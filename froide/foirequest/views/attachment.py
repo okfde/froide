@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.templatetags.static import static
 
 from crossdomainmedia import CrossDomainMediaMixin
-from froide.helper.utils import render_400, render_403
+from froide.helper.utils import render_400, render_403, is_ajax
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..auth import (
@@ -59,9 +59,9 @@ def show_attachment(request, slug, message_id, attachment_name):
 
 @require_POST
 @allow_write_foirequest
-def approve_attachment(request, foirequest, attachment):
+def approve_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
-        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
@@ -73,7 +73,7 @@ def approve_attachment(request, foirequest, attachment):
             sender=att, user=request.user,
         )
 
-    if request.is_ajax():
+    if is_ajax(request):
         if request.content_type == 'application/json':
             return JsonResponse({})
         return render(
@@ -87,9 +87,9 @@ def approve_attachment(request, foirequest, attachment):
 
 @require_POST
 @allow_write_foirequest
-def delete_attachment(request, foirequest, attachment):
+def delete_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
-        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
     message = att.belongs_to
     if not message.is_postal:
@@ -105,7 +105,7 @@ def delete_attachment(request, foirequest, attachment):
     )
     att.remove_file_and_delete()
 
-    if request.is_ajax():
+    if is_ajax(request):
         if request.content_type == 'application/json':
             return JsonResponse({})
         return HttpResponse()
@@ -116,9 +116,9 @@ def delete_attachment(request, foirequest, attachment):
 
 @require_POST
 @allow_write_foirequest
-def create_document(request, foirequest, attachment):
+def create_document(request, foirequest, attachment_id):
     att = get_object_or_404(
-        FoiAttachment, id=int(attachment), belongs_to__request=foirequest
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
     if not att.can_approve and not request.user.is_staff:
         return render_403(request)
@@ -132,7 +132,7 @@ def create_document(request, foirequest, attachment):
         sender=att, user=request.user,
     )
 
-    if request.is_ajax():
+    if is_ajax(request):
         return JsonResponse({
             'resource_uri': reverse('api:document-detail', kwargs={'pk': doc.id}),
         })
@@ -200,7 +200,7 @@ def get_redact_context(foirequest, attachment):
         'urls': {
             'publishUrl': reverse('foirequest-approve_attachment', kwargs={
                 'slug': foirequest.slug,
-                'attachment': attachment.pk
+                'attachment_id': attachment.pk
             }),
             'messageUpload': reverse('foirequest-upload_attachments', kwargs={
                 'slug': foirequest.slug,

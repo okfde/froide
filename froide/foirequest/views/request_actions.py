@@ -11,7 +11,7 @@ from django.urls import reverse
 
 from froide.account.forms import NewUserForm, AddressForm
 from froide.team.views import AssignTeamView
-from froide.helper.utils import render_400, render_403, get_redirect
+from froide.helper.utils import render_400, render_403, get_redirect, is_ajax
 
 from ..models import FoiRequest, FoiEvent
 from ..forms import (
@@ -212,7 +212,7 @@ def mark_not_foi(request, foirequest):
         user=request.user
     )
     foirequest.save()
-    if request.is_ajax():
+    if is_ajax(request):
         return HttpResponse()
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as not a FoI request.'))

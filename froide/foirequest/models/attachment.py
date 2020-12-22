@@ -143,10 +143,10 @@ class FoiAttachment(models.Model):
 
     objects = FoiAttachmentManager()
 
-    attachment_published = Signal(providing_args=['user'])
-    attachment_deleted = Signal(providing_args=['user'])
-    attachment_redacted = Signal(providing_args=['user'])
-    document_created = Signal(providing_args=['user'])
+    attachment_published = Signal()  # args: ['user']
+    attachment_deleted = Signal()  # args: ['user']
+    attachment_redacted = Signal()  # args: ['user']
+    document_created = Signal()  # args: ['user']
 
     class Meta:
         ordering = ('name',)

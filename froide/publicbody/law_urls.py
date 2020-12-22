@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import show_foilaw
 
 urlpatterns = [
-    url(r"^(?P<slug>[-\w]+)/$", show_foilaw, name="publicbody-foilaw-show"),
+    path("<slug:slug>/", show_foilaw, name="publicbody-foilaw-show"),
 ]

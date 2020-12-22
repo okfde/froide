@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.templatetags.static import static
 from django.template.defaultfilters import slugify
 
-from froide.helper.utils import render_400
+from froide.helper.utils import render_400, is_ajax
 from froide.helper.storage import add_number_to_filename
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
@@ -175,7 +175,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
             **{'added': str(added), 'updated': str(updated)}
         )
 
-        if request.is_ajax():
+        if is_ajax(request):
             return get_attachment_update_response(request, added, updated)
 
         added_count = len(added)
@@ -198,7 +198,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
         messages.add_message(request, messages.SUCCESS, status_message)
         return redirect(message)
 
-    if request.is_ajax():
+    if is_ajax(request):
         return JsonResponse({
             'error': form._errors['files'][0],
         })
@@ -446,12 +446,12 @@ def upload_attachments(request, foirequest, message_id):
             'redactAttachment': reverse('foirequest-redact_attachment',
                 kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'approveAttachment': reverse('foirequest-approve_attachment',
-                kwargs={'slug': foirequest.slug, 'attachment': 0}),
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'deleteAttachment': reverse('foirequest-delete_attachment',
-                kwargs={'slug': foirequest.slug, 'attachment': 0}),
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
             'tusEndpoint': reverse('api:upload-list'),
             'createDocument': reverse('foirequest-create_document',
-                kwargs={'slug': foirequest.slug, 'attachment': 0}),
+                kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
         },
         'i18n': {
             'newDocumentPageCount': [
@@ -652,7 +652,7 @@ def resend_message(request, foirequest, message_id):
         user=request.user,
     )
 
-    if request.is_ajax():
+    if is_ajax(request):
         return HttpResponse(sent_message.get_absolute_url())
 
     messages.add_message(request, messages.SUCCESS,

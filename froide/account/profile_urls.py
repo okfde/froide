@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from .views import profile
 
 urlpatterns = [
-    url(r'^(?P<slug>[-\w\.]+)/$', profile, name='account-profile')
+    path('<str:slug>/', profile, name='account-profile')
 ]

@@ -1,5 +1,4 @@
-from django.conf.urls import url, include
-from django.urls import path
+from django.urls import path, re_path, include
 from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
 
@@ -15,60 +14,60 @@ STATUS_URLS = [str(x[0]) for x in FOIREQUEST_FILTERS]
 
 urlpatterns = [
     # Old feed URL
-    url(pgettext_lazy('url part', r'^latest/feed/$'),
+    path(pgettext_lazy('url part', 'latest/feed/'),
         RedirectView.as_view(pattern_name='foirequest-list_feed_atom', permanent=True),
         name='foirequest-feed_latest_atom'),
-    url(pgettext_lazy('url part', r'^latest/rss/$'),
+    path(pgettext_lazy('url part', 'latest/rss/'),
         RedirectView.as_view(pattern_name='foirequest-list_feed', permanent=True),
         name='foirequest-feed_latest'),
 
-    url(r'^delete-draft$', delete_draft, name='foirequest-delete_draft'),
+    path('delete-draft/', delete_draft, name='foirequest-delete_draft'),
     path('claim/<uuid:token>/', claim_draft, name='foirequest-claim_draft'),
 ]
 
 foirequest_urls = [
-    url(r'^$', ListRequestView.as_view(), name='foirequest-list'),
-    url(r'^feed/$', ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom'),
-    url(r'^rss/$', ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
+    path('', ListRequestView.as_view(), name='foirequest-list'),
+    path('feed/', ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom'),
+    path('rss/', ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
 
     # Translators: part in request filter URL
-    url(pgettext_lazy('url part', r'^topic/(?P<category>[-\w]+)/$'),
+    path(pgettext_lazy('url part', 'topic/<slug:category>/'),
         ListRequestView.as_view(), name='foirequest-list'),
-    url(pgettext_lazy('url part', r'^topic/(?P<category>[-\w]+)/feed/$'),
+    path(pgettext_lazy('url part', 'topic/<slug:category>/feed/'),
         ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom'),
-    url(pgettext_lazy('url part', r'^topic/(?P<category>[-\w]+)/rss/$'),
+    path(pgettext_lazy('url part', 'topic/<slug:category>/rss/'),
         ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
 
     # # Translators: part in request filter URL
-    url(pgettext_lazy('url part', r'^tag/(?P<tag>[-\w]+)/$'),
+    path(pgettext_lazy('url part', 'tag/<slug:tag>/'),
         ListRequestView.as_view(), name='foirequest-list'),
-    url(pgettext_lazy('url part', r'^tag/(?P<tag>[-\w]+)/feed/$'),
+    path(pgettext_lazy('url part', 'tag/<slug:tag>/feed/'),
         ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom'),
-    url(pgettext_lazy('url part', r'^tag/(?P<tag>[-\w]+)/rss/$'),
+    path(pgettext_lazy('url part', 'tag/<slug:tag>/rss/'),
         ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
 
     # # Translators: part in request filter URL
-    url(pgettext_lazy('url part', r'^to/(?P<publicbody>[-\w]+)/$'),
+    path(pgettext_lazy('url part', 'to/<slug:publicbody>/'),
         ListRequestView.as_view(), name='foirequest-list'),
-    url(pgettext_lazy('url part', r'^to/(?P<publicbody>[-\w]+)/feed/$'),
+    path(pgettext_lazy('url part', 'to/<slug:publicbody>/feed/'),
         ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom'),
-    url(pgettext_lazy('url part', r'^to/(?P<publicbody>[-\w]+)/rss/$'),
+    path(pgettext_lazy('url part', 'to/<slug:publicbody>/rss/'),
         ListRequestView.as_view(feed='rss'), name='foirequest-list_feed'),
 
-    url(pgettext_lazy('url part', r'^token/(?P<token>[-\w]+)/feed/$'),
+    path(pgettext_lazy('url part', 'token/<slug:token>/feed/'),
         UserRequestFeedView.as_view(feed='atom'), name='foirequest-user_list_feed_atom'),
-    url(pgettext_lazy('url part', r'^token/(?P<token>[-\w]+)/rss/$'),
+    path(pgettext_lazy('url part', 'token/<slug:token>/rss/'),
         UserRequestFeedView.as_view(feed='rss'), name='foirequest-user_list_feed'),
-    url(pgettext_lazy('url part', r'^token/(?P<token>[-\w]+)/calendar/$'),
+    path(pgettext_lazy('url part', 'token/<slug:token>/calendar/'),
         user_calendar, name='foirequest-user_ical_calendar'),
 
-] + [url(r'^(?P<status>%s)/$' % status, ListRequestView.as_view(),
+] + [re_path('(?P<status>%s)/' % status, ListRequestView.as_view(),
          name='foirequest-list')
         for status in STATUS_URLS
-] + [url(r'^(?P<status>%s)/feed/$' % status,
+] + [re_path('(?P<status>%s)/feed/' % status,
          ListRequestView.as_view(feed='atom'), name='foirequest-list_feed_atom')
         for status in STATUS_URLS
-] + [url(r'^(?P<status>%s)/rss/$' % status,
+] + [re_path('(?P<status>%s)/rss/' % status,
          ListRequestView.as_view(feed='rss'), name='foirequest-list_feed')
         for status in STATUS_URLS
 ]
@@ -76,5 +75,5 @@ foirequest_urls = [
 urlpatterns += foirequest_urls
 
 urlpatterns += [
-    url(r'^(?P<jurisdiction>[-\w]+)/', include(foirequest_urls))
+    path('<slug:jurisdiction>/', include(foirequest_urls))
 ]

@@ -10,7 +10,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, DetailView, TemplateView
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from django.utils.decorators import method_decorator, decorator_from_middleware
 from django.utils.module_loading import import_string
 
 from froide.account.forms import NewUserForm, AddressForm
@@ -36,6 +36,8 @@ csrf_middleware_class = import_string(
         'django.middleware.csrf.CsrfViewMiddleware'
     )
 )
+
+csrf_protect = decorator_from_middleware(csrf_middleware_class)
 
 
 class FakePublicBodyForm(object):
@@ -339,9 +341,17 @@ class MakeRequestView(FormView):
         return FakePublicBodyForm(publicbodies)
 
     def csrf_valid(self):
-        return not bool(
-            csrf_middleware_class().process_view(self.request, None, (), {})
-        )
+        """
+        This runs a replaceable csrf view middleware
+        on the request and checks if something other than
+        None is returned, indicating csrf failure
+        """
+
+        @csrf_protect
+        def fake_view(request):
+            return None
+
+        return not bool(fake_view(self.request))
 
     def post(self, request, *args, **kwargs):
         error = False

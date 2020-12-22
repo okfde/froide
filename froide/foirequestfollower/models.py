@@ -2,7 +2,6 @@ import hmac
 import hashlib
 
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -158,12 +157,12 @@ class FoiRequestFollower(models.Model):
         _("Timestamp of Following"),
         default=timezone.now
     )
-    context = JSONField(blank=True, null=True)
+    context = models.JSONField(blank=True, null=True)
 
     objects = FoiRequestFollowerManager()
 
-    followed = Signal(providing_args=[])
-    unfollowing = Signal(providing_args=[])
+    followed = Signal()  # args: []
+    unfollowing = Signal()  # args: []
 
     class Meta:
         get_latest_by = 'timestamp'

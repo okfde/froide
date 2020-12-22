@@ -1,8 +1,9 @@
-from django.conf.urls import url
+from django.urls import path
 
 from ..views import ProjectView, SetProjectTeamView
 
 urlpatterns = [
-    url(r"^(?P<slug>[-\w]+)/$", ProjectView.as_view(), name="foirequest-project"),
-    url(r"^(?P<slug>[-\w]+)/set-team/$", SetProjectTeamView.as_view(), name="foirequest-project_set_team")
+    path("<slug:slug>/", ProjectView.as_view(), name="foirequest-project"),
+    path("<slug:slug>/set-team/", SetProjectTeamView.as_view(),
+         name="foirequest-project_set_team")
 ]

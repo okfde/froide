@@ -24,7 +24,7 @@ class DeferredMessage(models.Model):
     request = models.ForeignKey(FoiRequest, null=True, blank=True,
         on_delete=models.CASCADE)
     mail = models.TextField(blank=True)
-    spam = models.NullBooleanField(null=True, default=False)
+    spam = models.BooleanField(null=True, default=False)
     delivered = models.BooleanField(default=False)
 
     objects = DeferredMessageManager()

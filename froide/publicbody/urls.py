@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 from django.utils.translation import pgettext_lazy
 
 from .views import (
@@ -8,22 +8,22 @@ from .views import (
 
 
 urlpatterns = [
-    url(pgettext_lazy('url part', r"^propose/$"),
+    path(pgettext_lazy('url part', "propose/"),
         PublicBodyProposalView.as_view(), name="publicbody-propose"),
 
-    url(pgettext_lazy('url part', r"^change/(?P<pk>\d+)/$"),
+    path(pgettext_lazy('url part', "change/<int:pk>/"),
         PublicBodyChangeProposalView.as_view(), name="publicbody-change"),
 
-    url(pgettext_lazy('url part', r"^accept/(?P<pk>\d+)/$"),
+    path(pgettext_lazy('url part', "accept/<int:pk>/"),
         PublicBodyAcceptProposalView.as_view(), name="publicbody-accept"),
 
-    url(r"^$", PublicBodySearch.as_view(), name="publicbody-list"),
+    path("", PublicBodySearch.as_view(), name="publicbody-list"),
     # Translators: part in Public Body URL
-    url(pgettext_lazy('url part', r"^topic/(?P<category>[-\w]+)/$"),
+    path(pgettext_lazy('url part', "topic/<slug:category>/"),
             PublicBodySearch.as_view(), name="publicbody-list"),
-    url(r"^(?P<jurisdiction>[-\w]+)/$",
+    path("<slug:jurisdiction>/",
             PublicBodySearch.as_view(), name="publicbody-list"),
     # Translators: part in Public Body URL
-    url(pgettext_lazy('url part', r"^(?P<jurisdiction>[-\w]+)/topic/(?P<category>[-\w]+)/$"),
+    path(pgettext_lazy('url part', "<slug:jurisdiction>/topic/<slug:category>/"),
             PublicBodySearch.as_view(), name="publicbody-list"),
 ]

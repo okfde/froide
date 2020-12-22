@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -47,7 +46,7 @@ class Bounce(models.Model):
         User, null=True, blank=True,
         on_delete=models.CASCADE
     )
-    bounces = JSONField(default=list, blank=True)
+    bounces = models.JSONField(default=list, blank=True)
     last_update = models.DateTimeField(default=timezone.now)
 
     objects = BounceManager()

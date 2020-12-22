@@ -8,7 +8,6 @@ from django.utils import timezone
 from django.utils.timesince import timesince
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
-from django.contrib.postgres.fields import JSONField
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
 
@@ -165,7 +164,7 @@ class FoiEvent(models.Model):
     public = models.BooleanField(_("Is Public?"), default=True)
     event_name = models.CharField(_("Event Name"), max_length=255)
     timestamp = models.DateTimeField(_("Timestamp"), default=timezone.now)
-    context = JSONField(_("Context JSON"))
+    context = models.JSONField(_("Context JSON"))
 
     objects = FoiEventManager()
 

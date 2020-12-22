@@ -9,14 +9,14 @@ from .models import Team, TeamMembership
 from .services import TeamService
 
 
-class TeamFactory(factory.DjangoModelFactory):
+class TeamFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Team
 
     name = factory.Sequence(lambda n: 'Team {}'.format(n))
 
 
-class TeamMembershipFactory(factory.DjangoModelFactory):
+class TeamMembershipFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TeamMembership
 

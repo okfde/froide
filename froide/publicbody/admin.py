@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.urls import reverse_lazy
 from django import forms
 from django.urls import reverse
-from django.conf.urls import url
+from django.urls import path
 from django.utils.html import format_html
 from django.template.response import TemplateResponse
 
@@ -200,10 +200,10 @@ class PublicBodyBaseAdminMixin:
     def get_urls(self):
         urls = super(PublicBodyBaseAdminMixin, self).get_urls()
         my_urls = [
-            url(r'^import/$',
+            path('import/',
                 self.admin_site.admin_view(self.import_csv),
                 name='publicbody-publicbody-import_csv'),
-            url(r'^geo-match/$',
+            path('geo-match/',
                 self.admin_site.admin_view(self.geo_match),
                 name='publicbody-publicbody-geo_match'),
         ]
@@ -351,10 +351,10 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            url(r'^(?P<pk>\d+)/confirm/$',
+            path('<int:pk>/confirm/',
                 self.admin_site.admin_view(self.confirm),
                 name='publicbody-proposedpublicbody-confirm'),
-            url(r'^(?P<pk>\d+)/send-message/$',
+            path('<int:pk>/send-message/',
                 self.admin_site.admin_view(self.send_message),
                 name='publicbody-proposedpublicbody-send_message'),
         ]

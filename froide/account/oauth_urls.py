@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 from django.http import HttpResponseRedirect
 
 from oauth2_provider.views import (AuthorizationView, TokenView,
@@ -22,8 +22,8 @@ class CustomAuthorizationView(AuthorizationView):
 
 
 urlpatterns = [
-    url(r'^authorize/$', CustomAuthorizationView.as_view(), name="authorize"),
-    url(r'^token/$', TokenView.as_view(), name="token"),
+    path('authorize/', CustomAuthorizationView.as_view(), name="authorize"),
+    path('token/', TokenView.as_view(), name="token"),
 ]
 
 
@@ -34,9 +34,9 @@ class CustomApplicationUpdate(ApplicationUpdate):
 # Application management views
 app_name = 'account'
 urlpatterns += [
-    url(r'^applications/$', ApplicationList.as_view(), name="list"),
-    url(r'^applications/register/$', ApplicationRegistration.as_view(), name="register"),
-    url(r'^applications/(?P<pk>\d+)/$', ApplicationDetail.as_view(), name="detail"),
-    url(r'^applications/(?P<pk>\d+)/delete/$', ApplicationDelete.as_view(), name="delete"),
-    url(r'^applications/(?P<pk>\d+)/update/$', CustomApplicationUpdate.as_view(), name="update"),
+    path('applications/', ApplicationList.as_view(), name="list"),
+    path('applications/register/', ApplicationRegistration.as_view(), name="register"),
+    path('applications/<int:pk>/', ApplicationDetail.as_view(), name="detail"),
+    path('applications/<int:pk>/delete/', ApplicationDelete.as_view(), name="delete"),
+    path('applications/<int:pk>/update/', CustomApplicationUpdate.as_view(), name="update"),
 ]

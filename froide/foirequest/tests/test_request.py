@@ -915,30 +915,30 @@ class RequestTest(TestCase):
 
         # Bad method
         response = self.client.get(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 405)
 
         # Bad slug
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug + 'blub', "attachment": att.id}))
+                kwargs={"slug": req.slug + 'blub', "attachment_id": att.id}))
         self.assertEqual(response.status_code, 404)
 
         # Not logged in
         self.client.logout()
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertForbidden(response)
 
         # Not user of request
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 403)
         self.client.logout()
 
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": '9' * 8}))
+                kwargs={"slug": req.slug, "attachment_id": '9' * 8}))
         self.assertEqual(response.status_code, 404)
 
         user = User.objects.get(username='sw')
@@ -947,7 +947,7 @@ class RequestTest(TestCase):
 
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 302)
         att = FoiAttachment.objects.get(id=att.id)
         self.assertTrue(att.approved)
@@ -957,7 +957,7 @@ class RequestTest(TestCase):
         att.save()
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 403)
         att = FoiAttachment.objects.get(id=att.id)
         self.assertFalse(att.approved)
@@ -966,7 +966,7 @@ class RequestTest(TestCase):
         self.client.logout()
         self.client.login(email='dummy_staff@example.org', password='froide')
         response = self.client.post(reverse('foirequest-approve_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 302)
         att = FoiAttachment.objects.get(id=att.id)
         self.assertTrue(att.approved)
@@ -986,30 +986,30 @@ class RequestTest(TestCase):
 
         # Bad method
         response = self.client.get(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 405)
 
         # Bad slug
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug + 'blub', "attachment": att.id}))
+                kwargs={"slug": req.slug + 'blub', "attachment_id": att.id}))
         self.assertEqual(response.status_code, 404)
 
         # Not logged in
         self.client.logout()
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertForbidden(response)
 
         # Not user of request
         self.client.login(email='dummy@example.org', password='froide')
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 403)
         self.client.logout()
 
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": '9' * 8}))
+                kwargs={"slug": req.slug, "attachment_id": '9' * 8}))
         self.assertEqual(response.status_code, 404)
 
         user = User.objects.get(username='sw')
@@ -1022,7 +1022,7 @@ class RequestTest(TestCase):
         mes.kind = 'email'
         mes.save()
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 403)
         att_exists = FoiAttachment.objects.filter(id=att.id).exists()
         self.assertTrue(att_exists)
@@ -1034,7 +1034,7 @@ class RequestTest(TestCase):
         att.save()
 
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 403)
         att_exists = FoiAttachment.objects.filter(id=att.id).exists()
         self.assertTrue(att_exists)
@@ -1043,7 +1043,7 @@ class RequestTest(TestCase):
         att.save()
 
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 302)
         att_exists = FoiAttachment.objects.filter(id=att.id).exists()
         self.assertFalse(att_exists)
@@ -1055,7 +1055,7 @@ class RequestTest(TestCase):
 
         self.client.login(email='info@fragdenstaat.de', password='froide')
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 403)
         att = FoiAttachment.objects.get(id=att.id)
 
@@ -1067,7 +1067,7 @@ class RequestTest(TestCase):
         self.client.logout()
         self.client.login(email='dummy_staff@example.org', password='froide')
         response = self.client.post(reverse('foirequest-delete_attachment',
-                kwargs={"slug": req.slug, "attachment": att.id}))
+                kwargs={"slug": req.slug, "attachment_id": att.id}))
         self.assertEqual(response.status_code, 302)
         att_exists = FoiAttachment.objects.filter(id=att.id).exists()
         self.assertFalse(att_exists)

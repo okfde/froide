@@ -6,6 +6,7 @@ from django.contrib import messages
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.views import show
+from froide.helper.utils import is_ajax
 
 from .models import FoiRequestFollower
 from .forms import FollowRequestForm
@@ -17,7 +18,7 @@ def follow(request, pk):
     form = FollowRequestForm(request.POST, foirequest=foirequest, request=request)
     if form.is_valid():
         followed = form.save()
-        if request.is_ajax():
+        if is_ajax(request):
             return render(request, 'foirequestfollower/show.html', {
                 'count': foirequest.follow_count(),
                 'object': foirequest,
@@ -35,7 +36,7 @@ def follow(request, pk):
                     _("Check your emails and click the confirmation link in order to follow this request."))
         return redirect(foirequest)
 
-    if request.is_ajax():
+    if is_ajax(request):
         error_string = ' '.join(' '.join(v) for k, v in form.errors.items())
         return JsonResponse({'errors': error_string})
     return show(request, foirequest.slug, context={"followform": form}, status=400)

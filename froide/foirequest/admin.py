@@ -10,7 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.template.response import TemplateResponse
 from django.contrib.admin import helpers
 from django import forms
-from django.conf.urls import url
+from django.urls import path
 from django.utils.html import format_html
 from django.utils import timezone
 
@@ -343,7 +343,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super(FoiMessageAdmin, self).get_urls()
         my_urls = [
-            url(r'^(?P<pk>\d+)/resend-message/$',
+            path('<int:pk>/resend-message/',
                 self.admin_site.admin_view(self.resend_message),
                 name='foirequest-foimessage-resend_message'),
         ]

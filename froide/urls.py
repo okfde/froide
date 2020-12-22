@@ -1,5 +1,4 @@
-from django.conf.urls import include, url
-from django.urls import reverse
+from django.urls import include, path, re_path, reverse
 from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -95,9 +94,9 @@ for klass in sitemaps.values():
     klass.protocol = PROTOCOL
 
 sitemap_urlpatterns = [
-    url(r'^sitemap\.xml$', sitemaps_views.index,
+    path('sitemap.xml', sitemaps_views.index,
         {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemaps'}),
-    url(r'^sitemap-(?P<section>.+)\.xml$', sitemaps_views.sitemap,
+    path('sitemap-<str:section>.xml', sitemaps_views.sitemap,
         {'sitemaps': sitemaps}, name='sitemaps')
 ]
 
@@ -109,20 +108,20 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
     schema_view = get_schema_view(title='{name} API'.format(
                                   name=settings.SITE_NAME))
     froide_urlpatterns += [
-        url(r'^api/v1/user/', ProfileView.as_view(), name='api-user-profile'),
-        url(r'^api/v1/', include((api_router.urls, 'api'))),
-        url(r'^api/v1/schema/$', schema_view),
+        path('api/v1/user/', ProfileView.as_view(), name='api-user-profile'),
+        path('api/v1/', include((api_router.urls, 'api'))),
+        path('api/v1/schema/', schema_view),
     ]
 
 
 froide_urlpatterns += [
     # Translators: URL part
-    url(r'^', include('froide.foirequest.urls')),
+    path('', include('froide.foirequest.urls')),
 ]
 
 if len(settings.LANGUAGES) > 1:
     froide_urlpatterns += [
-        url(r'^i18n/', include('django.conf.urls.i18n'))
+        path('i18n/', include('django.conf.urls.i18n'))
     ]
 
 account = pgettext('url part', 'account')
@@ -131,45 +130,45 @@ teams = pgettext('url part', 'teams')
 
 froide_urlpatterns += [
     # Translators: follow request URL
-    url(r'^%s/' % pgettext('url part', 'follow'), include('froide.foirequestfollower.urls')),
+    path('%s/' % pgettext('url part', 'follow'), include('froide.foirequestfollower.urls')),
 
-    url(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'b'),
+    re_path(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'b'),
         publicbody_shortlink, name="publicbody-publicbody_shortlink"),
     # Translators: URL part
-    url(r"^%s/(?P<slug>[-\w]+)/$" % pgettext('url part', 'entity'), show_publicbody,
+    path('%s/<slug:slug>/' % pgettext('url part', 'entity'), show_publicbody,
             name="publicbody-show"),
-    url(r"^%s/$" % pgettext('url part', 'entity'),
+    path('%s/' % pgettext('url part', 'entity'),
         lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
     # Translators: URL part
-    url(r'^%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
+    path('%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
     # Translators: URL part
-    url(r'^%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
-    url(r'^%s/' % documents, include('froide.document.urls')),
-    url(r'^%s/%s/' % (account, teams), include('froide.team.urls')),
-    url(r'^%s/' % account, include('froide.account.urls')),
-    url(r'^', include('froide.account.export_urls')),
-    url(r'^%s/access-token/' % account, include('froide.accesstoken.urls')),
+    path('%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
+    path('%s/' % documents, include('froide.document.urls')),
+    path('%s/%s/' % (account, teams), include('froide.team.urls')),
+    path('%s/' % account, include('froide.account.urls')),
+    path('', include('froide.account.export_urls')),
+    path('%s/access-token/' % account, include('froide.accesstoken.urls')),
     # Translators: URL part
-    url(r'^%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
-    url(r'^comments/', include('django_comments.urls')),
-    url(r'^problem/', include('froide.problem.urls')),
-    url(r'^moderation/', include('froide.problem.moderation_urls')),
-    url(pgettext('url part', r'^letter/'), include('froide.letter.urls')),
-    url(r'^guide/', include('froide.guide.urls')),
-    url(r'^500/', lambda request: TemplateResponse(request, '500.html'))
+    path('%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
+    path('comments/', include('django_comments.urls')),
+    path('problem/', include('froide.problem.urls')),
+    path('moderation/', include('froide.problem.moderation_urls')),
+    path(pgettext('url part', 'letter/'), include('froide.letter.urls')),
+    path('guide/', include('froide.guide.urls')),
+    path('500/', lambda request: TemplateResponse(request, '500.html'))
 ]
 
 froide_urlpatterns += document_media_urlpatterns
 
 admin_urls = [
-        url(r'^%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
+        path('%s/' % SECRET_URLS.get('admin', 'admin'), admin.site.urls)
 ]
 
 if SECRET_URLS.get('postmark_inbound'):
     from froide.foirequest.views import postmark_inbound
 
     froide_urlpatterns += [
-        url(r'^postmark/%s/' % SECRET_URLS['postmark_inbound'],
+        path('postmark/%s/' % SECRET_URLS['postmark_inbound'],
             postmark_inbound, name="foirequest-postmark_inbound")
     ]
 
@@ -177,7 +176,7 @@ if SECRET_URLS.get('postmark_bounce'):
     from froide.foirequest.views import postmark_bounce
 
     froide_urlpatterns += [
-        url(r'^postmark/%s/' % SECRET_URLS['postmark_bounce'],
+        path('postmark/%s/' % SECRET_URLS['postmark_bounce'],
             postmark_bounce, name="foirequest-postmark_bounce")
     ]
 
@@ -193,7 +192,7 @@ if settings.DEBUG:
     try:
         import debug_toolbar
         froide_urlpatterns = [
-            url(r'^__debug__/', include(debug_toolbar.urls)),
+            path('__debug__/', include(debug_toolbar.urls)),
         ] + froide_urlpatterns
     except ImportError:
         pass
@@ -203,11 +202,11 @@ if settings.DEBUG:
 jurisdiction_part = pgettext('url part', 'jurisdiction')
 
 jurisdiction_urls = [
-    url(r'^%s/(?P<slug>[\w-]+)/' % jurisdiction_part,
+    path('%s/<slug:slug>/' % jurisdiction_part,
         include('froide.publicbody.jurisdiction_urls'))
 ]
 
 urlpatterns = froide_urlpatterns + [
-    url(r'^$', index, name='index'),
-    url(r'^dashboard/$', dashboard, name='dashboard'),
+    path('', index, name='index'),
+    path('dashboard/', dashboard, name='dashboard'),
 ] + sitemap_urlpatterns + jurisdiction_urls + admin_urls

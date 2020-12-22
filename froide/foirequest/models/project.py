@@ -81,7 +81,7 @@ class FoiProject(models.Model):
         verbose_name_plural = _('FOI Projects')
         ordering = ('last_update',)
 
-    project_created = Signal(providing_args=[])
+    project_created = Signal()  # args: []
 
     def __str__(self):
         return self.title
