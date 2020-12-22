@@ -8,7 +8,7 @@ from froide.problem.consumers import ModerationConsumer
 
 
 websocket_urls = [
-    path('moderation/', ModerationConsumer)
+    path('moderation/', ModerationConsumer.as_asgi())
 ]
 
 application = ProtocolTypeRouter({
