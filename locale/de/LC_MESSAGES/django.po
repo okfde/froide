@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-22 17:47+0000\n"
-"PO-Revision-Date: 2020-12-22 17:55+0000\n"
+"PO-Revision-Date: 2020-12-22 21:36+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3755,8 +3755,8 @@ msgstr "Nachricht absenden"
 #: froide/foirequest/templates/foirequest/show.html:369
 msgid "If you need to provide an alternative email address, use this one:"
 msgstr ""
-"Sollte eine Behörde nicht an FragDenStaat antworten wollen, sondern nur"
-"an eine private E-Mail-Adresse, geben Sie bitte diese an:"
+"Sollte eine Behörde nicht an FragDenStaat antworten wollen, sondern nuran "
+"eine private E-Mail-Adresse, geben Sie bitte diese an:"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:128
 #: froide/foirequest/templates/foirequest/show.html:372
@@ -5934,12 +5934,12 @@ msgstr "an/<slug:publicbody>/"
 #: froide/foirequest/urls/list_requests_urls.py:52
 msgctxt "url part"
 msgid "to/<slug:publicbody>/feed/"
-msgstr "an/<slug:publicbody_slug>/feed/"
+msgstr "an/<slug:publicbody>/feed/"
 
 #: froide/foirequest/urls/list_requests_urls.py:54
 msgctxt "url part"
 msgid "to/<slug:publicbody>/rss/"
-msgstr "an/<slug:publicbody_slug>/rss/"
+msgstr "an/<slug:publicbody>/rss/"
 
 #: froide/foirequest/urls/list_requests_urls.py:57
 msgctxt "url part"
