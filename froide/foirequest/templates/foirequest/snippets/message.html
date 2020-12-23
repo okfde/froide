@@ -248,7 +248,13 @@
 
         {% block message_toolbar_item %}{% endblock %}
 
-        {% render_problem_button message %}
+        {% comment %}
+          Removed wrapper from "render_problem_button"-output ot make it work in alpha version.
+          Also there's only one button to render, so there's no use for a button group.
+        {% endcomment %}
+        <div class="btn-group btn-group-sm ml-auto">
+          {% render_problem_button message %}
+        </div>
 
         {% if object|can_write_foirequest:request and not message.original%}
 
