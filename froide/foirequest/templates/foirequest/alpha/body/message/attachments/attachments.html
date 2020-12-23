@@ -40,7 +40,6 @@
           <!-- manage attachments link -->
           <a
             href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}"
-            class="mb-2 mb-sm-0"
           >
             <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Manage attachments" %}
           </a>
@@ -53,7 +52,7 @@
             href="#{{ message.get_html_id }}-decoattachments"
             role="button" aria-expanded="false"
             aria-controls="{{ message.get_html_id }}-decoattachments"
-            class="ml-sm-3"
+            class="ml-sm-3 mt-2 mt-sm-0"
           >
             <i class="fa fa-eye-slash" aria-hidden="true"></i> {% trans "Show irrelevant attachments" %}
           </a>

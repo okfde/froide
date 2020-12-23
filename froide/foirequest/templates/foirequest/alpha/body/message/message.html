@@ -178,7 +178,7 @@
       <div class="alpha-message__wrap pb-4">
 
         {% if not comment_list|length %}
-          <span class="text-gray-600">{% trans "No comments yet." %}</span>
+          <span class="text-gray-600 smaller">{% trans "No comments yet." %}</span>
         {% else %}
           {% include "foirequest/alpha/body/message/comments/list.html" %}
         {% endif %}
