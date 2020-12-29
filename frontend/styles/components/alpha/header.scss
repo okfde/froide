@@ -59,7 +59,7 @@
   left: 0;
   right: 0;
   padding-top: 80px;
-  background-image: linear-gradient(to bottom, transparent, $gray-100);
+  background-image: linear-gradient(to bottom, rgba($gray-100, 0), $gray-100);
 }
 
 .info-box {
