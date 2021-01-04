@@ -2,29 +2,27 @@
 {% load markup %}
 {% load form_helper %}
 
-<div class="btn-group btn-group-sm ml-auto">
-  <button type="button" class="btn btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
-    {% if not request.user.is_authenticated %}
-      {% trans "Report" %}
-    {% else %}
-      {% if not message.problemreports_count %}
-        {% if is_requester %}
-          {% trans "Problem?" %}
-        {% else %}
-          {% trans "Report" %}
-        {% endif %}
+<button type="button" class="btn btn-sm btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
+  {% if not request.user.is_authenticated %}
+    {% trans "Report" %}
+  {% else %}
+    {% if not message.problemreports_count %}
+      {% if is_requester %}
+        {% trans "Problem?" %}
       {% else %}
-        {% if message.problemreports_unresolved_count %}
-          <span class="fa fa-exclamation-circle"></span>
-        {% endif %}
-        {% if message.problemreports_count > 1 %}{% trans "Problem" %}{% else %}{% trans "Problems" %}{% endif %}
-        <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
-          {{ message.problemreports_count }}
-        </span>
+        {% trans "Report" %}
       {% endif %}
+    {% else %}
+      {% if message.problemreports_unresolved_count %}
+        <span class="fa fa-exclamation-circle"></span>
+      {% endif %}
+      {% if message.problemreports_count > 1 %}{% trans "Problem" %}{% else %}{% trans "Problems" %}{% endif %}
+      <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
+        {{ message.problemreports_count }}
+      </span>
     {% endif %}
-  </button>
-</div>
+  {% endif %}
+</button>
 
 <div class="modal" tabindex="-1" role="dialog" id="problemreport-{{ message.pk }}">
   <div class="modal-dialog modal-lg" role="document">

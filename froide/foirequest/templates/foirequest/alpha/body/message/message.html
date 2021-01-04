@@ -119,12 +119,12 @@
   <div class="alpha-message__footer">
 
     <!-- footer buttons -->
-    <div class="alpha-message__wrap d-flex py-3">
+    <div class="alpha-message__wrap d-flex flex-column flex-sm-row py-3">
 
       <!-- Comments button -->
       <button
         type="button"
-        class="btn btn-light btn-sm text-primary"
+        class="btn btn-light btn-sm text-primary mb-1 mb-sm-0 mr-sm-auto"
         data-toggle="collapse"
         aria-expanded="false"
         aria-controls="comments-{{ message.id }}"
@@ -141,14 +141,14 @@
 
       <!-- Guidance menu -->
       {% if request.user.is_staff %}
-        <div class="dropdown">
+        <div class="dropdown d-flex mt-1 mt-sm-0">
           <button
             id="myDropdown"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-            class="btn btn-light btn-sm ml-2"
+            class="btn btn-light btn-sm flex-fill ml-sm-2"
           >
             {% trans "Guidance" %}
           </button>
