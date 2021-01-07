@@ -2013,7 +2013,7 @@ msgstr "warte-auf-antwort"
 #: froide/foirequest/filters.py:79
 msgctxt "URL part"
 msgid "overdue"
-msgstr "verspaetet"
+msgstr "verspätet"
 
 #: froide/foirequest/filters.py:86
 msgctxt "URL part"
@@ -3719,7 +3719,7 @@ msgstr "Post hochladen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:73
 msgid "Other Options"
-msgstr "Andere Otionen"
+msgstr "Andere Optionen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/body.html:100
 msgid "Sticky"
@@ -4114,7 +4114,7 @@ msgstr[1] ""
 
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:18
 msgid "overdue"
-msgstr "verspaetet"
+msgstr "verspätet"
 
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:22
 msgid "Deadline expired on"
