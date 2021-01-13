@@ -5,6 +5,7 @@
         v-if="canSubmit"
         type="submit"
         class="btn btn-lg btn-primary"
+        @click="submitting = true"
       >
         <span
           v-if="uploading"
@@ -27,6 +28,7 @@
         type="submit"
         class="btn btn-lg btn-primary"
         :disabled="!canSubmit"
+        @click="submitting = true"
       >
         <span
           v-if="uploading"
@@ -61,12 +63,16 @@ export default {
   data () {
     return {
       canSubmit: false,
-      uploading: false
+      uploading: false,
+      submitting: false
     }
   },
   mounted () {
     window.addEventListener('beforeunload', (e) => {
       if (!this.canSubmit && !this.uploading) {
+        return
+      }
+      if (this.submitting) {
         return
       }
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
