@@ -25,3 +25,10 @@ def get_item_by_key(obj, key=None):
     if key is None:
         return
     return obj.get(key)
+
+
+@register.filter
+def get_field_by_key(obj, key=None):
+    if key is None:
+        return
+    return getattr(obj, key)
