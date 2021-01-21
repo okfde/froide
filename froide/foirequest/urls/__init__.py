@@ -53,7 +53,7 @@ else:
 
 
 urlpatterns += [
-    path('%s%s/(<int:message_id>/<str:attachment_name>' % (
+    path('%s%s/<int:message_id>/<str:attachment_name>' % (
         MEDIA_PATH, settings.FOI_MEDIA_PATH
     ), AttachmentFileDetailView.as_view(), name='foirequest-auth_message_attachment')
 ]
