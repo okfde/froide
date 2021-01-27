@@ -6,49 +6,55 @@
 {% load form_helper %}
 
 {% if not hide_intro %}
-<p>
-  {% if object.status_is_final %}
-    {% blocktrans with title=object.title %}The request "{{ title }}" received documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them below.{% endblocktrans %}
+  {% if object.user != request.user %}
+    <p>
+    {% if object.status_is_final %}
+      {% blocktrans with title=object.title %}The request “{{ title }}” received documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them below.{% endblocktrans %}
+    {% else %}
+      {% blocktrans with title=object.title %}The request “{{ title }}” is for documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them below.{% endblocktrans %}
+    {% endif %}
+    </p>
   {% else %}
-    {% blocktrans with title=object.title %}The request "{{ title }}" is for documents that we are not allowed to publish. However, every person can get individual access to these documents by requesting them just for themselves.{% endblocktrans %}
+    <p>
+    {% blocktrans with title=foirequest.title %}
+    The documents in your request “{{ title }}” cannot be published. However, every person can get individual access to these documents by requesting them for themselves on this page.
+    {% endblocktrans %}
+    </p>
   {% endif %}
-</p>
 {% endif %}
 {% if user.is_authenticated %}
-  {% if object.user == user %}
-    <p>{% blocktrans with email=SITE_EMAIL %}You stated that you are not allowed to publish the received documents. If this was a mistake, please contact {{ email }}.{% endblocktrans %}</p>
-  {% else %}
-    {% if object.same_as.user == user %}
-      <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
+  {% if object.same_as.user == user %}
+    <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
+  {% endif %}
+  {% if object.user != user and object.same_as.user != user %}
+    {% check_same_request object user "same_request" %}
+    {% if same_request %}
+      <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
     {% else %}
-      {% check_same_request object user "same_request" %}
-      {% if same_request %}
-        <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
-      {% else %}
-        <form method="post" class="d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug %}">
-          {% csrf_token %}
-          <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
-          <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
+      <form method="post" class="d-print-none" action="{% url 'foirequest-make_same_request' slug=object.slug %}">
+        {% csrf_token %}
+        <p>{% blocktrans %}Make an identical request in your name to get access to the information.{% endblocktrans %}</p>
 
-          {% if not address_form %}
-            {% get_user_form address_required=object.law.address_required as address_form %}
-          {% endif %}
-          {% render_form address_form %}
-          {% if redirect_url %}
-            <input type="hidden" name="redirect_url" value="{{ redirect_url }}"/>
-          {% endif %}
-          {% if reference %}
-            <input type="hidden" name="reference" value="{{ reference }}"/>
-          {% endif %}
+        <p>{% blocktrans %}Your Email Address:{% endblocktrans %} <strong><span id="email_address">{{ user.email }}</span></strong></p>
 
-          <p class="text-right">
-            <button type="submit" class="btn btn-primary">
-              &rarr;
-              {% trans "Make identical request in your name" %}
-            </button>
-          </p>
-        </form>
-      {% endif %}
+        {% if not address_form %}
+          {% get_user_form address_required=object.law.address_required as address_form %}
+        {% endif %}
+        {% render_form address_form %}
+        {% if redirect_url %}
+          <input type="hidden" name="redirect_url" value="{{ redirect_url }}"/>
+        {% endif %}
+        {% if reference %}
+          <input type="hidden" name="reference" value="{{ reference }}"/>
+        {% endif %}
+
+        <p class="text-right">
+          <button type="submit" class="btn btn-primary">
+            &rarr;
+            {% trans "Make identical request in your name" %}
+          </button>
+        </p>
+      </form>
     {% endif %}
   {% endif %}
 {% else %}
@@ -73,4 +79,10 @@
     </p>
   </form>
 {% endif %}
-<p class="mt-3 mb-3">{% blocktrans with counter=object.identical_count|intcomma count count=object.identical_count %}So far one person also requested this document.{% plural %}So far <strong>{{ counter }} people</strong> requested this document.{% endblocktrans %}</p>
+<p class="mt-3 mb-3">
+  {% blocktrans with counter=object.identical_count|intcomma count count=object.identical_count %}
+    So far one person also requested this document.
+    {% plural %}
+    So far <strong>{{ counter }} people</strong> requested this document.
+  {% endblocktrans %}
+</p>
