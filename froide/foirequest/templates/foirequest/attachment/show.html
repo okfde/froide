@@ -8,18 +8,20 @@
 
 {% block body %}
 <div class="container mt-3 mb-3">
-    <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>
-    <p>
-        {% blocktrans with title=foirequest.title message_url=message.get_absolute_url %}
-        This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
-        {% endblocktrans %}
-    </p>
-    {% if attachment.can_redact and foirequest|can_write_foirequest:request %}
-        <a class="btn btn-sm btn-dark d-print-none" href="{% url 'foirequest-redact_attachment' slug=foirequest.slug attachment_id=attachment.id %}">
-            <i class="fa fa-paint-brush"></i>
-            {% trans "Redact" %}
-        </a>
-    {% endif %}
+  {% block attachment_top %}
+  <h2>{% blocktrans with name=attachment.name %}Attachment “{{ name }}”{% endblocktrans %}</h2>
+  <p>
+    {% blocktrans with title=foirequest.title message_url=message.get_absolute_url %}
+    This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
+    {% endblocktrans %}
+  </p>
+  {% if attachment.can_redact and foirequest|can_write_foirequest:request %}
+    <a class="btn btn-sm btn-dark d-print-none" href="{% url 'foirequest-redact_attachment' slug=foirequest.slug attachment_id=attachment.id %}">
+      <i class="fa fa-paint-brush"></i>
+      {% trans "Redact" %}
+    </a>
+  {% endif %}
+  {% endblock %}
 </div>
 
 
