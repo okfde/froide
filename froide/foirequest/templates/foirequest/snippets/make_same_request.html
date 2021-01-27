@@ -27,7 +27,7 @@
     <p>{% blocktrans %}You made the original request.{% endblocktrans %}</p>
   {% endif %}
   {% if object.user != user and object.same_as.user != user %}
-    {% check_same_request object user "same_request" %}
+    {% check_same_request object user %}
     {% if same_request %}
       <a href="{{ same_request.get_absolute_url }}">{% blocktrans %}You made an identical request.{% endblocktrans %}</a>
     {% else %}
