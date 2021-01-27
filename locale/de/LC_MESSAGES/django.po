@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-13 17:53+0000\n"
-"PO-Revision-Date: 2021-01-13 17:54+0000\n"
+"POT-Creation-Date: 2021-01-27 16:53+0000\n"
+"PO-Revision-Date: 2021-01-27 16:57+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -564,7 +564,7 @@ msgstr "Sende E-Mail an Nutzer"
 #: froide/foirequest/templates/foirequest/alpha/body/message/meta_container.html:78
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:80
 #: froide/foirequest/templates/foirequest/snippets/message.html:88
-#: froide/foirequest/templatetags/foirequest_tags.py:307
+#: froide/foirequest/templatetags/foirequest_tags.py:306
 #: froide/foirequest/views/make_request.py:184
 msgid "Subject"
 msgstr "Betreff"
@@ -4214,7 +4214,7 @@ msgid "in %(due)s"
 msgstr "in %(due)s"
 
 #: froide/foirequest/templates/foirequest/alpha/header/info-box.html:94
-#: froide/foirequest/templatetags/foirequest_tags.py:368
+#: froide/foirequest/templatetags/foirequest_tags.py:367
 msgid "Due date"
 msgstr "Frist"
 
@@ -4267,39 +4267,39 @@ msgstr "Atom-Feed für Anfrage '%(title)s'"
 msgid "%(name)s in request „%(title)s“"
 msgstr "%(name)s in Anfrage „%(title)s“"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:11
+#: froide/foirequest/templates/foirequest/attachment/show.html:12
 #, python-format
 msgid "Attachment “%(name)s”"
 msgstr "Anhang „%(name)s“"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:13
+#: froide/foirequest/templates/foirequest/attachment/show.html:14
 #, python-format
 msgid ""
 "\n"
-"        This attachment is part of the request ”<a href=\"%(message_url)s\">"
+"    This attachment is part of the request ”<a href=\"%(message_url)s\">"
 "%(title)s</a>”.\n"
-"        "
+"    "
 msgstr ""
 "\n"
 "        Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">"
-"%(title)s</a>“\n"
+"%(title)s</a>“.\n"
 "        "
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:20
+#: froide/foirequest/templates/foirequest/attachment/show.html:21
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html:9
 #: froide/foirequest/views/message.py:496
 msgid "Redact"
 msgstr "Schwärzen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:44
+#: froide/foirequest/templates/foirequest/attachment/show.html:46
 msgid "Download original"
 msgstr "Original-Datei herunterladen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:50
+#: froide/foirequest/templates/foirequest/attachment/show.html:52
 msgid "This file cannot be previewed."
 msgstr "Eine Vorschau für diese Datei ist nicht möglich."
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:52
+#: froide/foirequest/templates/foirequest/attachment/show.html:54
 msgid "Download the file here."
 msgstr "Datei hier herunterladen."
 
@@ -5617,72 +5617,84 @@ msgstr "sichtbar für Sie"
 msgid "Not public!"
 msgstr "Nicht öffentlich!"
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:11
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:12
 #, python-format
 msgid ""
-"The request \"%(title)s\" received documents that we are not allowed to "
+"The request “%(title)s” received documents that we are not allowed to "
 "publish. However, every person can get individual access to these documents "
 "by requesting them below."
 msgstr ""
 "Die Anfrage „%(title)s“ hat Dokumente erhalten, die wir nicht "
 "veröffentlichen dürfen. Allerdings kann jede Person Zugang zu diesen "
-"Dokumenten erhalten, indem sie sie selbst hier anfragt."
+"Dokumenten erhalten, indem sie diese selbst hier anfragt."
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:13
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:14
 #, python-format
 msgid ""
-"The request \"%(title)s\" is for documents that we are not allowed to "
-"publish. However, every person can get individual access to these documents "
-"by requesting them just for themselves."
+"The request “%(title)s” is for documents that we are not allowed to publish. "
+"However, every person can get individual access to these documents by "
+"requesting them below."
 msgstr ""
-"Die Anfrage „%(title)s“ hat Dokumente erhalten, die wir nicht "
-"veröffentlichen dürfen. Allerdings kann jede Person Zugang zu diesen "
-"Dokumenten erhalten, indem sie sie selbst hier anfragt."
+"Die Anfrage „%(title)s“ ist zu Dokumenten, die wir nicht veröffentlichen "
+"dürfen. Allerdings kann jede Person Zugang zu diesen Dokumenten erhalten, "
+"indem sie diese selbst hier anfragt."
 
 #: froide/foirequest/templates/foirequest/snippets/make_same_request.html:19
 #, python-format
 msgid ""
-"You stated that you are not allowed to publish the received documents. If "
-"this was a mistake, please contact %(email)s."
+"\n"
+"    The documents in your request “%(title)s” cannot be published. However, "
+"every person can get individual access to these documents by requesting them "
+"for themselves on this page.\n"
+"    "
 msgstr ""
-"Sie haben angegeben, dass es Ihnen nicht erlaubt ist, die von Ihnen "
-"erhaltenen Dokumente zu veröffentlichen. Falls dies ein Fehler war, "
-"schreiben Sie bitte an %(email)s."
+"\n"
+"  Die Dokumente in Ihrer Anfrage „%(title)s“ können nicht veröffentlicht "
+"werden. Allerdings kann jede Person Zugang zu diesen Dokumenten erhalten, "
+"indem sie diese selbst auf dieser Seite anfragt."
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:22
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:27
 msgid "You made the original request."
 msgstr "Sie haben die Originalanfrage gestellt."
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:26
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:32
 msgid "You made an identical request."
 msgstr "Sie haben eine identische Anfrage gestellt."
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:30
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:57
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:36
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:63
 msgid ""
 "Make an identical request in your name to get access to the information."
 msgstr ""
 "Stellen Sie eine identische Anfrage in Ihrem Namen, um Zugang zu den "
 "Informationen zu erhalten."
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:31
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:38
 msgid "Your Email Address:"
 msgstr "Ihre E-Mail-Adresse:"
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:47
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:71
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:54
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:77
 msgid "Make identical request in your name"
 msgstr "Eine identische Anfrage in Ihrem Namen stellen"
 
-#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:76
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html:83
 #, python-format
-msgid "So far one person also requested this document."
+msgid ""
+"\n"
+"    So far one person also requested this document.\n"
+"    "
 msgid_plural ""
-"So far <strong>%(counter)s people</strong> requested this document."
-msgstr[0] "Bisher hat eine weitere Person dieses Dokument angefragt."
+"\n"
+"    So far <strong>%(counter)s people</strong> requested this document.\n"
+"  "
+msgstr[0] ""
+"\n"
+"   Bisher hat eine weitere Person dieses Dokument angefragt."
 msgstr[1] ""
-"Bisher haben <strong>%(counter)s weitere Personen</strong> dieses Dokument "
-"angefragt."
+"\n"
+"    Bisher haben <strong>%(counter)s weitere Personen</strong> dieses "
+"Dokument angefragt."
 
 #: froide/foirequest/templates/foirequest/snippets/message.html:129
 msgid "Set the public body that received this message:"
@@ -5825,16 +5837,16 @@ msgstr "[… Zeige kompletten Anfragetext]"
 msgid "Show the quoted message"
 msgstr "Zeige die zitierte Nachricht an"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:308
+#: froide/foirequest/templatetags/foirequest_tags.py:307
 #: froide/problem/views.py:90
 msgid "Message"
 msgstr "Nachricht"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:309
+#: froide/foirequest/templatetags/foirequest_tags.py:308
 msgid "Message is loading..."
 msgstr "Nachricht wird geladen..."
 
-#: froide/foirequest/templatetags/foirequest_tags.py:378
+#: froide/foirequest/templatetags/foirequest_tags.py:377
 msgid "Today"
 msgstr "Heute"
 
@@ -9827,6 +9839,15 @@ msgstr "brief/"
 msgctxt "url part"
 msgid "jurisdiction"
 msgstr "zustaendigkeit"
+
+#, python-format
+#~ msgid ""
+#~ "You stated that you are not allowed to publish the received documents. If "
+#~ "this was a mistake, please contact %(email)s."
+#~ msgstr ""
+#~ "Sie haben angegeben, dass es Ihnen nicht erlaubt ist, die von Ihnen "
+#~ "erhaltenen Dokumente zu veröffentlichen. Falls dies ein Fehler war, "
+#~ "schreiben Sie bitte an %(email)s."
 
 #~ msgctxt "url part"
 #~ msgid "^search/$"
