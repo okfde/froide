@@ -192,8 +192,8 @@ def markup_redacted_content(real_content, redacted_content,
     return mark_safe(content_1)
 
 
-@register.simple_tag(takes_context=True)
-def check_same_request(context, foirequest, user, var_name):
+@register.simple_tag
+def check_same_request(foirequest, user):
     if foirequest.same_as_id:
         foirequest_id = foirequest.same_as_id
     else:
@@ -202,10 +202,9 @@ def check_same_request(context, foirequest, user, var_name):
         user=user, same_as_id=foirequest_id
     )
     if same_requests:
-        context[var_name] = same_requests[0]
-    else:
-        context[var_name] = False
-    return ""
+        return same_requests[0]
+
+    return False
 
 
 @register.filter(name='can_read_foirequest')

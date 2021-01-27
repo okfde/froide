@@ -17,8 +17,6 @@ class TemplateTagTest(TestCase):
         self.site = factories.make_world()
 
     def test_check_same_request(self):
-        context = {}
-        var_name = 'same_as'
         user_1 = factories.UserFactory.create()
         user_2 = factories.UserFactory.create()
         user_3 = factories.UserFactory.create()
@@ -31,14 +29,14 @@ class TemplateTagTest(TestCase):
                                                     same_as=original,
                                                     site=self.site)
 
-        check_same_request(context, original, user_2, var_name)
-        self.assertEqual(context[var_name], same_1)
+        result = check_same_request(original, user_2)
+        self.assertEqual(result, same_1)
 
-        check_same_request(context, same_2, user_2, var_name)
-        self.assertEqual(context[var_name], same_1)
+        result = check_same_request(same_2, user_2)
+        self.assertEqual(result, same_1)
 
-        check_same_request(context, same_2, user_1, var_name)
-        self.assertEqual(context[var_name], False)
+        result = check_same_request(same_2, user_1)
+        self.assertEqual(result, False)
 
 
 class TaskTest(TestCase):
