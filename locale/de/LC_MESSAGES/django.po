@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-27 16:53+0000\n"
-"PO-Revision-Date: 2021-01-27 16:57+0000\n"
+"POT-Creation-Date: 2021-02-02 13:24+0000\n"
+"PO-Revision-Date: 2021-02-02 13:30+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -5875,7 +5875,7 @@ msgid "project/"
 msgstr "projekt/"
 
 #. Translators: project URL
-#: froide/foirequest/urls/__init__.py:30
+#: froide/foirequest/urls/__init__.py:30 froide/urls.py:141
 msgctxt "url part"
 msgid "account/"
 msgstr "account/"
@@ -5895,7 +5895,7 @@ msgstr "^a/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
 
 #: froide/foirequest/urls/__init__.py:41
 msgctxt "url part"
-msgid "^r/(?P<obj_id>\\d+)/?$"
+msgid "^r/(?P<obj_id>\\d+)/?"
 msgstr "^a/(?P<obj_id>\\d+)/?"
 
 #: froide/foirequest/urls/__init__.py:43
@@ -9779,66 +9779,109 @@ msgstr "GUID"
 msgid "upload_offset should be >= 0."
 msgstr "upload_offset muss >=0 sein."
 
-#: froide/urls.py:127
-msgctxt "url part"
-msgid "account"
-msgstr "account"
-
-#: froide/urls.py:128
-msgctxt "url part"
-msgid "documents"
-msgstr "dokumente"
-
+#. Translators: follow request URL
 #: froide/urls.py:129
 msgctxt "url part"
-msgid "teams"
-msgstr "teams"
+msgid "follow/"
+msgstr "benachrichtigen/"
 
-#. Translators: follow request URL
+#: froide/urls.py:131
+msgctxt "url part"
+msgid "^b/(?P<obj_id>\\d+)/?$"
+msgstr "^b/(?P<obj_id>\\d+)/?$"
+
 #: froide/urls.py:133
 msgctxt "url part"
-msgid "follow"
-msgstr "benachrichtigen"
+msgid "entity/<slug:slug>/"
+msgstr "behoerde/<slug:slug>/"
 
 #: froide/urls.py:135
 msgctxt "url part"
-msgid "b"
-msgstr "b"
+msgid "entity/"
+msgstr "behoerde/"
 
-#. Translators: URL part
-#: froide/urls.py:138 froide/urls.py:140
+#: froide/urls.py:137
 msgctxt "url part"
-msgid "entity"
-msgstr "behoerde"
+msgid "entities/"
+msgstr "behoerden/"
 
-#. Translators: URL part
+#: froide/urls.py:138
+msgctxt "url part"
+msgid "law/"
+msgstr "gesetz/"
+
+#: froide/urls.py:139
+msgctxt "url part"
+msgid "documents/"
+msgstr "dokumente/"
+
+#: froide/urls.py:140
+msgctxt "url part"
+msgid "account/teams/"
+msgstr "account/teams/"
+
 #: froide/urls.py:143
 msgctxt "url part"
-msgid "entities"
-msgstr "behoerden"
+msgid "account/access-token/"
+msgstr "account/access-token/"
 
-#. Translators: URL part
+#: froide/urls.py:144
+msgctxt "url part"
+msgid "profile/"
+msgstr "profil/"
+
 #: froide/urls.py:145
 msgctxt "url part"
-msgid "law"
-msgstr "gesetz"
+msgid "comments/"
+msgstr "comments/"
 
-#. Translators: URL part
-#: froide/urls.py:152
+#: froide/urls.py:146
 msgctxt "url part"
-msgid "profile"
-msgstr "profil"
+msgid "problem/"
+msgstr "problem/"
 
-#: froide/urls.py:156
+#: froide/urls.py:147
+msgctxt "url part"
+msgid "moderation/"
+msgstr "moderation/"
+
+#: froide/urls.py:148
 msgctxt "url part"
 msgid "letter/"
 msgstr "brief/"
 
-#. Translators: URL part
-#: froide/urls.py:202
+#: froide/urls.py:194
 msgctxt "url part"
-msgid "jurisdiction"
-msgstr "zustaendigkeit"
+msgid "jurisdiction/<slug:slug>/"
+msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgctxt "url part"
+#~ msgid "account"
+#~ msgstr "account"
+
+#~ msgctxt "url part"
+#~ msgid "teams"
+#~ msgstr "teams"
+
+#~ msgctxt "url part"
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgctxt "url part"
+#~ msgid "entity"
+#~ msgstr "behoerde"
+
+#~ msgctxt "url part"
+#~ msgid "entities"
+#~ msgstr "behoerden"
+
+#~ msgctxt "url part"
+#~ msgid "law"
+#~ msgstr "gesetz"
+
+#~ msgctxt "url part"
+#~ msgid "jurisdiction"
+#~ msgstr "zustaendigkeit"
 
 #, python-format
 #~ msgid ""
