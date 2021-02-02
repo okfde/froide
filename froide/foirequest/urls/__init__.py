@@ -38,7 +38,7 @@ urlpatterns = [
     # Translators: Short-request auth URL
     re_path(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/auth/(?P<code>[0-9a-f]+)/$"),
         auth, name="foirequest-auth"),
-    re_path(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/?$"), shortlink,
+    re_path(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/?"), shortlink,
         name="foirequest-shortlink"),
     re_path(pgettext_lazy('url part', r"^r/(?P<obj_id>\d+)/(?P<url_part>[\w/\-]*)$"), shortlink,
         name="foirequest-shortlink_url"),

@@ -4,7 +4,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
-from django.utils.translation import pgettext
+from django.utils.translation import pgettext_lazy
 from django.contrib import admin
 from django.template.response import TemplateResponse
 
@@ -124,36 +124,28 @@ if len(settings.LANGUAGES) > 1:
         path('i18n/', include('django.conf.urls.i18n'))
     ]
 
-account = pgettext('url part', 'account')
-documents = pgettext('url part', 'documents')
-teams = pgettext('url part', 'teams')
-
 froide_urlpatterns += [
     # Translators: follow request URL
-    path('%s/' % pgettext('url part', 'follow'), include('froide.foirequestfollower.urls')),
+    path(pgettext_lazy('url part', 'follow/'), include('froide.foirequestfollower.urls')),
 
-    re_path(r"^%s/(?P<obj_id>\d+)/?$" % pgettext('url part', 'b'),
+    re_path(pgettext_lazy('url part', r'^b/(?P<obj_id>\d+)/?$'),
         publicbody_shortlink, name="publicbody-publicbody_shortlink"),
-    # Translators: URL part
-    path('%s/<slug:slug>/' % pgettext('url part', 'entity'), show_publicbody,
+    path(pgettext_lazy('url part', 'entity/<slug:slug>/'), show_publicbody,
             name="publicbody-show"),
-    path('%s/' % pgettext('url part', 'entity'),
+    path(pgettext_lazy('url part', 'entity/'),
         lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
-    # Translators: URL part
-    path('%s/' % pgettext('url part', 'entities'), include('froide.publicbody.urls')),
-    # Translators: URL part
-    path('%s/' % pgettext('url part', 'law'), include('froide.publicbody.law_urls')),
-    path('%s/' % documents, include('froide.document.urls')),
-    path('%s/%s/' % (account, teams), include('froide.team.urls')),
-    path('%s/' % account, include('froide.account.urls')),
+    path(pgettext_lazy('url part', 'entities/'), include('froide.publicbody.urls')),
+    path(pgettext_lazy('url part', 'law/'), include('froide.publicbody.law_urls')),
+    path(pgettext_lazy('url part', 'documents/'), include('froide.document.urls')),
+    path(pgettext_lazy('url part', 'account/teams/'), include('froide.team.urls')),
+    path(pgettext_lazy('url part', 'account/'), include('froide.account.urls')),
     path('', include('froide.account.export_urls')),
-    path('%s/access-token/' % account, include('froide.accesstoken.urls')),
-    # Translators: URL part
-    path('%s/' % pgettext('url part', 'profile'), include('froide.account.profile_urls')),
-    path('comments/', include('django_comments.urls')),
-    path('problem/', include('froide.problem.urls')),
-    path('moderation/', include('froide.problem.moderation_urls')),
-    path(pgettext('url part', 'letter/'), include('froide.letter.urls')),
+    path(pgettext_lazy('url part', 'account/access-token/'), include('froide.accesstoken.urls')),
+    path(pgettext_lazy('url part', 'profile/'), include('froide.account.profile_urls')),
+    path(pgettext_lazy('url part', 'comments/'), include('django_comments.urls')),
+    path(pgettext_lazy('url part', 'problem/'), include('froide.problem.urls')),
+    path(pgettext_lazy('url part', 'moderation/'), include('froide.problem.moderation_urls')),
+    path(pgettext_lazy('url part', 'letter/'), include('froide.letter.urls')),
     path('guide/', include('froide.guide.urls')),
     path('500/', lambda request: TemplateResponse(request, '500.html'))
 ]
@@ -198,11 +190,8 @@ if settings.DEBUG:
         pass
 
 
-# Translators: URL part
-jurisdiction_part = pgettext('url part', 'jurisdiction')
-
 jurisdiction_urls = [
-    path('%s/<slug:slug>/' % jurisdiction_part,
+    path(pgettext_lazy('url part', 'jurisdiction/<slug:slug>/'),
         include('froide.publicbody.jurisdiction_urls'))
 ]
 
