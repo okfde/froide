@@ -18,7 +18,7 @@ from django.template.response import TemplateResponse
 
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
-
+from parler.admin import TranslatableAdmin
 from froide.helper.admin_utils import (
     make_batch_tag_action, make_emptyfilter,
     make_nullfilter, make_choose_object_action,
@@ -438,13 +438,19 @@ class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
     pass
 
 
-class FoiLawAdmin(admin.ModelAdmin):
-    prepopulated_fields = {"slug": ("name",)}
+class FoiLawAdmin(TranslatableAdmin):
     list_display = ('name', 'meta', 'priority', 'law_type', 'jurisdiction',)
     list_filter = ('meta', 'law_type', 'jurisdiction')
     raw_id_fields = ('mediator',)
     filter_horizontal = ('combined',)
-    search_fields = ['name', 'description']
+    search_fields = ['translations__name', 'translations__description']
+
+    def get_prepopulated_fields(self, request, obj=None):
+        # can't use `prepopulated_fields = ..` because it breaks the admin validation
+        # for translated fields. This is the official django-parler workaround.
+        return {
+            'slug': ('name',)
+        }
 
 
 class JurisdictionAdmin(admin.ModelAdmin):

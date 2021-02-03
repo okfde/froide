@@ -9,6 +9,7 @@ from django.conf import settings
 import django.db.models.deletion
 import froide.publicbody.models
 import taggit.managers
+import parler
 
 
 class Migration(migrations.Migration):
@@ -45,6 +46,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Freedom of Information Law',
                 'verbose_name_plural': 'Freedom of Information Laws',
             },
+            bases=(parler.models.TranslatableModelMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Jurisdiction',
