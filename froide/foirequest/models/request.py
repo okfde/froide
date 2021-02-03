@@ -330,6 +330,11 @@ class FoiRequest(models.Model):
         verbose_name=_('Jurisdiction'),
         null=True, on_delete=models.SET_NULL
     )
+    language = models.CharField(
+        max_length=10, blank=True,
+        default=settings.LANGUAGE_CODE,
+        choices=settings.LANGUAGES
+    )
 
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))

@@ -71,6 +71,12 @@ class FoiProject(models.Model):
     tags = TaggableManager(through=TaggedFoiProject, blank=True)
     publicbodies = models.ManyToManyField(PublicBody, blank=True)
 
+    language = models.CharField(
+        max_length=10, blank=True,
+        default=settings.LANGUAGE_CODE,
+        choices=settings.LANGUAGES
+    )
+
     site = models.ForeignKey(Site, null=True,
             on_delete=models.SET_NULL, verbose_name=_("Site"))
 
