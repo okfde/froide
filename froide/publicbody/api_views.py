@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -78,6 +80,15 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
             'letter_start', 'letter_end'
         )
 
+    def to_representation(self, instance):
+        """Activate language based on request query param."""
+        request = self.context.get('request')
+        if request:
+            lang = request.GET.get('language', settings.LANGUAGE_CODE)
+            instance.set_current_language(lang)
+        ret = super().to_representation(instance)
+        return ret
+
 
 class FoiLawSerializer(SimpleFoiLawSerializer):
     combined = serializers.HyperlinkedRelatedField(
@@ -113,13 +124,15 @@ class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = FoiLawFilter
 
     def get_queryset(self):
-        return self.optimize_query(FoiLaw.objects.all())
+        lang = self.request.GET.get('language', settings.LANGUAGE_CODE)
+        qs = FoiLaw.objects.language(lang)
+        return self.optimize_query(qs)
 
     def optimize_query(self, qs):
         return qs.select_related(
             'jurisdiction',
             'mediator',
-        ).prefetch_related('combined')
+        ).prefetch_related('combined', 'translations')
 
 
 class TreeMixin(object):
