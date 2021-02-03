@@ -91,6 +91,8 @@ class MakeRequestView(FormView):
         if 'full_text' in request.GET:
             initial['full_text'] = request.GET['full_text'] == '1'
 
+        initial['language'] = request.LANGUAGE_CODE
+
         initial['jurisdiction'] = request.GET.get("jurisdiction", None)
         initial.update(self.get_form_config_initial())
         return initial

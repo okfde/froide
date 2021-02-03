@@ -139,6 +139,7 @@ class CreateRequestService(BaseService):
             user=user,
             site=Site.objects.get_current(),
             reference=data.get('reference', ''),
+            language=data.get('language', ''),
             request_count=len(self.data['publicbodies'])
         )
         save_obj_with_slug(project)
@@ -169,6 +170,7 @@ class CreateRequestService(BaseService):
             user=data['user'],
             description=data['body'],
             public=data['public'],
+            language=data.get('language', ''),
             site=Site.objects.get_current(),
             reference=data.get('reference', ''),
             first_message=now,

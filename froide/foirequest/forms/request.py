@@ -71,6 +71,13 @@ class RequestForm(JSONMixin, forms.Form):
     draft = forms.ModelChoiceField(
         queryset=None, required=False, widget=forms.HiddenInput
     )
+    language = forms.ChoiceField(
+        choices=settings.LANGUAGES,
+        initial=settings.LANGUAGE_CODE,
+        label=_('Language'),
+        widget=forms.HiddenInput,
+        required=False
+    )
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
