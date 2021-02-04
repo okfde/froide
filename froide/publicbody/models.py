@@ -16,6 +16,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 from taggit.utils import edit_string_for_tags
 from treebeard.mp_tree import MP_Node, MP_NodeManager
+from parler.models import TranslatableModel, TranslatedFields
 
 from froide.georegion.models import GeoRegion
 
@@ -98,22 +99,30 @@ class Jurisdiction(models.Model):
         return laws.union(meta_laws)
 
 
-class FoiLaw(models.Model):
-    name = models.CharField(_("Name"), max_length=255)
-    slug = models.SlugField(_("Slug"), max_length=255)
-    description = models.TextField(_("Description"), blank=True)
-    long_description = models.TextField(_("Website Text"), blank=True)
+class FoiLaw(TranslatableModel):
+    translations = TranslatedFields(
+        name=models.CharField(_("Name"), max_length=255),
+        slug=models.SlugField(_("Slug"), max_length=255),
+        description=models.TextField(_("Description"), blank=True),
+        long_description=models.TextField(_("Website Text"), blank=True),
+        request_note=models.TextField(_("request note"), blank=True),
+        letter_start=models.TextField(_("Start of Letter"), blank=True),
+        letter_end=models.TextField(_("End of Letter"), blank=True),
+        refusal_reasons=models.TextField(
+            _("refusal reasons"),
+            blank=True
+        ),
+    )
+
     created = models.DateField(_("Creation Date"), blank=True, null=True)
     updated = models.DateField(_("Updated Date"), blank=True, null=True)
-    request_note = models.TextField(_("request note"), blank=True)
+
     meta = models.BooleanField(_("Meta Law"), default=False)
     law_type = models.CharField(_('law type'), max_length=255, blank=True)
     combined = models.ManyToManyField(
         'FoiLaw',
         verbose_name=_("Combined Laws"), blank=True
     )
-    letter_start = models.TextField(_("Start of Letter"), blank=True)
-    letter_end = models.TextField(_("End of Letter"), blank=True)
     jurisdiction = models.ForeignKey(
             Jurisdiction, verbose_name=_('Jurisdiction'),
             null=True, on_delete=models.SET_NULL, blank=True)
@@ -127,9 +136,6 @@ class FoiLaw(models.Model):
                 ('working_day', _('Working Day(s)')),
                 ('month_de', _('Month(s) (DE)')),
             ))
-    refusal_reasons = models.TextField(
-        _("Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"),
-        blank=True)
     mediator = models.ForeignKey('PublicBody', verbose_name=_("Mediator"),
             null=True, blank=True,
             default=None, on_delete=models.SET_NULL,

@@ -1,5 +1,6 @@
 /* globals XMLHttpRequest */
 
+const LANG_PATH = new RegExp(/^\/([a-z]{2})\//)
 class FroideAPI {
   constructor (config) {
     this.config = config
@@ -35,14 +36,14 @@ class FroideAPI {
   }
   getJsonObjects (url) {
     return new Promise((resolve, reject) => {
-      this.getJson(url)
+      this.getJsonForUrl(url)
         .then((data) => resolve(data.objects))
         .catch((e) => reject(e))
     })
   }
   getPublicBody (id) {
     let url = this.config.url.getPublicBody.replace(/\/0\//, `/${id}/`)
-    return this.getJson(url)
+    return this.getJsonForUrl(url)
   }
 
   autocompletePublicBody (term) {
@@ -60,6 +61,11 @@ class FroideAPI {
     if (term !== undefined && term) {
       hasParam = true
       url = url + '?q=' + encodeURIComponent(term)
+    }
+    let langMatch
+    if (document && document.location && (langMatch = LANG_PATH.exec(document.location.pathname))) {
+      filters = filters || {}
+      filters.language = langMatch[1]
     }
     if (filters !== undefined) {
       let f = []

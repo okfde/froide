@@ -94,7 +94,7 @@ def show_jurisdiction(request, slug):
 
 
 def show_foilaw(request, slug):
-    law = get_object_or_404(FoiLaw, slug=slug)
+    law = get_object_or_404(FoiLaw.objects.translated(slug=slug))
     context = {"object": law}
     return render(request, 'publicbody/show_foilaw.html', context)
 

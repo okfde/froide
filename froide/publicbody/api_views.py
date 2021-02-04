@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.utils import translation
+
 from rest_framework import serializers
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -20,6 +23,12 @@ from froide.georegion.models import GeoRegion
 from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
                      Classification)
 from .documents import PublicBodyDocument
+
+
+def get_language_from_query(request):
+    if request:
+        return request.GET.get('language', settings.LANGUAGE_CODE)
+    return settings.LANGUAGE_CODE
 
 
 class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
@@ -63,7 +72,7 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field='pk',
         read_only=True
     )
-    site_url = serializers.CharField(source='get_absolute_domain_url')
+    site_url = serializers.SerializerMethodField()
 
     class Meta:
         model = FoiLaw
@@ -77,6 +86,20 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
             'requires_signature', 'max_response_time_unit',
             'letter_start', 'letter_end'
         )
+
+    def get_site_url(self, obj):
+        language = get_language_from_query(self.context.get('request'))
+        with translation.override(language):
+            return obj.get_absolute_domain_url()
+
+    def to_representation(self, instance):
+        """Activate language based on request query param."""
+        request = self.context.get('request')
+        if request:
+            lang = request.GET.get('language', settings.LANGUAGE_CODE)
+            instance.set_current_language(lang)
+        ret = super().to_representation(instance)
+        return ret
 
 
 class FoiLawSerializer(SimpleFoiLawSerializer):
@@ -113,13 +136,15 @@ class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = FoiLawFilter
 
     def get_queryset(self):
-        return self.optimize_query(FoiLaw.objects.all())
+        lang = self.request.GET.get('language', settings.LANGUAGE_CODE)
+        qs = FoiLaw.objects.language(lang)
+        return self.optimize_query(qs)
 
     def optimize_query(self, qs):
         return qs.select_related(
             'jurisdiction',
             'mediator',
-        ).prefetch_related('combined')
+        ).prefetch_related('combined', 'translations')
 
 
 class TreeMixin(object):

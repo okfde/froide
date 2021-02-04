@@ -13,6 +13,7 @@ django-filter
 django-fsm
 django-leaflet
 django-oauth-toolkit
+django-parler
 django-storages
 django-taggit
 django-treebeard
