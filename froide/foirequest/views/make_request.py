@@ -57,6 +57,12 @@ class FakePublicBodyForm(object):
         assert self.valid
         return self.publicbodies
 
+    def as_json(self):
+        return json.dumps({
+            'fields': {},
+            'errors': {},
+            'nonFieldErrors': []
+        })
 
 @method_decorator(csrf_exempt, name='dispatch')
 class MakeRequestView(FormView):
