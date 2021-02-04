@@ -1,6 +1,7 @@
 from django.db.models import (
     Value, BooleanField, Case, When
 )
+from django.utils.decorators import method_decorator
 
 from rest_framework import serializers, permissions, viewsets
 
@@ -22,6 +23,7 @@ from froide.helper.auth import (
     can_write_object, get_read_queryset, get_write_queryset
 )
 from froide.helper.search.api_views import ESQueryMixin
+from froide.helper.cache import cache_anonymous_page
 
 from .models import Document, DocumentCollection
 from .documents import PageDocument
@@ -117,6 +119,10 @@ class DocumentViewSet(FCDocumentViewSet):
     def get_base_queryset(self):
         return get_document_read_qs(self.request)
 
+    @method_decorator(cache_anonymous_page(60 * 60))
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
 
 class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
     serializer_action_classes = {
@@ -134,6 +140,10 @@ class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
             public_field='public',
             scope='read:document'
         )
+
+    @method_decorator(cache_anonymous_page(60 * 60))
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class PageAnnotationViewSet(FCPageAnnotationViewSet):
