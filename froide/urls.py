@@ -101,13 +101,13 @@ sitemap_urlpatterns = [
 ]
 
 froide_urlpatterns = []
-
+api_urlpatterns = []
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
 if settings.FROIDE_CONFIG.get('api_activated', True):
     schema_view = get_schema_view(title='{name} API'.format(
                                   name=settings.SITE_NAME))
-    froide_urlpatterns += [
+    api_urlpatterns = [
         path('api/v1/user/', ProfileView.as_view(), name='api-user-profile'),
         path('api/v1/', include((api_router.urls, 'api'))),
         path('api/v1/schema/', schema_view),
