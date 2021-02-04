@@ -1,6 +1,3 @@
-/* globals XMLHttpRequest */
-
-const LANG_PATH = new RegExp(/^\/([a-z]{2})\//)
 class FroideAPI {
   constructor (config) {
     this.config = config
@@ -62,27 +59,23 @@ class FroideAPI {
       hasParam = true
       url = url + '?q=' + encodeURIComponent(term)
     }
-    let langMatch
-    if (document && document.location && (langMatch = LANG_PATH.exec(document.location.pathname))) {
-      filters = filters || {}
-      filters.language = langMatch[1]
-    }
-    if (filters !== undefined) {
-      let f = []
-      for (let key in filters) {
-        let filterVal = filters[key]
-        if (filterVal !== null) {
-          if (!Array.isArray(filterVal)) {
-            filterVal = [filterVal]
-          }
-          filterVal.forEach((val) => {
-            f.push(key + '=' + encodeURIComponent(val))
-          })
+
+    filters = filters || {}
+    filters.language = document.documentElement.lang
+    let f = []
+    for (let key in filters) {
+      let filterVal = filters[key]
+      if (filterVal !== null) {
+        if (!Array.isArray(filterVal)) {
+          filterVal = [filterVal]
         }
+        filterVal.forEach((val) => {
+          f.push(key + '=' + encodeURIComponent(val))
+        })
       }
-      url += hasParam ? '&' : '?'
-      url += f.join('&')
     }
+    url += hasParam ? '&' : '?'
+    url += f.join('&')
     return this.getJson(url)
   }
 
