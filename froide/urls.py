@@ -198,4 +198,4 @@ jurisdiction_urls = [
 urlpatterns = froide_urlpatterns + [
     path('', index, name='index'),
     path('dashboard/', dashboard, name='dashboard'),
-] + sitemap_urlpatterns + jurisdiction_urls + admin_urls
+] + api_urlpatterns + sitemap_urlpatterns + jurisdiction_urls + admin_urls
