@@ -128,6 +128,8 @@ class NewUserBaseForm(AddressBaseForm):
             label=_("Hide my name from public view"),
             help_text=format_html(_("If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity")))
 
+    field_order = ['first_name', 'last_name', 'user_email']
+
     def __init__(self, *args, **kwargs):
         address_required = kwargs.pop('address_required', False)
         super().__init__(*args, **kwargs)
