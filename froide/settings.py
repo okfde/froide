@@ -747,6 +747,7 @@ class SSLSite(object):
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
+    LANGUAGE_COOKIE_SECURE = True
 
 
 class AmazonS3(object):
