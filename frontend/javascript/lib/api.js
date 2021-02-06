@@ -58,6 +58,8 @@ class FroideAPI {
     if (term !== undefined && term) {
       hasParam = true
       url = url + '?q=' + encodeURIComponent(term)
+    } else {
+      hasParam = url.indexOf('?') !== -1
     }
 
     filters = filters || {}
