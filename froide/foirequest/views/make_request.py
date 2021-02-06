@@ -64,6 +64,7 @@ class FakePublicBodyForm(object):
             'nonFieldErrors': []
         })
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class MakeRequestView(FormView):
     form_class = RequestForm
