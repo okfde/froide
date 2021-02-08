@@ -107,9 +107,9 @@ class Base(Configuration):
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
-    LOCALE_PATHS = values.TupleValue(
-        (os.path.abspath(os.path.join(PROJECT_ROOT, '..', "locale")),)
-    )
+    LOCALE_PATHS = [
+        os.path.abspath(os.path.join(PROJECT_ROOT, '..', "locale"))
+    ]
 
     GEOIP_PATH = None
 
