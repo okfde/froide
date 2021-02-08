@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements-test.in
 #
--e git+git://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet  # via -r requirements.in
+-e git+https://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet  # via -r requirements.in
 aiohttp==3.7.3            # via geoip2
 amqp==5.0.5               # via kombu
 asgiref==3.3.1            # via channels, daphne, django
