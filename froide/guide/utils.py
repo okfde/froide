@@ -99,7 +99,9 @@ class GuidanceApplicator:
 
     def apply_rule(self, rule, includes=None, excludes=None, tags=None):
         for action in rule.actions.all():
-            yield self.apply_action(action, tags=tags, rule=rule)
+            guidance = self.apply_action(action, tags=tags, rule=rule)
+            if guidance is not None:
+                yield guidance
 
     def apply_action(self, action, tags=None, rule=None):
         message = self.message
