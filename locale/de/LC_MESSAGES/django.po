@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-11 12:57+0000\n"
-"PO-Revision-Date: 2021-02-11 13:01+0000\n"
+"POT-Creation-Date: 2021-02-11 14:49+0000\n"
+"PO-Revision-Date: 2021-02-11 14:50+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -26,6 +26,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.3\n"
+
+#: docs/_build/html/_sources/theming.txt:53
+msgid ""
+"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+"\">the Open Knowledge Foundation</a>."
+msgstr ""
+"FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn.de"
+"\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie FragDenStaat."
+"de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
+"</a>"
 
 #: docs/_build/html/theming.html:95
 msgid ""
@@ -615,6 +625,99 @@ msgstr "Bitte setzen Sie jetzt ein Passwort für Ihr Nutzerkonto."
 msgid "Set password"
 msgstr "Passwort setzen"
 
+#: froide/account/templates/account/emails/account_reminder.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"someone is trying to create an account on %(site_name)s with your email "
+"address.\n"
+"\n"
+"If this is you, this is a reminder that you already have an account!\n"
+"\n"
+"Click here to go there:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"If this is not you, you can ignore this email."
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"jemand versucht ein Konto bei %(site_name)s mit Ihrer E-Mail-Adresse "
+"einzurichten.\n"
+"\n"
+"Falls Sie selbst das sind, dürfen wir Sie erinnern, dass Sie schon ein Konto "
+"haben!\n"
+"\n"
+"Klicken Sie hier, um direkt dort hinzugehen:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Falls Sie nicht versuchen, ein Konto mit dieser E-Mail-Adresse einzurichten, "
+"dann können Sie diese Nachricht ignorieren."
+
+#: froide/account/templates/account/emails/account_reminder.txt:14
+#: froide/account/templates/account/emails/change_email.txt:10
+#: froide/account/templates/account/emails/confirm_action.txt:12
+#: froide/account/templates/account/emails/confirmation_mail.txt:9
+#: froide/account/templates/account/emails/password_reset_email.txt:9
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:12
+#: froide/team/templates/team/emails/team_invite.txt:11
+#, python-format
+msgid ""
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Grüße,\n"
+"%(site_name)s"
+
+#: froide/account/templates/account/emails/change_email.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"This is an email from %(site_name)s to confirm your new email address.\n"
+"Please visit the link below:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"dies ist eine E-Mail von %(site_name)s, um Ihre neue E-Mail-Adresse zu "
+"bestätigen.\n"
+"Bitte besuchen Sie folgenden Link:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+
+#: froide/account/templates/account/emails/confirm_action.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"are you trying to send a request on %(site_name)s with the subject "
+"“%(title)s”?\n"
+"\n"
+"If so, please click the following link to continue\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+"If you are not trying to send this request, please ignore this email. No "
+"further action is required on your part."
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"haben Sie versucht eine Anfrage auf %(site_name)s namens „%(title)s“ zu "
+"versenden?\n"
+"\n"
+"Falls ja, klicken Sie zum Bestätigen bitte den folgenden Link:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+"Falls Sie diese Anfrage nicht stellen wollen, ignorieren Sie bitte diese E-"
+"Mail. Sie müssen dann nichts weiter tun."
+
 #: froide/account/templates/account/emails/confirmation_mail.html:2
 #, python-format
 msgid ""
@@ -643,6 +746,95 @@ msgid ""
 msgstr ""
 "Beste Grüße,\n"
 "%(site_name)s"
+
+#: froide/account/templates/account/emails/confirmation_mail.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"This is an email from %(site_name)s to confirm your email address.\n"
+"Please visit the link below:\n"
+"\n"
+"%(action_url)s\n"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"dies ist eine E-Mail von %(site_name)s, um Ihre E-Mail-Adresse zu "
+"bestätigen.\n"
+"Bitte besuchen Sie folgenden Link:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+
+#: froide/account/templates/account/emails/confirmation_mail_subject.txt:1
+#, python-format
+msgid "%(site_name)s: please confirm your account"
+msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
+
+#: froide/account/templates/account/emails/export_ready.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your data export is ready for download:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"This download will work for %(days)s days or until you generate the next "
+"export.\n"
+"\n"
+"Cheers\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihr Datenexport ist zum Download bereit:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Dieser Download steht für %(days)s Tage zur Verfügung oder bis Sie den "
+"nächsten Export anstoßen.\n"
+"\n"
+"Beste Grüße\n"
+"%(site_name)s"
+
+#: froide/account/templates/account/emails/export_ready_admin.txt:1
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"the data export of %(name)s is ready for download from the user action "
+"menu.\n"
+"\n"
+"The download will work for %(days)s days or until you generate the next "
+"export.\n"
+"\n"
+"Cheers\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"der Datenexport von %(name)s steht jetzt zum Download bereit vom Aktions-"
+"Menü im User-Admin.\n"
+"\n"
+"Dieser Download steht für %(days)s Tage zur Verfügung oder bis Sie den "
+"nächsten Export anstoßen.\n"
+"\n"
+"Beste Grüße\n"
+"%(site_name)s"
+
+#: froide/account/templates/account/emails/password_reset_email.txt:2
+#, python-format
+msgid ""
+"You're receiving this e-mail because you requested a password reset for your "
+"account at %(site_name)s."
+msgstr ""
+"Sie erhalten diese E-Mail, weil Sie Ihr Passwort für ihren %(site_name)s "
+"Account zurücksetzen wollen."
+
+#: froide/account/templates/account/emails/password_reset_email.txt:4
+msgid "Please go to the following page and choose a new password:"
+msgstr "Bitte besuchen Sie folgende Seite und wählen Sie ein neues Passwort:"
 
 #: froide/account/templates/account/includes/change_password_form.html:9
 #: froide/account/templates/account/includes/change_password_form.html:21
@@ -4173,6 +4365,438 @@ msgstr "Anzahl der Anfragen"
 msgid "Number of Users"
 msgstr "Anzahl der Nutzer"
 
+#: froide/foirequest/templates/foirequest/emails/became_asleep.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your request “%(title)s” is not marked as resolved and has not seen any "
+"activity in the last 6 months. Therefore your request has been marked "
+"asleep.\n"
+"\n"
+"If you have received a response and your request is resolved, please add the "
+"response and mark the request resolved here:\n"
+"%(url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihre Anfrage „%(title)s“ hat kein Ergebnis und hatte in den letzten 6 "
+"Monaten keine Aktivität. Daher ist Ihre Anfrage jetzt eingeschlafen.\n"
+"Falls Sie in der Zwischenzeit eine Antwort erhalten haben, fügen Sie diese "
+"bitte hinzu und markieren Sie die Anfrage als erledigt:\n"
+"%(url)s\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s"
+
+#: froide/foirequest/templates/foirequest/emails/became_overdue.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your request “%(title)s” was not answered in the required time and became "
+"overdue.\n"
+"We recommend that you send another message to the public body to check the "
+"status of the request and if they received it.\n"
+"\n"
+"If you received a postal answer, please add it to the request.\n"
+"\n"
+"Here's a link to the request:\n"
+"%(url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihre Anfrage „%(title)s“ wurde offenbar nicht in der gesetzlichen Frist "
+"beantwortet und ist nun verspätet.\n"
+"Wir empfehlen Ihnen eine weitere Nachricht an die Behörde zu senden und den "
+"Status der Anfrage zu erfragen.\n"
+"\n"
+"Falls Sie zwischenzeitlich eine Antwort per Post erhalten haben, fügen Sie "
+"diese Antwort bitte Ihrer Anfrage hinzu.\n"
+"Hier ist ein Link zu Ihrer Anfrage:\n"
+"%(url)s\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s"
+
+#: froide/foirequest/templates/foirequest/emails/classification_reminder.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Your request \"%(title)s\" has received a reply, but it is unclear if the "
+"request is now finished.\n"
+"\n"
+"Please use the following link to set if the request is still ongoing or "
+"finished:\n"
+"%(url)s\n"
+"\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihre Anfrage „%(title)s“ hat zwar bereits eine Antwort erhalten, aber es ist "
+"unklar, ob die Anfrage damit abgeschlossen ist.\n"
+"\n"
+"Bitte stellen Sie unter folgendem Link ein, ob die Anfrage noch läuft oder "
+"abgeschlossen ist:\n"
+"%(url)s\n"
+"\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s"
+
+#: froide/foirequest/templates/foirequest/emails/confirm_foi_message_sent.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"your message for the Freedom of Information request \"%(title)s\" has been "
+"sent to %(pbname)s. We will notify you when you get a response.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihre Nachricht zur Anfrage „%(title)s“ an %(pbname)s wurde gesendet. Wir "
+"werden Sie benachrichtigen, sobald Sie eine Antwort erhalten.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/emails/confirm_foi_project_created.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"your project \"%(title)s\" has been created and we are sending the requests "
+"to the public bodies now. We will notify you when you get responses.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihr Projekt „%(title)s“ wurde erstellt und wir versenden gerade Ihre "
+"Anfragen an die Behörden. Wir werden Sie benachrichtigen, sobald Sie "
+"Antworten erhalten.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Beste Grüße\n"
+"%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/emails/confirm_foi_request_sent.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"your request \"%(title)s\" to \"%(public_body)s\" has been sent. We will "
+"notify you when you get a response.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Ihre Anfrage „%(title)s“ an \"%(public_body)s\" wurde gesendet. Wir werden "
+"Sie benachrichtigen, sobald Sie eine Antwort erhalten.\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/emails/dummy_mail_end.txt:1
+msgid ""
+"\n"
+"Sincerely yours,"
+msgstr ""
+"\n"
+"Mit freundlichen Grüßen"
+
+#: froide/foirequest/templates/foirequest/emails/dummy_mail_start.txt:1
+msgid ""
+"Dear Sir or Madam,\n"
+"\n"
+"I'd like to make a request under a (yet to be determined) freedom of "
+"information law."
+msgstr ""
+"Sehr geehrte Damen und Herren,\n"
+"\n"
+"ich würde gerne eine Anfrage nach einem (noch festzulegenden) "
+"Informationsfreiheitsgesetz stellen."
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:1
+#, python-format
+msgid "From: %(from)s"
+msgstr "Von: %(from)s"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:2
+#, python-format
+msgid "To: %(to)s"
+msgstr "An: %(to)s"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:3
+#, python-format
+msgid ""
+"Date: %(date)s\n"
+"Via: Postal Mail"
+msgstr ""
+"Datum: %(date)s\n"
+"Via: Postalischer Zustellung"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:4
+#, python-format
+msgid ""
+"Date: %(date)s\n"
+"Via: Email"
+msgstr ""
+"Datum: %(date)s\n"
+"Via: E-Mail"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:6
+#, python-format
+msgid "URL: %(url)s"
+msgstr "URL: %(url)s"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:7
+#, python-format
+msgid "Subject: %(subject)s"
+msgstr "Betreff: %(subject)s"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt:12
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:3
+msgid "Attachments:"
+msgstr "Anhänge:"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:6
+msgid ""
+"The following attachments could not be sent via email because of their size. "
+"You can find them via the provided link:"
+msgstr ""
+"Die folgenden Anhänge konnten wegen ihrer Größe nicht per Mail versendet "
+"werden. Sie können sie auf der Anfrageseite finden:"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:9
+#, python-format
+msgid "Request Number: %(num)s"
+msgstr "Anfragenr: %(num)s"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:10
+#, python-format
+msgid "Reply To: %(email)s"
+msgstr "Antwort an: %(email)s"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:11
+msgid "Upload large files for this request here:"
+msgstr "Laden Sie große Dateien zu dieser Anfrage hier hoch:"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt:14
+msgid "Post Address:"
+msgstr "Postanschrift"
+
+#: froide/foirequest/templates/foirequest/emails/mediation_message.txt:1
+#, python-format
+msgid ""
+"Dear Sir or Madam,\n"
+"\n"
+"I'd like to complain about the handling of the request under the %(law)s "
+"documented here:\n"
+"\n"
+"%(link)s\n"
+"\n"
+"You can also find all documents related to this request attached to this "
+"email.\n"
+"\n"
+"I believe this request has been mishandled because ...\n"
+"\n"
+"Sincerely yours\n"
+"%(name)s"
+msgstr ""
+"Sehr geehrte Damen und Herren,\n"
+"\n"
+"ich bitte um Vermittlung bei einer Anfrage nach dem %(law)s. Die bisherige "
+"Korrespondenz finden Sie hier:\n"
+"\n"
+"%(link)s\n"
+"\n"
+"Ich bin der Meinung, die Anfrage wurde zu Unrecht auf diese Weise "
+"bearbeitet, weil …\n"
+"\n"
+"Sie finden auch alle Dokumente zu dieser Anfrage als Anhang zu dieser E-"
+"Mail.\n"
+"Sie dürfen meinen Namen gegenüber der Behörde nennen.\n"
+"\n"
+"Mit freundlichen Grüßen\n"
+"%(name)s"
+
+#: froide/foirequest/templates/foirequest/emails/message_received_notification.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"%(pbname)s sent you a response to your request “%(title)s”. Please read the "
+"response and change the status of the request if needed. You can also send "
+"another message.\n"
+"\n"
+"To read your response and to reply to the authority, click the link below:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"%(pbname)s hat auf Ihre Anfrage „%(title)s“ geantwortet. Bitte lesen Sie die "
+"Nachricht auf FragDenStaat.de und tragen ein, ob die Anfrage abgeschlossen "
+"ist. Sie können dort auch eine weitere Nachricht senden.\n"
+"\n"
+"Um die Antwort zu lesen und der Behörde zu antworten, klicken Sie auf diesen "
+"Link:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s"
+
+#: froide/foirequest/templates/foirequest/emails/overdue_reply.txt:1
+#, python-format
+msgid ""
+"Dear Sir or Madam,\n"
+"\n"
+"My Freedom of Information request \"%(title)s\" (%(date)s, #%(num)s) was not "
+"answered in the time defined by law and is now %(due)s late.\n"
+"Please update me on the status of my request as soon as possible.\n"
+"\n"
+"Sincerely yours,\n"
+"%(name)s"
+msgstr ""
+"Sehr geehrte Damen und Herren,\n"
+"\n"
+"meine Informationsfreiheitsanfrage „%(title)s“ vom %(date)s (#%(num)s) wurde "
+"von Ihnen nicht in der gesetzlich vorgeschriebenen Zeit beantwortet. Sie "
+"haben die Frist mittlerweile um %(due)s überschritten.\n"
+"Bitte informieren Sie mich umgehend über den Stand meiner Anfrage.\n"
+"\n"
+"Mit freundlichen Grüßen\n"
+"%(name)s"
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"you received a suggestion for a Public Body on your request “%(title)s”."
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"Sie haben einen neuen Vorschlag für eine Behörde für Ihre Anfrage "
+"„%(title)s“ erhalten."
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:4
+msgid "The suggestion is:"
+msgstr "Der Vorschlag lautet:"
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:6
+msgid "The following reason was given:"
+msgstr "Folgender Grund wurde angegeben:"
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt:9
+msgid ""
+"If you want to use this Public Body, go to your request and chose the Public "
+"Body from the list. Here is a link to your request:"
+msgstr ""
+"Wenn Sie Ihre Anfrage an diese Behörde richten wollen, rufen Sie Ihre "
+"Anfrage auf und wählen Sie die Behörde aus der Liste. Hier ist ein Link zu "
+"Ihrer Anfrage:"
+
+#: froide/foirequest/templates/foirequest/emails/request_footer.txt:2
+msgid ""
+"Legal Note: This mail was sent through a Freedom Of Information Portal. "
+"Replies might be published automatically.\n"
+msgstr ""
+"Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat."
+"de versendet. Antworten werden ggf. im Auftrag der Antragstellenden "
+"automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen "
+"haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-behoerden/\n"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt:1
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:1
+#: froide/foirequestfollower/templates/foirequestfollower/emails/confirm_follow.txt:1
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower.txt:1
+#: froide/guide/templates/guide/emails/new_guidance.txt:1
+#: froide/problem/templates/problem/email_problem_resolved.txt:1
+#, python-format
+msgid "Hello %(name)s,"
+msgstr "Hallo %(name)s,"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt:3
+#, python-format
+msgid "in the last 24 hours there was an update on one of your requests."
+msgid_plural ""
+"in the last 24 hours there were updates to %(count)s of your requests."
+msgstr[0] ""
+"in den letzten 24 Stunden passierte Folgendes bei einer Ihrer Anfragen."
+msgstr[1] ""
+"in den letzten 24 Stunden passierte Folgendes bei %(count)s Ihrer Anfragen."
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt:5
+#, python-format
+msgid "Updates to your request \"%(title)s\""
+msgstr "Neues zu Ihrer Anfrage „%(title)s“"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt:8
+#, python-format
+msgid "Visit your request: %(link)s"
+msgstr "Gehe zu deiner Anfrage: %(link)s"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt:11
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:11
+#, python-format
+msgid ""
+"\n"
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"\n"
+"Grüße,\n"
+"%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/events/status_changed.txt:1
+#, python-format
+msgid "The status was set to “%(status)s”."
+msgstr "Der Status wurde auf „%(status)s“ gesetzt."
+
+#: froide/foirequest/templates/foirequest/events/status_changed.txt:1
+#, python-format
+msgid "The reason for refusal was given as “%(refusal_reason)s”."
+msgstr ""
+"Die Gründe für die Ablehnung wurden angegeben als “%(refusal_reason)s”."
+
+#: froide/foirequest/templates/foirequest/events/status_changed.txt:1
+#, python-format
+msgid "Costs of %(costs)s EUR were reported."
+msgstr "Kosten in Höhe von %(costs)s EUR wurden angegeben."
+
 #: froide/foirequest/templates/foirequest/foiproject_detail.html:35
 #, python-format
 msgid ""
@@ -6587,6 +7211,89 @@ msgstr ""
 msgid "Follow request"
 msgstr "Anfrage folgen"
 
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:1
+#: froide/foirequestfollower/templates/foirequestfollower/emails/confirm_follow.txt:1
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower.txt:1
+msgid "Hello,"
+msgstr "Hallo,"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:3
+#, python-format
+msgid ""
+"in the last 24 hours there was an update on one request that you follow."
+msgid_plural ""
+"in the last 24 hours there were updates to %(count)s requests that you "
+"follow."
+msgstr[0] ""
+"in den letzten 24 Stunden passierte Folgendes bei einer Anfrage, der Sie "
+"folgen."
+msgstr[1] ""
+"in den letzten 24 Stunden passierte Folgendes bei %(count)s Anfragen, denen "
+"Sie folgen."
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:5
+#, python-format
+msgid "Updates to the request “%(title)s”:"
+msgstr "Neues bei Anfrage „%(title)s“"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:8
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower.txt:6
+#, python-format
+msgid ""
+"Go to request:\n"
+"%(link)s"
+msgstr ""
+"Zur Anfrage:\n"
+"%(link)s"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower.txt:17
+#, python-format
+msgid "Unfollow request “%(title)s”:"
+msgstr "Anfrage entfolgen „%(title)s“:"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/batch_update_follower_subject.txt:1
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower_subject.txt:1
+#, python-format
+msgid "Update on one followed request"
+msgid_plural "Update on %(counter)s followed requests"
+msgstr[0] "Neues bei einer Anfrage, der Sie folgen"
+msgstr[1] "Neues bei %(counter)s Anfragen, denen Sie folgen"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/confirm_follow.txt:2
+#, python-format
+msgid ""
+"\n"
+"please confirm that you want to follow the request “%(title)s” on "
+"%(site_name)s by clicking this link:"
+msgstr ""
+"\n"
+"bitte bestätigen Sie, dass Sie für die Anfrage „%(title)s“ auf %(site_name)s "
+"Benachrichtigungen erhalten wollen, indem Sie diesen Link klicken:"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/confirm_follow.txt:7
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower.txt:9
+#, python-format
+msgid ""
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"Grüße,\n"
+"%(site_name)s\n"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower.txt:3
+#, python-format
+msgid "The following just happend to the request “%(title)s” that you follow:"
+msgstr "folgendes passierte bei der Anfrage „%(title)s“, der Sie folgen:"
+
+#: froide/foirequestfollower/templates/foirequestfollower/emails/update_follower.txt:13
+#, python-format
+msgid ""
+"If you want to UNFOLLOW this request, click this link:\n"
+"%(unfollow_link)s"
+msgstr ""
+"Wenn Sie der Anfrage NICHT mehr folgen wollen, klicken Sie diesen Link:\n"
+"%(unfollow_link)s"
+
 #: froide/foirequestfollower/templates/foirequestfollower/follow_count_badge.html:5
 #, python-format
 msgid ""
@@ -6818,6 +7525,46 @@ msgstr "Regel"
 #: froide/guide/models.py:227
 msgid "Rules"
 msgstr "Regeln"
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:3
+#, python-format
+msgid "You recently received a reply to your request “%(title)s”."
+msgstr ""
+"Sie haben vor kurzem eine Antwort auf Ihre Anfrage „%(title)s“ erhalten."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:4
+msgid "You recently received replies to some of your requests."
+msgstr ""
+"Sie haben vor kurzem Antworten auf einige Ihrer Anfragen bei FragDenStaat.de "
+"erhalten."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:6
+msgid ""
+"We can now provide you with the following guidance concerning how you can "
+"procede."
+msgstr ""
+"Wir können Ihnen nun folgenden Hinweis geben, wie Sie sich verhalten können."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:11
+msgid "This guidance comes with a snippet you can use to reply."
+msgstr "Dieser Hinweis gibt Ihnen auch einen Textbaustein für Ihre Antwort."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:13
+msgid "This guidance applies to the following messages:"
+msgstr "Dieser Hinweis betrifft diese Nachrichten:"
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:20
+msgid "We hope this information can help you."
+msgstr "Wir hoffen, dass dieser Hinweis Ihnen weiterhilft."
+
+#: froide/guide/templates/guide/emails/new_guidance.txt:22
+#, python-format
+msgid ""
+"Cheers\n"
+"%(site_name)s"
+msgstr ""
+"Beste Grüße,\n"
+"%(site_name)s"
 
 #: froide/guide/templates/guide/guidance.html:32
 msgid "Add to reply"
@@ -7182,6 +7929,37 @@ msgstr "Problembericht"
 #: froide/problem/models.py:84 froide/problem/views.py:88
 msgid "problem reports"
 msgstr "Problemberichte"
+
+#: froide/problem/templates/problem/email_problem_resolved.txt:3
+#, python-format
+msgid ""
+"We have resolved a problem that had been automatically detected on the "
+"request “%(title)s”."
+msgstr ""
+"Wir haben ein automatisch erkanntes Problem bei der Anfrage „%(title)s“ "
+"behoben."
+
+#: froide/problem/templates/problem/email_problem_resolved.txt:5
+#, python-format
+msgid "We have resolved the problem you reported on the request “%(title)s”."
+msgstr ""
+"Wir haben das von Ihnen gemeldete Problem bei der Anfrage „%(title)s“ "
+"behoben."
+
+#: froide/problem/templates/problem/email_problem_resolved.txt:9
+msgid "You can go to the request here:"
+msgstr "Hier kommen Sie zur Anfrage:"
+
+#: froide/problem/templates/problem/email_problem_resolved.txt:12
+#, python-format
+msgid ""
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"\n"
+"Grüße,\n"
+"%(site_name)s"
 
 #: froide/problem/templates/problem/message_toolbar_item.html:7
 #: froide/problem/templates/problem/message_toolbar_item.html:13
@@ -8527,6 +9305,29 @@ msgstr "Aktuell kein Team ausgewählt."
 msgid "Create a new team."
 msgstr "Lege ein neues Team an."
 
+#: froide/team/templates/team/emails/team_invite.txt:1
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"%(name)s has invited you to join a team on %(site_name)s.\n"
+"Please visit the link below to join this team:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"If you don't have an account on %(site_name)s yet, you have to create one "
+"first.\n"
+msgstr ""
+"Hallo,\n"
+"\n"
+"%(name)s hat Sie eingeladen, einem Team auf %(site_name)s beizutreten.\n"
+"Bitte besuchen Sie diesen Link, um dem Team beizutreten:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Falls Sie noch kein Konto auf %(site_name)s haben, bitte legen Sie zuerst "
+"eines an.\n"
+
 #: froide/team/templates/team/team_detail.html:9
 #, python-format
 msgid "Team “%(name)s”"
@@ -8777,6 +9578,14 @@ msgid ""
 msgstr ""
 "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
 "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#: froide/templates/emails/footer.txt:2
+msgid ""
+"Support Froide by donating to Open Knowledge Foundation Germany:\n"
+"https://okfn.de/spenden/\n"
+msgstr ""
+"Wir kämpfen für Transparenz! Kämpfen Sie mit und unterstützen Sie uns:\n"
+"https://fragdenstaat.de/hilfe/spenden/\n"
 
 #: froide/templates/footer.html:21
 msgid ""
@@ -9071,740 +9880,10 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-#~ "\">the Open Knowledge Foundation</a>."
-#~ msgstr ""
-#~ "FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn."
-#~ "de\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie "
-#~ "FragDenStaat.de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns "
-#~ "über Ihre Spende!</a>"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "someone is trying to create an account on %(site_name)s with your email "
-#~ "address.\n"
-#~ "\n"
-#~ "If this is you, this is a reminder that you already have an account!\n"
-#~ "\n"
-#~ "Click here to go there:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "If this is not you, you can ignore this email."
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "jemand versucht ein Konto bei %(site_name)s mit Ihrer E-Mail-Adresse "
-#~ "einzurichten.\n"
-#~ "\n"
-#~ "Falls Sie selbst das sind, dürfen wir Sie erinnern, dass Sie schon ein "
-#~ "Konto haben!\n"
-#~ "\n"
-#~ "Klicken Sie hier, um direkt dort hinzugehen:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Falls Sie nicht versuchen, ein Konto mit dieser E-Mail-Adresse "
-#~ "einzurichten, dann können Sie diese Nachricht ignorieren."
-
-#, python-format
-#~ msgid ""
-#~ "Cheers,\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Grüße,\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "This is an email from %(site_name)s to confirm your new email address.\n"
-#~ "Please visit the link below:\n"
-#~ "\n"
-#~ "%(action_url)s\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "dies ist eine E-Mail von %(site_name)s, um Ihre neue E-Mail-Adresse zu "
-#~ "bestätigen.\n"
-#~ "Bitte besuchen Sie folgenden Link:\n"
-#~ "\n"
-#~ "%(action_url)s\n"
-#~ "\n"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "are you trying to send a request on %(site_name)s with the subject "
-#~ "“%(title)s”?\n"
-#~ "\n"
-#~ "If so, please click the following link to continue\n"
-#~ "\n"
-#~ "%(action_url)s\n"
-#~ "\n"
-#~ "If you are not trying to send this request, please ignore this email. No "
-#~ "further action is required on your part."
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "haben Sie versucht eine Anfrage auf %(site_name)s namens „%(title)s“ zu "
-#~ "versenden?\n"
-#~ "\n"
-#~ "Falls ja, klicken Sie zum Bestätigen bitte den folgenden Link:\n"
-#~ "\n"
-#~ "%(action_url)s\n"
-#~ "\n"
-#~ "Falls Sie diese Anfrage nicht stellen wollen, ignorieren Sie bitte diese "
-#~ "E-Mail. Sie müssen dann nichts weiter tun."
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "This is an email from %(site_name)s to confirm your email address.\n"
-#~ "Please visit the link below:\n"
-#~ "\n"
-#~ "%(action_url)s\n"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "dies ist eine E-Mail von %(site_name)s, um Ihre E-Mail-Adresse zu "
-#~ "bestätigen.\n"
-#~ "Bitte besuchen Sie folgenden Link:\n"
-#~ "\n"
-#~ "%(action_url)s\n"
-#~ "\n"
-
-#, python-format
-#~ msgid "%(site_name)s: please confirm your account"
-#~ msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "Your data export is ready for download:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "This download will work for %(days)s days or until you generate the next "
-#~ "export.\n"
-#~ "\n"
-#~ "Cheers\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihr Datenexport ist zum Download bereit:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Dieser Download steht für %(days)s Tage zur Verfügung oder bis Sie den "
-#~ "nächsten Export anstoßen.\n"
-#~ "\n"
-#~ "Beste Grüße\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello,\n"
-#~ "\n"
-#~ "the data export of %(name)s is ready for download from the user action "
-#~ "menu.\n"
-#~ "\n"
-#~ "The download will work for %(days)s days or until you generate the next "
-#~ "export.\n"
-#~ "\n"
-#~ "Cheers\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "der Datenexport von %(name)s steht jetzt zum Download bereit vom Aktions-"
-#~ "Menü im User-Admin.\n"
-#~ "\n"
-#~ "Dieser Download steht für %(days)s Tage zur Verfügung oder bis Sie den "
-#~ "nächsten Export anstoßen.\n"
-#~ "\n"
-#~ "Beste Grüße\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "You're receiving this e-mail because you requested a password reset for "
-#~ "your account at %(site_name)s."
-#~ msgstr ""
-#~ "Sie erhalten diese E-Mail, weil Sie Ihr Passwort für ihren %(site_name)s "
-#~ "Account zurücksetzen wollen."
-
-#~ msgid "Please go to the following page and choose a new password:"
-#~ msgstr ""
-#~ "Bitte besuchen Sie folgende Seite und wählen Sie ein neues Passwort:"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "Your request “%(title)s” is not marked as resolved and has not seen any "
-#~ "activity in the last 6 months. Therefore your request has been marked "
-#~ "asleep.\n"
-#~ "\n"
-#~ "If you have received a response and your request is resolved, please add "
-#~ "the response and mark the request resolved here:\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihre Anfrage „%(title)s“ hat kein Ergebnis und hatte in den letzten 6 "
-#~ "Monaten keine Aktivität. Daher ist Ihre Anfrage jetzt eingeschlafen.\n"
-#~ "Falls Sie in der Zwischenzeit eine Antwort erhalten haben, fügen Sie "
-#~ "diese bitte hinzu und markieren Sie die Anfrage als erledigt:\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "Your request “%(title)s” was not answered in the required time and became "
-#~ "overdue.\n"
-#~ "We recommend that you send another message to the public body to check "
-#~ "the status of the request and if they received it.\n"
-#~ "\n"
-#~ "If you received a postal answer, please add it to the request.\n"
-#~ "\n"
-#~ "Here's a link to the request:\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihre Anfrage „%(title)s“ wurde offenbar nicht in der gesetzlichen Frist "
-#~ "beantwortet und ist nun verspätet.\n"
-#~ "Wir empfehlen Ihnen eine weitere Nachricht an die Behörde zu senden und "
-#~ "den Status der Anfrage zu erfragen.\n"
-#~ "\n"
-#~ "Falls Sie zwischenzeitlich eine Antwort per Post erhalten haben, fügen "
-#~ "Sie diese Antwort bitte Ihrer Anfrage hinzu.\n"
-#~ "Hier ist ein Link zu Ihrer Anfrage:\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "Your request \"%(title)s\" has received a reply, but it is unclear if the "
-#~ "request is now finished.\n"
-#~ "\n"
-#~ "Please use the following link to set if the request is still ongoing or "
-#~ "finished:\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihre Anfrage „%(title)s“ hat zwar bereits eine Antwort erhalten, aber es "
-#~ "ist unklar, ob die Anfrage damit abgeschlossen ist.\n"
-#~ "\n"
-#~ "Bitte stellen Sie unter folgendem Link ein, ob die Anfrage noch läuft "
-#~ "oder abgeschlossen ist:\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "\n"
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "your message for the Freedom of Information request \"%(title)s\" has "
-#~ "been sent to %(pbname)s. We will notify you when you get a response.\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s\n"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihre Nachricht zur Anfrage „%(title)s“ an %(pbname)s wurde gesendet. Wir "
-#~ "werden Sie benachrichtigen, sobald Sie eine Antwort erhalten.\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s\n"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "your project \"%(title)s\" has been created and we are sending the "
-#~ "requests to the public bodies now. We will notify you when you get "
-#~ "responses.\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s\n"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihr Projekt „%(title)s“ wurde erstellt und wir versenden gerade Ihre "
-#~ "Anfragen an die Behörden. Wir werden Sie benachrichtigen, sobald Sie "
-#~ "Antworten erhalten.\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Beste Grüße\n"
-#~ "%(site_name)s\n"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "your request \"%(title)s\" to \"%(public_body)s\" has been sent. We will "
-#~ "notify you when you get a response.\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s\n"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Ihre Anfrage „%(title)s“ an \"%(public_body)s\" wurde gesendet. Wir "
-#~ "werden Sie benachrichtigen, sobald Sie eine Antwort erhalten.\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "Sincerely yours,"
-#~ msgstr ""
-#~ "\n"
-#~ "Mit freundlichen Grüßen"
-
-#~ msgid ""
-#~ "Dear Sir or Madam,\n"
-#~ "\n"
-#~ "I'd like to make a request under a (yet to be determined) freedom of "
-#~ "information law."
-#~ msgstr ""
-#~ "Sehr geehrte Damen und Herren,\n"
-#~ "\n"
-#~ "ich würde gerne eine Anfrage nach einem (noch festzulegenden) "
-#~ "Informationsfreiheitsgesetz stellen."
-
-#, python-format
-#~ msgid "From: %(from)s"
-#~ msgstr "Von: %(from)s"
-
-#, python-format
-#~ msgid "To: %(to)s"
-#~ msgstr "An: %(to)s"
-
-#, python-format
-#~ msgid ""
-#~ "Date: %(date)s\n"
-#~ "Via: Postal Mail"
-#~ msgstr ""
-#~ "Datum: %(date)s\n"
-#~ "Via: Postalischer Zustellung"
-
-#, python-format
-#~ msgid ""
-#~ "Date: %(date)s\n"
-#~ "Via: Email"
-#~ msgstr ""
-#~ "Datum: %(date)s\n"
-#~ "Via: E-Mail"
-
-#, python-format
-#~ msgid "URL: %(url)s"
-#~ msgstr "URL: %(url)s"
-
-#, python-format
-#~ msgid "Subject: %(subject)s"
-#~ msgstr "Betreff: %(subject)s"
-
-#~ msgid "Attachments:"
-#~ msgstr "Anhänge:"
-
-#~ msgid ""
-#~ "The following attachments could not be sent via email because of their "
-#~ "size. You can find them via the provided link:"
-#~ msgstr ""
-#~ "Die folgenden Anhänge konnten wegen ihrer Größe nicht per Mail versendet "
-#~ "werden. Sie können sie auf der Anfrageseite finden:"
-
-#, python-format
-#~ msgid "Request Number: %(num)s"
-#~ msgstr "Anfragenr: %(num)s"
-
-#, python-format
-#~ msgid "Reply To: %(email)s"
-#~ msgstr "Antwort an: %(email)s"
-
-#~ msgid "Upload large files for this request here:"
-#~ msgstr "Laden Sie große Dateien zu dieser Anfrage hier hoch:"
-
-#~ msgid "Post Address:"
-#~ msgstr "Postanschrift"
-
-#, python-format
-#~ msgid ""
-#~ "Dear Sir or Madam,\n"
-#~ "\n"
-#~ "I'd like to complain about the handling of the request under the %(law)s "
-#~ "documented here:\n"
-#~ "\n"
-#~ "%(link)s\n"
-#~ "\n"
-#~ "You can also find all documents related to this request attached to this "
-#~ "email.\n"
-#~ "\n"
-#~ "I believe this request has been mishandled because ...\n"
-#~ "\n"
-#~ "Sincerely yours\n"
-#~ "%(name)s"
-#~ msgstr ""
-#~ "Sehr geehrte Damen und Herren,\n"
-#~ "\n"
-#~ "ich bitte um Vermittlung bei einer Anfrage nach dem %(law)s. Die "
-#~ "bisherige Korrespondenz finden Sie hier:\n"
-#~ "\n"
-#~ "%(link)s\n"
-#~ "\n"
-#~ "Ich bin der Meinung, die Anfrage wurde zu Unrecht auf diese Weise "
-#~ "bearbeitet, weil …\n"
-#~ "\n"
-#~ "Sie finden auch alle Dokumente zu dieser Anfrage als Anhang zu dieser E-"
-#~ "Mail.\n"
-#~ "Sie dürfen meinen Namen gegenüber der Behörde nennen.\n"
-#~ "\n"
-#~ "Mit freundlichen Grüßen\n"
-#~ "%(name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "%(pbname)s sent you a response to your request “%(title)s”. Please read "
-#~ "the response and change the status of the request if needed. You can also "
-#~ "send another message.\n"
-#~ "\n"
-#~ "To read your response and to reply to the authority, click the link "
-#~ "below:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "%(pbname)s hat auf Ihre Anfrage „%(title)s“ geantwortet. Bitte lesen Sie "
-#~ "die Nachricht auf FragDenStaat.de und tragen ein, ob die Anfrage "
-#~ "abgeschlossen ist. Sie können dort auch eine weitere Nachricht senden.\n"
-#~ "\n"
-#~ "Um die Antwort zu lesen und der Behörde zu antworten, klicken Sie auf "
-#~ "diesen Link:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Dear Sir or Madam,\n"
-#~ "\n"
-#~ "My Freedom of Information request \"%(title)s\" (%(date)s, #%(num)s) was "
-#~ "not answered in the time defined by law and is now %(due)s late.\n"
-#~ "Please update me on the status of my request as soon as possible.\n"
-#~ "\n"
-#~ "Sincerely yours,\n"
-#~ "%(name)s"
-#~ msgstr ""
-#~ "Sehr geehrte Damen und Herren,\n"
-#~ "\n"
-#~ "meine Informationsfreiheitsanfrage „%(title)s“ vom %(date)s (#%(num)s) "
-#~ "wurde von Ihnen nicht in der gesetzlich vorgeschriebenen Zeit "
-#~ "beantwortet. Sie haben die Frist mittlerweile um %(due)s überschritten.\n"
-#~ "Bitte informieren Sie mich umgehend über den Stand meiner Anfrage.\n"
-#~ "\n"
-#~ "Mit freundlichen Grüßen\n"
-#~ "%(name)s"
-
-#, python-format
-#~ msgid ""
-#~ "Hello %(name)s,\n"
-#~ "\n"
-#~ "you received a suggestion for a Public Body on your request “%(title)s”."
-#~ msgstr ""
-#~ "Hallo %(name)s,\n"
-#~ "\n"
-#~ "Sie haben einen neuen Vorschlag für eine Behörde für Ihre Anfrage "
-#~ "„%(title)s“ erhalten."
-
-#~ msgid "The suggestion is:"
-#~ msgstr "Der Vorschlag lautet:"
-
-#~ msgid "The following reason was given:"
-#~ msgstr "Folgender Grund wurde angegeben:"
-
-#~ msgid ""
-#~ "If you want to use this Public Body, go to your request and chose the "
-#~ "Public Body from the list. Here is a link to your request:"
-#~ msgstr ""
-#~ "Wenn Sie Ihre Anfrage an diese Behörde richten wollen, rufen Sie Ihre "
-#~ "Anfrage auf und wählen Sie die Behörde aus der Liste. Hier ist ein Link "
-#~ "zu Ihrer Anfrage:"
-
-#~ msgid ""
-#~ "Legal Note: This mail was sent through a Freedom Of Information Portal. "
-#~ "Replies might be published automatically.\n"
-#~ msgstr ""
-#~ "Rechtshinweis: Diese E-Mail wurde über den Webservice https://"
-#~ "fragdenstaat.de versendet. Antworten werden ggf. im Auftrag der "
-#~ "Antragstellenden automatisch auf dem Internet-Portal veröffentlicht. "
-#~ "Falls Sie noch Fragen haben, besuchen Sie https://fragdenstaat.de/hilfe/"
-#~ "fuer-behoerden/\n"
-
-#, python-format
-#~ msgid "Hello %(name)s,"
-#~ msgstr "Hallo %(name)s,"
-
-#, python-format
-#~ msgid "in the last 24 hours there was an update on one of your requests."
-#~ msgid_plural ""
-#~ "in the last 24 hours there were updates to %(count)s of your requests."
-#~ msgstr[0] ""
-#~ "in den letzten 24 Stunden passierte Folgendes bei einer Ihrer Anfragen."
-#~ msgstr[1] ""
-#~ "in den letzten 24 Stunden passierte Folgendes bei %(count)s Ihrer "
-#~ "Anfragen."
-
-#, python-format
-#~ msgid "Updates to your request \"%(title)s\""
-#~ msgstr "Neues zu Ihrer Anfrage „%(title)s“"
-
-#, python-format
-#~ msgid "Visit your request: %(link)s"
-#~ msgstr "Gehe zu deiner Anfrage: %(link)s"
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Grüße,\n"
-#~ "%(site_name)s\n"
-
-#, python-format
-#~ msgid "The status was set to “%(status)s”."
-#~ msgstr "Der Status wurde auf „%(status)s“ gesetzt."
-
-#, python-format
-#~ msgid "The reason for refusal was given as “%(refusal_reason)s”."
-#~ msgstr ""
-#~ "Die Gründe für die Ablehnung wurden angegeben als “%(refusal_reason)s”."
-
-#, python-format
-#~ msgid "Costs of %(costs)s EUR were reported."
-#~ msgstr "Kosten in Höhe von %(costs)s EUR wurden angegeben."
-
-#~ msgid "Hello,"
-#~ msgstr "Hallo,"
-
-#, python-format
-#~ msgid ""
-#~ "in the last 24 hours there was an update on one request that you follow."
-#~ msgid_plural ""
-#~ "in the last 24 hours there were updates to %(count)s requests that you "
-#~ "follow."
-#~ msgstr[0] ""
-#~ "in den letzten 24 Stunden passierte Folgendes bei einer Anfrage, der Sie "
-#~ "folgen."
-#~ msgstr[1] ""
-#~ "in den letzten 24 Stunden passierte Folgendes bei %(count)s Anfragen, "
-#~ "denen Sie folgen."
-
-#, python-format
-#~ msgid "Updates to the request “%(title)s”:"
-#~ msgstr "Neues bei Anfrage „%(title)s“"
-
-#, python-format
-#~ msgid ""
-#~ "Go to request:\n"
-#~ "%(link)s"
-#~ msgstr ""
-#~ "Zur Anfrage:\n"
-#~ "%(link)s"
-
-#, python-format
-#~ msgid "Unfollow request “%(title)s”:"
-#~ msgstr "Anfrage entfolgen „%(title)s“:"
-
-#, python-format
-#~ msgid "Update on one followed request"
-#~ msgid_plural "Update on %(counter)s followed requests"
-#~ msgstr[0] "Neues bei einer Anfrage, der Sie folgen"
-#~ msgstr[1] "Neues bei %(counter)s Anfragen, denen Sie folgen"
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "please confirm that you want to follow the request “%(title)s” on "
-#~ "%(site_name)s by clicking this link:"
-#~ msgstr ""
-#~ "\n"
-#~ "bitte bestätigen Sie, dass Sie für die Anfrage „%(title)s“ auf "
-#~ "%(site_name)s Benachrichtigungen erhalten wollen, indem Sie diesen Link "
-#~ "klicken:"
-
-#, python-format
-#~ msgid ""
-#~ "Cheers,\n"
-#~ "%(site_name)s\n"
-#~ msgstr ""
-#~ "Grüße,\n"
-#~ "%(site_name)s\n"
-
-#, python-format
-#~ msgid ""
-#~ "The following just happend to the request “%(title)s” that you follow:"
-#~ msgstr "folgendes passierte bei der Anfrage „%(title)s“, der Sie folgen:"
-
-#, python-format
-#~ msgid ""
-#~ "If you want to UNFOLLOW this request, click this link:\n"
-#~ "%(unfollow_link)s"
-#~ msgstr ""
-#~ "Wenn Sie der Anfrage NICHT mehr folgen wollen, klicken Sie diesen Link:\n"
-#~ "%(unfollow_link)s"
-
-#, python-format
-#~ msgid "You recently received a reply to your request “%(title)s”."
-#~ msgstr ""
-#~ "Sie haben vor kurzem eine Antwort auf Ihre Anfrage „%(title)s“ erhalten."
-
-#~ msgid "You recently received replies to some of your requests."
-#~ msgstr ""
-#~ "Sie haben vor kurzem Antworten auf einige Ihrer Anfragen bei FragDenStaat."
-#~ "de erhalten."
-
-#~ msgid ""
-#~ "We can now provide you with the following guidance concerning how you can "
-#~ "procede."
-#~ msgstr ""
-#~ "Wir können Ihnen nun folgenden Hinweis geben, wie Sie sich verhalten "
-#~ "können."
-
-#~ msgid "This guidance comes with a snippet you can use to reply."
-#~ msgstr "Dieser Hinweis gibt Ihnen auch einen Textbaustein für Ihre Antwort."
-
-#~ msgid "This guidance applies to the following messages:"
-#~ msgstr "Dieser Hinweis betrifft diese Nachrichten:"
-
-#~ msgid "We hope this information can help you."
-#~ msgstr "Wir hoffen, dass dieser Hinweis Ihnen weiterhilft."
-
-#, python-format
-#~ msgid ""
-#~ "Cheers\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "Beste Grüße,\n"
-#~ "%(site_name)s"
-
-#, python-format
-#~ msgid ""
-#~ "We have resolved a problem that had been automatically detected on the "
-#~ "request “%(title)s”."
-#~ msgstr ""
-#~ "Wir haben ein automatisch erkanntes Problem bei der Anfrage „%(title)s“ "
-#~ "behoben."
-
-#, python-format
-#~ msgid ""
-#~ "We have resolved the problem you reported on the request “%(title)s”."
-#~ msgstr ""
-#~ "Wir haben das von Ihnen gemeldete Problem bei der Anfrage „%(title)s“ "
-#~ "behoben."
-
-#~ msgid "You can go to the request here:"
-#~ msgstr "Hier kommen Sie zur Anfrage:"
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "Cheers,\n"
-#~ "%(site_name)s"
-#~ msgstr ""
-#~ "\n"
-#~ "Grüße,\n"
-#~ "%(site_name)s"
-
 #~ msgid "Possible Refusal Reasons, one per line, e.g §X.Y: Privacy Concerns"
 #~ msgstr ""
 #~ "Mögliche Verweigerungsgründe, einer pro Zeile, z.B. §X.Y: "
 #~ "Datenschutzgründe"
-
-#, python-format
-#~ msgid ""
-#~ "Hello,\n"
-#~ "\n"
-#~ "%(name)s has invited you to join a team on %(site_name)s.\n"
-#~ "Please visit the link below to join this team:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "If you don't have an account on %(site_name)s yet, you have to create one "
-#~ "first.\n"
-#~ msgstr ""
-#~ "Hallo,\n"
-#~ "\n"
-#~ "%(name)s hat Sie eingeladen, einem Team auf %(site_name)s beizutreten.\n"
-#~ "Bitte besuchen Sie diesen Link, um dem Team beizutreten:\n"
-#~ "\n"
-#~ "%(url)s\n"
-#~ "\n"
-#~ "Falls Sie noch kein Konto auf %(site_name)s haben, bitte legen Sie zuerst "
-#~ "eines an.\n"
-
-#~ msgid ""
-#~ "Support Froide by donating to Open Knowledge Foundation Germany:\n"
-#~ "https://okfn.de/spenden/\n"
-#~ msgstr ""
-#~ "Wir kämpfen für Transparenz! Kämpfen Sie mit und unterstützen Sie uns:\n"
-#~ "https://fragdenstaat.de/hilfe/spenden/\n"
 
 #~ msgctxt "url part"
 #~ msgid "account"
