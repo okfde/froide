@@ -1,11 +1,13 @@
 from django.db.models import Count
 from django.core.exceptions import PermissionDenied
+from django.urls import path
 from django.template.response import TemplateResponse
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.admin import helpers
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.shortcuts import redirect
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
@@ -91,10 +93,51 @@ class UserAdmin(DjangoUserAdmin):
         )
         return qs
 
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('<int:pk>/become-user/',
+                self.admin_site.admin_view(self.become_user),
+                name='admin-account_user-become_user'),
+        ]
+        return my_urls + urls
+
     def request_count(self, obj):
         return obj.request_count
     request_count.admin_order_field = 'request_count'
     request_count.short_description = _('requests')
+
+    def become_user(self, request, pk):
+        if not request.method == 'POST':
+            raise PermissionDenied
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+        if request.session.get('impostor'):
+            # Cannot use this if already impostoring
+            raise PermissionDenied
+
+        from django.contrib.auth import login
+
+        # Cannot become superuser!
+        user = User.objects.get(pk=pk, is_superuser=False)
+
+        impostor_user = request.user
+
+        self.log_change(
+            request, user,
+            [{
+                'changed': {
+                    'name': 'became user %s' % user.get_full_name(),
+                    'object': '%s (%s)' % (user.email, user.pk),
+                    'fields': [],
+                }
+            }]
+        )
+
+        login(request, user)
+        request.session['impostor'] = impostor_user.get_full_name()
+
+        return redirect('/')
 
     def export_csv(self, request, queryset):
         if not request.user.is_superuser:

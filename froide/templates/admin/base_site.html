@@ -1,0 +1,11 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n %}
+
+{% block branding %}
+{% blocktrans with site_name=SITE_NAME %}{{ site_name }} admin{% endblocktrans %}
+{% if request.user.is_authenticated and request.session.impostor %}
+  {% include "account/includes/impostor.html" %}
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,15 @@
+{% load i18n %}
+{# style inline so it works everywhere #}
+<div style="background-color: red; color: #fff; text-align: center; font-size: 8pt; position: fixed; width:100%; left:0; top: 0; z-index: 99999999; ">
+  {% blocktrans with user=request.user.get_full_name impostor=request.session.impostor %}
+  WARNING! {{ impostor}}, you are an impostor! You pretend to be <strong>{{ user }}</strong>!
+  {% endblocktrans %}
+  <form action="{% url 'account-logout' %}" method="post" class="form-inline float-right">
+    {% csrf_token %}
+    <button type="submit" class="btn-warning">
+      {% blocktrans %}Eject{% endblocktrans %}
+    </button>
+  </form>
+
+</div>
+<div style=" border: 2px red dashed; top:0; left:0; width: calc(100% - 5px); height: calc(100% - 4px); position: fixed; z-index: 99999999; pointer-events: none;"></div>

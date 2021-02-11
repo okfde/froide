@@ -12,6 +12,10 @@
 
 
 {% block body_tag %}
+  {% if request.user.is_authenticated and request.session.impostor %}
+    {% include "account/includes/impostor.html" %}
+  {% endif %}
+
   {% block top_block %}
   {% endblock %}
 

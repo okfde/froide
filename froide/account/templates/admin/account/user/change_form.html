@@ -8,3 +8,15 @@
 </li>
 {{ block.super }}
 {% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  {% if original.pk and not original.is_superuser and perms.account.change_user %}
+    <form method="post" action="{% url 'admin:admin-account_user-become_user' pk=original.pk %}">
+      {% csrf_token %}
+      <button type="submit" style="text-align:left">
+        {% blocktrans %}Become user{% endblocktrans %}
+      </button>
+    </form>
+  {% endif %}
+{% endblock %}
