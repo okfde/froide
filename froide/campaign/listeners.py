@@ -1,4 +1,4 @@
-from .models import Campaign
+from .utils import connect_foirequest
 
 
 def connect_campaign(sender, **kwargs):
@@ -9,14 +9,5 @@ def connect_campaign(sender, **kwargs):
     if len(parts) != 2:
         return
     namespace = parts[0]
-    try:
-        campaign = Campaign.objects.get(ident=namespace)
-    except Campaign.DoesNotExist:
-        return
-    sender.campaign = campaign
-    sender.save()
 
-    sender.user.tags.add(campaign.ident)
-    if not sender.user.is_active:
-        # First-time requester
-        sender.user.tags.add('%s-first' % campaign.ident)
+    connect_foirequest(sender, namespace)
