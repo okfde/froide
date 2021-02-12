@@ -133,8 +133,14 @@ class UserAdmin(DjangoUserAdmin):
                 }
             }]
         )
+        original_last_login = user.last_login
 
         login(request, user)
+
+        # reset last_login
+        user.last_login = original_last_login
+        user.save(update_fields=['last_login'])
+
         request.session['impostor'] = impostor_user.get_full_name()
 
         return redirect('/')
