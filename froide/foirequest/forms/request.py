@@ -5,6 +5,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.template.defaultfilters import slugify
 from django import forms
 
 from froide.publicbody.models import PublicBody
@@ -26,13 +27,16 @@ payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
 
 
 class RequestForm(JSONMixin, forms.Form):
-    subject = forms.CharField(label=_("Subject"),
-            max_length=230,
-            widget=forms.TextInput(
-                attrs={'placeholder': _("Subject"),
-                "class": "form-control"}))
+    subject = forms.CharField(
+        label=_("Subject"),
+        min_length=8,
+        max_length=230,
+        widget=forms.TextInput(
+            attrs={'placeholder': _("Subject"),
+            "class": "form-control"}))
     body = forms.CharField(
         label=_("Body"),
+        min_length=8,
         max_length=5000,
         widget=forms.Textarea(
             attrs={
@@ -84,6 +88,13 @@ class RequestForm(JSONMixin, forms.Form):
         super(RequestForm, self).__init__(*args, **kwargs)
         draft_qs = get_read_queryset(RequestDraft.objects.all(), self.request)
         self.fields['draft'].queryset = draft_qs
+
+    def clean_subject(self):
+        subject = self.cleaned_data['subject']
+        slug = slugify(subject)
+        if len(slug) < 4:
+            raise forms.ValidationError(_('Subject is invalid.'))
+        return subject
 
     def clean_reference(self):
         ref = self.cleaned_data['reference']
