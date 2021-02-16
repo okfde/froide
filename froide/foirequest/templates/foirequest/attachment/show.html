@@ -22,6 +22,11 @@
     </a>
   {% endif %}
   {% endblock %}
+
+  {% if foirequest.campaign %}
+    {% include foirequest.campaign.banner_templates with object=foirequest %}
+  {% endif %}
+
 </div>
 
 
