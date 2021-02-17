@@ -4,7 +4,16 @@
 
   {% block foirequest_messages %}
     {% for message in object.messages %}
+      {% if forloop.last and object.messages|length > 1 %}
+        {% block foirequest_message_before_last %}{% endblock %}
+      {% endif %}
+
       {% include "foirequest/alpha/body/message/message.html" %}
+
+      {% if forloop.last and object.messages|length == 1 %}
+        {% block foirequest_message_after_single %}{% endblock %}
+      {% endif %}
+
       {% empty %}
         <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
     {% endfor %}
