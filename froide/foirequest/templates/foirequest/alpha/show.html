@@ -77,12 +77,6 @@
   {% endblock app_body %}
 {% endblock body %}
 
-{% comment %} {% block foirequest_below_header %}
-{{ block.super }}
-ALPHA1
-{% endblock %} {% endcomment %}
-
-
 {% block scripts %}
   {{ block.super }}
   {% if object|can_write_foirequest:request %}
