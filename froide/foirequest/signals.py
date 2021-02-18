@@ -82,7 +82,7 @@ def send_notification_became_asleep(sender, **kwargs):
 @receiver(FoiRequest.message_received,
         dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    if message.kind not in ('email', 'upload'):
+    if message.received_by_user:
         # All non-email/upload received messages the user actively contributed
         # Don't inform them about it
         return
@@ -157,7 +157,7 @@ def send_foiproject_created_confirmation(sender, **kwargs):
 @receiver(FoiRequest.message_sent,
         dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
-    if message.kind != 'email':
+    if message.is_not_email:
         # All non-email sent messages are not interesting to users.
         # Don't inform them about it.
         return

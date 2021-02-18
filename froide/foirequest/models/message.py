@@ -51,15 +51,26 @@ class TaggedMessage(TaggedItemBase):
         verbose_name_plural = _('tagged messages')
 
 
+class MessageKind(models.TextChoices):
+    EMAIL = ('email', _('email'))
+    POST = ('post', _('postal mail'))
+    FAX = ('fax', _('fax'))
+    UPLOAD = ('upload', _('upload'))
+    PHONE = ('phone', _('phone call'))
+    VISIT = ('visit', _('visit in person'))
+
+
+MESSAGE_KIND_ICONS = {
+    MessageKind.EMAIL: 'mail',
+    MessageKind.POST: 'newspaper-o',
+    MessageKind.FAX: 'fax',
+    MessageKind.UPLOAD: 'upload',
+    MessageKind.PHONE: 'phone',
+    MessageKind.VISIT: 'handshake-o'
+}
+
+
 class FoiMessage(models.Model):
-    MESSAGE_CHOICES = (
-        ('email', _('Email')),
-        ('post', _('Postal mail')),
-        ('fax', _('Fax')),
-        ('upload', _('Upload')),
-        ('phone', _('Phone call')),
-        ('visit', _('Personal visit')),
-    )
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
@@ -69,8 +80,8 @@ class FoiMessage(models.Model):
         _("response?"),
         default=True)
     kind = models.CharField(
-        max_length=10, choices=MESSAGE_CHOICES,
-        default='email'
+        max_length=10, choices=MessageKind.choices,
+        default=MessageKind.EMAIL
     )
     is_escalation = models.BooleanField(
         _("Escalation?"),
@@ -150,15 +161,23 @@ class FoiMessage(models.Model):
 
     @property
     def is_postal(self):
-        return self.kind == 'post'
+        return self.kind == MessageKind.POST
 
     @property
     def is_not_email(self):
-        return self.kind != 'email'
+        return self.kind != MessageKind.EMAIL
 
     @property
     def can_edit(self):
-        return self.is_response and self.is_not_email
+        return self.received_by_user
+
+    @property
+    def received_by_user(self):
+        return self.kind not in (MessageKind.EMAIL, MessageKind.UPLOAD)
+
+    @property
+    def kind_icon(self):
+        return MESSAGE_KIND_ICONS.get(self.kind)
 
     @property
     def content(self):
@@ -175,7 +194,7 @@ class FoiMessage(models.Model):
 
     @property
     def is_bounce(self):
-        return self.kind == 'email' and BOUNCE_TAG in self.tag_set
+        return self.kind == MessageKind.EMAIL and BOUNCE_TAG in self.tag_set
 
     @property
     def is_bounce_resent(self):

@@ -26,6 +26,7 @@ from froide.upload.models import Upload
 from ..models import (
     FoiMessage, FoiAttachment
 )
+from ..models.message import MessageKind
 from ..foi_mail import generate_foirequest_files
 from ..tasks import convert_attachment_task, move_upload_to_attachment
 from ..validators import (
@@ -330,7 +331,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         message = FoiMessage(
             request=self.foirequest,
             subject=subject,
-            kind='email',
+            kind=MessageKind.EMAIL,
             subject_redacted=subject_redacted,
             is_response=False,
             sender_user=user,
@@ -614,7 +615,7 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
         foirequest = self.foirequest
         message = FoiMessage(
             request=foirequest,
-            kind='post',
+            kind=MessageKind.POST
         )
         message = self.set_data_on_message(message)
         message = self.contribute_to_message(message)
@@ -852,7 +853,7 @@ class PublicBodyUploader:
             plaintext='',
             plaintext_redacted='',
             html='',
-            kind='upload',
+            kind=MessageKind.UPLOAD,
             sender_public_body=self.foirequest.public_body
         )
         self.foirequest.message_received.send(
