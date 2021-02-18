@@ -719,6 +719,21 @@ class RequestDraftAdmin(admin.ModelAdmin):
     raw_id_fields = ('user', 'publicbodies', 'request', 'project')
 
 
+class DeliveryStatusAdmin(admin.ModelAdmin):
+    raw_id_fields = ('message',)
+    date_hierarchy = 'last_update'
+    list_display = ('message', 'status', 'last_update', 'retry_count')
+    list_filter = (
+        'status',
+        ('message', ForeignKeyFilter),
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.prefetch_related('message', 'message__request')
+        return qs
+
+
 admin.site.register(FoiRequest, FoiRequestAdmin)
 admin.site.register(FoiMessage, FoiMessageAdmin)
 admin.site.register(MessageTag, MessageTagAdmin)
@@ -728,3 +743,4 @@ admin.site.register(PublicBodySuggestion, PublicBodySuggestionAdmin)
 admin.site.register(DeferredMessage, DeferredMessageAdmin)
 admin.site.register(RequestDraft, RequestDraftAdmin)
 admin.site.register(FoiProject, FoiProjectAdmin)
+admin.site.register(DeliveryStatus, DeliveryStatusAdmin)
