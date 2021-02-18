@@ -18,5 +18,5 @@ testui:
 htmlcov:
 	coverage html
 
-makemessagesde:
+messagesde:
 	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov
