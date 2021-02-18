@@ -1435,7 +1435,7 @@ class RequestTest(TestCase):
 
         DeliveryStatus.objects.create(
             message=message,
-            status=DeliveryStatus.STATUS_BOUNCED
+            status=DeliveryStatus.Delivery.STATUS_BOUNCED
         )
         self.assertTrue(message.can_resend_bounce)
 
@@ -1443,7 +1443,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         message = FoiMessage.objects.get(id=message.pk)
         ds = message.get_delivery_status()
-        self.assertEqual(ds.status, DeliveryStatus.STATUS_SENDING)
+        self.assertEqual(ds.status, DeliveryStatus.Delivery.STATUS_SENDING)
 
     def test_approve_message(self):
         foirequest = FoiRequest.objects.all()[0]

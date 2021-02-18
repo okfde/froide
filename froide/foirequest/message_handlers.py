@@ -129,7 +129,7 @@ class EmailMessageHandler(MessageHandler):
         DeliveryStatus.objects.update_or_create(
             message=message,
             defaults=dict(
-                status=DeliveryStatus.STATUS_SENDING,
+                status=DeliveryStatus.Delivery.STATUS_SENDING,
                 last_update=timezone.now(),
             )
         )

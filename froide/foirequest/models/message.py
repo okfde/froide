@@ -512,36 +512,35 @@ class FoiMessage(models.Model):
         resend_message(self, **kwargs)
 
 
+class Delivery(models.TextChoices):
+    STATUS_UNKNOWN = ('unknown', _('unknown'))
+    STATUS_SENDING = ('sending', _('sending'))
+    STATUS_SENT = ('sent', _('sent'))
+    STATUS_RECEIVED = ('received', _('received'))
+    STATUS_READ = ('read', _('read'))
+    STATUS_DEFERRED = ('deferred', _('deferred'))
+    STATUS_BOUNCED = ('bounced', _('bounced'))
+    STATUS_EXPIRED = ('expired', _('expired'))
+    STATUS_FAILED = ('failed', _('failed'))
+
+
 class DeliveryStatus(models.Model):
-    STATUS_UNKNOWN = 'unknown'
-    STATUS_SENDING = 'sending'
-    STATUS_SENT = 'sent'
-    STATUS_RECEIVED = 'received'
-    STATUS_READ = 'read'
-    STATUS_DEFERRED = 'deferred'
-    STATUS_BOUNCED = 'bounced'
-    STATUS_EXPIRED = 'expired'
-    STATUS_FAILED = 'failed'
-
+    Delivery = Delivery
     FINAL_STATUS = (
-        STATUS_SENT, STATUS_RECEIVED, STATUS_READ, STATUS_BOUNCED,
-        STATUS_EXPIRED, STATUS_FAILED
-    )
-
-    STATUS_CHOICES = (
-        (STATUS_UNKNOWN, _('unknown')),
-        (STATUS_SENDING, _('sending')),
-        (STATUS_SENT, _('sent')),
-        (STATUS_RECEIVED, _('received')),
-        (STATUS_READ, _('read')),
-        (STATUS_DEFERRED, _('deferred')),
-        (STATUS_BOUNCED, _('bounced')),
-        (STATUS_EXPIRED, _('expired')),
-        (STATUS_FAILED, _('failed')),
+        Delivery.STATUS_SENT,
+        Delivery.STATUS_RECEIVED,
+        Delivery.STATUS_READ,
+        Delivery.STATUS_BOUNCED,
+        Delivery.STATUS_EXPIRED,
+        Delivery.STATUS_FAILED
     )
 
     message = models.OneToOneField(FoiMessage, on_delete=models.CASCADE)
-    status = models.CharField(choices=STATUS_CHOICES, blank=True, max_length=32)
+    status = models.CharField(
+        choices=Delivery.choices,
+        blank=True,
+        max_length=32
+    )
     retry_count = models.PositiveIntegerField(default=0)
     log = models.TextField(blank=True)
     last_update = models.DateTimeField(default=timezone.now)
@@ -557,19 +556,21 @@ class DeliveryStatus(models.Model):
 
     def is_sent(self):
         return self.status in (
-            self.STATUS_SENT,
-            self.STATUS_RECEIVED,
-            self.STATUS_READ
+            Delivery.STATUS_SENT,
+            Delivery.STATUS_RECEIVED,
+            Delivery.STATUS_READ
         )
 
     def is_pending(self):
         return self.status in (
-            self.STATUS_DEFERRED, self.STATUS_SENDING
+            Delivery.STATUS_DEFERRED, Delivery.STATUS_SENDING
         )
 
     def is_failed(self):
         return self.status in (
-            self.STATUS_BOUNCED, self.STATUS_EXPIRED, self.STATUS_FAILED
+            Delivery.STATUS_BOUNCED,
+            Delivery.STATUS_EXPIRED,
+            Delivery.STATUS_FAILED
         )
 
     def is_log_status_final(self):
