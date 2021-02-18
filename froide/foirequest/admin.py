@@ -294,7 +294,7 @@ class DeliveryStatusInline(admin.TabularInline):
     max_num = 1
     min_num = 0
     raw_id_fields = ('message',)
-    readonly_fields = ('log', 'status', 'last_update')
+    readonly_fields = ('retry_count', 'log', 'status', 'last_update')
 
 
 class MessageTagsFilter(TaggitListFilter):
