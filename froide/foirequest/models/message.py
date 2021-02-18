@@ -339,10 +339,9 @@ class FoiMessage(models.Model):
             return make_address(self.sender_email, self.sender_name)
         if self.sender_name:
             return self.sender_name
-        else:
-            if self.sender_public_body:
-                return self.sender_public_body.name
-            return self.sender_public_body
+        if self.sender_public_body:
+            return self.sender_public_body.name
+        return ''
 
     @property
     def real_sender(self):
