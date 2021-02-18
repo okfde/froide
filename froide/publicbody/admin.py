@@ -441,7 +441,7 @@ class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
 class FoiLawAdmin(TranslatableAdmin):
     list_display = ('name', 'meta', 'priority', 'law_type', 'jurisdiction',)
     list_filter = ('meta', 'law_type', 'jurisdiction')
-    raw_id_fields = ('mediator',)
+    raw_id_fields = ('mediator', 'combined')
     filter_horizontal = ('combined',)
     search_fields = ['translations__name', 'translations__description']
 
@@ -451,6 +451,17 @@ class FoiLawAdmin(TranslatableAdmin):
         return {
             'slug': ('name',)
         }
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.select_related('jurisdiction')
+        qs = qs.prefetch_related(
+            'translations',
+            'combined',
+            'combined__translations',
+            'combined__jurisdiction'
+        )
+        return qs
 
 
 class JurisdictionAdmin(admin.ModelAdmin):
