@@ -93,8 +93,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
         'add_to_project', 'unblock_request', 'close_requests'
     ]
     raw_id_fields = (
-        'same_as', 'public_body', 'user', 'project',
-        'jurisdiction', 'law'
+        'same_as', 'public_body', 'user', 'team',
+        'project', 'jurisdiction', 'law'
     )
     save_on_top = True
 
