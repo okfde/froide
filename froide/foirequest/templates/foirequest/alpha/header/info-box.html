@@ -37,7 +37,7 @@
     {% if object|can_write_foirequest:request %}
       <div class="bg-blue-10 px-4 py-2">
         <a href="#" class="info-box__edit-button">
-          <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit" %}</span>
+          <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit request status" %}</span>
           <span class="{% if active_tab != 'set-status' %}d-none{% endif %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
         </a>
       </div>

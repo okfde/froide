@@ -27,7 +27,7 @@
                 </span>
                 – {{ message.sender_public_body.name }}
               </span>
-              {% if message.kind != 'email' %}
+              {% if message.is_not_email %}
                 <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
               {% endif %}
               <span class="d-print-none">
@@ -55,7 +55,7 @@
               {% endif %}
                 {{ message.user_real_sender }}
               </span>
-              {% if message.kind != 'email' %}
+              {% if message.is_not_email %}
                 <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
               {% endif %}
             {% endif %}
@@ -79,7 +79,7 @@
             {% else %}
               {{ message.sender }}
             {% endif %}
-            {% if message.kind != 'email' %}
+            {% if message.is_not_email %}
               <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
             {% endif %}
           {% endif %}

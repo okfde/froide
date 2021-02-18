@@ -85,6 +85,16 @@
         {{ set_tags_form.media.js }}
       {% endwith %}
     {% endaddtoblock %}
+
+    {% addtoblock "js" %}
+      <script src="{% static 'js/publicbody.js' %}" defer></script>
+    {% endaddtoblock %}
+    {% addtoblock "js" %}
+      <script src="{% static 'js/messageredaction.js' %}" defer></script>
+    {% endaddtoblock %}
+    {% addtoblock "css" %}
+      <link rel="stylesheet" href="{% static 'css/messageredaction.css' %}"/>
+    {% endaddtoblock %}
   {% endif %}
 
   {% addtoblock "css" %}

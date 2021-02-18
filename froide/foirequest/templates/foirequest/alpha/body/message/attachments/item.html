@@ -11,7 +11,7 @@
     {% if object.public %}
       {% trans 'This attachment is public.' as tooltip %}
     {% else %}
-      {% trans 'This attachment is only visible for logged in users.' as tooltip %}
+      {% trans 'This attachment is only visible for users with access to this request.' as tooltip %}
     {% endif %}
   {% else %}
     {% trans 'This attachment is not public yet.' as tooltip %}

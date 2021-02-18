@@ -5,35 +5,17 @@
   {% if object|can_write_foirequest:request %}
     {% if message.is_response %}
       <span title="{{ message.sender_email }}">
-        <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
-          {{ message.user_real_sender }}
-        </span>
-        <!-- – {{ message.sender_public_body.name }} -->
+        {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
+          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+            {{ message.user_real_sender }}
+          </span>
+          {% if message.sender_public_body %}
+           <span> – {{ message.sender_public_body.name }}</span>
+          {% endif %}
+        {% else %}
+          {{ message.sender_public_body.name }}
+        {% endif %}
       </span>
-      {% if message.kind != 'email' %}
-        <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
-      {% endif %}
-
-      <!-- change link -->
-      <!-- <span class="d-print-none">
-        (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
-          {% trans "change" %}
-        </a>)
-      </span> -->
-
-      <!-- change form -->
-      <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
-        {% with message_pb_form=message.get_public_body_sender_form %}
-          <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
-            {% csrf_token %}
-            <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
-            {{ message_pb_form.sender }}
-            <p class="text-right">
-              <button type="submit" class="btn btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
-            </p>
-          </form>
-        {% endwith %}
-      </div>
     {% else %}
       {% if object.user.private %}
         <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
@@ -42,9 +24,6 @@
       {% endif %}
         {{ message.user_real_sender }}
       </span>
-      {% if message.kind != 'email' %}
-        <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
-      {% endif %}
     {% endif %}
     </span>
   {% else %}
@@ -54,7 +33,7 @@
           {{ message.sender }}
         {% endif %}
         {% if message.sender_public_body %}
-        – {{ message.sender_public_body.name }}
+          <span> – {{ message.sender_public_body.name }}</span>
         {% endif %}
       {% else %}
         {% if message.sender_public_body %}
@@ -65,9 +44,6 @@
       {% endif %}
     {% else %}
       {{ message.sender }}
-    {% endif %}
-    {% if message.kind != 'email' %}
-      <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
     {% endif %}
   {% endif %}
 </div>

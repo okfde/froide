@@ -26,51 +26,61 @@
   &__head {
     cursor: pointer;
   }
-    &__avatar {
-      flex: 0 0 $avatar_size_mobile;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: $avatar_size_mobile;
-      height: $avatar_size_mobile;
-      background-color: $gray-200;
-      border-radius: 50%;
-      color: $gray-500;
-      margin-right: $avatar_right_margin_mobile;
-      &--house { font-size: 14px; }
-      @include media-breakpoint-up(md) {
-        flex: 0 0 $avatar_size_desktop;
-        width: $avatar_size_desktop;
-        height: $avatar_size_desktop;
-        margin-right: $avatar_right_margin_desktop;
-        &--user { font-size: 18px; }
-        &--house { font-size: 16px; }
-      }
+  &__avatar {
+    flex: 0 0 $avatar_size_mobile;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $avatar_size_mobile;
+    height: $avatar_size_mobile;
+    background-color: $gray-200;
+    border-radius: 50%;
+    color: $gray-500;
+    margin-right: $avatar_right_margin_mobile;
+    &--house { font-size: 14px; }
+    @include media-breakpoint-up(md) {
+      flex: 0 0 $avatar_size_desktop;
+      width: $avatar_size_desktop;
+      height: $avatar_size_desktop;
+      margin-right: $avatar_right_margin_desktop;
+      &--user { font-size: 18px; }
+      &--house { font-size: 16px; }
     }
-    &__sender {
-      font-weight: 600;
-      overflow: hidden;
-      white-space: nowrap;
-      margin-right: 3px;
+  }
+  &__sender {
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-right: 3px;
+  }
+  &__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $gray-600;
+    background-color: $gray-200;
+    border-radius: 50%;
+    min-width: 20px;
+    min-height: 20px;
+    font-size: 14px;
+    margin-left: 3px;
+    margin-right: 3px;
+    &--kind {
+      border-radius: 20%;
     }
-    &__badge {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: $gray-600;
-      background-color: $gray-200;
-      border-radius: 50%;
-      min-width: 20px;
-      min-height: 20px;
-      font-size: 14px;
-      margin-left: 3px;
-      margin-right: 3px;
+    &--error {
+      color: $danger;
     }
-    &__relative-time {
-      margin-left: 3px;
+    &:hover {
+      color: inherit;
+      text-decoration: none;
     }
-    &__details { display: none; }
-      &__meta-toggle { cursor: pointer; }
+  }
+  &__relative-time {
+    margin-left: 3px;
+  }
+  &__details { display: none; }
+  &__meta-toggle { cursor: pointer; }
   &__wrap {
     margin-left: $spacer;
     margin-right: $spacer;

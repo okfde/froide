@@ -25,15 +25,34 @@
         <!-- icons & timestamp -->
         <div class="d-flex flex-nowrap">
           {% if message.all_attachments %}
-            <span class="alpha-message__badge">
+            <span class="alpha-message__badge" data-toggle="tooltip" title="{% trans 'Has attachments' %}">
               <span class="fa fa-paperclip"></span>
             </span>
           {% endif %}
           {% if comment_list %}
-            <span class="alpha-message__badge">
+            <span class="alpha-message__badge" data-toggle="tooltip" title="{% trans 'Has comments' %}">
               <span class="fa fa-comment-o"></span>
             </span>
           {% endif %}
+
+          {% if message.is_not_email %}
+            {% if message.is_response %}
+              {% blocktrans with kind=message.get_kind_display asvar kind_display %}received via {{ kind }}{% endblocktrans %}
+            {% else %}
+              {% blocktrans with kind=message.get_kind_display asvar kind_display %}sent via {{ kind }}{% endblocktrans %}
+            {% endif %}
+            <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{{ kind_display }}">
+              <span class="fa fa-{{ message.kind_icon }}"></span>
+            </span>
+          {% endif %}
+
+          {% get_delivery_status message as delivery_status %}
+          {% if delivery_status.is_failed %}
+            <a href="#" class="alpha-message__head alpha-message__meta-toggle alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
+              <span class="fa fa-bolt"></span>
+            </a>
+          {% endif %}
+
 
           <!-- relative time -->
           <span class="alpha-message__relative-time d-flex align-items-center d-print-none text-nowrap smaller text-gray-600" title="{{ message.timestamp }}">
@@ -136,14 +155,34 @@
         {% endwith %}
       </button>
 
+      {% block message_toolbar_item %}{% endblock %}
+
+      {% if object|can_write_foirequest:request and not message.original%}
+        {% render_message_redact_button message %}
+        {% render_message_edit_button message %}
+      {% endif %}
+
       <!-- Problem button-->
       {% render_problem_button message %}
+
+
+      {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
+        <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
+        method="post" class="ajaxified"
+        data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
+          {% csrf_token %}
+          <button class="btn btn-sm btn-warning ml-1" type="submit"
+            data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
+            {% trans "Resend" %}
+          </button>
+        </form>
+      {% endif %}
 
       <!-- Guidance menu -->
       {% if request.user.is_staff %}
         <div class="dropdown d-flex mt-1 mt-sm-0">
           <button
-            id="myDropdown"
+            id="guidance-dropdown"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
@@ -152,7 +191,7 @@
           >
             {% trans "Guidance" %}
           </button>
-          <div class="dropdown-menu smaller alpha-dropdown-menu" aria-labelledby="myDropdown">
+          <div class="dropdown-menu smaller alpha-dropdown-menu" aria-labelledby="guidance-dropdown">
 
             <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
               {% csrf_token %}

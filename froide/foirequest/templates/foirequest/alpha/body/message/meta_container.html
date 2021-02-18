@@ -17,9 +17,6 @@
             </span>
             – {{ message.sender_public_body.name }}
           </span>
-          {% if message.kind != 'email' %}
-            <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
-          {% endif %}
           <span class="d-print-none">
             (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
               {% trans "change" %}
@@ -32,7 +29,7 @@
                 <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
                 {{ message_pb_form.sender }}
                 <p class="text-right">
-                  <button type="submit" class="btn btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                  <button type="submit" class="btn btn-sm btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
                 </p>
               </form>
             {% endwith %}
@@ -45,9 +42,6 @@
           {% endif %}
             {{ message.user_real_sender }}
           </span>
-          {% if message.kind != 'email' %}
-            <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
-          {% endif %}
         {% endif %}
         </span>
       {% else %}
@@ -69,11 +63,16 @@
         {% else %}
           {{ message.sender }}
         {% endif %}
-        {% if message.kind != 'email' %}
-          <em>{% blocktrans with kind=message.get_kind_display %}via {{ kind }}{% endblocktrans %}</em>
-        {% endif %}
       {% endif %}
     </dd>
+    {% if message.is_not_email %}
+      <dt>
+        {% translate "Via" %}
+      </dt>
+      <dd>
+        {{ message.get_kind_display }}
+      </dd>
+    {% endif %}
     <dt>
       {% blocktrans %}Subject{% endblocktrans %}
     </dt>

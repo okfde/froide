@@ -3,7 +3,7 @@
 {% load form_helper %}
 
 {% if message.can_edit %}
-  <div class="btn-group btn-group-sm ml-1">
+  <div class="btn-group btn-group-sm mx-1">
     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#message-edit-{{ message.pk }}">
       <i class="fa fa-edit"></i>
       {% trans "Edit" %}

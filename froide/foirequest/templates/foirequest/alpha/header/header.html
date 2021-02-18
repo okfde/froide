@@ -68,14 +68,14 @@
             {% if tags %}
               <div class="request-tags-list">
                 <ul class="mb-3 list-unstyled d-flex flex-wrap">
-                      {% for tag in tags %}
-                      <li class="mr-2 smaller">
-                        <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
-                          <i class="fa fa-tags" aria-hidden="true"></i>
-                          <medium>{{ tag.name }}</medium>
-                        </a>
-                      </li>
-                      {% endfor %}
+                  {% for tag in tags %}
+                    <li class="mr-2 smaller">
+                      <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
+                        <i class="fa fa-tags" aria-hidden="true"></i>
+                        <span>{{ tag.name }}</span>
+                      </a>
+                    </li>
+                  {% endfor %}
                 </ul>
               </div>
             {% endif %}
@@ -125,6 +125,14 @@
     </div>
   </div>
 </div>
+
+
+{% if object.campaign %}
+  <div class="container mt-4">
+    {% include object.campaign.banner_templates %}
+  </div>
+{% endif %}
+
 
 <!-- tabs -->
 <div class="container px-0 mt-4 mt-lg-0">
