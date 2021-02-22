@@ -166,12 +166,30 @@
         </li>
       {% endif %}
 
-      <!-- rss link -->
+      <!-- rss/download links -->
       <li class="info-box__list-item">
-        <a href="{% url 'foirequest-feed' slug=object.slug %}">
-          <i class="fa fa-rss" aria-hidden="true"></i>
-          {% trans "RSS Feed" %}
-        </a>
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'foirequest-feed' slug=object.slug %}">
+            <i class="fa fa-rss" aria-hidden="true"></i>
+            {% trans "RSS Feed" %}
+          </a>
+          {% if object|can_read_foirequest_authenticated:request %}
+            <div class="dropdown">
+              <button id="downloadActions" type="button" class="btn btn-link mt-n2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% trans 'Download' %}
+              </button>
+              <div class="dropdown-menu alpha-dropdown-menu" aria-labelledby="downloadActions">
+                <a class="dropdown-item" href="{% url 'foirequest-download' slug=object.slug %}">
+                  {% trans "Download as ZIP" %}
+                </a>
+                <a class="dropdown-item" href="{% url 'foirequest-pdf' slug=object.slug %}">
+                  {% trans "Download as PDF" %}
+                </a>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
       </li>
 
     </ul>
