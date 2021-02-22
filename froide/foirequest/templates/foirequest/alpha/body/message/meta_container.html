@@ -18,9 +18,10 @@
             – {{ message.sender_public_body.name }}
           </span>
           <span class="d-print-none">
-            (<a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
-              {% trans "change" %}
-            </a>)
+            <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+              <i class="fa fa-edit"></i>
+              <span class="sr-only">{% trans "change" %}</span>
+            </a>
           </span>
           <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
             {% with message_pb_form=message.get_public_body_sender_form %}
