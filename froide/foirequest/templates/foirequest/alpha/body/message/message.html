@@ -48,9 +48,9 @@
 
           {% get_delivery_status message as delivery_status %}
           {% if delivery_status.is_failed %}
-            <a href="#" class="alpha-message__head alpha-message__meta-toggle alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
+            <span class="alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
               <span class="fa fa-bolt"></span>
-            </a>
+            </span>
           {% endif %}
 
 
@@ -143,7 +143,7 @@
       <!-- Comments button -->
       <button
         type="button"
-        class="btn btn-light btn-sm text-primary mb-1 mb-sm-0 mr-sm-auto"
+        class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first"
         data-toggle="collapse"
         aria-expanded="false"
         aria-controls="comments-{{ message.id }}"
@@ -165,13 +165,12 @@
       <!-- Problem button-->
       {% render_problem_button message %}
 
-
       {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
         <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
         method="post" class="ajaxified"
         data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
           {% csrf_token %}
-          <button class="btn btn-sm btn-warning ml-1" type="submit"
+          <button class="btn btn-sm btn-warning flex-fill mt-1 ml-1" type="submit"
             data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
             {% trans "Resend" %}
           </button>
@@ -180,7 +179,7 @@
 
       <!-- Guidance menu -->
       {% if request.user.is_staff %}
-        <div class="dropdown d-flex mt-1 mt-sm-0">
+        <div class="dropdown d-flex mb-1">
           <button
             id="guidance-dropdown"
             type="button"
