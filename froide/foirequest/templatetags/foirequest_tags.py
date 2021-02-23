@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import timedelta
 import json
+import re
 
 from django import template
 from django.utils.safestring import mark_safe
@@ -143,6 +144,18 @@ def redact_subject(message, request):
     )
 
 
+MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
+
+
+def urlizetrunc_no_mail(content, chars, **kwargs):
+    '''
+    Remove mailto links, makes it to easy to accidentally reply
+    with your own email client.
+    '''
+    result = urlizetrunc(content, chars, **kwargs)
+    return mark_safe(MAILTO_RE.sub('\\1', result))
+
+
 def mark_redacted(original='', redacted='', authenticated_read=False):
     if authenticated_read:
         content = mark_differences(
@@ -157,7 +170,7 @@ def mark_redacted(original='', redacted='', authenticated_read=False):
             attrs='class="redacted"'
         )
 
-    return urlizetrunc(content, 40, autoescape=False)
+    return urlizetrunc_no_mail(content, 40, autoescape=False)
 
 
 def markup_redacted_content(real_content, redacted_content,
