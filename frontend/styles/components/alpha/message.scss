@@ -99,14 +99,28 @@
   }
   &__body {
     display: none;
+  }
+  &__bodyinner {
     padding-bottom: $spacer;
   }
-    &__guidance p:last-child { margin-bottom: 0; }
-    &__content-text {
-      white-space: nowrap;
-      white-space: pre-wrap;
-      word-wrap: break-word;
+  &__guidance p:last-child { margin-bottom: 0; }
+  &__content-text {
+    white-space: nowrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  &__toolbar {
+    background-color: $gray-100;
+    box-shadow:
+      $blue-box-shadow,
+      inset 0px 1px 2px $gray-200;
+    &--sticky {
+      @include media-breakpoint-up(sm) {
+        position: sticky;
+        bottom: 0;
+      }
     }
+  }
   &__footer {
     display: none;
     background-color: $gray-100;

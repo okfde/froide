@@ -3,7 +3,7 @@ import Message from './Message'
 import Timeline from './Timeline'
 import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
-import { toggleSlide } from '../lib/misc';
+import { toggleSlide, addText } from '../lib/misc';
 import { Tab } from 'bootstrap.native/dist/bootstrap-native-v4';
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
@@ -56,12 +56,36 @@ const initRequestPage = () => {
   writeForm?.addEventListener('show.bs.collapse', scrollToWriteForm, false);
   replyButtonTop?.addEventListener('click', (e) => {
     e.preventDefault()
+    goToReplyForm()
+  })
+
+  const goToReplyForm = () => {
     if (!writeForm?.classList.contains('show')) {
       replyButtonBottom?.click()
     } else {
       scrollToWriteForm()
     }
+  }
+
+  const fieldFillLinks = document.querySelectorAll('[data-fieldname]') as NodeListOf<HTMLElement>
+  Array.from(fieldFillLinks).forEach(el => {
+    el.addEventListener('click', fieldFillLinkClick)
   })
+
+
+  function fieldFillLinkClick (this: HTMLElement) {
+    if (this.dataset && this.dataset.value) {
+      const sel = '[name="' + this.dataset.fieldname + '"][value="' + this.dataset.value + '"]';
+      const checkbox = document.querySelector(sel);
+      if (checkbox) {
+        checkbox.setAttribute("checked", "");
+      }
+    }
+    if (this.dataset && this.dataset.addtextfield) {
+      addText(this.dataset);
+    }
+    goToReplyForm()
+  }
 
 }
 

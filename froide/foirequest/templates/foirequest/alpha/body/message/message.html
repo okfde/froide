@@ -100,149 +100,164 @@
   {% include "foirequest/alpha/body/message/meta_container.html" %}
 
   <!-- body -->
-  <div class="alpha-message__body alpha-message__wrap">
+  <div class="alpha-message__body">
+    <div class="alpha-message__wrap alpha-message__bodyinner">
 
-    <!-- guidance -->
-    {% render_guidance_alpha message %}
+      <!-- guidance -->
+      {% render_guidance_alpha message %}
 
-    <!-- attachments -->
-    {% include "foirequest/alpha/body/message/attachments/attachments.html" %}
+      <!-- attachments -->
+      {% include "foirequest/alpha/body/message/attachments/attachments.html" %}
 
-    <!-- text -->
-    {% if forloop.counter0 == 0 %}
-      <div class="alpha-message__content-text">{% highlight_request message request %}</div>
-    {% else %}
-      {% if message.content_hidden %}
-        {% if object|can_write_foirequest:request %}
-          <div class="d-print-none alert alert-warning">
-            <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
-            <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message_id=message.pk %}">
-              {% csrf_token %}
-              <button class="btn btn-secondary" type="submit">
-                {% trans "Publish message content" %}
-              </button>
-            </form>
-          </div>
-          <div class="alpha-message__content-text">{% redact_message message request %}</div>
-        {% else %}
-          <div class="alert alert-warning">
-            <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
-          </div>
-        {% endif %}
+      <!-- text -->
+      {% if forloop.counter0 == 0 %}
+        <div class="alpha-message__content-text">{% highlight_request message request %}</div>
       {% else %}
-        <div class="alpha-message__content-text">{% redact_message message request %}</div>
-      {% endif %}
-    {% endif %}
-  </div>
-
-  <div class="alpha-message__footer">
-
-    <!-- footer buttons -->
-    <div class="alpha-message__wrap d-flex flex-column flex-sm-row py-3">
-
-      <!-- Comments button -->
-      <button
-        type="button"
-        class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first"
-        data-toggle="collapse"
-        aria-expanded="false"
-        aria-controls="comments-{{ message.id }}"
-        data-target="#comments-{{ message.id }}"
-      >
-        <span class="fa fa-comments"></span>
-        {% with count=comment_list|length %}
-          {{ count }} {% if count == 1 %}{% trans "Comment" %}{% else %}{% trans "Comments" %}{% endif %}
-        {% endwith %}
-      </button>
-
-      {% block message_toolbar_item %}{% endblock %}
-
-      {% if object|can_write_foirequest:request and not message.original%}
-        {% render_message_redact_button message %}
-        {% render_message_edit_button message %}
-      {% endif %}
-
-      <!-- Problem button-->
-      {% render_problem_button message %}
-
-      {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
-        <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
-        method="post" class="ajaxified"
-        data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
-          {% csrf_token %}
-          <button class="btn btn-sm btn-warning flex-fill mt-1 ml-1" type="submit"
-            data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
-            {% trans "Resend" %}
-          </button>
-        </form>
-      {% endif %}
-
-      <!-- Guidance menu -->
-      {% if request.user.is_staff %}
-        <div class="dropdown d-flex mb-1">
-          <button
-            id="guidance-dropdown"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            class="btn btn-light btn-sm flex-fill ml-sm-2"
-          >
-            {% trans "Guidance" %}
-          </button>
-          <div class="dropdown-menu smaller alpha-dropdown-menu" aria-labelledby="guidance-dropdown">
-
-            <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
-              {% csrf_token %}
-              <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" class="dropdown-item" target="_blank">
-                {% trans "In admin" %}
-              </a>
-              <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" class="dropdown-item" target="_blank">
-                {% trans "Add custom" %}
-              </a>
-              <button type="submit" class="dropdown-item">{% trans "Rerun guidance" %}</button>
-              <input name="notify" value="🚨 {% trans 'Run + Notify' %}" type="submit" class="dropdown-item"/>
-            </form>
-
-          </div>
-        </div>
-      {% endif %}
-
-    </div>
-
-    <!-- comments list -->
-    <div id="comments-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
-      {% block before_comments %}{% endblock %}
-      <div class="alpha-message__wrap pb-4">
-
-        {% if not comment_list|length %}
-          <span class="text-gray-600">{% trans "No comments yet." %}</span>
+        {% if message.content_hidden %}
+          {% if object|can_write_foirequest:request %}
+            <div class="d-print-none alert alert-warning">
+              <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
+              <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message_id=message.pk %}">
+                {% csrf_token %}
+                <button class="btn btn-secondary" type="submit">
+                  {% trans "Publish message content" %}
+                </button>
+              </form>
+            </div>
+            <div class="alpha-message__content-text">{% redact_message message request %}</div>
+          {% else %}
+            <div class="alert alert-warning">
+              <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
+            </div>
+          {% endif %}
         {% else %}
-          {% include "foirequest/alpha/body/message/comments/list.html" %}
+          <div class="alpha-message__content-text">{% redact_message message request %}</div>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="alpha-message__toolbar {% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky{% endif %}">
+
+      <!-- footer buttons -->
+      <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap py-3">
+
+        <!-- Comments button -->
+        <button
+          type="button"
+          class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first"
+          data-toggle="collapse"
+          aria-expanded="false"
+          aria-controls="comments-{{ message.id }}"
+          data-target="#comments-{{ message.id }}"
+          data-scrollto="comments-{{ message.id }}"
+        >
+          <span class="fa fa-comments"></span>
+          {% with count=comment_list|length %}
+            {{ count }} {% if count == 1 %}{% trans "Comment" %}{% else %}{% trans "Comments" %}{% endif %}
+          {% endwith %}
+        </button>
+
+
+        {% block message_toolbar_item %}{% endblock %}
+
+        {% if object|can_write_foirequest:request and not message.original %}
+          {% if message.is_response %}
+            <div class="btn-group btn-group-sm mb-1 ml-sm-auto">
+              <a data-fieldname="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-outline-primary">
+                <span class="fa fa-reply"></span>
+                {% trans "Reply" %}
+              </a>
+            </div>
+          {% endif %}
+
+          {% render_message_redact_button message %}
+          {% render_message_edit_button message %}
         {% endif %}
 
-        {% if request.user.is_authenticated %}
-          <!-- comment reply button and form -->
-          <div class="mt-3">
-            <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
-              {% if object.public %}
-                {% trans "Write a public comment" %}
-              {% else %}
-                {% trans "Write a comment" %}
-              {% endif %}
-            </a>
-            <div class="collapse pt-3" id="comment-form-{{ message.id }}">
-              {% include "foirequest/alpha/body/message/comments/form.html" %}
+        <!-- Problem button-->
+        {% render_problem_button message %}
+
+        {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
+          <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
+          method="post" class="ajaxified"
+          data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-warning flex-fill mb-1 ml-sm-1" type="submit"
+              data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
+              {% trans "Resend" %}
+            </button>
+          </form>
+        {% endif %}
+
+        <!-- Guidance menu -->
+        {% if request.user.is_staff %}
+          <div class="dropdown d-flex mb-1 dropup">
+            <button
+              id="guidance-dropdown"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              class="btn btn-light btn-sm flex-fill ml-sm-1"
+            >
+              {% trans "Guidance" %}
+            </button>
+            <div class="dropdown-menu dropdown-menu-right smaller alpha-dropdown-menu" aria-labelledby="guidance-dropdown">
+
+              <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
+                {% csrf_token %}
+                <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" class="dropdown-item" target="_blank">
+                  {% trans "In admin" %}
+                </a>
+                <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" class="dropdown-item" target="_blank">
+                  {% trans "Add custom" %}
+                </a>
+                <button type="submit" class="dropdown-item">{% trans "Rerun guidance" %}</button>
+                <input name="notify" value="🚨 {% trans 'Run + Notify' %}" type="submit" class="dropdown-item"/>
+              </form>
+
             </div>
           </div>
-        {% else %}
-          <span class="text-gray-600 smaller">
-            {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}Please <a href="{{ link }}" >login</a> to write a comment.{% endblocktrans %}
-          </span>
         {% endif %}
+
+      </div>
+    </div>
+
+    <div class="alpha-message__footer">
+      <!-- comments list -->
+      <div id="comments-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
+        {% block before_comments %}{% endblock %}
+        <div class="alpha-message__wrap pb-4">
+
+          {% if not comment_list|length %}
+            <span class="text-gray-600">{% trans "No comments yet." %}</span>
+          {% else %}
+            {% include "foirequest/alpha/body/message/comments/list.html" %}
+          {% endif %}
+
+          {% if request.user.is_authenticated %}
+            <!-- comment reply button and form -->
+            <div class="mt-3">
+              <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
+                {% if object.public %}
+                  {% trans "Write a public comment" %}
+                {% else %}
+                  {% trans "Write a comment" %}
+                {% endif %}
+              </a>
+              <div class="collapse pt-3" id="comment-form-{{ message.id }}">
+                {% include "foirequest/alpha/body/message/comments/form.html" %}
+              </div>
+            </div>
+          {% else %}
+            <span class="text-gray-600 smaller">
+              {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}Please <a href="{{ link }}" >login</a> to write a comment.{% endblocktrans %}
+            </span>
+          {% endif %}
+        </div>
+
+        {% block after_comments %}{% endblock %}
       </div>
 
-      {% block after_comments %}{% endblock %}
     </div>
 
   </div>

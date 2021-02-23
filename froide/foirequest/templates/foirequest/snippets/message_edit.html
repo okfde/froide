@@ -9,8 +9,7 @@
       {% trans "Edit" %}
     </button>
   </div>
-
-  <div class="modal" tabindex="-1" role="dialog" id="message-edit-{{ message.pk }}">
+  <div class="modal" tabindex="-1" data-teleport="body" role="dialog" id="message-edit-{{ message.pk }}">
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
