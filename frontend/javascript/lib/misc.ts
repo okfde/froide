@@ -1,11 +1,15 @@
-function scrollToAnchor(id: string) {
+function scrollToAnchor(id: string, options: boolean|Object|undefined=true) {
   window.setTimeout(() => {
     const el = document.getElementById(id);
     if (!el) {
       return;
     }
-    el.scrollIntoView(true);
-  }, 100);
+    if (el.classList.contains('collapse') && !el.classList.contains('show')) {
+      // skip if this container collapses
+      return
+    }
+    el.scrollIntoView(options);
+  }, 300);
 }
 
 const getHeight = (el: HTMLElement) => {
@@ -68,7 +72,38 @@ const toggleSlide = (el: HTMLElement, seconds = 2) => {
   }
 };
 
+
+const addText = (dataset: DOMStringMap) => {
+  if (!dataset.addtextfield) {
+    return;
+  }
+  const textField = document.querySelector(dataset.addtextfield) as HTMLInputElement;
+  if (textField === null) {
+    return;
+  }
+  let text = textField.value;
+  const addedText = dataset.addtext;
+  if (!addedText) {
+    return;
+  }
+  if (text.indexOf(addedText) !== -1) {
+    return;
+  }
+  if (text.indexOf("\n...\n") !== -1) {
+    text = text.replace("...", addedText);
+  } else {
+    const textParts = text.split("\n\n");
+    text = [
+      textParts[0],
+      addedText,
+      textParts[textParts.length - 1],
+    ].join("\n\n");
+  }
+  textField.value = text;
+};
+
 export {
   scrollToAnchor,
   toggleSlide,
+  addText
 };

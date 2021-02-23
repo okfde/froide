@@ -1,3 +1,4 @@
+import {scrollToAnchor} from '../lib/misc.ts'
 
 const runOnPage = () => {
   const hideParents = document.querySelectorAll(".hideparent");
@@ -21,6 +22,29 @@ const runOnPage = () => {
         button.setAttribute("disabled", "");
       });
     });
+  });
+
+  const teleports = document.querySelectorAll('[data-teleport]') as NodeListOf<HTMLElement>
+  Array.from(teleports).forEach((el) => {
+    let location
+    if (el.dataset.teleport) {
+      location = document.querySelector(el.dataset.teleport)
+    } else {
+      location = document.body
+    }
+    if (location) {
+      location.appendChild(el)
+    }
+  })
+
+  const scrollToLinks = document.querySelectorAll("[data-scrollto]") as NodeListOf<HTMLElement>
+  Array.from(scrollToLinks).forEach((link) => {
+    link.addEventListener('click', (e) => {
+      if (link.dataset.scrollto) {
+        e.preventDefault()
+        scrollToAnchor(link.dataset.scrollto, {behavior: 'smooth', block: 'end'})
+      }
+    })
   });
 
   const inputs = document.querySelectorAll(".honigtopf input");

@@ -1,38 +1,9 @@
-import {toggleSlide} from "./lib/misc";
+import {toggleSlide, addText} from "./lib/misc";
 
 import {Tab, Tooltip} from "bootstrap.native/dist/bootstrap-native-v4";
 
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
-
-const addText = (dataset: DOMStringMap) => {
-  if (!dataset.addtextfield) {
-    return;
-  }
-  const textField = document.querySelector(dataset.addtextfield) as HTMLInputElement;
-  if (textField === null) {
-    return;
-  }
-  let text = textField.value;
-  const addedText = dataset.addtext;
-  if (!addedText) {
-    return;
-  }
-  if (text.indexOf(addedText) !== -1) {
-    return;
-  }
-  if (text.indexOf("\n...\n") !== -1) {
-    text = text.replace("...", addedText);
-  } else {
-    const textParts = text.split("\n\n");
-    text = [
-      textParts[0],
-      addedText,
-      textParts[textParts.length - 1],
-    ].join("\n\n");
-  }
-  textField.value = text;
-};
 
 const setStatus = () => {
   const refusal = document.querySelector(".status-refusal") as HTMLElement;
