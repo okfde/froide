@@ -55,9 +55,9 @@
 
 
           <!-- relative time -->
-          <span class="alpha-message__relative-time d-flex align-items-center d-print-none text-nowrap smaller text-gray-600" title="{{ message.timestamp }}">
+          <a href="#{{ message.get_html_id }}" class="alpha-message__relative-time d-flex align-items-center d-print-none text-nowrap smaller text-gray-600" title="{{ message.timestamp }}">
             {{ message.timestamp|relativetime }}
-          </span>
+          </a>
         </div>
       </div>
 

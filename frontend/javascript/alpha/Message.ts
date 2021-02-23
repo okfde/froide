@@ -72,6 +72,9 @@ export default class Message {
       this.collapseMessage()
     } else {
       this.expandMessage()
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + this.id)
+      }
     }
   }
 
