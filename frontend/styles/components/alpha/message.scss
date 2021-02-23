@@ -104,10 +104,16 @@
     padding-bottom: $spacer;
   }
   &__guidance p:last-child { margin-bottom: 0; }
+  &__guidance:target {
+    box-shadow: 0 0 3px 3px $yellow-300;
+  }
   &__content-text {
     white-space: nowrap;
     white-space: pre-wrap;
     word-wrap: break-word;
+    mark a {
+      color: inherit;
+    }
   }
   &__toolbar {
     background-color: $gray-100;

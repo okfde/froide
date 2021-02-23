@@ -4,7 +4,7 @@ import Timeline from './Timeline'
 import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
 import { toggleSlide, addText } from '../lib/misc';
-import { Tab } from 'bootstrap.native/dist/bootstrap-native-v4';
+import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4';
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
@@ -20,6 +20,8 @@ const initRequestPage = () => {
   initSummaryForm()
   initTagsForm()
   initExpandableDescription()
+
+  initMessageMarks()
 
   // init Info Box
   new InfoBox()
@@ -136,6 +138,52 @@ const initTagsForm = () => {
     })
 
   })
+}
+
+const initMessageMarks = () => {
+  const guidances = document.querySelectorAll('[data-messagemark]') as NodeListOf<HTMLElement>
+  Array.from(guidances).forEach((guidance) => {
+    const messageMark = guidance.dataset.messagemark
+    if (!messageMark || ! guidance.dataset.messageid) { return }
+    const markObj = JSON.parse(messageMark)
+    if (markObj.span) {
+      applyMarkToMessage(guidance.dataset.messageid, guidance.id, markObj.span)
+    }
+  })
+}
+
+const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[]) => {
+  const messageText = document.querySelector(`#${messageId} .text-content-visible`)
+  if (!messageText) { return }
+  let charIndex = 0
+  for (let i = 0; i < messageText.childNodes.length; i++) {
+    let node = messageText.childNodes[i]
+    console.log(node, guidanceId, span, charIndex)
+    let content = node.textContent || ''
+    if (span[0] > charIndex && span[0] < charIndex + content.length) {
+      let match = content.substring(span[0] - charIndex, span[1] - charIndex)
+      const mark = document.createElement('mark');
+      mark.dataset.toggle = "tooltip"
+      mark.setAttribute('title', `<i class="fa fa-info-circle"></i>`)
+      const markA = document.createElement('a')
+      markA.href = '#' + guidanceId
+      markA.appendChild(document.createTextNode(match))
+      mark.appendChild(markA);
+      if (node.nodeName === '#text') {
+        const textNode = node as Text
+        const second = textNode.splitText(span[0] - charIndex);
+        messageText.insertBefore(mark, second)
+        second.textContent = content.substring(span[1] - charIndex, content.length)
+        new Tooltip(mark);
+      }
+      return
+    }
+    if (span[0] < charIndex) {
+      // we missed it
+      return
+    }
+    charIndex += content.length
+  }
 }
 
 const initExpandableDescription = () => {
