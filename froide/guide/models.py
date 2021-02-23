@@ -1,3 +1,4 @@
+import json
 import re
 
 from django.db import models
@@ -100,6 +101,7 @@ class Guidance(models.Model):
     label = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     snippet = models.TextField(blank=True)
+    matches = models.JSONField(null=True)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True,
@@ -160,6 +162,11 @@ class Guidance(models.Model):
         if self.action:
             return self.action.label
         return self.label
+
+    def get_matches_json(self):
+        if not self.matches:
+            return ''
+        return json.dumps(self.matches)
 
     def has_snippet(self):
         if self.action:

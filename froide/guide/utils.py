@@ -28,7 +28,6 @@ WS = re.compile(r'\s+')
 def prepare_text(text):
     text, _1 = split_text_by_separator(text)
     text = ' '.join(text.splitlines())
-    text = WS.sub(' ', text)
     return text
 
 
@@ -91,19 +90,21 @@ class GuidanceApplicator:
 
             # Rule applies
             ctx = {
-                'includes': include_match.groups() if include_match else None,
-                'excludes': exclude_match.groups() if exclude_match else None,
+                'includes': include_match,
+                'excludes': exclude_match,
                 'tags': tags
             }
             yield from self.apply_rule(rule, **ctx)
 
     def apply_rule(self, rule, includes=None, excludes=None, tags=None):
         for action in rule.actions.all():
-            guidance = self.apply_action(action, tags=tags, rule=rule)
+            guidance = self.apply_action(
+                action, tags=tags, rule=rule, includes=includes
+            )
             if guidance is not None:
                 yield guidance
 
-    def apply_action(self, action, tags=None, rule=None):
+    def apply_action(self, action, tags=None, rule=None, includes=None):
         message = self.message
         if action.tag:
             message.tags.add(action.tag)
@@ -111,11 +112,15 @@ class GuidanceApplicator:
                 tags.add(action.tag_id)
         if not action.label:
             return
+        matches = None
+        if includes:
+            matches = {'span': list(includes.span())}
         guidance, created = Guidance.objects.get_or_create(
             message=message,
             action=action,
             defaults={
-                'rule': rule
+                'rule': rule,
+                'matches': matches
             }
         )
         guidance.created = created
