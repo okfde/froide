@@ -155,6 +155,22 @@
         <span class="badge badge-light">{{ tag_name }}</span>
       {% endfor %}
     </dd>
+    <dt class="d-print-none">
+      {% trans "Guidance" %}
+    </dt>
+    <dd class="d-print-none">
+      <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" target="_blank">
+        {% trans "In admin" %}
+      </a> -
+      <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" target="_blank">
+        {% trans "Add custom" %}
+      </a>
+      <form class="form-inline" action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-light">{% trans "Rerun guidance" %}</button>
+        <input name="notify" value="🚨 {% trans 'Run + Notify' %}" type="submit" class="btn btn-sm btn-outline-warning"/>
+      </form>
+    </dd>
   {% endif %}
   </dl>
   
