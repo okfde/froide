@@ -164,6 +164,10 @@ class FoiMessage(models.Model):
         return self.kind == MessageKind.POST
 
     @property
+    def is_email(self):
+        return self.kind == MessageKind.EMAIL
+
+    @property
     def is_not_email(self):
         return self.kind != MessageKind.EMAIL
 

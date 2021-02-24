@@ -2,7 +2,7 @@
 {% load markup %}
 {% load form_helper %}
 
-<button type="button" class="btn btn-sm mb-1 mx-1 btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
+<button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
   {% if not request.user.is_authenticated %}
     {% trans "Report" %}
   {% else %}

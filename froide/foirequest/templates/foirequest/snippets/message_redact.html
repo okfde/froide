@@ -3,7 +3,7 @@
 {% load form_helper %}
 
 {% if show_button %}
-<div class="btn-group btn-group-sm mx-1 mb-1">
+<div class="btn-group btn-group-sm mx-sm-1 mb-1">
   <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-outline-dark" data-toggle="modal" data-target="#message-redact-{{ message.pk }}">
     <i class="fa fa-paint-brush"></i>
     {% trans "Redact" %}
