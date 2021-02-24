@@ -115,6 +115,11 @@ const initInlineEditForms = () => {
       e.preventDefault()
       el.parentElement?.classList.toggle('d-none')
       targetForm.classList.toggle('d-none')
+      if (targetForm.classList.contains('d-none')) {
+        el.parentElement?.scrollIntoView({behavior: 'smooth', block: 'center'})
+      } else {
+        targetForm.scrollIntoView({behavior: 'smooth', block: 'center'})
+      }
     }
 
     el.addEventListener('click', toggle)
