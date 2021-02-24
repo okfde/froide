@@ -9,8 +9,7 @@
       </li>
     {% endblock followers %}
 
-
-  {% if object.visibility == 2 %}
+  {% if object.is_public %}
   {% block social_sharing %}
     <li class="nav-header">{% trans "Share this request" %}</li>
     <li class="nav-item">
