@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-18 15:04+0100\n"
-"PO-Revision-Date: 2021-02-18 14:09+0000\n"
+"POT-Creation-Date: 2021-02-24 12:00+0100\n"
+"PO-Revision-Date: 2021-02-24 11:06+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -32,20 +32,14 @@ msgid ""
 "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
 "\">the Open Knowledge Foundation</a>."
 msgstr ""
-"FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn.de"
-"\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie FragDenStaat."
-"de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
-"</a>"
+"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
+"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
 #: docs/_build/html/theming.html:95
 msgid ""
 "Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
 "org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
 msgstr ""
-"FragDenStaat.de ist ein gemeinnütziges Projekt des <a href=\"http://okfn.de"
-"\">Open Knowledge Foundation Deutschland e.V.</a><br/>Wenn Sie FragDenStaat."
-"de unterstützen möchten, <a href=\"%(url)s\">freuen wir uns über Ihre Spende!"
-"</a>"
 
 #: froide/_local_settings.py:10 froide/settings.py:256 froide/settings.py:682
 msgid "German"
@@ -594,7 +588,6 @@ msgid "Your email address is now confirmed!"
 msgstr "Ihre E-Mail-Adresse wurde bestätigt!"
 
 #: froide/account/templates/account/confirmed.html:27
-#: froide/foirequest/templates/foirequest/sent.html:29
 #, python-format
 msgid ""
 "\n"
@@ -608,7 +601,7 @@ msgstr ""
 "          "
 
 #: froide/account/templates/account/confirmed.html:32
-#: froide/foirequest/templates/foirequest/sent.html:34
+#: froide/foirequest/templates/foirequest/sent.html:31
 msgid ""
 "We will send you an email when you receive a reply from the public body."
 msgstr ""
@@ -2468,11 +2461,11 @@ msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
 
 #: froide/foirequest/forms/step.py:23
 msgid "Date is too far in the future."
-msgstr "Datum ist zu weit in der Zukunft."
+msgstr ""
 
 #: froide/foirequest/forms/step.py:29
 msgid "End date is before start date."
-msgstr "Enddatum ist vor Startdatum."
+msgstr ""
 
 #: froide/foirequest/models/attachment.py:112
 msgid "Belongs to message"
@@ -3317,39 +3310,43 @@ msgstr "Anfrage"
 
 #: froide/foirequest/models/step.py:10
 msgid "Appeal"
-msgstr "Widerspruch"
+msgstr ""
 
 #: froide/foirequest/models/step.py:11
 msgid "Lawsuit court level 1"
-msgstr "Klage Verwaltungsgericht"
+msgstr ""
 
 #: froide/foirequest/models/step.py:12
 msgid "Lawsuit court level 2"
-msgstr "Klage Oberverwaltungsgericht"
+msgstr ""
 
 #: froide/foirequest/models/step.py:13
 msgid "Lawsuit court level 3"
-msgstr "Klage Bundesverwaltungsgericht"
+msgstr ""
 
 #: froide/foirequest/models/step.py:14
 msgid "Lawsuit court level 4"
-msgstr "Klage Bundesverfassungsgericht"
+msgstr ""
 
 #: froide/foirequest/models/step.py:15
 msgid "Lawsuit court level 5"
-msgstr "Klage EGMR"
+msgstr ""
 
 #: froide/foirequest/models/step.py:28
+#, fuzzy
+#| msgid "Name of this team"
 msgid "Cost of this step"
-msgstr "Kosten dieses Prozessschrittes"
+msgstr "Name dieses Teams"
 
 #: froide/foirequest/models/step.py:34
 msgid "Process step"
-msgstr "Prozessschritt"
+msgstr ""
 
 #: froide/foirequest/models/step.py:35
+#, fuzzy
+#| msgid "access tokens"
 msgid "Process steps"
-msgstr "Prozessschritte"
+msgstr "Zugangs-Tokens"
 
 #: froide/foirequest/models/suggestion.py:19
 msgid "Timestamp of Suggestion"
@@ -4276,10 +4273,12 @@ msgid "Copy Short-URL"
 msgstr "Kurz-URL kopieren"
 
 #: froide/foirequest/templates/foirequest/alpha/header/info-box.html:159
+#: froide/foirequest/templates/foirequest/sent.html:62
 msgid "Tweet request"
 msgstr "Anfrage tweeten"
 
 #: froide/foirequest/templates/foirequest/alpha/header/info-box.html:164
+#: froide/foirequest/templates/foirequest/sent.html:67
 msgid "Share request"
 msgstr "Anfrage teilen"
 
@@ -5291,26 +5290,33 @@ msgstr "Ihre Anfrage wurde gesendet!"
 msgid "Request sent"
 msgstr "Anfrage versendet"
 
-#: froide/foirequest/templates/foirequest/sent.html:21
+#: froide/foirequest/templates/foirequest/sent.html:22
 msgid "Your project was created!"
 msgstr "Ihr Projekt wurde erstellt!"
 
-#: froide/foirequest/templates/foirequest/sent.html:23
+#: froide/foirequest/templates/foirequest/sent.html:24
 msgid "Your request has been sent!"
 msgstr "Ihre Anfrage wurde gesendet!"
 
-#: froide/foirequest/templates/foirequest/sent.html:39
-#, python-format
-msgid ""
-"\n"
-"              Your project “<a href=\"%(url)s\">%(title)s</a>” has been "
-"created and its requests are being sent out now.\n"
-"            "
-msgstr ""
-"\n"
-"            Ihr Projekt „<a href=\"%(url)s\">%(title)s</a>“ wurde erstellt "
-"und die Anfragen werden gerade versendet.\n"
-"          "
+#: froide/foirequest/templates/foirequest/sent.html:35
+msgid "view your request"
+msgstr "zu Ihrer Anfrage"
+
+#: froide/foirequest/templates/foirequest/sent.html:41
+msgid "The requests are being sent out now."
+msgstr "Diese Anfragen werden nun versendet."
+
+#: froide/foirequest/templates/foirequest/sent.html:45
+msgid "view your project"
+msgstr "zu Ihrem Projekt"
+
+#: froide/foirequest/templates/foirequest/sent.html:54
+msgid "Share your project with others!"
+msgstr "Teilen Sie Ihr Projekt mit anderen!"
+
+#: froide/foirequest/templates/foirequest/sent.html:56
+msgid "Share your request with others!"
+msgstr "Teilen Sie Ihre Anfrage mit anderen!"
 
 #: froide/foirequest/templates/foirequest/show.html:51
 #, python-format
@@ -6542,14 +6548,6 @@ msgstr ""
 msgid "Please confirm your form submission."
 msgstr "Bitte bestätigen Sie das Absenden der Anfrage."
 
-#: froide/foirequest/views/make_request.py:465
-msgid "Your request has been sent."
-msgstr "Ihre Anfrage wurde gesendet."
-
-#: froide/foirequest/views/make_request.py:469
-msgid "Your project has been created and we are sending your requests."
-msgstr "Ihr Projekt wurde erstellt und wir versenden Ihre Anfragen."
-
 #: froide/foirequest/views/message.py:56
 msgid "Your message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."
@@ -7427,7 +7425,7 @@ msgstr "Anfrage der Woche"
 
 #: froide/frontpage/models.py:45
 msgid "Featured Requests"
-msgstr "Anfragen der Woche"
+msgstr "Anfrage der Woche"
 
 #: froide/georegion/admin.py:20
 msgid "Relative to"
@@ -8462,15 +8460,15 @@ msgstr ""
 "Beste Grüße\n"
 "{site_name}"
 
-#. Translators: URL part
-#: froide/publicbody/jurisdiction_urls.py:12
-msgid "entity"
-msgstr "behoerde"
+#: froide/publicbody/jurisdiction_urls.py:11 froide/urls.py:135
+msgctxt "url part"
+msgid "entity/"
+msgstr "behoerde/"
 
-#. Translators: URL part
-#: froide/publicbody/jurisdiction_urls.py:17
-msgid "entities"
-msgstr "behoerden"
+#: froide/publicbody/jurisdiction_urls.py:15 froide/urls.py:137
+msgctxt "url part"
+msgid "entities/"
+msgstr "behoerden/"
 
 #: froide/publicbody/management/commands/validate_publicbodies.py:47
 msgid "Public body validation results"
@@ -9845,16 +9843,6 @@ msgctxt "url part"
 msgid "entity/<slug:slug>/"
 msgstr "behoerde/<slug:slug>/"
 
-#: froide/urls.py:135
-msgctxt "url part"
-msgid "entity/"
-msgstr "behoerde/"
-
-#: froide/urls.py:137
-msgctxt "url part"
-msgid "entities/"
-msgstr "behoerden/"
-
 #: froide/urls.py:138
 msgctxt "url part"
 msgid "law/"
@@ -9905,6 +9893,15 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#~ msgid "entity"
+#~ msgstr "behoerde"
+
+#, fuzzy
+#~| msgctxt "url part"
+#~| msgid "entities"
+#~ msgid "entities"
+#~ msgstr "behoerden"
+
 #~ msgid "Personal visit"
 #~ msgstr "Persönlicher Besuch"
 
@@ -9928,10 +9925,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgctxt "url part"
 #~ msgid "entity"
 #~ msgstr "behoerde"
-
-#~ msgctxt "url part"
-#~ msgid "entities"
-#~ msgstr "behoerden"
 
 #~ msgctxt "url part"
 #~ msgid "law"
@@ -10744,11 +10737,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid "Profile of %(name)s"
 #~ msgstr "Profil von %(name)s"
 
-#~ msgid "One Request"
-#~ msgid_plural "%(counter)s requests"
-#~ msgstr[0] "Eine Anfrage"
-#~ msgstr[1] "%(counter)s Anfragen"
-
 #~ msgid "Redaction process started, please wait..."
 #~ msgstr "Schwärzung erfolgt, bitte warten..."
 
@@ -11333,9 +11321,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "%(site_name)s: Request became asleep"
 #~ msgstr "%(site_name)s: Ihre Anfrage ist eingeschlafen"
-
-#~ msgid "Search your requests"
-#~ msgstr "Suchen Sie nach Anfragen"
 
 #~ msgid "Search your requests by title"
 #~ msgstr "Durchsuchen Sie Ihre Anfragen nach Titel"
