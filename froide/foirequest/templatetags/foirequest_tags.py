@@ -117,8 +117,14 @@ def redact_message(message, request):
 
 @register.simple_tag
 def redact_message_short(message, request):
-    real_content = unify(message.get_real_content())
-    redacted_content = unify(message.get_content())
+    subject, redacted_subject = '', ''
+    if message.request.title not in message.subject:
+        subject = message.subject
+        redacted_subject = message.subject_redacted
+    real_content = unify('{} {}'.format(
+        subject, message.get_real_content()).strip())
+    redacted_content = unify('{} {}'.format(
+        redacted_subject, message.get_content()).strip())
 
     content_normal = split_text_by_separator(real_content)
     content_redacted = split_text_by_separator(redacted_content)
