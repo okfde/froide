@@ -10,13 +10,14 @@
   <div class="container">
     <div class="row mt-5 justify-content-center">
       <div class="col-6 col-md-3">
-        <img src="{% static 'img/onboarding/request-sent.svg' %}" alt="{% trans 'Request sent' %}">
+        <img src="{% static 'img/onboarding/request-sent.svg' %}" alt="{% trans 'Request sent' %}" class="w-100">
       </div>
     </div>
+
     <div class="row mt-5 mb-5 justify-content-center">
       <div class="col-md-8 text-center">
 
-        <h2>
+        <h2 class="my-3">
           {% if foiproject %}
             {% trans "Your project was created!" %}
           {% else %}
@@ -24,28 +25,54 @@
           {% endif %}
         </h2>
 
-        {% if foirequest %}
-          <p class="lead">
-            {% blocktrans with title=foirequest.title url=foirequest.get_absolute_url %}
-              Your request “<a href="{{ url }}">{{ title }}</a>” has been sent.
-            {% endblocktrans %}
-          </p>
-          <p>
-            {% trans "We will send you an email when you receive a reply from the public body." %}
-          </p>
-        {% endif %}
-        {% if foiproject %}
-          <p class="lead">
-            {% blocktrans with title=foiproject.title url=foiproject.get_absolute_url %}
-              Your project “<a href="{{ url }}">{{ title }}</a>” has been created and its requests are being sent out now.
-            {% endblocktrans %}
-          </p>
-        {% endif %}
+        <div class="my-5">
+          {% if foirequest %}
+            <p class="mb-0">
+              {% trans "We will send you an email when you receive a reply from the public body." %}
+            </p>
+            <p class="mt-1">
+              <a href="{{ url }}" class="font-weight-bold">
+                {% trans "view your request" %}
+              </a>
+            </p>
+          {% endif %}
+          {% if foiproject %}
+            <p class="mb-0">
+              {% trans "The requests are being sent out now." %}
+            </p>
+            <p class="mt-0">
+              <a href="{{ url }}" class="font-weight-bold">
+                {% trans "view your project" %}
+              </a>
+            </p>
+          {% endif %}
+        </div>
 
+        <div class="my-5">
+          <p class="mb-0">
+            {% if foiproject %}
+              {% trans "Share your project with others!" %}
+            {% else %}
+              {% trans "Share your request with others!" %}
+            {% endif %}
+          </p>
+          <p class="mt-1">
+            <a href="https://twitter.com/share?url={{ url | urlencode }}" class="font-weight-bold">
+              <i class="fa fa-twitter mr-1"></i>
+              {% trans "Tweet request" %}
+            </a>
+
+            <a href="https://www.facebook.com/share.php?u={{ url | urlencode }}" class="font-weight-bold ml-3">
+              <i class="fa fa-facebook mr-1"></i>
+              {% trans "Share request" %}
+            </a>
+          </p>
+        </div>
+
+        {% block foirequest_sent_footer %}{% endblock %}
       </div>
     </div>
   </div>
   
-  {% block foirequest_sent_footer %}{% endblock %}
 
 {% endblock %}

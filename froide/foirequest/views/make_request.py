@@ -461,13 +461,8 @@ class MakeRequestView(FormView):
             params = {}
             if isinstance(foi_object, FoiRequest):
                 params['request'] = str(foi_object.pk).encode('utf-8')
-                messages.add_message(self.request, messages.INFO,
-                    _('Your request has been sent.'))
             else:
                 params['project'] = str(foi_object.pk).encode('utf-8')
-                messages.add_message(self.request, messages.INFO,
-                    _('Your project has been created and we are sending your '
-                      'requests.'))
 
             if special_redirect:
                 special_redirect = update_query_params(special_redirect, params)
