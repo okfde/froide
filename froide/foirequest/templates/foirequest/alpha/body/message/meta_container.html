@@ -12,10 +12,13 @@
       {% if object|can_write_foirequest:request %}
         {% if message.is_response %}
           <span title="{{ message.sender_email }}">
-            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
-              {{ message.user_real_sender }}
-            </span>
-            – {{ message.sender_public_body.name }}
+            {% if message.user_real_sender != message.sender_public_body.name %}
+              <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+                {{ message.user_real_sender }}
+              </span>
+              –
+            {% endif %}
+            {{ message.sender_public_body.name }}
           </span>
           <span class="d-print-none">
             <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
