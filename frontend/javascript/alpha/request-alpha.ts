@@ -17,9 +17,8 @@ const initRequestPage = () => {
   const messages: Message[] = parseMessageContainers()
   if (!messages.length) return
 
-  initSummaryForm()
-  initTagsForm()
-  initExpandableDescription()
+  initInlineEditForms()
+  initExpandableDescriptions()
 
   initMessageMarks()
 
@@ -105,38 +104,24 @@ const parseMessageContainers = () => {
   return messages
 }
 
-const initSummaryForm = () => {
-  const buttonsArr = Array.from(document.querySelectorAll('.toggle-summary-form-btn')) as HTMLElement[]
-  const editButtonsContainer = document.querySelector('.request-edit-buttons')
-  const form = document.querySelector('.request-summary-form')
-  const descr = document.querySelector('.request-descr')
-  const tags = document.querySelector('.request-tags')
+const initInlineEditForms = () => {
+  const buttonsArr = Array.from(document.querySelectorAll('[data-inlineedit]')) as HTMLElement[]
   buttonsArr.forEach(el => {
-    el.addEventListener('click', (e: MouseEvent) => {
+    if (!el.dataset.inlineedit) { return }
+    const targetForm = document.querySelector(el.dataset.inlineedit) as HTMLElement
+    if (!targetForm) { return }
+
+    const toggle = (e: MouseEvent) => {
       e.preventDefault()
-      form?.classList.toggle('d-none')
-      descr?.classList.toggle('d-none')
-      tags?.classList.toggle('d-none')
-      editButtonsContainer?.classList.toggle('d-none')
-    })
+      el.parentElement?.classList.toggle('d-none')
+      targetForm.classList.toggle('d-none')
+    }
 
-  })
-}
+    el.addEventListener('click', toggle)
 
-const initTagsForm = () => {
-  const buttonsArr = Array.from(document.querySelectorAll('.toggle-tags-form-btn')) as HTMLElement[]
-  const form = document.querySelector('.request-tags-form')
-  const list = document.querySelector('.request-tags-list')
-  const editButtonsContainer = document.querySelector('.request-edit-buttons')
-
-  buttonsArr.forEach(el => {
-    el.addEventListener('click', (e: MouseEvent) => {
-      e.preventDefault()
-      form?.classList.toggle('d-none')
-      list?.classList.toggle('d-none')
-      editButtonsContainer?.classList.toggle('d-none')
-    })
-
+    const cancelButton = targetForm.querySelector('[data-inlineeditcancel]') as HTMLElement
+    if (!cancelButton) { return }
+    cancelButton.addEventListener('click', toggle)
   })
 }
 
@@ -186,23 +171,25 @@ const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[
   }
 }
 
-const initExpandableDescription = () => {
-  const textContainer = document.querySelector('.request-descr')
-  const readmoreContainer = document.querySelector('.request-descr-read-more')
-  const expandButton = document.querySelector('.expand-descr-btn')
-  const clientHeight = textContainer?.clientHeight || 0
-  const scrollHeight = textContainer?.scrollHeight || 0
+const initExpandableDescriptions = () => {
+  const textContainers = document.querySelectorAll('.request-descr')
+  Array.from(textContainers).forEach(textContainer => {
+    const readmoreContainer = textContainer.querySelector('.request-descr-read-more')
+    const expandButton = textContainer.querySelector('.expand-descr-btn')
+    const clientHeight = textContainer?.clientHeight || 0
+    const scrollHeight = textContainer?.scrollHeight || 0
 
-  const expand = () => {
-    readmoreContainer?.classList.add('d-none')
-    textContainer?.classList.remove('request-descr--collapsed')
-  }
+    const expand = () => {
+      readmoreContainer?.classList.add('d-none')
+      textContainer?.classList.remove('request-descr--collapsed')
+    }
 
-  if (scrollHeight <= clientHeight) {
-    expand()
-  } else {
-    expandButton?.addEventListener('click', () => expand())
-  }
+    if (scrollHeight <= clientHeight) {
+      expand()
+    } else {
+      expandButton?.addEventListener('click', () => expand())
+    }
+  })
 }
 
 const scrollToComment = (messages: Message[]) => {

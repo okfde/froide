@@ -30,60 +30,89 @@
           {% endif %}
         </div>
 
-        <!-- summary / description -->
+        <!-- description -->
         <div class="mt-3">
-
           <div class="request-descr request-descr--collapsed">
-            {% if object.summary %}
-              <h5>{% trans "Summary of Resolution" %}</h5>
-              {{ object.summary|urlizetrunc:40|linebreaks }}
-            {% elif object.description %}
-              {{ object.get_description|urlizetrunc:40|linebreaks }}
-            {% endif %}
+            {{ object.get_description|urlizetrunc:40|linebreaks }}
             <div class="request-descr-read-more">
               <button type="button" class="btn btn-light btn-sm btn-block expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
             </div>
           </div>
+        </div>
 
-          <!-- write summary form -->
-          {% if object|can_write_foirequest:request and object.status_is_final %}
-            <div class="mb-3 request-summary-form d-none">
-              <h4>{% blocktrans %}Resolution Summary{% endblocktrans %}</h4>
+        {% if object.summary or object|can_write_foirequest:request and object.reply_received %}
+        <!-- result summary -->
+        <div class="mt-3">
+          <h5>{% trans "Result of request" %}</h5>
+            <div>
+            {% if not object.summary and object|can_write_foirequest:request %}
+              <p class="text-muted mb-0">
+                {% translate "What have you learned from this request? Write a short summary of the results." %}
+              </p>
+            {% endif %}
+            {% if object.summary %}
+              <div class="request-descr request-descr--collapsed">
+                {{ object.summary|urlizetrunc:40|linebreaks }}
+                <div class="request-descr-read-more">
+                  <button type="button" class="btn btn-light btn-sm btn-block expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+                </div>
+              </div>
+            {% endif %}
+            {% if object|can_write_foirequest:request %}
+              <a href="#" data-inlineedit="#request-summary-form">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                {% if object.summary %}{% trans "Edit summary" %}{% else %}{% trans "Write summary" %}{% endif %}
+              </a>
+            {% endif %}
+          </div>
+          {% if object|can_write_foirequest:request %}
+            <div class="mb-3 request-summary-form d-none" id="request-summary-form">
               <form method="post" class="disable-submit" action="{% url 'foirequest-set_summary' slug=object.slug %}">
                 {% csrf_token %}
-                <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
-                <textarea rows="8" class="form-control mb-3" name="summary">{% if object.summary %}{{ object.summary }}{% endif %}</textarea>
-                <button type="submit" class="btn btn-primary mr-2">{% blocktrans %}Save Summary{% endblocktrans %}</button>
-                <button type="button" class="btn btn-secondary toggle-summary-form-btn">{% blocktrans %}Cancel{% endblocktrans %}</button>
+                {% if object.summary %}
+                  <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+                {% endif %}
+                <textarea rows="8" class="form-control mb-3" name="summary" placeholder="{% trans 'Summary of the result of your request' %}">{{ object.summary }}</textarea>
+                <button type="submit" class="btn btn-primary mr-2">
+                  {% blocktrans %}Save{% endblocktrans %}
+                </button>
+                <button type="button" class="btn btn-secondary" data-inlineeditcancel="true">
+                  {% blocktrans %}Cancel{% endblocktrans %}
+                </button>
               </form>
             </div>
           {% endif %}
         </div>
+        {% endif %}
 
         <!-- tags -->
-        <div class="request-tags">
-
-          <!-- tags list -->
-          {% with object.tags.all as tags %}
-            {% if tags %}
-              <div class="request-tags-list">
-                <ul class="mb-3 list-unstyled d-flex flex-wrap">
-                  {% for tag in tags %}
-                    <li class="mr-2 smaller">
-                      <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
-                        <i class="fa fa-tags" aria-hidden="true"></i>
-                        <span>{{ tag.name }}</span>
-                      </a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
+        <div class="request-tags mt-3 mb-3">
+          <div>
+            <!-- tags list -->
+            {% with object.tags.all as tags %}
+              {% if tags %}
+                <div class="request-tags-list">
+                  <ul class="list-unstyled d-flex flex-wrap mb-0">
+                    {% for tag in tags %}
+                      <li class="mr-2 smaller">
+                        <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
+                          <i class="fa fa-tags" aria-hidden="true"></i>
+                          <span>{{ tag.name }}</span>
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+            {% endwith %}
+            {% if object|can_write_foirequest:request %}
+              <a href="#" data-inlineedit="#request-tags-form"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Add Tags" %}</a>
             {% endif %}
-          {% endwith %}
+          </div>
 
           <!-- tags form-->
           {% if object|can_write_foirequest:request %}
-            <div class="request-tags-form mb-3 d-none">
+            <div class="request-tags-form mb-3 d-none" id="request-tags-form">
               <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
                 {% csrf_token %}
                 <div class="mb-3">
@@ -92,28 +121,12 @@
                   {% endwith %}
                 </div>
                 <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
-                <button class="btn btn-secondary toggle-tags-form-btn" type="button">{% trans "Cancel" %}</button>
+                <button class="btn btn-secondary" data-inlineeditcancel="true" type="button">{% trans "Cancel" %}</button>
               </form>
             </div>
           {% endif %}
 
         </div>
-
-        <!-- Edit buttons -->
-        {% if object|can_write_foirequest:request %}
-        <div class="request-edit-buttons">
-          <ul class="list-unstyled mb-0 d-md-flex">
-            {% if object.status_is_final %}
-              <li class="mb-2 mb-md-0 mr-md-3">
-                <a href="#" class="toggle-summary-form-btn"><i class="fa fa-pencil" aria-hidden="true"></i> {% if object.summary %}{% trans "Edit summary" %}{% else %}{% trans "Write summary" %}{% endif %}</a>
-              </li>
-            {% endif %}
-            <li>
-              <a href="#" class="toggle-tags-form-btn"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Add Tags" %}</a>
-            </li>
-          </ul>
-        </div>
-        {% endif %}
 
       </div>
 
