@@ -45,6 +45,21 @@
 
     <ul class="info-box__list {% if active_tab == 'set-status' %}d-none{% endif %}">
 
+
+      {% if not object.public and object.is_foi and object|can_write_foirequest:request %}
+        <li class="info-box__list-item info-box__list-item--inset bg-yellow-10 d-flex my-0 py-2 border-top border-yellow-20 d-print-none">
+          <form class="form-inline disable-submit" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+            {% csrf_token %}
+            <p>
+              {% blocktrans %}This request is <strong>not public</strong>.{% endblocktrans %}
+            </p>
+            <p class="m-2 text-right">
+              <button type="submit" class="btn ml-auto btn-success">{% blocktrans %}Make public{% endblocktrans %}</button>
+            </p>
+          </form>
+        </li>
+      {% endif %}
+
       {# Admin/moderation links #}
       {% if object|can_moderate_foirequest:request %}
         <li class="info-box__list-item info-box__list-item--inset bg-blue-10 d-flex my-0 border-top border-blue-20">
@@ -138,7 +153,7 @@
         </li>
       {% endblock followers %}
 
-      {% if object.visibility == 2 %}
+      {% if object.is_public %}
         <li class="info-box__list-item info-box__list-item--has-divider">
 
           <!-- copy url -->

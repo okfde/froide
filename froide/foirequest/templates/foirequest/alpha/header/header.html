@@ -10,6 +10,32 @@
 {% endblock extra_head %}
 
 <div class="container">
+
+
+  {% if not object.public and object|can_read_foirequest_anonymous:request %}
+  <div class="alert alert-warning">
+    <h4>{% trans "This request is not public!" %}</h4>
+    <p>
+      {% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}
+    </p>
+  </div>
+  {% elif object|can_read_foirequest_anonymous:request %}
+  <div class="alert alert-warning">
+    <h4>{% trans "Special access" %}</h4>
+    <p>
+      {% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}
+    </p>
+  </div>
+  {% endif %}
+
+  {% if not object.is_foi %}
+  <div class="alert alert-info">
+    {% blocktrans %}This request is not an FoI request. This site is only for requesting specific, non-personal information from public bodies.{% endblocktrans %}
+  </div>
+  {% endif %}
+
+  {% block foirequest_header %}{% endblock %}
+
   <div class="row">
     <!-- left column (title, description, tags etc.) -->
     <div class="col-md-6 col-lg-7 col-xl-8 mb-4">

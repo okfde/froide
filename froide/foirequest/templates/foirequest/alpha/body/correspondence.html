@@ -18,4 +18,11 @@
         <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
     {% endfor %}
   {% endblock foirequest_messages %}
+
+  {% if object.closed %}
+    <div class="alert alert-secondary">
+      {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
+    </div>
+  {% endif %}
+
 </div>
