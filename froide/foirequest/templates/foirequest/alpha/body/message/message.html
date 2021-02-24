@@ -69,7 +69,11 @@
           {% blocktrans %}This message is not yet public.{% endblocktrans %}
         {% else %}
           {% if not message.plaintext %}
-            <i>{% trans 'No message text' %}</i>
+            {% if message.subject %}
+              {% redact_subject message request %}
+            {% else %}
+              <i>{% trans 'No message text' %}</i>
+            {% endif %}
           {% else %}
             {% redact_message_short message request %}
           {% endif %}
