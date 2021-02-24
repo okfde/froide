@@ -9,8 +9,23 @@
   <path d="m37 17.044-4.1746 31.157 4.1746 4.4169 4.1746-4.4169z" fill="#fff"/>
  </g>
  <g fill="none" stroke="#719eff" stroke-linecap="round" stroke-linejoin="round">
-  <path d="m14.385 32.35v9z" stroke-width="2.1167"/>
-  <path d="m37 14.376v2z" stroke-width="2.1167"/>
-  <path d="m58.693 20.215v3z" stroke-width="2.1167"/>
+  <path d="m14.385 32.35v9z" stroke-width="2.1167">
+    <animateTransform id="a1" attributeName="transform" type="translate"
+      from="0 0" to="0 10" begin="1s;a2.end" dur="3s"/>
+    <animateTransform id="a2" attributeName="transform" type="translate"
+      from="0 10" to="0 0" begin="a1.end" dur="3s"/>
+  </path>
+  <path d="m37 14.376v2z" stroke-width="2.1167">
+      <animateTransform id="b1" attributeName="transform" type="translate"
+      from="0 0" to="0 3" begin="0s;b2.end" dur="2s"/>
+    <animateTransform id="b2" attributeName="transform" type="translate"
+      from="0 3" to="0 0" begin="b1.end" dur="2s"/>
+  </path>
+  <path d="m58.693 20.215v3z" stroke-width="2.1167">
+      <animateTransform id="c1" attributeName="transform" type="translate"
+      from="0 0" to="0 5" begin="0.5s;c2.end" dur="2s"/>
+    <animateTransform id="c2" attributeName="transform" type="translate"
+      from="0 5" to="0 0" begin="c1.end" dur="2s"/>
+  </path>
  </g>
 </svg>
