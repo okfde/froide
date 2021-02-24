@@ -87,6 +87,9 @@
     {% endaddtoblock %}
 
     {% addtoblock "js" %}
+      <script src="{% static 'js/common.js' %}"></script>
+    {% endaddtoblock %}
+    {% addtoblock "js" %}
       <script src="{% static 'js/publicbody.js' %}" defer></script>
     {% endaddtoblock %}
     {% addtoblock "js" %}
