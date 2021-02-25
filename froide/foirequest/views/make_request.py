@@ -570,9 +570,10 @@ class RequestSentView(LoginRequiredMixin, TemplateView):
         context['foirequest'] = self.get_foirequest()
         context['foiproject'] = self.get_foiproject()
         foi_obj = context['foirequest'] or context['foiproject']
-        context['is_public'] = foi_obj.is_public
-        context['url'] = foi_obj.get_absolute_url()
-        context['share_url'] = foi_obj.get_absolute_domain_url()
+        if foi_obj:
+            context['is_public'] = foi_obj.is_public
+            context['url'] = foi_obj.get_absolute_url()
+            context['share_url'] = foi_obj.get_absolute_domain_url()
         return context
 
     def get_foirequest(self):
