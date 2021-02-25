@@ -84,7 +84,7 @@
           <h5>{% trans "Result of request" %}</h5>
             <div>
             {% if not object.summary and object|can_write_foirequest:request %}
-              <p class="text-muted mb-0">
+              <p class="text-muted font-italic mb-0">
                 {% translate "What have you learned from this request? Write a short summary of the results." %}
               </p>
             {% endif %}
@@ -125,7 +125,7 @@
 
         <!-- tags -->
         <div class="request-tags mt-3 mb-3">
-          <div>
+          <div id="request-tags-list">
             <!-- tags list -->
             {% with object.tags.all as tags %}
               {% if tags %}
@@ -139,13 +139,19 @@
                         </a>
                       </li>
                     {% endfor %}
+                    <li class="mr-2 smaller">
+                      <a href="#" data-inlineedit="#request-tags-form" data-inlineeditpresentation="#request-tags-list">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        <span class="sr-only">{% trans "Edit tags" %}</span>
+                      </a>
+                    </li>
                   </ul>
                 </div>
               {% endif %}
+              {% if not tags and object|can_write_foirequest:request %}
+                  <a href="#" data-inlineedit="#request-tags-form"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Add tags" %}</a>
+              {% endif %}
             {% endwith %}
-            {% if object|can_write_foirequest:request %}
-              <a href="#" data-inlineedit="#request-tags-form"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Add Tags" %}</a>
-            {% endif %}
           </div>
 
           <!-- tags form-->

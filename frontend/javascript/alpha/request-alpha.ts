@@ -111,12 +111,20 @@ const initInlineEditForms = () => {
     const targetForm = document.querySelector(el.dataset.inlineedit) as HTMLElement
     if (!targetForm) { return }
 
+    let presentation: HTMLElement | null = null
+    if (el.dataset.inlineeditpresentation) {
+      presentation = document.querySelector(el.dataset.inlineeditpresentation) as HTMLElement
+    }
+    if (!presentation) {
+      presentation = el.parentElement
+    }
+
     const toggle = (e: MouseEvent) => {
       e.preventDefault()
       el.parentElement?.classList.toggle('d-none')
       targetForm.classList.toggle('d-none')
       if (targetForm.classList.contains('d-none')) {
-        el.parentElement?.scrollIntoView({behavior: 'smooth', block: 'center'})
+        presentation?.scrollIntoView({behavior: 'smooth', block: 'center'})
       } else {
         targetForm.scrollIntoView({behavior: 'smooth', block: 'center'})
       }
