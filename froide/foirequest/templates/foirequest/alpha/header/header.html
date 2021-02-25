@@ -56,6 +56,18 @@
           {% endif %}
         </div>
 
+        {% if object.project %}
+          {% if object.project.public or object|can_write_foirequest:request %}
+            <!-- project -->
+            <div class="mt-3 text-gray-500">
+              {% blocktrans %}Project:{% endblocktrans %}
+              <a class="text-gray-500 font-weight-bold" href="{{ object.project.get_absolute_url }}">
+                {{ object.project.title }}
+              </a>
+            </div>
+          {% endif %}
+        {% endif %}
+
         <!-- description -->
         <div class="mt-3">
           <div class="request-descr request-descr--collapsed">
