@@ -64,7 +64,8 @@ MESSAGE_KIND_ICONS = {
     MessageKind.EMAIL: 'mail',
     MessageKind.POST: 'newspaper-o',
     MessageKind.FAX: 'fax',
-    MessageKind.UPLOAD: 'upload',
+    # it's received, so the download icon seems more appropriate
+    MessageKind.UPLOAD: 'download',
     MessageKind.PHONE: 'phone',
     MessageKind.VISIT: 'handshake-o'
 }
