@@ -566,13 +566,13 @@ class RequestSentView(LoginRequiredMixin, TemplateView):
     template_name = 'foirequest/sent.html'
 
     def get_context_data(self, **kwargs):
-        context = super(RequestSentView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['foirequest'] = self.get_foirequest()
         context['foiproject'] = self.get_foiproject()
-        if context['foirequest']:
-            context['url'] = context['foirequest'].get_absolute_url()
-        if context['foiproject']:
-            context['url'] = context['foiproject'].get_absolute_url()
+        foi_obj = context['foirequest'] or context['foiproject']
+        context['is_public'] = foi_obj.is_public
+        context['url'] = foi_obj.get_absolute_url()
+        context['share_url'] = foi_obj.get_absolute_domain_url()
         return context
 
     def get_foirequest(self):

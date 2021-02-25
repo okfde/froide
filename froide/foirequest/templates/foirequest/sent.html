@@ -47,27 +47,28 @@
             </p>
           {% endif %}
         </div>
+        {% if is_public %}
+          <div class="my-5">
+            <p class="mb-0">
+              {% if foiproject %}
+                {% trans "Share your project with others!" %}
+              {% else %}
+                {% trans "Share your request with others!" %}
+              {% endif %}
+            </p>
+            <p class="mt-1">
+              <a href="https://twitter.com/share?url={{ share_url | urlencode }}" class="font-weight-bold">
+                <i class="fa fa-twitter mr-1"></i>
+                {% trans "Tweet request" %}
+              </a>
 
-        <div class="my-5">
-          <p class="mb-0">
-            {% if foiproject %}
-              {% trans "Share your project with others!" %}
-            {% else %}
-              {% trans "Share your request with others!" %}
-            {% endif %}
-          </p>
-          <p class="mt-1">
-            <a href="https://twitter.com/share?url={{ url | urlencode }}" class="font-weight-bold">
-              <i class="fa fa-twitter mr-1"></i>
-              {% trans "Tweet request" %}
-            </a>
-
-            <a href="https://www.facebook.com/share.php?u={{ url | urlencode }}" class="font-weight-bold ml-3">
-              <i class="fa fa-facebook mr-1"></i>
-              {% trans "Share request" %}
-            </a>
-          </p>
-        </div>
+              <a href="https://www.facebook.com/share.php?u={{ share_url | urlencode }}" class="font-weight-bold ml-3">
+                <i class="fa fa-facebook mr-1"></i>
+                {% trans "Share request" %}
+              </a>
+            </p>
+          </div>
+        {% endif %}
 
         {% block foirequest_sent_footer %}{% endblock %}
       </div>
