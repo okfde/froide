@@ -420,11 +420,11 @@ class FoiRequest(models.Model):
                 }
             groups[key]['messages'].append(msg)
 
-            if msg.timestamp > due_date:
+            if due_date and msg.timestamp > due_date:
                 has_overdue_messages = True
 
         # loop groups and set "has_overdue_message"
-        if has_overdue_messages is True:
+        if has_overdue_messages and due_date:
             for group_key, group in reversed(groups.items()):
                 if group['date'] < due_date:
                     group['show_overdue_message'] = True
