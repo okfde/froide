@@ -557,6 +557,15 @@ class FoiRequest(models.Model):
             return None
         return mes[0]
 
+    def is_sent(self):
+        return (
+            not self.needs_public_body() and
+            not self.awaits_user_confirmation()
+        )
+
+    def awaits_user_confirmation(self):
+        return self.status == Status.AWAITING_USER_CONFIRMATION
+
     def status_is_final(self):
         return self.status == Status.RESOLVED
 
