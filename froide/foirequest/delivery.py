@@ -35,6 +35,7 @@ class PostfixDeliveryReporter(object):
     ALL_RE = r' {mail_id}: '
     RECIPIENT_RE = r'{mail_id}: to=<{recipient}'
     STATUS_RE = re.compile(r'status=(\w+)')
+    MAIL_ID_DELIMITER = re.compile(r'(: removed)')
     TIMESTAMP_RE = re.compile(r'\w{3}\s+\d+\s+\d+:\d+:\d+')
     TIME_PARSE_STR = '%b %d %H:%M:%S'
 
@@ -110,7 +111,22 @@ class PostfixDeliveryReporter(object):
         return candidates[0]
 
     def extract(self, lines, mail_id, sender_re, recipient, timestamp):
+        '''
+        postfix mail queue ids are not unique forever!
+        In case they happen to appear twice
+        in the same log file, split those sections apart.
+        '''
         text = ''.join(lines)
+        line_parts = self.MAIL_ID_DELIMITER.split(text)
+        texts = [''.join(x) for x in zip(
+            line_parts[::2], line_parts[1::2])
+        ]
+        for text in texts:
+            result = self.extract_part(text, mail_id, sender_re, recipient, timestamp)
+            if result:
+                return result
+
+    def extract_part(self, text, mail_id, sender_re, recipient, timestamp):
         recipient_re = re.compile(self.RECIPIENT_RE.format(
                 mail_id=mail_id, recipient=recipient))
         match = recipient_re.search(text)
