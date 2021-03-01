@@ -107,9 +107,7 @@
       >
         <div class="info-box__list-label">
           {% blocktrans %}Due date{% endblocktrans %}
-          {% block foirequest_explain_deadline %}
-            <a class="d-print-none" href="/hilfe/howto/fuer-behoerden/#frist" title="Wie wird das berechnet?"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a>
-          {% endblock %}
+          {% block foirequest_explain_deadline %}{% endblock %}
 
           <!-- Extend due date form -->
           {% comment %} merge this form with "set status form"! {% endcomment %}

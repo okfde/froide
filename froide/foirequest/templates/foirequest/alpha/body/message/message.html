@@ -7,7 +7,11 @@
 {% get_comment_list message as comment_list %}
 
 
+{% block before_message_container %}{% endblock %}
+
 <div class="alpha-message" id="{{ message.get_html_id }}" data-timeline-key="{{ message.timestamp|date:'Y-m' }}">
+
+  {% block before_message %}{% endblock %}
 
   <!-- head -->
   <div class="d-flex p-3 alpha-message__head">
@@ -147,6 +151,9 @@
 
       {% endif %}
     </div>
+
+    {% block after_message %}{% endblock %}
+
     <div class="alpha-message__toolbar {% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky{% endif %}">
 
       <!-- footer buttons -->
@@ -244,3 +251,5 @@
   </div>
 
 </div>
+
+{% block after_message_container %}{% endblock %}
