@@ -81,8 +81,16 @@
         {% if object.summary or object|can_write_foirequest:request and object.reply_received %}
         <!-- result summary -->
         <div class="mt-3">
-          <h5>{% trans "Result of request" %}</h5>
-            <div>
+          <h5>
+            {% trans "Result of request" %}
+            {% if object|can_write_foirequest:request %}
+              <a href="#" data-inlineedit="#request-summary-form" data-inlineeditpresentation="#request-summary">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span class="sr-only">{% trans "Edit summary" %}</span>
+              </a>
+            {% endif %}
+          </h5>
+            <div id="request-summary">
             {% if not object.summary and object|can_write_foirequest:request %}
               <p class="text-muted font-italic mb-0">
                 {% translate "What have you learned from this request? Write a short summary of the results." %}
@@ -96,15 +104,15 @@
                 </div>
               </div>
             {% endif %}
-            {% if object|can_write_foirequest:request %}
+            {% if not object.summary and object|can_write_foirequest:request %}
               <a href="#" data-inlineedit="#request-summary-form">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
-                {% if object.summary %}{% trans "Edit summary" %}{% else %}{% trans "Write summary" %}{% endif %}
+                {% trans "Write summary" %}
               </a>
             {% endif %}
           </div>
           {% if object|can_write_foirequest:request %}
-            <div class="mb-3 request-summary-form d-none" id="request-summary-form">
+            <div class="mb-3 request-summary-form d-none" id="request-summary-form" data-autofocus="[name='summary']">
               <form method="post" class="disable-submit" action="{% url 'foirequest-set_summary' slug=object.slug %}">
                 {% csrf_token %}
                 {% if object.summary %}
@@ -156,7 +164,7 @@
 
           <!-- tags form-->
           {% if object|can_write_foirequest:request %}
-            <div class="request-tags-form mb-3 d-none" id="request-tags-form">
+            <div class="request-tags-form mb-3 d-none" id="request-tags-form" data-autofocus=".choices__input.choices__input--cloned">
               <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
                 {% csrf_token %}
                 <div class="mb-3">

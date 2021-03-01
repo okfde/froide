@@ -12,7 +12,7 @@
 
 <div
   id="infobox"
-  class="info-box info-box--{% if object.is_overdue or object.resolution == 'refused' %}danger{% elif object.status_is_final and object.is_successful or object.resolution == 'partially_successful' %}success{% else %}regular{% endif %}"
+  class="info-box mb-3 info-box--{% if object.is_overdue or object.resolution == 'refused' %}danger{% elif object.status_is_final and object.is_successful or object.resolution == 'partially_successful' %}success{% else %}regular{% endif %}"
 >
 
   <!-- header (status, status icon) -->

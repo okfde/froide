@@ -121,12 +121,18 @@ const initInlineEditForms = () => {
 
     const toggle = (e: MouseEvent) => {
       e.preventDefault()
-      el.parentElement?.classList.toggle('d-none')
+      presentation?.classList.toggle('d-none')
       targetForm.classList.toggle('d-none')
       if (targetForm.classList.contains('d-none')) {
         presentation?.scrollIntoView({behavior: 'smooth', block: 'center'})
       } else {
         targetForm.scrollIntoView({behavior: 'smooth', block: 'center'})
+        if (targetForm.dataset.autofocus) {
+          const autoFocus = targetForm.querySelector(targetForm.dataset.autofocus) as HTMLInputElement
+          if (autoFocus) {
+            autoFocus.focus()
+          }
+        }
       }
     }
 
