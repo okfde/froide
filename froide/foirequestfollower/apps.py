@@ -61,8 +61,6 @@ def merge_user(sender, old_user=None, new_user=None, **kwargs):
         dupe=('user_id', 'request_id',)
     )
     # Don't follow your own requests
-    # FIXME: this will not work in case foirequest signal has
-    # not run yet. Check if order is fix
     FoiRequestFollower.objects.filter(
         user=new_user, request__user=new_user
     ).delete()
