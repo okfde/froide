@@ -9,7 +9,7 @@ class FoiRequestFollowerConfig(AppConfig):
     verbose_name = _('FOI Request Follower')
 
     def ready(self):
-        from froide.account import account_canceled, account_merged
+        from froide.account import account_canceled, account_merged, account_email_changed
         import froide.foirequestfollower.listeners  # noqa
         from froide.account.export import registry
         from froide.bounce.signals import email_bounced, email_unsubscribed
@@ -18,6 +18,7 @@ class FoiRequestFollowerConfig(AppConfig):
         from .utils import handle_bounce, handle_unsubscribe
 
         account_canceled.connect(cancel_user)
+        account_email_changed.connect(email_changed)
         account_merged.connect(merge_user)
         registry.register(export_user_data)
 
@@ -32,6 +33,23 @@ def cancel_user(sender, user=None, **kwargs):
     if user is None:
         return
     FoiRequestFollower.objects.filter(user=user).delete()
+
+
+def email_changed(sender=None, old_email=None, **kwargs):
+    from .models import FoiRequestFollower
+
+    # Move all confirmed email subscriptions of new email
+    # to user except own requests
+    FoiRequestFollower.objects.filter(
+        email=sender.email, confirmed=True
+    ).exclude(request__user=sender).update(
+        email='', user=sender
+    )
+    # Delete (attempted) email follows with the user's
+    # email address to the users requests
+    FoiRequestFollower.objects.filter(
+        email=sender.email, request__user=sender
+    ).delete()
 
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):

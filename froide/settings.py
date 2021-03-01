@@ -52,7 +52,7 @@ class Base(Configuration):
 
         # local
         'froide.foirequest',
-        'froide.foirequestfollower',
+        'froide.foirequestfollower',  # needs to come after foirequest
         'froide.frontpage',
         'froide.georegion',
         'froide.publicbody',
