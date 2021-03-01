@@ -275,12 +275,14 @@ class ForeignKeyFilter(admin.FieldListFilter):
     def expected_parameters(self):
         return [self.field_path]
 
-    def choices(self, cl):
+    def choices(self, changelist):
+        params = changelist.params.copy()
+        params.pop(self.field_path, None)
+
         return [{
             'value': self.lookup_val,
             'field_path': self.field_path,
-            'query_string': cl.get_query_string({},
-                [self.field_path]),
+            'params': params,
         }]
 
 
