@@ -13,6 +13,7 @@ from froide.foirequest.models import FoiRequest
 from froide.helper.csv_utils import export_csv_response
 from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 
+from . import account_email_changed
 from .models import User, TaggedUser, UserTag, AccountBlocklist, UserPreference
 from .services import AccountService
 from .export import get_export_access_token
@@ -101,6 +102,12 @@ class UserAdmin(DjangoUserAdmin):
                 name='admin-account_user-become_user'),
         ]
         return my_urls + urls
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        if 'email' in form.changed_data:
+            account_email_changed.send_robust(sender=obj)
 
     def request_count(self, obj):
         return obj.request_count

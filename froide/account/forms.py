@@ -16,6 +16,7 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.content_urls import get_content_url
 from froide.helper.widgets import BootstrapCheckboxInput
 
+from . import account_email_changed
 from .widgets import ConfirmationWidget
 from .models import AccountBlocklist
 from .services import AccountService
@@ -358,9 +359,11 @@ class UserEmailConfirmationForm(forms.Form):
         return self.cleaned_data
 
     def save(self):
+        old_email = self.user.email
         self.user.email = self.cleaned_data['email']
         AccountService.check_against_blocklist(self.user, save=False)
         self.user.save()
+        account_email_changed.send_robust(sender=self.user, old_email=old_email)
 
 
 class UserDeleteForm(forms.Form):
