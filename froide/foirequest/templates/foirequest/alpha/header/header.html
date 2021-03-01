@@ -83,7 +83,7 @@
         <div class="mt-3">
           <h5>
             {% trans "Result of request" %}
-            {% if object|can_write_foirequest:request %}
+            {% if object|can_write_foirequest:request and object.summary %}
               <a href="#" data-inlineedit="#request-summary-form" data-inlineeditpresentation="#request-summary">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
                 <span class="sr-only">{% trans "Edit summary" %}</span>
@@ -105,7 +105,7 @@
               </div>
             {% endif %}
             {% if not object.summary and object|can_write_foirequest:request %}
-              <a href="#" data-inlineedit="#request-summary-form">
+              <a href="#" data-inlineedit="#request-summary-form" data-inlineeditpresentation="#request-summary">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
                 {% trans "Write summary" %}
               </a>
