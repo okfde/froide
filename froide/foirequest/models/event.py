@@ -35,6 +35,7 @@ class EventName(models.TextChoices):
 
     ATTACHMENT_UPLOADED = "attachment_uploaded", _('attachments were uploaded')
     ATTACHMENT_PUBLISHED = "attachment_published", _('an attachment was published')
+    ATTACHMENT_DEPUBLISHED = "attachment_depublished", _('an attachment was depublished')
     ATTACHMENT_REDACTED = "attachment_redacted", _('an attachment was redacted')
     ATTACHMENT_DELETED = "attachment_deleted", _('an attachment was deleted')
     DOCUMENT_CREATED = "document_created", _('a document was created')
@@ -79,6 +80,9 @@ EVENT_DETAILS = {
     ),
     EventName.ATTACHMENT_PUBLISHED: EventDetail(_(
         "An attachment was published on request.")
+    ),
+    EventName.ATTACHMENT_DEPUBLISHED: EventDetail(_(
+        "An attachment was depublished.")
     ),
     EventName.REQUEST_REDIRECTED: EventDetail(_(
         "Request was redirected to {public_body} and due date has been reset.")
