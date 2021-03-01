@@ -211,23 +211,22 @@
         </a>
       </li>
 
-      {# TODO: set status tab: show when people come from email? #}
-      {% comment %} {% if active_tab == 'set-status' %}
-        <li class="alpha-tabs__tab">
+      {% if object|can_manage_foirequest:request %}
+        <li class="alpha-tabs__tab ml-auto">
           <a
-            href="#set-status"
-            id="set-status-tab"
+            href="#settings-panel"
+            id="settings-tab"
             data-toggle="tab"
             class="alpha-tabs__tab-link"
             data-toggle="tab"
-            aria-controls="set-status"
-            aria-selected="false"
+            aria-controls="settings-panel"
+            aria-selected="true"
             role="tab"
           >
-            <span>{% trans "Set status" %}</span>
+            <span>{% trans "Settings" %}</span>
           </a>
         </li>
-      {% endif %} {% endcomment %}
+      {% endif %}
 
     </ul>
   </div>

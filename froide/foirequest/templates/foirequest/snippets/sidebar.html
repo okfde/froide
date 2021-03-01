@@ -71,7 +71,7 @@
       class="form-control input-sm copy-text" readonly/>
   </li>
 
-  {% if not object.public %}
+  {% if not object.public and object|can_write_foirequest:request %}
     <li class="nav-header">{% trans "Secret Short URL" %}</li>
     <li class="nav-item">
       <span class="small help">

@@ -138,6 +138,10 @@
 
   </div>
 
+  {% if object|can_manage_foirequest:request %}
+    {% include "foirequest/alpha/body/settings.html" %}
+  {% endif %}
+
   {% comment %}
     {# TODO: set status tab: show when people come from email? #}
   {% if active_tab == 'set-status' %}
