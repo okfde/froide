@@ -1,3 +1,6 @@
+import calendar
+from email.utils import formatdate
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
@@ -5,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.functional import cached_property
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
@@ -380,8 +384,10 @@ class FoiMessage(models.Model):
             self._attachments = list(self.foiattachment_set.all().order_by('id'))
         return self._attachments
 
-    def get_mime_attachments(self):
-        return [(a.name, a.get_bytes(), a.filetype) for a in self.attachments]
+    def get_mime_attachments(self, attachments=None):
+        if attachments is None:
+            attachments = self.attachments
+        return [(a.name, a.get_bytes(), a.filetype) for a in attachments]
 
     def get_original_attachments(self):
         return [a for a in self.attachments if not a.is_redacted and not a.is_converted]
@@ -430,6 +436,41 @@ class FoiMessage(models.Model):
     def get_public_body_recipient_form(self):
         from ..forms import get_message_recipient_form
         return get_message_recipient_form(foimessage=self)
+
+    def as_mime_message(self):
+        klass = EmailMessage
+        if self.html:
+            klass = EmailMultiAlternatives
+
+        headers = {
+            'Date': formatdate(
+                int(calendar.timegm(self.timestamp.timetuple()))
+            ),
+            'Message-ID': self.email_message_id,
+            'X-Froide-Hint': 'replica',
+            'X-Froide-Message-Id': self.get_absolute_domain_short_url(),
+        }
+
+        if not self.is_response:
+            headers.update({
+                'Reply-To': self.sender_email
+            })
+
+        email = klass(
+            self.subject,
+            self.plaintext,
+            self.sender_email,
+            to=[self.recipient_email],
+            headers=headers,
+        )
+        if self.html:
+            email.attach_alternative(self.html, "text/html")
+
+        atts = self.get_original_attachments()
+        mime_atts = self.get_mime_attachments(attachments=atts)
+        for mime_data in mime_atts:
+            email.attach(*mime_data)
+        return email.message()
 
     def has_delivery_status(self):
         if not self.sent or self.is_response:

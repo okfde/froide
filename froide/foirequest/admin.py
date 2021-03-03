@@ -4,6 +4,7 @@ import re
 from django.contrib import admin
 from django.db import models
 from django.shortcuts import redirect
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse, reverse_lazy
@@ -346,6 +347,9 @@ class FoiMessageAdmin(admin.ModelAdmin):
             path('<int:pk>/resend-message/',
                 self.admin_site.admin_view(self.resend_message),
                 name='foirequest-foimessage-resend_message'),
+            path('<int:pk>/download-eml/',
+                self.admin_site.admin_view(self.download_eml),
+                name='foirequest-foimessage-download_eml'),
         ]
         return my_urls + urls
 
@@ -405,6 +409,23 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
         self.message_user(request, _('Message was send again.'))
         return redirect('admin:foirequest_foimessage_change', message.id)
+
+    def download_eml(self, request, pk):
+        if not self.has_change_permission(request):
+            raise PermissionDenied
+
+        message = FoiMessage.objects.get(pk=pk, kind='email')
+
+        response = HttpResponse(
+            message.as_mime_message().as_bytes(),
+            content_type='application/octet-stream'
+        )
+        response['Content-Disposition'] = (
+            'attachment; filename="message-{}.eml"'.format(
+                message.id
+            )
+        )
+        return response
 
     def resend_messages(self, request, queryset):
         if not request.method == 'POST':

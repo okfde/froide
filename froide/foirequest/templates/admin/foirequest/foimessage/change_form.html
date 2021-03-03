@@ -7,6 +7,13 @@
       <button type="submit" class="btn btn-secondary">{% blocktrans %}Resend message{% endblocktrans %}</button>
     </form></li>
   {% endif %}
+  {% if original and original.is_email %}
+    <li>
+      <a href="{% url 'admin:foirequest-foimessage-download_eml' pk=original.pk %}">
+        {% translate "Download as .eml" %}
+      </a>
+    </li>
+  {% endif %}
   {{ block.super }}
 {% endblock %}
 
