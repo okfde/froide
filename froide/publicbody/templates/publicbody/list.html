@@ -47,3 +47,13 @@
 
   {{ block.super }}
 {% endblock %}
+
+{% block sidebar_bottom %}
+  {% if page_obj.paginator.count > 0 %}
+    <p>
+      <a href="{% url 'publicbody-propose' %}">
+        {% trans "Public body missing? Propose a new public body!" %}
+      </a>
+    </p>
+  {% endif %}
+{% endblock %}
