@@ -14,7 +14,7 @@
   {% block before_message %}{% endblock %}
 
   <!-- head -->
-  <div class="d-flex p-3 alpha-message__head">
+  <div {% if message.timestamp == object.last_message %}id="last" {% endif %} class="d-flex p-3 alpha-message__head">
 
     <!-- avatar -->
     <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}"><i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i></div>
