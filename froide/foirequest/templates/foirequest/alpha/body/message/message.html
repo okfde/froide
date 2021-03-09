@@ -157,12 +157,12 @@
     <div class="alpha-message__toolbar {% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky{% endif %}">
 
       <!-- footer buttons -->
-      <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap py-3">
+      <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-3">
 
         <!-- Comments button -->
         <button
           type="button"
-          class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first"
+          class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first "
           data-toggle="collapse"
           aria-expanded="false"
           aria-controls="comments-{{ message.id }}"
@@ -171,7 +171,12 @@
         >
           <span class="fa fa-comments"></span>
           {% with count=comment_list|length %}
-            {{ count }} {% if count == 1 %}{% trans "Comment" %}{% else %}{% trans "Comments" %}{% endif %}
+            <span class="d-inline d-lg-none d-xl-inline">
+              {{ count }} {% if count == 1 %}{% trans "Comment" %}{% else %}{% trans "Comments" %}{% endif %}
+            </span>
+            <span class="d-none d-lg-inline d-xl-none">
+              {{ count }}
+            </span>
           {% endwith %}
         </button>
 
