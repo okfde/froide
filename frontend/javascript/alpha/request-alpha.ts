@@ -45,7 +45,7 @@ const initRequestPage = () => {
   // init reply buttons
   const replyButtonTop = document.getElementById('alpha-reply-button-top')
   const replyButtonBottom = document.getElementById('alpha-reply-button-bottom')
-  const writeForm = document.getElementById('write-message')
+  const writeForm = document.getElementById('write-messages')
   const scrollToWriteForm = () => {
     setTimeout(() => {
       writeForm?.scrollIntoView({

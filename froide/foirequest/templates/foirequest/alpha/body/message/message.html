@@ -157,7 +157,7 @@
     <div class="alpha-message__toolbar {% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky{% endif %}">
 
       <!-- footer buttons -->
-      <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-3">
+      <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
 
         <!-- Comments button -->
         <button
@@ -168,6 +168,7 @@
           aria-controls="comments-{{ message.id }}"
           data-target="#comments-{{ message.id }}"
           data-scrollto="comments-{{ message.id }}"
+          data-scrolltoblock="end"
         >
           <span class="fa fa-comments"></span>
           {% with count=comment_list|length %}

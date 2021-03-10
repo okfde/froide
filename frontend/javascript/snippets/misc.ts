@@ -1,4 +1,4 @@
-import {scrollToAnchor} from '../lib/misc.ts'
+import {scrollToAnchor} from '../lib/misc'
 
 const runOnPage = () => {
   const hideParents = document.querySelectorAll(".hideparent");
@@ -42,7 +42,10 @@ const runOnPage = () => {
     link.addEventListener('click', (e) => {
       if (link.dataset.scrollto) {
         e.preventDefault()
-        scrollToAnchor(link.dataset.scrollto, {behavior: 'smooth', block: 'end'})
+        scrollToAnchor(link.dataset.scrollto, {
+          behavior: 'smooth',
+          block: link.dataset.scrolltoblock || 'start'
+        })
       }
     })
   });

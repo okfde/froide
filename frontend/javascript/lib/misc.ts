@@ -9,7 +9,7 @@ function scrollToAnchor(id: string, options: boolean|Object|undefined=true) {
       return
     }
     el.scrollIntoView(options);
-  }, 300);
+  }, 200);
 }
 
 const getHeight = (el: HTMLElement) => {
