@@ -138,7 +138,11 @@ def add_postal_message(request, slug):
 @allow_write_foirequest
 def upload_postal_message(request, foirequest):
     if request.method == 'POST':
-        form = PostalUploadForm(data=request.POST, foirequest=foirequest)
+        form = PostalUploadForm(
+            data=request.POST,
+            foirequest=foirequest,
+            user=request.user  # needs to be request user for upload ident
+        )
         status_form = foirequest.get_status_form(data=request.POST)
         if form.is_valid():
             message = form.save()

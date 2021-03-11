@@ -52,7 +52,10 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop('foirequest')
+        self.user = kwargs.pop('user', None)
+
         super().__init__(*args, **kwargs)
+
         self.fields['publicbody'].initial = self.foirequest.public_body
         self.fields['publicbody'].widget.set_initial_object(
             self.foirequest.public_body
