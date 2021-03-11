@@ -1,18 +1,42 @@
 <template>
   <div>
-    <div class="search-result" v-if="publicBody && !hasSearchResults">
+    <div
+      v-if="publicBody && !hasSearchResults"
+      class="search-result"
+    >
       <label>
-        <input type="radio" :data-label="publicBody.name" :name="name" :value="publicBody.id" v-model="value"/>
+        <input
+          v-model="value"
+          type="radio"
+          :data-label="publicBody.name"
+          :name="name"
+          :value="publicBody.id"
+        >
         {{ publicBody.name }}
         <small>
           {{ publicBody.jurisdiction.name }}
         </small>
       </label>
     </div>
-    <ul v-if="searchResults.length > 0 || emptyResults" class="search-results list-unstyled">
-      <li v-for="result in searchResults" :key="result.id" class="search-result">
+    <ul
+      v-if="searchResults.length > 0"
+      class="search-results list-unstyled"
+    >
+      <li
+        v-for="result in searchResults"
+        :key="result.id"
+        class="search-result"
+      >
         <label>
-          <input type="radio" :data-label="result.name" :name="name" :value="result.id" @change="selectSearchResult" @click="selectSearchResult" v-model="value"/>
+          <input
+            v-model="value"
+            type="radio"
+            :data-label="result.name"
+            :name="name"
+            :value="result.id"
+            @change="selectSearchResult"
+            @click="selectSearchResult"
+          >
           {{ result.name }}
           <small>
             {{ result.jurisdiction.name }}
@@ -29,15 +53,29 @@ import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
-  name: 'pb-result-list',
-  props: ['name', 'scope', 'config'],
+  name: 'PbResultList',
   mixins: [PBListMixin, I18nMixin],
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    scope: {
+      type: String,
+      required: true
+    },
+    config: {
+      type: Object,
+      required: true
+    },
+  },
   computed: {
     value: {
       get () {
         if (this.publicBody) {
           return this.publicBody.id
         }
+        return null
       },
       set (value) {
         this.setPublicBody({
