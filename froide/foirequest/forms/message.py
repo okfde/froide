@@ -24,7 +24,7 @@ from froide.helper.text_diff import get_diff_chunks
 from froide.upload.models import Upload
 
 from ..models import (
-    FoiMessage, FoiAttachment
+    FoiRequest, FoiMessage, FoiAttachment
 )
 from ..models.message import MessageKind
 from ..foi_mail import generate_foirequest_files
@@ -34,7 +34,7 @@ from ..validators import (
 )
 from ..utils import (
     construct_message_body, MailAttachmentSizeChecker,
-    possible_reply_addresses, get_info_for_email, make_name_unique,
+    possible_reply_addresses, get_info_for_email, make_unique_filename,
     redact_plaintext_with_request
 )
 
@@ -504,17 +504,17 @@ class MessageEditMixin(forms.Form):
             }
         )
     )
-    text = forms.CharField(label=_("Letter"),
+    text = forms.CharField(
+        label=_("Letter text summary"),
         widget=forms.Textarea(
             attrs={
-                "placeholder": _("Letter text"),
+                'rows': '4',
                 "class": "form-control"
             }
         ),
         required=False,
         help_text=_(
-            "The text can be left empty, instead you can upload "
-            "scanned documents."
+            "Optionally give a summary of the letter contents"
         )
     )
 
@@ -879,7 +879,7 @@ class PublicBodyUploader:
             upload.filename, str(_('NAME'))
         )
 
-        name = make_name_unique(name, self.names)
+        name = make_unique_filename(name, self.names)
         self.names.add(name)
         att = FoiAttachment.objects.create(
             belongs_to=message,

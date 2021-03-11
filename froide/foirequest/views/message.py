@@ -24,7 +24,8 @@ from ..forms import (
     get_send_message_form, get_postal_reply_form, get_postal_message_form,
     get_escalation_message_form, get_postal_attachment_form,
     get_message_sender_form, get_message_recipient_form,
-    TransferUploadForm, EditMessageForm, RedactMessageForm
+    TransferUploadForm, EditMessageForm, RedactMessageForm,
+    PostalUploadForm
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
@@ -131,6 +132,48 @@ def add_postal_message(request, slug):
         error_message=_('There were errors with your form submission!'),
         signal=FoiRequest.message_sent,
         form_key='postal_message_form'
+    )
+
+
+@allow_write_foirequest
+def upload_postal_message(request, foirequest):
+    if request.method == 'POST':
+        form = PostalUploadForm(data=request.POST, foirequest=foirequest)
+        status_form = foirequest.get_status_form(data=request.POST)
+        if form.is_valid():
+            message = form.save()
+
+            if status_form.is_valid():
+                status_form.save()
+
+            if message.is_response:
+                signal = FoiRequest.message_received
+                success_message = _('A postal reply was successfully added!')
+            else:
+                signal = FoiRequest.message_sent
+                success_message = _('A sent letter was successfully added!')
+
+            signal.send(sender=foirequest, message=message, user=request.user)
+            messages.add_message(request, messages.SUCCESS, success_message)
+
+            url = reverse(
+                'foirequest-upload_attachments',
+                kwargs={'slug': foirequest.slug, 'message_id': message.id}
+            )
+            return redirect(url)
+        else:
+            messages.add_message(request, messages.ERROR, _(
+                'There were errors with your form submission!')
+            )
+    else:
+        form = PostalUploadForm(foirequest=foirequest)
+        status_form = foirequest.get_status_form()
+    return render(
+        request, 'foirequest/upload_postal_message.html', {
+            'object': foirequest,
+            'form': form,
+            'status_form': status_form,
+        }
     )
 
 

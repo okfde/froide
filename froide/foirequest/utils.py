@@ -13,6 +13,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
+from django.template.defaultfilters import slugify
 
 import icalendar
 import pytz
@@ -209,7 +210,10 @@ def get_domain(email):
     return strip_subdomains(host)
 
 
-def make_name_unique(name, existing_names):
+def make_unique_filename(name, existing_names):
+    name = os.path.basename(name).rsplit('.', 1)
+    name = '.'.join([slugify(n) for n in name])
+
     name_counter = Counter(existing_names)
     index = 0
     while name_counter[name] > 1:

@@ -10,6 +10,9 @@ interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
 
 const initRequestPage = () => {
+
+  initSetStatusForm()
+
   console.debug('Init request page...')
 
   // init message containers
@@ -25,7 +28,6 @@ const initRequestPage = () => {
   // init Info Box
   new InfoBox()
 
-  initSetStatusForm()
 
   // init timeline
   new Timeline(messagesContainer, messages)
@@ -282,10 +284,10 @@ const initSetStatusForm = () => {
     idResolution.addEventListener('change', setStatus);
   }
 
-  const inputStatus = document.querySelector('input[name="status"]');
-  if (inputStatus !== null) {
-    inputStatus.addEventListener('change', setStatus);
-  }
+  const inputStatusInputs = Array.from(document.querySelectorAll('input[name="status"]'));
+  inputStatusInputs.forEach(input => {
+    input.addEventListener('change', setStatus);
+  })
 
   setStatus();
 

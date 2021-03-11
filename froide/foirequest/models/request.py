@@ -634,13 +634,15 @@ class FoiRequest(models.Model):
         from ..forms import TagFoiRequestForm
         return TagFoiRequestForm(tags=self.tags.all())
 
-    def get_status_form(self):
+    def get_status_form(self, data=None):
         from ..forms import FoiRequestStatusForm
+
         if self.status not in (Status.AWAITING_RESPONSE, Status.RESOLVED):
             status = ''
         else:
             status = self.status
         return FoiRequestStatusForm(
+            data=data,
             foirequest=self,
             initial={
                 "status": status,

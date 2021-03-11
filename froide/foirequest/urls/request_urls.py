@@ -8,6 +8,7 @@ from ..views import (
     confirm_request, delete_request,
     set_law, set_tags, set_summary, add_postal_reply,
     add_postal_message, add_postal_reply_attachment,
+    upload_postal_message,
     set_message_sender, set_message_recipient, mark_not_foi,
     extend_deadline, approve_attachment, approve_message,
     make_same_request, resend_message,
@@ -37,6 +38,10 @@ urlpatterns = [
     path("<slug:slug>/set/resolution/", set_summary, name="foirequest-set_summary"),
     path("<slug:slug>/add/postal-reply/", add_postal_reply, name="foirequest-add_postal_reply"),
     path("<slug:slug>/add/postal-message/", add_postal_message, name="foirequest-add_postal_message"),
+    path(pgettext_lazy('url part', "<slug:slug>/upload-postal-message/"),
+        upload_postal_message,
+        name="foirequest-upload_postal_message"
+    ),
     path("<slug:slug>/mark/not-foi/", mark_not_foi, name="foirequest-mark_not_foi"),
     path("<slug:slug>/extend-deadline/", extend_deadline, name="foirequest-extend_deadline"),
     path("<slug:slug>/make-same/", make_same_request, name="foirequest-make_same_request"),

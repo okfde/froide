@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% load static %}
+{% load block_helper %}
+{% load form_helper %}
+
+{% block title %}{% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}{% endblock %}
+
+{% block navbar %}
+  {% include "header_reduced.html" %}
+{% endblock %}
+
+
+{% block app_body %}
+<h3>
+  {% blocktranslate with title=object.title %}Upload postal mail for your request “{{ title }}”{% endblocktranslate %}
+</h3>
+
+<p>
+  {% blocktranslate %}Please give details of the letter, upload a scan or photo if possible and update the status of this request.{% endblocktranslate %}
+</p>
+
+<div class="row justify-content-center">
+  <div class="col-md-9">
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <fieldset>
+        {% render_form form horizontal=False %}
+      </fieldset>
+      <fieldset>
+        <legend>
+          {% trans "What is the status of your request after this letter?" %}
+        </legend>
+        {% include "foirequest/alpha/header/_set_status.html" with status_form=status_form %}
+      </fieldset>
+      <p class="text-right">
+        <button type="submit" class="btn btn-primary">
+          {% trans "Add letter" %}
+        </button>
+      </p>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+  {{ block.super }}
+  {% addtoblock "js" %}
+    <script src="{% static 'js/common.js' %}" defer></script>
+  {% endaddtoblock %}
+  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/common.css' %}"/>{% endaddtoblock %}
+
+  {% addtoblock "js" %}
+    {{ form.media.js }}
+  {% endaddtoblock %}
+  {% addtoblock "css" %}
+    {{ form.media.css }}
+  {% endaddtoblock %}
+
+  {# For set status #}
+  {% addtoblock "js" %}
+    <script src="{% static 'js/request-alpha.js' %}" defer></script>
+  {% endaddtoblock %}
+
+  {% endblock %}

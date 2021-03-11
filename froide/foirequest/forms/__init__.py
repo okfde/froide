@@ -15,6 +15,7 @@ from .message import (
     TransferUploadForm, RedactMessageForm,
     PublicBodyUploader
 )
+from .postal import PostalUploadForm
 
 __all__ = [
     RequestForm, MakePublicBodySuggestionForm,
@@ -27,5 +28,6 @@ __all__ = [
     get_message_sender_form, get_message_recipient_form,
     get_escalation_message_form,
     TransferUploadForm, RedactMessageForm,
-    PublicBodyUploader
+    PublicBodyUploader,
+    PostalUploadForm
 ]
