@@ -6,8 +6,15 @@
         v-for="upload in uploads"
         :key="upload"
         type="hidden"
-        name="upload"
+        :name="name"
         :value="upload"
+      >
+      <input
+        v-if="!canSubmit"
+        type="hidden"
+        name="upload-pending"
+        value=""
+        required
       >
     </template>
   </div>
@@ -32,10 +39,19 @@ export default {
       type: Object,
       required: true
     },
+    name: {
+      type: String,
+      default: 'upload'
+    },
     formFields: {
       type: Boolean,
       default: true,
       required: false
+    },
+    required: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
     allowedFileTypes: {
       type: Array,
@@ -59,7 +75,7 @@ export default {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
     },
     canSubmit () {
-      return this.hasFiles && this.uploadComplete
+      return (!this.required || this.hasFiles) && this.uploadComplete
     },
     showSubmit () {
       return this.uploading || this.canSubmit
@@ -106,7 +122,7 @@ export default {
     this.uppy.use(Dashboard, {
       inline: true,
       target: this.$refs.uppy,
-      height: 400,
+      height: 250,
       showLinkToFileUploadResult: false,
       proudlyDisplayPoweredByUppy: false
     })

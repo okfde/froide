@@ -25,6 +25,7 @@ const ENTRY = {
   request: ['./frontend/javascript/request.ts'],
   'request-alpha': ['./frontend/javascript/alpha/request-alpha.ts'],
   tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
+  fileuploader: ['./frontend/javascript/fileuploader.js'],
 }
 
 const EXCLUDE_CHUNKS = [
