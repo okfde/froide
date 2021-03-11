@@ -39,6 +39,9 @@ csrf_middleware_class = import_string(
 
 csrf_protect = decorator_from_middleware(csrf_middleware_class)
 
+USER_VAR_MAX_KEY_LENGTH = 30
+USER_VAR_MAX_COUNT = 20
+
 
 class FakePublicBodyForm(object):
     def __init__(self, publicbodies):
@@ -65,6 +68,12 @@ class FakePublicBodyForm(object):
         })
 
 
+def replace_user_vars(template_string, user_vars):
+    for key, val in user_vars:
+        template_string = template_string.replace(key, val)
+    return template_string
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class MakeRequestView(FormView):
     form_class = RequestForm
@@ -78,11 +87,14 @@ class MakeRequestView(FormView):
         request = self.request
         initial = {
             "subject": request.GET.get('subject', ''),
+            "body": request.GET.get('body', ''),
             "reference": request.GET.get('ref', ''),
             "redirect_url": request.GET.get('redirect', '')
         }
-        if 'body' in request.GET:
-            initial['body'] = request.GET['body']
+        user_vars = self.get_user_template_vars()
+        if user_vars:
+            initial['subject'] = replace_user_vars(initial['subject'], user_vars)
+            initial['body'] = replace_user_vars(initial['body'], user_vars)
 
         if 'draft' in request.GET:
             initial['draft'] = request.GET['draft']
@@ -103,6 +115,15 @@ class MakeRequestView(FormView):
         initial['jurisdiction'] = request.GET.get("jurisdiction", None)
         initial.update(self.get_form_config_initial())
         return initial
+
+    def get_user_template_vars(self):
+        user_vars = {}
+        for key in self.request.GET:
+            if key.startswith('$') and len(key) < USER_VAR_MAX_KEY_LENGTH:
+                user_vars[key] = self.request.GET[key]
+        if len(user_vars) > USER_VAR_MAX_COUNT:
+            return {}
+        return user_vars
 
     def get_js_context(self):
         ctx = {
