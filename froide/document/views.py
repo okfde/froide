@@ -106,7 +106,7 @@ class DocumentFileDetailView(CrossDomainMediaMixin, DetailView):
 
 
 def upload_documents(request):
-    from froide.foirequest.views.message import get_uppy_i18n
+    from froide.upload.forms import get_uppy_i18n
 
     if not request.user.is_staff:
         return redirect('/')
