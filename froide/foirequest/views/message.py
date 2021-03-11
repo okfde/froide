@@ -447,7 +447,7 @@ def upload_attachments(request, foirequest, message_id):
     serializer = FoiMessageSerializer(message, context={
         'request': request
     })
-    return render(request, 'foirequest/attachment/upload.html', {
+    return render(request, 'foirequest/attachment/manage.html', {
         'object': foirequest,
         'message_json': json.dumps(serializer.data),
         'message': message,
