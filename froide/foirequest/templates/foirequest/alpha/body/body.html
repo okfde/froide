@@ -30,6 +30,13 @@
               <i class="fa fa-send" aria-hidden="true"></i>
               {% trans 'Send message' %}
             </a>
+            <a
+              href="{% url 'foirequest-upload_postal_message' slug=object.slug %}"
+              class="btn btn-primary btn-sm"
+            >
+              <i class="fa fa-envelope" aria-hidden="true"></i>
+              {% trans 'Upload Mail' %}
+            </a>
           {% endif %}
 
           <a href="#" class="btn btn-light btn-sm js-trigger-expand-all-messages">
@@ -108,7 +115,7 @@
                   </li>
                   <li class="nav-item">
                     <a class="nav-link"  data-toggle="tab" href="#escalate" role="tab" aria-controls="escalate" aria-selected="false">
-                      {% trans "Mediation" %}
+                      {% trans "Start mediation" %}
                     </a>
                   </li>
                   {% block request_action_menu_footer %}{% endblock %}
