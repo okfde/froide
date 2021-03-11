@@ -20,6 +20,7 @@
       :config="config"
       class="mb-3 mt-3"
       :auto-proceed="true"
+      :required="true"
       @ready="canSubmit = $event"
       @uploading="uploading = $event"
     />
