@@ -69,7 +69,7 @@ class FakePublicBodyForm(object):
 
 
 def replace_user_vars(template_string, user_vars):
-    for key, val in user_vars:
+    for key, val in user_vars.items():
         template_string = template_string.replace(key, val)
     return template_string
 
