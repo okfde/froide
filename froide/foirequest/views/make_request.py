@@ -314,7 +314,10 @@ class MakeRequestView(FormView):
         )
 
     def get_publicbodies_from_context(self):
-        publicbody_ids = self.kwargs.get('publicbody_ids')
+        publicbody_ids = self.kwargs.get(
+            'publicbody_ids',
+            self.request.GET.get('publicbody')
+        )
         publicbody_slug = self.kwargs.get('publicbody_slug')
         publicbodies = []
         if publicbody_ids is not None:
