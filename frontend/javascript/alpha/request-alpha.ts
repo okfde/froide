@@ -365,6 +365,8 @@ const initReplyForm = () => {
 
 }
 
-
-
-window.addEventListener('load', initRequestPage)
+if (document.readyState === "loading") {
+  window.document.addEventListener("DOMContentLoaded", initRequestPage);
+} else {
+  initRequestPage();
+}
