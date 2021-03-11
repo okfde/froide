@@ -1,27 +1,10 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
     <div
-      v-if="canUpload"
-      class="upload"
-    >
-      <h2>{{ i18n.upload }}</h2>
-      <p>{{ i18n.uploadPdfOrPicture }}</p>
-      <file-uploader
-        class="mb-3 mt-3"
-        :config="config"
-        :auto-proceed="true"
-        :allowed-file-types="[
-          'application/pdf',
-          'image/*'
-        ]"
-        @upload-success="uploadSuccess"
-      />
-    </div>
-    <div
       v-if="imageDocuments.length > 0"
       class="images mt-3"
     >
-      <h2>{{ i18n.convertImagesToDocuments }}</h2>
+      <h3>{{ i18n.convertImagesToDocuments }}</h3>
       <image-document
         v-for="doc in imageDocuments"
         :key="doc.id"
@@ -40,7 +23,7 @@
       v-if="pdfDocuments.length > 0"
       class="documents mt-5"
     >
-      <h2>{{ i18n.documents }}</h2>
+      <h3>{{ i18n.documents }}</h3>
       <div class="mt-3 mb-3">
         <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
           <div class="col-auto mr-auto">
@@ -107,6 +90,24 @@
         @docupdated="documentUpdated(doc, $event)"
         @makerelevant="makeRelevant(doc)"
         @notnew="doc.new = false"
+      />
+    </div>
+
+    <div
+      v-if="canUpload"
+      class="upload"
+    >
+      <h3>{{ i18n.upload }}</h3>
+      <p>{{ i18n.uploadPdfOrPicture }}</p>
+      <file-uploader
+        class="mb-3 mt-3"
+        :config="config"
+        :auto-proceed="true"
+        :allowed-file-types="[
+          'application/pdf',
+          'image/*'
+        ]"
+        @upload-success="uploadSuccess"
       />
     </div>
   </div>
