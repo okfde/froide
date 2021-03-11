@@ -120,7 +120,6 @@ def get_uppy_i18n():
     }
 
 
-
 def get_widget_context():
     return {
         'settings': {
@@ -166,5 +165,5 @@ class FileUploaderField(forms.fields.CharField):
 
     def clean(self, values):
         if len(values) == 0 and self.required:
-            raise ValidationError(self.error_messages["required"])
+            raise forms.ValidationError(self.error_messages["required"])
         return values
