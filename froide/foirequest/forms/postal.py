@@ -28,6 +28,7 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         ),
         coerce=lambda x: bool(int(x)),
         required=True,
+        initial=0,
         label=_('Did you receive or sent the letter?'),
         error_messages={
             'required': _('You have to decide!')
