@@ -181,8 +181,6 @@ def set_tags(request, foirequest):
 @require_POST
 @allow_write_foirequest
 def set_summary(request, foirequest):
-    if not foirequest.status_is_final():
-        return render_400(request)
     summary = request.POST.get('summary', None)
     if summary is None:
         return render_400(request)
