@@ -17,7 +17,9 @@
   <div {% if message.timestamp == object.last_message %}id="last" {% endif %} class="d-flex p-3 alpha-message__head">
 
     <!-- avatar -->
-    <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}house{% else %}user{% endif %}"><i class="fa fa-{% if message.is_response %}bank{% else %}user{% endif %}" aria-hidden="true"></i></div>
+    <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
+      <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
+    </div>
 
     <!-- sender, recipient, message preview, meta infos -->
     <div class="d-flex flex-fill flex-column overflow-hidden">
@@ -47,6 +49,12 @@
             {% endif %}
             <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{{ kind_display }}">
               <span class="fa fa-{{ message.kind_icon }}"></span>
+            </span>
+          {% endif %}
+
+          {% if message.is_escalation_message %}
+            <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
+              <span class="fa fa-shield"></span>
             </span>
           {% endif %}
 

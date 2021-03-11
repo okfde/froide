@@ -38,6 +38,7 @@
     color: $gray-500;
     margin-right: $avatar_right_margin_mobile;
     &--house { font-size: 14px; }
+    &--shield { font-size: 20px; }
     @include media-breakpoint-up(md) {
       flex: 0 0 $avatar_size_desktop;
       width: $avatar_size_desktop;
@@ -45,6 +46,7 @@
       margin-right: $avatar_right_margin_desktop;
       &--user { font-size: 18px; }
       &--house { font-size: 16px; }
+      &--shield { font-size: 20px; }
     }
   }
   &__sender {
