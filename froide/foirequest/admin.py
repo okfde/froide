@@ -132,7 +132,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
 
     def mark_successfully_resolved(self, request, queryset):
         rows_updated = queryset.update(
-            status='resolved', resolution='successful'
+            status=FoiRequest.STATUS.RESOLVED,
+            resolution=FoiRequest.RESOLUTION.SUCCESSFUL
         )
         update_foirequest_index(queryset)
         self.message_user(request,
@@ -142,7 +143,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
 
     def mark_refused(self, request, queryset):
         rows_updated = queryset.update(
-            status='resolved', resolution='refused'
+            status=FoiRequest.STATUS.RESOLVED,
+            resolution=FoiRequest.RESOLUTION.REFUSED
         )
         update_foirequest_index(queryset)
         self.message_user(request,
@@ -202,7 +204,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
 
     def confirm_request(self, request, queryset):
         foirequest = queryset[0]
-        if foirequest.status != 'awaiting_user_confirmation':
+        if foirequest.status != FoiRequest.STATUS.AWAITING_USER_CONFIRMATION:
             self.message_user(request, _("Request not in correct state!"))
             return None
         self.message_user(request, _("Message send successfully!"))

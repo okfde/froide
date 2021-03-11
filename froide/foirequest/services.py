@@ -182,7 +182,7 @@ class CreateRequestService(BaseService):
         send_now = False
 
         if not user.is_active:
-            request.status = 'awaiting_user_confirmation'
+            request.status = FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
             request.visibility = FoiRequest.VISIBILITY.INVISIBLE
         else:
             # TODO add draft
@@ -392,7 +392,7 @@ class ReceiveEmailService(BaseService):
             message.tags.add(AUTO_REPLY_TAG)
 
         foirequest._messages = None
-        foirequest.status = 'awaiting_classification'
+        foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
         foirequest.save()
 
         self.add_attachments(foirequest, message, email.attachments)

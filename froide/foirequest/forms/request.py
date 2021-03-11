@@ -220,8 +220,10 @@ class FoiRequestStatusForm(forms.Form):
     status = forms.ChoiceField(label=_("Status"),
             widget=BootstrapRadioSelect,
             choices=[
-                ('awaiting_response', _('This request is still ongoing.')),
-                ('resolved', _('This request is finished.')),
+                (FoiRequest.STATUS.AWAITING_RESPONSE,
+                    _('This request is still ongoing.')),
+                (FoiRequest.STATUS.RESOLVED,
+                    _('This request is finished.')),
             ]
     )
 
@@ -264,7 +266,7 @@ class FoiRequestStatusForm(forms.Form):
 
     def clean(self):
         status = self.cleaned_data.get('status', None)
-        if status == 'resolved':
+        if status == FoiRequest.STATUS.RESOLVED:
             if not self.cleaned_data.get('resolution', ''):
                 self.add_error('resolution', _('Please give a resolution to this request'))
                 return self.cleaned_data

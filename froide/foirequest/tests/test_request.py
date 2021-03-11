@@ -417,7 +417,7 @@ class RequestTest(TestCase):
         user = User.objects.get(email='dummy@example.org')
         req = factories.FoiRequestFactory.create(
             user=user,
-            status='publicbody_needed',
+            status=FoiRequest.STATUS.PUBLICBODY_NEEDED,
             public_body=None
         )
         factories.FoiMessageFactory.create(
@@ -895,7 +895,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
 
         # No resolution given
-        req.status = 'resolved'
+        req.status = FoiRequest.STATUS.RESOLVED
         req.save()
         response = self.client.post(reverse('foirequest-set_summary',
                 kwargs={"slug": req.slug}))
@@ -1205,7 +1205,7 @@ class RequestTest(TestCase):
             request=req
         )
         self.client.login(email='info@fragdenstaat.de', password='froide')
-        status = 'resolved'
+        status = FoiRequest.STATUS.RESOLVED
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
                 {"status": status, "costs": "", 'resolution': ''})
@@ -1216,12 +1216,14 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 400)
         response = self.client.post(reverse('foirequest-set_status',
                 kwargs={"slug": req.slug}),
-                {"status": status, "costs": "", 'resolution': 'successful'})
+                {
+                "status": status, "costs": "",
+                'resolution': FoiRequest.RESOLUTION.SUCCESSFUL})
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.costs, 0.0)
-        self.assertEqual(req.status, 'resolved')
-        self.assertEqual(req.resolution, 'successful')
+        self.assertEqual(req.status, FoiRequest.STATUS.RESOLVED)
+        self.assertEqual(req.resolution, FoiRequest.RESOLUTION.SUCCESSFUL)
         self.assertEqual(req.days_to_resolution(),
                          (mes.timestamp - req.first_message).days)
 

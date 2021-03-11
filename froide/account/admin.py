@@ -166,7 +166,7 @@ class UserAdmin(DjangoUserAdmin):
                 continue
             foi_request = FoiRequest.objects.filter(
                 user=user,
-                status='awaiting_user_confirmation')
+                status=FoiRequest.STATUS.AWAITING_USER_CONFIRMATION)
             if len(foi_request) == 1:
                 foi_request = foi_request[0].pk
             elif len(foi_request) > 1:

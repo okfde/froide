@@ -46,19 +46,19 @@ class TaskTest(TestCase):
     def test_detect_asleep(self):
         fr = FoiRequest.objects.all()[0]
         fr.last_message = fr.last_message - timedelta(days=31 * 6)
-        fr.status = 'awaiting_response'
+        fr.status = FoiRequest.STATUS.AWAITING_RESPONSE
         fr.save()
         mail.outbox = []
         detect_asleep.delay()
         fr = FoiRequest.objects.get(pk=fr.pk)
-        self.assertEqual(fr.status, 'asleep')
+        self.assertEqual(fr.status, FoiRequest.STATUS.ASLEEP)
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('Request became asleep', mail.outbox[0].subject)
 
     def test_detect_overdue(self):
         fr = FoiRequest.objects.all()[0]
         fr.due_date = timezone.now() - timedelta(hours=5)
-        fr.status = 'awaiting_response'
+        fr.status = FoiRequest.STATUS.AWAITING_RESPONSE
         fr.save()
         self.assertEqual(fr.readable_status, 'Response overdue')
         message_form = fr.get_send_message_form()
@@ -67,19 +67,19 @@ class TaskTest(TestCase):
         mail.outbox = []
         detect_overdue.delay()
         fr = FoiRequest.objects.get(pk=fr.pk)
-        self.assertEqual(fr.status, 'awaiting_response')
+        self.assertEqual(fr.status, FoiRequest.STATUS.AWAITING_RESPONSE)
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('Request became overdue', mail.outbox[0].subject)
 
     def test_classification_reminder(self):
         fr = FoiRequest.objects.all()[0]
         fr.last_message = timezone.now() - timedelta(days=5)
-        fr.status = 'awaiting_classification'
+        fr.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
         fr.save()
         mail.outbox = []
         classification_reminder.delay()
         fr = FoiRequest.objects.get(pk=fr.pk)
-        self.assertEqual(fr.status, 'awaiting_classification')
+        self.assertEqual(fr.status, FoiRequest.STATUS.AWAITING_CLASSIFICATION)
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('Please classify the reply to your request',
                       mail.outbox[0].subject)

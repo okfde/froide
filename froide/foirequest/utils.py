@@ -565,7 +565,10 @@ def add_ical_events(foirequest, cal):
         cal.add_component(event)
 
     if foirequest.status == 'awaiting_response' and (
-            foirequest.resolution in ('partially_successful', 'refused')):
+            foirequest.resolution in (
+                foirequest.RESOLUTION.PARTIALLY_SUCCESSFUL,
+                foirequest.RESOLUTION.REFUSED)
+            ):
 
         responses = foirequest.response_messages()
         if responses:

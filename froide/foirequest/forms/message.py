@@ -622,7 +622,7 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
         message.save()
 
         foirequest._messages = None
-        foirequest.status = 'awaiting_classification'
+        foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
         foirequest.save()
 
         if self.cleaned_data.get('files'):

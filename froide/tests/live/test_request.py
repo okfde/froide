@@ -94,7 +94,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, True)
         self.assertEqual(req.public_body, self.pb)
-        self.assertEqual(req.status, 'awaiting_user_confirmation')
+        self.assertEqual(req.status, FoiRequest.STATUS.AWAITING_USER_CONFIRMATION)
         message = mail.outbox[0]
         match = re.search(r'http://[^/]+(/.+)', message.body)
         activate_url = match.group(1)
@@ -157,7 +157,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
         self.assertEqual(req.title, req_title)
         self.assertEqual(req.public, False)
         self.assertEqual(req.public_body, self.pb)
-        self.assertEqual(req.status, 'awaiting_user_confirmation')
+        self.assertEqual(req.status, FoiRequest.STATUS.AWAITING_USER_CONFIRMATION)
 
     def test_make_logged_in_request(self):
         self.do_login()

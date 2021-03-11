@@ -318,7 +318,7 @@ class SetTeamView(AssignTeamView):
 @require_POST
 @allow_write_foirequest
 def confirm_request(request, foirequest):
-    if foirequest.status != 'awaiting_user_confirmation':
+    if foirequest.status != FoiRequest.STATUS.AWAITING_USER_CONFIRMATION:
         return render_400(request)
 
     req_service = ActivatePendingRequestService({'foirequest': foirequest})
@@ -332,7 +332,7 @@ def confirm_request(request, foirequest):
 @require_POST
 @allow_write_foirequest
 def delete_request(request, foirequest):
-    if foirequest.status != 'awaiting_user_confirmation':
+    if foirequest.status != FoiRequest.STATUS.AWAITING_USER_CONFIRMATION:
         return render_400(request)
 
     if foirequest.user != request.user:
