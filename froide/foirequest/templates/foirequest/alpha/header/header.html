@@ -159,6 +159,11 @@
               {% if not tags and object|can_write_foirequest:request %}
                   <a href="#" data-inlineedit="#request-tags-form"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Add tags" %}</a>
               {% endif %}
+              {% if object|can_write_foirequest:request %}
+                <small class="text-muted font-italic d-block">
+                  {% translate "Tags are a way to organise your own requests and also group them with other requests on the platform." %}
+                </small>
+              {% endif %}
             {% endwith %}
           </div>
 
