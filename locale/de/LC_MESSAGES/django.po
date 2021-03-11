@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-11 14:32+0100\n"
-"PO-Revision-Date: 2021-03-11 13:44+0000\n"
+"PO-Revision-Date: 2021-03-11 13:52+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -6234,7 +6234,7 @@ msgstr "gesendet/"
 #: froide/foirequest/urls/request_urls.py:41
 msgctxt "url part"
 msgid "<slug:slug>/upload-postal-message/"
-msgstr "<slug:slug>/<int:message_id>/post-hochladen/"
+msgstr "<slug:slug>/post-hochladen/"
 
 #: froide/foirequest/urls/request_urls.py:61
 msgctxt "url part"
