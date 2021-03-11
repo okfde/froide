@@ -52,15 +52,15 @@
       {% include "foirequest/alpha/header/breadcrumb.html" %}
     </div>
 
-    <!-- header, including tabs -->
+    <!-- header,  -->
     <div class="bg-gray-100" style="margin-bottom: 2px;">
       {% include "foirequest/alpha/header/header.html" %}
+
+      {% include "foirequest/alpha/header/tabs.html" %}
     </div>
 
     <!-- body, tabs content -->
-    <div class="bg-gray-200">
-      {% include "foirequest/alpha/body/body.html" %}
-    </div>
+    {% include "foirequest/alpha/body/body.html" %}
 
     {% if user.is_authenticated %}
       <div class="bg-gray-200">

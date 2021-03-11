@@ -10,7 +10,7 @@
 
   <div
     role="tabpanel"
-    class="tab-pane fade active show"
+    class="tab-pane fade active show bg-gray-200"
     id="correspondence-panel"
     aria-labelledby="correspondence-tab"
   >
@@ -27,8 +27,8 @@
               class="btn btn-primary btn-sm"
               role="button"
             >
-              <i class="fa fa-mail-reply" aria-hidden="true"></i>
-              {% trans 'Send a message' %}
+              <i class="fa fa-send" aria-hidden="true"></i>
+              {% trans 'Send message' %}
             </a>
           {% endif %}
 
@@ -137,6 +137,8 @@
     {% endif %}
 
   </div>
+
+  {% block request_top_pane %}{% endblock %}
 
   {% if object|can_manage_foirequest:request %}
     {% include "foirequest/alpha/body/settings.html" %}
