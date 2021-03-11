@@ -116,8 +116,7 @@ const initInlineEditForms = () => {
     let presentation: HTMLElement | null = null
     if (el.dataset.inlineeditpresentation) {
       presentation = document.querySelector(el.dataset.inlineeditpresentation) as HTMLElement
-    }
-    if (!presentation) {
+    } else {
       presentation = el.parentElement
     }
 

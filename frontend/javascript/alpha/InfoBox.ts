@@ -11,6 +11,7 @@ export default class InfoBox {
   constructor () {
     this.element = document.getElementById('infobox') as HTMLElement
 
+    this.editButtonClickCallback = this.editButtonClickCallback.bind(this)
     // edit button listener
     this.editButton = this.element.querySelector('.info-box__edit-button') as HTMLElement
     if (this.editButton) {
@@ -19,7 +20,7 @@ export default class InfoBox {
       this.infoList = this.element.querySelector('.info-box__list') as HTMLElement
 
       // event listeners
-      this.editButton.addEventListener('click', this.editButtonClickCallback.bind(this))
+      this.editButton.addEventListener('click', this.editButtonClickCallback)
     }
 
     // copy short url listener
@@ -27,6 +28,11 @@ export default class InfoBox {
     if (this.copyUrlTrigger) {
       this.copyUrlTrigger.addEventListener('click', this.copyShortUrlTriggerClickCallback.bind(this))
     }
+
+    const editLinks = Array.from(this.element.querySelectorAll('.info-box__edit-link')) as HTMLElement[]
+    editLinks.forEach(link => {
+      link.addEventListener('click', this.editButtonClickCallback)
+    })
 
   }
 

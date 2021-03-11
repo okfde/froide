@@ -108,31 +108,36 @@
         <div class="info-box__list-label">
           {% blocktrans %}Due date{% endblocktrans %}
           {% block foirequest_explain_deadline %}{% endblock %}
-
-          <!-- Extend due date form -->
-          {% comment %} merge this form with "set status form"! {% endcomment %}
-          {% comment %} {% if object|can_write_foirequest:request %}
-            <a class="btn btn-light btn-sm" data-toggle="collapse" href="#extend-deadline-form" role="button" aria-expanded="false" aria-controls="extend-deadline-form">
-              {% trans "Extend deadline" %}
-            </a>
-            <div class="collapse" id="extend-deadline-form">
-              <form class="mt-3 disable-submit" method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
+        </div>
+        <div class="info-box__list-value">
+          <span>
+            {{ object.due_date|date:"DATE_FORMAT" }}
+            {% if object|can_write_foirequest:request %}
+              <a href="#" data-inlineedit="#request-duedate-form" data-inlineeditpresentation="#null">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span class="sr-only">{% trans "Edit due date" %}</span>
+              </a>
+            {% endif %}
+          </span>
+          {% if object|can_write_foirequest:request %}
+            <div class="d-none" id="request-duedate-form">
+              <small class="text-mute">
+                {% translate "Extend deadline by a number of months." %}
+              </small>
+              <form class="disable-submit" method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
                 {% csrf_token %}
-                <div class="input-group input-group-sm mb-3">
+                <div class="input-group input-group-sm mb-1">
                   <input class="form-control" type="number" min="0" max="15" name="time" value="1">
                   <div class="input-group-append">
                     <span class="input-group-text">{{ object.law.get_max_response_time_unit_display }}</span>
-                    <button class="btn btn-light btn-block" type="submit">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">
                       {% trans "Extend deadline" %}
                     </button>
                   </div>
                 </div>
               </form>
             </div>
-          {% endif %} {% endcomment %}
-        </div>
-        <div class="info-box__list-value">
-          {{ object.due_date|date:"DATE_FORMAT" }}
+          {% endif %}
         </div>
       </li>
 
@@ -140,7 +145,16 @@
       {% if object.costs > 0 %}
         <li class="info-box__list-item">
           <div class="info-box__list-label">{% blocktrans %}Cost of information:{% endblocktrans %}</div>
-          <div class="info-box__list-value">{{ object.costs|floatformat:2 }} {{ froide.currency }}</div>
+          <div class="info-box__list-value">
+            {{ object.costs|floatformat:2 }} {{ froide.currency }}
+
+            {% if object|can_write_foirequest:request %}
+              <a href="#" class="info-box__edit-link">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span class="sr-only">{% trans "Edit costs" %}</span>
+              </a>
+            {% endif %}
+          </div>
         </li>
       {% endif %}
 
