@@ -19,7 +19,7 @@
       <i class="fa fa-angle-right" aria-hidden="true"></i>
     </li>
     <li class="breadcrumb__element">
-      <a href="{{ object.get_absolute_url }}">{% trans "request" %} #{{ object.id }}</a>
+      <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{% trans "request" %} #{{ object.id }}</a>
     </li>
     {% if last_item %}
       <li class="breadcrumb__separator">
