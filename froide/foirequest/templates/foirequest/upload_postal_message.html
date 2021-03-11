@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'foirequest/base.html' %}
 
 {% load i18n %}
 {% load static %}
@@ -12,34 +12,43 @@
 {% endblock %}
 
 
-{% block app_body %}
-<h3>
-  {% blocktranslate with title=object.title %}Upload postal mail for your request “{{ title }}”{% endblocktranslate %}
-</h3>
+{% block body %}
 
-<p>
-  {% blocktranslate %}Please give details of the letter, upload a scan or photo if possible and update the status of this request.{% endblocktranslate %}
-</p>
+<div class="bg-gray-100" style="margin-bottom: 2px;">
+  {% translate "Upload postal mail" as breadcrumb_label %}
+  {% include "foirequest/alpha/header/breadcrumb.html" with last_item=breadcrumb_label %}
+</div>
 
-<div class="row justify-content-center">
-  <div class="col-md-9">
-    <form action="" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <fieldset>
-        {% render_form form horizontal=False %}
-      </fieldset>
-      <fieldset>
-        <legend>
-          {% trans "What is the status of your request after this letter?" %}
-        </legend>
-        {% include "foirequest/alpha/header/_set_status.html" with status_form=status_form %}
-      </fieldset>
-      <p class="text-right">
-        <button type="submit" class="btn btn-primary">
-          {% trans "Add letter" %}
-        </button>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-9">
+
+      <h3 class="mt-3">
+        {% blocktranslate with title=object.title %}Upload postal mail for your request “{{ title }}”{% endblocktranslate %}
+      </h3>
+
+      <p>
+        {% blocktranslate %}Please give details of the letter, upload a scan or photo if possible and update the status of this request.{% endblocktranslate %}
       </p>
-    </form>
+
+      <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset>
+          {% render_form form horizontal=False %}
+        </fieldset>
+        <fieldset>
+          <legend>
+            {% trans "What is the status of your request after this letter?" %}
+          </legend>
+          {% include "foirequest/alpha/header/_set_status.html" with status_form=status_form %}
+        </fieldset>
+        <p class="text-right">
+          <button type="submit" class="btn btn-primary">
+            {% trans "Add letter" %}
+          </button>
+        </p>
+      </form>
+    </div>
   </div>
 </div>
 
