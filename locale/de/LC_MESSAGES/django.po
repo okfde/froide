@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-11 15:41+0100\n"
-"PO-Revision-Date: 2021-03-11 14:43+0000\n"
+"POT-Creation-Date: 2021-03-11 16:28+0100\n"
+"PO-Revision-Date: 2021-03-11 15:29+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -75,7 +75,7 @@ msgstr "Noch keine URL erstellt."
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html:7
 #: froide/foirequest/templates/foirequest/alpha/body/settings.html:44
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:161
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:173
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:69
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:83
 msgid "Click to copy"
@@ -83,7 +83,7 @@ msgstr "Klicken zum Kopieren"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html:8
 #: froide/foirequest/templates/foirequest/alpha/body/settings.html:45
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:161
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:173
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:70
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:84
 msgid "URL copied"
@@ -2354,7 +2354,7 @@ msgstr "Sie müssen sich entscheiden!"
 
 #: froide/foirequest/forms/postal.py:46
 msgid "Upload scans or photos of the letter"
-msgstr "Laden Sie Scan oder Fotos des Briefes hoch"
+msgstr "Laden Sie Scans oder Fotos des Briefes hoch"
 
 #: froide/foirequest/forms/postal.py:88
 msgid ""
@@ -3868,23 +3868,19 @@ msgstr "Alle ausklappen"
 msgid "Scroll to end"
 msgstr "Zum Ende"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:75
-msgid "Other Options"
-msgstr "Andere Optionen"
-
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:102
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:105
 msgid "Sticky"
 msgstr "Anheften"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:113
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:116
 msgid "Write message"
 msgstr "Nachricht schreiben"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:118
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:121
 msgid "Start mediation"
 msgstr "Vermittlung starten"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:189
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:192
 #: froide/foirequest/templates/foirequest/show.html:654
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html:27
 #, python-format
@@ -3893,7 +3889,7 @@ msgid_plural "%(counter)s identical requests"
 msgstr[0] "Eine identische Anfrage"
 msgstr[1] "%(counter)s identische Anfragen"
 
-#: froide/foirequest/templates/foirequest/alpha/body/body.html:195
+#: froide/foirequest/templates/foirequest/alpha/body/body.html:198
 #: froide/foirequest/templates/foirequest/show.html:660
 msgid "This request is identical to:"
 msgstr "Diese Anfrage ist identisch zu:"
@@ -4479,48 +4475,66 @@ msgstr "in %(due)s"
 msgid "Due date"
 msgstr "Frist"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:144
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:118
+msgid "Edit due date"
+msgstr "Frist bearbeiten"
+
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:125
+msgid "Extend deadline by a number of months."
+msgstr "Frist um eine Anzahl von Monaten verlängern."
+
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:134
+#: froide/foirequest/templates/foirequest/show.html:522
+#: froide/foirequest/templates/foirequest/show.html:532
+msgid "Extend deadline"
+msgstr "Verlängere Frist"
+
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:147
 #: froide/foirequest/templates/foirequest/show.html:546
 msgid "Cost of information:"
 msgstr "Kosten dieser Information:"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:163
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:154
+msgid "Edit costs"
+msgstr "Kosten bearbeiten"
+
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:175
 msgid "Copy Short-URL"
 msgstr "Kurz-URL kopieren"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:172
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:184
 #: froide/foirequest/templates/foirequest/sent.html:62
 msgid "Tweet request"
 msgstr "Anfrage tweeten"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:177
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:189
 #: froide/foirequest/templates/foirequest/sent.html:67
 msgid "Share request"
 msgstr "Anfrage teilen"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:189
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:201
 #: froide/foirequest/templates/foirequest/list.html:75
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:95
 #: froide/publicbody/templates/publicbody/show.html:189
 msgid "RSS Feed"
 msgstr "RSS-Feed"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:194
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:206
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:108
 msgid "Download"
 msgstr "Download"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:198
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:210
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:112
 msgid "Download as ZIP"
 msgstr "Download als ZIP"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:201
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:213
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:118
 msgid "Download as PDF"
 msgstr "Download als PDF"
 
-#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:225
+#: froide/foirequest/templates/foirequest/alpha/header/info-box.html:237
 #: froide/foirequest/templates/foirequest/show.html:150
 #: froide/foirequest/templates/foirequest/show.html:237
 #: froide/foirequest/templates/foirequest/show.html:619
@@ -4551,7 +4565,6 @@ msgstr "Anhänge zur Anfrage „%(title)s“ verwalten"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html:16
 #, python-format
-#| msgid "came into effect on %(date)s"
 msgid "Attachments of message from %(date)s"
 msgstr "Anhänge der Nachricht vom %(date)s"
 
@@ -5794,11 +5807,6 @@ msgstr "Status dieser Anfrage:"
 #: froide/foirequest/templates/foirequest/show.html:508
 msgid "Due date:"
 msgstr "Frist:"
-
-#: froide/foirequest/templates/foirequest/show.html:522
-#: froide/foirequest/templates/foirequest/show.html:532
-msgid "Extend deadline"
-msgstr "Verlängere Frist"
 
 #: froide/foirequest/templates/foirequest/show.html:552
 msgid "Summary of Request"
@@ -10086,6 +10094,9 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#~ msgid "Other Options"
+#~ msgstr "Andere Optionen"
+
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
 
@@ -10921,9 +10932,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr ""
 #~ "Trotz Ihrer Privatsphäre-Einstellungen wird Ihr Name mit Ihrem Kommentar "
 #~ "veröffentlicht. Es gibt <strong>keine anonymen Kommentare</strong>."
-
-#~ msgid "Extend Deadline by Months"
-#~ msgstr "Verlängere Frist um Monate"
 
 #, fuzzy
 #~| msgid "Show advanced filter"
