@@ -60,7 +60,7 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         self.order_fields(self.FIELD_ORDER)
         self.account_service = AccountService(self.foirequest.user)
 
-    def clean_upload(self):
+    def clean_uploads(self):
         upload_urls = self.cleaned_data['uploads']
         uploads = []
         for upload_url in upload_urls:
