@@ -42,10 +42,10 @@ class LawTreeprocessor(Treeprocessor):
         super().__init__(md)
 
         self.used_ids = set()
-        self.header_rgx = re.compile('[Hh][123456]')
+        self.header_rgx = re.compile(r'[Hh][123456]')
 
         # see https://regex101.com/r/pOR9CI/1
-        self.paragraph_rgx = re.compile('(§)\s*(\d+)\s*([a-z]*)')
+        self.paragraph_rgx = re.compile(r'(§)\s*(\d+)\s*([a-z]*)')
 
     def run(self, doc):
         for el in doc.iter():
