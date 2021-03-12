@@ -129,6 +129,8 @@ class FoiLaw(TranslatableModel):
             null=True, on_delete=models.SET_NULL, blank=True)
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
+    scale_of_fees = models.CharField(_("Scale of fees URL"),
+            max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
             null=True, blank=True, default=30)
     max_response_time_unit = models.CharField(_("Unit of Response Time"),
