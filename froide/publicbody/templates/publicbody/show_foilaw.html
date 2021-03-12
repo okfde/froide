@@ -34,7 +34,7 @@
 
   <div class="col-md-9">
     {% if legal_text %}
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs mb-3">
       <li class="nav-item">
         <a class="nav-link active" href="#legaltext" data-toggle="tab">Gesetzestext</a>
       </li>
@@ -44,7 +44,7 @@
     </ul>
     {% endif %}
 
-    <div class="tab-content mt-3">
+    <div class="tab-content">
       {% if legal_text %}
       <div class="tab-pane active" id="legaltext">
         <div class="alert alert-info">
@@ -59,7 +59,7 @@
         {{ legal_text|safe }}
       </div>
       {% endif %}
-      <div class="tab-pane fade {% if not known_legal_text %}active{% endif %}" id="description">
+      <div class="tab-pane {% if not legal_text %}active{% else %}fade{% endif %}" id="description">
         {{ object.long_description|markdown }}
       </div>
     </div>
