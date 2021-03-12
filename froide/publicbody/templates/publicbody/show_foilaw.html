@@ -43,7 +43,7 @@
           <a href="{{ object.url }}" target="_blank" rel="noopener">{% blocktrans with name=object.name juris=object.jurisdiction.name %}Official law text of {{ name }}{% endblocktrans %}</a>
         </div>
 
-        {{ object.legal_text|markdown }}
+        {{ legal_text|safe }}
       </div>
       <div class="tab-pane fade" id="description">
         {{ object.long_description|markdown }}

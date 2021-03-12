@@ -19,6 +19,9 @@ from .forms import (
 )
 from .filters import PublicBodyFilterSet
 
+import markdown
+from .utils import LawExtension
+
 
 FILTER_ORDER = ('jurisdiction', 'category')
 SUB_FILTERS = {
@@ -95,7 +98,10 @@ def show_jurisdiction(request, slug):
 
 def show_foilaw(request, slug):
     law = get_object_or_404(FoiLaw.objects.translated(slug=slug))
-    context = {"object": law}
+
+    legal_text = markdown.markdown(law.legal_text, extensions=[LawExtension()])
+
+    context = {"object": law, "legal_text": legal_text}
     return render(request, 'publicbody/show_foilaw.html', context)
 
 
