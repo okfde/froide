@@ -4,28 +4,51 @@
 {% load markup %}
 
 {% block app_body %}
-<h2>{{ object.name }} ({{ object.jurisdiction.name }})</h2>
-<dl>
-  <dt>{% blocktrans %}Link to law text:{% endblocktrans %}</dt>
-  <dd>
-  	<a href="{{ object.url }}" target="_blank" rel="noopener">{% blocktrans with name=object.name juris=object.jurisdiction.name %}Law text of {{ name }} ({{ juris }}){% endblocktrans %}</a>
-  </dd>
-  {% if object.created %}
-	  <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
-	  <dd>{{ object.created|date:"DATE_FORMAT" }}</dd>
-  {% endif %}
-  {% if object.updated %}
-	  <dt>{% blocktrans %}Last update on{% endblocktrans %}:</dt>
-	  <dd>{{ object.updated|date:"DATE_FORMAT" }}</dd>
-  {% endif %}
-  {% if object.mediator %}
-	  <dt>{% blocktrans %}Mediating authority{% endblocktrans %}:</dt>
-	  <dd><a href="{{ object.mediator.get_absolute_url }}">{{ object.mediator.name }}</a></dd>
-  {% endif %}
-</dl>
+<h2>{{ object.name }}</h2>
 
-<div>
-	{{ object.long_description|markdown }}
+<div class="row mt-4">
+  <div class="col-md-3">
+    <dl class="my-0">
+      {% if object.created %}
+        <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
+        <dd>{{ object.created|date:"DATE_FORMAT" }}</dd>
+      {% endif %}
+      {% if object.updated %}
+        <dt>{% blocktrans %}Last update on{% endblocktrans %}:</dt>
+        <dd>{{ object.updated|date:"DATE_FORMAT" }}</dd>
+      {% endif %}
+      {% if object.mediator %}
+        <dt>{% blocktrans %}Mediating authority{% endblocktrans %}:</dt>
+        <dd><a href="{{ object.mediator.get_absolute_url }}">{{ object.mediator.name }}</a></dd>
+      {% endif %}  
+    </dl>
+  </div>
+
+  <div class="col-md-9">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#legaltext" data-toggle="tab">Gesetzestext</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#description" data-toggle="tab">{% trans "Description" %}</a>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+      <div class="tab-pane active" id="legaltext">
+        <div class="alert alert-info">
+          {% blocktrans %}
+            This is a copy of the law, for which we can't guarantee correctness.
+          {% endblocktrans %}
+          <a href="{{ object.url }}" target="_blank" rel="noopener">{% blocktrans with name=object.name juris=object.jurisdiction.name %}Official law text of {{ name }}{% endblocktrans %}</a>
+        </div>
+
+        {{ object.legal_text|markdown }}
+      </div>
+      <div class="tab-pane fade" id="description">
+        {{ object.long_description|markdown }}
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock %}

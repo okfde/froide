@@ -105,6 +105,7 @@ class FoiLaw(TranslatableModel):
         slug=models.SlugField(_("Slug"), max_length=255),
         description=models.TextField(_("Description"), blank=True),
         long_description=models.TextField(_("Website Text"), blank=True),
+        legal_text=models.TextField(_("Legal Text"), blank=True),
         request_note=models.TextField(_("request note"), blank=True),
         letter_start=models.TextField(_("Start of Letter"), blank=True),
         letter_end=models.TextField(_("End of Letter"), blank=True),
