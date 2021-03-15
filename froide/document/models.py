@@ -3,13 +3,29 @@ from django.db import models
 from filingcabinet.models import (
     AbstractDocument,
     AbstractDocumentCollection,
+    DocumentManager as FCDocumentManager,
+    DocumentCollectionManager as FCDocumentCollectionManager,
     get_page_image_filename,
     Page
 )
 
 from froide.helper.auth import (
-    can_read_object, can_write_object, get_write_queryset
+    can_read_object, can_write_object,
+    get_read_queryset, get_write_queryset
 )
+
+
+class AuthQuerysetMixin:
+    def get_authenticated_queryset(self, request):
+        qs = self.get_queryset()
+        return get_read_queryset(
+            qs, request, has_team=True, public_field='public',
+            scope='read:document'
+        )
+
+
+class DocumentManager(AuthQuerysetMixin, FCDocumentManager):
+    pass
 
 
 class Document(AbstractDocument):
@@ -30,6 +46,8 @@ class Document(AbstractDocument):
         'team.Team', null=True, blank=True,
         on_delete=models.SET_NULL
     )
+
+    objects = DocumentManager()
 
     def is_public(self):
         return self.public
@@ -99,11 +117,18 @@ class Document(AbstractDocument):
         return None
 
 
+class DocumentCollectionManager(
+        AuthQuerysetMixin, FCDocumentCollectionManager):
+    pass
+
+
 class DocumentCollection(AbstractDocumentCollection):
     team = models.ForeignKey(
         'team.Team', null=True, blank=True,
         on_delete=models.SET_NULL
     )
+
+    objects = DocumentCollectionManager()
 
     def is_public(self):
         return self.public
