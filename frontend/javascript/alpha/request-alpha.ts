@@ -90,6 +90,12 @@ const initRequestPage = () => {
     goToReplyForm()
   }
 
+  document.addEventListener('keydown', function (event) {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+      expandAll(messagesContainer, messages, true)
+    }
+  });
+
 }
 
 const parseMessageContainers = () => {
@@ -257,31 +263,38 @@ const initTabs = () => {
 
 const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]) => {
   const expandAllLink = document.querySelector('.js-trigger-expand-all-messages') as HTMLElement
-  const isAllExpandedClass = 'is-all-expanded'
 
   expandAllLink.addEventListener('click', (e: MouseEvent) => {
     e.preventDefault()
-
-    const isAllExpanded = messagesContainer.classList.contains(isAllExpandedClass)
-
-    // expand or collapse all messages
-    for (let i = 0, l = messages.length; i < l; i++) {
-      const msg = messages[i]
-      if (isAllExpanded) {
-        msg.collapseMessage()
-      } else {
-        msg.expandMessage()
-      }
-    }
-
-    // add/remove class to message container
-    if (isAllExpanded) {
-      messagesContainer.classList.remove(isAllExpandedClass)
-    } else {
-      messagesContainer.classList.add(isAllExpandedClass)
-    }
+    expandAll(messagesContainer, messages)
   })
 
+}
+
+const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false) => {
+  const isAllExpandedClass = 'is-all-expanded'
+
+  const isAllExpanded = messagesContainer.classList.contains(isAllExpandedClass)
+  if (isAllExpanded && mustExpand) {
+    return
+  }
+
+  // expand or collapse all messages
+  for (let i = 0, l = messages.length; i < l; i++) {
+    const msg = messages[i]
+    if (isAllExpanded) {
+      msg.collapseMessage()
+    } else {
+      msg.expandMessage()
+    }
+  }
+
+  // add/remove class to message container
+  if (isAllExpanded) {
+    messagesContainer.classList.remove(isAllExpandedClass)
+  } else {
+    messagesContainer.classList.add(isAllExpandedClass)
+  }
 }
 
 const initSetStatusForm = () => {
