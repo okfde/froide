@@ -42,7 +42,7 @@ const initRequestPage = () => {
   initReplyForm()
 
   // if url query parameter found, scroll to comment next
-  scrollToComment(messages)
+  scrollToAnchor(messages)
 
   // init reply buttons
   const replyButtonTop = document.getElementById('alpha-reply-button-top')
@@ -212,7 +212,7 @@ const initExpandableDescriptions = () => {
   })
 }
 
-const scrollToComment = (messages: Message[]) => {
+const scrollToAnchor = (messages: Message[]) => {
   // when all messages initialized:
   // scroll to comment if query parameters given (e.g. ?msg=76058&c=10856)
   // find message and comment containers with id that equal query params
@@ -226,6 +226,13 @@ const scrollToComment = (messages: Message[]) => {
     if (msg) {
       msg.scrollToComment(scrollToCommentId)
     }
+    return
+  }
+  const element = document.querySelector(window.location.hash)
+  if (element) {
+    window.setTimeout(() => {
+      element.scrollIntoView({behavior: 'smooth'})
+    }, 300)
   }
 }
 
