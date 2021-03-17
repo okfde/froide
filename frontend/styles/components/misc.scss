@@ -41,6 +41,10 @@ FIXME: Problematic css definitions commented out:
   display: none;
 }
 
+.d-none-important {
+  display: none !important;
+}
+
 .text-unlink {
   cursor: default;
   color: #333;

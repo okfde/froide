@@ -234,11 +234,13 @@ const scrollToAnchor = (messages: Message[]) => {
     }
     return
   }
-  const element = document.querySelector(window.location.hash)
-  if (element) {
-    window.setTimeout(() => {
-      element.scrollIntoView({behavior: 'smooth'})
-    }, 300)
+  if (window.location.hash) {
+    const element = document.querySelector(window.location.hash)
+    if (element) {
+      window.setTimeout(() => {
+        element.scrollIntoView({behavior: 'smooth'})
+      }, 300)
+    }
   }
 }
 
@@ -288,6 +290,13 @@ const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpa
       msg.expandMessage()
     }
   }
+
+  Array.from(document.querySelectorAll('.js-trigger-expand-all-messages .fa')).forEach(el => {
+    el.classList.toggle('d-none-important')
+  })
+  Array.from(document.querySelectorAll('.js-trigger-expand-all-messages span')).forEach(el => {
+    el.classList.toggle('d-none-important')
+  })
 
   // add/remove class to message container
   if (isAllExpanded) {
