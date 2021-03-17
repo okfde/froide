@@ -90,6 +90,7 @@ class Base(Configuration):
     SECRET_KEY = 'make_me_unique!!'
 
     SITE_NAME = values.Value('Froide')
+    SITE_LOGO = values.Value('')
     SITE_EMAIL = values.Value('info@froide.example.com')
     SITE_URL = values.Value('http://localhost:8000')
 
