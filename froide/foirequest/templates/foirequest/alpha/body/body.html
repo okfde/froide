@@ -28,14 +28,14 @@
               role="button"
             >
               <i class="fa fa-send" aria-hidden="true"></i>
-              {% trans 'Send message' %}
+              <span class="d-none d-sm-inline">{% trans 'Send message' %}</span>
             </a>
             <a
               href="{% url 'foirequest-upload_postal_message' slug=object.slug %}"
               class="btn btn-primary btn-sm"
             >
               <i class="fa fa-envelope" aria-hidden="true"></i>
-              {% trans 'Upload Mail' %}
+              <span>{% trans 'Upload Mail' %}</span>
             </a>
           {% endif %}
           
