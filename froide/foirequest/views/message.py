@@ -388,6 +388,7 @@ def upload_attachments(request, foirequest, message_id):
                 kwargs={'slug': foirequest.slug, 'attachment_id': 0}),
         },
         'i18n': {
+            'attachmentName': _('Name of attachment to create'),
             'newDocumentPageCount': [
                 _('New document with one page'),
                 _('New document with {count} pages').format(count='${count}'),
@@ -396,18 +397,15 @@ def upload_attachments(request, foirequest, message_id):
             'convertImages': _('Convert images to document'),
             'openAttachmentPage': _('Open attachment page'),
             'loadPreview': _('Preview'),
-            'uploadPdfOrPicture': _('Upload PDFs or pictures of documents.'),
-            'upload': _('Upload'),
+            'approveAll': _('Approve all'),
+            'markAllAsResult': _('Mark all as result'),
             'otherAttachments': _('Other attachments that are not documents'),
-            'convertImagesToDocuments': _('Convert images to documents'),
             'imageDocumentExplanation': _(
                 'Here you can combine your uploaded images to a PDF document. '
                 'You can rearrange the pages and '
                 'split it into multiple documents. '
                 'You can redact the PDF in the next step.'
             ),
-            'documents': _('Documents'),
-            'otherFiles': _('Other files'),
             'documentPending': _(
                 'This document is being generated. '
                 'This can take several minutes.'

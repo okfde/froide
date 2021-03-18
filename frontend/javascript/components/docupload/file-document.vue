@@ -19,43 +19,7 @@
           <span class="sr-only">{{ i18n.loading }}</span>
         </div>
       </div>
-      <div class="col px-0">
-        <small v-if="document.pending">
-          {{ i18n.documentPending }}
-        </small>
-        <small v-if="document.deleting">
-          {{ i18n.documentDeleting }}
-        </small>
-
-        <small :title="attachment.name">{{ documentTitle }}</small>
-
-        <a
-          v-if="canOpen"
-          :href="attachment.site_url"
-          :title="i18n.openAttachmentPage"
-        >
-          <i class="fa fa-external-link" />
-        </a>
-
-        <div
-          v-if="document.uploading"
-          class="progress"
-        >
-          <div
-            class="progress-bar"
-            :class="{
-              'progress-bar-animated progress-bar-striped': progressAlmostComplete,
-              'bg-info progress-bar-striped': progressUnknown,
-            }"
-            :style="{'width': progressPercentLabel}"
-            role="progressbar"
-            :aria-valuenow="document.progress"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          />
-        </div>
-      </div>
-      <div class="col-auto doc-status">
+      <div class="col-auto pl-0 doc-status">
         <template v-if="hasAttachment">
           <span
             v-if="!approved"
@@ -86,7 +50,44 @@
           </span>
         </template>
       </div>
-      <div class="col-md-2 text-center">
+      <div class="col-auto col-sm px-0">
+        <small v-if="document.pending">
+          {{ i18n.documentPending }}
+        </small>
+        <small v-if="document.deleting">
+          {{ i18n.documentDeleting }}
+        </small>
+
+        <small :title="attachment.name">{{ documentTitle }}</small>
+
+        <a
+          v-if="canOpen"
+          :href="attachment.site_url"
+          :title="i18n.openAttachmentPage"
+        >
+          <i class="fa fa-external-link" />
+          <span class="sr-only">{{ i18n.openAttachmentPage }}</span>
+        </a>
+
+        <div
+          v-if="document.uploading"
+          class="progress"
+        >
+          <div
+            class="progress-bar"
+            :class="{
+              'progress-bar-animated progress-bar-striped': progressAlmostComplete,
+              'bg-info progress-bar-striped': progressUnknown,
+            }"
+            :style="{'width': progressPercentLabel}"
+            role="progressbar"
+            :aria-valuenow="document.progress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          />
+        </div>
+      </div>
+      <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-right text-sm-center">
         <button
           v-if="canMakeResult"
           class="btn btn-sm btn-outline-success"
@@ -99,37 +100,27 @@
           <i class="fa fa-certificate" />
           {{ i18n.isResult }}
         </button>
-        <template v-else-if="hasDocument">
-          <a
-            :href="attachment.site_url"
-            target="_blank"
-          >
-            <i class="fa fa-certificate" />
-          </a>
-          <button
-            class="btn btn-sm ml-1"
-            :class="{'btn-light': !editDocumentMeta, 'btn-secondary': editDocumentMeta}"
-            @click.prevent="editDocumentMeta = !editDocumentMeta"
-          >
-            <span class="sr-only">{{ i18n.edit }}</span>
-            <i class="fa fa-edit" />
-          </button>
-        </template>
+        <button
+          v-else-if="hasDocument"
+          class="btn btn-sm ml-1"
+          :class="{'btn-light': !editDocumentMeta, 'btn-secondary': editDocumentMeta}"
+          @click.prevent="editDocumentMeta = !editDocumentMeta"
+        >
+          <span class="sr-only">{{ i18n.edit }}</span>
+          <i class="fa fa-edit" />
+        </button>
+        <file-review
+          v-if="ready"
+          :config="config"
+          :document="document"
+          @docupdated="updateDocument"
+          @makerelevant="$emit('makerelevant')"
+        />
       </div>
-      <div class="col-md-4">
-        <template v-if="ready">
-          <file-review
-            :config="config"
-            :document="document"
-            @docupdated="updateDocument"
-            @makerelevant="$emit('makerelevant')"
-          />
-        </template>
-      </div>
-      <div class="col-auto">
+      <!-- <div class="col-auto">
         <button
           v-if="ready && attachment.is_pdf"
-          class="btn btn-sm"
+          class="btn btn-sm d-none d-md-inline"
           :class="{'btn-light': !document.previewPdf, 'btn-secondary': document.previewPdf}"
           @click.prevent="$emit('docupdated', {previewPdf: !document.previewPdf})"
         >
@@ -137,9 +128,9 @@
             class="fa"
             :class="{'fa-caret-square-o-right': !document.previewPdf, 'fa-caret-square-o-down': document.previewPdf}"
           />
-          <!-- {{ i18n.loadPreview }} -->
+          {{ i18n.loadPreview }}
         </button>
-      </div>
+      </div> -->
     </div>
     <div
       v-if="editDocumentMeta"

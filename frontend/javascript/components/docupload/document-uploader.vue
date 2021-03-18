@@ -2,9 +2,9 @@
   <div class="document-uploader mb-3 mt-3">
     <div
       v-if="imageDocuments.length > 0"
-      class="images mt-3"
+      class="images mt-5"
     >
-      <h3>{{ i18n.convertImagesToDocuments }}</h3>
+      <slot name="convert-images" />
       <image-document
         v-for="doc in imageDocuments"
         :key="doc.id"
@@ -23,19 +23,19 @@
       v-if="pdfDocuments.length > 0"
       class="documents mt-5"
     >
-      <h3>{{ i18n.documents }}</h3>
+      <slot name="documents" />
       <div class="mt-3 mb-3">
         <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
-          <div class="col-auto mr-auto">
+          <div class="col-auto mr-md-auto">
             <input
               v-model="selectAll"
               type="checkbox"
               @click="clickSelectAll"
             >
           </div>
-          <div class="col-md-2 ml-auto text-center">
+          <div class="col-auto ml-auto">
             <button
-              v-if="canMakeDocument"
+              v-if="canMakeDocument && canMakeResult"
               class="btn btn-sm"
               :class="{'btn-success': canMakeResult}"
               :disabled="!canMakeResult"
@@ -45,18 +45,17 @@
               @click="makeResults"
             >
               <i class="fa fa-certificate" />
-              {{ i18n.isResult }}
+              {{ i18n.markAllAsResult }}
             </button>
-          </div>
-          <div class="col-md-4 mr-5 text-right">
             <button
+              v-if="canApprove"
               class="btn btn-sm"
               :class="{'btn-success': canApprove}"
               :disabled="!canApprove"
               @click="approveSelected"
             >
               <i class="fa fa-check" />
-              {{ i18n.approve }}
+              {{ i18n.approveAll }}
             </button>
           </div>
         </div>
@@ -81,7 +80,7 @@
       class="mt-5"
     >
       <hr>
-      <h4>{{ i18n.otherFiles }}</h4>
+      <slot name="other-files" />
       <file-document
         v-for="doc in otherAttachments"
         :key="doc.id"
@@ -95,12 +94,11 @@
 
     <div
       v-if="canUpload"
-      class="upload"
+      class="upload mt-5"
     >
-      <h3>{{ i18n.upload }}</h3>
-      <p>{{ i18n.uploadPdfOrPicture }}</p>
+      <slot name="upload-header" />
       <file-uploader
-        class="mb-3 mt-3"
+        class="mb-3 mt-2"
         :config="config"
         :auto-proceed="true"
         :allowed-file-types="[

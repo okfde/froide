@@ -1,43 +1,74 @@
 <template>
   <div class="document mb-3">
     <div class="card">
-      <div class="card-header" ref="top">
+      <div
+        ref="top"
+        class="card-header"
+      >
         {{ i18n._('newDocumentPageCount', {count: numPages} ) }}
       </div>
-      <div class="card-body" :class="{'is-new': document.new}">
-        <div v-if="converting" class="progress">
-          <div class="progress-bar"
-          :class="{'progress-bar-animated progress-bar-striped': progressCurrent === null}"
-          :style="{'width': progressCurrent ? progressCurrent : '100%'}"
-          role="progressbar" :aria-valuenow="progressCurrent ? progressCurrent : 0"
-          aria-valuemin="0" aria-valuemax="100"></div>
+      <div
+        class="card-body"
+        :class="{'is-new': document.new}"
+      >
+        <div
+          v-if="converting"
+          class="progress"
+        >
+          <div
+            class="progress-bar"
+            :class="{'progress-bar-animated progress-bar-striped': progressCurrent === null}"
+            :style="{'width': progressCurrent ? progressCurrent : '100%'}"
+            role="progressbar"
+            :aria-valuenow="progressCurrent ? progressCurrent : 0"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          />
         </div>
         <div v-else>
+          <p class="text-muted">
+            {{ i18n.imageDocumentExplanation }} 
+          </p>
           <div class="form-group">
             <label for="page-label">{{ i18n.attachmentName }}</label>
-            <input v-model="documentName" type="text" class="form-control" :placeholder="i18n.documentTitlePlaceholder">
+            <input
+              v-model="documentName"
+              type="text"
+              class="form-control"
+              :placeholder="i18n.documentTitlePlaceholder"
+            >
           </div>
-          <draggable v-model="pages" @start="drag=true" @end="drag=false" class="row pages bg-light">
-            <image-page v-for="page in pages" :key="page.pageNum"
+          <draggable
+            v-model="pages"
+            class="row pages bg-light"
+            @start="drag=true"
+            @end="drag=false"
+          >
+            <image-page
+              v-for="page in pages"
+              :key="page.pageNum"
               :page="page"
               :page-count="pages.length"
               @pageupdated="$emit('pageupdated', {document, ...$event})"
               @splitpages="splitPages"
-            ></image-page>
+            />
           </draggable>
         </div>
         <div class="row mt-3">
-          <div class="col-md-8 text-muted">
-            {{ i18n.imageDocumentExplanation }} 
-          </div>
-          <div class="col-md-4">
+          <div class="col-md-12">
             <p class="text-right">
-              <button class="btn btn-primary mt-2" :disabled="anyUploads || converting" @click="convertImages">
+              <button
+                class="btn btn-primary mt-2"
+                :disabled="anyUploads || converting"
+                @click="convertImages"
+              >
                 {{ i18n.convertImages }}
               </button>
-              <file-review :config="config" :document="document"
+              <file-review
+                :config="config"
+                :document="document"
                 @docupdated="updateDocument"
-              ></file-review>
+              />
             </p>
           </div>
         </div>
@@ -58,27 +89,29 @@ import {DocumentMixin} from './lib/document_utils'
 
 import {postData} from '../../lib/api.js'
 
-const range = (len) => [...Array(len).keys()]
-
 export default {
-  name: 'image-document',
-  mixins: [I18nMixin, DocumentMixin],
-  props: ['config', 'document'],
+  name: 'ImageDocument',
   components: {
     draggable,
     ImagePage,
     FileReview,
+  },
+  mixins: [I18nMixin, DocumentMixin],
+  props: {
+    config: {
+      type: Object,
+      required: true
+    },
+    document: {
+      type: Object,
+      required: true
+    }
   },
   data () {
     return {
       progressTotal: null,
       progressCurrent: null,
       converting: false,
-    }
-  },
-  mounted () {
-    if (this.document.new) {
-      window.setTimeout(() => this.$emit('notnew'), 2000);
     }
   },
   computed: {
@@ -106,6 +139,11 @@ export default {
         return p && p.id
       })
     },
+  },
+  mounted () {
+    if (this.document.new) {
+      window.setTimeout(() => this.$emit('notnew'), 2000);
+    }
   },
   methods: {
     splitPages (pageNum) {
@@ -140,9 +178,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .document {
-    margin-top: 2rem;
-  }
   .pages {
     display: flex;
     flex-wrap: nowrap;
