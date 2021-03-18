@@ -14,7 +14,11 @@
       {% trans 'This attachment is only visible for users with access to this request.' as tooltip %}
     {% endif %}
   {% else %}
-    {% trans 'This attachment is not public yet.' as tooltip %}
+    {% if not attachment.can_approve %}
+      {% trans 'This attachment is not public yet.' as tooltip %}
+    {% else %}
+      {% trans 'This attachment cannot be published.' as tooltip %}
+    {% endif %}
   {% endif %}
 
   <div
@@ -66,8 +70,7 @@
           <span class="mr-1 badge badge-info">
             {% blocktrans %}PDF Pending{% endblocktrans %}
           </span>
-        {% endif %}
-        {% if attachment.is_mail_decoration and object|can_write_foirequest:request %}
+        {% elif attachment.is_mail_decoration and object|can_write_foirequest:request %}
           <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
             <i class="fa fa-picture-o" aria-hidden="true"></i>
           </span>
@@ -79,6 +82,21 @@
 
     <!-- filesize -->
     <div class="text-gray-600 small">{{ attachment.size|filesizeformat }}</div>
+
+    {% if object|can_write_foirequest:request and attachment.can_approve %}
+      <div class="small">
+        {% if attachment.can_redact %}
+          <a href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">
+            {% translate "Review to publish" %}
+          </a>
+        {% else %}
+          <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=attachment.belongs_to_id %}">
+            {% translate "Review to publish" %}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
 
   </div>
 
