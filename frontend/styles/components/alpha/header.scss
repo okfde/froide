@@ -8,6 +8,9 @@
   margin: 0;
   &__element, &__separator {
     margin-right: $spacer * .5;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     > * {
       color: $gray-500;
       font-size: small;
