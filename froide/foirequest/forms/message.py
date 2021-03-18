@@ -286,10 +286,12 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         return message
 
     def clean(self):
-        if (self.cleaned_data.get('send_address', False) and
-                not self.cleaned_data['address'].strip()):
+        cleaned_data = super().clean()
+        if (cleaned_data.get('send_address', False) and
+                not cleaned_data.get('address', '').strip()):
             raise forms.ValidationError('You need to give a postal address, '
                                         'if you want to send it.')
+        return cleaned_data
 
     def add_message_body(self, message,
                          attachment_names=(), attachment_missing=()):
