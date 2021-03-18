@@ -113,7 +113,7 @@ def add_postal_reply(request, foirequest, form_func=get_postal_reply_form,
 
         signal.send(sender=foirequest, message=message, user=request.user)
         messages.add_message(request, messages.SUCCESS, success_message)
-        url = reverse('foirequest-upload_attachments',
+        url = reverse('foirequest-manage_attachments',
                 kwargs={'slug': foirequest.slug, 'message_id': message.id})
         return redirect(url)
 
@@ -161,7 +161,7 @@ def upload_postal_message(request, foirequest):
             messages.add_message(request, messages.SUCCESS, success_message)
 
             url = reverse(
-                'foirequest-upload_attachments',
+                'foirequest-manage_attachments',
                 kwargs={'slug': foirequest.slug, 'message_id': message.id}
             )
             return redirect(url)
@@ -373,7 +373,7 @@ def upload_attachments(request, foirequest, message_id):
             'getAttachment': reverse('api:attachment-detail', kwargs={
                 'pk': 0
             }),
-            'convertAttachments': reverse('foirequest-upload_attachments',
+            'convertAttachments': reverse('foirequest-manage_attachments',
                 kwargs={'slug': foirequest.slug, 'message_id': message.id}),
             'addAttachment': reverse('foirequest-add_postal_reply_attachment',
                 kwargs={'slug': foirequest.slug, 'message_id': message.id}),

@@ -12,7 +12,7 @@
       and force to review.
     {% endcomment %}
     {% if object|can_write_foirequest:request and attachment.can_edit %}
-      <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}">
+      <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}">
     {% endif %}
     <span title="{{ attachment.name }}">
       <i class="fa fa-paperclip" aria-hidden="true"></i>
@@ -44,7 +44,7 @@
   <div class="btn-group-forms" role="group">
     {% if object|can_write_foirequest:request %}
       {% if attachment.can_edit %}
-        <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
+        <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}#attachment-{{ attachment.id }}" class="btn btn-sm btn-secondary">
           <span class="fa fa-edit"></span>
           <span class="sr-only">{% trans "Edit" %}</span>
         </a>

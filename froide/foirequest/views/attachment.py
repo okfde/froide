@@ -202,7 +202,7 @@ def get_redact_context(foirequest, attachment):
                 'slug': foirequest.slug,
                 'attachment_id': attachment.pk
             }),
-            'messageUpload': reverse('foirequest-upload_attachments', kwargs={
+            'messageUpload': reverse('foirequest-manage_attachments', kwargs={
                 'slug': foirequest.slug,
                 'message_id': attachment.belongs_to_id
             })

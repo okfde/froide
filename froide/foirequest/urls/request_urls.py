@@ -62,7 +62,7 @@ urlpatterns = [
         show_attachment, name='foirequest-show_attachment'),
     # Attachment Upload
     path(pgettext_lazy('url part', '<slug:slug>/<int:message_id>/upload/'),
-        upload_attachments, name='foirequest-upload_attachments'),
+        upload_attachments, name='foirequest-manage_attachments'),
 
     # Attachment actions
     path("<slug:slug>/redact/<int:attachment_id>/", redact_attachment, name="foirequest-redact_attachment"),

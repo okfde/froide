@@ -192,7 +192,7 @@
 
     {% if object|can_write_foirequest:request and message.is_postal %}
       <div class="d-print-none">
-        <a href="{% url 'foirequest-upload_attachments' slug=object.slug message_id=message.pk %}" class="btn btn-secondary">
+        <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}" class="btn btn-secondary">
           {% trans "Manage attachments" %}
         </a>
       </div>
