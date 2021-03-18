@@ -100,9 +100,9 @@
       <li
         class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger info-box__list-item--inset{% endif %}"
         {% if object.is_overdue %}
-          title="{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}"
+          title="{{ object.due_date|date:'DATE_FORMAT' }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}"
         {% else %}
-          title="{{ object.due_date|date:"DATE_FORMAT" }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}"
+          title="{{ object.due_date|date:'DATE_FORMAT' }} - {% blocktrans with due=object.due_date|timeuntil %}in {{ due }}{% endblocktrans %}"
         {% endif %}
       >
         <div class="info-box__list-label">
@@ -183,7 +183,7 @@
                 <i class="fa fa-twitter" aria-hidden="true"></i>
                 {% trans "Tweet request" %}
               </a>
-              &nbsp;
+              &nbsp;<br class="d-sm-none"/>
               <a href="https://www.facebook.com/share.php?u={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
                 <i class="fa fa-facebook-official" aria-hidden="true"></i>
                 {% blocktrans %}Share request{% endblocktrans %}
