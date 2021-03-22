@@ -98,7 +98,6 @@
 
     </div>
 
-
     <!-- Reply form -->
     {% if object|can_write_foirequest:request and object.public_body %}
       <div id="reply-form-helper"></div>
@@ -120,7 +119,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link"  data-toggle="tab" href="#escalate" role="tab" aria-controls="escalate" aria-selected="false">
+                    <a class="nav-link" data-toggle="tab" href="#escalate" role="tab" aria-controls="escalate" aria-selected="false">
                       {% trans "Start mediation" %}
                     </a>
                   </li>
@@ -157,35 +156,6 @@
     {% include "foirequest/alpha/body/settings.html" %}
   {% endif %}
 
-  {% comment %}
-    {# TODO: set status tab: show when people come from email? #}
-  {% if active_tab == 'set-status' %}
-    <div
-      role="tabpanel"
-      class="tab-pane fade"
-      id="set-status"
-      aria-labelledby="set-status-tab"
-    >
-      <div class="container px-0">
-        <div class="row bg-white mx-0">
-          <div class="col-md-8 col-lg-6 p-3 pb-4 px-lg-4">
-            <h4 class="mt-3 mb-3">{% blocktrans %}Set a new status{% endblocktrans %}</h4>
-            <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
-              {% csrf_token %}
-              {% if status_form %}
-                {% include "foirequest/alpha/header/_set_status.html" %}
-              {% else %}
-                {% with status_form=object.get_status_form %}
-                  {% include "foirequest/alpha/header/_set_status.html" %}
-                {% endwith %}
-              {% endif %}
-              <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  {% endif %} {% endcomment %}
 </div>
 
 {% block after_foirequest_messages %}
@@ -200,6 +170,18 @@
         {% blocktrans %}This request is identical to:{% endblocktrans %}
         <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a>
       </p>
+    </div>
+  {% endif %}
+
+  {% if object.is_blocked %}
+    <div class="container">
+      <div class="row mt-5">
+        <div class="col-lg-12 text-right">
+          <small class="text-muted">
+            {% trans "This request has been detected as spam and its messages are not sent." %}
+          </small>
+        </div>
+      </div>
     </div>
   {% endif %}
 {% endblock after_foirequest_messages %}

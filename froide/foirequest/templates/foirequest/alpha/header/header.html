@@ -9,8 +9,7 @@
   {% endif %}
 {% endblock extra_head %}
 
-<div class="container">
-
+<div class="container pt-2">
 
   {% if not object.public and object|can_read_foirequest_anonymous:request %}
   <div class="alert alert-warning">
@@ -33,6 +32,46 @@
     {% blocktrans %}This request is not an FoI request. This site is only for requesting specific, non-personal information from public bodies.{% endblocktrans %}
   </div>
   {% endif %}
+
+  {% if object.closed %}
+  <div class="alert alert-info">
+    {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
+  </div>
+  {% endif %}
+
+  {% if object|can_write_foirequest:request and object.is_overdue %}
+    <div class="alert alert-info d-print-none">
+      {% blocktrans with name=object.user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!{% endblocktrans %}
+      <br/>
+      {% translate "Please act now:" %}
+      <ul>
+        <li>
+          {% blocktrans %}Have you received a reply by <b>postal mail</b>?{% endblocktrans %}
+          &rarr;
+          <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}">
+            {% translate "Upload the letter now!" %}
+          </a>
+        </li>
+        <li>
+          {% blocktrans %}Have you not gotten any reply?{% endblocktrans %}
+          &rarr; 
+          <a href="#write-messages" data-scrollto="write-messages">
+            {% translate "Write a reminder to the public body!" %}
+          </a>
+        </li>
+      </ul>
+    </div>
+  {% endif %}
+
+  {% if object|can_write_foirequest:request and object.has_been_refused and object.can_be_escalated %}
+    <div class="alert alert-info d-print-none">
+      {% blocktrans %}You request has been refused.{% endblocktrans %}
+      <a href="#escalate" data-tabgo="tab" data-scrollto="escalate">
+        {% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}
+      </a>
+    </div>
+  {% endif %}
+
 
   {% block foirequest_header %}{% endblock %}
 
