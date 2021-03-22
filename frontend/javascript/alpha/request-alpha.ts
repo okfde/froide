@@ -62,6 +62,24 @@ const initRequestPage = () => {
     goToReplyForm()
   })
 
+  const tabLinks = document.querySelectorAll('a[data-tabgo]');
+  Array.from(tabLinks).forEach(tabLink => {
+    tabLink.addEventListener('click', function(this: HTMLElement) {
+      const hrefAttr = this.attributes.getNamedItem('href');
+      if (hrefAttr === null) { return; }
+      const href = hrefAttr && hrefAttr.value;
+      const el = document.querySelector(href);
+      if (el === null) { return; }
+      const display = window.getComputedStyle(el, null).display;
+      if (display === 'none') {
+        const navLink = document.querySelector('.nav-link[href="' + href + '"]') as IHTMLTabElement;
+        if (navLink && navLink.Tab) {
+          navLink.Tab.show();
+        }
+      }
+    })
+  })
+
   const goToReplyForm = () => {
     if (!writeForm?.classList.contains('show')) {
       replyButtonBottom?.click()

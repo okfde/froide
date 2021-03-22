@@ -42,10 +42,21 @@ const runOnPage = () => {
     link.addEventListener('click', (e) => {
       if (link.dataset.scrollto) {
         e.preventDefault()
-        scrollToAnchor(link.dataset.scrollto, {
-          behavior: 'smooth',
-          block: link.dataset.scrolltoblock || 'start'
-        })
+        if (link.dataset.tabgo) {
+          window.setTimeout(() => {
+            if (link.dataset.scrollto) {
+              scrollToAnchor(link.dataset.scrollto, {
+                behavior: 'smooth',
+                block: link.dataset.scrolltoblock || 'start'
+              })
+            }
+          }, 100)
+        } else {
+          scrollToAnchor(link.dataset.scrollto, {
+            behavior: 'smooth',
+            block: link.dataset.scrolltoblock || 'start'
+          })
+        }
       }
     })
   });
