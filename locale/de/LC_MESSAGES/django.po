@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-03-22 13:18+0100\n"
-"PO-Revision-Date: 2021-03-22 12:21+0000\n"
+"PO-Revision-Date: 2021-03-22 19:17+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3997,7 +3997,7 @@ msgstr "PDF wird erstellt"
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:90
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/item.html:94
 msgid "Review to publish"
-msgstr "Prüfen um zu veröffentlichen"
+msgstr "Prüfen, um zu veröffentlichen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/attachments/list.html:17
 #, python-format
