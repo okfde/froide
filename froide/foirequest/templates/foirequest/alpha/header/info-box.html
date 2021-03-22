@@ -179,7 +179,8 @@
           <!-- share links -->
           {% block social_sharing %}
             <div>
-              <a href="https://twitter.com/share?url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
+              {% translate "I made an #FOI request:" as social_text %}
+              <a href="https://twitter.com/share?text={{ social_text|urlencode }}&amp;url={{ object.get_absolute_domain_short_url|urlencode }}" target="_blank" rel="noopener">
                 <i class="fa fa-twitter" aria-hidden="true"></i>
                 {% trans "Tweet request" %}
               </a>
