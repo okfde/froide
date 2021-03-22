@@ -12,7 +12,7 @@
 
 {% block body %}
 
-  <div class="bg-gray-100" style="margin-bottom: 2px;">
+  <div class="request-section">
     {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachments of message from {{ date }}{% endblocktrans %}
     {% include "foirequest/alpha/header/breadcrumb.html" with last_item=breadcrumb_label %}
   </div>
