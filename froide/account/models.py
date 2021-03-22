@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.postgres.fields import CIEmailField
 from django.contrib.auth.models import (AbstractBaseUser, PermissionsMixin,
                                         BaseUserManager)
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -102,6 +103,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=150, blank=True)
     email = models.EmailField(_('email address'), unique=True, null=True,
                               blank=True)
+    email_ci = CIEmailField(_('email address'), null=True, blank=True)
+
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,
