@@ -30,9 +30,9 @@
     <!-- attachments footer -->
     {% if object|can_write_foirequest:request or message.hidden_attachments %}
 
-      <hr class="mt-2">
+      <hr class="mt-2 d-print-none">
 
-      <div class="d-flex flex-column flex-sm-row smaller">
+      <div class="d-flex flex-column flex-sm-row smaller d-print-none">
         {% if object|can_write_foirequest:request and message.can_edit_attachments %}
           <!-- manage attachments link -->
           <a

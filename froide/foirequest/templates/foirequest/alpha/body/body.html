@@ -17,7 +17,7 @@
 
     <!-- Correspondence, Action buttons and Timeline -->
     <div class="container-sm-full px-0">
-      <div class="row mx-3 mx-lg-0 py-4">
+      <div class="row mx-3 mx-lg-0 py-4 d-print-none">
         <div class="col-lg-8 px-0 d-flex">
 
           {% if object|can_write_foirequest:request and object.public_body %}
@@ -61,7 +61,7 @@
 
           {% if object|can_write_foirequest:request and object.public_body %}
           <!-- Reply action buttons -->
-          <div class="text-center mb-6">
+          <div class="text-center mb-6 d-print-none">
             <a
               href="#write-messages"
               data-scrollto="write-messages"
@@ -91,7 +91,7 @@
 
         </div>
 
-        <div class="px-0 px-lg-3 col-lg-4">
+        <div class="px-0 px-lg-3 col-lg-4 d-print-none">
           {% include "foirequest/alpha/body/timeline.html" %}
         </div>
       </div>
@@ -100,8 +100,8 @@
 
     <!-- Reply form -->
     {% if object|can_write_foirequest:request and object.public_body %}
-      <div id="reply-form-helper"></div>
-      <div id="write-messages" class="reply-form bg-white">
+      <div id="reply-form-helper" class="d-print-none"></div>
+      <div id="write-messages" class="reply-form bg-white d-print-none">
         <a href="#" class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
           <i class="fa fa-unlock" aria-hidden="true"></i>
           {% trans "Sticky" %}
