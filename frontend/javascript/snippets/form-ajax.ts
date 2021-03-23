@@ -64,6 +64,9 @@ const submitFormsAjax = () => {
       request.send(data);
 
       Array.from(form.querySelectorAll("button, input")).forEach((el) => {
+        if (el.getAttribute('type') === 'submit') {
+          el.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${el.innerHTML}`
+        }
         el.setAttribute("disabled", "");
       });
     });

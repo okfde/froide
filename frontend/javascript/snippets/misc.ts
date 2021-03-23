@@ -19,6 +19,7 @@ const runOnPage = () => {
       const form = this;
       const buttons = form.querySelectorAll('button[type="submit"]');
       Array.from(buttons).forEach((button) => {
+        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${button.innerHTML}`
         button.setAttribute("disabled", "");
       });
     });
