@@ -20,18 +20,40 @@
     This attachment is part of the request ”<a href="{{ message_url }}">{{ title }}</a>”.
     {% endblocktrans %}
   </p>
-  {% if attachment.can_redact and foirequest|can_write_foirequest:request %}
-    <a class="btn btn-sm btn-dark d-print-none" href="{% url 'foirequest-redact_attachment' slug=foirequest.slug attachment_id=attachment.id %}">
-      <i class="fa fa-paint-brush"></i>
-      {% trans "Redact" %}
-    </a>
-  {% endif %}
   {% endblock %}
 
   {% if foirequest.campaign %}
-    {% include foirequest.campaign.banner_templates with object=foirequest %}
+    <div class="my-3">
+      {% include foirequest.campaign.banner_templates with object=foirequest %}
+    </div>
   {% endif %}
 
+  {% if foirequest|can_write_foirequest:request %}
+
+    {% if foirequest.awaits_classification %}
+      <div class="alert alert-warning">
+        <a href="{% url 'foirequest-show' slug=foirequest.slug %}#set-status">
+          {% translate "Don't forget to set the status of this request!" %}
+        </a>
+      </div>
+    {% endif %}
+
+    {% if attachment.can_redact %}
+      <a class="btn btn-sm btn-dark d-print-none" href="{% url 'foirequest-redact_attachment' slug=foirequest.slug attachment_id=attachment.id %}">
+        <i class="fa fa-paint-brush"></i>
+        {% trans "Redact" %}
+      </a>
+    {% endif %}
+    {% if not attachment.approved and attachment.can_approve %}
+      <form class="ajaxified ajax-parent" action="{% url 'foirequest-approve_attachment' slug=foirequest.slug attachment_id=attachment.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">
+          {% translate "Approve" %}
+        </button>
+      </form>
+    {% endif %}
+
+  {% endif %}
 </div>
 
 

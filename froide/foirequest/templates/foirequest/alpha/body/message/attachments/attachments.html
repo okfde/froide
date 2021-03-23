@@ -33,10 +33,7 @@
       <hr class="mt-2">
 
       <div class="d-flex flex-column flex-sm-row smaller">
-        {% if object|can_write_foirequest:request %}
-          {% comment %}
-            TODO: check if at least one attachment can be edited
-          {% endcomment %}
+        {% if object|can_write_foirequest:request and message.can_edit_attachments %}
           <!-- manage attachments link -->
           <a
             href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}"

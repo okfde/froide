@@ -83,7 +83,7 @@
     <!-- filesize -->
     <div class="text-gray-600 small">{{ attachment.size|filesizeformat }}</div>
 
-    {% if object|can_write_foirequest:request and attachment.can_approve %}
+    {% if object|can_write_foirequest:request and not attachment.approved and attachment.can_approve %}
       <div class="small">
         {% if attachment.can_redact %}
           <a href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">

@@ -78,6 +78,10 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
             a for a in message.listed_attachments
             if a.is_irrelevant
         ]
+        message.can_edit_attachments = bool([
+            a for a in message.listed_attachments
+            if a.can_edit
+        ])
         message.approved_attachments = [
             a for a in message.listed_attachments
             if a.approved and a not in message.hidden_attachments

@@ -76,10 +76,9 @@ def approve_attachment(request, foirequest, attachment_id):
     if is_ajax(request):
         if request.content_type == 'application/json':
             return JsonResponse({})
-        return render(
-            request, 'foirequest/snippets/attachment.html',
-            {'attachment': att, 'object': foirequest}
-        )
+        return HttpResponse('<div class="alert alert-success">{}</div>'.format(
+            _('Attachment approved.')
+        ))
     messages.add_message(request, messages.SUCCESS,
             _('Attachment approved.'))
     return redirect(att.get_anchor_url())
