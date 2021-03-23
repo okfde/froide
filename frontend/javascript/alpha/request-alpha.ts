@@ -112,8 +112,8 @@ const initRequestPage = () => {
   }
 
   document.addEventListener('keydown', function (event) {
-    if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
-      expandAll(messagesContainer, messages, true)
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'f' || event.key === 'p')) {
+      expandAll(messagesContainer, messages, true, true)
     }
   });
 
@@ -294,8 +294,14 @@ const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Mes
 
 }
 
-const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false) => {
+const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false, details = false) => {
   const isAllExpandedClass = 'is-all-expanded'
+
+  if (mustExpand && details) {
+    messages.forEach(m => {
+      m.showMetaContainer()
+    })
+  }
 
   const isAllExpanded = messagesContainer.classList.contains(isAllExpandedClass)
   if (isAllExpanded && mustExpand) {

@@ -3,6 +3,7 @@ export default class Message {
   element: HTMLElement
   metaContainer: HTMLElement
   expandedClassName = 'alpha-message--expanded'
+  metaExpandedClassName = 'alpha-message__meta-container--visible'
 
   constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
@@ -86,12 +87,19 @@ export default class Message {
   collapseMessage () {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
+    this.metaContainer.classList.remove(this.metaExpandedClassName)
   }
 
-  toggleMetaContainer (e: Event) {
-    e.preventDefault()
-    e.stopPropagation()
-    this.metaContainer.classList.toggle('alpha-message__meta-container--visible')
+  showMetaContainer () {
+    if (!this.metaContainer.classList.contains(this.metaExpandedClassName)) {
+      this.toggleMetaContainer()
+    }
+  }
+
+  toggleMetaContainer (e?: Event) {
+    e?.preventDefault()
+    e?.stopPropagation()
+    this.metaContainer.classList.toggle(this.metaExpandedClassName)
   }
 
   expandCommentText (e: Event) {
