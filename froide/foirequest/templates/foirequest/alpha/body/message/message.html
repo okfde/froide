@@ -210,15 +210,7 @@
         {% render_problem_button message %}
 
         {% if not message.is_response and message.is_email and message.can_resend_bounce and object|can_moderate_foirequest:request %}
-          <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
-          method="post" class="ajaxified"
-          data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
-            {% csrf_token %}
-            <button class="btn btn-sm btn-warning flex-fill mb-1 mx-sm-1" type="submit"
-              data-toggle="tooltip" title="{% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}">
-              {% trans "Resend" %}
-            </button>
-          </form>
+          {% include "foirequest/alpha/body/message/toolbar/resend.html" %}
         {% endif %}
 
       </div>
