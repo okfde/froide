@@ -26,7 +26,10 @@ const initRequestPage = () => {
   initMessageMarks()
 
   // init Info Box
-  new InfoBox()
+  const infoBox = new InfoBox()
+  if (window.location.hash === '#set-status') {
+    infoBox.showStatus()
+  }
 
 
   // init timeline

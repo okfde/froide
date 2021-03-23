@@ -128,6 +128,11 @@
         bottom: 0;
       }
     }
+    &--stickybump {
+      @include media-breakpoint-up(sm) {
+        bottom: 40px;
+      }
+    }
   }
   &__footer {
     display: none;

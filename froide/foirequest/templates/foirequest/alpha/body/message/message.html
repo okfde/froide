@@ -162,7 +162,7 @@
 
     {% block after_message %}{% endblock %}
 
-    <div class="alpha-message__toolbar {% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky{% endif %}">
+    <div class="d-print-none alpha-message__toolbar {% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky {% if object.awaits_classification %}alpha-message__toolbar--stickybump{% endif %}{% endif %}">
 
       <!-- footer buttons -->
       <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">

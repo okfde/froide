@@ -36,8 +36,14 @@ export default class InfoBox {
 
   }
 
-  editButtonClickCallback (e: MouseEvent) {
-    e.preventDefault()
+  showStatus () {
+    if (this.editPanel?.classList.contains('d-none')) {
+      this.editButtonClickCallback()
+    }
+  }
+
+  editButtonClickCallback (e?: MouseEvent) {
+    e?.preventDefault()
     if (this.editButton && this.editPanel && this.infoList) {
       this.editPanel.classList.toggle('d-none')
       this.infoList.classList.toggle('d-none')
