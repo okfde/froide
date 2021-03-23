@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-22 13:18+0100\n"
-"PO-Revision-Date: 2021-03-22 19:17+0000\n"
+"POT-Creation-Date: 2021-03-23 11:53+0100\n"
+"PO-Revision-Date: 2021-03-23 10:59+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1236,7 +1236,7 @@ msgstr "Die Anwendung erfordert die folgenden Berechtigungen"
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:165
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:220
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html:29
-#: froide/foirequest/views/attachment.py:218
+#: froide/foirequest/views/attachment.py:217
 #: froide/problem/templates/problem/message_toolbar_item.html:145
 #: froide/problem/views.py:95 froide/upload/forms.py:20
 msgid "Cancel"
@@ -3455,6 +3455,8 @@ msgid "{name}_converted{ext}"
 msgstr "{name}_konvertiert{ext}"
 
 #: froide/foirequest/templates/admin/foirequest/foimessage/change_form.html:7
+#: froide/foirequest/templates/foirequest/alpha/body/message/toolbar/resend.html:12
+#: froide/foirequest/templates/foirequest/alpha/body/message/toolbar/resend.html:27
 msgid "Resend message"
 msgstr "Nachricht erneut senden"
 
@@ -3915,7 +3917,11 @@ msgstr ""
 msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
-#: froide/foirequest/templates/foirequest/alpha/body/correspondence.html:25
+#: froide/foirequest/templates/foirequest/alpha/body/correspondence.html:29
+msgid "Please set the status of this request!"
+msgstr "Bitte den Status der Anfrage angeben!"
+
+#: froide/foirequest/templates/foirequest/alpha/body/correspondence.html:37
 #: froide/foirequest/templates/foirequest/alpha/header/header.html:38
 #: froide/foirequest/templates/foirequest/show.html:101
 msgid "This request has been closed and cannot receive further messages."
@@ -3931,13 +3937,13 @@ msgstr "Freigeschaltete Anhänge:"
 msgid "Unapproved attachments:"
 msgstr "Nicht-öffentliche Anhänge:"
 
-#: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:46
+#: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:42
 #: froide/foirequest/templates/foirequest/attachment/manage.html:25
 #: froide/foirequest/templates/foirequest/snippets/message.html:196
 msgid "Manage attachments"
 msgstr "Anhänge verwalten"
 
-#: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:59
+#: froide/foirequest/templates/foirequest/alpha/body/message/attachments/attachments.html:55
 #: froide/foirequest/templates/foirequest/snippets/message.html:215
 #: froide/foirequest/views/message.py:417
 msgid "Show irrelevant attachments"
@@ -4150,38 +4156,21 @@ msgstr "Inhalt der Nachricht veröffentlichen"
 msgid "Reply"
 msgstr "Antworten"
 
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:215
-#: froide/foirequest/templates/foirequest/snippets/message.html:270
-#, python-format
-msgid "Resend to updated “%(name)s” default email address?"
-msgstr "Erneut an Standard-E-Mail-Adresse von „%(name)s“ senden?"
-
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:218
-#: froide/foirequest/templates/foirequest/snippets/message.html:273
-#, python-format
-msgid "Resend to default email address of “%(name)s”."
-msgstr "Erneut an Standard-E-Mail-Adresse von „%(name)s“ senden."
-
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:219
-#: froide/foirequest/templates/foirequest/snippets/message.html:274
-msgid "Resend"
-msgstr "Erneut senden"
-
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:234
+#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:226
 msgid "No comments yet."
 msgstr "Noch keine Kommentare."
 
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:244
+#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:236
 #: froide/foirequest/templates/foirequest/snippets/message.html:359
 msgid "Write a public comment"
 msgstr "Schreiben Sie einen öffentlichen Kommentar"
 
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:246
+#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:238
 #: froide/foirequest/templates/foirequest/snippets/message.html:361
 msgid "Write a comment"
 msgstr "Schreiben Sie einen Kommentar"
 
-#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:255
+#: froide/foirequest/templates/foirequest/alpha/body/message/message.html:247
 #, python-format
 msgid "Please <a href=\"%(link)s\" >login</a> to write a comment."
 msgstr ""
@@ -4295,6 +4284,23 @@ msgstr "Beratung aktualisieren"
 #: froide/guide/templates/guide/guidance.html:61
 msgid "Run + Notify"
 msgstr "Aktualisieren + Benachrichtigungen"
+
+#: froide/foirequest/templates/foirequest/alpha/body/message/toolbar/resend.html:4
+#: froide/foirequest/templates/foirequest/snippets/message.html:274
+msgid "Resend"
+msgstr "Erneut senden"
+
+#: froide/foirequest/templates/foirequest/alpha/body/message/toolbar/resend.html:21
+#: froide/foirequest/templates/foirequest/snippets/message.html:270
+#, python-format
+msgid "Resend to updated “%(name)s” default email address?"
+msgstr "Erneut an Standard-E-Mail-Adresse von „%(name)s“ senden?"
+
+#: froide/foirequest/templates/foirequest/alpha/body/message/toolbar/resend.html:24
+#: froide/foirequest/templates/foirequest/snippets/message.html:273
+#, python-format
+msgid "Resend to default email address of “%(name)s”."
+msgstr "Erneut an Standard-E-Mail-Adresse von „%(name)s“ senden."
 
 #: froide/foirequest/templates/foirequest/alpha/body/settings.html:12
 #: froide/foirequest/templates/foirequest/show.html:426
@@ -4744,21 +4750,30 @@ msgstr ""
 "%(title)s</a>“.\n"
 "        "
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:26
+#: froide/foirequest/templates/foirequest/attachment/show.html:36
+msgid "Don't forget to set the status of this request!"
+msgstr "Bitte vergessen Sie nicht den Status dieser Anfrage anzugeben!"
+
+#: froide/foirequest/templates/foirequest/attachment/show.html:44
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html:9
 #: froide/foirequest/views/message.py:428
 msgid "Redact"
 msgstr "Schwärzen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:56
+#: froide/foirequest/templates/foirequest/attachment/show.html:51
+#: froide/foirequest/views/message.py:425
+msgid "Approve"
+msgstr "Freischalten"
+
+#: froide/foirequest/templates/foirequest/attachment/show.html:78
 msgid "Download original"
 msgstr "Original-Datei herunterladen"
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:62
+#: froide/foirequest/templates/foirequest/attachment/show.html:84
 msgid "This file cannot be previewed."
 msgstr "Eine Vorschau für diese Datei ist nicht möglich."
 
-#: froide/foirequest/templates/foirequest/attachment/show.html:64
+#: froide/foirequest/templates/foirequest/attachment/show.html:86
 msgid "Download the file here."
 msgstr "Datei hier herunterladen."
 
@@ -6429,74 +6444,75 @@ msgstr "Behörden"
 msgid "tag"
 msgstr "Schlagwort"
 
-#: froide/foirequest/views/attachment.py:84
+#: froide/foirequest/views/attachment.py:80
+#: froide/foirequest/views/attachment.py:83
 msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
 
-#: froide/foirequest/views/attachment.py:113
+#: froide/foirequest/views/attachment.py:112
 msgid "Attachment deleted."
 msgstr "Anhang gelöscht."
 
-#: froide/foirequest/views/attachment.py:140
+#: froide/foirequest/views/attachment.py:139
 msgid "Document created."
 msgstr "Dokument erstellt."
 
-#: froide/foirequest/views/attachment.py:211
+#: froide/foirequest/views/attachment.py:210
 msgid "Previous Page"
 msgstr "Vorherige Seite"
 
-#: froide/foirequest/views/attachment.py:212
+#: froide/foirequest/views/attachment.py:211
 msgid "Next Page"
 msgstr "nächste Seite"
 
-#: froide/foirequest/views/attachment.py:213
+#: froide/foirequest/views/attachment.py:212
 #, python-brace-format
 msgid "{current} of {total}"
 msgstr "{current} von {total}"
 
-#: froide/foirequest/views/attachment.py:214
+#: froide/foirequest/views/attachment.py:213
 msgid "Save redaction"
 msgstr "Schwärzungen anwenden"
 
-#: froide/foirequest/views/attachment.py:215
+#: froide/foirequest/views/attachment.py:214
 msgid "No redaction needed"
 msgstr "Keine Schwärzung benötigt"
 
-#: froide/foirequest/views/attachment.py:216
+#: froide/foirequest/views/attachment.py:215
 msgid "Text only"
 msgstr "Nur Text"
 
-#: froide/foirequest/views/attachment.py:217
+#: froide/foirequest/views/attachment.py:216
 msgid "Hide text"
 msgstr "Text ausblenden"
 
-#: froide/foirequest/views/attachment.py:219
+#: froide/foirequest/views/attachment.py:218
 msgid "Undo"
 msgstr "Rückgängig"
 
-#: froide/foirequest/views/attachment.py:220
+#: froide/foirequest/views/attachment.py:219
 msgid "Redo"
 msgstr "Wiederholen"
 
-#: froide/foirequest/views/attachment.py:221
+#: froide/foirequest/views/attachment.py:220
 msgid "Loading PDF..."
 msgstr "Lade PDF..."
 
-#: froide/foirequest/views/attachment.py:222
+#: froide/foirequest/views/attachment.py:221
 msgid "Uploading redaction instructions, please wait..."
 msgstr "Schwärzungen werden hochgeladen, bitte warten..."
 
-#: froide/foirequest/views/attachment.py:223
+#: froide/foirequest/views/attachment.py:222
 msgid "Redacting PDF, please wait..."
 msgstr "PDF wird geschwärzt, bitte warten..."
 
-#: froide/foirequest/views/attachment.py:224
+#: froide/foirequest/views/attachment.py:223
 msgid "There was a problem with your redaction. Please contact moderators."
 msgstr ""
 "Es gab ein Problem bei der Schwärzung des Dokuments. Bitte kontaktieren Sie "
 "Moderatoren."
 
-#: froide/foirequest/views/attachment.py:225
+#: froide/foirequest/views/attachment.py:224
 msgid ""
 "Your redaction took too long. It may become available soon, if not, contact "
 "moderators."
@@ -6504,7 +6520,7 @@ msgstr ""
 "Die Schwärzung dauerte zu lang. Unter Umständen wird das geschwärzte "
 "Dokument verfügbar sein, falls nicht informieren Sie bitte Moderatoren."
 
-#: froide/foirequest/views/attachment.py:226
+#: froide/foirequest/views/attachment.py:225
 msgid ""
 "We automatically redacted some text for you already. Please check if we got "
 "everything."
@@ -6512,17 +6528,17 @@ msgstr ""
 "Wir haben schon automatisiert ein paar Textstellen geschwärzt. Bitte prüfen "
 "Sie, ob wir etwas übersehen haben."
 
-#: froide/foirequest/views/attachment.py:227
+#: froide/foirequest/views/attachment.py:226
 msgid "This PDF requires a password to open. Please provide the password here:"
 msgstr ""
 "Das Öffnen des PDFs benötigt ein Passwort. Bitte geben Sie das Passwort hier "
 "ein:"
 
-#: froide/foirequest/views/attachment.py:228
+#: froide/foirequest/views/attachment.py:227
 msgid "The password you provided was incorrect. Do you want to abort?"
 msgstr "Das angegeben Passwort ist inkorrekt. Möchten Sie den Vorgang beenden?"
 
-#: froide/foirequest/views/attachment.py:229
+#: froide/foirequest/views/attachment.py:228
 msgid ""
 "The PDF could not be opened because of a missing password. Please ask the "
 "authority to provide you with a password."
@@ -6530,11 +6546,11 @@ msgstr ""
 "Das PDF konnte nicht geöffnet werden, weil ein Passwort benötigt wird. Bitte "
 "fragen Sie die Behörde nach dem Passwort."
 
-#: froide/foirequest/views/attachment.py:230
+#: froide/foirequest/views/attachment.py:229
 msgid "Remove password and publish"
 msgstr "Veröffentlichen ohne Passwort"
 
-#: froide/foirequest/views/attachment.py:231
+#: froide/foirequest/views/attachment.py:230
 msgid ""
 "The original document is protected with a password. The password is getting "
 "removed on publication."
@@ -6542,7 +6558,7 @@ msgstr ""
 "Das Original-Dokument ist mit einem Passwort geschützt. Das Passwort wird "
 "für die Veröffentlichung entfernt."
 
-#: froide/foirequest/views/attachment.py:274
+#: froide/foirequest/views/attachment.py:273
 #, python-format
 msgid "%s_redacted.pdf"
 msgstr "%s_geschwaerzt.pdf"
@@ -6999,10 +7015,6 @@ msgstr "Beschreiben Sie den Inhalt"
 #: froide/foirequest/views/message.py:424
 msgid "Review"
 msgstr "Überprüfen"
-
-#: froide/foirequest/views/message.py:425
-msgid "Approve"
-msgstr "Freischalten"
 
 #: froide/foirequest/views/message.py:426
 msgid "not public"
@@ -11593,10 +11605,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~| msgid "What you need to redact"
 #~ msgid "Information needs to be redacted."
 #~ msgstr "Was Sie schwärzen sollten"
-
-#~ msgid "Please click here to set a new status for this request now"
-#~ msgstr ""
-#~ "Bitte klicken Sie hier um einen neuen Status für diese Anfrage auszuwählen"
 
 #~ msgid "You can write a reply by clicking here"
 #~ msgstr "Um eine Antwort an die Behörde zu schreiben klicken Sie hier"
