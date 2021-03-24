@@ -18,6 +18,7 @@ from froide.helper.admin_utils import (
 )
 
 from .models import Document, DocumentCollection
+from .utils import update_document_index
 
 
 def execute_add_document_to_collection(admin, request, queryset, action_obj):
@@ -46,6 +47,18 @@ class DocumentAdmin(DocumentBaseAdmin):
         DocumentCollection, execute_add_document_to_collection,
         _('Add documents to collection')
     )
+
+    def mark_listed(self, request, queryset):
+        super().mark_listed(request, queryset)
+        for doc in queryset:
+            update_document_index(doc)
+    mark_listed.short_description = _("Mark as listed")
+
+    def mark_unlisted(self, request, queryset):
+        super().mark_unlisted(request, queryset)
+        for doc in queryset:
+            update_document_index(doc)
+    mark_unlisted.short_description = _("Mark as unlisted")
 
 
 class CustomPageAdmin(PageAdmin):
