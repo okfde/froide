@@ -48,6 +48,11 @@ class DocumentAdmin(DocumentBaseAdmin):
         _('Add documents to collection')
     )
 
+    def save_model(self, request, obj, form, change):
+        res = super().save_model(request, obj, form, change)
+        update_document_index(obj)
+        return res
+
     def mark_listed(self, request, queryset):
         super().mark_listed(request, queryset)
         for doc in queryset:
