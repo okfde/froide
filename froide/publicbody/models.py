@@ -105,6 +105,7 @@ class FoiLaw(TranslatableModel):
         slug=models.SlugField(_("Slug"), max_length=255),
         description=models.TextField(_("Description"), blank=True),
         long_description=models.TextField(_("Website Text"), blank=True),
+        legal_text=models.TextField(_("Legal Text"), blank=True),
         request_note=models.TextField(_("request note"), blank=True),
         letter_start=models.TextField(_("Start of Letter"), blank=True),
         letter_end=models.TextField(_("End of Letter"), blank=True),
@@ -128,6 +129,8 @@ class FoiLaw(TranslatableModel):
             null=True, on_delete=models.SET_NULL, blank=True)
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
+    scale_of_fees = models.CharField(_("Scale of fees URL"),
+            max_length=255, blank=True)
     max_response_time = models.IntegerField(_("Maximal Response Time"),
             null=True, blank=True, default=30)
     max_response_time_unit = models.CharField(_("Unit of Response Time"),
