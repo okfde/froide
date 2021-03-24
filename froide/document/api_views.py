@@ -1,5 +1,5 @@
 from django.db.models import (
-    Value, BooleanField, Case, When
+    Q, Value, BooleanField, Case, When
 )
 from django.utils.decorators import method_decorator
 
@@ -114,10 +114,9 @@ class DocumentViewSet(FCDocumentViewSet):
         'retrieve': DocumentDetailSerializer,
         'update': UpdateDocumentSerializer
     }
-    permission_classes = (AllowedOrReadOnly,)
 
     def get_base_queryset(self):
-        return get_document_read_qs(self.request)
+        return get_document_read_qs(self.request, detail=self.action == 'retrieve')
 
     @method_decorator(cache_anonymous_page(60 * 60))
     def retrieve(self, request, *args, **kwargs):
@@ -130,14 +129,17 @@ class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
         'retrieve': DocumentCollectionSerializer,
 
     }
-    permission_classes = (AllowedOrReadOnly,)
 
     def get_queryset(self):
+        if self.action == 'list':
+            public_q = Q(public=True, listed=True)
+        else:
+            public_q = Q(public=True)
         return get_read_queryset(
             DocumentCollection.objects.all(),
             self.request,
             has_team=True,
-            public_field='public',
+            public_q=public_q,
             scope='read:document'
         )
 
@@ -154,6 +156,8 @@ class PageAnnotationViewSet(FCPageAnnotationViewSet):
         try:
             doc = docs.get(pk=document_id)
         except (ValueError, Document.DoesNotExist):
+            return PageAnnotation.objects.none()
+        if not doc.can_read(self.request):
             return PageAnnotation.objects.none()
         return PageAnnotation.objects.filter(page__document=doc)
 

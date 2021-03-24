@@ -50,10 +50,13 @@ class Document(AbstractDocument):
     objects = DocumentManager()
 
     def is_public(self):
-        return self.public
+        return self.public and self.listed
 
     def can_read(self, request):
-        return can_read_object(self, request=request)
+        can_read = can_read_object(self, request=request)
+        if not can_read:
+            return self.can_read_unlisted(request)
+        return can_read
 
     def can_write(self, request):
         return can_write_object(self, request=request)
@@ -131,7 +134,16 @@ class DocumentCollection(AbstractDocumentCollection):
     objects = DocumentCollectionManager()
 
     def is_public(self):
-        return self.public
+        return self.public and self.listed
+
+    def can_read(self, request):
+        can_read = can_read_object(self, request=request)
+        if not can_read:
+            return self.can_read_unlisted(request)
+        return can_read
+
+    def can_write(self, request):
+        return can_write_object(self, request=request)
 
     def get_serializer_class(self):
         from .api_views import DocumentCollectionSerializer

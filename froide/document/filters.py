@@ -16,12 +16,15 @@ from filingcabinet.models import DocumentPortal, Page
 from .models import Document, DocumentCollection
 
 
-def get_document_read_qs(request):
+def get_document_read_qs(request, detail=False):
+    public_q = Q(public=True, listed=True)
+    if detail:
+        public_q = Q(public=True)
     return get_read_queryset(
         Document.objects.all(),
         request,
         has_team=True,
-        public_field='public',
+        public_q=public_q,
         scope='read:document'
     )
 
@@ -108,7 +111,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         document_qs = get_document_read_qs(request)
         collection_qs = get_read_queryset(
             DocumentCollection.objects.all(), request,
-            has_team=True, public_field='public',
+            has_team=True, public_q=Q(public=True, listed=True),
             scope='read:document'
         )
         self.filters['collection'].field.queryset = collection_qs

@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from django.conf import settings
 from django.utils.translation import pgettext_lazy
 
@@ -12,9 +12,10 @@ from .views import (
 
 
 urlpatterns = [
+    path('', include((fc_urlpatterns, 'filingcabinet'), namespace=None)),
     path(pgettext_lazy('url part', 'search/'), DocumentSearchView.as_view(), name='document-search'),
     path(pgettext_lazy('url part', 'upload/'), upload_documents, name='document-upload'),
-] + fc_urlpatterns
+]
 
 
 MEDIA_PATH = settings.MEDIA_URL
