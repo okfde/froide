@@ -46,13 +46,13 @@ class DocumentAccessTest(TestCase):
             listed=False
         )
 
-        url = reverse('document-detail_short', kwargs={
+        url = reverse('filingcabinet:document-detail_short', kwargs={
             'pk': doc.pk,
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-        url = reverse('document-detail', kwargs={
+        url = reverse('filingcabinet:document-detail', kwargs={
             'pk': doc.pk,
             'slug': doc.slug
         })
@@ -60,7 +60,7 @@ class DocumentAccessTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.client.force_login(self.user)
-        url = reverse('document-detail_short', kwargs={
+        url = reverse('filingcabinet:document-detail_short', kwargs={
             'pk': doc.pk,
         })
         response = self.client.get(url)
@@ -104,13 +104,13 @@ class DocumentAccessTest(TestCase):
             listed=False
         )
 
-        url = reverse('document-collection_short', kwargs={
+        url = reverse('filingcabinet:document-collection_short', kwargs={
             'pk': collection.pk,
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-        url = reverse('document-collection', kwargs={
+        url = reverse('filingcabinet:document-collection', kwargs={
             'pk': collection.pk,
             'slug': collection.slug
         })
@@ -118,7 +118,7 @@ class DocumentAccessTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         self.client.force_login(self.user)
-        url = reverse('document-collection_short', kwargs={
+        url = reverse('filingcabinet:document-collection_short', kwargs={
             'pk': collection.pk,
         })
         response = self.client.get(url)
