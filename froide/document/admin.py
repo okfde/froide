@@ -10,11 +10,13 @@ from filingcabinet.admin import (
 )
 from filingcabinet.models import (
     Page, PageAnnotation, CollectionDocument,
-    DocumentPortal, CollectionDirectory
+    DocumentPortal, CollectionDirectory,
+    TaggedDocument
 )
 
 from froide.helper.admin_utils import (
-    ForeignKeyFilter, make_choose_object_action
+    ForeignKeyFilter, make_choose_object_action,
+    TaggitListFilter
 )
 
 from .models import Document, DocumentCollection
@@ -29,6 +31,10 @@ def execute_add_document_to_collection(admin, request, queryset, action_obj):
         )
 
 
+class DocumentTagsFilter(TaggitListFilter):
+    tag_class = TaggedDocument
+
+
 class DocumentAdmin(DocumentBaseAdmin):
     raw_id_fields = DocumentBaseAdmin.raw_id_fields + (
         'original', 'foirequest', 'publicbody', 'team'
@@ -38,6 +44,8 @@ class DocumentAdmin(DocumentBaseAdmin):
         ('publicbody', ForeignKeyFilter),
         ('user', ForeignKeyFilter),
         ('team', ForeignKeyFilter),
+        ('document_documentcollection', ForeignKeyFilter),
+        DocumentTagsFilter,
     )
     actions = (
         DocumentBaseAdmin.actions
