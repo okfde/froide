@@ -152,7 +152,7 @@ def get_secret_url_replacements():
     return SECRET_URL_REPLACEMENTS
 
 
-def short_request_url(name, foirequest, message):
+def short_request_url(name, foirequest, message=None):
     params = {'slug': foirequest.slug}
     if message:
         params['message_id'] = message.id
