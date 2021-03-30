@@ -71,7 +71,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         widget=forms.HiddenInput()
     )
     collection = django_filters.ModelChoiceFilter(
-        queryset=None,
+        queryset=DocumentCollection.objects.all(),
         to_field_name='pk',
         method='filter_collection',
         widget=forms.HiddenInput()
@@ -83,7 +83,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         widget=forms.HiddenInput()
     )
     document = django_filters.ModelChoiceFilter(
-        queryset=None,
+        queryset=Document.objects.all(),
         to_field_name='pk',
         method='filter_document',
         widget=forms.HiddenInput()
@@ -108,14 +108,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         request = kwargs.get('request')
         if request is None:
             request = self.view.request
-        document_qs = get_document_read_qs(request)
-        collection_qs = get_read_queryset(
-            DocumentCollection.objects.all(), request,
-            has_team=True, public_q=Q(public=True, listed=True),
-            scope='read:document'
-        )
-        self.filters['collection'].field.queryset = collection_qs
-        self.filters['document'].field.queryset = document_qs
+        self.request = request
 
     def filter_jurisdiction(self, qs, name, value):
         return qs.filter(jurisdiction=value.id)
@@ -136,12 +129,16 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         return qs.filter(publicbody=value.id)
 
     def filter_collection(self, qs, name, value):
+        if not value.can_read(self.request):
+            return qs.none()
         return qs.filter(collections=value.id)
 
     def filter_portal(self, qs, name, value):
         return qs.filter(portal=value.id)
 
     def filter_document(self, qs, name, value):
+        if not value.can_read(self.request):
+            return qs.none()
         return qs.filter(document=value.id)
 
     def filter_user(self, qs, name, value):
