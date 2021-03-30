@@ -152,6 +152,19 @@ def get_secret_url_replacements():
     return SECRET_URL_REPLACEMENTS
 
 
+def short_request_url(name, foirequest, message):
+    params = {'slug': foirequest.slug}
+    if message:
+        params['message_id'] = message.id
+    url_path = reverse(name, kwargs=params)
+    url_path = re.sub('^/{}'.format(foirequest.slug), '', url_path)
+
+    return reverse('foirequest-shortlink_url', kwargs={
+        'obj_id': foirequest.pk,
+        'url_path': url_path
+    })
+
+
 def redact_plaintext_with_request(plaintext, foirequest,
                                   redact_greeting=False, redact_closing=False):
     replacements = get_secret_url_replacements()
