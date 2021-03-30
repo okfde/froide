@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-29 16:27+0200\n"
-"PO-Revision-Date: 2021-03-29 15:28+0100\n"
+"POT-Creation-Date: 2021-03-30 14:30+0200\n"
+"PO-Revision-Date: 2021-03-30 13:31+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1660,17 +1660,17 @@ msgctxt "url part"
 msgid "upload/"
 msgstr "upload/"
 
-#: froide/document/views.py:44 froide/foirequest/models/message.py:147
+#: froide/document/views.py:45 froide/foirequest/models/message.py:147
 #: froide/helper/admin_utils.py:228
 msgid "tags"
 msgstr "Tags"
 
-#: froide/document/views.py:120
+#: froide/document/views.py:122
 #, python-format
 msgid "%s file(s) uploaded successfully."
 msgstr "%s Datei(en) wurde(n) erfolgreich hochgeladen."
 
-#: froide/document/views.py:132
+#: froide/document/views.py:134
 msgid "Create documents now"
 msgstr "Dokumente jetzt erstellen"
 
@@ -3428,35 +3428,35 @@ msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
 msgid "attached_file_%d"
 msgstr "angehaengte_datei_%d"
 
-#: froide/foirequest/signals.py:56
+#: froide/foirequest/signals.py:62
 msgid "Request became overdue"
 msgstr "Die Frist für diese Anfrage ist abgelaufen"
 
-#: froide/foirequest/signals.py:72
+#: froide/foirequest/signals.py:80
 msgid "Request became asleep"
 msgstr "Anfrage eingeschlafen"
 
-#: froide/foirequest/signals.py:94
+#: froide/foirequest/signals.py:102
 msgid "New reply to your request"
 msgstr "💬 Neue Antwort auf Ihre Anfrage"
 
-#: froide/foirequest/signals.py:116
+#: froide/foirequest/signals.py:124
 msgid "New suggestion for a Public Body"
 msgstr "Neuer Behördenvorschlag für Ihre Anfrage"
 
-#: froide/foirequest/signals.py:149
+#: froide/foirequest/signals.py:157
 msgid "Your Freedom of Information Project has been created"
 msgstr "Ihr Projekt wurde erstellt und Ihre Anfragen werden versendet"
 
-#: froide/foirequest/signals.py:170
+#: froide/foirequest/signals.py:178
 msgid "Your Freedom of Information Request was sent"
 msgstr "✔️ Informationsfreiheitsanfrage gesendet"
 
-#: froide/foirequest/signals.py:174
+#: froide/foirequest/signals.py:182
 msgid "Your message was sent"
 msgstr "✔️ Nachricht gesendet"
 
-#: froide/foirequest/signals.py:403
+#: froide/foirequest/signals.py:411
 #: froide/problem/templates/problem/message_toolbar_item.html:93
 msgid "requester"
 msgstr "Anfragesteller/in"
@@ -4830,19 +4830,40 @@ msgstr ""
 "%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/became_overdue.txt:1
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "Hello %(name)s,\n"
+#| "\n"
+#| "Your request “%(title)s” was not answered in the required time and became "
+#| "overdue.\n"
+#| "We recommend that you send another message to the public body to check "
+#| "the status of the request and if they received it.\n"
+#| "\n"
+#| "If you received a postal answer, please add it to the request.\n"
+#| "\n"
+#| "Here's a link to the request:\n"
+#| "%(url)s\n"
+#| "\n"
+#| "Cheers,\n"
+#| "%(site_name)s"
 msgid ""
 "Hello %(name)s,\n"
 "\n"
-"Your request “%(title)s” was not answered in the required time and became "
-"overdue.\n"
+"Your request “%(title)s” seems to not have gotten an answer in the required "
+"time and became overdue.\n"
 "We recommend that you send another message to the public body to check the "
 "status of the request and if they received it.\n"
 "\n"
-"If you received a postal answer, please add it to the request.\n"
+"%(write_action_url)s\n"
 "\n"
-"Here's a link to the request:\n"
-"%(url)s\n"
+"If you received a postal answer, please upload it to the request:\n"
+"\n"
+"%(upload_action_url)s\n"
+"\n"
+"If you are no longer interested in the request, you can set its status to "
+"resolved:\n"
+"\n"
+"%(action_url)s\n"
 "\n"
 "Cheers,\n"
 "%(site_name)s"
@@ -6286,8 +6307,8 @@ msgstr "^a/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
 
 #: froide/foirequest/urls/__init__.py:41
 msgctxt "url part"
-msgid "^r/(?P<obj_id>\\d+)(?P<url_path>[\\w/\\-/]+)$"
-msgstr "^a/(?P<obj_id>\\d+)(?P<url_path>[\\w/\\-/]*)$"
+msgid "^r/(?P<obj_id>\\d+)(?P<url_path>/[\\w/\\-/]+)$"
+msgstr "^a/(?P<obj_id>\\d+)(?P<url_path>/[\\w/\\-/]+)$"
 
 #: froide/foirequest/urls/__init__.py:43
 msgctxt "url part"
