@@ -15,6 +15,7 @@ from taggit.models import Tag
 
 from filingcabinet.models import Page
 
+from froide.team.models import Team
 from froide.helper.search.views import BaseSearchView
 
 from .documents import PageDocument
@@ -55,6 +56,7 @@ class DocumentSearchView(BaseSearchView):
         q = Q('term', public=True)
         if self.request.user.is_authenticated:
             q |= Q('term', user=self.request.user.pk)
+            q |= Q('terms', team=Team.objects.get_list_for_user(self.request.user))
         return super().get_base_search().filter(q).filter('term', portal=0)
 
 
