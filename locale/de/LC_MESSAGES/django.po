@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-24 11:23+0100\n"
-"PO-Revision-Date: 2021-03-23 10:59+0000\n"
+"POT-Creation-Date: 2021-03-29 16:27+0200\n"
+"PO-Revision-Date: 2021-03-29 15:28+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -26,6 +26,30 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.3\n"
+
+#: docs/_build/html/_sources/theming.txt:53
+msgid ""
+"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+"\">the Open Knowledge Foundation</a>."
+msgstr ""
+"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
+"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#: docs/_build/html/theming.html:95
+#, fuzzy
+#| msgid ""
+#| "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+#| "\">the Open Knowledge Foundation</a>."
+msgid ""
+"Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
+"org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+msgstr ""
+"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
+"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#: froide/_local_settings.py:10 froide/settings.py:257 froide/settings.py:683
+msgid "German"
+msgstr "Deutsch"
 
 #: froide/accesstoken/apps.py:9
 msgid "Secret Access Token"
@@ -1434,7 +1458,7 @@ msgstr "Bounce-Meldungen"
 msgid "Campaign"
 msgstr "Kampagne"
 
-#: froide/campaign/models.py:41 froide/document/filters.py:40
+#: froide/campaign/models.py:41 froide/document/filters.py:43
 #: froide/foirequest/filters.py:202 froide/foirequest/models/request.py:324
 msgid "campaign"
 msgstr "Kampagne"
@@ -1502,9 +1526,17 @@ msgstr "Ihr Name wird nur für angemeldete Personen sichtbar sein."
 msgid "Comment"
 msgstr "Kommentar"
 
-#: froide/document/admin.py:47
+#: froide/document/admin.py:56
 msgid "Add documents to collection"
 msgstr "Füge Dokumente zu Sammlung hinzu"
+
+#: froide/document/admin.py:68
+msgid "Mark as listed"
+msgstr "Als gelistet markieren"
+
+#: froide/document/admin.py:74
+msgid "Mark as unlisted"
+msgstr "Als ungelistet markieren"
 
 #: froide/document/apps.py:8
 msgid "Document"
@@ -1514,20 +1546,20 @@ msgstr "Dokument"
 msgid "Documents (beta)"
 msgstr "Dokumente (beta)"
 
-#: froide/document/filters.py:36 froide/foirequest/filters.py:198
+#: froide/document/filters.py:39 froide/foirequest/filters.py:198
 msgid "all/no campaigns"
 msgstr "alle/keine Kampagnen"
 
-#: froide/document/filters.py:37 froide/foirequest/filters.py:199
+#: froide/document/filters.py:40 froide/foirequest/filters.py:199
 msgid "no campaign"
 msgstr "Keine Kampagne"
 
-#: froide/document/filters.py:49 froide/foirequest/filters.py:173
+#: froide/document/filters.py:52 froide/foirequest/filters.py:173
 #: froide/publicbody/filters.py:27
 msgid "all jurisdictions"
 msgstr "alle Zuständigkeitsbereiche"
 
-#: froide/document/filters.py:52 froide/foirequest/filters.py:176
+#: froide/document/filters.py:55 froide/foirequest/filters.py:176
 #: froide/publicbody/filters.py:30
 msgid "jurisdiction"
 msgstr "Zuständigkeit"
@@ -1618,12 +1650,12 @@ msgid "Create documents"
 msgstr "Dokumente erstellen"
 
 #. Translators: request URL
-#: froide/document/urls.py:15 froide/foirequest/urls/__init__.py:33
+#: froide/document/urls.py:16 froide/foirequest/urls/__init__.py:33
 msgctxt "url part"
 msgid "search/"
 msgstr "suche/"
 
-#: froide/document/urls.py:16
+#: froide/document/urls.py:17
 msgctxt "url part"
 msgid "upload/"
 msgstr "upload/"
@@ -2463,6 +2495,14 @@ msgstr "Informationsgesetz"
 #: froide/foirequest/forms/request.py:327
 msgid "Invalid FoI Request for this operation"
 msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
+
+#: froide/foirequest/forms/step.py:23
+msgid "Date is too far in the future."
+msgstr "Das Datum ist zu weit in der Zukunft."
+
+#: froide/foirequest/forms/step.py:29
+msgid "End date is before start date."
+msgstr "Das Datum ist vor dem Start der Anfrage."
 
 #: froide/foirequest/models/attachment.py:112
 msgid "Belongs to message"
@@ -3308,6 +3348,54 @@ msgstr "Kann Anfragen moderieren"
 msgid "Request '%s'"
 msgstr "Anfrage '%s'"
 
+#: froide/foirequest/models/step.py:9
+#: froide/foirequest/templates/foirequest/publicbody_upload.html:20
+#: froide/foirequest/templates/foirequest/show.html:159
+msgid "Request"
+msgstr "Anfrage"
+
+#: froide/foirequest/models/step.py:10
+msgid "Appeal"
+msgstr ""
+
+#: froide/foirequest/models/step.py:11
+msgid "Lawsuit court level 1"
+msgstr ""
+
+#: froide/foirequest/models/step.py:12
+msgid "Lawsuit court level 2"
+msgstr ""
+
+#: froide/foirequest/models/step.py:13
+msgid "Lawsuit court level 3"
+msgstr ""
+
+#: froide/foirequest/models/step.py:14
+msgid "Lawsuit court level 4"
+msgstr ""
+
+#: froide/foirequest/models/step.py:15
+msgid "Lawsuit court level 5"
+msgstr ""
+
+#: froide/foirequest/models/step.py:28
+#, fuzzy
+#| msgid "Name of this team"
+msgid "Cost of this step"
+msgstr "Name dieses Teams"
+
+#: froide/foirequest/models/step.py:34
+#, fuzzy
+#| msgid "access tokens"
+msgid "Process step"
+msgstr "Zugangs-Tokens"
+
+#: froide/foirequest/models/step.py:35
+#, fuzzy
+#| msgid "access tokens"
+msgid "Process steps"
+msgstr "Zugangs-Tokens"
+
 #: froide/foirequest/models/suggestion.py:19
 msgid "Timestamp of Suggestion"
 msgstr "Zeitstempel des Vorschlags"
@@ -3344,31 +3432,31 @@ msgstr "angehaengte_datei_%d"
 msgid "Request became overdue"
 msgstr "Die Frist für diese Anfrage ist abgelaufen"
 
-#: froide/foirequest/signals.py:71
+#: froide/foirequest/signals.py:72
 msgid "Request became asleep"
 msgstr "Anfrage eingeschlafen"
 
-#: froide/foirequest/signals.py:93
+#: froide/foirequest/signals.py:94
 msgid "New reply to your request"
 msgstr "💬 Neue Antwort auf Ihre Anfrage"
 
-#: froide/foirequest/signals.py:115
+#: froide/foirequest/signals.py:116
 msgid "New suggestion for a Public Body"
 msgstr "Neuer Behördenvorschlag für Ihre Anfrage"
 
-#: froide/foirequest/signals.py:148
+#: froide/foirequest/signals.py:149
 msgid "Your Freedom of Information Project has been created"
 msgstr "Ihr Projekt wurde erstellt und Ihre Anfragen werden versendet"
 
-#: froide/foirequest/signals.py:169
+#: froide/foirequest/signals.py:170
 msgid "Your Freedom of Information Request was sent"
 msgstr "✔️ Informationsfreiheitsanfrage gesendet"
 
-#: froide/foirequest/signals.py:173
+#: froide/foirequest/signals.py:174
 msgid "Your message was sent"
 msgstr "✔️ Nachricht gesendet"
 
-#: froide/foirequest/signals.py:402
+#: froide/foirequest/signals.py:403
 #: froide/problem/templates/problem/message_toolbar_item.html:93
 msgid "requester"
 msgstr "Anfragesteller/in"
@@ -5266,11 +5354,6 @@ msgstr ""
 "\n"
 "  Dateiübermittlung als <mark>%(name)s</mark> zur Anfrage [#%(reqid)s]\n"
 
-#: froide/foirequest/templates/foirequest/publicbody_upload.html:20
-#: froide/foirequest/templates/foirequest/show.html:159
-msgid "Request"
-msgstr "Anfrage"
-
 #: froide/foirequest/templates/foirequest/publicbody_upload.html:24
 msgid "File transfer"
 msgstr "Datenübertragung"
@@ -6203,13 +6286,13 @@ msgstr "^a/(?P<obj_id>\\d+)/auth/(?P<code>[0-9a-f]+)/$"
 
 #: froide/foirequest/urls/__init__.py:41
 msgctxt "url part"
-msgid "^r/(?P<obj_id>\\d+)/?"
-msgstr "^a/(?P<obj_id>\\d+)/?"
+msgid "^r/(?P<obj_id>\\d+)(?P<url_path>[\\w/\\-/]+)$"
+msgstr "^a/(?P<obj_id>\\d+)(?P<url_path>[\\w/\\-/]*)$"
 
 #: froide/foirequest/urls/__init__.py:43
 msgctxt "url part"
-msgid "^r/(?P<obj_id>\\d+)/(?P<url_part>[\\w/\\-]*)$"
-msgstr "^a/(?P<obj_id>\\d+)/(?P<url_part>[\\w/\\-]*)$"
+msgid "^r/(?P<obj_id>\\d+)"
+msgstr "^a/(?P<obj_id>\\d+)"
 
 #: froide/foirequest/urls/list_requests_urls.py:17
 msgctxt "url part"
@@ -6331,22 +6414,22 @@ msgstr ""
 "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
 "Dies ist eine automatische Vorsichtsmaßnahme."
 
-#: froide/foirequest/utils.py:349
+#: froide/foirequest/utils.py:362
 #, python-brace-format
 msgid "Default address of {publicbody}"
 msgstr "Standardadresse von {publicbody}"
 
-#: froide/foirequest/utils.py:489 froide/foirequest/utils.py:490
-#: froide/foirequest/utils.py:491
+#: froide/foirequest/utils.py:502 froide/foirequest/utils.py:503
+#: froide/foirequest/utils.py:504
 msgid "<information-removed>"
 msgstr "<Information-entfernt>"
 
-#: froide/foirequest/utils.py:567
+#: froide/foirequest/utils.py:580
 #, python-format
 msgid "Due date: %s"
 msgstr "Antwortfrist: %s"
 
-#: froide/foirequest/utils.py:587 froide/foirequest/utils.py:592
+#: froide/foirequest/utils.py:600 froide/foirequest/utils.py:605
 #, python-format
 msgid "Appeal deadline: %s"
 msgstr "Widerspruchs-Termin: %s"
@@ -8991,7 +9074,6 @@ msgid "Last update on"
 msgstr "Letzte Änderung"
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html:27
-#| msgid "Create documents"
 msgid "Legal documents:"
 msgstr "Rechtliche Dokumente:"
 
@@ -9004,7 +9086,6 @@ msgid "Scale of fees"
 msgstr "Gebührenordnung"
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html:53
-#| msgid "Hide text"
 msgid "Legal text"
 msgstr "Gesetzestext"
 
@@ -9022,7 +9103,6 @@ msgstr ""
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html:70
 #, python-format
-#| msgid "Profile of %(name)s"
 msgid "Official law text of %(name)s"
 msgstr "Zum offiziellen %(name)s"
 
@@ -9151,10 +9231,6 @@ msgstr "Spanisch"
 #: froide/settings.py:256
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
-
-#: froide/settings.py:257 froide/settings.py:683
-msgid "German"
-msgstr "Deutsch"
 
 #: froide/settings.py:258
 msgid "Danish (Denmark)"
@@ -10179,29 +10255,6 @@ msgstr "brief/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
-
-#~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-#~ "\">the Open Knowledge Foundation</a>."
-#~ msgstr ""
-#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
-#~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
-
-#~ msgid "Date is too far in the future."
-#~ msgstr "Das Datum ist zu weit in der Zukunft."
-
-#~ msgid "End date is before start date."
-#~ msgstr "Das Datum ist vor dem Start der Anfrage."
-
-#, fuzzy
-#~| msgid "Name of this team"
-#~ msgid "Cost of this step"
-#~ msgstr "Name dieses Teams"
-
-#, fuzzy
-#~| msgid "access tokens"
-#~ msgid "Process steps"
-#~ msgstr "Zugangs-Tokens"
 
 #~ msgid "Link to law text:"
 #~ msgstr "Link zum Gesetzestext:"
