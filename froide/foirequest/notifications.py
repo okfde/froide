@@ -14,6 +14,11 @@ classification_reminder_email = mail_registry.register(
     ('foirequest', 'user', 'action_url', 'status_action_url')
 )
 
+non_foi_email = mail_registry.register(
+    'foirequest/emails/non_foi',
+    ('foirequest', 'user', 'action_url')
+)
+
 
 def send_update(request_list, user=None):
     if user is None:
@@ -61,6 +66,27 @@ def send_classification_reminder(foirequest):
     }
     send_request_user_email(
         classification_reminder_email,
+        foirequest,
+        subject=subject,
+        context=context,
+        priority=False
+    )
+
+
+def send_non_foi_notification(foirequest):
+    if foirequest.user is None:
+        return
+    req_url = foirequest.user.get_autologin_url(
+        foirequest.get_absolute_short_url()
+    )
+    subject = _("Your request is not suitable for our platform")
+    context = {
+        "foirequest": foirequest,
+        "user": foirequest.user,
+        "action_url": req_url,
+    }
+    send_request_user_email(
+        non_foi_email,
         foirequest,
         subject=subject,
         context=context,

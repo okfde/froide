@@ -31,6 +31,7 @@ from ..hooks import registry
 
 from .request import show_foirequest
 from .make_request import get_new_account_url
+from ..notifications import send_non_foi_notification
 
 
 def allow_write_foirequest(func):
@@ -210,6 +211,7 @@ def mark_not_foi(request, foirequest):
         user=request.user
     )
     foirequest.save()
+    send_non_foi_notification(foirequest)
     if is_ajax(request):
         return HttpResponse()
     messages.add_message(request, messages.SUCCESS,

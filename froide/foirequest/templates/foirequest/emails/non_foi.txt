@@ -1,0 +1,14 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=foirequest.user.get_full_name title=foirequest.title action_url=action_url %}Hello {{ name }},
+
+Our moderation team has determined that your request "{{ title }}" is not suitable for our platform.
+
+Your request will continue as before, but it will no longer be visible to other users.
+
+You can find your request here:
+
+{{ action_url }}
+
+Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}
