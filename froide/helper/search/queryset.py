@@ -56,11 +56,17 @@ class SearchQuerySetWrapper(object):
     def all(self):
         return self
 
+    def none(self):
+        self.broken_query = True
+        return self
+
     @property
     def response(self):
         return self.get_response()
 
     def get_response(self):
+        if self.broken_query:
+            return EmtpyResponse()
         if not hasattr(self.sqs, '_response'):
             self.sqs = self.sqs.source(excludes=['*'])
         else:

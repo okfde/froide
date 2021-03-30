@@ -66,6 +66,13 @@ def can_read_object(obj, request=None):
 
 
 @lru_cache()
+def can_read_object_authenticated(obj, request=None):
+    if request is None:
+        return False
+    return has_authenticated_access(obj, request, verb='read')
+
+
+@lru_cache()
 def can_write_object(obj, request):
     return has_authenticated_access(obj, request)
 

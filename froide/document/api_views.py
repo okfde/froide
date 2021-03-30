@@ -152,7 +152,7 @@ class PageAnnotationViewSet(FCPageAnnotationViewSet):
     permission_classes = (AllowedOrReadOnly,)
 
     def get_base_queryset(self, document_id):
-        docs = get_document_read_qs(self.request)
+        docs = Document.objects.all()
         try:
             doc = docs.get(pk=document_id)
         except (ValueError, Document.DoesNotExist):

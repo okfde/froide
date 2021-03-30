@@ -110,6 +110,16 @@ class PageDocumentFilterset(BaseSearchFilterSet):
             request = self.view.request
         self.request = request
 
+    def filter_queryset(self, queryset):
+        required_unlisted_filters = {'document', 'collection'}
+        filter_present = any(
+            v for k, v in self.form.cleaned_data.items()
+            if k in required_unlisted_filters
+        )
+        if not filter_present:
+            queryset = queryset.filter(listed=True)
+        return super().filter_queryset(queryset)
+
     def filter_jurisdiction(self, qs, name, value):
         return qs.filter(jurisdiction=value.id)
 

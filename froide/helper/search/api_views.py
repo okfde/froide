@@ -45,31 +45,35 @@ class ESQueryMixin:
         return paginator.get_paginated_response(data)
 
     def get_searchqueryset(self):
+        sqs = self.search_document.search()
+        sqs = self.filter_authenticated(sqs)
+        return SearchQuerySetWrapper(
+            sqs,
+            self.search_model
+        )
+
+    def get_public_q(self):
+        return ESQ('term', public=True)
+
+    def filter_authenticated(self, sqs):
         user = self.request.user
         token = self.request.auth
-        s = self.search_document.search()
-        if user.is_authenticated:
+        if not user.is_authenticated:
+            return sqs.filter(self.get_public_q())
+        else:
             # Either not OAuth or OAuth and valid token
             if not token and user.is_superuser:
                 # No filters for super users
-                pass
+                return sqs
             elif not token or token.is_valid(self.read_token_scopes):
-                s = s.filter('bool', should=[
+                return sqs.filter('bool', should=[
                     # Bool query in filter context
                     # at least one should clause is required to match.
-                    ESQ('term', public=True),
+                    self.get_public_q(),
                     ESQ('term', user=user.pk),
                     ESQ('terms', team=Team.objects.get_list_for_user(user))
                 ])
-            else:
-                s = s.filter('term', public=True)
-        else:
-            s = s.filter('term', public=True)
-
-        return SearchQuerySetWrapper(
-            s,
-            self.search_model
-        )
+        return sqs.filter(self.get_public_q())
 
     def optimize_query(self, qs):
         return qs

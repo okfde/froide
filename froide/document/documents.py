@@ -37,6 +37,7 @@ class PageDocument(Document):
     team = fields.IntegerField(attr='document.team_id')
 
     public = fields.BooleanField()
+    listed = fields.BooleanField()
 
     number = fields.IntegerField()
     content = fields.TextField(
@@ -76,6 +77,9 @@ class PageDocument(Document):
 
     def prepare_public(self, obj):
         return obj.document.is_public()
+
+    def prepare_listed(self, obj):
+        return obj.document.listed
 
     def prepare_team(self, obj):
         if obj.document.team_id:

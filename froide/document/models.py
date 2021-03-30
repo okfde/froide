@@ -10,7 +10,7 @@ from filingcabinet.models import (
 )
 
 from froide.helper.auth import (
-    can_read_object, can_write_object,
+    can_read_object_authenticated, can_write_object,
     get_read_queryset, get_write_queryset
 )
 
@@ -50,13 +50,12 @@ class Document(AbstractDocument):
     objects = DocumentManager()
 
     def is_public(self):
-        return self.public and self.listed
+        return self.public
 
     def can_read(self, request):
-        can_read = can_read_object(self, request=request)
-        if not can_read:
-            return self.can_read_unlisted(request)
-        return can_read
+        if self.can_read_unlisted(request):
+            return True
+        return can_read_object_authenticated(self, request=request)
 
     def can_write(self, request):
         return can_write_object(self, request=request)
@@ -134,13 +133,12 @@ class DocumentCollection(AbstractDocumentCollection):
     objects = DocumentCollectionManager()
 
     def is_public(self):
-        return self.public and self.listed
+        return self.public
 
     def can_read(self, request):
-        can_read = can_read_object(self, request=request)
-        if not can_read:
-            return self.can_read_unlisted(request)
-        return can_read
+        if self.can_read_unlisted(request):
+            return True
+        return can_read_object_authenticated(self, request=request)
 
     def can_write(self, request):
         return can_write_object(self, request=request)
