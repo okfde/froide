@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-30 16:47+0200\n"
-"PO-Revision-Date: 2021-03-30 15:51+0100\n"
+"POT-Creation-Date: 2021-03-30 17:08+0200\n"
+"PO-Revision-Date: 2021-03-30 16:11+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3412,16 +3412,20 @@ msgstr "Vorschlag für Behörde"
 msgid "Public Body Suggestions"
 msgstr "Vorschläge für Behörden"
 
-#: froide/foirequest/notifications.py:23
+#: froide/foirequest/notifications.py:28
 #, python-format
 msgid "Update on one of your request"
 msgid_plural "Update on %(count)s of your requests"
 msgstr[0] "Neues bei einer Anfrage, der Sie folgen"
 msgstr[1] "Neues bei %(count)s Anfragen, denen Sie folgen"
 
-#: froide/foirequest/notifications.py:55
+#: froide/foirequest/notifications.py:60
 msgid "Please classify the reply to your request"
 msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
+
+#: froide/foirequest/notifications.py:82
+msgid "Your request is not suitable for our platform"
+msgstr "Ihre Anfrage passt leider nicht zu unserer Plattform"
 
 #: froide/foirequest/services.py:474
 #, python-format
@@ -5148,6 +5152,39 @@ msgstr ""
 "%(url)s\n"
 "\n"
 "Beste Grüße,\n"
+"%(site_name)s"
+
+#: froide/foirequest/templates/foirequest/emails/non_foi.txt:1
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"Our moderation team has determined that your request \"%(title)s\" is not "
+"suitable for our platform.\n"
+"\n"
+"Your request will continue as before, but it will no longer be visible to "
+"other users.\n"
+"\n"
+"You can find your request here:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"unser Moderations-Team hat Ihre Anfrage „%(title)s“ als unpassend für unsere "
+"Plattform markiert.\n"
+"\n"
+"Ihre Anfrage läuft weiter wie zuvor, aber sie ist nicht mehr öffentlich "
+"sichtbar.\n"
+"\n"
+"Sie können Ihre Anfrage hier finden:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+"Beste Grüße\n"
 "%(site_name)s"
 
 #: froide/foirequest/templates/foirequest/emails/overdue_reply.txt:1
@@ -7099,52 +7136,52 @@ msgstr "Nachricht veröffentlicht."
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
 
-#: froide/foirequest/views/request_actions.py:72
+#: froide/foirequest/views/request_actions.py:73
 #, python-brace-format
 msgid "Request was sent to: {name}."
 msgstr "Anfrage wurde gesendet an: {name}"
 
-#: froide/foirequest/views/request_actions.py:96
+#: froide/foirequest/views/request_actions.py:97
 msgid "Your Public Body suggestion has been added."
 msgstr "Ihr Vorschlag für eine Behörde wurde hinzugefügt."
 
-#: froide/foirequest/views/request_actions.py:99
+#: froide/foirequest/views/request_actions.py:100
 msgid "This Public Body has already been suggested."
 msgstr "Diese Behörde wurde schon vorgeschlagen."
 
-#: froide/foirequest/views/request_actions.py:103
+#: froide/foirequest/views/request_actions.py:104
 msgid "You need to specify a Public Body!"
 msgstr "Sie müssen eine Behörde angeben!"
 
-#: froide/foirequest/views/request_actions.py:121
+#: froide/foirequest/views/request_actions.py:122
 msgid "Status of request has been updated."
 msgstr "Status der Anfrage wurde aktualisiert."
 
-#: froide/foirequest/views/request_actions.py:132
+#: froide/foirequest/views/request_actions.py:133
 msgid "Invalid value for form submission!"
 msgstr "Ungültige Eingabe im Formular!"
 
-#: froide/foirequest/views/request_actions.py:160
+#: froide/foirequest/views/request_actions.py:161
 msgid "A concrete law has been set for this request."
 msgstr "Ein konkretes Gesetz wurde für diese Anfrage festgelegt."
 
-#: froide/foirequest/views/request_actions.py:177
+#: froide/foirequest/views/request_actions.py:178
 msgid "Tags have been set for this request."
 msgstr "Die Schlagworte dieser Anfrage wurden gespeichert."
 
-#: froide/foirequest/views/request_actions.py:195
+#: froide/foirequest/views/request_actions.py:196
 msgid "The outcome summary has been saved."
 msgstr "Die Ergebniszusammenfassung wurde gespeichert."
 
-#: froide/foirequest/views/request_actions.py:216
+#: froide/foirequest/views/request_actions.py:218
 msgid "Request marked as not a FoI request."
 msgstr "Anfrage wurde als nicht-IF markiert."
 
-#: froide/foirequest/views/request_actions.py:240
+#: froide/foirequest/views/request_actions.py:242
 msgid "You already made an identical request"
 msgstr "Sie haben schon eine identische Anfrage gestellt"
 
-#: froide/foirequest/views/request_actions.py:255
+#: froide/foirequest/views/request_actions.py:257
 #, python-format
 msgid ""
 "Please see this request on %(site_name)s where you granted access to this "
@@ -7153,24 +7190,24 @@ msgstr ""
 "Ich verweise auf eine Anfrage auf %(site_name)s, der Sie Zugang zu den "
 "angefragten Dokumenten gewährt haben: %(url)s"
 
-#: froide/foirequest/views/request_actions.py:285
+#: froide/foirequest/views/request_actions.py:287
 msgid ""
 "You successfully requested this document! Your request is displayed below."
 msgstr ""
 "Sie haben das Dokument nun angefragt. Ihre Anfrage finden Sie auf dieser "
 "Seite."
 
-#: froide/foirequest/views/request_actions.py:290
+#: froide/foirequest/views/request_actions.py:292
 msgid "Please check your inbox for mail from us to confirm your mail address."
 msgstr ""
 "Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mail-"
 "Adresse."
 
-#: froide/foirequest/views/request_actions.py:303
+#: froide/foirequest/views/request_actions.py:305
 msgid "Deadline has been extended."
 msgstr "Frist wurde verlängert."
 
-#: froide/foirequest/views/request_actions.py:360
+#: froide/foirequest/views/request_actions.py:362
 msgid ""
 "A session error occurred while authenticating your uploads. Please contact "
 "administrators."
@@ -7178,16 +7215,16 @@ msgstr ""
 "Ein Fehler ist aufgetreten bei der Authentifizierung Ihrer Dateien. Bitte "
 "kontaktieren Sie FragDenStaat.de direkt."
 
-#: froide/foirequest/views/request_actions.py:370
+#: froide/foirequest/views/request_actions.py:372
 #, python-format
 msgid "%s files were uploaded successfully. Thank you!"
 msgstr "%s Dateien wurden erfolgreich hochgeladen. Vielen Dank!"
 
-#: froide/foirequest/views/request_actions.py:383
+#: froide/foirequest/views/request_actions.py:385
 msgid "Create response now"
 msgstr "Dateien als Antwort erstellen"
 
-#: froide/foirequest/views/request_actions.py:385
+#: froide/foirequest/views/request_actions.py:387
 msgid "You have not completed this process. Are you sure you want to cancel?"
 msgstr ""
 "Sie haben den Prozess noch nicht abgeschlossen. Sind Sie sicher, dass Sie "
