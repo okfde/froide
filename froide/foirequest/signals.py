@@ -56,7 +56,7 @@ def send_notification_became_overdue(sender, **kwargs):
     req_url = sender.user.get_autologin_url(
         sender.get_absolute_short_url()
     )
-    upload_url = sender.user.get_auto_login_url(
+    upload_url = sender.user.get_autologin_url(
         short_request_url('foirequest-upload_postal_message', sender)
     )
     send_request_user_email(
@@ -81,7 +81,7 @@ def send_notification_became_asleep(sender, **kwargs):
     req_url = sender.user.get_autologin_url(
         sender.get_absolute_short_url()
     )
-    upload_url = sender.user.get_auto_login_url(
+    upload_url = sender.user.get_autologin_url(
         short_request_url('foirequest-upload_postal_message', sender)
     )
 
