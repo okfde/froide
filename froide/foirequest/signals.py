@@ -5,36 +5,39 @@ from django.utils.translation import gettext_lazy as _
 from froide.helper.email_sending import mail_registry
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent, FoiProject
-from .utils import send_request_user_email
+from .utils import send_request_user_email, short_request_url
 
 
 became_overdue_email = mail_registry.register(
     'foirequest/emails/became_overdue',
-    ('action_url', 'foirequest',)
+    ('action_url', 'upload_action_url', 'write_action_url',
+    'status_action_url',
+    'foirequest', 'user')
 )
 became_asleep_email = mail_registry.register(
     'foirequest/emails/became_asleep',
-    ('action_url', 'foirequest',)
+    ('action_url', 'upload_action_url', 'write_action_url',
+    'status_action_url', 'foirequest', 'user')
 )
 message_received_email = mail_registry.register(
     'foirequest/emails/message_received_notification',
-    ('action_url', 'foirequest', 'publicbody', 'message')
+    ('action_url', 'foirequest', 'publicbody', 'message', 'user')
 )
 public_body_suggested_email = mail_registry.register(
     'foirequest/emails/public_body_suggestion_received',
-    ('action_url', 'foirequest', 'suggestion')
+    ('action_url', 'foirequest', 'suggestion', 'user')
 )
 confirm_foi_project_created_email = mail_registry.register(
     'foirequest/emails/confirm_foi_project_created',
-    ('foiproject', 'action_url')
+    ('foiproject', 'action_url', 'user')
 )
 confirm_foi_request_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_request_sent',
-    ('foirequest', 'message', 'publicbody', 'action_url')
+    ('foirequest', 'message', 'publicbody', 'action_url', 'user')
 )
 confirm_foi_message_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_message_sent',
-    ('foirequest', 'message', 'publicbody', 'action_url')
+    ('foirequest', 'message', 'publicbody', 'action_url', 'user')
 )
 
 
@@ -50,13 +53,23 @@ def trigger_index_update(klass, instance_pk):
 @receiver(FoiRequest.became_overdue,
         dispatch_uid="send_notification_became_overdue")
 def send_notification_became_overdue(sender, **kwargs):
+    req_url = sender.user.get_autologin_url(
+        sender.get_absolute_short_url()
+    )
+    upload_url = sender.user.get_auto_login_url(
+        short_request_url('foirequest-upload_postal_message', sender)
+    )
     send_request_user_email(
         became_overdue_email,
         sender,
         subject=_("Request became overdue"),
         context={
             "foirequest": sender,
-            "action_url": sender.user.get_autologin_url(sender.get_absolute_short_url()),
+            "user": sender.user,
+            "action_url": req_url,
+            "upload_action_url": upload_url,
+            "write_action_url": req_url + '#write-message',
+            "status_action_url": req_url + '#set-status',
         },
         priority=False
     )
@@ -65,15 +78,24 @@ def send_notification_became_overdue(sender, **kwargs):
 @receiver(FoiRequest.became_asleep,
         dispatch_uid="send_notification_became_asleep")
 def send_notification_became_asleep(sender, **kwargs):
+    req_url = sender.user.get_autologin_url(
+        sender.get_absolute_short_url()
+    )
+    upload_url = sender.user.get_auto_login_url(
+        short_request_url('foirequest-upload_postal_message', sender)
+    )
+
     send_request_user_email(
         became_asleep_email,
         sender,
         subject=_("Request became asleep"),
         context={
             "foirequest": sender,
-            "action_url": sender.user.get_autologin_url(
-                sender.get_absolute_short_url()
-            ),
+            "user": sender.user,
+            "action_url": req_url,
+            "upload_action_url": upload_url,
+            "write_action_url": req_url + '#write-message',
+            "status_action_url": req_url + '#set-status',
         },
         priority=False
     )
@@ -94,6 +116,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
         context={
             "message": message,
             "foirequest": sender,
+            "user": sender.user,
             "publicbody": message.sender_public_body,
             "action_url": sender.user.get_autologin_url(
                 message.get_absolute_short_url()
@@ -116,6 +139,7 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
         context={
             "suggestion": suggestion,
             "foirequest": sender,
+            "user": sender.user,
             "action_url": sender.user.get_autologin_url(
                 sender.get_absolute_short_url()
             )
@@ -148,6 +172,7 @@ def send_foiproject_created_confirmation(sender, **kwargs):
         subject=_("Your Freedom of Information Project has been created"),
         context={
             "foiproject": sender,
+            "user": sender.user,
             "action_url": sender.get_absolute_domain_short_url()
         },
         priority=False,
@@ -176,6 +201,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
 
     context = {
         "foirequest": sender,
+        "user": sender.user,
         "publicbody": message.recipient_public_body,
         "message": message,
         "action_url": action_url

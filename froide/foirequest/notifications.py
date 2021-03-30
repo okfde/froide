@@ -11,7 +11,7 @@ update_requester_email = mail_registry.register(
 )
 classification_reminder_email = mail_registry.register(
     'foirequest/emails/classification_reminder',
-    ('foirequest', 'action_url')
+    ('foirequest', 'user', 'action_url', 'status_action_url')
 )
 
 
@@ -49,12 +49,15 @@ def send_update(request_list, user=None):
 def send_classification_reminder(foirequest):
     if foirequest.user is None:
         return
+    req_url = foirequest.user.get_autologin_url(
+        foirequest.get_absolute_short_url()
+    )
     subject = _("Please classify the reply to your request")
     context = {
         "foirequest": foirequest,
-        "action_url": foirequest.user.get_autologin_url(
-            foirequest.get_absolute_short_url()
-        ),
+        "user": foirequest.user,
+        "action_url": req_url,
+        "status_action_url": req_url + '#set-status',
     }
     send_request_user_email(
         classification_reminder_email,
