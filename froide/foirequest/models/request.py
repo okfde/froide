@@ -65,8 +65,11 @@ class FoiRequestManager(CurrentSiteManager):
         if offset is None:
             offset = timedelta(days=4)
         ago = timezone.now() - offset
-        return self.get_queryset().filter(status=Status.AWAITING_CLASSIFICATION,
-                last_message__lt=ago)
+        return self.get_queryset().filter(
+            status=Status.AWAITING_CLASSIFICATION,
+            is_foi=True,
+            last_message__lt=ago
+        )
 
     def get_unclassified_for_moderation(self):
         return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET).filter(
