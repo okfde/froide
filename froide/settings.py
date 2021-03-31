@@ -47,9 +47,6 @@ class Base(Configuration):
         'leaflet',
         'django_celery_beat',
 
-        # Semi-external
-        'filingcabinet',
-
         # local
         'froide.foirequest',
         'froide.foirequestfollower',  # needs to come after foirequest
@@ -68,6 +65,9 @@ class Base(Configuration):
         'froide.comments',
         'froide.campaign',
         'froide.upload',
+
+        # Semi-external
+        'filingcabinet', # Later in template chain than froide.document
 
         # API
         'oauth2_provider',
