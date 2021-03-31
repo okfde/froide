@@ -67,7 +67,7 @@ class Base(Configuration):
         'froide.upload',
 
         # Semi-external
-        'filingcabinet', # Later in template chain than froide.document
+        'filingcabinet',  # Later in template chain than froide.document
 
         # API
         'oauth2_provider',
