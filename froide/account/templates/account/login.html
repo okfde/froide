@@ -15,7 +15,9 @@
       <div class="card-body">
         <p class="visible-sm visible-xs">
           <a href="{% url 'account-signup' %}">
+            {% block signup_hint %}
             {% blocktrans %}Don't have an account? Click here to sign up!{% endblocktrans %}
+            {% endblock %}
           </a>
         </p>
         <form class="form-horizontal" method="post" action="{% url 'account-login' %}">
