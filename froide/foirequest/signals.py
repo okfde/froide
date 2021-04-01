@@ -190,12 +190,14 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         return
 
     messages = sender.get_messages()
+    start_thread = False
     if len(messages) == 1:
         if sender.project_id is not None:
             return
         subject = _("Your Freedom of Information Request was sent")
         mail_intent = confirm_foi_request_sent_email
         action_url = sender.get_absolute_domain_short_url()
+        start_thread = True
     else:
         subject = _("Your message was sent")
         mail_intent = confirm_foi_message_sent_email
@@ -218,7 +220,8 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         mail_intent,
         sender,
         subject=subject,
-        context=context
+        context=context,
+        start_thread=start_thread
     )
 
 

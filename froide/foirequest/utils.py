@@ -308,22 +308,39 @@ def get_publicbody_for_email(email, foi_request, include_deferred=False):
     return None
 
 
-def send_request_user_email(mail_intent, foiobject, subject=None, context=None,
-                            add_idmark=True, priority=True, **kwargs):
-    if not foiobject.user:
+def send_request_user_email(mail_intent, foirequest, subject=None, context=None,
+                            add_idmark=True, priority=True, start_thread=False,
+                            **kwargs):
+    if not foirequest.user:
         return
     if subject and add_idmark:
-        subject = '{} [#{}]'.format(subject, foiobject.pk)
+        subject = '{} [#{}]'.format(subject, foirequest.pk)
 
     context.update({
-        'user': foiobject.user
+        'user': foirequest.user
     })
+    headers = {}
+    domain = settings.SITE_URL.split('/')[-1]
+    thread_id = '<foirequest/{id}@{domain}>'.format(
+        id=foirequest.id, domain=domain
+    )
+    if start_thread:
+        headers['Message-ID'] = thread_id
+    else:
+        headers['References'] = thread_id
+        headers['In-Reply-To'] = thread_id
+
+    headers['List-ID'] = "foirequest/{id} <{id}.foirequest.{domain}>".format(
+        id=foirequest.id, domain=domain
+    )
+    headers['List-Archive'] = foirequest.get_absolute_domain_short_url()
 
     mail_intent.send(
-        user=foiobject.user,
+        user=foirequest.user,
         subject=subject,
         context=context,
         priority=priority,
+        headers=headers,
         **kwargs
     )
 
