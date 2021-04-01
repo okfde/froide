@@ -29,15 +29,17 @@ public_body_suggested_email = mail_registry.register(
 )
 confirm_foi_project_created_email = mail_registry.register(
     'foirequest/emails/confirm_foi_project_created',
-    ('foiproject', 'action_url', 'user')
+    ('foiproject', 'action_url', 'upload_action_url', 'user')
 )
 confirm_foi_request_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_request_sent',
-    ('foirequest', 'message', 'publicbody', 'action_url', 'user')
+    ('foirequest', 'message', 'publicbody',
+    'action_url', 'upload_action_url', 'user')
 )
 confirm_foi_message_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_message_sent',
-    ('foirequest', 'message', 'publicbody', 'action_url', 'user')
+    ('foirequest', 'message', 'publicbody',
+    'action_url', 'upload_action_url', 'user')
 )
 
 
@@ -173,7 +175,7 @@ def send_foiproject_created_confirmation(sender, **kwargs):
         context={
             "foiproject": sender,
             "user": sender.user,
-            "action_url": sender.get_absolute_domain_short_url()
+            "action_url": sender.get_absolute_domain_short_url(),
         },
         priority=False,
     )
@@ -199,12 +201,17 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         mail_intent = confirm_foi_message_sent_email
         action_url = message.get_absolute_domain_short_url()
 
+    upload_url = sender.user.get_autologin_url(
+        short_request_url('foirequest-upload_postal_message', sender)
+    )
+
     context = {
         "foirequest": sender,
         "user": sender.user,
         "publicbody": message.recipient_public_body,
         "message": message,
-        "action_url": action_url
+        "action_url": action_url,
+        "upload_action_url": upload_url,
     }
 
     send_request_user_email(
