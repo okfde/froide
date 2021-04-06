@@ -1,10 +1,14 @@
 from rest_framework import serializers, views, response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from rest_framework.response import Response
 
 from oauth2_provider.contrib.rest_framework import (
     IsAuthenticatedOrTokenHasScope
 )
 
-from .models import User
+from .models import User, UserPreference
+from .preferences import registry
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -81,3 +85,36 @@ class ProfileView(views.APIView):
             # if token is None, user is currently logged in user
             serializer = UserFullSerializer(user)
         return response.Response(serializer.data)
+
+
+class UserPreferenceView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        key = request.GET.get('key')
+        if key is None:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+        try:
+            registry.find(key)
+        except KeyError:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+        value = UserPreference.objects.get_preference(
+            request.user, key
+        )
+        return Response({"key": key, "value": value})
+
+    def post(self, request, format=None):
+        key = request.data.get('key')
+        if key is None:
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+        try:
+            form_klass = registry.find(key)
+        except KeyError:
+            return Response(None, status=status.HTTP_400_BAD_REQUEST)
+
+        form = form_klass(request.data)
+        if form.is_valid():
+            form.save(request.user)
+            return Response(None)
+        return Response(None, status=status.HTTP_400_BAD_REQUEST)

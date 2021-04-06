@@ -10,7 +10,7 @@ from django.template.response import TemplateResponse
 
 from rest_framework.schemas import get_schema_view
 
-from froide.account.api_views import ProfileView
+from froide.account.api_views import ProfileView, UserPreferenceView
 from froide.foirequest.api_views import (FoiRequestViewSet, FoiMessageViewSet,
     FoiAttachmentViewSet)
 from froide.publicbody.api_views import (ClassificationViewSet,
@@ -109,6 +109,8 @@ if settings.FROIDE_CONFIG.get('api_activated', True):
                                   name=settings.SITE_NAME))
     api_urlpatterns = [
         path('api/v1/user/', ProfileView.as_view(), name='api-user-profile'),
+        path('api/v1/userpreference/', UserPreferenceView.as_view(),
+             name='api-user-preference'),
         path('api/v1/', include((api_router.urls, 'api'))),
         path('api/v1/schema/', schema_view),
     ]
