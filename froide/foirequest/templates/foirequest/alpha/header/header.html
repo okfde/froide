@@ -1,14 +1,6 @@
 {% load i18n %}
 {% load foirequest_tags %}
 
-{% block extra_head %}
-  {% if object|can_write_foirequest:request %}
-  {% with object.get_set_tags_form as set_tags_form %}
-    {{ set_tags_form.media.css }}
-  {% endwith %}
-  {% endif %}
-{% endblock extra_head %}
-
 <div class="container pt-2">
 
   {% if not object.public and object|can_read_foirequest_anonymous:request %}
@@ -37,6 +29,31 @@
   <div class="alert alert-info">
     {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
   </div>
+  {% endif %}
+
+  {% if not preferences.request_page_tour.value %}
+    <div class="alert alert-success ajax-parent">
+      <p>
+        <strong>{% blocktrans %}Welcome to your request page! Can we give you a tour?{% endblocktrans %}</strong>
+      </p>
+      <div class="row justify-content-between">
+        <div class="col">
+          <button data-tour="start" class="btn btn-success">
+            {% translate "Yes, start tour!" %}
+          </button>
+        </div>
+        <div class="col-auto">
+          <form class="float-right ajaxified" action="{% url 'api-user-preference' %}" method="post">
+            {% csrf_token %}
+            {{ preferences.request_page_tour.form.key }}
+            <input type="hidden" name="value" value="true"/>
+            <button type="submit" class="btn btn-secondary">
+              {% translate "No, thanks." %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
   {% endif %}
 
   {% if object|can_write_foirequest:request and object.is_overdue %}

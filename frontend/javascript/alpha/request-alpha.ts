@@ -5,6 +5,8 @@ import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
 import { toggleSlide, addText } from '../lib/misc';
 import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4';
+import Driver from 'driver.js';
+import 'driver.js/dist/driver.min.css';
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
 
@@ -117,6 +119,37 @@ const initRequestPage = () => {
     }
   });
 
+  const tourButtons = document.querySelectorAll('[data-tour="start"]') as NodeListOf<HTMLElement>
+  Array.from(tourButtons).forEach(t => {
+    t.addEventListener("click", (e) => {
+      e.stopPropagation();
+      startTour();
+    })
+  });
+
+}
+
+const startTour = () => {
+  const tourDataEl = document.querySelector('#tour-data');
+  if (!tourDataEl || !tourDataEl.textContent) {
+    return
+  }
+  let tourData
+  try {
+    tourData = JSON.parse(tourDataEl.textContent);
+  } catch {
+    return
+  }
+  const driver = new Driver({
+    animate: true,  // Animate while changing highlighted element
+    doneBtnText: tourData.i18n.done, // Text on the final button
+    closeBtnText: tourData.i18n.close, // Text on the close button for this step
+    nextBtnText: tourData.i18n.next, // Next button text for this step
+    prevBtnText: tourData.i18n.previous, // Previous button text for this step
+    scrollIntoViewOptions: {behavior: "smooth", block: 'center',},
+  });
+  driver.defineSteps(tourData.steps);
+  driver.start();
 }
 
 const parseMessageContainers = () => {

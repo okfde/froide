@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404
+from django.utils.translation import gettext as _
 
 from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiEvent, FoiAttachment
+from ..forms.preferences import request_page_tour_pref
 from ..auth import (can_read_foirequest, can_write_foirequest,
     check_foirequest_auth_code)
 
@@ -116,8 +118,20 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
 
     context.update({
         "object": obj,
-        "active_tab": active_tab
+        "active_tab": active_tab,
+        "preferences": {}
     })
+    if can_write:
+        context.update({
+            "preferences": {
+                "request_page_tour": request_page_tour_pref.get(request.user)
+            }
+        })
+
+        if not context['preferences']['request_page_tour'].value:
+            context.update({
+                'tour_data': get_tour_data()
+            })
 
     alpha_key = 'foirequest_alpha'
     alpha = request.GET.get('alpha')
@@ -158,3 +172,65 @@ def get_active_tab(obj, context):
         return 'write-message'
 
     return 'info'
+
+
+def get_tour_data():
+    return {
+        'i18n': {
+            'done': _('👋 Goodbye!'),
+            'next': _('Next'),
+            'previous': _('Previous'),
+            'close': _('Close'),
+            'start': _('Next'),
+        },
+        'steps': [{
+            'element': '#infobox',
+            'popover': {
+                'title': _('Status of request'),
+                'description': _('''Here you can see the status and other details of your request. Under "Edit request status" you can update the status after you get a response.'''),
+                'position': 'top'
+            }
+        }, {
+            'element': '#correspondence-tab',
+            'popover': {
+                'title': _('Messages in this request'),
+                'description': _('''Below you find all messages that you sent and received in this request. When you receive a response it appears at the end and we let you know about it via email.'''),
+                'position': 'top'
+            }
+        }, {
+            'element': '.upload-post-link',
+            'popover': {
+                'title': _('Got postal mail?'),
+                'description': _('''When you receive a letter, you can click this button and upload a scan or photo of the letter. You can redact parts of the letter with our tool before publishing it.'''),
+                'position': 'top'
+            }
+        }, {
+            'element': '.write-message-top-link',
+            'popover': {
+                'title': _('Need to reply or send a reminder?'),
+                'description': _('''This button takes you to the send message form. Let's go there next!'''),
+                'position': 'top'
+            }
+        }, {
+            'element': '#write-message .form-group',
+            'popover': {
+                'title': _('Sending messages'),
+                'description': _('''You can reply to messages or send reminders about your request at the bottom of the page. If your request is refused or overdue you will be able to ask for mediation.'''),
+                'position': 'top'
+            }
+        }, {
+            'element': '#request-summary',
+            'popover': {
+                'title': _('Got the information you asked for?'),
+                'description': _('''When you received documents, you can write a summary of what you have learned.'''),
+            }
+        }, {
+            'element': '.request-section-header',
+            'popover': {
+                'title': _('The end.'),
+                'description': _('''That concludes this tour! We'll let you know via email if anything around your request changes.'''),
+                'position': 'top-center'
+            }
+        },
+        ]
+    }

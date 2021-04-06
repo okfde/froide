@@ -67,7 +67,7 @@
     </div>
 
     <!-- header,  -->
-    <div class="request-section">
+    <div class="request-section request-section-header">
       {% include "foirequest/alpha/header/header.html" %}
 
       {% include "foirequest/alpha/header/tabs.html" %}
@@ -99,6 +99,18 @@
         {{ set_tags_form.media.js }}
       {% endwith %}
     {% endaddtoblock %}
+    {% addtoblock "css" %}
+      {% with object.get_set_tags_form as set_tags_form %}
+        {{ set_tags_form.media.css }}
+      {% endwith %}
+    {% endaddtoblock %}
+
+    {% if not preferences.request_page_tour.value %}
+      {% addtoblock "js" %}
+        {{ tour_data|json_script:"tour-data" }}
+      {% endaddtoblock %}
+    {% endif %}
+
 
     {% addtoblock "js" %}
       <script src="{% static 'js/common.js' %}"></script>
