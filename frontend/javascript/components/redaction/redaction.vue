@@ -275,15 +275,34 @@ import Vue from 'vue'
 
 import {bustCache, getData} from '../../lib/api.js'
 
-const PDF_TO_CSS_UNITS = 96.0 / 72.0
-
 function isTouchDevice() {
   return 'ontouchstart' in window;
 }
 
 export default {
   name: 'Redaction',
-  props: ['config', 'pdfPath', 'attachmentUrl', 'redactRegex', 'canPublish'],
+  props: {
+    config: {
+      type: Object,
+      required: true
+    },
+    pdfPath: {
+      type: String,
+      required: true
+    },
+    attachmentUrl: {
+      type: String,
+      required: true
+    },
+    redactRegex: {
+      type: Array,
+      default: () => [],
+    },
+    canPublish: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       doc: null,
@@ -694,7 +713,7 @@ export default {
     touchMove (e) {
       this.mouseMove(e, true)
     },
-    touchCancel (e) {
+    touchCancel () {
       this.startDrag = null
     },
     mouseMove (e, override) {
