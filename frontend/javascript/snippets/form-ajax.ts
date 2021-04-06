@@ -59,6 +59,8 @@ const submitFormsAjax = () => {
           } else {
             parent.outerHTML = responseData;
           }
+        } else {
+          form.outerHTML = responseData
         }
       };
       request.send(data);

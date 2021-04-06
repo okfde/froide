@@ -73,7 +73,7 @@
             </div>
           {% endif %}
           {% if not object.is_foi %}
-            <span class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></span>
+            <div class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></div>
           {% else %}
             <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
@@ -82,11 +82,7 @@
                 {% trans "Not an FOI request" %}
               </button>
             </form>
-            <div style="display:none" id="mark-not-foi-form-success">
-              {% trans "Marked as NOT FoI" %}
-            </div>
           {% endif %}
-
         </li>
       {% endif %}
 

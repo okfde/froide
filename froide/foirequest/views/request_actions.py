@@ -213,7 +213,7 @@ def mark_not_foi(request, foirequest):
     foirequest.save()
     send_non_foi_notification(foirequest)
     if is_ajax(request):
-        return HttpResponse()
+        return HttpResponse(_("Marked as NOT FoI"))
     messages.add_message(request, messages.SUCCESS,
             _('Request marked as not a FoI request.'))
     return redirect(foirequest)
