@@ -21,8 +21,7 @@
   {% endblock foirequest_messages %}
 
 
-  {% if object.awaits_classification %}
-
+  {% if object|can_write_foirequest:request and object.awaits_classification %}
     <div class="position-sticky d-print-none" style="bottom: 0">
       <div class="bg-yellow-100 text-center p-2">
         <a href="#set-status" data-scrollto="set-status">
