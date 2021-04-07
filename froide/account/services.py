@@ -166,6 +166,7 @@ class AccountService(object):
             )
 
         context = {
+            'user': self.user,
             'action_url': settings.SITE_URL + url,
             'request_id': request_id,
             'name': self.user.get_full_name(),
@@ -196,6 +197,7 @@ class AccountService(object):
         })
 
         context = {
+            'user': self.user,
             'action_url': secret_url,
             'title': title,
             'name': self.user.get_full_name(),
@@ -212,6 +214,7 @@ class AccountService(object):
         secret_url = self.get_autologin_url(reverse('account-show'))
 
         context = {
+            'user': self.user,
             'action_url': secret_url,
             'name': self.user.get_full_name(),
         }
@@ -238,6 +241,7 @@ class AccountService(object):
             urlencode(url_kwargs)
         )
         context = {
+            'user': self.user,
             'action_url': url,
             'name': self.user.get_full_name(),
         }
