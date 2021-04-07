@@ -7201,7 +7201,7 @@ msgid ""
 "photo of the letter. You can redact parts of the letter with our tool before "
 "publishing it."
 msgstr ""
-"Wenn Sie einen Brief erhalten, können Sie diesen Knopf drück und dann Scans "
+"Wenn Sie einen Brief erhalten, können Sie diesen Knopf drücken und dann Scans "
 "oder Fotos des Briefs hochladen. Im Anschluss können Sie unser Schwärzungs-"
 "Werkzeug verwenden, bevor Sie den Brief veröffentlichen."
 
