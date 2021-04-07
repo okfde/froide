@@ -157,7 +157,8 @@ def short_request_url(name, foirequest, message=None):
     if message:
         params['message_id'] = message.id
     url_path = reverse(name, kwargs=params)
-    url_path = re.sub('^/{}'.format(foirequest.slug), '', url_path)
+    fr_path = foirequest.get_absolute_url()
+    url_path = re.sub('^{}'.format(fr_path), '/', url_path)
 
     return reverse('foirequest-shortlink_url', kwargs={
         'obj_id': foirequest.pk,
