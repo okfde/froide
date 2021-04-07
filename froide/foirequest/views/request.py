@@ -188,7 +188,6 @@ def get_tour_data():
             'popover': {
                 'title': _('Status of request'),
                 'description': _('''Here you can see the status and other details of your request. Under "Edit request status" you can update the status after you get a response.'''),
-                'position': 'top'
             }
         }, {
             'element': '#correspondence-tab',
