@@ -390,6 +390,8 @@ class FoiRequestFilter(filters.FilterSet):
         lookup_expr='isnull',
         method='campaign_filter'
     )
+    first_message_after = filters.DateFilter(field_name="first_message", lookup_expr='gte')
+    first_message_before = filters.DateFilter(field_name="first_message", lookup_expr='lt')
 
     # FIXME: default ordering should be undetermined?
     # ordering = filters.OrderingFilter(
