@@ -1,5 +1,6 @@
 import random
 import hashlib
+from typing import Sequence, List
 
 from django.conf import settings
 
@@ -2839,14 +2840,33 @@ def get_float_from_string(seed):
 
 
 def shuffle_list(original, seed):
-    ''' Same shuffle for same seed'''
+    '''
+    Same shuffle for same seed
+    FIXME: Python 3.9 deprecated random.shuffle with seed
+    '''
     float_seed = get_float_from_string(seed)
     return random.shuffle(original, lambda: float_seed)
 
 
+def new_shuffle_list(seq: Sequence[str], seed: str) -> List[str]:
+    """Deterministically shuffle"""
+    fixed_random = random.Random()
+    fixed_random.seed(seed, version=2)
+    seq = list(seq)
+    fixed_random.shuffle(seq)
+    return seq
+
+
 shuffle_list(NAMES, settings.SECRET_KEY)
+NEW_NAMES = new_shuffle_list(NAMES, settings.SECRET_KEY)
+
+
+def get_old_name_from_number(num):
+    # FIXME: remove after maybe a year
+    x = num % len(NAMES)
+    return NAMES[x]
 
 
 def get_name_from_number(num):
-    x = num % len(NAMES)
-    return NAMES[x]
+    x = num % len(NEW_NAMES)
+    return NEW_NAMES[x]

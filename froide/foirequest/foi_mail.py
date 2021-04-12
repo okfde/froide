@@ -16,7 +16,9 @@ from froide.helper.email_utils import (
     EmailParser, get_mail_client, get_unread_mails,
     make_address, unflag_mail
 )
-from froide.helper.name_generator import get_name_from_number
+from froide.helper.name_generator import (
+    get_name_from_number, get_old_name_from_number
+)
 
 from .utils import get_publicbody_for_email, get_foi_mail_domains
 from .pdf_generator import FoiRequestPDFGenerator
@@ -144,7 +146,8 @@ def get_foirequest_from_mail(email):
         except ValueError:
             return None
         hero_name = get_name_from_number(num)
-        if hero_name != hero:
+        old_hero_name = get_old_name_from_number(num)
+        if hero_name != hero and old_hero_name != hero:
             return None
         try:
             return FoiRequest.objects.get(pk=num)
