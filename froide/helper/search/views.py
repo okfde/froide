@@ -13,7 +13,7 @@ class BaseSearchView(ListView):
     allow_empty = True
     search_name = None
     template_name = 'helper/search/search_base.html'
-    paginate_by = 30
+    paginate_by = 25
     paginator_class = ElasticsearchPaginator
     show_filters = {}
     advanced_filters = {}
