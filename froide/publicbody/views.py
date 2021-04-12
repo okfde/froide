@@ -86,7 +86,7 @@ def show_jurisdiction(request, slug):
         "object": jurisdiction,
         "pb_count": PublicBody.objects.filter(jurisdiction=jurisdiction).count(),
         "laws": FoiLaw.objects.filter(meta=False,
-            jurisdiction=jurisdiction).order_by('priority'),
+            jurisdiction=jurisdiction).order_by('-priority'),
         "foirequests": FoiRequest.published.filter(jurisdiction=jurisdiction)[:5]
     }
     template_names = (
