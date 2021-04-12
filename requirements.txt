@@ -6,11 +6,11 @@
 #
 -e git+git://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet
     # via -r requirements.in
-aiohttp==3.7.3
+aiohttp==3.7.4.post0
     # via geoip2
-amqp==5.0.5
+amqp==5.0.6
     # via kombu
-asgiref==3.3.1
+asgiref==3.3.4
     # via
     #   channels
     #   daphne
@@ -23,17 +23,17 @@ attrs==20.3.0
     #   automat
     #   service-identity
     #   twisted
-autobahn==21.1.1
+autobahn==21.3.1
     # via daphne
 automat==20.2.0
     # via twisted
-billiard==3.6.3.0
+billiard==3.6.4.0
     # via celery
 cairocffi==1.2.0
     # via
     #   cairosvg
     #   weasyprint
-cairosvg==2.5.1
+cairosvg==2.5.2
     # via weasyprint
 celery==5.0.5
     # via
@@ -44,14 +44,14 @@ certifi==2020.12.5
     # via
     #   elasticsearch
     #   requests
-cffi==1.14.4
+cffi==1.14.5
     # via
     #   cairocffi
     #   cryptography
     #   weasyprint
 channels==3.0.3
     # via -r requirements.in
-chardet==3.0.4
+chardet==4.0.0
     # via
     #   aiohttp
     #   requests
@@ -73,24 +73,25 @@ coreapi==2.3.3
     # via -r requirements.in
 coreschema==0.0.4
     # via coreapi
-cryptography==3.3.1
+cryptography==3.4.7
     # via
     #   autobahn
+    #   jwcrypto
     #   pyopenssl
     #   service-identity
 cssselect2==0.4.1
     # via
     #   cairosvg
     #   weasyprint
-daphne==3.0.1
+daphne==3.0.2
     # via channels
-defusedxml==0.6.0
+defusedxml==0.7.1
     # via cairosvg
 dj-database-url==0.5.0
     # via -r requirements.in
 django-appconf==1.0.4
     # via django-celery-email
-django-cache-url==3.2.2
+django-cache-url==3.2.3
     # via -r requirements.in
 django-celery-beat==2.2.0
     # via -r requirements.in
@@ -98,7 +99,7 @@ django-celery-email==3.0.0
     # via -r requirements.in
 django-configurations==2.2
     # via -r requirements.in
-django-contrib-comments==2.0.0
+django-contrib-comments==2.1.0
     # via -r requirements.in
 django-crossdomainmedia==0.0.3
     # via -r requirements.in
@@ -114,9 +115,9 @@ django-js-asset==1.2.2
     # via django-mptt
 django-leaflet==0.27.1
     # via -r requirements.in
-django-mptt==0.11.0
+django-mptt==0.12.0
     # via django-filingcabinet
-django-oauth-toolkit==1.3.3
+django-oauth-toolkit==1.5.0
     # via -r requirements.in
 django-parler==2.2
     # via -r requirements.in
@@ -126,9 +127,9 @@ django-taggit==1.3.0
     # via
     #   -r requirements.in
     #   django-filingcabinet
-django-timezone-field==4.1.1
+django-timezone-field==4.1.2
     # via django-celery-beat
-django-treebeard==4.4
+django-treebeard==4.5.1
     # via -r requirements.in
 django==3.1.8
     # via
@@ -153,7 +154,7 @@ djangorestframework-csv==2.1.0
     # via -r requirements.in
 djangorestframework-jsonp==1.0.2
     # via -r requirements.in
-djangorestframework==3.12.2
+djangorestframework==3.12.4
     # via
     #   -r requirements.in
     #   djangorestframework-csv
@@ -163,7 +164,7 @@ elasticsearch-dsl==7.3.0
     # via
     #   -r requirements.in
     #   django-elasticsearch-dsl
-elasticsearch==7.10.1
+elasticsearch==7.12.0
     # via
     #   -r requirements.in
     #   elasticsearch-dsl
@@ -183,17 +184,19 @@ idna==2.10
     #   requests
     #   twisted
     #   yarl
-incremental==17.5.0
+incremental==21.3.0
     # via twisted
 itypes==1.2.0
     # via coreapi
 jinja2==2.11.3
     # via coreschema
+jwcrypto==0.8
+    # via django-oauth-toolkit
 kombu==5.0.2
     # via celery
-lxml==4.6.2
+lxml==4.6.3
     # via pikepdf
-markdown==3.3.3
+markdown==3.3.4
     # via -r requirements.in
 markupsafe==1.1.1
     # via jinja2
@@ -205,18 +208,18 @@ multidict==5.1.0
     #   yarl
 oauthlib==3.1.0
     # via django-oauth-toolkit
-phonenumbers==8.12.17
+phonenumbers==8.12.21
     # via -r requirements.in
-pikepdf==2.5.2
+pikepdf==2.11.0
     # via django-filingcabinet
-pillow==8.1.0
+pillow==8.2.0
     # via
     #   cairosvg
     #   django-filingcabinet
     #   pikepdf
     #   reportlab
     #   weasyprint
-prompt-toolkit==3.0.14
+prompt-toolkit==3.0.18
     # via click-repl
 psycopg2-binary==2.8.6
     # via -r requirements.in
@@ -228,8 +231,6 @@ pyasn1==0.4.8
     #   service-identity
 pycparser==2.20
     # via cffi
-pyhamcrest==2.0.2
-    # via twisted
 pyisemail==1.3.2
     # via -r requirements.in
 pyopenssl==20.0.1
@@ -247,7 +248,7 @@ python-dateutil==2.8.1
     #   elasticsearch-dsl
     #   icalendar
     #   python-crontab
-python-magic==0.4.18
+python-magic==0.4.22
     # via -r requirements.in
 python-mimeparse==1.6.0
     # via -r requirements.in
@@ -258,7 +259,7 @@ pytz==2021.1
     #   django
     #   django-timezone-field
     #   icalendar
-reportlab==3.5.59
+reportlab==3.5.66
     # via -r requirements.in
 requests==2.25.1
     # via
@@ -272,9 +273,9 @@ six==1.15.0
     # via
     #   automat
     #   click-repl
-    #   cryptography
     #   django-configurations
     #   django-elasticsearch-dsl
+    #   django-oauth-toolkit
     #   djangorestframework-csv
     #   elasticsearch-dsl
     #   html5lib
@@ -287,9 +288,9 @@ tinycss2==1.1.0
     #   cairosvg
     #   cssselect2
     #   weasyprint
-twisted[tls]==20.3.0
+twisted[tls]==21.2.0
     # via daphne
-txaio==20.12.1
+txaio==21.2.1
     # via autobahn
 typing-extensions==3.7.4.3
     # via aiohttp
@@ -297,7 +298,7 @@ unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
     # via coreapi
-urllib3==1.26.3
+urllib3==1.26.4
     # via
     #   elasticsearch
     #   geoip2
@@ -306,13 +307,13 @@ vine==5.0.0
     # via
     #   amqp
     #   celery
-wand==0.6.5
+wand==0.6.6
     # via
     #   -r requirements.in
     #   django-filingcabinet
 wcwidth==0.2.5
     # via prompt-toolkit
-weasyprint==52.2
+weasyprint==52.4
     # via -r requirements.in
 webencodings==0.5.1
     # via
@@ -323,7 +324,7 @@ websockets==8.1
     # via -r requirements.in
 yarl==1.6.3
     # via aiohttp
-zope.interface==5.2.0
+zope.interface==5.3.0
     # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
