@@ -269,11 +269,8 @@ class SignupView(FormView):
 
 
 @require_POST
+@login_required
 def change_password(request):
-    if not request.user.is_authenticated:
-        messages.add_message(request, messages.ERROR,
-                _('You are not currently logged in, you cannot change your password.'))
-        return render_403(request)
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
@@ -292,11 +289,8 @@ def change_password(request):
 
 
 @require_POST
+@login_required
 def send_reset_password_link(request):
-    if request.user.is_authenticated:
-        messages.add_message(request, messages.ERROR,
-                _('You are currently logged in, you cannot get a password reset link.'))
-        return get_redirect(request)
     form = auth.forms.PasswordResetForm(request.POST, prefix='pwreset')
     if form.is_valid():
         if request.POST.get('next'):
@@ -329,9 +323,8 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         return get_redirect_url(self.request, default=reverse('account-show'))
 
 
+@login_required
 def account_settings(request, context=None, status=200):
-    if not request.user.is_authenticated:
-        return redirect('account-login')
     if not context:
         context = {}
     if 'new' in request.GET:
@@ -344,11 +337,8 @@ def account_settings(request, context=None, status=200):
 
 
 @require_POST
+@login_required
 def change_user(request):
-    if not request.user.is_authenticated:
-        messages.add_message(request, messages.ERROR,
-                _('You are not currently logged in, you cannot change your address.'))
-        return render_403(request)
     form = UserChangeForm(request.user, request.POST)
     if form.is_valid():
         new_email = form.cleaned_data['email']
@@ -384,12 +374,8 @@ def make_user_private(request):
     return redirect('account-settings')
 
 
+@login_required
 def change_email(request):
-    if not request.user.is_authenticated:
-        messages.add_message(request, messages.ERROR,
-                _('You are not currently logged in, you cannot change your email address.'))
-        return render_403(request)
-
     form = UserEmailConfirmationForm(request.user, request.GET)
     if form.is_valid():
         form.save()
@@ -402,11 +388,8 @@ def change_email(request):
 
 
 @require_POST
+@login_required
 def delete_account(request):
-    if not request.user.is_authenticated:
-        messages.add_message(request, messages.ERROR,
-                _('You are not currently logged in, you cannot delete your account.'))
-        return render_403(request)
     form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
         messages.add_message(request, messages.ERROR,
