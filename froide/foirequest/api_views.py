@@ -413,7 +413,8 @@ class FoiRequestFilter(filters.FilterSet):
         fields = (
             'user', 'is_foi', 'checked', 'jurisdiction', 'tags',
             'resolution', 'status', 'reference', 'public_body',
-            'slug', 'costs', 'project', 'campaign'
+            'slug', 'costs', 'project', 'campaign',
+            'law'
         )
 
     def tag_filter(self, queryset, name, value):
