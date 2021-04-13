@@ -392,6 +392,7 @@ class FoiRequestFilter(filters.FilterSet):
     )
     first_message_after = filters.DateFilter(field_name="first_message", lookup_expr='gte')
     first_message_before = filters.DateFilter(field_name="first_message", lookup_expr='lt')
+    has_same = filters.BooleanFilter(field_name="same_as", lookup_expr='isnull', exclude=True)
 
     # FIXME: default ordering should be undetermined?
     # ordering = filters.OrderingFilter(
