@@ -289,8 +289,11 @@ def change_password(request):
 
 
 @require_POST
-@login_required
 def send_reset_password_link(request):
+    if request.user.is_authenticated:
+        messages.add_message(request, messages.ERROR,
+                _('You are currently logged in, you cannot get a password reset link.'))
+        return get_redirect(request)
     form = auth.forms.PasswordResetForm(request.POST, prefix='pwreset')
     if form.is_valid():
         if request.POST.get('next'):
