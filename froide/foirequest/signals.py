@@ -29,7 +29,7 @@ public_body_suggested_email = mail_registry.register(
 )
 confirm_foi_project_created_email = mail_registry.register(
     'foirequest/emails/confirm_foi_project_created',
-    ('foiproject', 'action_url', 'upload_action_url', 'user')
+    ('foiproject', 'action_url', 'user')
 )
 confirm_foi_request_sent_email = mail_registry.register(
     'foirequest/emails/confirm_foi_request_sent',
