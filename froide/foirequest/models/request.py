@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.sites.managers import CurrentSiteManager
 from django.urls import reverse
+from django.utils.crypto import get_random_string
 
 import django.dispatch
 from django.utils import timezone
@@ -482,6 +483,12 @@ class FoiRequest(models.Model):
 
     def get_absolute_domain_short_url(self):
         return get_absolute_domain_short_url(self.id)
+
+    def get_secret(self):
+        if not self.secret:
+            self.secret = get_random_string(25)
+            self.save()
+        return self.secret
 
     def get_auth_link(self):
         from ..auth import get_foirequest_auth_code

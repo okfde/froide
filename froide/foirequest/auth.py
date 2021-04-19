@@ -139,22 +139,45 @@ def can_read_foirequest_anonymous(foirequest, request):
     return False
 
 
-def get_foirequest_auth_code(foirequest):
-    return salted_hmac("FoiRequestPublicBodyAuth",
+def _get_foirequest_auth_code(foirequest):
+    return [
+        salted_hmac("FoiRequestPublicBodyAuth",
+            '%s#%s' % (foirequest.id, foirequest.get_secret())).hexdigest(),
+        salted_hmac("FoiRequestPublicBodyAuth",
             '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
+    ]
+
+
+def _get_foirequest_upload_code(foirequest):
+    secret = foirequest.get_secret()
+    return [
+        salted_hmac("FoiRequestPublicBodyUpload",
+            '%s#%s' % (foirequest.id, secret)).hexdigest(),
+        salted_hmac("FoiRequestPublicBodyUpload",
+            '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
+    ]
 
 
 def get_foirequest_upload_code(foirequest):
-    return salted_hmac("FoiRequestPublicBodyUpload",
-            '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
+    return _get_foirequest_upload_code(foirequest)[0]
+
+
+def get_foirequest_auth_code(foirequest):
+    return _get_foirequest_auth_code(foirequest)[0]
 
 
 def check_foirequest_auth_code(foirequest, code):
-    return constant_time_compare(code, get_foirequest_auth_code(foirequest))
+    for gen_code in _get_foirequest_auth_code(foirequest):
+        if constant_time_compare(code, gen_code):
+            return True
+    return False
 
 
 def check_foirequest_upload_code(foirequest, code):
-    return constant_time_compare(code, get_foirequest_upload_code(foirequest))
+    for gen_code in _get_foirequest_upload_code(foirequest):
+        if constant_time_compare(code, gen_code):
+            return True
+    return False
 
 
 def is_attachment_public(foirequest, attachment):
