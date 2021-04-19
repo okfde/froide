@@ -1,10 +1,14 @@
-from django import template
 import calendar
 import datetime
+
+from django import template
 from django.utils.html import avoid_wrapping
 from django.utils.timezone import is_aware, utc
 from django.utils.formats import date_format
-from django.utils.translation import ngettext_lazy, get_language
+from django.utils.translation import (
+    ngettext_lazy, gettext as _,
+    pgettext
+)
 from django.utils.http import urlencode
 from django.urls import reverse
 
@@ -56,9 +60,6 @@ def relativetime(d):
     https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#date
     """
 
-    def add_ago(time_str, lang_code):
-        return f'vor {time_str}' if lang_code == 'de' else f'{time_str} ago'
-
     # Convert datetime.date to datetime.datetime for comparison.
     if not isinstance(d, datetime.datetime):
         d = datetime.datetime(d.year, d.month, d.day)
@@ -81,31 +82,25 @@ def relativetime(d):
         # d is in the future compared to now, stop processing.
         return avoid_wrapping(TIME_STRINGS['minute'] % 0)
 
-    lang_code = get_language()
     result = ''
-
-    if since <= TIME_VALUES['minute']:
-        time_str = TIME_STRINGS['second'] % since
-        result = add_ago(time_str, lang_code)
-    elif since <= TIME_VALUES['hour']:
-        minutes = since // TIME_VALUES['minute']
-        time_str = TIME_STRINGS['minute'] % minutes
-        result = add_ago(time_str, lang_code)
-    elif since <= TIME_VALUES['day']:
-        hours = since // TIME_VALUES['hour']
-        time_str = TIME_STRINGS['hour'] % hours
-        result = add_ago(time_str, lang_code)
+    if since <= TIME_VALUES['day']:
+        if since <= TIME_VALUES['minute']:
+            time_str = TIME_STRINGS['second'] % since
+        elif since <= TIME_VALUES['hour']:
+            minutes = since // TIME_VALUES['minute']
+            time_str = TIME_STRINGS['minute'] % minutes
+        else:
+            hours = since // TIME_VALUES['hour']
+            time_str = TIME_STRINGS['hour'] % hours
+        result = _('{time_str} ago').format(time_str=time_str)
     elif d.year == now.year:
-        if lang_code == 'de':
-            result = date_format(d, 'j. N')  # 18. Feb.
-        else:
-            result = date_format(d, 'M j.')  # Feb 18.
+        result = _('on {date}').format(
+            date=date_format(d, pgettext('date format without year', 'M j.'))
+        )
     else:
-        if lang_code == 'de':
-            result = date_format(d, 'j. N Y')  # 18. Feb. 2018
-        else:
-            result = date_format(d, 'M j. Y')  # Feb 18. 2018
-
+        result = _('on {date}').format(
+            date=date_format(d, "SHORT_DATE_FORMAT")
+        )
     return avoid_wrapping(result)
 
 

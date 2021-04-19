@@ -19,7 +19,7 @@
                 {% endspaceless %}
               </div>
               {% if group.show_overdue_message %}
-                <div class="alpha-timeline__overdue-time">{% trans 'Deadline expired on' %} {{ object.due_date|relativetime }}</div>
+                <div class="alpha-timeline__overdue-time">{% blocktranslate with ago=object.due_date|relativetime %}Deadline expired {{ ago }}{% endblocktranslate %}</div>
               {% endif %}
             </a>
           </div>
