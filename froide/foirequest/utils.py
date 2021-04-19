@@ -537,6 +537,7 @@ def permanently_anonymize_requests(foirequests):
             message.plaintext = redact_user_strings(
                 message.plaintext, user, replacements=replacements
             )
+            message.clear_render_cache()
             message.html = ''
             if message.is_response:
                 # This may occasionally delete real sender name

@@ -551,6 +551,7 @@ class MessageEditMixin(forms.Form):
             message.plaintext = self.cleaned_data.get('text')
         message.plaintext_redacted = None
         message.plaintext_redacted = message.get_content()
+        message.clear_render_cache()
         return message
 
 

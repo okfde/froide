@@ -47,6 +47,7 @@ class FoiMessageInline(admin.StackedInline):
         'request', 'sender_user', 'sender_public_body', 'recipient_public_body',
         'original'
     )
+    exclude = ('content_rendered_auth', 'content_rendered_anon')
 
 
 class FoiRequestAdminForm(forms.ModelForm):
@@ -337,6 +338,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         DeliveryStatusInline,
         FoiAttachmentInline,
     ]
+    exclude = ('content_rendered_auth', 'content_rendered_anon')
     actions = [
         'check_delivery_status', 'resend_messages',
         'run_guidance', 'run_guidance_notify',
@@ -359,6 +361,11 @@ class FoiMessageAdmin(admin.ModelAdmin):
         qs = super(FoiMessageAdmin, self).get_queryset(request)
         qs = qs.select_related('deliverystatus')
         return qs
+
+    def save_model(self, request, obj, form, change):
+        if 'plaintext' in form.changed_data or 'plaintext_redacted' in form.changed_data:
+            obj.clear_render_cache()
+        super().save_model(request, obj, form, change)
 
     def message_page(self, obj):
         return format_html('<a href="{}">{}</a>',

@@ -136,6 +136,8 @@ class FoiMessage(models.Model):
     plaintext_redacted = models.TextField(
         _("redacted plain text"), blank=True, null=True)
     html = models.TextField(_("HTML"), blank=True, null=True)
+    content_rendered_auth = models.TextField(blank=True, null=True)
+    content_rendered_anon = models.TextField(blank=True, null=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
     not_publishable = models.BooleanField(_('Not publishable'), default=False)
     original = models.ForeignKey(
@@ -399,6 +401,10 @@ class FoiMessage(models.Model):
             )
             self.save()
         return self.subject_redacted
+
+    def clear_render_cache(self):
+        self.content_rendered_auth = None
+        self.content_rendered_anon = None
 
     def get_content(self):
         self.plaintext = self.plaintext or ''

@@ -30,6 +30,8 @@ Comment = get_model()
 
 register = template.Library()
 
+CONTENT_CACHE_THRESHOLD = 5000
+
 
 def unify(text):
     text = text or ''
@@ -102,36 +104,54 @@ def highlight_request(message, request):
     return mark_safe(''.join(html))
 
 
-@register.simple_tag
-def redact_message(message, request):
+def render_message_content(message, authenticated_read=False):
+    if authenticated_read and message.content_rendered_auth is not None:
+        return mark_safe(message.content_rendered_auth)
+    if not authenticated_read and message.content_rendered_anon is not None:
+        return mark_safe(message.content_rendered_anon)
+
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
+    needs_caching = len(real_content) > CONTENT_CACHE_THRESHOLD
 
-    authenticated_read = is_authenticated_read(message, request)
-    return markup_redacted_content(
+    content = markup_redacted_content(
         real_content, redacted_content,
         authenticated_read=authenticated_read,
         message_id=message.id
     )
+    if needs_caching:
+        if authenticated_read:
+            update = {'content_rendered_auth': content}
+        else:
+            update = {'content_rendered_anon': content}
+        FoiMessage.objects.filter(id=message.id).update(**update)
+
+    return content
+
+
+@register.simple_tag
+def redact_message(message, request):
+    authenticated_read = is_authenticated_read(message, request)
+    content = render_message_content(message, authenticated_read=authenticated_read)
+
+    return content
 
 
 @register.simple_tag
 def redact_message_short(message, request):
+    authenticated_read = is_authenticated_read(message, request)
+    content = render_message_content(message, authenticated_read=authenticated_read)
+
     subject, redacted_subject = '', ''
     if message.request.title not in message.subject:
         subject = message.subject
         redacted_subject = message.subject_redacted
-    real_content = unify('{} {}'.format(
-        subject, message.get_real_content()).strip())
-    redacted_content = unify('{} {}'.format(
-        redacted_subject, message.get_content()).strip())
 
-    content_normal = split_text_by_separator(real_content)
-    content_redacted = split_text_by_separator(redacted_content)
-
-    result = mark_redacted(
-        original=content_normal[0], redacted=content_redacted[0],
-        authenticated_read=is_authenticated_read(message, request)
+    result = mark_safe('{} {}'.format(
+        mark_redacted(
+            original=subject, redacted=redacted_subject,
+            authenticated_read=authenticated_read
+        ), content).strip()
     )
 
     return truncatechars_html(result, 115)
