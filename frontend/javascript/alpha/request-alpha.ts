@@ -119,18 +119,22 @@ const initRequestPage = () => {
     }
   });
 
-  const tourButtons = document.querySelectorAll('[data-tour="start"]') as NodeListOf<HTMLElement>
+  const tourButtons = document.querySelectorAll('[data-tour]') as NodeListOf<HTMLElement>
   Array.from(tourButtons).forEach(t => {
     t.addEventListener("click", (e) => {
       e.stopPropagation();
-      startTour();
+      infoBox.showInfoBox();
+      startTour(t.dataset.tour, t.dataset.tourdone);
     })
   });
 
 }
 
-const startTour = () => {
-  const tourDataEl = document.querySelector('#tour-data');
+const startTour = (tourId: string | undefined, tourDoneSelector: string | undefined) => {
+  if (!tourId) {
+    return
+  }
+  const tourDataEl = document.querySelector(`#${tourId}`);
   if (!tourDataEl || !tourDataEl.textContent) {
     return
   }
@@ -140,6 +144,7 @@ const startTour = () => {
   } catch {
     return
   }
+  const lastStep = tourData.steps[tourData.steps.length - 1]
   const driver = new Driver({
     animate: true,  // Animate while changing highlighted element
     doneBtnText: tourData.i18n.done, // Text on the final button
@@ -147,6 +152,15 @@ const startTour = () => {
     nextBtnText: tourData.i18n.next, // Next button text for this step
     prevBtnText: tourData.i18n.previous, // Previous button text for this step
     scrollIntoViewOptions: {behavior: "smooth", block: 'center',},
+    onReset: (el: any) => {
+      if (el.node === document.querySelector(lastStep.element)) {
+        // Done button clicked
+        if (tourDoneSelector) {
+          const done = document.querySelector(tourDoneSelector) as HTMLElement
+          done?.click()
+        }
+      }
+    },
   });
   driver.defineSteps(tourData.steps);
   driver.start();

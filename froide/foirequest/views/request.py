@@ -2,10 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404
 from django.utils.translation import gettext as _
 
+from froide.account.preferences import get_preferences_for_user
 from froide.helper.utils import render_403
 
 from ..models import FoiRequest, FoiEvent, FoiAttachment
-from ..forms.preferences import request_page_tour_pref
+from ..forms.preferences import (
+    request_page_tour_pref, message_received_tour_pref
+)
 from ..auth import (can_read_foirequest, can_write_foirequest,
     check_foirequest_auth_code)
 
@@ -122,15 +125,21 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
         "preferences": {}
     })
     if can_write:
+        preferences = get_preferences_for_user(request.user, [
+            request_page_tour_pref,
+            message_received_tour_pref
+        ])
         context.update({
-            "preferences": {
-                "request_page_tour": request_page_tour_pref.get(request.user)
-            }
+            "preferences": preferences
         })
 
-        if not context['preferences']['request_page_tour'].value:
+        if obj.reply_received() and not preferences['foirequest_messagereceived_tour'].value:
             context.update({
-                'tour_data': get_tour_data()
+                'foirequest_messagereceived_tour': get_messagereceived_tour_data()
+            })
+        elif not preferences['foirequest_requestpage_tour'].value:
+            context.update({
+                'foirequest_requestpage_tour': get_requestpage_tour_data()
             })
 
     alpha_key = 'foirequest_alpha'
@@ -174,7 +183,7 @@ def get_active_tab(obj, context):
     return 'info'
 
 
-def get_tour_data():
+def get_base_tour_data():
     return {
         'i18n': {
             'done': _('👋 Goodbye!'),
@@ -182,40 +191,95 @@ def get_tour_data():
             'previous': _('Previous'),
             'close': _('Close'),
             'start': _('Next'),
-        },
+        }
+    }
+
+
+def get_requestpage_tour_data():
+    return {
+        **get_base_tour_data(),
         'steps': [{
-            'element': '#infobox',
+            'element': '#infobox .info-box__header',
             'popover': {
                 'title': _('Status of request'),
-                'description': _('''Here you can see the status and other details of your request. Under "Edit request status" you can update the status after you get a response.'''),
+                'description': _('''Here you can see the status your request. Below you can update the status of your request when you receive a response.'''),
+            }
+        }, {
+            'element': '#due-date',
+            'popover': {
+                'title': _('Deadline'),
+                'description': _('''This is the deadline for your request. If the public body has not replied by then, we will let you know, so you can send a reminder. You can also adjust the date if necessary.'''),
+            }
+        }, {
+            'element': '#share-links',
+            'popover': {
+                'title': _('Share links'),
+                'description': _('''Here are some quick links for you to share your request with others.'''),
+            }
+        }, {
+            'element': '#download-links',
+            'popover': {
+                'title': _('Download'),
+                'description': _('''You can download all messages of your request. The RSS link allows you to subscribe to the request in a feed reader.'''),
             }
         }, {
             'element': '#correspondence-tab',
             'popover': {
                 'title': _('Messages in this request'),
                 'description': _('''Below you find all messages that you sent and received in this request. When you receive a response it appears at the end and we let you know about it via email.'''),
-                'position': 'top'
+            }
+        }, {
+            'element': '#correspondence .alpha-message .alpha-message__head',
+            'popover': {
+                'title': _('Details of your message'),
+                'description': _('''This is your message. There's more information e.g. about the delivery status of your message when you click on the “Details” link.'''),
+            },
+            'position': 'top-center'
+        }, {
+            'element': '.write-message-top-link',
+            'popover': {
+                'title': _('Need to reply or send a reminder?'),
+                'description': _('''This button takes you to the send message form. Let's go there next!'''),
             }
         }, {
             'element': '.upload-post-link',
             'popover': {
                 'title': _('Got postal mail?'),
                 'description': _('''When you receive a letter, you can click this button and upload a scan or photo of the letter. You can redact parts of the letter with our tool before publishing it.'''),
-                'position': 'top'
             }
         }, {
-            'element': '.write-message-top-link',
+            'element': '.request-title',
             'popover': {
-                'title': _('Need to reply or send a reminder?'),
-                'description': _('''This button takes you to the send message form. Let's go there next!'''),
-                'position': 'top'
+                'title': _('The end.'),
+                'description': _('''That concludes this tour! We'll let you know via email if anything around your request changes.'''),
+                'position': 'top-center'
+            }
+        }]
+    }
+
+
+def get_messagereceived_tour_data():
+    return {
+        **get_base_tour_data(),
+        'steps': [{
+            'element': '#infobox .info-box__header',
+            'popover': {
+                'title': _('Status of request'),
+                'description': _('''After you read your replies you need to update the status of your request here below.'''),
             }
         }, {
-            'element': '#write-message .form-group',
+            'element': '#correspondence .alpha-message',
             'popover': {
-                'title': _('Sending messages'),
-                'description': _('''You can reply to messages or send reminders about your request at the bottom of the page. If your request is refused or overdue you will be able to ask for mediation.'''),
-                'position': 'top'
+                'title': _('Message toolbar'),
+                'description': _('''The “Redact” button allows you to redact the text of a message in case sensitive information is accidentally not automatically removed. The “Problem?” allows you to notify our moderation team, if you have a problem with a message.'''),
+                'position': 'bottom-center'
+            }
+        }, {
+            'element': '.reply-form__wrap',
+            'popover': {
+                'title': _('Reply'),
+                'description': _('''At the bottom of the page you can send replies to the public body or start a mediation process with the mediation authority.'''),
+                'position': 'top-center'
             }
         }, {
             'element': '#request-summary',
@@ -224,10 +288,10 @@ def get_tour_data():
                 'description': _('''When you received documents, you can write a summary of what you have learned.'''),
             }
         }, {
-            'element': '.request-section-header',
+            'element': '.request-title',
             'popover': {
                 'title': _('The end.'),
-                'description': _('''That concludes this tour! We'll let you know via email if anything around your request changes.'''),
+                'description': _('''That concludes this tour!'''),
                 'position': 'top-center'
             }
         },

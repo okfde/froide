@@ -93,7 +93,7 @@
       </li>
 
       <!-- due date -->
-      <li
+      <li id="due-date"
         class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger info-box__list-item--inset{% endif %}"
         {% if object.is_overdue %}
           title="{{ object.due_date|date:'DATE_FORMAT' }} - {% blocktrans with due=object.due_date|timesince %}{{ due }} ago{% endblocktrans %}"
@@ -162,7 +162,7 @@
       {% endblock followers %}
 
       {% if object.is_public %}
-        <li class="info-box__list-item info-box__list-item--has-divider">
+        <li id="share-links" class="info-box__list-item info-box__list-item--has-divider">
 
           <!-- copy url -->
           <div class="mb-2 mb-lg-3">
@@ -191,7 +191,7 @@
       {% endif %}
 
       <!-- rss/download links -->
-      <li class="info-box__list-item">
+      <li id="download-links" class="info-box__list-item">
         <div class="d-flex justify-content-between">
           <a href="{% url 'foirequest-feed' slug=object.slug %}">
             <i class="fa fa-rss" aria-hidden="true"></i>

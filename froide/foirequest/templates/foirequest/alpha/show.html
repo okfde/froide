@@ -105,9 +105,14 @@
       {% endwith %}
     {% endaddtoblock %}
 
-    {% if not preferences.request_page_tour.value %}
+    {% if foirequest_requestpage_tour %}
       {% addtoblock "js" %}
-        {{ tour_data|json_script:"tour-data" }}
+        {{ foirequest_requestpage_tour|json_script:"foirequest_requestpage_tour" }}
+      {% endaddtoblock %}
+    {% endif %}
+    {% if foirequest_messagereceived_tour %}
+      {% addtoblock "js" %}
+        {{ foirequest_messagereceived_tour|json_script:"foirequest_messagereceived_tour" }}
       {% endaddtoblock %}
     {% endif %}
 

@@ -31,29 +31,54 @@
   </div>
   {% endif %}
 
-  {% if object|can_write_foirequest:request and not preferences.request_page_tour.value %}
+  {% if object|can_write_foirequest:request %}
+    {% if foirequest_requestpage_tour %}
     <div class="alert alert-success ajax-parent">
       <p>
-        <strong>{% blocktrans %}Welcome to your request page! Can we give you a tour?{% endblocktrans %}</strong>
+        <strong>{% blocktrans %}Welcome to your new request page! Can we give you a tour?{% endblocktrans %}</strong>
       </p>
-      <div class="row justify-content-between">
-        <div class="col">
-          <button data-tour="start" class="btn btn-success">
-            {% translate "Yes, start tour!" %}
+      <div class="row">
+        <div class="col-auto">
+          <button data-tour="foirequest_requestpage_tour" data-tourdone="#cancel-tour" class="btn btn-success">
+            {% translate "Yes, show me!" %}
           </button>
         </div>
         <div class="col-auto">
-          <form class="float-right ajaxified" action="{% url 'api-user-preference' %}" method="post">
+          <form class="ajaxified" action="{% url 'api-user-preference' %}" method="post">
             {% csrf_token %}
-            {{ preferences.request_page_tour.form.key }}
-            <input type="hidden" name="value" value="true"/>
-            <button type="submit" class="btn btn-secondary">
+            {{ preferences.foirequest_requestpage_tour.form.key }}
+            <input type="hidden" name="value" value="1"/>
+            <button type="submit" id="cancel-tour" class="btn btn-secondary">
               {% translate "No, thanks." %}
             </button>
           </form>
         </div>
       </div>
     </div>
+    {% elif foirequest_messagereceived_tour %}
+      <div class="alert alert-info ajax-parent">
+        <p>
+          <strong>{% blocktrans %}You received a reply! Can we give you a tour of your options?{% endblocktrans %}</strong>
+        </p>
+        <div class="row">
+          <div class="col-auto">
+            <button data-tour="foirequest_messagereceived_tour" data-tourdone="#cancel-tour" class="btn btn-success">
+              {% translate "Yes, show me!" %}
+            </button>
+          </div>
+          <div class="col-auto">
+            <form class="ajaxified" action="{% url 'api-user-preference' %}" method="post">
+              {% csrf_token %}
+              {{ preferences.foirequest_messagereceived_tour.form.key }}
+              <input type="hidden" name="value" value="1"/>
+              <button type="submit" id="cancel-tour" class="btn btn-secondary">
+                {% translate "No, thanks." %}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   {% endif %}
 
   {% if object|can_write_foirequest:request and object.is_overdue %}

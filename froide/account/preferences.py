@@ -1,4 +1,5 @@
 import re
+from typing import Sequence
 
 from django import forms
 from django.utils import timezone
@@ -27,16 +28,33 @@ class Preference:
         return PreferenceVar(value, self.form_class())
 
 
+def get_preferences_for_user(user, preferences: Sequence[Preference]):
+    prefs_map = {p.key: p for p in preferences}
+    value_map = dict(
+        UserPreference.objects.filter(
+            user=user, key__in=list(prefs_map.keys())
+        ).values_list('key', 'value')
+    )
+    return {
+        key: PreferenceVar(value_map.get(key), p.form_class())
+        for key, p in prefs_map.items()
+    }
+
+
 class PreferenceRegistry:
     def __init__(self):
         self.preferences = {}
 
     def register(self, key: str, form_class):
-        form_class.initial_key = key
         pattern = re.compile(key)
-        form_class.key_pattern = pattern
-        self.preferences[pattern] = form_class
-        return Preference(key, form_class)
+        # Create a subclass so a class can be used
+        # with multiple keys
+        key_form_class = type(key.title(), (form_class,), {
+            'initial_key': key,
+            'key_pattern': pattern
+        })
+        self.preferences[pattern] = key_form_class
+        return Preference(key, key_form_class)
 
     def find(self, key):
         for prefix, form in self.preferences.items():

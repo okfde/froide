@@ -42,6 +42,12 @@ export default class InfoBox {
     }
   }
 
+  showInfoBox () {
+    if (this.infoList?.classList.contains('d-none')) {
+      this.editButtonClickCallback()
+    }
+  }
+
   editButtonClickCallback (e?: MouseEvent) {
     e?.preventDefault()
     if (this.editButton && this.editPanel && this.infoList) {

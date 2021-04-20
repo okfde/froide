@@ -16,3 +16,11 @@ class RequestPageTourForm(PreferenceForm):
 request_page_tour_pref = registry.register(
     'foirequest_requestpage_tour', RequestPageTourForm
 )
+
+message_received_tour_pref = registry.register(
+    'foirequest_messagereceived_tour', RequestPageTourForm
+)
+
+postal_reply_tour_pref = registry.register(
+    'foirequest_postalreply_tour', RequestPageTourForm
+)
