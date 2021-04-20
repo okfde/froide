@@ -4,6 +4,10 @@
 {% load static %}
 {% load block_helper %}
 
+{% block extra_head %}
+  <meta name="robots" content="noindex"/>
+{% endblock %}
+
 {% block navbar %}
   {% include "header_minimal.html" %}
 {% endblock %}
