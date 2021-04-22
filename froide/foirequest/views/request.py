@@ -145,13 +145,13 @@ def show_foirequest(request, obj, template_name="foirequest/alpha/show.html",
     alpha_key = 'foirequest_alpha'
     alpha = request.GET.get('alpha')
     if alpha:
-        if alpha == '1':
+        if alpha == '1' and alpha_key in request.session:
             del request.session[alpha_key]
-        elif alpha == '0' and alpha_key in request.session:
+        elif alpha == '0':
             request.session[alpha_key] = False
         return redirect(obj)
 
-    if not request.session.get(alpha_key):
+    if request.session.get(alpha_key) is False:
         template_name = [
             "foirequest/show.html",
             "foirequest/alpha/show.html",
