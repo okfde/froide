@@ -62,7 +62,7 @@ def can_see_attachment(att, can_write):
     return True
 
 
-def show_foirequest(request, obj, template_name="foirequest/show.html",
+def show_foirequest(request, obj, template_name="foirequest/alpha/show.html",
         context=None, status=200):
     all_attachments = (
         FoiAttachment.objects
@@ -146,15 +146,15 @@ def show_foirequest(request, obj, template_name="foirequest/show.html",
     alpha = request.GET.get('alpha')
     if alpha:
         if alpha == '1':
-            request.session[alpha_key] = True
-        elif alpha == '0' and alpha_key in request.session:
             del request.session[alpha_key]
+        elif alpha == '0' and alpha_key in request.session:
+            request.session[alpha_key] = False
         return redirect(obj)
 
-    if alpha_key in request.session:
+    if not request.session.get(alpha_key):
         template_name = [
+            "foirequest/show.html",
             "foirequest/alpha/show.html",
-            "foirequest/show.html"
         ]
 
     return render(request, template_name, context, status=status)
