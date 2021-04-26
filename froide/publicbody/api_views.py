@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils import translation
+from django.contrib.gis.geos import Point
 
 from rest_framework import serializers
 from rest_framework import viewsets
@@ -362,6 +363,7 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
         queryset=Category.objects.all()
     )
     regions = filters.CharFilter(method='regions_filter')
+    lnglat = filters.CharFilter(method='lnglat_filter')
 
     class Meta:
         model = PublicBody
@@ -392,6 +394,17 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
             except GeoRegion.DoesNotExist:
                 return queryset
         return queryset.filter(regions__in=ids)
+
+    def lnglat_filter(self, queryset, name, value):
+        if ',' not in value:
+            return queryset
+        try:
+            lnglat = value.split(',', 1)
+            lnglat = (float(lnglat[0]), float(lnglat[1]))
+        except (IndexError, ValueError):
+            return queryset
+        point = Point(lnglat[0], lnglat[1])
+        return queryset.filter(regions__geom__covers=point)
 
 
 class PublicBodyViewSet(OpenRefineReconciliationMixin,
