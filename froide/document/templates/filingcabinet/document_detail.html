@@ -18,11 +18,16 @@
       </p>
     {% endif %}
     {% if object.foirequest %}
-    <p>
+      <p>
         {% blocktrans with title=object.foirequest.title request_url=object.foirequest.get_absolute_url %}
         This document is part of the request ”<a href="{{ request_url }}">{{ title }}</a>”.
         {% endblocktrans %}
-    </p>
+      </p>
+      {% if object.foirequest.campaign %}
+        <div class="my-3">
+          {% include foirequest.campaign.banner_templates with object=foirequest %}
+        </div>
+      {% endif %}
     {% endif %}
 </div>
 {% endblock document_top %}
