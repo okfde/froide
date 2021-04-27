@@ -129,7 +129,7 @@
           >
             {{ i18n.subject }}
           </label>
-          <div v-if="editingDisabled">
+          <div v-if="editingDisabled && !(errors.subject && errors.subject.length > 0)">
             <input
               type="hidden"
               name="subject"
@@ -146,28 +146,29 @@
               </small>
             </button>
           </div>
-          <div
-            v-if="errors.subject && errors.subject.length > 0"
-            class="alert alert-danger"
-          >
-            <p
-              v-for="error in errors.subject"
-              :key="error.message"
+          <template v-else>
+            <div
+              v-if="errors.subject && errors.subject.length > 0"
+              class="alert alert-danger"
             >
-              {{ error.message }}
-            </p>
-          </div>
-          <input
-            v-else
-            id="id_subject"
-            v-model="subject"
-            type="text"
-            name="subject"
-            class="form-control"
-            :class="{ 'is-invalid': errors.subject }"
-            :placeholder="formFields.subject.placeholder"
-            @keydown.enter.prevent
-          >
+              <p
+                v-for="error in errors.subject"
+                :key="error.message"
+              >
+                {{ error.message }}
+              </p>
+            </div>
+            <input
+              id="id_subject"
+              v-model="subject"
+              type="text"
+              name="subject"
+              class="form-control"
+              :class="{ 'is-invalid': errors.subject }"
+              :placeholder="formFields.subject.placeholder"
+              @keydown.enter.prevent
+            >
+          </template>
         </div>
       </div>
     </div>
