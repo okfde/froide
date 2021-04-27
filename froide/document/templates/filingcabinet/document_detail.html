@@ -25,7 +25,7 @@
       </p>
       {% if object.foirequest.campaign %}
         <div class="my-3">
-          {% include foirequest.campaign.banner_templates with object=foirequest %}
+          {% include object.foirequest.campaign.banner_templates with object=object.foirequest %}
         </div>
       {% endif %}
     {% endif %}
