@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-21 15:17+0200\n"
-"PO-Revision-Date: 2021-04-21 17:29+0100\n"
+"POT-Creation-Date: 2021-04-27 20:04+0200\n"
+"PO-Revision-Date: 2021-04-27 19:05+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1471,6 +1471,14 @@ msgstr ""
 #: froide/campaign/templates/campaign/request_banner.html:24
 msgid "Answer some questions!"
 msgstr "Fragen beantworten!"
+
+#: froide/campaign/validators.py:15
+msgid ""
+"This request seems like it should belong to a campaign. Please use the "
+"campaign interface to make the request."
+msgstr ""
+"Es sieht so aus, als sollte diese Anfrage zu einer Kampagne gehören. Bitte "
+"nutzen Sie die Kampagnen-Seite, um die Anfrage zu stellen."
 
 #: froide/comments/admin.py:18
 msgid "Content"
@@ -4367,7 +4375,6 @@ msgstr "verspätet"
 
 #: froide/foirequest/templates/foirequest/alpha/body/timeline.html:22
 #, python-format
-#| msgid "Deadline expired on"
 msgid "Deadline expired %(ago)s"
 msgstr "Frist abgelaufen %(ago)s"
 
@@ -8046,7 +8053,6 @@ msgstr[1] "%d Sekunden"
 
 #: froide/helper/templatetags/content_helper.py:95
 #, python-brace-format
-#| msgid "%(time)s ago"
 msgid "{time_str} ago"
 msgstr "seit {time_str}"
 
