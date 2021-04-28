@@ -87,6 +87,8 @@ def make_account_private(user):
 
 
 def merge_accounts(old_user, new_user):
+    for tag in old_user.tags.all():
+        new_user.tags.add(tag)
     account_merged.send(
         sender=User, old_user=old_user, new_user=new_user
     )
