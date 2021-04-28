@@ -404,7 +404,9 @@ class UserDeleteForm(forms.Form):
     def __init__(self, request, *args, **kwargs):
         self.request = request
         self.user = request.user
-        super(UserDeleteForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        if not self.user.has_usable_password():
+            del self.fields['password']
 
     def clean_password(self):
         password = self.cleaned_data['password']
