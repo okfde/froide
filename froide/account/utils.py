@@ -218,3 +218,46 @@ def parse_address(address):
         'postcode': postcode,
         'city': city
     }
+
+
+def find_duplicate_email_groups():
+    from collections import defaultdict
+
+    email_mapping = defaultdict(list)
+    emails = User.objects.filter(email__isnull=False).values_list('email', flat=True)
+
+    for email in emails:
+        email_mapping[email.lower()].append(email)
+
+    email_groups = []
+    for emails in email_mapping.values():
+        if len(emails) < 2:
+            continue
+        email_groups.append(emails)
+    return email_groups
+
+
+def check_account_compatibility(groups):
+    def all_equal(li):
+        if not li:
+            return True
+        first = li[0]
+        return all(elem == first for elem in li)
+
+    for emails in groups:
+        users = User.objects.filter(email__in=emails).order_by('date_joined')
+        name = [u.get_full_name().title() for u in users]
+        private = [u.private for u in users]
+        matches = all_equal([all_equal(li) for li in [
+            name, private
+        ]])
+        users[0].tags.add('duplicate-email-main')
+        for user in users:
+            user.tags.add('duplicate-email')
+            if matches:
+                user.tags.add('duplicate-email-match')
+            else:
+                if not all_equal(private):
+                    user.tags.add('duplicate-email-private-mismatch')
+                else:
+                    user.tags.add('duplicate-email-other-mismatch')
