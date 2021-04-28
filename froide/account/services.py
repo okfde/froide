@@ -18,7 +18,7 @@ from . import account_activated
 
 def get_user_for_email(email):
     try:
-        return User.objects.get(email=email)
+        return User.objects.get(email_ci=email)
     except User.DoesNotExist:
         return False
 
@@ -70,7 +70,8 @@ class AccountService(object):
         user = User(
             first_name=data['first_name'],
             last_name=data['last_name'],
-            email=data['user_email']
+            email=data['user_email'],
+            email_ci=data['user_email']
         )
         username_base = cls.get_username_base(user.first_name, user.last_name)
 

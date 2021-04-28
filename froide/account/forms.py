@@ -18,8 +18,8 @@ from froide.helper.widgets import BootstrapCheckboxInput
 
 from . import account_email_changed
 from .widgets import ConfirmationWidget
-from .models import AccountBlocklist
-from .services import AccountService
+from .models import AccountBlocklist, User
+from .services import AccountService, get_user_for_email
 
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
@@ -140,6 +140,9 @@ class NewUserBaseForm(AddressBaseForm):
                 _('<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'),
                 get_content_url("privacy") + '#pseudonym'
             )
+
+    def clean_user_email(self):
+        return User.objects.normalize_email(self.cleaned_data['user_email'])
 
     def clean_first_name(self):
         return self.cleaned_data['first_name'].strip()
@@ -347,6 +350,14 @@ class UserEmailConfirmationForm(forms.Form):
             )
         return user_id
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email.lower() == self.user.email.lower():
+            raise forms.ValidationError(
+                _('This email is already set on this account.')
+            )
+        return User.objects.normalize_email(email)
+
     def clean(self):
         check = AccountService(self.user).check_confirmation_secret(
             self.cleaned_data.get('secret', ''),
@@ -355,6 +366,11 @@ class UserEmailConfirmationForm(forms.Form):
         if not check:
             raise forms.ValidationError(
                 _('Link is invalid or has expired!')
+            )
+        existing_user = get_user_for_email(self.cleaned_data['email'])
+        if existing_user:
+            raise forms.ValidationError(
+                _('This email is used by another account!')
             )
         return self.cleaned_data
 
