@@ -222,7 +222,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return AccountService(self)
 
-    def get_autologin_url(self, url):
+    def get_autologin_url(self, url='/'):
         from .services import AccountService
 
         service = AccountService(self)
