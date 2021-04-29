@@ -208,6 +208,7 @@ class PublicBodySuggestionsForm(forms.Form):
                 message.plaintext,
                 user=req.user
             )
+            message.clear_render_cache()
             message.save()
             message.send()
             req.message_sent.send(

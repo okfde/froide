@@ -414,6 +414,7 @@ class FoiMessage(models.Model):
                 redact_closing=self.is_response,
                 user=self.request.user
             )
+            self.clear_render_cache()
             self.save()
         return self.plaintext_redacted
 

@@ -510,6 +510,7 @@ def rerun_message_redaction(foirequests):
                 redact_greeting=not message.is_response,
                 user=user
             )
+            message.clear_render_cache()
             message.save()
 
 

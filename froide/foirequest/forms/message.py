@@ -309,6 +309,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             self.foirequest,
             redact_greeting=True
         )
+        message.clear_render_cache()
 
     def make_message(self):
         user = self.foirequest.user
@@ -838,6 +839,7 @@ class RedactMessageForm(forms.Form):
         except IndexError as e:
             logging.warning(e)
 
+        message.clear_render_cache()
         message.save()
 
 
