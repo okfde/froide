@@ -70,7 +70,8 @@ class Document(AbstractDocument):
             user_write_filter=cond,
         )
 
-    def get_serializer_class(self, detail=False):
+    @classmethod
+    def get_serializer_class(cls, detail=False):
         from .api_views import DocumentSerializer, DocumentDetailSerializer
 
         if detail:
@@ -143,7 +144,8 @@ class DocumentCollection(AbstractDocumentCollection):
     def can_write(self, request):
         return can_write_object(self, request=request)
 
-    def get_serializer_class(self):
+    @classmethod
+    def get_serializer_class(cls):
         from .api_views import DocumentCollectionSerializer
 
         return DocumentCollectionSerializer
