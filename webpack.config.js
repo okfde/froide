@@ -131,9 +131,11 @@ const config = {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
-              includePaths: [
-                'node_modules/'
-              ]
+              sassOptions: {
+                includePaths: [
+                  'node_modules/'
+                ]
+              }
             }
           }
         ]
