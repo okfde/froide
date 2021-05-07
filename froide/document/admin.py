@@ -88,9 +88,17 @@ class CustomPageAnnotationAdmin(PageAnnotationAdmin):
 
 
 class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
-    raw_id_fields = DocumentBaseAdmin.raw_id_fields + (
+    raw_id_fields = DocumentCollectionBaseAdmin.raw_id_fields + (
         'team',
     )
+    actions = DocumentCollectionBaseAdmin.actions + [
+        'reindex_collection'
+    ]
+
+    def reindex_collection(self, request, queryset):
+        for collection in queryset:
+            for doc in collection.documents.all():
+                update_document_index(doc)
 
 
 class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
