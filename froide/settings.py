@@ -45,6 +45,7 @@ class Base(Configuration):
         'treebeard',
         'django_filters',
         'leaflet',
+        'django_json_widget',
         'django_celery_beat',
 
         # local

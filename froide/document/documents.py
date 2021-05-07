@@ -32,6 +32,7 @@ class PageDocument(Document):
     campaign = fields.IntegerField(attr='document.foirequest.campaign_id')
     collections = fields.IntegerField()
     portal = fields.IntegerField(attr='document_portal_id')
+    data = fields.ObjectField(attr='document.data')
 
     user = fields.IntegerField(attr='document.user_id')
     team = fields.IntegerField(attr='document.team_id')

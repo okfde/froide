@@ -94,6 +94,10 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method='filter_user',
         widget=forms.HiddenInput()
     )
+    number = django_filters.NumberFilter(
+        method='filter_number',
+        widget=forms.HiddenInput()
+    )
 
     class Meta:
         model = Page
@@ -138,13 +142,35 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     def filter_publicbody(self, qs, name, value):
         return qs.filter(publicbody=value.id)
 
-    def filter_collection(self, qs, name, value):
-        if not value.can_read(self.request):
+    def filter_collection(self, qs, name, collection):
+        if not collection.can_read(self.request):
             return qs.none()
-        return qs.filter(collections=value.id)
+        qs = qs.filter(collections=collection.id)
+        qs = self.apply_data_filters(qs, collection.settings.get('filters', []))
+        return qs
 
-    def filter_portal(self, qs, name, value):
-        return qs.filter(portal=value.id)
+    def filter_portal(self, qs, name, portal):
+        qs = qs.filter(portal=portal.id)
+        qs = self.apply_data_filters(qs, portal.settings.get('filters', []))
+        return qs
+
+    def apply_data_filters(self, qs, filters):
+        for filt in filters:
+            if not filt['key'].startswith('data__'):
+                continue
+            val = self.request.GET.get(filt['key'])
+            if not val:
+                continue
+            data_type = filt.get('datatype')
+            if data_type:
+                try:
+                    if data_type == 'int':
+                        val = int(val)
+                except ValueError:
+                    continue
+            es_key = filt['key'].replace('__', '.')
+            qs = qs.filter(**{es_key: val})
+        return qs
 
     def filter_document(self, qs, name, value):
         if not value.can_read(self.request):
@@ -153,3 +179,6 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def filter_user(self, qs, name, value):
         return qs.filter(user=value.id)
+
+    def filter_number(self, qs, name, value):
+        return qs.filter(number=int(value))

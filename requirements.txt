@@ -113,6 +113,8 @@ django-fsm==2.7.1
     # via -r requirements.in
 django-js-asset==1.2.2
     # via django-mptt
+django-json-widget==1.1.1
+    # via -r requirements.in
 django-leaflet==0.27.1
     # via -r requirements.in
 django-mptt==0.12.0
@@ -157,6 +159,7 @@ djangorestframework-jsonp==1.0.2
 djangorestframework==3.12.4
     # via
     #   -r requirements.in
+    #   django-filingcabinet
     #   djangorestframework-csv
 dnspython==2.1.0
     # via pyisemail
@@ -168,6 +171,8 @@ elasticsearch==7.12.0
     # via
     #   -r requirements.in
     #   elasticsearch-dsl
+future==0.18.2
+    # via django-json-widget
 geoip2==4.1.0
     # via -r requirements.in
 html5lib==1.1
