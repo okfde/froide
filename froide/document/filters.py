@@ -94,6 +94,10 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method='filter_user',
         widget=forms.HiddenInput()
     )
+    number = django_filters.NumberFilter(
+        method='filter_number',
+        widget=forms.HiddenInput()
+    )
 
     class Meta:
         model = Page
@@ -153,3 +157,6 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def filter_user(self, qs, name, value):
         return qs.filter(user=value.id)
+
+    def filter_number(self, qs, name, value):
+        return qs.filter(number=int(value))
