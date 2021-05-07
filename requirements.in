@@ -11,6 +11,7 @@ django-crossdomainmedia
 django-elasticsearch-dsl
 django-filter
 django-fsm
+django-json-widget
 django-leaflet
 django-oauth-toolkit
 django-parler
