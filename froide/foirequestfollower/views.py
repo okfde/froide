@@ -54,7 +54,12 @@ def confirm_follow(request, follow_id, check):
 
 
 def unfollow_by_link(request, follow_id, check):
-    follower = get_object_or_404(FoiRequestFollower, id=int(follow_id))
+    try:
+        follower = FoiRequestFollower.objects.get(id=int(follow_id))
+    except FoiRequestFollower.DoesNotExist:
+        messages.add_message(request, messages.INFO,
+            _("This follow subscription does not exist anymore."))
+        return redirect('/')
     if follower.check_and_unfollow(check):
         messages.add_message(request, messages.INFO,
             _("You are not following this request anymore."))
