@@ -32,7 +32,7 @@ class PageDocument(Document):
     campaign = fields.IntegerField(attr='document.foirequest.campaign_id')
     collections = fields.IntegerField()
     portal = fields.IntegerField(attr='document_portal_id')
-    data = fields.ObjectField(attr='document.data')
+    data = fields.ObjectField()
 
     user = fields.IntegerField(attr='document.user_id')
     team = fields.IntegerField(attr='document.team_id')
@@ -81,6 +81,9 @@ class PageDocument(Document):
 
     def prepare_listed(self, obj):
         return obj.document.listed
+
+    def prepare_data(self, obj):
+        return obj.document.data
 
     def prepare_team(self, obj):
         if obj.document.team_id:
