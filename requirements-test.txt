@@ -21,6 +21,7 @@ attrs==20.3.0
     # via
     #   aiohttp
     #   automat
+    #   jsonschema
     #   service-identity
     #   twisted
 autobahn==21.3.1
@@ -35,6 +36,8 @@ cairocffi==1.2.0
     #   weasyprint
 cairosvg==2.5.2
     # via weasyprint
+camelot-py[cv]==0.8.2
+    # via -r requirements.in
 celery==5.0.5
     # via
     #   -r requirements.in
@@ -54,6 +57,8 @@ channels==3.0.3
 chardet==4.0.0
     # via
     #   aiohttp
+    #   camelot-py
+    #   pdfminer.six
     #   requests
 click-didyoumean==0.0.3
     # via celery
@@ -63,6 +68,7 @@ click-repl==0.1.6
     # via celery
 click==7.1.2
     # via
+    #   camelot-py
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -84,6 +90,7 @@ cryptography==3.4.7
     # via
     #   autobahn
     #   jwcrypto
+    #   pdfminer.six
     #   pyopenssl
     #   service-identity
 cssselect2==0.4.1
@@ -123,7 +130,9 @@ django-fsm==2.7.1
 django-js-asset==1.2.2
     # via django-mptt
 django-json-widget==1.1.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-filingcabinet
 django-leaflet==0.27.1
     # via -r requirements.in
 django-mptt==0.12.0
@@ -182,6 +191,8 @@ elasticsearch==7.12.0
     # via
     #   -r requirements.in
     #   elasticsearch-dsl
+et-xmlfile==1.1.0
+    # via openpyxl
 factory-boy==3.2.0
     # via -r requirements-test.in
 faker==8.0.0
@@ -214,6 +225,8 @@ itypes==1.2.0
     # via coreapi
 jinja2==2.11.3
     # via coreschema
+jsonschema==3.2.0
+    # via django-filingcabinet
 jwcrypto==0.8
     # via django-oauth-toolkit
 kombu==5.0.2
@@ -234,10 +247,23 @@ multidict==5.1.0
     # via
     #   aiohttp
     #   yarl
+numpy==1.20.2
+    # via
+    #   camelot-py
+    #   opencv-python
+    #   pandas
 oauthlib==3.1.0
     # via django-oauth-toolkit
+opencv-python==4.5.1.48
+    # via camelot-py
+openpyxl==3.0.7
+    # via camelot-py
+pandas==1.2.4
+    # via camelot-py
 pbr==5.5.1
     # via -r requirements-test.in
+pdfminer.six==20201018
+    # via camelot-py
 phonenumbers==8.12.21
     # via -r requirements.in
 pikepdf==2.11.0
@@ -276,9 +302,12 @@ pyopenssl==20.0.1
 pypdf2==1.26.0
     # via
     #   -r requirements.in
+    #   camelot-py
     #   django-filingcabinet
 pyphen==0.10.0
     # via weasyprint
+pyrsistent==0.17.3
+    # via jsonschema
 python-crontab==2.5.1
     # via django-celery-beat
 python-dateutil==2.8.1
@@ -286,6 +315,7 @@ python-dateutil==2.8.1
     #   elasticsearch-dsl
     #   faker
     #   icalendar
+    #   pandas
     #   python-crontab
 python-magic==0.4.22
     # via -r requirements.in
@@ -298,6 +328,7 @@ pytz==2021.1
     #   django
     #   django-timezone-field
     #   icalendar
+    #   pandas
 reportlab==3.5.66
     # via -r requirements.in
 requests==2.25.1
@@ -322,8 +353,11 @@ six==1.15.0
     #   djangorestframework-csv
     #   elasticsearch-dsl
     #   html5lib
+    #   jsonschema
     #   pyopenssl
     #   python-dateutil
+sortedcontainers==2.3.0
+    # via pdfminer.six
 sqlparse==0.4.1
     # via django
 tblib==1.7.0
