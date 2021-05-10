@@ -34,7 +34,7 @@
   <div class="info-box__body">
 
     <!-- edit button -->
-    {% if object|can_write_foirequest:request %}
+    {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
       <div id="set-status" class="bg-blue-10 px-4 py-2">
         <a href="#" class="info-box__edit-button">
           <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit request status" %}</span>
@@ -220,20 +220,20 @@
 
 
     {# edit interface #}
-    {% if object|can_write_foirequest:request %}
-    <div class="info-box__edit-panel px-4 mt-2 mb-4 {% if active_tab != 'set-status' %}d-none{% endif %}">
-      <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
-        {% csrf_token %}
-        {% if status_form %}
-          {% include "foirequest/alpha/header/_set_status.html" %}
-        {% else %}
-          {% with status_form=object.get_status_form %}
+    {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
+      <div class="info-box__edit-panel px-4 mt-2 mb-4 {% if active_tab != 'set-status' %}d-none{% endif %}">
+        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+          {% csrf_token %}
+          {% if status_form %}
             {% include "foirequest/alpha/header/_set_status.html" %}
-          {% endwith %}
-        {% endif %}
-        <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
-      </form>
-    </div>
+          {% else %}
+            {% with status_form=object.get_status_form %}
+              {% include "foirequest/alpha/header/_set_status.html" %}
+            {% endwith %}
+          {% endif %}
+          <button class="btn btn-primary" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
+        </form>
+      </div>
     {% endif %}
   </div>
 
