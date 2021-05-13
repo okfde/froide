@@ -162,7 +162,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
             if has_query and filt.get('facet'):
                 qs = qs.add_aggregation([es_key])
 
-            if not filt['key'].startswith('data__'):
+            if not filt['key'].startswith('data.'):
                 continue
             val = self.request.GET.get(filt['key'])
             if not val:
