@@ -13,7 +13,5 @@ class CustomPaginatedCSVRenderer(PaginatedCSVRenderer):
     """
     def render(self, data, *args, **kwargs):
         if not isinstance(data, list):
-            data = data.get('objects', {})
-            if not isinstance(data, list):
-                data = data.get('results', [])
+            data = data.get('objects', [])
         return super(PaginatedCSVRenderer, self).render(data, *args, **kwargs)

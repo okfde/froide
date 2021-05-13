@@ -30,10 +30,36 @@ def get_fake_api_context(url='/'):
     }
 
 
+class SearchFacetListSerializer(ListSerializer):
+    @property
+    def data(self):
+        ret = super(ListSerializer, self).data
+        return ReturnDict(ret, serializer=self)
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+
+        # Return both objects and facets by wrapping them in dict
+        # this will be split up again by custom paginator below
+        ret = OrderedDict([
+            ('objects', ret),
+            ('facets', self._context.get('facets', {'fields': {}})),
+        ])
+        return ret
+
+
 class CustomLimitOffsetPagination(LimitOffsetPagination):
     max_limit = 50
 
     def get_paginated_response(self, data):
+        if 'facets' in data:
+            # Split out facets into root object
+            result = [
+                ('objects', data['objects']),
+                ('facets', data['facets'])
+            ]
+        else:
+            result = [('objects', data)]
         return Response(OrderedDict([
             ('meta', OrderedDict([
                 ('limit', self.limit),
@@ -42,7 +68,7 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
                 ('previous', self.get_previous_link()),
                 ('total_count', self.count),
             ])),
-            ('objects', data),
+            *result
         ]))
 
 
@@ -68,22 +94,6 @@ class ElasticLimitOffsetPagination(CustomLimitOffsetPagination):
 
         # Do not return anything
         return None
-
-
-class SearchFacetListSerializer(ListSerializer):
-    @property
-    def data(self):
-        ret = super(ListSerializer, self).data
-        return ReturnDict(ret, serializer=self)
-
-    def to_representation(self, instance):
-        ret = super(SearchFacetListSerializer, self).to_representation(instance)
-
-        ret = OrderedDict([
-            ('results', ret),
-            ('facets', self._context.get('facets', {'fields': {}})),
-        ])
-        return ret
 
 
 class OpenRefineReconciliationMixin(object):
