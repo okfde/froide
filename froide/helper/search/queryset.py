@@ -93,7 +93,7 @@ class SearchQuerySetWrapper(object):
         }
 
     def get_aggregations(self):
-        if self.broken_query:
+        if self.broken_query or 'aggregations' not in self.response:
             return {
                 'fields': {}
             }
