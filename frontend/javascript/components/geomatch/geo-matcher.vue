@@ -261,7 +261,7 @@ export default {
       }
       this.api.searchPublicBodies(term, filter).then((data) => {
         Vue.set(gr, 'loading', false)
-        Vue.set(gr, 'matches', data.objects.results.slice(0, 5))
+        Vue.set(gr, 'matches', data.objects.slice(0, 5))
       })
     },
     connectPublicBody (payload) {

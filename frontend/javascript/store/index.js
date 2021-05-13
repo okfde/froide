@@ -319,13 +319,13 @@ export default new Vuex.Store({
   actions: {
     setSearchResults ({ commit, state, dispatch }, {scope, results}) {
       commit(SET_SEARCHRESULTS, {
-        searchResults: results.objects.results,
-        searchFacets: results.objects.facets.fields,
+        searchResults: results.objects,
+        searchFacets: results.facets.fields,
         searchMeta: results.meta,
         scope: scope
       })
-      commit(CACHE_PUBLICBODIES, results.objects.results)
-      dispatch('getLawsForPublicBodies', results.objects.results)
+      commit(CACHE_PUBLICBODIES, results.objects)
+      dispatch('getLawsForPublicBodies', results.objects)
     },
     cacheLaws ({ commit }, { laws }) {
       commit(CACHE_LAWS, {

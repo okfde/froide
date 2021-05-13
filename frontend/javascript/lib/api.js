@@ -175,11 +175,7 @@ function getData (url = '', headers = {}) {
 function getAllData (url = '', headers = {}, result = [], progress = null) {
   return new Promise((resolve, reject) => {
     getData(url, headers).then((data) => {
-      if (Array.isArray(data.objects)) {
-        result = [...result, ...data.objects]
-      } else {
-        result = [...result, ...data.objects.results]
-      }
+      result = [...result, ...data.objects]
       if (data.meta.next) {
         if (progress) {
           progress(result)
