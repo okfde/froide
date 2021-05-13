@@ -155,7 +155,13 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         return qs
 
     def apply_data_filters(self, qs, filters):
+        has_query = self.request.GET.get('q')
+
         for filt in filters:
+            es_key = filt['key'].replace('__', '.')
+            if has_query and filt.get('facet'):
+                qs = qs.add_aggregation([es_key])
+
             if not filt['key'].startswith('data__'):
                 continue
             val = self.request.GET.get(filt['key'])
@@ -168,7 +174,6 @@ class PageDocumentFilterset(BaseSearchFilterSet):
                         val = int(val)
                 except ValueError:
                     continue
-            es_key = filt['key'].replace('__', '.')
             qs = qs.filter(**{es_key: val})
         return qs
 

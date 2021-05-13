@@ -22,6 +22,7 @@ from filingcabinet.models import Page, PageAnnotation
 from froide.helper.auth import (
     can_write_object, get_read_queryset, get_write_queryset
 )
+from froide.helper.api_utils import SearchFacetListSerializer
 from froide.helper.search.api_views import ESQueryMixin
 from froide.helper.cache import cache_anonymous_page
 
@@ -92,6 +93,7 @@ class PageSerializer(FCPageSerializer):
         fields = FCPageSerializer.Meta.fields + (
             'query_highlight',
         )
+        list_serializer_class = SearchFacetListSerializer
 
 
 class PageViewSet(ESQueryMixin, viewsets.GenericViewSet):
@@ -106,6 +108,12 @@ class PageViewSet(ESQueryMixin, viewsets.GenericViewSet):
 
     def optimize_query(self, qs):
         return qs.prefetch_related('document')
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        if hasattr(self, 'sqs'):
+            ctx['facets'] = self.sqs.get_aggregations()
+        return ctx
 
 
 class DocumentViewSet(FCDocumentViewSet):
