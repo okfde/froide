@@ -525,7 +525,7 @@ class MakeRequestView(FormView):
         if publicbodies:
             publicbodies_json = json.dumps(PublicBodyListSerializer(
                 publicbodies, context={'request': self.request}, many=True
-            ).data['results'])
+            ).data['objects'])
 
         if 'user_form' not in kwargs:
             kwargs['user_form'] = self.get_user_form()

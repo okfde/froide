@@ -186,9 +186,9 @@ class ApiTest(TestCase):
                 '/api/v1/publicbody/search/', pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertIn(pb.name, obj['objects']['results'][0]['name'])
+        self.assertIn(pb.name, obj['objects'][0]['name'])
         response = self.client.get('%s?query=%s&jurisdiction=non_existant' % (
                 '/api/v1/publicbody/search/', pb.name))
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(obj['objects']['results'], [])
+        self.assertEqual(obj['objects'], [])
