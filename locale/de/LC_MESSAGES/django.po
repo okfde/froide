@@ -4711,7 +4711,7 @@ msgstr "Anhänge freischalten oder schwärzen."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html:38
 msgid "Convert multiple pictures to pages in a PDF document."
-msgstr "Mehrere Bilder in PDF-Dokumn"
+msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html:41
 msgid "Upload more pictures or PDFs."
