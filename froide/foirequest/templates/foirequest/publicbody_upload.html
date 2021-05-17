@@ -20,6 +20,32 @@
 {% endblocktrans %}
 </h3>
 
+{% if not authenticated %}
+  <form action="" method="post" class="mb-5">
+    {% csrf_token %}
+    <p>
+      {% blocktranslate %}Please enter the email address of the requester to use the upload form.{% endblocktranslate %}
+    </p>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="email_prefix">
+            {% blocktranslate %}Enter the email address of the requester:{% endblocktranslate %}
+          </label>
+          <div class="input-group mb-3">
+            <input name="email_prefix" id="email_prefix" type="text" class="form-control" aria-label="{% translate 'email address' %}" placeholder="{% translate 'j.doe.1234abc' %}">
+            <div class="input-group-append">
+              <span class="input-group-text">@{{ email_domain }}</span>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          {% translate "Next" %}
+        </button>
+      </div>
+    </div>
+  </form>
+{% else %}
 <dl>
   <dt>{% trans "Request" %}</dt>
   <dd>“{{ foirequest.title }}” [#{{ foirequest.id }}] ({{ foirequest.first_message|date:"SHORT_DATE_FORMAT" }})</dd>
@@ -36,7 +62,7 @@
 <ol>
   <li>{% trans 'Drag files on the framed area or click "Search" to select files.' %}</li>
   <li>{% trans 'Wait for all files to be uploaded.' %}</li>
-  <li>{% trans 'Click on "Create response now" to finish the process.' %}</li>
+  <li><strong>{% trans 'Click on "Create response now" to finish the process.' %}</strong></li>
 </ol>
 
 <form action="" method="post" class="mb-5">
@@ -47,6 +73,7 @@
     </div>
   </publicbody-upload>
 </form>
+{% endif %}
 
 {% endblock %}
 

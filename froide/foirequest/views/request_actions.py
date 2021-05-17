@@ -19,7 +19,7 @@ from ..forms import (
     MakePublicBodySuggestionForm, PublicBodySuggestionsForm,
     ExtendDeadlineForm, PublicBodyUploader
 )
-from ..utils import check_throttle
+from ..utils import check_throttle, get_foi_mail_domains
 from ..services import (
     CreateSameAsRequestService, ActivatePendingRequestService
 )
@@ -354,6 +354,32 @@ def publicbody_upload(request, obj_id, code):
         # Don't leak slug, so go to short url
         return redirect(foirequest.get_absolute_short_url())
 
+    pb_upload_auth = request.session.get('pb_upload_auth')
+    if pb_upload_auth != foirequest.secret_address:
+        email_domain = get_foi_mail_domains()[0]
+        if request.method == 'POST':
+            email_prefix = request.POST.get('email_prefix', '')
+            email_prefix = email_prefix.replace('@{}'.format(email_domain), '')
+            email = '{}@{}'.format(email_prefix, email_domain)
+            if email == foirequest.secret_address:
+                request.session['pb_upload_auth'] = email
+                return redirect(request.get_full_path())
+            else:
+                messages.add_message(
+                    request, messages.ERROR,
+                    _('The given email address is not correct for this request.')
+                )
+
+        return render(
+            request,
+            'foirequest/publicbody_upload.html',
+            {
+                'authenticated': False,
+                'email_domain': get_foi_mail_domains()[0],
+                'foirequest': foirequest,
+            }
+        )
+
     if request.method == 'POST':
         token = request.session.get('upload_auth')
         if not token:
@@ -396,6 +422,7 @@ def publicbody_upload(request, obj_id, code):
         request,
         'foirequest/publicbody_upload.html',
         {
+            'authenticated': True,
             'foirequest': foirequest,
             'config': config
         }
