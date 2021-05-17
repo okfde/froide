@@ -53,7 +53,6 @@ class UserFactory(DjangoModelFactory):
     last_name = factory.Sequence(lambda n: 'D%se' % ('o' * min(20, int(n))))
     username = factory.Sequence(lambda n: 'user_%s' % n)
     email = factory.Sequence(lambda n: 'user%s@example.org' % n)
-    email_ci = factory.LazyAttribute(lambda o: o.email)
     password = factory.PostGenerationMethodCall('set_password', 'froide')
     is_staff = False
     is_active = True

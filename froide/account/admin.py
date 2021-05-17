@@ -64,7 +64,7 @@ class UserAdmin(DjangoUserAdmin):
     ordering = ('-date_joined',)
 
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
-        (_('Profile info'), {'fields': ('email_ci', 'address', 'organization',
+        (_('Profile info'), {'fields': ('address', 'organization',
             'organization_url', 'private',
             'profile_text', 'profile_photo'
         )}),

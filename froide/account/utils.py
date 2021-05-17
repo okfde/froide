@@ -138,7 +138,6 @@ def start_cancel_account_process(user, delete=False):
 
     user.private = True
     user.email = None
-    user.email_ci = None
     user.tags.clear()
     user.is_active = False
     user.set_unusable_password()

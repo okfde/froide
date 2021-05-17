@@ -64,7 +64,6 @@ class UserManager(BaseUserManager):
         username = self.model.normalize_username(username)
 
         user = self.model(email=email,
-                          email_ci=email,
                           is_staff=is_staff, is_active=True,
                           is_superuser=is_superuser, last_login=None,
                           date_joined=now, **extra_fields)
@@ -102,9 +101,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(_('first name'), max_length=30, blank=True)
     last_name = models.CharField(_('last name'), max_length=150, blank=True)
-    email = models.EmailField(_('email address'), unique=True, null=True,
-                              blank=True)
-    email_ci = CIEmailField(_('email address'), null=True, blank=True)
+    email = CIEmailField(_('email address'), unique=True, null=True, blank=True)
 
     is_staff = models.BooleanField(
         _('staff status'),
