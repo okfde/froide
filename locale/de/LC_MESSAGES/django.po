@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-17 12:37+0200\n"
-"PO-Revision-Date: 2021-05-17 11:43+0100\n"
+"POT-Creation-Date: 2021-05-21 11:10+0200\n"
+"PO-Revision-Date: 2021-05-21 11:28+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -352,7 +352,7 @@ msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
 #: froide/account/forms.py:300 froide/account/forms.py:303
-#: froide/account/models.py:124
+#: froide/account/models.py:121
 msgid "Organization"
 msgstr "Organisation"
 
@@ -420,47 +420,47 @@ msgstr "getaggte Nutzer"
 msgid "tagged users"
 msgstr "getaggte Nutzer"
 
-#: froide/account/models.py:94
+#: froide/account/models.py:93
 msgid "username"
 msgstr "Nutzername"
 
-#: froide/account/models.py:97
+#: froide/account/models.py:96
 msgid "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
 msgstr ""
 "Verpflichtend. 150 Zeichen oder weniger. Nur Buchstaben, Zahlen und @/./+/-/"
 "_ ."
 
-#: froide/account/models.py:100
+#: froide/account/models.py:99
 msgid "A user with that username already exists."
 msgstr "Es existiert bereits eine Nutzerin mit diesem Nutzernamen."
 
-#: froide/account/models.py:103
+#: froide/account/models.py:102
 msgid "first name"
 msgstr "Vorname"
 
-#: froide/account/models.py:104
+#: froide/account/models.py:103
 msgid "last name"
 msgstr "Nachname"
 
-#: froide/account/models.py:105 froide/account/models.py:107
+#: froide/account/models.py:104
 #: froide/foirequest/templates/foirequest/publicbody_upload.html:36
 #: froide/foirequestfollower/forms.py:33
 msgid "email address"
 msgstr "E-Mail-Adresse"
 
-#: froide/account/models.py:110
+#: froide/account/models.py:107
 msgid "staff status"
 msgstr "Mitarbeiter-Status"
 
-#: froide/account/models.py:112
+#: froide/account/models.py:109
 msgid "Designates whether the user can log into this admin site."
 msgstr "Zeigt an, ob Nutzer sich in den Adminbereich anmelden kann."
 
-#: froide/account/models.py:115 froide/team/models.py:24
+#: froide/account/models.py:112 froide/team/models.py:24
 msgid "active"
 msgstr "aktiv"
 
-#: froide/account/models.py:118
+#: froide/account/models.py:115
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
@@ -468,97 +468,97 @@ msgstr ""
 "Gibt an, ob dieser Nutzer als aktiv behandelt wird. Abhaken, anstatt das "
 "Konto zu löschen."
 
-#: froide/account/models.py:122
+#: froide/account/models.py:119
 msgid "date joined"
 msgstr "Eintrittsdatum"
 
-#: froide/account/models.py:125
+#: froide/account/models.py:122
 msgid "Organization URL"
 msgstr "Organisations-URL"
 
-#: froide/account/models.py:126
+#: froide/account/models.py:123
 msgid "Private"
 msgstr "Privat"
 
-#: froide/account/models.py:127 froide/publicbody/models.py:338
+#: froide/account/models.py:124 froide/publicbody/models.py:338
 msgid "Address"
 msgstr "Adresse"
 
-#: froide/account/models.py:128
+#: froide/account/models.py:125
 msgid "Accepted Terms"
 msgstr "Bedingungen akzeptiert"
 
-#: froide/account/models.py:137
+#: froide/account/models.py:134
 msgid "Trusted"
 msgstr "Vertrauenswürdig"
 
-#: froide/account/models.py:138 froide/foirequest/models/request.py:322
+#: froide/account/models.py:135 froide/foirequest/models/request.py:322
 msgid "Blocked"
 msgstr "Blockiert"
 
-#: froide/account/models.py:141
+#: froide/account/models.py:138
 msgid "date deactivated"
 msgstr "Deaktivierungsdatum"
 
-#: froide/account/models.py:142
+#: froide/account/models.py:139
 msgid "deleted"
 msgstr "gelöscht"
 
-#: froide/account/models.py:143
+#: froide/account/models.py:140
 msgid "Designates whether this user was deleted."
 msgstr "Zeigt an, ob Nutzer gelöscht wurde."
 
-#: froide/account/models.py:145
+#: froide/account/models.py:142
 msgid "date left"
 msgstr "Austrittsdatum"
 
-#: froide/account/models.py:213
+#: froide/account/models.py:210
 msgid "<< Name Not Public >>"
 msgstr "<< Anfragesteller/in >>"
 
-#: froide/account/models.py:317
+#: froide/account/models.py:314
 msgid "Blocklist entry"
 msgstr "Blocklist-Eintrag"
 
-#: froide/account/models.py:318
+#: froide/account/models.py:315
 msgid "Blocklist"
 msgstr "Blocklist"
 
-#: froide/account/models.py:375
+#: froide/account/models.py:372
 msgid "User preference"
 msgstr "Nutzerpräferenz"
 
-#: froide/account/models.py:376
+#: froide/account/models.py:373
 msgid "User preferences"
 msgstr "Nutzerpräferenzen"
 
 #. Translators: Mail subject
-#: froide/account/services.py:196
+#: froide/account/services.py:195
 #, python-format
 msgid "%(site_name)s: please confirm your action"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihre Aktion"
 
 #. Translators: Mail subject
-#: froide/account/services.py:224
+#: froide/account/services.py:223
 #, python-format
 msgid "%(site_name)s: account reminder"
 msgstr "%(site_name)s: Konto-Erinnerung"
 
 #. Translators: Mail subject
-#: froide/account/services.py:250
+#: froide/account/services.py:249
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
 
-#: froide/account/services.py:296
+#: froide/account/services.py:295
 msgid "<< Name removed >>"
 msgstr "Antragsteller/in"
 
-#: froide/account/services.py:297
+#: froide/account/services.py:296
 msgid "<< Email removed >>"
 msgstr "<< E-Mail entfernt >>"
 
-#: froide/account/services.py:298
+#: froide/account/services.py:297
 msgid "<< Address removed >>"
 msgstr "<< Adresse entfernt >>"
 
@@ -7269,10 +7269,8 @@ msgid "Need to reply or send a reminder?"
 msgstr "Antwort schreiben oder Erinnerung verschicken?"
 
 #: froide/foirequest/views/request.py:242
-msgid "This button takes you to the send message form. Let's go there next!"
-msgstr ""
-"Dieser Knopf führt zum Versenden-Formular. Das schauen wir uns als nächstes "
-"an."
+msgid "This button takes you to the send message form."
+msgstr "Dieser Knopf führt zum Formular für das Versenden von Nachrichten."
 
 #: froide/foirequest/views/request.py:247
 msgid "Got postal mail?"
