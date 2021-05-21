@@ -239,7 +239,7 @@ def get_requestpage_tour_data():
             'element': '.write-message-top-link',
             'popover': {
                 'title': _('Need to reply or send a reminder?'),
-                'description': _('''This button takes you to the send message form. Let's go there next!'''),
+                'description': _('''This button takes you to the send message form.'''),
             }
         }, {
             'element': '.upload-post-link',
