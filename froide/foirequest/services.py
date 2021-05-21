@@ -19,7 +19,9 @@ from froide.problem.models import ProblemReport
 from .models import (
     FoiRequest, FoiMessage, RequestDraft, FoiProject, FoiAttachment
 )
-from .models.message import BOUNCE_TAG, AUTO_REPLY_TAG, BOUNCE_RESENT_TAG
+from .models.message import (
+    BOUNCE_TAG, HAS_BOUNCED_TAG, AUTO_REPLY_TAG, BOUNCE_RESENT_TAG
+)
 from .utils import (
     generate_secret_address, construct_initial_message_body,
     get_publicbody_for_email, redact_plaintext_with_request
@@ -446,6 +448,8 @@ class ReceiveEmailService(BaseService):
         message.save()
 
         message.tags.add(BOUNCE_TAG)
+        if mes:
+            mes.tags.add(HAS_BOUNCED_TAG)
 
         ProblemReport.objects.report(
             message=mes or message,
@@ -530,7 +534,8 @@ class ResendBouncedMessageService(BaseService):
 
         return self.resend_message(message)
 
-    def resend_message(self, sent_message,):
+    def resend_message(self, sent_message):
+        sent_message.tags.remove(HAS_BOUNCED_TAG)
         foirequest = sent_message.request
         sent_message.recipient_email = foirequest.public_body.email
         sent_message.sent = False

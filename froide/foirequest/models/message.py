@@ -24,6 +24,7 @@ from .request import (
 )
 
 BOUNCE_TAG = 'bounce'
+HAS_BOUNCED_TAG = 'bounced'
 AUTO_REPLY_TAG = 'auto-reply'
 BOUNCE_RESENT_TAG = 'bounce-resent'
 
@@ -196,16 +197,24 @@ class FoiMessage(models.Model):
 
     @property
     def can_resend_bounce(self):
-        if self.original_id:
-            return self.is_bounce and not self.is_bounce_resent
+        if not self.is_email:
+            return False
+        if self.is_response:
+            if self.original_id:
+                return self.is_bounce and not self.is_bounce_resent
+            return False
         ds = self.get_delivery_status()
-        if ds is not None:
-            return ds.is_failed()
-        return False
+        if ds is not None and ds.is_failed():
+            return True
+        return self.has_bounced
 
     @property
     def is_bounce(self):
         return self.kind == MessageKind.EMAIL and BOUNCE_TAG in self.tag_set
+
+    @property
+    def has_bounced(self):
+        return self.kind == MessageKind.EMAIL and HAS_BOUNCED_TAG in self.tag_set
 
     @property
     def is_bounce_resent(self):

@@ -209,7 +209,7 @@
         <!-- Problem button-->
         {% render_problem_button message %}
 
-        {% if not message.is_response and message.is_email and message.can_resend_bounce and object|can_moderate_foirequest:request %}
+        {% if message.can_resend_bounce and object|can_moderate_foirequest:request %}
           {% include "foirequest/alpha/body/message/toolbar/resend.html" %}
         {% endif %}
 
