@@ -147,6 +147,7 @@ class PublicBodyBaseAdminMixin:
         ),
         'jurisdiction',
         ('classification', TreeRelatedFieldListFilter),
+        'classification',
         'categories',
         make_nullfilter('geo', _('Has geo coordinates')),
         make_nullfilter('regions', _('Has regions')),
