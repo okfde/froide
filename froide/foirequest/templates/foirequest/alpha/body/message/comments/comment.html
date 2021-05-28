@@ -6,14 +6,18 @@
   <div class="d-flex justify-content-start align-items-center flex-nowrap">
     <!-- name -->
     <strong class="text-truncate">
-      {% if comment.user == object.user and object.user.private %}
-        <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Name not public' %}">
+      {% if request.user.is_authenticated %}
+        {% if comment.user == object.user and object.user.private %}
+          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Name not public' %}">
+            {% trans "Commentator" %}
+          </span>
+        {% elif not comment.user_name %}
           {% trans "Commentator" %}
-        </span>
-      {% elif not comment.user_name %}
-        {% trans "Commentator" %}
+        {% else %}
+          {{ comment.user_name }}
+        {% endif %}
       {% else %}
-        {{ comment.user_name }}
+        <span class="text-muted font-italic">{% trans "Only visible if logged in" %}</span>
       {% endif %}
     </strong>
     
