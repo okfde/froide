@@ -1,4 +1,4 @@
-from django import template
+from django import template, forms
 
 register = template.Library()
 
@@ -16,7 +16,8 @@ def render_field(field, horizontal=True):
     return {
         'field': field,
         'field_type': getattr(field.field.widget, 'input_type', None),
-        'horizontal': horizontal
+        'horizontal': horizontal,
+        'is_checkboxmultiple': isinstance(field.field.widget, forms.CheckboxSelectMultiple)
     }
 
 
