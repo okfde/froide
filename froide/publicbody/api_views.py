@@ -28,7 +28,10 @@ from .documents import PublicBodyDocument
 
 def get_language_from_query(request):
     if request:
-        return request.GET.get('language', settings.LANGUAGE_CODE)
+        lang = request.GET.get('language', settings.LANGUAGE_CODE)
+        lang_dict = dict(settings.LANGUAGES)
+        if lang in lang_dict:
+            return lang
     return settings.LANGUAGE_CODE
 
 
