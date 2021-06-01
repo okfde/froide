@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 from froide.foirequest.views import show
 from froide.foirequest.auth import get_read_foirequest_queryset
@@ -10,6 +11,25 @@ from froide.helper.utils import is_ajax
 
 from .models import FoiRequestFollower
 from .forms import FollowRequestForm
+
+
+def get_context(foirequest, request, **kwargs):
+    form = FollowRequestForm(foirequest=foirequest, request=request)
+    following = False
+    user = request.user
+    if user.is_authenticated:
+        following = FoiRequestFollower.objects.request_followed_by(
+            foirequest, user=user
+        )
+    context = {
+        'form': form,
+        'object': foirequest,
+        'following': following,
+        'request': request,
+        'can_follow': foirequest.user != user
+    }
+    context.update(kwargs)
+    return context
 
 
 @require_POST
@@ -43,6 +63,15 @@ def follow(request, pk):
         error_string = ' '.join(' '.join(v) for k, v in form.errors.items())
         return JsonResponse({'errors': error_string})
     return show(request, foirequest.slug, context={"followform": form}, status=400)
+
+
+@xframe_options_exempt
+def embed_follow(request, pk):
+    qs = get_read_foirequest_queryset(request)
+    foirequest = get_object_or_404(qs, pk=pk)
+    return render(request, "foirequestfollower/embed_form.html", get_context(
+        foirequest, request, embed=True
+    ))
 
 
 def confirm_follow(request, follow_id, check):
