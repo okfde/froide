@@ -42,12 +42,19 @@ class FoiRequestFollowerTest(TestCase):
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"pk": req.pk}))
         # Can't follow my own requests
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
         followers = FoiRequestFollower.objects.filter(request=req, user=user)
         self.assertEqual(followers.count(), 0)
         self.client.logout()
         user = User.objects.get(username='dummy')
         self.client.login(email='dummy@example.org', password='froide')
+        req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+        req.save()
+        response = self.client.post(reverse('foirequestfollower-follow',
+                kwargs={"pk": req.pk}))
+        self.assertEqual(response.status_code, 404)
+        req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
+        req.save()
         response = self.client.post(reverse('foirequestfollower-follow',
                 kwargs={"pk": req.pk}))
         self.assertEqual(response.status_code, 302)
