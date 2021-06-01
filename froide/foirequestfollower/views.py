@@ -4,8 +4,8 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 
-from froide.foirequest.models import FoiRequest
 from froide.foirequest.views import show
+from froide.foirequest.auth import get_read_foirequest_queryset
 from froide.helper.utils import is_ajax
 
 from .models import FoiRequestFollower
@@ -14,7 +14,10 @@ from .forms import FollowRequestForm
 
 @require_POST
 def follow(request, pk):
-    foirequest = get_object_or_404(FoiRequest, pk=pk)
+    qs = get_read_foirequest_queryset(request)
+    if request.user.is_authenticated:
+        qs = qs.exclude(user=request.user)
+    foirequest = get_object_or_404(qs, pk=pk)
     form = FollowRequestForm(request.POST, foirequest=foirequest, request=request)
     if form.is_valid():
         followed = form.save()
