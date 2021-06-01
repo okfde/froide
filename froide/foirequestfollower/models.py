@@ -231,28 +231,28 @@ class FoiRequestFollower(models.Model):
 
     def check_and_follow(self, check):
         secret = self.get_follow_secret()
-        if constant_time_compare(check, secret):
-            if self.confirmed:
-                return True
-            if self.email:
-                user = FoiRequestFollower.objects.get_user_for_email(
-                    self.email
-                )
-                if user is not None and user.id != self.request_id:
-                    already_following = FoiRequestFollower.objects.filter(
-                        request=self.request, user=user
-                    ).exists()
-                    if already_following:
-                        # Remove duplicate
-                        self.delete()
-                        return True
-                    self.user = user
-                    self.email = ''
-            self.confirmed = True
-            self.save()
-            FoiRequestFollower.followed.send(sender=self)
+        if not constant_time_compare(check, secret):
+            return False
+        if self.confirmed:
             return True
-        return False
+        if self.email:
+            user = FoiRequestFollower.objects.get_user_for_email(
+                self.email
+            )
+            if user is not None and user.id != self.request.user_id:
+                already_following = FoiRequestFollower.objects.filter(
+                    request=self.request, user=user
+                ).exists()
+                if already_following:
+                    # Remove duplicate
+                    self.delete()
+                    return True
+                self.user = user
+                self.email = ''
+        self.confirmed = True
+        self.save()
+        FoiRequestFollower.followed.send(sender=self)
+        return True
 
     def send_confirm_follow_mail(self, extra_data, user=None):
         '''
