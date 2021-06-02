@@ -75,7 +75,7 @@
           {% if not object.is_foi %}
             <div class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></div>
           {% else %}
-            <form id="mark-not-foi-form" class="ajaxified" method="post" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
+            <form id="mark-not-foi-form" class="ajaxified" method="post" data-confirm="{% translate 'Mark as not an FOI request?' %}" action="{% url 'foirequest-mark_not_foi' slug=object.slug %}">
               {% csrf_token %}
               <button class="btn btn-link" type="submit">
               <i class="fa fa-ban"></i>
