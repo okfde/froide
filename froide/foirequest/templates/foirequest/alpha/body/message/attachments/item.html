@@ -87,11 +87,11 @@
       <div class="small d-print-none">
         {% if attachment.can_redact %}
           <a href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">
-            {% translate "Review to publish" %}
+            {% translate "Review to approve" %}
           </a>
         {% else %}
           <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=attachment.belongs_to_id %}">
-            {% translate "Review to publish" %}
+            {% translate "Review to approve" %}
           </a>
         {% endif %}
       </div>
