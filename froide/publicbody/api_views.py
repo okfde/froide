@@ -131,6 +131,10 @@ class FoiLawFilter(filters.FilterSet):
 
     def id_filter(self, queryset, name, value):
         ids = value.split(',')
+        try:
+            ids = [int(i) for i in ids]
+        except ValueError:
+            return queryset
         return queryset.filter(pk__in=ids)
 
 
