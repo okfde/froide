@@ -8,6 +8,7 @@ from .text_utils import replace_email_name, remove_closing
 from .text_diff import mark_differences
 from .date_utils import calc_easter, calculate_month_range_de
 from .email_sending import mail_registry
+from .csv_utils import dict_to_csv_stream
 
 
 def rec(x):
@@ -147,3 +148,17 @@ class TestMailIntent(TestCase):
             except Exception:
                 print('intent_key', intent_key)
                 raise
+
+
+class TestCSVFormulaEscape(TestCase):
+    def test_formula_escape(self):
+        data = [
+            {'col1': '=SUM(1+1)', 'col2': '+AVG(A2:A)',
+            'col3': '-SUM(1+1)', 'col4': '@SUM(1+1)+"X"'}]
+        csv_bytes = list(dict_to_csv_stream(data))
+
+        self.assertEqual(csv_bytes[0].strip(), ','.join(data[0].keys()).encode('utf-8'))
+        self.assertEqual(
+            csv_bytes[1].strip(),
+            b'\'=SUM(1+1),\'+AVG(A2:A),\'-SUM(1+1),"\'@SUM(1+1)+""X"""'
+        )
