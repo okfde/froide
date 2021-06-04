@@ -1,6 +1,10 @@
 import csv
+import re
 
 from django.http import StreamingHttpResponse
+
+
+FORMULA_START = re.compile(r'^([=\+\-@])')
 
 
 def export_csv_response(generator, name='export.csv'):
@@ -50,6 +54,12 @@ def export_dict_stream(queryset, fields):
         yield d
 
 
+def sanitize_row(row):
+    for k, v in row.items():
+        row[k] = FORMULA_START.sub("'\\1", str(v))
+    return row
+
+
 def dict_to_csv_stream(stream):
     writer = None
     fake_file = FakeFile()
@@ -59,7 +69,7 @@ def dict_to_csv_stream(stream):
             writer = csv.DictWriter(fake_file, field_names)
             writer.writeheader()
             yield fake_file._last_string
-        writer.writerow(d)
+        writer.writerow(sanitize_row(d))
         yield fake_file._last_string
 
 
