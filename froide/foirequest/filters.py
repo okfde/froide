@@ -12,9 +12,10 @@ from froide.account.models import User
 from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
+from froide.helper.widgets import DateRangeWidget
 
 from .models import FoiRequest
-from .widgets import DropDownFilterWidget, DateRangeWidget
+from .widgets import DropDownFilterWidget
 
 
 def resolution_filter(x):

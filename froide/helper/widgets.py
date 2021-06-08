@@ -4,6 +4,8 @@ from django.conf import settings
 from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
+from django_filters.widgets import RangeWidget
+
 
 class BootstrapChoiceMixin(object):
     def __init__(self, *args, **kwargs):
@@ -77,3 +79,14 @@ class TagAutocompleteWidget(TagWidget):
         else:
             ctx['tags'] = []
         return ctx
+
+
+class DateRangeWidget(RangeWidget):
+    template_name = 'helper/forms/widgets/daterange.html'
+
+    def __init__(self):
+        widgets = [
+            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+        ]
+        super().__init__(widgets)

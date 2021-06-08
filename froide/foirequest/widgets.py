@@ -1,7 +1,5 @@
 from django import forms
 
-from django_filters.widgets import RangeWidget
-
 
 class DropDownFilterWidget(forms.widgets.ChoiceWidget):
     template_name = 'foirequest/widgets/dropdown_filter.html'
@@ -41,12 +39,3 @@ class AttachmentFileWidget(forms.ClearableFileInput):
     template_name = 'foirequest/widgets/attachment_file.html'
 
 
-class DateRangeWidget(RangeWidget):
-    template_name = 'foirequest/widgets/daterange.html'
-
-    def __init__(self):
-        widgets = [
-            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
-        ]
-        super(RangeWidget, self).__init__(widgets)
