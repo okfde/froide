@@ -17,9 +17,6 @@ def document_created(instance=None, created=False, **kwargs):
         update_document_index(instance)
         return
 
-    from filingcabinet.tasks import process_document_task
-    process_document_task.delay(instance.pk)
-
 
 @receiver(signals.post_save, sender=FoiAttachment,
         dispatch_uid='reprocess_attachment_redaction')

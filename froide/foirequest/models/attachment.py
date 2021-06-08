@@ -353,4 +353,8 @@ class FoiAttachment(models.Model):
         )
         self.document = doc
         self.save()
+
+        from filingcabinet.tasks import process_document_task
+        process_document_task.delay(doc.pk)
+
         return doc
