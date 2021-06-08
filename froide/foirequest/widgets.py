@@ -37,5 +37,3 @@ class DropDownFilterWidget(forms.widgets.ChoiceWidget):
 
 class AttachmentFileWidget(forms.ClearableFileInput):
     template_name = 'foirequest/widgets/attachment_file.html'
-
-
