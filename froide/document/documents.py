@@ -74,7 +74,7 @@ class PageDocument(Document):
         return [tag.id for tag in obj.document.tags.all()]
 
     def prepare_created_at(self, obj):
-        return obj.document.created_at
+        return obj.document.published_at or obj.document.created_at
 
     def prepare_public(self, obj):
         return obj.document.is_public()
