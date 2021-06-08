@@ -89,4 +89,5 @@ class DateRangeWidget(RangeWidget):
             forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
         ]
-        super().__init__(widgets)
+        # Skip super class init!
+        super(RangeWidget, self).__init__(widgets)
