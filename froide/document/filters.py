@@ -10,6 +10,7 @@ from froide.publicbody.models import PublicBody, Jurisdiction
 from froide.campaign.models import Campaign
 from froide.account.models import User
 from froide.helper.auth import get_read_queryset
+from froide.helper.widgets import DateRangeWidget
 
 from filingcabinet.models import DocumentPortal, Page
 
@@ -97,6 +98,10 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     number = django_filters.NumberFilter(
         method='filter_number',
         widget=forms.HiddenInput()
+    )
+    created_at = django_filters.DateFromToRangeFilter(
+        method='filter_created_at',
+        widget=DateRangeWidget,
     )
 
     class Meta:
@@ -187,3 +192,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def filter_number(self, qs, name, value):
         return qs.filter(number=int(value))
+
+    def filter_created_at(self, qs, name, value):
+        range_kwargs = {}
+        if value.start is not None:
+            range_kwargs['gte'] = value.start
+        if value.stop is not None:
+            range_kwargs['lte'] = value.stop
+
+        return qs.filter(Q('range', created_at=range_kwargs))
