@@ -28,7 +28,9 @@ from froide.helper.cache import cache_anonymous_page
 
 from .models import Document, DocumentCollection
 from .documents import PageDocument
-from .filters import PageDocumentFilterset, get_document_read_qs
+from .filters import (
+    PageDocumentFilterset, get_document_read_qs, DocumentFilter
+)
 
 
 class DocumentSerializer(FCDocumentSerializer):
@@ -122,9 +124,14 @@ class DocumentViewSet(FCDocumentViewSet):
         'retrieve': DocumentDetailSerializer,
         'update': UpdateDocumentSerializer
     }
+    filterset_class = DocumentFilter
 
     def get_base_queryset(self):
         return get_document_read_qs(self.request, detail=self.action == 'retrieve')
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.prefetch_related('original')
 
     @method_decorator(cache_anonymous_page(60 * 60))
     def retrieve(self, request, *args, **kwargs):

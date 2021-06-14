@@ -7,12 +7,14 @@ import django_filters
 
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.publicbody.models import PublicBody, Jurisdiction
+from froide.foirequest.auth import get_read_foirequest_queryset
 from froide.campaign.models import Campaign
 from froide.account.models import User
 from froide.helper.auth import get_read_queryset
 from froide.helper.widgets import DateRangeWidget
 
 from filingcabinet.models import DocumentPortal, Page
+from filingcabinet.filters import DocumentFilter as FCDocumentFilter
 
 from .models import Document, DocumentCollection
 
@@ -28,6 +30,33 @@ def get_document_read_qs(request, detail=False):
         public_q=public_q,
         scope='read:document'
     )
+
+
+class DocumentFilter(FCDocumentFilter):
+    publicbody = django_filters.ModelChoiceFilter(
+        queryset=PublicBody.objects.all(),
+        method='filter_publicbody',
+    )
+    foirequest = django_filters.ModelChoiceFilter(
+        queryset=None,
+        to_field_name='pk',
+        method='filter_foirequest',
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = kwargs.get('request')
+        if request is None:
+            request = self.view.request
+        self.filters['foirequest'].queryset = get_read_foirequest_queryset(
+            request
+        )
+
+    def filter_publicbody(self, qs, name, value):
+        return qs.filter(publicbody=value)
+
+    def filter_foirequest(self, qs, name, value):
+        return qs.filter(foirequest=value)
 
 
 class PageDocumentFilterset(BaseSearchFilterSet):
