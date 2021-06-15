@@ -2,7 +2,7 @@ function applyToForm(searchForm: HTMLFormElement) {
   function submitForm() {
     searchForm.submit();
   }
-  const inputs = searchForm.querySelectorAll('select, input[type="date"]');
+  const inputs = searchForm.querySelectorAll('select');
   let i;
   for (i = 0; i < inputs.length; i += 1) {
     const selectInput = inputs[i];
