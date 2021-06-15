@@ -5,7 +5,7 @@ import tempfile
 import zipfile
 
 from django.core.files.storage import default_storage
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import override, gettext_lazy as _
 from django.conf import settings
 from django.utils import timezone
 from django.template.loader import render_to_string
@@ -297,9 +297,10 @@ class ExportCrossDomainMediaAuth(CrossDomainMediaAuth):
         for the media described in context
         '''
         obj = self.context['object']
-        return reverse('account-download_export_token', kwargs={
-            'token': obj.token
-        })
+        with override(settings.LANGUAGE_CODE):
+            return reverse('account-download_export_token', kwargs={
+                'token': obj.token
+            })
 
     def get_media_file_path(self):
         '''

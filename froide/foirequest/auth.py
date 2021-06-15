@@ -2,6 +2,7 @@ from functools import lru_cache
 
 from django.db.models import Q
 from django.utils.crypto import salted_hmac, constant_time_compare
+from django.utils.translation import override
 from django.urls import reverse
 from django.conf import settings
 
@@ -240,12 +241,12 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
         for the media described in context
         '''
         obj = self.context['object']
-
-        return reverse('foirequest-auth_message_attachment',
-            kwargs={
-                'message_id': obj.belongs_to_id,
-                'attachment_name': obj.name
-            })
+        with override(settings.LANGUAGE_CODE):
+            return reverse('foirequest-auth_message_attachment',
+                kwargs={
+                    'message_id': obj.belongs_to_id,
+                    'attachment_name': obj.name
+                })
 
     def get_full_auth_url(self):
         return super().get_full_auth_url() + '?download'

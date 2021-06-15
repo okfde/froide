@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.utils.translation import override
+
 from crossdomainmedia import CrossDomainMediaAuth
 
 
@@ -29,7 +32,8 @@ class DocumentCrossDomainMediaAuth(CrossDomainMediaAuth):
         for the media described in context
         '''
         obj = self.context['object']
-        return obj.get_file_url(filename=self.context['filename'])
+        with override(settings.LANGUAGE_CODE):
+            return obj.get_file_url(filename=self.context['filename'])
 
     def get_full_auth_url(self):
         return super().get_full_auth_url() + '?download'
