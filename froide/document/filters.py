@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from taggit.models import Tag
 import django_filters
+from elasticsearch_dsl.query import Q as ESQ
 
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.publicbody.models import PublicBody, Jurisdiction
@@ -229,4 +230,4 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         if value.stop is not None:
             range_kwargs['lte'] = value.stop
 
-        return qs.filter(Q('range', created_at=range_kwargs))
+        return qs.filter(ESQ('range', created_at=range_kwargs))
