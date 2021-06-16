@@ -83,6 +83,16 @@ class SearchQuerySetWrapper(object):
             self.sqs.aggs.bucket(field, a)
         return self
 
+    def add_date_histogram(self, date_field, interval='1y', format='yyyy'):
+        a = A(
+            'date_histogram',
+            field=date_field,
+            calendar_interval=interval,
+            format=format
+        )
+        self.sqs.aggs.bucket(date_field, a)
+        return self
+
     def get_facets(self, resolvers=None):
         if resolvers is None:
             resolvers = {}

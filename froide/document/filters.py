@@ -195,7 +195,16 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         for filt in filters:
             es_key = filt['key'].replace('__', '.')
             if has_query and filt.get('facet'):
-                qs = qs.add_aggregation([es_key])
+                facet = filt.get('facet_config', {'type': 'term'})
+                if facet['type'] == 'term':
+                    qs = qs.add_aggregation([es_key])
+                elif facet['type'] == 'date_histogram':
+                    facet_kwargs = {k: v for k, v in facet.items() if k in (
+                        'interval', 'format'
+                    )}
+                    qs = qs.add_date_histogram(
+                        es_key, **facet_kwargs
+                    )
 
             if not filt['key'].startswith('data.'):
                 continue
