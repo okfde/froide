@@ -75,7 +75,7 @@ class UserAdmin(DjangoUserAdmin):
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
         'private', 'terms', 'is_trusted',
-        'is_deleted',
+        'is_deleted', 'is_blocked',
         UserTagListFilter
     ]
     search_fields = ('email', 'username', 'first_name', 'last_name')
