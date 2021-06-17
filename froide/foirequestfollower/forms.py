@@ -46,10 +46,14 @@ class FollowRequestForm(SpamProtectionMixin, forms.Form):
             raise forms.ValidationError(_("You cannot access this request!"))
         if self.user == self.foirequest.user:
             raise forms.ValidationError(_("You cannot follow your own requests."))
+
+        user_extra_registry.on_clean('follow', self)
+
         super().clean()
         return self.cleaned_data
 
     def save(self):
+        user_extra_registry.on_save('follow', self, self.user)
         return FoiRequestFollower.objects.follow(
             self.foirequest, self.user, **self.cleaned_data
         )
