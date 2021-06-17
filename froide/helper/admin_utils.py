@@ -302,14 +302,22 @@ class MultiFilterMixin:
         if request.GET.get(self.parameter_name):
             lookup = self.parameter_name + self.lookup_name
             values = self.value_as_list()
-            includes = [v for v in values if not v.startswith('~')]
-            excludes = [v[1:] for v in values if v.startswith('~')]
-            if includes:
-                for inc in includes:
-                    queryset = queryset.filter(**{lookup: [inc]})
-            if excludes:
-                queryset = queryset.exclude(**{lookup: excludes})
+            queryset = queryset.filter(
+                self.get_q(values, lookup)
+            )
         return queryset
+
+    @classmethod
+    def get_q(cls, values, lookup):
+        includes = [v for v in values if not v.startswith('~')]
+        excludes = [v[1:] for v in values if v.startswith('~')]
+        q = models.Q()
+        if includes:
+            for inc in includes:
+                q |= models.Q(**{lookup: [inc]})
+        if excludes:
+            q &= ~models.Q(**{lookup: excludes})
+        return q
 
     def value_as_list(self):
         return self.value().split(',') if self.value() else []
