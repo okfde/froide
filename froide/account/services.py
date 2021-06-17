@@ -256,7 +256,9 @@ class AccountService(object):
         )
 
     @classmethod
-    def check_against_blocklist(cls, user, save=True):
+    def check_against_blocklist(cls, user, save=True) -> bool:
+        if user.trusted():
+            return False
         blocklisted = AccountBlocklist.objects.is_blocklisted(user)
         if blocklisted:
             user.is_blocked = True
