@@ -9,6 +9,10 @@ from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django.contrib.auth.password_validation import (
     password_validators_help_text_html
 )
+from django.contrib.auth.forms import (
+    UserCreationForm as DjangoUserCreationForm,
+    UserChangeForm as DjangoUserChangeForm
+)
 from django import forms
 
 from froide.helper.spam import SpamProtectionMixin
@@ -25,6 +29,22 @@ from .services import AccountService, get_user_for_email
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
+
+
+# UserChangeForm / UserCreationForm need to be in this module
+# due to django-cms convention:
+# https://github.com/django-cms/django-cms/blob/3.9.0rc3/cms/utils/compat/forms.py
+
+class UserCreationForm(DjangoUserCreationForm):
+    class Meta:
+        model = User
+        fields = ("email",)
+
+
+class UserChangeForm(DjangoUserChangeForm):
+    class Meta:
+        model = User
+        fields = '__all__'
 
 
 class UserExtrasRegistry():
@@ -274,7 +294,7 @@ class PasswordResetForm(auth.forms.PasswordResetForm):
         label=_('Email address'))
 
 
-class UserChangeForm(forms.Form):
+class UserChangeDetailsForm(forms.Form):
     email = forms.EmailField(required=False, widget=forms.EmailInput(
         attrs={
             'placeholder': _('mail@ddress.net'),
@@ -308,7 +328,7 @@ class UserChangeForm(forms.Form):
         field_order = ['email', 'address']
 
     def __init__(self, user, *args, **kwargs):
-        super(UserChangeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.user = user
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email

@@ -6,7 +6,6 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.admin import helpers
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.shortcuts import redirect
 
 from froide.foirequest.models import FoiRequest
@@ -18,22 +17,11 @@ from .models import User, TaggedUser, UserTag, AccountBlocklist, UserPreference
 from .services import AccountService
 from .export import get_export_access_token
 from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
+from .forms import UserChangeForm, UserCreationForm
 from .utils import (
     delete_all_unexpired_sessions_for_user, cancel_user,
     make_account_private
 )
-
-
-class CustomUserCreationForm(UserCreationForm):
-    class Meta:
-        model = User
-        fields = ("email",)
-
-
-class CustomUserChangeForm(UserChangeForm):
-    class Meta:
-        model = User
-        fields = '__all__'
 
 
 class UserTagAdmin(admin.ModelAdmin):
@@ -53,8 +41,8 @@ class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
 
 class UserAdmin(DjangoUserAdmin):
     # The forms to add and change user instances
-    form = CustomUserChangeForm
-    add_form = CustomUserCreationForm
+    form = UserChangeForm
+    add_form = UserCreationForm
 
     list_display = ('username', 'email', 'first_name', 'last_name',
         'date_joined', 'is_active', 'is_staff', 'private', 'is_trusted',

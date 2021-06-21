@@ -230,8 +230,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return SetPasswordForm(self, *args, **kwargs)
 
     def get_change_form(self, *args, **kwargs):
-        from .forms import UserChangeForm
-        return UserChangeForm(self, *args, **kwargs)
+        from .forms import UserChangeDetailsForm
+        return UserChangeDetailsForm(self, *args, **kwargs)
 
     def send_mail(self, subject, body, **kwargs):
         from .utils import send_mail_user

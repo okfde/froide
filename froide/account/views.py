@@ -25,7 +25,7 @@ from froide.helper.utils import render_403, get_redirect, get_redirect_url
 from . import account_activated
 from .forms import (
     UserLoginForm, PasswordResetForm, SignUpForm, SetPasswordForm,
-    UserEmailConfirmationForm, UserChangeForm, UserDeleteForm, TermsForm
+    UserEmailConfirmationForm, UserChangeDetailsForm, UserDeleteForm, TermsForm
 )
 from .services import AccountService
 from .utils import start_cancel_account_process, make_account_private
@@ -335,14 +335,14 @@ def account_settings(request, context=None, status=200):
     if 'user_delete_form' not in context:
         context['user_delete_form'] = UserDeleteForm(request)
     if 'change_form' not in context:
-        context['change_form'] = UserChangeForm(request.user)
+        context['change_form'] = UserChangeDetailsForm(request.user)
     return render(request, 'account/settings.html', context, status=status)
 
 
 @require_POST
 @login_required
 def change_user(request):
-    form = UserChangeForm(request.user, request.POST)
+    form = UserChangeDetailsForm(request.user, request.POST)
     if form.is_valid():
         new_email = form.cleaned_data['email']
         if new_email and request.user.email != new_email:
