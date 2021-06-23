@@ -47,13 +47,13 @@ class DocumentAdmin(DocumentBaseAdmin):
         ('document_documentcollection', ForeignKeyFilter),
         DocumentTagsFilter,
     )
-    actions = (
-        DocumentBaseAdmin.actions
-    )
+    actions = DocumentBaseAdmin.actions + [
+        'add_document_to_collection'
+    ]
 
     add_document_to_collection = make_choose_object_action(
         DocumentCollection, execute_add_document_to_collection,
-        _('Add documents to collection')
+        _('Add documents to collection...')
     )
 
     def save_model(self, request, obj, form, change):
