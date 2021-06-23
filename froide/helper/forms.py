@@ -33,7 +33,7 @@ class TagObjectForm(forms.Form):
         )
 
     def save(self, obj):
-        obj.tags.set(*self.cleaned_data['tags'])
+        obj.tags.set(*[t[:100] for t in self.cleaned_data['tags']])
         obj.save()
 
 
