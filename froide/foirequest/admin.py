@@ -2,6 +2,7 @@ from io import BytesIO
 import re
 
 from django.contrib import admin
+from django.contrib.admin.views.main import ChangeList
 from django.db import models
 from django.shortcuts import redirect
 from django.http import HttpResponse
@@ -65,6 +66,17 @@ class FoiRequestTagsFilter(TaggitListFilter):
     tag_class = TaggedFoiRequest
 
 
+class FoiRequestChangeList(ChangeList):
+    def get_results(self, *args, **kwargs):
+        ret = super().get_results(*args, **kwargs)
+        q = self.queryset.aggregate(
+            user_count=models.Count('user', distinct=True),
+        )
+        self.user_count = q['user_count']
+
+        return ret
+
+
 class FoiRequestAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
@@ -103,6 +115,9 @@ class FoiRequestAdmin(admin.ModelAdmin):
     tag_all = make_batch_tag_action(
         autocomplete_url=reverse_lazy('api:request-tags-autocomplete')
     )
+
+    def get_changelist(self, request):
+        return FoiRequestChangeList
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
