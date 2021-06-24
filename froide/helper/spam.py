@@ -1,4 +1,5 @@
 import logging
+import re
 from datetime import timedelta, datetime
 
 from django.core.cache import cache
@@ -6,6 +7,8 @@ from django import forms
 from django.conf import settings
 from django.contrib.gis.geoip2 import GeoIP2
 from django.utils.translation import gettext_lazy as _
+
+import requests
 
 from froide.helper.utils import get_client_ip
 
@@ -28,12 +31,32 @@ def suspicious_ip(request):
             return True
     except Exception as e:
         logger.warning(e)
+    try:
+        if ip in get_tor_exit_ips():
+            return True
+    except Exception as e:
+        logger.error(e)
     return False
+
+
+IP_RE = re.compile(r'ExitAddress (\S+)')
+TOR_EXIT_IP_TIMEOUT = 60 * 15
+
+
+def get_tor_exit_ips(refresh=False):
+    cache_key = 'froide:tor_exit_ips'
+    result = cache.get(cache_key)
+    if result and not refresh:
+        return result
+    response = requests.get('https://check.torproject.org/exit-addresses')
+    exit_ips = set(IP_RE.findall(response.text))
+    cache.set(cache_key, exit_ips, TOR_EXIT_IP_TIMEOUT)
+    return exit_ips
 
 
 def too_many_actions(request, action, threshold=3, increment=False):
     ip_address = get_client_ip(request)
-    cache_key = 'fds:limit_action:%s:%s' % (action, ip_address)
+    cache_key = 'froide:limit_action:%s:%s' % (action, ip_address)
     count = cache.get(cache_key, 0)
     if increment:
         if count == 0:
