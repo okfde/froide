@@ -191,6 +191,11 @@ class TermsForm(forms.Form):
             url_terms=get_content_url("terms"),
             url_privacy=get_content_url("privacy")
         )
+
+
+class ExplicitRegistrationMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         user_extra_registry.on_init('registration', self)
 
     def clean(self):
@@ -203,17 +208,20 @@ class TermsForm(forms.Form):
         user.save()
 
 
-class NewUserForm(JSONMixin, SpamProtectionMixin, TermsForm, NewUserBaseForm):
-    '''
-    Used in implicit sign up flow
-    '''
+class NewUserSpamProtectionForm(JSONMixin, SpamProtectionMixin, TermsForm, NewUserBaseForm):
     SPAM_PROTECTION = {
         'timing': True,
         'captcha': 'ip',
     }
 
 
-class SignUpForm(NewUserForm):
+class NewUserForm(NewUserSpamProtectionForm):
+    '''
+    Used in implicit sign up flow
+    '''
+
+
+class SignUpForm(ExplicitRegistrationMixin, NewUserForm):
     '''
     Used in explicit sign up flow (signup page)
     '''
