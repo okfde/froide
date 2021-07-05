@@ -34,6 +34,8 @@ from .export import (
     get_export_access_token_by_token
 )
 
+User = auth.get_user_model()
+
 
 class AccountView(RedirectView):
     # Temporary redirect
@@ -75,7 +77,7 @@ def confirm(request, user_id, secret, request_id=None):
             messages.add_message(request, messages.ERROR,
                     _('You are logged in and cannot use a confirmation link.'))
         return redirect('account-show')
-    user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
+    user = get_object_or_404(User, pk=int(user_id))
     if user.is_active or (not user.is_active and user.email is None):
         return redirect('account-login')
     account_service = AccountService(user)
@@ -111,7 +113,7 @@ def go(request, user_id, secret, url):
                 _('You are logged in with a different user account. Please logout first before using this link.'))
         return redirect(url)
 
-    user = get_object_or_404(auth.get_user_model(), pk=int(user_id))
+    user = get_object_or_404(User, pk=int(user_id))
     account_manager = AccountService(user)
     if account_manager.check_autologin_secret(secret):
         if user.is_superuser:
@@ -133,20 +135,25 @@ def go(request, user_id, secret, url):
     return get_redirect(request, default='account-login', params={'next': url})
 
 
-def profile(request, slug):
-    user = get_object_or_404(auth.get_user_model(), username=slug)
-    if user.private:
-        raise Http404
-    foirequests = FoiRequest.published.filter(user=user)
-    foirequest_count = foirequests.count()
-    foirequests = foirequests.order_by('-first_message')[:10]
-    foievents = FoiEvent.objects.filter(public=True, user=user)[:20]
-    return render(request, 'account/profile.html', {
-        'profile': user,
-        'requests': foirequests,
-        'request_count': foirequest_count,
-        'events': foievents
-    })
+class ProfileView(DetailView):
+    queryset = User.objects.filter(private=False)
+    slug_field = 'username'
+    template_name = 'account/profile.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data()
+
+        foirequests = FoiRequest.published.filter(user=self.object)
+        foirequest_count = foirequests.count()
+        foirequests = foirequests.order_by('-first_message')[:10]
+        foievents = FoiEvent.objects.filter(public=True, user=self.object)[:20]
+
+        ctx.update({
+            'requests': foirequests,
+            'request_count': foirequest_count,
+            'events': foievents
+        })
+        return ctx
 
 
 @require_POST
