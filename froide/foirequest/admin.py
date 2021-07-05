@@ -357,8 +357,10 @@ class FoiMessageAdmin(admin.ModelAdmin):
     actions = [
         'check_delivery_status', 'resend_messages',
         'run_guidance', 'run_guidance_notify',
-        'attach_guidance_action'
+        'attach_guidance_action', 'tag_all'
     ]
+
+    tag_all = make_batch_tag_action()
 
     def get_urls(self):
         urls = super(FoiMessageAdmin, self).get_urls()
