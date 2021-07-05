@@ -380,7 +380,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(FoiMessageAdmin, self).get_queryset(request)
-        qs = qs.select_related('deliverystatus')
+        qs = qs.prefetch_related('deliverystatus')
         return qs
 
     def save_model(self, request, obj, form, change):
