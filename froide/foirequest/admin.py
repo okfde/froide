@@ -24,7 +24,7 @@ from froide.helper.admin_utils import (
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fake_fk_form_class
 from froide.helper.email_utils import EmailParser
-from froide.guide.utils import assign_guidance
+from froide.guide.utils import assign_guidance_action
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 
 from .models import (
@@ -392,7 +392,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         return format_html('<a href="{}">{}</a>',
             obj.get_absolute_short_url(), _('on site'))
 
-    attach_guidance_action = assign_guidance
+    attach_guidance_action = assign_guidance_action
 
     def run_guidance_notify(self, request, queryset):
         self._run_guidance(queryset, notify=True)

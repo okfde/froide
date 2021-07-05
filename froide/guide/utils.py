@@ -8,7 +8,7 @@ from froide.helper.text_utils import split_text_by_separator
 from froide.helper.admin_utils import make_choose_object_action
 from froide.helper.email_sending import mail_registry
 
-from .models import Rule, Guidance
+from .models import Rule, Guidance, Action
 
 
 guidance_notification_mail = mail_registry.register(
@@ -247,7 +247,7 @@ def notify_guidance(guidance):
     notify_users([(guidance.message, GuidanceResult([guidance], 0, 0))])
 
 
-def execute_assign_guidance(admin, request, queryset, action_obj):
+def execute_assign_guidance_action(admin, request, queryset, action_obj):
     from .tasks import add_action_to_queryset_task
 
     add_action_to_queryset_task.delay(
@@ -257,7 +257,7 @@ def execute_assign_guidance(admin, request, queryset, action_obj):
     )
 
 
-assign_guidance = make_choose_object_action(
-    Guidance, execute_assign_guidance,
+assign_guidance_action = make_choose_object_action(
+    Action, execute_assign_guidance_action,
     _('Choose guidance action to attach...')
 )
