@@ -19,7 +19,7 @@ from django.utils import timezone
 from froide.helper.admin_utils import (
     make_nullfilter, make_greaterzerofilter, make_batch_tag_action,
     ForeignKeyFilter, TaggitListFilter, SearchFilter,
-    make_choose_object_action
+    make_choose_object_action, MultiFilterMixin
 )
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fake_fk_form_class
@@ -316,8 +316,11 @@ class DeliveryStatusInline(admin.TabularInline):
     readonly_fields = ('retry_count', 'log', 'status', 'last_update')
 
 
-class MessageTagsFilter(TaggitListFilter):
+class MessageTagsFilter(MultiFilterMixin, TaggitListFilter):
     tag_class = TaggedMessage
+    title = 'Tags'
+    parameter_name = 'tags__slug'
+    lookup_name = '__in'
 
 
 class FoiMessageAdmin(admin.ModelAdmin):
