@@ -192,8 +192,8 @@ class AccountTest(TestCase):
             "terms": "on",
             "user_email": 'horst.porst@example.com',
             "address": 'MyOwnPrivateStree 5\n31415 Pi-Ville',
-            # Signup in 10 seconds
-            'time': (datetime.utcnow() - timedelta(seconds=10)).timestamp(),
+            # Signup in less than 5 seconds
+            'time': (datetime.utcnow() - timedelta(seconds=3)).timestamp(),
         }
         self.client.logout()
         response = self.client.post(reverse('account-signup'), post)
