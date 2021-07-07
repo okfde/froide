@@ -2217,8 +2217,10 @@ msgstr ""
 
 #: froide/foirequest/forms/message.py:228
 #: froide/foirequest/forms/message.py:574 froide/foirequest/forms/postal.py:49
-msgid "Uploaded scans can be PDF, JPG, PNG or GIF."
-msgstr "Dateien können als PDF, JPG, PNG oder GIF hochgeladen werden."
+msgid "Uploaded scans can be PDF, JPG, PNG or GIF. "
+"You can redact documents after uploading them."
+msgstr "Dateien können als PDF, JPG, PNG oder GIF hochgeladen werden. "
+"Sie können Dokumente vor der Veröffentlichung in FragDenStaat schwärzen."
 
 #: froide/foirequest/forms/message.py:230
 #: froide/foirequest/models/attachment.py:156
