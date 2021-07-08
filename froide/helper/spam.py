@@ -20,12 +20,12 @@ def suspicious_ip(request):
     target_countries = settings.FROIDE_CONFIG.get('target_countries', None)
     if target_countries is None:
         return False
+    ip = get_client_ip(request)
+    if ip == '127.0.0.1':
+        # Consider suspicious
+        return True
     try:
         g = GeoIP2()
-        ip = get_client_ip(request)
-        if ip == '127.0.0.1':
-            # Consider suspicious
-            return True
         info = g.country(ip)
         if info['country_code'] not in target_countries:
             return True
