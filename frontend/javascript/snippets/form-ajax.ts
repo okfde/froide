@@ -46,7 +46,9 @@ const submitFormsAjax = () => {
         if (responseData[0] === "/") {
           // starts with URL, redirect
           window.location.href = responseData;
-          window.location.reload(true);
+          if (responseData.indexOf('#') !== -1) {
+            window.location.reload(true);
+          }
           return;
         }
         const parent = form.closest(".ajax-parent");
