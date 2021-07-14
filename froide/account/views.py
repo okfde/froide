@@ -146,7 +146,9 @@ class ProfileView(DetailView):
         from froide.campaign.models import Campaign
         from froide.publicbody.models import PublicBody
 
-        ctx = {}
+        ctx = super().get_context_data(**kwargs)
+        ctx.pop('user', None)  # Remove 'user' key set by super
+
         foirequests = FoiRequest.published.filter(user=self.object)
 
         fr_aggs = foirequests.aggregate(
