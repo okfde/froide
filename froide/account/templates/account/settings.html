@@ -22,6 +22,11 @@
       <a href="#general" class="list-group-item list-group-item-action">
         {% trans "General settings" %}
       </a>
+      {% if not user.private %}
+        <a href="#profile" class="list-group-item list-group-item-action">
+          {% trans "Public profile" %}
+        </a>
+      {% endif %}
       <a href="#change-password-now" class="list-group-item list-group-item-action">
         {% trans "Change password" %}
       </a>
@@ -71,6 +76,7 @@
               {% endblocktrans %}</p>
               <div class="alert alert-danger mt-3 text-center">
                 {% blocktrans %}This account-wide setting <b>cannot be undone</b>.<br/> Your account will <b>stay private</b> once you set it to private.{% endblocktrans %}
+                {% blocktrans %}Any public profile information will be removed.{% endblocktrans %}
               </div>
               <p class="text-muted">
                 {% trans "You are still responsible for redacting attachments when they contain your personal information." %}
@@ -103,6 +109,34 @@
         </form>
       </div>
     </div>
+
+    {% if not user.private %}
+      <div id="profile" class="card mb-3 mt-5">
+        <h5 class="card-header">
+          {% trans "Public profile" %}
+        </h5>
+        <div class="card-body">
+          {% if request.user.is_staff %}
+            <p>
+              <a href="{{ user.get_absolute_url }}">
+                {% translate "Your public profile" %}
+              </a>
+            </p>
+          {% endif %}
+          <form action="{% url 'account-change_profile' %}#profile" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if profile_form %}
+              {% render_form profile_form %}
+            {% else %}
+              {% render_form user.get_profile_form %}
+            {% endif %}
+            <button type="submit" class="btn btn-secondary">
+              {% blocktrans %}Save changes{% endblocktrans %}
+            </button>
+          </form>
+        </div>
+      </div>
+    {% endif %}
 
     {% include "account/includes/change_password_form.html" %}
 

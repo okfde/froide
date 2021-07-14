@@ -398,6 +398,29 @@ def change_user(request):
 
 @require_POST
 @login_required
+def change_profile(request):
+    form = ProfileForm(
+        data=request.POST,
+        files=request.FILES,
+        instance=request.user
+    )
+    if form.is_valid():
+        form.save()
+        messages.add_message(request, messages.SUCCESS,
+                _('Your profile information has been changed.'))
+        return redirect('account-settings')
+    messages.add_message(request, messages.ERROR,
+            _('Please correct the errors below. You profile information was not changed.'))
+
+    return account_settings(
+        request,
+        context={"profile_form": form},
+        status=400
+    )
+
+
+@require_POST
+@login_required
 def make_user_private(request):
     if request.user.private:
         messages.add_message(request, messages.ERROR,

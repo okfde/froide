@@ -7,7 +7,7 @@ from .views import (
     new_terms, logout, login, SignupView, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
-    make_user_private,
+    make_user_private, change_profile,
     create_export, download_export,
     CustomPasswordResetConfirmView
 )
@@ -28,6 +28,7 @@ urlpatterns = [
     path('change_user/', change_user, name='account-change_user'),
     path('make-private/', make_user_private, name='account-make_user_private'),
     path('change-email/', change_email, name='account-change_email'),
+    path('change-profile/', change_profile, name='account-change_profile'),
     path('delete-account/', delete_account, name='account-delete_account'),
     path('confirm/<int:user_id>/<str:secret>/', confirm, name='account-confirm'),
     path('confirm/<int:user_id>/<int:request_id>/<str:secret>/',

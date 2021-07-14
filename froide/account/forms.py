@@ -27,7 +27,6 @@ from .services import AccountService, get_user_for_email
 
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
-HAVE_ORGANIZATION = settings.FROIDE_CONFIG.get("user_has_organization", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
 
 
@@ -322,26 +321,13 @@ class UserChangeDetailsForm(forms.Form):
         }),
         required=False
     )
-    if HAVE_ORGANIZATION:
-        organization = forms.CharField(
-            required=False,
-            label=_("Organization"),
-            help_text=_('Optional. Affiliation will be shown next to your name'),
-            widget=forms.TextInput(attrs={
-                'placeholder': _('Organization'),
-                'class': 'form-control'})
-        )
-        field_order = ['email', 'address', 'organization']
-    else:
-        field_order = ['email', 'address']
+    field_order = ['email', 'address']
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
         self.fields['address'].initial = self.user.address
         self.fields['email'].initial = self.user.email
-        if HAVE_ORGANIZATION:
-            self.fields['organization'].initial = self.user.organization
         self.order_fields(self.field_order)
 
     def clean_email(self):
@@ -355,8 +341,6 @@ class UserChangeDetailsForm(forms.Form):
 
     def save(self):
         self.user.address = self.cleaned_data['address']
-        if HAVE_ORGANIZATION:
-            self.user.organization = self.cleaned_data['organization']
         AccountService.check_against_blocklist(self.user, save=False)
         self.user.save()
 
@@ -488,3 +472,58 @@ class SetPasswordForm(DjangoSetPasswordForm):
                 'class': 'form-control',
                 'autocomplete': 'new-password',
             })
+
+
+class ProfilePhotoFileInput(forms.ClearableFileInput):
+    template_name = 'account/widgets/image.html'
+
+
+class ProfileForm(forms.ModelForm):
+    profile_text = forms.CharField(
+        label=_('Profile text'),
+        help_text=_('Optional short text about yourself.'),
+        required=False,
+        max_length=1000,
+        widget=forms.Textarea(
+            attrs={'rows': 3, 'class': 'form-control'}
+        )
+    )
+
+    class Meta:
+        model = User
+        fields = [
+            'organization', 'organization_url',
+            'profile_text', 'profile_photo'
+        ]
+        widgets = {
+            'profile_photo': ProfilePhotoFileInput(),
+            'organization': forms.TextInput(attrs={
+                'placeholder': _('Organization'),
+                'class': 'form-control'}),
+            'organization_url': forms.URLInput(attrs={
+                'placeholder': _('https://...'),
+                'class': 'form-control'})
+        }
+
+    DIMS = (480, 960)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['profile_photo'].label = _('Profile picture')
+        self.fields['profile_photo'].help_text = _(
+            'Image must be square and between 480 to 960 pixels '
+            'in both dimensions.'
+        )
+
+    def clean_profile_photo(self):
+        image_field = self.cleaned_data['profile_photo']
+        if not image_field:
+            return image_field
+        image = image_field.image
+        if image.height != image.width:
+            raise forms.ValidationError(_('Image is not square.'))
+        if image.width < self.DIMS[0]:
+            raise forms.ValidationError(_('Image dimensions are too small.'))
+        if image.width > self.DIMS[1]:
+            raise forms.ValidationError(_('Image dimensions are too large.'))
+        return image_field

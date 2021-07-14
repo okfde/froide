@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% if widget.is_initial %}<img src="{{ widget.value.url }}" class="img-fluid" alt="{% translate 'profile picture' %}">
+<input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+<label for="{{ widget.checkbox_id }}">{% translate "Delete?" %}</label><br>
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>

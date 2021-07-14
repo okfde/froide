@@ -118,8 +118,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
-    organization = models.CharField(_('Organization'), blank=True, max_length=255)
-    organization_url = models.URLField(_('Organization URL'), blank=True, max_length=255)
+    organization = models.CharField(
+        _('Organization'),
+        blank=True, max_length=255,
+        help_text=_('Optional. Affiliation will be shown next to your name')
+    )
+    organization_url = models.URLField(
+        _('Organization Website'),
+        blank=True, max_length=255
+    )
     private = models.BooleanField(_('Private'), default=False)
     address = models.TextField(_('Address'), blank=True)
     terms = models.BooleanField(_('Accepted Terms'), default=True)
@@ -232,6 +239,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_change_form(self, *args, **kwargs):
         from .forms import UserChangeDetailsForm
         return UserChangeDetailsForm(self, *args, **kwargs)
+
+    def get_profile_form(self, *args, **kwargs):
+        from .forms import ProfileForm
+        return ProfileForm(*args, instance=self, **kwargs)
 
     def send_mail(self, subject, body, **kwargs):
         from .utils import send_mail_user

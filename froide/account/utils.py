@@ -81,6 +81,11 @@ def send_template_mail(user: User, subject: str, body: str, **kwargs):
 
 def make_account_private(user):
     user.private = True
+    user.organization = ''
+    user.organization_url = ''
+    user.profile_text = ''
+    if user.profile_photo:
+        user.profile_photo.delete(save=False)
     user.save()
 
     make_account_private_task.delay(user.id)
