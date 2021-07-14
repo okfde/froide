@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.http import Http404
 from django.contrib import auth
+from django.db import models
 from django.views.generic import DetailView, FormView
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,14 +19,15 @@ from django.views.generic import TemplateView, RedirectView
 
 from crossdomainmedia import CrossDomainMediaMixin
 
-from froide.foirequest.models import FoiRequest, FoiEvent
+from froide.foirequest.models import FoiRequest
 from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
 from . import account_activated
 from .forms import (
     UserLoginForm, PasswordResetForm, SignUpForm, SetPasswordForm,
-    UserEmailConfirmationForm, UserChangeDetailsForm, UserDeleteForm, TermsForm
+    UserEmailConfirmationForm, UserChangeDetailsForm, UserDeleteForm,
+    TermsForm, ProfileForm
 )
 from .services import AccountService
 from .utils import start_cancel_account_process, make_account_private
@@ -141,17 +143,42 @@ class ProfileView(DetailView):
     template_name = 'account/profile.html'
 
     def get_context_data(self, **kwargs):
+        from froide.campaign.models import Campaign
+        from froide.publicbody.models import PublicBody
+
         ctx = super().get_context_data()
 
         foirequests = FoiRequest.published.filter(user=self.object)
-        foirequest_count = foirequests.count()
-        foirequests = foirequests.order_by('-first_message')[:10]
-        foievents = FoiEvent.objects.filter(public=True, user=self.object)[:20]
+
+        fr_aggs = foirequests.aggregate(
+            count=models.Count('id'),
+            first_date=models.Min('first_message'),
+            successful=models.Count('id', filter=models.Q(
+                status=FoiRequest.STATUS.RESOLVED,
+                resolution=FoiRequest.RESOLUTION.SUCCESSFUL,
+            ) | models.Q(
+                status=FoiRequest.STATUS.RESOLVED,
+                resolution=FoiRequest.RESOLUTION.PARTIALLY_SUCCESSFUL,
+            )),
+            refused=models.Count('id', filter=models.Q(
+                status=FoiRequest.STATUS.RESOLVED,
+                resolution=FoiRequest.RESOLUTION.REFUSED,
+            )),
+            total_costs=models.Sum('costs')
+        )
+        campaigns = Campaign.objects.filter(
+            foirequest__in=foirequests,
+        ).exclude(url='').distinct().order_by('-start_date')
+        TOP_PUBLIC_BODIES = 3
+        top_publicbodies = PublicBody.objects.filter(foirequest__in=foirequests).annotate(
+            user_request_count=models.Count('id')
+        ).order_by('-user_request_count')[:TOP_PUBLIC_BODIES]
 
         ctx.update({
-            'requests': foirequests,
-            'request_count': foirequest_count,
-            'events': foievents
+            'foirequests': foirequests.order_by('-first_message')[:10],
+            'aggregates': fr_aggs,
+            'campaigns': campaigns,
+            'top_publicbodies': top_publicbodies,
         })
         return ctx
 

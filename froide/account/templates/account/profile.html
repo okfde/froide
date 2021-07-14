@@ -14,39 +14,126 @@
 {% block app_body %}
 <div class="row mt-3">
   <div class="col-md-3">
-    {% if object.profile_photo %}
-      <img class="img-fluid" src="{{ object.profile_photo.url }}" alt="{{ object.get_full_name }}">
-    {% endif %}
-    <h2>
-      {{ object.get_full_name }}
-    </h2>
-    {% if object.organization_url and object.organization %}
-      <p>
-        <strong>
-          <a href="{{ object.organization_url }}">{{ object.organization }}</a>
-        </strong>
-      </p>
-    {% elif object.organization %}
-      <p>
-        {{ object.organization }}
-      </p>
-    {% endif %}
+    <div class="row mb-3">
+      {% if object.profile_photo %}
+        <div class="col-4 col-md-12">
+          <img class="img-fluid" src="{{ object.profile_photo.url }}" alt="{{ object.get_full_name }}">
+        </div>
+      {% endif %}
+      <div class="col-8 col-md-12 mt-3">
+        <h2 class="no-hyphens">
+          {{ object.get_full_name }}
+        </h2>
+        {% if object.organization_url and object.organization %}
+          <p>
+            <strong>
+              <a href="{{ object.organization_url }}">{{ object.organization }}</a>
+            </strong>
+          </p>
+        {% elif object.organization %}
+          <p>
+            {{ object.organization }}
+          </p>
+        {% endif %}
+        <dl>
+          {% if aggregates.first_date %}
+            <dt>{% translate "First request:" %}</dt>
+            <dd>{{ aggregates.first_date|date }}</dd>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+
     {% if object.profile_text %}
-      {{ object.profile_text|markdown }}
+      {% if object.is_staff %}
+        {{ object.profile_text|markdown }}
+      {% else %}
+        <p>{{ object.profile_text|linebreaksbr }}</p>
+      {% endif %}
     {% endif %}
 
     {% block profile_details %}{% endblock %}
 
+    {% if object == request.user %}
+      <a href="{% url 'account-settings' %}#profile" class="btn btn-secondary">
+        {% translate "Edit profile" %}
+      </a>
+    {% endif %}
+
   </div>
 
   <div class="col-md-9">
+    <div class="row">
+      <div class="col-md-12 col-lg-4">
+        <div class="jumbotron pt-3 pb-2 px-2">
+          <div class="display-3 text-center">{{ aggregates.count|intcomma }}</div>
+          <p class="lead text-center no-hyphens">{% translate "Number of public requests" %}</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="jumbotron pt-3 pb-2 px-2">
+          <div class="display-3 text-center">{{ aggregates.successful|intcomma }}</div>
+          <p class="lead text-center no-hyphens">{% translate "Number of successful requests" %}</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="jumbotron pt-3 pb-2 px-2">
+          <div class="display-3 text-center">{{ aggregates.refused|intcomma }}</div>
+          <p class="lead text-center no-hyphens">{% translate "Number of refused requests" %}</p>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="jumbotron pt-3 pb-2 mb-2">
+          <h4 class="text-center">
+            {% translate "Top requested public bodies" %}
+          </h4>
+          <ol class="lead">
+            {% for pb in top_publicbodies %}
+              <li>
+                <a href="{{ pb.get_absolute_url }}">
+                  {{ pb.name }}
+                </a>
+                <span class="badge badge-secondary">
+                  {% blocktranslate count count=pb.user_request_count %}one request{% plural %}{{ count }} requests{% endblocktranslate %}
+                </span>
+              </li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    {% if campaigns %}
+      <hr/>
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4>
+            {% blocktrans with name=object.first_name %}
+              {{ name }} has taken part in these campaigns
+            {% endblocktrans %}
+          </h4>
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            {% for campaign in campaigns %}
+              <li class="list-group-item">
+                <a href="{{ campaign.url }}">
+                  {{ campaign.name }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+
     <div class="card mb-3">
       <div class="card-header">
-        {% blocktrans with name=object.get_full_name counter=request_count|intcomma count count=request_count %}{{ name }} has one public request.{% plural %}{{ name }} has {{ counter }} public requests.{% endblocktrans %}
+        <h4>{% translate "Last requests" %}</h4>
       </div>
       <div class="card-body">
         <ul class="list-unstyled">
-          {% for object in requests %}
+          {% for object in foirequests %}
             <li>
               {% include "foirequest/snippets/request_item.html" %}
             </li>
@@ -55,34 +142,6 @@
         <a href="{% url 'foirequest-list' %}?user={{ object.username }}">
           {% blocktrans with name=object.get_full_name %}See all requests of {{ name }}{% endblocktrans %}
         </a>
-      </div>
-    </div>
-
-    <div class="card mb-3">
-      <div class="card-header">
-        {% blocktrans %}Recent events{% endblocktrans %}
-      </div>
-      <div class="card-body">
-        <div class="list-group">
-          {% for event in events %}
-            <a href="{{ event.get_absolute_url }}" class="list-group-item">
-              <h4 class="list-group-item-heading">
-                {{ event.request.title }}
-                <small>
-                  <span class="d-print-none" title="{{ event.timestamp }}">
-                  {% blocktrans with time=event.timestamp|timesince %}{{ time }} ago{% endblocktrans %}
-                  </span>
-                  <span class="d-print-inline">
-                    {{ event.timestamp|date:"DATETIME_FORMAT" }}
-                  </span>
-                </small>
-              </h4>
-              <p class="list-group-item-text">
-                {{ event.as_text }}
-              </p>
-            </a>
-          {% endfor %}
-        </div>
       </div>
     </div>
   </div>
