@@ -85,7 +85,7 @@
       {% endif %}
     </dl>
 
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
       {% if object|can_moderate:request %}
         <a class="btn btn-secondary mt-2" href="{% url 'publicbody-accept' pk=object.pk %}">
           {% if not object.confirmed %}
@@ -110,7 +110,7 @@
       </button>
     {% endif %}
 
-    {% if user.is_staff %}
+    {% if request.user.is_staff %}
       {% if object.confirmed %}
         {% url 'admin:publicbody_publicbody_change' object.id as admin_url %}
       {% else %}

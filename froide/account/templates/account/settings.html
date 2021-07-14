@@ -22,7 +22,7 @@
       <a href="#general" class="list-group-item list-group-item-action">
         {% trans "General settings" %}
       </a>
-      {% if not user.private %}
+      {% if not request.user.private %}
         <a href="#profile" class="list-group-item list-group-item-action">
           {% trans "Public profile" %}
         </a>
@@ -48,20 +48,12 @@
       <dt>
         {% blocktrans %}Your name:{% endblocktrans %}
       </dt>
-      <dd>{{ user.get_full_name }}</dd>
-      {% if user.organisation %}
-      <dt>
-        {% blocktrans %}Your Organisation:{% endblocktrans %}
-      </dt>
-      <dd>
-        {{ user.organisation }}
-      </dd>
-      {% endif %}
+      <dd>{{ request.user.get_full_name }}</dd>
       <dt>
         {% trans "Account Privacy:" %}
       </dt>
       <dd>
-      {% if user.private %}
+      {% if request.user.private %}
         <i class="fa fa-lock"></i>
         {% blocktrans %}Your name is hidden on the web.{% endblocktrans %}
       {% else %}
@@ -101,7 +93,7 @@
           {% if change_form %}
             {% render_form change_form %}
           {% else %}
-            {% render_form user.get_change_form %}
+            {% render_form request.user.get_change_form %}
           {% endif %}
           <button type="submit" class="btn btn-secondary">
             {% blocktrans %}Save changes{% endblocktrans %}
@@ -110,7 +102,7 @@
       </div>
     </div>
 
-    {% if not user.private %}
+    {% if not request.user.private %}
       <div id="profile" class="card mb-3 mt-5">
         <h5 class="card-header">
           {% trans "Public profile" %}
@@ -118,7 +110,7 @@
         <div class="card-body">
           {% if request.user.is_staff %}
             <p>
-              <a href="{{ user.get_absolute_url }}">
+              <a href="{{ request.user.get_absolute_url }}">
                 {% translate "Your public profile" %}
               </a>
             </p>
@@ -128,7 +120,7 @@
             {% if profile_form %}
               {% render_form profile_form %}
             {% else %}
-              {% render_form user.get_profile_form %}
+              {% render_form request.user.get_profile_form %}
             {% endif %}
             <button type="submit" class="btn btn-secondary">
               {% blocktrans %}Save changes{% endblocktrans %}

@@ -11,7 +11,7 @@
     {% endif %}
   {% endfor %}
 
-  {% if user.private and user == object.user %}
+  {% if request.user.private and request.user == object.user %}
     <div class="alert alert-info">
       {% trans "You have a private account. Your comment will show “requester” as the author." %}
     </div>

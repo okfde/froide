@@ -76,7 +76,7 @@
     <!-- body, tabs content -->
     {% include "foirequest/alpha/body/body.html" %}
 
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
       <div class="bg-gray-200">
         <div class="container py-4">
           <div class="row">

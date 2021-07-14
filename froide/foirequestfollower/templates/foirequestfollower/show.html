@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <div class="ajax-parent">
-  {% if user != object.user %}
+  {% if request.user != object.user %}
     {% if email_followed %}
       <div class="alert alert-info">
         {% trans "Please check your email inbox for a confirmation email." %}

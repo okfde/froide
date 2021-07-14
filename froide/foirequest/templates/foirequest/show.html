@@ -60,7 +60,7 @@
 
 {% block app_body %}
 
-{% if not user.is_authenticated and object.awaits_classification and not object|can_read_foirequest_anonymous:request %}
+{% if not request.user.is_authenticated and object.awaits_classification and not object|can_read_foirequest_anonymous:request %}
   {% url "account-login" as login_url %}
   <div class="alert alert-info d-print-none">{% blocktrans with login_url=login_url %}This request received a reply and is in an unknown state. If you created this request, please <a href="{{ login_url }}">log in</a> and set a new status.{% endblocktrans %}</div>
 {% endif %}
@@ -681,7 +681,7 @@
 </div>
 
 {% comment %}
-{% if user.is_authenticated %}
+{% if request.user.is_authenticated %}
   <div class="row mt-6 mb-n5">
     <div class="col-lg-8 smaller bg-gray-200 py-2">
       <a

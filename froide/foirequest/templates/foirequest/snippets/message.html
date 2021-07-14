@@ -175,7 +175,7 @@
           {% endif %}
         </dd>
       {% endif %}
-      {% if user.is_staff %}
+      {% if request.user.is_staff %}
         <dt class="d-print-none">
           {% blocktrans %}Admin{% endblocktrans %}
         </dt>
@@ -361,7 +361,7 @@
         </a>
       </div>
       <div class="collapse" id="comment-form-{{ message.id }}">
-        {% if user.is_authenticated %}
+        {% if request.user.is_authenticated %}
           {% include "comments/foirequest/form.html" %}
         {% else %}
           <a href="{% url 'account-login' %}" class="d-print-none">

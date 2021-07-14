@@ -30,7 +30,7 @@
         </p>
         <ul>
           <li>
-            {% if foirequest.user == user %}
+            {% if foirequest.user == request.user %}
               {% if foirequest.user.private %}
                 {% trans "Please remove all your personally identifying information." %}
               {% else %}

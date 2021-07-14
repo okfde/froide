@@ -23,7 +23,7 @@
           {% trans "Your requests" %}
         </a>
       </li>
-      {% if user.trusted %}
+      {% if request.user.trusted %}
         <li class="nav-item">
           <a href="{% if menu != 'projects' %}{% url 'account-projects' %}{% endif %}" class="nav-link{% if menu == 'projects' %} active{% endif %}">
             {% trans "Your projects" %}

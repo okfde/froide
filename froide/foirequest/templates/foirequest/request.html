@@ -135,7 +135,7 @@
         <div class="alert alert-danger">
           {% trans "You have JavaScript disabled. For a better experience please enable JavaScript." %}
         </div>
-        {% if not user.is_authenticated %}
+        {% if not request.user.is_authenticated %}
           <div class="alert alert-warning">
             <a href="{% url 'account-login' %}">
               {% trans "You have to login or signup first in order to make a request." %}

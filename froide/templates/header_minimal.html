@@ -8,10 +8,10 @@
 {% block nav_secondary %}<ul class="navbar-nav navbar-nav-secondary col-auto"></ul>{% endblock %}
 
 {% block nav_account_login %}
-  {% if user.is_authenticated %}
+  {% if request.user.is_authenticated %}
   <li class="nav-item dropdown account-dropdown {% block nav_account %}{% endblock %}">
     <span class="d-none d-md-none d-lg-inline">
-    {% blocktrans with name=user.first_name|truncatechars:12 %}
+    {% blocktrans with name=request.user.first_name|truncatechars:12 %}
       Hello {{ name}}
     {% endblocktrans %}
   </li>
