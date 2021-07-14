@@ -519,6 +519,8 @@ class ProfileForm(forms.ModelForm):
         image_field = self.cleaned_data['profile_photo']
         if not image_field:
             return image_field
+        if not hasattr(image_field, 'image'):
+            return image_field
         image = image_field.image
         if image.height != image.width:
             raise forms.ValidationError(_('Image is not square.'))
