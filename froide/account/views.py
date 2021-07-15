@@ -151,7 +151,7 @@ class ProfileView(DetailView):
 
         foirequests = FoiRequest.published.filter(user=self.object)
 
-        fr_aggs = foirequests.aggregate(
+        aggregates = foirequests.aggregate(
             count=models.Count('id'),
             first_date=models.Min('first_message'),
             successful=models.Count('id', filter=models.Q(
@@ -182,13 +182,17 @@ class ProfileView(DetailView):
                 'followers', filter=models.Q(followers__confirmed=True)
             )
         ).filter(follower_count__gt=0).order_by('-follower_count')[:TOP_FOLLOWERS]
+        user_days = (timezone.now() - self.object.date_joined).days
+
+        no_index = aggregates['count'] < 5 and user_days < 30
 
         ctx.update({
             'foirequests': foirequests.order_by('-first_message')[:10],
-            'aggregates': fr_aggs,
+            'aggregates': aggregates,
             'campaigns': campaigns,
             'top_followers': top_followers,
             'top_publicbodies': top_publicbodies,
+            'no_index': no_index,
         })
         return ctx
 

@@ -8,7 +8,10 @@
 {% block metadescription %}{% blocktrans with name=object.get_full_name site_name=SITE_NAME %}Profil and requests of {{ name }} on {{ site_name }}{% endblocktrans %}{% endblock %}
 
 {% block extra_head %}
-<meta name="robots" content="noindex"/>
+  {{ block.super }}
+  {% if no_index %}
+    <meta name="robots" content="noindex"/>
+  {% endif %}
 {% endblock %}
 
 {% block app_body %}
