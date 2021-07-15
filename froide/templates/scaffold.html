@@ -15,6 +15,8 @@
   
   {% render_block "css" %}
   {% block meta %}
+    {# Translators: meta description #}
+    <meta name="description" content="{% if description %}{{ description }}{% else %}{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}{% endif %}"/>
     {% include "snippets/meta.html" %}
   {% endblock %}
 
