@@ -6,6 +6,15 @@
     <a href="{{ object.url }}">
       {{ object.title }}
     </a>
+    {% if object.follower_count %}
+      <span class="badge badge-primary">
+      {% blocktrans count counter=object.follower_count %}
+        One follower
+      {% plural %}
+        {{ counter }} followers
+      {% endblocktrans %}
+      </span>
+    {% endif %}
     <br/>
     <small>
       {% if object.project %}

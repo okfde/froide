@@ -170,15 +170,24 @@ class ProfileView(DetailView):
         campaigns = Campaign.objects.filter(
             foirequest__in=foirequests,
         ).exclude(url='').distinct().order_by('-start_date')
+
         TOP_PUBLIC_BODIES = 3
         top_publicbodies = PublicBody.objects.filter(foirequest__in=foirequests).annotate(
             user_request_count=models.Count('id')
         ).order_by('-user_request_count')[:TOP_PUBLIC_BODIES]
 
+        TOP_FOLLOWERS = 3
+        top_followers = foirequests.annotate(
+            follower_count=models.Count(
+                'followers', filter=models.Q(followers__confirmed=True)
+            )
+        ).filter(follower_count__gt=0).order_by('-follower_count')[:TOP_FOLLOWERS]
+
         ctx.update({
             'foirequests': foirequests.order_by('-first_message')[:10],
             'aggregates': fr_aggs,
             'campaigns': campaigns,
+            'top_followers': top_followers,
             'top_publicbodies': top_publicbodies,
         })
         return ctx
