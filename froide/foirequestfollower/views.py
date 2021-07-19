@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from froide.foirequest.views import show
+from froide.foirequest.views.request import show_foirequest
 from froide.foirequest.auth import get_read_foirequest_queryset
 from froide.helper.utils import is_ajax
 
@@ -62,7 +62,7 @@ def follow(request, pk):
     if is_ajax(request):
         error_string = ' '.join(' '.join(v) for k, v in form.errors.items())
         return JsonResponse({'errors': error_string})
-    return show(request, foirequest.slug, context={"followform": form}, status=400)
+    return show_foirequest(request, foirequest, context={"followform": form}, status=400)
 
 
 @xframe_options_exempt

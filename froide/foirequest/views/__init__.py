@@ -35,7 +35,7 @@ from .request_actions import (
     publicbody_upload
 )
 from .request import (
-    shortlink, auth, show
+    shortlink, auth, FoiRequestView
 )
 
 
@@ -62,5 +62,5 @@ __all__ = [
     confirm_request, delete_request, publicbody_upload,
     set_tags, set_summary, mark_not_foi, make_same_request,
     extend_deadline,
-    shortlink, auth, show
+    shortlink, auth, FoiRequestView
 ]

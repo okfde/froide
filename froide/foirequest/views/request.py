@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import Http404
+from django.views.generic import DetailView
 from django.utils.translation import gettext as _
 
 from froide.account.preferences import get_preferences_for_user
@@ -33,25 +33,6 @@ def auth(request, obj_id, code):
     return render_403(request)
 
 
-def show(request, slug, **kwargs):
-    try:
-        obj = FoiRequest.objects.select_related(
-            "public_body",
-            "jurisdiction",
-            "user",
-            "law",
-        ).prefetch_related(
-            "tags",
-        ).get(slug=slug)
-    except FoiRequest.DoesNotExist:
-        raise Http404
-
-    if not can_read_foirequest(obj, request):
-        return render_403(request)
-
-    return show_foirequest(request, obj, **kwargs)
-
-
 def can_see_attachment(att, can_write):
     if att.approved:
         return True
@@ -64,6 +45,53 @@ def can_see_attachment(att, can_write):
 
 def show_foirequest(request, obj, template_name="foirequest/alpha/show.html",
         context=None, status=200):
+
+    if context is None:
+        context = {}
+
+    context.update(
+        get_foirequest_context(request, obj)
+    )
+
+    return render(request, template_name, context, status=status)
+
+
+class FoiRequestView(DetailView):
+    queryset = FoiRequest.objects.select_related(
+        "public_body",
+        "jurisdiction",
+        "user",
+        "law",
+    ).prefetch_related(
+        "tags",
+    )
+    template_name = "foirequest/alpha/show.html"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not can_read_foirequest(self.object, self.request):
+            return render_403(self.request)
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        obj = self.object
+        request = self.request
+
+        context.update(
+            get_foirequest_context(request, obj)
+        )
+
+        return context
+
+
+def get_foirequest_context(request, obj):
+    context = {}
+
     all_attachments = (
         FoiAttachment.objects
         .select_related('redacted')
@@ -112,9 +140,7 @@ def show_foirequest(request, obj, template_name="foirequest/alpha/show.html",
                 if ev.timestamp >= message.timestamp]
         last_index = last_index - len(message.events)
 
-    if context is None:
-        context = {}
-
+    # TODO: remove active_tab
     active_tab = 'info'
     if can_write:
         active_tab = get_active_tab(obj, context)
@@ -141,8 +167,7 @@ def show_foirequest(request, obj, template_name="foirequest/alpha/show.html",
             context.update({
                 'foirequest_requestpage_tour': get_requestpage_tour_data()
             })
-
-    return render(request, template_name, context, status=status)
+    return context
 
 
 def get_active_tab(obj, context):

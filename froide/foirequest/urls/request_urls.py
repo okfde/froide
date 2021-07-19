@@ -3,7 +3,7 @@ from django.utils.translation import pgettext_lazy
 
 from ..feeds import FoiRequestFeed, FoiRequestFeedAtom
 from ..views import (
-    shortlink, auth, show, suggest_public_body, set_public_body,
+    shortlink, auth, FoiRequestView, suggest_public_body, set_public_body,
     set_status, send_message, escalation_message, make_public,
     confirm_request, delete_request,
     set_law, set_tags, set_summary, add_postal_reply,
@@ -24,7 +24,7 @@ urlpatterns = [
     path("<int:obj_id>/auth/<slug:code>/", auth, name="foirequest-longerauth"),
     path("<int:obj_id>/upload/<slug:code>/", publicbody_upload,
         name="foirequest-publicbody_upload"),
-    path("<slug:slug>/", show, name="foirequest-show"),
+    path("<slug:slug>/", FoiRequestView.as_view(), name="foirequest-show"),
     path("<slug:slug>/suggest/public-body/", suggest_public_body, name="foirequest-suggest_public_body"),
     path("<slug:slug>/set/public-body/", set_public_body, name="foirequest-set_public_body"),
     path("<slug:slug>/set/status/", set_status, name="foirequest-set_status"),
