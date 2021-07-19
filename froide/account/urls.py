@@ -3,7 +3,7 @@ from django.urls import path, re_path, include
 from .views import (
     AccountView,
     NewAccountView, AccountConfirmedView,
-    account_settings,
+    account_settings, profile_redirect,
     new_terms, logout, login, SignupView, confirm,
     send_reset_password_link, change_password,
     change_user, change_email, go, delete_account,
@@ -18,6 +18,7 @@ urlpatterns = [
     path('', AccountView.as_view(), name='account-show'),
     path('new/', NewAccountView.as_view(), name='account-new'),
     path('confirmed/', AccountConfirmedView.as_view(), name='account-confirmed'),
+    path('profile/', profile_redirect, name='account-profile_redirect'),
     path('settings/', account_settings, name='account-settings'),
     path('terms/', new_terms, name='account-new_terms'),
     path('logout/', logout, name='account-logout'),
