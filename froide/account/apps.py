@@ -16,6 +16,7 @@ class AccountConfig(AppConfig):
 
         menu_registry.register(get_settings_menu_item)
         menu_registry.register(get_request_menu_item)
+        menu_registry.register(get_profile_menu_item)
 
 
 def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwargs):
@@ -31,6 +32,19 @@ def get_request_menu_item(request):
         section='before_request', order=999,
         url=reverse('account-show'),
         label=_('My requests')
+    )
+
+
+def get_profile_menu_item(request):
+    if request.user.private:
+        return None
+    # TODO: remove on launch
+    if not request.user.is_staff:
+        return None
+    return MenuItem(
+        section='before_settings', order=0,
+        url=reverse('account-profile', kwargs={'slug': request.user.username}),
+        label=_('My public profile')
     )
 
 
