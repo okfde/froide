@@ -142,21 +142,6 @@ def show_foirequest(request, obj, template_name="foirequest/alpha/show.html",
                 'foirequest_requestpage_tour': get_requestpage_tour_data()
             })
 
-    alpha_key = 'foirequest_alpha'
-    alpha = request.GET.get('alpha')
-    if alpha:
-        if alpha == '1' and alpha_key in request.session:
-            del request.session[alpha_key]
-        elif alpha == '0':
-            request.session[alpha_key] = False
-        return redirect(obj)
-
-    if request.session.get(alpha_key) is False:
-        template_name = [
-            "foirequest/show.html",
-            "foirequest/alpha/show.html",
-        ]
-
     return render(request, template_name, context, status=status)
 
 
