@@ -36,6 +36,8 @@ def get_request_menu_item(request):
 
 
 def get_profile_menu_item(request):
+    if not request.user.is_authenticated:
+        return None
     if request.user.private:
         return None
     # TODO: remove on launch
