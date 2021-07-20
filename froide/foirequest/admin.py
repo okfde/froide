@@ -749,7 +749,10 @@ class FoiProjectAdmin(admin.ModelAdmin):
     list_display = ('title', 'created',
         'requests_admin_link',
         'user', 'public', 'status', 'request_count', 'site_link')
-    list_filter = ('public', 'status',)
+    list_filter = (
+        'public', 'status',
+        ('user', ForeignKeyFilter)
+    )
     search_fields = ['title', 'description', 'reference']
     ordering = ('-last_update',)
     date_hierarchy = 'created'
