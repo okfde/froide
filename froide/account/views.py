@@ -466,7 +466,7 @@ def profile_redirect(request):
     if request.user.private:
         messages.add_message(request, messages.INFO,
                 _("Your account is private, so you don't have a public profile."))
-        return redirect('account-settings')
+        return redirect('account-requests')
 
     return redirect('account-profile', slug=request.user.username)
 
