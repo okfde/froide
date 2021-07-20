@@ -23,14 +23,16 @@
   <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="og:title" content="{{ object.title }}">
   <meta property="og:description" content="{{ object.description }}">
-  {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
+  
 
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="twitter:title" content="{{ object.title }}">
   <meta property="twitter:description" content="{{ object.description }}">
-  {% if SITE_LOGO %}<meta property="twitter:image" content="{{ SITE_LOGO }}">{% endif %}
+  {% block share_image %}
+    <meta property="twitter:card" content="summary_large_image">
+    {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
+  {% endblock share_image %}
 
   <link rel="self" type="text/html" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
   {% if DEFAULT_LANGUAGE_CODE != CURRENT_LANGUAGE_CODE %}
