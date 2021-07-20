@@ -733,6 +733,15 @@ class FoiProjectAdminForm(forms.ModelForm):
         }
 
 
+def execute_move_requests(admin, request, queryset, action_obj):
+    assert not queryset.filter(id=action_obj.id).exists()
+
+    for foi_project in queryset:
+        action_obj.add_requests(
+            FoiRequest.objects.filter(project=foi_project)
+        )
+
+
 class FoiProjectAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
@@ -745,6 +754,7 @@ class FoiProjectAdmin(admin.ModelAdmin):
     ordering = ('-last_update',)
     date_hierarchy = 'created'
     raw_id_fields = ('user', 'team', 'publicbodies',)
+    actions = ['move_requests', 'publish']
 
     def site_link(self, obj):
         return format_html('<a href="{}">{}</a>',
@@ -759,6 +769,16 @@ class FoiProjectAdmin(admin.ModelAdmin):
             ),
             _('Requests in admin')
         )
+
+    move_requests = make_choose_object_action(
+        FoiProject, execute_move_requests,
+        _("Move requests to...")
+    )
+
+    def publish(self, request, queryset):
+        for foi_project in queryset:
+            foi_project.make_public(publish_requests=True, user=request.user)
+    publish.short_description = _('Publish project and all requests')
 
 
 class RequestDraftAdmin(admin.ModelAdmin):
