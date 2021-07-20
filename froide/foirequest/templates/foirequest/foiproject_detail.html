@@ -4,8 +4,7 @@
 {% load static %}
 {% load markup %}
 {% load foirequest_tags %}
-{% load block_helper %}
-
+{% load form_helper %}
 
 {% block title %}{{ object.title }}{% endblock %}
 
@@ -32,56 +31,113 @@
   </h1>
 
   <p>
-    {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
-    Created on {{ date }} with currently {{ num }} requests.
-    {% endblocktrans %}
-    {% if object.public %}
-      {% trans "This project and all its requests are <strong>public</strong>." %}
+    {% if object|can_read_foiproject:request %}
+      {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
+      Created on {{ date }} with currently {{ num }} requests.
+      {% endblocktrans %}
     {% else %}
-      {% trans "This project and all its requests are <strong>not public</strong>." %}
+      {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=public_requests %}
+      Created on {{ date }} with currently {{ num }} public requests.
+      {% endblocktrans %}
     {% endif %}
   </p>
 
-  <table class="table table-hover table-sm">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">
-          {% trans "status" %}
-        </th>
-        <th scope="col">
-          {% trans "last message" %}
-        </th>
-        <th scope="col">
-          {% trans "public body" %}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for req in object.foirequest_set.all %}
-      <tr>
-        <td>
-          {{ req.project_number }}
-        </td>
-        <td>
-          <a href="{{ req.get_absolute_url }}">
-            {{ req.get_status_display }}
-          </a>
-        </td>
-        <td>
-          <a href="{{ req.get_absolute_url_last_message }}">
-            {{ req.last_message|date:"SHORT_DATE_FORMAT" }}
-          </a>
-        </td>
-        <td>
-          <a href="{{ req.public_body.get_absolute_url }}">
-            {{ req.public_body.name }}
-          </a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+  {% if object|can_read_foiproject:request and not all_public or not object.public %}
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card mt-2 mb-5">
+          <div class="card-body">
+            {% if object.public %}
+              {% if all_public %}
+                {% trans "This project and all its requests are <strong>public</strong>." %}
+              {% else %}
+                {% trans "This project is public, but some of its requests are <strong>not public</strong>." %}
+              {% endif %}
+            {% else %}
+              {% if all_non_public %}
+                {% trans "This project and all its requests are <strong>not public</strong>." %}
+              {% else %}
+                {% trans "This project is <strong>not public</strong>, but some of its requests are public." %}
+              {% endif %}
+            {% endif %}
+            {% if object|can_manage_foiproject:request %}
+              <form method="post" action="{% url 'foirequest-project_make_public' slug=object.slug %}">
+                {% csrf_token %}
+                {% if not object.public and not all_public %}
+                  {% render_form make_public_form %}
+                {% endif %}
+                <div class="text-right">
+                  <button type="submit" class="btn btn-primary">
+                    {% if not object.public %}
+                      {% translate "Publish project" %}
+                    {% else %}
+                      {% translate "Publish all requests" %}
+                    {% endif %}
+                  </button>
+                </div>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="table-responsive">
+    <table class="table table-hover table-sm">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">
+            {% trans "status" %}
+          </th>
+          <th scope="col">
+            {% trans "last message" %}
+          </th>
+          <th scope="col">
+            {% trans "public body" %}
+          </th>
+          <th scope="col">
+            {% trans "is public?" %}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in object.foirequest_set.all %}
+        <tr>
+          <td>
+            {{ req.project_number }}
+          </td>
+          <td>
+            <a href="{{ req.get_absolute_url }}">
+              {{ req.get_status_display }}
+            </a>
+          </td>
+          <td>
+            <a href="{{ req.get_absolute_url_last_message }}">
+              {{ req.last_message|date:"SHORT_DATE_FORMAT" }}
+            </a>
+          </td>
+          <td>
+            <a href="{{ req.public_body.get_absolute_url }}">
+              {{ req.public_body.name }}
+            </a>
+          </td>
+          <td class="text-center">
+            {% if req.is_public %}
+              <span class="fa fa-check"></span>
+              <span class="sr-only">{% translate "Yes" %}</span>
+            {% else %}
+              <span class="fa fa-ban"></span>
+              <span class="sr-only">{% translate "No" %}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
   {% if team_form %}
     {% trans "Assign team to project" as legend %}

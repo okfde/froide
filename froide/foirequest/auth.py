@@ -15,7 +15,7 @@ from froide.helper.auth import (
     get_read_queryset, check_permission
 )
 
-from .models import FoiRequest, FoiMessage, FoiAttachment
+from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 
 
 def get_read_foirequest_queryset(request):
@@ -93,6 +93,7 @@ def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
 
 
 def can_read_foiproject(foiproject, request):
+    assert isinstance(foiproject, FoiProject)
     return can_read_object(foiproject, request)
 
 
@@ -130,6 +131,7 @@ def can_write_foiproject(foiproject, request):
 
 
 def can_manage_foiproject(foiproject, request):
+    assert isinstance(foiproject, FoiProject)
     return can_manage_object(foiproject, request)
 
 

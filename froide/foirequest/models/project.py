@@ -122,3 +122,12 @@ class FoiProject(models.Model):
                 self.publicbodies.add(req.public_body)
         self.request_count = self.foirequest_set.all().count()
         self.save()
+
+    def make_public(self, publish_requests=False, user=None):
+        self.public = True
+        self.save()
+        if not publish_requests:
+            return
+        for req in self.foirequest_set.all():
+            if not req.is_public():
+                req.make_public(user=user)

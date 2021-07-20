@@ -23,7 +23,8 @@ from ..foi_mail import get_alternative_mail
 from ..auth import (
     can_read_foirequest, can_write_foirequest, can_manage_foirequest,
     can_read_foirequest_anonymous, can_read_foirequest_authenticated,
-    can_moderate_foirequest
+    can_moderate_foirequest,
+    can_read_foiproject, can_write_foiproject, can_manage_foiproject
 )
 
 Comment = get_model()
@@ -274,6 +275,21 @@ def can_moderate_foirequest_filter(foirequest, request):
 @register.filter(name='can_read_foirequest_anonymous')
 def can_read_foirequest_anonymous_filter(foirequest, request):
     return can_read_foirequest_anonymous(foirequest, request)
+
+
+@register.filter(name='can_read_foiproject')
+def can_read_foiproject_filter(foiproject, request):
+    return can_read_foiproject(foiproject, request)
+
+
+@register.filter(name='can_write_foiproject')
+def can_write_foiproject_filter(foiproject, request):
+    return can_write_foiproject(foiproject, request)
+
+
+@register.filter(name='can_manage_foiproject')
+def can_manage_foiproject_filter(foiproject, request):
+    return can_manage_foiproject(foiproject, request)
 
 
 @register.filter

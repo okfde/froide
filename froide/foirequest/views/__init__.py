@@ -25,7 +25,8 @@ from .misc_views import (
     FoiRequestSitemap
 )
 from .project import (
-    ProjectView, project_shortlink, SetProjectTeamView
+    ProjectView, project_shortlink, SetProjectTeamView,
+    make_project_public
 )
 from .request_actions import (
     set_public_body, suggest_public_body, set_status, make_public, set_law,
@@ -58,6 +59,7 @@ __all__ = [
     SetTeamView,
     FoiRequestSitemap,
     ProjectView, project_shortlink, SetProjectTeamView,
+    make_project_public,
     set_public_body, suggest_public_body, set_status, make_public, set_law,
     confirm_request, delete_request, publicbody_upload,
     set_tags, set_summary, mark_not_foi, make_same_request,
