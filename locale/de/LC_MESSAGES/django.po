@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-19 12:22+0200\n"
-"PO-Revision-Date: 2021-07-19 12:23+0200\n"
+"POT-Creation-Date: 2021-07-20 16:26+0200\n"
+"PO-Revision-Date: 2021-07-20 16:30+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -218,11 +218,11 @@ msgstr "Account"
 msgid "My requests"
 msgstr "Meine Anfragen"
 
-#: froide/account/apps.py:47
+#: froide/account/apps.py:49
 msgid "My public profile"
 msgstr "Mein öffentliches Profil"
 
-#: froide/account/apps.py:55
+#: froide/account/apps.py:57
 #: froide/foirequest/templates/foirequest/alpha/header/tabs.html:38
 msgid "Settings"
 msgstr "Einstellungen"
@@ -612,7 +612,7 @@ msgstr "Sende E-Mail an Nutzer"
 #: froide/foirequest/templates/foirequest/alpha/body/message/meta_container.html:81
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:80
 #: froide/foirequest/templates/foirequest/snippets/message.html:88
-#: froide/foirequest/templatetags/foirequest_tags.py:345
+#: froide/foirequest/templatetags/foirequest_tags.py:361
 #: froide/foirequest/views/make_request.py:214
 msgid "Subject"
 msgstr "Betreff"
@@ -1061,7 +1061,6 @@ msgid "Top requested public bodies"
 msgstr "Meist angefragte Behörden"
 
 #: froide/account/templates/account/profile.html:122
-#: froide/foirequest/views/make_request.py:163
 #, python-format
 msgid "one request"
 msgid_plural "%(count)s requests"
@@ -2016,13 +2015,21 @@ msgstr "Als Spam markieren (löscht alle außer eine pro Absender)"
 msgid "Redeliver to..."
 msgstr "Erneut zustellen…"
 
-#: froide/foirequest/admin.py:752
+#: froide/foirequest/admin.py:762
 msgid "Show on site"
 msgstr "Live-Ansicht"
 
-#: froide/foirequest/admin.py:760
+#: froide/foirequest/admin.py:770
 msgid "Requests in admin"
 msgstr "Anfragen im Admin"
+
+#: froide/foirequest/admin.py:775
+msgid "Move requests to..."
+msgstr "Verschiebe Anfragen in..."
+
+#: froide/foirequest/admin.py:781
+msgid "Publish project and all requests"
+msgstr "Veröffentliche Projekt und alle Anfragen"
 
 #: froide/foirequest/apps.py:8
 msgid "FOI Request"
@@ -2174,7 +2181,7 @@ msgid "Search requests"
 msgstr "Anfragen durchsuchen"
 
 #: froide/foirequest/filters.py:161 froide/foirequest/filters.py:165
-#: froide/foirequest/templates/foirequest/foiproject_detail.html:50
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:93
 #: froide/foirequest/views/account_requests.py:42
 msgid "status"
 msgstr "Zustand"
@@ -2466,6 +2473,11 @@ msgid ""
 msgstr ""
 "Bitte geben Sie entweder eine Zusammenfassung des Briefes an oder laden Sie "
 "einen Scan oder Foto des Briefes hoch."
+
+#: froide/foirequest/forms/project.py:11
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:75
+msgid "Publish all requests"
+msgstr "Alle Anfragen veröffentlichen"
 
 #: froide/foirequest/forms/request.py:38
 msgid "Body"
@@ -4310,7 +4322,7 @@ msgstr "Von"
 #: froide/foirequest/templates/foirequest/alpha/body/message/sender.html:21
 #: froide/foirequest/templates/foirequest/snippets/message.html:25
 #: froide/foirequest/templates/foirequest/snippets/message.html:52
-#: froide/foirequest/templatetags/foirequest_tags.py:191
+#: froide/foirequest/templatetags/foirequest_tags.py:192
 msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
 
@@ -4703,7 +4715,7 @@ msgid "in %(due)s"
 msgstr "in %(due)s"
 
 #: froide/foirequest/templates/foirequest/alpha/header/info-box.html:105
-#: froide/foirequest/templatetags/foirequest_tags.py:406
+#: froide/foirequest/templatetags/foirequest_tags.py:422
 msgid "Due date"
 msgstr "Frist"
 
@@ -5442,39 +5454,84 @@ msgstr "Kosten in Höhe von %(costs)s EUR wurden angegeben."
 #, python-format
 msgid ""
 "\n"
-"    Created on %(date)s with currently %(num)s requests.\n"
-"    "
+"      Created on %(date)s with currently %(num)s requests.\n"
+"      "
 msgstr ""
 "\n"
-"    Erstellt am %(date)s mit aktuell %(num)s Anfragen.\n"
-"    "
+"       Erstellt am %(date)s mit aktuell %(num)s Anfragen.\n"
+"       "
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html:39
+#, python-format
+msgid ""
+"\n"
+"      Created on %(date)s with currently %(num)s public requests.\n"
+"      "
+msgstr ""
+"\n"
+"        Erstellt am %(date)s mit aktuell %(num)s öffentlichen Anfragen.\n"
+"        "
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:53
 msgid "This project and all its requests are <strong>public</strong>."
 msgstr ""
 "Dieses Projekt und alle Anfragen darin sind momentan <strong>öffentlich</"
 "strong>."
 
-#: froide/foirequest/templates/foirequest/foiproject_detail.html:41
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:55
+#| msgid "This project and all its requests are <strong>not public</strong>."
+msgid ""
+"This project is public, but some of its requests are <strong>not public</"
+"strong>."
+msgstr ""
+"Dieses Projekt ist öffentlich, aber einige der Anfragen sind <strong>nicht "
+"öffentlich</strong>."
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:59
 msgid "This project and all its requests are <strong>not public</strong>."
 msgstr ""
 "Dieses Projekt und alle Anfragen darin sind momentan <strong>nicht "
 "öffentlich</strong>."
 
-#: froide/foirequest/templates/foirequest/foiproject_detail.html:53
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:61
+#| msgid "This request is <strong>not public</strong> at the moment."
+msgid ""
+"This project is <strong>not public</strong>, but some of its requests are "
+"public."
+msgstr ""
+"Dieses Projekt ist <strong>nicht öffentlich</strong>, aber einige der "
+"Anfragen sind öffentlich."
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:73
+msgid "Publish project"
+msgstr "Projekt veröffentlichen"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:96
 #: froide/problem/views.py:110
 msgid "last message"
 msgstr "letzte Nachricht"
 
-#: froide/foirequest/templates/foirequest/foiproject_detail.html:56
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:99
 msgid "public body"
 msgstr "Behörde"
 
-#: froide/foirequest/templates/foirequest/foiproject_detail.html:87
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:102
+msgid "is public?"
+msgstr "öffentlich?"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:130
+msgid "Yes"
+msgstr "Ja"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:133
+msgid "No"
+msgstr "Nein"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:143
 msgid "Assign team to project"
 msgstr "Weise ein Team zu diesem Projekt zu"
 
-#: froide/foirequest/templates/foirequest/foiproject_detail.html:88
+#: froide/foirequest/templates/foirequest/foiproject_detail.html:144
 msgid "Set team for project"
 msgstr "Weisen Sie diesem Projekt ein Team zu"
 
@@ -5545,7 +5602,7 @@ msgid "Subject:"
 msgstr "Betreff:"
 
 #: froide/foirequest/templates/foirequest/pdf/message_letter.html:118
-#: froide/foirequest/templatetags/foirequest_tags.py:100
+#: froide/foirequest/templatetags/foirequest_tags.py:101
 msgid "Kind Regards,"
 msgstr "Mit freundlichen Grüßen"
 
@@ -6462,24 +6519,24 @@ msgstr "Was ist der Status Ihrer Anfrage nach diesem Brief?"
 msgid "Add letter"
 msgstr "Brief hinzufügen"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:94
+#: froide/foirequest/templatetags/foirequest_tags.py:95
 msgid "[... Show complete request text]"
 msgstr "[… Zeige kompletten Anfragetext]"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:225
+#: froide/foirequest/templatetags/foirequest_tags.py:226
 msgid "Show the quoted message"
 msgstr "Zeige die zitierte Nachricht an"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:346
+#: froide/foirequest/templatetags/foirequest_tags.py:362
 #: froide/problem/views.py:90
 msgid "Message"
 msgstr "Nachricht"
 
-#: froide/foirequest/templatetags/foirequest_tags.py:347
+#: froide/foirequest/templatetags/foirequest_tags.py:363
 msgid "Message is loading..."
 msgstr "Nachricht wird geladen..."
 
-#: froide/foirequest/templatetags/foirequest_tags.py:416
+#: froide/foirequest/templatetags/foirequest_tags.py:432
 msgid "Today"
 msgstr "Heute"
 
@@ -6859,6 +6916,11 @@ msgstr "eine Behörde"
 #, python-brace-format
 msgid "{count} public bodies"
 msgstr "{count} Behörden"
+
+#: froide/foirequest/views/make_request.py:163
+msgctxt "js"
+msgid "one request"
+msgstr "eine Anfrage"
 
 #: froide/foirequest/views/make_request.py:164
 #, python-brace-format
@@ -11091,11 +11153,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~| msgid "Nuclear"
 #~ msgid "Clear"
 #~ msgstr "Atom"
-
-#, fuzzy
-#~| msgid "None"
-#~ msgid "No"
-#~ msgstr "None"
 
 #, fuzzy
 #~| msgid "NAME"
