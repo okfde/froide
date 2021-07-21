@@ -24,7 +24,8 @@ from ..auth import (
     can_read_foirequest, can_write_foirequest, can_manage_foirequest,
     can_read_foirequest_anonymous, can_read_foirequest_authenticated,
     can_moderate_foirequest,
-    can_read_foiproject, can_write_foiproject, can_manage_foiproject
+    can_read_foiproject, can_write_foiproject, can_manage_foiproject,
+    can_read_foiproject_authenticated
 )
 
 Comment = get_model()
@@ -280,6 +281,11 @@ def can_read_foirequest_anonymous_filter(foirequest, request):
 @register.filter(name='can_read_foiproject')
 def can_read_foiproject_filter(foiproject, request):
     return can_read_foiproject(foiproject, request)
+
+
+@register.filter(name='can_read_foiproject_authenticated')
+def can_read_foiproject_authenticated_filter(foiproject, request):
+    return can_read_foiproject_authenticated(foiproject, request)
 
 
 @register.filter(name='can_write_foiproject')

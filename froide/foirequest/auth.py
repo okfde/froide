@@ -18,18 +18,22 @@ from froide.helper.auth import (
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 
 
-def get_read_foirequest_queryset(request):
+def get_read_foirequest_queryset(request, queryset=None):
+    if queryset is None:
+        queryset = FoiRequest.objects.all()
     return get_read_queryset(
-        FoiRequest.objects.all(), request,
+        queryset, request,
         has_team=True,
         public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope='read:request'
     )
 
 
-def get_read_foimessage_queryset(request):
+def get_read_foimessage_queryset(request, queryset=None):
+    if queryset is None:
+        queryset = FoiMessage.objects.all()
     return get_read_queryset(
-        FoiMessage.objects.all(), request,
+        queryset, request,
         has_team=True,
         public_q=Q(request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope='read:request',
@@ -95,6 +99,15 @@ def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
 def can_read_foiproject(foiproject, request):
     assert isinstance(foiproject, FoiProject)
     return can_read_object(foiproject, request)
+
+
+@lru_cache()
+def can_read_foiproject_authenticated(foiproject, request):
+    assert isinstance(foiproject, FoiProject)
+    return has_authenticated_access(
+        foiproject, request, verb='read',
+        scope='read:request'
+    )
 
 
 @lru_cache()

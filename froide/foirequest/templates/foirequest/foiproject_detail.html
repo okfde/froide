@@ -31,7 +31,7 @@
   </h1>
 
   <p>
-    {% if object|can_read_foiproject:request %}
+    {% if object|can_read_foiproject_authenticated:request %}
       {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
       Created on {{ date }} with currently {{ num }} requests.
       {% endblocktrans %}
@@ -43,7 +43,7 @@
   </p>
 
 
-  {% if object|can_read_foiproject:request and not all_public or not object.public %}
+  {% if object|can_read_foiproject_authenticated:request and not all_public or not object.public %}
     <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card mt-2 mb-5">
@@ -98,13 +98,15 @@
           <th scope="col">
             {% trans "public body" %}
           </th>
-          <th scope="col">
-            {% trans "is public?" %}
-          </th>
+          {% if object|can_read_foiproject_authenticated:request %}
+            <th scope="col">
+              {% trans "is public?" %}
+            </th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
-        {% for req in object.foirequest_set.all %}
+        {% for req in foirequests %}
         <tr>
           <td>
             {{ req.project_number }}
@@ -124,15 +126,17 @@
               {{ req.public_body.name }}
             </a>
           </td>
-          <td class="text-center">
-            {% if req.is_public %}
-              <span class="fa fa-check"></span>
-              <span class="sr-only">{% translate "Yes" %}</span>
-            {% else %}
-              <span class="fa fa-ban"></span>
-              <span class="sr-only">{% translate "No" %}</span>
-            {% endif %}
-          </td>
+          {% if object|can_read_foiproject_authenticated:request %}
+            <td class="text-center">
+              {% if req.is_public %}
+                <span class="fa fa-check"></span>
+                <span class="sr-only">{% translate "Yes" %}</span>
+              {% else %}
+                <span class="fa fa-ban"></span>
+                <span class="sr-only">{% translate "No" %}</span>
+              {% endif %}
+            </td>
+          {% endif %}
         </tr>
         {% endfor %}
       </tbody>

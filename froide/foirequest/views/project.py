@@ -10,7 +10,9 @@ from froide.helper.utils import render_400, render_403
 
 from ..models import FoiProject
 from ..forms import MakeProjectPublicForm
-from ..auth import can_read_foiproject, can_manage_foiproject
+from ..auth import (
+    get_read_foirequest_queryset, can_read_foiproject, can_manage_foiproject
+)
 
 
 def project_shortlink(request, obj_id):
@@ -45,6 +47,9 @@ class ProjectView(AuthRequiredMixin, DetailView):
         public_requests = self.object.foirequest_set.filter(
             public=True
         ).count()
+        context['foirequests'] = get_read_foirequest_queryset(
+            self.request, queryset=self.object.foirequest_set.all()
+        )
         context['public_requests'] = public_requests
         context['all_public'] = public_requests == self.object.request_count
         context['all_non_public'] = public_requests == 0
