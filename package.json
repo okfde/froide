@@ -56,7 +56,7 @@
     "postcss": "^8.1.0",
     "postcss-loader": "^6.1.1",
     "resolve-url-loader": "^4.0.0",
-    "sass": "^1.32.12",
+    "sass": "1.32.13",
     "sass-loader": "^12.1.0",
     "style-loader": "^3.2.1",
     "ts-loader": "^9.2.4",
