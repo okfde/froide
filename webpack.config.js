@@ -1,7 +1,7 @@
 const path = require('path')
 const LiveReloadPlugin = require('webpack-livereload-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -48,16 +48,17 @@ const config = {
     libraryTarget: 'umd'
   },
   devtool: 'source-map', // any "source-map"-like devtool is possible
-  node: {
-    url: true
-  },
+  // node: {
+  //   url: true
+  // },
   resolve: {
     modules: ['node_modules', 'froide/static'],
     extensions: ['.js', '.ts', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.runtime.esm.js',
       'froide': path.resolve('.')
-    }
+    },
+    fallback: { "zlib": path.resolve("browserify-zlib") }
   },
   module: {
     rules: [
@@ -115,10 +116,11 @@ const config = {
           {
             loader: 'postcss-loader',
             options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                require('autoprefixer')()
-              ]
+              postcssOptions: {
+                plugins: [
+                  ["autoprefixer"]
+                ]
+              }
             }
           },
           {
@@ -175,9 +177,11 @@ const config = {
       // publicPath: '../../'
     }),
     new LiveReloadPlugin(),
-    new CopyWebpackPlugin([
-      {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
+      ]
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: `"${process.env.NODE_ENV}"`
@@ -187,18 +191,9 @@ const config = {
   ],
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true // set to true if you want JS source maps
-      })
+      new TerserPlugin()
     ].concat(!devMode ? [
-      new OptimizeCssAssetsPlugin({
-        assetNameRegExp: /\.css$/,
-        cssProcessorOptions: {
-          discardComments: { removeAll: true }
-        }
-      })
+      new CssMinimizerPlugin()
     ] : []),
     splitChunks: {
       cacheGroups: {

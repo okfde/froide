@@ -26,9 +26,6 @@ function setupTagging() {
         return addItemText.replace("${value}", String(value));
       },
       addItems: true,
-      classNames: {
-        hiddenState: "d-none",
-      },
       delimiter: ",",
       duplicateItemsAllowed: false,
       editItems: true,
