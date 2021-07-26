@@ -6,8 +6,6 @@ available under MIT License, Copyright (c) 2017, Dirk Moors
 '''
 
 
-default_app_config = 'froide.upload.apps.UploadConfig'
-
 tus_api_version = '1.0.0'
 tus_api_version_supported = ['1.0.0']
 tus_api_extensions = ['creation', 'creation-defer-length', 'termination', 'checksum', 'expiration']
