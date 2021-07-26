@@ -58,7 +58,7 @@ const config = {
       'vue$': 'vue/dist/vue.runtime.esm.js',
       'froide': path.resolve('.')
     },
-    fallback: { "zlib": path.resolve("browserify-zlib") }
+    fallback: { "zlib": false }
   },
   module: {
     rules: [
