@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .js,.vue frontend",
     "dev": "webpack --watch --mode development",
-    "serve": "NODE_ENV=development webpack serve -d --progress --mode development --hot --host 0.0.0.0",
+    "serve": "NODE_ENV=development webpack serve --progress --mode development --hot --host 0.0.0.0",
     "build": "NODE_ENV=production webpack --mode production",
     "favicon": "real-favicon generate froide/static/img/logo/favicon.json favicon-result.json froide/static/img/logo"
   },
