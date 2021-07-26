@@ -1,11 +1,16 @@
 from io import BytesIO
 import json
+import os
 import tempfile
 
 from django.test import TestCase
 from django.urls import reverse
 
-from froide.foirequest.tests import factories
+from froide.foirequest.tests.factories import make_world, rebuild_index
+from froide.publicbody.factories import (
+    PublicBodyFactory, ClassificationFactory, CategoryFactory,
+    JurisdictionFactory
+)
 from froide.helper.csv_utils import export_csv_bytes
 
 from .models import PublicBody, FoiLaw, Jurisdiction
@@ -14,14 +19,14 @@ from .csv_import import CSVImporter
 
 class PublicBodyTest(TestCase):
     def setUp(self):
-        self.site = factories.make_world()
+        self.site = make_world()
 
     def test_web_page(self):
         pb = PublicBody.objects.all()[0]
-        category = factories.CategoryFactory.create(is_topic=True)
+        category = CategoryFactory.create(is_topic=True)
         pb.categories.add(category)
 
-        factories.rebuild_index()
+        rebuild_index()
 
         response = self.client.get(reverse('publicbody-list'))
         self.assertEqual(response.status_code, 200)
@@ -61,8 +66,8 @@ class PublicBodyTest(TestCase):
         self.assertEqual(now_count, prev_count)
 
     def test_csv_existing_import(self):
-        classification = factories.ClassificationFactory.create(name='Ministry')
-        factories.PublicBodyFactory.create(
+        classification = ClassificationFactory.create(name='Ministry')
+        PublicBodyFactory.create(
             site=self.site,
             name='Public Body 76 X',
             classification=classification
@@ -81,7 +86,7 @@ Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some c
 
     def test_csv_new_import(self):
         # Make sure classification exist
-        factories.ClassificationFactory.create(name='Ministry')
+        ClassificationFactory.create(name='Ministry')
         prev_count = PublicBody.objects.all().count()
         csv = '''name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,website_dump,request_note
 Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,,'''
@@ -95,8 +100,8 @@ Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some c
         csv_file = tempfile.NamedTemporaryFile()
         csv_file.write(export_csv_bytes(PublicBody.export_csv(PublicBody.objects.all())))
         csv_file.flush()
-
-        call_command('import_csv', csv_file.name)
+        with open(os.devnull, 'a') as f:
+            call_command('import_csv', csv_file.name, stdout=f)
 
         csv_file.close()
 
@@ -136,7 +141,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some c
         response = self.client.get(juris.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, juris.name)
-        new_juris = factories.JurisdictionFactory.create(
+        new_juris = JurisdictionFactory.create(
             name='peculiar', hidden=True
         )
         response = self.client.get(new_juris.get_absolute_url())
@@ -151,7 +156,7 @@ Public Body X 76,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some c
 
 class ApiTest(TestCase):
     def setUp(self):
-        self.site = factories.make_world()
+        self.site = make_world()
 
     def test_list(self):
         response = self.client.get('/api/v1/publicbody/?format=json')
@@ -180,7 +185,7 @@ class ApiTest(TestCase):
 
     def test_autocomplete(self):
         pb = PublicBody.objects.all()[0]
-        factories.rebuild_index()
+        rebuild_index()
 
         response = self.client.get('%s?q=%s' % (
                 '/api/v1/publicbody/search/', pb.name))
