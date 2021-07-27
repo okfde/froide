@@ -17,9 +17,9 @@ class UploadDocumentStorer(DocumentStorer):
         upload.ensure_saving()
         upload.save()
 
-        if upload.filename.endswith('.pdf'):
+        if upload.filename.lower().endswith('.pdf'):
             self.create_document_from_upload(upload)
-        elif upload.filename.endswith('.zip') and self.collection:
+        elif upload.filename.lower().endswith('.zip') and self.collection:
             self.unpack_upload_zip(upload)
 
         upload.finish()
