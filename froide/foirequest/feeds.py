@@ -1,5 +1,3 @@
-import re
-
 from django.conf import settings
 from django.contrib.syndication.views import Feed
 from django.utils.feedgenerator import Atom1Feed
@@ -8,14 +6,10 @@ from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import linebreaksbr
 
+from froide.helper.feed_utils import clean_feed_output
+
 from .models import FoiRequest
 from .filters import FOIREQUEST_FILTER_DICT
-
-CONTROLCHARS_RE = re.compile(r'[\x00-\x08\x0B-\x0C\x0E-\x1F]')
-
-
-def clean(val):
-    return CONTROLCHARS_RE.sub('', val)
 
 
 class LatestFoiRequestsFeed(Feed):
@@ -45,29 +39,31 @@ class LatestFoiRequestsFeed(Feed):
             by.append(_('to %(publicbody)s') % {'publicbody': self.data['publicbody'].name})
         return ' '.join(str(x) for x in by)
 
+    @clean_feed_output
     def title(self, obj):
         by = self.get_filter_string()
         if by:
-            return clean(_("Freedom of Information Requests %(by)s on %(sitename)s") % {
+            return _("Freedom of Information Requests %(by)s on %(sitename)s") % {
                 "sitename": settings.SITE_NAME,
                 'by': by
-            })
-        return clean(_("Freedom of Information Requests on %(sitename)s") % {
+            }
+        return _("Freedom of Information Requests on %(sitename)s") % {
             "sitename": settings.SITE_NAME
-        })
+        }
 
+    @clean_feed_output
     def description(self, obj):
         by = self.get_filter_string()
         if by:
-            return clean(_("This feed contains the Freedom of Information requests %(by)s"
+            return _("This feed contains the Freedom of Information requests %(by)s"
                 " that have been made through %(sitename)s.") % {
                     "sitename": settings.SITE_NAME,
                     'by': by
-                })
-        return clean(_("This feed contains the latest Freedom of Information requests"
+                }
+        return _("This feed contains the latest Freedom of Information requests"
             " that have been made through %(sitename)s.") % {
                 "sitename": settings.SITE_NAME
-            })
+            }
 
     def link(self):
         return self.make_url(self.url_name)
@@ -75,18 +71,20 @@ class LatestFoiRequestsFeed(Feed):
     def items(self):
         return self.items.order_by("-first_message")[:15]
 
+    @clean_feed_output
     def item_title(self, item):
         if item.public_body:
             pb_name = item.public_body.name
         else:
             pb_name = _("Not yet known")
-        return clean(_("'%(title)s' to %(publicbody)s") % {
+        return _("'%(title)s' to %(publicbody)s") % {
             "title": item.title,
             "publicbody": pb_name
-        })
+        }
 
+    @clean_feed_output
     def item_description(self, item):
-        return clean(linebreaksbr(item.get_description()))
+        return linebreaksbr(item.get_description())
 
     def item_pubdate(self, item):
         return item.first_message
@@ -105,23 +103,27 @@ class FoiRequestFeed(Feed):
             visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         )
 
+    @clean_feed_output
     def title(self, obj):
-        return clean(obj.title)
+        return obj.title
 
     def link(self, obj):
         return reverse('foirequest-feed', kwargs={"slug": obj.slug})
 
+    @clean_feed_output
     def description(self, obj):
-        return clean(obj.get_description())
+        return obj.get_description()
 
     def items(self, obj):
         return obj.foievent_set.order_by("-timestamp")[:15]
 
+    @clean_feed_output
     def item_title(self, item):
-        return clean(item.as_text())
+        return item.as_text()
 
+    @clean_feed_output
     def item_description(self, item):
-        return clean(linebreaksbr(item.as_text()))
+        return linebreaksbr(item.as_text())
 
     def item_pubdate(self, item):
         return item.timestamp
