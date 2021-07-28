@@ -2,9 +2,21 @@
   <div class="card">
     <div class="card-body">
       <ol class="pages">
-        <li v-for="page in pages" :key="page.pageNum" class="page">
-          <a :href="document.site_url" target="_blank">
-            <img v-if="page.url" :src="page.url" alt="" class="page-image"/>
+        <li
+          v-for="page in pages"
+          :key="page.pageNum"
+          class="page"
+        >
+          <a
+            :href="document.site_url"
+            target="_blank"
+          >
+            <img
+              v-if="page.url"
+              :src="page.url"
+              alt=""
+              class="page-image"
+            >
           </a>
           <div class="text-center">
             <span>{{ page.pageNum }}</span>
@@ -16,12 +28,11 @@
 </template>
 
 <script>
-const PDF_TO_CSS_UNITS = 96.0 / 72.0
 
 const range = (len) => [...Array(len).keys()]
 
 export default {
-  name: 'pdf-preview',
+  name: 'PdfPreview',
   props: ['config', 'document'],
   data () {
     return {
@@ -31,6 +42,14 @@ export default {
         pdf: null,
         numPages: null,
         pdfPages: []
+    }
+  },
+  computed: {
+    pages () {
+      if (this.document.filetype === 'application/pdf') {
+        return this.pdfPages
+      }
+      return this.document.pages
     }
   },
   created () {
@@ -48,14 +67,6 @@ export default {
   mounted () {
     if (this.document.new) {
       window.setTimeout(() => this.$emit('notnew'), 2000);
-    }
-  },
-  computed: {
-    pages () {
-      if (this.document.filetype === 'application/pdf') {
-        return this.pdfPages
-      }
-      return this.document.pages
     }
   },
   methods: {
@@ -86,14 +97,14 @@ export default {
     loadPage (pageNum) {
       return this.pdf.getPage(pageNum).then((page) => {
         var height = 120
-        var viewport = page.getViewport(1)
+        var viewport = page.getViewport({scale: 1})
         var scale = height / viewport.height;
         var width = Math.round(viewport.width * scale)
         var canvas = this.getNewCanvas(width, height)
         var ctx = canvas.getContext('2d')
         page.render({
           canvasContext: ctx,
-          viewport: page.getViewport(scale)
+          viewport: page.getViewport({ scale: 1 })
         }).then(() => {
           this.pdfPages[pageNum - 1].url = canvas.toDataURL('image/png')
           ctx = null
@@ -129,7 +140,7 @@ export default {
       return canvas.toDataURL('image/png')
     },
     prepareImage () {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         let img = new window.Image()
         img.onload = () => {
           if (img.naturalWidth > img.naturalHeight) {

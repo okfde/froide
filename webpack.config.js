@@ -1,7 +1,7 @@
 const path = require('path')
 const LiveReloadPlugin = require('webpack-livereload-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -48,16 +48,14 @@ const config = {
     libraryTarget: 'umd'
   },
   devtool: 'source-map', // any "source-map"-like devtool is possible
-  node: {
-    url: true
-  },
   resolve: {
     modules: ['node_modules', 'froide/static'],
     extensions: ['.js', '.ts', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.runtime.esm.js',
+      'vue$': 'vue/dist/vue.esm.js',
       'froide': path.resolve('.')
-    }
+    },
+    fallback: { "zlib": false }
   },
   module: {
     rules: [
@@ -115,10 +113,11 @@ const config = {
           {
             loader: 'postcss-loader',
             options: {
-              ident: 'postcss',
-              plugins: (loader) => [
-                require('autoprefixer')()
-              ]
+              postcssOptions: {
+                plugins: [
+                  ["autoprefixer"]
+                ]
+              }
             }
           },
           {
@@ -142,26 +141,21 @@ const config = {
       },
       {
         test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: '../fonts/[name].[ext]',
-          emitFile: true,
-          context: 'froide/static/',
-          publicPath: ''
+        type: 'asset/resource',
+        generator: {
+          filename: '../fonts/[name].[ext]'
         }
       },
       {
         test: /\.(jpg|png|svg)$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 8192,
-            name: '[path][name].[ext]',
-            emitFile: false,
-            context: 'froide/static',
-            publicPath: '../'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024
           }
+        },
+        generator: {
+          filename: '../img/[name].[ext]'
         }
       }
     ]
@@ -175,9 +169,11 @@ const config = {
       // publicPath: '../../'
     }),
     new LiveReloadPlugin(),
-    new CopyWebpackPlugin([
-      {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
+      ]
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: `"${process.env.NODE_ENV}"`
@@ -187,18 +183,9 @@ const config = {
   ],
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true // set to true if you want JS source maps
-      })
+      new TerserPlugin()
     ].concat(!devMode ? [
-      new OptimizeCssAssetsPlugin({
-        assetNameRegExp: /\.css$/,
-        cssProcessorOptions: {
-          discardComments: { removeAll: true }
-        }
-      })
+      new CssMinimizerPlugin()
     ] : []),
     splitChunks: {
       cacheGroups: {
