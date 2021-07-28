@@ -489,7 +489,7 @@ export default {
         }
 
         let scaleFactor = this.pageScaleFactor[pageNum]
-        let viewport = page.getViewport(scaleFactor)
+        let viewport = page.getViewport({ scale: scaleFactor })
 
         this.viewport = viewport
         console.log(scaleFactor, 'Size: ' + viewport.width + 'x' + viewport.height, 'at maxwidth', this.maxWidth)
@@ -1148,7 +1148,7 @@ export default {
     opacity: 0.2;
     line-height: 1.0;
   }
-  .textLayer > div {
+  .textLayer > div, .textLayer > span, .textLayer > br {
     color: transparent;
     position: absolute;
     white-space: pre;
