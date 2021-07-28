@@ -48,14 +48,11 @@ const config = {
     libraryTarget: 'umd'
   },
   devtool: 'source-map', // any "source-map"-like devtool is possible
-  // node: {
-  //   url: true
-  // },
   resolve: {
     modules: ['node_modules', 'froide/static'],
     extensions: ['.js', '.ts', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.runtime.esm.js',
+      'vue$': 'vue/dist/vue.esm.js',
       'froide': path.resolve('.')
     },
     fallback: { "zlib": false }
@@ -144,26 +141,21 @@ const config = {
       },
       {
         test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: '../fonts/[name].[ext]',
-          emitFile: true,
-          context: 'froide/static/',
-          publicPath: ''
+        type: 'asset/resource',
+        generator: {
+          filename: '../fonts/[name].[ext]'
         }
       },
       {
         test: /\.(jpg|png|svg)$/,
-        use: {
-          loader: 'url-loader',
-          options: {
-            limit: 8192,
-            name: '[path][name].[ext]',
-            emitFile: false,
-            context: 'froide/static',
-            publicPath: '../'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 4 * 1024
           }
+        },
+        generator: {
+          filename: '../img/[name].[ext]'
         }
       }
     ]
