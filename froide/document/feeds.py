@@ -64,9 +64,9 @@ class DocumentSearchFeed(Feed):
 
     @clean_feed_output
     def item_title(self, item):
-        return clean_feed_output(_('{title} (page {page})').format(
+        return _('{title} (page {page})').format(
             title=item.document.title, page=item.number
-        ))
+        )
 
     @clean_feed_output
     def item_description(self, item):
