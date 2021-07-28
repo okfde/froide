@@ -23,6 +23,7 @@ from .filters import PageDocumentFilterset
 from .forms import DocumentUploadForm
 from .models import Document
 from .auth import DocumentCrossDomainMediaAuth
+from .feeds import DocumentSearchFeed
 
 
 class DocumentSearchView(BaseSearchView):
@@ -58,6 +59,18 @@ class DocumentSearchView(BaseSearchView):
             q |= Q('term', user=self.request.user.pk)
             q |= Q('terms', team=Team.objects.get_list_for_user(self.request.user))
         return super().get_base_search().filter(q).filter('term', portal=0)
+
+
+class DocumentSearchFeedView(DocumentSearchView):
+    def get_search(self):
+        return super().get_search().sort('-created_at')
+
+    def render_to_response(self, context, **response_kwargs):
+        feed_obj = DocumentSearchFeed(
+            context['object_list'],
+            data=self.filtered_objs
+        )
+        return feed_obj(self.request)
 
 
 class DocumentFileDetailView(CrossDomainMediaMixin, DetailView):
