@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load static %}
 {% load foirequest_tags %}
+{% load filingcabinet %}
 
 {% block title %}{% blocktrans with name=attachment.name title=foirequest.title %}{{ name }} in request „{{ title }}“{% endblocktrans %}{% endblock %}
 
@@ -60,7 +61,7 @@
 {% if attachment.can_embed %}
   {% if attachment.is_pdf %}
     <div class="container-sm-full">
-      <iframe src="{% static 'filingcabinet/viewer/web/viewer.html' %}?file={{ attachment_url | urlencode }}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
+      <iframe src="{% get_pdf_viewer attachment_url %}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
     </div>
   {% else %}
     <div class="container">
