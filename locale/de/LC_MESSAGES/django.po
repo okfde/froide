@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-28 20:51+0200\n"
-"PO-Revision-Date: 2021-07-28 20:51+0200\n"
+"POT-Creation-Date: 2021-07-28 21:43+0200\n"
+"PO-Revision-Date: 2021-07-28 21:45+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1638,7 +1638,7 @@ msgstr "Dokumente (beta)"
 #: froide/document/feeds.py:21
 #, python-format
 msgid "matching the query “%s”"
-msgstr "passend auf die Suche nach „%s“"
+msgstr "passend zur Suche nach „%s“"
 
 #: froide/document/feeds.py:23 froide/foirequest/feeds.py:35
 #, python-format
