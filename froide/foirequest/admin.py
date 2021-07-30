@@ -482,6 +482,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
 
 class MessageTagAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
     actions = ['export_csv']
 
     def export_csv(self, request, queryset):
