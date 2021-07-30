@@ -4,6 +4,7 @@ import re
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 from django.db import models
+from django.db.models.functions import RowNumber
 from django.shortcuts import redirect
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
@@ -25,6 +26,7 @@ from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fake_fk_form_class
 from froide.helper.email_utils import EmailParser
 from froide.guide.utils import assign_guidance_action
+from froide.guide.models import Action
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 
 from .models import (
@@ -40,6 +42,29 @@ from .utils import update_foirequest_index
 
 
 SUBJECT_REQUEST_ID = re.compile(r' \[#(\d+)\]')
+
+
+def execute_assign_guidance_action_to_last_message(admin, request, queryset, action_obj):
+    from froide.guide.tasks import add_action_to_queryset_task
+
+    last_message_ids = FoiMessage.objects.filter(request__in=queryset).annotate(
+        _number=models.Window(
+            expression=RowNumber(),
+            partition_by=models.F('request_id'),
+            order_by=models.F('timestamp').desc(),
+        )).order_by(
+            models.F('_number')
+        ).values_list('id', flat=True)[:queryset.count()]
+
+    add_action_to_queryset_task.delay(
+        action_obj.id, list(last_message_ids)
+    )
+
+
+assign_guidance_action_to_last_message = make_choose_object_action(
+    Action, execute_assign_guidance_action_to_last_message,
+    _('Choose guidance action to attach to last message...')
+)
 
 
 class FoiMessageInline(admin.StackedInline):
@@ -104,8 +129,11 @@ class FoiRequestAdmin(admin.ModelAdmin):
         'mark_successfully_resolved', 'mark_refused',
         'tag_all', 'mark_same_as', 'update_index',
         'confirm_request', 'unpublish',
-        'add_to_project', 'unblock_request', 'close_requests'
+        'add_to_project', 'unblock_request', 'close_requests',
+        'attach_guidance_to_last_message'
     ]
+    attach_guidance_to_last_message = assign_guidance_action_to_last_message
+
     raw_id_fields = (
         'same_as', 'public_body', 'user', 'team',
         'project', 'jurisdiction', 'law'
