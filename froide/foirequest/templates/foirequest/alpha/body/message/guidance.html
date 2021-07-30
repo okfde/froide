@@ -3,7 +3,7 @@
 {% load foirequest_tags %}
 
 {% for guidance in message.guidances %}
-  <div id="guidance-{{ guidance.id }}" data-messageid="{{ message.get_html_id }}" {% if foirequest|can_read_foirequest_authenticated:request and guidance.matches %}data-messagemark="{{ guidance.get_matches_json }}" {% endif %}class="alpha-message__guidance d-print-none bg-yellow-100 p-3 mb-3">
+  <div id="{{ message.get_html_id }}-guidance" data-messageid="{{ message.get_html_id }}" {% if foirequest|can_read_foirequest_authenticated:request and guidance.matches %}data-messagemark="{{ guidance.get_matches_json }}" {% endif %}class="alpha-message__guidance d-print-none bg-yellow-100 p-3 mb-3">
     {% with guidance.get_label as label %}
       {% if label %}
         <h4 class="h6 mb-1" {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>
