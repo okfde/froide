@@ -108,13 +108,11 @@
           {% trans "Public profile" %}
         </h5>
         <div class="card-body">
-          {% if request.user.is_staff %}
-            <p>
-              <a href="{{ request.user.get_absolute_url }}">
-                {% translate "Your public profile" %}
-              </a>
-            </p>
-          {% endif %}
+          <p>
+            <a href="{{ request.user.get_absolute_url }}">
+              {% translate "Your public profile" %}
+            </a>
+          </p>
           <form action="{% url 'account-change_profile' %}#profile" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% if profile_form %}

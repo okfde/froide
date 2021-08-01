@@ -40,9 +40,6 @@ def get_profile_menu_item(request):
         return None
     if request.user.private:
         return None
-    # TODO: remove on launch
-    if not request.user.is_staff:
-        return None
     return MenuItem(
         section='before_settings', order=0,
         url=reverse('account-profile', kwargs={'slug': request.user.username}),
