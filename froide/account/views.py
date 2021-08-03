@@ -463,7 +463,7 @@ def change_email(request):
 
 @login_required
 def profile_redirect(request):
-    if request.user.private:
+    if request.user.private or not request.user.username:
         messages.add_message(request, messages.INFO,
                 _("Your account is private, so you don't have a public profile."))
         return redirect('account-requests')

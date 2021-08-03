@@ -38,7 +38,7 @@ def get_request_menu_item(request):
 def get_profile_menu_item(request):
     if not request.user.is_authenticated:
         return None
-    if request.user.private:
+    if request.user.private or not request.user.username:
         return None
     return MenuItem(
         section='before_settings', order=0,

@@ -166,6 +166,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_absolute_url(self):
         if self.private:
             return ""
+        if not self.username:
+            return ""
         return reverse('account-profile', kwargs={'slug': self.username})
 
     def get_full_name(self):
