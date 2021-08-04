@@ -18,7 +18,8 @@
     height: 80vh;
 }
 </style>
-{% leaflet_map "main" callback="main_map_init" %}
+{% leaflet_map "map" callback="main_map_init" creatediv=False %}
+<div id="map" class="leaflet-container"></div>
 
 {% if no_regions %}
   <h2>{% trans "No geo region available for these public bodies" %}</h2>
@@ -71,7 +72,7 @@
           getData(data.meta.next, map)
         }
         var geoData = data.objects.map(function(x) {
-          features.push({ "type": "Feature",
+          var feature = { "type": "Feature",
             "geometry": x[geoGetter],
             "properties": {
               "pb_id": regions[x.id],
@@ -81,12 +82,17 @@
               "kind_detail": x.kind_detail,
               "region_id": x.id
             }
-          })
-          return x[geoGetter]
+          }
+          features.push(feature)
+          
+          return feature
         })
-
+        console.log(geoData)
         console.log(geoData.length)
         var layer = L.geoJson(geoData, {
+          onEachFeature: (f, l) => {
+            l.bindPopup('<pre>' + f.properties.name + ' (' + f.properties.pb_id + ') </pre>');
+          },
           style: function() {
             return {
               fillOpacity: 0.9
