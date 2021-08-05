@@ -67,6 +67,8 @@ def send_foi_mail(subject, message, from_email, recipient_list,
         headers['Return-Receipt-To'] = from_email
     if kwargs.get('froide_message_id'):
         headers['X-Froide-Message-Id'] = kwargs.get('froide_message_id')
+    if kwargs.get('message_id'):
+        headers['Message-Id'] = kwargs['message_id']
 
     email = EmailMessage(subject, message, from_email, recipient_list,
                          connection=connection, headers=headers)
