@@ -434,6 +434,7 @@ class Base(Configuration):
     CELERY_EMAIL_TASK_CONFIG = {
         'queue': 'emailsend'
     }
+    CELERY_EMAIL_BACKEND = 'froide.foirequest.smtp.EmailBackend'
     EMAIL_BULK_QUEUE = 'emailsend_bulk'
 
     # ######## Search ###########
