@@ -12,6 +12,14 @@ import pytz
 
 
 def get_delivery_report(sender, recipient, timestamp, extended=False):
+    reporter = get_delivery_reporter()
+    if reporter:
+        return reporter.find(sender, recipient, timestamp, extended=extended)
+    else:
+        return
+
+
+def get_delivery_reporter():
     from django.conf import settings
 
     reporter_path = settings.FROIDE_CONFIG.get("delivery_reporter", None)
@@ -20,10 +28,10 @@ def get_delivery_report(sender, recipient, timestamp, extended=False):
 
     module, klass = reporter_path.rsplit(".", 1)
     module = importlib.import_module(module)
-    reporter_klass = getattr(module, klass)
+    rerporter_klass = getattr(module, klass)
 
     reporter = reporter_klass(time_zone=settings.TIME_ZONE)
-    return reporter.find(sender, recipient, timestamp, extended=extended)
+    return reporter
 
 
 DeliveryReport = namedtuple(
