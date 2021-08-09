@@ -1,4 +1,3 @@
-from email.utils import make_msgid
 import importlib
 
 from django.conf import settings
@@ -114,21 +113,11 @@ class EmailMessageHandler(MessageHandler):
 
         message.timestamp = timezone.now()
         message.save()
-        message_id = message.get_absolute_domain_short_url()
-        extra_kwargs['froide_message_id'] = message_id
 
-        if get_notified:
-            extra_kwargs['message_id'] = make_msgid(
-                idstring='foimsg.{}.{}'.format(
-                    message.id,
-                    message.timestamp.timestamp()
-                ),
-                domain=settings.FROIDE_CONFIG.get('mail_domain')
-            )
-            message.email_message_id = extra_kwargs['message_id']
-        else:
-            # Set to empty as not yet known
-            message.email_message_id = ''
+        message.email_message_id = message.make_message_id()
+        extra_kwargs['message_id'] = message.email_message_id
+        froide_message_id = message.get_absolute_domain_short_url()
+        extra_kwargs['froide_message_id'] = froide_message_id
 
         send_foi_mail(
             message.subject, message.plaintext, from_addr,

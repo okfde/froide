@@ -318,13 +318,17 @@ class RequestTest(TestCase):
         self.assertTrue(req.messages[0].sent)
         self.assertEqual(req.law, pb.default_law)
 
-        messages = list(filter(
+        email_messages = list(filter(
                 lambda x: req.secret_address in x.extra_headers.get('Reply-To', ''),
                 mail.outbox))
-        self.assertEqual(len(messages), 1)
-        message = messages[0]
-        self.assertEqual(message.to[0], pb.email)
-        self.assertEqual(message.subject, '%s [#%s]' % (req.title, req.pk))
+        self.assertEqual(len(email_messages), 1)
+        email_message = email_messages[0]
+        self.assertEqual(email_message.to[0], pb.email)
+        self.assertEqual(email_message.subject, '%s [#%s]' % (req.title, req.pk))
+        self.assertEqual(
+            email_message.extra_headers.get('Message-Id'),
+            req.messages[0].make_message_id()
+        )
 
     def test_redirect_after_request(self):
         response = self.client.get(
