@@ -554,6 +554,7 @@ def permanently_anonymize_requests(foirequests):
         foirequest.secret_address = '~' + '.'.join(
             foirequest.secret_address.split('.')[2:]
         )
+        foirequest.save()
         user = foirequest.user
         user.private = True
         for message in foirequest.messages:
