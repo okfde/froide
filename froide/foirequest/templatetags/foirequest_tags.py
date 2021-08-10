@@ -324,7 +324,7 @@ def get_comment_list(context, message):
             content_type=ct,
             object_pk__in=mids,
             site_id=foirequest.site_id
-        )
+        ).select_related('user')
         comment_mapping = defaultdict(list)
         for c in comments:
             comment_mapping[c.object_pk].append(c)

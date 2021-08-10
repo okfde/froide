@@ -106,6 +106,11 @@ def get_foirequest_context(request, obj):
         message.request = obj
         message.all_attachments = [a for a in all_attachments
                     if a.belongs_to_id == message.id]
+
+        # Preempt attribute access
+        for att in message.all_attachments:
+            att.belongs_to = message
+
         message.listed_attachments = [a for a in all_attachments
             if a.belongs_to_id == message.id and
             can_see_attachment(a, can_write)]
@@ -125,9 +130,6 @@ def get_foirequest_context(request, obj):
             a for a in message.listed_attachments
             if not a.approved and a not in message.hidden_attachments
         ]
-
-        for att in message.all_attachments:
-            att.belongs_to = message
 
     events = FoiEvent.objects.filter(request=obj).select_related(
             "user", "request",
