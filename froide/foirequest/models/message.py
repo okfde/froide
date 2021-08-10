@@ -324,6 +324,20 @@ class FoiMessage(models.Model):
     def is_mediator(self):
         return self.is_mediator_message(self.sender_public_body_id)
 
+    @property
+    def is_default_recipient(self):
+        return (
+            self.is_email and not self.is_response and
+            self.request.public_body.email == self.recipient_email
+        )
+
+    @property
+    def is_default_sender(self):
+        return (
+            self.is_email and self.is_response and
+            self.request.public_body.email == self.sender_email
+        )
+
     def is_mediator_message(self, pb_id):
         request = self.request
         if not request.law:

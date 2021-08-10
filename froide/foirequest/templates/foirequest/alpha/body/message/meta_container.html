@@ -20,24 +20,26 @@
             {% endif %}
             {{ message.sender_public_body.name }}
           </span>
-          <span class="d-print-none">
-            <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
-              <i class="fa fa-edit"></i>
-              <span class="sr-only">{% trans "change" %}</span>
-            </a>
-          </span>
-          <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
-            {% with message_pb_form=message.get_public_body_sender_form %}
-              <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
-                {% csrf_token %}
-                <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
-                {{ message_pb_form.sender }}
-                <p class="text-right">
-                  <button type="submit" class="btn btn-sm btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
-                </p>
-              </form>
-            {% endwith %}
-          </div>
+          {% if not message.is_default_sender %}
+            <span class="d-print-none">
+              <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+                <i class="fa fa-edit"></i>
+                <span class="sr-only">{% trans "change" %}</span>
+              </a>
+            </span>
+            <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
+              {% with message_pb_form=message.get_public_body_sender_form %}
+                <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
+                  {% csrf_token %}
+                  <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
+                  {{ message_pb_form.sender }}
+                  <p class="text-right">
+                    <button type="submit" class="btn btn-sm btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
+                  </p>
+                </form>
+              {% endwith %}
+            </div>
+          {% endif %}
         {% else %}
           {% if object.user.private %}
             <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
@@ -47,7 +49,6 @@
             {{ message.user_real_sender }}
           </span>
         {% endif %}
-        </span>
       {% else %}
         {% if message.is_response %}
           {% if froide.public_body_officials_public %}
@@ -108,6 +109,26 @@
     </dt>
     <dd>
       {{ message.get_recipient }}
+      {% if object|can_write_foirequest:request and not message.is_default_recipient %}
+      <span class="d-print-none">
+        <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+          <i class="fa fa-edit"></i>
+          <span class="sr-only">{% trans "change" %}</span>
+        </a>
+      </span>
+      <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
+        {% with message_pb_form=message.get_public_body_recipient_form %}
+          <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_recipient' slug=object.slug message_id=message.id %}">
+            {% csrf_token %}
+            <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the public body that received this message:{% endblocktrans %}</label>
+            {{ message_pb_form.recipient }}
+            <p class="text-right">
+              <button type="submit" class="btn btn-primary">{% blocktrans %}Set receiving public body{% endblocktrans %}</button>
+            </p>
+          </form>
+        {% endwith %}
+      </div>
+    {% endif %}
     </dd>
   {% endif %}
   {% get_delivery_status message as delivery_status %}
