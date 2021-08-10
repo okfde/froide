@@ -97,7 +97,8 @@ def merge_accounts(old_user, new_user):
     account_merged.send(
         sender=User, old_user=old_user, new_user=new_user
     )
-    start_cancel_account_process(old_user)
+    delete_all_unexpired_sessions_for_user(old_user)
+    old_user.delete()
 
 
 def move_ownership(model, attr, old_user, new_user, dupe=None):
