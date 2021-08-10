@@ -1,6 +1,5 @@
 import calendar
 from email.utils import formatdate
-import socket
 
 from django.db import models
 from django.conf import settings
@@ -457,9 +456,8 @@ class FoiMessage(models.Model):
     def make_message_id(self):
         assert self.id is not None
         assert self.timestamp is not None
-        domain = settings.FROIDE_CONFIG.get('mail_domain')
-        if domain is None:
-            domain = socket.getfqdn()
+        domain = settings.FROIDE_CONFIG['mail_domain']
+        assert domain is not None
         return '<foimsg.{}.{}@{}>'.format(
             self.id,
             self.timestamp.timestamp(),
