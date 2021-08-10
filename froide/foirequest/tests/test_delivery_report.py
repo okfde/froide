@@ -1,7 +1,7 @@
 from io import StringIO
 
 import pytz
-from mock import patch, Mock
+from unittest import mock
 
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
@@ -44,7 +44,7 @@ class PostfixDeliveryReportTest(TestCase):
         self.assertEqual(result.status, 'sent')
         self.assertEqual(result.message_id, '20171211133019.12503.3873@fragdenstaat.de')
 
-    @patch('froide.foirequest.delivery.get_delivery_report',
+    @mock.patch('froide.foirequest.delivery.get_delivery_report',
            lambda a, b, c, extended=False:
                 DeliveryReport('loglines', None, 'sent', 'message-id'))
     def test_delivery_report_sent(self):
@@ -56,18 +56,18 @@ class PostfixDeliveryReportTest(TestCase):
         self.assertEqual(mes.email_message_id, 'message-id')
 
     def test_delivery_report_unavailable(self):
-        mock = Mock(return_value=None)
+        mock_obj = mock.Mock(return_value=None)
         mes = factories.FoiMessageFactory.create(is_response=False)
-        with patch('froide.foirequest.delivery.get_delivery_report', mock):
+        with mock.patch('froide.foirequest.delivery.get_delivery_report', mock_obj):
             mes.check_delivery_status(count=0)
 
         self.assertEqual(mock.call_count, 7)
         self.assertIsNone(mes.get_delivery_status())
 
     def test_delivery_report_deferred(self):
-        mock = Mock(return_value=DeliveryReport('loglines', None, 'deferred', 'message-id-2'))
+        mock_obj = mock.Mock(return_value=DeliveryReport('loglines', None, 'deferred', 'message-id-2'))
         mes = factories.FoiMessageFactory.create(is_response=False)
-        with patch('froide.foirequest.delivery.get_delivery_report', mock):
+        with mock.patch('froide.foirequest.delivery.get_delivery_report', mock_obj):
             mes.check_delivery_status(count=0)
 
         self.assertEqual(mock.call_count, 7)

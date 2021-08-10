@@ -6,7 +6,7 @@ import re
 import zipfile
 from urllib.parse import quote
 
-from mock import patch
+from unittest import mock
 
 from django.test import TestCase
 from django.urls import reverse
@@ -1353,7 +1353,7 @@ class RequestTest(TestCase):
         self.assertIn('publicbody', response.context['publicbody_form'].errors)
         self.assertEqual(len(response.context['publicbody_form'].errors), 1)
 
-    @patch('froide.foirequest.views.attachment.redact_attachment_task.delay',
+    @mock.patch('froide.foirequest.views.attachment.redact_attachment_task.delay',
            lambda a, b, c: None)
     def test_redact_attachment(self):
         foirequest = FoiRequest.objects.all()[0]

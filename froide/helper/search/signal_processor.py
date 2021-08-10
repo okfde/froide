@@ -16,7 +16,7 @@ def run_commit_hooks(testcase):
     Fake transaction commit to run delayed on_commit functions
     :return:
     """
-    import mock
+    from unittest import mock
 
     for db_name in reversed(testcase._databases_names()):
         with mock.patch('django.db.backends.base.base.BaseDatabaseWrapper.validate_no_atomic_block', lambda a: False):

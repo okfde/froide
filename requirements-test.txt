@@ -243,8 +243,6 @@ maxminddb==2.0.3
     # via geoip2
 mccabe==0.6.1
     # via flake8
-mock==4.0.3
-    # via -r requirements-test.in
 multidict==5.1.0
     # via
     #   aiohttp

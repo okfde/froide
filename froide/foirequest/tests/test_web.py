@@ -1,6 +1,5 @@
 import unittest
-
-from mock import patch
+from unittest import mock
 
 from django.test import TestCase
 from django.urls import reverse
@@ -303,7 +302,7 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         MEDIA_URL='https://' + MEDIA_DOMAIN + '/files/',
         ALLOWED_HOSTS=('fragdenstaat.de', MEDIA_DOMAIN),
     )
-    @patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.SITE_URL',
+    @mock.patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.SITE_URL',
            'https://fragdenstaat.de')
     def test_request_not_public(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
@@ -396,9 +395,9 @@ class MediaServingTest(TestCaseHelpers, TestCase):
         ALLOWED_HOSTS=('fragdenstaat.de', MEDIA_DOMAIN),
         FOI_MEDIA_TOKEN_EXPIRY=0
     )
-    @patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.TOKEN_MAX_AGE_SECONDS',
+    @mock.patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.TOKEN_MAX_AGE_SECONDS',
            0)
-    @patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.SITE_URL',
+    @mock.patch('froide.foirequest.auth.AttachmentCrossDomainMediaAuth.SITE_URL',
            'https://fragdenstaat.de')
     def test_request_media_tokens_expired(self):
         att = FoiAttachment.objects.filter(approved=True)[0]
