@@ -61,7 +61,7 @@ class PostfixDeliveryReportTest(TestCase):
         with mock.patch('froide.foirequest.delivery.get_delivery_report', mock_obj):
             mes.check_delivery_status(count=0)
 
-        self.assertEqual(mock.call_count, 7)
+        self.assertEqual(mock_obj.call_count, 7)
         self.assertIsNone(mes.get_delivery_status())
 
     def test_delivery_report_deferred(self):
@@ -70,7 +70,7 @@ class PostfixDeliveryReportTest(TestCase):
         with mock.patch('froide.foirequest.delivery.get_delivery_report', mock_obj):
             mes.check_delivery_status(count=0)
 
-        self.assertEqual(mock.call_count, 7)
+        self.assertEqual(mock_obj.call_count, 7)
         ds = mes.get_delivery_status()
         self.assertEqual(ds.status, 'deferred')
         self.assertEqual(mes.email_message_id, 'message-id-2')
