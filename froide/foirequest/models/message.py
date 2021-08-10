@@ -22,7 +22,6 @@ from froide.helper.text_utils import (
 from .request import (
     FoiRequest, get_absolute_short_url, get_absolute_domain_short_url
 )
-from .utils import get_foi_mail_domains
 
 BOUNCE_TAG = 'bounce'
 HAS_BOUNCED_TAG = 'bounced'
