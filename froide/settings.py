@@ -536,8 +536,7 @@ class Base(Configuration):
         unsubscribe_format='unsub+{token}@example.com',
         auto_reply_subject_regex=rec('^(Auto-?Reply|Out of office)'),
         auto_reply_email_regex=rec('^auto(reply|responder)@'),
-        hide_content_funcs=[],
-        mail_domain=None
+        hide_content_funcs=[]
     )
 
     TESSERACT_DATA_PATH = values.Value('/usr/local/share/tessdata')
@@ -577,6 +576,8 @@ class Base(Configuration):
 
     # The FoI Mail can use a different account
     FOI_EMAIL_DOMAIN = values.Value("example.com")
+    # For generating email Message-Id
+    FOI_MAIL_SERVER_HOST = values.Value("mail.example.com")
 
     FOI_EMAIL_TEMPLATE = None
     # Example:

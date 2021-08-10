@@ -22,6 +22,7 @@ from froide.helper.text_utils import (
 from .request import (
     FoiRequest, get_absolute_short_url, get_absolute_domain_short_url
 )
+from .utils import get_foi_mail_domains
 
 BOUNCE_TAG = 'bounce'
 HAS_BOUNCED_TAG = 'bounced'
@@ -470,8 +471,8 @@ class FoiMessage(models.Model):
     def make_message_id(self):
         assert self.id is not None
         assert self.timestamp is not None
-        domain = settings.FROIDE_CONFIG['mail_domain']
-        assert domain is not None
+        domain = settings.FOI_MAIL_SERVER_HOST
+        assert domain and '.' in domain
         return '<foimsg.{}.{}@{}>'.format(
             self.id,
             self.timestamp.timestamp(),
