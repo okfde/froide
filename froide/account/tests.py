@@ -1,5 +1,6 @@
 import re
 from datetime import timedelta, datetime
+from unittest import mock
 from urllib.parse import urlencode
 
 from django.test import TestCase
@@ -621,12 +622,14 @@ class AccountTest(TestCase):
         mes.plaintext = user.first_name
         mes.save()
 
-        response = self.client.post(reverse('account-delete_account'),
-            {
-                'password': 'froide',
-                'confirmation': 'Freedom of Information Act'
-            }
-        )
+        with mock.patch('froide.foirequest.utils.delete_foirequest_emails_from_imap') as mock_func:
+            mock_func.return_value = 30
+            response = self.client.post(reverse('account-delete_account'),
+                {
+                    'password': 'froide',
+                    'confirmation': 'Freedom of Information Act'
+                }
+            )
         self.assertEqual(response.status_code, 302)
 
         user = User.objects.get(pk=user.pk)
