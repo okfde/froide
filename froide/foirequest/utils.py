@@ -25,6 +25,7 @@ from froide.helper.text_utils import (
 from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
 from froide.helper.tasks import search_instance_save
+from froide.helper.email_utils import delete_mails_by_recipient
 
 from froide.publicbody.models import PublicBody
 
@@ -484,12 +485,32 @@ def cancel_user(sender, user=None, **kwargs):
     if user is None:
         return
 
+    user_foirequests = FoiRequest.objects.filter(user=user)
+    delete_foirequest_emails_from_imap(user_foirequests)
+
     FoiRequest.objects.delete_private_requests(user)
     RequestDraft.objects.filter(user=user).delete()
 
     permanently_anonymize_requests(
-        FoiRequest.objects.filter(user=user).select_related('user')
+        user_foirequests.select_related('user')
     )
+
+
+def delete_foirequest_emails_from_imap(user_foirequests):
+    from .foi_mail import get_foi_mail_client
+
+    with get_foi_mail_client() as mailbox:
+        for foirequest in user_foirequests:
+            parts = foirequest.secret_address.split('@')
+            # Sanity check recipient address
+            assert len(parts) == 2
+            assert len(parts[0]) > 5
+            assert parts[1] in get_foi_mail_domains()
+            delete_mails_by_recipient(
+                mailbox, foirequest.secret_address,
+                expunge=False
+            )
+        mailbox.expunge()
 
 
 def make_account_private(sender, user=None, **kwargs):
@@ -525,10 +546,12 @@ def permanently_anonymize_requests(foirequests):
     original_private = True
     if foirequests:
         original_private = foirequests[0].user.private
-    foirequests.update(
-        closed=True
-    )
     for foirequest in foirequests:
+        foirequest.closed = True
+        # Cut off name part of secret address
+        foirequest.secret_address = '~' + '.'.join(
+            foirequest.secret_address.split('.')[2:]
+        )
         user = foirequest.user
         user.private = True
         for message in foirequest.messages:
@@ -544,6 +567,7 @@ def permanently_anonymize_requests(foirequests):
                 # This may occasionally delete real sender name
                 # when user was only in CC
                 message.recipient = ''
+                message.recipient_email = ''
             else:
                 message.sender_name = ''
 
@@ -641,6 +665,7 @@ def export_user_data(user):
         data = FoiRequestListSerializer(
             foirequest, context=ctx
         ).data
+        data['secret_address'] = foirequest.secret_address
         yield (
             'requests/%s/request.json' % foirequest.id,
             json.dumps(data).encode('utf-8')
@@ -663,17 +688,18 @@ def export_user_data(user):
             .select_related('redacted')
             .filter(belongs_to__request=foirequest)
         )
-        yield (
-            'requests/%s/%s/attachments.json' % (
-                foirequest.id, message.id
-            ),
-            json.dumps([
-                FoiAttachmentSerializer(
-                    att, context=ctx
-                ).data
-                for att in all_attachments
-            ]).encode('utf-8')
-        )
+        if all_attachments:
+            yield (
+                'requests/%s/%s/attachments.json' % (
+                    foirequest.id, message.id
+                ),
+                json.dumps([
+                    FoiAttachmentSerializer(
+                        att, context=ctx
+                    ).data
+                    for att in all_attachments
+                ]).encode('utf-8')
+            )
         for attachment in all_attachments:
             try:
                 yield ('requests/%s/%s/%s' % (

@@ -93,6 +93,41 @@ def get_unread_mails(
         yield uid, data[0][1]
 
 
+def delete_mails_by_recipient(
+        mailbox: Union[imaplib.IMAP4_SSL, imaplib.IMAP4],
+        recipient_mail: str,
+        expunge=False, sanity_check=100) -> int:
+    '''
+    Delete all mail to recipient_mail in IMAP mailbox
+    '''
+    assert recipient_mail
+
+    status, count = mailbox.select('Inbox')
+    # find all messages to recipient mail
+    status, [msg_ids] = mailbox.search(
+        None,
+        '(OR TO "{recipient}" CC "{recipient}")'.format(
+            recipient=recipient_mail
+        )
+    )
+    msg_ids = msg_ids.decode('utf-8').split(' ')
+    message_count = len(msg_ids)
+
+    # Sanity check amount of messages that will be deleted
+    assert message_count < sanity_check
+
+    # Mark as deleted
+    status, response = mailbox.store(','.join(msg_ids), '+FLAGS', '(\\Deleted)')
+    assert status == 'OK'
+
+    if expunge:
+        # Expunge to really delete
+        status, response = mailbox.expunge()
+        assert status == 'OK'
+
+    return message_count
+
+
 def unflag_mail(mailbox, uid):
     status, count = mailbox.select('Inbox')
     mailbox.uid('STORE', uid, '-FLAGS', '\\Flagged')

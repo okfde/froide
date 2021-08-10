@@ -99,12 +99,15 @@ class FoiRequestManager(CurrentSiteManager):
     def delete_private_requests(self, user):
         if not user:
             return
-        self.get_queryset().filter(
+        qs = self.get_queryset().filter(
             user=user
         ).filter(
             Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER) |
             Q(visibility=FoiRequest.VISIBILITY.INVISIBLE)
-        ).delete()
+        )
+        for req in qs:
+            # Trigger signals
+            req.delete()
 
 
 class PublishedFoiRequestManager(CurrentSiteManager):
