@@ -110,8 +110,10 @@ def delete_mails_by_recipient(
             recipient=recipient_mail
         )
     )
-    msg_ids = msg_ids.decode('utf-8').split(' ')
+    msg_ids = [x.strip() for x in msg_ids.decode('utf-8').split(' ') if x.strip()]
     message_count = len(msg_ids)
+    if message_count == 0:
+        return message_count
 
     # Sanity check amount of messages that will be deleted
     assert message_count < sanity_check
