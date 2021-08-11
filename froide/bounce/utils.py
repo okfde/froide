@@ -4,12 +4,15 @@ https://en.wikipedia.org/wiki/Variable_envelope_return_path
 
 """
 import base64
+from collections import defaultdict
 from contextlib import closing
 import datetime
 from email.utils import parseaddr
 from io import BytesIO
+import re
 import time
 from urllib.parse import quote
+from pygtail import Pygtail
 
 from django.conf import settings
 from django.core.mail import mail_managers
@@ -31,6 +34,8 @@ from froide.helper.email_parsing import parse_email, parse_header_field
 
 from .signals import user_email_bounced, email_bounced, email_unsubscribed
 from .models import Bounce
+from froide.foirequest.models.message import FoiMessage, DeliveryStatus, MessageKind
+from froide.foirequest.delivery import get_delivery_reporter
 
 
 BOUNCE_FORMAT = settings.FROIDE_CONFIG["bounce_format"]
@@ -325,3 +330,46 @@ def handle_smtp_error(exc):
             continue
         raise exc
     return True
+
+
+def check_delivery_from_log():
+    """
+    check and update the delivery status of FOI-Messages
+
+    1. query model for all FOI-messages that have an update-able delivery state
+    2. collect new postfix-log entries
+    3. match msg-ids from postfix log with queries FOI-messages
+    4. update FOI-messages accordingly
+    """
+    POSTFIX_LOG_PATH = "/var/log/mail.log"
+    PYGTAIL_OFFSET_PATH = "./pt.offset"
+    FINAL_STATES = DeliveryStatus.FINAL_STATUS
+
+    # query model
+    messages = (
+        FoiMessage.objects.exclude(status__in=FINAL_STATES)
+        .filter(kind=MessageKind.EMAIL)
+        .exclude(is_response=True)
+        .exclude(sender_email__isnull=True)
+        .exclude(recipient_email__isnull=True)
+    )
+
+    # collect log
+    pygtail = Pygtail(POSTFIX_LOG_PATH, offset_file=PYGTAIL_OFFSET_PATH)
+    new_log_lines = pygtail.readlines()
+
+    # match entrys
+    reporter = get_delivery_reporter()
+
+    for message in messages:
+        sender = message.sender_email.strip()
+        recipient = message.recipient_email.strip()
+        report = reporter.search_log(
+            new_log_lines, sender, recipient, message.timestamp, real_file=False
+        )
+        ds, created = DeliveryStatus.objects.update_or_create(
+            message=message,
+            defaults=dict(
+                log=report.log, status=report.status, last_update=timezone.now()
+            ),
+        )
