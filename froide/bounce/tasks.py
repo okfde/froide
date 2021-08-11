@@ -2,7 +2,7 @@ from django.conf import settings
 
 from froide.celery import app as celery_app
 
-from .utils import check_bounce_mails, check_unsubscribe_mails
+from .utils import check_bounce_mails, check_unsubscribe_mails, check_delivery_from_log
 
 
 HANDLE_BOUNCES = settings.FROIDE_CONFIG["bounce_enabled"]
@@ -15,6 +15,9 @@ def check_bounces():
         return
     check_bounce_mails()
 
+@celery_app.task(name='froide.bounce.tasks.check_mail_log', expires=60*60)
+def check_mail_log():
+    check_delivery_from_log()
 
 @celery_app.task(name="froide.bounce.tasks.check_unsubscribe", expires=60 * 60)
 def check_unsubscribe():
