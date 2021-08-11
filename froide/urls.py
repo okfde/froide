@@ -1,7 +1,6 @@
-from django.urls import include, path, re_path, reverse
+from django.urls import include, path, reverse
 from django.conf.urls.static import static
 from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.sitemaps import views as sitemaps_views, Sitemap
 from django.utils.translation import pgettext_lazy
@@ -27,8 +26,7 @@ from froide.document.api_views import (
 from froide.document.urls import document_media_urlpatterns
 
 from froide.publicbody.views import (PublicBodySitemap, FoiLawSitemap,
-                                     JurisdictionSitemap, show_publicbody,
-                                     publicbody_shortlink)
+                                     JurisdictionSitemap)
 from froide.foirequest.views import FoiRequestSitemap, index, dashboard
 
 
@@ -129,14 +127,7 @@ if len(settings.LANGUAGES) > 1:
 froide_urlpatterns += [
     # Translators: follow request URL
     path(pgettext_lazy('url part', 'follow/'), include('froide.foirequestfollower.urls')),
-
-    re_path(pgettext_lazy('url part', r'^b/(?P<obj_id>\d+)/?$'),
-        publicbody_shortlink, name="publicbody-publicbody_shortlink"),
-    path(pgettext_lazy('url part', 'entity/<slug:slug>/'), show_publicbody,
-            name="publicbody-show"),
-    path(pgettext_lazy('url part', 'entity/'),
-        lambda request: HttpResponseRedirect(reverse('publicbody-list'))),
-    path(pgettext_lazy('url part', 'entities/'), include('froide.publicbody.urls')),
+    path('', include('froide.publicbody.urls')),
     path(pgettext_lazy('url part', 'law/'), include('froide.publicbody.law_urls')),
     path(pgettext_lazy('url part', 'documents/'), include('froide.document.urls')),
     path(pgettext_lazy('url part', 'account/teams/'), include('froide.team.urls')),

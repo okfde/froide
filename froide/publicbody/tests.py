@@ -48,8 +48,26 @@ class PublicBodyTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, pb.name)
         response = self.client.get(reverse('publicbody-show',
-                kwargs={"slug": pb.slug}))
+                kwargs={"slug": pb.slug, "pk": pb.id}))
         self.assertEqual(response.status_code, 200)
+
+    def test_slug_redirect(self):
+        pb = PublicBody.objects.all()[0]
+        response = self.client.get(reverse('publicbody-show',
+                kwargs={"slug": pb.slug}))
+        self.assertRedirects(response, pb.get_absolute_url(), status_code=301)
+
+        response = self.client.get(reverse('publicbody-show',
+                kwargs={"pk": pb.id}))
+        self.assertRedirects(response, pb.get_absolute_url(), status_code=301)
+
+        response = self.client.get(reverse('publicbody-show',
+                kwargs={"pk": pb.id, "slug": 'bad-slug'}))
+        self.assertRedirects(response, pb.get_absolute_url(), status_code=301)
+
+        response = self.client.get(reverse('publicbody-show',
+                kwargs={"pk": "0", "slug": 'bad-slug'}))
+        self.assertEqual(response.status_code, 404)
 
     def test_csv(self):
         csv = export_csv_bytes(PublicBody.export_csv(PublicBody.objects.all()))

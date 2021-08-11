@@ -451,7 +451,10 @@ class PublicBody(models.Model):
         return get_applicable_law(pb=self, law_type=law_type)
 
     def get_absolute_url(self):
-        return reverse('publicbody-show', kwargs={"slug": self.slug})
+        return reverse('publicbody-show', kwargs={
+            "slug": self.slug,
+            "pk": self.id
+        })
 
     def get_absolute_short_url(self):
         return reverse('publicbody-publicbody_shortlink', kwargs={

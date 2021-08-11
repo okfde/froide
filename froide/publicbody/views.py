@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.contrib.sitemaps import Sitemap
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import FormView, UpdateView
+from django.views.generic import DetailView, FormView, UpdateView
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.cache import cache_anonymous_page
@@ -110,20 +110,52 @@ def publicbody_shortlink(request, obj_id):
     return redirect(obj)
 
 
-def show_publicbody(request, slug):
-    obj = get_object_or_404(PublicBody._default_manager, slug=slug)
-    if not obj.confirmed:
-        not_creator = request.user != obj._created_by
-        if not_creator and not can_moderate_object(obj, request):
+class PublicBodyView(DetailView):
+    template_name = 'publicbody/show.html'
+
+    def get_queryset(self):
+        return PublicBody._default_manager.all()
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.slug != self.kwargs.get('slug', ''):
+            if self._can_access():
+                # only redirect if we can access
+                return self.get_redirect()
             raise Http404
-    context = {
-        'object': obj,
-        'foirequests': FoiRequest.published.filter(
-            public_body=obj).order_by('-last_message')[:10],
-        'resolutions': FoiRequest.published.get_resolution_count_by_public_body(obj),
-        'foirequest_count': FoiRequest.published.filter(public_body=obj).count()
-    }
-    return render(request, 'publicbody/show.html', context)
+        if self.kwargs.get('pk') is None:
+            return self.get_redirect()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_redirect(self):
+        url = self.object.get_absolute_url()
+        query = self.request.META['QUERY_STRING']
+        if query:
+            return redirect('{}?{}'.format(url, query))
+        return redirect(url, permanent=True)
+
+    def _can_access(self):
+        if not self.object.confirmed:
+            not_creator = self.request.user != self.object._created_by
+            if not_creator and not can_moderate_object(self.object, self.request):
+                return False
+        return True
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx.update({
+            'object': self.object,
+            'foirequests': FoiRequest.published.filter(
+                public_body=self.object).order_by('-last_message')[:10],
+            'resolutions': FoiRequest.published.get_resolution_count_by_public_body(
+                self.object
+            ),
+            'foirequest_count': FoiRequest.published.filter(
+                public_body=self.object
+            ).count()
+        })
+        return ctx
 
 
 SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
