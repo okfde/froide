@@ -29,7 +29,7 @@ from froide.helper.admin_utils import (
 )
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.helper.forms import get_fake_fk_form_class
-from froide.helper.email_utils import EmailParser
+from froide.helper.email_parsing import parse_email
 from froide.guide.utils import assign_guidance_action
 from froide.guide.models import Action
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
@@ -843,9 +843,8 @@ class DeferredMessageAdmin(admin.ModelAdmin):
     close_request.short_description = _("Close associated requests")
 
     def redeliver_subject(self, request, queryset):
-        parser = EmailParser()
         for deferred in queryset:
-            email = parser.parse(BytesIO(deferred.encoded_mail()))
+            email = parse_email(BytesIO(deferred.encoded_mail()))
             match = SUBJECT_REQUEST_ID.search(email.subject)
             if match is not None:
                 try:

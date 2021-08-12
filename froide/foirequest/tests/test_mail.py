@@ -1,5 +1,4 @@
 from datetime import datetime
-from io import BytesIO
 import json
 import os
 
@@ -11,7 +10,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.test.utils import override_settings
 
-from froide.helper.email_utils import EmailParser
+from froide.helper.email_parsing import parse_email
 
 from froide.foirequest.tasks import process_mail
 from froide.foirequest.models import FoiRequest, FoiMessage, DeferredMessage
@@ -105,18 +104,15 @@ class MailTest(MailTestMixin, TestCase):
             self.assertIn(manager[1], recipients)
 
     def test_inline_attachments(self):
-        parser = EmailParser()
         with open(p("test_mail_03.txt"), "rb") as f:
-            email = parser.parse(f)
+            email = parse_email(f)
         self.assertEqual(len(email.attachments), 1)
         self.assertEqual(email.subject, "Öffentlicher Personennahverkehr")
 
     def test_long_attachment_names(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
         with open(p("test_mail_04.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
         self.assertEqual(
             mail.subject,
             "Kooperationen des Ministerium für Schule und "
@@ -147,9 +143,7 @@ class MailTest(MailTestMixin, TestCase):
 
     def test_recipient_parsing(self):
         with open(p("test_mail_05.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
         self.assertEqual(len(mail.cc), 2)
         self.assertEqual(len(mail.to), 3)  # contains X-Original-To as well
         self.assertTrue(mail.is_auto_reply)
@@ -157,9 +151,7 @@ class MailTest(MailTestMixin, TestCase):
     def test_strip_html(self):
         request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
         with open(p("test_mail_05.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
         add_message_from_email(request, mail)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -169,9 +161,7 @@ class MailTest(MailTestMixin, TestCase):
 
     def test_attachment_name_broken_encoding(self):
         with open(p("test_mail_06.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-        mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
         self.assertEqual(len(mail.attachments), 2)
         self.assertEqual(
             mail.attachments[0].name,
@@ -187,14 +177,12 @@ class MailTest(MailTestMixin, TestCase):
         request.user = user
         request.save()
         with open(p("test_mail_06.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail.attachments), 2)
-            self.assertEqual(
-                mail.attachments[0].name,
-                "usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf",
-            )
+            mail = parse_email(f)
+        self.assertEqual(len(mail.attachments), 2)
+        self.assertEqual(
+            mail.attachments[0].name,
+            "usernameEingangsbestätigung und Hinweis auf Unzustellbarkeit - Username.pdf",
+        )
         add_message_from_email(request, mail)
         messages = request.foimessage_set.all()
         self.assertEqual(len(messages), 2)
@@ -206,9 +194,7 @@ class MailTest(MailTestMixin, TestCase):
 
     def test_attachment_name_parsing(self):
         with open(p("test_mail_07.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-        mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
         self.assertEqual(
             mail.subject,
             "Anfrage nach dem Informationsfreiheitsgesetz; Gespräch damaliger BM Steinmeier Matthias Müller VW AG; Vg. 069-2018",
@@ -225,9 +211,7 @@ class MailTest(MailTestMixin, TestCase):
 
     def test_attachment_name_parsing_2(self):
         with open(p("test_mail_11.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-        mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
         self.assertEqual(
             mail.subject,
             "Bescheid zu Ihrer ergänzten IFG-Anfrage Bestellung Infomaterial, Broschüren... [#32154]",
@@ -237,10 +221,8 @@ class MailTest(MailTestMixin, TestCase):
 
     def test_address_list(self):
         with open(p("test_mail_01.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail.cc), 5)
+            mail = parse_email(f)
+        self.assertEqual(len(mail.cc), 5)
 
     @override_settings(FOI_EMAIL_DOMAIN=["fragdenstaat.de", "example.com"])
     def test_additional_domains(self):
@@ -257,11 +239,9 @@ class MailTest(MailTestMixin, TestCase):
 
     def test_eml_attachments(self):
         with open(p("test_mail_08.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
-            subject = "WG: Disziplinarverfahren u.a. gegen Bürgermeister/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche Bürgermeister/Ortsvorsteher/Landräte im Land Brandenburg in den letzten Jahren [#5617]"
-            self.assertEqual(mail.attachments[0].name, "%s.eml" % subject[:45])
+            mail = parse_email(f)
+        subject = "WG: Disziplinarverfahren u.a. gegen Bürgermeister/Hauptverwaltungsbeamte/Amtsdirektoren/ehrenamtliche Bürgermeister/Ortsvorsteher/Landräte im Land Brandenburg in den letzten Jahren [#5617]"
+        self.assertEqual(mail.attachments[0].name, "%s.eml" % subject[:45])
 
     def test_missing_date(self):
         with open(p("test_mail_08.txt"), "rb") as f:
@@ -275,27 +255,21 @@ class MailTest(MailTestMixin, TestCase):
     def test_borked_subject(self):
         """Subject completly borked"""
         with open(p("test_mail_09.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
-            self.assertIn("Unterlagen nach", mail.subject)
-            self.assertIn("E-Mail Empfangsbest", mail.subject)
+            mail = parse_email(f)
+        self.assertIn("Unterlagen nach", mail.subject)
+        self.assertIn("E-Mail Empfangsbest", mail.subject)
 
     def test_attachment_name_parsing_header(self):
         with open(p("test_mail_10.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-            mail = parser.parse(BytesIO(content))
-            self.assertEqual(len(mail.attachments), 1)
-            self.assertEqual(
-                mail.attachments[0].name, "Eingangsbestätigung Akteneinsicht.doc"
-            )
+            mail = parse_email(f)
+        self.assertEqual(len(mail.attachments), 1)
+        self.assertEqual(
+            mail.attachments[0].name, "Eingangsbestätigung Akteneinsicht.doc"
+        )
 
     def test_html_only_mail(self):
         with open(p("test_mail_13.txt"), "rb") as f:
-            parser = EmailParser()
-            content = f.read()
-        mail = parser.parse(BytesIO(content))
+            mail = parse_email(f)
 
         self.assertTrue(len(mail.body) > 10)
         # Markdown like links are rendered

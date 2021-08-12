@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.test import TestCase
 from django.db import connection
 
-from froide.helper.email_utils import EmailParser
+from froide.helper.email_parsing import parse_email
 from froide.foirequest.tests.factories import UserFactory
 
 from .models import Bounce
@@ -38,9 +38,8 @@ class BounceTest(TestCase):
         self.assertTrue(status)
 
     def test_bounce_parsing(self):
-        parser = EmailParser()
         with open(p("bounce_001.txt"), "rb") as f:
-            email = parser.parse(f)
+            email = parse_email(f)
 
         bounce_address = make_bounce_address(self.email)
         email.to = [("", bounce_address)]
@@ -55,9 +54,8 @@ class BounceTest(TestCase):
         self.assertEqual(len(bounce.bounces), 1)
 
     def test_bounce_parsing_2(self):
-        parser = EmailParser()
         with open(p("bounce_002.txt"), "rb") as f:
-            email = parser.parse(f)
+            email = parse_email(f)
 
         bounce_address = make_bounce_address(self.email)
         email.to = [("", bounce_address)]

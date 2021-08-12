@@ -1,32 +1,11 @@
-"""
-
-Original EmailParser Code by Ian Lewis:
-http://www.ianlewis.org/en/parsing-email-attachments-python
-Licensed under MIT
-
-"""
-
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 import contextlib
-from datetime import datetime
-from io import BytesIO
-import base64
 import re
-from email.parser import BytesParser as Parser
 import imaplib
-from typing import Iterator, Tuple, Optional, Union, List
+from typing import Iterator, Tuple, Optional, Union
 
 from django.conf import settings
 from django.utils import timezone
-from django.utils.functional import cached_property
-
-from .text_utils import convert_html_to_text
-from .email_parsing import (
-    parse_email_body,
-    parse_main_headers,
-    parse_date,
-    get_bounce_headers,
-)
 
 
 AUTO_REPLY_SUBJECT_REGEX = settings.FROIDE_CONFIG.get("auto_reply_subject_regex", None)
@@ -51,6 +30,18 @@ Return-Path:\ # If headers are given in verbose
     re.X | re.I,
 )
 BOUNCE_TEXT_THRESHOLD = 3  # At least three occurences of above patterns
+BOUNCE_HEADERS = (
+    "Action",
+    "Content-Description",
+    "Diagnostic-Code",
+    "Final-Recipient",
+    "Received",
+    "Remote-Mta",
+    "Remote-MTA",
+    "Reporting-MTA",
+    "Reporting-Mta",
+    "Status",
+)
 
 DsnStatus = namedtuple("DsnStatus", "class_ subject detail")
 
@@ -61,8 +52,6 @@ BounceResult = namedtuple(
 GENERIC_ERROR = DsnStatus(5, 0, 0)
 MAILBOX_FULL = DsnStatus(5, 2, 2)
 
-# Restrict to max 3 consecutive newlines in email body
-MULTI_NL_RE = re.compile("((?:\r?\n){,3})(?:\r?\n)*")
 UID_RE = re.compile(r"UID\s+(?P<uid>\d+)")
 
 
@@ -151,6 +140,34 @@ class UnsupportedMailFormat(Exception):
     pass
 
 
+def get_bounce_headers(msgobj):
+    headers = defaultdict(list)
+    for part in msgobj.walk():
+        for k, v in part.items():
+            if k in BOUNCE_HEADERS:
+                headers[k].append(v)
+    return headers
+
+
+def get_bounce_info(body, msgobj=None, date=None):
+    headers = {}
+    if msgobj is not None:
+        headers = get_bounce_headers(msgobj)
+    status = find_bounce_status(headers, body)
+    diagnostic_code = headers.get("Diagnostic-Code", [None])[0]
+    diagnostic_status = find_status_from_diagnostic(diagnostic_code)
+    if status == GENERIC_ERROR and diagnostic_status != status:
+        status = diagnostic_status
+    bounce_type = classify_bounce_status(status)
+    return BounceResult(
+        status=status,
+        bounce_type=bounce_type,
+        is_bounce=bool(bounce_type),
+        diagnostic_code=diagnostic_code,
+        timestamp=date or timezone.now(),
+    )
+
+
 def find_bounce_status(headers, body=None):
     for v in headers.get("Status", []):
         match = BOUNCE_STATUS_RE.match(v.strip())
@@ -192,130 +209,21 @@ def classify_bounce_status(status):
         return "hard"
 
 
-EmailField = Tuple[str, str]
-
-
-class ParsedEmail(object):
-    attachments: List
-    message_id: str
-    date: datetime
-    subject: str
-    body: str
-    html: Optional[str]
-    from_: EmailField
-    to: List[EmailField]
-    cc: List[EmailField]
-    resent_to: List[EmailField]
-    resent_cc: List[EmailField]
-
-    def __init__(self, msgobj, **kwargs):
-        self.msgobj = msgobj
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-
-    @cached_property
-    def bounce_info(self):
-        return self.get_bounce_info()
-
-    def get_bounce_info(self):
-        headers = {}
-        if self.msgobj is not None:
-            headers = get_bounce_headers(self.msgobj)
-        status = find_bounce_status(headers, self.body)
-        diagnostic_code = headers.get("Diagnostic-Code", [None])[0]
-        diagnostic_status = find_status_from_diagnostic(diagnostic_code)
-        if status == GENERIC_ERROR and diagnostic_status != status:
-            status = diagnostic_status
-        bounce_type = classify_bounce_status(status)
-        return BounceResult(
-            status=status,
-            bounce_type=bounce_type,
-            is_bounce=bool(bounce_type),
-            diagnostic_code=diagnostic_code,
-            timestamp=self.date or timezone.now(),
-        )
-
-    @cached_property
-    def is_auto_reply(self):
-        return self.detect_auto_reply()
-
-    def detect_auto_reply(self):
-        msgobj = self.msgobj
-        if msgobj:
-            for header, val in AUTO_REPLY_HEADERS:
-                header_val = msgobj.get(header, None)
-                if header_val is None:
-                    continue
-                if val is None or val in header_val:
-                    return True
-
-        from_field = self.from_
-        if from_field and AUTO_REPLY_EMAIL_REGEX is not None:
-            if AUTO_REPLY_EMAIL_REGEX.search(from_field[0]):
+def detect_auto_reply(from_field, subject="", msgobj=None):
+    if msgobj:
+        for header, val in AUTO_REPLY_HEADERS:
+            header_val = msgobj.get(header, None)
+            if header_val is None:
+                continue
+            if val is None or val in header_val:
                 return True
 
-        subject = self.subject
-        if subject and AUTO_REPLY_SUBJECT_REGEX is not None:
-            if AUTO_REPLY_SUBJECT_REGEX.search(subject) is not None:
-                return True
+    if from_field and AUTO_REPLY_EMAIL_REGEX is not None:
+        if AUTO_REPLY_EMAIL_REGEX.search(from_field[0]):
+            return True
 
-        return False
+    if subject and AUTO_REPLY_SUBJECT_REGEX is not None:
+        if AUTO_REPLY_SUBJECT_REGEX.search(subject) is not None:
+            return True
 
-    def is_direct_recipient(self, email_address):
-        return any(email.lower() == email_address.lower() for name, email in self.to)
-
-
-def fix_email_body(body):
-    return MULTI_NL_RE.sub("\\1", body)
-
-
-class EmailParser(object):
-    def parse(self, bytesfile: BytesIO) -> ParsedEmail:
-        p = Parser()
-        msgobj = p.parse(bytesfile)
-
-        body, html, attachments = parse_email_body(msgobj)
-        body = "\n".join(body).strip()
-        html = "\n".join(html).strip()
-
-        if not body and html:
-            body = convert_html_to_text(html)
-
-        body = fix_email_body(body)
-
-        email_info = parse_main_headers(msgobj)
-        email_info.update({"body": body, "html": html, "attachments": attachments})
-
-        return ParsedEmail(msgobj, **email_info)
-
-    def parse_postmark(self, obj):
-        from_field = (obj["FromFull"]["Name"], obj["FromFull"]["Email"])
-        tos = [(o["Name"], o["Email"]) for o in obj["ToFull"]]
-        ccs = [(o["Name"], o["Email"]) for o in obj["CcFull"]]
-        attachments = []
-        for a in obj["Attachments"]:
-            attachment = BytesIO(base64.b64decode(a["Content"]))
-            attachment.content_type = a["ContentType"]
-            attachment.size = a["ContentLength"]
-            attachment.name = a["Name"]
-            attachment.create_date = None
-            attachment.mod_date = None
-            attachment.read_date = None
-            attachments.append(attachment)
-
-        return ParsedEmail(
-            None,
-            **{
-                "postmark_msgobj": obj,
-                "date": parse_date(obj["Date"]),
-                "subject": obj["Subject"],
-                "body": obj["TextBody"],
-                "html": obj["HtmlBody"],
-                "from_": from_field,
-                "to": tos,
-                "cc": ccs,
-                "resent_to": [],
-                "resent_cc": [],
-                "attachments": attachments,
-            }
-        )
+    return False

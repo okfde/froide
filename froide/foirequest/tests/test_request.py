@@ -32,7 +32,7 @@ from froide.foirequest.models import (
 )
 from froide.foirequest.forms import get_send_message_form, get_escalation_message_form
 from froide.foirequest.utils import possible_reply_addresses
-from froide.helper.email_utils import ParsedEmail
+from froide.helper.email_parsing import ParsedEmail
 
 User = get_user_model()
 

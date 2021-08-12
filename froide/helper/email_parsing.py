@@ -1,36 +1,37 @@
-from collections import defaultdict
+"""
+
+Original EmailParser Code by Ian Lewis:
+http://www.ianlewis.org/en/parsing-email-attachments-python
+Licensed under MIT
+
+"""
+
+import base64
+import re
+import time
 from contextlib import closing
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.message import EmailMessage
 from email.parser import BytesParser as Parser
-from email.utils import parseaddr, parsedate_tz, getaddresses
+from email.utils import getaddresses, parseaddr, parsedate_tz
 from io import BytesIO
-import re
-import time
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 from urllib.parse import unquote
 
 import pytz
+from django.utils.functional import cached_property
 
+from .text_utils import convert_html_to_text
+from .email_utils import get_bounce_info, detect_auto_reply
+
+# Restrict to max 3 consecutive newlines in email body
+MULTI_NL_RE = re.compile("((?:\r?\n){,3})(?:\r?\n)*")
 
 DISPO_SPLIT = re.compile(r"""((?:[^;"']|"[^"]*"|'[^']*')+)""")
 # Reassemble regular-parameter section
 # https://tools.ietf.org/html/rfc2231#7
 DISPO_MULTI_VALUE = re.compile(r"(\w+)\*\d+$")
-
-BOUNCE_HEADERS = (
-    "Action",
-    "Content-Description",
-    "Diagnostic-Code",
-    "Final-Recipient",
-    "Received",
-    "Remote-Mta",
-    "Remote-MTA",
-    "Reporting-MTA",
-    "Reporting-Mta",
-    "Status",
-)
 
 
 def split_with_quotes(dispo):
@@ -284,10 +285,96 @@ def parse_date(date_str):
     return pytz.utc.localize(date)
 
 
-def get_bounce_headers(msgobj):
-    headers = defaultdict(list)
-    for part in msgobj.walk():
-        for k, v in part.items():
-            if k in BOUNCE_HEADERS:
-                headers[k].append(v)
-    return headers
+EmailField = Tuple[str, str]
+
+
+class ParsedEmail(object):
+    message_id: str = ""
+    date: datetime = None
+    subject: str
+    body: str
+    html: Optional[str]
+    from_: EmailField
+    to: List[EmailField]
+    cc: List[EmailField]
+    resent_to: List[EmailField]
+    resent_cc: List[EmailField]
+    attachments: List[EmailAttachment]
+
+    def __init__(self, msgobj, **kwargs):
+        self.msgobj = msgobj
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+    @cached_property
+    def bounce_info(self):
+        return self.get_bounce_info()
+
+    def get_bounce_info(self):
+        return get_bounce_info(self.body, msgobj=self.msgobj, date=self.date)
+
+    @cached_property
+    def is_auto_reply(self):
+        return self.detect_auto_reply()
+
+    def detect_auto_reply(self):
+        return detect_auto_reply(self.from_, subject=self.subject, msgobj=self.msgobj)
+
+    def is_direct_recipient(self, email_address):
+        return any(email.lower() == email_address.lower() for name, email in self.to)
+
+
+def fix_email_body(body):
+    return MULTI_NL_RE.sub("\\1", body)
+
+
+def parse_email(bytesfile: BytesIO) -> ParsedEmail:
+    p = Parser()
+    msgobj = p.parse(bytesfile)
+
+    body, html, attachments = parse_email_body(msgobj)
+    body = "\n".join(body).strip()
+    html = "\n".join(html).strip()
+
+    if not body and html:
+        body = convert_html_to_text(html)
+
+    body = fix_email_body(body)
+
+    email_info = parse_main_headers(msgobj)
+    email_info.update({"body": body, "html": html, "attachments": attachments})
+
+    return ParsedEmail(msgobj, **email_info)
+
+
+def parse_postmark(obj):
+    from_field = (obj["FromFull"]["Name"], obj["FromFull"]["Email"])
+    tos = [(o["Name"], o["Email"]) for o in obj["ToFull"]]
+    ccs = [(o["Name"], o["Email"]) for o in obj["CcFull"]]
+    attachments = []
+    for a in obj["Attachments"]:
+        attachment = BytesIO(base64.b64decode(a["Content"]))
+        attachment.content_type = a["ContentType"]
+        attachment.size = a["ContentLength"]
+        attachment.name = a["Name"]
+        attachment.create_date = None
+        attachment.mod_date = None
+        attachment.read_date = None
+        attachments.append(attachment)
+
+    return ParsedEmail(
+        None,
+        **{
+            "postmark_msgobj": obj,
+            "date": parse_date(obj["Date"]),
+            "subject": obj["Subject"],
+            "body": obj["TextBody"],
+            "html": obj["HtmlBody"],
+            "from_": from_field,
+            "to": tos,
+            "cc": ccs,
+            "resent_to": [],
+            "resent_cc": [],
+            "attachments": attachments,
+        }
+    )

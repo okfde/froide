@@ -21,14 +21,13 @@ from django.core.validators import validate_email
 from django.core.mail.message import sanitize_address
 
 from froide.helper.email_utils import (
-    EmailParser,
     get_mail_client,
     get_unread_mails,
     BounceResult,
     find_status_from_diagnostic,
     classify_bounce_status,
 )
-from froide.helper.email_parsing import parse_header_field
+from froide.helper.email_parsing import parse_email, parse_header_field
 
 from .signals import user_email_bounced, email_bounced, email_unsubscribed
 from .models import Bounce
@@ -201,9 +200,8 @@ def check_unsubscribe_mails():
 
 
 def process_unsubscribe_mail(mail_bytes):
-    parser = EmailParser()
     with closing(BytesIO(mail_bytes)) as stream:
-        email = parser.parse(stream)
+        email = parse_email(stream)
     recipient_list = list(
         set([get_recipient_address_from_unsubscribe(addr) for name, addr in email.to])
     )
@@ -220,9 +218,8 @@ def process_unsubscribe_mail(mail_bytes):
 
 
 def process_bounce_mail(mail_bytes):
-    parser = EmailParser()
     with closing(BytesIO(mail_bytes)) as stream:
-        email = parser.parse(stream)
+        email = parse_email(stream)
 
     bounce_info = email.bounce_info
     if bounce_info.is_bounce:
