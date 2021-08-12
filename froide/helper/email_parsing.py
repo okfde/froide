@@ -2,11 +2,13 @@ from collections import defaultdict
 from contextlib import closing
 from datetime import datetime, timedelta
 from email.header import decode_header
+from email.message import EmailMessage
 from email.parser import BytesParser as Parser
 from email.utils import parseaddr, parsedate_tz, getaddresses
 from io import BytesIO
 import re
 import time
+from typing import Optional, List, Tuple
 from urllib.parse import unquote
 
 import pytz
@@ -44,7 +46,18 @@ def get_email_headers(message_bytes, headers=None):
     return {k: [parse_header_field(x) for x in msgobj.get_all(k, [])] for k in headers}
 
 
-def parse_email_body(msgobj):
+class EmailAttachment(BytesIO):
+    content_type: str
+    size: int
+    name: Optional[str]
+    create_date: Optional[str]
+    mod_date: Optional[str]
+    read_date: Optional[str]
+
+
+def parse_email_body(
+    msgobj: EmailMessage,
+) -> Tuple[List[str], List[str], List[EmailAttachment]]:
     body = []
     html = []
     attachments = []
@@ -136,7 +149,7 @@ def parse_attachment(message_part):
     if file_data is None:
         payloads = message_part.get_payload()
         file_data = "\n\n".join([p.as_string() for p in payloads]).encode("utf-8")
-    attachment = BytesIO(file_data)
+    attachment = EmailAttachment(file_data)
     attachment.content_type = message_part.get_content_type()
     attachment.size = len(file_data)
     attachment.name = None

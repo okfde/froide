@@ -185,7 +185,7 @@ class FoiEventFactory(DjangoModelFactory):
     context = "{}"
 
 
-def make_world():
+def make_world() -> Site:
     site = Site.objects.get(id=1)
 
     user1 = UserFactory.create(

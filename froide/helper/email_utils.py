@@ -8,12 +8,13 @@ Licensed under MIT
 
 from collections import namedtuple
 import contextlib
+from datetime import datetime
 from io import BytesIO
 import base64
 import re
 from email.parser import BytesParser as Parser
 import imaplib
-from typing import Iterator, Tuple, Optional, Union
+from typing import Iterator, Tuple, Optional, Union, List
 
 from django.conf import settings
 from django.utils import timezone
@@ -191,9 +192,21 @@ def classify_bounce_status(status):
         return "hard"
 
 
+EmailField = Tuple[str, str]
+
+
 class ParsedEmail(object):
-    message_id = None
-    date = None
+    attachments: List
+    message_id: str
+    date: datetime
+    subject: str
+    body: str
+    html: Optional[str]
+    from_: EmailField
+    to: List[EmailField]
+    cc: List[EmailField]
+    resent_to: List[EmailField]
+    resent_cc: List[EmailField]
 
     def __init__(self, msgobj, **kwargs):
         self.msgobj = msgobj
@@ -257,7 +270,7 @@ def fix_email_body(body):
 
 
 class EmailParser(object):
-    def parse(self, bytesfile):
+    def parse(self, bytesfile: BytesIO) -> ParsedEmail:
         p = Parser()
         msgobj = p.parse(bytesfile)
 

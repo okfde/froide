@@ -123,6 +123,8 @@ class RequestTest(TestCase):
         match_full = re.search(r"http://[^/]+(/.+)", message.body)
         self.assertIsNotNone(match)
         self.assertIsNotNone(match_full)
+        assert match is not None
+        assert match_full is not None
         url = match_full.group(1)
         secret = match.group(1)
         generated_url = reverse(

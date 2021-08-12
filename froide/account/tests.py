@@ -4,6 +4,7 @@ from unittest import mock
 from urllib.parse import urlencode
 
 from django.test import TestCase
+from django.http import HttpResponse
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory
 from django.urls import reverse
@@ -38,7 +39,7 @@ class AccountTest(TestCase):
     def setUp(self):
         factories.make_world()
 
-    def assertForbidden(self, response):
+    def assertForbidden(self, response: HttpResponse):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("account-login"), response["Location"])
         self.assertIn("?next=", response["Location"])

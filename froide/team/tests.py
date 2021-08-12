@@ -4,6 +4,7 @@ from django.urls import reverse
 import factory
 
 from froide.foirequest.tests import factories
+from froide.account.factories import UserFactory
 
 from .models import Team, TeamMembership
 from .services import TeamService
@@ -20,7 +21,7 @@ class TeamMembershipFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = TeamMembership
 
-    user = factory.SubFactory(factories.UserFactory)
+    user = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
     role = TeamMembership.ROLE_VIEWER
     status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
@@ -29,7 +30,7 @@ class TeamMembershipFactory(factory.django.DjangoModelFactory):
 class TeamTest(TestCase):
     def setUp(self):
         factories.make_world()
-        self.user = factories.UserFactory.create()
+        self.user = UserFactory.create()
 
         self.owner_team = TeamFactory.create()
         TeamMembershipFactory.create(

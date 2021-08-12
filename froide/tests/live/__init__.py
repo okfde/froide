@@ -1,5 +1,6 @@
 import os
 import socket
+from typing import Union
 
 from django.conf import settings
 from django.db import connections
@@ -25,7 +26,10 @@ def get_driver_options(driver_name, **kwargs):
     return options
 
 
-def get_selenium(**kwargs):
+Webdriver = Union[webdriver.Remote, webdriver.Chrome, webdriver.Firefox]
+
+
+def get_selenium(**kwargs) -> Webdriver:
     driver_setting = getattr(settings, "TEST_SELENIUM_DRIVER", "firefox")
 
     driver_url = None
@@ -72,6 +76,7 @@ class CheckJSErrors(object):
 
 class LiveTestMixin(object):
     ADDITIONAL_KWARGS = {}
+    selenium: Webdriver
 
     @classmethod
     def setUpClass(cls):
@@ -85,7 +90,7 @@ class LiveTestMixin(object):
         cls.selenium.quit()
         super(LiveTestMixin, cls).tearDownClass()
 
-    def scrollTo(self, selector):
+    def scrollTo(self, selector: str):
         # self.selenium.find_element_by_id(id).location_once_scrolled_into_view
         self.selenium.execute_script(
             "window.scrollTo(0,0);" 'document.getElementById("%s").focus();' % selector

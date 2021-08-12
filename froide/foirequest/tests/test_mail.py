@@ -23,7 +23,7 @@ from froide.problem.models import ProblemReport
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "testdata"))
 
 
-def p(path):
+def p(path: str) -> str:
     return os.path.join(TEST_DATA_ROOT, path)
 
 

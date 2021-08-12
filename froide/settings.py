@@ -11,7 +11,7 @@ from configurations import Configuration, importer, values
 importer.install(check_options=True)
 
 
-def rec(x):
+def rec(x: str) -> re.Pattern:
     return re.compile(x, re.I | re.U)
 
 

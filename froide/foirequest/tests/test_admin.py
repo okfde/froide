@@ -1,8 +1,10 @@
 from django.test import TestCase
+from django.db.models import Model
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory
 from django.contrib.auth import get_user_model
 from django.contrib.messages.storage import default_storage
+from typing import Callable
 
 from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, FoiAttachment, DeferredMessage
@@ -80,7 +82,14 @@ class AdminActionTest(TestCase):
         self.assertEqual(set([t.name for t in frs[0].tags.all()]), set(["one", "two"]))
 
     def check_attribute_change_action(
-        self, klass, factory, admin_action, attr, initial, final, factory_extra=None
+        self,
+        klass: Model,
+        factory,
+        admin_action: Callable,
+        attr: str,
+        initial: bool,
+        final: bool,
+        factory_extra=None,
     ):
         if factory_extra is None:
             d = {}
