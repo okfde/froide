@@ -29,7 +29,7 @@ class GeoRegionAdminForm(movenodeform_factory(GeoRegion)):
 class GeoRegionMixin(object):
     form = GeoRegionAdminForm
 
-    search_fields = ['name', 'region_identifier']
+    search_fields = ['name', '^region_identifier']
     list_display = ('name', 'kind', 'kind_detail', 'region_identifier')
     list_filter = (
         'kind', 'kind_detail',
