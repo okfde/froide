@@ -11,7 +11,7 @@ def get_user_by_token_or_404(token, purpose=None):
     return user
 
 
-SALT = 'token:'
+SALT = "token:"
 
 
 def get_signed_purpose(purpose):
@@ -23,6 +23,6 @@ def unsign_purpose(signed_purpose):
     signer = Signer()
     try:
         val = signer.unsign(signed_purpose)
-        return val[len(SALT):]
+        return val[len(SALT) :]
     except BadSignature:
         return None

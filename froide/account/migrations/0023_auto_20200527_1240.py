@@ -8,26 +8,42 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0022_accountblacklist'),
+        ("account", "0022_accountblacklist"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='UserPreference',
+            name="UserPreference",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('key', models.CharField(max_length=255)),
-                ('timestamp', models.DateTimeField(auto_now=True)),
-                ('value', models.JSONField()),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("key", models.CharField(max_length=255)),
+                ("timestamp", models.DateTimeField(auto_now=True)),
+                ("value", models.JSONField()),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'User preference',
-                'verbose_name_plural': 'User preferences',
+                "verbose_name": "User preference",
+                "verbose_name_plural": "User preferences",
             },
         ),
         migrations.AddConstraint(
-            model_name='userpreference',
-            constraint=models.UniqueConstraint(fields=('user', 'key'), name='unique_user_preference_key'),
+            model_name="userpreference",
+            constraint=models.UniqueConstraint(
+                fields=("user", "key"), name="unique_user_preference_key"
+            ),
         ),
     ]

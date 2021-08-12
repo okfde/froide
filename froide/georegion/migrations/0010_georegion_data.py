@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('georegion', '0009_auto_20190325_2040'),
+        ("georegion", "0009_auto_20190325_2040"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='georegion',
-            name='data',
+            model_name="georegion",
+            name="data",
             field=models.JSONField(default=dict),
         ),
     ]

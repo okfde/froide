@@ -12,7 +12,7 @@ class SearchRegistry(object):
             if menu_item is None:
                 continue
             sections.append(menu_item)
-        sections = sorted(sections, key=lambda x: x['title'])
+        sections = sorted(sections, key=lambda x: x["title"])
         return sections
 
 

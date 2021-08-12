@@ -9,27 +9,49 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('guide', '0001_initial'),
+        ("guide", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='guidance',
-            options={'ordering': ('-timestamp',), 'permissions': (('can_run_guidance', 'Can run guidance'),), 'verbose_name': 'Guidance', 'verbose_name_plural': 'Guidances'},
+            name="guidance",
+            options={
+                "ordering": ("-timestamp",),
+                "permissions": (("can_run_guidance", "Can run guidance"),),
+                "verbose_name": "Guidance",
+                "verbose_name_plural": "Guidances",
+            },
         ),
         migrations.AlterField(
-            model_name='action',
-            name='tag',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='foirequest.MessageTag'),
+            model_name="action",
+            name="tag",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="foirequest.MessageTag",
+            ),
         ),
         migrations.AlterField(
-            model_name='rule',
-            name='has_no_tag',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='foirequest.MessageTag'),
+            model_name="rule",
+            name="has_no_tag",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="foirequest.MessageTag",
+            ),
         ),
         migrations.AlterField(
-            model_name='rule',
-            name='has_tag',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='foirequest.MessageTag'),
+            model_name="rule",
+            name="has_tag",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="+",
+                to="foirequest.MessageTag",
+            ),
         ),
     ]

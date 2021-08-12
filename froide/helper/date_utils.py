@@ -15,7 +15,7 @@ def format_seconds(seconds):
 
 
 def calculate_month_range_de(date, months=1):
-    """ Should calculate after German BGB Law § 130 and § 188"""
+    """Should calculate after German BGB Law § 130 and § 188"""
 
     current_tz = timezone.get_current_timezone()
 
@@ -71,8 +71,7 @@ def is_holiday(date):
             return True
     if (date.month, date.day) in settings.HOLIDAYS:
         return True
-    if hasattr(settings, "HOLIDAYS_FOR_EASTER") and \
-            settings.HOLIDAYS_FOR_EASTER:
+    if hasattr(settings, "HOLIDAYS_FOR_EASTER") and settings.HOLIDAYS_FOR_EASTER:
         easter_sunday = calc_easter(date.year)
         easter_sunday = datetime(*easter_sunday)
         easter_holidays = [
@@ -106,5 +105,5 @@ def calc_easter(year):
     return (year, month, day)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print(calculate_month_range_de(datetime(2011, 1, 31, 17, 16), 1))

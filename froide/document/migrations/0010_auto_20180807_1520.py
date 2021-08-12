@@ -6,8 +6,8 @@ from django.db import migrations
 
 
 def set_original_fk(apps, schema_editor):
-    Document = apps.get_model('document', 'Document')
-    Attachment = apps.get_model('foirequest', 'FoiAttachment')
+    Document = apps.get_model("document", "Document")
+    Attachment = apps.get_model("foirequest", "FoiAttachment")
 
     for att in Attachment.objects.filter(document__isnull=False):
         Document.objects.filter(id=att.document_id).update(original_id=att.id)
@@ -16,8 +16,8 @@ def set_original_fk(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0019_foiattachment_document'),
-        ('document', '0009_document_original'),
+        ("foirequest", "0019_foiattachment_document"),
+        ("document", "0009_document_original"),
     ]
 
     operations = [

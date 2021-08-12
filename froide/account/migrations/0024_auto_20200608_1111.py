@@ -6,9 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0023_auto_20200527_1240'),
+        ("account", "0023_auto_20200527_1240"),
     ]
 
-    operations = [
-        migrations.RenameModel('AccountBlacklist', 'AccountBlocklist')
-    ]
+    operations = [migrations.RenameModel("AccountBlacklist", "AccountBlocklist")]

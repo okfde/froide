@@ -6,14 +6,14 @@ from django.db import migrations
 
 
 def set_message_kind(apps, schema_editor):
-    FoiMessage = apps.get_model('foirequest', 'FoiMessage')
-    FoiMessage.objects.filter(is_postal=True).update(kind='post')
+    FoiMessage = apps.get_model("foirequest", "FoiMessage")
+    FoiMessage.objects.filter(is_postal=True).update(kind="post")
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0021_foimessage_kind'),
+        ("foirequest", "0021_foimessage_kind"),
     ]
 
     operations = [

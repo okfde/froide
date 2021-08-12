@@ -9,18 +9,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0012_auto_20171218_1407'),
+        ("foirequest", "0012_auto_20171218_1407"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='requestdraft',
-            name='project',
-            field=models.ForeignKey(null=True, blank=True, on_delete=django.db.models.deletion.SET_NULL, to='foirequest.FoiProject'),
+            model_name="requestdraft",
+            name="project",
+            field=models.ForeignKey(
+                null=True,
+                blank=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="foirequest.FoiProject",
+            ),
         ),
         migrations.AddField(
-            model_name='requestdraft',
-            name='request',
-            field=models.ForeignKey(null=True, blank=True, on_delete=django.db.models.deletion.SET_NULL, to='foirequest.FoiRequest'),
+            model_name="requestdraft",
+            name="request",
+            field=models.ForeignKey(
+                null=True,
+                blank=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="foirequest.FoiRequest",
+            ),
         ),
     ]

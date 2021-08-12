@@ -7,22 +7,28 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0020_auto_20190309_1223'),
+        ("account", "0020_auto_20190309_1223"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='taggeduser',
-            name='tag',
+            model_name="taggeduser",
+            name="tag",
         ),
         migrations.RenameField(
-            model_name='taggeduser',
-            old_name='tag_new',
-            new_name='tag',
+            model_name="taggeduser",
+            old_name="tag_new",
+            new_name="tag",
         ),
         migrations.AlterField(
-            model_name='user',
-            name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='account.TaggedUser', to='account.UserTag', verbose_name='Tags'),
+            model_name="user",
+            name="tags",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="account.TaggedUser",
+                to="account.UserTag",
+                verbose_name="Tags",
+            ),
         ),
     ]

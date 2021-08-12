@@ -21,11 +21,16 @@ from ..forms import EditMessageForm
 from ..models import FoiRequest, FoiMessage, DeliveryStatus
 from ..foi_mail import get_alternative_mail
 from ..auth import (
-    can_read_foirequest, can_write_foirequest, can_manage_foirequest,
-    can_read_foirequest_anonymous, can_read_foirequest_authenticated,
+    can_read_foirequest,
+    can_write_foirequest,
+    can_manage_foirequest,
+    can_read_foirequest_anonymous,
+    can_read_foirequest_authenticated,
     can_moderate_foirequest,
-    can_read_foiproject, can_write_foiproject, can_manage_foiproject,
-    can_read_foiproject_authenticated
+    can_read_foiproject,
+    can_write_foiproject,
+    can_manage_foiproject,
+    can_read_foiproject_authenticated,
 )
 
 Comment = get_model()
@@ -36,16 +41,15 @@ CONTENT_CACHE_THRESHOLD = 5000
 
 
 def unify(text):
-    text = text or ''
+    text = text or ""
     text = text.replace("\r\n", "\n")
     return text
 
 
 def is_authenticated_read(message, request):
     foirequest = message.request
-    return (
-        can_write_foirequest(foirequest, request) or
-        can_read_foirequest_anonymous(foirequest, request)
+    return can_write_foirequest(foirequest, request) or can_read_foirequest_anonymous(
+        foirequest, request
     )
 
 
@@ -67,9 +71,10 @@ def highlight_request(message, request):
         index = content.index(description)
     except ValueError:
         return markup_redacted_content(
-            real_content, redacted_content,
+            real_content,
+            redacted_content,
             authenticated_read=auth_read,
-            message_id=message.id
+            message_id=message.id,
         )
 
     offset = index + len(description)
@@ -77,33 +82,38 @@ def highlight_request(message, request):
     if content[:index]:
         html.append(
             markup_redacted_content(
-                real_content[:index], redacted_content[:index],
-                authenticated_read=auth_read
+                real_content[:index],
+                redacted_content[:index],
+                authenticated_read=auth_read,
             )
             # format_html('<div>{pre}</div>', pre=content[:index])
         )
 
     html_post = markup_redacted_content(
-        real_content[offset:],
-        redacted_content[offset:],
-        authenticated_read=auth_read
+        real_content[offset:], redacted_content[offset:], authenticated_read=auth_read
     )
 
-    html.append(format_html('''<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
-<div class="d-print-none"><a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>''',
-        description=description,
-        post=html_post,
-        show_letter=_("[... Show complete request text]"),
-    ))
+    html.append(
+        format_html(
+            """<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
+<div class="d-print-none"><a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>""",
+            description=description,
+            post=html_post,
+            show_letter=_("[... Show complete request text]"),
+        )
+    )
     if content[:index]:
-        html.append(format_html('''
+        html.append(
+            format_html(
+                """
 {regards}
-{message_sender}''',
-            regards=_('Kind Regards,'),
-            message_sender=message.sender
-        ))
-    html.append(format_html('</div>'))
-    return mark_safe(''.join(html))
+{message_sender}""",
+                regards=_("Kind Regards,"),
+                message_sender=message.sender,
+            )
+        )
+    html.append(format_html("</div>"))
+    return mark_safe("".join(html))
 
 
 def render_message_content(message, authenticated_read=False):
@@ -117,15 +127,16 @@ def render_message_content(message, authenticated_read=False):
     needs_caching = len(real_content) > CONTENT_CACHE_THRESHOLD
 
     content = markup_redacted_content(
-        real_content, redacted_content,
+        real_content,
+        redacted_content,
         authenticated_read=authenticated_read,
-        message_id=message.id
+        message_id=message.id,
     )
     if needs_caching:
         if authenticated_read:
-            update = {'content_rendered_auth': content}
+            update = {"content_rendered_auth": content}
         else:
-            update = {'content_rendered_anon': content}
+            update = {"content_rendered_anon": content}
         FoiMessage.objects.filter(id=message.id).update(**update)
 
     return content
@@ -144,16 +155,20 @@ def redact_message_short(message, request):
     authenticated_read = is_authenticated_read(message, request)
     content = render_message_content(message, authenticated_read=authenticated_read)
 
-    subject, redacted_subject = '', ''
+    subject, redacted_subject = "", ""
     if message.request.title not in message.subject:
         subject = message.subject
         redacted_subject = message.subject_redacted
 
-    result = mark_safe('{} {}'.format(
-        mark_redacted(
-            original=subject, redacted=redacted_subject,
-            authenticated_read=authenticated_read
-        ), content).strip()
+    result = mark_safe(
+        "{} {}".format(
+            mark_redacted(
+                original=subject,
+                redacted=redacted_subject,
+                authenticated_read=authenticated_read,
+            ),
+            content,
+        ).strip()
     )
 
     return truncatechars_html(result, 115)
@@ -167,7 +182,8 @@ def redact_subject(message, request):
     authenticated_read = is_authenticated_read(message, request)
 
     return mark_redacted(
-        original=real_subject, redacted=redacted_subject,
+        original=real_subject,
+        redacted=redacted_subject,
         authenticated_read=authenticated_read,
     )
 
@@ -176,59 +192,61 @@ MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 
 def urlizetrunc_no_mail(content, chars, **kwargs):
-    '''
+    """
     Remove mailto links, makes it to easy to accidentally reply
     with your own email client.
-    '''
+    """
     result = urlizetrunc(content, chars, **kwargs)
-    return mark_safe(MAILTO_RE.sub('\\1', result))
+    return mark_safe(MAILTO_RE.sub("\\1", result))
 
 
-def mark_redacted(original='', redacted='', authenticated_read=False):
+def mark_redacted(original="", redacted="", authenticated_read=False):
     if authenticated_read:
         content = mark_differences(
-            original, redacted,
+            original,
+            redacted,
             attrs='class="redacted-dummy redacted-hover"'
             ' data-toggle="tooltip" title="{title}"'.format(
-                title=_('Only visible to you')
-            ))
-    else:
-        content = mark_differences(
-            redacted, original,
-            attrs='class="redacted"'
+                title=_("Only visible to you")
+            ),
         )
+    else:
+        content = mark_differences(redacted, original, attrs='class="redacted"')
 
     return urlizetrunc_no_mail(content, 40, autoescape=False)
 
 
-def markup_redacted_content(real_content, redacted_content,
-                            authenticated_read=False, message_id=None):
+def markup_redacted_content(
+    real_content, redacted_content, authenticated_read=False, message_id=None
+):
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
 
     content_1 = mark_redacted(
-        original=c_1, redacted=r_1,
-        authenticated_read=authenticated_read
+        original=c_1, redacted=r_1, authenticated_read=authenticated_read
     )
     content_2 = mark_redacted(
-        original=c_2, redacted=r_2,
-        authenticated_read=authenticated_read
+        original=c_2, redacted=r_2, authenticated_read=authenticated_read
     )
 
     if content_2 and message_id:
-        return mark_safe(''.join([
-            '<div class="text-content-visible">',
-            content_1,
-            ('</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-toggle="collapse" '
-            ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
-            '<div id="message-footer-{message_id}" class="collapse">'
-            .format(
-                message_id=message_id,
-                label=_('Show the quoted message')
-            )),
-            content_2,
-            '</div>'
-        ]))
+        return mark_safe(
+            "".join(
+                [
+                    '<div class="text-content-visible">',
+                    content_1,
+                    (
+                        '</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-toggle="collapse" '
+                        ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
+                        '<div id="message-footer-{message_id}" class="collapse">'.format(
+                            message_id=message_id, label=_("Show the quoted message")
+                        )
+                    ),
+                    content_2,
+                    "</div>",
+                ]
+            )
+        )
 
     return mark_safe(content_1)
 
@@ -239,61 +257,59 @@ def check_same_request(foirequest, user):
         foirequest_id = foirequest.same_as_id
     else:
         foirequest_id = foirequest.id
-    same_requests = FoiRequest.objects.filter(
-        user=user, same_as_id=foirequest_id
-    )
+    same_requests = FoiRequest.objects.filter(user=user, same_as_id=foirequest_id)
     if same_requests:
         return same_requests[0]
 
     return False
 
 
-@register.filter(name='can_read_foirequest')
+@register.filter(name="can_read_foirequest")
 def can_read_foirequest_filter(foirequest, request):
     return can_read_foirequest(foirequest, request)
 
 
-@register.filter(name='can_read_foirequest_authenticated')
+@register.filter(name="can_read_foirequest_authenticated")
 def can_read_foirequest_authenticated_filter(foirequest, request):
     return can_read_foirequest_authenticated(foirequest, request)
 
 
-@register.filter(name='can_write_foirequest')
+@register.filter(name="can_write_foirequest")
 def can_write_foirequest_filter(foirequest, request):
     return can_write_foirequest(foirequest, request)
 
 
-@register.filter(name='can_manage_foirequest')
+@register.filter(name="can_manage_foirequest")
 def can_manage_foirequest_filter(foirequest, request):
     return can_manage_foirequest(foirequest, request)
 
 
-@register.filter(name='can_moderate_foirequest')
+@register.filter(name="can_moderate_foirequest")
 def can_moderate_foirequest_filter(foirequest, request):
     return can_moderate_foirequest(foirequest, request)
 
 
-@register.filter(name='can_read_foirequest_anonymous')
+@register.filter(name="can_read_foirequest_anonymous")
 def can_read_foirequest_anonymous_filter(foirequest, request):
     return can_read_foirequest_anonymous(foirequest, request)
 
 
-@register.filter(name='can_read_foiproject')
+@register.filter(name="can_read_foiproject")
 def can_read_foiproject_filter(foiproject, request):
     return can_read_foiproject(foiproject, request)
 
 
-@register.filter(name='can_read_foiproject_authenticated')
+@register.filter(name="can_read_foiproject_authenticated")
 def can_read_foiproject_authenticated_filter(foiproject, request):
     return can_read_foiproject_authenticated(foiproject, request)
 
 
-@register.filter(name='can_write_foiproject')
+@register.filter(name="can_write_foiproject")
 def can_write_foiproject_filter(foiproject, request):
     return can_write_foiproject(foiproject, request)
 
 
-@register.filter(name='can_manage_foiproject')
+@register.filter(name="can_manage_foiproject")
 def can_manage_foiproject_filter(foiproject, request):
     return can_manage_foiproject(foiproject, request)
 
@@ -306,7 +322,7 @@ def truncatefilename(filename, chars=20):
     is_even = chars % 2
     half_chars = chars // 2
     back = -half_chars + (0 if is_even else 1)
-    return '%s…%s' % (filename[:half_chars], filename[back:])
+    return "%s…%s" % (filename[:half_chars], filename[back:])
 
 
 @register.simple_tag
@@ -316,15 +332,13 @@ def alternative_address(foirequest):
 
 @register.simple_tag(takes_context=True)
 def get_comment_list(context, message):
-    if not hasattr(message, 'comment_list'):
+    if not hasattr(message, "comment_list"):
         ct = ContentType.objects.get_for_model(FoiMessage)
         foirequest = message.request
         mids = [m.id for m in foirequest.messages]
         comments = Comment.objects.filter(
-            content_type=ct,
-            object_pk__in=mids,
-            site_id=foirequest.site_id
-        ).select_related('user')
+            content_type=ct, object_pk__in=mids, site_id=foirequest.site_id
+        ).select_related("user")
         comment_mapping = defaultdict(list)
         for c in comments:
             comment_mapping[c.object_pk].append(c)
@@ -335,7 +349,7 @@ def get_comment_list(context, message):
 
 @register.simple_tag
 def get_delivery_status(message):
-    if not hasattr(message, '_delivery_status'):
+    if not hasattr(message, "_delivery_status"):
         foirequest = message.request
         mids = [m.id for m in foirequest.sent_messages()]
         qs = DeliveryStatus.objects.filter(message_id__in=mids)
@@ -347,55 +361,54 @@ def get_delivery_status(message):
     return message._delivery_status
 
 
-@register.inclusion_tag('foirequest/snippets/message_edit.html')
+@register.inclusion_tag("foirequest/snippets/message_edit.html")
 def render_message_edit_button(message):
     return {
-        'form': EditMessageForm(message=message),
-        'foirequest': message.request,
-        'message': message
+        "form": EditMessageForm(message=message),
+        "foirequest": message.request,
+        "message": message,
     }
 
 
-@register.inclusion_tag('foirequest/snippets/message_redact.html')
+@register.inclusion_tag("foirequest/snippets/message_redact.html")
 def render_message_redact_button(message):
     return {
-        'foirequest': message.request,
-        'message': message,
-        'show_button': bool(message.plaintext or message.subject),
-        'js_config': json.dumps({
-            'i18n': {
-                'subject': _('Subject'),
-                'message': _('Message'),
-                'messageLoading': _('Message is loading...'),
+        "foirequest": message.request,
+        "message": message,
+        "show_button": bool(message.plaintext or message.subject),
+        "js_config": json.dumps(
+            {
+                "i18n": {
+                    "subject": _("Subject"),
+                    "message": _("Message"),
+                    "messageLoading": _("Message is loading..."),
+                }
             }
-        })
+        ),
     }
 
 
 @register.filter
-def readable_status(status, resolution=''):
+def readable_status(status, resolution=""):
     if status == FoiRequest.STATUS.RESOLVED and resolution:
         status = resolution
     return FoiRequest.get_readable_status(status)
 
 
 @register.filter
-def status_description(status, resolution=''):
+def status_description(status, resolution=""):
     if status == FoiRequest.STATUS.RESOLVED and resolution:
         status = resolution
     return FoiRequest.get_status_description(status)
 
 
-@register.inclusion_tag('foirequest/snippets/message_timeline.html')
+@register.inclusion_tag("foirequest/snippets/message_timeline.html")
 def show_timeline(foirequest):
 
     items = get_timeline_items(foirequest)
-    items = sorted(items, key=lambda x: x['timestamp'])
+    items = sorted(items, key=lambda x: x["timestamp"])
 
-    return {
-        'items': items,
-        'mark_items': list(get_timeline_marks(foirequest))
-    }
+    return {"items": items, "mark_items": list(get_timeline_marks(foirequest))}
 
 
 def get_duration(foirequest):
@@ -423,21 +436,21 @@ def get_timeline_items(foirequest):
     if foirequest.due_date:
         percent = (foirequest.due_date - first_date) / duration * 100
         yield {
-            'percent': '{}%'.format(round(percent, 2)),
-            'class_name': 'is-duedate',
-            'label': _('Due date'),
-            'timestamp': foirequest.due_date,
-            'items': False
+            "percent": "{}%".format(round(percent, 2)),
+            "class_name": "is-duedate",
+            "label": _("Due date"),
+            "timestamp": foirequest.due_date,
+            "items": False,
         }
 
         if foirequest.due_date > timezone.now():
             percent = (timezone.now() - first_date) / duration * 100
             yield {
-                'percent': '{}%'.format(round(percent, 2)),
-                'class_name': 'is-now',
-                'label': _('Today'),
-                'timestamp': timezone.now(),
-                'items': False
+                "percent": "{}%".format(round(percent, 2)),
+                "class_name": "is-now",
+                "label": _("Today"),
+                "timestamp": timezone.now(),
+                "items": False,
             }
 
     clusters = []
@@ -450,7 +463,7 @@ def get_timeline_items(foirequest):
             current_cluster.append(item)
             last_item = item
             continue
-        diff = abs(last_item['timestamp'] - item['timestamp']) / duration * 100
+        diff = abs(last_item["timestamp"] - item["timestamp"]) / duration * 100
         if diff > 2:
             current_cluster = []
             clusters.append(current_cluster)
@@ -460,9 +473,9 @@ def get_timeline_items(foirequest):
         if not cluster:
             continue
         yield {
-            'timestamp': cluster[0]['timestamp'],
-            'percent': cluster[0]['percent'],
-            'items': cluster
+            "timestamp": cluster[0]["timestamp"],
+            "percent": cluster[0]["percent"],
+            "items": cluster,
         }
 
 
@@ -476,18 +489,18 @@ def get_timeline_message_items(messages, first_date, duration):
             label = message.sender
 
         yield {
-            'percent': '{}%'.format(round(percent, 2)),
-            'href': message.get_html_id(),
-            'class_name': message.get_css_class(),
-            'label': label,
-            'timestamp': message.timestamp
+            "percent": "{}%".format(round(percent, 2)),
+            "href": message.get_html_id(),
+            "class_name": message.get_css_class(),
+            "label": label,
+            "timestamp": message.timestamp,
         }
 
 
 FORMAT_CHOICES = [
-    (60, 'd. b', lambda x: x),
-    (700, 'b Y', lambda x: x.replace(day=1)),
-    (1000, 'Y', lambda x: x.replace(day=1, month=1)),
+    (60, "d. b", lambda x: x),
+    (700, "b Y", lambda x: x.replace(day=1)),
+    (1000, "Y", lambda x: x.replace(day=1, month=1)),
 ]
 
 
@@ -521,10 +534,10 @@ def get_timeline_marks(foirequest, num_slices=6):
             continue
         last_label = label
         if i == 0 or i == num_slices - 1:
-            label = formats.date_format(timezone.localtime(current), 'd. b Y')
+            label = formats.date_format(timezone.localtime(current), "d. b Y")
             if last_label == label:
                 continue
         yield {
-            'percent': '{}%'.format(round(percent, 2)),
-            'label': label,
+            "percent": "{}%".format(round(percent, 2)),
+            "label": label,
         }

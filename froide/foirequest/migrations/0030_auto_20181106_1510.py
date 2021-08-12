@@ -8,18 +8,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0029_auto_20180924_1107'),
+        ("foirequest", "0029_auto_20180924_1107"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deferredmessage',
-            name='sender',
+            model_name="deferredmessage",
+            name="sender",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
-            model_name='deferredmessage',
-            name='spam',
+            model_name="deferredmessage",
+            name="spam",
             field=models.BooleanField(default=False, null=True),
         ),
     ]

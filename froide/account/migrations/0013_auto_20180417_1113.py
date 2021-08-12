@@ -10,18 +10,23 @@ import froide.helper.storage
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0012_application'),
+        ("account", "0012_application"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='profile_photo',
-            field=models.ImageField(blank=True, null=True, storage=froide.helper.storage.HashedFilenameStorage(), upload_to=froide.account.models.profile_photo_path),
+            model_name="user",
+            name="profile_photo",
+            field=models.ImageField(
+                blank=True,
+                null=True,
+                storage=froide.helper.storage.HashedFilenameStorage(),
+                upload_to=froide.account.models.profile_photo_path,
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='profile_text',
+            model_name="user",
+            name="profile_text",
             field=models.TextField(blank=True),
         ),
     ]

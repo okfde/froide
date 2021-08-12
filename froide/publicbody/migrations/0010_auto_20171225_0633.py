@@ -10,6 +10,7 @@ def create_categories(apps, schema_editor):
     Copy all PublicBodyTags to Categories
     """
     from ..models import Category, TaggedPublicBody  # Use treebeard API
+
     # Category = apps.get_model('publicbody', 'Category')
     # PublicBody = apps.get_model('publicbody', 'PublicBody')
     categories = {}
@@ -18,9 +19,7 @@ def create_categories(apps, schema_editor):
             category = categories[tpb.tag.slug]
         else:
             category = Category.add_root(
-                name=tpb.tag.name,
-                slug=tpb.tag.slug,
-                is_topic=tpb.tag.is_topic
+                name=tpb.tag.name, slug=tpb.tag.slug, is_topic=tpb.tag.is_topic
             )
             categories[tpb.tag.slug] = category
         pb = tpb.content_object
@@ -30,7 +29,7 @@ def create_categories(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0009_auto_20171225_0631'),
+        ("publicbody", "0009_auto_20171225_0631"),
     ]
 
     operations = [

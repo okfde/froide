@@ -4,20 +4,16 @@ from django.db import migrations
 
 
 def assign_not_publishable(apps, schema_editor):
-    FoiRequest = apps.get_model('foirequest', 'FoiRequest')
-    FoiMessage = apps.get_model('foirequest', 'FoiMessage')
+    FoiRequest = apps.get_model("foirequest", "FoiRequest")
+    FoiMessage = apps.get_model("foirequest", "FoiMessage")
     for message in FoiMessage.objects.filter(not_publishable=True):
-        FoiRequest.objects.filter(id=message.request_id).update(
-            not_publishable=True
-        )
+        FoiRequest.objects.filter(id=message.request_id).update(not_publishable=True)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0035_auto_20190209_1801'),
+        ("foirequest", "0035_auto_20190209_1801"),
     ]
 
-    operations = [
-        migrations.RunPython(assign_not_publishable)
-    ]
+    operations = [migrations.RunPython(assign_not_publishable)]

@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0031_publicbody_change_history'),
+        ("publicbody", "0031_publicbody_change_history"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='category',
-            name='name',
-            field=models.CharField(max_length=100, unique=True, verbose_name='name'),
+            model_name="category",
+            name="name",
+            field=models.CharField(max_length=100, unique=True, verbose_name="name"),
         ),
         migrations.AlterField(
-            model_name='category',
-            name='slug',
-            field=models.SlugField(max_length=100, unique=True, verbose_name='slug'),
+            model_name="category",
+            name="slug",
+            field=models.SlugField(max_length=100, unique=True, verbose_name="slug"),
         ),
         migrations.AlterField(
-            model_name='publicbodytag',
-            name='name',
-            field=models.CharField(max_length=100, unique=True, verbose_name='name'),
+            model_name="publicbodytag",
+            name="name",
+            field=models.CharField(max_length=100, unique=True, verbose_name="name"),
         ),
         migrations.AlterField(
-            model_name='publicbodytag',
-            name='slug',
-            field=models.SlugField(max_length=100, unique=True, verbose_name='slug'),
+            model_name="publicbodytag",
+            name="slug",
+            field=models.SlugField(max_length=100, unique=True, verbose_name="slug"),
         ),
     ]

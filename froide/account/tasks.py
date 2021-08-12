@@ -40,9 +40,7 @@ def delete_deactivated_users_task():
 
 @celery_app.task
 def account_maintenance_task():
-    from .utils import (
-        delete_unconfirmed_users, delete_deactivated_users
-    )
+    from .utils import delete_unconfirmed_users, delete_deactivated_users
     from .export import delete_all_expired_exports
 
     delete_unconfirmed_users()
@@ -100,7 +98,7 @@ def start_export_task(user_id, notification_user_id=None):
 
 
 def chunker(seq, size):
-    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+    return (seq[pos : pos + size] for pos in range(0, len(seq), size))
 
 
 @celery_app.task
@@ -111,7 +109,4 @@ def send_bulk_mail(user_ids, subject, body):
     for chunk in chunks:
         users = User.objects.filter(id__in=chunk)
         for user in users:
-            send_template_mail(
-                user, subject, body,
-                priority=False
-            )
+            send_template_mail(user, subject, body, priority=False)

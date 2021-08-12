@@ -16,18 +16,18 @@ def update_followers(request_id, update_message, template=None):
     except FoiRequest.DoesNotExist:
         return
 
-    followers = FoiRequestFollower.objects.filter(
-        request=foirequest, confirmed=True
-    )
+    followers = FoiRequestFollower.objects.filter(request=foirequest, confirmed=True)
     for follower in followers:
         FoiRequestFollower.objects.send_update(
             follower.user or follower.email,
-            [{
-                'request': foirequest,
-                'unfollow_link': follower.get_unfollow_link(),
-                'events': [update_message]
-            }],
-            batch=False
+            [
+                {
+                    "request": foirequest,
+                    "unfollow_link": follower.get_unfollow_link(),
+                    "events": [update_message],
+                }
+            ],
+            batch=False,
         )
 
 

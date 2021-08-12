@@ -1,6 +1,6 @@
 from collections import namedtuple, defaultdict
 
-MenuItem = namedtuple('MenuItem', 'section order label url')
+MenuItem = namedtuple("MenuItem", "section order label url")
 
 
 def menu_order(item):

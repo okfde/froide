@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0019_foilaw_law_type'),
+        ("publicbody", "0019_foilaw_law_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foilaw',
-            name='requires_signature',
-            field=models.BooleanField(default=False, verbose_name='Requires signature'),
+            model_name="foilaw",
+            name="requires_signature",
+            field=models.BooleanField(default=False, verbose_name="Requires signature"),
         ),
     ]

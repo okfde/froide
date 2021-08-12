@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0026_auto_20210603_1617'),
+        ("document", "0026_auto_20210603_1617"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='content_hash',
-            field=models.CharField(blank=True, editable=False, max_length=40, null=True),
+            model_name="document",
+            name="content_hash",
+            field=models.CharField(
+                blank=True, editable=False, max_length=40, null=True
+            ),
         ),
     ]

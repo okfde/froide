@@ -9,9 +9,7 @@ from froide.upload.forms import FileUploaderField
 from froide.upload.models import Upload
 
 
-from ..models import (
-    FoiRequest, FoiMessage, FoiAttachment
-)
+from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..models.message import MessageKind
 from .message import MessageEditMixin
 from ..tasks import move_upload_to_attachment
@@ -23,56 +21,50 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
     sent = forms.TypedChoiceField(
         widget=forms.RadioSelect,
         choices=(
-            (0, _('I have received the letter')),
-            (1, _('I have sent the letter')),
+            (0, _("I have received the letter")),
+            (1, _("I have sent the letter")),
         ),
         coerce=lambda x: bool(int(x)),
         required=True,
         initial=0,
-        label=_('Did you receive or sent the letter?'),
-        error_messages={
-            'required': _('You have to decide!')
-        },
+        label=_("Did you receive or sent the letter?"),
+        error_messages={"required": _("You have to decide!")},
     )
 
     publicbody = forms.ModelChoiceField(
-        label=_('Public body'),
+        label=_("Public body"),
         queryset=PublicBody.objects.all(),
         required=True,
-        widget=PublicBodySelect
+        widget=PublicBodySelect,
     )
 
     uploads = FileUploaderField(
-        label=_('Upload scans or photos of the letter'),
+        label=_("Upload scans or photos of the letter"),
         required=False,
-        allowed_file_types=['.pdf', '.jpg', '.jpeg', '.png', '.gif'],
-        help_text=_('Uploaded scans can be PDF, JPG, PNG or GIF.')
+        allowed_file_types=[".pdf", ".jpg", ".jpeg", ".png", ".gif"],
+        help_text=_("Uploaded scans can be PDF, JPG, PNG or GIF."),
     )
 
-    FIELD_ORDER = ['sent', 'publicbody', 'date', 'subject', 'uploads', 'text']
+    FIELD_ORDER = ["sent", "publicbody", "date", "subject", "uploads", "text"]
 
     def __init__(self, *args, **kwargs):
-        self.foirequest = kwargs.pop('foirequest')
-        self.user = kwargs.pop('user', None)
+        self.foirequest = kwargs.pop("foirequest")
+        self.user = kwargs.pop("user", None)
 
         super().__init__(*args, **kwargs)
 
-        self.fields['publicbody'].initial = self.foirequest.public_body
-        self.fields['publicbody'].widget.set_initial_object(
-            self.foirequest.public_body
-        )
+        self.fields["publicbody"].initial = self.foirequest.public_body
+        self.fields["publicbody"].widget.set_initial_object(self.foirequest.public_body)
         self.order_fields(self.FIELD_ORDER)
         self.account_service = AccountService(self.foirequest.user)
 
     def clean_uploads(self):
-        upload_urls = self.cleaned_data['uploads']
+        upload_urls = self.cleaned_data["uploads"]
         uploads = []
         for upload_url in upload_urls:
-            upload = Upload.objects.get_by_url(
-                upload_url, user=self.user
-            )
+            upload = Upload.objects.get_by_url(upload_url, user=self.user)
             if upload is None:
-                raise forms.ValidationError(_('Bad URL'))
+                raise forms.ValidationError(_("Bad URL"))
             validate_postal_content_type(upload.content_type)
             uploads.append(upload)
         return uploads
@@ -93,20 +85,17 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
 
     def save(self):
         foirequest = self.foirequest
-        message = FoiMessage(
-            request=foirequest,
-            kind=MessageKind.POST
-        )
+        message = FoiMessage(request=foirequest, kind=MessageKind.POST)
         # set subject, text, date via MessageEditMixin
         message = self.set_data_on_message(message)
 
-        if self.cleaned_data['sent']:
+        if self.cleaned_data["sent"]:
             message.is_response = False
             message.sender_user = message.request.user
-            message.recipient_public_body = self.cleaned_data['publicbody']
+            message.recipient_public_body = self.cleaned_data["publicbody"]
         else:
             message.is_response = True
-            message.sender_public_body = self.cleaned_data['publicbody']
+            message.sender_public_body = self.cleaned_data["publicbody"]
 
         message.save()
 
@@ -114,7 +103,7 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
         foirequest.save()
 
-        uploads = self.cleaned_data.get('uploads')
+        uploads = self.cleaned_data.get("uploads")
         if uploads:
             self.save_attachments(message, uploads)
 
@@ -127,7 +116,7 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
 
     def create_attachment(self, message, upload):
         name = self.account_service.apply_name_redaction(
-            upload.filename, str(_('NAME'))
+            upload.filename, str(_("NAME"))
         )
         name = make_unique_filename(name, self.names)
         self.names.add(name)
@@ -145,8 +134,6 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         upload.save()
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(
-                att.id, upload.id
-            )
+            lambda: move_upload_to_attachment.delay(att.id, upload.id)
         )
         return att

@@ -6,17 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0019_auto_20191001_1644'),
+        ("document", "0019_auto_20191001_1644"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='documentcollection',
-            options={'verbose_name': 'document collection', 'verbose_name_plural': 'document collections'},
+            name="documentcollection",
+            options={
+                "verbose_name": "document collection",
+                "verbose_name_plural": "document collections",
+            },
         ),
         migrations.AlterField(
-            model_name='document',
-            name='file_size',
+            model_name="document",
+            name="file_size",
             field=models.BigIntegerField(blank=True, null=True),
         ),
     ]

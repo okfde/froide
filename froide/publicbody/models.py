@@ -22,7 +22,7 @@ from froide.georegion.models import GeoRegion
 
 from froide.helper.date_utils import (
     calculate_workingday_range,
-    calculate_month_range_de
+    calculate_month_range_de,
 )
 from froide.helper.templatetags.markup import markdown
 from froide.helper.csv_utils import export_csv
@@ -41,7 +41,7 @@ def get_applicable_law(pb=None, law_type=None):
             if law_type is not None:
                 qs = qs.filter(law_type__contains=law_type)
             # Prefer meta laws
-            qs = qs.order_by('-meta', '-priority')
+            qs = qs.order_by("-meta", "-priority")
             if qs:
                 try:
                     return qs[0]
@@ -56,13 +56,10 @@ def get_applicable_law(pb=None, law_type=None):
 
 class JurisdictionManager(models.Manager):
     def get_visible(self):
-        return self.get_queryset()\
-                .filter(hidden=False).order_by('rank', 'name')
+        return self.get_queryset().filter(hidden=False).order_by("rank", "name")
 
     def get_list(self):
-        return self.get_visible().annotate(
-            num_publicbodies=models.Count('publicbody')
-        )
+        return self.get_visible().annotate(num_publicbodies=models.Count("publicbody"))
 
 
 class Jurisdiction(models.Model):
@@ -80,21 +77,23 @@ class Jurisdiction(models.Model):
     class Meta:
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
-        ordering = ('rank', 'name',)
+        ordering = (
+            "rank",
+            "name",
+        )
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('publicbody-show_jurisdiction',
-            kwargs={'slug': self.slug})
+        return reverse("publicbody-show_jurisdiction", kwargs={"slug": self.slug})
 
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
 
     def get_all_laws(self):
         laws = FoiLaw.objects.filter(jurisdiction=self)
-        meta_ids = laws.filter(meta=True).values_list('combined', flat=True)
+        meta_ids = laws.filter(meta=True).values_list("combined", flat=True)
         meta_laws = FoiLaw.objects.filter(pk__in=meta_ids)
         return laws.union(meta_laws)
 
@@ -109,58 +108,69 @@ class FoiLaw(TranslatableModel):
         request_note=models.TextField(_("request note"), blank=True),
         letter_start=models.TextField(_("Start of Letter"), blank=True),
         letter_end=models.TextField(_("End of Letter"), blank=True),
-        refusal_reasons=models.TextField(
-            _("refusal reasons"),
-            blank=True
-        ),
+        refusal_reasons=models.TextField(_("refusal reasons"), blank=True),
     )
 
     created = models.DateField(_("Creation Date"), blank=True, null=True)
     updated = models.DateField(_("Updated Date"), blank=True, null=True)
 
     meta = models.BooleanField(_("Meta Law"), default=False)
-    law_type = models.CharField(_('law type'), max_length=255, blank=True)
+    law_type = models.CharField(_("law type"), max_length=255, blank=True)
     combined = models.ManyToManyField(
-        'FoiLaw',
-        verbose_name=_("Combined Laws"), blank=True
+        "FoiLaw", verbose_name=_("Combined Laws"), blank=True
     )
     jurisdiction = models.ForeignKey(
-            Jurisdiction, verbose_name=_('Jurisdiction'),
-            null=True, on_delete=models.SET_NULL, blank=True)
+        Jurisdiction,
+        verbose_name=_("Jurisdiction"),
+        null=True,
+        on_delete=models.SET_NULL,
+        blank=True,
+    )
     priority = models.SmallIntegerField(_("Priority"), default=3)
     url = models.CharField(_("URL"), max_length=255, blank=True)
-    scale_of_fees = models.CharField(_("Scale of fees URL"),
-            max_length=255, blank=True)
-    max_response_time = models.IntegerField(_("Maximal Response Time"),
-            null=True, blank=True, default=30)
-    max_response_time_unit = models.CharField(_("Unit of Response Time"),
-            blank=True, max_length=32, default='day',
-            choices=(('day', _('Day(s)')),
-                ('working_day', _('Working Day(s)')),
-                ('month_de', _('Month(s) (DE)')),
-            ))
-    mediator = models.ForeignKey('PublicBody', verbose_name=_("Mediator"),
-            null=True, blank=True,
-            default=None, on_delete=models.SET_NULL,
-            related_name="mediating_laws")
-    email_only = models.BooleanField(_('E-Mail only'), default=False)
-    requires_signature = models.BooleanField(_('Requires signature'), default=False)
-    site = models.ForeignKey(Site, verbose_name=_("Site"),
-            null=True, on_delete=models.SET_NULL,
-            default=settings.SITE_ID)
+    scale_of_fees = models.CharField(_("Scale of fees URL"), max_length=255, blank=True)
+    max_response_time = models.IntegerField(
+        _("Maximal Response Time"), null=True, blank=True, default=30
+    )
+    max_response_time_unit = models.CharField(
+        _("Unit of Response Time"),
+        blank=True,
+        max_length=32,
+        default="day",
+        choices=(
+            ("day", _("Day(s)")),
+            ("working_day", _("Working Day(s)")),
+            ("month_de", _("Month(s) (DE)")),
+        ),
+    )
+    mediator = models.ForeignKey(
+        "PublicBody",
+        verbose_name=_("Mediator"),
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="mediating_laws",
+    )
+    email_only = models.BooleanField(_("E-Mail only"), default=False)
+    requires_signature = models.BooleanField(_("Requires signature"), default=False)
+    site = models.ForeignKey(
+        Site,
+        verbose_name=_("Site"),
+        null=True,
+        on_delete=models.SET_NULL,
+        default=settings.SITE_ID,
+    )
 
     class Meta:
         verbose_name = _("Freedom of Information Law")
         verbose_name_plural = _("Freedom of Information Laws")
 
     def __str__(self):
-        return "%s (%s)" % (
-            self.name,
-            self.jurisdiction if self.jurisdiction else ''
-        )
+        return "%s (%s)" % (self.name, self.jurisdiction if self.jurisdiction else "")
 
     def get_absolute_url(self):
-        return reverse('publicbody-foilaw-show', kwargs={'slug': self.slug})
+        return reverse("publicbody-foilaw-show", kwargs={"slug": self.slug})
 
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
@@ -178,25 +188,25 @@ class FoiLaw(TranslatableModel):
         return not self.email_only
 
     def get_refusal_reason_choices(self):
-        not_applicable = [('n/a', _("No law can be applied"))]
+        not_applicable = [("n/a", _("No law can be applied"))]
         if self.meta:
-            return (not_applicable + [
-                    (c[0], "%s: %s" % (law.name, c[1]))
-                    for law in self.combined.all()
-                    for c in law.get_refusal_reason_choices()[1:]])
+            return not_applicable + [
+                (c[0], "%s: %s" % (law.name, c[1]))
+                for law in self.combined.all()
+                for c in law.get_refusal_reason_choices()[1:]
+            ]
         else:
-            return (not_applicable + [
-                    (x, Truncator(x).words(12))
-                    for x in self.refusal_reasons.splitlines()])
+            return not_applicable + [
+                (x, Truncator(x).words(12)) for x in self.refusal_reasons.splitlines()
+            ]
 
     def as_data(self, request=None):
         from .api_views import FoiLawSerializer
+
         if request is None:
             ctx = get_fake_api_context()
         else:
-            ctx = {
-                'request': request
-            }
+            ctx = {"request": request}
         return FoiLawSerializer(self, context=ctx).data
 
     def calculate_due_date(self, date=None, value=None):
@@ -214,15 +224,17 @@ class FoiLaw(TranslatableModel):
 
 class PublicBodyTagManager(models.Manager):
     def get_topic_list(self):
-        return (self.get_queryset().filter(is_topic=True)
-            .order_by('rank', 'name')
-            .annotate(num_publicbodies=models.Count('publicbodies'))
+        return (
+            self.get_queryset()
+            .filter(is_topic=True)
+            .order_by("rank", "name")
+            .annotate(num_publicbodies=models.Count("publicbodies"))
         )
 
 
 class PublicBodyTag(TagBase):
-    is_topic = models.BooleanField(_('as topic'), default=False)
-    rank = models.SmallIntegerField(_('rank'), default=0)
+    is_topic = models.BooleanField(_("as topic"), default=False)
+    rank = models.SmallIntegerField(_("rank"), default=0)
 
     objects = PublicBodyTagManager()
 
@@ -232,28 +244,31 @@ class PublicBodyTag(TagBase):
 
 
 class TaggedPublicBody(TaggedItemBase):
-    tag = models.ForeignKey(PublicBodyTag, on_delete=models.CASCADE,
-                            related_name="publicbodies")
-    content_object = models.ForeignKey('PublicBody', on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        PublicBodyTag, on_delete=models.CASCADE, related_name="publicbodies"
+    )
+    content_object = models.ForeignKey("PublicBody", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = _('Tagged Public Body')
-        verbose_name_plural = _('Tagged Public Bodies')
+        verbose_name = _("Tagged Public Body")
+        verbose_name_plural = _("Tagged Public Bodies")
 
 
 class CategoryManager(MP_NodeManager):
     def get_category_list(self):
-        count = models.Count('categorized_publicbodies')
-        return (self.get_queryset().filter(depth=1, is_topic=True)
-            .order_by('name')
+        count = models.Count("categorized_publicbodies")
+        return (
+            self.get_queryset()
+            .filter(depth=1, is_topic=True)
+            .order_by("name")
             .annotate(num_publicbodies=count)
         )
 
 
 class Category(TagBase, MP_Node):
-    is_topic = models.BooleanField(_('as topic'), default=False)
+    is_topic = models.BooleanField(_("as topic"), default=False)
 
-    node_order_by = ['name']
+    node_order_by = ["name"]
     objects = CategoryManager()
 
     class Meta:
@@ -261,11 +276,9 @@ class Category(TagBase, MP_Node):
         verbose_name_plural = _("categories")
 
     def save(self, *args, **kwargs):
-        if self.pk is None and kwargs.get('force_insert'):
+        if self.pk is None and kwargs.get("force_insert"):
             obj = Category.add_root(
-                name=self.name,
-                slug=self.slug,
-                is_topic=self.is_topic
+                name=self.name, slug=self.slug, is_topic=self.is_topic
             )
             self.pk = obj.pk
         else:
@@ -273,20 +286,21 @@ class Category(TagBase, MP_Node):
 
 
 class CategorizedPublicBody(TaggedItemBase):
-    tag = models.ForeignKey(Category, on_delete=models.CASCADE,
-                            related_name="categorized_publicbodies")
-    content_object = models.ForeignKey('PublicBody', on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Category, on_delete=models.CASCADE, related_name="categorized_publicbodies"
+    )
+    content_object = models.ForeignKey("PublicBody", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = _('Categorized Public Body')
-        verbose_name_plural = _('Categorized Public Bodies')
+        verbose_name = _("Categorized Public Body")
+        verbose_name_plural = _("Categorized Public Bodies")
 
 
 class Classification(MP_Node):
     name = models.CharField(_("name"), max_length=255)
     slug = models.SlugField(_("slug"), max_length=255)
 
-    node_order_by = ['name']
+    node_order_by = ["name"]
 
     class Meta:
         verbose_name = _("classification")
@@ -298,8 +312,10 @@ class Classification(MP_Node):
 
 class PublicBodyManager(CurrentSiteManager):
     def get_queryset(self):
-        return (super(PublicBodyManager, self).get_queryset()
-            .exclude(email='')
+        return (
+            super(PublicBodyManager, self)
+            .get_queryset()
+            .exclude(email="")
             .filter(email__isnull=False, confirmed=True)
         )
 
@@ -307,7 +323,7 @@ class PublicBodyManager(CurrentSiteManager):
         return (
             self.get_queryset()
             .filter(jurisdiction__hidden=False)
-            .select_related('jurisdiction')
+            .select_related("jurisdiction")
         )
 
     def get_for_search_index(self):
@@ -321,26 +337,36 @@ class PublicBody(models.Model):
     description = models.TextField(_("Description"), blank=True)
     url = models.URLField(_("URL"), null=True, blank=True, max_length=500)
 
-    parent = models.ForeignKey('PublicBody', null=True, blank=True,
-            default=None, on_delete=models.SET_NULL,
-            related_name="children")
-    root = models.ForeignKey('PublicBody', null=True, blank=True,
-            default=None, on_delete=models.SET_NULL,
-            related_name="descendants")
+    parent = models.ForeignKey(
+        "PublicBody",
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="children",
+    )
+    root = models.ForeignKey(
+        "PublicBody",
+        null=True,
+        blank=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="descendants",
+    )
     depth = models.SmallIntegerField(default=0)
 
-    classification = models.ForeignKey(Classification, null=True, blank=True,
-        on_delete=models.SET_NULL)
+    classification = models.ForeignKey(
+        Classification, null=True, blank=True, on_delete=models.SET_NULL
+    )
 
-    email = models.EmailField(_("Email"), blank=True, default='')
+    email = models.EmailField(_("Email"), blank=True, default="")
     fax = models.CharField(max_length=50, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
     website_dump = models.TextField(_("Website Dump"), null=True, blank=True)
     request_note = models.TextField(_("request note"), blank=True)
     source_reference = models.CharField(
-        _('source reference'),
-        max_length=255, blank=True
+        _("source reference"), max_length=255, blank=True
     )
     extra_data = models.JSONField(default=dict, blank=True)
 
@@ -350,38 +376,52 @@ class PublicBody(models.Model):
     file_index = models.CharField(_("file index"), max_length=1024, blank=True)
     org_chart = models.CharField(_("organisational chart"), max_length=1024, blank=True)
 
-    _created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
-            verbose_name=_("Created by"),
-            blank=True, null=True, related_name='public_body_creators',
-            on_delete=models.SET_NULL)
-    _updated_by = models.ForeignKey(settings.AUTH_USER_MODEL,
-            verbose_name=_("Updated by"),
-            blank=True, null=True, related_name='public_body_updaters',
-            on_delete=models.SET_NULL)
+    _created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_("Created by"),
+        blank=True,
+        null=True,
+        related_name="public_body_creators",
+        on_delete=models.SET_NULL,
+    )
+    _updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_("Updated by"),
+        blank=True,
+        null=True,
+        related_name="public_body_updaters",
+        on_delete=models.SET_NULL,
+    )
     created_at = models.DateTimeField(_("Created at"), default=timezone.now)
     updated_at = models.DateTimeField(_("Updated at"), default=timezone.now)
     confirmed = models.BooleanField(_("confirmed"), default=True)
 
-    number_of_requests = models.IntegerField(_("Number of requests"),
-            default=0)
-    site = models.ForeignKey(Site, verbose_name=_("Site"),
-            null=True, on_delete=models.SET_NULL, default=settings.SITE_ID)
+    number_of_requests = models.IntegerField(_("Number of requests"), default=0)
+    site = models.ForeignKey(
+        Site,
+        verbose_name=_("Site"),
+        null=True,
+        on_delete=models.SET_NULL,
+        default=settings.SITE_ID,
+    )
 
-    wikidata_item = models.CharField(_('Wikidata item'), max_length=50, blank=True)
+    wikidata_item = models.CharField(_("Wikidata item"), max_length=50, blank=True)
 
-    jurisdiction = models.ForeignKey(Jurisdiction, verbose_name=_('Jurisdiction'),
-            blank=True, null=True, on_delete=models.SET_NULL)
+    jurisdiction = models.ForeignKey(
+        Jurisdiction,
+        verbose_name=_("Jurisdiction"),
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     geo = models.PointField(null=True, blank=True, geography=True)
     regions = models.ManyToManyField(GeoRegion, blank=True)
 
-    laws = models.ManyToManyField(FoiLaw,
-            verbose_name=_("Freedom of Information Laws"))
+    laws = models.ManyToManyField(FoiLaw, verbose_name=_("Freedom of Information Laws"))
     tags = TaggableManager(through=TaggedPublicBody, blank=True)
     categories = TaggableManager(
-        through=CategorizedPublicBody,
-        verbose_name=_("categories"),
-        blank=True
+        through=CategorizedPublicBody, verbose_name=_("categories"), blank=True
     )
 
     non_filtered_objects = models.Manager()
@@ -395,16 +435,24 @@ class PublicBody(models.Model):
     change_proposal_accepted = Signal()  # args: ['user']
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
         verbose_name = _("Public Body")
         verbose_name_plural = _("Public Bodies")
-        permissions = (
-            ("moderate", _("Can moderate public bodies")),
-        )
+        permissions = (("moderate", _("Can moderate public bodies")),)
 
-    serializable_fields = ('id', 'name', 'slug', 'request_note_html',
-            'description', 'url', 'email', 'contact',
-            'address', 'domain', 'number_of_requests')
+    serializable_fields = (
+        "id",
+        "name",
+        "slug",
+        "request_note_html",
+        "description",
+        "url",
+        "email",
+        "contact",
+        "address",
+        "domain",
+        "number_of_requests",
+    )
 
     def __str__(self):
         return self.name
@@ -419,7 +467,7 @@ class PublicBody(models.Model):
 
     @property
     def domain(self):
-        if self.url and self.url.count('/') > 1:
+        if self.url and self.url.count("/") > 1:
             return self.url.split("/")[2]
         return None
 
@@ -428,7 +476,7 @@ class PublicBody(models.Model):
         names = [self.name, self.other_names]
         if self.jurisdiction:
             names.extend([self.jurisdiction.name, self.jurisdiction.slug])
-        return ' '.join(names)
+        return " ".join(names)
 
     @property
     def request_note_html(self):
@@ -451,15 +499,10 @@ class PublicBody(models.Model):
         return get_applicable_law(pb=self, law_type=law_type)
 
     def get_absolute_url(self):
-        return reverse('publicbody-show', kwargs={
-            "slug": self.slug,
-            "pk": self.id
-        })
+        return reverse("publicbody-show", kwargs={"slug": self.slug, "pk": self.id})
 
     def get_absolute_short_url(self):
-        return reverse('publicbody-publicbody_shortlink', kwargs={
-            'obj_id': self.pk
-        })
+        return reverse("publicbody-publicbody_shortlink", kwargs={"obj_id": self.pk})
 
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
@@ -476,10 +519,11 @@ class PublicBody(models.Model):
     def get_label(self):
         return mark_safe(
             '%(name)s - <a href="%(url)s" target="_blank" '
-            'class="info-link">%(detail)s</a>' % {
+            'class="info-link">%(detail)s</a>'
+            % {
                 "name": escape(self.name),
                 "url": self.get_absolute_url(),
-                "detail": _("More Info")
+                "detail": _("More Info"),
             }
         )
 
@@ -487,9 +531,7 @@ class PublicBody(models.Model):
         if request is None:
             ctx = get_fake_api_context()
         else:
-            ctx = {
-                'request': request
-            }
+            ctx = {"request": request}
         return serializer_klass(self, context=ctx).data
 
     def as_data(self, request=None):
@@ -510,14 +552,25 @@ class PublicBody(models.Model):
     def export_csv(cls, queryset):
 
         fields = (
-            "id", "name", "email", "fax", "contact",
-            "address", "url",
-            ('classification', lambda x: x.classification.name if x.classification else None),
+            "id",
+            "name",
+            "email",
+            "fax",
+            "contact",
+            "address",
+            "url",
+            (
+                "classification",
+                lambda x: x.classification.name if x.classification else None,
+            ),
             "jurisdiction__slug",
             ("categories", lambda x: edit_string_for_tags(x.categories.all())),
-            "other_names", "website_dump", "description",
-            "request_note", "parent__id",
-            ('regions', lambda obj: ','.join(str(x.id) for x in obj.regions.all()))
+            "other_names",
+            "website_dump",
+            "description",
+            "request_note",
+            "parent__id",
+            ("regions", lambda obj: ",".join(str(x.id) for x in obj.regions.all())),
         )
 
         return export_csv(queryset, fields)
@@ -545,6 +598,6 @@ class ProposedPublicBody(PublicBody):
 
     class Meta:
         proxy = True
-        ordering = ('-created_at',)
-        verbose_name = _('Proposed Public Body')
-        verbose_name_plural = _('Proposed Public Bodies')
+        ordering = ("-created_at",)
+        verbose_name = _("Proposed Public Body")
+        verbose_name_plural = _("Proposed Public Bodies")

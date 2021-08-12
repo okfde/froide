@@ -4,25 +4,25 @@ from django.db import migrations, models
 
 
 def update_email_address(apps, schema_editor):
-    User = apps.get_model('account', 'User')
-    User.objects.all().update(email_ci=models.F('email'))
+    User = apps.get_model("account", "User")
+    User.objects.all().update(email_ci=models.F("email"))
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0030_auto_20210517_1420'),
+        ("account", "0030_auto_20210517_1420"),
     ]
 
     operations = [
         migrations.RunPython(update_email_address),
         migrations.RemoveField(
-            model_name='user',
-            name='email',
+            model_name="user",
+            name="email",
         ),
         migrations.RenameField(
-            model_name='user',
-            old_name='email_ci',
-            new_name='email',
+            model_name="user",
+            old_name="email_ci",
+            new_name="email",
         ),
     ]

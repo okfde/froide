@@ -20,13 +20,13 @@ from rest_framework_jsonp.renderers import JSONPRenderer
 from elasticsearch_dsl.query import Q
 
 
-def get_fake_api_context(url='/'):
+def get_fake_api_context(url="/"):
     factory = APIRequestFactory()
-    host = settings.SITE_URL.split('/')[-1]
+    host = settings.SITE_URL.split("/")[-1]
     request = factory.get(url, HTTP_HOST=host)
 
     return {
-        'request': Request(request),
+        "request": Request(request),
     }
 
 
@@ -41,10 +41,12 @@ class SearchFacetListSerializer(ListSerializer):
 
         # Return both objects and facets by wrapping them in dict
         # this will be split up again by custom paginator below
-        ret = OrderedDict([
-            ('objects', ret),
-            ('facets', self._context.get('facets', {'fields': {}})),
-        ])
+        ret = OrderedDict(
+            [
+                ("objects", ret),
+                ("facets", self._context.get("facets", {"fields": {}})),
+            ]
+        )
         return ret
 
 
@@ -52,24 +54,30 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
     max_limit = 50
 
     def get_paginated_response(self, data):
-        if 'facets' in data:
+        if "facets" in data:
             # Split out facets into root object
-            result = [
-                ('objects', data['objects']),
-                ('facets', data['facets'])
-            ]
+            result = [("objects", data["objects"]), ("facets", data["facets"])]
         else:
-            result = [('objects', data)]
-        return Response(OrderedDict([
-            ('meta', OrderedDict([
-                ('limit', self.limit),
-                ('next', self.get_next_link()),
-                ('offset', self.offset),
-                ('previous', self.get_previous_link()),
-                ('total_count', self.count),
-            ])),
-            *result
-        ]))
+            result = [("objects", data)]
+        return Response(
+            OrderedDict(
+                [
+                    (
+                        "meta",
+                        OrderedDict(
+                            [
+                                ("limit", self.limit),
+                                ("next", self.get_next_link()),
+                                ("offset", self.offset),
+                                ("previous", self.get_previous_link()),
+                                ("total_count", self.count),
+                            ]
+                        ),
+                    ),
+                    *result,
+                ]
+            )
+        )
 
 
 class ElasticLimitOffsetPagination(CustomLimitOffsetPagination):
@@ -82,7 +90,7 @@ class ElasticLimitOffsetPagination(CustomLimitOffsetPagination):
         self.request = request
 
         # Set offset limit on sqs before calling count!
-        queryset = queryset[self.offset:self.offset + self.limit]
+        queryset = queryset[self.offset : self.offset + self.limit]
 
         self.count = self.get_count(queryset)
 
@@ -110,50 +118,44 @@ class OpenRefineReconciliationMixin(object):
     def _reconciliation_meta(self, request):
         api_url = reverse(self.RECONCILIATION_META.api_list, request=request)
 
-        detail_url = ''
+        detail_url = ""
         if self.RECONCILIATION_META.obj_short_link:
-            magic = '13374223'
+            magic = "13374223"
             detail_url = reverse(
                 self.RECONCILIATION_META.obj_short_link,
-                kwargs={'obj_id': magic}, request=request)
-            detail_url = detail_url.replace(magic, '{{id}}')
+                kwargs={"obj_id": magic},
+                request=request,
+            )
+            detail_url = detail_url.replace(magic, "{{id}}")
 
         name = self.RECONCILIATION_META.name
 
-        return Response({
-            'name': "%s Reconciliation Service %s" % (
-                settings.SITE_NAME,
-                name
-            ),
-            'identifierSpace': api_url,
-            'schemaSpace': api_url,
-            'view': {
-                'url': detail_url
-            },
-            'defaultTypes': [
-                {
-                    'id': self.RECONCILIATION_META.id,
-                    'name': name
-                }
-            ],
-            # 'suggest': {
-            #     self.RECONCILIATION_META.id: {
-            #         'service_path': 'reconciliation-suggest-service/',
-            #         'service_url': api_url,
-            #         'flyout_service_path': 'reconciliation-flyout/',
-            #     }
-            # },
-            'extend': {
-                'propose_properties': {
-                    'service_url': api_url,
-                    'service_path': 'reconciliation-propose-properties/'
+        return Response(
+            {
+                "name": "%s Reconciliation Service %s" % (settings.SITE_NAME, name),
+                "identifierSpace": api_url,
+                "schemaSpace": api_url,
+                "view": {"url": detail_url},
+                "defaultTypes": [{"id": self.RECONCILIATION_META.id, "name": name}],
+                # 'suggest': {
+                #     self.RECONCILIATION_META.id: {
+                #         'service_path': 'reconciliation-suggest-service/',
+                #         'service_url': api_url,
+                #         'flyout_service_path': 'reconciliation-flyout/',
+                #     }
+                # },
+                "extend": {
+                    "propose_properties": {
+                        "service_url": api_url,
+                        "service_path": "reconciliation-propose-properties/",
+                    },
+                    "property_settings": [],
                 },
-                'property_settings': []
             }
-        })
+        )
 
     def _apply_openrefine_jsonp(self, request):
-        if request.GET.get('callback'):
+        if request.GET.get("callback"):
             # Force set JSONPRenderer
             request.accepted_renderer = JSONPRenderer()
         else:
@@ -164,30 +166,28 @@ class OpenRefineReconciliationMixin(object):
         result = {}
         for key in queries:
             query = queries[key]
-            result[key] = {
-                'result': list(self._get_reconciliation_result(query))
-            }
+            result[key] = {"result": list(self._get_reconciliation_result(query))}
         return result
 
     def _get_reconciliation_result(self, query):
-        limit = min(query.get('limit', 3), 10)
-        q = query.get('query')
-        properties = query.get('properties', [])
+        limit = min(query.get("limit", 3), 10)
+        q = query.get("query")
+        properties = query.get("properties", [])
         ALLOWED_FILTERS = set(self.RECONCILIATION_META.filters)
         queries = self.RECONCILIATION_META.properties_dict
         filters = {}
         for prop in properties:
-            p = prop.get('p', prop.get('pid', None))
+            p = prop.get("p", prop.get("pid", None))
             if p not in ALLOWED_FILTERS:
                 continue
-            v = prop.get('v', None)
+            v = prop.get("v", None)
             if v is None:
                 continue
             if isinstance(v, list):
                 if not v:
                     continue
                 v = v[0]
-            query = queries[p].get('query', p)
+            query = queries[p].get("query", p)
             filters[query] = str(v)
         if not q:
             return
@@ -196,40 +196,42 @@ class OpenRefineReconciliationMixin(object):
     def _search_reconciliation_results(self, query, filters, limit):
         sqs = self.RECONCILIATION_META.document.search()
         for key, val in filters.items():
-            sqs = sqs.filter('term', **{key: val})
-        sqs = sqs.query(Q(
-                "multi_match",
-                query=query,
-                fields=self.RECONCILIATION_META.query_fields
-        ))[:limit]
+            sqs = sqs.filter("term", **{key: val})
+        sqs = sqs.query(
+            Q("multi_match", query=query, fields=self.RECONCILIATION_META.query_fields)
+        )[:limit]
         for r in sqs:
             yield {
-                'id': str(r.meta.id),
-                'name': r.name,
-                'type': [self.RECONCILIATION_META.model.__name__],
-                'score': r.meta.score,
-                'match': r.meta.score >= 4  # FIXME: this is quite arbitrary
+                "id": str(r.meta.id),
+                "name": r.name,
+                "type": [self.RECONCILIATION_META.model.__name__],
+                "score": r.meta.score,
+                "match": r.meta.score >= 4,  # FIXME: this is quite arbitrary
             }
 
     def _get_reconciliation_extend(self, request, query):
         """
         This implementation ignores settings
         """
-        ids = query.get('ids', [])
-        properties = query.get('properties', [])
+        ids = query.get("ids", [])
+        properties = query.get("properties", [])
         props = [
-            p['id'] for p in properties
-            if p.get('id') in self.RECONCILIATION_META.properties_dict
+            p["id"]
+            for p in properties
+            if p.get("id") in self.RECONCILIATION_META.properties_dict
         ]
         qs = self.RECONCILIATION_META.model._default_manager.filter(id__in=ids)
         for prop in self.RECONCILIATION_META.properties:
-            if prop['id'] in props and '__' in prop.get('query', ''):
-                qs = qs.select_related(prop['query'].split('__')[0])
+            if prop["id"] in props and "__" in prop.get("query", ""):
+                qs = qs.select_related(prop["query"].split("__")[0])
 
-        meta = [{
-            'id': self.RECONCILIATION_META.properties_dict[p]['id'],
-            'name': self.RECONCILIATION_META.properties_dict[p]['name']
-        } for p in props]
+        meta = [
+            {
+                "id": self.RECONCILIATION_META.properties_dict[p]["id"],
+                "name": self.RECONCILIATION_META.properties_dict[p]["name"],
+            }
+            for p in props
+        ]
         objs = {str(o.id): o for o in qs}
 
         def make_prop(pk, objs, props):
@@ -239,46 +241,41 @@ class OpenRefineReconciliationMixin(object):
             result = {}
             for p in props:
                 meta = self.RECONCILIATION_META.properties_dict[p]
-                item = meta.get('query', meta['id'])
+                item = meta.get("query", meta["id"])
                 val = obj
-                for key in item.split('__'):
+                for key in item.split("__"):
                     val = getattr(val, key, None)
                     if val is None:
                         break
                 if val is None:
                     val = {}
                 else:
-                    val = {'str': str(val)}
+                    val = {"str": str(val)}
                 result[p] = [val]
             return result
 
-        rows = {
-            id_: make_prop(id_, objs, props) for id_ in ids
-        }
-        return {
-            'meta': meta,
-            'rows': rows
-        }
+        rows = {id_: make_prop(id_, objs, props) for id_ in ids}
+        return {"meta": meta, "rows": rows}
 
     @action(
         detail=False,
-        methods=['get', 'post'],
+        methods=["get", "post"],
         permission_classes=(),
         authentication_classes=(),
     )
     def reconciliation(self, request):
-        '''
+        """
         This is a OpenRefine Reconciliation API endpoint
         https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
         It's a bit messy.
-        '''
+        """
         self._apply_openrefine_jsonp(request)
-        if request.method == 'GET':
+        if request.method == "GET":
             return self._reconciliation_meta(request)
 
         methods = {
-            'queries': self._get_reconciliation_results,
-            'extend': self._get_reconciliation_extend
+            "queries": self._get_reconciliation_results,
+            "extend": self._get_reconciliation_extend,
         }
 
         payload = None
@@ -300,10 +297,10 @@ class OpenRefineReconciliationMixin(object):
 
     @action(
         detail=False,
-        methods=['get', 'post'],
+        methods=["get", "post"],
         permission_classes=(),
         authentication_classes=(),
-        url_path='reconciliation-propose-properties'
+        url_path="reconciliation-propose-properties",
     )
     def reconciliation_propose_properties(self, request):
         """
@@ -314,20 +311,22 @@ class OpenRefineReconciliationMixin(object):
         self._apply_openrefine_jsonp(request)
 
         properties = self.RECONCILIATION_META.properties
-        limit = request.GET.get('limit', len(properties))
+        limit = request.GET.get("limit", len(properties))
 
-        return Response({
-            'properties': properties[:limit],
-            'type': self.RECONCILIATION_META.id,
-            'limit': limit
-        })
+        return Response(
+            {
+                "properties": properties[:limit],
+                "type": self.RECONCILIATION_META.id,
+                "limit": limit,
+            }
+        )
 
     @action(
         detail=False,
-        methods=['get', 'post'],
+        methods=["get", "post"],
         permission_classes=(),
         authentication_classes=(),
-        url_path='reconciliation-flyout'
+        url_path="reconciliation-flyout",
     )
     def reconciliation_flyout_entity(self, request):
         """
@@ -336,7 +335,7 @@ class OpenRefineReconciliationMixin(object):
 
         """
         self._apply_openrefine_jsonp(request)
-        req_id = request.GET.get('id')
+        req_id = request.GET.get("id")
         if req_id is None:
             return Response({})
         model = self.RECONCILIATION_META.model
@@ -344,17 +343,14 @@ class OpenRefineReconciliationMixin(object):
             obj = model.objects.get(pk=req_id)
         except model.DoesNotExist:
             return Response({})
-        return Response({
-            'id': str(obj.obj),
-            'html': format_html('<p>{}</p>', obj)
-        })
+        return Response({"id": str(obj.obj), "html": format_html("<p>{}</p>", obj)})
 
     @action(
         detail=False,
-        methods=['get', 'post'],
+        methods=["get", "post"],
         permission_classes=(),
         authentication_classes=(),
-        url_path='reconciliation-suggest-service'
+        url_path="reconciliation-suggest-service",
     )
     def reconciliation_suggest_service(self, request):
         """
@@ -364,12 +360,12 @@ class OpenRefineReconciliationMixin(object):
         Only implements prefix
         """
         self._apply_openrefine_jsonp(request)
-        q = request.GET.get('prefix')
+        q = request.GET.get("prefix")
         response = {
             "code": "/api/status/ok",
             "status": "200 OK",
-            "prefix": q or '',
-            "result": []
+            "prefix": q or "",
+            "result": [],
         }
         if q is None:
             return Response(response)
@@ -377,11 +373,13 @@ class OpenRefineReconciliationMixin(object):
         results = []
         for f in self.RECONCILIATION_META.filters:
             if f.startswith(q):
-                results.append({
-                    'id': f,
-                    'name': f,
-                })
-        response['result'] = results
+                results.append(
+                    {
+                        "id": f,
+                        "name": f,
+                    }
+                )
+        response["result"] = results
 
         return Response(response)
 
@@ -397,7 +395,7 @@ def get_dict(obj, fields):
         if field_name in d:
             continue
         value = obj
-        for f in field_name.split('__'):
+        for f in field_name.split("__"):
             value = getattr(value, f, None)
             if value is None:
                 break

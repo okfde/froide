@@ -9,9 +9,7 @@ from django.core.files.base import ContentFile
 
 from celery.exceptions import SoftTimeLimitExceeded
 
-from filingcabinet.pdf_utils import (
-    convert_to_pdf, convert_images_to_ocred_pdf, run_ocr
-)
+from filingcabinet.pdf_utils import convert_to_pdf, convert_images_to_ocred_pdf, run_ocr
 
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
@@ -25,8 +23,9 @@ from .notifications import send_classification_reminder
 logger = logging.getLogger(__name__)
 
 
-@celery_app.task(name='froide.foirequest.tasks.process_mail',
-                 acks_late=True, time_limit=60)
+@celery_app.task(
+    name="froide.foirequest.tasks.process_mail", acks_late=True, time_limit=60
+)
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
@@ -34,7 +33,7 @@ def process_mail(*args, **kwargs):
         _process_mail(*args, **kwargs)
 
 
-@celery_app.task(name='froide.foirequest.tasks.fetch_mail', expires=60)
+@celery_app.task(name="froide.foirequest.tasks.fetch_mail", expires=60)
 def fetch_mail():
     for mail_uid, rfc_data in _fetch_mail():
         process_mail.delay(rfc_data, mail_uid=mail_uid)
@@ -92,19 +91,19 @@ def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
         # pb was deleted?
         return
 
-    kwargs.update({
-        'project': project,
-        'publicbody': pb,
-
-        'subject': project.title,
-        'user': project.user,
-        'body': project.description,
-        'public': project.public,
-        'reference': project.reference,
-        'tags': [t.name for t in project.tags.all()],
-
-        'project_order': sequence
-    })
+    kwargs.update(
+        {
+            "project": project,
+            "publicbody": pb,
+            "subject": project.title,
+            "user": project.user,
+            "body": project.description,
+            "public": project.public,
+            "reference": project.reference,
+            "tags": [t.name for t in project.tags.all()],
+            "project_order": sequence,
+        }
+    )
     service = CreateRequestFromProjectService(kwargs)
     foirequest = service.execute()
 
@@ -115,8 +114,7 @@ def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
     return foirequest.pk
 
 
-@celery_app.task(name='froide.foirequest.tasks.convert_attachment_task',
-                 time_limit=60)
+@celery_app.task(name="froide.foirequest.tasks.convert_attachment_task", time_limit=60)
 def convert_attachment_task(instance_id):
     try:
         att = FoiAttachment.objects.get(pk=instance_id)
@@ -131,13 +129,13 @@ def ocr_pdf_attachment(att):
         ocred_att = att.converted
     else:
         name, ext = os.path.splitext(att.name)
-        name = _('{name}_ocr{ext}').format(name=name, ext='.pdf')
+        name = _("{name}_ocr{ext}").format(name=name, ext=".pdf")
 
         ocred_att = FoiAttachment.objects.create(
             name=name,
             belongs_to=att.belongs_to,
             approved=False,
-            filetype='application/pdf',
+            filetype="application/pdf",
             is_converted=True,
             can_approve=att.can_approve,
         )
@@ -148,19 +146,16 @@ def ocr_pdf_attachment(att):
     att.save()
 
     ocr_pdf_task.delay(
-        att.pk, ocred_att.pk,
+        att.pk,
+        ocred_att.pk,
     )
 
 
 def convert_attachment(att):
     output_bytes = convert_to_pdf(
         att.file.path,
-        binary_name=settings.FROIDE_CONFIG.get(
-            'doc_conversion_binary'
-        ),
-        construct_call=settings.FROIDE_CONFIG.get(
-            'doc_conversion_call_func'
-        )
+        binary_name=settings.FROIDE_CONFIG.get("doc_conversion_binary"),
+        construct_call=settings.FROIDE_CONFIG.get("doc_conversion_call_func"),
     )
     if output_bytes is None:
         return
@@ -169,15 +164,15 @@ def convert_attachment(att):
         new_att = att.converted
     else:
         name, ext = os.path.splitext(att.name)
-        name = _('{name}_converted{ext}').format(name=name, ext='.pdf')
+        name = _("{name}_converted{ext}").format(name=name, ext=".pdf")
 
         new_att = FoiAttachment(
             name=name,
             belongs_to=att.belongs_to,
             approved=False,
-            filetype='application/pdf',
+            filetype="application/pdf",
             is_converted=True,
-            can_approve=att.can_approve
+            can_approve=att.can_approve,
         )
 
     new_file = ContentFile(output_bytes)
@@ -190,12 +185,13 @@ def convert_attachment(att):
     att.save()
 
 
-@celery_app.task(name='froide.foirequest.tasks.convert_images_to_pdf_task',
-                 time_limit=60 * 5, soft_time_limit=60 * 4)
+@celery_app.task(
+    name="froide.foirequest.tasks.convert_images_to_pdf_task",
+    time_limit=60 * 5,
+    soft_time_limit=60 * 4,
+)
 def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=True):
-    att_qs = FoiAttachment.objects.filter(
-        id__in=att_ids
-    )
+    att_qs = FoiAttachment.objects.filter(id__in=att_ids)
     att_map = {a.id: a for a in att_qs}
     atts = [att_map[a_id] for a_id in att_ids]
     try:
@@ -210,9 +206,7 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
         pdf_bytes = None
 
     if pdf_bytes is None:
-        att_qs.update(
-            can_approve=can_approve
-        )
+        att_qs.update(can_approve=can_approve)
         target.delete()
         return
 
@@ -222,8 +216,11 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
     target.save()
 
 
-@celery_app.task(name='froide.foirequest.tasks.ocr_pdf_task',
-                 time_limit=60 * 5, soft_time_limit=60 * 4)
+@celery_app.task(
+    name="froide.foirequest.tasks.ocr_pdf_task",
+    time_limit=60 * 5,
+    soft_time_limit=60 * 4,
+)
 def ocr_pdf_task(att_id, target_id, can_approve=True):
     try:
         attachment = FoiAttachment.objects.get(pk=att_id)
@@ -236,9 +233,7 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
 
     try:
         pdf_bytes = run_ocr(
-            attachment.file.path,
-            language=settings.LANGUAGE_CODE,
-            timeout=180
+            attachment.file.path, language=settings.LANGUAGE_CODE, timeout=180
         )
     except SoftTimeLimitExceeded:
         pdf_bytes = None
@@ -255,8 +250,11 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
     target.save()
 
 
-@celery_app.task(name='froide.foirequest.tasks.redact_attachment_task',
-                 time_limit=60 * 6, soft_time_limit=60 * 5)
+@celery_app.task(
+    name="froide.foirequest.tasks.redact_attachment_task",
+    time_limit=60 * 6,
+    soft_time_limit=60 * 5,
+)
 def redact_attachment_task(att_id, target_id, instructions):
     try:
         attachment = FoiAttachment.objects.get(pk=att_id)
@@ -271,7 +269,7 @@ def redact_attachment_task(att_id, target_id, instructions):
     else:
         target = attachment
 
-    logger.info('Trying redaction of %s', attachment.id)
+    logger.info("Trying redaction of %s", attachment.id)
 
     try:
         pdf_bytes = redact_file(attachment.file, instructions)
@@ -280,7 +278,7 @@ def redact_attachment_task(att_id, target_id, instructions):
         pdf_bytes = None
 
     if pdf_bytes is None:
-        logger.info('Redaction failed %s', attachment.id)
+        logger.info("Redaction failed %s", attachment.id)
         # Redaction has failed, remove empty attachment
         if attachment.redacted:
             attachment.redacted = None
@@ -294,28 +292,27 @@ def redact_attachment_task(att_id, target_id, instructions):
             target.delete()
         return
 
-    logger.info('Redaction successful %s', attachment.id)
+    logger.info("Redaction successful %s", attachment.id)
     pdf_file = ContentFile(pdf_bytes)
     target.size = pdf_file.size
     target.file.save(target.name, pdf_file, save=False)
 
-    logger.info('Trying OCR %s', target.id)
+    logger.info("Trying OCR %s", target.id)
 
     try:
         pdf_bytes = run_ocr(
-            target.file.path, language=settings.LANGUAGE_CODE,
-            timeout=60 * 4
+            target.file.path, language=settings.LANGUAGE_CODE, timeout=60 * 4
         )
     except SoftTimeLimitExceeded:
         pdf_bytes = None
 
     if pdf_bytes is not None:
-        logger.info('OCR successful %s', target.id)
+        logger.info("OCR successful %s", target.id)
         pdf_file = ContentFile(pdf_bytes)
         target.size = pdf_file.size
         target.file.save(target.name, pdf_file, save=False)
     else:
-        logger.info('OCR failed %s', target.id)
+        logger.info("OCR failed %s", target.id)
 
     target.can_approve = True
     target.pending = False
@@ -323,7 +320,7 @@ def redact_attachment_task(att_id, target_id, instructions):
     FoiAttachment.attachment_published.send(sender=target, user=None)
 
 
-@celery_app.task(name='froide.foirequest.tasks.move_upload_to_attachment')
+@celery_app.task(name="froide.foirequest.tasks.move_upload_to_attachment")
 def move_upload_to_attachment(att_id, upload_id):
     try:
         att = FoiAttachment.objects.get(pk=att_id)

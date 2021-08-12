@@ -10,14 +10,14 @@ from .models import DeliveryStatus
 
 
 def get_message_handler_class(dotted):
-    module, klass = dotted.rsplit('.', 1)
+    module, klass = dotted.rsplit(".", 1)
     module = importlib.import_module(module)
     return getattr(module, klass)
 
 
 def get_message_handler(message):
     kind = message.kind
-    handler = settings.FROIDE_CONFIG['message_handlers'].get(kind)
+    handler = settings.FROIDE_CONFIG["message_handlers"].get(kind)
     if handler is None:
         handler_klass = DefaultMessageHandler
     else:
@@ -46,8 +46,8 @@ class MessageHandler(object):
         request = message.request
 
         ds = message.get_delivery_status()
-        if ds is not None and ds.is_sent() and not kwargs.get('force'):
-            raise ValueError('Delivery Status with sent exists!')
+        if ds is not None and ds.is_sent() and not kwargs.get("force"):
+            raise ValueError("Delivery Status with sent exists!")
 
         if not request.is_blocked:
             self.run_send(**kwargs)
@@ -58,7 +58,7 @@ class MessageHandler(object):
         message = self.message
 
         ds = message.get_delivery_status()
-        if ds is not None and ds.is_sent() and not kwargs.get('force'):
+        if ds is not None and ds.is_sent() and not kwargs.get("force"):
             # If status is received, do not send
             return
 
@@ -88,39 +88,38 @@ class EmailMessageHandler(MessageHandler):
         message = self.message
         request = message.request
 
-        attachments = kwargs.get('attachments', [])
+        attachments = kwargs.get("attachments", [])
 
         extra_kwargs = {}
         # Use send_foi_mail here
         from_addr = make_address(
             request.secret_address,
-            '{} [#{}]'.format(
-                request.user.get_full_name(),
-                request.id
-            )
+            "{} [#{}]".format(request.user.get_full_name(), request.id),
         )
         get_notified = (
-            message.sender_user and
-            message.sender_user.is_superuser and
-            not request.public
+            message.sender_user
+            and message.sender_user.is_superuser
+            and not request.public
         )
-        if settings.FROIDE_CONFIG['read_receipt'] and get_notified:
-            extra_kwargs['read_receipt'] = True
-        if settings.FROIDE_CONFIG['delivery_receipt'] and get_notified:
-            extra_kwargs['delivery_receipt'] = True
-        if settings.FROIDE_CONFIG['dsn'] and get_notified:
-            extra_kwargs['dsn'] = True
+        if settings.FROIDE_CONFIG["read_receipt"] and get_notified:
+            extra_kwargs["read_receipt"] = True
+        if settings.FROIDE_CONFIG["delivery_receipt"] and get_notified:
+            extra_kwargs["delivery_receipt"] = True
+        if settings.FROIDE_CONFIG["dsn"] and get_notified:
+            extra_kwargs["dsn"] = True
 
         message.timestamp = timezone.now()
         message.save()
 
         message.email_message_id = message.make_message_id()
-        extra_kwargs['message_id'] = message.email_message_id
+        extra_kwargs["message_id"] = message.email_message_id
         froide_message_id = message.get_absolute_domain_short_url()
-        extra_kwargs['froide_message_id'] = froide_message_id
+        extra_kwargs["froide_message_id"] = froide_message_id
 
         send_foi_mail(
-            message.subject, message.plaintext, from_addr,
+            message.subject,
+            message.plaintext,
+            from_addr,
             [message.recipient_email.strip()],
             attachments=attachments,
             **extra_kwargs
@@ -134,10 +133,10 @@ class EmailMessageHandler(MessageHandler):
             defaults=dict(
                 status=DeliveryStatus.Delivery.STATUS_SENDING,
                 last_update=timezone.now(),
-            )
+            ),
         )
 
         # Check delivery status in 2 minutes
         from .tasks import check_delivery_status
-        check_delivery_status.apply_async((message.id,), {'count': 0},
-                                            countdown=2 * 60)
+
+        check_delivery_status.apply_async((message.id,), {"count": 0}, countdown=2 * 60)

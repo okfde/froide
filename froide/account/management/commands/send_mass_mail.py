@@ -17,22 +17,18 @@ class Command(BaseCommand):
 
         subject, content = self.get_content(content)
         for user_pk in self.send_mail(subject, content):
-            self.stdout.write('%s' % user_pk)
+            self.stdout.write("%s" % user_pk)
 
     def send_mail(self, subject, content):
         users = User.objects.filter(is_active=True)
-        users = users.exclude(email='')
+        users = users.exclude(email="")
 
         for user in users.iterator():
-            user.send_mail(
-                subject, content,
-                fail_silently=False,
-                priority=False
-            )
+            user.send_mail(subject, content, fail_silently=False, priority=False)
             yield user.pk
 
     def get_content(self, content):
         content = content.splitlines()
         subject = content[0].strip()
-        content = '\n'.join(content[1:]).strip()
+        content = "\n".join(content[1:]).strip()
         return subject, content

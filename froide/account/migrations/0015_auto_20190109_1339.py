@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0014_user_date_deactivated'),
+        ("account", "0014_user_date_deactivated"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='application',
-            name='redirect_uris',
-            field=models.TextField(blank=True, help_text='Allowed URIs list, space separated'),
+            model_name="application",
+            name="redirect_uris",
+            field=models.TextField(
+                blank=True, help_text="Allowed URIs list, space separated"
+            ),
         ),
     ]

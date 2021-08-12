@@ -4,12 +4,10 @@ from django.db import migrations
 
 
 def set_tags(apps, schema_editor):
-    TaggedUser = apps.get_model('account', 'TaggedUser')
-    UserTag = apps.get_model('account', 'UserTag')
+    TaggedUser = apps.get_model("account", "TaggedUser")
+    UserTag = apps.get_model("account", "UserTag")
     for tagged_user in TaggedUser.objects.all():
-        user_tag = UserTag.objects.get(
-            slug=tagged_user.tag.slug
-        )
+        user_tag = UserTag.objects.get(slug=tagged_user.tag.slug)
         tagged_user.tag_new = user_tag
         tagged_user.save()
 
@@ -17,9 +15,7 @@ def set_tags(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0019_auto_20190309_1223'),
+        ("account", "0019_auto_20190309_1223"),
     ]
 
-    operations = [
-        migrations.RunPython(set_tags)
-    ]
+    operations = [migrations.RunPython(set_tags)]

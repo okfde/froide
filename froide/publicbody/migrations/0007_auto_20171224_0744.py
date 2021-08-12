@@ -8,10 +8,10 @@ from django.db import migrations
 def create_classifications(apps, schema_editor):
     from ..models import Classification as RealClassification  # Use treebeard API
 
-    Classification = apps.get_model('publicbody', 'Classification')
-    PublicBody = apps.get_model('publicbody', 'PublicBody')
+    Classification = apps.get_model("publicbody", "Classification")
+    PublicBody = apps.get_model("publicbody", "PublicBody")
     classifications = {}
-    for pb in PublicBody.objects.exclude(classification_slug=''):
+    for pb in PublicBody.objects.exclude(classification_slug=""):
         if pb.classification_slug in classifications:
             pb.classification = classifications[pb.classification_slug]
         else:
@@ -19,7 +19,7 @@ def create_classifications(apps, schema_editor):
                 name=pb.classification_name,
                 slug=pb.classification_slug,
                 depth=1,
-                path=RealClassification._get_path(None, 1, len(classifications))
+                path=RealClassification._get_path(None, 1, len(classifications)),
             )
             root.save()
             pb.classification = root
@@ -44,7 +44,7 @@ def create_classifications(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0006_auto_20171224_0732'),
+        ("publicbody", "0006_auto_20171224_0732"),
     ]
 
     operations = [

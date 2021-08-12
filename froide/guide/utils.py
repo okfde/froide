@@ -12,22 +12,26 @@ from .models import Rule, Guidance, Action
 
 
 guidance_notification_mail = mail_registry.register(
-    'guide/emails/new_guidance',
-    ('name', 'single_request', 'request_title', 'guidances')
+    "guide/emails/new_guidance",
+    ("name", "single_request", "request_title", "guidances"),
 )
 
 
 GuidanceResult = namedtuple(
-    'GuidanceResult',
-    ('guidances', 'created', 'deleted',)
+    "GuidanceResult",
+    (
+        "guidances",
+        "created",
+        "deleted",
+    ),
 )
 
-WS = re.compile(r'\s+')
+WS = re.compile(r"\s+")
 
 
 def prepare_text(text):
     text, _1 = split_text_by_separator(text)
-    text = ' '.join(text.splitlines())
+    text = " ".join(text.splitlines())
     return text
 
 
@@ -44,17 +48,19 @@ class GuidanceApplicator:
             rules = Rule.objects.all()
 
         if self.active_only:
-            rules = rules.filter(
-                is_active=True
-            )
+            rules = rules.filter(is_active=True)
 
-        rules = rules.filter(
-            Q(jurisdictions=None) | Q(jurisdictions=foirequest.jurisdiction)
-        ).filter(
-            Q(publicbodies=None) | Q(publicbodies=foirequest.public_body)
-        ).filter(
-            Q(categories=None) | Q(categories__in=foirequest.public_body.categories.all())
-        ).order_by('priority')
+        rules = (
+            rules.filter(
+                Q(jurisdictions=None) | Q(jurisdictions=foirequest.jurisdiction)
+            )
+            .filter(Q(publicbodies=None) | Q(publicbodies=foirequest.public_body))
+            .filter(
+                Q(categories=None)
+                | Q(categories__in=foirequest.public_body.categories.all())
+            )
+            .order_by("priority")
+        )
         for rule in rules:
             if rule.references_re:
                 if not rule.references_re.search(foirequest.reference):
@@ -68,7 +74,7 @@ class GuidanceApplicator:
         rules = self.filter_rules()
 
         message = self.message
-        tags = set(message.tags.all().values_list('id', flat=True))
+        tags = set(message.tags.all().values_list("id", flat=True))
         text = prepare_text(message.plaintext)
 
         for rule in rules:
@@ -89,11 +95,7 @@ class GuidanceApplicator:
                     continue
 
             # Rule applies
-            ctx = {
-                'includes': include_match,
-                'excludes': exclude_match,
-                'tags': tags
-            }
+            ctx = {"includes": include_match, "excludes": exclude_match, "tags": tags}
             yield from self.apply_rule(rule, **ctx)
 
     def apply_rule(self, rule, includes=None, excludes=None, tags=None):
@@ -114,14 +116,9 @@ class GuidanceApplicator:
             return
         matches = None
         if includes:
-            matches = {'span': list(includes.span())}
+            matches = {"span": list(includes.span())}
         guidance, created = Guidance.objects.get_or_create(
-            message=message,
-            action=action,
-            defaults={
-                'rule': rule,
-                'matches': matches
-            }
+            message=message, action=action, defaults={"rule": rule, "matches": matches}
         )
         guidance.created = created
         if created:
@@ -133,17 +130,14 @@ class GuidanceApplicator:
 
         # Delete all guidances that were there before
         # but are not returned, keep custom guidances
-        count, ctypes = self.message.guidance_set.all().exclude(
-            Q(id__in=[n.id for n in guidances]) |
-            Q(user__isnull=False)
-        ).delete()
+        count, ctypes = (
+            self.message.guidance_set.all()
+            .exclude(Q(id__in=[n.id for n in guidances]) | Q(user__isnull=False))
+            .delete()
+        )
         self.deleted_count = count
 
-        return GuidanceResult(
-            guidances,
-            self.created_count,
-            self.deleted_count
-        )
+        return GuidanceResult(guidances, self.created_count, self.deleted_count)
 
 
 def run_guidance(message, active_only=True, notify=False):
@@ -167,7 +161,7 @@ def apply_guidance_generator(queryset):
 
 
 def run_guidance_on_queryset(queryset, notify=False):
-    queryset = queryset.order_by('request__user_id')
+    queryset = queryset.order_by("request__user_id")
 
     gen = apply_guidance_generator(queryset)
     if notify:
@@ -192,9 +186,7 @@ def notify_users_generator(gen):
                 send_notifications(notifications)
                 notifications = []
         last_user = message.request.user_id
-        notifications.append(
-            (message, result)
-        )
+        notifications.append((message, result))
         yield message, result
     send_notifications(notifications)
 
@@ -214,31 +206,24 @@ def send_notifications(notifications):
             if guidance.send_custom_notification():
                 continue
             guidances.append(guidance)
-            guidance_mapping[guidance.action or guidance].append(
-                message
-            )
+            guidance_mapping[guidance.action or guidance].append(message)
     if not guidance_mapping:
         return
     requests = list(requests)
     single_request = len(requests) == 1
     if single_request:
-        subject = _('New guidance for your request [#{}]').format(requests[0])
+        subject = _("New guidance for your request [#{}]").format(requests[0])
     else:
-        subject = _('New guidance for your requests')
+        subject = _("New guidance for your requests")
 
     context = {
-        'name': user.get_full_name(),
-        'single_request': single_request,
-        'request_title': notifications[0][0].request.title,
-        'guidances': list(guidance_mapping.items()),
+        "name": user.get_full_name(),
+        "single_request": single_request,
+        "request_title": notifications[0][0].request.title,
+        "guidances": list(guidance_mapping.items()),
     }
-    guidance_notification_mail.send(
-        user=user, context=context,
-        subject=subject
-    )
-    Guidance.objects.filter(
-        id__in=[g.id for g in guidances]
-    ).update(notified=True)
+    guidance_notification_mail.send(user=user, context=context, subject=subject)
+    Guidance.objects.filter(id__in=[g.id for g in guidances]).update(notified=True)
 
 
 def notify_guidance(guidance):
@@ -251,13 +236,10 @@ def execute_assign_guidance_action(admin, request, queryset, action_obj):
     from .tasks import add_action_to_queryset_task
 
     add_action_to_queryset_task.delay(
-        action_obj.id, list(
-            queryset.values_list('id', flat=True)
-        )
+        action_obj.id, list(queryset.values_list("id", flat=True))
     )
 
 
 assign_guidance_action = make_choose_object_action(
-    Action, execute_assign_guidance_action,
-    _('Choose guidance action to attach...')
+    Action, execute_assign_guidance_action, _("Choose guidance action to attach...")
 )

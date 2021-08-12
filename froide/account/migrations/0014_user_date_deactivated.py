@@ -8,13 +8,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0013_auto_20180417_1113'),
+        ("account", "0013_auto_20180417_1113"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='date_deactivated',
-            field=models.DateTimeField(blank=True, default=None, null=True, verbose_name='date deactivated'),
+            model_name="user",
+            name="date_deactivated",
+            field=models.DateTimeField(
+                blank=True, default=None, null=True, verbose_name="date deactivated"
+            ),
         ),
     ]

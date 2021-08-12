@@ -7,7 +7,7 @@ register = template.Library()
 
 
 def advise_foisite(context):
-    ip = get_client_ip(context['request'])
+    ip = get_client_ip(context["request"])
     return advisor.get_site(ip)
 
 

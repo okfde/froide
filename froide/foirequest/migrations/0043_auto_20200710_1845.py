@@ -7,13 +7,13 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0042_auto_20200710_1749'),
+        ("foirequest", "0042_auto_20200710_1749"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='deliverystatus',
-            name='last_update',
+            model_name="deliverystatus",
+            name="last_update",
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
     ]

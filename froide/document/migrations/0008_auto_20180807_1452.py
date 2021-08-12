@@ -6,8 +6,8 @@ from django.db import migrations
 
 
 def migrate_data_to_external_app(apps, schema_editor):
-    FroidePage = apps.get_model('document', 'Page')
-    FCPage = apps.get_model('filingcabinet', 'Page')
+    FroidePage = apps.get_model("document", "Page")
+    FCPage = apps.get_model("filingcabinet", "Page")
 
     for page in FroidePage.objects.all():
         FCPage.objects.create(
@@ -18,11 +18,11 @@ def migrate_data_to_external_app(apps, schema_editor):
             image=page.image,
             image_large=page.image_large,
             image_normal=page.image_normal,
-            image_small=page.image_small
+            image_small=page.image_small,
         )
 
-    FroidePageAnnotation = apps.get_model('document', 'PageAnnotation')
-    FCPageAnnotation = apps.get_model('filingcabinet', 'PageAnnotation')
+    FroidePageAnnotation = apps.get_model("document", "PageAnnotation")
+    FCPageAnnotation = apps.get_model("filingcabinet", "PageAnnotation")
 
     for anno in FroidePageAnnotation.objects.all():
         FCPageAnnotation.objects.create(
@@ -35,14 +35,14 @@ def migrate_data_to_external_app(apps, schema_editor):
             left=anno.left,
             width=anno.width,
             height=anno.height,
-            image=anno.image
+            image=anno.image,
         )
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0007_auto_20180807_1448'),
+        ("document", "0007_auto_20180807_1448"),
     ]
 
     operations = [

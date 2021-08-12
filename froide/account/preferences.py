@@ -19,7 +19,7 @@ class Preference:
         self.form_class = form_class
 
     def __str__(self):
-        return '<Preference {}>'.format(self.key)
+        return "<Preference {}>".format(self.key)
 
     def get(self, user):
         if user is None or not user.is_authenticated:
@@ -33,7 +33,7 @@ def get_preferences_for_user(user, preferences: Sequence[Preference]):
     value_map = dict(
         UserPreference.objects.filter(
             user=user, key__in=list(prefs_map.keys())
-        ).values_list('key', 'value')
+        ).values_list("key", "value")
     )
     return {
         key: PreferenceVar(value_map.get(key), p.form_class())
@@ -49,10 +49,9 @@ class PreferenceRegistry:
         pattern = re.compile(key)
         # Create a subclass so a class can be used
         # with multiple keys
-        key_form_class = type(key.title(), (form_class,), {
-            'initial_key': key,
-            'key_pattern': pattern
-        })
+        key_form_class = type(
+            key.title(), (form_class,), {"initial_key": key, "key_pattern": pattern}
+        )
         self.preferences[pattern] = key_form_class
         return Preference(key, key_form_class)
 
@@ -71,22 +70,18 @@ class PreferenceForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['key'].initial = self.initial_key
+        self.fields["key"].initial = self.initial_key
 
     def clean_key(self):
-        key = self.cleaned_data['key']
+        key = self.cleaned_data["key"]
         if not self.key_pattern.match(key):
-            raise forms.ValidationError('Key does not match')
+            raise forms.ValidationError("Key does not match")
         return key
 
     def save(self, user):
-        key = self.cleaned_data['key']
-        value = self.cleaned_data['value']
+        key = self.cleaned_data["key"]
+        value = self.cleaned_data["value"]
 
         UserPreference.objects.update_or_create(
-            user=user, key=key,
-            defaults={
-                'value': value,
-                'timestamp': timezone.now()
-            }
+            user=user, key=key, defaults={"value": value, "timestamp": timezone.now()}
         )

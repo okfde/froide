@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('guide', '0003_rule_is_active'),
+        ("guide", "0003_rule_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='guidance',
-            name='notified',
+            model_name="guidance",
+            name="notified",
             field=models.BooleanField(default=False),
         ),
     ]

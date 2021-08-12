@@ -13,9 +13,7 @@ from django.db.models.fields.related import ForeignObjectRel, ManyToManyField
 
 from taggit.models import TaggedItem
 
-from .forms import (
-    TagObjectForm, get_fake_fk_form_class
-)
+from .forms import TagObjectForm, get_fake_fk_form_class
 
 
 def make_choose_object_action(model_or_queryset, callback, label):
@@ -31,14 +29,12 @@ def make_choose_object_action(model_or_queryset, callback, label):
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        Form = get_fake_fk_form_class(
-            model, self.admin_site, queryset=filter_qs
-        )
+        Form = get_fake_fk_form_class(model, self.admin_site, queryset=filter_qs)
         # User has already chosen the other req
-        if request.POST.get('obj'):
+        if request.POST.get("obj"):
             form = Form(request.POST)
             if form.is_valid():
-                action_obj = form.cleaned_data['obj']
+                action_obj = form.cleaned_data["obj"]
                 callback(self, request, queryset, action_obj)
                 self.message_user(request, _("Successfully executed."))
                 return None
@@ -47,28 +43,30 @@ def make_choose_object_action(model_or_queryset, callback, label):
 
         opts = self.model._meta
         context = {
-            'opts': opts,
-            'queryset': queryset,
-            'media': self.media,
-            'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
-            'form': form,
-            'headline': label,
-            'actionname': request.POST.get('action'),
-            'applabel': opts.app_label
+            "opts": opts,
+            "queryset": queryset,
+            "media": self.media,
+            "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            "form": form,
+            "headline": label,
+            "actionname": request.POST.get("action"),
+            "applabel": opts.app_label,
         }
 
         # Display the confirmation page
-        return TemplateResponse(request, 'helper/admin/apply_action.html',
-            context)
+        return TemplateResponse(request, "helper/admin/apply_action.html", context)
 
     action.short_description = label
     return action
 
 
 def make_batch_tag_action(
-        action_name='tag_all', field='tags', autocomplete_url=None,
-        short_description=None, template='admin_utils/admin_tag_all.html'):
-
+    action_name="tag_all",
+    field="tags",
+    autocomplete_url=None,
+    short_description=None,
+    template="admin_utils/admin_tag_all.html",
+):
     def tag_func(self, request, queryset):
         """
         Add tag to all selected objects
@@ -80,11 +78,12 @@ def make_batch_tag_action(
             raise PermissionDenied
 
         # User has already chosen the other req
-        if request.POST.get('tags'):
-            form = TagObjectForm(request.POST, tags=[],
-                                 autocomplete_url=autocomplete_url)
+        if request.POST.get("tags"):
+            form = TagObjectForm(
+                request.POST, tags=[], autocomplete_url=autocomplete_url
+            )
             if form.is_valid():
-                tags = form.cleaned_data['tags']
+                tags = form.cleaned_data["tags"]
                 for obj in queryset:
                     if callable(field):
                         field(obj, tags)
@@ -97,18 +96,17 @@ def make_batch_tag_action(
             self.message_user(request, _("Form invalid"))
 
         tags = set()
-        form = TagObjectForm(tags=tags,
-                             autocomplete_url=autocomplete_url)
+        form = TagObjectForm(tags=tags, autocomplete_url=autocomplete_url)
 
         context = {
-            'opts': opts,
-            'queryset': queryset,
-            'media': self.media,
-            'form': form,
-            'headline': _('Set these tags for all selected items:'),
-            'action_checkbox_name': admin.helpers.ACTION_CHECKBOX_NAME,
-            'action_name': action_name,
-            'applabel': opts.app_label
+            "opts": opts,
+            "queryset": queryset,
+            "media": self.media,
+            "form": form,
+            "headline": _("Set these tags for all selected items:"),
+            "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            "action_name": action_name,
+            "applabel": opts.app_label,
         }
 
         # Display the confirmation page
@@ -127,73 +125,71 @@ class NullFilter(SimpleListFilter):
     http://stackoverflow.com/questions/7691890/filtering-django-admin-by-null-is-not-null
     under CC-By 3.0
     """
-    title = ''
 
-    parameter_name = ''
+    title = ""
+
+    parameter_name = ""
 
     def lookups(self, request, model_admin):
         return (
-            ('1', _('Has value')),
-            ('0', _('None')),
+            ("1", _("Has value")),
+            ("0", _("None")),
         )
 
     def queryset(self, request, queryset):
         kwargs = {
-            '%s' % self.parameter_name: None,
+            "%s" % self.parameter_name: None,
         }
-        if self.value() == '0':
+        if self.value() == "0":
             return queryset.filter(**kwargs)
-        if self.value() == '1':
+        if self.value() == "1":
             return queryset.exclude(**kwargs)
         return queryset
 
 
 def make_nullfilter(field, title):
-    return type(str('%sNullFilter' % field.title()), (NullFilter,), {
-        'title': title,
-        'parameter_name': field
-    })
+    return type(
+        str("%sNullFilter" % field.title()),
+        (NullFilter,),
+        {"title": title, "parameter_name": field},
+    )
 
 
 class GreaterZeroFilter(SimpleListFilter):
-    title = ''
-    parameter_name = ''
+    title = ""
+    parameter_name = ""
 
     def lookups(self, request, model_admin):
         return (
-            ('1', _('Greater zero')),
-            ('0', _('Zero')),
+            ("1", _("Greater zero")),
+            ("0", _("Zero")),
         )
 
     def queryset(self, request, queryset):
-        if self.value() == '0':
-            return queryset.filter(**{
-                '%s' % self.parameter_name: 0
-            })
-        if self.value() == '1':
-            return queryset.filter(**{
-                '%s__gt' % self.parameter_name: 0
-            })
+        if self.value() == "0":
+            return queryset.filter(**{"%s" % self.parameter_name: 0})
+        if self.value() == "1":
+            return queryset.filter(**{"%s__gt" % self.parameter_name: 0})
         return queryset
 
 
 def make_greaterzerofilter(field, title):
-    return type(str('%sGreaterZeroFilter' % field.title()), (GreaterZeroFilter,), {
-        'title': title,
-        'parameter_name': field
-    })
+    return type(
+        str("%sGreaterZeroFilter" % field.title()),
+        (GreaterZeroFilter,),
+        {"title": title, "parameter_name": field},
+    )
 
 
 class EmptyFilter(SimpleListFilter):
-    title = ''
-    parameter_name = ''
-    empty_value = ''
+    title = ""
+    parameter_name = ""
+    empty_value = ""
 
     def lookups(self, request, model_admin):
         return (
-            ('0', _('Is empty')),
-            ('1', _('Is not empty')),
-
+            ("0", _("Is empty")),
+            ("1", _("Is not empty")),
         )
 
     def queryset(self, request, queryset):
@@ -201,21 +197,25 @@ class EmptyFilter(SimpleListFilter):
         if callable(val):
             val = val()
         kwargs = {
-            '%s' % self.parameter_name: val,
+            "%s" % self.parameter_name: val,
         }
-        if self.value() == '0':
+        if self.value() == "0":
             return queryset.filter(**kwargs)
-        if self.value() == '1':
+        if self.value() == "1":
             return queryset.exclude(**kwargs)
         return queryset
 
 
-def make_emptyfilter(field, title, empty_value=''):
-    return type(str('%sEmptyFilter' % field.title()), (EmptyFilter,), {
-        'title': title,
-        'parameter_name': field,
-        'empty_value': empty_value,
-    })
+def make_emptyfilter(field, title, empty_value=""):
+    return type(
+        str("%sEmptyFilter" % field.title()),
+        (EmptyFilter,),
+        {
+            "title": title,
+            "parameter_name": field,
+            "empty_value": empty_value,
+        },
+    )
 
 
 class TaggitListFilter(SimpleListFilter):
@@ -225,10 +225,10 @@ class TaggitListFilter(SimpleListFilter):
 
     # Human-readable title which will be displayed in the
     # right admin sidebar just above the filter options.
-    title = _('tags')
+    title = _("tags")
 
     # Parameter for the filter that will be used in the URL query.
-    parameter_name = 'tag'
+    parameter_name = "tag"
     tag_class = TaggedItem
 
     def lookups(self, request, model_admin):
@@ -256,8 +256,7 @@ class ForeignKeyFilter(admin.FieldListFilter):
     template = "helper/admin/fk_filter.html"
 
     def __init__(self, field, request, params, model, model_admin, field_path):
-        super().__init__(
-            field, request, params, model, model_admin, field_path)
+        super().__init__(field, request, params, model, model_admin, field_path)
         self.lookup_val = request.GET.get(self.field_path, None)
         self.create_used_parameters()
 
@@ -265,12 +264,12 @@ class ForeignKeyFilter(admin.FieldListFilter):
         param = self.field_path
         val = self.used_parameters.pop(param, None)
         if val is not None:
-            if val == 'isnull':
-                self.used_parameters['{}__isnull'.format(param)] = True
-            elif val == 'notnull':
-                self.used_parameters['{}__isnull'.format(param)] = False
+            if val == "isnull":
+                self.used_parameters["{}__isnull".format(param)] = True
+            elif val == "notnull":
+                self.used_parameters["{}__isnull".format(param)] = False
             else:
-                self.used_parameters['{}__in'.format(param)] = val.split(',')
+                self.used_parameters["{}__in".format(param)] = val.split(",")
 
     def expected_parameters(self):
         return [self.field_path]
@@ -279,11 +278,13 @@ class ForeignKeyFilter(admin.FieldListFilter):
         params = changelist.params.copy()
         params.pop(self.field_path, None)
 
-        return [{
-            'value': self.lookup_val,
-            'field_path': self.field_path,
-            'params': params,
-        }]
+        return [
+            {
+                "value": self.lookup_val,
+                "field_path": self.field_path,
+                "params": params,
+            }
+        ]
 
 
 class SearchFilter(ForeignKeyFilter):
@@ -291,26 +292,24 @@ class SearchFilter(ForeignKeyFilter):
         param = self.field_path
         val = self.used_parameters.pop(param, None)
         if val is not None:
-            self.used_parameters['{}__startswith'.format(param)] = val
+            self.used_parameters["{}__startswith".format(param)] = val
 
 
 class MultiFilterMixin:
-    template = 'helper/admin/multi_filter.html'
-    lookup_name = ''
+    template = "helper/admin/multi_filter.html"
+    lookup_name = ""
 
     def queryset(self, request, queryset):
         if request.GET.get(self.parameter_name):
             lookup = self.parameter_name + self.lookup_name
             values = self.value_as_list()
-            queryset = queryset.filter(
-                self.get_q(values, lookup)
-            )
+            queryset = queryset.filter(self.get_q(values, lookup))
         return queryset
 
     @classmethod
     def get_q(cls, values, lookup):
-        includes = [v for v in values if not v.startswith('~')]
-        excludes = [v[1:] for v in values if v.startswith('~')]
+        includes = [v for v in values if not v.startswith("~")]
+        excludes = [v[1:] for v in values if v.startswith("~")]
         q = models.Q()
         if includes:
             for inc in includes:
@@ -320,19 +319,18 @@ class MultiFilterMixin:
         return q
 
     def value_as_list(self):
-        return self.value().split(',') if self.value() else []
+        return self.value().split(",") if self.value() else []
 
     def choices(self, changelist):
-
         def amend_query_string(include=None, clear=None, exclude=None):
             selections = self.value_as_list()
             if include and include not in selections:
                 selections.append(include)
-                exclude_val = '~{}'.format(include)
+                exclude_val = "~{}".format(include)
                 if exclude_val in selections:
                     selections.remove(exclude_val)
             if exclude:
-                exclude_val = '~{}'.format(exclude)
+                exclude_val = "~{}".format(exclude)
                 if exclude in selections:
                     selections.remove(exclude)
                 if exclude_val not in selections:
@@ -340,31 +338,33 @@ class MultiFilterMixin:
             if clear:
                 if clear in selections:
                     selections.remove(clear)
-                exclude_val = '~{}'.format(clear)
+                exclude_val = "~{}".format(clear)
                 if exclude_val in selections:
                     selections.remove(exclude_val)
             if selections:
-                csv = ','.join(selections)
+                csv = ",".join(selections)
                 return changelist.get_query_string({self.parameter_name: csv})
             else:
                 return changelist.get_query_string(remove=[self.parameter_name])
 
         yield {
-            'selected': self.value() is None,
-            'query_string': changelist.get_query_string(remove=[self.parameter_name]),
-            'display': _('All'),
-            'reset': True,
+            "selected": self.value() is None,
+            "query_string": changelist.get_query_string(remove=[self.parameter_name]),
+            "display": _("All"),
+            "reset": True,
         }
         values = self.value_as_list()
         for lookup, title in self.lookup_choices:
             yield {
-                'included': str(lookup) in values,
-                'excluded': '~{}'.format(lookup) in values,
-                'query_string': changelist.get_query_string({self.parameter_name: lookup}),
-                'include_query_string': amend_query_string(include=str(lookup)),
-                'clear_query_string': amend_query_string(clear=str(lookup)),
-                'exclude_query_string': amend_query_string(exclude=str(lookup)),
-                'display': title,
+                "included": str(lookup) in values,
+                "excluded": "~{}".format(lookup) in values,
+                "query_string": changelist.get_query_string(
+                    {self.parameter_name: lookup}
+                ),
+                "include_query_string": amend_query_string(include=str(lookup)),
+                "clear_query_string": amend_query_string(clear=str(lookup)),
+                "exclude_query_string": amend_query_string(exclude=str(lookup)),
+                "display": title,
             }
 
 
@@ -375,18 +375,20 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
 
     Admin filter class which filters models related to parent model with all it's descendants.
     """
-    template = 'helper/admin/tree_filter.html'
+
+    template = "helper/admin/tree_filter.html"
     tree_level_indent = 10
 
     def __init__(self, field, request, params, model, model_admin, field_path):
         self.other_model = get_model_from_relation(field)
-        if field.remote_field is not None and hasattr(field.remote_field, 'get_related_field'):
+        if field.remote_field is not None and hasattr(
+            field.remote_field, "get_related_field"
+        ):
             self.rel_name = field.remote_field.get_related_field().name
         else:
             self.rel_name = self.other_model._meta.pk.name
-        self.changed_lookup_kwarg = '%s__%s__inhierarchy' % (field_path, self.rel_name)
-        super().__init__(field, request, params, model, model_admin,
-                         field_path)
+        self.changed_lookup_kwarg = "%s__%s__inhierarchy" % (field_path, self.rel_name)
+        super().__init__(field, request, params, model, model_admin, field_path)
         self.lookup_val = request.GET.get(self.changed_lookup_kwarg)
 
     def expected_parameters(self):
@@ -402,7 +404,7 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
                 other_models = other_model.__class__.get_tree(other_model)
                 del self.used_parameters[self.changed_lookup_kwarg]
                 self.used_parameters.update(
-                    {'%s__%s__in' % (self.field_path, self.rel_name): other_models}
+                    {"%s__%s__in" % (self.field_path, self.rel_name): other_models}
                 )
             # #### MPTT ADDITION END
             return queryset.filter(**self.used_parameters)
@@ -411,7 +413,9 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
 
     # Adding padding_style to each choice tuple
     def field_choices(self, field, request, model_admin):
-        tree_level_indent = getattr(model_admin, 'tree_level_indent', self.tree_level_indent)
+        tree_level_indent = getattr(
+            model_admin, "tree_level_indent", self.tree_level_indent
+        )
         language_bidi = get_language_bidi()
         initial_choices = field.get_choices(include_blank=False)
         pks = [pk for pk, val in initial_choices]
@@ -419,11 +423,14 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
         levels_dict = {model.pk: model.get_depth() for model in models}
         choices = []
         for pk, val in initial_choices:
-            choices.append((
-                pk, val,
-                'right' if language_bidi else 'left',
-                tree_level_indent * levels_dict[pk]
-            ))
+            choices.append(
+                (
+                    pk,
+                    val,
+                    "right" if language_bidi else "left",
+                    tree_level_indent * levels_dict[pk],
+                )
+            )
 
         return choices
 
@@ -434,30 +441,40 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
         EMPTY_CHANGELIST_VALUE = self.empty_value_display
         # #### TREE ADDITION END
         yield {
-            'selected': self.lookup_val is None and not self.lookup_val_isnull,
-            'query_string': cl.get_query_string({}, [self.changed_lookup_kwarg, self.lookup_kwarg_isnull]),
-            'display': _('All'),
+            "selected": self.lookup_val is None and not self.lookup_val_isnull,
+            "query_string": cl.get_query_string(
+                {}, [self.changed_lookup_kwarg, self.lookup_kwarg_isnull]
+            ),
+            "display": _("All"),
         }
         for pk_val, val, padding_dir, padding_size in self.lookup_choices:
             yield {
-                'selected': self.lookup_val == smart_str(pk_val),
-                'query_string': cl.get_query_string({
-                    self.changed_lookup_kwarg: pk_val,
-                }, [self.lookup_kwarg_isnull]),
-                'display': val,
+                "selected": self.lookup_val == smart_str(pk_val),
+                "query_string": cl.get_query_string(
+                    {
+                        self.changed_lookup_kwarg: pk_val,
+                    },
+                    [self.lookup_kwarg_isnull],
+                ),
+                "display": val,
                 # #### TREE ADDITION START
-                'padding_dir': padding_dir,
-                'padding_size': padding_size,
+                "padding_dir": padding_dir,
+                "padding_size": padding_size,
                 # #### TREE ADDITION END
             }
-        if (isinstance(self.field, ForeignObjectRel) and
-                (self.field.field.null or isinstance(self.field.field, ManyToManyField)) or
-                self.field.remote_field is not None and
-                (self.field.null or isinstance(self.field, ManyToManyField))):
+        if (
+            isinstance(self.field, ForeignObjectRel)
+            and (self.field.field.null or isinstance(self.field.field, ManyToManyField))
+            or self.field.remote_field is not None
+            and (self.field.null or isinstance(self.field, ManyToManyField))
+        ):
             yield {
-                'selected': bool(self.lookup_val_isnull),
-                'query_string': cl.get_query_string({
-                    self.lookup_kwarg_isnull: 'True',
-                }, [self.changed_lookup_kwarg]),
-                'display': EMPTY_CHANGELIST_VALUE,
+                "selected": bool(self.lookup_val_isnull),
+                "query_string": cl.get_query_string(
+                    {
+                        self.lookup_kwarg_isnull: "True",
+                    },
+                    [self.changed_lookup_kwarg],
+                ),
+                "display": EMPTY_CHANGELIST_VALUE,
             }

@@ -14,73 +14,124 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0006_auto_20180522_0114'),
-        ('filingcabinet', '0001_initial'),
+        ("document", "0006_auto_20180522_0114"),
+        ("filingcabinet", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='taggeddocument',
-            name='content_object',
+            model_name="taggeddocument",
+            name="content_object",
         ),
         migrations.RemoveField(
-            model_name='taggeddocument',
-            name='tag',
+            model_name="taggeddocument",
+            name="tag",
         ),
         migrations.AlterModelOptions(
-            name='document',
-            options={'verbose_name': 'document', 'verbose_name_plural': 'documents'},
+            name="document",
+            options={"verbose_name": "document", "verbose_name_plural": "documents"},
         ),
         migrations.RemoveField(
-            model_name='document',
-            name='original',
+            model_name="document",
+            name="original",
         ),
         migrations.AlterField(
-            model_name='document',
-            name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='filingcabinet.TaggedDocument', to='taggit.Tag', verbose_name='Tags'),
+            model_name="document",
+            name="tags",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="filingcabinet.TaggedDocument",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
         migrations.AlterField(
-            model_name='document',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='document_document', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="document",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="document_document",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='document',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='froide_document', to=settings.FILINGCABINET_DOCUMENT_MODEL),
+            model_name="page",
+            name="document",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="froide_document",
+                to=settings.FILINGCABINET_DOCUMENT_MODEL,
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'original'})),
+            model_name="page",
+            name="image",
+            field=models.ImageField(
+                max_length=255,
+                storage=froide.helper.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "original"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_large',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'large'})),
+            model_name="page",
+            name="image_large",
+            field=models.ImageField(
+                max_length=255,
+                storage=froide.helper.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "large"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_normal',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'normal'})),
+            model_name="page",
+            name="image_normal",
+            field=models.ImageField(
+                max_length=255,
+                storage=froide.helper.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "normal"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_small',
-            field=models.ImageField(max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'small'})),
+            model_name="page",
+            name="image_small",
+            field=models.ImageField(
+                max_length=255,
+                storage=froide.helper.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "small"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='pageannotation',
-            name='image',
-            field=models.ImageField(blank=True, max_length=255, storage=froide.helper.storage.OverwriteStorage(), upload_to=filingcabinet.models.get_page_annotation_filename),
+            model_name="pageannotation",
+            name="image",
+            field=models.ImageField(
+                blank=True,
+                max_length=255,
+                storage=froide.helper.storage.OverwriteStorage(),
+                upload_to=filingcabinet.models.get_page_annotation_filename,
+            ),
         ),
         migrations.AlterField(
-            model_name='pageannotation',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='froide_pageannotations', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="pageannotation",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="froide_pageannotations",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.DeleteModel(
-            name='TaggedDocument',
+            name="TaggedDocument",
         ),
     ]

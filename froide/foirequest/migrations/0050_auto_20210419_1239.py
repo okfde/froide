@@ -6,23 +6,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0049_auto_20210203_1237'),
+        ("foirequest", "0049_auto_20210203_1237"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foimessage',
-            name='content_rendered_anon',
+            model_name="foimessage",
+            name="content_rendered_anon",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='foimessage',
-            name='content_rendered_auth',
+            model_name="foimessage",
+            name="content_rendered_auth",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='foimessage',
-            name='kind',
-            field=models.CharField(choices=[('email', 'email'), ('post', 'postal mail'), ('fax', 'fax'), ('upload', 'upload'), ('phone', 'phone call'), ('visit', 'visit in person')], default='email', max_length=10),
+            model_name="foimessage",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "email"),
+                    ("post", "postal mail"),
+                    ("fax", "fax"),
+                    ("upload", "upload"),
+                    ("phone", "phone call"),
+                    ("visit", "visit in person"),
+                ],
+                default="email",
+                max_length=10,
+            ),
         ),
     ]

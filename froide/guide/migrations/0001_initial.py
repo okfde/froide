@@ -13,74 +13,157 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('publicbody', '0025_remove_publicbody_region'),
-        ('foirequest', '0032_auto_20181115_1339'),
+        ("publicbody", "0025_remove_publicbody_region"),
+        ("foirequest", "0032_auto_20181115_1339"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Action',
+            name="Action",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('label', models.CharField(blank=True, max_length=255)),
-                ('description', models.TextField(blank=True)),
-                ('snippet', models.TextField(blank=True)),
-                ('tag', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='foirequest.MessageTag')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("label", models.CharField(blank=True, max_length=255)),
+                ("description", models.TextField(blank=True)),
+                ("snippet", models.TextField(blank=True)),
+                (
+                    "tag",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="foirequest.MessageTag",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Action',
-                'verbose_name_plural': 'Actions',
+                "verbose_name": "Action",
+                "verbose_name_plural": "Actions",
             },
         ),
         migrations.CreateModel(
-            name='Guidance',
+            name="Guidance",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('label', models.CharField(blank=True, max_length=255)),
-                ('description', models.TextField(blank=True)),
-                ('snippet', models.TextField(blank=True)),
-                ('timestamp', models.DateTimeField(default=django.utils.timezone.now)),
-                ('action', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='guide.Action')),
-                ('message', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='foirequest.FoiMessage')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("label", models.CharField(blank=True, max_length=255)),
+                ("description", models.TextField(blank=True)),
+                ("snippet", models.TextField(blank=True)),
+                ("timestamp", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "action",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="guide.Action",
+                    ),
+                ),
+                (
+                    "message",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="foirequest.FoiMessage",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Guidance',
-                'verbose_name_plural': 'Guidances',
-                'ordering': ('-timestamp',),
+                "verbose_name": "Guidance",
+                "verbose_name_plural": "Guidances",
+                "ordering": ("-timestamp",),
             },
         ),
         migrations.CreateModel(
-            name='Rule',
+            name="Rule",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('priority', models.SmallIntegerField(default=1)),
-                ('includes', models.TextField(blank=True)),
-                ('excludes', models.TextField(blank=True)),
-                ('references', models.CharField(blank=True, max_length=255)),
-                ('actions', models.ManyToManyField(blank=True, to='guide.Action')),
-                ('categories', models.ManyToManyField(blank=True, to='publicbody.Category')),
-                ('has_no_tag', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='foirequest.MessageTag')),
-                ('has_tag', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='foirequest.MessageTag')),
-                ('jurisdictions', models.ManyToManyField(blank=True, to='publicbody.Jurisdiction')),
-                ('publicbodies', models.ManyToManyField(blank=True, to='publicbody.PublicBody')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("priority", models.SmallIntegerField(default=1)),
+                ("includes", models.TextField(blank=True)),
+                ("excludes", models.TextField(blank=True)),
+                ("references", models.CharField(blank=True, max_length=255)),
+                ("actions", models.ManyToManyField(blank=True, to="guide.Action")),
+                (
+                    "categories",
+                    models.ManyToManyField(blank=True, to="publicbody.Category"),
+                ),
+                (
+                    "has_no_tag",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="foirequest.MessageTag",
+                    ),
+                ),
+                (
+                    "has_tag",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="+",
+                        to="foirequest.MessageTag",
+                    ),
+                ),
+                (
+                    "jurisdictions",
+                    models.ManyToManyField(blank=True, to="publicbody.Jurisdiction"),
+                ),
+                (
+                    "publicbodies",
+                    models.ManyToManyField(blank=True, to="publicbody.PublicBody"),
+                ),
             ],
             options={
-                'verbose_name': 'Rule',
-                'verbose_name_plural': 'Rules',
-                'ordering': ('priority', 'name'),
+                "verbose_name": "Rule",
+                "verbose_name_plural": "Rules",
+                "ordering": ("priority", "name"),
             },
         ),
         migrations.AddField(
-            model_name='guidance',
-            name='rule',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='guide.Rule'),
+            model_name="guidance",
+            name="rule",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="guide.Rule",
+            ),
         ),
         migrations.AddField(
-            model_name='guidance',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL),
+            model_name="guidance",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

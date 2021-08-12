@@ -5,7 +5,7 @@ from froide.celery import app as celery_app
 from .models import Upload
 
 
-@celery_app.task(name='froide.upload.tasks.remove_expired_uploads')
+@celery_app.task(name="froide.upload.tasks.remove_expired_uploads")
 def remove_expired_uploads():
     now = timezone.now()
     expired_uploads = Upload.objects.filter(expires__lt=now)

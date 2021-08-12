@@ -7,25 +7,43 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequestfollower', '0001_initial'),
+        ("foirequestfollower", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='foirequestfollower',
-            options={'get_latest_by': 'timestamp', 'ordering': ('-timestamp',), 'verbose_name': 'Request Follower', 'verbose_name_plural': 'Request Followers'},
+            name="foirequestfollower",
+            options={
+                "get_latest_by": "timestamp",
+                "ordering": ("-timestamp",),
+                "verbose_name": "Request Follower",
+                "verbose_name_plural": "Request Followers",
+            },
         ),
         migrations.AlterField(
-            model_name='foirequestfollower',
-            name='request',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to='foirequest.FoiRequest', verbose_name='Freedom of Information Request'),
+            model_name="foirequestfollower",
+            name="request",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="followers",
+                to="foirequest.FoiRequest",
+                verbose_name="Freedom of Information Request",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='foirequestfollower',
-            constraint=models.UniqueConstraint(condition=models.Q(user__isnull=False), fields=('request', 'user'), name='unique_user_follower'),
+            model_name="foirequestfollower",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(user__isnull=False),
+                fields=("request", "user"),
+                name="unique_user_follower",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='foirequestfollower',
-            constraint=models.UniqueConstraint(condition=models.Q(user__isnull=True), fields=('request', 'email'), name='unique_email_follower'),
+            model_name="foirequestfollower",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(user__isnull=True),
+                fields=("request", "email"),
+                name="unique_email_follower",
+            ),
         ),
     ]

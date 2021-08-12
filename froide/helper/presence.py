@@ -30,12 +30,12 @@ class RedisContext:
 
 
 def get_presence_manager(room):
-    if aioredis is None or not getattr(settings, 'REDIS_URL', None):
+    if aioredis is None or not getattr(settings, "REDIS_URL", None):
         return DummyUserPresenceManager(room)
     return RedisUserPresenceManager(room)
 
 
-class BaseUserPresenceManager():
+class BaseUserPresenceManager:
     def __init__(self, room):
         self.room = room
 
@@ -72,9 +72,7 @@ class DummyUserPresenceManager(BaseUserPresenceManager):
                 yield user_id
 
     def _list_present_users(self):
-        return list(User.objects.filter(
-            id__in=self._list_present_user_ids()
-        ))
+        return list(User.objects.filter(id__in=self._list_present_user_ids()))
 
     async def list_present(self):
         return await database_sync_to_async(self._list_present_users)()
@@ -90,8 +88,8 @@ class DummyUserPresenceManager(BaseUserPresenceManager):
     def _expire(self):
         now = timezone.now()
         self.presence[self.room] = {
-            uid: timestamp for uid, timestamp in
-            self.presence[self.room].items()
+            uid: timestamp
+            for uid, timestamp in self.presence[self.room].items()
             if timestamp + MAX_AGE >= now
         }
 
@@ -102,7 +100,7 @@ class DummyUserPresenceManager(BaseUserPresenceManager):
 class RedisUserPresenceManager(BaseUserPresenceManager):
     @property
     def key(self):
-        return 'froide_presence_{}'.format(self.room)
+        return "froide_presence_{}".format(self.room)
 
     # Wait for Python 3.8
     # @asynccontextmanager
@@ -135,9 +133,7 @@ class RedisUserPresenceManager(BaseUserPresenceManager):
                 await self._expire(redis)
 
     def _list_present_users(self, user_ids):
-        return list(User.objects.filter(
-            id__in=user_ids
-        ))
+        return list(User.objects.filter(id__in=user_ids))
 
     async def list_present(self):
         user_ids = [x async for x in self._list_present_user_ids()]

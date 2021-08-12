@@ -28,10 +28,10 @@ class ESQueryMixin:
                 self.request, self.sqs, self
             )
 
-        has_query = request.GET.get('q')
+        has_query = request.GET.get("q")
         if has_query:
-            self.sqs.sqs = self.sqs.sqs.highlight('content')
-            self.sqs.sqs = self.sqs.sqs.sort('_score')
+            self.sqs.sqs = self.sqs.sqs.highlight("content")
+            self.sqs.sqs = self.sqs.sqs.sort("_score")
 
         paginator = ElasticLimitOffsetPagination()
         paginator.paginate_queryset(self.sqs, self.request, view=self)
@@ -47,13 +47,10 @@ class ESQueryMixin:
     def get_searchqueryset(self):
         sqs = self.search_document.search()
         sqs = self.filter_authenticated(sqs)
-        return SearchQuerySetWrapper(
-            sqs,
-            self.search_model
-        )
+        return SearchQuerySetWrapper(sqs, self.search_model)
 
     def get_public_q(self):
-        return ESQ('term', public=True)
+        return ESQ("term", public=True)
 
     def filter_authenticated(self, sqs):
         user = self.request.user
@@ -66,13 +63,16 @@ class ESQueryMixin:
                 # No filters for super users
                 return sqs
             elif not token or token.is_valid(self.read_token_scopes):
-                return sqs.filter('bool', should=[
-                    # Bool query in filter context
-                    # at least one should clause is required to match.
-                    self.get_public_q(),
-                    ESQ('term', user=user.pk),
-                    ESQ('terms', team=Team.objects.get_list_for_user(user))
-                ])
+                return sqs.filter(
+                    "bool",
+                    should=[
+                        # Bool query in filter context
+                        # at least one should clause is required to match.
+                        self.get_public_q(),
+                        ESQ("term", user=user.pk),
+                        ESQ("terms", team=Team.objects.get_list_for_user(user)),
+                    ],
+                )
         return sqs.filter(self.get_public_q())
 
     def optimize_query(self, qs):

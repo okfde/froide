@@ -10,13 +10,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0016_publicbody_fax'),
+        ("publicbody", "0016_publicbody_fax"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='publicbody',
-            name='region',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='georegion.GeoRegion'),
+            model_name="publicbody",
+            name="region",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="georegion.GeoRegion",
+            ),
         ),
     ]

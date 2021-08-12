@@ -9,33 +9,83 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('georegion', '0001_initial'), ('georegion', '0002_georegion_kind_detail'), ('georegion', '0003_auto_20180306_1730'), ('georegion', '0004_auto_20180307_2026')]
-
-    dependencies = [
+    replaces = [
+        ("georegion", "0001_initial"),
+        ("georegion", "0002_georegion_kind_detail"),
+        ("georegion", "0003_auto_20180306_1730"),
+        ("georegion", "0004_auto_20180307_2026"),
     ]
+
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='GeoRegion',
+            name="GeoRegion",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('slug', models.SlugField(max_length=255, verbose_name='Slug')),
-                ('kind', models.CharField(choices=[('country', 'country'), ('state', 'state'), ('admin_district', 'administrative district'), ('district', 'district'), ('admin_cooperation', 'administrative cooperation'), ('municipality', 'municipality'), ('borough', 'borough'), ('zipcode', 'zipcode')], max_length=255, verbose_name='Kind of Region')),
-                ('level', models.IntegerField(default=0)),
-                ('region_identifier', models.CharField(blank=True, max_length=255)),
-                ('global_identifier', models.CharField(blank=True, max_length=255)),
-                ('area', models.FloatField(default=0.0, verbose_name='Area')),
-                ('population', models.IntegerField(blank=True, null=True)),
-                ('valid_on', models.DateTimeField(blank=True, null=True)),
-                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(geography=True, srid=4326, verbose_name='geometry')),
-                ('gov_seat', django.contrib.gis.db.models.fields.PointField(geography=True, null=True, blank=True, srid=4326, verbose_name='gov seat')),
-                ('part_of', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='georegion.GeoRegion', verbose_name='Part of')),
-                ('kind_detail', models.CharField(blank=True, max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                ("slug", models.SlugField(max_length=255, verbose_name="Slug")),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[
+                            ("country", "country"),
+                            ("state", "state"),
+                            ("admin_district", "administrative district"),
+                            ("district", "district"),
+                            ("admin_cooperation", "administrative cooperation"),
+                            ("municipality", "municipality"),
+                            ("borough", "borough"),
+                            ("zipcode", "zipcode"),
+                        ],
+                        max_length=255,
+                        verbose_name="Kind of Region",
+                    ),
+                ),
+                ("level", models.IntegerField(default=0)),
+                ("region_identifier", models.CharField(blank=True, max_length=255)),
+                ("global_identifier", models.CharField(blank=True, max_length=255)),
+                ("area", models.FloatField(default=0.0, verbose_name="Area")),
+                ("population", models.IntegerField(blank=True, null=True)),
+                ("valid_on", models.DateTimeField(blank=True, null=True)),
+                (
+                    "geom",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        geography=True, srid=4326, verbose_name="geometry"
+                    ),
+                ),
+                (
+                    "gov_seat",
+                    django.contrib.gis.db.models.fields.PointField(
+                        geography=True,
+                        null=True,
+                        blank=True,
+                        srid=4326,
+                        verbose_name="gov seat",
+                    ),
+                ),
+                (
+                    "part_of",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="georegion.GeoRegion",
+                        verbose_name="Part of",
+                    ),
+                ),
+                ("kind_detail", models.CharField(blank=True, max_length=255)),
             ],
             options={
-                'verbose_name': 'Geo Region',
-                'verbose_name_plural': 'Geo Regions',
+                "verbose_name": "Geo Region",
+                "verbose_name_plural": "Geo Regions",
             },
         ),
     ]

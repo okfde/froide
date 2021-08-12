@@ -6,16 +6,20 @@ from .models import Campaign
 
 class CampaignSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
-        view_name='api:campaign-detail',
-        lookup_field='pk'
+        view_name="api:campaign-detail", lookup_field="pk"
     )
 
     class Meta:
         model = Campaign
         fields = (
-            'resource_uri', 'id', 'name', 'slug', 'url',
-            'description', 'start_date',
-            'active',
+            "resource_uri",
+            "id",
+            "name",
+            "slug",
+            "url",
+            "description",
+            "start_date",
+            "active",
         )
 
 

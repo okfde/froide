@@ -28,21 +28,22 @@ def validate_upload_document(scan):
 def validate_postal_content_type(content_type):
     if content_type not in POSTAL_CONTENT_TYPES:
         raise ValidationError(
-            _('The scanned letter must be either PDF, JPG or PNG,'
-                ' but was detected as %(content_type)s!'), params={
-                    'content_type': content_type
-                }
+            _(
+                "The scanned letter must be either PDF, JPG or PNG,"
+                " but was detected as %(content_type)s!"
+            ),
+            params={"content_type": content_type},
         )
 
 
 def clean_reference(value):
     if not value:
-        return ''
+        return ""
     try:
-        kind, value = value.split(':', 1)
+        kind, value = value.split(":", 1)
     except ValueError:
-        return ''
+        return ""
     try:
-        return '%s:%s' % (kind, value)
+        return "%s:%s" % (kind, value)
     except ValueError:
-        return ''
+        return ""

@@ -30,32 +30,30 @@ class Campaign(models.Model):
     request_match = models.TextField(blank=True)
     request_hint = models.TextField(blank=True)
 
-    group = models.ForeignKey(
-        Group, null=True, blank=True,
-        on_delete=models.SET_NULL
-    )
+    group = models.ForeignKey(Group, null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = CampaignManager()
 
     class Meta:
-        verbose_name = _('campaign')
-        verbose_name_plural = _('campaigns')
+        verbose_name = _("campaign")
+        verbose_name_plural = _("campaigns")
 
     def __str__(self):
         return self.name
 
     @property
     def banner_templates(self):
-        return select_template([
-            'campaign/%s/request_banner.html' % self.ident,
-            'campaign/request_banner.html'
-        ])
+        return select_template(
+            [
+                "campaign/%s/request_banner.html" % self.ident,
+                "campaign/request_banner.html",
+            ]
+        )
 
     def match_text(self, text):
         regex_list = self.request_match
         if not regex_list:
             return False
         return all(
-            re.search(line, text, re.I | re.S)
-            for line in regex_list.splitlines()
+            re.search(line, text, re.I | re.S) for line in regex_list.splitlines()
         )

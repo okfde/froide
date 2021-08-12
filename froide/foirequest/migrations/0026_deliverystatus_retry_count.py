@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0025_foimessage_original'),
+        ("foirequest", "0025_foimessage_original"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deliverystatus',
-            name='retry_count',
+            model_name="deliverystatus",
+            name="retry_count",
             field=models.PositiveIntegerField(default=0),
         ),
     ]

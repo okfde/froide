@@ -13,26 +13,31 @@ from markdown.util import AtomicString
 
 
 def export_user_data(user):
-    pbs = PublicBody.objects.filter(
-        Q(_created_by=user) |
-        Q(_updated_by=user)
-    )
+    pbs = PublicBody.objects.filter(Q(_created_by=user) | Q(_updated_by=user))
     if not pbs:
         return
-    yield ('publicbodies.json', json.dumps([
-        {
-            'created': pb._created_by_id == user.id,
-            'updated': pb._updated_by_id == user.id,
-            'created_timestamp': (
-                pb.created_at.isoformat() if pb._created_by_id == user.id
-                else None),
-            'updated_timestamp': (
-                pb.updated_at.isoformat() if pb._updated_by_id == user.id
-                else None
-            ),
-            'url': pb.get_absolute_domain_short_url()
-        }
-        for pb in pbs]).encode('utf-8')
+    yield (
+        "publicbodies.json",
+        json.dumps(
+            [
+                {
+                    "created": pb._created_by_id == user.id,
+                    "updated": pb._updated_by_id == user.id,
+                    "created_timestamp": (
+                        pb.created_at.isoformat()
+                        if pb._created_by_id == user.id
+                        else None
+                    ),
+                    "updated_timestamp": (
+                        pb.updated_at.isoformat()
+                        if pb._updated_by_id == user.id
+                        else None
+                    ),
+                    "url": pb.get_absolute_domain_short_url(),
+                }
+                for pb in pbs
+            ]
+        ).encode("utf-8"),
     )
 
 
@@ -42,19 +47,19 @@ class LawTreeprocessor(Treeprocessor):
         super().__init__(md)
 
         self.used_ids = set()
-        self.header_rgx = re.compile(r'[Hh][123456]')
+        self.header_rgx = re.compile(r"[Hh][123456]")
 
         # see https://regex101.com/r/pOR9CI/1
-        self.paragraph_rgx = re.compile(r'(§)\s*(\d+)\s*([a-z]*)')
+        self.paragraph_rgx = re.compile(r"(§)\s*(\d+)\s*([a-z]*)")
 
     def run(self, doc):
         for el in doc.iter():
             if isinstance(el.tag, str) and self.header_rgx.match(el.tag):
                 text = self.get_title_text(el)
 
-                if 'id' not in el.attrib:
+                if "id" not in el.attrib:
                     # don't overwrite existing ids
-                    el.attrib['id'] = self.get_title_id(text)
+                    el.attrib["id"] = self.get_title_id(text)
 
     def get_title_text(self, el):
         # get title text
@@ -66,7 +71,7 @@ class LawTreeprocessor(Treeprocessor):
             else:
                 text.append(c)
 
-        return ''.join(text).strip()
+        return "".join(text).strip()
 
     def get_unique_id(self, id_name):
         if id_name not in self.used_ids:
@@ -79,7 +84,7 @@ class LawTreeprocessor(Treeprocessor):
 
         # we need another one
         while alternative_id in self.used_ids:
-            alternative_id = '{}-{}'.format(id_name, i)
+            alternative_id = "{}-{}".format(id_name, i)
             i += 1
 
         self.used_ids.add(alternative_id)
@@ -91,7 +96,7 @@ class LawTreeprocessor(Treeprocessor):
         if text.startswith("§"):
             result = self.paragraph_rgx.match(text)
             if result:
-                title_id = ''.join(result.groups())
+                title_id = "".join(result.groups())
 
         if title_id is None:
             title_id = slugify(text)
@@ -101,4 +106,4 @@ class LawTreeprocessor(Treeprocessor):
 
 class LawExtension(Extension):
     def extendMarkdown(self, md):
-        md.treeprocessors.register(LawTreeprocessor(md), 'laws', 5)
+        md.treeprocessors.register(LawTreeprocessor(md), "laws", 5)

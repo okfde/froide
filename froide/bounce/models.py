@@ -7,7 +7,7 @@ from froide.account.models import User
 
 def convert_bounce_info(bounce_info):
     d = dict(bounce_info._asdict())
-    d['timestamp'] = d['timestamp'].isoformat()
+    d["timestamp"] = d["timestamp"].isoformat()
     return d
 
 
@@ -17,9 +17,7 @@ class BounceManager(models.Manager):
         try:
             bounce = Bounce.objects.get(email=email_lower)
             bounce.last_update = timezone.now()
-            bounce.bounces.append(
-                convert_bounce_info(bounce_info)
-            )
+            bounce.bounces.append(convert_bounce_info(bounce_info))
             bounce.save()
         except Bounce.DoesNotExist:
             user = None
@@ -32,9 +30,7 @@ class BounceManager(models.Manager):
             if users and not user:
                 user = users[0]
             bounce = Bounce.objects.create(
-                email=email,
-                user=user,
-                bounces=[convert_bounce_info(bounce_info)]
+                email=email, user=user, bounces=[convert_bounce_info(bounce_info)]
             )
         return bounce
 
@@ -42,18 +38,15 @@ class BounceManager(models.Manager):
 class Bounce(models.Model):
     email = models.EmailField(max_length=255)
 
-    user = models.ForeignKey(
-        User, null=True, blank=True,
-        on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
     bounces = models.JSONField(default=list, blank=True)
     last_update = models.DateTimeField(default=timezone.now)
 
     objects = BounceManager()
 
     class Meta:
-        verbose_name = _('Bounce')
-        verbose_name_plural = _('Bounces')
+        verbose_name = _("Bounce")
+        verbose_name_plural = _("Bounces")
 
     def __str__(self):
-        return '{} ({})'.format(self.email, len(self.bounces))
+        return "{} ({})".format(self.email, len(self.bounces))

@@ -7,13 +7,20 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('georegion', '0004_georegion_description'),
+        ("georegion", "0004_georegion_description"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='georegion',
-            name='part_of',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sub_regions', to='georegion.GeoRegion', verbose_name='Part of'),
+            model_name="georegion",
+            name="part_of",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="sub_regions",
+                to="georegion.GeoRegion",
+                verbose_name="Part of",
+            ),
         ),
     ]

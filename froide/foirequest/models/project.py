@@ -14,11 +14,11 @@ from froide.publicbody.models import PublicBody
 
 
 class TaggedFoiProject(TaggedItemBase):
-    content_object = models.ForeignKey('FoiProject', on_delete=models.CASCADE)
+    content_object = models.ForeignKey("FoiProject", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = _('Project Tag')
-        verbose_name_plural = _('Project Tags')
+        verbose_name = _("Project Tag")
+        verbose_name_plural = _("Project Tags")
 
 
 class FoiProjectManager(CurrentSiteManager):
@@ -26,24 +26,22 @@ class FoiProjectManager(CurrentSiteManager):
         qs = self.get_queryset()
         user_teams = Team.objects.get_for_user(user)
         qs = qs.filter(
-            models.Q(user=user) |
-            models.Q(team__in=user_teams),
-            **query_kwargs
+            models.Q(user=user) | models.Q(team__in=user_teams), **query_kwargs
         )
         return qs
 
 
 class FoiProject(models.Model):
-    STATUS_PENDING = 'pending'
-    STATUS_READY = 'ready'
-    STATUS_COMPLETE = 'complete'
-    STATUS_ASLEEP = 'asleep'
+    STATUS_PENDING = "pending"
+    STATUS_READY = "ready"
+    STATUS_COMPLETE = "complete"
+    STATUS_ASLEEP = "asleep"
 
     STATUS_CHOICES = (
-        (STATUS_PENDING, _('pending')),
-        (STATUS_READY, _('ready')),
-        (STATUS_COMPLETE, _('complete')),
-        (STATUS_ASLEEP, _('asleep')),
+        (STATUS_PENDING, _("pending")),
+        (STATUS_READY, _("ready")),
+        (STATUS_COMPLETE, _("complete")),
+        (STATUS_ASLEEP, _("asleep")),
     )
 
     title = models.CharField(_("Title"), max_length=255)
@@ -60,11 +58,15 @@ class FoiProject(models.Model):
 
     public = models.BooleanField(_("published?"), default=True)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
-            on_delete=models.SET_NULL,
-            verbose_name=_("User"))
-    team = models.ForeignKey(Team, null=True, blank=True,
-            on_delete=models.SET_NULL, verbose_name=_("Team"))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("User"),
+    )
+    team = models.ForeignKey(
+        Team, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Team")
+    )
 
     request_count = models.IntegerField(default=0)
     reference = models.CharField(_("Reference"), blank=True, max_length=255)
@@ -72,20 +74,22 @@ class FoiProject(models.Model):
     publicbodies = models.ManyToManyField(PublicBody, blank=True)
 
     language = models.CharField(
-        max_length=10, blank=True,
+        max_length=10,
+        blank=True,
         default=settings.LANGUAGE_CODE,
-        choices=settings.LANGUAGES
+        choices=settings.LANGUAGES,
     )
 
-    site = models.ForeignKey(Site, null=True,
-            on_delete=models.SET_NULL, verbose_name=_("Site"))
+    site = models.ForeignKey(
+        Site, null=True, on_delete=models.SET_NULL, verbose_name=_("Site")
+    )
 
     objects = FoiProjectManager()
 
     class Meta:
-        verbose_name = _('FOI Project')
-        verbose_name_plural = _('FOI Projects')
-        ordering = ('last_update',)
+        verbose_name = _("FOI Project")
+        verbose_name_plural = _("FOI Projects")
+        ordering = ("last_update",)
 
     project_created = Signal()  # args: []
 
@@ -93,11 +97,10 @@ class FoiProject(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('foirequest-project', kwargs={'slug': self.slug})
+        return reverse("foirequest-project", kwargs={"slug": self.slug})
 
     def get_absolute_short_url(self):
-        return reverse('foirequest-project_shortlink',
-                kwargs={'obj_id': self.id})
+        return reverse("foirequest-project_shortlink", kwargs={"obj_id": self.id})
 
     def get_absolute_domain_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_url())
@@ -109,8 +112,8 @@ class FoiProject(models.Model):
         return self.public
 
     def add_requests(self, queryset):
-        order_max = self.foirequest_set.all().aggregate(models.Max('project_order'))
-        order_max = order_max['project_order__max']
+        order_max = self.foirequest_set.all().aggregate(models.Max("project_order"))
+        order_max = order_max["project_order__max"]
         if order_max is None:
             order_max = -1
         for req in queryset:

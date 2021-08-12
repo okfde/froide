@@ -3,7 +3,9 @@ import itertools
 from elasticsearch.exceptions import ConnectionError
 
 from django_elasticsearch_dsl.registries import registry
-from django_elasticsearch_dsl.management.commands.search_index import Command as DESCommand
+from django_elasticsearch_dsl.management.commands.search_index import (
+    Command as DESCommand,
+)
 
 # FIXME: DB chunk size only starting Django 2.0
 DB_CHUNK_SIZE = 2000
@@ -20,7 +22,6 @@ def grouper(n, iterable):
 
 
 class Command(DESCommand):
-
     def _populate(self, models, options):
         for doc in registry.get_documents(models):
             qs = doc().get_queryset()
@@ -35,9 +36,7 @@ class Command(DESCommand):
             obj_iterator = qs.iterator()
             for i, obj_group in enumerate(grouper(CHUNK_SIZE, obj_iterator)):
                 percentage = round((i * CHUNK_SIZE) / count * 100, 2)
-                self.stdout.write('Indexing {}%'.format(
-                    percentage
-                ), ending='\r')
+                self.stdout.write("Indexing {}%".format(percentage), ending="\r")
                 tries = 1
                 if working_chunk_divider is None:
                     divider = 1
@@ -52,10 +51,16 @@ class Command(DESCommand):
                         working_chunk_divider = divider
                         break
                     except ConnectionError:
-                        self.stdout.write('Failed chunk {} ({}%) at size {} with group {} ({} tries)'.format(
-                            i, percentage, sub_group_size, [x.pk for x in sub_group], tries
-                        ))
+                        self.stdout.write(
+                            "Failed chunk {} ({}%) at size {} with group {} ({} tries)".format(
+                                i,
+                                percentage,
+                                sub_group_size,
+                                [x.pk for x in sub_group],
+                                tries,
+                            )
+                        )
                         tries += 1
                         divider = tries
 
-            self.stdout.write('Done')
+            self.stdout.write("Done")

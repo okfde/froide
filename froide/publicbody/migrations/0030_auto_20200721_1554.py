@@ -6,12 +6,17 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0029_auto_20200703_2032'),
+        ("publicbody", "0029_auto_20200703_2032"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='publicbody',
-            options={'ordering': ('name',), 'permissions': (('moderate', 'Can moderate public bodies'),), 'verbose_name': 'Public Body', 'verbose_name_plural': 'Public Bodies'},
+            name="publicbody",
+            options={
+                "ordering": ("name",),
+                "permissions": (("moderate", "Can moderate public bodies"),),
+                "verbose_name": "Public Body",
+                "verbose_name_plural": "Public Bodies",
+            },
         ),
     ]

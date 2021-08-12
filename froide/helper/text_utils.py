@@ -13,17 +13,18 @@ except ImportError:
     html_parser = None
 
 
-SEPARATORS = re.compile(r'(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)', re.UNICODE | re.M)
+SEPARATORS = re.compile(r"(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)", re.UNICODE | re.M)
 
 
 def unescape(text):
-    '''
+    """
     From http://effbot.org/zone/re-sub.htm#unescape-html
     Removes HTML or XML character references and entities from a text string.
 
     @param text The HTML (or XML) source text.
     @return The plain text, as a Unicode string, if necessary.
-    '''
+    """
+
     def fixup(m):
         text = m.group(0)
         if text[:2] == "&#":
@@ -42,7 +43,8 @@ def unescape(text):
             except KeyError:
                 pass
         return text  # leave as is
-    return re.sub(r'&#?\w+;', fixup, text)
+
+    return re.sub(r"&#?\w+;", fixup, text)
 
 
 def split_text_by_separator(text, separator=None):
@@ -50,9 +52,9 @@ def split_text_by_separator(text, separator=None):
         separator = SEPARATORS
     split_text = separator.split(text)
     if len(split_text) == 1:
-        split_text.append('')
+        split_text.append("")
     if len(split_text) > 2:
-        split_text = [split_text[0], '\n'.join(split_text[1:])]
+        split_text = [split_text[0], "\n".join(split_text[1:])]
     return split_text
 
 
@@ -73,22 +75,18 @@ def redact_subject(content, user=None):
     return content[:255]
 
 
-def redact_plaintext(content, redact_greeting=False, redact_closing=False, user=None, replacements=None):
+def redact_plaintext(
+    content, redact_greeting=False, redact_closing=False, user=None, replacements=None
+):
     content = redact_content(content)
 
     if redact_closing:
-        content = remove_closing(
-            content
-        )
+        content = remove_closing(content)
     if redact_greeting:
-        greetings = settings.FROIDE_CONFIG.get('greetings')
+        greetings = settings.FROIDE_CONFIG.get("greetings")
         if greetings:
             greeting_replacement = str(_("<< Greeting >>"))
-            content = replace_custom(
-                greetings,
-                greeting_replacement,
-                content
-            )
+            content = replace_custom(greetings, greeting_replacement, content)
 
     if user:
         content = redact_user_strings(content, user)
@@ -107,22 +105,29 @@ def redact_content(content):
     content = replace_email_name(content, _("<<name and email address>>"))
     content = replace_email(content, _("<<email address>>"))
 
-    if settings.FROIDE_CONFIG.get('custom_replacements'):
-        content = replace_custom(settings.FROIDE_CONFIG['custom_replacements'],
-            str(_('<<removed>>')), content)
+    if settings.FROIDE_CONFIG.get("custom_replacements"):
+        content = replace_custom(
+            settings.FROIDE_CONFIG["custom_replacements"],
+            str(_("<<removed>>")),
+            content,
+        )
     return content
 
 
 def replace_word(needle, replacement, content):
     if not needle:
         return content
-    return re.sub(r'(^|[\W_])%s($|[\W_])' % re.escape(needle),
-                    '\\1%s\\2' % replacement, content, re.U | re.I)
+    return re.sub(
+        r"(^|[\W_])%s($|[\W_])" % re.escape(needle),
+        "\\1%s\\2" % replacement,
+        content,
+        re.U | re.I,
+    )
 
 
-EMAIL = r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b'
+EMAIL = r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b"
 EMAIL_RE = re.compile(EMAIL, flags=re.IGNORECASE)
-EMAIL_NAME_RE = re.compile('<%s>' % EMAIL, flags=re.IGNORECASE)
+EMAIL_NAME_RE = re.compile("<%s>" % EMAIL, flags=re.IGNORECASE)
 
 
 def replace_email_name(text, replacement=""):
@@ -141,8 +146,7 @@ def replace_custom(regex_list, replacement, content):
     for regex in regex_list:
         match = regex.search(content)
         if match is not None and len(match.groups()):
-            content = content.replace(match.group(1),
-                replacement)
+            content = content.replace(match.group(1), replacement)
     return content
 
 
@@ -157,55 +161,42 @@ def remove_part(regexes, content, func=None):
 
 def remove_closing(content, regexes=None):
     if regexes is None:
-        regexes = settings.FROIDE_CONFIG.get('closings', [])
-    return remove_part(regexes, content, func=lambda c, m: c[:m.end()].strip())
+        regexes = settings.FROIDE_CONFIG.get("closings", [])
+    return remove_part(regexes, content, func=lambda c, m: c[: m.end()].strip())
 
 
 def remove_closing_inclusive(content):
-    regexes = settings.FROIDE_CONFIG.get('closings', [])
-    return remove_part(regexes, content, func=lambda c, m: c[:m.start()].strip())
+    regexes = settings.FROIDE_CONFIG.get("closings", [])
+    return remove_part(regexes, content, func=lambda c, m: c[: m.start()].strip())
 
 
 def remove_greeting_inclusive(content):
-    regexes = settings.FROIDE_CONFIG.get('greetings', [])
-    return remove_part(regexes, content, func=lambda c, m: c[m.end():].strip())
+    regexes = settings.FROIDE_CONFIG.get("greetings", [])
+    return remove_part(regexes, content, func=lambda c, m: c[m.end() :].strip())
 
 
 def ignore_tag(x):
-    return '%s%s' % (
-        x.text_content(),
-        x.tail if x.tail else ''
-    )
+    return "%s%s" % (x.text_content(), x.tail if x.tail else "")
 
 
 def make_strong(x):
-    return '**%s**%s' % (
-        x.text_content(),
-        x.tail if x.tail else ''
-    )
+    return "**%s**%s" % (x.text_content(), x.tail if x.tail else "")
 
 
 def make_italic(x):
-    return '*%s*%s' % (
-        x.text_content(),
-        x.tail if x.tail else ''
-    )
+    return "*%s*%s" % (x.text_content(), x.tail if x.tail else "")
 
 
 def make_link(x):
-    return '%s ( %s )%s' % (
+    return "%s ( %s )%s" % (
         x.text_content(),
-        x.attrib.get('href', ''),
-        x.tail if x.tail else ''
+        x.attrib.get("href", ""),
+        x.tail if x.tail else "",
     )
 
 
 def make_heading(x, num=1):
-    return '%s %s\n\n%s' % (
-        '#' * num,
-        x.text_content(),
-        x.tail if x.tail else ''
-    )
+    return "%s %s\n\n%s" % ("#" * num, x.text_content(), x.tail if x.tail else "")
 
 
 def heading_maker(num):
@@ -218,23 +209,23 @@ def make_paragraph(el):
 
 
 HTML_CONVERTERS = {
-    'a': make_link,
-    'strong': make_strong,
-    'b': make_strong,
-    'i': make_italic,
-    'em': make_italic,
-    'p': make_paragraph,
-    'h1': heading_maker(1),
-    'h2': heading_maker(2),
-    'h3': heading_maker(3),
-    'h4': heading_maker(4),
-    'h5': heading_maker(5),
-    'h6': heading_maker(6),
-    'br': lambda x: '\n%s' % (x.tail if x.tail else ''),
-    'hr': lambda x: '\n\n%s\n\n%s' % ('-' * 25, x.tail if x.tail else ''),
+    "a": make_link,
+    "strong": make_strong,
+    "b": make_strong,
+    "i": make_italic,
+    "em": make_italic,
+    "p": make_paragraph,
+    "h1": heading_maker(1),
+    "h2": heading_maker(2),
+    "h3": heading_maker(3),
+    "h4": heading_maker(4),
+    "h5": heading_maker(5),
+    "h6": heading_maker(6),
+    "br": lambda x: "\n%s" % (x.tail if x.tail else ""),
+    "hr": lambda x: "\n\n%s\n\n%s" % ("-" * 25, x.tail if x.tail else ""),
 }
 
-HTML_GARBAGE = ('style',)
+HTML_GARBAGE = ("style",)
 
 
 def convert_html_to_text(html_str, ignore_tags=None):
@@ -243,32 +234,29 @@ def convert_html_to_text(html_str, ignore_tags=None):
     otherwise just strip_tags
     """
     if not html_str:
-        return ''
+        return ""
     if html_parser is None:
         return strip_tags(html_str)
 
     root = html_parser.fromstring(html_str)
     try:
-        body = root.xpath('./body')[0]
+        body = root.xpath("./body")[0]
     except IndexError:
         # No body element
         body = root
 
     for tag in HTML_GARBAGE:
-        els = body.xpath('.//' + tag)
+        els = body.xpath(".//" + tag)
         for el in els:
             el.getparent().remove(el)
 
     convert_element(body, ignore_tags=ignore_tags)
 
     text = html_parser.tostring(
-        body,
-        pretty_print=True,
-        method='text',
-        encoding='utf-8'
-    ).decode('utf-8')
+        body, pretty_print=True, method="text", encoding="utf-8"
+    ).decode("utf-8")
 
-    return '\n'.join(x.strip() for x in text.splitlines()).strip()
+    return "\n".join(x.strip() for x in text.splitlines()).strip()
 
 
 def convert_element(root_element, ignore_tags=None):
@@ -277,7 +265,7 @@ def convert_element(root_element, ignore_tags=None):
     for tag, func in HTML_CONVERTERS.items():
         if tag in ignore_tags:
             func = ignore_tag
-        els = root_element.xpath('.//' + tag)
+        els = root_element.xpath(".//" + tag)
         for el in els:
             replacement = func(el)
             if replacement is not None:

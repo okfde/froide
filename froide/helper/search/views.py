@@ -12,7 +12,7 @@ from .filters import BaseSearchFilterSet
 class BaseSearchView(ListView):
     allow_empty = True
     search_name = None
-    template_name = 'helper/search/search_base.html'
+    template_name = "helper/search/search_base.html"
     paginate_by = 25
     paginator_class = ElasticsearchPaginator
     show_filters = {}
@@ -22,10 +22,10 @@ class BaseSearchView(ListView):
     model = None
     document = None
     filterset = BaseSearchFilterSet
-    default_sort = '_score'
+    default_sort = "_score"
     filtered_objs = None
     select_related = ()
-    search_url_name = ''
+    search_url_name = ""
     object_template = None
 
     def get_base_search(self):
@@ -44,15 +44,17 @@ class BaseSearchView(ListView):
         return bool(set(self.filtered_objs) & self.advanced_filters)
 
     def get_search(self):
-        self.filter_data = self.get_filter_data(self.kwargs, dict(self.request.GET.items()))
+        self.filter_data = self.get_filter_data(
+            self.kwargs, dict(self.request.GET.items())
+        )
 
         s = self.get_base_search()
-        self.has_query = self.request.GET.get('q')
+        self.has_query = self.request.GET.get("q")
         if not self.has_query:
             s = s.sort(self.default_sort)
         else:
-            s = s.highlight('content')
-            s = s.sort('_score')
+            s = s.highlight("content")
+            s = s.sort("_score")
         return s
 
     def get_queryset(self):
@@ -70,8 +72,7 @@ class BaseSearchView(ListView):
 
             # Set only valid data on widgets so they can render filter links
             data_clean_only = {
-                k: v for k, v in self.filter_data.items()
-                if k in self.form.cleaned_data
+                k: v for k, v in self.filter_data.items() if k in self.form.cleaned_data
             }
             for _n, field in filtered.form.fields.items():
                 field.widget.data = data_clean_only
@@ -86,31 +87,27 @@ class BaseSearchView(ListView):
         return sqs
 
     def make_filter_url(self, data):
-        return make_filter_url(
-            self.search_url_name,
-            data
-        )
+        return make_filter_url(self.search_url_name, data)
 
     def show_facets(self):
         return self.has_facets
 
     def add_facets(self, sqs):
         if self.show_facets():
-            sqs = sqs.add_aggregation(
-                list(self.facet_config.keys())
-            )
+            sqs = sqs.add_aggregation(list(self.facet_config.keys()))
         return sqs
 
     def get_facet_resolvers(self):
         return {
             key: resolve_facet(
                 self.filter_data,
-                getter=config.get('getter'),
-                model=config.get('model'),
-                query_param=config.get('query_param', key),
-                label_getter=config.get('label_getter'),
-                make_url=self.make_filter_url
-            ) for key, config in self.facet_config.items()
+                getter=config.get("getter"),
+                model=config.get("model"),
+                query_param=config.get("query_param", key),
+                label_getter=config.get("label_getter"),
+                make_url=self.make_filter_url,
+            )
+            for key, config in self.facet_config.items()
         }
 
     def resolve_facets(self, sqs):
@@ -135,27 +132,27 @@ class BaseSearchView(ListView):
             self.facets = self.resolve_facets(sqs)
         else:
             # Empty facets
-            self.facets = {
-                k: {'buckets': []} for k in self.facet_config
-            }
+            self.facets = {k: {"buckets": []} for k in self.facet_config}
 
         return (paginator, page, queryset, is_paginated)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context.update({
-            'count': self.count,
-            'form': self.form,
-            'facets': self.facets,
-            'search_name': self.search_name,
-            'search_url': reverse(self.search_url_name),
-            'facet_config': self.facet_config,
-            'has_query': self.has_query,
-            'object_template': self.object_template,
-            'show_filters': self.show_filters,
-            'is_filtered': bool(set(self.filter_data) - {'q'}),
-            'getvars': get_pagination_vars(self.filter_data),
-            'filtered_objects': self.filtered_objs
-        })
+        context.update(
+            {
+                "count": self.count,
+                "form": self.form,
+                "facets": self.facets,
+                "search_name": self.search_name,
+                "search_url": reverse(self.search_url_name),
+                "facet_config": self.facet_config,
+                "has_query": self.has_query,
+                "object_template": self.object_template,
+                "show_filters": self.show_filters,
+                "is_filtered": bool(set(self.filter_data) - {"q"}),
+                "getvars": get_pagination_vars(self.filter_data),
+                "filtered_objects": self.filtered_objs,
+            }
+        )
         return context

@@ -7,23 +7,35 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0015_auto_20180810_1910'),
+        ("document", "0015_auto_20180810_1910"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='document',
-            name='file_size',
+            model_name="document",
+            name="file_size",
             field=models.BigIntegerField(null=True),
         ),
         migrations.AlterField(
-            model_name='document',
-            name='language',
-            field=models.CharField(blank=True, choices=[('de', 'German'), ('en', 'English')], default='de', max_length=10),
+            model_name="document",
+            name="language",
+            field=models.CharField(
+                blank=True,
+                choices=[("de", "German"), ("en", "English")],
+                default="de",
+                max_length=10,
+            ),
         ),
         migrations.AlterField(
-            model_name='document',
-            name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', related_name='+', through='filingcabinet.TaggedDocument', to='taggit.Tag', verbose_name='Tags'),
+            model_name="document",
+            name="tags",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                related_name="+",
+                through="filingcabinet.TaggedDocument",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
     ]

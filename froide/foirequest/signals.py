@@ -9,42 +9,51 @@ from .utils import send_request_user_email, short_request_url
 
 
 became_overdue_email = mail_registry.register(
-    'foirequest/emails/became_overdue',
-    ('action_url', 'upload_action_url', 'write_action_url',
-    'status_action_url',
-    'foirequest', 'user')
+    "foirequest/emails/became_overdue",
+    (
+        "action_url",
+        "upload_action_url",
+        "write_action_url",
+        "status_action_url",
+        "foirequest",
+        "user",
+    ),
 )
 became_asleep_email = mail_registry.register(
-    'foirequest/emails/became_asleep',
-    ('action_url', 'upload_action_url', 'write_action_url',
-    'status_action_url', 'foirequest', 'user')
+    "foirequest/emails/became_asleep",
+    (
+        "action_url",
+        "upload_action_url",
+        "write_action_url",
+        "status_action_url",
+        "foirequest",
+        "user",
+    ),
 )
 message_received_email = mail_registry.register(
-    'foirequest/emails/message_received_notification',
-    ('action_url', 'foirequest', 'publicbody', 'message', 'user')
+    "foirequest/emails/message_received_notification",
+    ("action_url", "foirequest", "publicbody", "message", "user"),
 )
 public_body_suggested_email = mail_registry.register(
-    'foirequest/emails/public_body_suggestion_received',
-    ('action_url', 'foirequest', 'suggestion', 'user')
+    "foirequest/emails/public_body_suggestion_received",
+    ("action_url", "foirequest", "suggestion", "user"),
 )
 confirm_foi_project_created_email = mail_registry.register(
-    'foirequest/emails/confirm_foi_project_created',
-    ('foiproject', 'action_url', 'user')
+    "foirequest/emails/confirm_foi_project_created",
+    ("foiproject", "action_url", "user"),
 )
 confirm_foi_request_sent_email = mail_registry.register(
-    'foirequest/emails/confirm_foi_request_sent',
-    ('foirequest', 'message', 'publicbody',
-    'action_url', 'upload_action_url', 'user')
+    "foirequest/emails/confirm_foi_request_sent",
+    ("foirequest", "message", "publicbody", "action_url", "upload_action_url", "user"),
 )
 confirm_foi_message_sent_email = mail_registry.register(
-    'foirequest/emails/confirm_foi_message_sent',
-    ('foirequest', 'message', 'publicbody',
-    'action_url', 'upload_action_url', 'user')
+    "foirequest/emails/confirm_foi_message_sent",
+    ("foirequest", "message", "publicbody", "action_url", "upload_action_url", "user"),
 )
 
 
 def trigger_index_update(klass, instance_pk):
-    """ Trigger index update by save """
+    """Trigger index update by save"""
     try:
         obj = klass.objects.get(pk=instance_pk)
     except klass.DoesNotExist:
@@ -52,14 +61,11 @@ def trigger_index_update(klass, instance_pk):
     obj.save()
 
 
-@receiver(FoiRequest.became_overdue,
-        dispatch_uid="send_notification_became_overdue")
+@receiver(FoiRequest.became_overdue, dispatch_uid="send_notification_became_overdue")
 def send_notification_became_overdue(sender, **kwargs):
-    req_url = sender.user.get_autologin_url(
-        sender.get_absolute_short_url()
-    )
+    req_url = sender.user.get_autologin_url(sender.get_absolute_short_url())
     upload_url = sender.user.get_autologin_url(
-        short_request_url('foirequest-upload_postal_message', sender)
+        short_request_url("foirequest-upload_postal_message", sender)
     )
     send_request_user_email(
         became_overdue_email,
@@ -70,21 +76,18 @@ def send_notification_became_overdue(sender, **kwargs):
             "user": sender.user,
             "action_url": req_url,
             "upload_action_url": upload_url,
-            "write_action_url": req_url + '#write-message',
-            "status_action_url": req_url + '#set-status',
+            "write_action_url": req_url + "#write-message",
+            "status_action_url": req_url + "#set-status",
         },
-        priority=False
+        priority=False,
     )
 
 
-@receiver(FoiRequest.became_asleep,
-        dispatch_uid="send_notification_became_asleep")
+@receiver(FoiRequest.became_asleep, dispatch_uid="send_notification_became_asleep")
 def send_notification_became_asleep(sender, **kwargs):
-    req_url = sender.user.get_autologin_url(
-        sender.get_absolute_short_url()
-    )
+    req_url = sender.user.get_autologin_url(sender.get_absolute_short_url())
     upload_url = sender.user.get_autologin_url(
-        short_request_url('foirequest-upload_postal_message', sender)
+        short_request_url("foirequest-upload_postal_message", sender)
     )
 
     send_request_user_email(
@@ -96,15 +99,14 @@ def send_notification_became_asleep(sender, **kwargs):
             "user": sender.user,
             "action_url": req_url,
             "upload_action_url": upload_url,
-            "write_action_url": req_url + '#write-message',
-            "status_action_url": req_url + '#set-status',
+            "write_action_url": req_url + "#write-message",
+            "status_action_url": req_url + "#set-status",
         },
-        priority=False
+        priority=False,
     )
 
 
-@receiver(FoiRequest.message_received,
-        dispatch_uid="notify_user_message_received")
+@receiver(FoiRequest.message_received, dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
     if message.received_by_user:
         # All non-email/upload received messages the user actively contributed
@@ -122,14 +124,15 @@ def notify_user_message_received(sender, message=None, **kwargs):
             "publicbody": message.sender_public_body,
             "action_url": sender.user.get_autologin_url(
                 message.get_absolute_short_url()
-            )
+            ),
         },
-        priority=False
+        priority=False,
     )
 
 
-@receiver(FoiRequest.public_body_suggested,
-        dispatch_uid="notify_user_public_body_suggested")
+@receiver(
+    FoiRequest.public_body_suggested, dispatch_uid="notify_user_public_body_suggested"
+)
 def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
     if sender.user == suggestion.user:
         return
@@ -144,30 +147,32 @@ def notify_user_public_body_suggested(sender, suggestion=None, **kwargs):
             "user": sender.user,
             "action_url": sender.user.get_autologin_url(
                 sender.get_absolute_short_url()
-            )
+            ),
         },
-        priority=False
+        priority=False,
     )
 
 
-@receiver(FoiRequest.message_sent,
-        dispatch_uid="set_last_message_date_on_message_sent")
+@receiver(FoiRequest.message_sent, dispatch_uid="set_last_message_date_on_message_sent")
 def set_last_message_date_on_message_sent(sender, message=None, **kwargs):
     if message is not None:
         sender.last_message = sender.messages[-1].timestamp
         sender.save()
 
 
-@receiver(FoiRequest.message_received,
-        dispatch_uid="set_last_message_date_on_message_received")
+@receiver(
+    FoiRequest.message_received,
+    dispatch_uid="set_last_message_date_on_message_received",
+)
 def set_last_message_date_on_message_received(sender, message=None, **kwargs):
     if message is not None:
         sender.last_message = sender.messages[-1].timestamp
         sender.save()
 
 
-@receiver(FoiProject.project_created,
-        dispatch_uid="send_foiproject_created_confirmation")
+@receiver(
+    FoiProject.project_created, dispatch_uid="send_foiproject_created_confirmation"
+)
 def send_foiproject_created_confirmation(sender, **kwargs):
     confirm_foi_project_created_email.send(
         user=sender.user,
@@ -181,8 +186,7 @@ def send_foiproject_created_confirmation(sender, **kwargs):
     )
 
 
-@receiver(FoiRequest.message_sent,
-        dispatch_uid="send_foimessage_sent_confirmation")
+@receiver(FoiRequest.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     if message.is_not_email:
         # All non-email sent messages are not interesting to users.
@@ -204,7 +208,7 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         action_url = message.get_absolute_domain_short_url()
 
     upload_url = sender.user.get_autologin_url(
-        short_request_url('foirequest-upload_postal_message', sender)
+        short_request_url("foirequest-upload_postal_message", sender)
     )
 
     context = {
@@ -217,17 +221,14 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     }
 
     send_request_user_email(
-        mail_intent,
-        sender,
-        subject=subject,
-        context=context,
-        start_thread=start_thread
+        mail_intent, sender, subject=subject, context=context, start_thread=start_thread
     )
 
 
 # Updating public body request counts
-@receiver(FoiRequest.request_to_public_body,
-        dispatch_uid="foirequest_increment_request_count")
+@receiver(
+    FoiRequest.request_to_public_body, dispatch_uid="foirequest_increment_request_count"
+)
 def increment_request_count(sender, **kwargs):
     if not sender.public_body:
         return
@@ -235,8 +236,11 @@ def increment_request_count(sender, **kwargs):
     sender.public_body.save()
 
 
-@receiver(signals.pre_delete, sender=FoiRequest,
-        dispatch_uid="foirequest_decrement_request_count")
+@receiver(
+    signals.pre_delete,
+    sender=FoiRequest,
+    dispatch_uid="foirequest_decrement_request_count",
+)
 def decrement_request_count(sender, instance=None, **kwargs):
     if not instance.public_body:
         return
@@ -248,30 +252,37 @@ def decrement_request_count(sender, instance=None, **kwargs):
 
 # Indexing
 
-@receiver(signals.post_save, sender=FoiMessage,
-        dispatch_uid='foimessage_delayed_update')
+
+@receiver(
+    signals.post_save, sender=FoiMessage, dispatch_uid="foimessage_delayed_update"
+)
 def foimessage_delayed_update(instance=None, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
+    if created and kwargs.get("raw", False):
         return
     trigger_index_update(FoiRequest, instance.request_id)
 
 
-@receiver(signals.post_delete, sender=FoiMessage,
-        dispatch_uid='foimessage_delayed_remove')
+@receiver(
+    signals.post_delete, sender=FoiMessage, dispatch_uid="foimessage_delayed_remove"
+)
 def foimessage_delayed_remove(instance, **kwargs):
     trigger_index_update(FoiRequest, instance.request_id)
 
 
-@receiver(signals.post_save, sender=FoiAttachment,
-        dispatch_uid='foiattachment_delayed_update')
+@receiver(
+    signals.post_save, sender=FoiAttachment, dispatch_uid="foiattachment_delayed_update"
+)
 def foiattachment_delayed_update(instance, created=False, **kwargs):
-    if created and kwargs.get('raw', False):
+    if created and kwargs.get("raw", False):
         return
     trigger_index_update(FoiRequest, instance.belongs_to.request_id)
 
 
-@receiver(signals.post_delete, sender=FoiAttachment,
-        dispatch_uid='foiattachment_delayed_remove')
+@receiver(
+    signals.post_delete,
+    sender=FoiAttachment,
+    dispatch_uid="foiattachment_delayed_remove",
+)
 def foiattachment_delayed_remove(instance, **kwargs):
     try:
         has_request = instance.belongs_to.request_id is not None
@@ -283,6 +294,7 @@ def foiattachment_delayed_remove(instance, **kwargs):
 
 # Event creation
 
+
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
 def create_event_message_sent(sender, message, user=None, **kwargs):
     FoiEvent.objects.create_event(
@@ -290,84 +302,89 @@ def create_event_message_sent(sender, message, user=None, **kwargs):
         sender,
         message=message,
         user=user,
-        public_body=message.recipient_public_body
+        public_body=message.recipient_public_body,
     )
 
 
-@receiver(FoiRequest.message_received,
-        dispatch_uid="create_event_message_received")
+@receiver(FoiRequest.message_received, dispatch_uid="create_event_message_received")
 def create_event_message_received(sender, message=None, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_RECEIVED,
         sender,
         message=message,
         user=user,
-        public_body=message.sender_public_body
+        public_body=message.sender_public_body,
     )
 
 
-@receiver(FoiAttachment.attachment_published,
-    dispatch_uid="create_event_followers_attachments_approved")
+@receiver(
+    FoiAttachment.attachment_published,
+    dispatch_uid="create_event_followers_attachments_approved",
+)
 def create_event_followers_attachments_approved(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
         sender.belongs_to.request,
         user=user,
-        attachment_id=sender.id
+        attachment_id=sender.id,
     )
 
 
-@receiver(FoiAttachment.attachment_redacted,
-    dispatch_uid="create_event_followers_attachment_redacted")
+@receiver(
+    FoiAttachment.attachment_redacted,
+    dispatch_uid="create_event_followers_attachment_redacted",
+)
 def create_event_followers_attachments_redacted(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.ATTACHMENT_REDACTED,
         sender.belongs_to.request,
         user=user,
-        attachment_id=sender.id
+        attachment_id=sender.id,
     )
 
 
-@receiver(FoiAttachment.attachment_deleted,
-    dispatch_uid="create_event_followers_attachment_deleted")
+@receiver(
+    FoiAttachment.attachment_deleted,
+    dispatch_uid="create_event_followers_attachment_deleted",
+)
 def create_event_followers_attachments_attachment_deleted(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.ATTACHMENT_DELETED,
         sender.belongs_to.request,
         user=user,
-        attachment_id=sender.id
+        attachment_id=sender.id,
     )
 
 
-@receiver(FoiAttachment.document_created,
-    dispatch_uid="create_event_followers_attachment_document_created")
+@receiver(
+    FoiAttachment.document_created,
+    dispatch_uid="create_event_followers_attachment_document_created",
+)
 def create_event_followers_attachments_document_created(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.DOCUMENT_CREATED,
         sender.belongs_to.request,
         user=user,
-        attachment_id=sender.id
+        attachment_id=sender.id,
     )
 
 
-@receiver(FoiRequest.status_changed,
-        dispatch_uid="create_event_status_changed")
+@receiver(FoiRequest.status_changed, dispatch_uid="create_event_status_changed")
 def create_event_status_changed(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.STATUS_CHANGED,
         sender,
         user=user,
-        status=kwargs.get('status', ''),
-        resolution=kwargs.get('resolution', ''),
-        costs=kwargs['data'].get('costs'),
-        previous_status=kwargs.get('previous_status', ''),
-        previous_resolution=kwargs.get('previous_resolution', ''),
-        refusal_reason=kwargs['data'].get('refusal_reason', ''),
+        status=kwargs.get("status", ""),
+        resolution=kwargs.get("resolution", ""),
+        costs=kwargs["data"].get("costs"),
+        previous_status=kwargs.get("previous_status", ""),
+        previous_resolution=kwargs.get("previous_resolution", ""),
+        refusal_reason=kwargs["data"].get("refusal_reason", ""),
     )
 
 
-@receiver(FoiRequest.made_public,
-        dispatch_uid="create_event_made_public")
+@receiver(FoiRequest.made_public, dispatch_uid="create_event_made_public")
 def create_event_made_public(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MADE_PUBLIC,
@@ -376,43 +393,38 @@ def create_event_made_public(sender, user=None, **kwargs):
     )
 
 
-@receiver(FoiRequest.public_body_suggested,
-        dispatch_uid="create_event_public_body_suggested")
+@receiver(
+    FoiRequest.public_body_suggested, dispatch_uid="create_event_public_body_suggested"
+)
 def create_event_public_body_suggested(sender, suggestion=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.PUBLIC_BODY_SUGGESTED,
         sender,
         user=suggestion.user,
-        public_body=suggestion.public_body
+        public_body=suggestion.public_body,
     )
 
 
-@receiver(FoiRequest.became_overdue,
-        dispatch_uid="create_event_became_overdue")
+@receiver(FoiRequest.became_overdue, dispatch_uid="create_event_became_overdue")
 def create_event_became_overdue(sender, **kwargs):
     FoiEvent.objects.create_event(FoiEvent.EVENTS.BECAME_OVERDUE, sender)
 
 
-@receiver(FoiRequest.set_concrete_law,
-        dispatch_uid="create_event_set_concrete_law")
+@receiver(FoiRequest.set_concrete_law, dispatch_uid="create_event_set_concrete_law")
 def create_event_set_concrete_law(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.SET_CONCRETE_LAW,
-        sender,
-        user=user,
-        name=kwargs['name']
+        FoiEvent.EVENTS.SET_CONCRETE_LAW, sender, user=user, name=kwargs["name"]
     )
 
 
-@receiver(FoiRequest.escalated,
-    dispatch_uid="create_event_escalated")
+@receiver(FoiRequest.escalated, dispatch_uid="create_event_escalated")
 def create_event_escalated(sender, message=None, user=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.ESCALATED,
         sender,
         message=message,
         user=user,
-        public_body=message.recipient_public_body
+        public_body=message.recipient_public_body,
     )
 
 
@@ -430,10 +442,10 @@ def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
     foirequest = foimessage.request
 
     # Do not store email or URL
-    comment.user_email = ''
-    comment.user_url = ''
+    comment.user_email = ""
+    comment.user_url = ""
 
     # Use requester when private on own request
     if user.private and foirequest.user == user:
-        comment.user_name = str(_('requester'))
+        comment.user_name = str(_("requester"))
     return True

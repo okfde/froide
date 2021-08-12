@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('campaign', '0005_campaign_group'),
+        ("campaign", "0005_campaign_group"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='campaign',
-            name='request_hint',
+            model_name="campaign",
+            name="request_hint",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='campaign',
-            name='request_match',
+            model_name="campaign",
+            name="request_match",
             field=models.TextField(blank=True),
         ),
     ]

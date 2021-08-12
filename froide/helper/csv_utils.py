@@ -4,18 +4,18 @@ import re
 from django.http import StreamingHttpResponse
 
 
-FORMULA_START = re.compile(r'^([=\+\-@])')
+FORMULA_START = re.compile(r"^([=\+\-@])")
 
 
-def export_csv_response(generator, name='export.csv'):
-    response = StreamingHttpResponse(generator, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="%s"' % name
+def export_csv_response(generator, name="export.csv"):
+    response = StreamingHttpResponse(generator, content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="%s"' % name
     return response
 
 
 class FakeFile(object):
     def write(self, string):
-        self._last_string = string.encode('utf-8')
+        self._last_string = string.encode("utf-8")
 
 
 def get_dict(obj, fields):
@@ -30,7 +30,7 @@ def get_dict(obj, fields):
         else:
             value = obj
             field_name = field
-            for f in field.split('__'):
+            for f in field.split("__"):
                 value = getattr(value, f, None)
                 if value is None:
                     break
@@ -47,7 +47,7 @@ def export_csv(queryset, fields):
 
 def export_dict_stream(queryset, fields):
     for obj in queryset:
-        if hasattr(obj, 'get_dict'):
+        if hasattr(obj, "get_dict"):
             d = obj.get_dict(fields)
         else:
             d = get_dict(obj, fields)

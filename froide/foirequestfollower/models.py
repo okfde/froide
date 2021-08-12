@@ -13,44 +13,36 @@ from django.dispatch import Signal
 from froide.foirequest.models import FoiRequest
 from froide.helper.email_sending import mail_registry
 
-REFERENCE_PREFIX = 'follow-'
+REFERENCE_PREFIX = "follow-"
 
 User = get_user_model()
 
 
 follow_request_email = mail_registry.register(
-    'foirequestfollower/emails/confirm_follow',
-    ('action_url', 'foirequest', 'user')
+    "foirequestfollower/emails/confirm_follow", ("action_url", "foirequest", "user")
 )
 
 update_follower_email = mail_registry.register(
-    'foirequestfollower/emails/update_follower',
-    ('count', 'user', 'update_list')
+    "foirequestfollower/emails/update_follower", ("count", "user", "update_list")
 )
 
 batch_update_follower_email = mail_registry.register(
-    'foirequestfollower/emails/batch_update_follower',
-    ('count', 'user', 'update_list')
+    "foirequestfollower/emails/batch_update_follower", ("count", "user", "update_list")
 )
 
 
 class FoiRequestFollowerManager(models.Manager):
     def get_followable_requests(self, user):
-        return FoiRequest.objects.exclude(
-            user=user
-        ).exclude(visibility=0)
+        return FoiRequest.objects.exclude(user=user).exclude(visibility=0)
 
     def request_followed_by(self, foirequest, user=None, email=None):
         if email is not None:
             return FoiRequestFollower.objects.filter(
-                request=foirequest,
-                email=email,
-                confirmed=True
+                request=foirequest, email=email, confirmed=True
             ).exists()
         else:
             return FoiRequestFollower.objects.filter(
-                request=foirequest,
-                user=user
+                request=foirequest, user=user
             ).exists()
 
     def follow(self, foirequest, user, email=None, **extra_data):
@@ -61,27 +53,21 @@ class FoiRequestFollowerManager(models.Manager):
 
     def user_follow(self, foirequest, user, extra_data):
         try:
-            follower = FoiRequestFollower.objects.get(
-                request=foirequest,
-                user=user
-            )
+            follower = FoiRequestFollower.objects.get(request=foirequest, user=user)
             FoiRequestFollower.unfollowing.send(sender=follower)
             follower.delete()
             return False
         except FoiRequestFollower.DoesNotExist:
             pass
         follower = FoiRequestFollower.objects.create(
-            request=foirequest, user=user, confirmed=True,
-            context=extra_data or None
+            request=foirequest, user=user, confirmed=True, context=extra_data or None
         )
         FoiRequestFollower.followed.send(sender=follower)
         return True
 
     def get_user_for_email(self, email):
         try:
-            return User.objects.get(
-                is_active=True, email=email
-            )
+            return User.objects.get(is_active=True, email=email)
         except User.DoesNotExist:
             return None
 
@@ -99,8 +85,7 @@ class FoiRequestFollowerManager(models.Manager):
 
         if follower is None:
             follower = FoiRequestFollower.objects.create(
-                request=foirequest, email=email,
-                context=extra_data or None
+                request=foirequest, email=email, context=extra_data or None
             )
         follower.send_confirm_follow_mail(extra_data, user=user)
         return True
@@ -116,47 +101,44 @@ class FoiRequestFollowerManager(models.Manager):
 
         count = len(update_list)
         context = {
-            'user': user,
-            'email': email,
-            'count': count,
-            'update_list': update_list
+            "user": user,
+            "email": email,
+            "count": count,
+            "update_list": update_list,
         }
         if count == 1:
             follower = FoiRequestFollower.objects.get(
-                request=update_list[0]['request'],
-                email=email or '', user=user, confirmed=True
+                request=update_list[0]["request"],
+                email=email or "",
+                user=user,
+                confirmed=True,
             )
-            context.update(
-                follower.get_context()
-            )
+            context.update(follower.get_context())
         if batch:
             mail_intent = batch_update_follower_email
         else:
             mail_intent = update_follower_email
 
-        mail_intent.send(
-            user=user,
-            email=email,
-            context=context
-        )
+        mail_intent.send(user=user, email=email, context=context)
 
 
 class FoiRequestFollower(models.Model):
     request = models.ForeignKey(
         FoiRequest,
         on_delete=models.CASCADE,
-        related_name='followers',
-        verbose_name=_("Freedom of Information Request")
+        related_name="followers",
+        verbose_name=_("Freedom of Information Request"),
     )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,
-        verbose_name=_("User"), on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        verbose_name=_("User"),
+        on_delete=models.CASCADE,
+    )
     email = models.CharField(max_length=255, blank=True)
     confirmed = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(
-        _("Timestamp of Following"),
-        default=timezone.now
-    )
+    timestamp = models.DateTimeField(_("Timestamp of Following"), default=timezone.now)
     context = models.JSONField(blank=True, null=True)
 
     objects = FoiRequestFollowerManager()
@@ -165,34 +147,35 @@ class FoiRequestFollower(models.Model):
     unfollowing = Signal()  # args: []
 
     class Meta:
-        get_latest_by = 'timestamp'
-        ordering = ('-timestamp',)
-        verbose_name = _('Request Follower')
-        verbose_name_plural = _('Request Followers')
+        get_latest_by = "timestamp"
+        ordering = ("-timestamp",)
+        verbose_name = _("Request Follower")
+        verbose_name_plural = _("Request Followers")
         constraints = [
             models.UniqueConstraint(
-                fields=['request', 'user'],
+                fields=["request", "user"],
                 condition=models.Q(user__isnull=False),
-                name='unique_user_follower'
+                name="unique_user_follower",
             ),
             models.UniqueConstraint(
-                fields=['request', 'email'],
+                fields=["request", "email"],
                 condition=models.Q(user__isnull=True),
-                name='unique_email_follower'
+                name="unique_email_follower",
             ),
         ]
 
     def __str__(self):
         return _("%(user)s follows %(request)s") % {
-                "user": self.email or str(self.user),
-                "request": self.request}
+            "user": self.email or str(self.user),
+            "request": self.request,
+        }
 
     def get_context(self):
         return {
-            'unsubscribe_url': self.get_unfollow_link(),
-            'unsubscribe_reference': '{prefix}{pk}'.format(
+            "unsubscribe_url": self.get_unfollow_link(),
+            "unsubscribe_reference": "{prefix}{pk}".format(
                 prefix=REFERENCE_PREFIX, pk=self.id
-            )
+            ),
         }
 
     def get_unfollow_link(self, user=None):
@@ -203,11 +186,8 @@ class FoiRequestFollower(models.Model):
 
     def get_link(self, kind="follow", user=user):
         url = reverse(
-            'foirequestfollower-confirm_%s' % kind,
-            kwargs={
-                'follow_id': self.id,
-                'check': self.get_follow_secret()
-            }
+            "foirequestfollower-confirm_%s" % kind,
+            kwargs={"follow_id": self.id, "check": self.get_follow_secret()},
         )
         if user is not None:
             return user.get_autologin_url(url)
@@ -216,9 +196,9 @@ class FoiRequestFollower(models.Model):
     def get_follow_secret(self):
         to_sign = [self.email, str(self.request.id), str(self.id)]
         return hmac.new(
-            settings.SECRET_KEY.encode('utf-8'),
-            (".".join(to_sign)).encode('utf-8'),
-            digestmod=hashlib.md5
+            settings.SECRET_KEY.encode("utf-8"),
+            (".".join(to_sign)).encode("utf-8"),
+            digestmod=hashlib.md5,
         ).hexdigest()
 
     def check_and_unfollow(self, check):
@@ -236,9 +216,7 @@ class FoiRequestFollower(models.Model):
         if self.confirmed:
             return True
         if self.email:
-            user = FoiRequestFollower.objects.get_user_for_email(
-                self.email
-            )
+            user = FoiRequestFollower.objects.get_user_for_email(self.email)
             if user is not None and user.id != self.request.user_id:
                 already_following = FoiRequestFollower.objects.filter(
                     request=self.request, user=user
@@ -248,16 +226,16 @@ class FoiRequestFollower(models.Model):
                     self.delete()
                     return True
                 self.user = user
-                self.email = ''
+                self.email = ""
         self.confirmed = True
         self.save()
         FoiRequestFollower.followed.send(sender=self)
         return True
 
     def send_confirm_follow_mail(self, extra_data, user=None):
-        '''
+        """
         user is unconfirmed, but matches email address if given
-        '''
+        """
         context = {
             "foirequest": self.request,
             "user": user,
@@ -267,9 +245,9 @@ class FoiRequestFollower(models.Model):
         context.update(self.get_context())
         follow_request_email.send(
             email=self.email,
-            subject=_('Please confirm notifications for request “{title}”').format(
+            subject=_("Please confirm notifications for request “{title}”").format(
                 title=self.request.title
             ),
             context=context,
-            priority=True
+            priority=True,
         )

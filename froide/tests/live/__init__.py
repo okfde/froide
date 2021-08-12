@@ -10,38 +10,35 @@ from selenium import webdriver
 
 def get_driver_options(driver_name, **kwargs):
     options = None
-    if driver_name.startswith('chrome'):
+    if driver_name.startswith("chrome"):
         options = webdriver.ChromeOptions()
-        if driver_name == 'chrome_headless':
-            options.add_argument('headless')
-            options.add_argument('disable-gpu')
+        if driver_name == "chrome_headless":
+            options.add_argument("headless")
+            options.add_argument("disable-gpu")
             for key, val in kwargs.items():
                 if val is not None:
-                    options.add_argument('{key}={val}'.format(key=key, val=val))
+                    options.add_argument("{key}={val}".format(key=key, val=val))
                 else:
-                    options.add_argument('{key}'.format(key=key))
-    elif driver_name.startswith('firefox'):
+                    options.add_argument("{key}".format(key=key))
+    elif driver_name.startswith("firefox"):
         options = webdriver.FirefoxOptions()
     return options
 
 
 def get_selenium(**kwargs):
-    driver_setting = getattr(settings, 'TEST_SELENIUM_DRIVER', 'firefox')
+    driver_setting = getattr(settings, "TEST_SELENIUM_DRIVER", "firefox")
 
     driver_url = None
-    if driver_setting.startswith('http'):
-        driver_url, driver_name = driver_setting.split('#', 1)
+    if driver_setting.startswith("http"):
+        driver_url, driver_name = driver_setting.split("#", 1)
     else:
         driver_name = driver_setting
 
     options = get_driver_options(driver_name, **kwargs)
-    if driver_setting.startswith('http'):
-        return webdriver.Remote(
-            command_executor=driver_url,
-            options=options
-        )
-    if driver_name.startswith('chrome'):
-        driver_path = os.environ.get('CHROME_DRIVER_PATH', None)
+    if driver_setting.startswith("http"):
+        return webdriver.Remote(command_executor=driver_url, options=options)
+    if driver_name.startswith("chrome"):
+        driver_path = os.environ.get("CHROME_DRIVER_PATH", None)
         if driver_path is not None:
             return webdriver.Chrome(executable_path=driver_path, options=options)
         return webdriver.Chrome(options=options)
@@ -58,16 +55,18 @@ class CheckJSErrors(object):
         self.driver = driver
 
     def __enter__(self):
-        self.driver.execute_script('''
+        self.driver.execute_script(
+            """
             window.onerror=function(msg){
                 document.getElementsByTagName('body')[0].setAttribute('jserror', msg);
             };
-        ''')
+        """
+        )
 
     def __exit__(self, exc_type, exc_value, traceback):
-        body = self.driver.find_elements_by_xpath('//body[@jserror]')
+        body = self.driver.find_elements_by_xpath("//body[@jserror]")
         if body:
-            msg = body[0].get_attribute('jserror')
+            msg = body[0].get_attribute("jserror")
             raise JavaScriptException(msg)
 
 
@@ -88,8 +87,9 @@ class LiveTestMixin(object):
 
     def scrollTo(self, selector):
         # self.selenium.find_element_by_id(id).location_once_scrolled_into_view
-        self.selenium.execute_script('window.scrollTo(0,0);'
-                        'document.getElementById("%s").focus();' % selector)
+        self.selenium.execute_script(
+            "window.scrollTo(0,0);" 'document.getElementById("%s").focus();' % selector
+        )
 
     def _fixture_teardown(self):
         """
@@ -103,10 +103,11 @@ class LiveTestMixin(object):
         for db_name in self._databases_names(include_mirrors=False):
             # Flush the database
             inhibit_post_migrate = (
-                self.available_apps is not None or (  # Inhibit the post_migrate signal when using serialized
+                self.available_apps is not None
+                or (  # Inhibit the post_migrate signal when using serialized
                     # rollback to avoid trying to recreate the serialized data.
-                    self.serialized_rollback and
-                    hasattr(connections[db_name], "_test_serialized_contents")
+                    self.serialized_rollback
+                    and hasattr(connections[db_name], "_test_serialized_contents")
                 )
             )
             call_command(

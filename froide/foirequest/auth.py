@@ -9,10 +9,13 @@ from django.conf import settings
 from crossdomainmedia import CrossDomainMediaAuth
 
 from froide.helper.auth import (
-    can_read_object, can_write_object,
-    can_manage_object, can_moderate_object,
+    can_read_object,
+    can_write_object,
+    can_manage_object,
+    can_moderate_object,
     has_authenticated_access,
-    get_read_queryset, check_permission
+    get_read_queryset,
+    check_permission,
 )
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
@@ -22,10 +25,11 @@ def get_read_foirequest_queryset(request, queryset=None):
     if queryset is None:
         queryset = FoiRequest.objects.all()
     return get_read_queryset(
-        queryset, request,
+        queryset,
+        request,
         has_team=True,
         public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
-        scope='read:request'
+        scope="read:request",
     )
 
 
@@ -33,11 +37,12 @@ def get_read_foimessage_queryset(request, queryset=None):
     if queryset is None:
         queryset = FoiMessage.objects.all()
     return get_read_queryset(
-        queryset, request,
+        queryset,
+        request,
         has_team=True,
         public_q=Q(request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
-        scope='read:request',
-        fk_path='request'
+        scope="read:request",
+        fk_path="request",
     )
 
 
@@ -45,14 +50,15 @@ def get_read_foiattachment_queryset(request, queryset=None):
     if queryset is None:
         queryset = FoiAttachment.objects.all()
     return get_read_queryset(
-        queryset, request,
+        queryset,
+        request,
         has_team=True,
         public_q=Q(
             belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
-            approved=True
+            approved=True,
         ),
-        scope='read:request',
-        fk_path='belongs_to__request'
+        scope="read:request",
+        fk_path="belongs_to__request",
     )
 
 
@@ -71,23 +77,21 @@ def can_read_foirequest(foirequest, request, allow_code=True):
 
 @lru_cache()
 def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
-    '''
+    """
     The read is authenticated: if the request was not public, the actor
     could still read.
     An authenticated read allows seeing redactions and unapproved attachments.
-    '''
+    """
     user = request.user
-    if has_authenticated_access(foirequest, request, verb='read',
-                                scope='read:request'):
+    if has_authenticated_access(foirequest, request, verb="read", scope="read:request"):
         return True
 
-    if user.is_staff and user.has_perm('foirequest.see_private'):
+    if user.is_staff and user.has_perm("foirequest.see_private"):
         return True
 
     if foirequest.project:
         return has_authenticated_access(
-            foirequest.project, request, verb='read',
-            scope='read:request'
+            foirequest.project, request, verb="read", scope="read:request"
         )
 
     # if authenticated may still have code
@@ -105,8 +109,7 @@ def can_read_foiproject(foiproject, request):
 def can_read_foiproject_authenticated(foiproject, request):
     assert isinstance(foiproject, FoiProject)
     return has_authenticated_access(
-        foiproject, request, verb='read',
-        scope='read:request'
+        foiproject, request, verb="read", scope="read:request"
     )
 
 
@@ -132,7 +135,7 @@ def is_foirequest_moderator(request):
         return False
     if request.user.is_staff:
         return True
-    return check_permission(FoiRequest, request, 'moderate')
+    return check_permission(FoiRequest, request, "moderate")
 
 
 def can_manage_foirequest(foirequest, request):
@@ -149,7 +152,7 @@ def can_manage_foiproject(foiproject, request):
 
 
 def can_read_foirequest_anonymous(foirequest, request):
-    pb_auth = request.session.get('pb_auth')
+    pb_auth = request.session.get("pb_auth")
     if pb_auth is not None:
         return check_foirequest_auth_code(foirequest, pb_auth)
     return False
@@ -157,20 +160,27 @@ def can_read_foirequest_anonymous(foirequest, request):
 
 def _get_foirequest_auth_code(foirequest):
     return [
-        salted_hmac("FoiRequestPublicBodyAuth",
-            '%s#%s' % (foirequest.id, foirequest.get_secret())).hexdigest(),
-        salted_hmac("FoiRequestPublicBodyAuth",
-            '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
+        salted_hmac(
+            "FoiRequestPublicBodyAuth",
+            "%s#%s" % (foirequest.id, foirequest.get_secret()),
+        ).hexdigest(),
+        salted_hmac(
+            "FoiRequestPublicBodyAuth",
+            "%s#%s" % (foirequest.id, foirequest.secret_address),
+        ).hexdigest(),
     ]
 
 
 def _get_foirequest_upload_code(foirequest):
     secret = foirequest.get_secret()
     return [
-        salted_hmac("FoiRequestPublicBodyUpload",
-            '%s#%s' % (foirequest.id, secret)).hexdigest(),
-        salted_hmac("FoiRequestPublicBodyUpload",
-            '%s#%s' % (foirequest.id, foirequest.secret_address)).hexdigest()
+        salted_hmac(
+            "FoiRequestPublicBodyUpload", "%s#%s" % (foirequest.id, secret)
+        ).hexdigest(),
+        salted_hmac(
+            "FoiRequestPublicBodyUpload",
+            "%s#%s" % (foirequest.id, foirequest.secret_address),
+        ).hexdigest(),
     ]
 
 
@@ -201,8 +211,12 @@ def is_attachment_public(foirequest, attachment):
 
 
 def clear_lru_caches():
-    for f in (can_write_foirequest, can_read_foirequest,
-              can_read_foirequest_authenticated, can_moderate_foirequest):
+    for f in (
+        can_write_foirequest,
+        can_read_foirequest,
+        can_read_foirequest_authenticated,
+        can_moderate_foirequest,
+    ):
         f.cache_clear()
 
 
@@ -222,53 +236,51 @@ def has_attachment_access(request, foirequest, attachment):
 
 def get_accessible_attachment_url(foirequest, attachment):
     needs_authorization = not is_attachment_public(foirequest, attachment)
-    return attachment.get_absolute_domain_file_url(
-        authorized=needs_authorization
-    )
+    return attachment.get_absolute_domain_file_url(authorized=needs_authorization)
 
 
 class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
-    '''
+    """
     Create your own custom CrossDomainMediaAuth class
     and implement at least these methods
-    '''
+    """
+
     TOKEN_MAX_AGE_SECONDS = settings.FOI_MEDIA_TOKEN_EXPIRY
     SITE_URL = settings.SITE_URL
     DEBUG = False
 
     def is_media_public(self):
-        '''
+        """
         Determine if the media described by self.context
         needs authentication/authorization at all
-        '''
+        """
         ctx = self.context
-        return is_attachment_public(ctx['foirequest'], ctx['object'])
+        return is_attachment_public(ctx["foirequest"], ctx["object"])
 
     def has_perm(self, request):
         ctx = self.context
-        obj = ctx['object']
-        foirequest = ctx['foirequest']
+        obj = ctx["object"]
+        foirequest = ctx["foirequest"]
         return has_attachment_access(request, foirequest, obj)
 
     def get_auth_url(self):
-        '''
+        """
         Give URL path to authenticating view
         for the media described in context
-        '''
-        obj = self.context['object']
+        """
+        obj = self.context["object"]
         with override(settings.LANGUAGE_CODE):
-            return reverse('foirequest-auth_message_attachment',
-                kwargs={
-                    'message_id': obj.belongs_to_id,
-                    'attachment_name': obj.name
-                })
+            return reverse(
+                "foirequest-auth_message_attachment",
+                kwargs={"message_id": obj.belongs_to_id, "attachment_name": obj.name},
+            )
 
     def get_full_auth_url(self):
-        return super().get_full_auth_url() + '?download'
+        return super().get_full_auth_url() + "?download"
 
     def get_media_file_path(self):
-        '''
+        """
         Return the URL path relative to MEDIA_ROOT for debug mode
-        '''
-        obj = self.context['object']
+        """
+        obj = self.context["object"]
         return obj.file.name

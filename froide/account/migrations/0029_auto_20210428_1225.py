@@ -4,7 +4,7 @@ from django.db import migrations
 
 
 def copy_email_address(apps, schema_editor):
-    User = apps.get_model('account', 'User')
+    User = apps.get_model("account", "User")
     for user in User.objects.all():
         user.email_ci = user.email
         user.save()
@@ -13,7 +13,7 @@ def copy_email_address(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0028_user_email_ci'),
+        ("account", "0028_user_email_ci"),
     ]
 
     operations = [

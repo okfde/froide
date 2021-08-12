@@ -10,13 +10,18 @@ import froide.helper.storage
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0016_foiproject_publicbodies'),
+        ("foirequest", "0016_foiproject_publicbodies"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='foiattachment',
-            name='file',
-            field=models.FileField(max_length=255, storage=froide.helper.storage.HashedFilenameStorage(), upload_to=froide.foirequest.models.attachment.upload_to, verbose_name='File'),
+            model_name="foiattachment",
+            name="file",
+            field=models.FileField(
+                max_length=255,
+                storage=froide.helper.storage.HashedFilenameStorage(),
+                upload_to=froide.foirequest.models.attachment.upload_to,
+                verbose_name="File",
+            ),
         ),
     ]

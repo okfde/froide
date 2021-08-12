@@ -8,7 +8,7 @@ from .services import UploadDocumentStorer
 User = get_user_model()
 
 
-@celery_app.task(name='froide.document.tasks.store_document_uploads')
+@celery_app.task(name="froide.document.tasks.store_document_uploads")
 def store_document_upload(upload_urls, user_id, form_data, collection_id):
     try:
         user = User.objects.get(id=user_id)
@@ -23,10 +23,7 @@ def store_document_upload(upload_urls, user_id, form_data, collection_id):
             pass
 
     storer = UploadDocumentStorer(
-        user,
-        collection=collection,
-        public=form_data['public'],
-        tags=form_data['tags']
+        user, collection=collection, public=form_data["public"], tags=form_data["tags"]
     )
 
     for upload_url in upload_urls:

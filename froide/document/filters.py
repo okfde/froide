@@ -29,29 +29,27 @@ def get_document_read_qs(request, detail=False):
         request,
         has_team=True,
         public_q=public_q,
-        scope='read:document'
+        scope="read:document",
     )
 
 
 class DocumentFilter(FCDocumentFilter):
     publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody.objects.all(),
-        method='filter_publicbody',
+        method="filter_publicbody",
     )
     foirequest = django_filters.ModelChoiceFilter(
         queryset=None,
-        to_field_name='pk',
-        method='filter_foirequest',
+        to_field_name="pk",
+        method="filter_foirequest",
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request = kwargs.get('request')
+        request = kwargs.get("request")
         if request is None:
             request = self.view.request
-        self.filters['foirequest'].queryset = get_read_foirequest_queryset(
-            request
-        )
+        self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
 
     def filter_publicbody(self, qs, name, value):
         return qs.filter(publicbody=value)
@@ -61,98 +59,96 @@ class DocumentFilter(FCDocumentFilter):
 
 
 class PageDocumentFilterset(BaseSearchFilterSet):
-    query_fields = ['title^3', 'description^2', 'content']
+    query_fields = ["title^3", "description^2", "content"]
 
     campaign = django_filters.ModelChoiceFilter(
         queryset=Campaign.objects.get_filter_list(),
-        to_field_name='slug',
-        null_value='-',
-        empty_label=_('all/no campaigns'),
-        null_label=_('no campaign'),
-        widget=forms.Select(
-            attrs={
-                'label': _('campaign'),
-                'class': 'form-control'
-            }
-        ),
-        method='filter_campaign'
+        to_field_name="slug",
+        null_value="-",
+        empty_label=_("all/no campaigns"),
+        null_label=_("no campaign"),
+        widget=forms.Select(attrs={"label": _("campaign"), "class": "form-control"}),
+        method="filter_campaign",
     )
     jurisdiction = django_filters.ModelChoiceFilter(
         queryset=Jurisdiction.objects.get_visible(),
-        to_field_name='slug',
-        empty_label=_('all jurisdictions'),
+        to_field_name="slug",
+        empty_label=_("all jurisdictions"),
         widget=forms.Select(
-            attrs={
-                'label': _('jurisdiction'),
-                'class': 'form-control'
-            }
+            attrs={"label": _("jurisdiction"), "class": "form-control"}
         ),
-        method='filter_jurisdiction'
+        method="filter_jurisdiction",
     )
     tag = django_filters.ModelChoiceFilter(
         queryset=Tag.objects.all(),
-        to_field_name='slug',
-        method='filter_tag',
-        widget=forms.HiddenInput()
+        to_field_name="slug",
+        method="filter_tag",
+        widget=forms.HiddenInput(),
     )
     publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody._default_manager.all(),
-        to_field_name='slug',
-        method='filter_publicbody',
-        widget=forms.HiddenInput()
+        to_field_name="slug",
+        method="filter_publicbody",
+        widget=forms.HiddenInput(),
     )
     collection = django_filters.ModelChoiceFilter(
         queryset=DocumentCollection.objects.all(),
-        to_field_name='pk',
-        method='filter_collection',
-        widget=forms.HiddenInput()
+        to_field_name="pk",
+        method="filter_collection",
+        widget=forms.HiddenInput(),
     )
     portal = django_filters.ModelChoiceFilter(
         queryset=DocumentPortal.objects.filter(public=True),
-        to_field_name='pk',
-        method='filter_portal',
-        widget=forms.HiddenInput()
+        to_field_name="pk",
+        method="filter_portal",
+        widget=forms.HiddenInput(),
     )
     document = django_filters.ModelChoiceFilter(
         queryset=Document.objects.all(),
-        to_field_name='pk',
-        method='filter_document',
-        widget=forms.HiddenInput()
+        to_field_name="pk",
+        method="filter_document",
+        widget=forms.HiddenInput(),
     )
     user = django_filters.ModelChoiceFilter(
         queryset=User.objects.get_public_profiles(),
-        to_field_name='username',
-        method='filter_user',
-        widget=forms.HiddenInput()
+        to_field_name="username",
+        method="filter_user",
+        widget=forms.HiddenInput(),
     )
     number = django_filters.NumberFilter(
-        method='filter_number',
-        widget=forms.HiddenInput()
+        method="filter_number", widget=forms.HiddenInput()
     )
     created_at = django_filters.DateFromToRangeFilter(
-        method='filter_created_at',
+        method="filter_created_at",
         widget=DateRangeWidget,
     )
 
     class Meta:
         model = Page
         fields = [
-            'q', 'jurisdiction', 'campaign',
-            'tag', 'publicbody', 'collection',
-            'number', 'user', 'portal'
+            "q",
+            "jurisdiction",
+            "campaign",
+            "tag",
+            "publicbody",
+            "collection",
+            "number",
+            "user",
+            "portal",
         ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        request = kwargs.get('request')
+        request = kwargs.get("request")
         if request is None:
             request = self.view.request
         self.request = request
 
     def filter_queryset(self, queryset):
-        required_unlisted_filters = {'document', 'collection'}
+        required_unlisted_filters = {"document", "collection"}
         filter_present = any(
-            v for k, v in self.form.cleaned_data.items()
+            v
+            for k, v in self.form.cleaned_data.items()
             if k in required_unlisted_filters
         )
         if not filter_present:
@@ -163,12 +159,8 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         return qs.filter(jurisdiction=value.id)
 
     def filter_campaign(self, qs, name, value):
-        if value == '-':
-            return qs.filter(
-                Q('bool', must_not={
-                    'exists': {'field': 'campaign'}
-                })
-            )
+        if value == "-":
+            return qs.filter(Q("bool", must_not={"exists": {"field": "campaign"}}))
         return qs.filter(campaign=value.id)
 
     def filter_tag(self, qs, name, value):
@@ -181,40 +173,38 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         if not collection.can_read(self.request):
             return qs.none()
         qs = qs.filter(collections=collection.id)
-        qs = self.apply_data_filters(qs, collection.settings.get('filters', []))
+        qs = self.apply_data_filters(qs, collection.settings.get("filters", []))
         return qs
 
     def filter_portal(self, qs, name, portal):
         qs = qs.filter(portal=portal.id)
-        qs = self.apply_data_filters(qs, portal.settings.get('filters', []))
+        qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
         return qs
 
     def apply_data_filters(self, qs, filters):
-        has_query = self.request.GET.get('q')
+        has_query = self.request.GET.get("q")
 
         for filt in filters:
-            es_key = filt['key'].replace('__', '.')
-            if has_query and filt.get('facet'):
-                facet = filt.get('facet_config', {'type': 'term'})
-                if facet['type'] == 'term':
+            es_key = filt["key"].replace("__", ".")
+            if has_query and filt.get("facet"):
+                facet = filt.get("facet_config", {"type": "term"})
+                if facet["type"] == "term":
                     qs = qs.add_aggregation([es_key])
-                elif facet['type'] == 'date_histogram':
-                    facet_kwargs = {k: v for k, v in facet.items() if k in (
-                        'interval', 'format'
-                    )}
-                    qs = qs.add_date_histogram(
-                        es_key, **facet_kwargs
-                    )
+                elif facet["type"] == "date_histogram":
+                    facet_kwargs = {
+                        k: v for k, v in facet.items() if k in ("interval", "format")
+                    }
+                    qs = qs.add_date_histogram(es_key, **facet_kwargs)
 
-            if not filt['key'].startswith('data.'):
+            if not filt["key"].startswith("data."):
                 continue
-            val = self.request.GET.get(filt['key'])
+            val = self.request.GET.get(filt["key"])
             if not val:
                 continue
-            data_type = filt.get('datatype')
+            data_type = filt.get("datatype")
             if data_type:
                 try:
-                    if data_type == 'int':
+                    if data_type == "int":
                         val = int(val)
                 except ValueError:
                     continue
@@ -235,8 +225,8 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     def filter_created_at(self, qs, name, value):
         range_kwargs = {}
         if value.start is not None:
-            range_kwargs['gte'] = value.start
+            range_kwargs["gte"] = value.start
         if value.stop is not None:
-            range_kwargs['lte'] = value.stop
+            range_kwargs["lte"] = value.stop
 
-        return qs.filter(ESQ('range', created_at=range_kwargs))
+        return qs.filter(ESQ("range", created_at=range_kwargs))

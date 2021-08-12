@@ -15,28 +15,22 @@ from taggit.models import TagBase, TaggedItemBase
 
 from froide.publicbody.models import PublicBody
 from froide.helper.email_utils import make_address
-from froide.helper.text_utils import (
-    redact_subject, redact_plaintext
-)
+from froide.helper.text_utils import redact_subject, redact_plaintext
 
-from .request import (
-    FoiRequest, get_absolute_short_url, get_absolute_domain_short_url
-)
+from .request import FoiRequest, get_absolute_short_url, get_absolute_domain_short_url
 
-BOUNCE_TAG = 'bounce'
-HAS_BOUNCED_TAG = 'bounced'
-AUTO_REPLY_TAG = 'auto-reply'
-BOUNCE_RESENT_TAG = 'bounce-resent'
+BOUNCE_TAG = "bounce"
+HAS_BOUNCED_TAG = "bounced"
+AUTO_REPLY_TAG = "auto-reply"
+BOUNCE_RESENT_TAG = "bounce-resent"
 
 
 class FoiMessageManager(models.Manager):
     def get_throttle_filter(self, queryset, user, extra_filters=None):
-        qs = queryset.filter(
-            sender_user=user, is_response=False
-        )
+        qs = queryset.filter(sender_user=user, is_response=False)
         if extra_filters is not None:
             qs = qs.filter(**extra_filters)
-        return qs, 'timestamp'
+        return qs, "timestamp"
 
 
 class MessageTag(TagBase):
@@ -47,32 +41,32 @@ class MessageTag(TagBase):
 
 class TaggedMessage(TaggedItemBase):
     tag = models.ForeignKey(
-        MessageTag, on_delete=models.CASCADE,
-        related_name="tagged_messages")
-    content_object = models.ForeignKey('FoiMessage', on_delete=models.CASCADE)
+        MessageTag, on_delete=models.CASCADE, related_name="tagged_messages"
+    )
+    content_object = models.ForeignKey("FoiMessage", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = _('tagged message')
-        verbose_name_plural = _('tagged messages')
+        verbose_name = _("tagged message")
+        verbose_name_plural = _("tagged messages")
 
 
 class MessageKind(models.TextChoices):
-    EMAIL = ('email', _('email'))
-    POST = ('post', _('postal mail'))
-    FAX = ('fax', _('fax'))
-    UPLOAD = ('upload', _('upload'))
-    PHONE = ('phone', _('phone call'))
-    VISIT = ('visit', _('visit in person'))
+    EMAIL = ("email", _("email"))
+    POST = ("post", _("postal mail"))
+    FAX = ("fax", _("fax"))
+    UPLOAD = ("upload", _("upload"))
+    PHONE = ("phone", _("phone call"))
+    VISIT = ("visit", _("visit in person"))
 
 
 MESSAGE_KIND_ICONS = {
-    MessageKind.EMAIL: 'mail',
-    MessageKind.POST: 'newspaper-o',
-    MessageKind.FAX: 'fax',
+    MessageKind.EMAIL: "mail",
+    MessageKind.POST: "newspaper-o",
+    MessageKind.FAX: "fax",
     # it's received, so the download icon seems more appropriate
-    MessageKind.UPLOAD: 'download',
-    MessageKind.PHONE: 'phone',
-    MessageKind.VISIT: 'handshake-o'
+    MessageKind.UPLOAD: "download",
+    MessageKind.PHONE: "phone",
+    MessageKind.VISIT: "handshake-o",
 }
 
 
@@ -80,92 +74,92 @@ class FoiMessage(models.Model):
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+    )
     sent = models.BooleanField(_("has message been sent?"), default=True)
-    is_response = models.BooleanField(
-        _("response?"),
-        default=True)
+    is_response = models.BooleanField(_("response?"), default=True)
     kind = models.CharField(
-        max_length=10, choices=MessageKind.choices,
-        default=MessageKind.EMAIL
+        max_length=10, choices=MessageKind.choices, default=MessageKind.EMAIL
     )
-    is_escalation = models.BooleanField(
-        _("Escalation?"),
-        default=False)
-    content_hidden = models.BooleanField(
-        _("Content hidden?"),
-        default=False)
+    is_escalation = models.BooleanField(_("Escalation?"), default=False)
+    content_hidden = models.BooleanField(_("Content hidden?"), default=False)
     sender_user = models.ForeignKey(
-            settings.AUTH_USER_MODEL,
-            blank=True,
-            null=True,
-            on_delete=models.SET_NULL,
-            verbose_name=_("From User")
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("From User"),
     )
-    sender_email = models.CharField(
-        _("From Email"),
-        blank=True, max_length=255)
-    sender_name = models.CharField(
-        _("From Name"),
-        blank=True, max_length=255)
+    sender_email = models.CharField(_("From Email"), blank=True, max_length=255)
+    sender_name = models.CharField(_("From Name"), blank=True, max_length=255)
     sender_public_body = models.ForeignKey(
-        PublicBody, blank=True,
-        null=True, on_delete=models.SET_NULL,
-        verbose_name=_("From Public Body"), related_name='send_messages')
+        PublicBody,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("From Public Body"),
+        related_name="send_messages",
+    )
 
-    recipient = models.CharField(
-        _("Recipient"), max_length=255,
-        blank=True, null=True)
+    recipient = models.CharField(_("Recipient"), max_length=255, blank=True, null=True)
     recipient_email = models.CharField(
-        _("Recipient Email"), max_length=255,
-        blank=True, null=True)
+        _("Recipient Email"), max_length=255, blank=True, null=True
+    )
     recipient_public_body = models.ForeignKey(
-        PublicBody, blank=True,
-        null=True, on_delete=models.SET_NULL,
+        PublicBody,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
         verbose_name=_("Public Body Recipient"),
-        related_name='received_messages')
+        related_name="received_messages",
+    )
     status = models.CharField(
-        _("Status"), max_length=50, null=True, blank=True,
-        choices=FoiRequest.STATUS.choices, default=None)
+        _("Status"),
+        max_length=50,
+        null=True,
+        blank=True,
+        choices=FoiRequest.STATUS.choices,
+        default=None,
+    )
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
-    email_message_id = models.CharField(max_length=512, blank=True, default='')
+    email_message_id = models.CharField(max_length=512, blank=True, default="")
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     subject_redacted = models.CharField(
-        _("Redacted Subject"), blank=True, max_length=255)
+        _("Redacted Subject"), blank=True, max_length=255
+    )
     plaintext = models.TextField(_("plain text"), blank=True, null=True)
     plaintext_redacted = models.TextField(
-        _("redacted plain text"), blank=True, null=True)
+        _("redacted plain text"), blank=True, null=True
+    )
     html = models.TextField(_("HTML"), blank=True, null=True)
     content_rendered_auth = models.TextField(blank=True, null=True)
     content_rendered_anon = models.TextField(blank=True, null=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
-    not_publishable = models.BooleanField(_('Not publishable'), default=False)
+    not_publishable = models.BooleanField(_("Not publishable"), default=False)
     original = models.ForeignKey(
-        'self', null=True, blank=True, on_delete=models.SET_NULL,
-        related_name='message_copies'
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="message_copies",
     )
-    tags = TaggableManager(
-        through=TaggedMessage,
-        verbose_name=_('tags'),
-        blank=True
-    )
+    tags = TaggableManager(through=TaggedMessage, verbose_name=_("tags"), blank=True)
 
     objects = FoiMessageManager()
 
     class Meta:
-        get_latest_by = 'timestamp'
-        ordering = ('timestamp',)
+        get_latest_by = "timestamp"
+        ordering = ("timestamp",)
         # order_with_respect_to = 'request'
-        verbose_name = _('Freedom of Information Message')
-        verbose_name_plural = _('Freedom of Information Messages')
+        verbose_name = _("Freedom of Information Message")
+        verbose_name_plural = _("Freedom of Information Messages")
 
     def __str__(self):
-        return _(
-            "Message in '%(request)s' at %(time)s") % {
-                "request": self.request,
-                "time": self.timestamp
-            }
+        return _("Message in '%(request)s' at %(time)s") % {
+            "request": self.request,
+            "time": self.timestamp,
+        }
 
     @property
     def is_postal(self):
@@ -232,7 +226,7 @@ class FoiMessage(models.Model):
         return _("message-%(id)d") % {"id": self.id}
 
     def get_request_link(self, url):
-        return '%s#%s' % (url, self.get_html_id())
+        return "%s#%s" % (url, self.get_html_id())
 
     def get_absolute_url(self):
         return self.get_request_link(self.request.get_absolute_url())
@@ -241,9 +235,7 @@ class FoiMessage(models.Model):
         return self.get_request_link(get_absolute_short_url(self.request_id))
 
     def get_absolute_domain_short_url(self):
-        return self.get_request_link(
-            get_absolute_domain_short_url(self.request_id)
-        )
+        return self.get_request_link(get_absolute_domain_short_url(self.request_id))
 
     def get_absolute_domain_url(self):
         return self.get_request_link(self.request.get_absolute_domain_url())
@@ -263,18 +255,15 @@ class FoiMessage(models.Model):
             if self.recipient_public_body:
                 alternative = self.recipient_public_body.name
             if self.is_not_email:
-                return _('{name} (via {via})').format(
-                    name=self.recipient or alternative,
-                    via=self.get_kind_display()
+                return _("{name} (via {via})").format(
+                    name=self.recipient or alternative, via=self.get_kind_display()
                 )
-            return make_address(self.recipient_email,
-                                self.recipient or alternative)
+            return make_address(self.recipient_email, self.recipient or alternative)
 
         recipient = self.recipient or self.request.user.get_full_name()
         if self.is_not_email:
-            return _('{name} (via {via})').format(
-                name=recipient,
-                via=self.get_kind_display()
+            return _("{name} (via {via})").format(
+                name=recipient, via=self.get_kind_display()
             )
         email = self.recipient_email or self.request.secret_address
         return make_address(email, recipient)
@@ -284,16 +273,16 @@ class FoiMessage(models.Model):
             return format_html(
                 '<a href="{url}">{name}</a>',
                 url=self.recipient_public_body.get_absolute_url(),
-                name=self.recipient_public_body.name
+                name=self.recipient_public_body.name,
             )
         else:
             return self.recipient
 
     def get_formatted(self, attachments):
-        return render_to_string('foirequest/emails/formatted_message.txt', {
-                'message': self,
-                'attachments': attachments
-        })
+        return render_to_string(
+            "foirequest/emails/formatted_message.txt",
+            {"message": self, "attachments": attachments},
+        )
 
     def get_quoted(self):
         return "\n".join([">%s" % x for x in self.plaintext.splitlines()])
@@ -303,14 +292,14 @@ class FoiMessage(models.Model):
 
     def get_css_class(self):
         if self.is_escalation:
-            return 'is-escalation'
+            return "is-escalation"
         if self.is_mediator:
-            return 'is-mediator'
+            return "is-mediator"
         if self.is_response:
-            return 'is-response'
+            return "is-response"
         if self.is_escalation_message:
-            return 'is-escalation'
-        return 'is-message'
+            return "is-escalation"
+        return "is-message"
 
     @property
     def is_escalation_message(self):
@@ -327,15 +316,17 @@ class FoiMessage(models.Model):
     @property
     def is_default_recipient(self):
         return (
-            self.is_email and not self.is_response and
-            self.request.public_body.email == self.recipient_email
+            self.is_email
+            and not self.is_response
+            and self.request.public_body.email == self.recipient_email
         )
 
     @property
     def is_default_sender(self):
         return (
-            self.is_email and self.is_response and
-            self.request.public_body.email == self.sender_email
+            self.is_email
+            and self.is_response
+            and self.request.public_body.email == self.sender_email
         )
 
     def is_mediator_message(self, pb_id):
@@ -353,11 +344,12 @@ class FoiMessage(models.Model):
     def sender(self):
         if self.sender_user:
             return self.sender_user.display_name()
-        if settings.FROIDE_CONFIG.get(
-                "public_body_officials_email_public", False):
+        if settings.FROIDE_CONFIG.get("public_body_officials_email_public", False):
             return make_address(self.sender_email, self.sender_name)
-        if settings.FROIDE_CONFIG.get(
-                "public_body_officials_public", False) and self.sender_name:
+        if (
+            settings.FROIDE_CONFIG.get("public_body_officials_public", False)
+            and self.sender_name
+        ):
             return self.sender_name
         else:
             if self.sender_public_body:
@@ -368,14 +360,13 @@ class FoiMessage(models.Model):
     def user_real_sender(self):
         if self.sender_user:
             return self.sender_user.get_full_name()
-        if settings.FROIDE_CONFIG.get(
-                "public_body_officials_email_public", False):
+        if settings.FROIDE_CONFIG.get("public_body_officials_email_public", False):
             return make_address(self.sender_email, self.sender_name)
         if self.sender_name:
             return self.sender_name
         if self.sender_public_body:
             return self.sender_public_body.name
-        return ''
+        return ""
 
     @property
     def real_sender(self):
@@ -385,9 +376,9 @@ class FoiMessage(models.Model):
         if not name and self.sender_public_body:
             name = self.sender_public_body.name
         if self.sender_email:
-            name += ' <%s>' % self.sender_email
+            name += " <%s>" % self.sender_email
         if self.sender_public_body:
-            name += ' (%s)' % self.sender_public_body.name
+            name += " (%s)" % self.sender_public_body.name
         return name
 
     @property
@@ -398,15 +389,15 @@ class FoiMessage(models.Model):
             pb = self.sender_public_body.name
         if email:
             if pb:
-                return '%s (%s)' % (email, pb)
+                return "%s (%s)" % (email, pb)
             return email
         else:
             return self.real_sender
 
     @property
     def attachments(self):
-        if not hasattr(self, '_attachments') or self._attachments is None:
-            self._attachments = list(self.foiattachment_set.all().order_by('id'))
+        if not hasattr(self, "_attachments") or self._attachments is None:
+            self._attachments = list(self.foiattachment_set.all().order_by("id"))
         return self._attachments
 
     def get_mime_attachments(self, attachments=None):
@@ -419,9 +410,7 @@ class FoiMessage(models.Model):
 
     def get_subject(self, user=None):
         if self.subject_redacted is None:
-            self.subject_redacted = redact_subject(
-                self.subject, user=self.request.user
-            )
+            self.subject_redacted = redact_subject(self.subject, user=self.request.user)
             self.save()
         return self.subject_redacted
 
@@ -430,12 +419,10 @@ class FoiMessage(models.Model):
         self.content_rendered_anon = None
 
     def get_content(self):
-        self.plaintext = self.plaintext or ''
+        self.plaintext = self.plaintext or ""
         if self.plaintext_redacted is None:
             self.plaintext_redacted = redact_plaintext(
-                self.plaintext,
-                redact_closing=self.is_response,
-                user=self.request.user
+                self.plaintext, redact_closing=self.is_response, user=self.request.user
             )
             self.clear_render_cache()
             self.save()
@@ -447,36 +434,35 @@ class FoiMessage(models.Model):
 
     def clean(self):
         from django.core.exceptions import ValidationError
+
         if self.sender_user and self.sender_public_body:
-            raise ValidationError(
-                    'Message may not be from user and public body')
+            raise ValidationError("Message may not be from user and public body")
 
     @classmethod
     def get_throttle_config(cls):
-        return settings.FROIDE_CONFIG.get('message_throttle', None)
+        return settings.FROIDE_CONFIG.get("message_throttle", None)
 
     def get_postal_attachment_form(self):
         from ..forms import get_postal_attachment_form
+
         return get_postal_attachment_form(foimessage=self)
 
     def get_public_body_sender_form(self):
         from ..forms import get_message_sender_form
+
         return get_message_sender_form(foimessage=self)
 
     def get_public_body_recipient_form(self):
         from ..forms import get_message_recipient_form
+
         return get_message_recipient_form(foimessage=self)
 
     def make_message_id(self):
         assert self.id is not None
         assert self.timestamp is not None
         domain = settings.FOI_MAIL_SERVER_HOST
-        assert domain and '.' in domain
-        return '<foimsg.{}.{}@{}>'.format(
-            self.id,
-            self.timestamp.timestamp(),
-            domain
-        )
+        assert domain and "." in domain
+        return "<foimsg.{}.{}@{}>".format(self.id, self.timestamp.timestamp(), domain)
 
     def as_mime_message(self):
         klass = EmailMessage
@@ -484,18 +470,14 @@ class FoiMessage(models.Model):
             klass = EmailMultiAlternatives
 
         headers = {
-            'Date': formatdate(
-                int(calendar.timegm(self.timestamp.timetuple()))
-            ),
-            'Message-ID': self.email_message_id,
-            'X-Froide-Hint': 'replica',
-            'X-Froide-Message-Id': self.get_absolute_domain_short_url(),
+            "Date": formatdate(int(calendar.timegm(self.timestamp.timetuple()))),
+            "Message-ID": self.email_message_id,
+            "X-Froide-Hint": "replica",
+            "X-Froide-Message-Id": self.get_absolute_domain_short_url(),
         }
 
         if not self.is_response:
-            headers.update({
-                'Reply-To': self.sender_email
-            })
+            headers.update({"Reply-To": self.sender_email})
 
         email = klass(
             self.subject,
@@ -519,14 +501,14 @@ class FoiMessage(models.Model):
         return self.get_delivery_status() is not None
 
     def delete_delivery_status(self):
-        delattr(self, '_delivery_status')
+        delattr(self, "_delivery_status")
         ds = self.get_delivery_status()
         if ds is not None:
             ds.delete()
         self._delivery_status = None
 
     def get_delivery_status(self):
-        if hasattr(self, '_delivery_status'):
+        if hasattr(self, "_delivery_status"):
             return self._delivery_status
         try:
             self._delivery_status = self.deliverystatus
@@ -544,15 +526,15 @@ class FoiMessage(models.Model):
         from ..tasks import check_delivery_status
 
         report = get_delivery_report(
-            self.sender_email, self.recipient_email, self.timestamp,
-            extended=extended
+            self.sender_email, self.recipient_email, self.timestamp, extended=extended
         )
         if report is None:
             if count is None or count > 5:
                 return
             count += 1
-            check_delivery_status.apply_async((self.id,), {'count': count},
-                                              countdown=5**count * 60)
+            check_delivery_status.apply_async(
+                (self.id,), {"count": count}, countdown=5 ** count * 60
+            )
             return
 
         if not self.email_message_id and report.message_id:
@@ -565,7 +547,7 @@ class FoiMessage(models.Model):
                 log=report.log,
                 status=report.status,
                 last_update=timezone.now(),
-            )
+            ),
         )
         if count is None or count > 5:
             return
@@ -573,9 +555,7 @@ class FoiMessage(models.Model):
         count += 1
         if not ds.is_log_status_final():
             check_delivery_status.apply_async(
-                (self.id,),
-                {'count': count},
-                countdown=5**count * 60
+                (self.id,), {"count": count}, countdown=5 ** count * 60
             )
 
     def send(self, **kwargs):
@@ -590,24 +570,24 @@ class FoiMessage(models.Model):
         from ..message_handlers import resend_message
         from ..utils import MailAttachmentSizeChecker
 
-        if 'attachments' not in kwargs:
+        if "attachments" not in kwargs:
             files = self.get_mime_attachments()
             att_gen = MailAttachmentSizeChecker(files)
-            kwargs['attachments'] = list(att_gen)
+            kwargs["attachments"] = list(att_gen)
 
         resend_message(self, **kwargs)
 
 
 class Delivery(models.TextChoices):
-    STATUS_UNKNOWN = ('unknown', _('unknown'))
-    STATUS_SENDING = ('sending', _('sending'))
-    STATUS_SENT = ('sent', _('sent'))
-    STATUS_RECEIVED = ('received', _('received'))
-    STATUS_READ = ('read', _('read'))
-    STATUS_DEFERRED = ('deferred', _('deferred'))
-    STATUS_BOUNCED = ('bounced', _('bounced'))
-    STATUS_EXPIRED = ('expired', _('expired'))
-    STATUS_FAILED = ('failed', _('failed'))
+    STATUS_UNKNOWN = ("unknown", _("unknown"))
+    STATUS_SENDING = ("sending", _("sending"))
+    STATUS_SENT = ("sent", _("sent"))
+    STATUS_RECEIVED = ("received", _("received"))
+    STATUS_READ = ("read", _("read"))
+    STATUS_DEFERRED = ("deferred", _("deferred"))
+    STATUS_BOUNCED = ("bounced", _("bounced"))
+    STATUS_EXPIRED = ("expired", _("expired"))
+    STATUS_FAILED = ("failed", _("failed"))
 
 
 class DeliveryStatus(models.Model):
@@ -618,45 +598,39 @@ class DeliveryStatus(models.Model):
         Delivery.STATUS_READ,
         Delivery.STATUS_BOUNCED,
         Delivery.STATUS_EXPIRED,
-        Delivery.STATUS_FAILED
+        Delivery.STATUS_FAILED,
     )
 
     message = models.OneToOneField(FoiMessage, on_delete=models.CASCADE)
-    status = models.CharField(
-        choices=Delivery.choices,
-        blank=True,
-        max_length=32
-    )
+    status = models.CharField(choices=Delivery.choices, blank=True, max_length=32)
     retry_count = models.PositiveIntegerField(default=0)
     log = models.TextField(blank=True)
     last_update = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        get_latest_by = 'last_update'
-        ordering = ('last_update',)
-        verbose_name = _('delivery status')
-        verbose_name_plural = _('delivery statii')
+        get_latest_by = "last_update"
+        ordering = ("last_update",)
+        verbose_name = _("delivery status")
+        verbose_name_plural = _("delivery statii")
 
     def __str__(self):
-        return '%s: %s' % (self.message, self.status)
+        return "%s: %s" % (self.message, self.status)
 
     def is_sent(self):
         return self.status in (
             Delivery.STATUS_SENT,
             Delivery.STATUS_RECEIVED,
-            Delivery.STATUS_READ
+            Delivery.STATUS_READ,
         )
 
     def is_pending(self):
-        return self.status in (
-            Delivery.STATUS_DEFERRED, Delivery.STATUS_SENDING
-        )
+        return self.status in (Delivery.STATUS_DEFERRED, Delivery.STATUS_SENDING)
 
     def is_failed(self):
         return self.status in (
             Delivery.STATUS_BOUNCED,
             Delivery.STATUS_EXPIRED,
-            Delivery.STATUS_FAILED
+            Delivery.STATUS_FAILED,
         )
 
     def is_log_status_final(self):

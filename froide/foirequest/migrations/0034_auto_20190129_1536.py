@@ -7,18 +7,18 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0033_requestdraft_flags'),
+        ("foirequest", "0033_requestdraft_flags"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foiattachment',
-            name='timestamp',
+            model_name="foiattachment",
+            name="timestamp",
             field=models.DateTimeField(default=django.utils.timezone.now, null=True),
         ),
         migrations.AlterField(
-            model_name='foimessage',
-            name='is_response',
-            field=models.BooleanField(default=True, verbose_name='response?'),
+            model_name="foimessage",
+            name="is_response",
+            field=models.BooleanField(default=True, verbose_name="response?"),
         ),
     ]

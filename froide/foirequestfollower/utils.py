@@ -20,51 +20,53 @@ Comment = get_model()
 
 # Interesting events
 # message sent/received are already in instant updates
-INTERESTING_EVENTS = set(EVENT_DETAILS.keys()) - set([
-    FoiEvent.EVENTS.MESSAGE_RECEIVED,
-    FoiEvent.EVENTS.MESSAGE_SENT,
-])
-COMBINE_EVENTS = set([
-    FoiEvent.EVENTS.SET_SUMMARY,
-    FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
-    FoiEvent.EVENTS.STATUS_CHANGED
-])
+INTERESTING_EVENTS = set(EVENT_DETAILS.keys()) - set(
+    [
+        FoiEvent.EVENTS.MESSAGE_RECEIVED,
+        FoiEvent.EVENTS.MESSAGE_SENT,
+    ]
+)
+COMBINE_EVENTS = set(
+    [
+        FoiEvent.EVENTS.SET_SUMMARY,
+        FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
+        FoiEvent.EVENTS.STATUS_CHANGED,
+    ]
+)
 
 
 def add_comment_updates(updates, since):
     message_type = ContentType.objects.get_for_model(FoiMessage)
 
-    comments = Comment.objects.filter(
-        content_type=message_type,
-        submit_date__gte=since
-    )
+    comments = Comment.objects.filter(content_type=message_type, submit_date__gte=since)
 
     for comment in comments:
         try:
-            message = FoiMessage.objects.select_related(
-                'request').get(pk=comment.object_pk)
+            message = FoiMessage.objects.select_related("request").get(
+                pk=comment.object_pk
+            )
         except FoiMessage.DoesNotExist:
             continue
 
         time = formats.date_format(
-            timezone.localtime(comment.submit_date),
-            "TIME_FORMAT"
+            timezone.localtime(comment.submit_date), "TIME_FORMAT"
         )
-        updates[message.request].append((
-            comment.submit_date,
-            _("%(time)s: New comment by %(name)s") % {
-                "time": time,
-                "name": comment.user_name
-            },
-            comment.user_id
-        ))
+        updates[message.request].append(
+            (
+                comment.submit_date,
+                _("%(time)s: New comment by %(name)s")
+                % {"time": time, "name": comment.user_name},
+                comment.user_id,
+            )
+        )
 
 
 def add_event_updates(updates, since):
-    events = FoiEvent.objects.filter(
-        timestamp__gte=since,
-        event_name__in=INTERESTING_EVENTS
-    ).select_related("request").order_by('-timestamp')
+    events = (
+        FoiEvent.objects.filter(timestamp__gte=since, event_name__in=INTERESTING_EVENTS)
+        .select_related("request")
+        .order_by("-timestamp")
+    )
     already_seen = defaultdict(set)
     for event in events:
         if event.event_name in COMBINE_EVENTS:
@@ -73,18 +75,14 @@ def add_event_updates(updates, since):
                 continue
             already_seen[event.request_id].add(event.event_name)
 
-        time = formats.date_format(
-            timezone.localtime(event.timestamp),
-            "TIME_FORMAT"
+        time = formats.date_format(timezone.localtime(event.timestamp), "TIME_FORMAT")
+        updates[event.request].append(
+            (
+                event.timestamp,
+                _("%(time)s: %(text)s") % {"time": time, "text": event.as_text()},
+                event.user_id,
+            )
         )
-        updates[event.request].append((
-            event.timestamp,
-            _("%(time)s: %(text)s") % {
-                "time": time,
-                "text": event.as_text()
-            },
-            event.user_id
-        ))
 
 
 def send_requester_update(updates):
@@ -98,10 +96,9 @@ def send_requester_update(updates):
 
         sorted_events = sorted(update_list, key=lambda x: x[0])
 
-        requester_updates[request.user].append({
-            'request': request,
-            'events': [x[1] for x in sorted_events]
-        })
+        requester_updates[request.user].append(
+            {"request": request, "events": [x[1] for x in sorted_events]}
+        )
 
     for user, request_list in requester_updates.items():
         send_update(request_list, user=user)
@@ -116,16 +113,19 @@ def get_follower_updates(updates):
             continue
         update_list.sort(key=lambda x: x[0])
         followers = FoiRequestFollower.objects.filter(
-                request=request, confirmed=True).select_related('user')
+            request=request, confirmed=True
+        ).select_related("user")
         for follower in followers:
             if not any([x for x in update_list if x[2] != follower.user_id]):
                 continue
             ident = follower.user or follower.email
-            follower_updates[ident].append({
-                'request': request,
-                'unfollow_link': follower.get_unfollow_link(),
-                'events': [x[1] for x in update_list]
-            })
+            follower_updates[ident].append(
+                {
+                    "request": request,
+                    "unfollow_link": follower.get_unfollow_link(),
+                    "events": [x[1] for x in update_list],
+                }
+            )
 
     return follower_updates
 
@@ -159,9 +159,7 @@ def handle_bounce(sender, bounce, should_deactivate=False, **kwargs):
     if not should_deactivate:
         return
 
-    FoiRequestFollower.objects.filter(
-        email=bounce.email
-    ).delete()
+    FoiRequestFollower.objects.filter(email=bounce.email).delete()
 
 
 def handle_unsubscribe(sender, email, reference, **kwargs):

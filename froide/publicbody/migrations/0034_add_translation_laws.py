@@ -9,32 +9,72 @@ import parler.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0033_auto_20210203_1554'),
+        ("publicbody", "0033_auto_20210203_1554"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FoiLawTranslation',
+            name="FoiLawTranslation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('language_code', models.CharField(db_index=True, max_length=15, verbose_name='Language')),
-                ('name', models.CharField(max_length=255, verbose_name='Name')),
-                ('slug', models.SlugField(max_length=255, verbose_name='Slug')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('long_description', models.TextField(blank=True, verbose_name='Website Text')),
-                ('request_note', models.TextField(blank=True, verbose_name='request note')),
-                ('letter_start', models.TextField(blank=True, verbose_name='Start of Letter')),
-                ('letter_end', models.TextField(blank=True, verbose_name='End of Letter')),
-                ('refusal_reasons', models.TextField(blank=True, verbose_name='refusal reasons')),
-                ('master', parler.fields.TranslationsForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='translations', to='publicbody.foilaw')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "language_code",
+                    models.CharField(
+                        db_index=True, max_length=15, verbose_name="Language"
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, verbose_name="Name")),
+                ("slug", models.SlugField(max_length=255, verbose_name="Slug")),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                (
+                    "long_description",
+                    models.TextField(blank=True, verbose_name="Website Text"),
+                ),
+                (
+                    "request_note",
+                    models.TextField(blank=True, verbose_name="request note"),
+                ),
+                (
+                    "letter_start",
+                    models.TextField(blank=True, verbose_name="Start of Letter"),
+                ),
+                (
+                    "letter_end",
+                    models.TextField(blank=True, verbose_name="End of Letter"),
+                ),
+                (
+                    "refusal_reasons",
+                    models.TextField(blank=True, verbose_name="refusal reasons"),
+                ),
+                (
+                    "master",
+                    parler.fields.TranslationsForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="translations",
+                        to="publicbody.foilaw",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Freedom of Information Law Translation',
-                'db_table': 'publicbody_foilaw_translation',
-                'db_tablespace': '',
-                'managed': True,
-                'default_permissions': (),
-                'unique_together': {('language_code', 'master')},
+                "verbose_name": "Freedom of Information Law Translation",
+                "db_table": "publicbody_foilaw_translation",
+                "db_tablespace": "",
+                "managed": True,
+                "default_permissions": (),
+                "unique_together": {("language_code", "master")},
             },
             bases=(parler.models.TranslatedFieldsModelMixin, models.Model),
         ),

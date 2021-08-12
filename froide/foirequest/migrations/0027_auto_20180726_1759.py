@@ -9,13 +9,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0026_deliverystatus_retry_count'),
+        ("foirequest", "0026_deliverystatus_retry_count"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='foiattachment',
-            name='document',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='original', to='document.Document'),
+            model_name="foiattachment",
+            name="document",
+            field=models.OneToOneField(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="original",
+                to="document.Document",
+            ),
         ),
     ]

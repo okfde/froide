@@ -6,18 +6,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0026_auto_20201221_1953'),
+        ("account", "0026_auto_20201221_1953"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='application',
-            name='algorithm',
-            field=models.CharField(blank=True, choices=[('', 'No OIDC support'), ('RS256', 'RSA with SHA-2 256'), ('HS256', 'HMAC with SHA-2 256')], default='', max_length=5),
+            model_name="application",
+            name="algorithm",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("", "No OIDC support"),
+                    ("RS256", "RSA with SHA-2 256"),
+                    ("HS256", "HMAC with SHA-2 256"),
+                ],
+                default="",
+                max_length=5,
+            ),
         ),
         migrations.AlterField(
-            model_name='application',
-            name='authorization_grant_type',
-            field=models.CharField(choices=[('authorization-code', 'Authorization code'), ('implicit', 'Implicit'), ('password', 'Resource owner password-based'), ('client-credentials', 'Client credentials'), ('openid-hybrid', 'OpenID connect hybrid')], max_length=32),
+            model_name="application",
+            name="authorization_grant_type",
+            field=models.CharField(
+                choices=[
+                    ("authorization-code", "Authorization code"),
+                    ("implicit", "Implicit"),
+                    ("password", "Resource owner password-based"),
+                    ("client-credentials", "Client credentials"),
+                    ("openid-hybrid", "OpenID connect hybrid"),
+                ],
+                max_length=32,
+            ),
         ),
     ]

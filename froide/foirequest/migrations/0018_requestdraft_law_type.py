@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0017_auto_20180405_1626'),
+        ("foirequest", "0017_auto_20180405_1626"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='requestdraft',
-            name='law_type',
+            model_name="requestdraft",
+            name="law_type",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

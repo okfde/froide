@@ -9,33 +9,37 @@ import filingcabinet.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0001_initial'),
+        ("document", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='pdf_file',
-            field=models.FileField(blank=True, max_length=255, upload_to=filingcabinet.models.get_document_path),
+            model_name="document",
+            name="pdf_file",
+            field=models.FileField(
+                blank=True,
+                max_length=255,
+                upload_to=filingcabinet.models.get_document_path,
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image',
-            field=models.ImageField(max_length=255, upload_to=''),
+            model_name="page",
+            name="image",
+            field=models.ImageField(max_length=255, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_large',
-            field=models.ImageField(max_length=255, upload_to=''),
+            model_name="page",
+            name="image_large",
+            field=models.ImageField(max_length=255, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_normal',
-            field=models.ImageField(max_length=255, upload_to=''),
+            model_name="page",
+            name="image_normal",
+            field=models.ImageField(max_length=255, upload_to=""),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_thumbnail',
-            field=models.ImageField(max_length=255, upload_to=''),
+            model_name="page",
+            name="image_thumbnail",
+            field=models.ImageField(max_length=255, upload_to=""),
         ),
     ]

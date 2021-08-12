@@ -26,16 +26,16 @@ class ApiTest(TestCase):
         self.site = factories.make_world()
 
     def test_list(self):
-        response = self.client.get('/api/v1/request/')
+        response = self.client.get("/api/v1/request/")
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/api/v1/message/')
+        response = self.client.get("/api/v1/message/")
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/api/v1/attachment/')
+        response = self.client.get("/api/v1/attachment/")
         self.assertEqual(response.status_code, 200)
 
     def test_detail(self):
         req = FoiRequest.objects.all()[0]
-        response = self.client.get('/api/v1/request/%d/' % req.pk)
+        response = self.client.get("/api/v1/request/%d/" % req.pk)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, req.title)
         self.assertNotContains(response, req.secret_address)
@@ -45,13 +45,10 @@ class ApiTest(TestCase):
         mes = factories.FoiMessageFactory.create(
             request=req,
             subject=req.user.get_full_name(),
-            plaintext='Hallo %s,\n%s\n%s' % (
-                req.user.get_full_name(),
-                req.secret_address,
-                req.user.address
-            )
+            plaintext="Hallo %s,\n%s\n%s"
+            % (req.user.get_full_name(), req.secret_address, req.user.address),
         )
-        response = self.client.get('/api/v1/message/%d/' % mes.pk)
+        response = self.client.get("/api/v1/message/%d/" % mes.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, req.user.get_full_name())
         self.assertNotContains(response, req.secret_address)
@@ -60,77 +57,70 @@ class ApiTest(TestCase):
         att = FoiAttachment.objects.all()[0]
         att.approved = True
         att.save()
-        response = self.client.get('/api/v1/attachment/%d/' % att.pk)
+        response = self.client.get("/api/v1/attachment/%d/" % att.pk)
         self.assertEqual(response.status_code, 200)
 
     def test_permissions(self):
         req = factories.FoiRequestFactory.create(
-            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER, site=self.site)
+            visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER, site=self.site
+        )
 
-        response = self.client.get('/api/v1/request/%d/' % req.pk)
+        response = self.client.get("/api/v1/request/%d/" % req.pk)
         self.assertEqual(response.status_code, 404)
 
         mes = factories.FoiMessageFactory.create(request=req)
-        response = self.client.get('/api/v1/message/%d/' % mes.pk)
+        response = self.client.get("/api/v1/message/%d/" % mes.pk)
         self.assertEqual(response.status_code, 404)
 
         att = factories.FoiAttachmentFactory.create(belongs_to=mes)
         att.approved = True
         att.save()
-        response = self.client.get('/api/v1/attachment/%d/' % att.pk)
+        response = self.client.get("/api/v1/attachment/%d/" % att.pk)
         self.assertEqual(response.status_code, 404)
 
     def test_content_hidden(self):
-        marker = 'TESTMARKER'
-        mes = factories.FoiMessageFactory.create(
-            content_hidden=True,
-            plaintext=marker
-        )
-        response = self.client.get('/api/v1/message/%d/' % mes.pk)
+        marker = "TESTMARKER"
+        mes = factories.FoiMessageFactory.create(content_hidden=True, plaintext=marker)
+        response = self.client.get("/api/v1/message/%d/" % mes.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, marker)
 
     def test_username_hidden(self):
-        user = factories.UserFactory.create(
-            first_name='Reinhardt'
-        )
+        user = factories.UserFactory.create(first_name="Reinhardt")
         user.private = True
         user.save()
-        mes = factories.FoiMessageFactory.create(
-            content_hidden=True,
-            sender_user=user
-        )
-        response = self.client.get('/api/v1/message/%d/' % mes.pk)
+        mes = factories.FoiMessageFactory.create(content_hidden=True, sender_user=user)
+        response = self.client.get("/api/v1/message/%d/" % mes.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, user.username)
         self.assertNotContains(response, user.first_name)
 
     def test_search(self):
-        response = self.client.get('/api/v1/request/search/?q=Number')
+        response = self.client.get("/api/v1/request/search/?q=Number")
         self.assertEqual(response.status_code, 200)
 
     def test_search_similar(self):
         factories.delete_index()
-        search_url = '/api/v1/request/search/'
+        search_url = "/api/v1/request/search/"
         response = self.client.get(search_url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"objects":[]')
-        self.assertEqual(response['Content-Type'], 'application/json')
+        self.assertEqual(response["Content-Type"], "application/json")
         req = FoiRequest.objects.all()[0]
         factories.rebuild_index()
-        response = self.client.get('%s?%s' % (
-            search_url, urlencode({'q': req.title})
-        ))
+        response = self.client.get("%s?%s" % (search_url, urlencode({"q": req.title})))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'title')
-        self.assertContains(response, 'description')
+        self.assertContains(response, "title")
+        self.assertContains(response, "description")
 
 
-class OAuthAPIMixin():
+class OAuthAPIMixin:
     def setUp(self):
         factories.make_world()
-        self.test_user = User.objects.get(username='dummy')
-        self.dev_user = User.objects.create_user("dev@example.com", "dev_user", "123456")
+        self.test_user = User.objects.get(username="dummy")
+        self.dev_user = User.objects.create_user(
+            "dev@example.com", "dev_user", "123456"
+        )
 
         self.application = Application.objects.create(
             name="Test Application",
@@ -145,34 +135,31 @@ class OAuthAPIMixin():
             scope="read:user",
             expires=timezone.now() + timedelta(seconds=300),
             token="secret-access-token-key",
-            application=self.application
+            application=self.application,
         )
 
         self.req = factories.FoiRequestFactory.create(
             visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER,
             user=self.test_user,
-            title='permissions required'
+            title="permissions required",
         )
-        self.mes = factories.FoiMessageFactory.create(
-            request=self.req
-        )
+        self.mes = factories.FoiMessageFactory.create(request=self.req)
         self.att = factories.FoiAttachmentFactory.create(
-            belongs_to=self.mes,
-            approved=False
+            belongs_to=self.mes, approved=False
         )
         self.att2 = factories.FoiAttachmentFactory.create(
-            belongs_to=self.mes,
-            approved=True
+            belongs_to=self.mes, approved=True
         )
         factories.FoiRequestFactory.create(
             visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER,
             user=self.dev_user,
-            title='never shown'
+            title="never shown",
         )
         self.pb = PublicBody.objects.all()[0]
-        self.request_list_url = reverse('api:request-list')
-        self.message_detail_url = reverse('api:message-detail',
-                                          kwargs={'pk': self.mes.pk})
+        self.request_list_url = reverse("api:request-list")
+        self.message_detail_url = reverse(
+            "api:message-detail", kwargs={"pk": self.mes.pk}
+        )
 
     def _create_authorization_header(self, token):
         return "Bearer {0}".format(token)
@@ -181,21 +168,29 @@ class OAuthAPIMixin():
         auth = self._create_authorization_header(self.access_token.token)
         response = self.client.get(url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
-        return response, json.loads(response.content.decode('utf-8'))
+        return response, json.loads(response.content.decode("utf-8"))
 
-    def api_post(self, url, data=''):
+    def api_post(self, url, data=""):
         auth = self._create_authorization_header(self.access_token.token)
-        response = self.client.post(url, json.dumps(data),
-            content_type="application/json", HTTP_AUTHORIZATION=auth)
-        return response, json.loads(response.content.decode('utf-8'))
+        response = self.client.post(
+            url,
+            json.dumps(data),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=auth,
+        )
+        return response, json.loads(response.content.decode("utf-8"))
 
-    def api_delete(self, url, data=''):
+    def api_delete(self, url, data=""):
         auth = self._create_authorization_header(self.access_token.token)
-        response = self.client.delete(url, json.dumps(data),
-            content_type="application/json", HTTP_AUTHORIZATION=auth)
+        response = self.client.delete(
+            url,
+            json.dumps(data),
+            content_type="application/json",
+            HTTP_AUTHORIZATION=auth,
+        )
         result = None
         if response.content:
-            result = json.loads(response.content.decode('utf-8'))
+            result = json.loads(response.content.decode("utf-8"))
         return response, result
 
 
@@ -204,51 +199,54 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(FoiRequest.objects.all().count(), 3)
         response = self.client.get(self.request_list_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(result['meta']['total_count'], 1)
+        result = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(result["meta"]["total_count"], 1)
 
     def test_list_private_requests_when_logged_in(self):
-        self.client.login(email=self.test_user.email, password='froide')
+        self.client.login(email=self.test_user.email, password="froide")
         response = self.client.get(self.request_list_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(result['meta']['total_count'], 2)
+        result = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(result["meta"]["total_count"], 2)
 
     def test_list_private_requests_without_scope(self):
         response, result = self.api_get(self.request_list_url)
-        self.assertEqual(result['meta']['total_count'], 1)
-        self.assertNotContains(response, 'permissions required')
-        self.assertNotContains(response, 'never shown')
+        self.assertEqual(result["meta"]["total_count"], 1)
+        self.assertNotContains(response, "permissions required")
+        self.assertNotContains(response, "never shown")
 
     def test_list_private_requests_with_scope(self):
         self.access_token.scope = "read:user read:request"
         self.access_token.save()
 
         response, result = self.api_get(self.request_list_url)
-        self.assertEqual(result['meta']['total_count'], 2)
-        self.assertContains(response, 'permissions required')
-        self.assertNotContains(response, 'never shown')
+        self.assertEqual(result["meta"]["total_count"], 2)
+        self.assertContains(response, "permissions required")
+        self.assertNotContains(response, "never shown")
 
     def test_filter_other_private_requests(self):
         self.access_token.scope = "read:user read:request"
         self.access_token.save()
 
-        response, result = self.api_get(self.request_list_url + '?user=%s' %
-                                        self.dev_user.pk)
-        self.assertEqual(result['meta']['total_count'], 0)
+        response, result = self.api_get(
+            self.request_list_url + "?user=%s" % self.dev_user.pk
+        )
+        self.assertEqual(result["meta"]["total_count"], 0)
 
     def test_filter_private_requests_without_scope(self):
-        response, result = self.api_get(self.request_list_url + '?user=%s' %
-                                        self.test_user.pk)
-        self.assertEqual(result['meta']['total_count'], 0)
+        response, result = self.api_get(
+            self.request_list_url + "?user=%s" % self.test_user.pk
+        )
+        self.assertEqual(result["meta"]["total_count"], 0)
 
     def test_filter_private_requests_with_scope(self):
         self.access_token.scope = "read:user read:request"
         self.access_token.save()
 
-        response, result = self.api_get(self.request_list_url + '?user=%s' %
-                                        self.test_user.pk)
-        self.assertEqual(result['meta']['total_count'], 1)
+        response, result = self.api_get(
+            self.request_list_url + "?user=%s" % self.test_user.pk
+        )
+        self.assertEqual(result["meta"]["total_count"], 1)
 
     def test_see_only_approved_attachments(self):
         self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
@@ -257,25 +255,25 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(FoiAttachment.objects.all().count(), 4)
         response = self.client.get(self.message_detail_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result['attachments']), 1)
+        result = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(len(result["attachments"]), 1)
 
     def test_see_only_approved_attachments_loggedin(self):
         self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         self.req.save()
 
-        self.client.login(email=self.test_user.email, password='froide')
+        self.client.login(email=self.test_user.email, password="froide")
         response = self.client.get(self.message_detail_url)
         self.assertEqual(response.status_code, 200)
-        result = json.loads(response.content.decode('utf-8'))
-        self.assertEqual(len(result['attachments']), 2)
+        result = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(len(result["attachments"]), 2)
 
     def test_see_only_approved_attachments_without_scope(self):
         self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         self.req.save()
 
         response, result = self.api_get(self.message_detail_url)
-        self.assertEqual(len(result['attachments']), 1)
+        self.assertEqual(len(result["attachments"]), 1)
 
     def test_see_only_approved_attachments_with_scope(self):
         self.req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
@@ -285,15 +283,17 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.access_token.save()
 
         response, result = self.api_get(self.message_detail_url)
-        self.assertEqual(len(result['attachments']), 2)
+        self.assertEqual(len(result["attachments"]), 2)
 
     def test_request_creation_not_loggedin(self):
         old_count = FoiRequest.objects.all().count()
-        response = self.client.post(self.request_list_url, json.dumps({
-            'subject': 'Test',
-            'body': 'Testing',
-            'publicbodies': [self.pb.pk]
-        }), content_type="application/json")
+        response = self.client.post(
+            self.request_list_url,
+            json.dumps(
+                {"subject": "Test", "body": "Testing", "publicbodies": [self.pb.pk]}
+            ),
+            content_type="application/json",
+        )
         self.assertEqual(response.status_code, 401)
         new_count = FoiRequest.objects.all().count()
         self.assertEqual(old_count, new_count)
@@ -301,11 +301,10 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
 
     def test_request_creation_without_scope(self):
         old_count = FoiRequest.objects.all().count()
-        response, result = self.api_post(self.request_list_url, {
-            'subject': 'Test',
-            'body': 'Testing',
-            'publicbodies': [self.pb.pk]
-        })
+        response, result = self.api_post(
+            self.request_list_url,
+            {"subject": "Test", "body": "Testing", "publicbodies": [self.pb.pk]},
+        )
         self.assertEqual(response.status_code, 403)
         new_count = FoiRequest.objects.all().count()
         self.assertEqual(old_count, new_count)
@@ -318,27 +317,25 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         old_count = FoiRequest.objects.all().count()
         mail.outbox = []
         data = {
-            'subject': 'OAUth-Test',
-            'body': 'Testing',
-            'publicbodies': [self.pb.pk],
-            'tags': ['test1', 'test2']
+            "subject": "OAUth-Test",
+            "body": "Testing",
+            "publicbodies": [self.pb.pk],
+            "tags": ["test1", "test2"],
         }
         response, result = self.api_post(self.request_list_url, data)
         self.assertEqual(response.status_code, 201)
         new_count = FoiRequest.objects.all().count()
         self.assertEqual(old_count, new_count - 1)
         self.assertEqual(len(mail.outbox), 2)
-        new_req = FoiRequest.objects.get(title='OAUth-Test')
-        self.assertEqual(set([t.name for t in new_req.tags.all()]),
-                         set(data['tags']))
+        new_req = FoiRequest.objects.get(title="OAUth-Test")
+        self.assertEqual(set([t.name for t in new_req.tags.all()]), set(data["tags"]))
 
         # Check throttling
         froide_config = dict(settings.FROIDE_CONFIG)
-        froide_config['request_throttle'] = [(1, 60), (5, 60 * 60)]
+        froide_config["request_throttle"] = [(1, 60), (5, 60 * 60)]
         with self.settings(FROIDE_CONFIG=froide_config):
-            response, result = self.api_post(self.request_list_url, {
-                'subject': 'Test',
-                'body': 'Testing',
-                'publicbodies': [self.pb.pk]
-            })
+            response, result = self.api_post(
+                self.request_list_url,
+                {"subject": "Test", "body": "Testing", "publicbodies": [self.pb.pk]},
+            )
         self.assertEqual(response.status_code, 429)

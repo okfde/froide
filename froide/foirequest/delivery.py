@@ -13,11 +13,12 @@ import pytz
 
 def get_delivery_report(sender, recipient, timestamp, extended=False):
     from django.conf import settings
-    reporter_path = settings.FROIDE_CONFIG.get('delivery_reporter', None)
+
+    reporter_path = settings.FROIDE_CONFIG.get("delivery_reporter", None)
     if not reporter_path:
         return
 
-    module, klass = reporter_path.rsplit('.', 1)
+    module, klass = reporter_path.rsplit(".", 1)
     module = importlib.import_module(module)
     reporter_klass = getattr(module, klass)
 
@@ -25,25 +26,26 @@ def get_delivery_report(sender, recipient, timestamp, extended=False):
     return reporter.find(sender, recipient, timestamp, extended=extended)
 
 
-DeliveryReport = namedtuple('DeliveryReport', ['log', 'time_diff',
-                                               'status', 'message_id'])
+DeliveryReport = namedtuple(
+    "DeliveryReport", ["log", "time_diff", "status", "message_id"]
+)
 
 
 class PostfixDeliveryReporter(object):
-    SENDER_RE = r'\s(?P<mail_id>\w+): from=<{sender}'
-    MESSAGE_ID_RE = r'{mail_id}: message-id=<(?P<message_id>[^>]+)>'
-    ALL_RE = r' {mail_id}: '
-    RECIPIENT_RE = r'{mail_id}: to=<{recipient}'
-    STATUS_RE = re.compile(r'status=(\w+)')
-    MAIL_ID_DELIMITER = re.compile(r'(: removed)')
-    TIMESTAMP_RE = re.compile(r'\w{3}\s+\d+\s+\d+:\d+:\d+')
-    TIME_PARSE_STR = '%b %d %H:%M:%S'
+    SENDER_RE = r"\s(?P<mail_id>\w+): from=<{sender}"
+    MESSAGE_ID_RE = r"{mail_id}: message-id=<(?P<message_id>[^>]+)>"
+    ALL_RE = r" {mail_id}: "
+    RECIPIENT_RE = r"{mail_id}: to=<{recipient}"
+    STATUS_RE = re.compile(r"status=(\w+)")
+    MAIL_ID_DELIMITER = re.compile(r"(: removed)")
+    TIMESTAMP_RE = re.compile(r"\w{3}\s+\d+\s+\d+:\d+:\d+")
+    TIME_PARSE_STR = "%b %d %H:%M:%S"
 
     LOG_FILES = [
-        '/var/log/mail.log',
-        '/var/log/mail.log.1',
+        "/var/log/mail.log",
+        "/var/log/mail.log.1",
     ]
-    LOG_FILES_EXTENDED = ['/var/log/mail.log.%d.gz' % i for i in range(2, 12)]
+    LOG_FILES_EXTENDED = ["/var/log/mail.log.%d.gz" % i for i in range(2, 12)]
 
     def __init__(self, time_zone=None):
         self.timezone = pytz.timezone(time_zone)
@@ -53,7 +55,7 @@ class PostfixDeliveryReporter(object):
             if not os.path.exists(filename):
                 continue
             try:
-                with open_func(filename, mode='rt', encoding='utf-8') as fp:
+                with open_func(filename, mode="rt", encoding="utf-8") as fp:
                     yield fp
             except IOError as e:
                 logging.exception(e)
@@ -68,7 +70,7 @@ class PostfixDeliveryReporter(object):
             yield self._get_openfunc(f), f
 
     def _get_openfunc(self, filename):
-        if filename.endswith('.gz'):
+        if filename.endswith(".gz"):
             return gzip.open
         return io.open
 
@@ -86,10 +88,11 @@ class PostfixDeliveryReporter(object):
         for line in fp:
             match = sender_re.search(line)
             if match:
-                mail_ids.add(match.group('mail_id'))
+                mail_ids.add(match.group("mail_id"))
         fp.seek(0)
-        mail_id_res = [re.compile(self.ALL_RE.format(mail_id=mail_id))
-                   for mail_id in mail_ids]
+        mail_id_res = [
+            re.compile(self.ALL_RE.format(mail_id=mail_id)) for mail_id in mail_ids
+        ]
         lines = defaultdict(list)
         for line in fp:
             for mail_id, mail_id_re in zip(mail_ids, mail_id_res):
@@ -99,7 +102,8 @@ class PostfixDeliveryReporter(object):
         candidates = []
         for mail_id in mail_ids:
             candidate = self.extract(
-                    lines[mail_id], mail_id, sender_re, recipient, timestamp)
+                lines[mail_id], mail_id, sender_re, recipient, timestamp
+            )
             if candidate is not None:
                 candidates.append(candidate)
 
@@ -111,24 +115,23 @@ class PostfixDeliveryReporter(object):
         return candidates[0]
 
     def extract(self, lines, mail_id, sender_re, recipient, timestamp):
-        '''
+        """
         postfix mail queue ids are not unique forever!
         In case they happen to appear twice
         in the same log file, split those sections apart.
-        '''
-        text = ''.join(lines)
+        """
+        text = "".join(lines)
         line_parts = self.MAIL_ID_DELIMITER.split(text)
-        texts = [''.join(x) for x in zip(
-            line_parts[::2], line_parts[1::2])
-        ]
+        texts = ["".join(x) for x in zip(line_parts[::2], line_parts[1::2])]
         for text in texts:
             result = self.extract_part(text, mail_id, sender_re, recipient, timestamp)
             if result:
                 return result
 
     def extract_part(self, text, mail_id, sender_re, recipient, timestamp):
-        recipient_re = re.compile(self.RECIPIENT_RE.format(
-                mail_id=mail_id, recipient=recipient))
+        recipient_re = re.compile(
+            self.RECIPIENT_RE.format(mail_id=mail_id, recipient=recipient)
+        )
         match = recipient_re.search(text)
         if match is None:
             return
@@ -148,7 +151,7 @@ class PostfixDeliveryReporter(object):
         match = message_id_re.search(text)
         message_id = None
         if match:
-            message_id = match.group('message_id')
+            message_id = match.group("message_id")
 
         return DeliveryReport(text, time_diff, status, message_id)
 
@@ -161,7 +164,9 @@ class PostfixDeliveryReporter(object):
         # since the default year is not a leap year
         date_struct = time.strptime(date_str, self.TIME_PARSE_STR)
         date_list = list(date_struct)
-        if date_list[0] == 1900:  # 1900 is the default year for time.strptime, hence no year was present in date_str
+        if (
+            date_list[0] == 1900
+        ):  # 1900 is the default year for time.strptime, hence no year was present in date_str
             date_list[0] = timestamp.year
         date = datetime.fromtimestamp(time.mktime(tuple(date_list)))
 

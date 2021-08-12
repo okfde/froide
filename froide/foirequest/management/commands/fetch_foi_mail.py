@@ -15,6 +15,7 @@ class Command(BaseCommand):
         try:
             count = fetch_and_process()
         except Exception as e:
-            raise CommandError('Fetch raised an error: %s' % e)
-        self.stdout.write('Successfully fetched and processed %(count)d mails\n' %
-                {"count": count})
+            raise CommandError("Fetch raised an error: %s" % e)
+        self.stdout.write(
+            "Successfully fetched and processed %(count)d mails\n" % {"count": count}
+        )

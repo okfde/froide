@@ -8,12 +8,21 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0007_auto_20171121_1134'),
+        ("foirequest", "0007_auto_20171121_1134"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='foirequest',
-            options={'get_latest_by': 'last_message', 'ordering': ('-last_message',), 'permissions': (('see_private', 'Can see private requests'), ('create_batch', 'Create batch requests')), 'verbose_name': 'Freedom of Information Request', 'verbose_name_plural': 'Freedom of Information Requests'},
+            name="foirequest",
+            options={
+                "get_latest_by": "last_message",
+                "ordering": ("-last_message",),
+                "permissions": (
+                    ("see_private", "Can see private requests"),
+                    ("create_batch", "Create batch requests"),
+                ),
+                "verbose_name": "Freedom of Information Request",
+                "verbose_name_plural": "Freedom of Information Requests",
+            },
         ),
     ]

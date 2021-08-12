@@ -12,71 +12,155 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0002_auto_20150616_2121'),
-        ('sites', '0002_alter_domain_unique'),
+        ("taggit", "0002_auto_20150616_2121"),
+        ("sites", "0002_alter_domain_unique"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('foirequest', '0006_auto_20171106_1503'),
+        ("foirequest", "0006_auto_20171106_1503"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FoiProject',
+            name="FoiProject",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255, verbose_name='Title')),
-                ('slug', models.SlugField(max_length=255, unique=True, verbose_name='Slug')),
-                ('description', models.TextField(blank=True, verbose_name='Description')),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('ready', 'ready'), ('complete', 'complete'), ('asleep', 'asleep')], default='pending', max_length=30)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('last_update', models.DateTimeField(auto_now_add=True)),
-                ('public', models.BooleanField(default=True, verbose_name='published?')),
-                ('request_count', models.IntegerField(default=0)),
-                ('reference', models.CharField(blank=True, max_length=255, verbose_name='Reference')),
-                ('site', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='sites.Site', verbose_name='Site')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255, verbose_name="Title")),
+                (
+                    "slug",
+                    models.SlugField(max_length=255, unique=True, verbose_name="Slug"),
+                ),
+                (
+                    "description",
+                    models.TextField(blank=True, verbose_name="Description"),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("ready", "ready"),
+                            ("complete", "complete"),
+                            ("asleep", "asleep"),
+                        ],
+                        default="pending",
+                        max_length=30,
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("last_update", models.DateTimeField(auto_now_add=True)),
+                (
+                    "public",
+                    models.BooleanField(default=True, verbose_name="published?"),
+                ),
+                ("request_count", models.IntegerField(default=0)),
+                (
+                    "reference",
+                    models.CharField(
+                        blank=True, max_length=255, verbose_name="Reference"
+                    ),
+                ),
+                (
+                    "site",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="sites.Site",
+                        verbose_name="Site",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'FOI Project',
-                'verbose_name_plural': 'FOI Projects',
-                'ordering': ('last_update',),
+                "verbose_name": "FOI Project",
+                "verbose_name_plural": "FOI Projects",
+                "ordering": ("last_update",),
             },
             managers=[
-                ('objects', froide.foirequest.models.project.FoiProjectManager()),
+                ("objects", froide.foirequest.models.project.FoiProjectManager()),
             ],
         ),
         migrations.CreateModel(
-            name='TaggedFoiProject',
+            name="TaggedFoiProject",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('content_object', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='foirequest.FoiProject')),
-                ('tag', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='foirequest_taggedfoiproject_items', to='taggit.Tag')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "content_object",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="foirequest.FoiProject",
+                    ),
+                ),
+                (
+                    "tag",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="foirequest_taggedfoiproject_items",
+                        to="taggit.Tag",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Project Tag',
-                'verbose_name_plural': 'Project Tags',
+                "verbose_name": "Project Tag",
+                "verbose_name_plural": "Project Tags",
             },
         ),
         migrations.AlterModelOptions(
-            name='requestdraft',
-            options={'ordering': ['-save_date'], 'verbose_name': 'request draft', 'verbose_name_plural': 'request drafts'},
+            name="requestdraft",
+            options={
+                "ordering": ["-save_date"],
+                "verbose_name": "request draft",
+                "verbose_name_plural": "request drafts",
+            },
         ),
         migrations.AddField(
-            model_name='foirequest',
-            name='project_order',
+            model_name="foirequest",
+            name="project_order",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='foiproject',
-            name='tags',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='foirequest.TaggedFoiProject', to='taggit.Tag', verbose_name='Tags'),
+            model_name="foiproject",
+            name="tags",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="foirequest.TaggedFoiProject",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
         migrations.AddField(
-            model_name='foiproject',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="foiproject",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
         migrations.AddField(
-            model_name='foirequest',
-            name='project',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='foirequest.FoiProject', verbose_name='project'),
+            model_name="foirequest",
+            name="project",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="foirequest.FoiProject",
+                verbose_name="project",
+            ),
         ),
     ]

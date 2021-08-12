@@ -7,6 +7,7 @@ class ElasticsearchPaginator(Paginator):
     Paginator that prevents two queries to ES (for count and objects)
     as ES gives count with objects
     """
+
     MAX_ES_OFFSET = 10000
 
     def page(self, number):
@@ -39,7 +40,4 @@ class ElasticsearchPaginator(Paginator):
 
     @property
     def formatted_count(self):
-        return '{}{}'.format(
-            intcomma(self.count),
-            '+' if self.has_more else ''
-        )
+        return "{}{}".format(intcomma(self.count), "+" if self.has_more else "")

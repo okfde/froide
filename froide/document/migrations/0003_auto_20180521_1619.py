@@ -8,13 +8,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0002_auto_20180521_1613'),
+        ("document", "0002_auto_20180521_1613"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='page',
-            old_name='image_thumbnail',
-            new_name='image_small',
+            model_name="page",
+            old_name="image_thumbnail",
+            new_name="image_small",
         ),
     ]

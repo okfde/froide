@@ -7,23 +7,23 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0023_auto_20200622_1312'),
+        ("document", "0023_auto_20200622_1312"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='document',
-            name='listed',
+            model_name="document",
+            name="listed",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='documentcollection',
-            name='listed',
+            model_name="documentcollection",
+            name="listed",
             field=models.BooleanField(default=True),
         ),
         migrations.AddField(
-            model_name='documentcollection',
-            name='uid',
+            model_name="documentcollection",
+            name="uid",
             field=models.UUIDField(default=uuid.uuid4, editable=False),
         ),
     ]

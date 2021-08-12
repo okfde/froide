@@ -9,13 +9,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('georegion', '0001_initial_squashed_0004_auto_20180307_2026'),
+        ("georegion", "0001_initial_squashed_0004_auto_20180307_2026"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='georegion',
-            name='part_of',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='georegion.GeoRegion', verbose_name='Part of'),
+            model_name="georegion",
+            name="part_of",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="georegion.GeoRegion",
+                verbose_name="Part of",
+            ),
         ),
     ]

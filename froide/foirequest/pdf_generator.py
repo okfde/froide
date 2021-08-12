@@ -5,6 +5,7 @@ from django.template.loader import render_to_string
 
 try:
     import weasyprint as wp
+
     PDF_EXPORT_AVAILABLE = True
 
 except ImportError:
@@ -22,7 +23,7 @@ class PDFGenerator(object):
 
     def get_pdf_bytes(self):
         if not PDF_EXPORT_AVAILABLE:
-            return b''
+            return b""
         return self.make_doc()
 
     def get_html_string(self):
@@ -35,38 +36,37 @@ class PDFGenerator(object):
         return doc.write_pdf()
 
     def get_context_data(self, obj):
-        return {
-            'object': obj,
-            'SITE_NAME': settings.SITE_NAME
-        }
+        return {"object": obj, "SITE_NAME": settings.SITE_NAME}
 
 
 class FoiRequestPDFGenerator(PDFGenerator):
-    template_name = 'foirequest/pdf/foirequest.html'
+    template_name = "foirequest/pdf/foirequest.html"
 
 
 class LetterPDFGenerator(PDFGenerator):
-    template_name = 'foirequest/pdf/message_letter.html'
+    template_name = "foirequest/pdf/message_letter.html"
 
     def get_publicbody(self):
         return self.obj.request.public_body
 
     def get_recipient_address(self):
         pb = self.get_publicbody()
-        pb_address = ''
+        pb_address = ""
         if pb is not None:
             address = pb.address.splitlines()
             pb_address = [pb.name] + address
-            pb_address = '\n'.join(pb_address)
+            pb_address = "\n".join(pb_address)
         return pb_address
 
     def get_context_data(self, obj):
         ctx = super().get_context_data(obj)
 
-        ctx.update({
-            'recipient_address': self.get_recipient_address(),
-            'text': self.get_letter_text(obj),
-        })
+        ctx.update(
+            {
+                "recipient_address": self.get_recipient_address(),
+                "text": self.get_letter_text(obj),
+            }
+        )
         return ctx
 
     def get_letter_text(self, message):

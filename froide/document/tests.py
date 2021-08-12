@@ -14,7 +14,7 @@ class DocumentFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Document
 
-    title = factory.Sequence(lambda n: 'Document {}'.format(n))
+    title = factory.Sequence(lambda n: "Document {}".format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.title))
     team = factory.SubFactory(TeamFactory)
 
@@ -23,7 +23,7 @@ class DocumentCollectionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DocumentCollection
 
-    title = factory.Sequence(lambda n: 'DocumentCollection {}'.format(n))
+    title = factory.Sequence(lambda n: "DocumentCollection {}".format(n))
     slug = factory.LazyAttribute(lambda o: slugify(o.title))
     user = factory.SubFactory(factories.UserFactory)
     team = factory.SubFactory(TeamFactory)
@@ -40,57 +40,50 @@ class DocumentAccessTest(TestCase):
         )
 
     def test_unlisted_document_needs_slug(self):
-        doc = DocumentFactory.create(
-            user=self.user,
-            public=True,
-            listed=False
-        )
+        doc = DocumentFactory.create(user=self.user, public=True, listed=False)
 
-        url = reverse('filingcabinet:document-detail_short', kwargs={
-            'pk': doc.pk,
-        })
+        url = reverse(
+            "filingcabinet:document-detail_short",
+            kwargs={
+                "pk": doc.pk,
+            },
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-        url = reverse('filingcabinet:document-detail', kwargs={
-            'pk': doc.pk,
-            'slug': doc.slug
-        })
+        url = reverse(
+            "filingcabinet:document-detail", kwargs={"pk": doc.pk, "slug": doc.slug}
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
         self.client.force_login(self.user)
-        url = reverse('filingcabinet:document-detail_short', kwargs={
-            'pk': doc.pk,
-        })
+        url = reverse(
+            "filingcabinet:document-detail_short",
+            kwargs={
+                "pk": doc.pk,
+            },
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
     def test_list_unlisted_document_api(self):
-        DocumentFactory.create(
-            user=self.user,
-            public=True,
-            listed=False
-        )
-        url = reverse('api:document-list')
+        DocumentFactory.create(user=self.user, public=True, listed=False)
+        url = reverse("api:document-list")
         response = self.client.get(url)
-        self.assertEqual(response.json()['meta']['total_count'], 0)
+        self.assertEqual(response.json()["meta"]["total_count"], 0)
         self.client.force_login(self.user)
         response = self.client.get(url)
-        self.assertEqual(response.json()['meta']['total_count'], 1)
+        self.assertEqual(response.json()["meta"]["total_count"], 1)
 
     def test_retrieve_unlisted_document_api(self):
-        doc = DocumentFactory.create(
-            user=self.user,
-            public=True,
-            listed=False
-        )
-        url = reverse('api:document-detail', kwargs={'pk': doc.pk})
+        doc = DocumentFactory.create(user=self.user, public=True, listed=False)
+        url = reverse("api:document-detail", kwargs={"pk": doc.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 401)
 
-        url = reverse('api:document-detail', kwargs={'pk': doc.pk})
-        response = self.client.get(url + '?uid=' + str(doc.uid))
+        url = reverse("api:document-detail", kwargs={"pk": doc.pk})
+        response = self.client.get(url + "?uid=" + str(doc.uid))
         self.assertEqual(response.status_code, 200)
 
         self.client.force_login(self.user)
@@ -99,57 +92,53 @@ class DocumentAccessTest(TestCase):
 
     def test_unlisted_documentcollection_needs_slug(self):
         collection = DocumentCollectionFactory.create(
-            user=self.user,
-            public=True,
-            listed=False
+            user=self.user, public=True, listed=False
         )
 
-        url = reverse('filingcabinet:document-collection_short', kwargs={
-            'pk': collection.pk,
-        })
+        url = reverse(
+            "filingcabinet:document-collection_short",
+            kwargs={
+                "pk": collection.pk,
+            },
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-        url = reverse('filingcabinet:document-collection', kwargs={
-            'pk': collection.pk,
-            'slug': collection.slug
-        })
+        url = reverse(
+            "filingcabinet:document-collection",
+            kwargs={"pk": collection.pk, "slug": collection.slug},
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
         self.client.force_login(self.user)
-        url = reverse('filingcabinet:document-collection_short', kwargs={
-            'pk': collection.pk,
-        })
+        url = reverse(
+            "filingcabinet:document-collection_short",
+            kwargs={
+                "pk": collection.pk,
+            },
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 302)
 
     def test_list_unlisted_documentcollection_api(self):
-        DocumentCollectionFactory.create(
-            user=self.user,
-            public=True,
-            listed=False
-        )
-        url = reverse('api:documentcollection-list')
+        DocumentCollectionFactory.create(user=self.user, public=True, listed=False)
+        url = reverse("api:documentcollection-list")
         response = self.client.get(url)
-        self.assertEqual(response.json()['meta']['total_count'], 0)
+        self.assertEqual(response.json()["meta"]["total_count"], 0)
         self.client.force_login(self.user)
         response = self.client.get(url)
-        self.assertEqual(response.json()['meta']['total_count'], 1)
+        self.assertEqual(response.json()["meta"]["total_count"], 1)
 
     def test_retrieve_unlisted_documentcollection_api(self):
         collection = DocumentCollectionFactory.create(
-            user=self.user,
-            public=True,
-            listed=False
+            user=self.user, public=True, listed=False
         )
-        url = reverse('api:documentcollection-detail', kwargs={
-            'pk': collection.pk
-        })
+        url = reverse("api:documentcollection-detail", kwargs={"pk": collection.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 401)
 
-        response = self.client.get(url + '?uid=' + str(collection.uid))
+        response = self.client.get(url + "?uid=" + str(collection.uid))
         self.assertEqual(response.status_code, 200)
 
         self.client.force_login(self.user)

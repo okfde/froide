@@ -7,13 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0045_auto_20200728_1537'),
+        ("foirequest", "0045_auto_20200728_1537"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foievent',
-            name='message',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='foirequest.FoiMessage'),
+            model_name="foievent",
+            name="message",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="foirequest.FoiMessage",
+            ),
         ),
     ]

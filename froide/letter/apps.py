@@ -3,5 +3,5 @@ from django.utils.translation import gettext_lazy as _
 
 
 class LetterConfig(AppConfig):
-    name = 'froide.letter'
-    verbose_name = _('Letter')
+    name = "froide.letter"
+    verbose_name = _("Letter")

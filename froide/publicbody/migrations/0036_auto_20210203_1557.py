@@ -6,40 +6,40 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0035_migrate_translatable_fields_foilaw'),
+        ("publicbody", "0035_migrate_translatable_fields_foilaw"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_description',
+            model_name="foilaw",
+            name="_description",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_letter_end',
+            model_name="foilaw",
+            name="_letter_end",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_letter_start',
+            model_name="foilaw",
+            name="_letter_start",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_long_description',
+            model_name="foilaw",
+            name="_long_description",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_name',
+            model_name="foilaw",
+            name="_name",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_refusal_reasons',
+            model_name="foilaw",
+            name="_refusal_reasons",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_request_note',
+            model_name="foilaw",
+            name="_request_note",
         ),
         migrations.RemoveField(
-            model_name='foilaw',
-            name='_slug',
+            model_name="foilaw",
+            name="_slug",
         ),
     ]

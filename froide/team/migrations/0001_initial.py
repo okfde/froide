@@ -18,33 +18,84 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Team',
+            name="Team",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("created", models.DateTimeField(default=django.utils.timezone.now)),
             ],
             options={
-                'verbose_name': 'team',
-                'verbose_name_plural': 'teams',
+                "verbose_name": "team",
+                "verbose_name_plural": "teams",
             },
         ),
         migrations.CreateModel(
-            name='TeamMembership',
+            name="TeamMembership",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email', models.CharField(blank=True, max_length=255)),
-                ('role', models.CharField(choices=[('owner', 'owner'), ('editor', 'editor'), ('viewer', 'viewer')], max_length=30)),
-                ('status', models.CharField(choices=[('inactive', 'inactive'), ('invited', 'invited'), ('active', 'active')], max_length=30)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now)),
-                ('updated', models.DateTimeField(default=django.utils.timezone.now)),
-                ('team', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='team.Team')),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("email", models.CharField(blank=True, max_length=255)),
+                (
+                    "role",
+                    models.CharField(
+                        choices=[
+                            ("owner", "owner"),
+                            ("editor", "editor"),
+                            ("viewer", "viewer"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("inactive", "inactive"),
+                            ("invited", "invited"),
+                            ("active", "active"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                ("created", models.DateTimeField(default=django.utils.timezone.now)),
+                ("updated", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "team",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="team.Team"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='team',
-            name='members',
-            field=models.ManyToManyField(through='team.TeamMembership', to=settings.AUTH_USER_MODEL),
+            model_name="team",
+            name="members",
+            field=models.ManyToManyField(
+                through="team.TeamMembership", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]

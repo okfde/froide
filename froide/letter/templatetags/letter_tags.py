@@ -6,7 +6,7 @@ from django.utils import timezone
 register = template.Library()
 
 
-@register.filter(name='deadline')
+@register.filter(name="deadline")
 def deadline(date, num_days):
     if date is None:
         return
@@ -14,7 +14,7 @@ def deadline(date, num_days):
     return date + days >= timezone.now().date()
 
 
-@register.filter(name='no_future')
+@register.filter(name="no_future")
 def no_future(date):
     if date is None:
         return

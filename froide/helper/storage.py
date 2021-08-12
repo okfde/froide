@@ -58,4 +58,4 @@ class HashedFilenameStorage(FileSystemStorage):
 
 def add_number_to_filename(filename, num):
     path, ext = os.path.splitext(filename)
-    return '%s_%d%s' % (path, num, ext)
+    return "%s_%d%s" % (path, num, ext)

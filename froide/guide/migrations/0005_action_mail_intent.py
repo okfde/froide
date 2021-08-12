@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('guide', '0004_guidance_notified'),
+        ("guide", "0004_guidance_notified"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='action',
-            name='mail_intent',
+            model_name="action",
+            name="mail_intent",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]

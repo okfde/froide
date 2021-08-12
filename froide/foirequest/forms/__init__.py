@@ -1,35 +1,51 @@
 from .request import (
     RequestForm,
     MakePublicBodySuggestionForm,
-    PublicBodySuggestionsForm, FoiRequestStatusForm,
-    ConcreteLawForm, TagFoiRequestForm,
-    ExtendDeadlineForm
+    PublicBodySuggestionsForm,
+    FoiRequestStatusForm,
+    ConcreteLawForm,
+    TagFoiRequestForm,
+    ExtendDeadlineForm,
 )
 from .message import (
-    SendMessageForm, EditMessageForm,
+    SendMessageForm,
+    EditMessageForm,
     MessagePublicBodySenderForm,
-    get_postal_reply_form, get_postal_message_form,
-    get_postal_attachment_form, get_send_message_form,
+    get_postal_reply_form,
+    get_postal_message_form,
+    get_postal_attachment_form,
+    get_send_message_form,
     get_escalation_message_form,
-    get_message_sender_form, get_message_recipient_form,
-    TransferUploadForm, RedactMessageForm,
-    PublicBodyUploader
+    get_message_sender_form,
+    get_message_recipient_form,
+    TransferUploadForm,
+    RedactMessageForm,
+    PublicBodyUploader,
 )
 from .postal import PostalUploadForm
 from .project import MakeProjectPublicForm
 
 __all__ = [
-    RequestForm, MakePublicBodySuggestionForm,
-    PublicBodySuggestionsForm, FoiRequestStatusForm,
-    ConcreteLawForm, TagFoiRequestForm, ExtendDeadlineForm,
-
-    SendMessageForm, EditMessageForm, MessagePublicBodySenderForm,
-    get_postal_reply_form, get_postal_message_form,
-    get_postal_attachment_form, get_send_message_form,
-    get_message_sender_form, get_message_recipient_form,
+    RequestForm,
+    MakePublicBodySuggestionForm,
+    PublicBodySuggestionsForm,
+    FoiRequestStatusForm,
+    ConcreteLawForm,
+    TagFoiRequestForm,
+    ExtendDeadlineForm,
+    SendMessageForm,
+    EditMessageForm,
+    MessagePublicBodySenderForm,
+    get_postal_reply_form,
+    get_postal_message_form,
+    get_postal_attachment_form,
+    get_send_message_form,
+    get_message_sender_form,
+    get_message_recipient_form,
     get_escalation_message_form,
-    TransferUploadForm, RedactMessageForm,
+    TransferUploadForm,
+    RedactMessageForm,
     PublicBodyUploader,
     PostalUploadForm,
-    MakeProjectPublicForm
+    MakeProjectPublicForm,
 ]

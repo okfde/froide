@@ -12,13 +12,11 @@ from froide.foirequest.auth import can_write_foirequest
 
 from .models import LetterTemplate
 from .forms import LetterForm
-from .utils import (
-    get_example_context, get_letter_generator, MessageSender
-)
+from .utils import get_example_context, get_letter_generator, MessageSender
 
 
 class LetterMixin(LoginRequiredMixin):
-    pk_url_kwarg = 'letter_id'
+    pk_url_kwarg = "letter_id"
     form_class = LetterForm
     model = LetterTemplate
 
@@ -33,9 +31,7 @@ class LetterMixin(LoginRequiredMixin):
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset=None)
-        self.message = get_object_or_404(
-            FoiMessage, id=self.kwargs['message_id']
-        )
+        self.message = get_object_or_404(FoiMessage, id=self.kwargs["message_id"])
         self.message_user = self.message.request.user
         if not can_write_foirequest(self.message.request, self.request):
             raise Http404
@@ -62,14 +58,13 @@ class LetterMixin(LoginRequiredMixin):
         foirequest = self.message.request
         try:
             sent_message = FoiMessage.objects.get(
-                request=foirequest,
-                tags=self.object.tag
+                request=foirequest, tags=self.object.tag
             )
             return redirect(
-                reverse('letter-sent', kwargs={
-                    'letter_id': self.object.id,
-                    'message_id': sent_message.id
-                })
+                reverse(
+                    "letter-sent",
+                    kwargs={"letter_id": self.object.id, "message_id": sent_message.id},
+                )
             )
         except (FoiMessage.DoesNotExist, FoiMessage.MultipleObjectsReturned):
             pass
@@ -77,84 +72,75 @@ class LetterMixin(LoginRequiredMixin):
     def get_form_kwargs(self):
         """Return the keyword arguments for instantiating the form."""
         kwargs = super().get_form_kwargs()
-        kwargs.update({
-            'user': self.message.request.user,
-            'message': self.message
-        })
+        kwargs.update({"user": self.message.request.user, "message": self.message})
         return kwargs
 
 
 class LetterView(LetterMixin, UpdateView):
-    template_name = 'letter/default.html'
+    template_name = "letter/default.html"
 
     def form_valid(self, form):
-        if self.request.POST.get('send'):
+        if self.request.POST.get("send"):
             return self.send_letter(form.cleaned_data)
-        return self.render_to_response(
-            self.get_context_data(form=form)
-        )
+        return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['message'] = self.message
-        context['foirequest'] = self.message.request
-        form = kwargs.get('form')
-        if self.request.method == 'POST' and form:
-            context['ready'] = form.is_valid() and not self.request.POST.get('edit')
-            context['preview_qs'] = urlencode(form.cleaned_data)
-        context['description'] = self.object.get_description({
-            'message': self.message,
-            'foirequest': self.message.request,
-        })
+        context["message"] = self.message
+        context["foirequest"] = self.message.request
+        form = kwargs.get("form")
+        if self.request.method == "POST" and form:
+            context["ready"] = form.is_valid() and not self.request.POST.get("edit")
+            context["preview_qs"] = urlencode(form.cleaned_data)
+        context["description"] = self.object.get_description(
+            {
+                "message": self.message,
+                "foirequest": self.message.request,
+            }
+        )
         return context
 
     def send_letter(self, form_data):
-        sender = MessageSender(
-            self.object, self.message, form_data
-        )
+        sender = MessageSender(self.object, self.message, form_data)
         sent_message = sender.send()
 
         return redirect(
-            reverse('letter-sent', kwargs={
-                'letter_id': self.object.id,
-                'message_id': sent_message.id
-            })
+            reverse(
+                "letter-sent",
+                kwargs={"letter_id": self.object.id, "message_id": sent_message.id},
+            )
         )
 
 
 class PreviewLetterView(LetterMixin, DetailView):
     def get_context_data(self, **kwargs):
         foirequest = self.message.request
-        ctx = get_example_context(
-            self.object, foirequest.user, self.message
-        )
-        if self.request.GET.get('address'):
+        ctx = get_example_context(self.object, foirequest.user, self.message)
+        if self.request.GET.get("address"):
             form = LetterForm(
                 self.request.GET.dict(),
                 instance=self.object,
                 user=foirequest.user,
-                message=self.message
+                message=self.message,
             )
             if form.is_valid():
                 ctx.update(form.cleaned_data)
         return ctx
 
     def render_to_response(self, context, **response_kwargs):
-        generator = get_letter_generator(
-            self.object, self.message, context
-        )
-        if self.request.GET.get('pdf'):
+        generator = get_letter_generator(self.object, self.message, context)
+        if self.request.GET.get("pdf"):
             response = HttpResponse(
-                generator.get_pdf_bytes(), content_type='application/pdf'
+                generator.get_pdf_bytes(), content_type="application/pdf"
             )
-            dispo = 'attachment; filename=preview.pdf'
-            response['Content-Disposition'] = dispo
+            dispo = "attachment; filename=preview.pdf"
+            response["Content-Disposition"] = dispo
             return response
         return HttpResponse(generator.get_html_string())
 
 
 class SentLetterView(LetterMixin, DetailView):
-    template_name = 'letter/sent.html'
+    template_name = "letter/sent.html"
 
     def check_already_sent(self):
         return
@@ -163,15 +149,13 @@ class SentLetterView(LetterMixin, DetailView):
         context = super().get_context_data(**kwargs)
         foirequest = self.message.request
         ctx = {
-            'foirequest': foirequest,
-            'user': foirequest.user,
-            'message': self.message,
+            "foirequest": foirequest,
+            "user": foirequest.user,
+            "message": self.message,
         }
-        context['post_instructions'] = self.object.get_post_instructions(
-            ctx
-        )
-        context['message'] = self.message
+        context["post_instructions"] = self.object.get_post_instructions(ctx)
+        context["message"] = self.message
         atts = [a for a in self.message.attachments if not a.is_redacted]
         if atts:
-            context['download_link'] = atts[0].get_absolute_domain_auth_url()
+            context["download_link"] = atts[0].get_absolute_domain_auth_url()
         return context

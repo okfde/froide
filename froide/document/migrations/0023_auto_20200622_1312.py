@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0022_auto_20200117_2101'),
+        ("document", "0022_auto_20200117_2101"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='document',
-            name='outline',
+            model_name="document",
+            name="outline",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='document',
-            name='properties',
+            model_name="document",
+            name="properties",
             field=models.JSONField(blank=True, default=dict),
         ),
     ]

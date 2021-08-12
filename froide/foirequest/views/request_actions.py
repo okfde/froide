@@ -15,17 +15,20 @@ from froide.helper.utils import render_400, render_403, get_redirect, is_ajax
 
 from ..models import FoiRequest, FoiEvent
 from ..forms import (
-    ConcreteLawForm, TagFoiRequestForm, FoiRequestStatusForm,
-    MakePublicBodySuggestionForm, PublicBodySuggestionsForm,
-    ExtendDeadlineForm, PublicBodyUploader
+    ConcreteLawForm,
+    TagFoiRequestForm,
+    FoiRequestStatusForm,
+    MakePublicBodySuggestionForm,
+    PublicBodySuggestionsForm,
+    ExtendDeadlineForm,
+    PublicBodyUploader,
 )
 from ..utils import check_throttle, get_foi_mail_domains
-from ..services import (
-    CreateSameAsRequestService, ActivatePendingRequestService
-)
+from ..services import CreateSameAsRequestService, ActivatePendingRequestService
 from ..auth import (
-    can_write_foirequest, check_foirequest_upload_code,
-    can_moderate_foirequest
+    can_write_foirequest,
+    check_foirequest_upload_code,
+    can_moderate_foirequest,
 )
 from ..hooks import registry
 
@@ -40,6 +43,7 @@ def allow_write_foirequest(func):
         if not can_write_foirequest(foirequest, request):
             return render_403(request)
         return func(request, foirequest, *args, **kwargs)
+
     return inner
 
 
@@ -49,6 +53,7 @@ def allow_moderate_foirequest(func):
         if not can_moderate_foirequest(foirequest, request):
             return render_403(request)
         return func(request, foirequest, *args, **kwargs)
+
     return inner
 
 
@@ -61,7 +66,7 @@ def set_public_body(request, foirequest):
 
     throttle_message = check_throttle(request.user, FoiRequest)
     if throttle_message:
-        message = '\n'.join(throttle_message.messages)
+        message = "\n".join(throttle_message.messages)
         messages.add_message(request, messages.ERROR, message)
         return render_400(request)
 
@@ -70,8 +75,7 @@ def set_public_body(request, foirequest):
     messages.add_message(
         request,
         messages.SUCCESS,
-        _('Request was sent to: {name}.').format(
-            name=foirequest.public_body.name)
+        _("Request was sent to: {name}.").format(name=foirequest.public_body.name),
     )
     return redirect(foirequest)
 
@@ -88,20 +92,25 @@ def suggest_public_body(request, slug):
         if request.user.is_authenticated:
             user = request.user
         response = foirequest.suggest_public_body(
-            publicbody,
-            form.cleaned_data['reason'],
-            user
+            publicbody, form.cleaned_data["reason"], user
         )
         if response:
-            messages.add_message(request, messages.SUCCESS,
-                _('Your Public Body suggestion has been added.'))
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                _("Your Public Body suggestion has been added."),
+            )
         else:
-            messages.add_message(request, messages.WARNING,
-                _('This Public Body has already been suggested.'))
+            messages.add_message(
+                request,
+                messages.WARNING,
+                _("This Public Body has already been suggested."),
+            )
         return redirect(foirequest)
 
-    messages.add_message(request, messages.ERROR,
-            _("You need to specify a Public Body!"))
+    messages.add_message(
+        request, messages.ERROR, _("You need to specify a Public Body!")
+    )
     return render_400(request)
 
 
@@ -118,23 +127,25 @@ def set_status(request, slug):
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
         form.save(user=request.user)
-        messages.add_message(request, messages.SUCCESS,
-                _('Status of request has been updated.'))
+        messages.add_message(
+            request, messages.SUCCESS, _("Status of request has been updated.")
+        )
         response = registry.run_hook(
-            'post_status_set',
+            "post_status_set",
             request,
             user=request.user,
-            data={'foirequest': foirequest, 'form': form}
+            data={"foirequest": foirequest, "form": form},
         )
         if response is not None:
             return response
     else:
-        messages.add_message(request, messages.ERROR,
-        _('Invalid value for form submission!'))
-        return show_foirequest(request, foirequest, context={
-            "status_form": form
-        }, status=400)
-    return redirect(foirequest.get_absolute_url() + '#-')
+        messages.add_message(
+            request, messages.ERROR, _("Invalid value for form submission!")
+        )
+        return show_foirequest(
+            request, foirequest, context={"status_form": form}, status=400
+        )
+    return redirect(foirequest.get_absolute_url() + "#-")
 
 
 @require_POST
@@ -157,8 +168,9 @@ def set_law(request, foirequest):
     if not form.is_valid():
         return render_400(request)
     form.save(user=request.user)
-    messages.add_message(request, messages.SUCCESS,
-            _('A concrete law has been set for this request.'))
+    messages.add_message(
+        request, messages.SUCCESS, _("A concrete law has been set for this request.")
+    )
     return redirect(foirequest)
 
 
@@ -172,28 +184,28 @@ def set_tags(request, foirequest):
             FoiEvent.EVENTS.SET_TAGS,
             foirequest,
             user=request.user,
-            tags=str(form.cleaned_data['tags'])
+            tags=str(form.cleaned_data["tags"]),
         )
-        messages.add_message(request, messages.SUCCESS,
-                _('Tags have been set for this request.'))
+        messages.add_message(
+            request, messages.SUCCESS, _("Tags have been set for this request.")
+        )
     return redirect(foirequest)
 
 
 @require_POST
 @allow_write_foirequest
 def set_summary(request, foirequest):
-    summary = request.POST.get('summary', None)
+    summary = request.POST.get("summary", None)
     if summary is None:
         return render_400(request)
     foirequest.summary = summary
     foirequest.save()
     FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.SET_SUMMARY,
-        foirequest,
-        user=request.user
+        FoiEvent.EVENTS.SET_SUMMARY, foirequest, user=request.user
     )
-    messages.add_message(request, messages.SUCCESS,
-                _('The outcome summary has been saved.'))
+    messages.add_message(
+        request, messages.SUCCESS, _("The outcome summary has been saved.")
+    )
     return redirect(foirequest)
 
 
@@ -207,15 +219,15 @@ def mark_not_foi(request, foirequest):
         foirequest.public = False
         FoiRequest.made_private.send(sender=foirequest)
     FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.MARK_NOT_FOI, foirequest,
-        user=request.user
+        FoiEvent.EVENTS.MARK_NOT_FOI, foirequest, user=request.user
     )
     foirequest.save()
     send_non_foi_notification(foirequest)
     if is_ajax(request):
         return HttpResponse(_("Marked as NOT FoI"))
-    messages.add_message(request, messages.SUCCESS,
-            _('Request marked as not a FoI request.'))
+    messages.add_message(
+        request, messages.SUCCESS, _("Request marked as not a FoI request.")
+    )
     return redirect(foirequest)
 
 
@@ -230,16 +242,23 @@ def make_same_request(request, slug):
     if not request.user.is_authenticated:
         new_user_form = NewUserForm(request.POST, request=request)
         if not new_user_form.is_valid():
-            return show_foirequest(request, foirequest,
-                context={"new_user_form": new_user_form}, status=400)
+            return show_foirequest(
+                request,
+                foirequest,
+                context={"new_user_form": new_user_form},
+                status=400,
+            )
     else:
         user = request.user
         if foirequest.user == user:
             return render_400(request)
-        same_requests = FoiRequest.objects.filter(user=user, same_as=foirequest).exists()
+        same_requests = FoiRequest.objects.filter(
+            user=user, same_as=foirequest
+        ).exists()
         if same_requests:
-            messages.add_message(request, messages.ERROR,
-                _("You already made an identical request"))
+            messages.add_message(
+                request, messages.ERROR, _("You already made an identical request")
+            )
             return render_400(request)
         address_form = AddressForm(request.POST, request=request)
         if address_form.is_valid():
@@ -247,31 +266,34 @@ def make_same_request(request, slug):
 
     throttle_message = check_throttle(request.user, FoiRequest)
     if throttle_message:
-        messages.add_message(request, messages.ERROR, '\n'.join(throttle_message))
+        messages.add_message(request, messages.ERROR, "\n".join(throttle_message))
         return render_400(request)
 
     body = foirequest.description
     if foirequest.status_is_final():
-        body = "{}\n\n{}" .format(
+        body = "{}\n\n{}".format(
             foirequest.description,
-            _('Please see this request on %(site_name)s where you granted access to this information: %(url)s') % {
-                'url': foirequest.get_absolute_domain_short_url(),
-                'site_name': settings.SITE_NAME
-            }
+            _(
+                "Please see this request on %(site_name)s where you granted access to this information: %(url)s"
+            )
+            % {
+                "url": foirequest.get_absolute_domain_short_url(),
+                "site_name": settings.SITE_NAME,
+            },
         )
 
     data = {
-        'user': request.user,
-        'publicbodies': [foirequest.public_body],
-        'subject': foirequest.title,
-        'body': body,
-        'public': foirequest.public,
-        'original_foirequest': foirequest
+        "user": request.user,
+        "publicbodies": [foirequest.public_body],
+        "subject": foirequest.title,
+        "body": body,
+        "public": foirequest.public,
+        "original_foirequest": foirequest,
     }
-    if request.POST.get('redirect_url'):
-        data['redirect_url'] = request.POST['redirect_url']
-    if request.POST.get('reference'):
-        data['reference'] = request.POST['reference']
+    if request.POST.get("redirect_url"):
+        data["redirect_url"] = request.POST["redirect_url"]
+    if request.POST.get("reference"):
+        data["reference"] = request.POST["reference"]
 
     if not request.user.is_authenticated:
         data.update(new_user_form.cleaned_data)
@@ -283,14 +305,24 @@ def make_same_request(request, slug):
     FoiRequest.objects.filter(id=foirequest.id).update(same_as_count=count)
 
     if request.user.is_active:
-        messages.add_message(request, messages.SUCCESS,
-                _('You successfully requested this document! '
-                  'Your request is displayed below.'))
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            _(
+                "You successfully requested this document! "
+                "Your request is displayed below."
+            ),
+        )
         return redirect(new_foirequest)
     else:
-        messages.add_message(request, messages.INFO,
-                _('Please check your inbox for mail from us to '
-                  'confirm your mail address.'))
+        messages.add_message(
+            request,
+            messages.INFO,
+            _(
+                "Please check your inbox for mail from us to "
+                "confirm your mail address."
+            ),
+        )
         # user cannot access the request yet!
         return redirect(get_new_account_url(new_foirequest))
 
@@ -301,11 +333,9 @@ def extend_deadline(request, foirequest):
     form = ExtendDeadlineForm(request.POST)
     if form.is_valid():
         form.save(foirequest)
-        messages.add_message(request, messages.INFO,
-                _('Deadline has been extended.'))
+        messages.add_message(request, messages.INFO, _("Deadline has been extended."))
         FoiEvent.objects.create_event(
-            'deadline_extended',
-            foirequest, user=request.user
+            "deadline_extended", foirequest, user=request.user
         )
         return redirect(foirequest)
     return render_400(request)
@@ -321,7 +351,7 @@ def confirm_request(request, foirequest):
     if foirequest.status != FoiRequest.STATUS.AWAITING_USER_CONFIRMATION:
         return render_400(request)
 
-    req_service = ActivatePendingRequestService({'foirequest': foirequest})
+    req_service = ActivatePendingRequestService({"foirequest": foirequest})
     foirequest = req_service.process(request=request)
     if not foirequest:
         return render_400(request)
@@ -354,76 +384,79 @@ def publicbody_upload(request, obj_id, code):
         # Don't leak slug, so go to short url
         return redirect(foirequest.get_absolute_short_url())
 
-    pb_upload_auth = request.session.get('pb_upload_auth')
+    pb_upload_auth = request.session.get("pb_upload_auth")
     if pb_upload_auth != foirequest.secret_address:
         email_domain = get_foi_mail_domains()[0]
-        if request.method == 'POST':
-            email_prefix = request.POST.get('email_prefix', '')
-            email_prefix = email_prefix.replace('@{}'.format(email_domain), '')
-            email = '{}@{}'.format(email_prefix, email_domain)
+        if request.method == "POST":
+            email_prefix = request.POST.get("email_prefix", "")
+            email_prefix = email_prefix.replace("@{}".format(email_domain), "")
+            email = "{}@{}".format(email_prefix, email_domain)
             if email == foirequest.secret_address:
-                request.session['pb_upload_auth'] = email
+                request.session["pb_upload_auth"] = email
                 return redirect(request.get_full_path())
             else:
                 messages.add_message(
-                    request, messages.ERROR,
-                    _('The given email address is not correct for this request.')
+                    request,
+                    messages.ERROR,
+                    _("The given email address is not correct for this request."),
                 )
 
         return render(
             request,
-            'foirequest/publicbody_upload.html',
+            "foirequest/publicbody_upload.html",
             {
-                'authenticated': False,
-                'email_domain': get_foi_mail_domains()[0],
-                'foirequest': foirequest,
-            }
+                "authenticated": False,
+                "email_domain": get_foi_mail_domains()[0],
+                "foirequest": foirequest,
+            },
         )
 
-    if request.method == 'POST':
-        token = request.session.get('upload_auth')
+    if request.method == "POST":
+        token = request.session.get("upload_auth")
         if not token:
             messages.add_message(
-                request, messages.ERROR,
-                _('A session error occurred while authenticating your '
-                'uploads. Please contact administrators.')
+                request,
+                messages.ERROR,
+                _(
+                    "A session error occurred while authenticating your "
+                    "uploads. Please contact administrators."
+                ),
             )
             return redirect(request.get_full_path())
         uploader = PublicBodyUploader(foirequest, token)
-        upload_list = request.POST.getlist('upload')
+        upload_list = request.POST.getlist("upload")
         att_count = uploader.create_upload_message(upload_list)
 
         messages.add_message(
-            request, messages.SUCCESS,
-            _('%s files were uploaded successfully. Thank you!') % att_count
+            request,
+            messages.SUCCESS,
+            _("%s files were uploaded successfully. Thank you!") % att_count,
         )
         return redirect(request.get_full_path())
 
-    if 'upload_auth' not in request.session:
-        request.session['upload_auth'] = str(uuid.uuid4())
+    if "upload_auth" not in request.session:
+        request.session["upload_auth"] = str(uuid.uuid4())
 
-    config = json.dumps({
-        'settings': {
-            'tusChunkSize': settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024)
-        },
-        'i18n': {
-            'uppy': get_uppy_i18n(),
-            'createResponse': _('Create response now'),
-            'sureCancel': _(
-                'You have not completed this process. '
-                'Are you sure you want to cancel?'
-            )
-        },
-        'url': {
-            'tusEndpoint': reverse('api:upload-list'),
+    config = json.dumps(
+        {
+            "settings": {
+                "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024)
+            },
+            "i18n": {
+                "uppy": get_uppy_i18n(),
+                "createResponse": _("Create response now"),
+                "sureCancel": _(
+                    "You have not completed this process. "
+                    "Are you sure you want to cancel?"
+                ),
+            },
+            "url": {
+                "tusEndpoint": reverse("api:upload-list"),
+            },
         }
-    })
+    )
     return render(
         request,
-        'foirequest/publicbody_upload.html',
-        {
-            'authenticated': True,
-            'foirequest': foirequest,
-            'config': config
-        }
+        "foirequest/publicbody_upload.html",
+        {"authenticated": True, "foirequest": foirequest, "config": config},
     )

@@ -11,33 +11,62 @@ import functools
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0005_auto_20180521_2048'),
+        ("document", "0005_auto_20180521_2048"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='pdf_file',
-            field=models.FileField(blank=True, max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=filingcabinet.models.get_document_path),
+            model_name="document",
+            name="pdf_file",
+            field=models.FileField(
+                blank=True,
+                max_length=255,
+                storage=filingcabinet.storage.OverwriteStorage(),
+                upload_to=filingcabinet.models.get_document_path,
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image',
-            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'original'})),
+            model_name="page",
+            name="image",
+            field=models.ImageField(
+                max_length=255,
+                storage=filingcabinet.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "original"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_large',
-            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'large'})),
+            model_name="page",
+            name="image_large",
+            field=models.ImageField(
+                max_length=255,
+                storage=filingcabinet.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "large"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_normal',
-            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'normal'})),
+            model_name="page",
+            name="image_normal",
+            field=models.ImageField(
+                max_length=255,
+                storage=filingcabinet.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "normal"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_small',
-            field=models.ImageField(max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'small'})),
+            model_name="page",
+            name="image_small",
+            field=models.ImageField(
+                max_length=255,
+                storage=filingcabinet.storage.OverwriteStorage(),
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "small"}
+                ),
+            ),
         ),
     ]

@@ -8,14 +8,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0012_auto_20180227_1926'),
-        ('foirequest', '0015_deferredmessage_delivered'),
+        ("publicbody", "0012_auto_20180227_1926"),
+        ("foirequest", "0015_deferredmessage_delivered"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foiproject',
-            name='publicbodies',
-            field=models.ManyToManyField(blank=True, to='publicbody.PublicBody'),
+            model_name="foiproject",
+            name="publicbodies",
+            field=models.ManyToManyField(blank=True, to="publicbody.PublicBody"),
         ),
     ]

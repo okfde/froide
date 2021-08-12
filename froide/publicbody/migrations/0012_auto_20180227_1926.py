@@ -8,17 +8,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0011_auto_20180105_1648'),
+        ("publicbody", "0011_auto_20180105_1648"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='category',
-            options={'verbose_name': 'category', 'verbose_name_plural': 'categories'},
+            name="category",
+            options={"verbose_name": "category", "verbose_name_plural": "categories"},
         ),
         migrations.AlterField(
-            model_name='publicbody',
-            name='email',
-            field=models.EmailField(blank=True, default='', max_length=254, verbose_name='Email'),
+            model_name="publicbody",
+            name="email",
+            field=models.EmailField(
+                blank=True, default="", max_length=254, verbose_name="Email"
+            ),
         ),
     ]

@@ -9,19 +9,19 @@ logger = logging.getLogger(__name__)
 
 
 class FoiSite(models.Model):
-    country_code = models.CharField(_('Country Code'), max_length=5)
-    country_name = models.CharField(_('Country Name'), max_length=255)
-    name = models.CharField(_('Name'), max_length=255)
-    url = models.CharField(_('URL'), max_length=255)
-    text = models.TextField(_('Text'), blank=True)
-    enabled = models.BooleanField(_('Enabled'), default=True)
+    country_code = models.CharField(_("Country Code"), max_length=5)
+    country_name = models.CharField(_("Country Name"), max_length=255)
+    name = models.CharField(_("Name"), max_length=255)
+    url = models.CharField(_("URL"), max_length=255)
+    text = models.TextField(_("Text"), blank=True)
+    enabled = models.BooleanField(_("Enabled"), default=True)
 
     class Meta:
-        verbose_name = _('FOI Site')
-        verbose_name_plural = _('FOI Sites')
+        verbose_name = _("FOI Site")
+        verbose_name_plural = _("FOI Sites")
 
     def __str__(self):
-        return '%s (%s)' % (self.name, self.country_name)
+        return "%s (%s)" % (self.name, self.country_name)
 
     def save(self, *args, **kwargs):
         self.country_code = self.country_code.upper()
@@ -57,7 +57,7 @@ class SiteAdivsor(object):
     def get_site(self, ip):
         if self.sites is None:
             self.update()
-        if ip == '127.0.0.1':
+        if ip == "127.0.0.1":
             return None
         try:
             if self.geoip is None:
@@ -70,7 +70,7 @@ class SiteAdivsor(object):
             # try recreating the geoIP2 object
             self.geoip = self.get_geoip()
             return None
-        return self.sites.get(result['country_code'], None)
+        return self.sites.get(result["country_code"], None)
 
 
 class DummyAdvisor(object):
@@ -81,13 +81,12 @@ class DummyAdvisor(object):
         pass
 
 
-if GeoIP2 and getattr(settings, 'GEOIP_PATH', False):
+if GeoIP2 and getattr(settings, "GEOIP_PATH", False):
     advisor = SiteAdivsor()
 else:
     advisor = DummyAdvisor()
 
 
-@receiver(models.signals.post_save, sender=FoiSite,
-        dispatch_uid="foisite_saved")
+@receiver(models.signals.post_save, sender=FoiSite, dispatch_uid="foisite_saved")
 def foisite_saved(instance=None, created=False, **kwargs):
     advisor.refresh()

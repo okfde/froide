@@ -9,14 +9,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('georegion', '0003_auto_20180306_1730'),
-        ('publicbody', '0014_auto_20180306_1730'),
+        ("georegion", "0003_auto_20180306_1730"),
+        ("publicbody", "0014_auto_20180306_1730"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='jurisdiction',
-            name='region',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='georegion.GeoRegion'),
+            model_name="jurisdiction",
+            name="region",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="georegion.GeoRegion",
+            ),
         ),
     ]

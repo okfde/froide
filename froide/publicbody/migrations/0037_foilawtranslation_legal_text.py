@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0036_auto_20210203_1557'),
+        ("publicbody", "0036_auto_20210203_1557"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foilawtranslation',
-            name='legal_text',
-            field=models.TextField(blank=True, verbose_name='Legal Text'),
+            model_name="foilawtranslation",
+            name="legal_text",
+            field=models.TextField(blank=True, verbose_name="Legal Text"),
         ),
     ]

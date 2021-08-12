@@ -10,23 +10,23 @@ from .utils import inform_user_problem_resolved
 
 
 USER_PROBLEM_CHOICES = [
-    ('message_not_delivered', _('Your message was not delivered.')),
-    ('attachment_broken', _('The attachments don\'t seem to work.')),
-    ('redaction_needed', _('You need more redaction.')),
-    ('foi_help_needed', _('You need help to understand or reply to this message.')),
-    ('other', _('Something else...')),
+    ("message_not_delivered", _("Your message was not delivered.")),
+    ("attachment_broken", _("The attachments don't seem to work.")),
+    ("redaction_needed", _("You need more redaction.")),
+    ("foi_help_needed", _("You need help to understand or reply to this message.")),
+    ("other", _("Something else...")),
 ]
 EXTERNAL_PROBLEM_CHOICES = [
-    ('not_foi', _('This is not a proper FOI request.')),
-    ('redaction_needed', _('More redactions are needed.')),
-    ('not_nice', _('Content is against netiquette.')),
-    ('info_outdated', _('Published information is outdated.')),
-    ('info_wrong', _('Published information is wrong.')),
-    ('other', _('Something else...')),
+    ("not_foi", _("This is not a proper FOI request.")),
+    ("redaction_needed", _("More redactions are needed.")),
+    ("not_nice", _("Content is against netiquette.")),
+    ("info_outdated", _("Published information is outdated.")),
+    ("info_wrong", _("Published information is wrong.")),
+    ("other", _("Something else...")),
 ]
 
 AUTO_PROBLEM_CHOICES = [
-    ('bounce_publicbody', _('You received a bounce mail from the public body.')),
+    ("bounce_publicbody", _("You received a bounce mail from the public body.")),
 ]
 
 PROBLEM_CHOICES = AUTO_PROBLEM_CHOICES + USER_PROBLEM_CHOICES
@@ -40,26 +40,22 @@ escalated = Signal()
 
 class ProblemReportManager(models.Manager):
     def report(self, **kwargs):
-        report = ProblemReport.objects.create(
-            **kwargs
-        )
+        report = ProblemReport.objects.create(**kwargs)
         reported.send(sender=report)
         return report
 
 
 class ProblemReport(models.Model):
-    message = models.ForeignKey(
-        FoiMessage, on_delete=models.CASCADE
-    )
+    message = models.ForeignKey(FoiMessage, on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        null=True, on_delete=models.SET_NULL,
-        blank=True, related_name='problems_reported'
+        null=True,
+        on_delete=models.SET_NULL,
+        blank=True,
+        related_name="problems_reported",
     )
     kind = models.CharField(
-        max_length=50, choices=(
-            PROBLEM_CHOICES + EXTERNAL_PROBLEM_CHOICES
-        )
+        max_length=50, choices=(PROBLEM_CHOICES + EXTERNAL_PROBLEM_CHOICES)
     )
     timestamp = models.DateTimeField(default=timezone.now)
     auto_submitted = models.BooleanField(default=False)
@@ -72,16 +68,18 @@ class ProblemReport(models.Model):
     escalated = models.DateTimeField(null=True, blank=True)
     moderator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        null=True, on_delete=models.SET_NULL,
-        blank=True, related_name='problems_moderated'
+        null=True,
+        on_delete=models.SET_NULL,
+        blank=True,
+        related_name="problems_moderated",
     )
 
     objects = ProblemReportManager()
 
     class Meta:
-        ordering = ('-timestamp',)
-        verbose_name = _('problem report')
-        verbose_name_plural = _('problem reports')
+        ordering = ("-timestamp",)
+        verbose_name = _("problem report")
+        verbose_name_plural = _("problem reports")
 
     def __str__(self):
         return self.kind
@@ -113,7 +111,7 @@ class ProblemReport(models.Model):
         self.save()
         unclaimed.send(sender=self)
 
-    def resolve(self, user, resolution=''):
+    def resolve(self, user, resolution=""):
         self.resolved = True
         self.resolution = resolution
         self.resolution_timestamp = timezone.now()
@@ -122,7 +120,7 @@ class ProblemReport(models.Model):
         resolved.send(sender=self)
         return inform_user_problem_resolved(self)
 
-    def escalate(self, user, escalation=''):
+    def escalate(self, user, escalation=""):
         self.moderator = user
         self.escalation = escalation
         self.escalated = timezone.now()

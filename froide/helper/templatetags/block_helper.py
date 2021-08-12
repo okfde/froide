@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 
 register = template.Library()
 
-VAR_NAME = '_ASSET_CONTEXT'
+VAR_NAME = "_ASSET_CONTEXT"
 
 
 def get_default_dict():
@@ -15,7 +15,7 @@ def get_default_dict():
 @register.tag(name="addtoblock")
 def do_addtoblock(parser, token):
     name = token.split_contents()[1][1:-1]
-    nodelist = parser.parse(('endaddtoblock', 'endaddtoblock %s' % name))
+    nodelist = parser.parse(("endaddtoblock", "endaddtoblock %s" % name))
     parser.delete_first_token()
     return AddToBlockNode(name, nodelist)
 
@@ -30,7 +30,7 @@ class AddToBlockNode(template.Node):
         if VAR_NAME not in context:
             context[VAR_NAME] = get_default_dict()
         context[VAR_NAME][self.block_name][output] = None
-        return ''
+        return ""
 
 
 @register.tag(name="render_block")
@@ -51,7 +51,7 @@ class RenderBlockNode(template.Node):
 
     def get_block_contents(self, context):
         if VAR_NAME not in context:
-            return ''
+            return ""
         if self.block_name not in context[VAR_NAME]:
-            return ''
-        return mark_safe('\n'.join(context[VAR_NAME][self.block_name].keys()))
+            return ""
+        return mark_safe("\n".join(context[VAR_NAME][self.block_name].keys()))

@@ -16,7 +16,7 @@ def can_use_team(user):
     if not user.is_authenticated:
         return False
     in_team = Team.objects.get_for_user(user).exists()
-    return in_team or user.has_perm('team.can_use_teams')
+    return in_team or user.has_perm("team.can_use_teams")
 
 
 class TeamService(object):
@@ -26,16 +26,13 @@ class TeamService(object):
     def generate_invite_secret(self):
         to_sign = [str(self.member.pk), str(self.member.email)]
         return hmac.new(
-            settings.SECRET_KEY.encode('utf-8'),
-            ('.'.join(to_sign)).encode('utf-8'),
-            digestmod=hashlib.sha256
+            settings.SECRET_KEY.encode("utf-8"),
+            (".".join(to_sign)).encode("utf-8"),
+            digestmod=hashlib.sha256,
         ).hexdigest()
 
     def check_invite_secret(self, secret):
-        return constant_time_compare(
-                secret,
-                self.generate_invite_secret()
-        )
+        return constant_time_compare(secret, self.generate_invite_secret())
 
     def send_team_invite(self, invited_by):
         secret = self.generate_invite_secret()
@@ -43,22 +40,23 @@ class TeamService(object):
             "pk": self.member.pk,
             "secret": secret,
         }
-        url = '%s%s' % (
+        url = "%s%s" % (
             settings.SITE_URL,
-            reverse('team-join', kwargs=url_kwargs),
+            reverse("team-join", kwargs=url_kwargs),
         )
-        message = render_to_string('team/emails/team_invite.txt',
-                {'url': url,
-                'name': invited_by.get_full_name(),
-                'site_name': settings.SITE_NAME,
-                'site_url': settings.SITE_URL
-            })
+        message = render_to_string(
+            "team/emails/team_invite.txt",
+            {
+                "url": url,
+                "name": invited_by.get_full_name(),
+                "site_name": settings.SITE_NAME,
+                "site_url": settings.SITE_URL,
+            },
+        )
         # Translators: Mail subject
         send_mail(
-            str(_("Team invite from %(name)s") % {
-                "name": invited_by.get_full_name()
-            }),
+            str(_("Team invite from %(name)s") % {"name": invited_by.get_full_name()}),
             message,
             self.member.email,
-            priority=True
+            priority=True,
         )

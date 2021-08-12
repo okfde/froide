@@ -11,7 +11,7 @@ from froide.helper.email_utils import EmailParser
 
 def deferred_fill_sender(apps, schema_editor):
     parser = EmailParser()
-    DeferredMessage = apps.get_model('foirequest', 'DeferredMessage')
+    DeferredMessage = apps.get_model("foirequest", "DeferredMessage")
     for deferred in DeferredMessage.objects.all():
         print(deferred.pk)
         email = parser.parse(BytesIO(base64.b64decode(deferred.mail)))
@@ -22,7 +22,7 @@ def deferred_fill_sender(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0030_auto_20181106_1510'),
+        ("foirequest", "0030_auto_20181106_1510"),
     ]
 
     operations = [

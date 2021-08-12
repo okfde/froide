@@ -29,13 +29,17 @@ def index(request):
     successful_foi_requests = FoiRequest.published.successful()[:8]
     unsuccessful_foi_requests = FoiRequest.published.unsuccessful()[:8]
     featured = FeaturedRequest.objects.getFeatured()
-    return render(request, 'index.html', {
-        'featured': featured,
-        'successful_foi_requests': successful_foi_requests,
-        'unsuccessful_foi_requests': unsuccessful_foi_requests,
-        'foicount': FoiRequest.objects.get_send_foi_requests().count(),
-        'pbcount': PublicBody.objects.get_list().count()
-    })
+    return render(
+        request,
+        "index.html",
+        {
+            "featured": featured,
+            "successful_foi_requests": successful_foi_requests,
+            "unsuccessful_foi_requests": unsuccessful_foi_requests,
+            "foicount": FoiRequest.objects.get_send_foi_requests().count(),
+            "pbcount": PublicBody.objects.get_list().count(),
+        },
+    )
 
 
 def dashboard(request):
@@ -44,45 +48,47 @@ def dashboard(request):
     context = {}
     user = {}
     start_date = timezone.utc.localize(datetime.datetime(2011, 7, 30))
-    for u in User.objects.filter(
-            is_active=True,
-            date_joined__gte=start_date):
+    for u in User.objects.filter(is_active=True, date_joined__gte=start_date):
         d = u.date_joined.date().isoformat()
-        d = '-'.join(d.split('-')[:2]) + '-01'
+        d = "-".join(d.split("-")[:2]) + "-01"
         user.setdefault(d, 0)
         user[d] += 1
-    context['user'] = sorted([{'date': k, 'num': v, 'symbol': 'user'} for k, v in user.items()], key=lambda x: x['date'])
+    context["user"] = sorted(
+        [{"date": k, "num": v, "symbol": "user"} for k, v in user.items()],
+        key=lambda x: x["date"],
+    )
     total = 0
-    for user in context['user']:
-        total += user['num']
-        user['total'] = total
+    for user in context["user"]:
+        total += user["num"]
+        user["total"] = total
     foirequest = {}
     foi_query = FoiRequest.objects.filter(
-            is_foi=True,
-            public_body__isnull=False,
-            first_message__gte=start_date
+        is_foi=True, public_body__isnull=False, first_message__gte=start_date
     )
-    if request.GET.get('notsameas'):
+    if request.GET.get("notsameas"):
         foi_query = foi_query.filter(same_as__isnull=True)
-    if request.GET.get('public'):
+    if request.GET.get("public"):
         foi_query = foi_query.filter(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC)
     for u in foi_query:
         d = u.first_message.date().isoformat()
-        d = '-'.join(d.split('-')[:2]) + '-01'
+        d = "-".join(d.split("-")[:2]) + "-01"
         foirequest.setdefault(d, 0)
         foirequest[d] += 1
-    context['foirequest'] = sorted([{'date': k, 'num': v, 'symbol': 'user'} for k, v in foirequest.items()], key=lambda x: x['date'])
+    context["foirequest"] = sorted(
+        [{"date": k, "num": v, "symbol": "user"} for k, v in foirequest.items()],
+        key=lambda x: x["date"],
+    )
     total = 0
-    for req in context['foirequest']:
-        total += req['num']
-        req['total'] = total
-    return render(request, 'foirequest/dashboard.html', {'data': json.dumps(context)})
+    for req in context["foirequest"]:
+        total += req["num"]
+        req["total"] = total
+    return render(request, "foirequest/dashboard.html", {"data": json.dumps(context)})
 
 
 @require_POST
 @csrf_exempt
 def postmark_inbound(request, bounce=False):
-    process_mail.delay(request.body, mail_type='postmark')
+    process_mail.delay(request.body, mail_type="postmark")
     return HttpResponse()
 
 
@@ -97,8 +103,10 @@ def download_foirequest_zip(request, slug):
     foirequest = get_object_or_404(FoiRequest, slug=slug)
     if not can_read_foirequest_authenticated(foirequest, request):
         return render_403(request)
-    response = HttpResponse(package_foirequest(foirequest), content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename="%s.zip"' % foirequest.pk
+    response = HttpResponse(
+        package_foirequest(foirequest), content_type="application/zip"
+    )
+    response["Content-Disposition"] = 'attachment; filename="%s.zip"' % foirequest.pk
     return response
 
 
@@ -108,14 +116,13 @@ def download_foirequest_pdf(request, slug):
         return render_403(request)
     pdf_generator = FoiRequestPDFGenerator(foirequest)
     response = HttpResponse(
-        pdf_generator.get_pdf_bytes(),
-        content_type='application/pdf'
+        pdf_generator.get_pdf_bytes(), content_type="application/pdf"
     )
-    response['Content-Disposition'] = 'attachment; filename="%s.pdf"' % foirequest.pk
+    response["Content-Disposition"] = 'attachment; filename="%s.pdf"' % foirequest.pk
     return response
 
 
-SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
+SITEMAP_PROTOCOL = "https" if settings.SITE_URL.startswith("https") else "http"
 
 
 class FoiRequestSitemap(Sitemap):

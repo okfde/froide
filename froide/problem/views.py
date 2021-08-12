@@ -21,16 +21,12 @@ def report_problem(request, message_pk):
     if not request.user.is_authenticated:
         return render_403(request)
 
-    form = ProblemReportForm(
-        data=request.POST, user=request.user,
-        message=message
-    )
+    form = ProblemReportForm(data=request.POST, user=request.user, message=message)
     if form.is_valid():
         form.save()
     else:
         messages.add_message(
-            request, messages.ERROR,
-            _('Your report could not be created.')
+            request, messages.ERROR, _("Your report could not be created.")
         )
     return redirect(message)
 
@@ -42,78 +38,79 @@ def moderation_view(request):
     problems = get_problem_reports(request)
 
     unclassified = FoiRequest.objects.get_unclassified_for_moderation()
-    unclassified = unclassified.values('title', 'id', 'last_message')[:100]
+    unclassified = unclassified.values("title", "id", "last_message")[:100]
 
     publicbodies = None
     if can_moderate_object(PublicBody, request):
-        publicbodies = PublicBody._default_manager.filter(
-            ~Q(change_proposals={}) | Q(confirmed=False)
-        ).order_by('-updated_at').values(
-            'name', 'id', 'confirmed', 'created_at',
+        publicbodies = (
+            PublicBody._default_manager.filter(
+                ~Q(change_proposals={}) | Q(confirmed=False)
+            )
+            .order_by("-updated_at")
+            .values(
+                "name",
+                "id",
+                "confirmed",
+                "created_at",
+            )
         )
 
     config = {
-        'settings': {
-            'user_id': request.user.id
+        "settings": {"user_id": request.user.id},
+        "url": {
+            "moderationWebsocket": "/ws/moderation/",  # WS URLs not reversible
+            "listReports": reverse("api:problemreport-list"),
+            "claimReport": reverse("api:problemreport-claim", kwargs={"pk": 0}),
+            "unclaimReport": reverse("api:problemreport-unclaim", kwargs={"pk": 0}),
+            "resolveReport": reverse("api:problemreport-resolve", kwargs={"pk": 0}),
+            "escalateReport": reverse("api:problemreport-escalate", kwargs={"pk": 0}),
+            "publicBody": reverse(
+                "publicbody-publicbody_shortlink", kwargs={"obj_id": 0}
+            ),
+            "publicBodyAcceptChanges": reverse("publicbody-accept", kwargs={"pk": 0}),
+            "foirequest": reverse("foirequest-shortlink", kwargs={"obj_id": 0}),
         },
-        'url': {
-            'moderationWebsocket': '/ws/moderation/',  # WS URLs not reversible
-            'listReports': reverse('api:problemreport-list'),
-            'claimReport': reverse('api:problemreport-claim', kwargs={
-                'pk': 0
-            }),
-            'unclaimReport': reverse('api:problemreport-unclaim', kwargs={
-                'pk': 0
-            }),
-            'resolveReport': reverse('api:problemreport-resolve', kwargs={
-                'pk': 0
-            }),
-            'escalateReport': reverse('api:problemreport-escalate', kwargs={
-                'pk': 0
-            }),
-            'publicBody': reverse('publicbody-publicbody_shortlink', kwargs={
-                'obj_id': 0
-            }),
-            'publicBodyAcceptChanges': reverse('publicbody-accept', kwargs={
-                'pk': 0
-            }),
-            'foirequest': reverse('foirequest-shortlink', kwargs={
-                'obj_id': 0
-            }),
+        "i18n": {
+            "name": _("Name"),
+            "kind": _("Kind"),
+            "date": _("Date"),
+            "problemReports": _("problem reports"),
+            "publicBodyChangeProposals": _("public bodies"),
+            "message": _("Message"),
+            "description": _("Description"),
+            "action": pgettext("action to take in moderation table", "Action"),
+            "isNotRequester": _("not requester"),
+            "claim": _("Claim"),
+            "unclaim": _("Cancel"),
+            "resolve": _("Resolve"),
+            "markResolved": _("Mark resolved"),
+            "claimedMinutesAgo": _("Claimed for {min} min."),
+            "maxClaimCount": _(
+                "You cannot work on more than 5 issues at the same time."
+            ),
+            "resolutionDescription": _("Please write a nice message to the user."),
+            "escalate": _("Escalate"),
+            "escalationDescription": _(
+                "Please describe to admins what should be done."
+            ),
+            "activeModerators": _("Active moderators"),
+            "toPublicBody": _("to public body"),
+            "toMessage": _("to message"),
+            "reviewNewPublicBody": _("review new"),
+            "reviewChangedPublicBody": _("review changes"),
+            "unclassifiedRequests": _("unclassified requests"),
+            "setStatus": _("set status"),
+            "lastMessage": _("last message"),
         },
-        'i18n': {
-            'name': _('Name'),
-            'kind': _('Kind'),
-            'date': _('Date'),
-            'problemReports': _('problem reports'),
-            'publicBodyChangeProposals': _('public bodies'),
-            'message': _('Message'),
-            'description': _('Description'),
-            'action': pgettext('action to take in moderation table', 'Action'),
-            'isNotRequester': _('not requester'),
-            'claim': _('Claim'),
-            'unclaim': _('Cancel'),
-            'resolve': _('Resolve'),
-            'markResolved': _('Mark resolved'),
-            'claimedMinutesAgo': _('Claimed for {min} min.'),
-            'maxClaimCount': _('You cannot work on more than 5 issues at the same time.'),
-            'resolutionDescription': _('Please write a nice message to the user.'),
-            'escalate': _('Escalate'),
-            'escalationDescription': _('Please describe to admins what should be done.'),
-            'activeModerators': _('Active moderators'),
-            'toPublicBody': _('to public body'),
-            'toMessage': _('to message'),
-            'reviewNewPublicBody': _('review new'),
-            'reviewChangedPublicBody': _('review changes'),
-            'unclassifiedRequests': _('unclassified requests'),
-            'setStatus': _('set status'),
-            'lastMessage': _('last message'),
-        }
     }
 
-    return render(request, 'problem/moderation.html', {
-        'problems': problems,
-        'publicbodies_json': to_json(list(publicbodies)),
-        'unclassified_json': to_json(list(unclassified)),
-        'config_json': to_json(config)
-    })
+    return render(
+        request,
+        "problem/moderation.html",
+        {
+            "problems": problems,
+            "publicbodies_json": to_json(list(publicbodies)),
+            "unclassified_json": to_json(list(unclassified)),
+            "config_json": to_json(config),
+        },
+    )

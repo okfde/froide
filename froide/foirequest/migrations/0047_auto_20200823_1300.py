@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0046_foievent_message'),
+        ("foirequest", "0046_foievent_message"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='foirequest',
-            name='visibility',
-            field=models.SmallIntegerField(choices=[(0, 'Invisible'), (1, 'Visible to requester'), (2, 'Visible to public')], default=0, verbose_name='Visibility'),
+            model_name="foirequest",
+            name="visibility",
+            field=models.SmallIntegerField(
+                choices=[
+                    (0, "Invisible"),
+                    (1, "Visible to requester"),
+                    (2, "Visible to public"),
+                ],
+                default=0,
+                verbose_name="Visibility",
+            ),
         ),
     ]

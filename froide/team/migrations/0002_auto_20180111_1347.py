@@ -8,12 +8,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('team', '0001_initial'),
+        ("team", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='team',
-            options={'permissions': (('can_use_teams', 'Can use teams'),), 'verbose_name': 'team', 'verbose_name_plural': 'teams'},
+            name="team",
+            options={
+                "permissions": (("can_use_teams", "Can use teams"),),
+                "verbose_name": "team",
+                "verbose_name_plural": "teams",
+            },
         ),
     ]

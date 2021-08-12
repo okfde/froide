@@ -8,9 +8,16 @@ from .views import show_jurisdiction
 
 urlpatterns = [
     path("", show_jurisdiction, name="publicbody-show_jurisdiction"),
-    path(pgettext_lazy('url part', 'entity/'),
+    path(
+        pgettext_lazy("url part", "entity/"),
         lambda r, slug: HttpResponseRedirect(
-            reverse("publicbody-list", kwargs={'jurisdiction': slug}))),
-    path(pgettext_lazy('url part', 'entities/'), lambda r, slug: HttpResponseRedirect(
-            reverse("publicbody-list", kwargs={'jurisdiction': slug}))),
+            reverse("publicbody-list", kwargs={"jurisdiction": slug})
+        ),
+    ),
+    path(
+        pgettext_lazy("url part", "entities/"),
+        lambda r, slug: HttpResponseRedirect(
+            reverse("publicbody-list", kwargs={"jurisdiction": slug})
+        ),
+    ),
 ]

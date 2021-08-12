@@ -10,7 +10,11 @@ from froide.foirequest.models import FoiRequest
 class FeaturedRequestManager(CurrentSiteManager):
     def getFeatured(self):
         try:
-            return self.get_queryset().order_by("-timestamp").select_related('request', 'request__public_body')[0]
+            return (
+                self.get_queryset()
+                .order_by("-timestamp")
+                .select_related("request", "request__public_body")[0]
+            )
         except IndexError:
             return None
 
@@ -19,7 +23,9 @@ class FeaturedRequest(models.Model):
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Featured Request"),
-        null=True, blank=True, on_delete=models.SET_NULL
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
     timestamp = models.DateTimeField(_("Timestamp"))
     title = models.CharField(_("Title"), max_length=255)
@@ -29,17 +35,16 @@ class FeaturedRequest(models.Model):
         settings.AUTH_USER_MODEL,
         null=True,
         on_delete=models.SET_NULL,
-        verbose_name=_("User")
+        verbose_name=_("User"),
     )
     site = models.ForeignKey(
-        Site, null=True,
-        on_delete=models.SET_NULL, verbose_name=_("Site")
+        Site, null=True, on_delete=models.SET_NULL, verbose_name=_("Site")
     )
 
     objects = FeaturedRequestManager()
 
     class Meta:
-        ordering = ('-timestamp',)
-        get_latest_by = 'timestamp'
-        verbose_name = _('Featured Request')
-        verbose_name_plural = _('Featured Requests')
+        ordering = ("-timestamp",)
+        get_latest_by = "timestamp"
+        verbose_name = _("Featured Request")
+        verbose_name_plural = _("Featured Requests")

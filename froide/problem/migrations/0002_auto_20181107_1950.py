@@ -8,18 +8,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('problem', '0001_initial'),
+        ("problem", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='problemreport',
-            name='resolution_timestamp',
+            model_name="problemreport",
+            name="resolution_timestamp",
             field=models.DateTimeField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='problemreport',
-            name='kind',
-            field=models.CharField(choices=[('bounce_publicbody', 'You received a bounce mail from the public body.'), ('message_not_delivered', 'Your message was not delivered.'), ('attachment_broken', "The attachments don't seem to work."), ('need_unpublish', 'You want to unpublish the request.'), ('redaction_needed', 'You need more redaction.'), ('foi_help_needed', 'You need help to understand or reply to this message.'), ('other', 'Something else...')], max_length=50),
+            model_name="problemreport",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    (
+                        "bounce_publicbody",
+                        "You received a bounce mail from the public body.",
+                    ),
+                    ("message_not_delivered", "Your message was not delivered."),
+                    ("attachment_broken", "The attachments don't seem to work."),
+                    ("need_unpublish", "You want to unpublish the request."),
+                    ("redaction_needed", "You need more redaction."),
+                    (
+                        "foi_help_needed",
+                        "You need help to understand or reply to this message.",
+                    ),
+                    ("other", "Something else..."),
+                ],
+                max_length=50,
+            ),
         ),
     ]

@@ -8,17 +8,31 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0023_remove_foimessage_is_postal'),
+        ("foirequest", "0023_remove_foimessage_is_postal"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='foimessage',
-            name='original',
+            model_name="foimessage",
+            name="original",
         ),
         migrations.AlterField(
-            model_name='deliverystatus',
-            name='status',
-            field=models.CharField(blank=True, choices=[('unknown', 'unknown'), ('sending', 'sending'), ('sent', 'sent'), ('received', 'received'), ('read', 'read'), ('deferred', 'deferred'), ('bounced', 'bounced'), ('expired', 'expired'), ('failed', 'failed')], max_length=32),
+            model_name="deliverystatus",
+            name="status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("unknown", "unknown"),
+                    ("sending", "sending"),
+                    ("sent", "sent"),
+                    ("received", "received"),
+                    ("read", "read"),
+                    ("deferred", "deferred"),
+                    ("bounced", "bounced"),
+                    ("expired", "expired"),
+                    ("failed", "failed"),
+                ],
+                max_length=32,
+            ),
         ),
     ]

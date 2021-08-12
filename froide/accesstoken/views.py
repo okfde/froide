@@ -17,6 +17,6 @@ def reset_token(request):
         message = form.save()
         messages.add_message(request, messages.SUCCESS, message)
     else:
-        messages.add_message(request, messages.ERROR, _('Failed to reset token.'))
+        messages.add_message(request, messages.ERROR, _("Failed to reset token."))
 
     return get_redirect(request)

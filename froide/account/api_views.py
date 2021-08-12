@@ -3,9 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 
-from oauth2_provider.contrib.rest_framework import (
-    IsAuthenticatedOrTokenHasScope
-)
+from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 
 from .models import User, UserPreference
 from .preferences import registry
@@ -14,21 +12,21 @@ from .preferences import registry
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'private')
+        fields = ("id", "private")
 
     def to_representation(self, obj):
         default = super(UserSerializer, self).to_representation(obj)
         if obj.is_superuser:
-            default['is_superuser'] = True
+            default["is_superuser"] = True
         if obj.is_staff:
-            default['is_staff'] = True
+            default["is_staff"] = True
         return default
 
 
 class UserEmailSerializer(UserSerializer):
     class Meta:
         model = User
-        fields = UserSerializer.Meta.fields + ('email',)
+        fields = UserSerializer.Meta.fields + ("email",)
 
 
 class UserDetailSerializer(UserSerializer):
@@ -38,8 +36,11 @@ class UserDetailSerializer(UserSerializer):
     class Meta:
         model = User
         fields = UserSerializer.Meta.fields + (
-            'first_name', 'last_name', 'full_name', 'username',
-            'profile_photo',
+            "first_name",
+            "last_name",
+            "full_name",
+            "username",
+            "profile_photo",
         )
 
     def get_full_name(self, obj):
@@ -54,25 +55,25 @@ class UserDetailSerializer(UserSerializer):
 class UserEmailDetailSerializer(UserDetailSerializer):
     class Meta:
         model = User
-        fields = UserDetailSerializer.Meta.fields + ('email',)
+        fields = UserDetailSerializer.Meta.fields + ("email",)
 
 
 class UserFullSerializer(UserEmailDetailSerializer):
     class Meta:
         model = User
-        fields = UserEmailDetailSerializer.Meta.fields + ('address',)
+        fields = UserEmailDetailSerializer.Meta.fields + ("address",)
 
 
 class ProfileView(views.APIView):
     permission_classes = [IsAuthenticatedOrTokenHasScope]
-    required_scopes = ['read:user']
+    required_scopes = ["read:user"]
 
     def get(self, request, format=None):
         token = request.auth
         user = request.user
         if token:
-            has_email = token.is_valid(['read:email'])
-            has_profile = token.is_valid(['read:profile'])
+            has_email = token.is_valid(["read:email"])
+            has_profile = token.is_valid(["read:profile"])
             if has_email and has_profile:
                 serializer = UserEmailDetailSerializer(user)
             elif has_email:
@@ -91,7 +92,7 @@ class UserPreferenceView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        key = request.GET.get('key')
+        key = request.GET.get("key")
         if key is None:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
         try:
@@ -99,13 +100,11 @@ class UserPreferenceView(views.APIView):
         except KeyError:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
 
-        value = UserPreference.objects.get_preference(
-            request.user, key
-        )
+        value = UserPreference.objects.get_preference(request.user, key)
         return Response({"key": key, "value": value})
 
     def post(self, request, format=None):
-        key = request.data.get('key')
+        key = request.data.get("key")
         if key is None:
             return Response(None, status=status.HTTP_404_NOT_FOUND)
         try:

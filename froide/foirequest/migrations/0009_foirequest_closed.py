@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0008_auto_20171124_1508'),
+        ("foirequest", "0008_auto_20171124_1508"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foirequest',
-            name='closed',
-            field=models.BooleanField(default=False, verbose_name='is closed'),
+            model_name="foirequest",
+            name="closed",
+            field=models.BooleanField(default=False, verbose_name="is closed"),
         ),
     ]

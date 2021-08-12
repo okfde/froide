@@ -9,13 +9,17 @@ import filingcabinet.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0003_auto_20180521_1619'),
+        ("document", "0003_auto_20180521_1619"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pageannotation',
-            name='image',
-            field=models.ImageField(blank=True, max_length=255, upload_to=filingcabinet.models.get_page_annotation_filename),
+            model_name="pageannotation",
+            name="image",
+            field=models.ImageField(
+                blank=True,
+                max_length=255,
+                upload_to=filingcabinet.models.get_page_annotation_filename,
+            ),
         ),
     ]

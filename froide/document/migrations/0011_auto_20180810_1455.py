@@ -8,26 +8,26 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0010_auto_20180807_1520'),
+        ("document", "0010_auto_20180807_1520"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='page',
-            name='document',
+            model_name="page",
+            name="document",
         ),
         migrations.RemoveField(
-            model_name='pageannotation',
-            name='page',
+            model_name="pageannotation",
+            name="page",
         ),
         migrations.RemoveField(
-            model_name='pageannotation',
-            name='user',
+            model_name="pageannotation",
+            name="user",
         ),
         migrations.DeleteModel(
-            name='Page',
+            name="Page",
         ),
         migrations.DeleteModel(
-            name='PageAnnotation',
+            name="PageAnnotation",
         ),
     ]

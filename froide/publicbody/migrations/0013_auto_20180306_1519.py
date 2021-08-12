@@ -10,19 +10,25 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('georegion', '__first__'),
-        ('publicbody', '0012_auto_20180227_1926'),
+        ("georegion", "__first__"),
+        ("publicbody", "0012_auto_20180227_1926"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='publicbody',
-            name='geo',
-            field=django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, null=True, srid=4326),
+            model_name="publicbody",
+            name="geo",
+            field=django.contrib.gis.db.models.fields.PointField(
+                blank=True, geography=True, null=True, srid=4326
+            ),
         ),
         migrations.AddField(
-            model_name='publicbody',
-            name='region',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='georegion.GeoRegion'),
+            model_name="publicbody",
+            name="region",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="georegion.GeoRegion",
+            ),
         ),
     ]

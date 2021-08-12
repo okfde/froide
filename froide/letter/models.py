@@ -11,6 +11,7 @@ def render_with_context(method):
         template_string = method(self)
         template = Template(template_string)
         return template.render(Context(context))
+
     return wrapper
 
 
@@ -35,22 +36,21 @@ class LetterTemplate(models.Model):
     notes = models.TextField(blank=True)
 
     tag = models.ForeignKey(
-        MessageTag, null=True, blank=True,
-        on_delete=models.SET_NULL
+        MessageTag, null=True, blank=True, on_delete=models.SET_NULL
     )
 
     class Meta:
-        verbose_name = _('letter template')
-        verbose_name_plural = _('letter templates')
+        verbose_name = _("letter template")
+        verbose_name_plural = _("letter templates")
 
     def __str__(self):
         return self.name
 
     def get_fields(self):
-        return self.form.get('fields', [])
+        return self.form.get("fields", [])
 
     def get_constraints(self):
-        return self.constraints.get('constraints', [])
+        return self.constraints.get("constraints", [])
 
     @render_with_context
     def get_description(self):

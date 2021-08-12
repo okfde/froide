@@ -6,7 +6,7 @@ from django.db import migrations
 
 
 def set_fields_from_original(apps, schema_editor):
-    Document = apps.get_model('document', 'Document')
+    Document = apps.get_model("document", "Document")
 
     for doc in Document.objects.filter(original__isnull=False):
         doc.foirequest = doc.original.belongs_to.request
@@ -17,7 +17,7 @@ def set_fields_from_original(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0014_auto_20180810_1908'),
+        ("document", "0014_auto_20180810_1908"),
     ]
 
     operations = [

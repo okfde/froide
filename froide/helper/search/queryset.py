@@ -5,10 +5,7 @@ from elasticsearch_dsl.query import Q
 
 
 def _make_values_lists(kwargs):
-    return {
-        k: v if isinstance(v, (list, tuple)) else [v]
-        for k, v in kwargs.items()
-    }
+    return {k: v if isinstance(v, (list, tuple)) else [v] for k, v in kwargs.items()}
 
 
 class EmtpyResponse(list):
@@ -20,6 +17,7 @@ class SearchQuerySetWrapper(object):
     """
     Decorates a SearchQuerySet object using a generator for efficient iteration
     """
+
     def __init__(self, sqs, model):
         self.sqs = sqs
         self.sqs.model = model
@@ -51,7 +49,7 @@ class SearchQuerySetWrapper(object):
 
     def update_query(self):
         if self.filters:
-            self.sqs.post_filter = Q('bool', must=self.filters)
+            self.sqs.post_filter = Q("bool", must=self.filters)
 
     def all(self):
         return self
@@ -67,8 +65,8 @@ class SearchQuerySetWrapper(object):
     def get_response(self):
         if self.broken_query:
             return EmtpyResponse()
-        if not hasattr(self.sqs, '_response'):
-            self.sqs = self.sqs.source(excludes=['*'])
+        if not hasattr(self.sqs, "_response"):
+            self.sqs = self.sqs.source(excludes=["*"])
         else:
             return self.sqs._response
         try:
@@ -79,16 +77,16 @@ class SearchQuerySetWrapper(object):
 
     def add_aggregation(self, aggs):
         for field in aggs:
-            a = A('terms', field=field)
+            a = A("terms", field=field)
             self.sqs.aggs.bucket(field, a)
         return self
 
-    def add_date_histogram(self, date_field, interval='1y', format='yyyy'):
+    def add_date_histogram(self, date_field, interval="1y", format="yyyy"):
         a = A(
-            'date_histogram',
+            "date_histogram",
             field=date_field,
             calendar_interval=interval,
-            format=format
+            format=format,
         )
         self.sqs.aggs.bucket(date_field, a)
         return self
@@ -97,27 +95,27 @@ class SearchQuerySetWrapper(object):
         if resolvers is None:
             resolvers = {}
         return {
-            k: resolvers[k](k, self.response['aggregations'][k])
-            for k in self.response['aggregations']
+            k: resolvers[k](k, self.response["aggregations"][k])
+            for k in self.response["aggregations"]
             if k in resolvers
         }
 
     def get_aggregations(self):
-        if self.broken_query or 'aggregations' not in self.response:
-            return {
-                'fields': {}
+        if self.broken_query or "aggregations" not in self.response:
+            return {"fields": {}}
+        return {
+            "fields": {
+                k: [
+                    [i["key"], i["doc_count"]]
+                    for i in self.response["aggregations"][k]["buckets"]
+                ]
+                for k in self.response["aggregations"]
             }
-        return {'fields': {
-            k: [
-                [i['key'], i['doc_count']]
-                for i in self.response['aggregations'][k]['buckets']
-            ]
-            for k in self.response['aggregations']
-        }}
+        }
 
     def filter(self, *args, **kwargs):
         if kwargs:
-            value = Q('terms', **_make_values_lists(kwargs))
+            value = Q("terms", **_make_values_lists(kwargs))
         else:
             value = args[0]
         self.filters.append(value)
@@ -143,27 +141,21 @@ class SearchQuerySetWrapper(object):
 
 class ESQuerySetWrapper(object):
     def __init__(self, qs, es_response):
-        self.__class__ = type(
-            qs.__class__.__name__,
-            (self.__class__, qs.__class__),
-            {}
-        )
+        self.__class__ = type(qs.__class__.__name__, (self.__class__, qs.__class__), {})
         self.__dict__ = qs.__dict__
         self._qs = qs
         self._es_response = es_response
-        self._es_map = {
-            int(hit.meta.id): hit for hit in es_response
-        }
+        self._es_map = {int(hit.meta.id): hit for hit in es_response}
 
     def __iter__(self):
         for obj in self._qs:
             hit = self._es_map[obj.pk]
             # mark_safe should work because highlight_options
             # has been set with encoder="html"
-            obj.query_highlight = mark_safe(' '.join(self._get_highlight(hit)))
+            obj.query_highlight = mark_safe(" ".join(self._get_highlight(hit)))
             yield obj
 
     def _get_highlight(self, hit):
-        if hasattr(hit.meta, 'highlight'):
+        if hasattr(hit.meta, "highlight"):
             for key in hit.meta.highlight:
                 yield from hit.meta.highlight[key]

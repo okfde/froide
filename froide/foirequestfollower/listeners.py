@@ -4,8 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from froide.foirequest.models import FoiRequest
 
 
-@receiver(FoiRequest.message_received,
-    dispatch_uid="notify_followers_message_received")
+@receiver(FoiRequest.message_received, dispatch_uid="notify_followers_message_received")
 def notify_followers_message_received(sender, message=None, **kwargs):
     from .tasks import update_followers
 
@@ -15,15 +14,17 @@ def notify_followers_message_received(sender, message=None, **kwargs):
         countdown = 10 * 60  # 10 minutes
 
     update_followers.apply_async(
-        args=[sender.pk, _("The request '%(request)s' received a reply.") % {
-            "request": sender.title}],
-        kwargs={'template': 'foirequestfollower/instant_update_follower.txt'},
-        countdown=countdown
+        args=[
+            sender.pk,
+            _("The request '%(request)s' received a reply.")
+            % {"request": sender.title},
+        ],
+        kwargs={"template": "foirequestfollower/instant_update_follower.txt"},
+        countdown=countdown,
     )
 
 
-@receiver(FoiRequest.message_sent,
-        dispatch_uid="notify_followers_send_foimessage")
+@receiver(FoiRequest.message_sent, dispatch_uid="notify_followers_send_foimessage")
 def notify_followers_send_foimessage(sender, message=None, **kwargs):
     from .tasks import update_followers
 
@@ -33,8 +34,11 @@ def notify_followers_send_foimessage(sender, message=None, **kwargs):
         countdown = 10 * 60  # 10 minutes
 
     update_followers.apply_async(
-        args=[sender.pk, _("A message was sent in the request '%(request)s'.") % {
-            "request": sender.title}],
-        kwargs={'template': 'foirequestfollower/instant_update_follower.txt'},
-        countdown=countdown
+        args=[
+            sender.pk,
+            _("A message was sent in the request '%(request)s'.")
+            % {"request": sender.title},
+        ],
+        kwargs={"template": "foirequestfollower/instant_update_follower.txt"},
+        countdown=countdown,
     )

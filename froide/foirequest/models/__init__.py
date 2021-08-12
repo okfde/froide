@@ -9,7 +9,16 @@ from .project import FoiProject
 
 
 __all__ = [
-    FoiRequest, TaggedFoiRequest, FoiMessage, FoiAttachment, FoiEvent,
-    DeferredMessage, PublicBodySuggestion, RequestDraft, FoiProject,
-    DeliveryStatus, MessageTag, TaggedMessage
+    FoiRequest,
+    TaggedFoiRequest,
+    FoiMessage,
+    FoiAttachment,
+    FoiEvent,
+    DeferredMessage,
+    PublicBodySuggestion,
+    RequestDraft,
+    FoiProject,
+    DeliveryStatus,
+    MessageTag,
+    TaggedMessage,
 ]

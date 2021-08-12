@@ -9,30 +9,41 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('team', '0002_auto_20180111_1347'),
+        ("team", "0002_auto_20180111_1347"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('document', '0018_document_team'),
+        ("document", "0018_document_team"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='documentcollection',
-            name='created_at',
+            model_name="documentcollection",
+            name="created_at",
             field=models.DateTimeField(default=django.utils.timezone.now, null=True),
         ),
         migrations.AddField(
-            model_name='documentcollection',
-            name='team',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='team.Team'),
+            model_name="documentcollection",
+            name="team",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="team.Team",
+            ),
         ),
         migrations.AddField(
-            model_name='documentcollection',
-            name='updated_at',
+            model_name="documentcollection",
+            name="updated_at",
             field=models.DateTimeField(default=django.utils.timezone.now, null=True),
         ),
         migrations.AddField(
-            model_name='documentcollection',
-            name='user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='document_documentcollection', to=settings.AUTH_USER_MODEL, verbose_name='User'),
+            model_name="documentcollection",
+            name="user",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="document_documentcollection",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="User",
+            ),
         ),
     ]

@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0015_jurisdiction_region'),
+        ("publicbody", "0015_jurisdiction_region"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='publicbody',
-            name='fax',
+            model_name="publicbody",
+            name="fax",
             field=models.CharField(blank=True, max_length=50),
         ),
     ]

@@ -11,7 +11,9 @@ from froide.helper.utils import render_400, render_403
 from ..models import FoiProject
 from ..forms import MakeProjectPublicForm
 from ..auth import (
-    get_read_foirequest_queryset, can_read_foiproject, can_manage_foiproject
+    get_read_foirequest_queryset,
+    can_read_foiproject,
+    can_manage_foiproject,
 )
 
 
@@ -28,6 +30,7 @@ def allow_manage_foiproject(func):
         if not can_manage_foiproject(foiproject, request):
             return render_403(request)
         return func(request, foiproject, *args, **kwargs)
+
     return inner
 
 
@@ -44,21 +47,18 @@ class ProjectView(AuthRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        public_requests = self.object.foirequest_set.filter(
-            public=True
-        ).count()
-        context['foirequests'] = get_read_foirequest_queryset(
+        public_requests = self.object.foirequest_set.filter(public=True).count()
+        context["foirequests"] = get_read_foirequest_queryset(
             self.request, queryset=self.object.foirequest_set.all()
         )
-        context['public_requests'] = public_requests
-        context['all_public'] = public_requests == self.object.request_count
-        context['all_non_public'] = public_requests == 0
-        if not context['all_public'] or not self.object.public:
-            context['make_public_form'] = MakeProjectPublicForm()
+        context["public_requests"] = public_requests
+        context["all_public"] = public_requests == self.object.request_count
+        context["all_non_public"] = public_requests == 0
+        if not context["all_public"] or not self.object.public:
+            context["make_public_form"] = MakeProjectPublicForm()
         if can_manage_foiproject(self.object, self.request):
-            context['team_form'] = AssignTeamForm(
-                instance=self.object,
-                user=self.request.user
+            context["team_form"] = AssignTeamForm(
+                instance=self.object, user=self.request.user
             )
         return context
 
@@ -78,7 +78,6 @@ def make_project_public(request, foiproject):
         if not form.is_valid():
             return render_400()
         foiproject.make_public(
-            publish_requests=form.cleaned_data['publish_requests'],
-            user=request.user
+            publish_requests=form.cleaned_data["publish_requests"], user=request.user
         )
     return redirect(foiproject)

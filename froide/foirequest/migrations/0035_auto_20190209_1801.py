@@ -7,18 +7,24 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0034_auto_20190129_1536'),
+        ("foirequest", "0034_auto_20190129_1536"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foirequest',
-            name='not_publishable',
-            field=models.BooleanField(default=False, verbose_name='Not publishable'),
+            model_name="foirequest",
+            name="not_publishable",
+            field=models.BooleanField(default=False, verbose_name="Not publishable"),
         ),
         migrations.AlterField(
-            model_name='foiattachment',
-            name='belongs_to',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='foiattachment_set', to='foirequest.FoiMessage', verbose_name='Belongs to request'),
+            model_name="foiattachment",
+            name="belongs_to",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="foiattachment_set",
+                to="foirequest.FoiMessage",
+                verbose_name="Belongs to request",
+            ),
         ),
     ]

@@ -17,12 +17,14 @@ def rec(x):
 
 class TestTextReplacement(TestCase):
     def test_email_name_replacement(self):
-        content = 'This is a very long string with a name <and.email@adress.in> it'
-        content = replace_email_name(content, 'REPLACEMENT')
-        self.assertEqual(content, 'This is a very long string with a name REPLACEMENT it')
+        content = "This is a very long string with a name <and.email@adress.in> it"
+        content = replace_email_name(content, "REPLACEMENT")
+        self.assertEqual(
+            content, "This is a very long string with a name REPLACEMENT it"
+        )
 
     def test_remove_closing(self):
-        content = '''
+        content = """
 Sehr geehrte Frau Müller,
 
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
@@ -32,33 +34,34 @@ Mit freundlichem Gruß
 Peter Parker
 
 More stuff here
-        '''
+        """
 
         closings = [
-            rec('[Mm]it( den)? (freundliche(n|m)|vielen|besten) Gr(ü|u)(ß|ss)(en)?,?'),
-            rec(r'Hochachtungsvoll,?'),
-            rec(r'i\. ?A\.'), rec(r'[iI]m Auftrag')
+            rec("[Mm]it( den)? (freundliche(n|m)|vielen|besten) Gr(ü|u)(ß|ss)(en)?,?"),
+            rec(r"Hochachtungsvoll,?"),
+            rec(r"i\. ?A\."),
+            rec(r"[iI]m Auftrag"),
         ]
 
         removed = remove_closing(content, closings)
-        self.assertNotIn('Peter Parker', removed)
+        self.assertNotIn("Peter Parker", removed)
 
     def test_redactions_simple(self):
-        original = '''Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an amtsleitung-jobcenter@kreis-warendorf.de
+        original = """Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an amtsleitung-jobcenter@kreis-warendorf.de
 
 Mit freundlichen Grüßen
 
 Peter Parker
-'''
-        redacted = '''Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an <<E-Mail-Adresse>>
+"""
+        redacted = """Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an <<E-Mail-Adresse>>
 
-Mit freundlichen Grüßen'''
+Mit freundlichen Grüßen"""
 
         differences = mark_differences(original, redacted)
-        self.assertEqual(2, differences.count('</span>'))
+        self.assertEqual(2, differences.count("</span>"))
 
     def test_email_redaction(self):
-        content = '''Sehr geehrte(r) Anfragende(r),
+        content = """Sehr geehrte(r) Anfragende(r),
 
 die E-Mailadresse, an die Sie sich wenden können, lautet informationsfreiheitsgesetz@example.com. Hier werden Ihre Anfragen unmittelbar bearbeitet.
 
@@ -68,9 +71,9 @@ Sollten Sie kein Interesse an der Veröffentlichung Ihres Namens auf der Website
 
 Vielen Dank für Ihr Verständnis.
 
-Mit freundlichen Grüßen'''
+Mit freundlichen Grüßen"""
 
-        redacted = '''Sehr geehrte(r) Anfragende(r),
+        redacted = """Sehr geehrte(r) Anfragende(r),
 
 die E-Mailadresse, an die Sie sich wenden können, lautet <<E-Mail-Adresse>>. Hier werden Ihre Anfragen unmittelbar bearbeitet.
 
@@ -80,9 +83,12 @@ Sollten Sie kein Interesse an der Veröffentlichung Ihres Namens auf der Website
 
 Vielen Dank für Ihr Verständnis.
 
-Mit freundlichen Grüßen'''
+Mit freundlichen Grüßen"""
         res = mark_differences(content, redacted, attrs='class="redacted"')
-        fake_res = content.replace('informationsfreiheitsgesetz@example.com.', '<span class="redacted">informationsfreiheitsgesetz@example.com.</span>')
+        fake_res = content.replace(
+            "informationsfreiheitsgesetz@example.com.",
+            '<span class="redacted">informationsfreiheitsgesetz@example.com.</span>',
+        )
         self.assertEqual(fake_res, res)
 
 
@@ -95,7 +101,8 @@ Mit freundlichen Grüßen'''
         (12, 26),  # Second day of Christmas
     ],
     HOLIDAYS_WEEKENDS=True,
-    HOLIDAYS_FOR_EASTER=(0, -2, 1, 39, 50, 60))
+    HOLIDAYS_FOR_EASTER=(0, -2, 1, 39, 50, 60),
+)
 class TestGermanDeadline(TestCase):
     def test_german_holidays_send(self):
         easter_sunday = calc_easter(2014)
@@ -146,19 +153,24 @@ class TestMailIntent(TestCase):
             try:
                 mail_registry.intents[intent_key].get_templates(needs_subject=False)
             except Exception:
-                print('intent_key', intent_key)
+                print("intent_key", intent_key)
                 raise
 
 
 class TestCSVFormulaEscape(TestCase):
     def test_formula_escape(self):
         data = [
-            {'col1': '=SUM(1+1)', 'col2': '+AVG(A2:A)',
-            'col3': '-SUM(1+1)', 'col4': '@SUM(1+1)+"X"'}]
+            {
+                "col1": "=SUM(1+1)",
+                "col2": "+AVG(A2:A)",
+                "col3": "-SUM(1+1)",
+                "col4": '@SUM(1+1)+"X"',
+            }
+        ]
         csv_bytes = list(dict_to_csv_stream(data))
 
-        self.assertEqual(csv_bytes[0].strip(), ','.join(data[0].keys()).encode('utf-8'))
+        self.assertEqual(csv_bytes[0].strip(), ",".join(data[0].keys()).encode("utf-8"))
         self.assertEqual(
             csv_bytes[1].strip(),
-            b'\'=SUM(1+1),\'+AVG(A2:A),\'-SUM(1+1),"\'@SUM(1+1)+""X"""'
+            b'\'=SUM(1+1),\'+AVG(A2:A),\'-SUM(1+1),"\'@SUM(1+1)+""X"""',
         )

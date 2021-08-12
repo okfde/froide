@@ -4,12 +4,12 @@ import sys
 # Calculate the path based on the location of the WSGI script.
 apache_configuration = os.path.dirname(__file__)
 project = os.path.dirname(apache_configuration)
-workspace = os.path.join(project, '..')
+workspace = os.path.join(project, "..")
 sys.path.append(project)
 sys.path.append(workspace)
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'froide.settings')
-os.environ.setdefault('DJANGO_CONFIGURATION', 'Production')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "froide.settings")
+os.environ.setdefault("DJANGO_CONFIGURATION", "Production")
 
 from django.conf import settings  # noqa
 from configurations.wsgi import get_wsgi_application  # noqa
@@ -18,6 +18,7 @@ application = get_wsgi_application()
 
 try:
     from whitenoise.django import DjangoWhiteNoise
+
     application = DjangoWhiteNoise(application)
 
     if settings.MEDIA_ROOT and settings.MEDIA_URL:

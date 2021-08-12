@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0037_foilawtranslation_legal_text'),
+        ("publicbody", "0037_foilawtranslation_legal_text"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foilaw',
-            name='scale_of_fees',
-            field=models.CharField(blank=True, max_length=255, verbose_name='Scale of fees URL'),
+            model_name="foilaw",
+            name="scale_of_fees",
+            field=models.CharField(
+                blank=True, max_length=255, verbose_name="Scale of fees URL"
+            ),
         ),
     ]

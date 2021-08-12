@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.filter(is_safe=True)
-def markdown(value, arg=''):
+def markdown(value, arg=""):
     """
     Taken from Django 1.4 to avoid deprecation warnings
 
@@ -30,7 +30,9 @@ def markdown(value, arg=''):
         import markdown
     except ImportError:
         if settings.DEBUG:
-            raise template.TemplateSyntaxError("Error in 'markdown' filter: The Python markdown library isn't installed.")
+            raise template.TemplateSyntaxError(
+                "Error in 'markdown' filter: The Python markdown library isn't installed."
+            )
         return force_str(value)
     else:
         return mark_safe(markdown.markdown(force_str(value)))

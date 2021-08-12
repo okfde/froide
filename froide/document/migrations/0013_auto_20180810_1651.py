@@ -9,18 +9,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0012_documentcollection'),
-        ('filingcabinet', '0004_auto_20180810_1642')
+        ("document", "0012_documentcollection"),
+        ("filingcabinet", "0004_auto_20180810_1642"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='documentcollection',
-            name='documents',
+            model_name="documentcollection",
+            name="documents",
         ),
         migrations.AddField(
-            model_name='documentcollection',
-            name='documents',
-            field=models.ManyToManyField(blank=True, related_name='document_documentcollection', through='filingcabinet.CollectionDocument', to=settings.FILINGCABINET_DOCUMENT_MODEL),
+            model_name="documentcollection",
+            name="documents",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="document_documentcollection",
+                through="filingcabinet.CollectionDocument",
+                to=settings.FILINGCABINET_DOCUMENT_MODEL,
+            ),
         ),
     ]

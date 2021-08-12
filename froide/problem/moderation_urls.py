@@ -4,5 +4,5 @@ from .views import moderation_view
 
 
 urlpatterns = [
-    path('', moderation_view, name='problem-moderation'),
+    path("", moderation_view, name="problem-moderation"),
 ]

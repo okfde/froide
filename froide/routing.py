@@ -7,16 +7,12 @@ from channels.security.websocket import AllowedHostsOriginValidator
 from froide.problem.consumers import ModerationConsumer
 
 
-websocket_urls = [
-    path('moderation/', ModerationConsumer.as_asgi())
-]
+websocket_urls = [path("moderation/", ModerationConsumer.as_asgi())]
 
-application = ProtocolTypeRouter({
-    'websocket': AllowedHostsOriginValidator(
-        AuthMiddlewareStack(
-            URLRouter([
-                path('ws/', URLRouter(websocket_urls))
-            ])
-        )
-    ),
-})
+application = ProtocolTypeRouter(
+    {
+        "websocket": AllowedHostsOriginValidator(
+            AuthMiddlewareStack(URLRouter([path("ws/", URLRouter(websocket_urls))]))
+        ),
+    }
+)

@@ -4,7 +4,7 @@ import os
 import sys
 import tempfile
 
-from .import constants
+from . import constants
 
 
 def encode_base64_to_string(data):
@@ -16,11 +16,11 @@ def encode_base64_to_string(data):
 
     if not isinstance(data, bytes):
         if isinstance(data, str):
-            data = data.encode('utf-8')
+            data = data.encode("utf-8")
         else:
-            data = str(data).encode('utf-8')
+            data = str(data).encode("utf-8")
 
-    return b64encode(data).decode('ascii').rstrip('\n')
+    return b64encode(data).decode("ascii").rstrip("\n")
 
 
 def encode_upload_metadata(upload_metadata):
@@ -30,11 +30,15 @@ def encode_upload_metadata(upload_metadata):
     :return str:
     """
     # Prepare encoded data
-    encoded_data = [(key, encode_base64_to_string(value))
-                    for (key, value) in sorted(upload_metadata.items(), key=lambda item: item[0])]
+    encoded_data = [
+        (key, encode_base64_to_string(value))
+        for (key, value) in sorted(upload_metadata.items(), key=lambda item: item[0])
+    ]
 
     # Encode into string
-    return ','.join([' '.join([key, encoded_value]) for key, encoded_value in encoded_data])
+    return ",".join(
+        [" ".join([key, encoded_value]) for key, encoded_value in encoded_data]
+    )
 
 
 def write_bytes_to_file(file_path, offset, bytes, makedirs=False):
@@ -55,9 +59,9 @@ def write_bytes_to_file(file_path, offset, bytes, makedirs=False):
     fh = None
     try:
         try:
-            fh = open(file_path, 'r+b')
+            fh = open(file_path, "r+b")
         except IOError:
-            fh = open(file_path, 'wb')
+            fh = open(file_path, "wb")
         fh.seek(offset, os.SEEK_SET)
         num_bytes_written = fh.write(bytes)
     finally:
@@ -91,7 +95,7 @@ def read_bytes(path):
     :param str path: The local path to the file to read
     :return six.binary_type: bytes read from the given field_file
     """
-    with open(path, 'r+b') as fh:
+    with open(path, "r+b") as fh:
         result = fh.read()
     return result
 
@@ -105,7 +109,7 @@ def write_chunk_to_temp_file(bytes):
     fd, chunk_file = tempfile.mkstemp(prefix="tus-upload-chunk-")
     os.close(fd)
 
-    with open(chunk_file, 'wb') as fh:
+    with open(chunk_file, "wb") as fh:
         fh.write(bytes)
 
     return chunk_file
@@ -131,7 +135,9 @@ def create_checksum_header(bytes, checksum_algorithm):
     :return str: The checksum algorithm, followed by the checksum (hex)
     """
     checksum = create_checksum(bytes, checksum_algorithm)
-    return '{checksum_algorithm} {checksum}'.format(checksum_algorithm=checksum_algorithm, checksum=checksum)
+    return "{checksum_algorithm} {checksum}".format(
+        checksum_algorithm=checksum_algorithm, checksum=checksum
+    )
 
 
 def checksum_matches(checksum_algorithm, checksum, bytes):
@@ -157,7 +163,7 @@ def augment_request(request):
 
 
 def parse_tus_version(request):
-    tus_version = get_header(request, 'Tus-Resumable', None)
+    tus_version = get_header(request, "Tus-Resumable", None)
 
     if tus_version is None:
         return
@@ -167,7 +173,7 @@ def parse_tus_version(request):
 
 
 def parse_upload_defer_length(request):
-    upload_defer_length = get_header(request, 'Upload-Defer-Length', None)
+    upload_defer_length = get_header(request, "Upload-Defer-Length", None)
 
     if not upload_defer_length:
         return
@@ -183,7 +189,7 @@ def parse_upload_defer_length(request):
 
 
 def parse_upload_offset(request):
-    upload_offset = get_header(request, 'Upload-Offset', None)
+    upload_offset = get_header(request, "Upload-Offset", None)
 
     if upload_offset is None:
         return
@@ -193,7 +199,7 @@ def parse_upload_offset(request):
 
 
 def parse_upload_length(request):
-    upload_length = get_header(request, 'Upload-Length', None)
+    upload_length = get_header(request, "Upload-Length", None)
 
     if upload_length is None:
         return
@@ -203,12 +209,12 @@ def parse_upload_length(request):
 
 
 def parse_upload_checksum(request):
-    upload_checksum_header = get_header(request, 'Upload-Checksum', None)
+    upload_checksum_header = get_header(request, "Upload-Checksum", None)
 
     if upload_checksum_header is None:
         return
 
-    upload_checksum = list(upload_checksum_header.split(' '))
+    upload_checksum = list(upload_checksum_header.split(" "))
     if len(upload_checksum) != 2:
         raise ValueError(
             'Invalid value for "Upload-Checksum" header: {}.'.format(
@@ -223,22 +229,22 @@ def parse_upload_checksum(request):
 
 
 def parse_upload_metadata(request):
-    upload_meta_header = get_header(request, 'Upload-Metadata', None)
+    upload_meta_header = get_header(request, "Upload-Metadata", None)
 
     if upload_meta_header is None:
         return
 
     upload_metadata = {}
 
-    for key_value_pair in upload_meta_header.split(','):
+    for key_value_pair in upload_meta_header.split(","):
         # Trim whitespace
         key_value_pair = key_value_pair.strip()
 
         # Split key and value
-        key, value = key_value_pair.split(' ')
+        key, value = key_value_pair.split(" ")
 
         # Store data
-        upload_metadata[key] = b64decode(value.encode('ascii')).decode('utf-8')
+        upload_metadata[key] = b64decode(value.encode("ascii")).decode("utf-8")
 
     # Set upload_metadata
     setattr(request, constants.UPLOAD_METADATA_FIELD_NAME, upload_metadata)
@@ -246,17 +252,17 @@ def parse_upload_metadata(request):
 
 def get_header(request, key, default_value=None):
     # First, we try to retrieve the key in the "headers" dictionary
-    result = request.META.get('headers', {}).get(key, None)
+    result = request.META.get("headers", {}).get(key, None)
 
     # If we didn't find the key, or the value was "None", try to use the "HTTP_{uppercased-key}" key
     if result is None:
-        custom_value = 'HTTP_{}'.format(key.replace('-', '_').upper())
+        custom_value = "HTTP_{}".format(key.replace("-", "_").upper())
         result = request.META.get(custom_value, default_value)
 
     # If we didn't find the key, or the value was "None", try to use the "HTTP_X_{uppercased-key}" key
     if result is None:
         # https://tools.ietf.org/html/rfc6648
-        custom_value = 'HTTP_X_{}'.format(key.replace('-', '_').upper())
+        custom_value = "HTTP_X_{}".format(key.replace("-", "_").upper())
         result = request.META.get(custom_value, default_value)
 
     # If we still didn't find the key, or the value was "None", return the default value

@@ -7,14 +7,19 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0009_alter_user_last_name_max_length'),
-        ('campaign', '0004_campaign_active'),
+        ("auth", "0009_alter_user_last_name_max_length"),
+        ("campaign", "0004_campaign_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='campaign',
-            name='group',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='auth.Group'),
+            model_name="campaign",
+            name="group",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="auth.Group",
+            ),
         ),
     ]

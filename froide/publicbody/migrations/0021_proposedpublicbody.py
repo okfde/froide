@@ -9,23 +9,22 @@ import froide.publicbody.models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0020_foilaw_requires_signature'),
+        ("publicbody", "0020_foilaw_requires_signature"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ProposedPublicBody',
-            fields=[
-            ],
+            name="ProposedPublicBody",
+            fields=[],
             options={
-                'verbose_name': 'Proposed Public Body',
-                'verbose_name_plural': 'Proposed Public Bodies',
-                'proxy': True,
-                'indexes': [],
+                "verbose_name": "Proposed Public Body",
+                "verbose_name_plural": "Proposed Public Bodies",
+                "proxy": True,
+                "indexes": [],
             },
-            bases=('publicbody.publicbody',),
+            bases=("publicbody.publicbody",),
             managers=[
-                ('objects', froide.publicbody.models.ProposedPublicBodyManager()),
+                ("objects", froide.publicbody.models.ProposedPublicBodyManager()),
             ],
         ),
     ]

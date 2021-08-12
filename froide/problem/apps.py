@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class ProblemConfig(AppConfig):
-    name = 'froide.problem'
-    verbose_name = _('Problems')
+    name = "froide.problem"
+    verbose_name = _("Problems")
 
     def ready(self):
         from froide.account.export import registry
@@ -26,9 +26,10 @@ class ProblemConfig(AppConfig):
                 return None
 
             return MenuItem(
-                section='after_settings', order=0,
-                url=reverse('problem-moderation'),
-                label=_('Moderation')
+                section="after_settings",
+                order=0,
+                url=reverse("problem-moderation"),
+                label=_("Moderation"),
             )
 
         menu_registry.register(get_moderation_menu_item)
@@ -38,34 +39,36 @@ class ProblemConfig(AppConfig):
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from .models import ProblemReport
 
-    ProblemReport.objects.filter(user=old_user).update(
-        user=new_user
-    )
-    ProblemReport.objects.filter(moderator=old_user).update(
-        moderator=new_user
-    )
+    ProblemReport.objects.filter(user=old_user).update(user=new_user)
+    ProblemReport.objects.filter(moderator=old_user).update(moderator=new_user)
 
 
 def export_user_data(user):
     from .models import ProblemReport
 
-    problems = ProblemReport.objects.filter(
-        user=user
-    ).select_related('message', 'message__request')
+    problems = ProblemReport.objects.filter(user=user).select_related(
+        "message", "message__request"
+    )
     if not problems:
         return
-    yield ('problem_reports.json', json.dumps([
-        {
-            'message': pb.message.get_absolute_domain_short_url(),
-            'timestamp': pb.timestamp.isoformat(),
-            'resolved': pb.resolved,
-            'kind': pb.kind,
-            'description': pb.description,
-            'resolution': pb.resolution,
-            'resolution_timestamp': (
-                pb.resolution_timestamp.isoformat()
-                if pb.resolution_timestamp else None
-            ),
-        }
-        for pb in problems]).encode('utf-8')
+    yield (
+        "problem_reports.json",
+        json.dumps(
+            [
+                {
+                    "message": pb.message.get_absolute_domain_short_url(),
+                    "timestamp": pb.timestamp.isoformat(),
+                    "resolved": pb.resolved,
+                    "kind": pb.kind,
+                    "description": pb.description,
+                    "resolution": pb.resolution,
+                    "resolution_timestamp": (
+                        pb.resolution_timestamp.isoformat()
+                        if pb.resolution_timestamp
+                        else None
+                    ),
+                }
+                for pb in problems
+            ]
+        ).encode("utf-8"),
     )

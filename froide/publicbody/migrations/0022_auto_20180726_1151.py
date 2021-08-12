@@ -8,12 +8,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0021_proposedpublicbody'),
+        ("publicbody", "0021_proposedpublicbody"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='proposedpublicbody',
-            options={'ordering': ('-created_at',), 'verbose_name': 'Proposed Public Body', 'verbose_name_plural': 'Proposed Public Bodies'},
+            name="proposedpublicbody",
+            options={
+                "ordering": ("-created_at",),
+                "verbose_name": "Proposed Public Body",
+                "verbose_name_plural": "Proposed Public Bodies",
+            },
         ),
     ]

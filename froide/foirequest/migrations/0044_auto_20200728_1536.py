@@ -7,18 +7,20 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0043_auto_20200710_1845'),
+        ("foirequest", "0043_auto_20200710_1845"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='foievent',
-            name='context_json',
-            field=models.JSONField(verbose_name='Context JSON'),
+            model_name="foievent",
+            name="context_json",
+            field=models.JSONField(verbose_name="Context JSON"),
         ),
         migrations.AlterField(
-            model_name='foievent',
-            name='timestamp',
-            field=models.DateTimeField(default=django.utils.timezone.now, verbose_name='Timestamp'),
+            model_name="foievent",
+            name="timestamp",
+            field=models.DateTimeField(
+                default=django.utils.timezone.now, verbose_name="Timestamp"
+            ),
         ),
     ]

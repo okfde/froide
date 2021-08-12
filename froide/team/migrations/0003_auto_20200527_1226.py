@@ -6,12 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('team', '0002_auto_20180111_1347'),
+        ("team", "0002_auto_20180111_1347"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='teammembership',
-            constraint=models.UniqueConstraint(condition=models.Q(user__isnull=False), fields=('user', 'team'), name='unique_user_team'),
+            model_name="teammembership",
+            constraint=models.UniqueConstraint(
+                condition=models.Q(user__isnull=False),
+                fields=("user", "team"),
+                name="unique_user_team",
+            ),
         ),
     ]

@@ -6,12 +6,14 @@ from filingcabinet.models import (
     DocumentManager as FCDocumentManager,
     DocumentCollectionManager as FCDocumentCollectionManager,
     get_page_image_filename,
-    Page
+    Page,
 )
 
 from froide.helper.auth import (
-    can_read_object_authenticated, can_write_object,
-    get_read_queryset, get_write_queryset
+    can_read_object_authenticated,
+    can_write_object,
+    get_read_queryset,
+    get_write_queryset,
 )
 
 
@@ -19,8 +21,7 @@ class AuthQuerysetMixin:
     def get_authenticated_queryset(self, request):
         qs = self.get_queryset()
         return get_read_queryset(
-            qs, request, has_team=True, public_field='public',
-            scope='read:document'
+            qs, request, has_team=True, public_field="public", scope="read:document"
         )
 
 
@@ -30,21 +31,21 @@ class DocumentManager(AuthQuerysetMixin, FCDocumentManager):
 
 class Document(AbstractDocument):
     original = models.ForeignKey(
-        'foirequest.FoiAttachment', null=True, blank=True,
-        on_delete=models.SET_NULL, related_name='original_document'
+        "foirequest.FoiAttachment",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="original_document",
     )
 
     foirequest = models.ForeignKey(
-        'foirequest.FoiRequest', null=True, blank=True,
-        on_delete=models.SET_NULL
+        "foirequest.FoiRequest", null=True, blank=True, on_delete=models.SET_NULL
     )
     publicbody = models.ForeignKey(
-        'publicbody.PublicBody', null=True, blank=True,
-        on_delete=models.SET_NULL
+        "publicbody.PublicBody", null=True, blank=True, on_delete=models.SET_NULL
     )
     team = models.ForeignKey(
-        'team.Team', null=True, blank=True,
-        on_delete=models.SET_NULL
+        "team.Team", null=True, blank=True, on_delete=models.SET_NULL
     )
 
     objects = DocumentManager()
@@ -84,10 +85,7 @@ class Document(AbstractDocument):
         if filename is None:
             filename = self.get_document_filename()
 
-        return DocumentCrossDomainMediaAuth({
-            'object': self,
-            'filename': filename
-        })
+        return DocumentCrossDomainMediaAuth({"object": self, "filename": filename})
 
     def get_authorized_file_url(self, filename=None):
         if self.public:
@@ -96,18 +94,18 @@ class Document(AbstractDocument):
             authorized=True
         )
 
-    def get_page_template(self, page='{page}', size='{size}'):
+    def get_page_template(self, page="{page}", size="{size}"):
         filename = get_page_image_filename(page=page, size=size)
         return self.get_authorized_file_url(filename=filename)
 
     def get_cover_image(self):
-        return self.get_authorized_file_url(filename=get_page_image_filename(
-            page=1, size='small'
-        ))
+        return self.get_authorized_file_url(
+            filename=get_page_image_filename(page=1, size="small")
+        )
 
     @property
     def first_page(self):
-        if not hasattr(self, '_first_page'):
+        if not hasattr(self, "_first_page"):
             try:
                 self._first_page = Page.objects.get(number=1, document=self)
             except Page.DoesNotExist:
@@ -120,15 +118,13 @@ class Document(AbstractDocument):
         return None
 
 
-class DocumentCollectionManager(
-        AuthQuerysetMixin, FCDocumentCollectionManager):
+class DocumentCollectionManager(AuthQuerysetMixin, FCDocumentCollectionManager):
     pass
 
 
 class DocumentCollection(AbstractDocumentCollection):
     team = models.ForeignKey(
-        'team.Team', null=True, blank=True,
-        on_delete=models.SET_NULL
+        "team.Team", null=True, blank=True, on_delete=models.SET_NULL
     )
 
     objects = DocumentCollectionManager()

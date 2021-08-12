@@ -22,11 +22,11 @@ def get_context(foirequest, request, **kwargs):
             foirequest, user=user
         )
     context = {
-        'form': form,
-        'object': foirequest,
-        'following': following,
-        'request': request,
-        'can_follow': foirequest.user != user
+        "form": form,
+        "object": foirequest,
+        "following": following,
+        "request": request,
+        "can_follow": foirequest.user != user,
     }
     context.update(kwargs)
     return context
@@ -42,46 +42,69 @@ def follow(request, pk):
     if form.is_valid():
         followed = form.save()
         if is_ajax(request):
-            return render(request, 'foirequestfollower/show.html', {
-                'count': foirequest.follow_count(),
-                'object': foirequest,
-                'email_followed': not request.user.is_authenticated
-            })
+            return render(
+                request,
+                "foirequestfollower/show.html",
+                {
+                    "count": foirequest.follow_count(),
+                    "object": foirequest,
+                    "email_followed": not request.user.is_authenticated,
+                },
+            )
         if request.user.is_authenticated:
             if followed:
-                messages.add_message(request, messages.SUCCESS,
-                        _("You are now following this request."))
+                messages.add_message(
+                    request, messages.SUCCESS, _("You are now following this request.")
+                )
             else:
-                messages.add_message(request, messages.INFO,
-                        _("You are not following this request anymore."))
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    _("You are not following this request anymore."),
+                )
         else:
-            messages.add_message(request, messages.SUCCESS,
-                    _("Check your emails and click the confirmation link in order to follow this request."))
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                _(
+                    "Check your emails and click the confirmation link in order to follow this request."
+                ),
+            )
         return redirect(foirequest)
 
     if is_ajax(request):
-        error_string = ' '.join(' '.join(v) for k, v in form.errors.items())
-        return JsonResponse({'errors': error_string})
-    return show_foirequest(request, foirequest, context={"followform": form}, status=400)
+        error_string = " ".join(" ".join(v) for k, v in form.errors.items())
+        return JsonResponse({"errors": error_string})
+    return show_foirequest(
+        request, foirequest, context={"followform": form}, status=400
+    )
 
 
 @xframe_options_exempt
 def embed_follow(request, pk):
     qs = get_read_foirequest_queryset(request)
     foirequest = get_object_or_404(qs, pk=pk)
-    return render(request, "foirequestfollower/embed_form.html", get_context(
-        foirequest, request, embed=True
-    ))
+    return render(
+        request,
+        "foirequestfollower/embed_form.html",
+        get_context(foirequest, request, embed=True),
+    )
 
 
 def confirm_follow(request, follow_id, check):
     follower = get_object_or_404(FoiRequestFollower, id=int(follow_id))
     if follower.check_and_follow(check):
-        messages.add_message(request, messages.SUCCESS,
-            _("You will now receive email notifications for this request!"))
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            _("You will now receive email notifications for this request!"),
+        )
     else:
-        messages.add_message(request, messages.ERROR,
-            _("There was something wrong with your link. Perhaps try again."))
+        messages.add_message(
+            request,
+            messages.ERROR,
+            _("There was something wrong with your link. Perhaps try again."),
+        )
     return redirect(follower.request)
 
 
@@ -89,13 +112,20 @@ def unfollow_by_link(request, follow_id, check):
     try:
         follower = FoiRequestFollower.objects.get(id=int(follow_id))
     except FoiRequestFollower.DoesNotExist:
-        messages.add_message(request, messages.INFO,
-            _("This follow subscription does not exist anymore."))
-        return redirect('/')
+        messages.add_message(
+            request,
+            messages.INFO,
+            _("This follow subscription does not exist anymore."),
+        )
+        return redirect("/")
     if follower.check_and_unfollow(check):
-        messages.add_message(request, messages.INFO,
-            _("You are not following this request anymore."))
+        messages.add_message(
+            request, messages.INFO, _("You are not following this request anymore.")
+        )
     else:
-        messages.add_message(request, messages.ERROR,
-            _("There was something wrong with your link. Perhaps try again."))
+        messages.add_message(
+            request,
+            messages.ERROR,
+            _("There was something wrong with your link. Perhaps try again."),
+        )
     return redirect(follower.request)

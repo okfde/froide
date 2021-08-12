@@ -4,5 +4,5 @@ from .views import reset_token
 
 
 urlpatterns = [
-    path('reset/', reset_token, name='accesstoken-reset'),
+    path("reset/", reset_token, name="accesstoken-reset"),
 ]

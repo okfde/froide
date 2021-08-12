@@ -16,19 +16,15 @@ from froide.helper.api_utils import OpenRefineReconciliationMixin
 from .models import GeoRegion
 
 
-GERMAN_PLZ_RE = re.compile(r'\d{5}')
+GERMAN_PLZ_RE = re.compile(r"\d{5}")
 
 
 class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
-        view_name='api:georegion-detail',
-        lookup_field='pk'
+        view_name="api:georegion-detail", lookup_field="pk"
     )
     part_of = serializers.HyperlinkedRelatedField(
-        view_name='api:georegion-detail',
-        lookup_field='pk',
-        read_only=True,
-        many=False
+        view_name="api:georegion-detail", lookup_field="pk", read_only=True, many=False
     )
     centroid = serializers.SerializerMethodField()
 
@@ -36,11 +32,20 @@ class GeoRegionSerializer(serializers.HyperlinkedModelSerializer):
         model = GeoRegion
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'slug', 'kind',
-            'kind_detail', 'level',
-            'region_identifier', 'global_identifier',
-            'area', 'population', 'valid_on',
-            'part_of', 'centroid',
+            "resource_uri",
+            "id",
+            "name",
+            "slug",
+            "kind",
+            "kind_detail",
+            "level",
+            "region_identifier",
+            "global_identifier",
+            "area",
+            "population",
+            "valid_on",
+            "part_of",
+            "centroid",
         )
 
     def get_centroid(self, obj):
@@ -55,8 +60,9 @@ class GeoRegionDetailSerializer(GeoRegionSerializer):
 
     class Meta(GeoRegionSerializer.Meta):
         fields = GeoRegionSerializer.Meta.fields + (
-            'geom', 'gov_seat',
-            'centroid',
+            "geom",
+            "gov_seat",
+            "centroid",
         )
 
     def get_geom(self, obj):
@@ -71,22 +77,19 @@ class GeoRegionDetailSerializer(GeoRegionSerializer):
 
 
 class GeoRegionFilter(filters.FilterSet):
-    id = filters.CharFilter(method='id_filter')
-    q = filters.CharFilter(method='search_filter')
-    kind = filters.CharFilter(method='kind_filter')
-    level = filters.NumberFilter(method='level_filter')
+    id = filters.CharFilter(method="id_filter")
+    q = filters.CharFilter(method="search_filter")
+    kind = filters.CharFilter(method="kind_filter")
+    level = filters.NumberFilter(method="level_filter")
     ancestor = filters.ModelChoiceFilter(
-        method='ancestor_filter',
-        queryset=GeoRegion.objects.all()
+        method="ancestor_filter", queryset=GeoRegion.objects.all()
     )
-    latlng = filters.CharFilter(method='latlng_filter')
-    name = filters.CharFilter(method='name_filter')
+    latlng = filters.CharFilter(method="latlng_filter")
+    name = filters.CharFilter(method="name_filter")
 
     class Meta:
         model = GeoRegion
-        fields = (
-            'name', 'level', 'kind', 'slug'
-        )
+        fields = ("name", "level", "kind", "slug")
 
     def name_filter(self, queryset, name, value):
         qs = queryset.filter(name=value)
@@ -104,32 +107,27 @@ class GeoRegionFilter(filters.FilterSet):
         return queryset.filter(level=value)
 
     def id_filter(self, queryset, name, value):
-        ids = value.split(',')
+        ids = value.split(",")
         return queryset.filter(pk__in=ids)
 
     def ancestor_filter(self, queryset, name, value):
         descendants = value.get_descendants()
-        return queryset.filter(
-            id__in=descendants
-        )
+        return queryset.filter(id__in=descendants)
 
     def latlng_filter(self, queryset, name, value):
         try:
-            parts = value.split(',', 1)
+            parts = value.split(",", 1)
             lat, lng = float(parts[0]), float(parts[1])
-            return queryset.filter(
-                geom__covers=Point(lng, lat)
-            )
+            return queryset.filter(geom__covers=Point(lng, lat))
         except (ValueError, IndexError):
             pass
         return queryset
 
 
-class GeoRegionViewSet(OpenRefineReconciliationMixin,
-                       viewsets.ReadOnlyModelViewSet):
+class GeoRegionViewSet(OpenRefineReconciliationMixin, viewsets.ReadOnlyModelViewSet):
     serializer_action_classes = {
-        'list': GeoRegionSerializer,
-        'retrieve': GeoRegionDetailSerializer
+        "list": GeoRegionSerializer,
+        "retrieve": GeoRegionDetailSerializer,
     }
     queryset = GeoRegion.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
@@ -140,43 +138,33 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
     renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (JSONPRenderer,)
 
     class RECONCILIATION_META:
-        name = 'GeoRegion'
-        id = 'georegion'
+        name = "GeoRegion"
+        id = "georegion"
         model = GeoRegion
-        api_list = 'api:georegion-list'
+        api_list = "api:georegion-list"
         obj_short_link = None
-        filters = ['kind', 'level']
-        properties = [{
-            'id': 'population',
-            'name': 'population',
-            }, {
-            'id': 'area',
-            'name': 'area',
-            }, {
-            'id': 'geom',
-            'name': 'geom',
-            }, {
-            'id': 'name',
-            'name': 'Name'
-            }, {
-            'id': 'id',
-            'name': 'ID'
-            }, {
-            'id': 'slug',
-            'name': 'Slug'
-            }, {
-            'id': 'kind',
-            'name': 'Kind'
-            }, {
-            'id': 'region_identifier',
-            'name': 'Region identifier'
-            }, {
-            'id': 'global_identifier',
-            'name': 'Global identifier'
-        }]
-        properties_dict = {
-            p['id']: p for p in properties
-        }
+        filters = ["kind", "level"]
+        properties = [
+            {
+                "id": "population",
+                "name": "population",
+            },
+            {
+                "id": "area",
+                "name": "area",
+            },
+            {
+                "id": "geom",
+                "name": "geom",
+            },
+            {"id": "name", "name": "Name"},
+            {"id": "id", "name": "ID"},
+            {"id": "slug", "name": "Slug"},
+            {"id": "kind", "name": "Kind"},
+            {"id": "region_identifier", "name": "Region identifier"},
+            {"id": "global_identifier", "name": "Global identifier"},
+        ]
+        properties_dict = {p["id"]: p for p in properties}
 
     def get_serializer_class(self):
         if self.request.user.is_superuser:
@@ -195,7 +183,7 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
         zip_region = None
         if match:
             try:
-                zip_region = GeoRegion.objects.get(name=query, kind='zipcode')
+                zip_region = GeoRegion.objects.get(name=query, kind="zipcode")
                 qs = qs.filter(geom__covers=zip_region.geom.centroid)
             except GeoRegion.DoesNotExist:
                 pass
@@ -205,9 +193,9 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin,
 
         for r in qs:
             yield {
-                'id': str(r.pk),
-                'name': r.name,
-                'type': ['georegion'],
-                'score': 4,
-                'match': True  # FIXME: this is quite arbitrary
+                "id": str(r.pk),
+                "name": r.name,
+                "type": ["georegion"],
+                "score": 4,
+                "match": True,  # FIXME: this is quite arbitrary
             }

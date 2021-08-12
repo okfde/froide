@@ -12,4 +12,4 @@ def connect_foirequest(foirequest, ident):
     foirequest.user.tags.add(campaign.ident)
     if not foirequest.user.is_active:
         # First-time requester
-        foirequest.user.tags.add('%s-first' % campaign.ident)
+        foirequest.user.tags.add("%s-first" % campaign.ident)

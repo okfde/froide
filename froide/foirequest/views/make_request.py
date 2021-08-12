@@ -31,9 +31,7 @@ from ..services import CreateRequestService, SaveDraftService
 
 csrf_middleware_class = import_string(
     getattr(
-        settings,
-        'FROIDE_CSRF_MIDDLEWARE',
-        'django.middleware.csrf.CsrfViewMiddleware'
+        settings, "FROIDE_CSRF_MIDDLEWARE", "django.middleware.csrf.CsrfViewMiddleware"
     )
 )
 
@@ -61,11 +59,7 @@ class FakePublicBodyForm(object):
         return self.publicbodies
 
     def as_json(self):
-        return json.dumps({
-            'fields': {},
-            'errors': {},
-            'nonFieldErrors': []
-        })
+        return json.dumps({"fields": {}, "errors": {}, "nonFieldErrors": []})
 
 
 def replace_user_vars(template_string, user_vars):
@@ -74,52 +68,58 @@ def replace_user_vars(template_string, user_vars):
     return template_string
 
 
-@method_decorator(csrf_exempt, name='dispatch')
+@method_decorator(csrf_exempt, name="dispatch")
 class MakeRequestView(FormView):
     form_class = RequestForm
-    template_name = 'foirequest/request.html'
-    FORM_CONFIG_PARAMS = ('hide_similar', 'hide_public', 'hide_draft',
-                          'hide_publicbody', 'hide_full_text', 'hide_editing')
+    template_name = "foirequest/request.html"
+    FORM_CONFIG_PARAMS = (
+        "hide_similar",
+        "hide_public",
+        "hide_draft",
+        "hide_publicbody",
+        "hide_full_text",
+        "hide_editing",
+    )
 
     draft = None
 
     def get_initial(self):
         request = self.request
         initial = {
-            "subject": request.GET.get('subject', ''),
-            "body": request.GET.get('body', ''),
-            "reference": request.GET.get('ref', ''),
-            "redirect_url": request.GET.get('redirect', '')
+            "subject": request.GET.get("subject", ""),
+            "body": request.GET.get("body", ""),
+            "reference": request.GET.get("ref", ""),
+            "redirect_url": request.GET.get("redirect", ""),
         }
         user_vars = self.get_user_template_vars()
         if user_vars:
-            initial['subject'] = replace_user_vars(initial['subject'], user_vars)
-            initial['body'] = replace_user_vars(initial['body'], user_vars)
+            initial["subject"] = replace_user_vars(initial["subject"], user_vars)
+            initial["body"] = replace_user_vars(initial["body"], user_vars)
 
-        if 'draft' in request.GET:
-            initial['draft'] = request.GET['draft']
+        if "draft" in request.GET:
+            initial["draft"] = request.GET["draft"]
 
-        if initial.get('hide_public'):
-            initial['public'] = True
-        if 'public' in request.GET:
-            initial['public'] = request.GET['public'] == '1'
+        if initial.get("hide_public"):
+            initial["public"] = True
+        if "public" in request.GET:
+            initial["public"] = request.GET["public"] == "1"
 
-        if 'law_type' in request.GET:
-            initial['law_type'] = request.GET['law_type']
+        if "law_type" in request.GET:
+            initial["law_type"] = request.GET["law_type"]
 
-        if 'full_text' in request.GET:
-            initial['full_text'] = request.GET['full_text'] == '1'
+        if "full_text" in request.GET:
+            initial["full_text"] = request.GET["full_text"] == "1"
 
-        initial['language'] = request.LANGUAGE_CODE
+        initial["language"] = request.LANGUAGE_CODE
 
-        initial['jurisdiction'] = request.GET.get("jurisdiction", None)
+        initial["jurisdiction"] = request.GET.get("jurisdiction", None)
         initial.update(self.get_form_config_initial())
         return initial
 
     def get_user_template_vars(self):
         user_vars = {}
         for key in self.request.GET:
-            if key.startswith('$') and len(key) < USER_VAR_MAX_KEY_LENGTH:
+            if key.startswith("$") and len(key) < USER_VAR_MAX_KEY_LENGTH:
                 user_vars[key] = self.request.GET[key]
         if len(user_vars) > USER_VAR_MAX_COUNT:
             return {}
@@ -127,135 +127,141 @@ class MakeRequestView(FormView):
 
     def get_js_context(self):
         ctx = {
-            'settings': {
-                'user_can_hide_web': settings.FROIDE_CONFIG.get('user_can_hide_web'),
-                'user_can_create_batch': self.can_create_batch()
+            "settings": {
+                "user_can_hide_web": settings.FROIDE_CONFIG.get("user_can_hide_web"),
+                "user_can_create_batch": self.can_create_batch(),
             },
-            'url': {
-                'searchRequests': reverse('api:request-search'),
-                'listJurisdictions': reverse('api:jurisdiction-list'),
-                'listCategories': reverse('api:category-list'),
-                'listClassifications': reverse('api:classification-list'),
-                'listGeoregions': reverse('api:georegion-list'),
-                'listPublicBodies': reverse('api:publicbody-list'),
-                'listLaws': reverse('api:law-list'),
-                'search': reverse('foirequest-search'),
-                'user': reverse('api-user-profile'),
-                'makeRequestTo': reverse('foirequest-make_request', kwargs={
-                    'publicbody_ids': '0'
-                }),
-                'makeRequest': reverse('foirequest-make_request')
+            "url": {
+                "searchRequests": reverse("api:request-search"),
+                "listJurisdictions": reverse("api:jurisdiction-list"),
+                "listCategories": reverse("api:category-list"),
+                "listClassifications": reverse("api:classification-list"),
+                "listGeoregions": reverse("api:georegion-list"),
+                "listPublicBodies": reverse("api:publicbody-list"),
+                "listLaws": reverse("api:law-list"),
+                "search": reverse("foirequest-search"),
+                "user": reverse("api-user-profile"),
+                "makeRequestTo": reverse(
+                    "foirequest-make_request", kwargs={"publicbody_ids": "0"}
+                ),
+                "makeRequest": reverse("foirequest-make_request"),
             },
-            'i18n': {
-                'publicBodiesFound': [
-                    _('one public body found'),
-                    _('{count} public bodies found').format(count='${count}'),
+            "i18n": {
+                "publicBodiesFound": [
+                    _("one public body found"),
+                    _("{count} public bodies found").format(count="${count}"),
                 ],
-                'publicBodiesChosen': [
-                    _('one public body chosen'),
-                    _('{count} public bodies chosen').format(count='${count}'),
+                "publicBodiesChosen": [
+                    _("one public body chosen"),
+                    _("{count} public bodies chosen").format(count="${count}"),
                 ],
-                'publicBodiesCount': [
-                    _('one public body'),
-                    _('{count} public bodies').format(count='${count}'),
+                "publicBodiesCount": [
+                    _("one public body"),
+                    _("{count} public bodies").format(count="${count}"),
                 ],
-                'requestCount': [
-                    pgettext('js', 'one request'),
-                    _('{count} requests').format(count='${count}'),
+                "requestCount": [
+                    pgettext("js", "one request"),
+                    _("{count} requests").format(count="${count}"),
                 ],
                 # Translators: not url
-                'requests': _('requests'),
-                'makeRequest': _('make request'),
-                'writingRequestTo': _('You are writing a request to'),
-                'toMultiPublicBodies': _('To: {count} public bodies').format(count='${count}'),
-                'selectPublicBodies': _('Select public bodies'),
-                'continue': _('continue'),
-                'selectAll': [
-                    _('select one'),
-                    _('select all')
-                ],
-                'selectingAll': _('Selecting all public bodies, please wait...'),
-                'name': _('Name'),
-                'jurisdictionPlural': [
-                    _('Jurisdiction'),
-                    _('Jurisdictions'),
-                ],
-                'topicPlural': [
-                    _('topic'),
-                    _('topics'),
-                ],
-                'classificationPlural': [
-                    _('classification'),
-                    _('classifications'),
-                ],
-                'containingGeoregionsPlural': [
-                    _('part of administrative region'),
-                    _('part of administrative regions'),
-                ],
-                'administrativeUnitKind': _('type of administrative unit'),
-                'toPublicBody': _('To: {name}').format(name='${name}'),
-                'change': _('change'),
-                'searchPlaceholder': _('Search...'),
-                'clearSearchResults': _('clear search'),
-                'clearSelection': _('clear selection'),
-                'reallyClearSelection': _('Are you sure you want to discard your current selection?'),
-                'loadMore': _('load more...'),
-                'next': _('next'),
-                'previous': _('previous'),
-                'choosePublicBody': _('Choose public authority'),
-                'checkSelection': _('Check selection'),
-                'checkRequest': _('Check request'),
-                'goNextStep': _('Go to next step'),
-                'batchRequestDraftOnly': _(
-                    'You have been allowed to make one project request to '
-                    'these public bodies, but you do not have permission '
-                    'to select your own.'
+                "requests": _("requests"),
+                "makeRequest": _("make request"),
+                "writingRequestTo": _("You are writing a request to"),
+                "toMultiPublicBodies": _("To: {count} public bodies").format(
+                    count="${count}"
                 ),
-                'subject': _('Subject'),
-                'defaultLetterStart': _('Please send me the following information:'),
-                'warnFullText': _('Watch out! You are requesting information across jurisdictions! If you write the full text, we cannot customize it according to applicable laws. Instead you have to write the text to be jurisdiction agnostic.'),
-                'resetFullText': _('Reset text to template version'),
-                'savedFullTextChanges': _('Your previous customized text'),
-                'saveAsDraft': _('Save as draft'),
-                'reviewRequest': _('Review request'),
-                'reviewTitle': _('Review your request and submit'),
-                'reviewEdit': _('Edit'),
-                'reviewFrom': _('From'),
-                'reviewTo': _('To'),
-                'reviewPublicbodies': _('public bodies'),
-                'reviewSpelling': _('Please use proper spelling.'),
-                'reviewPoliteness': _('Please stay polite.'),
-                'submitRequest': _('Submit request'),
-
-                'greeting': _('Dear Sir or Madam'),
-                'kindRegards': _('Kind regards'),
-
-                'yourFirstName': _('Your first name'),
-                'yourLastName': _('Your last name'),
-                'yourEmail': _('Your email address'),
-                'yourAddress': _('Your postal address'),
-                'giveName': _('Please fill out your name below'),
-
-                'similarExist': _('Please make sure the information is not already requested or public'),
-                'similarRequests': _('Similar requests'),
-                'moreSimilarRequests': _('Search for more similar requests'),
-                'relevantResources': _('Relevant resources'),
-                'officialWebsite': _('Official website: '),
-                'noSubject': _('Please add a subject.'),
-                'noBody': _('Please describe the information you want to request!'),
-                'dontAddClosing': _('Do not add a closing, it is added automatically at the end of the letter.'),
-                'dontAddGreeting': _('Do not add a greeting, it is added automatically at the start of the letter.'),
-                'dontInsertName': _('Do not insert your name, we will add it automatically at the end of the letter.')
+                "selectPublicBodies": _("Select public bodies"),
+                "continue": _("continue"),
+                "selectAll": [_("select one"), _("select all")],
+                "selectingAll": _("Selecting all public bodies, please wait..."),
+                "name": _("Name"),
+                "jurisdictionPlural": [
+                    _("Jurisdiction"),
+                    _("Jurisdictions"),
+                ],
+                "topicPlural": [
+                    _("topic"),
+                    _("topics"),
+                ],
+                "classificationPlural": [
+                    _("classification"),
+                    _("classifications"),
+                ],
+                "containingGeoregionsPlural": [
+                    _("part of administrative region"),
+                    _("part of administrative regions"),
+                ],
+                "administrativeUnitKind": _("type of administrative unit"),
+                "toPublicBody": _("To: {name}").format(name="${name}"),
+                "change": _("change"),
+                "searchPlaceholder": _("Search..."),
+                "clearSearchResults": _("clear search"),
+                "clearSelection": _("clear selection"),
+                "reallyClearSelection": _(
+                    "Are you sure you want to discard your current selection?"
+                ),
+                "loadMore": _("load more..."),
+                "next": _("next"),
+                "previous": _("previous"),
+                "choosePublicBody": _("Choose public authority"),
+                "checkSelection": _("Check selection"),
+                "checkRequest": _("Check request"),
+                "goNextStep": _("Go to next step"),
+                "batchRequestDraftOnly": _(
+                    "You have been allowed to make one project request to "
+                    "these public bodies, but you do not have permission "
+                    "to select your own."
+                ),
+                "subject": _("Subject"),
+                "defaultLetterStart": _("Please send me the following information:"),
+                "warnFullText": _(
+                    "Watch out! You are requesting information across jurisdictions! If you write the full text, we cannot customize it according to applicable laws. Instead you have to write the text to be jurisdiction agnostic."
+                ),
+                "resetFullText": _("Reset text to template version"),
+                "savedFullTextChanges": _("Your previous customized text"),
+                "saveAsDraft": _("Save as draft"),
+                "reviewRequest": _("Review request"),
+                "reviewTitle": _("Review your request and submit"),
+                "reviewEdit": _("Edit"),
+                "reviewFrom": _("From"),
+                "reviewTo": _("To"),
+                "reviewPublicbodies": _("public bodies"),
+                "reviewSpelling": _("Please use proper spelling."),
+                "reviewPoliteness": _("Please stay polite."),
+                "submitRequest": _("Submit request"),
+                "greeting": _("Dear Sir or Madam"),
+                "kindRegards": _("Kind regards"),
+                "yourFirstName": _("Your first name"),
+                "yourLastName": _("Your last name"),
+                "yourEmail": _("Your email address"),
+                "yourAddress": _("Your postal address"),
+                "giveName": _("Please fill out your name below"),
+                "similarExist": _(
+                    "Please make sure the information is not already requested or public"
+                ),
+                "similarRequests": _("Similar requests"),
+                "moreSimilarRequests": _("Search for more similar requests"),
+                "relevantResources": _("Relevant resources"),
+                "officialWebsite": _("Official website: "),
+                "noSubject": _("Please add a subject."),
+                "noBody": _("Please describe the information you want to request!"),
+                "dontAddClosing": _(
+                    "Do not add a closing, it is added automatically at the end of the letter."
+                ),
+                "dontAddGreeting": _(
+                    "Do not add a greeting, it is added automatically at the start of the letter."
+                ),
+                "dontInsertName": _(
+                    "Do not insert your name, we will add it automatically at the end of the letter."
+                ),
             },
-            'regex': {
-                'greetings': [_('Dear Sir or Madam')],
-                'closings': [_('Kind Regards')]
+            "regex": {
+                "greetings": [_("Dear Sir or Madam")],
+                "closings": [_("Kind Regards")],
             },
-            'fixtures': {
-                'georegion_kind': [
-                    [str(k), str(v)] for k, v in GeoRegion.KIND_CHOICES
-                ]
-            }
+            "fixtures": {
+                "georegion_kind": [[str(k), str(v)] for k, v in GeoRegion.KIND_CHOICES]
+            },
         }
         pb_ctx = get_widget_context()
         for key in pb_ctx:
@@ -266,63 +272,61 @@ class MakeRequestView(FormView):
         return ctx
 
     def get_form_config_initial(self):
-        return {k: True for k in self.FORM_CONFIG_PARAMS
-                if k in self.request.GET}
+        return {k: True for k in self.FORM_CONFIG_PARAMS if k in self.request.GET}
 
     def get_form_kwargs(self):
         kwargs = super(MakeRequestView, self).get_form_kwargs()
-        kwargs['request'] = self.request
+        kwargs["request"] = self.request
         return kwargs
 
     def get_user_initial(self):
         request = self.request
         initial_user_data = {}
-        if 'email' in request.GET:
-            initial_user_data['user_email'] = request.GET['email']
-        if 'first_name' in request.GET:
-            initial_user_data['first_name'] = request.GET['first_name']
-        if 'last_name' in request.GET:
-            initial_user_data['last_name'] = request.GET['last_name']
+        if "email" in request.GET:
+            initial_user_data["user_email"] = request.GET["email"]
+        if "first_name" in request.GET:
+            initial_user_data["first_name"] = request.GET["first_name"]
+        if "last_name" in request.GET:
+            initial_user_data["last_name"] = request.GET["last_name"]
         return initial_user_data
 
     def get_user_form(self):
         if self.request.user.is_authenticated:
             form_klass = AddressForm
             kwargs = {
-                'initial': {
-                    'address': self.request.user.address
-                },
-                'request': self.request
+                "initial": {"address": self.request.user.address},
+                "request": self.request,
             }
         else:
             form_klass = NewUserForm
-            kwargs = {
-                'initial': self.get_user_initial(),
-                'request': self.request
-            }
-        if self.request.method in ('POST', 'PUT'):
-            kwargs.update({
-                'data': self.request.POST,
-                'files': self.request.FILES,
-            })
+            kwargs = {"initial": self.get_user_initial(), "request": self.request}
+        if self.request.method in ("POST", "PUT"):
+            kwargs.update(
+                {
+                    "data": self.request.POST,
+                    "files": self.request.FILES,
+                }
+            )
         return form_klass(**kwargs)
 
     def get_publicbody_form_kwargs(self):
         kwargs = {}
-        if self.request.method in ('POST', 'PUT'):
-            kwargs.update({
-                'data': self.request.POST,
-            })
+        if self.request.method in ("POST", "PUT"):
+            kwargs.update(
+                {
+                    "data": self.request.POST,
+                }
+            )
         return kwargs
 
     def get_publicbodies(self):
-        if self.request.method == 'POST':
+        if self.request.method == "POST":
             # on POST public bodies need to come from POST vars
             if self.has_prepared_publicbodies():
                 # prepared draft with fixed public bodies
                 return self.draft.publicbodies.all()
             self._publicbodies = []
-        if hasattr(self, '_publicbodies'):
+        if hasattr(self, "_publicbodies"):
             return self._publicbodies
         pbs = self.get_publicbodies_from_context()
         self._publicbodies = pbs
@@ -330,19 +334,17 @@ class MakeRequestView(FormView):
 
     def has_prepared_publicbodies(self):
         return (
-            not self.can_create_batch() and
-            self.draft and self.draft.is_multi_request
+            not self.can_create_batch() and self.draft and self.draft.is_multi_request
         )
 
     def get_publicbodies_from_context(self):
         publicbody_ids = self.kwargs.get(
-            'publicbody_ids',
-            self.request.GET.get('publicbody')
+            "publicbody_ids", self.request.GET.get("publicbody")
         )
-        publicbody_slug = self.kwargs.get('publicbody_slug')
+        publicbody_slug = self.kwargs.get("publicbody_slug")
         publicbodies = []
         if publicbody_ids is not None:
-            publicbody_ids = publicbody_ids.split('+')
+            publicbody_ids = publicbody_ids.split("+")
             publicbodies = PublicBody.objects.filter(pk__in=publicbody_ids)
             if len(publicbody_ids) != len(publicbodies):
                 raise Http404
@@ -359,7 +361,7 @@ class MakeRequestView(FormView):
         user = self.request.user
         if not user.is_authenticated:
             return False
-        return user.is_superuser or user.has_perm('foirequest.create_batch')
+        return user.is_superuser or user.has_perm("foirequest.create_batch")
 
     def get_publicbody_form_class(self):
         if self.can_create_batch():
@@ -411,10 +413,10 @@ class MakeRequestView(FormView):
             error = True
 
         if self.has_prepared_publicbodies() and self.draft.project:
-            request_form.add_error(None, _('Draft cannot be used again.'))
+            request_form.add_error(None, _("Draft cannot be used again."))
             error = True
 
-        if request.user.is_authenticated and request.POST.get('save_draft', ''):
+        if request.user.is_authenticated and request.POST.get("save_draft", ""):
             return self.save_draft(request_form, publicbody_form)
 
         user_form = self.get_user_form()
@@ -422,9 +424,9 @@ class MakeRequestView(FormView):
             error = True
 
         form_kwargs = {
-            'request_form': request_form,
-            'user_form': user_form,
-            'publicbody_form': publicbody_form
+            "request_form": request_form,
+            "user_form": user_form,
+            "publicbody_form": publicbody_form,
         }
 
         if not error:
@@ -434,126 +436,139 @@ class MakeRequestView(FormView):
     def save_draft(self, request_form, publicbody_form):
         publicbodies = publicbody_form.get_publicbodies()
 
-        service = SaveDraftService({
-            'publicbodies': publicbodies,
-            'request_form': request_form
-        })
+        service = SaveDraftService(
+            {"publicbodies": publicbodies, "request_form": request_form}
+        )
         service.execute(self.request)
-        messages.add_message(self.request, messages.INFO,
-            _('Your request has been saved to your drafts.'))
+        messages.add_message(
+            self.request,
+            messages.INFO,
+            _("Your request has been saved to your drafts."),
+        )
 
-        return redirect('account-drafts')
+        return redirect("account-drafts")
 
     def form_invalid(self, **form_kwargs):
         if not self.csrf_failed:
-            messages.add_message(self.request, messages.ERROR,
-                _('There were errors in your form submission. '
-                'Please review and submit again.'))
+            messages.add_message(
+                self.request,
+                messages.ERROR,
+                _(
+                    "There were errors in your form submission. "
+                    "Please review and submit again."
+                ),
+            )
         else:
-            messages.add_message(self.request, messages.INFO,
-                _('Please confirm your form submission.'))
-        return self.render_to_response(
-            self.get_context_data(**form_kwargs),
-            status=400
-        )
+            messages.add_message(
+                self.request, messages.INFO, _("Please confirm your form submission.")
+            )
+        return self.render_to_response(self.get_context_data(**form_kwargs), status=400)
 
-    def form_valid(self, request_form=None, publicbody_form=None,
-                   user_form=None):
+    def form_valid(self, request_form=None, publicbody_form=None, user_form=None):
         user = self.request.user
         data = dict(request_form.cleaned_data)
-        data['user'] = user
-        data['publicbodies'] = publicbody_form.get_publicbodies()
+        data["user"] = user
+        data["publicbodies"] = publicbody_form.get_publicbodies()
 
         if not user.is_authenticated:
             data.update(user_form.cleaned_data)
         elif user_form is not None:
-            data['address'] = user_form.cleaned_data.get('address')
+            data["address"] = user_form.cleaned_data.get("address")
             user_form.save(user=user)
 
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
 
         return self.make_redirect(
-            request_form, foi_object, email=data.get('user_email')
+            request_form, foi_object, email=data.get("user_email")
         )
 
     def make_redirect(self, request_form, foi_object, email=None):
         user = self.request.user
-        special_redirect = request_form.cleaned_data['redirect_url']
+        special_redirect = request_form.cleaned_data["redirect_url"]
 
         if user.is_authenticated:
             params = {}
             if isinstance(foi_object, FoiRequest):
-                params['request'] = str(foi_object.pk).encode('utf-8')
+                params["request"] = str(foi_object.pk).encode("utf-8")
             else:
-                params['project'] = str(foi_object.pk).encode('utf-8')
+                params["project"] = str(foi_object.pk).encode("utf-8")
 
             if special_redirect:
                 special_redirect = update_query_params(special_redirect, params)
                 return redirect(special_redirect)
 
-            req_url = '%s?%s' % (
-                reverse('foirequest-request_sent'),
-                urlencode(params)
-            )
+            req_url = "%s?%s" % (reverse("foirequest-request_sent"), urlencode(params))
             return redirect(req_url)
 
         return redirect(get_new_account_url(foi_object, email=email))
 
     def get_config(self, form):
         config = {}
-        if self.request.method in ('POST', 'PUT'):
-            source_func = lambda k: form.cleaned_data.get(k, False)
+        if self.request.method in ("POST", "PUT"):
+
+            def get_from_form(key):
+                return form.cleaned_data.get(key, False)
+
+            source_func = get_from_form
         else:
-            source_func = lambda k: k in self.request.GET
+
+            def get_from_query(key):
+                return key in self.request.GET
+
+            source_func = get_from_query
 
         for key in self.FORM_CONFIG_PARAMS:
             config[key] = source_func(key)
         return config
 
     def get_context_data(self, **kwargs):
-        if 'request_form' not in kwargs:
-            kwargs['request_form'] = self.get_form()
+        if "request_form" not in kwargs:
+            kwargs["request_form"] = self.get_form()
 
-        if 'publicbody_form' not in kwargs:
-            kwargs['publicbody_form'] = self.get_publicbody_form()
+        if "publicbody_form" not in kwargs:
+            kwargs["publicbody_form"] = self.get_publicbody_form()
 
-        publicbodies_json = '[]'
+        publicbodies_json = "[]"
         publicbodies = self.get_publicbodies()
         if not publicbodies:
-            publicbodies = kwargs['publicbody_form'].get_publicbodies()
+            publicbodies = kwargs["publicbody_form"].get_publicbodies()
         if publicbodies:
-            publicbodies_json = json.dumps(PublicBodyListSerializer(
-                publicbodies, context={'request': self.request}, many=True
-            ).data['objects'])
+            publicbodies_json = json.dumps(
+                PublicBodyListSerializer(
+                    publicbodies, context={"request": self.request}, many=True
+                ).data["objects"]
+            )
 
-        if 'user_form' not in kwargs:
-            kwargs['user_form'] = self.get_user_form()
+        if "user_form" not in kwargs:
+            kwargs["user_form"] = self.get_user_form()
 
-        config = self.get_config(kwargs['request_form'])
+        config = self.get_config(kwargs["request_form"])
 
         is_multi = False
-        if kwargs['publicbody_form'] and kwargs['publicbody_form'].is_multi:
+        if kwargs["publicbody_form"] and kwargs["publicbody_form"].is_multi:
             is_multi = True
         if publicbodies and len(publicbodies) > 1:
             is_multi = True
-        if self.request.GET.get('single') is not None:
+        if self.request.GET.get("single") is not None:
             is_multi = False
 
-        if self.request.method == 'POST' or publicbodies or is_multi:
+        if self.request.method == "POST" or publicbodies or is_multi:
             campaigns = None
         else:
             campaigns = Campaign.objects.get_active()
 
-        kwargs.update({
-            'publicbodies': publicbodies,
-            'publicbodies_json': publicbodies_json,
-            'multi_request': is_multi,
-            'config': config,
-            'campaigns': campaigns,
-            'js_config': json.dumps(self.get_js_context()),
-            'public_body_search': self.request.GET.get('topic', '')
-        })
+        kwargs.update(
+            {
+                "publicbodies": publicbodies,
+                "publicbodies_json": publicbodies_json,
+                "multi_request": is_multi,
+                "config": config,
+                "campaigns": campaigns,
+                "js_config": json.dumps(self.get_js_context()),
+                "public_body_search": self.request.GET.get("topic", ""),
+            }
+        )
         return kwargs
 
 
@@ -576,32 +591,30 @@ class DraftRequestView(MakeRequestView, DetailView):
 
 
 def get_new_account_url(foi_object, email=None):
-    url = reverse('account-new')
-    d = {
-        'title': foi_object.title.encode('utf-8')
-    }
+    url = reverse("account-new")
+    d = {"title": foi_object.title.encode("utf-8")}
     if email is not None:
-        d['email'] = email.encode('utf-8')
+        d["email"] = email.encode("utf-8")
     query = urlencode(d)
-    return '%s?%s' % (url, query)
+    return "%s?%s" % (url, query)
 
 
 class RequestSentView(LoginRequiredMixin, TemplateView):
-    template_name = 'foirequest/sent.html'
+    template_name = "foirequest/sent.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['foirequest'] = self.get_foirequest()
-        context['foiproject'] = self.get_foiproject()
-        foi_obj = context['foirequest'] or context['foiproject']
+        context["foirequest"] = self.get_foirequest()
+        context["foiproject"] = self.get_foiproject()
+        foi_obj = context["foirequest"] or context["foiproject"]
         if foi_obj:
-            context['is_public'] = foi_obj.is_public
-            context['url'] = foi_obj.get_absolute_url()
-            context['share_url'] = foi_obj.get_absolute_domain_url()
+            context["is_public"] = foi_obj.is_public
+            context["url"] = foi_obj.get_absolute_url()
+            context["share_url"] = foi_obj.get_absolute_domain_url()
         return context
 
     def get_foirequest(self):
-        request_pk = self.request.GET.get('request')
+        request_pk = self.request.GET.get("request")
         if request_pk:
             try:
                 return FoiRequest.objects.get(user=self.request.user, pk=request_pk)
@@ -610,7 +623,7 @@ class RequestSentView(LoginRequiredMixin, TemplateView):
         return None
 
     def get_foiproject(self):
-        project_pk = self.request.GET.get('project')
+        project_pk = self.request.GET.get("project")
         if project_pk:
             try:
                 return FoiProject.objects.get(user=self.request.user, pk=project_pk)

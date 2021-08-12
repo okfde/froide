@@ -11,7 +11,7 @@ from .utils import run_guidance
 
 
 @require_POST
-@permission_required('guide.can_run_guidance')
+@permission_required("guide.can_run_guidance")
 def rerun_rules(request, message_id):
     if not request.user.is_staff:
         return render_403(request)
@@ -19,14 +19,13 @@ def rerun_rules(request, message_id):
     message = get_object_or_404(FoiMessage, id=message_id)
     notify = False
 
-    if request.POST.get('notify'):
+    if request.POST.get("notify"):
         notify = True
 
     run_guidance(message, active_only=False, notify=notify)
 
     messages.add_message(
-        request, messages.SUCCESS,
-        _('Guidance refreshed for message.')
+        request, messages.SUCCESS, _("Guidance refreshed for message.")
     )
 
     return redirect(message)

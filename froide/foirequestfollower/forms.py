@@ -13,16 +13,16 @@ User = get_user_model()
 
 class FollowRequestForm(SpamProtectionMixin, forms.Form):
     SPAM_PROTECTION = {
-        'timing': False,
-        'captcha': 'ip',
-        'action': 'follow_request',
-        'action_limit': 3,
-        'action_block': True
+        "timing": False,
+        "captcha": "ip",
+        "action": "follow_request",
+        "action_limit": 3,
+        "action_block": True,
     }
 
     def __init__(self, *args, **kwargs):
-        self.foirequest = kwargs.pop('foirequest')
-        self.request = kwargs.pop('request')
+        self.foirequest = kwargs.pop("foirequest")
+        self.request = kwargs.pop("request")
         self.user = self.request.user
         super().__init__(*args, **kwargs)
         if not self.user.is_authenticated:
@@ -32,14 +32,14 @@ class FollowRequestForm(SpamProtectionMixin, forms.Form):
                     attrs={
                         "placeholder": _("email address"),
                         "class": "form-control",
-                        'autocomplete': 'email'
+                        "autocomplete": "email",
                     }
-                )
+                ),
             )
-            user_extra_registry.on_init('follow', self)
+            user_extra_registry.on_init("follow", self)
 
     def clean(self):
-        email = self.cleaned_data.get('email', None)
+        email = self.cleaned_data.get("email", None)
         if not self.user.is_authenticated and email is None:
             raise forms.ValidationError(_("Missing email address!"))
         if not can_read_foirequest(self.foirequest, self.request):
@@ -47,13 +47,13 @@ class FollowRequestForm(SpamProtectionMixin, forms.Form):
         if self.user == self.foirequest.user:
             raise forms.ValidationError(_("You cannot follow your own requests."))
 
-        user_extra_registry.on_clean('follow', self)
+        user_extra_registry.on_clean("follow", self)
 
         super().clean()
         return self.cleaned_data
 
     def save(self):
-        user_extra_registry.on_save('follow', self, self.user)
+        user_extra_registry.on_save("follow", self, self.user)
         return FoiRequestFollower.objects.follow(
             self.foirequest, self.user, **self.cleaned_data
         )

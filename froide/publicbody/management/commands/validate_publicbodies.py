@@ -16,24 +16,24 @@ class Command(BaseCommand):
     help = "Validates public bodies"
 
     def add_arguments(self, parser):
-        parser.add_argument('filename', type=str, nargs='?', default=None)
+        parser.add_argument("filename", type=str, nargs="?", default=None)
 
     @contextmanager
     def get_stream(self, filename):
         if filename is None:
             stream = StringIO()
         else:
-            if filename == '-':
+            if filename == "-":
                 stream = self.stdout
             else:
-                stream = open(filename, 'w')
+                stream = open(filename, "w")
         yield stream
-        if filename is not None and filename != '-':
+        if filename is not None and filename != "-":
             stream.close()
 
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
-        filename = options['filename']
+        filename = options["filename"]
 
         pbs = PublicBody.objects.all()
         validator = PublicBodyValidator(pbs)
@@ -44,10 +44,16 @@ class Command(BaseCommand):
             if filename is None and not validator.is_valid:
                 for _n, email in settings.MANAGERS:
                     send_mail(
-                        _('Public body validation results'),
-                        _('Please find attached the results of the public body validation'),
+                        _("Public body validation results"),
+                        _(
+                            "Please find attached the results of the public body validation"
+                        ),
                         email,
                         attachments=[
-                            ('validation_result.csv', stream.getvalue().encode('utf-8'), 'text/csv')
-                        ]
+                            (
+                                "validation_result.csv",
+                                stream.getvalue().encode("utf-8"),
+                                "text/csv",
+                            )
+                        ],
                     )

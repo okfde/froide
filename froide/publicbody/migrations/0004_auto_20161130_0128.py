@@ -10,18 +10,32 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0003_auto_20160123_1336'),
+        ("publicbody", "0003_auto_20160123_1336"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='publicbody',
-            name='_created_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='public_body_creators', to=settings.AUTH_USER_MODEL, verbose_name='Created by'),
+            model_name="publicbody",
+            name="_created_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="public_body_creators",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Created by",
+            ),
         ),
         migrations.AlterField(
-            model_name='publicbody',
-            name='_updated_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='public_body_updaters', to=settings.AUTH_USER_MODEL, verbose_name='Updated by'),
+            model_name="publicbody",
+            name="_updated_by",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="public_body_updaters",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Updated by",
+            ),
         ),
     ]

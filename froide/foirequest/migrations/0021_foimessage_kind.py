@@ -8,13 +8,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0020_auto_20180605_1053'),
+        ("foirequest", "0020_auto_20180605_1053"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foimessage',
-            name='kind',
-            field=models.CharField(choices=[('email', 'Email'), ('post', 'Postal mail'), ('fax', 'Fax'), ('phone', 'Phone call'), ('visit', 'Personal visit')], default='email', max_length=10),
+            model_name="foimessage",
+            name="kind",
+            field=models.CharField(
+                choices=[
+                    ("email", "Email"),
+                    ("post", "Postal mail"),
+                    ("fax", "Fax"),
+                    ("phone", "Phone call"),
+                    ("visit", "Personal visit"),
+                ],
+                default="email",
+                max_length=10,
+            ),
         ),
     ]

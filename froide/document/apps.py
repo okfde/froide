@@ -4,8 +4,8 @@ from django.urls import reverse
 
 
 class DocumentConfig(AppConfig):
-    name = 'froide.document'
-    verbose_name = _('Document')
+    name = "froide.document"
+    verbose_name = _("Document")
 
     def ready(self):
         import froide.document.signals  # noqa
@@ -18,7 +18,7 @@ class DocumentConfig(AppConfig):
 def add_search(request):
     if request.user.is_staff:
         return {
-            'title': _('Documents (beta)'),
-            'name': 'document',
-            'url': reverse('document-search')
+            "title": _("Documents (beta)"),
+            "name": "document",
+            "url": reverse("document-search"),
         }

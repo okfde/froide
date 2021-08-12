@@ -6,19 +6,19 @@ from django.db import migrations
 
 
 def set_email_null(apps, schema_editor):
-    User = apps.get_model('account', 'User')
-    User.objects.filter(email__exact='').update(email=None)
+    User = apps.get_model("account", "User")
+    User.objects.filter(email__exact="").update(email=None)
 
 
 def set_email_empty(apps, schema_editor):
-    User = apps.get_model('account', 'User')
-    User.objects.filter(email__isnull=True).update(email='')
+    User = apps.get_model("account", "User")
+    User.objects.filter(email__isnull=True).update(email="")
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0007_auto_20170912_1032'),
+        ("account", "0007_auto_20170912_1032"),
     ]
 
     operations = [

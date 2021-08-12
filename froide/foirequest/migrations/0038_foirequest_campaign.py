@@ -7,14 +7,20 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('campaign', '__first__'),
-        ('foirequest', '0037_auto_20190309_1153'),
+        ("campaign", "__first__"),
+        ("foirequest", "0037_auto_20190309_1153"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foirequest',
-            name='campaign',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='campaign.Campaign', verbose_name='campaign'),
+            model_name="foirequest",
+            name="campaign",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="campaign.Campaign",
+                verbose_name="campaign",
+            ),
         ),
     ]

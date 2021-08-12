@@ -4,8 +4,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class PublicBodyConfig(AppConfig):
-    name = 'froide.publicbody'
-    verbose_name = _('Public Body')
+    name = "froide.publicbody"
+    verbose_name = _("Public Body")
 
     def ready(self):
         from froide.account import account_merged
@@ -20,9 +20,9 @@ class PublicBodyConfig(AppConfig):
 
 def add_search(request):
     return {
-        'name': 'publicbody',
-        'title': _('Public Bodies'),
-        'url': reverse('publicbody-list')
+        "name": "publicbody",
+        "title": _("Public Bodies"),
+        "url": reverse("publicbody-list"),
     }
 
 
@@ -31,10 +31,10 @@ def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from .models import PublicBody, ProposedPublicBody
 
     mapping = [
-        (PublicBody, '_created_by'),
-        (PublicBody, '_updated_by'),
-        (ProposedPublicBody, '_created_by'),
-        (ProposedPublicBody, '_updated_by'),
+        (PublicBody, "_created_by"),
+        (PublicBody, "_updated_by"),
+        (ProposedPublicBody, "_created_by"),
+        (ProposedPublicBody, "_updated_by"),
     ]
 
     for model, attr in mapping:

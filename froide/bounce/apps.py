@@ -5,8 +5,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 class BounceConfig(AppConfig):
-    name = 'froide.bounce'
-    verbose_name = _('Bounce')
+    name = "froide.bounce"
+    verbose_name = _("Bounce")
 
     def ready(self):
         from froide.account import account_canceled
@@ -33,27 +33,31 @@ def export_user_data(user):
     bounces = Bounce.objects.filter(user=user)
     if not bounces:
         return
-    yield ('bounces.json', json.dumps([
-        {
-            'last_update': (
-                b.last_update.isoformat() if b.last_update else None
-            ),
-            'bounces': b.bounces,
-            'email': b.email,
-        }
-        for b in bounces]).encode('utf-8')
+    yield (
+        "bounces.json",
+        json.dumps(
+            [
+                {
+                    "last_update": (
+                        b.last_update.isoformat() if b.last_update else None
+                    ),
+                    "bounces": b.bounces,
+                    "email": b.email,
+                }
+                for b in bounces
+            ]
+        ).encode("utf-8"),
     )
 
 
 class UnsubscribeReferenceMailMiddleware:
-    '''
+    """
     Moves unsubscribe_reference from mail render context
     to email sending kwargs
-    '''
+    """
+
     def enhance_email_kwargs(self, mail_intent, context, email_kwargs):
-        unsubscribe_reference = context.get('unsubscribe_reference')
+        unsubscribe_reference = context.get("unsubscribe_reference")
         if unsubscribe_reference is None:
             return
-        return {
-            'unsubscribe_reference': unsubscribe_reference
-        }
+        return {"unsubscribe_reference": unsubscribe_reference}

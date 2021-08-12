@@ -7,18 +7,24 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0039_foirequest_team'),
+        ("foirequest", "0039_foirequest_team"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foiattachment',
-            name='pending',
+            model_name="foiattachment",
+            name="pending",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='foiattachment',
-            name='belongs_to',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='foiattachment_set', to='foirequest.FoiMessage', verbose_name='Belongs to message'),
+            model_name="foiattachment",
+            name="belongs_to",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="foiattachment_set",
+                to="foirequest.FoiMessage",
+                verbose_name="Belongs to message",
+            ),
         ),
     ]

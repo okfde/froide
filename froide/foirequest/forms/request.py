@@ -17,13 +17,11 @@ from froide.helper.text_utils import redact_plaintext
 from froide.helper.auth import get_read_queryset
 from froide.campaign.validators import validate_not_campaign
 
-from ..models import (
-    FoiRequest, RequestDraft, PublicBodySuggestion
-)
+from ..models import FoiRequest, RequestDraft, PublicBodySuggestion
 from ..validators import clean_reference
 from ..utils import construct_initial_message_body
 
-payment_possible = settings.FROIDE_CONFIG.get('payment_possible', False)
+payment_possible = settings.FROIDE_CONFIG.get("payment_possible", False)
 
 
 class RequestForm(JSONMixin, forms.Form):
@@ -32,25 +30,35 @@ class RequestForm(JSONMixin, forms.Form):
         min_length=8,
         max_length=230,
         widget=forms.TextInput(
-            attrs={'placeholder': _("Subject"),
-            "class": "form-control"}))
+            attrs={"placeholder": _("Subject"), "class": "form-control"}
+        ),
+    )
     body = forms.CharField(
         label=_("Body"),
         min_length=8,
         max_length=5000,
         widget=forms.Textarea(
             attrs={
-                'placeholder': _("Specify your request here..."),
-                "class": "form-control"
-            }))
-    full_text = forms.BooleanField(required=False, initial=False,
-            label=_("Don't wrap in template"),
-            widget=forms.CheckboxInput(attrs={'tabindex': '-1'}))
-    public = forms.BooleanField(required=False, initial=True,
-            label=_("This request is public."),
-            help_text=_("If you don't want your request to be public right now,"
-                        " uncheck this. You can always decide to make it public later.")
-            )
+                "placeholder": _("Specify your request here..."),
+                "class": "form-control",
+            }
+        ),
+    )
+    full_text = forms.BooleanField(
+        required=False,
+        initial=False,
+        label=_("Don't wrap in template"),
+        widget=forms.CheckboxInput(attrs={"tabindex": "-1"}),
+    )
+    public = forms.BooleanField(
+        required=False,
+        initial=True,
+        label=_("This request is public."),
+        help_text=_(
+            "If you don't want your request to be public right now,"
+            " uncheck this. You can always decide to make it public later."
+        ),
+    )
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     law_type = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -78,40 +86,41 @@ class RequestForm(JSONMixin, forms.Form):
     language = forms.ChoiceField(
         choices=settings.LANGUAGES,
         initial=settings.LANGUAGE_CODE,
-        label=_('Language'),
+        label=_("Language"),
         widget=forms.HiddenInput,
-        required=False
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
+        self.request = kwargs.pop("request", None)
         super(RequestForm, self).__init__(*args, **kwargs)
         draft_qs = get_read_queryset(RequestDraft.objects.all(), self.request)
-        self.fields['draft'].queryset = draft_qs
+        self.fields["draft"].queryset = draft_qs
 
     def clean_subject(self):
-        subject = self.cleaned_data['subject']
+        subject = self.cleaned_data["subject"]
         slug = slugify(subject)
         if len(slug) < 4:
-            raise forms.ValidationError(_('Subject is invalid.'))
+            raise forms.ValidationError(_("Subject is invalid."))
         return subject
 
     def clean_reference(self):
-        ref = self.cleaned_data['reference']
+        ref = self.cleaned_data["reference"]
         return clean_reference(ref)
 
     def clean_redirect_url(self):
-        redirect_url = self.cleaned_data['redirect_url']
-        if url_has_allowed_host_and_scheme(redirect_url,
-                       allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS):
+        redirect_url = self.cleaned_data["redirect_url"]
+        if url_has_allowed_host_and_scheme(
+            redirect_url, allowed_hosts=settings.ALLOWED_REDIRECT_HOSTS
+        ):
             return redirect_url
-        return ''
+        return ""
 
     def get_draft(self):
-        return self.cleaned_data.get('draft')
+        return self.cleaned_data.get("draft")
 
     def clean(self):
-        ref = self.cleaned_data.get('reference', '')
+        ref = self.cleaned_data.get("reference", "")
         if not ref:
             validate_not_campaign(self.cleaned_data)
         return self.cleaned_data
@@ -119,16 +128,18 @@ class RequestForm(JSONMixin, forms.Form):
 
 class MakePublicBodySuggestionForm(forms.Form):
     publicbody = forms.ModelChoiceField(
-        label=_('Public body'),
+        label=_("Public body"),
         queryset=PublicBody.objects.all(),
-        widget=PublicBodySelect
+        widget=PublicBodySelect,
     )
-    reason = forms.CharField(label=_("Please specify a reason why this is the right Public Body:"),
+    reason = forms.CharField(
+        label=_("Please specify a reason why this is the right Public Body:"),
         widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}),
-        required=False)
+        required=False,
+    )
 
     def clean_publicbody(self):
-        publicbody = self.cleaned_data['publicbody']
+        publicbody = self.cleaned_data["publicbody"]
         self.publicbody_object = publicbody
         self.foi_law_object = publicbody.default_law
         return publicbody
@@ -136,34 +147,43 @@ class MakePublicBodySuggestionForm(forms.Form):
 
 class PublicBodySuggestionsForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        foirequest = kwargs.pop('foirequest')
+        foirequest = kwargs.pop("foirequest")
         super(PublicBodySuggestionsForm, self).__init__(*args, **kwargs)
         self.foirequest = foirequest
 
         queryset = PublicBodySuggestion.objects.filter(
             request=self.foirequest
-        ).select_related('public_body', 'request')
+        ).select_related("public_body", "request")
 
-        self.fields['suggestion'] = forms.ChoiceField(label=_("Suggestions"),
+        self.fields["suggestion"] = forms.ChoiceField(
+            label=_("Suggestions"),
             widget=BootstrapRadioSelect,
-            choices=((s.public_body.id, mark_safe(
-                '''%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
-                <span class="help">%(reason)s</span>''' % {
-                    "name": escape(s.public_body.name),
-                    "url": s.public_body.get_absolute_url(),
-                    "link": _("More Info"),
-                    "reason": _("Reason for this suggestion: %(reason)s") % {
-                        "reason": escape(s.reason)
-                    }
-                })) for s in queryset))
+            choices=(
+                (
+                    s.public_body.id,
+                    mark_safe(
+                        """%(name)s - <a class="info-link" href="%(url)s">%(link)s</a><br/>
+                <span class="help">%(reason)s</span>"""
+                        % {
+                            "name": escape(s.public_body.name),
+                            "url": s.public_body.get_absolute_url(),
+                            "link": _("More Info"),
+                            "reason": _("Reason for this suggestion: %(reason)s")
+                            % {"reason": escape(s.reason)},
+                        }
+                    ),
+                )
+                for s in queryset
+            ),
+        )
 
     def clean_suggestion(self):
-        pb_pk = self.cleaned_data['suggestion']
+        pb_pk = self.cleaned_data["suggestion"]
         self.publicbody = None
         try:
             self.publicbody = PublicBody.objects.get(pk=pb_pk)
         except PublicBody.DoesNotExist:
-            raise forms.ValidationError(_('Missing or invalid input!'))
+            raise forms.ValidationError(_("Missing or invalid input!"))
         return pb_pk
 
     def clean(self):
@@ -202,82 +222,86 @@ class PublicBodySuggestionsForm(forms.Form):
                 text=req.description,
                 foilaw=req.law,
                 full_text=False,
-                send_address=send_address
+                send_address=send_address,
             )
             message.plaintext_redacted = redact_plaintext(
-                message.plaintext,
-                user=req.user
+                message.plaintext, user=req.user
             )
             message.clear_render_cache()
             message.save()
             message.send()
-            req.message_sent.send(
-                sender=req, message=message,
-                user=user
-            )
+            req.message_sent.send(sender=req, message=message, user=user)
 
 
 class FoiRequestStatusForm(forms.Form):
-    status = forms.ChoiceField(label=_("Status"),
-            widget=BootstrapRadioSelect,
-            choices=[
-                (FoiRequest.STATUS.AWAITING_RESPONSE,
-                    _('This request is still ongoing.')),
-                (FoiRequest.STATUS.RESOLVED,
-                    _('This request is finished.')),
-            ]
+    status = forms.ChoiceField(
+        label=_("Status"),
+        widget=BootstrapRadioSelect,
+        choices=[
+            (FoiRequest.STATUS.AWAITING_RESPONSE, _("This request is still ongoing.")),
+            (FoiRequest.STATUS.RESOLVED, _("This request is finished.")),
+        ],
     )
 
     resolution = forms.ChoiceField(
-        label=_('Resolution'),
-        choices=[('', _('No outcome yet'))] + FoiRequest.RESOLUTION.choices,
+        label=_("Resolution"),
+        choices=[("", _("No outcome yet"))] + FoiRequest.RESOLUTION.choices,
         required=False,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text=_('How would you describe the current outcome of this request?'))
+        widget=forms.Select(attrs={"class": "form-control"}),
+        help_text=_("How would you describe the current outcome of this request?"),
+    )
     if payment_possible:
         costs = forms.FloatField(
             label=_("Costs"),
-            required=False, min_value=0.0,
+            required=False,
+            min_value=0.0,
             localize=True,
             widget=PriceInput,
-            help_text=_('Please specify what the Public Body charges for the information.')
+            help_text=_(
+                "Please specify what the Public Body charges for the information."
+            ),
         )
 
     def __init__(self, *args, **kwargs):
-        foirequest = kwargs.pop('foirequest')
+        foirequest = kwargs.pop("foirequest")
         super().__init__(*args, **kwargs)
         self.foirequest = foirequest
         refusal_choices = []
         if foirequest.law:
             refusal_choices = foirequest.law.get_refusal_reason_choices()
-        self.fields['refusal_reason'] = forms.ChoiceField(
+        self.fields["refusal_reason"] = forms.ChoiceField(
             label=_("Refusal Reason"),
-            choices=[('', _('No or other reason given'))] + refusal_choices,
+            choices=[("", _("No or other reason given"))] + refusal_choices,
             required=False,
-            widget=forms.Select(attrs={'class': 'form-control'}),
-            help_text=_('When you are (partially) denied access to information, the Public Body should always state the reason.')
+            widget=forms.Select(attrs={"class": "form-control"}),
+            help_text=_(
+                "When you are (partially) denied access to information, the Public Body should always state the reason."
+            ),
         )
 
     if payment_possible:
+
         def clean_costs(self):
-            costs = self.cleaned_data['costs']
+            costs = self.cleaned_data["costs"]
             if costs is None:
                 return 0.0
             return costs
 
     def clean(self):
-        status = self.cleaned_data.get('status', None)
+        status = self.cleaned_data.get("status", None)
         if status == FoiRequest.STATUS.RESOLVED:
-            if not self.cleaned_data.get('resolution', ''):
-                self.add_error('resolution', _('Please give a resolution to this request'))
+            if not self.cleaned_data.get("resolution", ""):
+                self.add_error(
+                    "resolution", _("Please give a resolution to this request")
+                )
                 return self.cleaned_data
 
         return self.cleaned_data
 
     def save(self, user=None):
         data = self.cleaned_data
-        status = data['status']
-        resolution = data['resolution']
+        status = data["status"]
+        resolution = data["resolution"]
         foirequest = self.foirequest
         previous_status = foirequest.status
         previous_resolution = foirequest.resolution
@@ -289,9 +313,9 @@ class FoiRequestStatusForm(forms.Form):
         foirequest.status = status
         foirequest.resolution = resolution
 
-        foirequest.costs = data['costs']
+        foirequest.costs = data["costs"]
         if resolution == "refused" or resolution == "partially_successful":
-            foirequest.refusal_reason = data['refusal_reason']
+            foirequest.refusal_reason = data["refusal_reason"]
         else:
             foirequest.refusal_reason = ""
 
@@ -304,7 +328,7 @@ class FoiRequestStatusForm(forms.Form):
             resolution=resolution,
             previous_status=previous_status,
             previous_resolution=previous_resolution,
-            data=data
+            data=data,
         )
 
 
@@ -312,15 +336,18 @@ class ConcreteLawForm(forms.Form):
     foi_law = None
 
     def __init__(self, *args, **kwargs):
-        foirequest = kwargs.pop('foirequest')
+        foirequest = kwargs.pop("foirequest")
         super().__init__(*args, **kwargs)
         self.foirequest = foirequest
         self.possible_laws = foirequest.law.combined.all()
-        self.fields['law'] = forms.TypedChoiceField(label=_("Information Law"),
-            choices=([('', '-------')] +
-                    list(map(lambda x: (x.pk, x.name), self.possible_laws))),
+        self.fields["law"] = forms.TypedChoiceField(
+            label=_("Information Law"),
+            choices=(
+                [("", "-------")]
+                + list(map(lambda x: (x.pk, x.name), self.possible_laws))
+            ),
             coerce=int,
-            empty_value=''
+            empty_value="",
         )
 
     def clean(self):
@@ -337,27 +364,23 @@ class ConcreteLawForm(forms.Form):
             self.foirequest.law = self.foi_law
             self.foirequest.save()
             self.foirequest.set_concrete_law.send(
-                sender=self.foirequest,
-                name=self.foi_law.name,
-                user=user
+                sender=self.foirequest, name=self.foi_law.name, user=user
             )
 
 
 class TagFoiRequestForm(TagObjectForm):
-    tags_autocomplete_url = reverse_lazy('api:request-tags-autocomplete')
+    tags_autocomplete_url = reverse_lazy("api:request-tags-autocomplete")
 
 
 class ExtendDeadlineForm(forms.Form):
-    time = forms.IntegerField(
-        min_value=1, max_value=15
-    )
+    time = forms.IntegerField(min_value=1, max_value=15)
 
     def save(self, foirequest):
-        time = self.cleaned_data['time']
+        time = self.cleaned_data["time"]
         now = timezone.now()
         foirequest.due_date = foirequest.law.calculate_due_date(
             foirequest.due_date, time
         )
-        if foirequest.due_date > now and foirequest.status == 'overdue':
-            foirequest.status = 'awaiting_response'
+        if foirequest.due_date > now and foirequest.status == "overdue":
+            foirequest.status = "awaiting_response"
         foirequest.save()

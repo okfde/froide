@@ -9,17 +9,13 @@ from django.utils import formats
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from froide.foirequest.forms import (
-    get_send_message_form, get_postal_message_form
-)
+from froide.foirequest.forms import get_send_message_form, get_postal_message_form
 from froide.foirequest.models import FoiAttachment
-from froide.foirequest.pdf_generator import (
-    LetterPDFGenerator as BaseLetterPDFGenerator
-)
+from froide.foirequest.pdf_generator import LetterPDFGenerator as BaseLetterPDFGenerator
 
 
 class LetterPDFGenerator(BaseLetterPDFGenerator):
-    template_name = 'letter/pdf/default.html'
+    template_name = "letter/pdf/default.html"
 
     def __init__(self, obj, template=None, extra_context=None):
         self.obj = obj
@@ -28,7 +24,7 @@ class LetterPDFGenerator(BaseLetterPDFGenerator):
 
     def get_context_data(self, obj):
         ctx = super().get_context_data(obj)
-        ctx['subject'] = self.template.get_subject(self.extra_context)
+        ctx["subject"] = self.template.get_subject(self.extra_context)
         if self.extra_context:
             ctx.update(self.extra_context)
         return ctx
@@ -39,29 +35,24 @@ class LetterPDFGenerator(BaseLetterPDFGenerator):
 
 def get_example_context(letter_template, user, message):
     fields = letter_template.get_fields()
-    context = {
-        f['slug']: format_html('<mark>{}</mark>', f['label'])
-        for f in fields
-    }
-    context.update({
-        'address': format_html('<mark>{}\n{}</mark>',
-            user.get_full_name(),
-            user.address
-        ),
-        'user': user,
-        'today': timezone.now(),
-        'preview': True,
-        'message': message,
-        'foirequest': message.request
-    })
+    context = {f["slug"]: format_html("<mark>{}</mark>", f["label"]) for f in fields}
+    context.update(
+        {
+            "address": format_html(
+                "<mark>{}\n{}</mark>", user.get_full_name(), user.address
+            ),
+            "user": user,
+            "today": timezone.now(),
+            "preview": True,
+            "message": message,
+            "foirequest": message.request,
+        }
+    )
     return context
 
 
 def get_letter_generator(letter_template, message, context):
-    return LetterPDFGenerator(
-        message, template=letter_template,
-        extra_context=context
-    )
+    return LetterPDFGenerator(message, template=letter_template, extra_context=context)
 
 
 class MessageSender:
@@ -82,7 +73,7 @@ class MessageSender:
             sent_message.tags.add(self.letter_template.tag)
 
         attachment = sent_message.attachments[0]
-        pdf_bytes = self.generate_letter(extra_context={'redacted': True})
+        pdf_bytes = self.generate_letter(extra_context={"redacted": True})
         att = self.add_attachment(sent_message, pdf_bytes)
 
         # Connect attachment
@@ -91,17 +82,17 @@ class MessageSender:
         attachment.approved = False
         attachment.save()
 
-        self.foirequest.status = 'awaiting_response'
+        self.foirequest.status = "awaiting_response"
         self.foirequest.save()
 
         return sent_message
 
     def get_context(self):
         context = {
-            'today': timezone.now(),
-            'foirequest': self.foirequest,
-            'user': self.foirequest.user,
-            'message': self.message,
+            "today": timezone.now(),
+            "foirequest": self.foirequest,
+            "user": self.foirequest.user,
+            "message": self.message,
         }
         context.update(self.form_data)
         return context
@@ -120,14 +111,12 @@ class MessageSender:
     def get_uploaded_file(self, pdf_bytes, subject):
         return InMemoryUploadedFile(
             file=BytesIO(pdf_bytes),
-            field_name='files',
-            name='{}.pdf'.format(
-                slugify(subject)[:25]
-            ),
-            content_type='application/pdf',
+            field_name="files",
+            name="{}.pdf".format(slugify(subject)[:25]),
+            content_type="application/pdf",
             size=len(pdf_bytes),
             charset=None,
-            content_type_extra=None
+            content_type_extra=None,
         )
 
     def send_email_message_form(self):
@@ -137,14 +126,12 @@ class MessageSender:
         letter = self.get_uploaded_file(pdf_bytes, subject)
         message_form = get_send_message_form(
             data={
-                'sendmessage-to': self.foirequest.public_body.email,
-                'sendmessage-subject': subject,
-                'sendmessage-message': self.letter_template.get_email_body(context),
-                'sendmessage-address': self.foirequest.user.address
+                "sendmessage-to": self.foirequest.public_body.email,
+                "sendmessage-subject": subject,
+                "sendmessage-message": self.letter_template.get_email_body(context),
+                "sendmessage-address": self.foirequest.user.address,
             },
-            files=MultiValueDict({
-                'sendmessage-files': [letter]
-            }),
+            files=MultiValueDict({"sendmessage-files": [letter]}),
             foirequest=self.foirequest,
             message_ready=True,
         )
@@ -157,20 +144,16 @@ class MessageSender:
         subject = self.letter_template.get_subject(context)
         pdf_bytes = self.generate_letter()
         letter = self.get_uploaded_file(pdf_bytes, subject)
-        date_str = formats.date_format(
-            timezone.now(), "SHORT_DATE_FORMAT"
-        )
+        date_str = formats.date_format(timezone.now(), "SHORT_DATE_FORMAT")
         message_form = get_postal_message_form(
             data={
-                'postal_message-publicbody': self.foirequest.public_body.id,
-                'postal_message-recipient': '',
-                'postal_message-date': date_str,
-                'postal_message-subject': subject,
-                'postal_message-text': self.letter_template.get_body(context),
+                "postal_message-publicbody": self.foirequest.public_body.id,
+                "postal_message-recipient": "",
+                "postal_message-date": date_str,
+                "postal_message-subject": subject,
+                "postal_message-text": self.letter_template.get_body(context),
             },
-            files=MultiValueDict({
-                'postal_message-files': [letter]
-            }),
+            files=MultiValueDict({"postal_message-files": [letter]}),
             foirequest=self.foirequest,
         )
         message_form.is_valid()
@@ -181,14 +164,11 @@ class MessageSender:
     def add_attachment(self, sent_message, pdf_bytes):
         att = FoiAttachment(
             belongs_to=sent_message,
-            name='{}_{}.pdf'.format(
-                slugify(sent_message.subject)[:25],
-                _('redacted')
-            ),
+            name="{}_{}.pdf".format(slugify(sent_message.subject)[:25], _("redacted")),
             is_redacted=True,
-            filetype='application/pdf',
+            filetype="application/pdf",
             approved=True,
-            can_approve=True
+            can_approve=True,
         )
         pdf_file = ContentFile(pdf_bytes)
         att.size = pdf_file.size

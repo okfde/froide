@@ -6,9 +6,7 @@ from froide.upload.models import Upload
 class UploadDocumentStorer(DocumentStorer):
     def create_from_upload_url(self, upload_url):
         try:
-            upload = Upload.objects.get_by_url(
-                upload_url, user=self.user
-            )
+            upload = Upload.objects.get_by_url(upload_url, user=self.user)
         except Upload.DoesNotExist:
             return None
         return self.create_from_upload(upload)
@@ -17,9 +15,9 @@ class UploadDocumentStorer(DocumentStorer):
         upload.ensure_saving()
         upload.save()
 
-        if upload.filename.lower().endswith('.pdf'):
+        if upload.filename.lower().endswith(".pdf"):
             self.create_document_from_upload(upload)
-        elif upload.filename.lower().endswith('.zip') and self.collection:
+        elif upload.filename.lower().endswith(".zip") and self.collection:
             self.unpack_upload_zip(upload)
 
         upload.finish()

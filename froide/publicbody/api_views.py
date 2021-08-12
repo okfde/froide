@@ -15,20 +15,20 @@ from elasticsearch_dsl.query import Q
 from django_filters import rest_framework as filters
 
 from froide.helper.api_utils import (
-    SearchFacetListSerializer, OpenRefineReconciliationMixin,
+    SearchFacetListSerializer,
+    OpenRefineReconciliationMixin,
 )
 from froide.helper.search import SearchQuerySetWrapper
 from froide.helper.search.api_views import ESQueryMixin
 from froide.georegion.models import GeoRegion
 
-from .models import (PublicBody, Category, Jurisdiction, FoiLaw,
-                     Classification)
+from .models import PublicBody, Category, Jurisdiction, FoiLaw, Classification
 from .documents import PublicBodyDocument
 
 
 def get_language_from_query(request):
     if request:
-        lang = request.GET.get('language', settings.LANGUAGE_CODE)
+        lang = request.GET.get("language", settings.LANGUAGE_CODE)
         lang_dict = dict(settings.LANGUAGES)
         if lang in lang_dict:
             return lang
@@ -37,22 +37,25 @@ def get_language_from_query(request):
 
 class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
-        view_name='api:jurisdiction-detail',
-        lookup_field='pk'
+        view_name="api:jurisdiction-detail", lookup_field="pk"
     )
     region = serializers.HyperlinkedRelatedField(
-        view_name='api:georegion-detail',
-        lookup_field='pk',
-        read_only=True
+        view_name="api:georegion-detail", lookup_field="pk", read_only=True
     )
-    site_url = serializers.CharField(source='get_absolute_domain_url')
+    site_url = serializers.CharField(source="get_absolute_domain_url")
 
     class Meta:
         model = Jurisdiction
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'rank', 'description', 'slug',
-            'site_url', 'region'
+            "resource_uri",
+            "id",
+            "name",
+            "rank",
+            "description",
+            "slug",
+            "site_url",
+            "region",
         )
 
 
@@ -63,18 +66,13 @@ class JurisdictionViewSet(viewsets.ReadOnlyModelViewSet):
 
 class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
-        view_name='api:law-detail',
-        lookup_field='pk'
+        view_name="api:law-detail", lookup_field="pk"
     )
     jurisdiction = serializers.HyperlinkedRelatedField(
-        view_name='api:jurisdiction-detail',
-        lookup_field='pk',
-        read_only=True
+        view_name="api:jurisdiction-detail", lookup_field="pk", read_only=True
     )
     mediator = serializers.HyperlinkedRelatedField(
-        view_name='api:publicbody-detail',
-        lookup_field='pk',
-        read_only=True
+        view_name="api:publicbody-detail", lookup_field="pk", read_only=True
     )
     site_url = serializers.SerializerMethodField()
 
@@ -82,25 +80,42 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
         model = FoiLaw
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'slug', 'description',
-            'long_description', 'law_type',
-            'created', 'updated', 'request_note', 'request_note_html', 'meta',
-            'site_url', 'jurisdiction', 'email_only', 'mediator',
-            'priority', 'url', 'max_response_time', 'email_only',
-            'requires_signature', 'max_response_time_unit',
-            'letter_start', 'letter_end'
+            "resource_uri",
+            "id",
+            "name",
+            "slug",
+            "description",
+            "long_description",
+            "law_type",
+            "created",
+            "updated",
+            "request_note",
+            "request_note_html",
+            "meta",
+            "site_url",
+            "jurisdiction",
+            "email_only",
+            "mediator",
+            "priority",
+            "url",
+            "max_response_time",
+            "email_only",
+            "requires_signature",
+            "max_response_time_unit",
+            "letter_start",
+            "letter_end",
         )
 
     def get_site_url(self, obj):
-        language = get_language_from_query(self.context.get('request'))
+        language = get_language_from_query(self.context.get("request"))
         with translation.override(language):
             return obj.get_absolute_domain_url()
 
     def to_representation(self, instance):
         """Activate language based on request query param."""
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request:
-            lang = request.GET.get('language', settings.LANGUAGE_CODE)
+            lang = request.GET.get("language", settings.LANGUAGE_CODE)
             instance.set_current_language(lang)
         ret = super().to_representation(instance)
         return ret
@@ -108,29 +123,25 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
 
 class FoiLawSerializer(SimpleFoiLawSerializer):
     combined = serializers.HyperlinkedRelatedField(
-        view_name='api:law-detail',
-        lookup_field='pk',
-        read_only=True,
-        many=True
+        view_name="api:law-detail", lookup_field="pk", read_only=True, many=True
     )
 
     class Meta(SimpleFoiLawSerializer.Meta):
         fields = SimpleFoiLawSerializer.Meta.fields + (
-            'refusal_reasons', 'combined',
+            "refusal_reasons",
+            "combined",
         )
 
 
 class FoiLawFilter(filters.FilterSet):
-    id = filters.CharFilter(method='id_filter')
+    id = filters.CharFilter(method="id_filter")
 
     class Meta:
         model = FoiLaw
-        fields = (
-            'jurisdiction', 'mediator', 'id'
-        )
+        fields = ("jurisdiction", "mediator", "id")
 
     def id_filter(self, queryset, name, value):
-        ids = value.split(',')
+        ids = value.split(",")
         try:
             ids = [int(i) for i in ids]
         except ValueError:
@@ -144,15 +155,15 @@ class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = FoiLawFilter
 
     def get_queryset(self):
-        lang = self.request.GET.get('language', settings.LANGUAGE_CODE)
+        lang = self.request.GET.get("language", settings.LANGUAGE_CODE)
         qs = FoiLaw.objects.language(lang)
         return self.optimize_query(qs)
 
     def optimize_query(self, qs):
         return qs.select_related(
-            'jurisdiction',
-            'mediator',
-        ).prefetch_related('combined', 'translations')
+            "jurisdiction",
+            "mediator",
+        ).prefetch_related("combined", "translations")
 
 
 class TreeMixin(object):
@@ -167,22 +178,26 @@ class SimpleClassificationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Classification
         fields = (
-            'id', 'name', 'slug', 'depth',
+            "id",
+            "name",
+            "slug",
+            "depth",
         )
 
 
 class ClassificationSerializer(SimpleClassificationSerializer):
     parent = serializers.HyperlinkedRelatedField(
-        source='get_parent', read_only=True,
-        view_name='api:classification-detail'
+        source="get_parent", read_only=True, view_name="api:classification-detail"
     )
     children = serializers.HyperlinkedRelatedField(
-        source='get_children', many=True, read_only=True,
-        view_name='api:classification-detail'
+        source="get_children",
+        many=True,
+        read_only=True,
+        view_name="api:classification-detail",
     )
 
     class Meta(SimpleClassificationSerializer.Meta):
-        fields = SimpleClassificationSerializer.Meta.fields + ('parent', 'children')
+        fields = SimpleClassificationSerializer.Meta.fields + ("parent", "children")
 
 
 class SearchFilterMixin(object):
@@ -198,18 +213,20 @@ class TreeFilterMixin(object):
         return queryset.intersection(value.get_descendants())
 
 
-class ClassificationFilter(SearchFilterMixin, TreeFilterMixin,
-                           filters.FilterSet):
-    q = filters.CharFilter(method='search_filter')
-    parent = filters.ModelChoiceFilter(method='parent_filter',
-        queryset=Classification.objects.all())
-    ancestor = filters.ModelChoiceFilter(method='ancestor_filter',
-        queryset=Classification.objects.all())
+class ClassificationFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
+    q = filters.CharFilter(method="search_filter")
+    parent = filters.ModelChoiceFilter(
+        method="parent_filter", queryset=Classification.objects.all()
+    )
+    ancestor = filters.ModelChoiceFilter(
+        method="ancestor_filter", queryset=Classification.objects.all()
+    )
 
     class Meta:
         model = Classification
         fields = (
-            'name', 'depth',
+            "name",
+            "depth",
         )
 
 
@@ -221,39 +238,47 @@ class ClassificationViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SimpleCategorySerializer(TreeMixin, serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Category
         fields = (
-            'id', 'name', 'slug', 'is_topic', 'depth',
+            "id",
+            "name",
+            "slug",
+            "is_topic",
+            "depth",
         )
 
 
 class CategorySerializer(SimpleCategorySerializer):
     parent = serializers.HyperlinkedRelatedField(
-        source='get_parent', read_only=True,
-        view_name='api:category-detail'
+        source="get_parent", read_only=True, view_name="api:category-detail"
     )
     children = serializers.HyperlinkedRelatedField(
-        source='get_children', many=True, read_only=True,
-        view_name='api:category-detail'
+        source="get_children",
+        many=True,
+        read_only=True,
+        view_name="api:category-detail",
     )
 
     class Meta(SimpleCategorySerializer.Meta):
-        fields = SimpleCategorySerializer.Meta.fields + ('parent', 'children')
+        fields = SimpleCategorySerializer.Meta.fields + ("parent", "children")
 
 
 class CategoryFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
-    q = filters.CharFilter(method='search_filter')
-    parent = filters.ModelChoiceFilter(method='parent_filter',
-        queryset=Category.objects.all())
-    ancestor = filters.ModelChoiceFilter(method='ancestor_filter',
-        queryset=Category.objects.all())
+    q = filters.CharFilter(method="search_filter")
+    parent = filters.ModelChoiceFilter(
+        method="parent_filter", queryset=Category.objects.all()
+    )
+    ancestor = filters.ModelChoiceFilter(
+        method="ancestor_filter", queryset=Category.objects.all()
+    )
 
     class Meta:
         model = Category
         fields = (
-            'name', 'is_topic', 'depth',
+            "name",
+            "is_topic",
+            "depth",
         )
 
 
@@ -263,119 +288,134 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = CategoryFilter
 
-    @action(detail=False, methods=['get'], url_path='autocomplete',
-            url_name='autocomplete')
+    @action(
+        detail=False, methods=["get"], url_path="autocomplete", url_name="autocomplete"
+    )
     def autocomplete(self, request):
-        query = request.GET.get('query', '')
+        query = request.GET.get("query", "")
         tags = []
         if query:
             tags = Category.objects.filter(name__istartswith=query)
-            tags = [t for t in tags.values_list('name', flat=True)]
+            tags = [t for t in tags.values_list("name", flat=True)]
         return Response(tags)
 
 
 class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
-        view_name='api:publicbody-detail',
-        lookup_field='pk'
+        view_name="api:publicbody-detail", lookup_field="pk"
     )
-    id = serializers.IntegerField(source='pk')
+    id = serializers.IntegerField(source="pk")
     jurisdiction = serializers.HyperlinkedRelatedField(
-        view_name='api:jurisdiction-detail',
+        view_name="api:jurisdiction-detail",
         read_only=True,
     )
     classification = serializers.HyperlinkedRelatedField(
-        view_name='api:classification-detail',
-        read_only=True
+        view_name="api:classification-detail", read_only=True
     )
 
-    site_url = serializers.CharField(source='get_absolute_domain_url')
+    site_url = serializers.CharField(source="get_absolute_domain_url")
 
     class Meta:
         model = PublicBody
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'slug', 'other_names',
-            'description', 'url',
-            'depth', 'classification',
-            'email', 'contact', 'address', 'fax',
-            'request_note', 'number_of_requests',
-            'site_url',
-            'jurisdiction', 'request_note_html',
+            "resource_uri",
+            "id",
+            "name",
+            "slug",
+            "other_names",
+            "description",
+            "url",
+            "depth",
+            "classification",
+            "email",
+            "contact",
+            "address",
+            "fax",
+            "request_note",
+            "number_of_requests",
+            "site_url",
+            "jurisdiction",
+            "request_note_html",
         )
 
 
 class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
-        view_name='api:publicbody-detail',
-        lookup_field='pk'
+        view_name="api:publicbody-detail", lookup_field="pk"
     )
     root = serializers.HyperlinkedRelatedField(
-        view_name='api:publicbody-detail',
-        read_only=True
+        view_name="api:publicbody-detail", read_only=True
     )
     parent = serializers.HyperlinkedRelatedField(
-        view_name='api:publicbody-detail',
-        read_only=True
+        view_name="api:publicbody-detail", read_only=True
     )
 
-    id = serializers.IntegerField(source='pk')
+    id = serializers.IntegerField(source="pk")
     jurisdiction = JurisdictionSerializer(read_only=True)
     laws = serializers.HyperlinkedRelatedField(
-        view_name='api:law-detail',
-        many=True,
-        read_only=True
+        view_name="api:law-detail", many=True, read_only=True
     )
     categories = SimpleCategorySerializer(read_only=True, many=True)
     classification = SimpleClassificationSerializer(read_only=True)
     regions = serializers.HyperlinkedRelatedField(
-        view_name='api:georegion-detail',
-        read_only=True,
-        many=True
+        view_name="api:georegion-detail", read_only=True, many=True
     )
 
-    site_url = serializers.CharField(source='get_absolute_domain_url')
+    site_url = serializers.CharField(source="get_absolute_domain_url")
 
     class Meta:
         model = PublicBody
         list_serializer_class = SearchFacetListSerializer
         depth = 0
         fields = (
-            'resource_uri', 'id', 'name', 'slug', 'other_names',
-            'description', 'url', 'parent', 'root',
-            'depth', 'classification', 'categories',
-            'email', 'contact', 'address', 'fax',
-            'request_note', 'number_of_requests',
-            'site_url', 'request_note_html',
-            'jurisdiction',
-            'laws', 'regions',
+            "resource_uri",
+            "id",
+            "name",
+            "slug",
+            "other_names",
+            "description",
+            "url",
+            "parent",
+            "root",
+            "depth",
+            "classification",
+            "categories",
+            "email",
+            "contact",
+            "address",
+            "fax",
+            "request_note",
+            "number_of_requests",
+            "site_url",
+            "request_note_html",
+            "jurisdiction",
+            "laws",
+            "regions",
         )
 
 
 class PublicBodySerializer(PublicBodyListSerializer):
-    laws = FoiLawSerializer(
-        many=True,
-        read_only=True
-    )
+    laws = FoiLawSerializer(many=True, read_only=True)
 
 
 class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
-    q = filters.CharFilter(method='search_filter')
+    q = filters.CharFilter(method="search_filter")
     classification = filters.ModelChoiceFilter(
-        method='classification_filter',
-        queryset=Classification.objects.all()
+        method="classification_filter", queryset=Classification.objects.all()
     )
     category = filters.ModelMultipleChoiceFilter(
-        method='category_filter',
-        queryset=Category.objects.all()
+        method="category_filter", queryset=Category.objects.all()
     )
-    regions = filters.CharFilter(method='regions_filter')
-    lnglat = filters.CharFilter(method='lnglat_filter')
+    regions = filters.CharFilter(method="regions_filter")
+    lnglat = filters.CharFilter(method="lnglat_filter")
 
     class Meta:
         model = PublicBody
         fields = (
-            'jurisdiction', 'slug', 'classification_id',
+            "jurisdiction",
+            "slug",
+            "classification_id",
         )
 
     def classification_filter(self, queryset, name, value):
@@ -384,29 +424,25 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
 
     def category_filter(self, queryset, name, value):
         for v in value:
-            queryset = queryset.filter(
-                categories__in=Category.get_tree(parent=v)
-            )
+            queryset = queryset.filter(categories__in=Category.get_tree(parent=v))
         return queryset
 
     def regions_filter(self, queryset, name, value):
-        if ',' in value:
-            ids = value.split(',')
+        if "," in value:
+            ids = value.split(",")
         else:
             try:
-                region = GeoRegion.objects.get(
-                    id=value
-                )
+                region = GeoRegion.objects.get(id=value)
                 ids = GeoRegion.get_tree(parent=region)
             except GeoRegion.DoesNotExist:
                 return queryset
         return queryset.filter(regions__in=ids)
 
     def lnglat_filter(self, queryset, name, value):
-        if ',' not in value:
+        if "," not in value:
             return queryset
         try:
-            lnglat = value.split(',', 1)
+            lnglat = value.split(",", 1)
             lnglat = (float(lnglat[0]), float(lnglat[1]))
         except (IndexError, ValueError):
             return queryset
@@ -414,58 +450,43 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
         return queryset.filter(regions__geom__covers=point)
 
 
-class PublicBodyViewSet(OpenRefineReconciliationMixin,
-                        ESQueryMixin,
-                        viewsets.ReadOnlyModelViewSet):
+class PublicBodyViewSet(
+    OpenRefineReconciliationMixin, ESQueryMixin, viewsets.ReadOnlyModelViewSet
+):
     serializer_action_classes = {
-        'list': PublicBodyListSerializer,
-        'retrieve': PublicBodySerializer
+        "list": PublicBodyListSerializer,
+        "retrieve": PublicBodySerializer,
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = PublicBodyFilter
 
     # OpenRefine needs JSONP responses
     # This is OK because authentication is not considered
-    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (
-        JSONPRenderer,
-    )
+    renderer_classes = tuple(api_settings.DEFAULT_RENDERER_CLASSES) + (JSONPRenderer,)
 
     class RECONCILIATION_META:
-        name = 'Public Body'
-        id = 'publicbody'
+        name = "Public Body"
+        id = "publicbody"
         model = PublicBody
         document = PublicBodyDocument
-        api_list = 'api:publicbody-list'
-        obj_short_link = 'publicbody-publicbody_shortlink'
-        query_fields = ['name', 'content']
-        filters = ['jurisdiction', 'classification']
-        properties = [{
-            'id': 'classification',
-            'name': 'Classification',
-            'query': 'classification'
-            }, {
-            'id': 'jurisdiction',
-            'name': 'Jurisdiction',
-            'query': 'jurisdiction'
-            }, {
-            'id': 'email',
-            'name': 'Email'
-            }, {
-            'id': 'id',
-            'name': 'ID'
-            }, {
-            'id': 'slug',
-            'name': 'Slug'
-            }, {
-            'id': 'url',
-            'name': 'URL'
-            }, {
-            'id': 'fax',
-            'name': 'Fax'
-        }]
-        properties_dict = {
-            p['id']: p for p in properties
-        }
+        api_list = "api:publicbody-list"
+        obj_short_link = "publicbody-publicbody_shortlink"
+        query_fields = ["name", "content"]
+        filters = ["jurisdiction", "classification"]
+        properties = [
+            {
+                "id": "classification",
+                "name": "Classification",
+                "query": "classification",
+            },
+            {"id": "jurisdiction", "name": "Jurisdiction", "query": "jurisdiction"},
+            {"id": "email", "name": "Email"},
+            {"id": "id", "name": "ID"},
+            {"id": "slug", "name": "Slug"},
+            {"id": "url", "name": "URL"},
+            {"id": "fax", "name": "Fax"},
+        ]
+        properties_dict = {p["id"]: p for p in properties}
 
     def get_serializer_class(self):
         try:
@@ -477,46 +498,38 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
         return self.optimize_query(PublicBody.objects.all())
 
     def optimize_query(self, qs):
-        return qs.select_related(
-            'classification',
-            'jurisdiction'
-        ).prefetch_related(
-            'categories',
-            'laws',
-            'regions',
+        return qs.select_related("classification", "jurisdiction").prefetch_related(
+            "categories",
+            "laws",
+            "regions",
         )
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def search(self, request):
         return self.search_view(request)
 
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
-        if self.action == 'search':
-            if hasattr(self, 'sqs'):
-                ctx['facets'] = self.sqs.get_aggregations()
+        if self.action == "search":
+            if hasattr(self, "sqs"):
+                ctx["facets"] = self.sqs.get_aggregations()
         return ctx
 
     def get_searchqueryset(self):
-        query = self.request.GET.get('q', '')
+        query = self.request.GET.get("q", "")
 
-        sqs = SearchQuerySetWrapper(
-            PublicBodyDocument.search(),
-            PublicBody
-        )
+        sqs = SearchQuerySetWrapper(PublicBodyDocument.search(), PublicBody)
 
         if len(query) > 2:
-            sqs = sqs.set_query(Q(
-                "multi_match",
-                query=query,
-                fields=['name_auto', 'content']
-            ))
+            sqs = sqs.set_query(
+                Q("multi_match", query=query, fields=["name_auto", "content"])
+            )
 
         model_filters = {
-            'jurisdiction': Jurisdiction,
-            'classification': Classification,
-            'categories': Category,
-            'regions': GeoRegion,
+            "jurisdiction": Jurisdiction,
+            "classification": Classification,
+            "categories": Category,
+            "regions": GeoRegion,
         }
         for key, model in model_filters.items():
             pks = self.request.GET.getlist(key)
@@ -528,18 +541,18 @@ class PublicBodyViewSet(OpenRefineReconciliationMixin,
                     # Make result set empty, no 0 pk present
                     sqs = sqs.filter(**{key: 0})
 
-        other_filters = {
-            'regions_kind': 'regions_kind'
-        }
+        other_filters = {"regions_kind": "regions_kind"}
         for key, search_key in other_filters.items():
             values = self.request.GET.getlist(key)
             if values:
                 sqs = sqs.filter(**{search_key: values})
 
-        sqs = sqs.add_aggregation([
-            'jurisdiction',
-            'classification',
-            'categories',
-            'regions',
-        ])
+        sqs = sqs.add_aggregation(
+            [
+                "jurisdiction",
+                "classification",
+                "categories",
+                "regions",
+            ]
+        )
         return sqs

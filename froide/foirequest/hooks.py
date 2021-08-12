@@ -1,7 +1,7 @@
 from collections import defaultdict, OrderedDict
 
 
-class HookRegistry():
+class HookRegistry:
     def __init__(self):
         self.hooks = defaultdict(OrderedDict)
 

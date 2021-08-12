@@ -7,18 +7,23 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0018_auto_20190309_1153'),
+        ("account", "0018_auto_20190309_1153"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='taggeduser',
-            name='count',
+            model_name="taggeduser",
+            name="count",
             field=models.PositiveIntegerField(default=1),
         ),
         migrations.AddField(
-            model_name='taggeduser',
-            name='tag_new',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='tagged_users', to='account.UserTag'),
+            model_name="taggeduser",
+            name="tag_new",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="tagged_users",
+                to="account.UserTag",
+            ),
         ),
     ]

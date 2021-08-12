@@ -4,15 +4,13 @@ from django.conf import settings
 from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
-from django_filters.widgets import (
-    RangeWidget, DateRangeWidget as DFDateRangeWidget
-)
+from django_filters.widgets import RangeWidget, DateRangeWidget as DFDateRangeWidget
 
 
 class BootstrapChoiceMixin(object):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('attrs', {})
-        kwargs['attrs'].update({'class': 'form-check-input'})
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"].update({"class": "form-check-input"})
         super(BootstrapChoiceMixin, self).__init__(*args, **kwargs)
 
 
@@ -21,13 +19,13 @@ class BootstrapCheckboxInput(BootstrapChoiceMixin, forms.CheckboxInput):
 
 
 class BootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
-    option_template_name = 'helper/forms/widgets/radio_option.html'
+    option_template_name = "helper/forms/widgets/radio_option.html"
 
 
 class BootstrapFileInput(forms.FileInput):
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('attrs', {})
-        kwargs['attrs'].update({'class': 'form-control'})
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"].update({"class": "form-control"})
         super(BootstrapFileInput, self).__init__(*args, **kwargs)
 
 
@@ -36,60 +34,54 @@ class PriceInput(forms.TextInput):
 
     def get_context(self, name, value, attrs):
         ctx = super(PriceInput, self).get_context(name, value, attrs)
-        ctx['widget'].setdefault('attrs', {})
-        ctx['widget']['attrs']['class'] = 'form-control col-3'
-        ctx['widget']['attrs']['pattern'] = "[\\d\\.,]*"
-        ctx['currency'] = settings.FROIDE_CONFIG['currency']
+        ctx["widget"].setdefault("attrs", {})
+        ctx["widget"]["attrs"]["class"] = "form-control col-3"
+        ctx["widget"]["attrs"]["pattern"] = "[\\d\\.,]*"
+        ctx["currency"] = settings.FROIDE_CONFIG["currency"]
         return ctx
 
 
 class TagAutocompleteWidget(TagWidget):
-    template_name = 'helper/forms/widgets/tag_autocomplete.html'
+    template_name = "helper/forms/widgets/tag_autocomplete.html"
 
     class Media:
 
-        js = (
-            'js/tagautocomplete.js',
-        )
+        js = ("js/tagautocomplete.js",)
 
-        css_list = [
-            'css/tagautocomplete.css'
-        ]
-        css = {
-            'screen': css_list
-        }
+        css_list = ["css/tagautocomplete.css"]
+        css = {"screen": css_list}
 
     def __init__(self, *args, **kwargs):
-        self.autocomplete_url = kwargs.pop('autocomplete_url', None)
+        self.autocomplete_url = kwargs.pop("autocomplete_url", None)
         super().__init__(*args, **kwargs)
 
     def value_from_datadict(self, data, files, name):
-        """ Force comma separation of tags by adding trailing comma """
+        """Force comma separation of tags by adding trailing comma"""
         val = data.get(name, None)
         if val is None:
-            return ''
-        return val + ','
+            return ""
+        return val + ","
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
-        ctx['autocomplete_url'] = self.autocomplete_url
+        ctx["autocomplete_url"] = self.autocomplete_url
         if value is not None:
             if isinstance(value, str):
-                ctx['tags'] = parse_tags(value)
+                ctx["tags"] = parse_tags(value)
             else:
-                ctx['tags'] = [v.name for v in value]
+                ctx["tags"] = [v.name for v in value]
         else:
-            ctx['tags'] = []
+            ctx["tags"] = []
         return ctx
 
 
 class DateRangeWidget(DFDateRangeWidget):
-    template_name = 'helper/forms/widgets/daterange.html'
+    template_name = "helper/forms/widgets/daterange.html"
 
     def __init__(self):
         widgets = [
-            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            forms.DateInput(attrs={'class': 'form-control', 'type': 'date'})
+            forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            forms.DateInput(attrs={"class": "form-control", "type": "date"}),
         ]
         # Skip super class init!
         super(RangeWidget, self).__init__(widgets)

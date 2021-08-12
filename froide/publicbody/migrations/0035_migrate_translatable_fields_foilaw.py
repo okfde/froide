@@ -6,8 +6,8 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 def forwards_func(apps, schema_editor):
-    FoiLaw = apps.get_model('publicbody', 'FoiLaw')
-    FoiLawTranslation = apps.get_model('publicbody', 'FoiLawTranslation')
+    FoiLaw = apps.get_model("publicbody", "FoiLaw")
+    FoiLawTranslation = apps.get_model("publicbody", "FoiLawTranslation")
 
     for obj in FoiLaw.objects.all():
         FoiLawTranslation.objects.create(
@@ -25,8 +25,8 @@ def forwards_func(apps, schema_editor):
 
 
 def backwards_func(apps, schema_editor):
-    FoiLaw = apps.get_model('publicbody', 'FoiLaw')
-    FoiLawTranslation = apps.get_model('publicbody', 'FoiLawTranslation')
+    FoiLaw = apps.get_model("publicbody", "FoiLaw")
+    FoiLawTranslation = apps.get_model("publicbody", "FoiLawTranslation")
 
     for obj in FoiLaw.objects.all():
         translation = _get_translation(obj, FoiLawTranslation)
@@ -38,7 +38,7 @@ def backwards_func(apps, schema_editor):
         obj._letter_start = translation.letter_start
         obj._letter_end = translation.letter_end
         obj._refusal_reasons = translation.refusal_reasons
-        obj.save()   # Note this only calls Model.save()
+        obj.save()  # Note this only calls Model.save()
 
 
 def _get_translation(object, MyModelTranslation):
@@ -59,7 +59,7 @@ def _get_translation(object, MyModelTranslation):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0034_add_translation_laws'),
+        ("publicbody", "0034_add_translation_laws"),
     ]
 
     operations = [

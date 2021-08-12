@@ -19,7 +19,10 @@ def run_commit_hooks(testcase):
     from unittest import mock
 
     for db_name in reversed(testcase._databases_names()):
-        with mock.patch('django.db.backends.base.base.BaseDatabaseWrapper.validate_no_atomic_block', lambda a: False):
+        with mock.patch(
+            "django.db.backends.base.base.BaseDatabaseWrapper.validate_no_atomic_block",
+            lambda a: False,
+        ):
             transaction.get_connection(using=db_name).run_and_clear_commit_hooks()
 
 
@@ -36,7 +39,7 @@ def realtime_search(testcase, test=True):
 class CelerySignalProcessor(RealTimeSignalProcessor):
     def setup(self):
         for doc in registry.get_documents():
-            if getattr(doc, 'special_signals', False):
+            if getattr(doc, "special_signals", False):
                 continue
             model = doc.django.model
             models.signals.post_save.connect(self.handle_save, sender=model)
@@ -48,7 +51,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
     def teardown(self):
         # Listen to all model saves.
         for doc in registry.get_documents():
-            if getattr(doc, 'special_signals', False):
+            if getattr(doc, "special_signals", False):
                 continue
             model = doc.django.model
             models.signals.post_save.disconnect(self.handle_save, sender=model)
@@ -62,7 +65,9 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         Given an individual model instance, update the object in the index.
         Update the related objects either.
         """
-        transaction.on_commit(lambda: search_instance_save.delay(instance._meta.label_lower, instance.pk))
+        transaction.on_commit(
+            lambda: search_instance_save.delay(instance._meta.label_lower, instance.pk)
+        )
 
     def handle_pre_delete(self, sender, instance, **kwargs):
         """Handle removing of instance object from related models instance.
@@ -78,4 +83,8 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         """
         if instance.pk is None:
             return
-        transaction.on_commit(lambda: search_instance_delete.delay(instance._meta.label_lower, instance.pk))
+        transaction.on_commit(
+            lambda: search_instance_delete.delay(
+                instance._meta.label_lower, instance.pk
+            )
+        )

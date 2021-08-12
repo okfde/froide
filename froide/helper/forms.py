@@ -10,30 +10,29 @@ from .widgets import TagAutocompleteWidget
 
 class TagObjectForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        tags = kwargs.pop('tags', [])
+        tags = kwargs.pop("tags", [])
         if tags:
-            kwargs['initial'] = {'tags': edit_string_for_tags(tags)}
+            kwargs["initial"] = {"tags": edit_string_for_tags(tags)}
 
-        autocomplete_url = kwargs.pop('autocomplete_url', '') or ''
+        autocomplete_url = kwargs.pop("autocomplete_url", "") or ""
 
-        if hasattr(self, 'tags_autocomplete_url'):
+        if hasattr(self, "tags_autocomplete_url"):
             if self.tags_autocomplete_url:
                 autocomplete_url = self.tags_autocomplete_url
 
         super(TagObjectForm, self).__init__(*args, **kwargs)
 
-        self.fields['tags'] = TagField(
+        self.fields["tags"] = TagField(
             label=_("Tags"),
             widget=TagAutocompleteWidget(
-                attrs={'placeholder': _('Tags')},
-                autocomplete_url=autocomplete_url
+                attrs={"placeholder": _("Tags")}, autocomplete_url=autocomplete_url
             ),
             required=False,
-            help_text=_("Comma separated and quoted")
+            help_text=_("Comma separated and quoted"),
         )
 
     def save(self, obj):
-        obj.tags.set(*[t[:100] for t in self.cleaned_data['tags']])
+        obj.tags.set(*[t[:100] for t in self.cleaned_data["tags"]])
         obj.save()
 
 
@@ -73,7 +72,6 @@ def get_fake_fk_form_class(model, admin_site, queryset=None):
         queryset = model.objects.all()
 
     class ForeignKeyForm(forms.Form):
-        obj = forms.ModelChoiceField(queryset=queryset,
-                                     widget=widget)
+        obj = forms.ModelChoiceField(queryset=queryset, widget=widget)
 
     return ForeignKeyForm

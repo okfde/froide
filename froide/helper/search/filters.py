@@ -6,20 +6,17 @@ from elasticsearch_dsl.query import Q
 
 
 class BaseSearchFilterSet(django_filters.FilterSet):
-    query_fields = ['content']
+    query_fields = ["content"]
 
     q = django_filters.CharFilter(
-        method='auto_query',
+        method="auto_query",
         widget=forms.TextInput(
-            attrs={
-                'placeholder': _('Enter search term'),
-                'class': 'form-control'
-            }
+            attrs={"placeholder": _("Enter search term"), "class": "form-control"}
         ),
     )
 
     def __init__(self, *args, **kwargs):
-        self.view = kwargs.pop('view', None)
+        self.view = kwargs.pop("view", None)
         super().__init__(*args, **kwargs)
 
     def filter_queryset(self, queryset):
@@ -38,11 +35,13 @@ class BaseSearchFilterSet(django_filters.FilterSet):
 
     def auto_query(self, qs, name, value):
         if value:
-            return qs.set_query(Q(
-                "simple_query_string",
-                query=value,
-                fields=self.query_fields,
-                default_operator='and',
-                lenient=True
-            ))
+            return qs.set_query(
+                Q(
+                    "simple_query_string",
+                    query=value,
+                    fields=self.query_fields,
+                    default_operator="and",
+                    lenient=True,
+                )
+            )
         return qs

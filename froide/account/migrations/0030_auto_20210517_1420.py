@@ -7,13 +7,19 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0029_auto_20210428_1225'),
+        ("account", "0029_auto_20210428_1225"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='user',
-            name='email_ci',
-            field=django.contrib.postgres.fields.citext.CIEmailField(blank=True, max_length=254, null=True, unique=True, verbose_name='email address'),
+            model_name="user",
+            name="email_ci",
+            field=django.contrib.postgres.fields.citext.CIEmailField(
+                blank=True,
+                max_length=254,
+                null=True,
+                unique=True,
+                verbose_name="email address",
+            ),
         ),
     ]

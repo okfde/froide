@@ -13,26 +13,30 @@ def delete_draft(request):
     if not request.user.is_authenticated:
         return render_403(request)
 
-    pk = request.POST.get('draft_id')
+    pk = request.POST.get("draft_id")
     draft = get_object_or_404(RequestDraft, pk=pk, user=request.user)
     draft.delete()
-    messages.add_message(request, messages.INFO,
-        _('The draft has been deleted.'))
+    messages.add_message(request, messages.INFO, _("The draft has been deleted."))
 
-    return redirect('account-drafts')
+    return redirect("account-drafts")
 
 
 def claim_draft(request, token):
     if not request.user.is_authenticated:
         # This should lead to a login page with next set to drafts
-        return redirect('account-drafts')
+        return redirect("account-drafts")
     try:
         draft = RequestDraft.objects.get(token=token, user=None)
     except RequestDraft.DoesNotExist:
-        return redirect('account-drafts')
+        return redirect("account-drafts")
     draft.token = None
     draft.user = request.user
     draft.save()
-    messages.add_message(request, messages.INFO,
-        _('Please check the request you wanted to make and send it when you are ready.'))
+    messages.add_message(
+        request,
+        messages.INFO,
+        _(
+            "Please check the request you wanted to make and send it when you are ready."
+        ),
+    )
     return redirect(draft)

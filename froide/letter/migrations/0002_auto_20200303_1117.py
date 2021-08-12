@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('letter', '0001_initial'),
+        ("letter", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='lettertemplate',
-            name='email_body',
+            model_name="lettertemplate",
+            name="email_body",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='lettertemplate',
-            name='email_subject',
+            model_name="lettertemplate",
+            name="email_subject",
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='lettertemplate',
-            name='post_instructions',
+            model_name="lettertemplate",
+            name="post_instructions",
             field=models.TextField(blank=True),
         ),
     ]

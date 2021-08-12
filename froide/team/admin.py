@@ -5,11 +5,14 @@ from .models import Team, TeamMembership
 
 class TeamMembershipInline(admin.StackedInline):
     model = TeamMembership
-    raw_id_fields = ('user', 'team',)
+    raw_id_fields = (
+        "user",
+        "team",
+    )
 
 
 class TeamAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created', 'member_count')
+    list_display = ("name", "created", "member_count")
     inlines = [TeamMembershipInline]
 
 

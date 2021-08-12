@@ -19,8 +19,8 @@ def fix_address(a):
 
 class EmailBackend(DjangoEmailBackend):
     def __init__(self, **kwargs):
-        self.rcpt_options = kwargs.pop('rcpt_options', [])
-        self.return_path = kwargs.pop('return_path', None)
+        self.rcpt_options = kwargs.pop("rcpt_options", [])
+        self.return_path = kwargs.pop("return_path", None)
         super().__init__(**kwargs)
 
     def _send(self, email_message):
@@ -33,12 +33,17 @@ class EmailBackend(DjangoEmailBackend):
             from_email = sanitize_address(self.return_path, encoding)
         else:
             from_email = sanitize_address(email_message.from_email, encoding)
-        recipients = [sanitize_address(addr, encoding) for addr in email_message.recipients()]
+        recipients = [
+            sanitize_address(addr, encoding) for addr in email_message.recipients()
+        ]
         try:
             message = email_message.message()
-            self.connection.sendmail(from_email, recipients,
-                                     message.as_bytes(linesep='\r\n'),
-                                     rcpt_options=self.rcpt_options)
+            self.connection.sendmail(
+                from_email,
+                recipients,
+                message.as_bytes(linesep="\r\n"),
+                rcpt_options=self.rcpt_options,
+            )
         except smtplib.SMTPRecipientsRefused as e:
             handle_smtp_error(e)
             logger.exception(e)

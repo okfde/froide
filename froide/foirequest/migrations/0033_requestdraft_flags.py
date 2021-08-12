@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0032_auto_20181115_1339'),
+        ("foirequest", "0032_auto_20181115_1339"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='requestdraft',
-            name='flags',
+            model_name="requestdraft",
+            name="flags",
             field=models.JSONField(blank=True, default=dict),
         ),
     ]

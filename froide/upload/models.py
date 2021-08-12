@@ -16,16 +16,17 @@ from .utils import write_bytes_to_file
 
 
 class states:
-    INITIAL = 'initial'
-    RECEIVING = 'receiving'
-    SAVING = 'saving'
-    DONE = 'done'
+    INITIAL = "initial"
+    RECEIVING = "receiving"
+    SAVING = "saving"
+    DONE = "done"
 
 
 class TusFile(File):
     """
     A TUS uploaded file, allow direct move
     """
+
     def temporary_file_path(self):
         """Return the full path of this file."""
         return self.file.name
@@ -35,7 +36,8 @@ class AbstractUpload(models.Model):
     """
     Abstract model for managing TUS uploads
     """
-    guid = models.UUIDField(_('GUID'), default=uuid.uuid4, unique=True)
+
+    guid = models.UUIDField(_("GUID"), default=uuid.uuid4, unique=True)
 
     state = FSMField(default=states.INITIAL)
 
@@ -59,14 +61,11 @@ class AbstractUpload(models.Model):
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
         if self.upload_offset < 0:
-            raise ValidationError(_('upload_offset should be >= 0.'))
+            raise ValidationError(_("upload_offset should be >= 0."))
 
     def write_data(self, upload_bytes, chunk_size):
         num_bytes_written = write_bytes_to_file(
-            self.temporary_file_path,
-            self.upload_offset,
-            upload_bytes,
-            makedirs=True
+            self.temporary_file_path, self.upload_offset, upload_bytes, makedirs=True
         )
 
         if num_bytes_written > 0:
@@ -79,7 +78,7 @@ class AbstractUpload(models.Model):
 
     @property
     def content_type(self):
-        return self.get_metadata().get('filetype')
+        return self.get_metadata().get("filetype")
 
     @property
     def name(self):
@@ -94,17 +93,23 @@ class AbstractUpload(models.Model):
         if not self.is_complete():
             return None
         if self.temporary_file_exists():
-            return TusFile(open(self.temporary_file_path, 'rb'))
+            return TusFile(open(self.temporary_file_path, "rb"))
         return None
 
     def generate_filename(self):
-        return os.path.join('{}.bin'.format(uuid.uuid4()))
+        return os.path.join("{}.bin".format(uuid.uuid4()))
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
         if not self.filename:
             self.filename = self.generate_filename()
         return super().save(
-            force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
 
     def is_complete(self):
         return self.upload_offset == self.upload_length
@@ -121,7 +126,12 @@ class AbstractUpload(models.Model):
         assert os.path.isfile(self.temporary_file_path)
         return self.temporary_file_path
 
-    @transition(field=state, source=states.INITIAL, target=states.RECEIVING, conditions=[temporary_file_exists])
+    @transition(
+        field=state,
+        source=states.INITIAL,
+        target=states.RECEIVING,
+        conditions=[temporary_file_exists],
+    )
     def start_receiving(self):
         """
         State transition to indicate the first file chunk has been received successfully
@@ -133,7 +143,12 @@ class AbstractUpload(models.Model):
         if self.state == states.RECEIVING:
             self.start_saving()
 
-    @transition(field=state, source=states.RECEIVING, target=states.SAVING, conditions=[is_complete])
+    @transition(
+        field=state,
+        source=states.RECEIVING,
+        target=states.SAVING,
+        conditions=[is_complete],
+    )
     def start_saving(self):
         """
         State transition to indicate that the upload is complete, and that the temporary file will be transferred to
@@ -156,21 +171,18 @@ class UploadManager(models.Manager):
             match = resolve(upload_url)
         except Resolver404:
             return None
-        guid = match.kwargs.get('guid')
+        guid = match.kwargs.get("guid")
         if guid is None:
             return None
         try:
-            return Upload.objects.get(
-                user=user, token=token, guid=guid
-            )
+            return Upload.objects.get(user=user, token=token, guid=guid)
         except Upload.DoesNotExist:
             return None
 
 
 class Upload(AbstractUpload):
     user = models.ForeignKey(
-        get_user_model(), blank=True, null=True,
-        on_delete=models.CASCADE
+        get_user_model(), blank=True, null=True, on_delete=models.CASCADE
     )
     token = models.UUIDField(null=True, blank=True)
 

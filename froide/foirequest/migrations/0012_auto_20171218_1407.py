@@ -8,13 +8,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0011_deliverystatus'),
+        ("foirequest", "0011_deliverystatus"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='foimessage',
-            name='email_message_id',
-            field=models.CharField(blank=True, default='', max_length=512),
+            model_name="foimessage",
+            name="email_message_id",
+            field=models.CharField(blank=True, default="", max_length=512),
         ),
     ]

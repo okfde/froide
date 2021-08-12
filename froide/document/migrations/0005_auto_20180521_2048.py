@@ -11,37 +11,62 @@ import functools
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('document', '0004_pageannotation_image'),
+        ("document", "0004_pageannotation_image"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='page',
-            options={'ordering': ('number',)},
+            name="page",
+            options={"ordering": ("number",)},
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image',
-            field=models.ImageField(max_length=255, upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'original'})),
+            model_name="page",
+            name="image",
+            field=models.ImageField(
+                max_length=255,
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "original"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_large',
-            field=models.ImageField(max_length=255, upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'large'})),
+            model_name="page",
+            name="image_large",
+            field=models.ImageField(
+                max_length=255,
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "large"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_normal',
-            field=models.ImageField(max_length=255, upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'normal'})),
+            model_name="page",
+            name="image_normal",
+            field=models.ImageField(
+                max_length=255,
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "normal"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='page',
-            name='image_small',
-            field=models.ImageField(max_length=255, upload_to=functools.partial(filingcabinet.models.get_page_filename, *(), **{'size': 'small'})),
+            model_name="page",
+            name="image_small",
+            field=models.ImageField(
+                max_length=255,
+                upload_to=functools.partial(
+                    filingcabinet.models.get_page_filename, *(), **{"size": "small"}
+                ),
+            ),
         ),
         migrations.AlterField(
-            model_name='pageannotation',
-            name='image',
-            field=models.ImageField(blank=True, max_length=255, storage=filingcabinet.storage.OverwriteStorage(), upload_to=filingcabinet.models.get_page_annotation_filename),
+            model_name="pageannotation",
+            name="image",
+            field=models.ImageField(
+                blank=True,
+                max_length=255,
+                storage=filingcabinet.storage.OverwriteStorage(),
+                upload_to=filingcabinet.models.get_page_annotation_filename,
+            ),
         ),
     ]

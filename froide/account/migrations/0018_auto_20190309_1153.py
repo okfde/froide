@@ -4,27 +4,22 @@ from django.db import migrations
 
 
 def create_tags(apps, schema_editor):
-    TaggedUser = apps.get_model('account', 'TaggedUser')
-    UserTag = apps.get_model('account', 'UserTag')
+    TaggedUser = apps.get_model("account", "TaggedUser")
+    UserTag = apps.get_model("account", "UserTag")
     already = set()
     for tagged_user in TaggedUser.objects.all():
         name = tagged_user.tag.name
         slug = tagged_user.tag.slug
         if slug in already:
             continue
-        UserTag.objects.create(
-            name=name,
-            slug=slug
-        )
+        UserTag.objects.create(name=name, slug=slug)
         already.add(slug)
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('account', '0017_auto_20190309_1153'),
+        ("account", "0017_auto_20190309_1153"),
     ]
 
-    operations = [
-        migrations.RunPython(create_tags)
-    ]
+    operations = [migrations.RunPython(create_tags)]

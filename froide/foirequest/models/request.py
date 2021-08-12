@@ -30,11 +30,9 @@ MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=14)
 
 
 class FoiRequestManager(CurrentSiteManager):
-
     def get_send_foi_requests(self):
         return self.get_queryset().filter(
-            is_foi=True,
-            visibility__gt=FoiRequest.VISIBILITY.INVISIBLE
+            is_foi=True, visibility__gt=FoiRequest.VISIBILITY.INVISIBLE
         )
 
     def get_by_secret_mail(self, mail):
@@ -52,12 +50,11 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_asleep(self):
         six_months_ago = timezone.now() - timedelta(days=30 * 6)
-        return self.get_queryset()\
-            .filter(
-                last_message__lt=six_months_ago
-            ).filter(
-                status=Status.AWAITING_RESPONSE
-            )
+        return (
+            self.get_queryset()
+            .filter(last_message__lt=six_months_ago)
+            .filter(status=Status.AWAITING_RESPONSE)
+        )
 
     def get_to_be_asleep(self):
         return self.get_asleep().exclude(status=Status.ASLEEP)
@@ -67,9 +64,7 @@ class FoiRequestManager(CurrentSiteManager):
             offset = timedelta(days=4)
         ago = timezone.now() - offset
         return self.get_queryset().filter(
-            status=Status.AWAITING_CLASSIFICATION,
-            is_foi=True,
-            last_message__lt=ago
+            status=Status.AWAITING_CLASSIFICATION, is_foi=True, last_message__lt=ago
         )
 
     def get_unclassified_for_moderation(self):
@@ -80,30 +75,39 @@ class FoiRequestManager(CurrentSiteManager):
     def get_dashboard_requests(self, user, query=None):
         query_kwargs = {}
         if query is not None:
-            query_kwargs = {'title__icontains': query}
+            query_kwargs = {"title__icontains": query}
         now = timezone.now()
-        return self.get_queryset().filter(user=user, **query_kwargs).annotate(
-            is_important=Case(
-                When(Q(status=Status.AWAITING_CLASSIFICATION) | (
-                    Q(due_date__lt=now) & Q(status=Status.AWAITING_RESPONSE)
-                ), then=Value(True)),
-                default=Value(False),
-                output_field=models.BooleanField()
+        return (
+            self.get_queryset()
+            .filter(user=user, **query_kwargs)
+            .annotate(
+                is_important=Case(
+                    When(
+                        Q(status=Status.AWAITING_CLASSIFICATION)
+                        | (Q(due_date__lt=now) & Q(status=Status.AWAITING_RESPONSE)),
+                        then=Value(True),
+                    ),
+                    default=Value(False),
+                    output_field=models.BooleanField(),
+                )
             )
-        ).order_by('-is_important', '-last_message')
+            .order_by("-is_important", "-last_message")
+        )
 
     def get_throttle_filter(self, qs, user, extra_filters=None):
         qs = qs.filter(user=user)
-        return qs, 'first_message'
+        return qs, "first_message"
 
     def delete_private_requests(self, user):
         if not user:
             return
-        qs = self.get_queryset().filter(
-            user=user
-        ).filter(
-            Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER) |
-            Q(visibility=FoiRequest.VISIBILITY.INVISIBLE)
+        qs = (
+            self.get_queryset()
+            .filter(user=user)
+            .filter(
+                Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER)
+                | Q(visibility=FoiRequest.VISIBILITY.INVISIBLE)
+            )
         )
         for req in qs:
             # Trigger signals
@@ -118,132 +122,158 @@ class PublishedFoiRequestManager(CurrentSiteManager):
         ).select_related("public_body", "jurisdiction")
 
     def by_last_update(self):
-        return self.get_queryset().order_by('-last_message')
+        return self.get_queryset().order_by("-last_message")
 
     def for_list_view(self):
-        return self.by_last_update().filter(
-            same_as__isnull=True,
-        ).filter(
-            models.Q(project__isnull=True) | models.Q(project_order=0)
+        return (
+            self.by_last_update()
+            .filter(
+                same_as__isnull=True,
+            )
+            .filter(models.Q(project__isnull=True) | models.Q(project_order=0))
         )
 
     def get_resolution_count_by_public_body(self, obj):
         from ..filters import REVERSE_FILTER_DICT
 
-        res = self.get_queryset().filter(
-                status=Status.RESOLVED, public_body=obj
-        ).values('resolution'
-        ).annotate(
-            models.Count('resolution')
-        ).order_by('-resolution__count')
+        res = (
+            self.get_queryset()
+            .filter(status=Status.RESOLVED, public_body=obj)
+            .values("resolution")
+            .annotate(models.Count("resolution"))
+            .order_by("-resolution__count")
+        )
 
-        return [{
-            'resolution': x['resolution'],
-            'url_slug': REVERSE_FILTER_DICT[x['resolution']].slug,
-            'name': REVERSE_FILTER_DICT[x['resolution']].label,
-            'description': REVERSE_FILTER_DICT[x['resolution']].description,
-            'count': x['resolution__count']
-            } for x in res if x['resolution']]
+        return [
+            {
+                "resolution": x["resolution"],
+                "url_slug": REVERSE_FILTER_DICT[x["resolution"]].slug,
+                "name": REVERSE_FILTER_DICT[x["resolution"]].label,
+                "description": REVERSE_FILTER_DICT[x["resolution"]].description,
+                "count": x["resolution__count"],
+            }
+            for x in res
+            if x["resolution"]
+        ]
 
     def successful(self):
-        return self.by_last_update().filter(
-                    models.Q(resolution=Resolution.SUCCESSFUL) |
-                    models.Q(resolution=Resolution.PARTIALLY_SUCCESSFUL)).order_by("-last_message")
+        return (
+            self.by_last_update()
+            .filter(
+                models.Q(resolution=Resolution.SUCCESSFUL)
+                | models.Q(resolution=Resolution.PARTIALLY_SUCCESSFUL)
+            )
+            .order_by("-last_message")
+        )
 
     def unsuccessful(self):
-        return self.by_last_update().filter(
-                    models.Q(resolution=Resolution.REFUSED) |
-                    models.Q(resolution=Resolution.NOT_HELD)).order_by("-last_message")
+        return (
+            self.by_last_update()
+            .filter(
+                models.Q(resolution=Resolution.REFUSED)
+                | models.Q(resolution=Resolution.NOT_HELD)
+            )
+            .order_by("-last_message")
+        )
 
 
 class PublishedNotFoiRequestManager(PublishedFoiRequestManager):
     def get_queryset(self):
-        return super(PublishedFoiRequestManager,
-                self).get_queryset().filter(visibility=2, is_foi=False)\
-                        .select_related("public_body", "jurisdiction")
+        return (
+            super(PublishedFoiRequestManager, self)
+            .get_queryset()
+            .filter(visibility=2, is_foi=False)
+            .select_related("public_body", "jurisdiction")
+        )
 
 
 class TaggedFoiRequest(TaggedItemBase):
-    content_object = models.ForeignKey('FoiRequest', on_delete=models.CASCADE)
+    content_object = models.ForeignKey("FoiRequest", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = _('FoI Request Tag')
-        verbose_name_plural = _('FoI Request Tags')
+        verbose_name = _("FoI Request Tag")
+        verbose_name_plural = _("FoI Request Tags")
 
 
 class Status(models.TextChoices):
     AWAITING_USER_CONFIRMATION = "awaiting_user_confirmation", _(
-        'Awaiting user confirmation')
-    PUBLICBODY_NEEDED = 'publicbody_needed', _('Public Body needed')
-    AWAITING_PUBLICBODY_CONFIRMATION = 'awaiting_publicbody_confirmation', _(
-        'Awaiting Public Body confirmation')
-    AWAITING_RESPONSE = 'awaiting_response', _('Awaiting response')
-    AWAITING_CLASSIFICATION = 'awaiting_classification', _(
-        'Request awaits classification')
-    ASLEEP = 'asleep', _('Request asleep')
-    RESOLVED = 'resolved', _('Request resolved')
+        "Awaiting user confirmation"
+    )
+    PUBLICBODY_NEEDED = "publicbody_needed", _("Public Body needed")
+    AWAITING_PUBLICBODY_CONFIRMATION = "awaiting_publicbody_confirmation", _(
+        "Awaiting Public Body confirmation"
+    )
+    AWAITING_RESPONSE = "awaiting_response", _("Awaiting response")
+    AWAITING_CLASSIFICATION = "awaiting_classification", _(
+        "Request awaits classification"
+    )
+    ASLEEP = "asleep", _("Request asleep")
+    RESOLVED = "resolved", _("Request resolved")
 
 
 class Resolution(models.TextChoices):
-    SUCCESSFUL = 'successful', _('Request Successful')
-    PARTIALLY_SUCCESSFUL = 'partially_successful', _(
-        'Request partially successful')
-    NOT_HELD = 'not_held', _('Information not held')
-    REFUSED = 'refused', _('Request refused')
-    USER_WITHDREW_COSTS = 'user_withdrew_costs', _(
-        'Request was withdrawn due to costs')
-    USER_WITHDREW = 'user_withdrew', _('Request was withdrawn')
+    SUCCESSFUL = "successful", _("Request Successful")
+    PARTIALLY_SUCCESSFUL = "partially_successful", _("Request partially successful")
+    NOT_HELD = "not_held", _("Information not held")
+    REFUSED = "refused", _("Request refused")
+    USER_WITHDREW_COSTS = "user_withdrew_costs", _("Request was withdrawn due to costs")
+    USER_WITHDREW = "user_withdrew", _("Request was withdrawn")
 
 
 class FilterStatus(models.TextChoices):
-    OVERDUE = 'overdue', _('Response overdue')
+    OVERDUE = "overdue", _("Response overdue")
 
 
-StatusResolutionDetail = namedtuple('StatusResolutionDetail',
-    'label description'
-)
+StatusResolutionDetail = namedtuple("StatusResolutionDetail", "label description")
 
-UNKNOWN_STATUS = StatusResolutionDetail(_('Unknown'), _('Unknown'))
+UNKNOWN_STATUS = StatusResolutionDetail(_("Unknown"), _("Unknown"))
 
 STATUS_RESOLUTION_DESCRIPTIONS = [
-    (Status.AWAITING_USER_CONFIRMATION,
-        _("The requester's email address is yet to be confirmed.")),
-    (Status.PUBLICBODY_NEEDED,
-        _('This request still needs a Public Body.')),
-    (Status.AWAITING_PUBLICBODY_CONFIRMATION,
-        _('The Public Body of this request has been created by the user and '
-          'still needs to be confirmed.')),
-    (Status.AWAITING_RESPONSE,
-        _('This request is still waiting for a response from the Public Body.'
-        )),
-    (Status.AWAITING_CLASSIFICATION,
-        _('A message was received and the user needs to set a new status.')),
-    (Status.ASLEEP,
-        _('The request is not resolved and has not been active for a while.')),
-    (Status.RESOLVED,
-        _('The request is resolved.')),
-    (Resolution.SUCCESSFUL,
-        _('The request has been successful.')),
-    (Resolution.PARTIALLY_SUCCESSFUL,
-        _('The request has been partially successful (some information was '
-          'provided, but not all)')),
-    (Resolution.REFUSED,
-        _('The Public Body refuses to provide the information.')),
-    (Resolution.USER_WITHDREW_COSTS,
-        _('User withdrew the request due to the associated costs.')),
-    (Resolution.USER_WITHDREW,
-        _('User withdrew the request for other reasons.')),
-    (Resolution.NOT_HELD,
-        _('The information does not exist at the public body.')),
-    (FilterStatus.OVERDUE,
-        _('The request has not been answered in time.'))
+    (
+        Status.AWAITING_USER_CONFIRMATION,
+        _("The requester's email address is yet to be confirmed."),
+    ),
+    (Status.PUBLICBODY_NEEDED, _("This request still needs a Public Body.")),
+    (
+        Status.AWAITING_PUBLICBODY_CONFIRMATION,
+        _(
+            "The Public Body of this request has been created by the user and "
+            "still needs to be confirmed."
+        ),
+    ),
+    (
+        Status.AWAITING_RESPONSE,
+        _("This request is still waiting for a response from the Public Body."),
+    ),
+    (
+        Status.AWAITING_CLASSIFICATION,
+        _("A message was received and the user needs to set a new status."),
+    ),
+    (
+        Status.ASLEEP,
+        _("The request is not resolved and has not been active for a while."),
+    ),
+    (Status.RESOLVED, _("The request is resolved.")),
+    (Resolution.SUCCESSFUL, _("The request has been successful.")),
+    (
+        Resolution.PARTIALLY_SUCCESSFUL,
+        _(
+            "The request has been partially successful (some information was "
+            "provided, but not all)"
+        ),
+    ),
+    (Resolution.REFUSED, _("The Public Body refuses to provide the information.")),
+    (
+        Resolution.USER_WITHDREW_COSTS,
+        _("User withdrew the request due to the associated costs."),
+    ),
+    (Resolution.USER_WITHDREW, _("User withdrew the request for other reasons.")),
+    (Resolution.NOT_HELD, _("The information does not exist at the public body.")),
+    (FilterStatus.OVERDUE, _("The request has not been answered in time.")),
 ]
 
 STATUS_RESOLUTION_DICT = {
-    str(x[0]): StatusResolutionDetail(
-        label=x[0].label,
-        description=x[1]
-    )
+    str(x[0]): StatusResolutionDetail(label=x[0].label, description=x[1])
     for x in STATUS_RESOLUTION_DESCRIPTIONS
 }
 
@@ -268,83 +298,107 @@ class FoiRequest(models.Model):
     description = models.TextField(_("Description"), blank=True)
     summary = models.TextField(_("Summary"), blank=True)
 
-    public_body = models.ForeignKey(PublicBody, null=True, blank=True,
-            on_delete=models.SET_NULL, verbose_name=_("Public Body"))
-
-    status = models.CharField(
-        _("Status"), max_length=50, choices=Status.choices
+    public_body = models.ForeignKey(
+        PublicBody,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Public Body"),
     )
+
+    status = models.CharField(_("Status"), max_length=50, choices=Status.choices)
     resolution = models.CharField(
-        _("Resolution"), max_length=50, choices=Resolution.choices,
-        blank=True
+        _("Resolution"), max_length=50, choices=Resolution.choices, blank=True
     )
 
     public = models.BooleanField(_("published?"), default=True)
     visibility = models.SmallIntegerField(
-        _("Visibility"), default=Visibility.INVISIBLE,
-        choices=Visibility.choices
+        _("Visibility"), default=Visibility.INVISIBLE, choices=Visibility.choices
     )
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
-            on_delete=models.SET_NULL,
-            verbose_name=_("User"))
-    team = models.ForeignKey(Team, null=True, blank=True,
-            on_delete=models.SET_NULL, verbose_name=_("Team"))
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("User"),
+    )
+    team = models.ForeignKey(
+        Team, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Team")
+    )
 
-    first_message = models.DateTimeField(_("Date of first message"),
-            blank=True, null=True)
-    last_message = models.DateTimeField(_("Date of last message"),
-            blank=True, null=True)
-    resolved_on = models.DateTimeField(_("Resolution date"),
-            blank=True, null=True)
-    due_date = models.DateTimeField(_("Due Date"),
-            blank=True, null=True)
+    first_message = models.DateTimeField(
+        _("Date of first message"), blank=True, null=True
+    )
+    last_message = models.DateTimeField(
+        _("Date of last message"), blank=True, null=True
+    )
+    resolved_on = models.DateTimeField(_("Resolution date"), blank=True, null=True)
+    due_date = models.DateTimeField(_("Due Date"), blank=True, null=True)
 
-    secret_address = models.CharField(_("Secret address"), max_length=255,
-            db_index=True, unique=True)
+    secret_address = models.CharField(
+        _("Secret address"), max_length=255, db_index=True, unique=True
+    )
     secret = models.CharField(_("Secret"), blank=True, max_length=100)
 
     reference = models.CharField(_("Reference"), blank=True, max_length=255)
 
-    same_as = models.ForeignKey('self', null=True, blank=True,
-            on_delete=models.SET_NULL,
-            verbose_name=_("Identical request"))
+    same_as = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Identical request"),
+    )
     same_as_count = models.IntegerField(_("Identical request count"), default=0)
 
-    project = models.ForeignKey(FoiProject, null=True, blank=True,
-            on_delete=models.SET_NULL, verbose_name=_('project'))
+    project = models.ForeignKey(
+        FoiProject,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("project"),
+    )
     project_order = models.IntegerField(null=True, blank=True)
 
-    law = models.ForeignKey(FoiLaw, null=True, blank=True,
-            on_delete=models.SET_NULL,
-            verbose_name=_("Freedom of Information Law"))
+    law = models.ForeignKey(
+        FoiLaw,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        verbose_name=_("Freedom of Information Law"),
+    )
     costs = models.FloatField(_("Cost of Information"), default=0.0)
-    refusal_reason = models.CharField(_("Refusal reason"), max_length=1024,
-            blank=True)
+    refusal_reason = models.CharField(_("Refusal reason"), max_length=1024, blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_blocked = models.BooleanField(_("Blocked"), default=False)
-    not_publishable = models.BooleanField(_('Not publishable'), default=False)
+    not_publishable = models.BooleanField(_("Not publishable"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
-    closed = models.BooleanField(_('is closed'), default=False)
+    closed = models.BooleanField(_("is closed"), default=False)
 
     campaign = models.ForeignKey(
-        Campaign, verbose_name=_('campaign'),
-        null=True, blank=True, on_delete=models.SET_NULL
+        Campaign,
+        verbose_name=_("campaign"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
 
     jurisdiction = models.ForeignKey(
         Jurisdiction,
-        verbose_name=_('Jurisdiction'),
-        null=True, on_delete=models.SET_NULL
+        verbose_name=_("Jurisdiction"),
+        null=True,
+        on_delete=models.SET_NULL,
     )
     language = models.CharField(
-        max_length=10, blank=True,
+        max_length=10,
+        blank=True,
         default=settings.LANGUAGE_CODE,
-        choices=settings.LANGUAGES
+        choices=settings.LANGUAGES,
     )
 
-    site = models.ForeignKey(Site, null=True,
-            on_delete=models.SET_NULL, verbose_name=_("Site"))
+    site = models.ForeignKey(
+        Site, null=True, on_delete=models.SET_NULL, verbose_name=_("Site")
+    )
 
     non_filtered_objects = models.Manager()
     objects = FoiRequestManager()
@@ -353,10 +407,10 @@ class FoiRequest(models.Model):
     tags = TaggableManager(through=TaggedFoiRequest, blank=True)
 
     class Meta:
-        ordering = ('-last_message',)
-        get_latest_by = 'last_message'
-        verbose_name = _('Freedom of Information Request')
-        verbose_name_plural = _('Freedom of Information Requests')
+        ordering = ("-last_message",)
+        get_latest_by = "last_message"
+        verbose_name = _("Freedom of Information Request")
+        verbose_name_plural = _("Freedom of Information Requests")
         permissions = (
             ("see_private", _("Can see private requests")),
             ("create_batch", _("Create batch requests")),
@@ -396,12 +450,10 @@ class FoiRequest(models.Model):
 
     def get_messages(self, with_tags=False):
         qs = self.foimessage_set.select_related(
-            "sender_user",
-            "sender_public_body",
-            "recipient_public_body"
+            "sender_user", "sender_public_body", "recipient_public_body"
         ).order_by("timestamp")
         if with_tags:
-            qs = qs.prefetch_related('tags')
+            qs = qs.prefetch_related("tags")
 
         self._messages = list(qs)
         return self._messages
@@ -419,25 +471,27 @@ class FoiRequest(models.Model):
             key = str(msg.timestamp)[:7]
             if key not in groups:
                 groups[key] = {
-                    'date': msg.timestamp.replace(day=1, hour=0, minute=0, second=0, microsecond=0),
-                    'messages': [],
-                    'show_overdue_message': False,  # shows "Deadline expired on ..." message
-                    'indicate_overdue': False,  # shows "(overdue)" in message count label in timeline
-                    'first_message_id': msg.get_html_id
+                    "date": msg.timestamp.replace(
+                        day=1, hour=0, minute=0, second=0, microsecond=0
+                    ),
+                    "messages": [],
+                    "show_overdue_message": False,  # shows "Deadline expired on ..." message
+                    "indicate_overdue": False,  # shows "(overdue)" in message count label in timeline
+                    "first_message_id": msg.get_html_id,
                 }
-            groups[key]['messages'].append(msg)
+            groups[key]["messages"].append(msg)
 
             if due_date and msg.timestamp > due_date:
                 has_overdue_messages = True
 
         # loop groups and set "has_overdue_message"
         if has_overdue_messages and due_date:
-            for group_key, group in reversed(groups.items()):
-                if group['date'] < due_date:
-                    group['show_overdue_message'] = True
+            for group in reversed(groups.values()):
+                if group["date"] < due_date:
+                    group["show_overdue_message"] = True
                     break
-                if group['date'] > due_date:
-                    group['indicate_overdue'] = True
+                if group["date"] > due_date:
+                    group["indicate_overdue"] = True
 
         return list(groups.values())
 
@@ -468,11 +522,10 @@ class FoiRequest(models.Model):
         return self.same_as_count
 
     def get_absolute_url(self):
-        return reverse('foirequest-show',
-                kwargs={'slug': self.slug})
+        return reverse("foirequest-show", kwargs={"slug": self.slug})
 
     def get_absolute_url_last_message(self):
-        return self.get_absolute_url() + '#last'
+        return self.get_absolute_url() + "#last"
 
     @property
     def url(self):
@@ -496,21 +549,24 @@ class FoiRequest(models.Model):
     def get_auth_link(self):
         from ..auth import get_foirequest_auth_code
 
-        return "%s%s" % (settings.SITE_URL,
-            reverse('foirequest-auth',
-                kwargs={"obj_id": self.id,
-                    "code": get_foirequest_auth_code(self)
-                }))
+        return "%s%s" % (
+            settings.SITE_URL,
+            reverse(
+                "foirequest-auth",
+                kwargs={"obj_id": self.id, "code": get_foirequest_auth_code(self)},
+            ),
+        )
 
     def get_upload_link(self):
         from ..auth import get_foirequest_upload_code
 
-        return "%s%s" % (settings.SITE_URL,
-            reverse('foirequest-publicbody_upload',
-                kwargs={
-                    "obj_id": self.id,
-                    "code": get_foirequest_upload_code(self)
-                }))
+        return "%s%s" % (
+            settings.SITE_URL,
+            reverse(
+                "foirequest-publicbody_upload",
+                kwargs={"obj_id": self.id, "code": get_foirequest_upload_code(self)},
+            ),
+        )
 
     def get_accessible_link(self):
         if self.visibility == self.VISIBILITY.VISIBLE_TO_REQUESTER:
@@ -518,18 +574,17 @@ class FoiRequest(models.Model):
         return self.get_absolute_domain_short_url()
 
     def get_autologin_url(self):
-        return self.user.get_autologin_url(
-            self.get_absolute_short_url()
-        )
+        return self.user.get_autologin_url(self.get_absolute_short_url())
 
     def is_public(self):
         return self.visibility == self.VISIBILITY.VISIBLE_TO_PUBLIC
 
     def in_public_search_index(self):
         return (
-            self.is_public() and self.is_foi and
-            self.same_as_id is None and
-            (self.project_id is None or self.project_order == 0)
+            self.is_public()
+            and self.is_foi
+            and self.same_as_id is None
+            and (self.project_id is None or self.project_order == 0)
         )
 
     def get_redaction_regexes(self):
@@ -537,16 +592,16 @@ class FoiRequest(models.Model):
 
         user = self.user
         domains = get_foi_mail_domains()
-        email_regexes = [r'[\w\.\-]+@' + x for x in domains]
+        email_regexes = [r"[\w\.\-]+@" + x for x in domains]
         FROIDE_CONFIG = settings.FROIDE_CONFIG
         user_regexes = []
         if user.private:
             user_regexes = [
-                '%s %s' % (FROIDE_CONFIG['redact_salutation'], user.get_full_name()),
-                '%s %s' % (FROIDE_CONFIG['redact_salutation'], user.last_name),
+                "%s %s" % (FROIDE_CONFIG["redact_salutation"], user.get_full_name()),
+                "%s %s" % (FROIDE_CONFIG["redact_salutation"], user.last_name),
                 user.get_full_name(),
                 user.last_name,
-                user.first_name
+                user.first_name,
             ]
         all_regexes = email_regexes + user_regexes + user.address.splitlines()
         all_regexes = [re.escape(a) for a in all_regexes]
@@ -571,10 +626,7 @@ class FoiRequest(models.Model):
         return mes[0]
 
     def is_sent(self):
-        return (
-            not self.needs_public_body() and
-            not self.awaits_user_confirmation()
-        )
+        return not self.needs_public_body() and not self.awaits_user_confirmation()
 
     def awaits_user_confirmation(self):
         return self.status == Status.AWAITING_USER_CONFIRMATION
@@ -595,7 +647,7 @@ class FoiRequest(models.Model):
 
     @classmethod
     def get_throttle_config(cls):
-        return settings.FROIDE_CONFIG.get('request_throttle', None)
+        return settings.FROIDE_CONFIG.get("request_throttle", None)
 
     def should_apply_throttle(self):
         last_message = self.messages[-1]
@@ -633,25 +685,26 @@ class FoiRequest(models.Model):
 
     def follow_count(self):
         from froide.foirequestfollower.models import FoiRequestFollower
-        return FoiRequestFollower.objects.filter(
-            request=self, confirmed=True
-        ).count()
+
+        return FoiRequestFollower.objects.filter(request=self, confirmed=True).count()
 
     def public_date(self):
         if self.due_date:
-            return self.due_date + timedelta(days=settings.FROIDE_CONFIG.get(
-                'request_public_after_due_days', 14))
+            return self.due_date + timedelta(
+                days=settings.FROIDE_CONFIG.get("request_public_after_due_days", 14)
+            )
         return None
 
     def get_set_tags_form(self):
         from ..forms import TagFoiRequestForm
+
         return TagFoiRequestForm(tags=self.tags.all())
 
     def get_status_form(self, data=None):
         from ..forms import FoiRequestStatusForm
 
         if self.status not in (Status.AWAITING_RESPONSE, Status.RESOLVED):
-            status = ''
+            status = ""
         else:
             status = self.status
         return FoiRequestStatusForm(
@@ -659,37 +712,45 @@ class FoiRequest(models.Model):
             foirequest=self,
             initial={
                 "status": status,
-                'resolution': self.resolution,
+                "resolution": self.resolution,
                 "costs": self.costs,
-                "refusal_reason": self.refusal_reason
-            })
+                "refusal_reason": self.refusal_reason,
+            },
+        )
 
     def public_body_suggestions_form(self):
         from ..forms import PublicBodySuggestionsForm
+
         return PublicBodySuggestionsForm(foirequest=self)
 
     def make_public_body_suggestion_form(self):
         from ..forms import MakePublicBodySuggestionForm
+
         return MakePublicBodySuggestionForm()
 
     def get_concrete_law_form(self):
         from ..forms import ConcreteLawForm
+
         return ConcreteLawForm(foirequest=self)
 
     def get_postal_reply_form(self):
         from ..forms import get_postal_reply_form
+
         return get_postal_reply_form(foirequest=self)
 
     def get_postal_message_form(self):
         from ..forms import get_postal_message_form
+
         return get_postal_message_form(foirequest=self)
 
     def get_send_message_form(self):
         from ..forms import get_send_message_form
+
         return get_send_message_form(foirequest=self)
 
     def get_escalation_message_form(self):
         from ..forms import get_escalation_message_form
+
         return get_escalation_message_form(foirequest=self)
 
     def quote_last_message(self):
@@ -739,10 +800,7 @@ class FoiRequest(models.Model):
         if message.sent:
             return None
         message.send()
-        self.message_sent.send(
-            sender=self, message=message,
-            user=self.user
-        )
+        self.message_sent.send(sender=self, message=message, user=self.user)
 
     def confirmed_public_body(self):
         send_now = self.set_status_after_change()
@@ -756,19 +814,12 @@ class FoiRequest(models.Model):
         from .suggestion import PublicBodySuggestion
 
         try:
-            PublicBodySuggestion.objects.get(
-                public_body=public_body,
-                request=self
-            )
+            PublicBodySuggestion.objects.get(public_body=public_body, request=self)
         except PublicBodySuggestion.DoesNotExist:
             suggestion = self.publicbodysuggestion_set.create(
-                    public_body=public_body,
-                    reason=reason,
-                    user=user)
-            self.public_body_suggested.send(
-                sender=self,
-                suggestion=suggestion
+                public_body=public_body, reason=reason, user=user
             )
+            self.public_body_suggested.send(sender=self, suggestion=suggestion)
             return suggestion
         else:
             return False
@@ -801,10 +852,11 @@ class FoiRequest(models.Model):
 
 
 def get_absolute_short_url(pk):
-    return reverse('foirequest-shortlink',
-            kwargs={'obj_id': pk})
+    return reverse("foirequest-shortlink", kwargs={"obj_id": pk})
 
 
 def get_absolute_domain_short_url(pk):
-    return "%s%s" % (settings.SITE_URL, reverse('foirequest-shortlink',
-            kwargs={'obj_id': pk}))
+    return "%s%s" % (
+        settings.SITE_URL,
+        reverse("foirequest-shortlink", kwargs={"obj_id": pk}),
+    )

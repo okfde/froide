@@ -8,16 +8,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0007_auto_20171224_0744'),
+        ("publicbody", "0007_auto_20171224_0744"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='publicbody',
-            name='classification_name',
+            model_name="publicbody",
+            name="classification_name",
         ),
         migrations.RemoveField(
-            model_name='publicbody',
-            name='classification_slug',
+            model_name="publicbody",
+            name="classification_slug",
         ),
     ]

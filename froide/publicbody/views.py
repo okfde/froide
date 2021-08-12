@@ -14,8 +14,9 @@ from froide.helper.auth import can_moderate_object
 from .models import PublicBody, FoiLaw, Jurisdiction
 from .documents import PublicBodyDocument
 from .forms import (
-    PublicBodyProposalForm, PublicBodyChangeProposalForm,
-    PublicBodyAcceptProposalForm
+    PublicBodyProposalForm,
+    PublicBodyChangeProposalForm,
+    PublicBodyAcceptProposalForm,
 )
 from .filters import PublicBodyFilterSet
 
@@ -23,10 +24,8 @@ import markdown
 from .utils import LawExtension
 
 
-FILTER_ORDER = ('jurisdiction', 'category')
-SUB_FILTERS = {
-    'jurisdiction': ('category',)
-}
+FILTER_ORDER = ("jurisdiction", "category")
+SUB_FILTERS = {"jurisdiction": ("category",)}
 
 
 def get_active_filters(data):
@@ -51,27 +50,23 @@ def get_filter_data(filter_kwargs, data):
 
 
 class PublicBodySearch(BaseSearchView):
-    search_name = 'publicbody'
-    template_name = 'publicbody/list.html'
+    search_name = "publicbody"
+    template_name = "publicbody/list.html"
     model = PublicBody
     document = PublicBodyDocument
     filterset = PublicBodyFilterSet
-    search_url_name = 'publicbody-list'
+    search_url_name = "publicbody-list"
 
-    show_filters = {
-        'jurisdiction', 'category', 'classification'
-    }
-    advanced_filters = {
-        'jurisdiction', 'category', 'classification'
-    }
-    object_template = 'publicbody/snippets/publicbody_item.html'
+    show_filters = {"jurisdiction", "category", "classification"}
+    advanced_filters = {"jurisdiction", "category", "classification"}
+    object_template = "publicbody/snippets/publicbody_item.html"
     has_facets = True
     facet_config = {
-        'jurisdiction': {
-            'model': Jurisdiction,
-            'getter': lambda x: x['object'].slug,
-            'label_getter': lambda x: x['object'].name,
-            'label': _('jurisdictions'),
+        "jurisdiction": {
+            "model": Jurisdiction,
+            "getter": lambda x: x["object"].slug,
+            "label_getter": lambda x: x["object"].name,
+            "label": _("jurisdictions"),
         }
     }
 
@@ -85,13 +80,14 @@ def show_jurisdiction(request, slug):
     context = {
         "object": jurisdiction,
         "pb_count": PublicBody.objects.filter(jurisdiction=jurisdiction).count(),
-        "laws": FoiLaw.objects.filter(meta=False,
-            jurisdiction=jurisdiction).order_by('-priority'),
-        "foirequests": FoiRequest.published.filter(jurisdiction=jurisdiction)[:5]
+        "laws": FoiLaw.objects.filter(meta=False, jurisdiction=jurisdiction).order_by(
+            "-priority"
+        ),
+        "foirequests": FoiRequest.published.filter(jurisdiction=jurisdiction)[:5],
     }
     template_names = (
-        'publicbody/jurisdiction/%s.html' % jurisdiction.slug,
-        'publicbody/jurisdiction.html',
+        "publicbody/jurisdiction/%s.html" % jurisdiction.slug,
+        "publicbody/jurisdiction.html",
     )
     return render(request, template_names, context)
 
@@ -102,7 +98,7 @@ def show_foilaw(request, slug):
     legal_text = markdown.markdown(law.legal_text, extensions=[LawExtension()])
 
     context = {"object": law, "legal_text": legal_text}
-    return render(request, 'publicbody/show_foilaw.html', context)
+    return render(request, "publicbody/show_foilaw.html", context)
 
 
 def publicbody_shortlink(request, obj_id):
@@ -111,28 +107,28 @@ def publicbody_shortlink(request, obj_id):
 
 
 class PublicBodyView(DetailView):
-    template_name = 'publicbody/show.html'
+    template_name = "publicbody/show.html"
 
     def get_queryset(self):
         return PublicBody._default_manager.all()
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.object.slug != self.kwargs.get('slug', ''):
+        if self.object.slug != self.kwargs.get("slug", ""):
             if self._can_access():
                 # only redirect if we can access
                 return self.get_redirect()
             raise Http404
-        if self.kwargs.get('pk') is None:
+        if self.kwargs.get("pk") is None:
             return self.get_redirect()
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
     def get_redirect(self):
         url = self.object.get_absolute_url()
-        query = self.request.META['QUERY_STRING']
+        query = self.request.META["QUERY_STRING"]
         if query:
-            return redirect('{}?{}'.format(url, query))
+            return redirect("{}?{}".format(url, query))
         return redirect(url, permanent=True)
 
     def _can_access(self):
@@ -144,21 +140,24 @@ class PublicBodyView(DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx.update({
-            'object': self.object,
-            'foirequests': FoiRequest.published.filter(
-                public_body=self.object).order_by('-last_message')[:10],
-            'resolutions': FoiRequest.published.get_resolution_count_by_public_body(
-                self.object
-            ),
-            'foirequest_count': FoiRequest.published.filter(
-                public_body=self.object
-            ).count()
-        })
+        ctx.update(
+            {
+                "object": self.object,
+                "foirequests": FoiRequest.published.filter(
+                    public_body=self.object
+                ).order_by("-last_message")[:10],
+                "resolutions": FoiRequest.published.get_resolution_count_by_public_body(
+                    self.object
+                ),
+                "foirequest_count": FoiRequest.published.filter(
+                    public_body=self.object
+                ).count(),
+            }
+        )
         return ctx
 
 
-SITEMAP_PROTOCOL = 'https' if settings.SITE_URL.startswith('https') else 'http'
+SITEMAP_PROTOCOL = "https" if settings.SITE_URL.startswith("https") else "http"
 
 
 class PublicBodySitemap(Sitemap):
@@ -195,7 +194,7 @@ class FoiLawSitemap(Sitemap):
 
 
 class PublicBodyProposalView(LoginRequiredMixin, FormView):
-    template_name = 'publicbody/propose.html'
+    template_name = "publicbody/propose.html"
     form_class = PublicBodyProposalForm
 
     def get_success_url(self):
@@ -204,21 +203,27 @@ class PublicBodyProposalView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         self.object = form.save(self.request.user)
         messages.add_message(
-            self.request, messages.INFO,
-            _('Thank you for your proposal. We will send you an email when it has been approved.')
+            self.request,
+            messages.INFO,
+            _(
+                "Thank you for your proposal. We will send you an email when it has been approved."
+            ),
         )
         return super().form_valid(form)
 
     def handle_no_permission(self):
         messages.add_message(
-            self.request, messages.WARNING,
-            _('You need to register an account and login in order to propose a new public body.')
+            self.request,
+            messages.WARNING,
+            _(
+                "You need to register an account and login in order to propose a new public body."
+            ),
         )
         return super().handle_no_permission()
 
 
 class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
-    template_name = 'publicbody/add_proposal.html'
+    template_name = "publicbody/add_proposal.html"
     form_class = PublicBodyChangeProposalForm
     queryset = PublicBody.objects.all()
 
@@ -228,14 +233,17 @@ class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(self.request.user)
         messages.add_message(
-            self.request, messages.INFO,
-            _('Thank you for your proposal. We will send you an email when it has been approved.')
+            self.request,
+            messages.INFO,
+            _(
+                "Thank you for your proposal. We will send you an email when it has been approved."
+            ),
         )
         return redirect(self.object)
 
 
 class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
-    template_name = 'publicbody/accept_proposals.html'
+    template_name = "publicbody/accept_proposals.html"
     form_class = PublicBodyAcceptProposalForm
     # Default manager gives access to proposed as well
     queryset = PublicBody._default_manager.all()
@@ -252,24 +260,22 @@ class PublicBodyAcceptProposalView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         self.object = form.save(
             self.request.user,
-            delete_unconfirmed=self.request.POST.get('delete', '0') == '1',
-            delete_reason=self.request.POST.get('delete_reason', ''),
-            proposal_id=self.request.POST.get('proposal_id'),
-            delete_proposals=self.request.POST.getlist('proposal_delete')
+            delete_unconfirmed=self.request.POST.get("delete", "0") == "1",
+            delete_reason=self.request.POST.get("delete_reason", ""),
+            proposal_id=self.request.POST.get("proposal_id"),
+            delete_proposals=self.request.POST.getlist("proposal_delete"),
         )
         if self.object is None:
             messages.add_message(
-                self.request, messages.INFO,
-                _('The proposal has been deleted.')
+                self.request, messages.INFO, _("The proposal has been deleted.")
             )
-            return redirect('publicbody-list')
+            return redirect("publicbody-list")
         messages.add_message(
-            self.request, messages.INFO,
-            _('Your change has been applied.')
+            self.request, messages.INFO, _("Your change has been applied.")
         )
         return redirect(self.object)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['proposals'] = context['form'].get_proposals()
+        context["proposals"] = context["form"].get_proposals()
         return context

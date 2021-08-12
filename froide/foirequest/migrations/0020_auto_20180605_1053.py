@@ -9,17 +9,22 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0019_foiattachment_document'),
+        ("foirequest", "0019_foiattachment_document"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='foiattachment',
-            name='document',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='document.Document'),
+            model_name="foiattachment",
+            name="document",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="document.Document",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='foiattachment',
-            unique_together=set([('belongs_to', 'name')]),
+            name="foiattachment",
+            unique_together=set([("belongs_to", "name")]),
         ),
     ]

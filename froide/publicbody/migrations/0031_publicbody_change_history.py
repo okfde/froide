@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0030_auto_20200721_1554'),
+        ("publicbody", "0030_auto_20200721_1554"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='publicbody',
-            name='change_history',
+            model_name="publicbody",
+            name="change_history",
             field=models.JSONField(blank=True, default=list),
         ),
     ]

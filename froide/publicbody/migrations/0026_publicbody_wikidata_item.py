@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('publicbody', '0025_remove_publicbody_region'),
+        ("publicbody", "0025_remove_publicbody_region"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='publicbody',
-            name='wikidata_item',
+            model_name="publicbody",
+            name="wikidata_item",
             field=models.CharField(blank=True, max_length=50),
         ),
     ]
