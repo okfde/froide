@@ -43,6 +43,7 @@ class GeoRegion(MP_Node):
     part_of = models.ForeignKey('self', verbose_name=_('Part of'), null=True,
         on_delete=models.SET_NULL, blank=True, related_name='sub_regions'
     )
+    data = models.JSONField(default=dict)
 
     node_order_by = ('name',)
 
