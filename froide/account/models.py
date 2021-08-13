@@ -257,6 +257,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         service = AccountService(self)
         return service.get_autologin_url(url)
 
+    def get_redactions(self, replacements=None):
+        account_service = self.get_account_service()
+        return list(account_service.get_user_redactions(replacements))
+
     def get_password_change_form(self, *args, **kwargs):
         from .forms import SetPasswordForm
 

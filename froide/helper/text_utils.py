@@ -1,11 +1,14 @@
 import functools
 from html.entities import name2codepoint
 import re
-from typing import Pattern
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, Pattern
 
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import strip_tags
 from django.conf import settings
+from django.utils.safestring import SafeString
+from functools import partial
+from lxml.html import HtmlElement
 
 try:
     from lxml import html as html_parser
@@ -47,7 +50,9 @@ def unescape(text):
     return re.sub(r"&#?\w+;", fixup, text)
 
 
-def split_text_by_separator(text, separator=None):
+def split_text_by_separator(
+    text: str, separator: Optional[Pattern] = None
+) -> List[str]:
     if separator is None:
         separator = SEPARATORS
     split_text = separator.split(text)
@@ -58,9 +63,11 @@ def split_text_by_separator(text, separator=None):
     return split_text
 
 
-def redact_user_strings(content: str, user, replacements=None):
-    account_service = user.get_account_service()
-    for needle, repl in account_service.get_user_redactions(replacements):
+Replacements = List[Union[Tuple[str, str], Tuple[Pattern, str]]]
+
+
+def redact_user_strings(content: str, user_replacements: Replacements) -> str:
+    for needle, repl in user_replacements:
         if isinstance(needle, (list, tuple)):
             content = replace_custom(needle, repl, content)
         else:
@@ -68,16 +75,22 @@ def redact_user_strings(content: str, user, replacements=None):
     return content
 
 
-def redact_subject(content, user=None):
-    if user:
-        content = redact_user_strings(content, user)
+def redact_subject(
+    content: str, user_replacements: Optional[Replacements] = None
+) -> str:
+    if user_replacements:
+        content = redact_user_strings(content, user_replacements)
     content = redact_content(content)
     return content[:255]
 
 
 def redact_plaintext(
-    content, redact_greeting=False, redact_closing=False, user=None, replacements=None
-):
+    content: Union[str, SafeString],
+    redact_greeting: bool = False,
+    redact_closing: bool = False,
+    user_replacements: Optional[Replacements] = None,
+    replacements: Optional[Dict[Pattern, str]] = None,
+) -> str:
     content = redact_content(content)
 
     if redact_closing:
@@ -88,8 +101,8 @@ def redact_plaintext(
             greeting_replacement = str(_("<< Greeting >>"))
             content = replace_custom(greetings, greeting_replacement, content)
 
-    if user:
-        content = redact_user_strings(content, user)
+    if user_replacements:
+        content = redact_user_strings(content, user_replacements)
 
     if replacements is not None:
         for key, val in replacements.items():
@@ -101,7 +114,7 @@ def redact_plaintext(
     return content
 
 
-def redact_content(content):
+def redact_content(content: Union[str, SafeString]) -> str:
     content = replace_email_name(content, _("<<name and email address>>"))
     content = replace_email(content, _("<<email address>>"))
 
@@ -114,7 +127,7 @@ def redact_content(content):
     return content
 
 
-def replace_word(needle, replacement, content):
+def replace_word(needle: str, replacement: str, content: str) -> str:
     if not needle:
         return content
     return re.sub(
@@ -130,7 +143,7 @@ EMAIL_RE = re.compile(EMAIL, flags=re.IGNORECASE)
 EMAIL_NAME_RE = re.compile("<%s>" % EMAIL, flags=re.IGNORECASE)
 
 
-def replace_email_name(text, replacement=""):
+def replace_email_name(text: str, replacement: str = "") -> str:
     return EMAIL_NAME_RE.sub(str(replacement), text)
 
 
@@ -138,11 +151,11 @@ def replace_email(text, replacement=""):
     return EMAIL_RE.sub(str(replacement), text)
 
 
-def find_all_emails(text):
+def find_all_emails(text: str) -> List[Any]:
     return EMAIL_RE.findall(text)
 
 
-def replace_custom(regex_list, replacement, content):
+def replace_custom(regex_list: List[Pattern], replacement: str, content: str) -> str:
     for regex in regex_list:
         match = regex.search(content)
         if match is not None and len(match.groups()):
@@ -150,7 +163,9 @@ def replace_custom(regex_list, replacement, content):
     return content
 
 
-def remove_part(regexes, content, func=None):
+def remove_part(
+    regexes: List[Pattern], content: str, func: Optional[Callable] = None
+) -> str:
     for regex in regexes:
         match = regex.search(content)
         if match is not None:
@@ -159,7 +174,7 @@ def remove_part(regexes, content, func=None):
     return content
 
 
-def remove_closing(content, regexes=None):
+def remove_closing(content: str, regexes: Optional[List[Pattern]] = None) -> str:
     if regexes is None:
         regexes = settings.FROIDE_CONFIG.get("closings", [])
     return remove_part(regexes, content, func=lambda c, m: c[: m.end()].strip())
@@ -183,11 +198,11 @@ def make_strong(x):
     return "**%s**%s" % (x.text_content(), x.tail if x.tail else "")
 
 
-def make_italic(x):
+def make_italic(x: HtmlElement) -> str:
     return "*%s*%s" % (x.text_content(), x.tail if x.tail else "")
 
 
-def make_link(x):
+def make_link(x: HtmlElement) -> str:
     return "%s ( %s )%s" % (
         x.text_content(),
         x.attrib.get("href", ""),
@@ -195,15 +210,15 @@ def make_link(x):
     )
 
 
-def make_heading(x, num=1):
+def make_heading(x: HtmlElement, num: int = 1) -> str:
     return "%s %s\n\n%s" % ("#" * num, x.text_content(), x.tail if x.tail else "")
 
 
-def heading_maker(num):
+def heading_maker(num: int) -> partial:
     return functools.partial(make_heading, num=num)
 
 
-def make_paragraph(el):
+def make_paragraph(el: HtmlElement) -> None:
     el.append(html_parser.Element("br"))
     convert_element(el)
 
@@ -228,7 +243,7 @@ HTML_CONVERTERS = {
 HTML_GARBAGE = ("style",)
 
 
-def convert_html_to_text(html_str, ignore_tags=None):
+def convert_html_to_text(html_str: str, ignore_tags: None = None) -> str:
     """
     If lxml is available, convert to Markdown (but badly)
     otherwise just strip_tags
@@ -259,7 +274,7 @@ def convert_html_to_text(html_str, ignore_tags=None):
     return "\n".join(x.strip() for x in text.splitlines()).strip()
 
 
-def convert_element(root_element, ignore_tags=None):
+def convert_element(root_element: HtmlElement, ignore_tags: None = None) -> None:
     if ignore_tags is None:
         ignore_tags = ()
     for tag, func in HTML_CONVERTERS.items():

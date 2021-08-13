@@ -608,7 +608,8 @@ class FoiRequest(models.Model):
         return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
-        return redact_plaintext(self.description, user=self.user)
+        user_replacements = self.user.get_redactions()
+        return redact_plaintext(self.description, user_replacements=user_replacements)
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))

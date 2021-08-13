@@ -318,7 +318,8 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             r"\s*\[#%s\]\s*$" % self.foirequest.pk, "", self.cleaned_data["subject"]
         )
         subject = "%s [#%s]" % (subject, self.foirequest.pk)
-        subject_redacted = redact_subject(subject, user=user)
+        user_replacements = user.get_redactions()
+        subject_redacted = redact_subject(subject, user_replacements)
 
         message = FoiMessage(
             request=self.foirequest,
@@ -417,7 +418,8 @@ class EscalationMessageForm(forms.Form):
         subject = re.sub(r"\s*\[#%s\]\s*$" % self.foirequest.pk, "", subject)
         subject = "%s [#%s]" % (subject, self.foirequest.pk)
 
-        subject_redacted = redact_subject(subject, user=user)
+        user_replacements = user.get_redactions()
+        subject_redacted = redact_subject(subject, user_replacements)
 
         plaintext = construct_message_body(
             self.foirequest,
@@ -516,7 +518,8 @@ class MessageEditMixin(forms.Form):
         )
         message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = self.cleaned_data.get("subject", "")
-        subject_redacted = redact_subject(message.subject, user=self.foirequest.user)
+        user_replacements = self.foirequest.user.get_redactions()
+        subject_redacted = redact_subject(message.subject, user_replacements)
         message.subject_redacted = subject_redacted
         message.plaintext = ""
         if self.cleaned_data.get("text"):

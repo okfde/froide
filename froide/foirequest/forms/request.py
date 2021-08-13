@@ -224,8 +224,9 @@ class PublicBodySuggestionsForm(forms.Form):
                 full_text=False,
                 send_address=send_address,
             )
+            user_replacements = req.user.get_redactions()
             message.plaintext_redacted = redact_plaintext(
-                message.plaintext, user=req.user
+                message.plaintext, user_replacements=user_replacements
             )
             message.clear_render_cache()
             message.save()

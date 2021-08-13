@@ -410,7 +410,8 @@ class FoiMessage(models.Model):
 
     def get_subject(self, user=None):
         if self.subject_redacted is None:
-            self.subject_redacted = redact_subject(self.subject, user=self.request.user)
+            user_replacements = self.request.user.get_redactions()
+            self.subject_redacted = redact_subject(self.subject, user_replacements)
             self.save()
         return self.subject_redacted
 
@@ -421,8 +422,11 @@ class FoiMessage(models.Model):
     def get_content(self):
         self.plaintext = self.plaintext or ""
         if self.plaintext_redacted is None:
+            user_replacements = self.request.user.get_redactions()
             self.plaintext_redacted = redact_plaintext(
-                self.plaintext, redact_closing=self.is_response, user=self.request.user
+                self.plaintext,
+                redact_closing=self.is_response,
+                user_replacements=user_replacements,
             )
             self.clear_render_cache()
             self.save()

@@ -165,11 +165,12 @@ def redact_plaintext_with_request(
     plaintext, foirequest, redact_greeting=False, redact_closing=False
 ):
     replacements = get_secret_url_replacements()
+    user_replacements = foirequest.user.get_redactions()
     return redact_plaintext(
         plaintext,
         redact_greeting=redact_greeting,
         redact_closing=redact_closing,
-        user=foirequest.user,
+        user_replacements=user_replacements,
         replacements=replacements,
     )
 
@@ -507,13 +508,16 @@ def make_account_private(sender, user=None, **kwargs):
 def rerun_message_redaction(foirequests):
     for foirequest in foirequests:
         user = foirequest.user
+        user_replacements = user.get_redactions()
         for message in foirequest.messages:
-            message.subject_redacted = redact_subject(message.subject, user=user)
+            message.subject_redacted = redact_subject(
+                message.subject, user_replacements
+            )
             message.plaintext_redacted = redact_plaintext(
                 message.plaintext,
                 redact_closing=message.is_response,
                 redact_greeting=not message.is_response,
-                user=user,
+                user_replacements=user_replacements,
             )
             message.clear_render_cache()
             message.save()
@@ -538,13 +542,17 @@ def permanently_anonymize_requests(foirequests):
         )
         foirequest.save()
         user = foirequest.user
+        user_replacements = user.get_redactions(replacements)
         user.private = True
         for message in foirequest.messages:
+
             message.plaintext_redacted = redact_user_strings(
-                message.plaintext_redacted, user, replacements=replacements
+                message.plaintext_redacted,
+                user_replacements=user_replacements,
             )
             message.plaintext = redact_user_strings(
-                message.plaintext, user, replacements=replacements
+                message.plaintext,
+                user_replacements=user_replacements,
             )
             message.clear_render_cache()
             message.html = ""

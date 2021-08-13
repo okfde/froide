@@ -1,6 +1,7 @@
 import hashlib
 import re
 import hmac
+from typing import Dict, Optional
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -278,7 +279,7 @@ class AccountService(object):
 
         return content
 
-    def get_user_redactions(self, replacements=None):
+    def get_user_redactions(self, replacements: Optional[Dict[str, str]] = None):
         if self.user.is_deleted:
             return
 
@@ -301,7 +302,8 @@ class AccountService(object):
         if not self.user.private:
             return
 
-        yield (settings.FROIDE_CONFIG["greetings"], repl["name"])
+        for regex in settings.FROIDE_CONFIG["greetings"]:
+            yield (regex, repl["name"])
         yield (self.user.last_name, repl["name"])
         yield (self.user.first_name, repl["name"])
         yield (self.user.get_full_name(), repl["name"])

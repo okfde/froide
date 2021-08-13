@@ -211,6 +211,7 @@ class CreateRequestService(BaseService):
             request.tags.add(*data["tags"])
 
         subject = "%s [#%s]" % (request.title, request.pk)
+        user_replacements = user.get_redactions()
         message = FoiMessage(
             request=request,
             sent=False,
@@ -221,7 +222,7 @@ class CreateRequestService(BaseService):
             timestamp=now,
             status="awaiting_response",
             subject=subject,
-            subject_redacted=redact_subject(subject, user=user),
+            subject_redacted=redact_subject(subject, user_replacements),
         )
 
         send_address = bool(self.data.get("address"))
@@ -359,8 +360,8 @@ class ReceiveEmailService(BaseService):
             message.timestamp = timezone.now()
         else:
             message.timestamp = email.date
-
-        message.subject_redacted = redact_subject(message.subject, user=foirequest.user)
+        user_replacements = foirequest.user.get_redactions()
+        message.subject_redacted = redact_subject(message.subject, user_replacements)
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
             foirequest,
