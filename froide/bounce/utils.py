@@ -344,6 +344,7 @@ def check_delivery_from_log():
     POSTFIX_LOG_PATH = "/var/log/mail.log"
     PYGTAIL_OFFSET_PATH = "./pt.offset"
     FINAL_STATES = DeliveryStatus.FINAL_STATUS
+    RELEVANT_FIELDS = set(("message-id", "from", "to", "status"))
 
     # query model
     messages = (
@@ -354,22 +355,102 @@ def check_delivery_from_log():
         .exclude(recipient_email__isnull=True)
     )
 
+    message_lookup = {message.make_message_id(): message for message in messages}
+
     # collect log
     pygtail = Pygtail(POSTFIX_LOG_PATH, offset_file=PYGTAIL_OFFSET_PATH)
-    new_log_lines = pygtail.readlines()
 
-    # match entrys
-    reporter = get_delivery_reporter()
+    postfix_messages = dict()
+    # will contain mappings from postfix queue_id to message information
 
-    for message in messages:
-        sender = message.sender_email.strip()
-        recipient = message.recipient_email.strip()
-        report = reporter.search_log(
-            new_log_lines, sender, recipient, message.timestamp, real_file=False
-        )
+    for line in pygtail:
+        if not "postfix" in line:
+            # DKIM line
+            continue
+        date, info = line.split("mail", maxsplit=1)
+        contents = info.rsplit(":")
+        # general postfix log format uses : as delimiter
+        # first date, host and process info, then possible a queue id, then information on logged event
+
+        if len(contents) == 2:
+            # no queue id in current line
+            continue
+
+        queue_id = contents[1]
+
+        if "TLS" in queue_id:
+            # TLS-Handshakes have no queue id
+            continue
+
+        fields = contents[-1].split(",")
+        # queue-events are in comma-seperated lists of key=value-Pairs
+
+        if len(fields) == 1 and "removed" in fields[0]:
+            # last log line for queue_id
+            # check if info for message-id is needed and status is set
+            # save delivery information to database
+            # remove queue_id from postfix_messages as postfix may reuse this id
+            if (
+                "status" in postfix_messages[queue_id]
+                and "log" in postfix_messages[queue_id]
+                and postfix_messages[queue_id].get("message-id")
+                in message_lookup.keys()
+            ):
+                generate_delivery_status(postfix_messages[queue_id])
+
+            del postfix_messages[queue_id]
+            continue
+
+        if queue_id not in postfix_messages:
+            postfix_messages[queue_id] = dict(log=list())
+
+        postfix_messages[queue_id]["log"].append(line)
+
+        for field in fields:
+            if "=" in field:
+                name, value = field.split("=", maxsplit=1)
+                # Under certain circumstances values can contain "=", so we split only once
+            else:
+                name = field
+                value = field
+
+            name = name.strip()
+            if "message-id" not in name:
+                value = value.replace("<", "").replace(">", "")
+                # everything resampling a mail address comes enclosed in < > in mail.log
+                # however mail-addresses in froide are stored without those, while the message-id is stored with.
+
+            value = value.strip()
+
+            if name in RELEVANT_FIELDS:
+                # only collect what's needed
+                postfix_messages[queue_id].setdefault(name, value)
+
+    for parsed_info in postfix_messages:
+        if (
+            "status" in parsed_info
+            and "log" in parsed_info
+            and parsed_info.get("message-id") in message_lookup
+        ):
+            generate_delivery_status(parsed_info)
+
+
+def generate_delivery_status(
+    message_info: dict,
+    last_update=timezone.now(),
+    message_lookup=message_lookup,
+):
+    assert "log" in message_info
+    assert "status" in message_info
+
+    message_id = message_info.get("message-id")
+    message = message_lookup.get(message_id)
+    if message:
         ds, created = DeliveryStatus.objects.update_or_create(
             message=message,
             defaults=dict(
-                log=report.log, status=report.status, last_update=timezone.now()
+                log="".join(message_info.get("log")),
+                status=message_info.get("status"),
+                last_update=last_update,
             ),
         )
