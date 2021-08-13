@@ -4,17 +4,18 @@ import calendar
 from django.conf import settings
 from django.utils import timezone
 from django.utils.timesince import timeuntil
+from typing import Tuple
 
 MONTHS_IN_YEAR = 12
 
 
-def format_seconds(seconds):
+def format_seconds(seconds: int) -> str:
     now = timezone.now()
     future = now + timedelta(seconds=seconds)
     return timeuntil(future, now)
 
 
-def calculate_month_range_de(date, months=1):
+def calculate_month_range_de(date: datetime, months: int = 1) -> datetime:
     """Should calculate after German BGB Law § 130 and § 188"""
 
     current_tz = timezone.get_current_timezone()
@@ -56,7 +57,7 @@ def calculate_month_range_de(date, months=1):
     return current_tz.localize(due)
 
 
-def calculate_workingday_range(date, days):
+def calculate_workingday_range(date: datetime, days: int):
     one_day = timedelta(days=1)
     while days > 0:
         date += one_day
@@ -65,7 +66,7 @@ def calculate_workingday_range(date, days):
     return date
 
 
-def is_holiday(date):
+def is_holiday(date: datetime) -> bool:
     if settings.HOLIDAYS_WEEKENDS:
         if date.weekday() > 4:
             return True
@@ -83,7 +84,7 @@ def is_holiday(date):
     return False
 
 
-def advance_after_holiday(date):
+def advance_after_holiday(date: datetime) -> datetime:
     one_day = timedelta(days=1)
     while is_holiday(date):
         date += one_day
@@ -92,7 +93,7 @@ def advance_after_holiday(date):
 
 # (c) Martin Diers, licensed under MIT
 # taken from: http://code.activestate.com/recipes/576517-calculate-easter-western-given-a-year/
-def calc_easter(year):
+def calc_easter(year: int) -> Tuple[int, int, int]:
     "Returns Easter as a year, month, day tuple."
     a = year % 19
     b = year // 100
