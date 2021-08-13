@@ -14,3 +14,10 @@ selenium
 text-unidecode
 django-coverage-plugin
 tblib
+monkeytype
+mypy
+django-stubs
+types-Markdown
+types-python-dateutil
+types-pytz
+types-requests
