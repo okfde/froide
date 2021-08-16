@@ -68,10 +68,11 @@ Replacements = List[Union[Tuple[str, str], Tuple[Pattern, str]]]
 
 def redact_user_strings(content: str, user_replacements: Replacements) -> str:
     for needle, repl in user_replacements:
-        if isinstance(needle, (list, tuple)):
-            content = replace_custom(needle, repl, content)
-        else:
+        if isinstance(needle, str):
             content = replace_word(needle, repl, content)
+        else:
+            content = replace_custom(needle, repl, content)
+
     return content
 
 
@@ -155,7 +156,11 @@ def find_all_emails(text: str) -> List[Any]:
     return EMAIL_RE.findall(text)
 
 
-def replace_custom(regex_list: List[Pattern], replacement: str, content: str) -> str:
+def replace_custom(
+    regex_list: Union[Pattern, List[Pattern]], replacement: str, content: str
+) -> str:
+    if isinstance(regex_list, re.Pattern):
+        regex_list = [regex_list]
     for regex in regex_list:
         match = regex.search(content)
         if match is not None and len(match.groups()):
