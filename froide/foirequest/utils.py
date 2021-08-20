@@ -486,18 +486,23 @@ def cancel_user(sender, user=None, **kwargs):
     permanently_anonymize_requests(user_foirequests.select_related("user"))
 
 
-def delete_foirequest_emails_from_imap(user_foirequests):
+def delete_foirequest_emails_from_imap(user_foirequests) -> int:
     from .foi_mail import get_foi_mail_client
 
     with get_foi_mail_client() as mailbox:
+        message_count = 0
         for foirequest in user_foirequests:
             parts = foirequest.secret_address.split("@")
             # Sanity check recipient address
             assert len(parts) == 2
             assert len(parts[0]) > 5
             assert parts[1] in get_foi_mail_domains()
-            delete_mails_by_recipient(mailbox, foirequest.secret_address, expunge=False)
-        mailbox.expunge()
+            message_count += delete_mails_by_recipient(
+                mailbox, foirequest.secret_address, expunge=False
+            )
+        if message_count > 0:
+            mailbox.expunge()
+    return message_count
 
 
 def make_account_private(sender, user=None, **kwargs):
