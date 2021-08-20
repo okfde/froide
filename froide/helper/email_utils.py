@@ -72,7 +72,6 @@ def get_mail_client(host, port, user, password, ssl=True):
 
     yield con
 
-    con.close()
     con.logout()
 
 
@@ -87,6 +86,8 @@ def get_unread_mails(
         if flag:
             mailbox.store(num, "+FLAGS", "\\Flagged")
         yield uid, data[0][1]
+
+    mailbox.close()
 
 
 def delete_mails_by_recipient(
@@ -122,12 +123,15 @@ def delete_mails_by_recipient(
         status, response = mailbox.expunge()
         assert status == "OK"
 
+    mailbox.close()
+
     return message_count
 
 
 def unflag_mail(mailbox, uid):
     status, count = mailbox.select("Inbox")
     mailbox.uid("STORE", uid, "-FLAGS", "\\Flagged")
+    mailbox.close()
 
 
 def make_address(email, name=None):
