@@ -498,10 +498,8 @@ def delete_foirequest_emails_from_imap(user_foirequests) -> int:
             assert len(parts[0]) > 5
             assert parts[1] in get_foi_mail_domains()
             message_count += delete_mails_by_recipient(
-                mailbox, foirequest.secret_address, expunge=False
+                mailbox, foirequest.secret_address, expunge=True
             )
-        if message_count > 0:
-            mailbox.expunge()
     return message_count
 
 
