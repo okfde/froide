@@ -60,8 +60,14 @@
 
 {% if attachment.can_embed %}
   {% if attachment.is_pdf %}
-    <div class="container-sm-full">
-      <iframe src="{% get_pdf_viewer attachment_url %}" frameborder="0" style="width: 100%; height: 90vh; border: 0;"></iframe>
+    <div class="container-sm-full d-none d-md-block">
+      <iframe src="{% get_pdf_viewer attachment_url %}" frameborder="0" style="width: 100%; height: 90vh; border: 0;">
+      </iframe>
+    </div>
+    <div class="container d-block d-md-none text-center">
+      <a class="btn btn-light" href="{{ attachment.get_absolute_domain_auth_url }}">
+        {% trans "Open PDF" %}
+      </a>
     </div>
   {% else %}
     <div class="container">
@@ -72,13 +78,13 @@
 
 <div class="container mb-5">
   {% if attachment.can_embed %}
-    <div class="text-right">
-        <small>
-            {# expose direct links through redirects in case they get copied #}
-            <a href="{{ attachment.get_absolute_domain_auth_url }}">
-                {% trans "Download original" %}
-            </a>
-        </small>
+    <div class="text-right d-none d-md-block">
+      <small>
+        {# expose direct links through redirects in case they get copied #}
+        <a href="{{ attachment.get_absolute_domain_auth_url }}">
+          {% trans "Download original" %}
+        </a>
+      </small>
     </div>
   {% else %}
     <p>
