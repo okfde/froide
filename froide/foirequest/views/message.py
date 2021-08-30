@@ -569,6 +569,27 @@ def download_message_pdf(request, foirequest, message_id):
     return response
 
 
+@allow_write_foirequest
+def download_original_email(request, foirequest, message_id):
+    message = get_object_or_404(
+        FoiMessage, request=foirequest, pk=message_id, is_response=True
+    )
+
+    data = message.get_original_email_from_imap()
+    if not data:
+        messages.add_message(
+            request, messages.WARNING, _("Could not download original.")
+        )
+        return redirect(foirequest)
+
+    response = HttpResponse(data, content_type="application/octet-stream")
+    response["Content-Disposition"] = 'attachment; filename="%s-%s.eml"' % (
+        foirequest.slug,
+        message.pk,
+    )
+    return response
+
+
 @require_POST
 @allow_moderate_foirequest
 def resend_message(request, foirequest, message_id):

@@ -167,6 +167,12 @@
           </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
         {% endif %}
       {% endif %}
+      {% if message.can_get_original_from_imap and message.object|can_write_foirequest:request %}
+          <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
+            <i class="fa fa-download"></i>
+            <span class="sr-only">{% translate "Download original" %}</span>
+          </a>
+      {% endif %}
     </dd>
   {% endif %}
   {% if request.user.is_staff %}

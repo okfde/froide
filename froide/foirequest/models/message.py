@@ -500,6 +500,25 @@ class FoiMessage(models.Model):
             email.attach(*mime_data)
         return email.message()
 
+    def can_get_original_from_imap(self):
+        if not self.is_response or not self.is_email:
+            return False
+
+        if not self.email_message_id:
+            return False
+        return True
+
+    def get_original_email_from_imap(self):
+        from froide.foirequest.foi_mail import get_foi_mail_client
+        from froide.helper.email_utils import retrieve_mail_by_message_id
+
+        if not self.can_get_original_from_imap():
+            return
+
+        with get_foi_mail_client() as client:
+            data = retrieve_mail_by_message_id(client, self.email_message_id)
+        return data
+
     def has_delivery_status(self):
         if not self.sent or self.is_response:
             return False

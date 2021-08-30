@@ -40,6 +40,7 @@ from ..views import (
     edit_message,
     redact_message,
     download_message_pdf,
+    download_original_email,
     publicbody_upload,
 )
 
@@ -148,6 +149,11 @@ urlpatterns = [
         "<slug:slug>/<int:message_id>/pdf/",
         download_message_pdf,
         name="foirequest-download_message_pdf",
+    ),
+    path(
+        "<slug:slug>/<int:message_id>/eml/",
+        download_original_email,
+        name="foirequest-download_original_email",
     ),
     # Attachments
     path(

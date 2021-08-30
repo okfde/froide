@@ -33,6 +33,7 @@ from .message import (
     edit_message,
     redact_message,
     download_message_pdf,
+    download_original_email,
 )
 from .misc_views import (
     index,
@@ -103,6 +104,7 @@ __all__ = [
     "edit_message",
     "redact_message",
     "download_message_pdf",
+    "download_original_email",
     "index",
     "dashboard",
     "postmark_inbound",

@@ -128,6 +128,26 @@ def delete_mails_by_recipient(
     return message_count
 
 
+def retrieve_mail_by_message_id(
+    mailbox: Union[imaplib.IMAP4_SSL, imaplib.IMAP4],
+    message_id: str,
+) -> bytes:
+    status, count = mailbox.select("Inbox")
+    # find message by message-id
+    status, [msg_ids] = mailbox.search(
+        None, 'HEADER "Message-Id" "{message_id}"'.format(message_id=message_id)
+    )
+    messages = msg_ids.split()
+    assert len(messages) <= 1
+    if not messages:
+        return None
+
+    status, data = mailbox.fetch(messages[0], "(BODY[] UID)")
+    assert status == "OK"
+    mailbox.close()
+    return data[0][1]
+
+
 def unflag_mail(mailbox, uid):
     status, count = mailbox.select("Inbox")
     mailbox.uid("STORE", uid, "-FLAGS", "\\Flagged")
