@@ -137,6 +137,7 @@ class FoiMessage(models.Model):
     content_rendered_anon = models.TextField(blank=True, null=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
     not_publishable = models.BooleanField(_("Not publishable"), default=False)
+    email_headers = models.JSONField(null=True, default=None)
     original = models.ForeignKey(
         "self",
         null=True,

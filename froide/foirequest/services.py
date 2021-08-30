@@ -343,6 +343,19 @@ class ReceiveEmailService(BaseService):
             html=email.html,
         )
 
+        email_headers = {}
+        if email.to and email.to[0][1] != foirequest.secret_address:
+            email_headers["to"] = email.to
+        if email.cc:
+            email_headers["cc"] = email.cc
+        if email.resent_to:
+            email_headers["resent-to"] = email.resent_to
+        if email.resent_cc:
+            email_headers["resent-cc"] = email.resent_cc
+
+        if email_headers:
+            message.email_headers = email_headers
+
         is_bounce = email.bounce_info.is_bounce
         if not is_bounce:
             if publicbody is None:
