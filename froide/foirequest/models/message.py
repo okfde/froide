@@ -529,6 +529,21 @@ class FoiMessage(models.Model):
             data = retrieve_mail_by_message_id(client, self.email_message_id)
         return data
 
+    def update_email_headers(self, email):
+        email_headers = {}
+        if email.to and email.to[0][1] != self.request.secret_address:
+            email_headers["to"] = email.to
+        if email.cc:
+            email_headers["cc"] = email.cc
+        if email.resent_to:
+            email_headers["resent-to"] = email.resent_to
+        if email.resent_cc:
+            email_headers["resent-cc"] = email.resent_cc
+
+        if email_headers:
+            self.email_headers = email_headers
+        return email_headers
+
     def has_delivery_status(self):
         if not self.sent or self.is_response:
             return False
