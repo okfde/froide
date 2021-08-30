@@ -70,6 +70,25 @@
         {% endif %}
       {% endif %}
     </dd>
+    {% if object|can_write_foirequest:request %}
+      {% with additional_recipients=message.list_additional_recipients %}
+        {% if additional_recipients %}
+          <dt>{% translate "Additional recipients" %}</dt>
+          <dd>
+            <ul class="list-unstyled">
+              {% for recipient_type, name, email in additional_recipients %}
+                <li>
+                  <strong>{{ recipient_type|title }}:</strong>
+                  <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+                    {{ name }} &lt;{{ email }}&gt;
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          </dd>
+        {% endif %}
+      {% endwith %}
+    {% endif %}
     {% if message.is_not_email %}
       <dt>
         {% translate "Via" %}

@@ -394,6 +394,16 @@ def get_emails_from_request(foirequest) -> Generator[PublicBodyEmailInfo, None, 
             )
             already.add(email.lower())
 
+        if message.email_headers:
+            for email in get_emails_from_message_headers(message.email_headers):
+                if email.lower() not in already:
+                    yield PublicBodyEmailInfo(
+                        email=email,
+                        name="",
+                        publicbody=message.sender_public_body,
+                    )
+                    already.add(email.lower())
+
     domains = tuple(get_foi_mail_domains())
 
     for message in reversed(messages):
@@ -419,12 +429,24 @@ def get_emails_from_request(foirequest) -> Generator[PublicBodyEmailInfo, None, 
         already.add(email)
 
 
+def get_emails_from_message_headers(email_headers):
+    fields = ("to", "cc", "resent-to", "resent-cc")
+    for field in fields:
+        for addr in email_headers.get(field, []):
+            email = addr[1]
+            if email:
+                yield email
+
+
 def possible_reply_addresses(foirequest):
     options = []
     for email_info in get_emails_from_request(foirequest):
         name = email_info.name
         if email_info.email not in name:
-            name = "{} ({})".format(name, email_info.email)
+            if not name:
+                name = email_info.email
+            else:
+                name = "{} ({})".format(name, email_info.email)
         options.append((email_info.email, name))
     return options
 

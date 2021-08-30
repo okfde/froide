@@ -395,6 +395,16 @@ class FoiMessage(models.Model):
         else:
             return self.real_sender
 
+    def list_additional_recipients(self):
+        if not self.email_headers:
+            return []
+        recipients = []
+        fields = ("to", "cc")
+        for field in fields:
+            for recipient in self.email_headers.get(field, []):
+                recipients.append((field, recipient[0], recipient[1]))
+        return recipients
+
     @property
     def attachments(self):
         if not hasattr(self, "_attachments") or self._attachments is None:
