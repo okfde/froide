@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 from django.utils.translation import gettext as _
 from django.contrib import messages
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from froide.account.forms import NewUserForm, AddressForm
 from froide.team.views import AssignTeamView
@@ -29,6 +30,7 @@ from ..auth import (
     can_write_foirequest,
     check_foirequest_upload_code,
     can_moderate_foirequest,
+    can_mark_not_foi,
 )
 from ..hooks import registry
 
@@ -210,8 +212,13 @@ def set_summary(request, foirequest):
 
 
 @require_POST
-@allow_moderate_foirequest
-def mark_not_foi(request, foirequest):
+@login_required
+def mark_not_foi(request, slug):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+
+    if not can_mark_not_foi(foirequest, request):
+        return render_403(request)
+
     foirequest.is_foi = False
 
     foirequest.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER

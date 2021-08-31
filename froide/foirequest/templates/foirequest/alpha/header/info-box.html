@@ -61,7 +61,7 @@
       {% endif %}
 
       {# Admin/moderation links #}
-      {% if object|can_moderate_foirequest:request %}
+      {% if object|can_mark_not_foi:request %}
         <li class="info-box__list-item info-box__list-item--inset bg-blue-10 d-flex my-0 border-top border-blue-20">
 
           {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
@@ -72,6 +72,7 @@
               </a>
             </div>
           {% endif %}
+
           {% if not object.is_foi %}
             <div class="smaller text-danger"><strong>{% trans "Marked as NOT FoI" %}</strong></div>
           {% else %}

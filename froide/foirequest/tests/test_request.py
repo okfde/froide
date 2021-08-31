@@ -11,6 +11,8 @@ from unittest import mock
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from django.core import mail
 from django.utils import timezone
@@ -895,6 +897,27 @@ class RequestTest(TestCase):
         self.assertTrue(req.is_foi)
         self.client.logout()
         self.client.login(email="info@fragdenstaat.de", password="froide")
+        response = self.client.post(
+            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
+        )
+        self.assertEqual(response.status_code, 302)
+        req = FoiRequest.objects.get(pk=req.pk)
+        self.assertFalse(req.is_foi)
+
+    def test_mark_not_foi_perm(self):
+        req = FoiRequest.objects.all()[0]
+        user = User.objects.get(email="dummy@example.org")
+        content_type = ContentType.objects.get_for_model(FoiRequest)
+        permission = Permission.objects.get(
+            codename="mark_not_foi",
+            content_type=content_type,
+        )
+
+        user.user_permissions.add(permission)
+
+        self.assertTrue(req.is_foi)
+
+        self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(
             reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
         )

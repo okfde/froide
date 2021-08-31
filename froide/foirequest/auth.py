@@ -130,6 +130,12 @@ def can_moderate_foirequest(foirequest, request):
     return can_moderate_object(foirequest, request)
 
 
+def can_mark_not_foi(foirequest, request):
+    return can_moderate_foirequest(foirequest, request) or (
+        request.user.has_perm("foirequest.mark_not_foi")
+    )
+
+
 def is_foirequest_moderator(request):
     if not request.user.is_authenticated:
         return False
