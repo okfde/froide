@@ -34,6 +34,7 @@ class GeoRegion(MP_Node):
     area = models.FloatField(_("Area"), default=0.0)  # in Sqm
     population = models.IntegerField(null=True, blank=True)
     valid_on = models.DateTimeField(null=True, blank=True)
+    invalid_on = models.DateTimeField(null=True, blank=True)
 
     geom = models.MultiPolygonField(_("geometry"), geography=True)
     gov_seat = models.PointField(_("gov seat"), null=True, blank=True, geography=True)
