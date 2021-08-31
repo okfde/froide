@@ -414,6 +414,7 @@ class FoiRequest(models.Model):
         permissions = (
             ("see_private", _("Can see private requests")),
             ("create_batch", _("Create batch requests")),
+            ("mark_not_foi", _("Can mark as not FOI")),
             ("moderate", _("Can moderate requests")),
         )
 
