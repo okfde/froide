@@ -880,14 +880,14 @@ class RequestTest(TestCase):
         response = self.client.post(
             reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug + "-blub"})
         )
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client.post(
-            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
-        )
-        self.assertForbidden(response)
+        self.assertEqual(response.status_code, 302)
 
         self.client.login(email="dummy@example.org", password="froide")
+        response = self.client.post(
+            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug + "-blub"})
+        )
+        self.assertEqual(response.status_code, 404)
+
         response = self.client.post(
             reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
         )
