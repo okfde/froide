@@ -5,33 +5,10 @@ from django.db import migrations
 
 def make_nodes(apps, schema_editor):
     from treebeard.mp_tree import MP_Node
+    from froide.helper.tree_utils import _inc_path, add_children
 
-    def _inc_path(path):
-        """:returns: The path of the next sibling of a given node path."""
-        newpos = MP_Node._str2int(path[-MP_Node.steplen :]) + 1
-        key = MP_Node._int2str(newpos)
-        if len(key) > MP_Node.steplen:
-            raise Exception("Path Overflow from")
-        return "{0}{1}{2}".format(
-            path[: -MP_Node.steplen],
-            MP_Node.alphabet[0] * (MP_Node.steplen - len(key)),
-            key,
-        )
-
-    def add_children(leaf, children):
-        leaf.numchild += len(children)
-        leaf.save()
-        last_child = None
-        for child in children:
-            child.depth = leaf.depth + 1
-            if last_child is None:
-                child.path = MP_Node._get_path(leaf.path, child.depth, 1)
-            else:
-                child.path = _inc_path(last_child.path)
-            child.save()
-            last_child = child
-            sub_children = GeoRegion.objects.filter(part_of=child).order_by("name")
-            add_children(child, sub_children)
+    def get_children(node):
+        return GeoRegion.objects.filter(part_of=node).order_by("name")
 
     GeoRegion = apps.get_model("georegion", "GeoRegion")
 
@@ -49,8 +26,7 @@ def make_nodes(apps, schema_editor):
         last_root = georegion
 
     for georegion in root_regions:
-        children = GeoRegion.objects.filter(part_of=georegion).order_by("name")
-        add_children(georegion, children)
+        add_children(georegion, get_children)
 
 
 class Migration(migrations.Migration):
