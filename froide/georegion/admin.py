@@ -28,7 +28,14 @@ class GeoRegionMixin(object):
     form = GeoRegionAdminForm
 
     search_fields = ["name", "^region_identifier"]
-    list_display = ("name", "kind", "kind_detail", "region_identifier")
+    list_display = (
+        "name",
+        "kind",
+        "kind_detail",
+        "region_identifier",
+        "valid_on",
+        "invalid_on",
+    )
     list_filter = (
         "kind",
         "kind_detail",
