@@ -15,7 +15,7 @@ class GeoRegionAdminForm(movenodeform_factory(GeoRegion)):
         super().__init__(*args, **kwargs)
 
         widget = get_fk_raw_id_widget(GeoRegion, admin.site, field_name="id")
-        self.fields["_ref_node_id"] = forms.IntegerField(
+        self.fields["_ref_node_id"] = forms.CharField(
             required=False, label=_("Relative to"), widget=widget
         )
 
