@@ -37,7 +37,6 @@ from .models import Bounce
 from froide.foirequest.models.message import FoiMessage, DeliveryStatus, MessageKind
 from froide.foirequest.delivery import get_delivery_reporter
 
-
 BOUNCE_FORMAT = settings.FROIDE_CONFIG["bounce_format"]
 UNSUBSCRIBE_FORMAT = settings.FROIDE_CONFIG["unsubscribe_format"]
 UNSUBSCRIBE_PREFIX = "unsubscribe-"
@@ -342,13 +341,13 @@ def check_delivery_from_log():
     4. update FOI-messages accordingly
     """
     POSTFIX_LOG_PATH = "/var/log/mail.log"
-    PYGTAIL_OFFSET_PATH = "./pt.offset"
+    PYGTAIL_OFFSET_PATH = "./mail_log.offset"
     FINAL_STATES = DeliveryStatus.FINAL_STATUS
-    RELEVANT_FIELDS = set(("message-id", "from", "to", "status"))
+    RELEVANT_FIELDS = {"message-id", "from", "to", "status"}
 
     # query model
     messages = (
-        FoiMessage.objects.exclude(status__in=FINAL_STATES)
+        FoiMessage.objects.exclude(deliverystatus__status__in=FINAL_STATES)
         .filter(kind=MessageKind.EMAIL)
         .exclude(is_response=True)
         .exclude(sender_email__isnull=True)
@@ -364,7 +363,7 @@ def check_delivery_from_log():
     # will contain mappings from postfix queue_id to message information
 
     for line in pygtail:
-        if not "postfix" in line:
+        if "postfix" not in line:
             # DKIM line
             continue
         date, info = line.split("mail", maxsplit=1)

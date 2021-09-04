@@ -28,7 +28,7 @@ def get_delivery_reporter():
 
     module, klass = reporter_path.rsplit(".", 1)
     module = importlib.import_module(module)
-    rerporter_klass = getattr(module, klass)
+    reporter_klass = getattr(module, klass)
 
     reporter = reporter_klass(time_zone=settings.TIME_ZONE)
     return reporter
