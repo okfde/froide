@@ -155,11 +155,11 @@ def get_recipient_address_from_unsubscribe(unsub_email):
 
 
 def get_original_email_from_signed(
-    signed_email, email_format=BOUNCE_FORMAT, max_age=MAX_BOUNCE_AGE
+        signed_email, email_format=BOUNCE_FORMAT, max_age=MAX_BOUNCE_AGE
 ):
     head, tail = email_format.split("{token}")
     # Cut off head and tail of bounce formatting
-    token = signed_email[len(head) : -len(tail)]
+    token = signed_email[len(head): -len(tail)]
     parts = token.split(SEP_REPL)
     signature = SIGN_SEP.join(parts[:2])
 
@@ -181,11 +181,11 @@ def get_original_email_from_signed(
 
 def check_bounce_mails():
     with get_mail_client(
-        settings.BOUNCE_EMAIL_HOST_IMAP,
-        settings.BOUNCE_EMAIL_PORT_IMAP,
-        settings.BOUNCE_EMAIL_ACCOUNT_NAME,
-        settings.BOUNCE_EMAIL_ACCOUNT_PASSWORD,
-        ssl=settings.BOUNCE_EMAIL_USE_SSL,
+            settings.BOUNCE_EMAIL_HOST_IMAP,
+            settings.BOUNCE_EMAIL_PORT_IMAP,
+            settings.BOUNCE_EMAIL_ACCOUNT_NAME,
+            settings.BOUNCE_EMAIL_ACCOUNT_PASSWORD,
+            ssl=settings.BOUNCE_EMAIL_USE_SSL,
     ) as client:
         for _mail_uid, rfc_data in get_unread_mails(client, flag=False):
             process_bounce_mail(rfc_data)
@@ -193,11 +193,11 @@ def check_bounce_mails():
 
 def check_unsubscribe_mails():
     with get_mail_client(
-        settings.UNSUBSCRIBE_EMAIL_HOST_IMAP,
-        settings.UNSUBSCRIBE_EMAIL_PORT_IMAP,
-        settings.UNSUBSCRIBE_EMAIL_ACCOUNT_NAME,
-        settings.UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD,
-        ssl=settings.UNSUBSCRIBE_EMAIL_USE_SSL,
+            settings.UNSUBSCRIBE_EMAIL_HOST_IMAP,
+            settings.UNSUBSCRIBE_EMAIL_PORT_IMAP,
+            settings.UNSUBSCRIBE_EMAIL_ACCOUNT_NAME,
+            settings.UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD,
+            ssl=settings.UNSUBSCRIBE_EMAIL_USE_SSL,
     ) as client:
         for _mail_uid, rfc_data in get_unread_mails(client, flag=False):
             process_unsubscribe_mail(rfc_data)
@@ -287,12 +287,12 @@ def check_deactivation_condition(bounce):
     """
 
     if check_bounce_status(
-        bounce.bounces, "hard", HARD_BOUNCE_PERIOD, HARD_BOUNCE_COUNT
+            bounce.bounces, "hard", HARD_BOUNCE_PERIOD, HARD_BOUNCE_COUNT
     ):
         return True
 
     if check_bounce_status(
-        bounce.bounces, "soft", SOFT_BOUNCE_PERIOD, SOFT_BOUNCE_COUNT
+            bounce.bounces, "soft", SOFT_BOUNCE_PERIOD, SOFT_BOUNCE_COUNT
     ):
         return True
 
@@ -348,10 +348,10 @@ def check_delivery_from_log():
     # query model
     messages = (
         FoiMessage.objects.exclude(deliverystatus__status__in=FINAL_STATES)
-        .filter(kind=MessageKind.EMAIL)
-        .exclude(is_response=True)
-        .exclude(sender_email__isnull=True)
-        .exclude(recipient_email__isnull=True)
+            .filter(kind=MessageKind.EMAIL)
+            .exclude(is_response=True)
+            .exclude(sender_email__isnull=True)
+            .exclude(recipient_email__isnull=True)
     )
 
     message_lookup = {message.make_message_id(): message for message in messages}
@@ -363,40 +363,15 @@ def check_delivery_from_log():
     # will contain mappings from postfix queue_id to message information
 
     for line in pygtail:
-        if "postfix" not in line:
-            # DKIM line
-            continue
-        date, info = line.split("mail", maxsplit=1)
-        contents = info.rsplit(":")
-        # general postfix log format uses : as delimiter
-        # first date, host and process info, then possible a queue id, then information on logged event
-
-        if len(contents) == 2:
-            # no queue id in current line
+        date, queue_id, fields = prepare_line(line)
+        if queue_id is None:
             continue
 
-        queue_id = contents[1]
-
-        if "TLS" in queue_id:
-            # TLS-Handshakes have no queue id
-            continue
-
-        fields = contents[-1].split(",")
-        # queue-events are in comma-seperated lists of key=value-Pairs
-
-        if len(fields) == 1 and "removed" in fields[0]:
-            # last log line for queue_id
-            # check if info for message-id is needed and status is set
-            # save delivery information to database
-            # remove queue_id from postfix_messages as postfix may reuse this id
-            if (
-                "status" in postfix_messages[queue_id]
-                and "log" in postfix_messages[queue_id]
-                and postfix_messages[queue_id].get("message-id")
-                in message_lookup.keys()
-            ):
-                generate_delivery_status(postfix_messages[queue_id])
-
+        if queue_id in postfix_messages and check_obsolete_queue_id(
+                message_info=postfix_messages[queue_id],
+                fields=fields,
+                message_lookup=message_lookup,
+        ):
             del postfix_messages[queue_id]
             continue
 
@@ -405,39 +380,110 @@ def check_delivery_from_log():
 
         postfix_messages[queue_id]["log"].append(line)
 
-        for field in fields:
-            if "=" in field:
-                name, value = field.split("=", maxsplit=1)
-                # Under certain circumstances values can contain "=", so we split only once
-            else:
-                name = field
-                value = field
-
-            name = name.strip()
-            if "message-id" not in name:
-                value = value.replace("<", "").replace(">", "")
-                # everything resampling a mail address comes enclosed in < > in mail.log
-                # however mail-addresses in froide are stored without those, while the message-id is stored with.
-
-            value = value.strip()
-
-            if name in RELEVANT_FIELDS:
-                # only collect what's needed
-                postfix_messages[queue_id].setdefault(name, value)
+        new_entries = prepare_key_value_pairs_from_fields(
+            fields=fields, relevant_fields=RELEVANT_FIELDS
+        )
+        postfix_messages[queue_id].update(new_entries)
 
     for parsed_info in postfix_messages:
         if (
-            "status" in parsed_info
-            and "log" in parsed_info
-            and parsed_info.get("message-id") in message_lookup
+                "status" in parsed_info
+                and "log" in parsed_info
+                and parsed_info.get("message-id") in message_lookup
         ):
             generate_delivery_status(parsed_info)
 
 
+def prepare_line(line: str):
+    """this consumes one log line (e.g. from pygtail)
+    it returns a  3 tuple with a date-string, queue-id and list of key-value pairs
+    or (None, None, None) if the line does not have information for delivery state
+    """
+    if "postfix" not in line:
+        # DKIM line
+        return None, None, None
+    date, info = line.split("mail", maxsplit=1)
+    contents = info.rsplit(":")
+    # general postfix log format uses ":" as delimiter
+    # lines consist of date, host and process info, optional queue id followed by information on the logged event
+
+    if len(contents) == 2:
+        # no queue id in current line -> no send-mail event
+        return None, None, None
+
+    queue_id = contents[1]
+
+    if "TLS" in queue_id:
+        # log lines for TLS handshakes do not contain queue ids
+        return None, None, None
+
+    fields = contents[-1].split(",")
+    # queue-events are in comma-seprated lists of key=value-pairs
+
+    return date, queue_id, fields
+
+
+def check_obsolete_queue_id(message_info: dict, fields: list, message_lookup: dict):
+    """
+    this checks for a given prepared log line if it is the last one for a given queue-id
+    if so it generates the deliveryStatus if necessary
+
+    this will return true if the given fields indicate that this is the last log line for given queue-id
+
+    deliveryStatus is generated if:
+        (a) the message has not already entered a final state and
+        (b) there has been status information for the message in log for the message
+    """
+    if (
+            len(fields) == 1
+            and "removed" in fields[0]
+            and "status" in message_info
+            and "log" in message_info
+            and message_info.get("message-id") in message_lookup.keys()
+    ):
+        generate_delivery_status(
+            message_info=message_info, message_lookup=message_lookup
+        )
+        return True
+    else:
+        return False
+
+
+def prepare_key_value_pairs_from_fields(fields: list, relevant_fields: set):
+    """
+    this takes all the fields from a log line as prepared by prepare_line and processes all the key-value pairs in it
+
+    this returns a dict with all the key-value mapping extracted from the log line
+    """
+    kv_map = dict()
+
+    for field in fields:
+        if "=" in field:
+            name, value = field.split("=", maxsplit=1)
+            # Under certain circumstances values can contain "=", so we split only once
+        else:
+            name = field
+            value = field
+
+        name = name.strip()
+        if "message-id" not in name:
+            value = value.replace("<", "").replace(">", "")
+            # everything resampling a mail address comes enclosed in < > in mail.log
+            # however mail-addresses in froide are stored without those, while the message-id is stored with.
+
+        value = value.strip()
+
+        if len(relevant_fields) != 0 and name in relevant_fields:
+            # only collect what's needed
+            kv_map[name] = value
+
+        return kv_map
+
+
 def generate_delivery_status(
-    message_info: dict,
-    last_update=timezone.now(),
-    message_lookup=message_lookup,
+        message_info: dict,
+        message_lookup: dict,
+        last_update=timezone.now(),
 ):
     assert "log" in message_info
     assert "status" in message_info
