@@ -53,7 +53,7 @@ class BaseSearchView(ListView):
         if not self.has_query:
             s = s.sort(self.default_sort)
         else:
-            s = s.highlight("content")
+            s = s.highlight_options(encoder="html").highlight("content")
             s = s.sort("_score")
         return s
 
