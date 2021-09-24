@@ -46,9 +46,9 @@
       </a>
     {% endif %}
     {% if not attachment.approved and attachment.can_approve %}
-      <form class="ajaxified ajax-parent" action="{% url 'foirequest-approve_attachment' slug=foirequest.slug attachment_id=attachment.id %}" method="POST">
+      <form class="d-inline ajaxified ajax-parent" action="{% url 'foirequest-approve_attachment' slug=foirequest.slug attachment_id=attachment.id %}" method="POST">
         {% csrf_token %}
-        <button type="submit" class="btn btn-success">
+        <button type="submit" class="btn btn-sm btn-success">
           {% translate "Approve" %}
         </button>
       </form>
