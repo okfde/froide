@@ -1163,7 +1163,8 @@ export default {
     visibility: hidden;
   }
 
-  .textLayer.textActive > div {
+  .textLayer.textActive > div,
+  .textLayer.textActive > span {
     color: #000;
   }
 
