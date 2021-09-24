@@ -98,7 +98,7 @@ deprecated==1.2.12
     # via jwcrypto
 dj-database-url==0.5.0
     # via -r requirements.in
-django==3.2.4
+django==3.2.7
     # via
     #   -r requirements.in
     #   channels
@@ -186,7 +186,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 future==0.18.2
     # via django-json-widget
-geoip2==4.2.0
+geoip2==4.3.0
     # via -r requirements.in
 html5lib==1.1
     # via weasyprint
@@ -220,7 +220,7 @@ markdown==3.3.4
     # via -r requirements.in
 markupsafe==2.0.1
     # via jinja2
-maxminddb==2.0.3
+maxminddb==2.1.0
     # via geoip2
 multidict==5.1.0
     # via
@@ -245,7 +245,7 @@ phonenumbers==8.12.25
     # via -r requirements.in
 pikepdf==2.13.0
     # via django-filingcabinet
-pillow==8.2.0
+pillow==8.3.2
     # via
     #   cairosvg
     #   django-filingcabinet
