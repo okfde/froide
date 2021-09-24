@@ -415,7 +415,7 @@ six==1.16.0
     #   virtualenv
 sortedcontainers==2.4.0
     # via pdfminer.six
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 tblib==1.7.0
     # via -r requirements-test.in

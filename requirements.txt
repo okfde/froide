@@ -324,7 +324,7 @@ six==1.16.0
     #   service-identity
 sortedcontainers==2.4.0
     # via pdfminer.six
-sqlparse==0.4.1
+sqlparse==0.4.2
     # via django
 tinycss2==1.1.0
     # via
