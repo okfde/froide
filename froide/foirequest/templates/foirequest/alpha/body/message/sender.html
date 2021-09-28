@@ -30,20 +30,20 @@
     {% if message.is_response %}
       {% if froide.public_body_officials_public %}
         {% if message.sender != message.sender_public_body.name %}
-          {{ message.sender }}
+          <span title="{{ message.sender }}">{{ message.sender }}</span>
         {% endif %}
         {% if message.sender_public_body %}
           <span> – {{ message.sender_public_body.name }}</span>
         {% endif %}
       {% else %}
         {% if message.sender_public_body %}
-          {{ message.sender_public_body.name }}
+          <span title="{{ message.sender_public_body.name }}">{{ message.sender_public_body.name }}</span>
         {% else %}
           {% trans "Public Body" %}
         {% endif %}
       {% endif %}
     {% else %}
-      {{ message.sender }}
+      <span title="{{ message.sender }}">{{ message.sender }}</span>
     {% endif %}
   {% endif %}
 </div>
