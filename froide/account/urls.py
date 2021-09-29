@@ -55,7 +55,7 @@ urlpatterns = [
         name="account-password_reset_confirm",
     ),
     re_path(
-        r"^go/(?P<user_id>\d+)/(?P<secret>\w{32})(?P<url>/.*)$", go, name="account-go"
+        r"^go/(?P<user_id>\d+)/(?P<token>\w{32})(?P<url>/.*)$", go, name="account-go"
     ),
     path("export/", create_export, name="account-create_export"),
     path("export/download/", download_export, name="account-download_export"),

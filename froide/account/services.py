@@ -1,4 +1,5 @@
 import hashlib
+from datetime import timedelta
 import re
 import hmac
 from typing import Dict, Optional
@@ -9,12 +10,18 @@ from django.template.defaultfilters import slugify
 from django.utils.crypto import constant_time_compare
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
+from froide.accesstoken.models import AccessToken
 from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import mail_registry
 
 from .models import User, AccountBlocklist
 from . import account_activated
+
+
+ONE_TIME_LOGIN_PURPOSE = "onetimelogin"
+ONE_TIME_LOGIN_EXPIRY = timedelta(hours=72)
 
 
 def get_user_for_email(email):
@@ -94,25 +101,69 @@ class AccountService(object):
         self._confirm_account()
         return True
 
+    def reactivate_account(self):
+        self._confirm_account()
+
     def _confirm_account(self):
         self.user.is_active = True
+        self.user.date_deactivated = None
         self.user.save()
         account_activated.send_robust(sender=self.user)
 
+    def can_autologin(self):
+        if self.user.is_superuser:
+            # Don't generate autologin URL for superuser
+            return False
+        if self.user.is_deleted or self.user.is_blocked:
+            # Don't generate autologin URL for deleted or blocked users either
+            return False
+        return True
+
     def get_autologin_url(self, url):
+        if not self.can_autologin():
+            return settings.SITE_URL + url
         return settings.SITE_URL + reverse(
             "account-go",
             kwargs={
                 "user_id": self.user.id,
-                "secret": self.generate_autologin_secret(),
+                "token": self.generate_autologin_token(),
                 "url": url,
             },
         )
 
-    def check_autologin_secret(self, secret):
-        return constant_time_compare(self.generate_autologin_secret(), secret)
+    @classmethod
+    def delete_autologin_token(self, user_id: int, token: str):
+        AccessToken.objects.filter(
+            user_id=user_id, purpose=ONE_TIME_LOGIN_PURPOSE, token=token
+        ).delete()
 
-    def generate_autologin_secret(self):
+    def check_autologin_token(self, url_token: str):
+        if not self.can_autologin():
+            return False
+        now = timezone.now()
+        try:
+            at = AccessToken.objects.get(
+                user=self.user,
+                purpose=ONE_TIME_LOGIN_PURPOSE,
+                token=url_token,
+                timestamp__gte=now - ONE_TIME_LOGIN_EXPIRY,
+            )
+            token = at.token.hex
+            # Delete token after use
+            at.delete()
+        except AccessToken.DoesNotExist:
+            token = self._legacy_generate_autologin_token()
+        return constant_time_compare(url_token, token)
+
+    def generate_autologin_token(self):
+        at, created = AccessToken.objects.update_or_create(
+            user=self.user,
+            purpose=ONE_TIME_LOGIN_PURPOSE,
+            defaults={"timestamp": timezone.now()},
+        )
+        return at.token.hex
+
+    def _legacy_generate_autologin_token(self):
         to_sign = [str(self.user.pk)]
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))

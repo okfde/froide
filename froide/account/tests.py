@@ -466,12 +466,25 @@ class AccountTest(TestCase):
     def test_go(self):
         user = User.objects.get(username="dummy")
         other_user = User.objects.get(username="sw")
+        super_user = User.objects.get(username="supersw")
+
         # test url is not cached and does not cause 404
         test_url = reverse("foirequest-make_request")
+        login_url = reverse("account-login")
+
+        # Super users are not logged in
+        super_autologin = super_user.get_autologin_url()
+        self.assertTrue(super_autologin.startswith("http://"))
+        response = self.client.post(super_autologin)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["user"].is_anonymous)
 
         # Try logging in via link: success
         autologin = user.get_autologin_url(test_url)
+        self.assertTrue(autologin.startswith("http://"))
         response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
         self.assertEqual(response.status_code, 200)
@@ -479,11 +492,20 @@ class AccountTest(TestCase):
         self.assertTrue(response.context["user"].is_authenticated)
         self.client.logout()
 
+        # Try logging in again, should not work
+        response = self.client.get(autologin)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(autologin)
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(test_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.context["user"], user)
+
         # Try logging in via link: other user is authenticated
         ok = self.client.login(email="info@fragdenstaat.de", password="froide")
         self.assertTrue(ok)
         autologin = user.get_autologin_url(test_url)
-        response = self.client.get(autologin)
+        response = self.client.post(autologin)
         self.assertEqual(response.status_code, 302)
         response = self.client.get(test_url)
         self.assertEqual(response.status_code, 200)
@@ -495,18 +517,19 @@ class AccountTest(TestCase):
         autologin = user.get_autologin_url(test_url)
         user.is_blocked = True
         user.save()
-        response = self.client.get(autologin)
+        response = self.client.post(autologin)
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], test_url)
+        self.assertTrue(response["Location"].startswith(login_url))
         response = self.client.get(test_url)
         self.assertTrue(response.context["user"].is_anonymous)
 
         # Try logging in via link: wrong user id
         autologin = reverse(
-            "account-go", kwargs=dict(user_id="80000", secret="a" * 32, url=test_url)
+            "account-go", kwargs=dict(user_id="80000", token="a" * 32, url=test_url)
         )
-        response = self.client.get(autologin)
-        self.assertEqual(response.status_code, 404)
+        response = self.client.post(autologin)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(response["Location"].startswith(login_url))
         response = self.client.get(test_url)
         self.assertTrue(response.context["user"].is_anonymous)
         user.is_active = True
@@ -515,10 +538,11 @@ class AccountTest(TestCase):
         # Try logging in via link: wrong secret
         autologin = reverse(
             "account-go",
-            kwargs=dict(user_id=str(user.id), secret="a" * 32, url=test_url),
+            kwargs=dict(user_id=str(user.id), token="a" * 32, url=test_url),
         )
-        response = self.client.get(autologin)
+        response = self.client.post(autologin)
         self.assertEqual(response.status_code, 302)
+        self.assertTrue(response["Location"].startswith(login_url))
         response = self.client.get(test_url)
         self.assertTrue(response.context["user"].is_anonymous)
 

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+
+{% block body_tag %}
+<div class="container mt-5 text-center">
+  <form action="." method="post" data-autosubmit="true">
+    {% csrf_token %}
+    <div class="spinner-border" role="status">
+      <span class="sr-only">{% translate "Loading..." %}</span>
+    </div>
+    <p class="mt-5">
+      <button type="submit">{% translate "Continue" %}</button>
+    </p>
+  </form>
+</div>
+{% endblock body_tag %}
+
+{% block scripts %}
+<script async src="{% static 'account/go.js' %}"></script>
+{% endblock %}

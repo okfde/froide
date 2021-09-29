@@ -23,7 +23,6 @@ from froide.foirequest.models import FoiRequest
 from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import render_403, get_redirect, get_redirect_url
 
-from . import account_activated
 from .forms import (
     UserLoginForm,
     PasswordResetForm,
@@ -122,7 +121,7 @@ def confirm(request, user_id, secret, request_id=None):
     return get_redirect(request, default=default_url, params=params)
 
 
-def go(request, user_id, secret, url):
+def go(request, user_id, token, url):
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(
@@ -132,28 +131,25 @@ def go(request, user_id, secret, url):
                     "You are logged in with a different user account. Please logout first before using this link."
                 ),
             )
+        # Delete token without using
+        AccountService.delete_autologin_token(user_id, token)
         return redirect(url)
 
-    user = get_object_or_404(User, pk=int(user_id))
-    account_manager = AccountService(user)
-    if account_manager.check_autologin_secret(secret):
-        if user.is_superuser:
-            # Don't allow autologin for superusers
-            return redirect(url)
-        if user.is_deleted or user.is_blocked:
-            # This will fail, but that's OK here
-            return redirect(url)
-        if not user.is_active:
-            # Confirm user account (link came from email)
-            user.date_deactivated = None
-            user.is_active = True
-            user.save()
-            account_activated.send_robust(sender=user)
-        auth.login(request, user)
-        return redirect(url)
+    if request.method == "POST":
+        user = User.objects.filter(pk=int(user_id)).first()
+        if user:
+            account_manager = AccountService(user)
+            if account_manager.check_autologin_token(token):
+                if not user.is_active:
+                    # Confirm user account (link came from email)
+                    account_manager.reactivate_account()
+                # Perform login
+                auth.login(request, user)
+                return redirect(url)
 
-    # If login-link fails, prompt login with redirect
-    return get_redirect(request, default="account-login", params={"next": url})
+        # If login-link fails, prompt login with redirect
+        return get_redirect(request, default="account-login", params={"next": url})
+    return render(request, "account/go.html")
 
 
 class ProfileView(DetailView):
@@ -245,7 +241,7 @@ def logout(request):
 
 def login(request, context=None, template="account/login.html", status=200):
     if request.user.is_authenticated:
-        return redirect("account-show")
+        return get_redirect(request, default="account-show")
 
     if not context:
         context = {}

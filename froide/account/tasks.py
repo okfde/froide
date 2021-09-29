@@ -40,12 +40,17 @@ def delete_deactivated_users_task():
 
 @celery_app.task
 def account_maintenance_task():
-    from .utils import delete_unconfirmed_users, delete_deactivated_users
+    from .utils import (
+        delete_unconfirmed_users,
+        delete_deactivated_users,
+        delete_expired_onetime_login_tokens,
+    )
     from .export import delete_all_expired_exports
 
     delete_unconfirmed_users()
     delete_deactivated_users()
     delete_all_expired_exports()
+    delete_expired_onetime_login_tokens()
 
 
 @celery_app.task

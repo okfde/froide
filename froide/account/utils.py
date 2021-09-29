@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.db import transaction
 from django.contrib.sessions.models import Session
 
+from froide.accesstoken.models import AccessToken
 from froide.helper.email_sending import (
     send_mail,
     mail_middleware_registry,
@@ -248,3 +249,12 @@ def check_account_compatibility(groups):
                     user.tags.add("duplicate-email-private-mismatch")
                 else:
                     user.tags.add("duplicate-email-other-mismatch")
+
+
+def delete_expired_onetime_login_tokens():
+    from .services import ONE_TIME_LOGIN_PURPOSE, ONE_TIME_LOGIN_EXPIRY
+
+    time_ago = timezone.now() - ONE_TIME_LOGIN_EXPIRY
+    AccessToken.objects.filter(
+        purpose=ONE_TIME_LOGIN_PURPOSE, timestamp__lt=time_ago
+    ).delete()
