@@ -296,11 +296,12 @@ class ParsedEmail(object):
     body: str
     html: Optional[str]
     from_: EmailField
-    to: List[EmailField]
-    cc: List[EmailField]
-    resent_to: List[EmailField]
-    resent_cc: List[EmailField]
-    attachments: List[EmailAttachment]
+    to: List[EmailField] = []
+    x_original_to: List[EmailField] = []
+    cc: List[EmailField] = []
+    resent_to: List[EmailField] = []
+    resent_cc: List[EmailField] = []
+    attachments: List[EmailAttachment] = []
 
     def __init__(self, msgobj, **kwargs):
         self.msgobj = msgobj
@@ -373,6 +374,7 @@ def parse_postmark(obj):
             "html": obj["HtmlBody"],
             "from_": from_field,
             "to": tos,
+            "x_original_to": [],
             "cc": ccs,
             "resent_to": [],
             "resent_cc": [],

@@ -145,7 +145,8 @@ class MailTest(MailTestMixin, TestCase):
         with open(p("test_mail_05.txt"), "rb") as f:
             mail = parse_email(f)
         self.assertEqual(len(mail.cc), 2)
-        self.assertEqual(len(mail.to), 3)  # contains X-Original-To as well
+        self.assertEqual(len(mail.to), 2)
+        self.assertEqual(len(mail.x_original_to), 1)
         self.assertTrue(mail.is_auto_reply)
 
     def test_strip_html(self):
