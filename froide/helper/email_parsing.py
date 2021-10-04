@@ -81,7 +81,7 @@ def decode_message_part(part):
 def parse_main_headers(msgobj):
     subject = parse_header_field(msgobj["Subject"])
     tos = get_address_list(msgobj.get_all("To", []))
-    tos.extend(get_address_list(msgobj.get_all("X-Original-To", [])))
+    x_original_tos = get_address_list(msgobj.get_all("X-Original-To", []))
     ccs = get_address_list(msgobj.get_all("Cc", []))
     resent_tos = get_address_list(msgobj.get_all("resent-to", []))
     resent_ccs = get_address_list(msgobj.get_all("resent-cc", []))
@@ -98,6 +98,7 @@ def parse_main_headers(msgobj):
         "subject": subject,
         "from_": from_field,
         "to": tos,
+        "x_original_to": x_original_tos,
         "cc": ccs,
         "resent_to": resent_tos,
         "resent_cc": resent_ccs,

@@ -535,6 +535,8 @@ class FoiMessage(models.Model):
             email_headers["to"] = email.to
         if email.cc:
             email_headers["cc"] = email.cc
+        if email.x_original_to:
+            email_headers["x_original_to"] = email.x_original_to
         if email.resent_to:
             email_headers["resent-to"] = email.resent_to
         if email.resent_cc:
