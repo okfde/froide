@@ -798,6 +798,8 @@ class RequestTest(TestCase):
         response = self.client.get(reverse("account-show"))
         self.assertEqual(response.status_code, 302)
         response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.post(url)
         self.assertEqual(response.status_code, 302)
         message = req.messages[1]
         self.assertIn(req.get_absolute_short_url(), response["Location"])
