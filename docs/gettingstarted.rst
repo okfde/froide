@@ -55,31 +55,6 @@ You can quit the server (Ctrl+C) and create a superuser account::
 
 .. _add-basic-database-objects:
 
-Add basic database objects
---------------------------
-
-The following guide creates some database objects that are needed for running a Froide instance. You can also take shortcut and load example objects::
-
-    python manage.py loaddata publicbody.json
-
-However, if you want to set stuff up properly, continue reading.
-
-Run the web server again and login to the admin interface at `http://localhost:8000/admin/ <http://localhost:8000/admin/>`_ with the credentials of your superuser.
-
-The first thing you should do is create a jurisdiction. Click on "Jurisdiction" in the "Publicbody" section and then on "Add Jurisdiction".
-Name your jurisdiction however you want (e.g. Federal). If you only ever intend to have one, the name will not even show up. Click "Save" to continue.
-
-Go back into the public body section and add an FOI law. Give it a name (e.g. Freedom of Information Act) and choose a jurisdiction. There are many more things that can be configured, but you can leave them for now.
-
-Now you can add your first public body by going back to the public body section and clicking on "Add" next to "Public Bodies". Give it a name (e.g. Ministry of the Interior).
-Click on the little plus-sign next to "classification" to add a topic for this public body. The classification is to distinguish different areas of government (e.g. "Ministry", "Council").
-If you want to make a request to this public body, it needs to have an email address.
-Select your previously created jurisdiction and FOI law and save.
-
-You should also fill out your user details like your name in the user section of the admin.
-
-Now you are ready to make your first request. Go back to the front page and give it a go. You can also find out more about the :doc:`admin`.
-
 
 Custom settings
 --------------------
