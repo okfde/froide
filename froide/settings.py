@@ -42,6 +42,7 @@ class Base(Configuration):
             "taggit",
             "storages",
             "treebeard",
+            "parler",
             "django_filters",
             "leaflet",
             "django_json_widget",
