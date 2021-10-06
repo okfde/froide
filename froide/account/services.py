@@ -141,18 +141,20 @@ class AccountService(object):
         if not self.can_autologin():
             return False
         now = timezone.now()
-        try:
-            at = AccessToken.objects.get(
-                user=self.user,
-                purpose=ONE_TIME_LOGIN_PURPOSE,
-                token=url_token,
-                timestamp__gte=now - ONE_TIME_LOGIN_EXPIRY,
-            )
-            token = at.token.hex
+        ats = AccessToken.objects.filter(
+            user=self.user,
+            purpose=ONE_TIME_LOGIN_PURPOSE,
+            token=url_token,
+            timestamp__gte=now - ONE_TIME_LOGIN_EXPIRY,
+        )
+        if ats:
+            token = ats[0].token.hex
             # Delete token after use
-            at.delete()
-        except AccessToken.DoesNotExist:
-            token = self._legacy_generate_autologin_token()
+            ats.delete()
+        else:
+            # Use invalid token for comparison
+            token = ""
+        # constant time compare probably overkill, but why not
         return constant_time_compare(url_token, token)
 
     def generate_autologin_token(self):
@@ -162,16 +164,6 @@ class AccountService(object):
             defaults={"timestamp": timezone.now()},
         )
         return at.token.hex
-
-    def _legacy_generate_autologin_token(self):
-        to_sign = [str(self.user.pk)]
-        if self.user.last_login:
-            to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
-        return hmac.new(
-            settings.SECRET_KEY.encode("utf-8"),
-            (".".join(to_sign)).encode("utf-8"),
-            digestmod=hashlib.md5,
-        ).hexdigest()
 
     def check_confirmation_secret(self, secret, *args):
         return constant_time_compare(secret, self.generate_confirmation_secret(*args))
