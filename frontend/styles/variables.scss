@@ -58,6 +58,8 @@ $theme-colors: (
   "yellow-100": $yellow-100,
   "yellow-200": $yellow-200,
   "yellow-300": $yellow-300,
+
+  "black": #000
 );
 
 $white: #fff;
@@ -109,6 +111,14 @@ $container-max-widths: (
 
 // Typography
 $btn-font-weight: 600;
+
+// Shadows
+$box-shadow: 7px 7px 0 transparentize($blue-30, 0.85);
+$box-shadow-sm: 2px 2px 0 transparentize($blue-30, 0.85);
+$box-shadow-gray: 7px 7px 0 transparentize($gray-300, 0.6);
+$box-shadow-gray-sm: 2px 2px 0 transparentize($gray-300, 0.6);
+$box-shadow-yellow: 7px 7px 0 transparentize($yellow-300, 0.85);
+$box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
 @import "~bootstrap/scss/variables";
 
