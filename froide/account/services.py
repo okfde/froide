@@ -158,12 +158,23 @@ class AccountService(object):
         return constant_time_compare(url_token, token)
 
     def generate_autologin_token(self):
+        try:
+            at = self._generate_autologin_token()
+        except AccessToken.MultipleObjectsReturned:
+            AccessToken.objects.filter(
+                user=self.user,
+                purpose=ONE_TIME_LOGIN_PURPOSE,
+            ).delete()
+            at = self._generate_autologin_token()
+        return at.token.hex
+
+    def _generate_autologin_token(self):
         at, created = AccessToken.objects.update_or_create(
             user=self.user,
             purpose=ONE_TIME_LOGIN_PURPOSE,
             defaults={"timestamp": timezone.now()},
         )
-        return at.token.hex
+        return at
 
     def check_confirmation_secret(self, secret, *args):
         return constant_time_compare(secret, self.generate_confirmation_secret(*args))
