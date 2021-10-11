@@ -220,7 +220,10 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         ),
     )
 
-    files_help_text = _("Uploaded scans can be PDF, JPG, PNG or GIF.")
+    files_help_text = _(
+        "Uploaded scans can be PDF, JPG, PNG or GIF. They will be non-public "
+        "by default and can be redacted after upload."
+    )
     files = forms.FileField(
         label=_("Attachments"),
         required=False,

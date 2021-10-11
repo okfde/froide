@@ -42,7 +42,10 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         label=_("Upload scans or photos of the letter"),
         required=False,
         allowed_file_types=[".pdf", ".jpg", ".jpeg", ".png", ".gif"],
-        help_text=_("Uploaded scans can be PDF, JPG, PNG or GIF."),
+        help_text=_(
+            "Uploaded scans can be PDF, JPG, PNG or GIF. They will be non-public "
+            "by default and can be redacted after upload."
+        ),
     )
 
     FIELD_ORDER = ["sent", "publicbody", "date", "subject", "uploads", "text"]
