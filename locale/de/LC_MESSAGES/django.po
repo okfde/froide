@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-05 11:53+0200\n"
+"POT-Creation-Date: 2021-10-11 11:21+0200\n"
 "PO-Revision-Date: 2021-10-05 12:33+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
@@ -47,7 +47,7 @@ msgstr ""
 "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
 "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
-#: froide/_local_settings.py:12 froide/settings.py:247 froide/settings.py:682
+#: froide/_local_settings.py:12 froide/settings.py:248 froide/settings.py:683
 msgid "German"
 msgstr "Deutsch"
 
@@ -567,30 +567,30 @@ msgstr "Nutzerpräferenz"
 msgid "User preferences"
 msgstr "Nutzerpräferenzen"
 
-#: froide/account/services.py:244
+#: froide/account/services.py:247
 #, python-format
 msgid "%(site_name)s: please confirm your action"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihre Aktion"
 
-#: froide/account/services.py:274
+#: froide/account/services.py:277
 #, python-format
 msgid "%(site_name)s: account reminder"
 msgstr "%(site_name)s: Konto-Erinnerung"
 
-#: froide/account/services.py:295
+#: froide/account/services.py:298
 #, python-format
 msgid "%(site_name)s: please confirm your new email address"
 msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
 
-#: froide/account/services.py:338
+#: froide/account/services.py:341
 msgid "<< Name removed >>"
 msgstr "Antragsteller/in"
 
-#: froide/account/services.py:339
+#: froide/account/services.py:342
 msgid "<< Email removed >>"
 msgstr "<< E-Mail entfernt >>"
 
-#: froide/account/services.py:340
+#: froide/account/services.py:343
 msgid "<< Address removed >>"
 msgstr "<< Adresse entfernt >>"
 
@@ -9811,71 +9811,71 @@ msgstr "Ihre Änderung wurde angewendet."
 msgid "Search for public authorities"
 msgstr "Suchen Sie nach Behörden"
 
-#: froide/settings.py:244
+#: froide/settings.py:245
 msgid "English"
 msgstr "Englisch"
 
-#: froide/settings.py:245
+#: froide/settings.py:246
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: froide/settings.py:246
+#: froide/settings.py:247
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
 
-#: froide/settings.py:248
+#: froide/settings.py:249
 msgid "Danish (Denmark)"
 msgstr "Dänisch (Dänemark)"
 
-#: froide/settings.py:249
+#: froide/settings.py:250
 msgid "Italian"
 msgstr "Italienisch"
 
-#: froide/settings.py:250
+#: froide/settings.py:251
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: froide/settings.py:251
+#: froide/settings.py:252
 msgid "Swedish (Sweden)"
 msgstr "Schwedisch (Schweden)"
 
-#: froide/settings.py:252
+#: froide/settings.py:253
 msgid "Swedish (Finland)"
 msgstr "Schwedisch (Finnland)"
 
-#: froide/settings.py:253
+#: froide/settings.py:254
 msgid "Chinese (Simplified)"
 msgstr "Chinesisch (Kurzzeichen)"
 
-#: froide/settings.py:254
+#: froide/settings.py:255
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "Chinesisch (Traditionell, Honk Kong)"
 
-#: froide/settings.py:443
+#: froide/settings.py:444
 msgid "Access to user status"
 msgstr "Kann Sie als Nutzer auf FragDenStaat.de identifizieren"
 
-#: froide/settings.py:444
+#: froide/settings.py:445
 msgid "Read user profile information"
 msgstr "Kann meine Profil-Informationen sehen"
 
-#: froide/settings.py:445
+#: froide/settings.py:446
 msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
-#: froide/settings.py:446
+#: froide/settings.py:447
 msgid "Read your (private) requests"
 msgstr "Kann Ihre (privaten) Anfragen sehen"
 
-#: froide/settings.py:447
+#: froide/settings.py:448
 msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
-#: froide/settings.py:448
+#: froide/settings.py:449
 msgid "Follow/Unfollow requests"
 msgstr "Folge/Entfolge Anfragen"
 
-#: froide/settings.py:449
+#: froide/settings.py:450
 msgid "Read your (private) documents"
 msgstr "Kann Ihre (privaten) Dokumente sehen"
 
