@@ -26,7 +26,7 @@ from .utils import (
 
 
 class UserTagAdmin(admin.ModelAdmin):
-    pass
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class TaggedUserAdmin(admin.ModelAdmin):
