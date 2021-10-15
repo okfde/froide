@@ -17,6 +17,7 @@ from django.urls import path
 from django.utils.html import format_html
 from django.utils import timezone
 
+from froide.account.models import UserTag
 from froide.helper.admin_utils import (
     make_nullfilter,
     make_greaterzerofilter,
@@ -82,6 +83,21 @@ assign_guidance_action_to_last_message = make_choose_object_action(
     Action,
     execute_assign_guidance_action_to_last_message,
     _("Choose guidance action to attach to last message..."),
+)
+
+
+def execute_assign_tag_to_foirequest_user(admin, request, queryset, action_obj):
+    from froide.account.models import User
+
+    users = User.objects.filter(foirequest__in=queryset).distinct()
+    for user in users:
+        user.tags.add(action_obj)
+
+
+assign_tag_to_foirequest_user = make_choose_object_action(
+    UserTag,
+    execute_assign_tag_to_foirequest_user,
+    _("Tag users of selected requests..."),
 )
 
 
@@ -176,8 +192,10 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "unblock_request",
         "close_requests",
         "attach_guidance_to_last_message",
+        "tag_users",
     ]
     attach_guidance_to_last_message = assign_guidance_action_to_last_message
+    tag_users = assign_tag_to_foirequest_user
 
     raw_id_fields = (
         "same_as",
