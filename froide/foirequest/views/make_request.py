@@ -345,7 +345,10 @@ class MakeRequestView(FormView):
         publicbodies = []
         if publicbody_ids is not None:
             publicbody_ids = publicbody_ids.split("+")
-            publicbodies = PublicBody.objects.filter(pk__in=publicbody_ids)
+            try:
+                publicbodies = PublicBody.objects.filter(pk__in=publicbody_ids)
+            except ValueError:
+                raise Http404
             if len(publicbody_ids) != len(publicbodies):
                 raise Http404
             if len(publicbody_ids) > 1 and not self.can_create_batch():
