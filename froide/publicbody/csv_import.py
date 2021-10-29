@@ -1,5 +1,6 @@
 import csv
 from io import BytesIO, StringIO
+import json
 
 import requests
 
@@ -46,7 +47,6 @@ class CSVImporter(object):
             self.import_row(row)
 
     def import_row(self, row):
-
         # generate slugs
         if "name" in row:
             row["name"] = row["name"].strip()
@@ -93,8 +93,14 @@ class CSVImporter(object):
         if parent:
             row["parent"] = PublicBody._default_manager.get(pk=parent)
 
+        extra_data = row.pop("extra_data", None)
+        if extra_data:
+            row["extra_data"] = json.loads(extra_data)
+
         # get optional values
         for n in (
+            "fax",
+            "source_reference",
             "description",
             "other_names",
             "request_note",
@@ -102,7 +108,7 @@ class CSVImporter(object):
             "wikidata_item",
         ):
             if n in row:
-                row[n] = row.get(n, "").strip()
+                row[n] = row[n].strip()
 
         if "lat" in row and "lng" in row:
             lat = row.pop("lat")
@@ -125,11 +131,13 @@ class CSVImporter(object):
             row["_updated_by"] = self.user
             row["updated_at"] = timezone.now()
             PublicBody._default_manager.filter(id=pb.id).update(**row)
-            pb.laws.clear()
-            pb.laws.add(*row["jurisdiction"].laws)
+            if row.get("jurisdiction"):
+                pb.laws.clear()
+                pb.laws.add(*row["jurisdiction"].laws)
             if regions:
                 pb.regions.set(regions)
-            pb.categories.set(*categories)
+            if categories:
+                pb.categories.set(*categories)
             return pb
         except PublicBody.DoesNotExist:
             pass
@@ -142,10 +150,12 @@ class CSVImporter(object):
         pb.confirmed = True
         pb.site = self.site
         pb.save()
-        pb.laws.add(*row["jurisdiction"].laws)
+        if row.get("jurisdiction"):
+            pb.laws.add(*row["jurisdiction"].laws)
         if regions:
             pb.regions.set(regions)
-        pb.categories.set(*categories)
+        if categories:
+            pb.categories.set(*categories)
         return pb
 
     def get_jurisdiction(self, slug):
