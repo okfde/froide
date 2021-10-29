@@ -487,6 +487,10 @@ class PublicBody(models.Model):
         return edit_string_for_tags(self.tags.all())
 
     @property
+    def category_list(self):
+        return [c.name for c in self.categories.all()]
+
+    @property
     def default_law(self):
         # FIXME: Materialize this?
         return self.get_applicable_law()
