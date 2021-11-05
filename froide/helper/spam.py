@@ -44,7 +44,7 @@ IP_RE = re.compile(r"ExitAddress (\S+)")
 TOR_EXIT_IP_TIMEOUT = 60 * 15
 
 
-def get_tor_exit_ips(refresh=False) -> set:
+def get_tor_exit_ips(refresh=False):
     cache_key = "froide:tor_exit_ips"
     result = cache.get(cache_key)
     if result and not refresh:
