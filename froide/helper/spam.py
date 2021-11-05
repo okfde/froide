@@ -9,6 +9,7 @@ from django.contrib.gis.geoip2 import GeoIP2
 from django.utils.translation import gettext_lazy as _
 
 import requests
+from requests.exceptions import Timeout
 
 from froide.helper.utils import get_client_ip
 
@@ -43,12 +44,17 @@ IP_RE = re.compile(r"ExitAddress (\S+)")
 TOR_EXIT_IP_TIMEOUT = 60 * 15
 
 
-def get_tor_exit_ips(refresh=False):
+def get_tor_exit_ips(refresh=False) -> set:
     cache_key = "froide:tor_exit_ips"
     result = cache.get(cache_key)
     if result and not refresh:
         return result
-    response = requests.get("https://check.torproject.org/exit-addresses")
+    try:
+        response = requests.get(
+            "https://check.torproject.org/exit-addresses", timeout=5
+        )
+    except Timeout:
+        return set()
     exit_ips = set(IP_RE.findall(response.text))
     cache.set(cache_key, exit_ips, TOR_EXIT_IP_TIMEOUT)
     return exit_ips
