@@ -5,7 +5,7 @@ export default class Message {
   expandedClassName = 'alpha-message--expanded'
   metaExpandedClassName = 'alpha-message__meta-container--visible'
 
-  constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
+  constructor(element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
     this.element = element
     this.metaContainer = this.element.querySelector('.alpha-message__meta-container') as HTMLElement
@@ -27,10 +27,13 @@ export default class Message {
     // create storage item and/or expand message
     if (!this.storageItem) {
       // create localStorage item
-      localStorage.setItem(
-        this.id,
-        JSON.stringify({ isExpanded: isLastItem || forceExpand })
-      )
+      try {
+        // localStorage access may cause DOMException if blocked
+        localStorage.setItem(
+          this.id,
+          JSON.stringify({ isExpanded: isLastItem || forceExpand })
+        )
+      } catch { }
       // maybe expand
       if (isLastItem || forceExpand) this.expandMessage()
     } else {
@@ -39,36 +42,44 @@ export default class Message {
     }
   }
 
-  get storageItem () {
-    const item = localStorage.getItem(this.id)
-    return item ? JSON.parse(item) : null
+  get storageItem() {
+    try {
+      // localStorage access may cause DOMException if blocked
+      const item = localStorage.getItem(this.id)
+      return item ? JSON.parse(item) : null
+    } catch {
+      return null
+    }
   }
 
-  get isExpanded () {
+  get isExpanded() {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
 
-  get isCollapsed () {
+  get isCollapsed() {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded === false : false
   }
 
-  updateStorageItem (data: Object) {
-    localStorage.setItem(
-      this.id,
-      JSON.stringify(
-        Object.assign(this.storageItem, data)
+  updateStorageItem(data: Object) {
+    try {
+      // localStorage access may cause DOMException if blocked
+      localStorage.setItem(
+        this.id,
+        JSON.stringify(
+          Object.assign(this.storageItem, data)
+        )
       )
-    )
+    } catch { }
   }
 
-  onHeadClick (e: Event) {
+  onHeadClick(e: Event) {
     this.toggleMessage()
     e.preventDefault()
   }
 
-  toggleMessage () {
+  toggleMessage() {
     if (this.isExpanded) {
       this.collapseMessage()
     } else {
@@ -79,30 +90,30 @@ export default class Message {
     }
   }
 
-  expandMessage () {
+  expandMessage() {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
   }
 
-  collapseMessage () {
+  collapseMessage() {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
     this.metaContainer.classList.remove(this.metaExpandedClassName)
   }
 
-  showMetaContainer () {
+  showMetaContainer() {
     if (!this.metaContainer.classList.contains(this.metaExpandedClassName)) {
       this.toggleMetaContainer()
     }
   }
 
-  toggleMetaContainer (e?: Event) {
+  toggleMetaContainer(e?: Event) {
     e?.preventDefault()
     e?.stopPropagation()
     this.metaContainer.classList.toggle(this.metaExpandedClassName)
   }
 
-  expandCommentText (e: Event) {
+  expandCommentText(e: Event) {
     e.preventDefault()
     // replace parent node content with right sibling content
     const el = e.target as HTMLElement
@@ -112,7 +123,7 @@ export default class Message {
     }
   }
 
-  showAllComments (e?: Event | undefined) {
+  showAllComments(e?: Event | undefined) {
     let el
     if (e) {
       e.preventDefault()
@@ -124,12 +135,12 @@ export default class Message {
     this.unwrapLeftSibling(el)
   }
 
-  showAllAttachments (e: Event) {
+  showAllAttachments(e: Event) {
     e.preventDefault()
     this.unwrapLeftSibling(e.target as HTMLElement)
   }
 
-  unwrapLeftSibling (el: HTMLElement) {
+  unwrapLeftSibling(el: HTMLElement) {
     // unwrap left sibling content of parent node
     const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
@@ -147,31 +158,31 @@ export default class Message {
     }
   }
 
-  scrollToComment (commentElementId: string) {
+  scrollToComment(commentElementId: string) {
     // expand message and comments container first if necessary
     if (!this.isExpanded) this.expandMessage()
     this.showAllComments()
 
-    // wait until DOM has finished rendering
-    // and scroll to comment element
-    ;(function checkIfReady () {
-      if (document.readyState === 'complete') {
-        const element = document.getElementById(commentElementId)
-        if (!element) return
+      // wait until DOM has finished rendering
+      // and scroll to comment element
+      ; (function checkIfReady() {
+        if (document.readyState === 'complete') {
+          const element = document.getElementById(commentElementId)
+          if (!element) return
 
-        // scroll into view
-        element.scrollIntoView({ block: 'center', behavior: 'smooth' })
+          // scroll into view
+          element.scrollIntoView({ block: 'center', behavior: 'smooth' })
 
-        // add and remove highlight class
-        element.classList.add('alpha-comment--highlighted')
-        setTimeout(() => {
-          element.classList.remove('alpha-comment--highlighted')
-        }, 750);
-      } else (
-        // if dom not ready, check again on next tick
-        window.requestAnimationFrame(checkIfReady)
-      )
-    })()
+          // add and remove highlight class
+          element.classList.add('alpha-comment--highlighted')
+          setTimeout(() => {
+            element.classList.remove('alpha-comment--highlighted')
+          }, 750);
+        } else (
+          // if dom not ready, check again on next tick
+          window.requestAnimationFrame(checkIfReady)
+        )
+      })()
 
   }
 
