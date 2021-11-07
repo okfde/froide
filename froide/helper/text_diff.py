@@ -1,7 +1,8 @@
 from difflib import SequenceMatcher
 import re
+from typing import Iterator, List, Optional, Tuple
 
-from django.utils.safestring import mark_safe
+from django.utils.safestring import mark_safe, SafeString
 from django.utils.html import escape
 
 
@@ -11,15 +12,17 @@ SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile("^%s$" % SPLITTER)
 
 
-def get_diff_chunks(content):
+def get_diff_chunks(content: str) -> List[str]:
     return [x for x in SPLITTER_RE.split(content) if x]
 
 
-def is_diff_separator(s):
-    return SPLITTER_MATCH_RE.match(s)
+def is_diff_separator(s: str) -> bool:
+    return bool(SPLITTER_MATCH_RE.match(s))
 
 
-def get_differences_by_chunk(content_a, content_b):
+def get_differences_by_chunk(
+    content_a: str, content_b: str
+) -> Iterator[Tuple[bool, str]]:
     a_list = get_diff_chunks(content_a)
     b_list = get_diff_chunks(content_b)
     matcher = SequenceMatcher(None, a_list, b_list, autojunk=False)
@@ -37,7 +40,9 @@ def get_differences_by_chunk(content_a, content_b):
         yield is_same, part
 
 
-def get_differences(content_a, content_b, min_part_len=3):
+def get_differences(
+    content_a: str, content_b: str, min_part_len: int = 3
+) -> Iterator[Tuple[bool, str]]:
     opened = False
     last_chunk = []
     for is_same, part in get_differences_by_chunk(content_a, content_b):
@@ -59,13 +64,13 @@ def get_differences(content_a, content_b, min_part_len=3):
 
 
 def get_tagged_differences(
-    content_a,
-    content_b,
-    start_tag="<span {attrs}>",
-    end_tag="</span>",
-    attrs=None,
-    min_part_len=3,
-):
+    content_a: str,
+    content_b: str,
+    start_tag: str = "<span {attrs}>",
+    end_tag: str = "</span>",
+    attrs: Optional[str] = None,
+    min_part_len: int = 3,
+) -> Iterator[str]:
 
     if attrs is None:
         attrs = ""
@@ -82,8 +87,12 @@ def get_tagged_differences(
 
 
 def mark_differences(
-    content_a, content_b, start_tag="<span {attrs}>", end_tag="</span>", attrs=None
-):
+    content_a: str,
+    content_b: str,
+    start_tag: str = "<span {attrs}>",
+    end_tag: str = "</span>",
+    attrs: Optional[str] = None,
+) -> SafeString:
     difference_tagger = get_tagged_differences(
         content_a, content_b, start_tag=start_tag, end_tag=end_tag, attrs=attrs
     )

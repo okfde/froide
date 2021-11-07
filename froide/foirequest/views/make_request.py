@@ -493,9 +493,9 @@ class MakeRequestView(FormView):
         if user.is_authenticated:
             params = {}
             if isinstance(foi_object, FoiRequest):
-                params["request"] = str(foi_object.pk).encode("utf-8")
+                params["request"] = str(foi_object.pk)
             else:
-                params["project"] = str(foi_object.pk).encode("utf-8")
+                params["project"] = str(foi_object.pk)
 
             if special_redirect:
                 special_redirect = update_query_params(special_redirect, params)

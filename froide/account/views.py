@@ -116,7 +116,7 @@ def confirm(request, user_id, secret, request_id=None):
         req_service = ActivatePendingRequestService({"request_id": request_id})
         foirequest = req_service.process(request=request)
         if foirequest:
-            params["request"] = str(foirequest.pk).encode("utf-8")
+            params["request"] = str(foirequest.pk)
     default_url = "%s?%s" % (reverse("account-confirmed"), urlencode(params))
     return get_redirect(request, default=default_url, params=params)
 

@@ -5,10 +5,13 @@ from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
 from django_filters.widgets import RangeWidget, DateRangeWidget as DFDateRangeWidget
+from django.http.request import QueryDict
+from django.utils.datastructures import MultiValueDict
+from typing import Any, Dict, Optional, Union
 
 
 class BootstrapChoiceMixin(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         kwargs.setdefault("attrs", {})
         kwargs["attrs"].update({"class": "form-check-input"})
         super(BootstrapChoiceMixin, self).__init__(*args, **kwargs)
@@ -23,17 +26,19 @@ class BootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
 
 
 class BootstrapFileInput(forms.FileInput):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         kwargs.setdefault("attrs", {})
         kwargs["attrs"].update({"class": "form-control"})
-        super(BootstrapFileInput, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class PriceInput(forms.TextInput):
     template_name = "helper/forms/widgets/price_input.html"
 
-    def get_context(self, name, value, attrs):
-        ctx = super(PriceInput, self).get_context(name, value, attrs)
+    def get_context(
+        self, name: str, value: Optional[Union[float, str]], attrs: Dict[str, str]
+    ) -> Dict[str, Any]:
+        ctx = super().get_context(name, value, attrs)
         ctx["widget"].setdefault("attrs", {})
         ctx["widget"]["attrs"]["class"] = "form-control col-3"
         ctx["widget"]["attrs"]["pattern"] = "[\\d\\.,]*"
@@ -51,11 +56,13 @@ class TagAutocompleteWidget(TagWidget):
         css_list = ["css/tagautocomplete.css"]
         css = {"screen": css_list}
 
-    def __init__(self, *args, **kwargs):
-        self.autocomplete_url = kwargs.pop("autocomplete_url", None)
+    def __init__(self, *args, **kwargs) -> None:
+        self.autocomplete_url: Optional[str] = kwargs.pop("autocomplete_url", None)
         super().__init__(*args, **kwargs)
 
-    def value_from_datadict(self, data, files, name):
+    def value_from_datadict(
+        self, data: QueryDict, files: MultiValueDict, name: str
+    ) -> str:
         """Force comma separation of tags by adding trailing comma"""
         val = data.get(name, None)
         if val is None:
@@ -78,7 +85,7 @@ class TagAutocompleteWidget(TagWidget):
 class DateRangeWidget(DFDateRangeWidget):
     template_name = "helper/forms/widgets/daterange.html"
 
-    def __init__(self):
+    def __init__(self) -> None:
         widgets = [
             forms.DateInput(attrs={"class": "form-control", "type": "date"}),
             forms.DateInput(attrs={"class": "form-control", "type": "date"}),

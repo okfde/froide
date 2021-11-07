@@ -5,28 +5,34 @@ from urllib.parse import parse_qs, urlsplit, urlunsplit
 from django.shortcuts import render, redirect
 from django.urls import reverse, NoReverseMatch
 from django.utils.http import url_has_allowed_host_and_scheme, urlencode
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from typing import Dict, Optional, Union
 
 
-def get_next(request):
+def get_next(request: HttpRequest) -> str:
     # This is not a view
     return request.GET.get("next", request.META.get("HTTP_REFERER", "/"))
 
 
-def render_code(code, request, context=None):
+def render_code(
+    code: int, request: HttpRequest, context: Optional[Dict[str, str]] = None
+) -> HttpResponse:
     if context is None:
         context = {}
     return render(request, "%d.html" % code, context, status=code)
 
 
-def render_400(request):
+def render_400(request: HttpRequest) -> HttpResponse:
     return render_code(400, request)
 
 
-def render_405(request):
+def render_405(request: HttpRequest) -> HttpResponse:
     return render_code(405, request)
 
 
-def render_403(request, message=""):
+def render_403(
+    request: HttpRequest, message: str = ""
+) -> Union[HttpResponseRedirect, HttpResponse]:
     if not request.user.is_authenticated:
         return get_redirect(
             request, default="account-login", params={"next": request.get_full_path()}
@@ -34,7 +40,7 @@ def render_403(request, message=""):
     return render_code(403, request, context={"message": message})
 
 
-def get_client_ip(request):
+def get_client_ip(request: HttpRequest) -> str:
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
         ip = x_forwarded_for.split(",")[-1].strip()
@@ -44,8 +50,13 @@ def get_client_ip(request):
 
 
 def get_redirect_url(
-    request, default="/", next=None, allowed_hosts=None, params=None, keep_session=False
-):
+    request: HttpRequest,
+    default: str = "/",
+    next: None = None,
+    allowed_hosts: None = None,
+    params: Optional[Union[Dict[str, str]]] = None,
+    keep_session: bool = False,
+) -> str:
     if next is None:
         next = request.POST.get(
             "next", request.GET.get("next", request.session.get("next"))
@@ -78,7 +89,7 @@ def get_redirect_url(
     return next
 
 
-def get_redirect(request, **kwargs):
+def get_redirect(request: HttpRequest, **kwargs) -> HttpResponseRedirect:
     url = get_redirect_url(request, **kwargs)
     try:
         return redirect(url)
@@ -86,7 +97,7 @@ def get_redirect(request, **kwargs):
         return redirect("/")
 
 
-def update_query_params(url, params):
+def update_query_params(url: str, params: Dict[str, str]) -> str:
     """
     Given a URL, update the query parameters and return the
     modified URL.
@@ -105,14 +116,14 @@ def update_query_params(url, params):
 
 
 class DateTimeEncoder(json.JSONEncoder):
-    def default(self, obj):
+    def default(self, obj) -> Optional[str]:
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
 
 
-def to_json(obj):
+def to_json(obj) -> str:
     return json.dumps(obj, cls=DateTimeEncoder)
 
 
-def is_ajax(request):
+def is_ajax(request: HttpRequest) -> bool:
     return request.headers.get("x-requested-with") == "XMLHttpRequest"

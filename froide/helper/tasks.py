@@ -1,14 +1,16 @@
 import logging
+from typing import Optional
 
 from django_elasticsearch_dsl.registries import registry
 from django.apps import apps
 
 from froide.celery import app as celery_app
+from froide.foirequest.models.request import FoiRequest
 
 logger = logging.getLogger(__name__)
 
 
-def get_instance(model_name, pk):
+def get_instance(model_name: str, pk: int) -> Optional[FoiRequest]:
     model = apps.get_model(model_name)
     try:
         return model._default_manager.get(pk=pk)
@@ -17,7 +19,7 @@ def get_instance(model_name, pk):
 
 
 @celery_app.task
-def search_instance_save(model_name, pk):
+def search_instance_save(model_name: str, pk: int) -> None:
     instance = get_instance(model_name, pk)
     if instance is None:
         return
@@ -29,7 +31,7 @@ def search_instance_save(model_name, pk):
 
 
 @celery_app.task
-def search_instance_pre_delete(model_name, pk):
+def search_instance_pre_delete(model_name: str, pk: int) -> None:
     instance = get_instance(model_name, pk)
     if instance is None:
         return
@@ -40,7 +42,7 @@ def search_instance_pre_delete(model_name, pk):
 
 
 @celery_app.task
-def search_instance_delete(model_name, pk):
+def search_instance_delete(model_name: str, pk: Optional[int]) -> None:
     if pk is None:
         return
     model = apps.get_model(model_name)
