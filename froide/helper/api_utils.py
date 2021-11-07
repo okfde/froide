@@ -196,7 +196,10 @@ class OpenRefineReconciliationMixin(object):
     def _search_reconciliation_results(self, query, filters, limit):
         sqs = self.RECONCILIATION_META.document.search()
         for key, val in filters.items():
-            sqs = sqs.filter("term", **{key: val})
+            try:
+                sqs = sqs.filter("term", **{key: int(val)})
+            except ValueError:
+                pass
         sqs = sqs.query(
             Q("multi_match", query=query, fields=self.RECONCILIATION_META.query_fields)
         )[:limit]
