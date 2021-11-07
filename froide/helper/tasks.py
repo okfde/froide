@@ -3,6 +3,7 @@ from typing import Optional
 
 from django_elasticsearch_dsl.registries import registry
 from django.apps import apps
+from elasticsearch.exceptions import ConnectionTimeout
 
 from froide.celery import app as celery_app
 from froide.foirequest.models.request import FoiRequest
@@ -18,7 +19,7 @@ def get_instance(model_name: str, pk: int) -> Optional[FoiRequest]:
         return None
 
 
-@celery_app.task
+@celery_app.task(autoretry_for=(ConnectionTimeout,), retry_backoff=True)
 def search_instance_save(model_name: str, pk: int) -> None:
     instance = get_instance(model_name, pk)
     if instance is None:
@@ -41,7 +42,7 @@ def search_instance_pre_delete(model_name: str, pk: int) -> None:
         logger.exception(e)
 
 
-@celery_app.task
+@celery_app.task(autoretry_for=(ConnectionTimeout,), retry_backoff=True)
 def search_instance_delete(model_name: str, pk: Optional[int]) -> None:
     if pk is None:
         return
