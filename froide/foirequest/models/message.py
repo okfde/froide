@@ -27,7 +27,9 @@ BOUNCE_RESENT_TAG = "bounce-resent"
 
 class FoiMessageManager(models.Manager):
     def get_throttle_filter(self, queryset, user, extra_filters=None):
-        qs = queryset.filter(sender_user=user, is_response=False)
+        qs = queryset.filter(
+            sender_user=user, is_response=False, kind=MessageKind.EMAIL
+        )
         if extra_filters is not None:
             qs = qs.filter(**extra_filters)
         return qs, "timestamp"
