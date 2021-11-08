@@ -1,13 +1,18 @@
-from django.db import IntegrityError
+from django.db import IntegrityError, models
 from django.template.defaultfilters import slugify
 
 
-def save_obj_with_slug(obj, attribute="title", **kwargs):
+def save_obj_with_slug(obj: models.Model, attribute: str = "title", **kwargs) -> None:
     obj.slug = slugify(getattr(obj, attribute))
     return save_obj_unique(obj, "slug", **kwargs)
 
 
-def save_obj_unique(obj, attr, count=0, postfix_format="-{count}"):
+def save_obj_unique(
+    obj: models.Model,
+    attr: str,
+    count: int = 0,
+    postfix_format: str = "-{count}",
+) -> None:
     klass = obj.__class__
     MAX_COUNT = 10000  # max 10 thousand loops
     base_attr = getattr(obj, attr)
