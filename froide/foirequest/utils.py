@@ -420,9 +420,11 @@ def get_emails_from_request(
                 continue
             email = email.lower()
             if email not in already:
-                pb = get_publicbody_for_email(email, foirequest)
-                yield PublicBodyEmailInfo(email=email, name=email, publicbody=pb)
-                already.add(email.lower())
+                pass
+                # FIXME: get pb without recursive call
+                # pb = get_publicbody_for_email(email, foirequest)
+                # yield PublicBodyEmailInfo(email=email, name=email, publicbody=pb)
+                # already.add(email.lower())
 
     if foirequest.public_body.parent and foirequest.public_body.parent.email:
         email = foirequest.public_body.parent.email.lower()
