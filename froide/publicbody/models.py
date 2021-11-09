@@ -368,6 +368,7 @@ class PublicBody(models.Model):
     source_reference = models.CharField(
         _("source reference"), max_length=255, blank=True
     )
+    alternative_emails = models.JSONField(null=True, blank=True)
     extra_data = models.JSONField(default=dict, blank=True)
 
     change_proposals = models.JSONField(default=dict, blank=True)
@@ -513,6 +514,13 @@ class PublicBody(models.Model):
 
     def get_absolute_domain_short_url(self):
         return "%s%s" % (settings.SITE_URL, self.get_absolute_short_url())
+
+    def get_email(self, law_type=None):
+        if not law_type:
+            return self.email
+        if self.alternative_emails:
+            return self.alternative_emails.get(law_type, self.email)
+        return self.email
 
     def get_mediator(self):
         law = self.default_law

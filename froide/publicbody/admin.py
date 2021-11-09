@@ -113,6 +113,7 @@ class PublicBodyBaseAdminMixin:
                     "classification",
                     "url",
                     "email",
+                    "alternative_emails",
                     "fax",
                     "contact",
                     "address",

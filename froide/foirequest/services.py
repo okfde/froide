@@ -240,7 +240,7 @@ class CreateRequestService(BaseService):
 
         message.recipient_public_body = publicbody
         message.recipient = publicbody.name
-        message.recipient_email = publicbody.email
+        message.recipient_email = publicbody.get_email(data.get("law_type"))
 
         FoiRequest.request_to_public_body.send(sender=request)
 
