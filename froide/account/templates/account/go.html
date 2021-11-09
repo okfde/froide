@@ -5,7 +5,7 @@
 
 {% block body_tag %}
 <div class="container mt-5 text-center">
-  <form action="." method="post" data-autosubmit="true">
+  <form action="{{ form_action }}" method="post" data-autosubmit="true">
     {% csrf_token %}
     <div class="spinner-border" role="status">
       <span class="sr-only">{% translate "Loading..." %}</span>

@@ -149,7 +149,7 @@ def go(request, user_id, token, url):
 
         # If login-link fails, prompt login with redirect
         return get_redirect(request, default="account-login", params={"next": url})
-    return render(request, "account/go.html")
+    return render(request, "account/go.html", {"form_action": request.path})
 
 
 class ProfileView(DetailView):
