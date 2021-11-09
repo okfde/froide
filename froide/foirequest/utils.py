@@ -3,7 +3,7 @@ from datetime import timedelta
 import json
 import os
 import re
-from typing import Optional, Generator, NamedTuple
+from typing import Optional, Iterator, NamedTuple
 
 from django.utils import timezone
 from django.core.mail import mail_managers
@@ -18,6 +18,8 @@ from django.template.defaultfilters import slugify
 import icalendar
 import pytz
 
+from froide.publicbody.models import PublicBody
+
 from froide.helper.text_utils import (
     redact_subject,
     redact_plaintext,
@@ -28,8 +30,6 @@ from froide.helper.date_utils import format_seconds
 from froide.helper.api_utils import get_fake_api_context
 from froide.helper.tasks import search_instance_save
 from froide.helper.email_utils import delete_mails_by_recipient
-
-from froide.publicbody.models import PublicBody
 
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
@@ -237,57 +237,38 @@ def make_unique_filename(name, existing_names):
     return name
 
 
-def compare_publicbody_email(email, foi_request, transform=lambda x: x.lower()):
+def compare_publicbody_email(email, pb_info_list, transform=lambda x: x.lower()):
     email = transform(email)
 
-    if foi_request.public_body and foi_request.public_body.email:
-        pb_value = transform(foi_request.public_body.email)
-        if email == pb_value:
-            return foi_request.public_body
-
-        mediator = foi_request.public_body.get_mediator()
-        if mediator is not None:
-            mediator_value = transform(mediator.email)
-            if email == mediator_value:
-                return mediator
-
-    message_checks = (
-        ("sender", foi_request.response_messages()),
-        ("recipient", foi_request.sent_messages()),
-    )
-    for kind, messages in message_checks:
-        for message in messages:
-            message_email = getattr(message, "%s_email" % kind)
-            message_pb = getattr(message, "%s_public_body" % kind)
-            if not message_email or not message_pb:
-                continue
-            message_email = transform(message_email)
-            if email == message_email:
-                return message_pb
+    for pb_info in pb_info_list:
+        if pb_info.publicbody and transform(pb_info.email) == email:
+            return pb_info.publicbody
 
 
-def get_publicbody_for_email(email, foi_request, include_deferred=False):
+def get_publicbody_for_email(
+    email, foi_request, include_deferred=False
+) -> Optional[PublicBody]:
     if not email:
         return None
 
+    pb_info_list = list(get_emails_from_request(foi_request))
+
     # Compare email direct
-    pb = compare_publicbody_email(email, foi_request)
+    pb = compare_publicbody_email(email, pb_info_list)
     if pb is not None:
         return pb
 
     # Compare email full host
-    pb = compare_publicbody_email(email, foi_request, transform=get_host)
+    pb = compare_publicbody_email(email, pb_info_list, transform=get_host)
     if pb is not None:
         return pb
 
     # Compare email domain without subdomains
-    pb = compare_publicbody_email(email, foi_request, transform=get_domain)
+    pb = compare_publicbody_email(email, pb_info_list, transform=get_domain)
     if pb is not None:
         return pb
 
     # Search in all PublicBodies
-    from froide.publicbody.models import PublicBody
-
     email_host = get_host(email)
     if email_host is None:
         return None
@@ -362,23 +343,48 @@ def get_info_for_email(foirequest, email):
     return PublicBodyEmailInfo(email="", name="", publicbody=None)
 
 
-def get_emails_from_request(foirequest) -> Generator[PublicBodyEmailInfo, None, None]:
+def get_emails_from_request(
+    foirequest, include_mediator=True
+) -> Iterator[PublicBodyEmailInfo]:
     """
     Yields tuples of the form
     email, message or None, Boolean
     """
     already = set()
 
-    if foirequest.public_body and foirequest.public_body.email:
-        email = foirequest.public_body.email
-        yield PublicBodyEmailInfo(
-            email=email,
-            name=_("Default address of {publicbody}").format(
-                publicbody=foirequest.public_body.name
-            ),
-            publicbody=foirequest.public_body,
-        )
-        already.add(email.lower())
+    if foirequest.public_body:
+        pb = foirequest.public_body
+        if pb.email:
+            email = foirequest.public_body.email
+            yield PublicBodyEmailInfo(
+                email=email,
+                name=_("Default address of {publicbody}").format(
+                    publicbody=foirequest.public_body.name
+                ),
+                publicbody=foirequest.public_body,
+            )
+            already.add(email.lower())
+        if pb.alternative_emails:
+            for law_type, email in pb.alternative_emails.items():
+                if email.lower() in already:
+                    continue
+                yield PublicBodyEmailInfo(
+                    email=email,
+                    name=_("Default {law_type} address of {publicbody}").format(
+                        law_type=law_type, publicbody=foirequest.public_body.name
+                    ),
+                    publicbody=foirequest.public_body,
+                )
+                already.add(email.lower())
+
+        if include_mediator:
+            mediator = pb.get_mediator()
+            if mediator:
+                yield PublicBodyEmailInfo(
+                    email=mediator.email,
+                    name=_("{publicbody} (mediator)").format(publicbody=mediator.name),
+                    publicbody=mediator,
+                )
 
     messages = foirequest.response_messages()
     for message in reversed(messages):
@@ -440,7 +446,7 @@ def get_emails_from_message_headers(email_headers):
 
 def possible_reply_addresses(foirequest):
     options = []
-    for email_info in get_emails_from_request(foirequest):
+    for email_info in get_emails_from_request(foirequest, include_mediator=False):
         name = email_info.name
         if email_info.email not in name:
             if not name:
