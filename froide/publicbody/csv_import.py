@@ -97,9 +97,9 @@ class CSVImporter(object):
         if extra_data:
             row["extra_data"] = json.loads(extra_data)
 
-        additional_emails = row.pop("additional_emails", None)
-        if additional_emails:
-            row["additional_emails"] = json.loads(additional_emails)
+        alternative_emails = row.pop("alternative_emails", None)
+        if alternative_emails:
+            row["alternative_emails"] = json.loads(alternative_emails)
 
         # get optional values
         for n in (
