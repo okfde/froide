@@ -35,7 +35,7 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
         method="filter_category",
     )
     classification = django_filters.ModelChoiceFilter(
-        queryset=Classification.objects.all(),
+        queryset=Classification.objects.get_list(),
         to_field_name="slug",
         empty_label=_("all classifications"),
         widget=forms.Select(
