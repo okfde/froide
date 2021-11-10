@@ -199,7 +199,7 @@ class PublicBodyBaseAdminMixin:
     )
     filter_horizontal = ("laws",)
     list_max_show_all = 5000
-    search_fields = ["name", "other_names", "description", "email"]
+    search_fields = ["name", "other_names", "description", "email", "source_reference"]
     exclude = ("confirmed",)
     raw_id_fields = (
         "parent",
