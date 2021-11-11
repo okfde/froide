@@ -43,7 +43,7 @@ def throttle(qs, throttle_config, date_param="first_message"):
     # Return True if the next request would break any limit
     for count, seconds in throttle_config:
         f = {"%s__gte" % date_param: timezone.now() - timedelta(seconds=seconds)}
-        if qs.filter(**f).count() + 1 > count:
+        if qs.filter(**f).count() > count:
             return (count, seconds)
     return False
 
