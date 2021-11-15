@@ -24,6 +24,9 @@ from ..utils import construct_initial_message_body
 payment_possible = settings.FROIDE_CONFIG.get("payment_possible", False)
 
 
+PLACEHOLDER_MARKER = "…"  # Single character, horizontal ellipsis U+2026
+
+
 class RequestForm(JSONMixin, forms.Form):
     subject = forms.CharField(
         label=_("Subject"),
@@ -103,6 +106,18 @@ class RequestForm(JSONMixin, forms.Form):
         if len(slug) < 4:
             raise forms.ValidationError(_("Subject is invalid."))
         return subject
+
+    def clean_body(self):
+        body = self.cleaned_data["body"]
+        if PLACEHOLDER_MARKER in body:
+            raise forms.ValidationError(
+                _(
+                    "Please replace all placeholder values marked by “{}”.".format(
+                        PLACEHOLDER_MARKER
+                    )
+                )
+            )
+        return body
 
     def clean_reference(self):
         ref = self.cleaned_data["reference"]
