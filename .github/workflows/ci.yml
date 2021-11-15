@@ -109,7 +109,7 @@ jobs:
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
         options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
           - "9200:9200"
