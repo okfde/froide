@@ -258,37 +258,39 @@ def check_delivery_conditions(
             foirequest = FoiRequest.objects.get(id=list(request_ids)[0])
 
     pb = None
-    if not manual:
-        if foirequest.closed:
-            # Request is closed and will not receive messages
-            return None, None
+    if manual:
+        return foirequest, pb
 
-        # Check for spam
-        pb = get_publicbody_for_email(sender_email, foirequest, include_deferred=True)
+    if foirequest.closed:
+        # Request is closed and will not receive messages
+        return None, None
 
-        if pb is None:
-            is_spammer = None
-            if sender_email is not None:
-                is_spammer = DeferredMessage.objects.filter(
-                    sender=sender_email, spam=True
-                ).exists()
-                # If no spam found, treat as unknown
-                is_spammer = is_spammer or None
+    # Check for spam
+    pb = get_publicbody_for_email(sender_email, foirequest, include_deferred=True)
+    if pb:
+        return foirequest, pb
 
-            if parsed_email.bounce_info.is_bounce:
-                return foirequest, None
+    if parsed_email.bounce_info.is_bounce:
+        return foirequest, None
 
-            create_deferred(
-                recipient_mail,
-                mail_bytes,
-                spam=is_spammer,
-                sender_email=sender_email,
-                subject=_("Possible Spam Mail received"),
-                body=spam_message,
-                request=foirequest,
-            )
-            return None, None
-    return foirequest, pb
+    is_spammer = None
+    if sender_email is not None:
+        is_spammer = DeferredMessage.objects.filter(
+            sender=sender_email, spam=True
+        ).exists()
+        # If no spam found, treat as unknown
+        is_spammer = is_spammer or None
+
+    create_deferred(
+        recipient_mail,
+        mail_bytes,
+        spam=is_spammer,
+        sender_email=sender_email,
+        subject=_("Possible Spam Mail received"),
+        body=spam_message,
+        request=foirequest,
+    )
+    return None, None
 
 
 @contextmanager
