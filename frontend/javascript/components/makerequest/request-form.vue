@@ -395,7 +395,7 @@
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
-const MAX_BODY_ROWS = 10
+const MAX_BODY_ROWS = 12
 const MIN_BODY_ROWS = 3
 
 export default {
@@ -625,6 +625,9 @@ export default {
       // FIXME
       return this.publicbodies
     }
+  },
+  mounted () {
+    this.bodyChanged()
   },
   methods: {
     resetFullText () {
