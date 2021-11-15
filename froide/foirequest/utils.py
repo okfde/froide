@@ -346,10 +346,6 @@ def get_info_for_email(foirequest, email):
 def get_emails_from_request(
     foirequest, include_mediator=True
 ) -> Iterator[PublicBodyEmailInfo]:
-    """
-    Yields tuples of the form
-    email, message or None, Boolean
-    """
     already = set()
 
     if foirequest.public_body:
@@ -421,10 +417,9 @@ def get_emails_from_request(
             email = email.lower()
             if email not in already:
                 pass
-                # FIXME: get pb without recursive call
-                # pb = get_publicbody_for_email(email, foirequest)
-                # yield PublicBodyEmailInfo(email=email, name=email, publicbody=pb)
-                # already.add(email.lower())
+                # FIXME: Try getting pb without recursive call
+                yield PublicBodyEmailInfo(email=email, name=email, publicbody=None)
+                already.add(email.lower())
 
     if foirequest.public_body.parent and foirequest.public_body.parent.email:
         email = foirequest.public_body.parent.email.lower()
