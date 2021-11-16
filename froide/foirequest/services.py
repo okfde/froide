@@ -180,8 +180,7 @@ class CreateRequestService(BaseService):
             request.status = FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
             request.visibility = FoiRequest.VISIBILITY.INVISIBLE
         else:
-            # TODO add draft
-            request.status = "awaiting_response"
+            request.status = FoiRequest.STATUS.AWAITING_RESPONSE
             request.determine_visibility()
             send_now = True
 
