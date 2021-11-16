@@ -4,6 +4,8 @@ from .utils import connect_foirequest
 def connect_campaign(sender, **kwargs):
     reference = kwargs.get("reference")
     if not reference:
+        reference = sender.reference
+    if not reference:
         return
     if "@" in reference:
         parts = reference.split("@", 1)
