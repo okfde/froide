@@ -172,6 +172,7 @@ class FoiRequestFollowerViewSet(
                 resource_uri=Subquery(follows.values("pk")),
                 can_follow=Case(
                     When(user_id=user.id, then=Value(False)),
+                    When(visibility=FoiRequest.VISIBILITY.INVISIBLE, then=Value(False)),
                     default=Value(True),
                     output_field=BooleanField(null=True),
                 ),
