@@ -42,6 +42,7 @@
                     name="publicbody"
                     :defaultsearch="publicBodySearch"
                     :scope="pbScope"
+                    :form="publicbodyForm"
                     :config="config"
                     :list-view="publicBodyListView"
                   />
