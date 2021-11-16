@@ -36,7 +36,7 @@ export default {
   },
   data () {
     return {
-      public: this.form.fields.public.value || this.form.fields.public.initial
+      public: this.form.fields.public.value !== null ? this.form.fields.public.value : this.form.fields.public.initial
     }
   },
   computed: {

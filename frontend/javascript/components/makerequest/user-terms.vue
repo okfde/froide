@@ -29,7 +29,7 @@ export default {
   },
   data () {
     return {
-      terms: this.form.fields.terms.value || this.form.fields.terms.initial
+      terms: this.form.fields.terms.value !== null ? this.form.fields.terms.value : this.form.fields.terms.initial
     }
   },
   computed: {
