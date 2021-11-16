@@ -35,6 +35,12 @@ def get_presence_manager(room):
     return RedisUserPresenceManager(room)
 
 
+def get_expiring_keys_manager(prefix, timeout=10 * 60):
+    if aioredis is None or not getattr(settings, "REDIS_URL", None):
+        return DummyExpiringKeysManager(prefix, timeout=timeout)
+    return RedisExpiringKeysManager(prefix, timeout=timeout)
+
+
 class BaseUserPresenceManager:
     def __init__(self, room):
         self.room = room
@@ -163,3 +169,97 @@ class RedisUserPresenceManager(BaseUserPresenceManager):
     async def expire(self):
         async with self.get_redis() as redis:
             await self._expire(redis)
+
+
+class BaseExpiringKeysManager:
+    def __init__(self, prefix, timeout=8 * 60):
+        self.prefix = prefix
+        self.timeout = timedelta(seconds=timeout)
+
+    async def add_key_value(self, key, value):
+        raise NotImplementedError
+
+    async def list_key_value(self):
+        raise NotImplementedError
+
+    async def remove_key_value(self, key):
+        raise NotImplementedError
+
+
+class DummyExpiringKeysManager(BaseExpiringKeysManager):
+    keys = defaultdict(dict)
+
+    async def add_key_value(self, key, value):
+        self.keys[self.prefix][key] = (timezone.now(), value)
+
+    async def list_key_value(self):
+        self._expire()
+        for key, (_, value) in self.keys[self.prefix].items():
+            yield key, value
+
+    async def remove_key_value(self, key, value):
+        try:
+            if self.keys[self.prefix][key] == value:
+                del self.keys[self.prefix][key]
+        except KeyError:
+            pass
+
+    async def remove_key(self, key):
+        try:
+            del self.keys[self.prefix][key]
+        except KeyError:
+            pass
+
+    def _expire(self):
+        now = timezone.now()
+        self.keys[self.prefix] = {
+            key: (timestamp, value)
+            for key, (timestamp, value) in self.keys[self.prefix].items()
+            if timestamp + self.timeout >= now
+        }
+
+
+class RedisExpiringKeysManager(BaseExpiringKeysManager):
+    """
+    Stores key/value as expiring redis keys
+    """
+
+    KEY_PREFIX = "froide_expkeys_"
+    SEPERATOR = "::"
+
+    def make_prefix(self):
+        return "{}_{}".format(self.KEY_PREFIX, self.prefix)
+
+    def _make_redis_key(self, key):
+        return "{prefix}{sep}{key}".format(
+            prefix=self.make_prefix(), sep=self.SEPERATOR, key=key
+        )
+
+    def split_key(self, redis_key):
+        return redis_key.split(self.SEPERATOR)[-1]
+
+    get_redis = RedisContext
+
+    async def add_key_value(self, key, value):
+        redis_key = self._make_redis_key(key)
+        async with self.get_redis() as redis:
+            await redis.set(redis_key, value, expire=self.timeout.seconds)
+
+    async def list_key_value(self):
+        async with self.get_redis() as redis:
+            async for redis_key in redis.iscan(match="{}*".format(self.make_prefix())):
+                key = self.split_key(redis_key.decode("utf-8"))
+                value = await redis.get(redis_key, encoding="utf-8")
+                yield key, value
+
+    async def remove_key_value(self, key, value):
+        redis_key = self._make_redis_key(key)
+        async with self.get_redis() as redis:
+            redis_value = await redis.get(redis_key, encoding="utf-8")
+            if redis_value == value:
+                await redis.delete(redis_key)
+
+    async def remove_key(self, key):
+        redis_key = self._make_redis_key(key)
+        async with self.get_redis() as redis:
+            await redis.delete(redis_key)
