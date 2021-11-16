@@ -48,7 +48,10 @@
       <dt>
         {% blocktrans %}Your name:{% endblocktrans %}
       </dt>
-      <dd>{{ request.user.get_full_name }}</dd>
+      <dd>
+        {{ request.user.get_full_name }}
+        {% block settings_name %}{% endblock %}
+      </dd>
       <dt>
         {% trans "Account Privacy:" %}
       </dt>
@@ -58,6 +61,7 @@
         {% blocktrans %}Your name is hidden on the web.{% endblocktrans %}
       {% else %}
         {% blocktrans %}Your name is visible.{% endblocktrans %}
+        {% block settings_privacy %}{% endblock %}
         <a class="btn btn-sm btn-secondary pull-right" data-toggle="collapse" href="#make-private">{% trans "Make my account private" %}</a>
         <div class="collapse mt-3" id="make-private">
           <div class="card card-body">
