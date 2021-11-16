@@ -10,4 +10,4 @@ class CampaignConfig(AppConfig):
         from froide.foirequest.models import FoiRequest
         from .listeners import connect_campaign
 
-        FoiRequest.request_created.connect(connect_campaign)
+        FoiRequest.request_sent.connect(connect_campaign)
