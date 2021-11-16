@@ -249,12 +249,14 @@ class CreateRequestService(BaseService):
         )
         if send_now:
             message.send()
+            message.save()
             FoiRequest.message_sent.send(
                 sender=request,
                 message=message,
             )
-
-            message.save()
+            FoiRequest.request_sent.send(
+                sender=request, reference=data.get("reference", "")
+            )
         return request
 
     def pre_save_request(self, request):
@@ -509,6 +511,7 @@ class ActivatePendingRequestService(BaseService):
         foirequest.save()
         if send_now:
             foirequest.safe_send_first_message()
+            FoiRequest.request_sent.send(sender=foirequest)
         return foirequest
 
 

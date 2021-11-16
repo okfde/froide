@@ -422,6 +422,7 @@ class FoiRequest(models.Model):
     message_sent = django.dispatch.Signal()  # args: ["message", "user"]
     message_received = django.dispatch.Signal()  # args: ["message"]
     request_created = django.dispatch.Signal()  # args: []
+    request_sent = django.dispatch.Signal()  # args: []
     request_to_public_body = django.dispatch.Signal()  # args: []
     # status_changed providing args: [
     #    "status", "resolution", "data", "user",
