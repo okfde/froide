@@ -168,6 +168,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "is_blocked",
         "not_publishable",
         "campaign",
+        "law",
         make_nullfilter("same_as", _("Has same request")),
         ("user", ForeignKeyFilter),
         ("public_body", ForeignKeyFilter),
