@@ -2,30 +2,27 @@
 {% load markup %}
 
 {% with campaign=object.campaign %}
-  <div class="card d-print-none">
-    <div class="card-body">
-      {% if campaign.description %}
-        {{ campaign.description|markdown }}
-      {% endif %}
-      <p class="text-right">
-        {% blocktrans with name=campaign.name url=campaign.url %}
-          This request was made as part of the campaign <a href="{{ url }}">“{{ name }}”</a>.
-        {% endblocktrans %}
-      </p>
-      {% if campaign.active %}
-      <div class="row justify-content-center mt-6">
+  {% if campaign.url or campaign.description %}
+    <div class="card d-print-none">
+      <div class="card-body">
+        {% if campaign.description %}
+          {{ campaign.description|markdown }}
+        {% endif %}
+        {% if campaign.url %}
+          <p class="text-right">
+            {% blocktrans with name=campaign.name url=campaign.url %}
+              This request was made as part of the campaign <a href="{{ url }}">“{{ name }}”</a>.
+            {% endblocktrans %}
+          </p>
+        {% endif %}
+        {% if campaign.active %}
+        <div class="row justify-content-center mt-6">
           {% if not request.user.is_authenticated or campaign.ident not in request.user.tags %}
             <a href="{{ campaign.url }}" class="btn btn-primary">{% trans "Make a request yourself" %}</a>
           {% endif %}
-
-          {% if object.resolution == 'successful' and campaign.report_url and request.user == object.user %}
-            <div class="col-md-6 text-center">
-              <p>{% trans 'Your request has been successful! Please help us now to classify the answer.' %}</p>
-              <a href="{{ campaign.report_url }}?request_id={{ object.id }}" class="btn btn-primary">{% trans "Answer some questions!" %}</a>
-            </div>
-          {% endif %}
+        </div>
+        {% endif %}
       </div>
-      {% endif %}
     </div>
-  </div>
+  {% endif %}
 {% endwith %}
