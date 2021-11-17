@@ -1,18 +1,29 @@
 <template>
-  <div class="modal-mask" id="step-review" @click.self="close">
+  <div
+    id="step-review"
+    class="modal-mask"
+    @click.self="close"
+  >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
             {{ i18n.reviewTitle }}
           </h5>
-          <button type="button" class="close" aria-label="Close" @click="close">
+          <button
+            type="button"
+            class="close"
+            aria-label="Close"
+            @click="close"
+          >
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <dl class="message-meta">
-            <dt :class="{'text-danger': !userValid}">{{ i18n.reviewFrom }}</dt>
+            <dt :class="{'text-danger': !userValid}">
+              {{ i18n.reviewFrom }}
+            </dt>
             <dd :class="{'text-danger': !userValid}">
               {{ user.first_name }} {{ user.last_name }} &lt;{{ user.email }}&gt;
             </dd>
@@ -26,7 +37,9 @@
             <dd v-else>
               -
             </dd>
-            <dt :class="{'text-danger': !subjectValid}">{{ i18n.subject }}</dt>
+            <dt :class="{'text-danger': !subjectValid}">
+              {{ i18n.subject }}
+            </dt>
             <dd :class="{'text-danger': !subjectValid}">
               {{ subject }}
             </dd>
@@ -48,18 +61,39 @@
           <ul class="review-hints">
             <li>{{ i18n.reviewSpelling }}</li>
             <li>{{ i18n.reviewPoliteness }}</li>
-            <li v-for="error in errors" :key="error" class="error">
+            <li
+              v-for="error in errors"
+              :key="error"
+              class="error"
+            >
               {{ error }}
             </li>
           </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" :class="{ 'btn-secondary': canSend, 'btn-primary': !canSend }" @click="close">
-            <i class="fa fa-edit" aria-hidden="true"></i>
+          <button
+            type="button"
+            class="btn"
+            :class="{ 'btn-secondary': canSend, 'btn-primary': !canSend }"
+            @click="close"
+          >
+            <i
+              class="fa fa-edit"
+              aria-hidden="true"
+            />
             {{ i18n.reviewEdit }}
           </button>
-          <button v-if="canSend" type="submit" id="send-request-button" class="btn btn-primary" @click="$emit('submit')">
-            <i class="fa fa-send" aria-hidden="true"></i>
+          <button
+            v-if="canSend"
+            id="send-request-button"
+            type="submit"
+            class="btn btn-primary"
+            @click="$emit('submit')"
+          >
+            <i
+              class="fa fa-send"
+              aria-hidden="true"
+            />
             {{ i18n.submitRequest }}
           </button>
         </div>
@@ -76,16 +110,38 @@ function erx (text) {
 }
 
 export default {
-  name: 'review-request',
-  props: ['i18n',
-    'publicbodies',
-    'user',
-    'defaultLaw',
-    'subject',
-    'body',
-    'fullText'
-  ],
+  name: 'ReviewRequest',
   mixins: [LetterMixin],
+  props: {
+    i18n: {
+      type: Object,
+      required: true
+    },
+    publicbodies: {
+      type: Array,
+      required: true
+    },
+    user: {
+      type: Object,
+      required: true
+    },
+    defaultLaw: {
+      type: Object,
+      required: true
+    },
+    subject: {
+      type: String,
+      required: true
+    },
+    body: {
+      type: String,
+      required: true
+    },
+    fullText: {
+      type: Boolean,
+      required: true
+    },
+  },
   computed: {
     canSend () {
       return this.user.id || !this.hasErrors
