@@ -42,6 +42,10 @@ class Campaign(models.Model):
         return self.name
 
     @property
+    def has_reporting(self):
+        return bool(self.report_url)
+
+    @property
     def banner_templates(self):
         return select_template(
             [
