@@ -40,6 +40,7 @@ from ..utils import (
     get_info_for_email,
     make_unique_filename,
     redact_plaintext_with_request,
+    select_foirequest_template,
 )
 
 publishing_denied = settings.FROIDE_CONFIG.get("publishing_denied", False)
@@ -124,7 +125,9 @@ def get_send_message_form(*args, **kwargs):
         message_ready = True
         days = (timezone.now() - foirequest.due_date).days + 1
         message = render_to_string(
-            "foirequest/emails/overdue_reply.txt",
+            select_foirequest_template(
+                foirequest, "foirequest/emails/overdue_reply.txt"
+            ),
             {
                 "due": ngettext_lazy("%(count)s day", "%(count)s days", days)
                 % {"count": days},
@@ -375,6 +378,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
 def get_escalation_message_form(*args, **kwargs):
     foirequest = kwargs.pop("foirequest")
     template = kwargs.pop("template", "foirequest/emails/mediation_message.txt")
+
     subject = _("Complaint about request “{title}”").format(title=foirequest.title)
 
     return EscalationMessageForm(
@@ -383,7 +387,7 @@ def get_escalation_message_form(*args, **kwargs):
         initial={
             "subject": subject,
             "message": render_to_string(
-                template,
+                select_foirequest_template(foirequest, template),
                 {
                     "law": foirequest.law.name,
                     "link": foirequest.get_auth_link(),

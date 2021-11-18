@@ -811,3 +811,13 @@ def export_user_data(user):
 def update_foirequest_index(queryset):
     for foirequest_id in queryset.values_list("id", flat=True):
         search_instance_save.delay("foirequest.foirequest", foirequest_id)
+
+
+def select_foirequest_template(foirequest, base_template: str):
+    path, name = base_template.rsplit("/", 1)
+    templates = []
+    if foirequest.law and foirequest.law.law_type:
+        templates.append("/".join((path, foirequest.law.law_type.lower(), name)))
+
+    templates.append(base_template)
+    return templates
