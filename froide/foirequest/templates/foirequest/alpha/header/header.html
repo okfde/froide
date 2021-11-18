@@ -103,6 +103,14 @@
           {% endif %}
         {% endif %}
 
+        <!-- law if not meta -->
+        {% if object.law and not object.law.meta %}
+        <div class="mt-3 text-gray-500">
+          {% blocktrans %}Legal basis:{% endblocktrans %}
+          <a class="text-gray-500 font-weight-bold" href="{{ object.law.get_absolute_url }}">{{ object.law.name }}</a>
+        </div>
+        {% endif %}
+
         <!-- description -->
         <div class="mt-3">
           <div class="request-descr request-descr--collapsed">
