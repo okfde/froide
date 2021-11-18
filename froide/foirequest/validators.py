@@ -47,3 +47,17 @@ def clean_reference(value):
         return "%s:%s" % (kind, value)
     except ValueError:
         return ""
+
+
+PLACEHOLDER_MARKER = "…"  # Single character, horizontal ellipsis U+2026
+
+
+def validate_no_placeholder(value):
+    if PLACEHOLDER_MARKER in value:
+        raise ValidationError(
+            _(
+                "Please replace all placeholder values marked by “{}”.".format(
+                    PLACEHOLDER_MARKER
+                )
+            )
+        )

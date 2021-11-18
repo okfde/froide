@@ -28,7 +28,11 @@ from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..models.message import MessageKind
 from ..foi_mail import generate_foirequest_files
 from ..tasks import convert_attachment_task, move_upload_to_attachment
-from ..validators import validate_upload_document, validate_postal_content_type
+from ..validators import (
+    validate_upload_document,
+    validate_postal_content_type,
+    validate_no_placeholder,
+)
 from ..utils import (
     construct_message_body,
     MailAttachmentSizeChecker,
@@ -212,6 +216,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
     )
     message = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"}),
+        validators=[validate_no_placeholder],
         label=_("Your message"),
         help_text=_(
             "Don't include personal information. "
@@ -396,8 +401,9 @@ class EscalationMessageForm(forms.Form):
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     message = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control"}),
         label=_("Your message"),
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        validators=[validate_no_placeholder],
     )
 
     def __init__(self, *args, **kwargs):

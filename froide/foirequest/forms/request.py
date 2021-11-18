@@ -18,13 +18,10 @@ from froide.helper.auth import get_read_queryset
 from froide.campaign.validators import validate_not_campaign
 
 from ..models import FoiRequest, RequestDraft, PublicBodySuggestion
-from ..validators import clean_reference
+from ..validators import clean_reference, validate_no_placeholder
 from ..utils import construct_initial_message_body
 
 payment_possible = settings.FROIDE_CONFIG.get("payment_possible", False)
-
-
-PLACEHOLDER_MARKER = "…"  # Single character, horizontal ellipsis U+2026
 
 
 class RequestForm(JSONMixin, forms.Form):
@@ -40,6 +37,7 @@ class RequestForm(JSONMixin, forms.Form):
         label=_("Body"),
         min_length=8,
         max_length=5000,
+        validators=[validate_no_placeholder],
         widget=forms.Textarea(
             attrs={
                 "placeholder": _("Specify your request here..."),
@@ -106,18 +104,6 @@ class RequestForm(JSONMixin, forms.Form):
         if len(slug) < 4:
             raise forms.ValidationError(_("Subject is invalid."))
         return subject
-
-    def clean_body(self):
-        body = self.cleaned_data["body"]
-        if PLACEHOLDER_MARKER in body:
-            raise forms.ValidationError(
-                _(
-                    "Please replace all placeholder values marked by “{}”.".format(
-                        PLACEHOLDER_MARKER
-                    )
-                )
-            )
-        return body
 
     def clean_reference(self):
         ref = self.cleaned_data["reference"]
