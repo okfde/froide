@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-18 10:52+0100\n"
-"PO-Revision-Date: 2021-11-15 14:09+0100\n"
+"POT-Creation-Date: 2021-11-18 11:10+0100\n"
+"PO-Revision-Date: 2021-11-18 11:13+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1351,8 +1351,8 @@ msgid "Application requires following permissions"
 msgstr "Die Anwendung erfordert die folgenden Berechtigungen"
 
 #: froide/account/templates/oauth2_provider/authorize.html:31
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:207
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:268
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:169
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:230
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html:29
 #: froide/foirequest/views/attachment.py:223
 #: froide/problem/templates/problem/message_toolbar_item.html:145
@@ -1561,12 +1561,7 @@ msgid "campaigns"
 msgstr "Kampagnen"
 
 #: froide/campaign/templates/campaign/request_banner.html:13
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "          This request was made as part of the campaign <a href=\"%(url)s"
-#| "\">“%(name)s”</a>.\n"
-#| "        "
+#, python-format
 msgid ""
 "\n"
 "              This request was made as part of the campaign <a href=\"%(url)s"
@@ -1574,8 +1569,8 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"           Diese Anfrage wurde als Teil der Kampagne <a href=\"%(url)s\">"
-"%(name)s</a> gestellt.\n"
+"           Diese Anfrage wurde als Teil der Kampagne <a href=\"%(url)s"
+"\">„%(name)s“</a> gestellt.\n"
 "          "
 
 #: froide/campaign/templates/campaign/request_banner.html:21
@@ -2173,7 +2168,7 @@ msgstr ""
 "Hilfe von %(sitename)s gestellt wurden."
 
 #: froide/foirequest/feeds.py:83
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:136
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:90
 #: froide/foirequest/templates/foirequest/show.html:484
 msgid "Not yet known"
 msgstr "Noch nicht bekannt"
@@ -2345,14 +2340,14 @@ msgstr[1] "%(count)s Tage"
 msgid ""
 "Dear Sir or Madam,\n"
 "\n"
-"...\n"
+"…\n"
 "\n"
 "Sincerely yours\n"
 "%(name)s\n"
 msgstr ""
 "Sehr geehrte Damen und Herren,\n"
 "\n"
-"...\n"
+"…\n"
 "\n"
 "Mit freundlichen Grüßen\n"
 "%(name)s\n"
@@ -4254,8 +4249,8 @@ msgid "Comment was removed."
 msgstr "Kommentar wurde entfernt."
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/comments/comment.html:47
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:157
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:184
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:119
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:146
 #: froide/templates/comments/foirequest/list.html:29
 msgid "Read all"
 msgstr "Alles lesen"
@@ -4640,82 +4635,65 @@ msgstr ""
 "Informationsfreiheitsgesetzes!<br/>Sie müssen nach spezifischen, nicht sie "
 "selbst betreffenden Dokumenten in Behörden fragen."
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:38
-msgid "Welcome to your new request page! Can we give you a tour?"
-msgstr ""
-"Willkommen auf Ihrer Anfrage-Seite! Möchten Sie einen kurzen Rundgang machen?"
-
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:43
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:66
-msgid "Yes, show me!"
-msgstr "Ja, los geht‘s!"
-
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:52
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:75
-msgid "No, thanks."
-msgstr "Nein, Danke."
-
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:61
-msgid "You received a reply! Can we give you a tour of your options?"
-msgstr ""
-"Sie haben eine Antwort erhalten! Können wir Ihnen zeigen, was Sie jetzt "
-"machen können?"
-
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:86
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:40
 #, python-format
 msgid "<b>Hey %(name)s</b>, your request is <b>overdue</b>!"
 msgstr ""
 "<b>Hallo %(name)s</b>, eine Antwort auf Ihre Anfrage ist <b>überfällig</b>!"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:88
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:42
 msgid "Please act now:"
 msgstr "Bitte handeln Sie jetzt:"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:91
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:45
 msgid "Have you received a reply by <b>postal mail</b>?"
 msgstr "Haben Sie eine Antwort <b>per Post</b> erhalten?"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:94
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:48
 msgid "Upload the letter now!"
 msgstr "Laden Sie den Brief jetzt hoch!"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:98
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:52
 msgid "Have you not gotten any reply?"
 msgstr "Haben Sie keine Antwort erhalten?"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:101
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:55
 msgid "Write a reminder to the public body!"
 msgstr "Schreiben Sie eine Erinnerung an die Behörde!"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:110
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:64
 #: froide/foirequest/templates/foirequest/show.html:88
 msgid "You request has been refused."
 msgstr "Ihre Anfrage wurde abgelehnt."
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:112
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:66
 #: froide/foirequest/templates/foirequest/show.html:89
 msgid "Consider sending a letter to a mediator"
 msgstr "Sie können den gesetzlichen Vermittler einschalten"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:131
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:85
 #: froide/foirequest/templates/foirequest/show.html:479
 msgid "Request to:"
 msgstr "Anfrage an:"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:144
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:98
 #: froide/foirequest/templates/foirequest/show.html:489
 msgid "Project:"
 msgstr "Projekt:"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:166
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:109
+msgid "Legal basis:"
+msgstr "Verwendetes Gesetz:"
+
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:128
 msgid "Result of request"
 msgstr "Ergebnis der Anfrage"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:170
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:132
 msgid "Edit summary"
 msgstr "Zusammenfassung bearbeiten"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:177
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:139
 msgid ""
 "What have you learned from this request? Write a short summary of the "
 "results."
@@ -4723,12 +4701,12 @@ msgstr ""
 "Was haben Sie durch diese Anfrage erfahren? Geben Sie eine kurze "
 "Zusammenfassung der Ergebnisse."
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:191
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:153
 #: froide/foirequest/templates/foirequest/show.html:218
 msgid "Write summary"
 msgstr "Zusammenfassung schreiben"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:200
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:162
 #: froide/foirequest/templates/foirequest/show.html:416
 msgid ""
 "Have you received the information you need? What have you learned from it?"
@@ -4736,24 +4714,24 @@ msgstr ""
 "Haben Sie die Informationen, die Sie erfragt haben, erhalten? Was haben Sie "
 "erfahren?"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:202
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:164
 msgid "Summary of the result of your request"
 msgstr "Zusammenfassung des Ergebnisses Ihrer Anfrage"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:204
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:267
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:166
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:229
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html:32
 #: froide/foirequest/templates/foirequest/snippets/sidebar.html:56
 #: froide/foirequest/views/message.py:427
 msgid "Save"
 msgstr "Speichern"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:234
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:196
 msgid "Edit tags"
 msgstr "Schlagwörter bearbeiten"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:236
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:249
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:198
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:211
 msgid ""
 "Tags are a way to organise your own requests and also group them with other "
 "requests on the platform."
@@ -4761,12 +4739,12 @@ msgstr ""
 "Mit Schlagwörtern können Sie Ihre Anfragen organisieren und diese auch mit "
 "anderen Anfragen auf der Plattform gruppieren."
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:238
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:251
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:200
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:213
 msgid "What does this mean?"
 msgstr "Was bedeutet das?"
 
-#: froide/foirequest/templates/foirequest/alpha/header/header.html:247
+#: froide/foirequest/templates/foirequest/alpha/header/header.html:209
 msgid "Add tags"
 msgstr "Schlagwörter hinzufügen"
 
@@ -4896,6 +4874,27 @@ msgstr "Status festlegen"
 #: froide/foirequest/templates/foirequest/alpha/header/tabs.html:20
 msgid "Correspondence"
 msgstr "Korrespondenz"
+
+#: froide/foirequest/templates/foirequest/alpha/header/tour.html:6
+msgid "Welcome to your new request page! Can we give you a tour?"
+msgstr ""
+"Willkommen auf Ihrer Anfrage-Seite! Möchten Sie einen kurzen Rundgang machen?"
+
+#: froide/foirequest/templates/foirequest/alpha/header/tour.html:11
+#: froide/foirequest/templates/foirequest/alpha/header/tour.html:34
+msgid "Yes, show me!"
+msgstr "Ja, los geht‘s!"
+
+#: froide/foirequest/templates/foirequest/alpha/header/tour.html:20
+#: froide/foirequest/templates/foirequest/alpha/header/tour.html:43
+msgid "No, thanks."
+msgstr "Nein, Danke."
+
+#: froide/foirequest/templates/foirequest/alpha/header/tour.html:29
+msgid "You received a reply! Can we give you a tour of your options?"
+msgstr ""
+"Sie haben eine Antwort erhalten! Können wir Ihnen zeigen, was Sie jetzt "
+"machen können?"
 
 #: froide/foirequest/templates/foirequest/alpha/show.html:44
 #: froide/foirequest/templates/foirequest/show.html:43
@@ -5328,22 +5327,7 @@ msgid "Post Address:"
 msgstr "Postanschrift"
 
 #: froide/foirequest/templates/foirequest/emails/mediation_message.txt:1
-#, fuzzy, python-format
-#| msgid ""
-#| "Dear Sir or Madam,\n"
-#| "\n"
-#| "I'd like to complain about the handling of the request under the %(law)s "
-#| "documented here:\n"
-#| "\n"
-#| "%(link)s\n"
-#| "\n"
-#| "You can also find all documents related to this request attached to this "
-#| "email.\n"
-#| "\n"
-#| "I believe this request has been mishandled because ...\n"
-#| "\n"
-#| "Sincerely yours\n"
-#| "%(name)s"
+#, python-format
 msgid ""
 "Dear Sir or Madam,\n"
 "\n"
@@ -9103,7 +9087,7 @@ msgstr "Webseiten-Text"
 
 #: froide/publicbody/models.py:107
 msgid "Legal Text"
-msgstr ""
+msgstr "Gesetzestext"
 
 #: froide/publicbody/models.py:108 froide/publicbody/models.py:379
 msgid "request note"
@@ -12656,9 +12640,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Please select one of the above options to proceed."
 #~ msgstr "Bitte wählen Sie eine der oberen Optionen um weiterzumachen."
-
-#~ msgid "Legal Explanation:"
-#~ msgstr "Erklärung:"
 
 #~ msgid "Request Subject"
 #~ msgstr "Betreff der Anfrage"
