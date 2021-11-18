@@ -135,7 +135,7 @@ def get_send_message_form(*args, **kwargs):
             },
         )
     else:
-        message = _("Dear Sir or Madam,\n\n...\n\nSincerely yours\n%(name)s\n")
+        message = _("Dear Sir or Madam,\n\n…\n\nSincerely yours\n%(name)s\n")
         message = message % {"name": foirequest.user.get_full_name()}
     if "message_ready" in kwargs:
         message_ready = kwargs.pop("message_ready")
