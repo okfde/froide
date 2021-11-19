@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-18 11:10+0100\n"
-"PO-Revision-Date: 2021-11-18 11:13+0100\n"
+"PO-Revision-Date: 2021-11-19 15:48+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3594,8 +3594,8 @@ msgstr "Vorschläge für Behörden"
 #, python-format
 msgid "Update on one of your request"
 msgid_plural "Update on %(count)s of your requests"
-msgstr[0] "Neues bei einer Anfrage, der Sie folgen"
-msgstr[1] "Neues bei %(count)s Anfragen, denen Sie folgen"
+msgstr[0] "Neues bei einer Ihrer Anfragen"
+msgstr[1] "Neues bei %(count)s Ihrer Anfragen"
 
 #: froide/foirequest/notifications.py:55
 msgid "Please classify the reply to your request"
@@ -4443,7 +4443,7 @@ msgstr "Geben Sie die Behörde an, die diese Nachricht erhalten hat:"
 #: froide/foirequest/templates/foirequest/alpha/body/message/meta_container.html:145
 #: froide/foirequest/templates/foirequest/snippets/message.html:132
 msgid "Set receiving public body"
-msgstr "Empfänger-Behörde wurde gesetzt"
+msgstr "Empfänger-Behörde festlegen"
 
 #: froide/foirequest/templates/foirequest/alpha/body/message/meta_container.html:163
 #: froide/foirequest/templates/foirequest/snippets/message.html:150
