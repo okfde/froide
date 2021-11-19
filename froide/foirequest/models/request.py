@@ -652,6 +652,9 @@ class FoiRequest(models.Model):
     def get_throttle_config(cls):
         return settings.FROIDE_CONFIG.get("request_throttle", None)
 
+    def get_throttle_message(cls):
+        return _("You exceeded your request limit of %(count)s requests in %(time)s.")
+
     def should_apply_throttle(self):
         last_message = self.messages[-1]
         return not last_message.is_response or not self.is_actionable()

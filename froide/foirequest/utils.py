@@ -63,9 +63,8 @@ def check_throttle(user, klass, extra_filters=None):
 
     if settings.FROIDE_CONFIG.get("request_throttle_mail"):
         mail_managers(_("User exceeded request limit"), str(user.pk))
-    message = _("You exceeded your request limit of %(count)s requests in %(time)s.")
     return forms.ValidationError(
-        message,
+        klass.get_throttle_message(),
         params={"count": throttle_kind[0], "time": format_seconds(throttle_kind[1])},
         code="throttled",
     )
