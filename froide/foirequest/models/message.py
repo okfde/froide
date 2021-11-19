@@ -459,6 +459,7 @@ class FoiMessage(models.Model):
     def get_throttle_config(cls):
         return settings.FROIDE_CONFIG.get("message_throttle", None)
 
+    @classmethod
     def get_throttle_message(cls):
         return _("You exceeded your message limit of %(count)s messages in %(time)s.")
 
