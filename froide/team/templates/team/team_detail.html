@@ -3,6 +3,8 @@
 {% load i18n %}
 {% load form_helper %}
 
+{% block title %}{% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}{% endblock %}
+
 {% block app_body %}
 <div class="row mb-3 mt-3">
   <div class="col-lg-8">
