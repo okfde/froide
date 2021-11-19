@@ -90,7 +90,7 @@
             :title="i18n.undo"
             @click="undo"
           >
-            <i class="fas fa-share fa-flip-horizontal" />
+            <i class="fa fa-share fa-flip-horizontal" />
           </button>
           <button
             class="btn btn-light"
@@ -100,7 +100,7 @@
             :title="i18n.redo"
             @click="redo"
           >
-            <i class="fas fa-share" />
+            <i class="fa fa-share" />
           </button>
         </div>
 
