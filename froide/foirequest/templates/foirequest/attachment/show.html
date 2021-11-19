@@ -10,7 +10,7 @@
 {% block body %}
 <div class="breadcrumb-container">
   {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachment of message from {{ date }}{% endblocktrans %}
-  {% include "foirequest/alpha/header/breadcrumb.html" with object=foirequest last_item=breadcrumb_label %}
+  {% include "foirequest/header/breadcrumb.html" with object=foirequest last_item=breadcrumb_label %}
 </div>
 
 <div class="container mt-3 mb-3">

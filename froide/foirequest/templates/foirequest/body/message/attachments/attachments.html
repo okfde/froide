@@ -11,19 +11,19 @@
       {% if object|can_write_foirequest:request %}
         <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments:' %}</div>
       {% endif %}
-      {% include "foirequest/alpha/body/message/attachments/list.html" with attachment_list=message.approved_attachments %}
+      {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.approved_attachments %}
     {% endif %}
 
     <!-- unapproved attachments -->
     {% if message.unapproved_attachments %}
       <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments:' %}</div>
-      {% include "foirequest/alpha/body/message/attachments/list.html" with attachment_list=message.unapproved_attachments %}
+      {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.unapproved_attachments %}
     {% endif %}
 
     {% if message.hidden_attachments %}
       <!-- irrelevant attachments -->
       <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
-        {% include "foirequest/alpha/body/message/attachments/list.html" with attachment_list=message.hidden_attachments %}
+        {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.hidden_attachments %}
       </div>
     {% endif %}
 

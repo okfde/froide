@@ -10,7 +10,7 @@
         {% block foirequest_message_before_last %}{% endblock %}
       {% endif %}
 
-      {% include "foirequest/alpha/body/message/message.html" %}
+      {% include "foirequest/body/message/message.html" %}
 
       {% if forloop.last and object.messages|length == 1 %}
         {% block foirequest_message_after_single %}{% endblock %}

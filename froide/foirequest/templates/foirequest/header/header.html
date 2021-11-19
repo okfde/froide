@@ -32,7 +32,7 @@
   {% endif %}
 
   {% if object|can_write_foirequest:request %}
-    {% include "foirequest/alpha/header/tour.html" %}
+    {% include "foirequest/header/tour.html" %}
   {% endif %}
 
   {% if object|can_write_foirequest:request and object.is_overdue %}
@@ -240,7 +240,7 @@
 
     <!-- right column (info box) -->
     <div class="col-md-6 col-lg-5 col-xl-4">
-      {% include "foirequest/alpha/header/info-box.html" %}
+      {% include "foirequest/header/info-box.html" %}
     </div>
   </div>
 </div>

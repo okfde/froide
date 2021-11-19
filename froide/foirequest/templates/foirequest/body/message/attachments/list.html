@@ -2,14 +2,14 @@
 
 <div class="d-flex flex-wrap mb-2">
   {% for attachment in attachment_list|slice:":3" %}
-    {% include "foirequest/alpha/body/message/attachments/item.html" %}
+    {% include "foirequest/body/message/attachments/item.html" %}
   {% endfor %}
 
   <!-- wrap everything after third attachment -->
   {% if attachment_list|length > 3 %}
     <div style="display: none;">
       {% for attachment in attachment_list|slice:"3:" %}
-        {% include "foirequest/alpha/body/message/attachments/item.html" %}
+        {% include "foirequest/body/message/attachments/item.html" %}
       {% endfor %}
     </div>
     <div class="d-flex flex-fill align-items-center justify-content-center mb-2 mr-2 rounded border border-light">

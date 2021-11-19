@@ -41,7 +41,7 @@ def can_see_attachment(att, can_write):
 
 
 def show_foirequest(
-    request, obj, template_name="foirequest/alpha/show.html", context=None, status=200
+    request, obj, template_name="foirequest/show.html", context=None, status=200
 ):
 
     if context is None:
@@ -61,7 +61,7 @@ class FoiRequestView(DetailView):
     ).prefetch_related(
         "tags",
     )
-    template_name = "foirequest/alpha/show.html"
+    template_name = "foirequest/show.html"
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()

@@ -16,7 +16,7 @@
 
 <div class="breadcrumb-container">
   {% translate "Upload postal mail" as breadcrumb_label %}
-  {% include "foirequest/alpha/header/breadcrumb.html" with last_item=breadcrumb_label %}
+  {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
 </div>
 
 <div class="container">
@@ -40,7 +40,7 @@
           <legend>
             {% trans "What is the status of your request after this letter?" %}
           </legend>
-          {% include "foirequest/alpha/header/_set_status.html" with status_form=status_form %}
+          {% include "foirequest/header/_set_status.html" with status_form=status_form %}
         </fieldset>
         <p class="text-right">
           <button type="submit" class="btn btn-primary">
