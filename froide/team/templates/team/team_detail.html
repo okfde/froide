@@ -130,6 +130,7 @@
     <table class="table table-responsive table-condensed">
       <thead>
         <th>{% blocktrans %}Title{% endblocktrans %}</th>
+        <th>{% blocktrans %}Public Body{% endblocktrans %}</th>
         <th>{% blocktrans %}Status{% endblocktrans %}</th>
         <th>{% blocktrans %}Date{% endblocktrans %}</th>
       </thead>
@@ -139,6 +140,11 @@
             <td>
               <a href="{{ foirequest.get_absolute_url }}">
                 {{ foirequest.title }}
+              </a>
+            </td>
+            <td>
+              <a href="{{ foirequest.public_body.get_absolute_url }}">
+                {{ foirequest.public_body.name }}
               </a>
             </td>
             <td>

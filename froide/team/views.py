@@ -83,7 +83,9 @@ class TeamDetailView(AuthMixin, DetailView):
 
         context["user_member"] = user_member
         context["projects"] = self.object.foiproject_set.all()
-        context["foirequests"] = self.object.foirequest_set.all()
+        context["foirequests"] = self.object.foirequest_set.all().select_related(
+            "public_body"
+        )
         return context
 
 
