@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: postgis/postgis
+    image: postgis/postgis:14-3.1
     volumes:
       - ./data/postgres_data:/var/lib/postgresql/data/
     environment:
