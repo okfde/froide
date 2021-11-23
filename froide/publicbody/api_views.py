@@ -392,6 +392,10 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
             "jurisdiction",
             "laws",
             "regions",
+            "source_reference",
+            "alternative_emails",
+            "wikidata_item",
+            "extra_data",
         )
 
 
