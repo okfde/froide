@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-19 16:16+0100\n"
-"PO-Revision-Date: 2021-11-19 16:17+0100\n"
+"POT-Creation-Date: 2021-11-24 09:17+0100\n"
+"PO-Revision-Date: 2021-11-24 09:20+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -96,8 +96,8 @@ msgid "Reset"
 msgstr "Zurücksetzen"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html:20
-#: froide/team/templates/team/team_detail.html:29
-#: froide/team/templates/team/team_detail.html:74
+#: froide/team/templates/team/team_detail.html:31
+#: froide/team/templates/team/team_detail.html:76
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -1267,8 +1267,8 @@ msgstr "Abonnements"
 #: froide/foirequest/models/message.py:119
 #: froide/foirequest/models/request.py:309
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html:156
-#: froide/team/templates/team/team_detail.html:27
-#: froide/team/templates/team/team_detail.html:133
+#: froide/team/templates/team/team_detail.html:29
+#: froide/team/templates/team/team_detail.html:136
 msgid "Status"
 msgstr "Status"
 
@@ -1278,8 +1278,8 @@ msgstr "Status"
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:30
 #: froide/foirequest/templates/foirequest/account/list_projects.html:29
 #: froide/frontpage/models.py:31
-#: froide/team/templates/team/team_detail.html:132
-#: froide/team/templates/team/team_detail.html:164
+#: froide/team/templates/team/team_detail.html:134
+#: froide/team/templates/team/team_detail.html:172
 msgid "Title"
 msgstr "Titel"
 
@@ -1957,7 +1957,7 @@ msgstr "Hinweise werden für die ausgewählten Nachrichten generiert"
 msgid "Run guidance"
 msgstr "Hinweise generieren"
 
-#: froide/foirequest/admin.py:554 froide/foirequest/models/message.py:669
+#: froide/foirequest/admin.py:554 froide/foirequest/models/message.py:670
 msgid "delivery status"
 msgstr "Zustellungsstatus"
 
@@ -2101,7 +2101,7 @@ msgstr "Informationsfreiheitsanfrage"
 #: froide/foirequest/templates/foirequest/account/list_projects.html:30
 #: froide/foirequest/templates/foirequest/header/breadcrumb.html:12
 #: froide/foirequest/templates/foirequest/list.html:14
-#: froide/team/templates/team/team_detail.html:165
+#: froide/team/templates/team/team_detail.html:173
 #: froide/templates/header.html:29
 msgid "Requests"
 msgstr "Anfragen"
@@ -2753,7 +2753,7 @@ msgstr "Anfrageentwürfe"
 msgid "Draft \"{subject}\" by {user}"
 msgstr "Entwurf „{subject}“ von {user}"
 
-#: froide/foirequest/models/event.py:20 froide/foirequest/models/message.py:638
+#: froide/foirequest/models/event.py:20 froide/foirequest/models/message.py:639
 msgid "unknown"
 msgstr "unbekannt"
 
@@ -2990,6 +2990,7 @@ msgstr "Nutzer"
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html:65
 #: froide/foirequest/templates/foirequest/body/message/sender.html:42
 #: froide/publicbody/apps.py:8 froide/publicbody/models.py:452
+#: froide/team/templates/team/team_detail.html:135
 msgid "Public Body"
 msgstr "Behörde"
 
@@ -3156,46 +3157,46 @@ msgstr "nachricht-%(id)d"
 msgid "{name} (via {via})"
 msgstr "{name} (per {via})"
 
-#: froide/foirequest/models/message.py:463
+#: froide/foirequest/models/message.py:464
 #, python-format
 msgid "You exceeded your message limit of %(count)s messages in %(time)s."
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
 "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
 
-#: froide/foirequest/models/message.py:639
+#: froide/foirequest/models/message.py:640
 msgid "sending"
 msgstr "wird gesendet"
 
-#: froide/foirequest/models/message.py:640
+#: froide/foirequest/models/message.py:641
 msgid "sent"
 msgstr "gesendet"
 
-#: froide/foirequest/models/message.py:641
+#: froide/foirequest/models/message.py:642
 msgid "received"
 msgstr "erhalten"
 
-#: froide/foirequest/models/message.py:642
+#: froide/foirequest/models/message.py:643
 msgid "read"
 msgstr "gelesen"
 
-#: froide/foirequest/models/message.py:643
+#: froide/foirequest/models/message.py:644
 msgid "deferred"
 msgstr "zurückgestellt"
 
-#: froide/foirequest/models/message.py:644
+#: froide/foirequest/models/message.py:645
 msgid "bounced"
 msgstr "abgewiesen"
 
-#: froide/foirequest/models/message.py:645
+#: froide/foirequest/models/message.py:646
 msgid "expired"
 msgstr "abgelaufen"
 
-#: froide/foirequest/models/message.py:646
+#: froide/foirequest/models/message.py:647
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: froide/foirequest/models/message.py:670
+#: froide/foirequest/models/message.py:671
 msgid "delivery statii"
 msgstr "Zustellungsstatus"
 
@@ -3520,7 +3521,7 @@ msgstr "Kann Anfragen moderieren"
 msgid "Request '%s'"
 msgstr "Anfrage '%s'"
 
-#: froide/foirequest/models/request.py:656
+#: froide/foirequest/models/request.py:657
 #, python-format
 msgid "You exceeded your request limit of %(count)s requests in %(time)s."
 msgstr ""
@@ -3739,8 +3740,8 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/pdf/message_letter.html:100
 #: froide/letter/templates/letter/pdf/default.html:24
 #: froide/problem/templates/problem/message_toolbar_item.html:64
-#: froide/problem/views.py:76 froide/team/templates/team/team_detail.html:134
-#: froide/team/templates/team/team_detail.html:166
+#: froide/problem/views.py:76 froide/team/templates/team/team_detail.html:137
+#: froide/team/templates/team/team_detail.html:174
 msgid "Date"
 msgstr "Datum"
 
@@ -5406,6 +5407,10 @@ msgstr "Schlagwörter hinzufügen"
 #: froide/foirequest/templates/foirequest/header/info-box.html:40
 msgid "Edit request status"
 msgstr "Status ändern"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html:51
+msgid "Are you sure you want to publish this request?"
+msgstr "Sind Sie sicher, dass Sie diese Anfrage veröffentlichen wollen?"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html:54
 msgid "This request is <strong>not public</strong>."
@@ -9098,7 +9103,7 @@ msgid "Change / accept proposals (%(count)s)"
 msgstr "Ändern / Vorschläge annehmen (%(count)s)"
 
 #: froide/publicbody/templates/publicbody/show.html:97
-#: froide/team/templates/team/team_detail.html:57
+#: froide/team/templates/team/team_detail.html:59
 msgid "Change"
 msgstr "Ändern"
 
@@ -9430,7 +9435,7 @@ msgstr "Betrachter"
 msgid "inactive"
 msgstr "inaktiv"
 
-#: froide/team/models.py:23 froide/team/templates/team/team_detail.html:42
+#: froide/team/models.py:23 froide/team/templates/team/team_detail.html:44
 msgid "invited"
 msgstr "eingeladen"
 
@@ -9493,36 +9498,37 @@ msgstr ""
 "Falls Sie noch kein Konto auf %(site_name)s haben, bitte legen Sie zuerst "
 "eines an.\n"
 
-#: froide/team/templates/team/team_detail.html:9
+#: froide/team/templates/team/team_detail.html:6
+#: froide/team/templates/team/team_detail.html:11
 #, python-format
 msgid "Team “%(name)s”"
 msgstr "Team „%(name)s“"
 
-#: froide/team/templates/team/team_detail.html:14
+#: froide/team/templates/team/team_detail.html:16
 msgid "back to team overview"
 msgstr "zurück zur Team-Übersicht"
 
-#: froide/team/templates/team/team_detail.html:25
+#: froide/team/templates/team/team_detail.html:27
 msgid "Member"
 msgstr "Mitglied"
 
-#: froide/team/templates/team/team_detail.html:26
+#: froide/team/templates/team/team_detail.html:28
 msgid "Role"
 msgstr "Funktion"
 
-#: froide/team/templates/team/team_detail.html:48
+#: froide/team/templates/team/team_detail.html:50
 msgid "– that's you!"
 msgstr "– das sind Sie!"
 
-#: froide/team/templates/team/team_detail.html:86
+#: froide/team/templates/team/team_detail.html:88
 msgid "Roles"
 msgstr "Funktionen"
 
-#: froide/team/templates/team/team_detail.html:88
+#: froide/team/templates/team/team_detail.html:90
 msgid "Viewer"
 msgstr "Betrachter"
 
-#: froide/team/templates/team/team_detail.html:90
+#: froide/team/templates/team/team_detail.html:92
 msgid ""
 "\n"
 "            A viewer has read-only access to all team projects and "
@@ -9534,11 +9540,11 @@ msgstr ""
 "Anfragen.\n"
 "          "
 
-#: froide/team/templates/team/team_detail.html:94
+#: froide/team/templates/team/team_detail.html:96
 msgid "Editor"
 msgstr "Bearbeiter"
 
-#: froide/team/templates/team/team_detail.html:96
+#: froide/team/templates/team/team_detail.html:98
 msgid ""
 "\n"
 "            An editor can make requests in team projects, send messages, set "
@@ -9550,11 +9556,11 @@ msgstr ""
 "Nachrichten senden, den Status von Anfragen ändern etc.\n"
 "          "
 
-#: froide/team/templates/team/team_detail.html:100
+#: froide/team/templates/team/team_detail.html:102
 msgid "Owner"
 msgstr "Eigentümer"
 
-#: froide/team/templates/team/team_detail.html:102
+#: froide/team/templates/team/team_detail.html:104
 msgid ""
 "\n"
 "            An owner can do everything an editor can do. In addition they "
@@ -9568,28 +9574,28 @@ msgstr ""
 "ihre Funktionen ändern und das Team löschen.\n"
 "          "
 
-#: froide/team/templates/team/team_detail.html:114
+#: froide/team/templates/team/team_detail.html:116
 msgid "Add team member"
 msgstr "Team-Mitglied hinzufügen"
 
-#: froide/team/templates/team/team_detail.html:119
+#: froide/team/templates/team/team_detail.html:121
 msgid "Invite as team member"
 msgstr "Als Team-Mitglied einladen"
 
-#: froide/team/templates/team/team_detail.html:129
+#: froide/team/templates/team/team_detail.html:131
 msgid "Requests accessible to this team"
 msgstr "Anfragen dieses Teams"
 
-#: froide/team/templates/team/team_detail.html:161
+#: froide/team/templates/team/team_detail.html:169
 msgid "Team projects"
 msgstr "Projekte des Teams"
 
-#: froide/team/templates/team/team_detail.html:192
 #: froide/team/templates/team/team_detail.html:200
+#: froide/team/templates/team/team_detail.html:208
 msgid "Delete team"
 msgstr "Team löschen"
 
-#: froide/team/templates/team/team_detail.html:194
+#: froide/team/templates/team/team_detail.html:202
 msgid ""
 "Deleting the team will remove access of team members to all requests and "
 "projects they did not create."
@@ -9597,15 +9603,15 @@ msgstr ""
 "Das Löschen des Teams wird den Zugang aller Mitglieder auf Anfragen und "
 "Projekte entfernen, die sind nicht selbst erstellt haben."
 
-#: froide/team/templates/team/team_detail.html:210
+#: froide/team/templates/team/team_detail.html:218
 msgid "Are you sure you want to delete this team?"
 msgstr "Sind Sie sicher, dass Sie dieses Team löschen wollen?"
 
-#: froide/team/templates/team/team_detail.html:218
+#: froide/team/templates/team/team_detail.html:226
 msgid "Deleting a team cannot be undone."
 msgstr "Das Löschen eines Teams kann nicht rückgängig gemacht werden."
 
-#: froide/team/templates/team/team_detail.html:224
+#: froide/team/templates/team/team_detail.html:232
 #, python-format
 msgid "Delete team “%(name)s”"
 msgstr "Team „%(name)s“ löschen"
@@ -9670,7 +9676,7 @@ msgstr "Lege ein neues Team an"
 msgid "Create team"
 msgstr "Lege ein Team an"
 
-#: froide/team/views.py:174
+#: froide/team/views.py:176
 msgid "You are already a team member."
 msgstr "Sie sind schon Team-Mitglied."
 
