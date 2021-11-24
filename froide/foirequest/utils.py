@@ -411,8 +411,6 @@ def get_emails_from_request(
         for email in find_all_emails(message.plaintext):
             if email.endswith(domains):
                 continue
-            if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email):
-                continue
             email = email.lower()
             if email not in already:
                 pass
@@ -443,6 +441,8 @@ def get_emails_from_message_headers(email_headers):
 def possible_reply_addresses(foirequest):
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
+        if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
+            continue
         name = email_info.name
         if email_info.email not in name:
             if not name:
