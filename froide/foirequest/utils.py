@@ -1,9 +1,10 @@
 from collections import Counter
+from dataclasses import dataclass
 from datetime import timedelta
 import json
 import os
 import re
-from typing import Optional, Iterator, NamedTuple
+from typing import Optional, Iterator
 
 from django.utils import timezone
 from django.core.mail import mail_managers
@@ -328,10 +329,15 @@ def send_request_user_email(
     )
 
 
-PublicBodyEmailInfo = NamedTuple(
-    "PublicBodyEmailInfo",
-    [("email", str), ("name", str), ("publicbody", Optional[PublicBody])],
-)
+@dataclass
+class PublicBodyEmailInfo:
+    email: str
+    name: str
+    publicbody: Optional[PublicBody] = None
+    label: Optional[str] = None
+
+    def get_label(self):
+        return self.label if self.label is not None else self.name
 
 
 def get_info_for_email(foirequest, email):
@@ -339,7 +345,7 @@ def get_info_for_email(foirequest, email):
     for email_info in get_emails_from_request(foirequest):
         if email == email_info.email.lower():
             return email_info
-    return PublicBodyEmailInfo(email="", name="", publicbody=None)
+    return PublicBodyEmailInfo(email="", name="")
 
 
 def get_emails_from_request(
@@ -353,7 +359,8 @@ def get_emails_from_request(
             email = foirequest.public_body.email
             yield PublicBodyEmailInfo(
                 email=email,
-                name=_("Default address of {publicbody}").format(
+                name=foirequest.public_body.name,
+                label=_("Default address of {publicbody}").format(
                     publicbody=foirequest.public_body.name
                 ),
                 publicbody=foirequest.public_body,
@@ -365,7 +372,8 @@ def get_emails_from_request(
                     continue
                 yield PublicBodyEmailInfo(
                     email=email,
-                    name=_("Default {law_type} address of {publicbody}").format(
+                    name=foirequest.public_body.name,
+                    label=_("Default {law_type} address of {publicbody}").format(
                         law_type=law_type, publicbody=foirequest.public_body.name
                     ),
                     publicbody=foirequest.public_body,
@@ -377,7 +385,8 @@ def get_emails_from_request(
             if mediator:
                 yield PublicBodyEmailInfo(
                     email=mediator.email,
-                    name=_("{publicbody} (mediator)").format(publicbody=mediator.name),
+                    name=mediator.name,
+                    label=_("{publicbody} (mediator)").format(publicbody=mediator.name),
                     publicbody=mediator,
                 )
 
@@ -443,13 +452,13 @@ def possible_reply_addresses(foirequest):
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
             continue
-        name = email_info.name
-        if email_info.email not in name:
-            if not name:
-                name = email_info.email
+        label = email_info.get_label()
+        if email_info.email not in label:
+            if not label:
+                label = email_info.email
             else:
-                name = "{} ({})".format(name, email_info.email)
-        options.append((email_info.email, name))
+                label = "{} ({})".format(label, email_info.email)
+        options.append((email_info.email, label))
     return options
 
 
