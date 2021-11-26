@@ -46,9 +46,7 @@ def unify(text):
 
 def is_authenticated_read(message, request):
     foirequest = message.request
-    return can_write_foirequest(foirequest, request) or can_read_foirequest_anonymous(
-        foirequest, request
-    )
+    return can_read_foirequest_authenticated(foirequest, request)
 
 
 @register.simple_tag
