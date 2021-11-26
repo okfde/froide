@@ -114,7 +114,7 @@
   <div class="row mt-5">
     <div class="col-md-8">
       <h4>{% trans "Add team member" %}</h4>
-      <form class="form-inline" method="post" action="{% url 'team-invite' pk=object.pk %}">
+      <form method="post" action="{% url 'team-invite' pk=object.pk %}">
         {% csrf_token %}
         {% render_form form %}
         <p>
