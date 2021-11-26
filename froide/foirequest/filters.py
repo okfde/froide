@@ -249,19 +249,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         if self.view is not None:
             self.filters["status"].field.widget.get_url = self.view.make_filter_url
 
-    def auto_query(self, qs, name, value):
-        if value:
-            return qs.set_query(
-                Q(
-                    "simple_query_string",
-                    query=value,
-                    fields=self.query_fields,
-                    default_operator="and",
-                    lenient=True,
-                )
-            )
-        return qs
-
     def filter_status(self, qs, name, value):
         entry = self.FOIREQUEST_FILTER_DICT[value]
         return qs.filter(entry.filter(entry.key))
