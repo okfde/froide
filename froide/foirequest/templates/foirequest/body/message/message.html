@@ -83,7 +83,7 @@
 
       <!-- message preview (collapsed state) -->
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
-        {% if message.content_hidden and not object|can_write_foirequest:request %}
+        {% if message.content_hidden and not object|can_read_foirequest_authenticated:request %}
           {% blocktrans %}This message is not yet public.{% endblocktrans %}
         {% else %}
           {% if not message.plaintext %}
@@ -149,7 +149,7 @@
           </div>
         {% endif %}
         
-        {% if not message.content_hidden or object|can_write_foirequest:request %}
+        {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
           <div class="alpha-message__content-text">{% redact_message message request %}</div>
         {% else %}
           <div class="alert alert-warning">
