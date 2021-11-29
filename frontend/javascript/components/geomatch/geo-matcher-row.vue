@@ -1,15 +1,27 @@
 <template>
-  <tr :class="{'loading': georegion.loading }" :data-region="georegion.resource_uri">
+  <tr
+    :class="{'loading': georegion.loading }"
+    :data-region="georegion.resource_uri"
+  >
     <td>
-      <a :href="georegionAdminUrl" target="_blank">
+      <a
+        :href="georegionAdminUrl"
+        target="_blank"
+      >
         {{ georegion.name }}
       </a>
     </td>
     <td>{{ georegion.kind_detail }}</td>
     <td>
       <ul v-if="hasLinks">
-        <li v-for="link in links" :key="link.id">
-          <a :href="link.url" target="_blank">
+        <li
+          v-for="link in links"
+          :key="link.id"
+        >
+          <a
+            :href="link.url"
+            target="_blank"
+          >
             {{ link.name }}
           </a>
           (<span v-if="link.categories.length > 0">{{ link.categories[0].name }}</span>)
@@ -17,26 +29,49 @@
       </ul>
     </td>
     <td>
-      <div v-if="georegion.loading" class="spinner-border" role="status">
+      <span v-if="link.classification">{{ link.classification.name }}</span>
+    </td>
+    <td>
+      <div
+        v-if="georegion.loading"
+        class="spinner-border"
+        role="status"
+      >
         <span class="sr-only">Loading...</span>
       </div>
       <ul v-if="hasMatches">
-        <li v-for="match in matches" :key="match.id">
-          <a :href="match.url" target="_blank">
+        <li
+          v-for="match in matches"
+          :key="match.id"
+        >
+          <a
+            :href="match.url"
+            target="_blank"
+          >
             {{ match.name }}
           </a>
           (
-            <span>{{ match.jurisdiction.name }}</span>,
-            <span v-if="match.categories.length > 0">{{ match.categories[0].name }}</span>
+          <span>{{ match.jurisdiction.name }}</span>,
+          <span v-if="match.categories.length > 0">{{ match.categories[0].name }}</span>
           )
-          <button @click="connect(match)">Connect</button>
+          <button @click="connect(match)">
+            Connect
+          </button>
         </li>
       </ul>
-      <a v-if="hasMatches" :href="createPublicBodyUrl" target="_blank">
+      <a
+        v-if="hasMatches"
+        :href="createPublicBodyUrl"
+        target="_blank"
+      >
         Create new
       </a>
       -
-      <a v-if="!hasLinks" :href="searchPublicBodyUrl" target="_blank">
+      <a
+        v-if="!hasLinks"
+        :href="searchPublicBodyUrl"
+        target="_blank"
+      >
         Search
       </a>
     </td>
@@ -46,7 +81,7 @@
 <script>
 
 export default {
-  name: 'geo-matcher-row',
+  name: 'GeoMatcherRow',
   props: {
     georegion: {
       type: Object
@@ -55,8 +90,6 @@ export default {
   data () {
     return {
     }
-  },
-  mounted () {
   },
   computed: {
     links () {
@@ -97,6 +130,8 @@ export default {
       let name = window.encodeURIComponent(this.georegion.name)
       return `${this.$root.config.url.publicbodyAdminUrl}?q=${name}`
     }
+  },
+  mounted () {
   },
   methods: {
     addPublicBodyAdminUrl (pb) {

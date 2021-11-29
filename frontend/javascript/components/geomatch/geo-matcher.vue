@@ -2,29 +2,40 @@
   <div class="geo-matcher mb-3 mt-3">
     <dl>
       <dd>Region Kind</dd>
-      <dt><input v-model="regionKind"/></dt>
+      <dt><input v-model="regionKind"></dt>
       <dd>Ancestor GeoRegion</dd>
       <dt>
-        <input v-model="ancestor" @change="ancestorChanged"/>
+        <input
+          v-model="ancestor"
+          @change="ancestorChanged"
+        >
         {{ ancestorName }}
       </dt>
       <dd>Public Body Category</dd>
       <dt>
-        <input v-model="category" @change="categoryChanged"/>
+        <input
+          v-model="category"
+          @change="categoryChanged"
+        >
         {{ categoryName }}
       </dt>
       <dd>Jurisdiction</dd>
       <dt>
-        <input v-model="jurisdiction" @change="jurisdictionChanged"/>
+        <input
+          v-model="jurisdiction"
+          @change="jurisdictionChanged"
+        >
         {{ jurisdictionName }}
       </dt>
       <dd>Public Body Search Hint</dd>
-      <dt><input v-model="searchHint"/></dt>
+      <dt><input v-model="searchHint"></dt>
     </dl>
-    <button @click="load">Load</button>
+    <button @click="load">
+      Load
+    </button>
     <p>
-      Regions: {{ regionCount }}<br />
-      Unlinked Regions: {{ unlinkedRegionCount }}<br />
+      Regions: {{ regionCount }}<br>
+      Unlinked Regions: {{ unlinkedRegionCount }}<br>
       Unmatched Regions: {{ unmatchedRegionCount }}
     </p>
     <table class="geo-matcher-table">
@@ -33,16 +44,17 @@
           <th>Name</th>
           <th>Type</th>
           <th>Public Body</th>
+          <th>Classification</th>
           <th>Search matches</th>
         </tr>
       </thead>
       <tbody>
-        <geo-matcher-row v-for="georegion in georegions"
+        <geo-matcher-row
+          v-for="georegion in georegions"
           :key="georegion.id"
           :georegion="georegion"
           @connectpublicbody="connectPublicBody"
-        >
-        </geo-matcher-row>
+        />
       </tbody>
     </table>
   </div>
@@ -68,11 +80,11 @@ function getQueryVariable(variable) {
 }
 
 export default {
-  name: 'geo-matcher',
-  props: ['config'],
+  name: 'GeoMatcher',
   components: {
     GeoMatcherRow
   },
+  props: ['config'],
   data () {
     return {
       georegions: [],
@@ -84,6 +96,30 @@ export default {
       category: '',
       categoryName: '',
       searchHint: '',
+    }
+  },
+  computed: {
+    regionCount () {
+      return this.georegions.length
+    },
+    unlinkedRegion () {
+      return this.georegions.filter((gr) => !gr.links || !gr.links.length)
+    },
+    unlinkedRegionCount () {
+      return this.unlinkedRegion.length
+    },
+    unmatchedRegion () {
+      return this.unlinkedRegion.filter((gr) => !gr.matches || !gr.matches.length)
+    },
+    unmatchedRegionCount () {
+      return this.unmatchedRegion.length
+    },
+    georegionMapping () {
+      let mapping = {}
+      this.georegions.forEach((gr, i) => {
+        mapping[gr.resource_uri] = i
+      })
+      return mapping
     }
   },
   mounted () {
@@ -111,30 +147,6 @@ export default {
         }
       });
     });
-  },
-  computed: {
-    regionCount () {
-      return this.georegions.length
-    },
-    unlinkedRegion () {
-      return this.georegions.filter((gr) => !gr.links || !gr.links.length)
-    },
-    unlinkedRegionCount () {
-      return this.unlinkedRegion.length
-    },
-    unmatchedRegion () {
-      return this.unlinkedRegion.filter((gr) => !gr.matches || !gr.matches.length)
-    },
-    unmatchedRegionCount () {
-      return this.unmatchedRegion.length
-    },
-    georegionMapping () {
-      let mapping = {}
-      this.georegions.forEach((gr, i) => {
-        mapping[gr.resource_uri] = i
-      })
-      return mapping
-    }
   },
   methods: {
     load () {
