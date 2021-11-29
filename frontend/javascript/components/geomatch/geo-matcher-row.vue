@@ -24,7 +24,7 @@
           >
             {{ link.name }}
           </a>
-          (<span v-if="link.categories.length > 0">{{ link.categories[0].name }}</span>)
+          (<span v-if="link.categories.length > 0"><template v-for="cat in link.categories">{{ cat.name }}, </template></span>)
           - <span v-if="link.classification">{{ link.classification.name }}</span>
         </li>
       </ul>
