@@ -25,11 +25,9 @@
             {{ link.name }}
           </a>
           (<span v-if="link.categories.length > 0">{{ link.categories[0].name }}</span>)
+          - <span v-if="link.classification">{{ link.classification.name }}</span>
         </li>
       </ul>
-    </td>
-    <td>
-      <span v-if="link.classification">{{ link.classification.name }}</span>
     </td>
     <td>
       <div

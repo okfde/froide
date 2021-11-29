@@ -44,7 +44,6 @@
           <th>Name</th>
           <th>Type</th>
           <th>Public Body</th>
-          <th>Classification</th>
           <th>Search matches</th>
         </tr>
       </thead>
