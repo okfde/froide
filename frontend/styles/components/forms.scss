@@ -21,3 +21,11 @@
     color: darken($red, 20%);
   }
 }
+
+.no-required-asterisk {
+  .field-required {
+    &:after {
+      content: "";
+    }
+  }
+}
