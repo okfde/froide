@@ -1,0 +1,20 @@
+{% load i18n %}
+<h3>{% blocktrans with filter_title=title %}By {{ filter_title }}{% endblocktrans %}</h3>
+
+<ul>
+  <li>
+    <form action="" method="get">
+        {% if choices.0.form %}
+          {{ choices.0.form.as_p }}
+        {% else %}
+          {{ spec.form.as_p }}
+        {% endif %}
+        {% for k, v in choices.0.params.items %}
+          <input type="hidden" name="{{ k }}" value="{{ v }}"/>
+        {% endfor %}
+        <div class="controls">
+            <input type="submit" value="{% trans 'Filter' %}">
+        </div>
+    </form>
+  </li>
+</ul>
