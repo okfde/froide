@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.html import format_html
 from django.utils import formats, timezone
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, RedirectView
@@ -33,6 +34,7 @@ from .forms import (
     UserDeleteForm,
     TermsForm,
     ProfileForm,
+    AccountSettingsForm,
 )
 from .services import AccountService
 from .utils import start_cancel_account_process, make_account_private
@@ -479,6 +481,30 @@ def change_profile(request):
     )
 
     return account_settings(request, context={"profile_form": form}, status=400)
+
+
+@require_POST
+@login_required
+def change_account_settings(request):
+    form = AccountSettingsForm(
+        data=request.POST, files=request.FILES, instance=request.user
+    )
+    if form.is_valid():
+        form.save()
+        messages.add_message(
+            request, messages.SUCCESS, _("Your account settings have been changed.")
+        )
+        translation.activate(form.cleaned_data["language"])
+        return redirect("account-settings")
+    messages.add_message(
+        request,
+        messages.ERROR,
+        _("Please correct the errors below. You account settings were not changed."),
+    )
+
+    return account_settings(
+        request, context={"account_settings_form": form}, status=400
+    )
 
 
 @require_POST

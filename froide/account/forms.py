@@ -537,3 +537,9 @@ class ProfileForm(forms.ModelForm):
         if image.width > self.DIMS[1]:
             raise forms.ValidationError(_("Image dimensions are too large."))
         return image_field
+
+
+class AccountSettingsForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["language"]

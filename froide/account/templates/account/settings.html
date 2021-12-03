@@ -106,6 +106,26 @@
       </div>
     </div>
 
+
+    <div id="settings" class="card mb-3 mt-5">
+      <h5 class="card-header">
+        {% trans "Account settings" %}
+      </h5>
+      <div class="card-body">
+        <form action="{% url 'account-change_settings' %}#settings" method="post">
+          {% csrf_token %}
+          {% if account_settings_form %}
+            {% render_form account_settings_form %}
+          {% else %}
+            {% render_form request.user.get_account_settings_form %}
+          {% endif %}
+          <button type="submit" class="btn btn-secondary">
+            {% blocktrans %}Save changes{% endblocktrans %}
+          </button>
+        </form>
+      </div>
+    </div>
+
     {% if not request.user.private %}
       <div id="profile" class="card mb-3 mt-5">
         <h5 class="card-header">

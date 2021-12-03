@@ -285,6 +285,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return ProfileForm(*args, instance=self, **kwargs)
 
+    def get_account_settings_form(self, *args, **kwargs):
+        from .forms import AccountSettingsForm
+
+        return AccountSettingsForm(*args, instance=self, **kwargs)
+
     def send_mail(self, subject, body, **kwargs):
         from .utils import send_mail_user
 
