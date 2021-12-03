@@ -135,6 +135,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     organization_url = models.URLField(
         _("Organization Website"), blank=True, max_length=255
     )
+
+    language = models.CharField(
+        verbose_name=_("Language"),
+        max_length=10,
+        default=settings.LANGUAGE_CODE,
+        choices=settings.LANGUAGES,
+        help_text=_("Determines the default language of communication with you."),
+    )
+
     private = models.BooleanField(_("Private"), default=False)
     address = models.TextField(_("Address"), blank=True)
     terms = models.BooleanField(_("Accepted Terms"), default=True)
