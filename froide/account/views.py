@@ -265,6 +265,7 @@ def login(request, context=None, template="account/login.html", status=200):
                     messages.add_message(
                         request, messages.INFO, _("You are now logged in.")
                     )
+                    translation.activate(user.language)
                     return get_redirect(request, default="account-show")
                 else:
                     messages.add_message(
