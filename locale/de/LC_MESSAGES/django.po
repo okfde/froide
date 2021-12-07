@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 11:48+0100\n"
-"PO-Revision-Date: 2021-12-07 12:11+0100\n"
+"PO-Revision-Date: 2021-12-07 13:00+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -514,7 +514,7 @@ msgstr "Sprache"
 
 #: froide/account/models.py:144
 msgid "Determines the default language of communication with you."
-msgstr ""
+msgstr "Dies ist die Sprache, die wir für Kommunikation mit Ihnen verwenden."
 
 #: froide/account/models.py:147
 msgid "Private"
