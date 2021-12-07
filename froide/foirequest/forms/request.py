@@ -23,6 +23,8 @@ from ..utils import construct_initial_message_body
 
 payment_possible = settings.FROIDE_CONFIG.get("payment_possible", False)
 
+MAX_BODY_LENGTH = 5000
+
 
 class RequestForm(JSONMixin, forms.Form):
     subject = forms.CharField(
@@ -36,7 +38,6 @@ class RequestForm(JSONMixin, forms.Form):
     body = forms.CharField(
         label=_("Body"),
         min_length=8,
-        max_length=5000,
         validators=[validate_no_placeholder],
         widget=forms.Textarea(
             attrs={
@@ -104,6 +105,17 @@ class RequestForm(JSONMixin, forms.Form):
         if len(slug) < 4:
             raise forms.ValidationError(_("Subject is invalid."))
         return subject
+
+    def clean_body(self):
+        body = self.cleaned_data["body"]
+        trusted = False
+        if self.request and self.request.user.is_authenticated:
+            trusted = self.request.user.is_trusted
+        if not trusted and len(body) > MAX_BODY_LENGTH:
+            raise forms.ValidationError(
+                _("Message exceeds {} character limit.").format(MAX_BODY_LENGTH)
+            )
+        return body
 
     def clean_reference(self):
         ref = self.cleaned_data["reference"]
