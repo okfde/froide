@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 18:15+0000\n"
-"PO-Revision-Date: 2021-12-07 18:16+0000\n"
+"PO-Revision-Date: 2021-12-07 18:26+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -2590,7 +2590,7 @@ msgstr "Betreff ist ungültig."
 
 #: froide/foirequest/forms/request.py:116
 msgid "Message exceeds {} character limit."
-msgstr "Nachrichtentext überschreitet die {} Zeichen Zeichenbegrenzung."
+msgstr "Nachrichtentext überschreitet die Begrenzung von {} Zeichen."
 
 #: froide/foirequest/forms/request.py:149
 msgid "Please specify a reason why this is the right Public Body:"
