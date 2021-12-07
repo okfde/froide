@@ -68,8 +68,10 @@ class FoiRequestManager(CurrentSiteManager):
         )
 
     def get_unclassified_for_moderation(self):
-        return self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET).filter(
-            visibility=Visibility.VISIBLE_TO_PUBLIC
+        return (
+            self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET)
+            .filter(visibility=Visibility.VISIBLE_TO_PUBLIC)
+            .order_by("last_message")
         )
 
     def get_dashboard_requests(self, user, query=None):
