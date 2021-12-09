@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-12-07 18:15+0000\n"
-"PO-Revision-Date: 2021-12-07 18:26+0000\n"
+"PO-Revision-Date: 2021-12-09 11:55+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -7906,7 +7906,7 @@ msgstr[1] "%d Sekunden"
 #: froide/helper/templatetags/content_helper.py:92
 #, python-brace-format
 msgid "{time_str} ago"
-msgstr "seit {time_str}"
+msgstr "vor {time_str}"
 
 #: froide/helper/templatetags/content_helper.py:94
 #: froide/helper/templatetags/content_helper.py:98
