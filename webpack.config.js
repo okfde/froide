@@ -143,7 +143,7 @@ const config = {
         test: /(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/,
         type: 'asset/resource',
         generator: {
-          filename: '../fonts/[name].[ext]'
+          filename: '../fonts/[name][ext]'
         }
       },
       {
@@ -155,7 +155,7 @@ const config = {
           }
         },
         generator: {
-          filename: '../img/[name].[ext]'
+          filename: '../img/[name][ext]'
         }
       }
     ]
