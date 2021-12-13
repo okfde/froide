@@ -99,7 +99,7 @@ class UserAdmin(DjangoUserAdmin):
         UserTagListFilter,
     ]
     search_fields = ("email", "username", "first_name", "last_name")
-    readonly_fields = ("is_superuser",)
+    readonly_fields = ("is_superuser", "user_permissions")
 
     actions = [
         "export_csv",
