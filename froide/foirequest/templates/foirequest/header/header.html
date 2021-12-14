@@ -191,10 +191,12 @@
                       </li>
                     {% endfor %}
                     <li class="mr-2 smaller">
-                      <a href="#" data-inlineedit="#request-tags-form" data-inlineeditpresentation="#request-tags-list">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                        <span class="sr-only">{% trans "Edit tags" %}</span>
-                      </a>
+                      {% if object|can_write_foirequest:request %}
+                        <a href="#" data-inlineedit="#request-tags-form" data-inlineeditpresentation="#request-tags-list">
+                          <i class="fa fa-pencil" aria-hidden="true"></i>
+                          <span class="sr-only">{% trans "Edit tags" %}</span>
+                        </a>
+                      {% endif %}
                       <span data-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
                         <i class="fa fa-question-circle-o" aria-hidden="true"></i>
                         <span class="sr-only">{% translate "What does this mean?" %}</span>
