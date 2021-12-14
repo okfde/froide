@@ -12,12 +12,12 @@ register = template.Library()
 @register.inclusion_tag("problem/message_toolbar_item.html", takes_context=True)
 def render_problem_button(context, message):
     request = context["request"]
+    foirequest = message.request
     is_requester = (
         request.user.is_authenticated and request.user.id == message.request.user_id
     )
     if request.user.is_authenticated and not hasattr(message, "problemreports"):
         # Get all problem reports for all messages
-        foirequest = message.request
         user_filter = {}
         if not can_moderate_foirequest(foirequest, request):
             user_filter["user"] = request.user
@@ -39,4 +39,9 @@ def render_problem_button(context, message):
             for problem in mes.problemreports:
                 problem.message = mes
 
-    return {"is_requester": is_requester, "request": request, "message": message}
+    return {
+        "is_requester": is_requester,
+        "request": request,
+        "foirequest": foirequest,
+        "message": message,
+    }
