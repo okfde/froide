@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load foirequest_tags %}
 
 <div id="comment-{{ comment.id }}" class="alpha-comment">
 
@@ -24,7 +25,7 @@
     <!-- requester-/moderator-badges -->
     {% if comment.user == object.user %}
       <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
-    {% elif comment.user.is_staff %}
+    {% elif object|can_moderate_foirequest:request %}
       <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
     {% endif %}
     

@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load foirequest_tags %}
 
 {% if comment_list %}
   <dl class="comments-list">
@@ -6,7 +7,7 @@
     <dt id="c{{ comment.id }}">
       {% if comment.user == object.user and not object.user.private %}
         <span class="requester">{% trans "Requester" %}</span>
-      {% elif comment.user.is_staff %}
+      {% elif object|can_moderate_foirequest:request %}
         <span class="moderator">{% trans "Moderator" %}</span>
       {% endif %}
       {% if comment.user == object.user and object.user.private %}
@@ -21,7 +22,7 @@
       {% if comment.is_removed %}
         <p class="text-muted">{% trans "Comment was removed." %}</p>
       {% else %}
-        {% if comment.user.is_staff %}
+        {% if object|can_moderate_foirequest:request %}
           <p>{{ comment.comment|urlizetrunc:40|linebreaksbr }}</p>
         {% else %}
           {% if comment.comment != comment.comment|truncatewords:20 %}

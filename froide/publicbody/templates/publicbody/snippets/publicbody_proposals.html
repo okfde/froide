@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load form_helper %}
+{% load permission_helper %}
 
 <div class="table-responsive">
 <table class="table">
@@ -10,7 +11,7 @@
       {% for key, proposal in proposals.items %}
         <th>
           <span title="{{ proposal.timestamp }}">
-            {% if request.user.is_staff %}
+            {% if request.user.is_staff and request.user|has_perm:"account.view_user" %}
               {{ proposal.user.get_full_name }} ({{ proposal.user.email }})
             {% else %}
               {{ proposal.timestamp | date:"SHORT_DATETIME" }}
@@ -36,11 +37,7 @@
         <td>
           <label>
             <input type="radio" name="proposal_id" class="proposal" value="{{ key }}" required>
-            {% if request.user.is_staff %}
-              {% blocktrans with name=proposal.user.first_name %}Accept proposal of {{ name }}{% endblocktrans %}
-            {% else %}
-            {% trans "Accept this proposal" %}
-            {% endif %}
+              {% trans "Accept this proposal" %}
           </label>
         </td>
       {% endfor %}

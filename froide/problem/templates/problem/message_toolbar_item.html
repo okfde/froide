@@ -1,6 +1,8 @@
 {% load i18n %}
 {% load markup %}
 {% load form_helper %}
+{% load foirequest_tags %}
+{% load permission_helper %}
 
 <button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
   {% if not request.user.is_authenticated %}
@@ -62,8 +64,8 @@
                   <tr>
                     <th>{% trans "Problem" %}</th>
                     <th>{% trans "Date" %}</th>
-                    {% if request.user.is_staff %}
-                    <th>{% trans "User" %}</th>
+                    {% if not is_requester or object|can_moderate_foirequest:request %}
+                      <th>{% trans "User" %}</th>
                     {% endif %}
                     <th>{% trans "State" %}</th>
                   </tr>
@@ -85,10 +87,11 @@
                           {{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                         {% endif %}
                       </td>
-
-                      {% if request.user.is_staff %}
+                      {% if not is_requester or object|can_moderate_foirequest:request %}
                         <td>
-                          {{ report.user.get_full_name }}
+                          {% if object|can_moderate_foirequest:request %}
+                            {{ report.user.get_full_name }}
+                          {% endif %}
                           {% if report.is_requester %}
                             <span class="badge badge-success">{% trans "requester" %}</span>
                           {% else %}
@@ -98,7 +101,7 @@
                       {% endif %}
 
                       <td>
-                        {% if request.user.is_staff %}
+                        {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
                           <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
                         {% endif %}
                         {% if report.resolved %}
@@ -110,7 +113,7 @@
                             {% trans "Pending" %}
                           </span>
                         {% endif %}
-                        {% if request.user.is_staff %}
+                        {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
                           </a>
                         {% endif %}
                       </td>

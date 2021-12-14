@@ -192,18 +192,25 @@
 
         {% block message_toolbar_item %}{% endblock %}
 
-        {% if object|can_write_foirequest:request and not message.original %}
-          {% if message.is_response %}
-            <div class="btn-group btn-group-sm mb-1 ml-sm-auto">
-              <a data-fieldname="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-outline-primary">
-                <span class="fa fa-reply"></span>
-                {% trans "Reply" %}
-              </a>
-            </div>
+        {% if not message.original %}
+          {% if object|can_write_foirequest:request %}
+            {% if message.is_response %}
+              <div class="btn-group btn-group-sm mb-1 ml-sm-auto">
+                <a data-fieldname="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-outline-primary">
+                  <span class="fa fa-reply"></span>
+                  {% trans "Reply" %}
+                </a>
+              </div>
+            {% endif %}
           {% endif %}
 
-          {% render_message_redact_button message %}
-          {% render_message_edit_button message %}
+          {% if object|can_moderate_foirequest:request %}
+            {% render_message_redact_button message %}
+          {% endif %}
+
+          {% if object|can_write_foirequest:request %}
+            {% render_message_edit_button message %}
+          {% endif %}
         {% endif %}
 
         <!-- Problem button-->
