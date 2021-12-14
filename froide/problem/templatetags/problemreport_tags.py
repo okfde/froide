@@ -1,6 +1,8 @@
 from collections import defaultdict
 from django import template
 
+from froide.foirequest.auth import can_moderate_foirequest
+
 from ..models import ProblemReport
 from ..forms import ProblemReportForm
 
@@ -17,7 +19,7 @@ def render_problem_button(context, message):
         # Get all problem reports for all messages
         foirequest = message.request
         user_filter = {}
-        if not request.user.is_staff:
+        if not can_moderate_foirequest(foirequest, request):
             user_filter["user"] = request.user
         reports = ProblemReport.objects.filter(
             message__in=foirequest.messages, **user_filter
