@@ -418,6 +418,7 @@ class FoiRequest(models.Model):
             ("create_batch", _("Create batch requests")),
             ("mark_not_foi", _("Can mark as not FOI")),
             ("moderate", _("Can moderate requests")),
+            ("moderate_pii", _("Can moderate personal information")),
         )
 
     # Custom Signals
