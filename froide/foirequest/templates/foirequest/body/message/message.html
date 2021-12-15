@@ -204,7 +204,7 @@
             {% endif %}
           {% endif %}
 
-          {% if object|can_moderate_foirequest:request %}
+          {% if object|can_write_foirequest:request %}
             {% render_message_redact_button message %}
           {% endif %}
 
