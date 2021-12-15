@@ -233,8 +233,11 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
 
     try:
         pdf_bytes = run_ocr(
-            attachment.file.path, language=settings.TESSERACT_LANGUAGE if hasattr(
-                settings, 'TESSERACT_LANGUAGE') else settings.LANGUAGE_CODE, timeout=180
+            attachment.file.path,
+            language=settings.TESSERACT_LANGUAGE
+            if settings.TESSERACT_LANGUAGE
+            else settings.LANGUAGE_CODE,
+            timeout=180,
         )
     except SoftTimeLimitExceeded:
         pdf_bytes = None
@@ -302,7 +305,11 @@ def redact_attachment_task(att_id, target_id, instructions):
 
     try:
         pdf_bytes = run_ocr(
-            target.file.path, language=settings.TESSERACT_LANGUAGE if hasattr(settings, 'TESSERACT_LANGUAGE') else settings.LANGUAGE_CODE, timeout=60 * 4
+            target.file.path,
+            language=settings.TESSERACT_LANGUAGE
+            if settings.TESSERACT_LANGUAGE
+            else settings.LANGUAGE_CODE,
+            timeout=60 * 4,
         )
     except SoftTimeLimitExceeded:
         pdf_bytes = None
