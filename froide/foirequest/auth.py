@@ -1,6 +1,8 @@
 from functools import lru_cache
+from typing import List
 
 from django.db.models import Q
+from django.http import HttpRequest
 from django.utils.crypto import salted_hmac, constant_time_compare
 from django.utils.translation import override
 from django.urls import reverse
@@ -21,7 +23,7 @@ from froide.helper.auth import (
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 
 
-def get_read_foirequest_queryset(request, queryset=None):
+def get_read_foirequest_queryset(request: HttpRequest, queryset=None):
     if queryset is None:
         queryset = FoiRequest.objects.all()
     return get_read_queryset(
@@ -33,7 +35,7 @@ def get_read_foirequest_queryset(request, queryset=None):
     )
 
 
-def get_read_foimessage_queryset(request, queryset=None):
+def get_read_foimessage_queryset(request: HttpRequest, queryset=None):
     if queryset is None:
         queryset = FoiMessage.objects.all()
     return get_read_queryset(
@@ -46,7 +48,7 @@ def get_read_foimessage_queryset(request, queryset=None):
     )
 
 
-def get_read_foiattachment_queryset(request, queryset=None):
+def get_read_foiattachment_queryset(request: HttpRequest, queryset=None):
     if queryset is None:
         queryset = FoiAttachment.objects.all()
     return get_read_queryset(
@@ -63,7 +65,9 @@ def get_read_foiattachment_queryset(request, queryset=None):
 
 
 @lru_cache()
-def can_read_foirequest(foirequest, request, allow_code=True):
+def can_read_foirequest(
+    foirequest: FoiRequest, request: HttpRequest, allow_code=True
+) -> bool:
     if foirequest.visibility == FoiRequest.VISIBILITY.INVISIBLE:
         return False
 
@@ -76,7 +80,9 @@ def can_read_foirequest(foirequest, request, allow_code=True):
 
 
 @lru_cache()
-def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
+def can_read_foirequest_authenticated(
+    foirequest: FoiRequest, request: HttpRequest, allow_code=True
+) -> bool:
     """
     The read is authenticated: if the request was not public, the actor
     could still read.
@@ -100,13 +106,15 @@ def can_read_foirequest_authenticated(foirequest, request, allow_code=True):
     return False
 
 
-def can_read_foiproject(foiproject, request):
+def can_read_foiproject(foiproject: FoiProject, request: HttpRequest) -> bool:
     assert isinstance(foiproject, FoiProject)
     return can_read_object(foiproject, request)
 
 
 @lru_cache()
-def can_read_foiproject_authenticated(foiproject, request):
+def can_read_foiproject_authenticated(
+    foiproject: FoiProject, request: HttpRequest
+) -> bool:
     assert isinstance(foiproject, FoiProject)
     return has_authenticated_access(
         foiproject, request, verb="read", scope="read:request"
@@ -114,7 +122,7 @@ def can_read_foiproject_authenticated(foiproject, request):
 
 
 @lru_cache()
-def can_write_foirequest(foirequest, request):
+def can_write_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
     if can_write_object(foirequest, request):
         return True
 
@@ -124,19 +132,19 @@ def can_write_foirequest(foirequest, request):
 
 
 @lru_cache()
-def can_moderate_foirequest(foirequest, request):
+def can_moderate_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
     if not can_read_foirequest(foirequest, request):
         return False
     return can_moderate_object(foirequest, request)
 
 
-def can_mark_not_foi(foirequest, request):
+def can_mark_not_foi(foirequest: FoiRequest, request: HttpRequest) -> bool:
     return can_moderate_foirequest(foirequest, request) or (
         request.user.has_perm("foirequest.mark_not_foi")
     )
 
 
-def is_foirequest_moderator(request):
+def is_foirequest_moderator(request: HttpRequest) -> bool:
     if not request.user.is_authenticated:
         return False
     if request.user.is_staff:
@@ -144,27 +152,27 @@ def is_foirequest_moderator(request):
     return check_permission(FoiRequest, request, "moderate")
 
 
-def can_manage_foirequest(foirequest, request):
+def can_manage_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
     return can_manage_object(foirequest, request)
 
 
-def can_write_foiproject(foiproject, request):
+def can_write_foiproject(foiproject: FoiProject, request: HttpRequest) -> bool:
     return can_write_object(foiproject, request)
 
 
-def can_manage_foiproject(foiproject, request):
+def can_manage_foiproject(foiproject: FoiProject, request: HttpRequest) -> bool:
     assert isinstance(foiproject, FoiProject)
     return can_manage_object(foiproject, request)
 
 
-def can_read_foirequest_anonymous(foirequest, request):
+def can_read_foirequest_anonymous(foirequest: FoiRequest, request: HttpRequest) -> bool:
     pb_auth = request.session.get("pb_auth")
     if pb_auth is not None:
         return check_foirequest_auth_code(foirequest, pb_auth)
     return False
 
 
-def _get_foirequest_auth_code(foirequest):
+def _get_foirequest_auth_code(foirequest: FoiRequest) -> List[str]:
     return [
         salted_hmac(
             "FoiRequestPublicBodyAuth",
@@ -177,7 +185,7 @@ def _get_foirequest_auth_code(foirequest):
     ]
 
 
-def _get_foirequest_upload_code(foirequest):
+def _get_foirequest_upload_code(foirequest: FoiRequest) -> List[str]:
     secret = foirequest.get_secret()
     return [
         salted_hmac(
@@ -190,29 +198,29 @@ def _get_foirequest_upload_code(foirequest):
     ]
 
 
-def get_foirequest_upload_code(foirequest):
+def get_foirequest_upload_code(foirequest: FoiRequest) -> str:
     return _get_foirequest_upload_code(foirequest)[0]
 
 
-def get_foirequest_auth_code(foirequest):
+def get_foirequest_auth_code(foirequest: FoiRequest) -> str:
     return _get_foirequest_auth_code(foirequest)[0]
 
 
-def check_foirequest_auth_code(foirequest, code):
+def check_foirequest_auth_code(foirequest: FoiRequest, code: str) -> bool:
     for gen_code in _get_foirequest_auth_code(foirequest):
         if constant_time_compare(code, gen_code):
             return True
     return False
 
 
-def check_foirequest_upload_code(foirequest, code):
+def check_foirequest_upload_code(foirequest: FoiRequest, code: str) -> bool:
     for gen_code in _get_foirequest_upload_code(foirequest):
         if constant_time_compare(code, gen_code):
             return True
     return False
 
 
-def is_attachment_public(foirequest, attachment):
+def is_attachment_public(foirequest: FoiRequest, attachment: FoiAttachment) -> bool:
     return can_read_object(foirequest) and attachment.approved
 
 
@@ -226,7 +234,9 @@ def clear_lru_caches():
         f.cache_clear()
 
 
-def has_attachment_access(request, foirequest, attachment):
+def has_attachment_access(
+    request: HttpRequest, foirequest: FoiRequest, attachment: FoiAttachment
+) -> bool:
     if not can_read_foirequest(foirequest, request):
         return False
     if not attachment.approved:
@@ -240,7 +250,9 @@ def has_attachment_access(request, foirequest, attachment):
     return True
 
 
-def get_accessible_attachment_url(foirequest, attachment):
+def get_accessible_attachment_url(
+    foirequest: FoiRequest, attachment: FoiAttachment
+) -> str:
     needs_authorization = not is_attachment_public(foirequest, attachment)
     return attachment.get_absolute_domain_file_url(authorized=needs_authorization)
 
@@ -255,7 +267,7 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
     SITE_URL = settings.SITE_URL
     DEBUG = False
 
-    def is_media_public(self):
+    def is_media_public(self) -> bool:
         """
         Determine if the media described by self.context
         needs authentication/authorization at all
@@ -263,13 +275,13 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
         ctx = self.context
         return is_attachment_public(ctx["foirequest"], ctx["object"])
 
-    def has_perm(self, request):
+    def has_perm(self, request: HttpRequest) -> bool:
         ctx = self.context
         obj = ctx["object"]
         foirequest = ctx["foirequest"]
         return has_attachment_access(request, foirequest, obj)
 
-    def get_auth_url(self):
+    def get_auth_url(self) -> str:
         """
         Give URL path to authenticating view
         for the media described in context
@@ -281,10 +293,10 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
                 kwargs={"message_id": obj.belongs_to_id, "attachment_name": obj.name},
             )
 
-    def get_full_auth_url(self):
+    def get_full_auth_url(self) -> str:
         return super().get_full_auth_url() + "?download"
 
-    def get_media_file_path(self):
+    def get_media_file_path(self) -> str:
         """
         Return the URL path relative to MEDIA_ROOT for debug mode
         """
