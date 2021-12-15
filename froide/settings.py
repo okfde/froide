@@ -528,6 +528,8 @@ class Base(Configuration):
     )
 
     TESSERACT_DATA_PATH = values.Value("/usr/local/share/tessdata")
+    # allow override of settings.LANGUAGE_CODE for Tesseract
+    TESSERACT_LANGUAGE = None
 
     # ###### Email ##############
 

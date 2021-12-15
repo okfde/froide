@@ -17,7 +17,7 @@ python3 -m venv froide-env
 source froide-env/bin/activate
 
 # Install dev dependencies
-pip install requirements-test.txt
+pip install -r requirements-test.txt
 
 # Install git pre-commit hook
 pre-commit install
