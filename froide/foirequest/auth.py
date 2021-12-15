@@ -84,21 +84,21 @@ def can_read_foirequest_authenticated(
     foirequest: FoiRequest, request: HttpRequest, allow_code=True
 ) -> bool:
     """
-    The read is authenticated: if the request was not public, the actor
-    could still read.
     An authenticated read allows seeing redactions and unapproved attachments.
     """
     user = request.user
     if has_authenticated_access(foirequest, request, verb="read", scope="read:request"):
         return True
 
-    if user.is_staff and user.has_perm("foirequest.see_private"):
-        return True
-
     if foirequest.project:
         return has_authenticated_access(
             foirequest.project, request, verb="read", scope="read:request"
         )
+
+    if can_moderate_foirequest(foirequest, request):
+        if foirequest.is_public() or user.has_perm("foirequest.see_private"):
+            if user.has_perm("foirequest.moderate_pii"):
+                return True
 
     # if authenticated may still have code
     if allow_code:
@@ -147,8 +147,6 @@ def can_mark_not_foi(foirequest: FoiRequest, request: HttpRequest) -> bool:
 def is_foirequest_moderator(request: HttpRequest) -> bool:
     if not request.user.is_authenticated:
         return False
-    if request.user.is_staff:
-        return True
     return check_permission(FoiRequest, request, "moderate")
 
 
