@@ -64,7 +64,7 @@
                   <tr>
                     <th>{% trans "Problem" %}</th>
                     <th>{% trans "Date" %}</th>
-                    {% if not is_requester or foirequest|can_moderate_foirequest:request %}
+                    {% if not is_requester or foirequest|can_moderate_pii_foirequest:request %}
                       <th>{% trans "User" %}</th>
                     {% endif %}
                     <th>{% trans "State" %}</th>
@@ -87,9 +87,9 @@
                           {{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                         {% endif %}
                       </td>
-                      {% if not is_requester or foirequest|can_moderate_foirequest:request %}
+                      {% if not is_requester or foirequest|can_moderate_pii_foirequest:request %}
                         <td>
-                          {% if foirequest|can_moderate_foirequest:request %}
+                          {% if foirequest|can_moderate_pii_foirequest:request %}
                             {{ report.user.get_full_name }}
                           {% endif %}
                           {% if report.is_requester %}
