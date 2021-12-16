@@ -24,6 +24,7 @@ from ..auth import (
     can_read_foirequest_anonymous,
     can_read_foirequest_authenticated,
     can_moderate_foirequest,
+    can_moderate_pii_foirequest,
     can_mark_not_foi,
     can_read_foiproject,
     can_write_foiproject,
@@ -283,6 +284,11 @@ def can_manage_foirequest_filter(foirequest, request):
 @register.filter(name="can_moderate_foirequest")
 def can_moderate_foirequest_filter(foirequest, request):
     return can_moderate_foirequest(foirequest, request)
+
+
+@register.filter(name="can_moderate_pii_foirequest")
+def can_moderate_pii_foirequest_filter(foirequest, request):
+    return can_moderate_pii_foirequest(foirequest, request)
 
 
 @register.filter(name="can_mark_not_foi")

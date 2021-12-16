@@ -11,10 +11,11 @@ from django.contrib import messages
 from django.templatetags.static import static
 from django.template.defaultfilters import slugify
 
-from froide.helper.utils import render_400, is_ajax
+from froide.helper.utils import render_400, render_403, is_ajax
 from froide.helper.storage import add_number_to_filename
 from froide.upload.forms import get_uppy_i18n
 
+from ..auth import can_write_foirequest, can_moderate_pii_foirequest
 from ..models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
 from ..models.attachment import POSTAL_CONTENT_TYPES, IMAGE_FILETYPES, PDF_FILETYPES
 from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
@@ -539,8 +540,14 @@ def edit_message(request, foirequest, message_id):
 
 
 @require_POST
-@allow_write_foirequest
-def redact_message(request, foirequest, message_id):
+def redact_message(request, slug, message_id):
+    foirequest = get_object_or_404(FoiRequest, slug=slug)
+    if not (
+        can_write_foirequest(foirequest, request)
+        or can_moderate_pii_foirequest(foirequest, request)
+    ):
+        return render_403(request)
+
     message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
     form = RedactMessageForm(request.POST)
     if form.is_valid():

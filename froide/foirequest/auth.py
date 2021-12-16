@@ -138,6 +138,12 @@ def can_moderate_foirequest(foirequest: FoiRequest, request: HttpRequest) -> boo
     return can_moderate_object(foirequest, request)
 
 
+def can_moderate_pii_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
+    if not can_moderate_foirequest(foirequest, request):
+        return False
+    return request.user.has_perm("foirequest.moderate_pii")
+
+
 def can_mark_not_foi(foirequest: FoiRequest, request: HttpRequest) -> bool:
     return can_moderate_foirequest(foirequest, request) or (
         request.user.has_perm("foirequest.mark_not_foi")
