@@ -83,7 +83,7 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% if object|can_write_foirequest:request %}
+  {% if object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
     {% addtoblock "js" %}
       {% with object.get_set_tags_form as set_tags_form %}
         {{ set_tags_form.media.js }}
