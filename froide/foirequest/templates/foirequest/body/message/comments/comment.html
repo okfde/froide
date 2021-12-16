@@ -40,7 +40,7 @@
     <div class="text-muted">{% trans "Comment was removed." %}</div>
   {% else %}
     <div>
-      {% if comment.user.is_staff %}
+      {% if object|can_moderate_foirequest:request %}
         {{ comment.comment|urlizetrunc:40|linebreaksbr }}
       {% else %}
         {% if comment.comment != comment.comment|truncatewords:20 %}
