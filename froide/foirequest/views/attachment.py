@@ -21,8 +21,7 @@ from ..auth import (
     has_attachment_access,
 )
 from ..tasks import redact_attachment_task
-
-from .request_actions import allow_write_foirequest
+from ..decorators import allow_write_foirequest, allow_write_or_moderate_pii_foirequest
 
 
 logger = logging.getLogger(__name__)
@@ -252,7 +251,7 @@ def get_redact_context(foirequest, attachment):
     }
 
 
-@allow_write_foirequest
+@allow_write_or_moderate_pii_foirequest
 def redact_attachment(request, foirequest, attachment_id):
     attachment = get_object_or_404(
         FoiAttachment, id=int(attachment_id), belongs_to__request=foirequest

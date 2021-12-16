@@ -33,30 +33,11 @@ from ..auth import (
     can_mark_not_foi,
 )
 from ..hooks import registry
+from ..notifications import send_non_foi_notification
+from ..decorators import allow_write_foirequest
 
 from .request import show_foirequest
 from .make_request import get_new_account_url
-from ..notifications import send_non_foi_notification
-
-
-def allow_write_foirequest(func):
-    def inner(request, slug, *args, **kwargs):
-        foirequest = get_object_or_404(FoiRequest, slug=slug)
-        if not can_write_foirequest(foirequest, request):
-            return render_403(request)
-        return func(request, foirequest, *args, **kwargs)
-
-    return inner
-
-
-def allow_moderate_foirequest(func):
-    def inner(request, slug, *args, **kwargs):
-        foirequest = get_object_or_404(FoiRequest, slug=slug)
-        if not can_moderate_foirequest(foirequest, request):
-            return render_403(request)
-        return func(request, foirequest, *args, **kwargs)
-
-    return inner
 
 
 @require_POST
