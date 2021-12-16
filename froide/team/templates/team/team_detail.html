@@ -136,6 +136,7 @@
         <th>{% blocktrans %}Title{% endblocktrans %}</th>
         <th>{% blocktrans %}Public Body{% endblocktrans %}</th>
         <th>{% blocktrans %}Status{% endblocktrans %}</th>
+        <th>{% blocktrans %}Requester{% endblocktrans %}</th>
         <th>{% blocktrans %}Date{% endblocktrans %}</th>
       </thead>
       <tbody>
@@ -155,6 +156,9 @@
               <a href="{{ foirequest.get_absolute_url }}">
                 {{ foirequest.get_status_display }}
               </a>
+            </td>
+            <td>
+              {{ foirequest.user.get_full_name }}
             </td>
             <td>
               {{ foirequest.last_message|date:"DATETIME_FORMAT" }}
