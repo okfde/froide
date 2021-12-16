@@ -2,7 +2,7 @@
 {% load foirequest_tags %}
 
 <div class="alpha-message__sender text-truncate">
-  {% if object|can_write_foirequest:request %}
+  {% if object|can_read_foirequest_authenticated:request %}
     {% if message.is_response %}
       <span title="{{ message.sender_email }}">
         {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
