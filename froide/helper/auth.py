@@ -87,8 +87,6 @@ def can_manage_object(obj, request):
 
 @lru_cache()
 def can_moderate_object(obj, request):
-    if request.user.is_staff:
-        return True
     return check_permission(obj, request, "moderate")
 
 

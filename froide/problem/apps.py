@@ -22,7 +22,7 @@ class ProblemConfig(AppConfig):
         def get_moderation_menu_item(request):
             from froide.foirequest.auth import is_foirequest_moderator
 
-            if not (request.user.is_staff or is_foirequest_moderator(request)):
+            if not is_foirequest_moderator(request):
                 return None
 
             return MenuItem(
