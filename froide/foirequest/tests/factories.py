@@ -214,25 +214,36 @@ def make_world() -> Site:
         first_name="Mod",
         last_name="Erator",
     )
-
+    moderator_pii = UserFactory.create(
+        username="moderator_pii",
+        email="moderator_pii@example.org",
+        first_name="Mod",
+        last_name="Erator PII",
+    )
     dummy_staff = UserFactory.create(
         is_staff=True,
         username="dummy_staff",
         email="dummy_staff@example.org",
     )
     content_type = ContentType.objects.get_for_model(FoiRequest)
-    permission = Permission.objects.get(
+    change_permission = Permission.objects.get(
         codename="change_foirequest",
         content_type=content_type,
     )
-
-    dummy_staff.user_permissions.add(permission)
+    dummy_staff.user_permissions.add(change_permission)
 
     moderate_permission = Permission.objects.get(
         codename="moderate",
         content_type=content_type,
     )
+    moderate_pii_permission = Permission.objects.get(
+        codename="moderate_pii",
+        content_type=content_type,
+    )
+
     moderator.user_permissions.add(moderate_permission)
+    moderator_pii.user_permissions.add(moderate_permission)
+    moderator_pii.user_permissions.add(moderate_pii_permission)
 
     bund = JurisdictionFactory.create(name="Bund")
     nrw = JurisdictionFactory.create(name="NRW")

@@ -898,7 +898,7 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertTrue(req.is_foi)
         self.client.logout()
-        self.client.login(email="info@fragdenstaat.de", password="froide")
+        self.client.login(email="moderator@example.org", password="froide")
         response = self.client.post(
             reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
         )
