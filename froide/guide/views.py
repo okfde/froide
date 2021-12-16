@@ -13,7 +13,7 @@ from .utils import run_guidance
 @require_POST
 @permission_required("guide.can_run_guidance")
 def rerun_rules(request, message_id):
-    if not request.user.is_staff:
+    if not request.user.is_staff and request.user.has_perm("guide.change_guidance"):
         return render_403(request)
 
     message = get_object_or_404(FoiMessage, id=message_id)

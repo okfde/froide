@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load foirequest_tags %}
+{% load permission_helper %}
 
 <div class="alpha-message__meta-container alpha-message__wrap">
 
@@ -9,7 +10,7 @@
       {% blocktrans %}From{% endblocktrans %}
     </dt>
     <dd>
-      {% if object|can_write_foirequest:request %}
+      {% if object|can_read_foirequest_authenticated:request %}
         {% if message.is_response %}
           <span title="{{ message.sender_email }}">
             {% if message.user_real_sender != message.sender_public_body.name %}
@@ -70,7 +71,7 @@
         {% endif %}
       {% endif %}
     </dd>
-    {% if object|can_write_foirequest:request %}
+    {% if object|can_read_foirequest_authenticated:request %}
       {% with additional_recipients=message.list_additional_recipients %}
         {% if additional_recipients %}
           <dt>{% translate "Additional recipients" %}</dt>
@@ -102,7 +103,7 @@
     </dt>
     <dd>
       {% if message.content_hidden %}
-        {% if object|can_write_foirequest:request %}
+        {% if object|can_read_foirequest_authenticated:request %}
           {{ message.subject }}
         {% endif %}
         <span class="badge badge-light">{% trans "Subject hidden" %}</span>
@@ -179,14 +180,14 @@
           <i class="fa fa-circle-o"></i>
           {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
         {% endif %}
-        {% if object|can_write_foirequest:request %}
+        {% if object|can_read_foirequest_authenticated:request %}
           <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" data-toggle="tooltip" title="{% trans 'Show technical delivery log' %}">
             <i class="fa fa-info-circle"></i>
             <span class="sr-only">{% trans "Show technical delivery log" %}</span>
           </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
         {% endif %}
       {% endif %}
-      {% if message.can_get_original_from_imap and message.object|can_write_foirequest:request %}
+      {% if message.can_get_original_from_imap and message.object|can_read_foirequest_authenticated:request %}
           <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
             <i class="fa fa-download"></i>
             <span class="sr-only">{% translate "Download original" %}</span>
@@ -194,7 +195,7 @@
       {% endif %}
     </dd>
   {% endif %}
-  {% if request.user.is_staff %}
+  {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foimessage" %}
     <dt class="d-print-none">
       {% blocktrans %}Admin{% endblocktrans %}
     </dt>
@@ -204,6 +205,8 @@
         <span class="badge badge-light">{{ tag_name }}</span>
       {% endfor %}
     </dd>
+  {% endif %}
+  {% if request.user.is_staff and request.user|has_perm:"guide.view_guidance" %}
     <dt class="d-print-none">
       {% trans "Guidance" %}
     </dt>
