@@ -3,31 +3,27 @@
 
 <div class="row justify-content-center">
   <div class="col-md-8">
-    <div class="card mt-3">
-      <div class="card-body">
-        <form method="post" action="{{ submit_url }}">
-          {% csrf_token %}
-          <h5 class="card-title">{{ legend }}</h5>
-          <p>
-            {% if object.team %}
-              {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
-                Currently assigned team: <a href="{{ url }}">{{ name }}</a>.
-              {% endblocktrans %}
-            {% else %}
-              {% trans "Currently no team assigned." %}
-            {% endif %}
-          </p>
-          {% render_form form %}
-          <p>
-            <button type="submit" class="btn btn-primary">
-              {{ submit_button }}
-            </button>
-          </p>
-          <p class="mt-5">
-            <a href="{% url 'team-list' %}">{% trans "Create a new team." %}</a>
-          </p>
-        </form>
-      </div>
-    </div>
+    <form method="post" action="{{ submit_url }}">
+      {% csrf_token %}
+      <h5 class="card-title">{{ legend }}</h5>
+      <p>
+        {% if object.team %}
+          {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
+            Currently assigned team: <a href="{{ url }}">{{ name }}</a>.
+          {% endblocktrans %}
+        {% else %}
+          {% trans "Currently no team assigned." %}
+        {% endif %}
+      </p>
+      {% render_form form %}
+      <p>
+        <button type="submit" class="btn btn-primary">
+          {{ submit_button }}
+        </button>
+      </p>
+      <p class="mt-5">
+        <a href="{% url 'team-list' %}">{% trans "Create a new team." %}</a>
+      </p>
+    </form>
   </div>
 </div>
