@@ -3,6 +3,7 @@ import json
 import re
 
 from django import template
+from django.db.models import Count, Q
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import urlizetrunc, truncatechars_html
 from django.utils.translation import gettext as _
@@ -343,9 +344,21 @@ def get_comment_list(context, message):
         ct = ContentType.objects.get_for_model(FoiMessage)
         foirequest = message.request
         mids = [m.id for m in foirequest.messages]
-        comments = Comment.objects.filter(
-            content_type=ct, object_pk__in=mids, site_id=foirequest.site_id
-        ).select_related("user")
+        comments = (
+            Comment.objects.filter(
+                content_type=ct, object_pk__in=mids, site_id=foirequest.site_id
+            )
+            .annotate(
+                # Check for any 'moderate' permissions
+                # in any groups, but groups only,
+                # no direct permissions to keep it simple
+                is_moderator=Count(
+                    "user__groups__permissions",
+                    filter=Q(user__groups__permissions__codename="moderate"),
+                )
+            )
+            .select_related("user")
+        )
         comment_mapping = defaultdict(list)
         for c in comments:
             comment_mapping[c.object_pk].append(c)

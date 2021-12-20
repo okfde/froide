@@ -25,7 +25,7 @@
     <!-- requester-/moderator-badges -->
     {% if comment.user == object.user %}
       <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
-    {% elif object|can_moderate_foirequest:request %}
+    {% elif comment.is_moderator %}
       <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
     {% endif %}
     
@@ -40,7 +40,7 @@
     <div class="text-muted">{% trans "Comment was removed." %}</div>
   {% else %}
     <div>
-      {% if object|can_moderate_foirequest:request %}
+      {% if comment.is_moderator %}
         {{ comment.comment|urlizetrunc:40|linebreaksbr }}
       {% else %}
         {% if comment.comment != comment.comment|truncatewords:20 %}
