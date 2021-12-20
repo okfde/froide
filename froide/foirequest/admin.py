@@ -174,6 +174,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         ("public_body", ForeignKeyFilter),
         ("project", ForeignKeyFilter),
         make_greaterzerofilter("costs", _("Costs given")),
+        "refusal_reason",
     )
     search_fields = ["title", "description", "secret_address", "reference"]
     ordering = ("-last_message",)
