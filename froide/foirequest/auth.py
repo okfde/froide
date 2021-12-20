@@ -170,9 +170,10 @@ def can_manage_foiproject(foiproject: FoiProject, request: HttpRequest) -> bool:
 
 
 def can_read_foirequest_anonymous(foirequest: FoiRequest, request: HttpRequest) -> bool:
-    pb_auth = request.session.get("pb_auth")
-    if pb_auth is not None:
-        return check_foirequest_auth_code(foirequest, pb_auth)
+    if hasattr(request, "session"):  # internal API serialization do not have session
+        pb_auth = request.session.get("pb_auth")
+        if pb_auth is not None:
+            return check_foirequest_auth_code(foirequest, pb_auth)
     return False
 
 
