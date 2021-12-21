@@ -119,7 +119,9 @@
           {% if object|can_write_foirequest:request %}
             <div class="d-none" id="request-duedate-form">
               <small class="text-mute">
-                {% translate "Extend deadline by a number of months." %}
+                {% blocktranslate with unit=object.law.get_max_response_time_unit_display %}
+                  Extend deadline by a number of {{ unit }}.
+                {% endblocktranslate %}
               </small>
               <form class="disable-submit" method="post" action="{% url 'foirequest-extend_deadline' slug=object.slug %}">
                 {% csrf_token %}
