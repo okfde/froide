@@ -6,6 +6,8 @@
 {% load block_helper %}
 {% load form_helper %}
 
+{% block title %}{% trans "Make a Freedom of Information request" %} - {{ SITE_NAME }}{% endblock %}
+
 {% block foisite_advice %}
   {% include "foisite/banner.html" %}
 {% endblock %}
