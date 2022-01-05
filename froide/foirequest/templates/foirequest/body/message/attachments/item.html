@@ -35,6 +35,11 @@
         <a id="{{ attachment.get_html_id }}" class="text-body font-weight-bold" href="{{ attachment.get_absolute_url }}">
           {{ attachment.name }}
         </a>
+      {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
+        {# not approved, can read but cannot write, so allow read link #}
+        <a id="{{ attachment.get_html_id }}" class="text-body font-weight-bold" href="{{ attachment.get_absolute_url }}">
+          {{ attachment.name }}
+        </a>
       {% else %}
         {{ attachment.name }}
       {% endif %}
@@ -70,7 +75,7 @@
           <span class="mr-1 badge badge-info">
             {% blocktrans %}PDF Pending{% endblocktrans %}
           </span>
-        {% elif attachment.is_mail_decoration and object|can_write_foirequest:request %}
+        {% elif attachment.is_mail_decoration and object|can_read_foirequest_authenticated:request %}
           <span data-toggle="tooltip" data-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
             <i class="fa fa-picture-o" aria-hidden="true"></i>
           </span>
