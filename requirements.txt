@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
--e git+git://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet
+-e git+https://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet
     # via -r requirements.in
 aiohttp==3.7.4.post0
     # via geoip2
