@@ -141,7 +141,7 @@ def can_moderate_foirequest(foirequest: FoiRequest, request: HttpRequest) -> boo
 def can_moderate_pii_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
     if not can_moderate_foirequest(foirequest, request):
         return False
-    return request.user.has_perm("foirequest.moderate_pii")
+    return is_foirequest_pii_moderator(request)
 
 
 def can_mark_not_foi(foirequest: FoiRequest, request: HttpRequest) -> bool:
@@ -154,6 +154,10 @@ def is_foirequest_moderator(request: HttpRequest) -> bool:
     if not request.user.is_authenticated:
         return False
     return check_permission(FoiRequest, request, "moderate")
+
+
+def is_foirequest_pii_moderator(request: HttpRequest) -> bool:
+    return request.user.has_perm("foirequest.moderate_pii")
 
 
 def can_manage_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
