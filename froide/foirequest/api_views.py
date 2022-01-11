@@ -268,6 +268,13 @@ def optimize_message_queryset(request, qs):
     )
 
 
+class TagListField(serializers.CharField):
+    child = serializers.CharField()
+
+    def to_representation(self, data):
+        return [t.name for t in data.all()]
+
+
 class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name="api:request-detail", lookup_field="pk"
@@ -289,6 +296,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
     campaign = serializers.HyperlinkedRelatedField(
         read_only=True, view_name="api:campaign-detail", lookup_field="pk"
     )
+    tags = TagListField()
 
     class Meta:
         model = FoiRequest
@@ -321,6 +329,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             "user",
             "project",
             "campaign",
+            "tags",
         )
 
     def get_user(self, obj):
@@ -530,7 +539,7 @@ class FoiRequestViewSet(
         if self.action == "retrieve":
             extras = ("law",)
         qs = qs.prefetch_related(
-            "public_body", "user", "public_body__jurisdiction", *extras
+            "public_body", "user", "tags", "public_body__jurisdiction", *extras
         )
         return qs
 
