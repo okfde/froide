@@ -29,7 +29,7 @@
     </div>
   {% endif %}
 
-  {% if foirequest|can_write_foirequest:request %}
+  {% if foirequest|can_write_foirequest:request or foirequest|can_moderate_pii_foirequest:request %}
 
     {% if foirequest.awaits_classification %}
       <div class="alert alert-warning">

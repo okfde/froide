@@ -60,7 +60,7 @@ def show_attachment(request, slug, message_id, attachment_name):
 
 
 @require_POST
-@allow_write_foirequest
+@allow_write_or_moderate_pii_foirequest
 def approve_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
         FoiAttachment, id=attachment_id, belongs_to__request=foirequest
@@ -116,7 +116,7 @@ def delete_attachment(request, foirequest, attachment_id):
 
 
 @require_POST
-@allow_write_foirequest
+@allow_write_or_moderate_pii_foirequest
 def create_document(request, foirequest, attachment_id):
     att = get_object_or_404(
         FoiAttachment, id=attachment_id, belongs_to__request=foirequest
