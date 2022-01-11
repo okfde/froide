@@ -5,8 +5,8 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.urls import reverse
 
-from froide.foirequest.models import FoiRequest, FoiMessage
-from froide.foirequest.auth import is_foirequest_moderator
+from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
+from froide.foirequest.auth import is_foirequest_moderator, is_foirequest_pii_moderator
 from froide.publicbody.models import PublicBody
 from froide.helper.utils import render_403, to_json
 from froide.helper.auth import can_moderate_object
@@ -40,6 +40,20 @@ def moderation_view(request):
     unclassified = FoiRequest.objects.get_unclassified_for_moderation()
     unclassified = unclassified.values("title", "id", "last_message")[:100]
 
+    attachments = None
+    if is_foirequest_pii_moderator(request):
+        attachments = (
+            FoiAttachment.objects.filter(
+                can_approve=True,
+                approved=False,
+                belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
+            )
+            .filter(FoiAttachment.make_is_pdf_q())
+            .order_by("-id")
+            .select_related("belongs_to", "belongs_to__request")
+            .values("name", "id", "belongs_to_id", "belongs_to__request__slug")[:100]
+        )
+
     publicbodies = None
     if can_moderate_object(PublicBody, request):
         publicbodies = (
@@ -69,6 +83,21 @@ def moderation_view(request):
             ),
             "publicBodyAcceptChanges": reverse("publicbody-accept", kwargs={"pk": 0}),
             "foirequest": reverse("foirequest-shortlink", kwargs={"obj_id": 0}),
+            "show_attachment": reverse(
+                "foirequest-show_attachment",
+                kwargs={
+                    "slug": "0",
+                    "message_id": 1,
+                    "attachment_name": "2",
+                },
+            ),
+            "redact_attachment": reverse(
+                "foirequest-redact_attachment",
+                kwargs={
+                    "slug": "0",
+                    "attachment_id": 1,
+                },
+            ),
         },
         "i18n": {
             "name": _("Name"),
@@ -101,6 +130,8 @@ def moderation_view(request):
             "unclassifiedRequests": _("unclassified requests"),
             "setStatus": _("set status"),
             "lastMessage": _("last message"),
+            "attachments": _("Attachments"),
+            "redact": _("redact"),
         },
     }
 
@@ -111,6 +142,7 @@ def moderation_view(request):
             "problems": problems,
             "publicbodies_json": to_json(list(publicbodies)),
             "unclassified_json": to_json(list(unclassified)),
+            "attachments_json": to_json(list(attachments)),
             "config_json": to_json(config),
         },
     )

@@ -57,6 +57,20 @@
             <span class="badge badge-secondary">{{ unclassifiedCount }}</span>
           </a>
         </li>
+        <li
+          v-if="attachments"
+          class="nav-item"
+        >
+          <a
+            class="nav-link"
+            :class="{'active': tab === 'attachments'}"
+            href="#attachments"
+            @click="tab = 'attachments'"
+          >
+            {{ i18n.attachments }}
+            <span class="badge badge-secondary">{{ attachmentCount }}</span>
+          </a>
+        </li>
       </ul>
       <div class="tab-content pt-3">
         <moderation-problems
@@ -74,6 +88,11 @@
           :config="config"
           :unclassified="unclassified"
         />
+        <moderation-attachments
+          v-if="tab === 'attachments'"
+          :config="config"
+          :attachments="attachments"
+        />
       </div>
     </div>
   </div>
@@ -87,6 +106,7 @@ import {getData} from '../../lib/api.js'
 import ModerationProblems from './moderation-problems.vue'
 import ModerationPublicbodies from './moderation-publicbodies.vue'
 import ModerationUnclassified from './moderation-unclassified.vue'
+import ModerationAttachments from './moderation-attachments.vue'
 
 const MAX_OBJECTS = 100
 
@@ -97,7 +117,8 @@ export default {
   components: {
     ModerationProblems,
     ModerationPublicbodies,
-    ModerationUnclassified
+    ModerationUnclassified,
+    ModerationAttachments
   },
   props: {
     config: {
@@ -113,6 +134,11 @@ export default {
       type: Array,
       required: false,
       default: null
+    },
+    initialAttachments: {
+      type: Array,
+      required: false,
+      default: null
     }
   },
   data () {
@@ -122,6 +148,7 @@ export default {
       reports: [],
       publicbodies: this.initialPublicbodies,
       unclassified: this.initialUnclassified,
+      attachments: this.initialAttachments,
       filter: {
         mine: false
       },
@@ -140,6 +167,9 @@ export default {
     },
     problemreportsCount () {
       return this.reports.length
+    },
+    attachmentCount () {
+      return showMaxCount(this.attachments.length)
     },
     publicbodiesCount () {
       return showMaxCount(this.publicbodies.length)
@@ -188,6 +218,11 @@ export default {
     if (this.unclassified !== null) {
       this.room.on('unclassified_removed', (data) => {
         this.unclassified = this.unclassified.filter((fr) => fr.id !== data.unclassified.id)
+      })
+    }
+    if (this.attachments !== null) {
+      this.room.on('attachment_published', (data) => {
+        this.attachments = this.attachments.filter((at) => at.id !== data.attachments.id)
       })
     }
   },

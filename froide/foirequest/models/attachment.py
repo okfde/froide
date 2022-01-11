@@ -26,6 +26,7 @@ PDF_FILETYPES = (
     "text/pdf",
     "text/x-pdf",
 )
+MIMETYPE_OCTET_STREAM = "application/octet-stream"
 
 WORD_FILETYPES = (
     "application/msword",
@@ -230,7 +231,14 @@ class FoiAttachment(models.Model):
         return self.filetype in PDF_FILETYPES or (
             self.name
             and self.name.endswith((".pdf", ".PDF"))
-            and self.filetype == "application/octet-stream"
+            and self.filetype == MIMETYPE_OCTET_STREAM
+        )
+
+    @classmethod
+    def make_is_pdf_q(cls):
+        return models.Q(filetype__in=PDF_FILETYPES) | (
+            (models.Q(name__endswith=".pdf") | models.Q(name__endswith=".PDF"))
+            & models.Q(filetype=MIMETYPE_OCTET_STREAM)
         )
 
     @property
