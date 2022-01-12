@@ -38,11 +38,11 @@ def moderation_view(request):
     problems = get_problem_reports(request)
 
     unclassified = FoiRequest.objects.get_unclassified_for_moderation()
-    unclassified = unclassified.values("title", "id", "last_message")[:100]
+    unclassified = list(unclassified.values("title", "id", "last_message")[:100])
 
     attachments = None
     if is_foirequest_pii_moderator(request):
-        attachments = (
+        attachments = list(
             FoiAttachment.objects.filter(
                 can_approve=True,
                 approved=False,
@@ -56,7 +56,7 @@ def moderation_view(request):
 
     publicbodies = None
     if can_moderate_object(PublicBody, request):
-        publicbodies = (
+        publicbodies = list(
             PublicBody._default_manager.filter(
                 ~Q(change_proposals={}) | Q(confirmed=False)
             )
@@ -140,9 +140,9 @@ def moderation_view(request):
         "problem/moderation.html",
         {
             "problems": problems,
-            "publicbodies_json": to_json(list(publicbodies)),
-            "unclassified_json": to_json(list(unclassified)),
-            "attachments_json": to_json(list(attachments)),
+            "publicbodies_json": to_json(publicbodies),
+            "unclassified_json": to_json(unclassified),
+            "attachments_json": to_json(attachments),
             "config_json": to_json(config),
         },
     )
