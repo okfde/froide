@@ -65,7 +65,7 @@
                     <th>{% trans "Problem" %}</th>
                     <th>{% trans "Date" %}</th>
                     {% if not is_requester or foirequest|can_moderate_pii_foirequest:request %}
-                      <th>{% trans "User" %}</th>
+                      <th>{% trans "Reported by" %}</th>
                     {% endif %}
                     <th>{% trans "State" %}</th>
                   </tr>
@@ -79,23 +79,23 @@
                         </span>
                       </td>
                       <td>
-                        {% if report.auto_submitted %}
-                          <span class="badge badge-dark">
-                            {% trans "auto detected" %}
-                          </span>
-                        {% else %}
-                          {{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}
-                        {% endif %}
+                        {{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}
                       </td>
                       {% if not is_requester or foirequest|can_moderate_pii_foirequest:request %}
                         <td>
-                          {% if foirequest|can_moderate_pii_foirequest:request %}
-                            {{ report.user.get_full_name }}
-                          {% endif %}
-                          {% if report.is_requester %}
-                            <span class="badge badge-success">{% trans "requester" %}</span>
+                          {% if report.auto_submitted %}
+                            <span class="badge badge-dark">
+                              {% trans "auto detected" %}
+                            </span>
                           {% else %}
-                            <span class="badge badge-secondary">{% trans "not requester" %}</span>
+                            {% if foirequest|can_moderate_pii_foirequest:request %}
+                              {{ report.user.get_full_name }}
+                            {% endif %}
+                            {% if report.is_requester %}
+                              <span class="badge badge-success">{% trans "requester" %}</span>
+                            {% else %}
+                              <span class="badge badge-secondary">{% trans "not requester" %}</span>
+                            {% endif %}
                           {% endif %}
                         </td>
                       {% endif %}
