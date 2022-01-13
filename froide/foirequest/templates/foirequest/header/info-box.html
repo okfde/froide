@@ -159,9 +159,11 @@
 
       <!-- follow request -->
       {% block followers %}
-        <li class="info-box__list-item info-box__list-item--has-divider">
-          {% include "foirequestfollower/show.html" %}
-        </li>
+        {% if object.is_public %}
+          <li class="info-box__list-item info-box__list-item--has-divider">
+            {% include "foirequestfollower/show.html" %}
+          </li>
+        {% endif %}
       {% endblock followers %}
 
       {% if object.is_public %}
