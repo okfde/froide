@@ -112,6 +112,7 @@ django==3.2.8
     #   django-leaflet
     #   django-mptt
     #   django-oauth-toolkit
+    #   django-parler
     #   django-storages
     #   django-taggit
     #   django-timezone-field
@@ -151,7 +152,7 @@ django-mptt==0.12.0
     # via django-filingcabinet
 django-oauth-toolkit==1.5.0
     # via -r requirements.in
-django-parler==2.2
+django-parler==2.3
     # via -r requirements.in
 django-storages==1.11.1
     # via -r requirements.in
