@@ -119,7 +119,7 @@ def broadcast_unclassified_changed(sender, **kwargs):
 )
 def broadcast_attachment_published(sender, **kwargs):
     broadcast_moderation(
-        "attachment_published", _get_attachment_data(sender), key="atachments"
+        "attachment_published", _get_attachment_data(sender), key="attachments"
     )
 
 
