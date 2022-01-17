@@ -128,6 +128,14 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
+    async def attachment_published(self, event):
+        await self.send_json(
+            {
+                "type": "attachment_published",
+                "attachments": event["attachments"],
+            }
+        )
+
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(PRESENCE_ROOM, self.channel_name)
         await self.pm.remove(self.scope["user"])
