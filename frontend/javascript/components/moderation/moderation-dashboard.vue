@@ -246,9 +246,9 @@ export default {
     reloadData () {
       getData(".").then((data) => {
         this.attachments = data.attachments
-        this.attachmentsCount = data.attachmentsCount
+        this.attachmentsCount = data.attachments_count
         this.unclassified = data.unclassified
-        this.unclassifiedCount = data.unclassifiedCount
+        this.unclassifiedCount = data.unclassified_count
         this.publicbodies = data.publicbodies
       })
     }
