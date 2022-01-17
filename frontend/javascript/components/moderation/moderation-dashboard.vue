@@ -68,7 +68,7 @@
             @click="tab = 'attachments'"
           >
             {{ i18n.attachments }}
-            <span class="badge badge-secondary">{{ attachmentCount }}</span>
+            <span class="badge badge-secondary">{{ attachmentsCount }}</span>
           </a>
         </li>
       </ul>
@@ -135,11 +135,21 @@ export default {
       required: false,
       default: null
     },
+    initialUnclassifiedCount: {
+      type: Number,
+      required: false,
+      default: null
+    },
     initialAttachments: {
       type: Array,
       required: false,
       default: null
-    }
+    },
+    initialAttachmentsCount: {
+      type: Number,
+      required: false,
+      default: null
+    },
   },
   data () {
     return {
@@ -148,7 +158,9 @@ export default {
       reports: [],
       publicbodies: this.initialPublicbodies,
       unclassified: this.initialUnclassified,
+      unclassifiedCount: this.initialUnclassifiedCount,
       attachments: this.initialAttachments,
+      attachmentsCount: this.initialAttachmentsCount,
       filter: {
         mine: false
       },
@@ -168,15 +180,9 @@ export default {
     problemreportsCount () {
       return this.reports.length
     },
-    attachmentCount () {
-      return showMaxCount(this.attachments.length)
-    },
     publicbodiesCount () {
       return showMaxCount(this.publicbodies.length)
     },
-    unclassifiedCount () {
-      return showMaxCount(this.unclassified.length)
-    }
   },
   created () {
     this.$root.config = this.config
@@ -213,21 +219,32 @@ export default {
       })
       .on('publicbody_removed', (data) => {
         this.publicbodies = this.publicbodies.filter((pb) => pb.id !== data.publicbody.id)
+        this.reloadData()
       })
     }
     if (this.unclassified !== null) {
       this.room.on('unclassified_removed', (data) => {
         this.unclassified = this.unclassified.filter((fr) => fr.id !== data.unclassified.id)
+        this.reloadData()
       })
     }
     if (this.attachments !== null) {
       this.room.on('attachment_published', (data) => {
         this.attachments = this.attachments.filter((at) => at.id !== data.attachments.id)
+        this.reloadData()
       })
     }
   },
   methods: {
-
+    reloadData () {
+      getData(".").then((data) => {
+        this.attachments = data.attachments
+        this.attachmentsCount = data.attachmentsCount
+        this.unclassified = data.unclassified
+        this.unclassifiedCount = data.unclassifiedCount
+        this.publicbodies = data.publicbodies
+      })
+    }
   }
 }
 </script>

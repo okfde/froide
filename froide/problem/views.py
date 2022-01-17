@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import JsonResponse
 from django.utils.translation import gettext as _, pgettext
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -8,7 +9,7 @@ from django.urls import reverse
 from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.foirequest.auth import is_foirequest_moderator, is_foirequest_pii_moderator
 from froide.publicbody.models import PublicBody
-from froide.helper.utils import render_403, to_json
+from froide.helper.utils import render_403, to_json, is_ajax
 from froide.helper.auth import can_moderate_object
 
 from .api_views import get_problem_reports
@@ -31,18 +32,15 @@ def report_problem(request, message_pk):
     return redirect(message)
 
 
-def moderation_view(request):
-    if not is_foirequest_moderator(request):
-        return render_403(request)
-
-    problems = get_problem_reports(request)
-
+def get_moderation_data(request):
     unclassified = FoiRequest.objects.get_unclassified_for_moderation()
+    unclassified_count = unclassified.count()
     unclassified = list(unclassified.values("title", "id", "last_message")[:100])
 
     attachments = None
+    attachments_count = ""
     if is_foirequest_pii_moderator(request):
-        attachments = list(
+        at_qs = (
             FoiAttachment.objects.filter(
                 can_approve=True,
                 approved=False,
@@ -50,8 +48,12 @@ def moderation_view(request):
             )
             .filter(FoiAttachment.make_is_pdf_q())
             .order_by("id")
-            .select_related("belongs_to", "belongs_to__request")
-            .values("name", "id", "belongs_to_id", "belongs_to__request__slug")[:100]
+        )
+        attachments_count = at_qs.count()
+        attachments = list(
+            at_qs.select_related("belongs_to", "belongs_to__request").values(
+                "name", "id", "belongs_to_id", "belongs_to__request__slug"
+            )[:100]
         )
 
     publicbodies = None
@@ -68,6 +70,24 @@ def moderation_view(request):
                 "created_at",
             )
         )
+    return {
+        "attachments_count": attachments_count,
+        "unclassified": unclassified,
+        "unclassified_count": unclassified_count,
+        "attachments": attachments,
+        "publicbodies": publicbodies,
+    }
+
+
+def moderation_view(request):
+    if not is_foirequest_moderator(request):
+        return render_403(request)
+
+    mod_data = get_moderation_data(request)
+    if is_ajax(request):
+        return JsonResponse(mod_data)
+
+    problems = get_problem_reports(request)
 
     config = {
         "settings": {"user_id": request.user.id},
@@ -140,9 +160,11 @@ def moderation_view(request):
         "problem/moderation.html",
         {
             "problems": problems,
-            "publicbodies_json": to_json(publicbodies),
-            "unclassified_json": to_json(unclassified),
-            "attachments_json": to_json(attachments),
+            "publicbodies_json": to_json(mod_data["publicbodies"]),
+            "unclassified_json": to_json(mod_data["unclassified"]),
+            "unclassified_count": mod_data["unclassified_count"],
+            "attachments_json": to_json(mod_data["attachments"]),
+            "attachments_count": mod_data["attachments_count"],
             "config_json": to_json(config),
         },
     )
