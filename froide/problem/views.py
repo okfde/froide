@@ -49,7 +49,7 @@ def moderation_view(request):
                 belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
             )
             .filter(FoiAttachment.make_is_pdf_q())
-            .order_by("-id")
+            .order_by("id")
             .select_related("belongs_to", "belongs_to__request")
             .values("name", "id", "belongs_to_id", "belongs_to__request__slug")[:100]
         )
