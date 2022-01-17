@@ -164,6 +164,7 @@ export default {
       filter: {
         mine: false
       },
+      tabs: ["problemreports", "unclassified", "publicbodies", "attachments"],
       tab: 'problemreports'
     }
   },
@@ -233,6 +234,12 @@ export default {
         this.attachments = this.attachments.filter((at) => at.id !== data.attachments.id)
         this.reloadData()
       })
+    }
+  },
+  mounted () {
+    const anchor = document.location.hash.substr(1)
+    if (this.tabs.includes(anchor)) {
+      this.tab = anchor
     }
   },
   methods: {
