@@ -2,7 +2,7 @@
  * Websocket room implementation
  * new Room('/ws/some-room/').connect().on('event', (data) => console.log(data))
  * 
-*/ 
+*/
 
 const HEARTBEAT_SECONDS = 30
 const RETRY_SECONDS = 3
@@ -34,7 +34,7 @@ class Room {
 
     this.connect = this.connect.bind(this);
   }
-  connect () {
+  connect() {
     let prot = 'ws';
     if (document.location.protocol === 'https:') {
       prot = 'wss';
@@ -50,6 +50,7 @@ class Room {
           this.socket.send(JSON.stringify(d))
         }
       })
+      window.addEventListener("beforeunload", this.onunload)
       this.queue = []
     }
     this.socket.onmessage = (e) => {
@@ -61,6 +62,7 @@ class Room {
     };
     this.socket.onclose = () => {
       this.clearHeartbeat()
+      window.removeEventListener("beforeunload", this.onunload)
       if (!this.closed) {
         console.error('Socket closed unexpectedly. Retrying...');
         this.setupRetry()
@@ -68,24 +70,29 @@ class Room {
     };
     return this
   }
-  send (data: EventData) {
+  onunload() {
+    if (!this.closed) {
+      this.close()
+    }
+  }
+  send(data: EventData) {
     if (this.socket && this.socket.readyState === 1) {
       this.socket.send(JSON.stringify(data))
     } else {
       this.queue.push(data)
     }
   }
-  on (event: string, callback: Function) {
+  on(event: string, callback: Function) {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event].push(callback)
     return this
   }
-  off (event: string, callback: Function) {
+  off(event: string, callback: Function) {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event] = this.callbacks[event].filter((cb) => cb !== callback)
     return this
   }
-  trigger (event: string, data: Object) {
+  trigger(event: string, data: Object) {
     if (!this.callbacks[event]) {
       return
     }
@@ -93,16 +100,16 @@ class Room {
       cb(data)
     })
   }
-  close () {
+  close() {
     this.closed = true
     if (this.socket) {
-        this.socket.close()
+      this.socket.close()
     }
   }
-  setupHeartbeat () {
+  setupHeartbeat() {
     this.heartBeatInterval = window.setInterval(() => {
       if (this.socket && this.socket.readyState === 1) {
-        this.socket.send(JSON.stringify({type: 'heartbeat'}));
+        this.socket.send(JSON.stringify({ type: 'heartbeat' }));
       } else {
         if (this.heartBeatInterval) {
           window.clearInterval(this.heartBeatInterval);
@@ -111,18 +118,18 @@ class Room {
       }
     }, this.heartbeatSeconds * 1000);
   }
-  clearHeartbeat () {
+  clearHeartbeat() {
     if (this.heartBeatInterval) {
       window.clearInterval(this.heartBeatInterval);
     }
     this.heartBeatInterval = null;
   }
-  setupRetry () {
+  setupRetry() {
     if (!this.retryInterval) {
       this.retryInterval = window.setInterval(this.connect, this.retrySeconds * 1000);
     }
   }
-  clearRetry () {
+  clearRetry() {
     if (this.retryInterval) {
       window.clearInterval(this.retryInterval);
       this.retryInterval = null;
