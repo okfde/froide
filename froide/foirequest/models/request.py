@@ -597,7 +597,7 @@ class FoiRequest(models.Model):
 
         user = self.user
         domains = get_foi_mail_domains()
-        email_regexes = [r"[\w\.\-]+@" + x for x in domains]
+        email_regexes = [r"[\w\.\-]+@" + re.escape(x) for x in domains]
         FROIDE_CONFIG = settings.FROIDE_CONFIG
         user_regexes = []
         if user.private:
@@ -608,8 +608,8 @@ class FoiRequest(models.Model):
                 user.last_name,
                 user.first_name,
             ]
-        all_regexes = email_regexes + user_regexes + user.address.splitlines()
-        all_regexes = [re.escape(a) for a in all_regexes]
+        all_regexes = user_regexes + user.address.splitlines()
+        all_regexes = email_regexes + [re.escape(a) for a in all_regexes]
         return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
