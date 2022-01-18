@@ -375,9 +375,12 @@ export default {
     regexList () {
       return this.redactRegex.map(r => {
         r = r.replace(/ /g, '\\s+')
+        if (r.length < 2) {
+          return null
+        }
         r = `\\b${r}\\b`
-        return new RegExp(r, 'g')
-      })
+        return new RegExp(r, 'gi')
+      }).filter(r => r !== null)
     },
     container () {
       return this.$refs.container
