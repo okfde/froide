@@ -34,15 +34,10 @@ $footer-color-hover: $gray-100;
   align-items: center;
   justify-content: space-between;
 
-  li, a {
+  li {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-  }
-  li {
-    display: inline-block;
-    width: 2rem;
-    text-align: center;
   }
   a {
     color: $footer-color;
