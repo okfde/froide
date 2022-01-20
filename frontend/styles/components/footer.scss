@@ -30,7 +30,15 @@ $footer-color-hover: $gray-100;
 .footer__networks {
   @extend .list-unstyled;
   font-size: $font-size-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
+  li, a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
   li {
     display: inline-block;
     width: 2rem;
@@ -42,6 +50,10 @@ $footer-color-hover: $gray-100;
   a:hover {
     color: $footer-color-hover;
     text-decoration: none;
+  }
+  img {
+    height: $font-size-lg;
+    width: auto;
   }
 }
 
