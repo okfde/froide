@@ -141,6 +141,7 @@ class FileUploader(forms.widgets.Input):
     class Media:
         extend = False
         js = ("js/fileuploader.js",)
+        css = {"screen": ("css/fileuploader.css",)}
 
     def __init__(self, allowed_file_types=None, *args, **kwargs):
         self.allowed_file_types = allowed_file_types

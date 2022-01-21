@@ -37,6 +37,7 @@ class PublicBodySelect(forms.Widget):
     class Media:
         extend = False
         js = ("js/publicbody.js",)
+        css = {"screen": ("css/publicbody.css",)}
 
     def set_initial_object(self, obj):
         self.object = obj
