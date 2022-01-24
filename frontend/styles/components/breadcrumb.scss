@@ -24,7 +24,7 @@
     }
     &:last-child {
       margin-right: none;
-      > * { color: $blue-800; }
+      &, > * { color: $blue-800; }
     }
   }
   &-item + &-item {
