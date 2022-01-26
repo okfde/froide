@@ -1,10 +1,10 @@
-import importlib
-
 from django.conf import settings
 
 from elasticsearch_dsl import analyzer, tokenizer
 
 from django_elasticsearch_dsl import Index
+
+from froide.helper.utils import get_module_attr_from_dotted_path
 
 from .signal_processor import CelerySignalProcessor
 from .queryset import SearchQuerySetWrapper
@@ -64,9 +64,7 @@ def get_func(config_name, default_func):
         if not func_path:
             return default_func()
 
-        module, func = func_path.rsplit(".", 1)
-        module = importlib.import_module(module)
-        analyzer_func = getattr(module, func)
+        analyzer_func = get_module_attr_from_dotted_path(func_path)
         return analyzer_func()
 
     return get_it

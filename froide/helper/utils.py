@@ -1,4 +1,5 @@
 import datetime
+import importlib
 import json
 from urllib.parse import parse_qs, urlsplit, urlunsplit
 
@@ -127,3 +128,9 @@ def to_json(obj) -> str:
 
 def is_ajax(request: HttpRequest) -> bool:
     return request.headers.get("x-requested-with") == "XMLHttpRequest"
+
+
+def get_module_attr_from_dotted_path(path):
+    module, attr = path.rsplit(".", 1)
+    module = importlib.import_module(module)
+    return getattr(module, attr)

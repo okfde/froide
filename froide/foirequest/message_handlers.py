@@ -1,18 +1,15 @@
-import importlib
-
 from django.conf import settings
 from django.utils import timezone
 
 from froide.helper.email_utils import make_address
+from froide.helper.utils import get_module_attr_from_dotted_path
 
 from .foi_mail import send_foi_mail
 from .models import DeliveryStatus
 
 
 def get_message_handler_class(dotted):
-    module, klass = dotted.rsplit(".", 1)
-    module = importlib.import_module(module)
-    return getattr(module, klass)
+    return get_module_attr_from_dotted_path(dotted)
 
 
 def get_message_handler(message):

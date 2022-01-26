@@ -1,7 +1,6 @@
 from collections import defaultdict, namedtuple
 from datetime import datetime
 import time
-import importlib
 import gzip
 import io
 import logging
@@ -9,6 +8,8 @@ import re
 import os
 
 import pytz
+
+from froide.helper.utils import get_module_attr_from_dotted_path
 
 
 def get_delivery_report(sender, recipient, timestamp, extended=False):
@@ -18,9 +19,7 @@ def get_delivery_report(sender, recipient, timestamp, extended=False):
     if not reporter_path:
         return
 
-    module, klass = reporter_path.rsplit(".", 1)
-    module = importlib.import_module(module)
-    reporter_klass = getattr(module, klass)
+    reporter_klass = get_module_attr_from_dotted_path(reporter_path)
 
     reporter = reporter_klass(time_zone=settings.TIME_ZONE)
     return reporter.find(sender, recipient, timestamp, extended=extended)
