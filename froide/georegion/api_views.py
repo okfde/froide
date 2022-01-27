@@ -86,6 +86,7 @@ class GeoRegionFilter(filters.FilterSet):
     )
     latlng = filters.CharFilter(method="latlng_filter")
     name = filters.CharFilter(method="name_filter")
+    region_identifier = filters.CharFilter(method="region_identifier_filter")
 
     class Meta:
         model = GeoRegion
@@ -113,6 +114,9 @@ class GeoRegionFilter(filters.FilterSet):
     def ancestor_filter(self, queryset, name, value):
         descendants = value.get_descendants()
         return queryset.filter(id__in=descendants)
+
+    def region_identifier_filter(self, queryset, name, value):
+        return queryset.filter(region_identifier=value)
 
     def latlng_filter(self, queryset, name, value):
         try:
