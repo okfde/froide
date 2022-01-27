@@ -273,6 +273,8 @@ def send_mail(
     email_address,
     html=None,
     from_email=None,
+    cc=None,
+    bcc=None,
     attachments=None,
     fail_silently=False,
     bounce_check=True,
@@ -320,10 +322,12 @@ def send_mail(
         email_klass = EmailMultiAlternatives
 
     email = email_klass(
-        subject,
-        body,
-        from_email,
-        [email_address],
+        subject=subject,
+        body=body,
+        from_email=from_email,
+        to=[email_address],
+        cc=cc,
+        bcc=bcc,
         connection=connection,
         headers=headers,
     )
