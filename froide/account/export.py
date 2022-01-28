@@ -13,7 +13,7 @@ from django.urls import reverse
 
 from crossdomainmedia import CrossDomainMediaAuth
 
-from froide.helper.api_utils import get_dict
+from froide.helper.csv_utils import get_dict
 
 from .utils import send_mail_user
 from .tasks import start_export_task

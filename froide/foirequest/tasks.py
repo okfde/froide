@@ -9,12 +9,9 @@ from django.core.files.base import ContentFile
 
 from celery.exceptions import SoftTimeLimitExceeded
 
-from filingcabinet.pdf_utils import convert_to_pdf, convert_images_to_ocred_pdf, run_ocr
-
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
-from froide.helper.redaction import redact_file
 
 from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
 from .foi_mail import _process_mail, _fetch_mail
@@ -152,6 +149,8 @@ def ocr_pdf_attachment(att):
 
 
 def convert_attachment(att):
+    from filingcabinet.pdf_utils import convert_to_pdf
+
     output_bytes = convert_to_pdf(
         att.file.path,
         binary_name=settings.FROIDE_CONFIG.get("doc_conversion_binary"),
@@ -191,6 +190,8 @@ def convert_attachment(att):
     soft_time_limit=60 * 4,
 )
 def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=True):
+    from filingcabinet.pdf_utils import convert_images_to_ocred_pdf
+
     att_qs = FoiAttachment.objects.filter(id__in=att_ids)
     att_map = {a.id: a for a in att_qs}
     atts = [att_map[a_id] for a_id in att_ids]
@@ -222,6 +223,8 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
     soft_time_limit=60 * 4,
 )
 def ocr_pdf_task(att_id, target_id, can_approve=True):
+    from filingcabinet.pdf_utils import run_ocr
+
     try:
         attachment = FoiAttachment.objects.get(pk=att_id)
     except FoiAttachment.DoesNotExist:
@@ -260,6 +263,9 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
     soft_time_limit=60 * 5,
 )
 def redact_attachment_task(att_id, target_id, instructions):
+    from filingcabinet.pdf_utils import run_ocr
+    from froide.helper.redaction import redact_file
+
     try:
         attachment = FoiAttachment.objects.get(pk=att_id)
     except FoiAttachment.DoesNotExist:

@@ -26,7 +26,6 @@ from froide.upload.models import Upload
 
 from ..models import FoiRequest, FoiMessage, FoiAttachment
 from ..models.message import MessageKind
-from ..foi_mail import generate_foirequest_files
 from ..tasks import convert_attachment_task, move_upload_to_attachment
 from ..validators import (
     validate_upload_document,
@@ -464,6 +463,8 @@ class EscalationMessageForm(forms.Form):
         )
 
     def save(self, user=None):
+        from ..foi_mail import generate_foirequest_files
+
         file_generator = generate_foirequest_files(self.foirequest)
         att_gen = MailAttachmentSizeChecker(file_generator)
         attachments = list(att_gen)

@@ -42,7 +42,6 @@ from .models import (
     ProposedPublicBody,
 )
 from .csv_import import CSVImporter
-from .validators import validate_publicbodies
 
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy("api:category-autocomplete")
@@ -379,6 +378,8 @@ class PublicBodyBaseAdminMixin:
     show_georegions.short_description = _("Show georegions of")
 
     def validate_publicbodies(self, request, queryset):
+        from .validators import validate_publicbodies
+
         csv_stream = dict_to_csv_stream(validate_publicbodies(queryset))
         return export_csv_response(csv_stream, name="validation.csv")
 

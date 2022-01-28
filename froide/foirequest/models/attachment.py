@@ -7,8 +7,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 
-from filingcabinet.pdf_utils import can_convert_to_pdf
-
 from froide.helper.storage import HashedFilenameStorage
 from froide.document.models import Document
 
@@ -367,6 +365,8 @@ class FoiAttachment(models.Model):
         self.delete()
 
     def can_convert_to_pdf(self):
+        from filingcabinet.pdf_utils import can_convert_to_pdf
+
         ft = self.filetype.lower()
         name = self.name.lower()
         return self.converted_id is None and can_convert_to_pdf(ft, name=name)
