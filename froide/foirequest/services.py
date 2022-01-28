@@ -362,7 +362,11 @@ class ReceiveEmailService(BaseService):
         if email.date is None:
             message.timestamp = timezone.now()
         else:
-            message.timestamp = email.date
+            if email.date < foirequest.first_message:
+                # Mail timestamp is earlier than first message due to bad time on mail server
+                message.timestamp = timezone.now()
+            else:
+                message.timestamp = email.date
         user_replacements = foirequest.user.get_redactions()
         message.subject_redacted = redact_subject(message.subject, user_replacements)
         message.plaintext_redacted = redact_plaintext_with_request(
