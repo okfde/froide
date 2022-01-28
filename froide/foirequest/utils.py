@@ -28,7 +28,6 @@ from froide.helper.text_utils import (
     redact_user_strings,
 )
 from froide.helper.date_utils import format_seconds
-from froide.helper.api_utils import get_fake_api_context
 from froide.helper.tasks import search_instance_save
 from froide.helper.email_utils import delete_mails_by_recipient
 
@@ -679,6 +678,7 @@ def add_ical_events(foirequest, cal):
 
 
 def export_user_data(user):
+    from froide.helper.api_utils import get_fake_api_context
     from .api_views import (
         FoiRequestListSerializer,
         FoiMessageSerializer,
