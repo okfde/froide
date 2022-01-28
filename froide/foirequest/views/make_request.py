@@ -89,6 +89,7 @@ class MakeRequestView(FormView):
             "subject": request.GET.get("subject", ""),
             "body": request.GET.get("body", ""),
             "reference": request.GET.get("ref", ""),
+            "tags": request.GET.get("tags", ""),
             "redirect_url": request.GET.get("redirect", ""),
         }
         user_vars = self.get_user_template_vars()

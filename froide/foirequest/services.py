@@ -207,7 +207,7 @@ class CreateRequestService(BaseService):
         save_obj_with_slug(request, count=sequence)
 
         if "tags" in data and data["tags"]:
-            request.tags.add(*data["tags"])
+            request.tags.add(*[t[:100] for t in data["tags"]])
 
         subject = "%s [#%s]" % (request.title, request.pk)
         user_replacements = user.get_redactions()

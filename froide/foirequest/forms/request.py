@@ -8,6 +8,8 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.template.defaultfilters import slugify
 from django import forms
 
+from taggit.forms import TagField
+
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.helper.widgets import PriceInput, BootstrapRadioSelect
@@ -85,6 +87,7 @@ class RequestForm(JSONMixin, forms.Form):
     draft = forms.ModelChoiceField(
         queryset=None, required=False, widget=forms.HiddenInput
     )
+    tags = TagField(required=False)
     language = forms.ChoiceField(
         choices=settings.LANGUAGES,
         initial=settings.LANGUAGE_CODE,
