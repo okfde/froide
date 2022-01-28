@@ -102,8 +102,7 @@
         <a class="btn btn-secondary" href="{% url 'publicbody-change' pk=object.pk %}">
           {% trans "Propose change" %}
         </a>
-        {% endif %}
-      </a>
+      {% endif %}
     {% else %}
       <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="{% trans 'You must be logged in.' %}">
         <button class="btn btn-secondary" disabled style="pointer-events: none;">
