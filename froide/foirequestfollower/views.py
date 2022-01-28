@@ -11,25 +11,7 @@ from froide.helper.utils import is_ajax
 
 from .models import FoiRequestFollower
 from .forms import FollowRequestForm
-
-
-def get_context(foirequest, request, **kwargs):
-    form = FollowRequestForm(foirequest=foirequest, request=request)
-    following = False
-    user = request.user
-    if user.is_authenticated:
-        following = FoiRequestFollower.objects.request_followed_by(
-            foirequest, user=user
-        )
-    context = {
-        "form": form,
-        "object": foirequest,
-        "following": following,
-        "request": request,
-        "can_follow": foirequest.user != user,
-    }
-    context.update(kwargs)
-    return context
+from .utils import get_context
 
 
 @require_POST

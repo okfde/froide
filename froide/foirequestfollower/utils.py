@@ -14,6 +14,7 @@ from froide.foirequest.models import FoiEvent, FoiMessage
 from froide.foirequest.models.event import EVENT_DETAILS
 from froide.foirequest.notifications import send_update
 
+from .forms import FollowRequestForm
 from .models import FoiRequestFollower, REFERENCE_PREFIX
 
 Comment = get_model()
@@ -33,6 +34,25 @@ COMBINE_EVENTS = set(
         FoiEvent.EVENTS.STATUS_CHANGED,
     ]
 )
+
+
+def get_context(foirequest, request, **kwargs):
+    form = FollowRequestForm(foirequest=foirequest, request=request)
+    following = False
+    user = request.user
+    if user.is_authenticated:
+        following = FoiRequestFollower.objects.request_followed_by(
+            foirequest, user=user
+        )
+    context = {
+        "form": form,
+        "object": foirequest,
+        "following": following,
+        "request": request,
+        "can_follow": foirequest.user != user,
+    }
+    context.update(kwargs)
+    return context
 
 
 def add_comment_updates(updates, since):

@@ -22,7 +22,6 @@ from froide.helper.email_parsing import parse_email, parse_postmark
 from froide.helper.name_generator import get_name_from_number, get_old_name_from_number
 
 from .utils import get_publicbody_for_email, get_foi_mail_domains
-from .pdf_generator import FoiRequestPDFGenerator
 
 
 unknown_foimail_subject = _("Unknown FoI-Mail Recipient")
@@ -319,6 +318,8 @@ def fetch_and_process():
 
 
 def generate_foirequest_files(foirequest):
+    from .pdf_generator import FoiRequestPDFGenerator
+
     pdf_generator = FoiRequestPDFGenerator(foirequest)
     correspondence_bytes = pdf_generator.get_pdf_bytes()
     yield ("%s.pdf" % foirequest.pk, correspondence_bytes, "application/pdf")
@@ -352,6 +353,8 @@ def get_attachments_for_package(foirequest):
 
 
 def package_foirequest(foirequest):
+    from .pdf_generator import FoiRequestPDFGenerator
+
     zfile_obj = BytesIO()
     with override(settings.LANGUAGE_CODE):
         zfile = zipfile.ZipFile(zfile_obj, "w")

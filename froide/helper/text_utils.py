@@ -7,13 +7,15 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.html import strip_tags
 from django.conf import settings
 from django.utils.safestring import SafeString
-from functools import partial
-from lxml.html import HtmlElement
 
 try:
     from lxml import html as html_parser
+    from lxml.html import HtmlElement
 except ImportError:
     html_parser = None
+
+    class HtmlElement:
+        pass
 
 
 SEPARATORS = re.compile(r"(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)", re.UNICODE | re.M)
@@ -185,21 +187,21 @@ def remove_closing(content: str, regexes: Optional[List[Pattern]] = None) -> str
     return remove_part(regexes, content, func=lambda c, m: c[: m.end()].strip())
 
 
-def remove_closing_inclusive(content):
+def remove_closing_inclusive(content: str) -> str:
     regexes = settings.FROIDE_CONFIG.get("closings", [])
     return remove_part(regexes, content, func=lambda c, m: c[: m.start()].strip())
 
 
-def remove_greeting_inclusive(content):
+def remove_greeting_inclusive(content: str) -> str:
     regexes = settings.FROIDE_CONFIG.get("greetings", [])
     return remove_part(regexes, content, func=lambda c, m: c[m.end() :].strip())
 
 
-def ignore_tag(x):
+def ignore_tag(x: HtmlElement) -> str:
     return "%s%s" % (x.text_content(), x.tail if x.tail else "")
 
 
-def make_strong(x):
+def make_strong(x: HtmlElement) -> str:
     return "**%s**%s" % (x.text_content(), x.tail if x.tail else "")
 
 
@@ -219,7 +221,7 @@ def make_heading(x: HtmlElement, num: int = 1) -> str:
     return "%s %s\n\n%s" % ("#" * num, x.text_content(), x.tail if x.tail else "")
 
 
-def heading_maker(num: int) -> partial:
+def heading_maker(num: int) -> functools.partial:
     return functools.partial(make_heading, num=num)
 
 

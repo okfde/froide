@@ -1,6 +1,6 @@
 from django import template
 
-from ..views import get_context
+from ..utils import get_context
 
 register = template.Library()
 

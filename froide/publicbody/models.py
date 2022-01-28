@@ -26,7 +26,6 @@ from froide.helper.date_utils import (
 )
 from froide.helper.templatetags.markup import markdown
 from froide.helper.csv_utils import export_csv
-from froide.helper.api_utils import get_fake_api_context
 
 
 DEFAULT_LAW = settings.FROIDE_CONFIG.get("default_law", 1)
@@ -201,6 +200,8 @@ class FoiLaw(TranslatableModel):
             ]
 
     def as_data(self, request=None):
+        from froide.helper.api_utils import get_fake_api_context
+
         from .api_views import FoiLawSerializer
 
         if request is None:
@@ -552,6 +553,8 @@ class PublicBody(models.Model):
         )
 
     def _as_data(self, serializer_klass, request=None):
+        from froide.helper.api_utils import get_fake_api_context
+
         if request is None:
             ctx = get_fake_api_context()
         else:
@@ -574,7 +577,6 @@ class PublicBody(models.Model):
 
     @classmethod
     def export_csv(cls, queryset):
-
         fields = (
             "id",
             "name",

@@ -33,7 +33,6 @@ from ..forms import (
 )
 from ..utils import check_throttle
 from ..tasks import convert_images_to_pdf_task
-from ..pdf_generator import LetterPDFGenerator
 from ..services import ResendBouncedMessageService
 from ..decorators import (
     allow_write_foirequest,
@@ -562,6 +561,8 @@ def redact_message(request, foirequest, message_id):
 
 @allow_write_foirequest
 def download_message_pdf(request, foirequest, message_id):
+    from ..pdf_generator import LetterPDFGenerator
+
     message = get_object_or_404(
         FoiMessage, request=foirequest, pk=message_id, is_response=False
     )

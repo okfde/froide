@@ -15,7 +15,6 @@ from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 from . import account_email_changed
 from .models import User, TaggedUser, UserTag, AccountBlocklist, UserPreference
 from .services import AccountService
-from .export import get_export_access_token
 from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
 from .forms import UserChangeForm, UserCreationForm
 from .utils import (
@@ -300,6 +299,8 @@ class UserAdmin(DjangoUserAdmin):
     merge_accounts_keep_newer.short_description = _("Merge accounts (keep newer)")
 
     def export_user_data(self, request, queryset):
+        from .export import get_export_access_token
+
         if not request.user.is_superuser:
             raise PermissionDenied
 

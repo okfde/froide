@@ -49,10 +49,7 @@ from .models import (
     RequestDraft,
     DeliveryStatus,
 )
-from .tasks import convert_attachment_task, ocr_pdf_attachment
 from .widgets import AttachmentFileWidget
-from .services import ActivatePendingRequestService
-from .utils import update_foirequest_index
 
 
 SUBJECT_REQUEST_ID = re.compile(r" \[#(\d+)\]")
@@ -228,6 +225,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
         )
 
     def mark_checked(self, request, queryset):
+        from .utils import update_foirequest_index
+
         rows_updated = queryset.update(checked=True)
         update_foirequest_index(queryset)
         self.message_user(
@@ -237,6 +236,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     mark_checked.short_description = _("Mark selected requests as checked")
 
     def mark_not_foi(self, request, queryset):
+        from .utils import update_foirequest_index
+
         rows_updated = queryset.update(
             is_foi=False,
             public=False,
@@ -250,6 +251,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     mark_not_foi.short_description = _("Mark selected requests as not FoI")
 
     def mark_successfully_resolved(self, request, queryset):
+        from .utils import update_foirequest_index
+
         rows_updated = queryset.update(
             status=FoiRequest.STATUS.RESOLVED,
             resolution=FoiRequest.RESOLUTION.SUCCESSFUL,
@@ -266,6 +269,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     mark_successfully_resolved.short_description = _("Mark successfully resolved")
 
     def mark_refused(self, request, queryset):
+        from .utils import update_foirequest_index
+
         rows_updated = queryset.update(
             status=FoiRequest.STATUS.RESOLVED, resolution=FoiRequest.RESOLUTION.REFUSED
         )
@@ -277,6 +282,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     mark_refused.short_description = _("Mark as refused")
 
     def update_index(self, request, queryset):
+        from .utils import update_foirequest_index
+
         update_foirequest_index(queryset)
         self.message_user(
             request,
@@ -290,6 +297,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
         Mark selected requests as same as the one we are choosing now.
 
         """
+        from .utils import update_foirequest_index
+
         opts = self.model._meta
         # Check that the user has change permission for the actual model
         if not self.has_change_permission(request):
@@ -328,6 +337,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     mark_same_as.short_description = _("Mark selected requests as identical to...")
 
     def confirm_request(self, request, queryset):
+        from .services import ActivatePendingRequestService
+
         foirequest = queryset[0]
         if foirequest.status != FoiRequest.STATUS.AWAITING_USER_CONFIRMATION:
             self.message_user(request, _("Request not in correct state!"))
@@ -340,6 +351,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     confirm_request.short_description = _("Confirm request if unconfirmed")
 
     def unpublish(self, request, queryset):
+        from .utils import update_foirequest_index
+
         queryset.update(
             public=False, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
         )
@@ -363,6 +376,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     unblock_request.short_description = _("Unblock requests and send first message")
 
     def close_requests(self, request, queryset):
+        from .utils import update_foirequest_index
+
         queryset.update(closed=True)
         update_foirequest_index(queryset)
 
@@ -729,6 +744,8 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     cannot_approve.short_description = _("Mark selected as not approvable/approved")
 
     def convert(self, request, queryset):
+        from .tasks import convert_attachment_task
+
         if not queryset:
             return
         count = 0
@@ -751,6 +768,8 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
     make_document.short_description = _("Make into document")
 
     def ocr_attachment(self, request, queryset):
+        from .tasks import ocr_pdf_attachment
+
         for att in queryset:
             ocr_pdf_attachment(att)
 

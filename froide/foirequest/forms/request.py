@@ -142,7 +142,7 @@ class RequestForm(JSONMixin, forms.Form):
 class MakePublicBodySuggestionForm(forms.Form):
     publicbody = forms.ModelChoiceField(
         label=_("Public body"),
-        queryset=PublicBody.objects.all(),
+        queryset=None,
         widget=PublicBodySelect,
     )
     reason = forms.CharField(
@@ -150,6 +150,10 @@ class MakePublicBodySuggestionForm(forms.Form):
         widget=forms.TextInput(attrs={"size": "40", "placeholder": _("Reason")}),
         required=False,
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["publicbody"].queryset = PublicBody.objects.all()
 
     def clean_publicbody(self):
         publicbody = self.cleaned_data["publicbody"]
