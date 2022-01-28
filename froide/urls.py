@@ -42,8 +42,7 @@ from froide.publicbody.views import (
 )
 from froide.foirequest.views import FoiRequestSitemap, index, dashboard
 
-
-from froide.helper import api_router
+from .api import api_router
 
 
 def handler500(request):
