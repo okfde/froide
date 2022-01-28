@@ -87,7 +87,7 @@ class RequestForm(JSONMixin, forms.Form):
     draft = forms.ModelChoiceField(
         queryset=None, required=False, widget=forms.HiddenInput
     )
-    tags = TagField(required=False)
+    tags = TagField(required=False, widget=forms.HiddenInput)
     language = forms.ChoiceField(
         choices=settings.LANGUAGES,
         initial=settings.LANGUAGE_CODE,
