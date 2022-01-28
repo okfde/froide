@@ -58,6 +58,7 @@ class EventName(models.TextChoices):
         "the deadline for the request " "was extended"
     )
     MARK_NOT_FOI = "mark_not_foi", _("the request was marked as not an FOI request")
+    MODERATOR_ACTION = "moderator_action", _("the request was moderated")
     SENDER_CHANGED = "sender_changed", _("sender of message was changed")
     RECIPIENT_CHANGED = "recipient_changed", _("recipient of message was changed")
 

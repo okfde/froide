@@ -6,6 +6,7 @@ from .request import (
     ConcreteLawForm,
     TagFoiRequestForm,
     ExtendDeadlineForm,
+    ApplyModerationForm,
 )
 from .message import (
     SendMessageForm,
@@ -48,4 +49,5 @@ __all__ = [
     "PublicBodyUploader",
     "PostalUploadForm",
     "MakeProjectPublicForm",
+    "ApplyModerationForm",
 ]
