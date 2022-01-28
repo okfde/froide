@@ -105,9 +105,11 @@
         {% endif %}
       </a>
     {% else %}
-      <button class="btn btn-secondary" disabled data-toggle="tooltip" data-placement="top" title="{% trans 'You must be logged in.' %}">
-        {% trans "Propose change" %}
-      </button>
+      <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="top" title="{% trans 'You must be logged in.' %}">
+        <button class="btn btn-secondary" disabled style="pointer-events: none;">
+          {% trans "Propose change" %}
+        </button>
+      </span>
     {% endif %}
 
     {% if request.user.is_staff and request.user|has_perm:"publicbody.view_publicbody" %}
