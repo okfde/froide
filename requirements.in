@@ -1,5 +1,5 @@
 camelot-py[cv]
-celery
+celery>=5.2.2
 channels
 coreapi
 dj-database-url
@@ -27,8 +27,11 @@ elasticsearch<8.0.0,>=7.0.0
 elasticsearch-dsl>=7.0.0<8.0.0
 geoip2
 icalendar
+lxml>=4.6.5
 markdown
+numpy>=1.21
 phonenumbers
+Pillow>=9.0.0
 psycopg2-binary
 pyisemail
 pypdf2
