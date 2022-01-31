@@ -205,11 +205,11 @@ def apply_moderation(request, slug):
         data=request.POST, foirequest=foirequest, request=request
     )
     if form.is_valid():
-        messages = form.save()
-        message_str = " ".join([str(x) for x in messages])
+        result_messages = form.save()
+        result_str = " ".join([str(x) for x in result_messages])
         if is_ajax(request):
-            return HttpResponse(message_str)
-        messages.add_message(request, messages.SUCCESS, message_str)
+            return HttpResponse(result_str)
+        messages.add_message(request, messages.SUCCESS, result_str)
     return redirect(foirequest)
 
 
