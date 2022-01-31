@@ -15,7 +15,7 @@
     overflow: hidden;
     white-space: nowrap;
     &, > * {
-      color: $gray-500;
+      color: $gray-700;
       font-size: small;
       white-space: nowrap;
       @include media-breakpoint-up(lg) {
