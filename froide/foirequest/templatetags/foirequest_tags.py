@@ -32,6 +32,7 @@ from ..auth import (
     can_manage_foiproject,
     can_read_foiproject_authenticated,
 )
+from ..moderation import get_moderation_triggers
 
 Comment = get_model()
 
@@ -413,3 +414,11 @@ def readable_status(status, resolution=""):
     if status == FoiRequest.STATUS.RESOLVED and resolution:
         status = resolution
     return FoiRequest.get_readable_status(status)
+
+
+@register.inclusion_tag(
+    "foirequest/snippets/moderation_triggers.html", takes_context=True
+)
+def render_moderation_actions(context, foirequest):
+    triggers = get_moderation_triggers(foirequest, request=context["request"])
+    return {"triggers": triggers.values(), "object": foirequest}

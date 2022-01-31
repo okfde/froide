@@ -1,3 +1,5 @@
+from typing import List
+
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
@@ -20,6 +22,7 @@ from froide.helper.auth import get_read_queryset
 from froide.campaign.validators import validate_not_campaign
 
 from ..models import FoiRequest, RequestDraft, PublicBodySuggestion
+from ..moderation import get_moderation_triggers
 from ..validators import clean_reference, validate_no_placeholder
 from ..utils import construct_initial_message_body
 
@@ -392,6 +395,14 @@ class ConcreteLawForm(forms.Form):
 class TagFoiRequestForm(TagObjectForm):
     tags_autocomplete_url = reverse_lazy("api:request-tags-autocomplete")
 
+    def clean_tags(self):
+        """
+        Remove special tags starting with tag's INTERNAL_PREFIX
+        """
+        tags = self.cleaned_data["tags"]
+        tags = [t for t in tags if not t.startswith(FoiRequest.tags.INTERNAL_PREFIX)]
+        return tags
+
 
 class ExtendDeadlineForm(forms.Form):
     time = forms.IntegerField(min_value=1, max_value=15)
@@ -405,3 +416,24 @@ class ExtendDeadlineForm(forms.Form):
         if foirequest.due_date > now and foirequest.status == "overdue":
             foirequest.status = "awaiting_response"
         foirequest.save()
+
+
+class ApplyModerationForm(forms.Form):
+    moderation_trigger = forms.ChoiceField(required=True, widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        self.foirequest = kwargs.pop("foirequest")
+        self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.moderation_triggers = get_moderation_triggers(
+            self.foirequest, self.request
+        )
+        self.fields["moderation_trigger"].choices = [
+            (name, name) for name in self.moderation_triggers.keys()
+        ]
+
+    def save(self) -> List[str]:
+        trigger_name = self.cleaned_data["moderation_trigger"]
+        trigger = self.moderation_triggers[trigger_name]
+        messages = trigger.apply_actions(self.foirequest, self.request)
+        return messages

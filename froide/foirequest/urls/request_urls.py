@@ -23,7 +23,7 @@ from ..views import (
     upload_postal_message,
     set_message_sender,
     set_message_recipient,
-    mark_not_foi,
+    apply_moderation,
     extend_deadline,
     approve_attachment,
     approve_message,
@@ -97,7 +97,11 @@ urlpatterns = [
         upload_postal_message,
         name="foirequest-upload_postal_message",
     ),
-    path("<slug:slug>/mark/not-foi/", mark_not_foi, name="foirequest-mark_not_foi"),
+    path(
+        "<slug:slug>/apply-moderation/",
+        apply_moderation,
+        name="foirequest-apply_moderation",
+    ),
     path(
         "<slug:slug>/extend-deadline/",
         extend_deadline,

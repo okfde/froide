@@ -23,17 +23,18 @@ from ..forms import (
     PublicBodySuggestionsForm,
     ExtendDeadlineForm,
     PublicBodyUploader,
+    ApplyModerationForm,
 )
 from ..utils import check_throttle, get_foi_mail_domains
 from ..services import CreateSameAsRequestService, ActivatePendingRequestService
 from ..auth import (
+    get_read_foirequest_queryset,
     can_write_foirequest,
     check_foirequest_upload_code,
     can_moderate_foirequest,
     can_mark_not_foi,
 )
 from ..hooks import registry
-from ..notifications import send_non_foi_notification
 from ..decorators import allow_write_foirequest
 
 from .request import show_foirequest
@@ -194,28 +195,21 @@ def set_summary(request, foirequest):
 
 @require_POST
 @login_required
-def mark_not_foi(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
+def apply_moderation(request, slug):
+    foirequest = get_object_or_404(get_read_foirequest_queryset(request), slug=slug)
 
     if not can_mark_not_foi(foirequest, request):
         return render_403(request)
 
-    foirequest.is_foi = False
-
-    foirequest.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
-    if foirequest.public:
-        foirequest.public = False
-        FoiRequest.made_private.send(sender=foirequest)
-    FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.MARK_NOT_FOI, foirequest, user=request.user
+    form = ApplyModerationForm(
+        data=request.POST, foirequest=foirequest, request=request
     )
-    foirequest.save()
-    send_non_foi_notification(foirequest)
-    if is_ajax(request):
-        return HttpResponse(_("Marked as NOT FoI"))
-    messages.add_message(
-        request, messages.SUCCESS, _("Request marked as not a FoI request.")
-    )
+    if form.is_valid():
+        result_messages = form.save()
+        result_str = " ".join([str(x) for x in result_messages])
+        if is_ajax(request):
+            return HttpResponse(result_str)
+        messages.add_message(request, messages.SUCCESS, result_str)
     return redirect(foirequest)
 
 

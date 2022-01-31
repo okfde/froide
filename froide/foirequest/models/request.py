@@ -15,7 +15,7 @@ from django.utils.crypto import get_random_string
 import django.dispatch
 from django.utils import timezone
 
-from taggit.managers import TaggableManager
+from taggit.managers import TaggableManager, _TaggableManager as TaggitTaggableManager
 from taggit.models import TaggedItemBase
 
 from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
@@ -195,6 +195,20 @@ class TaggedFoiRequest(TaggedItemBase):
     class Meta:
         verbose_name = _("FoI Request Tag")
         verbose_name_plural = _("FoI Request Tags")
+
+
+class InternalTaggableManager(TaggitTaggableManager):
+    INTERNAL_PREFIX = "$"
+
+    def all(self):
+        return [t for t in super().all() if not t.name.startswith(self.INTERNAL_PREFIX)]
+
+    def all_internal(self):
+        return [t for t in super().all() if t.name.startswith(self.INTERNAL_PREFIX)]
+
+    def add_internal(self, tag):
+        assert tag.startswith(self.INTERNAL_PREFIX)
+        return self.add(tag)
 
 
 class Status(models.TextChoices):
@@ -406,7 +420,9 @@ class FoiRequest(models.Model):
     objects = FoiRequestManager()
     published = PublishedFoiRequestManager()
     published_not_foi = PublishedNotFoiRequestManager()
-    tags = TaggableManager(through=TaggedFoiRequest, blank=True)
+    tags = TaggableManager(
+        through=TaggedFoiRequest, blank=True, manager=InternalTaggableManager
+    )
 
     class Meta:
         ordering = ("-last_message",)

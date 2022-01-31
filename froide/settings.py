@@ -512,6 +512,24 @@ class Base(Configuration):
             "about": "/about/",
             "help": "/help/",
         },
+        moderation_triggers=[
+            {
+                "name": "nonfoi",
+                "label": _("Non-FOI"),
+                "icon": "fa-ban",
+                "actions": [
+                    ("froide.foirequest.moderation.MarkNonFOI",),
+                ],
+            },
+            {
+                "name": "depublish",
+                "label": _("Depublish"),
+                "icon": "fa-minus-circle",
+                "actions": [
+                    ("froide.foirequest.moderation.Depublish",),
+                ],
+            },
+        ],
         message_handlers={
             "email": "froide.foirequest.message_handlers.EmailMessageHandler"
         },
