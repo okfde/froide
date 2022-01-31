@@ -201,14 +201,14 @@ class InternalTaggableManager(TaggitTaggableManager):
     INTERNAL_PREFIX = "$"
 
     def all(self):
-        return super().all().exclude(name__startswith=self.INTERNAL_PREFIX)
+        return [t for t in super().all() if not t.name.startswith(self.INTERNAL_PREFIX)]
 
     def all_internal(self):
-        return super().all().filter(name__startswith=self.INTERNAL_PREFIX)
+        return [t for t in super().all() if t.name.startswith(self.INTERNAL_PREFIX)]
 
     def add_internal(self, tag):
         assert tag.startswith(self.INTERNAL_PREFIX)
-        return self.add(tag, tag_kwargs={"internal": True})
+        return self.add(tag)
 
 
 class Status(models.TextChoices):
