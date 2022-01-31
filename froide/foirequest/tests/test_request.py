@@ -876,22 +876,25 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 403)
         self.assertNotEqual(message.sender_public_body, original_pb)
 
-    def test_mark_not_foi(self):
+    def test_apply_moderation(self):
         req = FoiRequest.objects.all()[0]
         self.assertTrue(req.is_foi)
         response = self.client.post(
-            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug + "-blub"})
+            reverse("foirequest-apply_moderation", kwargs={"slug": req.slug + "-blub"}),
+            data={"moderation_trigger": "nonfoi"},
         )
         self.assertEqual(response.status_code, 302)
 
         self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(
-            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug + "-blub"})
+            reverse("foirequest-apply_moderation", kwargs={"slug": req.slug + "-blub"}),
+            data={"moderation_trigger": "nonfoi"},
         )
         self.assertEqual(response.status_code, 404)
 
         response = self.client.post(
-            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
+            reverse("foirequest-apply_moderation", kwargs={"slug": req.slug}),
+            data={"moderation_trigger": "nonfoi"},
         )
         self.assertEqual(response.status_code, 403)
 
@@ -900,7 +903,8 @@ class RequestTest(TestCase):
         self.client.logout()
         self.client.login(email="moderator@example.org", password="froide")
         response = self.client.post(
-            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
+            reverse("foirequest-apply_moderation", kwargs={"slug": req.slug}),
+            data={"moderation_trigger": "nonfoi"},
         )
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(pk=req.pk)
@@ -921,7 +925,8 @@ class RequestTest(TestCase):
 
         self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(
-            reverse("foirequest-mark_not_foi", kwargs={"slug": req.slug})
+            reverse("foirequest-apply_moderation", kwargs={"slug": req.slug}),
+            data={"moderation_trigger": "nonfoi"},
         )
         self.assertEqual(response.status_code, 302)
         req = FoiRequest.objects.get(pk=req.pk)
