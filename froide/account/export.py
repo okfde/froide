@@ -186,7 +186,9 @@ def export_user_data(user):
             "profile_text",
             (
                 "profile_photo",
-                lambda x: os.path.basename(x.profile_photo.path) if x else None,
+                lambda x: os.path.basename(x.profile_photo.path)
+                if x.profile_photo
+                else None,
             ),
             ("tags", lambda x: ",".join(str(t) for t in x.tags.all())),
             "is_trusted",
