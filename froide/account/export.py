@@ -184,8 +184,11 @@ def export_user_data(user):
             "date_joined",
             "is_staff",
             "profile_text",
-            ("profile_photo", lambda x: os.path.basename(x.path) if x else None),
-            ("tags", lambda x: ",".join(str(t) for t in x.all())),
+            (
+                "profile_photo",
+                lambda x: os.path.basename(x.profile_photo.path) if x else None,
+            ),
+            ("tags", lambda x: ",".join(str(t) for t in x.tags.all())),
             "is_trusted",
             "is_blocked",
             "date_deactivated",
