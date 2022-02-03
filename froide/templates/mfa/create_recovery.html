@@ -1,0 +1,64 @@
+{% extends "mfa/base_create.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load form_helper %}
+
+{% block title %}{% translate "Setup recovery code" %}{% endblock %}
+
+{% block mfa_heading %}{% translate "Setup recovery code" %}{% endblock %}
+
+{% block mfa_inner %}
+
+<p>
+  {% translate "A recovery code can be used when you lose access to your other two-factor login options. Each recovery code can only be used once." %}
+</p>
+<p>
+  {% translate "Make sure to store it in a safe place! If you lose your other two-factor login options and don’t have the recovery codes you will lose access to your account." %}
+</p>
+
+<form method="POST">
+  {% csrf_token %}
+  {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
+  {% render_field form.name %}
+
+  <div class="form-group row">
+  <label class="font-weight-bold col-md-4 col-form-label" for="{{ field.id_for_label }}">
+    {{ form.code.label }}
+  </label>
+  <div class="col-md-8">
+    <div class="input-group mb-3">
+      <input name="code" value="{{ mfa_data.code }}"
+        title="{% translate 'Click to copy' %}"
+        data-toggle="tooltip" data-placement="top"
+        data-copied="{% translate 'URL copied' %}"
+        class="form-control copy-text" readonly
+      />
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" data-downloadtxt="{{ SITE_NAME }} {% translate 'recovery code:' %} {{ mfa_data.code }}">
+          {% translate "Download as TXT file" %}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="form-group row">
+    <div class="col-md-8 ml-auto">
+      <div class="form-check">
+        <label class="form-check-label font-weight-bold field-required">
+          <input type="checkbox" required>
+          {% translate "I have safely stored the code." %}
+        </label>
+      </div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">
+    {% translate "Setup code" %}
+  </button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'account/mfa.js' %}"></script>
+{% endblock %}

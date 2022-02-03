@@ -1,5 +1,7 @@
 from django.apps import AppConfig
+from django.contrib import messages
 from django.urls import reverse
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
 from .menu import MenuItem, menu_registry
@@ -10,6 +12,8 @@ class AccountConfig(AppConfig):
     verbose_name = _("Account")
 
     def ready(self):
+        from django.contrib.auth.signals import user_logged_in
+
         from froide.bounce.signals import user_email_bounced
 
         user_email_bounced.connect(deactivate_user_after_bounce)
@@ -17,6 +21,14 @@ class AccountConfig(AppConfig):
         menu_registry.register(get_settings_menu_item)
         menu_registry.register(get_request_menu_item)
         menu_registry.register(get_profile_menu_item)
+        user_logged_in.connect(handle_user_login)
+
+
+def handle_user_login(sender, request, user, **kwargs):
+    # Activate the user's language
+    translation.activate(user.language)
+    request.session["last_auth"] = timezone.now().isoformat()
+    messages.add_message(request, messages.INFO, _("You are now logged in."))
 
 
 def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwargs):

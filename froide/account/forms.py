@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
@@ -288,8 +289,8 @@ class AddressForm(JSONMixin, AddressBaseForm):
             user.save()
 
 
-class UserLoginForm(forms.Form):
-    email = forms.EmailField(
+class UserLoginForm(AuthenticationForm):
+    username = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
                 "placeholder": _("mail@ddress.net"),
@@ -305,6 +306,10 @@ class UserLoginForm(forms.Form):
         ),
         label=_("Password"),
     )
+    error_messages = {
+        "invalid_login": _("Email and password do not match."),
+        "inactive": _("Please activate your mail address before logging in."),
+    }
 
 
 class PasswordResetForm(auth.forms.PasswordResetForm):
