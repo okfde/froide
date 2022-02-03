@@ -117,9 +117,7 @@
   </div>
 {% endif %}
 
-{% if not request.user.has_usable_password %}
-  {% include "account/includes/change_password_form.html" %}
-{% endif %}
+{% include "account/includes/change_password_form.html" %}
 
 {% block post_password %}{% endblock %}
 
