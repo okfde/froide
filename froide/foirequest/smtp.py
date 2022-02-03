@@ -46,7 +46,7 @@ class EmailBackend(DjangoEmailBackend):
             )
         except smtplib.SMTPRecipientsRefused as e:
             handle_smtp_error(e)
-            logger.exception(e)
+            logger.warn("SMTPRecipientsRefused: %s", e)
             return False
         except smtplib.SMTPException as e:
             logger.exception(e)
