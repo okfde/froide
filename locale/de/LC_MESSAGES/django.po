@@ -4540,7 +4540,7 @@ msgstr "Absender angeben"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html:77
 msgid "Additional recipients"
-msgstr "Weitere Emfpänger"
+msgstr "Weitere Empfänger"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html:95
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html:72
