@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
+from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import add_number_to_filename
 from froide.helper.utils import is_ajax, render_400
 from froide.upload.forms import get_uppy_i18n
@@ -544,6 +545,22 @@ def edit_message(request, foirequest, message_id):
 @allow_write_or_moderate_pii_foirequest
 def redact_message(request, foirequest, message_id):
     message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    if message.is_response and request.POST.get("unredact_closing"):
+        message.plaintext_redacted = redact_plaintext_with_request(
+            message.plaintext,
+            foirequest,
+            redact_closing=False,
+        )
+        message.clear_render_cache()
+        message.save()
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.MESSAGE_REDACTED,
+            foirequest,
+            message=message,
+            user=request.user,
+            **{"action": "unredact_closing"}
+        )
+        return redirect(message.get_absolute_url())
     form = RedactMessageForm(request.POST)
     if form.is_valid():
         form.save(message)
