@@ -428,7 +428,9 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
 
     def category_filter(self, queryset, name, value):
         for v in value:
-            queryset = queryset.filter(categories__in=Category.get_tree(parent=v))
+            queryset = queryset.filter(
+                categories__in=Category.get_tree(parent=v)
+            ).distinct()
         return queryset
 
     def regions_filter(self, queryset, name, value):
