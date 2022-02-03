@@ -2,7 +2,10 @@ from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
 
-from .menu import menu_registry, MenuItem
+from .menu import menu_registry
+from django.core.handlers.wsgi import WSGIRequest
+from froide.account.menu import MenuItem
+from typing import Optional
 
 
 class AccountConfig(AppConfig):
@@ -27,7 +30,7 @@ def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwar
     bounce.user.deactivate()
 
 
-def get_request_menu_item(request):
+def get_request_menu_item(request: WSGIRequest) -> MenuItem:
     return MenuItem(
         section="before_request",
         order=999,
@@ -36,7 +39,7 @@ def get_request_menu_item(request):
     )
 
 
-def get_profile_menu_item(request):
+def get_profile_menu_item(request: WSGIRequest) -> Optional[MenuItem]:
     if not request.user.is_authenticated:
         return None
     if request.user.private or not request.user.username:
@@ -49,7 +52,7 @@ def get_profile_menu_item(request):
     )
 
 
-def get_settings_menu_item(request):
+def get_settings_menu_item(request: WSGIRequest) -> MenuItem:
     return MenuItem(
         section="after_settings",
         order=-1,

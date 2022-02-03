@@ -4,7 +4,6 @@ from unittest import mock
 from urllib.parse import urlencode
 
 from django.test import TestCase
-from django.http import HttpResponse
 from django.contrib.admin.sites import AdminSite
 from django.test.client import RequestFactory
 from django.urls import reverse
@@ -26,6 +25,7 @@ from .services import AccountService
 from .utils import merge_accounts
 from .admin import UserAdmin
 from .models import AccountBlocklist
+from django.http.response import HttpResponse
 
 User = get_user_model()
 Application = get_application_model()
@@ -36,15 +36,15 @@ SPAM_ENABLED_CONFIG["spam_protection"] = True
 
 
 class AccountTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         factories.make_world()
 
-    def assertForbidden(self, response: HttpResponse):
+    def assertForbidden(self, response: HttpResponse) -> None:
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("account-login"), response["Location"])
         self.assertIn("?next=", response["Location"])
 
-    def test_account_page(self):
+    def test_account_page(self) -> None:
         ok = self.client.login(email="info@fragdenstaat.de", password="wrong")
         self.assertFalse(ok)
         ok = self.client.login(email="info@fragdenstaat.de", password="froide")
@@ -52,7 +52,7 @@ class AccountTest(TestCase):
         response = self.client.get(reverse("account-requests"))
         self.assertEqual(response.status_code, 200)
 
-    def test_account_drafts(self):
+    def test_account_drafts(self) -> None:
         response = self.client.get(reverse("account-drafts"))
         self.assertEqual(response.status_code, 302)
         ok = self.client.login(email="info@fragdenstaat.de", password="froide")
@@ -66,7 +66,7 @@ class AccountTest(TestCase):
         self.assertContains(response, draft.subject)
         self.assertContains(response, escape(draft.get_absolute_url()))
 
-    def test_account_following(self):
+    def test_account_following(self) -> None:
         response = self.client.get(reverse("account-following"))
         self.assertEqual(response.status_code, 302)
         ok = self.client.login(email="info@fragdenstaat.de", password="froide")
@@ -75,7 +75,7 @@ class AccountTest(TestCase):
         response = self.client.get(reverse("account-following"))
         self.assertEqual(response.status_code, 200)
 
-    def test_login_page(self):
+    def test_login_page(self) -> None:
         self.client.logout()
         response = self.client.get(reverse("account-requests"))
         self.assertEqual(response.status_code, 302)
@@ -123,7 +123,7 @@ class AccountTest(TestCase):
         response = self.client.get(reverse("account-requests"))
         self.assertEqual(response.status_code, 302)
 
-    def test_signup(self):
+    def test_signup(self) -> None:
         froide_config = settings.FROIDE_CONFIG
         mail.outbox = []
         post = {
@@ -177,7 +177,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse("account-signup"), post)
         self.assertTrue(response.status_code, 200)
 
-    def test_overlong_name_signup(self):
+    def test_overlong_name_signup(self) -> None:
         post = {
             "first_name": "Horst" * 6 + "a",
             "last_name": "Porst" * 6,
@@ -194,7 +194,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     @override_settings(FROIDE_CONFIG=SPAM_ENABLED_CONFIG)
-    def test_signup_too_fast(self):
+    def test_signup_too_fast(self) -> None:
         post = {
             "first_name": "Horst",
             "last_name": "Porst",
@@ -208,7 +208,7 @@ class AccountTest(TestCase):
         response = self.client.post(reverse("account-signup"), post)
         self.assertEqual(response.status_code, 200)
 
-    def test_signup_same_name(self):
+    def test_signup_same_name(self) -> None:
         self.client.logout()
         post = {
             "first_name": "Horst",
@@ -226,7 +226,7 @@ class AccountTest(TestCase):
         user = User.objects.get(email="horst.porst2@example.com")
         self.assertEqual(user.username, "h.porst_1")
 
-    def test_confirmation_process(self):
+    def test_confirmation_process(self) -> None:
         self.client.logout()
         user, user_created = AccountService.create_user(
             first_name="Stefan",
@@ -279,7 +279,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("account-login"), response.url)
 
-    def test_next_link_login(self):
+    def test_next_link_login(self) -> None:
         mes = FoiMessage.objects.all()[0]
         url = mes.get_absolute_url()
         enc_url = url.replace("#", "%23")  # FIXME: fake uri encode
@@ -293,7 +293,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
 
-    def test_next_link_signup(self):
+    def test_next_link_signup(self) -> None:
         self.client.logout()
         mail.outbox = []
         mes = FoiMessage.objects.all()[0]
@@ -323,7 +323,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
 
-    def test_change_password(self):
+    def test_change_password(self) -> None:
         response = self.client.get(reverse("account-change_password"))
         self.assertEqual(response.status_code, 405)
         data = {"new_password1": "froide1froide2", "new_password2": "froide1froide3"}
@@ -344,7 +344,7 @@ class AccountTest(TestCase):
         )
         self.assertTrue(ok)
 
-    def test_send_reset_password_link(self):
+    def test_send_reset_password_link(self) -> None:
         mail.outbox = []
         response = self.client.get(reverse("account-send_reset_password_link"))
         self.assertEqual(response.status_code, 405)
@@ -391,7 +391,7 @@ class AccountTest(TestCase):
         ok = self.client.login(email="info@fragdenstaat.de", password="froide4froide5")
         self.assertTrue(ok)
 
-    def test_next_password_reset(self):
+    def test_next_password_reset(self) -> None:
         mail.outbox = []
         mes = FoiMessage.objects.all()[0]
         url = mes.get_absolute_url()
@@ -416,7 +416,7 @@ class AccountTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
 
-    def test_private_name(self):
+    def test_private_name(self) -> None:
         user = User.objects.get(username="dummy")
         user.private = True
         user.save()
@@ -444,7 +444,7 @@ class AccountTest(TestCase):
         self.assertNotIn(user.last_name.encode("utf-8"), response.content)
         self.assertEqual("", user.get_absolute_url())
 
-    def test_change_user(self):
+    def test_change_user(self) -> None:
         data = {}
         response = self.client.post(reverse("account-change_user"), data)
         self.assertEqual(response.status_code, 302)
@@ -463,7 +463,7 @@ class AccountTest(TestCase):
         user = User.objects.get(username="sw")
         self.assertEqual(user.address, data["address"])
 
-    def test_go(self):
+    def test_go(self) -> None:
         user = User.objects.get(username="dummy")
         other_user = User.objects.get(username="sw")
         super_user = User.objects.get(username="supersw")
@@ -546,7 +546,7 @@ class AccountTest(TestCase):
         response = self.client.get(test_url)
         self.assertTrue(response.context["user"].is_anonymous)
 
-    def test_profile_page(self):
+    def test_profile_page(self) -> None:
         user = User.objects.get(username="sw")
         response = self.client.get(
             reverse("account-profile", kwargs={"slug": user.username})
@@ -560,7 +560,7 @@ class AccountTest(TestCase):
         )
         self.assertEqual(response.status_code, 404)
 
-    def test_change_email(self):
+    def test_change_email(self) -> None:
         mail.outbox = []
         new_email = "newemail@example.com"
         user = User.objects.get(username="sw")
@@ -628,7 +628,7 @@ class AccountTest(TestCase):
         user = User.objects.get(pk=user.pk)
         self.assertEqual(user.email, new_email)
 
-    def test_account_delete(self):
+    def test_account_delete(self) -> None:
         response = self.client.get(reverse("account-settings"))
         self.assertEqual(response.status_code, 302)
         response = self.client.post(
@@ -692,7 +692,7 @@ class AccountTest(TestCase):
         mes = messages[1]
         self.assertEqual(mes.plaintext, "<information-removed>")
 
-    def test_merge_account(self):
+    def test_merge_account(self) -> None:
         from froide.foirequestfollower.models import FoiRequestFollower
         from froide.foirequestfollower.tests import FoiRequestFollowerFactory
 
@@ -712,7 +712,7 @@ class AccountTest(TestCase):
         self.assertEqual(req.user, new_user)
         self.assertEqual(mes[0].sender_user, new_user)
 
-    def test_send_mass_mail(self):
+    def test_send_mass_mail(self) -> None:
         from froide.account.management.commands.send_mass_mail import Command
 
         user_count = User.objects.all().count()
@@ -722,7 +722,7 @@ class AccountTest(TestCase):
         list(command.send_mail(subject, content))
         self.assertEqual(len(mail.outbox), user_count)
 
-    def test_signup_blocklisted(self):
+    def test_signup_blocklisted(self) -> None:
         froide_config = settings.FROIDE_CONFIG
         mail.outbox = []
         post = {
@@ -747,7 +747,7 @@ class AccountTest(TestCase):
 
 
 class AdminActionTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.site = factories.make_world()
         self.admin_site = AdminSite()
         self.user_admin = UserAdmin(User, self.admin_site)
@@ -755,7 +755,7 @@ class AdminActionTest(TestCase):
         self.user = User.objects.get(username="sw")
         self.user.is_superuser = True
 
-    def test_send_mail(self):
+    def test_send_mail(self) -> None:
         users = User.objects.all()[:1]
 
         req = self.factory.post("/", {})
@@ -781,7 +781,7 @@ class AdminActionTest(TestCase):
 
 
 class ApiTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         factories.make_world()
         self.test_user = User.objects.get(username="dummy")
         self.dev_user = User.objects.create_user(
@@ -805,24 +805,24 @@ class ApiTest(TestCase):
         )
         self.profile_url = reverse("api-user-profile")
 
-    def _create_authorization_header(self, token):
+    def _create_authorization_header(self, token: str) -> str:
         return "Bearer {0}".format(token)
 
-    def test_authentication_logged_in(self):
+    def test_authentication_logged_in(self) -> None:
         self.client.login(email=self.test_user, password="froide")
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, 200)
 
-    def test_authentication_logged_in_no_jsonp(self):
+    def test_authentication_logged_in_no_jsonp(self) -> None:
         self.client.login(email=self.test_user, password="froide")
         response = self.client.get(self.profile_url + "?format=jsonp")
         self.assertNotContains(response, "callback({", status_code=404)
 
-    def test_authentication_not_loggedin(self):
+    def test_authentication_not_loggedin(self) -> None:
         response = self.client.get(self.profile_url)
         self.assertEqual(response.status_code, 401)
 
-    def test_authentication_empty_scope(self):
+    def test_authentication_empty_scope(self) -> None:
         self.access_token.scope = ""
         self.access_token.save()
 
@@ -830,7 +830,7 @@ class ApiTest(TestCase):
         response = self.client.get(self.profile_url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 403)
 
-    def test_authentication_user_scope(self):
+    def test_authentication_user_scope(self) -> None:
         auth = self._create_authorization_header(self.access_token.token)
         response = self.client.get(self.profile_url, HTTP_AUTHORIZATION=auth)
         self.assertEqual(response.status_code, 200)
@@ -838,7 +838,7 @@ class ApiTest(TestCase):
         self.assertNotContains(response, self.test_user.email)
         self.assertNotContains(response, self.test_user.first_name)
 
-    def test_authentication_profile_scope(self):
+    def test_authentication_profile_scope(self) -> None:
         self.access_token.scope = "read:user read:profile"
         self.access_token.save()
         auth = self._create_authorization_header(self.access_token.token)
@@ -849,7 +849,7 @@ class ApiTest(TestCase):
         self.assertContains(response, self.test_user.first_name)
         self.assertContains(response, self.test_user.last_name)
 
-    def test_authentication_email_scope(self):
+    def test_authentication_email_scope(self) -> None:
         self.access_token.scope = "read:user read:profile read:email"
         self.access_token.save()
         auth = self._create_authorization_header(self.access_token.token)

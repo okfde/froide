@@ -15,6 +15,7 @@ from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 from . import account_email_changed
 from .models import User, TaggedUser, UserTag, AccountBlocklist, UserPreference
 from .services import AccountService
+from .export import get_export_access_token
 from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
 from .forms import UserChangeForm, UserCreationForm
 from .utils import (
@@ -22,6 +23,10 @@ from .utils import (
     cancel_user,
     make_account_private,
 )
+from django.core.handlers.wsgi import WSGIRequest
+from django.db.models.query import QuerySet
+from django.urls.resolvers import URLPattern
+from typing import List, Optional
 
 
 class UserTagAdmin(admin.ModelAdmin):
@@ -118,7 +123,7 @@ class UserAdmin(DjangoUserAdmin):
         qs = qs.annotate(request_count=Count("foirequest"))
         return qs
 
-    def get_urls(self):
+    def get_urls(self) -> List[URLPattern]:
         urls = super().get_urls()
         my_urls = [
             path(
@@ -214,7 +219,9 @@ class UserAdmin(DjangoUserAdmin):
 
     resend_activation.short_description = _("Resend activation mail")
 
-    def send_mail(self, request, queryset):
+    def send_mail(
+        self, request: WSGIRequest, queryset: QuerySet
+    ) -> Optional[TemplateResponse]:
         """
         Send mail to users
 
@@ -299,8 +306,6 @@ class UserAdmin(DjangoUserAdmin):
     merge_accounts_keep_newer.short_description = _("Merge accounts (keep newer)")
 
     def export_user_data(self, request, queryset):
-        from .export import get_export_access_token
-
         if not request.user.is_superuser:
             raise PermissionDenied
 

@@ -1,10 +1,11 @@
 import re
-from typing import Sequence
+from typing import Dict
 
 from django import forms
 from django.utils import timezone
 
 from .models import UserPreference
+from django.utils.functional import SimpleLazyObject
 
 
 class PreferenceVar:
@@ -28,7 +29,9 @@ class Preference:
         return PreferenceVar(value, self.form_class())
 
 
-def get_preferences_for_user(user, preferences: Sequence[Preference]):
+def get_preferences_for_user(
+    user: SimpleLazyObject, preferences
+) -> Dict[str, PreferenceVar]:
     prefs_map = {p.key: p for p in preferences}
     value_map = dict(
         UserPreference.objects.filter(
@@ -42,7 +45,7 @@ def get_preferences_for_user(user, preferences: Sequence[Preference]):
 
 
 class PreferenceRegistry:
-    def __init__(self):
+    def __init__(self) -> None:
         self.preferences = {}
 
     def register(self, key: str, form_class):

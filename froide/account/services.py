@@ -2,7 +2,7 @@ import hashlib
 from datetime import timedelta
 import re
 import hmac
-from typing import Dict, Optional
+from typing import Iterator, Tuple, Union, Dict, Optional
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -16,15 +16,18 @@ from froide.accesstoken.models import AccessToken
 from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import mail_registry
 
-from .models import User, AccountBlocklist
+from .models import AccountBlocklist
 from . import account_activated
+from django.utils.functional import SimpleLazyObject
+from froide.account.models import User
+from re import Pattern
 
 
 ONE_TIME_LOGIN_PURPOSE = "onetimelogin"
 ONE_TIME_LOGIN_EXPIRY = timedelta(hours=72)
 
 
-def get_user_for_email(email):
+def get_user_for_email(email: str) -> Union[bool, User]:
     try:
         return User.objects.get(email=email)
     except User.DoesNotExist:
@@ -46,11 +49,11 @@ change_email_mail = mail_registry.register(
 
 
 class AccountService(object):
-    def __init__(self, user):
+    def __init__(self, user: Union[User, SimpleLazyObject]) -> None:
         self.user = user
 
     @classmethod
-    def get_username_base(self, firstname, lastname):
+    def get_username_base(self, firstname: str, lastname: str) -> str:
         base = ""
         first = slugify(firstname)
         last = slugify(lastname)
@@ -66,7 +69,7 @@ class AccountService(object):
         return base
 
     @classmethod
-    def create_user(cls, **data):
+    def create_user(cls, **data) -> Tuple[User, bool]:
         existing_user = get_user_for_email(data["user_email"])
         if existing_user:
             return existing_user, False
@@ -95,7 +98,7 @@ class AccountService(object):
 
         return user, True
 
-    def confirm_account(self, secret, request_id=None):
+    def confirm_account(self, secret: str, request_id: Optional[int] = None) -> bool:
         if not self.check_confirmation_secret(secret, request_id):
             return False
         self._confirm_account()
@@ -104,13 +107,13 @@ class AccountService(object):
     def reactivate_account(self):
         self._confirm_account()
 
-    def _confirm_account(self):
+    def _confirm_account(self) -> None:
         self.user.is_active = True
         self.user.date_deactivated = None
         self.user.save()
         account_activated.send_robust(sender=self.user)
 
-    def can_autologin(self):
+    def can_autologin(self) -> bool:
         if self.user.is_superuser:
             # Don't generate autologin URL for superuser
             return False
@@ -119,7 +122,7 @@ class AccountService(object):
             return False
         return True
 
-    def get_autologin_url(self, url):
+    def get_autologin_url(self, url: str) -> str:
         if not self.can_autologin():
             return settings.SITE_URL + url
         return settings.SITE_URL + reverse(
@@ -132,12 +135,12 @@ class AccountService(object):
         )
 
     @classmethod
-    def delete_autologin_token(self, user_id: int, token: str):
+    def delete_autologin_token(self, user_id: int, token: str) -> None:
         AccessToken.objects.filter(
             user_id=user_id, purpose=ONE_TIME_LOGIN_PURPOSE, token=token
         ).delete()
 
-    def check_autologin_token(self, url_token: str):
+    def check_autologin_token(self, url_token: str) -> bool:
         if not self.can_autologin():
             return False
         now = timezone.now()
@@ -157,7 +160,7 @@ class AccountService(object):
         # constant time compare probably overkill, but why not
         return constant_time_compare(url_token, token)
 
-    def generate_autologin_token(self):
+    def generate_autologin_token(self) -> str:
         try:
             at = self._generate_autologin_token()
         except AccessToken.MultipleObjectsReturned:
@@ -168,7 +171,7 @@ class AccountService(object):
             at = self._generate_autologin_token()
         return at.token.hex
 
-    def _generate_autologin_token(self):
+    def _generate_autologin_token(self) -> AccessToken:
         at, created = AccessToken.objects.update_or_create(
             user=self.user,
             purpose=ONE_TIME_LOGIN_PURPOSE,
@@ -176,10 +179,10 @@ class AccountService(object):
         )
         return at
 
-    def check_confirmation_secret(self, secret, *args):
+    def check_confirmation_secret(self, secret: str, *args) -> bool:
         return constant_time_compare(secret, self.generate_confirmation_secret(*args))
 
-    def generate_confirmation_secret(self, *args):
+    def generate_confirmation_secret(self, *args) -> str:
         if self.user.email is None:
             return ""
         to_sign = [str(self.user.pk), self.user.email]
@@ -194,8 +197,11 @@ class AccountService(object):
         ).hexdigest()
 
     def send_confirmation_mail(
-        self, request_id=None, reference=None, redirect_url=None
-    ):
+        self,
+        request_id: Optional[int] = None,
+        reference: Optional[str] = None,
+        redirect_url: Optional[str] = None,
+    ) -> None:
         secret = self.generate_confirmation_secret(request_id)
         url_kwargs = {"user_id": self.user.pk, "secret": secret}
         if request_id:
@@ -231,7 +237,13 @@ class AccountService(object):
             priority=True,
         )
 
-    def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None):
+    def send_confirm_action_mail(
+        self,
+        url: str,
+        title: str,
+        reference: Optional[str] = None,
+        redirect_url: Optional[str] = None,
+    ) -> None:
         secret_url = self.get_autologin_url(url)
 
         params = {}
@@ -263,7 +275,9 @@ class AccountService(object):
             reference=reference,
         )
 
-    def send_reminder_mail(self, reference=None, redirect_url=None):
+    def send_reminder_mail(
+        self, reference: None = None, redirect_url: None = None
+    ) -> None:
         secret_url = self.get_autologin_url(reverse("account-show"))
 
         context = {
@@ -280,7 +294,7 @@ class AccountService(object):
             user=self.user, context=context, subject=subject, reference=reference
         )
 
-    def send_email_change_mail(self, email):
+    def send_email_change_mail(self, email: str) -> None:
         secret = self.generate_confirmation_secret(email)
         url_kwargs = {"user_id": self.user.pk, "secret": secret, "email": email}
         url = "%s%s?%s" % (
@@ -303,7 +317,9 @@ class AccountService(object):
         )
 
     @classmethod
-    def check_against_blocklist(cls, user, save=True) -> bool:
+    def check_against_blocklist(
+        cls, user: Union[User, SimpleLazyObject], save: bool = True
+    ) -> bool:
         if user.trusted():
             return False
         blocklisted = AccountBlocklist.objects.is_blocklisted(user)
@@ -314,7 +330,7 @@ class AccountService(object):
                 user.save()
         return blocklisted
 
-    def apply_name_redaction(self, content, replacement=""):
+    def apply_name_redaction(self, content: str, replacement: str = "") -> str:
         if not self.user.private:
             return content
 
@@ -333,7 +349,9 @@ class AccountService(object):
 
         return content
 
-    def get_user_redactions(self, replacements: Optional[Dict[str, str]] = None):
+    def get_user_redactions(
+        self, replacements: Optional[Dict[str, str]] = None
+    ) -> Iterator[Union[Tuple[str, str], Tuple[Pattern, str]]]:
         if self.user.is_deleted:
             return
 
