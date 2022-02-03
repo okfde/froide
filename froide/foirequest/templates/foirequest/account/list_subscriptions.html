@@ -3,11 +3,19 @@
 {% load form_helper %}
 {% load token_tags %}
 
+{% block title %}{% translate "Subscriptions" %}{% endblock %}
+
+{% block breadcrumbs %}
+{% url "account-subscriptions" as section_url %}
+{% translate "Subscriptions" as section_name %}
+{% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% endblock %}
+
 {% block tab_content %}
-<div class="mt-5 mb-3">
-  <h3 id="subscription-urls">
+<div class="mt-2">
+  <h2 id="subscription-urls" class="mb-3">
     {% trans "Private Subscription URLs" %}
-  </h3>
+  </h2>
   <p>
     {% trans "You can generate private URLs to subscribe to your requests in other applications." %}
   </p>

@@ -2,9 +2,20 @@
 
 {% load i18n %}
 
+{% block title %}{% translate "Your projects" %}{% endblock %}
+
+{% block breadcrumbs %}
+{% url "account-projects" as section_url %}
+{% translate "Your projects" as section_name %}
+{% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% endblock %}
+
 {% block pre_table %}
   <div class="row">
     <div class="col-lg-8 mt-2">
+
+      <h2 class="mb-3">{% translate "Your projects" %}</h2>
+
       {% trans "Search your projects" as search_title %}
       <p>
         {% if view.query %}

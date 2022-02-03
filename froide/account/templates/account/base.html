@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 
+{% load i18n %}
+
 {% block navbar %}
   {% include "account/header.html" %}
+{% endblock %}
+
+{% block body %}
+<div class="breadcrumb-container">
+  {% block breadcrumbs %}{% include "account/includes/breadcrumbs.html" %}{% endblock %}
+</div>
+
+{% block app_body %}
+<div class="container mb-5 mt-3">
+  {% block app_container %}{% endblock %}
+</div>
+{% endblock %}
+
 {% endblock %}

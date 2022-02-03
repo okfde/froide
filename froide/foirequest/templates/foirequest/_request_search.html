@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load humanize %}
 
-<form action="{{ search_url }}" method="get" class="mb-5 search-form">
+<form action="{{ search_url }}" method="get" class="mb-3 search-form">
   <div class="row mt-2 mb-2 align-items-start">
     <div class="col-md-6">
       <div class="input-group">
@@ -60,24 +60,27 @@
   </div>
 
   {% if 'first' in show_filters or 'sort' in show_filters %}
-    <div class="row mt-2">
-      <div class="col-md-6">
-        <label>
-          {% trans "request date" %}
-          {{ form.first }}
-        </label>
-      </div>
-      {% if "sort" in show_filters %}
-        <div class="col-md-3">
+    <details>
+      <summary>{% translate "More search options" %}</summary>
+      <div class="row mt-2">
+        <div class="col-md-6">
           <label>
-            {% trans "sort" %}
-            {{ form.sort }}
+            {% trans "request date" %}
+            {{ form.first }}
           </label>
         </div>
-      {% else %}
-        {{ form.sort }}
-      {% endif %}
-    </div>
+        {% if "sort" in show_filters %}
+          <div class="col-md-3">
+            <label>
+              {% trans "sort" %}
+              {{ form.sort }}
+            </label>
+          </div>
+        {% else %}
+          {{ form.sort }}
+        {% endif %}
+      </div>
+    </details>
   {% endif %}
   
 </form>

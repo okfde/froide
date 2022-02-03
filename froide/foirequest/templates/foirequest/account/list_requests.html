@@ -5,9 +5,21 @@
 {% load form_helper %}
 {% load token_tags %}
 
+{% block title %}{% translate "Your requests" %}{% endblock %}
+
+{% block breadcrumbs %}
+{% url "account-requests" as section_url %}
+{% translate "Your requests" as section_name %}
+{% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% endblock %}
+
+
 {% block pre_table %}
   <div class="row">
     <div class="col-12 mt-2">
+
+      <h2 class="mb-3">{% translate "Your requests" %}</h2>
+
       {% url "account-requests" as search_url %}
       {% include "foirequest/_request_search.html" with search_url=search_url %}
 
@@ -38,6 +50,50 @@
     </div>
     <div class="col-md-9">
 {% endblock %}
+
+{% block table_row %}
+  <tr class="{% if object.is_important %}warning{% endif %}">
+    <td>
+      <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
+    </td>
+    <td class="request-link__body">
+      {% include "foirequest/snippets/request_item_inner.html" %}
+
+      {% if object.status == "awaiting_user_confirmation" %}
+        <form class="d-inline" action="{% url 'foirequest-confirm_request' slug=object.slug %}" method="post">
+          {% csrf_token %}
+            <button type="submit" class="btn btn-success ml-3 mt-3">
+              {% blocktrans %}Send request{% endblocktrans %}
+            </button>
+          </form>
+          <form class="d-inline" action="{% url 'foirequest-delete_request' slug=object.slug %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger ml-3 mt-3">
+              <i class="fa fa-ban"></i>
+              {% blocktrans %}Delete request{% endblocktrans %}
+            </button>
+          </form>
+      {% endif %}
+
+      {% if object.status == "awaiting_response" %}
+        {% if object.due_date %}
+          <small>
+            {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
+          </small>
+        {% endif %}
+      {% endif %}
+
+      {% if not object.public and object.user == request.user %}
+        <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+          {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">
+              {% blocktrans %}Publish{% endblocktrans %}
+            </button>
+          </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endblock %}
 
 
 {% block post_table %}

@@ -2,9 +2,20 @@
 
 {% load i18n %}
 
+{% block title %}{% translate "Followed requests" %}{% endblock %}
+
+{% block breadcrumbs %}
+{% url "account-following" as section_url %}
+{% translate "Followed requests" as section_name %}
+{% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% endblock %}
+
 {% block pre_table %}
   <div class="row">
     <div class="col-lg-8 mt-2">
+
+      <h2 class="mb-3">{% translate "Requests you follow" %}</h2>
+
       {% trans "Search the requests you follow" as search_title %}
       <p>
         {% if view.query %}
@@ -23,4 +34,25 @@
       </p>
     </div>
   </div>
+{% endblock %}
+
+
+{% block table_row %}
+  <tr>
+    <td>
+      <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
+    </td>
+    <td class="request-link__body">
+      {% include "foirequest/snippets/request_item_inner.html" %}
+
+      {% if object.status == "awaiting_response" %}
+        {% if object.due_date %}
+          <small>
+            {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
+          </small>
+        {% endif %}
+      {% endif %}
+
+    </td>
+  </tr>
 {% endblock %}

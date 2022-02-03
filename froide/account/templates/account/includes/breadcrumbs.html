@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<nav class="container" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">
+      <a href="{% url 'account-show' %}">{% translate "Account" %}</a>
+    </li>
+    {% if section_url %}
+      <li class="breadcrumb-item">
+        <a href="{{ section_url }}">{{ section_name }}</a>
+      </li>
+    {% endif %}
+    {% if last_item %}
+      <li class="breadcrumb-item active">
+        <span>{{ last_item }}</span>
+      </li>
+    {% endif %}
+  </ol>
+</nav>

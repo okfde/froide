@@ -3,116 +3,73 @@
 {% load markup %}
 
 {% block app_body %}
-<div class="row mb-3 mt-3">
-  <div class="col-lg-8">
-    <h2>{% trans "Your requests" %}</h2>
-  </div>
-  <div class="col-lg-4">
-    <a href="{% url 'account-settings' %}" class="btn btn-secondary pull-right">
-      <i class="fa fa-wrench"></i>
-      {% trans "Your account settings" %}
-    </a>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-lg-12">
-    <ul class="nav nav-tabs" role="tablist">
-      <li class="nav-item">
-        <a href="{% if menu != 'requests' %}{% url 'account-show' %}{% endif %}" class="nav-link{% if menu == 'requests' %} active{% endif %}">
-          {% trans "Your requests" %}
-        </a>
-      </li>
-      {% if request.user.trusted %}
+<div class="container-fluid mt-2">
+  <div class="row">
+    <div class="col-lg-3 col-xl-2">
+      <ul class="nav nav-pills mt-3 flex-column flex-md-row flex-lg-column" role="tablist">
         <li class="nav-item">
-          <a href="{% if menu != 'projects' %}{% url 'account-projects' %}{% endif %}" class="nav-link{% if menu == 'projects' %} active{% endif %}">
-            {% trans "Your projects" %}
+          <a href="{% if menu != 'requests' %}{% url 'account-show' %}{% endif %}" class="nav-link{% if menu == 'requests' %} active{% endif %}">
+            {% trans "Your requests" %}
           </a>
         </li>
-      {% endif %}
-      <li class="nav-item">
-        <a href="{% if menu != 'drafts' %}{% url 'account-drafts' %}{% endif %}" class="nav-link{% if menu == 'drafts' %} active{% endif %}">
-          {% trans "Request drafts" %}
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{% if menu != 'following' %}{% url 'account-following' %}{% endif %}" class="nav-link{% if menu == 'following' %} active{% endif %}">
-          {% trans "Requests you follow" %}
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{% if menu != 'subscriptions' %}{% url 'account-subscriptions' %}{% endif %}" class="nav-link{% if menu == 'subscriptions' %} active{% endif %}">
-          {% trans "Subscriptions" %}
-        </a>
-      </li>
-    </ul>
-    <div class="tab-content">
-      {% block tab_content %}
-      {% block pre_table %}{% endblock %}
-      <div class="table-responsive">
-        <table class="table table-hover mt-3">
-          <thead>
-            <tr>
-              {% block table_head %}
-              <th>{% blocktrans %}Status{% endblocktrans %}</th>
-              <th>{% blocktrans %}Title{% endblocktrans %}</th>
-              {% endblock table_head %}
-            </tr>
-          </thead>
-          <tbody>
-        {% for object in object_list %}
-          {% block table_row %}
-          <tr class="{% if object.user == request.user and object.is_important %}warning{% endif %}">
-            <td>
-              <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
-            </td>
-            <td class="request-link__body">
-              {% include "foirequest/snippets/request_item_inner.html" %}
+        {% if request.user.trusted %}
+          <li class="nav-item">
+            <a href="{% if menu != 'projects' %}{% url 'account-projects' %}{% endif %}" class="nav-link{% if menu == 'projects' %} active{% endif %}">
+              {% trans "Your projects" %}
+            </a>
+          </li>
+        {% endif %}
+        <li class="nav-item">
+          <a href="{% if menu != 'drafts' %}{% url 'account-drafts' %}{% endif %}" class="nav-link{% if menu == 'drafts' %} active{% endif %}">
+            {% trans "Request drafts" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% if menu != 'following' %}{% url 'account-following' %}{% endif %}" class="nav-link{% if menu == 'following' %} active{% endif %}">
+            {% trans "Followed requests" %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{% if menu != 'subscriptions' %}{% url 'account-subscriptions' %}{% endif %}" class="nav-link{% if menu == 'subscriptions' %} active{% endif %}">
+            {% trans "Subscriptions" %}
+          </a>
+        </li>
+      </ul>
 
-              {% if object.status == "awaiting_user_confirmation" %}
-                <form class="d-inline" action="{% url 'foirequest-confirm_request' slug=object.slug %}" method="post">
-                  {% csrf_token %}
-                    <button type="submit" class="btn btn-success ml-3 mt-3">
-                      {% blocktrans %}Send request{% endblocktrans %}
-                    </button>
-                  </form>
-                  <form class="d-inline" action="{% url 'foirequest-delete_request' slug=object.slug %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger ml-3 mt-3">
-                      <i class="fa fa-ban"></i>
-                      {% blocktrans %}Delete request{% endblocktrans %}
-                    </button>
-                  </form>
-              {% endif %}
+      <a href="{% url 'account-settings' %}" class="btn btn-light mt-3 mb-lg-3 pull-right">
+        <i class="fa fa-wrench"></i>
+        {% trans "Your account settings" %}
+      </a>
 
-              {% if object.status == "awaiting_response" %}
-                {% if object.due_date %}
-                  <small>
-                    {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
-                  </small>
-                {% endif %}
-              {% endif %}
+    </div>
 
-              {% if not object.public and object.user == request.user %}
-                <form action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
-                  {% csrf_token %}
-                    <button type="submit" class="btn btn-secondary">
-                      {% blocktrans %}Publish{% endblocktrans %}
-                    </button>
-                  </form>
-              {% endif %}
-            </td>
-          </tr>
-          {% endblock %}
-        {% endfor %}
-          </tbody>
-        </table>
+    <div class="col-lg-9 col-xl-10">
+      <div class="tab-content">
+        {% block tab_content %}
+        {% block pre_table %}{% endblock %}
+        <div class="table-responsive">
+          <table class="table table-hover mt-3">
+            <thead>
+              <tr>
+                {% block table_head %}
+                <th>{% blocktrans %}Status{% endblocktrans %}</th>
+                <th>{% blocktrans %}Title{% endblocktrans %}</th>
+                {% endblock table_head %}
+              </tr>
+            </thead>
+            <tbody>
+          {% for object in object_list %}
+            {% block table_row %}{% endblock %}
+          {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if page_obj.has_other_pages %}
+          {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
+        {% endif %}
+        {% block post_table %}{% endblock %}
+        {% endblock %}
       </div>
-      {% if page_obj.has_other_pages %}
-        {% include "pagination/pagination.html" with getvars="&"|add:getvars  %}
-      {% endif %}
-      {% block post_table %}{% endblock %}
-      {% endblock %}
     </div>
   </div>
 </div>
