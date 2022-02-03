@@ -1,9 +1,7 @@
-from rest_framework import serializers, views, response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.response import Response
-
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from rest_framework import response, serializers, status, views
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import User, UserPreference
 from .preferences import registry

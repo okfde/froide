@@ -9,10 +9,11 @@ class GuideConfig(AppConfig):
     verbose_name = _("Guide")
 
     def ready(self):
-        from .signals import start_guidance_task
-        from froide.foirequest.models import FoiRequest
         from froide.account import account_merged
         from froide.account.export import registry
+        from froide.foirequest.models import FoiRequest
+
+        from .signals import start_guidance_task
 
         FoiRequest.message_received.connect(start_guidance_task)
 
@@ -22,6 +23,7 @@ class GuideConfig(AppConfig):
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
+
     from .models import Guidance
 
     move_ownership(Guidance, "user", old_user, new_user)

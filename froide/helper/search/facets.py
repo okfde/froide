@@ -1,5 +1,5 @@
+from django.urls import NoReverseMatch, reverse
 from django.utils.http import urlencode
-from django.urls import reverse, NoReverseMatch
 
 
 def make_filter_url(url_name, data=None, get_active_filters=None):

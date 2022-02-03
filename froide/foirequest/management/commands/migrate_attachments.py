@@ -1,12 +1,12 @@
-from collections import Counter
-import os
-import shutil
-import re
 import json
+import os
+import re
+import shutil
+from collections import Counter
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import translation
-from django.conf import settings
 
 from froide.foirequest.models import FoiAttachment
 from froide.foirequest.models.attachment import upload_to

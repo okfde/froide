@@ -1,7 +1,7 @@
-from rest_framework import serializers, viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import BasePermission
+from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import BasePermission
+from rest_framework.response import Response
 
 from froide.foirequest.auth import is_foirequest_moderator
 from froide.foirequest.models import FoiRequest

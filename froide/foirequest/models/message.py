@@ -1,23 +1,23 @@
 import calendar
 from email.utils import formatdate
 
-from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
-from django.utils.html import format_html
 from django.utils.functional import cached_property
-from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
-from froide.publicbody.models import PublicBody
 from froide.helper.email_utils import make_address
-from froide.helper.text_utils import redact_subject, redact_plaintext
+from froide.helper.text_utils import redact_plaintext, redact_subject
+from froide.publicbody.models import PublicBody
 
-from .request import FoiRequest, get_absolute_short_url, get_absolute_domain_short_url
+from .request import FoiRequest, get_absolute_domain_short_url, get_absolute_short_url
 
 BOUNCE_TAG = "bounce"
 HAS_BOUNCED_TAG = "bounced"
@@ -580,6 +580,7 @@ class FoiMessage(models.Model):
             return
 
         from froide.foirequest.delivery import get_delivery_report
+
         from ..tasks import check_delivery_status
 
         report = get_delivery_report(
@@ -590,7 +591,7 @@ class FoiMessage(models.Model):
                 return
             count += 1
             check_delivery_status.apply_async(
-                (self.id,), {"count": count}, countdown=5 ** count * 60
+                (self.id,), {"count": count}, countdown=5**count * 60
             )
             return
 
@@ -612,7 +613,7 @@ class FoiMessage(models.Model):
         count += 1
         if not ds.is_log_status_final():
             check_delivery_status.apply_async(
-                (self.id,), {"count": count}, countdown=5 ** count * 60
+                (self.id,), {"count": count}, countdown=5**count * 60
             )
 
     def send(self, **kwargs):

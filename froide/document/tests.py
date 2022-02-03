@@ -1,6 +1,6 @@
+from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.urls import reverse
-from django.template.defaultfilters import slugify
 
 import factory
 

@@ -19,11 +19,12 @@ from io import BytesIO
 from typing import List, Optional, Tuple
 from urllib.parse import unquote
 
-import pytz
 from django.utils.functional import cached_property
 
+import pytz
+
+from .email_utils import detect_auto_reply, get_bounce_info
 from .text_utils import convert_html_to_text
-from .email_utils import get_bounce_info, detect_auto_reply
 
 # Restrict to max 3 consecutive newlines in email body
 MULTI_NL_RE = re.compile("((?:\r?\n){,3})(?:\r?\n)*")

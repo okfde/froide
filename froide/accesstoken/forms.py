@@ -1,12 +1,13 @@
+from typing import Callable
+
 from django import forms
 from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from .models import AccessToken
-from .widgets import TokenWidget
 from .utils import get_signed_purpose, unsign_purpose
-from typing import Callable
+from .widgets import TokenWidget
 
 
 def clean_purpose(field: str) -> Callable:

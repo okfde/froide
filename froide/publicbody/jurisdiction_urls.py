@@ -1,10 +1,8 @@
-from django.urls import path
-from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.urls import path, reverse
 from django.utils.translation import pgettext_lazy
 
 from .views import show_jurisdiction
-
 
 urlpatterns = [
     path("", show_jurisdiction, name="publicbody-show_jurisdiction"),

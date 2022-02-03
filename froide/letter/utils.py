@@ -2,14 +2,13 @@ from io import BytesIO
 
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.utils import formats, timezone
 from django.utils.datastructures import MultiValueDict
-from django.utils import timezone
 from django.utils.html import format_html
-from django.utils import formats
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
-from froide.foirequest.forms import get_send_message_form, get_postal_message_form
+from froide.foirequest.forms import get_postal_message_form, get_send_message_form
 from froide.foirequest.models import FoiAttachment
 from froide.foirequest.pdf_generator import LetterPDFGenerator as BaseLetterPDFGenerator
 

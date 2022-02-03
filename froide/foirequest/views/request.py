@@ -1,13 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
+from django.views.generic import DetailView
 
 from froide.account.preferences import get_preferences_for_user
 from froide.helper.utils import render_403
 
-from ..models import FoiRequest, FoiEvent, FoiAttachment
-from ..forms.preferences import request_page_tour_pref, message_received_tour_pref
 from ..auth import can_read_foirequest, can_write_foirequest, check_foirequest_auth_code
+from ..forms.preferences import message_received_tour_pref, request_page_tour_pref
+from ..models import FoiAttachment, FoiEvent, FoiRequest
 
 
 def shortlink(request, obj_id, url_path=""):

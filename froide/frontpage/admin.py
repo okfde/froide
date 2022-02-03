@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from froide.frontpage.models import FeaturedRequest
 
 

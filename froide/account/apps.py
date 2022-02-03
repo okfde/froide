@@ -1,8 +1,8 @@
 from django.apps import AppConfig
-from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
-from .menu import menu_registry, MenuItem
+from .menu import MenuItem, menu_registry
 
 
 class AccountConfig(AppConfig):

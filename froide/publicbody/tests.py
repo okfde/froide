@@ -1,22 +1,22 @@
-from io import BytesIO
 import json
 import os
 import tempfile
+from io import BytesIO
 
 from django.test import TestCase
 from django.urls import reverse
 
 from froide.foirequest.tests.factories import make_world, rebuild_index
-from froide.publicbody.factories import (
-    PublicBodyFactory,
-    ClassificationFactory,
-    CategoryFactory,
-    JurisdictionFactory,
-)
 from froide.helper.csv_utils import export_csv_bytes
+from froide.publicbody.factories import (
+    CategoryFactory,
+    ClassificationFactory,
+    JurisdictionFactory,
+    PublicBodyFactory,
+)
 
-from .models import PublicBody, FoiLaw, Jurisdiction
 from .csv_import import CSVImporter
+from .models import FoiLaw, Jurisdiction, PublicBody
 
 
 class PublicBodyTest(TestCase):

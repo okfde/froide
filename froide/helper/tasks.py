@@ -1,8 +1,9 @@
 import logging
 from typing import Optional
 
-from django_elasticsearch_dsl.registries import registry
 from django.apps import apps
+
+from django_elasticsearch_dsl.registries import registry
 from elasticsearch.exceptions import ConnectionTimeout
 
 from froide.celery import app as celery_app

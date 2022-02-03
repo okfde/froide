@@ -1,13 +1,13 @@
-import re
 import json
+import re
 
-import factory
-
+from django.contrib.auth import get_user_model
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
-from django.core import mail
-from django.contrib.auth import get_user_model
-from django_comments import get_model, get_form
+
+import factory
+from django_comments import get_form, get_model
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tests import factories

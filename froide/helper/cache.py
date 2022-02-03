@@ -1,6 +1,6 @@
 from django.contrib.messages import get_messages
-from django.utils.decorators import decorator_from_middleware_with_args
 from django.middleware.cache import CacheMiddleware
+from django.utils.decorators import decorator_from_middleware_with_args
 
 
 def cache_anonymous_page(time, **cache_kwargs):

@@ -1,19 +1,19 @@
-from collections import namedtuple
 import logging
+from collections import namedtuple
 
-from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from django.utils.timesince import timesince
-from django.utils.safestring import mark_safe
-from django.utils.html import format_html
-from django.template.loader import get_template
+from django.db import models
 from django.template import TemplateDoesNotExist
+from django.template.loader import get_template
+from django.utils import timezone
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.timesince import timesince
+from django.utils.translation import gettext_lazy as _
 
 from froide.publicbody.models import PublicBody
 
-from . import FoiRequest, FoiMessage
+from . import FoiMessage, FoiRequest
 
 EventDetail = namedtuple("EventDetail", "description")
 

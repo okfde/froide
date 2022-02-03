@@ -1,10 +1,10 @@
-from datetime import timedelta, datetime
 import calendar
+from datetime import datetime, timedelta
+from typing import Tuple
 
 from django.conf import settings
 from django.utils import timezone
 from django.utils.timesince import timeuntil
-from typing import Tuple
 
 MONTHS_IN_YEAR = 12
 

@@ -1,16 +1,16 @@
-from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.http import require_POST
 
-from froide.foirequest.views.request import show_foirequest
 from froide.foirequest.auth import get_read_foirequest_queryset
+from froide.foirequest.views.request import show_foirequest
 from froide.helper.utils import is_ajax
 
-from .models import FoiRequestFollower
 from .forms import FollowRequestForm
+from .models import FoiRequestFollower
 from .utils import get_context
 
 

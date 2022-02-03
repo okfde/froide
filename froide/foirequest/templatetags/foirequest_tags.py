@@ -1,37 +1,37 @@
-from collections import defaultdict
 import json
 import re
+from collections import defaultdict
 
 from django import template
-from django.db.models import Count, Q
-from django.utils.safestring import mark_safe
-from django.template.defaultfilters import urlizetrunc, truncatechars_html
-from django.utils.translation import gettext as _
-from django.utils.html import format_html
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Count, Q
+from django.template.defaultfilters import truncatechars_html, urlizetrunc
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext as _
 
 from django_comments import get_model
 
-from froide.helper.text_utils import split_text_by_separator
 from froide.helper.text_diff import mark_differences
+from froide.helper.text_utils import split_text_by_separator
 
-from ..forms import EditMessageForm
-from ..models import FoiRequest, FoiMessage, DeliveryStatus
-from ..foi_mail import get_alternative_mail
 from ..auth import (
-    can_read_foirequest,
-    can_write_foirequest,
+    can_manage_foiproject,
     can_manage_foirequest,
-    can_read_foirequest_anonymous,
-    can_read_foirequest_authenticated,
+    can_mark_not_foi,
     can_moderate_foirequest,
     can_moderate_pii_foirequest,
-    can_mark_not_foi,
     can_read_foiproject,
-    can_write_foiproject,
-    can_manage_foiproject,
     can_read_foiproject_authenticated,
+    can_read_foirequest,
+    can_read_foirequest_anonymous,
+    can_read_foirequest_authenticated,
+    can_write_foiproject,
+    can_write_foirequest,
 )
+from ..foi_mail import get_alternative_mail
+from ..forms import EditMessageForm
+from ..models import DeliveryStatus, FoiMessage, FoiRequest
 from ..moderation import get_moderation_triggers
 
 Comment = get_model()

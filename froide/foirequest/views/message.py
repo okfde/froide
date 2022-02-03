@@ -2,47 +2,46 @@ import json
 import logging
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_POST
-from django.utils.translation import gettext as _
-from django.http import Http404, JsonResponse, HttpResponse
-from django.urls import reverse
 from django.contrib import messages
-from django.templatetags.static import static
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import slugify
+from django.templatetags.static import static
+from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 
-from froide.helper.utils import render_400, is_ajax
+from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import add_number_to_filename
+from froide.helper.utils import is_ajax, render_400
 from froide.upload.forms import get_uppy_i18n
 
-from ..models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent
-from ..models.attachment import POSTAL_CONTENT_TYPES, IMAGE_FILETYPES, PDF_FILETYPES
-from ..api_views import FoiMessageSerializer, FoiAttachmentSerializer
-from ..forms import (
-    get_send_message_form,
-    get_postal_reply_form,
-    get_postal_message_form,
-    get_escalation_message_form,
-    get_postal_attachment_form,
-    get_message_sender_form,
-    get_message_recipient_form,
-    TransferUploadForm,
-    EditMessageForm,
-    RedactMessageForm,
-    PostalUploadForm,
-)
-from ..utils import check_throttle
-from ..tasks import convert_images_to_pdf_task
-from ..services import ResendBouncedMessageService
+from ..api_views import FoiAttachmentSerializer, FoiMessageSerializer
 from ..decorators import (
-    allow_write_foirequest,
     allow_moderate_foirequest,
+    allow_write_foirequest,
     allow_write_or_moderate_foirequest,
     allow_write_or_moderate_pii_foirequest,
 )
-
+from ..forms import (
+    EditMessageForm,
+    PostalUploadForm,
+    RedactMessageForm,
+    TransferUploadForm,
+    get_escalation_message_form,
+    get_message_recipient_form,
+    get_message_sender_form,
+    get_postal_attachment_form,
+    get_postal_message_form,
+    get_postal_reply_form,
+    get_send_message_form,
+)
+from ..models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
+from ..models.attachment import IMAGE_FILETYPES, PDF_FILETYPES, POSTAL_CONTENT_TYPES
+from ..services import ResendBouncedMessageService
+from ..tasks import convert_images_to_pdf_task
+from ..utils import check_throttle
 from .request import show_foirequest
-
 
 logger = logging.getLogger(__name__)
 
@@ -546,6 +545,22 @@ def edit_message(request, foirequest, message_id):
 @allow_write_or_moderate_pii_foirequest
 def redact_message(request, foirequest, message_id):
     message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    if message.is_response and request.POST.get("unredact_closing"):
+        message.plaintext_redacted = redact_plaintext_with_request(
+            message.plaintext,
+            foirequest,
+            redact_closing=False,
+        )
+        message.clear_render_cache()
+        message.save()
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.MESSAGE_REDACTED,
+            foirequest,
+            message=message,
+            user=request.user,
+            **{"action": "unredact_closing"}
+        )
+        return redirect(message.get_absolute_url())
     form = RedactMessageForm(request.POST)
     if form.is_valid():
         form.save(message)

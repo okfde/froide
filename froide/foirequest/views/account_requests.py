@@ -1,33 +1,31 @@
 from datetime import timedelta
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-from django.db.models import Q
-from django.views.generic import ListView, TemplateView
-from django.conf import settings
 from django import forms
-from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
+from django.http import HttpResponse
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import ListView, TemplateView
 
 import django_filters
 import icalendar
 from taggit.models import Tag
 
-from froide.publicbody.models import Jurisdiction, PublicBody
 from froide.accesstoken.utils import get_user_by_token_or_404
+from froide.publicbody.models import Jurisdiction, PublicBody
 
-from .list_requests import BaseListRequestView, ListRequestView
-
-from ..models import FoiRequest, FoiProject, RequestDraft
 from ..documents import FoiRequestDocument
-from ..utils import add_ical_events
 from ..filters import (
-    BaseFoiRequestFilterSet,
-    FOIREQUEST_FILTER_DICT,
     FOIREQUEST_FILTER_CHOICES,
+    FOIREQUEST_FILTER_DICT,
+    BaseFoiRequestFilterSet,
     DropDownStatusFilterWidget,
 )
-
+from ..models import FoiProject, FoiRequest, RequestDraft
+from ..utils import add_ical_events
+from .list_requests import BaseListRequestView, ListRequestView
 
 ACCOUNT_FILTERS = {"q", "first", "status", "project", "sort"}
 

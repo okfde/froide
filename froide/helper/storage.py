@@ -1,5 +1,5 @@
-import os
 import hashlib
+import os
 
 from django.core.files.storage import FileSystemStorage
 

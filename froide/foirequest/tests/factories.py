@@ -1,43 +1,41 @@
 import base64
-from datetime import timedelta
 import os
 import random
 import string
 import time
+from datetime import timedelta
 
-import factory
-from factory.django import DjangoModelFactory
-
-from django.contrib.sites.models import Site
-from django.template.defaultfilters import slugify
-from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core.management import call_command
+from django.template.defaultfilters import slugify
+from django.utils import timezone
 
+import factory
 from elasticsearch.exceptions import RequestError
+from factory.django import DjangoModelFactory
 
 from froide.account.factories import UserFactory
 from froide.publicbody.factories import (
-    PublicBodyFactory,
+    CategoryFactory,
     FoiLawFactory,
     JurisdictionFactory,
-    CategoryFactory,
+    PublicBodyFactory,
     PublicBodyTagFactory,
 )
 
 from ..models import (
-    FoiRequest,
-    FoiMessage,
-    FoiAttachment,
-    FoiProject,
-    FoiEvent,
-    PublicBodySuggestion,
     DeferredMessage,
+    FoiAttachment,
+    FoiEvent,
+    FoiMessage,
+    FoiProject,
+    FoiRequest,
+    PublicBodySuggestion,
     RequestDraft,
 )
-
 
 TEST_PDF_URL = "test.pdf"
 TEST_PDF_PATH = os.path.join(settings.MEDIA_ROOT, TEST_PDF_URL)
@@ -312,7 +310,7 @@ def es_retries(func):
             except RequestError as e:
                 count += 1
                 if count <= max_count:
-                    time.sleep(2 ** count)
+                    time.sleep(2**count)
                     continue
                 raise e
 

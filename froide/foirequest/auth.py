@@ -1,26 +1,26 @@
 from functools import lru_cache
 from typing import List
 
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
-from django.utils.crypto import salted_hmac, constant_time_compare
-from django.utils.translation import override
 from django.urls import reverse
-from django.conf import settings
+from django.utils.crypto import constant_time_compare, salted_hmac
+from django.utils.translation import override
 
 from crossdomainmedia import CrossDomainMediaAuth
 
 from froide.helper.auth import (
-    can_read_object,
-    can_write_object,
     can_manage_object,
     can_moderate_object,
-    has_authenticated_access,
-    get_read_queryset,
+    can_read_object,
+    can_write_object,
     check_permission,
+    get_read_queryset,
+    has_authenticated_access,
 )
 
-from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
+from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 
 
 def get_read_foirequest_queryset(request: HttpRequest, queryset=None):

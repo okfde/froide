@@ -1,28 +1,27 @@
-from django.shortcuts import render, redirect, get_object_or_404, Http404
-from django.utils.translation import gettext_lazy as _
-from django.contrib import messages
 from django.conf import settings
-from django.contrib.sitemaps import Sitemap
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sitemaps import Sitemap
+from django.shortcuts import Http404, get_object_or_404, redirect, render
+from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, FormView, UpdateView
 
+import markdown
+
 from froide.foirequest.models import FoiRequest
+from froide.helper.auth import can_moderate_object
 from froide.helper.cache import cache_anonymous_page
 from froide.helper.search.views import BaseSearchView
-from froide.helper.auth import can_moderate_object
 
-from .models import PublicBody, FoiLaw, Jurisdiction
 from .documents import PublicBodyDocument
-from .forms import (
-    PublicBodyProposalForm,
-    PublicBodyChangeProposalForm,
-    PublicBodyAcceptProposalForm,
-)
 from .filters import PublicBodyFilterSet
-
-import markdown
+from .forms import (
+    PublicBodyAcceptProposalForm,
+    PublicBodyChangeProposalForm,
+    PublicBodyProposalForm,
+)
+from .models import FoiLaw, Jurisdiction, PublicBody
 from .utils import LawExtension
-
 
 FILTER_ORDER = ("jurisdiction", "category")
 SUB_FILTERS = {"jurisdiction": ("category",)}

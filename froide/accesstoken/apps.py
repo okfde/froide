@@ -27,6 +27,7 @@ def cancel_user(sender, user=None, **kwargs) -> None:
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs) -> None:
     from froide.account.utils import move_ownership
+
     from .models import AccessToken
 
     move_ownership(AccessToken, "user", old_user, new_user, dupe=("user", "purpose"))

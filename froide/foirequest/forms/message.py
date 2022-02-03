@@ -3,43 +3,44 @@ import logging
 import os
 import re
 
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _, ngettext_lazy
-from django.template.defaultfilters import slugify
-from django.utils import timezone
 from django import forms
+from django.conf import settings
 from django.db import transaction
+from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 
-from froide.account.services import AccountService
 from froide.account.forms import AddressBaseForm
+from froide.account.services import AccountService
+from froide.helper.text_diff import get_diff_chunks
+from froide.helper.text_utils import redact_subject
+from froide.helper.widgets import (
+    BootstrapCheckboxInput,
+    BootstrapFileInput,
+    BootstrapRadioSelect,
+)
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
-from froide.helper.widgets import (
-    BootstrapRadioSelect,
-    BootstrapFileInput,
-    BootstrapCheckboxInput,
-)
-from froide.helper.text_utils import redact_subject
-from froide.helper.text_diff import get_diff_chunks
 from froide.upload.models import Upload
 
-from ..models import FoiRequest, FoiMessage, FoiAttachment
+from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
-from ..validators import (
-    validate_upload_document,
-    validate_postal_content_type,
-    validate_no_placeholder,
-)
 from ..utils import (
-    construct_message_body,
     MailAttachmentSizeChecker,
-    possible_reply_addresses,
+    construct_message_body,
     get_info_for_email,
     make_unique_filename,
+    possible_reply_addresses,
     redact_plaintext_with_request,
     select_foirequest_template,
+)
+from ..validators import (
+    validate_no_placeholder,
+    validate_postal_content_type,
+    validate_upload_document,
 )
 
 publishing_denied = settings.FROIDE_CONFIG.get("publishing_denied", False)

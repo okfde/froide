@@ -2,27 +2,27 @@ from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
 from filingcabinet.admin import (
+    CollectionDirectoryAdmin,
+    CollectionDocumentBaseAdmin,
     DocumentBaseAdmin,
+    DocumentCollectionBaseAdmin,
+    DocumentPortalAdmin,
     PageAdmin,
     PageAnnotationAdmin,
-    DocumentCollectionBaseAdmin,
-    CollectionDocumentBaseAdmin,
-    CollectionDirectoryAdmin,
-    DocumentPortalAdmin,
 )
 from filingcabinet.models import (
-    Page,
-    PageAnnotation,
+    CollectionDirectory,
     CollectionDocument,
     DocumentPortal,
-    CollectionDirectory,
+    Page,
+    PageAnnotation,
     TaggedDocument,
 )
 
 from froide.helper.admin_utils import (
     ForeignKeyFilter,
-    make_choose_object_action,
     TaggitListFilter,
+    make_choose_object_action,
 )
 
 from .models import Document, DocumentCollection

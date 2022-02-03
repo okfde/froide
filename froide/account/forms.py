@@ -1,28 +1,25 @@
 from collections import defaultdict
 
-from django.utils.translation import gettext_lazy as _
-from django.utils.html import format_html
+from django import forms
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth import get_user_model
-from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
+from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
+from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django.contrib.auth.password_validation import password_validators_help_text_html
-from django.contrib.auth.forms import (
-    UserCreationForm as DjangoUserCreationForm,
-    UserChangeForm as DjangoUserChangeForm,
-)
-from django import forms
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
-from froide.helper.spam import SpamProtectionMixin
-from froide.helper.form_utils import JSONMixin
 from froide.helper.content_urls import get_content_url
+from froide.helper.form_utils import JSONMixin
+from froide.helper.spam import SpamProtectionMixin
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from . import account_email_changed
-from .widgets import ConfirmationWidget
 from .models import AccountBlocklist, User
 from .services import AccountService, get_user_for_email
-
+from .widgets import ConfirmationWidget
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)

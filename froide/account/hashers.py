@@ -2,10 +2,7 @@
 From: https://docs.djangoproject.com/en/1.11/topics/auth/passwords/#password-upgrading-without-requiring-a-login
 """
 
-from django.contrib.auth.hashers import (
-    PBKDF2PasswordHasher,
-    SHA1PasswordHasher,
-)
+from django.contrib.auth.hashers import PBKDF2PasswordHasher, SHA1PasswordHasher
 
 
 class PBKDF2WrappedSHA1PasswordHasher(PBKDF2PasswordHasher):

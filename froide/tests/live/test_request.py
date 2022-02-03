@@ -1,22 +1,22 @@
-import re
 import logging
+import re
 import time
 
 from django.conf import settings
-from django.urls import reverse
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth import get_user_model
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core import mail
-from django.utils import timezone
 from django.test import tag
+from django.urls import reverse
+from django.utils import timezone
 
 from selenium.webdriver.support.wait import WebDriverWait
 
-from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, RequestDraft
+from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
 
-from . import LiveTestMixin, CheckJSErrors
+from . import CheckJSErrors, LiveTestMixin
 
 User = get_user_model()
 

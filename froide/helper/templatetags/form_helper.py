@@ -1,4 +1,4 @@
-from django import template, forms
+from django import forms, template
 
 register = template.Library()
 

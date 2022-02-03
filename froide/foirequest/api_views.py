@@ -1,41 +1,36 @@
-from django.db.models import Q, Prefetch
 from django.contrib.auth import get_user_model
-
-from rest_framework import serializers, viewsets, mixins, status, throttling
-from rest_framework.response import Response
-from rest_framework.decorators import action
-
-from oauth2_provider.contrib.rest_framework import TokenHasScope
+from django.db.models import Prefetch, Q
 
 from django_filters import rest_framework as filters
+from oauth2_provider.contrib.rest_framework import TokenHasScope
+from rest_framework import mixins, serializers, status, throttling, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from taggit.models import Tag
 
+from froide.campaign.models import Campaign
+from froide.document.api_views import DocumentSerializer
 from froide.helper.search.api_views import ESQueryMixin
 from froide.helper.text_diff import get_differences
 from froide.publicbody.api_views import (
     FoiLawSerializer,
-    SimplePublicBodySerializer,
     PublicBodySerializer,
+    SimplePublicBodySerializer,
 )
-
-from taggit.models import Tag
-
 from froide.publicbody.models import PublicBody
-from froide.campaign.models import Campaign
-from froide.document.api_views import DocumentSerializer
 
-from .models import FoiRequest, FoiMessage, FoiAttachment
-from .services import CreateRequestService
-from .validators import clean_reference
-from .utils import check_throttle
 from .auth import (
     can_read_foirequest_authenticated,
-    get_read_foirequest_queryset,
-    get_read_foimessage_queryset,
     get_read_foiattachment_queryset,
+    get_read_foimessage_queryset,
+    get_read_foirequest_queryset,
 )
 from .documents import FoiRequestDocument
 from .filters import FoiRequestFilterSet
-
+from .models import FoiAttachment, FoiMessage, FoiRequest
+from .services import CreateRequestService
+from .utils import check_throttle
+from .validators import clean_reference
 
 User = get_user_model()
 

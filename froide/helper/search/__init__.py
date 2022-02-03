@@ -1,14 +1,13 @@
 from django.conf import settings
 
-from elasticsearch_dsl import analyzer, tokenizer
-
 from django_elasticsearch_dsl import Index
+from elasticsearch_dsl import analyzer, tokenizer
 
 from froide.helper.utils import get_module_attr_from_dotted_path
 
-from .signal_processor import CelerySignalProcessor
 from .queryset import SearchQuerySetWrapper
 from .registry import search_registry
+from .signal_processor import CelerySignalProcessor
 
 __all__ = [
     "CelerySignalProcessor",

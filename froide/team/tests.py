@@ -3,8 +3,8 @@ from django.urls import reverse
 
 import factory
 
-from froide.foirequest.tests import factories
 from froide.account.factories import UserFactory
+from froide.foirequest.tests import factories
 
 from .models import Team, TeamMembership
 from .services import TeamService

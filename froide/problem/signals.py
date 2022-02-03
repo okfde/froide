@@ -3,13 +3,13 @@ from django.dispatch import receiver
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
-from froide.foirequest.models import FoiRequest, FoiAttachment
+from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.publicbody.models import PublicBody
 
-from .models import reported, claimed, unclaimed, escalated, resolved
-from .utils import inform_managers
-from .consumers import PRESENCE_ROOM
 from .api_views import ProblemReportSerializer
+from .consumers import PRESENCE_ROOM
+from .models import claimed, escalated, reported, resolved, unclaimed
+from .utils import inform_managers
 
 
 @receiver(reported, dispatch_uid="report_problem_reported")

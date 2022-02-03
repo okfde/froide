@@ -1,36 +1,34 @@
-from collections import Counter
-from dataclasses import dataclass
-from datetime import timedelta
 import json
 import os
 import re
-from typing import Optional, Iterator
+from collections import Counter
+from dataclasses import dataclass
+from datetime import timedelta
+from typing import Iterator, Optional
 
-from django.utils import timezone
-from django.core.mail import mail_managers
-from django.conf import settings
-from django.urls import reverse
 from django import forms
-from django.utils.translation import gettext_lazy as _
-from django.template.loader import render_to_string
-from django.utils.crypto import get_random_string
+from django.conf import settings
+from django.core.mail import mail_managers
 from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 
 import icalendar
 import pytz
 
-from froide.publicbody.models import PublicBody
-
+from froide.helper.date_utils import format_seconds
+from froide.helper.email_utils import delete_mails_by_recipient
+from froide.helper.tasks import search_instance_save
 from froide.helper.text_utils import (
-    redact_subject,
-    redact_plaintext,
     find_all_emails,
+    redact_plaintext,
+    redact_subject,
     redact_user_strings,
 )
-from froide.helper.date_utils import format_seconds
-from froide.helper.tasks import search_instance_save
-from froide.helper.email_utils import delete_mails_by_recipient
-
+from froide.publicbody.models import PublicBody
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
@@ -481,12 +479,13 @@ class MailAttachmentSizeChecker:
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
+
     from .models import (
+        FoiEvent,
+        FoiMessage,
+        FoiProject,
         FoiRequest,
         PublicBodySuggestion,
-        FoiMessage,
-        FoiEvent,
-        FoiProject,
         RequestDraft,
     )
 
@@ -679,10 +678,11 @@ def add_ical_events(foirequest, cal):
 
 def export_user_data(user):
     from froide.helper.api_utils import get_fake_api_context
+
     from .api_views import (
-        FoiRequestListSerializer,
-        FoiMessageSerializer,
         FoiAttachmentSerializer,
+        FoiMessageSerializer,
+        FoiRequestListSerializer,
     )
     from .models import FoiAttachment, FoiProject
 

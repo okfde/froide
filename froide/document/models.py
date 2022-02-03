@@ -1,13 +1,11 @@
 from django.db import models
 
+from filingcabinet.models import AbstractDocument, AbstractDocumentCollection
 from filingcabinet.models import (
-    AbstractDocument,
-    AbstractDocumentCollection,
-    DocumentManager as FCDocumentManager,
     DocumentCollectionManager as FCDocumentCollectionManager,
-    get_page_image_filename,
-    Page,
 )
+from filingcabinet.models import DocumentManager as FCDocumentManager
+from filingcabinet.models import Page, get_page_image_filename
 
 from froide.helper.auth import (
     can_read_object_authenticated,
@@ -73,7 +71,7 @@ class Document(AbstractDocument):
 
     @classmethod
     def get_serializer_class(cls, detail=False):
-        from .api_views import DocumentSerializer, DocumentDetailSerializer
+        from .api_views import DocumentDetailSerializer, DocumentSerializer
 
         if detail:
             return DocumentDetailSerializer

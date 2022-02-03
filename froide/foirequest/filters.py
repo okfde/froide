@@ -2,17 +2,18 @@ from collections import namedtuple
 
 from django import forms
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _, pgettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 
-from taggit.models import Tag
 import django_filters
 from elasticsearch_dsl.query import Q
+from taggit.models import Tag
 
 from froide.account.models import User
-from froide.publicbody.models import PublicBody, Category, Jurisdiction
 from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.helper.widgets import DateRangeWidget
+from froide.publicbody.models import Category, Jurisdiction, PublicBody
 
 from .models import FoiRequest
 from .widgets import DropDownFilterWidget

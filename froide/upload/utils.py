@@ -1,8 +1,8 @@
-from base64 import b64encode, b64decode
 import hashlib
 import os
 import sys
 import tempfile
+from base64 import b64decode, b64encode
 
 from . import constants
 

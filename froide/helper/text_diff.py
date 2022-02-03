@@ -1,10 +1,9 @@
-from difflib import SequenceMatcher
 import re
+from difflib import SequenceMatcher
 from typing import Iterator, List, Optional, Tuple
 
-from django.utils.safestring import mark_safe, SafeString
 from django.utils.html import escape
-
+from django.utils.safestring import SafeString, mark_safe
 
 SPLITTER = r"([^\w\-@/\.\:])"
 SPLITTER = r"([\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E])"

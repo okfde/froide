@@ -1,11 +1,10 @@
 import itertools
 
-from elasticsearch.exceptions import ConnectionError
-
-from django_elasticsearch_dsl.registries import registry
 from django_elasticsearch_dsl.management.commands.search_index import (
     Command as DESCommand,
 )
+from django_elasticsearch_dsl.registries import registry
+from elasticsearch.exceptions import ConnectionError
 
 # FIXME: DB chunk size only starting Django 2.0
 DB_CHUNK_SIZE = 2000
@@ -43,7 +42,7 @@ class Command(DESCommand):
                 else:
                     divider = working_chunk_divider
                 while True:
-                    sub_group_size = max(CHUNK_SIZE // (2 ** divider), 1)
+                    sub_group_size = max(CHUNK_SIZE // (2**divider), 1)
                     sub_groups = list(grouper(sub_group_size, obj_group))
                     try:
                         for sub_group in sub_groups:

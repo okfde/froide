@@ -8,13 +8,12 @@ from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.forms import FileUploaderField
 from froide.upload.models import Upload
 
-
-from ..models import FoiRequest, FoiMessage, FoiAttachment
+from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import MessageKind
-from .message import MessageEditMixin
 from ..tasks import move_upload_to_attachment
-from ..validators import validate_postal_content_type
 from ..utils import make_unique_filename
+from ..validators import validate_postal_content_type
+from .message import MessageEditMixin
 
 
 class PostalUploadForm(MessageEditMixin, forms.Form):

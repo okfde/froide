@@ -1,14 +1,12 @@
 from contextlib import contextmanager
 
-from django.db import models
-from django.db import transaction
-
-from elasticsearch_dsl.connections import connections
+from django.db import models, transaction
 
 from django_elasticsearch_dsl.registries import registry
 from django_elasticsearch_dsl.signals import RealTimeSignalProcessor
+from elasticsearch_dsl.connections import connections
 
-from ..tasks import search_instance_save, search_instance_delete
+from ..tasks import search_instance_delete, search_instance_save
 
 
 def run_commit_hooks(testcase):

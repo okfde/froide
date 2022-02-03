@@ -1,16 +1,16 @@
-from django.db import models
 from django.conf import settings
+from django.contrib.sites.managers import CurrentSiteManager
+from django.contrib.sites.models import Site
+from django.db import models
+from django.dispatch import Signal
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from django.contrib.sites.models import Site
-from django.dispatch import Signal
-from django.contrib.sites.managers import CurrentSiteManager
 
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
-from froide.team.models import Team
 from froide.publicbody.models import PublicBody
+from froide.team.models import Team
 
 
 class TaggedFoiProject(TaggedItemBase):

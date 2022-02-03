@@ -1,15 +1,13 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
+from filingcabinet.models import Page
 
 from froide.helper.search import (
     get_index,
-    get_text_analyzer,
     get_search_analyzer,
     get_search_quote_analyzer,
+    get_text_analyzer,
 )
-
-from filingcabinet.models import Page
-
 
 index = get_index("documentpage")
 analyzer = get_text_analyzer()

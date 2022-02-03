@@ -11,7 +11,6 @@ class BounceConfig(AppConfig):
     def ready(self):
         from froide.account import account_canceled
         from froide.account.export import registry
-
         from froide.helper.email_sending import mail_middleware_registry
 
         account_canceled.connect(cancel_user)

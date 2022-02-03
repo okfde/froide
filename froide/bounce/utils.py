@@ -4,34 +4,33 @@ https://en.wikipedia.org/wiki/Variable_envelope_return_path
 
 """
 import base64
-from contextlib import closing
 import datetime
+import time
+from contextlib import closing
 from email.utils import parseaddr
 from io import BytesIO
-import time
 from urllib.parse import quote
 
 from django.conf import settings
-from django.core.mail import mail_managers
-from django.core.signing import TimestampSigner, SignatureExpired, BadSignature
-from django.utils.crypto import salted_hmac
-from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
+from django.core.mail import mail_managers
 from django.core.mail.message import sanitize_address
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
+from django.core.validators import validate_email
+from django.utils import timezone
+from django.utils.crypto import salted_hmac
 
+from froide.helper.email_parsing import parse_email, parse_header_field
 from froide.helper.email_utils import (
+    BounceResult,
+    classify_bounce_status,
+    find_status_from_diagnostic,
     get_mail_client,
     get_unread_mails,
-    BounceResult,
-    find_status_from_diagnostic,
-    classify_bounce_status,
 )
-from froide.helper.email_parsing import parse_email, parse_header_field
 
-from .signals import user_email_bounced, email_bounced, email_unsubscribed
 from .models import Bounce
-
+from .signals import email_bounced, email_unsubscribed, user_email_bounced
 
 BOUNCE_FORMAT = settings.FROIDE_CONFIG["bounce_format"]
 UNSUBSCRIBE_FORMAT = settings.FROIDE_CONFIG["unsubscribe_format"]

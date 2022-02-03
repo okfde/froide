@@ -3,8 +3,8 @@ import socket
 from typing import Union
 
 from django.conf import settings
-from django.db import connections
 from django.core.management import call_command
+from django.db import connections
 
 from selenium import webdriver
 

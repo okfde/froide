@@ -1,29 +1,27 @@
 import json
 
-from django.utils.translation import gettext_lazy as _, gettext
-from django.urls import reverse
-from django.shortcuts import redirect, get_object_or_404, Http404, render
-from django.views.generic import DetailView
-from django.contrib import messages
 from django.conf import settings
-
-from elasticsearch_dsl.query import Q
+from django.contrib import messages
+from django.shortcuts import Http404, get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.translation import gettext
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import DetailView
 
 from crossdomainmedia import CrossDomainMediaMixin
-
+from elasticsearch_dsl.query import Q
+from filingcabinet.models import Page
 from taggit.models import Tag
 
-from filingcabinet.models import Page
-
-from froide.team.models import Team
 from froide.helper.search.views import BaseSearchView
+from froide.team.models import Team
 
+from .auth import DocumentCrossDomainMediaAuth
 from .documents import PageDocument
+from .feeds import DocumentSearchFeed
 from .filters import PageDocumentFilterset
 from .forms import DocumentUploadForm
 from .models import Document
-from .auth import DocumentCrossDomainMediaAuth
-from .feeds import DocumentSearchFeed
 
 
 class DocumentSearchView(BaseSearchView):

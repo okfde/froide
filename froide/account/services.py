@@ -1,24 +1,23 @@
 import hashlib
-from datetime import timedelta
-import re
 import hmac
+import re
+from datetime import timedelta
 from typing import Dict, Optional
 from urllib.parse import urlencode
 
 from django.conf import settings
 from django.template.defaultfilters import slugify
-from django.utils.crypto import constant_time_compare
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.utils.crypto import constant_time_compare
+from django.utils.translation import gettext_lazy as _
 
 from froide.accesstoken.models import AccessToken
 from froide.helper.db_utils import save_obj_unique
 from froide.helper.email_sending import mail_registry
 
-from .models import User, AccountBlocklist
 from . import account_activated
-
+from .models import AccountBlocklist, User
 
 ONE_TIME_LOGIN_PURPOSE = "onetimelogin"
 ONE_TIME_LOGIN_EXPIRY = timedelta(hours=72)

@@ -1,4 +1,5 @@
 from django import forms
+
 from froide.account.preferences import PreferenceForm, registry
 
 
