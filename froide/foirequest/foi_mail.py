@@ -26,7 +26,7 @@ from .utils import get_publicbody_for_email, get_foi_mail_domains
 
 unknown_foimail_subject = _("Unknown FoI-Mail Recipient")
 unknown_foimail_message = _(
-    """We received an FoI mail to this address: %(address)s.
+    """We received an FoI mail from <%(from_address)s> to this address: %(address)s.
 No corresponding request could be identified, please investigate! %(url)s
 """
 )
@@ -140,7 +140,13 @@ def create_deferred(
     with override(settings.LANGUAGE_CODE):
         url = reverse("admin:foirequest_deferredmessage_changelist")
         mail_managers(
-            subject, body % {"address": secret_mail, "url": settings.SITE_URL + url}
+            subject,
+            body
+            % {
+                "address": secret_mail,
+                "url": settings.SITE_URL + url,
+                "from_address": sender_email,
+            },
         )
 
 
