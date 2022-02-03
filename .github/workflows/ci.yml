@@ -23,6 +23,10 @@ jobs:
         pip install .[lint]
     - name: Run flake8
       run: flake8 froide --statistics
+    - name: Run black
+      run: black --check froide
+    - name: Run isort
+      run: isort --check froide
 
   test:
     runs-on: ubuntu-latest

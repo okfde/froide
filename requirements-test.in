@@ -6,6 +6,7 @@ factory-boy
 faker
 flake8
 flake8-bugbear
+isort
 pbr
 pre-commit
 pycodestyle

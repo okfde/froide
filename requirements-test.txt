@@ -250,6 +250,8 @@ idna==2.10
     #   yarl
 incremental==21.3.0
     # via twisted
+isort==5.10.1
+    # via -r requirements-test.in
 itypes==1.2.0
     # via coreapi
 jinja2==3.0.1
