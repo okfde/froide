@@ -1,12 +1,11 @@
-from .draft import RequestDraft
-from .request import FoiRequest, TaggedFoiRequest
-from .message import FoiMessage, DeliveryStatus, MessageTag, TaggedMessage
 from .attachment import FoiAttachment
-from .event import FoiEvent
 from .deferred import DeferredMessage
-from .suggestion import PublicBodySuggestion
+from .draft import RequestDraft
+from .event import FoiEvent
+from .message import DeliveryStatus, FoiMessage, MessageTag, TaggedMessage
 from .project import FoiProject
-
+from .request import FoiRequest, TaggedFoiRequest
+from .suggestion import PublicBodySuggestion
 
 __all__ = [
     "FoiRequest",

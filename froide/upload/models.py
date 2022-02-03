@@ -3,12 +3,12 @@ import os
 import tempfile
 import uuid
 
-from django.db import models
-from django.urls import resolve, Resolver404
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.core.files import File
+from django.db import models
+from django.urls import Resolver404, resolve
+from django.utils.translation import gettext_lazy as _
 
 from django_fsm import FSMField, transition
 

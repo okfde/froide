@@ -1,13 +1,13 @@
 from dataclasses import dataclass
-from typing import Protocol, Optional, List, Dict
+from typing import Dict, List, Optional, Protocol
 
-from django.http import HttpRequest
 from django.conf import settings
+from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.utils import get_module_attr_from_dotted_path
 
-from .models import FoiRequest, FoiEvent
+from .models import FoiEvent, FoiRequest
 from .notifications import send_non_foi_notification
 
 

@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.contrib.syndication.views import Feed
-from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
-from froide.helper.search.facets import make_filter_url
 from froide.helper.feed_utils import clean_feed_output
+from froide.helper.search.facets import make_filter_url
 
 
 class DocumentSearchFeed(Feed):

@@ -1,30 +1,28 @@
-from django.db.models import Q, Value, BooleanField, Case, When
+from django.db.models import BooleanField, Case, Q, Value, When
 from django.utils.decorators import method_decorator
 
-from rest_framework import serializers, permissions, viewsets
-
 from filingcabinet.api_serializers import (
-    DocumentSerializer as FCDocumentSerializer,
-    PageSerializer as FCPageSerializer,
     DocumentCollectionSerializer as FCDocumentCollectionSerializer,
-    UpdateDocumentSerializer,
-    PagesMixin,
 )
+from filingcabinet.api_serializers import DocumentSerializer as FCDocumentSerializer
+from filingcabinet.api_serializers import PageSerializer as FCPageSerializer
+from filingcabinet.api_serializers import PagesMixin, UpdateDocumentSerializer
 from filingcabinet.api_views import (
-    DocumentViewSet as FCDocumentViewSet,
     DocumentCollectionViewSet as FCDocumentCollectionViewSet,
-    PageAnnotationViewSet as FCPageAnnotationViewSet,
 )
+from filingcabinet.api_views import DocumentViewSet as FCDocumentViewSet
+from filingcabinet.api_views import PageAnnotationViewSet as FCPageAnnotationViewSet
 from filingcabinet.models import Page, PageAnnotation
+from rest_framework import permissions, serializers, viewsets
 
-from froide.helper.auth import can_write_object, get_read_queryset, get_write_queryset
 from froide.helper.api_utils import SearchFacetListSerializer
-from froide.helper.search.api_views import ESQueryMixin
+from froide.helper.auth import can_write_object, get_read_queryset, get_write_queryset
 from froide.helper.cache import cache_anonymous_page
+from froide.helper.search.api_views import ESQueryMixin
 
-from .models import Document, DocumentCollection
 from .documents import PageDocument
-from .filters import PageDocumentFilterset, get_document_read_qs, DocumentFilter
+from .filters import DocumentFilter, PageDocumentFilterset, get_document_read_qs
+from .models import Document, DocumentCollection
 
 
 class DocumentSerializer(FCDocumentSerializer):

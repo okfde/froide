@@ -1,15 +1,15 @@
-from datetime import timedelta
 import re
+from datetime import timedelta
 
-from django.utils import timezone
-from django.db import transaction
 from django.contrib.sessions.models import Session
+from django.db import transaction
+from django.utils import timezone
 
 from froide.accesstoken.models import AccessToken
 from froide.helper.email_sending import (
-    send_mail,
     mail_middleware_registry,
     mail_registry,
+    send_mail,
 )
 
 from . import account_canceled, account_merged
@@ -252,7 +252,7 @@ def check_account_compatibility(groups):
 
 
 def delete_expired_onetime_login_tokens():
-    from .services import ONE_TIME_LOGIN_PURPOSE, ONE_TIME_LOGIN_EXPIRY
+    from .services import ONE_TIME_LOGIN_EXPIRY, ONE_TIME_LOGIN_PURPOSE
 
     time_ago = timezone.now() - ONE_TIME_LOGIN_EXPIRY
     AccessToken.objects.filter(

@@ -1,9 +1,9 @@
-import smtplib
 import logging
 import re
+import smtplib
 
-from django.core.mail.backends.smtp import EmailBackend as DjangoEmailBackend
 from django.conf import settings
+from django.core.mail.backends.smtp import EmailBackend as DjangoEmailBackend
 from django.core.mail.message import sanitize_address
 
 from froide.bounce.utils import handle_smtp_error

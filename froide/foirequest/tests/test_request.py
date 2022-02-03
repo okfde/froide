@@ -1,40 +1,39 @@
-from datetime import datetime, timedelta
-from email.parser import BytesParser as Parser
-from io import BytesIO
 import os
 import re
 import zipfile
+from datetime import datetime, timedelta
+from email.parser import BytesParser as Parser
+from io import BytesIO
+from unittest import mock
 from urllib.parse import quote
 
-from unittest import mock
-
-from django.test import TestCase
-from django.urls import reverse
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
 from django.core import mail
-from django.utils import timezone
-from django.test.utils import override_settings
 from django.http import QueryDict
+from django.test import TestCase
+from django.test.utils import override_settings
+from django.urls import reverse
+from django.utils import timezone
 
-from froide.publicbody.models import PublicBody, FoiLaw
-from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import (
-    package_foirequest,
-    generate_foirequest_files,
     add_message_from_email,
+    generate_foirequest_files,
+    package_foirequest,
 )
+from froide.foirequest.forms import get_escalation_message_form, get_send_message_form
 from froide.foirequest.models import (
-    FoiRequest,
-    FoiMessage,
-    FoiAttachment,
     DeliveryStatus,
+    FoiAttachment,
+    FoiMessage,
+    FoiRequest,
 )
-from froide.foirequest.forms import get_send_message_form, get_escalation_message_form
+from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
 from froide.helper.email_parsing import ParsedEmail
+from froide.publicbody.models import FoiLaw, PublicBody
 
 User = get_user_model()
 

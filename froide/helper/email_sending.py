@@ -1,10 +1,10 @@
-from collections import namedtuple
 import logging
+from collections import namedtuple
 
-from django.core.mail import EmailMessage, EmailMultiAlternatives, get_connection
-from django.template.loader import render_to_string, select_template
-from django.template import TemplateDoesNotExist
 from django.conf import settings
+from django.core.mail import EmailMessage, EmailMultiAlternatives, get_connection
+from django.template import TemplateDoesNotExist
+from django.template.loader import render_to_string, select_template
 
 try:
     from froide.bounce.utils import make_bounce_address, make_unsubscribe_header

@@ -1,10 +1,10 @@
 from django.urls import path
 
 from ..views import (
-    MyRequestsView,
     DraftRequestsView,
     FoiProjectListView,
     FollowingRequestsView,
+    MyRequestsView,
     RequestSubscriptionsView,
 )
 

@@ -1,6 +1,5 @@
-from elasticsearch_dsl.query import Q as ESQ
-
 from django_filters import rest_framework as filters
+from elasticsearch_dsl.query import Q as ESQ
 
 from froide.team.models import Team
 

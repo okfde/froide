@@ -1,13 +1,12 @@
-from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
+from django.db import models
 from django.dispatch import Signal
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.models import FoiMessage
 
 from .utils import inform_user_problem_resolved
-
 
 USER_PROBLEM_CHOICES = [
     ("message_not_delivered", _("Your message was not delivered.")),

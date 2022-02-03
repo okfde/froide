@@ -1,15 +1,14 @@
-from collections import namedtuple, defaultdict
 import re
+from collections import defaultdict, namedtuple
 
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-from froide.helper.text_utils import split_text_by_separator
 from froide.helper.admin_utils import make_choose_object_action
 from froide.helper.email_sending import mail_registry
+from froide.helper.text_utils import split_text_by_separator
 
-from .models import Rule, Guidance, Action
-
+from .models import Action, Guidance, Rule
 
 guidance_notification_mail = mail_registry.register(
     "guide/emails/new_guidance",

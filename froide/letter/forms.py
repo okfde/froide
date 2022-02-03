@@ -1,7 +1,6 @@
 from django import forms
+from django.template import Context, Template
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, Context
-
 
 field_mapping = {k: getattr(forms, k) for k in forms.fields.__all__}
 

@@ -1,14 +1,14 @@
-from django.urls import path
 from django.http import HttpResponseRedirect
+from django.urls import path
 
 from oauth2_provider.views import (
-    AuthorizationView,
-    TokenView,
+    ApplicationDelete,
+    ApplicationDetail,
     ApplicationList,
     ApplicationRegistration,
-    ApplicationDetail,
-    ApplicationDelete,
     ApplicationUpdate,
+    AuthorizationView,
+    TokenView,
 )
 
 

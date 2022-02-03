@@ -1,5 +1,5 @@
-from django.utils.http import urlencode
 from django.db import transaction
+from django.utils.http import urlencode
 
 from ..tasks import search_instance_save
 

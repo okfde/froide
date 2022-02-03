@@ -1,23 +1,22 @@
-from django.utils import timezone
 from django.db.models import (
-    Count,
-    Subquery,
-    Exists,
-    OuterRef,
-    Value,
     BooleanField,
     Case,
+    Count,
+    Exists,
+    OuterRef,
+    Subquery,
+    Value,
     When,
 )
+from django.utils import timezone
 
-from rest_framework import serializers, viewsets, mixins, status
+from oauth2_provider.contrib.rest_framework import TokenHasScope
+from rest_framework import mixins, serializers, status, viewsets
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from oauth2_provider.contrib.rest_framework import TokenHasScope
-
-from froide.foirequest.models.request import FoiRequest, get_absolute_domain_short_url
 from froide.foirequest.auth import get_read_foirequest_queryset
+from froide.foirequest.models.request import FoiRequest, get_absolute_domain_short_url
 from froide.helper.api_utils import CustomLimitOffsetPagination
 
 from .models import FoiRequestFollower

@@ -27,6 +27,7 @@ def cancel_user(sender, user=None, **kwargs):
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
+
     from .models import FeaturedRequest
 
     move_ownership(FeaturedRequest, "user", old_user, new_user)

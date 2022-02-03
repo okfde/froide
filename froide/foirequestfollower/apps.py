@@ -9,12 +9,12 @@ class FoiRequestFollowerConfig(AppConfig):
     verbose_name = _("FOI Request Follower")
 
     def ready(self):
+        import froide.foirequestfollower.listeners  # noqa
         from froide.account import (
             account_canceled,
-            account_merged,
             account_email_changed,
+            account_merged,
         )
-        import froide.foirequestfollower.listeners  # noqa
         from froide.account.export import registry
         from froide.bounce.signals import email_bounced, email_unsubscribed
         from froide.foirequest.models import FoiRequest
@@ -54,6 +54,7 @@ def email_changed(sender=None, old_email=None, **kwargs):
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
+
     from .models import FoiRequestFollower
 
     move_ownership(
@@ -71,8 +72,9 @@ def merge_user(sender, old_user=None, new_user=None, **kwargs):
 
 
 def export_user_data(user):
-    from .models import FoiRequestFollower
     from froide.foirequest.models.request import get_absolute_domain_short_url
+
+    from .models import FoiRequestFollower
 
     following = FoiRequestFollower.objects.filter(user=user)
     if not following:

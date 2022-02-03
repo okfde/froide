@@ -1,29 +1,25 @@
 from django.conf import settings
-from django.utils import translation
 from django.contrib.gis.geos import Point
-
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.settings import api_settings
-
-from rest_framework_jsonp.renderers import JSONPRenderer
-
-from elasticsearch_dsl.query import Q
+from django.utils import translation
 
 from django_filters import rest_framework as filters
+from elasticsearch_dsl.query import Q
+from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.settings import api_settings
+from rest_framework_jsonp.renderers import JSONPRenderer
 
+from froide.georegion.models import GeoRegion
 from froide.helper.api_utils import (
-    SearchFacetListSerializer,
     OpenRefineReconciliationMixin,
+    SearchFacetListSerializer,
 )
 from froide.helper.search import SearchQuerySetWrapper
 from froide.helper.search.api_views import ESQueryMixin
-from froide.georegion.models import GeoRegion
 
-from .models import PublicBody, Category, Jurisdiction, FoiLaw, Classification
 from .documents import PublicBodyDocument
+from .models import Category, Classification, FoiLaw, Jurisdiction, PublicBody
 
 
 def get_language_from_query(request):

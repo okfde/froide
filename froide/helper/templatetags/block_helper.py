@@ -1,4 +1,4 @@
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 
 from django import template
 from django.utils.safestring import mark_safe

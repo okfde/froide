@@ -1,5 +1,5 @@
-from io import StringIO
 from contextlib import contextmanager
+from io import StringIO
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -8,8 +8,8 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.helper.email_sending import send_mail
 
-from ...validators import PublicBodyValidator
 from ...models import PublicBody
+from ...validators import PublicBodyValidator
 
 
 class Command(BaseCommand):

@@ -1,4 +1,4 @@
-from collections import namedtuple, defaultdict
+from collections import defaultdict, namedtuple
 
 MenuItem = namedtuple("MenuItem", "section order label url")
 

@@ -1,16 +1,15 @@
-from django.urls import path, re_path, include
+from django.urls import include, path, re_path
 from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
 
+from ..filters import FOIREQUEST_FILTERS
 from ..views import (
-    delete_draft,
-    claim_draft,
     ListRequestView,
     UserRequestFeedView,
+    claim_draft,
+    delete_draft,
     user_calendar,
 )
-from ..filters import FOIREQUEST_FILTERS
-
 
 STATUS_URLS = [str(x[0]) for x in FOIREQUEST_FILTERS]
 

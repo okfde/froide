@@ -6,26 +6,23 @@ import shutil
 import tempfile
 import zlib
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-from PyPDF2.utils import PdfReadError
-
-from reportlab.pdfgen import canvas
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfbase import pdfmetrics
 import PIL.Image as PILImage
-
-from wand.image import Image
-from wand.drawing import Drawing
-from wand.color import Color
-from wand.exceptions import DelegateError, WandError
-
 from filingcabinet.pdf_utils import (
     decrypt_pdf_in_place,
-    rewrite_pdf_in_place,
-    rewrite_hard_pdf_in_place,
     get_images_from_pdf_chunked,
+    rewrite_hard_pdf_in_place,
+    rewrite_pdf_in_place,
 )
+from PyPDF2 import PdfFileReader, PdfFileWriter
+from PyPDF2.utils import PdfReadError
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from wand.color import Color
+from wand.drawing import Drawing
+from wand.exceptions import DelegateError, WandError
+from wand.image import Image
 
 logger = logging.getLogger(__name__)
 

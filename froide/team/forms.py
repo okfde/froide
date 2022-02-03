@@ -1,10 +1,10 @@
-from django.utils.translation import gettext_lazy as _
+from django import forms
 from django.db import transaction
 from django.db.models import Q
-from django import forms
+from django.utils.translation import gettext_lazy as _
 
-from .services import TeamService
 from .models import Team, TeamMembership
+from .services import TeamService
 
 
 class CreateTeamForm(forms.Form):

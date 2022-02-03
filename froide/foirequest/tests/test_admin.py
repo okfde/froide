@@ -1,18 +1,19 @@
-from django.test import TestCase
-from django.db.models import Model
-from django.contrib.admin.sites import AdminSite
-from django.test.client import RequestFactory
-from django.contrib.auth import get_user_model
-from django.contrib.messages.storage import default_storage
 from typing import Callable
 
-from froide.foirequest.tests import factories
-from froide.foirequest.models import FoiRequest, FoiAttachment, DeferredMessage
+from django.contrib.admin.sites import AdminSite
+from django.contrib.auth import get_user_model
+from django.contrib.messages.storage import default_storage
+from django.db.models import Model
+from django.test import TestCase
+from django.test.client import RequestFactory
+
 from froide.foirequest.admin import (
-    FoiRequestAdmin,
-    FoiAttachmentAdmin,
     DeferredMessageAdmin,
+    FoiAttachmentAdmin,
+    FoiRequestAdmin,
 )
+from froide.foirequest.models import DeferredMessage, FoiAttachment, FoiRequest
+from froide.foirequest.tests import factories
 
 User = get_user_model()
 

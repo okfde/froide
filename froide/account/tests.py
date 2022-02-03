@@ -1,31 +1,31 @@
 import re
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 from unittest import mock
 from urllib.parse import urlencode
 
-from django.test import TestCase
-from django.http import HttpResponse
-from django.contrib.admin.sites import AdminSite
-from django.test.client import RequestFactory
-from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.core import mail
 from django.conf import settings
+from django.contrib.admin.sites import AdminSite
+from django.contrib.auth import get_user_model
 from django.contrib.messages.storage import default_storage
-from django.utils.html import escape
-from django.utils import timezone
+from django.core import mail
+from django.http import HttpResponse
+from django.test import TestCase
+from django.test.client import RequestFactory
 from django.test.utils import override_settings
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import escape
 
 from oauth2_provider.models import get_access_token_model, get_application_model
 
-from froide.publicbody.models import PublicBody
-from froide.foirequest.models import FoiRequest, FoiMessage
+from froide.foirequest.models import FoiMessage, FoiRequest
 from froide.foirequest.tests import factories
+from froide.publicbody.models import PublicBody
 
-from .services import AccountService
-from .utils import merge_accounts
 from .admin import UserAdmin
 from .models import AccountBlocklist
+from .services import AccountService
+from .utils import merge_accounts
 
 User = get_user_model()
 Application = get_application_model()

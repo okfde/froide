@@ -10,9 +10,9 @@ class ProblemConfig(AppConfig):
     verbose_name = _("Problems")
 
     def ready(self):
-        from froide.account.export import registry
         from froide.account import account_merged
-        from froide.account.menu import menu_registry, MenuItem
+        from froide.account.export import registry
+        from froide.account.menu import MenuItem, menu_registry
 
         from . import signals  # noqa
 

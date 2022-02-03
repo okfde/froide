@@ -4,12 +4,12 @@ from django.shortcuts import get_object_or_404
 
 from froide.helper.utils import render_403
 
-from .models import FoiRequest
 from .auth import (
-    can_write_foirequest,
     can_moderate_foirequest,
     can_moderate_pii_foirequest,
+    can_write_foirequest,
 )
+from .models import FoiRequest
 
 
 def allow_foirequest_if_any(*checks):

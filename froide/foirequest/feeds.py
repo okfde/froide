@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.contrib.syndication.views import Feed
-from django.utils.feedgenerator import Atom1Feed
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import linebreaksbr
+from django.urls import reverse
+from django.utils.feedgenerator import Atom1Feed
+from django.utils.translation import gettext_lazy as _
 
 from froide.helper.feed_utils import clean_feed_output
 
-from .models import FoiRequest
 from .filters import FOIREQUEST_FILTER_DICT
+from .models import FoiRequest
 
 
 class LatestFoiRequestsFeed(Feed):

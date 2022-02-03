@@ -1,10 +1,10 @@
-from datetime import timedelta
 import random
 import string
+from datetime import timedelta
 
+from django.contrib.sites.models import Site
 from django.template.defaultfilters import slugify
 from django.utils import timezone
-from django.contrib.sites.models import Site
 
 import factory
 from factory.django import DjangoModelFactory
@@ -12,11 +12,11 @@ from factory.django import DjangoModelFactory
 from froide.account.factories import UserFactory
 
 from .models import (
-    Jurisdiction,
-    FoiLaw,
-    PublicBody,
-    Classification,
     Category,
+    Classification,
+    FoiLaw,
+    Jurisdiction,
+    PublicBody,
     PublicBodyTag,
 )
 

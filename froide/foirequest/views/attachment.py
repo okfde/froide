@@ -1,28 +1,28 @@
-import re
 import json
 import logging
+import re
 
+from django.contrib import messages
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import Http404, get_object_or_404, redirect, render
+from django.templatetags.static import static
 from django.urls import reverse
-from django.shortcuts import render, get_object_or_404, Http404, redirect
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
-from django.utils.translation import gettext as _
-from django.http import HttpResponse, JsonResponse
-from django.contrib import messages
-from django.templatetags.static import static
 
 from crossdomainmedia import CrossDomainMediaMixin
-from froide.helper.utils import render_400, render_403, is_ajax
 
-from ..models import FoiRequest, FoiMessage, FoiAttachment
+from froide.helper.utils import is_ajax, render_400, render_403
+
 from ..auth import (
-    get_accessible_attachment_url,
     AttachmentCrossDomainMediaAuth,
+    get_accessible_attachment_url,
     has_attachment_access,
 )
-from ..tasks import redact_attachment_task
 from ..decorators import allow_write_foirequest, allow_write_or_moderate_pii_foirequest
-
+from ..models import FoiAttachment, FoiMessage, FoiRequest
+from ..tasks import redact_attachment_task
 
 logger = logging.getLogger(__name__)
 

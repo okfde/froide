@@ -1,17 +1,15 @@
-from django.urls import path, re_path, include
 from django.conf import settings
+from django.urls import include, path, re_path
 from django.utils.translation import pgettext_lazy
 
-from ..views import search, auth, shortlink, AttachmentFileDetailView, project_shortlink
-
+from ..views import AttachmentFileDetailView, auth, project_shortlink, search, shortlink
 from . import (
-    make_request_urls,
-    list_requests_urls,
-    request_urls,
-    project_urls,
     account_urls,
+    list_requests_urls,
+    make_request_urls,
+    project_urls,
+    request_urls,
 )
-
 
 urlpatterns = [
     # Translators: request URL

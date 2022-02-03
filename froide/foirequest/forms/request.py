@@ -1,30 +1,30 @@
 from typing import List
 
-from django.conf import settings
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
-from django.utils.safestring import mark_safe
-from django.utils.html import escape
-from django.utils import timezone
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.template.defaultfilters import slugify
 from django import forms
+from django.conf import settings
+from django.template.defaultfilters import slugify
+from django.urls import reverse_lazy
+from django.utils import timezone
+from django.utils.html import escape
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from taggit.forms import TagField
 
+from froide.campaign.validators import validate_not_campaign
+from froide.helper.auth import get_read_queryset
+from froide.helper.form_utils import JSONMixin
+from froide.helper.forms import TagObjectForm
+from froide.helper.text_utils import redact_plaintext
+from froide.helper.widgets import BootstrapRadioSelect, PriceInput
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
-from froide.helper.widgets import PriceInput, BootstrapRadioSelect
-from froide.helper.forms import TagObjectForm
-from froide.helper.form_utils import JSONMixin
-from froide.helper.text_utils import redact_plaintext
-from froide.helper.auth import get_read_queryset
-from froide.campaign.validators import validate_not_campaign
 
-from ..models import FoiRequest, RequestDraft, PublicBodySuggestion
+from ..models import FoiRequest, PublicBodySuggestion, RequestDraft
 from ..moderation import get_moderation_triggers
-from ..validators import clean_reference, validate_no_placeholder
 from ..utils import construct_initial_message_body
+from ..validators import clean_reference, validate_no_placeholder
 
 payment_possible = settings.FROIDE_CONFIG.get("payment_possible", False)
 

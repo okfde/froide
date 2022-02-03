@@ -1,6 +1,6 @@
 from django import template
 
-from ..forms import NewUserForm, AddressForm
+from ..forms import AddressForm, NewUserForm
 from ..menu import menu_registry
 
 register = template.Library()

@@ -1,7 +1,7 @@
 from django.urls import path
 from django.utils.translation import pgettext_lazy
 
-from .views import follow, embed_follow, confirm_follow, unfollow_by_link
+from .views import confirm_follow, embed_follow, follow, unfollow_by_link
 
 urlpatterns = [
     path("<int:pk>/follow/", follow, name="foirequestfollower-follow"),

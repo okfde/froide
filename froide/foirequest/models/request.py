@@ -1,30 +1,29 @@
-from collections import namedtuple
-from datetime import timedelta
 import json
 import re
-
-from django.db import models
-from django.db.models import Q, When, Case, Value
-from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.contrib.sites.models import Site
-from django.contrib.sites.managers import CurrentSiteManager
-from django.urls import reverse
-from django.utils.crypto import get_random_string
+from collections import namedtuple
+from datetime import timedelta
 
 import django.dispatch
+from django.conf import settings
+from django.contrib.sites.managers import CurrentSiteManager
+from django.contrib.sites.models import Site
+from django.db import models
+from django.db.models import Case, Q, Value, When
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.crypto import get_random_string
+from django.utils.translation import gettext_lazy as _
 
-from taggit.managers import TaggableManager, _TaggableManager as TaggitTaggableManager
+from taggit.managers import TaggableManager
+from taggit.managers import _TaggableManager as TaggitTaggableManager
 from taggit.models import TaggedItemBase
 
-from froide.publicbody.models import PublicBody, FoiLaw, Jurisdiction
 from froide.campaign.models import Campaign
-from froide.team.models import Team
 from froide.helper.text_utils import redact_plaintext
+from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
+from froide.team.models import Team
 
 from .project import FoiProject
-
 
 MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=14)
 

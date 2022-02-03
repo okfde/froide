@@ -1,15 +1,15 @@
+import html
 import json
+import re
 
 from django.db.models import Q
 from django.utils.text import slugify
 
-from .models import PublicBody
-
-import re
-import html
-from markdown.treeprocessors import Treeprocessor
 from markdown.extensions import Extension
+from markdown.treeprocessors import Treeprocessor
 from markdown.util import AtomicString
+
+from .models import PublicBody
 
 
 def export_user_data(user):

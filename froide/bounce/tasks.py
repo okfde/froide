@@ -4,7 +4,6 @@ from froide.celery import app as celery_app
 
 from .utils import check_bounce_mails, check_unsubscribe_mails
 
-
 HANDLE_BOUNCES = settings.FROIDE_CONFIG["bounce_enabled"]
 HANDLE_UNSUBSCRIBE = settings.FROIDE_CONFIG["unsubscribe_enabled"]
 

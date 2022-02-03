@@ -1,14 +1,13 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth import get_user_model
-from django.core import mail
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import Permission
 
-from froide.publicbody.models import PublicBody
-from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiProject, FoiRequest
-
+from froide.foirequest.tests import factories
+from froide.publicbody.models import PublicBody
 
 User = get_user_model()
 

@@ -1,5 +1,5 @@
-from django.core.paginator import Paginator, InvalidPage
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.core.paginator import InvalidPage, Paginator
 
 
 class ElasticsearchPaginator(Paginator):

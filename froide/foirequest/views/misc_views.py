@@ -2,24 +2,24 @@ import datetime
 import json
 
 from django.conf import settings
-from django.utils import timezone
-from django.shortcuts import render, get_object_or_404
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
 from django.contrib.auth import get_user_model
 from django.contrib.sitemaps import Sitemap
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
-from froide.publicbody.models import PublicBody
 from froide.frontpage.models import FeaturedRequest
-from froide.helper.utils import render_403
 from froide.helper.cache import cache_anonymous_page
+from froide.helper.utils import render_403
+from froide.publicbody.models import PublicBody
 
-from ..models import FoiRequest
-from ..tasks import process_mail
-from ..foi_mail import package_foirequest
 from ..auth import can_read_foirequest_authenticated
+from ..foi_mail import package_foirequest
+from ..models import FoiRequest
 from ..pdf_generator import FoiRequestPDFGenerator
+from ..tasks import process_mail
 
 User = get_user_model()
 

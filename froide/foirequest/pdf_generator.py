@@ -13,7 +13,6 @@ except ImportError:
 
 from froide.helper.text_utils import remove_closing_inclusive
 
-
 logger = logging.getLogger(__name__)
 
 

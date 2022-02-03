@@ -8,20 +8,22 @@ class FoiRequestConfig(AppConfig):
     verbose_name = _("FOI Request")
 
     def ready(self):
+        from django_comments.signals import comment_will_be_posted
+
         from froide.account import (
             account_canceled,
-            account_merged,
             account_made_private,
+            account_merged,
         )
         from froide.account.export import registry
-        from froide.helper.search import search_registry
-        from django_comments.signals import comment_will_be_posted
         from froide.foirequest import signals  # noqa
+        from froide.helper.search import search_registry
+
         from .utils import (
             cancel_user,
-            merge_user,
             export_user_data,
             make_account_private,
+            merge_user,
         )
 
         account_canceled.connect(cancel_user)

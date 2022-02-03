@@ -1,7 +1,8 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from django_comments.forms import CommentForm as DjangoCommentForm, COMMENT_MAX_LENGTH
+from django_comments.forms import COMMENT_MAX_LENGTH
+from django_comments.forms import CommentForm as DjangoCommentForm
 
 
 class CommentForm(DjangoCommentForm):
