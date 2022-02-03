@@ -47,6 +47,7 @@ class Base(Configuration):
             "leaflet",
             "django_json_widget",
             "django_celery_beat",
+            "mfa",
             # local
             "froide.foirequest",
             "froide.foirequestfollower",  # needs to come after foirequest
@@ -88,6 +89,14 @@ class Base(Configuration):
     SITE_LOGO = values.Value("")
     SITE_EMAIL = values.Value("info@froide.example.com")
     SITE_URL = values.Value("http://localhost:8000")
+
+    @property
+    def MFA_DOMAIN(self):
+        return self.SITE_URL.rsplit("/", 1)[1]
+
+    @property
+    def MFA_SITE_TITLE(self):
+        return self.SITE_NAME
 
     SITE_ID = values.IntegerValue(1)
 

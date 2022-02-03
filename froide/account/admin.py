@@ -8,6 +8,9 @@ from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
 
+from mfa.admin import MFAKeyAdmin
+from mfa.models import MFAKey
+
 from froide.foirequest.models import FoiRequest
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
@@ -338,8 +341,17 @@ class UserPreferenceAdmin(admin.ModelAdmin):
         return qs
 
 
+class CustomMFAKeyAdmin(MFAKeyAdmin):
+    raw_id_fields = ("user",)
+    exclude = ("secret",)
+    readonly_fields = ("user", "method", "last_code")
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(TaggedUser, TaggedUserAdmin)
 admin.site.register(UserTag, UserTagAdmin)
 admin.site.register(AccountBlocklist, AccountBlocklistAdmin)
 admin.site.register(UserPreference, UserPreferenceAdmin)
+
+admin.site.unregister(MFAKey)
+admin.site.register(MFAKey, CustomMFAKeyAdmin)
