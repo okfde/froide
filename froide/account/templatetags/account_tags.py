@@ -1,9 +1,11 @@
 import itertools
 
 from django import template
+from django.template.loader import render_to_string
 
 from mfa.models import MFAKey
 
+from ..auth import requires_recent_auth
 from ..forms import AddressForm, NewUserForm
 from ..menu import menu_registry
 from ..models import User
@@ -50,3 +52,23 @@ def get_mfa_keys(context):
         k: list(v) for k, v in itertools.groupby(keys, key=lambda x: x["method"])
     }
     return {"all": keys, "by_method": by_method}
+
+
+@register.tag(name="recentauthrequired")
+def do_recentauthrequired(parser, token):
+    nodelist = parser.parse(("endrecentauthrequired",))
+    parser.delete_first_token()
+    return RecentAuthRequiredNode(nodelist)
+
+
+class RecentAuthRequiredNode(template.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        request = context["request"]
+        if requires_recent_auth(request):
+            return render_to_string(
+                "account/includes/recent_auth_required.html", {"next": request.path}
+            )
+        return self.nodelist.render(context)

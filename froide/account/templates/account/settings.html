@@ -57,17 +57,19 @@
     {% trans "Change details" %}
   </h5>
   <div class="card-body">
-    <form action="{% url 'account-change_user' %}" method="post" id="change-address">
-      {% csrf_token %}
-      {% if change_form %}
-        {% render_form change_form %}
-      {% else %}
-        {% render_form request.user.get_change_form %}
-      {% endif %}
-      <button type="submit" class="btn btn-secondary">
-        {% blocktrans %}Save changes{% endblocktrans %}
-      </button>
-    </form>
+    {% recentauthrequired %}
+      <form action="{% url 'account-change_user' %}" method="post" id="change-address">
+        {% csrf_token %}
+        {% if change_form %}
+          {% render_form change_form %}
+        {% else %}
+          {% render_form request.user.get_change_form %}
+        {% endif %}
+        <button type="submit" class="btn btn-secondary">
+          {% blocktrans %}Save changes{% endblocktrans %}
+        </button>
+      </form>
+    {% endrecentauthrequired %}
   </div>
 </div>
 
@@ -125,33 +127,35 @@
       {% translate "Setup two-factor login" %}
     </h5>
     <div class="card-body">
-      {% if not request.user.has_usable_password %}
-        <p>{% translate "You need to set a password first." %}</p>
-      {% else %}
-        {% get_mfa_keys as mfa_keys %}
-        {% if mfa_keys.all %}
-          <p>{% translate "You have the following two-factor login methods active:" %}</p>
-          <ul>
-            {% for mfa_key in mfa_keys.all %}
-              <li>
-                {{ mfa_key.name }} 
-                <span class="badge badge-secondary">
-                {% if mfa_key.method == "FIDO2" %}
-                  {% translate "hardware security key" %}
-                {% elif mfa_key.method == "TOTP" %}
-                  {% translate "authenticator app" %}
-                {% else %}
-                  {% translate "recovery code" %}
-                {% endif %}
-                </span>
-              </li>
-            {% endfor %}
-          </ul>
+      {% recentauthrequired %}
+        {% if not request.user.has_usable_password %}
+          <p>{% translate "You need to set a password first." %}</p>
         {% else %}
-          <p>{% translate "You have not setup any two-factor login methods." %}</p>
+          {% get_mfa_keys as mfa_keys %}
+          {% if mfa_keys.all %}
+            <p>{% translate "You have the following two-factor login methods active:" %}</p>
+            <ul>
+              {% for mfa_key in mfa_keys.all %}
+                <li>
+                  {{ mfa_key.name }} 
+                  <span class="badge badge-secondary">
+                  {% if mfa_key.method == "FIDO2" %}
+                    {% translate "hardware security key" %}
+                  {% elif mfa_key.method == "TOTP" %}
+                    {% translate "authenticator app" %}
+                  {% else %}
+                    {% translate "recovery code" %}
+                  {% endif %}
+                  </span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>{% translate "You have not setup any two-factor login methods." %}</p>
+          {% endif %}
+          <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
         {% endif %}
-        <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
-      {% endif %}
+      {% endrecentauthrequired %}
     </div>
   </div>
 {% endif %}
@@ -165,15 +169,17 @@
     {% trans "Export your data" %}
   </h5>
   <div class="card-body">
-    <form action="{% url 'account-create_export' %}" method="post">
-      {% csrf_token %}
-      <p>
-        {% trans "We will generate a data export and notify you by email when it is ready." %}
-      </p>
-      <button type="submit" class="btn btn-secondary">
-        {% trans "Request data export" %}
-      </button>
-    </form>
+    {% recentauthrequired %}
+      <form action="{% url 'account-create_export' %}" method="post">
+        {% csrf_token %}
+        <p>
+          {% trans "We will generate a data export and notify you by email when it is ready." %}
+        </p>
+        <button type="submit" class="btn btn-secondary">
+          {% trans "Request data export" %}
+        </button>
+      </form>
+    {% endrecentauthrequired %}
   </div>
 </div>
 
@@ -184,24 +190,26 @@
     {% blocktrans %}Delete your account{% endblocktrans %}
   </h5>
   <div class="card-body">
-    <div class="alert alert-error">
-      <h4>
-        <i class="fa fa-fire"></i>
-        {% trans "Danger: deleting your account cannot be undone." %}
-        <i class="fa fa-fire"></i>
-      </h4>
-      <form action="{% url 'account-delete_account' %}" method="post">
-        {% csrf_token %}
-        {% render_form user_delete_form %}
-        <p>
-          {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
-        </p>
-        <button type="submit" class="btn btn-danger">
-          <i class="fa fa-warning" aria-hidden="true"></i>
-          {% blocktrans %}Delete account{% endblocktrans %}
-        </button>
-      </form>
-    </div>
+    {% recentauthrequired %}
+      <div class="alert alert-error">
+        <h4>
+          <i class="fa fa-fire"></i>
+          {% trans "Danger: deleting your account cannot be undone." %}
+          <i class="fa fa-fire"></i>
+        </h4>
+        <form action="{% url 'account-delete_account' %}" method="post">
+          {% csrf_token %}
+          {% render_form user_delete_form %}
+          <p>
+            {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
+          </p>
+          <button type="submit" class="btn btn-danger">
+            <i class="fa fa-warning" aria-hidden="true"></i>
+            {% blocktrans %}Delete account{% endblocktrans %}
+          </button>
+        </form>
+      </div>
+    {% endrecentauthrequired %}
   </div>
 </div>
 
@@ -211,9 +219,11 @@
   </h5>
   <div class="card-body">
     {% if froide.api_activated %}
-    <a href="{% url 'oauth2_provider:list' %}">
-      {% trans "Your OAuth Applications" %}
-    </a>
+      {% recentauthrequired %}
+        <a href="{% url 'oauth2_provider:list' %}">
+          {% trans "Your OAuth Applications" %}
+        </a>
+      {% endrecentauthrequired %}
     {% endif %}
   </div>
 </div>
