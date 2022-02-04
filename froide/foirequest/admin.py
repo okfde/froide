@@ -1,56 +1,54 @@
-from io import BytesIO
 import re
+from io import BytesIO
 
+from django import forms
 from django.contrib import admin
+from django.contrib.admin import helpers
 from django.contrib.admin.views.main import ChangeList
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models.functions import RowNumber
-from django.shortcuts import redirect
 from django.http import HttpResponse
-from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import PermissionDenied
-from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
-from django.contrib.admin import helpers
-from django import forms
-from django.urls import path
-from django.utils.html import format_html
+from django.urls import path, reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
 
 from froide.account.models import UserTag
-from froide.helper.admin_utils import (
-    make_nullfilter,
-    make_greaterzerofilter,
-    make_batch_tag_action,
-    ForeignKeyFilter,
-    TaggitListFilter,
-    SearchFilter,
-    make_choose_object_action,
-    MultiFilterMixin,
-)
-from froide.helper.widgets import TagAutocompleteWidget
-from froide.helper.forms import get_fake_fk_form_class
-from froide.helper.email_parsing import parse_email
-from froide.guide.utils import assign_guidance_action
 from froide.guide.models import Action
+from froide.guide.utils import assign_guidance_action
+from froide.helper.admin_utils import (
+    ForeignKeyFilter,
+    MultiFilterMixin,
+    SearchFilter,
+    TaggitListFilter,
+    make_batch_tag_action,
+    make_choose_object_action,
+    make_greaterzerofilter,
+    make_nullfilter,
+)
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
+from froide.helper.email_parsing import parse_email
+from froide.helper.forms import get_fake_fk_form_class
+from froide.helper.widgets import TagAutocompleteWidget
 
 from .models import (
-    FoiRequest,
-    FoiMessage,
-    FoiProject,
+    DeferredMessage,
+    DeliveryStatus,
     FoiAttachment,
     FoiEvent,
-    PublicBodySuggestion,
+    FoiMessage,
+    FoiProject,
+    FoiRequest,
     MessageTag,
-    TaggedMessage,
-    DeferredMessage,
-    TaggedFoiRequest,
+    PublicBodySuggestion,
     RequestDraft,
-    DeliveryStatus,
+    TaggedFoiRequest,
+    TaggedMessage,
 )
 from .widgets import AttachmentFileWidget
-
 
 SUBJECT_REQUEST_ID = re.compile(r" \[#(\d+)\]")
 

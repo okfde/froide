@@ -1,18 +1,17 @@
-from django.shortcuts import get_object_or_404, Http404, redirect
-from django.urls import reverse
-from django.views.generic import DetailView, UpdateView
-from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
+from django.shortcuts import Http404, get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.http import urlencode
+from django.views.generic import DetailView, UpdateView
 
+from froide.foirequest.auth import can_write_foirequest
+from froide.foirequest.models import FoiMessage
 from froide.helper.utils import render_403
 
-from froide.foirequest.models import FoiMessage
-from froide.foirequest.auth import can_write_foirequest
-
-from .models import LetterTemplate
 from .forms import LetterForm
-from .utils import get_example_context, get_letter_generator, MessageSender
+from .models import LetterTemplate
+from .utils import MessageSender, get_example_context, get_letter_generator
 
 
 class LetterMixin(LoginRequiredMixin):

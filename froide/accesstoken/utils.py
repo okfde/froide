@@ -1,4 +1,4 @@
-from django.core.signing import Signer, BadSignature
+from django.core.signing import BadSignature, Signer
 from django.shortcuts import Http404
 
 from .models import AccessToken

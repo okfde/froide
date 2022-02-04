@@ -1,8 +1,7 @@
 from django.urls import path, re_path
 from django.utils.translation import pgettext_lazy
 
-from ..views import MakeRequestView, DraftRequestView, RequestSentView
-
+from ..views import DraftRequestView, MakeRequestView, RequestSentView
 
 urlpatterns = [
     # Translators: part in /request/to/public-body-slug URL

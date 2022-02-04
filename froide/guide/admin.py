@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from froide.helper.admin_utils import make_nullfilter, ForeignKeyFilter
+from froide.helper.admin_utils import ForeignKeyFilter, make_nullfilter
 
-from .models import Rule, Action, Guidance
+from .models import Action, Guidance, Rule
 from .utils import notify_guidance
 
 

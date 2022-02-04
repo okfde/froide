@@ -1,20 +1,19 @@
-from datetime import timedelta
 import json
+from datetime import timedelta
 from urllib.parse import urlencode
 
-from django.test import TestCase
-from django.core import mail
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.utils import timezone
+from django.core import mail
+from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from oauth2_provider.models import get_access_token_model, get_application_model
 
-from froide.publicbody.models import PublicBody
+from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
-from froide.foirequest.models import FoiRequest, FoiAttachment
-
+from froide.publicbody.models import PublicBody
 
 User = get_user_model()
 Application = get_application_model()

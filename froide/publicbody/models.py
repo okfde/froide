@@ -1,32 +1,30 @@
 from datetime import timedelta
 
-from django.contrib.gis.db import models
-from django.utils.translation import gettext_lazy as _
-from django.contrib.sites.models import Site
-from django.contrib.sites.managers import CurrentSiteManager
-from django.urls import reverse
 from django.conf import settings
-from django.utils.text import Truncator
-from django.utils.safestring import mark_safe
-from django.utils.html import escape
-from django.utils import timezone
+from django.contrib.gis.db import models
+from django.contrib.sites.managers import CurrentSiteManager
+from django.contrib.sites.models import Site
 from django.dispatch import Signal
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
+from django.utils.text import Truncator
+from django.utils.translation import gettext_lazy as _
 
+from parler.models import TranslatableModel, TranslatedFields
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 from taggit.utils import edit_string_for_tags
 from treebeard.mp_tree import MP_Node, MP_NodeManager
-from parler.models import TranslatableModel, TranslatedFields
 
 from froide.georegion.models import GeoRegion
-
+from froide.helper.csv_utils import export_csv
 from froide.helper.date_utils import (
-    calculate_workingday_range,
     calculate_month_range_de,
+    calculate_workingday_range,
 )
 from froide.helper.templatetags.markup import markdown
-from froide.helper.csv_utils import export_csv
-
 
 DEFAULT_LAW = settings.FROIDE_CONFIG.get("default_law", 1)
 

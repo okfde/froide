@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import ProblemReport, USER_PROBLEM_CHOICES, EXTERNAL_PROBLEM_CHOICES
+from .models import EXTERNAL_PROBLEM_CHOICES, USER_PROBLEM_CHOICES, ProblemReport
 
 
 class ProblemReportForm(forms.Form):

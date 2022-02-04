@@ -1,20 +1,19 @@
-from django.views.generic import DetailView
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
-from django.http import Http404
+from django.views.generic import DetailView
 
+from froide.helper.utils import render_400, render_403
 from froide.team.forms import AssignTeamForm
 from froide.team.views import AssignTeamView
-from froide.helper.utils import render_400, render_403
 
-
-from ..models import FoiProject
-from ..forms import MakeProjectPublicForm
 from ..auth import (
-    get_read_foirequest_queryset,
-    can_read_foiproject,
     can_manage_foiproject,
+    can_read_foiproject,
+    get_read_foirequest_queryset,
 )
+from ..forms import MakeProjectPublicForm
+from ..models import FoiProject
 
 
 def project_shortlink(request, obj_id):

@@ -1,33 +1,33 @@
 import json
 from urllib.parse import urlencode
 
-from django.urls import reverse
-from django.shortcuts import get_object_or_404, redirect
-from django.utils.translation import gettext as _, pgettext
-from django.http import Http404
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import FormView, DetailView, TemplateView
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator, decorator_from_middleware
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.utils.decorators import decorator_from_middleware, method_decorator
 from django.utils.module_loading import import_string
+from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import DetailView, FormView, TemplateView
 
-from froide.account.forms import NewUserForm, AddressForm
-from froide.publicbody.forms import PublicBodyForm, MultiplePublicBodyForm
-from froide.publicbody.widgets import get_widget_context
-from froide.publicbody.models import PublicBody
-from froide.publicbody.api_views import PublicBodyListSerializer
-from froide.georegion.models import GeoRegion
+from froide.account.forms import AddressForm, NewUserForm
 from froide.campaign.models import Campaign
+from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
+from froide.publicbody.api_views import PublicBodyListSerializer
+from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
+from froide.publicbody.models import PublicBody
+from froide.publicbody.widgets import get_widget_context
 
-from ..models import FoiRequest, FoiProject, RequestDraft
 from ..forms import RequestForm
-from ..utils import check_throttle
+from ..models import FoiProject, FoiRequest, RequestDraft
 from ..services import CreateRequestService, SaveDraftService
-
+from ..utils import check_throttle
 
 csrf_middleware_class = import_string(
     getattr(

@@ -1,13 +1,14 @@
+from typing import Any, Dict, Optional, Union
+
 from django import forms
 from django.conf import settings
-
-from taggit.forms import TagWidget
-from taggit.utils import parse_tags
-
-from django_filters.widgets import RangeWidget, DateRangeWidget as DFDateRangeWidget
 from django.http.request import QueryDict
 from django.utils.datastructures import MultiValueDict
-from typing import Any, Dict, Optional, Union
+
+from django_filters.widgets import DateRangeWidget as DFDateRangeWidget
+from django_filters.widgets import RangeWidget
+from taggit.forms import TagWidget
+from taggit.utils import parse_tags
 
 
 class BootstrapChoiceMixin(object):

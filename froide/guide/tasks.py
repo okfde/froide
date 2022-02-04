@@ -1,11 +1,11 @@
 from froide.celery import app as celery_app
 
 from .utils import (
-    run_guidance,
-    run_guidance_on_queryset,
     GuidanceApplicator,
     GuidanceResult,
     notify_users,
+    run_guidance,
+    run_guidance_on_queryset,
 )
 
 
@@ -31,6 +31,7 @@ def run_guidance_on_queryset_task(message_ids, notify=False):
 @celery_app.task(name="froide.guide.tasks.add_action_to_queryset_task")
 def add_action_to_queryset_task(action_id, message_ids):
     from froide.foirequest.models import FoiMessage
+
     from .models import Action
 
     try:

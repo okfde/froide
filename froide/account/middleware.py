@@ -1,6 +1,6 @@
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.flatpages.views import flatpage
+from django.core.exceptions import ImproperlyConfigured
 
 from .views import new_terms
 

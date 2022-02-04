@@ -1,17 +1,18 @@
-from rest_framework import serializers, views, response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.response import Response
+from collections import OrderedDict
+from typing import Union
+
+from django.utils.functional import SimpleLazyObject
 
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from rest_framework import response, serializers, status, views
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+
+from froide.account.models import User
 
 from .models import UserPreference
 from .preferences import registry
-from collections import OrderedDict
-from django.utils.functional import SimpleLazyObject
-from froide.account.models import User
-from rest_framework.request import Request
-from typing import Union
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

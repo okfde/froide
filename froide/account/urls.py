@@ -1,30 +1,30 @@
-from django.urls import path, re_path, include
+from django.urls import include, path, re_path
 
-from .views import (
-    AccountView,
-    NewAccountView,
-    AccountConfirmedView,
-    account_settings,
-    profile_redirect,
-    new_terms,
-    logout,
-    login,
-    SignupView,
-    confirm,
-    send_reset_password_link,
-    change_password,
-    change_user,
-    change_email,
-    change_account_settings,
-    go,
-    delete_account,
-    make_user_private,
-    change_profile,
-    create_export,
-    download_export,
-    CustomPasswordResetConfirmView,
-)
 from . import oauth_urls
+from .views import (
+    AccountConfirmedView,
+    AccountView,
+    CustomPasswordResetConfirmView,
+    NewAccountView,
+    SignupView,
+    account_settings,
+    change_account_settings,
+    change_email,
+    change_password,
+    change_profile,
+    change_user,
+    confirm,
+    create_export,
+    delete_account,
+    download_export,
+    go,
+    login,
+    logout,
+    make_user_private,
+    new_terms,
+    profile_redirect,
+    send_reset_password_link,
+)
 
 urlpatterns = [
     path("", include(oauth_urls, namespace="oauth2_provider")),

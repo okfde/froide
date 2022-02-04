@@ -2,12 +2,13 @@ import calendar
 import datetime
 
 from django import template
-from django.utils.html import avoid_wrapping
-from django.utils.timezone import is_aware, utc
-from django.utils.formats import date_format
-from django.utils.translation import ngettext_lazy, gettext as _, pgettext
-from django.utils.http import urlencode
 from django.urls import reverse
+from django.utils.formats import date_format
+from django.utils.html import avoid_wrapping
+from django.utils.http import urlencode
+from django.utils.timezone import is_aware, utc
+from django.utils.translation import gettext as _
+from django.utils.translation import ngettext_lazy, pgettext
 
 from ..content_urls import get_content_url
 

@@ -1,12 +1,12 @@
 import functools
-from html.entities import name2codepoint
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union, Pattern
+from html.entities import name2codepoint
+from typing import Any, Callable, Dict, List, Optional, Pattern, Tuple, Union
 
-from django.utils.translation import gettext_lazy as _
-from django.utils.html import strip_tags
 from django.conf import settings
+from django.utils.html import strip_tags
 from django.utils.safestring import SafeString
+from django.utils.translation import gettext_lazy as _
 
 try:
     from lxml import html as html_parser

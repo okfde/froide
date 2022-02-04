@@ -1,12 +1,10 @@
-from datetime import timedelta
 from collections import defaultdict
+from datetime import timedelta
 
-from django.utils.translation import gettext as _
-from django.utils import translation
-from django.utils import formats
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.utils import timezone
+from django.utils import formats, timezone, translation
+from django.utils.translation import gettext as _
 
 from django_comments import get_model
 
@@ -15,7 +13,7 @@ from froide.foirequest.models.event import EVENT_DETAILS
 from froide.foirequest.notifications import send_update
 
 from .forms import FollowRequestForm
-from .models import FoiRequestFollower, REFERENCE_PREFIX
+from .models import REFERENCE_PREFIX, FoiRequestFollower
 
 Comment = get_model()
 

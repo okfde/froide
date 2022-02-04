@@ -1,14 +1,14 @@
 from urllib.parse import urlencode
 
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 
 from froide.publicbody.models import PublicBody
 
-from .request import FoiRequest, FoiProject
+from .request import FoiProject, FoiRequest
 
 
 def convert_flag(val):

@@ -1,11 +1,13 @@
+from typing import Optional
+
 from django.apps import AppConfig
-from django.utils.translation import gettext_lazy as _
+from django.core.handlers.wsgi import WSGIRequest
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+
+from froide.account.menu import MenuItem
 
 from .menu import menu_registry
-from django.core.handlers.wsgi import WSGIRequest
-from froide.account.menu import MenuItem
-from typing import Optional
 
 
 class AccountConfig(AppConfig):

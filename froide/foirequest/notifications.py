@@ -1,9 +1,9 @@
-from django.utils.translation import ngettext_lazy, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext_lazy
 
 from froide.helper.email_sending import mail_registry
 
 from .utils import send_request_user_email
-
 
 update_requester_email = mail_registry.register(
     "foirequest/emails/request_update", ("count", "user", "request_list")

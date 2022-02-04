@@ -1,22 +1,21 @@
-from datetime import datetime
 import json
 import os
+from datetime import datetime
 
-from django.test import TestCase, TransactionTestCase
-from django.core import mail
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from django.urls import reverse
+from django.core import mail
+from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
-from froide.helper.email_parsing import parse_email
-
-from froide.foirequest.tasks import process_mail
-from froide.foirequest.models import FoiRequest, FoiMessage, DeferredMessage
-from froide.foirequest.tests import factories
 from froide.foirequest.foi_mail import add_message_from_email
+from froide.foirequest.models import DeferredMessage, FoiMessage, FoiRequest
 from froide.foirequest.services import BOUNCE_TAG
+from froide.foirequest.tasks import process_mail
+from froide.foirequest.tests import factories
+from froide.helper.email_parsing import parse_email
 from froide.problem.models import ProblemReport
 
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "testdata"))

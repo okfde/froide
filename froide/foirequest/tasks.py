@@ -1,20 +1,19 @@
-import os
 import logging
+import os
 
 from django.conf import settings
+from django.core.files.base import ContentFile
+from django.db import transaction
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
-from django.db import transaction
-from django.core.files.base import ContentFile
 
 from celery.exceptions import SoftTimeLimitExceeded
-
 from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
-from .models import FoiRequest, FoiMessage, FoiAttachment, FoiProject
-from .foi_mail import _process_mail, _fetch_mail
+from .foi_mail import _fetch_mail, _process_mail
+from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 from .notifications import send_classification_reminder
 
 logger = logging.getLogger(__name__)
@@ -264,6 +263,7 @@ def ocr_pdf_task(att_id, target_id, can_approve=True):
 )
 def redact_attachment_task(att_id, target_id, instructions):
     from filingcabinet.pdf_utils import run_ocr
+
     from froide.helper.redaction import redact_file
 
     try:

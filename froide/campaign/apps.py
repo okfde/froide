@@ -8,6 +8,7 @@ class CampaignConfig(AppConfig):
 
     def ready(self):
         from froide.foirequest.models import FoiRequest
+
         from .listeners import connect_campaign
 
         FoiRequest.request_sent.connect(connect_campaign)

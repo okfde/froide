@@ -1,49 +1,28 @@
 from datetime import timedelta
+from typing import Dict, Optional, Union
 from urllib.parse import urlencode
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from django.http import Http404
-from django.contrib import auth
-from django.db import models
-from django.views.generic import DetailView, FormView
-from django.contrib.auth.views import PasswordResetConfirmView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.core.handlers.wsgi import WSGIRequest
+from django.db import models
+from django.http import Http404
+from django.http.request import QueryDict
+from django.http.response import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.response import TemplateResponse
+from django.urls import reverse
+from django.utils import formats, timezone, translation
+from django.utils.datastructures import MultiValueDict
 from django.utils.html import format_html
-from django.utils import formats, timezone
-from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_POST
-from django.views.generic import TemplateView, RedirectView
+from django.views.generic import DetailView, FormView, RedirectView, TemplateView
 
 from crossdomainmedia import CrossDomainMediaMixin
 
-from froide.foirequest.services import ActivatePendingRequestService
-from froide.helper.utils import render_403, get_redirect, get_redirect_url
-
-from .forms import (
-    UserLoginForm,
-    PasswordResetForm,
-    UserEmailConfirmationForm,
-    TermsForm,
-    ProfileForm,
-    AccountSettingsForm,
-)
-from .services import AccountService
-from .utils import start_cancel_account_process, make_account_private
-from .export import (
-    request_export,
-    ExportCrossDomainMediaAuth,
-    get_export_access_token,
-    get_export_access_token_by_token,
-)
-from django.core.handlers.wsgi import WSGIRequest
-from django.http.request import QueryDict
-from django.http.response import HttpResponse, HttpResponseRedirect
-from django.template.response import TemplateResponse
-from django.utils.datastructures import MultiValueDict
 from froide.account.forms import (
     SetPasswordForm,
     SignUpForm,
@@ -51,7 +30,25 @@ from froide.account.forms import (
     UserDeleteForm,
 )
 from froide.foirequest.models.request import FoiRequest
-from typing import Dict, Optional, Union
+from froide.foirequest.services import ActivatePendingRequestService
+from froide.helper.utils import get_redirect, get_redirect_url, render_403
+
+from .export import (
+    ExportCrossDomainMediaAuth,
+    get_export_access_token,
+    get_export_access_token_by_token,
+    request_export,
+)
+from .forms import (
+    AccountSettingsForm,
+    PasswordResetForm,
+    ProfileForm,
+    TermsForm,
+    UserEmailConfirmationForm,
+    UserLoginForm,
+)
+from .services import AccountService
+from .utils import make_account_private, start_cancel_account_process
 
 User = auth.get_user_model()
 

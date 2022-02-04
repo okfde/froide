@@ -1,12 +1,12 @@
 import os
-import sys
 import re
+import sys
 
 from django.utils.translation import gettext_lazy as _
 
-from celery.schedules import crontab
-
 from configurations import Configuration, importer, values
+
+from celery.schedules import crontab
 
 importer.install(check_options=True)
 

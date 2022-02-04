@@ -1,12 +1,12 @@
-from django.views.generic import ListView
 from django.urls import reverse
 from django.utils.functional import cached_property
+from django.views.generic import ListView
 
-from .queryset import SearchQuerySetWrapper
-from .facets import resolve_facet, make_filter_url
-from .utils import get_pagination_vars
-from .paginator import ElasticsearchPaginator
+from .facets import make_filter_url, resolve_facet
 from .filters import BaseSearchFilterSet
+from .paginator import ElasticsearchPaginator
+from .queryset import SearchQuerySetWrapper
+from .utils import get_pagination_vars
 
 
 class BaseSearchView(ListView):

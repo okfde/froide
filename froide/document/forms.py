@@ -1,14 +1,14 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 
 from taggit.forms import TagField, TagWidget
 
 from froide.helper.widgets import BootstrapCheckboxInput
 
-from .tasks import store_document_upload
 from .models import Document, DocumentCollection
+from .tasks import store_document_upload
 
 
 class DocumentUploadForm(forms.Form):

@@ -1,46 +1,46 @@
-from django.urls import include, path, reverse
-from django.conf.urls.static import static
 from django.conf import settings
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.contrib.sitemaps import views as sitemaps_views, Sitemap
-from django.utils.translation import pgettext_lazy
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps import Sitemap
+from django.contrib.sitemaps import views as sitemaps_views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.template.response import TemplateResponse
+from django.urls import include, path, reverse
+from django.utils.translation import pgettext_lazy
 
 from rest_framework.schemas import get_schema_view
 
 from froide.account.api_views import ProfileView, UserPreferenceView
-from froide.foirequest.api_views import (
-    FoiRequestViewSet,
-    FoiMessageViewSet,
-    FoiAttachmentViewSet,
-)
-from froide.publicbody.api_views import (
-    ClassificationViewSet,
-    CategoryViewSet,
-    PublicBodyViewSet,
-    JurisdictionViewSet,
-    FoiLawViewSet,
-)
-from froide.georegion.api_views import GeoRegionViewSet
-from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
 from froide.campaign.api_views import CampaignViewSet
-from froide.upload.api_views import UploadViewSet
-from froide.problem.api_views import ProblemReportViewSet
 from froide.document.api_views import (
-    PageViewSet,
-    DocumentViewSet,
     DocumentCollectionViewSet,
+    DocumentViewSet,
     PageAnnotationViewSet,
+    PageViewSet,
 )
 from froide.document.urls import document_media_urlpatterns
-
+from froide.foirequest.api_views import (
+    FoiAttachmentViewSet,
+    FoiMessageViewSet,
+    FoiRequestViewSet,
+)
+from froide.foirequest.views import FoiRequestSitemap, dashboard, index
+from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
+from froide.georegion.api_views import GeoRegionViewSet
+from froide.problem.api_views import ProblemReportViewSet
+from froide.publicbody.api_views import (
+    CategoryViewSet,
+    ClassificationViewSet,
+    FoiLawViewSet,
+    JurisdictionViewSet,
+    PublicBodyViewSet,
+)
 from froide.publicbody.views import (
-    PublicBodySitemap,
     FoiLawSitemap,
     JurisdictionSitemap,
+    PublicBodySitemap,
 )
-from froide.foirequest.views import FoiRequestSitemap, index, dashboard
+from froide.upload.api_views import UploadViewSet
 
 from .api import api_router
 

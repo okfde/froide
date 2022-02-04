@@ -1,5 +1,5 @@
-from django.utils.translation import gettext_lazy as _
 from django.contrib.gis.db import models
+from django.utils.translation import gettext_lazy as _
 
 from treebeard.mp_tree import MP_Node, MP_NodeManager
 

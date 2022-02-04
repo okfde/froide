@@ -1,6 +1,6 @@
-from dateutil import relativedelta
-
 from django.conf import settings as django_settings
+
+from dateutil import relativedelta
 
 # Retrieve root settings dict
 TUS_SETTINGS = getattr(django_settings, "TUS_SETTINGS", {})

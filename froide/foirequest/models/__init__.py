@@ -1,12 +1,12 @@
-from .draft import RequestDraft
-from .request import FoiRequest, TaggedFoiRequest
-from .message import FoiMessage, DeliveryStatus, MessageTag, TaggedMessage
 from .attachment import FoiAttachment
-from .event import FoiEvent
 from .deferred import DeferredMessage
-from .suggestion import PublicBodySuggestion
+from .draft import RequestDraft
+from .message import DeliveryStatus, FoiMessage, MessageTag, TaggedMessage
 from .project import FoiProject
+from .request import FoiRequest, TaggedFoiRequest
+from .suggestion import PublicBodySuggestion
 
+from .event import FoiEvent  # isort: skip
 
 __all__ = [
     "FoiRequest",

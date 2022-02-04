@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from .models import AccessToken
-from .widgets import TokenWidget
 from .utils import get_signed_purpose, unsign_purpose
+from .widgets import TokenWidget
 
 
 def clean_purpose(field):

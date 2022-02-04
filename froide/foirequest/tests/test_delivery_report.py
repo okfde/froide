@@ -1,13 +1,13 @@
 from io import StringIO
-
-import pytz
 from unittest import mock
 
+from django.conf import settings
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
-from django.conf import settings
 
-from ..delivery import PostfixDeliveryReporter, DeliveryReport
+import pytz
+
+from ..delivery import DeliveryReport, PostfixDeliveryReporter
 from . import factories
 
 log_string = """

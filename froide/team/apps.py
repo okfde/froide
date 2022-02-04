@@ -1,8 +1,8 @@
 import json
 
 from django.apps import AppConfig
-from django.urls import reverse
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -11,9 +11,9 @@ class TeamConfig(AppConfig):
     verbose_name = _("Teams")
 
     def ready(self):
-        from froide.account.menu import menu_registry, MenuItem
         from froide.account import account_canceled, account_merged
         from froide.account.export import registry
+        from froide.account.menu import MenuItem, menu_registry
 
         def get_account_menu_item(request):
             return MenuItem(
@@ -32,6 +32,7 @@ class TeamConfig(AppConfig):
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
+
     from .models import TeamMembership
 
     move_ownership(TeamMembership, "user", old_user, new_user, dupe=("user", "team"))

@@ -1,7 +1,6 @@
-from websockets.exceptions import ConnectionClosedOK
-
-from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from websockets.exceptions import ConnectionClosedOK
 
 from froide.foirequest.auth import is_foirequest_moderator
 from froide.helper.presence import get_presence_manager

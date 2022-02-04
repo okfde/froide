@@ -1,73 +1,72 @@
 from .account_requests import (
-    MyRequestsView,
     DraftRequestsView,
-    FollowingRequestsView,
     FoiProjectListView,
+    FollowingRequestsView,
+    MyRequestsView,
     RequestSubscriptionsView,
     UserRequestFeedView,
     user_calendar,
 )
 from .attachment import (
-    show_attachment,
-    delete_attachment,
-    create_document,
-    approve_attachment,
     AttachmentFileDetailView,
+    approve_attachment,
+    create_document,
+    delete_attachment,
     redact_attachment,
+    show_attachment,
 )
-from .draft import delete_draft, claim_draft
+from .draft import claim_draft, delete_draft
 from .list_requests import ListRequestView, search
-from .make_request import MakeRequestView, DraftRequestView, RequestSentView
+from .make_request import DraftRequestView, MakeRequestView, RequestSentView
 from .message import (
-    send_message,
-    escalation_message,
-    add_postal_reply,
     add_postal_message,
-    upload_postal_message,
+    add_postal_reply,
     add_postal_reply_attachment,
-    set_message_sender,
-    set_message_recipient,
     approve_message,
-    resend_message,
-    upload_attachments,
-    edit_message,
-    redact_message,
     download_message_pdf,
     download_original_email,
+    edit_message,
+    escalation_message,
+    redact_message,
+    resend_message,
+    send_message,
+    set_message_recipient,
+    set_message_sender,
+    upload_attachments,
+    upload_postal_message,
 )
 from .misc_views import (
-    index,
-    dashboard,
-    postmark_inbound,
-    postmark_bounce,
-    download_foirequest_zip,
-    download_foirequest_pdf,
     FoiRequestSitemap,
+    dashboard,
+    download_foirequest_pdf,
+    download_foirequest_zip,
+    index,
+    postmark_bounce,
+    postmark_inbound,
 )
 from .project import (
     ProjectView,
-    project_shortlink,
     SetProjectTeamView,
     make_project_public,
+    project_shortlink,
 )
+from .request import FoiRequestView, auth, shortlink
 from .request_actions import (
-    set_public_body,
-    suggest_public_body,
-    set_status,
-    make_public,
-    set_law,
-    set_tags,
-    set_summary,
-    apply_moderation,
-    make_same_request,
-    extend_deadline,
     SetTeamView,
+    apply_moderation,
     confirm_request,
     delete_request,
+    extend_deadline,
+    make_public,
+    make_same_request,
     publicbody_upload,
+    set_law,
+    set_public_body,
+    set_status,
+    set_summary,
+    set_tags,
+    suggest_public_body,
 )
-from .request import shortlink, auth, FoiRequestView
-
 
 __all__ = [
     "MyRequestsView",

@@ -5,7 +5,7 @@ import django_filters
 
 from froide.helper.search.filters import BaseSearchFilterSet
 
-from .models import PublicBody, Jurisdiction, Category, Classification
+from .models import Category, Classification, Jurisdiction, PublicBody
 
 
 class PublicBodyFilterSet(BaseSearchFilterSet):

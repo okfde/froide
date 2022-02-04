@@ -1,6 +1,6 @@
 from django.apps import AppConfig
-from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 
 class DocumentConfig(AppConfig):
@@ -9,7 +9,6 @@ class DocumentConfig(AppConfig):
 
     def ready(self):
         import froide.document.signals  # noqa
-
         from froide.helper.search import search_registry
 
         search_registry.register(add_search)

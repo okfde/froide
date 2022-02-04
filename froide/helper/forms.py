@@ -1,10 +1,10 @@
 from typing import Dict, Optional, Type
 
+from django import forms
+from django.contrib.admin.sites import AdminSite
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 from django.db.models import Model, QuerySet
 from django.utils.translation import gettext_lazy as _
-from django import forms
-from django.contrib.admin.widgets import ForeignKeyRawIdWidget
-from django.contrib.admin.sites import AdminSite
 
 from taggit.forms import TagField
 from taggit.utils import edit_string_for_tags

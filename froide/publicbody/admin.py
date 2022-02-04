@@ -1,48 +1,47 @@
 import json
 
-from django.db import transaction
-from django.contrib import admin
-from django.shortcuts import redirect, render
-from django.http import HttpResponse
-from django.core.exceptions import PermissionDenied
-from django.conf import settings
-from django.db.models import Count
-from django.utils.translation import gettext_lazy as _, ngettext
-from django.utils import timezone
-from django.urls import reverse_lazy
 from django import forms
-from django.urls import reverse
-from django.urls import path
-from django.utils.html import format_html
+from django.conf import settings
+from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.db.models import Count
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
+from django.urls import path, reverse, reverse_lazy
+from django.utils import timezone
+from django.utils.html import format_html
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ngettext
 
+from parler.admin import TranslatableAdmin
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
-from parler.admin import TranslatableAdmin
+
 from froide.helper.admin_utils import (
+    TreeRelatedFieldListFilter,
     make_batch_tag_action,
+    make_choose_object_action,
     make_emptyfilter,
     make_nullfilter,
-    make_choose_object_action,
-    TreeRelatedFieldListFilter,
 )
-from froide.helper.widgets import TagAutocompleteWidget
+from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 from froide.helper.search.utils import trigger_search_index_update_qs
-from froide.helper.csv_utils import export_csv_response, dict_to_csv_stream
+from froide.helper.widgets import TagAutocompleteWidget
 
+from .csv_import import CSVImporter
 from .models import (
+    CategorizedPublicBody,
+    Category,
+    Classification,
+    FoiLaw,
+    Jurisdiction,
+    ProposedPublicBody,
     PublicBody,
     PublicBodyTag,
     TaggedPublicBody,
-    FoiLaw,
-    Jurisdiction,
-    Classification,
-    Category,
-    CategorizedPublicBody,
-    ProposedPublicBody,
 )
-from .csv_import import CSVImporter
-
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy("api:category-autocomplete")
 

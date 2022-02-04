@@ -1,5 +1,5 @@
-from django.utils import translation
 from django.conf import settings
+from django.utils import translation
 
 from froide.celery import app as celery_app
 from froide.foirequest.models import FoiRequest

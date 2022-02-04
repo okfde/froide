@@ -1,12 +1,11 @@
-from collections import namedtuple, defaultdict
 import contextlib
-import re
 import imaplib
-from typing import Iterator, Tuple, Optional, Union
+import re
+from collections import defaultdict, namedtuple
+from typing import Iterator, Optional, Tuple, Union
 
 from django.conf import settings
 from django.utils import timezone
-
 
 AUTO_REPLY_SUBJECT_REGEX = settings.FROIDE_CONFIG.get("auto_reply_subject_regex", None)
 AUTO_REPLY_EMAIL_REGEX = settings.FROIDE_CONFIG.get("auto_reply_email_regex", None)

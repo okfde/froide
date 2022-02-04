@@ -1,10 +1,9 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 
-from froide.helper.search import get_index, get_text_analyzer, get_ngram_analyzer
+from froide.helper.search import get_index, get_ngram_analyzer, get_text_analyzer
 
 from .models import PublicBody
-
 
 index = get_index("publicbody")
 

@@ -1,17 +1,17 @@
 from datetime import timedelta
 
-from django.test import TestCase
 from django.core import mail
+from django.test import TestCase
 from django.utils import timezone
 
-from froide.foirequest.tests import factories
-from froide.foirequest.templatetags.foirequest_tags import check_same_request
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tasks import (
+    classification_reminder,
     detect_asleep,
     detect_overdue,
-    classification_reminder,
 )
+from froide.foirequest.templatetags.foirequest_tags import check_same_request
+from froide.foirequest.tests import factories
 from froide.foirequest.utils import MailAttachmentSizeChecker
 
 

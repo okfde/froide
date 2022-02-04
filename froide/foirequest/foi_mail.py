@@ -1,28 +1,28 @@
-from contextlib import closing, contextmanager
 import base64
 import json
-from io import BytesIO
-import zipfile
-from email.utils import parseaddr
 import random
-from typing import Iterator, Tuple, Optional
+import zipfile
+from contextlib import closing, contextmanager
+from email.utils import parseaddr
+from io import BytesIO
+from typing import Iterator, Optional, Tuple
 
 from django.conf import settings
-from django.core.mail import get_connection, EmailMessage, mail_managers
+from django.core.mail import EmailMessage, get_connection, mail_managers
 from django.urls import reverse
-from django.utils.translation import override, gettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import override
 
+from froide.helper.email_parsing import parse_email, parse_postmark
 from froide.helper.email_utils import (
     get_mail_client,
     get_unread_mails,
     make_address,
     unflag_mail,
 )
-from froide.helper.email_parsing import parse_email, parse_postmark
 from froide.helper.name_generator import get_name_from_number, get_old_name_from_number
 
-from .utils import get_publicbody_for_email, get_foi_mail_domains
-
+from .utils import get_foi_mail_domains, get_publicbody_for_email
 
 unknown_foimail_subject = _("Unknown FoI-Mail Recipient")
 unknown_foimail_message = _(

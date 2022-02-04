@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 from django import template
 
 from ..models import Guidance

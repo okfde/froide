@@ -2,20 +2,19 @@ from django import forms
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-from taggit.models import Tag
 import django_filters
 from elasticsearch_dsl.query import Q as ESQ
-
-from froide.helper.search.filters import BaseSearchFilterSet
-from froide.publicbody.models import PublicBody, Jurisdiction
-from froide.foirequest.auth import get_read_foirequest_queryset
-from froide.campaign.models import Campaign
-from froide.account.models import User
-from froide.helper.auth import get_read_queryset
-from froide.helper.widgets import DateRangeWidget
-
-from filingcabinet.models import DocumentPortal, Page
 from filingcabinet.filters import DocumentFilter as FCDocumentFilter
+from filingcabinet.models import DocumentPortal, Page
+from taggit.models import Tag
+
+from froide.account.models import User
+from froide.campaign.models import Campaign
+from froide.foirequest.auth import get_read_foirequest_queryset
+from froide.helper.auth import get_read_queryset
+from froide.helper.search.filters import BaseSearchFilterSet
+from froide.helper.widgets import DateRangeWidget
+from froide.publicbody.models import Jurisdiction, PublicBody
 
 from .models import Document, DocumentCollection
 

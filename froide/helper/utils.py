@@ -4,10 +4,10 @@ import json
 from typing import Dict, Optional, Union
 from urllib.parse import parse_qs, urlsplit, urlunsplit
 
-from django.shortcuts import render, redirect
-from django.urls import reverse, NoReverseMatch
-from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import NoReverseMatch, reverse
+from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 
 
 def get_next(request: HttpRequest) -> str:

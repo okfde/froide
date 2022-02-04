@@ -1,18 +1,18 @@
 import unittest
 from unittest import mock
 
-from django.test import TestCase
-from django.urls import reverse
 from django.conf import settings
-from django.test.utils import override_settings
 from django.contrib.contenttypes.models import ContentType
+from django.test import TestCase
+from django.test.utils import override_settings
+from django.urls import reverse
 
-from froide.publicbody.models import PublicBody, Category, Jurisdiction
-from froide.foirequest.models import FoiRequest, FoiAttachment
-from froide.foirequest.tests import factories
 from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
+from froide.foirequest.models import FoiAttachment, FoiRequest
+from froide.foirequest.tests import factories
 from froide.helper.auth import clear_lru_caches
 from froide.helper.search.signal_processor import realtime_search
+from froide.publicbody.models import Category, Jurisdiction, PublicBody
 
 
 class TestCaseHelpers:

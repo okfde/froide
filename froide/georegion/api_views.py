@@ -3,18 +3,14 @@ import re
 
 from django.contrib.gis.geos import Point
 
-from rest_framework import serializers
-from rest_framework import viewsets
-from rest_framework.settings import api_settings
-
-from rest_framework_jsonp.renderers import JSONPRenderer
-
 from django_filters import rest_framework as filters
+from rest_framework import serializers, viewsets
+from rest_framework.settings import api_settings
+from rest_framework_jsonp.renderers import JSONPRenderer
 
 from froide.helper.api_utils import OpenRefineReconciliationMixin
 
 from .models import GeoRegion
-
 
 GERMAN_PLZ_RE = re.compile(r"\d{5}")
 

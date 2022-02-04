@@ -1,9 +1,9 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
-from django.conf import settings
-from django.utils import translation, timezone
+from django.utils import timezone, translation
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.tests.factories import make_world

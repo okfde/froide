@@ -1,6 +1,6 @@
-import random
 import hashlib
-from typing import Sequence, List
+import random
+from typing import List, Sequence
 
 from django.conf import settings
 

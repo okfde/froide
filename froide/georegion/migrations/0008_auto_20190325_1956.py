@@ -5,6 +5,7 @@ from django.db import migrations
 
 def make_nodes(apps, schema_editor):
     from treebeard.mp_tree import MP_Node
+
     from froide.helper.tree_utils import _inc_path, add_children
 
     def get_children(node):

@@ -1,32 +1,33 @@
-from django.db.models import Count
-from django.core.exceptions import PermissionDenied
-from django.urls import path
-from django.template.response import TemplateResponse
+from typing import List, Optional
+
 from django.contrib import admin
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.admin import helpers
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.core.exceptions import PermissionDenied
+from django.core.handlers.wsgi import WSGIRequest
+from django.db.models import Count
+from django.db.models.query import QuerySet
 from django.shortcuts import redirect
+from django.template.response import TemplateResponse
+from django.urls import path
+from django.urls.resolvers import URLPattern
+from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.models import FoiRequest
+from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
-from froide.helper.admin_utils import TaggitListFilter, MultiFilterMixin
 
 from . import account_email_changed
-from .models import User, TaggedUser, UserTag, AccountBlocklist, UserPreference
-from .services import AccountService
 from .export import get_export_access_token
-from .tasks import start_export_task, send_bulk_mail, merge_accounts_task
 from .forms import UserChangeForm, UserCreationForm
+from .models import AccountBlocklist, TaggedUser, User, UserPreference, UserTag
+from .services import AccountService
+from .tasks import merge_accounts_task, send_bulk_mail, start_export_task
 from .utils import (
-    delete_all_unexpired_sessions_for_user,
     cancel_user,
+    delete_all_unexpired_sessions_for_user,
     make_account_private,
 )
-from django.core.handlers.wsgi import WSGIRequest
-from django.db.models.query import QuerySet
-from django.urls.resolvers import URLPattern
-from typing import List, Optional
 
 
 class UserTagAdmin(admin.ModelAdmin):

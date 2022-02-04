@@ -1,11 +1,12 @@
+from typing import Any, Iterator
+
 from django.conf import settings
+from django.db.models.query import QuerySet
 from django.utils import translation
 
 from froide.celery import app as celery_app
 
 from .models import User
-from django.db.models.query import QuerySet
-from typing import Any, Iterator
 
 
 @celery_app.task
@@ -42,12 +43,12 @@ def delete_deactivated_users_task():
 
 @celery_app.task
 def account_maintenance_task():
+    from .export import delete_all_expired_exports
     from .utils import (
-        delete_unconfirmed_users,
         delete_deactivated_users,
         delete_expired_onetime_login_tokens,
+        delete_unconfirmed_users,
     )
-    from .export import delete_all_expired_exports
 
     delete_unconfirmed_users()
     delete_deactivated_users()

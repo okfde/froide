@@ -1,30 +1,29 @@
 import json
 import os
 import re
+from re import Pattern
+from typing import Dict, List, Optional, Tuple, Union
 
-from django.db import models
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
-from django.urls import reverse
-from django.utils import timezone
-from django.contrib.postgres.fields import CIEmailField
 from django.contrib.auth.models import (
     AbstractBaseUser,
-    PermissionsMixin,
     BaseUserManager,
+    PermissionsMixin,
 )
 from django.contrib.auth.validators import UnicodeUsernameValidator
-
-from taggit.managers import TaggableManager
-from taggit.models import TaggedItemBase, TagBase
+from django.contrib.postgres.fields import CIEmailField
+from django.db import models
+from django.db.models.query import QuerySet
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from oauth2_provider.models import AbstractApplication
+from taggit.managers import TaggableManager
+from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.csv_utils import export_csv, get_dict
 from froide.helper.storage import HashedFilenameStorage
-from django.db.models.query import QuerySet
-from re import Pattern
-from typing import Dict, List, Optional, Tuple, Union
 
 
 class UserTag(TagBase):

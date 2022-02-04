@@ -1,30 +1,30 @@
-from .request import (
-    RequestForm,
-    MakePublicBodySuggestionForm,
-    PublicBodySuggestionsForm,
-    FoiRequestStatusForm,
-    ConcreteLawForm,
-    TagFoiRequestForm,
-    ExtendDeadlineForm,
-    ApplyModerationForm,
-)
 from .message import (
-    SendMessageForm,
     EditMessageForm,
     MessagePublicBodySenderForm,
-    get_postal_reply_form,
-    get_postal_message_form,
-    get_postal_attachment_form,
-    get_send_message_form,
-    get_escalation_message_form,
-    get_message_sender_form,
-    get_message_recipient_form,
-    TransferUploadForm,
-    RedactMessageForm,
     PublicBodyUploader,
+    RedactMessageForm,
+    SendMessageForm,
+    TransferUploadForm,
+    get_escalation_message_form,
+    get_message_recipient_form,
+    get_message_sender_form,
+    get_postal_attachment_form,
+    get_postal_message_form,
+    get_postal_reply_form,
+    get_send_message_form,
 )
 from .postal import PostalUploadForm
 from .project import MakeProjectPublicForm
+from .request import (
+    ApplyModerationForm,
+    ConcreteLawForm,
+    ExtendDeadlineForm,
+    FoiRequestStatusForm,
+    MakePublicBodySuggestionForm,
+    PublicBodySuggestionsForm,
+    RequestForm,
+    TagFoiRequestForm,
+)
 
 __all__ = [
     "RequestForm",

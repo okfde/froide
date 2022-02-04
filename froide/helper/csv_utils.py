@@ -1,9 +1,8 @@
 import csv
-from datetime import datetime
 import re
+from datetime import datetime
 
 from django.http import StreamingHttpResponse
-
 
 FORMULA_START = re.compile(r"^([=\+\-@])")
 

@@ -1,20 +1,20 @@
-from django.db import models
-from django.shortcuts import redirect
-from django.views.generic import ListView, FormView, DetailView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
-from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import models
+from django.http import Http404
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import DeleteView, DetailView, FormView, ListView, UpdateView
 
 from froide.helper.auth import can_manage_object
 
 from .forms import (
+    AssignTeamForm,
     CreateTeamForm,
     TeamInviteForm,
     TeamMemberChangeRoleForm,
-    AssignTeamForm,
 )
 from .models import Team, TeamMembership
 from .services import TeamService

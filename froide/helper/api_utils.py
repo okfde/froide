@@ -4,19 +4,17 @@ from collections import OrderedDict
 from django.conf import settings
 from django.utils.html import format_html
 
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.response import Response
-from rest_framework.serializers import ListSerializer
-from rest_framework.utils.serializer_helpers import ReturnDict
+from elasticsearch_dsl.query import Q
 from rest_framework.decorators import action
-from rest_framework.reverse import reverse
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework.serializers import ListSerializer
 from rest_framework.test import APIRequestFactory
-
+from rest_framework.utils.serializer_helpers import ReturnDict
 from rest_framework_jsonp.renderers import JSONPRenderer
-
-from elasticsearch_dsl.query import Q
 
 
 def get_fake_api_context(url="/"):

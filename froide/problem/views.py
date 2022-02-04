@@ -1,16 +1,17 @@
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
-from django.http import JsonResponse
-from django.utils.translation import gettext as _, pgettext
-from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
+from django.views.decorators.http import require_POST
 
-from froide.foirequest.models import FoiRequest, FoiMessage, FoiAttachment
 from froide.foirequest.auth import is_foirequest_moderator, is_foirequest_pii_moderator
-from froide.publicbody.models import PublicBody
-from froide.helper.utils import render_403, to_json, is_ajax
+from froide.foirequest.models import FoiAttachment, FoiMessage, FoiRequest
 from froide.helper.auth import can_moderate_object
+from froide.helper.utils import is_ajax, render_403, to_json
+from froide.publicbody.models import PublicBody
 
 from .api_views import get_problem_reports
 from .forms import ProblemReportForm

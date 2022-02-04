@@ -1,11 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.html import escape
-from django.contrib.auth import get_user_model
 
-from froide.publicbody.models import PublicBody
-from froide.foirequest.tests import factories
 from froide.foirequest.models import FoiRequest, RequestDraft
+from froide.foirequest.tests import factories
+from froide.publicbody.models import PublicBody
 
 User = get_user_model()
 

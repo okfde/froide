@@ -1,11 +1,11 @@
-from collections import defaultdict, namedtuple
-from datetime import datetime
-import time
 import gzip
 import io
 import logging
-import re
 import os
+import re
+import time
+from collections import defaultdict, namedtuple
+from datetime import datetime
 
 import pytz
 

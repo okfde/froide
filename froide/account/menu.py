@@ -1,6 +1,7 @@
-from collections import namedtuple, defaultdict
-from django.core.handlers.wsgi import WSGIRequest
+from collections import defaultdict, namedtuple
 from typing import DefaultDict, List
+
+from django.core.handlers.wsgi import WSGIRequest
 
 MenuItem = namedtuple("MenuItem", "section order label url")
 

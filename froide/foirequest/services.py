@@ -1,36 +1,36 @@
 import re
 import uuid
 
-from django.db import transaction
-from django.utils import timezone
-from django.urls import reverse
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.files import File
+from django.db import transaction
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
 
 from froide.account.services import AccountService
-from froide.helper.text_utils import redact_subject
-from froide.helper.storage import add_number_to_filename
 from froide.helper.db_utils import save_obj_with_slug
+from froide.helper.storage import add_number_to_filename
+from froide.helper.text_utils import redact_subject
 from froide.problem.models import ProblemReport
 
-from .models import FoiRequest, FoiMessage, RequestDraft, FoiProject, FoiAttachment
+from .hooks import registry
+from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest, RequestDraft
 from .models.message import (
-    BOUNCE_TAG,
-    HAS_BOUNCED_TAG,
     AUTO_REPLY_TAG,
     BOUNCE_RESENT_TAG,
+    BOUNCE_TAG,
+    HAS_BOUNCED_TAG,
 )
+from .tasks import convert_attachment_task, create_project_requests
 from .utils import (
-    generate_secret_address,
     construct_initial_message_body,
+    generate_secret_address,
     get_publicbody_for_email,
     redact_plaintext_with_request,
 )
-from .hooks import registry
-from .tasks import create_project_requests, convert_attachment_task
 
 User = get_user_model()
 

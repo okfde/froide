@@ -11,6 +11,7 @@ class PublicBodyConfig(AppConfig):
         from froide.account import account_merged
         from froide.account.export import registry
         from froide.helper.search import search_registry
+
         from .utils import export_user_data
 
         registry.register(export_user_data)
@@ -28,7 +29,8 @@ def add_search(request):
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
-    from .models import PublicBody, ProposedPublicBody
+
+    from .models import ProposedPublicBody, PublicBody
 
     mapping = [
         (PublicBody, "_created_by"),

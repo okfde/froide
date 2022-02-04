@@ -1,44 +1,43 @@
-import uuid
 import json
+import uuid
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.views.decorators.http import require_POST
-from django.utils.translation import gettext as _
-from django.contrib import messages
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required
+from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 
-from froide.account.forms import NewUserForm, AddressForm
+from froide.account.forms import AddressForm, NewUserForm
+from froide.helper.utils import get_redirect, is_ajax, render_400, render_403
 from froide.team.views import AssignTeamView
-from froide.helper.utils import render_400, render_403, get_redirect, is_ajax
 
-from ..models import FoiRequest, FoiEvent
+from ..auth import (
+    can_mark_not_foi,
+    can_moderate_foirequest,
+    can_write_foirequest,
+    check_foirequest_upload_code,
+    get_read_foirequest_queryset,
+)
+from ..decorators import allow_write_foirequest
 from ..forms import (
+    ApplyModerationForm,
     ConcreteLawForm,
-    TagFoiRequestForm,
+    ExtendDeadlineForm,
     FoiRequestStatusForm,
     MakePublicBodySuggestionForm,
     PublicBodySuggestionsForm,
-    ExtendDeadlineForm,
     PublicBodyUploader,
-    ApplyModerationForm,
-)
-from ..utils import check_throttle, get_foi_mail_domains
-from ..services import CreateSameAsRequestService, ActivatePendingRequestService
-from ..auth import (
-    get_read_foirequest_queryset,
-    can_write_foirequest,
-    check_foirequest_upload_code,
-    can_moderate_foirequest,
-    can_mark_not_foi,
+    TagFoiRequestForm,
 )
 from ..hooks import registry
-from ..decorators import allow_write_foirequest
-
-from .request import show_foirequest
+from ..models import FoiEvent, FoiRequest
+from ..services import ActivatePendingRequestService, CreateSameAsRequestService
+from ..utils import check_throttle, get_foi_mail_domains
 from .make_request import get_new_account_url
+from .request import show_foirequest
 
 
 @require_POST

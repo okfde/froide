@@ -4,9 +4,8 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.helper.email_sending import mail_registry
 
-from .models import FoiRequest, FoiMessage, FoiAttachment, FoiEvent, FoiProject
+from .models import FoiAttachment, FoiEvent, FoiMessage, FoiProject, FoiRequest
 from .utils import send_request_user_email, short_request_url
-
 
 became_overdue_email = mail_registry.register(
     "foirequest/emails/became_overdue",

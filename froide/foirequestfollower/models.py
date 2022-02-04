@@ -1,14 +1,14 @@
-import hmac
 import hashlib
+import hmac
 
-from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
+from django.db import models
+from django.dispatch import Signal
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
-from django.dispatch import Signal
+from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.email_sending import mail_registry

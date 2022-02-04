@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+
 import froide.foirequest.models.attachment
 import froide.helper.storage
 

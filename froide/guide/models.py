@@ -1,18 +1,19 @@
 import json
 import re
 
-from django.db import models
 from django.conf import settings
+from django.db import models
+from django.template import Context, Template
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _, pgettext_lazy
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.template import Template, Context
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 from froide.foirequest.models import FoiMessage, MessageTag
 from froide.helper.email_sending import MailIntent
-from froide.publicbody.models import Jurisdiction, PublicBody, Category
 from froide.letter.models import LetterTemplate
+from froide.publicbody.models import Category, Jurisdiction, PublicBody
 
 
 def compile_text(text):

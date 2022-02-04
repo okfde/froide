@@ -1,10 +1,11 @@
 from collections import defaultdict
+
 from django import template
 
 from froide.foirequest.auth import can_moderate_foirequest
 
-from ..models import ProblemReport
 from ..forms import ProblemReportForm
+from ..models import ProblemReport
 
 register = template.Library()
 

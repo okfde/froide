@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 import codecs
-import re
 import os
+import re
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def read(*parts):
@@ -22,7 +22,7 @@ def find_version(*file_paths):
 
 
 extras = {
-    "lint": ["flake8"],
+    "lint": ["flake8", "black", "isort", "flake8-bugbear"],
 }
 
 setup(
