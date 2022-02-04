@@ -6,9 +6,8 @@ from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordResetConfirmView
-from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
-from django.http import Http404
+from django.http import Http404, HttpRequest
 from django.http.request import QueryDict
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -88,7 +87,7 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
 
 
 def confirm(
-    request: WSGIRequest, user_id: int, secret: str, request_id: Optional[int] = None
+    request: HttpRequest, user_id: int, secret: str, request_id: Optional[int] = None
 ) -> HttpResponseRedirect:
     if request.user.is_authenticated:
         if request.user.id != user_id:
@@ -131,7 +130,7 @@ def confirm(
 
 
 def go(
-    request: WSGIRequest, user_id: str, token: str, url: str
+    request: HttpRequest, user_id: str, token: str, url: str
 ) -> Union[HttpResponseRedirect, HttpResponse]:
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
@@ -244,14 +243,14 @@ class ProfileView(DetailView):
 
 
 @require_POST
-def logout(request: WSGIRequest) -> HttpResponseRedirect:
+def logout(request: HttpRequest) -> HttpResponseRedirect:
     auth.logout(request)
     messages.add_message(request, messages.INFO, _("You have been logged out."))
     return redirect("/")
 
 
 def login(
-    request: WSGIRequest,
+    request: HttpRequest,
     context: None = None,
     template: str = "account/login.html",
     status: int = 200,
@@ -302,7 +301,7 @@ class SignupView(FormView):
     form_class = SignUpForm
 
     def dispatch(
-        self, request: WSGIRequest, *args, **kwargs
+        self, request: HttpRequest, *args, **kwargs
     ) -> Union[TemplateResponse, HttpResponseRedirect]:
         if request.user.is_authenticated:
             return redirect("account-show")
@@ -310,7 +309,7 @@ class SignupView(FormView):
 
     def get_form_kwargs(
         self,
-    ) -> Dict[str, Optional[Union[QueryDict, MultiValueDict, WSGIRequest]]]:
+    ) -> Dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]:
         kwargs = super().get_form_kwargs()
         kwargs.update({"request": self.request})
         return kwargs
@@ -371,7 +370,7 @@ class SignupView(FormView):
 
 @require_POST
 @login_required
-def change_password(request: WSGIRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+def change_password(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
@@ -390,7 +389,7 @@ def change_password(request: WSGIRequest) -> Union[HttpResponseRedirect, HttpRes
 
 
 @require_POST
-def send_reset_password_link(request: WSGIRequest) -> HttpResponseRedirect:
+def send_reset_password_link(request: HttpRequest) -> HttpResponseRedirect:
     if request.user.is_authenticated:
         messages.add_message(
             request,
@@ -441,7 +440,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 @login_required
 def account_settings(
-    request: WSGIRequest,
+    request: HttpRequest,
     context: Optional[
         Union[
             Dict[str, UserDeleteForm],
@@ -464,7 +463,7 @@ def account_settings(
 
 @require_POST
 @login_required
-def change_user(request: WSGIRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+def change_user(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
     form = UserChangeDetailsForm(request.user, request.POST)
     if form.is_valid():
         new_email = form.cleaned_data["email"]
@@ -556,7 +555,7 @@ def make_user_private(request):
 
 
 @login_required
-def change_email(request: WSGIRequest) -> HttpResponseRedirect:
+def change_email(request: HttpRequest) -> HttpResponseRedirect:
     form = UserEmailConfirmationForm(request.user, request.GET)
     if form.is_valid():
         form.save()
@@ -587,7 +586,7 @@ def profile_redirect(request):
 
 @require_POST
 @login_required
-def delete_account(request: WSGIRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+def delete_account(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
     form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
         messages.add_message(

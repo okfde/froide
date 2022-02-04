@@ -4,9 +4,9 @@ from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.exceptions import PermissionDenied
-from django.core.handlers.wsgi import WSGIRequest
 from django.db.models import Count
 from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
@@ -221,7 +221,7 @@ class UserAdmin(DjangoUserAdmin):
     resend_activation.short_description = _("Resend activation mail")
 
     def send_mail(
-        self, request: WSGIRequest, queryset: QuerySet
+        self, request: HttpRequest, queryset: QuerySet
     ) -> Optional[TemplateResponse]:
         """
         Send mail to users

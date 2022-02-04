@@ -9,7 +9,7 @@ from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
 from django.contrib.auth.password_validation import password_validators_help_text_html
-from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -434,7 +434,7 @@ class UserDeleteForm(forms.Form):
         help_text=_("Type the phrase above exactly as displayed."),
     )
 
-    def __init__(self, request: WSGIRequest, *args, **kwargs) -> None:
+    def __init__(self, request: HttpRequest, *args, **kwargs) -> None:
         self.request = request
         self.user = request.user
         super().__init__(*args, **kwargs)

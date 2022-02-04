@@ -1,7 +1,7 @@
 from typing import Optional
 
 from django.apps import AppConfig
-from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -32,7 +32,7 @@ def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwar
     bounce.user.deactivate()
 
 
-def get_request_menu_item(request: WSGIRequest) -> MenuItem:
+def get_request_menu_item(request: HttpRequest) -> MenuItem:
     return MenuItem(
         section="before_request",
         order=999,
@@ -41,7 +41,7 @@ def get_request_menu_item(request: WSGIRequest) -> MenuItem:
     )
 
 
-def get_profile_menu_item(request: WSGIRequest) -> Optional[MenuItem]:
+def get_profile_menu_item(request: HttpRequest) -> Optional[MenuItem]:
     if not request.user.is_authenticated:
         return None
     if request.user.private or not request.user.username:
@@ -54,7 +54,7 @@ def get_profile_menu_item(request: WSGIRequest) -> Optional[MenuItem]:
     )
 
 
-def get_settings_menu_item(request: WSGIRequest) -> MenuItem:
+def get_settings_menu_item(request: HttpRequest) -> MenuItem:
     return MenuItem(
         section="after_settings",
         order=-1,
