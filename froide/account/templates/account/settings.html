@@ -57,19 +57,17 @@
     {% trans "Change details" %}
   </h5>
   <div class="card-body">
-    {% recentauthrequired %}
-      <form action="{% url 'account-change_user' %}" method="post" id="change-address">
-        {% csrf_token %}
-        {% if change_form %}
-          {% render_form change_form %}
-        {% else %}
-          {% render_form request.user.get_change_form %}
-        {% endif %}
-        <button type="submit" class="btn btn-secondary">
-          {% blocktrans %}Save changes{% endblocktrans %}
-        </button>
-      </form>
-    {% endrecentauthrequired %}
+    <form action="{% url 'account-change_user' %}" method="post" id="change-address">
+      {% csrf_token %}
+      {% if change_form %}
+        {% render_form change_form %}
+      {% else %}
+        {% render_form request.user.get_change_form %}
+      {% endif %}
+      <button type="submit" class="btn btn-secondary">
+        {% blocktrans %}Save changes{% endblocktrans %}
+      </button>
+    </form>
   </div>
 </div>
 
@@ -127,7 +125,7 @@
       {% translate "Setup two-factor login" %}
     </h5>
     <div class="card-body">
-      {% recentauthrequired %}
+      {% recentauthrequired "mfa" %}
         {% if not request.user.has_usable_password %}
           <p>{% translate "You need to set a password first." %}</p>
         {% else %}
@@ -169,7 +167,7 @@
     {% trans "Export your data" %}
   </h5>
   <div class="card-body">
-    {% recentauthrequired %}
+    {% recentauthrequired "export" %}
       <form action="{% url 'account-create_export' %}" method="post">
         {% csrf_token %}
         <p>
@@ -190,7 +188,7 @@
     {% blocktrans %}Delete your account{% endblocktrans %}
   </h5>
   <div class="card-body">
-    {% recentauthrequired %}
+    {% recentauthrequired "delete-account-section" %}
       <div class="alert alert-error">
         <h4>
           <i class="fa fa-fire"></i>
@@ -219,7 +217,7 @@
   </h5>
   <div class="card-body">
     {% if froide.api_activated %}
-      {% recentauthrequired %}
+      {% recentauthrequired "developer" %}
         <a href="{% url 'oauth2_provider:list' %}">
           {% trans "Your OAuth Applications" %}
         </a>

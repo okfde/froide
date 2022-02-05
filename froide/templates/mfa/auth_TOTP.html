@@ -20,12 +20,24 @@
 
 {% get_mfa_keys as mfa_keys %}
 
-<form method="POST">
+<form method="POST" class="disable-submit">
   {% csrf_token %}
-  {% for error in form.non_field_errors %}
-    <p>{{ error }}</p>
-  {% endfor %}
-  {% render_field form.code %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <div class="form-group row">
+    <label class="font-weight-bold col-md-4 col-form-label" for="id_code">
+      {{ form.code.label }}
+    </label>
+    <div class="col-md-8">
+      {% render_pininput name="code" autofocus=True %}
+    </div>
+  </div>
+
   <button type="submit" class="btn btn-lg btn-primary">
     {% translate "Verify code" %}
   </button>
@@ -42,4 +54,9 @@
     {% endif %}
   </p>
 </form>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'account/mfa.js' %}"></script>
 {% endblock %}

@@ -29,6 +29,15 @@ def get_menu_items(context):
     return menu_registry.get_menu_items(context.get("request"))
 
 
+@register.inclusion_tag("account/widgets/pininput.html")
+def render_pininput(name="code", digits=6, autofocus=True):
+    return {
+        "widget": {"name": name},
+        "autofocus": autofocus,
+        "digits": list(range(digits)),
+    }
+
+
 @register.simple_tag(takes_context=True)
 def get_mfa_keys(context):
     request = context["request"]
@@ -56,19 +65,31 @@ def get_mfa_keys(context):
 
 @register.tag(name="recentauthrequired")
 def do_recentauthrequired(parser, token):
+    args = token.contents.split(None)[1:]
+    anchor = ""
+    if len(args) == 1:
+        anchor = args[0]
+        assert (anchor[0] == '"' and anchor[-1] == '"') or (
+            anchor[0] == "'" and anchor[-1] == "'"
+        )
+        anchor = anchor[1:-1]
     nodelist = parser.parse(("endrecentauthrequired",))
     parser.delete_first_token()
-    return RecentAuthRequiredNode(nodelist)
+    return RecentAuthRequiredNode(nodelist, anchor=anchor)
 
 
 class RecentAuthRequiredNode(template.Node):
-    def __init__(self, nodelist):
+    def __init__(self, nodelist, anchor=""):
+        self.anchor = anchor
         self.nodelist = nodelist
 
     def render(self, context):
         request = context["request"]
         if requires_recent_auth(request):
+            next_var = request.get_full_path()
+            if self.anchor:
+                next_var = "{}#{}".format(next_var, self.anchor)
             return render_to_string(
-                "account/includes/recent_auth_required.html", {"next": request.path}
+                "account/includes/recent_auth_required.html", {"next": next_var}
             )
         return self.nodelist.render(context)
