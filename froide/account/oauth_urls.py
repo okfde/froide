@@ -11,6 +11,8 @@ from oauth2_provider.views import (
     TokenView,
 )
 
+from .auth import recent_auth_required
+
 
 class CustomAuthorizationView(AuthorizationView):
     def render_to_response(self, context, **kwargs):
@@ -44,13 +46,25 @@ class CustomApplicationUpdate(ApplicationUpdate):
 # Application management views
 app_name = "account"
 urlpatterns += [
-    path("applications/", ApplicationList.as_view(), name="list"),
-    path("applications/register/", ApplicationRegistration.as_view(), name="register"),
-    path("applications/<int:pk>/", ApplicationDetail.as_view(), name="detail"),
-    path("applications/<int:pk>/delete/", ApplicationDelete.as_view(), name="delete"),
+    path("applications/", recent_auth_required(ApplicationList.as_view()), name="list"),
+    path(
+        "applications/register/",
+        recent_auth_required(ApplicationRegistration.as_view()),
+        name="register",
+    ),
+    path(
+        "applications/<int:pk>/",
+        recent_auth_required(ApplicationDetail.as_view()),
+        name="detail",
+    ),
+    path(
+        "applications/<int:pk>/delete/",
+        recent_auth_required(ApplicationDelete.as_view()),
+        name="delete",
+    ),
     path(
         "applications/<int:pk>/update/",
-        CustomApplicationUpdate.as_view(),
+        recent_auth_required(CustomApplicationUpdate.as_view()),
         name="update",
     ),
 ]

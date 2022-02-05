@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load i18n %}
+{% load form_helper %}
+{% load account_tags %}
+
+{% block title %}{% translate "Authenticate again" %}{% endblock %}
+
+{% block navbar %}
+  {% include "header_minimal.html" %}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-5 text-center">
+  <div class="row justify-content-center">
+    <div class="col-md-9 col-lg-8 col-xl-7 text-center">
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="card">
+        <div class="card-header">
+          {% translate "Please authenticate again with any of the methods below" %}
+        </div>
+        <ul class="list-group list-group-flush">
+        {% if "TOTP" in mfa_methods %}
+          <li class="list-group-item">
+          <h5>{% translate "Use hardware security key" %}</h5>
+            <form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
+              {% csrf_token %}
+              {{ form.code.as_hidden }}
+              {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+              <input type="hidden" name="method" value="fido2"/>
+              <button autofocus class="btn btn-success">
+                {% translate "Click here to check hardware security key" %}
+              </button>
+            </form>
+          </li>
+        {% endif %}
+
+        {% if "TOTP" in mfa_methods %}
+          <li class="list-group-item">
+            <h5>{% translate "Use your authenticator app" %}</h5>
+            <form method="post" class="disable-submit">
+              {% csrf_token %}
+              {% render_field form.code %}
+              {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+              <input type="hidden" name="method" value="TOTP"/>
+              <button type="submit" class="btn btn-primary pull-right">
+                {% translate "Verify code" %}
+              </button>
+            </form>
+          </li>
+        {% endif %}
+
+        {% if request.user.has_usable_password %}
+          <li class="list-group-item">
+            <h5>{% translate "Use your password" %}</h5>
+            <form method="post" class="disable-submit">
+              {% csrf_token %}
+              {% render_field form.password %}
+              {{ form.hidden_email }}
+              {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
+              <input type="hidden" name="method" value="password"/>
+              <button type="submit" class="btn btn-primary pull-right">
+                {% translate "Check password" %}
+              </button>
+            </form>
+          </li>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'account/cbor.js' %}"></script>
+  <script src="{% static 'mfa/fido2.js' %}"></script>
+  <script async src="{% static 'account/mfa.js' %}"></script>
+{% endblock %}

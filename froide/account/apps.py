@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.contrib import messages
 from django.urls import reverse
-from django.utils import timezone, translation
+from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 
 from .menu import MenuItem, menu_registry
@@ -25,9 +25,11 @@ class AccountConfig(AppConfig):
 
 
 def handle_user_login(sender, request, user, **kwargs):
+    from .auth import set_last_auth
+
     # Activate the user's language
     translation.activate(user.language)
-    request.session["last_auth"] = timezone.now().isoformat()
+    set_last_auth(request)
     messages.add_message(request, messages.INFO, _("You are now logged in."))
 
 

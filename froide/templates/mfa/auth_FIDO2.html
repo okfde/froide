@@ -19,7 +19,7 @@
 
 {% get_mfa_keys as mfa_keys %}
 
-<form data-fido2-auth="{{ mfa_data }}" method="POST">
+<form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
   {% csrf_token %}
   {% for error in form.errors %}
       <p>{{ error }}</p>

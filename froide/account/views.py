@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Any, Dict
 from urllib.parse import urlencode
 
 from django.contrib import auth, messages
@@ -13,8 +14,11 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import formats, timezone, translation
+from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, RedirectView, TemplateView
 
@@ -25,7 +29,17 @@ from froide.foirequest.models import FoiRequest
 from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import get_redirect, get_redirect_url, render_403
 
-from .auth import start_mfa_auth
+from .auth import (
+    MFAMethod,
+    begin_mfa_authenticate_for_method,
+    delete_mfa_data,
+    get_mfa_data,
+    list_mfa_methods,
+    recent_auth_required,
+    requires_recent_auth,
+    set_last_auth,
+    start_mfa_auth,
+)
 from .export import (
     ExportCrossDomainMediaAuth,
     get_export_access_token,
@@ -36,6 +50,7 @@ from .forms import (
     AccountSettingsForm,
     PasswordResetForm,
     ProfileForm,
+    ReAuthForm,
     SetPasswordForm,
     SignUpForm,
     TermsForm,
@@ -263,6 +278,52 @@ class LoginView(MFALoginView):
         return context
 
 
+class ReAuthView(FormView):
+    template_name = "account/reauth.html"
+    form_class = ReAuthForm
+
+    @method_decorator(login_required)
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        if not requires_recent_auth(self.request):
+            return redirect(self.get_success_url())
+        return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        self.mfa_methods = set(
+            x["method"] for x in list_mfa_methods(self.request.user)
+        ) - {"recovery"}
+        kwargs["mfa_methods"] = self.mfa_methods
+        return kwargs
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["next"] = self.request.GET.get("next", "")
+        context["mfa_methods"] = self.mfa_methods
+        if MFAMethod.FIDO2 in self.mfa_methods and "mfa_data" not in context:
+            context["mfa_data"] = begin_mfa_authenticate_for_method(
+                "FIDO2", self.request, self.request.user
+            )
+        return context
+
+    def form_invalid(self, form):
+        # do not generate a new challenge
+        return self.render_to_response(
+            self.get_context_data(form=form, mfa_data=get_mfa_data(self.request))
+        )
+
+    def form_valid(self, form):
+        delete_mfa_data(self.request)
+        set_last_auth(self.request)
+        return super().form_valid(form)
+
+    def get_success_url(self) -> str:
+        return get_redirect_url(self.request)
+
+
 class SignupView(FormView):
     template_name = "account/signup.html"
     form_class = SignUpForm
@@ -333,6 +394,8 @@ class SignupView(FormView):
 
 @require_POST
 @login_required
+@sensitive_post_parameters()
+@recent_auth_required
 def change_password(request):
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
@@ -516,6 +579,7 @@ def make_user_private(request):
 
 
 @login_required
+@recent_auth_required
 def change_email(request):
     form = UserEmailConfirmationForm(request.user, request.GET)
     if form.is_valid():
@@ -547,6 +611,7 @@ def profile_redirect(request):
 
 @require_POST
 @login_required
+@recent_auth_required
 def delete_account(request):
     form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
@@ -606,6 +671,7 @@ def csrf_failure(request, reason=""):
 
 
 @login_required
+@recent_auth_required
 def create_export(request):
     if request.method == "POST":
         result = request_export(request.user)
@@ -647,6 +713,7 @@ def create_export(request):
 
 
 @login_required
+@recent_auth_required
 def download_export(request):
     access_token = get_export_access_token(request.user)
     if not access_token:
