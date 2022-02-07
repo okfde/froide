@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count
+from django.db.models import Count, Exists, OuterRef
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
@@ -59,6 +59,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "private",
         "is_trusted",
         "is_deleted",
+        "has_mfa",
         "request_count",
     )
     date_hierarchy = "date_joined"
@@ -120,6 +121,10 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(request_count=Count("foirequest"))
+        user_has_mfa = MFAKey.objects.filter(
+            user_id=OuterRef("pk"),
+        )
+        qs = qs.annotate(has_mfa=Exists(user_has_mfa))
         return qs
 
     def get_urls(self):
@@ -144,6 +149,13 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     request_count.admin_order_field = "request_count"
     request_count.short_description = _("requests")
+
+    def has_mfa(self, obj):
+        return obj.has_mfa
+
+    has_mfa.admin_order_field = "has_mfa"
+    has_mfa.short_description = _("2FA")
+    has_mfa.boolean = True
 
     def become_user(self, request, pk):
         if not request.method == "POST":
