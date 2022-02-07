@@ -55,7 +55,7 @@ def get_redirect_url(
     default: str = "/",
     next: None = None,
     allowed_hosts: None = None,
-    params: Optional[Union[Dict[str, str]]] = None,
+    params: Optional[Dict[str, str]] = None,
     keep_session: bool = False,
 ) -> str:
     if next is None:
