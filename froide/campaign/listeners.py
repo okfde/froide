@@ -1,7 +1,9 @@
+from froide.foirequest.models.request import FoiRequest
+
 from .utils import connect_foirequest
 
 
-def connect_campaign(sender, **kwargs):
+def connect_campaign(sender: FoiRequest, **kwargs) -> None:
     reference = kwargs.get("reference")
     if not reference:
         reference = sender.reference
