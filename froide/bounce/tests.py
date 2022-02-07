@@ -19,16 +19,16 @@ from .utils import (
 TEST_DATA_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "testdata"))
 
 
-def p(path):
+def p(path: str) -> str:
     return os.path.join(TEST_DATA_ROOT, path)
 
 
 @unittest.skipUnless(connection.vendor == "postgresql", "PostgreSQL specific tests")
 class BounceTest(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.email = "nonexistant@example.org"
 
-    def test_bounce_address(self):
+    def test_bounce_address(self) -> None:
         email = "Upper_Case@example.org"
         bounce_address = make_bounce_address(email)
         self.assertEqual(bounce_address, bounce_address.lower())
@@ -36,7 +36,7 @@ class BounceTest(TestCase):
         self.assertEqual(recovered_email, email.lower())
         self.assertTrue(status)
 
-    def test_bounce_parsing(self):
+    def test_bounce_parsing(self) -> None:
         with open(p("bounce_001.txt"), "rb") as f:
             email = parse_email(f)
 
@@ -52,7 +52,7 @@ class BounceTest(TestCase):
         self.assertIsNone(bounce.user)
         self.assertEqual(len(bounce.bounces), 1)
 
-    def test_bounce_parsing_2(self):
+    def test_bounce_parsing_2(self) -> None:
         with open(p("bounce_002.txt"), "rb") as f:
             email = parse_email(f)
 
@@ -63,7 +63,7 @@ class BounceTest(TestCase):
         self.assertEqual(bounce_info.bounce_type, "hard")
         self.assertEqual(bounce_info.status, (5, 1, 1))
 
-    def test_bounce_handling(self):
+    def test_bounce_handling(self) -> None:
         def days_ago(days):
             return (datetime.now() - timedelta(days=days)).isoformat()
 
