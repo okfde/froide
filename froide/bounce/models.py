@@ -1,18 +1,23 @@
+from typing import Dict, Union
+
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.models import User
+from froide.helper.email_utils import BounceResult, DsnStatus
 
 
-def convert_bounce_info(bounce_info):
+def convert_bounce_info(
+    bounce_info: BounceResult,
+) -> Dict[str, Union[DsnStatus, bool, str]]:
     d = dict(bounce_info._asdict())
     d["timestamp"] = d["timestamp"].isoformat()
     return d
 
 
 class BounceManager(models.Manager):
-    def update_bounce(self, email, bounce_info):
+    def update_bounce(self, email: str, bounce_info: BounceResult):
         email_lower = email.lower()
         try:
             bounce = Bounce.objects.get(email=email_lower)
