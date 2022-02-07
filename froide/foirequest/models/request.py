@@ -687,9 +687,11 @@ class FoiRequest(models.Model):
     def response_deadline_has_past(self):
         now = timezone.now().date()
         three_months_ago = now - timedelta(days=30 * 3)
-        return not self.foimessage_set.exclude(
-            sender_user=self.user).filter(
-                timestamp__gte=three_months_ago).exists()
+        return (
+            not self.foimessage_set.exclude(sender_user=self.user)
+            .filter(timestamp__gte=three_months_ago)
+            .exists()
+        )
 
     def is_successful(self):
         return self.resolution == Resolution.SUCCESSFUL
