@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-03 19:31+0000\n"
-"PO-Revision-Date: 2022-02-03 20:44+0000\n"
+"POT-Creation-Date: 2022-02-08 11:51+0000\n"
+"PO-Revision-Date: 2022-02-08 12:39+0000\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -43,7 +43,7 @@ msgstr ""
 "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
 "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
-#: froide/_local_settings.py:12 froide/settings.py:248 froide/settings.py:703
+#: froide/_local_settings.py:12 froide/settings.py:257 froide/settings.py:712
 msgid "German"
 msgstr "Deutsch"
 
@@ -78,12 +78,14 @@ msgstr "Noch keine URL erstellt."
 #: froide/accesstoken/templates/accesstoken/token_widget.html:7
 #: froide/foirequest/templates/foirequest/body/settings.html:50
 #: froide/foirequest/templates/foirequest/header/info-box.html:164
+#: froide/templates/mfa/create_recovery.html:32
 msgid "Click to copy"
 msgstr "Klicken zum Kopieren"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html:8
 #: froide/foirequest/templates/foirequest/body/settings.html:51
 #: froide/foirequest/templates/foirequest/header/info-box.html:164
+#: froide/templates/mfa/create_recovery.html:34
 msgid "URL copied"
 msgstr "URL kopiert"
 
@@ -105,120 +107,129 @@ msgstr "URL erstellen"
 msgid "Failed to reset token."
 msgstr "Konnte URL nicht zurücksetzen."
 
-#: froide/account/admin.py:65
+#: froide/account/admin.py:70
 msgid "Profile info"
 msgstr "Profil-Info"
 
-#: froide/account/admin.py:78 froide/publicbody/admin.py:150
+#: froide/account/admin.py:83 froide/publicbody/admin.py:150
 msgid "Advanced"
 msgstr "Fortgeschritten"
 
 #. Translators: not url
-#: froide/account/admin.py:142 froide/foirequest/views/make_request.py:168
+#: froide/account/admin.py:151 froide/foirequest/views/make_request.py:168
 #: froide/publicbody/admin.py:243
 msgid "requests"
 msgstr "anfragen"
 
-#: froide/account/admin.py:190 froide/publicbody/admin.py:343
+#: froide/account/admin.py:157
+msgid "2FA"
+msgstr "2FA"
+
+#: froide/account/admin.py:206 froide/publicbody/admin.py:343
 msgid "Export to CSV"
 msgstr "Exportiere als CSV"
 
-#: froide/account/admin.py:213
+#: froide/account/admin.py:229
 #, python-format
 msgid "%d activation mails sent."
 msgstr "%d Aktivierungs-E-Mails versendet."
 
-#: froide/account/admin.py:215
+#: froide/account/admin.py:231
 msgid "Resend activation mail"
 msgstr "Aktivierungs-Mail neuversenden"
 
-#: froide/account/admin.py:229
+#: froide/account/admin.py:245
 #, python-format
 msgid "%d mail tasks queued."
 msgstr "%d E-Mails zur Zustellung vorbereitet."
 
-#: froide/account/admin.py:244
+#: froide/account/admin.py:260
 msgid "Send mail to users..."
 msgstr "Sende E-Mail an Nutzer:innen..."
 
-#: froide/account/admin.py:250
+#: froide/account/admin.py:266
 msgid "Sessions deleted."
 msgstr "Sessions gelöscht."
 
-#: froide/account/admin.py:253
+#: froide/account/admin.py:269
 msgid "Delete sessions of users"
 msgstr "Sessions des Nutzers löschen"
 
-#: froide/account/admin.py:258
+#: froide/account/admin.py:274
 msgid "Users canceled."
 msgstr "Nutzer gekündigt."
 
-#: froide/account/admin.py:261
+#: froide/account/admin.py:277
 msgid "Cancel account of users"
 msgstr "Nutzerkonto kündigen"
 
-#: froide/account/admin.py:266
+#: froide/account/admin.py:282
 msgid "Users logged out, deactivated and blocked."
 msgstr "Nutzer wurden ausgeloggt, deaktiviert und blockiert."
 
-#: froide/account/admin.py:269
+#: froide/account/admin.py:285
 msgid "Deactivate and block users"
 msgstr "Nutzer deaktivieren und blocken"
 
-#: froide/account/admin.py:276
+#: froide/account/admin.py:292
 msgid "User made private."
 msgstr "Nutzer wurde auf privat geschaltet."
 
-#: froide/account/admin.py:279
+#: froide/account/admin.py:295
 msgid "Make user private"
 msgstr "Nutzer auf privat schalten"
 
-#: froide/account/admin.py:283
+#: froide/account/admin.py:299
 msgid "Can only merge two accounts at a time."
 msgstr "Kann nur zwei Konten zusammenführen."
 
-#: froide/account/admin.py:292
+#: froide/account/admin.py:308
 msgid "Account merging started..."
 msgstr "Nutzerkonto-Zusammenführung angestoßen..."
 
-#: froide/account/admin.py:294
+#: froide/account/admin.py:310
 msgid "Merge accounts (keep older)"
 msgstr "Konten zusammenführen (älteres behalten)"
 
-#: froide/account/admin.py:299
+#: froide/account/admin.py:315
 msgid "Merge accounts (keep newer)"
 msgstr "Konten zusammenführen (neueres behalten)"
 
-#: froide/account/admin.py:313
+#: froide/account/admin.py:329
 msgid "Download export of user '{}' is ready."
 msgstr "Export von Nutzer '{}' ist bereit."
 
-#: froide/account/admin.py:319
+#: froide/account/admin.py:335
 msgid "Export of user '{}' started."
 msgstr "Export von Nutzer '{}' gestartet."
 
-#: froide/account/admin.py:323
+#: froide/account/admin.py:339
 msgid "Start export of user data"
 msgstr "Export von Nutzerdaten starten"
 
-#: froide/account/apps.py:10
+#: froide/account/apps.py:12
 #: froide/account/templates/account/includes/breadcrumbs.html:6
 msgid "Account"
 msgstr "Account"
 
-#: froide/account/apps.py:35
+#: froide/account/apps.py:39
+msgid "You are now logged in."
+msgstr "Sie sind jetzt eingeloggt."
+
+#: froide/account/apps.py:55
 #: froide/foirequest/templates/foirequest/header/breadcrumb.html:7
 msgid "My requests"
 msgstr "Meine Anfragen"
 
-#: froide/account/apps.py:48
+#: froide/account/apps.py:68
 msgid "My public profile"
 msgstr "Mein öffentliches Profil"
 
-#: froide/account/apps.py:57
+#: froide/account/apps.py:77
 #: froide/account/templates/account/settings_base.html:7
 #: froide/account/templates/oauth2_provider/base.html:9
 #: froide/foirequest/templates/foirequest/header/tabs.html:38
+#: froide/templates/mfa/base.html:11
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -226,7 +237,7 @@ msgstr "Einstellungen"
 msgid "Your data export is ready"
 msgstr "Ihr Datenexport ist fertig"
 
-#: froide/account/forms.py:67
+#: froide/account/forms.py:69
 msgid ""
 "Your address will not be displayed publicly and is only needed because a "
 "public body will likely want to send you paper."
@@ -234,7 +245,7 @@ msgstr ""
 "Ihre Adresse wird nicht öffentlich angezeigt und wird nur gebraucht, weil "
 "eine Behörde Ihnen wahrscheinlich etwas per Post zusenden will."
 
-#: froide/account/forms.py:73
+#: froide/account/forms.py:75
 msgid ""
 "Your address will not be displayed publicly and is only needed in case a "
 "public body needs to send you paper."
@@ -242,53 +253,53 @@ msgstr ""
 "Ihre Adresse wird nicht öffentlich angezeigt und wird nur für den Fall "
 "verwendet, dass eine Behörde Ihnen etwas per Post zusenden muss."
 
-#: froide/account/forms.py:83
+#: froide/account/forms.py:85
 msgid "Mailing Address"
 msgstr "Postadresse"
 
-#: froide/account/forms.py:89 froide/account/forms.py:342
+#: froide/account/forms.py:91 froide/account/forms.py:396
 msgid "Street, Post Code, City"
 msgstr "Straße, Hausnummer, PLZ, Ort"
 
-#: froide/account/forms.py:115
+#: froide/account/forms.py:117
 msgid "This address cannot be used by you."
 msgstr "Diese Adresse kann von Ihnen nicht verwendet werden."
 
-#: froide/account/forms.py:122
+#: froide/account/forms.py:124
 msgid "First name"
 msgstr "Vorname"
 
-#: froide/account/forms.py:124
+#: froide/account/forms.py:126
 msgid "First Name"
 msgstr "Vorname"
 
-#: froide/account/forms.py:129
+#: froide/account/forms.py:131
 msgid "Last name"
 msgstr "Nachname"
 
-#: froide/account/forms.py:131
+#: froide/account/forms.py:133
 msgid "Last Name"
 msgstr "Nachname"
 
-#: froide/account/forms.py:136 froide/account/forms.py:300
-#: froide/account/forms.py:319 froide/team/forms.py:56
+#: froide/account/forms.py:138 froide/account/forms.py:302
+#: froide/account/forms.py:373 froide/team/forms.py:56
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
-#: froide/account/forms.py:138
+#: froide/account/forms.py:140
 msgid "Not public. The given address will need to be confirmed."
 msgstr "Nicht öffentlich. Sie müssen diese Adresse bestätigen."
 
-#: froide/account/forms.py:141 froide/account/forms.py:295
-#: froide/account/forms.py:314 froide/account/forms.py:328
+#: froide/account/forms.py:143 froide/account/forms.py:297
+#: froide/account/forms.py:368 froide/account/forms.py:382
 msgid "mail@ddress.net"
 msgstr "email@dresse.net"
 
-#: froide/account/forms.py:154
+#: froide/account/forms.py:156
 msgid "Hide my name from public view"
 msgstr "Zeige meinen Namen nicht öffentlich an"
 
-#: froide/account/forms.py:157
+#: froide/account/forms.py:159
 msgid ""
 "If you check this, your name will still appear in requests to public bodies, "
 "but we will do our best to not display it publicly. However, we cannot "
@@ -298,7 +309,7 @@ msgstr ""
 "nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen "
 "<b>keine</b> komplette Anonymität garantieren."
 
-#: froide/account/forms.py:171
+#: froide/account/forms.py:173
 msgid ""
 "<a target=\"_blank\" href=\"{}\">You may use a pseudonym if you don't need "
 "to receive postal messages</a>."
@@ -306,13 +317,13 @@ msgstr ""
 "<a target=\"_blank\" href=\"{}\">Sie können ein Pseudonym verwenden, wenn "
 "Sie keine Post erhalten müssen</a>."
 
-#: froide/account/forms.py:191
+#: froide/account/forms.py:193
 msgid "You need to accept our Terms and Conditions and Priavcy Statement."
 msgstr ""
 "Sie müssen die Nutzungs- und Datenschutzbedingungen von FragDenStaat.de "
 "akzeptieren."
 
-#: froide/account/forms.py:203
+#: froide/account/forms.py:205
 #, python-brace-format
 msgid ""
 "You agree to our <a href=\"{url_terms}\" target=\"_blank\">Terms and "
@@ -325,108 +336,128 @@ msgstr ""
 "\">Nutzungsbedingungen Archivplattform</a> und den <a href=\"{url_privacy}\" "
 "target=\"_blank\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
 
-#: froide/account/forms.py:253 froide/account/forms.py:306
-#: froide/account/forms.py:422
+#: froide/account/forms.py:255 froide/account/forms.py:308
+#: froide/account/forms.py:325 froide/account/forms.py:476
 msgid "Password"
 msgstr "Passwort"
 
-#: froide/account/forms.py:261
+#: froide/account/forms.py:263
 msgid "Password (repeat)"
 msgstr "Passwort (wiederholen)"
 
-#: froide/account/forms.py:267
+#: froide/account/forms.py:269
 msgid "Passwords do not match!"
 msgstr "Passwörter stimmen nicht überein!"
 
-#: froide/account/forms.py:333 froide/foirequest/views/make_request.py:237
+#: froide/account/forms.py:311
+msgid "Email and password do not match."
+msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
+
+#: froide/account/forms.py:312
+msgid "Please activate your mail address before logging in."
+msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich anmelden."
+
+#: froide/account/forms.py:318
+msgid "Authentication code"
+msgstr "Login-Code"
+
+#: froide/account/forms.py:353
+msgid "Bad password."
+msgstr "Falsches Passwort."
+
+#: froide/account/forms.py:360
+msgid "Validation failed."
+msgstr "Verifizierung fehlgeschlagen."
+
+#: froide/account/forms.py:387 froide/foirequest/views/make_request.py:237
 msgid "Your email address"
 msgstr "Ihre E-Mail-Adresse"
 
-#: froide/account/forms.py:338
+#: froide/account/forms.py:392
 msgid "Your mailing address"
 msgstr "Ihre Postadresse"
 
-#: froide/account/forms.py:339
+#: froide/account/forms.py:393
 msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
 
-#: froide/account/forms.py:365
+#: froide/account/forms.py:419
 msgid "Another user with that email address already exists!"
 msgstr "Es existiert bereits eine Nutzerin mit dieser E-Mail-Adresse."
 
-#: froide/account/forms.py:387
+#: froide/account/forms.py:441
 msgid "Logged in user does not match this link!"
 msgstr "Der eingeloggte Nutzer passt nicht zu dem geklickten Link!"
 
-#: froide/account/forms.py:393
+#: froide/account/forms.py:447
 msgid "This email is already set on this account."
 msgstr "Diese E-Mail-Adresse wird von diesem Konto schon verwendet."
 
-#: froide/account/forms.py:401
+#: froide/account/forms.py:455
 msgid "Link is invalid or has expired!"
 msgstr "Link ist ungültig oder abgelaufen!"
 
-#: froide/account/forms.py:404
+#: froide/account/forms.py:458
 msgid "This email is used by another account!"
 msgstr "Diese E-Mail-Adresse wird von einem anderen Account verwendet!"
 
-#: froide/account/forms.py:416
+#: froide/account/forms.py:470
 msgid "Freedom of Information Act"
 msgstr "Informationsfreiheitsgesetz"
 
-#: froide/account/forms.py:423
+#: froide/account/forms.py:477
 msgid "Please type your password to confirm."
 msgstr "Bitte geben Sie Ihr Passwort zum Bestätigen ein."
 
-#: froide/account/forms.py:429
+#: froide/account/forms.py:483
 msgid "Confirmation Phrase"
 msgstr "Bestätigungs-Satz"
 
-#: froide/account/forms.py:430
+#: froide/account/forms.py:484
 msgid "Type the phrase above exactly as displayed."
 msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
 
-#: froide/account/forms.py:446
+#: froide/account/forms.py:500
 msgid "You provided the wrong password!"
 msgstr "Sie haben ein falsches Passwort angegeben!"
 
-#: froide/account/forms.py:453
+#: froide/account/forms.py:507
 msgid "You did not type the confirmation phrase exactly right!"
 msgstr "Sie haben das Bestätigungswort nicht korrekt eingegeben!"
 
-#: froide/account/forms.py:494
+#: froide/account/forms.py:548
 msgid "Profile text"
 msgstr "Profiltext"
 
-#: froide/account/forms.py:495
+#: froide/account/forms.py:549
 msgid "Optional short text about yourself."
 msgstr "Optionaler kurzer Text zu Ihnen."
 
-#: froide/account/forms.py:507 froide/account/models.py:129
+#: froide/account/forms.py:561 froide/account/models.py:129
 msgid "Organization"
 msgstr "Organisation"
 
-#: froide/account/forms.py:510
+#: froide/account/forms.py:564
 msgid "https://..."
 msgstr "https://..."
 
-#: froide/account/forms.py:518
+#: froide/account/forms.py:572
 msgid "Profile picture"
 msgstr "Profilbild"
 
-#: froide/account/forms.py:520
+#: froide/account/forms.py:574
 msgid "Image must be square and between 480 to 960 pixels in both dimensions."
 msgstr "Bild muss quadratisch und zwischen 480 bis 960 Pixel groß sein."
 
-#: froide/account/forms.py:531
+#: froide/account/forms.py:585
 msgid "Image is not square."
 msgstr "Bild ist nicht quadratisch."
 
-#: froide/account/forms.py:533
+#: froide/account/forms.py:587
 msgid "Image dimensions are too small."
 msgstr "Bilddimensionen zu klein."
 
-#: froide/account/forms.py:535
+#: froide/account/forms.py:589
 msgid "Image dimensions are too large."
 msgstr "Bilddimensionen zu groß."
 
@@ -897,8 +928,8 @@ msgstr "Wird geladen..."
 msgid "Continue"
 msgstr "Weiter"
 
-#: froide/account/templates/account/includes/change_password_form.html:9
-#: froide/account/templates/account/includes/change_password_form.html:21
+#: froide/account/templates/account/includes/change_password_form.html:10
+#: froide/account/templates/account/includes/change_password_form.html:23
 #: froide/account/templates/account/settings_base.html:30
 msgid "Change password"
 msgstr "Passwort ändern"
@@ -919,6 +950,14 @@ msgstr ""
 #: froide/account/templates/account/includes/impostor.html:10
 msgid "Eject"
 msgstr "Rauswerfen"
+
+#: froide/account/templates/account/includes/recent_auth_required.html:4
+msgid "This section requires you to re-authenticate"
+msgstr "Dieser Bereich erfordert eine erneute Authentifizierung."
+
+#: froide/account/templates/account/includes/recent_auth_required.html:6
+msgid "Re-authenticate now"
+msgstr "Jetzt erneut authentifizieren"
 
 #: froide/account/templates/account/login.html:13
 msgid "Log in"
@@ -1101,6 +1140,43 @@ msgstr ""
 "              %(name)s hat an diesen Kampagnen teilgenommen\n"
 "            "
 
+#: froide/account/templates/account/reauth.html:8
+msgid "Authenticate again"
+msgstr "Erneut authentifizieren"
+
+#: froide/account/templates/account/reauth.html:29
+msgid "Please authenticate again with any of the methods below"
+msgstr ""
+"Bitte authentifizieren Sie sich erneut mit einer der folgenden Methoden"
+
+#: froide/account/templates/account/reauth.html:34
+#: froide/templates/mfa/auth_TOTP.html:47
+#: froide/templates/mfa/auth_recovery.html:43
+msgid "Use hardware security key"
+msgstr "Hardware-Sicherheitsschlüssel verwenden"
+
+#: froide/account/templates/account/reauth.html:41
+msgid "Click here to check hardware security key"
+msgstr "Klicken Sie hier, um einen Hardware-Sicherheitsschlüssel zu verwenden"
+
+#: froide/account/templates/account/reauth.html:49
+msgid "Use your authenticator app"
+msgstr "Ihre Authentifizierungs-App verwenden"
+
+#: froide/account/templates/account/reauth.html:56
+#: froide/templates/mfa/auth_TOTP.html:42
+#: froide/templates/mfa/auth_recovery.html:38
+msgid "Verify code"
+msgstr "Code verifizieren"
+
+#: froide/account/templates/account/reauth.html:64
+msgid "Use your password"
+msgstr "Verwenden Sie Ihr Passwort"
+
+#: froide/account/templates/account/reauth.html:72
+msgid "Check password"
+msgstr "Passwort prüfen"
+
 #: froide/account/templates/account/settings.html:7
 #: froide/account/templates/account/settings.html:10
 msgid "Account Settings"
@@ -1189,31 +1265,64 @@ msgstr "Öffentliches Profil"
 msgid "Your public profile"
 msgstr "Ihr öffentliches Profil"
 
-#: froide/account/templates/account/settings.html:128
+#: froide/account/templates/account/settings.html:125
+#: froide/account/templates/account/settings_base.html:34
+msgid "Setup two-factor login"
+msgstr "Two-Faktor-Login einrichten"
+
+#: froide/account/templates/account/settings.html:130
+msgid "You need to set a password first."
+msgstr "Sie müssen zuerst ein Passwort setzen."
+
+#: froide/account/templates/account/settings.html:134
+msgid "You have the following two-factor login methods active:"
+msgstr "Sie haben die folgenden Zwei-Faktor-Login-Methoden aktiviert:"
+
+#: froide/account/templates/account/settings.html:141
+msgid "hardware security key"
+msgstr "Hardware-Sicherheitsschlüssel"
+
+#: froide/account/templates/account/settings.html:143
+msgid "authenticator app"
+msgstr "Autentifizierungs-App"
+
+#: froide/account/templates/account/settings.html:145
+msgid "recovery code"
+msgstr "Wiederherstellungs-Code"
+
+#: froide/account/templates/account/settings.html:152
+msgid "You have not setup any two-factor login methods."
+msgstr "Sie haben keine Zwei-Faktor-Login-Methoden eingerichtet."
+
+#: froide/account/templates/account/settings.html:154
+msgid "Manage two-factor login methods"
+msgstr "Zwei-Faktor-Login-Methoden verwalten"
+
+#: froide/account/templates/account/settings.html:167
 msgid "Export your data"
 msgstr "Exportieren Sie Ihre Daten"
 
-#: froide/account/templates/account/settings.html:134
+#: froide/account/templates/account/settings.html:174
 msgid ""
 "We will generate a data export and notify you by email when it is ready."
 msgstr ""
 "Wir erstellen Ihren Datenexport und teilen Ihnen per E-Mail mit, sobald der "
 "Export fertig ist."
 
-#: froide/account/templates/account/settings.html:137
+#: froide/account/templates/account/settings.html:177
 msgid "Request data export"
 msgstr "Starte Datenexport"
 
-#: froide/account/templates/account/settings.html:147
+#: froide/account/templates/account/settings.html:188
 msgid "Delete your account"
 msgstr "Löschen Sie Ihren Account"
 
-#: froide/account/templates/account/settings.html:153
+#: froide/account/templates/account/settings.html:195
 msgid "Danger: deleting your account cannot be undone."
 msgstr ""
 "Gefahr: das Löschen Ihres Account kann nicht rückgängig gemacht werden."
 
-#: froide/account/templates/account/settings.html:160
+#: froide/account/templates/account/settings.html:202
 msgid ""
 "Your FOI requests will not be removed. Only your personal information "
 "connected with your account will be removed."
@@ -1221,16 +1330,16 @@ msgstr ""
 "Ihre IFG-Anfragen werden nicht gelöscht. Nur die persönlichen Informationen "
 "Ihres Account werden entfernt."
 
-#: froide/account/templates/account/settings.html:164
+#: froide/account/templates/account/settings.html:206
 msgid "Delete account"
 msgstr "Account löschen"
 
-#: froide/account/templates/account/settings.html:173
-#: froide/account/templates/account/settings_base.html:40
+#: froide/account/templates/account/settings.html:216
+#: froide/account/templates/account/settings_base.html:45
 msgid "Developer"
 msgstr "Entwickler"
 
-#: froide/account/templates/account/settings.html:178
+#: froide/account/templates/account/settings.html:222
 msgid "Your OAuth Applications"
 msgstr "Ihre OAuth-Anwendungen"
 
@@ -1242,11 +1351,11 @@ msgstr "zurück zu Ihren Anfragen"
 msgid "General settings"
 msgstr "Allgemeine Einstellungen"
 
-#: froide/account/templates/account/settings_base.html:34
+#: froide/account/templates/account/settings_base.html:39
 msgid "Data export"
 msgstr "Datenexport"
 
-#: froide/account/templates/account/settings_base.html:37
+#: froide/account/templates/account/settings_base.html:42
 msgid "Account deletion"
 msgstr "Konto löschen"
 
@@ -1366,19 +1475,19 @@ msgstr "Zugriff erlauben"
 msgid "OAuth applications"
 msgstr "OAuth-Anwendungen"
 
-#: froide/account/views.py:88
+#: froide/account/views.py:108
 msgid "You are logged in and cannot use a confirmation link."
 msgstr ""
 "Sie sind gerade eingeloggt und können daher Bestätigungslinks nicht nutzen."
 
-#: froide/account/views.py:101
+#: froide/account/views.py:121
 msgid ""
 "You can only use the confirmation link once, please login with your password."
 msgstr ""
 "Sie können den Bestätigungslink nur einmal benutzen, bitte loggen Sie sich "
 "mit Ihrem Passwort ein."
 
-#: froide/account/views.py:130
+#: froide/account/views.py:150
 msgid ""
 "You are logged in with a different user account. Please logout first before "
 "using this link."
@@ -1386,47 +1495,35 @@ msgstr ""
 "Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich "
 "erst aus, bevor Sie den E-Mail-Link benutzen."
 
-#: froide/account/views.py:237
+#: froide/account/views.py:260
 msgid "You have been logged out."
 msgstr "Sie wurden ausgeloggt."
 
-#: froide/account/views.py:263
-msgid "You are now logged in."
-msgstr "Sie sind jetzt eingeloggt."
-
-#: froide/account/views.py:271
-msgid "Please activate your mail address before logging in."
-msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich anmelden."
-
-#: froide/account/views.py:275
-msgid "E-mail and password do not match."
-msgstr "E-Mail-Adresse und Passwort passen nicht zusammen."
-
-#: froide/account/views.py:309
+#: froide/account/views.py:353
 msgid "Please correct the errors below."
 msgstr "Bitte korrigieren Sie die unten stehenden Fehler."
 
-#: froide/account/views.py:343
+#: froide/account/views.py:387
 msgid "Please check your emails for a mail from us with a confirmation link."
 msgstr ""
 "Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem "
 "Bestätigungslink von uns erhalten."
 
-#: froide/account/views.py:359
+#: froide/account/views.py:405
 msgid "Your password has been changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: froide/account/views.py:366
+#: froide/account/views.py:412
 msgid "Your password was NOT changed. Please fix the errors."
 msgstr "Ihr Passwort wurde NICHT geändert. Bitte beheben Sie die Fehler."
 
-#: froide/account/views.py:377
+#: froide/account/views.py:423
 msgid "You are currently logged in, you cannot get a password reset link."
 msgstr ""
 "Sie sind gerade eingeloggt. Sie können keinen Passwort-Zurücksetzen-Link "
 "erhalten."
 
-#: froide/account/views.py:392
+#: froide/account/views.py:438
 msgid ""
 "Check your mail, we sent you a password reset link. If you don't receive an "
 "email, check if you entered your email correctly or if you really have an "
@@ -1437,11 +1534,11 @@ msgstr ""
 "Ihre E-Mail-Adresse richtig eingegeben haben und ob Sie wirklich damit einen "
 "Account haben."
 
-#: froide/account/views.py:410
+#: froide/account/views.py:462
 msgid "Your password has been set and you are now logged in."
 msgstr "Ihre Password wurde gesetzt und Sie sind jetzt eingeloggt."
 
-#: froide/account/views.py:448
+#: froide/account/views.py:506
 msgid ""
 "We sent a confirmation email to your new address. Please click the link in "
 "there."
@@ -1449,69 +1546,69 @@ msgstr ""
 "Wir haben eine Bestätigungs-E-Mail an Ihre neue Adresse gesendet. Bitte "
 "klicken Sie den Link in der E-Mail."
 
-#: froide/account/views.py:453 froide/account/views.py:472
+#: froide/account/views.py:511 froide/account/views.py:530
 msgid "Your profile information has been changed."
 msgstr "Ihre Profilinformationen wurden geändert."
 
-#: froide/account/views.py:459 froide/account/views.py:478
+#: froide/account/views.py:517 froide/account/views.py:536
 msgid ""
 "Please correct the errors below. You profile information was not changed."
 msgstr ""
 "Bitte korrigieren Sie die Fehler unten. Ihre Profilinformationen wurden "
 "nicht geändert."
 
-#: froide/account/views.py:493
+#: froide/account/views.py:551
 msgid "Your account settings have been changed."
 msgstr "Ihre Kontoeinstellungen wurden geändert."
 
-#: froide/account/views.py:500
+#: froide/account/views.py:558
 msgid "Please correct the errors below. You account settings were not changed."
 msgstr ""
 "Bitte korrigieren Sie die Fehler unten. Ihre Kontoeinstellungen wurden nicht "
 "geändert."
 
-#: froide/account/views.py:513
+#: froide/account/views.py:571
 msgid "Your account is already private."
 msgstr "Ihr Nutzerkonto ist schon privat."
 
-#: froide/account/views.py:522
+#: froide/account/views.py:580
 msgid "Your account has been made private. The changes are being applied now."
 msgstr ""
 "Ihr Account wurde auf privat geschaltet. Die Änderungen werden jetzt "
 "angewendet."
 
-#: froide/account/views.py:533
+#: froide/account/views.py:592
 msgid "Your email address has been changed."
 msgstr "Ihre E-Mail-Adresse wurde geändert."
 
-#: froide/account/views.py:539
+#: froide/account/views.py:598
 msgid "The email confirmation link was invalid or expired."
 msgstr "Der E-Mail-Bestätigungs-Link ist ungültig oder abgelaufen."
 
-#: froide/account/views.py:550
+#: froide/account/views.py:609
 msgid "Your account is private, so you don't have a public profile."
 msgstr "Ihr Konto is privat, daher haben Sie kein öffentliches Profil."
 
-#: froide/account/views.py:565
+#: froide/account/views.py:625
 msgid "Password or confirmation phrase were wrong. Account was not deleted."
 msgstr ""
 "Passwort oder Bestätigungssatz waren falsch. Ihr Account wurde nicht "
 "gelöscht."
 
-#: froide/account/views.py:574
+#: froide/account/views.py:634
 msgid "Your account has been deleted and you have been logged out."
 msgstr "Ihr Account wurde gelöscht und Sie wurden ausgeloggt."
 
-#: froide/account/views.py:593
+#: froide/account/views.py:653
 msgid "Thank you for accepting our new terms!"
 msgstr "Danke, dass Sie unsere neuen Nutzungsbedingungen akzeptiert haben!"
 
-#: froide/account/views.py:600
+#: froide/account/views.py:660
 msgid "You need to accept our new terms to continue."
 msgstr ""
 "Sie müssen unsere neuen Nutzungs- und Datenschutzbedingungen akzeptieren."
 
-#: froide/account/views.py:609
+#: froide/account/views.py:669
 #, python-format
 msgid ""
 "You probably do not have cookies enabled, but you need cookies to use this "
@@ -1523,14 +1620,14 @@ msgstr ""
 "sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: "
 "%(reason)s"
 
-#: froide/account/views.py:626
+#: froide/account/views.py:687
 msgid ""
 "Your export has been started. You will receive an email when it is finished."
 msgstr ""
 "Ihr Datenexport wurde gestartet. Sie erhalten eine E-Mail, sobald der Export "
 "fertiggestellt wurde."
 
-#: froide/account/views.py:636
+#: froide/account/views.py:697
 msgid ""
 "Your export is currently being created. You will receive an email once it is "
 "available."
@@ -1538,7 +1635,7 @@ msgstr ""
 "Ihr Export wird gerade erstellt. Sie erhalten eine E-Mail, sobald der Export "
 "verfügbar ist."
 
-#: froide/account/views.py:646
+#: froide/account/views.py:707
 #, python-brace-format
 msgid ""
 "Your next export will be possible at {date}. <a href=\"{url}\">You can "
@@ -3786,6 +3883,9 @@ msgstr "Bearbeiten"
 #: froide/foirequest/templates/foirequest/account/list_drafts.html:86
 #: froide/foirequest/views/message.py:436
 #: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html:79
+#: froide/templates/mfa/mfakey_list.html:64
+#: froide/templates/mfa/mfakey_list.html:97
+#: froide/templates/mfa/mfakey_list.html:133
 msgid "Delete"
 msgstr "Löschen"
 
@@ -6171,7 +6271,7 @@ msgid "project/"
 msgstr "projekt/"
 
 #. Translators: project URL
-#: froide/foirequest/urls/__init__.py:24 froide/urls.py:153
+#: froide/foirequest/urls/__init__.py:24 froide/urls.py:154
 msgctxt "url part"
 msgid "account/"
 msgstr "account/"
@@ -9386,79 +9486,79 @@ msgstr "Ihre Änderung wurde angewendet."
 msgid "Search for public authorities"
 msgstr "Suchen Sie nach Behörden"
 
-#: froide/settings.py:245
+#: froide/settings.py:254
 msgid "English"
 msgstr "Englisch"
 
-#: froide/settings.py:246
+#: froide/settings.py:255
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: froide/settings.py:247
+#: froide/settings.py:256
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
 
-#: froide/settings.py:249
+#: froide/settings.py:258
 msgid "Danish (Denmark)"
 msgstr "Dänisch (Dänemark)"
 
-#: froide/settings.py:250
+#: froide/settings.py:259
 msgid "Italian"
 msgstr "Italienisch"
 
-#: froide/settings.py:251
+#: froide/settings.py:260
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: froide/settings.py:252
+#: froide/settings.py:261
 msgid "Swedish (Sweden)"
 msgstr "Schwedisch (Schweden)"
 
-#: froide/settings.py:253
+#: froide/settings.py:262
 msgid "Swedish (Finland)"
 msgstr "Schwedisch (Finnland)"
 
-#: froide/settings.py:254
+#: froide/settings.py:263
 msgid "Chinese (Simplified)"
 msgstr "Chinesisch (Kurzzeichen)"
 
-#: froide/settings.py:255
+#: froide/settings.py:264
 msgid "Chinese (Traditional, Hong Kong)"
 msgstr "Chinesisch (Traditionell, Honk Kong)"
 
-#: froide/settings.py:444
+#: froide/settings.py:453
 msgid "Access to user status"
 msgstr "Kann Sie als Nutzer auf FragDenStaat.de identifizieren"
 
-#: froide/settings.py:445
+#: froide/settings.py:454
 msgid "Read user profile information"
 msgstr "Kann meine Profil-Informationen sehen"
 
-#: froide/settings.py:446
+#: froide/settings.py:455
 msgid "Read user email"
 msgstr "Kann meine E-Mail-Adresse sehen"
 
-#: froide/settings.py:447
+#: froide/settings.py:456
 msgid "Read your (private) requests"
 msgstr "Kann Ihre (privaten) Anfragen sehen"
 
-#: froide/settings.py:448
+#: froide/settings.py:457
 msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
-#: froide/settings.py:449
+#: froide/settings.py:458
 msgid "Follow/Unfollow requests"
 msgstr "Folge/Entfolge Anfragen"
 
-#: froide/settings.py:450
+#: froide/settings.py:459
 msgid "Read your (private) documents"
 msgstr "Kann Ihre (privaten) Dokumente sehen"
 
-#: froide/settings.py:518
+#: froide/settings.py:527
 msgid "Non-FOI"
 msgstr "Nicht-IFG"
 
-#: froide/settings.py:526
+#: froide/settings.py:535
 msgid "Depublish"
 msgstr "Depublizieren"
 
@@ -9923,6 +10023,241 @@ msgstr "Erfolgreiche Anfragen"
 msgid "Unsuccessful Requests"
 msgstr "Abgelehnte Anfragen"
 
+#: froide/templates/mfa/auth_FIDO2.html:6
+#: froide/templates/mfa/auth_FIDO2.html:14
+#: froide/templates/mfa/auth_TOTP.html:7 froide/templates/mfa/auth_TOTP.html:15
+#: froide/templates/mfa/auth_recovery.html:7
+#: froide/templates/mfa/auth_recovery.html:15
+msgid "Two-factor login"
+msgstr "Zwei-Faktor-Login"
+
+#: froide/templates/mfa/auth_FIDO2.html:17
+msgid ""
+"When you are ready to verify your hardware security key, press the button "
+"below."
+msgstr ""
+"Wenn Sie bereit sind Ihren Hardware-Sicherheitsschlüssel zu verifizieren, "
+"drücken Sie die folgenden Schaltfläche."
+
+#: froide/templates/mfa/auth_FIDO2.html:29
+msgid "Verify hardware security key"
+msgstr "Hardware-Sicherheitsschlüssel verifizieren"
+
+#: froide/templates/mfa/auth_FIDO2.html:34
+msgid "Use authenticator app"
+msgstr "Authentifizierungs-App nutzen"
+
+#: froide/templates/mfa/auth_FIDO2.html:39
+#: froide/templates/mfa/auth_TOTP.html:52
+#: froide/templates/mfa/auth_recovery.html:48
+msgid "Use recovery code"
+msgstr "Wiederherstellungs-Code nutzen"
+
+#: froide/templates/mfa/auth_TOTP.html:18
+msgid "Open your authenticator app to get an authentication code."
+msgstr ""
+"Öffnen Sie Ihre Authentifizierungs-App, um einen Authentifizierungs-Code zu "
+"erhalten."
+
+#: froide/templates/mfa/auth_recovery.html:18
+msgid "Use a recovery code."
+msgstr "Nutzen Sie einen Wiederherstellungs-Code."
+
+#: froide/templates/mfa/auth_recovery.html:22
+msgid ""
+"\n"
+"  <strong>WARNING</strong>:\n"
+"  The recovery code will be removed after it has been used.\n"
+"  Make sure to create a new one after login!\n"
+"  "
+msgstr ""
+"\n"
+"  <strong>WARNUNG</strong>:\n"
+"  Der Wiederherstellungs-Code wird nach Benutzung entfernt.\n"
+"  Sie müssen nach dem Login einen neuen erstellen!\n"
+"  "
+
+#: froide/templates/mfa/base.html:12
+msgid "Two-factor setup"
+msgstr "Zwei-Faktor-Einrichtung"
+
+#: froide/templates/mfa/base.html:17
+msgid "Two Factor Setup"
+msgstr "Zwei-Faktor-Einrichtung"
+
+#: froide/templates/mfa/base_create.html:10
+msgid "back to two-factor settings"
+msgstr "zurück zu Zwei-Faktor-Login-Einstellungen"
+
+#: froide/templates/mfa/create_FIDO2.html:7
+#: froide/templates/mfa/create_FIDO2.html:9
+msgid "Setup Hardware security key"
+msgstr "Hardware-Sicherheitsschlüssel einrichten"
+
+#: froide/templates/mfa/create_FIDO2.html:17
+msgid "Please give your key a name, e.g. main blue key."
+msgstr ""
+"Bitte geben Sie Ihrem Schlüssel einen Namen, z.B. blauer Hauptschlüssel."
+
+#: froide/templates/mfa/create_FIDO2.html:23
+msgid "You will be prompted to activate the device once you submit the form."
+msgstr ""
+"Sie werden aufgefordert werden, den Schlüssel zu aktivieren, sobald Sie das "
+"Formular abschicken."
+
+#: froide/templates/mfa/create_FIDO2.html:26
+msgid "Start setup now"
+msgstr "Einrichtung jetzt beginnen"
+
+#: froide/templates/mfa/create_TOTP.html:7
+#: froide/templates/mfa/create_TOTP.html:9
+#: froide/templates/mfa/mfakey_list.html:84
+msgid "Setup authenticator app"
+msgstr "Authentifizierungs-App einrichten"
+
+#: froide/templates/mfa/create_TOTP.html:16
+msgid "Scan the code with your authenticator app."
+msgstr "Scannen Sie den QR-Code mit Ihrer Authentifizierungs-App."
+
+#: froide/templates/mfa/create_TOTP.html:19
+msgid "Generate a code with the app and submit it."
+msgstr "Generieren Sie einen Code mit der App und geben Sie ihn ein."
+
+#: froide/templates/mfa/create_TOTP.html:32
+msgid "Setup TOTP"
+msgstr ""
+
+#: froide/templates/mfa/create_recovery.html:7
+#: froide/templates/mfa/create_recovery.html:9
+#: froide/templates/mfa/mfakey_list.html:116
+msgid "Setup recovery code"
+msgstr "Wiederherstellungs-Code einrichten"
+
+#: froide/templates/mfa/create_recovery.html:14
+msgid ""
+"A recovery code can be used when you lose access to your other two-factor "
+"login options. Each recovery code can only be used once."
+msgstr ""
+"Ein Wiederherstellungs-Code kann genutzt werden, wenn Sie den Zugang zu "
+"Ihren anderen Zwei-Faktor-Login-Optionen verlieren. Jeder Wiederherstellungs-"
+"Code kann nur einmal genutzt werden."
+
+#: froide/templates/mfa/create_recovery.html:17
+msgid ""
+"Make sure to store it in a safe place! If you lose your other two-factor "
+"login options and don’t have the recovery codes you will lose access to your "
+"account."
+msgstr ""
+"Stellen Sie sicher, dass Sie den Code an einem sicheren Platz aufbewahren! "
+"Wenn Sie Ihre anderen Zwei-Faktor-Login-Optionen verlieren und keinen "
+"Wiederherstellungs-Code haben, dann verlieren Sie den Zugriff zu Ihrem Konto."
+
+#: froide/templates/mfa/create_recovery.html:38
+msgid "recovery code:"
+msgstr "Wiederherstellungs-Code:"
+
+#: froide/templates/mfa/create_recovery.html:39
+msgid "Download as TXT file"
+msgstr "Als Textdatei herunterladen"
+
+#: froide/templates/mfa/create_recovery.html:50
+msgid "I have safely stored the code."
+msgstr "Ich habe den Code sicher verwahrt."
+
+#: froide/templates/mfa/create_recovery.html:56
+msgid "Setup code"
+msgstr "Code einrichten"
+
+#: froide/templates/mfa/mfakey_list.html:11
+msgid "back to account settings"
+msgstr "zurück zu den Kontoeinstellungen"
+
+#: froide/templates/mfa/mfakey_list.html:17
+msgid "Manage two-factor authentication"
+msgstr "Two-Faktor-Logins verwalten"
+
+#: froide/templates/mfa/mfakey_list.html:21
+msgid ""
+"Two-factor authentication adds an additional layer of security to your "
+"account by requiring more than just a password to log in."
+msgstr ""
+"Der Zwei-Faktor-Login fügt eine weitere Sicherheitsebene zu Ihrem Konto "
+"hinzu, weil Sie mehr als nur ein Passwort brauchen, um sich einzuloggen."
+
+#: froide/templates/mfa/mfakey_list.html:28
+msgid ""
+"\n"
+"    <strong>WARNING</strong>:\n"
+"    You have registered only a single key. If you lose access to that key "
+"you won't be able log into your account again.\n"
+"    "
+msgstr ""
+"\n"
+"    <strong>WARNUNG</strong>:\n"
+"    Sie haben nur einen Schlüssel registriert. Wenn Sie diesen verlieren, "
+"können Sie sich nicht mehr einloggen.\n"
+"    "
+
+#: froide/templates/mfa/mfakey_list.html:37
+msgid "You have not created any recovery codes!"
+msgstr "Sie haben keine Wiederherstellungs-Codes erstellt!"
+
+#: froide/templates/mfa/mfakey_list.html:43
+msgid "Hardware security keys"
+msgstr "Hardware-Sicherheitsschlüssel"
+
+#: froide/templates/mfa/mfakey_list.html:48
+msgid "Setup another hardware security key"
+msgstr "Weiteren Hardware-Sicherheitsschlüssel einrichten"
+
+#: froide/templates/mfa/mfakey_list.html:50
+msgid "Setup hardware security key"
+msgstr "Hardware-Sicherheitsschlüssel einrichten"
+
+#: froide/templates/mfa/mfakey_list.html:57
+msgid "You have the following hardware security keys:"
+msgstr "Sie haben die folgenden Hardware-Sicherheitsschlüssel:"
+
+#: froide/templates/mfa/mfakey_list.html:70
+msgid "No hardware security keys set up."
+msgstr "Keine Hardware-Sicherheitsschlüssel eingerichtet."
+
+#: froide/templates/mfa/mfakey_list.html:77
+msgid "Authenticator Apps"
+msgstr "Authentifizierungs-Apps"
+
+#: froide/templates/mfa/mfakey_list.html:82
+msgid "Setup another authenticator app"
+msgstr "Weitere Authentifizierungs-App einrichten"
+
+#: froide/templates/mfa/mfakey_list.html:90
+msgid "You have the following authenticator apps:"
+msgstr "Sie haben die folgenden Authentifizierungs-Apps:"
+
+#: froide/templates/mfa/mfakey_list.html:103
+msgid "No authenticator apps set up."
+msgstr "Keine Authentifizierungs-Apps eingerichtet."
+
+#: froide/templates/mfa/mfakey_list.html:111
+msgid "Recovery Codes"
+msgstr "Wiederherstellungs-Codes"
+
+#: froide/templates/mfa/mfakey_list.html:121
+msgid ""
+"You need to setup a hardware security key or an authenticator app before you "
+"can create recovery codes."
+msgstr ""
+"Sie müssen einen Hardware-Sicherheitsschlüssel oder eine Authentifizierungs-"
+"App einrichten, bevor Sie einen Wiederherstellungs-Code erstellen können."
+
+#: froide/templates/mfa/mfakey_list.html:126
+msgid "You have the following recovery codes:"
+msgstr "Sie haben die folgenden Wiederherstellungs-Codes:"
+
+#: froide/templates/mfa/mfakey_list.html:139
+msgid "No recovery codes created."
+msgstr "Keine Wiederherstellungs-Codes erstellt."
+
 #: froide/templates/pagination/pagination.html:4
 msgid "Pagination"
 msgstr "Paginierung"
@@ -10342,57 +10677,64 @@ msgstr "GUID"
 msgid "upload_offset should be >= 0."
 msgstr "upload_offset muss >=0 sein."
 
-#: froide/urls.py:147
+#: froide/urls.py:148
 msgctxt "url part"
 msgid "follow/"
 msgstr "benachrichtigen/"
 
-#: froide/urls.py:150
+#: froide/urls.py:151
 msgctxt "url part"
 msgid "law/"
 msgstr "gesetz/"
 
-#: froide/urls.py:151
+#: froide/urls.py:152
 msgctxt "url part"
 msgid "documents/"
 msgstr "dokumente/"
 
-#: froide/urls.py:152
+#: froide/urls.py:153
 msgctxt "url part"
 msgid "account/teams/"
 msgstr "account/teams/"
 
 #: froide/urls.py:156
+#| msgctxt "url part"
+#| msgid "account/"
+msgctxt "url part"
+msgid "account/mfa/"
+msgstr "account/mfa/"
+
+#: froide/urls.py:160
 msgctxt "url part"
 msgid "account/access-token/"
 msgstr "account/access-token/"
 
-#: froide/urls.py:159
+#: froide/urls.py:163
 msgctxt "url part"
 msgid "profile/"
 msgstr "profil/"
 
-#: froide/urls.py:160
+#: froide/urls.py:164
 msgctxt "url part"
 msgid "comments/"
 msgstr "comments/"
 
-#: froide/urls.py:161
+#: froide/urls.py:165
 msgctxt "url part"
 msgid "problem/"
 msgstr "problem/"
 
-#: froide/urls.py:163
+#: froide/urls.py:167
 msgctxt "url part"
 msgid "moderation/"
 msgstr "moderation/"
 
-#: froide/urls.py:166
+#: froide/urls.py:170
 msgctxt "url part"
 msgid "letter/"
 msgstr "brief/"
 
-#: froide/urls.py:215
+#: froide/urls.py:226
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
@@ -11417,11 +11759,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Nachname"
 
 #, fuzzy
-#~| msgid "Authorize"
-#~ msgid "Authorization code"
-#~ msgstr "Zugriff erlauben"
-
-#, fuzzy
 #~| msgid "access tokens"
 #~ msgid "The access token has expired."
 #~ msgstr "Zugangs-Tokens"
@@ -11470,11 +11807,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~| msgid "Your OAuth Applications"
 #~ msgid "Your applications"
 #~ msgstr "Ihre OAuth-Anwendungen"
-
-#, fuzzy
-#~| msgid "No redaction needed"
-#~ msgid "No applications defined"
-#~ msgstr "Keine Schwärzung benötigt"
 
 #, fuzzy
 #~| msgid "Check if you want to receive our newsletter."
@@ -12531,12 +12863,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Terms and Conditions and Privacy Statement"
 #~ msgstr "Nutzungs- und Datenschutz&shy;bedingungen"
-
-#~ msgid "You need to enter your address."
-#~ msgstr "Sie müssen Ihre Adresse eingeben."
-
-#~ msgid "Change your password"
-#~ msgstr "Ändern Sie Ihr Passwort"
 
 #~ msgid "You must specify a public body"
 #~ msgstr "Sie müssen eine Behörde angeben"
