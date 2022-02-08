@@ -76,7 +76,6 @@ class MFATest(TestCase):
         self.assertEqual(response.status_code, 302)
 
     def test_go_with_mfa(self):
-        # test url is not cached and does not cause 404
         test_url = reverse("account-requests")
 
         # Try logging in via link: success
@@ -93,3 +92,11 @@ class MFATest(TestCase):
         # We are not logged in
         response = self.client.get(test_url)
         self.assertEqual(response.status_code, 302)
+
+    def test_admin_login_url(self):
+        admin_login_url = reverse("admin:login")
+
+        response = self.client.get(admin_login_url)
+        # Admin login page redirects to account login page
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("account-login"), response["Location"])
