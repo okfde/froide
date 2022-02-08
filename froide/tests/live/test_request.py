@@ -41,7 +41,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
     def do_login(self, navigate=True):
         if navigate:
             self.selenium.get("%s%s" % (self.live_server_url, reverse("account-login")))
-        email_input = self.selenium.find_element_by_name("email")
+        email_input = self.selenium.find_element_by_name("username")
         email_input.send_keys(self.user.email)
         password_input = self.selenium.find_element_by_name("password")
         password_input.send_keys("froide")

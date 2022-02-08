@@ -77,24 +77,24 @@ class AccountTest(TestCase):
         self.client.get(reverse("account-login"))
         response = self.client.post(
             reverse("account-login"),
-            {"email": "doesnt@exist.com", "password": "foobar"},
+            {"username": "doesnt@exist.com", "password": "foobar"},
         )
         self.assertEqual(response.status_code, 400)
         response = self.client.post(
             reverse("account-login"),
-            {"email": "info@fragdenstaat.de", "password": "dummy"},
+            {"username": "info@fragdenstaat.de", "password": "dummy"},
         )
         self.assertEqual(response.status_code, 400)
         response = self.client.post(
             reverse("account-login"),
-            {"email": "info@fragdenstaat.de", "password": "froide"},
+            {"username": "info@fragdenstaat.de", "password": "froide"},
         )
         self.assertEqual(response.status_code, 302)
         response = self.client.get(reverse("account-requests"))
         self.assertEqual(response.status_code, 200)
         response = self.client.post(
             reverse("account-login"),
-            {"email": "info@fragdenstaat.de", "password": "froide"},
+            {"username": "info@fragdenstaat.de", "password": "froide"},
         )
         # already logged in, login again gives 302
         self.assertEqual(response.status_code, 302)
@@ -283,7 +283,7 @@ class AccountTest(TestCase):
         self.assertTrue(response.content.decode("utf-8").count(url), 3)
         response = self.client.post(
             reverse("account-login"),
-            {"email": "info@fragdenstaat.de", "next": url, "password": "froide"},
+            {"username": "info@fragdenstaat.de", "next": url, "password": "froide"},
         )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(response.url.endswith(url))
