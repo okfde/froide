@@ -446,24 +446,28 @@ def send_reset_password_link(request):
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "account/password_reset_confirm.html"
-    post_reset_login = True
     form_class = SetPasswordForm
 
     def form_valid(self, form):
+        # Taken from parent class
         user = form.save()
         del self.request.session[INTERNAL_RESET_SESSION_TOKEN]
-        if self.post_reset_login:
-            if not user.mfakey_set.exists():
-                messages.add_message(
-                    self.request,
-                    messages.SUCCESS,
-                    _("Your password has been set and you are now logged in."),
-                )
-                auth.login(self.request, user, self.post_reset_login_backend)
-                return super().form_valid(form)
-            url = self.get_success_url()
-            return start_mfa_auth(self.request, user, url)
-        return super().form_valid(form)
+
+        # Login after post reset only if no MFA keys are set
+        # leave post_reset_login class setting as False
+        if not user.mfakey_set.exists():
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                _("Your password has been set and you are now logged in."),
+            )
+            auth.login(self.request, user, self.post_reset_login_backend)
+            # Skip parent class implemntation
+            return super(PasswordResetConfirmView, self).form_valid(form)
+
+        # Start MFA process with success URL
+        url = self.get_success_url()
+        return start_mfa_auth(self.request, user, url)
 
     def get_success_url(self):
         """
