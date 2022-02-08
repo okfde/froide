@@ -36,7 +36,7 @@
               {% csrf_token %}
               {{ form.code.as_hidden }}
               {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
-              <input type="hidden" name="method" value="fido2"/>
+              <input type="hidden" name="method" value="FIDO2"/>
               <button autofocus class="btn btn-success">
                 {% translate "Click here to check hardware security key" %}
               </button>
