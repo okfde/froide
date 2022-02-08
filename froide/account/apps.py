@@ -29,8 +29,14 @@ def handle_user_login(sender, request, user, **kwargs):
 
     # Activate the user's language
     translation.activate(user.language)
+
+    # Store last auth in session
     set_last_auth(request)
-    messages.add_message(request, messages.INFO, _("You are now logged in."))
+
+    # test client login sends signal, but doesn't go through message middleware
+    # so check if messages can be added
+    if hasattr(request, "_messages"):
+        messages.add_message(request, messages.INFO, _("You are now logged in."))
 
 
 def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwargs):
