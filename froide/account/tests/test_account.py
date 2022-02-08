@@ -79,12 +79,12 @@ class AccountTest(TestCase):
             reverse("account-login"),
             {"username": "doesnt@exist.com", "password": "foobar"},
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         response = self.client.post(
             reverse("account-login"),
             {"username": "info@fragdenstaat.de", "password": "dummy"},
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         response = self.client.post(
             reverse("account-login"),
             {"username": "info@fragdenstaat.de", "password": "froide"},
@@ -114,7 +114,7 @@ class AccountTest(TestCase):
             {"email": "info@fragdenstaat.de", "password": "froide"},
         )
         # inactive users can't login via password
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         response = self.client.get(reverse("account-requests"))
         self.assertEqual(response.status_code, 302)
 
