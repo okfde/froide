@@ -231,7 +231,11 @@ class FoiRequestAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("public_body")
-        qs = qs.annotate(follower_count=models.Count("followers"))
+        qs = qs.annotate(
+            follower_count=models.Count(
+                "followers", filter=models.Q(followers__confirmed=True)
+            )
+        )
         return qs
 
     def request_page(self, obj):
