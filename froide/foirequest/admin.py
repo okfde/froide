@@ -164,6 +164,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "public_body",
         "status",
         "visibility",
+        "follower_count",
     )
     list_filter = (
         "jurisdiction",
@@ -230,12 +231,19 @@ class FoiRequestAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("public_body")
+        qs = qs.annotate(follower_count=models.Count("followers"))
         return qs
 
     def request_page(self, obj):
         return format_html(
             '<a href="{}">{}</a>', obj.get_absolute_url(), _("request page")
         )
+
+    def follower_count(self, obj):
+        return obj.follower_count
+
+    follower_count.short_description = _("follower")
+    follower_count.admin_order_field = "follower_count"
 
     def mark_checked(self, request, queryset):
         from .utils import update_foirequest_index
