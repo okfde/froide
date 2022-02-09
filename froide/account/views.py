@@ -318,6 +318,7 @@ class ReAuthView(FormView):
     def form_valid(self, form):
         delete_mfa_data(self.request)
         set_last_auth(self.request)
+        self.request.session.modified = True
         return super().form_valid(form)
 
     def get_success_url(self) -> str:
