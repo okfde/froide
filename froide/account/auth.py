@@ -72,7 +72,10 @@ def get_mfa_data(request: HttpRequest) -> Optional[str]:
 
 
 def delete_mfa_data(request: HttpRequest) -> None:
-    del request.session["mfa_challenge"]
+    try:
+        del request.session["mfa_challenge"]
+    except KeyError:
+        pass
 
 
 def start_mfa_auth(request: HttpRequest, user: User, redirect_url: str) -> HttpResponse:
