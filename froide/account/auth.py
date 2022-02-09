@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
+from functools import wraps
 from typing import Optional
 
 from django.http import HttpRequest, HttpResponse
@@ -11,7 +12,7 @@ from mfa import settings
 from mfa.methods import fido2, totp
 from mfa.models import MFAKey
 
-from froide.helper.utils import get_redirect
+from froide.helper.utils import get_redirect, redirect_to_login
 
 from .models import User
 
@@ -91,6 +92,8 @@ def start_mfa_auth(request: HttpRequest, user: User, redirect_url: str) -> HttpR
 
 def needs_recent_auth(request: HttpRequest) -> bool:
     user = request.user
+    if not user.is_authenticated:
+        return False
     if not user.has_usable_password():
         return False
     return user_has_mfa(user)
@@ -124,7 +127,11 @@ def requires_recent_auth(request: HttpRequest) -> bool:
 
 
 def recent_auth_required(view_func):
+    @wraps(view_func)
     def check_recent_auth(request: HttpRequest, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # in case login required runs later, check here
+            return redirect_to_login(request)
         if requires_recent_auth(request):
             return get_redirect(
                 request,

@@ -4,6 +4,7 @@ import json
 from typing import Dict, Optional, Union
 from urllib.parse import parse_qs, urlsplit, urlunsplit
 
+from django.conf import settings
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import NoReverseMatch, reverse
@@ -36,9 +37,17 @@ def render_403(
 ) -> Union[HttpResponseRedirect, HttpResponse]:
     if not request.user.is_authenticated:
         return get_redirect(
-            request, default="account-login", params={"next": request.get_full_path()}
+            request,
+            default=settings.LOGIN_URL,
+            params={"next": request.get_full_path()},
         )
     return render_code(403, request, context={"message": message})
+
+
+def redirect_to_login(request: HttpRequest):
+    return get_redirect(
+        request, default=settings.LOGIN_URL, params={"next": request.get_full_path()}
+    )
 
 
 def get_client_ip(request: HttpRequest) -> str:
