@@ -33,6 +33,7 @@ from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 from froide.helper.email_parsing import parse_email
 from froide.helper.forms import get_fake_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
+from froide.publicbody.models import FoiLaw
 
 from .models import (
     DeferredMessage,
@@ -134,6 +135,20 @@ class FoiRequestChangeList(ChangeList):
         return ret
 
 
+class LawRelatedFieldListFilter(admin.RelatedFieldListFilter):
+    """
+    This optimizes the query for the law filter
+    """
+
+    def field_choices(self, field, request, model_admin):
+        return [
+            (x.id, str(x))
+            for x in FoiLaw.objects.all()
+            .select_related("jurisdiction")
+            .prefetch_related("translations")
+        ]
+
+
 class FoiRequestAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
@@ -163,12 +178,12 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "is_blocked",
         "not_publishable",
         "campaign",
-        "law",
         make_nullfilter("same_as", _("Has same request")),
         ("user", ForeignKeyFilter),
         ("public_body", ForeignKeyFilter),
         ("project", ForeignKeyFilter),
         make_greaterzerofilter("costs", _("Costs given")),
+        ("law", LawRelatedFieldListFilter),
         "refusal_reason",
     )
     search_fields = ["title", "description", "secret_address", "reference"]
