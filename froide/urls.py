@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.sitemaps import Sitemap
 from django.contrib.sitemaps import views as sitemaps_views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import include, path, reverse
 from django.utils.translation import pgettext_lazy
@@ -151,6 +152,9 @@ froide_urlpatterns += [
     path(pgettext_lazy("url part", "documents/"), include("froide.document.urls")),
     path(pgettext_lazy("url part", "account/teams/"), include("froide.team.urls")),
     path(pgettext_lazy("url part", "account/"), include("froide.account.urls")),
+    path(
+        pgettext_lazy("url part", "account/mfa/"), include("mfa.urls", namespace="mfa")
+    ),
     path("", include("froide.account.export_urls")),
     path(
         pgettext_lazy("url part", "account/access-token/"),
@@ -170,7 +174,14 @@ froide_urlpatterns += [
 
 froide_urlpatterns += document_media_urlpatterns
 
-admin_urls = [path("%s/" % SECRET_URLS.get("admin", "admin"), admin.site.urls)]
+admin_urls = [
+    # Disable admin login page, by overriding URL and redirecting
+    path(
+        "%s/login/" % SECRET_URLS.get("admin", "admin"),
+        lambda _request: redirect(settings.LOGIN_URL),
+    ),
+    path("%s/" % SECRET_URLS.get("admin", "admin"), admin.site.urls),
+]
 
 if SECRET_URLS.get("postmark_inbound"):
     from froide.foirequest.views import postmark_inbound

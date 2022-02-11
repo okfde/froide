@@ -1,0 +1,8 @@
+<div data-pininput="{{ widget.name }}" id="id_code">
+  <input type="hidden" name="{{ widget.name }}" value=""/>
+  <div data-pininputdigits="{{ digits|length }}" class="inputs d-flex flex-row justify-content-center">
+    {% for digit in digits %}
+      <input {% if digit == 0 and autofocus %}autofocus {% endif %}class="m-2 text-center form-control rounded" autocomplete="off" type="text" maxlength="1" />
+    {% endfor %}
+  </div>
+</div>

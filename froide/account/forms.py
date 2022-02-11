@@ -3,7 +3,8 @@ from collections import defaultdict
 from django import forms
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
 from django.contrib.auth.forms import UserCreationForm as DjangoUserCreationForm
@@ -17,9 +18,10 @@ from froide.helper.spam import SpamProtectionMixin
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from . import account_email_changed
+from .auth import complete_mfa_authenticate_for_method
 from .models import AccountBlocklist, User
 from .services import AccountService, get_user_for_email
-from .widgets import ConfirmationWidget
+from .widgets import ConfirmationWidget, PinInputWidget
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
@@ -288,8 +290,8 @@ class AddressForm(JSONMixin, AddressBaseForm):
             user.save()
 
 
-class UserLoginForm(forms.Form):
-    email = forms.EmailField(
+class UserLoginForm(AuthenticationForm):
+    username = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
                 "placeholder": _("mail@ddress.net"),
@@ -305,6 +307,58 @@ class UserLoginForm(forms.Form):
         ),
         label=_("Password"),
     )
+    error_messages = {
+        "invalid_login": _("Email and password do not match."),
+        "inactive": _("Please activate your mail address before logging in."),
+    }
+
+
+class ReAuthForm(forms.Form):
+    code = forms.CharField(
+        required=False, label=_("Authentication code"), widget=PinInputWidget
+    )
+    password = forms.CharField(
+        required=False,
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "autocomplete": "current-password"}
+        ),
+        label=_("Password"),
+    )
+    hidden_email = forms.CharField(
+        required=False, widget=forms.HiddenInput(attrs={"autocomplete": "username"})
+    )
+    method = forms.ChoiceField(
+        choices=[("password", "password")], widget=forms.HiddenInput
+    )
+
+    def __init__(self, request=None, mfa_methods=None, *args, **kwargs):
+        """
+        The 'request' parameter is set for custom auth use by subclasses.
+        The form data comes in via the standard 'data' kwarg.
+        """
+        self.request = request
+        super().__init__(*args, **kwargs)
+        user = self.request.user
+        self.fields["hidden_email"].initial = user.email
+        self.mfa_methods = mfa_methods
+        self.fields["method"].choices.extend([(m, m) for m in mfa_methods])
+
+    def clean(self):
+        user = self.request.user
+        method = self.cleaned_data["method"]
+        if method == "password":
+            password = self.cleaned_data.get("password", "")
+            result = authenticate(self.request, username=user.email, password=password)
+            if result is None:
+                raise forms.ValidationError(_("Bad password."))
+        else:
+            try:
+                complete_mfa_authenticate_for_method(
+                    method, self.request, user, self.cleaned_data["code"]
+                )
+            except ValueError as e:
+                raise forms.ValidationError(_("Validation failed.")) from e
+        return self.cleaned_data
 
 
 class PasswordResetForm(auth.forms.PasswordResetForm):

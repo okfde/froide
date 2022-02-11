@@ -33,6 +33,7 @@ from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 from froide.helper.email_parsing import parse_email
 from froide.helper.forms import get_fake_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
+from froide.publicbody.models import FoiLaw
 
 from .models import (
     DeferredMessage,
@@ -134,6 +135,20 @@ class FoiRequestChangeList(ChangeList):
         return ret
 
 
+class LawRelatedFieldListFilter(admin.RelatedFieldListFilter):
+    """
+    This optimizes the query for the law filter
+    """
+
+    def field_choices(self, field, request, model_admin):
+        return [
+            (x.id, str(x))
+            for x in FoiLaw.objects.all()
+            .select_related("jurisdiction")
+            .prefetch_related("translations")
+        ]
+
+
 class FoiRequestAdmin(admin.ModelAdmin):
     form = FoiRequestAdminForm
 
@@ -149,6 +164,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "public_body",
         "status",
         "visibility",
+        "follower_count",
     )
     list_filter = (
         "jurisdiction",
@@ -163,12 +179,12 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "is_blocked",
         "not_publishable",
         "campaign",
-        "law",
         make_nullfilter("same_as", _("Has same request")),
         ("user", ForeignKeyFilter),
         ("public_body", ForeignKeyFilter),
         ("project", ForeignKeyFilter),
         make_greaterzerofilter("costs", _("Costs given")),
+        ("law", LawRelatedFieldListFilter),
         "refusal_reason",
     )
     search_fields = ["title", "description", "secret_address", "reference"]
@@ -215,12 +231,23 @@ class FoiRequestAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("public_body")
+        qs = qs.annotate(
+            follower_count=models.Count(
+                "followers", filter=models.Q(followers__confirmed=True)
+            )
+        )
         return qs
 
     def request_page(self, obj):
         return format_html(
             '<a href="{}">{}</a>', obj.get_absolute_url(), _("request page")
         )
+
+    def follower_count(self, obj):
+        return obj.follower_count
+
+    follower_count.short_description = _("follower")
+    follower_count.admin_order_field = "follower_count"
 
     def mark_checked(self, request, queryset):
         from .utils import update_foirequest_index

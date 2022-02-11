@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<div class="bg-light p-5">
+  <h6>{% translate "This section requires you to re-authenticate" %}</h6>
+  <a href="{% url 'account-reauth' %}?next={{ next | urlencode }}"  class="btn btn-secondary">
+      {% translate "Re-authenticate now" %}
+  </a>
+</div>
