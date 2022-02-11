@@ -1,11 +1,15 @@
 import re
 from datetime import timedelta
+from typing import Any, Dict, Optional, Tuple, Union
 
 from django.contrib.sessions.models import Session
 from django.db import transaction
+from django.db.models.query import QuerySet
 from django.utils import timezone
+from django.utils.functional import SimpleLazyObject
 
 from froide.accesstoken.models import AccessToken
+from froide.account.models import User
 from froide.helper.email_sending import (
     mail_middleware_registry,
     mail_registry,
@@ -13,7 +17,6 @@ from froide.helper.email_sending import (
 )
 
 from . import account_canceled, account_merged
-from .models import User
 from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r"(\d{5})\s+(.*)")
@@ -29,7 +32,12 @@ def send_mail_users(subject, body, users, **kwargs):
 
 
 class OnlyActiveUsersMailMiddleware:
-    def should_mail(self, mail_intent, context, email_kwargs):
+    def should_mail(
+        self,
+        mail_intent: str,
+        context: Dict[str, Any],
+        email_kwargs: Dict[str, Optional[Union[str, bool, Dict[str, str]]]],
+    ) -> None:
         user = context.get("user")
         if not user:
             # No user, not our concern here
@@ -44,7 +52,9 @@ class OnlyActiveUsersMailMiddleware:
 mail_middleware_registry.register(OnlyActiveUsersMailMiddleware())
 
 
-def send_mail_user(subject, body, user: User, ignore_active=False, **kwargs):
+def send_mail_user(
+    subject: str, body: str, user: User, ignore_active: bool = False, **kwargs
+) -> int:
     if not ignore_active and not user.is_active:
         return
     if not user.email:
@@ -56,7 +66,7 @@ def send_mail_user(subject, body, user: User, ignore_active=False, **kwargs):
 user_email = mail_registry.register("account/emails/user_email", ("subject", "body"))
 
 
-def send_template_mail(user: User, subject: str, body: str, **kwargs):
+def send_template_mail(user: User, subject: str, body: str, **kwargs) -> int:
     mail_context = {
         "first_name": user.first_name,
         "last_name": user.last_name,
@@ -82,7 +92,7 @@ def make_account_private(user):
     make_account_private_task.delay(user.id)
 
 
-def merge_accounts(old_user, new_user):
+def merge_accounts(old_user: User, new_user: User) -> None:
     for tag in old_user.tags.all():
         new_user.tags.add(tag)
     account_merged.send(sender=User, old_user=old_user, new_user=new_user)
@@ -90,7 +100,13 @@ def merge_accounts(old_user, new_user):
     old_user.delete()
 
 
-def move_ownership(model, attr, old_user, new_user, dupe=None):
+def move_ownership(
+    model: Any,
+    attr: str,
+    old_user: Union[int, User],
+    new_user: Union[int, User],
+    dupe: Optional[Tuple[str, str]] = None,
+) -> None:
     qs = model.objects.filter(**{attr: old_user})
 
     if dupe:
@@ -109,7 +125,7 @@ def move_ownership(model, attr, old_user, new_user, dupe=None):
     qs = model.objects.filter(**{attr: old_user}).delete()
 
 
-def all_unexpired_sessions_for_user(user):
+def all_unexpired_sessions_for_user(user: Union[SimpleLazyObject, User]) -> QuerySet:
     user_sessions = []
     all_sessions = Session.objects.filter(expire_date__gte=timezone.now())
     for session in all_sessions:
@@ -119,14 +135,16 @@ def all_unexpired_sessions_for_user(user):
     return Session.objects.filter(pk__in=user_sessions)
 
 
-def delete_all_unexpired_sessions_for_user(user, session_to_omit=None):
+def delete_all_unexpired_sessions_for_user(
+    user: Union[SimpleLazyObject, User], session_to_omit: None = None
+) -> None:
     session_list = all_unexpired_sessions_for_user(user)
     if session_to_omit is not None:
         session_list.exclude(session_key=session_to_omit.session_key)
     session_list.delete()
 
 
-def start_cancel_account_process(user, delete=False):
+def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -> None:
     from .tasks import cancel_account_task
 
     user.private = True
@@ -144,7 +162,7 @@ def start_cancel_account_process(user, delete=False):
     cancel_account_task.delay(user.pk, delete=delete)
 
 
-def cancel_user(user, delete=False):
+def cancel_user(user: User, delete: bool = False) -> None:
     with transaction.atomic():
         account_canceled.send(sender=User, user=user)
 
