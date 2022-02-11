@@ -1,0 +1,35 @@
+{% extends "mfa/base_create.html" %}
+
+{% load static mfa %}
+{% load i18n %}
+{% load form_helper %}
+
+{% block title %}{% translate "Setup authenticator app" %}{% endblock %}
+
+{% block mfa_heading %}{% translate "Setup authenticator app" %}{% endblock %}
+
+
+{% block mfa_inner %}
+
+<ol class="mt-3">
+  <li>
+    {% translate "Scan the code with your authenticator app." %}
+  </li>
+  <li>
+   {% translate "Generate a code with the app and submit it." %}
+  </li>
+</ol>
+
+{{ mfa_data.url|qrcode }}
+{{ mfa_data.secret }}
+
+<form method="POST">
+  {% csrf_token %}
+  {% include "helper/forms/errors.html" with errors=form.code.errors %}
+  {% render_field form.name %}
+  {% render_field form.code %}
+  <button type="submit" class="btn btn-primary pull-right">
+    {% translate "Setup authenticator app" %}
+  </button>
+</form>
+{% endblock %}

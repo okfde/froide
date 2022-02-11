@@ -1,26 +1,45 @@
 from datetime import timedelta
+from typing import Any, Dict
 from urllib.parse import urlencode
 
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.views import (
+    INTERNAL_RESET_SESSION_TOKEN,
+    PasswordResetConfirmView,
+)
 from django.db import models
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import formats, timezone, translation
+from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, FormView, RedirectView, TemplateView
 
 from crossdomainmedia import CrossDomainMediaMixin
+from mfa.views import LoginView as MFALoginView
 
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import get_redirect, get_redirect_url, render_403
 
+from .auth import (
+    MFAMethod,
+    begin_mfa_authenticate_for_method,
+    delete_mfa_data,
+    get_mfa_data,
+    list_mfa_methods,
+    recent_auth_required,
+    requires_recent_auth,
+    set_last_auth,
+    start_mfa_auth,
+)
 from .export import (
     ExportCrossDomainMediaAuth,
     get_export_access_token,
@@ -31,6 +50,7 @@ from .forms import (
     AccountSettingsForm,
     PasswordResetForm,
     ProfileForm,
+    ReAuthForm,
     SetPasswordForm,
     SignUpForm,
     TermsForm,
@@ -142,9 +162,12 @@ def go(request, user_id, token, url):
                 if not user.is_active:
                     # Confirm user account (link came from email)
                     account_manager.reactivate_account()
-                # Perform login
-                auth.login(request, user)
-                return redirect(url)
+
+                if not user.mfakey_set.exists():
+                    # Perform login
+                    auth.login(request, user)
+                    return redirect(url)
+                return start_mfa_auth(request, user, url)
 
         # If login-link fails, prompt login with redirect
         return get_redirect(request, default="account-login", params={"next": url})
@@ -238,46 +261,68 @@ def logout(request):
     return redirect("/")
 
 
-def login(request, context=None, template="account/login.html", status=200):
-    if request.user.is_authenticated:
-        return get_redirect(request, default="account-show")
+class LoginView(MFALoginView):
+    template_name = "account/login.html"
+    form_class = UserLoginForm
+    redirect_authenticated_user = True
 
-    if not context:
-        context = {}
-    if "reset_form" not in context:
-        context["reset_form"] = PasswordResetForm(prefix="pwreset")
+    def get_success_url(self):
+        # user language is set via logged in signal
+        return get_redirect_url(self.request, default="account-show")
 
-    if request.method == "POST" and status == 200:
-        status = 400  # if ok, we are going to redirect anyways
-        form = UserLoginForm(request.POST)
-        if form.is_valid():
-            user = auth.authenticate(
-                request,
-                username=form.cleaned_data["email"],
-                password=form.cleaned_data["password"],
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "reset_form" not in context:
+            context["reset_form"] = PasswordResetForm(prefix="pwreset")
+        context.update({"next": self.request.GET.get("next")})
+        return context
+
+
+class ReAuthView(FormView):
+    template_name = "account/reauth.html"
+    form_class = ReAuthForm
+
+    @method_decorator(login_required)
+    @method_decorator(sensitive_post_parameters())
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        if not requires_recent_auth(self.request):
+            return redirect(self.get_success_url())
+        return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        self.mfa_methods = set(
+            x["method"] for x in list_mfa_methods(self.request.user)
+        ) - {"recovery"}
+        kwargs["mfa_methods"] = self.mfa_methods
+        return kwargs
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["next"] = self.request.GET.get("next", "")
+        context["mfa_methods"] = self.mfa_methods
+        if MFAMethod.FIDO2 in self.mfa_methods and "mfa_data" not in context:
+            context["mfa_data"] = begin_mfa_authenticate_for_method(
+                "FIDO2", self.request, self.request.user
             )
-            if user is not None:
-                if user.is_active:
-                    auth.login(request, user)
-                    messages.add_message(
-                        request, messages.INFO, _("You are now logged in.")
-                    )
-                    translation.activate(user.language)
-                    return get_redirect(request, default="account-show")
-                else:
-                    messages.add_message(
-                        request,
-                        messages.ERROR,
-                        _("Please activate your mail address before logging in."),
-                    )
-            else:
-                messages.add_message(
-                    request, messages.ERROR, _("E-mail and password do not match.")
-                )
-    else:
-        form = UserLoginForm(initial=None)
-    context.update({"form": form, "next": request.GET.get("next")})
-    return render(request, template, context, status=status)
+        return context
+
+    def form_invalid(self, form):
+        # do not generate a new challenge
+        return self.render_to_response(
+            self.get_context_data(form=form, mfa_data=get_mfa_data(self.request))
+        )
+
+    def form_valid(self, form):
+        delete_mfa_data(self.request)
+        set_last_auth(self.request)
+        self.request.session.modified = True
+        return super().form_valid(form)
+
+    def get_success_url(self) -> str:
+        return get_redirect_url(self.request)
 
 
 class SignupView(FormView):
@@ -350,6 +395,8 @@ class SignupView(FormView):
 
 @require_POST
 @login_required
+@sensitive_post_parameters()
+@recent_auth_required
 def change_password(request):
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
@@ -394,22 +441,34 @@ def send_reset_password_link(request):
                 " email correctly or if you really have an account."
             ),
         )
-        return get_redirect(request, keep_session=True)
-    return login(request, context={"reset_form": form}, status=400)
+    return get_redirect(request, keep_session=True)
+    # return login(request, context={"reset_form": form}, status=400)
 
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "account/password_reset_confirm.html"
-    post_reset_login = True
     form_class = SetPasswordForm
 
     def form_valid(self, form):
-        messages.add_message(
-            self.request,
-            messages.SUCCESS,
-            _("Your password has been set and you are now logged in."),
-        )
-        return super().form_valid(form)
+        # Taken from parent class
+        user = form.save()
+        del self.request.session[INTERNAL_RESET_SESSION_TOKEN]
+
+        # Login after post reset only if no MFA keys are set
+        # leave post_reset_login class setting as False
+        if not user.mfakey_set.exists():
+            messages.add_message(
+                self.request,
+                messages.SUCCESS,
+                _("Your password has been set and you are now logged in."),
+            )
+            auth.login(self.request, user, self.post_reset_login_backend)
+            # Skip parent class implemntation
+            return super(PasswordResetConfirmView, self).form_valid(form)
+
+        # Start MFA process with success URL
+        url = self.get_success_url()
+        return start_mfa_auth(self.request, user, url)
 
     def get_success_url(self):
         """
@@ -525,6 +584,7 @@ def make_user_private(request):
 
 
 @login_required
+@recent_auth_required
 def change_email(request):
     form = UserEmailConfirmationForm(request.user, request.GET)
     if form.is_valid():
@@ -556,6 +616,7 @@ def profile_redirect(request):
 
 @require_POST
 @login_required
+@recent_auth_required
 def delete_account(request):
     form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
@@ -615,6 +676,7 @@ def csrf_failure(request, reason=""):
 
 
 @login_required
+@recent_auth_required
 def create_export(request):
     if request.method == "POST":
         result = request_export(request.user)
@@ -656,6 +718,7 @@ def create_export(request):
 
 
 @login_required
+@recent_auth_required
 def download_export(request):
     access_token = get_export_access_token(request.user)
     if not access_token:
