@@ -1,9 +1,12 @@
 from collections import defaultdict, namedtuple
+from typing import DefaultDict, List
+
+from django.core.handlers.wsgi import WSGIRequest
 
 MenuItem = namedtuple("MenuItem", "section order label url")
 
 
-def menu_order(item):
+def menu_order(item: MenuItem) -> int:
     return item.order
 
 
@@ -14,7 +17,7 @@ class MenuRegistry(object):
     def register(self, func):
         self.callbacks.append(func)
 
-    def get_menu_items(self, request):
+    def get_menu_items(self, request: WSGIRequest) -> DefaultDict[str, List[MenuItem]]:
         if request is None:
             return
         sections = defaultdict(list)

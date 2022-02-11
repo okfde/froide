@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urlencode
 
 from django.contrib import auth, messages
@@ -10,10 +10,14 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
 )
 from django.db import models
-from django.http import Http404
+from django.http import Http404, HttpRequest
+from django.http.request import QueryDict
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import formats, timezone, translation
+from django.utils.datastructures import MultiValueDict
 from django.utils.decorators import method_decorator
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -25,7 +29,7 @@ from django.views.generic import DetailView, FormView, RedirectView, TemplateVie
 from crossdomainmedia import CrossDomainMediaMixin
 from mfa.views import LoginView as MFALoginView
 
-from froide.foirequest.models import FoiRequest
+from froide.foirequest.models.request import FoiRequest
 from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import get_redirect, get_redirect_url, render_403
 
@@ -89,7 +93,7 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
         context["ref"] = self.request.GET.get("ref")
         return context
 
-    def get_foirequest(self):
+    def get_foirequest(self) -> Optional[FoiRequest]:
         request_pk = self.request.GET.get("request")
         if request_pk:
             try:
@@ -99,7 +103,9 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
         return None
 
 
-def confirm(request, user_id, secret, request_id=None):
+def confirm(
+    request: HttpRequest, user_id: int, secret: str, request_id: Optional[int] = None
+) -> HttpResponseRedirect:
     if request.user.is_authenticated:
         if request.user.id != user_id:
             messages.add_message(
@@ -140,7 +146,9 @@ def confirm(request, user_id, secret, request_id=None):
     return get_redirect(request, default=default_url, params=params)
 
 
-def go(request, user_id, token, url):
+def go(
+    request: HttpRequest, user_id: str, token: str, url: str
+) -> Union[HttpResponseRedirect, HttpResponse]:
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(
@@ -255,7 +263,7 @@ class ProfileView(DetailView):
 
 
 @require_POST
-def logout(request):
+def logout(request: HttpRequest) -> HttpResponseRedirect:
     auth.logout(request)
     messages.add_message(request, messages.INFO, _("You have been logged out."))
     return redirect("/")
@@ -329,17 +337,21 @@ class SignupView(FormView):
     template_name = "account/signup.html"
     form_class = SignUpForm
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(
+        self, request: HttpRequest, *args, **kwargs
+    ) -> Union[TemplateResponse, HttpResponseRedirect]:
         if request.user.is_authenticated:
             return redirect("account-show")
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form_kwargs(self):
+    def get_form_kwargs(
+        self,
+    ) -> Dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]:
         kwargs = super().get_form_kwargs()
         kwargs.update({"request": self.request})
         return kwargs
 
-    def get_success_url(self, email=""):
+    def get_success_url(self, email: str = "") -> str:
         next_url = self.request.POST.get("next")
         if next_url:
             # Store next in session to redirect on confirm
@@ -349,13 +361,13 @@ class SignupView(FormView):
         query = urlencode({"email": self.user.email.encode("utf-8")})
         return "%s?%s" % (url, query)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: SignUpForm) -> TemplateResponse:
         messages.add_message(
             self.request, messages.ERROR, _("Please correct the errors below.")
         )
         return super().form_invalid(form)
 
-    def form_valid(self, form):
+    def form_valid(self, form: SignUpForm) -> HttpResponseRedirect:
         user, user_created = AccountService.create_user(**form.cleaned_data)
         if user_created:
             form.save(user)
@@ -397,7 +409,7 @@ class SignupView(FormView):
 @login_required
 @sensitive_post_parameters()
 @recent_auth_required
-def change_password(request):
+def change_password(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
@@ -416,7 +428,7 @@ def change_password(request):
 
 
 @require_POST
-def send_reset_password_link(request):
+def send_reset_password_link(request: HttpRequest) -> HttpResponseRedirect:
     if request.user.is_authenticated:
         messages.add_message(
             request,
@@ -449,7 +461,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "account/password_reset_confirm.html"
     form_class = SetPasswordForm
 
-    def form_valid(self, form):
+    def form_valid(self, form: SetPasswordForm) -> HttpResponseRedirect:
         # Taken from parent class
         user = form.save()
         del self.request.session[INTERNAL_RESET_SESSION_TOKEN]
@@ -470,7 +482,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         url = self.get_success_url()
         return start_mfa_auth(self.request, user, url)
 
-    def get_success_url(self):
+    def get_success_url(self) -> str:
         """
         Returns the supplied success URL.
         """
@@ -478,7 +490,17 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 
 @login_required
-def account_settings(request, context=None, status=200):
+def account_settings(
+    request: HttpRequest,
+    context: Optional[
+        Union[
+            Dict[str, UserChangeDetailsForm],
+            Dict[str, UserDeleteForm],
+            Dict[str, SetPasswordForm],
+        ]
+    ] = None,
+    status: int = 200,
+) -> HttpResponse:
     if not context:
         context = {}
     if "new" in request.GET:
@@ -492,7 +514,7 @@ def account_settings(request, context=None, status=200):
 
 @require_POST
 @login_required
-def change_user(request):
+def change_user(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
     form = UserChangeDetailsForm(request.user, request.POST)
     if form.is_valid():
         new_email = form.cleaned_data["email"]
@@ -585,7 +607,7 @@ def make_user_private(request):
 
 @login_required
 @recent_auth_required
-def change_email(request):
+def change_email(request: HttpRequest) -> HttpResponseRedirect:
     form = UserEmailConfirmationForm(request.user, request.GET)
     if form.is_valid():
         form.save()
@@ -617,7 +639,7 @@ def profile_redirect(request):
 @require_POST
 @login_required
 @recent_auth_required
-def delete_account(request):
+def delete_account(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
     form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
         messages.add_message(

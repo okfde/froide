@@ -1,6 +1,12 @@
+from collections import OrderedDict
+from typing import Union
+
+from django.utils.functional import SimpleLazyObject
+
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework import response, serializers, status, views
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .models import User, UserPreference
@@ -12,7 +18,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ("id", "private")
 
-    def to_representation(self, obj):
+    def to_representation(self, obj: Union[User, SimpleLazyObject]) -> OrderedDict:
         default = super(UserSerializer, self).to_representation(obj)
         if obj.is_superuser:
             default["is_superuser"] = True
@@ -41,7 +47,7 @@ class UserDetailSerializer(UserSerializer):
             "profile_photo",
         )
 
-    def get_full_name(self, obj):
+    def get_full_name(self, obj: Union[User, SimpleLazyObject]) -> str:
         return obj.get_full_name()
 
     def profile_photo(self, obj):
@@ -66,7 +72,7 @@ class ProfileView(views.APIView):
     permission_classes = [IsAuthenticatedOrTokenHasScope]
     required_scopes = ["read:user"]
 
-    def get(self, request, format=None):
+    def get(self, request: Request, format: None = None) -> Response:
         token = request.auth
         user = request.user
         if token:
