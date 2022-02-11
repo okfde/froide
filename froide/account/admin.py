@@ -2,17 +2,21 @@ from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count
+from django.db.models import Count, Exists, OuterRef
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils.translation import gettext_lazy as _
+
+from mfa.admin import MFAKeyAdmin
+from mfa.models import MFAKey
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
 
 from . import account_email_changed
+from .auth import RecentAuthRequiredAdminMixin
 from .forms import UserChangeForm, UserCreationForm
 from .models import AccountBlocklist, TaggedUser, User, UserPreference, UserTag
 from .services import AccountService
@@ -39,7 +43,7 @@ class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
     lookup_name = "__in"
 
 
-class UserAdmin(DjangoUserAdmin):
+class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
@@ -55,6 +59,7 @@ class UserAdmin(DjangoUserAdmin):
         "private",
         "is_trusted",
         "is_deleted",
+        "has_mfa",
         "request_count",
     )
     date_hierarchy = "date_joined"
@@ -116,6 +121,10 @@ class UserAdmin(DjangoUserAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         qs = qs.annotate(request_count=Count("foirequest"))
+        user_has_mfa = MFAKey.objects.filter(
+            user_id=OuterRef("pk"),
+        )
+        qs = qs.annotate(has_mfa=Exists(user_has_mfa))
         return qs
 
     def get_urls(self):
@@ -140,6 +149,13 @@ class UserAdmin(DjangoUserAdmin):
 
     request_count.admin_order_field = "request_count"
     request_count.short_description = _("requests")
+
+    def has_mfa(self, obj):
+        return obj.has_mfa
+
+    has_mfa.admin_order_field = "has_mfa"
+    has_mfa.short_description = _("2FA")
+    has_mfa.boolean = True
 
     def become_user(self, request, pk):
         if not request.method == "POST":
@@ -338,8 +354,17 @@ class UserPreferenceAdmin(admin.ModelAdmin):
         return qs
 
 
+class CustomMFAKeyAdmin(RecentAuthRequiredAdminMixin, MFAKeyAdmin):
+    raw_id_fields = ("user",)
+    exclude = ("secret",)
+    readonly_fields = ("user", "method", "last_code")
+
+
 admin.site.register(User, UserAdmin)
 admin.site.register(TaggedUser, TaggedUserAdmin)
 admin.site.register(UserTag, UserTagAdmin)
 admin.site.register(AccountBlocklist, AccountBlocklistAdmin)
 admin.site.register(UserPreference, UserPreferenceAdmin)
+
+admin.site.unregister(MFAKey)
+admin.site.register(MFAKey, CustomMFAKeyAdmin)
