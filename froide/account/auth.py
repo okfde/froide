@@ -59,7 +59,7 @@ def complete_mfa_authenticate_for_method(
     method: str, request: HttpRequest, user: User, request_data: str
 ) -> None:
     module = get_mfa_module_for_method(method)
-    _data, state = request.session["mfa_challenge"]
+    _data, state = request.session.get("mfa_challenge", (None, None))
     module.authenticate_complete(
         state,
         user,
