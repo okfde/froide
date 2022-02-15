@@ -17,7 +17,7 @@ class CommentConfig(AppConfig):
         registry.register(export_user_data)
 
 
-def cancel_user(sender, user, **kwargs) -> None:
+def cancel_user(sender, user=None, **kwargs) -> None:
     from .models import FroideComment
 
     if user is None:
@@ -27,7 +27,7 @@ def cancel_user(sender, user, **kwargs) -> None:
     )
 
 
-def merge_user(sender, old_user, new_user, **kwargs) -> None:
+def merge_user(sender, old_user=None, new_user=None, **kwargs) -> None:
     from .models import FroideComment
 
     FroideComment.objects.filter(user=old_user).update(user=new_user)
