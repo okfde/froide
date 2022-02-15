@@ -29,7 +29,7 @@ from django.views.generic import DetailView, FormView, RedirectView, TemplateVie
 from crossdomainmedia import CrossDomainMediaMixin
 from mfa.views import LoginView as MFALoginView
 
-from froide.foirequest.models.request import FoiRequest
+from froide.foirequest.models import FoiRequest
 from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import get_redirect, get_redirect_url, render_403
 
@@ -146,9 +146,7 @@ def confirm(
     return get_redirect(request, default=default_url, params=params)
 
 
-def go(
-    request: HttpRequest, user_id: str, token: str, url: str
-) -> Union[HttpResponseRedirect, HttpResponse]:
+def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse:
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(
