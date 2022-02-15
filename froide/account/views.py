@@ -410,7 +410,7 @@ class SignupView(FormView):
 @login_required
 @sensitive_post_parameters()
 @recent_auth_required
-def change_password(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+def change_password(request: HttpRequest) -> HttpResponse:
     form = request.user.get_password_change_form(request.POST)
     if form.is_valid():
         form.save()
@@ -515,7 +515,7 @@ def account_settings(
 
 @require_POST
 @login_required
-def change_user(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+def change_user(request: HttpRequest) -> HttpResponse:
     form = UserChangeDetailsForm(request.user, request.POST)
     if form.is_valid():
         new_email = form.cleaned_data["email"]
@@ -640,7 +640,7 @@ def profile_redirect(request):
 @require_POST
 @login_required
 @recent_auth_required
-def delete_account(request: HttpRequest) -> Union[HttpResponseRedirect, HttpResponse]:
+def delete_account(request: HttpRequest) -> HttpResponse:
     form = UserDeleteForm(request, data=request.POST)
     if not form.is_valid():
         messages.add_message(
