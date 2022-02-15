@@ -1,3 +1,5 @@
+from typing import Callable
+
 from django import forms
 from django.conf import settings
 from django.urls import reverse
