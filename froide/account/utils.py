@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 
 from froide.accesstoken.models import AccessToken
-from froide.account.models import User
 from froide.helper.email_sending import (
     mail_middleware_registry,
     mail_registry,
@@ -17,6 +16,7 @@ from froide.helper.email_sending import (
 )
 
 from . import account_canceled, account_merged
+from .models import User
 from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r"(\d{5})\s+(.*)")
