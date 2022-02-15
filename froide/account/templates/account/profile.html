@@ -27,15 +27,15 @@
         <h2>
           {{ object.get_full_name }}
         </h2>
-        {% if object.organization_url and object.organization %}
+        {% if object.organization_url and object.organization_name %}
           <p>
             <strong>
-              <a href="{{ object.organization_url }}">{{ object.organization }}</a>
+              <a href="{{ object.organization_url }}">{{ object.organization_name }}</a>
             </strong>
           </p>
-        {% elif object.organization %}
+        {% elif object.organization_name %}
           <p>
-            {{ object.organization }}
+            {{ object.organization_name }}
           </p>
         {% endif %}
         <dl>

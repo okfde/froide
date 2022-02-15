@@ -71,7 +71,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
             {
                 "fields": (
                     "address",
-                    "organization",
+                    "organization_namme",
                     "organization_url",
                     "private",
                     "profile_text",

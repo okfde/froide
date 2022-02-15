@@ -83,7 +83,7 @@ class AccountService(object):
 
         user.private = data["private"]
 
-        for key in ("address", "organization", "organization_url"):
+        for key in ("address", "organization_name", "organization_url"):
             setattr(user, key, data.get(key, ""))
 
         cls.check_against_blocklist(user)
@@ -322,8 +322,8 @@ class AccountService(object):
             return content
 
         needles = [self.user.last_name, self.user.first_name, self.user.get_full_name()]
-        if self.user.organization:
-            needles.append(self.user.organization)
+        if self.user.organization_name:
+            needles.append(self.user.organization_name)
 
         needles = [re.escape(n) for n in needles]
 
@@ -361,5 +361,5 @@ class AccountService(object):
         yield (self.user.first_name, repl["name"])
         yield (self.user.get_full_name(), repl["name"])
 
-        if self.user.organization:
-            yield (self.user.organization, repl["name"])
+        if self.user.organization_name:
+            yield (self.user.organization_name, repl["name"])
