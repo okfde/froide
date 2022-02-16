@@ -16,13 +16,15 @@
   const pinInputs = document.querySelectorAll("[data-pininput]");
   [...pinInputs].forEach(pinInput => {
     const inputLen = parseInt(pinInput.dataset.pininput, 10)
-    pinInput.addEventListener('keyup', () => {
+    const submitInput = () => {
       if (pinInput.value.length === inputLen) {
         if (pinInput.closest && pinInput.closest("form")) {
           pinInput.closest("form").querySelector("button[type='submit']").click()
         }
       }
-    })
+    };
+    pinInput.addEventListener('keyup', submitInput)
+    pinInput.addEventListener('paste', submitInput)
   })
 
 }())
