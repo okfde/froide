@@ -9,6 +9,7 @@ class OrganizationMembershipInline(admin.StackedInline):
 
 
 class OrganizationAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
     list_display = ("name", "website", "created", "member_count")
     inlines = [OrganizationMembershipInline]
 
