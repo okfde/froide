@@ -8,27 +8,49 @@ from froide.foirequest.models import FoiMessage
 
 from .utils import inform_user_problem_resolved
 
-USER_PROBLEM_CHOICES = [
-    ("message_not_delivered", _("Your message was not delivered.")),
-    ("attachment_broken", _("The attachments don't seem to work.")),
-    ("redaction_needed", _("You need more redaction.")),
-    ("foi_help_needed", _("You need help to understand or reply to this message.")),
-    ("other", _("Something else...")),
-]
-EXTERNAL_PROBLEM_CHOICES = [
-    ("not_foi", _("This is not a proper FOI request.")),
-    ("redaction_needed", _("More redactions are needed.")),
-    ("not_nice", _("Content is against netiquette.")),
-    ("info_outdated", _("Published information is outdated.")),
-    ("info_wrong", _("Published information is wrong.")),
-    ("other", _("Something else...")),
-]
 
-AUTO_PROBLEM_CHOICES = [
-    ("bounce_publicbody", _("You received a bounce mail from the public body.")),
-]
+class ProblemChoices(models.TextChoices):
+    MESSAGE_NOT_DELIVERED = "message_not_delivered", _(
+        "Your message was not delivered."
+    )
+    ATTACHMENT_BROKEN = "attachment_broken", _("The attachments don't seem to work.")
+    REDACTION_NEEDED = "redaction_needed", _("More redactions are needed.")
+    FOI_HELP_NEEDED = "foi_help_needed", _(
+        "You need help to understand or reply to this message."
+    )
+    OTHER = "other", _("Something else...")
+    NOT_FOI = "not_foi", _("This is not a proper FOI request.")
+    NOT_NICE = "not_nice", _("Content is against netiquette.")
+    INFO_OUTDATED = "info_outdated", _("Published information is outdated.")
+    INFO_WRONG = "info_wrong", _("Published information is wrong.")
+    BOUNCE_PUBLICBODY = "bounce_publicbody", _(
+        "You received a bounce mail from the public body."
+    )
 
-PROBLEM_CHOICES = AUTO_PROBLEM_CHOICES + USER_PROBLEM_CHOICES
+
+def make_choices(value_list):
+    return [(k, k.label) for k in value_list]
+
+
+USER_PROBLEM_CHOICES = make_choices(
+    [
+        ProblemChoices.MESSAGE_NOT_DELIVERED,
+        ProblemChoices.ATTACHMENT_BROKEN,
+        ProblemChoices.REDACTION_NEEDED,
+        ProblemChoices.FOI_HELP_NEEDED,
+        ProblemChoices.OTHER,
+    ]
+)
+EXTERNAL_PROBLEM_CHOICES = make_choices(
+    [
+        ProblemChoices.NOT_FOI,
+        ProblemChoices.REDACTION_NEEDED,
+        ProblemChoices.NOT_NICE,
+        ProblemChoices.INFO_OUTDATED,
+        ProblemChoices.INFO_WRONG,
+        ProblemChoices.OTHER,
+    ]
+)
 
 reported = Signal()
 claimed = Signal()
@@ -45,6 +67,8 @@ class ProblemReportManager(models.Manager):
 
 
 class ProblemReport(models.Model):
+    PROBLEM = ProblemChoices
+
     message = models.ForeignKey(FoiMessage, on_delete=models.CASCADE)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -53,9 +77,7 @@ class ProblemReport(models.Model):
         blank=True,
         related_name="problems_reported",
     )
-    kind = models.CharField(
-        max_length=50, choices=(PROBLEM_CHOICES + EXTERNAL_PROBLEM_CHOICES)
-    )
+    kind = models.CharField(max_length=50, choices=ProblemChoices.choices)
     timestamp = models.DateTimeField(default=timezone.now)
     auto_submitted = models.BooleanField(default=False)
     resolved = models.BooleanField(default=False)
