@@ -20,7 +20,7 @@ class CreateTeamForm(forms.Form):
             TeamMembership.objects.create(
                 team=team,
                 user=user,
-                role=TeamMembership.ROLE_OWNER,
+                role=TeamMembership.ROLE.OWNER,
                 status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
             )
         return team
@@ -76,7 +76,7 @@ class TeamInviteForm(forms.Form):
         member = TeamMembership.objects.create(
             team=self.team,
             email=email,
-            role=TeamMembership.ROLE_VIEWER,
+            role=TeamMembership.ROLE.VIEWER,
             status=TeamMembership.MEMBERSHIP_STATUS_INVITED,
         )
         service = TeamService(member)
