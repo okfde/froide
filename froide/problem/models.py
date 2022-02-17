@@ -65,6 +65,24 @@ class ProblemReportManager(models.Manager):
         reported.send(sender=report)
         return report
 
+    def find_and_resolve(
+        self, message=None, foirequest=None, kind=None, user=None, resolution=""
+    ):
+        if not message and not foirequest:
+            return
+        if not kind:
+            return
+        qs = self.get_queryset().filter(resolved=False)
+        if message:
+            qs = qs.filter(message=message)
+        if foirequest:
+            qs = qs.filter(message__request=foirequest)
+        qs = qs.filter(kind=kind)
+        report = qs.first()
+        if not report:
+            return
+        return report.resolve(user, resolution=resolution)
+
 
 class ProblemReport(models.Model):
     PROBLEM = ProblemChoices
