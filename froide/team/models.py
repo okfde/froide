@@ -20,6 +20,7 @@ class MembershipStatus(models.TextChoices):
 class TeamMembership(models.Model):
     ROLE = TeamRole
     MEMBERSHIP_STATUS = MembershipStatus
+    ROLES_DICT = dict(TeamRole.choices)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE

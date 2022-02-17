@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-from .models import Team, TeamMembership, TeamRole
+from .models import Team, TeamMembership
 from .services import TeamService
 
 
@@ -21,13 +21,13 @@ class CreateTeamForm(forms.Form):
                 team=team,
                 user=user,
                 role=TeamMembership.ROLE.OWNER,
-                status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+                status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
             )
         return team
 
 
 class TeamMemberChangeRoleForm(forms.Form):
-    role = forms.ChoiceField(choices=TeamRole.choices, label="")
+    role = forms.ChoiceField(choices=TeamMembership.ROLE.choices, label="")
 
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop("owner")
@@ -77,7 +77,7 @@ class TeamInviteForm(forms.Form):
             team=self.team,
             email=email,
             role=TeamMembership.ROLE.VIEWER,
-            status=TeamMembership.MEMBERSHIP_STATUS_INVITED,
+            status=TeamMembership.MEMBERSHIP_STATUS.INVITED,
         )
         service = TeamService(member)
         service.send_team_invite(user)
