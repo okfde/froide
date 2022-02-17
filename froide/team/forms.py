@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
-from .models import Team, TeamMembership
+from .models import Team, TeamMembership, TeamRole
 from .services import TeamService
 
 
@@ -27,7 +27,7 @@ class CreateTeamForm(forms.Form):
 
 
 class TeamMemberChangeRoleForm(forms.Form):
-    role = forms.ChoiceField(choices=TeamMembership.ROLES, label="")
+    role = forms.ChoiceField(choices=TeamRole.choices, label="")
 
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop("owner")
