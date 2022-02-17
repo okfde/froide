@@ -20,7 +20,7 @@ class OrganizationMembershipStatus(models.TextChoices):
 
 
 class OrganizationMembership(models.Model):
-    ROLES = OrganizationRole
+    ROLE = OrganizationRole
     STATUS = OrganizationMembershipStatus
 
     user = models.ForeignKey(
@@ -51,13 +51,13 @@ class OrganizationMembership(models.Model):
         return "%s in %s" % (self.user, self.organization)
 
     def is_active(self):
-        return self.status == self.MEMBERSHIP_STATUS_ACTIVE
+        return self.status == self.STATUS.ACTIVE
 
     def is_invited(self):
-        return self.status == self.MEMBERSHIP_STATUS_INVITED
+        return self.status == self.STATUS.INVITED
 
     def is_owner(self):
-        return self.role == self.ROLE_OWNER
+        return self.role == self.ROLE.OWNER
 
 
 def logo_path(instance=None, filename=None):
@@ -108,7 +108,7 @@ class Organization(models.Model):
     def add_user(
         self,
         user,
-        role=OrganizationMembership.ROLES.MEMBER,
+        role=OrganizationMembership.ROLE.MEMBER,
         status=OrganizationMembership.STATUS.ACTIVE,
     ):
         if OrganizationMembership.objects.filter(user=user, organization=self).exists():
