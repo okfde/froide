@@ -60,7 +60,7 @@ class TeamDetailView(AuthMixin, DetailView):
     def get_queryset(self):
         return Team.objects.filter(
             teammembership__user=self.request.user,
-            teammembership__status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+            teammembership__status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
         ).distinct()
 
     def get_context_data(self, **kwargs):
@@ -116,8 +116,8 @@ class ChangeTeamMemberRoleView(AuthMixin, UpdateView):
     def get_queryset(self):
         return TeamMembership.objects.filter(
             team__teammembership__user=self.request.user,
-            team__teammembership__role=TeamMembership.ROLE_OWNER,
-            team__teammembership__status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+            team__teammembership__role=TeamMembership.ROLE.OWNER,
+            team__teammembership__status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
         )
 
     def get_form_kwargs(self):
@@ -145,8 +145,8 @@ class DeleteTeamMemberRoleView(AuthMixin, DetailView):
     def get_queryset(self):
         return TeamMembership.objects.filter(
             team__teammembership__user=self.request.user,
-            team__teammembership__role=TeamMembership.ROLE_OWNER,
-            team__teammembership__status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+            team__teammembership__role=TeamMembership.ROLE.OWNER,
+            team__teammembership__status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
         ).exclude(user=self.request.user)
 
     def post(self, request, *args, **kwargs):
@@ -163,7 +163,7 @@ class JoinMixin:
             return redirect(self.object.team)
         self.object.user = request.user
         self.object.updated = timezone.now()
-        self.object.status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
+        self.object.status = TeamMembership.MEMBERSHIP_STATUS.ACTIVE
         self.object.save()
         return redirect(self.object.team)
 
@@ -184,7 +184,7 @@ class JoinTeamView(AuthMixin, JoinMixin, DetailView):
 
     def get_queryset(self):
         return TeamMembership.objects.filter(
-            status=TeamMembership.MEMBERSHIP_STATUS_INVITED
+            status=TeamMembership.MEMBERSHIP_STATUS.INVITED
         )
 
     def get_object(self):
@@ -203,7 +203,7 @@ class JoinTeamView(AuthMixin, JoinMixin, DetailView):
 class JoinTeamUserView(AuthMixin, JoinMixin, DetailView):
     def get_queryset(self):
         return TeamMembership.objects.filter(
-            status=TeamMembership.MEMBERSHIP_STATUS_INVITED, user=self.request.user
+            status=TeamMembership.MEMBERSHIP_STATUS.INVITED, user=self.request.user
         )
 
 

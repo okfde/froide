@@ -16,7 +16,7 @@ from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
 
 from . import account_email_changed
-from .auth import RecentAuthRequiredAdminMixin
+from .auth import MFAAndRecentAuthRequiredAdminMixin, RecentAuthRequiredAdminMixin
 from .forms import UserChangeForm, UserCreationForm
 from .models import AccountBlocklist, TaggedUser, User, UserPreference, UserTag
 from .services import AccountService
@@ -71,7 +71,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
             {
                 "fields": (
                     "address",
-                    "organization",
+                    "organization_name",
                     "organization_url",
                     "private",
                     "profile_text",
@@ -354,7 +354,7 @@ class UserPreferenceAdmin(admin.ModelAdmin):
         return qs
 
 
-class CustomMFAKeyAdmin(RecentAuthRequiredAdminMixin, MFAKeyAdmin):
+class CustomMFAKeyAdmin(MFAAndRecentAuthRequiredAdminMixin, MFAKeyAdmin):
     raw_id_fields = ("user",)
     exclude = ("secret",)
     readonly_fields = ("user", "method", "last_code")

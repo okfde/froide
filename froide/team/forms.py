@@ -20,14 +20,14 @@ class CreateTeamForm(forms.Form):
             TeamMembership.objects.create(
                 team=team,
                 user=user,
-                role=TeamMembership.ROLE_OWNER,
-                status=TeamMembership.MEMBERSHIP_STATUS_ACTIVE,
+                role=TeamMembership.ROLE.OWNER,
+                status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
             )
         return team
 
 
 class TeamMemberChangeRoleForm(forms.Form):
-    role = forms.ChoiceField(choices=TeamMembership.ROLES, label="")
+    role = forms.ChoiceField(choices=TeamMembership.ROLE.choices, label="")
 
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop("owner")
@@ -76,8 +76,8 @@ class TeamInviteForm(forms.Form):
         member = TeamMembership.objects.create(
             team=self.team,
             email=email,
-            role=TeamMembership.ROLE_VIEWER,
-            status=TeamMembership.MEMBERSHIP_STATUS_INVITED,
+            role=TeamMembership.ROLE.VIEWER,
+            status=TeamMembership.MEMBERSHIP_STATUS.INVITED,
         )
         service = TeamService(member)
         service.send_team_invite(user)

@@ -1,8 +1,3 @@
-<div data-pininput="{{ widget.name }}" id="id_code">
-  <input type="hidden" name="{{ widget.name }}" value=""/>
-  <div data-pininputdigits="{{ digits|length }}" class="inputs d-flex flex-row justify-content-center">
-    {% for digit in digits %}
-      <input {% if digit == 0 and autofocus %}autofocus {% endif %}class="m-2 text-center form-control rounded" autocomplete="off" type="text" maxlength="1" />
-    {% endfor %}
-  </div>
+<div class="d-flex flex-row justify-content-center">
+  <input class="form-control rounded" data-pininput="{{ digits | length }}" {% if autofocus %}autofocus{% endif %} type="text" name="{{ widget.name }}" value="" pattern="\d{{ '{' }}{{ digits | length }}{{ '}' }}" inputmode="numeric" autocomplete="off" maxlength="{{ digits | length }}" style="font-size: 2em;letter-spacing: 0.5ch;width: 12ch;font-family: monospace;"/>
 </div>
