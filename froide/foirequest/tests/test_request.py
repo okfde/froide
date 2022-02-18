@@ -53,7 +53,7 @@ class RequestTest(TestCase):
         self.assertTrue(ok)
 
         user = User.objects.get(username="sw")
-        user.organization = "ACME Org"
+        user.organization_name = "ACME Org"
         user.save()
 
         pb = PublicBody.objects.all()[0]

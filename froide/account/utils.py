@@ -72,7 +72,7 @@ def send_template_mail(user: User, subject: str, body: str, **kwargs):
 
 def make_account_private(user):
     user.private = True
-    user.organization = ""
+    user.organization_name = ""
     user.organization_url = ""
     user.profile_text = ""
     if user.profile_photo:
@@ -154,7 +154,7 @@ def cancel_user(user, delete=False):
         user.delete()
         return
 
-    user.organization = ""
+    user.organization_name = ""
     user.organization_url = ""
     user.private = True
     user.terms = False
