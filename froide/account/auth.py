@@ -3,10 +3,12 @@ from enum import Enum
 from functools import wraps
 from typing import Optional
 
+from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 
 from mfa import settings
 from mfa.methods import fido2, totp
@@ -129,21 +131,42 @@ def requires_recent_auth(request: HttpRequest) -> bool:
     return needs_auth and not has_recent_auth(request)
 
 
-def recent_auth_required(view_func):
-    @wraps(view_func)
-    def check_recent_auth(request: HttpRequest, *args, **kwargs):
-        if not request.user.is_authenticated:
-            # in case login required runs later, check here
-            return redirect_to_login(request)
-        if requires_recent_auth(request):
-            return get_redirect(
-                request,
-                default="account-reauth",
-                params={"next": request.get_full_path()},
-            )
-        return view_func(request, *args, **kwargs)
+def check_recent_auth_decorator(mfa_required=False):
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request: HttpRequest, *args, **kwargs):
+            if not request.user.is_authenticated:
+                # in case login required runs later, check here
+                return redirect_to_login(request)
+            if mfa_required and not user_has_mfa(request.user):
+                messages.add_message(
+                    request,
+                    messages.WARNING,
+                    _(
+                        "You need to have two-factor login set on your account. Please set it up now."
+                    ),
+                )
+                return get_redirect(request, default="account-settings")
+            if requires_recent_auth(request):
+                return get_redirect(
+                    request,
+                    default="account-reauth",
+                    params={"next": request.get_full_path()},
+                )
+            return view_func(request, *args, **kwargs)
 
-    return check_recent_auth
+        return _wrapped_view
+
+    return decorator
+
+
+def recent_auth_required(view_func=None, mfa_required=False):
+    actual_decorator = check_recent_auth_decorator(mfa_required=mfa_required)
+
+    if view_func:
+        return actual_decorator(view_func)
+
+    return actual_decorator
 
 
 class RecentAuthRequiredAdminMixin:
@@ -164,5 +187,27 @@ class RecentAuthRequiredAdminMixin:
         return super().delete_view(*args, **kwargs)
 
     @method_decorator(recent_auth_required)
+    def history_view(self, *args, **kwargs):
+        return super().history_view(*args, **kwargs)
+
+
+class MFAAndRecentAuthRequiredAdminMixin:
+    @method_decorator(recent_auth_required(mfa_required=True))
+    def change_view(self, *args, **kwargs):
+        return super().change_view(*args, **kwargs)
+
+    @method_decorator(recent_auth_required(mfa_required=True))
+    def add_view(self, *args, **kwargs):
+        return super().add_view(*args, **kwargs)
+
+    @method_decorator(recent_auth_required(mfa_required=True))
+    def changelist_view(self, *args, **kwargs):
+        return super().changelist_view(*args, **kwargs)
+
+    @method_decorator(recent_auth_required(mfa_required=True))
+    def delete_view(self, *args, **kwargs):
+        return super().delete_view(*args, **kwargs)
+
+    @method_decorator(recent_auth_required(mfa_required=True))
     def history_view(self, *args, **kwargs):
         return super().history_view(*args, **kwargs)
