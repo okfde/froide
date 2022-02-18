@@ -65,6 +65,7 @@ class Base(Configuration):
             "froide.guide",
             "froide.comments",
             "froide.campaign",
+            "froide.organization",
             "froide.upload",
             # Semi-external
             "filingcabinet",  # Later in template chain than froide.document

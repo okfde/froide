@@ -125,7 +125,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
-    organization = models.CharField(
+    organization_name = models.CharField(
         _("Organization"),
         blank=True,
         max_length=255,
@@ -241,7 +241,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 "address": self.address,
                 "private": self.private,
                 "email": self.email,
-                "organization": self.organization,
+                "organization": self.organization_name,
             }
         )
 
@@ -249,8 +249,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         if self.private:
             return str(_("<< Name Not Public >>"))
         else:
-            if self.organization:
-                return "%s (%s)" % (self.get_full_name(), self.organization)
+            if self.organization_name:
+                return "%s (%s)" % (self.get_full_name(), self.organization_name)
             else:
                 return self.get_full_name()
 

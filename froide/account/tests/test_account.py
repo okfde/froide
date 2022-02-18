@@ -675,7 +675,7 @@ class AccountTest(TestCase):
         self.assertIsNone(user.email)
         self.assertEqual(user.username, "u%s" % user.pk)
         self.assertEqual(user.address, "")
-        self.assertEqual(user.organization, "")
+        self.assertEqual(user.organization_name, "")
         self.assertEqual(user.organization_url, "")
         self.assertTrue(user.private)
         self.assertTrue(user.is_deleted)

@@ -23,8 +23,8 @@ class TeamMembershipFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     team = factory.SubFactory(TeamFactory)
-    role = TeamMembership.ROLE_VIEWER
-    status = TeamMembership.MEMBERSHIP_STATUS_ACTIVE
+    role = TeamMembership.ROLE.VIEWER
+    status = TeamMembership.MEMBERSHIP_STATUS.ACTIVE
 
 
 class TeamTest(TestCase):
@@ -34,25 +34,25 @@ class TeamTest(TestCase):
 
         self.owner_team = TeamFactory.create()
         TeamMembershipFactory.create(
-            user=self.user, team=self.owner_team, role=TeamMembership.ROLE_OWNER
+            user=self.user, team=self.owner_team, role=TeamMembership.ROLE.OWNER
         )
         TeamMembershipFactory.create(
-            team=self.owner_team, role=TeamMembership.ROLE_OWNER
+            team=self.owner_team, role=TeamMembership.ROLE.OWNER
         )
 
         self.editor_team = TeamFactory.create()
         TeamMembershipFactory.create(
-            user=self.user, team=self.editor_team, role=TeamMembership.ROLE_EDITOR
+            user=self.user, team=self.editor_team, role=TeamMembership.ROLE.EDITOR
         )
         TeamMembershipFactory.create(
-            team=self.editor_team, role=TeamMembership.ROLE_OWNER
+            team=self.editor_team, role=TeamMembership.ROLE.OWNER
         )
         self.other_team = TeamFactory.create()
         TeamMembershipFactory.create(
-            team=self.other_team, role=TeamMembership.ROLE_EDITOR
+            team=self.other_team, role=TeamMembership.ROLE.EDITOR
         )
         TeamMembershipFactory.create(
-            team=self.other_team, role=TeamMembership.ROLE_OWNER
+            team=self.other_team, role=TeamMembership.ROLE.OWNER
         )
 
     def test_owner_teams(self):
@@ -65,8 +65,8 @@ class TeamTest(TestCase):
         invite = TeamMembershipFactory.create(
             user=None,
             team=self.owner_team,
-            role=TeamMembership.ROLE_OWNER,
-            status=TeamMembership.MEMBERSHIP_STATUS_INVITED,
+            role=TeamMembership.ROLE.OWNER,
+            status=TeamMembership.MEMBERSHIP_STATUS.INVITED,
             email=self.user.email,
         )
         team_service = TeamService(invite)

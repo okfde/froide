@@ -328,7 +328,7 @@ class PublicBodyBaseAdminMixin:
     def save_model(self, request, obj, form, change):
         obj._updated_by = request.user
         obj.updated_at = timezone.now()
-        if change is None:
+        if not change:
             obj._created_by = obj._updated_by
             obj.created_at = obj.updated_at
 
