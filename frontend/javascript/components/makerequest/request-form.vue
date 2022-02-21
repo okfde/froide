@@ -61,6 +61,7 @@
             {{ i18n._('toPublicBody', {name: publicBody.name}) }}
             <a
               :href="publicBody.site_url"
+              target="_blank"
             >
               <span class="fa fa-info-circle" />
             </a>
