@@ -6,6 +6,7 @@ from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.utils import get_module_attr_from_dotted_path
+from froide.problem.models import ProblemReport
 
 from .models import FoiEvent, FoiRequest
 from .notifications import send_non_foi_notification
@@ -42,6 +43,9 @@ class MarkNonFOI(BaseModerationAction):
         )
         foirequest.save()
         send_non_foi_notification(foirequest)
+        ProblemReport.objects.find_and_resolve(
+            foirequest=foirequest, kind=ProblemReport.PROBLEM.NOT_FOI, user=request.user
+        )
         return _("Request marked as not an FOI request.")
 
 

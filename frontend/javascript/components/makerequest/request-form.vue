@@ -59,6 +59,12 @@
         <div class="col-lg-12 publicbody-summary">
           <p>
             {{ i18n._('toPublicBody', {name: publicBody.name}) }}
+            <a
+              :href="publicBody.site_url"
+              target="_blank"
+            >
+              <span class="fa fa-info-circle" />
+            </a>
             <span v-if="!hidePublicbodyChooser">
               <a
                 class="pb-change-link badge badge-pill badge-primary ml-3"

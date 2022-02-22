@@ -447,7 +447,7 @@ class ReceiveEmailService(BaseService):
 
         ProblemReport.objects.report(
             message=mes or message,
-            kind="bounce_publicbody",
+            kind=ProblemReport.PROBLEM.BOUNCE_PUBLICBODY,
             description=email.bounce_info.diagnostic_code or "",
             auto_submitted=True,
         )

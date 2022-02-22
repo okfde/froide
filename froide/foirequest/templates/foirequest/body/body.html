@@ -111,7 +111,6 @@
             <div class="row">
               <div class="col-lg-8">
 
-                {% if object.can_be_escalated %}
                 <ul class="nav nav-tabs">
                   <li class="nav-item">
                     <a class="nav-link active" data-toggle="tab" href="#write-message" role="tab" aria-controls="write-message" aria-selected="true">
@@ -125,7 +124,6 @@
                   </li>
                   {% block request_action_menu_footer %}{% endblock %}
                 </ul>
-                {% endif %}
                 <div class="tab-content">
 
                   <div id="write-message" class="tab-pane fade show active">

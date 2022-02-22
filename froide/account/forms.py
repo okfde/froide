@@ -557,10 +557,15 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["organization", "organization_url", "profile_text", "profile_photo"]
+        fields = [
+            "organization_name",
+            "organization_url",
+            "profile_text",
+            "profile_photo",
+        ]
         widgets = {
             "profile_photo": ProfilePhotoFileInput(),
-            "organization": forms.TextInput(
+            "organization_name": forms.TextInput(
                 attrs={"placeholder": _("Organization"), "class": "form-control"}
             ),
             "organization_url": forms.URLInput(
