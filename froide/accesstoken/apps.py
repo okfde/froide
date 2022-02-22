@@ -17,7 +17,7 @@ class AccessTokenConfig(AppConfig):
         registry.register(export_user_data)
 
 
-def cancel_user(sender, user=None, **kwargs) -> None:
+def cancel_user(sender, user=None, **kwargs):
     from .models import AccessToken
 
     if user is None:
@@ -25,7 +25,7 @@ def cancel_user(sender, user=None, **kwargs) -> None:
     AccessToken.objects.filter(user=user).delete()
 
 
-def merge_user(sender, old_user=None, new_user=None, **kwargs) -> None:
+def merge_user(sender, old_user=None, new_user=None, **kwargs):
     from froide.account.utils import move_ownership
 
     from .models import AccessToken
