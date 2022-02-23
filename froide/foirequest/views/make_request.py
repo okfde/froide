@@ -420,8 +420,16 @@ class MakeRequestView(FormView):
             request_form.add_error(None, _("Draft cannot be used again."))
             error = True
 
-        if request.user.is_authenticated and request.POST.get("save_draft", ""):
-            return self.save_draft(request_form, publicbody_form)
+        if request.user.is_authenticated:
+            if request.POST.get("save_draft", ""):
+                return self.save_draft(request_form, publicbody_form)
+            if request.user.is_blocked:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Your account cannot send requests."),
+                )
+                return self.save_draft(request_form, publicbody_form)
 
         user_form = self.get_user_form()
         if not user_form.is_valid():
