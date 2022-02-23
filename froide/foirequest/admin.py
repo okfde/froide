@@ -389,14 +389,18 @@ class FoiRequestAdmin(admin.ModelAdmin):
     def unblock_request(self, request, queryset):
         for req in queryset:
             mes = req.messages[0]
-            mes.timestamp = timezone.now()
-            if req.law:
-                req.due_date = req.law.calculate_due_date()
+            if not mes.sent:
+                mes.timestamp = timezone.now()
+                if req.law:
+                    req.due_date = req.law.calculate_due_date()
+                req.first_message = mes.timestamp
+
             req.is_blocked = False
-            req.first_message = mes.timestamp
             req.save()
-            mes.save()
-            mes.force_resend()
+
+            if not mes.sent:
+                mes.save()
+                mes.force_resend()
 
     unblock_request.short_description = _("Unblock requests and send first message")
 
