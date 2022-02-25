@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils import timezone
+from django.utils import formats, timezone
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +14,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.email_utils import make_address
-from froide.helper.text_utils import redact_plaintext, redact_subject
+from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
 from .request import FoiRequest, get_absolute_domain_short_url, get_absolute_short_url
@@ -252,6 +252,28 @@ class FoiMessage(models.Model):
     def get_autologin_url(self):
         return self.get_request_link(self.request.get_autologin_url())
 
+    def get_text_sender(self):
+        if self.is_response:
+            alternative = self.sender_name
+            if self.sender_public_body:
+                alternative = self.sender_public_body.name
+            if self.is_not_email:
+                return _("{name} (via {via})").format(
+                    name=self.sender or alternative, via=self.get_kind_display()
+                )
+            return make_address(self.sender_email, self.sender_name or alternative)
+
+        sender = ""
+        sender_user = self.sender_user or self.request.user
+        if sender_user:
+            sender = sender_user.get_full_name()
+        if self.is_not_email:
+            return _("{name} (via {via})").format(
+                name=sender, via=self.get_kind_display()
+            )
+        email = self.sender_email or self.request.secret_address
+        return make_address(email, sender)
+
     def get_text_recipient(self):
         if not self.is_response:
             alternative = self.recipient
@@ -287,8 +309,26 @@ class FoiMessage(models.Model):
             {"message": self, "attachments": attachments},
         )
 
-    def get_quoted(self):
-        return "\n".join([">%s" % x for x in self.plaintext.splitlines()])
+    def get_quoted_message(self):
+        header = "\n".join(
+            (
+                "> {label} 	{value}".format(label=_("Subject:"), value=self.subject),
+                "> {label} 	{value}".format(
+                    label=_("Date:"),
+                    value=formats.date_format(self.timestamp, settings.DATETIME_FORMAT),
+                ),
+                "> {label} 	{value}".format(
+                    label=_("From:"), value=self.get_text_sender()
+                ),
+                "> {label} 	{value}".format(
+                    label=_("To:"), value=self.get_text_recipient()
+                ),
+            )
+        )
+        return "{header}\n>\n{text}".format(header=header, text=self.get_quoted_text())
+
+    def get_quoted_text(self):
+        return quote_text(self.plaintext)
 
     def needs_status_input(self):
         return self.request.message_needs_status() == self

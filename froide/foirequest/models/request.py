@@ -785,9 +785,6 @@ class FoiRequest(models.Model):
 
         return get_escalation_message_form(foirequest=self)
 
-    def quote_last_message(self):
-        return list(self.messages)[-1].get_quoted()
-
     @property
     def readable_status(self):
         return FoiRequest.get_readable_status(self.status_representation)
