@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.utils import timezone
 
-from froide.helper.email_utils import make_address
 from froide.helper.utils import get_module_attr_from_dotted_path
 
 from .foi_mail import send_foi_mail
@@ -89,10 +88,7 @@ class EmailMessageHandler(MessageHandler):
 
         extra_kwargs = {}
         # Use send_foi_mail here
-        from_addr = make_address(
-            request.secret_address,
-            "{} [#{}]".format(request.user.get_full_name(), request.id),
-        )
+        from_addr = request.get_sender_address()
         get_notified = (
             message.sender_user
             and message.sender_user.is_superuser
