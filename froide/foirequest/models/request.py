@@ -19,6 +19,7 @@ from taggit.managers import _TaggableManager as TaggitTaggableManager
 from taggit.models import TaggedItemBase
 
 from froide.campaign.models import Campaign
+from froide.helper.email_utils import make_address
 from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
 from froide.team.models import Team
@@ -565,6 +566,12 @@ class FoiRequest(models.Model):
             self.secret = get_random_string(25)
             self.save()
         return self.secret
+
+    def get_sender_address(self):
+        return make_address(
+            self.secret_address,
+            "{} [#{}]".format(self.user.get_full_name(), self.id),
+        )
 
     def get_auth_link(self):
         from ..auth import get_foirequest_auth_code
