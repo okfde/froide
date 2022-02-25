@@ -21,9 +21,13 @@
 
 <form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
   {% csrf_token %}
-  {% for error in form.errors %}
-      <p>{{ error }}</p>
-  {% endfor %}
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger">
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
   {{ form.code.as_hidden }}
   <button autofocus class="btn btn-lg btn-primary">
     {% translate "Verify hardware security key" %}
