@@ -124,6 +124,7 @@ def get_send_message_form(*args, **kwargs):
     if foirequest.is_overdue() and foirequest.awaits_response():
         message_ready = True
         days = (timezone.now() - foirequest.due_date).days + 1
+        first_message = foirequest.messages[0]
         message = render_to_string(
             select_foirequest_template(
                 foirequest, "foirequest/emails/overdue_reply.txt"
@@ -132,6 +133,7 @@ def get_send_message_form(*args, **kwargs):
                 "due": ngettext_lazy("%(count)s day", "%(count)s days", days)
                 % {"count": days},
                 "foirequest": foirequest,
+                "first_message": first_message,
             },
         )
     else:

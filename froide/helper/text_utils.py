@@ -52,6 +52,10 @@ def unescape(text):
     return re.sub(r"&#?\w+;", fixup, text)
 
 
+def quote_text(text: str, prefix: str = "> ") -> str:
+    return "\n".join(f"{prefix}{x}" for x in text.splitlines())
+
+
 def split_text_by_separator(
     text: str, separator: Optional[Pattern] = None
 ) -> List[str]:

@@ -156,7 +156,7 @@ def go(request, user_id, token, url):
 
     if request.method == "POST":
         user = User.objects.filter(pk=int(user_id)).first()
-        if user:
+        if user and not user.is_blocked:
             account_manager = AccountService(user)
             if account_manager.check_autologin_token(token):
                 if not user.is_active:
