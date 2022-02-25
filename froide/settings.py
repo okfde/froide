@@ -276,6 +276,7 @@ class Base(Configuration):
     DATE_FORMAT = values.Value("d. F Y")
     SHORT_DATE_FORMAT = values.Value("d.m.Y")
     DATE_INPUT_FORMATS = values.TupleValue(("%d.%m.%Y",))
+    DATETIME_FORMAT = values.Value("N j, Y, P")
     SHORT_DATETIME_FORMAT = values.Value("d.m.Y H:i")
     DATETIME_INPUT_FORMATS = values.TupleValue(("%d.%m.%Y %H:%M",))
     TIME_FORMAT = values.Value("H:i")
@@ -715,6 +716,7 @@ class German(object):
     DATE_FORMAT = "d. F Y"
     SHORT_DATE_FORMAT = "d.m.Y"
     DATE_INPUT_FORMATS = ("%d.%m.%Y",)
+    DATETIME_FORMAT = "j. F Y, H:i"
     SHORT_DATETIME_FORMAT = "d.m.Y H:i"
     DATETIME_INPUT_FORMATS = ("%d.%m.%Y %H:%M",)
     TIME_FORMAT = "H:i"
