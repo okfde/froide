@@ -10,6 +10,9 @@ def menu_order(item: MenuItem) -> int:
     return item.order
 
 
+Replacements = DefaultDict[str, List[MenuItem]]
+
+
 class MenuRegistry(object):
     def __init__(self):
         self.callbacks = []
@@ -17,7 +20,7 @@ class MenuRegistry(object):
     def register(self, func):
         self.callbacks.append(func)
 
-    def get_menu_items(self, request: HttpRequest) -> DefaultDict[str, List[MenuItem]]:
+    def get_menu_items(self, request: HttpRequest) -> Replacements:
         if request is None:
             return
         sections = defaultdict(list)

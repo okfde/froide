@@ -214,12 +214,15 @@ class TermsForm(forms.Form):
         )
 
 
+Replacements_1 = Dict[str, Union[str, bool]]
+
+
 class ExplicitRegistrationMixin:
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         user_extra_registry.on_init("registration", self)
 
-    def clean(self) -> Dict[str, Union[str, bool]]:
+    def clean(self) -> Replacements_1:
         user_extra_registry.on_clean("registration", self)
         return self.cleaned_data
 
@@ -429,6 +432,9 @@ class UserChangeDetailsForm(forms.Form):
         self.user.save()
 
 
+Replacements_2 = Dict[str, Union[str, int]]
+
+
 class UserEmailConfirmationForm(forms.Form):
     email = forms.EmailField()
     secret = forms.CharField(min_length=32, max_length=32)
@@ -450,7 +456,7 @@ class UserEmailConfirmationForm(forms.Form):
             raise forms.ValidationError(_("This email is already set on this account."))
         return User.objects.normalize_email(email)
 
-    def clean(self) -> Dict[str, Union[str, int]]:
+    def clean(self) -> Replacements_2:
         check = AccountService(self.user).check_confirmation_secret(
             self.cleaned_data.get("secret", ""), self.cleaned_data.get("email", "")
         )

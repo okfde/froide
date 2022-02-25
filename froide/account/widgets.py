@@ -2,6 +2,14 @@ from typing import Dict, Optional, Union
 
 from django import forms
 
+Replacements = Dict[
+    str,
+    Union[
+        Dict[str, Union[str, bool, Dict[str, Union[str, bool]]]],
+        Dict[str, Optional[Union[str, bool, Dict[str, Union[str, bool]]]]],
+    ],
+]
+
 
 class ConfirmationWidget(forms.TextInput):
     template_name = "account/widgets/confirmation.html"
@@ -10,15 +18,7 @@ class ConfirmationWidget(forms.TextInput):
         self.phrase = phrase
         super(ConfirmationWidget, self).__init__(**kwargs)
 
-    def get_context(
-        self, *args
-    ) -> Dict[
-        str,
-        Union[
-            Dict[str, Union[str, bool, Dict[str, Union[str, bool]]]],
-            Dict[str, Optional[Union[str, bool, Dict[str, Union[str, bool]]]]],
-        ],
-    ]:
+    def get_context(self, *args) -> Replacements:
         context = super(ConfirmationWidget, self).get_context(*args)
         context["widget"].update({"phrase": self.phrase})
         return context

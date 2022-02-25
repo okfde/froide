@@ -490,16 +490,19 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         return get_redirect_url(self.request, default=reverse("account-show"))
 
 
+Replacements = Optional[
+    Union[
+        Dict[str, UserChangeDetailsForm],
+        Dict[str, UserDeleteForm],
+        Dict[str, SetPasswordForm],
+    ]
+]
+
+
 @login_required
 def account_settings(
     request: HttpRequest,
-    context: Optional[
-        Union[
-            Dict[str, UserChangeDetailsForm],
-            Dict[str, UserDeleteForm],
-            Dict[str, SetPasswordForm],
-        ]
-    ] = None,
+    context: Replacements = None,
     status: int = 200,
 ) -> HttpResponse:
     if not context:

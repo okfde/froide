@@ -31,12 +31,15 @@ def send_mail_users(subject, body, users, **kwargs):
         send_mail_user(subject, body, user, **kwargs)
 
 
+Replacements = Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
+
+
 class OnlyActiveUsersMailMiddleware:
     def should_mail(
         self,
         mail_intent: str,
         context: Dict[str, Any],
-        email_kwargs: Dict[str, Optional[Union[str, bool, Dict[str, str]]]],
+        email_kwargs: Replacements,
     ) -> None:
         user = context.get("user")
         if not user:
