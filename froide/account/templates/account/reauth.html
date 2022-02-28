@@ -29,7 +29,7 @@
           {% translate "Please authenticate again with any of the methods below" %}
         </div>
         <ul class="list-group list-group-flush">
-        {% if "TOTP" in mfa_methods %}
+        {% if "FIDO2" in mfa_methods %}
           <li class="list-group-item">
           <h5>{% translate "Use hardware security key" %}</h5>
             <form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
