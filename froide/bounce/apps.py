@@ -50,6 +50,9 @@ def export_user_data(user):
     )
 
 
+EmailKwargs = Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
+
+
 class UnsubscribeReferenceMailMiddleware:
     """
     Moves unsubscribe_reference from mail render context
@@ -57,10 +60,7 @@ class UnsubscribeReferenceMailMiddleware:
     """
 
     def enhance_email_kwargs(
-        self,
-        mail_intent: str,
-        context: Dict[str, Any],
-        email_kwargs: Dict[str, Optional[Union[str, bool, Dict[str, str]]]],
+        self, mail_intent: str, context: Dict[str, Any], email_kwargs: EmailKwargs
     ) -> Optional[Dict[str, str]]:
         unsubscribe_reference = context.get("unsubscribe_reference")
         if unsubscribe_reference is None:

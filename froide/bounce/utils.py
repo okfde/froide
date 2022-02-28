@@ -258,10 +258,11 @@ def update_bounce(email: ParsedEmail, recipient: str) -> None:
         )
 
 
+Bounces = List[Dict[str, Union[DsnStatus, bool, str]]]
+
+
 def get_bounce_stats(
-    bounces: List[Dict[str, Union[DsnStatus, bool, str]]],
-    bounce_type: str = "hard",
-    start_date: Optional[datetime] = None,
+    bounces: Bounces, bounce_type: str = "hard", start_date: Optional[datetime] = None
 ) -> int:
     filtered_bounces = [
         datetime.strptime(b["timestamp"][:19], "%Y-%m-%dT%H:%M:%S")
