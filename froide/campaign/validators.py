@@ -7,10 +7,10 @@ from froide.foirequest.models.draft import RequestDraft
 
 from .models import Campaign
 
+Data = Dict[str, Optional[Union[str, bool, RequestDraft]]]
 
-def validate_not_campaign(
-    data: Dict[str, Optional[Union[str, bool, RequestDraft]]]
-) -> None:
+
+def validate_not_campaign(data: Data) -> None:
     subject = data.get("subject", "")
     body = data.get("body", "")
     text = "\n".join((subject, body)).strip()
