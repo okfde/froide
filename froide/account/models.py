@@ -101,6 +101,10 @@ def profile_photo_path(instance=None, filename=None):
     return os.path.join(*path)
 
 
+Replacements = Optional[Dict[str, str]]
+Redactions = List[Union[Tuple[str, str], Tuple[Pattern, str]]]
+
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     username_validator = UnicodeUsernameValidator()
@@ -276,9 +280,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         service = AccountService(self)
         return service.get_autologin_url(url)
 
-    def get_redactions(
-        self, replacements: Optional[Dict[str, str]] = None
-    ) -> List[Union[Tuple[str, str], Tuple[Pattern, str]]]:
+    def get_redactions(self, replacements: Replacements = None) -> Redactions:
         account_service = self.get_account_service()
         return list(account_service.get_user_redactions(replacements))
 

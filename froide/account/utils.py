@@ -31,7 +31,7 @@ def send_mail_users(subject, body, users, **kwargs):
         send_mail_user(subject, body, user, **kwargs)
 
 
-Replacements = Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
+EmailKwargs = Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
 
 
 class OnlyActiveUsersMailMiddleware:
@@ -39,7 +39,7 @@ class OnlyActiveUsersMailMiddleware:
         self,
         mail_intent: str,
         context: Dict[str, Any],
-        email_kwargs: Replacements,
+        email_kwargs: EmailKwargs,
     ) -> None:
         user = context.get("user")
         if not user:
@@ -103,12 +103,15 @@ def merge_accounts(old_user: User, new_user: User) -> None:
     old_user.delete()
 
 
+Dupe = Optional[Tuple[str, str]]
+
+
 def move_ownership(
     model: Any,
     attr: str,
     old_user: Union[int, User],
     new_user: Union[int, User],
-    dupe: Optional[Tuple[str, str]] = None,
+    dupe: Dupe = None,
 ) -> None:
     qs = model.objects.filter(**{attr: old_user})
 

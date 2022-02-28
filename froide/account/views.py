@@ -334,6 +334,9 @@ class ReAuthView(FormView):
         return get_redirect_url(self.request)
 
 
+FormKwargs = Dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]
+
+
 class SignupView(FormView):
     template_name = "account/signup.html"
     form_class = SignUpForm
@@ -345,9 +348,7 @@ class SignupView(FormView):
             return redirect("account-show")
         return super().dispatch(request, *args, **kwargs)
 
-    def get_form_kwargs(
-        self,
-    ) -> Dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]:
+    def get_form_kwargs(self) -> FormKwargs:
         kwargs = super().get_form_kwargs()
         kwargs.update({"request": self.request})
         return kwargs
@@ -490,7 +491,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         return get_redirect_url(self.request, default=reverse("account-show"))
 
 
-Replacements = Optional[
+Context = Optional[
     Union[
         Dict[str, UserChangeDetailsForm],
         Dict[str, UserDeleteForm],
@@ -502,7 +503,7 @@ Replacements = Optional[
 @login_required
 def account_settings(
     request: HttpRequest,
-    context: Replacements = None,
+    context: Context = None,
     status: int = 200,
 ) -> HttpResponse:
     if not context:
