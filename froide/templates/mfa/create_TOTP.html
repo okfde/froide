@@ -3,6 +3,7 @@
 {% load static mfa %}
 {% load i18n %}
 {% load form_helper %}
+{% load account_tags %}
 
 {% block title %}{% translate "Setup authenticator app" %}{% endblock %}
 
@@ -26,8 +27,18 @@
 <form method="POST">
   {% csrf_token %}
   {% include "helper/forms/errors.html" with errors=form.code.errors %}
+  {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
+
   {% render_field form.name %}
-  {% render_field form.code %}
+
+  <div class="form-group row">
+    <label class="font-weight-bold col-md-4 col-form-label" for="id_code">
+      {{ form.code.label }}
+    </label>
+    <div class="col-md-8">
+      {% render_pininput name="code" %}
+    </div>
+  </div>
   <button type="submit" class="btn btn-primary pull-right">
     {% translate "Setup authenticator app" %}
   </button>

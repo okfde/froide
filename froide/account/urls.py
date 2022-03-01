@@ -1,6 +1,6 @@
 from django.urls import include, path, re_path
 
-from . import oauth_urls
+from . import mfa_urls, oauth_urls
 from .views import (
     AccountConfirmedView,
     AccountView,
@@ -28,8 +28,9 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", include(oauth_urls, namespace="oauth2_provider")),
     path("", AccountView.as_view(), name="account-show"),
+    path("", include(oauth_urls, namespace="oauth2_provider")),
+    path("mfa/", include(mfa_urls, namespace="mfa")),
     path("new/", NewAccountView.as_view(), name="account-new"),
     path("confirmed/", AccountConfirmedView.as_view(), name="account-confirmed"),
     path("profile/", profile_redirect, name="account-profile_redirect"),

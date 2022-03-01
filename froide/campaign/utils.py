@@ -1,7 +1,9 @@
+from froide.foirequest.models.request import FoiRequest
+
 from .models import Campaign
 
 
-def connect_foirequest(foirequest, ident):
+def connect_foirequest(foirequest: FoiRequest, ident: str) -> None:
     try:
         campaign = Campaign.objects.get(ident=ident)
     except Campaign.DoesNotExist:
