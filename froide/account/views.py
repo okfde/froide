@@ -269,8 +269,11 @@ class LoginView(MFALoginView):
     def get_success_url(self):
         # user language is set via logged in signal
         url = get_redirect_url(self.request, default="account-show")
+        # Avoid redirect loop
         if url.startswith(self.request.path):
             return reverse("account-show")
+        if url.startswith(reverse("admin:login")):
+            return reverse("admin:index")
         return url
 
     def get_context_data(self, **kwargs):

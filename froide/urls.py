@@ -152,9 +152,6 @@ froide_urlpatterns += [
     path(pgettext_lazy("url part", "documents/"), include("froide.document.urls")),
     path(pgettext_lazy("url part", "account/teams/"), include("froide.team.urls")),
     path(pgettext_lazy("url part", "account/"), include("froide.account.urls")),
-    path(
-        pgettext_lazy("url part", "account/mfa/"), include("mfa.urls", namespace="mfa")
-    ),
     path("", include("froide.account.export_urls")),
     path(
         pgettext_lazy("url part", "account/access-token/"),

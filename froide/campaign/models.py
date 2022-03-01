@@ -2,15 +2,16 @@ import re
 
 from django.contrib.auth.models import Group
 from django.db import models
+from django.db.models.query import QuerySet
 from django.template.loader import select_template
 from django.utils.translation import gettext_lazy as _
 
 
 class CampaignManager(models.Manager):
-    def get_filter_list(self):
+    def get_filter_list(self) -> QuerySet:
         return super().get_queryset().filter(public=True)
 
-    def get_active(self):
+    def get_active(self) -> QuerySet:
         return super().get_queryset().filter(active=True)
 
 
