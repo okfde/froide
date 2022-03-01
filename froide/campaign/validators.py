@@ -1,10 +1,16 @@
+from typing import Dict, Optional, Union
+
 from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.models.draft import RequestDraft
+
 from .models import Campaign
 
+Data = Dict[str, Optional[Union[str, bool, RequestDraft]]]
 
-def validate_not_campaign(data):
+
+def validate_not_campaign(data: Data) -> None:
     subject = data.get("subject", "")
     body = data.get("body", "")
     text = "\n".join((subject, body)).strip()
