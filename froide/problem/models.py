@@ -78,10 +78,8 @@ class ProblemReportManager(models.Manager):
         if foirequest:
             qs = qs.filter(message__request=foirequest)
         qs = qs.filter(kind=kind)
-        report = qs.first()
-        if not report:
-            return
-        return report.resolve(user, resolution=resolution)
+        for report in qs:
+            report.resolve(user, resolution=resolution)
 
 
 class ProblemReport(models.Model):
@@ -157,7 +155,13 @@ class ProblemReport(models.Model):
         self.moderator = user
         self.save()
         resolved.send(sender=self)
+        self.resolve_identical(user, resolution=resolution)
         return inform_user_problem_resolved(self)
+
+    def resolve_identical(self, user, resolution=""):
+        self.objects.find_and_resolve(
+            message=self.message, kind=self.kind, user=user, resolution=resolution
+        )
 
     def escalate(self, user, escalation=""):
         self.moderator = user
