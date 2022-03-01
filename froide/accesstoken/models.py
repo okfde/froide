@@ -7,36 +7,36 @@ from django.utils.translation import gettext_lazy as _
 
 
 class AccessTokenManager(models.Manager):
-    def create_for_user(self, user, purpose=None):
+    def create_for_user(self, user, purpose):
         at, created = AccessToken.objects.get_or_create(user=user, purpose=purpose)
         return at.token
 
-    def reset(self, user, purpose=None):
+    def reset(self, user, purpose):
         new_token = uuid.uuid4()
         AccessToken.objects.filter(user=user, purpose=purpose).update(
             token=new_token, timestamp=timezone.now()
         )
         return new_token
 
-    def get_token_by_user(self, user, purpose=None):
+    def get_token_by_user(self, user, purpose):
         at = self.get_by_user(user, purpose=purpose)
         if at is not None:
             return at.token
         return None
 
-    def get_by_user(self, user, purpose=None):
+    def get_by_user(self, user, purpose):
         try:
             return AccessToken.objects.get(user=user, purpose=purpose)
         except AccessToken.DoesNotExist:
             return None
 
-    def get_by_token(self, token, purpose=None):
+    def get_by_token(self, token, purpose):
         try:
             return AccessToken.objects.get(token=token, purpose=purpose)
         except AccessToken.DoesNotExist:
             return None
 
-    def get_user_by_token(self, token, purpose=None):
+    def get_user_by_token(self, token, purpose):
         access_token = self.get_by_token(token, purpose=purpose)
         if access_token:
             return access_token.user
