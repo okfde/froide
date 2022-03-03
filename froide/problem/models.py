@@ -159,7 +159,7 @@ class ProblemReport(models.Model):
         return inform_user_problem_resolved(self)
 
     def resolve_identical(self, user, resolution=""):
-        self.objects.find_and_resolve(
+        ProblemReport.objects.find_and_resolve(
             message=self.message, kind=self.kind, user=user, resolution=resolution
         )
 

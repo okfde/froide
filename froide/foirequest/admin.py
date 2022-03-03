@@ -200,6 +200,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "mark_same_as",
         "update_index",
         "confirm_request",
+        "publish",
         "unpublish",
         "add_to_project",
         "unblock_request",
@@ -385,6 +386,15 @@ class FoiRequestAdmin(admin.ModelAdmin):
         self.message_user(request, _("Selected requests are now unpublished."))
 
     unpublish.short_description = _("Unpublish")
+
+    def publish(self, request, queryset):
+        from .utils import update_foirequest_index
+
+        queryset.update(public=True, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC)
+        update_foirequest_index(queryset)
+        self.message_user(request, _("Selected requests are now published."))
+
+    publish.short_description = _("Publish")
 
     def unblock_request(self, request, queryset):
         for req in queryset:
