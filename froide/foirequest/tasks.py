@@ -19,9 +19,7 @@ from .notifications import send_classification_reminder
 logger = logging.getLogger(__name__)
 
 
-@celery_app.task(
-    name="froide.foirequest.tasks.process_mail", acks_late=True, time_limit=60
-)
+@celery_app.task(name="froide.foirequest.tasks.process_mail", acks_late=True)
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
