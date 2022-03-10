@@ -121,14 +121,21 @@ $box-shadow-gray-sm: 2px 2px 0 transparentize($gray-300, 0.6);
 $box-shadow-yellow: 7px 7px 0 transparentize($yellow-300, 0.85);
 $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
+@import "~bootstrap/scss/variables";
 
 :root {
   --shadow-blue: #{transparentize($blue-30, 0.85)};
   --shadow-gray: #{transparentize($gray-300, 0.6)};
   --shadow-yellow: #{transparentize($yellow-300, 0.85)};
-}
 
-@import "~bootstrap/scss/variables";
+  @each $color, $value in $colors {
+    --#{$color}: #{$value};
+  }
+
+  @each $color, $value in $theme-colors {
+    --#{$color}: #{$value};
+  }
+}
 
 /* Bootstrap theme end*/
 
