@@ -10,7 +10,7 @@ class CommentEvent(Event):
         self.comment = comment
 
     def as_text(self):
-        return _("New comment by %(name)s").format(name=self.comment.user_name)
+        return _("New comment by {name}").format(name=self.comment.user_name)
 
     def as_html(self):
         return ""
