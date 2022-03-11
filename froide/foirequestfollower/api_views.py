@@ -17,6 +17,7 @@ from rest_framework.reverse import reverse
 
 from froide.foirequest.auth import get_read_foirequest_queryset
 from froide.foirequest.models.request import FoiRequest, get_absolute_domain_short_url
+from froide.follow.configuration import follow_registry
 from froide.helper.api_utils import CustomLimitOffsetPagination
 
 from .models import FoiRequestFollower
@@ -41,10 +42,9 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
         fields = ("request",)
 
     def __init__(self, *args, **kwargs):
-        super(CreateFoiRequestFollowSerializer, self).__init__(*args, **kwargs)
-        qs = FoiRequestFollower.objects.get_followable_requests(
-            self.context["view"].request.user
-        )
+        super().__init__(*args, **kwargs)
+        configuration = follow_registry.get_by_model(FoiRequestFollower)
+        qs = configuration.get_content_object_queryset(self.context["view"].request)
         self.fields["request"].queryset = qs
 
     def validate_request(self, value):
@@ -64,7 +64,7 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         follower, create = FoiRequestFollower.objects.get_or_create(
-            request=validated_data["request"],
+            content_object=validated_data["request"],
             user=validated_data["user"],
             defaults={"timestamp": timezone.now(), "confirmed": True},
         )
@@ -98,7 +98,7 @@ class FoiRequestFollowSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_request_url(self, obj):
-        return get_absolute_domain_short_url(obj.request_id)
+        return get_absolute_domain_short_url(obj.content_object_id)
 
 
 class FoiRequestFollowRequestSerializer(serializers.HyperlinkedModelSerializer):
@@ -164,7 +164,7 @@ class FoiRequestFollowerViewSet(
             qs = qs.filter(id__in=requests)
         if user.is_authenticated and (not token or token.is_valid(self.read_scopes)):
             follows = FoiRequestFollower.objects.filter(
-                request_id=OuterRef("pk"), user=user
+                content_object_id=OuterRef("pk"), user=user
             )
             qs = qs.annotate(
                 follows=Exists(follows),
@@ -212,7 +212,7 @@ class FoiRequestFollowerViewSet(
 
         if self.action == "list":
             follower_count = (
-                FoiRequest.objects.filter(id=OuterRef("request"))
+                FoiRequest.objects.filter(id=OuterRef("content_object"))
                 .values("pk")
                 .annotate(count=Count("followers"))
             )

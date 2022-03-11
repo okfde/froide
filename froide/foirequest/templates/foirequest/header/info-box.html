@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load foirequest_tags %}
 {% load permission_helper %}
+{% load follow_tags %}
 
 {% comment %}
   Info box colors:
@@ -151,7 +152,7 @@
       {% block followers %}
         {% if object.is_public %}
           <li class="info-box__list-item info-box__list-item--has-divider">
-            {% include "foirequestfollower/show.html" %}
+            {% show_follow "request" object %}
           </li>
         {% endif %}
       {% endblock followers %}

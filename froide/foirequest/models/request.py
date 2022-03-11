@@ -715,11 +715,6 @@ class FoiRequest(models.Model):
     def set_awaits_classification(self):
         self.status = Status.AWAITING_CLASSIFICATION
 
-    def follow_count(self):
-        from froide.foirequestfollower.models import FoiRequestFollower
-
-        return FoiRequestFollower.objects.filter(request=self, confirmed=True).count()
-
     def public_date(self):
         if self.due_date:
             return self.due_date + timedelta(

@@ -145,7 +145,8 @@ if len(settings.LANGUAGES) > 1:
 froide_urlpatterns += [
     # Translators: follow request URL
     path(
-        pgettext_lazy("url part", "follow/"), include("froide.foirequestfollower.urls")
+        pgettext_lazy("url part", "follow/"),
+        include("froide.follow.urls", namespace="follow"),
     ),
     path("", include("froide.publicbody.urls")),
     path(pgettext_lazy("url part", "law/"), include("froide.publicbody.law_urls")),

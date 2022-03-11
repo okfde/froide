@@ -1,10 +1,9 @@
 {% load i18n %}
-{% load follower_tags %}
 
 <span class="badge {% if count %}badge-success{% else %}badge-light{% endif %}">
-  {% blocktrans count counter=count %}
+  {% blocktranslate count counter=count %}
     One follower
   {% plural %}
     {{ counter }} followers
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </span>

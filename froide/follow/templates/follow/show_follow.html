@@ -1,15 +1,15 @@
 {% load i18n %}
 
 <div class="ajax-parent">
-  {% if request.user != object.user %}
+  {% if can_follow %}
     {% if email_followed %}
       <div class="alert alert-info">
         {% trans "Please check your email inbox for a confirmation email." %}
       </div>
     {% else %}
-      {% include "foirequestfollower/follow_form.html" with count=count %}
+      {% include "follow/_follow_form.html" with count=count %}
     {% endif %}
   {% else %}
-    {% include "foirequestfollower/follow_count_badge.html" with count=object.follow_count %}
+    {% include "follow/follow_count_badge.html" with count=count %}
   {% endif %}
 </div>

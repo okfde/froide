@@ -1,31 +1,37 @@
 import json
 import re
+from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 import factory
 from django_comments import get_form, get_model
 
 from froide.foirequest.models import FoiRequest
+from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
 from froide.foirequest.tests.test_api import OAuthAPIMixin
+from froide.follow.notifications import run_batch_update
 
+from .configuration import FoiRequestFollowConfiguration
 from .models import FoiRequestFollower
-from .utils import run_batch_update
 
 User = get_user_model()
 Comment = get_model()
 CommentForm = get_form()
+
+CONF_SLUG = FoiRequestFollowConfiguration.slug
 
 
 class FoiRequestFollowerFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = FoiRequestFollower
 
-    request = factory.SubFactory(factories.FoiRequestFactory)
+    content_object = factory.SubFactory(factories.FoiRequestFactory)
     user = factory.SubFactory(factories.UserFactory)
     email = ""
     confirmed = True
@@ -40,11 +46,11 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username="sw")
         self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG})
         )
         # Can't follow my own requests
         self.assertEqual(response.status_code, 404)
-        followers = FoiRequestFollower.objects.filter(request=req, user=user)
+        followers = FoiRequestFollower.objects.filter(content_object=req, user=user)
         self.assertEqual(followers.count(), 0)
         self.client.logout()
         user = User.objects.get(username="dummy")
@@ -52,42 +58,50 @@ class FoiRequestFollowerTest(TestCase):
         req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
         req.save()
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG})
         )
         self.assertEqual(response.status_code, 404)
         req.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
         req.save()
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG})
         )
         self.assertEqual(response.status_code, 302)
-        follower = FoiRequestFollower.objects.get(request=req, user=user)
+        follower = FoiRequestFollower.objects.get(content_object=req, user=user)
         self.assertEqual(len(mail.outbox), 0)
         # Make second message postal message
         # So there's no notification to requester about sent mail
-        req.messages[1].kind = "post"
+        req.messages[1].kind = MessageKind.POST
         req.message_sent.send(sender=req, message=req.messages[1])
         self.assertEqual(len(mail.outbox), 1)
         mes = mail.outbox[0]
-        match = re.search(r"/%d/(\w+)/" % follower.pk, mes.body)
+        match = re.search(r"/%s-%d/(\w+)/" % (CONF_SLUG, follower.pk), mes.body)
         check = match.group(1)
         response = self.client.get(
             reverse(
-                "foirequestfollower-confirm_unfollow",
-                kwargs={"follow_id": follower.id, "check": "a" * 32},
+                "follow:confirm_unfollow",
+                kwargs={
+                    "follow_id": follower.id,
+                    "check": "a" * 32,
+                    "conf_slug": CONF_SLUG,
+                },
             )
         )
         self.assertEqual(response.status_code, 302)
-        follower = FoiRequestFollower.objects.get(request=req, user=user)
+        follower = FoiRequestFollower.objects.get(content_object=req, user=user)
         response = self.client.get(
             reverse(
-                "foirequestfollower-confirm_unfollow",
-                kwargs={"follow_id": follower.id, "check": check},
+                "follow:confirm_unfollow",
+                kwargs={
+                    "follow_id": follower.id,
+                    "check": check,
+                    "conf_slug": CONF_SLUG,
+                },
             )
         )
         self.assertEqual(response.status_code, 302)
         try:
-            FoiRequestFollower.objects.get(request=req, user=user)
+            FoiRequestFollower.objects.get(content_object=req, user=user)
         except FoiRequestFollower.DoesNotExist:
             pass
         else:
@@ -98,57 +112,71 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username="dummy")
         self.client.login(email="dummy@example.org", password="froide")
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG})
         )
         self.assertEqual(response.status_code, 302)
-        follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
+        follower = FoiRequestFollower.objects.filter(
+            content_object=req, user=user
+        ).count()
         self.assertEqual(follower, 1)
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG})
         )
         self.assertEqual(response.status_code, 302)
-        follower = FoiRequestFollower.objects.filter(request=req, user=user).count()
+        follower = FoiRequestFollower.objects.filter(
+            content_object=req, user=user
+        ).count()
         self.assertEqual(follower, 0)
 
     def test_email_following(self):
         req = FoiRequest.objects.all()[0]
         email = "test@example.org"
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk}),
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG}),
             {"email": email},
         )
         self.assertEqual(response.status_code, 302)
-        follower = FoiRequestFollower.objects.get(request=req, user=None, email=email)
+        follower = FoiRequestFollower.objects.get(
+            content_object=req, user=None, email=email
+        )
         self.assertFalse(follower.confirmed)
         self.assertEqual(len(mail.outbox), 1)
 
         # Bad secret in URL
         response = self.client.get(
             reverse(
-                "foirequestfollower-confirm_follow",
-                kwargs={"follow_id": follower.id, "check": "a" * 32},
+                "follow:confirm_follow",
+                kwargs={
+                    "follow_id": follower.id,
+                    "check": "a" * 32,
+                    "conf_slug": CONF_SLUG,
+                },
             )
         )
         self.assertEqual(response.status_code, 302)
         self.assertFalse(
             FoiRequestFollower.objects.filter(
-                request=req, user=None, email=email, confirmed=True
+                content_object=req, user=None, email=email, confirmed=True
             ).exists()
         )
         mes = mail.outbox[0]
-        match = re.search(r"/%d/(\w+)/" % follower.pk, mes.body)
+        match = re.search(r"/%s-%d/(\w+)/" % (CONF_SLUG, follower.pk), mes.body)
         check = match.group(1)
 
         response = self.client.get(
             reverse(
-                "foirequestfollower-confirm_follow",
-                kwargs={"follow_id": follower.id, "check": check},
+                "follow:confirm_follow",
+                kwargs={
+                    "follow_id": follower.id,
+                    "check": check,
+                    "conf_slug": CONF_SLUG,
+                },
             )
         )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(
             FoiRequestFollower.objects.filter(
-                request=req, user=None, email=email, confirmed=True
+                content_object=req, user=None, email=email, confirmed=True
             ).exists()
         )
 
@@ -157,28 +185,34 @@ class FoiRequestFollowerTest(TestCase):
         user = User.objects.get(username="dummy")
         email = user.email
         response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk}),
+            reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG}),
             {"email": email},
         )
         self.assertEqual(response.status_code, 302)
-        follower = FoiRequestFollower.objects.get(request=req, user=None, email=email)
+        follower = FoiRequestFollower.objects.get(
+            content_object=req, user=None, email=email
+        )
         self.assertFalse(follower.confirmed)
         self.assertEqual(len(mail.outbox), 1)
 
         mes = mail.outbox[0]
-        match = re.search(r"/%d/(\w+)/" % follower.pk, mes.body)
+        match = re.search(r"/%s-%d/(\w+)/" % (CONF_SLUG, follower.pk), mes.body)
         check = match.group(1)
 
         response = self.client.get(
             reverse(
-                "foirequestfollower-confirm_follow",
-                kwargs={"follow_id": follower.id, "check": check},
+                "follow:confirm_follow",
+                kwargs={
+                    "follow_id": follower.id,
+                    "check": check,
+                    "conf_slug": CONF_SLUG,
+                },
             )
         )
         self.assertEqual(response.status_code, 302)
         self.assertTrue(
             FoiRequestFollower.objects.filter(
-                request=req, user=user, email="", confirmed=True
+                content_object=req, user=user, email="", confirmed=True
             ).exists()
         )
 
@@ -188,9 +222,7 @@ class FoiRequestFollowerTest(TestCase):
         comment_user = factories.UserFactory()
         user = User.objects.get(username="dummy")
         self.client.login(email="dummy@example.org", password="froide")
-        response = self.client.post(
-            reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
-        )
+        response = self.client.post(reverse("follow:follow", kwargs={"pk": req.pk}))
         self.assertEqual(response.status_code, 302)
         self.client.logout()
         ok = self.client.login(username=comment_user.email, password="froide")
@@ -204,10 +236,12 @@ class FoiRequestFollowerTest(TestCase):
         f = CommentForm(mes)
         d.update(f.initial)
         self.client.post(reverse("comments-post-comment"), d)
-        run_batch_update()
-        self.assertEqual(len(mail.outbox), 2)
-        self.assertEqual(mail.outbox[0].to[0], req.user.email)
-        self.assertEqual(mail.outbox[1].to[0], user.email)
+        end = timezone.now()
+        start = end - timedelta(minutes=5)
+        # Update followers (not requester)
+        run_batch_update(start=start, end=end)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to[0], user.email)
 
     def test_updates_avoid(self):
         mail.outbox = []
@@ -225,7 +259,9 @@ class FoiRequestFollowerTest(TestCase):
         d.update(f.initial)
         self.client.post(reverse("comments-post-comment"), d)
 
-        run_batch_update(update_requester=False)
+        end = timezone.now()
+        start = end - timedelta(minutes=5)
+        run_batch_update(start=start, end=end)
 
         self.assertEqual(len(mail.outbox), 0)
 
@@ -236,7 +272,7 @@ class FoiRequestFollowerTest(TestCase):
             ok = self.client.login(email=email, password="froide")
             self.assertTrue(ok)
             response = self.client.post(
-                reverse("foirequestfollower-follow", kwargs={"pk": req.pk})
+                reverse("follow:follow", kwargs={"pk": req.pk, "conf_slug": CONF_SLUG})
             )
             self.assertEqual(response.status_code, 302)
             self.client.logout()
@@ -254,7 +290,10 @@ class FoiRequestFollowerTest(TestCase):
         do_follow(req2, "dummy@example.org")
         do_comment(mes2, "info@fragdenstaat.de")
 
-        run_batch_update()
+        end = timezone.now()
+        start = end - timedelta(minutes=5)
+        run_batch_update(start=start, end=end)
+
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to[0], dummy_user.email)
 
@@ -263,9 +302,9 @@ class FoiRequestFollowerTest(TestCase):
 
         do_comment(mes2, "dummy@example.org")
 
-        run_batch_update()
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to[0], req.user.email)
+        run_batch_update(start=start, end=end)
+        # Don't send updates to dummy for dummy's own comment
+        self.assertEqual(len(mail.outbox), 0)
 
 
 class ApiTest(OAuthAPIMixin, TestCase):
@@ -416,7 +455,7 @@ class ApiTest(OAuthAPIMixin, TestCase):
         self.client.login(email="dummy@example.org", password="froide")
 
         ff_obj = FoiRequestFollower.objects.create(
-            id=self.accessible.id, user=self.dev_user, request=self.accessible
+            id=self.accessible.id, user=self.dev_user, content_object=self.accessible
         )
 
         delete_url = reverse(

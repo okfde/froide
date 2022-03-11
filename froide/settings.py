@@ -49,6 +49,7 @@ class Base(Configuration):
             "mfa",
             # local
             "froide.foirequest",
+            "froide.follow",
             "froide.foirequestfollower",  # needs to come after foirequest
             "froide.frontpage",
             "froide.georegion",
@@ -387,9 +388,13 @@ class Base(Configuration):
             "task": "froide.foirequest.tasks.detect_overdue",
             "schedule": crontab(hour=0, minute=0),
         },
+        "batch-update-foirequest": {
+            "task": "froide.foirequest.tasks.batch_update_requester_task",
+            "schedule": crontab(hour=0, minute=1),
+        },
         "update-foirequestfollowers": {
             "task": "froide.foirequestfollower.tasks.batch_update",
-            "schedule": crontab(hour=0, minute=0),
+            "schedule": crontab(hour=0, minute=1),
         },
         "classification-reminder": {
             "task": "froide.foirequest.tasks.classification_reminder",

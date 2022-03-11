@@ -1,0 +1,1 @@
+{% load i18n %}{% autoescape off %}{% blocktranslate count counter=count %}Update on one followed item{% plural %}Update on {{ counter }} followed items{% endblocktranslate %}{% endautoescape %}
