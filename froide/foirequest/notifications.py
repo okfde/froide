@@ -52,11 +52,12 @@ COMBINE_EVENTS = set(
 )
 
 
-def get_event_updates(start: datetime, end: datetime):
+def get_event_updates(start: datetime, end: datetime, **filter_kwargs):
     events = (
         FoiEvent.objects.filter(
             timestamp__gte=start, timestamp__lt=end, event_name__in=INTERESTING_EVENTS
         )
+        .filter(**filter_kwargs)
         .select_related("request")
         .order_by("-timestamp")
     )
@@ -71,12 +72,12 @@ def get_event_updates(start: datetime, end: datetime):
         yield event.to_notification()
 
 
-def get_comment_updates(start: datetime, end: datetime):
+def get_comment_updates(start: datetime, end: datetime, **filter_kwargs):
     ct = ContentType.objects.get_for_model(FoiMessage)
 
     comments = Comment.objects.filter(
         content_type=ct, submit_date__gte=start, submit_date__lt=end
-    )
+    ).filter(**filter_kwargs)
 
     for comment in comments:
         try:

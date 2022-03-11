@@ -1,8 +1,12 @@
+import itertools
+from datetime import datetime
+
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.auth import can_read_foirequest, get_read_foirequest_queryset
 from froide.foirequest.models import FoiRequest
+from froide.foirequest.notifications import get_comment_updates, get_event_updates
 from froide.follow.configuration import FollowConfiguration
 from froide.helper.notifications import Notification, TemplatedEvent
 
@@ -39,6 +43,11 @@ class FoiRequestFollowConfiguration(FollowConfiguration):
             return False
 
         return super().can_follow(content_object, user)
+
+    def get_batch_updates(self, start: datetime, end: datetime):
+        return itertools.chain(
+            get_comment_updates(start, end), get_event_updates(start, end)
+        )
 
     def get_confirm_follow_message(self, content_object):
         return _(

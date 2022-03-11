@@ -5,7 +5,6 @@ from typing import Dict, List
 from django.conf import settings
 from django.utils import translation
 
-from froide.foirequest.notifications import get_comment_updates, get_event_updates
 from froide.helper.date_utils import get_yesterday_datetime_range
 from froide.helper.email_sending import mail_registry
 from froide.helper.notifications import Notification
@@ -94,7 +93,10 @@ def run_batch_update(start=None, end=None):
         start, end = get_yesterday_datetime_range()
 
     notifications = list(
-        itertools.chain(get_comment_updates(start, end), get_event_updates(start, end))
+        itertools.chain.from_iterable(
+            configuration.get_batch_updates(start, end)
+            for configuration in follow_registry.get_entries()
+        )
     )
 
     follower_updates = get_follower_updates(notifications)

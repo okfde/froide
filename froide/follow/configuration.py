@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime
 from typing import Dict, Iterator, List
 
 from django import forms
@@ -53,6 +54,9 @@ class FollowConfiguration:
 
     def wants_update(self, update_list: List[Notification]) -> bool:
         return True
+
+    def get_batch_updates(self, start: datetime, end: datetime):
+        return []
 
     def get_follow_form_class(self):
         from .forms import FollowForm
