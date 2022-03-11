@@ -1,5 +1,4 @@
 import base64
-import json
 import random
 import zipfile
 from contextlib import closing, contextmanager
@@ -13,7 +12,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from froide.helper.email_parsing import parse_email, parse_postmark
+from froide.helper.email_parsing import parse_email
 from froide.helper.email_utils import (
     get_mail_client,
     get_unread_mails,
@@ -95,13 +94,11 @@ def send_foi_mail(
     return email.send()
 
 
-def _process_mail(mail_bytes, mail_uid=None, mail_type=None, manual=False):
+def _process_mail(mail_bytes, mail_uid=None, manual=False):
     email = None
-    if mail_type is None:
-        with closing(BytesIO(mail_bytes)) as stream:
-            email = parse_email(stream)
-    elif mail_type == "postmark":
-        email = parse_postmark(json.loads(mail_bytes.decode("utf-8")))
+
+    with closing(BytesIO(mail_bytes)) as stream:
+        email = parse_email(stream)
     assert email is not None
 
     _deliver_mail(email, mail_bytes=mail_bytes, manual=manual)
