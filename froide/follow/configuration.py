@@ -97,8 +97,6 @@ class FollowConfiguration:
         return content_object._follow_count
 
     def can_follow(self, content_object, user):
-        if user.is_authenticated:
-            return content_object.user != user
         return True
 
     def cancel_user(self, user):

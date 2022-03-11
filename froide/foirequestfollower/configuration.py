@@ -42,6 +42,9 @@ class FoiRequestFollowConfiguration(FollowConfiguration):
         if request and not can_read_foirequest(content_object, request):
             return False
 
+        if user.is_authenticated:
+            return content_object.user != user
+
         return super().can_follow(content_object, user)
 
     def get_batch_updates(self, start: datetime, end: datetime):
