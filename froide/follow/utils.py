@@ -33,7 +33,7 @@ def get_context(
             kwargs={"pk": content_object.pk, "conf_slug": configuration.slug},
         ),
         "action_labels": configuration.get_action_labels(),
-        "can_follow": configuration.can_follow(content_object, user),
+        "can_follow": configuration.can_follow(content_object, user, request=request),
     }
     context.update(kwargs)
     return context
