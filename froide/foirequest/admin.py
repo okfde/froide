@@ -728,6 +728,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         "pending",
         ("belongs_to__request", ForeignKeyFilter),
         ("belongs_to__request__user", ForeignKeyFilter),
+        ("belongs_to__sender_public_body", ForeignKeyFilter),
     )
     search_fields = ["name"]
     formfield_overrides = {
