@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 20:22+0100\n"
-"PO-Revision-Date: 2022-03-11 20:28+0100\n"
+"POT-Creation-Date: 2022-03-11 20:35+0100\n"
+"PO-Revision-Date: 2022-03-11 20:36+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -7447,11 +7447,12 @@ msgstr ""
 "passiert. Sie können die Benachrichtigungen jederzeit abbestellen."
 
 #: froide/foirequestfollower/configuration.py:45
+#, python-brace-format
 msgid ""
-"please confirm that you want to follow the request “{{ title }}” on "
-"{{ site_name }} by clicking this link:"
+"please confirm that you want to follow the request “{title}” on {site_name} "
+"by clicking this link:"
 msgstr ""
-"bitte bestätigen Sie, dass Sie für die Anfrage „%(title)s“ auf %(site_name)s "
+"bitte bestätigen Sie, dass Sie für die Anfrage „{title}“ auf {site_name} "
 "Benachrichtigungen erhalten wollen, indem Sie diesen Link klicken:"
 
 #: froide/foirequestfollower/configuration.py:67
