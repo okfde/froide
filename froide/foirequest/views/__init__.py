@@ -41,8 +41,6 @@ from .misc_views import (
     download_foirequest_pdf,
     download_foirequest_zip,
     index,
-    postmark_bounce,
-    postmark_inbound,
 )
 from .project import (
     ProjectView,
@@ -106,8 +104,6 @@ __all__ = [
     "download_original_email",
     "index",
     "dashboard",
-    "postmark_inbound",
-    "postmark_bounce",
     "download_foirequest_zip",
     "download_foirequest_pdf",
     "SetTeamView",

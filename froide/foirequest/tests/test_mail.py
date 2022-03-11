@@ -1,4 +1,3 @@
-import json
 import os
 from datetime import datetime
 
@@ -6,7 +5,6 @@ from django.conf import settings
 from django.core import mail
 from django.test import TestCase, TransactionTestCase
 from django.test.utils import override_settings
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -139,6 +137,30 @@ class MailTest(MailTestMixin, TestCase):
                 ]
             ),
         )
+
+    def test_authenticity_pass(self):
+        with open(p("test_mail_05.txt"), "rb") as f:
+            mail = parse_email(f)
+        self.assertFalse(mail.fails_authenticity)
+        authenticity_checks = mail.get_authenticity_checks()
+        self.assertEqual(authenticity_checks[0].check.value, "SPF")
+        self.assertEqual(authenticity_checks[1].check.value, "DMARC")
+        self.assertEqual(authenticity_checks[2].check.value, "DKIM")
+        self.assertFalse(authenticity_checks[0].failed)
+        self.assertFalse(authenticity_checks[1].failed)
+        self.assertFalse(authenticity_checks[2].failed)
+
+    def test_authenticity_fails(self):
+        with open(p("test_mail_04.txt"), "rb") as f:
+            mail = parse_email(f)
+        self.assertTrue(mail.fails_authenticity)
+        authenticity_checks = mail.get_authenticity_checks()
+        self.assertEqual(authenticity_checks[0].check.value, "SPF")
+        self.assertEqual(authenticity_checks[1].check.value, "DMARC")
+        self.assertEqual(authenticity_checks[2].check.value, "DKIM")
+        self.assertTrue(authenticity_checks[0].failed)
+        self.assertTrue(authenticity_checks[1].failed)
+        self.assertTrue(authenticity_checks[2].failed)
 
     def test_recipient_parsing(self):
         with open(p("test_mail_05.txt"), "rb") as f:
@@ -438,93 +460,3 @@ class ClosedRequestTest(TestCase):
         )
         dms = DeferredMessage.objects.filter(recipient=recipient)
         self.assertEqual(len(dms), 0)
-
-
-class PostMarkMailTest(TestCase):
-    def setUp(self):
-        self.secret_address = "sw+yurpykc1hr@fragdenstaat.de"
-        self.site = factories.make_world()
-        date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
-        req = factories.FoiRequestFactory.create(
-            site=self.site,
-            secret_address=self.secret_address,
-            first_message=date,
-            last_message=date,
-        )
-        factories.FoiMessageFactory.create(request=req, timestamp=date)
-        self.post_data = {
-            "From": "myUser@example.com",
-            "FromFull": {"Email": "myUser@example.com", "Name": "John Doe"},
-            "To": self.secret_address,
-            "ToFull": [{"Email": self.secret_address, "Name": ""}],
-            "Cc": '"Full name" <sample.cc@example.com>, "Another Cc" <another.cc@example.com>',
-            "CcFull": [
-                {"Email": "sample.cc@example.com", "Name": "Full name"},
-                {"Email": "another.cc@example.com", "Name": "Another Cc"},
-            ],
-            "ReplyTo": "myUsersReplyAddress@example.com",
-            "Subject": "This is an inbound message",
-            "MessageID": "22c74902-a0c1-4511-804f2-341342852c90",
-            "Date": "Thu, 5 Apr 2012 16:59:01 +0200",
-            "MailboxHash": "ahoy",
-            "TextBody": "[ASCII]",
-            "HtmlBody": "[HTML(encoded)]",
-            "Tag": "",
-            "Headers": [
-                {
-                    "Name": "X-Spam-Checker-Version",
-                    "Value": "SpamAssassin 3.3.1 (2010-03-16) onrs-ord-pm-inbound1.wildbit.com",
-                },
-                {"Name": "X-Spam-Status", "Value": "No"},
-                {"Name": "X-Spam-Score", "Value": "-0.1"},
-                {
-                    "Name": "X-Spam-Tests",
-                    "Value": "DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,SPF_PASS",
-                },
-                {
-                    "Name": "Received-SPF",
-                    "Value": "Pass (sender SPF authorized) identity=mailfrom; client-ip=209.85.160.180; helo=mail-gy0-f180.google.com; envelope-from=myUser@theirDomain.com; receiver=451d9b70cf9364d23ff6f9d51d870251569e+ahoy@inbound.postmarkapp.com",
-                },
-                {
-                    "Name": "DKIM-Signature",
-                    "Value": "v=1; a=rsa-sha256; c=relaxed/relaxed;                d=wildbit.com; s=google;                h=mime-version:reply-to:date:message-id:subject:from:to:cc                 :content-type;                bh=cYr/+oQiklaYbBJOQU3CdAnyhCTuvemrU36WT7cPNt0=;                b=QsegXXbTbC4CMirl7A3VjDHyXbEsbCUTPL5vEHa7hNkkUTxXOK+dQA0JwgBHq5C+1u                 iuAJMz+SNBoTqEDqte2ckDvG2SeFR+Edip10p80TFGLp5RucaYvkwJTyuwsA7xd78NKT                 Q9ou6L1hgy/MbKChnp2kxHOtYNOrrszY3JfQM=",
-                },
-                {"Name": "MIME-Version", "Value": "1.0"},
-                {
-                    "Name": "Message-ID",
-                    "Value": "<CAGXpo2WKfxHWZ5UFYCR3H_J9SNMG+5AXUovfEFL6DjWBJSyZaA@mail.example.com>",
-                },
-            ],
-            "Attachments": [
-                {
-                    "Name": "myimage.png",
-                    "Content": "[BASE64-ENCODED CONTENT]",
-                    "ContentType": "image/png",
-                    "ContentLength": 4096,
-                    "ContentID": "myimage.png@01CE7342.75E71F80",
-                },
-                {
-                    "Name": "mypaper.doc",
-                    "Content": "[BASE64-ENCODED CONTENT]",
-                    "ContentType": "application/msword",
-                    "ContentLength": 16384,
-                    "ContentID": "",
-                },
-            ],
-        }
-
-    def test_postmark_post(self, url=None):
-        if url is None:
-            url = reverse("foirequest-postmark_inbound")
-        response = self.client.post(
-            url,
-            json.dumps(self.post_data).encode("utf-8"),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 200)
-        request = FoiRequest.objects.get_by_secret_mail(self.secret_address)
-        mes = request.messages[-1]
-        self.assertEqual(mes.sender_email, "myUser@example.com")
-
-    def test_postmark_bounce(self):
-        self.test_postmark_post(url=reverse("foirequest-postmark_bounce"))

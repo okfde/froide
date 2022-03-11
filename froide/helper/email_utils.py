@@ -2,6 +2,9 @@ import contextlib
 import imaplib
 import re
 from collections import defaultdict, namedtuple
+from dataclasses import dataclass
+from email.message import EmailMessage
+from enum import Enum
 from typing import Iterator, Optional, Tuple, Union
 
 from django.conf import settings
@@ -43,6 +46,32 @@ BOUNCE_HEADERS = (
 )
 
 DsnStatus = namedtuple("DsnStatus", "class_ subject detail")
+
+
+class AuthenticityCheck(Enum):
+    SPF = "SPF"
+    DKIM = "DKIM"
+    DMARC = "DMARC"
+
+
+@dataclass
+class AuthenticityStatus:
+    check: AuthenticityCheck
+    status: str
+    failed: bool
+    details: str
+
+    def __str__(self):
+        return self.details
+
+    def to_dict(self):
+        return {
+            "check": self.check.value,
+            "status": self.status,
+            "failed": self.failed,
+            "details": self.details,
+        }
+
 
 BounceResult = namedtuple(
     "BounceResult", "status is_bounce bounce_type diagnostic_code timestamp"
@@ -250,3 +279,55 @@ def detect_auto_reply(from_field, subject="", msgobj=None):
             return True
 
     return False
+
+
+def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
+    spf_headers = msgobj.get_all("Received-SPF", [])
+    if not spf_headers:
+        return
+    header = spf_headers[0]
+    status = header.split(" ", 1)[0]
+    return AuthenticityStatus(
+        check=AuthenticityCheck.SPF,
+        status=status,
+        failed=status.lower() == "fail",
+        details=header,
+    )
+
+
+DMARC_MATCH = re.compile(r"\sdmarc=(\w+)\s")
+
+
+def check_dmarc(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
+    auth_headers = msgobj.get_all("Authentication-Results", [])
+    dmarc_headers = [h for h in auth_headers if DMARC_MATCH.search(h) is not None]
+    if not dmarc_headers:
+        return
+    header = dmarc_headers[0]
+    match = DMARC_MATCH.search(header)
+    status = match.group(1)
+    return AuthenticityStatus(
+        check=AuthenticityCheck.DMARC,
+        status=status,
+        failed=status.lower() == "fail",
+        details=header,
+    )
+
+
+DKIM_MATCH = re.compile(r"\sdkim=(\w+)\s")
+
+
+def check_dkim(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
+    auth_headers = msgobj.get_all("Authentication-Results", [])
+    dkim_headers = [h for h in auth_headers if DKIM_MATCH.search(h) is not None]
+    if not dkim_headers:
+        return
+    header = dkim_headers[0]
+    match = DKIM_MATCH.search(header)
+    status = match.group(1)
+    return AuthenticityStatus(
+        check=AuthenticityCheck.DKIM,
+        status=status,
+        failed=status.lower() == "fail",
+        details=header,
+    )

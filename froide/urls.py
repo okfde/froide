@@ -180,28 +180,6 @@ admin_urls = [
     path("%s/" % SECRET_URLS.get("admin", "admin"), admin.site.urls),
 ]
 
-if SECRET_URLS.get("postmark_inbound"):
-    from froide.foirequest.views import postmark_inbound
-
-    froide_urlpatterns += [
-        path(
-            "postmark/%s/" % SECRET_URLS["postmark_inbound"],
-            postmark_inbound,
-            name="foirequest-postmark_inbound",
-        )
-    ]
-
-if SECRET_URLS.get("postmark_bounce"):
-    from froide.foirequest.views import postmark_bounce
-
-    froide_urlpatterns += [
-        path(
-            "postmark/%s/" % SECRET_URLS["postmark_bounce"],
-            postmark_bounce,
-            name="foirequest-postmark_bounce",
-        )
-    ]
-
 
 if settings.DEBUG:
     froide_urlpatterns += staticfiles_urlpatterns()

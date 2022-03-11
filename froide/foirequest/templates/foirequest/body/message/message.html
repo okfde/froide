@@ -52,6 +52,12 @@
             </span>
           {% endif %}
 
+          {% if message.object|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.fails_authenticity %}
+            <span class="alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
+              <span class="fa fa-user-secret"></span>
+            </span>
+          {% endif %}
+
           {% if message.is_escalation_message %}
             <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
               <span class="fa fa-shield"></span>

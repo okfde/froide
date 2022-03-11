@@ -384,6 +384,14 @@ class ReceiveEmailService(BaseService):
         if email.is_auto_reply:
             message.tags.add(AUTO_REPLY_TAG)
 
+        if email.fails_authenticity:
+            ProblemReport.objects.report(
+                message=message,
+                kind=ProblemReport.PROBLEM.MAIL_INAUTHENTIC,
+                description="\n".join(str(c) for c in email.fails_authenticity),
+                auto_submitted=True,
+            )
+
         foirequest._messages = None
         foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
         foirequest.save()
