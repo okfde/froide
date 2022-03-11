@@ -26,6 +26,9 @@ class ProblemChoices(models.TextChoices):
     BOUNCE_PUBLICBODY = "bounce_publicbody", _(
         "You received a bounce mail from the public body."
     )
+    MAIL_INAUTHENTIC = "mail_inauthentic", _(
+        "Received mail does not pass authenticity checks."
+    )
 
 
 def make_choices(value_list):

@@ -16,14 +16,21 @@ from email.message import EmailMessage
 from email.parser import BytesParser as Parser
 from email.utils import getaddresses, parseaddr, parsedate_tz
 from io import BytesIO
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import unquote
 
 from django.utils.functional import cached_property
 
 import pytz
 
-from .email_utils import detect_auto_reply, get_bounce_info
+from .email_utils import (
+    AuthenticityStatus,
+    check_dkim,
+    check_dmarc,
+    check_spf,
+    detect_auto_reply,
+    get_bounce_info,
+)
 from .text_utils import convert_html_to_text
 
 # Restrict to max 3 consecutive newlines in email body
@@ -305,7 +312,7 @@ class ParsedEmail(object):
     attachments: List[EmailAttachment] = []
 
     def __init__(self, msgobj, **kwargs):
-        self.msgobj = msgobj
+        self.msgobj: EmailMessage = msgobj
         for k, v in kwargs.items():
             setattr(self, k, v)
 
@@ -325,6 +332,28 @@ class ParsedEmail(object):
 
     def is_direct_recipient(self, email_address):
         return any(email.lower() == email_address.lower() for name, email in self.to)
+
+    @cached_property
+    def fails_authenticity(self):
+        checks = self.get_authenticity_checks()
+        return [c for c in checks if c.failed]
+
+    def get_authenticity_checks(self) -> Dict[str, AuthenticityStatus]:
+        if hasattr(self, "_authenticity_checks"):
+            return self._authenticity_checks
+        checks = []
+        status = check_spf(self.msgobj)
+        if status:
+            checks.append(status)
+        status = check_dmarc(self.msgobj)
+        if status:
+            checks.append(status)
+        status = check_dkim(self.msgobj)
+        if status:
+            checks.append(status)
+
+        self._authenticity_checks = checks
+        return checks
 
 
 def fix_email_body(body):

@@ -1,6 +1,12 @@
 Return-Path: <Peter.Punkt@MSW.NRW.DE>
 X-Original-To: sw+yurpykc1hr@fragdenstaat.de
 Delivered-To: foimail@fragdenstaat.de
+X-Comment: Failing authenticity
+Received-SPF: Fail (mailfrom) identity=mailfrom; client-ip=194.246.151.239; helo=c119-k30-rz.muenchen.de; envelope-from=prvs=062a39565=max.mustermann@muenchen.de; receiver=<UNKNOWN> 
+Authentication-Results: OpenDMARC; dmarc=fail (p=none dis=none) header.from=muenchen.de
+Authentication-Results: mail.fragdenstaat.de;
+	dkim=fail (2048-bit key; unprotected) header.d=muenchen.de header.i=@muenchen.de header.a=rsa-sha256 header.s=dkim2020 header.b=MpYjhRkg;
+	dkim-atps=neutral
 Received: from localhost (localhost [127.0.0.1])
 	by fragdenstaat.de (Postfix) with ESMTP id 8509495D273
 	for <sw+yurpykc1hr@fragdenstaat.de>; Thu, 10 Jan 2013 10:44:54 +0100 (CET)

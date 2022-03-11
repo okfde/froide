@@ -588,6 +588,10 @@ class FoiMessage(models.Model):
         if email.resent_cc:
             email_headers["resent-cc"] = email.resent_cc
 
+        email_headers["authenticity"] = [
+            c.to_dict() for c in email.get_authenticity_checks()
+        ]
+
         if email_headers:
             self.email_headers = email_headers
         return email_headers

@@ -140,6 +140,30 @@ class MailTest(MailTestMixin, TestCase):
             ),
         )
 
+    def test_authenticity_pass(self):
+        with open(p("test_mail_05.txt"), "rb") as f:
+            mail = parse_email(f)
+        self.assertFalse(mail.fails_authenticity)
+        authenticity_checks = mail.get_authenticity_checks()
+        self.assertEqual(authenticity_checks[0].check.value, "SPF")
+        self.assertEqual(authenticity_checks[1].check.value, "DMARC")
+        self.assertEqual(authenticity_checks[2].check.value, "DKIM")
+        self.assertFalse(authenticity_checks[0].failed)
+        self.assertFalse(authenticity_checks[1].failed)
+        self.assertFalse(authenticity_checks[2].failed)
+
+    def test_authenticity_fails(self):
+        with open(p("test_mail_04.txt"), "rb") as f:
+            mail = parse_email(f)
+        self.assertTrue(mail.fails_authenticity)
+        authenticity_checks = mail.get_authenticity_checks()
+        self.assertEqual(authenticity_checks[0].check.value, "SPF")
+        self.assertEqual(authenticity_checks[1].check.value, "DMARC")
+        self.assertEqual(authenticity_checks[2].check.value, "DKIM")
+        self.assertTrue(authenticity_checks[0].failed)
+        self.assertTrue(authenticity_checks[1].failed)
+        self.assertTrue(authenticity_checks[2].failed)
+
     def test_recipient_parsing(self):
         with open(p("test_mail_05.txt"), "rb") as f:
             mail = parse_email(f)
