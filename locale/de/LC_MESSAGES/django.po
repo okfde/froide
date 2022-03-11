@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 20:35+0100\n"
-"PO-Revision-Date: 2022-03-11 20:36+0100\n"
+"POT-Creation-Date: 2022-03-11 22:43+0100\n"
+"PO-Revision-Date: 2022-03-11 22:47+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1736,9 +1736,9 @@ msgid "Comment"
 msgstr "Kommentar"
 
 #: froide/comments/notifications.py:13
-#, python-format
-msgid "New comment by %(name)s"
-msgstr "Neuer Kommentar von %(name)s"
+#, python-brace-format
+msgid "New comment by {name}"
+msgstr "Neuer Kommentar von {name}"
 
 #: froide/document/admin.py:61
 msgid "Add documents to collection..."
@@ -2238,12 +2238,12 @@ msgid "FOI Request"
 msgstr "Informationsfreiheitsanfrage"
 
 #: froide/foirequest/apps.py:39 froide/foirequest/models/event.py:261
-#: froide/foirequest/notifications.py:90
+#: froide/foirequest/notifications.py:91
 #: froide/foirequest/templates/foirequest/account/list_projects.html:41
 #: froide/foirequest/templates/foirequest/header/breadcrumb.html:9
 #: froide/foirequest/templates/foirequest/list.html:14
-#: froide/foirequestfollower/configuration.py:14
-#: froide/foirequestfollower/configuration.py:78
+#: froide/foirequestfollower/configuration.py:18
+#: froide/foirequestfollower/configuration.py:87
 #: froide/team/templates/team/team_detail.html:179
 #: froide/templates/header.html:29
 msgid "Requests"
@@ -3728,18 +3728,18 @@ msgstr "Anfrage hat nun Tag „{}“"
 msgid "User got tag “{}”."
 msgstr "User hat nun Tag „{}“."
 
-#: froide/foirequest/notifications.py:126
+#: froide/foirequest/notifications.py:127
 #, python-format
 msgid "Update on one of your request"
 msgid_plural "Update on %(count)s of your requests"
 msgstr[0] "Neues bei einer Ihrer Anfragen"
 msgstr[1] "Neues bei %(count)s Ihrer Anfragen"
 
-#: froide/foirequest/notifications.py:166
+#: froide/foirequest/notifications.py:167
 msgid "Please classify the reply to your request"
 msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
 
-#: froide/foirequest/notifications.py:186
+#: froide/foirequest/notifications.py:187
 msgid "Your request is not suitable for our platform"
 msgstr "Ihre Anfrage passt leider nicht zu unserer Plattform"
 
@@ -7406,15 +7406,15 @@ msgstr ""
 msgid "FOI Request Follower"
 msgstr "Anfrage-Abo"
 
-#: froide/foirequestfollower/configuration.py:16
+#: froide/foirequestfollower/configuration.py:20
 msgid "You are now following this request."
 msgstr "Sie erhalten nun Benachrichtigungen für diese Anfrage."
 
-#: froide/foirequestfollower/configuration.py:17 froide/follow/views.py:130
+#: froide/foirequestfollower/configuration.py:21 froide/follow/views.py:130
 msgid "You are not following this request anymore."
 msgstr "Sie erhalten keine Benachrichtigungen mehr für diese Anfrage."
 
-#: froide/foirequestfollower/configuration.py:19
+#: froide/foirequestfollower/configuration.py:23
 msgid ""
 "Check your emails and click the confirmation link in order to follow this "
 "request."
@@ -7422,23 +7422,23 @@ msgstr ""
 "Rufen Sie Ihre E-Mails ab und klicken Sie auf den Bestätigungs-Link um "
 "Benachrichtigungen für diese Anfrage zu erhalten."
 
-#: froide/foirequestfollower/configuration.py:22
+#: froide/foirequestfollower/configuration.py:26
 msgid "Follow request"
 msgstr "Anfrage folgen"
 
-#: froide/foirequestfollower/configuration.py:23
+#: froide/foirequestfollower/configuration.py:27
 msgid "Follow request?"
 msgstr "Anfrage folgen?"
 
-#: froide/foirequestfollower/configuration.py:24
+#: froide/foirequestfollower/configuration.py:28
 msgid "Unfollow request"
 msgstr "Nicht mehr folgen"
 
-#: froide/foirequestfollower/configuration.py:25
+#: froide/foirequestfollower/configuration.py:29
 msgid "Following request"
 msgstr "Anfrage folgend"
 
-#: froide/foirequestfollower/configuration.py:27
+#: froide/foirequestfollower/configuration.py:31
 msgid ""
 "You will get notifications via email when something new happens with this "
 "request. You can unsubscribe anytime."
@@ -7446,7 +7446,7 @@ msgstr ""
 "Sie erhalten per E-Mail Benachrichtigungen, sobald etwas bei dieser Anfrage "
 "passiert. Sie können die Benachrichtigungen jederzeit abbestellen."
 
-#: froide/foirequestfollower/configuration.py:45
+#: froide/foirequestfollower/configuration.py:54
 #, python-brace-format
 msgid ""
 "please confirm that you want to follow the request “{title}” on {site_name} "
@@ -7455,12 +7455,12 @@ msgstr ""
 "bitte bestätigen Sie, dass Sie für die Anfrage „{title}“ auf {site_name} "
 "Benachrichtigungen erhalten wollen, indem Sie diesen Link klicken:"
 
-#: froide/foirequestfollower/configuration.py:67
+#: froide/foirequestfollower/configuration.py:76
 #, python-brace-format
 msgid "The request “{title}” received a reply."
 msgstr "Die Anfrage „{title}“ hat eine Antwort erhalten."
 
-#: froide/foirequestfollower/configuration.py:71
+#: froide/foirequestfollower/configuration.py:80
 #, python-brace-format
 msgid "A message was sent in the request “{title}”."
 msgstr "Eine Nachricht wurde in der Anfrage „{title}“ versendet."
@@ -7512,37 +7512,37 @@ msgstr ""
 msgid "Follow App"
 msgstr "Folgen-Anwendung"
 
-#: froide/follow/configuration.py:24
+#: froide/follow/configuration.py:25
 msgid "You are now following."
 msgstr "Sie folgen jetzt."
 
-#: froide/follow/configuration.py:25
+#: froide/follow/configuration.py:26
 msgid "You are not following anymore."
 msgstr "Sie erhalten keine Benachrichtigungen mehr."
 
-#: froide/follow/configuration.py:27
+#: froide/follow/configuration.py:28
 msgid "Check your emails and click the confirmation link in order to follow."
 msgstr ""
 "Rufen Sie Ihre E-Mails ab und klicken Sie auf den Bestätigungs-Link um "
 "Benachrichtigungen zu erhalten."
 
-#: froide/follow/configuration.py:30
+#: froide/follow/configuration.py:31
 msgid "Follow"
 msgstr "Folgen"
 
-#: froide/follow/configuration.py:31
+#: froide/follow/configuration.py:32
 msgid "Follow?"
 msgstr "Folgen?"
 
-#: froide/follow/configuration.py:32
+#: froide/follow/configuration.py:33
 msgid "Unfollow"
 msgstr "Entfolgen"
 
-#: froide/follow/configuration.py:33
+#: froide/follow/configuration.py:34
 msgid "Following"
 msgstr "Sie folgen"
 
-#: froide/follow/configuration.py:35
+#: froide/follow/configuration.py:36
 msgid ""
 "You will get notifications via email when something new happens. You can "
 "unsubscribe anytime."
@@ -7550,7 +7550,7 @@ msgstr ""
 "Sie erhalten per E-Mail Benachrichtigungen, sobald etwas passiert. Sie "
 "können die Benachrichtigungen jederzeit abbestellen."
 
-#: froide/follow/configuration.py:83
+#: froide/follow/configuration.py:87
 msgid "please confirm that you want to follow by clicking this link:"
 msgstr "Bitte bestätigen Sie, dass Sie Benachrichtigungen erhalten möchten:"
 
