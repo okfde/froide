@@ -42,7 +42,7 @@ class FoiRequestFollowConfiguration(FollowConfiguration):
 
     def get_confirm_follow_message(self, content_object):
         return _(
-            "please confirm that you want to follow the request “{{ title }}” on {{ site_name }} by clicking this link:"
+            "please confirm that you want to follow the request “{title}” on {site_name} by clicking this link:"
         ).format(title=content_object.title, site_name=settings.SITE_NAME)
 
     def merge_user(self, old_user, new_user):
