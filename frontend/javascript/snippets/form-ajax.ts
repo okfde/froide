@@ -47,7 +47,7 @@ const submitFormsAjax = () => {
           // starts with URL, redirect
           window.location.href = responseData;
           if (responseData.indexOf('#') !== -1) {
-            window.location.reload(true);
+            window.location.reload();
           }
           return;
         }
