@@ -131,6 +131,7 @@ def send_update(notifications: List[Notification], user):
     request_list = []
     grouped_notifications = groupby(notifications, lambda n: n.object.id)
     for _request_id, notifications in grouped_notifications:
+        notifications = list(notifications)
         assert notifications[0].object.user_id == user.id
         foirequest = notifications[0].object
 
@@ -138,7 +139,7 @@ def send_update(notifications: List[Notification], user):
         if len([n for n in notifications if n.user_id != user.id]) == 0:
             continue
 
-        request_list.push(
+        request_list.append(
             {
                 "request": foirequest,
                 "events": [n.event.as_text() for n in notifications],
