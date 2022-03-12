@@ -392,8 +392,8 @@ class Base(Configuration):
             "task": "froide.foirequest.tasks.batch_update_requester_task",
             "schedule": crontab(hour=0, minute=1),
         },
-        "update-foirequestfollowers": {
-            "task": "froide.foirequestfollower.tasks.batch_update",
+        "batch-update-followers": {
+            "task": "froide.follow.tasks.batch_update",
             "schedule": crontab(hour=0, minute=1),
         },
         "classification-reminder": {
