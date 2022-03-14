@@ -1,3 +1,4 @@
+import {Modal} from "bootstrap.native/dist/bootstrap-native-v4";
 interface IHTMLModalTriggerElement extends HTMLElement { Modal: any | null; }
 
 const confirmForm = (form: HTMLElement) => {
@@ -37,12 +38,19 @@ const submitFormsAjax = () => {
       request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
       request.onload = () => {
 
-        if (form.dataset.modal) {
+        if (form.dataset.modalcontainer) {
+          const target = document.querySelector<HTMLElement>(form.dataset.modalcontainer as string)
+          if (target) {
+            new Modal(target).show();
+            console.log('got modal')
+          }
+        } else if (form.dataset.modal) {
           const modalTrigger = document.getElementById(form.dataset.modal) as IHTMLModalTriggerElement;
           if (modalTrigger) {
             modalTrigger.Modal.hide();
           }
         }
+
 
         const responseData = request.responseText;
         if (responseData[0] === "/") {
