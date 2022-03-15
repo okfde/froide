@@ -11,6 +11,8 @@ from taggit.utils import edit_string_for_tags
 
 from .widgets import TagAutocompleteWidget
 
+TAG_NAME_MAX_CHARS = 100
+
 
 class TagObjectForm(forms.Form):
     def __init__(self, *args, **kwargs) -> None:
@@ -36,7 +38,7 @@ class TagObjectForm(forms.Form):
         )
 
     def save(self, obj: Model) -> None:
-        obj.tags.set(*[t[:100] for t in self.cleaned_data["tags"]])
+        obj.tags.set(*[t[:TAG_NAME_MAX_CHARS] for t in self.cleaned_data["tags"]])
         obj.save()
 
 
