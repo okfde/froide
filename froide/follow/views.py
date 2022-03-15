@@ -86,7 +86,7 @@ def embed_follow(request: HttpRequest, pk: int, conf_slug: Optional[str] = None)
 
     return render(
         request,
-        "foirequestfollower/embed_form.html",
+        "follow/embed_form.html",
         get_context(request, content_object, configuration, embed=True),
     )
 
