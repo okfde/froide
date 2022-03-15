@@ -722,7 +722,10 @@ class German(object):
     SHORT_DATETIME_FORMAT = "d.m.Y H:i"
     DATETIME_INPUT_FORMATS = ("%d.%m.%Y %H:%M",)
     TIME_FORMAT = "H:i"
-    TIME_INPUT_FORMATS = ("%H:%M",)
+    TIME_INPUT_FORMATS = (
+        "%H:%M:%S",
+        "%H:%M",
+    )
 
     # Holidays Germany
     HOLIDAYS = [
