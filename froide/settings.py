@@ -280,7 +280,7 @@ class Base(Configuration):
     SHORT_DATETIME_FORMAT = values.Value("d.m.Y H:i")
     DATETIME_INPUT_FORMATS = values.TupleValue(("%d.%m.%Y %H:%M",))
     TIME_FORMAT = values.Value("H:i")
-    TIME_INPUT_FORMATS = values.TupleValue(("%H:%M",))
+    TIME_INPUT_FORMATS = values.TupleValue(("%H:%M:%S", "%H:%M"))
 
     TAGGIT_CASE_INSENSITIVE = True
 
