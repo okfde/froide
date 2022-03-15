@@ -1,0 +1,22 @@
+{% load i18n %}
+{% load humanize %}
+
+<div class="request-link d-flex flex-column">
+  {% if object.status_representation %}
+    <a class="request-link__icon" href="{{ object.url }}" title="{{ object.readable_status }}">
+    </a>
+  {% endif %}
+  <div class="request-link__wrapper">
+    <span class="mt-0 mb-1">
+      <a href="{{ object.url }}">
+        <span class="small-icon status-{{ object.status_representation }} {% if object.has_fee %}--has-fee{% endif %}"></span>
+        {{ object.title }}
+      </a>
+      <br>
+      <small class="text-gray-700">
+        {{ object.readable_status }},
+        <span title="{{ object.last_message }}">{% blocktrans with time=object.last_message|timesince %}{{ time }} ago{% endblocktrans %}</span>
+      </small>
+    </span>
+  </div>
+</div>
