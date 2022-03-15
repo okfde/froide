@@ -101,7 +101,7 @@ def confirm_follow(
         messages.add_message(
             request,
             messages.SUCCESS,
-            _("You will now receive email notifications for this request!"),
+            configuration.get_follow_message(),
         )
     else:
         messages.add_message(
