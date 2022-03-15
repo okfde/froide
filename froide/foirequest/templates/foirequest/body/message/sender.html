@@ -6,11 +6,13 @@
     {% if message.is_response %}
       <span title="{{ message.sender_email }}">
         {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
-          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
-            {{ message.user_real_sender }}
-          </span>
           {% if message.sender_public_body %}
-           <span> – {{ message.sender_public_body.name }}</span>
+            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+              {{ message.user_real_sender }}
+            </span>
+            <span> – {{ message.sender_public_body.name }}</span>
+          {% else %}
+            {{ message.sender_name }}
           {% endif %}
         {% else %}
           {{ message.sender_public_body.name }}
