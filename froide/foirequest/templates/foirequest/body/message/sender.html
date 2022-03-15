@@ -39,7 +39,7 @@
         {% if message.sender_public_body %}
           <span title="{{ message.sender_public_body.name }}">{{ message.sender_public_body.name }}</span>
         {% else %}
-          {% trans "Public Body" %}
+          {{ message.sender_name }}
         {% endif %}
       {% endif %}
     {% else %}
