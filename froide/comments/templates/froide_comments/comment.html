@@ -1,7 +1,6 @@
 {% load i18n %}
-{% load foirequest_tags %}
 
-<div id="comment-{{ comment.id }}" class="alpha-comment">
+<div id="comment-{{ comment.id }}" class="comments-comment">
 
   <!-- head -->
   <div class="d-flex justify-content-start align-items-center flex-nowrap">
@@ -44,9 +43,10 @@
         {{ comment.comment|urlizetrunc:40|linebreaksbr }}
       {% else %}
         {% if comment.comment != comment.comment|truncatewords:20 %}
-          {{ comment.comment|truncatewords:20|urlizetrunc:40|linebreaksbr }}
-          <a class="alpha-comment__more-text-trigger" href="#">{% trans "Read all" %}</a>
-          <span style="display: none;">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
+          <span>{{ comment.comment|truncatewords:20|urlizetrunc:40|linebreaksbr }}
+          <a href="#more-commenttext-{{ comment.id }}" class="hideparent" data-toggle="collapse">
+          {% trans "Read all" %}</a></span>
+          <span id="more-commenttext-{{ comment.id }}" class="collapse">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
         {% else %}
           {{ comment.comment|urlizetrunc:40|linebreaksbr }}
         {% endif %}

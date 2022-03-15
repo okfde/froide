@@ -1,9 +1,0 @@
-.alpha-comment {
-  padding-bottom: $spacer * .5;
-  margin-bottom: $spacer * .5;
-  border-bottom: 1px solid $gray-200;
-  transition: background-color .6s linear;
-  &--highlighted {
-    background-color: $yellow-100;
-  }
-}

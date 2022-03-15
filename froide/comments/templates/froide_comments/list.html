@@ -5,17 +5,17 @@
   <div class="pt-3 mb-3 smaller border-top border-light">
 
     {% for comment in comment_list|slice:":3" %}
-      {% include "foirequest/body/message/comments/comment.html" %}
+      {% include "froide_comments/comment.html" %}
     {% endfor %}
 
     {% if comment_list|length > 3 %}
-      <div style="display: none;">
+      <div id="more-comments-{{ object.id }}" class="collapse">
         {% for comment in comment_list|slice:"3:" %}
-          {% include "foirequest/body/message/comments/comment.html" %}
+          {% include "froide_comments/comment.html" %}
         {% endfor %}
       </div>
       <div class="my-3 pb-3 border-bottom border-light">
-        <a href="#" class="font-weight-bold alpha-comment__more-comments-trigger">
+        <a href="#more-comments-{{ object.id }}" class="font-weight-bold hideparent" data-toggle="collapse">
           {% blocktrans with count=comment_list|length|add:"-3" %}
             Show {{ count }} other comments
           {% endblocktrans %}

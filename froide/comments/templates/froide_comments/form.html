@@ -1,10 +1,10 @@
 {% load comments i18n %}
 {% load form_helper %}
 
-{% get_comment_form for message as form %}
+{% get_comment_form for object as form %}
 
 <form action="{% comment_form_target %}" method="post">{% csrf_token %}
-  <input type="hidden" name="next" value="{{ message.request.get_absolute_url }}?msg={{ message.id }}" />
+  <input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
   {% for field in form %}
     {% if field.is_hidden %}
       {{ field }}
