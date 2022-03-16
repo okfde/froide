@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load humanize %}
 
-<div class="request-link d-flex flex-column">
+<div class="request-link mb-0 d-flex flex-column">
   {% if object.status_representation %}
     <a class="request-link__icon" href="{{ object.url }}" title="{{ object.readable_status }}">
     </a>
