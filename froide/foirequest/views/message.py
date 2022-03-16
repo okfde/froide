@@ -312,7 +312,7 @@ def convert_to_pdf(request, foirequest, message, data):
 
 
 def add_tus_attachment(request, foirequest, message, data):
-    form = TransferUploadForm(data=data, user=request.user)
+    form = TransferUploadForm(data=data, foimessage=message, user=request.user)
     if form.is_valid():
         result = form.save(message)
         added, updated = result
@@ -362,6 +362,8 @@ def upload_attachments(request, foirequest, message_id):
             "document_filetypes": POSTAL_CONTENT_TYPES,
             "image_filetypes": IMAGE_FILETYPES,
             "pdf_filetypes": PDF_FILETYPES,
+            "allowed_filetypes": ["application/pdf", "image/*"]
+            + message.get_extra_content_types(),
             "attachment_form_prefix": attachment_form.prefix,
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
         },

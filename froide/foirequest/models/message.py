@@ -1,5 +1,6 @@
 import calendar
 from email.utils import formatdate
+from typing import List
 
 from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -446,6 +447,10 @@ class FoiMessage(models.Model):
             for recipient in self.email_headers.get(field, []):
                 recipients.append((field, recipient[0], recipient[1]))
         return recipients
+
+    def get_extra_content_types(self) -> List[str]:
+        prefs = self.email_headers or {}
+        return prefs.get("_extra_content_types", [])
 
     @property
     def attachments(self):
