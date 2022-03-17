@@ -295,7 +295,7 @@ def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
     )
 
 
-DMARC_MATCH = re.compile(r"\sdmarc=(\w+)\s")
+DMARC_MATCH = re.compile(r"\sdmarc=(\w+);?\s")
 
 
 def check_dmarc(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
@@ -314,7 +314,7 @@ def check_dmarc(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
     )
 
 
-DKIM_MATCH = re.compile(r"\sdkim=(\w+)\s")
+DKIM_MATCH = re.compile(r"\sdkim=(\w+);?\s")
 
 
 def check_dkim(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
