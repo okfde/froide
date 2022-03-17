@@ -13,7 +13,7 @@ class ProblemReportForm(forms.Form):
         widget=BootstrapRadioSelect,
     )
     description = forms.CharField(
-        required=True,
+        required=False,
         label=_("Details"),
         widget=forms.Textarea(attrs={"class": "form-control", "rows": "2"}),
     )
