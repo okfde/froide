@@ -8,7 +8,7 @@ from .csv_utils import dict_to_csv_stream
 from .date_utils import calc_easter, calculate_month_range_de
 from .email_sending import mail_registry
 from .text_diff import mark_differences
-from .text_utils import remove_closing, replace_email_name
+from .text_utils import remove_closing, replace_email_name, split_text_by_separator
 
 
 def rec(x):
@@ -90,6 +90,32 @@ Mit freundlichen Grüßen"""
             '<span class="redacted">informationsfreiheitsgesetz@example.com.</span>',
         )
         self.assertEqual(fake_res, res)
+
+
+class TestTextSplitting(TestCase):
+    def test_no_text_split(self):
+        content = ""
+        a, b = split_text_by_separator(content)
+        self.assertEqual(a, "")
+        self.assertEqual(b, "")
+
+    def test_no_split(self):
+        content = "content\ncontent"
+        a, b = split_text_by_separator(content)
+        self.assertEqual(a, content)
+        self.assertEqual(b, "")
+
+    def test_normal_text_split(self):
+        content = "content\n\n---- forward ----\nother"
+        a, b = split_text_by_separator(content)
+        self.assertEqual(a, "content\n\n")
+        self.assertEqual(b, "---- forward ----\nother")
+
+    def test_notop_text_split(self):
+        content = "---- top ----\ncontent\n\n---- middle ----\nbottom"
+        a, b = split_text_by_separator(content)
+        self.assertEqual(a, "---- top ----\ncontent\n\n")
+        self.assertEqual(b, "---- middle ----\nbottom")
 
 
 @override_settings(

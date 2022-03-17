@@ -18,7 +18,7 @@ except ImportError:
         pass
 
 
-SEPARATORS = re.compile(r"(\s*-{5}\w+ \w+-{5}\s*|^--\s*$)", re.UNICODE | re.M)
+SEPARATORS = re.compile(r"( *-{4,}\s*[\w ]+\s*-{4,}\s*|^--\s*$)", re.UNICODE | re.M)
 
 
 def unescape(text):
@@ -62,10 +62,19 @@ def split_text_by_separator(
     if separator is None:
         separator = SEPARATORS
     split_text = separator.split(text)
+    split_point = 1
+    for part in split_text[::2]:
+        if not part.strip():
+            split_point += 2
+        else:
+            break
     if len(split_text) == 1:
         split_text.append("")
     if len(split_text) > 2:
-        split_text = [split_text[0], "\n".join(split_text[1:])]
+        split_text = [
+            "".join(split_text[:split_point]),
+            "".join(split_text[split_point:]),
+        ]
     return split_text
 
 
