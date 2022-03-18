@@ -11,6 +11,7 @@ from django.utils.safestring import mark_safe
 from django.utils.timesince import timesince
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.notifications import Notification
 from froide.publicbody.models import PublicBody
 
 from . import FoiMessage, FoiRequest
@@ -46,7 +47,7 @@ class EventName(models.TextChoices):
     REPORTED_COSTS = "reported_costs", _("costs were reported for this request")
     REQUEST_REFUSED = "request_refused", _("the request was marked as refused")
     PARTIALLY_SUCCESSFUL = "partially_successful", _(
-        "the request was marked " "as partially successful"
+        "the request was marked as partially successful"
     )
     BECAME_OVERDUE = "became_overdue", _("request became overdue")
 
@@ -55,7 +56,7 @@ class EventName(models.TextChoices):
     SET_TAGS = "set_tags", _("set tags on request")
 
     DEADLINE_EXTENDED = "deadline_extended", _(
-        "the deadline for the request " "was extended"
+        "the deadline for the request was extended"
     )
     MARK_NOT_FOI = "mark_not_foi", _("the request was marked as not an FOI request")
     MODERATOR_ACTION = "moderator_action", _("the request was moderated")
@@ -254,3 +255,14 @@ class FoiEvent(models.Model):
 
     def as_html(self):
         return mark_safe(self.detail.description.format(**self.get_html_context()))
+
+    def to_notification(self):
+        return Notification(
+            section=_("Requests"),
+            event_type=self.event_name,
+            object=self.request,
+            object_label=self.request.title,
+            timestamp=self.timestamp,
+            event=self,
+            user_id=self.user_id,
+        )

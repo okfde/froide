@@ -152,49 +152,59 @@
     </dd>
   {% endif %}
   {% get_delivery_status message as delivery_status %}
-  {% if message.status or delivery_status %}
-    <dt>
-      {% blocktrans %}Status{% endblocktrans %}
-    </dt>
-    <dd>
+  <dt>
+    {% blocktrans %}Status{% endblocktrans %}
+  </dt>
+  <dd>
+    {% if message.status %}
+      {{ message.readable_status }}
+    {% endif %}
+    {% if not message.sent %}
+      <small class="text-light">{% trans "Message was not sent" %}</small>
+    {% endif %}
+    {% if delivery_status %}
       {% if message.status %}
-        {{ message.readable_status }}
+        &mdash;
       {% endif %}
-      {% if not message.sent %}
-        <small class="text-light">{% trans "Message was not sent" %}</small>
+      {% if delivery_status.is_sent %}
+        <i class="fa fa-check-circle-o"></i>
+        {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
+      {% elif delivery_status.is_pending %}
+        <i class="fa fa-clock-o"></i>
+        {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
+      {% elif delivery_status.is_failed %}
+        <i class="fa fa-ban"></i>
+        {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
+      {% else %}
+        <i class="fa fa-circle-o"></i>
+        {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
       {% endif %}
-      {% if delivery_status %}
-        {% if message.status %}
-          &mdash;
-        {% endif %}
-        {% if delivery_status.is_sent %}
-          <i class="fa fa-check-circle-o"></i>
-          {% blocktrans with kind=message.get_kind_display %}{{ kind }} was sent successfully.{% endblocktrans %}
-        {% elif delivery_status.is_pending %}
-          <i class="fa fa-clock-o"></i>
-          {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery is ongoing...{% endblocktrans %}
-        {% elif delivery_status.is_failed %}
-          <i class="fa fa-ban"></i>
-          {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}
-        {% else %}
-          <i class="fa fa-circle-o"></i>
-          {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
-        {% endif %}
-        {% if object|can_read_foirequest_authenticated:request %}
-          <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" data-toggle="tooltip" title="{% trans 'Show technical delivery log' %}">
-            <i class="fa fa-info-circle"></i>
-            <span class="sr-only">{% trans "Show technical delivery log" %}</span>
-          </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
-        {% endif %}
+      {% if object|can_read_foirequest_authenticated:request %}
+        <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" data-toggle="tooltip" title="{% trans 'Show technical delivery log' %}">
+          <i class="fa fa-info-circle"></i>
+          <span class="sr-only">{% trans "Show technical delivery log" %}</span>
+        </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
       {% endif %}
-      {% if message.can_get_original_from_imap and message.object|can_read_foirequest_authenticated:request %}
-          <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
-            <i class="fa fa-download"></i>
-            <span class="sr-only">{% translate "Download original" %}</span>
-          </a>
-      {% endif %}
-    </dd>
-  {% endif %}
+    {% endif %}
+    {% if message.object|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.has_authenticity_info %}
+      <a data-toggle="collapse" href="#{{ message.get_html_id }}-authenticity" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-authenticity" data-toggle="tooltip" title="{% trans 'Show mail authenticity information' %}">
+        <i class="fa fa-id-badge"></i>
+        <span class="sr-only">{% translate "Show mail authenticity information" %}</span>
+      </a>
+      <dl id="{{ message.get_html_id }}-authenticity" class="collapse d-print-none">
+        {% for check in message.email_headers.authenticity %}
+          <dt>{{ check.check }}</dt>
+          <dd><pre>{{ check.details }}</pre></dd>
+        {% endfor %}
+      </dl>
+    {% endif %}
+    {% if message.can_get_original_from_imap and message.object|can_read_foirequest_authenticated:request %}
+      <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
+        <i class="fa fa-download"></i>
+        <span class="sr-only">{% translate "Download original" %}</span>
+      </a>
+    {% endif %}
+  </dd>
   {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foimessage" %}
     <dt class="d-print-none">
       {% blocktrans %}Admin{% endblocktrans %}

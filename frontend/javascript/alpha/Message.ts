@@ -17,10 +17,6 @@ export default class Message {
       ?.addEventListener('click', this.onHeadClick.bind(this))
     element.querySelector('.alpha-message__meta-toggle')
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
-    element.querySelectorAll('.alpha-comment__more-text-trigger')
-      .forEach(el => el.addEventListener('click', this.expandCommentText.bind(this)))
-    element.querySelectorAll('.alpha-comment__more-comments-trigger')
-      .forEach(el => el.addEventListener('click', this.showAllComments.bind(this)))
     element.querySelectorAll('.alpha-attachment__more-trigger')
       .forEach(el => el.addEventListener('click', this.showAllAttachments.bind(this)))
 
@@ -113,28 +109,6 @@ export default class Message {
     this.metaContainer.classList.toggle(this.metaExpandedClassName)
   }
 
-  expandCommentText(e: Event) {
-    e.preventDefault()
-    // replace parent node content with right sibling content
-    const el = e.target as HTMLElement
-    const parentEl = el.parentElement
-    if (el && parentEl && el.nextElementSibling) {
-      parentEl.innerHTML = el.nextElementSibling.innerHTML
-    }
-  }
-
-  showAllComments(e?: Event | undefined) {
-    let el
-    if (e) {
-      e.preventDefault()
-      el = e.target as HTMLElement
-    } else {
-      el = this.element.querySelector('.alpha-comment__more-comments-trigger') as HTMLElement
-    }
-
-    this.unwrapLeftSibling(el)
-  }
-
   showAllAttachments(e: Event) {
     e.preventDefault()
     this.unwrapLeftSibling(e.target as HTMLElement)
@@ -161,7 +135,6 @@ export default class Message {
   scrollToComment(commentElementId: string) {
     // expand message and comments container first if necessary
     if (!this.isExpanded) this.expandMessage()
-    this.showAllComments()
 
       // wait until DOM has finished rendering
       // and scroll to comment element
@@ -174,9 +147,9 @@ export default class Message {
           element.scrollIntoView({ block: 'center', behavior: 'smooth' })
 
           // add and remove highlight class
-          element.classList.add('alpha-comment--highlighted')
+          element.classList.add('comments-comment--highlighted')
           setTimeout(() => {
-            element.classList.remove('alpha-comment--highlighted')
+            element.classList.remove('comments-comment--highlighted')
           }, 750);
         } else (
           // if dom not ready, check again on next tick

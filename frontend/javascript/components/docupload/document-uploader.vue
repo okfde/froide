@@ -101,10 +101,7 @@
         class="mb-3 mt-2"
         :config="config"
         :auto-proceed="true"
-        :allowed-file-types="[
-          'application/pdf',
-          'image/*'
-        ]"
+        :allowed-file-types="config.settings.allowed_filetypes"
         @upload-success="uploadSuccess"
       />
     </div>

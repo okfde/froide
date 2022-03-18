@@ -8,6 +8,20 @@ from django.utils.timesince import timeuntil
 
 MONTHS_IN_YEAR = 12
 
+TIME_ZERO = dict(hour=0, minute=0, second=0, microsecond=0)
+
+
+def get_yesterday_datetime_range() -> Tuple[datetime, datetime]:
+    one_day = timedelta(hours=24)
+    today = timezone.localtime(timezone.now())
+    start_yesterday = get_midnight(today - one_day)
+    end_yesterday = start_yesterday + one_day
+    return start_yesterday, end_yesterday
+
+
+def get_midnight(date: datetime) -> datetime:
+    return date.replace(**TIME_ZERO)
+
 
 def format_seconds(seconds: int) -> str:
     now = timezone.now()

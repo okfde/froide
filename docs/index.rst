@@ -17,7 +17,6 @@ Freedom of Information Portal, but is internationalized, localized and themeable
 
    about
    gettingstarted
-   herokudeployment
    importpublicbodies
    configuration
    theming

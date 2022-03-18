@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}{% if user %}{% blocktranslate with name=user.get_full_name %}Hello {{ name }},{% endblocktranslate %}{% else %}{% translate "Hello," %}{% endif %}
+
+{{ confirm_follow_message }}
+
+{{ action_url }}
+
+{% blocktranslate with site_name=site_name %}Cheers,
+{{ site_name }}
+{% endblocktranslate %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

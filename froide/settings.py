@@ -1,6 +1,5 @@
 import os
 import re
-import sys
 
 from django.utils.translation import gettext_lazy as _
 
@@ -50,6 +49,7 @@ class Base(Configuration):
             "mfa",
             # local
             "froide.foirequest",
+            "froide.follow",
             "froide.foirequestfollower",  # needs to come after foirequest
             "froide.frontpage",
             "froide.georegion",
@@ -280,7 +280,7 @@ class Base(Configuration):
     SHORT_DATETIME_FORMAT = values.Value("d.m.Y H:i")
     DATETIME_INPUT_FORMATS = values.TupleValue(("%d.%m.%Y %H:%M",))
     TIME_FORMAT = values.Value("H:i")
-    TIME_INPUT_FORMATS = values.TupleValue(("%H:%M",))
+    TIME_INPUT_FORMATS = values.TupleValue(("%H:%M:%S", "%H:%M"))
 
     TAGGIT_CASE_INSENSITIVE = True
 
@@ -388,9 +388,13 @@ class Base(Configuration):
             "task": "froide.foirequest.tasks.detect_overdue",
             "schedule": crontab(hour=0, minute=0),
         },
-        "update-foirequestfollowers": {
-            "task": "froide.foirequestfollower.tasks.batch_update",
-            "schedule": crontab(hour=0, minute=0),
+        "batch-update-foirequest": {
+            "task": "froide.foirequest.tasks.batch_update_requester_task",
+            "schedule": crontab(hour=0, minute=1),
+        },
+        "batch-update-followers": {
+            "task": "froide.follow.tasks.batch_update",
+            "schedule": crontab(hour=0, minute=1),
         },
         "classification-reminder": {
             "task": "froide.foirequest.tasks.classification_reminder",
@@ -681,8 +685,6 @@ class TestBase(Base):
     SECRET_URLS = values.DictValue(
         {
             "admin": "admin",
-            "postmark_inbound": "postmark_inbound",
-            "postmark_bounce": "postmark_bounce",
         }
     )
 
@@ -720,7 +722,10 @@ class German(object):
     SHORT_DATETIME_FORMAT = "d.m.Y H:i"
     DATETIME_INPUT_FORMATS = ("%d.%m.%Y %H:%M",)
     TIME_FORMAT = "H:i"
-    TIME_INPUT_FORMATS = ("%H:%M",)
+    TIME_INPUT_FORMATS = (
+        "%H:%M:%S",
+        "%H:%M",
+    )
 
     # Holidays Germany
     HOLIDAYS = [
@@ -789,82 +794,8 @@ class SSLSite(object):
     LANGUAGE_COOKIE_SECURE = True
 
 
-class AmazonS3(object):
-    STATICFILES_STORAGE = values.Value("storages.backends.s3boto.S3BotoStorage")
-
-    STATIC_URL = values.Value("/static/")
-
-    DEFAULT_FILE_STORAGE = values.Value("storages.backends.s3boto.S3BotoStorage")
-
-    AWS_ACCESS_KEY_ID = values.Value("")
-    AWS_SECRET_ACCESS_KEY = values.Value("")
-    AWS_STORAGE_BUCKET_NAME = values.Value("")
-    AWS_S3_SECURE_URLS = values.Value(False)
-    AWS_QUERYSTRING_AUTH = values.Value(False)
-
-
-class Heroku(Production):
-    ALLOWED_HOSTS = ["*"]
-    SECRET_KEY = values.SecretValue()
-
-    CELERY_TASK_ALWAYS_EAGER = values.BooleanValue(True)
-    CELERY_BROKER_URL = values.Value("amqp://")
-
-    @property
-    def LOGGING(self):
-        logging = super().LOGGING
-        logging["handlers"]["console"]["stream"] = sys.stdout
-        logging["loggers"]["django.request"]["handlers"] = ["console"]
-        return logging
-
-
 def os_env(name):
     return os.environ.get(name)
-
-
-class HerokuPostmark(Heroku):
-    SECRET_URLS = values.DictValue(
-        {
-            "admin": "admin",
-            "postmark_inbound": "postmark_inbound",
-            "postmark_bounce": "postmark_bounce",
-        }
-    )
-
-    FOI_EMAIL_TEMPLATE = values.Value("request+{secret}@{domain}")
-    FOI_EMAIL_DOMAIN = values.Value("inbound.postmarkapp.com")
-
-    SERVER_EMAIL = values.Value(os_env("POSTMARK_INBOUND_ADDRESS"))
-    DEFAULT_FROM_EMAIL = values.Value(os_env("POSTMARK_INBOUND_ADDRESS"))
-
-    # Official Notification Mail goes through
-    # the normal Django SMTP Backend
-    EMAIL_HOST = os_env("POSTMARK_SMTP_SERVER")
-    EMAIL_PORT = values.IntegerValue(2525)
-    EMAIL_HOST_USER = os_env("POSTMARK_API_KEY")
-    EMAIL_HOST_PASSWORD = os_env("POSTMARK_API_KEY")
-    EMAIL_USE_TLS = values.BooleanValue(True)
-
-    # SMTP settings for sending FoI mail
-    FOI_EMAIL_FIXED_FROM_ADDRESS = values.BooleanValue(False)
-    FOI_EMAIL_HOST_FROM = os_env("POSTMARK_INBOUND_ADDRESS")
-    FOI_EMAIL_HOST_USER = os_env("POSTMARK_API_KEY")
-    FOI_EMAIL_HOST_PASSWORD = os_env("POSTMARK_API_KEY")
-    FOI_EMAIL_HOST = os_env("POSTMARK_SMTP_SERVER")
-    FOI_EMAIL_PORT = values.IntegerValue(2525)
-    FOI_EMAIL_USE_TLS = values.BooleanValue(True)
-
-
-class HerokuPostmarkS3(AmazonS3, HerokuPostmark):
-    pass
-
-
-class HerokuSSL(SSLSite, Heroku):
-    pass
-
-
-class HerokuSSLPostmark(SSLSite, HerokuPostmark):
-    pass
 
 
 try:

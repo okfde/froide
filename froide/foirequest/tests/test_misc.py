@@ -1,10 +1,14 @@
 from datetime import timedelta
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
 
-from froide.foirequest.models import FoiRequest
+from froide.comments.models import FroideComment
+from froide.foirequest.models import FoiMessage, FoiRequest
+from froide.foirequest.notifications import batch_update_requester
 from froide.foirequest.tasks import (
     classification_reminder,
     detect_asleep,
@@ -86,6 +90,29 @@ class TaskTest(TestCase):
         self.assertIn(
             "Please classify the reply to your request", mail.outbox[0].subject
         )
+
+    def test_requester_batch_update(self):
+        fr = FoiRequest.objects.all()[0]
+
+        end = timezone.now()
+        start = end - timedelta(minutes=5)
+
+        mail.outbox = []
+        batch_update_requester(start=start, end=end)
+        self.assertEqual(len(mail.outbox), 0)
+
+        message = fr.messages[0]
+        FroideComment.objects.create(
+            content_type=ContentType.objects.get_for_model(FoiMessage),
+            object_pk=message.id,
+            user_name="Joe Somebody",
+            comment="First!",
+            submit_date=timezone.now() - timedelta(minutes=2),
+            site=Site.objects.get_current(),
+        )
+        batch_update_requester(start=start, end=end)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Update on one of your request", mail.outbox[0].subject)
 
 
 class MailAttachmentSizeCheckerTest(TestCase):

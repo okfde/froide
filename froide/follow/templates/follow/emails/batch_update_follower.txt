@@ -1,0 +1,23 @@
+{% load i18n %}{% autoescape off %}{% if user %}{% blocktranslate with name=user.get_full_name %}Hello {{ name }},{% endblocktranslate %}{% else %}{% translate "Hello," %}{% endif %}
+
+{% blocktranslate %}The following happened in the last 24 hours:{% endblocktranslate %}
+{% for update in update_list %}{% ifchanged update.section %}
+{{ update.section }}
+{% endifchanged %}
+{% blocktranslate with title=update.object_label %}Updates to {{ title }}:{% endblocktranslate %}
+{% for event in update.events %} - {{ event }}
+{% endfor %}
+{% with url=update.content_object.get_absolute_domain_short_url %}{% if url %}{{ url }}{% endif %}{% endwith %}
+
+{% endfor %}{% blocktranslate with site_name=site_name %}
+Cheers,
+{{ site_name }}
+{% endblocktranslate %}
+
+{% for update in update_list %}
+{% blocktranslate with title=update.object_label %}Unfollow {{ title }}:{% endblocktranslate %}
+{{ update.unfollow_link }}
+
+{% endfor %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

@@ -1,13 +1,11 @@
 @import "../../variables";
 
-@import 'header';
-@import 'message';
-@import 'comment';
-@import 'attachment';
-@import 'timeline';
-@import 'scrollIndicator';
-@import 'reply';
-
+@import "header";
+@import "message";
+@import "attachment";
+@import "timeline";
+@import "scrollIndicator";
+@import "reply";
 
 .alpha-dropdown-menu {
   .dropdown-item {
@@ -19,5 +17,4 @@
       background-color: $blue-200;
     }
   }
-
 }

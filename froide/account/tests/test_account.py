@@ -695,13 +695,15 @@ class AccountTest(TestCase):
         req = FoiRequest.objects.all()[0]
         new_req = factories.FoiRequestFactory.create()
         old_user = req.user
-        FoiRequestFollowerFactory.create(user=new_user, request=new_req)
-        FoiRequestFollowerFactory.create(user=old_user, request=new_req)
+        FoiRequestFollowerFactory.create(user=new_user, content_object=new_req)
+        FoiRequestFollowerFactory.create(user=old_user, content_object=new_req)
         mes = req.messages
         self.assertEqual(mes[0].sender_user, old_user)
         merge_accounts(old_user, new_user)
 
-        self.assertEqual(1, FoiRequestFollower.objects.filter(request=new_req).count())
+        self.assertEqual(
+            1, FoiRequestFollower.objects.filter(content_object=new_req).count()
+        )
         req = FoiRequest.objects.get(pk=req.pk)
         mes = req.messages
         self.assertEqual(req.user, new_user)
