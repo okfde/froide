@@ -14,14 +14,12 @@ from froide.upload.models import Upload
 
 from .foi_mail import _fetch_mail, _process_mail
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
-from .notifications import send_classification_reminder
+from .notifications import batch_update_requester, send_classification_reminder
 
 logger = logging.getLogger(__name__)
 
 
-@celery_app.task(
-    name="froide.foirequest.tasks.process_mail", acks_late=True, time_limit=60
-)
+@celery_app.task(name="froide.foirequest.tasks.process_mail", acks_late=True)
 def process_mail(*args, **kwargs):
     translation.activate(settings.LANGUAGE_CODE)
 
@@ -47,6 +45,11 @@ def detect_asleep():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_to_be_asleep():
         foirequest.set_asleep()
+
+
+@celery_app.task
+def batch_update_requester_task():
+    return batch_update_requester()
 
 
 @celery_app.task

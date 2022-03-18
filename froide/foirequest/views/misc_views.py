@@ -7,8 +7,6 @@ from django.contrib.sitemaps import Sitemap
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
 
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.cache import cache_anonymous_page
@@ -19,7 +17,6 @@ from ..auth import can_read_foirequest_authenticated
 from ..foi_mail import package_foirequest
 from ..models import FoiRequest
 from ..pdf_generator import FoiRequestPDFGenerator
-from ..tasks import process_mail
 
 User = get_user_model()
 
@@ -83,20 +80,6 @@ def dashboard(request):
         total += req["num"]
         req["total"] = total
     return render(request, "foirequest/dashboard.html", {"data": json.dumps(context)})
-
-
-@require_POST
-@csrf_exempt
-def postmark_inbound(request, bounce=False):
-    process_mail.delay(request.body, mail_type="postmark")
-    return HttpResponse()
-
-
-@require_POST
-@csrf_exempt
-def postmark_bounce(request):
-    # FIXME: bounces are not handled correctly from postmark
-    return postmark_inbound(request, bounce=True)
 
 
 def download_foirequest_zip(request, slug):

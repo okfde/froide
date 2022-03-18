@@ -31,28 +31,28 @@ def make_choose_object_action(model_or_queryset, callback, label):
         filter_qs = model_or_queryset
         model = model_or_queryset.model
 
-    def action(self, request, queryset):
+    def action(model_admin, request, queryset):
         # Check that the user has change permission for the actual model
-        if not self.has_change_permission(request):
+        if not model_admin.has_change_permission(request):
             raise PermissionDenied
 
-        Form = get_fake_fk_form_class(model, self.admin_site, queryset=filter_qs)
+        Form = get_fake_fk_form_class(model, model_admin.admin_site, queryset=filter_qs)
         # User has already chosen the other req
         if request.POST.get("obj"):
             form = Form(request.POST)
             if form.is_valid():
                 action_obj = form.cleaned_data["obj"]
-                callback(self, request, queryset, action_obj)
-                self.message_user(request, _("Successfully executed."))
+                callback(model_admin, request, queryset, action_obj)
+                model_admin.message_user(request, _("Successfully executed."))
                 return None
         else:
             form = Form()
 
-        opts = self.model._meta
+        opts = model_admin.model._meta
         context = {
             "opts": opts,
             "queryset": queryset,
-            "media": self.media,
+            "media": model_admin.media,
             "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
             "form": form,
             "headline": label,

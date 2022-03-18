@@ -1,0 +1,15 @@
+{% load i18n %}
+
+<div class="ajax-parent">
+  {% if can_follow %}
+    {% if email_followed %}
+      <div class="alert alert-info">
+        {% trans "Please check your email inbox for a confirmation email." %}
+      </div>
+    {% else %}
+      {% include "follow/_follow_form.html" with count=count %}
+    {% endif %}
+  {% else %}
+    {% include "follow/follow_count_badge.html" with count=count %}
+  {% endif %}
+</div>

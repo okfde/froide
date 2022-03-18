@@ -67,17 +67,6 @@ import {getAllData, FroideAPI, getData, postData} from '../../lib/api.js'
 
 import GeoMatcherRow from './geo-matcher-row.vue'
 
-function getQueryVariable(variable) {
-  var query = window.location.search.substring(1);
-  var vars = query.split('&');
-  for (var i = 0; i < vars.length; i++) {
-    var pair = vars[i].split('=');
-    if (decodeURIComponent(pair[0]) == variable) {
-      return decodeURIComponent(pair[1]);
-    }
-  }
-}
-
 export default {
   name: 'GeoMatcher',
   components: {
@@ -124,11 +113,14 @@ export default {
   mounted () {
     this.$root.config = this.config
     this.$root.csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value
-    this.ancestor = getQueryVariable('ancestor') || ''
-    this.regionKind = getQueryVariable('kind') || ''
-    this.category = getQueryVariable('category') || ''
-    this.jurisdiction = getQueryVariable('jurisdiction') || ''
-    this.searchHint = getQueryVariable('searchhint') || ''
+
+    const entries = new URLSearchParams(window.location.search)
+
+    this.ancestor = entries.get('ancestor') || ''
+    this.regionKind = entries.get('kind') || ''
+    this.category = entries.get('category') || ''
+    this.jurisdiction = entries.get('jurisdiction') || ''
+    this.searchHint = entries.get('searchhint') || ''
 
     this.api = new FroideAPI(this.config)
 

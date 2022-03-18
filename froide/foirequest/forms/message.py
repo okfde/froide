@@ -722,6 +722,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
+        self.foimessage = kwargs.pop("foimessage")
         super().__init__(*args, **kwargs)
 
     def clean_upload(self):
@@ -729,7 +730,8 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         upload = Upload.objects.get_by_url(upload_url, user=self.user)
         if upload is None:
             raise forms.ValidationError(_("Bad URL"))
-        validate_postal_content_type(upload.content_type)
+        if upload.content_type not in self.foimessage.get_extra_content_types():
+            validate_postal_content_type(upload.content_type)
         return upload
 
     def save(self, foimessage):

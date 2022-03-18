@@ -358,6 +358,7 @@ def get_comment_list(context, message):
                     filter=Q(user__groups__permissions__codename="moderate"),
                 )
             )
+            .order_by("-submit_date")
             .select_related("user")
         )
         comment_mapping = defaultdict(list)

@@ -1,5 +1,6 @@
 import calendar
 from email.utils import formatdate
+from typing import List
 
 from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -447,6 +448,10 @@ class FoiMessage(models.Model):
                 recipients.append((field, recipient[0], recipient[1]))
         return recipients
 
+    def get_extra_content_types(self) -> List[str]:
+        prefs = self.email_headers or {}
+        return prefs.get("_extra_content_types", [])
+
     @property
     def attachments(self):
         if not hasattr(self, "_attachments") or self._attachments is None:
@@ -575,6 +580,17 @@ class FoiMessage(models.Model):
             data = retrieve_mail_by_message_id(client, self.email_message_id)
         return data
 
+    def fails_authenticity(self):
+        if not self.is_response or not self.is_email:
+            return
+        checks = self.email_headers.get("authenticity")
+        if not checks:
+            return False
+        return any([c["failed"] for c in checks])
+
+    def has_authenticity_info(self):
+        return bool(self.email_headers.get("authenticity"))
+
     def update_email_headers(self, email):
         email_headers = {}
         if email.to and email.to[0][1] != self.request.secret_address:
@@ -587,6 +603,10 @@ class FoiMessage(models.Model):
             email_headers["resent-to"] = email.resent_to
         if email.resent_cc:
             email_headers["resent-cc"] = email.resent_cc
+
+        email_headers["authenticity"] = [
+            c.to_dict() for c in email.get_authenticity_checks()
+        ]
 
         if email_headers:
             self.email_headers = email_headers

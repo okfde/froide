@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.fields import SVGAndImageField
 from froide.helper.storage import HashedFilenameStorage
 
 
@@ -80,7 +81,7 @@ class Organization(models.Model):
 
     email_domain = models.CharField(max_length=255, blank=True)
 
-    logo = models.ImageField(
+    logo = SVGAndImageField(
         null=True,
         blank=True,
         upload_to=logo_path,

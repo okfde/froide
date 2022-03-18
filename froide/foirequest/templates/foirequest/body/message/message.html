@@ -4,6 +4,7 @@
 {% load problemreport_tags %}
 {% load guidance_tags %}
 {% load content_helper %}
+
 {% get_comment_list message as comment_list %}
 
 
@@ -49,6 +50,12 @@
             {% endif %}
             <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{{ kind_display }}">
               <span class="fa fa-{{ message.kind_icon }}"></span>
+            </span>
+          {% endif %}
+
+          {% if message.object|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.fails_authenticity %}
+            <span class="alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
+              <span class="fa fa-user-secret"></span>
             </span>
           {% endif %}
 
@@ -229,31 +236,8 @@
         {% block before_comments %}{% endblock %}
         <div class="alpha-message__wrap pb-4">
 
-          {% if not comment_list|length %}
-            <span class="text-gray-600">{% trans "No comments yet." %}</span>
-          {% else %}
-            {% include "foirequest/body/message/comments/list.html" %}
-          {% endif %}
+          {% include "froide_comments/comments.html" with object=message comment_list=comment_list %}
 
-          {% if request.user.is_authenticated %}
-            <!-- comment reply button and form -->
-            <div class="mt-3">
-              <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ message.id }}" href="#comment-form-{{ message.id }}">
-                {% if object.public %}
-                  {% trans "Write a public comment" %}
-                {% else %}
-                  {% trans "Write a comment" %}
-                {% endif %}
-              </a>
-              <div class="collapse pt-3" id="comment-form-{{ message.id }}">
-                {% include "foirequest/body/message/comments/form.html" %}
-              </div>
-            </div>
-          {% else %}
-            <span class="text-gray-600 smaller">
-              {% blocktrans with link=message.get_absolute_url|make_login_redirect_url %}Please <a href="{{ link }}" >login</a> to write a comment.{% endblocktrans %}
-            </span>
-          {% endif %}
         </div>
 
         {% block after_comments %}{% endblock %}
