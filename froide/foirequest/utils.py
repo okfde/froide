@@ -4,21 +4,28 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Generator, Iterator, Optional, Union
+from re import Pattern
+from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail import mail_managers
+from django.db.models.query import QuerySet
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.functional import SimpleLazyObject
+from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
 
 import icalendar
 import pytz
 
+from froide.account.models import User
+from froide.foirequest.models.request import FoiRequest
 from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
 from froide.helper.tasks import search_instance_save
@@ -28,15 +35,18 @@ from froide.helper.text_utils import (
     redact_subject,
     redact_user_strings,
 )
-from froide.publicbody.models import PublicBody
-
-from .models.request import FoiRequest
+from froide.publicbody.models import FoiLaw, PublicBody
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
 
+Throttle_config = Optional[List[Tuple[int, int]]]
+Throttle = Union[bool, Tuple[int, int]]
 
-def throttle(qs, throttle_config, date_param="first_message"):
+
+def throttle(
+    qs: QuerySet, throttle_config: Throttle_config, date_param: str = "first_message"
+) -> Throttle:
     if throttle_config is None:
         return False
 
@@ -48,7 +58,11 @@ def throttle(qs, throttle_config, date_param="first_message"):
     return False
 
 
-def check_throttle(user, klass, extra_filters=None):
+def check_throttle(
+    user: Union[User, SimpleLazyObject],
+    klass: Type[FoiRequest],
+    extra_filters: None = None,
+) -> Optional[ValidationError]:
     if not user.is_authenticated or user.trusted():
         return
 
@@ -70,14 +84,16 @@ def check_throttle(user, klass, extra_filters=None):
     )
 
 
-def get_foi_mail_domains():
+def get_foi_mail_domains() -> List[str]:
     domains = settings.FOI_EMAIL_DOMAIN
     if not isinstance(domains, (list, tuple)):
         return [domains]
     return domains
 
 
-def generate_secret_address(user, length=10):
+def generate_secret_address(
+    user: Union[User, SimpleLazyObject], length: int = 10
+) -> str:
     allowed_chars = "abcdefghkmnprstuvwxyz2345689"
     username = user.username.replace("_", ".")
     secret = get_random_string(length=length, allowed_chars=allowed_chars)
@@ -94,14 +110,18 @@ def generate_secret_address(user, length=10):
     return "%s.%s@%s" % (username, secret, FOI_EMAIL_DOMAIN)
 
 
+Attachment_names = Optional[List[Union[str, Any]]]
+Attachment_missing = Optional[List[Any]]
+
+
 def construct_message_body(
-    foirequest,
-    text,
-    send_address=True,
-    attachment_names=None,
-    attachment_missing=None,
-    template="foirequest/emails/mail_with_userinfo.txt",
-):
+    foirequest: FoiRequest,
+    text: str,
+    send_address: bool = True,
+    attachment_names: Attachment_names = None,
+    attachment_missing: Attachment_missing = None,
+    template: str = "foirequest/emails/mail_with_userinfo.txt",
+) -> SafeString:
     return render_to_string(
         template,
         {
@@ -114,7 +134,7 @@ def construct_message_body(
     )
 
 
-def build_secret_url_regexes(url_name):
+def build_secret_url_regexes(url_name: str) -> Pattern:
     obj_id = "0"
     code = "deadbeef"
     url = reverse(url_name, kwargs={"obj_id": obj_id, "code": code})
@@ -133,7 +153,7 @@ SECRET_URL_NAMES = [
 SECRET_URL_REPLACEMENTS = {}
 
 
-def get_secret_url_replacements():
+def get_secret_url_replacements() -> Dict[Pattern, str]:
     if SECRET_URL_REPLACEMENTS:
         return SECRET_URL_REPLACEMENTS
 
@@ -146,7 +166,7 @@ def get_secret_url_replacements():
     return SECRET_URL_REPLACEMENTS
 
 
-def short_request_url(name, foirequest, message=None):
+def short_request_url(name: str, foirequest: FoiRequest, message: None = None) -> str:
     params = {"slug": foirequest.slug}
     if message:
         params["message_id"] = message.id
@@ -161,7 +181,7 @@ def short_request_url(name, foirequest, message=None):
 
 
 def redact_plaintext_with_request(
-    plaintext: str,
+    plaintext: Union[SafeString, str],
     foirequest: FoiRequest,
     redact_greeting: bool = False,
     redact_closing: bool = False,
@@ -178,13 +198,13 @@ def redact_plaintext_with_request(
 
 
 def construct_initial_message_body(
-    foirequest,
-    text="",
-    foilaw=None,
-    full_text=False,
-    send_address=True,
-    template="foirequest/emails/mail_with_userinfo.txt",
-):
+    foirequest: FoiRequest,
+    text: str = "",
+    foilaw: Optional[FoiLaw] = None,
+    full_text: bool = False,
+    send_address: bool = True,
+    template: str = "foirequest/emails/mail_with_userinfo.txt",
+) -> SafeString:
     if full_text:
         body = "{body}\n{name}".format(body=text, name=foirequest.user.get_full_name())
     else:
@@ -209,17 +229,17 @@ def construct_initial_message_body(
     )
 
 
-def strip_subdomains(domain):
+def strip_subdomains(domain: str) -> str:
     return ".".join(domain.split(".")[-2:])
 
 
-def get_host(email):
+def get_host(email: str) -> str:
     if email and "@" in email:
         return email.rsplit("@", 1)[1].lower()
     return None
 
 
-def get_domain(email):
+def get_domain(email: str) -> str:
     host = get_host(email)
     if host is None:
         return None
@@ -239,7 +259,9 @@ def make_unique_filename(name, existing_names):
     return name
 
 
-def compare_publicbody_email(email, pb_info_list, transform=lambda x: x.lower()):
+def compare_publicbody_email(
+    email: str, pb_info_list, transform: Callable = lambda x: x.lower()
+) -> Optional[PublicBody]:
     email = transform(email)
 
     for pb_info in pb_info_list:
@@ -248,7 +270,7 @@ def compare_publicbody_email(email, pb_info_list, transform=lambda x: x.lower())
 
 
 def get_publicbody_for_email(
-    email, foi_request, include_deferred=False
+    email: str, foi_request: FoiRequest, include_deferred: bool = False
 ) -> Optional[PublicBody]:
     if not email:
         return None
@@ -338,11 +360,11 @@ class PublicBodyEmailInfo:
     publicbody: Optional[PublicBody] = None
     label: Optional[str] = None
 
-    def get_label(self):
+    def get_label(self) -> str:
         return self.label if self.label is not None else self.name
 
 
-def get_info_for_email(foirequest, email):
+def get_info_for_email(foirequest: FoiRequest, email: str) -> PublicBodyEmailInfo:
     email = email.lower()
     for email_info in get_emails_from_request(foirequest):
         if email == email_info.email.lower():
@@ -351,7 +373,7 @@ def get_info_for_email(foirequest, email):
 
 
 def get_emails_from_request(
-    foirequest, include_mediator=True
+    foirequest: FoiRequest, include_mediator: bool = True
 ) -> Iterator[PublicBodyEmailInfo]:
     already = set()
 
@@ -440,7 +462,10 @@ def get_emails_from_request(
         already.add(email)
 
 
-def get_emails_from_message_headers(email_headers):
+Email_headers = Dict[str, List[Any]]
+
+
+def get_emails_from_message_headers(email_headers: Email_headers) -> None:
     fields = ("to", "cc", "resent-to", "resent-cc")
     for field in fields:
         for addr in email_headers.get(field, []):
@@ -449,7 +474,10 @@ def get_emails_from_message_headers(email_headers):
                 yield email
 
 
-def possible_reply_addresses(foirequest: FoiRequest) -> list:
+Possible_reply_addresses = List[Tuple[str, str]]
+
+
+def possible_reply_addresses(foirequest: FoiRequest) -> Possible_reply_addresses:
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
@@ -464,12 +492,18 @@ def possible_reply_addresses(foirequest: FoiRequest) -> list:
     return options
 
 
+Generator = List[Tuple[str, bytes, str]]
+MailAttachmentSizeChecker_iterator = Iterator[Tuple[str, bytes, str]]
+
+
 class MailAttachmentSizeChecker:
-    def __init__(self, generator, max_size: int = MAX_ATTACHMENT_SIZE) -> None:
+    def __init__(
+        self, generator: Generator, max_size: int = MAX_ATTACHMENT_SIZE
+    ) -> None:
         self.generator = generator
         self.max_size = max_size
 
-    def __iter__(self) -> Generator[Union[str, bytes], None, None]:
+    def __iter__(self) -> MailAttachmentSizeChecker_iterator:
         sum_bytes = 0
         self.non_send_files = []
         self.send_files = []
@@ -482,7 +516,12 @@ class MailAttachmentSizeChecker:
                 yield name, filebytes, mimetype
 
 
-def merge_user(sender, old_user=None, new_user=None, **kwargs):
+def merge_user(
+    sender: Type[User],
+    old_user: Optional[User] = None,
+    new_user: Optional[User] = None,
+    **kwargs
+) -> None:
     from froide.account.utils import move_ownership
 
     from .models import (
@@ -507,7 +546,7 @@ def merge_user(sender, old_user=None, new_user=None, **kwargs):
     update_foirequest_index(FoiRequest.objects.filter(user=new_user))
 
 
-def cancel_user(sender, user=None, **kwargs):
+def cancel_user(sender: Type[User], user: Optional[User] = None, **kwargs) -> None:
     from .models import FoiRequest, RequestDraft
 
     if user is None:
@@ -562,7 +601,7 @@ def rerun_message_redaction(foirequests):
             message.save()
 
 
-def permanently_anonymize_requests(foirequests):
+def permanently_anonymize_requests(foirequests: QuerySet) -> None:
     from .models import FoiAttachment
 
     replacements = {
@@ -821,12 +860,12 @@ def export_user_data(user):
         )
 
 
-def update_foirequest_index(queryset):
+def update_foirequest_index(queryset: QuerySet) -> None:
     for foirequest_id in queryset.values_list("id", flat=True):
         search_instance_save.delay("foirequest.foirequest", foirequest_id)
 
 
-def select_foirequest_template(foirequest, base_template: str):
+def select_foirequest_template(foirequest: FoiRequest, base_template: str) -> List[str]:
     path, name = base_template.rsplit("/", 1)
     templates = []
     if foirequest.law and foirequest.law.law_type:
