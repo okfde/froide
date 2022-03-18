@@ -138,9 +138,9 @@ class Follower(models.Model):
         ]
 
     def __str__(self):
-        return _("%(user)s follows %(request)s") % {
+        return _("%(user)s follows %(content_object)s") % {
             "user": self.email or str(self.user),
-            "request": self.request,
+            "content_object": self.content_object,
         }
 
     @property
