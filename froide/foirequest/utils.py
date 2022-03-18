@@ -4,7 +4,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Iterator, Optional
+from typing import Generator, Iterator, Optional, Union
 
 from django import forms
 from django.conf import settings
@@ -29,6 +29,8 @@ from froide.helper.text_utils import (
     redact_user_strings,
 )
 from froide.publicbody.models import PublicBody
+
+from .models.request import FoiRequest
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
@@ -159,8 +161,11 @@ def short_request_url(name, foirequest, message=None):
 
 
 def redact_plaintext_with_request(
-    plaintext, foirequest, redact_greeting=False, redact_closing=False
-):
+    plaintext: str,
+    foirequest: FoiRequest,
+    redact_greeting: bool = False,
+    redact_closing: bool = False,
+) -> str:
     replacements = get_secret_url_replacements()
     user_replacements = foirequest.user.get_redactions()
     return redact_plaintext(
@@ -444,7 +449,7 @@ def get_emails_from_message_headers(email_headers):
                 yield email
 
 
-def possible_reply_addresses(foirequest):
+def possible_reply_addresses(foirequest: FoiRequest) -> list:
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
@@ -460,11 +465,11 @@ def possible_reply_addresses(foirequest):
 
 
 class MailAttachmentSizeChecker:
-    def __init__(self, generator, max_size=MAX_ATTACHMENT_SIZE):
+    def __init__(self, generator, max_size: int = MAX_ATTACHMENT_SIZE) -> None:
         self.generator = generator
         self.max_size = max_size
 
-    def __iter__(self):
+    def __iter__(self) -> Generator[Union[str, bytes], None, None]:
         sum_bytes = 0
         self.non_send_files = []
         self.send_files = []
