@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -7,6 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 
+from froide.account.models import User
 from froide.foirequest.auth import is_foirequest_moderator, is_foirequest_pii_moderator
 from froide.foirequest.models import FoiAttachment, FoiMessage, FoiRequest
 from froide.helper.auth import can_moderate_object
@@ -15,6 +16,7 @@ from froide.publicbody.models import PublicBody
 
 from .api_views import get_problem_reports
 from .forms import ProblemReportForm
+from .models import ProblemReport
 
 
 @require_POST
@@ -168,5 +170,40 @@ def moderation_view(request):
             "attachments_json": to_json(mod_data["attachments"]),
             "attachments_count": mod_data["attachments_count"],
             "config_json": to_json(config),
+        },
+    )
+
+
+def moderate_user(request, pk):
+    if not is_foirequest_pii_moderator(request):
+        return render_403(request)
+
+    # Only show non-deleted, active users without special privileges
+    qs = User.objects.filter(
+        is_deleted=False, is_trusted=False, is_active=True, is_staff=False
+    )
+    user = get_object_or_404(qs, pk=pk)
+
+    # Only show public, non-foi or depublished requests
+    foirequests = FoiRequest.objects.filter(user=user).filter(
+        Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC)
+        | Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER, public=True)
+        | Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER, is_foi=False)
+    )
+    report_count = (
+        ProblemReport.objects.filter(message__request__user=user, user__isnull=False)
+        .exclude(user=user)
+        .values("kind")
+        .annotate(count=Count("pk", distinct=True))
+    )
+
+    return render(
+        request,
+        "problem/user_moderation.html",
+        {
+            "object": user,
+            "foirequests": foirequests,
+            "highlighted": request.GET.get("request"),
+            "report_count": report_count,
         },
     )
