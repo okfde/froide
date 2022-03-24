@@ -40,12 +40,12 @@ from froide.publicbody.models import FoiLaw, PublicBody
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
 
-Throttle_config = Optional[List[Tuple[int, int]]]
+ThrottleConfig = Optional[List[Tuple[int, int]]]
 Throttle = Union[bool, Tuple[int, int]]
 
 
 def throttle(
-    qs: QuerySet, throttle_config: Throttle_config, date_param: str = "first_message"
+    qs: QuerySet, throttle_config: ThrottleConfig, date_param: str = "first_message"
 ) -> Throttle:
     if throttle_config is None:
         return False
@@ -110,16 +110,16 @@ def generate_secret_address(
     return "%s.%s@%s" % (username, secret, FOI_EMAIL_DOMAIN)
 
 
-Attachment_names = Optional[List[Union[str, Any]]]
-Attachment_missing = Optional[List[Any]]
+AttachmentNames = Optional[List[Union[str, Any]]]
+AttachmentMissing = Optional[List[Any]]
 
 
 def construct_message_body(
     foirequest: FoiRequest,
     text: str,
     send_address: bool = True,
-    attachment_names: Attachment_names = None,
-    attachment_missing: Attachment_missing = None,
+    attachment_names: AttachmentNames = None,
+    attachment_missing: AttachmentMissing = None,
     template: str = "foirequest/emails/mail_with_userinfo.txt",
 ) -> SafeString:
     return render_to_string(
@@ -462,10 +462,10 @@ def get_emails_from_request(
         already.add(email)
 
 
-Email_headers = Dict[str, List[Any]]
+EmailHeaders = Dict[str, List[Any]]
 
 
-def get_emails_from_message_headers(email_headers: Email_headers) -> None:
+def get_emails_from_message_headers(email_headers: EmailHeaders) -> None:
     fields = ("to", "cc", "resent-to", "resent-cc")
     for field in fields:
         for addr in email_headers.get(field, []):
@@ -474,10 +474,10 @@ def get_emails_from_message_headers(email_headers: Email_headers) -> None:
                 yield email
 
 
-Possible_reply_addresses = List[Tuple[str, str]]
+PossibleReplyAddresses = List[Tuple[str, str]]
 
 
-def possible_reply_addresses(foirequest: FoiRequest) -> Possible_reply_addresses:
+def possible_reply_addresses(foirequest: FoiRequest) -> PossibleReplyAddresses:
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
@@ -493,7 +493,7 @@ def possible_reply_addresses(foirequest: FoiRequest) -> Possible_reply_addresses
 
 
 Generator = List[Tuple[str, bytes, str]]
-MailAttachmentSizeChecker_iterator = Iterator[Tuple[str, bytes, str]]
+MailAttachmentSizeCheckerIterator = Iterator[Tuple[str, bytes, str]]
 
 
 class MailAttachmentSizeChecker:
@@ -503,7 +503,7 @@ class MailAttachmentSizeChecker:
         self.generator = generator
         self.max_size = max_size
 
-    def __iter__(self) -> MailAttachmentSizeChecker_iterator:
+    def __iter__(self) -> MailAttachmentSizeCheckerIterator:
         sum_bytes = 0
         self.non_send_files = []
         self.send_files = []
