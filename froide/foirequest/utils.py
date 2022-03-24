@@ -234,7 +234,12 @@ def make_unique_filename(name, existing_names):
     return name
 
 
-def compare_publicbody_email(email, pb_info_list, transform=lambda x: x.lower()):
+def compare_publicbody_email(email, pb_info_list, transform=None):
+    if transform is None:
+
+        def transform(x):
+            x.lower()
+
     email = transform(email)
 
     for pb_info in pb_info_list:
