@@ -186,6 +186,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
 
     tags = TaggableManager(through=TaggedUser, blank=True)
+    notes = models.TextField(blank=True)
 
     objects = UserManager()
 
