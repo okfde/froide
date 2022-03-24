@@ -84,6 +84,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
             {
                 "fields": (
                     "tags",
+                    "notes",
                     "is_trusted",
                     "terms",
                     "is_blocked",
