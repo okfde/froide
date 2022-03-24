@@ -54,7 +54,9 @@ class PostfixDeliveryReporter(object):
             if not os.path.exists(filename):
                 continue
             try:
-                with open_func(filename, mode="rt", encoding="utf-8") as fp:
+                with open_func(
+                    filename, mode="rt", errors="replace", encoding="utf-8"
+                ) as fp:
                     yield fp
             except IOError as e:
                 logging.exception(e)

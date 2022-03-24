@@ -193,11 +193,13 @@ class UnsupportedMailFormat(Exception):
 
 
 def get_bounce_headers(msgobj):
+    from .email_parsing import parse_header_field
+
     headers = defaultdict(list)
     for part in msgobj.walk():
         for k, v in part.items():
             if k in BOUNCE_HEADERS:
-                headers[k].append(v)
+                headers[k].append(parse_header_field(v))
     return headers
 
 
