@@ -133,7 +133,7 @@
           {{ message.recipient_public_body.name }}
         </a>
       {% else %}
-        {% if object|can_read_foirequest_authenticated %}
+        {% if object|can_read_foirequest_authenticated:request %}
           <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
             {{ message.recipient }}
           </span>
