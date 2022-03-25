@@ -128,7 +128,21 @@
       {% blocktrans %}To{% endblocktrans %}
     </dt>
     <dd>
-      {{ message.get_recipient }}
+      {% if message.recipient_public_body %}
+        <a href="{{ message.recipient_public_body.get_absolute_url }}">
+          {{ message.recipient_public_body.name }}
+        </a>
+      {% else %}
+        {% if object|can_read_foirequest_authenticated %}
+          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+            {{ message.recipient }}
+          </span>
+        {% else %}
+          <span class="redacted">
+            {% translate "Recipient name" %}
+          </span>
+        {% endif %}
+      {% endif %}
       {% if not message.is_default_recipient and object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
       <span class="d-print-none">
         <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">

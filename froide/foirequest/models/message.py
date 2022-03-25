@@ -8,7 +8,6 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import formats, timezone
 from django.utils.functional import cached_property
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
@@ -293,16 +292,6 @@ class FoiMessage(models.Model):
             )
         email = self.recipient_email or self.request.secret_address
         return make_address(email, recipient)
-
-    def get_recipient(self):
-        if self.recipient_public_body:
-            return format_html(
-                '<a href="{url}">{name}</a>',
-                url=self.recipient_public_body.get_absolute_url(),
-                name=self.recipient_public_body.name,
-            )
-        else:
-            return self.recipient
 
     def get_formatted(self, attachments):
         return render_to_string(
