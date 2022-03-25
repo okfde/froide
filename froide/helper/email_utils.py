@@ -78,7 +78,7 @@ BounceResult = namedtuple(
 )
 
 GENERIC_ERROR = DsnStatus(5, 0, 0)
-MAILBOX_FULL = DsnStatus(5, 2, 2)
+MAILBOX_FULL = DsnStatus(5, 5, 2)
 
 UID_RE = re.compile(r"UID\s+(?P<uid>\d+)")
 

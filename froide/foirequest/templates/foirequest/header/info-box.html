@@ -73,7 +73,7 @@
                 </a>
               </li>
             {% endif %}
-            {% if foirequest|can_moderate_pii_foirequest:request %}
+            {% if object|can_moderate_pii_foirequest:request %}
               {% if not object.user.is_deleted and not object.user.is_trusted and object.user.is_active and not object.user.is_staff %}
                 <li class="list-inline-item">
                   <a class="btn btn-link" href="{% url 'problem-user' pk=foirequest.user.pk %}?request={{ object.id }}">
