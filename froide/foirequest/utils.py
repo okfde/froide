@@ -243,12 +243,12 @@ def compare_publicbody_email(email, pb_info_list, transform=lambda x: x.lower())
 
 
 def get_publicbody_for_email(
-    email, foi_request, include_deferred=False
+    email: str, foirequest, include_deferred=False
 ) -> Optional[PublicBody]:
     if not email:
         return None
 
-    pb_info_list = list(get_emails_from_request(foi_request))
+    pb_info_list = list(get_emails_from_request(foirequest))
 
     # Compare email direct
     pb = compare_publicbody_email(email, pb_info_list)
@@ -272,9 +272,9 @@ def get_publicbody_for_email(
     pbs = PublicBody.objects.filter(email__endswith=email_host)
     if len(pbs) == 1:
         return pbs[0]
-    elif foi_request.public_body in pbs:
+    elif foirequest.public_body in pbs:
         # likely the request's public body
-        return foi_request.public_body
+        return foirequest.public_body
 
     if include_deferred:
         from .models import DeferredMessage
