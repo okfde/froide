@@ -330,6 +330,17 @@ class ReceiveEmailService(BaseService):
         if message_id:
             message_id = message_id[:512]
 
+        # check if same message has already been delivered
+        if message_id:
+            message_exists = (
+                FoiMessage.objects.filter(request=foirequest)
+                .exclude(email_message_id="")
+                .filter(email_message_id=message_id)
+                .exists()
+            )
+            if message_exists:
+                return
+
         recipient_name, recipient_email = self.get_recipient_name_email()
 
         message = FoiMessage(
