@@ -35,15 +35,6 @@ docker-compose up
 
 This will start Postgres and Elasticsearch and listen on port 5432 and 9200 respectively. You can adjust the port mapping in the `docker-compose.yml`.
 
-
-### Upgrade dependencies
-
-```
-# with pip-tools
-pip-compile -U requirements.in
-pip-compile -U requirements-test.in
-```
-
 ### Setup database and search index, start server
 
 If you need to adjust settings, you can copy the `froide/local_settings.py.example` to `froide/local_settings.py` and edit it. More steps:
@@ -71,6 +62,15 @@ make test
 make testci
 # Run only end-to-end tests
 make testui
+```
+
+
+### Upgrade dependencies
+
+```
+# with pip-tools
+pip-compile -U requirements.in
+pip-compile -U requirements-test.in
 ```
 
 ## Docs
