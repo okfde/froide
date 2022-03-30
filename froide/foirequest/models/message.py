@@ -433,8 +433,16 @@ class FoiMessage(models.Model):
         recipients = []
         fields = ("to", "cc")
         for field in fields:
-            for recipient in self.email_headers.get(field, []):
-                recipients.append((field, recipient[0], recipient[1]))
+            for name, email in self.email_headers.get(field, []):
+                # Hide other addresses of foi mail domain
+                if email != self.request.secret_address and email.endswith(
+                    "@{}".format(settings.FOI_EMAIL_DOMAIN)
+                ):
+                    recipients.append(
+                        (field, settings.FOI_EMAIL_DOMAIN, settings.FOI_EMAIL_DOMAIN)
+                    )
+                else:
+                    recipients.append((field, name, email))
         return recipients
 
     def get_extra_content_types(self) -> List[str]:
