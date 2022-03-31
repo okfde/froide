@@ -10,7 +10,7 @@ export default class ScrollIndicator {
   elementIsHidden: boolean
 
   constructor (
-    messagesContainer: HTMLElement,
+    messagesContainer: HTMLElement
   ) {
     this.messagesContainer = messagesContainer
     this.eventAttached = false
@@ -71,7 +71,6 @@ export default class ScrollIndicator {
     const percentageScrolled = (Math.abs(scrollTopBottom) / (height - window.innerHeight)) * 100
 
     this.lineElement.style.width = percentageScrolled + '%'
-
   }
 
   showIndicator () {
@@ -85,5 +84,4 @@ export default class ScrollIndicator {
     this.element.style.visibility = 'hidden'
     this.elementIsHidden = true
   }
-
 }

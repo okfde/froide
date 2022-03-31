@@ -2,7 +2,7 @@ const VAR = new RegExp(/\$\{(\w+)\}/g)
 
 const LANG = document.querySelector('html').lang
 
-var I18nMixin = {
+const I18nMixin = {
   computed: {
     i18n () {
       return {
@@ -15,7 +15,7 @@ var I18nMixin = {
           }
         },
         _ (key, params) {
-          let trans = this[key]
+          const trans = this[key]
           if (Array.isArray(trans)) {
             if (params.count !== undefined && (params.count > 1 ||
                                                params.count === 0)) {

@@ -5,7 +5,7 @@ export default class Message {
   expandedClassName = 'alpha-message--expanded'
   metaExpandedClassName = 'alpha-message__meta-container--visible'
 
-  constructor(element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
+  constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
     this.element = element
     this.metaContainer = this.element.querySelector('.alpha-message__meta-container') as HTMLElement
@@ -38,7 +38,7 @@ export default class Message {
     }
   }
 
-  get storageItem() {
+  get storageItem () {
     try {
       // localStorage access may cause DOMException if blocked
       const item = localStorage.getItem(this.id)
@@ -48,17 +48,17 @@ export default class Message {
     }
   }
 
-  get isExpanded() {
+  get isExpanded () {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
 
-  get isCollapsed() {
+  get isCollapsed () {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded === false : false
   }
 
-  updateStorageItem(data: Object) {
+  updateStorageItem (data: Object) {
     try {
       // localStorage access may cause DOMException if blocked
       localStorage.setItem(
@@ -70,12 +70,12 @@ export default class Message {
     } catch { }
   }
 
-  onHeadClick(e: Event) {
+  onHeadClick (e: Event) {
     this.toggleMessage()
     e.preventDefault()
   }
 
-  toggleMessage() {
+  toggleMessage () {
     if (this.isExpanded) {
       this.collapseMessage()
     } else {
@@ -86,77 +86,76 @@ export default class Message {
     }
   }
 
-  expandMessage() {
+  expandMessage () {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
   }
 
-  collapseMessage() {
+  collapseMessage () {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
     this.metaContainer.classList.remove(this.metaExpandedClassName)
   }
 
-  showMetaContainer() {
+  showMetaContainer () {
     if (!this.metaContainer.classList.contains(this.metaExpandedClassName)) {
       this.toggleMetaContainer()
     }
   }
 
-  toggleMetaContainer(e?: Event) {
+  toggleMetaContainer (e?: Event) {
     e?.preventDefault()
     e?.stopPropagation()
     this.metaContainer.classList.toggle(this.metaExpandedClassName)
   }
 
-  showAllAttachments(e: Event) {
+  showAllAttachments (e: Event) {
     e.preventDefault()
     this.unwrapLeftSibling(e.target as HTMLElement)
   }
 
-  unwrapLeftSibling(el: HTMLElement) {
+  unwrapLeftSibling (el: HTMLElement) {
     // unwrap left sibling content of parent node
     const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
     const previousParent = parentEl?.previousElementSibling
-    if (el && parentEl && outerParent && previousParent) {
-
+    if (el && (parentEl != null) && (outerParent != null) && (previousParent != null)) {
       // move all children out of the element
-      while (previousParent.firstChild) {
-        outerParent.appendChild(previousParent.firstChild);
+      while (previousParent.firstChild != null) {
+        outerParent.appendChild(previousParent.firstChild)
       }
 
       // remove the empty element and trigger container
-      outerParent.removeChild(parentEl);
-      outerParent.removeChild(previousParent);
+      outerParent.removeChild(parentEl)
+      outerParent.removeChild(previousParent)
     }
   }
 
-  scrollToComment(commentElementId: string) {
+  scrollToComment (commentElementId: string) {
     // expand message and comments container first if necessary
     if (!this.isExpanded) this.expandMessage()
 
-      // wait until DOM has finished rendering
-      // and scroll to comment element
-      ; (function checkIfReady() {
-        if (document.readyState === 'complete') {
-          const element = document.getElementById(commentElementId)
-          if (!element) return
+    // wait until DOM has finished rendering
+    // and scroll to comment element
+    ; (function checkIfReady () {
+      if (document.readyState === 'complete') {
+        const element = document.getElementById(commentElementId)
+        if (element == null) return
 
-          // scroll into view
-          element.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        // scroll into view
+        element.scrollIntoView({ block: 'center', behavior: 'smooth' })
 
-          // add and remove highlight class
-          element.classList.add('comments-comment--highlighted')
-          setTimeout(() => {
-            element.classList.remove('comments-comment--highlighted')
-          }, 750);
-        } else (
-          // if dom not ready, check again on next tick
+        // add and remove highlight class
+        element.classList.add('comments-comment--highlighted')
+        setTimeout(() => {
+          element.classList.remove('comments-comment--highlighted')
+        }, 750)
+      } else {
+        (
+        // if dom not ready, check again on next tick
           window.requestAnimationFrame(checkIfReady)
         )
-      })()
-
+      }
+    })()
   }
-
 }

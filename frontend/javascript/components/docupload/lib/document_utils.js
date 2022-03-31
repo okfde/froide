@@ -1,4 +1,4 @@
-import {postData, putData, getData} from '../../../lib/api.js'
+import { postData, putData, getData } from '../../../lib/api.js'
 
 const deleteAttachment = (doc, config, csrf) => {
   const deleteUrl = config.url.deleteAttachment.replace('/0/', `/${doc.id}/`)

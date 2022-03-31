@@ -1,15 +1,15 @@
-declare module "bootstrap.native/dist/bootstrap-native-v4" {
+declare module 'bootstrap.native/dist/bootstrap-native-v4' {
   export class Tab {
     constructor (el: HTMLElement, options: object);
-    show(): void
+    show (): void
   }
   export class Tooltip {
     constructor (el: HTMLElement);
-    show(): void
+    show (): void
   }
 
   export class Modal {
     constructor (el: HTMLElement);
-    show(): void
+    show (): void
   }
 }

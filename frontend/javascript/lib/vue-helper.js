@@ -8,7 +8,7 @@ function getPropsFromElement (el) {
   const props = {}
 
   for (let i = 0; i < attrs.length; i += 1) {
-    let attr = attrs[i]
+    const attr = attrs[i]
     if (attr.name[0] === 'v' && attr.name[1] === '-') {
       continue
     }
@@ -37,8 +37,8 @@ function getSlotData (el) {
   const slotEls = el.querySelectorAll('[slot]')
   const slots = {}
   for (let i = 0; i < slotEls.length; i += 1) {
-    let slotEl = slotEls[i]
-    let slotName = slotEl.attributes.slot.value
+    const slotEl = slotEls[i]
+    const slotName = slotEl.attributes.slot.value
     slots[slotName] = {
       tag: slotEl.tagName.toLowerCase(),
       innerHTML: slotEl.innerHTML
@@ -59,7 +59,7 @@ function makeSlotFunction (slotData, createElement) {
 
 function makeSlots (slotData, createElement) {
   const slots = {}
-  for (let name in slotData) {
+  for (const name in slotData) {
     slots[name] = makeSlotFunction(slotData[name], createElement)
   }
   return slots
@@ -68,15 +68,15 @@ function makeSlots (slotData, createElement) {
 function getOtherAttrs (el) {
   const other = {}
   if (el.id) {
-    other['attrs'] = {
+    other.attrs = {
       id: el.id
     }
   }
   if (el.className) {
-    let classes = el.className.split(' ')
-    other['class'] = {}
+    const classes = el.className.split(' ')
+    other.class = {}
     classes.forEach((c) => {
-      other['class'][c.trim()] = true
+      other.class[c.trim()] = true
     })
   }
   return other

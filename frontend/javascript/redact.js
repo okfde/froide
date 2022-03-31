@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import {renderComponent} from './lib/vue-helper'
+import { renderComponent } from './lib/vue-helper'
 
 import Redaction from './components/redaction/redaction'
 

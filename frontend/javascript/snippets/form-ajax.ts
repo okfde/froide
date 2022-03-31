@@ -1,123 +1,119 @@
-import {Modal} from "bootstrap.native/dist/bootstrap-native-v4";
-interface IHTMLModalTriggerElement extends HTMLElement { Modal: any | null; }
+import { Modal } from 'bootstrap.native/dist/bootstrap-native-v4'
+interface IHTMLModalTriggerElement extends HTMLElement { Modal: any | null }
 
 const confirmForm = (form: HTMLElement) => {
-  const confirmMessage = form.dataset.confirm;
+  const confirmMessage = form.dataset.confirm
   if (!confirmMessage) {
-    return true;
+    return true
   }
-  const confirmed = window.confirm(confirmMessage);
+  const confirmed = window.confirm(confirmMessage)
   if (!confirmed) {
-    return false;
+    return false
   }
-  return true;
-};
+  return true
+}
 
 const submitFormsAjax = () => {
-  const ajaxForms = document.querySelectorAll("form.ajaxified");
+  const ajaxForms = document.querySelectorAll('form.ajaxified');
   (Array.from(ajaxForms) as HTMLFormElement[]).forEach((form) => {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
 
       if (!confirmForm(form)) {
-        return false;
+        return false
       }
 
-      const method = form.getAttribute("method") || "post";
-      let url = form.getAttribute("action") || "";
-      const formData = new FormData(form);
+      const method = form.getAttribute('method') || 'post'
+      let url = form.getAttribute('action') || ''
+      const formData = new FormData(form)
       const data = Array.from(formData)
-        .map((pair) => pair.map((x) => encodeURIComponent(x.toString())).join("="))
-        .join("&");
-      if (method.toLowerCase() === "get") {
+        .map((pair) => pair.map((x) => encodeURIComponent(x.toString())).join('='))
+        .join('&')
+      if (method.toLowerCase() === 'get') {
         url = `${url}?${data}`
       }
-      const request = new XMLHttpRequest();
-      request.open(method, url, true);
-      request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+      const request = new XMLHttpRequest()
+      request.open(method, url, true)
+      request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+      request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
       request.onload = () => {
-
         if (form.dataset.modalcontainer) {
-          const target = document.querySelector<HTMLElement>(form.dataset.modalcontainer as string)
-          if (target) {
-            new Modal(target).show();
+          const target = document.querySelector<HTMLElement>(form.dataset.modalcontainer)
+          if (target != null) {
+            new Modal(target).show()
             console.log('got modal')
           }
         } else if (form.dataset.modal) {
-          const modalTrigger = document.getElementById(form.dataset.modal) as IHTMLModalTriggerElement;
+          const modalTrigger = document.getElementById(form.dataset.modal) as IHTMLModalTriggerElement
           if (modalTrigger) {
-            modalTrigger.Modal.hide();
+            modalTrigger.Modal.hide()
           }
         }
 
-
-        const responseData = request.responseText;
-        if (responseData[0] === "/") {
+        const responseData = request.responseText
+        if (responseData[0] === '/') {
           // starts with URL, redirect
-          window.location.href = responseData;
-          if (responseData.indexOf('#') !== -1) {
-            window.location.reload();
+          window.location.href = responseData
+          if (responseData.includes('#')) {
+            window.location.reload()
           }
-          return;
+          return
         }
         if (form.dataset.container) {
           unsetWorking(form)
           const container = document.querySelector(form.dataset.container)
-          if (container) {
+          if (container != null) {
             container.innerHTML = responseData
           }
         } else {
-          const parent = form.closest(".ajax-parent");
-          if (parent) {
-            if (responseData[0] === "{") {
+          const parent = form.closest('.ajax-parent')
+          if (parent != null) {
+            if (responseData[0] === '{') {
               const data = JSON.parse(responseData)
               if (data.errors) {
-                parent.outerHTML = `<div class="alert alert-danger">${data.errors}</div>`;
+                parent.outerHTML = `<div class="alert alert-danger">${data.errors}</div>`
               }
             } else {
-              parent.outerHTML = responseData;
+              parent.outerHTML = responseData
             }
           } else {
             form.outerHTML = responseData
           }
         }
-      };
-      if (method.toLowerCase() !== "get") {
-        request.send(data);
+      }
+      if (method.toLowerCase() !== 'get') {
+        request.send(data)
       } else {
-        request.send();
+        request.send()
       }
 
       setWorking(form)
+    })
+  })
+}
 
-    });
-  });
-};
-
-const SPINNER = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`
+const SPINNER = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
 
 const setWorking = (form: HTMLFormElement) => {
-  Array.from(form.querySelectorAll("button, input")).forEach((el) => {
+  Array.from(form.querySelectorAll('button, input')).forEach((el) => {
     if (el.getAttribute('type') === 'submit') {
       el.innerHTML = `${SPINNER}${el.innerHTML}`
     }
-    el.setAttribute("disabled", "");
-  });
+    el.setAttribute('disabled', '')
+  })
 }
 
 const unsetWorking = (form: HTMLFormElement) => {
-  Array.from(form.querySelectorAll("button, input")).forEach((el) => {
+  Array.from(form.querySelectorAll('button, input')).forEach((el) => {
     if (el.getAttribute('type') === 'submit') {
-      el.innerHTML = el.innerHTML.replace(SPINNER, "")
+      el.innerHTML = el.innerHTML.replace(SPINNER, '')
     }
-    el.removeAttribute("disabled");
-  });
-
+    el.removeAttribute('disabled')
+  })
 }
 
-submitFormsAjax();
+submitFormsAjax()
 
 export default {
-  submitFormsAjax,
-};
+  submitFormsAjax
+}

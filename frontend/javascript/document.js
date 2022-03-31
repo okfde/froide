@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import {renderComponent} from './lib/vue-helper'
+import { renderComponent } from './lib/vue-helper'
 
 import FileUploader from './components/upload/file-uploader.vue'
 
@@ -14,13 +14,13 @@ function createDocumentUploader (element) {
   }).$mount(element)
 }
 
-var els = document.querySelectorAll('.document-upload')
+const els = document.querySelectorAll('.document-upload')
 for (let i = 0; i < els.length; i += 1) {
   createDocumentUploader(els[i])
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  let docUploader = document.querySelector('#document-upload')
+  const docUploader = document.querySelector('#document-upload')
   if (docUploader) {
     createDocumentUploader(docUploader)
   }

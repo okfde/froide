@@ -1,5 +1,5 @@
 import debounce from 'lodash.debounce'
-import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import {
   SET_CONFIG, SET_PUBLICBODY, SET_PUBLICBODIES,
@@ -8,13 +8,13 @@ import {
   CLEAR_PUBLICBODIES, SET_STEP_SELECT_PUBLICBODY
 } from '../../../store/mutation_types'
 
-var PBChooserMixin = {
+const PBChooserMixin = {
   created () {
     if (this.config) {
       this.setConfig(this.config)
     }
     if (this.hasForm && this.field.value) {
-      let pbs = this.field.objects
+      const pbs = this.field.objects
       if (pbs) {
         this.cachePublicBodies(pbs)
         this.setPublicBodies({
@@ -76,11 +76,11 @@ var PBChooserMixin = {
       return Object.keys(this.filters).length > 0
     },
     searchFilters () {
-      let f = {}
+      const f = {}
       if (!this.hasFilters) {
         return f
       }
-      for (let k in this.filters) {
+      for (const k in this.filters) {
         if (this.filters[k] === null || this.filters[k].length === 0) {
           continue
         }
@@ -132,7 +132,7 @@ var PBChooserMixin = {
     },
     clearSelection () {
       if (window.confirm(this.i18n.reallyClearSelection)) {
-        this.clearPublicBodies({scope: this.scope})
+        this.clearPublicBodies({ scope: this.scope })
         this.setStepSelectPublicBody()
       }
     },
@@ -148,7 +148,7 @@ var PBChooserMixin = {
           return
         }
       }
-      let query = this.buildQuery()
+      const query = this.buildQuery()
       if (query === this.lastQuery &&
           this.searchResults.length !== 0) {
         this.searching = false
@@ -169,7 +169,7 @@ var PBChooserMixin = {
       })
     },
     clearResults () {
-      this.clearSearchResults({scope: this.scope})
+      this.clearSearchResults({ scope: this.scope })
     },
     ...mapMutations({
       setConfig: SET_CONFIG,
