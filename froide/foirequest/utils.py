@@ -4,7 +4,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Iterator, Optional
+from typing import Iterator, List, Optional, Tuple, Union
 
 from django import forms
 from django.conf import settings
@@ -68,7 +68,7 @@ def check_throttle(user, klass, extra_filters=None):
     )
 
 
-def get_foi_mail_domains():
+def get_foi_mail_domains() -> Union[List[str], Tuple[str]]:
     domains = settings.FOI_EMAIL_DOMAIN
     if not isinstance(domains, (list, tuple)):
         return [domains]
@@ -445,10 +445,11 @@ def get_emails_from_message_headers(email_headers):
 
 
 def possible_reply_addresses(foirequest):
+    FOI_MAIL_DOMAIN = get_foi_mail_domains()[0]
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
         # Don't reply to our own addesses
-        if email_info.email.endswith("@{}".format(settings.FOI_EMAIL_DOMAIN)):
+        if email_info.email.endswith("@{}".format(FOI_MAIL_DOMAIN)):
             continue
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
             continue

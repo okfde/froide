@@ -17,6 +17,7 @@ from froide.helper.email_utils import make_address
 from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
+from ..utils import get_foi_mail_domains
 from .request import FoiRequest, get_absolute_domain_short_url, get_absolute_short_url
 
 BOUNCE_TAG = "bounce"
@@ -432,15 +433,14 @@ class FoiMessage(models.Model):
             return []
         recipients = []
         fields = ("to", "cc")
+        FOI_EMAIL_DOMAIN = get_foi_mail_domains()[0]
         for field in fields:
             for name, email in self.email_headers.get(field, []):
                 # Hide other addresses of foi mail domain
                 if email != self.request.secret_address and email.endswith(
-                    "@{}".format(settings.FOI_EMAIL_DOMAIN)
+                    "@{}".format(FOI_EMAIL_DOMAIN)
                 ):
-                    recipients.append(
-                        (field, settings.FOI_EMAIL_DOMAIN, settings.FOI_EMAIL_DOMAIN)
-                    )
+                    recipients.append((field, FOI_EMAIL_DOMAIN, FOI_EMAIL_DOMAIN))
                 else:
                     recipients.append((field, name, email))
         return recipients
