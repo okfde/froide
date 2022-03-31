@@ -29,11 +29,9 @@ export default class InfoBox {
       this.copyUrlTrigger.addEventListener('click', this.copyShortUrlTriggerClickCallback.bind(this))
     }
 
-    const editLinks = Array.from(this.element.querySelectorAll('.info-box__edit-link')) as HTMLElement[]
-    editLinks.forEach(link => {
+    this.element.querySelectorAll<HTMLElement>('.info-box__edit-link').forEach(link => {
       link.addEventListener('click', this.editButtonClickCallback)
     })
-
   }
 
   showStatus () {
@@ -50,7 +48,7 @@ export default class InfoBox {
 
   editButtonClickCallback (e?: MouseEvent) {
     e?.preventDefault()
-    if (this.editButton && this.editPanel && this.infoList) {
+    if ((this.editButton != null) && (this.editPanel != null) && (this.infoList != null)) {
       this.editPanel.classList.toggle('d-none')
       this.infoList.classList.toggle('d-none')
       this.editButton.children[0].classList.toggle('d-none')
@@ -69,12 +67,12 @@ export default class InfoBox {
     }
 
     if (el.Tooltip) {
-      const originalTitle = el.title;
-      el.title = el.dataset.copied || ""
+      const originalTitle = el.title
+      el.title = el.dataset.copied || ''
       el.Tooltip.hide()
       const switchTooltip = () => {
         el.Tooltip.show()
-        el.removeEventListener("hidden.bs.tooltip", switchTooltip)
+        el.removeEventListener('hidden.bs.tooltip', switchTooltip)
 
         window.setTimeout(() => {
           el.Tooltip.hide()
@@ -82,7 +80,7 @@ export default class InfoBox {
         }, 2500)
       }
 
-      el.addEventListener("hidden.bs.tooltip", switchTooltip);
+      el.addEventListener('hidden.bs.tooltip', switchTooltip)
     }
   }
 
@@ -97,5 +95,4 @@ export default class InfoBox {
     document.execCommand('copy')
     document.body.removeChild(el)
   }
-
 }

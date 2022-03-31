@@ -1,14 +1,13 @@
 {
-    "parserOptions": {
-      "sourceType": "module",
-      "parser": "babel-eslint"
-    },
-    "extends": [
-      "eslint:recommended",
-      "plugin:vue/recommended"
-    ],
-    "plugins": ["vue"],
-    "rules": {
-      "vue/component-tags-order": "off"
-    }
+  "parserOptions": {
+    "sourceType": "module",
+    "project": ["./tsconfig.json"]
+  },
+  "extends": "standard-with-typescript",
+  "plugins": [
+    "vue",
+    "html"
+  ],
+  "ignorePatterns": ["node_modules/**", "**/static/**"],
+  "root": true
 }

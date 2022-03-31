@@ -1,55 +1,55 @@
-interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null; }
+interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null }
 
-Array.from(document.querySelectorAll(".copy-text")).forEach((copyEl) => {
-  copyEl.addEventListener("click", function(this: IHTMLToolTipElement) {
-    const el = this;
-    let selection;
+document.querySelectorAll('.copy-text').forEach((copyEl) => {
+  copyEl.addEventListener('click', function (this: IHTMLToolTipElement) {
+    const el = this
+    let selection
 
-    const isiOSDevice = navigator.userAgent.match(/ipad|iphone/i);
+    const isiOSDevice = navigator.userAgent.match(/ipad|iphone/i)
 
-    if (isiOSDevice) {
-      const editable = el.contentEditable;
-      const readOnly = el.readOnly;
+    if (isiOSDevice != null) {
+      const editable = el.contentEditable
+      const readOnly = el.readOnly
 
-      el.contentEditable = "";
-      el.readOnly = false;
+      el.contentEditable = ''
+      el.readOnly = false
 
-      const range = document.createRange();
-      range.selectNodeContents(el);
+      const range = document.createRange()
+      range.selectNodeContents(el)
 
-      selection = window.getSelection();
+      selection = window.getSelection()
       if (selection !== null) {
-        selection.removeAllRanges();
-        selection.addRange(range);
+        selection.removeAllRanges()
+        selection.addRange(range)
       }
-      el.setSelectionRange(0, 999999);
-      el.contentEditable = editable;
-      el.readOnly = readOnly;
+      el.setSelectionRange(0, 999999)
+      el.contentEditable = editable
+      el.readOnly = readOnly
     } else {
-      el.select();
+      el.select()
     }
 
-    document.execCommand("copy");
+    document.execCommand('copy')
 
-    if (isiOSDevice && selection) {
-      selection.removeAllRanges();
+    if ((isiOSDevice != null) && (selection != null)) {
+      selection.removeAllRanges()
     }
 
     if (el.Tooltip) {
-      const originalTitle = el.title;
-      el.title = el.dataset.copied || "";
-      el.Tooltip.hide();
+      const originalTitle = el.title
+      el.title = el.dataset.copied || ''
+      el.Tooltip.hide()
       const switchTooltip = () => {
-        el.Tooltip.show();
-        el.removeEventListener("hidden.bs.tooltip", switchTooltip);
+        el.Tooltip.show()
+        el.removeEventListener('hidden.bs.tooltip', switchTooltip)
 
         window.setTimeout(() => {
-          el.Tooltip.hide();
-          el.title = originalTitle;
-        }, 3000);
-      };
+          el.Tooltip.hide()
+          el.title = originalTitle
+        }, 3000)
+      }
 
-      el.addEventListener("hidden.bs.tooltip", switchTooltip);
+      el.addEventListener('hidden.bs.tooltip', switchTooltip)
     }
-  });
-});
+  })
+})

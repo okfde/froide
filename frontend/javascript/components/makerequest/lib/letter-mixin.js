@@ -1,4 +1,4 @@
-var LetterMixin = {
+const LetterMixin = {
   computed: {
     letterStart () {
       if (this.defaultLaw) {
@@ -15,11 +15,11 @@ var LetterMixin = {
       return name.trim()
     },
     letterEndShort () {
-      let name = this.letterSignatureName
+      const name = this.letterSignatureName
       return `\n${this.i18n.kindRegards}\n${name}`
     },
     letterEnd () {
-      let name = this.letterSignatureName
+      const name = this.letterSignatureName
       if (!this.defaultLaw) {
         return `${this.i18n.kindRegards}\n${name}`
       }

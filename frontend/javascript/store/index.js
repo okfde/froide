@@ -18,8 +18,8 @@ import {
   UPDATE_PRIVATE, UPDATE_USER_ID
 } from './mutation_types'
 
-import {FroideAPI} from '../lib/api'
-import {selectBestLaw} from '../lib/law-select'
+import { FroideAPI } from '../lib/api'
+import { selectBestLaw } from '../lib/law-select'
 
 Vue.use(Vuex)
 
@@ -44,21 +44,21 @@ export default new Vuex.Store({
   },
   getters: {
     getPublicBodyByScope: (state, getters) => (scope) => {
-      let pbs = getters.getPublicBodiesByScope(scope)
+      const pbs = getters.getPublicBodiesByScope(scope)
       if (pbs.length === 0) {
         return null
       }
       return pbs[0]
     },
     getPublicBodiesByScope: (state, getters) => (scope) => {
-      let pbs = state.scopedPublicBodies[scope]
+      const pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return []
       }
       return pbs
     },
     isPublicBodySelectedByScope: (state) => (scope, id) => {
-      let pbMap = state.scopedPublicBodiesMap[scope]
+      const pbMap = state.scopedPublicBodiesMap[scope]
       if (pbMap === undefined) {
         return false
       }
@@ -68,21 +68,21 @@ export default new Vuex.Store({
       return state.publicBodies[id]
     },
     getScopedSearchResults: (state, getters) => (scope) => {
-      let srs = state.scopedSearchResults[scope]
+      const srs = state.scopedSearchResults[scope]
       if (srs === undefined) {
         return []
       }
       return srs
     },
     getScopedSearchFacets: (state) => (scope) => {
-      let facets = state.scopedSearchFacets[scope]
+      const facets = state.scopedSearchFacets[scope]
       if (facets === undefined) {
         return null
       }
       return facets
     },
     getScopedSearchMeta: (state) => (scope) => {
-      let meta = state.scopedSearchMeta[scope]
+      const meta = state.scopedSearchMeta[scope]
       if (meta === undefined) {
         return null
       }
@@ -94,16 +94,16 @@ export default new Vuex.Store({
       }).filter((law) => law !== undefined)
     },
     defaultLaw: (state, getters) => {
-      var key = null
+      let key = null
       // Get first key in scoped public bodies
       for (key in state.scopedPublicBodies) {}
-      let pbs = state.scopedPublicBodies[key] || []
+      const pbs = state.scopedPublicBodies[key] || []
       let lastLaw = null
       let sameLaw = true
       for (let i = 0; i < pbs.length; i += 1) {
-        let pb = pbs[i]
-        let laws = getters.getLawsForPublicBody(pb)
-        let bestLaw = selectBestLaw(laws, state.lawType)
+        const pb = pbs[i]
+        const laws = getters.getLawsForPublicBody(pb)
+        const bestLaw = selectBestLaw(laws, state.lawType)
         if (bestLaw === null) {
           continue
         }
@@ -156,9 +156,9 @@ export default new Vuex.Store({
     [SET_STEP_REQUEST] (state) {
       state.step = STEPS.WRITE_REQUEST
     },
-    [SET_PUBLICBODY] (state, {publicBody, scope}) {
+    [SET_PUBLICBODY] (state, { publicBody, scope }) {
       Vue.set(state.scopedPublicBodies, scope, [publicBody])
-      Vue.set(state.scopedPublicBodiesMap, scope, {[publicBody.id]: true})
+      Vue.set(state.scopedPublicBodiesMap, scope, { [publicBody.id]: true })
       state.scopedSearchResults[scope].forEach((sr) => {
         if (sr.id === publicBody.id) {
           sr.isSelected = true
@@ -167,9 +167,9 @@ export default new Vuex.Store({
         }
       })
     },
-    [SET_PUBLICBODIES] (state, {publicBodies, scope}) {
+    [SET_PUBLICBODIES] (state, { publicBodies, scope }) {
       Vue.set(state.scopedPublicBodies, scope, publicBodies)
-      let pbMap = {}
+      const pbMap = {}
       publicBodies.forEach((pb) => {
         pbMap[pb.id] = true
       })
@@ -184,10 +184,10 @@ export default new Vuex.Store({
         })
       }
     },
-    [SET_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
-      let pb = state.publicBodies[publicBodyId]
+    [SET_PUBLICBODY_ID] (state, { publicBodyId, scope }) {
+      const pb = state.publicBodies[publicBodyId]
       Vue.set(state.scopedPublicBodies, scope, [pb])
-      Vue.set(state.scopedPublicBodiesMap, scope, {publicBodyId: true})
+      Vue.set(state.scopedPublicBodiesMap, scope, { publicBodyId: true })
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -198,16 +198,16 @@ export default new Vuex.Store({
         })
       }
     },
-    [ADD_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
-      let pb = state.publicBodies[publicBodyId]
+    [ADD_PUBLICBODY_ID] (state, { publicBodyId, scope }) {
+      const pb = state.publicBodies[publicBodyId]
       if (pb === undefined) {
         return
       }
-      let pbs = state.scopedPublicBodies[scope]
+      const pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         Vue.set(state.scopedPublicBodies, scope, [pb])
       } else {
-        let contains = pbs.some((p) => p.id === pb.id)
+        const contains = pbs.some((p) => p.id === pb.id)
         if (!contains) {
           Vue.set(state.scopedPublicBodies, scope, [
             ...pbs,
@@ -224,7 +224,7 @@ export default new Vuex.Store({
         })
       }
     },
-    [REMOVE_PUBLICBODY_ID] (state, {publicBodyId, scope}) {
+    [REMOVE_PUBLICBODY_ID] (state, { publicBodyId, scope }) {
       let pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return
@@ -240,7 +240,7 @@ export default new Vuex.Store({
         })
       }
     },
-    [CLEAR_PUBLICBODIES] (state, {scope}) {
+    [CLEAR_PUBLICBODIES] (state, { scope }) {
       Vue.set(state.scopedPublicBodies, scope, [])
       Vue.set(state.scopedPublicBodiesMap, scope, {})
       if (state.scopedSearchResults[scope]) {
@@ -250,7 +250,7 @@ export default new Vuex.Store({
       }
     },
     [CACHE_PUBLICBODIES] (state, publicBodies) {
-      let newPublicBodies = {}
+      const newPublicBodies = {}
       if (!publicBodies) {
         return
       }
@@ -262,7 +262,7 @@ export default new Vuex.Store({
         ...newPublicBodies
       }
     },
-    [SET_SEARCHRESULTS] (state, {searchResults, searchFacets, searchMeta, scope}) {
+    [SET_SEARCHRESULTS] (state, { searchResults, searchFacets, searchMeta, scope }) {
       state.scopedPublicBodiesMap[scope] = state.scopedPublicBodiesMap[scope] || {}
       searchResults = searchResults.map((sr) => {
         sr.isSelected = state.scopedPublicBodiesMap[scope][sr.id] !== undefined
@@ -272,7 +272,7 @@ export default new Vuex.Store({
       Vue.set(state.scopedSearchFacets, scope, searchFacets)
       Vue.set(state.scopedSearchMeta, scope, searchMeta)
     },
-    [CLEAR_SEARCHRESULTS] (state, {scope}) {
+    [CLEAR_SEARCHRESULTS] (state, { scope }) {
       Vue.set(state.scopedSearchResults, scope, [])
       Vue.set(state.scopedSearchFacets, scope, {})
       Vue.set(state.scopedSearchMeta, scope, null)
@@ -310,14 +310,14 @@ export default new Vuex.Store({
     [UPDATE_LAW_TYPE] (state, val) {
       state.lawType = val
     },
-    [CACHE_LAWS] (state, {laws}) {
+    [CACHE_LAWS] (state, { laws }) {
       laws.forEach((law) => {
         Vue.set(state.lawCache, law.resource_uri, law)
       })
     }
   },
   actions: {
-    setSearchResults ({ commit, state, dispatch }, {scope, results}) {
+    setSearchResults ({ commit, state, dispatch }, { scope, results }) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,
         searchFacets: results.facets.fields,
@@ -333,44 +333,44 @@ export default new Vuex.Store({
       })
     },
     getLawsForPublicBodies ({ state, dispatch }, publicBodies) {
-      let searcher = new FroideAPI(state.config)
+      const searcher = new FroideAPI(state.config)
       searcher.getLawsForPublicBodies(publicBodies, state.lawCache).then((laws) => {
-        dispatch('cacheLaws', {laws})
+        dispatch('cacheLaws', { laws })
       })
     },
-    getSearchResults ({ commit, state, dispatch }, {scope, search, filters}) {
-      commit(CLEAR_SEARCHRESULTS, {scope})
-      let searcher = new FroideAPI(state.config)
+    getSearchResults ({ commit, state, dispatch }, { scope, search, filters }) {
+      commit(CLEAR_SEARCHRESULTS, { scope })
+      const searcher = new FroideAPI(state.config)
       return searcher.searchPublicBodies(search, filters).then((results) => {
-        dispatch('setSearchResults', {results, scope})
+        dispatch('setSearchResults', { results, scope })
       })
     },
-    setPublicBodyById ({ state, dispatch }, {scope, id}) {
-      let searcher = new FroideAPI(state.config)
+    setPublicBodyById ({ state, dispatch }, { scope, id }) {
+      const searcher = new FroideAPI(state.config)
       return searcher.getPublicBody(id).then((result) => {
-        dispatch('setPublicBodyByIdDone', {result, scope, id})
+        dispatch('setPublicBodyByIdDone', { result, scope, id })
       })
     },
-    setPublicBodyByIdDone ({commit, dispatch}, {scope, result, id}) {
+    setPublicBodyByIdDone ({ commit, dispatch }, { scope, result, id }) {
       commit(CACHE_PUBLICBODIES, [result])
-      commit(SET_PUBLICBODY_ID, {publicBodyId: id, scope})
+      commit(SET_PUBLICBODY_ID, { publicBodyId: id, scope })
       commit(SET_STEP_REQUEST)
       dispatch('getLawsForPublicBodies', [result])
     },
     getSearchResultsUrl ({ commit, state, getters, dispatch }, { scope, url }) {
-      commit(CLEAR_SEARCHRESULTS, {scope})
-      let searcher = new FroideAPI(state.config)
+      commit(CLEAR_SEARCHRESULTS, { scope })
+      const searcher = new FroideAPI(state.config)
       return searcher.getJson(url).then((results) => {
-        dispatch('setSearchResults', {results, scope})
+        dispatch('setSearchResults', { results, scope })
       })
     },
     getNextSearchResults ({ state, getters, dispatch }, scope) {
-      let meta = getters.getScopedSearchMeta(scope)
-      return dispatch('getSearchResultsUrl', {url: meta.next, scope: scope})
+      const meta = getters.getScopedSearchMeta(scope)
+      return dispatch('getSearchResultsUrl', { url: meta.next, scope: scope })
     },
     getPreviousSearchResults ({ state, getters, dispatch }, scope) {
-      let meta = getters.getScopedSearchMeta(scope)
-      return dispatch('getSearchResultsUrl', {url: meta.previous, scope: scope})
+      const meta = getters.getScopedSearchMeta(scope)
+      return dispatch('getSearchResultsUrl', { url: meta.previous, scope: scope })
     }
   },
   strict: debug

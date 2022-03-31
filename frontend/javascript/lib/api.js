@@ -2,9 +2,10 @@ class FroideAPI {
   constructor (config) {
     this.config = config
   }
+
   getJson (url) {
     return new Promise((resolve, reject) => {
-      var request = new XMLHttpRequest()
+      const request = new XMLHttpRequest()
       request.open('GET', url, true)
       request.onload = function () {
         if (request.status >= 400) {
@@ -23,6 +24,7 @@ class FroideAPI {
       request.send()
     })
   }
+
   getObjects (promise) {
     return new Promise((resolve, reject) => {
       promise.then((data) => {
@@ -31,6 +33,7 @@ class FroideAPI {
         .catch((e) => reject(e))
     })
   }
+
   getJsonObjects (url) {
     return new Promise((resolve, reject) => {
       this.getJsonForUrl(url)
@@ -38,14 +41,15 @@ class FroideAPI {
         .catch((e) => reject(e))
     })
   }
+
   getPublicBody (id) {
-    let url = this.config.url.getPublicBody.replace(/\/0\//, `/${id}/`)
+    const url = this.config.url.getPublicBody.replace(/\/0\//, `/${id}/`)
     return this.getJsonForUrl(url)
   }
 
   autocompletePublicBody (term) {
-    let query = encodeURIComponent(term)
-    let url = this.config.url.autocompletePublicBody + '?query=' + query
+    const query = encodeURIComponent(term)
+    const url = this.config.url.autocompletePublicBody + '?query=' + query
     return this.getJsonObjects(url)
   }
 
@@ -64,8 +68,8 @@ class FroideAPI {
 
     filters = filters || {}
     filters.language = document.documentElement.lang
-    let f = []
-    for (let key in filters) {
+    const f = []
+    for (const key in filters) {
       let filterVal = filters[key]
       if (filterVal !== null) {
         if (!Array.isArray(filterVal)) {
@@ -91,16 +95,16 @@ class FroideAPI {
 
   getLawsForPublicBodies (publicBodies, cachedLaws) {
     cachedLaws = cachedLaws || {}
-    let lawIdMap = {}
-    let lawIds = []
+    const lawIdMap = {}
+    const lawIds = []
     publicBodies.forEach((pb) => {
       pb.laws.forEach((law) => {
         if (typeof law === 'string') {
           if (cachedLaws[law] !== undefined) {
             return
           }
-          let parts = law.split('/')
-          let lawId = parts[parts.length - 2]
+          const parts = law.split('/')
+          const lawId = parts[parts.length - 2]
           if (lawIdMap[lawId] === undefined) {
             lawIdMap[lawId] = true
             lawIds.push(lawId)
@@ -112,7 +116,7 @@ class FroideAPI {
       return Promise.resolve([])
     }
     return this.getJsonForUrl(this.config.url.listLaws, null, {
-      'id': lawIds.join(',')
+      id: lawIds.join(',')
     }).then((data) => data.objects)
   }
 
@@ -133,8 +137,8 @@ class FroideAPI {
   }
 
   searchFoiRequests (term) {
-    let query = encodeURIComponent(term)
-    let url = this.config.url.searchRequests + '?q=' + query
+    const query = encodeURIComponent(term)
+    const url = this.config.url.searchRequests + '?q=' + query
     return this.getJsonObjects(url)
   }
 }
@@ -165,7 +169,7 @@ function getData (url = '', headers = {}) {
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
       ...headers
     }
@@ -194,7 +198,7 @@ function bustCache (url) {
     cache: 'no-cache',
     credentials: 'same-origin',
     headers: {
-      'pragma': 'no-cache',
+      pragma: 'no-cache',
       'cache-control': 'no-cache'
     }
   })

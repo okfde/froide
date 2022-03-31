@@ -1,45 +1,41 @@
-import {scrollToAnchor} from '../lib/misc'
+import { scrollToAnchor } from '../lib/misc'
 
-const runOnPage = () => {
-  const hideParents = document.querySelectorAll(".hideparent");
-  Array.from(hideParents).forEach((hideParent) => {
-    hideParent.addEventListener("click", function(this: HTMLElement, e) {
-      e.preventDefault();
-      const parent = this.parentElement;
-      if (parent) {
-        parent.style.display = "none";
+const runOnPage = (): void => {
+  document.querySelectorAll<HTMLElement>('.hideparent').forEach((hideParent) => {
+    hideParent.addEventListener('click', function (this: HTMLElement, e) {
+      e.preventDefault()
+      const parent = this.parentElement
+      if (parent != null) {
+        parent.style.display = 'none'
       }
-    });
-  });
+    })
+  })
 
   /* Set all form submit buttons to disabled on form submit */
-  const forms = document.querySelectorAll("form.disable-submit");
+  const forms = document.querySelectorAll('form.disable-submit')
   Array.from(forms).forEach((f) => {
-    f.addEventListener("submit", function(this: HTMLFormElement) {
-      const form = this;
-      const buttons = form.querySelectorAll('button[type="submit"]');
-      Array.from(buttons).forEach((button) => {
+    f.addEventListener('submit', function (this: HTMLFormElement) {
+      const form = this
+      form.querySelectorAll<HTMLElement>('button[type="submit"]').forEach((button) => {
         button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${button.innerHTML}`
-        button.setAttribute("disabled", "");
-      });
-    });
-  });
+        button.setAttribute('disabled', '')
+      })
+    })
+  })
 
-  const teleports = document.querySelectorAll('[data-teleport]') as NodeListOf<HTMLElement>
-  Array.from(teleports).forEach((el) => {
+  document.querySelectorAll<HTMLElement>('[data-teleport]').forEach((el) => {
     let location
     if (el.dataset.teleport) {
       location = document.querySelector(el.dataset.teleport)
     } else {
       location = document.body
     }
-    if (location) {
+    if (location != null) {
       location.appendChild(el)
     }
   })
 
-  const scrollToLinks = document.querySelectorAll("[data-scrollto]") as NodeListOf<HTMLElement>
-  Array.from(scrollToLinks).forEach((link) => {
+  document.querySelectorAll<HTMLElement>('[data-scrollto]').forEach((link) => {
     link.addEventListener('click', (e) => {
       if (link.dataset.scrollto) {
         e.preventDefault()
@@ -60,17 +56,15 @@ const runOnPage = () => {
         }
       }
     })
-  });
+  })
 
-  const inputs = document.querySelectorAll(".honigtopf input");
-  Array.from(inputs).forEach((input) => {
-    input.removeAttribute("required");
-  });
+  document.querySelectorAll('.honigtopf input').forEach((input) => {
+    input.removeAttribute('required')
+  })
+}
 
-};
-
-if (document.readyState === "loading") {
-  window.document.addEventListener("DOMContentLoaded", runOnPage);
+if (document.readyState === 'loading') {
+  window.document.addEventListener('DOMContentLoaded', runOnPage)
 } else {
-  runOnPage();
+  runOnPage()
 }

@@ -1,4 +1,4 @@
-var FilterMixin = {
+const FilterMixin = {
   computed: {
     valueList () {
       if (this.value === null) {
@@ -23,7 +23,7 @@ var FilterMixin = {
   methods: {
     removeFilter (itemId) {
       if (this.config.multi) {
-        let val = this.value.filter((x) => itemId !== x)
+        const val = this.value.filter((x) => itemId !== x)
         this.$emit('update', this.config, val)
       } else {
         this.$emit('update', this.config, null)

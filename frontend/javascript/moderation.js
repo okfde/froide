@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-import {renderComponent} from './lib/vue-helper'
+import { renderComponent } from './lib/vue-helper'
 
 import ModerationDashboard from './components/moderation/moderation-dashboard'
 

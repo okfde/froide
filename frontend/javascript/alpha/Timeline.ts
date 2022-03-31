@@ -2,11 +2,11 @@ import Message from './Message'
 
 interface TimelineItemsInterface {
   [key: string]: {
-    isActive: boolean,
-    element: HTMLElement,
-    msgIdsVisibleMap: MessagesVisbileMap,
-    updateItemVisibility: Function,
-  };
+    isActive: boolean
+    element: HTMLElement
+    msgIdsVisibleMap: MessagesVisbileMap
+    updateItemVisibility: Function
+  }
 }
 
 interface MessagesVisbileMap {
@@ -56,7 +56,7 @@ export default class Timeline {
     const result: TimelineItemsInterface = {}
     const nodes: any = this.element.getElementsByClassName('alpha-timeline__item')
 
-    for (let item of nodes) {
+    for (const item of nodes) {
       const key = item.dataset.key
 
       result[key] = {
@@ -78,20 +78,19 @@ export default class Timeline {
           this.msgIdsVisibleMap[msgId] = isVisible
 
           // set active if at least one message container is visible
-          if (Object.values(this.msgIdsVisibleMap).some(v => v === true)) {
+          if (Object.values(this.msgIdsVisibleMap).some(v => v)) {
             this.element.classList.add(activeClassName)
             this.isActive = true
           } else {
             this.element.classList.remove(activeClassName)
             this.isActive = false
           }
-        },
+        }
       }
 
       // smooth scroll on link click (anchor link)
       item.querySelector('.alpha-timeline__link')
         .addEventListener('click', this.itemClickCallback.bind(this))
-
     }
 
     return result
@@ -127,14 +126,14 @@ export default class Timeline {
     // expand message if collapsed
     const messageId = anchor.substring(1)
     const messageObj = this.getMessageById(messageId)
-    if (messageObj && messageObj.isCollapsed) {
+    if ((messageObj != null) && messageObj.isCollapsed) {
       messageObj.expandMessage()
     }
   }
 
   scrollToLastMessage () {
-    let messagesArr = this.messagesArr
-    let lastMessageId = messagesArr[messagesArr.length - 1].id
+    const messagesArr = this.messagesArr
+    const lastMessageId = messagesArr[messagesArr.length - 1].id
     this.scrollToMessage('#' + lastMessageId)
   }
 
@@ -162,21 +161,19 @@ export default class Timeline {
     }
   }
 
-
   setupScrollListener () {
     window.addEventListener('scroll', this.scrollListenerCallback.bind(this))
 
     // execute on first run
     this.scrollListenerCallback()
-
   }
 
   get lastTimelineItemIsVisible () {
     // src: https://stackoverflow.com/a/7557433
-    const rect = this.lastItemElement.getBoundingClientRect();
+    const rect = this.lastItemElement.getBoundingClientRect()
 
     return (
-        rect.top >= 0 &&
+      rect.top >= 0 &&
         rect.left >= 0 &&
         rect.bottom <= window.innerHeight &&
         rect.right <= window.innerWidth
@@ -185,7 +182,7 @@ export default class Timeline {
 
   scrollListenerCallback () {
     // toggle scrollToEndLink visibility
-    const allTimelineItemsAreInactive = Object.values(this.items).every(item => item.isActive === false)
+    const allTimelineItemsAreInactive = Object.values(this.items).every(item => !item.isActive)
     if (!allTimelineItemsAreInactive) {
       if (this.lastMessageIsVisible || this.lastTimelineItemIsVisible) {
         this.hideScrollToEndLink()
@@ -256,9 +253,7 @@ export default class Timeline {
         ? activeElements[0] as HTMLElement
         : activeElements[Math.round(activeElements.length / 2)] as HTMLElement
 
-
       if (activeElement) {
-
         // const documentScrollTop = document.documentElement.scrollTop
         // const messagesRootOffsetTop = this.messagesContainer.offsetTop
         // const isBehindFirstMessage = documentScrollTop > messagesRootOffsetTop
@@ -271,7 +266,5 @@ export default class Timeline {
         innerWrapElement.style.transform = `translateY(${scrollValue}px)`
       }
     }
-
   }
-
 }
