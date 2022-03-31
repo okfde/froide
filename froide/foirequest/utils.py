@@ -447,6 +447,9 @@ def get_emails_from_message_headers(email_headers):
 def possible_reply_addresses(foirequest):
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
+        # Don't reply to our own addesses
+        if email_info.email.endswith("@{}".format(settings.FOI_EMAIL_DOMAIN)):
+            continue
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
             continue
         label = email_info.get_label()
