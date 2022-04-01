@@ -35,7 +35,7 @@
           class="text-right"
         >
           <button
-            class="btn btn-sm text-muted small" 
+            class="btn btn-sm text-muted small"
             @click="splitPages"
           >
             <span class="fa fa-scissors" />
@@ -83,12 +83,12 @@ export default {
     return {
       loaded: false,
       width: null,
-      height: null,
+      height: null
     }
   },
   computed: {
     totalRotate () {
-      let rotDegree = (this.page.rotate || 0)
+      const rotDegree = (this.page.rotate || 0)
       if (this.$root.exifSupport) {
         return rotDegree
       }
@@ -96,8 +96,8 @@ export default {
     },
     image () {
       const image = new window.Image()
-      image.crossOrigin = "Anonymous"
-      image.addEventListener("load", this.imageLoaded, false);
+      image.crossOrigin = 'Anonymous'
+      image.addEventListener('load', this.imageLoaded, false)
       image.src = this.page.file_url
       return image
     },
@@ -109,7 +109,7 @@ export default {
         if (this.totalRotate === 0) {
           return this.page.file_url
         }
-        return this.rotateImage(this.totalRotate) 
+        return this.rotateImage(this.totalRotate)
       }
       return false
     },
@@ -145,10 +145,10 @@ export default {
     rotatePage () {
       const degree = ((this.page.rotate || 0) + 90) % 360
       this.$emit('pageupdated', {
-          pageNum: this.pageNum,
-          data: {
-            rotate: degree
-          }
+        pageNum: this.pageNum,
+        data: {
+          rotate: degree
+        }
       })
     },
     rotateImage (degree) {
@@ -167,7 +167,7 @@ export default {
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.save()
-      
+
       ctx.translate(canvas.width / 2, canvas.height / 2)
       ctx.rotate(degree * Math.PI / 180)
       ctx.drawImage(img, -img.width / 2, -img.height / 2)
@@ -177,22 +177,21 @@ export default {
     },
     imageLoaded (e) {
       this.loaded = true
-      let width = this.width = e.target.width
-      let height = this.height = e.target.height
-      let page = this.page
+      const width = this.width = e.target.width
+      const height = this.height = e.target.height
+      const page = this.page
       if (page.exif === undefined) {
-        let self = this
-        EXIF.getData(e.target, function() {
-          let data = {
+        const self = this
+        EXIF.getData(e.target, function () {
+          const data = {
             exif: true,
             width,
             height
           }
-          let orientation = EXIF.getTag(this, "Orientation");
-          if(orientation === 6) {
+          const orientation = EXIF.getTag(this, 'Orientation')
+          if (orientation === 6) {
             data.implicitRotate = 90
-          }
-          else if (orientation === 8) {
+          } else if (orientation === 8) {
             data.implicitRotate = 270
           } else if (orientation === 3) {
             data.implicitRotate = 180
@@ -214,7 +213,7 @@ export default {
 
 <style lang="scss" scoped>
   .page {
-    flex: 0 0 120px; 
+    flex: 0 0 120px;
     padding: 0 15px;
     margin: 0 1rem;
     cursor: move;

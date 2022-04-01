@@ -25,7 +25,7 @@
 
 export default {
   name: 'pb-table-row',
-  props: ['name', 'row', 'selected',  'headers'],
+  props: ['name', 'row', 'selected', 'headers'],
   computed: {
     rowCategories () {
       return this.row.categories.map((x) => x.name).join(', ')
@@ -35,7 +35,7 @@ export default {
         return this.selected
       },
       set (value) {
-        this.$emit('update:row', {id: this.row.id, value: value})
+        this.$emit('update:row', { id: this.row.id, value: value })
       }
     },
     hasJurisdiction () {

@@ -77,11 +77,11 @@ export default {
         return
       }
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-      e.preventDefault();
+      e.preventDefault()
       // Chrome requires returnValue to be set
-      e.returnValue = this.i18n.sureCancel;
+      e.returnValue = this.i18n.sureCancel
       return e.returnValue
-    });
+    })
   }
 }
 </script>

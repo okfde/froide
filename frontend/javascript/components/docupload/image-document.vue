@@ -27,7 +27,7 @@
         </div>
         <div v-else>
           <p class="text-muted">
-            {{ i18n.imageDocumentExplanation }} 
+            {{ i18n.imageDocumentExplanation }}
           </p>
           <div class="form-group">
             <label for="page-label">{{ i18n.attachmentName }}</label>
@@ -85,16 +85,16 @@ import ImagePage from './image-page.vue'
 import FileReview from './file-review.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
-import {DocumentMixin} from './lib/document_utils'
+import { DocumentMixin } from './lib/document_utils'
 
-import {postData} from '../../lib/api.js'
+import { postData } from '../../lib/api.js'
 
 export default {
   name: 'ImageDocument',
   components: {
     draggable,
     ImagePage,
-    FileReview,
+    FileReview
   },
   mixins: [I18nMixin, DocumentMixin],
   props: {
@@ -111,7 +111,7 @@ export default {
     return {
       progressTotal: null,
       progressCurrent: null,
-      converting: false,
+      converting: false
     }
   },
   computed: {
@@ -119,7 +119,7 @@ export default {
       return this.pages.length
     },
     pages: {
-      get: function() {
+      get: function () {
         return this.document.pages
       },
       set: function (pages) {
@@ -127,7 +127,7 @@ export default {
       }
     },
     documentName: {
-      get: function() {
+      get: function () {
         return this.document.name
       },
       set: function (name) {
@@ -138,11 +138,11 @@ export default {
       return !this.pages.every((p) => {
         return p && p.id
       })
-    },
+    }
   },
   mounted () {
     if (this.document.new) {
-      window.setTimeout(() => this.$emit('notnew'), 2000);
+      window.setTimeout(() => this.$emit('notnew'), 2000)
     }
   },
   methods: {
@@ -152,7 +152,7 @@ export default {
     convertImages () {
       this.converting = true
       this.$refs.top.scrollIntoView(true)
-      let data = {
+      const data = {
         action: 'convert_to_pdf',
         title: this.document.name,
         images: this.pages.map((p) => {

@@ -15,7 +15,7 @@
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   </div>
 </template>
 
@@ -43,7 +43,7 @@ export default {
       return {}
     },
     termsValue: {
-      get() {
+      get () {
         return this.terms
       },
       set (value) {

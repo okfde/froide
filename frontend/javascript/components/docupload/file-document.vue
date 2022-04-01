@@ -200,7 +200,7 @@
 
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
-import {DocumentMixin} from './lib/document_utils'
+import { DocumentMixin } from './lib/document_utils'
 
 import FileReview from './file-review.vue'
 import PdfPreview from './pdf-preview.vue'
@@ -307,13 +307,13 @@ export default {
         return !!this.document.selected
       },
       set () {
-        this.$emit('docupdated', {selected: !this.document.selected})
+        this.$emit('docupdated', { selected: !this.document.selected })
       }
     }
   },
   mounted () {
     if (this.document.new) {
-      window.setTimeout(() => this.$emit('notnew'), 2000);
+      window.setTimeout(() => this.$emit('notnew'), 2000)
     }
     if (this.pending) {
       this.checkProgress()
@@ -346,8 +346,7 @@ export default {
       window.fetch(`/api/v1/attachment/${this.document.id}/`)
         .then(response => response.json()).then((data) => {
           if (data.pending === true) {
-            window.setTimeout(() => this.checkProgress(), 5000);
-            return
+            window.setTimeout(() => this.checkProgress(), 5000)
           } else if (data.pending === false) {
             this.$emit('docupdated', {
               pending: false,
@@ -360,7 +359,7 @@ export default {
             document.location.reload()
           }
         }).catch(() => {
-          window.setTimeout(() => this.checkProgress(), 5000);
+          window.setTimeout(() => this.checkProgress(), 5000)
         })
     }
   }

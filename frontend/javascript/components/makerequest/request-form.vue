@@ -491,7 +491,7 @@ export default {
       fullTextValue: this.initialFullText,
       firstNameValue: this.initialFirstName || (this.user && this.user.first_name) || '',
       lastNameValue: this.initialLastName || (this.user && this.user.last_name) || '',
-      privateValue: this.initialPrivate || (this.user && this.user.private) || false,
+      privateValue: this.initialPrivate || (this.user && this.user.private) || false
     }
   },
   computed: {
@@ -590,7 +590,7 @@ export default {
             this.body = this.bodyBeforeChange
           }
         }
-        let newLineCount = (this.body.match(/\n/g) || []).length
+        const newLineCount = (this.body.match(/\n/g) || []).length
         this.bodyRows = Math.max(MIN_BODY_ROWS, Math.min(newLineCount + 1, MAX_BODY_ROWS))
       }
     },
@@ -645,7 +645,7 @@ export default {
       if (this.fullText) {
         this.fullTextDisabled = true
       }
-      var ta = document.querySelector('[name=body]')
+      const ta = document.querySelector('[name=body]')
       while (ta.scrollHeight > ta.clientHeight && ta.rows < MAX_BODY_ROWS) {
         ta.style.overflow = 'hidden'
         ta.rows += 1
@@ -661,7 +661,6 @@ export default {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 

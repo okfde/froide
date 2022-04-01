@@ -100,8 +100,8 @@
 
 <script>
 
-import Room from "../../lib/websocket.ts"
-import {getData} from '../../lib/api.js'
+import Room from '../../lib/websocket.ts'
+import { getData } from '../../lib/api.js'
 
 import ModerationProblems from './moderation-problems.vue'
 import ModerationPublicbodies from './moderation-publicbodies.vue'
@@ -149,7 +149,7 @@ export default {
       type: Number,
       required: false,
       default: null
-    },
+    }
   },
   data () {
     return {
@@ -164,7 +164,7 @@ export default {
       filter: {
         mine: false
       },
-      tabs: ["problemreports", "unclassified", "publicbodies", "attachments"],
+      tabs: ['problemreports', 'unclassified', 'publicbodies', 'attachments'],
       tab: 'problemreports'
     }
   },
@@ -183,7 +183,7 @@ export default {
     },
     publicbodiesCount () {
       return showMaxCount(this.publicbodies.length)
-    },
+    }
   },
   created () {
     this.$root.config = this.config
@@ -196,21 +196,21 @@ export default {
       ]
     })
     this.room.connect()
-    .on('userlist', (data) => {
-      this.moderators = data.userlist      
-    })
-    .on('report_added', (data) => {
-      this.reports = [
-        data.report,
-        ...this.reports.filter((r) => r.id !== data.report.id)
-      ]
-    })
-    .on('report_updated', (data) => {
-      this.reports = this.reports.map((r) => r.id === data.report.id ? data.report : r)
-    })
-    .on('report_removed', (data) => {
-      this.reports = this.reports.filter((r) => r.id !== data.report.id)
-    })
+      .on('userlist', (data) => {
+        this.moderators = data.userlist
+      })
+      .on('report_added', (data) => {
+        this.reports = [
+          data.report,
+          ...this.reports.filter((r) => r.id !== data.report.id)
+        ]
+      })
+      .on('report_updated', (data) => {
+        this.reports = this.reports.map((r) => r.id === data.report.id ? data.report : r)
+      })
+      .on('report_removed', (data) => {
+        this.reports = this.reports.filter((r) => r.id !== data.report.id)
+      })
     if (this.publicbodies !== null) {
       this.room.on('publicbody_added', (data) => {
         this.publicbodies = [
@@ -218,10 +218,10 @@ export default {
           ...this.publicbodies.filter((pb) => pb.id !== data.publicbody.id)
         ]
       })
-      .on('publicbody_removed', (data) => {
-        this.publicbodies = this.publicbodies.filter((pb) => pb.id !== data.publicbody.id)
-        this.reloadData()
-      })
+        .on('publicbody_removed', (data) => {
+          this.publicbodies = this.publicbodies.filter((pb) => pb.id !== data.publicbody.id)
+          this.reloadData()
+        })
     }
     if (this.unclassified !== null) {
       this.room.on('unclassified_removed', (data) => {
@@ -244,7 +244,7 @@ export default {
   },
   methods: {
     reloadData () {
-      getData(".").then((data) => {
+      getData('.').then((data) => {
         this.attachments = data.attachments
         this.attachmentsCount = data.attachments_count
         this.unclassified = data.unclassified
@@ -255,7 +255,6 @@ export default {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
   .sidebar {

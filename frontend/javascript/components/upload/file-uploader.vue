@@ -30,7 +30,6 @@ import Dashboard from '@uppy/dashboard'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
-
 export default {
   name: 'FileUploader',
   mixins: [I18nMixin],
@@ -51,7 +50,7 @@ export default {
     required: {
       type: Boolean,
       default: false,
-      required: false,
+      required: false
     },
     allowedFileTypes: {
       type: Array,
@@ -84,7 +83,7 @@ export default {
       return this.uploads.length > 0
     },
     uploadComplete () {
-      for (let key in this.files) {
+      for (const key in this.files) {
         if (this.files[key] === false) {
           return false
         }
@@ -93,7 +92,7 @@ export default {
     },
     uploads () {
       const uploads = []
-      for (let key in this.files) {
+      for (const key in this.files) {
         if (this.files[key] !== false) {
           uploads.push(this.files[key])
         }
@@ -148,7 +147,7 @@ export default {
     this.uppy.on('upload-success', (file, response) => {
       Vue.set(this.files, file.id, response.uploadURL)
       this.$emit('ready', this.canSubmit)
-      this.$emit('upload-success', {uppy: this.uppy, file, response})
+      this.$emit('upload-success', { uppy: this.uppy, file, response })
     })
     this.uppy.on('complete', (result) => {
       console.log('successful files:', result.successful)

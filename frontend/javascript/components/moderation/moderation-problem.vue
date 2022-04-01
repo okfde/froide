@@ -133,26 +133,25 @@
   </tr>
 </template>
 
-
 <script>
 
 const EMOJI_MAPPING = {
-  'message_not_delivered': '📭',
-  'bounce_publicbody': '🤖',
-  'attachment_broken': '📃',
-  'redaction_needed': '🔏',
-  'foi_help_needed': '🥺',
-  'other': '❓',
-  'not_nice': '💩',
-  'info_outdated': '⌛️',
-  'info_wrong': '❌',
+  message_not_delivered: '📭',
+  bounce_publicbody: '🤖',
+  attachment_broken: '📃',
+  redaction_needed: '🔏',
+  foi_help_needed: '🥺',
+  other: '❓',
+  not_nice: '💩',
+  info_outdated: '⌛️',
+  info_wrong: '❌'
 }
 
 const MAX_CLAIMED_MINUTES = 15
 
 const calcMinutesAgo = (val) => {
-  let now = new Date().getTime()
-  let t = new Date(val).getTime()
+  const now = new Date().getTime()
+  const t = new Date(val).getTime()
   return Math.round((now - t) / (1000 * 60))
 }
 
@@ -160,9 +159,9 @@ export default {
   name: 'ModerationRow',
   filters: {
     date: (val) => {
-      let d = new Date(val)
-      let today = (new Date()).toLocaleDateString()
-      let res = d.toLocaleString()
+      const d = new Date(val)
+      const today = (new Date()).toLocaleDateString()
+      const res = d.toLocaleString()
       if (d.toLocaleDateString() === today) {
         return res.split(',')[1].trim()
       }

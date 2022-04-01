@@ -36,12 +36,12 @@ export default {
   props: ['config', 'document'],
   data () {
     return {
-        progressTotal: null,
-        progressCurrent: null,
-        ready: false,
-        pdf: null,
-        numPages: null,
-        pdfPages: []
+      progressTotal: null,
+      progressCurrent: null,
+      ready: false,
+      pdf: null,
+      numPages: null,
+      pdfPages: []
     }
   },
   computed: {
@@ -59,20 +59,20 @@ export default {
         this.PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
         console.log(this.config.resources.pdfjsWorker, this.PDFJS)
         this.loadDocument()
-      }).catch((err) =>{
+      }).catch((err) => {
         console.log(err)
       })
     }
   },
   mounted () {
     if (this.document.new) {
-      window.setTimeout(() => this.$emit('notnew'), 2000);
+      window.setTimeout(() => this.$emit('notnew'), 2000)
     }
   },
   methods: {
     loadDocument () {
       console.log('Loading PDF', this.document.attachment.file_url)
-      let loadingTask = this.PDFJS.getDocument({
+      const loadingTask = this.PDFJS.getDocument({
         url: this.document.attachment.file_url,
         isEvalSupported: false
       })
@@ -96,12 +96,12 @@ export default {
     },
     loadPage (pageNum) {
       return this.pdf.getPage(pageNum).then((page) => {
-        var height = 120
-        var viewport = page.getViewport({scale: 1})
-        var scale = height / viewport.height;
-        var width = Math.round(viewport.width * scale)
-        var canvas = this.getNewCanvas(width, height)
-        var ctx = canvas.getContext('2d')
+        const height = 120
+        const viewport = page.getViewport({ scale: 1 })
+        const scale = height / viewport.height
+        const width = Math.round(viewport.width * scale)
+        let canvas = this.getNewCanvas(width, height)
+        let ctx = canvas.getContext('2d')
         page.render({
           canvasContext: ctx,
           viewport: page.getViewport({ scale: 1 })
@@ -113,7 +113,7 @@ export default {
       })
     },
     getNewCanvas (width, height) {
-      let canvas = document.createElement('canvas')
+      const canvas = document.createElement('canvas')
       canvas.width = width
       canvas.height = height
       return canvas
@@ -134,18 +134,18 @@ export default {
       ctx.translate(-canvas.width / 2, -canvas.height / 2)
     },
     imageDataToImageDataUrl (imageData, width, height) {
-      let canvas = this.getNewCanvas(width, height)
-      let ctx = canvas.getContext('2d')
+      const canvas = this.getNewCanvas(width, height)
+      const ctx = canvas.getContext('2d')
       ctx.putImageData(imageData, 0, 0)
       return canvas.toDataURL('image/png')
     },
     prepareImage () {
       return new Promise((resolve) => {
-        let img = new window.Image()
+        const img = new window.Image()
         img.onload = () => {
           if (img.naturalWidth > img.naturalHeight) {
-            let canvas = this.getNewCanvas(img.naturalHeight, img.naturalWidth)
-            let ctx = canvas.getContext('2d')
+            const canvas = this.getNewCanvas(img.naturalHeight, img.naturalWidth)
+            const ctx = canvas.getContext('2d')
             this.drawRotated(canvas, ctx, img)
             // let imgRotated = new window.Image()
             // imgRotated.onload = () => {

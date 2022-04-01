@@ -32,20 +32,20 @@
 
 <script>
 
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'pb-filter-list',
   props: ['config', 'items', 'i18n', 'scope', 'value', 'hasMore'],
   computed: {
     facetMap () {
-      let facets = this.getScopedSearchFacets(this.scope)
+      const facets = this.getScopedSearchFacets(this.scope)
       if (!facets) {
         return {}
       }
-      let counts = facets[this.config.key]
+      const counts = facets[this.config.key]
       if (counts) {
-        let facetMap = {}
+        const facetMap = {}
         counts.forEach((x) => {
           facetMap[x[0]] = x[1]
         })
@@ -60,7 +60,7 @@ export default {
       return this.items
     },
     orderedItems () {
-      let items = this.items
+      const items = this.items
       if (this.facetMap) {
         return items.map((x) => {
           x.count = this.facetMap[x.id] || null

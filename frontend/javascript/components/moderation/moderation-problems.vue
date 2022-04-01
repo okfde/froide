@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import {postData} from '../../lib/api.js'
+import { postData } from '../../lib/api.js'
 
 import ModerationProblem from './moderation-problem.vue'
 
@@ -90,7 +90,7 @@ export default {
         this.$root.csrfToken
       )
     },
-    escalate ({reportId, escalation}) {
+    escalate ({ reportId, escalation }) {
       postData(
         getUrl(this.config.url.escalateReport, reportId), {
           escalation
@@ -98,7 +98,7 @@ export default {
         this.$root.csrfToken
       )
     },
-    resolve ({reportId, resolution}) {
+    resolve ({ reportId, resolution }) {
       postData(
         getUrl(this.config.url.resolveReport, reportId), {
           resolution

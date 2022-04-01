@@ -30,10 +30,10 @@
 
 <script>
 import Vue from 'vue'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 
-import {FroideAPI} from '../../lib/api'
+import { FroideAPI } from '../../lib/api'
 import FilterMixin from './lib/filter-mixin'
 
 import PbFilterList from './pb-filter-list'
@@ -42,7 +42,7 @@ export default {
   name: 'pb-filter',
   props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
   mixins: [FilterMixin],
-  components: {PbFilterList},
+  components: { PbFilterList },
   data () {
     return {
       items: [],
@@ -67,13 +67,13 @@ export default {
       return debounce(this.runSearch, 300)
     },
     facetMap () {
-      let facets = this.getScopedSearchFacets(this.scope)
+      const facets = this.getScopedSearchFacets(this.scope)
       if (!facets) {
         return null
       }
-      let counts = facets[this.config.key]
+      const counts = facets[this.config.key]
       if (counts) {
-        let facetMap = {}
+        const facetMap = {}
         counts.forEach((x) => {
           facetMap[x[0]] = x[1]
         })
@@ -84,7 +84,7 @@ export default {
     orderedItems () {
       let items = this.items
       if (this.facetMap) {
-        let applyFacetMap = function (facetMap, items) {
+        const applyFacetMap = function (facetMap, items) {
           return items.map((x) => {
             x.count = facetMap[x.id]
             if (x.subItems) {
@@ -98,7 +98,7 @@ export default {
       return items
     },
     searcher () {
-      let searcher = new FroideAPI(this.globalConfig)
+      const searcher = new FroideAPI(this.globalConfig)
       return searcher
     },
     ...mapGetters(['getScopedSearchFacets'])
@@ -122,7 +122,7 @@ export default {
       if (this.config.choices && this.choice) {
         filters[this.config.choices[0]] = this.choice
       }
-      let searchDump = JSON.stringify({
+      const searchDump = JSON.stringify({
         q: this.search,
         ...filters
       })
@@ -160,8 +160,8 @@ export default {
       })
     },
     loadChildren (item) {
-      this.config.getItems(null, {parent: item.id}).then((result) => {
-        let items = this.processItems(result.objects)
+      this.config.getItems(null, { parent: item.id }).then((result) => {
+        const items = this.processItems(result.objects)
         Vue.set(item, 'subItems', items)
       })
     },
