@@ -10,7 +10,7 @@ function applyToForm(searchForm: HTMLFormElement): void {
   }
 
   function dropdownSubmit(input: HTMLInputElement) {
-    return function(this: HTMLElement, e: Event) {
+    return function (this: HTMLElement, e: Event) {
       e.preventDefault()
       input.value = this.dataset.value ?? ''
       searchForm.submit()

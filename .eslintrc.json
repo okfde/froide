@@ -5,11 +5,17 @@
   },
   "extends": ["plugin:vue/essential","standard-with-typescript"],
   "plugins": [
+    "prettier",
     "html"
   ],
   "ignorePatterns": ["node_modules/**", "**/static/**"],
   "rules": {
-    "space-before-function-paren": ["error", "never"]
+    "prettier/prettier": "error",
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "always"
+    }]
   },
   "overrides": [{
     "files": ["*.ts", "*.tsx"],
@@ -17,7 +23,11 @@
       // TODO: remove these exceptions
       "@typescript-eslint/strict-boolean-expressions": "warn",
       "@typescript-eslint/prefer-nullish-coalescing": "warn",
-      "@typescript-eslint/space-before-function-paren": ["error", "never"]
+      "@typescript-eslint/space-before-function-paren": ["error", {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }]
     }
   }]  
 }

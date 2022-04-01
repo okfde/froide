@@ -72,7 +72,7 @@ const initRequestPage = (): void => {
 
   const tabLinks = document.querySelectorAll('a[data-tabgo]')
   Array.from(tabLinks).forEach((tabLink) => {
-    tabLink.addEventListener('click', function(this: HTMLElement) {
+    tabLink.addEventListener('click', function (this: HTMLElement) {
       const hrefAttr = this.attributes.getNamedItem('href')
       if (hrefAttr === null) {
         return
@@ -123,7 +123,7 @@ const initRequestPage = (): void => {
     goToReplyForm()
   }
 
-  document.addEventListener('keydown', function(event) {
+  document.addEventListener('keydown', function (event) {
     if (
       (event.ctrlKey || event.metaKey) &&
       (event.key === 'f' || event.key === 'p')

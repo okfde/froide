@@ -1,5 +1,5 @@
 function snakeToCamel(s) {
-  return s.replace(/(-\w)/g, function(m) {
+  return s.replace(/(-\w)/g, function (m) {
     return m[1].toUpperCase()
   })
 }
@@ -98,7 +98,7 @@ function renderComponent(el, component) {
   const slotData = getSlotData(el)
   const otherAttrs = getOtherAttrs(el)
 
-  return function(createElement) {
+  return function (createElement) {
     const slots = makeSlots(slotData, createElement)
     return createElement(component, {
       props: props,

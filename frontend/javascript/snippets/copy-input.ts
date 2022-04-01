@@ -3,7 +3,7 @@ interface IHTMLToolTipElement extends HTMLInputElement {
 }
 
 document.querySelectorAll('.copy-text').forEach((copyEl) => {
-  copyEl.addEventListener('click', function(this: IHTMLToolTipElement) {
+  copyEl.addEventListener('click', function (this: IHTMLToolTipElement) {
     let selection
 
     const isiOSDevice = navigator.userAgent.match(/ipad|iphone/i)

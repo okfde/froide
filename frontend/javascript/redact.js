@@ -14,7 +14,7 @@ function createRedaction(selector) {
   }).$mount(selector)
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   createRedaction('#redact')
 })
 

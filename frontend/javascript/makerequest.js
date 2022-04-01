@@ -17,7 +17,7 @@ function createRequestPage(selector) {
   }).$mount(selector)
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   createRequestPage('#make-request')
 })
 

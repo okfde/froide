@@ -384,7 +384,7 @@ export default {
     ...mapActions(['getNextSearchResults'])
   },
   watch: {
-    defaultsearch: function() {
+    defaultsearch: function () {
       this.triggerAutocomplete()
     }
   }

@@ -111,7 +111,7 @@ export default {
     orderedItems() {
       let items = this.items
       if (this.facetMap) {
-        const applyFacetMap = function(facetMap, items) {
+        const applyFacetMap = function (facetMap, items) {
           return items.map((x) => {
             x.count = facetMap[x.id]
             if (x.subItems) {
