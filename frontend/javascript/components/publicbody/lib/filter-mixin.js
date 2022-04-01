@@ -1,6 +1,6 @@
 const FilterMixin = {
   computed: {
-    valueList () {
+    valueList() {
       if (this.value === null) {
         return []
       }
@@ -9,19 +9,21 @@ const FilterMixin = {
       }
       return this.value
     },
-    hasValue () {
+    hasValue() {
       if (this.value === null) {
         return false
       }
       return !(this.config.multi && this.value.length === 0)
     },
-    hasMore () {
-      if (!this.searchMeta) { return false }
+    hasMore() {
+      if (!this.searchMeta) {
+        return false
+      }
       return this.searchMeta.next !== null
     }
   },
   methods: {
-    removeFilter (itemId) {
+    removeFilter(itemId) {
       if (this.config.multi) {
         const val = this.value.filter((x) => itemId !== x)
         this.$emit('update', this.config, val)

@@ -5,16 +5,19 @@
   },
   "extends": ["plugin:vue/essential","standard-with-typescript"],
   "plugins": [
-    "html",
-    "prettier"
+    "html"
   ],
   "ignorePatterns": ["node_modules/**", "**/static/**"],
+  "rules": {
+    "space-before-function-paren": ["error", "never"]
+  },
   "overrides": [{
     "files": ["*.ts", "*.tsx"],
     "rules": {
       // TODO: remove these exceptions
       "@typescript-eslint/strict-boolean-expressions": "warn",
-      "@typescript-eslint/prefer-nullish-coalescing": "warn"
+      "@typescript-eslint/prefer-nullish-coalescing": "warn",
+      "@typescript-eslint/space-before-function-paren": ["error", "never"]
     }
   }]  
 }

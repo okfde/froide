@@ -32,7 +32,7 @@
               </ul>
               <p v-if="moreSimilarRequestsAvailable">
                 <a :href="searchUrl" target="_blank">
-                  {{ i18n.moreSimilarRequests}}
+                  {{ i18n.moreSimilarRequests }}
                 </a>
               </p>
             </div>
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-
 import debounce from 'lodash.debounce'
 
 import { FroideAPI } from '../../lib/api'
@@ -56,36 +55,36 @@ export default {
   name: 'similar-requests',
   props: ['config', 'publicbodies', 'subject'],
   mixins: [I18nMixin],
-  data () {
+  data() {
     return {
       similarRequests: [],
       searches: {},
       moreSimilarRequestsAvailable: false
     }
   },
-  created () {
+  created() {
     this.search = new FroideAPI(this.config)
     this.runSearch()
   },
   computed: {
-    hasResources () {
+    hasResources() {
       return this.publicBody && this.publicBody.url
     },
-    hasSimilarRequests () {
+    hasSimilarRequests() {
       return this.similarRequests.length > 0
     },
-    searchUrl () {
+    searchUrl() {
       return this.config.url.search + '?q=' + encodeURIComponent(this.subject)
     },
-    debouncedSearch () {
+    debouncedSearch() {
       return debounce(this.runSearch, 1000)
     },
-    publicBody () {
+    publicBody() {
       return this.publicbodies[0]
     }
   },
   methods: {
-    runSearch () {
+    runSearch() {
       if (!this.subject) {
         return
       }
@@ -95,9 +94,9 @@ export default {
         }
         return
       }
-      this.searches[this.subject] = false;
-      ((subject) => {
-        this.search.searchFoiRequests(subject).then(result => {
+      this.searches[this.subject] = false
+      ;((subject) => {
+        this.search.searchFoiRequests(subject).then((result) => {
           this.moreSimilarRequestsAvailable = result.length > MAX_SIMILAR
           this.similarRequests = result.slice(0, MAX_SIMILAR)
           this.searches[subject] = result
@@ -106,7 +105,7 @@ export default {
     }
   },
   watch: {
-    subject: function (val, oldVal) {
+    subject: function(val, oldVal) {
       this.debouncedSearch()
     }
   }

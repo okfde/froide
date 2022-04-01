@@ -8,7 +8,9 @@ import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4'
 import Driver from 'driver.js'
 import 'driver.js/dist/driver.min.css'
 
-interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined }
+interface IHTMLTabElement extends HTMLElement {
+  Tab: Tab | undefined
+}
 
 const initRequestPage = (): void => {
   initSetStatusForm()
@@ -16,7 +18,9 @@ const initRequestPage = (): void => {
   console.debug('Init request page...')
 
   // init message containers
-  const messagesContainer = document.getElementById('correspondence') as HTMLElement
+  const messagesContainer = document.getElementById(
+    'correspondence'
+  ) as HTMLElement
   const messages: Message[] = parseMessageContainers()
   if (messages.length === 0) return
 
@@ -67,16 +71,22 @@ const initRequestPage = (): void => {
   })
 
   const tabLinks = document.querySelectorAll('a[data-tabgo]')
-  Array.from(tabLinks).forEach(tabLink => {
-    tabLink.addEventListener('click', function (this: HTMLElement) {
+  Array.from(tabLinks).forEach((tabLink) => {
+    tabLink.addEventListener('click', function(this: HTMLElement) {
       const hrefAttr = this.attributes.getNamedItem('href')
-      if (hrefAttr === null) { return }
+      if (hrefAttr === null) {
+        return
+      }
       const href = hrefAttr?.value
       const el = document.querySelector(href)
-      if (el === null) { return }
+      if (el === null) {
+        return
+      }
       const display = window.getComputedStyle(el, null).display
       if (display === 'none') {
-        const navLink = document.querySelector('.nav-link[href="' + href + '"]') as IHTMLTabElement
+        const navLink = document.querySelector(
+          '.nav-link[href="' + href + '"]'
+        ) as IHTMLTabElement
         if (navLink?.Tab != null) {
           navLink.Tab.show()
         }
@@ -93,13 +103,15 @@ const initRequestPage = (): void => {
   }
 
   const fieldFillLinks = document.querySelectorAll('[data-fieldname]')
-  Array.from(fieldFillLinks).forEach(el => {
+  Array.from(fieldFillLinks).forEach((el) => {
     el.addEventListener('click', fieldFillLinkClick)
   })
 
-  function fieldFillLinkClick (this: HTMLElement): void {
+  function fieldFillLinkClick(this: HTMLElement): void {
     if (this.dataset?.value) {
-      const sel = `[name="${this.dataset.fieldname as string}"][value="${this.dataset.value}"]`
+      const sel = `[name="${this.dataset.fieldname as string}"][value="${
+        this.dataset.value
+      }"]`
       const checkbox = document.querySelector(sel)
       if (checkbox != null) {
         checkbox.setAttribute('checked', '')
@@ -111,13 +123,16 @@ const initRequestPage = (): void => {
     goToReplyForm()
   }
 
-  document.addEventListener('keydown', function (event) {
-    if ((event.ctrlKey || event.metaKey) && (event.key === 'f' || event.key === 'p')) {
+  document.addEventListener('keydown', function(event) {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      (event.key === 'f' || event.key === 'p')
+    ) {
       expandAll(messagesContainer, messages, true, true)
     }
   })
 
-  document.querySelectorAll<HTMLElement>('[data-tour]').forEach(t => {
+  document.querySelectorAll<HTMLElement>('[data-tour]').forEach((t) => {
     t.addEventListener('click', (e) => {
       e.stopPropagation()
       infoBox.showInfoBox()
@@ -126,12 +141,15 @@ const initRequestPage = (): void => {
   })
 }
 
-const startTour = (tourId: string | undefined, tourDoneSelector: string | undefined): void => {
+const startTour = (
+  tourId: string | undefined,
+  tourDoneSelector: string | undefined
+): void => {
   if (!tourId) {
     return
   }
   const tourDataEl = document.querySelector(`#${tourId}`)
-  if ((tourDataEl == null) || !tourDataEl.textContent) {
+  if (tourDataEl == null || !tourDataEl.textContent) {
     return
   }
   let tourData
@@ -165,26 +183,42 @@ const startTour = (tourId: string | undefined, tourDoneSelector: string | undefi
 const parseMessageContainers = (): Message[] => {
   const messages: Message[] = []
   const urlHash = window.location.hash
-  const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash) ? urlHash.substr(1) : null
+  const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash)
+    ? urlHash.substr(1)
+    : null
   const messageContainers = document.querySelectorAll('.alpha-message')
 
   messageContainers.forEach((el, idx) => {
     const isLastItem = idx === messageContainers.length - 1
     const forceExpand = collapsedMsgId && collapsedMsgId === el.id
-    messages.push(new Message(el as HTMLElement, forceExpand as Boolean, isLastItem as Boolean))
+    messages.push(
+      new Message(
+        el as HTMLElement,
+        forceExpand as Boolean,
+        isLastItem as Boolean
+      )
+    )
   })
   return messages
 }
 
 const initInlineEditForms = (): void => {
-  document.querySelectorAll<HTMLElement>('[data-inlineedit]').forEach(el => {
-    if (!el.dataset.inlineedit) { return }
-    const targetForm = document.querySelector(el.dataset.inlineedit) as HTMLElement
-    if (!targetForm) { return }
+  document.querySelectorAll<HTMLElement>('[data-inlineedit]').forEach((el) => {
+    if (!el.dataset.inlineedit) {
+      return
+    }
+    const targetForm = document.querySelector(
+      el.dataset.inlineedit
+    ) as HTMLElement
+    if (!targetForm) {
+      return
+    }
 
     let presentation: HTMLElement | null = null
     if (el.dataset.inlineeditpresentation) {
-      presentation = document.querySelector(el.dataset.inlineeditpresentation) as HTMLElement
+      presentation = document.querySelector(
+        el.dataset.inlineeditpresentation
+      ) as HTMLElement
     } else {
       presentation = el.parentElement
     }
@@ -198,7 +232,9 @@ const initInlineEditForms = (): void => {
       } else {
         targetForm.scrollIntoView({ behavior: 'smooth', block: 'center' })
         if (targetForm.dataset.autofocus) {
-          const autoFocus = targetForm.querySelector(targetForm.dataset.autofocus) as HTMLInputElement
+          const autoFocus = targetForm.querySelector(
+            targetForm.dataset.autofocus
+          ) as HTMLInputElement
           if (autoFocus) {
             autoFocus.focus()
           }
@@ -208,26 +244,46 @@ const initInlineEditForms = (): void => {
 
     el.addEventListener('click', toggle)
 
-    const cancelButton = targetForm.querySelector('[data-inlineeditcancel]') as HTMLElement
-    if (!cancelButton) { return }
+    const cancelButton = targetForm.querySelector(
+      '[data-inlineeditcancel]'
+    ) as HTMLElement
+    if (!cancelButton) {
+      return
+    }
     cancelButton.addEventListener('click', toggle)
   })
 }
 
 const initMessageMarks = (): void => {
-  document.querySelectorAll<HTMLElement>('[data-messagemark]').forEach((guidance) => {
-    const messageMark = guidance.dataset.messagemark
-    if (!messageMark || !guidance.dataset.messageid) { return }
-    const markObj = JSON.parse(messageMark)
-    if (markObj.span) {
-      applyMarkToMessage(guidance.dataset.messageid, guidance.id, markObj.span)
-    }
-  })
+  document
+    .querySelectorAll<HTMLElement>('[data-messagemark]')
+    .forEach((guidance) => {
+      const messageMark = guidance.dataset.messagemark
+      if (!messageMark || !guidance.dataset.messageid) {
+        return
+      }
+      const markObj = JSON.parse(messageMark)
+      if (markObj.span) {
+        applyMarkToMessage(
+          guidance.dataset.messageid,
+          guidance.id,
+          markObj.span
+        )
+      }
+    })
 }
 
-const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[]): void => {
-  const messageText = document.querySelector(`#${messageId} .text-content-visible`)
-  if (messageText == null) { return }
+const applyMarkToMessage = (
+  messageId: string,
+  guidanceId: string,
+  span: number[]
+): void => {
+  const messageText = document.querySelector(
+    `#${messageId} .text-content-visible`
+  )
+  if (messageText == null) {
+    return
+  }
   let charIndex = 0
   for (let i = 0; i < messageText.childNodes.length; i++) {
     const node = messageText.childNodes[i]
@@ -246,7 +302,10 @@ const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[
         const textNode = node as Text
         const second = textNode.splitText(span[0] - charIndex)
         messageText.insertBefore(mark, second)
-        second.textContent = content.substring(span[1] - charIndex, content.length)
+        second.textContent = content.substring(
+          span[1] - charIndex,
+          content.length
+        )
         // eslint-disable-next-line no-new
         new Tooltip(mark)
       }
@@ -262,8 +321,10 @@ const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[
 
 const initExpandableDescriptions = (): void => {
   const textContainers = document.querySelectorAll('.request-descr')
-  Array.from(textContainers).forEach(textContainer => {
-    const readmoreContainer = textContainer.querySelector('.request-descr-read-more')
+  Array.from(textContainers).forEach((textContainer) => {
+    const readmoreContainer = textContainer.querySelector(
+      '.request-descr-read-more'
+    )
     const expandButton = textContainer.querySelector('.expand-descr-btn')
     const clientHeight = textContainer?.clientHeight || 0
     const scrollHeight = textContainer?.scrollHeight || 0
@@ -291,7 +352,7 @@ const scrollToAnchor = (messages: Message[]): void => {
   const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
   const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
   if (scrollToMsgId && scrollToCommentId) {
-    const msg = messages.find(m => m.id === scrollToMsgId)
+    const msg = messages.find((m) => m.id === scrollToMsgId)
     if (msg != null) {
       msg.scrollToComment(scrollToCommentId)
     }
@@ -318,7 +379,9 @@ const initTabs = (): void => {
   // show tab if query paramter exists
   let hash = document.location?.hash || ''
   hash = hash.replace(/[^#\-\w]/g, '')
-  const hashNav = container.querySelector('a[href="' + hash + '"]') as IHTMLTabElement
+  const hashNav = container.querySelector(
+    'a[href="' + hash + '"]'
+  ) as IHTMLTabElement
   if (hashNav?.Tab != null) {
     hashNav.Tab.show()
     // scroll tab into view
@@ -326,8 +389,13 @@ const initTabs = (): void => {
   }
 }
 
-const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]): void => {
-  const expandAllLink = document.querySelector('.js-trigger-expand-all-messages') as HTMLElement
+const initCorrespondenceTopMenu = (
+  messagesContainer: HTMLElement,
+  messages: Message[]
+): void => {
+  const expandAllLink = document.querySelector(
+    '.js-trigger-expand-all-messages'
+  ) as HTMLElement
 
   expandAllLink.addEventListener('click', (e: MouseEvent) => {
     e.preventDefault()
@@ -335,11 +403,16 @@ const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Mes
   })
 }
 
-const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false, details = false): void => {
+const expandAll = (
+  messagesContainer: HTMLElement,
+  messages: Message[],
+  mustExpand = false,
+  details = false
+): void => {
   const isAllExpandedClass = 'is-all-expanded'
 
   if (mustExpand && details) {
-    messages.forEach(m => {
+    messages.forEach((m) => {
       m.showMetaContainer()
     })
   }
@@ -359,12 +432,16 @@ const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpa
     }
   }
 
-  document.querySelectorAll('.js-trigger-expand-all-messages .fa').forEach(el => {
-    el.classList.toggle('d-none-important')
-  })
-  document.querySelectorAll('.js-trigger-expand-all-messages span').forEach(el => {
-    el.classList.toggle('d-none-important')
-  })
+  document
+    .querySelectorAll('.js-trigger-expand-all-messages .fa')
+    .forEach((el) => {
+      el.classList.toggle('d-none-important')
+    })
+  document
+    .querySelectorAll('.js-trigger-expand-all-messages span')
+    .forEach((el) => {
+      el.classList.toggle('d-none-important')
+    })
 
   // add/remove class to message container
   if (isAllExpanded) {
@@ -380,7 +457,7 @@ const initSetStatusForm = (): void => {
     idResolution.addEventListener('change', setStatus)
   }
 
-  document.querySelectorAll('input[name="status"]').forEach(input => {
+  document.querySelectorAll('input[name="status"]').forEach((input) => {
     input.addEventListener('change', setStatus)
   })
 
@@ -391,10 +468,14 @@ let refusalInputIsVisible = false
 const setStatus = (): void => {
   const container = document.querySelector('.status-refusal') as HTMLElement
   if (container !== null) {
-    const resolutionElement = document.querySelector('#id_resolution') as HTMLInputElement
+    const resolutionElement = document.querySelector(
+      '#id_resolution'
+    ) as HTMLInputElement
     if (resolutionElement) {
       const resolutionValue = resolutionElement.value
-      const resolutionValueTriggersInput = /refus/.exec(resolutionValue) !== null || /partial/.exec(resolutionValue) !== null
+      const resolutionValueTriggersInput =
+        /refus/.exec(resolutionValue) !== null ||
+        /partial/.exec(resolutionValue) !== null
       if (
         (refusalInputIsVisible && !resolutionValueTriggersInput) ||
         (!refusalInputIsVisible && resolutionValueTriggersInput)
@@ -413,9 +494,13 @@ const initReplyForm = (): void => {
     return
   }
 
-  const replyContainerHelper = document.getElementById('reply-form-helper') as HTMLElement
+  const replyContainerHelper = document.getElementById(
+    'reply-form-helper'
+  ) as HTMLElement
   const replyContainerOffsetTop = replyContainerHelper.offsetTop
-  const stickyButton = replyContainer.querySelector('.reply-form__toggle-sticky-btn') as HTMLElement
+  const stickyButton = replyContainer.querySelector(
+    '.reply-form__toggle-sticky-btn'
+  ) as HTMLElement
   let stickyModeEnabled = false
   let userScrolledPastEnd = false
 
@@ -445,8 +530,10 @@ const initReplyForm = (): void => {
 
   window.addEventListener('scroll', () => {
     const documentScrollTop = document.documentElement.scrollTop
-    userScrolledPastEnd = (documentScrollTop + window.innerHeight / 2) >= replyContainerOffsetTop
-    const hastStickyClass = replyContainer.classList.contains('reply-form--sticky')
+    userScrolledPastEnd =
+      documentScrollTop + window.innerHeight / 2 >= replyContainerOffsetTop
+    const hastStickyClass =
+      replyContainer.classList.contains('reply-form--sticky')
     if (stickyModeEnabled) {
       if (
         (userScrolledPastEnd && hastStickyClass) ||

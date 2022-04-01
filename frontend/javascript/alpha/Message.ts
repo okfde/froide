@@ -5,20 +5,27 @@ export default class Message {
   expandedClassName = 'alpha-message--expanded'
   metaExpandedClassName = 'alpha-message__meta-container--visible'
 
-  constructor (element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
+  constructor(element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
     this.id = element.id || ''
     this.element = element
-    this.metaContainer = this.element.querySelector('.alpha-message__meta-container') as HTMLElement
+    this.metaContainer = this.element.querySelector(
+      '.alpha-message__meta-container'
+    ) as HTMLElement
 
     // event listeners
 
     // header row
-    element.querySelector('.alpha-message__head')
+    element
+      .querySelector('.alpha-message__head')
       ?.addEventListener('click', this.onHeadClick.bind(this))
-    element.querySelector('.alpha-message__meta-toggle')
+    element
+      .querySelector('.alpha-message__meta-toggle')
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
-    element.querySelectorAll('.alpha-attachment__more-trigger')
-      .forEach(el => el.addEventListener('click', this.showAllAttachments.bind(this)))
+    element
+      .querySelectorAll('.alpha-attachment__more-trigger')
+      .forEach((el) =>
+        el.addEventListener('click', this.showAllAttachments.bind(this))
+      )
 
     // create storage item and/or expand message
     if (!this.storageItem) {
@@ -29,7 +36,7 @@ export default class Message {
           this.id,
           JSON.stringify({ isExpanded: isLastItem || forceExpand })
         )
-      } catch { }
+      } catch {}
       // maybe expand
       if (isLastItem || forceExpand) this.expandMessage()
     } else {
@@ -38,7 +45,7 @@ export default class Message {
     }
   }
 
-  get storageItem (): any | null {
+  get storageItem(): any | null {
     try {
       // localStorage access may cause DOMException if blocked
       const item = localStorage.getItem(this.id)
@@ -48,34 +55,32 @@ export default class Message {
     }
   }
 
-  get isExpanded (): string | false {
+  get isExpanded(): string | false {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
 
-  get isCollapsed (): boolean {
+  get isCollapsed(): boolean {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded === false : false
   }
 
-  updateStorageItem (data: Object): void {
+  updateStorageItem(data: Object): void {
     try {
       // localStorage access may cause DOMException if blocked
       localStorage.setItem(
         this.id,
-        JSON.stringify(
-          Object.assign(this.storageItem, data)
-        )
+        JSON.stringify(Object.assign(this.storageItem, data))
       )
-    } catch { }
+    } catch {}
   }
 
-  onHeadClick (e: Event): void {
+  onHeadClick(e: Event): void {
     this.toggleMessage()
     e.preventDefault()
   }
 
-  toggleMessage (): void {
+  toggleMessage(): void {
     if (this.isExpanded) {
       this.collapseMessage()
     } else {
@@ -86,40 +91,45 @@ export default class Message {
     }
   }
 
-  expandMessage (): void {
+  expandMessage(): void {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
   }
 
-  collapseMessage (): void {
+  collapseMessage(): void {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
     this.metaContainer.classList.remove(this.metaExpandedClassName)
   }
 
-  showMetaContainer (): void {
+  showMetaContainer(): void {
     if (!this.metaContainer.classList.contains(this.metaExpandedClassName)) {
       this.toggleMetaContainer()
     }
   }
 
-  toggleMetaContainer (e?: Event): void {
+  toggleMetaContainer(e?: Event): void {
     e?.preventDefault()
     e?.stopPropagation()
     this.metaContainer.classList.toggle(this.metaExpandedClassName)
   }
 
-  showAllAttachments (e: Event): void {
+  showAllAttachments(e: Event): void {
     e.preventDefault()
     this.unwrapLeftSibling(e.target as HTMLElement)
   }
 
-  unwrapLeftSibling (el: HTMLElement): void {
+  unwrapLeftSibling(el: HTMLElement): void {
     // unwrap left sibling content of parent node
     const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
     const previousParent = parentEl?.previousElementSibling
-    if (el && (parentEl != null) && (outerParent != null) && (previousParent != null)) {
+    if (
+      el &&
+      parentEl != null &&
+      outerParent != null &&
+      previousParent != null
+    ) {
       // move all children out of the element
       while (previousParent.firstChild != null) {
         outerParent.appendChild(previousParent.firstChild)
@@ -131,13 +141,15 @@ export default class Message {
     }
   }
 
-  scrollToComment (commentElementId: string): void {
+  scrollToComment(commentElementId: string): void {
     // expand message and comments container first if necessary
-    if (!this.isExpanded) this.expandMessage()
+    if (!this.isExpanded) {
+      this.expandMessage()
 
-    // wait until DOM has finished rendering
-    // and scroll to comment element
-    ; (function checkIfReady () {
+      // wait until DOM has finished rendering
+      // and scroll to comment element
+    }
+    ;(function checkIfReady() {
       if (document.readyState === 'complete') {
         const element = document.getElementById(commentElementId)
         if (element == null) return
@@ -151,10 +163,8 @@ export default class Message {
           element.classList.remove('comments-comment--highlighted')
         }, 750)
       } else {
-        (
         // if dom not ready, check again on next tick
-          window.requestAnimationFrame(checkIfReady)
-        )
+        window.requestAnimationFrame(checkIfReady)
       }
     })()
   }

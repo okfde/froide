@@ -144,7 +144,7 @@ import 'string.prototype.repeat'
 
 const MAX_PUBLICBODIES = 800
 
-function treeLabel (item) {
+function treeLabel(item) {
   return '-'.repeat(item.depth - 1) + ' ' + item.name
 }
 
@@ -159,12 +159,12 @@ export default {
     PbFilterSelected
   },
   allowEmptySearch: true,
-  mounted () {
+  mounted() {
     if (!this.hasSearchResults) {
       this.triggerAutocomplete()
     }
   },
-  data () {
+  data() {
     return {
       search: '',
       blockUI: false,
@@ -189,13 +189,13 @@ export default {
     }
   },
   computed: {
-    getListView () {
+    getListView() {
       if (!this.listView) {
         return 'resultList'
       }
       return this.listView
     },
-    filterConfig () {
+    filterConfig() {
       const searcher = new FroideAPI(this.config)
       return {
         classification: {
@@ -266,23 +266,23 @@ export default {
         }
       }
     },
-    currentHeaders () {
+    currentHeaders() {
       return this.headers.filter((x) => !this.hasFilter(x.key))
     },
-    publicBodies () {
+    publicBodies() {
       return this.getPublicBodiesByScope(this.scope)
     },
-    hasNextSearchResults () {
+    hasNextSearchResults() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.next
     },
-    selectAllButtonDisabled () {
+    selectAllButtonDisabled() {
       return !(this.hasSearchResults && this.canSelectAll)
     },
-    canSelectAll () {
+    canSelectAll() {
       let searchCount = 0
       const meta = this.getScopedSearchMeta(this.scope)
       if (meta) {
@@ -290,23 +290,23 @@ export default {
       }
       return this.publicBodies.length + searchCount <= MAX_PUBLICBODIES
     },
-    maxResultPage () {
+    maxResultPage() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
       return Math.ceil(meta.total_count / meta.limit)
     },
-    blockProgressWidth () {
+    blockProgressWidth() {
       return `width: ${this.blockProgress}%`
     },
     ...mapGetters(['getPublicBodiesByScope', 'getScopedSearchMeta'])
   },
   methods: {
-    togglePane (e) {
+    togglePane(e) {
       this.tabPane = e.target.dataset.pane
     },
-    getEmptyFilters () {
+    getEmptyFilters() {
       return {
         classification: null,
         jurisdiction: null,
@@ -315,7 +315,7 @@ export default {
         regions_kind: null
       }
     },
-    hasFilter (key) {
+    hasFilter(key) {
       const v = this.filters[key]
       if (v === undefined) {
         return false
@@ -328,7 +328,7 @@ export default {
       }
       return true
     },
-    selectAll () {
+    selectAll() {
       this.blockUI = true
       this.blockMessage = this.i18n.selectingAll
       if (this.currentResultPage !== 1) {
@@ -338,7 +338,7 @@ export default {
         this.selectAllNext(1)
       }
     },
-    selectAllNext (num) {
+    selectAllNext(num) {
       this.blockProgress = (num / this.maxResultPage) * 100
       if (this.hasNextSearchResults) {
         this.getNextSearchResults(this.scope).then(() => {
@@ -354,11 +354,11 @@ export default {
         this.blockUI = false
       }
     },
-    clearSearch () {
+    clearSearch() {
       this.clearResults()
       this.filters = this.getEmptyFilters()
     },
-    setFilterExpand (filter, expand) {
+    setFilterExpand(filter, expand) {
       const expanded = {
         [filter.key]: expand
       }
@@ -371,7 +371,7 @@ export default {
       }
       this.filterExpanded = expanded
     },
-    updateFilter (filter, value) {
+    updateFilter(filter, value) {
       Vue.set(this.filters, filter.key, value)
       this.triggerAutocomplete()
     },
@@ -384,7 +384,7 @@ export default {
     ...mapActions(['getNextSearchResults'])
   },
   watch: {
-    defaultsearch: function () {
+    defaultsearch: function() {
       this.triggerAutocomplete()
     }
   }

@@ -1,12 +1,17 @@
 <template>
-  <tr @click="toggleRow" class="row-data" :class="{'row-active': value }">
+  <tr @click="toggleRow" class="row-data" :class="{ 'row-active': value }">
     <td>
-      <input type="checkbox" :data-label="row.name" :value="row.id" v-model="value"/>
+      <input
+        type="checkbox"
+        :data-label="row.name"
+        :value="row.id"
+        v-model="value" />
     </td>
     <td>
       {{ row.name }}
       <a :href="row.site_url" @click.stop class="info-link" target="_blank">
-        <span class="sr-only">Details</span><i class="fa fa-info-circle" aria-hidden="true"></i>
+        <span class="sr-only">Details</span
+        ><i class="fa fa-info-circle" aria-hidden="true"></i>
       </a>
     </td>
     <td v-if="hasJurisdiction">
@@ -22,34 +27,33 @@
 </template>
 
 <script>
-
 export default {
   name: 'pb-table-row',
   props: ['name', 'row', 'selected', 'headers'],
   computed: {
-    rowCategories () {
+    rowCategories() {
       return this.row.categories.map((x) => x.name).join(', ')
     },
     value: {
-      get () {
+      get() {
         return this.selected
       },
-      set (value) {
+      set(value) {
         this.$emit('update:row', { id: this.row.id, value: value })
       }
     },
-    hasJurisdiction () {
+    hasJurisdiction() {
       return this.headers.filter((x) => x.key === 'jurisdiction').length > 0
     },
-    hasClassification () {
+    hasClassification() {
       return this.headers.filter((x) => x.key === 'classification').length > 0
     },
-    hasCategories () {
+    hasCategories() {
       return this.headers.filter((x) => x.key === 'categories').length > 0
     }
   },
   methods: {
-    toggleRow (event) {
+    toggleRow(event) {
       this.value = !this.value
     }
   }
@@ -57,21 +61,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../../styles/variables";
+@import '../../../styles/variables';
 
-  .row-data {
-    cursor: pointer;
+.row-data {
+  cursor: pointer;
+}
+
+.row-active {
+  background-color: lighten($success, 50%);
+}
+
+.info-link {
+  color: $gray-500;
+  &:hover {
+    color: $link-color;
   }
-
-  .row-active {
-    background-color: lighten($success, 50%);
-  }
-
-  .info-link {
-    color: $gray-500;
-    &:hover {
-      color: $link-color;
-    }
-  }
-
+}
 </style>

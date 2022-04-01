@@ -2,20 +2,11 @@
   <div
     :id="attachmentId"
     class="document mb-1"
-    :class="{'is-new': document.new}"
-  >
+    :class="{ 'is-new': document.new }">
     <div class="row">
       <div class="col-auto">
-        <input
-          v-if="ready"
-          v-model="selected"
-          type="checkbox"
-        >
-        <div
-          v-else
-          class="spinner-border spinner-border-sm"
-          role="status"
-        >
+        <input v-if="ready" v-model="selected" type="checkbox" />
+        <div v-else class="spinner-border spinner-border-sm" role="status">
           <span class="sr-only">{{ i18n.loading }}</span>
         </div>
       </div>
@@ -26,8 +17,7 @@
             class="badge badge-pill badge-secondary"
             data-toggle="tooltip"
             data-placement="top"
-            :title="i18n.notPublic"
-          >
+            :title="i18n.notPublic">
             &nbsp;
           </span>
           <span
@@ -35,8 +25,7 @@
             class="badge badge-pill badge-dark"
             data-toggle="tooltip"
             data-placement="top"
-            :title="i18n.redacted"
-          >
+            :title="i18n.redacted">
             &nbsp;
           </span>
           <span
@@ -44,8 +33,7 @@
             class="badge badge-pill badge-info"
             data-toggle="tooltip"
             data-placement="top"
-            :title="i18n.protectedOriginalExplanation"
-          >
+            :title="i18n.protectedOriginalExplanation">
             &nbsp;
           </span>
         </template>
@@ -63,28 +51,24 @@
         <a
           v-if="canOpen"
           :href="attachment.site_url"
-          :title="i18n.openAttachmentPage"
-        >
+          :title="i18n.openAttachmentPage">
           <i class="fa fa-external-link" />
           <span class="sr-only">{{ i18n.openAttachmentPage }}</span>
         </a>
 
-        <div
-          v-if="document.uploading"
-          class="progress"
-        >
+        <div v-if="document.uploading" class="progress">
           <div
             class="progress-bar"
             :class="{
-              'progress-bar-animated progress-bar-striped': progressAlmostComplete,
-              'bg-info progress-bar-striped': progressUnknown,
+              'progress-bar-animated progress-bar-striped':
+                progressAlmostComplete,
+              'bg-info progress-bar-striped': progressUnknown
             }"
-            :style="{'width': progressPercentLabel}"
+            :style="{ width: progressPercentLabel }"
             role="progressbar"
             :aria-valuenow="document.progress"
             aria-valuemin="0"
-            aria-valuemax="100"
-          />
+            aria-valuemax="100" />
         </div>
       </div>
       <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-right text-sm-center">
@@ -95,17 +79,18 @@
           data-toggle="tooltip"
           data-placement="top"
           :title="i18n.makeResultExplanation"
-          @click="makeResult"
-        >
+          @click="makeResult">
           <i class="fa fa-certificate" />
           {{ i18n.isResult }}
         </button>
         <button
           v-else-if="hasDocument"
           class="btn btn-sm ml-1"
-          :class="{'btn-light': !editDocumentMeta, 'btn-secondary': editDocumentMeta}"
-          @click.prevent="editDocumentMeta = !editDocumentMeta"
-        >
+          :class="{
+            'btn-light': !editDocumentMeta,
+            'btn-secondary': editDocumentMeta
+          }"
+          @click.prevent="editDocumentMeta = !editDocumentMeta">
           <span class="sr-only">{{ i18n.edit }}</span>
           <i class="fa fa-edit" />
         </button>
@@ -114,8 +99,7 @@
           :config="config"
           :document="document"
           @docupdated="updateDocument"
-          @makerelevant="$emit('makerelevant')"
-        />
+          @makerelevant="$emit('makerelevant')" />
       </div>
       <!-- <div class="col-auto">
         <button
@@ -132,10 +116,7 @@
         </button>
       </div> -->
     </div>
-    <div
-      v-if="editDocumentMeta"
-      class="row"
-    >
+    <div v-if="editDocumentMeta" class="row">
       <div class="col mt-1">
         <div class="card">
           <div class="card-body">
@@ -144,38 +125,39 @@
                 <label
                   class="col-sm-2 col-form-label"
                   :for="'doc-title' + doc.id"
-                >{{ i18n.documentTitle }}</label>
+                  >{{ i18n.documentTitle }}</label
+                >
                 <div class="col-sm-10">
                   <input
                     :id="'doc-title' + doc.id"
                     v-model="title"
                     type="text"
                     class="form-control"
-                    :placeholder="i18n.title"
-                  >
-                  <small class="form-text text-muted">{{ i18n.documentTitleHelp }}</small>
+                    :placeholder="i18n.title" />
+                  <small class="form-text text-muted">{{
+                    i18n.documentTitleHelp
+                  }}</small>
                 </div>
               </div>
               <div class="form-group row mb-0">
                 <label
                   class="col-sm-2 col-form-label"
                   :for="'doc-title' + doc.id"
-                >{{ i18n.description }}</label>
+                  >{{ i18n.description }}</label
+                >
                 <div class="col-sm-10">
                   <textarea
                     :id="'doc-description' + doc.id"
                     v-model="description"
                     class="form-control"
-                    rows="3"
-                  />
-                  <small class="form-text text-muted">{{ i18n.descriptionHelp }}</small>
+                    rows="3" />
+                  <small class="form-text text-muted">{{
+                    i18n.descriptionHelp
+                  }}</small>
                 </div>
               </div>
               <p class="text-right mb-0">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                >
+                <button type="submit" class="btn btn-primary">
                   {{ i18n.save }}
                 </button>
               </p>
@@ -184,15 +166,9 @@
         </div>
       </div>
     </div>
-    <div
-      v-if="document.previewPdf"
-      class="row"
-    >
+    <div v-if="document.previewPdf" class="row">
       <div class="col mt-1">
-        <pdf-preview
-          :config="config"
-          :document="document"
-        />
+        <pdf-preview :config="config" :document="document" />
       </div>
     </div>
   </div>
@@ -208,11 +184,12 @@ import PdfPreview from './pdf-preview.vue'
 export default {
   name: 'FileDocument',
   components: {
-    FileReview, PdfPreview
+    FileReview,
+    PdfPreview
   },
   mixins: [I18nMixin, DocumentMixin],
   props: ['config', 'document'],
-  data () {
+  data() {
     return {
       progressTotal: null,
       progressCurrent: null,
@@ -225,93 +202,117 @@ export default {
     }
   },
   computed: {
-    attachment () {
+    attachment() {
       return this.document.attachment
     },
-    doc () {
+    doc() {
       return this.document.attachment.document
     },
-    documentTitle () {
+    documentTitle() {
       return this.hasDocument ? this.doc.title : this.attachment.name
     },
-    hasAttachment () {
+    hasAttachment() {
       return !!this.document.attachment
     },
-    hasDocument () {
+    hasDocument() {
       return this.hasAttachment && !!this.attachment.document
     },
-    working () {
+    working() {
       return this.document.approving || this.document.deleting
     },
-    canApprove () {
-      return this.attachment && !this.attachment.approved && this.attachment.can_approve
+    canApprove() {
+      return (
+        this.attachment &&
+        !this.attachment.approved &&
+        this.attachment.can_approve
+      )
     },
-    canDelete () {
-      return this.attachment && this.attachment.can_delete && !this.document.approving
+    canDelete() {
+      return (
+        this.attachment &&
+        this.attachment.can_delete &&
+        !this.document.approving
+      )
     },
-    canReview () {
+    canReview() {
       return this.attachment && this.attachment.can_redact
     },
-    canOpen () {
+    canOpen() {
       return !this.canApprove || !this.canReview
     },
-    canMakeResult () {
+    canMakeResult() {
       if (!this.config.settings.can_make_document) {
         return false
       }
-      return !this.hasDocument && this.attachment && this.attachment.approved && this.attachment.is_pdf && !(
-        !!this.attachment.redacted || !!this.attachment.converted || this.creatingDocument
+      return (
+        !this.hasDocument &&
+        this.attachment &&
+        this.attachment.approved &&
+        this.attachment.is_pdf &&
+        !(
+          !!this.attachment.redacted ||
+          !!this.attachment.converted ||
+          this.creatingDocument
+        )
       )
     },
-    isProtected () {
-      return (this.attachment.converted && !this.attachment.approved) || this.attachment.redacted
+    isProtected() {
+      return (
+        (this.attachment.converted && !this.attachment.approved) ||
+        this.attachment.redacted
+      )
     },
-    isRedacted () {
+    isRedacted() {
       return this.attachment.is_redacted
     },
-    approved () {
+    approved() {
       return this.attachment.approved
     },
-    pages () {
+    pages() {
       return this.document.pages
     },
-    ready () {
+    ready() {
       return !this.pending && !this.document.deleting
     },
-    pending () {
-      return this.document.pending || !this.attachment || this.attachment.pending
+    pending() {
+      return (
+        this.document.pending || !this.attachment || this.attachment.pending
+      )
     },
-    progressAlmostComplete () {
-      return !this.progressUnknown && this.document.progress === this.document.progressTotal
+    progressAlmostComplete() {
+      return (
+        !this.progressUnknown &&
+        this.document.progress === this.document.progressTotal
+      )
     },
-    progressUnknown () {
+    progressUnknown() {
       return this.progressPercent === null
     },
-    progressPercent () {
+    progressPercent() {
       if (!this.document.progressTotal) {
         return null
       }
-      return this.document.progress / this.document.progressTotal * 100
+      return (this.document.progress / this.document.progressTotal) * 100
     },
-    progressPercentLabel () {
+    progressPercentLabel() {
       if (this.progressPercent) {
         return `${this.progressPercent}%`
       }
       return '100%'
     },
-    attachmentId () {
+    attachmentId() {
       return `attachment-${this.document.id}`
     },
     selected: {
-      get () {
+      get() {
         return !!this.document.selected
       },
-      set () {
+      set() {
         this.$emit('docupdated', { selected: !this.document.selected })
       }
     }
   },
-  mounted () {
+  mounted() {
     if (this.document.new) {
       window.setTimeout(() => this.$emit('notnew'), 2000)
     }
@@ -325,12 +326,12 @@ export default {
     }
   },
   methods: {
-    makeResult () {
+    makeResult() {
       this.updateDocument({
         creatingDocument: true
       })
     },
-    saveDocumentMeta () {
+    saveDocumentMeta() {
       this.editDocumentMeta = false
       this.updateDocument({
         updatingDocument: {
@@ -342,9 +343,11 @@ export default {
         alert(err)
       })
     },
-    checkProgress () {
-      window.fetch(`/api/v1/attachment/${this.document.id}/`)
-        .then(response => response.json()).then((data) => {
+    checkProgress() {
+      window
+        .fetch(`/api/v1/attachment/${this.document.id}/`)
+        .then((response) => response.json())
+        .then((data) => {
           if (data.pending === true) {
             window.setTimeout(() => this.checkProgress(), 5000)
           } else if (data.pending === false) {
@@ -358,7 +361,8 @@ export default {
           } else {
             document.location.reload()
           }
-        }).catch(() => {
+        })
+        .catch(() => {
           window.setTimeout(() => this.checkProgress(), 5000)
         })
     }
@@ -367,29 +371,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .pages {
-    padding-left: 0;
-    list-style-type: none;
-    white-space: nowrap;
-    overflow-x: scroll;
-    overflow-scrolling: touch;
-  }
-  .page {
-    display: inline-block;
-    max-width: 90px;
-    height: 120px;
-    margin: 0 1rem;
-  }
-  .page-image {
-    padding: 0 0.25rem;
-    width: 100%;
-    border: 1px solid #bbb;
-  }
-  .document:not(:last-child) {
-    padding-bottom: 5px;
-    border-bottom: 1px solid #ccc;
-  }
-  .doc-status .badge {
-    cursor: help;
-  }
+.pages {
+  padding-left: 0;
+  list-style-type: none;
+  white-space: nowrap;
+  overflow-x: scroll;
+  overflow-scrolling: touch;
+}
+.page {
+  display: inline-block;
+  max-width: 90px;
+  height: 120px;
+  margin: 0 1rem;
+}
+.page-image {
+  padding: 0 0.25rem;
+  width: 100%;
+  border: 1px solid #bbb;
+}
+.document:not(:last-child) {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ccc;
+}
+.doc-status .badge {
+  cursor: help;
+}
 </style>

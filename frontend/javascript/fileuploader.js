@@ -9,7 +9,7 @@ import FileUploader from './components/upload/file-uploader.vue'
 
 Vue.config.productionTip = false
 
-function createFileUploader (element) {
+function createFileUploader(element) {
   /* eslint-disable no-new */
   store.commit(SET_CONFIG)
   new Vue({

@@ -1,9 +1,10 @@
-
-function snakeToCamel (s) {
-  return s.replace(/(-\w)/g, function (m) { return m[1].toUpperCase() })
+function snakeToCamel(s) {
+  return s.replace(/(-\w)/g, function(m) {
+    return m[1].toUpperCase()
+  })
 }
 
-function getPropsFromElement (el) {
+function getPropsFromElement(el) {
   const attrs = el.attributes
   const props = {}
 
@@ -33,7 +34,7 @@ function getPropsFromElement (el) {
   return props
 }
 
-function getSlotData (el) {
+function getSlotData(el) {
   const slotEls = el.querySelectorAll('[slot]')
   const slots = {}
   for (let i = 0; i < slotEls.length; i += 1) {
@@ -47,7 +48,7 @@ function getSlotData (el) {
   return slots
 }
 
-function makeSlotFunction (slotData, createElement) {
+function makeSlotFunction(slotData, createElement) {
   return () => {
     return createElement(slotData.tag, {
       domProps: {
@@ -57,7 +58,7 @@ function makeSlotFunction (slotData, createElement) {
   }
 }
 
-function makeSlots (slotData, createElement) {
+function makeSlots(slotData, createElement) {
   const slots = {}
   for (const name in slotData) {
     slots[name] = makeSlotFunction(slotData[name], createElement)
@@ -65,7 +66,7 @@ function makeSlots (slotData, createElement) {
   return slots
 }
 
-function getOtherAttrs (el) {
+function getOtherAttrs(el) {
   const other = {}
   if (el.id) {
     other.attrs = {
@@ -82,7 +83,7 @@ function getOtherAttrs (el) {
   return other
 }
 
-function renderComponent (el, component) {
+function renderComponent(el, component) {
   /*
     Fake VueJS compiler which does only the following:
     - takes class and id attributes and sets them on new element
@@ -97,7 +98,7 @@ function renderComponent (el, component) {
   const slotData = getSlotData(el)
   const otherAttrs = getOtherAttrs(el)
 
-  return function (createElement) {
+  return function(createElement) {
     const slots = makeSlots(slotData, createElement)
     return createElement(component, {
       props: props,
@@ -107,6 +108,4 @@ function renderComponent (el, component) {
   }
 }
 
-export {
-  renderComponent
-}
+export { renderComponent }

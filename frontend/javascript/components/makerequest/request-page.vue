@@ -256,7 +256,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
@@ -266,113 +266,113 @@ export default {
     }
   },
   computed: {
-    form () {
+    form() {
       return this.requestForm
     },
-    formFields () {
+    formFields() {
       return this.form.fields
     },
-    userformFields () {
+    userformFields() {
       return this.userForm.fields
     },
-    publicBodySearch () {
+    publicBodySearch() {
       if (this.publicBody) {
         return this.publicBody.name
       }
       return this.publicbodyDefaultSearch
     },
-    publicBodyListView () {
+    publicBodyListView() {
       if (this.multiRequest) {
         return 'multi'
       }
       return 'actionList'
     },
     subject: {
-      get () {
+      get() {
         return this.$store.state.subject
       },
-      set (value) {
+      set(value) {
         this.updateSubject(value)
       }
     },
-    subjectWasChanged () {
+    subjectWasChanged() {
       return this.subject !== this.originalSubject
     },
-    hasBody () {
+    hasBody() {
       return this.body && this.body.length > 0
     },
-    bodyWasChanged () {
+    bodyWasChanged() {
       return this.body !== this.originalBody
     },
     body: {
-      get () {
+      get() {
         return this.$store.state.body
       },
-      set (value) {
+      set(value) {
         this.updateBody(value)
       }
     },
-    multipleLaws () {
+    multipleLaws() {
       return this.defaultLaw === null
     },
     fullText: {
-      get () {
+      get() {
         return this.$store.state.fullText
       },
-      set (value) {
+      set(value) {
         this.updateFullText(value)
       }
     },
     firstName: {
-      get () {
+      get() {
         return this.$store.state.user.first_name
       },
-      set (value) {
+      set(value) {
         this.updateFirstName(value)
       }
     },
     lastName: {
-      get () {
+      get() {
         return this.$store.state.user.last_name
       },
-      set (value) {
+      set(value) {
         this.updateLastName(value)
       }
     },
     email: {
-      get () {
+      get() {
         return this.$store.state.user.email
       },
-      set (value) {
+      set(value) {
         this.updateEmail(value)
       }
     },
     address: {
-      get () {
+      get() {
         return this.$store.state.user.address
       },
-      set (value) {
+      set(value) {
         this.updateAddress(value)
       }
     },
     userPrivate: {
-      get () {
+      get() {
         return this.$store.state.user.private
       },
-      set (value) {
+      set(value) {
         this.updatePrivate(value)
       }
     },
-    hasPublicBodies () {
+    hasPublicBodies() {
       return this.publicBodies.length > 0
     },
-    publicBody () {
+    publicBody() {
       return this.getPublicBodyByScope(this.pbScope)
     },
-    publicBodies () {
+    publicBodies() {
       return this.getPublicBodiesByScope(this.pbScope)
     },
-    shouldCheckRequest () {
+    shouldCheckRequest() {
       return (
         this.body === '' ||
         this.bodyWasChanged ||
@@ -393,11 +393,11 @@ export default {
     ])
   },
   watch: {
-    step () {
+    step() {
       window.scrollTo(0, 0)
     }
   },
-  created () {
+  created() {
     this.pbScope = 'make-request'
     this.setConfig(this.config)
 
@@ -437,7 +437,7 @@ export default {
     this.originalBody = this.body
     this.originalSubject = this.subject
   },
-  mounted () {
+  mounted() {
     if (this.hasPublicBodies) {
       this.setStepRequest()
     }
@@ -456,7 +456,7 @@ export default {
     })
   },
   methods: {
-    initStoreValues (fields, mapping) {
+    initStoreValues(fields, mapping) {
       for (const key in mapping) {
         const method = mapping[key]
         if (fields[key] === undefined) {

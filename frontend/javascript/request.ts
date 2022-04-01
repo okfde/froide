@@ -1,16 +1,22 @@
 import { toggleSlide, addText } from './lib/misc'
 import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4'
 
-interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined }
+interface IHTMLTabElement extends HTMLElement {
+  Tab: Tab | undefined
+}
 
 const setStatus = (): void => {
   const refusal = document.querySelector('.status-refusal') as HTMLElement
   if (refusal !== null) {
     refusal.style.display = 'none'
-    const resolutionElement = document.querySelector<HTMLInputElement>('#id_resolution')
+    const resolutionElement =
+      document.querySelector<HTMLInputElement>('#id_resolution')
     if (resolutionElement != null) {
       const resolution = resolutionElement.value
-      if (/refus/.exec(resolution) !== null || /partial/.exec(resolution) !== null) {
+      if (
+        /refus/.exec(resolution) !== null ||
+        /partial/.exec(resolution) !== null
+      ) {
         toggleSlide(refusal, 0.5)
       }
     }
@@ -46,22 +52,30 @@ const runOnPage = (): void => {
 
   const tabLinks = document.querySelectorAll('a[data-tabgo="tab"]')
   Array.from(tabLinks).forEach((tabLink) => {
-    tabLink.addEventListener('click', function (this: HTMLElement, e) {
+    tabLink.addEventListener('click', function(this: HTMLElement, e) {
       const hrefAttr = this.attributes.getNamedItem('href')
-      if (hrefAttr === null) { return }
+      if (hrefAttr === null) {
+        return
+      }
       const href = hrefAttr?.value
       const el = document.querySelector(href)
-      if (el === null) { return }
+      if (el === null) {
+        return
+      }
       const display = window.getComputedStyle(el, null).display
       if (display === 'none') {
-        const navLink = document.querySelector('.nav-link[href="' + href + '"]') as IHTMLTabElement
+        const navLink = document.querySelector(
+          '.nav-link[href="' + href + '"]'
+        ) as IHTMLTabElement
         if (navLink?.Tab != null) {
           navLink.Tab.show()
         }
       }
 
       if (this.dataset?.value) {
-        const sel = `[name="${this.dataset.name as string}"][value="${this.dataset.value}"]`
+        const sel = `[name="${this.dataset.name as string}"][value="${
+          this.dataset.value
+        }"]`
         const checkbox = el.querySelector(sel)
         if (checkbox != null) {
           checkbox.setAttribute('checked', '')
@@ -83,21 +97,29 @@ const runOnPage = (): void => {
   if (requestNav !== null) {
     const activeTab = requestNav.dataset.activetab
     if (activeTab && activeTab !== 'info') {
-      const activeTabElement = requestNav.querySelector('a[href="#' + activeTab + '"]') as IHTMLTabElement
+      const activeTabElement = requestNav.querySelector(
+        'a[href="#' + activeTab + '"]'
+      ) as IHTMLTabElement
       if (activeTabElement?.Tab != null) {
         activeTabElement.Tab.show()
       }
     } else {
       let hash = document.location?.hash || ''
       hash = hash.replace(/[^#\-\w]/g, '')
-      const hashNav = document.querySelector('.request-nav a[href="' + hash + '"]')
+      const hashNav = document.querySelector(
+        '.request-nav a[href="' + hash + '"]'
+      )
       if (hashNav !== null) {
-        const tabNav = requestNav.querySelector('a[href="' + hash + '"]') as IHTMLTabElement
+        const tabNav = requestNav.querySelector(
+          'a[href="' + hash + '"]'
+        ) as IHTMLTabElement
         if (tabNav?.Tab != null) {
           tabNav.Tab.show()
         }
       } else if (activeTab !== 'info') {
-        const tabNav = requestNav.querySelector('a[href="#info"]') as IHTMLTabElement
+        const tabNav = requestNav.querySelector(
+          'a[href="#info"]'
+        ) as IHTMLTabElement
         if (tabNav?.Tab != null) {
           tabNav.Tab.show()
         }
@@ -105,7 +127,11 @@ const runOnPage = (): void => {
     }
   }
 
-  interface IMessageOffsetCache { top: number, height: number, id: string }
+  interface IMessageOffsetCache {
+    top: number
+    height: number
+    id: string
+  }
 
   const messages = [] as IMessageOffsetCache[]
   document.querySelectorAll('.message-container').forEach((el) => {
@@ -124,11 +150,15 @@ const runOnPage = (): void => {
       if (py >= message.top && py <= message.top + message.height) {
         if (activeMessage !== message.id) {
           activeMessage = message.id
-          const navEls = document.querySelectorAll('.message-timeline-listitem a')
+          const navEls = document.querySelectorAll(
+            '.message-timeline-listitem a'
+          )
           navEls.forEach((el) => {
             el.classList.remove('active')
           })
-          const navEl = document.querySelector('.message-timeline-listitem [href="#' + message.id + '"]')
+          const navEl = document.querySelector(
+            '.message-timeline-listitem [href="#' + message.id + '"]'
+          )
           if (navEl !== null) {
             navEl.classList.add('active')
           }
@@ -139,12 +169,14 @@ const runOnPage = (): void => {
   })
 
   if (!('ontouchstart' in window.document)) {
-    document.querySelectorAll<HTMLElement>('.message-timeline-item').forEach((el) => {
-      // eslint-disable-next-line no-new
-      new Tooltip(el)
-    })
+    document
+      .querySelectorAll<HTMLElement>('.message-timeline-item')
+      .forEach((el) => {
+        // eslint-disable-next-line no-new
+        new Tooltip(el)
+      })
   } else {
-    const click = function (this: HTMLElement): void {
+    const click = function(this: HTMLElement): void {
       this.click()
     }
     document.querySelectorAll('.message-timeline-item').forEach((el) => {

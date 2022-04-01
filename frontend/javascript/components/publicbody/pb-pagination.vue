@@ -33,55 +33,54 @@
 </template>
 
 <script>
-
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'pb-pagination',
   props: ['scope', 'i18n'],
   computed: {
-    searchResults () {
+    searchResults() {
       return this.getScopedSearchResults(this.scope)
     },
-    hasSearchResults () {
+    hasSearchResults() {
       return this.searchResults.length > 0
     },
-    hasNextSearchResults () {
+    hasNextSearchResults() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.next
     },
-    hasPreviousSearchResults () {
+    hasPreviousSearchResults() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.previous
     },
-    currentResultPage () {
+    currentResultPage() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
-      return (meta.offset / meta.limit) + 1
+      return meta.offset / meta.limit + 1
     },
-    maxResultPage () {
+    maxResultPage() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
       return Math.ceil(meta.total_count / meta.limit)
     },
-    currentResultsLength () {
+    currentResultsLength() {
       const sr = this.searchResults
       if (sr) {
         return sr.length
       }
       return null
     },
-    searchResultsLength () {
+    searchResultsLength() {
       const meta = this.getScopedSearchMeta(this.scope)
       if (meta) {
         return meta.total_count
@@ -95,19 +94,15 @@ export default {
       'getScopedSearchResults',
       'getScopedSearchMeta'
     ])
-
   },
   methods: {
-    getNext (e) {
+    getNext(e) {
       this.getNextSearchResults(this.scope)
     },
-    getPrevious (e) {
+    getPrevious(e) {
       this.getPreviousSearchResults(this.scope)
     },
-    ...mapActions([
-      'getNextSearchResults',
-      'getPreviousSearchResults'
-    ])
+    ...mapActions(['getNextSearchResults', 'getPreviousSearchResults'])
   }
 }
 </script>

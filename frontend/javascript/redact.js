@@ -6,7 +6,7 @@ import Redaction from './components/redaction/redaction'
 
 Vue.config.productionTip = false
 
-function createRedaction (selector) {
+function createRedaction(selector) {
   /* eslint-disable no-new */
   new Vue({
     components: { Redaction },
@@ -14,7 +14,7 @@ function createRedaction (selector) {
   }).$mount(selector)
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   createRedaction('#redact')
 })
 

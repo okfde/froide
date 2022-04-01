@@ -1,34 +1,32 @@
 .js .js-hidden {
-    display:none;
+  display: none;
 }
 
 .js-hidden:target {
-    display:block;
+  display: block;
 }
 
-
 .focussed:target {
-    background-color: #FFE9EE;
-    border: 1px red solid;
+  background-color: #ffe9ee;
+  border: 1px red solid;
 }
 
 .focussed:target .js-hidden {
-    display:block;
+  display: block;
 }
 
 .focussed:target .toggle {
-    display:none;
+  display: none;
 }
 
 .focussed:target .toggle-div {
-    display:block !important;
+  display: block !important;
 }
-
 
 .hover-visible {
-    visibility: hidden;
+  visibility: hidden;
 }
 
-.hover-parent:hover .hover-visible{
-    visibility: visible;
+.hover-parent:hover .hover-visible {
+  visibility: visible;
 }

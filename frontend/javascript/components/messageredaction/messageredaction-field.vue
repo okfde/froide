@@ -26,7 +26,7 @@ import MessageRedactionWord from './messageredaction-word.vue'
 // eslint-disable-next-line no-control-regex
 const SPLITTER = /[\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E]/g
 
-function getChunks (redactedParts) {
+function getChunks(redactedParts) {
   let counter = 0
   const chunks = []
   for (const redactedPart of redactedParts) {
@@ -71,16 +71,16 @@ export default {
   components: {
     MessageRedactionWord
   },
-  data () {
+  data() {
     return {
       words: []
     }
   },
-  mounted () {
+  mounted() {
     this.words = getChunks(this.redactedParts)
   },
   computed: {
-    serializedValue () {
+    serializedValue() {
       const redacted = []
       for (let i = 0; i < this.words.length; i += 1) {
         if (this.words[i].redacted) {
@@ -91,7 +91,7 @@ export default {
     }
   },
   methods: {
-    redact (index) {
+    redact(index) {
       Vue.set(this.words[index], 'redacted', !this.words[index].redacted)
     }
   }

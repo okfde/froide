@@ -8,47 +8,64 @@ export default class InfoBox {
   infoList: HTMLElement | undefined
   editPanelIsVisible: boolean | undefined
 
-  constructor () {
+  constructor() {
     this.element = document.getElementById('infobox') as HTMLElement
 
     this.editButtonClickCallback = this.editButtonClickCallback.bind(this)
     // edit button listener
-    this.editButton = this.element.querySelector('.info-box__edit-button') as HTMLElement
+    this.editButton = this.element.querySelector(
+      '.info-box__edit-button'
+    ) as HTMLElement
     if (this.editButton) {
-      this.editPanel = this.element.querySelector('.info-box__edit-panel') as HTMLElement
+      this.editPanel = this.element.querySelector(
+        '.info-box__edit-panel'
+      ) as HTMLElement
       this.editPanelIsVisible = false
-      this.infoList = this.element.querySelector('.info-box__list') as HTMLElement
+      this.infoList = this.element.querySelector(
+        '.info-box__list'
+      ) as HTMLElement
 
       // event listeners
       this.editButton.addEventListener('click', this.editButtonClickCallback)
     }
 
     // copy short url listener
-    this.copyUrlTrigger = this.element.querySelector('.copy-short-url-trigger') as HTMLElement
+    this.copyUrlTrigger = this.element.querySelector(
+      '.copy-short-url-trigger'
+    ) as HTMLElement
     if (this.copyUrlTrigger) {
-      this.copyUrlTrigger.addEventListener('click', this.copyShortUrlTriggerClickCallback.bind(this))
+      this.copyUrlTrigger.addEventListener(
+        'click',
+        this.copyShortUrlTriggerClickCallback.bind(this)
+      )
     }
 
-    this.element.querySelectorAll<HTMLElement>('.info-box__edit-link').forEach(link => {
-      link.addEventListener('click', this.editButtonClickCallback)
-    })
+    this.element
+      .querySelectorAll<HTMLElement>('.info-box__edit-link')
+      .forEach((link) => {
+        link.addEventListener('click', this.editButtonClickCallback)
+      })
   }
 
-  showStatus (): void {
+  showStatus(): void {
     if (this.editPanel?.classList.contains('d-none')) {
       this.editButtonClickCallback()
     }
   }
 
-  showInfoBox (): void {
+  showInfoBox(): void {
     if (this.infoList?.classList.contains('d-none')) {
       this.editButtonClickCallback()
     }
   }
 
-  editButtonClickCallback (e?: MouseEvent): void {
+  editButtonClickCallback(e?: MouseEvent): void {
     e?.preventDefault()
-    if ((this.editButton != null) && (this.editPanel != null) && (this.infoList != null)) {
+    if (
+      this.editButton != null &&
+      this.editPanel != null &&
+      this.infoList != null
+    ) {
       this.editPanel.classList.toggle('d-none')
       this.infoList.classList.toggle('d-none')
       this.editButton.children[0].classList.toggle('d-none')
@@ -57,7 +74,7 @@ export default class InfoBox {
     }
   }
 
-  copyShortUrlTriggerClickCallback (e: MouseEvent): void {
+  copyShortUrlTriggerClickCallback(e: MouseEvent): void {
     e.preventDefault()
     const el = e.target as IHTMLToolTipElement
 
@@ -84,7 +101,7 @@ export default class InfoBox {
     }
   }
 
-  copyToClipboard (text: string): void {
+  copyToClipboard(text: string): void {
     const el = document.createElement('textarea')
     el.value = text
     el.setAttribute('readonly', '')

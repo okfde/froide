@@ -1,13 +1,13 @@
 class FroideAPI {
-  constructor (config) {
+  constructor(config) {
     this.config = config
   }
 
-  getJson (url) {
+  getJson(url) {
     return new Promise((resolve, reject) => {
       const request = new window.XMLHttpRequest()
       request.open('GET', url, true)
-      request.onload = function () {
+      request.onload = function() {
         if (request.status >= 400) {
           try {
             return reject(JSON.parse(request.responseText))
@@ -17,7 +17,7 @@ class FroideAPI {
         }
         resolve(JSON.parse(request.responseText))
       }
-      request.onerror = function () {
+      request.onerror = function() {
         reject(request.statusText)
       }
 
@@ -25,16 +25,17 @@ class FroideAPI {
     })
   }
 
-  getObjects (promise) {
+  getObjects(promise) {
     return new Promise((resolve, reject) => {
-      promise.then((data) => {
-        return resolve(data.objects)
-      })
+      promise
+        .then((data) => {
+          return resolve(data.objects)
+        })
         .catch((e) => reject(e))
     })
   }
 
-  getJsonObjects (url) {
+  getJsonObjects(url) {
     return new Promise((resolve, reject) => {
       this.getJsonForUrl(url)
         .then((data) => resolve(data.objects))
@@ -42,22 +43,22 @@ class FroideAPI {
     })
   }
 
-  getPublicBody (id) {
+  getPublicBody(id) {
     const url = this.config.url.getPublicBody.replace(/\/0\//, `/${id}/`)
     return this.getJsonForUrl(url)
   }
 
-  autocompletePublicBody (term) {
+  autocompletePublicBody(term) {
     const query = encodeURIComponent(term)
     const url = this.config.url.autocompletePublicBody + '?query=' + query
     return this.getJsonObjects(url)
   }
 
-  getUser () {
+  getUser() {
     return this.getJson(this.config.url.user)
   }
 
-  getJsonForUrl (url, term, filters) {
+  getJsonForUrl(url, term, filters) {
     let hasParam = false
     if (term !== undefined && term) {
       hasParam = true
@@ -85,15 +86,15 @@ class FroideAPI {
     return this.getJson(url)
   }
 
-  searchPublicBodies (term, filters) {
+  searchPublicBodies(term, filters) {
     return this.getJsonForUrl(this.config.url.searchPublicBody, term, filters)
   }
 
-  listPublicBodies (term, filters) {
+  listPublicBodies(term, filters) {
     return this.getJsonForUrl(this.config.url.listPublicBodies, term, filters)
   }
 
-  getLawsForPublicBodies (publicBodies, cachedLaws) {
+  getLawsForPublicBodies(publicBodies, cachedLaws) {
     cachedLaws = cachedLaws || {}
     const lawIdMap = {}
     const lawIds = []
@@ -120,63 +121,70 @@ class FroideAPI {
     }).then((data) => data.objects)
   }
 
-  listJurisdictions (term, filters) {
+  listJurisdictions(term, filters) {
     return this.getJsonForUrl(this.config.url.listJurisdictions, term, filters)
   }
 
-  listCategories (term, filters) {
+  listCategories(term, filters) {
     return this.getJsonForUrl(this.config.url.listCategories, term, filters)
   }
 
-  listClassifications (term, filters) {
-    return this.getJsonForUrl(this.config.url.listClassifications, term, filters)
+  listClassifications(term, filters) {
+    return this.getJsonForUrl(
+      this.config.url.listClassifications,
+      term,
+      filters
+    )
   }
 
-  listGeoregions (term, filters) {
+  listGeoregions(term, filters) {
     return this.getJsonForUrl(this.config.url.listGeoregions, term, filters)
   }
 
-  searchFoiRequests (term) {
+  searchFoiRequests(term) {
     const query = encodeURIComponent(term)
     const url = this.config.url.searchRequests + '?q=' + query
     return this.getJsonObjects(url)
   }
 }
 
-function postData (url = '', data = {}, csrfToken, method = 'POST') {
-  return window.fetch(url, {
-    method: method,
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-
-      'Content-Type': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify(data)
-  }).then(response => response.json())
+function postData(url = '', data = {}, csrfToken, method = 'POST') {
+  return window
+    .fetch(url, {
+      method: method,
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify(data)
+    })
+    .then((response) => response.json())
 }
 
-function putData (url = '', data = {}, csrfToken) {
+function putData(url = '', data = {}, csrfToken) {
   return postData(url, data, csrfToken, 'PUT')
 }
 
-function getData (url = '', headers = {}) {
+function getData(url = '', headers = {}) {
   headers = headers || {}
-  return window.fetch(url, {
-    method: 'GET',
-    cache: 'no-cache',
-    credentials: 'same-origin',
-    headers: {
-      Accept: 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-      ...headers
-    }
-  }).then(response => response.json())
+  return window
+    .fetch(url, {
+      method: 'GET',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        ...headers
+      }
+    })
+    .then((response) => response.json())
 }
 
-function getAllData (url = '', headers = {}, result = [], progress = null) {
+function getAllData(url = '', headers = {}, result = [], progress = null) {
   return new Promise((resolve, reject) => {
     getData(url, headers).then((data) => {
       result = [...result, ...data.objects]
@@ -192,7 +200,7 @@ function getAllData (url = '', headers = {}, result = [], progress = null) {
   })
 }
 
-function bustCache (url) {
+function bustCache(url) {
   return window.fetch(url, {
     method: 'GET',
     cache: 'no-cache',
@@ -204,11 +212,4 @@ function bustCache (url) {
   })
 }
 
-export {
-  FroideAPI,
-  postData,
-  putData,
-  getData,
-  getAllData,
-  bustCache
-}
+export { FroideAPI, postData, putData, getData, getAllData, bustCache }

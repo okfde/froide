@@ -118,7 +118,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       sortHeader: null,
       sortOrder: 1,
@@ -126,7 +126,7 @@ export default {
     }
   },
   computed: {
-    showNext () {
+    showNext() {
       if (
         (this.stepSelectPublicBody || this.stepReviewPublicBodies) &&
         this.hasPublicBodies
@@ -145,7 +145,7 @@ export default {
     ])
   },
   methods: {
-    clickNext () {
+    clickNext() {
       if (this.hasPublicBodies) {
         if (this.stepSelectPublicBody && this.multiRequest) {
           this.setStepReviewPublicBody()

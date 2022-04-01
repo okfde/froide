@@ -219,7 +219,7 @@ import Vue from 'vue'
 
 import { bustCache, getData } from '../../lib/api.js'
 
-function isTouchDevice () {
+function isTouchDevice() {
   return 'ontouchstart' in window
 }
 
@@ -247,7 +247,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       doc: null,
       currentPage: null,
@@ -280,26 +280,26 @@ export default {
     }
   },
   computed: {
-    i18n () {
+    i18n() {
       return this.config.i18n
     },
-    hasNext () {
+    hasNext() {
       return this.currentPage < this.numPages && !this.pageLoading
     },
-    hasPrevious () {
+    hasPrevious() {
       return this.currentPage > 1 && !this.pageLoading
     },
-    canUndo () {
+    canUndo() {
       return this.actionIndexPerPage[this.currentPage] > 0
     },
-    canRedo () {
+    canRedo() {
       const actions = this.actionsPerPage[this.currentPage]
       if (actions === undefined) {
         return false
       }
       return this.actionIndexPerPage[this.currentPage] < actions.length
     },
-    hasRedactions () {
+    hasRedactions() {
       for (const p in this.actionsPerPage) {
         if (this.actionIndexPerPage[p] > 0) {
           return true
@@ -307,10 +307,10 @@ export default {
       }
       return false
     },
-    hasPassword () {
+    hasPassword() {
       return this.password !== null
     },
-    pageOfTotal () {
+    pageOfTotal() {
       if (this.numPages !== null) {
         return this.i18n.pageCurrentOfTotal
           .replace(/\$current/, this.currentPage)
@@ -318,7 +318,7 @@ export default {
       }
       return ''
     },
-    regexList () {
+    regexList() {
       return this.redactRegex
         .map((r) => {
           r = r.replace(/ /g, '\\s+')
@@ -330,51 +330,52 @@ export default {
         })
         .filter((r) => r !== null)
     },
-    container () {
+    container() {
       return this.$refs.container
     },
-    canvas () {
+    canvas() {
       return document.getElementById(this.canvasId)
     },
-    redactCanvas () {
+    redactCanvas() {
       return document.getElementById(this.redactCanvasId)
     },
-    textLayer () {
+    textLayer() {
       return document.getElementById(this.textLayerId)
     },
-    working () {
+    working() {
       return this.workingState !== null
     },
-    loading () {
+    loading() {
       return this.workingState === 'loading'
     },
-    redacting () {
+    redacting() {
       return this.workingState === 'redacting'
     },
-    sending () {
+    sending() {
       return this.workingState === 'sending'
     },
-    progressUnknown () {
+    progressUnknown() {
       return this.progressCurrent === null || this.progressTotal === undefined
     },
-    progressPercent () {
+    progressPercent() {
       if (!this.progressUnknown) {
         return (this.progressCurrent / this.progressTotal) * 100
       }
       return 100
     },
-    progressWidth () {
+    progressWidth() {
       return `width: ${this.progressPercent}%`
     },
-    csrfToken () {
+    csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
     }
   },
-  created () {
+  created() {
     import('pdfjs-dist')
       .then((PDFJS) => {
         this.PDFJS = PDFJS
-        this.PDFJS.GlobalWorkerOptions.workerSrc = this.config.resources.pdfjsWorker
+        this.PDFJS.GlobalWorkerOptions.workerSrc =
+          this.config.resources.pdfjsWorker
         console.log(this.config.resources.pdfjsWorker, this.PDFJS)
         this.loadDocument().then(() => this.loadPage(1))
       })
@@ -383,7 +384,7 @@ export default {
       })
   },
   methods: {
-    loadDocument () {
+    loadDocument() {
       const loadingTask = this.PDFJS.getDocument({
         url: this.pdfPath,
         isEvalSupported: false,
@@ -427,7 +428,7 @@ export default {
         this.currentPage = 1
       })
     },
-    loadPage (pageNum) {
+    loadPage(pageNum) {
       this.pageLoading = true
       return this.doc.getPage(pageNum).then((page) => {
         console.log('# Page ' + pageNum)
@@ -489,29 +490,29 @@ export default {
           })
       })
     },
-    goNext () {
+    goNext() {
       if (this.hasNext) {
         this.setCurrentPage(this.currentPage + 1)
       }
     },
-    goPrevious () {
+    goPrevious() {
       if (this.hasPrevious) {
         this.setCurrentPage(this.currentPage - 1)
       }
     },
-    setCurrentPage (pageNum) {
+    setCurrentPage(pageNum) {
       this.currentPage = pageNum
       return this.loadPage(pageNum)
     },
-    toggleText () {
+    toggleText() {
       this.textOnly = !this.textOnly
       this.textDisabled = !this.textOnly
     },
-    toggleDrawing () {
+    toggleDrawing() {
       this.textDisabled = !this.textDisabled
       this.textOnly = !this.textDisabled
     },
-    redact () {
+    redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
       this.ready = false
       this.workingState = 'sending'
@@ -555,7 +556,7 @@ export default {
             })
         })
     },
-    sendSerializedPages (serialized) {
+    sendSerializedPages(serialized) {
       this.workingState = 'sending'
       this.progressCurrent = 5 // show at least some progress
       this.progressTotal = 100
@@ -596,7 +597,7 @@ export default {
         xhr.send(JSON.stringify(serialized))
       })
     },
-    waitOnAttachment (response) {
+    waitOnAttachment(response) {
       return new Promise((resolve, reject) => {
         const attachmentUrl = response.resource_uri
         let waitTime = 0
@@ -625,7 +626,7 @@ export default {
         window.setTimeout(checkAttachment, 1000)
       })
     },
-    serializePage (pageNumber) {
+    serializePage(pageNumber) {
       const divs = this.textLayer.children
       const texts = Array.prototype.map.call(divs, (d) => {
         const [dx, dy] = this.getDivPos(d)
@@ -648,7 +649,7 @@ export default {
         texts
       }
     },
-    getOffset (e) {
+    getOffset(e) {
       const target = e.target || e.srcElement
       const rect = target.getBoundingClientRect()
       let clientX = e.clientX
@@ -664,7 +665,7 @@ export default {
       const offsetY = clientY - rect.top
       return [offsetX, offsetY]
     },
-    touchStart (e) {
+    touchStart(e) {
       if (!this.doubleTap) {
         this.doubleTap = true
         setTimeout(() => {
@@ -675,16 +676,16 @@ export default {
       e.preventDefault()
       this.mouseDown(e, true)
     },
-    touchEnd (e) {
+    touchEnd(e) {
       this.mouseUp(e, true)
     },
-    touchMove (e) {
+    touchMove(e) {
       this.mouseMove(e, true)
     },
-    touchCancel () {
+    touchCancel() {
       this.startDrag = null
     },
-    mouseMove (e, override) {
+    mouseMove(e, override) {
       if (this.hasTouch && !override) {
         return
       }
@@ -698,13 +699,13 @@ export default {
       this.endDrag = this.getOffset(e)
       this.drawRectangles()
     },
-    mouseDown (e, override) {
+    mouseDown(e, override) {
       if (this.hasTouch && !override) {
         return
       }
       this.startDrag = this.getOffset(e)
     },
-    mouseUp (e, override) {
+    mouseUp(e, override) {
       if (this.hasTouch && !override) {
         return
       }
@@ -757,7 +758,7 @@ export default {
       })
       this.startDrag = null
     },
-    getRect (start, end) {
+    getRect(start, end) {
       let x, y, w, h
       if (start[0] < end[0]) {
         x = start[0]
@@ -775,8 +776,8 @@ export default {
       }
       return [x, y, w, h]
     },
-    handleSelection (selection) {
-      function getNextNode (node) {
+    handleSelection(selection) {
+      function getNextNode(node) {
         if (node.firstChild) {
           return node.firstChild
         }
@@ -788,7 +789,7 @@ export default {
         }
       }
 
-      function getNodesInRange (range) {
+      function getNodesInRange(range) {
         const start = range.startContainer
         const end = range.endContainer
         const commonAncestor = range.commonAncestorContainer
@@ -871,7 +872,7 @@ export default {
       const action = this.combineActions(actions)
       this.addAction(action)
     },
-    combineActions (actions) {
+    combineActions(actions) {
       const texts = actions.reduce((a, b) => a.concat(b.texts), [])
       const rects = actions.reduce((a, b) => a.concat(b.rects), [])
       return {
@@ -881,7 +882,7 @@ export default {
         page: this.currentPage
       }
     },
-    textAvailable () {
+    textAvailable() {
       // mark every div with an index number
       let i = 0
       Array.prototype.forEach.call(this.textLayer.children, (c) => {
@@ -894,12 +895,12 @@ export default {
       }
       this.applyActionsOnPageLoad()
     },
-    drawRectangle (ctx, rect) {
+    drawRectangle(ctx, rect) {
       const [x, y, w, h] = rect
       ctx.fillStyle = '#000'
       ctx.fillRect(x, y, w, h)
     },
-    drawRectangles () {
+    drawRectangles() {
       const ctx = this.redactCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       if (this.rectanglesPerPage[this.currentPage] !== undefined) {
@@ -911,7 +912,7 @@ export default {
         this.drawRectangle(ctx, this.getRect(this.startDrag, this.endDrag))
       }
     },
-    applyActionsOnPageLoad () {
+    applyActionsOnPageLoad() {
       if (this.rectanglesPerPage[this.currentPage] === undefined) {
         Vue.set(this.rectanglesPerPage, this.currentPage, [])
       }
@@ -920,7 +921,7 @@ export default {
       })
       this.drawRectangles()
     },
-    undo () {
+    undo() {
       if (!this.canUndo) {
         return
       }
@@ -930,7 +931,7 @@ export default {
       const lastAction = this.actionsPerPage[this.currentPage][actionIndex]
       this.unapplyAction(lastAction)
     },
-    redo () {
+    redo() {
       if (!this.canRedo) {
         return
       }
@@ -940,7 +941,7 @@ export default {
       Vue.set(this.actionIndexPerPage, this.currentPage, actionIndex)
       this.applyAction(nextAction)
     },
-    addAction (action) {
+    addAction(action) {
       let actions = this.actionsPerPage[action.page].slice()
       actions = actions.slice(0, this.actionIndexPerPage[action.page])
       actions.push(action)
@@ -953,7 +954,7 @@ export default {
 
       this.applyAction(action)
     },
-    applyAction (action, ignoreRects = false) {
+    applyAction(action, ignoreRects = false) {
       if (this.rectanglesPerPage[action.page] === undefined) {
         Vue.set(this.rectanglesPerPage, action.page, [])
       }
@@ -975,7 +976,7 @@ export default {
         })
       }
     },
-    unapplyAction (action) {
+    unapplyAction(action) {
       if (action.rects !== undefined && action.rects.length > 0) {
         const newRects = this.rectanglesPerPage[action.page].filter((r) => {
           return (
@@ -1000,7 +1001,7 @@ export default {
         })
       }
     },
-    autoRedact (regex) {
+    autoRedact(regex) {
       const divs = this.textLayer.children
       const matchFunc = (node) => node.textContent.match(regex)
       const matches = Array.prototype.filter.call(divs, matchFunc)
@@ -1021,16 +1022,16 @@ export default {
         this.message = this.i18n.autoRedacted
       }
     },
-    getDivPos (div) {
+    getDivPos(div) {
       return [
         parseInt(div.style.left.replace('px', '')),
         parseInt(div.style.top.replace('px', ''))
       ]
     },
-    redactText (div, start, text) {
+    redactText(div, start, text) {
       return this.redactRange(div, start, start + text.length)
     },
-    redactRange (div, start, end) {
+    redactRange(div, start, end) {
       /*
         Measure the size of the match for the div
         Measure the offset of the match in the div

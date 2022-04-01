@@ -8,7 +8,7 @@ import RequestPage from './components/makerequest/request-page'
 
 Vue.config.productionTip = false
 
-function createRequestPage (selector) {
+function createRequestPage(selector) {
   /* eslint-disable no-new */
   new Vue({
     store: store,
@@ -17,7 +17,7 @@ function createRequestPage (selector) {
   }).$mount(selector)
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   createRequestPage('#make-request')
 })
 

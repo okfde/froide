@@ -47,7 +47,7 @@ import PbTableRow from './pb-table-row'
 export default {
   name: 'pb-table',
   props: ['name', 'headers', 'options', 'scope', 'i18n', 'rows'],
-  data () {
+  data() {
     return {
       sortHeader: null,
       sortOrder: 1,
@@ -55,7 +55,7 @@ export default {
     }
   },
   computed: {
-    sortedRows () {
+    sortedRows() {
       let sortedRows = this.rows.slice()
       if (this.sortHeader === null) {
         return sortedRows
@@ -68,23 +68,23 @@ export default {
       return sortedRows
     },
     selectAllRows: {
-      get () {
+      get() {
         return this.allRowsSelected
       },
-      set () {
+      set() {
         this.allRowsSelected = !this.allRowsSelected
         this.$emit('selectAllRows', this.allRowsSelected)
       }
     }
   },
   methods: {
-    changeSort (sortHeader) {
+    changeSort(sortHeader) {
       if (sortHeader === this.sortHeader) {
         this.sortOrder *= -1
       }
       this.sortHeader = sortHeader
     },
-    updateRow ({ id, value }) {
+    updateRow({ id, value }) {
       if (value) {
         this.addPublicBodyId({
           publicBodyId: id,

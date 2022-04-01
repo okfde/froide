@@ -6,7 +6,7 @@ import GeoMatcher from './components/geomatch/geo-matcher.vue'
 
 Vue.config.productionTip = false
 
-function createGeoMatcher (element) {
+function createGeoMatcher(element) {
   /* eslint-disable no-new */
   new Vue({
     components: { GeoMatcher },
@@ -14,7 +14,7 @@ function createGeoMatcher (element) {
   }).$mount(element)
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   const el = document.querySelector('#geomatch-component')
   if (el) {
     createGeoMatcher(el)

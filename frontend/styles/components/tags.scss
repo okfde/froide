@@ -1,26 +1,25 @@
-
 .tag-list {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .tag-list li {
-    display: inline;
+  display: inline;
 }
 
 .tag-list li a {
-    font-size: 0.9em;
-   text-decoration: none;
+  font-size: 0.9em;
+  text-decoration: none;
 }
 
 .tag-list li a:hover {
-   text-decoration: underline;
+  text-decoration: underline;
 }
 
 ul.tagit {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 .tagit-form {
-    font-size: 80%;
+  font-size: 80%;
 }
