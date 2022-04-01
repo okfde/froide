@@ -1,7 +1,7 @@
 {
   "parserOptions": {
     "sourceType": "module",
-    "project": ["./tsconfig.json"]
+    "project": "./tsconfig.json"
   },
   "extends": "standard-with-typescript",
   "plugins": [
@@ -9,5 +9,12 @@
     "html"
   ],
   "ignorePatterns": ["node_modules/**", "**/static/**"],
-  "root": true
+  "overrides": [{
+    "files": ["*.ts"],
+    "rules": {
+      // TODO: remove these exceptions
+      "@typescript-eslint/strict-boolean-expressions": "warn",
+      "@typescript-eslint/prefer-nullish-coalescing": "warn"
+    }
+  }]
 }

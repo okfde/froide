@@ -35,7 +35,7 @@ class Room {
     this.connect = this.connect.bind(this)
   }
 
-  connect () {
+  connect (): this {
     let prot = 'ws'
     if (document.location.protocol === 'https:') {
       prot = 'wss'
@@ -72,13 +72,13 @@ class Room {
     return this
   }
 
-  onunload () {
+  onunload (): void {
     if (!this.closed) {
       this.close()
     }
   }
 
-  send (data: EventData) {
+  send (data: EventData): void {
     if ((this.socket != null) && this.socket.readyState === 1) {
       this.socket.send(JSON.stringify(data))
     } else {
@@ -86,19 +86,19 @@ class Room {
     }
   }
 
-  on (event: string, callback: Function) {
+  on (event: string, callback: Function): this {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event].push(callback)
     return this
   }
 
-  off (event: string, callback: Function) {
+  off (event: string, callback: Function): this {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event] = this.callbacks[event].filter((cb) => cb !== callback)
     return this
   }
 
-  trigger (event: string, data: Object) {
+  trigger (event: string, data: Object): void {
     if (!this.callbacks[event]) {
       return
     }
@@ -107,14 +107,14 @@ class Room {
     })
   }
 
-  close () {
+  close (): void {
     this.closed = true
     if (this.socket != null) {
       this.socket.close()
     }
   }
 
-  setupHeartbeat () {
+  setupHeartbeat (): void {
     this.heartBeatInterval = window.setInterval(() => {
       if ((this.socket != null) && this.socket.readyState === 1) {
         this.socket.send(JSON.stringify({ type: 'heartbeat' }))
@@ -127,20 +127,20 @@ class Room {
     }, this.heartbeatSeconds * 1000)
   }
 
-  clearHeartbeat () {
+  clearHeartbeat (): void {
     if (this.heartBeatInterval) {
       window.clearInterval(this.heartBeatInterval)
     }
     this.heartBeatInterval = null
   }
 
-  setupRetry () {
+  setupRetry (): void {
     if (!this.retryInterval) {
       this.retryInterval = window.setInterval(this.connect, this.retrySeconds * 1000)
     }
   }
 
-  clearRetry () {
+  clearRetry (): void {
     if (this.retryInterval) {
       window.clearInterval(this.retryInterval)
       this.retryInterval = null
