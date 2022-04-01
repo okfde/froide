@@ -38,7 +38,7 @@
 
 <script>
 
-import {getData} from '../../lib/api.js'
+import { getData } from '../../lib/api.js'
 
 import MessageRedactionField from './messageredaction-field.vue'
 
@@ -61,11 +61,10 @@ export default {
   computed: {
     i18n () {
       return this.config.i18n
-    },
+    }
   }
 }
 </script>
-
 
 <style lang="scss">
 

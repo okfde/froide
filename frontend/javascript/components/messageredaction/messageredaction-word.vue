@@ -6,10 +6,10 @@
 <script>
 export default {
   name: 'messageredaction-word',
-  props: ['word', 'redacted',  'index'],
+  props: ['word', 'redacted', 'index'],
   data () {
     return {
-      changed: false,
+      changed: false
     }
   },
   methods: {
@@ -23,7 +23,6 @@ export default {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
   .word {

@@ -13,7 +13,7 @@ import FilterMixin from './lib/filter-mixin'
 export default {
   name: 'pb-filter-selected',
   props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
-  mixins: [FilterMixin],
+  mixins: [FilterMixin]
 }
 </script>
 

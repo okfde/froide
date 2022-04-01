@@ -4,10 +4,9 @@
       :i18n="i18n"
       :multi-request="multiRequest"
       :has-public-bodies="hasPublicBodies"
-      :hide-publicbody-chooser="hidePublicbodyChooser"
-    />
+      :hide-publicbody-chooser="hidePublicbodyChooser" />
 
-    <div :class="{container: !multiRequest, 'container-multi': multiRequest}">
+    <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
       <slot name="messages" />
 
       <div class="row justify-content-lg-center">
@@ -15,15 +14,13 @@
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
-            class="mt-5"
-          >
+            class="mt-5">
             <div v-if="multiRequest">
               <publicbody-multi-chooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
-                :config="config"
-              >
+                :config="config">
                 <template slot="publicbody-missing">
                   <slot name="publicbody-missing" />
                 </template>
@@ -44,8 +41,7 @@
                     :scope="pbScope"
                     :form="publicbodyForm"
                     :config="config"
-                    :list-view="publicBodyListView"
-                  />
+                    :list-view="publicBodyListView" />
                 </div>
                 <div class="col-lg-4 small">
                   <slot name="publicbody-missing" />
@@ -57,20 +53,11 @@
           <fieldset
             v-if="stepReviewPublicBodies && !stepWriteRequest"
             id="step-review-publicbody"
-            class="mt-5"
-          >
-            <pb-multi-review
-              name="publicbody"
-              :i18n="i18n"
-              :scope="pbScope"
-            />
+            class="mt-5">
+            <pb-multi-review name="publicbody" :i18n="i18n" :scope="pbScope" />
           </fieldset>
 
-          <fieldset
-            v-if="stepWriteRequest"
-            id="step-request"
-            class="mt-3"
-          >
+          <fieldset v-if="stepWriteRequest" id="step-request" class="mt-3">
             <request-form
               :config="config"
               :publicbodies="publicBodies"
@@ -89,8 +76,7 @@
               :initial-first-name.sync="firstName"
               :initial-last-name.sync="lastName"
               :initial-private.sync="userPrivate"
-              @setStepSelectPublicBody="setStepSelectPublicBody"
-            >
+              @setStepSelectPublicBody="setStepSelectPublicBody">
               <template slot="request-hints">
                 <slot name="request-hints" />
               </template>
@@ -106,26 +92,18 @@
               :default-law="defaultLaw"
               :initial-email.sync="email"
               :initial-address.sync="address"
-              :address-help-text="userForm.fields.address.help_text"
-            />
+              :address-help-text="userForm.fields.address.help_text" />
 
-            <request-public
-              :form="requestForm"
-              :hide-public="hidePublic"
-            />
+            <request-public :form="requestForm" :hide-public="hidePublic" />
 
-            <user-terms
-              v-if="!user.id"
-              :form="userForm"
-            />
+            <user-terms v-if="!user.id" :form="userForm" />
           </fieldset>
 
           <similar-requests
             v-if="showSimilar && stepWriteRequest"
             :publicbodies="publicBodies"
             :subject="subject"
-            :config="config"
-          />
+            :config="config" />
 
           <review-request
             v-if="stepWriteRequest && showReview"
@@ -137,20 +115,15 @@
             :body="body"
             :full-text="fullText"
             @close="showReview = false"
-            @submit="submitting = true"
-          />
+            @submit="submitting = true" />
 
           <button
             v-if="stepWriteRequest && shouldCheckRequest"
             id="review-button"
             type="button"
             class="btn btn-primary btn-lg mt-3"
-            @click="showReview = true"
-          >
-            <i
-              class="fa fa-check"
-              aria-hidden="true"
-            />
+            @click="showReview = true">
+            <i class="fa fa-check" aria-hidden="true" />
             {{ i18n.reviewRequest }}
           </button>
           <button
@@ -158,12 +131,8 @@
             id="send-request-button"
             type="submit"
             class="btn btn-primary btn-lg mt-3"
-            @click="submitting = true"
-          >
-            <i
-              class="fa fa-send"
-              aria-hidden="true"
-            />
+            @click="submitting = true">
+            <i class="fa fa-send" aria-hidden="true" />
             {{ i18n.submitRequest }}
           </button>
           <button
@@ -172,12 +141,8 @@
             class="btn btn-secondary mt-3"
             name="save_draft"
             value="true"
-            @click="submitting = true"
-          >
-            <i
-              class="fa fa-save"
-              aria-hidden="true"
-            />
+            @click="submitting = true">
+            <i class="fa fa-save" aria-hidden="true" />
             {{ i18n.saveAsDraft }}
           </button>
         </div>
@@ -198,16 +163,25 @@ import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
 
-
-import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import {
-  SET_STEP_SELECT_PUBLICBODY, SET_STEP_REQUEST,
-  SET_PUBLICBODY, SET_PUBLICBODIES, CACHE_PUBLICBODIES,
-  UPDATE_FIRST_NAME, UPDATE_LAST_NAME,
-  SET_USER, UPDATE_SUBJECT, UPDATE_BODY, UPDATE_FULL_TEXT,
-  UPDATE_ADDRESS, UPDATE_EMAIL, UPDATE_PRIVATE,
-  UPDATE_LAW_TYPE, SET_CONFIG
+  SET_STEP_SELECT_PUBLICBODY,
+  SET_STEP_REQUEST,
+  SET_PUBLICBODY,
+  SET_PUBLICBODIES,
+  CACHE_PUBLICBODIES,
+  UPDATE_FIRST_NAME,
+  UPDATE_LAST_NAME,
+  SET_USER,
+  UPDATE_SUBJECT,
+  UPDATE_BODY,
+  UPDATE_FULL_TEXT,
+  UPDATE_ADDRESS,
+  UPDATE_EMAIL,
+  UPDATE_PRIVATE,
+  UPDATE_LAW_TYPE,
+  SET_CONFIG
 } from '../../store/mutation_types'
 
 import LetterMixin from './lib/letter-mixin'
@@ -233,7 +207,7 @@ export default {
       type: Object
     },
     publicbodyDefaultSearch: {
-        type: String
+      type: String
     },
     publicbodyForm: {
       type: Object,
@@ -251,7 +225,7 @@ export default {
       type: Object
     },
     userForm: {
-      type: Object,
+      type: Object
     },
     showSimilar: {
       type: Boolean,
@@ -399,7 +373,12 @@ export default {
       return this.getPublicBodiesByScope(this.pbScope)
     },
     shouldCheckRequest () {
-      return (this.body === '' || this.bodyWasChanged) || (this.subject === '' || this.subjectWasChanged)
+      return (
+        this.body === '' ||
+        this.bodyWasChanged ||
+        this.subject === '' ||
+        this.subjectWasChanged
+      )
     },
     ...mapGetters([
       'user',
@@ -426,13 +405,14 @@ export default {
       subject: this.updateSubject,
       body: this.updateBody,
       full_text: this.updateFullText,
-      law_type: this.updateLawType,
+      law_type: this.updateLawType
     })
 
-
-    this.updateLawType(this.formFields.law_type.value || this.formFields.law_type.initial)
+    this.updateLawType(
+      this.formFields.law_type.value || this.formFields.law_type.initial
+    )
     if (this.publicbodies !== null) {
-      let pbs = this.publicbodies
+      const pbs = this.publicbodies
       this.setPublicBodies({
         publicBodies: pbs,
         scope: this.pbScope
@@ -443,7 +423,7 @@ export default {
     if (this.userInfo !== null) {
       this.setUser(this.userInfo)
       this.initStoreValues(this.userformFields, {
-        address: this.updateAddress,
+        address: this.updateAddress
       })
     } else {
       this.initStoreValues(this.userformFields, {
@@ -451,12 +431,11 @@ export default {
         first_name: this.updateFirstName,
         last_name: this.updateLastName,
         address: this.updateAddress,
-        private: this.updatePrivate,
+        private: this.updatePrivate
       })
     }
-    this.originalBody = this.body,
+    this.originalBody = this.body
     this.originalSubject = this.subject
-
   },
   mounted () {
     if (this.hasPublicBodies) {
@@ -470,20 +449,20 @@ export default {
         return
       }
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-      e.preventDefault();
+      e.preventDefault()
       // Chrome requires returnValue to be set
-      e.returnValue = this.i18n.sureCancel;
+      e.returnValue = this.i18n.sureCancel
       return e.returnValue
-    });
+    })
   },
   methods: {
     initStoreValues (fields, mapping) {
-      for (let key in mapping) {
-        let method = mapping[key]
-        if (fields[key] === undefined) { continue }
-        method(
-          fields[key].value || fields[key].initial
-        )
+      for (const key in mapping) {
+        const method = mapping[key]
+        if (fields[key] === undefined) {
+          continue
+        }
+        method(fields[key].value || fields[key].initial)
       }
     },
     ...mapMutations({
@@ -502,18 +481,15 @@ export default {
       cachePublicBodies: CACHE_PUBLICBODIES,
       updateAddress: UPDATE_ADDRESS,
       updateEmail: UPDATE_EMAIL,
-      updatePrivate: UPDATE_PRIVATE,
+      updatePrivate: UPDATE_PRIVATE
     }),
-    ...mapActions([
-      'getLawsForPublicBodies'
-    ])
+    ...mapActions(['getLawsForPublicBodies'])
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
-@import "../../../styles/variables";
+@import '../../../styles/variables';
 
 .make-request-container {
   padding-bottom: 1rem;
@@ -547,7 +523,7 @@ legend {
 }
 
 .publicbody-summary-container {
-  margin: 0 0 $spacer*2;
+  margin: 0 0 $spacer * 2;
 }
 
 .publicbody-summary {
@@ -583,10 +559,12 @@ legend {
   height: 5em;
 }
 
-.saved-full-text-enter-active, .saved-full-text-leave-active {
-  transition: opacity .5s;
+.saved-full-text-enter-active,
+.saved-full-text-leave-active {
+  transition: opacity 0.5s;
 }
-.saved-full-text-enter, .saved-full-text-leave-to {
+.saved-full-text-enter,
+.saved-full-text-leave-to {
   opacity: 0;
 }
 
@@ -594,5 +572,4 @@ legend {
   color: #999;
   text-decoration: underline;
 }
-
 </style>

@@ -67,7 +67,7 @@ export default {
     config: {
       type: Object,
       required: true
-    },
+    }
   },
   computed: {
     value: {
@@ -82,7 +82,7 @@ export default {
           publicBody: this.getPublicBody(value),
           scope: this.scope
         })
-        this.clearSearchResults({scope: this.scope})
+        this.clearSearchResults({ scope: this.scope })
       }
     }
   },

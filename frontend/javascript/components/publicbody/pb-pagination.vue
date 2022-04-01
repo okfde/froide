@@ -34,7 +34,7 @@
 
 <script>
 
-import {mapGetters, mapActions} from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'pb-pagination',
@@ -47,42 +47,42 @@ export default {
       return this.searchResults.length > 0
     },
     hasNextSearchResults () {
-      let meta = this.getScopedSearchMeta(this.scope)
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.next
     },
     hasPreviousSearchResults () {
-      let meta = this.getScopedSearchMeta(this.scope)
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.previous
     },
     currentResultPage () {
-      let meta = this.getScopedSearchMeta(this.scope)
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
       return (meta.offset / meta.limit) + 1
     },
     maxResultPage () {
-      let meta = this.getScopedSearchMeta(this.scope)
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
       return Math.ceil(meta.total_count / meta.limit)
     },
     currentResultsLength () {
-      let sr = this.searchResults
+      const sr = this.searchResults
       if (sr) {
         return sr.length
       }
       return null
     },
     searchResultsLength () {
-      let meta = this.getScopedSearchMeta(this.scope)
+      const meta = this.getScopedSearchMeta(this.scope)
       if (meta) {
         return meta.total_count
       }

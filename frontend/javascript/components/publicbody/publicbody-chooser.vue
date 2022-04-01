@@ -91,7 +91,7 @@ export default {
     },
     searchCollapsed: {
       type: Boolean,
-      default: false,
+      default: false
     },
     listView: {
       type: String,

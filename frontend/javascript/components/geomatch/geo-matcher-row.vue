@@ -91,13 +91,13 @@ export default {
   },
   computed: {
     links () {
-      if (!this.georegion.links){
+      if (!this.georegion.links) {
         return []
       }
       return this.georegion.links.map(this.addPublicBodyAdminUrl)
     },
     matches () {
-      if (!this.georegion.matches){
+      if (!this.georegion.matches) {
         return []
       }
       return this.georegion.matches.map(this.addPublicBodyAdminUrl)
@@ -121,11 +121,11 @@ export default {
       return this.$root.config.url.georegionAdminUrl.replace(/\/0\//, `/${this.georegion.id}/`)
     },
     createPublicBodyUrl () {
-      let name = window.encodeURIComponent(`${this.georegion.kind_detail} ${this.georegion.name}`)
+      const name = window.encodeURIComponent(`${this.georegion.kind_detail} ${this.georegion.name}`)
       return `${this.$root.config.url.publicbodyAddAdminUrl}?regions=${this.georegion.id}&name=${name}`
     },
     searchPublicBodyUrl () {
-      let name = window.encodeURIComponent(this.georegion.name)
+      const name = window.encodeURIComponent(this.georegion.name)
       return `${this.$root.config.url.publicbodyAdminUrl}?q=${name}`
     }
   },
@@ -141,7 +141,7 @@ export default {
         georegionId: this.georegion.id,
         georegionUrl: this.georegion.resource_uri,
         publicbodyId: match.id,
-        publicbody: match,
+        publicbody: match
       })
     }
   }

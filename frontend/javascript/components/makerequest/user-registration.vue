@@ -144,11 +144,11 @@ export default {
     },
     initialEmail: {
       type: String,
-      default: '',
+      default: ''
     },
     initialAddress: {
       type: String,
-      default: '',
+      default: ''
     },
     initialPrivate: {
       type: Boolean,
@@ -161,12 +161,12 @@ export default {
     addressRequired: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data () {
     return {
       emailValue: this.initialEmail,
-      addressValue: this.initialAddress || (this.user && this.user.address) || '',
+      addressValue: this.initialAddress || (this.user && this.user.address) || ''
     }
   },
   computed: {

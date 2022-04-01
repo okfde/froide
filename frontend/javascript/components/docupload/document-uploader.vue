@@ -113,9 +113,9 @@
 import Vue from 'vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
-import {postData} from '../../lib/api.js'
+import { postData } from '../../lib/api.js'
 
-import {approveAttachment, createDocument} from './lib/document_utils'
+import { approveAttachment, createDocument } from './lib/document_utils'
 import ImageDocument from './image-document.vue'
 import FileDocument from './file-document.vue'
 import FileUploader from '../upload/file-uploader.vue'
@@ -145,7 +145,7 @@ export default {
       uploadCount: 0,
       exifSupport: null,
       names: {},
-      selectAll: false,
+      selectAll: false
     }
   },
   computed: {
@@ -216,16 +216,16 @@ export default {
       From Modernizr feature detection:
       https://github.com/Modernizr/Modernizr/blob/master/feature-detects/exif-orientation.js
       */
-      var img = new Image();
-      img.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAASUkqAAgAAAABABIBAwABAAAABgASAAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+/iiiigD/2Q==';
+      const img = new Image()
+      img.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAASUkqAAgAAAABABIBAwABAAAABgASAAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+/iiiigD/2Q=='
       img.onload = () => {
         document.body.appendChild(img)
         const rect = img.getBoundingClientRect()
         this.$root.exifSupport = this.exifSupport = rect.height === 2
         document.body.removeChild(img)
-      };
+      }
     },
-    addAttachmentFromTus(uploadUrl) {
+    addAttachmentFromTus (uploadUrl) {
       return postData(
         this.config.url.convertAttachments,
         {
@@ -250,7 +250,7 @@ export default {
       const documents = []
       let images = []
       attachments.forEach((att) => {
-        let doc = {
+        const doc = {
           id: att.id,
           name: att.name,
           filetype: att.filetype,
@@ -275,7 +275,7 @@ export default {
               id: att.id,
               name: att.name,
               attachment: att,
-              file_url: att.file_url,
+              file_url: att.file_url
             })
           }
         }
@@ -297,9 +297,9 @@ export default {
     },
     prepareImages (images) {
       images = images.sort((a, b) => {
-        if(a.name < b.name) return -1;
-        if(a.name > b.name) return 1;
-        return 0;
+        if (a.name < b.name) return -1
+        if (a.name > b.name) return 1
+        return 0
       }).map((x, i) => {
         x.pageNum = i + 1
         return x
@@ -312,14 +312,14 @@ export default {
       })
       doc.pages = pages
     },
-    pageUpdated ({document, pageNum, data}) {
-      let page = document.pages[pageNum - 1]
-      for (let key in data) {
+    pageUpdated ({ document, pageNum, data }) {
+      const page = document.pages[pageNum - 1]
+      for (const key in data) {
         Vue.set(page, key, data[key])
       }
     },
     splitPages (doc, pageNum) {
-      let newPages = doc.pages.slice(pageNum)
+      const newPages = doc.pages.slice(pageNum)
       newPages.forEach((p, i) => {
         p.pageNum = i + 1
       })
@@ -328,9 +328,9 @@ export default {
       this.documents = [
         ...this.documents.filter((d) => d.type === 'imagedoc'),
         this.getNewImageDoc({
-          pages: newPages,
-        }), 
-        ...this.documents.filter((d) => d.type !== 'imagedoc'),
+          pages: newPages
+        }),
+        ...this.documents.filter((d) => d.type !== 'imagedoc')
       ]
     },
     getNewImageDoc (data) {
@@ -344,15 +344,15 @@ export default {
         ...data
       }
     },
-    imagesConverted ({attachment, imageDoc}) {
+    imagesConverted ({ attachment, imageDoc }) {
       // Remove image doc
       this.documents = this.documents.filter((d) => d.id !== imageDoc.id)
       // add new attachment to top
       this.documents = [
         ...this.documents.filter((d) => d.type === 'imagedoc'),
         ...this.buildDocuments([attachment], {
-            new: true,
-          }),
+          new: true
+        }),
         ...this.documents.filter((d) => d.type !== 'imagedoc')
       ]
     },
@@ -361,7 +361,7 @@ export default {
         this.documents = this.documents.filter((d) => d.id !== doc.id)
         return
       }
-      for (let key in update) {
+      for (const key in update) {
         if (key === 'document') {
           Vue.set(doc.attachment, key, update[key])
         } else {
@@ -371,7 +371,7 @@ export default {
     },
     makeRelevant (doc) {
       if (doc.attachment.is_image) {
-        let imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
+        const imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
         if (imageDoc.length > 0) {
           doc.pageNum = imageDoc[0].pages.length + 1
           Vue.set(imageDoc[0], 'pages', [
@@ -408,7 +408,7 @@ export default {
       }))
     },
     addImages (images) {
-      let imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
+      const imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
       if (imageDocs.length === 0) {
         this.documents = [
           this.getNewImageDoc({
@@ -420,7 +420,7 @@ export default {
           ...this.documents
         ]
       } else {
-        let imageDoc = imageDocs[0]
+        const imageDoc = imageDocs[0]
         imageDoc.pages = [
           ...imageDoc.pages,
           ...images.map((i, c) => {
@@ -434,10 +434,9 @@ export default {
       if (att.is_image) {
         this.addImages([att])
       } else {
-        
         this.documents = [
-          ...this.buildDocuments([att], {new: true}),
-          ...this.documents,
+          ...this.buildDocuments([att], { new: true }),
+          ...this.documents
         ]
       }
     },

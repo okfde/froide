@@ -140,7 +140,7 @@ export default {
     fullText: {
       type: Boolean,
       required: true
-    },
+    }
   },
   computed: {
     canSend () {
@@ -156,7 +156,7 @@ export default {
       return this.subject && this.subject.length > 0
     },
     errors () {
-      let errors = []
+      const errors = []
       if (!this.subjectValid) {
         errors.push(this.i18n.noSubject)
       }
@@ -191,7 +191,7 @@ export default {
       return errors
     },
     userRegex () {
-      let regex = []
+      const regex = []
       if (this.user.first_name && this.user.last_name) {
         regex.push(
           erx(`${this.user.first_name} ${this.user.last_name}`)

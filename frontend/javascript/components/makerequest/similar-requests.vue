@@ -47,7 +47,7 @@
 
 import debounce from 'lodash.debounce'
 
-import {FroideAPI} from '../../lib/api'
+import { FroideAPI } from '../../lib/api'
 import I18nMixin from '../../lib/i18n-mixin'
 
 const MAX_SIMILAR = 5

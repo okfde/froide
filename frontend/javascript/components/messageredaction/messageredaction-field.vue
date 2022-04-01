@@ -1,36 +1,39 @@
 <template>
   <div class="redaction-area">
-    <div class="content-text"><template v-for="word in words"><message-redaction-word 
-      v-if="!word.separator"
-      :key="word.index"
-      :word="word.word"
-      :redacted="word.redacted"
-      :index="word.index"
-      @redact="redact"
-    ></message-redaction-word><template v-else>{{ word.word }}</template></template></div>
-    <input type="hidden" :name="fieldName" :value="serializedValue">
-    <input type="hidden" :name="fieldName + '_length'" :value="words.length">
+    <div class="content-text">
+      <template v-for="word in words">
+        <message-redaction-word
+          v-if="!word.separator"
+          :key="word.index"
+          :word="word.word"
+          :redacted="word.redacted"
+          :index="word.index"
+          @redact="redact" />
+        <template v-else>{{ word.word }}</template>
+      </template>
+    </div>
+    <input type="hidden" :name="fieldName" :value="serializedValue" />
+    <input type="hidden" :name="fieldName + '_length'" :value="words.length" />
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
 
-import {getData} from '../../lib/api.js'
-
 import MessageRedactionWord from './messageredaction-word.vue'
 
 // const SPLITTER = /[^\w\u00C0-\u00FF\-@/\.\:]/g
+// eslint-disable-next-line no-control-regex
 const SPLITTER = /[\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E]/g
 
-function getChunks(redactedParts) {
+function getChunks (redactedParts) {
   let counter = 0
-  let chunks = []
-  for (let redactedPart of redactedParts) {
+  const chunks = []
+  for (const redactedPart of redactedParts) {
     let result
     let partIndex = 0
-    let part = redactedPart[1]
-    while (result = SPLITTER.exec(part)) {
+    const part = redactedPart[1]
+    while ((result = SPLITTER.exec(part))) {
       if (result.index > partIndex) {
         chunks.push({
           separator: false,
@@ -58,7 +61,6 @@ function getChunks(redactedParts) {
       })
       counter += 1
     }
-
   }
   return chunks
 }
@@ -75,13 +77,12 @@ export default {
     }
   },
   mounted () {
-    let counter = -1
     this.words = getChunks(this.redactedParts)
   },
   computed: {
     serializedValue () {
-      let redacted = []
-      for (var i = 0; i < this.words.length; i += 1) {
+      const redacted = []
+      for (let i = 0; i < this.words.length; i += 1) {
         if (this.words[i].redacted) {
           redacted.push('' + i)
         }
@@ -96,7 +97,6 @@ export default {
   }
 }
 </script>
-
 
 <style lang="scss">
 .redaction-area {
