@@ -28,3 +28,6 @@ repos:
           - eslint-plugin-node
           - eslint-plugin-promise
           - eslint-plugin-vue
+          - prettier
+          - eslint-plugin-prettier
+          - eslint-config-standard
