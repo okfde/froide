@@ -11,7 +11,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint frontend",
+    "lint": "eslint frontend --ext .js,.ts,.vue",
     "dev": "webpack --watch --mode development",
     "serve": "NODE_ENV=development webpack serve --progress --mode development --hot --host 0.0.0.0",
     "build": "NODE_ENV=production webpack --mode production",
