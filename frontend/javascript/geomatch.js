@@ -14,7 +14,7 @@ function createGeoMatcher(element) {
   }).$mount(element)
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const el = document.querySelector('#geomatch-component')
   if (el) {
     createGeoMatcher(el)

@@ -171,7 +171,7 @@ export default {
       const page = this.page
       if (page.exif === undefined) {
         const self = this
-        EXIF.getData(e.target, function() {
+        EXIF.getData(e.target, function () {
           const data = {
             exif: true,
             width,

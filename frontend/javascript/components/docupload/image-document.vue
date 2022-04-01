@@ -106,18 +106,18 @@ export default {
       return this.pages.length
     },
     pages: {
-      get: function() {
+      get: function () {
         return this.document.pages
       },
-      set: function(pages) {
+      set: function (pages) {
         this.$emit('pageschanged', pages)
       }
     },
     documentName: {
-      get: function() {
+      get: function () {
         return this.document.name
       },
-      set: function(name) {
+      set: function (name) {
         this.$emit('namechanged', name)
       }
     },

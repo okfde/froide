@@ -105,7 +105,7 @@ export default {
     }
   },
   watch: {
-    subject: function(val, oldVal) {
+    subject: function (val, oldVal) {
       this.debouncedSearch()
     }
   }

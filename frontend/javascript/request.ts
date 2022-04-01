@@ -52,7 +52,7 @@ const runOnPage = (): void => {
 
   const tabLinks = document.querySelectorAll('a[data-tabgo="tab"]')
   Array.from(tabLinks).forEach((tabLink) => {
-    tabLink.addEventListener('click', function(this: HTMLElement, e) {
+    tabLink.addEventListener('click', function (this: HTMLElement, e) {
       const hrefAttr = this.attributes.getNamedItem('href')
       if (hrefAttr === null) {
         return
@@ -176,7 +176,7 @@ const runOnPage = (): void => {
         new Tooltip(el)
       })
   } else {
-    const click = function(this: HTMLElement): void {
+    const click = function (this: HTMLElement): void {
       this.click()
     }
     document.querySelectorAll('.message-timeline-item').forEach((el) => {

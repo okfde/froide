@@ -7,7 +7,7 @@ class FroideAPI {
     return new Promise((resolve, reject) => {
       const request = new window.XMLHttpRequest()
       request.open('GET', url, true)
-      request.onload = function() {
+      request.onload = function () {
         if (request.status >= 400) {
           try {
             return reject(JSON.parse(request.responseText))
@@ -17,7 +17,7 @@ class FroideAPI {
         }
         resolve(JSON.parse(request.responseText))
       }
-      request.onerror = function() {
+      request.onerror = function () {
         reject(request.statusText)
       }
 
