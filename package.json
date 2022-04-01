@@ -4,7 +4,8 @@
   "description": "Froide",
   "main": "frontend/javascript/main.js",
   "files": [
-    "frontend/"
+    "frontend/",
+    ".eslintrc.json"
   ],
   "directories": {
     "doc": "docs"
