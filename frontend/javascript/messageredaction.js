@@ -6,7 +6,7 @@ import MessageRedaction from './components/messageredaction/messageredaction.vue
 
 Vue.config.productionTip = false
 
-function createMessageRedaction (selector) {
+function createMessageRedaction(selector) {
   /* eslint-disable no-new */
   new Vue({
     components: { MessageRedaction },

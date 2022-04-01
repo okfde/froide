@@ -5,14 +5,12 @@
         v-if="canSubmit"
         type="submit"
         class="btn btn-lg btn-primary"
-        @click="submitting = true"
-      >
+        @click="submitting = true">
         <span
           v-if="uploading"
           class="spinner-border spinner-border-sm"
           role="status"
-          aria-hidden="true"
-        />
+          aria-hidden="true" />
         {{ i18n.createResponse }}
       </button>
     </div>
@@ -22,21 +20,18 @@
       :auto-proceed="true"
       :required="true"
       @ready="canSubmit = $event"
-      @uploading="uploading = $event"
-    />
+      @uploading="uploading = $event" />
     <div class="text-right mt-3">
       <button
         type="submit"
         class="btn btn-lg btn-primary"
         :disabled="!canSubmit"
-        @click="submitting = true"
-      >
+        @click="submitting = true">
         <span
           v-if="uploading"
           class="spinner-border spinner-border-sm"
           role="status"
-          aria-hidden="true"
-        />
+          aria-hidden="true" />
         {{ i18n.createResponse }}
       </button>
     </div>
@@ -44,7 +39,6 @@
 </template>
 
 <script>
-
 import FileUploader from '../upload/file-uploader.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
@@ -61,14 +55,14 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       canSubmit: false,
       uploading: false,
       submitting: false
     }
   },
-  mounted () {
+  mounted() {
     window.addEventListener('beforeunload', (e) => {
       if (!this.canSubmit && !this.uploading) {
         return

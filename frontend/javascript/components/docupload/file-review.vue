@@ -69,45 +69,45 @@ export default {
   mixins: [I18nMixin],
   props: ['config', 'document'],
   computed: {
-    attachment () {
+    attachment() {
       return this.document.attachment
     },
-    hasAttachment () {
+    hasAttachment() {
       return !!this.document.attachment
     },
-    working () {
+    working() {
       return !!this.document.approving || !!this.document.deleting
     },
-    canApprove () {
+    canApprove() {
       return (
         !!this.attachment &&
         !this.attachment.approved &&
         this.attachment.can_approve
       )
     },
-    canDelete () {
+    canDelete() {
       return (
         !!this.attachment &&
         this.attachment.can_delete &&
         !this.document.approving
       )
     },
-    canReview () {
+    canReview() {
       return !!this.attachment && this.attachment.can_redact
     },
-    canOpen () {
+    canOpen() {
       return !this.canApprove
     },
-    reviewUrl () {
+    reviewUrl() {
       return this.config.url.redactAttachment.replace(
         '/0/',
         `/${this.document.id}/`
       )
     },
-    approved () {
+    approved() {
       return this.attachment && this.attachment.approved
     },
-    hasSubMenu () {
+    hasSubMenu() {
       return (
         this.canDelete ||
         (this.attachment &&
@@ -117,7 +117,7 @@ export default {
       )
     }
   },
-  mounted () {
+  mounted() {
     if (this.hasSubMenu) {
       // eslint-disable-next-line no-new
       new Dropdown(
@@ -126,15 +126,15 @@ export default {
     }
   },
   methods: {
-    approve () {
+    approve() {
       this.$emit('docupdated', {
         approving: true
       })
     },
-    makeRelevant () {
+    makeRelevant() {
       this.$emit('makerelevant')
     },
-    deleteAttachment () {
+    deleteAttachment() {
       const confirm = window.confirm(this.i18n.confirmDelete)
       if (!confirm) {
         return

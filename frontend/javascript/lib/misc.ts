@@ -1,4 +1,7 @@
-function scrollToAnchor (id: string, options: boolean|Object|undefined = true): void {
+function scrollToAnchor(
+  id: string,
+  options: boolean | Object | undefined = true
+): void {
   window.setTimeout(() => {
     const el = document.getElementById(id)
     if (el == null) {
@@ -42,9 +45,9 @@ const getHeight = (el: HTMLElement): number => {
 }
 
 /**
-  * toggleSlide mimics the jQuery version of slideDown and slideUp
-  * all in one function comparing the max-heigth to 0
-  */
+ * toggleSlide mimics the jQuery version of slideDown and slideUp
+ * all in one function comparing the max-heigth to 0
+ */
 const toggleSlide = (el: HTMLElement, seconds = 2): void => {
   let elMaxHeight = '0px'
 
@@ -76,7 +79,9 @@ const addText = (dataset: DOMStringMap): void => {
   if (!dataset.addtextfield) {
     return
   }
-  const textField = document.querySelector(dataset.addtextfield) as HTMLInputElement
+  const textField = document.querySelector(
+    dataset.addtextfield
+  ) as HTMLInputElement
   if (textField === null) {
     return
   }
@@ -92,17 +97,11 @@ const addText = (dataset: DOMStringMap): void => {
     text = text.replace('...', addedText)
   } else {
     const textParts = text.split('\n\n')
-    text = [
-      textParts[0],
-      addedText,
-      textParts[textParts.length - 1]
-    ].join('\n\n')
+    text = [textParts[0], addedText, textParts[textParts.length - 1]].join(
+      '\n\n'
+    )
   }
   textField.value = text
 }
 
-export {
-  scrollToAnchor,
-  toggleSlide,
-  addText
-}
+export { scrollToAnchor, toggleSlide, addText }

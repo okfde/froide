@@ -60,7 +60,7 @@ export default {
     GeoMatcherRow
   },
   props: ['config'],
-  data () {
+  data() {
     return {
       georegions: [],
       regionKind: '',
@@ -74,24 +74,24 @@ export default {
     }
   },
   computed: {
-    regionCount () {
+    regionCount() {
       return this.georegions.length
     },
-    unlinkedRegion () {
+    unlinkedRegion() {
       return this.georegions.filter((gr) => !gr.links || !gr.links.length)
     },
-    unlinkedRegionCount () {
+    unlinkedRegionCount() {
       return this.unlinkedRegion.length
     },
-    unmatchedRegion () {
+    unmatchedRegion() {
       return this.unlinkedRegion.filter(
         (gr) => !gr.matches || !gr.matches.length
       )
     },
-    unmatchedRegionCount () {
+    unmatchedRegionCount() {
       return this.unmatchedRegion.length
     },
-    georegionMapping () {
+    georegionMapping() {
       const mapping = {}
       this.georegions.forEach((gr, i) => {
         mapping[gr.resource_uri] = i
@@ -99,7 +99,7 @@ export default {
       return mapping
     }
   },
-  mounted () {
+  mounted() {
     this.$root.config = this.config
     this.$root.csrfToken = document.querySelector(
       'input[name="csrfmiddlewaretoken"]'
@@ -131,32 +131,32 @@ export default {
     })
   },
   methods: {
-    load () {
+    load() {
       this.deactivateIntersectionObserver()
       this.loadGeoRegions()
     },
-    activateIntersectionObserver () {
+    activateIntersectionObserver() {
       const rows = document.querySelectorAll('.geo-matcher-table tbody tr')
       Array.from(rows).forEach((row) => {
         this.intersectionObserver.observe(row)
       })
     },
-    deactivateIntersectionObserver () {
+    deactivateIntersectionObserver() {
       const rows = document.querySelectorAll('.geo-matcher-table tbody tr')
       Array.from(rows).forEach((row) => {
         this.intersectionObserver.unobserve(row)
       })
     },
-    categoryChanged () {
+    categoryChanged() {
       this.loadCategoryName()
     },
-    ancestorChanged () {
+    ancestorChanged() {
       this.loadAncestorName()
     },
-    jurisdictionChanged () {
+    jurisdictionChanged() {
       this.loadJurisdictionName()
     },
-    loadCategoryName () {
+    loadCategoryName() {
       if (!this.category) {
         return
       }
@@ -166,7 +166,7 @@ export default {
         }
       )
     },
-    loadAncestorName () {
+    loadAncestorName() {
       if (!this.ancestor) {
         return
       }
@@ -176,7 +176,7 @@ export default {
         }
       )
     },
-    loadJurisdictionName () {
+    loadJurisdictionName() {
       if (!this.jurisdiction) {
         return
       }
@@ -188,7 +188,7 @@ export default {
         this.jurisdictionName = data.name
       })
     },
-    loadGeoRegions () {
+    loadGeoRegions() {
       let apiUrl = `${this.config.url.listGeoregion}?kind=${this.regionKind}`
       if (this.ancestor) {
         apiUrl += `&ancestor=${this.ancestor}`
@@ -205,7 +205,7 @@ export default {
         })
       })
     },
-    loadLinks () {
+    loadLinks() {
       const MAX_ITEMS = 40
       const regions = this.georegions.map((gr) => gr.id)
       const rounds = Math.ceil(regions.length / MAX_ITEMS)
@@ -220,7 +220,7 @@ export default {
 
       return Promise.all(promises)
     },
-    loadPublicBodyWithRegions (ids) {
+    loadPublicBodyWithRegions(ids) {
       let apiUrl = `${this.config.url.listPublicBodies}?regions=${ids.join(
         ','
       )}`
@@ -239,10 +239,10 @@ export default {
         })
       })
     },
-    searchPublicBodies () {
+    searchPublicBodies() {
       this.activateIntersectionObserver()
     },
-    searchPublicBodiesForRegion (gr) {
+    searchPublicBodiesForRegion(gr) {
       if (gr.links !== null) {
         return
       }
@@ -267,7 +267,7 @@ export default {
         Vue.set(gr, 'matches', data.objects.slice(0, 5))
       })
     },
-    connectPublicBody (payload) {
+    connectPublicBody(payload) {
       const data = {
         georegion: payload.georegionId,
         publicbody: payload.publicbodyId

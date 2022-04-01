@@ -21,6 +21,4 @@ const selectBestLaw = (allLaws, lawType) => {
   return laws[0]
 }
 
-export {
-  selectBestLaw
-}
+export { selectBestLaw }

@@ -3,7 +3,7 @@
     <div class="row">
       <div v-for="item in summary" :key="item.label" class="col-sm-6 col-md-4">
         <strong>
-          {{ item.count }} {{ i18n._(item.i18nLabel, {count: item.count}) }}
+          {{ item.count }} {{ i18n._(item.i18nLabel, { count: item.count }) }}
           <span v-if="item.multi">multi</span>
         </strong>
         <ul class="summary-subitem-list">
@@ -23,7 +23,7 @@ export default {
   name: 'pb-summary',
   props: ['scope', 'dimensions', 'i18n'],
   computed: {
-    summary () {
+    summary() {
       const summary = {}
       for (const pb of this.publicBodies) {
         for (const dimension of this.dimensions) {
@@ -46,7 +46,9 @@ export default {
       }
       for (const dimension of this.dimensions) {
         const dim = dimension.id
-        if (summary[dim] === undefined) { continue }
+        if (summary[dim] === undefined) {
+          continue
+        }
         summary[dim].count = Object.keys(summary[dim].items).length
         summary[dim].sorted = []
         for (const key in summary[dim].items) {
@@ -68,19 +70,17 @@ export default {
       }
       return summary
     },
-    publicBodies () {
+    publicBodies() {
       return this.getPublicBodiesByScope(this.scope)
     },
-    ...mapGetters([
-      'getPublicBodiesByScope'
-    ])
+    ...mapGetters(['getPublicBodiesByScope'])
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .summary-subitem-list {
-    max-height: 200px;
-    overflow-y: scroll;
-  }
+.summary-subitem-list {
+  max-height: 200px;
+  overflow-y: scroll;
+}
 </style>

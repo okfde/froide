@@ -9,7 +9,7 @@ import PublicbodyChooser from './components/publicbody/publicbody-chooser'
 
 Vue.config.productionTip = false
 
-function createPublicbodyChooser (element) {
+function createPublicbodyChooser(element) {
   /* eslint-disable no-new */
   store.commit(SET_CONFIG)
   new Vue({

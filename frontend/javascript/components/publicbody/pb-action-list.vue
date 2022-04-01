@@ -1,7 +1,13 @@
 <template>
   <div class="search-result-container">
-    <ul v-if="searchResultsLength > 0 || emptyResults" class="search-results list-unstyled">
-      <li v-for="result in searchResults" :key="result.id" class="search-result" @click.prevent="selectSearchResult(result.id)">
+    <ul
+      v-if="searchResultsLength > 0 || emptyResults"
+      class="search-results list-unstyled">
+      <li
+        v-for="result in searchResults"
+        :key="result.id"
+        class="search-result"
+        @click.prevent="selectSearchResult(result.id)">
         <div class="row">
           <div class="col-sm-8">
             <h4 class="pb-heading">
@@ -9,11 +15,14 @@
             </h4>
             <small>
               {{ result.jurisdiction.name }},
-              {{ i18n._('requestCount', {count: result.number_of_requests} ) }}
+              {{ i18n._('requestCount', { count: result.number_of_requests }) }}
             </small>
           </div>
           <div class="col-sm-4">
-            <a class="btn btn-primary" :href="getMakeRequestURLForResult(result)" @click.prevent="selectSearchResult(result.id)">
+            <a
+              class="btn btn-primary"
+              :href="getMakeRequestURLForResult(result)"
+              @click.prevent="selectSearchResult(result.id)">
               {{ i18n.makeRequest }}
             </a>
           </div>
@@ -66,14 +75,14 @@ export default {
   mixins: [PBListMixin, I18nMixin],
   props: ['name', 'scope', 'config'],
   methods: {
-    selectSearchResult (pbid) {
+    selectSearchResult(pbid) {
       this.setPublicBodyId({
         publicBodyId: pbid,
         scope: this.scope
       })
       this.setStepRequest()
     },
-    getMakeRequestURLForResult (result) {
+    getMakeRequestURLForResult(result) {
       return this.config.url.makeRequestTo.replace(/0/, result.id)
     },
     ...mapMutations({
@@ -85,32 +94,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../styles/variables';
 
-  @import "../../../styles/variables";
+.search-result-container {
+  margin-top: 30px;
+}
 
-  .search-result-container {
-    margin-top: 30px;
-  }
+.search-result {
+  border-top: 1px solid #ccc;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  cursor: pointer;
 
-  .search-result {
-    border-top: 1px solid #ccc;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    cursor: pointer;
-
-    .row {
-      padding: 1rem 0;
-      &:hover {
-        background-color: $gray-200;
-      }
-    }
-    .btn  {
-      float: right;
+  .row {
+    padding: 1rem 0;
+    &:hover {
+      background-color: $gray-200;
     }
   }
-
-  .pb-heading {
-    margin-bottom: 0;
+  .btn {
+    float: right;
   }
+}
 
+.pb-heading {
+  margin-bottom: 0;
+}
 </style>

@@ -9,7 +9,7 @@ import PublicbodyUpload from './components/publicbodyupload/publicbody-upload.vu
 
 Vue.config.productionTip = false
 
-function createPublicbodyUpload (element) {
+function createPublicbodyUpload(element) {
   /* eslint-disable no-new */
   store.commit(SET_CONFIG)
   new Vue({

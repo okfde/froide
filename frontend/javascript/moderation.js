@@ -6,7 +6,7 @@ import ModerationDashboard from './components/moderation/moderation-dashboard'
 
 Vue.config.productionTip = false
 
-function createModerationDashboard (selector) {
+function createModerationDashboard(selector) {
   console.log('createModerationDashboard')
   /* eslint-disable no-new */
   new Vue({

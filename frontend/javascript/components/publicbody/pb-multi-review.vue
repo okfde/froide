@@ -64,7 +64,7 @@ export default {
     PbTable,
     PbSummary
   },
-  data () {
+  data() {
     return {
       chosenOptions: {
         sortableHeader: true
@@ -72,7 +72,7 @@ export default {
     }
   },
   computed: {
-    summaryDimensions () {
+    summaryDimensions() {
       return summaryDimensions
     }
   },

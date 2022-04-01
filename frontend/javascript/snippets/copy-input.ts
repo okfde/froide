@@ -1,7 +1,9 @@
-interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null }
+interface IHTMLToolTipElement extends HTMLInputElement {
+  Tooltip: any | null
+}
 
 document.querySelectorAll('.copy-text').forEach((copyEl) => {
-  copyEl.addEventListener('click', function (this: IHTMLToolTipElement) {
+  copyEl.addEventListener('click', function(this: IHTMLToolTipElement) {
     let selection
 
     const isiOSDevice = navigator.userAgent.match(/ipad|iphone/i)
@@ -30,7 +32,7 @@ document.querySelectorAll('.copy-text').forEach((copyEl) => {
 
     document.execCommand('copy')
 
-    if ((isiOSDevice != null) && (selection != null)) {
+    if (isiOSDevice != null && selection != null) {
       selection.removeAllRanges()
     }
 

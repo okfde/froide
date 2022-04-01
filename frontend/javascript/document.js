@@ -6,7 +6,7 @@ import FileUploader from './components/upload/file-uploader.vue'
 
 Vue.config.productionTip = false
 
-function createDocumentUploader (element) {
+function createDocumentUploader(element) {
   /* eslint-disable no-new */
   new Vue({
     components: { FileUploader },
@@ -19,7 +19,7 @@ for (let i = 0; i < els.length; i += 1) {
   createDocumentUploader(els[i])
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   const docUploader = document.querySelector('#document-upload')
   if (docUploader) {
     createDocumentUploader(docUploader)

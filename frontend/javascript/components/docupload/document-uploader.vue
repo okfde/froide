@@ -1,9 +1,6 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
-    <div
-      v-if="imageDocuments.length > 0"
-      class="images mt-5"
-    >
+    <div v-if="imageDocuments.length > 0" class="images mt-5">
       <slot name="convert-images" />
       <image-document
         v-for="doc in imageDocuments"
@@ -16,13 +13,9 @@
         @namechanged="doc.name = $event"
         @docupdated="documentUpdated(doc, $event)"
         @pageupdated="pageUpdated"
-        @notnew="doc.new = false"
-      />
+        @notnew="doc.new = false" />
     </div>
-    <div
-      v-if="pdfDocuments.length > 0"
-      class="documents mt-5"
-    >
+    <div v-if="pdfDocuments.length > 0" class="documents mt-5">
       <slot name="documents" />
       <div class="mt-3 mb-3">
         <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
@@ -30,30 +23,27 @@
             <input
               v-model="selectAll"
               type="checkbox"
-              @click="clickSelectAll"
-            >
+              @click="clickSelectAll" />
           </div>
           <div class="col-auto ml-auto">
             <button
               v-if="canMakeDocument && canMakeResult"
               class="btn btn-sm"
-              :class="{'btn-success': canMakeResult}"
+              :class="{ 'btn-success': canMakeResult }"
               :disabled="!canMakeResult"
               data-toggle="tooltip"
               data-placement="top"
               :title="i18n.makeResultsExplanation"
-              @click="makeResults"
-            >
+              @click="makeResults">
               <i class="fa fa-certificate" />
               {{ i18n.markAllAsResult }}
             </button>
             <button
               v-if="canApprove"
               class="btn btn-sm"
-              :class="{'btn-success': canApprove}"
+              :class="{ 'btn-success': canApprove }"
               :disabled="!canApprove"
-              @click="approveSelected"
-            >
+              @click="approveSelected">
               <i class="fa fa-check" />
               {{ i18n.approveAll }}
             </button>
@@ -70,16 +60,12 @@
           @namechanged="doc.name = $event"
           @docupdated="documentUpdated(doc, $event)"
           @pageupdated="pageUpdated"
-          @notnew="doc.new = false"
-        />
+          @notnew="doc.new = false" />
       </div>
     </div>
 
-    <div
-      v-if="otherAttachments.length > 0"
-      class="mt-5"
-    >
-      <hr>
+    <div v-if="otherAttachments.length > 0" class="mt-5">
+      <hr />
       <slot name="other-files" />
       <file-document
         v-for="doc in otherAttachments"
@@ -88,28 +74,22 @@
         :config="config"
         @docupdated="documentUpdated(doc, $event)"
         @makerelevant="makeRelevant(doc)"
-        @notnew="doc.new = false"
-      />
+        @notnew="doc.new = false" />
     </div>
 
-    <div
-      v-if="canUpload"
-      class="upload mt-5"
-    >
+    <div v-if="canUpload" class="upload mt-5">
       <slot name="upload-header" />
       <file-uploader
         class="mb-3 mt-2"
         :config="config"
         :auto-proceed="true"
         :allowed-file-types="config.settings.allowed_filetypes"
-        @upload-success="uploadSuccess"
-      />
+        @upload-success="uploadSuccess" />
     </div>
   </div>
 </template>
 
 <script>
-
 import Vue from 'vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
@@ -138,7 +118,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       documents: [],
       imageDocId: 0,
@@ -149,24 +129,30 @@ export default {
     }
   },
   computed: {
-    isMobile () {
+    isMobile() {
       // device detection
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
     },
-    canUpload () {
+    canUpload() {
       return this.message.kind === 'post'
     },
-    imageDocuments () {
-      return this.documents.filter(d => !d.irrelevant && d.type === 'imagedoc')
+    imageDocuments() {
+      return this.documents.filter(
+        (d) => !d.irrelevant && d.type === 'imagedoc'
+      )
     },
-    pdfDocuments () {
-      return this.documents.filter(d => !d.irrelevant && d.type !== 'imagedoc')
+    pdfDocuments() {
+      return this.documents.filter(
+        (d) => !d.irrelevant && d.type !== 'imagedoc'
+      )
     },
-    otherAttachments () {
-      return this.documents.filter(d => d.irrelevant)
+    otherAttachments() {
+      return this.documents.filter((d) => d.irrelevant)
     },
-    canMakeResultDocs () {
-      return this.pdfDocuments.filter(d => {
+    canMakeResultDocs() {
+      return this.pdfDocuments.filter((d) => {
         return (
           d.selected &&
           d.creatingDocument === undefined &&
@@ -177,14 +163,14 @@ export default {
         )
       })
     },
-    canMakeDocument () {
+    canMakeDocument() {
       return this.config.settings.can_make_document
     },
-    canMakeResult () {
+    canMakeResult() {
       return this.canMakeDocument && this.canMakeResultDocs.length > 0
     },
-    canApproveDocs () {
-      return this.pdfDocuments.filter(d => {
+    canApproveDocs() {
+      return this.pdfDocuments.filter((d) => {
         return (
           d.selected &&
           d.approving === undefined &&
@@ -194,30 +180,33 @@ export default {
         )
       })
     },
-    canApprove () {
+    canApprove() {
       return this.canApproveDocs.length > 0
     }
   },
-  mounted () {
+  mounted() {
     this.$root.exifSupport = this.exifSupport = null
     this.testExifSupport()
     this.$root.url = this.config.url
-    this.$root.csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value
+    this.$root.csrfToken = document.querySelector(
+      '[name=csrfmiddlewaretoken]'
+    ).value
     this.documents = this.buildDocuments(this.message.attachments)
   },
   methods: {
-    uploadSuccess ({ uppy, response, file }) {
+    uploadSuccess({ uppy, response, file }) {
       this.addAttachmentFromTus(response.uploadURL).then(() => {
         uppy.removeFile(file.id)
       })
     },
-    testExifSupport () {
+    testExifSupport() {
       /*
       From Modernizr feature detection:
       https://github.com/Modernizr/Modernizr/blob/master/feature-detects/exif-orientation.js
       */
       const img = new Image()
-      img.src = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAASUkqAAgAAAABABIBAwABAAAABgASAAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+/iiiigD/2Q=='
+      img.src =
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/4QAiRXhpZgAASUkqAAgAAAABABIBAwABAAAABgASAAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAIDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+/iiiigD/2Q=='
       img.onload = () => {
         document.body.appendChild(img)
         const rect = img.getBoundingClientRect()
@@ -225,7 +214,7 @@ export default {
         document.body.removeChild(img)
       }
     },
-    addAttachmentFromTus (uploadUrl) {
+    addAttachmentFromTus(uploadUrl) {
       return postData(
         this.config.url.convertAttachments,
         {
@@ -246,7 +235,7 @@ export default {
         this.addAttachment(att)
       })
     },
-    buildDocuments (attachments, extra = {}) {
+    buildDocuments(attachments, extra = {}) {
       const documents = []
       let images = []
       attachments.forEach((att) => {
@@ -295,30 +284,32 @@ export default {
       }
       return documents
     },
-    prepareImages (images) {
-      images = images.sort((a, b) => {
-        if (a.name < b.name) return -1
-        if (a.name > b.name) return 1
-        return 0
-      }).map((x, i) => {
-        x.pageNum = i + 1
-        return x
-      })
+    prepareImages(images) {
+      images = images
+        .sort((a, b) => {
+          if (a.name < b.name) return -1
+          if (a.name > b.name) return 1
+          return 0
+        })
+        .map((x, i) => {
+          x.pageNum = i + 1
+          return x
+        })
       return images
     },
-    pagesChanged (doc, pages) {
+    pagesChanged(doc, pages) {
       pages.forEach((p, i) => {
         p.pageNum = i + 1
       })
       doc.pages = pages
     },
-    pageUpdated ({ document, pageNum, data }) {
+    pageUpdated({ document, pageNum, data }) {
       const page = document.pages[pageNum - 1]
       for (const key in data) {
         Vue.set(page, key, data[key])
       }
     },
-    splitPages (doc, pageNum) {
+    splitPages(doc, pageNum) {
       const newPages = doc.pages.slice(pageNum)
       newPages.forEach((p, i) => {
         p.pageNum = i + 1
@@ -333,7 +324,7 @@ export default {
         ...this.documents.filter((d) => d.type !== 'imagedoc')
       ]
     },
-    getNewImageDoc (data) {
+    getNewImageDoc(data) {
       this.imageDocId += 1
       return {
         id: 'imagedoc' + this.imageDocId,
@@ -344,7 +335,7 @@ export default {
         ...data
       }
     },
-    imagesConverted ({ attachment, imageDoc }) {
+    imagesConverted({ attachment, imageDoc }) {
       // Remove image doc
       this.documents = this.documents.filter((d) => d.id !== imageDoc.id)
       // add new attachment to top
@@ -356,7 +347,7 @@ export default {
         ...this.documents.filter((d) => d.type !== 'imagedoc')
       ]
     },
-    documentUpdated (doc, update) {
+    documentUpdated(doc, update) {
       if (update === null) {
         this.documents = this.documents.filter((d) => d.id !== doc.id)
         return
@@ -369,15 +360,12 @@ export default {
         }
       }
     },
-    makeRelevant (doc) {
+    makeRelevant(doc) {
       if (doc.attachment.is_image) {
         const imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
         if (imageDoc.length > 0) {
           doc.pageNum = imageDoc[0].pages.length + 1
-          Vue.set(imageDoc[0], 'pages', [
-            ...imageDoc[0].pages,
-            doc
-          ])
+          Vue.set(imageDoc[0], 'pages', [...imageDoc[0].pages, doc])
         } else {
           doc.pageNum = 1
           this.documents = [
@@ -393,21 +381,25 @@ export default {
         Vue.set(doc, 'irrelevant', false)
       }
     },
-    clickSelectAll () {
+    clickSelectAll() {
       this.pdfDocuments.forEach((d) => {
         Vue.set(d, 'selected', !this.selectAll)
       })
     },
-    approveSelected () {
-      return Promise.all(this.canApproveDocs.map((d) => {
-        Vue.set(d, 'approving', true)
-        return approveAttachment(d, this.config, this.$root.csrfToken).then((att) => {
-          Vue.set(d, 'approving', false)
-          Vue.set(d, 'attachment', att)
+    approveSelected() {
+      return Promise.all(
+        this.canApproveDocs.map((d) => {
+          Vue.set(d, 'approving', true)
+          return approveAttachment(d, this.config, this.$root.csrfToken).then(
+            (att) => {
+              Vue.set(d, 'approving', false)
+              Vue.set(d, 'attachment', att)
+            }
+          )
         })
-      }))
+      )
     },
-    addImages (images) {
+    addImages(images) {
       const imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
       if (imageDocs.length === 0) {
         this.documents = [
@@ -430,7 +422,7 @@ export default {
         ]
       }
     },
-    addAttachment (att) {
+    addAttachment(att) {
       if (att.is_image) {
         this.addImages([att])
       } else {
@@ -440,14 +432,18 @@ export default {
         ]
       }
     },
-    makeResults () {
-      return Promise.all(this.canMakeResultDocs.map((d) => {
-        Vue.set(d, 'creatingDocument', false)
-        return createDocument(d, this.config, this.$root.csrfToken).then((data) => {
-          Vue.set(d.attachment, 'document', data)
-          Vue.set(d, 'creatingDocument', null)
+    makeResults() {
+      return Promise.all(
+        this.canMakeResultDocs.map((d) => {
+          Vue.set(d, 'creatingDocument', false)
+          return createDocument(d, this.config, this.$root.csrfToken).then(
+            (data) => {
+              Vue.set(d.attachment, 'document', data)
+              Vue.set(d, 'creatingDocument', null)
+            }
+          )
         })
-      }))
+      )
     }
   }
 }

@@ -5,16 +5,17 @@
 .breadcrumb {
   display: flex;
   align-items: center;
-  padding: $spacer * .5 0;
+  padding: $spacer * 0.5 0;
   background-color: inherit;
   overflow: hidden;
   margin: 0;
   &-item {
-    margin-right: $spacer * .5;
+    margin-right: $spacer * 0.5;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    &, > * {
+    &,
+    > * {
       color: $gray-700;
       font-size: small;
       white-space: nowrap;
@@ -24,10 +25,13 @@
     }
     &:last-child {
       margin-right: none;
-      &, > * { color: $blue-800; }
+      &,
+      > * {
+        color: $blue-800;
+      }
     }
   }
   &-item + &-item {
     padding-left: 0;
-  } 
+  }
 }

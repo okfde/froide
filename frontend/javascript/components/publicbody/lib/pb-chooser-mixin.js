@@ -2,14 +2,20 @@ import debounce from 'lodash.debounce'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import {
-  SET_CONFIG, SET_PUBLICBODY, SET_PUBLICBODIES,
-  ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
-  SET_SEARCHRESULTS, CLEAR_SEARCHRESULTS, CACHE_PUBLICBODIES,
-  CLEAR_PUBLICBODIES, SET_STEP_SELECT_PUBLICBODY
+  SET_CONFIG,
+  SET_PUBLICBODY,
+  SET_PUBLICBODIES,
+  ADD_PUBLICBODY_ID,
+  REMOVE_PUBLICBODY_ID,
+  SET_SEARCHRESULTS,
+  CLEAR_SEARCHRESULTS,
+  CACHE_PUBLICBODIES,
+  CLEAR_PUBLICBODIES,
+  SET_STEP_SELECT_PUBLICBODY
 } from '../../../store/mutation_types'
 
 const PBChooserMixin = {
-  created () {
+  created() {
     if (this.config) {
       this.setConfig(this.config)
     }
@@ -25,10 +31,10 @@ const PBChooserMixin = {
     }
   },
   computed: {
-    help_url () {
+    help_url() {
       return this.config.url.helpAbout
     },
-    headers () {
+    headers() {
       return [
         {
           key: 'name',
@@ -52,30 +58,31 @@ const PBChooserMixin = {
         }
       ]
     },
-    hasForm () {
-      return (this.form !== undefined && this.form !== null &&
-              this.form !== '')
+    hasForm() {
+      return this.form !== undefined && this.form !== null && this.form !== ''
     },
-    formFields () {
+    formFields() {
       return this.form.fields
     },
-    field () {
+    field() {
       return this.formFields[this.name]
     },
-    errors () {
+    errors() {
       return this.form.errors
     },
-    hasPublicBodies () {
+    hasPublicBodies() {
       return this.publicBodies.length > 0
     },
-    debouncedAutocomplete () {
+    debouncedAutocomplete() {
       return debounce(this.runAutocomplete, 300)
     },
-    hasFilters () {
-      if (!this.filters) { return false }
+    hasFilters() {
+      if (!this.filters) {
+        return false
+      }
       return Object.keys(this.filters).length > 0
     },
-    searchFilters () {
+    searchFilters() {
       const f = {}
       if (!this.hasFilters) {
         return f
@@ -92,13 +99,13 @@ const PBChooserMixin = {
       }
       return f
     },
-    hasSearchResults () {
+    hasSearchResults() {
       return this.searchResults.length > 0
     },
-    searchResults () {
+    searchResults() {
       return this.getScopedSearchResults(this.scope)
     },
-    searchMeta () {
+    searchMeta() {
       return this.getScopedSearchMeta(this.scope)
     },
     ...mapGetters([
@@ -108,14 +115,14 @@ const PBChooserMixin = {
     ])
   },
   methods: {
-    buildQuery () {
+    buildQuery() {
       let query = this.search
       if (this.hasFilters) {
         query += JSON.stringify(this.filters)
       }
       return query
     },
-    selectAllRows (select) {
+    selectAllRows(select) {
       this.searchResults.forEach((r) => {
         if (select) {
           this.addPublicBodyId({
@@ -130,34 +137,36 @@ const PBChooserMixin = {
         }
       })
     },
-    clearSelection () {
+    clearSelection() {
       if (window.confirm(this.i18n.reallyClearSelection)) {
         this.clearPublicBodies({ scope: this.scope })
         this.setStepSelectPublicBody()
       }
     },
-    triggerAutocomplete () {
+    triggerAutocomplete() {
       if (this.search === '' && !this.hasFilters) {
         // this.searchResults = []
         this.searching = false
       }
       if (!this.allowEmptySearch) {
-        if (this.search !== undefined && this.search.length < 3 &&
-             !this.hasFilters) {
+        if (
+          this.search !== undefined &&
+          this.search.length < 3 &&
+          !this.hasFilters
+        ) {
           this.searching = false
           return
         }
       }
       const query = this.buildQuery()
-      if (query === this.lastQuery &&
-          this.searchResults.length !== 0) {
+      if (query === this.lastQuery && this.searchResults.length !== 0) {
         this.searching = false
         return
       }
       this.searching = true
       this.debouncedAutocomplete()
     },
-    runAutocomplete () {
+    runAutocomplete() {
       this.searching = true
       this.lastQuery = this.buildQuery()
       return this.getSearchResults({
@@ -168,7 +177,7 @@ const PBChooserMixin = {
         this.searching = false
       })
     },
-    clearResults () {
+    clearResults() {
       this.clearSearchResults({ scope: this.scope })
     },
     ...mapMutations({

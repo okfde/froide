@@ -7,21 +7,18 @@
         :key="upload"
         type="hidden"
         :name="name"
-        :value="upload"
-      >
+        :value="upload" />
       <input
         v-if="!canSubmit"
         type="hidden"
         name="upload-pending"
         value=""
-        required
-      >
+        required />
     </template>
   </div>
 </template>
 
 <script>
-
 import Vue from 'vue'
 
 import Uppy from '@uppy/core'
@@ -63,26 +60,26 @@ export default {
       required: false
     }
   },
-  data () {
+  data() {
     return {
       files: {},
       uploading: false
     }
   },
   computed: {
-    csrf () {
+    csrf() {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
     },
-    canSubmit () {
+    canSubmit() {
       return (!this.required || this.hasFiles) && this.uploadComplete
     },
-    showSubmit () {
+    showSubmit() {
       return this.uploading || this.canSubmit
     },
-    hasFiles () {
+    hasFiles() {
       return this.uploads.length > 0
     },
-    uploadComplete () {
+    uploadComplete() {
       for (const key in this.files) {
         if (this.files[key] === false) {
           return false
@@ -90,7 +87,7 @@ export default {
       }
       return true
     },
-    uploads () {
+    uploads() {
       const uploads = []
       for (const key in this.files) {
         if (this.files[key] !== false) {
@@ -100,7 +97,7 @@ export default {
       return uploads
     }
   },
-  mounted () {
+  mounted() {
     const uppyLocale = {
       strings: this.config.i18n.uppy,
       pluralize: (n) => {
@@ -162,5 +159,4 @@ export default {
 <style lang="scss" scoped>
 @import '~@uppy/core/dist/style.css';
 @import '~@uppy/dashboard/dist/style.css';
-
 </style>

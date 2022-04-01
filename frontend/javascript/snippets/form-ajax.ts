@@ -1,5 +1,7 @@
 import { Modal } from 'bootstrap.native/dist/bootstrap-native-v4'
-interface IHTMLModalTriggerElement extends HTMLElement { Modal: any | null }
+interface IHTMLModalTriggerElement extends HTMLElement {
+  Modal: any | null
+}
 
 const confirmForm = (form: HTMLElement): boolean => {
   const confirmMessage = form.dataset.confirm
@@ -11,9 +13,9 @@ const confirmForm = (form: HTMLElement): boolean => {
   return true
 }
 
-function submitFormsAjax (): void {
-  const ajaxForms = document.querySelectorAll('form.ajaxified');
-  (Array.from(ajaxForms) as HTMLFormElement[]).forEach((form) => {
+function submitFormsAjax(): void {
+  const ajaxForms = document.querySelectorAll('form.ajaxified')
+  ;(Array.from(ajaxForms) as HTMLFormElement[]).forEach((form) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault()
 
@@ -25,24 +27,33 @@ function submitFormsAjax (): void {
       let url = form.getAttribute('action') || ''
       const formData = new FormData(form)
       const data = Array.from(formData)
-        .map((pair) => pair.map((x) => encodeURIComponent(x as string)).join('='))
+        .map((pair) =>
+          pair.map((x) => encodeURIComponent(x as string)).join('=')
+        )
         .join('&')
       if (method.toLowerCase() === 'get') {
         url = `${url}?${data}`
       }
       const request = new XMLHttpRequest()
       request.open(method, url, true)
-      request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+      request.setRequestHeader(
+        'Content-type',
+        'application/x-www-form-urlencoded'
+      )
       request.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
       request.onload = () => {
         if (form.dataset.modalcontainer) {
-          const target = document.querySelector<HTMLElement>(form.dataset.modalcontainer)
+          const target = document.querySelector<HTMLElement>(
+            form.dataset.modalcontainer
+          )
           if (target != null) {
             new Modal(target).show()
             console.log('got modal')
           }
         } else if (form.dataset.modal) {
-          const modalTrigger = document.getElementById(form.dataset.modal) as IHTMLModalTriggerElement
+          const modalTrigger = document.getElementById(
+            form.dataset.modal
+          ) as IHTMLModalTriggerElement
           if (modalTrigger) {
             modalTrigger.Modal.hide()
           }
@@ -69,7 +80,9 @@ function submitFormsAjax (): void {
             if (responseData[0] === '{') {
               const data = JSON.parse(responseData)
               if (data.errors) {
-                parent.outerHTML = `<div class="alert alert-danger">${data.errors as string}</div>`
+                parent.outerHTML = `<div class="alert alert-danger">${
+                  data.errors as string
+                }</div>`
               }
             } else {
               parent.outerHTML = responseData
@@ -90,7 +103,8 @@ function submitFormsAjax (): void {
   })
 }
 
-const SPINNER = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
+const SPINNER =
+  '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
 
 const setWorking = (form: HTMLFormElement): void => {
   Array.from(form.querySelectorAll('button, input')).forEach((el) => {

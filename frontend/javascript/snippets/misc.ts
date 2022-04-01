@@ -1,24 +1,28 @@
 import { scrollToAnchor } from '../lib/misc'
 
 const runOnPage = (): void => {
-  document.querySelectorAll<HTMLElement>('.hideparent').forEach((hideParent) => {
-    hideParent.addEventListener('click', function (this: HTMLElement, e) {
-      e.preventDefault()
-      const parent = this.parentElement
-      if (parent != null) {
-        parent.style.display = 'none'
-      }
+  document
+    .querySelectorAll<HTMLElement>('.hideparent')
+    .forEach((hideParent) => {
+      hideParent.addEventListener('click', function(this: HTMLElement, e) {
+        e.preventDefault()
+        const parent = this.parentElement
+        if (parent != null) {
+          parent.style.display = 'none'
+        }
+      })
     })
-  })
 
   /* Set all form submit buttons to disabled on form submit */
   const forms = document.querySelectorAll('form.disable-submit')
   Array.from(forms).forEach((f) => {
-    f.addEventListener('submit', function (this: HTMLFormElement) {
-      this.querySelectorAll<HTMLElement>('button[type="submit"]').forEach((button) => {
-        button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${button.innerHTML}`
-        button.setAttribute('disabled', '')
-      })
+    f.addEventListener('submit', function(this: HTMLFormElement) {
+      this.querySelectorAll<HTMLElement>('button[type="submit"]').forEach(
+        (button) => {
+          button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${button.innerHTML}`
+          button.setAttribute('disabled', '')
+        }
+      )
     })
   })
 

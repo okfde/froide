@@ -49,7 +49,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       public:
         this.form.fields.public.value !== null
@@ -59,10 +59,10 @@ export default {
   },
   computed: {
     publicValue: {
-      get () {
+      get() {
         return this.public
       },
-      set (value) {
+      set(value) {
         this.public = value
         this.$emit('update:initialPublic', value)
       }
