@@ -1,7 +1,7 @@
 const path = require('path')
 const LiveReloadPlugin = require('webpack-livereload-plugin')
-const TerserPlugin = require("terser-webpack-plugin");
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -25,16 +25,16 @@ const ENTRY = {
   request: ['./frontend/javascript/request.ts'],
   'request-alpha': ['./frontend/javascript/alpha/request-alpha.ts'],
   tagautocomplete: ['./frontend/javascript/tagautocomplete.ts'],
-  fileuploader: ['./frontend/javascript/fileuploader.js'],
+  fileuploader: ['./frontend/javascript/fileuploader.js']
 }
 
-const EXCLUDE_CHUNKS = [
-  'main', 'tagautocomplete'
-].join('|')
+const EXCLUDE_CHUNKS = ['main', 'tagautocomplete'].join('|')
 
 let CHUNK_LIST = []
-for (let key in ENTRY) {
-  if (EXCLUDE_CHUNKS.indexOf(key) !== -1) { continue }
+for (const key in ENTRY) {
+  if (EXCLUDE_CHUNKS.indexOf(key) !== -1) {
+    continue
+  }
   CHUNK_LIST.push(key)
 }
 CHUNK_LIST = CHUNK_LIST.join('|')
@@ -52,10 +52,10 @@ const config = {
     modules: ['node_modules', 'froide/static'],
     extensions: ['.js', '.ts', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
-      'froide': path.resolve('.')
+      vue$: 'vue/dist/vue.esm.js',
+      froide: path.resolve('.')
     },
-    fallback: { "zlib": false }
+    fallback: { zlib: false }
   },
   module: {
     rules: [
@@ -83,7 +83,7 @@ const config = {
           //   }
           // },
           {
-            loader: 'ts-loader',
+            loader: 'ts-loader'
           }
         ]
       },
@@ -114,9 +114,7 @@ const config = {
             loader: 'postcss-loader',
             options: {
               postcssOptions: {
-                plugins: [
-                  ["autoprefixer"]
-                ]
+                plugins: [['autoprefixer']]
               }
             }
           },
@@ -131,9 +129,7 @@ const config = {
             options: {
               sourceMap: true,
               sassOptions: {
-                includePaths: [
-                  'node_modules/'
-                ]
+                includePaths: ['node_modules/']
               }
             }
           }
@@ -170,9 +166,7 @@ const config = {
     }),
     new LiveReloadPlugin(),
     new CopyWebpackPlugin({
-      patterns: [
-        {from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js'}
-      ]
+      patterns: [{ from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js' }]
     }),
     new webpack.DefinePlugin({
       'process.env': {
@@ -182,11 +176,9 @@ const config = {
     })
   ],
   optimization: {
-    minimizer: [
-      new TerserPlugin()
-    ].concat(!devMode ? [
-      new CssMinimizerPlugin()
-    ] : []),
+    minimizer: [new TerserPlugin()].concat(
+      !devMode ? [new CssMinimizerPlugin()] : []
+    ),
     splitChunks: {
       cacheGroups: {
         pdfjs: {
@@ -196,7 +188,7 @@ const config = {
         },
         common: {
           test: /[\\/]node_modules[\\/]/,
-          chunks (chunk) {
+          chunks(chunk) {
             return CHUNK_LIST.indexOf(chunk.name) !== -1
           },
           name: 'common',
