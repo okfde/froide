@@ -1,5 +1,5 @@
-function applyToForm (searchForm: HTMLFormElement) {
-  function submitForm () {
+function applyToForm (searchForm: HTMLFormElement): void {
+  function submitForm (): void {
     searchForm.submit()
   }
   const inputs = searchForm.querySelectorAll('select')
@@ -12,7 +12,7 @@ function applyToForm (searchForm: HTMLFormElement) {
   function dropdownSubmit (input: HTMLInputElement) {
     return function (this: HTMLElement, e: Event) {
       e.preventDefault()
-      input.value = this.dataset.value || ''
+      input.value = this.dataset.value ?? ''
       searchForm.submit()
     }
   }
@@ -20,15 +20,14 @@ function applyToForm (searchForm: HTMLFormElement) {
   const dropdowns = searchForm.querySelectorAll('.dropdown')
   for (i = 0; i < dropdowns.length; i += 1) {
     const dropdown = dropdowns[i]
-    const input = dropdown.querySelector('input') as HTMLInputElement
-    const dropdownLinks = dropdown.querySelectorAll('.dropdown-menu a')
-    Array.from(dropdownLinks).forEach((dropdownLink) => {
-      dropdownLink.addEventListener('click', dropdownSubmit(input))
+    const input = dropdown.querySelector('input')
+    dropdown.querySelectorAll('.dropdown-menu a').forEach((dropdownLink) => {
+      dropdownLink.addEventListener('click', dropdownSubmit(input as HTMLInputElement))
     })
   }
 }
 
-const domSearchForm = document.querySelector('.search-form') as HTMLFormElement
+const domSearchForm = document.querySelector<HTMLFormElement>('.search-form')
 if (domSearchForm !== null) {
   applyToForm(domSearchForm)
 }

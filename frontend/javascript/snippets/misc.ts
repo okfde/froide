@@ -15,8 +15,7 @@ const runOnPage = (): void => {
   const forms = document.querySelectorAll('form.disable-submit')
   Array.from(forms).forEach((f) => {
     f.addEventListener('submit', function (this: HTMLFormElement) {
-      const form = this
-      form.querySelectorAll<HTMLElement>('button[type="submit"]').forEach((button) => {
+      this.querySelectorAll<HTMLElement>('button[type="submit"]').forEach((button) => {
         button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>${button.innerHTML}`
         button.setAttribute('disabled', '')
       })

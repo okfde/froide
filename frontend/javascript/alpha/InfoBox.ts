@@ -34,19 +34,19 @@ export default class InfoBox {
     })
   }
 
-  showStatus () {
+  showStatus (): void {
     if (this.editPanel?.classList.contains('d-none')) {
       this.editButtonClickCallback()
     }
   }
 
-  showInfoBox () {
+  showInfoBox (): void {
     if (this.infoList?.classList.contains('d-none')) {
       this.editButtonClickCallback()
     }
   }
 
-  editButtonClickCallback (e?: MouseEvent) {
+  editButtonClickCallback (e?: MouseEvent): void {
     e?.preventDefault()
     if ((this.editButton != null) && (this.editPanel != null) && (this.infoList != null)) {
       this.editPanel.classList.toggle('d-none')
@@ -57,7 +57,7 @@ export default class InfoBox {
     }
   }
 
-  copyShortUrlTriggerClickCallback (e: MouseEvent) {
+  copyShortUrlTriggerClickCallback (e: MouseEvent): void {
     e.preventDefault()
     const el = e.target as IHTMLToolTipElement
 
@@ -70,7 +70,7 @@ export default class InfoBox {
       const originalTitle = el.title
       el.title = el.dataset.copied || ''
       el.Tooltip.hide()
-      const switchTooltip = () => {
+      const switchTooltip = (): void => {
         el.Tooltip.show()
         el.removeEventListener('hidden.bs.tooltip', switchTooltip)
 
@@ -84,7 +84,7 @@ export default class InfoBox {
     }
   }
 
-  copyToClipboard (text: string) {
+  copyToClipboard (text: string): void {
     const el = document.createElement('textarea')
     el.value = text
     el.setAttribute('readonly', '')

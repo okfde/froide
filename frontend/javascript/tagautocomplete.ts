@@ -5,7 +5,7 @@ import Choices from 'choices.js'
 
 interface IChoicesSearchEvent extends Event { detail: {value: string} }
 
-function setupTagging () {
+function setupTagging (): void {
   const allSelects = document.querySelectorAll('.tagautocomplete');
   (Array.from(allSelects) as HTMLInputElement[]).forEach((select) => {
     const selectId = select.id.replace('_select', '')
@@ -13,17 +13,18 @@ function setupTagging () {
     if (realInput === null) {
       return
     }
-    const addItemText = select.dataset.additemtext || ''
-    const loadingText = select.dataset.loading || ''
-    const noResultsText = select.dataset.noresults || ''
-    const noChoicesText = select.dataset.nochoices || ''
-    const itemSelectText = select.dataset.itemselect || ''
-    const uniqueItemText = select.dataset.uniqueitemtext || ''
-    const fetchUrl = select.dataset.fetchurl || ''
+    const addItemText = select.dataset.additemtext ?? ''
+    const loadingText = select.dataset.loading ?? ''
+    const noResultsText = select.dataset.noresults ?? ''
+    const noChoicesText = select.dataset.nochoices ?? ''
+    const itemSelectText = select.dataset.itemselect ?? ''
+    const uniqueItemText = select.dataset.uniqueitemtext ?? ''
+    const fetchUrl = select.dataset.fetchurl ?? ''
 
     const choices = new Choices(select, {
       addItemText (value) {
-        return addItemText.replace('${value}', String(value))
+        // eslint-disable-next-line no-template-curly-in-string
+        return addItemText.replace('${value}', value)
       },
       addItems: true,
       delimiter: ',',
@@ -53,9 +54,9 @@ function setupTagging () {
       const choicesEvent = event as IChoicesSearchEvent
       const value = choicesEvent.detail.value
       if (fetchUrl) {
-        fetch(fetchUrl + '?query=' + encodeURIComponent(value))
+        void fetch(fetchUrl + '?query=' + encodeURIComponent(value))
           .then((response) => {
-            response.json().then((data: string[]) => {
+            void response.json().then((data: string[]) => {
               const present = data.filter((f) => f === value).length > 0
               const transformed = data.map((x) => ({ value: x, label: x }))
               if (!present) {

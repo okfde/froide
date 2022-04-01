@@ -47,12 +47,12 @@ export default class Timeline {
     this.setupScrollListener()
   }
 
-  scrollToLastMessageLinkCallback (e: MouseEvent) {
+  scrollToLastMessageLinkCallback (e: MouseEvent): void {
     e.preventDefault()
     this.scrollToLastMessage()
   }
 
-  parseTimelineItems () {
+  parseTimelineItems (): TimelineItemsInterface {
     const result: TimelineItemsInterface = {}
     const nodes: any = this.element.getElementsByClassName('alpha-timeline__item')
 
@@ -64,7 +64,7 @@ export default class Timeline {
         element: item,
         msgIdsVisibleMap: (() => {
           const result: MessagesVisbileMap = {}
-          const msgContainersByKey = this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key}"]`)
+          const msgContainersByKey = this.messagesContainer.querySelectorAll(`[data-timeline-key^="${key as string}"]`)
           const ids = Array.from(msgContainersByKey).map(n => n.id)
           for (let i = 0; i < ids.length; i++) {
             const id: string = ids[i]
@@ -96,7 +96,7 @@ export default class Timeline {
     return result
   }
 
-  itemClickCallback (e: Event) {
+  itemClickCallback (e: Event): void {
     e.preventDefault()
     const target = e.target as HTMLElement
     const element = target.closest('a')
@@ -106,7 +106,7 @@ export default class Timeline {
     }
   }
 
-  getMessageById (id: string) {
+  getMessageById (id: string): Message | undefined {
     let i = this.messagesArr.length
     const messagesArr = this.messagesArr
     while (i--) {
@@ -116,7 +116,7 @@ export default class Timeline {
     }
   }
 
-  scrollToMessage (anchor: string) {
+  scrollToMessage (anchor: string): void {
     // smooth scroll to element
     document.querySelector(anchor)?.scrollIntoView({
       behavior: 'smooth',
@@ -126,25 +126,25 @@ export default class Timeline {
     // expand message if collapsed
     const messageId = anchor.substring(1)
     const messageObj = this.getMessageById(messageId)
-    if ((messageObj != null) && messageObj.isCollapsed) {
+    if (messageObj?.isCollapsed) {
       messageObj.expandMessage()
     }
   }
 
-  scrollToLastMessage () {
+  scrollToLastMessage (): void {
     const messagesArr = this.messagesArr
     const lastMessageId = messagesArr[messagesArr.length - 1].id
     this.scrollToMessage('#' + lastMessageId)
   }
 
-  setupResizeListener () {
+  setupResizeListener (): void {
     window.addEventListener('resize', this.resizeListenerCallback.bind(this))
 
     // execute on first run
     this.resizeListenerCallback()
   }
 
-  resizeListenerCallback () {
+  resizeListenerCallback (): void {
     const windowWidth = window.innerWidth
     const minWidth = this.minWidthBreakpoint
 
@@ -161,14 +161,14 @@ export default class Timeline {
     }
   }
 
-  setupScrollListener () {
+  setupScrollListener (): void {
     window.addEventListener('scroll', this.scrollListenerCallback.bind(this))
 
     // execute on first run
     this.scrollListenerCallback()
   }
 
-  get lastTimelineItemIsVisible () {
+  get lastTimelineItemIsVisible (): boolean {
     // src: https://stackoverflow.com/a/7557433
     const rect = this.lastItemElement.getBoundingClientRect()
 
@@ -180,7 +180,7 @@ export default class Timeline {
     )
   }
 
-  scrollListenerCallback () {
+  scrollListenerCallback (): void {
     // toggle scrollToEndLink visibility
     const allTimelineItemsAreInactive = Object.values(this.items).every(item => !item.isActive)
     if (!allTimelineItemsAreInactive) {
@@ -192,12 +192,12 @@ export default class Timeline {
     }
   }
 
-  setTimelineHeight () {
+  setTimelineHeight (): void {
     // set timeline height to browser window height
-    this.element.style.height = window.innerHeight + 'px'
+    this.element.style.height = `${window.innerHeight}px`
   }
 
-  setupIntersectionObserver () {
+  setupIntersectionObserver (): void {
     this.observer = new IntersectionObserver(
       this.intersectionObserverCallback.bind(this),
       { rootMargin: '-50px 0px -50px 0px' }
@@ -207,22 +207,22 @@ export default class Timeline {
     })
   }
 
-  destroyIntersectionObserver () {
+  destroyIntersectionObserver (): void {
     this.observer?.disconnect()
     this.observer = null
   }
 
-  hideScrollToEndLink () {
+  hideScrollToEndLink (): void {
     this.scrollToEndLink.style.opacity = '0'
     this.scrollToEndLink.style.visibility = 'hidden'
   }
 
-  showScrollToEndLink () {
+  showScrollToEndLink (): void {
     this.scrollToEndLink.style.opacity = '1'
     this.scrollToEndLink.style.visibility = 'visible'
   }
 
-  intersectionObserverCallback (entries: IntersectionObserverEntry[]) {
+  intersectionObserverCallback (entries: IntersectionObserverEntry[]): void {
     for (let i = 0, l = entries.length; i < l; i++) {
       const entry = entries[i]
 

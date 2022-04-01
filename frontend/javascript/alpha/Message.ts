@@ -38,7 +38,7 @@ export default class Message {
     }
   }
 
-  get storageItem () {
+  get storageItem (): any | null {
     try {
       // localStorage access may cause DOMException if blocked
       const item = localStorage.getItem(this.id)
@@ -48,17 +48,17 @@ export default class Message {
     }
   }
 
-  get isExpanded () {
+  get isExpanded (): string | false {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
 
-  get isCollapsed () {
+  get isCollapsed (): boolean {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded === false : false
   }
 
-  updateStorageItem (data: Object) {
+  updateStorageItem (data: Object): void {
     try {
       // localStorage access may cause DOMException if blocked
       localStorage.setItem(
@@ -70,12 +70,12 @@ export default class Message {
     } catch { }
   }
 
-  onHeadClick (e: Event) {
+  onHeadClick (e: Event): void {
     this.toggleMessage()
     e.preventDefault()
   }
 
-  toggleMessage () {
+  toggleMessage (): void {
     if (this.isExpanded) {
       this.collapseMessage()
     } else {
@@ -86,35 +86,35 @@ export default class Message {
     }
   }
 
-  expandMessage () {
+  expandMessage (): void {
     this.updateStorageItem({ isExpanded: true })
     this.element.classList.add(this.expandedClassName)
   }
 
-  collapseMessage () {
+  collapseMessage (): void {
     this.updateStorageItem({ isExpanded: false })
     this.element.classList.remove(this.expandedClassName)
     this.metaContainer.classList.remove(this.metaExpandedClassName)
   }
 
-  showMetaContainer () {
+  showMetaContainer (): void {
     if (!this.metaContainer.classList.contains(this.metaExpandedClassName)) {
       this.toggleMetaContainer()
     }
   }
 
-  toggleMetaContainer (e?: Event) {
+  toggleMetaContainer (e?: Event): void {
     e?.preventDefault()
     e?.stopPropagation()
     this.metaContainer.classList.toggle(this.metaExpandedClassName)
   }
 
-  showAllAttachments (e: Event) {
+  showAllAttachments (e: Event): void {
     e.preventDefault()
     this.unwrapLeftSibling(e.target as HTMLElement)
   }
 
-  unwrapLeftSibling (el: HTMLElement) {
+  unwrapLeftSibling (el: HTMLElement): void {
     // unwrap left sibling content of parent node
     const parentEl = el?.parentElement
     const outerParent = parentEl?.parentNode
@@ -131,7 +131,7 @@ export default class Message {
     }
   }
 
-  scrollToComment (commentElementId: string) {
+  scrollToComment (commentElementId: string): void {
     // expand message and comments container first if necessary
     if (!this.isExpanded) this.expandMessage()
 

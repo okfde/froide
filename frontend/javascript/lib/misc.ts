@@ -1,4 +1,4 @@
-function scrollToAnchor (id: string, options: boolean|Object|undefined = true) {
+function scrollToAnchor (id: string, options: boolean|Object|undefined = true): void {
   window.setTimeout(() => {
     const el = document.getElementById(id)
     if (el == null) {
@@ -12,12 +12,12 @@ function scrollToAnchor (id: string, options: boolean|Object|undefined = true) {
   }, 200)
 }
 
-const getHeight = (el: HTMLElement) => {
+const getHeight = (el: HTMLElement): number => {
   const style = window.getComputedStyle(el)
   const display = style.display
   const position = style.position
   const visibility = style.visibility
-  const maxHeight = style.maxHeight && style.maxHeight.replace('px', '').replace('%', '')
+  const maxHeight = style.maxHeight?.replace('px', '').replace('%', '')
   let wantedHeight = 0
 
   // if its not hidden we just return normal height
@@ -45,20 +45,20 @@ const getHeight = (el: HTMLElement) => {
   * toggleSlide mimics the jQuery version of slideDown and slideUp
   * all in one function comparing the max-heigth to 0
   */
-const toggleSlide = (el: HTMLElement, seconds = 2) => {
+const toggleSlide = (el: HTMLElement, seconds = 2): void => {
   let elMaxHeight = '0px'
 
   if (el.getAttribute('data-max-height')) {
     // we've already used this before, so everything is setup
     let maxHeight = el.style.maxHeight
-    maxHeight = maxHeight && maxHeight.replace('px', '').replace('%', '')
+    maxHeight = maxHeight?.replace('px', '').replace('%', '')
     if (maxHeight === '0') {
       el.style.maxHeight = el.getAttribute('data-max-height') || '0'
     } else {
       el.style.maxHeight = '0'
     }
   } else {
-    elMaxHeight = getHeight(el) + 'px'
+    elMaxHeight = `${getHeight(el)}px`
     el.style.transition = `max-height ${seconds}s ease-in-out`
     el.style.overflow = 'hidden'
     el.style.maxHeight = '0'
@@ -72,7 +72,7 @@ const toggleSlide = (el: HTMLElement, seconds = 2) => {
   }
 }
 
-const addText = (dataset: DOMStringMap) => {
+const addText = (dataset: DOMStringMap): void => {
   if (!dataset.addtextfield) {
     return
   }

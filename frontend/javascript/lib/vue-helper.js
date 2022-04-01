@@ -24,7 +24,7 @@ function getPropsFromElement (el) {
       }
       if (attr.value === 'true') {
         val = true
-      } else if (attr.value == 'false') {
+      } else if (attr.value === 'false') {
         val = false
       }
     }

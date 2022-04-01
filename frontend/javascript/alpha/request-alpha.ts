@@ -10,7 +10,7 @@ import 'driver.js/dist/driver.min.css'
 
 interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined }
 
-const initRequestPage = () => {
+const initRequestPage = (): void => {
   initSetStatusForm()
 
   console.debug('Init request page...')
@@ -32,9 +32,11 @@ const initRequestPage = () => {
   }
 
   // init timeline
+  // eslint-disable-next-line no-new
   new Timeline(messagesContainer, messages)
 
   // init ScrollIndicator on mobile view
+  // eslint-disable-next-line no-new
   new ScrollIndicator(messagesContainer)
 
   initTabs()
@@ -50,7 +52,7 @@ const initRequestPage = () => {
   const replyButtonTop = document.getElementById('alpha-reply-button-top')
   const replyButtonBottom = document.getElementById('alpha-reply-button-bottom')
   const writeForm = document.getElementById('write-messages')
-  const scrollToWriteForm = () => {
+  const scrollToWriteForm = (): void => {
     setTimeout(() => {
       writeForm?.scrollIntoView({
         behavior: 'smooth',
@@ -69,20 +71,20 @@ const initRequestPage = () => {
     tabLink.addEventListener('click', function (this: HTMLElement) {
       const hrefAttr = this.attributes.getNamedItem('href')
       if (hrefAttr === null) { return }
-      const href = hrefAttr && hrefAttr.value
+      const href = hrefAttr?.value
       const el = document.querySelector(href)
       if (el === null) { return }
       const display = window.getComputedStyle(el, null).display
       if (display === 'none') {
         const navLink = document.querySelector('.nav-link[href="' + href + '"]') as IHTMLTabElement
-        if (navLink && (navLink.Tab != null)) {
+        if (navLink?.Tab != null) {
           navLink.Tab.show()
         }
       }
     })
   })
 
-  const goToReplyForm = () => {
+  const goToReplyForm = (): void => {
     if (!writeForm?.classList.contains('show')) {
       replyButtonBottom?.click()
     } else {
@@ -95,15 +97,15 @@ const initRequestPage = () => {
     el.addEventListener('click', fieldFillLinkClick)
   })
 
-  function fieldFillLinkClick (this: HTMLElement) {
-    if (this.dataset && this.dataset.value) {
-      const sel = '[name="' + this.dataset.fieldname + '"][value="' + this.dataset.value + '"]'
+  function fieldFillLinkClick (this: HTMLElement): void {
+    if (this.dataset?.value) {
+      const sel = `[name="${this.dataset.fieldname as string}"][value="${this.dataset.value}"]`
       const checkbox = document.querySelector(sel)
       if (checkbox != null) {
         checkbox.setAttribute('checked', '')
       }
     }
-    if (this.dataset && this.dataset.addtextfield) {
+    if (this.dataset?.addtextfield) {
       addText(this.dataset)
     }
     goToReplyForm()
@@ -124,7 +126,7 @@ const initRequestPage = () => {
   })
 }
 
-const startTour = (tourId: string | undefined, tourDoneSelector: string | undefined) => {
+const startTour = (tourId: string | undefined, tourDoneSelector: string | undefined): void => {
   if (!tourId) {
     return
   }
@@ -160,7 +162,7 @@ const startTour = (tourId: string | undefined, tourDoneSelector: string | undefi
   driver.start()
 }
 
-const parseMessageContainers = () => {
+const parseMessageContainers = (): Message[] => {
   const messages: Message[] = []
   const urlHash = window.location.hash
   const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash) ? urlHash.substr(1) : null
@@ -174,7 +176,7 @@ const parseMessageContainers = () => {
   return messages
 }
 
-const initInlineEditForms = () => {
+const initInlineEditForms = (): void => {
   document.querySelectorAll<HTMLElement>('[data-inlineedit]').forEach(el => {
     if (!el.dataset.inlineedit) { return }
     const targetForm = document.querySelector(el.dataset.inlineedit) as HTMLElement
@@ -187,7 +189,7 @@ const initInlineEditForms = () => {
       presentation = el.parentElement
     }
 
-    const toggle = (e: MouseEvent) => {
+    const toggle = (e: MouseEvent): void => {
       e.preventDefault()
       presentation?.classList.toggle('d-none')
       targetForm.classList.toggle('d-none')
@@ -212,7 +214,7 @@ const initInlineEditForms = () => {
   })
 }
 
-const initMessageMarks = () => {
+const initMessageMarks = (): void => {
   document.querySelectorAll<HTMLElement>('[data-messagemark]').forEach((guidance) => {
     const messageMark = guidance.dataset.messagemark
     if (!messageMark || !guidance.dataset.messageid) { return }
@@ -223,7 +225,7 @@ const initMessageMarks = () => {
   })
 }
 
-const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[]) => {
+const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[]): void => {
   const messageText = document.querySelector(`#${messageId} .text-content-visible`)
   if (messageText == null) { return }
   let charIndex = 0
@@ -245,6 +247,7 @@ const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[
         const second = textNode.splitText(span[0] - charIndex)
         messageText.insertBefore(mark, second)
         second.textContent = content.substring(span[1] - charIndex, content.length)
+        // eslint-disable-next-line no-new
         new Tooltip(mark)
       }
       return
@@ -257,7 +260,7 @@ const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[
   }
 }
 
-const initExpandableDescriptions = () => {
+const initExpandableDescriptions = (): void => {
   const textContainers = document.querySelectorAll('.request-descr')
   Array.from(textContainers).forEach(textContainer => {
     const readmoreContainer = textContainer.querySelector('.request-descr-read-more')
@@ -265,7 +268,7 @@ const initExpandableDescriptions = () => {
     const clientHeight = textContainer?.clientHeight || 0
     const scrollHeight = textContainer?.scrollHeight || 0
 
-    const expand = () => {
+    const expand = (): void => {
       readmoreContainer?.classList.add('d-none')
       textContainer?.classList.remove('request-descr--collapsed')
     }
@@ -278,7 +281,7 @@ const initExpandableDescriptions = () => {
   })
 }
 
-const scrollToAnchor = (messages: Message[]) => {
+const scrollToAnchor = (messages: Message[]): void => {
   // when all messages initialized:
   // scroll to comment if query parameters given (e.g. ?msg=76058&c=10856)
   // find message and comment containers with id that equal query params
@@ -304,26 +307,26 @@ const scrollToAnchor = (messages: Message[]) => {
   }
 }
 
-const initTabs = () => {
+const initTabs = (): void => {
   const container = document.querySelector('.alpha-tabs') as HTMLElement
   const tabCollection = container.getElementsByTagName('A')
   Array.from(tabCollection).forEach((tab) => {
-    // tslint:disable-next-line: no-unused-expression
+    // eslint-disable-next-line no-new
     new Tab(tab as HTMLElement, { height: false })
   })
 
   // show tab if query paramter exists
-  let hash = document.location && document.location.hash || ''
+  let hash = document.location?.hash || ''
   hash = hash.replace(/[^#\-\w]/g, '')
   const hashNav = container.querySelector('a[href="' + hash + '"]') as IHTMLTabElement
-  if (hashNav !== null && (hashNav.Tab != null)) {
+  if (hashNav?.Tab != null) {
     hashNav.Tab.show()
     // scroll tab into view
     hashNav.scrollIntoView()
   }
 }
 
-const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]) => {
+const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]): void => {
   const expandAllLink = document.querySelector('.js-trigger-expand-all-messages') as HTMLElement
 
   expandAllLink.addEventListener('click', (e: MouseEvent) => {
@@ -332,7 +335,7 @@ const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Mes
   })
 }
 
-const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false, details = false) => {
+const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false, details = false): void => {
   const isAllExpandedClass = 'is-all-expanded'
 
   if (mustExpand && details) {
@@ -371,7 +374,7 @@ const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpa
   }
 }
 
-const initSetStatusForm = () => {
+const initSetStatusForm = (): void => {
   const idResolution = document.querySelector('#id_resolution')
   if (idResolution !== null) {
     idResolution.addEventListener('change', setStatus)
@@ -385,7 +388,7 @@ const initSetStatusForm = () => {
 }
 
 let refusalInputIsVisible = false
-const setStatus = () => {
+const setStatus = (): void => {
   const container = document.querySelector('.status-refusal') as HTMLElement
   if (container !== null) {
     const resolutionElement = document.querySelector('#id_resolution') as HTMLInputElement
@@ -403,7 +406,7 @@ const setStatus = () => {
   }
 }
 
-const initReplyForm = () => {
+const initReplyForm = (): void => {
   const replyContainer = document.querySelector('.reply-form') as HTMLElement
 
   if (!replyContainer) {
@@ -436,7 +439,7 @@ const initReplyForm = () => {
     stickyModeEnabled = !stickyModeEnabled
   })
 
-  const toggleStickyClass = () => {
+  const toggleStickyClass = (): void => {
     replyContainer.classList.toggle('reply-form--sticky')
   }
 

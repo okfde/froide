@@ -1,4 +1,4 @@
-const VAR = new RegExp(/\$\{(\w+)\}/g)
+const VAR = /\$\{(\w+)\}/g
 
 const LANG = document.querySelector('html').lang
 

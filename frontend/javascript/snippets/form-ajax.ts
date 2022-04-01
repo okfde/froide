@@ -1,11 +1,9 @@
 import { Modal } from 'bootstrap.native/dist/bootstrap-native-v4'
 interface IHTMLModalTriggerElement extends HTMLElement { Modal: any | null }
 
-const confirmForm = (form: HTMLElement) => {
+const confirmForm = (form: HTMLElement): boolean => {
   const confirmMessage = form.dataset.confirm
-  if (!confirmMessage) {
-    return true
-  }
+  if (!confirmMessage) return true
   const confirmed = window.confirm(confirmMessage)
   if (!confirmed) {
     return false
@@ -13,7 +11,7 @@ const confirmForm = (form: HTMLElement) => {
   return true
 }
 
-const submitFormsAjax = () => {
+function submitFormsAjax (): void {
   const ajaxForms = document.querySelectorAll('form.ajaxified');
   (Array.from(ajaxForms) as HTMLFormElement[]).forEach((form) => {
     form.addEventListener('submit', (e) => {
@@ -27,7 +25,7 @@ const submitFormsAjax = () => {
       let url = form.getAttribute('action') || ''
       const formData = new FormData(form)
       const data = Array.from(formData)
-        .map((pair) => pair.map((x) => encodeURIComponent(x.toString())).join('='))
+        .map((pair) => pair.map((x) => encodeURIComponent(x as string)).join('='))
         .join('&')
       if (method.toLowerCase() === 'get') {
         url = `${url}?${data}`
@@ -71,7 +69,7 @@ const submitFormsAjax = () => {
             if (responseData[0] === '{') {
               const data = JSON.parse(responseData)
               if (data.errors) {
-                parent.outerHTML = `<div class="alert alert-danger">${data.errors}</div>`
+                parent.outerHTML = `<div class="alert alert-danger">${data.errors as string}</div>`
               }
             } else {
               parent.outerHTML = responseData
@@ -94,7 +92,7 @@ const submitFormsAjax = () => {
 
 const SPINNER = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
 
-const setWorking = (form: HTMLFormElement) => {
+const setWorking = (form: HTMLFormElement): void => {
   Array.from(form.querySelectorAll('button, input')).forEach((el) => {
     if (el.getAttribute('type') === 'submit') {
       el.innerHTML = `${SPINNER}${el.innerHTML}`
@@ -103,7 +101,7 @@ const setWorking = (form: HTMLFormElement) => {
   })
 }
 
-const unsetWorking = (form: HTMLFormElement) => {
+const unsetWorking = (form: HTMLFormElement): void => {
   Array.from(form.querySelectorAll('button, input')).forEach((el) => {
     if (el.getAttribute('type') === 'submit') {
       el.innerHTML = el.innerHTML.replace(SPINNER, '')

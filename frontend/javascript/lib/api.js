@@ -5,7 +5,7 @@ class FroideAPI {
 
   getJson (url) {
     return new Promise((resolve, reject) => {
-      const request = new XMLHttpRequest()
+      const request = new window.XMLHttpRequest()
       request.open('GET', url, true)
       request.onload = function () {
         if (request.status >= 400) {
