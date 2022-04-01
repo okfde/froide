@@ -5,7 +5,8 @@
   },
   "extends": ["plugin:vue/essential","standard-with-typescript"],
   "plugins": [
-    "html"
+    "html",
+    "prettier"
   ],
   "ignorePatterns": ["node_modules/**", "**/static/**"],
   "overrides": [{
