@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from django.utils.translation import pgettext_lazy
 
-from filingcabinet.urls import urlpatterns as fc_urlpatterns
+from filingcabinet.urls import fc_urlpatterns
 
 from .views import (
     DocumentFileDetailView,
