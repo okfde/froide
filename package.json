@@ -5,7 +5,7 @@
   "main": "frontend/javascript/main.js",
   "files": [
     "frontend/",
-    ".eslintrc.json"
+    ".eslintrc.js"
   ],
   "directories": {
     "doc": "docs"
