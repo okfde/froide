@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-03-16 21:02+0100\n"
-"PO-Revision-Date: 2022-03-16 21:03+0100\n"
+"PO-Revision-Date: 2022-04-05 21:29+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -8183,7 +8183,7 @@ msgstr "brief-versendet/<int:letter_id>/<int:message_id>/"
 
 #: froide/organization/models.py:13 froide/team/models.py:9
 msgid "owner"
-msgstr "Eigentümer"
+msgstr "Eigentümer/in"
 
 #: froide/organization/models.py:14
 msgid "member"
@@ -9676,7 +9676,7 @@ msgstr "Sie können Ihre eigene Funktion nicht ändern."
 
 #: froide/team/forms.py:44
 msgid "Only owners can change roles."
-msgstr "Nur Eigentümer können die Funktionen ändern."
+msgstr "Nur Eigentümer/innen können die Funktionen ändern."
 
 #: froide/team/forms.py:70
 msgid "Member already present in team."
@@ -9684,11 +9684,11 @@ msgstr "Das Mitglied gehört schon zum Team."
 
 #: froide/team/models.py:10
 msgid "editor"
-msgstr "Bearbeiter"
+msgstr "Bearbeiter/in"
 
 #: froide/team/models.py:11
 msgid "viewer"
-msgstr "Betrachter"
+msgstr "Betrachter/in"
 
 #: froide/team/models.py:92
 msgid "team"
@@ -9777,7 +9777,7 @@ msgstr "Funktionen"
 
 #: froide/team/templates/team/team_detail.html:90
 msgid "Viewer"
-msgstr "Betrachter"
+msgstr "Betrachter/in"
 
 #: froide/team/templates/team/team_detail.html:92
 msgid ""
@@ -9787,13 +9787,13 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Ein Betrachter hat nur Lesezugriff auf alle Team-Projekte und "
-"Anfragen.\n"
+"            Ein/e Betrachter/in hat nur Lesezugriff auf alle Team-Projekte "
+"und Anfragen.\n"
 "          "
 
 #: froide/team/templates/team/team_detail.html:96
 msgid "Editor"
-msgstr "Bearbeiter"
+msgstr "Bearbeiter/in"
 
 #: froide/team/templates/team/team_detail.html:98
 msgid ""
@@ -9803,13 +9803,13 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Ein Bearbeiter kann Anfragen in den Team-Projekten stellen, "
+"            Ein/e Bearbeiter/in kann Anfragen in den Team-Projekten stellen, "
 "Nachrichten senden, den Status von Anfragen ändern etc.\n"
 "          "
 
 #: froide/team/templates/team/team_detail.html:102
 msgid "Owner"
-msgstr "Eigentümer"
+msgstr "Eigentümer/in"
 
 #: froide/team/templates/team/team_detail.html:104
 msgid ""
@@ -9820,9 +9820,9 @@ msgid ""
 "          "
 msgstr ""
 "\n"
-"            Ein Eigentümer kann alles, was ein Bearbeiter auch kann. "
-"Zusätzlich können Eigentümer auch Team-Mitglieder anlegen, entfernen oder "
-"ihre Funktionen ändern und das Team löschen.\n"
+"            Ein/e Eigentümer/in kann alles, was ein/e Bearbeiter/in auch "
+"kann. Zusätzlich können Eigentümer/innen auch Team-Mitglieder anlegen, "
+"entfernen oder ihre Funktionen ändern und das Team löschen.\n"
 "          "
 
 #: froide/team/templates/team/team_detail.html:116
