@@ -52,7 +52,7 @@ cffi==1.14.5
     #   cairocffi
     #   cryptography
     #   weasyprint
-channels==3.0.3
+channels==3.0.4
     # via -r requirements.in
 chardet==4.0.0
     # via
