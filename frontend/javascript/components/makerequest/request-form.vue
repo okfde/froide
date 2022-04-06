@@ -166,9 +166,7 @@
             </div>
             <!-- The following is whitespace sensitive -->
             <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
-            <div v-if="editingDisabled" class="body-text body-text-em">
-              {{ body }}
-            </div>
+            <div v-if="editingDisabled" class="body-text-em">{{ body }}</div>
             <textarea
               v-show="!editingDisabled"
               id="id_body"
@@ -619,7 +617,8 @@ legend {
   font-size: $font-size-sm;
 }
 
-.body-text {
+.body-text,
+.body-text-em {
   hyphens: none;
   white-space: pre-wrap;
   word-wrap: break-word;
