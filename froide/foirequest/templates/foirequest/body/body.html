@@ -117,11 +117,13 @@
                       {% trans "Write message" %}
                     </a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#escalate" role="tab" aria-controls="escalate" aria-selected="false">
-                      {% trans "Start mediation" %}
-                    </a>
-                  </li>
+                  {% if object.can_be_escalated %}
+                    <li class="nav-item">
+                      <a class="nav-link" data-toggle="tab" href="#escalate" role="tab" aria-controls="escalate" aria-selected="false">
+                        {% trans "Start mediation" %}
+                      </a>
+                    </li>
+                  {% endif %}
                   {% block request_action_menu_footer %}{% endblock %}
                 </ul>
                 <div class="tab-content">
