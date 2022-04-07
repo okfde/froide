@@ -94,13 +94,16 @@ def delete_all_expired_exports():
     from froide.accesstoken.models import AccessToken
 
     old_export_date = timezone.now() - EXPORT_MAX_AGE
-    access_tokens = AccessToken.objects.filter(
-        purpose=PURPOSE, timestamp__lte=old_export_date
-    )
-    for at in access_tokens:
-        delete_export(at.token)
 
-    access_tokens.delete()
+    AccessToken.objects.filter(purpose=PURPOSE, timestamp__lte=old_export_date).delete()
+
+    _, files = default_storage.listdir(EXPORT_MEDIA_PREFIX)
+    for filename in files:
+        token = filename.replace(".zip", "")
+        if not AccessToken.objects.filter(
+            purpose=PURPOSE, timestamp__gt=old_export_date, token=token
+        ).exists():
+            delete_export(token)
 
 
 def create_export(user, notification_user=None):
