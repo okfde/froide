@@ -109,8 +109,8 @@ export default new Vuex.Store({
         .filter((law) => law !== undefined)
     },
     defaultLaw: (state, getters) => {
-      const key = null
       // Get first key in scoped public bodies
+      const key = Object.keys(state.scopedPublicBodies)[0]
       const pbs = state.scopedPublicBodies[key] || []
       let lastLaw = null
       let sameLaw = true
