@@ -164,9 +164,8 @@
                 {{ error.message }}
               </p>
             </div>
-            <!-- The following is whitespace sensitive -->
-            <div v-if="!fullText" class="body-text">{{ letterStart }}</div>
-            <div v-if="editingDisabled" class="body-text-em">{{ body }}</div>
+            <div v-if="!fullText" class="body-text" v-text="letterStart" />
+            <div v-if="editingDisabled" class="body-text-em" v-text="body" />
             <textarea
               v-show="!editingDisabled"
               id="id_body"
@@ -193,24 +192,24 @@
               {{ formFields.full_text.label }}
             </label>
             <input v-model="fullText" type="hidden" name="full_text" />
-            <!-- The following is whitespace sensitive -->
             <div v-if="!fullText" class="body-text">
               <template v-if="!fullLetter">
                 <a
                   class="show-full-letter"
                   href="#"
                   @click.prevent="showFullLetter"
-                  >[&hellip;]</a
-                >
-                {{ letterEndShort }} </template
-              ><template v-else>{{ letterEnd }}</template>
+                  v-text="'[…]'" />
+                <template>{{ letterEndShort }}</template>
+              </template>
+              <template v-else>{{ letterEnd }}</template>
             </div>
             <div v-if="letterSignature" class="body-text">
               <em>{{ letterSignature }}</em>
             </div>
-            <div v-if="!letterSignature && fullText" class="body-text">
-              {{ letterSignatureName }}
-            </div>
+            <div
+              v-if="!letterSignature && fullText"
+              class="body-text"
+              v-text="letterSignatureName" />
           </div>
         </div>
         <div v-if="!hasUser" class="row">
