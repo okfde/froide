@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from froide.accesstoken.models import AccessToken
+from froide.helper.date_utils import get_midnight
 from froide.helper.email_sending import (
     mail_middleware_registry,
     mail_registry,
@@ -21,6 +22,7 @@ TRAILING_COMMA = re.compile(r"\s*,\s*$")
 
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
 CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
+FUTURE_CANCEL_PERIOD = timedelta(days=31)
 
 
 def send_mail_users(subject, body, users, **kwargs):
@@ -126,6 +128,19 @@ def delete_all_unexpired_sessions_for_user(user, session_to_omit=None):
     session_list.delete()
 
 
+def future_cancel_user(user):
+    user.is_trusted = False
+    user.isblocked = True
+    # Do not delete yet!
+    user.is_deleted = False
+    now = timezone.now()
+    user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
+    user.notes += "Canceled on {} for {}\n\n".format(
+        now.isoformat(), user.date_left.isoformat()
+    )
+    user.save()
+
+
 def start_cancel_account_process(user, delete=False):
     from .tasks import cancel_account_task
 
@@ -168,9 +183,11 @@ def cancel_user(user, delete=False):
     user.is_staff = False
     user.is_superuser = False
     user.is_active = False
-    user.date_deactivated = timezone.now()
+    if not user.date_deactivated:
+        user.date_deactivated = timezone.now()
     user.is_deleted = True
-    user.date_left = timezone.now()
+    if not user.date_left:
+        user.date_left = timezone.now()
     user.email = None
     user.set_unusable_password()
     user.username = "u%s" % user.pk
@@ -195,6 +212,15 @@ def delete_deactivated_users():
         is_active=False, is_deleted=False, date_deactivated__lt=time_ago
     )
     for user in expired_users:
+        start_cancel_account_process(user)
+
+
+def delete_undeleted_left_users():
+    now = timezone.now()
+    canceled_but_undeleted = User.objects.filter(
+        date_left__isnull=False, date_left__lt=now, is_delete=False
+    )
+    for user in canceled_but_undeleted:
         start_cancel_account_process(user)
 
 
