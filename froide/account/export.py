@@ -314,6 +314,8 @@ class ExportCrossDomainMediaAuth(CrossDomainMediaAuth):
         return False
 
     def has_perm(self, request):
+        if request.user.is_superuser:
+            return True
         ctx = self.context
         obj = ctx["object"]
         return obj.user == request.user

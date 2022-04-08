@@ -11,6 +11,7 @@ from django.utils.translation import gettext_lazy as _
 from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
+from froide.account.export import ExportCrossDomainMediaAuth
 from froide.foirequest.models import FoiRequest
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
@@ -336,8 +337,14 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         export_user = queryset[0]
         access_token = get_export_access_token(export_user)
         if access_token:
+            mauth = ExportCrossDomainMediaAuth({"object": access_token})
+            url = mauth.get_full_media_url(authorized=True)
+
             self.message_user(
-                request, _("Download export of user '{}' is ready.").format(export_user)
+                request,
+                _("Download export of user '{user}' is ready: {url}").format(
+                    user=export_user, url=url
+                ),
             )
             return
 
