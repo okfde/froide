@@ -218,7 +218,7 @@ def delete_deactivated_users():
 def delete_undeleted_left_users():
     now = timezone.now()
     canceled_but_undeleted = User.objects.filter(
-        date_left__isnull=False, date_left__lt=now, is_delete=False
+        date_left__isnull=False, date_left__lt=now, is_deleted=False
     )
     for user in canceled_but_undeleted:
         start_cancel_account_process(user)
