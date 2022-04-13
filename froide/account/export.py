@@ -235,66 +235,67 @@ def export_user_data(user):
     refreshtokens = user.oauth2_provider_refreshtoken.all().select_related(
         "application"
     )
-    yield (
-        "oauth.json",
-        json.dumps(
-            {
-                "grants": [
-                    get_dict(
-                        g,
-                        (
-                            "id",
-                            "code",
-                            "application_id",
-                            "application__name",
-                            "application__description",
-                            "expires",
-                            "redirect_uri",
-                            "scope",
-                            "created",
-                            "updated",
-                        ),
-                    )
-                    for g in grants
-                ],
-                "accesstokens": [
-                    get_dict(
-                        a,
-                        (
-                            "id",
-                            "source_refresh_token_id",
-                            "token",
-                            "application_id",
-                            "application__name",
-                            "application__description",
-                            "expires",
-                            "scope",
-                            "created",
-                            "updated",
-                        ),
-                    )
-                    for a in accesstokens
-                ],
-                "refreshtokens": [
-                    get_dict(
-                        a,
-                        (
-                            "id",
-                            "token",
-                            "application_id",
-                            "application__name",
-                            "application__description",
-                            "access_token_id",
-                            "created",
-                            "updated",
-                            "revoked",
-                        ),
-                    )
-                    for a in refreshtokens
-                ],
-            }
-        ).encode("utf-8"),
-    )
+    if grants or accesstokens or refreshtokens:
+        yield (
+            "oauth.json",
+            json.dumps(
+                {
+                    "grants": [
+                        get_dict(
+                            g,
+                            (
+                                "id",
+                                "code",
+                                "application_id",
+                                "application__name",
+                                "application__description",
+                                "expires",
+                                "redirect_uri",
+                                "scope",
+                                "created",
+                                "updated",
+                            ),
+                        )
+                        for g in grants
+                    ],
+                    "accesstokens": [
+                        get_dict(
+                            a,
+                            (
+                                "id",
+                                "source_refresh_token_id",
+                                "token",
+                                "application_id",
+                                "application__name",
+                                "application__description",
+                                "expires",
+                                "scope",
+                                "created",
+                                "updated",
+                            ),
+                        )
+                        for a in accesstokens
+                    ],
+                    "refreshtokens": [
+                        get_dict(
+                            a,
+                            (
+                                "id",
+                                "token",
+                                "application_id",
+                                "application__name",
+                                "application__description",
+                                "access_token_id",
+                                "created",
+                                "updated",
+                                "revoked",
+                            ),
+                        )
+                        for a in refreshtokens
+                    ],
+                }
+            ).encode("utf-8"),
+        )
 
 
 class ExportCrossDomainMediaAuth(CrossDomainMediaAuth):
