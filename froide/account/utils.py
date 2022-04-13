@@ -116,7 +116,7 @@ def all_unexpired_sessions_for_user(user):
     all_sessions = Session.objects.filter(expire_date__gte=timezone.now())
     for session in all_sessions:
         session_data = session.get_decoded()
-        if user.pk == session_data.get("_auth_user_id"):
+        if str(user.pk) == str(session_data.get("_auth_user_id")):
             user_sessions.append(session.pk)
     return Session.objects.filter(pk__in=user_sessions)
 
