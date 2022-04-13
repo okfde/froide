@@ -25,6 +25,7 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
 
+from ...helper.storage import filename_already_exists, get_numbered_filename
 from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
@@ -741,8 +742,8 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         upload = self.cleaned_data["upload"]
 
         attachments = FoiAttachment.objects.filter(belongs_to=foimessage).all()
-        if self.filename_already_exists(attachments, upload.filename):
-            upload.filename = self.get_numbered_filename(attachments, upload.filename)
+        if filename_already_exists(attachments, upload.filename):
+            upload.filename = get_numbered_filename(attachments, upload.filename)
 
         result = self.save_attachments(
             [upload], foimessage, replace=True, save_file=False
@@ -760,40 +761,6 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         )
 
         return result
-
-    def filename_already_exists(self, attachments, filename):
-        if attachments.filter(name=self.make_filename(filename)).count() > 0:
-            return True
-        return False
-
-    def get_numbered_filename(self, attachments, filename):
-        return self.get_numbered_filename_recursively(
-            attachments, self.make_filename(filename)
-        )
-
-    def get_numbered_filename_recursively(self, attachments, filename, number=1):
-        if self.filename_already_exists(attachments, filename):
-            name, extension = os.path.splitext(filename)
-
-            if number == 1:
-                return self.get_numbered_filename_recursively(
-                    attachments,
-                    "{name}_{number}{extension}".format(
-                        name=name, number=str(number), extension=extension
-                    ),
-                    number + 1,
-                    )
-
-            match_filenumber = re.compile(
-                r"(.*_)\d+({extension})".format(extension=extension)
-            )
-            new_filename = match_filenumber.sub(
-                r"\g<1>{number}\g<2>".format(number=number), filename
-            )
-            return self.get_numbered_filename_recursively(
-                attachments, new_filename, number + 1
-            )
-        return filename
 
 
 class RedactMessageForm(forms.Form):

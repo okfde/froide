@@ -1,7 +1,9 @@
 import hashlib
 import os
+import re
 
 from django.core.files.storage import FileSystemStorage
+from django.template.defaultfilters import slugify
 
 
 def sha256(file):
@@ -59,3 +61,41 @@ class HashedFilenameStorage(FileSystemStorage):
 def add_number_to_filename(filename, num):
     path, ext = os.path.splitext(filename)
     return "%s_%d%s" % (path, num, ext)
+
+
+def make_filename(name):
+    name = os.path.basename(name).rsplit(".", 1)
+    return ".".join([slugify(n) for n in name])
+
+
+def filename_already_exists(attachments, filename):
+    if attachments.filter(name=make_filename(filename)).count() > 0:
+        return True
+    return False
+
+
+def get_numbered_filename(attachments, filename):
+    return get_numbered_filename_recursively(attachments, make_filename(filename))
+
+
+def get_numbered_filename_recursively(attachments, filename, number=1):
+    if filename_already_exists(attachments, filename):
+        name, extension = os.path.splitext(filename)
+
+        if number == 1:
+            return get_numbered_filename_recursively(
+                attachments,
+                "{name}_{number}{extension}".format(
+                    name=name, number=str(number), extension=extension
+                ),
+                number + 1,
+                )
+
+        match_filenumber = re.compile(
+            r"(.*_)\d+({extension})".format(extension=extension)
+        )
+        new_filename = match_filenumber.sub(
+            r"\g<1>{number}\g<2>".format(number=number), filename
+        )
+        return get_numbered_filename_recursively(attachments, new_filename, number + 1)
+    return filename
