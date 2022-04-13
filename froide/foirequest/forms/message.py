@@ -741,7 +741,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
     def save(self, foimessage):
         upload = self.cleaned_data["upload"]
 
-        attachments = FoiAttachment.objects.filter(belongs_to=foimessage).all()
+        attachments = list(FoiAttachment.objects.filter(belongs_to=foimessage))
         if filename_already_exists(attachments, upload.filename):
             upload.filename = get_numbered_filename(attachments, upload.filename)
 

@@ -69,7 +69,11 @@ def make_filename(name):
 
 
 def filename_already_exists(attachments, filename):
-    if attachments.filter(name=make_filename(filename)).count() > 0:
+    clean_filename = make_filename(filename)
+    same_filenames = list(
+        filter(lambda attachment: attachment.name == clean_filename, attachments)
+    )
+    if len(same_filenames) > 0:
         return True
     return False
 
