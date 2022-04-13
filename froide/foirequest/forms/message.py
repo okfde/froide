@@ -1,12 +1,10 @@
 import datetime
 import logging
-import os
 import re
 
 from django import forms
 from django.conf import settings
 from django.db import transaction
-from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -25,7 +23,11 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
 
-from ...helper.storage import filename_already_exists, get_numbered_filename
+from ...helper.storage import (
+    filename_already_exists,
+    get_numbered_filename,
+    make_filename,
+)
 from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
@@ -58,16 +60,12 @@ class AttachmentSaverMixin(object):
         names = set()
         for file in files:
             validate_upload_document(file)
-            name = self.make_filename(file.name)
+            name = make_filename(file.name)
             if name in names:
                 # FIXME: dont make this a requirement
                 raise forms.ValidationError(_("Upload files must have distinct names"))
             names.add(name)
         return self.cleaned_data["files"]
-
-    def make_filename(self, name):
-        name = os.path.basename(name).rsplit(".", 1)
-        return ".".join([slugify(n) for n in name])
 
     def get_or_create_attachment(self, message, filename):
         try:
@@ -83,7 +81,7 @@ class AttachmentSaverMixin(object):
         updated = []
 
         for file in files:
-            filename = self.make_filename(file.name)
+            filename = make_filename(file.name)
             if replace:
                 att, created = self.get_or_create_attachment(message, filename)
             else:
