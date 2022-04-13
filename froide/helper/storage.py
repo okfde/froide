@@ -63,12 +63,12 @@ def add_number_to_filename(filename, num):
     return "%s_%d%s" % (path, num, ext)
 
 
-def make_filename(name):
+def make_filename(name: str) -> str:
     name = os.path.basename(name).rsplit(".", 1)
     return ".".join([slugify(n) for n in name])
 
 
-def filename_already_exists(attachments, filename):
+def filename_already_exists(attachments: list, filename: str) -> bool:
     clean_filename = make_filename(filename)
     same_filenames = list(
         filter(lambda attachment: attachment.name == clean_filename, attachments)
@@ -78,11 +78,13 @@ def filename_already_exists(attachments, filename):
     return False
 
 
-def get_numbered_filename(attachments, filename):
+def get_numbered_filename(attachments: list, filename: str) -> str:
     return get_numbered_filename_recursively(attachments, make_filename(filename))
 
 
-def get_numbered_filename_recursively(attachments, filename, number=1):
+def get_numbered_filename_recursively(
+        attachments: list, filename: str, number: int = 1
+) -> str:
     if filename_already_exists(attachments, filename):
         name, extension = os.path.splitext(filename)
 
