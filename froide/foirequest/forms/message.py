@@ -740,6 +740,9 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
     def save(self, foimessage):
         upload = self.cleaned_data["upload"]
 
+        if self.filename_already_exists(foimessage, upload.filename):
+            upload.filename = self.get_numbered_filename(foimessage, upload.filename)
+
         result = self.save_attachments(
             [upload], foimessage, replace=True, save_file=False
         )
@@ -756,6 +759,45 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         )
 
         return result
+
+    def filename_already_exists(self, message, filename):
+        if (
+                FoiAttachment.objects.filter(
+                    belongs_to=message, name=self.make_filename(filename)
+                ).count()
+                > 0
+        ):
+            return True
+        return False
+
+    def get_numbered_filename(self, message, filename):
+        return self.get_numbered_filename_recursively(
+            message, self.make_filename(filename)
+        )
+
+    def get_numbered_filename_recursively(self, message, filename, number=1):
+        if self.filename_already_exists(message, filename):
+            name, extension = os.path.splitext(filename)
+
+            if number == 1:
+                return self.get_numbered_filename_recursively(
+                    message,
+                    "{name}_{number}{extension}".format(
+                        name=name, number=str(number), extension=extension
+                    ),
+                    number + 1,
+                    )
+
+            match_filenumber = re.compile(
+                r"(.*_)\d+({extension})".format(extension=extension)
+            )
+            new_filename = match_filenumber.sub(
+                r"\g<1>{number}\g<2>".format(number=number), filename
+            )
+            return self.get_numbered_filename_recursively(
+                message, new_filename, number + 1
+            )
+        return filename
 
 
 class RedactMessageForm(forms.Form):
