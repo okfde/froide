@@ -1,10 +1,21 @@
+from typing import List, Optional
+
 from django.db.models import signals
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.email_sending import mail_registry
+from froide.helper.signals import email_left_queue
 
-from .models import FoiAttachment, FoiEvent, FoiMessage, FoiProject, FoiRequest
+from .models import (
+    DeliveryStatus,
+    FoiAttachment,
+    FoiEvent,
+    FoiMessage,
+    FoiProject,
+    FoiRequest,
+)
 from .utils import send_request_user_email, short_request_url
 
 became_overdue_email = mail_registry.register(
@@ -452,3 +463,25 @@ def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
     if user.private and foirequest.user == user:
         comment.user_name = str(_("requester"))
     return True
+
+
+@receiver(email_left_queue)
+def save_delivery_status(
+    message_id: Optional[str], status: str, log: List[str], **kwargs
+):
+    if message_id is None or not message_id.startswith("<foimsg."):
+        return
+
+    try:
+        message = FoiMessage.objects.filter(email_message_id=message_id).get()
+    except FoiMessage.DoesNotExist:
+        return
+
+    DeliveryStatus.objects.update_or_create(
+        message=message,
+        defaults={
+            "log": "".join(log),
+            "status": status,
+            "last_update": timezone.now(),
+        },
+    )

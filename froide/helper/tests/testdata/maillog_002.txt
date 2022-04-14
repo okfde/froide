@@ -1,0 +1,5 @@
+Jan 1 01:02:03 mail postfix/smtpd[1234567]: connect from localhost.localdomain[127.0.0.1]
+Jan 1 01:02:04 mail postfix/cleanup[2345678]: 065AB16D682C: message-id=<foimsg.1324123.12312312312312.1231@mail.example.com>
+Jan 1 01:02:05 mail postfix/anvil[2345678]: statistics: max connection rate 1/60s for (smtp:123.456.789.123) at Apr  9 23:53:41
+Jan 1 01:02:05 mail postfix/anvil[2345678]: statistics: max connection count 1 for (smtp:123.456.789.123) at Apr  9 23:53:41
+Jan 1 01:02:05 mail postfix/anvil[2345678]: statistics: max cache size 4 at Jan 1 00:01:03

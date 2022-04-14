@@ -20,3 +20,7 @@ htmlcov:
 
 messagesde:
 	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file
+
+requirements: requirements.in requirements-test.in
+	pip-compile requirements.in
+	pip-compile requirements-test.in

@@ -8,6 +8,7 @@ from elasticsearch.exceptions import ConnectionTimeout
 
 from froide.celery import app as celery_app
 from froide.foirequest.models.request import FoiRequest
+from froide.helper.email_log_parsing import check_delivery_from_log
 
 logger = logging.getLogger(__name__)
 
@@ -52,3 +53,8 @@ def search_instance_delete(model_name: str, pk: Optional[int]) -> None:
     instance.pk = pk
     instance.id = pk
     registry.delete(instance, raise_on_error=False)
+
+
+@celery_app.task(expires=60 * 60)
+def check_mail_log():
+    check_delivery_from_log()
