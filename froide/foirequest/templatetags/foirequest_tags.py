@@ -5,11 +5,12 @@ from collections import defaultdict
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, Q
-from django.template.defaultfilters import truncatechars_html, urlizetrunc
+from django.template.defaultfilters import truncatechars_html
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
+import bleach
 from django_comments import get_model
 
 from froide.helper.text_diff import mark_differences
@@ -192,11 +193,30 @@ MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 def urlizetrunc_no_mail(content, chars, **kwargs):
     """
-    Remove mailto links, makes it to easy to accidentally reply
-    with your own email client.
+    Transform urls in the text to proper links, shortening the displayed text
+    to not be longer than `chars`.
+
+    This will not create mailto links, as they make it to easy to accidentally
+    reply with your own email client.
     """
-    result = urlizetrunc(content, chars, **kwargs)
-    return mark_safe(MAILTO_RE.sub("\\1", result))
+
+    def truncate_link_texts(attrs, new=False):
+        if not new:
+            return attrs
+
+        text = attrs["_text"]
+        if len(text) > chars:
+            text = text[: chars - 3] + "..."
+        attrs["_text"] = text
+        return attrs
+
+    result = bleach.linkify(
+        content,
+        parse_email=False,
+        callbacks=[bleach.callbacks.nofollow, truncate_link_texts],
+    )
+
+    return mark_safe(result)
 
 
 def mark_redacted(original="", redacted="", authenticated_read=False):
