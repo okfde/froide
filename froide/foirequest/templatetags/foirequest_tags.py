@@ -30,7 +30,7 @@ from ..auth import (
     can_write_foirequest,
 )
 from ..foi_mail import get_alternative_mail
-from ..forms import EditMessageForm
+from ..forms import AssignProjectForm, EditMessageForm
 from ..models import DeliveryStatus, FoiMessage, FoiRequest
 from ..moderation import get_moderation_triggers
 
@@ -423,3 +423,9 @@ def readable_status(status, resolution=""):
 def render_moderation_actions(context, foirequest):
     triggers = get_moderation_triggers(foirequest, request=context["request"])
     return {"triggers": triggers.values(), "object": foirequest}
+
+
+@register.simple_tag(takes_context=True)
+def get_project_form(context, obj):
+    request = context["request"]
+    return AssignProjectForm(instance=obj, user=request.user)
