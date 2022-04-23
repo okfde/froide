@@ -50,6 +50,7 @@ from .project import (
 )
 from .request import FoiRequestView, auth, shortlink
 from .request_actions import (
+    SetProjectView,
     SetTeamView,
     apply_moderation,
     confirm_request,
@@ -128,4 +129,5 @@ __all__ = [
     "shortlink",
     "auth",
     "FoiRequestView",
+    "SetProjectView",
 ]

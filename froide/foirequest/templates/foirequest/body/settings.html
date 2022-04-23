@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load team_tags %}
+{% load foirequest_tags %}
 
 <div
 role="tabpanel"
@@ -14,6 +15,14 @@ aria-labelledby="settings-tab"
     {% url 'foirequest-set_team' slug=object.slug as submit_url %}
     {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
 
+  </div>
+
+  <div class="container">
+    {% get_project_form object as project_form %}
+    {% trans "Assign request to project" as legend %}
+    {% trans "Set project" as submit_button %}
+    {% url 'foirequest-set_project' slug=object.slug as submit_url %}
+    {% include "foirequest/_assign_project_form.html" with object=object form=project_form submit_url=submit_url legend=legend submit_button=submit_button %}
   </div>
 
   {# If Meta Law #}
