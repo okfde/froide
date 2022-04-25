@@ -7,7 +7,6 @@ import { toggleSlide, addText } from '../lib/misc'
 import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4'
 import Driver from 'driver.js'
 import 'driver.js/dist/driver.min.css'
-
 interface IHTMLTabElement extends HTMLElement {
   Tab: Tab | undefined
 }
@@ -24,7 +23,6 @@ const initRequestPage = (): void => {
   const messages: Message[] = parseMessageContainers()
   if (messages.length === 0) return
 
-  initInlineEditForms()
   initExpandableDescriptions()
 
   initMessageMarks()
@@ -200,58 +198,6 @@ const parseMessageContainers = (): Message[] => {
     )
   })
   return messages
-}
-
-const initInlineEditForms = (): void => {
-  document.querySelectorAll<HTMLElement>('[data-inlineedit]').forEach((el) => {
-    if (!el.dataset.inlineedit) {
-      return
-    }
-    const targetForm = document.querySelector(
-      el.dataset.inlineedit
-    ) as HTMLElement
-    if (!targetForm) {
-      return
-    }
-
-    let presentation: HTMLElement | null = null
-    if (el.dataset.inlineeditpresentation) {
-      presentation = document.querySelector(
-        el.dataset.inlineeditpresentation
-      ) as HTMLElement
-    } else {
-      presentation = el.parentElement
-    }
-
-    const toggle = (e: MouseEvent): void => {
-      e.preventDefault()
-      presentation?.classList.toggle('d-none')
-      targetForm.classList.toggle('d-none')
-      if (targetForm.classList.contains('d-none')) {
-        presentation?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      } else {
-        targetForm.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        if (targetForm.dataset.autofocus) {
-          const autoFocus = targetForm.querySelector(
-            targetForm.dataset.autofocus
-          ) as HTMLInputElement
-          if (autoFocus) {
-            autoFocus.focus()
-          }
-        }
-      }
-    }
-
-    el.addEventListener('click', toggle)
-
-    const cancelButton = targetForm.querySelector(
-      '[data-inlineeditcancel]'
-    ) as HTMLElement
-    if (!cancelButton) {
-      return
-    }
-    cancelButton.addEventListener('click', toggle)
-  })
 }
 
 const initMessageMarks = (): void => {

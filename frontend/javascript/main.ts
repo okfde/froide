@@ -7,5 +7,6 @@ import 'bootstrap.native/dist/polyfill.js'
 
 import './snippets/copy-input.ts'
 import './snippets/form-ajax.ts'
+import './snippets/inline-edit-forms.ts'
 import './snippets/misc.ts'
 import './snippets/search.ts'
