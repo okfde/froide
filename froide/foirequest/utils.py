@@ -453,6 +453,8 @@ def possible_reply_addresses(foirequest):
             continue
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
             continue
+        if "@" not in email_info.email:
+            continue
         label = email_info.get_label()
         if email_info.email not in label:
             if not label:
