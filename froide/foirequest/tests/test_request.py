@@ -1906,6 +1906,20 @@ class RequestTest(TestCase):
         self.assertIn("valid-email@ddress", form_reply_emails_adresses)
         self.assertNotIn("invalid-email to address", form_reply_emails_adresses)
 
+    def test_attachment_wrapping(self):
+        req = FoiRequest.objects.all()[0]
+        msg = factories.FoiMessageFactory.create(status=None, request=req)
+        for _ in range(3):
+            factories.FoiAttachmentFactory.create(belongs_to=msg, approved=True)
+        response = self.client.get(req.get_absolute_url())
+        self.assertNotContains(response, "more attachments")
+        factories.FoiAttachmentFactory.create(belongs_to=msg, approved=True)
+        response = self.client.get(req.get_absolute_url())
+        self.assertNotContains(response, "more attachments")
+        factories.FoiAttachmentFactory.create(belongs_to=msg, approved=True)
+        response = self.client.get(req.get_absolute_url())
+        self.assertContains(response, "Show 2 more attachments")
+
 
 class MediatorTest(TestCase):
     def setUp(self):
