@@ -82,8 +82,8 @@ export default {
   computed: {
     serializedValue() {
       const redacted = []
-      for (let i = 0; i < this.words.length; i += 1) {
-        if (this.words[i].redacted) {
+      for (const [i, word] of this.words.entries()) {
+        if (word.redacted) {
           redacted.push('' + i)
         }
       }
