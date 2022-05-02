@@ -181,7 +181,7 @@ def set_property(document, request, name):
     if value is None:
         return render_400(request)
     setattr(document, name, value)
-    document.save()
+    document.save(update_fields=[name])
 
     messages.add_message(request, messages.SUCCESS, _("The document has been saved."))
     return redirect(document)

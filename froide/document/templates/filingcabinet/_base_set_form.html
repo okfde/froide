@@ -1,7 +1,7 @@
 {% load i18n %}
 
 <div class="mb-3 d-none" id="{{ form_id }}" data-autofocus="{%block autofocus%}{%endblock%}">
-  <form method="post" class="{% block fromclasses %}disable-submit{% endblock %}" action="{%block saveurl %}{%endblock%}">
+  <form method="post" class="{% block fromclasses %}disable-submit{% endblock %}" action="{% block saveurl %}{% endblock %}">
     {% csrf_token %}
     {% block inputs %}{% endblock %}
     <button type="submit" class="btn btn-primary mr-2">
