@@ -21,8 +21,8 @@
 
 
     {% if object|can_write_document:request %}
-      {% include './_set_title_form.html' with form_id='document-title-form' %}
-      {% include './_set_description_form.html' with form_id='document-description-form' %}
+      {% include 'filingcabinet/_set_title_form.html' with form_id='document-title-form' %}
+      {% include 'filingcabinet/_set_description_form.html' with form_id='document-description-form' %}
     {% endif %}
 
     {% if not object.public %}
