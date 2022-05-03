@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
 from froide.helper.db_utils import save_obj_with_slug
-from froide.helper.storage import add_number_to_filename
+from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import redact_subject
 from froide.problem.models import ProblemReport
 
@@ -504,8 +504,7 @@ class ReceiveEmailService(BaseService):
             att.name = att.name[:250]
 
             # Assure name is unique
-            if att.name in names:
-                att.name = add_number_to_filename(att.name, i)
+            att.name = make_unique_filename(att.name, names)
             names.add(att.name)
 
             if foirequest.not_publishable:

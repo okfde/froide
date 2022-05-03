@@ -1,6 +1,5 @@
 import hashlib
 import os
-import re
 
 from django.core.files.storage import FileSystemStorage
 from django.template.defaultfilters import slugify
@@ -65,43 +64,14 @@ def add_number_to_filename(filename, num):
 
 def make_filename(name: str) -> str:
     name = os.path.basename(name).rsplit(".", 1)
-    return ".".join([slugify(n) for n in name])
+    return ".".join(slugify(n) for n in name)
 
 
-def filename_already_exists(attachments: list, filename: str) -> bool:
-    clean_filename = make_filename(filename)
-    same_filenames = list(
-        filter(lambda attachment: attachment.name == clean_filename, attachments)
-    )
-    if len(same_filenames) > 0:
-        return True
-    return False
-
-
-def get_numbered_filename(attachments: list, filename: str) -> str:
-    return get_numbered_filename_recursively(attachments, make_filename(filename))
-
-
-def get_numbered_filename_recursively(
-        attachments: list, filename: str, number: int = 1
-) -> str:
-    if filename_already_exists(attachments, filename):
-        name, extension = os.path.splitext(filename)
-
-        if number == 1:
-            return get_numbered_filename_recursively(
-                attachments,
-                "{name}_{number}{extension}".format(
-                    name=name, number=str(number), extension=extension
-                ),
-                number + 1,
-                )
-
-        match_filenumber = re.compile(
-            r"(.*_)\d+({extension})".format(extension=extension)
-        )
-        new_filename = match_filenumber.sub(
-            r"\g<1>{number}\g<2>".format(number=number), filename
-        )
-        return get_numbered_filename_recursively(attachments, new_filename, number + 1)
-    return filename
+def make_unique_filename(name, existing_names):
+    slugified_name = make_filename(name)
+    name = slugified_name
+    index = 0
+    while name in existing_names:
+        index += 1
+        name = add_number_to_filename(slugified_name, index)
+    return name

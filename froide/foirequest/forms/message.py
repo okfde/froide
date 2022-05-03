@@ -12,6 +12,7 @@ from django.utils.translation import ngettext_lazy
 
 from froide.account.forms import AddressBaseForm
 from froide.account.services import AccountService
+from froide.helper.storage import make_filename, make_unique_filename
 from froide.helper.text_diff import get_diff_chunks
 from froide.helper.text_utils import redact_subject
 from froide.helper.widgets import (
@@ -23,11 +24,6 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
 
-from ...helper.storage import (
-    filename_already_exists,
-    get_numbered_filename,
-    make_filename,
-)
 from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
@@ -36,7 +32,6 @@ from ..utils import (
     construct_message_body,
     get_info_for_email,
     get_publicbody_for_email,
-    make_unique_filename,
     possible_reply_addresses,
     redact_plaintext_with_request,
     select_foirequest_template,
@@ -62,7 +57,6 @@ class AttachmentSaverMixin(object):
             validate_upload_document(file)
             name = make_filename(file.name)
             if name in names:
-                # FIXME: dont make this a requirement
                 raise forms.ValidationError(_("Upload files must have distinct names"))
             names.add(name)
         return self.cleaned_data["files"]
@@ -76,22 +70,17 @@ class AttachmentSaverMixin(object):
         att = FoiAttachment(belongs_to=message, name=filename)
         return att, True
 
-    def save_attachments(self, files, message, replace=False, save_file=True):
+    def save_attachments(self, files, message, save_file=True):
         added = []
-        updated = []
+
+        attachment_names = {
+            att.name for att in FoiAttachment.objects.filter(belongs_to=message)
+        }
 
         for file in files:
-            filename = make_filename(file.name)
-            if replace:
-                att, created = self.get_or_create_attachment(message, filename)
-            else:
-                created = True
-                att = FoiAttachment(belongs_to=message, name=filename)
-
-            if created:
-                added.append(att)
-            else:
-                updated.append(att)
+            filename = make_unique_filename(file.name, attachment_names)
+            attachment_names.add(filename)
+            att = FoiAttachment(belongs_to=message, name=filename)
             att.size = file.size
             att.filetype = file.content_type
             if save_file:
@@ -101,13 +90,14 @@ class AttachmentSaverMixin(object):
             att.can_approve = not message.request.not_publishable
             att.approved = False
             att.save()
+            added.append(att)
 
             if save_file and att.can_convert_to_pdf():
                 transaction.on_commit(lambda: convert_attachment_task.delay(att.id))
 
         message._attachments = None
 
-        return added, updated
+        return added
 
 
 def get_send_message_form(*args, **kwargs):
@@ -715,7 +705,7 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
 
     def save(self, message):
         files = self.files.getlist("%s-files" % self.prefix)
-        result = self.save_attachments(files, message, replace=True)
+        result = self.save_attachments(files, message)
         return result
 
 
@@ -739,13 +729,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
     def save(self, foimessage):
         upload = self.cleaned_data["upload"]
 
-        attachments = list(FoiAttachment.objects.filter(belongs_to=foimessage))
-        if filename_already_exists(attachments, upload.filename):
-            upload.filename = get_numbered_filename(attachments, upload.filename)
-
-        result = self.save_attachments(
-            [upload], foimessage, replace=True, save_file=False
-        )
+        result = self.save_attachments([upload], foimessage, save_file=False)
         upload.ensure_saving()
         upload.save()
 

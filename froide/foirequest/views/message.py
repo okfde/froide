@@ -12,7 +12,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from froide.foirequest.utils import redact_plaintext_with_request
-from froide.helper.storage import add_number_to_filename
+from froide.helper.storage import make_unique_filename
 from froide.helper.utils import is_ajax, render_400
 from froide.upload.forms import get_uppy_i18n
 
@@ -197,16 +197,12 @@ def upload_postal_message(request, foirequest):
     )
 
 
-def get_attachment_update_response(request, added, updated):
+def get_attachment_update_response(request, added_attachments):
     return JsonResponse(
         {
             "added": [
                 FoiAttachmentSerializer(a, context={"request": request}).data
-                for a in added
-            ],
-            "updated": [
-                FoiAttachmentSerializer(u, context={"request": request}).data
-                for u in updated
+                for a in added_attachments
             ],
         }
     )
@@ -224,36 +220,20 @@ def add_postal_reply_attachment(request, foirequest, message_id):
 
     form = get_postal_attachment_form(request.POST, request.FILES, foimessage=message)
     if form.is_valid():
-        result = form.save(message)
-        added, updated = result
+        added = form.save(message)
 
         FoiEvent.objects.create_event(
             FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
             foirequest,
             message=message,
             user=request.user,
-            **{"added": str(added), "updated": str(updated)}
+            **{"added": str(added)}
         )
 
         if is_ajax(request):
-            return get_attachment_update_response(request, added, updated)
+            return get_attachment_update_response(request, added)
 
-        added_count = len(added)
-        updated_count = len(updated)
-
-        if updated_count > 0 and not added_count:
-            status_message = (
-                _("You updated %d document(s) on this message") % updated_count
-            )
-        elif updated_count > 0 and added_count > 0:
-            status_message = _(
-                "You added %(added)d and updated %(updated)d "
-                "document(s) on this message"
-            ) % {"updated": updated_count, "added": added_count}
-        elif added_count > 0:
-            status_message = (
-                _("You added %d document(s) to this message.") % added_count
-            )
+        status_message = _("You added %d document(s) to this message.") % len(added)
         messages.add_message(request, messages.SUCCESS, status_message)
         return redirect(message)
 
@@ -271,7 +251,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
 def convert_to_pdf(request, foirequest, message, data):
     att_ids = [a["id"] for a in data["images"]]
     title = data.get("title") or _("letter")
-    names = set(a.name for a in message.attachments)
+    existing_names = {a.name for a in message.attachments}
 
     atts = message.foiattachment_set.filter(
         id__in=att_ids, filetype__startswith="image/"
@@ -280,13 +260,7 @@ def convert_to_pdf(request, foirequest, message, data):
     att_ids = [aid for aid in att_ids if aid in safe_att_ids]
 
     name = "{}.pdf".format(slugify(title))
-
-    i = 0
-    while True:
-        if name not in names:
-            break
-        i += 1
-        name = add_number_to_filename(name, i)
+    name = make_unique_filename(name, existing_names)
 
     can_approve = not foirequest.not_publishable
     att = FoiAttachment.objects.create(
@@ -314,16 +288,15 @@ def convert_to_pdf(request, foirequest, message, data):
 def add_tus_attachment(request, foirequest, message, data):
     form = TransferUploadForm(data=data, foimessage=message, user=request.user)
     if form.is_valid():
-        result = form.save(message)
-        added, updated = result
+        added = form.save(message)
         FoiEvent.objects.create_event(
             FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
             foirequest,
             message=message,
             user=request.user,
-            **{"added": str(added), "updated": str(updated)}
+            **{"added": str(added)}
         )
-        return get_attachment_update_response(request, added, updated)
+        return get_attachment_update_response(request, added)
 
     return JsonResponse({"error": True, "message": str(form.errors)})
 
