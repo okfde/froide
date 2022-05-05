@@ -155,8 +155,8 @@ def upload_documents(request):
 
 def allow_write_document(func):
     @wraps(func)
-    def inner(request, pk, slug, *args, **kwargs):
-        document = get_object_or_404(Document, pk=pk, slug=slug)
+    def inner(request, pk, *args, **kwargs):
+        document = get_object_or_404(Document, pk=pk)
         if document.can_write(request):
             return func(request, document, *args, **kwargs)
         return render_403(request)

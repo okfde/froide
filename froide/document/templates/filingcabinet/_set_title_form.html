@@ -5,5 +5,5 @@
 {% endblock %}
 
 {% block fromclasses %}{{block.super}} d-flex{% endblock%}
-{% block saveurl %}{% url 'document-set_title' slug=object.slug pk=object.pk %}{% endblock%}
+{% block saveurl %}{% url 'document-set_title' pk=object.pk %}{% endblock%}
 {% block autofocus %}[name='title']{%endblock%}

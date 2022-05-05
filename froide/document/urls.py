@@ -29,12 +29,12 @@ urlpatterns = [
         pgettext_lazy("url part", "upload/"), upload_documents, name="document-upload"
     ),
     path(
-        pgettext_lazy("url part", "<int:pk>-<str:slug>/set_title"),
+        pgettext_lazy("url part", "<int:pk>/set_title"),
         set_title,
         name="document-set_title",
     ),
     path(
-        pgettext_lazy("url part", "<int:pk>-<str:slug>/set_description"),
+        pgettext_lazy("url part", "<int:pk>/set_description"),
         set_description,
         name="document-set_description",
     ),

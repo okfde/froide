@@ -155,24 +155,18 @@ class DocumentAccessTest(TestCase):
         )
 
         self.client.logout()
-        url = reverse(
-            "document-set_title", kwargs={"slug": document.slug, "pk": document.pk}
-        )
+        url = reverse("document-set_title", kwargs={"pk": document.pk})
         response = self.client.post(url, data={"title": "MARKER"})
         self.assertForbidden(response)
 
         self.client.force_login(self.user)
-        url = reverse(
-            "document-set_title", kwargs={"slug": document.slug, "pk": document.pk}
-        )
+        url = reverse("document-set_title", kwargs={"pk": document.pk})
         response = self.client.post(url, data={"title": "MARKER"})
         self.assertEqual(response.status_code, 302)
         document.refresh_from_db()
         self.assertEqual(document.title, "MARKER")
 
-        url = reverse(
-            "document-set_title", kwargs={"slug": document.slug, "pk": document.pk}
-        )
+        url = reverse("document-set_title", kwargs={"pk": document.pk})
         response = self.client.post(
             url, data={"description": "MARKER"}
         )  # Wrong form field
@@ -186,7 +180,7 @@ class DocumentAccessTest(TestCase):
         self.client.logout()
         url = reverse(
             "document-set_description",
-            kwargs={"slug": document.slug, "pk": document.pk},
+            kwargs={"pk": document.pk},
         )
         response = self.client.post(url, data={"description": "MARKER"})
         self.assertForbidden(response)
@@ -194,7 +188,7 @@ class DocumentAccessTest(TestCase):
         self.client.force_login(self.user)
         url = reverse(
             "document-set_description",
-            kwargs={"slug": document.slug, "pk": document.pk},
+            kwargs={"pk": document.pk},
         )
         response = self.client.post(url, data={"description": "MARKER"})
         self.assertEqual(response.status_code, 302)

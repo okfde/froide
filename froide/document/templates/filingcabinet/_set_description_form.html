@@ -4,5 +4,5 @@
 <textarea rows="8" class="form-control mb-3" name="description">{{ object.description }}</textarea>
 {% endblock %}
 
-{% block saveurl %}{% url 'document-set_description' slug=object.slug pk=object.pk %}{% endblock%}
+{% block saveurl %}{% url 'document-set_description' pk=object.pk %}{% endblock%}
 {% block autofocus %}[name='description']{%endblock%}
