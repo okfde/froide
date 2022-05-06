@@ -39,9 +39,9 @@
                 {% if member.is_invited %}
                   {% if user_member.is_owner %}
                     <i>{{ member.email }}</i>
-                     -
+                    <br /> -
                   {% endif %}
-                  {% trans "invited" %}
+                    {% trans "invited" %}
                 {% else %}
                   {{ member.user.get_full_name }}
                 {% endif %}
@@ -52,9 +52,12 @@
               </td>
               <td>
                 {% if member.change_role_form %}
-                  <form method="post" action="{% url 'team-change_member' pk=member.pk %}" class="form-inline">
+                  <form method="post" action="{% url 'team-change_member' pk=member.pk %}"
+                    class="form-inline align-items-start">
                     {% csrf_token %}
-                    {% render_form member.change_role_form %}
+                    <div class="mr-3 mb-sm-3">
+                      {% render_form member.change_role_form %}
+                    </div>
                     <button type="submit" class="btn btn-primary btn-sm">
                       {% trans "Change" %}
                     </button>

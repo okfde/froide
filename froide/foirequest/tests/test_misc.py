@@ -14,7 +14,10 @@ from froide.foirequest.tasks import (
     detect_asleep,
     detect_overdue,
 )
-from froide.foirequest.templatetags.foirequest_tags import check_same_request
+from froide.foirequest.templatetags.foirequest_tags import (
+    check_same_request,
+    render_message_content,
+)
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import MailAttachmentSizeChecker
 
@@ -128,3 +131,64 @@ class MailAttachmentSizeCheckerTest(TestCase):
         self.assertEqual(atts, files[:2])
         self.assertEqual(checker.send_files, ["test1.txt", "test2.txt"])
         self.assertEqual(checker.non_send_files, ["test3.txt"])
+
+
+class RenderMessageContentTest(TestCase):
+    def setUp(self):
+        self.site = factories.make_world()
+        self.req = factories.FoiRequestFactory.create(site=self.site)
+
+    def test_escapes_script_tag(self):
+        plaintext = "<script>XSS</script>"
+        expected = "&lt;script&gt;XSS&lt;/script&gt;"
+
+        msg = factories.FoiMessageFactory.create(
+            request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
+        )
+        self.assertEqual(render_message_content(msg), expected)
+
+    def test_escapes_a_tag(self):
+        plaintext = '<a href="https://example.com">test</a>'
+        expected = '&lt;a href="<a href="https://example.com" rel="nofollow">https://example.com</a>"&gt;test&lt;/a&gt;'
+
+        msg = factories.FoiMessageFactory.create(
+            request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
+        )
+        self.assertEqual(render_message_content(msg), expected)
+
+    def test_no_mail(self):
+        """
+        This test is a regression test for https://github.com/okfde/froide/issues/508
+        It was reported that sometimes quotes were double-escaped. This happened
+        when the quote was in a string that looked like an email adress.
+        """
+        plaintext = """
+        '@ with spaces'
+        "@ with spaces"
+        '@NoSpaces'
+        "@NoSpaces"
+        '@No.spacesAndDot'
+        "@No.spacesAndDot"
+        """
+        expected = """
+        '@ with spaces'
+        "@ with spaces"
+        '@NoSpaces'
+        "@NoSpaces"
+        '@No.spacesAndDot'
+        "@No.spacesAndDot"
+        """
+
+        msg = factories.FoiMessageFactory.create(
+            request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
+        )
+        self.assertEqual(render_message_content(msg), expected)
+
+    def test_redaction(self):
+        expected = '<span class="redacted">[redacted]</span>'
+
+        msg = factories.FoiMessageFactory.create(
+            request=self.req, plaintext="aaaaa", plaintext_redacted="[redacted]"
+        )
+        print(render_message_content(msg))
+        self.assertEqual(render_message_content(msg), expected)

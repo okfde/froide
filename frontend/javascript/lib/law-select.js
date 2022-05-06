@@ -1,4 +1,4 @@
-let sortMetaLawsFirst = (a, b) => {
+const sortMetaLawsFirst = (a, b) => {
   if (a.meta && !b.meta) return -1
   if (b.meta && !a.meta) return 1
 
@@ -6,7 +6,7 @@ let sortMetaLawsFirst = (a, b) => {
   return a.priority < b.priority
 }
 
-let selectBestLaw = (allLaws, lawType) => {
+const selectBestLaw = (allLaws, lawType) => {
   if (allLaws.length === 0) {
     return null
   }
@@ -21,6 +21,4 @@ let selectBestLaw = (allLaws, lawType) => {
   return laws[0]
 }
 
-export {
-  selectBestLaw
-}
+export { selectBestLaw }

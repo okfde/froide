@@ -2,13 +2,13 @@ import Vue from 'vue'
 
 import store from './store'
 
-import {renderComponent} from './lib/vue-helper'
+import { renderComponent } from './lib/vue-helper'
 
 import RequestPage from './components/makerequest/request-page'
 
 Vue.config.productionTip = false
 
-function createRequestPage (selector) {
+function createRequestPage(selector) {
   /* eslint-disable no-new */
   new Vue({
     store: store,

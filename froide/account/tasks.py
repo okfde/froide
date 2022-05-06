@@ -42,6 +42,15 @@ def delete_deactivated_users_task():
 
 
 @celery_app.task
+def delete_undeleted_left_users_task():
+    from .utils import delete_undeleted_left_users
+
+    translation.activate(settings.LANGUAGE_CODE)
+
+    delete_undeleted_left_users()
+
+
+@celery_app.task
 def account_maintenance_task():
     from .export import delete_all_expired_exports
     from .utils import (

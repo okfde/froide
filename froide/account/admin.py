@@ -16,6 +16,7 @@ from django.utils.translation import gettext_lazy as _
 from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
+from froide.account.export import ExportCrossDomainMediaAuth
 from froide.foirequest.models import FoiRequest
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
@@ -27,9 +28,10 @@ from .models import AccountBlocklist, TaggedUser, User, UserPreference, UserTag
 from .services import AccountService
 from .tasks import merge_accounts_task, send_bulk_mail, start_export_task
 from .utils import (
-    cancel_user,
     delete_all_unexpired_sessions_for_user,
+    future_cancel_user,
     make_account_private,
+    start_cancel_account_process,
 )
 
 
@@ -118,6 +120,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "delete_sessions",
         "make_private",
         "cancel_users",
+        "future_cancel_users",
         "deactivate_users",
         "export_user_data",
         "merge_accounts",
@@ -278,11 +281,19 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     def cancel_users(self, request, queryset):
         for user in queryset:
-            cancel_user(user)
+            start_cancel_account_process(user)
         self.message_user(request, _("Users canceled."))
         return None
 
     cancel_users.short_description = _("Cancel account of users")
+
+    def future_cancel_users(self, request, queryset):
+        for user in queryset:
+            future_cancel_user(user)
+        self.message_user(request, _("Users future canceled."))
+        return None
+
+    future_cancel_users.short_description = _("Future cancel account of users")
 
     def deactivate_users(self, request, queryset):
         for user in queryset:
@@ -333,8 +344,14 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         export_user = queryset[0]
         access_token = get_export_access_token(export_user)
         if access_token:
+            mauth = ExportCrossDomainMediaAuth({"object": access_token})
+            url = mauth.get_full_media_url(authorized=True)
+
             self.message_user(
-                request, _("Download export of user '{}' is ready.").format(export_user)
+                request,
+                _("Download export of user '{user}' is ready: {url}").format(
+                    user=export_user, url=url
+                ),
             )
             return
 

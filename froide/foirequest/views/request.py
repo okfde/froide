@@ -112,7 +112,7 @@ def get_foirequest_context(request, obj):
         message.hidden_attachments = [
             a for a in message.listed_attachments if a.is_irrelevant
         ]
-        message.can_edit_attachments = bool(
+        message.can_edit_attachments = message.can_edit or bool(
             [a for a in message.listed_attachments if a.can_edit]
         )
         message.approved_attachments = [
