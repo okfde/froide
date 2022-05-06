@@ -5,6 +5,7 @@ from django.urls import reverse
 import factory
 
 from froide.foirequest.tests import factories
+from froide.team.models import TeamMembership
 from froide.team.tests import TeamFactory, TeamMembershipFactory
 
 from .models import Document, DocumentCollection
@@ -35,8 +36,7 @@ class DocumentAccessTest(TestCase):
 
         self.owner_team = TeamFactory.create()
         TeamMembershipFactory.create(
-            user=self.user,
-            team=self.owner_team,
+            user=self.user, team=self.owner_team, role=TeamMembership.ROLE.OWNER
         )
 
     def test_unlisted_document_needs_slug(self):
@@ -80,7 +80,6 @@ class DocumentAccessTest(TestCase):
         doc = DocumentFactory.create(user=self.user, public=True, listed=False)
         url = reverse("api:document-detail", kwargs={"pk": doc.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
 
         url = reverse("api:document-detail", kwargs={"pk": doc.pk})
         response = self.client.get(url + "?uid=" + str(doc.uid))
@@ -144,3 +143,54 @@ class DocumentAccessTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def assertForbidden(self, response):
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse("account-login"), response["Location"])
+        self.assertIn("?next=", response["Location"])
+
+    def test_set_title(self):
+        document = DocumentFactory.create(
+            team=self.owner_team, public=True, listed=False
+        )
+
+        self.client.logout()
+        url = reverse("document-set_title", kwargs={"pk": document.pk})
+        response = self.client.post(url, data={"title": "MARKER"})
+        self.assertForbidden(response)
+
+        self.client.force_login(self.user)
+        url = reverse("document-set_title", kwargs={"pk": document.pk})
+        response = self.client.post(url, data={"title": "MARKER"})
+        self.assertEqual(response.status_code, 302)
+        document.refresh_from_db()
+        self.assertEqual(document.title, "MARKER")
+
+        url = reverse("document-set_title", kwargs={"pk": document.pk})
+        response = self.client.post(
+            url, data={"description": "MARKER"}
+        )  # Wrong form field
+        self.assertEqual(response.status_code, 400)
+
+    def test_set_description(self):
+        document = DocumentFactory.create(
+            team=self.owner_team, public=True, listed=False
+        )
+
+        self.client.logout()
+        url = reverse(
+            "document-set_description",
+            kwargs={"pk": document.pk},
+        )
+        response = self.client.post(url, data={"description": "MARKER"})
+        self.assertForbidden(response)
+
+        self.client.force_login(self.user)
+        url = reverse(
+            "document-set_description",
+            kwargs={"pk": document.pk},
+        )
+        response = self.client.post(url, data={"description": "MARKER"})
+        self.assertEqual(response.status_code, 302)
+        document.refresh_from_db()
+        self.assertEqual(document.description, "MARKER")

@@ -4,6 +4,7 @@ from django.utils.translation import pgettext_lazy
 from ..feeds import FoiRequestFeed, FoiRequestFeedAtom
 from ..views import (
     FoiRequestView,
+    SetProjectView,
     SetTeamView,
     add_postal_message,
     add_postal_reply,
@@ -113,6 +114,11 @@ urlpatterns = [
     path("<slug:slug>/download/", download_foirequest_zip, name="foirequest-download"),
     path("<slug:slug>/pdf/", download_foirequest_pdf, name="foirequest-pdf"),
     path("<slug:slug>/set-team/", SetTeamView.as_view(), name="foirequest-set_team"),
+    path(
+        "<slug:slug>/set-project/",
+        SetProjectView.as_view(),
+        name="foirequest-set_project",
+    ),
     # Messages
     path(
         "<slug:slug>/add/postal-reply/<int:message_id>/",

@@ -16,7 +16,6 @@ $escalation: #fff2f0;
 }
 
 .message-timeline {
-
   .message-timeline-container {
     height: 1.5rem;
     user-select: none;
@@ -26,7 +25,8 @@ $escalation: #fff2f0;
     height: 1.5rem;
   }
 
-  .message-timline-wrapper, .message-timline-markwrapper {
+  .message-timline-wrapper,
+  .message-timline-markwrapper {
     position: relative;
     list-style-type: none;
     margin: 0;
@@ -44,16 +44,15 @@ $escalation: #fff2f0;
   }
 
   .message-timeline-item {
-
     height: 1.5rem;
-    transform: scale(1.0);
+    transform: scale(1);
     transition: transform 0.1s ease-in;
 
     &.is-message {
       width: 0.5rem;
       background-color: $gray-200;
     }
-    
+
     &.is-escalation {
       width: 0.5rem;
       background-color: $gray-500;
@@ -80,7 +79,9 @@ $escalation: #fff2f0;
       background-color: $red;
     }
 
-    &:hover, &.active, &:active {
+    &:hover,
+    &.active,
+    &:active {
       z-index: 100;
       outline: 1px solid black;
       transform-origin: center center;
@@ -101,7 +102,6 @@ $escalation: #fff2f0;
       padding-left: 0;
       border-right: 1px solid #999;
       padding-right: 0.25rem;
-        
     }
   }
 }
@@ -123,11 +123,10 @@ $escalation: #fff2f0;
     display: none;
   }
   .message-timeline-mark:first-child,
-  .message-timeline-mark:last-child, {
+  .message-timeline-mark:last-child {
     display: block;
   }
 }
-
 
 .message-container:not(:last-child) {
   border-bottom: 1px solid #ddd;
@@ -137,7 +136,6 @@ $escalation: #fff2f0;
 .message-container {
   padding-top: 3rem;
 }
-
 
 .message {
   @include make-col-ready();
@@ -175,7 +173,8 @@ $escalation: #fff2f0;
   top: 50px;
 }
 
-.message-header, .message-body {
+.message-header,
+.message-body {
   padding: 10px 0 10px;
 }
 
@@ -208,7 +207,6 @@ $escalation: #fff2f0;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-
 
 .events-container {
   @include make-col-ready();

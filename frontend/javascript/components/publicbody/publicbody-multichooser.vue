@@ -5,21 +5,35 @@
         {{ blockMessage }}
       </h4>
       <div class="progress">
-        <div class="progress-bar" :style="blockProgressWidth" role="progressbar" :aria-valuenow="blockProgress" aria-valuemin="0" aria-valuemax="100"></div>
+        <div
+          class="progress-bar"
+          :style="blockProgressWidth"
+          role="progressbar"
+          :aria-valuenow="blockProgress"
+          aria-valuemin="0"
+          aria-valuemax="100"></div>
       </div>
     </div>
     <template v-else>
       <div class="row">
         <div class="form-search col-md-8 mt-3">
-          <label for="publicbody-multi-search-input">{{ i18n.searchPublicBodyLabel }}</label>
+          <label for="publicbody-multi-search-input">{{
+            i18n.searchPublicBodyLabel
+          }}</label>
           <div class="input-group">
-            <input id="publicbody-multi-search-input" type="search" class="search-public_bodies form-control form-control-lg"
+            <input
+              id="publicbody-multi-search-input"
+              type="search"
+              class="search-public_bodies form-control form-control-lg"
               v-model="search"
               :placeholder="i18n.publicBodySearchPlaceholder"
               @keyup="triggerAutocomplete"
-              @keydown.enter.prevent="triggerAutocomplete"/>
+              @keydown.enter.prevent="triggerAutocomplete" />
             <div class="input-group-append">
-              <button type="button" class="btn btn-primary search-public_bodies-submit" @click="triggerAutocomplete">
+              <button
+                type="button"
+                class="btn btn-primary search-public_bodies-submit"
+                @click="triggerAutocomplete">
                 <i class="fa fa-search"></i>
                 {{ i18n.search }}
               </button>
@@ -30,7 +44,7 @@
       <div class="row mb-4 mt-5">
         <div class="col-auto">
           <h3 v-show="!searching">
-            {{ i18n._('publicBodiesFound', {count: searchResultsLength} ) }}
+            {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
           </h3>
           <div v-show="searching" class="col-auto">
             <div class="spinner-border text-secondary" role="status">
@@ -39,45 +53,63 @@
           </div>
         </div>
         <div class="col-auto">
-          <button @click.prevent="selectAll" class="btn btn-sm btn-light" :disabled="selectAllButtonDisabled">
-            {{ i18n._('selectAll', { count: searchResultsLength} ) }}
+          <button
+            @click.prevent="selectAll"
+            class="btn btn-sm btn-light"
+            :disabled="selectAllButtonDisabled">
+            {{ i18n._('selectAll', { count: searchResultsLength }) }}
           </button>
         </div>
         <div class="col-auto ml-auto">
-          <button :disabled="!hasSearchResults" @click.prevent="clearSearch" class="btn-sm btn btn-light">
+          <button
+            :disabled="!hasSearchResults"
+            @click.prevent="clearSearch"
+            class="btn-sm btn btn-light">
             {{ i18n.clearSearchResults }}
           </button>
         </div>
       </div>
       <div class="row">
         <div class="col-md-8 col-lg-9 order-2">
-          <pb-table :name="name" :scope="scope" :i18n="i18n" :headers="currentHeaders"
-                    :options="selectOptions" :rows="searchResults" @selectAllRows="selectAllRows"></pb-table>
-          <div v-show="searching" class="spinner-border text-secondary" role="status">
+          <pb-table
+            :name="name"
+            :scope="scope"
+            :i18n="i18n"
+            :headers="currentHeaders"
+            :options="selectOptions"
+            :rows="searchResults"
+            @selectAllRows="selectAllRows"></pb-table>
+          <div
+            v-show="searching"
+            class="spinner-border text-secondary"
+            role="status">
             <span class="sr-only">{{ i18n.loading }}</span>
           </div>
           <slot name="publicbody-missing" v-if="!searching"></slot>
           <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
         </div>
-        <div class="col-md-4  col-lg-3 order-md-1">
+        <div class="col-md-4 col-lg-3 order-md-1">
           <pb-filter-selected
-            v-for="filterKey in filterOrder" :key="filterKey"
+            v-for="filterKey in filterOrder"
+            :key="filterKey"
             :config="filterConfig[filterKey]"
             @update="updateFilter"
             :value="filters[filterKey]">
           </pb-filter-selected>
           <div class="row mt-3">
-            <div v-for="filterKey in filterOrder" :key="filterKey" class="col-sm-4 col-md-12 filter-column">
+            <div
+              v-for="filterKey in filterOrder"
+              :key="filterKey"
+              class="col-sm-4 col-md-12 filter-column">
               <pb-filter
-              :global-config="config"
-              :expanded="filterExpanded[filterKey]"
-              :config="filterConfig[filterKey]"
-              :i18n="i18n"
-              :scope="scope"
-              :value="filters[filterKey]"
-              @update="updateFilter"
-              @setFilterExpand="setFilterExpand"
-            ></pb-filter>
+                :global-config="config"
+                :expanded="filterExpanded[filterKey]"
+                :config="filterConfig[filterKey]"
+                :i18n="i18n"
+                :scope="scope"
+                :value="filters[filterKey]"
+                @update="updateFilter"
+                @setFilterExpand="setFilterExpand"></pb-filter>
             </div>
           </div>
         </div>
@@ -89,13 +121,15 @@
 <script>
 import Vue from 'vue'
 
-import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import {
-  SET_STEP_REQUEST, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID,
+  SET_STEP_REQUEST,
+  ADD_PUBLICBODY_ID,
+  REMOVE_PUBLICBODY_ID,
   CLEAR_PUBLICBODIES
 } from '../../store/mutation_types'
 
-import {FroideAPI} from '../../lib/api'
+import { FroideAPI } from '../../lib/api'
 import I18nMixin from '../../lib/i18n-mixin'
 
 import PBChooserMixin from './lib/pb-chooser-mixin'
@@ -103,7 +137,6 @@ import PBListMixin from './lib/pb-list-mixin'
 
 import PbTable from './pb-table'
 import PbPagination from './pb-pagination'
-import PbSummary from './pb-summary'
 import PbFilter from './pb-filter'
 import PbFilterSelected from './pb-filter-selected'
 
@@ -111,7 +144,7 @@ import 'string.prototype.repeat'
 
 const MAX_PUBLICBODIES = 800
 
-function treeLabel (item) {
+function treeLabel(item) {
   return '-'.repeat(item.depth - 1) + ' ' + item.name
 }
 
@@ -122,17 +155,16 @@ export default {
   components: {
     PbTable,
     PbPagination,
-    PbSummary,
     PbFilter,
     PbFilterSelected
   },
   allowEmptySearch: true,
-  mounted () {
+  mounted() {
     if (!this.hasSearchResults) {
       this.triggerAutocomplete()
     }
   },
-  data () {
+  data() {
     return {
       search: '',
       blockUI: false,
@@ -147,18 +179,24 @@ export default {
       filterExpanded: {
         classification: true
       },
-      filterOrder: ['classification', 'jurisdiction', 'categories', 'regions_kind', 'regions']
+      filterOrder: [
+        'classification',
+        'jurisdiction',
+        'categories',
+        'regions_kind',
+        'regions'
+      ]
     }
   },
   computed: {
-    getListView () {
+    getListView() {
       if (!this.listView) {
         return 'resultList'
       }
       return this.listView
     },
-    filterConfig () {
-      let searcher = new FroideAPI(this.config)
+    filterConfig() {
+      const searcher = new FroideAPI(this.config)
       return {
         classification: {
           label: this.i18n.classificationPlural[1],
@@ -206,73 +244,69 @@ export default {
           expanded: this.filterExpanded.georegion,
           getItems: (q, filters) => searcher.listGeoregions(q, filters),
           hasSearch: true,
-          choices: [
-            'kind', this.config.fixtures.georegion_kind
-          ],
+          choices: ['kind', this.config.fixtures.georegion_kind],
           itemMap: (item) => {
             return {
               label: item.name,
-              id: item.id,
+              id: item.id
             }
           }
         },
         regions_kind: {
           label: this.i18n.administrativeUnitKind,
           key: 'regions_kind',
-          getItems: () => Promise.resolve({
-            meta: {next: null},
-            objects: this.config.fixtures.georegion_kind
-          }),
+          getItems: () =>
+            Promise.resolve({
+              meta: { next: null },
+              objects: this.config.fixtures.georegion_kind
+            }),
           itemMap: (item) => {
-            return {label: item[1], id: item[0]}
+            return { label: item[1], id: item[0] }
           }
         }
       }
     },
-    currentHeaders () {
+    currentHeaders() {
       return this.headers.filter((x) => !this.hasFilter(x.key))
     },
-    publicBodies () {
+    publicBodies() {
       return this.getPublicBodiesByScope(this.scope)
     },
-    hasNextSearchResults () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    hasNextSearchResults() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.next
     },
-    selectAllButtonDisabled () {
+    selectAllButtonDisabled() {
       return !(this.hasSearchResults && this.canSelectAll)
     },
-    canSelectAll () {
+    canSelectAll() {
       let searchCount = 0
-      let meta = this.getScopedSearchMeta(this.scope)
+      const meta = this.getScopedSearchMeta(this.scope)
       if (meta) {
         searchCount = meta.total_count
       }
       return this.publicBodies.length + searchCount <= MAX_PUBLICBODIES
     },
-    maxResultPage () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    maxResultPage() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
       return Math.ceil(meta.total_count / meta.limit)
     },
-    blockProgressWidth () {
+    blockProgressWidth() {
       return `width: ${this.blockProgress}%`
     },
-    ...mapGetters([
-      'getPublicBodiesByScope',
-      'getScopedSearchMeta'
-    ])
+    ...mapGetters(['getPublicBodiesByScope', 'getScopedSearchMeta'])
   },
   methods: {
-    togglePane (e) {
+    togglePane(e) {
       this.tabPane = e.target.dataset.pane
     },
-    getEmptyFilters () {
+    getEmptyFilters() {
       return {
         classification: null,
         jurisdiction: null,
@@ -281,8 +315,8 @@ export default {
         regions_kind: null
       }
     },
-    hasFilter (key) {
-      let v = this.filters[key]
+    hasFilter(key) {
+      const v = this.filters[key]
       if (v === undefined) {
         return false
       }
@@ -294,7 +328,7 @@ export default {
       }
       return true
     },
-    selectAll () {
+    selectAll() {
       this.blockUI = true
       this.blockMessage = this.i18n.selectingAll
       if (this.currentResultPage !== 1) {
@@ -304,8 +338,8 @@ export default {
         this.selectAllNext(1)
       }
     },
-    selectAllNext (num) {
-      this.blockProgress = num / this.maxResultPage * 100
+    selectAllNext(num) {
+      this.blockProgress = (num / this.maxResultPage) * 100
       if (this.hasNextSearchResults) {
         this.getNextSearchResults(this.scope).then(() => {
           this.selectAllRows(true)
@@ -320,16 +354,16 @@ export default {
         this.blockUI = false
       }
     },
-    clearSearch () {
+    clearSearch() {
       this.clearResults()
       this.filters = this.getEmptyFilters()
     },
-    setFilterExpand (filter, expand) {
-      let expanded = {
+    setFilterExpand(filter, expand) {
+      const expanded = {
         [filter.key]: expand
       }
       if (expand) {
-        for (let key in this.filterExpanded) {
+        for (const key in this.filterExpanded) {
           if (key !== filter.key) {
             expanded[key] = false
           }
@@ -337,7 +371,7 @@ export default {
       }
       this.filterExpanded = expanded
     },
-    updateFilter (filter, value) {
+    updateFilter(filter, value) {
       Vue.set(this.filters, filter.key, value)
       this.triggerAutocomplete()
     },
@@ -347,9 +381,7 @@ export default {
       removePublicBodyId: REMOVE_PUBLICBODY_ID,
       clearPublicBodies: CLEAR_PUBLICBODIES
     }),
-    ...mapActions([
-      'getNextSearchResults'
-    ])
+    ...mapActions(['getNextSearchResults'])
   },
   watch: {
     defaultsearch: function () {
@@ -360,24 +392,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../../styles/variables";
+@import '../../../styles/variables';
 
-  button[disabled] {
-    cursor: not-allowed;
+button[disabled] {
+  cursor: not-allowed;
+}
+@mixin filter-divider() {
+  .filter-column:not(:first-child) {
+    padding-top: 1em;
   }
-  @mixin filter-divider() {
-    .filter-column:not(:first-child) {
-      padding-top: 1em;
-    }
-    .filter-column:not(:last-child) {
-      border-bottom: 2px solid $gray-300;
-      padding-bottom: 1em;
-    }
+  .filter-column:not(:last-child) {
+    border-bottom: 2px solid $gray-300;
+    padding-bottom: 1em;
   }
-  @include media-breakpoint-up(md) {
-    @include filter-divider();
-  }
-  @include media-breakpoint-down(xs) {
-    @include filter-divider();
-  }
+}
+@include media-breakpoint-up(md) {
+  @include filter-divider();
+}
+@include media-breakpoint-down(xs) {
+  @include filter-divider();
+}
 </style>

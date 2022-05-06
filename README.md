@@ -2,7 +2,6 @@
 
 [![Froide CI](https://github.com/okfde/froide/workflows/Froide%20CI/badge.svg)](https://github.com/okfde/froide/actions?query=workflow%3A%22Froide+CI%22) [![Coverage Status](https://coveralls.io/repos/github/okfde/froide/badge.svg?branch=main)](https://coveralls.io/r/okfde/froide?branch=main)
 
-
 Froide is a Freedom Of Information Portal using Django 3.2 on Python 3.8+.
 
 It is used by the German and the Austrian FOI site, but it is fully
@@ -35,15 +34,6 @@ docker-compose up
 
 This will start Postgres and Elasticsearch and listen on port 5432 and 9200 respectively. You can adjust the port mapping in the `docker-compose.yml`.
 
-
-### Upgrade dependencies
-
-```
-# with pip-tools
-pip-compile -U requirements.in
-pip-compile -U requirements-test.in
-```
-
 ### Setup database and search index, start server
 
 If you need to adjust settings, you can copy the `froide/local_settings.py.example` to `froide/local_settings.py` and edit it. More steps:
@@ -60,7 +50,7 @@ python manage.py search_index --populate
 python manage.py runserver
 ```
 
-## Run tests
+### Run tests
 
 Make sure the services are running.
 
@@ -73,12 +63,35 @@ make testci
 make testui
 ```
 
+### Development tooling
+
+For Python code, we use flake8 following black code style. JavaScript, Vue and SCSS files are formatted and linted with ESLint and Prettier.
+
+Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode, the [Python](https://code.visualstudio.com/docs/python/linting), [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur) extensions are helpful, with these workspace settings recommended:
+
+```json
+{
+  "eslint.format.enable": true,
+  "eslint.packageManager": "yarn",
+  "vetur.format.defaultFormatter.css": "prettier",
+  "vetur.format.defaultFormatter.html": "prettier",
+  "vetur.format.defaultFormatter.js": "prettier-eslint"
+}
+```
+
+### Upgrade dependencies
+
+```
+# with pip-tools
+pip-compile -U requirements.in
+pip-compile -U requirements-test.in
+```
+
 ## Docs
 
 [Read the documentation](http://froide.readthedocs.org/en/latest/) including a [Getting Started Guide](http://froide.readthedocs.org/en/latest/gettingstarted/).
 
 Froide is supported by the [Open Knowledge Foundation Germany](http://www.okfn.de/) and [Open Knowledge Foundation International](http://okfn.org/).
-
 
 ## License
 

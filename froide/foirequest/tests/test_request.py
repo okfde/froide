@@ -1869,6 +1869,57 @@ class RequestTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertTrue("address" in form.errors)
 
+    def test_invalid_emails_not_shown_in_reply(self):
+        self.client.login(email="dummy@example.org", password="froide")
+        req = FoiRequest.objects.all()[0]
+        add_message_from_email(
+            req,
+            ParsedEmail(
+                self.msgobj,
+                **{
+                    "from_": ("from", "from@ddress"),
+                    "to": [
+                        ("", "valid-email@ddress"),
+                        ("", "invalid-email to address"),
+                    ],
+                    "date": timezone.now(),
+                    "subject": "Reply",
+                    "body": "Content",
+                    "html": "html",
+                    "cc": [],
+                    "resent_to": [],
+                    "resent_cc": [],
+                    "attachments": [],
+                }
+            ),
+        )
+
+        req = FoiRequest.objects.all()[0]
+        reply_addresses = possible_reply_addresses(req)
+        reply_emails_adresses = [x[1] for x in reply_addresses]
+        self.assertIn("valid-email@ddress", reply_emails_adresses)
+        self.assertNotIn("invalid-email to address", reply_emails_adresses)
+
+        form = get_send_message_form(foirequest=req)
+        form_reply_addresses = form.fields["to"].choices
+        form_reply_emails_adresses = [x[1] for x in form_reply_addresses]
+        self.assertIn("valid-email@ddress", form_reply_emails_adresses)
+        self.assertNotIn("invalid-email to address", form_reply_emails_adresses)
+
+    def test_attachment_wrapping(self):
+        req = FoiRequest.objects.all()[0]
+        msg = factories.FoiMessageFactory.create(status=None, request=req)
+        for _ in range(3):
+            factories.FoiAttachmentFactory.create(belongs_to=msg, approved=True)
+        response = self.client.get(req.get_absolute_url())
+        self.assertNotContains(response, "more attachments")
+        factories.FoiAttachmentFactory.create(belongs_to=msg, approved=True)
+        response = self.client.get(req.get_absolute_url())
+        self.assertNotContains(response, "more attachments")
+        factories.FoiAttachmentFactory.create(belongs_to=msg, approved=True)
+        response = self.client.get(req.get_absolute_url())
+        self.assertContains(response, "Show 2 more attachments")
+
 
 class MediatorTest(TestCase):
     def setUp(self):

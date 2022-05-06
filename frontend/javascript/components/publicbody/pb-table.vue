@@ -7,34 +7,47 @@
         </th>
         <th v-for="header in headers" :key="header.label" :class="header.class">
           {{ header.label }}
-          <i v-if="options.sortableHeader && header.sortKey" class="sort-control fa" :class="{'fa-sort-alpha-asc': sortOrder > 0, 'fa-sort-alpha-desc': sortOrder < 0, 'sort-control--active': sortHeader === header.label}" @click="changeSort(header.label)"></i>
+          <i
+            v-if="options.sortableHeader && header.sortKey"
+            class="sort-control fa"
+            :class="{
+              'fa-sort-alpha-asc': sortOrder > 0,
+              'fa-sort-alpha-desc': sortOrder < 0,
+              'sort-control--active': sortHeader === header.label
+            }"
+            @click="changeSort(header.label)"></i>
         </th>
       </tr>
     </thead>
     <transition-group name="table" tag="tbody">
-      <pb-table-row v-for="row in sortedRows" :key="row.id"
+      <pb-table-row
+        v-for="row in sortedRows"
+        :key="row.id"
         :name="name"
         :row="row"
         :headers="headers"
         :selected="row.isSelected"
-        @update:row="updateRow"
-      ></pb-table-row>
+        @update:row="updateRow"></pb-table-row>
     </transition-group>
   </table>
 </template>
 
 <script>
-import {mapMutations, mapGetters} from 'vuex'
+import { mapMutations } from 'vuex'
 import sortBy from 'lodash.sortby'
 
-import {SET_STEP_REQUEST, ADD_PUBLICBODY_ID, REMOVE_PUBLICBODY_ID} from '../../store/mutation_types'
+import {
+  SET_STEP_REQUEST,
+  ADD_PUBLICBODY_ID,
+  REMOVE_PUBLICBODY_ID
+} from '../../store/mutation_types'
 
 import PbTableRow from './pb-table-row'
 
 export default {
   name: 'pb-table',
   props: ['name', 'headers', 'options', 'scope', 'i18n', 'rows'],
-  data () {
+  data() {
     return {
       sortHeader: null,
       sortOrder: 1,
@@ -42,10 +55,12 @@ export default {
     }
   },
   computed: {
-    sortedRows () {
+    sortedRows() {
       let sortedRows = this.rows.slice()
-      if (this.sortHeader === null) { return sortedRows }
-      let header = this.headers.find((x) => x.label === this.sortHeader)
+      if (this.sortHeader === null) {
+        return sortedRows
+      }
+      const header = this.headers.find((x) => x.label === this.sortHeader)
       sortedRows = sortBy(sortedRows, header.sortKey)
       if (this.sortOrder === -1) {
         sortedRows = sortedRows.reverse()
@@ -53,23 +68,23 @@ export default {
       return sortedRows
     },
     selectAllRows: {
-      get () {
+      get() {
         return this.allRowsSelected
       },
-      set () {
+      set() {
         this.allRowsSelected = !this.allRowsSelected
         this.$emit('selectAllRows', this.allRowsSelected)
       }
     }
   },
   methods: {
-    changeSort (sortHeader) {
+    changeSort(sortHeader) {
       if (sortHeader === this.sortHeader) {
         this.sortOrder *= -1
       }
       this.sortHeader = sortHeader
     },
-    updateRow ({id, value}) {
+    updateRow({ id, value }) {
       if (value) {
         this.addPublicBodyId({
           publicBodyId: id,
@@ -95,36 +110,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import "../../../styles/variables";
+@import '../../../styles/variables';
 
-  .sort-control {
-    cursor: pointer;
-    opacity: 0.3;
+.sort-control {
+  cursor: pointer;
+  opacity: 0.3;
+}
+.sort-control--active {
+  opacity: 1;
+}
+
+@include media-breakpoint-up(lg) {
+  .table-responsive {
+    display: table;
   }
-  .sort-control--active {
-    opacity: 1;
-  }
+}
 
-  @include media-breakpoint-up(lg) {
-    .table-responsive {
-      display: table;
-    }
-  }
-
-  .transition {
-    .table-move {
-      transition: transform 0.5s;
-    }
-
-    .table-enter-active, .table-leave-active {
-      transition: opacity 0.8s;
-    }
-    .table-enter, .table-leave-to /* .fade-leave-active below version 2.1.8 */ {
-      opacity: 0;
-    }
-    .table-leave-active {
-      position: absolute;
-    }
+.transition {
+  .table-move {
+    transition: transform 0.5s;
   }
 
+  .table-enter-active,
+  .table-leave-active {
+    transition: opacity 0.8s;
+  }
+  .table-enter, .table-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+  .table-leave-active {
+    position: absolute;
+  }
+}
 </style>

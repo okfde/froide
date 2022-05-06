@@ -1,15 +1,15 @@
 import Vue from 'vue'
 
 import store from './store'
-import {SET_CONFIG} from './store/mutation_types'
+import { SET_CONFIG } from './store/mutation_types'
 
-import {renderComponent} from './lib/vue-helper'
+import { renderComponent } from './lib/vue-helper'
 
 import PublicbodyChooser from './components/publicbody/publicbody-chooser'
 
 Vue.config.productionTip = false
 
-function createPublicbodyChooser (element) {
+function createPublicbodyChooser(element) {
   /* eslint-disable no-new */
   store.commit(SET_CONFIG)
   new Vue({
@@ -19,7 +19,7 @@ function createPublicbodyChooser (element) {
   }).$mount(element)
 }
 
-var els = document.querySelectorAll('.publicbody-chooser')
+const els = document.querySelectorAll('.publicbody-chooser')
 for (let i = 0; i < els.length; i += 1) {
   createPublicbodyChooser(els[i])
 }

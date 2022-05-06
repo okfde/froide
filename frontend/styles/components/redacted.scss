@@ -5,12 +5,12 @@ $redacted: #e3e3e3;
   .redacted:hover,
   .redacted:active,
   .redacted a {
-      background-color: $redacted !important;
-      color: $redacted !important;
-      line-break: anywhere;
-      overflow-wrap: break-word;
-      word-break: break-all;
-      word-wrap: break-word;
+    background-color: $redacted !important;
+    color: $redacted !important;
+    line-break: anywhere;
+    overflow-wrap: break-word;
+    word-break: break-all;
+    word-wrap: break-word;
   }
 
   .redacted::selection {
@@ -31,16 +31,14 @@ $redacted: #e3e3e3;
   .redacted-dummy a {
     background-color: $redacted !important;
   }
-
 }
 
-
 .pdf-canvas-container {
-    position: relative;
+  position: relative;
 }
 
 .pdf-canvas-container canvas {
-    outline: 1px solid #ddd;
+  outline: 1px solid #ddd;
 }
 
 .pdf-redaction {
