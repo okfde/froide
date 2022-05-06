@@ -32,6 +32,7 @@ from ..utils import (
     MailAttachmentSizeChecker,
     construct_message_body,
     get_info_for_email,
+    get_publicbody_for_email,
     make_unique_filename,
     possible_reply_addresses,
     redact_plaintext_with_request,
@@ -326,6 +327,8 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         recipient_info = get_info_for_email(self.foirequest, recipient_email)
         recipient_name = recipient_info.name
         recipient_pb = recipient_info.publicbody
+        if recipient_pb is None:
+            recipient_pb = get_publicbody_for_email(recipient_email, self.foirequest)
 
         subject = re.sub(
             r"\s*\[#%s\]\s*$" % self.foirequest.pk, "", self.cleaned_data["subject"]

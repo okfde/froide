@@ -1,71 +1,71 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/mixins";
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/mixins';
 
 /* Bootstrap Theme */
 
 // gray
-$gray-100: #F6F7F9;
-$gray-200: #E8EBF0;
-$gray-300: #C9D2DC;
-$gray-400: #ABBAC9;
-$gray-500: #7B91A9;
-$gray-600: #5C748D;
-$gray-700: #4A5D71;
-$gray-800: #3B4A5A;
-$gray-900: #1C232B;
+$gray-100: #f6f7f9;
+$gray-200: #e8ebf0;
+$gray-300: #c9d2dc;
+$gray-400: #abbac9;
+$gray-500: #7b91a9;
+$gray-600: #5c748d;
+$gray-700: #4a5d71;
+$gray-800: #3b4a5a;
+$gray-900: #1c232b;
 
 // new blue
-$blue-10: #DFEFF9;
-$blue-20: #B6DDF5;
-$blue-30: #8DBAD4;
-$blue-100: #F0F4FF;
-$blue-200: #DEE8FF;
-$blue-300: #B8CEFF;
-$blue-400: #719DFF;
-$blue-500: #296DFF;
-$blue-600: #0047E1;
-$blue-700: #0034A5;
-$blue-800: #001C5A;
+$blue-10: #dfeff9;
+$blue-20: #b6ddf5;
+$blue-30: #8dbad4;
+$blue-100: #f0f4ff;
+$blue-200: #dee8ff;
+$blue-300: #b8ceff;
+$blue-400: #719dff;
+$blue-500: #296dff;
+$blue-600: #0047e1;
+$blue-700: #0034a5;
+$blue-800: #001c5a;
 
 // new yellow
-$yellow-100: #FDE9AE;
-$yellow-200: #FACE44;
-$yellow-300: #E8B106;
+$yellow-100: #fde9ae;
+$yellow-200: #face44;
+$yellow-300: #e8b106;
 
 $theme-colors: (
-  "gray-100": $gray-100,
-  "gray-200": $gray-200,
-  "gray-300": $gray-300,
-  "gray-400": $gray-400,
-  "gray-500": $gray-500,
-  "gray-600": $gray-600,
-  "gray-700": $gray-700,
-  "gray-800": $gray-800,
-  "gray-900": $gray-900,
+  'gray-100': $gray-100,
+  'gray-200': $gray-200,
+  'gray-300': $gray-300,
+  'gray-400': $gray-400,
+  'gray-500': $gray-500,
+  'gray-600': $gray-600,
+  'gray-700': $gray-700,
+  'gray-800': $gray-800,
+  'gray-900': $gray-900,
 
-  "blue-10": $blue-10,
-  "blue-20": $blue-20,
-  "blue-30": $blue-30,
-  "blue-100": $blue-100,
-  "blue-200": $blue-200,
-  "blue-300": $blue-300,
-  "blue-400": $blue-400,
-  "blue-500": $blue-500,
-  "blue-600": $blue-600,
-  "blue-700": $blue-700,
-  "blue-800": $blue-800,
+  'blue-10': $blue-10,
+  'blue-20': $blue-20,
+  'blue-30': $blue-30,
+  'blue-100': $blue-100,
+  'blue-200': $blue-200,
+  'blue-300': $blue-300,
+  'blue-400': $blue-400,
+  'blue-500': $blue-500,
+  'blue-600': $blue-600,
+  'blue-700': $blue-700,
+  'blue-800': $blue-800,
 
-  "yellow-100": $yellow-100,
-  "yellow-200": $yellow-200,
-  "yellow-300": $yellow-300,
+  'yellow-100': $yellow-100,
+  'yellow-200': $yellow-200,
+  'yellow-300': $yellow-300,
 
-  "black": #000
+  'black': #000
 );
 
 $white: #fff;
 // $white: #FDFDFF;
 $black: $blue-800;
-$red: #FF5029;
+$red: #ff5029;
 $green: #3bb273;
 $cyan: #17a2b8;
 $yellow: #ffc107;
@@ -87,17 +87,26 @@ $navbar-light-color: $black;
 $component-active-color: $white;
 $component-active-bg: $primary;
 
-
-// spacing 
+// spacing
 $spacer: 1rem;
 $spacers: (
   0: 0,
-  1: ($spacer * .25),
-  2: ($spacer * .5),
+  1: (
+    $spacer * 0.25
+  ),
+  2: (
+    $spacer * 0.5
+  ),
   3: $spacer,
-  4: ($spacer * 1.5),
-  5: ($spacer * 3),
-  6: ($spacer * 4),
+  4: (
+    $spacer * 1.5
+  ),
+  5: (
+    $spacer * 3
+  ),
+  6: (
+    $spacer * 4
+  )
 );
 
 // Grid containers
@@ -121,7 +130,7 @@ $box-shadow-gray-sm: 2px 2px 0 transparentize($gray-300, 0.6);
 $box-shadow-yellow: 7px 7px 0 transparentize($yellow-300, 0.85);
 $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
-@import "~bootstrap/scss/variables";
+@import '~bootstrap/scss/variables';
 
 :root {
   --shadow-blue: #{transparentize($blue-30, 0.85)};
@@ -140,6 +149,6 @@ $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 /* Bootstrap theme end*/
 
 // Other colors
-$highlight-yellow: #FFFC78;
+$highlight-yellow: #fffc78;
 
-$breadcrumb-divider: quote("›");
+$breadcrumb-divider: quote('›');

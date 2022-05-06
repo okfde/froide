@@ -8,53 +8,57 @@
   // overflow-y: scroll;
   font-size: $font-size-sm;
   &__wrap {
-    transition: transform .2s ease;
+    transition: transform 0.2s ease;
   }
-    &__item {
-      border-left: 2px solid $gray-300;
-      padding-top: $spacer * .25;
-      padding-left: $spacer;
-      padding-bottom: $spacer * 1.5;
-      transition: all .2s ease;
+  &__item {
+    border-left: 2px solid $gray-300;
+    padding-top: $spacer * 0.25;
+    padding-left: $spacer;
+    padding-bottom: $spacer * 1.5;
+    transition: all 0.2s ease;
+    color: $gray-500;
+    a {
       color: $gray-500;
-      a { color: $gray-500; }
-      &--active {
-        color: $gray-700;
-        a { color: $gray-700; }
-        border-left-color: $gray-500;
-      }
     }
-      &__link:hover {
-        color: $gray-700;
-      }
-      &__month {
-        font-weight: 600;
-      }
-      &__item--overdue &__overdue-time {
-        display: inline-block;
-        $color1: darken($red, 7%);
-        $color2: #FFDCD4;
-        color: $color1;
-        border: 1px solid $color1;
-        padding: $spacer * .25 $spacer * .5;
-        margin-top: $spacer * .25;
-      }
-    &__scroll-end-link {
-      position: sticky;
-      bottom: 0;
-      left: 0;
-      display: block;
-      width: 100%;
-      padding-left: $spacer;
-      margin-left: 2px;
-      padding-top: $spacer * .75;
-      padding-bottom: $spacer;
+    &--active {
       color: $gray-700;
-      background-color: $gray-200;
-      font-weight: 600;
-      box-shadow: 0 -10px 10px $gray-200;
-      transition: all .2s ease;
-      opacity: 0;
-      visibility: hidden;
+      a {
+        color: $gray-700;
+      }
+      border-left-color: $gray-500;
     }
+  }
+  &__link:hover {
+    color: $gray-700;
+  }
+  &__month {
+    font-weight: 600;
+  }
+  &__item--overdue &__overdue-time {
+    display: inline-block;
+    $color1: darken($red, 7%);
+    $color2: #ffdcd4;
+    color: $color1;
+    border: 1px solid $color1;
+    padding: $spacer * 0.25 $spacer * 0.5;
+    margin-top: $spacer * 0.25;
+  }
+  &__scroll-end-link {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding-left: $spacer;
+    margin-left: 2px;
+    padding-top: $spacer * 0.75;
+    padding-bottom: $spacer;
+    color: $gray-700;
+    background-color: $gray-200;
+    font-weight: 600;
+    box-shadow: 0 -10px 10px $gray-200;
+    transition: all 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+  }
 }

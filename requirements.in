@@ -1,3 +1,4 @@
+bleach
 camelot-py[cv]
 celery>=5.2.2
 channels

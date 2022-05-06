@@ -11,15 +11,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="req in unclassifiedList"
-          :key="req.id"
-        >
+        <tr v-for="req in unclassifiedList" :key="req.id">
           <td>
-            <a
-              :href="req.url"
-              target="_blank"
-            >
+            <a :href="req.url" target="_blank">
               {{ req.title }}
             </a>
           </td>
@@ -30,8 +24,7 @@
             <a
               :href="req.url + '#set-status'"
               class="btn btn-primary"
-              target="_blank"
-            >
+              target="_blank">
               {{ i18n.setStatus }}
             </a>
           </td>
@@ -42,7 +35,6 @@
 </template>
 
 <script>
-
 const getUrl = (templ, objId) => templ.replace(/0/, objId)
 
 export default {
@@ -58,24 +50,22 @@ export default {
     }
   },
   computed: {
-    i18n () {
+    i18n() {
       return this.config.i18n
     },
-    unclassifiedList () {
-      return this.unclassified.map(req => {
+    unclassifiedList() {
+      return this.unclassified.map((req) => {
         req.url = getUrl(this.config.url.foirequest, req.id)
         return req
       })
     }
   },
-  methods: {
-
-  }
+  methods: {}
 }
 </script>
 
 <style lang="scss" scoped>
-  .action-column {
-    min-width: 120px;
-  }
+.action-column {
+  min-width: 120px;
+}
 </style>

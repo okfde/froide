@@ -209,7 +209,7 @@ class PublicBodyBaseAdminMixin:
     )
     readonly_fields = ("_created_by", "created_at", "_updated_by", "updated_at")
 
-    actions = (
+    actions = [
         "assign_classification",
         "replace_publicbody",
         "export_csv",
@@ -217,7 +217,7 @@ class PublicBodyBaseAdminMixin:
         "tag_all",
         "show_georegions",
         "validate_publicbodies",
-    )
+    ]
 
     tag_all = make_batch_tag_action(
         field="categories", autocomplete_url=CATEGORY_AUTOCOMPLETE_URL

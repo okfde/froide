@@ -8,7 +8,6 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import formats, timezone
 from django.utils.functional import cached_property
-from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
@@ -18,6 +17,7 @@ from froide.helper.email_utils import make_address
 from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
+from ..utils import get_foi_mail_domains
 from .request import FoiRequest, get_absolute_domain_short_url, get_absolute_short_url
 
 BOUNCE_TAG = "bounce"
@@ -294,16 +294,6 @@ class FoiMessage(models.Model):
         email = self.recipient_email or self.request.secret_address
         return make_address(email, recipient)
 
-    def get_recipient(self):
-        if self.recipient_public_body:
-            return format_html(
-                '<a href="{url}">{name}</a>',
-                url=self.recipient_public_body.get_absolute_url(),
-                name=self.recipient_public_body.name,
-            )
-        else:
-            return self.recipient
-
     def get_formatted(self, attachments):
         return render_to_string(
             "foirequest/emails/formatted_message.txt",
@@ -443,9 +433,16 @@ class FoiMessage(models.Model):
             return []
         recipients = []
         fields = ("to", "cc")
+        FOI_EMAIL_DOMAIN = get_foi_mail_domains()[0]
         for field in fields:
-            for recipient in self.email_headers.get(field, []):
-                recipients.append((field, recipient[0], recipient[1]))
+            for name, email in self.email_headers.get(field, []):
+                # Hide other addresses of foi mail domain
+                if email != self.request.secret_address and email.endswith(
+                    "@{}".format(FOI_EMAIL_DOMAIN)
+                ):
+                    recipients.append((field, FOI_EMAIL_DOMAIN, FOI_EMAIL_DOMAIN))
+                else:
+                    recipients.append((field, name, email))
         return recipients
 
     def get_extra_content_types(self) -> List[str]:

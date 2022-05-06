@@ -4,13 +4,16 @@ import uuid
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
+from django.views.generic import UpdateView
 
 from froide.account.forms import AddressForm, NewUserForm
+from froide.foirequest.forms.project import AssignProjectForm
+from froide.helper.auth import can_manage_object
 from froide.helper.utils import get_redirect, is_ajax, render_400, render_403
 from froide.team.views import AssignTeamView
 
@@ -324,6 +327,26 @@ def extend_deadline(request, foirequest):
 
 class SetTeamView(AssignTeamView):
     model = FoiRequest
+
+
+class SetProjectView(UpdateView):
+    model = FoiRequest
+    form_class = AssignProjectForm
+    template_name = "foirequest/foiproject_detail.html"
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        if not can_manage_object(obj, self.request):
+            raise Http404
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        return redirect(self.get_object())
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
 
 
 @require_POST

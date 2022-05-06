@@ -1,67 +1,70 @@
-import {mapGetters, mapMutations, mapActions} from 'vuex'
-import {SET_PUBLICBODY, CLEAR_SEARCHRESULTS} from '../../../store/mutation_types'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+import {
+  SET_PUBLICBODY,
+  CLEAR_SEARCHRESULTS
+} from '../../../store/mutation_types'
 
-var PBListMixin = {
+const PBListMixin = {
   computed: {
-    publicBody () {
+    publicBody() {
       return this.getPublicBodyByScope(this.scope)
     },
-    publicBodies () {
+    publicBodies() {
       return this.getPublicBodiesByScope(this.scope)
     },
-    hasPublicBodies () {
+    hasPublicBodies() {
       return this.publicBodies.length > 0
     },
-    searchResults () {
+    searchResults() {
       return this.getScopedSearchResults(this.scope)
     },
-    hasSearchResults () {
+    hasSearchResults() {
       return this.searchResults.length > 0
     },
-    hasNextSearchResults () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    hasNextSearchResults() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.next
     },
-    hasPreviousSearchResults () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    hasPreviousSearchResults() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return false
       }
       return meta.previous
     },
-    currentResultPage () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    currentResultPage() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
-      return (meta.offset / meta.limit) + 1
+      return meta.offset / meta.limit + 1
     },
-    maxResultPage () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    maxResultPage() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (!meta) {
         return 0
       }
       return Math.ceil(meta.total_count / meta.limit)
     },
-    currentResultsLength () {
-      let sr = this.searchResults
+    currentResultsLength() {
+      const sr = this.searchResults
       if (sr) {
         return sr.length
       }
       return null
     },
-    searchResultsLength () {
-      let meta = this.getScopedSearchMeta(this.scope)
+    searchResultsLength() {
+      const meta = this.getScopedSearchMeta(this.scope)
       if (meta) {
         return meta.total_count
       }
       return 0
     },
-    emptyResults () {
-      let len = this.searchResultsLength
+    emptyResults() {
+      const len = this.searchResultsLength
       if (len === null) {
         return false
       }
@@ -74,23 +77,19 @@ var PBListMixin = {
       'getScopedSearchResults',
       'getScopedSearchMeta'
     ])
-
   },
   methods: {
-    getNext (e) {
+    getNext(e) {
       this.getNextSearchResults(this.scope)
     },
-    getPrevious (e) {
+    getPrevious(e) {
       this.getPreviousSearchResults(this.scope)
     },
     ...mapMutations({
       setPublicBody: SET_PUBLICBODY,
       clearSearchResults: CLEAR_SEARCHRESULTS
     }),
-    ...mapActions([
-      'getNextSearchResults',
-      'getPreviousSearchResults'
-    ])
+    ...mapActions(['getNextSearchResults', 'getPreviousSearchResults'])
   }
 }
 

@@ -59,7 +59,9 @@ class FakePublicBodyForm(object):
         return self.publicbodies
 
     def as_json(self):
-        return json.dumps({"fields": {}, "errors": {}, "nonFieldErrors": []})
+        return json.dumps(
+            {"fields": {"publicbody": {}}, "errors": {}, "nonFieldErrors": []}
+        )
 
 
 def replace_user_vars(template_string, user_vars):

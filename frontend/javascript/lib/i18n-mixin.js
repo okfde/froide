@@ -1,12 +1,12 @@
-const VAR = new RegExp(/\$\{(\w+)\}/g)
+const VAR = /\$\{(\w+)\}/g
 
 const LANG = document.querySelector('html').lang
 
-var I18nMixin = {
+const I18nMixin = {
   computed: {
-    i18n () {
+    i18n() {
       return {
-        _replacer (params) {
+        _replacer(params) {
           return (match, p1) => {
             if (p1 === 'count' && params.count >= 1000) {
               return params.count.toLocaleString(LANG)
@@ -14,18 +14,20 @@ var I18nMixin = {
             return params[p1]
           }
         },
-        _ (key, params) {
-          let trans = this[key]
+        _(key, params) {
+          const trans = this[key]
           if (Array.isArray(trans)) {
-            if (params.count !== undefined && (params.count > 1 ||
-                                               params.count === 0)) {
+            if (
+              params.count !== undefined &&
+              (params.count > 1 || params.count === 0)
+            ) {
               return trans[1].replace(VAR, this._replacer(params))
             }
             return trans[0].replace(VAR, this._replacer(params))
           }
           return trans.replace(VAR, this._replacer(params))
         },
-        ...(this.config.i18n)
+        ...this.config.i18n
       }
     }
   }

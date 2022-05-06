@@ -8,8 +8,9 @@
         <div class="col-md-9">
           <message-redaction-field
             field-name="subject"
-            :redacted-parts="message.redacted_subject"
-          ></message-redaction-field>
+            :redacted-parts="
+              message.redacted_subject
+            "></message-redaction-field>
         </div>
       </div>
       <div v-if="message.content" class="mb-3">
@@ -19,8 +20,9 @@
         <div>
           <message-redaction-field
             field-name="content"
-            :redacted-parts="message.redacted_content"
-          ></message-redaction-field>
+            :redacted-parts="
+              message.redacted_content
+            "></message-redaction-field>
         </div>
       </div>
     </template>
@@ -29,16 +31,14 @@
         <h3>
           {{ i18n.messageLoading }}
         </h3>
-        <div class="spinner-border" role="status">
-        </div>
+        <div class="spinner-border" role="status"></div>
       </div>
     </template>
   </div>
 </template>
 
 <script>
-
-import {getData} from '../../lib/api.js'
+import { getData } from '../../lib/api.js'
 
 import MessageRedactionField from './messageredaction-field.vue'
 
@@ -48,25 +48,22 @@ export default {
   components: {
     MessageRedactionField
   },
-  data () {
+  data() {
     return {
       message: null
     }
   },
-  created () {
+  created() {
     getData(this.messageUrl).then((message) => {
       this.message = message
     })
   },
   computed: {
-    i18n () {
+    i18n() {
       return this.config.i18n
-    },
+    }
   }
 }
 </script>
 
-
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>

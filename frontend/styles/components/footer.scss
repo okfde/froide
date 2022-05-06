@@ -52,13 +52,12 @@ $footer-color-hover: $gray-100;
   }
 }
 
-
 .footer__menu {
   @extend .list-unstyled;
 
   li {
     font-size: $font-size-sm;
-    padding: $spacer*0.5 0 0;
+    padding: $spacer * 0.5 0 0;
 
     a {
       color: $footer-color;
