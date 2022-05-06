@@ -3,39 +3,46 @@ name: Froide CI
 on:
   push:
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
-      with:
-        python-version: 3.x
-    - uses: actions/cache@v1
-      with:
-        key: v0-${{ runner.os }}-pip-lint-${{ hashFiles('setup.py') }}
-        path: ~/.cache/pip
-        restore-keys: |
-          v0-${{ runner.os }}-pip-lint-
-          v0-${{ runner.os }}-pip-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip pip-tools
-        pip install .[lint]
-    - name: Run flake8
-      run: flake8 froide --statistics
-    - name: Run black
-      run: black --check froide
-    - name: Run isort
-      run: isort --check froide
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.x
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+      - uses: actions/cache@v1
+        with:
+          key: v0-${{ runner.os }}-pip-lint-${{ hashFiles('setup.py') }}
+          path: ~/.cache/pip
+          restore-keys: |
+            v0-${{ runner.os }}-pip-lint-
+            v0-${{ runner.os }}-pip-
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip pip-tools
+          pip install .[lint]
+          yarn install
+      - name: Run flake8
+        run: flake8 froide --statistics
+      - name: Run black
+        run: black --check froide
+      - name: Run isort
+        run: isort --check froide
+      - name: Run eslint
+        run: yarn lint
 
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9"]
+        python-version: ['3.8', '3.9']
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -45,9 +52,9 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev
       - name: Install dependencies
         run: |
-            python -m pip install --upgrade pip pip-tools
-            pip-sync requirements-test.txt
-            pip install -e .
+          python -m pip install --upgrade pip pip-tools
+          pip-sync requirements-test.txt
+          pip install -e .
       - name: Run flake8 and tests
         run: make testci
         env:
@@ -60,19 +67,19 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: froide
         ports:
-        - 5432:5432
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
         options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
-          - "9200:9200"
+          - '9200:9200'
   testui:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ['3.8']
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
@@ -82,10 +89,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python-dev libgdal-dev gdal-bin python3-gdal libmagic-dev libmagickwand-dev
       - name: Install dependencies
         run: |
-            python -m pip install --upgrade pip pip-tools
-            pip-sync requirements-test.txt
-            pip install -e .
-            yarn install
+          python -m pip install --upgrade pip pip-tools
+          pip-sync requirements-test.txt
+          pip install -e .
+          yarn install
       - name: Build frontend
         run: yarn run build --bail
       - name: Run in-browser tests
@@ -101,14 +108,14 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: froide
         ports:
-        - 5432:5432
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
         options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
-          - "9200:9200"
+          - '9200:9200'
       selenium:
         image: selenium/standalone-chrome
         env:

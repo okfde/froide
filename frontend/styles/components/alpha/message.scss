@@ -3,9 +3,10 @@
   $message_box_shadow: 6px 6px 0px rgba(201, 210, 220, 0.23);
   $avatar_size_desktop: 2.75rem; // 44px
   $avatar_size_mobile: 2.25rem; // 36px
-  $avatar_right_margin_mobile: $spacer * .5;
+  $avatar_right_margin_mobile: $spacer * 0.5;
   $avatar_right_margin_desktop: $spacer;
-  $message_body_margin_left_desktop: $avatar_size_desktop + $avatar_right_margin_desktop + $spacer;
+  $message_body_margin_left_desktop: $avatar_size_desktop +
+    $avatar_right_margin_desktop + $spacer;
 
   display: flex;
   flex-direction: column;
@@ -15,12 +16,13 @@
     box-shadow: $message_box_shadow;
   }
 
-  .redacted, .redacted a {
-    background-color: $gray-200!important;
-    color: $gray-200!important;
+  .redacted,
+  .redacted a {
+    background-color: $gray-200 !important;
+    color: $gray-200 !important;
   }
   .redacted-dummy {
-    background-color: $gray-200!important;
+    background-color: $gray-200 !important;
   }
 
   &__head {
@@ -37,16 +39,26 @@
     border-radius: 50%;
     color: $gray-500;
     margin-right: $avatar_right_margin_mobile;
-    &--house { font-size: 14px; }
-    &--shield { font-size: 20px; }
+    &--house {
+      font-size: 14px;
+    }
+    &--shield {
+      font-size: 20px;
+    }
     @include media-breakpoint-up(md) {
       flex: 0 0 $avatar_size_desktop;
       width: $avatar_size_desktop;
       height: $avatar_size_desktop;
       margin-right: $avatar_right_margin_desktop;
-      &--user { font-size: 18px; }
-      &--house { font-size: 16px; }
-      &--shield { font-size: 20px; }
+      &--user {
+        font-size: 18px;
+      }
+      &--house {
+        font-size: 16px;
+      }
+      &--shield {
+        font-size: 20px;
+      }
     }
   }
   &__sender {
@@ -81,8 +93,12 @@
   &__relative-time {
     margin-left: 3px;
   }
-  &__details { display: none; }
-  &__meta-toggle { cursor: pointer; }
+  &__details {
+    display: none;
+  }
+  &__meta-toggle {
+    cursor: pointer;
+  }
   &__wrap {
     margin-left: $spacer;
     margin-right: $spacer;
@@ -97,7 +113,9 @@
     font-size: $font-size-sm;
     padding: $spacer;
     margin-bottom: $spacer;
-    dd:last-child { margin-bottom: 0; }
+    dd:last-child {
+      margin-bottom: 0;
+    }
   }
   &__body {
     display: none;
@@ -105,7 +123,9 @@
   &__bodyinner {
     padding-bottom: $spacer;
   }
-  &__guidance p:last-child { margin-bottom: 0; }
+  &__guidance p:last-child {
+    margin-bottom: 0;
+  }
   &__guidance:target {
     box-shadow: 0 0 3px 3px $yellow-300;
   }
@@ -119,9 +139,7 @@
   }
   &__toolbar {
     background-color: $gray-100;
-    box-shadow:
-      $blue-box-shadow,
-      inset 0px 1px 2px $gray-200;
+    box-shadow: $blue-box-shadow, inset 0px 1px 2px $gray-200;
     &--sticky {
       @include media-breakpoint-up(sm) {
         position: sticky;
@@ -137,23 +155,23 @@
   &__footer {
     display: none;
     background-color: $gray-100;
-    box-shadow:
-      $blue-box-shadow,
-      inset 0px 1px 2px $gray-200;
+    box-shadow: $blue-box-shadow, inset 0px 1px 2px $gray-200;
   }
 
   // expanded state
   &--expanded {
     box-shadow: $blue-box-shadow; // blue border left
     @include media-breakpoint-up(md) {
-      box-shadow:
-        $message_box_shadow,
-        $blue-box-shadow; // blue border left
+      box-shadow: $message_box_shadow, $blue-box-shadow; // blue border left
     }
   }
-  &--expanded &__text-preview { display: none; }
+  &--expanded &__text-preview {
+    display: none;
+  }
   &--expanded &__details,
   &--expanded &__meta-container--visible,
   &--expanded &__body,
-  &--expanded &__footer { display: block; }
+  &--expanded &__footer {
+    display: block;
+  }
 }

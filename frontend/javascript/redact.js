@@ -1,12 +1,12 @@
 import Vue from 'vue'
 
-import {renderComponent} from './lib/vue-helper'
+import { renderComponent } from './lib/vue-helper'
 
 import Redaction from './components/redaction/redaction'
 
 Vue.config.productionTip = false
 
-function createRedaction (selector) {
+function createRedaction(selector) {
   /* eslint-disable no-new */
   new Vue({
     components: { Redaction },

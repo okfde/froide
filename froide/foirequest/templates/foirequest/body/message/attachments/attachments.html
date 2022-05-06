@@ -62,6 +62,18 @@
     {% endif %}
 
   </div>
+{% elif object|can_write_foirequest:request and message.can_edit_attachments %}
+  <hr class="mt-2 d-print-none">
+  <div class="d-flex flex-column flex-sm-row smaller d-print-none">
+    <!-- manage attachments link -->
+    <a
+    href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}"
+    class="mb-2 mb-sm-0"
+    >
+      <i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Manage attachments" %}
+    </a>
+  </div>
+  <hr class="mt-2 d-print-none">
 {% endif %}
 
 {% block after_attachments %}{% endblock %}

@@ -134,3 +134,17 @@ class FoiProject(models.Model):
         for req in self.foirequest_set.all():
             if not req.is_public():
                 req.make_public(user=user)
+
+    def recalculate_order(self):
+        requests = self.foirequest_set.order_by("project_order").all()
+        for i, req in enumerate(requests):
+            if req.project != self or req.project_order != i:
+                req.project = self
+                req.project_order = i
+                req.save()
+
+            if req.public_body:
+                self.publicbodies.add(req.public_body)
+
+        self.request_count = len(requests)
+        self.save()

@@ -2,40 +2,29 @@
   <div class="geo-matcher mb-3 mt-3">
     <dl>
       <dd>Region Kind</dd>
-      <dt><input v-model="regionKind"></dt>
+      <dt><input v-model="regionKind" /></dt>
       <dd>Ancestor GeoRegion</dd>
       <dt>
-        <input
-          v-model="ancestor"
-          @change="ancestorChanged"
-        >
+        <input v-model="ancestor" @change="ancestorChanged" />
         {{ ancestorName }}
       </dt>
       <dd>Public Body Category</dd>
       <dt>
-        <input
-          v-model="category"
-          @change="categoryChanged"
-        >
+        <input v-model="category" @change="categoryChanged" />
         {{ categoryName }}
       </dt>
       <dd>Jurisdiction</dd>
       <dt>
-        <input
-          v-model="jurisdiction"
-          @change="jurisdictionChanged"
-        >
+        <input v-model="jurisdiction" @change="jurisdictionChanged" />
         {{ jurisdictionName }}
       </dt>
       <dd>Public Body Search Hint</dd>
-      <dt><input v-model="searchHint"></dt>
+      <dt><input v-model="searchHint" /></dt>
     </dl>
-    <button @click="load">
-      Load
-    </button>
+    <button @click="load">Load</button>
     <p>
-      Regions: {{ regionCount }}<br>
-      Unlinked Regions: {{ unlinkedRegionCount }}<br>
+      Regions: {{ regionCount }}<br />
+      Unlinked Regions: {{ unlinkedRegionCount }}<br />
       Unmatched Regions: {{ unmatchedRegionCount }}
     </p>
     <table class="geo-matcher-table">
@@ -52,18 +41,16 @@
           v-for="georegion in georegions"
           :key="georegion.id"
           :georegion="georegion"
-          @connectpublicbody="connectPublicBody"
-        />
+          @connectpublicbody="connectPublicBody" />
       </tbody>
     </table>
   </div>
 </template>
 
 <script>
-
 import Vue from 'vue'
 
-import {getAllData, FroideAPI, getData, postData} from '../../lib/api.js'
+import { getAllData, FroideAPI, getData, postData } from '../../lib/api.js'
 
 import GeoMatcherRow from './geo-matcher-row.vue'
 
@@ -73,7 +60,7 @@ export default {
     GeoMatcherRow
   },
   props: ['config'],
-  data () {
+  data() {
     return {
       georegions: [],
       regionKind: '',
@@ -83,36 +70,40 @@ export default {
       jurisdictionName: '',
       category: '',
       categoryName: '',
-      searchHint: '',
+      searchHint: ''
     }
   },
   computed: {
-    regionCount () {
+    regionCount() {
       return this.georegions.length
     },
-    unlinkedRegion () {
+    unlinkedRegion() {
       return this.georegions.filter((gr) => !gr.links || !gr.links.length)
     },
-    unlinkedRegionCount () {
+    unlinkedRegionCount() {
       return this.unlinkedRegion.length
     },
-    unmatchedRegion () {
-      return this.unlinkedRegion.filter((gr) => !gr.matches || !gr.matches.length)
+    unmatchedRegion() {
+      return this.unlinkedRegion.filter(
+        (gr) => !gr.matches || !gr.matches.length
+      )
     },
-    unmatchedRegionCount () {
+    unmatchedRegionCount() {
       return this.unmatchedRegion.length
     },
-    georegionMapping () {
-      let mapping = {}
+    georegionMapping() {
+      const mapping = {}
       this.georegions.forEach((gr, i) => {
         mapping[gr.resource_uri] = i
       })
       return mapping
     }
   },
-  mounted () {
+  mounted() {
     this.$root.config = this.config
-    this.$root.csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value
+    this.$root.csrfToken = document.querySelector(
+      'input[name="csrfmiddlewaretoken"]'
+    ).value
 
     const entries = new URLSearchParams(window.location.search)
 
@@ -129,68 +120,75 @@ export default {
     this.loadJurisdictionName()
 
     this.intersectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+      entries.forEach((entry) => {
         if (entry.intersectionRatio > 0) {
           this.intersectionObserver.unobserve(entry.target)
-          let region_uri = entry.target.dataset.region
-          let gr = this.georegions[this.georegionMapping[region_uri]]
+          const regionUri = entry.target.dataset.region
+          const gr = this.georegions[this.georegionMapping[regionUri]]
           this.searchPublicBodiesForRegion(gr)
         }
-      });
-    });
+      })
+    })
   },
   methods: {
-    load () {
+    load() {
       this.deactivateIntersectionObserver()
       this.loadGeoRegions()
     },
-    activateIntersectionObserver () {
+    activateIntersectionObserver() {
       const rows = document.querySelectorAll('.geo-matcher-table tbody tr')
       Array.from(rows).forEach((row) => {
-        this.intersectionObserver.observe(row);
+        this.intersectionObserver.observe(row)
       })
     },
-    deactivateIntersectionObserver () {
+    deactivateIntersectionObserver() {
       const rows = document.querySelectorAll('.geo-matcher-table tbody tr')
       Array.from(rows).forEach((row) => {
-        this.intersectionObserver.unobserve(row);
+        this.intersectionObserver.unobserve(row)
       })
     },
-    categoryChanged () {
+    categoryChanged() {
       this.loadCategoryName()
     },
-    ancestorChanged () {
+    ancestorChanged() {
       this.loadAncestorName()
     },
-    jurisdictionChanged () {
+    jurisdictionChanged() {
       this.loadJurisdictionName()
     },
-    loadCategoryName () {
+    loadCategoryName() {
       if (!this.category) {
         return
       }
-      getData(`${this.config.url.listCategories}${this.category}/`).then((data) => {
-        this.categoryName = data.name
-      })
+      getData(`${this.config.url.listCategories}${this.category}/`).then(
+        (data) => {
+          this.categoryName = data.name
+        }
+      )
     },
-    loadAncestorName () {
+    loadAncestorName() {
       if (!this.ancestor) {
         return
       }
-      getData(`${this.config.url.listGeoregion}${this.ancestor}/`).then((data) => {
-        this.ancestorName = `${data.name} (${data.kind} - ${data.kind_detail})` 
-      })
+      getData(`${this.config.url.listGeoregion}${this.ancestor}/`).then(
+        (data) => {
+          this.ancestorName = `${data.name} (${data.kind} - ${data.kind_detail})`
+        }
+      )
     },
-    loadJurisdictionName () {
+    loadJurisdictionName() {
       if (!this.jurisdiction) {
         return
       }
-      const url = this.config.url.detailJurisdiction.replace(/0/, this.jurisdiction)
+      const url = this.config.url.detailJurisdiction.replace(
+        /0/,
+        this.jurisdiction
+      )
       getData(url).then((data) => {
-        this.jurisdictionName = data.name 
+        this.jurisdictionName = data.name
       })
     },
-    loadGeoRegions () {
+    loadGeoRegions() {
       let apiUrl = `${this.config.url.listGeoregion}?kind=${this.regionKind}`
       if (this.ancestor) {
         apiUrl += `&ancestor=${this.ancestor}`
@@ -207,45 +205,47 @@ export default {
         })
       })
     },
-    loadLinks () {
+    loadLinks() {
       const MAX_ITEMS = 40
       const regions = this.georegions.map((gr) => gr.id)
       const rounds = Math.ceil(regions.length / MAX_ITEMS)
 
       const promises = [...Array(rounds).keys()].map((index) => {
-        let ids = regions.slice(index * MAX_ITEMS, index * MAX_ITEMS + MAX_ITEMS)
+        const ids = regions.slice(
+          index * MAX_ITEMS,
+          index * MAX_ITEMS + MAX_ITEMS
+        )
         return this.loadPublicBodyWithRegions(ids)
       })
 
       return Promise.all(promises)
     },
-    loadPublicBodyWithRegions (ids) {
-      let apiUrl = `${this.config.url.listPublicBodies}?regions=${ids.join(',')}`
+    loadPublicBodyWithRegions(ids) {
+      let apiUrl = `${this.config.url.listPublicBodies}?regions=${ids.join(
+        ','
+      )}`
       if (this.category) {
         apiUrl += `&category=${this.category}`
       }
       return getAllData(apiUrl).then((data) => {
         data.forEach((pb) => {
-          pb.regions.forEach((region_uri) => {
-            let gr = this.georegions[this.georegionMapping[region_uri]]
+          pb.regions.forEach((regionUri) => {
+            const gr = this.georegions[this.georegionMapping[regionUri]]
             if (gr === undefined) {
               return
             }
-            Vue.set(gr, 'links', [
-              ...(gr.links || []),
-              pb
-            ])
+            Vue.set(gr, 'links', [...(gr.links || []), pb])
           })
         })
       })
     },
-    searchPublicBodies () {
+    searchPublicBodies() {
       this.activateIntersectionObserver()
     },
-    searchPublicBodiesForRegion (gr) {
+    searchPublicBodiesForRegion(gr) {
       if (gr.links !== null) {
         return
-      } 
+      }
       if (gr.matches !== null || gr.loading) {
         return
       }
@@ -267,14 +267,14 @@ export default {
         Vue.set(gr, 'matches', data.objects.slice(0, 5))
       })
     },
-    connectPublicBody (payload) {
-      const data = {georegion: payload.georegionId, publicbody: payload.publicbodyId}
+    connectPublicBody(payload) {
+      const data = {
+        georegion: payload.georegionId,
+        publicbody: payload.publicbodyId
+      }
       postData('', data, this.$root.csrfToken).then((data) => {
-        let gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
-        Vue.set(gr, 'links', [
-          ...(gr.links || []),
-          payload.publicbody
-        ])
+        const gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
+        Vue.set(gr, 'links', [...(gr.links || []), payload.publicbody])
         Vue.set(gr, 'matches', [])
       })
     }

@@ -10,24 +10,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr
-          v-for="att in attachmentsList"
-          :key="att.id"
-        >
+        <tr v-for="att in attachmentsList" :key="att.id">
           <td>
-            <a
-              :href="att.url"
-              target="_blank"
-            >
+            <a :href="att.url" target="_blank">
               {{ att.name }}
             </a>
           </td>
           <td>
-            <a
-              :href="att.redactUrl"
-              class="btn btn-dark"
-              target="_blank"
-            >
+            <a :href="att.redactUrl" class="btn btn-dark" target="_blank">
               {{ i18n.redact }}
             </a>
           </td>
@@ -38,7 +28,6 @@
 </template>
 
 <script>
-
 const getUrl = (templ, att) => {
   return templ
     .replace(/\/0\//, `/${att.belongs_to__request__slug}/`)
@@ -65,25 +54,23 @@ export default {
     }
   },
   computed: {
-    i18n () {
+    i18n() {
       return this.config.i18n
     },
-    attachmentsList () {
-      return this.attachments.map(att => {
+    attachmentsList() {
+      return this.attachments.map((att) => {
         att.url = getUrl(this.config.url.show_attachment, att)
         att.redactUrl = getRedactionUrl(this.config.url.redact_attachment, att)
         return att
       })
     }
   },
-  methods: {
-
-  }
+  methods: {}
 }
 </script>
 
 <style lang="scss" scoped>
-  .action-column {
-    min-width: 120px;
-  }
+.action-column {
+  min-width: 120px;
+}
 </style>

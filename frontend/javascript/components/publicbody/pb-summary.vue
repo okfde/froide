@@ -3,7 +3,7 @@
     <div class="row">
       <div v-for="item in summary" :key="item.label" class="col-sm-6 col-md-4">
         <strong>
-          {{ item.count }} {{ i18n._(item.i18nLabel, {count: item.count}) }}
+          {{ item.count }} {{ i18n._(item.i18nLabel, { count: item.count }) }}
           <span v-if="item.multi">multi</span>
         </strong>
         <ul class="summary-subitem-list">
@@ -17,18 +17,18 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'pb-summary',
   props: ['scope', 'dimensions', 'i18n'],
   computed: {
-    summary () {
-      let summary = {}
-      for (let pb of this.publicBodies) {
-        for (let dimension of this.dimensions) {
+    summary() {
+      const summary = {}
+      for (const pb of this.publicBodies) {
+        for (const dimension of this.dimensions) {
           let val = dimension.key(pb) || ''
-          let dim = dimension.id
+          const dim = dimension.id
           summary[dim] = summary[dim] || {
             count: 0,
             items: {},
@@ -44,12 +44,14 @@ export default {
           })
         }
       }
-      for (let dimension of this.dimensions) {
-        let dim = dimension.id
-        if (summary[dim] === undefined) { continue }
+      for (const dimension of this.dimensions) {
+        const dim = dimension.id
+        if (summary[dim] === undefined) {
+          continue
+        }
         summary[dim].count = Object.keys(summary[dim].items).length
         summary[dim].sorted = []
-        for (let key in summary[dim].items) {
+        for (const key in summary[dim].items) {
           summary[dim].sorted.push({
             label: key === '' ? '-' : key,
             count: summary[dim].items[key]
@@ -68,19 +70,17 @@ export default {
       }
       return summary
     },
-    publicBodies () {
+    publicBodies() {
       return this.getPublicBodiesByScope(this.scope)
     },
-    ...mapGetters([
-      'getPublicBodiesByScope'
-    ])
+    ...mapGetters(['getPublicBodiesByScope'])
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .summary-subitem-list {
-    max-height: 200px;
-    overflow-y: scroll;
-  }
+.summary-subitem-list {
+  max-height: 200px;
+  overflow-y: scroll;
+}
 </style>

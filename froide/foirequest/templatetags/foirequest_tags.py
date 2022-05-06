@@ -5,11 +5,12 @@ from collections import defaultdict
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, Q
-from django.template.defaultfilters import truncatechars_html, urlizetrunc
+from django.template.defaultfilters import truncatechars_html
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 
+import bleach
 from django_comments import get_model
 
 from froide.helper.text_diff import mark_differences
@@ -30,7 +31,7 @@ from ..auth import (
     can_write_foirequest,
 )
 from ..foi_mail import get_alternative_mail
-from ..forms import EditMessageForm
+from ..forms import AssignProjectForm, EditMessageForm
 from ..models import DeliveryStatus, FoiMessage, FoiRequest
 from ..moderation import get_moderation_triggers
 
@@ -192,11 +193,30 @@ MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 def urlizetrunc_no_mail(content, chars, **kwargs):
     """
-    Remove mailto links, makes it to easy to accidentally reply
-    with your own email client.
+    Transform urls in the text to proper links, shortening the displayed text
+    to not be longer than `chars`.
+
+    This will not create mailto links, as they make it to easy to accidentally
+    reply with your own email client.
     """
-    result = urlizetrunc(content, chars, **kwargs)
-    return mark_safe(MAILTO_RE.sub("\\1", result))
+
+    def truncate_link_texts(attrs, new=False):
+        if not new:
+            return attrs
+
+        text = attrs["_text"]
+        if len(text) > chars:
+            text = text[: chars - 3] + "..."
+        attrs["_text"] = text
+        return attrs
+
+    result = bleach.linkify(
+        content,
+        parse_email=False,
+        callbacks=[bleach.callbacks.nofollow, truncate_link_texts],
+    )
+
+    return mark_safe(result)
 
 
 def mark_redacted(original="", redacted="", authenticated_read=False):
@@ -423,3 +443,9 @@ def readable_status(status, resolution=""):
 def render_moderation_actions(context, foirequest):
     triggers = get_moderation_triggers(foirequest, request=context["request"])
     return {"triggers": triggers.values(), "object": foirequest}
+
+
+@register.simple_tag(takes_context=True)
+def get_project_form(context, obj):
+    request = context["request"]
+    return AssignProjectForm(instance=obj, user=request.user)

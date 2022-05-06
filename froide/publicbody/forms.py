@@ -26,7 +26,7 @@ class PublicBodyForm(JSONMixin, forms.Form):
     is_multi = False
 
     def as_data(self):
-        data = super(PublicBodyForm, self).as_data()
+        data = super().as_data()
         if self.is_bound and self.is_valid():
             data["cleaned_data"] = self.cleaned_data
         return data

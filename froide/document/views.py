@@ -1,4 +1,5 @@
 import json
+from functools import wraps
 
 from django.conf import settings
 from django.contrib import messages
@@ -6,6 +7,7 @@ from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 
 from crossdomainmedia import CrossDomainMediaMixin
@@ -14,6 +16,7 @@ from filingcabinet.models import Page
 from taggit.models import Tag
 
 from froide.helper.search.views import BaseSearchView
+from froide.helper.utils import render_400, render_403
 from froide.team.models import Team
 
 from .auth import DocumentCrossDomainMediaAuth
@@ -148,3 +151,37 @@ def upload_documents(request):
         }
     )
     return render(request, "document/upload.html", {"form": form, "config": config})
+
+
+def allow_write_document(func):
+    @wraps(func)
+    def inner(request, pk, *args, **kwargs):
+        document = get_object_or_404(Document, pk=pk)
+        if document.can_write(request):
+            return func(request, document, *args, **kwargs)
+        return render_403(request)
+
+    return inner
+
+
+@require_POST
+@allow_write_document
+def set_title(request, document):
+    return set_property(document, request, "title")
+
+
+@require_POST
+@allow_write_document
+def set_description(request, document):
+    return set_property(document, request, "description")
+
+
+def set_property(document, request, name):
+    value = request.POST.get(name, None)
+    if value is None:
+        return render_400(request)
+    setattr(document, name, value)
+    document.save(update_fields=[name])
+
+    messages.add_message(request, messages.SUCCESS, _("The document has been saved."))
+    return redirect(document)
