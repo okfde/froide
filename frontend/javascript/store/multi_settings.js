@@ -17,6 +17,4 @@ const summaryDimensions = [
   }
 ]
 
-export {
-  summaryDimensions
-}
+export { summaryDimensions }

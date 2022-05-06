@@ -1,9 +1,11 @@
 import re
 from collections import defaultdict, namedtuple
+from typing import Any, List
 
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.models.message import FoiMessage
 from froide.helper.admin_utils import make_choose_object_action
 from froide.helper.email_sending import mail_registry
 from froide.helper.text_utils import split_text_by_separator
@@ -28,20 +30,20 @@ GuidanceResult = namedtuple(
 WS = re.compile(r"\s+")
 
 
-def prepare_text(text):
+def prepare_text(text: str) -> str:
     text, _1 = split_text_by_separator(text)
     text = " ".join(text.splitlines())
     return text
 
 
 class GuidanceApplicator:
-    def __init__(self, message, active_only=True):
+    def __init__(self, message: FoiMessage, active_only: bool = True) -> None:
         self.message = message
         self.created_count = 0
         self.deleted_count = 0
         self.active_only = active_only
 
-    def filter_rules(self, rules=None):
+    def filter_rules(self, rules: None = None) -> None:
         foirequest = self.message.request
         if rules is None:
             rules = Rule.objects.all()
@@ -66,10 +68,10 @@ class GuidanceApplicator:
                     continue
             yield rule
 
-    def apply_rules(self):
+    def apply_rules(self) -> List[Any]:
         return list(self.apply_rules_generator())
 
-    def apply_rules_generator(self):
+    def apply_rules_generator(self) -> None:
         rules = self.filter_rules()
 
         message = self.message
@@ -124,7 +126,7 @@ class GuidanceApplicator:
             self.created_count += 1
         return guidance
 
-    def run(self):
+    def run(self) -> GuidanceResult:
         guidances = self.apply_rules()
 
         # Delete all guidances that were there before
@@ -139,7 +141,9 @@ class GuidanceApplicator:
         return GuidanceResult(guidances, self.created_count, self.deleted_count)
 
 
-def run_guidance(message, active_only=True, notify=False):
+def run_guidance(
+    message: FoiMessage, active_only: bool = True, notify: bool = False
+) -> GuidanceResult:
     if not message.is_response:
         return
 

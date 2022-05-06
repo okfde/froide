@@ -19,4 +19,4 @@ htmlcov:
 	coverage html
 
 messagesde:
-	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov
+	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file

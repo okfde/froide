@@ -1,0 +1,26 @@
+{% load i18n %}
+{% load form_helper %}
+
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <form method="post" action="{{ submit_url }}">
+      {% csrf_token %}
+      <h5 class="card-title">{{ legend }}</h5>
+      <p>
+        {% if object.project %}
+          {% blocktrans with title=object.project.title url=object.project.get_absolute_url %}
+            Currently assigned project: <a href="{{ url }}">{{ title }}</a>.
+          {% endblocktrans %}
+        {% else %}
+          {% trans "Currently no project assigned." %}
+        {% endif %}
+      </p>
+      {% render_form form %}
+      <p>
+        <button type="submit" class="btn btn-primary">
+          {{ submit_button }}
+        </button>
+      </p>
+    </form>
+  </div>
+</div>

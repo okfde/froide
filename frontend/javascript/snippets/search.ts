@@ -1,34 +1,36 @@
-function applyToForm(searchForm: HTMLFormElement) {
-  function submitForm() {
-    searchForm.submit();
+function applyToForm(searchForm: HTMLFormElement): void {
+  function submitForm(): void {
+    searchForm.submit()
   }
-  const inputs = searchForm.querySelectorAll('select');
-  let i;
+  const inputs = searchForm.querySelectorAll('select')
+  let i
   for (i = 0; i < inputs.length; i += 1) {
-    const selectInput = inputs[i];
-    selectInput.addEventListener("change", submitForm);
+    const selectInput = inputs[i]
+    selectInput.addEventListener('change', submitForm)
   }
 
   function dropdownSubmit(input: HTMLInputElement) {
-    return function(this: HTMLElement, e: Event) {
-      e.preventDefault();
-      input.value = this.dataset.value || "";
-      searchForm.submit();
-    };
+    return function (this: HTMLElement, e: Event) {
+      e.preventDefault()
+      input.value = this.dataset.value ?? ''
+      searchForm.submit()
+    }
   }
 
-  const dropdowns = searchForm.querySelectorAll(".dropdown");
+  const dropdowns = searchForm.querySelectorAll('.dropdown')
   for (i = 0; i < dropdowns.length; i += 1) {
-    const dropdown = dropdowns[i];
-    const input = dropdown.querySelector("input") as HTMLInputElement;
-    const dropdownLinks = dropdown.querySelectorAll(".dropdown-menu a");
-    Array.from(dropdownLinks).forEach((dropdownLink) => {
-      dropdownLink.addEventListener("click", dropdownSubmit(input));
-    });
+    const dropdown = dropdowns[i]
+    const input = dropdown.querySelector('input')
+    dropdown.querySelectorAll('.dropdown-menu a').forEach((dropdownLink) => {
+      dropdownLink.addEventListener(
+        'click',
+        dropdownSubmit(input as HTMLInputElement)
+      )
+    })
   }
 }
 
-let domSearchForm = document.querySelector(".search-form") as HTMLFormElement;
+const domSearchForm = document.querySelector<HTMLFormElement>('.search-form')
 if (domSearchForm !== null) {
-  applyToForm(domSearchForm);
+  applyToForm(domSearchForm)
 }

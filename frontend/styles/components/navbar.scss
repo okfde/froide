@@ -1,4 +1,4 @@
-.nav-compact > li > a{
+.nav-compact > li > a {
   padding: 2px 15px !important;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .navbar .nav > li > a:hover {
-    color: #06C;
+  color: #06c;
 }
 
 .navbar-secondary {
@@ -55,7 +55,6 @@
 }
 
 @include media-breakpoint-up(md) {
-
   .navbar-nav-secondary {
     padding-bottom: $spacer;
     width: 100%;
@@ -68,7 +67,7 @@
 
       &.special-nav-secondary-item {
         border-radius: 0px;
-        background: theme-color("danger");
+        background: theme-color('danger');
         font-weight: bold;
         .nav-link {
           color: $white !important;
@@ -88,10 +87,10 @@
   background-color: transparent !important;
 
   .account-name {
-      float: left;
-      font-size: 60%;
-      margin: 2px 0 0 5px;
-      line-height: 110%;
+    float: left;
+    font-size: 60%;
+    margin: 2px 0 0 5px;
+    line-height: 110%;
   }
 }
 
@@ -108,5 +107,4 @@
   .dropdown-item {
     padding: 0.25rem 0;
   }
-
 }

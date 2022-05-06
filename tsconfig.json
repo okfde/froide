@@ -13,12 +13,11 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitAny":  true
+    "noImplicitAny":  true,
   },
   "include": [
     "./frontend/javascript/**/*"

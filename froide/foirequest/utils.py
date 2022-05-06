@@ -5,7 +5,7 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import timedelta
 from re import Pattern
-from typing import Any, Callable, Dict, Iterator, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Type, Union
 
 from django import forms
 from django.conf import settings
@@ -84,7 +84,7 @@ def check_throttle(
     )
 
 
-def get_foi_mail_domains() -> List[str]:
+def get_foi_mail_domains() -> Union[List[str], Tuple[str]]:
     domains = settings.FOI_EMAIL_DOMAIN
     if not isinstance(domains, (list, tuple)):
         return [domains]
@@ -259,9 +259,7 @@ def make_unique_filename(name, existing_names):
     return name
 
 
-def compare_publicbody_email(
-    email: str, pb_info_list, transform: Callable = lambda x: x.lower()
-) -> Optional[PublicBody]:
+def compare_publicbody_email(email, pb_info_list, transform=str.lower):
     email = transform(email)
 
     for pb_info in pb_info_list:
@@ -270,12 +268,12 @@ def compare_publicbody_email(
 
 
 def get_publicbody_for_email(
-    email: str, foi_request: FoiRequest, include_deferred: bool = False
+    email: str, foirequest: FoiRequest, include_deferred: bool = False
 ) -> Optional[PublicBody]:
     if not email:
         return None
 
-    pb_info_list = list(get_emails_from_request(foi_request))
+    pb_info_list = list(get_emails_from_request(foirequest))
 
     # Compare email direct
     pb = compare_publicbody_email(email, pb_info_list)
@@ -299,9 +297,9 @@ def get_publicbody_for_email(
     pbs = PublicBody.objects.filter(email__endswith=email_host)
     if len(pbs) == 1:
         return pbs[0]
-    elif foi_request.public_body in pbs:
+    elif foirequest.public_body in pbs:
         # likely the request's public body
-        return foi_request.public_body
+        return foirequest.public_body
 
     if include_deferred:
         from .models import DeferredMessage
@@ -478,9 +476,15 @@ PossibleReplyAddresses = List[Tuple[str, str]]
 
 
 def possible_reply_addresses(foirequest: FoiRequest) -> PossibleReplyAddresses:
+    FOI_MAIL_DOMAIN = get_foi_mail_domains()[0]
     options = []
     for email_info in get_emails_from_request(foirequest, include_mediator=False):
+        # Don't reply to our own addesses
+        if email_info.email.endswith("@{}".format(FOI_MAIL_DOMAIN)):
+            continue
         if RECIPIENT_BLOCKLIST and RECIPIENT_BLOCKLIST.match(email_info.email):
+            continue
+        if "@" not in email_info.email:
             continue
         label = email_info.get_label()
         if email_info.email not in label:

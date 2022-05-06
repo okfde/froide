@@ -10,7 +10,8 @@
     Especially display: flex is not good for printing in firefox.
   */
 
-  html, body {
+  html,
+  body {
     display: block !important;
     font-size: 1rem;
     overflow: visible !important;
@@ -19,8 +20,9 @@
     height: 100%;
   }
 
-  a:link:after, a:visited:after {
-    content: "" !important;
+  a:link:after,
+  a:visited:after {
+    content: '' !important;
   }
 
   #top-block {
@@ -41,7 +43,10 @@
     text-decoration: none !important;
   }
 
-  .tab-content-container, .request-info, .messages, #correspondence {
+  .tab-content-container,
+  .request-info,
+  .messages,
+  #correspondence {
     max-width: 100%;
     flex: 0 0 100%;
     display: block;
@@ -58,7 +63,6 @@
     @include make-col-ready();
     @include make-col(12);
 
-
     @include media-breakpoint-up(md) {
       @include make-col(12);
     }
@@ -67,7 +71,9 @@
     }
   }
 
-  .message-meta, .request-info, .attachment-card {
+  .message-meta,
+  .request-info,
+  .attachment-card {
     a:link,
     a:visited {
       color: #000;
@@ -76,7 +82,7 @@
   }
 
   .message-content {
-    a[data-toggle="collapse"] {
+    a[data-toggle='collapse'] {
       display: none !important;
     }
     a:link,
@@ -90,7 +96,7 @@
       font-size: 0.8rem;
       letter-spacing: normal;
       color: #000;
-      content: "" attr(href) "" !important;
+      content: '' attr(href) '' !important;
     }
   }
 
@@ -99,5 +105,4 @@
     break-after: page;
     page-break-after: always;
   }
-
 }

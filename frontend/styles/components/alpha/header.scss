@@ -40,7 +40,7 @@
 .info-box {
   $x-spacing-mobile: $spacer;
   $x-spacing-desktop: $spacer * 1.5;
-  $y-spacing-mobile: $spacer * .75;
+  $y-spacing-mobile: $spacer * 0.75;
   $y-spacing-desktop: $spacer;
   @include media-breakpoint-up(md) {
     margin-top: $spacer * 1.5;
@@ -52,65 +52,73 @@
       padding: $spacer * 1.5;
     }
   }
-    &__title {
-      margin: 0;
-    }
-    // &__subtitle {}
-    &__icon {
-      background-color: $white;
-      border-radius: 50%;
-      width: 44px;
-      height: 44px;
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: 30px;
-    }
+  &__title {
+    margin: 0;
+  }
+  // &__subtitle {}
+  &__icon {
+    background-color: $white;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 30px;
+  }
   &__body {
     background-color: $gray-100;
   }
-    &__list {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
+  &__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  &__list-item {
+    margin: $y-spacing-mobile $x-spacing-mobile;
+    @include media-breakpoint-up(lg) {
+      margin: $y-spacing-desktop $x-spacing-desktop;
     }
-      &__list-item {
-        margin: $y-spacing-mobile $x-spacing-mobile;
-        @include media-breakpoint-up(lg) {
-          margin: $y-spacing-desktop $x-spacing-desktop;
-        }
-        a .fa-question-circle-o { color: $blue-800; }
-        p { margin: 0; }
-        &--inset {
-          margin-left: 0;
-          margin-right: 0;
-          padding-left: $x-spacing-mobile;
-          padding-right: $x-spacing-mobile;
-          @include media-breakpoint-up(lg) {
-            padding-left: $x-spacing-desktop;
-            padding-right: $x-spacing-desktop;
-          }
-        }
-        &--has-divider {
-          padding-bottom: $y-spacing-mobile;
-          border-bottom: 2px solid $gray-200;
-          @include media-breakpoint-up(lg) {
-            padding-bottom: $y-spacing-desktop;
-          }
-        }
-        &--is-danger {
-          color: darken($red, 7%);
-          background-color: #FFDCD4;
-          padding-top: $y-spacing-mobile;
-          padding-bottom: $y-spacing-mobile;
-          @include media-breakpoint-up(lg) {
-            padding-top: $y-spacing-desktop;
-            padding-bottom: $y-spacing-desktop;
-          }
-          a .fa-question-circle-o { color: darken($red, 7%); }
-        }
+    a .fa-question-circle-o {
+      color: $blue-800;
+    }
+    p {
+      margin: 0;
+    }
+    &--inset {
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: $x-spacing-mobile;
+      padding-right: $x-spacing-mobile;
+      @include media-breakpoint-up(lg) {
+        padding-left: $x-spacing-desktop;
+        padding-right: $x-spacing-desktop;
       }
-        &__list-label { font-weight: 600; }
-        // &__list-value {}
+    }
+    &--has-divider {
+      padding-bottom: $y-spacing-mobile;
+      border-bottom: 2px solid $gray-200;
+      @include media-breakpoint-up(lg) {
+        padding-bottom: $y-spacing-desktop;
+      }
+    }
+    &--is-danger {
+      color: darken($red, 7%);
+      background-color: #ffdcd4;
+      padding-top: $y-spacing-mobile;
+      padding-bottom: $y-spacing-mobile;
+      @include media-breakpoint-up(lg) {
+        padding-top: $y-spacing-desktop;
+        padding-bottom: $y-spacing-desktop;
+      }
+      a .fa-question-circle-o {
+        color: darken($red, 7%);
+      }
+    }
+  }
+  &__list-label {
+    font-weight: 600;
+  }
+  // &__list-value {}
 
   /*
     Info-box theme regular
@@ -119,9 +127,15 @@
     border: 2px solid $gray-300;
     box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
   }
-  &--regular &__header { background-color: $gray-300 }
-  &--regular &__title { color: $blue-800}
-  &--regular &__subtitle { color: $gray-700}
+  &--regular &__header {
+    background-color: $gray-300;
+  }
+  &--regular &__title {
+    color: $blue-800;
+  }
+  &--regular &__subtitle {
+    color: $gray-700;
+  }
 
   /*
     Info-box theme danger
@@ -130,9 +144,15 @@
     border: 2px solid $red;
     box-shadow: 6px 6px 0px rgba(255, 220, 212, 0.7);
   }
-  &--danger &__header { background-color: $red }
-  &--danger &__title { color: $white}
-  &--danger &__subtitle { color: $white}
+  &--danger &__header {
+    background-color: $red;
+  }
+  &--danger &__title {
+    color: $white;
+  }
+  &--danger &__subtitle {
+    color: $white;
+  }
 
   /*
     Info-box thesme success
@@ -141,9 +161,15 @@
     border: 2px solid $green;
     box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
   }
-  &--success &__header { background-color: $green }
-  &--success &__title { color: $white}
-  &--success &__subtitle { color: $white}
+  &--success &__header {
+    background-color: $green;
+  }
+  &--success &__title {
+    color: $white;
+  }
+  &--success &__subtitle {
+    color: $white;
+  }
 }
 
 .alpha-tabs {
@@ -154,12 +180,15 @@
   -ms-overflow-style: -ms-autohiding-scrollbar;
 
   background-image:
-    /* Shadows */
-    linear-gradient(to right, $gray-100, $gray-100),
+    /* Shadows */ linear-gradient(
+      to right,
+      $gray-100,
+      $gray-100
+    ),
     linear-gradient(to right, $gray-100, $gray-100),
     /* Shadow covers */
-    linear-gradient(to right, rgba(0,0,0,.15), rgba(255,255,255,0)),
-    linear-gradient(to left, rgba(0,0,0,.15), rgba(255,255,255,0));
+      linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0)),
+    linear-gradient(to left, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0));
 
   background-position: left center, right center, left center, right center;
   background-repeat: no-repeat;
@@ -175,7 +204,7 @@
   &__tab-link {
     display: flex;
     align-items: center;
-    padding: $spacer * .625 $spacer;
+    padding: $spacer * 0.625 $spacer;
     color: $blue-800;
     font-weight: 600;
     font-size: $font-size-base;
@@ -191,28 +220,28 @@
       border-bottom-color: $blue-600;
     }
     @include media-breakpoint-up(sm) {
-      padding: $spacer * .625 $spacer;
+      padding: $spacer * 0.625 $spacer;
       font-size: $font-size-base * 1.125;
     }
     @include media-breakpoint-up(lg) {
-      padding: $spacer * .625 $spacer * 1.5;
+      padding: $spacer * 0.625 $spacer * 1.5;
     }
   }
-    &__counter {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: $spacer * .25;
-      font-size: 10px;
-      line-height: 1;
-      color: $gray-700;
-      background-color: #D7DEE5;
-      border-radius: 50%;
-      min-width: 20px;
-      height: 20px;
-      &--highlight {
-        color: $gray-800;
-        background-color: $yellow-200;
-      }
+  &__counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: $spacer * 0.25;
+    font-size: 10px;
+    line-height: 1;
+    color: $gray-700;
+    background-color: #d7dee5;
+    border-radius: 50%;
+    min-width: 20px;
+    height: 20px;
+    &--highlight {
+      color: $gray-800;
+      background-color: $yellow-200;
     }
+  }
 }

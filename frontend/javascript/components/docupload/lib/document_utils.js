@@ -1,4 +1,4 @@
-import {postData, putData, getData} from '../../../lib/api.js'
+import { postData, putData, getData } from '../../../lib/api.js'
 
 const deleteAttachment = (doc, config, csrf) => {
   const deleteUrl = config.url.deleteAttachment.replace('/0/', `/${doc.id}/`)
@@ -14,7 +14,10 @@ const approveAttachment = (doc, config, csrf) => {
 }
 
 const createDocument = (doc, config, csrf) => {
-  const createDocumentUrl = config.url.createDocument.replace('/0/', `/${doc.id}/`)
+  const createDocumentUrl = config.url.createDocument.replace(
+    '/0/',
+    `/${doc.id}/`
+  )
   return postData(createDocumentUrl, {}, csrf).then((data) => {
     return getData(data.resource_uri)
   })
@@ -29,15 +32,23 @@ const updateDocument = (doc, config, csrf, payload) => {
 
 const DocumentMixin = {
   methods: {
-    updateDocument (payload) {
+    updateDocument(payload) {
       this.$emit('docupdated', payload)
       if (payload.deleting) {
-        return deleteAttachment(this.document, this.config, this.$root.csrfToken).then((data) => {
+        return deleteAttachment(
+          this.document,
+          this.config,
+          this.$root.csrfToken
+        ).then((data) => {
           this.$emit('docupdated', null)
         })
       }
       if (payload.approving) {
-        return approveAttachment(this.document, this.config, this.$root.csrfToken).then((data) => {
+        return approveAttachment(
+          this.document,
+          this.config,
+          this.$root.csrfToken
+        ).then((data) => {
           this.$emit('docupdated', {
             approving: false,
             new: true,
@@ -46,7 +57,11 @@ const DocumentMixin = {
         })
       }
       if (payload.creatingDocument) {
-        return createDocument(this.document, this.config, this.$root.csrfToken).then((data) => {
+        return createDocument(
+          this.document,
+          this.config,
+          this.$root.csrfToken
+        ).then((data) => {
           this.$emit('docupdated', {
             document: data,
             new: true,
@@ -55,7 +70,12 @@ const DocumentMixin = {
         })
       }
       if (payload.updatingDocument) {
-        return updateDocument(this.document, this.config, this.$root.csrfToken, payload.updatingDocument).then((data) => {
+        return updateDocument(
+          this.document,
+          this.config,
+          this.$root.csrfToken,
+          payload.updatingDocument
+        ).then((data) => {
           this.$emit('docupdated', {
             document: data,
             new: true,
@@ -67,9 +87,4 @@ const DocumentMixin = {
   }
 }
 
-export {
-  DocumentMixin,
-  deleteAttachment,
-  approveAttachment,
-  createDocument
-}
+export { DocumentMixin, deleteAttachment, approveAttachment, createDocument }

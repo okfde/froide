@@ -3,26 +3,26 @@ import Message from './Message'
 import Timeline from './Timeline'
 import ScrollIndicator from './ScrollIndicator'
 import InfoBox from './InfoBox'
-import { toggleSlide, addText } from '../lib/misc';
-import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4';
-import Driver from 'driver.js';
-import 'driver.js/dist/driver.min.css';
+import { toggleSlide, addText } from '../lib/misc'
+import { Tab, Tooltip } from 'bootstrap.native/dist/bootstrap-native-v4'
+import Driver from 'driver.js'
+import 'driver.js/dist/driver.min.css'
+interface IHTMLTabElement extends HTMLElement {
+  Tab: Tab | undefined
+}
 
-interface IHTMLTabElement extends HTMLElement { Tab: Tab | undefined; }
-
-
-const initRequestPage = () => {
-
+const initRequestPage = (): void => {
   initSetStatusForm()
 
   console.debug('Init request page...')
 
   // init message containers
-  const messagesContainer = document.getElementById('correspondence') as HTMLElement
+  const messagesContainer = document.getElementById(
+    'correspondence'
+  ) as HTMLElement
   const messages: Message[] = parseMessageContainers()
-  if (!messages.length) return
+  if (messages.length === 0) return
 
-  initInlineEditForms()
   initExpandableDescriptions()
 
   initMessageMarks()
@@ -33,11 +33,12 @@ const initRequestPage = () => {
     infoBox.showStatus()
   }
 
-
   // init timeline
+  // eslint-disable-next-line no-new
   new Timeline(messagesContainer, messages)
 
   // init ScrollIndicator on mobile view
+  // eslint-disable-next-line no-new
   new ScrollIndicator(messagesContainer)
 
   initTabs()
@@ -53,39 +54,45 @@ const initRequestPage = () => {
   const replyButtonTop = document.getElementById('alpha-reply-button-top')
   const replyButtonBottom = document.getElementById('alpha-reply-button-bottom')
   const writeForm = document.getElementById('write-messages')
-  const scrollToWriteForm = () => {
+  const scrollToWriteForm = (): void => {
     setTimeout(() => {
       writeForm?.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       })
-    }, 0);
+    }, 0)
   }
-  writeForm?.addEventListener('show.bs.collapse', scrollToWriteForm, false);
+  writeForm?.addEventListener('show.bs.collapse', scrollToWriteForm, false)
   replyButtonTop?.addEventListener('click', (e) => {
     e.preventDefault()
     goToReplyForm()
   })
 
-  const tabLinks = document.querySelectorAll('a[data-tabgo]');
-  Array.from(tabLinks).forEach(tabLink => {
-    tabLink.addEventListener('click', function(this: HTMLElement) {
-      const hrefAttr = this.attributes.getNamedItem('href');
-      if (hrefAttr === null) { return; }
-      const href = hrefAttr && hrefAttr.value;
-      const el = document.querySelector(href);
-      if (el === null) { return; }
-      const display = window.getComputedStyle(el, null).display;
+  const tabLinks = document.querySelectorAll('a[data-tabgo]')
+  Array.from(tabLinks).forEach((tabLink) => {
+    tabLink.addEventListener('click', function (this: HTMLElement) {
+      const hrefAttr = this.attributes.getNamedItem('href')
+      if (hrefAttr === null) {
+        return
+      }
+      const href = hrefAttr?.value
+      const el = document.querySelector(href)
+      if (el === null) {
+        return
+      }
+      const display = window.getComputedStyle(el, null).display
       if (display === 'none') {
-        const navLink = document.querySelector('.nav-link[href="' + href + '"]') as IHTMLTabElement;
-        if (navLink && navLink.Tab) {
-          navLink.Tab.show();
+        const navLink = document.querySelector(
+          '.nav-link[href="' + href + '"]'
+        ) as IHTMLTabElement
+        if (navLink?.Tab != null) {
+          navLink.Tab.show()
         }
       }
     })
   })
 
-  const goToReplyForm = () => {
+  const goToReplyForm = (): void => {
     if (!writeForm?.classList.contains('show')) {
       replyButtonBottom?.click()
     } else {
@@ -93,65 +100,70 @@ const initRequestPage = () => {
     }
   }
 
-  const fieldFillLinks = document.querySelectorAll('[data-fieldname]') as NodeListOf<HTMLElement>
-  Array.from(fieldFillLinks).forEach(el => {
+  const fieldFillLinks = document.querySelectorAll('[data-fieldname]')
+  Array.from(fieldFillLinks).forEach((el) => {
     el.addEventListener('click', fieldFillLinkClick)
   })
 
-
-  function fieldFillLinkClick (this: HTMLElement) {
-    if (this.dataset && this.dataset.value) {
-      const sel = '[name="' + this.dataset.fieldname + '"][value="' + this.dataset.value + '"]';
-      const checkbox = document.querySelector(sel);
-      if (checkbox) {
-        checkbox.setAttribute("checked", "");
+  function fieldFillLinkClick(this: HTMLElement): void {
+    if (this.dataset?.value) {
+      const sel = `[name="${this.dataset.fieldname as string}"][value="${
+        this.dataset.value
+      }"]`
+      const checkbox = document.querySelector(sel)
+      if (checkbox != null) {
+        checkbox.setAttribute('checked', '')
       }
     }
-    if (this.dataset && this.dataset.addtextfield) {
-      addText(this.dataset);
+    if (this.dataset?.addtextfield) {
+      addText(this.dataset)
     }
     goToReplyForm()
   }
 
   document.addEventListener('keydown', function (event) {
-    if ((event.ctrlKey || event.metaKey) && (event.key === 'f' || event.key === 'p')) {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      (event.key === 'f' || event.key === 'p')
+    ) {
       expandAll(messagesContainer, messages, true, true)
     }
-  });
+  })
 
-  const tourButtons = document.querySelectorAll('[data-tour]') as NodeListOf<HTMLElement>
-  Array.from(tourButtons).forEach(t => {
-    t.addEventListener("click", (e) => {
-      e.stopPropagation();
-      infoBox.showInfoBox();
-      startTour(t.dataset.tour, t.dataset.tourdone);
+  document.querySelectorAll<HTMLElement>('[data-tour]').forEach((t) => {
+    t.addEventListener('click', (e) => {
+      e.stopPropagation()
+      infoBox.showInfoBox()
+      startTour(t.dataset.tour, t.dataset.tourdone)
     })
-  });
-
+  })
 }
 
-const startTour = (tourId: string | undefined, tourDoneSelector: string | undefined) => {
+const startTour = (
+  tourId: string | undefined,
+  tourDoneSelector: string | undefined
+): void => {
   if (!tourId) {
     return
   }
-  const tourDataEl = document.querySelector(`#${tourId}`);
-  if (!tourDataEl || !tourDataEl.textContent) {
+  const tourDataEl = document.querySelector(`#${tourId}`)
+  if (tourDataEl == null || !tourDataEl.textContent) {
     return
   }
   let tourData
   try {
-    tourData = JSON.parse(tourDataEl.textContent);
+    tourData = JSON.parse(tourDataEl.textContent)
   } catch {
     return
   }
   const lastStep = tourData.steps[tourData.steps.length - 1]
   const driver = new Driver({
-    animate: true,  // Animate while changing highlighted element
+    animate: true, // Animate while changing highlighted element
     doneBtnText: tourData.i18n.done, // Text on the final button
     closeBtnText: tourData.i18n.close, // Text on the close button for this step
     nextBtnText: tourData.i18n.next, // Next button text for this step
     prevBtnText: tourData.i18n.previous, // Previous button text for this step
-    scrollIntoViewOptions: {behavior: "smooth", block: 'center',},
+    scrollIntoViewOptions: { behavior: 'smooth', block: 'center' },
     onReset: (el: any) => {
       if (el.node === document.querySelector(lastStep.element)) {
         // Done button clicked
@@ -160,100 +172,88 @@ const startTour = (tourId: string | undefined, tourDoneSelector: string | undefi
           done?.click()
         }
       }
-    },
-  });
-  driver.defineSteps(tourData.steps);
-  driver.start();
+    }
+  })
+  driver.defineSteps(tourData.steps)
+  driver.start()
 }
 
-const parseMessageContainers = () => {
+const parseMessageContainers = (): Message[] => {
   const messages: Message[] = []
   const urlHash = window.location.hash
-  const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash) ? urlHash.substr(1) : null
+  const collapsedMsgId = /^#nachricht-[0-9]+$/.test(urlHash)
+    ? urlHash.substr(1)
+    : null
   const messageContainers = document.querySelectorAll('.alpha-message')
 
   messageContainers.forEach((el, idx) => {
-    const isLastItem = idx === messageContainers.length  - 1
+    const isLastItem = idx === messageContainers.length - 1
     const forceExpand = collapsedMsgId && collapsedMsgId === el.id
-    messages.push(new Message(el as HTMLElement, forceExpand as Boolean, isLastItem as Boolean))
+    messages.push(
+      new Message(
+        el as HTMLElement,
+        forceExpand as Boolean,
+        isLastItem as Boolean
+      )
+    )
   })
   return messages
 }
 
-const initInlineEditForms = () => {
-  const buttonsArr = Array.from(document.querySelectorAll('[data-inlineedit]')) as HTMLElement[]
-  buttonsArr.forEach(el => {
-    if (!el.dataset.inlineedit) { return }
-    const targetForm = document.querySelector(el.dataset.inlineedit) as HTMLElement
-    if (!targetForm) { return }
-
-    let presentation: HTMLElement | null = null
-    if (el.dataset.inlineeditpresentation) {
-      presentation = document.querySelector(el.dataset.inlineeditpresentation) as HTMLElement
-    } else {
-      presentation = el.parentElement
-    }
-
-    const toggle = (e: MouseEvent) => {
-      e.preventDefault()
-      presentation?.classList.toggle('d-none')
-      targetForm.classList.toggle('d-none')
-      if (targetForm.classList.contains('d-none')) {
-        presentation?.scrollIntoView({behavior: 'smooth', block: 'center'})
-      } else {
-        targetForm.scrollIntoView({behavior: 'smooth', block: 'center'})
-        if (targetForm.dataset.autofocus) {
-          const autoFocus = targetForm.querySelector(targetForm.dataset.autofocus) as HTMLInputElement
-          if (autoFocus) {
-            autoFocus.focus()
-          }
-        }
+const initMessageMarks = (): void => {
+  document
+    .querySelectorAll<HTMLElement>('[data-messagemark]')
+    .forEach((guidance) => {
+      const messageMark = guidance.dataset.messagemark
+      if (!messageMark || !guidance.dataset.messageid) {
+        return
       }
-    }
-
-    el.addEventListener('click', toggle)
-
-    const cancelButton = targetForm.querySelector('[data-inlineeditcancel]') as HTMLElement
-    if (!cancelButton) { return }
-    cancelButton.addEventListener('click', toggle)
-  })
+      const markObj = JSON.parse(messageMark)
+      if (markObj.span) {
+        applyMarkToMessage(
+          guidance.dataset.messageid,
+          guidance.id,
+          markObj.span
+        )
+      }
+    })
 }
 
-const initMessageMarks = () => {
-  const guidances = document.querySelectorAll('[data-messagemark]') as NodeListOf<HTMLElement>
-  Array.from(guidances).forEach((guidance) => {
-    const messageMark = guidance.dataset.messagemark
-    if (!messageMark || ! guidance.dataset.messageid) { return }
-    const markObj = JSON.parse(messageMark)
-    if (markObj.span) {
-      applyMarkToMessage(guidance.dataset.messageid, guidance.id, markObj.span)
-    }
-  })
-}
-
-const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[]) => {
-  const messageText = document.querySelector(`#${messageId} .text-content-visible`)
-  if (!messageText) { return }
+const applyMarkToMessage = (
+  messageId: string,
+  guidanceId: string,
+  span: number[]
+): void => {
+  const messageText = document.querySelector(
+    `#${messageId} .text-content-visible`
+  )
+  if (messageText == null) {
+    return
+  }
   let charIndex = 0
   for (let i = 0; i < messageText.childNodes.length; i++) {
-    let node = messageText.childNodes[i]
+    const node = messageText.childNodes[i]
     console.log(node, guidanceId, span, charIndex)
-    let content = node.textContent || ''
+    const content = node.textContent || ''
     if (span[0] > charIndex && span[0] < charIndex + content.length) {
-      let match = content.substring(span[0] - charIndex, span[1] - charIndex)
-      const mark = document.createElement('mark');
-      mark.dataset.toggle = "tooltip"
-      mark.setAttribute('title', `<i class="fa fa-info-circle"></i>`)
+      const match = content.substring(span[0] - charIndex, span[1] - charIndex)
+      const mark = document.createElement('mark')
+      mark.dataset.toggle = 'tooltip'
+      mark.setAttribute('title', '<i class="fa fa-info-circle"></i>')
       const markA = document.createElement('a')
       markA.href = '#' + guidanceId
       markA.appendChild(document.createTextNode(match))
-      mark.appendChild(markA);
+      mark.appendChild(markA)
       if (node.nodeName === '#text') {
         const textNode = node as Text
-        const second = textNode.splitText(span[0] - charIndex);
+        const second = textNode.splitText(span[0] - charIndex)
         messageText.insertBefore(mark, second)
-        second.textContent = content.substring(span[1] - charIndex, content.length)
-        new Tooltip(mark);
+        second.textContent = content.substring(
+          span[1] - charIndex,
+          content.length
+        )
+        // eslint-disable-next-line no-new
+        new Tooltip(mark)
       }
       return
     }
@@ -265,15 +265,17 @@ const applyMarkToMessage = (messageId: string, guidanceId: string, span: number[
   }
 }
 
-const initExpandableDescriptions = () => {
+const initExpandableDescriptions = (): void => {
   const textContainers = document.querySelectorAll('.request-descr')
-  Array.from(textContainers).forEach(textContainer => {
-    const readmoreContainer = textContainer.querySelector('.request-descr-read-more')
+  Array.from(textContainers).forEach((textContainer) => {
+    const readmoreContainer = textContainer.querySelector(
+      '.request-descr-read-more'
+    )
     const expandButton = textContainer.querySelector('.expand-descr-btn')
     const clientHeight = textContainer?.clientHeight || 0
     const scrollHeight = textContainer?.scrollHeight || 0
 
-    const expand = () => {
+    const expand = (): void => {
       readmoreContainer?.classList.add('d-none')
       textContainer?.classList.remove('request-descr--collapsed')
     }
@@ -286,66 +288,77 @@ const initExpandableDescriptions = () => {
   })
 }
 
-const scrollToAnchor = (messages: Message[]) => {
+const scrollToAnchor = (messages: Message[]): void => {
   // when all messages initialized:
   // scroll to comment if query parameters given (e.g. ?msg=76058&c=10856)
   // find message and comment containers with id that equal query params
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(window.location.search)
   const msgParam = urlParams.get('msg')
   const commentParam = urlParams.get('c')
   const scrollToMsgId = msgParam ? `nachricht-${msgParam}` : null
   const scrollToCommentId = commentParam ? `comment-${commentParam}` : null
   if (scrollToMsgId && scrollToCommentId) {
-    const msg = messages.find(m => m.id === scrollToMsgId)
-    if (msg) {
+    const msg = messages.find((m) => m.id === scrollToMsgId)
+    if (msg != null) {
       msg.scrollToComment(scrollToCommentId)
     }
     return
   }
   if (window.location.hash) {
     const element = document.querySelector(window.location.hash)
-    if (element) {
+    if (element != null) {
       window.setTimeout(() => {
-        element.scrollIntoView({behavior: 'smooth'})
+        element.scrollIntoView({ behavior: 'smooth' })
       }, 300)
     }
   }
 }
 
-const initTabs = () => {
+const initTabs = (): void => {
   const container = document.querySelector('.alpha-tabs') as HTMLElement
-  const tabCollection = container.getElementsByTagName("A");
+  const tabCollection = container.getElementsByTagName('A')
   Array.from(tabCollection).forEach((tab) => {
-    // tslint:disable-next-line: no-unused-expression
-    new Tab(tab as HTMLElement, { height: false });
+    // eslint-disable-next-line no-new
+    new Tab(tab as HTMLElement, { height: false })
   })
 
   // show tab if query paramter exists
-  let hash = document.location && document.location.hash || "";
-  hash = hash.replace(/[^#\-\w]/g, "");
-  const hashNav = container.querySelector('a[href="' + hash + '"]') as IHTMLTabElement;
-  if (hashNav !== null && hashNav.Tab) {
-    hashNav.Tab.show();
+  let hash = document.location?.hash || ''
+  hash = hash.replace(/[^#\-\w]/g, '')
+  const hashNav = container.querySelector(
+    'a[href="' + hash + '"]'
+  ) as IHTMLTabElement
+  if (hashNav?.Tab != null) {
+    hashNav.Tab.show()
     // scroll tab into view
     hashNav.scrollIntoView()
   }
 }
 
-const initCorrespondenceTopMenu = (messagesContainer: HTMLElement, messages: Message[]) => {
-  const expandAllLink = document.querySelector('.js-trigger-expand-all-messages') as HTMLElement
+const initCorrespondenceTopMenu = (
+  messagesContainer: HTMLElement,
+  messages: Message[]
+): void => {
+  const expandAllLink = document.querySelector(
+    '.js-trigger-expand-all-messages'
+  ) as HTMLElement
 
   expandAllLink.addEventListener('click', (e: MouseEvent) => {
     e.preventDefault()
     expandAll(messagesContainer, messages)
   })
-
 }
 
-const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpand = false, details = false) => {
+const expandAll = (
+  messagesContainer: HTMLElement,
+  messages: Message[],
+  mustExpand = false,
+  details = false
+): void => {
   const isAllExpandedClass = 'is-all-expanded'
 
   if (mustExpand && details) {
-    messages.forEach(m => {
+    messages.forEach((m) => {
       m.showMetaContainer()
     })
   }
@@ -365,12 +378,16 @@ const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpa
     }
   }
 
-  Array.from(document.querySelectorAll('.js-trigger-expand-all-messages .fa')).forEach(el => {
-    el.classList.toggle('d-none-important')
-  })
-  Array.from(document.querySelectorAll('.js-trigger-expand-all-messages span')).forEach(el => {
-    el.classList.toggle('d-none-important')
-  })
+  document
+    .querySelectorAll('.js-trigger-expand-all-messages .fa')
+    .forEach((el) => {
+      el.classList.toggle('d-none-important')
+    })
+  document
+    .querySelectorAll('.js-trigger-expand-all-messages span')
+    .forEach((el) => {
+      el.classList.toggle('d-none-important')
+    })
 
   // add/remove class to message container
   if (isAllExpanded) {
@@ -380,53 +397,58 @@ const expandAll = (messagesContainer: HTMLElement, messages: Message[], mustExpa
   }
 }
 
-const initSetStatusForm = () => {
-  const idResolution = document.querySelector('#id_resolution');
+const initSetStatusForm = (): void => {
+  const idResolution = document.querySelector('#id_resolution')
   if (idResolution !== null) {
-    idResolution.addEventListener('change', setStatus);
+    idResolution.addEventListener('change', setStatus)
   }
 
-  const inputStatusInputs = Array.from(document.querySelectorAll('input[name="status"]'));
-  inputStatusInputs.forEach(input => {
-    input.addEventListener('change', setStatus);
+  document.querySelectorAll('input[name="status"]').forEach((input) => {
+    input.addEventListener('change', setStatus)
   })
 
-  setStatus();
-
+  setStatus()
 }
 
 let refusalInputIsVisible = false
-const setStatus = () => {
-  const container = document.querySelector('.status-refusal') as HTMLElement;
+const setStatus = (): void => {
+  const container = document.querySelector('.status-refusal') as HTMLElement
   if (container !== null) {
-    const resolutionElement = document.querySelector('#id_resolution') as HTMLInputElement;
+    const resolutionElement = document.querySelector(
+      '#id_resolution'
+    ) as HTMLInputElement
     if (resolutionElement) {
-      const resolutionValue = resolutionElement.value;
-      const resolutionValueTriggersInput = /refus/.exec(resolutionValue) !== null || /partial/.exec(resolutionValue) !== null
+      const resolutionValue = resolutionElement.value
+      const resolutionValueTriggersInput =
+        /refus/.exec(resolutionValue) !== null ||
+        /partial/.exec(resolutionValue) !== null
       if (
         (refusalInputIsVisible && !resolutionValueTriggersInput) ||
         (!refusalInputIsVisible && resolutionValueTriggersInput)
       ) {
         refusalInputIsVisible = resolutionValueTriggersInput
-        toggleSlide(container, 0.5);
+        toggleSlide(container, 0.5)
       }
     }
   }
-};
+}
 
-const initReplyForm = () => {
+const initReplyForm = (): void => {
   const replyContainer = document.querySelector('.reply-form') as HTMLElement
 
   if (!replyContainer) {
     return
   }
 
-  const replyContainerHelper = document.getElementById('reply-form-helper') as HTMLElement
+  const replyContainerHelper = document.getElementById(
+    'reply-form-helper'
+  ) as HTMLElement
   const replyContainerOffsetTop = replyContainerHelper.offsetTop
-  const stickyButton = replyContainer.querySelector('.reply-form__toggle-sticky-btn') as HTMLElement
+  const stickyButton = replyContainer.querySelector(
+    '.reply-form__toggle-sticky-btn'
+  ) as HTMLElement
   let stickyModeEnabled = false
   let userScrolledPastEnd = false
-
 
   stickyButton.addEventListener('click', (e: MouseEvent) => {
     e.preventDefault()
@@ -448,15 +470,16 @@ const initReplyForm = () => {
     stickyModeEnabled = !stickyModeEnabled
   })
 
-
-  const toggleStickyClass = () => {
+  const toggleStickyClass = (): void => {
     replyContainer.classList.toggle('reply-form--sticky')
   }
 
   window.addEventListener('scroll', () => {
     const documentScrollTop = document.documentElement.scrollTop
-    userScrolledPastEnd = (documentScrollTop + window.innerHeight / 2) >= replyContainerOffsetTop
-    const hastStickyClass = replyContainer.classList.contains('reply-form--sticky')
+    userScrolledPastEnd =
+      documentScrollTop + window.innerHeight / 2 >= replyContainerOffsetTop
+    const hastStickyClass =
+      replyContainer.classList.contains('reply-form--sticky')
     if (stickyModeEnabled) {
       if (
         (userScrolledPastEnd && hastStickyClass) ||
@@ -466,11 +489,10 @@ const initReplyForm = () => {
       }
     }
   })
-
 }
 
-if (document.readyState === "loading") {
-  window.document.addEventListener("DOMContentLoaded", initRequestPage);
+if (document.readyState === 'loading') {
+  window.document.addEventListener('DOMContentLoaded', initRequestPage)
 } else {
-  initRequestPage();
+  initRequestPage()
 }
