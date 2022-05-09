@@ -226,12 +226,7 @@ export default {
         if (result.error) {
           throw new Error(result.message)
         }
-        let att
-        if (result.added.length === 1) {
-          att = result.added[0]
-        } else {
-          att = result.updated[0]
-        }
+        const att = result.added[0]
         this.addAttachment(att)
       })
     },

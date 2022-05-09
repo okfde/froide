@@ -57,7 +57,7 @@ class MailTransactionTest(MailTestMixin, TransactionTestCase):
             "Fwd: Informationsfreiheitsgesetz des Bundes, Antragsvordruck für Open Data",
         )
         self.assertEqual(len(messages[1].attachments), 2)
-        self.assertEqual(messages[1].attachments[0].name, "TI-IFG-AntragVordruck.docx")
+        self.assertEqual(messages[1].attachments[0].name, "ti-ifg-antragvordruck.docx")
         self.assertTrue(messages[1].attachments[1].name.endswith(".pdf"))
         self.assertFalse(messages[1].attachments[0].is_converted)
         self.assertTrue(messages[1].attachments[1].is_converted)
@@ -130,12 +130,10 @@ class MailTest(MailTestMixin, TestCase):
         names = set([a.name for a in messages[1].attachments])
         self.assertEqual(
             names,
-            set(
-                [
-                    "KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-Anlage.pdf",
-                    "KooperationendesMSWAntragnachInformationsfreiheitsgesetzNRWStefanSafariovom06.12.2012-AWvom08.01.2013-RS.pdf",
-                ]
-            ),
+            {
+                "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06122012-anlage.pdf",
+                "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06122012-awvom08012013-rs.pdf",
+            },
         )
 
     def test_authenticity_pass(self):
@@ -210,7 +208,7 @@ class MailTest(MailTestMixin, TestCase):
         self.assertEqual(len(messages), 2)
         mes = messages[1]
         self.assertIn(
-            "NAMEEingangsbesttigungundHinweisaufUnzustellbarkeit-NAME.pdf",
+            "nameeingangsbesttigungundhinweisaufunzustellbarkeit-name.pdf",
             {a.name for a in mes.attachments},
         )
 
