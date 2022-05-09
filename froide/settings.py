@@ -726,6 +726,15 @@ class German(object):
         "%H:%M:%S",
         "%H:%M",
     )
+    SLUGIFY_REPLACEMENTS = (
+        ("Ä", "Ae"),
+        ("ä", "ae"),
+        ("Ö", "Oe"),
+        ("ö", "oe"),
+        ("Ü", "Ue"),
+        ("ü", "ue"),
+        ("ß", "ss"),
+    )
 
     # Holidays Germany
     HOLIDAYS = [

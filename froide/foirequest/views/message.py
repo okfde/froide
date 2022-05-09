@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.defaultfilters import slugify
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.translation import gettext as _
@@ -13,6 +12,7 @@ from django.views.decorators.http import require_POST
 
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import make_unique_filename
+from froide.helper.text_utils import slugify
 from froide.helper.utils import is_ajax, render_400
 from froide.upload.forms import get_uppy_i18n
 

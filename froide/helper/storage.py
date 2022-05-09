@@ -2,7 +2,8 @@ import hashlib
 import os
 
 from django.core.files.storage import FileSystemStorage
-from django.template.defaultfilters import slugify
+
+from froide.helper.text_utils import slugify
 
 
 def sha256(file):
