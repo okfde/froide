@@ -131,8 +131,8 @@ class MailTest(MailTestMixin, TestCase):
         self.assertEqual(
             names,
             {
-                "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06122012-anlage.pdf",
-                "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06122012-awvom08012013-rs.pdf",
+                "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06-12-2012-anlage.pdf",
+                "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06-12-2012-awvom08-01-2013-rs.pdf",
             },
         )
 
