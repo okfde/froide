@@ -733,10 +733,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         upload.ensure_saving()
         upload.save()
 
-        for x in result:
-            if x:
-                att = x[0]
-                break
+        att = result[0]
 
         transaction.on_commit(
             lambda: move_upload_to_attachment.delay(att.id, upload.id)
