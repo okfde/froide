@@ -12,8 +12,6 @@ from django.utils.functional import SimpleLazyObject
 from django.utils.safestring import SafeString
 
 from froide.account.models import User
-from froide.account.utils import OnlyActiveUsersMailMiddleware
-from froide.bounce.apps import UnsubscribeReferenceMailMiddleware
 
 try:
     from froide.bounce.utils import make_bounce_address, make_unsubscribe_header
@@ -56,12 +54,7 @@ class MailMiddlwareRegistry:
         return middleware
 
     def maybe_call_middleware(
-        self,
-        middleware: Union[
-            UnsubscribeReferenceMailMiddleware, OnlyActiveUsersMailMiddleware
-        ],
-        method: str,
-        **kwargs
+        self, middleware, method: str, **kwargs
     ) -> Optional[Dict[str, str]]:
         if hasattr(middleware, method):
             return getattr(middleware, method)(**kwargs)
