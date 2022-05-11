@@ -1,8 +1,19 @@
 from functools import lru_cache
+from typing import Optional, Type, Union
 
 from django.contrib.auth import get_permission_codename
-from django.db.models import Q
+from django.db.models.query import QuerySet
+from django.db.models.query_utils import Q
+from django.http import HttpRequest
+from django.utils.functional import SimpleLazyObject
 
+from rest_framework.request import Request
+
+from froide.account.models import User
+
+# from froide.document.models import Document, DocumentCollection
+from froide.foirequest.models.project import FoiProject
+from froide.foirequest.models.request import FoiRequest
 from froide.team.models import Team
 
 AUTH_MAPPING = {
@@ -11,7 +22,10 @@ AUTH_MAPPING = {
 }
 
 
-def check_permission(obj, request, verb):
+Obj = Optional[Union[Type[FoiRequest], FoiRequest]]
+
+
+def check_permission(obj: Obj, request: Union[HttpRequest, Request], verb: str) -> bool:
     user = request.user
     opts = obj._meta
 
@@ -28,7 +42,12 @@ def check_permission(obj, request, verb):
     return False
 
 
-def has_authenticated_access(obj, request, verb="write", scope=None):
+def has_authenticated_access(
+    obj,
+    request: Union[HttpRequest, Request],
+    verb: str = "write",
+    scope: Optional[str] = None,
+) -> bool:
     user = request.user
     if not user.is_authenticated:
         # No authentication, no access
@@ -56,8 +75,13 @@ def has_authenticated_access(obj, request, verb="write", scope=None):
     return False
 
 
+Request_opt = Optional[Union[HttpRequest, Request]]
+
+
 @lru_cache()
-def can_read_object(obj, request=None):
+def can_read_object(
+    obj: Union[FoiProject, FoiRequest], request: Request_opt = None
+) -> bool:
     if hasattr(obj, "is_public") and obj.is_public():
         return True
     if request is None:
@@ -66,19 +90,19 @@ def can_read_object(obj, request=None):
 
 
 @lru_cache()
-def can_read_object_authenticated(obj, request=None):
+def can_read_object_authenticated(obj, request: Request_opt = None) -> bool:
     if request is None:
         return False
     return has_authenticated_access(obj, request, verb="read")
 
 
 @lru_cache()
-def can_write_object(obj, request):
+def can_write_object(obj, request: HttpRequest) -> bool:
     return has_authenticated_access(obj, request)
 
 
 @lru_cache()
-def can_manage_object(obj, request):
+def can_manage_object(obj: FoiRequest, request: HttpRequest) -> bool:
     """
     Team owner permission
     """
@@ -86,7 +110,7 @@ def can_manage_object(obj, request):
 
 
 @lru_cache()
-def can_moderate_object(obj, request):
+def can_moderate_object(obj: FoiRequest, request: Union[HttpRequest, Request]) -> bool:
     return check_permission(obj, request, "moderate")
 
 
@@ -107,14 +131,14 @@ def can_access_object(verb, obj, request):
 
 
 def get_read_queryset(
-    qs,
-    request,
-    has_team=False,
-    public_field=None,
-    public_q=None,
-    scope=None,
-    fk_path=None,
-):
+    qs: QuerySet,
+    request: Union[HttpRequest, Request],
+    has_team: bool = False,
+    public_field: Optional[str] = None,
+    public_q: Optional[Q] = None,
+    scope: Optional[str] = None,
+    fk_path: Optional[str] = None,
+) -> QuerySet:
     user = request.user
     filters = None
     if public_field is not None:
@@ -196,14 +220,22 @@ def get_write_queryset(
     return qs.filter(filters)
 
 
-def make_q(lookup, value, fk_path=None):
+def make_q(
+    lookup: str,
+    value: Union[SimpleLazyObject, User, QuerySet],
+    fk_path: Optional[str] = None,
+) -> Q:
     path = lookup
     if fk_path is not None:
         path = "{}__{}".format(fk_path, lookup)
     return Q(**{path: value})
 
 
-def get_user_filter(request, teams=None, fk_path=None):
+def get_user_filter(
+    request: Union[HttpRequest, Request],
+    teams: Optional[QuerySet] = None,
+    fk_path: Optional[str] = None,
+) -> Q:
     user = request.user
     filter_arg = make_q("user", user, fk_path=fk_path)
     if teams:
@@ -212,6 +244,6 @@ def get_user_filter(request, teams=None, fk_path=None):
     return filter_arg
 
 
-def clear_lru_caches():
+def clear_lru_caches() -> None:
     for f in ACCESS_MAPPING.values():
         f.cache_clear()

@@ -1,12 +1,17 @@
 import hashlib
 import os
+from typing import List, Optional, Union
 
+from django.core.files.base import ContentFile, File
 from django.core.files.storage import FileSystemStorage
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from froide.helper.text_utils import slugify
 
+File = Union[ContentFile, File, InMemoryUploadedFile]
 
-def sha256(file):
+
+def sha256(file: File) -> str:
     hash_sha256 = hashlib.sha256()
     file.seek(0)
     for chunk in iter(lambda: file.read(4096), b""):
@@ -26,14 +31,14 @@ class OverwriteStorage(FileSystemStorage):
 
 
 class HashedFilenameStorage(FileSystemStorage):
-    def get_hash_parts(self, content):
+    def get_hash_parts(self, content: File) -> List[str]:
         hex_name = sha256(content)
         hex_name_02 = hex_name[:2]
         hex_name_24 = hex_name[2:4]
         hex_name_46 = hex_name[4:6]
         return [hex_name_02, hex_name_24, hex_name_46, hex_name]
 
-    def _get_content_name(self, name, content):
+    def _get_content_name(self, name: str, content: File) -> str:
         dir_name, file_name = os.path.split(name)
         # file_ext includes the dot.
         file_ext = os.path.splitext(file_name)[1].lower()
@@ -42,13 +47,13 @@ class HashedFilenameStorage(FileSystemStorage):
         parts[-1] = parts[-1] + file_ext
         return os.path.join(dir_name, *parts)
 
-    def get_available_name(self, name, max_length=None):
+    def get_available_name(self, name: str, max_length: Optional[int] = None) -> str:
         """
         Doesn't matter, as hash filename identifies file uniquely
         """
         return name
 
-    def _save(self, name, content):
+    def _save(self, name: str, content: File) -> str:
         hashed_name = self._get_content_name(name=name, content=content)
         if self.exists(hashed_name):
             # if the file exists, just return the hashed name,

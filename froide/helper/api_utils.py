@@ -1,7 +1,9 @@
 import json
 from collections import OrderedDict
+from typing import Dict, List, Union
 
 from django.conf import settings
+from django.db.models.query import QuerySet
 from django.utils.html import format_html
 
 from elasticsearch_dsl.query import Q
@@ -13,11 +15,14 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.serializers import ListSerializer
 from rest_framework.test import APIRequestFactory
-from rest_framework.utils.serializer_helpers import ReturnDict
+from rest_framework.utils.serializer_helpers import ReturnDict, ReturnList
 from rest_framework_jsonp.renderers import JSONPRenderer
 
+from froide.helper.search.queryset import SearchQuerySetWrapper
+from froide.publicbody.models import PublicBody
 
-def get_fake_api_context(url="/"):
+
+def get_fake_api_context(url: str = "/") -> Dict[str, Request]:
     factory = APIRequestFactory()
     host = settings.SITE_URL.split("/")[-1]
     request = factory.get(url, HTTP_HOST=host)
@@ -29,11 +34,13 @@ def get_fake_api_context(url="/"):
 
 class SearchFacetListSerializer(ListSerializer):
     @property
-    def data(self):
+    def data(self) -> ReturnDict:
         ret = super(ListSerializer, self).data
         return ReturnDict(ret, serializer=self)
 
-    def to_representation(self, instance):
+    def to_representation(
+        self, instance: Union[QuerySet, List[PublicBody]]
+    ) -> OrderedDict:
         ret = super().to_representation(instance)
 
         # Return both objects and facets by wrapping them in dict
@@ -50,7 +57,7 @@ class SearchFacetListSerializer(ListSerializer):
 class CustomLimitOffsetPagination(LimitOffsetPagination):
     max_limit = 50
 
-    def get_paginated_response(self, data):
+    def get_paginated_response(self, data: Union[ReturnDict, ReturnList]) -> Response:
         if "facets" in data:
             # Split out facets into root object
             result = [("objects", data["objects"]), ("facets", data["facets"])]
@@ -78,7 +85,9 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
 
 
 class ElasticLimitOffsetPagination(CustomLimitOffsetPagination):
-    def paginate_queryset(self, queryset, request, view=None):
+    def paginate_queryset(
+        self, queryset: SearchQuerySetWrapper, request: Request, view=None
+    ) -> None:
         self.limit = self.get_limit(request)
         if self.limit is None:
             return None

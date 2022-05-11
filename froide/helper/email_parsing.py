@@ -10,12 +10,12 @@ import re
 import time
 from contextlib import closing
 from datetime import datetime, timedelta
-from email.header import decode_header
-from email.message import EmailMessage
+from email.header import Header, decode_header
+from email.message import EmailMessage, Message
 from email.parser import BytesParser as Parser
 from email.utils import getaddresses, parseaddr, parsedate_tz
 from io import BytesIO
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 from urllib.parse import unquote
 
 from django.utils.functional import cached_property
@@ -24,6 +24,7 @@ import pytz
 
 from .email_utils import (
     AuthenticityStatus,
+    BounceResult,
     check_dkim,
     check_dmarc,
     check_spf,
@@ -41,11 +42,15 @@ DISPO_SPLIT = re.compile(r"""((?:[^;"']|"[^"]*"|'[^']*')+)""")
 DISPO_MULTI_VALUE = re.compile(r"(\w+)\*\d+$")
 
 
-def split_with_quotes(dispo):
+def split_with_quotes(dispo: str) -> List[str]:
     return [x.strip() for x in DISPO_SPLIT.split(dispo.strip()) if x and x != ";"]
 
 
-def get_email_headers(message_bytes, headers=None):
+Headers = Optional[List[str]]
+ReturnHeaders = Dict[str, List[str]]
+
+
+def get_email_headers(message_bytes: bytes, headers: Headers = None) -> ReturnHeaders:
     p = Parser()
     with closing(BytesIO(message_bytes)) as stream:
         msgobj = p.parse(stream)
@@ -80,12 +85,17 @@ def parse_email_body(
     return body, html, attachments
 
 
-def decode_message_part(part):
+def decode_message_part(part: Message) -> str:
     charset = part.get_content_charset() or "ascii"
     return str(part.get_payload(decode=True), charset, "replace")
 
 
-def parse_main_headers(msgobj):
+ReturnMainHeaders = Dict[
+    str, Optional[Union[datetime, str, Tuple[str, str], List[Tuple[str, str]]]]
+]
+
+
+def parse_main_headers(msgobj: Message) -> ReturnMainHeaders:
     subject = parse_header_field(msgobj["Subject"])
     tos = get_address_list(msgobj.get_all("To", []))
     x_original_tos = get_address_list(msgobj.get_all("X-Original-To", []))
@@ -112,7 +122,10 @@ def parse_main_headers(msgobj):
     }
 
 
-def parse_dispositions(dispo):
+ReturnDispositions = Union[Tuple[str, Dict[str, str]], Tuple[str, Dict[Any, Any]]]
+
+
+def parse_dispositions(dispo: Union[Header, str]) -> ReturnDispositions:
     if not isinstance(dispo, str):
         dispo = parse_header_field(dispo)
     dispos = split_with_quotes(dispo)
@@ -142,7 +155,7 @@ def parse_dispositions(dispo):
     return dispo_name, dispo_dict
 
 
-def parse_attachment(message_part):
+def parse_attachment(message_part: Message) -> Optional[EmailAttachment]:
     content_disposition = message_part.get("Content-Disposition", None)
     if not content_disposition:
         return None
@@ -178,7 +191,14 @@ def parse_attachment(message_part):
     return attachment
 
 
-def get_attachment_name(attachment, dispo_dict, content_type=None):
+ContentType = Optional[Union[Header, str]]
+
+
+def get_attachment_name(
+    attachment: EmailAttachment,
+    dispo_dict: Dict[str, str],
+    content_type: ContentType = None,
+) -> str:
     name = None
     if "filename" in dispo_dict:
         name = dispo_dict["filename"]
@@ -201,7 +221,7 @@ def get_attachment_name(attachment, dispo_dict, content_type=None):
     return name
 
 
-def parse_header_field(field):
+def parse_header_field(field: Union[str, Header]) -> str:
     if field is None:
         return None
 
@@ -241,7 +261,7 @@ def parse_header_field(field):
     return field.replace("\n\t", " ").replace("\n", "").replace("\r", "")
 
 
-def parse_extended_header_field(field):
+def parse_extended_header_field(field: str) -> str:
     """
     https://tools.ietf.org/html/rfc5987#section-3.2
     """
@@ -252,7 +272,7 @@ def parse_extended_header_field(field):
     return unquote(fname, encoding=fname_encoding)
 
 
-def try_decoding(encoded, encoding=None):
+def try_decoding(encoded: bytes, encoding: Optional[str] = None) -> str:
     decoded = None
     if encoding and encoding != "unknown-8bit":
         try:
@@ -273,7 +293,11 @@ def try_decoding(encoded, encoding=None):
     return decoded
 
 
-def get_address_list(values):
+Values = List[Union[Header, Any, str]]
+AddressList = List[Union[Tuple[str, str], Any]]
+
+
+def get_address_list(values: Values) -> AddressList:
     values = [parse_header_field(value) for value in values]
     address_list = getaddresses(values)
     fixed = []
@@ -282,7 +306,7 @@ def get_address_list(values):
     return fixed
 
 
-def parse_date(date_str):
+def parse_date(date_str: str) -> Optional[datetime]:
     date_tuple = parsedate_tz(date_str)
     if date_tuple is None:
         return None
@@ -294,6 +318,7 @@ def parse_date(date_str):
 
 
 EmailField = Tuple[str, str]
+Checks = List[Union[Any, AuthenticityStatus]]
 
 
 class ParsedEmail(object):
@@ -310,30 +335,30 @@ class ParsedEmail(object):
     resent_cc: List[EmailField] = []
     attachments: List[EmailAttachment] = []
 
-    def __init__(self, msgobj, **kwargs):
+    def __init__(self, msgobj: Message, **kwargs) -> None:
         self.msgobj: EmailMessage = msgobj
         for k, v in kwargs.items():
             setattr(self, k, v)
 
     @cached_property
-    def bounce_info(self):
+    def bounce_info(self) -> BounceResult:
         return self.get_bounce_info()
 
-    def get_bounce_info(self):
+    def get_bounce_info(self) -> BounceResult:
         return get_bounce_info(self.body, msgobj=self.msgobj, date=self.date)
 
     @cached_property
-    def is_auto_reply(self):
+    def is_auto_reply(self) -> bool:
         return self.detect_auto_reply()
 
-    def detect_auto_reply(self):
+    def detect_auto_reply(self) -> bool:
         return detect_auto_reply(self.from_, subject=self.subject, msgobj=self.msgobj)
 
-    def is_direct_recipient(self, email_address):
+    def is_direct_recipient(self, email_address: str) -> bool:
         return any(email.lower() == email_address.lower() for name, email in self.to)
 
     @cached_property
-    def fails_authenticity(self):
+    def fails_authenticity(self) -> Checks:
         checks = self.get_authenticity_checks()
         return [c for c in checks if c.failed]
 
@@ -355,7 +380,7 @@ class ParsedEmail(object):
         return checks
 
 
-def fix_email_body(body):
+def fix_email_body(body: str) -> str:
     return MULTI_NL_RE.sub("\\1", body)
 
 

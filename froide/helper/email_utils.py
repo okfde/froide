@@ -3,9 +3,10 @@ import imaplib
 import re
 from collections import defaultdict, namedtuple
 from dataclasses import dataclass
-from email.message import EmailMessage
+from datetime import datetime
+from email.message import EmailMessage, Message
 from enum import Enum
-from typing import Iterator, Optional, Tuple, Union
+from typing import DefaultDict, Dict, Iterator, List, Optional, Tuple, Union
 
 from django.conf import settings
 from django.utils import timezone
@@ -54,6 +55,9 @@ class AuthenticityCheck(Enum):
     DMARC = "DMARC"
 
 
+AuthenticityStatusDict = Dict[str, Union[str, bool]]
+
+
 @dataclass
 class AuthenticityStatus:
     check: AuthenticityCheck
@@ -61,10 +65,10 @@ class AuthenticityStatus:
     failed: bool
     details: str
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.details
 
-    def to_dict(self):
+    def to_dict(self) -> AuthenticityStatusDict:
         return {
             "check": self.check.value,
             "status": self.status,
@@ -182,7 +186,7 @@ def unflag_mail(mailbox, uid):
     mailbox.close()
 
 
-def make_address(email, name=None):
+def make_address(email: str, name: Optional[str] = None) -> str:
     if name:
         return '"%s" <%s>' % (name.replace('"', ""), email)
     return email
@@ -192,7 +196,7 @@ class UnsupportedMailFormat(Exception):
     pass
 
 
-def get_bounce_headers(msgobj):
+def get_bounce_headers(msgobj: Message) -> DefaultDict[str, List[str]]:
     from .email_parsing import parse_header_field
 
     headers = defaultdict(list)
@@ -203,7 +207,9 @@ def get_bounce_headers(msgobj):
     return headers
 
 
-def get_bounce_info(body, msgobj=None, date=None):
+def get_bounce_info(
+    body: str, msgobj: Optional[Message] = None, date: Optional[datetime] = None
+) -> BounceResult:
     headers = {}
     if msgobj is not None:
         headers = get_bounce_headers(msgobj)
@@ -222,7 +228,9 @@ def get_bounce_info(body, msgobj=None, date=None):
     )
 
 
-def find_bounce_status(headers, body=None):
+def find_bounce_status(
+    headers: DefaultDict[str, List[str]], body: Optional[str] = None
+) -> Optional[DsnStatus]:
     for v in headers.get("Status", []):
         match = BOUNCE_STATUS_RE.match(v.strip())
         if match is not None:
@@ -236,7 +244,7 @@ def find_bounce_status(headers, body=None):
     return None
 
 
-def find_status_from_diagnostic(message):
+def find_status_from_diagnostic(message: Optional[str]) -> Optional[DsnStatus]:
     if not message:
         return
     message = str(message)
@@ -249,7 +257,7 @@ def find_status_from_diagnostic(message):
     return DsnStatus(*[int(x) for x in match.group(1)])
 
 
-def classify_bounce_status(status):
+def classify_bounce_status(status: Optional[DsnStatus]) -> Optional[str]:
     if status is None:
         return
     if status.class_ == 2:
@@ -263,7 +271,9 @@ def classify_bounce_status(status):
         return "hard"
 
 
-def detect_auto_reply(from_field, subject="", msgobj=None):
+def detect_auto_reply(
+    from_field: Tuple[str, str], subject: str = "", msgobj: Optional[Message] = None
+) -> bool:
     if msgobj:
         for header, val in AUTO_REPLY_HEADERS:
             header_val = msgobj.get(header, None)
