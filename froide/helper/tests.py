@@ -7,6 +7,7 @@ from django.test.utils import override_settings
 from .csv_utils import dict_to_csv_stream
 from .date_utils import calc_easter, calculate_month_range_de
 from .email_sending import mail_registry
+from .storage import make_unique_filename
 from .text_diff import mark_differences
 from .text_utils import remove_closing, replace_email_name, split_text_by_separator
 
@@ -200,3 +201,30 @@ class TestCSVFormulaEscape(TestCase):
             csv_bytes[1].strip(),
             b'\'=SUM(1+1),\'+AVG(A2:A),\'-SUM(1+1),"\'@SUM(1+1)+""X"""',
         )
+
+
+class TestUniqueFilename(TestCase):
+    def test_should_return_filename_when_it_does_not_exist_yet(self):
+        filename = "test123.pdf"
+        actual_new_filename = make_unique_filename(filename, [])
+
+        self.assertEqual(actual_new_filename, filename)
+
+    def test_should_return_filename_numbered_with_one_when_the_filename_already_exist(
+        self,
+    ):
+        filename = "test123.pdf"
+
+        actual_new_filename = make_unique_filename(filename, [filename])
+
+        self.assertEqual(actual_new_filename, "test123_1.pdf")
+
+    def test_filename_naming_scheme_incrementing(
+        self,
+    ):
+        filename = "test123.pdf"
+        filename_2 = "test123_1.pdf"
+
+        actual_new_filename = make_unique_filename(filename, [filename, filename_2])
+
+        self.assertEqual(actual_new_filename, "test123_2.pdf")

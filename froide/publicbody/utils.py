@@ -3,11 +3,12 @@ import json
 import re
 
 from django.db.models import Q
-from django.utils.text import slugify
 
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from markdown.util import AtomicString
+
+from froide.helper.text_utils import slugify
 
 from .models import PublicBody
 

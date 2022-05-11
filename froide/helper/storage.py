@@ -3,6 +3,8 @@ import os
 
 from django.core.files.storage import FileSystemStorage
 
+from froide.helper.text_utils import slugify
+
 
 def sha256(file):
     hash_sha256 = hashlib.sha256()
@@ -59,3 +61,18 @@ class HashedFilenameStorage(FileSystemStorage):
 def add_number_to_filename(filename, num):
     path, ext = os.path.splitext(filename)
     return "%s_%d%s" % (path, num, ext)
+
+
+def make_filename(name: str) -> str:
+    name = os.path.basename(name).rsplit(".", 1)
+    return ".".join(slugify(n) for n in name)
+
+
+def make_unique_filename(name, existing_names):
+    slugified_name = make_filename(name)
+    name = slugified_name
+    index = 0
+    while name in existing_names:
+        index += 1
+        name = add_number_to_filename(slugified_name, index)
+    return name

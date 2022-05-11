@@ -10,7 +10,6 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.management import call_command
-from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 import factory
@@ -18,6 +17,7 @@ from elasticsearch.exceptions import RequestError
 from factory.django import DjangoModelFactory
 
 from froide.account.factories import UserFactory
+from froide.helper.text_utils import slugify
 from froide.publicbody.factories import (
     CategoryFactory,
     FoiLawFactory,
