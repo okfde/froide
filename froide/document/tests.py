@@ -1,10 +1,10 @@
-from django.template.defaultfilters import slugify
 from django.test import TestCase
 from django.urls import reverse
 
 import factory
 
 from froide.foirequest.tests import factories
+from froide.helper.text_utils import slugify
 from froide.team.models import TeamMembership
 from froide.team.tests import TeamFactory, TeamMembershipFactory
 

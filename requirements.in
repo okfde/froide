@@ -39,6 +39,7 @@ pyisemail
 pypdf2
 python-magic
 python-mimeparse
+python-slugify
 pytz
 reportlab
 requests

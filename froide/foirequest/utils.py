@@ -1,7 +1,5 @@
 import json
-import os
 import re
-from collections import Counter
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Iterator, List, Optional, Tuple, Union
@@ -9,7 +7,6 @@ from typing import Iterator, List, Optional, Tuple, Union
 from django import forms
 from django.conf import settings
 from django.core.mail import mail_managers
-from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -219,19 +216,6 @@ def get_domain(email):
     if host is None:
         return None
     return strip_subdomains(host)
-
-
-def make_unique_filename(name, existing_names):
-    name = os.path.basename(name).rsplit(".", 1)
-    name = ".".join([slugify(n) for n in name])
-
-    name_counter = Counter(existing_names)
-    index = 0
-    while name_counter[name] > 1:
-        index += 1
-        path, ext = os.path.splitext(name)
-        name = "%s_%d%s" % (path, index, ext)
-    return name
 
 
 def compare_publicbody_email(email, pb_info_list, transform=str.lower):

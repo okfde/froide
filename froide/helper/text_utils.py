@@ -8,6 +8,8 @@ from django.utils.html import strip_tags
 from django.utils.safestring import SafeString
 from django.utils.translation import gettext_lazy as _
 
+from slugify import slugify as _slugify
+
 try:
     from lxml import html as html_parser
     from lxml.html import HtmlElement
@@ -19,6 +21,12 @@ except ImportError:
 
 
 SEPARATORS = re.compile(r"( *-{4,}\s*[\w ]+\s*-{4,}\s*|^--\s*$)", re.UNICODE | re.M)
+
+SLUGIFY_REPLACEMENTS = getattr(settings, "SLUGIFY_REPLACEMENTS", ())
+
+
+def slugify(s):
+    return _slugify(s, replacements=SLUGIFY_REPLACEMENTS)
 
 
 def unescape(text):

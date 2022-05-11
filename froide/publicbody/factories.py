@@ -3,13 +3,13 @@ import string
 from datetime import timedelta
 
 from django.contrib.sites.models import Site
-from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 import factory
 from factory.django import DjangoModelFactory
 
 from froide.account.factories import UserFactory
+from froide.helper.text_utils import slugify
 
 from .models import (
     Category,
