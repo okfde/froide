@@ -1,10 +1,19 @@
 import logging
 from collections import namedtuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives, get_connection
+from django.core.mail.backends.locmem import EmailBackend
 from django.template import TemplateDoesNotExist
+from django.template.backends.django import Template
 from django.template.loader import render_to_string, select_template
+from django.utils.functional import SimpleLazyObject
+from django.utils.safestring import SafeString
+
+from froide.account.models import User
+from froide.account.utils import OnlyActiveUsersMailMiddleware
+from froide.bounce.apps import UnsubscribeReferenceMailMiddleware
 
 try:
     from froide.bounce.utils import make_bounce_address, make_unsubscribe_header
@@ -23,7 +32,9 @@ class MailIntentRegistry:
     def __init__(self):
         self.intents = {}
 
-    def register(self, mail_intent, context_vars=None):
+    def register(
+        self, mail_intent: str, context_vars: Optional[Tuple[str, str, str]] = None
+    ):
         intent = MailIntent(mail_intent, context_vars)
         self.intents[mail_intent] = intent
         return intent
@@ -33,6 +44,7 @@ class MailIntentRegistry:
 
 
 mail_registry = MailIntentRegistry()
+EmailKwargs = Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
 
 
 class MailMiddlwareRegistry:
@@ -43,11 +55,20 @@ class MailMiddlwareRegistry:
         self.middlewares.append(middleware)
         return middleware
 
-    def maybe_call_middleware(self, middleware, method, **kwargs):
+    def maybe_call_middleware(
+        self,
+        middleware: Union[
+            UnsubscribeReferenceMailMiddleware, OnlyActiveUsersMailMiddleware
+        ],
+        method: str,
+        **kwargs
+    ) -> Optional[Dict[str, str]]:
         if hasattr(middleware, method):
             return getattr(middleware, method)(**kwargs)
 
-    def should_mail(self, mail_intent, context, email_kwargs):
+    def should_mail(
+        self, mail_intent: str, context: Dict[str, Any], email_kwargs: EmailKwargs
+    ) -> bool:
         for middleware in self.middlewares:
             result = self.maybe_call_middleware(
                 middleware,
@@ -60,7 +81,7 @@ class MailMiddlwareRegistry:
                 return False
         return True
 
-    def get_email_address(self, mail_intent, context):
+    def get_email_address(self, mail_intent: str, context: Dict[str, Any]) -> None:
         for middleware in self.middlewares:
             result = self.maybe_call_middleware(
                 middleware,
@@ -71,7 +92,7 @@ class MailMiddlwareRegistry:
             if result is not None:
                 return result
 
-    def get_context(self, mail_intent, context):
+    def get_context(self, mail_intent: str, context: Dict[str, Any]) -> Dict[str, Any]:
         for middleware in self.middlewares:
             ctx = self.maybe_call_middleware(
                 middleware, "get_context", mail_intent=mail_intent, context=context
@@ -80,7 +101,13 @@ class MailMiddlwareRegistry:
                 context.update(ctx)
         return context
 
-    def get_email_content(self, mail_intent, context, template_base, email_kwargs):
+    def get_email_content(
+        self,
+        mail_intent: str,
+        context: Dict[str, Any],
+        template_base: Optional[str],
+        email_kwargs: Dict[str, Optional[Union[str, bool, Dict[str, str]]]],
+    ) -> None:
         for middleware in self.middlewares:
             result = self.maybe_call_middleware(
                 middleware,
@@ -93,7 +120,12 @@ class MailMiddlwareRegistry:
             if result is not None:
                 return result
 
-    def enhance_email_kwargs(self, mail_intent, context, email_kwargs):
+    def enhance_email_kwargs(
+        self,
+        mail_intent: str,
+        context: Dict[str, Any],
+        email_kwargs: Dict[str, Optional[Union[str, bool, Dict[str, str]]]],
+    ) -> Dict[str, Optional[Union[str, bool, Dict[str, str]]]]:
         for middleware in self.middlewares:
             ctx = self.maybe_call_middleware(
                 middleware,
@@ -111,11 +143,11 @@ mail_middleware_registry = MailMiddlwareRegistry()
 
 
 class MailIntent:
-    def __init__(self, mail_intent, context_vars):
+    def __init__(self, mail_intent: str, context_vars: Tuple[str, str, str]) -> None:
         self.mail_intent = mail_intent
         self.context_vars = set(context_vars or [])
 
-    def get_email_address(self, context):
+    def get_email_address(self, context: Dict[str, Any]) -> str:
         email_address = mail_middleware_registry.get_email_address(
             self.mail_intent, context
         )
@@ -127,7 +159,9 @@ class MailIntent:
             return context["user"].email
         raise ValueError("No email provided for mail intent")
 
-    def get_context(self, context, preview=False):
+    def get_context(
+        self, context: Dict[str, Any], preview: bool = False
+    ) -> Dict[str, Any]:
         if not preview and self.context_vars - set(context.keys()):
             logger.warn(
                 "Mail intent %s with incomplete default context %s",
@@ -140,7 +174,9 @@ class MailIntent:
         context = mail_middleware_registry.get_context(self.mail_intent, context)
         return context
 
-    def get_template(self, template_names, required=True):
+    def get_template(
+        self, template_names: List[str], required: bool = True
+    ) -> Optional[Template]:
         try:
             return select_template(template_names)
         except TemplateDoesNotExist:
@@ -148,7 +184,9 @@ class MailIntent:
                 raise
             return None
 
-    def get_templates(self, template_base=None, needs_subject=True):
+    def get_templates(
+        self, template_base: Optional[str] = None, needs_subject: bool = True
+    ) -> EmailContent:
         template_bases = []
         if template_base is not None:
             template_bases.append(template_base)
@@ -165,7 +203,14 @@ class MailIntent:
             html=self.get_template(html_template_names, required=False),
         )
 
-    def get_email_content(self, context, template_base=None, email_kwargs=None):
+    def get_email_content(
+        self,
+        context: Dict[str, Any],
+        template_base: Optional[str] = None,
+        email_kwargs: Optional[
+            Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
+        ] = None,
+    ) -> EmailContent:
         email_content = mail_middleware_registry.get_email_content(
             self.mail_intent, context, template_base, email_kwargs
         )
@@ -195,13 +240,24 @@ class MailIntent:
 
         return EmailContent(subject, text, html)
 
-    def enhance_email_kwargs(self, context, email_kwargs):
+    def enhance_email_kwargs(
+        self,
+        context: Dict[str, Any],
+        email_kwargs: Dict[str, Optional[Union[str, bool, Dict[str, str]]]],
+    ) -> Dict[str, Optional[Union[str, bool, Dict[str, str]]]]:
         email_kwargs = mail_middleware_registry.enhance_email_kwargs(
             self.mail_intent, context, email_kwargs
         )
         return email_kwargs
 
-    def send(self, email=None, user=None, context=None, template_base=None, **kwargs):
+    def send(
+        self,
+        email: Optional[str] = None,
+        user: Optional[Union[SimpleLazyObject, User]] = None,
+        context: Optional[Dict[str, Any]] = None,
+        template_base: Optional[str] = None,
+        **kwargs
+    ) -> int:
         if context is None:
             context = {}
         if user is not None:
@@ -239,7 +295,7 @@ class MailIntent:
         )
 
 
-def get_mail_connection(**kwargs):
+def get_mail_connection(**kwargs) -> EmailBackend:
     return get_connection(backend=settings.EMAIL_BACKEND, **kwargs)
 
 
@@ -268,23 +324,23 @@ def send_template_email(
 
 
 def send_mail(
-    subject,
-    body,
-    email_address,
-    html=None,
-    from_email=None,
-    cc=None,
-    bcc=None,
-    attachments=None,
-    fail_silently=False,
-    bounce_check=True,
-    headers=None,
-    priority=True,
-    queue=None,
-    auto_bounce=True,
-    unsubscribe_reference=None,
+    subject: str,
+    body: Union[str, SafeString],
+    email_address: str,
+    html: Optional[SafeString] = None,
+    from_email: None = None,
+    cc: None = None,
+    bcc: None = None,
+    attachments: None = None,
+    fail_silently: bool = False,
+    bounce_check: bool = True,
+    headers: Optional[Dict[str, str]] = None,
+    priority: bool = True,
+    queue: None = None,
+    auto_bounce: bool = True,
+    unsubscribe_reference: Optional[str] = None,
     **kwargs
-):
+) -> int:
     if not email_address:
         return
     if bounce_check:
