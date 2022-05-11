@@ -736,7 +736,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(message.foiattachment_set.all()), 2)
 
-        # Adding the same document again should override the first one
+        # Adding the same document again will add another with a numbered filename
         with open(factories.TEST_PDF_PATH, "rb") as f:
             post.update({post_var: f})
             response = self.client.post(
@@ -748,7 +748,10 @@ class RequestTest(TestCase):
             )
 
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(len(message.foiattachment_set.all()), 2)
+        attachments = {att.name for att in message.foiattachment_set.all()}
+        self.assertEqual(len(attachments), 3)
+        self.assertIn("test_1.pdf", attachments)
+        self.assertIn("test.pdf", attachments)
 
     def test_set_message_sender(self):
         from froide.foirequest.forms import get_message_sender_form

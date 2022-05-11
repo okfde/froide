@@ -1,10 +1,10 @@
 from django import forms
 from django.conf import settings
-from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 
 from taggit.forms import TagField, TagWidget
 
+from froide.helper.text_utils import slugify
 from froide.helper.widgets import BootstrapCheckboxInput
 
 from .models import Document, DocumentCollection

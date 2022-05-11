@@ -5,13 +5,13 @@ from io import BytesIO, StringIO
 from django.contrib.auth import get_user_model
 from django.contrib.gis.geos import Point
 from django.contrib.sites.models import Site
-from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
 import requests
 
 from froide.georegion.models import GeoRegion
+from froide.helper.text_utils import slugify
 from froide.publicbody.models import Category, Classification, Jurisdiction, PublicBody
 
 User = get_user_model()
