@@ -189,6 +189,11 @@ class FoiAttachment(models.Model):
     def __str__(self):
         return "%s (%s) of %s" % (self.name, self.size, self.belongs_to)
 
+    @property
+    def slug(self):
+        # Introduce proper slug field later
+        return self.name
+
     def index_content(self):
         return "\n".join((self.name,))
 

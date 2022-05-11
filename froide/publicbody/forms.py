@@ -4,13 +4,13 @@ from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import phonenumbers
 
 from froide.helper.form_utils import JSONMixin
+from froide.helper.text_utils import slugify
 
 from .models import Classification, Jurisdiction, PublicBody
 from .widgets import PublicBodySelect
