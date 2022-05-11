@@ -549,9 +549,7 @@ def change_profile(request):
 @require_POST
 @login_required
 def change_account_settings(request):
-    form = AccountSettingsForm(
-        data=request.POST, files=request.FILES, instance=request.user
-    )
+    form = AccountSettingsForm(data=request.POST, instance=request.user)
     if form.is_valid():
         form.save()
         messages.add_message(
