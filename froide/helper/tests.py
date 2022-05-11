@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta
+from re import Pattern
 
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -12,19 +13,19 @@ from .text_diff import mark_differences
 from .text_utils import remove_closing, replace_email_name, split_text_by_separator
 
 
-def rec(x):
+def rec(x: str) -> Pattern:
     return re.compile(x, re.I | re.U)
 
 
 class TestTextReplacement(TestCase):
-    def test_email_name_replacement(self):
+    def test_email_name_replacement(self) -> None:
         content = "This is a very long string with a name <and.email@adress.in> it"
         content = replace_email_name(content, "REPLACEMENT")
         self.assertEqual(
             content, "This is a very long string with a name REPLACEMENT it"
         )
 
-    def test_remove_closing(self):
+    def test_remove_closing(self) -> None:
         content = """
 Sehr geehrte Frau Müller,
 
@@ -47,7 +48,7 @@ More stuff here
         removed = remove_closing(content, closings)
         self.assertNotIn("Peter Parker", removed)
 
-    def test_redactions_simple(self):
+    def test_redactions_simple(self) -> None:
         original = """Ich bin am 21.10.2014 wieder an meinem Arbeitsplatz erreichbar. Ihre E-Mail wird nicht weitergeleitet. In dringenden Fällen wenden Sie sich bitte an amtsleitung-jobcenter@kreis-warendorf.de
 
 Mit freundlichen Grüßen
@@ -61,7 +62,7 @@ Mit freundlichen Grüßen"""
         differences = mark_differences(original, redacted)
         self.assertEqual(2, differences.count("</span>"))
 
-    def test_email_redaction(self):
+    def test_email_redaction(self) -> None:
         content = """Sehr geehrte(r) Anfragende(r),
 
 die E-Mailadresse, an die Sie sich wenden können, lautet informationsfreiheitsgesetz@example.com. Hier werden Ihre Anfragen unmittelbar bearbeitet.
@@ -94,25 +95,25 @@ Mit freundlichen Grüßen"""
 
 
 class TestTextSplitting(TestCase):
-    def test_no_text_split(self):
+    def test_no_text_split(self) -> None:
         content = ""
         a, b = split_text_by_separator(content)
         self.assertEqual(a, "")
         self.assertEqual(b, "")
 
-    def test_no_split(self):
+    def test_no_split(self) -> None:
         content = "content\ncontent"
         a, b = split_text_by_separator(content)
         self.assertEqual(a, content)
         self.assertEqual(b, "")
 
-    def test_normal_text_split(self):
+    def test_normal_text_split(self) -> None:
         content = "content\n\n---- forward ----\nother"
         a, b = split_text_by_separator(content)
         self.assertEqual(a, "content\n\n")
         self.assertEqual(b, "---- forward ----\nother")
 
-    def test_notop_text_split(self):
+    def test_notop_text_split(self) -> None:
         content = "---- top ----\ncontent\n\n---- middle ----\nbottom"
         a, b = split_text_by_separator(content)
         self.assertEqual(a, "---- top ----\ncontent\n\n")
@@ -131,7 +132,7 @@ class TestTextSplitting(TestCase):
     HOLIDAYS_FOR_EASTER=(0, -2, 1, 39, 50, 60),
 )
 class TestGermanDeadline(TestCase):
-    def test_german_holidays_send(self):
+    def test_german_holidays_send(self) -> None:
         easter_sunday = calc_easter(2014)
         easter_sunday = datetime(*easter_sunday)
 
@@ -145,7 +146,7 @@ class TestGermanDeadline(TestCase):
         self.assertTrue(deadline2 > deadline)
         self.assertEqual((deadline + timedelta(days=4)).date(), deadline2.date())
 
-    def test_german_holidays_receive(self):
+    def test_german_holidays_receive(self) -> None:
         easter_sunday = calc_easter(2014)
         easter_sunday = datetime(*easter_sunday)
 
@@ -154,19 +155,19 @@ class TestGermanDeadline(TestCase):
         deadline = deadline.replace(tzinfo=None)
         self.assertTrue((deadline - month_before).days > 33)
 
-    def test_long_period(self):
+    def test_long_period(self) -> None:
         start = datetime(2014, 10, 30)
         deadline = calculate_month_range_de(start, months=15)
         deadline = deadline.replace(tzinfo=None)
         self.assertEqual(deadline, datetime(2016, 2, 2))
 
-    def test_last_day(self):
+    def test_last_day(self) -> None:
         start = datetime(2014, 1, 30)
         deadline = calculate_month_range_de(start, months=1)
         deadline = deadline.replace(tzinfo=None)
         self.assertEqual(deadline, datetime(2014, 3, 1))
 
-    def test_end_of_year(self):
+    def test_end_of_year(self) -> None:
         start = datetime(2014, 11, 10)
         deadline = calculate_month_range_de(start, months=1)
         deadline = deadline.replace(tzinfo=None)
@@ -174,7 +175,7 @@ class TestGermanDeadline(TestCase):
 
 
 class TestMailIntent(TestCase):
-    def test_mail_intent_templates(self):
+    def test_mail_intent_templates(self) -> None:
         for intent_key in mail_registry.intents:
             # check if all mail intent templates are present
             try:
@@ -185,7 +186,7 @@ class TestMailIntent(TestCase):
 
 
 class TestCSVFormulaEscape(TestCase):
-    def test_formula_escape(self):
+    def test_formula_escape(self) -> None:
         data = [
             {
                 "col1": "=SUM(1+1)",
