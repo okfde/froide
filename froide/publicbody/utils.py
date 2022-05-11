@@ -4,6 +4,7 @@ import re
 
 from django.db.models import Q
 
+from markdown.core import Markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 from markdown.util import AtomicString
@@ -44,7 +45,7 @@ def export_user_data(user):
 
 # add anchors to law markdown
 class LawTreeprocessor(Treeprocessor):
-    def __init__(self, md):
+    def __init__(self, md: Markdown) -> None:
         super().__init__(md)
 
         self.used_ids = set()
@@ -106,5 +107,5 @@ class LawTreeprocessor(Treeprocessor):
 
 
 class LawExtension(Extension):
-    def extendMarkdown(self, md):
+    def extendMarkdown(self, md: Markdown) -> None:
         md.treeprocessors.register(LawTreeprocessor(md), "laws", 5)
