@@ -1,5 +1,6 @@
 from django.db import IntegrityError, models
-from django.template.defaultfilters import slugify
+
+from froide.helper.text_utils import slugify
 
 
 def save_obj_with_slug(obj: models.Model, attribute: str = "title", **kwargs) -> None:

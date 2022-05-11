@@ -3,6 +3,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
+from froide.helper.storage import make_unique_filename
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.forms import FileUploaderField
@@ -11,7 +12,6 @@ from froide.upload.models import Upload
 from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import MessageKind
 from ..tasks import move_upload_to_attachment
-from ..utils import make_unique_filename
 from ..validators import validate_postal_content_type
 from .message import MessageEditMixin
 

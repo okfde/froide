@@ -32,12 +32,12 @@
       <div id="document-description">
          {{ object.description|markdown }} 
       </div>
-      {% if object|can_write_document:request %}
-        <a href="#" data-inlineedit="#document-description-form" data-inlineeditpresentation="#document-description">
-          <i class="fa fa-pencil" aria-hidden="true"></i>
-          <span>{% trans "Edit description" %}</span>
-        </a>
-      {% endif %}
+    {% endif %}
+    {% if object|can_write_document:request %}
+      <a href="#" data-inlineedit="#document-description-form" data-inlineeditpresentation="#document-description">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
+        <span>{% trans "Edit description" %}</span>
+      </a>
     {% endif %}
 
     {% if object.foirequest %}

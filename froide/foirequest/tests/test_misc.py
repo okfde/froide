@@ -190,5 +190,4 @@ class RenderMessageContentTest(TestCase):
         msg = factories.FoiMessageFactory.create(
             request=self.req, plaintext="aaaaa", plaintext_redacted="[redacted]"
         )
-        print(render_message_content(msg))
         self.assertEqual(render_message_content(msg), expected)

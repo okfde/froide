@@ -2,7 +2,6 @@ from typing import List
 
 from django import forms
 from django.conf import settings
-from django.template.defaultfilters import slugify
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.html import escape
@@ -16,7 +15,7 @@ from froide.campaign.validators import validate_not_campaign
 from froide.helper.auth import get_read_queryset
 from froide.helper.form_utils import JSONMixin
 from froide.helper.forms import TagObjectForm
-from froide.helper.text_utils import redact_plaintext
+from froide.helper.text_utils import redact_plaintext, slugify
 from froide.helper.widgets import BootstrapRadioSelect, PriceInput
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
