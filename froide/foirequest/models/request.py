@@ -26,7 +26,7 @@ from froide.team.models import Team
 
 from .project import FoiProject
 
-MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=14)
+MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=31)
 
 
 class FoiRequestManager(CurrentSiteManager):
