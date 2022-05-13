@@ -444,6 +444,7 @@ class ReceiveEmailService(BaseService):
             foirequest.law
             and foirequest.law.mediator
             and publicbody == foirequest.law.mediator
+            and foirequest.public_body != foirequest.law.mediator
         ):
             return True
 
