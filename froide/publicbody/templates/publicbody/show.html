@@ -13,6 +13,10 @@
   {% if not object.confirmed %}
     <meta name="robots" content="noindex"/>
   {% endif %}
+
+  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed" %}" href="{% url 'foirequest-list_feed' publicbody=object.slug %}" />
+  <link rel="alternate" type="application/atom+xml" title="{% trans "Atom Feed" %}" href="{% url 'foirequest-list_feed_atom' publicbody=object.slug %}" />
+
 {% endblock %}
 
 {% block app_body %}
