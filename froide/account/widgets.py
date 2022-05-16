@@ -1,4 +1,14 @@
+from typing import Dict, Optional, Union
+
 from django import forms
+
+Context = Dict[
+    str,
+    Union[
+        Dict[str, Union[str, bool, Dict[str, Union[str, bool]]]],
+        Dict[str, Optional[Union[str, bool, Dict[str, Union[str, bool]]]]],
+    ],
+]
 
 
 class ConfirmationWidget(forms.TextInput):
@@ -8,7 +18,7 @@ class ConfirmationWidget(forms.TextInput):
         self.phrase = phrase
         super(ConfirmationWidget, self).__init__(**kwargs)
 
-    def get_context(self, *args):
+    def get_context(self, *args) -> Context:
         context = super(ConfirmationWidget, self).get_context(*args)
         context["widget"].update({"phrase": self.phrase})
         return context

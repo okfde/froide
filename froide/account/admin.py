@@ -1,11 +1,16 @@
+from typing import List, Optional
+
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Exists, OuterRef
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
+from django.urls.resolvers import URLPattern
 from django.utils.translation import gettext_lazy as _
 
 from mfa.admin import MFAKeyAdmin
@@ -131,7 +136,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         qs = qs.annotate(has_mfa=Exists(user_has_mfa))
         return qs
 
-    def get_urls(self):
+    def get_urls(self) -> List[URLPattern]:
         urls = super().get_urls()
         my_urls = [
             path(
@@ -234,7 +239,9 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     resend_activation.short_description = _("Resend activation mail")
 
-    def send_mail(self, request, queryset):
+    def send_mail(
+        self, request: HttpRequest, queryset: QuerySet
+    ) -> Optional[TemplateResponse]:
         """
         Send mail to users
 
