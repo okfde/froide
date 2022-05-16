@@ -119,44 +119,42 @@
 
 {% include "account/includes/change_password_form.html" %}
 
-{% if request.user.is_staff  %}
-  <div id="mfa" class="card mb-3">
-    <h5 class="card-header">
-      {% translate "Setup two-factor login" %}
-    </h5>
-    <div class="card-body">
-      {% recentauthrequired "mfa" %}
-        {% if not request.user.has_usable_password %}
-          <p>{% translate "You need to set a password first." %}</p>
+<div id="mfa" class="card mb-3">
+  <h5 class="card-header">
+    {% translate "Setup two-factor login" %}
+  </h5>
+  <div class="card-body">
+    {% recentauthrequired "mfa" %}
+      {% if not request.user.has_usable_password %}
+        <p>{% translate "You need to set a password first." %}</p>
+      {% else %}
+        {% get_mfa_keys as mfa_keys %}
+        {% if mfa_keys.all %}
+          <p>{% translate "You have the following two-factor login methods active:" %}</p>
+          <ul>
+            {% for mfa_key in mfa_keys.all %}
+              <li>
+                {{ mfa_key.name }} 
+                <span class="badge badge-secondary">
+                {% if mfa_key.method == "FIDO2" %}
+                  {% translate "hardware security key" %}
+                {% elif mfa_key.method == "TOTP" %}
+                  {% translate "authenticator app" %}
+                {% else %}
+                  {% translate "recovery code" %}
+                {% endif %}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
         {% else %}
-          {% get_mfa_keys as mfa_keys %}
-          {% if mfa_keys.all %}
-            <p>{% translate "You have the following two-factor login methods active:" %}</p>
-            <ul>
-              {% for mfa_key in mfa_keys.all %}
-                <li>
-                  {{ mfa_key.name }} 
-                  <span class="badge badge-secondary">
-                  {% if mfa_key.method == "FIDO2" %}
-                    {% translate "hardware security key" %}
-                  {% elif mfa_key.method == "TOTP" %}
-                    {% translate "authenticator app" %}
-                  {% else %}
-                    {% translate "recovery code" %}
-                  {% endif %}
-                  </span>
-                </li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p>{% translate "You have not setup any two-factor login methods." %}</p>
-          {% endif %}
-          <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
+          <p>{% translate "You have not setup any two-factor login methods." %}</p>
         {% endif %}
-      {% endrecentauthrequired %}
-    </div>
+        <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
+      {% endif %}
+    {% endrecentauthrequired %}
   </div>
-{% endif %}
+</div>
 
 {% block post_password %}{% endblock %}
 

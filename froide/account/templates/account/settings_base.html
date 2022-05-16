@@ -29,11 +29,9 @@
       <a href="#change-password-now" class="list-group-item list-group-item-action">
         {% trans "Change password" %}
       </a>
-      {% if request.user.is_staff %}
-        <a href="#mfa" class="list-group-item list-group-item-action">
-          {% trans "Setup two-factor login" %}
-        </a>
-      {% endif %}
+      <a href="#mfa" class="list-group-item list-group-item-action">
+        {% trans "Setup two-factor login" %}
+      </a>
       {% block post_password_menu %}{% endblock %}
       <a href="#export" class="list-group-item list-group-item-action">
         {% trans "Data export" %}
