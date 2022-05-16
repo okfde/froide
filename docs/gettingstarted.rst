@@ -88,9 +88,9 @@ Background Tasks with Celery
 
 From the standard settings file everything is already setup for background tasks except that they are not running in the background.
 
-You need to change the `CELERY_ALWAYS_EAGER` setting to `False` in your custom settings::
+You need to change the `CELERY_TASK_ALWAYS_EAGER` setting to `False` in your custom settings::
 
-    CELERY_ALWAYS_EAGER = False
+    CELERY_TASK_ALWAYS_EAGER = False
 
 You need a broker for Celery. Find out more at the `Celery Docs <http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#choosing-a-broker>`_.
 
