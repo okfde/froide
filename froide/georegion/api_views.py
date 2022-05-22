@@ -105,7 +105,10 @@ class GeoRegionFilter(filters.FilterSet):
 
     def id_filter(self, queryset, name, value):
         ids = value.split(",")
-        return queryset.filter(pk__in=ids)
+        try:
+            return queryset.filter(pk__in=ids)
+        except ValueError:
+            return queryset
 
     def ancestor_filter(self, queryset, name, value):
         descendants = value.get_descendants()
