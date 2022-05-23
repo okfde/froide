@@ -35,7 +35,7 @@ backports.entry-points-selectable==1.1.1
     # via virtualenv
 billiard==3.6.4.0
     # via celery
-black==21.7b0
+black==22.3.0
     # via -r requirements-test.in
 bleach==5.0.0
     # via -r requirements.in
