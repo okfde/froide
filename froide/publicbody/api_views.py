@@ -109,10 +109,8 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
         """Activate language based on request query param."""
-        request = self.context.get("request")
-        if request:
-            lang = request.GET.get("language", settings.LANGUAGE_CODE)
-            instance.set_current_language(lang)
+        language = get_language_from_query(self.context.get("request"))
+        instance.set_current_language(language)
         ret = super().to_representation(instance)
         return ret
 
