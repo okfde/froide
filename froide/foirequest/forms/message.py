@@ -110,9 +110,7 @@ def get_send_message_form(*args, **kwargs):
         subject = "{prefix} {subject}".format(
             prefix=prefix, subject=last_message.subject
         )
-    message_ready = False
     if foirequest.is_overdue() and foirequest.awaits_response():
-        message_ready = True
         days = (timezone.now() - foirequest.due_date).days + 1
         first_message = foirequest.messages[0]
         message = render_to_string(
@@ -129,13 +127,10 @@ def get_send_message_form(*args, **kwargs):
     else:
         message = _("Dear Sir or Madam,\n\n…\n\nSincerely yours\n%(name)s\n")
         message = message % {"name": foirequest.user.get_full_name()}
-    if "message_ready" in kwargs:
-        message_ready = kwargs.pop("message_ready")
 
     return SendMessageForm(
         *args,
         foirequest=foirequest,
-        message_ready=message_ready,
         prefix="sendmessage",
         initial={"subject": subject, "message": message},
         **kwargs
@@ -247,36 +242,26 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
     field_order = ["to", "subject", "message", "files", "send_address"]
 
     def __init__(self, *args, **kwargs):
-        foirequest = kwargs.pop("foirequest")
-        self.message_ready = kwargs.pop("message_ready")
+        self._store_params(kwargs)
         super().__init__(*args, **kwargs)
-        self.foirequest = foirequest
+        self._initialize_fields()
 
-        to_choices = possible_reply_addresses(foirequest)
+    def _store_params(self, kwargs):
+        self.foirequest = kwargs.pop("foirequest")
+
+    def _initialize_fields(self):
+        to_choices = possible_reply_addresses(self.foirequest)
         self.fields["to"].choices = to_choices
         if len(to_choices) == 1:
             self.fields["to"].initial = to_choices[0][0]
 
-        address_optional = foirequest.law and foirequest.law.email_only
+        address_optional = self.foirequest.law and self.foirequest.law.email_only
 
         self.fields["send_address"].initial = not address_optional
-        self.fields["address"].initial = foirequest.user.address
+        self.fields["address"].initial = self.foirequest.user.address
 
     def get_user(self):
         return self.foirequest.user
-
-    def clean_message(self):
-        message = self.cleaned_data["message"]
-        if not self.message_ready:
-            # Initial message needs to be filled out
-            # Check if submitted message is still the initial
-            message = message.replace("\r\n", "\n").strip()
-            empty_form = get_send_message_form(foirequest=self.foirequest)
-            if message == empty_form.initial["message"].strip():
-                raise forms.ValidationError(
-                    _("You need to fill in the blanks in the template!")
-                )
-        return message
 
     def clean(self):
         cleaned_data = super().clean()
@@ -304,37 +289,36 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         message.clear_render_cache()
 
-    def make_message(self):
-        user = self.foirequest.user
+    def make_message(self, foirequest: FoiRequest, recipient_email: str):
+        user = self.get_user()
 
         address = self.cleaned_data.get("address", "")
         if address.strip() and address != user.address:
             user.address = address
             user.save()
 
-        recipient_email = self.cleaned_data["to"]
-        recipient_info = get_info_for_email(self.foirequest, recipient_email)
+        recipient_info = get_info_for_email(foirequest, recipient_email)
         recipient_name = recipient_info.name
         recipient_pb = recipient_info.publicbody
         if recipient_pb is None:
             recipient_pb = get_publicbody_for_email(recipient_email, self.foirequest)
 
         subject = re.sub(
-            r"\s*\[#%s\]\s*$" % self.foirequest.pk, "", self.cleaned_data["subject"]
+            r"\s*\[#%s\]\s*$" % foirequest.pk, "", self.cleaned_data["subject"]
         )
-        subject = "%s [#%s]" % (subject, self.foirequest.pk)
+        subject = "%s [#%s]" % (subject, foirequest.pk)
         user_replacements = user.get_redactions()
         subject_redacted = redact_subject(subject, user_replacements)
 
         message = FoiMessage(
-            request=self.foirequest,
+            request=foirequest,
             subject=subject,
             kind=MessageKind.EMAIL,
             subject_redacted=subject_redacted,
             is_response=False,
             sender_user=user,
             sender_name=user.display_name(),
-            sender_email=self.foirequest.secret_address,
+            sender_email=foirequest.secret_address,
             recipient_email=recipient_email.strip(),
             recipient_public_body=recipient_pb,
             recipient=recipient_name,
@@ -343,7 +327,8 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         return message
 
     def save(self, user=None):
-        message = self.make_message()
+        recipient_email = self.cleaned_data["to"]
+        message = self.make_message(self.foirequest, recipient_email)
         message.save()
 
         if self.cleaned_data.get("files"):

@@ -14,7 +14,12 @@ from .message import (
     get_send_message_form,
 )
 from .postal import PostalUploadForm
-from .project import AssignProjectForm, MakeProjectPublicForm
+from .project import (
+    AssignProjectForm,
+    MakeProjectPublicForm,
+    PublishRequestsForm,
+    SendMessageProjectForm,
+)
 from .request import (
     ApplyModerationForm,
     ConcreteLawForm,
@@ -49,6 +54,8 @@ __all__ = [
     "PublicBodyUploader",
     "PostalUploadForm",
     "MakeProjectPublicForm",
+    "PublishRequestsForm",
     "ApplyModerationForm",
     "AssignProjectForm",
+    "SendMessageProjectForm",
 ]

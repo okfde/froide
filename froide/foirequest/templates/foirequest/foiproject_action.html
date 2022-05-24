@@ -1,0 +1,44 @@
+{% extends 'foirequest/base.html' %}
+
+{% load i18n %}
+{% load form_helper %}
+
+{% block title %}{{ object.title }}{% endblock %}
+
+{% block app_body %}
+  <h1>
+    {{ object.title }}
+  </h1>
+
+  <a href="{{ object.get_absolute_url }}" class="btn btn-secondary btn-sm float-right">
+    {% translate "Back to project page " %}
+  </a>
+
+  <p>
+    {{ action.description }}
+  </p>
+
+  <form method="post" action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="{{ action.action }}"/>
+    <div style="max-height: 20vh" class="border my-2">
+      <ul class="mb-0">
+        {% for foirequest in foirequests %}
+          <li>
+            <input type="hidden" name="foirequest" value="{{ foirequest.pk }}"/>
+            {% blocktranslate with req_id=foirequest.id pb_name=foirequest.public_body.name %}
+            Request to {{ pb_name }} [#{{ req_id }}]
+            {% endblocktranslate %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    {% render_form form %}
+
+    <button type="submit" class="btn btn-primary">
+      {{ action.button }}
+    </button>
+  </form>
+
+{% endblock %}
