@@ -100,6 +100,11 @@ class AttachmentSaverMixin(object):
         return added
 
 
+def get_default_initial_message(user):
+    message = _("Dear Sir or Madam,\n\n…\n\nSincerely yours\n%(name)s\n")
+    return message % {"name": user.get_full_name()}
+
+
 def get_send_message_form(*args, **kwargs):
     foirequest = kwargs.pop("foirequest")
     last_message = list(foirequest.messages)[-1]
@@ -125,8 +130,7 @@ def get_send_message_form(*args, **kwargs):
             },
         )
     else:
-        message = _("Dear Sir or Madam,\n\n…\n\nSincerely yours\n%(name)s\n")
-        message = message % {"name": foirequest.user.get_full_name()}
+        message = get_default_initial_message(foirequest.user)
 
     return SendMessageForm(
         *args,

@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.forms.message import get_default_initial_message
 from froide.foirequest.tasks import create_project_messages
 from froide.helper.widgets import BootstrapCheckboxInput
 
@@ -77,6 +78,10 @@ class SendMessageProjectForm(SendMessageForm):
 
     def _initialize_fields(self):
         self.fields["address"].initial = self.foiproject.user.address
+        self.fields["message"].initial = get_default_initial_message(
+            self.foiproject.user
+        )
+        self.fields["subject"].initial = self.foiproject.title
 
     def get_user(self):
         return self.foiproject.user
