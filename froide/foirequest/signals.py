@@ -191,11 +191,15 @@ def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
         # All non-email sent messages are not interesting to users.
         # Don't inform them about it.
         return
+    if kwargs.get("bulk"):
+        # Don't notify on bulk message sending
+        return
 
     messages = sender.get_messages()
     start_thread = False
     if len(messages) == 1:
         if sender.project_id is not None:
+            # Don't notify on first message in a project
             return
         subject = _("Your Freedom of Information Request was sent")
         mail_intent = confirm_foi_request_sent_email

@@ -326,7 +326,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         return message
 
-    def save(self, user=None):
+    def save(self, user=None, bulk=False):
         recipient_email = self.cleaned_data["to"]
         message = self.make_message(self.foirequest, recipient_email)
         message.save()
@@ -348,7 +348,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
 
         message.send(attachments=attachments)
         self.foirequest.message_sent.send(
-            sender=self.foirequest, message=message, user=user
+            sender=self.foirequest, message=message, user=user, bulk=bulk
         )
 
         return message

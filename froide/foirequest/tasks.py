@@ -143,7 +143,7 @@ def create_project_message(foirequest_id, user_id, **form_data):
     form_data["to"] = foirequest.public_body.email
     form = SendMessageForm(foirequest=foirequest, data=form_data)
     if form.is_valid():
-        form.save(user)
+        form.save(user=user, bulk=True)
 
 
 @celery_app.task(name="froide.foirequest.tasks.convert_attachment_task", time_limit=60)
