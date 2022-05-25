@@ -16,6 +16,7 @@ from .message import (
 from .postal import PostalUploadForm
 from .project import (
     AssignProjectForm,
+    FoiRequestBulkForm,
     MakeProjectPublicForm,
     PublishRequestsForm,
     SendMessageProjectForm,
@@ -53,6 +54,7 @@ __all__ = [
     "RedactMessageForm",
     "PublicBodyUploader",
     "PostalUploadForm",
+    "FoiRequestBulkForm",
     "MakeProjectPublicForm",
     "PublishRequestsForm",
     "ApplyModerationForm",

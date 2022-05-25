@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from froide.foirequest.tasks import create_project_messages
 from froide.helper.widgets import BootstrapCheckboxInput
 
+from ..auth import get_write_foirequest_queryset
 from ..forms import SendMessageForm
 from ..models import FoiProject
 
@@ -38,6 +39,18 @@ class AssignProjectForm(forms.Form):
             project.recalculate_order()
 
         return self.instance
+
+
+class FoiRequestBulkForm(forms.Form):
+    foirequest = forms.ModelMultipleChoiceField(queryset=None)
+
+    def __init__(self, *args, **kwargs):
+        foiproject: FoiProject = kwargs.pop("foiproject")
+        request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.fields["foirequest"].queryset = get_write_foirequest_queryset(
+            request, queryset=foiproject.foirequest_set.all()
+        )
 
 
 class PublishRequestsForm(forms.Form):

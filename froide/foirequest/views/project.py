@@ -19,7 +19,12 @@ from ..auth import (
     can_write_foiproject,
     get_read_foirequest_queryset,
 )
-from ..forms import MakeProjectPublicForm, PublishRequestsForm, SendMessageProjectForm
+from ..forms import (
+    FoiRequestBulkForm,
+    MakeProjectPublicForm,
+    PublishRequestsForm,
+    SendMessageProjectForm,
+)
 from ..models import FoiProject
 
 
@@ -115,9 +120,12 @@ class ProjectActionView(UpdateView):
         return redirect(self.get_object())
 
     def get_foirequests(self):
-        return self.object.foirequest_set.filter(
-            id__in=self.request.POST.getlist("foirequest", [])
+        form = FoiRequestBulkForm(
+            data=self.request.POST, request=self.request, foiproject=self.object
         )
+        if form.is_valid():
+            return form.cleaned_data["foirequest"]
+        return []
 
     def post(self, request, *args, **kwargs):
         action = self.get_action()
@@ -125,6 +133,9 @@ class ProjectActionView(UpdateView):
         if not action.auth_check(self.object, request):
             raise Http404
         foirequests = self.get_foirequests()
+        if not foirequests:
+            return redirect(self.object)
+
         if self.is_initial_step():
             form = action.form_class(foiproject=self.object, foirequests=foirequests)
             context = self.get_context_data(form=form, foirequests=foirequests)
