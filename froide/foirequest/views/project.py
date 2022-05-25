@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict
 
+from django.contrib import messages
 from django.forms import Form
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -82,6 +83,7 @@ class ProjectAction:
     form_class: Form
     button: str
     description: str
+    success: str
 
 
 class ProjectActionView(UpdateView):
@@ -97,6 +99,7 @@ class ProjectActionView(UpdateView):
                 form_class=PublishRequestsForm,
                 button=gettext("Publish"),
                 description=gettext("Publish selected requests."),
+                success=gettext("Requests are now published."),
             ),
             ProjectAction(
                 action="writemessage",
@@ -106,6 +109,7 @@ class ProjectActionView(UpdateView):
                     "Write message to public body in selected requests."
                 ),
                 button=gettext("Send messages"),
+                success=gettext("Messages are being sent now."),
             ),
         )
         return {a.action: a for a in actions}
@@ -128,20 +132,22 @@ class ProjectActionView(UpdateView):
         return []
 
     def post(self, request, *args, **kwargs):
-        action = self.get_action()
+        self.action = self.get_action()
         self.object = self.get_object()
-        if not action.auth_check(self.object, request):
+        if not self.action.auth_check(self.object, request):
             raise Http404
         foirequests = self.get_foirequests()
         if not foirequests:
             return redirect(self.object)
 
         if self.is_initial_step():
-            form = action.form_class(foiproject=self.object, foirequests=foirequests)
+            form = self.action.form_class(
+                foiproject=self.object, foirequests=foirequests
+            )
             context = self.get_context_data(form=form, foirequests=foirequests)
             return self.render_to_response(context)
 
-        form = action.form_class(
+        form = self.action.form_class(
             request.POST, foiproject=self.object, foirequests=foirequests
         )
         if form.is_valid():
@@ -164,8 +170,8 @@ class ProjectActionView(UpdateView):
         return ctx
 
     def form_valid(self, form):
-        """If the form is valid, save the associated model."""
         self.object = form.save(self.request.user)
+        messages.add_message(self.request, messages.SUCCESS, self.action.success)
         return redirect(self.get_success_url())
 
     def get_success_url(self) -> str:
