@@ -151,7 +151,12 @@ class CreateRequestService(BaseService):
         FoiProject.project_created.send(sender=project)
 
         publicbody_ids = [pb.pk for pb in data["publicbodies"]]
-        extra = {"full_text": data.get("full_text", False)}
+        extra = {
+            "law_type": data.get("law_type", ""),
+            "language": data.get("language", ""),
+            "address": data.get("address"),
+            "full_text": data.get("full_text", False),
+        }
         create_project_requests.delay(project.id, publicbody_ids, **extra)
         return project
 
