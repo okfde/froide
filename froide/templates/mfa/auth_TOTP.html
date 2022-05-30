@@ -29,11 +29,6 @@
       {% endfor %}
     </div>
   {% endif %}
-  {% if form.errors %}
-    <div class="alert alert-danger">
-      {{ form.errors }}
-    </div>
-  {% endif %}
   <div class="form-group row">
     <label class="font-weight-bold col-md-4 col-form-label" for="id_code">
       {{ form.code.label }}
