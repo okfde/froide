@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=user.get_full_name site_name=SITE_NAME %}Hello {{ name }},
+due to your activities we see ourselves forced to terminate your user account due to violations of our terms of use.
+ 
+Kind Regards
+{{ site_name }}
+{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

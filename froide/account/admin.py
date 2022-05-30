@@ -119,7 +119,8 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "send_mail",
         "delete_sessions",
         "make_private",
-        "cancel_users",
+        "cancel_users_by_request",
+        "future_cancel_users_notify",
         "future_cancel_users",
         "deactivate_users",
         "export_user_data",
@@ -279,13 +280,23 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     delete_sessions.short_description = _("Delete sessions of users")
 
-    def cancel_users(self, request, queryset):
+    def cancel_users_by_request(self, request, queryset):
         for user in queryset:
             start_cancel_account_process(user)
-        self.message_user(request, _("Users canceled."))
+        self.message_user(request, _("Accounts canceled."))
         return None
 
-    cancel_users.short_description = _("Cancel account of users")
+    cancel_users_by_request.short_description = _("Cancel account by user request")
+
+    def future_cancel_users_notify(self, request, queryset):
+        for user in queryset:
+            future_cancel_user(user, notify=True)
+        self.message_user(request, _("Users future canceled and notified."))
+        return None
+
+    future_cancel_users_notify.short_description = _(
+        "Future cancel accounts + notify of terms violation"
+    )
 
     def future_cancel_users(self, request, queryset):
         for user in queryset:
@@ -293,7 +304,9 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         self.message_user(request, _("Users future canceled."))
         return None
 
-    future_cancel_users.short_description = _("Future cancel account of users")
+    future_cancel_users.short_description = _(
+        "Future cancel accounts (no notification)"
+    )
 
     def deactivate_users(self, request, queryset):
         for user in queryset:

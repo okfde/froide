@@ -1,0 +1,1 @@
+{% load i18n %}{% translate "Your user account will be terminated in one month" %}

@@ -16,7 +16,7 @@ from froide.helper.email_sending import (
     send_mail,
 )
 
-from . import account_canceled, account_merged
+from . import account_canceled, account_future_canceled, account_merged
 from .models import User
 from .tasks import make_account_private_task
 
@@ -152,7 +152,12 @@ def delete_all_unexpired_sessions_for_user(
     session_list.delete()
 
 
-def future_cancel_user(user):
+future_cancel_mail = mail_registry.register(
+    "account/emails/future_cancel_user", ("user",)
+)
+
+
+def future_cancel_user(user, notify=False):
     user.is_trusted = False
     user.is_blocked = True
     # Do not delete yet!
@@ -163,6 +168,11 @@ def future_cancel_user(user):
         now.isoformat(), user.date_left.isoformat()
     )
     user.save()
+
+    account_future_canceled.send(user)
+
+    if notify:
+        future_cancel_mail.send(user=user)
 
 
 def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -> None:
