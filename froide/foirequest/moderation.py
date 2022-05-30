@@ -1,15 +1,15 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Protocol
+from typing import Any, Dict, List, Optional, Protocol
 
 from django.conf import settings
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.email_sending import mail_registry
 from froide.helper.utils import get_module_attr_from_dotted_path
 from froide.problem.models import ProblemReport
 
 from .models import FoiEvent, FoiRequest
-from .notifications import send_non_foi_notification
 
 
 class ModerationAction(Protocol):
@@ -42,7 +42,6 @@ class MarkNonFOI(BaseModerationAction):
             FoiEvent.EVENTS.MARK_NOT_FOI, foirequest, user=request.user
         )
         foirequest.save()
-        send_non_foi_notification(foirequest)
         ProblemReport.objects.find_and_resolve(
             foirequest=foirequest, kind=ProblemReport.PROBLEM.NOT_FOI, user=request.user
         )
@@ -102,6 +101,28 @@ class ApplyUserTag(BaseModerationAction):
             context={"action": "user_tag", "tag": self.tag},
         )
         return _("User got tag “{}”.").format(self.tag)
+
+
+class SendUserEmail(BaseModerationAction):
+    def __init__(self, intent_identifier):
+        self.intent_identifier = intent_identifier
+
+    def is_applied(self, foirequest: FoiRequest) -> bool:
+        return False
+
+    def get_email_context(
+        self, foirequest: FoiRequest, request: HttpRequest
+    ) -> Dict[str, Any]:
+        user = foirequest.user
+        action_url = user.get_autologin_url(foirequest.get_absolute_short_url())
+        return {"user": user, "foirequest": foirequest, "action_url": action_url}
+
+    def apply(self, foirequest: FoiRequest, request: HttpRequest) -> None:
+        user = foirequest.user
+        mail_intent = mail_registry.get_intent(self.intent_identifier)
+        context = self.get_email_context(foirequest, request)
+        mail_intent.send(user=user, context=context)
+        return _("User was sent an email.")
 
 
 def resolve_moderation_action(action: str, *args):

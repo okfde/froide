@@ -1,0 +1,1 @@
+{% load i18n %}{% translate "Your request is not suitable for our platform" %}

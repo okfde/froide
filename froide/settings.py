@@ -534,6 +534,10 @@ class Base(Configuration):
                 "icon": "fa-ban",
                 "actions": [
                     ("froide.foirequest.moderation.MarkNonFOI",),
+                    (
+                        "froide.foirequest.moderation.SendUserEmail",
+                        "foirequest/emails/non_foi",
+                    ),
                 ],
             },
             {
