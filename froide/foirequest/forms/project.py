@@ -1,8 +1,12 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.forms.message import get_default_initial_message
+from froide.foirequest.tasks import create_project_messages
 from froide.helper.widgets import BootstrapCheckboxInput
 
+from ..auth import get_write_foirequest_queryset
+from ..forms import SendMessageForm
 from ..models import FoiProject
 
 
@@ -36,3 +40,54 @@ class AssignProjectForm(forms.Form):
             project.recalculate_order()
 
         return self.instance
+
+
+class FoiRequestBulkForm(forms.Form):
+    foirequest = forms.ModelMultipleChoiceField(queryset=None)
+
+    def __init__(self, *args, **kwargs):
+        foiproject: FoiProject = kwargs.pop("foiproject")
+        request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+        self.fields["foirequest"].queryset = get_write_foirequest_queryset(
+            request, queryset=foiproject.foirequest_set.all()
+        )
+
+
+class PublishRequestsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.foiproject: FoiProject = kwargs.pop("foiproject")
+        self.foirequests = kwargs.pop("foirequests")
+        super().__init__(*args, **kwargs)
+
+    def save(self, user):
+        for req in self.foirequests:
+            if not req.is_public():
+                req.make_public(user=user)
+
+        return self.foiproject
+
+
+class SendMessageProjectForm(SendMessageForm):
+    to = None
+    files = None
+
+    def _store_params(self, kwargs):
+        self.foiproject: FoiProject = kwargs.pop("foiproject")
+        self.foirequests = kwargs.pop("foirequests")
+
+    def _initialize_fields(self):
+        self.fields["address"].initial = self.foiproject.user.address
+        self.fields["message"].initial = get_default_initial_message(
+            self.foiproject.user
+        )
+        self.fields["subject"].initial = self.foiproject.title
+
+    def get_user(self):
+        return self.foiproject.user
+
+    def save(self, user):
+        create_project_messages.delay(
+            [f.id for f in self.foirequests], user.id, **self.cleaned_data
+        )
+        return self.foiproject

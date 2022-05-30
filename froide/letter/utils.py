@@ -132,7 +132,6 @@ class MessageSender:
             },
             files=MultiValueDict({"sendmessage-files": [letter]}),
             foirequest=self.foirequest,
-            message_ready=True,
         )
         message_form.is_valid()
         sent_message = message_form.save()

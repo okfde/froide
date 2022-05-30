@@ -17,6 +17,7 @@ from froide.helper.auth import (
     can_write_object,
     check_permission,
     get_read_queryset,
+    get_write_queryset,
     has_authenticated_access,
 )
 
@@ -32,6 +33,17 @@ def get_read_foirequest_queryset(request: HttpRequest, queryset=None):
         has_team=True,
         public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope="read:request",
+    )
+
+
+def get_write_foirequest_queryset(request: HttpRequest, queryset=None):
+    if queryset is None:
+        queryset = FoiRequest.objects.all()
+    return get_write_queryset(
+        queryset,
+        request,
+        has_team=True,
+        scope="write:request",
     )
 
 

@@ -38,6 +38,22 @@ const runOnPage = (): void => {
     }
   })
 
+  document
+    .querySelectorAll<HTMLInputElement>('input[data-checkall]')
+    .forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const checkboxName = checkbox.dataset.checkall
+        if (checkboxName == null) {
+          return
+        }
+        document
+          .querySelectorAll<HTMLInputElement>(`input[name="${checkboxName}"]`)
+          .forEach((el) => {
+            el.checked = checkbox.checked
+          })
+      })
+    })
+
   document.querySelectorAll<HTMLElement>('[data-scrollto]').forEach((link) => {
     link.addEventListener('click', (e) => {
       if (link.dataset.scrollto) {

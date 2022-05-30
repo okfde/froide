@@ -1,6 +1,11 @@
 from django.urls import path
 
-from ..views import ProjectView, SetProjectTeamView, make_project_public
+from ..views import (
+    ProjectActionView,
+    ProjectView,
+    SetProjectTeamView,
+    make_project_public,
+)
 
 urlpatterns = [
     path("<slug:slug>/", ProjectView.as_view(), name="foirequest-project"),
@@ -13,5 +18,10 @@ urlpatterns = [
         "<slug:slug>/make-public/",
         make_project_public,
         name="foirequest-project_make_public",
+    ),
+    path(
+        "<slug:slug>/action/",
+        ProjectActionView.as_view(),
+        name="foirequest-project_execute_action",
     ),
 ]

@@ -63,10 +63,10 @@ def send_message(request, foirequest):
             request, messages.SUCCESS, _("Your message has been sent.")
         )
         return redirect(mes)
-    else:
-        return show_foirequest(
-            request, foirequest, context={"send_message_form": form}, status=400
-        )
+
+    return show_foirequest(
+        request, foirequest, context={"send_message_form": form}, status=400
+    )
 
 
 @require_POST

@@ -43,6 +43,7 @@ from .misc_views import (
     index,
 )
 from .project import (
+    ProjectActionView,
     ProjectView,
     SetProjectTeamView,
     make_project_public,
@@ -110,6 +111,7 @@ __all__ = [
     "SetTeamView",
     "FoiRequestSitemap",
     "ProjectView",
+    "ProjectActionView",
     "project_shortlink",
     "SetProjectTeamView",
     "make_project_public",
