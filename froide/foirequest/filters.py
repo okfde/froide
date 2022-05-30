@@ -13,7 +13,7 @@ from froide.account.models import User
 from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.helper.widgets import DateRangeWidget
-from froide.publicbody.models import Category, Jurisdiction, PublicBody
+from froide.publicbody.models import Category, Classification, Jurisdiction, PublicBody
 
 from .models import FoiRequest
 from .widgets import DropDownFilterWidget
@@ -184,6 +184,15 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         widget=forms.Select(attrs={"label": _("category"), "class": "form-control"}),
         method="filter_category",
     )
+    classification = django_filters.ModelChoiceFilter(
+        queryset=Classification.objects.all(),
+        to_field_name="slug",
+        empty_label=_("all classifications"),
+        widget=forms.Select(
+            attrs={"label": _("classification"), "class": "form-control"}
+        ),
+        method="filter_classification",
+    )
     campaign = django_filters.ModelChoiceFilter(
         queryset=Campaign.objects.get_filter_list(),
         to_field_name="slug",
@@ -240,6 +249,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             "jurisdiction",
             "campaign",
             "category",
+            "classification",
             "tag",
             "publicbody",
             "first",
@@ -264,6 +274,9 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_category(self, qs, name, value):
         return qs.filter(categories=value.id)
+
+    def filter_classification(self, qs, name, value):
+        return qs.filter(classification=value.id)
 
     def filter_tag(self, qs, name, value):
         return qs.filter(tags=value.id)

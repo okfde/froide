@@ -385,6 +385,7 @@ class FoiRequestFilter(filters.FilterSet):
     user = filters.ModelChoiceFilter(queryset=filter_by_user_queryset)
     tags = filters.CharFilter(method="tag_filter")
     categories = filters.CharFilter(method="categories_filter")
+    classification = filters.CharFilter(method="classification_filter")
     reference = filters.CharFilter(method="reference_filter")
     follower = filters.ModelChoiceFilter(
         queryset=filter_by_authenticated_user_queryset, method="follower_filter"
@@ -432,6 +433,7 @@ class FoiRequestFilter(filters.FilterSet):
             "resolution",
             "status",
             "reference",
+            "classification",
             "public_body",
             "slug",
             "costs",
@@ -451,6 +453,13 @@ class FoiRequestFilter(filters.FilterSet):
         return queryset.filter(
             **{
                 "public_body__categories__name": value,
+            }
+        )
+
+    def classification_filter(self, queryset, name, value):
+        return queryset.filter(
+            **{
+                "public_body__classification__name": value,
             }
         )
 
