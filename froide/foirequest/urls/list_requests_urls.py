@@ -1,4 +1,4 @@
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
 
@@ -103,25 +103,25 @@ foirequest_urls = (
         ),
     ]
     + [
-        re_path(
-            "(?P<status>%s)/" % status,
-            ListRequestView.as_view(),
+        path(
+            "%s/" % status,
+            ListRequestView.as_view(status=status),
             name="foirequest-list",
         )
         for status in STATUS_URLS
     ]
     + [
-        re_path(
-            "(?P<status>%s)/feed/" % status,
-            ListRequestView.as_view(feed="atom"),
+        path(
+            "%s/feed/" % status,
+            ListRequestView.as_view(status=status, feed="atom"),
             name="foirequest-list_feed_atom",
         )
         for status in STATUS_URLS
     ]
     + [
-        re_path(
-            "(?P<status>%s)/rss/" % status,
-            ListRequestView.as_view(feed="rss"),
+        path(
+            "%s/rss/" % status,
+            ListRequestView.as_view(status=status, feed="rss"),
             name="foirequest-list_feed",
         )
         for status in STATUS_URLS

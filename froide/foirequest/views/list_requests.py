@@ -53,6 +53,7 @@ class BaseListRequestView(BaseSearchView):
 
 class ListRequestView(BaseListRequestView):
     feed = None
+    status = None
 
     def get(self, request, *args, **kwargs):
         q = request.GET.get("q", "")
@@ -64,6 +65,12 @@ class ListRequestView(BaseListRequestView):
             except FoiRequest.DoesNotExist:
                 pass
         return super().get(request, *args, **kwargs)
+
+    def get_filter_data(self, kwargs, get_dict):
+        data = super().get_filter_data(kwargs, get_dict)
+        if self.status is not None:
+            data["status"] = self.status
+        return data
 
     def show_facets(self):
         return self.has_query
