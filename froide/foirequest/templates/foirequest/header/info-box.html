@@ -83,7 +83,9 @@
                 </li>
               {% endif %}
             {% endif %}
-            {% render_moderation_actions object %}
+            {% if not object.user.is_trusted and not object.user.is_staff %}
+              {% render_moderation_actions object %}
+            {% endif %}
           </ul>
         </li>
       {% endif %}
