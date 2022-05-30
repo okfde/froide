@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.contrib import messages
+from django.core.mail import mail_managers
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -183,6 +185,26 @@ def moderate_user(request, pk):
         is_deleted=False, is_trusted=False, is_active=True, is_staff=False
     )
     user = get_object_or_404(qs, pk=pk)
+
+    if request.method == "POST":
+        note = request.POST.get("note", "")
+        if note:
+            user.notes = "{}\n\nModerator:{}\n{}".format(
+                user.notes, request.user.pk, note
+            ).strip()
+            user.save(update_fields=["notes"])
+
+        admin_url = "{domain}{path}?q={q}".format(
+            domain=settings.SITE_URL,
+            path=reverse("admin:account_user_changelist"),
+            q=user.email,
+        )
+        mail_managers(
+            _("Action on account requested by moderation team member"),
+            "{}\n\n{}".format(note, admin_url),
+        )
+        messages.add_message(request, messages.SUCCESS, _("Admins have been notified."))
+        return redirect(reverse("problem-user", kwargs={"pk": pk}))
 
     # Only show public, non-foi or depublished requests
     foirequests = FoiRequest.objects.filter(user=user).filter(

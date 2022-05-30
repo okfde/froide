@@ -52,6 +52,23 @@
           </div>
         </div>
       {% endfor %}
+
+      <div class="mb-3 p-2 bg-light border">
+        <h4>{% translate "Administrative review of account" %}</h4>
+        <form method="post">
+          {% csrf_token %}
+          <p>
+            {% translate "Please give reasons why this account should be reviewed." %}
+          </p>
+          <p>
+            <textarea class="form-control" name="note"></textarea>
+          </p>
+          <button type="submit" class="btn btn-danger">
+            {% translate "Request admin review" %}
+          </button>
+        </form>
+      </div>
+
     </div>
   </div>
 </div>
