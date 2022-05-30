@@ -154,7 +154,7 @@ def delete_all_unexpired_sessions_for_user(
 
 def future_cancel_user(user):
     user.is_trusted = False
-    user.isblocked = True
+    user.is_blocked = True
     # Do not delete yet!
     user.is_deleted = False
     now = timezone.now()
