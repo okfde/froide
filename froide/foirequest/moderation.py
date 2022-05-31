@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional, Protocol
 
 from django.conf import settings
 from django.http import HttpRequest
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.email_sending import mail_registry
@@ -101,6 +102,25 @@ class ApplyUserTag(BaseModerationAction):
             context={"action": "user_tag", "tag": self.tag},
         )
         return _("User got tag “{}”.").format(self.tag)
+
+
+class AddUserNote(BaseModerationAction):
+    def __init__(self, note_template):
+        self.note_template = note_template
+
+    def is_applied(self, foirequest: FoiRequest) -> bool:
+        return False
+
+    def apply(self, foirequest: FoiRequest, request: HttpRequest) -> None:
+        note = self.note_template.format(
+            timestamp=timezone.localtime(timezone.now()),
+            foirequest=foirequest.ident,
+            moderator=request.user.id,
+        )
+        user = foirequest.user
+        user.note = "{}\n\n{}".format(user.note, note).strip()
+        user.save(update_fields=["note"])
+        return
 
 
 class SendUserEmail(BaseModerationAction):

@@ -469,6 +469,10 @@ class FoiRequest(models.Model):
             self.get_messages()
         return self._messages
 
+    @property
+    def ident(self):
+        return "[#{}]".format(self.id)
+
     def get_messages(self, with_tags=False):
         qs = self.foimessage_set.select_related(
             "sender_user", "sender_public_body", "recipient_public_body"
