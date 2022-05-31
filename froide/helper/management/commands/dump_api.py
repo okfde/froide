@@ -19,11 +19,19 @@ class Command(BaseCommand):
 
         url = options["url"]
 
+        server_name = settings.SITE_URL.rsplit("/", 1)[1]
+
         client = APIClient()
         total = None
         while True:
             parsed = urlparse(url)
-            response = client.get(parsed.path, parse_qs(parsed.query), format="json")
+            response = client.get(
+                parsed.path,
+                parse_qs(parsed.query),
+                format="json",
+                SERVER_NAME=server_name,
+                secure=True,
+            )
             for obj in response.data["objects"]:
                 self.stdout.write(json.dumps(obj), ending="\n")
             offset = response.data["meta"]["offset"]
