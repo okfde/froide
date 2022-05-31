@@ -162,7 +162,7 @@ def future_cancel_user(user, notify=False):
     user.is_blocked = True
     # Do not delete yet!
     user.is_deleted = False
-    now = timezone.now()
+    now = timezone.localtime(timezone.now())
     user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
     user.notes += "Canceled on {} for {}\n\n".format(
         now.isoformat(), user.date_left.isoformat()
