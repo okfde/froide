@@ -434,5 +434,7 @@ class ApplyModerationForm(forms.Form):
     def save(self) -> List[str]:
         trigger_name = self.cleaned_data["moderation_trigger"]
         trigger = self.moderation_triggers[trigger_name]
-        messages = trigger.apply_actions(self.foirequest, self.request)
+        messages = [
+            m for m in trigger.apply_actions(self.foirequest, self.request) if m
+        ]
         return messages
