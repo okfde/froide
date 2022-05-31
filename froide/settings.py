@@ -542,7 +542,7 @@ class Base(Configuration):
             },
             {
                 "name": "depublish",
-                "label": _("Depublish"),
+                "label": _("Give warning"),
                 "icon": "fa-minus-circle",
                 "actions": [
                     ("froide.foirequest.moderation.Depublish",),
