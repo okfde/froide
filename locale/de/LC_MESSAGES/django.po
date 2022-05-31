@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-30 12:55+0200\n"
-"PO-Revision-Date: 2022-05-30 12:56+0200\n"
+"POT-Creation-Date: 2022-05-31 11:00+0200\n"
+"PO-Revision-Date: 2022-05-31 11:10+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -155,20 +155,28 @@ msgid "Delete sessions of users"
 msgstr "Sessions des:der Nutzer:in löschen"
 
 #: froide/account/admin.py
-msgid "Users canceled."
-msgstr "Nutzer:in gekündigt."
+msgid "Accounts canceled."
+msgstr "Konten gekündigt."
 
 #: froide/account/admin.py
-msgid "Cancel account of users"
-msgstr "Konto kündigen"
+msgid "Cancel account by user request"
+msgstr "Konto auf Wunsch kündigen"
+
+#: froide/account/admin.py
+msgid "Users future canceled and notified."
+msgstr "Nutzer:in zur Kündigung vorgemerkt und benachrichtigt."
+
+#: froide/account/admin.py
+msgid "Future cancel accounts + notify of terms violation"
+msgstr "Konto zur Kündigung vormerken und NB-Verstoß benachrichtigen"
 
 #: froide/account/admin.py
 msgid "Users future canceled."
-msgstr "Nutzer:in in Zukunft gekündigt."
+msgstr "Nutzer:in zur Kündigung vorgemerkt."
 
 #: froide/account/admin.py
-msgid "Future cancel account of users"
-msgstr "Konto in Zukunft kündigen"
+msgid "Future cancel accounts (no notification)"
+msgstr "Konto zur Kündigung vormerken (ohne Benachrichtigung)"
 
 #: froide/account/admin.py
 msgid "Users logged out, deactivated and blocked."
@@ -907,6 +915,27 @@ msgstr ""
 "\n"
 "Beste Grüße\n"
 "%(site_name)s"
+
+#: froide/account/templates/account/emails/future_cancel_user.txt
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"due to your activities we see ourselves forced to terminate your user "
+"account due to violations of our terms of use.\n"
+" \n"
+"Kind Regards\n"
+"%(site_name)s\n"
+msgstr ""
+"Hallo %(name)s,\n"
+"aufgrund Ihrer Aktivitäten sehen wir uns gezwungen, Ihr Konto wegen Verstoß "
+"gegen unsere Nutzungsbedingungen zu kündigen.\n"
+" \n"
+"Beste Grüße\n"
+"%(site_name)s\n"
+
+#: froide/account/templates/account/emails/future_cancel_user_subject.txt
+msgid "Your user account will be terminated in one month"
+msgstr "Ihr Konto wird in einem Monat gekündigt"
 
 #: froide/account/templates/account/emails/password_reset_email.txt
 #, python-format
@@ -3788,6 +3817,10 @@ msgstr "Anfrage hat nun Tag „{}“"
 msgid "User got tag “{}”."
 msgstr "User hat nun Tag „{}“."
 
+#: froide/foirequest/moderation.py
+msgid "User was sent an email."
+msgstr "Nutzer:in wurde eine E-Mail gesendet."
+
 #: froide/foirequest/notifications.py
 #, python-format
 msgid "Update on one of your request"
@@ -3798,10 +3831,6 @@ msgstr[1] "Neues bei %(count)s Ihrer Anfragen"
 #: froide/foirequest/notifications.py
 msgid "Please classify the reply to your request"
 msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
-
-#: froide/foirequest/notifications.py
-msgid "Your request is not suitable for our platform"
-msgstr "Ihre Anfrage passt leider nicht zu unserer Plattform"
 
 #: froide/foirequest/services.py
 #, python-format
@@ -5234,6 +5263,10 @@ msgstr ""
 "Beste Grüße\n"
 "%(site_name)s"
 
+#: froide/foirequest/templates/foirequest/emails/non_foi_subject.txt
+msgid "Your request is not suitable for our platform"
+msgstr "Ihre Anfrage passt leider nicht zu unserer Plattform"
+
 #: froide/foirequest/templates/foirequest/emails/overdue_reply.txt
 #, python-format
 msgid ""
@@ -5610,8 +5643,8 @@ msgid "Make public"
 msgstr "Veröffentlichen"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
-msgid "User details"
-msgstr "Nutzer:innendetails"
+msgid "Account details"
+msgstr "Konto-Details"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #, python-format
@@ -8420,6 +8453,18 @@ msgstr "Nicht-IFG"
 msgid "Depublished"
 msgstr "Depubliziert"
 
+#: froide/problem/templates/problem/user_moderation.html
+msgid "Administrative review of account"
+msgstr "Admin-Überprüfung des Kontos"
+
+#: froide/problem/templates/problem/user_moderation.html
+msgid "Please give reasons why this account should be reviewed."
+msgstr "Bitte geben Sie an, warum dieses Konto überprüft werden sollte."
+
+#: froide/problem/templates/problem/user_moderation.html
+msgid "Request admin review"
+msgstr "Admin-Überprüfung anfordern"
+
 #: froide/problem/utils.py
 #, python-brace-format
 msgid "New problem: {label} [#{reqid}]"
@@ -8514,6 +8559,14 @@ msgstr "Status festlegen"
 #: froide/problem/views.py
 msgid "redact"
 msgstr "schwärzen"
+
+#: froide/problem/views.py
+msgid "Action on account requested by moderation team member"
+msgstr "Konto-Überprüfung durch Moderator:in angefordert"
+
+#: froide/problem/views.py
+msgid "Admins have been notified."
+msgstr "Admins wurden benachrichtigt."
 
 #: froide/publicbody/admin.py
 msgid "Context"
@@ -9656,8 +9709,8 @@ msgid "Non-FOI"
 msgstr "Nicht-IFG"
 
 #: froide/settings.py
-msgid "Depublish"
-msgstr "Depublizieren"
+msgid "Give warning"
+msgstr "Verwarnen"
 
 #: froide/team/apps.py
 msgid "Teams"
@@ -10802,6 +10855,12 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#~ msgid "User details"
+#~ msgstr "Nutzer:innendetails"
+
+#~ msgid "Depublish"
+#~ msgstr "Depublizieren"
+
 #, python-format
 #~ msgid "You updated %d document(s) on this message"
 #~ msgstr "Sie haben %d Dokument(e) bei dieser Nachricht aktualisiert"
@@ -11473,10 +11532,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid "%(user)s added a reply that was received via postal mail."
 #~ msgstr ""
 #~ "%(user)s hat eine Antwort hinzugefügt, die auf dem Postweg erhalten wurde."
-
-#, fuzzy
-#~ msgid "%(user)s has sent a postal mail."
-#~ msgstr "%(user)s hat eine Post-Antwort versendet."
 
 #~ msgid "Moderators"
 #~ msgstr "Moderator:innen"
