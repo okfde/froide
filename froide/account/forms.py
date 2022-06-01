@@ -418,7 +418,7 @@ class UserChangeDetailsForm(forms.Form):
     def clean_email(self) -> str:
         email = self.cleaned_data["email"].lower()
         if (
-            self.user.email != email
+            self.user.email.lower() != email
             and get_user_model().objects.filter(email=email).exists()
         ):
             raise forms.ValidationError(
