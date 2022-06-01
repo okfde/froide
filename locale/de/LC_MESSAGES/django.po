@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-31 11:00+0200\n"
-"PO-Revision-Date: 2022-05-31 11:10+0200\n"
+"POT-Creation-Date: 2022-06-01 15:42+0200\n"
+"PO-Revision-Date: 2022-06-01 15:44+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -400,10 +400,6 @@ msgstr "Ihre Postadresse"
 #: froide/account/forms.py
 msgid "Your address will never be displayed publicly."
 msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
-
-#: froide/account/forms.py
-msgid "Another user with that email address already exists!"
-msgstr "Es existiert bereits ein:e Nutzer:in mit dieser E-Mail-Adresse!"
 
 #: froide/account/forms.py
 msgid "Logged in user does not match this link!"
@@ -1558,11 +1554,11 @@ msgstr "Ihre Password wurde gesetzt und Sie sind jetzt eingeloggt."
 
 #: froide/account/views.py
 msgid ""
-"We sent a confirmation email to your new address. Please click the link in "
-"there."
+"We sent a confirmation email to your new address (unless it belongs to an "
+"existing account)."
 msgstr ""
-"Wir haben eine Bestätigungs-E-Mail an Ihre neue Adresse gesendet. Bitte "
-"klicken Sie den Link in der E-Mail."
+"Wir haben eine Bestätigungs-E-Mail an Ihre neue Adresse gesendet (es sei "
+"denn diese gehört schon zu einem bereits existierenden Konto)."
 
 #: froide/account/views.py
 msgid "Your profile information has been changed."
@@ -10854,6 +10850,9 @@ msgstr "brief/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "Another user with that email address already exists!"
+#~ msgstr "Es existiert bereits ein:e Nutzer:in mit dieser E-Mail-Adresse!"
 
 #~ msgid "User details"
 #~ msgstr "Nutzer:innendetails"
