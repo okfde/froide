@@ -526,15 +526,14 @@ def change_user(request: HttpRequest) -> HttpResponse:
     form = UserChangeDetailsForm(request.user, request.POST)
     if form.is_valid():
         new_email = form.cleaned_data["email"]
-        if new_email and request.user.email != new_email:
-            AccountService(request.user).send_email_change_mail(
-                form.cleaned_data["email"]
-            )
+        if new_email and request.user.email.lower() != new_email:
+            if not User.objects.filter(email=new_email).exists():
+                AccountService(request.user).send_email_change_mail(new_email)
             messages.add_message(
                 request,
                 messages.SUCCESS,
                 _(
-                    "We sent a confirmation email to your new address. Please click the link in there."
+                    "We sent a confirmation email to your new address (unless it belongs to an existing account)."
                 ),
             )
         form.save()

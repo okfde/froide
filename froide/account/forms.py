@@ -4,7 +4,7 @@ from typing import Dict, Union
 from django import forms
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import SetPasswordForm as DjangoSetPasswordForm
 from django.contrib.auth.forms import UserChangeForm as DjangoUserChangeForm
@@ -417,13 +417,6 @@ class UserChangeDetailsForm(forms.Form):
 
     def clean_email(self) -> str:
         email = self.cleaned_data["email"].lower()
-        if (
-            self.user.email.lower() != email
-            and get_user_model().objects.filter(email=email).exists()
-        ):
-            raise forms.ValidationError(
-                _("Another user with that email address already exists!")
-            )
         return email
 
     def save(self) -> None:
