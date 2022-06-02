@@ -57,6 +57,7 @@ setup(
         "django-cache-url",
         "django-filter",
         "phonenumbers",
+        "pygtail",
         "django-filingcabinet",
         "icalendar",
     ],
