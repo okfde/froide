@@ -157,31 +157,3 @@
   {% endif %}
 
 </div>
-
-{% block after_foirequest_messages %}
-  {% if object.same_as_count %}
-    <div class="d-print-none" id="identical">
-      <h5>{% blocktrans with counter=object.same_as_count|intcomma count count=object.same_as_count %}One identical request{% plural %}{{ counter }} identical requests{% endblocktrans %}</h5>
-    </div>
-  {% endif %}
-  {% if object.same_as %}
-    <div class="d-print-none" id="identical">
-      <p>
-        {% blocktrans %}This request is identical to:{% endblocktrans %}
-        <a href="{{ object.same_as.get_absolute_url }}">{{ object.same_as.title }}</a>
-      </p>
-    </div>
-  {% endif %}
-
-  {% if object.is_blocked %}
-    <div class="container">
-      <div class="row mt-5">
-        <div class="col-lg-12 text-right">
-          <small class="text-muted">
-            {% trans "This request has been detected as spam and its messages are not sent." %}
-          </small>
-        </div>
-      </div>
-    </div>
-  {% endif %}
-{% endblock after_foirequest_messages %}
