@@ -207,6 +207,13 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         label=_("Subject"),
         max_length=230,
         widget=forms.TextInput(attrs={"class": "form-control"}),
+        error_messages={
+            "max_length": ngettext_lazy(
+                "Ensure the subject has at most %(limit_value)d character (it has %(show_value)d).",
+                "Ensure the subject has at most %(limit_value)d characters (it has %(show_value)d).",
+                "limit_value",
+            )
+        },
     )
     message = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"}),

@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-01 15:42+0200\n"
-"PO-Revision-Date: 2022-06-01 15:44+0200\n"
+"POT-Creation-Date: 2022-06-02 09:20+0200\n"
+"PO-Revision-Date: 2022-06-02 09:26+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -2613,6 +2613,21 @@ msgstr "Empfänger-Behörde"
 #: froide/foirequest/views/make_request.py
 msgid "To"
 msgstr "An"
+
+#: froide/foirequest/forms/message.py
+#, python-format
+msgid ""
+"Ensure the subject has at most %(limit_value)d character (it has "
+"%(show_value)d)."
+msgid_plural ""
+"Ensure the subject has at most %(limit_value)d characters (it has "
+"%(show_value)d)."
+msgstr[0] ""
+"Bitte sicherstellen, dass der Betreff aus höchstens einem Zeichen besteht. "
+"Aktuell sind es %(show_value)d Zeichen."
+msgstr[1] ""
+"Bitte sicherstellen, dass der Betreff aus höchstens %(limit_value)d Zeichen "
+"besteht. Aktuell sind es %(show_value)d Zeichen."
 
 #: froide/foirequest/forms/message.py
 msgid "Your message"
