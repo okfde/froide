@@ -72,15 +72,15 @@
   {% block foirequest_header %}{% endblock %}
 
   <div class="row">
-    <!-- left column (title, description, tags etc.) -->
+    {# left column (title, description, tags etc.) #}
     <div class="col-md-6 col-lg-7 col-xl-8 mb-4">
 
       <div class="d-flex flex-column">
 
-        <!-- title -->
+        {# title #}
         <h2 class="request-title">{{ object.title }}</h2>
 
-        <!-- recipient -->
+        {# recipient #}
         <div class="mt-3 text-gray-500">
           {% blocktrans %}Request to:{% endblocktrans %}
 
@@ -93,7 +93,7 @@
 
         {% if object.project %}
           {% if object.project.public or object|can_write_foirequest:request %}
-            <!-- project -->
+            {# project #}
             <div class="mt-3 text-gray-500">
               {% blocktrans %}Project:{% endblocktrans %}
               <a class="text-gray-500 font-weight-bold" href="{{ object.project.get_absolute_url }}">
@@ -103,7 +103,7 @@
           {% endif %}
         {% endif %}
 
-        <!-- law if not meta -->
+        {# law if not meta #}
         {% if object.law and not object.law.meta %}
         <div class="mt-3 text-gray-500">
           {% blocktrans %}Legal basis:{% endblocktrans %}
@@ -111,7 +111,7 @@
         </div>
         {% endif %}
 
-        <!-- description -->
+        {# description #}
         <div class="mt-3">
           <div class="request-descr request-descr--collapsed">
             {{ object.get_description|urlizetrunc:40|linebreaks }}
@@ -122,7 +122,7 @@
         </div>
 
         {% if object.summary or object|can_write_foirequest:request %}
-        <!-- result summary -->
+        {# result summary #}
         <div class="mt-3">
           <h5>
             {% trans "Result of request" %}
@@ -174,10 +174,10 @@
         </div>
         {% endif %}
 
-        <!-- tags -->
+        {# tags #}
         <div class="request-tags mt-3 mb-3">
           <div id="request-tags-list">
-            <!-- tags list -->
+            {# tags list #}
             {% with object.tags.all as tags %}
               {% if tags %}
                 <div class="request-tags-list">
@@ -240,7 +240,7 @@
 
     </div>
 
-    <!-- right column (info box) -->
+    {# right column (info box) #}
     <div class="col-md-6 col-lg-5 col-xl-4">
       {% include "foirequest/header/info-box.html" %}
     </div>

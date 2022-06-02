@@ -16,7 +16,7 @@
   class="info-box mb-3 info-box--{% if object.is_overdue or object.resolution == 'refused' %}danger{% elif object.status_is_final and object.is_successful or object.resolution == 'partially_successful' %}success{% else %}regular{% endif %}"
 >
 
-  <!-- header (status, status icon) -->
+  {# header (status, status icon) #}
   <div class="info-box__header d-flex flex-nowrap justify-content-between align-items-center">
     <div>
       <h3 class="h5 info-box__title">{{ object.readable_status }}</h3>
@@ -31,10 +31,10 @@
     {% endif %}
   </div>
 
-  <!-- body  -->
+  {# body  #}
   <div class="info-box__body">
 
-    <!-- edit button -->
+    {# edit button #}
     {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
       <div id="set-status" class="bg-blue-10 px-4 py-2">
         <a href="#" class="info-box__edit-button">
@@ -90,13 +90,13 @@
         </li>
       {% endif %}
 
-      <!-- date -->
+      {# date #}
       <li class="info-box__list-item">
         <div class="info-box__list-label">{% blocktrans %}Date{% endblocktrans %}</div>
         <div class="info-box__list-value">{{ object.first_message|date:"j. F Y" }}</div>
       </li>
 
-      <!-- due date -->
+      {# due date #}
       <li id="due-date"
         class="info-box__list-item {% if object.is_overdue %}info-box__list-item--is-danger info-box__list-item--inset{% endif %}"
         {% if object.is_overdue %}
@@ -143,7 +143,7 @@
         </div>
       </li>
 
-      <!-- Costs -->
+      {# Costs #}
       {% if object.costs > 0 %}
         <li class="info-box__list-item">
           <div class="info-box__list-label">{% blocktrans %}Cost of information:{% endblocktrans %}</div>
@@ -160,7 +160,7 @@
         </li>
       {% endif %}
 
-      <!-- follow request -->
+      {# follow request #}
       {% block followers %}
         {% if object.is_public %}
           <li class="info-box__list-item info-box__list-item--has-divider">
@@ -172,7 +172,7 @@
       {% if object.is_public %}
         <li id="share-links" class="info-box__list-item info-box__list-item--has-divider">
 
-          <!-- copy url -->
+          {# copy url #}
           <div class="mb-2 mb-lg-3">
             <a href="{{ object.get_absolute_domain_short_url }}" data-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" class="copy-short-url-trigger">
               <i class="fa fa-copy" aria-hidden="true"></i>
@@ -180,7 +180,7 @@
             </a>
           </div>
 
-          <!-- share links -->
+          {# share links #}
           {% block social_sharing %}
             <div>
               {% if object.user == request.user %}
@@ -202,7 +202,7 @@
         </li>
       {% endif %}
 
-      <!-- rss/download links -->
+      {# rss/download links #}
       <li id="download-links" class="info-box__list-item">
         <div class="d-flex justify-content-between">
           {% if object.public %}

@@ -6,7 +6,7 @@
 {% if message.all_attachments %}
   <div class="mb-3">
 
-    <!-- approved attachments -->
+    {# approved attachments #}
     {% if message.approved_attachments %}
       {% if object|can_read_foirequest_authenticated:request %}
         <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments:' %}</div>
@@ -14,27 +14,27 @@
       {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.approved_attachments %}
     {% endif %}
 
-    <!-- unapproved attachments -->
+    {# unapproved attachments #}
     {% if message.unapproved_attachments %}
       <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments:' %}</div>
       {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.unapproved_attachments %}
     {% endif %}
 
     {% if message.hidden_attachments %}
-      <!-- irrelevant attachments -->
+      {# irrelevant attachments #}
       <div id="{{ message.get_html_id }}-decoattachments" class="collapse">
         {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.hidden_attachments %}
       </div>
     {% endif %}
 
-    <!-- attachments footer -->
+    {# attachments footer #}
     {% if object|can_write_foirequest:request or message.hidden_attachments %}
 
       <hr class="mt-2 d-print-none">
 
       <div class="d-flex flex-column flex-sm-row smaller d-print-none">
         {% if object|can_write_foirequest:request and message.can_edit_attachments %}
-          <!-- manage attachments link -->
+          {# manage attachments link #}
           <a
             href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}"
             class="mb-2 mb-sm-0"
@@ -44,7 +44,7 @@
         {% endif %}
 
         {% if message.hidden_attachments %}
-          <!-- irrelevant attachments -->
+          {# irrelevant attachments #}
           <a
             data-toggle="collapse"
             href="#{{ message.get_html_id }}-decoattachments"
@@ -65,7 +65,7 @@
 {% elif object|can_write_foirequest:request and message.can_edit_attachments %}
   <hr class="mt-2 d-print-none">
   <div class="d-flex flex-column flex-sm-row smaller d-print-none">
-    <!-- manage attachments link -->
+    {# manage attachments link #}
     <a
     href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=message.pk %}"
     class="mb-2 mb-sm-0"

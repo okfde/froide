@@ -14,22 +14,22 @@
 
   {% block before_message %}{% endblock %}
 
-  <!-- head -->
+  {# head #}
   <div {% if message.timestamp == object.last_message %}id="last" {% endif %} class="d-flex p-3 alpha-message__head">
 
-    <!-- avatar -->
+    {# avatar #}
     <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
       <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
     </div>
 
-    <!-- sender, recipient, message preview, meta infos -->
+    {# sender, recipient, message preview, meta infos #}
     <div class="d-flex flex-fill flex-column overflow-hidden">
-      <!-- first row -->
+      {# first row #}
       <div class="d-flex justify-content-between align-items-center">
-        <!-- sender -->
+        {# sender #}
         {% include "foirequest/body/message/sender.html" %}
 
-        <!-- icons & timestamp -->
+        {# icons & timestamp #}
         <div class="d-flex flex-nowrap">
           {% if message.all_attachments %}
             <span class="alpha-message__badge" data-toggle="tooltip" title="{% trans 'Has attachments' %}">
@@ -79,16 +79,16 @@
           {% endif %}
 
 
-          <!-- relative time -->
+          {# relative time #}
           <a href="#{{ message.get_html_id }}" class="alpha-message__relative-time d-flex align-items-center d-print-none text-nowrap smaller text-gray-600" title="{{ message.timestamp }}">
             {{ message.timestamp|relativetime }}
           </a>
         </div>
       </div>
 
-      <!-- second row -->
+      {# second row #}
 
-      <!-- message preview (collapsed state) -->
+      {# message preview (collapsed state) #}
       <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
         {% if message.content_hidden and not object|can_read_foirequest_authenticated:request %}
           {% blocktrans %}This message is not yet public.{% endblocktrans %}
@@ -105,9 +105,9 @@
         {% endif %}
       </div>
 
-      <!-- recipient and delivery details link (expanded state) -->
+      {# recipient and delivery details link (expanded state) #}
       <div class="alpha-message__details smaller">
-        <!-- recipient -->
+        {# recipient #}
         {% if message.recipient_public_body.name %}
           <span class="text-gray-600 mr-1">
             {% blocktrans %}To{% endblocktrans %}
@@ -125,20 +125,20 @@
     </div>
   </div>
 
-  <!-- meta details container -->
+  {# meta details container #}
   {% include "foirequest/body/message/meta_container.html" %}
 
-  <!-- body -->
+  {# body #}
   <div class="alpha-message__body">
     <div class="alpha-message__wrap alpha-message__bodyinner">
 
-      <!-- guidance -->
+      {# guidance #}
       {% render_guidance_alpha message %}
 
-      <!-- attachments -->
+      {# attachments #}
       {% include "foirequest/body/message/attachments/attachments.html" %}
 
-      <!-- text -->
+      {# text #}
       {% if forloop.counter0 == 0 %}
         {# Render first message with highlight, cannot be hidden #}
         <div class="alpha-message__content-text">{% highlight_request message request %}</div>
@@ -171,10 +171,10 @@
 
     <div class="d-print-none alpha-message__toolbar {% block message_extra_classes %}{% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky {% if object.awaits_classification %}alpha-message__toolbar--stickybump{% endif %}{% endif %}{% endblock message_extra_classes %}">
 
-      <!-- footer buttons -->
+      {# footer buttons #}
       <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
 
-        <!-- Comments button -->
+        {# Comments button #}
         <button
           type="button"
           class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first "
@@ -231,7 +231,7 @@
     </div>
 
     <div class="alpha-message__footer">
-      <!-- comments list -->
+      {# comments list #}
       <div id="comments-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
         {% block before_comments %}{% endblock %}
         <div class="alpha-message__wrap pb-4">

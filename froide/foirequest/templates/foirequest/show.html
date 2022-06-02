@@ -18,14 +18,14 @@
     <meta name="robots" content="noindex"/>
   {% endif %}
 
-  <!-- Open Graph / Facebook -->
+  {# Open Graph / Facebook #}
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="og:title" content="{{ object.title }}">
   <meta property="og:description" content="{{ object.description }}">
   
 
-  <!-- Twitter -->
+  {# Twitter #}
   <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="twitter:title" content="{{ object.title }}">
   <meta property="twitter:description" content="{{ object.description }}">
@@ -63,19 +63,19 @@
 {% block body %}
   {% block app_body %}
 
-    <!-- breadcrumb -->
+    {# breadcrumb #}
     <div class="breadcrumb-container">
       {% include "foirequest/header/breadcrumb.html" %}
     </div>
 
-    <!-- header,  -->
+    {# header,  #}
     <div class="breadcrumb-container breadcrumb-container-header">
       {% include "foirequest/header/header.html" %}
 
       {% include "foirequest/header/tabs.html" %}
     </div>
 
-    <!-- body, tabs content -->
+    {# body, tabs content #}
     {% include "foirequest/body/body.html" %}
 
   {% endblock app_body %}

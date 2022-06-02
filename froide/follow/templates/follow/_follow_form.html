@@ -57,7 +57,7 @@
   {% endif %}
 
   {% if not user_authenticated %}
-    <!-- modal form -->
+    {# modal form #}
     <div id="follow-form-{{ object.pk }}-modal" class="modal fade" role="dialog" aria-labelledby="follow-form-{{ object.pk }}-modal-label" aria-hidden="true">
       <div class="modal-dialog modal-lg">
         {% include "follow/_email_follow_form.html" %}

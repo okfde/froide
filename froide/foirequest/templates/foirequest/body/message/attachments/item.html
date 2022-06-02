@@ -29,7 +29,7 @@
   </div>
 
   <div class="overflow-hidden">
-    <!-- filename -->
+    {# filename #}
     <div class="text-nowrap text-truncate smaller" title="{{ attachment.name }}">
       {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
         <a id="{{ attachment.get_html_id }}" class="text-body font-weight-bold" href="{{ attachment.get_absolute_url }}">
@@ -45,7 +45,7 @@
       {% endif %}
     </div>
 
-    <!-- attachments badges -->
+    {# attachments badges #}
     <div class="d-flex">
       {% if attachment.approved or attachment.redacted %}
 
@@ -83,9 +83,9 @@
 
       {% endif %}
     </div>
-    <!-- attachment badges end -->
+    {# attachment badges end #}
 
-    <!-- filesize -->
+    {# filesize #}
     <div class="text-gray-600 small">{{ attachment.size|filesizeformat }}</div>
 
     {% if object|can_write_foirequest:request and not attachment.approved and attachment.can_approve %}
