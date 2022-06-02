@@ -1,0 +1,7 @@
+Jan 1 01:02:04 mail postfix/smtpd[1234567]: 163CB3EE5E7F: client=localhost.localdomain[127.0.0.1], sasl_method=PLAIN, sasl_username=examplemail@example.com
+Jan 1 01:02:04 mail postfix/cleanup[2345678]: 163CB3EE5E7F: message-id=<foirequest/123123@example.com>
+Jan 1 01:02:04 mail opendkim[2345678]: 163CB3EE5E7F: DKIM-Signature field added (s=mail, d=example.com)
+Jan 1 01:02:05 mail postfix/qmgr[2345678]: 163CB3EE5E7F: from=<bounce+asdadasd=+132kl12j31n12d1190+a.foo=example.com@example.com>, size=12321, nrcpt=1 (queue active)
+Jan 1 01:02:05 mail postfix/smtp[2345678]: 163CB3EE5E7F: to=<a.foo@example.com>, relay=example.com[123.456.789.123]:25, delay=0.67, delays=0.1/0.37/0.13/0.07, dsn=2.0.0, status=sent (250 Requested mail action okay, completed: id=aaaaa-bbbbb-ccccc-ddddd
+)
+Jan 1 01:02:05 mail postfix/qmgr[2345678]: 163CB3EE5E7F: removed

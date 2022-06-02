@@ -13,6 +13,14 @@ from froide.helper.utils import get_module_attr_from_dotted_path
 
 
 def get_delivery_report(sender, recipient, timestamp, extended=False):
+    reporter = get_delivery_reporter()
+    if reporter:
+        return reporter.find(sender, recipient, timestamp, extended=extended)
+    else:
+        return
+
+
+def get_delivery_reporter():
     from django.conf import settings
 
     reporter_path = settings.FROIDE_CONFIG.get("delivery_reporter", None)
@@ -20,9 +28,8 @@ def get_delivery_report(sender, recipient, timestamp, extended=False):
         return
 
     reporter_klass = get_module_attr_from_dotted_path(reporter_path)
-
     reporter = reporter_klass(time_zone=settings.TIME_ZONE)
-    return reporter.find(sender, recipient, timestamp, extended=extended)
+    return reporter
 
 
 DeliveryReport = namedtuple(
@@ -83,14 +90,17 @@ class PostfixDeliveryReporter(object):
             if result:
                 return result
 
-    def search_log(self, fp, sender, recipient, timestamp):
+    def search_log(self, fp, sender, recipient, timestamp, real_file=True):
         sender_re = re.compile(self.SENDER_RE.format(sender=sender))
         mail_ids = set()
         for line in fp:
             match = sender_re.search(line)
             if match:
                 mail_ids.add(match.group("mail_id"))
-        fp.seek(0)
+
+        if real_file:
+            fp.seek(0)
+
         mail_id_res = [
             re.compile(self.ALL_RE.format(mail_id=mail_id)) for mail_id in mail_ids
         ]

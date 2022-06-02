@@ -359,6 +359,8 @@ pyflakes==2.3.1
     # via
     #   -r requirements-test.in
     #   flake8
+pygtail==0.12.0
+    # via -r requirements.in
 pyisemail==1.3.2
     # via -r requirements.in
 pyopenssl==20.0.1

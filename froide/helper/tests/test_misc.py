@@ -4,12 +4,12 @@ from datetime import datetime, timedelta
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from .csv_utils import dict_to_csv_stream
-from .date_utils import calc_easter, calculate_month_range_de
-from .email_sending import mail_registry
-from .storage import make_unique_filename
-from .text_diff import mark_differences
-from .text_utils import remove_closing, replace_email_name, split_text_by_separator
+from ..csv_utils import dict_to_csv_stream
+from ..date_utils import calc_easter, calculate_month_range_de
+from ..email_sending import mail_registry
+from ..storage import make_unique_filename
+from ..text_diff import mark_differences
+from ..text_utils import remove_closing, replace_email_name, split_text_by_separator
 
 
 def rec(x):
