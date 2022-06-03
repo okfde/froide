@@ -1,4 +1,5 @@
 import json
+from typing import Any, Dict, Optional, Union
 
 from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +19,7 @@ class BounceConfig(AppConfig):
         mail_middleware_registry.register(UnsubscribeReferenceMailMiddleware())
 
 
-def cancel_user(sender, user=None, **kwargs):
+def cancel_user(sender, user=None, **kwargs) -> None:
     from .models import Bounce
 
     if user is None:
@@ -49,13 +50,18 @@ def export_user_data(user):
     )
 
 
+EmailKwargs = Dict[str, Optional[Union[str, bool, Dict[str, str]]]]
+
+
 class UnsubscribeReferenceMailMiddleware:
     """
     Moves unsubscribe_reference from mail render context
     to email sending kwargs
     """
 
-    def enhance_email_kwargs(self, mail_intent, context, email_kwargs):
+    def enhance_email_kwargs(
+        self, mail_intent: str, context: Dict[str, Any], email_kwargs: EmailKwargs
+    ) -> Optional[Dict[str, str]]:
         unsubscribe_reference = context.get("unsubscribe_reference")
         if unsubscribe_reference is None:
             return
