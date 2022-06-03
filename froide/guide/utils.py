@@ -1,6 +1,6 @@
 import re
 from collections import defaultdict, namedtuple
-from typing import Any, List
+from typing import Any, Iterator, List, Optional, Set, Tuple
 
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -28,6 +28,8 @@ GuidanceResult = namedtuple(
 )
 
 WS = re.compile(r"\s+")
+
+RuleMatch = Optional[Tuple[Optional[re.Match], Optional[re.Match]]]
 
 
 def prepare_text(text: str) -> str:
@@ -71,7 +73,25 @@ class GuidanceApplicator:
     def apply_rules(self) -> List[Any]:
         return list(self.apply_rules_generator())
 
-    def apply_rules_generator(self) -> None:
+    def match_rule(self, rule: Rule, tags: Set[int], text: str) -> RuleMatch:
+        if rule.has_tag_id and rule.has_tag_id not in tags:
+            return
+        if rule.has_no_tag_id and rule.has_no_tag_id in tags:
+            return
+
+        include_match = None
+        if rule.includes_re:
+            include_match = rule.includes_re.search(text)
+            if include_match is None:
+                return
+        exclude_match = None
+        if rule.excludes_re:
+            exclude_match = rule.excludes_re.search(text)
+            if exclude_match is not None:
+                return
+        return (include_match, exclude_match)
+
+    def apply_rules_generator(self) -> Iterator[Guidance]:
         rules = self.filter_rules()
 
         message = self.message
@@ -79,22 +99,10 @@ class GuidanceApplicator:
         text = prepare_text(message.plaintext)
 
         for rule in rules:
-            if rule.has_tag_id and rule.has_tag_id not in tags:
+            result = self.match_rule(rule, tags, text)
+            if not result:
                 continue
-            if rule.has_no_tag_id and rule.has_no_tag_id in tags:
-                continue
-
-            include_match = None
-            if rule.includes_re:
-                include_match = rule.includes_re.search(text)
-                if include_match is None:
-                    continue
-            exclude_match = None
-            if rule.excludes_re:
-                exclude_match = rule.excludes_re.search(text)
-                if exclude_match is not None:
-                    continue
-
+            include_match, exclude_match = result
             # Rule applies
             ctx = {"includes": include_match, "excludes": exclude_match, "tags": tags}
             yield from self.apply_rule(rule, **ctx)
