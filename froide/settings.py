@@ -420,7 +420,7 @@ class Base(Configuration):
         "froide.foirequest.tasks.fetch_mail": {"queue": "emailfetch"},
         "froide.foirequest.tasks.process_mail": {"queue": "email"},
         "djcelery_email_send_multiple": {"queue": "emailsend"},
-        "froide.helper.tasks.*": {"queue": "searchindex"},
+        "froide.helper.tasks.search_*": {"queue": "searchindex"},
         "froide.foirequest.tasks.redact_attachment_task": {"queue": "redact"},
         "froide.foirequest.tasks.ocr_pdf_task": {"queue": "ocr"},
         "filingcabinet.tasks.*": {"queue": "document"},
