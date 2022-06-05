@@ -118,8 +118,8 @@ class AddUserNote(BaseModerationAction):
             moderator=request.user.id,
         )
         user = foirequest.user
-        user.note = "{}\n\n{}".format(user.note, note).strip()
-        user.save(update_fields=["note"])
+        user.notes = "{}\n\n{}".format(user.notes, note).strip()
+        user.save(update_fields=["notes"])
         return
 
 
