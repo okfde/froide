@@ -41,14 +41,14 @@
     {# filename #}
     <div class="text-nowrap text-truncate smaller" title="{{ attachment.name }}">
       {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
-        <div class="text-body font-weight-bold">
+        <span class="text-body font-weight-bold">
           {{ attachment.name }}
-        </div>
+        </span>
       {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
         {# not approved, can read but cannot write, so allow read link #}
-        <div class="text-body font-weight-bold">
+        <span class="text-body font-weight-bold">
           {{ attachment.name }}
-        </div>
+        </span>
       {% else %}
         {{ attachment.name }}
       {% endif %}
