@@ -2,7 +2,16 @@
 {% load foirequest_tags %}
 {% load content_helper %}
 
-<div class="alpha-attachment">
+  {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
+    <a id="{{ attachment.get_html_id }}" class="alpha-attachment" href="{{ attachment.get_absolute_url }}">
+  {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
+    {# not approved, can read but cannot write, so allow read link #}
+    <a id="{{ attachment.get_html_id }}" class="alpha-attachment" href="{{ attachment.get_absolute_url }}">
+  {% else %}
+    <div class="alpha-attachment">
+  {% endif %}
+
+
   {% if attachment.redacted %}
     {% trans 'This attachment contains personally identifying information and cannot be published.' as tooltip %}
   {% elif attachment.converted and not attachment.approved %}
@@ -32,14 +41,14 @@
     {# filename #}
     <div class="text-nowrap text-truncate smaller" title="{{ attachment.name }}">
       {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
-        <a id="{{ attachment.get_html_id }}" class="text-body font-weight-bold" href="{{ attachment.get_absolute_url }}">
+        <span class="text-body font-weight-bold">
           {{ attachment.name }}
-        </a>
+        </span>
       {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
         {# not approved, can read but cannot write, so allow read link #}
-        <a id="{{ attachment.get_html_id }}" class="text-body font-weight-bold" href="{{ attachment.get_absolute_url }}">
+        <span class="text-body font-weight-bold">
           {{ attachment.name }}
-        </a>
+        </span>
       {% else %}
         {{ attachment.name }}
       {% endif %}
@@ -101,8 +110,14 @@
         {% endif %}
       </div>
     {% endif %}
+    </div>
+
+  {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
+    </a>
+  {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
+    </a>
+  {% else %}
+    </div>
+  {% endif %}
 
 
-  </div>
-
-</div>
