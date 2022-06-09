@@ -5,29 +5,56 @@
   background-color: inherit;
   overflow: hidden;
   margin: 0;
+
   &-item {
     margin-right: $spacer * 0.5;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+
     &,
     > * {
       color: $gray-700;
       font-size: small;
       white-space: nowrap;
+
       @include media-breakpoint-up(lg) {
         font-size: $font-size-sm;
       }
     }
+
     &:last-child {
       margin-right: none;
+
       &,
       > * {
         color: $blue-800;
       }
     }
   }
+
   &-item + &-item {
     padding-left: 0;
+  }
+
+  &-light {
+    .breadcrumb-item {
+      &,
+      > * {
+        color: $gray-200;
+      }
+
+      &:last-child,
+      &.active {
+        &,
+        > * {
+          color: $white;
+        }
+      }
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+      color: $gray-300;
+    }
   }
 }
