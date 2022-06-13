@@ -187,6 +187,9 @@ class MaillogParseTest(TestCase):
                 check_delivery_from_log(logfile_path, offset_file_path)
                 self.assertEqual(len(invocations), 2)
 
+                check_delivery_from_log(logfile_path, offset_file_path)
+                self.assertEqual(len(invocations), 2)
+
         self.assertEqual(invocations[0]["message_id"], self.MAIL_2_ID)
         self.assertEqual(invocations[1]["message_id"], self.MAIL_1_ID)
         self.assertEqual(
@@ -196,15 +199,23 @@ class MaillogParseTest(TestCase):
 
         self.assertEqual(invocations[1]["log"], self.MAIL_1_LOG)
 
-    def test_on_empty_log(self):
-        invocation_count = [0]
+    def test_multiple_partial(self):
+        invocations = []
 
-        class LogParser(PostfixLogfileParser):
-            def on_empty_log(_):
-                invocation_count[0] += 1
+        def callback(**kwargs):
+            invocations.append(kwargs)
 
-        with open(p("maillog_001.txt")) as f:
-            parser = LogParser(f)
-            for _ in parser:
-                pass
-        self.assertEqual(invocation_count[0], 1)
+        email_left_queue.connect(callback)
+        self.assertEqual(len(invocations), 0)
+        with tempfile.TemporaryDirectory() as dir:
+            check_delivery_from_log(p("maillog_005.txt"), str(dir + "/mail_log.offset"))
+            self.assertEqual(len(invocations), 1)
+
+            check_delivery_from_log(p("maillog_005.txt"), str(dir + "/mail_log.offset"))
+            self.assertEqual(len(invocations), 1)
+
+        self.assertEqual(invocations[0]["message_id"], self.MAIL_1_ID)
+        self.assertEqual(
+            invocations[0]["log"],
+            self.MAIL_1_LOG,
+        )

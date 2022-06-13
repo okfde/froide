@@ -51,14 +51,9 @@ class PostfixLogfileParser(collections.abc.Iterator):
             if self._is_completed_message(self._msg_log[parsed_line.queue_id]):
                 msg = self._msg_log[parsed_line.queue_id]
                 del self._msg_log[parsed_line.queue_id]
-                if not self._msg_log:
-                    self.on_empty_log()
                 return msg
 
         raise StopIteration
-
-    def on_empty_log(self):
-        pass
 
     def _is_completed_message(self, msg):
         return "removed" in msg["data"]
@@ -158,12 +153,42 @@ class PygtailPostfixLogfileParser(PostfixLogfileParser):
             offset_path = self.DEFAULT_PYGTAIL_OFFSET_PATH
 
         self.logfile_reader = Pygtail(
-            log_path, offset_file=offset_path, full_lines=True, save_on_end=False
+            log_path,
+            offset_file=offset_path,
+            full_lines=True,
+            save_on_end=False,
+            copytruncate=False,
         )
         super().__init__(self.logfile_reader)
+        self._msg_log = defaultdict(lambda: {"log": [], "data": {}, "offset": None})
 
-    def on_empty_log(self):
-        self.logfile_reader.update_offset_file()
+    def iteration_done(self):
+        if not self._msg_log:
+            self.logfile_reader.update_offset_file()
+        else:
+            first_logoffset = sorted(x["offset"] for x in self._msg_log.values())[0]
+            self.logfile_reader.write_offset_to_file(first_logoffset)
+
+    def __next__(self):
+        for line, offset in self.logfile_reader.with_offsets():
+            parsed_line = self._parse_line(line)
+            if parsed_line is None:
+                continue
+
+            self._msg_log[parsed_line.queue_id]["log"].append(line)
+            self._msg_log[parsed_line.queue_id]["data"].update(parsed_line.data)
+
+            if self._msg_log[parsed_line.queue_id]["offset"] is None:
+                self._msg_log[parsed_line.queue_id]["offset"] = offset
+
+            if self._is_completed_message(self._msg_log[parsed_line.queue_id]):
+                msg = self._msg_log[parsed_line.queue_id]
+                del self._msg_log[parsed_line.queue_id]
+                return msg
+
+        self.iteration_done()
+
+        raise StopIteration
 
 
 def check_delivery_from_log(
