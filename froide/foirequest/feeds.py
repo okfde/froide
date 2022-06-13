@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.feedgenerator import Atom1Feed
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.models.event import EVENT_DETAILS
 from froide.helper.feed_utils import clean_feed_output
 
 from .filters import FOIREQUEST_FILTER_DICT
@@ -121,7 +122,9 @@ class FoiRequestFeed(Feed):
         return obj.get_description()
 
     def items(self, obj):
-        return obj.foievent_set.order_by("-timestamp")[:15]
+        return obj.foievent_set.filter(event_name__in=EVENT_DETAILS).order_by(
+            "-timestamp"
+        )[:15]
 
     @clean_feed_output
     def item_title(self, item):
