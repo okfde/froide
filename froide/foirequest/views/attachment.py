@@ -247,6 +247,11 @@ def get_redact_context(foirequest, attachment):
             "hasPassword": _(
                 "The original document is protected with a password. The password is getting removed on publication."
             ),
+            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
+            "confirmNoRedactionsText": _(
+                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
+            ),
+            "close": _("Close"),
         },
     }
 

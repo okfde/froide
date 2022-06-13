@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-02 09:20+0200\n"
-"PO-Revision-Date: 2022-06-02 09:26+0200\n"
+"POT-Creation-Date: 2022-06-17 14:59+0200\n"
+"PO-Revision-Date: 2022-06-17 14:58+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -25,27 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
-
-#: docs/_build/html/_sources/theming.txt
-msgid ""
-"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-"\">the Open Knowledge Foundation</a>."
-msgstr ""
-"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
-"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
-
-#: docs/_build/html/theming.html
-msgid ""
-"Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
-"org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
-msgstr ""
-"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
-"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
-
-#: froide/_local_settings.py froide/settings.py
-msgid "German"
-msgstr "Deutsch"
+"X-Generator: Poedit 3.1\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -4502,24 +4482,6 @@ msgstr "Nachricht schreiben"
 msgid "Start mediation"
 msgstr "Vermittlung starten"
 
-#: froide/foirequest/templates/foirequest/body/body.html
-#: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
-#, python-format
-msgid "One identical request"
-msgid_plural "%(counter)s identical requests"
-msgstr[0] "Eine identische Anfrage"
-msgstr[1] "%(counter)s identische Anfragen"
-
-#: froide/foirequest/templates/foirequest/body/body.html
-msgid "This request is identical to:"
-msgstr "Diese Anfrage ist identisch zu:"
-
-#: froide/foirequest/templates/foirequest/body/body.html
-msgid "This request has been detected as spam and its messages are not sent."
-msgstr ""
-"Diese Anfrage wurde als Spam erkannt und die Nachrichten wurden nicht "
-"versendet."
-
 #: froide/foirequest/templates/foirequest/body/correspondence.html
 msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
@@ -6310,6 +6272,13 @@ msgstr "Noch nicht festgelegt"
 msgid "%(time)s ago"
 msgstr "%(time)s her"
 
+#: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
+#, python-format
+msgid "One identical request"
+msgid_plural "%(counter)s identical requests"
+msgstr[0] "Eine identische Anfrage"
+msgstr[1] "%(counter)s identische Anfragen"
+
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #, python-format
 msgid "Upload postal mail for “%(title)s”"
@@ -6688,6 +6657,23 @@ msgid ""
 msgstr ""
 "Das Original-Dokument ist mit einem Passwort geschützt. Das Passwort wird "
 "für die Veröffentlichung entfernt."
+
+#: froide/foirequest/views/attachment.py
+msgid "Are you sure that no redaction is needed?"
+msgstr "Sind Sie sicher, dass keine Schwärzungen nötig sind?"
+
+#: froide/foirequest/views/attachment.py
+msgid ""
+"You redacted parts of the document, but clicked that no redaction is needed. "
+"Are you sure that no redaction is needed?"
+msgstr ""
+"Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt das keine "
+"Schwärzungen nötig sind. Sind Sie sich sicher?"
+
+#: froide/foirequest/views/attachment.py froide/foirequest/views/request.py
+#: froide/templates/snippets/messages.html
+msgid "Close"
+msgstr "Schließen"
 
 #: froide/foirequest/views/attachment.py
 #, python-format
@@ -7191,10 +7177,6 @@ msgstr "👋 Viel Erfolg!"
 #: froide/foirequest/views/request.py
 msgid "Previous"
 msgstr "Zurück"
-
-#: froide/foirequest/views/request.py froide/templates/snippets/messages.html
-msgid "Close"
-msgstr "Schließen"
 
 #: froide/foirequest/views/request.py
 msgid "Status of request"
@@ -9660,6 +9642,10 @@ msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
 
 #: froide/settings.py
+msgid "German"
+msgstr "Deutsch"
+
+#: froide/settings.py
 msgid "Danish (Denmark)"
 msgstr "Dänisch (Dänemark)"
 
@@ -10865,6 +10851,29 @@ msgstr "brief/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+#~ "\">the Open Knowledge Foundation</a>."
+#~ msgstr ""
+#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
+#~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
+#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ msgstr ""
+#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
+#~ "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#~ msgid "This request is identical to:"
+#~ msgstr "Diese Anfrage ist identisch zu:"
+
+#~ msgid ""
+#~ "This request has been detected as spam and its messages are not sent."
+#~ msgstr ""
+#~ "Diese Anfrage wurde als Spam erkannt und die Nachrichten wurden nicht "
+#~ "versendet."
 
 #~ msgid "Another user with that email address already exists!"
 #~ msgstr "Es existiert bereits ein:e Nutzer:in mit dieser E-Mail-Adresse!"

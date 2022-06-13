@@ -129,6 +129,7 @@
           <form
             v-if="canPublish && !hasPassword"
             method="post"
+            id="redaction-submit-form"
             :action="config.urls.publishUrl">
             <input
               type="hidden"
@@ -140,7 +141,8 @@
                 'btn-success': !hasRedactions,
                 'btn-light': hasRedactions
               }"
-              type="submit">
+              type="submit"
+              @click="confirmNoRedactions">
               <i class="fa fa-check" />
               {{ i18n.publishWithoutRedaction }}
             </button>
@@ -148,6 +150,12 @@
           <a v-else class="btn btn-secondary" :href="attachmentUrl">
             {{ i18n.cancel }}
           </a>
+
+          <confirm-no-redaction
+            v-if="showConfirmModal"
+            :i18n="config.i18n"
+            @close="closeConfirmModal"
+            @submit="submitRedactions" />
         </div>
       </div>
     </div>
@@ -212,6 +220,7 @@
 
 <script>
 import 'string.prototype.repeat'
+import ConfirmNoRedaction from './confirm-no-redaction'
 
 import range from 'lodash.range'
 
@@ -225,6 +234,7 @@ function isTouchDevice() {
 
 export default {
   name: 'Redaction',
+  components: { ConfirmNoRedaction },
   props: {
     config: {
       type: Object,
@@ -276,7 +286,8 @@ export default {
       progressCurrent: null,
       progressTotal: null,
       hasTouch: isTouchDevice(),
-      doubleTap: false
+      doubleTap: false,
+      showConfirmModal: false
     }
   },
   computed: {
@@ -1104,6 +1115,18 @@ export default {
         rects: [[x - padding, y, width + padding * 2, height]],
         page: this.currentPage
       }
+    },
+    confirmNoRedactions(event) {
+      if (this.hasRedactions) {
+        event.preventDefault()
+        this.showConfirmModal = true
+      }
+    },
+    submitRedactions(event) {
+      document.getElementById('redaction-submit-form').submit()
+    },
+    closeConfirmModal(event) {
+      this.showConfirmModal = false
     }
   }
 }
