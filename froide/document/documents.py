@@ -31,6 +31,7 @@ class PageDocument(Document):
     foirequest = fields.IntegerField(attr="document.foirequest_id")
     campaign = fields.IntegerField(attr="document.foirequest.campaign_id")
     collections = fields.IntegerField()
+    directories = fields.IntegerField()
     portal = fields.IntegerField(attr="document_portal_id")
     data = fields.ObjectField()
 
@@ -97,6 +98,12 @@ class PageDocument(Document):
     def prepare_collections(self, obj):
         collections = obj.document.document_documentcollection.all()
         return list(collections.values_list("id", flat=True))
+
+    def prepare_directories(self, obj):
+        collection_docs_with_dirs = (
+            obj.document.filingcabinet_collectiondocument.exclude(directory=None)
+        )
+        return list(collection_docs_with_dirs.values_list("directory_id", flat=True))
 
     def prepare_portal(self, obj):
         if obj.document.portal_id:
