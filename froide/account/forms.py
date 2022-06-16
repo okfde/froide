@@ -175,7 +175,7 @@ class NewUserBaseForm(AddressBaseForm):
                 _(
                     '<a target="_blank" href="{}">You may use a pseudonym if you don\'t need to receive postal messages</a>.'
                 ),
-                get_content_url("privacy") + "#pseudonym",
+                get_content_url("pseudonym"),
             )
 
     def clean_user_email(self) -> str:
