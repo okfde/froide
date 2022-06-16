@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 import django_filters
 from elasticsearch_dsl.query import Q as ESQ
 from filingcabinet.filters import DocumentFilter as FCDocumentFilter
-from filingcabinet.models import DocumentPortal, Page
+from filingcabinet.models import CollectionDirectory, DocumentPortal, Page
 from taggit.models import Tag
 
 from froide.account.models import User
@@ -96,6 +96,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method="filter_collection",
         widget=forms.HiddenInput(),
     )
+    directory = django_filters.ModelChoiceFilter(
+        queryset=CollectionDirectory.objects.all().select_related("collection"),
+        to_field_name="pk",
+        method="filter_directory",
+        widget=forms.HiddenInput(),
+    )
     portal = django_filters.ModelChoiceFilter(
         queryset=DocumentPortal.objects.filter(public=True),
         to_field_name="pk",
@@ -173,6 +179,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
             return qs.none()
         qs = qs.filter(collections=collection.id)
         qs = self.apply_data_filters(qs, collection.settings.get("filters", []))
+        return qs
+
+    def filter_directory(self, qs, name, directory):
+        if not directory.collection.can_read(self.request):
+            return qs.none()
+        qs = qs.filter(directories=directory.id)
         return qs
 
     def filter_portal(self, qs, name, portal):
