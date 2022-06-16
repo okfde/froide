@@ -1,6 +1,6 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
-from filingcabinet.models import Page
+from filingcabinet.models import CollectionDirectory, CollectionDocument, Page
 
 from froide.helper.search import (
     get_index,
@@ -100,10 +100,18 @@ class PageDocument(Document):
         return list(collections.values_list("id", flat=True))
 
     def prepare_directories(self, obj):
-        collection_docs_with_dirs = (
-            obj.document.filingcabinet_collectiondocument.exclude(directory=None)
+        return list(self._get_ancestor_directories())
+
+    def _get_ancestor_directories(self, obj):
+        directory_ids = (
+            CollectionDocument.objects.filter(document=obj.document)
+            .exclude(directory=None)
+            .values_list("directory_id", flat=True)
         )
-        return list(collection_docs_with_dirs.values_list("directory_id", flat=True))
+        directories = CollectionDirectory.objects.filter(id__in=directory_ids)
+        for directory in directories:
+            yield directory.id
+            yield from [d.id for d in directory.get_ancestors()]
 
     def prepare_portal(self, obj):
         if obj.document.portal_id:
