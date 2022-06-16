@@ -103,6 +103,7 @@ class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
     list_filter = CollectionDocumentBaseAdmin.list_filter + (
         ("document", ForeignKeyFilter),
         ("collection", ForeignKeyFilter),
+        ("directory", ForeignKeyFilter),
     )
 
 
