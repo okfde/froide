@@ -53,7 +53,6 @@ class DocumentSearchView(BaseSearchView):
     select_related = ("document",)
 
     def get_base_search(self):
-        # FIXME: add team
         q = Q("term", public=True)
         if self.request.user.is_authenticated:
             q |= Q("term", user=self.request.user.pk)
