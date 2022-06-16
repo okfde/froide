@@ -100,7 +100,7 @@ class PageDocument(Document):
         return list(collections.values_list("id", flat=True))
 
     def prepare_directories(self, obj):
-        return list(self._get_ancestor_directories())
+        return list(self._get_ancestor_directories(obj))
 
     def _get_ancestor_directories(self, obj):
         directory_ids = (
