@@ -16,6 +16,7 @@ from filingcabinet.models import Page
 from taggit.models import Tag
 
 from froide.helper.search.views import BaseSearchView
+from froide.helper.text_utils import slugify
 from froide.helper.utils import render_400, render_403
 from froide.team.models import Team
 
@@ -163,10 +164,15 @@ def allow_write_document(func):
     return inner
 
 
+def set_slug(document, property_value):
+    document.slug = slugify(property_value)
+    document.save(update_fields=["slug"])
+
+
 @require_POST
 @allow_write_document
 def set_title(request, document):
-    return set_property(document, request, "title")
+    return set_property(document, request, "title", extra_action=set_slug)
 
 
 @require_POST
@@ -175,12 +181,14 @@ def set_description(request, document):
     return set_property(document, request, "description")
 
 
-def set_property(document, request, name):
+def set_property(document, request, name, extra_action=None):
     value = request.POST.get(name, None)
     if value is None:
         return render_400(request)
     setattr(document, name, value)
     document.save(update_fields=[name])
+    if extra_action is not None:
+        extra_action(document, value)
 
     messages.add_message(request, messages.SUCCESS, _("The document has been saved."))
     return redirect(document)
