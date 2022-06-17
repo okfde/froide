@@ -4,10 +4,10 @@
 
   {# head #}
   <div class="d-flex justify-content-start align-items-center flex-nowrap">
-    {# name #}
     <strong class="text-truncate">
       {% if request.user.is_authenticated %}
-        {% if comment.is_requester and object.user.private %}
+        {# name #}
+        {% if comment.is_requester and comment.user.private %}
           <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Name not public' %}">
             {% trans "Commentator" %}
           </span>
@@ -16,18 +16,19 @@
         {% else %}
           {{ comment.user_name }}
         {% endif %}
+
+        {# requester-/moderator-badges #}
+        {% if comment.is_requester %}
+          <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
+        {% elif comment.is_moderator %}
+          <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
+        {% endif %}
+
       {% else %}
         <span class="text-muted font-italic">{% trans "Only visible if logged in" %}</span>
       {% endif %}
     </strong>
-    
-    {# requester-/moderator-badges #}
-    {% if comment.is_requester %}
-      <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
-    {% elif comment.is_moderator %}
-      <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
-    {% endif %}
-    
+
     {# timestamp #}
     <small class="text-gray-600 mx-1">•</small>
     <small class="text-nowrap text-gray-600">{{ comment.submit_date }}</small>
