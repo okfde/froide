@@ -1,6 +1,7 @@
 from django.db.models import BooleanField, Case, Q, Value, When
 from django.utils.decorators import method_decorator
 
+from filingcabinet.api_renderers import RSSRenderer
 from filingcabinet.api_serializers import (
     DocumentCollectionSerializer as FCDocumentCollectionSerializer,
 )
@@ -89,9 +90,16 @@ class PageViewSet(ESQueryMixin, viewsets.GenericViewSet):
     search_document = PageDocument
     read_token_scopes = ["read:document"]
     searchfilterset_class = PageDocumentFilterset
+    renderer_classes = viewsets.GenericViewSet.renderer_classes + [RSSRenderer]
 
     def list(self, request, *args, **kwargs):
         return self.search_view(request)
+
+    def override_sqs(self):
+        has_query = self.request.GET.get("q")
+        if has_query and self.request.GET.get("format") == "rss":
+            self.sqs.sqs = self.sqs.sqs.sort()
+            self.sqs.sqs = self.sqs.sqs.sort("-created_at")
 
     def optimize_query(self, qs):
         return qs.prefetch_related("document")
