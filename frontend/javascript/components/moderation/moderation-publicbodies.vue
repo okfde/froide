@@ -24,12 +24,18 @@
           </td>
           <td>
             <template v-if="pb.confirmed">
-              <a :href="pb.acceptUrl" class="btn btn-primary" target="_blank">
+              <a
+                :href="pb.acceptUrl"
+                class="btn btn-primary btn-sm"
+                target="_blank">
                 {{ i18n.reviewChangedPublicBody }}
               </a>
             </template>
             <template v-else>
-              <a :href="pb.acceptUrl" class="btn btn-secondary" target="_blank">
+              <a
+                :href="pb.acceptUrl"
+                class="btn btn-secondary btn-sm"
+                target="_blank">
                 {{ i18n.reviewNewPublicBody }}
               </a>
             </template>

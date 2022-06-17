@@ -20,7 +20,11 @@ from ..auth import (
     get_accessible_attachment_url,
     has_attachment_access,
 )
-from ..decorators import allow_write_foirequest, allow_write_or_moderate_pii_foirequest
+from ..decorators import (
+    allow_moderate_pii_foirequest,
+    allow_write_foirequest,
+    allow_write_or_moderate_pii_foirequest,
+)
 from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..tasks import redact_attachment_task
 
@@ -85,6 +89,31 @@ def approve_attachment(request, foirequest, attachment_id):
             )
         )
     messages.add_message(request, messages.SUCCESS, _("Attachment approved."))
+    return redirect(att.get_anchor_url())
+
+
+@require_POST
+@allow_moderate_pii_foirequest
+def mark_attachment_as_moderated(request, foirequest, attachment_id):
+    att = get_object_or_404(
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
+    )
+
+    if not att.has_been_moderated:
+        att.has_been_moderated = True
+        att.save(update_fields=["has_been_moderated"])
+
+    if is_ajax(request):
+        if request.content_type == "application/json":
+            return JsonResponse({})
+        return HttpResponse(
+            '<div class="alert alert-success">{}</div>'.format(
+                _("Attachment has been marked as moderated.")
+            )
+        )
+    messages.add_message(
+        request, messages.SUCCESS, _("Attachment has been marked as moderated.")
+    )
     return redirect(att.get_anchor_url())
 
 
