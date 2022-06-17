@@ -7,7 +7,7 @@
     {# name #}
     <strong class="text-truncate">
       {% if request.user.is_authenticated %}
-        {% if comment.user == object.user and object.user.private %}
+        {% if comment.is_requester and object.user.private %}
           <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Name not public' %}">
             {% trans "Commentator" %}
           </span>
@@ -22,7 +22,7 @@
     </strong>
     
     {# requester-/moderator-badges #}
-    {% if comment.user == object.user %}
+    {% if comment.is_requester %}
       <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
     {% elif comment.is_moderator %}
       <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
