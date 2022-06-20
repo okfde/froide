@@ -532,6 +532,7 @@ class Base(Configuration):
                 "name": "nonfoi",
                 "label": _("Non-FOI"),
                 "icon": "fa-ban",
+                "applied_if_actions_applied": [0],
                 "actions": [
                     ("froide.foirequest.moderation.MarkNonFOI",),
                     (
