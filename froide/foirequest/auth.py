@@ -102,10 +102,10 @@ def can_read_foirequest_authenticated(
     if has_authenticated_access(foirequest, request, verb="read", scope="read:request"):
         return True
 
-    if foirequest.project:
-        return has_authenticated_access(
-            foirequest.project, request, verb="read", scope="read:request"
-        )
+    if foirequest.project and has_authenticated_access(
+        foirequest.project, request, verb="read", scope="read:request"
+    ):
+        return True
 
     if can_moderate_foirequest(foirequest, request):
         if foirequest.is_public() or user.has_perm("foirequest.see_private"):
