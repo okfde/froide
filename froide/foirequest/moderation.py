@@ -175,7 +175,11 @@ def get_moderation_triggers(
             resolve_moderation_action(*action_args)
             for action_args in trigger["actions"]
         ]
-        is_applied = all(a.is_applied(foirequest) for a in actions)
+        all_action_idx = range(len(actions))
+        is_applied = all(
+            actions[idx].is_applied(foirequest)
+            for idx in trigger.get("applied_if_actions_applied", all_action_idx)
+        )
         triggers[trigger["name"]] = ModerationTrigger(
             name=trigger["name"],
             label=trigger["label"],
