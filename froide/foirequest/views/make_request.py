@@ -133,6 +133,9 @@ class MakeRequestView(FormView):
             "settings": {
                 "user_can_hide_web": settings.FROIDE_CONFIG.get("user_can_hide_web"),
                 "user_can_create_batch": self.can_create_batch(),
+                "non_meaningful_subject_regex": settings.FROIDE_CONFIG.get(
+                    "non_meaningful_subject_regex", []
+                ),
             },
             "url": {
                 "searchRequests": reverse("api:request-search"),
@@ -256,6 +259,9 @@ class MakeRequestView(FormView):
                 ),
                 "dontInsertName": _(
                     "Do not insert your name, we will add it automatically at the end of the letter."
+                ),
+                "enterMeaningfulSubject": _(
+                    "Please enter a subject which describes the information you are requesting."
                 ),
             },
             "regex": {

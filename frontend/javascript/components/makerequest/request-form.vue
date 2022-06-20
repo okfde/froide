@@ -114,6 +114,9 @@
                 {{ error.message }}
               </p>
             </div>
+            <div v-if="!isMeaningfulSubject" class="alert alert-warning">
+              {{ i18n.enterMeaningfulSubject }}
+            </div>
             <input
               id="id_subject"
               v-model="subject"
@@ -440,6 +443,11 @@ export default {
     canBatchRequest() {
       return this.config.settings.user_can_create_batch
     },
+    nonMeaningfulSubjects() {
+      return this.config.settings.non_meaningful_subject_regex.map(
+        (x) => new RegExp(x, 'i')
+      )
+    },
     hasUser() {
       return this.user && this.user.id
     },
@@ -531,6 +539,14 @@ export default {
     publicBodies() {
       // FIXME
       return this.publicbodies
+    },
+    isMeaningfulSubject() {
+      for (const re of this.nonMeaningfulSubjects) {
+        if (re.test(this.subject)) {
+          return false
+        }
+      }
+      return true
     }
   },
   mounted() {
