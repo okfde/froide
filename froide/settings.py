@@ -563,6 +563,11 @@ class Base(Configuration):
         auto_reply_subject_regex=rec("^(Auto-?Reply|Out of office)"),
         auto_reply_email_regex=rec("^auto(reply|responder)@"),
         hide_content_funcs=[],
+        non_meaningful_subject_regex=[
+            r"^(foi[- ])?request$",
+            r"^documents?$",
+            r"^information$",
+        ],
     )
 
     TESSERACT_DATA_PATH = values.Value("/usr/local/share/tessdata")
