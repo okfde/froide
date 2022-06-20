@@ -130,6 +130,10 @@ const initRequestPage = (): void => {
     }
   })
 
+  window.addEventListener('beforeprint', function () {
+    expandAll(messagesContainer, messages, true, true)
+  })
+
   document.querySelectorAll<HTMLElement>('[data-tour]').forEach((t) => {
     t.addEventListener('click', (e) => {
       e.stopPropagation()
