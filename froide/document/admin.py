@@ -107,10 +107,17 @@ class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
     )
 
 
+class CustomCollectionDirectoryAdmin(CollectionDirectoryAdmin):
+    list_filter = CollectionDirectoryAdmin.list_filter + (
+        ("collection", ForeignKeyFilter),
+        ("user", ForeignKeyFilter),
+    )
+
+
 admin.site.register(Document, DocumentAdmin)
 admin.site.register(Page, CustomPageAdmin)
 admin.site.register(PageAnnotation, CustomPageAnnotationAdmin)
 admin.site.register(DocumentCollection, DocumentCollectionAdmin)
 admin.site.register(CollectionDocument, CollectionDocumentAdmin)
 admin.site.register(DocumentPortal, DocumentPortalAdmin)
-admin.site.register(CollectionDirectory, CollectionDirectoryAdmin)
+admin.site.register(CollectionDirectory, CustomCollectionDirectoryAdmin)
