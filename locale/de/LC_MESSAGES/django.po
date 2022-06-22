@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-17 14:59+0200\n"
-"PO-Revision-Date: 2022-06-17 14:58+0200\n"
+"POT-Creation-Date: 2022-06-22 13:00+0200\n"
+"PO-Revision-Date: 2022-06-22 13:00+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -1732,10 +1732,6 @@ msgid "Commentator"
 msgstr "Autor:in"
 
 #: froide/comments/templates/froide_comments/comment.html
-msgid "Only visible if logged in"
-msgstr "Nur eingeloggt sichtbar"
-
-#: froide/comments/templates/froide_comments/comment.html
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
 #: froide/team/templates/team/team_detail.html
 msgid "Requester"
@@ -1744,6 +1740,10 @@ msgstr "Anfragesteller:in"
 #: froide/comments/templates/froide_comments/comment.html
 msgid "Moderator"
 msgstr "Moderator:in"
+
+#: froide/comments/templates/froide_comments/comment.html
+msgid "Only visible if logged in"
+msgstr "Nur eingeloggt sichtbar"
 
 #: froide/comments/templates/froide_comments/comment.html
 msgid "Comment was removed."
@@ -6970,6 +6970,13 @@ msgid ""
 msgstr ""
 "Schreiben Sie Ihren Namen nicht selbst in Ihre Anfrage. Wir fügen Ihren "
 "Namen automatisch am Ende des Briefs ein."
+
+#: froide/foirequest/views/make_request.py
+msgid ""
+"Please enter a subject which describes the information you are requesting."
+msgstr ""
+"Bitte geben Sie einen Betreff an, der die Information, die Sie anfragen "
+"möchten kurz beschreibt."
 
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
