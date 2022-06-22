@@ -10,6 +10,7 @@ from django.test import tag
 from django.urls import reverse
 from django.utils import timezone
 
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
 from froide.foirequest.models import FoiRequest, RequestDraft
@@ -390,3 +391,83 @@ class MenuTest(LiveTestMixin, StaticLiveServerTestCase):
                     ".navbar form[role=search]"
                 ).is_displayed()
             )
+
+
+@tag("ui", "slow")
+class TestSettingStatus(LiveTestMixin, StaticLiveServerTestCase):
+    def setUp(self):
+        factories.make_world()
+        factories.rebuild_index()
+        self.user = User.objects.get(username="dummy")
+
+        self.req: FoiRequest = factories.FoiRequestFactory.create(
+            user=self.user, first_message=timezone.now(), status="resolved"
+        )
+        factories.FoiMessageFactory.create(
+            request=self.req, is_response=False, sender_user=self.user
+        )
+
+    def go_to_request_page(self, req: FoiRequest):
+        path = reverse("foirequest-show", kwargs={"slug": req.slug})
+        self.selenium.get("%s%s" % (self.live_server_url, path))
+
+    def do_login(self, navigate=True):
+        if navigate:
+            self.selenium.get("%s%s" % (self.live_server_url, reverse("account-login")))
+        email_input = self.selenium.find_element_by_name("username")
+        email_input.send_keys(self.user.email)
+        password_input = self.selenium.find_element_by_name("password")
+        password_input.send_keys("froide")
+        self.selenium.find_element_by_xpath(
+            '//form//button[contains(text(), "Log In")]'
+        ).click()
+
+    def test_set_status(self):
+        self.do_login()
+
+        for from_resolution, to_resolution in [
+            ("", "successful"),
+            ("successful", "refused"),
+            ("refused", "partially_successful"),
+        ]:
+            self.req.refresh_from_db()
+            self.assertEquals(self.req.resolution, from_resolution)
+
+            self.go_to_request_page(self.req)
+
+            with CheckJSErrors(self.selenium):
+                WebDriverWait(self.selenium, 5).until(
+                    lambda driver: driver.find_element_by_class_name(
+                        "info-box__edit-button"
+                    ).is_displayed()
+                )
+                editForm = self.selenium.find_element_by_css_selector(
+                    ".info-box__edit-panel > form"
+                )
+                self.assertFalse(editForm.is_displayed())
+                self.selenium.find_element_by_class_name(
+                    "info-box__edit-button"
+                ).click()
+                self.assertTrue(editForm.is_displayed())
+                resolution = self.selenium.find_element_by_id("id_resolution")
+                resolution_select = Select(resolution)
+                reason = self.selenium.find_element_by_id("id_refusal_reason")
+                self.assertTrue(resolution.is_displayed())
+                self.assertEquals(
+                    resolution_select.first_selected_option.get_attribute("value"),
+                    from_resolution,
+                )
+
+                resolution_select.select_by_value("successful")
+                time.sleep(1)
+                self.assertFalse(reason.is_displayed())
+
+                resolution_select.select_by_value("refused")
+                time.sleep(1)
+                self.assertTrue(reason.is_displayed())
+
+                resolution_select.select_by_value(to_resolution)
+                editForm.find_element_by_css_selector('button[type="submit"]').click()
+
+                self.req.refresh_from_db()
+                self.assertEquals(self.req.resolution, to_resolution)
