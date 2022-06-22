@@ -18,8 +18,6 @@ function scrollToAnchor(
 const getHeight = (el: HTMLElement): number => {
   const style = window.getComputedStyle(el)
   const display = style.display
-  const position = style.position
-  const visibility = style.visibility
   const maxHeight = style.maxHeight?.replace('px', '').replace('%', '')
   let wantedHeight = 0
 
@@ -28,18 +26,26 @@ const getHeight = (el: HTMLElement): number => {
     return el.offsetHeight
   }
 
-  // the element is hidden so:
-  // making the el block so we can meassure its height but still be hidden
-  el.style.position = 'absolute'
-  el.style.visibility = 'hidden'
-  el.style.display = 'block'
+  // the element or one of its parents is hidden so:
 
+  // making the el and all hidden parents block so we can meassure its height but still be hidden
+  const elemState: string[] = []
+  let cur: HTMLElement | null = el
+  while (cur !== null && cur.offsetHeight === 0) {
+    elemState.push(cur.style.cssText)
+    cur.style.setProperty('visibility', 'hidden', 'important')
+    cur.style.setProperty('display', 'block', 'important')
+    cur = cur.parentElement
+  }
   wantedHeight = el.offsetHeight
 
   // reverting to the original values
-  el.style.display = display
-  el.style.position = position
-  el.style.visibility = visibility
+  cur = el
+  while (cur !== null && elemState.length > 0) {
+    cur.style.cssText = elemState[0]
+    elemState.shift()
+    cur = cur.parentElement
+  }
 
   return wantedHeight
 }
@@ -51,27 +57,29 @@ const getHeight = (el: HTMLElement): number => {
 const toggleSlide = (el: HTMLElement, seconds = 2): void => {
   let elMaxHeight = '0px'
 
-  if (el.getAttribute('data-max-height')) {
+  const dataMaxHeight = el.getAttribute('data-max-height')
+  if (dataMaxHeight !== null) {
     // we've already used this before, so everything is setup
     let maxHeight = el.style.maxHeight
     maxHeight = maxHeight?.replace('px', '').replace('%', '')
     if (maxHeight === '0') {
-      el.style.maxHeight = el.getAttribute('data-max-height') || '0'
+      el.style.maxHeight = dataMaxHeight
     } else {
       el.style.maxHeight = '0'
     }
   } else {
     elMaxHeight = `${getHeight(el)}px`
+
     el.style.transition = `max-height ${seconds}s ease-in-out`
     el.style.overflow = 'hidden'
     el.style.maxHeight = '0'
     el.setAttribute('data-max-height', elMaxHeight)
     el.style.display = 'block'
 
-    // we use setTimeout to modify maxHeight later than display (so we have the transition effect)
-    setTimeout(() => {
+    // we use requestAnimationFrame to modify maxHeight after the display and transition are set
+    requestAnimationFrame(() => {
       el.style.maxHeight = elMaxHeight
-    }, 10)
+    })
   }
 }
 
