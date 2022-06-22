@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
+from froide.foirequest.models.request import FoiRequest
 from froide.helper.email_parsing import ParsedEmail, parse_email, parse_email_address
 from froide.helper.email_utils import (
     get_mail_client,
@@ -19,6 +20,7 @@ from froide.helper.email_utils import (
     unflag_mail,
 )
 from froide.helper.name_generator import get_name_from_number, get_old_name_from_number
+from froide.publicbody.models import PublicBody
 
 from .utils import get_foi_mail_domains, get_publicbody_for_email
 
@@ -201,20 +203,35 @@ def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
     sender_email = email.from_.email
 
     already = set()
+    is_delivered = False
     for received in received_list:
         recipient_email = received[1]
         if recipient_email in already:
             continue
         already.add(recipient_email)
-        foirequest, pb = check_delivery_conditions(
+        foirequest, pb, is_handled = check_delivery_conditions(
             recipient_email,
             sender_email,
             parsed_email=email,
             mail_bytes=mail_bytes,
             manual=manual,
         )
+        if is_handled:
+            is_delivered = True
         if foirequest is not None:
             add_message_from_email(foirequest, email, publicbody=pb)
+            is_delivered = True
+
+    if not is_delivered:
+        create_deferred(
+            "",
+            mail_bytes,
+            spam=None,
+            sender_email=sender_email,
+            subject=unknown_foimail_subject,
+            body=unknown_foimail_message,
+            request=foirequest,
+        )
 
 
 def add_message_from_email(foirequest, email, publicbody=None):
@@ -226,7 +243,7 @@ def add_message_from_email(foirequest, email, publicbody=None):
 
 def check_delivery_conditions(
     recipient_mail, sender_email, parsed_email=None, mail_bytes=b"", manual=False
-):
+) -> Tuple[Optional[FoiRequest], Optional[PublicBody], bool]:
     from .models import DeferredMessage, FoiRequest
 
     if (
@@ -234,14 +251,14 @@ def check_delivery_conditions(
         and recipient_mail == settings.FOI_EMAIL_HOST_USER
     ):
         # foi mailbox email, but custom email required, dropping
-        return None, None
+        return None, None, False
 
     previous_spam_sender = DeferredMessage.objects.filter(
         sender=sender_email, spam=True
     ).exists()
     if previous_spam_sender:
         # Drop previous spammer
-        return None, None
+        return None, None, True
 
     foirequest = get_foirequest_from_mail(recipient_mail)
     if not foirequest:
@@ -254,25 +271,25 @@ def check_delivery_conditions(
             create_deferred(
                 recipient_mail, mail_bytes, sender_email=sender_email, spam=None
             )
-            return None, None
+            return None, None, True
         else:
             foirequest = FoiRequest.objects.get(id=list(request_ids)[0])
 
     pb = None
     if manual:
-        return foirequest, pb
+        return foirequest, pb, False
 
     if foirequest.closed:
         # Request is closed and will not receive messages
-        return None, None
+        return None, None, False
 
     # Check for spam
     pb = get_publicbody_for_email(sender_email, foirequest, include_deferred=True)
     if pb:
-        return foirequest, pb
+        return foirequest, pb, False
 
     if parsed_email.bounce_info.is_bounce:
-        return foirequest, None
+        return foirequest, None, False
 
     is_spammer = None
     if sender_email is not None:
@@ -291,7 +308,7 @@ def check_delivery_conditions(
         body=spam_message,
         request=foirequest,
     )
-    return None, None
+    return None, None, True
 
 
 @contextmanager
