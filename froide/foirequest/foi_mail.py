@@ -184,7 +184,9 @@ def get_foirequest_from_mail(email):
 
 
 def _deliver_mail(email, mail_bytes=None, manual=False):
-    received_list = email.to + email.cc + email.resent_to + email.resent_cc
+    received_list = (
+        email.to + email.cc + email.resent_to + email.resent_cc + email.x_original_to
+    )
     received_list = [(r[0], r[1].lower()) for r in received_list]
 
     domains = get_foi_mail_domains()
