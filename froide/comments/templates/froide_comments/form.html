@@ -1,7 +1,8 @@
 {% load comments i18n %}
 {% load form_helper %}
+{% load froide_comment_tags %}
 
-{% get_comment_form for object as form %}
+{% get_froide_comment_form object as form %}
 
 <form action="{% comment_form_target %}" method="post">{% csrf_token %}
   <input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
