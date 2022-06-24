@@ -10,10 +10,11 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
+from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
-from froide.helper.utils import is_ajax, render_400
+from froide.helper.utils import is_ajax, render_400, render_403
 from froide.upload.forms import get_uppy_i18n
 
 from ..api_views import FoiAttachmentSerializer, FoiMessageSerializer
@@ -608,3 +609,11 @@ def resend_message(request, foirequest, message_id):
 
     messages.add_message(request, messages.SUCCESS, _("The message has been re-sent."))
     return redirect(sent_message)
+
+
+def message_shortlink(request, obj_id):
+    foimessage = get_object_or_404(FoiMessage, pk=obj_id)
+    if not can_read_foirequest(foimessage.request, request):
+        return render_403(request)
+    url = foimessage.get_absolute_url()
+    return redirect(url)

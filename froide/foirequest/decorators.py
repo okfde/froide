@@ -32,6 +32,7 @@ def allow_foirequest_if_any(*checks):
 
 allow_write_foirequest = allow_foirequest_if_any(can_write_foirequest)
 allow_moderate_foirequest = allow_foirequest_if_any(can_moderate_foirequest)
+allow_moderate_pii_foirequest = allow_foirequest_if_any(can_moderate_pii_foirequest)
 allow_write_or_moderate_foirequest = allow_foirequest_if_any(
     can_write_foirequest, can_moderate_foirequest
 )

@@ -163,6 +163,7 @@ class FoiAttachment(models.Model):
     is_converted = models.BooleanField(_("Is converted"), default=False)
     timestamp = models.DateTimeField(null=True, default=timezone.now)
     pending = models.BooleanField(default=False)
+    is_moderated = models.BooleanField(_("Has been moderated"), default=False)
 
     document = models.OneToOneField(
         Document,

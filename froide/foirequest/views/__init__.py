@@ -12,6 +12,7 @@ from .attachment import (
     approve_attachment,
     create_document,
     delete_attachment,
+    mark_attachment_as_moderated,
     redact_attachment,
     show_attachment,
 )
@@ -27,6 +28,7 @@ from .message import (
     download_original_email,
     edit_message,
     escalation_message,
+    message_shortlink,
     redact_message,
     resend_message,
     send_message,
@@ -132,4 +134,6 @@ __all__ = [
     "auth",
     "FoiRequestView",
     "SetProjectView",
+    "message_shortlink",
+    "mark_attachment_as_moderated",
 ]

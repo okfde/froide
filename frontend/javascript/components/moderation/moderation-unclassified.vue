@@ -23,7 +23,7 @@
           <td>
             <a
               :href="req.url + '#set-status'"
-              class="btn btn-primary"
+              class="btn btn-primary btn-sm"
               target="_blank">
               {{ i18n.setStatus }}
             </a>

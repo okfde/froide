@@ -49,6 +49,7 @@ def get_moderation_data(request):
             FoiAttachment.objects.filter(
                 can_approve=True,
                 approved=False,
+                is_moderated=False,
                 belongs_to__is_response=True,
                 belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
             )
@@ -58,7 +59,11 @@ def get_moderation_data(request):
         attachments_count = at_qs.count()
         attachments = list(
             at_qs.select_related("belongs_to", "belongs_to__request").values(
-                "name", "id", "belongs_to_id", "belongs_to__request__slug"
+                "name",
+                "id",
+                "belongs_to_id",
+                "belongs_to__subject",
+                "belongs_to__request__slug",
             )[:100]
         )
 
@@ -124,6 +129,19 @@ def moderation_view(request):
                     "attachment_id": 1,
                 },
             ),
+            "foimessage": reverse(
+                "foirequest-message_shortlink",
+                kwargs={
+                    "obj_id": 0,
+                },
+            ),
+            "mark_attachment_as_moderated": reverse(
+                "foirequest-mark_attachment_as_moderated",
+                kwargs={
+                    "slug": "0",
+                    "attachment_id": 1,
+                },
+            ),
         },
         "i18n": {
             "name": _("Name"),
@@ -139,6 +157,7 @@ def moderation_view(request):
             "unclaim": _("Cancel"),
             "resolve": _("Resolve"),
             "markResolved": _("Mark resolved"),
+            "markModerated": _("Mark moderated"),
             "claimedMinutesAgo": _("Claimed for {min} min."),
             "maxClaimCount": _(
                 "You cannot work on more than 5 issues at the same time."

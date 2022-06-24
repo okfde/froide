@@ -26,6 +26,8 @@ from ..views import (
     extend_deadline,
     make_public,
     make_same_request,
+    mark_attachment_as_moderated,
+    message_shortlink,
     publicbody_upload,
     redact_attachment,
     redact_message,
@@ -53,6 +55,8 @@ urlpatterns = [
         publicbody_upload,
         name="foirequest-publicbody_upload",
     ),
+    # Shortlink for message
+    path("m/<int:obj_id>/", message_shortlink, name="foirequest-message_shortlink"),
     path("<slug:slug>/", FoiRequestView.as_view(), name="foirequest-show"),
     path(
         "<slug:slug>/suggest/public-body/",
@@ -194,6 +198,11 @@ urlpatterns = [
         "<slug:slug>/delete/<int:attachment_id>/",
         delete_attachment,
         name="foirequest-delete_attachment",
+    ),
+    path(
+        "<slug:slug>/mark-as-moderated/<int:attachment_id>/",
+        mark_attachment_as_moderated,
+        name="foirequest-mark_attachment_as_moderated",
     ),
     path(
         "<slug:slug>/create-doc/<int:attachment_id>/",
