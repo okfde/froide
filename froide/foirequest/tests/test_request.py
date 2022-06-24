@@ -32,7 +32,7 @@ from froide.foirequest.models import (
 )
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
-from froide.helper.email_parsing import ParsedEmail
+from froide.helper.email_parsing import EmailAddress, ParsedEmail
 from froide.publicbody.models import FoiLaw, PublicBody
 
 User = get_user_model()
@@ -170,8 +170,8 @@ class RequestTest(TestCase):
                     "subject": "Re: %s" % req.title,
                     "body": """Message""",
                     "html": None,
-                    "from_": ("FoI Officer", new_foi_email),
-                    "to": [(req.user.get_full_name(), req.secret_address)],
+                    "from_": EmailAddress("FoI Officer", new_foi_email),
+                    "to": [EmailAddress(req.user.get_full_name(), req.secret_address)],
                     "cc": [],
                     "resent_to": [],
                     "resent_cc": [],
@@ -778,8 +778,8 @@ class RequestTest(TestCase):
                     "subject": "Re: %s" % req.title,
                     "body": """Message""",
                     "html": None,
-                    "from_": ("FoI Officer", "randomfoi@example.com"),
-                    "to": [(req.user.get_full_name(), req.secret_address)],
+                    "from_": EmailAddress("FoI Officer", "randomfoi@example.com"),
+                    "to": [EmailAddress(req.user.get_full_name(), req.secret_address)],
                     "cc": [],
                     "resent_to": [],
                     "resent_cc": [],
@@ -1536,8 +1536,8 @@ class RequestTest(TestCase):
                         "Mit freundlichen Grüßen\n" + name
                     ),
                     "html": "html",
-                    "from_": (name, "petra.radetsky@bund.example.org"),
-                    "to": [("", req.secret_address)],
+                    "from_": EmailAddress(name, "petra.radetsky@bund.example.org"),
+                    "to": [EmailAddress("", req.secret_address)],
                     "cc": [],
                     "resent_to": [],
                     "resent_cc": [],
@@ -1880,10 +1880,10 @@ class RequestTest(TestCase):
             ParsedEmail(
                 self.msgobj,
                 **{
-                    "from_": ("from", "from@ddress"),
+                    "from_": EmailAddress("from", "from@ddress"),
                     "to": [
-                        ("", "valid-email@ddress"),
-                        ("", "invalid-email to address"),
+                        EmailAddress("", "valid-email@ddress"),
+                        EmailAddress("", "invalid-email to address"),
                     ],
                     "date": timezone.now(),
                     "subject": "Reply",
@@ -1947,8 +1947,8 @@ class MediatorTest(TestCase):
                     "subject": "Reply",
                     "body": "Content",
                     "html": "html",
-                    "from_": ("Name", mediator.email),
-                    "to": [("", req.secret_address)],
+                    "from_": EmailAddress("Name", mediator.email),
+                    "to": [EmailAddress("", req.secret_address)],
                     "cc": [],
                     "resent_to": [],
                     "resent_cc": [],

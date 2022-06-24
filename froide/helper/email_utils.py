@@ -182,7 +182,7 @@ def unflag_mail(mailbox, uid):
     mailbox.close()
 
 
-def make_address(email, name=None):
+def make_address(email: str, name: Optional[str] = None):
     if name:
         return '"%s" <%s>' % (name.replace('"', ""), email)
     return email
