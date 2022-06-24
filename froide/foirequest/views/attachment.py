@@ -99,9 +99,9 @@ def mark_attachment_as_moderated(request, foirequest, attachment_id):
         FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
 
-    if not att.has_been_moderated:
-        att.has_been_moderated = True
-        att.save(update_fields=["has_been_moderated"])
+    if not att.is_moderated:
+        att.is_moderated = True
+        att.save(update_fields=["is_moderated"])
 
     if is_ajax(request):
         if request.content_type == "application/json":
