@@ -175,7 +175,8 @@ class FoiAttachment(models.Model):
 
     objects = FoiAttachmentManager()
 
-    attachment_published = Signal()  # args: ['user']
+    attachment_approved = Signal()  # args: ['user', 'redacted']
+    attachment_unapproved = Signal()  # args: ['user']
     attachment_deleted = Signal()  # args: ['user']
     attachment_redacted = Signal()  # args: ['user']
     document_created = Signal()  # args: ['user']
