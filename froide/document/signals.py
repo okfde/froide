@@ -18,34 +18,27 @@ def document_created(instance=None, created=False, **kwargs):
 
 
 @receiver(
-    signals.post_save,
-    sender=FoiAttachment,
-    dispatch_uid="reprocess_attachment_redaction",
-)
-def reprocess_attachment_redaction(instance, created=False, **kwargs):
-    if created and kwargs.get("raw", False):
-        return
-    if not instance.document_id:
-        return
-    if not instance.redacted_id:
-        return
-    # If attachment has document, but also redacted version
-    # move document reference to redacted version
-    with transaction.atomic():
-        doc_id = instance.document_id
-        Document.objects.filter(id=doc_id).update(original_id=instance.redacted_id)
-        instance.document = None
-        instance.save()
-        FoiAttachment.objects.filter(id=instance.redacted_id).update(document_id=doc_id)
-
-    d = Document.objects.get(id=doc_id)
-    d.process_document()
-
-
-@receiver(
     FoiAttachment.attachment_approved, dispatch_uid="was_redacted_reprocess_document"
 )
-def reprocess_document_after_redaction(sender, **kwargs):
+def reprocess_document_after_redaction(sender: FoiAttachment, **kwargs):
     if sender.document and kwargs.get("redacted"):
         # Recreate pages after redaction
         sender.document.process_document(reprocess=True)
+        return
+    unredacteds = sender.unredacted_set.all()
+    if not unredacteds:
+        return
+    assert len(unredacteds) == 1
+    original = unredacteds[0]
+    doc_id = original.document_id
+    if doc_id:
+        # Original has a document
+        # Move references to redacted version (=sender)
+        with transaction.atomic():
+            Document.objects.filter(id=doc_id).update(original_id=sender.id)
+            original.document = None
+            original.save(update_fields=["document"])
+            FoiAttachment.objects.filter(id=sender.id).update(document_id=doc_id)
+        # Then reprocess document
+        document = Document.objects.get(id=doc_id)
+        document.process_document(reprocess=True)
