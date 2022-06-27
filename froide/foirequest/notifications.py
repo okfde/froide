@@ -46,7 +46,7 @@ INTERESTING_EVENTS = set(EVENT_DETAILS.keys()) - set(
 COMBINE_EVENTS = set(
     [
         FoiEvent.EVENTS.SET_SUMMARY,
-        FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
+        FoiEvent.EVENTS.ATTACHMENT_APPROVED,
         FoiEvent.EVENTS.STATUS_CHANGED,
     ]
 )

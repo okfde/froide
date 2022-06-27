@@ -80,8 +80,8 @@ EVENT_DETAILS = {
         _("Received a message from {public_body}.")
     ),
     EventName.MESSAGE_SENT: EventDetail(_("A message was sent to {public_body}.")),
-    EventName.ATTACHMENT_PUBLISHED: EventDetail(
-        _("An attachment was published on request.")
+    EventName.ATTACHMENT_APPROVED: EventDetail(
+        _("An attachment was approved on request.")
     ),
     EventName.ATTACHMENT_DEPUBLISHED: EventDetail(_("An attachment was depublished.")),
     EventName.REQUEST_REDIRECTED: EventDetail(
