@@ -204,9 +204,16 @@ def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
 
     sender_email = email.from_.email
 
+    if not received_list:
+        # Create a deferred message if the message is otherwise not handled
+        create_deferred(
+            "",
+            mail_bytes,
+            sender_email=sender_email,
+        )
+
     already_emails = set()
     already_foirequests = set()
-    is_handled = False
     for received in received_list:
         recipient_email = received.email
         if recipient_email in already_emails:
@@ -223,7 +230,6 @@ def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
                     continue
                 already_foirequests.add(foirequest)
                 add_message_from_email(foirequest, email, publicbody=publicbody)
-                is_handled = True
         except DeferredMessageNeeded as deferred_exception:
             create_deferred(
                 recipient_email,
@@ -231,15 +237,6 @@ def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
                 sender_email=sender_email,
                 foirequest=deferred_exception.foirequest,
             )
-            is_handled = True
-
-    if not is_handled:
-        # Create a deferred message if the message is otherwise not handled
-        create_deferred(
-            "",
-            mail_bytes,
-            sender_email=sender_email,
-        )
 
 
 DeliveryConditionResult = Tuple[Optional[FoiRequest], Optional[PublicBody]]
