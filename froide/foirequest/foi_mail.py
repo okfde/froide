@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from froide.foirequest.models.request import FoiRequest
+from froide.foirequest.models import DeferredMessage, FoiRequest
 from froide.helper.email_parsing import ParsedEmail, parse_email, parse_email_address
 from froide.helper.email_utils import (
     get_mail_client,
@@ -111,16 +111,14 @@ def _process_mail(mail_bytes, mail_uid=None, manual=False):
 
 
 def create_deferred(
-    secret_mail,
-    mail_bytes,
-    spam=False,
-    sender_email=None,
+    secret_mail: str,
+    mail_bytes: bytes,
+    spam: Optional[bool] = None,
+    sender_email: Optional[str] = None,
     subject=unknown_foimail_subject,
     body=unknown_foimail_message,
-    request=None,
+    foirequest: Optional[FoiRequest] = None,
 ):
-    from .models import DeferredMessage
-
     mail_string = ""
     if mail_bytes is not None:
         mail_string = base64.b64encode(mail_bytes).decode("utf-8")
@@ -129,7 +127,7 @@ def create_deferred(
         sender=sender_email or "",
         mail=mail_string,
         spam=spam,
-        request=request,
+        request=foirequest,
     )
     if spam:
         # Do not notify on identified spam
@@ -158,9 +156,7 @@ def get_alternative_mail(req):
     return "%s_%s@%s" % (name, req.pk, domains[0])
 
 
-def get_foirequest_from_mail(email):
-    from .models import FoiRequest
-
+def get_foirequest_from_mail(email: str) -> Optional[FoiRequest]:
     if "_" in email:
         name, domain = email.split("@", 1)
         hero, num = name.rsplit("_", 1)
@@ -184,6 +180,12 @@ def get_foirequest_from_mail(email):
             return None
 
 
+class DeferredMessageNeeded(Exception):
+    def __init__(self, *args, foirequest=None, **kwargs):
+        self.foirequest = foirequest
+        super().__init__(*args, **kwargs)
+
+
 def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
     received_list = (
         email.to + email.cc + email.resent_to + email.resent_cc + email.x_original_to
@@ -202,113 +204,126 @@ def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
 
     sender_email = email.from_.email
 
-    already = set()
-    is_delivered = False
+    already_emails = set()
+    already_foirequests = set()
+    is_handled = False
     for received in received_list:
-        recipient_email = received[1]
-        if recipient_email in already:
+        recipient_email = received.email
+        if recipient_email in already_emails:
             continue
-        already.add(recipient_email)
-        foirequest, pb, is_handled = check_delivery_conditions(
-            recipient_email,
-            sender_email,
-            parsed_email=email,
-            mail_bytes=mail_bytes,
-            manual=manual,
-        )
-        if is_handled:
-            is_delivered = True
-        if foirequest is not None:
-            add_message_from_email(foirequest, email, publicbody=pb)
-            is_delivered = True
+        already_emails.add(recipient_email)
 
-    if not is_delivered:
+        try:
+            foirequest, publicbody = check_delivery_conditions(
+                recipient_email, sender_email, parsed_email=email, manual=manual
+            )
+            if foirequest:
+                if foirequest in already_foirequests:
+                    # Only deliver once to an foirequest
+                    continue
+                already_foirequests.add(foirequest)
+                add_message_from_email(foirequest, email, publicbody=publicbody)
+                is_handled = True
+        except DeferredMessageNeeded as deferred_exception:
+            create_deferred(
+                recipient_email,
+                mail_bytes,
+                sender_email=sender_email,
+                foirequest=deferred_exception.foirequest,
+            )
+            is_handled = True
+
+    if not is_handled:
+        # Create a deferred message if the message is otherwise not handled
         create_deferred(
             "",
             mail_bytes,
-            spam=None,
             sender_email=sender_email,
-            subject=unknown_foimail_subject,
-            body=unknown_foimail_message,
-            request=foirequest,
         )
 
 
-def add_message_from_email(foirequest, email, publicbody=None):
+DeliveryConditionResult = Tuple[Optional[FoiRequest], Optional[PublicBody]]
+
+
+def check_delivery_conditions(
+    recipient_email: str,
+    sender_email: str,
+    parsed_email: ParsedEmail,
+    manual: bool = False,
+) -> DeliveryConditionResult:
+    if should_drop_email(recipient_email, sender_email):
+        return None, None
+
+    foirequest = find_foirequest_for_delivery(recipient_email)
+    if not foirequest:
+        raise DeferredMessageNeeded
+
+    publicbody = get_publicbody_for_email(
+        sender_email, foirequest, include_deferred=True
+    )
+
+    if manual:
+        # Force delivery to foirequest, no more checks
+        return foirequest, publicbody
+
+    if foirequest.closed:
+        # Request is closed and will not receive messages
+        return None, None
+
+    if publicbody:
+        # if email can be matched to public body, deliver to foirequest
+        return foirequest, publicbody
+
+    if parsed_email.bounce_info.is_bounce:
+        # If public body cannot be found, but it's a bounce message, deliver
+        return foirequest, None
+
+    # No match and not bounce, raise DeferredMessageNeeded
+    raise DeferredMessageNeeded(foirequest)
+
+
+def find_foirequest_for_delivery(recipient_email: str) -> Optional[FoiRequest]:
+    foirequest = get_foirequest_from_mail(recipient_email)
+    if foirequest:
+        return foirequest
+
+    # Find previous non-spam matching
+    request_ids = DeferredMessage.objects.filter(
+        recipient=recipient_email, request__isnull=False, spam=False
+    ).values_list("request_id", flat=True)
+    if len(set(request_ids)) != 1:
+        raise DeferredMessageNeeded
+
+    return FoiRequest.objects.get(id=list(request_ids)[0])
+
+
+def add_message_from_email(
+    foirequest: FoiRequest, email: ParsedEmail, publicbody: Optional[PublicBody] = None
+):
     from .services import ReceiveEmailService
 
     service = ReceiveEmailService(email, foirequest=foirequest, publicbody=publicbody)
     service.process()
 
 
-def check_delivery_conditions(
-    recipient_mail, sender_email, parsed_email=None, mail_bytes=b"", manual=False
-) -> Tuple[Optional[FoiRequest], Optional[PublicBody], bool]:
-    from .models import DeferredMessage, FoiRequest
+def should_drop_email(recipient_email: str, sender_email: str) -> bool:
+    from .models import DeferredMessage
 
     if (
         not settings.FOI_EMAIL_FIXED_FROM_ADDRESS
-        and recipient_mail == settings.FOI_EMAIL_HOST_USER
+        and recipient_email == settings.FOI_EMAIL_HOST_USER
     ):
         # foi mailbox email, but custom email required, dropping
-        return None, None, False
+        return True
 
     previous_spam_sender = DeferredMessage.objects.filter(
         sender=sender_email, spam=True
     ).exists()
     if previous_spam_sender:
         # Drop previous spammer
-        return None, None, True
+        return True
 
-    foirequest = get_foirequest_from_mail(recipient_mail)
-    if not foirequest:
-        # Find previous non-spam matching
-        request_ids = DeferredMessage.objects.filter(
-            recipient=recipient_mail, request__isnull=False, spam=False
-        ).values_list("request_id", flat=True)
-        if len(set(request_ids)) != 1:
-            # Can't do automatic matching!
-            create_deferred(
-                recipient_mail, mail_bytes, sender_email=sender_email, spam=None
-            )
-            return None, None, True
-        else:
-            foirequest = FoiRequest.objects.get(id=list(request_ids)[0])
-
-    pb = None
-    if manual:
-        return foirequest, pb, False
-
-    if foirequest.closed:
-        # Request is closed and will not receive messages
-        return None, None, False
-
-    # Check for spam
-    pb = get_publicbody_for_email(sender_email, foirequest, include_deferred=True)
-    if pb:
-        return foirequest, pb, False
-
-    if parsed_email.bounce_info.is_bounce:
-        return foirequest, None, False
-
-    is_spammer = None
-    if sender_email is not None:
-        is_spammer = DeferredMessage.objects.filter(
-            sender=sender_email, spam=True
-        ).exists()
-        # If no spam found, treat as unknown
-        is_spammer = is_spammer or None
-
-    create_deferred(
-        recipient_mail,
-        mail_bytes,
-        spam=is_spammer,
-        sender_email=sender_email,
-        subject=_("Possible Spam Mail received"),
-        body=spam_message,
-        request=foirequest,
-    )
-    return None, None, True
+    return False
 
 
 @contextmanager
