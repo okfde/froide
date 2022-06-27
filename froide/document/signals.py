@@ -43,8 +43,9 @@ def reprocess_attachment_redaction(instance, created=False, **kwargs):
 
 
 @receiver(
-    FoiAttachment.attachment_redacted, dispatch_uid="was_redacted_reprocess_document"
+    FoiAttachment.attachment_approved, dispatch_uid="was_redacted_reprocess_document"
 )
 def reprocess_document_after_redaction(sender, **kwargs):
-    if sender.document:
-        sender.document.process_document()
+    if sender.document and kwargs.get("redacted"):
+        # Recreate pages after redaction
+        sender.document.process_document(reprocess=True)

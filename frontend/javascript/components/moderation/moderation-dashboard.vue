@@ -214,7 +214,7 @@ export default {
       })
     }
     if (this.attachments !== null) {
-      this.room.on('attachment_published', (data) => {
+      this.room.on('attachment_approved', (data) => {
         this.attachments = this.attachments.filter(
           (at) => at.id !== data.attachments.id
         )

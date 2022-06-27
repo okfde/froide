@@ -332,12 +332,12 @@ def create_event_message_received(sender, message=None, user=None, **kwargs):
 
 
 @receiver(
-    FoiAttachment.attachment_published,
+    FoiAttachment.attachment_approved,
     dispatch_uid="create_event_followers_attachments_approved",
 )
 def create_event_followers_attachments_approved(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.ATTACHMENT_PUBLISHED,
+        FoiEvent.EVENTS.ATTACHMENT_APPROVED,
         sender.belongs_to.request,
         user=user,
         attachment_id=sender.id,

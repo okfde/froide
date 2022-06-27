@@ -75,7 +75,7 @@ def approve_attachment(request, foirequest, attachment_id):
     # hard guard against publishing of non publishable requests
     if not foirequest.not_publishable:
         att.approve_and_save()
-        att.attachment_published.send(
+        att.attachment_approved.send(
             sender=att,
             user=request.user,
         )

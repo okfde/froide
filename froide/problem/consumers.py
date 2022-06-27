@@ -127,10 +127,10 @@ class ModerationConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-    async def attachment_published(self, event):
+    async def attachment_approved(self, event):
         await self.send_json(
             {
-                "type": "attachment_published",
+                "type": "attachment_approved",
                 "attachments": event["attachments"],
             }
         )

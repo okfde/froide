@@ -367,7 +367,7 @@ def redact_attachment_task(att_id, target_id, instructions):
     target.can_approve = True
     target.pending = False
     target.approve_and_save()
-    FoiAttachment.attachment_published.send(sender=target, user=None)
+    FoiAttachment.attachment_approved.send(sender=target, user=None)
 
 
 @celery_app.task(name="froide.foirequest.tasks.move_upload_to_attachment")

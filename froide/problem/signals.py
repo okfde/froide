@@ -115,11 +115,11 @@ def broadcast_unclassified_changed(sender, **kwargs):
 
 
 @receiver(
-    FoiAttachment.attachment_published, dispatch_uid="moderation_attachment_published"
+    FoiAttachment.attachment_approved, dispatch_uid="moderation_attachment_approved"
 )
-def broadcast_attachment_published(sender, **kwargs):
+def broadcast_attachment_approved(sender, **kwargs):
     broadcast_moderation(
-        "attachment_published", _get_attachment_data(sender), key="attachments"
+        "attachment_approved", _get_attachment_data(sender), key="attachments"
     )
 
 

@@ -35,7 +35,7 @@ class EventName(models.TextChoices):
     MADE_PUBLIC = "made_public", _("the request was made public")
 
     ATTACHMENT_UPLOADED = "attachment_uploaded", _("attachments were uploaded")
-    ATTACHMENT_PUBLISHED = "attachment_published", _("an attachment was published")
+    ATTACHMENT_APPROVED = "attachment_approved", _("an attachment was approved")
     ATTACHMENT_DEPUBLISHED = "attachment_depublished", _(
         "an attachment was depublished"
     )
