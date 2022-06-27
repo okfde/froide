@@ -590,7 +590,7 @@ class FoiMessage(models.Model):
 
     def update_email_headers(self, email):
         email_headers = {}
-        if email.to and email.to[0][1] != self.request.secret_address:
+        if email.to and email.to[0].email != self.request.secret_address:
             email_headers["to"] = email.to
         if email.cc:
             email_headers["cc"] = email.cc

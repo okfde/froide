@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
 from froide.helper.db_utils import save_obj_with_slug
+from froide.helper.email_parsing import ParsedEmail
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import redact_subject
 from froide.problem.models import ProblemReport
@@ -326,7 +327,7 @@ class ReceiveEmailService(BaseService):
     def process(self, request=None):
         foirequest = self.kwargs["foirequest"]
         publicbody = self.kwargs.get("publicbody", None)
-        email = self.data
+        email: ParsedEmail = self.data
 
         subject = email.subject or ""
         subject = subject[:250]
@@ -353,8 +354,8 @@ class ReceiveEmailService(BaseService):
             subject=subject,
             email_message_id=message_id,
             is_response=True,
-            sender_name=email.from_[0],
-            sender_email=email.from_[1],
+            sender_name=email.from_.name,
+            sender_email=email.from_.email,
             recipient=recipient_name,
             recipient_email=recipient_email,
             plaintext=email.body,
@@ -433,8 +434,8 @@ class ReceiveEmailService(BaseService):
             recipient_email = foirequest.secret_address
         else:
             try:
-                recipient_name = email.to[0][0]
-                recipient_email = email.to[0][1]
+                recipient_name = email.to[0].name
+                recipient_email = email.to[0].email
             except IndexError:
                 pass
         return recipient_name, recipient_email

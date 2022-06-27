@@ -9,13 +9,14 @@ Licensed under MIT
 import re
 import time
 from contextlib import closing
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from email.header import decode_header
 from email.message import EmailMessage
 from email.parser import BytesParser as Parser
 from email.utils import getaddresses, parseaddr, parsedate_tz
 from io import BytesIO
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional, Tuple
 from urllib.parse import unquote
 
 from django.utils.functional import cached_property
@@ -29,6 +30,7 @@ from .email_utils import (
     check_spf,
     detect_auto_reply,
     get_bounce_info,
+    make_address,
 )
 from .text_utils import convert_html_to_text
 
@@ -39,6 +41,27 @@ DISPO_SPLIT = re.compile(r"""((?:[^;"']|"[^"]*"|'[^']*')+)""")
 # Reassemble regular-parameter section
 # https://tools.ietf.org/html/rfc2231#7
 DISPO_MULTI_VALUE = re.compile(r"(\w+)\*\d+$")
+
+
+class EmailAddress(NamedTuple):
+    name: str
+    email: str
+
+    def __str__(self):
+        return make_address(self.email, name=self.name)
+
+    def lower(self):
+        return EmailAddress(self.name, self.email.lower())
+
+    def replace_email_domain(self, domain):
+        local_part, _ = self.email.split("@")
+        return EmailAddress(self.name, "{}@{}".format(local_part, domain))
+
+
+def parse_email_address(email_address_header: str) -> EmailAddress:
+    name, email = parseaddr(email_address_header)
+    name = parse_header_field(name)
+    return EmailAddress(name, email)
 
 
 def split_with_quotes(dispo):
@@ -83,33 +106,6 @@ def parse_email_body(
 def decode_message_part(part):
     charset = part.get_content_charset() or "ascii"
     return str(part.get_payload(decode=True), charset, "replace")
-
-
-def parse_main_headers(msgobj):
-    subject = parse_header_field(msgobj["Subject"])
-    tos = get_address_list(msgobj.get_all("To", []))
-    x_original_tos = get_address_list(msgobj.get_all("X-Original-To", []))
-    ccs = get_address_list(msgobj.get_all("Cc", []))
-    resent_tos = get_address_list(msgobj.get_all("resent-to", []))
-    resent_ccs = get_address_list(msgobj.get_all("resent-cc", []))
-
-    from_field = parseaddr(str(msgobj.get("From")))
-    from_field = (
-        parse_header_field(from_field[0]),
-        from_field[1].lower() if from_field[1] else from_field[1],
-    )
-    date = parse_date(str(msgobj.get("Date")))
-    return {
-        "message_id": msgobj.get("Message-Id"),
-        "date": date,
-        "subject": subject,
-        "from_": from_field,
-        "to": tos,
-        "x_original_to": x_original_tos,
-        "cc": ccs,
-        "resent_to": resent_tos,
-        "resent_cc": resent_ccs,
-    }
 
 
 def parse_dispositions(dispo):
@@ -278,7 +274,7 @@ def get_address_list(values):
     address_list = getaddresses(values)
     fixed = []
     for addr in address_list:
-        fixed.append((parse_header_field(addr[0]), addr[1]))
+        fixed.append(EmailAddress(parse_header_field(addr[0]), addr[1]))
     return fixed
 
 
@@ -293,27 +289,21 @@ def parse_date(date_str):
     return pytz.utc.localize(date)
 
 
-EmailField = Tuple[str, str]
-
-
-class ParsedEmail(object):
-    message_id: str = ""
-    date: datetime = None
+@dataclass
+class ParsedEmail:
+    msgobj: EmailMessage
     subject: str
     body: str
     html: Optional[str]
-    from_: EmailField
-    to: List[EmailField] = []
-    x_original_to: List[EmailField] = []
-    cc: List[EmailField] = []
-    resent_to: List[EmailField] = []
-    resent_cc: List[EmailField] = []
-    attachments: List[EmailAttachment] = []
-
-    def __init__(self, msgobj, **kwargs):
-        self.msgobj: EmailMessage = msgobj
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+    from_: EmailAddress
+    message_id: str = ""
+    date: datetime = None
+    to: List[EmailAddress] = field(default_factory=list)
+    x_original_to: List[EmailAddress] = field(default_factory=list)
+    cc: List[EmailAddress] = field(default_factory=list)
+    resent_to: List[EmailAddress] = field(default_factory=list)
+    resent_cc: List[EmailAddress] = field(default_factory=list)
+    attachments: List[EmailAttachment] = field(default_factory=list)
 
     @cached_property
     def bounce_info(self):
@@ -372,7 +362,30 @@ def parse_email(bytesfile: BytesIO) -> ParsedEmail:
 
     body = fix_email_body(body)
 
-    email_info = parse_main_headers(msgobj)
-    email_info.update({"body": body, "html": html, "attachments": attachments})
+    subject = parse_header_field(msgobj["Subject"])
+    to = get_address_list(msgobj.get_all("To", []))
+    x_original_to = get_address_list(msgobj.get_all("X-Original-To", []))
+    cc = get_address_list(msgobj.get_all("Cc", []))
+    resent_to = get_address_list(msgobj.get_all("resent-to", []))
+    resent_cc = get_address_list(msgobj.get_all("resent-cc", []))
+    message_id = msgobj.get("Message-Id", "")
 
-    return ParsedEmail(msgobj, **email_info)
+    from_field = parse_email_address(str(msgobj.get("From")))
+    from_field = from_field.lower()
+    date = parse_date(str(msgobj.get("Date")))
+
+    return ParsedEmail(
+        msgobj=msgobj,
+        subject=subject,
+        body=body,
+        html=html,
+        attachments=attachments,
+        from_=from_field,
+        message_id=message_id,
+        date=date,
+        to=to,
+        x_original_to=x_original_to,
+        cc=cc,
+        resent_to=resent_to,
+        resent_cc=resent_cc,
+    )

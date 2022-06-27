@@ -2,7 +2,6 @@ import base64
 import random
 import zipfile
 from contextlib import closing, contextmanager
-from email.utils import parseaddr
 from io import BytesIO
 from typing import Iterator, Optional, Tuple
 
@@ -12,7 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from froide.helper.email_parsing import parse_email
+from froide.helper.email_parsing import ParsedEmail, parse_email, parse_email_address
 from froide.helper.email_utils import (
     get_mail_client,
     get_unread_mails,
@@ -64,7 +63,7 @@ def send_foi_mail(
     )
     headers = {}
     if settings.FOI_EMAIL_FIXED_FROM_ADDRESS:
-        name, mailaddr = parseaddr(from_email)
+        name, mailaddr = parse_email_address(from_email)
         from_address = settings.FOI_EMAIL_HOST_FROM
         from_email = make_address(from_address, name)
         headers["Reply-To"] = make_address(mailaddr, name)
@@ -183,25 +182,23 @@ def get_foirequest_from_mail(email):
             return None
 
 
-def _deliver_mail(email, mail_bytes=None, manual=False):
+def _deliver_mail(email: ParsedEmail, mail_bytes=None, manual=False):
     received_list = (
         email.to + email.cc + email.resent_to + email.resent_cc + email.x_original_to
     )
-    received_list = [(r[0], r[1].lower()) for r in received_list]
+    received_list = [r.lower() for r in received_list]
 
     domains = get_foi_mail_domains()
 
     def mail_filter(x):
-        return x[1].endswith(tuple(["@%s" % d for d in domains]))
+        return x.email.endswith(tuple(["@%s" % d for d in domains]))
 
     received_list = [r for r in received_list if mail_filter(r)]
 
     # normalize to first FOI_EMAIL_DOMAIN
-    received_list = [
-        (x[0], "@".join((x[1].split("@")[0], domains[0]))) for x in received_list
-    ]
+    received_list = [x.replace_email_domain(domains[0]) for x in received_list]
 
-    sender_email = email.from_[1]
+    sender_email = email.from_.email
 
     already = set()
     for received in received_list:

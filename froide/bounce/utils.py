@@ -7,7 +7,6 @@ import base64
 import datetime
 import time
 from contextlib import closing
-from email.utils import parseaddr
 from io import BytesIO
 from urllib.parse import quote
 
@@ -20,7 +19,11 @@ from django.core.validators import validate_email
 from django.utils import timezone
 from django.utils.crypto import salted_hmac
 
-from froide.helper.email_parsing import parse_email, parse_header_field
+from froide.helper.email_parsing import (
+    parse_email,
+    parse_email_address,
+    parse_header_field,
+)
 from froide.helper.email_utils import (
     BounceResult,
     classify_bounce_status,
@@ -93,14 +96,14 @@ class CustomTimestampSigner(TimestampSigner):
         return value
 
 
-def make_bounce_address(email):
-    _, email = parseaddr(email)
-    return make_signed_address(email)
+def make_bounce_address(email_str: str) -> str:
+    email_address = parse_email_address(email_str)
+    return make_signed_address(email_address.email)
 
 
-def make_unsubscribe_header(email, reference):
-    _, email = parseaddr(email)
-    unsub_email = make_unsubscribe_address(email)
+def make_unsubscribe_header(email_str: str, reference: str) -> str:
+    email_address = parse_email_address(email_str)
+    unsub_email = make_unsubscribe_address(email_address.email)
     return "<mailto:{email}?subject={subject}>".format(
         email=unsub_email,
         subject=quote(
@@ -202,7 +205,7 @@ def process_unsubscribe_mail(mail_bytes):
     with closing(BytesIO(mail_bytes)) as stream:
         email = parse_email(stream)
     recipient_list = list(
-        set([get_recipient_address_from_unsubscribe(addr) for name, addr in email.to])
+        set([get_recipient_address_from_unsubscribe(x.email) for x in email.to])
     )
     if len(recipient_list) != 1:
         return
@@ -230,9 +233,7 @@ def process_bounce_mail(mail_bytes):
 
 
 def add_bounce_mail(email):
-    recipient_list = set(
-        [get_recipient_address_from_bounce(addr) for name, addr in email.to]
-    )
+    recipient_list = set([get_recipient_address_from_bounce(x.email) for x in email.to])
     for recipient, status in recipient_list:
         if status:
             update_bounce(email, recipient)
