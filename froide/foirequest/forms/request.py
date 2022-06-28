@@ -362,20 +362,24 @@ class ConcreteLawForm(forms.Form):
         foirequest = kwargs.pop("foirequest")
         super().__init__(*args, **kwargs)
         self.foirequest = foirequest
-        self.possible_laws = foirequest.law.combined.all()
+        if foirequest.law and foirequest.law.meta:
+            self.possible_laws = foirequest.law.combined.all()
+        elif foirequest.public_body:
+            self.possible_laws = foirequest.public_body.laws.all().filter(meta=False)
+        elif foirequest.law:
+            self.possible_laws = [foirequest.law]
+        else:
+            self.possible_laws = []
         self.fields["law"] = forms.TypedChoiceField(
             label=_("Information Law"),
             choices=(
-                [("", "-------")]
-                + list(map(lambda x: (x.pk, x.name), self.possible_laws))
+                [("", "-------")] + [(law.pk, law.name) for law in self.possible_laws]
             ),
             coerce=int,
             empty_value="",
         )
 
     def clean(self):
-        if self.foirequest.law is None or not self.foirequest.law.meta:
-            raise forms.ValidationError(_("Invalid FoI Request for this operation"))
         indexed_laws = dict([(law.pk, law) for law in self.possible_laws])
         if "law" not in self.cleaned_data:
             return
