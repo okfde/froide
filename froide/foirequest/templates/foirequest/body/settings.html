@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load team_tags %}
+{% load form_helper %}
 {% load foirequest_tags %}
 
 <div
@@ -27,7 +28,6 @@ aria-labelledby="settings-tab"
     </div>
   {% endif %}
 
-  {# If Meta Law #}
   {% if object.response_messages %}
     <div class="container mt-3 p-3">
       <div class="row justify-content-center">
@@ -36,8 +36,10 @@ aria-labelledby="settings-tab"
             <h4>{% trans "Set Law" %}</h4>
             <form method="post" class="disable-submit" action="{% url 'foirequest-set_law' slug=object.slug %}">
               {% csrf_token %}
-              <p>{% blocktrans %}This request was made under multiple information laws. If it is apparent from the reply under which law the request was answered, please choose this law below. If it is not obvious, leave it as it is.{% endblocktrans %}</p>
-              {{ object.get_concrete_law_form.as_p }}
+              <p>
+                {% blocktrans %}Please choose the law under which you received an answer. If it is not obvious, leave it as it is.{% endblocktrans %}
+              </p>
+              {% render_form object.get_concrete_law_form %}
               <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
             </form>
           </div>
