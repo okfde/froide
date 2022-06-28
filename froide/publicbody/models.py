@@ -162,6 +162,10 @@ class FoiLaw(TranslatableModel):
     class Meta:
         verbose_name = _("Freedom of Information Law")
         verbose_name_plural = _("Freedom of Information Laws")
+        ordering = (
+            "-meta",
+            "-priority",
+        )
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.jurisdiction if self.jurisdiction else "")
