@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-22 13:00+0200\n"
-"PO-Revision-Date: 2022-06-22 13:00+0200\n"
+"POT-Creation-Date: 2022-06-28 11:19+0200\n"
+"PO-Revision-Date: 2022-06-28 11:23+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -25,7 +25,27 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: docs/_build/html/_sources/theming.txt
+msgid ""
+"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+"\">the Open Knowledge Foundation</a>."
+msgstr ""
+"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
+"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#: docs/_build/html/theming.html
+msgid ""
+"Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
+"org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+msgstr ""
+"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
+"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#: froide/_local_settings.py froide/settings.py
+msgid "German"
+msgstr "Deutsch"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -2541,10 +2561,6 @@ msgstr ""
 "Bitte dem nachgehen!\n"
 "%(url)s\n"
 
-#: froide/foirequest/foi_mail.py
-msgid "Possible Spam Mail received"
-msgstr "Mögliche Spam-E-Mail erhalten"
-
 #: froide/foirequest/forms/message.py
 msgid "Upload files must have distinct names"
 msgstr "Hochgeladene Dateien müssen eindeutige Namen haben"
@@ -2903,10 +2919,6 @@ msgstr "Bitte geben Sie ein Ergebnis dieser Anfrage an"
 msgid "Information Law"
 msgstr "Informationsgesetz"
 
-#: froide/foirequest/forms/request.py
-msgid "Invalid FoI Request for this operation"
-msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
-
 #: froide/foirequest/models/attachment.py
 msgid "Belongs to message"
 msgstr "Gehört zu Nachricht"
@@ -2950,6 +2962,10 @@ msgstr "Konvertierte Version"
 #: froide/foirequest/models/attachment.py
 msgid "Is converted"
 msgstr "Konvertiert?"
+
+#: froide/foirequest/models/attachment.py
+msgid "Has been moderated"
+msgstr "Wurde moderiert"
 
 #: froide/foirequest/models/attachment.py
 msgid "Attachment"
@@ -3043,8 +3059,8 @@ msgid "attachments were uploaded"
 msgstr "Anhänge wurden hochgeladen"
 
 #: froide/foirequest/models/event.py
-msgid "an attachment was published"
-msgstr "ein Anhang wurde veröffentlicht"
+msgid "an attachment was approved"
+msgstr "ein Anhang wurde freigegeben"
 
 #: froide/foirequest/models/event.py
 msgid "an attachment was depublished"
@@ -3143,8 +3159,8 @@ msgid "A message was sent to {public_body}."
 msgstr "Nachricht wurde an {public_body} gesendet."
 
 #: froide/foirequest/models/event.py
-msgid "An attachment was published on request."
-msgstr "Ein Anhang wurde veröffentlicht."
+msgid "An attachment was approved on request."
+msgstr "Ein Anhang wurde freigegeben."
 
 #: froide/foirequest/models/event.py
 msgid "An attachment was depublished."
@@ -4798,14 +4814,11 @@ msgstr "Gesetz festlegen"
 
 #: froide/foirequest/templates/foirequest/body/settings.html
 msgid ""
-"This request was made under multiple information laws. If it is apparent "
-"from the reply under which law the request was answered, please choose this "
-"law below. If it is not obvious, leave it as it is."
+"Please choose the law under which you received an answer. If it is not "
+"obvious, leave it as it is."
 msgstr ""
-"Auf diese Anfrage treffen mehrere Informationsgesetze zu. Falls aus der "
-"Antwort klar hervorgeht, auf welches Gesetz sie sich bezieht, wählen Sie "
-"dieses Gesetz unten aus. Falls es nicht offensichtlich ist, belassen Sie es "
-"dabei."
+"Bitte wählen Sie das Gesetz, auf das sich die Behörde in ihrer Antwort "
+"bezieht. Wenn es unklar ist, brauchen Sie keine Änderung vornehmen."
 
 #: froide/foirequest/templates/foirequest/body/settings.html
 msgid "Set Concrete Law"
@@ -6548,6 +6561,11 @@ msgstr "Schlagwort"
 #: froide/foirequest/views/attachment.py
 msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
+
+#: froide/foirequest/views/attachment.py
+#| msgid "%d request(s) have been marked as refused."
+msgid "Attachment has been marked as moderated."
+msgstr "Anhang wurde als moderiert markiert."
 
 #: froide/foirequest/views/attachment.py
 msgid "Attachment deleted."
@@ -8508,6 +8526,10 @@ msgid "Mark resolved"
 msgstr "Als abgeschlossen markieren"
 
 #: froide/problem/views.py
+msgid "Mark moderated"
+msgstr "Als moderiert markieren"
+
+#: froide/problem/views.py
 #, python-brace-format
 msgid "Claimed for {min} min."
 msgstr "Wird seit {min} Minuten bearbeitet."
@@ -9647,10 +9669,6 @@ msgstr "Spanisch"
 #: froide/settings.py
 msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
-
-#: froide/settings.py
-msgid "German"
-msgstr "Deutsch"
 
 #: froide/settings.py
 msgid "Danish (Denmark)"
@@ -10859,19 +10877,24 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-#~ "\">the Open Knowledge Foundation</a>."
-#~ msgstr ""
-#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
-#~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+#~ msgid "Possible Spam Mail received"
+#~ msgstr "Mögliche Spam-E-Mail erhalten"
+
+#~ msgid "Invalid FoI Request for this operation"
+#~ msgstr "Ungültige IFG-Anfrage für diesen Vorgang"
+
+#~ msgid "an attachment was published"
+#~ msgstr "ein Anhang wurde veröffentlicht"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
-#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ "This request was made under multiple information laws. If it is apparent "
+#~ "from the reply under which law the request was answered, please choose "
+#~ "this law below. If it is not obvious, leave it as it is."
 #~ msgstr ""
-#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
-#~ "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+#~ "Auf diese Anfrage treffen mehrere Informationsgesetze zu. Falls aus der "
+#~ "Antwort klar hervorgeht, auf welches Gesetz sie sich bezieht, wählen Sie "
+#~ "dieses Gesetz unten aus. Falls es nicht offensichtlich ist, belassen Sie "
+#~ "es dabei."
 
 #~ msgid "This request is identical to:"
 #~ msgstr "Diese Anfrage ist identisch zu:"
