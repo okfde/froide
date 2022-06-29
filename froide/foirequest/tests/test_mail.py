@@ -355,6 +355,22 @@ class DeferredMessageTest(TestCase):
         )
         self.assertEqual(DeferredMessage.objects.count(), 3)
 
+    def test_pb_unknown(self):
+        count_messages = len(self.req.get_messages())
+        with open(p("test_mail_01.txt"), "rb") as f:
+            mail = f.read().decode("ascii")
+
+        # Change sender email domain to not match public body
+        mail = mail.replace("hb@example.com", "hb@example.org")
+        process_mail.delay(mail.encode("ascii"))
+        self.assertEqual(
+            count_messages, FoiMessage.objects.filter(request=self.req).count()
+        )
+        dms = DeferredMessage.objects.filter(recipient=self.req.secret_address)
+        self.assertEqual(len(dms), 1)
+        dm = dms[0]
+        self.assertEqual(dm.request, self.req)
+
 
 class SpamMailTest(TestCase):
     def setUp(self):

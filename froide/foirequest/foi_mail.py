@@ -276,7 +276,7 @@ def check_delivery_conditions(
         return foirequest, None
 
     # No match and not bounce, raise DeferredMessageNeeded
-    raise DeferredMessageNeeded(foirequest)
+    raise DeferredMessageNeeded(foirequest=foirequest)
 
 
 def find_foirequest_for_delivery(recipient_email: str) -> Optional[FoiRequest]:
