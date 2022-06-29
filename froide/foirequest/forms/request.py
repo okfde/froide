@@ -377,6 +377,7 @@ class ConcreteLawForm(forms.Form):
             ),
             coerce=int,
             empty_value="",
+            initial=foirequest.law.pk if foirequest.law else None,
         )
 
     def clean(self):
