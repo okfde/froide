@@ -148,8 +148,6 @@ def make_public(request, foirequest):
 def set_law(request, foirequest):
     if not foirequest.response_messages():
         return render_400(request)
-    if not foirequest.law.meta:
-        return render_400(request)
     form = ConcreteLawForm(request.POST, foirequest=foirequest)
     if not form.is_valid():
         return render_400(request)
