@@ -291,7 +291,7 @@ class RequestTest(TestCase):
         response = self.client.post(
             reverse("foirequest-set_law", kwargs={"slug": req.slug}), post
         )
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 302)
         # logout
         self.client.logout()
 
