@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-28 11:19+0200\n"
-"PO-Revision-Date: 2022-06-28 11:23+0200\n"
+"PO-Revision-Date: 2022-06-30 13:21+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -2773,7 +2773,7 @@ msgstr "NAME"
 
 #: froide/foirequest/forms/postal.py
 msgid "I have received the letter"
-msgstr "Ich habe einen Brief erhalten"
+msgstr "Ich habe Post erhalten"
 
 #: froide/foirequest/forms/postal.py
 msgid "I have sent the letter"
@@ -2781,7 +2781,7 @@ msgstr "Ich habe einen Brief gesendet"
 
 #: froide/foirequest/forms/postal.py
 msgid "Did you receive or sent the letter?"
-msgstr "Haben Sie den Brief erhalten oder versendet?"
+msgstr "Haben Sie Post erhalten oder versendet?"
 
 #: froide/foirequest/forms/postal.py
 msgid "You have to decide!"
@@ -2789,7 +2789,7 @@ msgstr "Sie müssen sich entscheiden!"
 
 #: froide/foirequest/forms/postal.py
 msgid "Upload scans or photos of the letter"
-msgstr "Laden Sie Scans oder Fotos des Briefes hoch"
+msgstr "Laden Sie Scans oder Fotos der Post hoch"
 
 #: froide/foirequest/forms/postal.py
 msgid ""
@@ -3213,7 +3213,7 @@ msgstr "Eine Zusammenfassung des Anfrageergebnisses wurde eingetragen "
 
 #: froide/foirequest/models/event.py
 msgid "A postal reply was added."
-msgstr "Eine Briefantwort wurde hinzugefügt."
+msgstr "Eine Postantwort wurde hinzugefügt."
 
 #: froide/foirequest/models/event.py
 msgid "A sent letter was added."
@@ -5531,7 +5531,7 @@ msgstr "Haben Sie eine Antwort <b>per Post</b> erhalten?"
 
 #: froide/foirequest/templates/foirequest/header/header.html
 msgid "Upload the letter now!"
-msgstr "Laden Sie den Brief jetzt hoch!"
+msgstr "Laden Sie die Post jetzt hoch!"
 
 #: froide/foirequest/templates/foirequest/header/header.html
 msgid "Have you not gotten any reply?"
@@ -6317,7 +6317,7 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 msgid "What is the status of your request after this letter?"
-msgstr "Was ist der Status Ihrer Anfrage nach diesem Brief?"
+msgstr "Was ist der Status Ihrer Anfrage nach Erhalt der Post?"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 msgid "Add letter"
@@ -7284,7 +7284,7 @@ msgstr "Dieser Knopf führt zum Formular für das Versenden von Nachrichten."
 
 #: froide/foirequest/views/request.py
 msgid "Got postal mail?"
-msgstr "Briefpost erhalten?"
+msgstr "Post erhalten?"
 
 #: froide/foirequest/views/request.py
 msgid ""
@@ -7292,9 +7292,9 @@ msgid ""
 "photo of the letter. You can redact parts of the letter with our tool before "
 "publishing it."
 msgstr ""
-"Wenn Sie einen Brief erhalten, können Sie diesen Knopf drücken und dann "
-"Scans oder Fotos des Briefs hochladen. Im Anschluss können Sie unser "
-"Schwärzungs-Werkzeug verwenden, bevor Sie den Brief veröffentlichen."
+"Wenn Sie Post erhalten, können Sie diesen Knopf drücken und dann Scans oder "
+"Fotos des Briefs hochladen. Im Anschluss können Sie unser Schwärzungs-"
+"Werkzeug verwenden, bevor Sie den Brief veröffentlichen."
 
 #: froide/foirequest/views/request.py
 msgid "The end."
