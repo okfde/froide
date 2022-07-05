@@ -14,7 +14,7 @@ from filingcabinet.pdf_utils import (
     rewrite_pdf_in_place,
 )
 from PyPDF2 import PdfFileReader, PdfFileWriter
-from PyPDF2.utils import PdfReadError
+from PyPDF2.errors import PdfReadError
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
