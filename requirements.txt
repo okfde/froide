@@ -293,7 +293,7 @@ pyopenssl==20.0.1
     # via twisted
 pyotp==2.6.0
     # via django-mfa3
-pypdf2==1.26.0
+pypdf2==2.4.2
     # via
     #   -r requirements.in
     #   camelot-py
@@ -366,7 +366,9 @@ twisted[tls]==22.4.0
 txaio==21.2.1
     # via autobahn
 typing-extensions==3.10.0.0
-    # via twisted
+    # via
+    #   pypdf2
+    #   twisted
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1

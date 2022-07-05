@@ -374,7 +374,7 @@ pyopenssl==20.0.1
     # via twisted
 pyotp==2.6.0
     # via django-mfa3
-pypdf2==1.26.0
+pypdf2==2.4.2
     # via
     #   -r requirements.in
     #   camelot-py
@@ -481,6 +481,7 @@ typing-extensions==3.10.0.0
     #   django-stubs
     #   libcst
     #   mypy
+    #   pypdf2
     #   twisted
     #   typing-inspect
 typing-inspect==0.7.1
