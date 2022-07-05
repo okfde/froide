@@ -10,8 +10,6 @@ aiohttp==3.7.4.post0
     # via geoip2
 amqp==5.0.9
     # via kombu
-appdirs==1.4.4
-    # via black
 asgiref==3.3.4
     # via
     #   channels
@@ -121,7 +119,7 @@ distlib==0.3.2
     # via virtualenv
 dj-database-url==0.5.0
     # via -r requirements.in
-django==3.2.11
+django==3.2.14
     # via
     #   -r requirements.in
     #   channels
@@ -336,7 +334,9 @@ pillow==9.0.0
     #   reportlab
     #   weasyprint
 platformdirs==2.2.0
-    # via virtualenv
+    # via
+    #   black
+    #   virtualenv
 pre-commit==2.14.0
     # via -r requirements-test.in
 prompt-toolkit==3.0.19
@@ -405,8 +405,6 @@ pyyaml==5.4.1
     #   pre-commit
 qrcode==7.3.1
     # via django-mfa3
-regex==2021.8.3
-    # via black
 reportlab==3.5.67
     # via -r requirements.in
 requests==2.25.1
@@ -474,6 +472,7 @@ types-requests==2.25.6
 typing-extensions==3.10.0.0
     # via
     #   aiohttp
+    #   black
     #   django-stubs
     #   libcst
     #   mypy
