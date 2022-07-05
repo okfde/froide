@@ -6,8 +6,10 @@
 #
 -e git+https://github.com/okfde/django-filingcabinet.git@master#egg=django-filingcabinet
     # via -r requirements.in
-aiohttp==3.7.4.post0
+aiohttp==3.8.1
     # via geoip2
+aiosignal==1.2.0
+    # via aiohttp
 amqp==5.0.9
     # via kombu
 asgiref==3.3.4
@@ -15,7 +17,7 @@ asgiref==3.3.4
     #   channels
     #   daphne
     #   django
-async-timeout==3.0.1
+async-timeout==4.0.2
     # via aiohttp
 attrs==21.2.0
     # via
@@ -58,11 +60,12 @@ channels==3.0.4
     # via -r requirements.in
 chardet==4.0.0
     # via
-    #   aiohttp
     #   camelot-py
     #   requests
 charset-normalizer==2.0.12
-    # via pdfminer.six
+    # via
+    #   aiohttp
+    #   pdfminer.six
 click==8.0.3
     # via
     #   camelot-py
@@ -153,7 +156,7 @@ django-json-widget==1.1.1
     #   django-filingcabinet
 django-leaflet==0.28.1
     # via -r requirements.in
-django-mfa3==0.4.0
+django-mfa3==0.7.0
     # via -r requirements.in
 django-mptt==0.12.0
     # via django-filingcabinet
@@ -192,8 +195,12 @@ elasticsearch-dsl==7.3.0
     #   django-elasticsearch-dsl
 et-xmlfile==1.1.0
     # via openpyxl
-fido2==0.9.3
+fido2==1.0.0
     # via django-mfa3
+frozenlist==1.3.0
+    # via
+    #   aiohttp
+    #   aiosignal
 future==0.18.2
     # via django-json-widget
 geoip2==4.3.0
@@ -258,7 +265,7 @@ phonenumbers==8.12.25
     # via -r requirements.in
 pikepdf==2.13.0
     # via django-filingcabinet
-pillow==9.0.0
+pillow==9.2.0
     # via
     #   -r requirements.in
     #   cairosvg
@@ -339,7 +346,6 @@ six==1.16.0
     #   django-oauth-toolkit
     #   djangorestframework-csv
     #   elasticsearch-dsl
-    #   fido2
     #   html5lib
     #   jsonschema
     #   jwcrypto
@@ -355,12 +361,12 @@ tinycss2==1.1.0
     #   cairosvg
     #   cssselect2
     #   weasyprint
-twisted[tls]==21.2.0
+twisted[tls]==22.4.0
     # via daphne
 txaio==21.2.1
     # via autobahn
 typing-extensions==3.10.0.0
-    # via aiohttp
+    # via twisted
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
