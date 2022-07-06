@@ -522,6 +522,8 @@ class FoiRequest(models.Model):
 
     @property
     def status_representation(self):
+        if self.status == Status.ASLEEP:
+            return self.status
         if self.due_date is not None:
             if self.is_overdue():
                 return FilterStatus.OVERDUE
