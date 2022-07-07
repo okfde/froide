@@ -212,7 +212,7 @@
         {% endfor %}
       </dl>
     {% endif %}
-    {% if message.can_get_original_from_imap and message.object|can_read_foirequest_authenticated:request %}
+    {% if message.can_get_original_from_imap and message.request|can_read_foirequest_authenticated:request %}
       <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
         <i class="fa fa-download"></i>
         <span class="sr-only">{% translate "Download original" %}</span>
