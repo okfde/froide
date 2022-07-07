@@ -311,8 +311,8 @@ export default {
       return this.actionIndexPerPage[this.currentPage] < actions.length
     },
     hasRedactions() {
-      for (const p in this.actionsPerPage) {
-        if (this.actionIndexPerPage[p] > 0) {
+      for (const p in this.rectanglesPerPage) {
+        if (this.rectanglesPerPage[p].length > 0) {
           return true
         }
       }
