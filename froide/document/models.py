@@ -124,6 +124,7 @@ class DocumentCollection(AbstractDocumentCollection):
     team = models.ForeignKey(
         "team.Team", null=True, blank=True, on_delete=models.SET_NULL
     )
+    foirequests = models.ManyToManyField("foirequest.FoiRequest", blank=True)
 
     objects = DocumentCollectionManager()
 
