@@ -124,7 +124,7 @@ def upload_documents(request):
         return redirect("/")
 
     if request.method == "POST":
-        form = DocumentUploadForm(request.POST)
+        form = DocumentUploadForm(request, request.POST)
         if form.is_valid():
             doc_count = form.save(request.user)
             messages.add_message(
@@ -134,7 +134,7 @@ def upload_documents(request):
             )
             return redirect(request.get_full_path())
     else:
-        form = DocumentUploadForm()
+        form = DocumentUploadForm(request)
 
     config = json.dumps(
         {
