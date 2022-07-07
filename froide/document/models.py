@@ -1,6 +1,10 @@
 from django.db import models
 
-from filingcabinet.models import AbstractDocument, AbstractDocumentCollection
+from filingcabinet.models import (
+    AbstractDocument,
+    AbstractDocumentCollection,
+    CollectionDocument,
+)
 from filingcabinet.models import (
     DocumentCollectionManager as FCDocumentCollectionManager,
 )
@@ -144,3 +148,12 @@ class DocumentCollection(AbstractDocumentCollection):
         from .api_views import DocumentCollectionSerializer
 
         return DocumentCollectionSerializer
+
+    def update_from_foirequests(self):
+        existing_docs = CollectionDocument.objects.filter(collection=self).values_list(
+            "document_id", flat=True
+        )
+        all_docs = Document.objects.filter(foirequest__in=self.foirequests.all())
+        missing_docs = all_docs.exclude(id__in=existing_docs)
+        for doc in missing_docs:
+            CollectionDocument.objects.create(collection=self, document=doc)
