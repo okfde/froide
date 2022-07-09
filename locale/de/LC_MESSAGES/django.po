@@ -6685,7 +6685,7 @@ msgid ""
 "You redacted parts of the document, but clicked that no redaction is needed. "
 "Are you sure that no redaction is needed?"
 msgstr ""
-"Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt das keine "
+"Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt, dass keine "
 "Schwärzungen nötig sind. Sind Sie sich sicher?"
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/request.py
