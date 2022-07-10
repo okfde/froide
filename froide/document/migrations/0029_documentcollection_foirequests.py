@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0055_foiattachment_is_moderated'),
-        ('document', '0028_auto_20220404_1608'),
+        ("foirequest", "0055_foiattachment_is_moderated"),
+        ("document", "0028_auto_20220404_1608"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='documentcollection',
-            name='foirequests',
-            field=models.ManyToManyField(blank=True, to='foirequest.FoiRequest'),
+            model_name="documentcollection",
+            name="foirequests",
+            field=models.ManyToManyField(blank=True, to="foirequest.FoiRequest"),
         ),
     ]
