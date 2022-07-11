@@ -163,7 +163,7 @@ def retrieve_mail_by_message_id(
     status, count = mailbox.select("Inbox")
     # find message by message-id
     status, [msg_ids] = mailbox.search(
-        None, 'HEADER "Message-Id" "{message_id}"'.format(message_id=message_id)
+        None, 'HEADER "Message-Id" "{message_id}"'.format(message_id=message_id.strip())
     )
     messages = msg_ids.split()
     assert len(messages) <= 1
