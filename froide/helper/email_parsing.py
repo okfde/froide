@@ -368,7 +368,7 @@ def parse_email(bytesfile: BytesIO) -> ParsedEmail:
     cc = get_address_list(msgobj.get_all("Cc", []))
     resent_to = get_address_list(msgobj.get_all("resent-to", []))
     resent_cc = get_address_list(msgobj.get_all("resent-cc", []))
-    message_id = msgobj.get("Message-Id", "")
+    message_id = msgobj.get("Message-Id", "").strip()
 
     from_field = parse_email_address(str(msgobj.get("From")))
     from_field = from_field.lower()
