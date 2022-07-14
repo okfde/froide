@@ -231,7 +231,7 @@ jwcrypto==0.9.1
     # via django-oauth-toolkit
 kombu==5.2.3
     # via celery
-lxml==4.7.1
+lxml==4.9.1
     # via
     #   -r requirements.in
     #   pikepdf
