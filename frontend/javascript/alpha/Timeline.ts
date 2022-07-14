@@ -210,7 +210,7 @@ export default class Timeline {
 
   setTimelineHeight(): void {
     // set timeline height to browser window height
-    this.element.style.height = `${window.innerHeight}px`
+    // this.element.style.height = `${window.innerHeight}px`
   }
 
   setupIntersectionObserver(): void {
