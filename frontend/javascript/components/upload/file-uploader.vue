@@ -157,6 +157,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@uppy/core/dist/style.css';
-@import '~@uppy/dashboard/dist/style.css';
+@import '@uppy/core/dist/style.css';
+@import '@uppy/dashboard/dist/style.css';
 </style>

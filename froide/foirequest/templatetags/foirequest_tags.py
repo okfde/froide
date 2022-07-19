@@ -96,7 +96,7 @@ def highlight_request(message, request):
     html.append(
         format_html(
             """<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
-<div class="d-print-none"><a data-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>""",
+<div class="d-print-none"><a data-bs-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>""",
             description=description,
             post=html_post,
             show_letter=_("[... Show complete request text]"),
@@ -225,7 +225,7 @@ def mark_redacted(original="", redacted="", authenticated_read=False):
             original,
             redacted,
             attrs='class="redacted-dummy redacted-hover"'
-            ' data-toggle="tooltip" title="{title}"'.format(
+            ' data-bs-toggle="tooltip" title="{title}"'.format(
                 title=_("Only visible to you")
             ),
         )
@@ -255,7 +255,7 @@ def markup_redacted_content(
                     '<div class="text-content-visible">',
                     content_1,
                     (
-                        '</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-toggle="collapse" '
+                        '</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-bs-toggle="collapse" '
                         ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
                         '<div id="message-footer-{message_id}" class="collapse">'.format(
                             message_id=message_id, label=_("Show the quoted message")

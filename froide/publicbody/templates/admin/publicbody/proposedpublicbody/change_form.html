@@ -19,7 +19,7 @@
 {% block footer %}
 {% if original.pk %}
   <div id="footer">
-    <div id="message-creator" class="form-row">
+    <div id="message-creator" class="row">
       <form method="post" action="{% url 'admin:publicbody-proposedpublicbody-send_message' pk=original.pk %}">{% csrf_token %}
         <div>
         <textarea name="message" rows="10" cols="60">{% blocktrans with name=original.name user_name=original.created_by.get_full_name site_name=SITE_NAME %}Dear {{ user_name }},

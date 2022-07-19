@@ -106,7 +106,6 @@
             :config="config" />
 
           <review-request
-            v-if="stepWriteRequest && showReview"
             :i18n="i18n"
             :publicbodies="publicBodies"
             :user="user"
@@ -114,6 +113,7 @@
             :subject="subject"
             :body="body"
             :full-text="fullText"
+            ref="reviewrequest"
             @close="showReview = false"
             @submit="submitting = true" />
 
@@ -138,7 +138,7 @@
           <button
             v-if="stepWriteRequest && user.id && showDraft"
             type="submit"
-            class="btn btn-secondary mt-3"
+            class="btn btn-secondary mt-3 ms-2"
             name="save_draft"
             value="true"
             @click="submitting = true">
@@ -162,6 +162,8 @@ import RequestForm from './request-form'
 import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
+
+import { Modal } from 'bootstrap'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
@@ -395,6 +397,14 @@ export default {
   watch: {
     step() {
       window.scrollTo(0, 0)
+    },
+    showReview(newShowReview) {
+      if (newShowReview) {
+        if (!this.reviewModal) {
+          this.reviewModal = new Modal(this.$refs.reviewrequest.$el)
+        }
+        this.reviewModal.show()
+      }
     }
   },
   created() {

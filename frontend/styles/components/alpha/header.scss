@@ -37,6 +37,13 @@
   background-image: linear-gradient(to bottom, rgba($gray-100, 0), $gray-100);
 }
 
+@mixin hover-focus() {
+  &:hover,
+  &:focus {
+    @content;
+  }
+}
+
 .info-box {
   $x-spacing-mobile: $spacer;
   $x-spacing-desktop: $spacer * 1.5;
@@ -180,14 +187,9 @@
   -ms-overflow-style: -ms-autohiding-scrollbar;
 
   background-image:
-    /* Shadows */ linear-gradient(
-      to right,
-      $gray-100,
-      $gray-100
-    ),
+    /* Shadows */ linear-gradient(to right, $gray-100, $gray-100),
     linear-gradient(to right, $gray-100, $gray-100),
-    /* Shadow covers */
-      linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0)),
+    /* Shadow covers */ linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0)),
     linear-gradient(to left, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0));
 
   background-position: left center, right center, left center, right center;

@@ -15,7 +15,7 @@
         {% endfor %}
       </div>
       <div class="my-3 pb-3 border-bottom border-light">
-        <a href="#more-comments-{{ object.id }}" class="font-weight-bold hideparent" data-toggle="collapse">
+        <a href="#more-comments-{{ object.id }}" class="fw-bold hideparent" data-bs-toggle="collapse">
           {% blocktrans with count=comment_list|length|add:"-3" %}
             Show {{ count }} other comments
           {% endblocktrans %}

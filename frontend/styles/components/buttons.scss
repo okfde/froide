@@ -25,24 +25,24 @@
 }
 
 .hover-btn-success {
-  @extend .btn-outline-success;
+  @include button-outline-variant(map-get($theme-colors, "success"));
   background-color: #fff;
 }
 
 .hover-btn-success:hover {
-  @extend .btn-success;
+  @include button-variant(map-get($theme-colors, "success"), map-get($theme-colors, "success"));
 }
 
 .hover-btn-danger {
-  @extend .btn-outline-secondary;
+  @include button-outline-variant(map-get($theme-colors, "secondary"));
 }
 
 .btn.hover-btn-danger:hover {
-  @extend .btn-danger;
+  @include button-variant(map-get($theme-colors, "danger"), map-get($theme-colors, "danger"));
 }
 
 .btn-warning-blink {
-  @extend .btn-warning;
+  @include button-variant(map-get($theme-colors, "warning"), map-get($theme-colors, "warning"));
   animation: warning-blink 1s ease-in-out infinite;
 }
 .btn-warning-blink:hover {
@@ -69,9 +69,7 @@
 
     // Bring the hover, focused, and "active" buttons to the front to overlay
     // the borders properly
-    @include hover {
-      z-index: 1;
-    }
+    &:hover,
     &:focus,
     &:active,
     &.active {
@@ -90,11 +88,11 @@
   // Reset rounded corners
   > .btn:not(:last-child):not(.dropdown-toggle),
   > form:not(:last-child) > .btn {
-    @include border-right-radius(0);
+    @include border-end-radius(0);
   }
 
   > .btn:not(:first-child),
   > form:not(:first-child) > .btn {
-    @include border-left-radius(0);
+    @include border-start-radius(0);
   }
 }

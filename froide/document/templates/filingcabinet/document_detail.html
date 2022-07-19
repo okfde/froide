@@ -14,7 +14,7 @@
       {% if object|can_write_document:request %}
         <a href="#" data-inlineedit="#document-title-form" data-inlineeditpresentation="#document-title">
           <i class="fa fa-pencil" aria-hidden="true"></i>
-          <span class="sr-only">{% trans "Edit title" %}</span>
+          <span class="visually-hidden">{% trans "Edit title" %}</span>
         </a>
       {% endif %}
     </h2>
@@ -26,7 +26,7 @@
     {% endif %}
 
     {% if not object.public %}
-      <span class="badge badge-secondary">{% trans "private" %}</span>
+      <span class="badge text-bg-secondary">{% trans "private" %}</span>
     {% endif %}
     {% if object.description %}
       <div id="document-description">

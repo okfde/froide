@@ -42,7 +42,7 @@
     <td>
       <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
     </td>
-    <td class="request-link__body">
+    <td>
       {% include "foirequest/snippets/request_item_inner.html" %}
 
       {% if object.status == "awaiting_response" %}

@@ -4,7 +4,7 @@
 
 {% if message.can_edit %}
   <div class="btn-group btn-group-sm mx-sm-1 mb-1">
-    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#message-edit-{{ message.pk }}">
+    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#message-edit-{{ message.pk }}">
       <i class="fa fa-edit"></i>
       {% trans "Edit" %}
     </button>
@@ -16,16 +16,14 @@
           <h5 class="modal-title">
             {% trans "Edit message" %}
           </h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
         </div>
         <div class="modal-body">
           <form action="{% url 'foirequest-edit_message' slug=foirequest.slug message_id=message.pk %}" method="post">
             {% csrf_token %}
             {% render_form form %}
             <div class="d-flex">
-            <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal" aria-label="Close">
               {% trans "Cancel" %}
             </button>
             <button type="submit" class="btn btn-primary">

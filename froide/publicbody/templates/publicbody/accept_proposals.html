@@ -40,11 +40,11 @@
           <p>
             {% trans "Reasons to reject the proposal could be that the public body already exists in our database or that the proposal is not a public body that can be requested." %}
           </p>
-          <label for="delete_reason">
+          <label class="form-label" for="delete_reason">
             {% trans "Please give a reason for not accepting this proposal. It will be send to the user who made the proposal." %}
           </label>
           <textarea id="delete_reason" class="form-control" name="delete_reason" placeholder="{% trans 'This is not a public body because...' %}"></textarea>
-          <button class="mt-2 btn btn-danger float-right" type="submit" name="delete" value="1">
+          <button class="mt-2 btn btn-danger float-end" type="submit" name="delete" value="1">
             {% trans "Delete proposed public body" %}
           </button>
         </div>

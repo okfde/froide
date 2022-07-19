@@ -9,14 +9,14 @@
     {# approved attachments #}
     {% if message.approved_attachments %}
       {% if object|can_read_foirequest_authenticated:request %}
-        <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments:' %}</div>
+        <div class="fw-bold smaller mb-2 text-gray-600">{% trans 'Approved attachments:' %}</div>
       {% endif %}
       {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.approved_attachments %}
     {% endif %}
 
     {# unapproved attachments #}
     {% if message.unapproved_attachments %}
-      <div class="font-weight-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments:' %}</div>
+      <div class="fw-bold smaller mb-2 text-gray-600">{% trans 'Unapproved attachments:' %}</div>
       {% include "foirequest/body/message/attachments/list.html" with attachment_list=message.unapproved_attachments %}
     {% endif %}
 
@@ -46,11 +46,11 @@
         {% if message.hidden_attachments %}
           {# irrelevant attachments #}
           <a
-            data-toggle="collapse"
+            data-bs-toggle="collapse"
             href="#{{ message.get_html_id }}-decoattachments"
             role="button" aria-expanded="false"
             aria-controls="{{ message.get_html_id }}-decoattachments"
-            class="ml-sm-3"
+            class="ms-sm-3"
           >
             <i class="fa fa-eye-slash" aria-hidden="true"></i> {% trans "Show irrelevant attachments" %}
           </a>

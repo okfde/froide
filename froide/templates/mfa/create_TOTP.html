@@ -31,15 +31,15 @@
 
   {% render_field form.name %}
 
-  <div class="form-group row">
-    <label class="font-weight-bold col-md-4 col-form-label" for="id_code">
+  <div class="mb-3 row">
+    <label class="fw-bold col-md-4 col-form-label" for="id_code">
       {{ form.code.label }}
     </label>
     <div class="col-md-8">
       {% render_pininput name="code" %}
     </div>
   </div>
-  <button type="submit" class="btn btn-primary pull-right">
+  <button type="submit" class="btn btn-primary float-end">
     {% translate "Setup authenticator app" %}
   </button>
 </form>

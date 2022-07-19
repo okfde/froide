@@ -71,19 +71,19 @@
   <div class="col-md-9">
     <div class="row">
       <div class="col-md-12 col-lg-4">
-        <div class="jumbotron pt-3 pb-2 px-2">
+        <div class="rounded-3 pt-3 pb-2 px-2 bg-light mb-3">
           <div class="display-3 text-center">{{ aggregates.count|intcomma }}</div>
           <p class="lead text-center no-hyphens">{% translate "Number of public requests" %}</p>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
-        <div class="jumbotron pt-3 pb-2 px-2">
+        <div class="rounded-3 pt-3 pb-2 px-2 bg-light mb-3">
           <div class="display-3 text-center">{{ aggregates.successful|intcomma }}</div>
           <p class="lead text-center no-hyphens">{% translate "Number of successful requests" %}</p>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
-        <div class="jumbotron pt-3 pb-2 px-2">
+        <div class="rounded-3 pt-3 pb-2 px-2 bg-light mb-3">
           <div class="display-3 text-center">{{ aggregates.refused|intcomma }}</div>
           <p class="lead text-center no-hyphens">{% translate "Number of refused requests" %}</p>
         </div>
@@ -108,7 +108,7 @@
       {% endif %}
       {% if top_publicbodies %}
       <div class="col-12">
-        <div class="jumbotron pt-3 pb-2 mb-3">
+        <div class="rounded-3 px-3 pt-3 pb-2 mb-3 bg-light">
           <h4 class="text-center">
             {% translate "Top requested public bodies" %}
           </h4>
@@ -118,7 +118,7 @@
                 <a href="{{ pb.get_absolute_url }}">
                   {{ pb.name }}
                 </a>
-                <span class="badge badge-secondary">
+                <span class="badge text-bg-secondary">
                   {% blocktranslate count count=pb.user_request_count %}one request{% plural %}{{ count }} requests{% endblocktranslate %}
                 </span>
               </li>

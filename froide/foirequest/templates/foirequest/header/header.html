@@ -85,7 +85,7 @@
           {% blocktrans %}Request to:{% endblocktrans %}
 
           {% if object.public_body %}
-            <a class="text-gray-500 font-weight-bold" href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+            <a class="text-gray-500 fw-bold" href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
           {% else %}
             {% blocktrans %}Not yet known{% endblocktrans %}
           {% endif %}
@@ -96,7 +96,7 @@
             {# project #}
             <div class="mt-3 text-gray-500">
               {% blocktrans %}Project:{% endblocktrans %}
-              <a class="text-gray-500 font-weight-bold" href="{{ object.project.get_absolute_url }}">
+              <a class="text-gray-500 fw-bold" href="{{ object.project.get_absolute_url }}">
                 {{ object.project.title }}
               </a>
             </div>
@@ -107,7 +107,7 @@
         {% if object.law and not object.law.meta %}
         <div class="mt-3 text-gray-500">
           {% blocktrans %}Legal basis:{% endblocktrans %}
-          <a class="text-gray-500 font-weight-bold" href="{{ object.law.get_absolute_url }}">{{ object.law.name }}</a>
+          <a class="text-gray-500 fw-bold" href="{{ object.law.get_absolute_url }}">{{ object.law.name }}</a>
         </div>
         {% endif %}
 
@@ -115,8 +115,8 @@
         <div class="mt-3">
           <div class="request-descr request-descr--collapsed">
             {{ object.get_description|urlizetrunc:40|linebreaks }}
-            <div class="request-descr-read-more">
-              <button type="button" class="btn btn-light btn-sm btn-block expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+            <div class="request-descr-read-more d-grid">
+              <button type="button" class="btn btn-light btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@
             {% if object|can_write_foirequest:request and object.summary %}
               <a href="#" data-inlineedit="#request-summary-form" data-inlineeditpresentation="#request-summary">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
-                <span class="sr-only">{% trans "Edit summary" %}</span>
+                <span class="visually-hidden">{% trans "Edit summary" %}</span>
               </a>
             {% endif %}
           </h5>
@@ -142,8 +142,8 @@
             {% if object.summary %}
               <div class="request-descr request-descr--collapsed">
                 {{ object.summary|urlizetrunc:40|linebreaks }}
-                <div class="request-descr-read-more">
-                  <button type="button" class="btn btn-light btn-sm btn-block expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+                <div class="request-descr-read-more d-grid">
+                  <button type="button" class="btn btn-light btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
                 </div>
               </div>
             {% endif %}
@@ -162,7 +162,7 @@
                   <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
                 {% endif %}
                 <textarea rows="8" class="form-control mb-3" name="summary" placeholder="{% trans 'Summary of the result of your request' %}">{{ object.summary }}</textarea>
-                <button type="submit" class="btn btn-primary mr-2">
+                <button type="submit" class="btn btn-primary me-2">
                   {% blocktrans %}Save{% endblocktrans %}
                 </button>
                 <button type="button" class="btn btn-secondary" data-inlineeditcancel="true">
@@ -183,22 +183,22 @@
                 <div class="request-tags-list">
                   <ul class="list-unstyled d-flex flex-wrap mb-0">
                     {% for tag in tags %}
-                      <li class="mr-2 smaller">
+                      <li class="me-2 smaller">
                         <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
                           <i class="fa fa-tags" aria-hidden="true"></i>
                           <span>{{ tag.name }}</span>
                         </a>
                       </li>
                     {% endfor %}
-                    <li class="mr-2 smaller">
+                    <li class="me-2 smaller">
                       {% if object|can_write_foirequest:request %}
                         <a href="#" data-inlineedit="#request-tags-form" data-inlineeditpresentation="#request-tags-list">
                           <i class="fa fa-pencil" aria-hidden="true"></i>
-                          <span class="sr-only">{% trans "Edit tags" %}</span>
+                          <span class="visually-hidden">{% trans "Edit tags" %}</span>
                         </a>
-                        <span data-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
+                        <span data-bs-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
                           <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                          <span class="sr-only">{% translate "What does this mean?" %}</span>
+                          <span class="visually-hidden">{% translate "What does this mean?" %}</span>
                         </span>
                       {% endif %}
                     </li>
@@ -210,9 +210,9 @@
                     <i class="fa fa-pencil" aria-hidden="true"></i>
                     {% trans "Add tags" %}
                   </a>
-                  <span data-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
+                  <span data-bs-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
                     <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                    <span class="sr-only">{% translate "What does this mean?" %}</span>
+                    <span class="visually-hidden">{% translate "What does this mean?" %}</span>
                   </span>
               {% endif %}
             {% endwith %}

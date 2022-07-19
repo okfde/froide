@@ -10,9 +10,9 @@
         <a
           href="#correspondence-panel"
           id="correspondence-tab"
-          data-toggle="tab"
+          data-bs-toggle="tab"
           class="alpha-tabs__tab-link active"
-          data-toggle="tab"
+          data-bs-toggle="tab"
           aria-controls="correspondence-panel"
           aria-selected="true"
           role="tab"
@@ -25,12 +25,12 @@
       {% block request_top_menu %}{% endblock %}
 
       {% if object|can_manage_foirequest:request %}
-        <li class="alpha-tabs__tab ml-auto">
+        <li class="alpha-tabs__tab ms-auto">
           <a
             href="#settings-panel"
             id="settings-tab"
             class="alpha-tabs__tab-link"
-            data-toggle="tab"
+            data-bs-toggle="tab"
             aria-controls="settings-panel"
             aria-selected="true"
             role="tab"

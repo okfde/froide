@@ -42,10 +42,10 @@
         <div class="mb-3 p-2 {% if foirequest.pk|slugify == highlighted %}highlight{% endif %}">
           {% include "foirequest/snippets/request_item_mini.html" with object=foirequest %}
           {% if not foirequest.is_foi %}
-            <span class="badge badge-warning">{% translate "Not FOI" %}</span>
+            <span class="badge text-bg-warning">{% translate "Not FOI" %}</span>
           {% endif %}
           {% if foirequest.visibility != 2 and foirequest.public %}
-            <span class="badge badge-warning">{% translate "Depublished" %}</span>
+            <span class="badge text-bg-warning">{% translate "Depublished" %}</span>
           {% endif %}
           <div class="bg-blue-200 p-2">
             {% render_moderation_actions foirequest %}

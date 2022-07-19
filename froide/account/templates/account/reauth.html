@@ -52,7 +52,7 @@
               {% render_field form.code %}
               {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
               <input type="hidden" name="method" value="TOTP"/>
-              <button type="submit" class="btn btn-primary pull-right">
+              <button type="submit" class="btn btn-primary float-end">
                 {% translate "Verify code" %}
               </button>
             </form>
@@ -68,7 +68,7 @@
               {{ form.hidden_email }}
               {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
               <input type="hidden" name="method" value="password"/>
-              <button type="submit" class="btn btn-primary pull-right">
+              <button type="submit" class="btn btn-primary float-end">
                 {% translate "Check password" %}
               </button>
             </form>

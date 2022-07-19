@@ -1,9 +1,9 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text required=field.field.required %}
 
 {% if field_type == "radio" or is_checkboxmultiple %}
-<div class="form-group">
+<div class="mb-3">
   <div class="{% if horizontal %}row{% endif %}">
-    <div class="font-weight-bold col-form-label {% if horizontal %} col-md-4{% endif %}{% if required %} field-required{% endif %}">{{ label }}</div>
+    <div class="fw-bold col-form-label {% if horizontal %} col-md-4{% endif %}{% if required %} field-required{% endif %}">{{ label }}</div>
     <div class="{% if horizontal %}col-md-8{% endif %}">
       {% for widget in field %}
         <div class="form-check">
@@ -20,10 +20,10 @@
   </div>
 </div>
 {% elif field_type == "checkbox" %}
-  <div class="form-group {% if horizontal %}row{% endif %}{% if classes %} {{ classes }}{% endif %}">
-    <div class="{% if horizontal %}col-md-8 ml-auto{% endif %}">
+  <div class="mb-3 {% if horizontal %}row{% endif %}{% if classes %} {{ classes }}{% endif %}">
+    <div class="{% if horizontal %}col-md-8 ms-auto{% endif %}">
       <div class="form-check">
-        <label class="form-check-label font-weight-bold {% if required %} field-required{% endif %}">
+        <label class="form-check-label fw-bold {% if required %} field-required{% endif %}">
           {{ field }}
           {{ label }}
         </label>
@@ -37,8 +37,8 @@
     </div>
   </div>
 {% else %}
-<div class="form-group {% if horizontal %}row{% endif %}{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
-  {% if label %}{% if field.id_for_label %}<label class="font-weight-bold {% if horizontal %}col-md-4 col-form-label{% endif %}{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
+<div class="mb-3 {% if horizontal %}row{% endif %}{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
+  {% if label %}{% if field.id_for_label %}<label class="fw-bold {% if horizontal %}col-md-4 col-form-label{% endif %}{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
   <div class="{% if horizontal %}col-md-8{% endif %}">
     {{ field }}
     {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}

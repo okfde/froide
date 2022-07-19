@@ -11,13 +11,14 @@
       <!-- eslint-enable vue/no-mutating-props -->
       <div class="card mb-3" v-if="!hidePublic">
         <div class="card-body">
-          <div class="checkbox">
-            <label>
-              <input
-                type="checkbox"
-                name="public"
-                id="id_public"
-                v-model="publicValue" />
+          <div class="form-check">
+            <input
+              type="checkbox"
+              name="public"
+              class="form-check-input"
+              id="id_public"
+              v-model="publicValue" />
+            <label class="form-check-label" for="id_public">
               {{ form.fields.public.label }}
             </label>
             <small class="form-text text-muted">

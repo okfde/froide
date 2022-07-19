@@ -22,8 +22,10 @@
           <p class="text-muted">
             {{ i18n.imageDocumentExplanation }}
           </p>
-          <div class="form-group">
-            <label for="page-label">{{ i18n.attachmentName }}</label>
+          <div class="mb-3">
+            <label class="form-label" for="page-label">{{
+              i18n.attachmentName
+            }}</label>
             <input
               v-model="documentName"
               type="text"
@@ -46,7 +48,7 @@
         </div>
         <div class="row mt-3">
           <div class="col-md-12">
-            <p class="text-right">
+            <p class="text-end">
               <button
                 class="btn btn-primary mt-2"
                 :disabled="anyUploads || converting"

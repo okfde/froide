@@ -33,7 +33,7 @@
 
     </form>
   {% else %}
-    <button id="follow-form-{{ object.pk }}-modal-trigger" data-toggle="modal" data-target="#follow-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">
+    <button id="follow-form-{{ object.pk }}-modal-trigger" data-bs-toggle="modal" data-bs-target="#follow-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">
       <span class="on-hover">
         <i class="fa fa-bell" aria-hidden="true"></i>
         {{ action_labels.follow_q }}

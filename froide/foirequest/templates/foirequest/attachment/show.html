@@ -78,7 +78,7 @@
 
 <div class="container mb-5">
   {% if attachment.can_embed %}
-    <div class="text-right d-none d-md-block">
+    <div class="text-end d-none d-md-block">
       <small>
         {# expose direct links through redirects in case they get copied #}
         <a href="{{ attachment.get_absolute_domain_auth_url }}">

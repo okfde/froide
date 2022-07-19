@@ -2,7 +2,7 @@
   <div>
     <div class="card mb-3">
       <div class="card-body">
-        <div class="form-group row">
+        <div class="mb-3 row">
           <label
             for="id_user_email"
             class="col-sm-3 col-form-label"
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <div class="form-group row">
+        <div class="mb-3 row">
           <label
             for="id_address"
             class="col-sm-3 col-form-label"
@@ -67,7 +67,7 @@
           <input type="hidden" name="time" :value="formFields.time.initial" />
         </template>
         <template v-if="formFields.phone">
-          <div class="form-group row d-none honigtopf">
+          <div class="mb-3 row d-none honigtopf">
             <label class="col-lg-3 col-form-label" for="id_phone">
               {{ formFields.phone.label }}
             </label>
@@ -81,7 +81,7 @@
           </div>
         </template>
         <template v-if="formFields.test">
-          <div class="form-group row">
+          <div class="mb-3 row">
             <label
               class="col-lg-3 col-form-label"
               :class="{

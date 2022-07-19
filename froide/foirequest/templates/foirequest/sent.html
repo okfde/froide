@@ -31,7 +31,7 @@
               {% trans "We will send you an email when you receive a reply from the public body." %}
             </p>
             <p class="mt-1">
-              <a href="{{ url }}" class="font-weight-bold">
+              <a href="{{ url }}" class="fw-bold">
                 {% trans "view your request" %}
               </a>
             </p>
@@ -41,7 +41,7 @@
               {% trans "The requests are being sent out now." %}
             </p>
             <p class="mt-0">
-              <a href="{{ url }}" class="font-weight-bold">
+              <a href="{{ url }}" class="fw-bold">
                 {% trans "view your project" %}
               </a>
             </p>
@@ -57,13 +57,13 @@
               {% endif %}
             </p>
             <p class="mt-1">
-              <a href="https://twitter.com/share?url={{ share_url | urlencode }}" class="font-weight-bold">
-                <i class="fa fa-twitter mr-1"></i>
+              <a href="https://twitter.com/share?url={{ share_url | urlencode }}" class="fw-bold">
+                <i class="fa fa-twitter me-1"></i>
                 {% trans "Tweet request" %}
               </a>
 
-              <a href="https://www.facebook.com/share.php?u={{ share_url | urlencode }}" class="font-weight-bold ml-3">
-                <i class="fa fa-facebook mr-1"></i>
+              <a href="https://www.facebook.com/share.php?u={{ share_url | urlencode }}" class="fw-bold ms-3">
+                <i class="fa fa-facebook me-1"></i>
                 {% trans "Share request" %}
               </a>
             </p>

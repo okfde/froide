@@ -10,13 +10,15 @@
 {% if request.user.is_authenticated %}
   {# comment reply button and form #}
   <div class="mt-3">
-    <a class="btn btn-sm btn-light btn-block text-primary" data-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ object.id }}" href="#comment-form-{{ object.id }}">
-      {% if object.public %}
-        {% trans "Write a public comment" %}
-      {% else %}
-        {% trans "Write a comment" %}
-      {% endif %}
-    </a>
+    <div class="d-grid">
+      <a class="btn btn-sm btn-light text-primary" data-bs-toggle="collapse" aria-expanded="false" aria-controls="comment-form-{{ object.id }}" href="#comment-form-{{ object.id }}">
+        {% if object.public %}
+          {% trans "Write a public comment" %}
+        {% else %}
+          {% trans "Write a comment" %}
+        {% endif %}
+      </a>
+    </div>
     <div class="collapse pt-3" id="comment-form-{{ object.id }}">
       {% include "froide_comments/form.html" %}
     </div>

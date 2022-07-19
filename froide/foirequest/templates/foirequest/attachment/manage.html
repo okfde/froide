@@ -18,7 +18,7 @@
   </div>
 
   <div class="container">
-    <div class="float-right">
+    <div class="float-end">
       <a href="{{ message.get_absolute_url }}" class="btn btn-light">{% trans "Back" %}</a>
     </div>
 
@@ -56,7 +56,7 @@
           {% trans "Attachments are loading..." %}
         </h4>
         <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
-          <span class="sr-only">{% trans "Loading..." %}</span>
+          <span class="visually-hidden">{% trans "Loading..." %}</span>
         </div>
       </div>
       <div slot="convert-images">
@@ -91,7 +91,7 @@
       </div>
     </document-uploader>
 
-    <p class="text-right">
+    <p class="text-end">
       <a href="{{ message.get_absolute_url }}" class="btn btn-secondary">{% trans "Return to message" %}</a>
     </p>
   </div>

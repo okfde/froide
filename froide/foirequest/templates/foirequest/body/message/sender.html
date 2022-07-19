@@ -7,7 +7,7 @@
       <span title="{{ message.sender_email }}">
         {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
           {% if message.sender_public_body %}
-            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+            <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
               {{ message.user_real_sender }}
             </span>
             <span> – {{ message.sender_public_body.name }}</span>
@@ -20,7 +20,7 @@
       </span>
     {% else %}
       {% if object.user.private %}
-        <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+        <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
       {% else %}
         <span>
       {% endif %}

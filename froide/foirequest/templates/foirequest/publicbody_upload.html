@@ -28,15 +28,13 @@
     </p>
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="form-group">
-          <label for="email_prefix">
+        <div class="mb-3">
+          <label class="form-label" for="email_prefix">
             {% blocktranslate %}Enter the email address of the requester:{% endblocktranslate %}
           </label>
           <div class="input-group mb-3">
             <input name="email_prefix" id="email_prefix" type="text" class="form-control" aria-label="{% translate 'email address' %}" placeholder="{% translate 'j.doe.1234abc' %}">
-            <div class="input-group-append">
-              <span class="input-group-text">@{{ email_domain }}</span>
-            </div>
+            <span class="input-group-text">@{{ email_domain }}</span>
           </div>
         </div>
         <button type="submit" class="btn btn-primary">
@@ -69,7 +67,7 @@
   {% csrf_token %}
   <publicbody-upload class="publicbody-upload" :config="{{ config }}">
     <div class="spinner-border text-center" role="status">
-      <span class="sr-only">Loading...</span>
+      <span class="visually-hidden">Loading...</span>
     </div>
   </publicbody-upload>
 </form>

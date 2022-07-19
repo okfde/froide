@@ -14,7 +14,7 @@
         {% if message.is_response %}
           <span title="{{ message.sender_email }}">
             {% if message.user_real_sender != message.sender_public_body.name %}
-              <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+              <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
                 {{ message.user_real_sender }}
               </span>
               –
@@ -23,18 +23,18 @@
           </span>
           {% if not message.is_default_sender and object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
             <span class="d-print-none">
-              <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+              <a href="#change-pb-{{ message.id }}" data-bs-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
                 <i class="fa fa-edit"></i>
-                <span class="sr-only">{% trans "change" %}</span>
+                <span class="visually-hidden">{% trans "change" %}</span>
               </a>
             </span>
             <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
               {% with message_pb_form=message.get_public_body_sender_form %}
                 <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_sender' slug=object.slug message_id=message.id %}">
                   {% csrf_token %}
-                  <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
+                  <label class="form-label" for="id_m{{ message.id }}-sender">{% blocktrans %}Set the Public Body that sent this message:{% endblocktrans %}</label>
                   {{ message_pb_form.sender }}
-                  <p class="text-right">
+                  <p class="text-end">
                     <button type="submit" class="btn btn-sm btn-primary">{% blocktrans %}Set Sending Public Body{% endblocktrans %}</button>
                   </p>
                 </form>
@@ -43,7 +43,7 @@
           {% endif %}
         {% else %}
           {% if object.user.private %}
-            <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+            <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
           {% else %}
             <span>
           {% endif %}
@@ -80,7 +80,7 @@
               {% for recipient_type, name, email in additional_recipients %}
                 <li>
                   <strong>{{ recipient_type|title }}:</strong>
-                  <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+                  <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
                     {{ name }} &lt;{{ email }}&gt;
                   </span>
                 </li>
@@ -106,7 +106,7 @@
         {% if object|can_read_foirequest_authenticated:request %}
           {{ message.subject }}
         {% endif %}
-        <span class="badge badge-light">{% trans "Subject hidden" %}</span>
+        <span class="badge text-bg-light">{% trans "Subject hidden" %}</span>
       {% else %}
         {% redact_subject message request %}
       {% endif %}
@@ -134,7 +134,7 @@
         </a>
       {% else %}
         {% if object|can_read_foirequest_authenticated:request %}
-          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+          <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
             {{ message.recipient }}
           </span>
         {% else %}
@@ -145,18 +145,18 @@
       {% endif %}
       {% if not message.is_default_recipient and object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
       <span class="d-print-none">
-        <a href="#change-pb-{{ message.id }}" data-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
+        <a href="#change-pb-{{ message.id }}" data-bs-toggle="collapse" href="#change-pb-{{ message.id }}" aria-expanded="false" aria-controls="change-pb-{{ message.id }}">
           <i class="fa fa-edit"></i>
-          <span class="sr-only">{% trans "change" %}</span>
+          <span class="visually-hidden">{% trans "change" %}</span>
         </a>
       </span>
       <div id="change-pb-{{ message.id }}" class="collapse d-print-none">
         {% with message_pb_form=message.get_public_body_recipient_form %}
           <form class="disable-submit" method="post" action="{% url 'foirequest-set_message_recipient' slug=object.slug message_id=message.id %}">
             {% csrf_token %}
-            <label for="id_m{{ message.id }}-sender">{% blocktrans %}Set the public body that received this message:{% endblocktrans %}</label>
+            <label class="form-label" for="id_m{{ message.id }}-sender">{% blocktrans %}Set the public body that received this message:{% endblocktrans %}</label>
             {{ message_pb_form.recipient }}
-            <p class="text-right">
+            <p class="text-end">
               <button type="submit" class="btn btn-primary">{% blocktrans %}Set receiving public body{% endblocktrans %}</button>
             </p>
           </form>
@@ -194,16 +194,16 @@
         {% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery status is unknown.{% endblocktrans %}
       {% endif %}
       {% if object|can_read_foirequest_authenticated:request %}
-        <a data-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" data-toggle="tooltip" title="{% trans 'Show technical delivery log' %}">
+        <a data-bs-toggle="collapse" href="#{{ message.get_html_id }}-deliverylog" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-deliverylog" data-bs-toggle="tooltip" title="{% trans 'Show technical delivery log' %}">
           <i class="fa fa-info-circle"></i>
-          <span class="sr-only">{% trans "Show technical delivery log" %}</span>
+          <span class="visually-hidden">{% trans "Show technical delivery log" %}</span>
         </a><pre id="{{ message.get_html_id }}-deliverylog" class="collapse d-print-none">{{ delivery_status.log }}</pre>
       {% endif %}
     {% endif %}
     {% if message.object|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.has_authenticity_info %}
-      <a data-toggle="collapse" href="#{{ message.get_html_id }}-authenticity" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-authenticity" data-toggle="tooltip" title="{% trans 'Show mail authenticity information' %}">
+      <a data-bs-toggle="collapse" href="#{{ message.get_html_id }}-authenticity" role="button" aria-expanded="false" aria-controls="{{ message.get_html_id }}-authenticity" data-bs-toggle="tooltip" title="{% trans 'Show mail authenticity information' %}">
         <i class="fa fa-id-badge"></i>
-        <span class="sr-only">{% translate "Show mail authenticity information" %}</span>
+        <span class="visually-hidden">{% translate "Show mail authenticity information" %}</span>
       </a>
       <dl id="{{ message.get_html_id }}-authenticity" class="collapse d-print-none">
         {% for check in message.email_headers.authenticity %}
@@ -215,7 +215,7 @@
     {% if message.can_get_original_from_imap and message.request|can_read_foirequest_authenticated:request %}
       <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
         <i class="fa fa-download"></i>
-        <span class="sr-only">{% translate "Download original" %}</span>
+        <span class="visually-hidden">{% translate "Download original" %}</span>
       </a>
     {% endif %}
   </dd>
@@ -226,7 +226,7 @@
     <dd class="d-print-none">
       <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
       {% for tag_name in message.tag_set %}
-        <span class="badge badge-light">{{ tag_name }}</span>
+        <span class="badge text-bg-light">{{ tag_name }}</span>
       {% endfor %}
     </dd>
   {% endif %}
@@ -241,7 +241,7 @@
       <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" target="_blank">
         {% trans "Add custom" %}
       </a>
-      <form class="form-inline" action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
+      <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-sm btn-light">{% trans "Rerun guidance" %}</button>
         <input name="notify" value="🚨 {% trans 'Run + Notify' %}" type="submit" class="btn btn-sm btn-outline-warning"/>

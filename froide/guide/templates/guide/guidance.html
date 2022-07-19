@@ -16,7 +16,7 @@
         {% with snippet=guidance.get_snippet %}
           {% if snippet|length < 250 %}
           <h6>{% trans "Suggested reply" %}</h6>
-          <blockquote class="card-text small bg-light pl-2">
+          <blockquote class="card-text small bg-light ps-2">
             <p>
             {{ snippet|linebreaksbr }}
             </p>
@@ -49,7 +49,7 @@
   {% endfor %}
 
   {% if request.user.is_staff %}
-    <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post" class="text-right mt-1">
+    <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post" class="text-end mt-1">
       {% csrf_token %}
       <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" class="btn btn-sm btn-light" target="_blank">
         {% trans "In admin" %}

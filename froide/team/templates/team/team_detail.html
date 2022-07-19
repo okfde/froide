@@ -11,7 +11,7 @@
     <h2>{% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}</h2>
   </div>
   <div class="col-lg-4">
-    <a href="{% url 'team-list' %}" class="btn btn-secondary pull-right">
+    <a href="{% url 'team-list' %}" class="btn btn-secondary float-end">
       <i class="fa fa-back"></i>
       {% trans "back to team overview" %}
     </a>
@@ -47,20 +47,22 @@
                 {% endif %}
                 {% if user_member == member %}
                   <span class="fa fa-user"></span>
-                  <em class="sr-only">{% trans "– that's you!" %}</em>
+                  <em class="visually-hidden">{% trans "– that's you!" %}</em>
                 {% endif %}
               </td>
               <td>
                 {% if member.change_role_form %}
                   <form method="post" action="{% url 'team-change_member' pk=member.pk %}"
-                    class="form-inline align-items-start">
+                    class="row row-cols-lg-auto g-3 align-items-center">
                     {% csrf_token %}
-                    <div class="mr-3 mb-sm-3">
+                    <div class="col-12">
                       {% render_form member.change_role_form %}
                     </div>
-                    <button type="submit" class="btn btn-primary btn-sm">
-                      {% trans "Change" %}
-                    </button>
+                    <div class="col-12">
+                      <button type="submit" class="btn btn-primary btn-sm">
+                        {% trans "Change" %}
+                      </button>
+                    </div>
                   </form>
                 {% else %}
                   {{ member.get_role_display }}
@@ -72,7 +74,7 @@
               {% if user_member.is_owner %}
                 <td>
                   {% if user_member != member %}
-                    <form method="post" action="{% url 'team-delete_member' pk=member.pk %}" class="form-inline">
+                    <form method="post" action="{% url 'team-delete_member' pk=member.pk %}">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-danger btn-sm">
                         <i class="fa fa-close"></i>
@@ -211,8 +213,8 @@
         {% trans "Deleting the team will remove access of team members to all requests and projects they did not create." %}
       </p>
       
-      <p class="text-right">
-        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delete-team-modal">
+      <p class="text-end">
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-team-modal">
           <i class="fa fa-ban"></i>
           {% trans "Delete team" %}
         </button>
@@ -226,9 +228,7 @@
               <h5 class="modal-title" id="delete-team-modal-label">
                 {% trans "Are you sure you want to delete this team?" %}
               </h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
             </div>
             <div class="modal-body">
               <p>

@@ -7,32 +7,32 @@
       <div class="col-auto">
         <input v-if="ready" v-model="selected" type="checkbox" />
         <div v-else class="spinner-border spinner-border-sm" role="status">
-          <span class="sr-only">{{ i18n.loading }}</span>
+          <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
       </div>
-      <div class="col-auto pl-0 doc-status">
+      <div class="col-auto ps-0 doc-status">
         <template v-if="hasAttachment">
           <span
             v-if="!approved"
-            class="badge badge-pill badge-secondary"
-            data-toggle="tooltip"
-            data-placement="top"
+            class="badge rounded-pill text-bg-secondary"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
             :title="i18n.notPublic">
             &nbsp;
           </span>
           <span
             v-if="isRedacted"
-            class="badge badge-pill badge-dark"
-            data-toggle="tooltip"
-            data-placement="top"
+            class="badge rounded-pill text-bg-dark"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
             :title="i18n.redacted">
             &nbsp;
           </span>
           <span
             v-if="isProtected"
-            class="badge badge-pill badge-info"
-            data-toggle="tooltip"
-            data-placement="top"
+            class="badge rounded-pill text-bg-info"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
             :title="i18n.protectedOriginalExplanation">
             &nbsp;
           </span>
@@ -53,7 +53,7 @@
           :href="attachment.site_url"
           :title="i18n.openAttachmentPage">
           <i class="fa fa-external-link" />
-          <span class="sr-only">{{ i18n.openAttachmentPage }}</span>
+          <span class="visually-hidden">{{ i18n.openAttachmentPage }}</span>
         </a>
 
         <div v-if="document.uploading" class="progress">
@@ -71,13 +71,13 @@
             aria-valuemax="100" />
         </div>
       </div>
-      <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-right text-sm-center">
+      <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
         <button
           v-if="canMakeResult"
           class="btn btn-sm btn-outline-success"
           :disabled="attachment.document || document.creatingDocument"
-          data-toggle="tooltip"
-          data-placement="top"
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
           :title="i18n.makeResultExplanation"
           @click="makeResult">
           <i class="fa fa-certificate" />
@@ -85,13 +85,13 @@
         </button>
         <button
           v-else-if="hasDocument"
-          class="btn btn-sm ml-1"
+          class="btn btn-sm ms-1"
           :class="{
             'btn-light': !editDocumentMeta,
             'btn-secondary': editDocumentMeta
           }"
           @click.prevent="editDocumentMeta = !editDocumentMeta">
-          <span class="sr-only">{{ i18n.edit }}</span>
+          <span class="visually-hidden">{{ i18n.edit }}</span>
           <i class="fa fa-edit" />
         </button>
         <file-review
@@ -121,7 +121,7 @@
         <div class="card">
           <div class="card-body">
             <form @submit.prevent="saveDocumentMeta">
-              <div class="form-group row">
+              <div class="mb-3 row">
                 <label
                   class="col-sm-2 col-form-label"
                   :for="'doc-title' + doc.id"
@@ -139,7 +139,7 @@
                   }}</small>
                 </div>
               </div>
-              <div class="form-group row mb-0">
+              <div class="row mb-0">
                 <label
                   class="col-sm-2 col-form-label"
                   :for="'doc-title' + doc.id"
@@ -156,7 +156,7 @@
                   }}</small>
                 </div>
               </div>
-              <p class="text-right mb-0">
+              <p class="text-end mb-0">
                 <button type="submit" class="btn btn-primary">
                   {{ i18n.save }}
                 </button>

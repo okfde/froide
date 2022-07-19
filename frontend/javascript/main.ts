@@ -1,10 +1,6 @@
 import '../styles/main.scss'
 
-import 'es6-promise/auto'
-
-import 'bootstrap.native/dist/bootstrap-native-v4.js'
-import 'bootstrap.native/dist/polyfill.js'
-
+import './snippets/bootstrap.ts'
 import './snippets/copy-input.ts'
 import './snippets/form-ajax.ts'
 import './snippets/inline-edit-forms.ts'

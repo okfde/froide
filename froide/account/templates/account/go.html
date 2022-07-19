@@ -8,7 +8,7 @@
   <form action="{{ form_action }}" method="post" data-autosubmit="true">
     {% csrf_token %}
     <div class="spinner-border" role="status">
-      <span class="sr-only">{% translate "Loading..." %}</span>
+      <span class="visually-hidden">{% translate "Loading..." %}</span>
     </div>
     <p class="mt-5">
       <button type="submit">{% translate "Continue" %}</button>

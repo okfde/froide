@@ -4,7 +4,7 @@
   {% blocktrans with user=request.user.get_full_name impostor=request.session.impostor %}
   WARNING! {{ impostor}}, you are an impostor! You pretend to be <strong>{{ user }}</strong>!
   {% endblocktrans %}
-  <form action="{% url 'account-logout' %}" method="post" class="form-inline float-right">
+  <form action="{% url 'account-logout' %}" method="post" class="d-inline float-end">
     {% csrf_token %}
     <button type="submit" class="btn-warning">
       {% blocktrans %}Eject{% endblocktrans %}

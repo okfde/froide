@@ -4,7 +4,7 @@
   <form method="post" class="{% block fromclasses %}disable-submit{% endblock %}" action="{% block saveurl %}{% endblock %}">
     {% csrf_token %}
     {% block inputs %}{% endblock %}
-    <button type="submit" class="btn btn-primary mr-2">
+    <button type="submit" class="btn btn-primary me-2">
       {% blocktrans %}Save{% endblocktrans %}
     </button>
     <button type="button" class="btn btn-secondary" data-inlineeditcancel="true">

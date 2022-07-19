@@ -25,14 +25,14 @@
               type="checkbox"
               @click="clickSelectAll" />
           </div>
-          <div class="col-auto ml-auto">
+          <div class="col-auto ms-auto">
             <button
               v-if="canMakeDocument && canMakeResult"
               class="btn btn-sm"
               :class="{ 'btn-success': canMakeResult }"
               :disabled="!canMakeResult"
-              data-toggle="tooltip"
-              data-placement="top"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
               :title="i18n.makeResultsExplanation"
               @click="makeResults">
               <i class="fa fa-certificate" />
@@ -445,8 +445,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@uppy/core/dist/style.css';
-@import '~@uppy/dashboard/dist/style.css';
+@import '@uppy/core/dist/style.css';
+@import '@uppy/dashboard/dist/style.css';
 
 .upload label.isMobile {
   display: block;

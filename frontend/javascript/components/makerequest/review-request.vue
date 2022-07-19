@@ -1,14 +1,17 @@
 <template>
-  <div id="step-review" class="modal-mask" @click.self="close">
+  <div id="step-review" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
             {{ i18n.reviewTitle }}
           </h5>
-          <button type="button" class="close" aria-label="Close" @click="close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            :aria-label="i18n.close"
+            @click="close" />
         </div>
         <div class="modal-body">
           <dl class="message-meta">
