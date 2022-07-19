@@ -22,7 +22,7 @@
       :dimensions="summaryDimensions"></pb-summary>
 
     <div class="row mb-2">
-      <div class="col-auto ml-auto">
+      <div class="col-auto ms-auto">
         <button
           v-if="publicBodies.length > 0"
           @click.prevent="clearSelection"

@@ -4,7 +4,7 @@
 
 {% if show_button %}
 <div class="btn-group btn-group-sm mx-sm-1 mb-1">
-  <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-outline-dark" data-toggle="modal" data-target="#message-redact-{{ message.pk }}">
+  <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#message-redact-{{ message.pk }}">
     <i class="fa fa-paint-brush"></i>
     {% trans "Redact" %}
   </button>
@@ -17,9 +17,7 @@
         <h5 class="modal-title">
           {% trans "Redact / unredact message" %}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
       </div>
       <div class="modal-body container">
         {% if message.is_response %}
@@ -45,7 +43,7 @@
         <form method="post" action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
           {% csrf_token %}
           <message-redaction :config="{{ js_config }}" message-url="{% url 'api:message-detail' pk=message.pk %}"></message-redaction>
-          <p class="text-right">
+          <p class="text-end">
             <button type="submit" class="btn btn-dark">
               {% trans "Change message redaction" %}
             </button>

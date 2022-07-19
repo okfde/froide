@@ -25,7 +25,7 @@
           {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
           {% render_form form %}
           <div class="clearfix">
-            <button type="submit" class="btn btn-primary btn-lg pull-right">
+            <button type="submit" class="btn btn-primary btn-lg float-end">
               {% blocktrans %}Log In{% endblocktrans %}
             </button>
           </div>
@@ -47,7 +47,7 @@
           {% endif %}
           {% render_form reset_form %}
           <div class="clearfix">
-            <button type="submit" class="btn btn-secondary pull-right">
+            <button type="submit" class="btn btn-secondary float-end">
               {% blocktrans %}Send reset link{% endblocktrans %}
             </button>
           </div>

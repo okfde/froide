@@ -25,7 +25,7 @@
           :id="'docupload-dropdown-' + attachment.id"
           type="button"
           class="btn btn-light dropdown-toggle"
-          data-toggle="dropdown"
+          data-bs-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false" />
         <div
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { Dropdown } from 'bootstrap.native/dist/bootstrap-native-v4.js'
+import { Dropdown } from 'bootstrap'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
@@ -121,7 +121,7 @@ export default {
     if (this.hasSubMenu) {
       // eslint-disable-next-line no-new
       new Dropdown(
-        document.getElementById('docupload-dropdown-' + this.attachment.id)
+        document.getElementById(`docupload-dropdown-${this.attachment.id}`)
       )
     }
   },

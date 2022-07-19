@@ -1,38 +1,44 @@
 <template>
   <div>
     <div v-if="publicBody && !hasSearchResults" class="search-result">
-      <label>
+      <div class="form-check">
         <input
           v-model="value"
+          class="form-check-input"
           type="radio"
           :data-label="publicBody.name"
           :name="name"
           :value="publicBody.id" />
-        {{ publicBody.name }}
-        <small>
-          {{ publicBody.jurisdiction.name }}
-        </small>
-      </label>
+        <label class="form-check-label">
+          {{ publicBody.name }}
+          <small>
+            {{ publicBody.jurisdiction.name }}
+          </small>
+        </label>
+      </div>
     </div>
     <ul v-if="searchResults.length > 0" class="search-results list-unstyled">
       <li
         v-for="result in searchResults"
         :key="result.id"
         class="search-result">
-        <label>
+        <div class="form-check">
           <input
             v-model="value"
             type="radio"
+            class="form-check-input"
             :data-label="result.name"
             :name="name"
             :value="result.id"
             @change="selectSearchResult"
             @click="selectSearchResult" />
-          {{ result.name }}
-          <small>
-            {{ result.jurisdiction.name }}
-          </small>
-        </label>
+          <label class="form-check-label">
+            {{ result.name }}
+            <small>
+              {{ result.jurisdiction.name }}
+            </small>
+          </label>
+        </div>
       </li>
     </ul>
   </div>

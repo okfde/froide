@@ -10,8 +10,8 @@
     Here you can explain your case to the authority that is responsible for your request.
     {% endblocktrans %}
   </p>
-  <div class="form-group row">
-    <span class="font-weight-bold col-md-4">
+  <div class="row mb-3">
+    <span class="fw-bold col-md-4">
       {% translate "Mediating authority" %}
     </span>
     <div class="col-md-8">
@@ -25,14 +25,14 @@
       {% render_form escalation_form horizontal=False %}
     {% endwith %}
   {% endif %}
-  <div class="form-group row mb-3">
+  <div class="row mb-3">
     <div class="ml-md-auto col-lg-9">
       {% if not object.public %}
         <small class="form-text text-muted">
           {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
         </small>
       {% endif %}
-      <button class="btn btn-primary mt-3 float-right" type="submit">
+      <button class="btn btn-primary mt-3 float-end" type="submit">
         {% blocktrans %}Send Message{% endblocktrans %}
       </button>
     </div>

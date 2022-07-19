@@ -6,25 +6,23 @@
     <div class="col-md-6">
       <div class="input-group">
         {{ form.q }}
-        <div class="input-group-append">
-          <button type="submit" class="btn btn-outline-primary">
-            {% trans "Search" %}
-          </button>
-        </div>
+        <button type="submit" class="btn btn-outline-primary">
+          {% trans "Search" %}
+        </button>
       </div>
     </div>
     {% if "status" in show_filters %}
-    <div class="col-md-4">
+    <div class="col-md-5">
       {{ form.status }}
     </div>
     {% else %}
       {{ form.status }}
     {% endif %}
-    <div class="col-md-2 ml-auto text-right">
+    <div class="col-md-1 ms-auto text-end mt-2 mt-md-0">
       {% if filtered_objects %}
       <a class="btn btn btn-light" href="./">
         <i class="fa fa-remove"></i>
-        <span class="sr-only">{% trans "Show all FoI requests" %}</span>
+        <span class="visually-hidden">{% trans "Show all FoI requests" %}</span>
       </a>
       {% endif %}
     </div>
@@ -64,14 +62,14 @@
       <summary>{% translate "More search options" %}</summary>
       <div class="row mt-2">
         <div class="col-md-6">
-          <label>
+          <label class="form-label">
             {% trans "request date" %}
             {{ form.first }}
           </label>
         </div>
         {% if "sort" in show_filters %}
           <div class="col-md-3">
-            <label>
+            <label class="form-label">
               {% trans "sort" %}
               {{ form.sort }}
             </label>

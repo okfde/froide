@@ -53,7 +53,7 @@
     </div>
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group mr-1">
+        <div class="btn-group me-1">
           <button
             class="btn btn-light"
             :disabled="!canUndo"
@@ -64,15 +64,15 @@
           <button
             class="btn btn-light"
             :disabled="!canRedo"
-            data-toggle="tooltip"
-            data-placement="top"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
             :title="i18n.redo"
             @click="redo">
             <i class="fa fa-share" />
           </button>
         </div>
 
-        <div class="btn-group mr-1">
+        <div class="btn-group me-1">
           <button
             class="btn"
             :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
@@ -92,13 +92,13 @@
           </button>
         </div>
 
-        <div class="btn-group mr-1">
+        <div class="btn-group me-1">
           <button
             class="pdf-prev btn btn-light"
             :disabled="!hasPrevious"
             @click="goPrevious">
             &laquo;
-            <span class="sr-only">{{ i18n.previousPage }}</span>
+            <span class="visually-hidden">{{ i18n.previousPage }}</span>
           </button>
           <span class="input-group-text">
             {{ pageOfTotal }}
@@ -107,14 +107,14 @@
             class="pdf-next btn btn-light"
             :disabled="!hasNext"
             @click="goNext">
-            <span class="sr-only">{{ i18n.nextPage }}</span>
+            <span class="visually-hidden">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
         </div>
 
         <div
           v-if="hasRedactions || hasPassword"
-          class="btn-group mr-lg-1 ml-auto mt-1 mt-lg-0">
+          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush" />
             <template v-if="hasRedactions">
@@ -125,7 +125,7 @@
             </template>
           </button>
         </div>
-        <div class="btn-group ml-auto mt-1 mt-lg-0">
+        <div class="btn-group ms-auto mt-1 mt-lg-0">
           <form
             v-if="canPublish && !hasPassword"
             method="post"
@@ -194,7 +194,7 @@
     </div>
     <div class="row">
       <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group mr-auto ml-auto">
+        <div class="btn-group me-auto ms-auto">
           <button
             class="pdf-prev btn btn-light"
             :disabled="!hasPrevious"

@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-warning" data-toggle="modal" data-target="#resend-{{ message.pk }}">
+<button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-warning" data-bs-toggle="modal" data-bs-target="#resend-{{ message.pk }}">
   {% translate "Resend" %}
 </button>
 
@@ -11,9 +11,7 @@
         <h5 class="modal-title">
           {% translate "Resend message" %}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
       </div>
       <div class="modal-body">
         <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"

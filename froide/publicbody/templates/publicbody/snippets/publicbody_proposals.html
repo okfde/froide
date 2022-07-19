@@ -28,17 +28,21 @@
         {% trans "Proposal" %}
       </td>
       <td>
-        <label>
-          <input type="radio" name="proposal_id" class="proposal" value="" required>
-          {% trans "Change, without accepting" %}
-        </label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="proposal_id' name="proposal_id" class="proposal" value="" required>
+          <label class="form-label" for="proposal_id">
+            {% trans "Change, without accepting" %}
+          </label>
+        </div>
       </td>
       {% for key, proposal in proposals.items %}
         <td>
-          <label>
-            <input type="radio" name="proposal_id" class="proposal" value="{{ key }}" required>
-              {% trans "Accept this proposal" %}
-          </label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="proposal_id" id="proposal_id-{{ key }}" class="proposal" value="{{ key }}" required>
+            <label class="form-check-label" for="proposal_id-{{ key }}">
+                {% trans "Accept this proposal" %}
+            </label>
+          </div>
         </td>
       {% endfor %}
     </tr>
@@ -74,10 +78,12 @@
       <td></td>
       {% for key, proposal in proposals.items %}
         <td>
-          <label>
-            <input type="checkbox" name="proposal_delete" value="{{ proposal.user.id }}">
-            {% trans "Delete" %}
-          </label>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="proposal_delete" id="proposal_delete-{{ proposal.user.id }}" value="{{ proposal.user.id }}">
+            <label class="form-check-label" for="proposal_delete-{{ proposal.user.id }}">
+              {% trans "Delete" %}
+            </label>
+          </div>
         </td>
       {% endfor %}
     </tr>

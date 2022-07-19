@@ -2,8 +2,8 @@
 
 {% include "helper/forms/errors.html" with errors=field.errors %}
 
-<div class="form-group{% if classes %} {{ classes }}{% endif %}">
-  {% if label %}{% if field.id_for_label %}<label for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
+<div class="mb-3{% if classes %} {{ classes }}{% endif %}">
+  {% if label %}{% if field.id_for_label %}<label class="form-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
     {{ field }}
     {% if help_text %}<small class="form-text text-muted">{{ help_text }}</small>{% endif %}
 </div>

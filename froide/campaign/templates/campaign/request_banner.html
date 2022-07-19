@@ -9,7 +9,7 @@
           {{ campaign.description|markdown }}
         {% endif %}
         {% if campaign.url %}
-          <p class="text-right">
+          <p class="text-end">
             {% blocktrans with name=campaign.name url=campaign.url %}
               This request was made as part of the campaign <a href="{{ url }}">“{{ name }}”</a>.
             {% endblocktrans %}

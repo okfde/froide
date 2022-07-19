@@ -1,6 +1,6 @@
 <template>
   <div class="publicbody-upload mb-3 mt-3">
-    <div class="text-right mt-3">
+    <div class="text-end mt-3">
       <button
         v-if="canSubmit"
         type="submit"
@@ -21,7 +21,7 @@
       :required="true"
       @ready="canSubmit = $event"
       @uploading="uploading = $event" />
-    <div class="text-right mt-3">
+    <div class="text-end mt-3">
       <button
         type="submit"
         class="btn btn-lg btn-primary"

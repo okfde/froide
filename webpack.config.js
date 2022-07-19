@@ -169,9 +169,9 @@ const config = {
       patterns: [{ from: 'node_modules/pdfjs-dist/build/pdf.worker.min.js' }]
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: `"${process.env.NODE_ENV}"`
-      },
+      // 'process.env': {
+      //   NODE_ENV: `"${process.env.NODE_ENV}"`
+      // },
       global: 'window'
     })
   ],

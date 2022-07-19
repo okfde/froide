@@ -8,11 +8,10 @@
           </h5>
           <button
             type="button"
-            class="close"
+            class="btn-close"
+            data-bs-dismiss="modal"
             :aria-label="i18n.close"
-            @click="close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+            @click="close"></button>
         </div>
         <div class="modal-body">
           <p>

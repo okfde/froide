@@ -22,19 +22,19 @@
   {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
   {% render_field form.name %}
 
-  <div class="form-group row">
-    <label class="font-weight-bold col-md-4 col-form-label" for="{{ field.id_for_label }}">
+  <div class="mb-3 row">
+    <label class="fw-bold col-md-4 col-form-label" for="{{ field.id_for_label }}">
       {{ form.code.label }}
     </label>
     <div class="col-md-8">
       <div class="input-group mb-3">
         <input name="code" value="{{ mfa_data.code }}"
           title="{% translate 'Click to copy' %}"
-          data-toggle="tooltip" data-placement="top"
+          data-bs-toggle="tooltip" data-placement="top"
           data-copied="{% translate 'URL copied' %}"
           class="form-control copy-text" readonly
         />
-        <div class="input-group-append">
+        <div>
           <button class="btn btn-outline-secondary" type="button" data-downloadtxt="{{ SITE_NAME }} {% translate 'recovery code:' %} {{ mfa_data.code }}">
             {% translate "Download as TXT file" %}
           </button>
@@ -42,11 +42,11 @@
       </div>
     </div>
   </div>
-  <div class="form-group row">
-    <div class="col-md-8 ml-auto">
+  <div class="mb-3 row">
+    <div class="col-md-8 ms-auto">
       <div class="form-check">
-        <label class="form-check-label font-weight-bold field-required">
-          <input type="checkbox" required>
+        <input class="form-check-input" type="checkbox" required>
+        <label class="form-check-label fw-bold field-required">
           {% translate "I have safely stored the code." %}
         </label>
       </div>

@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <div class="card mb-3">
         <div class="card-body">
-          <div class="form-group row">
+          <div class="mb-3 row">
             <div class="col-lg-9">
               <div class="form-check">
                 <label

@@ -12,7 +12,7 @@
                 class="message-timeline-item {{ subitem.class_name }}"
                 title="{{ subitem.label }} - {{ subitem.timestamp|date:'SHORT_DATE_FORMAT' }}"
                 >
-                  <span class="sr-only">
+                  <span class="visually-hidden">
                     {{ subitem.label }} – {{ subitem.timestamp|date:'SHORT_DATE_FORMAT' }}
                   </span>
                 </a>
@@ -23,7 +23,7 @@
               title="{{ item.label }} - {{ item.timestamp|date:'SHORT_DATE_FORMAT' }}"
               class="message-timeline-item {{ item.class_name }}"
               >
-              <span class="sr-only">
+              <span class="visually-hidden">
                 {{ item.label }} – {{ item.timestamp|date:'SHORT_DATE_FORMAT' }}
               </span>
             </div>

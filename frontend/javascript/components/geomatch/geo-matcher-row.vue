@@ -25,7 +25,7 @@
     </td>
     <td>
       <div v-if="georegion.loading" class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
       <ul v-if="hasMatches">
         <li v-for="match in matches" :key="match.id">

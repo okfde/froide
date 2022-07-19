@@ -4,7 +4,7 @@
 {% load foirequest_tags %}
 {% load permission_helper %}
 
-<button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-light" data-toggle="modal" data-target="#problemreport-{{ message.pk }}">
+<button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-light" data-bs-toggle="modal" data-bs-target="#problemreport-{{ message.pk }}">
   {% if not request.user.is_authenticated %}
     {% trans "Report" %}
   {% else %}
@@ -19,7 +19,7 @@
         <span class="fa fa-exclamation-circle"></span>
       {% endif %}
       {% if message.problemreports_count > 1 %}{% trans "Problem" %}{% else %}{% trans "Problems" %}{% endif %}
-      <span class="badge {% if message.problemreports_unresolved_count %}badge-warning{% else %}badge-white{% endif %}">
+      <span class="badge {% if message.problemreports_unresolved_count %}bg-warning{% else %}bg-white{% endif %}">
         {{ message.problemreports_count }}
       </span>
     {% endif %}
@@ -37,9 +37,7 @@
             {% trans "Problem reports" %}
           {% endif %}
         </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
       </div>
       <div class="modal-body">
         {% if not request.user.is_authenticated %}
@@ -74,7 +72,7 @@
                   {% for report in message.problemreports %}
                     <tr>
                       <td>
-                        <span class="badge badge-white">
+                        <span class="badge text-bg-white">
                           {{ report.get_kind_display }}
                         </span>
                       </td>
@@ -84,7 +82,7 @@
                       {% if not is_requester or foirequest|can_moderate_pii_foirequest:request %}
                         <td>
                           {% if report.auto_submitted %}
-                            <span class="badge badge-dark">
+                            <span class="badge text-bg-dark">
                               {% trans "auto detected" %}
                             </span>
                           {% else %}
@@ -92,9 +90,9 @@
                               {{ report.user.get_full_name }}
                             {% endif %}
                             {% if report.is_requester %}
-                              <span class="badge badge-success">{% trans "requester" %}</span>
+                              <span class="badge text-bg-success">{% trans "requester" %}</span>
                             {% else %}
-                              <span class="badge badge-secondary">{% trans "not requester" %}</span>
+                              <span class="badge text-bg-secondary">{% trans "not requester" %}</span>
                             {% endif %}
                           {% endif %}
                         </td>
@@ -105,11 +103,11 @@
                           <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
                         {% endif %}
                         {% if report.resolved %}
-                          <span class="badge badge-success">
+                          <span class="badge text-bg-success">
                             {% trans "Resolved" %}
                           </span>
                         {% else %}
-                          <span class="badge badge-secondary">
+                          <span class="badge text-bg-secondary">
                             {% trans "Pending" %}
                           </span>
                         {% endif %}
@@ -144,7 +142,7 @@
             {% csrf_token %}
             {% render_form message.problemreports_form %}
             <div class="d-flex">
-              <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal" aria-label="Close">
+              <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal" aria-label="Close">
                 {% trans "Cancel" %}
               </button>
               <button type="submit" class="btn btn-primary">

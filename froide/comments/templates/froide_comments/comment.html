@@ -8,7 +8,7 @@
       {% if request.user.is_authenticated %}
         {# name #}
         {% if comment.is_requester and comment.user.private %}
-          <span class="redacted-dummy redacted-hover" data-toggle="tooltip" title="{% trans 'Name not public' %}">
+          <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Name not public' %}">
             {% trans "Commentator" %}
           </span>
         {% elif not comment.user_name %}
@@ -19,9 +19,9 @@
 
         {# requester-/moderator-badges #}
         {% if comment.is_requester %}
-          <span class="badge bg-blue-20 ml-1">{% trans "Requester" %}</span>
+          <span class="badge text-bg-blue-20 ms-1">{% trans "Requester" %}</span>
         {% elif comment.is_moderator %}
-          <span class="badge bg-yellow-100 ml-1">{% trans "Moderator" %}</span>
+          <span class="badge text-bg-yellow-100 ms-1">{% trans "Moderator" %}</span>
         {% endif %}
 
       {% else %}
@@ -45,7 +45,7 @@
       {% else %}
         {% if comment.comment != comment.comment|truncatewords:20 %}
           <span>{{ comment.comment|truncatewords:20|urlizetrunc:40|linebreaksbr }}
-          <a href="#more-commenttext-{{ comment.id }}" class="hideparent" data-toggle="collapse">
+          <a href="#more-commenttext-{{ comment.id }}" class="hideparent" data-bs-toggle="collapse">
           {% trans "Read all" %}</a></span>
           <span id="more-commenttext-{{ comment.id }}" class="collapse">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
         {% else %}

@@ -27,7 +27,7 @@
       </div>
     </div>
     {% if object.status_representation %}
-      <div class="info-box__icon ml-1 flex-shrink-0 status-{{ object.status_representation }}"></div>
+      <div class="info-box__icon ms-1 flex-shrink-0 status-{{ object.status_representation }}"></div>
     {% endif %}
   </div>
 
@@ -49,13 +49,13 @@
 
       {% if not object.public and object.is_foi and object|can_write_foirequest:request %}
         <li class="info-box__list-item info-box__list-item--inset bg-yellow-10 d-flex my-0 py-2 border-top border-yellow-20 d-print-none">
-          <form class="form-inline disable-submit" data-confirm="{% translate 'Are you sure you want to publish this request?' %}" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
+          <form class="disable-submit" data-confirm="{% translate 'Are you sure you want to publish this request?' %}" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
             {% csrf_token %}
             <p>
               {% blocktrans %}This request is <strong>not public</strong>.{% endblocktrans %}
             </p>
-            <p class="m-2 text-right">
-              <button type="submit" class="btn ml-auto btn-success">{% blocktrans %}Make public{% endblocktrans %}</button>
+            <p class="m-2 text-end">
+              <button type="submit" class="btn ms-auto btn-success">{% blocktrans %}Make public{% endblocktrans %}</button>
             </p>
           </form>
         </li>
@@ -115,7 +115,7 @@
             {% if object|can_write_foirequest:request %}
               <a href="#" data-inlineedit="#request-duedate-form" data-inlineeditpresentation="#null">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
-                <span class="sr-only">{% trans "Edit due date" %}</span>
+                <span class="visually-hidden">{% trans "Edit due date" %}</span>
               </a>
             {% endif %}
           </span>
@@ -130,12 +130,10 @@
                 {% csrf_token %}
                 <div class="input-group input-group-sm mb-1">
                   <input class="form-control" type="number" min="0" max="15" name="time" value="1">
-                  <div class="input-group-append">
-                    <span class="input-group-text">{{ object.law.get_max_response_time_unit_display }}</span>
-                    <button class="btn btn-sm btn-outline-secondary" type="submit">
-                      {% trans "Extend deadline" %}
-                    </button>
-                  </div>
+                  <span class="input-group-text">{{ object.law.get_max_response_time_unit_display }}</span>
+                  <button class="btn btn-sm btn-outline-secondary" type="submit">
+                    {% trans "Extend deadline" %}
+                  </button>
                 </div>
               </form>
             </div>
@@ -153,7 +151,7 @@
             {% if object|can_write_foirequest:request %}
               <a href="#" class="info-box__edit-link">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
-                <span class="sr-only">{% trans "Edit costs" %}</span>
+                <span class="visually-hidden">{% trans "Edit costs" %}</span>
               </a>
             {% endif %}
           </div>
@@ -174,7 +172,7 @@
 
           {# copy url #}
           <div class="mb-2 mb-lg-3">
-            <a href="{{ object.get_absolute_domain_short_url }}" data-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" class="copy-short-url-trigger">
+            <a href="{{ object.get_absolute_domain_short_url }}" data-bs-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" class="copy-short-url-trigger">
               <i class="fa fa-copy" aria-hidden="true"></i>
               {% blocktrans %}Copy Short-URL{% endblocktrans %}
             </a>
@@ -213,7 +211,7 @@
           {% endif %}
           {% if object|can_read_foirequest_authenticated:request %}
             <div class="dropdown">
-              <button id="downloadActions" type="button" class="btn btn-link mt-n2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button id="downloadActions" type="button" class="btn btn-link mt-n2 dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {% trans 'Download' %}
               </button>
               <div class="dropdown-menu alpha-dropdown-menu" aria-labelledby="downloadActions">

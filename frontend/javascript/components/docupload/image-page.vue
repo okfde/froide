@@ -13,7 +13,7 @@
     </div>
     <div class="row justify-content-center">
       <div class="scol">
-        <div class="text-left">
+        <div class="text-start">
           <button
             class="btn btn-sm text-muted small"
             :class="{ 'btn-info': page.needsRotation }"
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="scol">
-        <div v-if="!isLast" class="text-right">
+        <div v-if="!isLast" class="text-end">
           <button class="btn btn-sm text-muted small" @click="splitPages">
             <span class="fa fa-scissors" />
           </button>

@@ -1,16 +1,19 @@
 <template>
-  <label>
+  <div class="form-check">
     <input
       type="checkbox"
+      class="form-check-input"
       :data-label="result.name"
       :name="name"
       :value="result.id"
       v-model="value" />
-    {{ result.name }}
-    <small>
-      {{ result.jurisdiction.name }}
-    </small>
-  </label>
+    <label class="form-check-label">
+      {{ result.name }}
+      <small>
+        {{ result.jurisdiction.name }}
+      </small>
+    </label>
+  </div>
 </template>
 
 <script>

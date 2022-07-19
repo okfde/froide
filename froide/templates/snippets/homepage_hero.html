@@ -16,19 +16,17 @@
         {% endblock %}
         {% block index-search %}
           <form method="get" action="{% url 'foirequest-search' %}">
-            <div class="form-group">
-              <label for="index-search">
+            <div class="mb-3">
+              <label class="form-label" for="index-search">
                 {% blocktrans with foicount=foicount|intcomma pbcount=pbcount|intcomma %}Search {{ foicount }} requests and {{ pbcount }} public bodies:{% endblocktrans %}
               </label>
 
               <div class="input-group">
                 <input id="index-search" class="form-control" type="text" name="q" autocomplete="off" placeholder="{% block index-search-placeholder %}{% endblock %}"/>
-                <div class="input-group-append">
-                  <button class="btn btn-primary" type="submit">
-                    <i class="fa fa-search"></i>
-                    {% blocktrans %}Search For Information{% endblocktrans %}
-                  </button>
-                </div>
+                <button class="btn btn-primary" type="submit">
+                  <i class="fa fa-search"></i>
+                  {% blocktrans %}Search For Information{% endblocktrans %}
+                </button>
               </div>
             </div>
             {% block example_search_terms_block %}

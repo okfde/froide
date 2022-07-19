@@ -29,15 +29,13 @@
               :placeholder="i18n.publicBodySearchPlaceholder"
               @keyup="triggerAutocomplete"
               @keydown.enter.prevent="triggerAutocomplete" />
-            <div class="input-group-append">
-              <button
-                type="button"
-                class="btn btn-primary search-public_bodies-submit"
-                @click="triggerAutocomplete">
-                <i class="fa fa-search"></i>
-                {{ i18n.search }}
-              </button>
-            </div>
+            <button
+              type="button"
+              class="btn btn-primary search-public_bodies-submit"
+              @click="triggerAutocomplete">
+              <i class="fa fa-search"></i>
+              {{ i18n.search }}
+            </button>
           </div>
         </div>
       </div>
@@ -48,7 +46,7 @@
           </h3>
           <div v-show="searching" class="col-auto">
             <div class="spinner-border text-secondary" role="status">
-              <span class="sr-only">{{ i18n.loading }}</span>
+              <span class="visually-hidden">{{ i18n.loading }}</span>
             </div>
           </div>
         </div>
@@ -60,7 +58,7 @@
             {{ i18n._('selectAll', { count: searchResultsLength }) }}
           </button>
         </div>
-        <div class="col-auto ml-auto">
+        <div class="col-auto ms-auto">
           <button
             :disabled="!hasSearchResults"
             @click.prevent="clearSearch"
@@ -83,7 +81,7 @@
             v-show="searching"
             class="spinner-border text-secondary"
             role="status">
-            <span class="sr-only">{{ i18n.loading }}</span>
+            <span class="visually-hidden">{{ i18n.loading }}</span>
           </div>
           <slot name="publicbody-missing" v-if="!searching"></slot>
           <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>

@@ -20,7 +20,9 @@
             href="#problemreports"
             @click="tab = 'problemreports'">
             {{ i18n.problemReports }}
-            <span class="badge badge-secondary">{{ problemreportsCount }}</span>
+            <span class="badge text-bg-secondary">{{
+              problemreportsCount
+            }}</span>
           </a>
         </li>
         <li v-if="publicbodies" class="nav-item">
@@ -30,7 +32,7 @@
             href="#publicbodies"
             @click="tab = 'publicbodies'">
             {{ i18n.publicBodyChangeProposals }}
-            <span class="badge badge-secondary">{{ publicbodiesCount }}</span>
+            <span class="badge text-bg-secondary">{{ publicbodiesCount }}</span>
           </a>
         </li>
         <li v-if="unclassified" class="nav-item">
@@ -40,7 +42,7 @@
             href="#unclassified"
             @click="tab = 'unclassified'">
             {{ i18n.unclassifiedRequests }}
-            <span class="badge badge-secondary">{{ unclassifiedCount }}</span>
+            <span class="badge text-bg-secondary">{{ unclassifiedCount }}</span>
           </a>
         </li>
         <li v-if="attachments" class="nav-item">
@@ -50,7 +52,7 @@
             href="#attachments"
             @click="tab = 'attachments'">
             {{ i18n.attachments }}
-            <span class="badge badge-secondary">{{ attachmentsCount }}</span>
+            <span class="badge text-bg-secondary">{{ attachmentsCount }}</span>
           </a>
         </li>
       </ul>

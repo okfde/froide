@@ -70,7 +70,10 @@
             </span>
           </li>
           <li>
-            <a href="#step-review" data-toggle="modal" v-if="stepWriteRequest">
+            <a
+              href="#step-review"
+              data-bs-toggle="modal"
+              v-if="stepWriteRequest">
               <i class="fa fa-check-circle-o" aria-hidden="true"></i>
               {{ i18n.checkRequest }}
             </a>
@@ -80,7 +83,7 @@
             </span>
           </li>
         </ol>
-        <div class="pt-2 col-auto ml-auto" v-if="showNext">
+        <div class="pt-2 col-auto ms-auto" v-if="showNext">
           <button class="btn btn-secondary" @click.prevent="clickNext">
             {{ i18n.goNextStep }}
           </button>

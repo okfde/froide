@@ -27,7 +27,7 @@
   {% else %}
     {% blocktrans %}Your name is visible.{% endblocktrans %}
     {% block settings_privacy %}{% endblock %}
-    <a class="btn btn-sm btn-secondary pull-right" data-toggle="collapse" href="#make-private">{% trans "Make my account private" %}</a>
+    <a class="btn btn-sm btn-secondary float-end" data-bs-toggle="collapse" href="#make-private">{% trans "Make my account private" %}</a>
     <div class="collapse mt-3" id="make-private">
       <div class="card card-body">
         <form method="post" action="{% url 'account-make_user_private' %}">
@@ -42,7 +42,7 @@
           <p class="text-muted">
             {% trans "You are still responsible for redacting attachments when they contain your personal information." %}
           </p>
-          <button type="submit" class="btn btn-danger pull-right">
+          <button type="submit" class="btn btn-danger float-end">
             {% trans "Make account private" %}
           </button>
         </form>
@@ -135,7 +135,7 @@
             {% for mfa_key in mfa_keys.all %}
               <li>
                 {{ mfa_key.name }} 
-                <span class="badge badge-secondary">
+                <span class="badge text-bg-secondary">
                 {% if mfa_key.method == "FIDO2" %}
                   {% translate "hardware security key" %}
                 {% elif mfa_key.method == "TOTP" %}

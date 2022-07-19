@@ -1,5 +1,5 @@
-@import '~bootstrap/scss/functions';
-@import '~bootstrap/scss/mixins';
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/mixins";
 
 /* Bootstrap Theme */
 
@@ -32,36 +32,6 @@ $yellow-100: #fde9ae;
 $yellow-200: #face44;
 $yellow-300: #e8b106;
 
-$theme-colors: (
-  'gray-100': $gray-100,
-  'gray-200': $gray-200,
-  'gray-300': $gray-300,
-  'gray-400': $gray-400,
-  'gray-500': $gray-500,
-  'gray-600': $gray-600,
-  'gray-700': $gray-700,
-  'gray-800': $gray-800,
-  'gray-900': $gray-900,
-
-  'blue-10': $blue-10,
-  'blue-20': $blue-20,
-  'blue-30': $blue-30,
-  'blue-100': $blue-100,
-  'blue-200': $blue-200,
-  'blue-300': $blue-300,
-  'blue-400': $blue-400,
-  'blue-500': $blue-500,
-  'blue-600': $blue-600,
-  'blue-700': $blue-700,
-  'blue-800': $blue-800,
-
-  'yellow-100': $yellow-100,
-  'yellow-200': $yellow-200,
-  'yellow-300': $yellow-300,
-
-  'black': #000
-);
-
 $white: #fff;
 // $white: #FDFDFF;
 $black: $blue-800;
@@ -92,21 +62,21 @@ $spacer: 1rem;
 $spacers: (
   0: 0,
   1: (
-    $spacer * 0.25
+    $spacer * 0.25,
   ),
   2: (
-    $spacer * 0.5
+    $spacer * 0.5,
   ),
   3: $spacer,
   4: (
-    $spacer * 1.5
+    $spacer * 1.5,
   ),
   5: (
-    $spacer * 3
+    $spacer * 3,
   ),
   6: (
-    $spacer * 4
-  )
+    $spacer * 4,
+  ),
 );
 
 // Grid containers
@@ -115,7 +85,7 @@ $container-max-widths: (
   sm: 540px,
   md: 780px,
   lg: 960px,
-  xl: 1140px
+  xl: 1140px,
 );
 
 // Typography
@@ -130,7 +100,7 @@ $box-shadow-gray-sm: 2px 2px 0 transparentize($gray-300, 0.6);
 $box-shadow-yellow: 7px 7px 0 transparentize($yellow-300, 0.85);
 $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
-@import '~bootstrap/scss/variables';
+@import "~bootstrap/scss/variables";
 
 :root {
   --shadow-blue: #{transparentize($blue-30, 0.85)};
@@ -151,4 +121,4 @@ $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 // Other colors
 $highlight-yellow: #fffc78;
 
-$breadcrumb-divider: quote('›');
+$breadcrumb-divider: quote("›");

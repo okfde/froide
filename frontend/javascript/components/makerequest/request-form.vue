@@ -19,7 +19,7 @@
           </template>
           <span v-if="!hidePublicbodyChooser">
             <a
-              class="pb-change-link badge badge-pill badge-primary ml-3"
+              class="pb-change-link badge rounded-pill text-bg-primary ms-3"
               :href="config.url.makeRequest"
               @click.prevent="$emit('setStepSelectPublicBody')">
               {{ i18n.change }}
@@ -50,7 +50,7 @@
             </a>
             <span v-if="!hidePublicbodyChooser">
               <a
-                class="pb-change-link badge badge-pill badge-primary ml-3"
+                class="pb-change-link badge rounded-pill text-bg-primary ms-3"
                 :href="config.url.makeRequest"
                 @click.prevent="$emit('setStepSelectPublicBody')">
                 {{ i18n.change }}
@@ -87,8 +87,11 @@
           </p>
         </div>
 
-        <div class="form-group">
-          <label for="id_subject" :class="{ 'text-danger': errors.subject }">
+        <div class="mb-3">
+          <label
+            class="form-check-label"
+            for="id_subject"
+            :class="{ 'text-danger': errors.subject }">
             {{ i18n.subject }}
           </label>
           <div
@@ -98,11 +101,11 @@
             <input type="hidden" name="subject" :value="subject" />
             <strong>{{ subject }}</strong>
             <button
-              class="btn btn-sm btn-white pull-right"
+              class="btn btn-sm btn-white float-end"
               @click.prevent="editingDisabled = false">
               <small class="d-none d-md-block">{{ i18n.reviewEdit }}</small>
               <small class="d-md-none fa fa-edit">
-                <span class="sr-only">{{ i18n.reviewEdit }}</span>
+                <span class="visually-hidden">{{ i18n.reviewEdit }}</span>
               </small>
             </button>
           </div>
@@ -179,21 +182,25 @@
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
               @keyup="bodyChanged" />
-            <label
-              v-if="allowFullText && !editingDisabled"
-              class="small pull-right text-muted">
+            <div class="form-check form-check-inline float-end">
               <input
                 id="full_text_checkbox"
+                class="form-check-input"
                 v-model="fullText"
                 type="checkbox"
                 name="full_text_checkbox"
                 :disabled="fullTextDisabled" />
-              <i
-                v-if="warnFullText"
-                class="fa fa-exclamation-triangle"
-                aria-hidden="true" />
-              {{ formFields.full_text.label }}
-            </label>
+              <label
+                v-if="allowFullText && !editingDisabled"
+                for="full_text_checkbox"
+                class="form-check-label small text-muted">
+                <i
+                  v-if="warnFullText"
+                  class="fa fa-exclamation-triangle"
+                  aria-hidden="true" />
+                {{ formFields.full_text.label }}
+              </label>
+            </div>
             <input v-model="fullText" type="hidden" name="full_text" />
             <div v-if="!fullText" class="body-text">
               <template v-if="!fullLetter">
@@ -217,12 +224,12 @@
         </div>
         <div v-if="!hasUser" class="row">
           <div class="col-md-8">
-            <div class="form-group row">
+            <div class="mb-3 row">
               <div
                 class="col-sm-6"
                 :class="{ 'text-danger': usererrors.first_name }">
                 <label
-                  class="control-label field-required"
+                  class="form-label field-required"
                   for="id_first_name"
                   :class="{ 'text-danger': usererrors.first_name }">
                   {{ i18n.yourFirstName }}
@@ -245,7 +252,7 @@
                 class="col-sm-6"
                 :class="{ 'text-danger': usererrors.last_name }">
                 <label
-                  class="control-label field-required"
+                  class="form-label field-required"
                   for="id_last_name"
                   :class="{ 'text-danger': usererrors.last_name }">
                   {{ i18n.yourLastName }}
@@ -276,8 +283,8 @@
           v-if="config.settings.user_can_hide_web && !hasUser"
           class="row mt-2">
           <div class="col-md-8">
-            <div class="checkbox">
-              <label>
+            <div class="form-check">
+              <label class="form-label">
                 <input
                   id="id_private"
                   v-model="userPrivate"

@@ -67,7 +67,7 @@
                 {% if not object.public and not all_public %}
                   {% render_form make_public_form %}
                 {% endif %}
-                <div class="text-right">
+                <div class="text-end">
                   <button type="submit" class="btn btn-primary">
                     {% if not object.public %}
                       {% translate "Publish project" %}
@@ -92,11 +92,11 @@
         {% translate "Perform action for selected requests:" %}
       </p>
       {% if object|can_manage_foiproject:request %}
-        <button class="btn btn-light btn-sm ml-2" name="action" value="publish">
+        <button class="btn btn-light btn-sm ms-2" name="action" value="publish">
           {% translate "Publish..." %}
         </button>
       {% endif %}
-      <button class="btn btn-light btn-sm ml-2" name="action" value="writemessage">
+      <button class="btn btn-light btn-sm ms-2" name="action" value="writemessage">
         {% translate "Write message..." %}
       </button>
     </div>
@@ -106,7 +106,10 @@
           <tr>
             <th scope="col">
               {% if object|can_write_foiproject:request %}
-                <input type="checkbox" data-checkall="foirequest">
+                <label class="visually-hidden" for="check-all-foirequests">
+                  {% translate "Check all requests" %}
+                </label>
+                <input class="form-check-input" type="checkbox" id="check-all-foirequests" data-checkall="foirequest">
               {% else %}#{% endif %}
             </th>
             <th scope="col">
@@ -130,7 +133,10 @@
           <tr>
             <td>
               {% if object|can_write_foiproject:request %}
-                <input type="checkbox" name="foirequest" value="{{ req.id }}">
+                <label class="visually-hidden" for="check-foirequest-{{ req.id }}">
+                  {% blocktranslate with num=req.id %}Check request #{{ num }}{% endblocktranslate %}
+                </label>
+                <input class="form-check-input" type="checkbox" name="foirequest" id="check-foirequest-{{ req.id }}" value="{{ req.id }}">
               {% else %}
                 {{ req.project_number }}
               {% endif %}
@@ -154,10 +160,10 @@
               <td class="text-center">
                 {% if req.is_public %}
                   <span class="fa fa-check"></span>
-                  <span class="sr-only">{% translate "Yes" %}</span>
+                  <span class="visually-hidden">{% translate "Yes" %}</span>
                 {% else %}
                   <span class="fa fa-ban"></span>
-                  <span class="sr-only">{% translate "No" %}</span>
+                  <span class="visually-hidden">{% translate "No" %}</span>
                 {% endif %}
               </td>
             {% endif %}

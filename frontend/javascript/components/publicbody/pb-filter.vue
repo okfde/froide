@@ -35,7 +35,7 @@
             v-if="loading"
             class="spinner-border text-secondary"
             role="status">
-            <span class="sr-only">{{ i18n.loading }}</span>
+            <span class="visually-hidden">{{ i18n.loading }}</span>
           </div>
           <pb-filter-list
             v-else

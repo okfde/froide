@@ -11,7 +11,7 @@
       {{ report.timestamp | date }}
       <span
         v-if="!report.is_requester && !report.auto_submitted"
-        class="badge badge-secondary">
+        class="badge text-bg-secondary">
         {{ i18n.isNotRequester }}
       </span>
     </td>
@@ -31,7 +31,7 @@
 
       <a
         v-if="showPublicBodyLink"
-        class="ml-3 btn btn-light btn-sm"
+        class="ms-3 btn btn-light btn-sm"
         :href="publicBodyLink"
         target="_blank">
         {{ i18n.toPublicBody }}

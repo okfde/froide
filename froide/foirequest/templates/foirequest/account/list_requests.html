@@ -56,19 +56,19 @@
     <td>
       <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
     </td>
-    <td class="request-link__body">
+    <td>
       {% include "foirequest/snippets/request_item_inner.html" %}
 
       {% if object.status == "awaiting_user_confirmation" %}
         <form class="d-inline" action="{% url 'foirequest-confirm_request' slug=object.slug %}" method="post">
           {% csrf_token %}
-            <button type="submit" class="btn btn-success ml-3 mt-3">
+            <button type="submit" class="btn btn-success ms-3 mt-3">
               {% blocktrans %}Send request{% endblocktrans %}
             </button>
           </form>
           <form class="d-inline" action="{% url 'foirequest-delete_request' slug=object.slug %}" method="post">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger ml-3 mt-3">
+            <button type="submit" class="btn btn-danger ms-3 mt-3">
               <i class="fa fa-ban"></i>
               {% blocktrans %}Delete request{% endblocktrans %}
             </button>

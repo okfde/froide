@@ -7,14 +7,14 @@
     <li class="page-item">
       <a href="?page={{ page_obj.previous_page_number }}{{ getvars }}{{ hashtag }}" class="page-link prev" title="{% trans "previous" %}">
         <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">{% trans "previous" %}</span>
+        <span class="visually-hidden">{% trans "previous" %}</span>
       </a>
     </li>
   {% else %}
     <li class="page-item disabled">
       <a class="page-link" href="#" tabindex="-1">
         <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">{% trans "previous" %}</span>
+        <span class="visually-hidden">{% trans "previous" %}</span>
       </a>
     </li>
   {% endif %}
@@ -58,7 +58,7 @@
     <li class="page-item active">
         <span class="page-link">
             {{ page_obj.number }}
-            <span class="sr-only">
+            <span class="visually-hidden">
                 {% trans "(current page)" %}
             </span>
         </span>
@@ -102,13 +102,13 @@
     <li class="page-item">
       <a href="?page={{ page_obj.next_page_number }}{{ getvars }}{{ hashtag }}" class="page-link next">
         <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">{% trans "next" %}</span>
+        <span class="visually-hidden">{% trans "next" %}</span>
       </a>
     </li>
   {% else %}
     <li class="page-item disabled">
       <a class="page-link" href="#" tabindex="-1">
-        <span class="sr-only">{% trans "next" %}</span>
+        <span class="visually-hidden">{% trans "next" %}</span>
         <span aria-hidden="true">&raquo;</span>
       </a>
     </li>

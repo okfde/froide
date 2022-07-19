@@ -27,7 +27,7 @@
           @loadChildren="loadChildren"></pb-filter-list>
       </li>
     </ul>
-    <small v-if="hasMore" class="text-right">
+    <small v-if="hasMore" class="text-end">
       <a href="#" @click.prevent="loadMore">{{ i18n.loadMore }}</a>
     </small>
   </div>

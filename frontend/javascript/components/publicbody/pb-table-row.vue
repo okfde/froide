@@ -10,7 +10,7 @@
     <td>
       {{ row.name }}
       <a :href="row.site_url" @click.stop class="info-link" target="_blank">
-        <span class="sr-only">Details</span
+        <span class="visually-hidden">Details</span
         ><i class="fa fa-info-circle" aria-hidden="true"></i>
       </a>
     </td>

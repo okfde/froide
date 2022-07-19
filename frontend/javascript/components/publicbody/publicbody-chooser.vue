@@ -2,7 +2,7 @@
   <div class="publicbody-chooser mb-3">
     <button
       v-if="!showSearch"
-      class="btn btn-sm btn-light float-right"
+      class="btn btn-sm btn-light float-end"
       @click.prevent="showSearch = true">
       {{ i18n.searchPublicBodyLabel }}
     </button>
@@ -15,20 +15,18 @@
           :placeholder="i18n.publicBodySearchPlaceholder"
           @keyup="triggerAutocomplete"
           @keydown.enter.prevent="triggerAutocomplete" />
-        <div class="input-group-append">
-          <button
-            type="button"
-            class="btn btn-outline-primary search-public_bodies-submit"
-            @click="triggerAutocomplete">
-            <i class="fa fa-search" />
-            {{ i18n.search }}
-          </button>
-        </div>
+        <button
+          type="button"
+          class="btn btn-outline-primary search-public_bodies-submit"
+          @click="triggerAutocomplete">
+          <i class="fa fa-search" />
+          {{ i18n.search }}
+        </button>
       </div>
     </div>
     <div v-if="searching" class="search-spinner">
       <div class="spinner-border" role="status">
-        <span class="sr-only">Loading...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
     <component :is="listView" :name="name" :scope="scope" :config="config" />

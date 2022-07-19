@@ -22,7 +22,7 @@
 
   a:link:after,
   a:visited:after {
-    content: '' !important;
+    content: "" !important;
   }
 
   #top-block {
@@ -82,7 +82,7 @@
   }
 
   .message-content {
-    a[data-toggle='collapse'] {
+    a[data-bs-toggle="collapse"] {
       display: none !important;
     }
     a:link,
@@ -96,7 +96,7 @@
       font-size: 0.8rem;
       letter-spacing: normal;
       color: #000;
-      content: '' attr(href) '' !important;
+      content: "" attr(href) "" !important;
     }
   }
 

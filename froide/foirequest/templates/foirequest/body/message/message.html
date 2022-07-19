@@ -32,12 +32,12 @@
         {# icons & timestamp #}
         <div class="d-flex flex-nowrap">
           {% if message.all_attachments %}
-            <span class="alpha-message__badge" data-toggle="tooltip" title="{% trans 'Has attachments' %}">
+            <span class="alpha-message__badge" data-bs-toggle="tooltip" title="{% trans 'Has attachments' %}">
               <span class="fa fa-paperclip"></span>
             </span>
           {% endif %}
           {% if comment_list %}
-            <span class="alpha-message__badge" data-toggle="tooltip" title="{% trans 'Has comments' %}">
+            <span class="alpha-message__badge" data-bs-toggle="tooltip" title="{% trans 'Has comments' %}">
               <span class="fa fa-comment-o"></span>
             </span>
           {% endif %}
@@ -48,32 +48,32 @@
             {% else %}
               {% blocktrans with kind=message.get_kind_display asvar kind_display %}sent via {{ kind }}{% endblocktrans %}
             {% endif %}
-            <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{{ kind_display }}">
+            <span class="alpha-message__badge alpha-message__badge--kind" data-bs-toggle="tooltip" title="{{ kind_display }}">
               <span class="fa fa-{{ message.kind_icon }}"></span>
             </span>
           {% endif %}
 
           {% if message.request|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.fails_authenticity %}
-            <span class="alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
+            <span class="alpha-message__badge alpha-message__badge--error" data-bs-toggle="tooltip" title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
               <span class="fa fa-user-secret"></span>
             </span>
           {% endif %}
 
           {% if message.is_escalation_message %}
-            <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
+            <span class="alpha-message__badge alpha-message__badge--kind" data-bs-toggle="tooltip" title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
               <span class="fa fa-shield"></span>
             </span>
           {% endif %}
 
           {% if message.content_hidden %}
-            <span class="alpha-message__badge alpha-message__badge--kind" data-toggle="tooltip" title="{% blocktrans %}This message is not yet public.{% endblocktrans %}">
+            <span class="alpha-message__badge alpha-message__badge--kind" data-bs-toggle="tooltip" title="{% blocktrans %}This message is not yet public.{% endblocktrans %}">
               <span class="fa fa-lock"></span>
             </span>
           {% endif %}
 
           {% get_delivery_status message as delivery_status %}
           {% if delivery_status.is_failed %}
-            <span class="alpha-message__badge alpha-message__badge--error" data-toggle="tooltip" title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
+            <span class="alpha-message__badge alpha-message__badge--error" data-bs-toggle="tooltip" title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
               <span class="fa fa-bolt"></span>
             </span>
           {% endif %}
@@ -109,7 +109,7 @@
       <div class="alpha-message__details smaller">
         {# recipient #}
         {% if message.recipient_public_body.name %}
-          <span class="text-gray-600 mr-1">
+          <span class="text-gray-600 me-1">
             {% blocktrans %}To{% endblocktrans %}
             {{ message.recipient_public_body.name }}
           </span>
@@ -178,10 +178,10 @@
         <button
           type="button"
           class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first "
-          data-toggle="collapse"
+          data-bs-toggle="collapse"
           aria-expanded="false"
           aria-controls="comments-{{ message.id }}"
-          data-target="#comments-{{ message.id }}"
+          data-bs-target="#comments-{{ message.id }}"
           data-scrollto="comments-{{ message.id }}"
           data-scrolltoblock="end"
         >

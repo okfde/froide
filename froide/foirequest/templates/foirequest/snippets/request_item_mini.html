@@ -1,12 +1,12 @@
 {% load i18n %}
 {% load humanize %}
 
-<div class="request-link mb-0 d-flex flex-column">
+<div class="mb-0 d-flex flex-column">
   {% if object.status_representation %}
-    <a class="request-link__icon" href="{{ object.url }}" title="{{ object.readable_status }}">
+    <a class="flex-shrink-0 " href="{{ object.url }}" title="{{ object.readable_status }}">
     </a>
   {% endif %}
-  <div class="request-link__wrapper">
+  <div class="flex-grow-1">
     <span class="mt-0 mb-1">
       <a href="{{ object.url }}">
         <span class="small-icon status-{{ object.status_representation }} {% if object.has_fee %}--has-fee{% endif %}"></span>

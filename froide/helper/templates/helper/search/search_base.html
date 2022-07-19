@@ -23,11 +23,9 @@
           <div class="col-md-12">
             <div class="input-group">
               {{ form.q }}
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-outline-primary">
-                  {% trans "Search" %}
-                </button>
-              </div>
+              <button type="submit" class="btn btn-outline-primary">
+                {% trans "Search" %}
+              </button>
             </div>
           </div>
         </div>
@@ -39,7 +37,7 @@
     {% endblock %}
 
     {% block search_results_label %}
-      <div class="mb-4 text-right">
+      <div class="mb-4 text-end">
         <p>
           {% if filtered_objects %}
             {% blocktrans with request_count=page_obj.paginator.formatted_count count counter=page_obj.paginator.count %}
@@ -58,7 +56,7 @@
 
     <ul class="list-unstyled">
       {% for object in object_list %}
-        <li class="media">
+        <li class="d-flex">
           {% if object_template %}
             {% include object_template with object=object %}
           {% else %}
