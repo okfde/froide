@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 import django_filters
 
 from froide.helper.search.filters import BaseSearchFilterSet
+from froide.helper.widgets import BootstrapSelect
 
 from .models import Category, Classification, Jurisdiction, PublicBody
 
@@ -22,25 +23,24 @@ class PublicBodyFilterSet(BaseSearchFilterSet):
         queryset=Jurisdiction.objects.get_visible(),
         to_field_name="slug",
         empty_label=_("all jurisdictions"),
-        widget=forms.Select(
-            attrs={"label": _("jurisdiction"), "class": "form-control"}
-        ),
+        label=_("jurisdiction"),
+        widget=BootstrapSelect,
         method="filter_jurisdiction",
     )
     category = django_filters.ModelChoiceFilter(
         queryset=Category.objects.get_category_list(),
         to_field_name="slug",
         empty_label=_("all categories"),
-        widget=forms.Select(attrs={"label": _("category"), "class": "form-control"}),
+        label=_("category"),
+        widget=BootstrapSelect,
         method="filter_category",
     )
     classification = django_filters.ModelChoiceFilter(
         queryset=Classification.objects.get_list(),
         to_field_name="slug",
         empty_label=_("all classifications"),
-        widget=forms.Select(
-            attrs={"label": _("classification"), "class": "form-control"}
-        ),
+        label=_("classification"),
+        widget=BootstrapSelect,
         method="filter_classification",
     )
 

@@ -14,6 +14,7 @@ import icalendar
 from taggit.models import Tag
 
 from froide.accesstoken.utils import get_user_by_token_or_404
+from froide.helper.widgets import BootstrapSelect
 from froide.publicbody.models import Jurisdiction, PublicBody
 
 from ..documents import FoiRequestDocument
@@ -45,7 +46,8 @@ class AccountRequestFilterSet(BaseFoiRequestFilterSet):
     project = django_filters.ModelChoiceFilter(
         queryset=None,
         empty_label=_("all projects"),
-        widget=forms.Select(attrs={"label": _("project"), "class": "form-control"}),
+        label=_("project"),
+        widget=BootstrapSelect,
         method="filter_project",
     )
 

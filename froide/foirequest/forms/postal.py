@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
 from froide.helper.storage import make_unique_filename
+from froide.helper.widgets import BootstrapRadioSelect
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.forms import FileUploaderField
@@ -18,7 +19,7 @@ from .message import MessageEditMixin
 
 class PostalUploadForm(MessageEditMixin, forms.Form):
     sent = forms.TypedChoiceField(
-        widget=forms.RadioSelect,
+        widget=BootstrapRadioSelect,
         choices=(
             (0, _("I have received the letter")),
             (1, _("I have sent the letter")),
