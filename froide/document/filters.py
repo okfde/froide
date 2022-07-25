@@ -13,7 +13,7 @@ from froide.campaign.models import Campaign
 from froide.foirequest.auth import get_read_foirequest_queryset
 from froide.helper.auth import get_read_queryset
 from froide.helper.search.filters import BaseSearchFilterSet
-from froide.helper.widgets import DateRangeWidget
+from froide.helper.widgets import BootstrapSelect, DateRangeWidget
 from froide.publicbody.models import Jurisdiction, PublicBody
 
 from .models import Document, DocumentCollection
@@ -66,16 +66,16 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         null_value="-",
         empty_label=_("all/no campaigns"),
         null_label=_("no campaign"),
-        widget=forms.Select(attrs={"label": _("campaign"), "class": "form-control"}),
+        label=_("campaign"),
+        widget=BootstrapSelect,
         method="filter_campaign",
     )
     jurisdiction = django_filters.ModelChoiceFilter(
         queryset=Jurisdiction.objects.get_visible(),
         to_field_name="slug",
         empty_label=_("all jurisdictions"),
-        widget=forms.Select(
-            attrs={"label": _("jurisdiction"), "class": "form-control"}
-        ),
+        label=_("jurisdiction"),
+        widget=BootstrapSelect,
         method="filter_jurisdiction",
     )
     tag = django_filters.ModelChoiceFilter(

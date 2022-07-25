@@ -16,7 +16,7 @@ from froide.helper.auth import get_read_queryset
 from froide.helper.form_utils import JSONMixin
 from froide.helper.forms import TagObjectForm
 from froide.helper.text_utils import redact_plaintext, slugify
-from froide.helper.widgets import BootstrapRadioSelect, PriceInput
+from froide.helper.widgets import BootstrapRadioSelect, BootstrapSelect, PriceInput
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 
@@ -270,7 +270,7 @@ class FoiRequestStatusForm(forms.Form):
         label=_("Resolution"),
         choices=[("", _("No outcome yet"))] + FoiRequest.RESOLUTION.choices,
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=BootstrapSelect,
         help_text=_("How would you describe the current outcome of this request?"),
     )
     if payment_possible:
@@ -296,9 +296,10 @@ class FoiRequestStatusForm(forms.Form):
             label=_("Refusal Reason"),
             choices=[("", _("No or other reason given"))] + refusal_choices,
             required=False,
-            widget=forms.Select(attrs={"class": "form-control"}),
+            widget=BootstrapSelect,
             help_text=_(
-                "When you are (partially) denied access to information, the Public Body should always state the reason."
+                "When you are (partially) denied access to information, "
+                "the Public Body should always state the reason."
             ),
         )
 

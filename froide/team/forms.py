@@ -3,6 +3,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.widgets import BootstrapSelect
+
 from .models import Team, TeamMembership
 from .services import TeamService
 
@@ -27,7 +29,11 @@ class CreateTeamForm(forms.Form):
 
 
 class TeamMemberChangeRoleForm(forms.Form):
-    role = forms.ChoiceField(choices=TeamMembership.ROLE.choices, label="")
+    role = forms.ChoiceField(
+        choices=TeamMembership.ROLE.choices,
+        label="",
+        widget=BootstrapSelect,
+    )
 
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.pop("owner")
@@ -85,7 +91,7 @@ class TeamInviteForm(forms.Form):
 
 
 class AssignTeamForm(forms.Form):
-    team = forms.ModelChoiceField(queryset=None)
+    team = forms.ModelChoiceField(queryset=None, widget=BootstrapSelect)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")

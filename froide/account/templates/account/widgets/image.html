@@ -1,7 +1,7 @@
 {% load i18n %}
 
 {% if widget.is_initial %}<img src="{{ widget.value.url }}" class="img-fluid" alt="{% translate 'profile picture' %}">
-<div class="form-check">
+<div class="form-check form-check-reverse">
     <input class="form-check-input" type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
     <label class="form-check-label" for="{{ widget.checkbox_id }}">{% translate "Delete?" %}</label>
 </div>

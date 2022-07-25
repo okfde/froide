@@ -6,7 +6,7 @@ from taggit.forms import TagField, TagWidget
 
 from froide.helper.auth import get_write_queryset
 from froide.helper.text_utils import slugify
-from froide.helper.widgets import BootstrapCheckboxInput
+from froide.helper.widgets import BootstrapCheckboxInput, BootstrapSelect
 
 from .models import Document, DocumentCollection
 from .tasks import store_document_upload
@@ -40,7 +40,7 @@ class DocumentUploadForm(forms.Form):
         initial=settings.LANGUAGE_CODE,
         label=_("Language"),
         help_text=_("Choose the dominant language of the documents."),
-        widget=forms.Select(attrs={"class": "form-control"}),
+        widget=BootstrapSelect,
     )
 
     def __init__(self, request, *args, **kwargs):

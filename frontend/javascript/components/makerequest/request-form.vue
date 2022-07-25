@@ -284,15 +284,15 @@
           class="row mt-2">
           <div class="col-md-8">
             <div class="form-check">
-              <label class="form-label">
-                <input
-                  id="id_private"
-                  v-model="userPrivate"
-                  type="checkbox"
-                  name="private" />
+              <input
+                id="id_private"
+                class="form-check-input"
+                v-model="userPrivate"
+                type="checkbox"
+                name="private" />
+              <label class="form-check-label">
                 {{ userformFields.private.label }}
               </label>
-              <br />
               <p class="help-block" v-html="userformFields.private.help_text" />
             </div>
           </div>

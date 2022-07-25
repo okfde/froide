@@ -15,15 +15,34 @@ class BootstrapChoiceMixin(object):
     def __init__(self, *args, **kwargs) -> None:
         kwargs.setdefault("attrs", {})
         kwargs["attrs"].update({"class": "form-check-input"})
-        super(BootstrapChoiceMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class BootstrapCheckboxInput(BootstrapChoiceMixin, forms.CheckboxInput):
     pass
 
 
+class BootstrapCheckboxSelectMultiple(
+    BootstrapChoiceMixin, forms.CheckboxSelectMultiple
+):
+    pass
+
+
 class BootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
+    template_name = "helper/forms/widgets/radio.html"
     option_template_name = "helper/forms/widgets/radio_option.html"
+
+
+class InlineBootstrapRadioSelect(BootstrapChoiceMixin, forms.RadioSelect):
+    template_name = "helper/forms/widgets/radio.html"
+    option_template_name = "helper/forms/widgets/radio_option_inline.html"
+
+
+class BootstrapSelect(forms.Select):
+    def __init__(self, *args, **kwargs) -> None:
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"].update({"class": "form-select"})
+        super().__init__(*args, **kwargs)
 
 
 class BootstrapFileInput(forms.FileInput):

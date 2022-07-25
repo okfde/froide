@@ -12,7 +12,7 @@ from taggit.models import Tag
 from froide.account.models import User
 from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
-from froide.helper.widgets import DateRangeWidget
+from froide.helper.widgets import BootstrapSelect, DateRangeWidget
 from froide.publicbody.models import Category, Classification, Jurisdiction, PublicBody
 
 from .models import FoiRequest
@@ -171,26 +171,25 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     jurisdiction = django_filters.ModelChoiceFilter(
         queryset=Jurisdiction.objects.get_visible(),
         to_field_name="slug",
+        label=_("jurisdiction"),
         empty_label=_("all jurisdictions"),
-        widget=forms.Select(
-            attrs={"label": _("jurisdiction"), "class": "form-control"}
-        ),
+        widget=BootstrapSelect,
         method="filter_jurisdiction",
     )
     category = django_filters.ModelChoiceFilter(
         queryset=Category.objects.get_category_list(),
         to_field_name="slug",
+        label=_("category"),
         empty_label=_("all categories"),
-        widget=forms.Select(attrs={"label": _("category"), "class": "form-control"}),
+        widget=BootstrapSelect,
         method="filter_category",
     )
     classification = django_filters.ModelChoiceFilter(
         queryset=Classification.objects.all(),
         to_field_name="slug",
         empty_label=_("all classifications"),
-        widget=forms.Select(
-            attrs={"label": _("classification"), "class": "form-control"}
-        ),
+        label=_("classification"),
+        widget=BootstrapSelect,
         method="filter_classification",
     )
     campaign = django_filters.ModelChoiceFilter(
@@ -199,7 +198,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         null_value="-",
         empty_label=_("all/no campaigns"),
         null_label=_("no campaign"),
-        widget=forms.Select(attrs={"label": _("campaign"), "class": "form-control"}),
+        label=_("campaign"),
+        widget=BootstrapSelect,
         method="filter_campaign",
     )
     tag = django_filters.ModelChoiceFilter(
@@ -237,7 +237,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         ],
         label=_("sort"),
         empty_label=_("default sort"),
-        widget=forms.Select(attrs={"label": _("sort"), "class": "form-control"}),
+        widget=BootstrapSelect,
         method="add_sort",
     )
 
