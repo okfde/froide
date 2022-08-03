@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-28 11:19+0200\n"
-"PO-Revision-Date: 2022-06-30 13:21+0200\n"
+"POT-Creation-Date: 2022-08-03 23:41+0200\n"
+"PO-Revision-Date: 2022-08-03 23:42+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -25,27 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
-
-#: docs/_build/html/_sources/theming.txt
-msgid ""
-"Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-"\">the Open Knowledge Foundation</a>."
-msgstr ""
-"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/spenden/"
-"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
-
-#: docs/_build/html/theming.html
-msgid ""
-"Froide is a free and Open Source Project by &lt;a href=&quot;http://www.okfn."
-"org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
-msgstr ""
-"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
-"\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
-
-#: froide/_local_settings.py froide/settings.py
-msgid "German"
-msgstr "Deutsch"
+"X-Generator: Poedit 3.1.1\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -1906,8 +1886,12 @@ msgid "jurisdiction"
 msgstr "Zuständigkeit"
 
 #: froide/document/forms.py
-msgid "Add all to collection with this title"
-msgstr "Alle Dokumente zu einer Sammlung mit diesem Titel hinzufügen"
+msgid "Add all to collection"
+msgstr "Alle zur Sammlung hinzufügen"
+
+#: froide/document/forms.py
+msgid "Or add all to new collection with this title"
+msgstr "Oder füge alle zu einer Sammlung mit diesem Titel hinzu"
 
 #: froide/document/forms.py
 msgid "Leave empty and no collection will be created"
@@ -3319,6 +3303,10 @@ msgstr "Telefonanruf"
 #: froide/foirequest/models/message.py
 msgid "visit in person"
 msgstr "Besuch in Person"
+
+#: froide/foirequest/models/message.py
+msgid "automatically imported"
+msgstr "automatischem Import"
 
 #: froide/foirequest/models/message.py
 msgid "has message been sent?"
@@ -6563,7 +6551,6 @@ msgid "Attachment approved."
 msgstr "Anhang veröffentlicht."
 
 #: froide/foirequest/views/attachment.py
-#| msgid "%d request(s) have been marked as refused."
 msgid "Attachment has been marked as moderated."
 msgstr "Anhang wurde als moderiert markiert."
 
@@ -9671,6 +9658,10 @@ msgid "Finnish (Finland)"
 msgstr "Finnisch (Finnland)"
 
 #: froide/settings.py
+msgid "German"
+msgstr "Deutsch"
+
+#: froide/settings.py
 msgid "Danish (Denmark)"
 msgstr "Dänisch (Dänemark)"
 
@@ -10876,6 +10867,20 @@ msgstr "brief/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+#~ "\">the Open Knowledge Foundation</a>."
+#~ msgstr ""
+#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
+#~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
+
+#~ msgid ""
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
+#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ msgstr ""
+#~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
+#~ "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
 #~ msgid "Possible Spam Mail received"
 #~ msgstr "Mögliche Spam-E-Mail erhalten"
