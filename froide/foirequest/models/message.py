@@ -60,6 +60,7 @@ class MessageKind(models.TextChoices):
     UPLOAD = ("upload", _("upload"))
     PHONE = ("phone", _("phone call"))
     VISIT = ("visit", _("visit in person"))
+    IMPORT = ("import", _("automatically imported"))
 
 
 MESSAGE_KIND_ICONS = {
@@ -70,6 +71,7 @@ MESSAGE_KIND_ICONS = {
     MessageKind.UPLOAD: "download",
     MessageKind.PHONE: "phone",
     MessageKind.VISIT: "handshake-o",
+    MessageKind.IMPORT: "cloud-download",
 }
 
 
