@@ -296,6 +296,11 @@ class MailTest(MailTestMixin, TestCase):
         self.assertIn(" ( https://", mail.body)
         self.assertIn("*peter.mueller@kreis-steinfurt.de*", mail.body)
 
+    def test_invalid_mail_address(self):
+        with open(p("test_mail_14.txt"), "rb") as f:
+            mail = parse_email(f)
+            self.assertEqual('john.doe@example.com', mail.to[0][1])
+
 
 class DeferredMessageTest(TestCase):
     def setUp(self):
