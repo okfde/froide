@@ -171,6 +171,7 @@ class MakeRequestView(FormView):
                 ],
                 # Translators: not url
                 "requests": _("requests"),
+                "close": _("close"),
                 "makeRequest": _("make request"),
                 "writingRequestTo": _("You are writing a request to"),
                 "toMultiPublicBodies": _("To: {count} public bodies").format(
@@ -221,7 +222,10 @@ class MakeRequestView(FormView):
                 "subject": _("Subject"),
                 "defaultLetterStart": _("Please send me the following information:"),
                 "warnFullText": _(
-                    "Watch out! You are requesting information across jurisdictions! If you write the full text, we cannot customize it according to applicable laws. Instead you have to write the text to be jurisdiction agnostic."
+                    "Watch out! You are requesting information across jurisdictions! "
+                    "If you write the full text, we cannot customize it according to "
+                    "applicable laws. Instead you have to write the text to be "
+                    "jurisdiction agnostic."
                 ),
                 "resetFullText": _("Reset text to template version"),
                 "savedFullTextChanges": _("Your previous customized text"),
