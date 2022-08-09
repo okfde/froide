@@ -1,5 +1,6 @@
 import os
 import re
+from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
 
@@ -111,17 +112,16 @@ class Base(Configuration):
 
     # ############## PATHS ###############
 
-    PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+    PROJECT_ROOT = Path(__file__).resolve().parent
+    BASE_DIR = PROJECT_ROOT.parent
 
-    LOCALE_PATHS = [os.path.abspath(os.path.join(PROJECT_ROOT, "..", "locale"))]
+    LOCALE_PATHS = [BASE_DIR / "locale"]
 
     GEOIP_PATH = None
 
     # Absolute filesystem path to the directory that will hold user-uploaded files.
     # Example: "/home/media/media.lawrence.com/media/"
-    MEDIA_ROOT = values.Value(
-        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "files"))
-    )
+    MEDIA_ROOT = values.Value(BASE_DIR / "files")
 
     # URL that handles the media served from MEDIA_ROOT. Make sure to use a
     # trailing slash.
@@ -137,12 +137,21 @@ class Base(Configuration):
     # Don't put anything in this directory yourself; store your static files
     # in apps' "static/" subdirectories and in STATICFILES_DIRS.
     # Example: "/home/media/media.lawrence.com/static/"
-    STATIC_ROOT = values.Value(
-        os.path.abspath(os.path.join(PROJECT_ROOT, "..", "public"))
-    )
+    STATIC_ROOT = values.Value(BASE_DIR / "public")
+
+    FRONTEND_BUILD_DIR = BASE_DIR / "build"
+    FRONTEND_SERVER_URL = "http://localhost:5173/static/"
+
+    @property
+    def FRONTEND_DEBUG(self):
+        return self.DEBUG
 
     # Additional locations of static files
-    STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "static"),)
+
+    @property
+    def STATICFILES_DIRS(self):
+        return [self.BASE_DIR / "froide" / "static", self.FRONTEND_BUILD_DIR]
+
     # ########## URLs #################
 
     ROOT_URLCONF = values.Value("froide.urls")
@@ -197,7 +206,7 @@ class Base(Configuration):
         {
             "BACKEND": "django.template.backends.django.DjangoTemplates",
             "DIRS": [
-                os.path.join(PROJECT_ROOT, "templates"),
+                PROJECT_ROOT / "templates",
             ],
             "OPTIONS": {
                 "debug": values.BooleanValue(DEBUG),
@@ -681,7 +690,7 @@ class TestBase(Base):
 
     @property
     def MEDIA_ROOT(self):
-        return os.path.abspath(os.path.join(super().PROJECT_ROOT, "tests", "testdata"))
+        return super().PROJECT_ROOT / "tests" / "testdata"
 
     ALLOWED_HOSTS = ("localhost", "testserver")
 

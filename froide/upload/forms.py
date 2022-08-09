@@ -5,6 +5,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
+from froide.helper.templatetags.frontend import get_frontend_build
+
 
 def get_uppy_i18n():
     return {
@@ -138,14 +140,14 @@ class FileUploader(forms.widgets.Input):
     input_type = "text"
     template_name = "upload/widgets/file_uploader.html"
 
-    class Media:
-        extend = False
-        js = ("js/fileuploader.js",)
-        css = {"screen": ("css/fileuploader.css",)}
-
     def __init__(self, allowed_file_types=None, *args, **kwargs):
         self.allowed_file_types = allowed_file_types
         super().__init__(*args, **kwargs)
+
+    @property
+    def media(self):
+        build_info = get_frontend_build("fileuploader.js")
+        return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
 
     def value_from_datadict(self, data, files, name):
         return data.getlist(name)

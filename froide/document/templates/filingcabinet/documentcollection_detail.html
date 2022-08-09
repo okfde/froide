@@ -1,6 +1,7 @@
 {% extends "filingcabinet/documentcollection_detail.html" %}
 
 {% load markup %}
+{% load frontend %}
 
 {% block navbar %}
   {% include "header_reduced.html" %}
@@ -16,3 +17,9 @@
     {% endif %}
 </div>
 {% endblock documentcollection_top %}
+
+
+{% block scripts %}
+  {{ block.super }}
+  {% addfrontendbuild "filingcabinet.js" %}
+{% endblock %}

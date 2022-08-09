@@ -2,13 +2,7 @@
 
 {% load i18n %}
 {% load static %}
-
-{% load block_helper %}
-
-{% block css %}
-  {% addtoblock "css" %}<link href="{% static 'css/main.css' %}" rel="stylesheet">{% endaddtoblock %}
-  {{ block.super }}
-{% endblock %}
+{% load frontend %}
 
 
 {% block body_tag %}
@@ -48,6 +42,7 @@
 {% endblock body_tag %}
 
 {% block scripts %}
-  {% addtoblock "js" %}<script async src="{% static 'js/main.js' %}"></script>{% endaddtoblock %}
+  {% renderfrontendhmr %}
+  {% addfrontendbuild "main.js" %}
   {{ block.super }}
 {% endblock %}

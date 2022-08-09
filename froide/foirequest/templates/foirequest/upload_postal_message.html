@@ -3,6 +3,7 @@
 {% load i18n %}
 {% load static %}
 {% load block_helper %}
+{% load frontend %}
 {% load form_helper %}
 
 {% block title %}{% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}{% endblock %}
@@ -57,22 +58,9 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/common.js' %}" defer></script>
-  {% endaddtoblock %}
-  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/common.css' %}"/>{% endaddtoblock %}
 
-  {% addtoblock "js" %}
-    {{ form.media.js }}
-  {% endaddtoblock %}
-  {% addtoblock "css" %}
-    {{ form.media.css }}
-  {% endaddtoblock %}
-
-  {# For set status #}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/request-alpha.js' %}" defer></script>
-  {% endaddtoblock %}
-  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/request-alpha.css' %}"/>{% endaddtoblock %}
+  {% addfrontendbuild "request.js" %}
+  {% addfrontendbuild "publicbody.js" %}
+  {% addfrontendbuild "fileuploader.js" %}
 
   {% endblock %}

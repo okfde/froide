@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% load i18n %}
-{% load block_helper %}
 {% load static %}
+{% load frontend %}
 
 {% block title %}{% trans "Moderation dashboard" %}{% endblock %}
 
@@ -27,16 +27,7 @@
 
 {% block scripts %}
   {{ block.super }}
- {% addtoblock "js" %}
-  <script async src="{% static 'js/common.js' %}"></script>
-  {% endaddtoblock %}
-  {% addtoblock "js" %}
-  <script async src="{% static 'js/moderation.js' %}"></script>
-  {% endaddtoblock %}
-  {% addtoblock "css" %}
-  <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
-  {% endaddtoblock %}
-  {% addtoblock "css" %}
-  <link rel="stylesheet" href="{% static 'css/moderation.css' %}"/>
-  {% endaddtoblock %}
+
+  {% addfrontendbuild "moderation.js" %}
+
 {% endblock %}
