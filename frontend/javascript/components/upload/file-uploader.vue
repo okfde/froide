@@ -25,6 +25,9 @@ import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
 
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
+
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
@@ -108,7 +111,7 @@ export default {
       }
     }
 
-    this.uppy = Uppy({
+    this.uppy = new Uppy({
       autoProceed: this.autoProceed,
       locale: uppyLocale,
       restrictions: {
@@ -155,8 +158,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '@uppy/core/dist/style.css';
-@import '@uppy/dashboard/dist/style.css';
-</style>
