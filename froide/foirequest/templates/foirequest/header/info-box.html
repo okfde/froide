@@ -36,7 +36,7 @@
 
     {# edit button #}
     {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
-      <div id="set-status" class="bg-blue-10 px-4 py-2">
+      <div id="set-status" class="bg-blue-10 px-4 py-2 d-print-none">
         <a href="#" class="info-box__edit-button">
           <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit request status" %}</span>
           <span class="{% if active_tab != 'set-status' %}d-none{% endif %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
@@ -63,7 +63,7 @@
 
       {# Admin/moderation links #}
       {% if object|can_mark_not_foi:request %}
-        <li class="info-box__list-item info-box__list-item--inset bg-blue-200 d-flex my-0 border-top border-blue-20 py-2">
+        <li class="info-box__list-item info-box__list-item--inset bg-blue-200 d-flex my-0 border-top border-blue-20 py-2 d-print-none">
           <ul class="list-inline">
             {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
               <li class="list-inline-item">
@@ -120,7 +120,7 @@
             {% endif %}
           </span>
           {% if object|can_write_foirequest:request %}
-            <div class="d-none" id="request-duedate-form">
+            <div class="d-none d-print-none" id="request-duedate-form">
               <small class="text-mute">
                 {% blocktranslate with unit=object.law.get_max_response_time_unit_display %}
                   Extend deadline by a number of {{ unit }}.
@@ -149,7 +149,7 @@
             {{ object.costs|floatformat:2 }} {{ froide.currency }}
 
             {% if object|can_write_foirequest:request %}
-              <a href="#" class="info-box__edit-link">
+              <a href="#" class="info-box__edit-link d-print-none">
                 <i class="fa fa-pencil" aria-hidden="true"></i>
                 <span class="visually-hidden">{% trans "Edit costs" %}</span>
               </a>
@@ -161,14 +161,14 @@
       {# follow request #}
       {% block followers %}
         {% if object.is_public %}
-          <li class="info-box__list-item info-box__list-item--has-divider">
+          <li class="info-box__list-item info-box__list-item--has-divider d-print-none">
             {% show_follow "request" object %}
           </li>
         {% endif %}
       {% endblock followers %}
 
       {% if object.is_public %}
-        <li id="share-links" class="info-box__list-item info-box__list-item--has-divider">
+        <li id="share-links" class="info-box__list-item info-box__list-item--has-divider d-print-none">
 
           {# copy url #}
           <div class="mb-2 mb-lg-3">
@@ -201,7 +201,7 @@
       {% endif %}
 
       {# rss/download links #}
-      <li id="download-links" class="info-box__list-item">
+      <li id="download-links" class="info-box__list-item d-print-none">
         <div class="d-flex justify-content-between">
           {% if object.public %}
             <a href="{% url 'foirequest-feed' slug=object.slug %}">
