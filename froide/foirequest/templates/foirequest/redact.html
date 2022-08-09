@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 
+{% load frontend %}
 {% load block_helper %}
 
 {% block title %}{% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}{% endblock %}
@@ -118,18 +119,9 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
-  {% endaddtoblock %}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/redact.js' %}" charset="utf-8"></script>
-  {% endaddtoblock %}
-  {% addtoblock "css" %}
-    <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
-  {% endaddtoblock %}
-  {% addtoblock "css" %}
-    <link rel="stylesheet" href="{% static 'css/redact.css' %}"/>
-  {% endaddtoblock %}
+
+  {% addfrontendbuild "redact.js" %}
+
   {% if not attachment.file %}
     {% addtoblock "css" %}
       <meta http-equiv="refresh" content="15">

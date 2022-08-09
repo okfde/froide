@@ -2,7 +2,7 @@
 
 {% load i18n %}
 {% load static %}
-{% load block_helper %}
+{% load frontend %}
 
 {% block title %}{% blocktrans with title=object.title %}Manage attachments for “{{ title }}”{% endblocktrans %}{% endblock %}
 
@@ -96,16 +96,6 @@
     </p>
   </div>
 
-{% addtoblock "js" %}
-  <script src="{% static 'js/common.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock "js" %}
-  <script src="{% static 'js/docupload.js' %}" charset="utf-8"></script>
-{% endaddtoblock %}
-{% addtoblock "css" %}
-  <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
-{% endaddtoblock %}
-{% addtoblock "css" %}
-  <link rel="stylesheet" href="{% static 'css/docupload.css' %}"/>
-{% endaddtoblock %}
+  {% addfrontendbuild "docupload.js" %}
+
 {% endblock %}

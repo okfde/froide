@@ -1,8 +1,8 @@
 {% extends "filingcabinet/document_detail.html" %}
 
 {% load i18n %}
-{% load static %}
 {% load markup %}
+{% load frontend %}
 {% load document_tags %}
 
 {% block title %}{{ object.title }} - {{ SITE_NAME }}{% endblock %}
@@ -54,3 +54,8 @@
     {% endif %}
 </div>
 {% endblock document_top %}
+
+{% block scripts %}
+  {{ block.super }}
+  {% addfrontendbuild "filingcabinet.js" %}
+{% endblock %}

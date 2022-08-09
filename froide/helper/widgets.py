@@ -10,6 +10,8 @@ from django_filters.widgets import RangeWidget
 from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
+from froide.helper.templatetags.frontend import get_frontend_build
+
 
 class BootstrapChoiceMixin(object):
     def __init__(self, *args, **kwargs) -> None:
@@ -69,16 +71,14 @@ class PriceInput(forms.TextInput):
 class TagAutocompleteWidget(TagWidget):
     template_name = "helper/forms/widgets/tag_autocomplete.html"
 
-    class Media:
-
-        js = ("js/tagautocomplete.js",)
-
-        css_list = ["css/tagautocomplete.css"]
-        css = {"screen": css_list}
-
     def __init__(self, *args, **kwargs) -> None:
         self.autocomplete_url: Optional[str] = kwargs.pop("autocomplete_url", None)
         super().__init__(*args, **kwargs)
+
+    @property
+    def media(self):
+        build_info = get_frontend_build("tagautocomplete.js")
+        return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
 
     def value_from_datadict(
         self, data: QueryDict, files: MultiValueDict, name: str

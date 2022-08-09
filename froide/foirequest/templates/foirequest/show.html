@@ -7,6 +7,7 @@
 {% load team_tags %}
 {% load form_helper %}
 {% load block_helper %}
+{% load frontend %}
 {% load humanize %}
 
 {% block title %}{{ object.title }}{% endblock %}
@@ -23,7 +24,7 @@
   <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="og:title" content="{{ object.title }}">
   <meta property="og:description" content="{{ object.description }}">
-  
+
 
   {# Twitter #}
   <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
@@ -84,16 +85,7 @@
 {% block scripts %}
   {{ block.super }}
   {% if object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
-    {% addtoblock "js" %}
-      {% with object.get_set_tags_form as set_tags_form %}
-        {{ set_tags_form.media.js }}
-      {% endwith %}
-    {% endaddtoblock %}
-    {% addtoblock "css" %}
-      {% with object.get_set_tags_form as set_tags_form %}
-        {{ set_tags_form.media.css }}
-      {% endwith %}
-    {% endaddtoblock %}
+    {% addfrontendbuild "tagautocomplete.js" %}
 
     {% if foirequest_requestpage_tour %}
       {% addtoblock "js" %}
@@ -106,26 +98,11 @@
       {% endaddtoblock %}
     {% endif %}
 
+    {% addfrontendbuild "publicbody.js" %}
+    {% addfrontendbuild "messageredaction.js" %}
 
-    {% addtoblock "js" %}
-      <script src="{% static 'js/common.js' %}"></script>
-    {% endaddtoblock %}
-    {% addtoblock "js" %}
-      <script src="{% static 'js/publicbody.js' %}" defer></script>
-    {% endaddtoblock %}
-    {% addtoblock "js" %}
-      <script src="{% static 'js/messageredaction.js' %}" defer></script>
-    {% endaddtoblock %}
-    {% addtoblock "css" %}
-      <link rel="stylesheet" href="{% static 'css/messageredaction.css' %}"/>
-    {% endaddtoblock %}
   {% endif %}
 
-  {% addtoblock "css" %}
-    <link rel="stylesheet" href="{% static 'css/request-alpha.css' %}"/>
-  {% endaddtoblock %}
+  {% addfrontendbuild "request.js" %}
 
-  {% addtoblock "js" %}
-    <script src="{% static 'js/request-alpha.js' %}" defer></script>
-  {% endaddtoblock %}
 {% endblock %}

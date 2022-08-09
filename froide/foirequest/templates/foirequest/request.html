@@ -5,6 +5,7 @@
 {% load searchtags %}
 {% load block_helper %}
 {% load form_helper %}
+{% load frontend %}
 
 {% block title %}{% trans "Make a Freedom of Information request" %} - {{ SITE_NAME }}{% endblock %}
 
@@ -164,18 +165,6 @@
 
     {% block after_form %}{% endblock %}
 
-{% addtoblock "js" %}
-  <script src="{% static 'js/common.js' %}"></script>
-{% endaddtoblock %}
-{% addtoblock "js" %}
-  <script src="{% static 'js/makerequest.js' %}" charset="utf-8"></script>
-{% endaddtoblock %}
-
-{% addtoblock "css" %}
-  <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
-{% endaddtoblock %}
-{% addtoblock "css" %}
-  <link rel="stylesheet" href="{% static 'css/makerequest.css' %}">
-{% endaddtoblock %}
+  {% addfrontendbuild "makerequest.js" %}
 
 {% endblock %}

@@ -2,7 +2,7 @@
 
 {% load i18n %}
 {% load static %}
-{% load block_helper %}
+{% load frontend %}
 {% load form_helper %}
 
 {% block navbar %}
@@ -40,10 +40,5 @@
 
 {% block scripts %}
   {{ block.super }}
-  {% addtoblock "js" %}
-    <script src="{% static 'js/common.js' %}" defer></script>
-  {% endaddtoblock %}
-  {% addtoblock "js" %}<script async src="{% static 'js/document.js' %}"></script>{% endaddtoblock %}
-  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/common.css' %}"/>{% endaddtoblock %}
-  {% addtoblock "css" %}<link rel="stylesheet" href="{% static 'css/document.css' %}"/>{% endaddtoblock %}
+  {% addfrontendbuild "document.js" %}
 {% endblock %}
