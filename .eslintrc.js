@@ -7,6 +7,7 @@ module.exports = {
   plugins: ['prettier', 'html'],
   ignorePatterns: ['node_modules/**', '**/static/**'],
   rules: {
+    indent: 'off',
     'prettier/prettier': 'error',
     'space-before-function-paren': [
       'error',
