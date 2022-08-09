@@ -1,4 +1,4 @@
-import '../../styles/components/request/index.scss'
+import '../styles/components/request/index.scss'
 import Message from './components/request/Message'
 import Timeline from './components/request/Timeline'
 import ScrollIndicator from './components/request/ScrollIndicator'
