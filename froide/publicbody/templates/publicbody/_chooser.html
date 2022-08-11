@@ -8,9 +8,9 @@
   scope="pb-{{ widget.attrs.id }}"
 >
   {% if widget.value %}
-  <label>
-    <input type="radio" name="{{ widget.name }}" value="{% if widget.value %}{{ widget.value }}{% endif %}"/>
-    {% if widget.value_label %}{{ widget.value_label }}{% endif %}
-  </label>
-  {% endif %} 
-</publicbody-chooser> 
+    <label>
+      <input type="radio" name="{{ widget.name }}" value="{% if widget.value %}{{ widget.value }}{% endif %}"/>
+      {% if widget.value_label %}{{ widget.value_label }}{% endif %}
+    </label>
+  {% endif %}
+</publicbody-chooser>
