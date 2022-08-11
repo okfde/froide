@@ -110,7 +110,7 @@ export default {
     },
     defaultLaw: {
       type: Object,
-      required: true
+      default: null
     },
     subject: {
       type: String,
