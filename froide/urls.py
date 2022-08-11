@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.sitemaps import Sitemap
 from django.contrib.sitemaps import views as sitemaps_views
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.template.response import TemplateResponse
 from django.urls import include, path, reverse
 from django.utils.translation import pgettext_lazy
@@ -183,7 +182,6 @@ admin_urls = [
 
 
 if settings.DEBUG:
-    froide_urlpatterns += staticfiles_urlpatterns()
     froide_urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
