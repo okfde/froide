@@ -1,5 +1,6 @@
 import os
 import re
+from typing import List, Tuple
 
 from django.utils.translation import gettext_lazy as _
 
@@ -637,6 +638,9 @@ class Dev(Base):
     pass
 
 
+FakePdf = Tuple[List[str], str]
+
+
 class TestBase(Base):
     DEBUG = False
 
@@ -654,7 +658,7 @@ class TestBase(Base):
         TEMP[0]["OPTIONS"]["debug"] = True
         return TEMP
 
-    def _fake_convert_pdf(self, infile, outpath):
+    def _fake_convert_pdf(self, infile: str, outpath: str) -> FakePdf:
         _, filename = os.path.split(infile)
         name, ext = filename.rsplit(".", 1)
         output = os.path.join(outpath, "%s.pdf" % name)
