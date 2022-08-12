@@ -222,7 +222,7 @@ class FoiMessage(models.Model):
 
     @cached_property
     def tag_set(self):
-        return set([t.name for t in self.tags.all()])
+        return set(self.tags.all().values_list("name", flat=True))
 
     @property
     def readable_status(self):
