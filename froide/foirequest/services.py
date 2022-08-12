@@ -465,7 +465,7 @@ class ReceiveEmailService(BaseService):
         foirequest = self.kwargs["foirequest"]
 
         # Find message
-        for sent_message in reversed(foirequest.sent_messages):
+        for sent_message in reversed(foirequest.sent_messages()):
             if (
                 sent_message.recipient_email
                 and sent_message.recipient_email in message.plaintext
