@@ -432,21 +432,19 @@ class BounceMailTest(TestCase):
         factories.FoiMessageFactory.create(
             timestamp=timezone.now().replace(2012, 1, 1),
             request=self.req,
+            is_response=False,
             recipient_email="nonexistant@example.org",
         )
 
     @override_settings(MANAGERS=[("Name", "manager@example.com")])
     def test_bounce(self):
-        mail.outbox = []
-
         with open(p("test_mail_12.txt"), "rb") as f:
             process_mail.delay(f.read())
 
         req = FoiRequest.objects.get(pk=self.req.pk)
         bounce_message = req.messages[-1]
         self.assertEqual(bounce_message.original, req.messages[0])
-        tags = bounce_message.tags.all().values_list("name", flat=True)
-        self.assertIn(BOUNCE_TAG, tags)
+        self.assertIn(BOUNCE_TAG, bounce_message.tag_set)
         self.assertTrue(
             ProblemReport.objects.filter(message=bounce_message.original).exists()
         )
