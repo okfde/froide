@@ -60,26 +60,17 @@ $fa-font-path: "~font-awesome/fonts";
 
 // Own components
 // FIXME: these are not really components
-@import "components/alerts";
-@import "components/attachments";
 @import "components/base";
 @import "components/breadcrumb";
 @import "components/buttons";
 @import "components/comments";
-@import "components/follow";
 @import "components/footer";
 @import "components/forms";
 @import "components/hero";
 @import "components/js-switches";
-@import "components/make-request";
-@import "components/messages";
 @import "components/misc";
 @import "components/navbar";
 @import "components/redacted";
 @import "components/request-status";
-@import "components/request";
-@import "components/search";
-@import "components/sharing";
-@import "components/tags";
 @import "components/type";
 @import "components/print";

@@ -1,34 +1,11 @@
-@import '../variables.scss';
+@import "../variables.scss";
 
 .target-primary:target {
   @extend .border-success;
 }
 
-/*
-FIXME: Problematic css definitions commented out:
-
-.small a {
-    text-decoration: none;
-    color: #666;
-}
-
-.small a:hover {
-    text-decoration: underline;
-    color: #666;
-}
-*/
-
 .highlight {
   background: $highlight-yellow;
-}
-
-.top-buffer {
-  margin-top: 20px;
-}
-
-.time-small {
-  color: #666;
-  font-size: 0.8em;
 }
 
 [v-cloak] {
@@ -57,10 +34,6 @@ input.copy-text {
   background-color: #fff;
 }
 
-.select2-container {
-  min-width: 100px;
-}
-
 .aspect-ratio {
   position: relative;
   width: 100%;
@@ -84,6 +57,7 @@ input.copy-text {
   padding-bottom: 75%;
 }
 
+/* TODO: remove */
 .modal-mask {
   position: fixed;
   z-index: 9998;

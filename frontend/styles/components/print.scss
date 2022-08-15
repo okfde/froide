@@ -35,8 +35,7 @@
   .alert,
   .warning,
   .notice,
-  .events,
-  .request-nav {
+  .events {
     display: none !important;
   }
   .navbar-brand {
@@ -72,8 +71,7 @@
   }
 
   .message-meta,
-  .request-info,
-  .attachment-card {
+  .request-info {
     a:link,
     a:visited {
       color: #000;
