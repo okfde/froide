@@ -1,9 +1,9 @@
-@import '../variables.scss';
+@import "../variables.scss";
 
 $choices-primary-color: $gray-500;
 $choices-guttering: 0;
 
-@import 'choices.js/src/styles/choices.scss';
+@import "choices.js/src/styles/choices.scss";
 
 .#{$choices-selector} {
   width: 100%;
