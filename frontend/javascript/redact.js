@@ -2,15 +2,15 @@ import Vue from 'vue'
 
 import { renderComponent } from './lib/vue-helper'
 
-import Redaction from './components/redaction/redaction'
+import PdfRedaction from './components/redaction/pdf-redaction'
 
 Vue.config.productionTip = false
 
 function createRedaction(selector) {
   /* eslint-disable no-new */
   new Vue({
-    components: { Redaction },
-    render: renderComponent(selector, Redaction)
+    components: { PdfRedaction },
+    render: renderComponent(selector, PdfRedaction)
   }).$mount(selector)
 }
 

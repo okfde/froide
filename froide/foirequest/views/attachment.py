@@ -5,7 +5,6 @@ import re
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import Http404, get_object_or_404, redirect, render
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
@@ -224,7 +223,6 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
 
 def get_redact_context(foirequest, attachment):
     return {
-        "resources": {"pdfjsWorker": static("js/pdf.worker.min.js")},
         "urls": {
             "publishUrl": reverse(
                 "foirequest-approve_attachment",

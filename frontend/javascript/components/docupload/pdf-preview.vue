@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
+
 const range = (len) => [...Array(len).keys()]
 
 export default {
@@ -44,9 +46,8 @@ export default {
       import('pdfjs-dist')
         .then((PDFJS) => {
           this.PDFJS = PDFJS
-          this.PDFJS.GlobalWorkerOptions.workerSrc =
-            this.config.resources.pdfjsWorker
-          console.log(this.config.resources.pdfjsWorker, this.PDFJS)
+          this.PDFJS.GlobalWorkerOptions.workerSrc = PDFJSWorkerUrl
+          console.log(PDFJSWorkerUrl, this.PDFJS)
           this.loadDocument()
         })
         .catch((err) => {
