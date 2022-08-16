@@ -17,7 +17,8 @@ jobs:
         with:
           node-version: '16'
           cache: 'yarn'
-      - uses: actions/cache@v1
+      - name: Cache pip
+        uses: actions/cache@v1
         with:
           key: v0-${{ runner.os }}-pip-lint-${{ hashFiles('setup.py') }}
           path: ~/.cache/pip
@@ -55,6 +56,9 @@ jobs:
           python -m pip install --upgrade pip~=22.0.1 pip-tools
           pip-sync requirements-test.txt
           pip install -e .
+          yarn install
+      - name: Build frontend
+        run: yarn run build
       - name: Run flake8 and tests
         run: make testci
         env:
@@ -94,7 +98,7 @@ jobs:
           pip install -e .
           yarn install
       - name: Build frontend
-        run: yarn run build --bail
+        run: yarn run build
       - name: Run in-browser tests
         run: make testui
         env:
