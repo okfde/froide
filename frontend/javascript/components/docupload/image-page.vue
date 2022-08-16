@@ -190,7 +190,7 @@ export default {
           }
           self.$emit('pageupdated', {
             pageNum: self.pageNum,
-            data: data
+            data
           })
         })
       }

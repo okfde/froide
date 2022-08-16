@@ -46,6 +46,8 @@ function setupTagging(): void {
         let valueString
         if (Array.isArray(value)) {
           valueString = value.join(', ')
+        } else if (typeof value !== 'string') {
+          valueString = value.label
         } else {
           valueString = value
         }
@@ -55,7 +57,7 @@ function setupTagging(): void {
       select.addEventListener('search', function onSearch(event) {
         const choicesEvent = event as IChoicesSearchEvent
         const value = choicesEvent.detail.value
-        if (fetchUrl) {
+        if (fetchUrl !== '') {
           void fetch(fetchUrl + '?query=' + encodeURIComponent(value)).then(
             (response) => {
               void response.json().then((data: string[]) => {
@@ -64,11 +66,13 @@ function setupTagging(): void {
                 if (!present) {
                   transformed.push({ value, label: value })
                 }
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 choices.setChoices(transformed, 'value', 'label', true)
               })
             }
           )
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           choices.setChoices([{ value, label: value }], 'value', 'label', true)
         }
       })

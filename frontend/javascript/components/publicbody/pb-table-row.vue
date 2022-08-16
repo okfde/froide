@@ -39,7 +39,7 @@ export default {
         return this.selected
       },
       set(value) {
-        this.$emit('update:row', { id: this.row.id, value: value })
+        this.$emit('update:row', { id: this.row.id, value })
       }
     },
     hasJurisdiction() {

@@ -13,7 +13,7 @@ function createFileUploader(element) {
   /* eslint-disable no-new */
   store.commit(SET_CONFIG)
   new Vue({
-    store: store,
+    store,
     components: { FileUploader },
     render: renderComponent(element, FileUploader)
   }).$mount(element)

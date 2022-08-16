@@ -151,7 +151,7 @@ class FroideAPI {
 function postData(url = '', data = {}, csrfToken, method = 'POST') {
   return window
     .fetch(url, {
-      method: method,
+      method,
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: {

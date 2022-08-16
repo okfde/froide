@@ -157,7 +157,7 @@ export default {
         this.$root.csrfToken
       ).then((attachment) => {
         this.$emit('imagesconverted', {
-          attachment: attachment,
+          attachment,
           imageDoc: this.document
         })
       })

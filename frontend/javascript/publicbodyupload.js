@@ -13,7 +13,7 @@ function createPublicbodyUpload(element) {
   /* eslint-disable no-new */
   store.commit(SET_CONFIG)
   new Vue({
-    store: store,
+    store,
     components: { PublicbodyUpload },
     render: renderComponent(element, PublicbodyUpload)
   }).$mount(element)

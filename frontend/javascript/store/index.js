@@ -337,7 +337,7 @@ export default new Vuex.Store({
         searchResults: results.objects,
         searchFacets: results.facets.fields,
         searchMeta: results.meta,
-        scope: scope
+        scope
       })
       commit(CACHE_PUBLICBODIES, results.objects)
       dispatch('getLawsForPublicBodies', results.objects)
@@ -383,13 +383,13 @@ export default new Vuex.Store({
     },
     getNextSearchResults({ state, getters, dispatch }, scope) {
       const meta = getters.getScopedSearchMeta(scope)
-      return dispatch('getSearchResultsUrl', { url: meta.next, scope: scope })
+      return dispatch('getSearchResultsUrl', { url: meta.next, scope })
     },
     getPreviousSearchResults({ state, getters, dispatch }, scope) {
       const meta = getters.getScopedSearchMeta(scope)
       return dispatch('getSearchResultsUrl', {
         url: meta.previous,
-        scope: scope
+        scope
       })
     }
   },
