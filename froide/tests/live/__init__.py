@@ -1,5 +1,6 @@
 import os
 import socket
+import time
 from typing import Union
 
 from django.conf import settings
@@ -7,6 +8,7 @@ from django.core.management import call_command
 from django.db import connections
 
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 def get_driver_options(driver_name, **kwargs):
@@ -42,6 +44,9 @@ def get_selenium(**kwargs) -> Webdriver:
     if driver_setting.startswith("http"):
         return webdriver.Remote(command_executor=driver_url, options=options)
     if driver_name.startswith("chrome"):
+        binary_location = os.environ.get("CHROME_BINARY_PATH", None)
+        if binary_location is not None:
+            options.binary_location = binary_location
         driver_path = os.environ.get("CHROME_DRIVER_PATH", None)
         if driver_path is not None:
             return webdriver.Chrome(executable_path=driver_path, options=options)
@@ -93,8 +98,13 @@ class LiveTestMixin(object):
     def scrollTo(self, selector: str):
         # self.selenium.find_element_by_id(id).location_once_scrolled_into_view
         self.selenium.execute_script(
-            "window.scrollTo(0,0);" 'document.getElementById("%s").focus();' % selector
+            'document.getElementById("{id_str}").scrollIntoView(true);'
+            'document.getElementById("{id_str}").focus();'.format(id_str=selector)
         )
+        WebDriverWait(self.selenium, 2).until(
+            lambda driver: driver.find_element_by_id(selector).is_displayed()
+        )
+        time.sleep(1.0)
 
     def _fixture_teardown(self):
         """

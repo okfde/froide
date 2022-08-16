@@ -90,6 +90,7 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
             self.selenium.find_element_by_name("user_email").send_keys(user_email)
             self.scrollTo("id_terms")
             self.selenium.find_element_by_name("terms").click()
+            self.scrollTo("review-button")
             self.selenium.find_element_by_id("review-button").click()
             self.selenium.find_element_by_id("step-review")
             self.scrollTo("send-request-button")
@@ -215,17 +216,9 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
                 )
             )
             self.scrollTo("review-button")
-            WebDriverWait(self.selenium, 5).until(
-                lambda driver: driver.find_element_by_id("review-button").is_displayed()
-            )
             self.selenium.find_element_by_id("review-button").click()
             self.scrollTo("send-request-button")
 
-        WebDriverWait(self.selenium, 10).until(
-            lambda driver: self.selenium.find_element_by_id(
-                "send-request-button"
-            ).is_displayed()
-        )
         self.selenium.find_element_by_id("send-request-button").click()
 
         request_sent = reverse("foirequest-request_sent")
@@ -277,19 +270,8 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
                     )
                 )
                 self.scrollTo("review-button")
-                WebDriverWait(self.selenium, 5).until(
-                    lambda driver: driver.find_element_by_id(
-                        "review-button"
-                    ).is_displayed()
-                )
                 self.selenium.find_element_by_id("review-button").click()
                 self.scrollTo("send-request-button")
-
-            WebDriverWait(self.selenium, 10).until(
-                lambda driver: self.selenium.find_element_by_id(
-                    "send-request-button"
-                ).is_displayed()
-            )
 
             self.selenium.find_element_by_id("send-request-button").click()
             make_request = reverse("foirequest-make_request")
@@ -326,9 +308,6 @@ class TestMakingRequest(LiveTestMixin, StaticLiveServerTestCase):
                 lambda driver: driver.find_elements_by_css_selector(
                     ".similar-requests li"
                 )
-            )
-            WebDriverWait(self.selenium, 5).until(
-                lambda driver: driver.find_element_by_id("review-button").is_displayed()
             )
             self.scrollTo("review-button")
             self.selenium.find_element_by_id("review-button").click()
@@ -467,7 +446,8 @@ class TestSettingStatus(LiveTestMixin, StaticLiveServerTestCase):
                 self.assertTrue(reason.is_displayed())
 
                 resolution_select.select_by_value(to_resolution)
-                editForm.find_element_by_css_selector('button[type="submit"]').click()
+                self.scrollTo("set-status-submit")
+                editForm.find_element_by_id("set-status-submit").click()
 
                 self.req.refresh_from_db()
                 self.assertEquals(self.req.resolution, to_resolution)
