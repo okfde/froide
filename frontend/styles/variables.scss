@@ -1,5 +1,5 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/mixins";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/mixins";
 
 /* Bootstrap Theme */
 
@@ -103,7 +103,7 @@ $box-shadow-gray-sm: 2px 2px 0 transparentize($gray-300, 0.6);
 $box-shadow-yellow: 7px 7px 0 transparentize($yellow-300, 0.85);
 $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
-@import "~bootstrap/scss/variables";
+@import "bootstrap/scss/variables";
 
 :root {
   --shadow-blue: #{transparentize($blue-30, 0.85)};

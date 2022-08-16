@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
@@ -341,7 +340,6 @@ def upload_attachments(request, foirequest, message_id):
             "attachment_form_prefix": attachment_form.prefix,
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
         },
-        "resources": {"pdfjsWorker": static("js/pdf.worker.min.js")},
         "url": {
             "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
             "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),

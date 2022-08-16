@@ -85,7 +85,7 @@
     </form>
     <div class="card">
       <div class="card-body">
-        <redaction
+        <pdf-redaction
           id="redact"
           pdf-path="{{ attachment_url }}"
           attachment-url="{{ attachment.get_anchor_url }}"
@@ -101,7 +101,7 @@
               <span class="visually-hidden">{% trans "Loading..." %}</span>
             </div>
           </div>
-        </redaction>
+        </pdf-redaction>
       </div>
     </div>
   </div>

@@ -222,6 +222,8 @@
 import 'string.prototype.repeat'
 import ConfirmNoRedaction from './confirm-no-redaction'
 
+import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
+
 import range from 'lodash.range'
 
 import Vue from 'vue'
@@ -233,7 +235,7 @@ function isTouchDevice() {
 }
 
 export default {
-  name: 'Redaction',
+  name: 'pdf-redaction',
   components: { ConfirmNoRedaction },
   props: {
     config: {
@@ -385,9 +387,8 @@ export default {
     import('pdfjs-dist')
       .then((PDFJS) => {
         this.PDFJS = PDFJS
-        this.PDFJS.GlobalWorkerOptions.workerSrc =
-          this.config.resources.pdfjsWorker
-        console.log(this.config.resources.pdfjsWorker, this.PDFJS)
+        this.PDFJS.GlobalWorkerOptions.workerSrc = PDFJSWorkerUrl
+        console.log(PDFJSWorkerUrl, this.PDFJS)
         this.loadDocument().then(() => this.loadPage(1))
       })
       .catch((err) => {
