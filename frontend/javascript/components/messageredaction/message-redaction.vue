@@ -40,10 +40,10 @@
 <script>
 import { getData } from '../../lib/api.js'
 
-import MessageRedactionField from './messageredaction-field.vue'
+import MessageRedactionField from './message-redaction-field.vue'
 
 export default {
-  name: 'messageredaction',
+  name: 'message-redaction',
   props: ['config', 'messageUrl'],
   components: {
     MessageRedactionField

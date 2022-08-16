@@ -20,7 +20,7 @@
 <script>
 import Vue from 'vue'
 
-import MessageRedactionWord from './messageredaction-word.vue'
+import MessageRedactionWord from './message-redaction-word.vue'
 
 // const SPLITTER = /[^\w\u00C0-\u00FF\-@/\.\:]/g
 // eslint-disable-next-line no-control-regex
@@ -66,7 +66,7 @@ function getChunks(redactedParts) {
 }
 
 export default {
-  name: 'messageredaction-field',
+  name: 'message-redaction-field',
   props: ['redactedParts', 'fieldName'],
   components: {
     MessageRedactionWord
