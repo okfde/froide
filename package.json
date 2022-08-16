@@ -53,7 +53,7 @@
     "vue-template-compiler": "^2.5.16"
   },
   "dependencies": {
-    "@okfde/filingcabinet": "^0.0.1",
+    "@okfde/filingcabinet": "okfde/django-filingcabinet#bootstrap-5",
     "@popperjs/core": "^2.11.5",
     "@uppy/core": "^2.3.2",
     "@uppy/dashboard": "^2.4.1",

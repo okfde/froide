@@ -95,12 +95,12 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@okfde/filingcabinet@^0.0.1":
+"@okfde/filingcabinet@okfde/django-filingcabinet#bootstrap-5":
   version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@okfde/filingcabinet/-/filingcabinet-0.0.1.tgz#82d222839fa098bf67772569d7ae3ba4a7ff2175"
-  integrity sha512-AW888iYoHM43U9UyYVA4maiZs5oXdnstnzl7bGSTWEa4P+GWQSalwa0TKVBjb3IooC23lYAu9YTdaJt8ZTHN2A==
+  resolved "https://codeload.github.com/okfde/django-filingcabinet/tar.gz/5743a854e4a515df4a33437dac411df71d1ab280"
   dependencies:
     intersection-observer "^0.7.0"
+    pdfjs-dist "==2.9.359"
     vue "^2.5.16"
     vue-virtual-scroller "^1.0.0-rc.2"
 
