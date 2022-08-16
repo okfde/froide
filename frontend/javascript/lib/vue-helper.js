@@ -101,7 +101,7 @@ function renderComponent(el, component) {
   return function (createElement) {
     const slots = makeSlots(slotData, createElement)
     return createElement(component, {
-      props: props,
+      props,
       scopedSlots: slots,
       ...otherAttrs
     })

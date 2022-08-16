@@ -476,7 +476,7 @@ export default {
         const ctx = canvas.getContext('2d')
         const renderTask = page.render({
           canvasContext: ctx,
-          viewport: viewport
+          viewport
         })
         const textPromise = page.getTextContent().then((content) => {
           // Content contains lots of information about the text layout and
@@ -655,7 +655,7 @@ export default {
         width: this.viewport.width,
         height: this.viewport.height,
         scaleFactor: this.scaleFactor,
-        pageNumber: pageNumber,
+        pageNumber,
         rects: this.rectanglesPerPage[pageNumber],
         texts
       }
@@ -888,8 +888,8 @@ export default {
       const rects = actions.reduce((a, b) => a.concat(b.rects), [])
       return {
         type: 'redact',
-        texts: texts,
-        rects: rects,
+        texts,
+        rects,
         page: this.currentPage
       }
     },

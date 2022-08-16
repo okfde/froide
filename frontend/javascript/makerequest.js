@@ -11,7 +11,7 @@ Vue.config.productionTip = false
 function createRequestPage(selector) {
   /* eslint-disable no-new */
   new Vue({
-    store: store,
+    store,
     components: { RequestPage },
     render: renderComponent(selector, RequestPage)
   }).$mount(selector)
