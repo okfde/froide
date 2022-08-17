@@ -465,21 +465,24 @@ class ReceiveEmailService(BaseService):
         foirequest = self.kwargs["foirequest"]
 
         # Find message
-        for mes in reversed(foirequest.messages):
-            if mes.recipient_email and mes.recipient_email in message.plaintext:
+        for sent_message in reversed(foirequest.sent_messages()):
+            if (
+                sent_message.recipient_email
+                and sent_message.recipient_email in message.plaintext
+            ):
                 break
         else:
-            mes = None
+            sent_message = None
 
-        message.original = mes
+        message.original = sent_message
         message.save()
 
         message.tags.add(BOUNCE_TAG)
-        if mes:
-            mes.tags.add(HAS_BOUNCED_TAG)
+        if sent_message:
+            sent_message.tags.add(HAS_BOUNCED_TAG)
 
         ProblemReport.objects.report(
-            message=mes or message,
+            message=sent_message or message,
             kind=ProblemReport.PROBLEM.BOUNCE_PUBLICBODY,
             description=email.bounce_info.diagnostic_code or "",
             auto_submitted=True,
