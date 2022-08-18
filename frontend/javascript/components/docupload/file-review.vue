@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { Dropdown } from 'bootstrap'
+import Dropdown from 'bootstrap/js/dist/dropdown'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
