@@ -2549,6 +2549,11 @@ v8-compile-cache@^2.0.3:
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz#2de19618c66dc247dcfb6f99338035d8245a2cee"
   integrity sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==
 
+vite-plugin-dev-manifest@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/vite-plugin-dev-manifest/-/vite-plugin-dev-manifest-1.0.9.tgz#f21d3b8a6a84d37cd24864818eca7e73971459b9"
+  integrity sha512-qCwUtE40pkTu5XeubXmKMHswSnd57waXl/iPx0KRCxhEzef+EBCEB2K+v1lXtiLvApk2Dev3doeq9Wqf3hE+9w==
+
 vite@^3.0.8:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/vite/-/vite-3.0.8.tgz#aa095ad8e3e5da46d9ec7e878f262678965d6531"

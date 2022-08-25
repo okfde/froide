@@ -25,9 +25,28 @@ class FrontendBuildLoader:
             self.entry_points = self.load_manifest()
         return self.entry_points.get(name)
 
+    def load_dev_manifest(self):
+        """
+        Dev manifest format is:
+
+        """
+        try:
+            with open(settings.FRONTEND_BUILD_DIR / "manifest.dev.json") as f:
+                manifest_data = json.load(f)
+        except IOError as e:
+            raise Exception("Please build frontend or run frontend dev server") from e
+        return {
+            "{}.js".format(entry_point): {"source": source_file}
+            for entry_point, source_file in manifest_data["inputs"].items()
+        }
+
     def load_manifest(self):
-        with open(settings.FRONTEND_BUILD_DIR / "manifest.json") as f:
-            manifest_data = json.load(f)
+        try:
+            with open(settings.FRONTEND_BUILD_DIR / "manifest.json") as f:
+                manifest_data = json.load(f)
+        except IOError:
+            return self.load_dev_manifest()
+
         entry_points = {}
         for source_file, data in manifest_data.items():
             output_file = data["file"]
