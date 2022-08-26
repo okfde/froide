@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils import translation
@@ -357,6 +359,7 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
     )
 
     site_url = serializers.CharField(source="get_absolute_domain_url")
+    geo = serializers.SerializerMethodField()
 
     class Meta:
         model = PublicBody
@@ -390,7 +393,13 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
             "alternative_emails",
             "wikidata_item",
             "extra_data",
+            "geo",
         )
+
+    def get_geo(self, obj):
+        if obj.geo is not None:
+            return json.loads(obj.geo.json)
+        return None
 
 
 class PublicBodySerializer(PublicBodyListSerializer):
