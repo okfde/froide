@@ -310,6 +310,7 @@ class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
     )
 
     site_url = serializers.CharField(source="get_absolute_domain_url")
+    geo = serializers.SerializerMethodField()
 
     class Meta:
         model = PublicBody
@@ -333,7 +334,13 @@ class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
             "site_url",
             "jurisdiction",
             "request_note_html",
+            "geo",
         )
+
+    def get_geo(self, obj):
+        if obj.geo is not None:
+            return json.loads(obj.geo.json)
+        return None
 
 
 class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
