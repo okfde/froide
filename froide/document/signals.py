@@ -2,6 +2,8 @@ from django.db import transaction
 from django.db.models import signals
 from django.dispatch import receiver
 
+from filingcabinet.models import CollectionDocument
+
 from froide.foirequest.models import FoiAttachment
 
 from .models import Document
@@ -42,3 +44,12 @@ def reprocess_document_after_redaction(sender: FoiAttachment, **kwargs):
         # Then reprocess document
         document = Document.objects.get(id=doc_id)
         document.process_document(reprocess=True)
+
+
+@receiver(
+    signals.post_delete,
+    sender=CollectionDocument,
+    dispatch_uid="reindex_document_removed_from_collection",
+)
+def reindex_document_removed_from_collection(instance: CollectionDocument, **kwargs):
+    update_document_index(instance.document)
