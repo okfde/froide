@@ -37,9 +37,11 @@
       <li>
         {% translate "Convert multiple pictures to pages in a PDF document." %}
       </li>
-      <li>
-        {% translate "Upload more pictures or PDFs." %}
-      </li>
+      {% if message.can_edit %}
+        <li>
+          {% translate "Upload more pictures or PDFs." %}
+        </li>
+      {% endif %}
     </ul>
 
     {% csrf_token %}
