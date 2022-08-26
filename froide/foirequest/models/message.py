@@ -74,6 +74,8 @@ MESSAGE_KIND_ICONS = {
     MessageKind.IMPORT: "cloud-download",
 }
 
+MANUAL_MESSAGE_KINDS = {MessageKind.POST, MessageKind.PHONE, MessageKind.VISIT}
+
 
 class FoiMessage(models.Model):
     request = models.ForeignKey(
@@ -181,11 +183,11 @@ class FoiMessage(models.Model):
 
     @property
     def can_edit(self):
-        return self.received_by_user
+        return self.kind in MANUAL_MESSAGE_KINDS
 
     @property
     def received_by_user(self):
-        return self.kind not in (MessageKind.EMAIL, MessageKind.UPLOAD)
+        return self.is_response and self.kind in MANUAL_MESSAGE_KINDS
 
     @property
     def kind_icon(self):
