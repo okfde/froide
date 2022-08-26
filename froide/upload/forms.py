@@ -5,7 +5,7 @@ from django.conf import settings
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from froide.helper.templatetags.frontend import get_frontend_build
+from froide.helper.templatetags.frontendbuild import get_frontend_build
 
 
 def get_uppy_i18n():

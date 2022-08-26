@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from froide.helper.content_urls import get_content_url
-from froide.helper.templatetags.frontend import get_frontend_build
+from froide.helper.templatetags.frontendbuild import get_frontend_build
 
 
 def get_widget_context():
