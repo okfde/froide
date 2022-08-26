@@ -10,7 +10,7 @@ from django_filters.widgets import RangeWidget
 from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
-from froide.helper.templatetags.frontend import get_frontend_build
+from froide.helper.templatetags.frontendbuild import get_frontend_build
 
 
 class BootstrapChoiceMixin(object):
