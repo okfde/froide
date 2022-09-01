@@ -34,12 +34,10 @@
 .status-refused {
   background-image: url('~froide/froide/static/img/status/icon-refused.svg');
 }
-.status-user_withdrew {
+.status-user_withdrew,
+.status-user_withdrew_costs {
   background-image: url('~froide/froide/static/img/status/icon-user_withdrew.svg');
 }
-// .status-user_withdrew_costs {
-//     background-image: url('~froide/froide/static/img/status/icon-user_withdrew_costs.svg')
-// }
 // .status-publicbody_needed {
 //     background-image: url('~froide/froide/static/img/status/icon-publicbody_needed.svg')
 // }
