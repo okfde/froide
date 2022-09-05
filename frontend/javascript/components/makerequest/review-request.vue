@@ -13,27 +13,27 @@
             @click="close" />
         </div>
         <div class="modal-body">
-          <dl class="message-meta">
-            <dt :class="{ 'text-danger': !userValid }">
+          <dl class="message-meta row">
+            <dt class="col-sm-3" :class="{ 'text-danger': !userValid }">
               {{ i18n.reviewFrom }}
             </dt>
-            <dd :class="{ 'text-danger': !userValid }">
+            <dd class="col-sm-9" :class="{ 'text-danger': !userValid }">
               {{ user.first_name }} {{ user.last_name }} &lt;{{
                 user.email
               }}&gt;
             </dd>
-            <dt>{{ i18n.reviewTo }}</dt>
-            <dd v-if="publicBodies.length > 1">
+            <dt class="col-sm-3">{{ i18n.reviewTo }}</dt>
+            <dd class="col-sm-9" v-if="publicBodies.length > 1">
               {{ publicBodies.length }} {{ i18n.reviewPublicbodies }}
             </dd>
-            <dd v-else-if="publicBody">
+            <dd class="col-sm-9" v-else-if="publicBody">
               {{ publicBody.name }}
             </dd>
-            <dd v-else>-</dd>
-            <dt :class="{ 'text-danger': !subjectValid }">
+            <dd class="col-sm-9" v-else>-</dd>
+            <dt class="col-sm-3" :class="{ 'text-danger': !subjectValid }">
               {{ i18n.subject }}
             </dt>
-            <dd :class="{ 'text-danger': !subjectValid }">
+            <dd class="col-sm-9" :class="{ 'text-danger': !subjectValid }">
               {{ subject }}
             </dd>
           </dl>
