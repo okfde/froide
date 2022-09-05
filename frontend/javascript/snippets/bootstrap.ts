@@ -1,12 +1,12 @@
-// FIXME: init consistently across components, some don't work yet
 import 'bootstrap/js/dist/collapse'
 import 'bootstrap/js/dist/tab'
 import 'bootstrap/js/dist/modal'
-import { Tooltip, Dropdown, Alert } from 'bootstrap'
+import 'bootstrap/js/dist/dropdown'
+import Tooltip from 'bootstrap/js/dist/tooltip'
+import Alert from 'bootstrap/js/dist/alert'
 
 const selectors = {
   '[data-bs-toggle="tooltip"]': Tooltip,
-  '[data-bs-toggle="dropdown"]': Dropdown,
   '.alert': Alert
 }
 
