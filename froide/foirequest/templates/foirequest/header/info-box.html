@@ -234,7 +234,7 @@
     {# edit interface #}
     {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
       <div class="info-box__edit-panel px-4 mt-2 mb-4 {% if active_tab != 'set-status' %}d-none{% endif %}">
-        <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
+        <form class="disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
           {% csrf_token %}
           {% if status_form %}
             {% include "foirequest/header/_set_status.html" %}
