@@ -14,7 +14,7 @@ def render_field(field, horizontal=True, inline=False, stacked=False, show_label
     template_name = "helper/forms/bootstrap_field.html"
     if inline:
         template_name = "helper/forms/bootstrap_field_inline.html"
-    elif stacked:
+    elif stacked or not horizontal:
         template_name = "helper/forms/bootstrap_field_stacked.html"
     return render_to_string(
         template_name,
