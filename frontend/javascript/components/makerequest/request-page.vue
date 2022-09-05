@@ -402,8 +402,16 @@ export default {
       if (newShowReview) {
         if (!this.reviewModal) {
           this.reviewModal = new Modal(this.$refs.reviewrequest.$el)
+          this.$refs.reviewrequest.$el.addEventListener(
+            'hidden.bs.modal',
+            () => {
+              this.showReview = false
+            }
+          )
         }
         this.reviewModal.show()
+      } else {
+        this.reviewModal.hide()
       }
     }
   },

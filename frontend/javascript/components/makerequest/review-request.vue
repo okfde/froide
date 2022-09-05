@@ -9,7 +9,6 @@
           <button
             type="button"
             class="btn-close"
-            data-bs-dismiss="modal"
             :aria-label="i18n.close"
             @click="close" />
         </div>
