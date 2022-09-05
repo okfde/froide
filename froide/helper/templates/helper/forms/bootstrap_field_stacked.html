@@ -2,7 +2,7 @@
 
 <div class="mb-3{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
   {% if field_type == "radio" or is_checkboxmultiple %}
-    {% if label and show_label %}<label class="form-label">{{ label }}</label>{% endif %}
+    {% if label and show_label %}<label class="fw-bold form-label{% if required %} field-required{% endif %}">{{ label }}</label>{% endif %}
     {% for widget in field %}
       <div class="form-check">
         {{ widget }}
@@ -16,7 +16,7 @@
       </label>
     </div>
   {% else %}
-    {% if label and show_label %}{% if field.id_for_label %}<label class="form-label" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
+    {% if label and show_label %}{% if field.id_for_label %}<label class="fw-bold form-label{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
     {{ field }}
   {% endif %}
 
