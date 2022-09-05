@@ -150,7 +150,7 @@ class Base(Configuration):
 
     @property
     def STATICFILES_DIRS(self):
-        return [self.BASE_DIR / "froide" / "static", self.FRONTEND_BUILD_DIR]
+        return [self.FRONTEND_BUILD_DIR, self.BASE_DIR / "froide" / "static"]
 
     # ########## URLs #################
 
