@@ -147,6 +147,14 @@ def addfrontendbuild(context, name: str) -> str:
 
 
 @register.simple_tag
+def getfrontendfiles(name) -> Optional[FrontendList]:
+    result = get_frontend_files(name)
+    if not result:
+        return
+    return list(result.items())
+
+
+@register.simple_tag
 def getfrontendbuild(name) -> Optional[FrontendList]:
     result = get_frontend_build(name)
     if not result:
