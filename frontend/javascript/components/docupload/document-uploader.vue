@@ -19,7 +19,7 @@
       <slot name="documents" />
       <div class="mt-3 mb-3">
         <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
-          <div class="col-auto mr-md-auto">
+          <div class="col-auto me-md-auto">
             <input
               v-model="selectAll"
               type="checkbox"

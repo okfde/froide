@@ -177,7 +177,7 @@
         {# Comments button #}
         <button
           type="button"
-          class="btn btn-light btn-sm text-primary mb-1 mr-sm-auto order-last order-sm-first "
+          class="btn btn-light btn-sm text-primary mb-1 me-sm-auto order-last order-sm-first "
           data-bs-toggle="collapse"
           aria-expanded="false"
           aria-controls="comments-{{ message.id }}"
@@ -202,7 +202,7 @@
         {% if not message.original %}
           {% if object|can_write_foirequest:request %}
             {% if message.is_response %}
-              <div class="btn-group btn-group-sm mb-1 ml-sm-auto">
+              <div class="btn-group btn-group-sm mb-1 ms-sm-auto">
                 <a data-fieldname="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-outline-primary">
                   <span class="fa fa-reply"></span>
                   {% trans "Reply" %}
