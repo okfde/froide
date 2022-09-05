@@ -98,7 +98,7 @@
             <div
               v-for="filterKey in filterOrder"
               :key="filterKey"
-              class="col-sm-4 col-md-12 filter-column">
+              class="col-sm-4 col-md-12 filter-column position-relative">
               <pb-filter
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
