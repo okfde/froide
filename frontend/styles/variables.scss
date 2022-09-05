@@ -95,6 +95,8 @@ $badge-font-weight: 600;
 $link-decoration: none;
 $link-hover-decoration: underline;
 
+$enable-negative-margins: true;
+
 // Shadows
 $box-shadow: 7px 7px 0 transparentize($blue-30, 0.85);
 $box-shadow-sm: 2px 2px 0 transparentize($blue-30, 0.85);
