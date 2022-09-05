@@ -10,7 +10,7 @@ from django_filters.widgets import RangeWidget
 from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
-from froide.helper.templatetags.frontendbuild import get_frontend_build
+from froide.helper.templatetags.frontendbuild import get_frontend_files
 
 
 class BootstrapChoiceMixin(object):
@@ -77,7 +77,7 @@ class TagAutocompleteWidget(TagWidget):
 
     @property
     def media(self):
-        build_info = get_frontend_build("tagautocomplete.js")
+        build_info = get_frontend_files("tagautocomplete.js")
         return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
 
     def value_from_datadict(

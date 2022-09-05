@@ -71,6 +71,32 @@ FrontendFiles = Dict[str, List[str]]
 FrontendList = List[Tuple[str, List[str]]]
 
 
+def get_frontend_files(name: str) -> FrontendFiles:
+    data = frontend.get_entry_point(name)
+    if data is None:
+        if FRONTEND_DEBUG:
+            raise KeyError(name)
+        return {}
+
+    if FRONTEND_DEBUG:
+        source_file = data["source"]
+        # Replace relative references from vite with symlink in node_modules
+        source_file = source_file.replace("../", "node_modules/")
+        return {
+            "js": [source_file],
+            "css": (),
+        }
+
+    result = {"js": [], "css": []}
+
+    for block_name, paths in data.items():
+        if block_name not in result:
+            continue
+        for path in paths:
+            result[block_name].append(path)
+    return result
+
+
 def get_frontend_build(name: str) -> FrontendFiles:
     data = frontend.get_entry_point(name)
     if data is None:

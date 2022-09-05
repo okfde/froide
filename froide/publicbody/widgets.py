@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 
 from froide.helper.content_urls import get_content_url
-from froide.helper.templatetags.frontendbuild import get_frontend_build
+from froide.helper.templatetags.frontendbuild import get_frontend_files
 
 
 def get_widget_context():
@@ -37,7 +37,7 @@ class PublicBodySelect(forms.Widget):
 
     @property
     def media(self):
-        build_info = get_frontend_build("publicbody.js")
+        build_info = get_frontend_files("publicbody.js")
         return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
 
     def set_initial_object(self, obj):
