@@ -112,6 +112,16 @@ class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
         ("collection", ForeignKeyFilter),
         ("directory", ForeignKeyFilter),
     )
+    actions = CollectionDirectoryAdmin.actions + ["move_to_directory"]
+
+    def execute_move_to_directory(self, request, queryset, action_obj):
+        queryset.update(directory=action_obj)
+
+    move_to_directory = make_choose_object_action(
+        CollectionDirectory,
+        execute_move_to_directory,
+        _("Move documents to directory..."),
+    )
 
 
 class CustomCollectionDirectoryAdmin(CollectionDirectoryAdmin):
