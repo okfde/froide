@@ -1,14 +1,11 @@
 <template>
   <div class="row">
     <div class="col-md-12">
-      <!-- FIXME: shouldn't be mutating props -->
-      <!-- eslint-disable vue/no-mutating-props -->
       <input
         type="hidden"
         name="hide_public"
-        v-model="hidePublic"
+        :value="hidePublic"
         id="id_hide_public" />
-      <!-- eslint-enable vue/no-mutating-props -->
       <div class="card mb-3" v-if="!hidePublic">
         <div class="card-body">
           <div class="form-check">

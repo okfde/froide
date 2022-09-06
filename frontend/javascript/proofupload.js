@@ -1,17 +1,8 @@
-import Vue from 'vue'
-
-import { renderComponent } from './lib/vue-helper'
-
 import ProofUpload from './components/proofupload/proof-upload'
-
-Vue.config.productionTip = false
+import { createAppWithProps } from './lib/vue-helper'
 
 function createProofUploadWidget(element) {
-  /* eslint-disable no-new */
-  new Vue({
-    components: { ProofUpload },
-    render: renderComponent(element, ProofUpload)
-  }).$mount(element)
+  createAppWithProps(element, ProofUpload).mount(element)
 }
 
 const els = document.querySelectorAll('[data-proofupload]')

@@ -34,11 +34,12 @@
     "@types/lodash.throttle": "^4.1.6",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
     "@typescript-eslint/parser": "^5.33.0",
-    "@vitejs/plugin-vue2": "^2.2.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/compiler-sfc": "^3.2.38",
     "autoprefixer": "^10.4.13",
     "cli-real-favicon": "0.0.8",
     "eslint": "^8.21.0",
-    "eslint-config-standard-with-typescript": "^27.0.1",
+    "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.4",
@@ -48,11 +49,10 @@
     "postcss": "^8.4.20",
     "prettier": "^2.7.1",
     "prettier-config-standard": "^5.0.0",
-    "sass": "^1.54.4",
-    "typescript": "^4.7.4",
-    "vite": "^4.0.4",
-    "vite-plugin-dev-manifest": "^1.0.9",
-    "vue-template-compiler": "^2.5.16"
+    "sass": "^1.58.3",
+    "typescript": "^4.9.5",
+    "vite": "^4.1.2",
+    "vite-plugin-dev-manifest": "^1.0.9"
   },
   "dependencies": {
     "@okfde/filingcabinet": "okfde/django-filingcabinet",
@@ -72,11 +72,9 @@
     "lodash.sortby": "^4.7.0",
     "pdfjs-dist": "==2.9.359",
     "string.prototype.repeat": "^1.0.0",
-    "vue": "^2.7.0",
-    "vue-lazyload": "^1.3.3",
-    "vue-slide-up-down": "^2.0.1",
+    "vue": "^3.2.38",
     "vuedraggable": "^2.23.2",
-    "vuex": "^3.1.1"
+    "vuex": "^4.1.0"
   },
   "exifreader": {
     "include": {

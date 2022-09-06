@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="uppy" />
+    <div ref="uppy"></div>
     <template v-if="formFields">
       <input
         v-for="upload in uploads"
@@ -19,8 +19,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
@@ -141,11 +139,11 @@ export default {
       }
     })
     this.uppy.on('file-added', (file) => {
-      Vue.set(this.files, file.id, false)
+      this.files[file.id] = false
       this.$emit('ready', this.canSubmit)
     })
     this.uppy.on('file-removed', (file) => {
-      Vue.delete(this.files, file.id)
+      delete this.files[file.id]
       this.$emit('ready', this.canSubmit)
     })
     this.uppy.on('upload', (data) => {
@@ -153,7 +151,7 @@ export default {
       this.$emit('uploading', true)
     })
     this.uppy.on('upload-success', (file, response) => {
-      Vue.set(this.files, file.id, response.uploadURL)
+      this.files[file.id] = response.uploadURL
       this.$emit('ready', this.canSubmit)
       this.$emit('upload-success', { uppy: this.uppy, file, response })
     })

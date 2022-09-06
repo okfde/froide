@@ -1,17 +1,9 @@
-import Vue from 'vue'
-
-import { renderComponent } from './lib/vue-helper'
+import { createAppWithProps } from './lib/vue-helper'
 
 import MessageRedaction from './components/messageredaction/message-redaction.vue'
 
-Vue.config.productionTip = false
-
 function createMessageRedaction(selector) {
-  /* eslint-disable no-new */
-  new Vue({
-    components: { MessageRedaction },
-    render: renderComponent(selector, MessageRedaction)
-  }).$mount(selector)
+  createAppWithProps(selector, MessageRedaction).mount(selector)
 }
 
 document.querySelectorAll('[data-redact="message"]').forEach((el) => {

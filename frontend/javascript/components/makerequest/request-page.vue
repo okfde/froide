@@ -21,16 +21,16 @@
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
                 :config="config">
-                <template slot="publicbody-missing">
-                  <slot name="publicbody-missing" />
+                <template v-slot:publicbody-missing>
+                  <template v-html="slots['publicbody-missing']" />
                 </template>
               </publicbody-multi-chooser>
             </div>
             <div v-else>
               <div class="row">
                 <div class="col-lg-7">
-                  <slot name="publicbody-legend-title" />
-                  <slot name="publicbody-help-text" />
+                  <template v-html="slots['publicbody-legend-title']" />
+                  <template v-html="slots['publicbody-help-text']" />
                 </div>
               </div>
               <div class="row">
@@ -89,10 +89,10 @@
               :initial-private.sync="userPrivate"
               :submitting="submitting"
               @setStepSelectPublicBody="setStepSelectPublicBody">
-              <template slot="request-hints">
+              <template v-slot:request-hints>
                 <slot name="request-hints" />
               </template>
-              <template slot="request-legend-title">
+              <template v-slot:request-legend-title>
                 <slot name="request-legend-title" />
               </template>
             </request-form>
@@ -219,6 +219,10 @@ export default {
   },
   mixins: [I18nMixin, LetterMixin],
   props: {
+    slots: {
+      type: Object,
+      default: () => ({})
+    },
     config: {
       type: Object
     },

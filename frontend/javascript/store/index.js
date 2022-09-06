@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
 import {
   SET_CONFIG,
@@ -34,26 +33,26 @@ import {
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
 
-Vue.use(Vuex)
-
 const debug = process.env.NODE_ENV !== 'production'
 
-export default new Vuex.Store({
-  state: {
-    config: null,
-    scopedSearchResults: {},
-    scopedSearchFacets: {},
-    scopedSearchMeta: {},
-    scopedPublicBodies: {},
-    scopedPublicBodiesMap: {},
-    lawCache: {},
-    publicBodies: {},
-    lawType: null,
-    user: {},
-    step: STEPS.SELECT_PUBLICBODY,
-    subject: '',
-    body: '',
-    fullText: false
+export default createStore({
+  state() {
+    return {
+      config: null,
+      scopedSearchResults: {},
+      scopedSearchFacets: {},
+      scopedSearchMeta: {},
+      scopedPublicBodies: {},
+      scopedPublicBodiesMap: {},
+      lawCache: {},
+      publicBodies: {},
+      lawType: null,
+      user: {},
+      step: STEPS.SELECT_PUBLICBODY,
+      subject: '',
+      body: '',
+      fullText: false
+    }
   },
   getters: {
     getPublicBodyByScope: (state, getters) => (scope) => {
@@ -171,8 +170,8 @@ export default new Vuex.Store({
       state.step = STEPS.WRITE_REQUEST
     },
     [SET_PUBLICBODY](state, { publicBody, scope }) {
-      Vue.set(state.scopedPublicBodies, scope, [publicBody])
-      Vue.set(state.scopedPublicBodiesMap, scope, { [publicBody.id]: true })
+      state.scopedPublicBodies[scope] = [publicBody]
+      state.scopedPublicBodiesMap[scope] = { [publicBody.id]: true }
       state.scopedSearchResults[scope].forEach((sr) => {
         if (sr.id === publicBody.id) {
           sr.isSelected = true
@@ -182,12 +181,12 @@ export default new Vuex.Store({
       })
     },
     [SET_PUBLICBODIES](state, { publicBodies, scope }) {
-      Vue.set(state.scopedPublicBodies, scope, publicBodies)
+      state.scopedPublicBodies[scope] = publicBodies
       const pbMap = {}
       publicBodies.forEach((pb) => {
         pbMap[pb.id] = true
       })
-      Vue.set(state.scopedPublicBodiesMap, scope, pbMap)
+      state.scopedPublicBodiesMap[scope] = pbMap
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (pbMap[sr.id] !== undefined) {
@@ -200,8 +199,8 @@ export default new Vuex.Store({
     },
     [SET_PUBLICBODY_ID](state, { publicBodyId, scope }) {
       const pb = state.publicBodies[publicBodyId]
-      Vue.set(state.scopedPublicBodies, scope, [pb])
-      Vue.set(state.scopedPublicBodiesMap, scope, { publicBodyId: true })
+      state.scopedPublicBodies[scope] = [pb]
+      state.scopedPublicBodiesMap[scope] = { publicBodyId: true }
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -219,14 +218,14 @@ export default new Vuex.Store({
       }
       const pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
-        Vue.set(state.scopedPublicBodies, scope, [pb])
+        state.scopedPublicBodies[scope] = [pb]
       } else {
         const contains = pbs.some((p) => p.id === pb.id)
         if (!contains) {
-          Vue.set(state.scopedPublicBodies, scope, [...pbs, ...[pb]])
+          state.scopedPublicBodies[scope] = [...pbs, ...[pb]]
         }
       }
-      Vue.set(state.scopedPublicBodiesMap[scope], publicBodyId, true)
+      state.scopedPublicBodiesMap[scope][publicBodyId] = true
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -241,8 +240,8 @@ export default new Vuex.Store({
         return
       }
       pbs = pbs.filter((p) => p.id !== publicBodyId)
-      Vue.set(state.scopedPublicBodies, scope, pbs)
-      Vue.set(state.scopedPublicBodiesMap[scope], publicBodyId, undefined)
+      state.scopedPublicBodies[scope] = pbs
+      state.scopedPublicBodiesMap[scope][publicBodyId] = undefined
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -252,8 +251,8 @@ export default new Vuex.Store({
       }
     },
     [CLEAR_PUBLICBODIES](state, { scope }) {
-      Vue.set(state.scopedPublicBodies, scope, [])
-      Vue.set(state.scopedPublicBodiesMap, scope, {})
+      state.scopedPublicBodies[scope] = []
+      state.scopedPublicBodiesMap[scope] = {}
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           sr.isSelected = false
@@ -283,14 +282,14 @@ export default new Vuex.Store({
         sr.isSelected = state.scopedPublicBodiesMap[scope][sr.id] !== undefined
         return sr
       })
-      Vue.set(state.scopedSearchResults, scope, searchResults)
-      Vue.set(state.scopedSearchFacets, scope, searchFacets)
-      Vue.set(state.scopedSearchMeta, scope, searchMeta)
+      state.scopedSearchResults[scope] = searchResults
+      state.scopedSearchFacets[scope] = searchFacets
+      state.scopedSearchMeta[scope] = searchMeta
     },
     [CLEAR_SEARCHRESULTS](state, { scope }) {
-      Vue.set(state.scopedSearchResults, scope, [])
-      Vue.set(state.scopedSearchFacets, scope, {})
-      Vue.set(state.scopedSearchMeta, scope, null)
+      state.scopedSearchResults[scope] = []
+      state.scopedSearchFacets[scope] = {}
+      state.scopedSearchMeta[scope] = null
     },
     [UPDATE_FULL_TEXT](state, val) {
       state.fullText = val
@@ -305,29 +304,29 @@ export default new Vuex.Store({
       state.body = body
     },
     [UPDATE_FIRST_NAME](state, firstName) {
-      Vue.set(state.user, 'first_name', firstName)
+      state.user.first_name = firstName
     },
     [UPDATE_LAST_NAME](state, lastName) {
-      Vue.set(state.user, 'last_name', lastName)
+      state.user.last_name = lastName
     },
     [UPDATE_ADDRESS](state, address) {
-      Vue.set(state.user, 'address', address)
+      state.user.address = address
     },
     [UPDATE_EMAIL](state, email) {
-      Vue.set(state.user, 'email', email)
+      state.user.email = email
     },
     [UPDATE_PRIVATE](state, val) {
-      Vue.set(state.user, 'private', val)
+      state.user.private = val
     },
     [UPDATE_USER_ID](state, val) {
-      Vue.set(state.user, 'id', val)
+      state.user.id = val
     },
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
     },
     [CACHE_LAWS](state, { laws }) {
       laws.forEach((law) => {
-        Vue.set(state.lawCache, law.resource_uri, law)
+        state.lawCache[law.resource_uri] = law
       })
     }
   },

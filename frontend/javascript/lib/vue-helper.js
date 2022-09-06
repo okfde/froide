@@ -1,3 +1,5 @@
+import { createApp } from 'vue'
+
 function snakeToCamel(s) {
   return s.replace(/(-\w)/g, function (m) {
     return m[1].toUpperCase()
@@ -35,37 +37,25 @@ function getPropsFromElement(el) {
 }
 
 function getSlotData(el) {
-  const slotEls = el.querySelectorAll('[slot]')
+  const slotEls = el.querySelectorAll('template')
   const slots = {}
   for (let i = 0; i < slotEls.length; i += 1) {
     const slotEl = slotEls[i]
-    const slotName = slotEl.attributes.slot.value
-    slots[slotName] = {
-      tag: slotEl.tagName.toLowerCase(),
-      innerHTML: slotEl.innerHTML
-    }
-  }
-  return slots
-}
-
-function makeSlotFunction(slotData, createElement) {
-  return () => {
-    return createElement(slotData.tag, {
-      domProps: {
-        innerHTML: slotData.innerHTML
+    const attrs = slotEl.attributes
+    let slotName = null
+    for (let i = 0; i < attrs.length; i++) {
+      if (attrs[i].name.startsWith('v-slot:')) {
+        slotName = attrs[i].name.replace('v-slot:', '')
+        break
       }
-    })
-  }
-}
-
-function makeSlots(slotData, createElement) {
-  const slots = {}
-  for (const name in slotData) {
-    slots[name] = makeSlotFunction(slotData[name], createElement)
+    }
+    if (slotName === null) {
+      continue
+    }
+    slots[slotName] = slotEl.innerHTML
   }
   return slots
 }
-
 function getOtherAttrs(el) {
   const other = {}
   if (el.id) {
@@ -83,7 +73,7 @@ function getOtherAttrs(el) {
   return other
 }
 
-function renderComponent(el, component) {
+function createAppWithProps(el, component) {
   /*
     Fake VueJS compiler which does only the following:
     - takes class and id attributes and sets them on new element
@@ -98,14 +88,11 @@ function renderComponent(el, component) {
   const slotData = getSlotData(el)
   const otherAttrs = getOtherAttrs(el)
 
-  return function (createElement) {
-    const slots = makeSlots(slotData, createElement)
-    return createElement(component, {
-      props,
-      scopedSlots: slots,
-      ...otherAttrs
-    })
-  }
+  return createApp(component, {
+    slots: slotData,
+    ...props,
+    ...otherAttrs
+  })
 }
 
-export { renderComponent }
+export { createAppWithProps }

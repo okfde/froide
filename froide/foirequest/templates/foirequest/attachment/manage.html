@@ -59,16 +59,16 @@
           <span class="visually-hidden">{% trans "Loading..." %}</span>
         </div>
       </div>
-      <div slot="convert-images">
+      <template v-slot:convert-images>
         <h3>{% translate "Convert images to documents" %}</h3>
-      </div>
-      <div slot="documents">
+      </template>
+      <template v-slot:documents>
         <h3>{% translate "Documents" %}</h3>
         <p>
           {% translate "Here you can approve, redact documents and also mark them as a result of your request." %}
         </p>
-      </div>
-      <div slot="upload-header">
+      </template>
+      <template v-slot:upload-header>
         <h3>{% translate "Upload" %}</h3>
         <p>{% translate "Upload PDFs or pictures of documents." %}</p>
         {% with extra_content_types=message.get_extra_content_types %}
@@ -85,10 +85,10 @@
             </ul>
           {% endif %}
         {% endwith %}
-      </div>
-      <div slot="other-files">
+      </template>
+      <template v-slot:other-files>
         <h4>{% translate "Other files" %}</h4>
-      </div>
+      </template>
     </document-uploader>
 
     <p class="text-end">

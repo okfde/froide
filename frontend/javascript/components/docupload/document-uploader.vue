@@ -1,7 +1,7 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
     <div v-if="imageDocuments.length > 0" class="images mt-5">
-      <slot name="convert-images" />
+      <template v-html="slots['convert-images']" />
       <image-document
         v-for="doc in imageDocuments"
         :key="doc.id"
@@ -16,7 +16,7 @@
         @notnew="doc.new = false" />
     </div>
     <div v-if="pdfDocuments.length > 0" class="documents mt-5">
-      <slot name="documents" />
+      <template v-html="slots['documents']" />
       <div class="mt-3 mb-3">
         <div class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom">
           <div class="col-auto me-md-auto">
@@ -64,7 +64,7 @@
 
     <div v-if="otherAttachments.length > 0" class="mt-5">
       <hr />
-      <slot name="other-files" />
+      <template v-html="slots['other-files']" />
       <file-document
         v-for="doc in otherAttachments"
         :key="doc.id"
@@ -76,7 +76,7 @@
     </div>
 
     <div v-if="canUpload" class="upload mt-5">
-      <slot name="upload-header" />
+      <template v-html="slots['upload-header']" />
       <file-uploader
         class="mb-3 mt-2"
         :config="config"
@@ -88,8 +88,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import I18nMixin from '../../lib/i18n-mixin'
 import { postData } from '../../lib/api.js'
 
@@ -107,6 +105,10 @@ export default {
   },
   mixins: [I18nMixin],
   props: {
+    slots: {
+      type: Object,
+      default: () => ({})
+    },
     config: {
       type: Object,
       required: true
@@ -299,7 +301,7 @@ export default {
     pageUpdated({ document, pageNum, data }) {
       const page = document.pages[pageNum - 1]
       for (const key in data) {
-        Vue.set(page, key, data[key])
+        page[key] = data[key]
       }
     },
     splitPages(doc, pageNum) {
@@ -347,9 +349,9 @@ export default {
       }
       for (const key in update) {
         if (key === 'document') {
-          Vue.set(doc.attachment, key, update[key])
+          doc.attachment[key] = update[key]
         } else {
-          Vue.set(doc, key, update[key])
+          doc[key] = update[key]
         }
       }
     },
@@ -358,7 +360,7 @@ export default {
         const imageDoc = this.documents.filter((d) => d.type === 'imagedoc')
         if (imageDoc.length > 0) {
           doc.pageNum = imageDoc[0].pages.length + 1
-          Vue.set(imageDoc[0], 'pages', [...imageDoc[0].pages, doc])
+          imageDoc[0].pages = [...imageDoc[0].pages, doc]
         } else {
           doc.pageNum = 1
           this.documents = [
@@ -371,22 +373,22 @@ export default {
         }
         this.documents = this.documents.filter((d) => d.id !== doc.id)
       } else {
-        Vue.set(doc, 'irrelevant', false)
+        doc.irrelevant = false
       }
     },
     clickSelectAll() {
       this.pdfDocuments.forEach((d) => {
-        Vue.set(d, 'selected', !this.selectAll)
+        d.selected = !this.selectAll
       })
     },
     approveSelected() {
       return Promise.all(
         this.canApproveDocs.map((d) => {
-          Vue.set(d, 'approving', true)
+          d.approving = true
           return approveAttachment(d, this.config, this.$root.csrfToken).then(
             (att) => {
-              Vue.set(d, 'approving', false)
-              Vue.set(d, 'attachment', att)
+              d.approving = false
+              d.attachment = att
             }
           )
         })
@@ -428,11 +430,11 @@ export default {
     makeResults() {
       return Promise.all(
         this.canMakeResultDocs.map((d) => {
-          Vue.set(d, 'creatingDocument', false)
+          d.creatingDocument = false
           return createDocument(d, this.config, this.$root.csrfToken).then(
             (data) => {
-              Vue.set(d.attachment, 'document', data)
-              Vue.set(d, 'creatingDocument', null)
+              d.attachment.document = data
+              d.creatingDocument = null
             }
           )
         })

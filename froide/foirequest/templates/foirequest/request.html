@@ -78,19 +78,23 @@
         :config="{{ js_config }}"
         >
 
-        <div slot="messages">
+        <template v-slot:messages>
           {% include "snippets/messages.html" %}
-        </div>
+        </template>
 
-        <legend slot="publicbody-legend-title">
-          {% blocktrans %}Choose a public body{% endblocktrans %}
-        </legend>
+        <template v-slot:publicbody-legend-title>
+          <legend>
+            {% blocktrans %}Choose a public body{% endblocktrans %}
+          </legend>
+        </template>
 
-        <p slot="publicbody-help-text">
-          {% blocktrans %}Please type <strong>the name of the public body</strong> you'd like to request information from into the search box.{% endblocktrans %}
-        </p>
+        <template v-slot:publicbody-help-text>
+          <p>
+            {% blocktrans %}Please type <strong>the name of the public body</strong> you'd like to request information from into the search box.{% endblocktrans %}
+          </p>
+        </template>
 
-        <div slot="publicbody-missing">
+        <template v-slot:publicbody-missing>
           <h6>{% trans "Can't find what you're looking for?" %}</h6>
           <p>
             {% url 'publicbody-list' as pb_search_url %}
@@ -99,13 +103,15 @@
               <a href="{{ search_url }}">Search in all public bodies</a> or <a href="{{ propose_url }}">suggest a new one</a>.
             {% endblocktrans %}
           </p>
-        </div>
+        </template>
 
-        <legend slot="request-legend-title">
-          {% blocktrans %}Write the request{% endblocktrans %}
-        </legend>
+        <template v-slot:request-legend-title>
+          <legend>
+            {% blocktrans %}Write the request{% endblocktrans %}
+          </legend>
+        </template>
 
-        <div slot="request-hints">
+        <template v-slot:request-hints>
           <div class="request-hints">
             <h6>
               {% blocktrans %}Important Notes:{% endblocktrans %}
@@ -131,8 +137,8 @@
               </li>
             </ul>
           </div>
-        </div>
-      </request-form>
+        </template>
+      </request-page>
 
     </form>
 

@@ -18,8 +18,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import MessageRedactionWord from './message-redaction-word.vue'
 
 // const SPLITTER = /[^\w\u00C0-\u00FF\-@/\.\:]/g
@@ -92,7 +90,7 @@ export default {
   },
   methods: {
     redact(index) {
-      Vue.set(this.words[index], 'redacted', !this.words[index].redacted)
+      this.words[index].redacted = !this.words[index].redacted
     }
   }
 }
