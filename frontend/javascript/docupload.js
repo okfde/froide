@@ -1,17 +1,9 @@
-import Vue from 'vue'
-
-import { renderComponent } from './lib/vue-helper'
+import { createAppWithProps } from './lib/vue-helper'
 
 import DocumentUploader from './components/docupload/document-uploader.vue'
 
-Vue.config.productionTip = false
-
 function createDocumentUploader(element) {
-  /* eslint-disable no-new */
-  new Vue({
-    components: { DocumentUploader },
-    render: renderComponent(element, DocumentUploader)
-  }).$mount(element)
+  createAppWithProps(element, DocumentUploader).mount(element)
 }
 
 const els = document.querySelectorAll('.document-uploader')

@@ -225,8 +225,6 @@ import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
 
 import range from 'lodash.range'
 
-import Vue from 'vue'
-
 import { Modal } from 'bootstrap'
 
 import { bustCache, getData } from '../../lib/api.js'
@@ -434,8 +432,8 @@ export default {
         this.numPages = this.doc.numPages
 
         for (let i = 1; i <= this.numPages; i += 1) {
-          Vue.set(this.actionsPerPage, i, [])
-          Vue.set(this.actionIndexPerPage, i, 0)
+          this.actionsPerPage[i] = []
+          this.actionIndexPerPage[i] = 0
         }
         this.currentPage = 1
       })
@@ -911,7 +909,7 @@ export default {
       })
       if (this.initialAutoRedact[this.currentPage] === undefined) {
         this.regexList.forEach((r) => this.autoRedact(r))
-        Vue.set(this.initialAutoRedact, this.currentPage, true)
+        this.initialAutoRedact[this.currentPage] = true
       }
       this.applyActionsOnPageLoad()
     },
@@ -934,7 +932,7 @@ export default {
     },
     applyActionsOnPageLoad() {
       if (this.rectanglesPerPage[this.currentPage] === undefined) {
-        Vue.set(this.rectanglesPerPage, this.currentPage, [])
+        this.rectanglesPerPage[this.currentPage] = []
       }
       this.actionsPerPage[this.currentPage].forEach((a) => {
         this.applyAction(a, true)
@@ -947,7 +945,7 @@ export default {
       }
       let actionIndex = this.actionIndexPerPage[this.currentPage]
       actionIndex -= 1
-      Vue.set(this.actionIndexPerPage, this.currentPage, actionIndex)
+      this.actionIndexPerPage[this.currentPage] = actionIndex
       const lastAction = this.actionsPerPage[this.currentPage][actionIndex]
       this.unapplyAction(lastAction)
     },
@@ -958,31 +956,29 @@ export default {
       let actionIndex = this.actionIndexPerPage[this.currentPage]
       const nextAction = this.actionsPerPage[this.currentPage][actionIndex]
       actionIndex += 1
-      Vue.set(this.actionIndexPerPage, this.currentPage, actionIndex)
+      this.actionIndexPerPage[this.currentPage] = actionIndex
       this.applyAction(nextAction)
     },
     addAction(action) {
       let actions = this.actionsPerPage[action.page].slice()
       actions = actions.slice(0, this.actionIndexPerPage[action.page])
       actions.push(action)
-      Vue.set(this.actionsPerPage, action.page, actions)
-      Vue.set(
-        this.actionIndexPerPage,
-        action.page,
+      this.actionsPerPage[action.page] = actions
+
+      this.actionIndexPerPage[action.page] =
         this.actionsPerPage[action.page].length
-      )
 
       this.applyAction(action)
     },
     applyAction(action, ignoreRects = false) {
       if (this.rectanglesPerPage[action.page] === undefined) {
-        Vue.set(this.rectanglesPerPage, action.page, [])
+        this.rectanglesPerPage[action.page] = []
       }
       if (action.rects !== undefined && !ignoreRects) {
-        Vue.set(this.rectanglesPerPage, action.page, [
+        this.rectanglesPerPage[action.page] = [
           ...this.rectanglesPerPage[action.page],
           ...action.rects
-        ])
+        ]
         this.drawRectangles()
       }
       if (action.texts !== undefined && action.texts.length > 0) {
@@ -1007,7 +1003,7 @@ export default {
             }).length === 0
           )
         })
-        Vue.set(this.rectanglesPerPage, action.page, newRects)
+        this.rectanglesPerPage[action.page] = newRects
         this.drawRectangles()
       }
       if (action.texts !== undefined && action.texts.length > 0) {

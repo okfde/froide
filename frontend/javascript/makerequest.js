@@ -1,20 +1,11 @@
-import Vue from 'vue'
+import { createAppWithProps } from './lib/vue-helper'
 
 import store from './store'
 
-import { renderComponent } from './lib/vue-helper'
-
 import RequestPage from './components/makerequest/request-page'
 
-Vue.config.productionTip = false
-
 function createRequestPage(selector) {
-  /* eslint-disable no-new */
-  new Vue({
-    store,
-    components: { RequestPage },
-    render: renderComponent(selector, RequestPage)
-  }).$mount(selector)
+  createAppWithProps(selector, RequestPage).use(store).mount(selector)
 }
 
 document.addEventListener('DOMContentLoaded', function () {

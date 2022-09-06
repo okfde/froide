@@ -87,8 +87,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
@@ -315,7 +313,7 @@ export default {
       this.filterExpanded = expanded
     },
     updateFilter(filter, value) {
-      Vue.set(this.filters, filter.key, value)
+      this.filters[filter.key] = value
       this.triggerAutocomplete()
     },
     updateJurisdictionFilter(filter, value) {

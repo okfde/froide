@@ -48,8 +48,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import { getAllData, FroideAPI, getData, postData } from '../../lib/api.js'
 
 import GeoMatcherRow from './geo-matcher-row.vue'
@@ -196,9 +194,9 @@ export default {
       getAllData(apiUrl).then((data) => {
         this.georegions = data
         this.georegions.forEach((gr) => {
-          Vue.set(gr, 'loading', false)
-          Vue.set(gr, 'links', null)
-          Vue.set(gr, 'matches', null)
+          gr.loading = false
+          gr.links = null
+          gr.matches = null
         })
         this.loadLinks().then(() => {
           this.searchPublicBodies()
@@ -234,7 +232,7 @@ export default {
             if (gr === undefined) {
               return
             }
-            Vue.set(gr, 'links', [...(gr.links || []), pb])
+            gr.links = [...(gr.links || []), pb]
           })
         })
       })
@@ -249,7 +247,7 @@ export default {
       if (gr.matches !== null || gr.loading) {
         return
       }
-      Vue.set(gr, 'loading', true)
+      gr.loading = true
       let term = gr.name
       if (this.searchHint) {
         term = `${this.searchHint} ${term}`
@@ -263,8 +261,8 @@ export default {
         filter.jurisdiction = this.jurisdiction
       }
       this.api.searchPublicBodies(term, filter).then((data) => {
-        Vue.set(gr, 'loading', false)
-        Vue.set(gr, 'matches', data.objects.slice(0, 5))
+        gr.loading = false
+        gr.matches = data.objects.slice(0, 5)
       })
     },
     connectPublicBody(payload) {
@@ -274,8 +272,8 @@ export default {
       }
       postData('', data, this.$root.csrfToken).then((data) => {
         const gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
-        Vue.set(gr, 'links', [...(gr.links || []), payload.publicbody])
-        Vue.set(gr, 'matches', [])
+        gr.links = [...(gr.links || []), payload.publicbody]
+        gr.matches = []
       })
     }
   }

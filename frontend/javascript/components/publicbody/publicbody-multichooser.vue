@@ -116,8 +116,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
-
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import {
   SET_STEP_REQUEST,
@@ -148,7 +146,28 @@ function treeLabel(item) {
 export default {
   name: 'publicbody-multi-chooser',
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
-  props: ['name', 'scope', 'defaultsearch', 'formJson', 'config'],
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    scope: {
+      type: String,
+      required: true
+    },
+    defaultsearch: {
+      type: String,
+      default: ''
+    },
+    formJson: {
+      type: Object,
+      default: () => ({})
+    },
+    config: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   components: {
     PbTable,
     PbPagination,
@@ -371,7 +390,7 @@ export default {
       this.filterExpanded = expanded
     },
     updateFilter(filter, value) {
-      Vue.set(this.filters, filter.key, value)
+      this.filters[filter.key] = value
       this.triggerAutocomplete()
     },
     ...mapMutations({

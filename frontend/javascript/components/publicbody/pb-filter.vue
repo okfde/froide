@@ -57,7 +57,6 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 
@@ -198,7 +197,7 @@ export default {
     loadChildren(item) {
       this.config.getItems(null, { parent: item.id }).then((result) => {
         const items = this.processItems(result.objects)
-        Vue.set(item, 'subItems', items)
+        item.subItems = items
       })
     },
     setFilter(item) {

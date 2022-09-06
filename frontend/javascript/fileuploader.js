@@ -1,22 +1,12 @@
-import Vue from 'vue'
-
+import { createAppWithProps } from './lib/vue-helper'
 import store from './store'
 import { SET_CONFIG } from './store/mutation_types'
 
-import { renderComponent } from './lib/vue-helper'
-
 import FileUploader from './components/upload/file-uploader.vue'
 
-Vue.config.productionTip = false
-
 function createFileUploader(element) {
-  /* eslint-disable no-new */
   store.commit(SET_CONFIG)
-  new Vue({
-    store,
-    components: { FileUploader },
-    render: renderComponent(element, FileUploader)
-  }).$mount(element)
+  createAppWithProps(element, FileUploader).use(store).mount(element)
 }
 
 const els = document.querySelectorAll('.file-uploader')
