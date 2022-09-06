@@ -150,12 +150,6 @@
           <a v-else class="btn btn-secondary" :href="attachmentUrl">
             {{ i18n.cancel }}
           </a>
-
-          <confirm-no-redaction
-            v-if="showConfirmModal"
-            :i18n="config.i18n"
-            @close="closeConfirmModal"
-            @submit="submitRedactions" />
         </div>
       </div>
     </div>
@@ -215,6 +209,10 @@
         </div>
       </div>
     </div>
+    <confirm-no-redaction
+      :i18n="config.i18n"
+      ref="confirmmodal"
+      @submit="submitRedactions" />
   </div>
 </template>
 
@@ -227,6 +225,8 @@ import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
 import range from 'lodash.range'
 
 import Vue from 'vue'
+
+import Modal from 'bootstrap/js/dist/modal'
 
 import { bustCache, getData } from '../../lib/api.js'
 
@@ -288,8 +288,7 @@ export default {
       progressCurrent: null,
       progressTotal: null,
       hasTouch: isTouchDevice(),
-      doubleTap: false,
-      showConfirmModal: false
+      doubleTap: false
     }
   },
   computed: {
@@ -1120,14 +1119,12 @@ export default {
     confirmNoRedactions(event) {
       if (this.hasRedactions) {
         event.preventDefault()
-        this.showConfirmModal = true
+        const modal = Modal.getOrCreateInstance(this.$refs.confirmmodal.$el)
+        modal.show()
       }
     },
     submitRedactions(event) {
       document.getElementById('redaction-submit-form').submit()
-    },
-    closeConfirmModal(event) {
-      this.showConfirmModal = false
     }
   }
 }

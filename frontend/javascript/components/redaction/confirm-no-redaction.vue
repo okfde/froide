@@ -1,5 +1,5 @@
 <template>
-  <div id="step-confirm" class="modal-mask" @click.self="close">
+  <div id="step-confirm" class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -10,8 +10,7 @@
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
-            :aria-label="i18n.close"
-            @click="close"></button>
+            :aria-label="i18n.close" />
         </div>
         <div class="modal-body">
           <p>
@@ -19,7 +18,7 @@
           </p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" @click="close">
+          <button type="button" class="btn" data-bs-dismiss="modal">
             {{ i18n.cancel }}
           </button>
           <button
@@ -45,9 +44,6 @@ export default {
     }
   },
   methods: {
-    close() {
-      this.$emit('close')
-    },
     submit() {
       this.$emit('submit')
     }
