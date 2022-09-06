@@ -225,7 +225,7 @@ const applyMarkToMessage = (
   span: number[]
 ): void => {
   const messageText = document.querySelector(
-    `#${messageId} .alpha-message__content-text .text-content-visible`
+    `#${messageId} .alpha-message__content-text .text-content-visible, #${messageId} .alpha-message__content-text`
   )
   if (messageText == null) {
     return
@@ -239,7 +239,6 @@ const applyMarkToMessage = (
       const match = content.substring(span[0] - charIndex, span[1] - charIndex)
       const mark = document.createElement('mark')
       mark.dataset.toggle = 'tooltip'
-      mark.setAttribute('title', '<i class="fa fa-info-circle"></i>')
       const markA = document.createElement('a')
       markA.href = '#' + guidanceId
       markA.appendChild(document.createTextNode(match))
@@ -253,7 +252,10 @@ const applyMarkToMessage = (
           content.length
         )
         // eslint-disable-next-line no-new
-        new Tooltip(mark)
+        new Tooltip(mark, {
+          html: true,
+          title: '<i class="fa fa-info-circle"></i>'
+        })
       }
       return
     }
