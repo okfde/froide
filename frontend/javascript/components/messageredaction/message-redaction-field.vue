@@ -98,11 +98,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .redaction-area {
   border: 1px solid gray;
   padding: 3px;
   max-height: 60vh;
   overflow-y: auto;
+}
+.content-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 </style>
