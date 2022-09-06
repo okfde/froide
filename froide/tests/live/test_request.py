@@ -427,6 +427,7 @@ class TestSettingStatus(LiveTestMixin, StaticLiveServerTestCase):
                 self.selenium.find_element_by_class_name(
                     "info-box__edit-button"
                 ).click()
+                time.sleep(1)
                 self.assertTrue(editForm.is_displayed())
                 resolution = self.selenium.find_element_by_id("id_resolution")
                 resolution_select = Select(resolution)
