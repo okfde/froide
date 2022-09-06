@@ -118,6 +118,8 @@ class Base(Configuration):
     LOCALE_PATHS = [BASE_DIR / "locale"]
 
     GEOIP_PATH = None
+    GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
+    GEOS_LIBRARY_PATH = os.environ.get("GEOS_LIBRARY_PATH")
 
     # Absolute filesystem path to the directory that will hold user-uploaded files.
     # Example: "/home/media/media.lawrence.com/media/"
