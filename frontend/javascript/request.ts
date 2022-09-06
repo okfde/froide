@@ -225,7 +225,7 @@ const applyMarkToMessage = (
   span: number[]
 ): void => {
   const messageText = document.querySelector(
-    `#${messageId} .text-content-visible`
+    `#${messageId} .alpha-message__content-text .text-content-visible`
   )
   if (messageText == null) {
     return
