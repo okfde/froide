@@ -1,5 +1,4 @@
 import json
-import re
 from typing import Dict, List, Optional, Tuple
 
 from django import template
@@ -10,10 +9,6 @@ from django.utils.safestring import mark_safe
 from .block_helper import VAR_NAME, get_default_dict
 
 register = template.Library()
-
-
-ENTRY_POINT_RE = re.compile(r"^[\w-]+\.js$")
-FRONTEND_DEBUG = settings.FRONTEND_DEBUG
 
 
 class FrontendBuildLoader:
@@ -47,11 +42,14 @@ class FrontendBuildLoader:
         except IOError:
             return self.load_dev_manifest()
 
+        return self.generate_entry_points(manifest_data)
+
+    def generate_entry_points(self, manifest_data):
         entry_points = {}
         for source_file, data in manifest_data.items():
-            output_file = data["file"]
-            if not ENTRY_POINT_RE.match(output_file):
+            if not data.get("isEntry"):
                 continue
+            output_file = data["file"]
             out_css = self.find_all_css(manifest_data, source_file, set())
             entry_points[output_file] = {
                 "source": source_file,
@@ -62,14 +60,14 @@ class FrontendBuildLoader:
 
     def find_all_css(self, manifest_data, import_path, already):
         data = manifest_data[import_path]
-        out_css = []
+        css_files = []
         for import_path in data.get("imports", ()):
-            out_css.extend(self.find_all_css(manifest_data, import_path, already))
+            css_files.extend(self.find_all_css(manifest_data, import_path, already))
         for css_path in data.get("css", ()):
             if css_path not in already:
-                out_css.append(css_path)
+                css_files.append(css_path)
                 already.add(css_path)
-        return out_css
+        return css_files
 
 
 frontend = FrontendBuildLoader()
@@ -83,14 +81,16 @@ FrontendFiles = Dict[str, List[str]]
 FrontendList = List[Tuple[str, List[str]]]
 
 
-def get_frontend_files(name: str) -> FrontendFiles:
+def get_frontend_files(
+    name: str, frontend: FrontendBuildLoader = frontend
+) -> FrontendFiles:
     data = frontend.get_entry_point(name)
     if data is None:
-        if FRONTEND_DEBUG:
+        if settings.FRONTEND_DEBUG:
             raise KeyError(name)
         return {}
 
-    if FRONTEND_DEBUG:
+    if settings.FRONTEND_DEBUG:
         source_file = data["source"]
         # Replace relative references from vite with symlink in node_modules
         source_file = source_file.replace("../", "node_modules/")
@@ -109,31 +109,25 @@ def get_frontend_files(name: str) -> FrontendFiles:
     return result
 
 
-def get_frontend_build(name: str) -> FrontendFiles:
-    data = frontend.get_entry_point(name)
-    if data is None:
-        if FRONTEND_DEBUG:
-            raise KeyError(name)
-        return {}
+def get_frontend_build(
+    name: str, frontend: FrontendBuildLoader = frontend
+) -> FrontendFiles:
+    frontend_files = get_frontend_files(name, frontend=frontend)
 
-    if FRONTEND_DEBUG:
-        source_file = data["source"]
-        # Replace relative references from vite with symlink in node_modules
-        source_file = source_file.replace("../", "node_modules/")
+    if settings.FRONTEND_DEBUG:
         return {
             "js": [
                 FRONTEND_TEMPLATES["js"].format(
                     src=settings.FRONTEND_SERVER_URL + source_file
                 )
+                for source_file in frontend_files["js"]
             ],
             "css": (),
         }
 
     result = {"js": [], "css": []}
 
-    for block_name, paths in data.items():
-        if block_name not in result:
-            continue
+    for block_name, paths in frontend_files.items():
         for path in paths:
             static_path = static(path)
             output = FRONTEND_TEMPLATES[block_name].format(src=static_path)
@@ -176,7 +170,7 @@ def getfrontendbuild(name) -> Optional[FrontendList]:
 
 @register.simple_tag
 def renderfrontendhmr() -> str:
-    if FRONTEND_DEBUG:
+    if settings.FRONTEND_DEBUG:
         return mark_safe(
             """<script type="module" src="{server_url}@vite/client" crossorigin="anonymous"></script>""".format(
                 server_url=settings.FRONTEND_SERVER_URL
