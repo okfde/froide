@@ -152,14 +152,11 @@ class RequestTest(TestCase):
         self.assertIn(req.secret_address, message.extra_headers.get("Reply-To", ""))
         self.assertEqual(message.to[0], req.public_body.email)
         self.assertEqual(message.subject, "%s [#%s]" % (req.title, req.pk))
-        resp = self.client.post(
-            reverse("foirequest-set_status", kwargs={"slug": req.slug})
-        )
-        self.assertEqual(resp.status_code, 400)
-        response = self.client.post(
-            reverse("foirequest-set_law", kwargs={"slug": req.slug}), post
-        )
-        self.assertEqual(response.status_code, 400)
+
+    def test_new_email_received_set_status(self):
+        req = FoiRequest.objects.all()[0]
+        pb = req.public_body
+
         new_foi_email = "foi@" + pb.email.split("@")[1]
         add_message_from_email(
             req,
@@ -180,10 +177,13 @@ class RequestTest(TestCase):
             ),
         )
         req = FoiRequest.objects.get(pk=req.pk)
+
         self.assertTrue(req.awaits_classification())
-        self.assertEqual(len(req.messages), 2)
-        self.assertEqual(req.messages[1].sender_email, new_foi_email)
-        self.assertEqual(req.messages[1].sender_public_body, req.public_body)
+        self.assertEqual(len(req.messages), 3)
+        self.assertEqual(req.messages[-1].sender_email, new_foi_email)
+        self.assertEqual(req.messages[-1].sender_public_body, req.public_body)
+
+        self.client.force_login(req.user)
         response = self.client.get(
             reverse("foirequest-show", kwargs={"slug": req.slug})
         )
@@ -203,8 +203,23 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.costs, float(costs))
         self.assertEqual(req.status, status)
+
+    def test_send_message(self):
+        req = FoiRequest.objects.all()[0]
+        pb = req.public_body
+        new_foi_email = "foi@" + pb.email.split("@")[1]
+        factories.FoiMessageFactory.create(
+            request=req, sender_email=new_foi_email, sender_public_body=req.public_body
+        )
+        user = req.user
         # send reply
         old_len = len(mail.outbox)
+        response = self.client.post(
+            reverse("foirequest-send_message", kwargs={"slug": req.slug}), {}
+        )
+        self.assertForbidden(response)
+
+        self.client.force_login(user)
         response = self.client.post(
             reverse("foirequest-send_message", kwargs={"slug": req.slug}), {}
         )
@@ -271,9 +286,12 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.get(pk=req.pk)
         self.assertEqual(req.last_message, foimessage.timestamp)
         self.assertEqual(foimessage.recipient_public_body, req.public_body)
-        self.assertTrue(req.law.meta)
-        other_laws = req.law.combined.all()
 
+    def test_set_law(self):
+        req = FoiRequest.objects.all()[0]
+        self.client.force_login(req.user)
+        other_laws = req.law.combined.all()
+        self.assertTrue(req.law.meta)
         response = self.client.post(
             reverse("foirequest-set_law", kwargs={"slug": req.slug}), {"law": "9" * 5}
         )
@@ -292,7 +310,17 @@ class RequestTest(TestCase):
             reverse("foirequest-set_law", kwargs={"slug": req.slug}), post
         )
         self.assertEqual(response.status_code, 302)
-        # logout
+        req = FoiRequest.objects.all()[0]
+        self.assertFalse(req.law.meta)
+
+    def test_logged_out_actions_forbidden(self):
+        req = FoiRequest.objects.all()[0]
+
+        other_laws = req.law.combined.all()
+        costs = "123.45"
+        status = "awaiting_response"
+
+        post = {"law": str(other_laws[0].pk)}
         self.client.logout()
 
         response = self.client.post(
@@ -309,13 +337,29 @@ class RequestTest(TestCase):
             {"status": status, "costs": costs},
         )
         self.assertForbidden(response)
-        self.client.login(email="info@fragdenstaat.de", password="froide")
+
+    def test_wrong_user_actions_forbidden(self):
+        self.client.login(email="dummy@example.org", password="froide")
+
+        req = FoiRequest.objects.all()[0]
+
+        other_laws = req.law.combined.all()
+        costs = "123.45"
+        status = "awaiting_response"
+
+        post = {"law": str(other_laws[0].pk)}
+
         response = self.client.post(
             reverse("foirequest-set_law", kwargs={"slug": req.slug}), post
         )
         self.assertEqual(response.status_code, 403)
         response = self.client.post(
             reverse("foirequest-send_message", kwargs={"slug": req.slug}), post
+        )
+        self.assertEqual(response.status_code, 403)
+        response = self.client.post(
+            reverse("foirequest-set_status", kwargs={"slug": req.slug}),
+            {"status": status, "costs": costs},
         )
         self.assertEqual(response.status_code, 403)
 
