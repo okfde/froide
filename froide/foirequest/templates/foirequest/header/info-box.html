@@ -237,10 +237,10 @@
         <form class="disable-submit" method="post" action="{% url 'foirequest-set_status' slug=object.slug %}#set-status">
           {% csrf_token %}
           {% if status_form %}
-            {% include "foirequest/header/_set_status.html" %}
+            {% include "foirequest/header/_set_status.html" with status_form=status_form inline=True %}
           {% else %}
             {% with status_form=object.get_status_form %}
-              {% include "foirequest/header/_set_status.html" %}
+              {% include "foirequest/header/_set_status.html" with status_form=status_form inline=True %}
             {% endwith %}
           {% endif %}
           <button class="btn btn-primary" id="set-status-submit" type="submit">{% blocktrans %}Set status{% endblocktrans %}</button>
