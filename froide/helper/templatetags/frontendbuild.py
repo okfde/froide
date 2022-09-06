@@ -52,12 +52,24 @@ class FrontendBuildLoader:
             output_file = data["file"]
             if not ENTRY_POINT_RE.match(output_file):
                 continue
+            out_css = self.find_all_css(manifest_data, source_file, set())
             entry_points[output_file] = {
                 "source": source_file,
                 "js": [output_file],
-                "css": data.get("css", ()),
+                "css": out_css,
             }
         return entry_points
+
+    def find_all_css(self, manifest_data, import_path, already):
+        data = manifest_data[import_path]
+        out_css = []
+        for import_path in data.get("imports", ()):
+            out_css.extend(self.find_all_css(manifest_data, import_path, already))
+        for css_path in data.get("css", ()):
+            if css_path not in already:
+                out_css.append(css_path)
+                already.add(css_path)
+        return out_css
 
 
 frontend = FrontendBuildLoader()
