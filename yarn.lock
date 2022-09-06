@@ -79,8 +79,9 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@okfde/filingcabinet@file:../django-filingcabinet":
+"@okfde/filingcabinet@okfde/django-filingcabinet":
   version "0.0.1"
+  resolved "https://codeload.github.com/okfde/django-filingcabinet/tar.gz/7aa71bfb8ea55a8e4cddf7644a1f1ae5e1599c28"
   dependencies:
     intersection-observer "^0.7.0"
     pdfjs-dist "==2.9.359"
