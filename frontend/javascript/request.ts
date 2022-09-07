@@ -224,12 +224,13 @@ const applyMarkToMessage = (
   guidanceId: string,
   span: number[]
 ): void => {
-  const messageText = document.querySelector(
+  const messageTexts = document.querySelectorAll(
     `#${messageId} .alpha-message__content-text, #${messageId} .alpha-message__content-text .text-content-visible`
   )
-  if (messageText == null) {
+  if (messageTexts.length === 0) {
     return
   }
+  const messageText = messageTexts[messageTexts.length - 1]
   let charIndex = 0
   for (let i = 0; i < messageText.childNodes.length; i++) {
     const node = messageText.childNodes[i]
