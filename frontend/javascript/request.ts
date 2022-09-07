@@ -308,10 +308,15 @@ const scrollToAnchor = (messages: Message[]): void => {
     return
   }
   if (window.location.hash) {
-    const element = document.querySelector(window.location.hash)
+    let element: HTMLElement | null = null
+    try {
+      element = document.querySelector(window.location.hash)
+    } catch (e) {
+      return
+    }
     if (element != null) {
       window.setTimeout(() => {
-        element.scrollIntoView({ behavior: 'smooth' })
+        element?.scrollIntoView({ behavior: 'smooth' })
       }, 300)
     }
   }
