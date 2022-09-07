@@ -3,6 +3,8 @@ from django.utils.translation import override
 
 from crossdomainmedia import CrossDomainMediaAuth
 
+from froide.helper.auth import can_read_object
+
 
 class DocumentCrossDomainMediaAuth(CrossDomainMediaAuth):
     """
@@ -21,11 +23,8 @@ class DocumentCrossDomainMediaAuth(CrossDomainMediaAuth):
         return self.context["object"].public
 
     def has_perm(self, request):
-        ctx = self.context
-        obj = ctx["object"]
-        if obj.user == request.user:
-            return True
-        return super().has_perm(request)
+        obj = self.context["object"]
+        return can_read_object(obj, request)
 
     def get_auth_url(self):
         """
