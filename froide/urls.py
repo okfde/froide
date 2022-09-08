@@ -24,7 +24,7 @@ from froide.foirequest.api_views import (
     FoiMessageViewSet,
     FoiRequestViewSet,
 )
-from froide.foirequest.views import FoiRequestSitemap, dashboard, index
+from froide.foirequest.views import FoiRequestSitemap, index
 from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
 from froide.georegion.api_views import GeoRegionViewSet
 from froide.problem.api_views import ProblemReportViewSet
@@ -206,7 +206,6 @@ urlpatterns = (
     froide_urlpatterns
     + [
         path("", index, name="index"),
-        path("dashboard/", dashboard, name="dashboard"),
     ]
     + api_urlpatterns
     + sitemap_urlpatterns

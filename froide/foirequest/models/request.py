@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.db import models
-from django.db.models import Case, Q, Value, When
+from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -72,28 +72,6 @@ class FoiRequestManager(CurrentSiteManager):
             self.get_unclassified(offset=MODERATOR_CLASSIFICATION_OFFSET)
             .filter(visibility=Visibility.VISIBLE_TO_PUBLIC)
             .order_by("last_message")
-        )
-
-    def get_dashboard_requests(self, user, query=None):
-        query_kwargs = {}
-        if query is not None:
-            query_kwargs = {"title__icontains": query}
-        now = timezone.now()
-        return (
-            self.get_queryset()
-            .filter(user=user, **query_kwargs)
-            .annotate(
-                is_important=Case(
-                    When(
-                        Q(status=Status.AWAITING_CLASSIFICATION)
-                        | (Q(due_date__lt=now) & Q(status=Status.AWAITING_RESPONSE)),
-                        then=Value(True),
-                    ),
-                    default=Value(False),
-                    output_field=models.BooleanField(),
-                )
-            )
-            .order_by("-is_important", "-last_message")
         )
 
     def get_throttle_filter(self, qs, user, extra_filters=None):

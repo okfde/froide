@@ -39,7 +39,6 @@ from .message import (
 )
 from .misc_views import (
     FoiRequestSitemap,
-    dashboard,
     download_foirequest_pdf,
     download_foirequest_zip,
     index,
@@ -107,7 +106,6 @@ __all__ = [
     "download_message_pdf",
     "download_original_email",
     "index",
-    "dashboard",
     "download_foirequest_zip",
     "download_foirequest_pdf",
     "SetTeamView",
