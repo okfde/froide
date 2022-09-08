@@ -132,9 +132,10 @@ class MaillogParseTest(TestCase):
         self.assertEqual(len(parser._msg_log), 0)
 
     def test_parse_file_with_partial_log(self):
-        parser = PostfixLogfileParser(open(p("maillog_002.txt")))
-        self.assertEqual(next(parser, None), None)
-        self.assertEqual(len(parser._msg_log), 1)
+        with open(p("maillog_002.txt")) as f:
+            parser = PostfixLogfileParser(f)
+            self.assertEqual(next(parser, None), None)
+            self.assertEqual(len(parser._msg_log), 1)
 
     def test_email_signal(self):
         invocations = []
