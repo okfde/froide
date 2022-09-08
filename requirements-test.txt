@@ -124,6 +124,8 @@ defusedxml==0.7.1
     # via cairosvg
 deprecated==1.2.12
     # via jwcrypto
+deprecation==2.1.0
+    # via pikepdf
 distlib==0.3.2
     # via virtualenv
 dj-database-url==0.5.0
@@ -322,13 +324,17 @@ oauthlib==3.1.1
     # via django-oauth-toolkit
 outcome==1.2.0
     # via trio
+packaging==21.3
+    # via
+    #   deprecation
+    #   pikepdf
 pathspec==0.9.0
     # via black
 pbr==5.6.0
     # via -r requirements-test.in
 phonenumbers==8.12.25
     # via -r requirements.in
-pikepdf==2.13.0
+pikepdf==5.6.1
     # via django-filingcabinet
 pillow==9.2.0
     # via
@@ -374,6 +380,8 @@ pyopenssl==20.0.1
     #   urllib3
 pyotp==2.6.0
     # via django-mfa3
+pyparsing==3.0.9
+    # via packaging
 pypdf2==2.4.2
     # via
     #   -r requirements.in
