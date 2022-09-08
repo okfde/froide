@@ -12,7 +12,7 @@ aiosignal==1.2.0
     # via aiohttp
 amqp==5.0.9
     # via kombu
-asgiref==3.3.4
+asgiref==3.5.2
     # via
     #   channels
     #   daphne
@@ -37,8 +37,13 @@ autobahn==21.3.1
     # via daphne
 automat==20.2.0
     # via twisted
-backports.entry-points-selectable==1.1.1
+backports-entry-points-selectable==1.1.1
     # via virtualenv
+backports-zoneinfo==0.2.1
+    # via
+    #   django
+    #   django-celery-beat
+    #   django-timezone-field
 billiard==3.6.4.0
     # via celery
 black==22.3.0
@@ -51,13 +56,12 @@ cairocffi==1.2.0
     #   weasyprint
 cairosvg==2.5.2
     # via weasyprint
-camelot-py[cv]==0.9.0
-    # via -r requirements.in
 celery==5.2.3
     # via
     #   -r requirements.in
     #   django-celery-beat
     #   django-celery-email
+    #   django-filingcabinet
 certifi==2021.5.30
     # via
     #   elasticsearch
@@ -73,17 +77,12 @@ cfgv==3.3.0
 channels==3.0.4
     # via -r requirements.in
 chardet==4.0.0
-    # via
-    #   camelot-py
-    #   requests
+    # via requests
 charset-normalizer==2.0.12
-    # via
-    #   aiohttp
-    #   pdfminer.six
+    # via aiohttp
 click==8.0.3
     # via
     #   black
-    #   camelot-py
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -112,7 +111,6 @@ cryptography==36.0.2
     #   autobahn
     #   fido2
     #   jwcrypto
-    #   pdfminer.six
     #   pyopenssl
     #   service-identity
     #   urllib3
@@ -130,7 +128,7 @@ distlib==0.3.2
     # via virtualenv
 dj-database-url==0.5.0
     # via -r requirements.in
-django==3.2.14
+django==4.0.7
     # via
     #   -r requirements.in
     #   channels
@@ -150,14 +148,13 @@ django==3.2.14
     #   django-stubs
     #   django-stubs-ext
     #   django-taggit
-    #   django-timezone-field
     #   django-treebeard
     #   djangorestframework
 django-appconf==1.0.4
     # via django-celery-email
 django-cache-url==3.2.3
     # via -r requirements.in
-django-celery-beat==2.2.0
+django-celery-beat==2.3.0
     # via -r requirements.in
 django-celery-email==3.0.0
     # via -r requirements.in
@@ -169,7 +166,7 @@ django-coverage-plugin==2.0.0
     # via -r requirements-test.in
 django-crossdomainmedia==0.0.3
     # via -r requirements.in
-django-elasticsearch-dsl==7.2.0
+django-elasticsearch-dsl==7.2.2
     # via -r requirements.in
 django-filter==2.4.0
     # via
@@ -203,7 +200,7 @@ django-taggit==1.4.0
     # via
     #   -r requirements.in
     #   django-filingcabinet
-django-timezone-field==4.1.2
+django-timezone-field==5.0
     # via django-celery-beat
 django-treebeard==4.5.1
     # via -r requirements.in
@@ -228,14 +225,14 @@ elasticsearch-dsl==7.3.0
     # via
     #   -r requirements.in
     #   django-elasticsearch-dsl
-et-xmlfile==1.1.0
-    # via openpyxl
 factory-boy==3.2.0
     # via -r requirements-test.in
 faker==8.8.1
     # via
     #   -r requirements-test.in
     #   factory-boy
+feedgen==0.9.0
+    # via django-filingcabinet
 fido2==1.0.0
     # via django-mfa3
 filelock==3.0.12
@@ -293,6 +290,7 @@ libcst==0.3.20
 lxml==4.9.1
     # via
     #   -r requirements.in
+    #   feedgen
     #   pikepdf
 markdown==3.3.4
     # via -r requirements.in
@@ -320,28 +318,14 @@ mypy-extensions==0.4.3
     #   typing-inspect
 nodeenv==1.6.0
     # via pre-commit
-numpy==1.22.1
-    # via
-    #   -r requirements.in
-    #   camelot-py
-    #   opencv-python
-    #   pandas
 oauthlib==3.1.1
     # via django-oauth-toolkit
-opencv-python==4.5.1.48
-    # via camelot-py
-openpyxl==3.0.7
-    # via camelot-py
 outcome==1.2.0
     # via trio
-pandas==1.2.4
-    # via camelot-py
 pathspec==0.9.0
     # via black
 pbr==5.6.0
     # via -r requirements-test.in
-pdfminer.six==20220506
-    # via camelot-py
 phonenumbers==8.12.25
     # via -r requirements.in
 pikepdf==2.13.0
@@ -393,7 +377,6 @@ pyotp==2.6.0
 pypdf2==2.4.2
     # via
     #   -r requirements.in
-    #   camelot-py
     #   django-filingcabinet
 pyphen==0.10.0
     # via weasyprint
@@ -407,8 +390,8 @@ python-dateutil==2.8.1
     # via
     #   elasticsearch-dsl
     #   faker
+    #   feedgen
     #   icalendar
-    #   pandas
     #   python-crontab
 python-magic==0.4.24
     # via -r requirements.in
@@ -418,12 +401,9 @@ python-slugify==6.1.2
     # via -r requirements.in
 pytz==2021.3
     # via
-    #   -r requirements.in
     #   celery
-    #   django
     #   django-timezone-field
     #   icalendar
-    #   pandas
 pyyaml==5.4.1
     # via
     #   libcst
@@ -431,7 +411,9 @@ pyyaml==5.4.1
 qrcode==7.3.1
     # via django-mfa3
 reportlab==3.5.67
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-filingcabinet
 requests==2.25.1
     # via
     #   -r requirements.in
@@ -499,8 +481,6 @@ types-markdown==3.3.2
     # via -r requirements-test.in
 types-python-dateutil==0.1.6
     # via -r requirements-test.in
-types-pytz==2021.1.2
-    # via -r requirements-test.in
 types-requests==2.25.6
     # via -r requirements-test.in
 typing-extensions==3.10.0.0
@@ -514,6 +494,8 @@ typing-extensions==3.10.0.0
     #   typing-inspect
 typing-inspect==0.7.1
     # via libcst
+tzdata==2022.2
+    # via django-celery-beat
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==3.0.1
@@ -553,7 +535,7 @@ wsproto==1.1.0
     # via trio-websocket
 yarl==1.6.3
     # via aiohttp
-zope.interface==5.4.0
+zope-interface==5.4.0
     # via twisted
 
 # The following packages are considered to be unsafe in a requirements file:
