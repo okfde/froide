@@ -39,7 +39,6 @@ pypdf2>=2
 python-magic
 python-mimeparse
 python-slugify
-pytz
 reportlab
 requests
 Wand

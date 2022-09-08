@@ -1,11 +1,9 @@
 from io import StringIO
 from unittest import mock
 
-from django.conf import settings
 from django.test import TestCase
+from django.utils import timezone
 from django.utils.dateparse import parse_datetime
-
-import pytz
 
 from ..delivery import DeliveryReport, PostfixDeliveryReporter
 from . import factories
@@ -34,11 +32,11 @@ class PostfixDeliveryReportTest(TestCase):
         sender = "s.peter.xyz123@fragdenstaat.de"
         recipient = "test.testing@staedteregion-aachen.de"
 
-        pdl = PostfixDeliveryReporter(time_zone=settings.TIME_ZONE)
+        pdl = PostfixDeliveryReporter(timezone=timezone.get_current_timezone())
         log_file = StringIO(log_string)
         naive = parse_datetime("2017-12-11 14:28:45")
 
-        timestamp = pytz.timezone(settings.TIME_ZONE).localize(naive, is_dst=None)
+        timestamp = naive.replace(tzinfo=timezone.get_current_timezone())
 
         result = pdl.search_log(log_file, sender, recipient, timestamp)
         self.assertEqual(result.status, "sent")

@@ -14,7 +14,6 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
 import icalendar
-import pytz
 
 from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
@@ -610,7 +609,7 @@ def permanently_anonymize_requests(foirequests):
 
 
 def add_ical_events(foirequest, cal):
-    event_timezone = pytz.timezone(settings.TIME_ZONE)
+    event_timezone = timezone.get_current_timezone()
 
     def tz(x):
         return x.astimezone(event_timezone)

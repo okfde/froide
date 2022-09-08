@@ -37,9 +37,11 @@ def calculate_month_range_de(date: datetime, months: int = 1) -> datetime:
     # make sure we are in our timezone
     if not isinstance(date, datetime):
         date = datetime(date.year, date.month, date.day, 23, 59, 59)
-        date = current_tz.localize(date, is_dst=None)
 
-    date = current_tz.normalize(date.astimezone(current_tz))
+    if timezone.is_naive(date):
+        date = date.replace(tzinfo=current_tz)
+
+    date = timezone.localtime(date)
 
     tempdate = date
     if date.hour >= 22:  # After 22h next working day is receival
@@ -63,12 +65,12 @@ def calculate_month_range_de(date: datetime, months: int = 1) -> datetime:
     last_day = calendar.monthrange(y, m)[1]
     if d > last_day:
         d = last_day
-    due = datetime(y, m, d, 0, 0, 0)
+    naive_due = datetime(y, m, d, 0, 0, 0)
     # Move Fristende to after holiday.
-    due = advance_after_holiday(due)
+    naive_due = advance_after_holiday(naive_due)
     # Return first day after Fristende
-    due += timedelta(days=1)
-    return current_tz.localize(due)
+    naive_due += timedelta(days=1)
+    return naive_due.replace(tzinfo=current_tz)
 
 
 def calculate_workingday_range(date: datetime, days: int):

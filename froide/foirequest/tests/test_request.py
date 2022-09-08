@@ -634,7 +634,7 @@ class RequestTest(TestCase):
         self.assertEqual(response.status_code, 200)
         # Date message back
         message = req.foimessage_set.all()[0]
-        message.timestamp = timezone.utc.localize(datetime(2011, 1, 1, 0, 0, 0))
+        message.timestamp = datetime(2011, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         message.save()
         req.first_message = message.timestamp
         req.save()

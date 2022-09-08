@@ -7,21 +7,19 @@ Licensed under MIT
 """
 
 import re
-import time
 from contextlib import closing
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from email.header import decode_header
 from email.message import EmailMessage
 from email.parser import BytesParser as Parser
-from email.utils import getaddresses, parseaddr, parsedate_tz
+from email.utils import getaddresses, parseaddr, parsedate_to_datetime
 from io import BytesIO
 from typing import Dict, List, NamedTuple, Optional, Tuple
 from urllib.parse import unquote
 
+from django.utils import timezone
 from django.utils.functional import cached_property
-
-import pytz
 
 from .email_utils import (
     AuthenticityStatus,
@@ -278,15 +276,16 @@ def get_address_list(values):
     return fixed
 
 
-def parse_date(date_str):
-    date_tuple = parsedate_tz(date_str)
-    if date_tuple is None:
+def parse_email_date(date_str: Optional[str]) -> Optional[datetime]:
+    if date_str is None:
         return None
-    date = datetime.fromtimestamp(time.mktime(date_tuple[:9]))
-    offset = date_tuple[9]
-    if offset is not None:
-        date = date - timedelta(seconds=offset)
-    return pytz.utc.localize(date)
+    try:
+        date = parsedate_to_datetime(date_str)
+    except ValueError:
+        return None
+    if timezone.is_naive(date):
+        date = date.replace(tzinfo=timezone.utc)
+    return date
 
 
 @dataclass
@@ -372,7 +371,7 @@ def parse_email(bytesfile: BytesIO) -> ParsedEmail:
 
     from_field = parse_email_address(str(msgobj.get("From")))
     from_field = from_field.lower()
-    date = parse_date(str(msgobj.get("Date")))
+    date = parse_email_date(msgobj.get("Date"))
 
     return ParsedEmail(
         msgobj=msgobj,

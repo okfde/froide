@@ -7,8 +7,6 @@ import time
 from collections import defaultdict, namedtuple
 from datetime import datetime
 
-import pytz
-
 from froide.helper.utils import get_module_attr_from_dotted_path
 
 
@@ -53,8 +51,8 @@ class PostfixDeliveryReporter(object):
     ]
     LOG_FILES_EXTENDED = ["/var/log/mail.log.%d.gz" % i for i in range(2, 12)]
 
-    def __init__(self, time_zone=None):
-        self.timezone = pytz.timezone(time_zone)
+    def __init__(self, timezone=None):
+        self.timezone = timezone
 
     def get_log_files(self, extended=False):
         for open_func, filename in self._get_files(extended):
@@ -179,6 +177,5 @@ class PostfixDeliveryReporter(object):
             date_list[0] == 1900
         ):  # 1900 is the default year for time.strptime, hence no year was present in date_str
             date_list[0] = timestamp.year
-        date = datetime.fromtimestamp(time.mktime(tuple(date_list)))
-
-        return self.timezone.localize(date)
+        date = datetime.fromtimestamp(time.mktime(tuple(date_list)), tz=self.timezone)
+        return date

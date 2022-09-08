@@ -20,5 +20,4 @@ mypy
 django-stubs
 types-Markdown
 types-python-dateutil
-types-pytz
 types-requests

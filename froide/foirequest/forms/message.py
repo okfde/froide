@@ -505,8 +505,7 @@ class MessageEditMixin(forms.Form):
 
     def clean_date(self):
         date = self.cleaned_data["date"]
-        current_tz = timezone.get_current_timezone()
-        today = current_tz.normalize(timezone.now().astimezone(current_tz)).date()
+        today = timezone.localdate()
         if date > today:
             raise forms.ValidationError(
                 _("Your reply date is in the future, that is not possible.")
@@ -522,10 +521,11 @@ class MessageEditMixin(forms.Form):
 
     def set_data_on_message(self, message):
         # TODO: Check if timezone support is correct
-        date = datetime.datetime.combine(
-            self.cleaned_data["date"], datetime.datetime.now().time()
+        message.timestamp = datetime.datetime.combine(
+            self.cleaned_data["date"],
+            datetime.datetime.now().time(),
+            tzinfo=timezone.get_current_timezone(),
         )
-        message.timestamp = timezone.get_current_timezone().localize(date)
         message.subject = self.cleaned_data.get("subject", "")
         user_replacements = self.foirequest.user.get_redactions()
         subject_redacted = redact_subject(message.subject, user_replacements)
