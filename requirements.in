@@ -1,5 +1,4 @@
 bleach
-camelot-py[cv]
 celery>=5.2.2
 channels
 coreapi
@@ -21,7 +20,7 @@ django-parler
 django-storages
 django-taggit
 django-treebeard
-Django>=3.2,<3.3
+Django>=4.0,<4.1
 djangorestframework
 djangorestframework-csv
 djangorestframework-jsonp
@@ -31,7 +30,6 @@ geoip2
 icalendar
 lxml>=4.6.5
 markdown
-numpy>=1.21
 phonenumbers
 Pillow>=9.0.0
 psycopg2-binary
