@@ -30,7 +30,7 @@ autobahn==21.3.1
     # via daphne
 automat==20.2.0
     # via twisted
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1; python_version < "3.9"
     # via
     #   django
     #   django-celery-beat

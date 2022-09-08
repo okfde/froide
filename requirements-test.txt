@@ -39,7 +39,7 @@ automat==20.2.0
     # via twisted
 backports-entry-points-selectable==1.1.1
     # via virtualenv
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1; python_version < "3.9"
     # via
     #   django
     #   django-celery-beat
