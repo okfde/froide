@@ -17,7 +17,6 @@ from django.utils.encoding import smart_str
 from django.utils.translation import get_language_bidi
 from django.utils.translation import gettext_lazy as _
 
-import pytz
 from taggit.models import TaggedItem
 
 from .forms import TagObjectForm, get_fake_fk_form_class
@@ -535,13 +534,12 @@ class DateRangeFilter(admin.filters.SimpleListFilter):
         return timezone.get_default_timezone()
 
     @staticmethod
-    def make_dt_aware(value, timezone):
-        if settings.USE_TZ and pytz is not None:
-            default_tz = timezone
-            if value.tzinfo is not None:
-                value = default_tz.normalize(value)
+    def make_dt_aware(value: datetime.datetime, tzinfo):
+        if settings.USE_TZ:
+            if timezone.is_aware(value):
+                value = timezone.localtime(value, timezone=tzinfo)
             else:
-                value = default_tz.localize(value)
+                value = value.replace(tzinfo=tzinfo)
         return value
 
     def choices(self, changelist):

@@ -43,7 +43,6 @@ setup(
         "geoip2",
         "django-elasticsearch-dsl",
         "django-taggit",
-        "pytz",
         "requests",
         "python-magic",
         "djangorestframework",
