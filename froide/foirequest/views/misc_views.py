@@ -1,12 +1,8 @@
-import datetime
-import json
-
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sitemaps import Sitemap
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
 
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.cache import cache_anonymous_page
@@ -37,49 +33,6 @@ def index(request):
             "pbcount": PublicBody.objects.get_list().count(),
         },
     )
-
-
-def dashboard(request):
-    if not request.user.is_staff:
-        return render_403(request)
-    context = {}
-    user = {}
-    start_date = timezone.utc.localize(datetime.datetime(2011, 7, 30))
-    for u in User.objects.filter(is_active=True, date_joined__gte=start_date):
-        d = u.date_joined.date().isoformat()
-        d = "-".join(d.split("-")[:2]) + "-01"
-        user.setdefault(d, 0)
-        user[d] += 1
-    context["user"] = sorted(
-        [{"date": k, "num": v, "symbol": "user"} for k, v in user.items()],
-        key=lambda x: x["date"],
-    )
-    total = 0
-    for user in context["user"]:
-        total += user["num"]
-        user["total"] = total
-    foirequest = {}
-    foi_query = FoiRequest.objects.filter(
-        is_foi=True, public_body__isnull=False, first_message__gte=start_date
-    )
-    if request.GET.get("notsameas"):
-        foi_query = foi_query.filter(same_as__isnull=True)
-    if request.GET.get("public"):
-        foi_query = foi_query.filter(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC)
-    for u in foi_query:
-        d = u.first_message.date().isoformat()
-        d = "-".join(d.split("-")[:2]) + "-01"
-        foirequest.setdefault(d, 0)
-        foirequest[d] += 1
-    context["foirequest"] = sorted(
-        [{"date": k, "num": v, "symbol": "user"} for k, v in foirequest.items()],
-        key=lambda x: x["date"],
-    )
-    total = 0
-    for req in context["foirequest"]:
-        total += req["num"]
-        req["total"] = total
-    return render(request, "foirequest/dashboard.html", {"data": json.dumps(context)})
 
 
 def download_foirequest_zip(request, slug):

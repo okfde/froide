@@ -316,17 +316,6 @@ class WebTest(TestCaseHelpers, TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_dashboard(self):
-        response = self.client.get(reverse("dashboard"))
-        self.assertForbidden(response)
-        self.client.login(email="dummy@example.org", password="froide")
-        response = self.client.get(reverse("dashboard"))
-        self.assertEqual(response.status_code, 403)
-        self.client.logout()
-        self.client.login(email="info@fragdenstaat.de", password="froide")
-        response = self.client.get(reverse("dashboard"))
-        self.assertEqual(response.status_code, 200)
-
     def test_search(self):
         response = self.client.get(reverse("foirequest-search"))
         self.assertEqual(response.status_code, 302)
