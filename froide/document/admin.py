@@ -24,6 +24,7 @@ from froide.helper.admin_utils import (
     TaggitListFilter,
     make_choose_object_action,
 )
+from froide.team.models import Team
 
 from .models import Document, DocumentCollection
 from .utils import update_document_index
@@ -32,6 +33,10 @@ from .utils import update_document_index
 def execute_add_document_to_collection(admin, request, queryset, action_obj):
     for obj in queryset:
         CollectionDocument.objects.get_or_create(collection=action_obj, document=obj)
+
+
+def execute_set_team(admin, request, queryset, action_obj):
+    queryset.update(team=action_obj)
 
 
 class DocumentTagsFilter(TaggitListFilter):
@@ -53,12 +58,16 @@ class DocumentAdmin(DocumentBaseAdmin):
         ("document_documentcollection", ForeignKeyFilter),
         DocumentTagsFilter,
     )
-    actions = DocumentBaseAdmin.actions + ["add_document_to_collection"]
+    actions = DocumentBaseAdmin.actions + ["add_document_to_collection", "set_team"]
 
     add_document_to_collection = make_choose_object_action(
         DocumentCollection,
         execute_add_document_to_collection,
         _("Add documents to collection..."),
+    )
+
+    set_team = make_choose_object_action(
+        Team, execute_set_team, _("Set team for documents...")
     )
 
     def save_model(self, request, obj, form, change):
