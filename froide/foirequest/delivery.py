@@ -7,6 +7,8 @@ import time
 from collections import defaultdict, namedtuple
 from datetime import datetime
 
+from django.utils import timezone
+
 from froide.helper.utils import get_module_attr_from_dotted_path
 
 
@@ -26,7 +28,7 @@ def get_delivery_reporter():
         return
 
     reporter_klass = get_module_attr_from_dotted_path(reporter_path)
-    reporter = reporter_klass(time_zone=settings.TIME_ZONE)
+    reporter = reporter_klass(timezone=timezone.get_current_timezone())
     return reporter
 
 
