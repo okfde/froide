@@ -29,7 +29,7 @@
       </td>
       <td>
         <div class="form-check">
-          <input class="form-check-input" type="radio" id="proposal_id' name="proposal_id" class="proposal" value="" required>
+          <input class="form-check-input proposal" type="radio" id="proposal_id" name="proposal_id" value="" required>
           <label class="form-label" for="proposal_id">
             {% trans "Change, without accepting" %}
           </label>
@@ -38,7 +38,7 @@
       {% for key, proposal in proposals.items %}
         <td>
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="proposal_id" id="proposal_id-{{ key }}" class="proposal" value="{{ key }}" required>
+            <input class="form-check-input proposal" type="radio" name="proposal_id" id="proposal_id-{{ key }}" value="{{ key }}" required>
             <label class="form-check-label" for="proposal_id-{{ key }}">
                 {% trans "Accept this proposal" %}
             </label>
