@@ -1,17 +1,8 @@
-import 'bootstrap/js/dist/collapse'
-import 'bootstrap/js/dist/tab'
-import 'bootstrap/js/dist/modal'
-import 'bootstrap/js/dist/dropdown'
-import Tooltip from 'bootstrap/js/dist/tooltip'
-import Alert from 'bootstrap/js/dist/alert'
-
-const selectors = {
-  '[data-bs-toggle="tooltip"]': Tooltip,
-  '.alert': Alert
-}
+import { Tooltip, Alert, Dropdown, Modal, Tab, Collapse } from 'bootstrap'
 
 document.addEventListener('DOMContentLoaded', () => {
-  for (const [selector, Component] of Object.entries(selectors)) {
-    document.querySelectorAll(selector).forEach((el) => new Component(el))
-  }
+  document
+    .querySelectorAll('[data-bs-toggle="tooltip"]')
+    .forEach((el) => new Tooltip(el))
 })
+;(window as any).bootstrap = { Tooltip, Alert, Dropdown, Modal, Tab, Collapse }
