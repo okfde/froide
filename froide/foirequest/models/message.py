@@ -17,7 +17,6 @@ from froide.helper.email_utils import make_address
 from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
-from ..utils import get_foi_mail_domains
 from .request import FoiRequest, get_absolute_domain_short_url, get_absolute_short_url
 
 BOUNCE_TAG = "bounce"
@@ -433,6 +432,8 @@ class FoiMessage(models.Model):
             return self.real_sender
 
     def list_additional_recipients(self):
+        from ..utils import get_foi_mail_domains
+
         if not self.email_headers:
             return []
         recipients = []
