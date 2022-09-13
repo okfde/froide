@@ -1919,15 +1919,17 @@ class RequestTest(TestCase):
     def test_invalid_emails_not_shown_in_reply(self):
         self.client.login(email="dummy@example.org", password="froide")
         req = FoiRequest.objects.all()[0]
+        valid_email = "valid-email@example.org"
+        invalid_email = "invalid-email to address"
         add_message_from_email(
             req,
             ParsedEmail(
                 self.msgobj,
                 **{
-                    "from_": EmailAddress("from", "from@ddress"),
+                    "from_": EmailAddress("from", "from@ddress.example.org"),
                     "to": [
-                        EmailAddress("", "valid-email@ddress"),
-                        EmailAddress("", "invalid-email to address"),
+                        EmailAddress("", valid_email),
+                        EmailAddress("", invalid_email),
                     ],
                     "date": timezone.now(),
                     "subject": "Reply",
@@ -1944,14 +1946,14 @@ class RequestTest(TestCase):
         req = FoiRequest.objects.all()[0]
         reply_addresses = possible_reply_addresses(req)
         reply_emails_adresses = [x[1] for x in reply_addresses]
-        self.assertIn("valid-email@ddress", reply_emails_adresses)
-        self.assertNotIn("invalid-email to address", reply_emails_adresses)
+        self.assertIn(valid_email, reply_emails_adresses)
+        self.assertNotIn(invalid_email, reply_emails_adresses)
 
         form = get_send_message_form(foirequest=req)
         form_reply_addresses = form.fields["to"].choices
         form_reply_emails_adresses = [x[1] for x in form_reply_addresses]
-        self.assertIn("valid-email@ddress", form_reply_emails_adresses)
-        self.assertNotIn("invalid-email to address", form_reply_emails_adresses)
+        self.assertIn(valid_email, form_reply_emails_adresses)
+        self.assertNotIn(invalid_email, form_reply_emails_adresses)
 
     def test_attachment_wrapping(self):
         req = FoiRequest.objects.all()[0]

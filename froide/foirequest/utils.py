@@ -6,7 +6,9 @@ from typing import Iterator, List, Optional, Tuple, Union
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail import mail_managers
+from django.core.validators import validate_email
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -26,8 +28,21 @@ from froide.helper.text_utils import (
 )
 from froide.publicbody.models import PublicBody
 
+from .models import FoiRequest
+
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
+
+
+@dataclass
+class PublicBodyEmailInfo:
+    email: str
+    name: str
+    publicbody: Optional[PublicBody] = None
+    label: Optional[str] = None
+
+    def get_label(self):
+        return self.label if self.label is not None else self.name
 
 
 def throttle(qs, throttle_config, date_param="first_message"):
@@ -89,12 +104,12 @@ def generate_secret_address(user, length=10):
 
 
 def construct_message_body(
-    foirequest,
-    text,
-    send_address=True,
-    attachment_names=None,
-    attachment_missing=None,
-    template="foirequest/emails/mail_with_userinfo.txt",
+    foirequest: FoiRequest,
+    text: str,
+    send_address: bool = True,
+    attachment_names: Optional[List[str]] = None,
+    attachment_missing: Optional[List[str]] = None,
+    template: str = "foirequest/emails/mail_with_userinfo.txt",
 ):
     return render_to_string(
         template,
@@ -217,7 +232,9 @@ def get_domain(email):
     return strip_subdomains(host)
 
 
-def compare_publicbody_email(email, pb_info_list, transform=str.lower):
+def compare_publicbody_email_with_transform(
+    email: str, pb_info_list: List[PublicBodyEmailInfo], transform=str.lower
+):
     email = transform(email)
 
     for pb_info in pb_info_list:
@@ -225,27 +242,40 @@ def compare_publicbody_email(email, pb_info_list, transform=str.lower):
             return pb_info.publicbody
 
 
+def compare_publicbody_email(
+    email: str, pb_info_list: List[PublicBodyEmailInfo], compare_tld=True
+) -> Optional[PublicBody]:
+    # Compare email direct
+    pb = compare_publicbody_email_with_transform(email, pb_info_list)
+    if pb:
+        return pb
+
+    # Compare email full host
+    pb = compare_publicbody_email_with_transform(
+        email, pb_info_list, transform=get_host
+    )
+    if pb:
+        return pb
+
+    if not compare_tld:
+        return None
+
+    # Compare email domain without subdomains
+    return compare_publicbody_email_with_transform(
+        email, pb_info_list, transform=get_domain
+    )
+
+
 def get_publicbody_for_email(
-    email: str, foirequest, include_deferred=False
+    email: str, foirequest: FoiRequest, include_deferred: bool = False
 ) -> Optional[PublicBody]:
     if not email:
         return None
 
     pb_info_list = list(get_emails_from_request(foirequest))
 
-    # Compare email direct
     pb = compare_publicbody_email(email, pb_info_list)
-    if pb is not None:
-        return pb
-
-    # Compare email full host
-    pb = compare_publicbody_email(email, pb_info_list, transform=get_host)
-    if pb is not None:
-        return pb
-
-    # Compare email domain without subdomains
-    pb = compare_publicbody_email(email, pb_info_list, transform=get_domain)
-    if pb is not None:
+    if pb:
         return pb
 
     # Search in all PublicBodies
@@ -309,17 +339,6 @@ def send_request_user_email(
     )
 
 
-@dataclass
-class PublicBodyEmailInfo:
-    email: str
-    name: str
-    publicbody: Optional[PublicBody] = None
-    label: Optional[str] = None
-
-    def get_label(self):
-        return self.label if self.label is not None else self.name
-
-
 def get_info_for_email(foirequest, email):
     email = email.lower()
     for email_info in get_emails_from_request(foirequest):
@@ -328,93 +347,108 @@ def get_info_for_email(foirequest, email):
     return PublicBodyEmailInfo(email="", name="")
 
 
-def get_emails_from_request(
-    foirequest, include_mediator=True
-) -> Iterator[PublicBodyEmailInfo]:
-    already = set()
-
-    if foirequest.public_body:
-        pb = foirequest.public_body
-        if pb.email:
-            email = foirequest.public_body.email
+def get_publicbody_emails(publicbody: PublicBody, include_mediator=True):
+    if publicbody.email:
+        email = publicbody.email
+        yield PublicBodyEmailInfo(
+            email=email,
+            name=publicbody.name,
+            label=_("Default address of {publicbody}").format(
+                publicbody=publicbody.name
+            ),
+            publicbody=publicbody,
+        )
+    if publicbody.alternative_emails:
+        for law_type, email in publicbody.alternative_emails.items():
             yield PublicBodyEmailInfo(
                 email=email,
-                name=foirequest.public_body.name,
-                label=_("Default address of {publicbody}").format(
-                    publicbody=foirequest.public_body.name
+                name=publicbody.name,
+                label=_("Default {law_type} address of {publicbody}").format(
+                    law_type=law_type, publicbody=publicbody.name
                 ),
-                publicbody=foirequest.public_body,
+                publicbody=publicbody,
             )
-            already.add(email.lower())
-        if pb.alternative_emails:
-            for law_type, email in pb.alternative_emails.items():
-                if email.lower() in already:
-                    continue
-                yield PublicBodyEmailInfo(
-                    email=email,
-                    name=foirequest.public_body.name,
-                    label=_("Default {law_type} address of {publicbody}").format(
-                        law_type=law_type, publicbody=foirequest.public_body.name
-                    ),
-                    publicbody=foirequest.public_body,
-                )
-                already.add(email.lower())
 
-        if include_mediator:
-            mediator = pb.get_mediator()
-            if mediator:
-                yield PublicBodyEmailInfo(
-                    email=mediator.email,
-                    name=mediator.name,
-                    label=_("{publicbody} (mediator)").format(publicbody=mediator.name),
-                    publicbody=mediator,
-                )
+    if include_mediator:
+        mediator = publicbody.get_mediator()
+        if mediator:
+            yield PublicBodyEmailInfo(
+                email=mediator.email,
+                name=mediator.name,
+                label=_("{publicbody} (mediator)").format(publicbody=mediator.name),
+                publicbody=mediator,
+            )
 
+
+def get_emails_from_request_iterator(
+    foirequest, include_mediator=True
+) -> Iterator[PublicBodyEmailInfo]:
+
+    if foirequest.public_body:
+        # Get emails from public body / mediator
+        yield from get_publicbody_emails(
+            foirequest.public_body, include_mediator=include_mediator
+        )
+
+    # Get emails from response messages,
+    domains = tuple(get_foi_mail_domains())
     messages = foirequest.response_messages()
     for message in reversed(messages):
         email = message.sender_email
         if not email and message.sender_public_body:
             email = message.sender_public_body.email
 
-        if email and email.lower() not in already:
+        if email:
             yield PublicBodyEmailInfo(
                 email=email,
                 name=message.sender_name,
                 publicbody=message.sender_public_body,
             )
-            already.add(email.lower())
 
+    # Get emails from response messages other recipients
+    for message in reversed(messages):
         if message.email_headers:
             for email in get_emails_from_message_headers(message.email_headers):
-                if email.lower() not in already:
-                    yield PublicBodyEmailInfo(
-                        email=email,
-                        name="",
-                        publicbody=message.sender_public_body,
-                    )
-                    already.add(email.lower())
-
-    domains = tuple(get_foi_mail_domains())
+                if email.endswith(domains):
+                    continue
+                yield PublicBodyEmailInfo(
+                    email=email,
+                    name="",
+                    publicbody=None,
+                )
 
     for message in reversed(messages):
         for email in find_all_emails(message.plaintext):
             if email.endswith(domains):
                 continue
-            email = email.lower()
-            if email not in already:
-                pass
-                # FIXME: Try getting pb without recursive call
-                yield PublicBodyEmailInfo(email=email, name=email, publicbody=None)
-                already.add(email.lower())
+            yield PublicBodyEmailInfo(email=email, name=email, publicbody=None)
 
     if foirequest.public_body.parent and foirequest.public_body.parent.email:
         email = foirequest.public_body.parent.email.lower()
-        if email not in already:
-            yield PublicBodyEmailInfo(
-                email=email,
-                name=foirequest.public_body.parent.name,
-                publicbody=foirequest.public_body.parent,
-            )
+        yield PublicBodyEmailInfo(
+            email=email,
+            name=foirequest.public_body.parent.name,
+            publicbody=foirequest.public_body.parent,
+        )
+
+
+def get_emails_from_request(
+    foirequest: FoiRequest, include_mediator: bool = True
+) -> Iterator[PublicBodyEmailInfo]:
+    already = set()
+    pb_info_list = list(
+        get_emails_from_request_iterator(foirequest, include_mediator=include_mediator)
+    )
+
+    for pb_info in pb_info_list:
+        email = pb_info.email.lower()
+        if email in already:
+            continue
+        if not pb_info.publicbody:
+            pb = compare_publicbody_email(email, pb_info_list, compare_tld=False)
+            if pb:
+                pb_info.publicbody = pb
+        yield pb_info
         already.add(email)
 
 
@@ -423,8 +457,13 @@ def get_emails_from_message_headers(email_headers):
     for field in fields:
         for addr in email_headers.get(field, []):
             email = addr[1]
-            if email:
+            if not email:
+                continue
+            try:
+                validate_email(email)
                 yield email
+            except ValidationError:
+                pass
 
 
 def possible_reply_addresses(foirequest):
