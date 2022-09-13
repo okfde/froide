@@ -8,3 +8,7 @@ $choices-guttering: 0;
 .#{$choices-selector} {
   width: 100%;
 }
+
+.form-row:has(.choices__list) {
+  overflow: visible;
+}

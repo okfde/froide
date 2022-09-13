@@ -1,5 +1,7 @@
 {% load i18n %}
 
+{% load frontendbuild %}
+
 <div style="display: none">
 {% include "django/forms/widgets/input.html" %}
 </div>
@@ -14,3 +16,6 @@
   id="{{ widget.attrs.id }}_select" multiple>
   {% for tag in tags %}<option value="{{ tag }}" selected>{{ tag }}</option>{% endfor %}
 </select>
+
+{% getfrontendbuild "tagautocomplete.js" as assets %}
+{% for block, output_list in assets %}{% for output in output_list %}{{ output|safe }}{% endfor %}{% endfor %}
