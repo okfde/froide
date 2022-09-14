@@ -15,7 +15,17 @@ class CommentAdmin(DjangoCommentsAdmin):
             _("Content"),
             {"fields": ("user", "user_name", "user_email", "user_url", "comment")},
         ),
-        (_("Metadata"), {"fields": ("submit_date", "is_public", "is_removed")}),
+        (
+            _("Metadata"),
+            {
+                "fields": (
+                    "submit_date",
+                    "is_public",
+                    "is_removed",
+                    "comment_as_normal_user",
+                )
+            },
+        ),
     )
     list_display = [c for c in DjangoCommentsAdmin.list_display if c not in REMOVED]
     search_fields = [c for c in DjangoCommentsAdmin.search_fields if c not in REMOVED]
