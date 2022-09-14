@@ -22,9 +22,9 @@
     <template v-if="hasSubMenu">
       <div class="btn-group-sm" role="group">
         <button
-          :id="'docupload-dropdown-' + attachment.id"
           type="button"
           class="btn btn-light dropdown-toggle"
+          ref="dropdown"
           data-bs-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false" />
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import Dropdown from 'bootstrap/js/dist/dropdown'
+import { Dropdown } from 'bootstrap'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
@@ -119,10 +119,7 @@ export default {
   },
   mounted() {
     if (this.hasSubMenu) {
-      // eslint-disable-next-line no-new
-      new Dropdown(
-        document.getElementById(`docupload-dropdown-${this.attachment.id}`)
-      )
+      Dropdown.getOrCreateInstance(this.$refs.dropdown)
     }
   },
   methods: {
