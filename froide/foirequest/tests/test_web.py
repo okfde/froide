@@ -534,7 +534,7 @@ class PerformanceTest(TestCase):
         - Problem reports - even for non-requester (+1)
         - ContentType + Comments for each FoiMessage (+2)
         """
-        TOTAL_EXPECTED_REQUESTS = 16
+        TOTAL_EXPECTED_REQUESTS = 18
         req = factories.FoiRequestFactory.create(site=self.site)
         factories.FoiMessageFactory.create(request=req, is_response=False)
         mes2 = factories.FoiMessageFactory.create(request=req)
