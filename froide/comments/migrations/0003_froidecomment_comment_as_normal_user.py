@@ -2,21 +2,20 @@
 
 from django.conf import settings
 from django.db import migrations, models
-import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('comments', '0002_auto_20210505_1720'),
+        ("comments", "0002_auto_20210505_1720"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='froidecomment',
-            name='comment_as_normal_user',
+            model_name="froidecomment",
+            name="comment_as_normal_user",
             field=models.BooleanField(null=True),
         )
     ]
