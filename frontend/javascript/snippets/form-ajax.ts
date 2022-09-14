@@ -1,4 +1,4 @@
-import Modal from 'bootstrap/js/dist/modal'
+import { Modal } from 'bootstrap'
 interface IHTMLModalTriggerElement extends HTMLElement {
   Modal: any | null
 }

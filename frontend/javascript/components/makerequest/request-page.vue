@@ -163,7 +163,7 @@ import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
 
-import Modal from 'bootstrap/js/dist/modal'
+import { Modal } from 'bootstrap'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 

@@ -229,7 +229,7 @@ import range from 'lodash.range'
 
 import Vue from 'vue'
 
-import Modal from 'bootstrap/js/dist/modal'
+import { Modal } from 'bootstrap'
 
 import { bustCache, getData } from '../../lib/api.js'
 
