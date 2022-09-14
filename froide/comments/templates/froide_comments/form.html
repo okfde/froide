@@ -22,10 +22,26 @@
 
   {% render_field form.comment %}
 
+  {% is_moderator as is_moderator %}
+  {% if is_moderator and not request.user == object.request.user %}
+  <div class="mb-3 row">
+    <div class="col-md-4 fw-bold">
+      {% trans "Moderator Badge" %}
+    </div>
+    <div class="col-md-8">
+      <div class="form-check">
+        {{ form.comment_as_normal_user }}
+        <label class="form-check-label" for="{{ form.comment_as_normal_user.name }}">
+          {{ form.comment_as_normal_user.label }}
+        </label>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="text-end">
     <button type="submit" name="post" class="btn btn-secondary">
       <span class="fa fa-comment"></span> {% trans "Post Comment" %}
     </button>
   </div>
 </form>
-

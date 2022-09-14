@@ -18,3 +18,8 @@ class CommentForm(DjangoCommentForm):
         widget=forms.Textarea(attrs={"class": "form-control", "rows": "4"}),
         max_length=COMMENT_MAX_LENGTH,
     )
+    comment_as_normal_user = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+        label=_("Hide moderator badge for this comment"),
+    )

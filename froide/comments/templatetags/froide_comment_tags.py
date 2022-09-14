@@ -13,3 +13,10 @@ def get_froide_comment_form(context, object):
         initial["name"] = request.user.get_full_name()
 
     return CommentForm(object, initial=initial)
+
+
+@register.simple_tag(takes_context=True)
+def is_moderator(context):
+    request = context["request"]
+    user = request.user
+    return user.groups.filter(permissions__codename="moderate").exists()
