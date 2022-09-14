@@ -61,6 +61,11 @@ export default {
       type: Boolean,
       default: false,
       required: false
+    },
+    allowRemove: {
+      type: Boolean,
+      default: true,
+      required: false
     }
   },
   data() {
@@ -123,7 +128,9 @@ export default {
       target: this.$refs.uppy,
       height: 250,
       showLinkToFileUploadResult: false,
-      proudlyDisplayPoweredByUppy: false
+      proudlyDisplayPoweredByUppy: false,
+      showRemoveButtonAfterComplete: this.allowRemove,
+      doneButtonHandler: null
     })
     this.uppy.use(Tus, {
       endpoint: this.config.url.tusEndpoint,

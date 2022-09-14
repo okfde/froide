@@ -18,6 +18,7 @@
       :config="config"
       class="mb-3 mt-3"
       :auto-proceed="true"
+      :allow-remove="false"
       :required="true"
       @ready="canSubmit = $event"
       @uploading="uploading = $event" />
