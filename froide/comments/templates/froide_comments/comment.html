@@ -20,7 +20,7 @@
         {# requester-/moderator-badges #}
         {% if comment.is_requester %}
           <span class="badge text-bg-blue-20 ms-1">{% trans "Requester" %}</span>
-        {% elif comment.is_moderator %}
+        {% elif comment.is_moderator and not comment.comment_as_normal_user %}
           <span class="badge text-bg-yellow-100 ms-1">{% trans "Moderator" %}</span>
         {% endif %}
 
