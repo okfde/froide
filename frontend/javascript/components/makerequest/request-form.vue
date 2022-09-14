@@ -182,7 +182,9 @@
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
               @keyup="bodyChanged" />
-            <div class="form-check form-check-inline float-end">
+            <div
+              v-if="allowFullText && !editingDisabled"
+              class="form-check form-check-inline float-end">
               <input
                 id="full_text_checkbox"
                 class="form-check-input"
@@ -191,7 +193,6 @@
                 name="full_text_checkbox"
                 :disabled="fullTextDisabled" />
               <label
-                v-if="allowFullText && !editingDisabled"
                 for="full_text_checkbox"
                 class="form-check-label small text-muted">
                 <i
@@ -290,7 +291,7 @@
                 v-model="userPrivate"
                 type="checkbox"
                 name="private" />
-              <label class="form-check-label">
+              <label for="id_private" class="form-check-label">
                 {{ userformFields.private.label }}
               </label>
               <p class="help-block" v-html="userformFields.private.help_text" />

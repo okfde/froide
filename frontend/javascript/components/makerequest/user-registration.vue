@@ -132,10 +132,6 @@ export default {
       type: String,
       default: ''
     },
-    initialPrivate: {
-      type: Boolean,
-      default: false
-    },
     addressHelpText: {
       type: String,
       default: null
