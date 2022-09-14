@@ -17,9 +17,6 @@
 
 <script>
 import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
-// Reference map so it gets copied on build
-// eslint-disable-next-line no-unused-vars
-import PDFJSWorkerUrlMap from 'pdfjs-dist/build/pdf.worker.js.map?url'
 
 const range = (len) => [...Array(len).keys()]
 
