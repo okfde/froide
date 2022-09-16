@@ -20,8 +20,8 @@
         {# requester-/moderator-badges #}
         {% if comment.is_requester %}
           <span class="badge text-bg-blue-20 ms-1">{% trans "Requester" %}</span>
-        {% elif comment.is_moderator %}
-          <span class="badge text-bg-yellow-100 ms-1">{% trans "Moderator" %}</span>
+        {% elif comment.is_moderation %}
+          <span class="badge text-bg-yellow-100 ms-1">{% trans "Moderation" %}</span>
         {% endif %}
 
       {% else %}
@@ -32,7 +32,7 @@
     {# timestamp #}
     <small class="text-gray-600 mx-1">•</small>
     <small class="text-nowrap text-gray-600">{{ comment.submit_date }}</small>
-    
+
   </div>
 
   {# body #}
@@ -40,7 +40,7 @@
     <div class="text-muted">{% trans "Comment was removed." %}</div>
   {% else %}
     <div>
-      {% if comment.is_moderator %}
+      {% if comment.is_moderation %}
         {{ comment.comment|urlizetrunc:40|linebreaksbr }}
       {% else %}
         {% if comment.comment != comment.comment|truncatewords:20 %}

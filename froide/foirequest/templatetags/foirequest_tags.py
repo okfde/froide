@@ -4,7 +4,7 @@ from collections import defaultdict
 
 from django import template
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, Count, Q, Value, When
+from django.db.models import Case, Value, When
 from django.template.defaultfilters import truncatechars_html
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -377,13 +377,6 @@ def get_comment_list(context, message):
                 content_type=ct, object_pk__in=mids, site_id=foirequest.site_id
             )
             .annotate(
-                # Check for any 'moderate' permissions
-                # in any groups, but groups only,
-                # no direct permissions to keep it simple
-                is_moderator=Count(
-                    "user__groups__permissions",
-                    filter=Q(user__groups__permissions__codename="moderate"),
-                ),
                 is_requester=Case(
                     When(user=foirequest.user, then=Value(1)),
                     default=Value(0),
