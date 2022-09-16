@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-03 23:41+0200\n"
+"POT-Creation-Date: 2022-09-16 15:10+0200\n"
 "PO-Revision-Date: 2022-08-03 23:42+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
@@ -1718,6 +1718,10 @@ msgstr "Ihr Name wird nur für angemeldete Personen sichtbar sein."
 msgid "Comment"
 msgstr "Kommentar"
 
+#: froide/comments/forms.py
+msgid "This is a moderation comment"
+msgstr "Dies ist ein Moderationskommentar"
+
 #: froide/comments/notifications.py
 #, python-brace-format
 msgid "New comment by {name}"
@@ -1738,8 +1742,9 @@ msgid "Requester"
 msgstr "Anfragesteller:in"
 
 #: froide/comments/templates/froide_comments/comment.html
-msgid "Moderator"
-msgstr "Moderator:in"
+#: froide/problem/apps.py froide/problem/templates/problem/moderation.html
+msgid "Moderation"
+msgstr "Moderation"
 
 #: froide/comments/templates/froide_comments/comment.html
 msgid "Only visible if logged in"
@@ -1800,12 +1805,20 @@ msgid "Add documents to collection..."
 msgstr "Füge Dokumente zu Sammlung hinzu..."
 
 #: froide/document/admin.py
+msgid "Set team for documents..."
+msgstr "Weisen Sie diesem Dokument ein Team zu"
+
+#: froide/document/admin.py
 msgid "Mark as listed"
 msgstr "Als gelistet markieren"
 
 #: froide/document/admin.py
 msgid "Mark as unlisted"
 msgstr "Als ungelistet markieren"
+
+#: froide/document/admin.py
+msgid "Move documents to directory..."
+msgstr "Dokumente in Verzeichnis verschieben..."
 
 #: froide/document/apps.py
 msgid "Document"
@@ -2476,13 +2489,13 @@ msgid "any status"
 msgstr "alle Zustände"
 
 #: froide/foirequest/filters.py froide/publicbody/filters.py
-msgid "all categories"
-msgstr "alle Kategorien"
-
-#: froide/foirequest/filters.py froide/publicbody/filters.py
 #: froide/publicbody/models.py
 msgid "category"
 msgstr "Kategorie"
+
+#: froide/foirequest/filters.py froide/publicbody/filters.py
+msgid "all categories"
+msgstr "alle Kategorien"
 
 #: froide/foirequest/filters.py froide/publicbody/filters.py
 msgid "all classifications"
@@ -4771,6 +4784,17 @@ msgid "Resend"
 msgstr "Erneut senden"
 
 #: froide/foirequest/templates/foirequest/body/message/toolbar/resend.html
+#: froide/foirequest/templates/foirequest/snippets/message_edit.html
+#: froide/foirequest/templates/foirequest/snippets/message_redact.html
+#: froide/foirequest/views/attachment.py froide/foirequest/views/request.py
+#: froide/follow/templates/follow/_email_follow_form.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+#: froide/team/templates/team/team_detail.html
+#: froide/templates/snippets/messages.html
+msgid "Close"
+msgstr "Schließen"
+
+#: froide/foirequest/templates/foirequest/body/message/toolbar/resend.html
 #, python-format
 msgid "Resend to updated “%(name)s” default email address?"
 msgstr "Erneut an Standard-E-Mail-Adresse von „%(name)s“ senden?"
@@ -4847,14 +4871,6 @@ msgstr "verspätet"
 #, python-format
 msgid "Deadline expired %(ago)s"
 msgstr "Frist abgelaufen %(ago)s"
-
-#: froide/foirequest/templates/foirequest/dashboard.html
-msgid "Number of Requests"
-msgstr "Anzahl der Anfragen"
-
-#: froide/foirequest/templates/foirequest/dashboard.html
-msgid "Number of Users"
-msgstr "Anzahl der Nutzer:innen"
 
 #: froide/foirequest/templates/foirequest/emails/became_asleep.txt
 #, python-format
@@ -5446,6 +5462,10 @@ msgid "Write message..."
 msgstr "Nachricht schreiben..."
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
+msgid "Check all requests"
+msgstr "Alle Anfragen prüfen"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
 #: froide/problem/views.py
 msgid "last message"
 msgstr "letzte Nachricht"
@@ -5457,6 +5477,11 @@ msgstr "Behörde"
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "is public?"
 msgstr "öffentlich?"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#, python-format
+msgid "Check request #%(num)s"
+msgstr "Anfrage #%(num)s prüfen"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Yes"
@@ -6253,14 +6278,13 @@ msgstr ""
 "andere Behörden</a>"
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
-#, python-format
 msgid ""
 "\n"
-"          <a href=\"%(url)s\">%(name)s</a>\n"
-"        "
+"        <a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>\n"
+"      "
 msgstr ""
 "\n"
-"        <a href=\"%(url)s\">%(name)s</a>\n"
+"        <a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>\n"
 "      "
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
@@ -6675,11 +6699,6 @@ msgstr ""
 "Sie haben Teile des Dokumentes geschwärzt, aber ausgewählt, dass keine "
 "Schwärzungen nötig sind. Sind Sie sich sicher?"
 
-#: froide/foirequest/views/attachment.py froide/foirequest/views/request.py
-#: froide/templates/snippets/messages.html
-msgid "Close"
-msgstr "Schließen"
-
 #: froide/foirequest/views/attachment.py
 #, python-format
 msgid "%s_redacted.pdf"
@@ -6732,6 +6751,10 @@ msgstr "eine Anfrage"
 #, python-brace-format
 msgid "{count} requests"
 msgstr "{count} Anfragen"
+
+#: froide/foirequest/views/make_request.py
+msgid "close"
+msgstr "Schließen"
 
 #: froide/foirequest/views/make_request.py
 msgid "make request"
@@ -8261,10 +8284,6 @@ msgstr "Ausgewählte als gelöst markieren"
 #: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Problems"
 msgstr "Probleme"
-
-#: froide/problem/apps.py froide/problem/templates/problem/moderation.html
-msgid "Moderation"
-msgstr "Moderation"
 
 #: froide/problem/forms.py
 msgid "What is the problem?"
@@ -10867,6 +10886,15 @@ msgstr "brief/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "Moderator"
+#~ msgstr "Moderator:in"
+
+#~ msgid "Number of Requests"
+#~ msgstr "Anzahl der Anfragen"
+
+#~ msgid "Number of Users"
+#~ msgstr "Anzahl der Nutzer:innen"
 
 #~ msgid ""
 #~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
