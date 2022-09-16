@@ -1,5 +1,6 @@
 {% load comments i18n %}
 {% load form_helper %}
+{% load foirequest_tags %}
 {% load froide_comment_tags %}
 
 {% get_froide_comment_form object as form %}
@@ -12,7 +13,7 @@
     {% endif %}
   {% endfor %}
 
-  {% if request.user.private and request.user == object.user %}
+  {% if request.user.private and request.user == object.request.user %}
     <div class="alert alert-info">
       {% trans "You have a private account. Your comment will show “requester” as the author." %}
     </div>
@@ -21,6 +22,10 @@
   {% endif %}
 
   {% render_field form.comment %}
+
+  {% if object.request|can_moderate_foirequest:request and not request.user == object.request.user %}
+    {% render_field form.is_moderation %}
+  {% endif %}
 
   <div class="text-end">
     <button type="submit" name="post" class="btn btn-secondary">
