@@ -116,7 +116,7 @@ def highlight_request(message, request):
     return mark_safe("".join(html))
 
 
-def render_message_content(message, authenticated_read=False):
+def render_message_content(message, authenticated_read=False, render_footer=True):
     if authenticated_read and message.content_rendered_auth is not None:
         return mark_safe(message.content_rendered_auth)
     if not authenticated_read and message.content_rendered_anon is not None:
@@ -131,6 +131,7 @@ def render_message_content(message, authenticated_read=False):
         redacted_content,
         authenticated_read=authenticated_read,
         message_id=message.id,
+        render_footer=render_footer,
     )
     if needs_caching:
         if authenticated_read:
@@ -153,7 +154,9 @@ def redact_message(message, request):
 @register.simple_tag
 def redact_message_short(message, request):
     authenticated_read = is_authenticated_read(message, request)
-    content = render_message_content(message, authenticated_read=authenticated_read)
+    content = render_message_content(
+        message, authenticated_read=authenticated_read, render_footer=False
+    )
 
     subject, redacted_subject = "", ""
     if message.request.title not in message.subject:
@@ -236,7 +239,11 @@ def mark_redacted(original="", redacted="", authenticated_read=False):
 
 
 def markup_redacted_content(
-    real_content, redacted_content, authenticated_read=False, message_id=None
+    real_content,
+    redacted_content,
+    authenticated_read=False,
+    message_id=None,
+    render_footer=True,
 ):
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
@@ -248,7 +255,7 @@ def markup_redacted_content(
         original=c_2, redacted=r_2, authenticated_read=authenticated_read
     )
 
-    if content_2 and message_id:
+    if content_2 and message_id and render_footer:
         return mark_safe(
             "".join(
                 [
