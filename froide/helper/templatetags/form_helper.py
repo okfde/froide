@@ -16,6 +16,9 @@ def render_field(field, horizontal=True, inline=False, stacked=False, show_label
         template_name = "helper/forms/bootstrap_field_inline.html"
     elif stacked or not horizontal:
         template_name = "helper/forms/bootstrap_field_stacked.html"
+    if field.errors:
+        css_classes = field.field.widget.attrs.get("class", "")
+        field.field.widget.attrs["class"] = css_classes + " is-invalid"
     return render_to_string(
         template_name,
         {
