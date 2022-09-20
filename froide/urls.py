@@ -167,6 +167,9 @@ froide_urlpatterns += [
     path(pgettext_lazy("url part", "letter/"), include("froide.letter.urls")),
     path("guide/", include("froide.guide.urls")),
     path("500/", lambda request: TemplateResponse(request, "500.html")),
+    path(
+        pgettext_lazy("url part", "organization/"), include("froide.organization.urls")
+    ),
 ]
 
 froide_urlpatterns += document_media_urlpatterns

@@ -1,0 +1,14 @@
+{% load i18n %}{% autoescape off %}{% blocktrans %}Hello,
+
+{{ name }} has invited you to join an organization on {{ site_name }}.
+Please visit the link below to join this organization:
+
+{{ url }}
+
+If you don't have an account on {{ site_name }} yet, you have to create one first.
+{% endblocktrans %}
+
+{% blocktrans with site_name=SITE_NAME %}Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

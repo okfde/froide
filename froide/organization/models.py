@@ -2,6 +2,7 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -71,6 +72,13 @@ class OrganizationManager(models.Manager):
         email_domain = email.split("@")[-1]
         return Organization.objects.filter(email_domain=email_domain).first()
 
+    def get_owner_organizations(self, user, *args, **kwargs):
+        return self.get_queryset().filter(
+            organizationmembership__role=OrganizationMembership.ROLE.OWNER,
+            organizationmembership__user=user,
+            organizationmembership__status=OrganizationMembership.STATUS.ACTIVE,
+        )
+
 
 class Organization(models.Model):
     name = models.CharField(max_length=255)
@@ -117,3 +125,6 @@ class Organization(models.Model):
         OrganizationMembership.objects.create(
             user=user, organization=self, role=role, status=status
         )
+
+    def get_absolute_url(self):
+        return reverse("organization-detail", kwargs={"slug": self.slug})

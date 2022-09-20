@@ -112,3 +112,12 @@ class DateRangeWidget(DFDateRangeWidget):
         ]
         # Skip super class init!
         super(RangeWidget, self).__init__(widgets)
+
+
+class ImageFileInput(forms.ClearableFileInput):
+    template_name = "helper/forms/widgets/image.html"
+
+    def __init__(self, *args, **kwargs) -> None:
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"].update({"class": "form-control"})
+        super().__init__(*args, **kwargs)
