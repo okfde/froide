@@ -355,6 +355,8 @@ export default {
     clearSearch() {
       this.clearResults()
       this.filters = this.getEmptyFilters()
+      this.search = ''
+      this.triggerAutocomplete()
     },
     setFilterExpand(filter, expand) {
       const expanded = {
