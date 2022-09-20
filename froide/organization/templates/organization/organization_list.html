@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}
+  {% trans "Organisations" %}
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <h1 class="py-4">{% trans "Organisations" %}</h1>
+    <ul>
+      {% for object in object_list %}
+        <li>
+          <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+        </li>
+      {% empty %}
+        <div class="col-md-4">
+          <p>{% trans "No organizations found." %}</p>
+        </div>
+      {% endfor %}
+    </ul>
+  </div>
+
+{% endblock %}

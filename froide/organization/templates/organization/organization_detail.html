@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load markup %}
+{% load i18n %}
+
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block body %}
+  <div class="bg-gray-100">
+    <div class="container">
+      <nav class="container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'organization-list' %}">{% trans "Organisations" %}</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
+          </li>
+        </ol>
+      </nav>
+      <div class="pt-3 pb-5">
+        <div class="col tight-margin d-flex align-items-center">
+          <h1 class="flex-grow-1">
+            <a href="{{ object.website }}">
+              {% if object.logo %}
+                <img src="{{ object.logo.url }}" class="h-1em" alt="{{ object.name }}" />
+              {% else %}
+                {{ object.name }}
+              {% endif %}
+            </a>
+          </h1>
+          {% if user_member and user_member.is_owner %}
+            <a class="btn btn-secondary"
+               href="{% url "organization-update" slug=object.slug %}">Edit Organisation</a>
+          {% endif %}
+        </div>
+        <div class="mt-3">{{ object.description | linebreaksbr }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="container pt-3">
+    {% block member_list %}
+      <h2>{% trans "Organisation Members" %}</h2>
+      <ul>
+        {% for member in members %}
+          <li>
+            <a href="{{ member.user.get_absolute_url }}">{{ member.user.get_full_name }}</a>
+            {% if member.user.profile_text %}
+              {% if member.user.is_staff %}
+                {{ member.user.profile_text|markdown }}
+              {% else %}
+                <p>{{ member.user.profile_text|linebreaksbr }}</p>
+              {% endif %}
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endblock %}
+  </div>
+
+{% endblock %}

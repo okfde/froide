@@ -8,6 +8,8 @@ from django.core.validators import (
 )
 from django.db import models
 
+from .widgets import ImageFileInput
+
 
 def validate_svg(f):
     # Find "start" word in file and get "tag" from there
@@ -36,6 +38,8 @@ class SVGAndImageFieldForm(forms.ImageField):
             allowed_extensions=get_available_image_extensions() + ["svg"]
         )
     ]
+
+    widget = ImageFileInput
 
     def to_python(self, data):
         try:

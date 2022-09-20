@@ -18,7 +18,11 @@ from django.utils.translation import gettext_lazy as _
 from froide.helper.content_urls import get_content_url
 from froide.helper.form_utils import JSONMixin
 from froide.helper.spam import SpamProtectionMixin
-from froide.helper.widgets import BootstrapCheckboxInput, BootstrapSelect
+from froide.helper.widgets import (
+    BootstrapCheckboxInput,
+    BootstrapSelect,
+    ImageFileInput,
+)
 
 from . import account_email_changed
 from .auth import complete_mfa_authenticate_for_method
@@ -541,15 +545,6 @@ class SetPasswordForm(DjangoSetPasswordForm):
             )
 
 
-class ProfilePhotoFileInput(forms.ClearableFileInput):
-    template_name = "account/widgets/image.html"
-
-    def __init__(self, *args, **kwargs) -> None:
-        kwargs.setdefault("attrs", {})
-        kwargs["attrs"].update({"class": "form-control"})
-        super().__init__(*args, **kwargs)
-
-
 class ProfileForm(forms.ModelForm):
     profile_text = forms.CharField(
         label=_("Profile text"),
@@ -568,7 +563,7 @@ class ProfileForm(forms.ModelForm):
             "profile_photo",
         ]
         widgets = {
-            "profile_photo": ProfilePhotoFileInput,
+            "profile_photo": ImageFileInput,
             "organization_name": forms.TextInput(
                 attrs={"placeholder": _("Organization"), "class": "form-control"}
             ),
