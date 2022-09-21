@@ -283,7 +283,7 @@ jinja2==3.0.1
     # via coreschema
 jsonschema==3.2.0
     # via django-filingcabinet
-jwcrypto==0.9.1
+jwcrypto==1.4
     # via django-oauth-toolkit
 kombu==5.2.3
     # via celery
@@ -320,7 +320,7 @@ mypy-extensions==0.4.3
     #   typing-inspect
 nodeenv==1.6.0
     # via pre-commit
-oauthlib==3.1.1
+oauthlib==3.2.1
     # via django-oauth-toolkit
 outcome==1.2.0
     # via trio

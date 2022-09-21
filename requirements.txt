@@ -226,7 +226,7 @@ jinja2==3.0.1
     # via coreschema
 jsonschema==3.2.0
     # via django-filingcabinet
-jwcrypto==0.9.1
+jwcrypto==1.4
     # via django-oauth-toolkit
 kombu==5.2.3
     # via celery
@@ -245,7 +245,7 @@ multidict==5.1.0
     # via
     #   aiohttp
     #   yarl
-oauthlib==3.1.1
+oauthlib==3.2.1
     # via django-oauth-toolkit
 packaging==21.3
     # via
