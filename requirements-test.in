@@ -11,6 +11,7 @@ pbr
 pre-commit
 pycodestyle
 pyflakes
+pytest-django
 selenium
 text-unidecode
 django-coverage-plugin

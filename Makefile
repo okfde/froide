@@ -4,15 +4,16 @@ export PYTHONWARNINGS=default
 
 test:
 	flake8 froide
-	coverage run --branch manage.py test froide --keepdb
+	coverage run --branch -m pytest --reuse-db
 	coverage report
 
 testci:
-	coverage run --branch manage.py test froide --exclude-tag ui --keepdb
+	coverage run --branch -m pytest --reuse-db --ignore=froide/tests/live/
 	coverage report
 
 testui:
-	coverage run --branch manage.py test froide.tests.live --keepdb
+	#coverage run --branch manage.py test froide.tests.live --keepdb
+	coverage run --branch -m pytest froide/tests/live/ --reuse-db
 
 .PHONY: htmlcov
 htmlcov:
