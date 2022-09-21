@@ -11,7 +11,7 @@
       <nav class="container" aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="{% url 'organization-list' %}">{% trans "Organisations" %}</a>
+            <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
           </li>
           <li class="breadcrumb-item">
             <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
@@ -31,7 +31,7 @@
           </h1>
           {% if user_member and user_member.is_owner %}
             <a class="btn btn-secondary"
-               href="{% url "organization-update" slug=object.slug %}">Edit Organisation</a>
+               href="{% url "organization-update" slug=object.slug %}">{% translate 'Edit Organization' %}</a>
           {% endif %}
         </div>
         <div class="mt-3">{{ object.description | linebreaksbr }}</div>
@@ -40,7 +40,7 @@
   </div>
   <div class="container pt-3">
     {% block member_list %}
-      <h2>{% trans "Organisation Members" %}</h2>
+      <h2>{% trans "Organization Members" %}</h2>
       <ul>
         {% for member in members %}
           <li>
