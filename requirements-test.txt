@@ -39,7 +39,7 @@ automat==20.2.0
     # via twisted
 backports-entry-points-selectable==1.1.1
     # via virtualenv
-backports-zoneinfo==0.2.1; python_version < "3.9"
+backports-zoneinfo==0.2.1
     # via
     #   django
     #   django-celery-beat
@@ -320,7 +320,7 @@ mypy-extensions==0.4.3
     #   typing-inspect
 nodeenv==1.6.0
     # via pre-commit
-oauthlib==3.1.1
+oauthlib==3.2.1
     # via django-oauth-toolkit
 outcome==1.2.0
     # via trio

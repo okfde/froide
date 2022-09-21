@@ -30,7 +30,7 @@ autobahn==21.3.1
     # via daphne
 automat==20.2.0
     # via twisted
-backports-zoneinfo==0.2.1; python_version < "3.9"
+backports-zoneinfo==0.2.1
     # via
     #   django
     #   django-celery-beat
@@ -245,7 +245,7 @@ multidict==5.1.0
     # via
     #   aiohttp
     #   yarl
-oauthlib==3.1.1
+oauthlib==3.2.1
     # via django-oauth-toolkit
 packaging==21.3
     # via
