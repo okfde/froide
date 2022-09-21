@@ -30,7 +30,7 @@ autobahn==21.3.1
     # via daphne
 automat==20.2.0
     # via twisted
-backports-zoneinfo==0.2.1; python_version < "3.9"
+backports-zoneinfo==0.2.1
     # via
     #   django
     #   django-celery-beat
@@ -226,7 +226,7 @@ jinja2==3.0.1
     # via coreschema
 jsonschema==3.2.0
     # via django-filingcabinet
-jwcrypto==0.9.1
+jwcrypto==1.4
     # via django-oauth-toolkit
 kombu==5.2.3
     # via celery
@@ -338,7 +338,6 @@ six==1.16.0
     #   elasticsearch-dsl
     #   html5lib
     #   jsonschema
-    #   jwcrypto
     #   pyopenssl
     #   python-dateutil
     #   service-identity
