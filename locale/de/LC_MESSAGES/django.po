@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-16 15:10+0200\n"
-"PO-Revision-Date: 2022-08-03 23:42+0200\n"
+"POT-Creation-Date: 2022-09-21 21:56+0200\n"
+"PO-Revision-Date: 2022-09-21 21:58+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -74,6 +74,7 @@ msgid "Reset"
 msgstr "Zurücksetzen"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html
+#: froide/organization/templates/organization/organization_update_form.html
 #: froide/team/templates/team/team_detail.html
 msgid "Remove"
 msgstr "Entfernen"
@@ -283,7 +284,7 @@ msgstr "Nachname"
 msgid "Last Name"
 msgstr "Nachname"
 
-#: froide/account/forms.py froide/team/forms.py
+#: froide/account/forms.py froide/organization/forms.py froide/team/forms.py
 msgid "Email address"
 msgstr "E-Mail-Adresse"
 
@@ -731,6 +732,7 @@ msgstr ""
 #: froide/account/templates/account/emails/confirmation_mail.txt
 #: froide/account/templates/account/emails/password_reset_email.txt
 #: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt
+#: froide/organization/templates/organization/emails/organization_invite.txt
 #: froide/team/templates/team/emails/team_invite.txt
 #, python-format
 msgid ""
@@ -1397,6 +1399,7 @@ msgstr "Ihre Konto-Einstellungen"
 #: froide/foirequest/forms/request.py froide/foirequest/models/message.py
 #: froide/foirequest/models/request.py
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/organization/templates/organization/organization_update_form.html
 #: froide/team/templates/team/team_detail.html
 msgid "Status"
 msgstr "Status"
@@ -1421,14 +1424,6 @@ msgstr "Konto erstellen"
 #, python-format
 msgid "Please type this phrase to confirm: %(phrase)s"
 msgstr "Bitte geben Sie zum Bestätigen folgendes ein: %(phrase)s"
-
-#: froide/account/templates/account/widgets/image.html
-msgid "profile picture"
-msgstr "Profilbild"
-
-#: froide/account/templates/account/widgets/image.html
-msgid "Delete?"
-msgstr "Löschen?"
 
 #: froide/account/templates/admin/account/user/change_form.html
 msgid "This users requests"
@@ -1703,9 +1698,9 @@ msgstr "Kommentare"
 
 #: froide/comments/forms.py froide/foirequest/models/attachment.py
 #: froide/foirequest/views/make_request.py froide/foisite/models.py
-#: froide/georegion/models.py froide/problem/views.py
-#: froide/publicbody/forms.py froide/publicbody/models.py
-#: froide/team/templates/team/team_list.html
+#: froide/georegion/models.py froide/organization/forms.py
+#: froide/problem/views.py froide/publicbody/forms.py
+#: froide/publicbody/models.py froide/team/templates/team/team_list.html
 msgid "Name"
 msgstr "Name"
 
@@ -1971,6 +1966,7 @@ msgstr "Dokumente erstellen"
 #: froide/foirequest/templates/foirequest/header/header.html
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html
 #: froide/foirequest/views/message.py
+#: froide/organization/templates/organization/organization_update_form.html
 msgid "Save"
 msgstr "Speichern"
 
@@ -3502,8 +3498,8 @@ msgid "Slug"
 msgstr "URL-Kürzel"
 
 #: froide/foirequest/models/project.py froide/foirequest/models/request.py
-#: froide/foirequest/views/message.py froide/problem/views.py
-#: froide/publicbody/models.py
+#: froide/foirequest/views/message.py froide/organization/forms.py
+#: froide/problem/views.py froide/publicbody/models.py
 #: froide/publicbody/templates/publicbody/show_foilaw.html
 msgid "Description"
 msgstr "Beschreibung"
@@ -6278,6 +6274,7 @@ msgstr ""
 "andere Behörden</a>"
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
+#, python-format
 msgid ""
 "\n"
 "        <a href=\"%(url)s\" class=\"link-secondary\">%(name)s</a>\n"
@@ -8055,6 +8052,14 @@ msgstr "von"
 msgid "until"
 msgstr "bis"
 
+#: froide/helper/templates/helper/forms/widgets/image.html
+msgid "uploaded picture"
+msgstr "hochgeladenes Bild"
+
+#: froide/helper/templates/helper/forms/widgets/image.html
+msgid "Delete?"
+msgstr "Löschen?"
+
 #: froide/helper/templates/helper/forms/widgets/range_filter.html
 #: froide/upload/forms.py
 msgid "Filter"
@@ -8232,6 +8237,18 @@ msgstr "brief-erstellen/<int:letter_id>/<int:message_id>/vorschau/"
 msgid "letter-sent/<int:letter_id>/<int:message_id>/"
 msgstr "brief-versendet/<int:letter_id>/<int:message_id>/"
 
+#: froide/organization/forms.py
+msgid "Member already present in organization."
+msgstr "Das Mitglied gehört schon zur Organisation."
+
+#: froide/organization/forms.py froide/team/forms.py
+msgid "You cannot change your own role."
+msgstr "Sie können Ihre eigene Funktion nicht ändern."
+
+#: froide/organization/forms.py froide/team/forms.py
+msgid "Only owners can change roles."
+msgstr "Nur Eigentümer:innen können die Funktionen ändern."
+
 #: froide/organization/models.py froide/team/models.py
 msgid "owner"
 msgstr "Eigentümer:in"
@@ -8244,8 +8261,9 @@ msgstr "Mitglied"
 msgid "inactive"
 msgstr "inaktiv"
 
-#: froide/organization/models.py froide/team/models.py
-#: froide/team/templates/team/team_detail.html
+#: froide/organization/models.py
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/models.py froide/team/templates/team/team_detail.html
 msgid "invited"
 msgstr "eingeladen"
 
@@ -8256,6 +8274,162 @@ msgstr "Organisation"
 #: froide/organization/models.py
 msgid "organizations"
 msgstr "Organisationen"
+
+#: froide/organization/services.py
+#, python-format
+msgid "Organization invite from %(name)s"
+msgstr "Organisations-Einladung von %(name)s"
+
+#: froide/organization/templates/organization/emails/organization_invite.txt
+#, python-format
+msgid ""
+"Hello,\n"
+"\n"
+"%(name)s has invited you to join an organization on %(site_name)s.\n"
+"Please visit the link below to join this organization:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"If you don't have an account on %(site_name)s yet, you have to create one "
+"first.\n"
+msgstr ""
+"Hallo,\n"
+"\n"
+"%(name)s hat Sie eingeladen, einer Organisation auf %(site_name)s "
+"beizutreten.\n"
+"Bitte besuchen Sie diesen Link, um der Organisation beizutreten:\n"
+"\n"
+"%(url)s\n"
+"\n"
+"Falls Sie noch kein Konto auf %(site_name)s haben, bitte legen Sie zuerst "
+"eines an.\n"
+
+#: froide/organization/templates/organization/organization_detail.html
+#: froide/organization/templates/organization/organization_list.html
+msgid "Organizations"
+msgstr "Organisationen"
+
+#: froide/organization/templates/organization/organization_detail.html
+msgid "Edit Organization"
+msgstr "Organisation bearbeiten"
+
+#: froide/organization/templates/organization/organization_detail.html
+msgid "Organization Members"
+msgstr "Organisationsmitglieder"
+
+#: froide/organization/templates/organization/organization_list.html
+msgid "No organizations found."
+msgstr "Keine Organisation gefunden."
+
+#: froide/organization/templates/organization/organization_update_form.html
+#, python-format
+msgid "Organization “%(name)s”"
+msgstr "Organisation „%(name)s“"
+
+#: froide/organization/templates/organization/organization_update_form.html
+msgid "back to organization"
+msgstr "zurück zur Organisation"
+
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/templates/team/team_detail.html
+msgid "Member"
+msgstr "Mitglied"
+
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/templates/team/team_detail.html
+msgid "Role"
+msgstr "Funktion"
+
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/templates/team/team_detail.html
+msgid "– that's you!"
+msgstr "– das sind Sie!"
+
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/publicbody/templates/publicbody/show.html
+#: froide/team/templates/team/team_detail.html
+msgid "Change"
+msgstr "Ändern"
+
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/templates/team/team_detail.html
+msgid "Roles"
+msgstr "Funktionen"
+
+#: froide/organization/templates/organization/organization_update_form.html
+msgid ""
+"\n"
+"            A member is shown on the team page.\n"
+"          "
+msgstr ""
+"\n"
+"            Ein Mitglied wird auf der Team-Seite angezeigt.\n"
+"          "
+
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/templates/team/team_detail.html
+msgid "Owner"
+msgstr "Eigentümer:in"
+
+#: froide/organization/templates/organization/organization_update_form.html
+msgid ""
+"\n"
+"            An owner can do everything a member can. In addition they can "
+"also change the organization details, add or remove members from the "
+"organization and change their roles.\n"
+"          "
+msgstr ""
+"\n"
+"            Ein:e Eigentümer:in kann alles, was ein Mitglied auch kann. "
+"Zusätzlich können Eigentümer:innen auch Details der Organisation bearbeiten "
+"und Mitglieder anlegen, entfernen oder ihre Rollen ändern.\n"
+"          "
+
+#: froide/organization/templates/organization/organization_update_form.html
+msgid "Add organization member"
+msgstr "Organisationsmitglied einladen"
+
+#: froide/organization/templates/organization/organization_update_form.html
+msgid "Invite"
+msgstr "Einladung"
+
+#: froide/organization/templates/organization/organization_update_form.html
+msgid "Edit organization"
+msgstr "Organisation bearbeiten"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "<str:slug>/"
+msgstr "<str:slug>/"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "<str:slug>/update/"
+msgstr "<str:slug>/aktualisieren/"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "organization/<str:slug>/invite/"
+msgstr "organisation/<str:slug>/einladung/"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "<str:slug>/delete-member/<int:pk>/"
+msgstr "<str:slug>/mitglied-entfernen/<int:pk>/"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "<str:slug>/change-member/<int:pk>/"
+msgstr "<str:slug>/mitglied-aendern/<int:pk>/"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "<str:slug>/join/<int:pk>/<str:secret>/"
+msgstr "<str:slug>/beitreten/<int:pk>/<str:secret>/"
+
+#: froide/organization/views.py
+msgid "You are already an organization member."
+msgstr "Sie sind schon Mitglied dieser Organisation."
 
 #: froide/problem/admin.py
 msgid "Claimed"
@@ -9432,7 +9606,7 @@ msgid "File Index:"
 msgstr "Aktenplan:"
 
 #: froide/publicbody/templates/publicbody/show.html
-msgid "Organisation Chart:"
+msgid "Organization Chart:"
 msgstr "Organigramm:"
 
 #: froide/publicbody/templates/publicbody/show.html
@@ -9443,11 +9617,6 @@ msgstr "Vorschlag prüfen"
 #, python-format
 msgid "Change / accept proposals (%(count)s)"
 msgstr "Ändern / Vorschläge annehmen (%(count)s)"
-
-#: froide/publicbody/templates/publicbody/show.html
-#: froide/team/templates/team/team_detail.html
-msgid "Change"
-msgstr "Ändern"
 
 #: froide/publicbody/templates/publicbody/show.html
 msgid "You must be logged in."
@@ -9757,14 +9926,6 @@ msgid "Name of this team"
 msgstr "Name dieses Teams"
 
 #: froide/team/forms.py
-msgid "You cannot change your own role."
-msgstr "Sie können Ihre eigene Funktion nicht ändern."
-
-#: froide/team/forms.py
-msgid "Only owners can change roles."
-msgstr "Nur Eigentümer:innen können die Funktionen ändern."
-
-#: froide/team/forms.py
 msgid "Member already present in team."
 msgstr "Das Mitglied gehört schon zum Team."
 
@@ -9845,22 +10006,6 @@ msgid "back to team overview"
 msgstr "zurück zur Team-Übersicht"
 
 #: froide/team/templates/team/team_detail.html
-msgid "Member"
-msgstr "Mitglied"
-
-#: froide/team/templates/team/team_detail.html
-msgid "Role"
-msgstr "Funktion"
-
-#: froide/team/templates/team/team_detail.html
-msgid "– that's you!"
-msgstr "– das sind Sie!"
-
-#: froide/team/templates/team/team_detail.html
-msgid "Roles"
-msgstr "Funktionen"
-
-#: froide/team/templates/team/team_detail.html
 msgid "Viewer"
 msgstr "Betrachter:in"
 
@@ -9891,10 +10036,6 @@ msgstr ""
 "            Ein:e Bearbeiter:in kann Anfragen in den Team-Projekten stellen, "
 "Nachrichten senden, den Status von Anfragen ändern etc.\n"
 "          "
-
-#: froide/team/templates/team/team_detail.html
-msgid "Owner"
-msgstr "Eigentümer:in"
 
 #: froide/team/templates/team/team_detail.html
 msgid ""
@@ -10884,8 +11025,18 @@ msgstr "brief/"
 
 #: froide/urls.py
 msgctxt "url part"
+msgid "organization/"
+msgstr "organisation/"
+
+#: froide/urls.py
+msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#, fuzzy
+#~| msgid "Organization"
+#~ msgid "Organisations"
+#~ msgstr "Organisation"
 
 #~ msgid "Moderator"
 #~ msgstr "Moderator:in"
