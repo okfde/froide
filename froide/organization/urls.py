@@ -13,7 +13,7 @@ from .views import (
 
 urlpatterns = [
     path(
-        pgettext_lazy("url part", ""),
+        "",
         OrganizationListView.as_view(),
         name="organization-list",
     ),
@@ -33,12 +33,12 @@ urlpatterns = [
         name="organization-invite",
     ),
     path(
-        pgettext_lazy("url part", "<str:slug>/delete-member/<int:pk>"),
+        pgettext_lazy("url part", "<str:slug>/delete-member/<int:pk>/"),
         DeleteOrganizationMemberView.as_view(),
         name="organization-delete_member",
     ),
     path(
-        pgettext_lazy("url part", "<str:slug>/change-member/<int:pk>"),
+        pgettext_lazy("url part", "<str:slug>/change-member/<int:pk>/"),
         ChangeOrganizationMemberRoleView.as_view(),
         name="organization-change_member",
     ),
