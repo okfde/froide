@@ -1,82 +1,70 @@
 import uuid
 from datetime import datetime
 
-from django.test import TestCase
+import pytest
 
+from froide.accesstoken.models import AccessToken, AccessTokenManager
 from froide.account.models import User
-from froide.foirequest.tests.factories import UserFactory
 
-from .models import AccessToken, AccessTokenManager
-
-
-class AccessTokenManagerTest(TestCase):
-    def setUp(self):
-        self.purpose = "test_purpose"
-        self.at_manager = AccessTokenManager()
-
-    # Check if accesstoken is created and of correct type
-    def test_create_for_user(self):
-        user = UserFactory()
-        accesstoken = self.at_manager.create_for_user(user, self.purpose)
-        self.assertIsInstance(accesstoken, uuid.UUID)
-
-    # Check if accesstoken is actually changed on reset and of correct type
-    def test_reset(self):
-        user = UserFactory()
-        old_token = self.at_manager.create_for_user(user, self.purpose)
-        new_token = self.at_manager.reset(user, self.purpose)
-        self.assertNotEqual(old_token, new_token)
-        self.assertIsInstance(new_token, uuid.UUID)
-
-    # Check if correct accesstoken is returned
-    def test_get_token_by_user(self):
-        user = UserFactory()
-        accesstoken = self.at_manager.create_for_user(user, self.purpose)
-        received_token = self.at_manager.get_token_by_user(user, self.purpose)
-        self.assertEqual(accesstoken, received_token)
-
-    # Check correct behaviour if accesstoken does not exist
-    # Check correct return type
-    def test_get_by_user(self):
-        user = UserFactory()
-        ret_value = self.at_manager.get_by_user(user, self.purpose)
-        self.assertEqual(ret_value, None)
-        self.at_manager.create_for_user(user, self.purpose)
-        ret_value = self.at_manager.get_by_user(user, self.purpose)
-        self.assertIsInstance(ret_value, AccessToken)
-
-    # Check correct behaviour if user does not exist
-    # Check correct return type
-    def test_get_by_token(self):
-        at = AccessToken()
-        ret_value = self.at_manager.get_by_token(at.token, self.purpose)
-        self.assertEqual(ret_value, None)
-        user = UserFactory()
-        accesstoken = self.at_manager.create_for_user(user, self.purpose)
-        ret_value = self.at_manager.get_by_token(accesstoken, self.purpose)
-        self.assertIsInstance(ret_value, AccessToken)
-
-    # Check if correct user is returned
-    def test_get_user_by_token(self):
-        user = UserFactory()
-        accesstoken = self.at_manager.create_for_user(user, self.purpose)
-        received_user = self.at_manager.get_user_by_token(accesstoken, self.purpose)
-        self.assertEqual(user, received_user)
+PURPOSE = "test_purpose"
+AT_MANAGER = AccessTokenManager()
 
 
-class AccessTokenTest(TestCase):
-    def setUp(self):
-        self.purpose = "test_purpose"
-        self.at_manager = AccessTokenManager()
+@pytest.mark.django_db
+def test_create_for_user(user):
+    accesstoken = AT_MANAGER.create_for_user(user, PURPOSE)
+    assert isinstance(accesstoken, uuid.UUID)
 
-    # Check if class parameters exist and have correct type
-    def test_constructor(self):
-        user = UserFactory()
-        self.at_manager.create_for_user(user, self.purpose)
-        accesstoken = self.at_manager.get_by_user(user, self.purpose)
-        self.assertIsInstance(accesstoken.token, uuid.UUID)
-        self.assertIsInstance(accesstoken.purpose, str)
-        self.assertIsInstance(accesstoken.user, User)
-        self.assertIsInstance(accesstoken.timestamp, datetime)
-        self.assertIsNotNone(accesstoken.user)
-        self.assertIsNotNone(accesstoken.purpose)
+
+@pytest.mark.django_db
+def test_reset(user):
+    old_token = AT_MANAGER.create_for_user(user, PURPOSE)
+    new_token = AT_MANAGER.reset(user, PURPOSE)
+    assert not old_token == new_token
+    assert isinstance(new_token, uuid.UUID)
+
+
+@pytest.mark.django_db
+def test_get_token_by_user(user):
+    accesstoken = AT_MANAGER.create_for_user(user, PURPOSE)
+    received_token = AT_MANAGER.get_token_by_user(user, PURPOSE)
+    assert accesstoken == received_token
+
+
+@pytest.mark.django_db
+def test_get_by_user(user):
+    ret_value = AT_MANAGER.get_by_user(user, PURPOSE)
+    assert ret_value is None
+    AccessToken.objects.create_for_user(user, PURPOSE)
+    ret_value = AccessToken.objects.get_by_user(user, PURPOSE)
+    assert isinstance(ret_value, AccessToken)
+
+
+@pytest.mark.django_db
+def test_get_by_token(user):
+    at = AccessToken()
+    ret_value = AT_MANAGER.get_by_token(at.token, PURPOSE)
+    assert ret_value is None
+    accesstoken = AT_MANAGER.create_for_user(user, PURPOSE)
+    ret_value = AT_MANAGER.get_by_token(accesstoken, PURPOSE)
+    assert isinstance(ret_value, AccessToken)
+
+
+# Check if correct user is returned
+@pytest.mark.django_db
+def test_get_user_by_token(user):
+    accesstoken = AT_MANAGER.create_for_user(user, PURPOSE)
+    received_user = AT_MANAGER.get_user_by_token(accesstoken, PURPOSE)
+    assert user == received_user
+
+
+@pytest.mark.django_db
+def test_constructor(user):
+    AT_MANAGER.create_for_user(user, PURPOSE)
+    accesstoken = AT_MANAGER.get_by_user(user, PURPOSE)
+    assert isinstance(accesstoken.token, uuid.UUID)
+    assert isinstance(accesstoken.purpose, str)
+    assert isinstance(accesstoken.user, User)
+    assert isinstance(accesstoken.timestamp, datetime)
+    assert accesstoken.user is not None
+    assert accesstoken.purpose is not None
