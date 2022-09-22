@@ -12,6 +12,7 @@ pre-commit
 pycodestyle
 pyflakes
 pytest-django
+pytest-factoryboy
 selenium
 text-unidecode
 django-coverage-plugin
