@@ -6,7 +6,7 @@ If this is you, this is a reminder that you already have an account!
 
 Click here to go there:
 
-{{ url }}
+{{ action_url }}
 
 If this is not you, you can ignore this email.{% endblocktrans %}
 

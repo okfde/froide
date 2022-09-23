@@ -2,7 +2,7 @@
 
 your message for the Freedom of Information request "{{ title }}" has been sent to {{ pbname }}. We will notify you when you get a response.
 
-{{ url }}
+{{ action_url }}
 
 Cheers,
 {{ site_name }}

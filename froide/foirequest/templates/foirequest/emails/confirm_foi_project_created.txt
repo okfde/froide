@@ -2,7 +2,7 @@
 
 your project "{{ title }}" has been created and we are sending the requests to the public bodies now. We will notify you when you get responses.
 
-{{ url }}
+{{ action_url }}
 
 Cheers,
 {{ site_name }}
