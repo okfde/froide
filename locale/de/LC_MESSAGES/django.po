@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-21 21:56+0200\n"
-"PO-Revision-Date: 2022-09-21 21:58+0200\n"
+"POT-Creation-Date: 2022-09-23 14:33+0200\n"
+"PO-Revision-Date: 2022-09-23 14:34+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -10672,6 +10672,14 @@ msgstr "Bitte erlauben Sie Zugriff auf Ihre Kamera"
 #: froide/upload/forms.py
 msgid "browse"
 msgstr "Suche"
+
+#: froide/upload/forms.py
+msgid "browse files"
+msgstr "Dateien auswählen"
+
+#: froide/upload/forms.py
+msgid "browse folders"
+msgstr "Ordner auswählen"
 
 #: froide/upload/forms.py
 msgid "Cancel upload"
