@@ -130,8 +130,8 @@ class AccountTest(TestCase):
         }
         self.client.login(email="info@fragdenstaat.de", password="froide")
         response = self.client.post(reverse("account-signup"), post)
-        self.assertTrue(response.status_code, 302)
-        self.assertTrue(response.url, "/")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/account/")
 
         self.assertEqual(len(mail.outbox), 0)
         self.client.logout()
@@ -154,8 +154,10 @@ class AccountTest(TestCase):
         self.assertEqual(mail.outbox[0].to[0], post["user_email"])
 
         # sign up with email that is not confirmed
+        mail.outbox = []
         response = self.client.post(reverse("account-signup"), post)
-        self.assertTrue(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 1)
 
         # sign up with email that is confirmed
         message = mail.outbox[0]
@@ -169,8 +171,13 @@ class AccountTest(TestCase):
         self.client.logout()
         user = User.objects.get(id=user.pk)
         self.assertTrue(user.is_active)
+        mail.outbox = []
         response = self.client.post(reverse("account-signup"), post)
-        self.assertTrue(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(
+            "this is a reminder that you already have an account", mail.outbox[0].body
+        )
 
     def test_overlong_name_signup(self):
         post = {
