@@ -141,7 +141,7 @@ class CSVImporter(object):
             if regions:
                 pb.regions.set(regions)
             if categories:
-                pb.categories.set(*categories)
+                pb.categories.set(categories)
             return pb
         except PublicBody.DoesNotExist:
             pass
@@ -159,7 +159,7 @@ class CSVImporter(object):
         if regions:
             pb.regions.set(regions)
         if categories:
-            pb.categories.set(*categories)
+            pb.categories.set(categories)
         return pb
 
     def get_jurisdiction(self, slug):

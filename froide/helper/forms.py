@@ -38,7 +38,11 @@ class TagObjectForm(forms.Form):
         )
 
     def save(self, obj: Model) -> None:
-        obj.tags.set(*[t[:TAG_NAME_MAX_CHARS] for t in self.cleaned_data["tags"]])
+        cleaned_tags = [t[:TAG_NAME_MAX_CHARS] for t in self.cleaned_data["tags"]]
+        if not cleaned_tags:
+            obj.tags.clear()
+        else:
+            obj.tags.set(cleaned_tags)
         obj.save()
 
 
