@@ -294,6 +294,7 @@ class Base(Configuration):
     TIME_INPUT_FORMATS = values.TupleValue(("%H:%M:%S", "%H:%M"))
 
     TAGGIT_CASE_INSENSITIVE = True
+    TAGGIT_STRIP_UNICODE_WHEN_SLUGIFYING = True
 
     HOLIDAYS = [
         (1, 1),  # New Year's Day
