@@ -5521,7 +5521,7 @@ msgid ""
 "specific, non-personal information from public bodies."
 msgstr ""
 "Diese Anfrage ist <strong>keine</strong> Anfrage im Sinne des "
-"Informationsfreiheitsgesetzes!<br/>Sie müssen nach spezifischen, nicht sie "
+"Informationsfreiheitsgesetzes!<br/>Sie müssen nach spezifischen, nicht Sie "
 "selbst betreffenden Dokumenten in Behörden fragen."
 
 #: froide/foirequest/templates/foirequest/header/header.html
