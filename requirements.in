@@ -18,7 +18,7 @@ django-mfa3
 django-oauth-toolkit
 django-parler
 django-storages
-django-taggit
+django-taggit>=2
 django-treebeard
 Django>=4.0,<4.1
 djangorestframework
