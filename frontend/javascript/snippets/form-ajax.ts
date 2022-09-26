@@ -54,8 +54,12 @@ function submitFormsAjax(): void {
           const modalTrigger = document.getElementById(
             form.dataset.modal
           ) as IHTMLModalTriggerElement
-          if (modalTrigger) {
-            modalTrigger.Modal.hide()
+          if (modalTrigger?.dataset?.bsTarget) {
+            Modal.getInstance(
+              document.querySelector(
+                modalTrigger.dataset.bsTarget
+              ) as HTMLElement
+            )?.hide()
           }
         }
 
