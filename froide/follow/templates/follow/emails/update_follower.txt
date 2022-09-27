@@ -18,4 +18,3 @@
 
 {% endautoescape %}
 {% include "emails/footer.txt" %}
-%
