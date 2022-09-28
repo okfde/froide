@@ -95,7 +95,7 @@ class AddressBaseForm(forms.Form):
             attrs={
                 "rows": "3",
                 "class": "form-control",
-                "placeholder": _("Street, Post Code, City"),
+                "placeholder": _("Street address,\nPost Code, City"),
             }
         ),
     )
