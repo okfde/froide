@@ -11,7 +11,7 @@
   {% elif field_type == "checkbox" %}
     <div class="form-check">
       {{ field }}
-      <label class="form-check-label fw-bold {% if required %} field-required{% endif %}">
+      <label class="form-check-label fw-bold {% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">
         {{ label }}
       </label>
     </div>
