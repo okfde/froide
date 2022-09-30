@@ -523,6 +523,7 @@ class Base(Configuration):
         delivery_receipt=False,
         dsn=False,
         target_countries=None,
+        suspicious_asn_provider_list=None,
         delivery_reporter=None,
         request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
         message_throttle=[

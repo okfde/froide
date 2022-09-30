@@ -1,7 +1,9 @@
 import logging
+import os
 import re
+from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
-from typing import Set
+from typing import Optional, Set
 
 from django import forms
 from django.conf import settings
@@ -10,6 +12,7 @@ from django.core.cache import cache
 from django.http import HttpRequest
 from django.utils.translation import gettext_lazy as _
 
+import geoip2.database
 import requests
 from requests.exceptions import Timeout
 
@@ -18,27 +21,105 @@ from froide.helper.utils import get_client_ip
 logger = logging.getLogger(__name__)
 
 
-def suspicious_ip(request: HttpRequest) -> bool:
-    target_countries = settings.FROIDE_CONFIG.get("target_countries", None)
-    if target_countries is None:
-        return False
+@dataclass
+class Suspicion:
+    message: str
+
+    def __str__(self):
+        return self.message
+
+
+def suspicious_ip(request: HttpRequest) -> Optional[Suspicion]:
     ip = get_client_ip(request)
     if ip == "127.0.0.1":
         # Consider suspicious
-        return True
-    try:
-        g = GeoIP2()
-        info = g.country(ip)
-        if info["country_code"] not in target_countries:
-            return True
-    except Exception as e:
-        logger.warning(e)
+        return Suspicion("localhost")
+
+    target_countries = settings.FROIDE_CONFIG.get("target_countries", None)
+    if target_countries:
+        try:
+            g = GeoIP2()
+            info = g.country(ip)
+            if info["country_code"] not in target_countries:
+                return Suspicion("not target country")
+        except Exception as e:
+            logger.warning(e)
+
     try:
         if ip in get_tor_exit_ips():
-            return True
+            return Suspicion("tor exit node")
     except Exception as e:
         logger.error(e)
-    return False
+
+    if settings.FROIDE_CONFIG.get("suspicious_asn_provider_list"):
+        asn_info = get_asn_info(ip)
+        if asn_info is None:
+            # No ASN info, consider suspicious
+            return Suspicion("no ASN info")
+
+        if suspicious_asn(asn_info.number):
+            return Suspicion(
+                "Bad ASN: {number} {organization}".format(**asdict(asn_info))
+            )
+
+    return None
+
+
+@dataclass
+class ASInfo:
+    number: int
+    organization: str
+
+
+def get_asn_info(ip_address: str) -> Optional[ASInfo]:
+    if not settings.GEOIP_PATH:
+        return None
+    asn_db_path = os.path.join(settings.GEOIP_PATH, "GeoLite2-ASN.mmdb")
+    if not os.path.exists(asn_db_path):
+        return None
+    try:
+        with geoip2.database.Reader(asn_db_path) as reader:
+            result = reader.asn(ip_address)
+    except geoip2.errors.AddressNotFoundError as e:
+        logger.warning(e)
+        return None
+    return ASInfo(
+        number=result.autonomous_system_number,
+        organization=result.autonomous_system_organization,
+    )
+
+
+def suspicious_asn(asn: int) -> bool:
+    try:
+        return asn in get_suspicious_asns()
+    except Exception as e:
+        logger.warning(e)
+        return False
+
+
+ASN_LIST_TIMEOUT = 60 * 60 * 24
+
+
+def get_suspicious_asns(refresh: bool = False) -> Set[int]:
+    cache_key = "froide:suspicious_asns"
+    result = cache.get(cache_key)
+    if result and not refresh:
+        return result
+
+    asn_set = set()
+    ASN_REGEX = re.compile(r"(?:^|[,;])(\d+)(?:$|[,;])", re.M)
+    provider_list = settings.FROIDE_CONFIG.get("suspicious_asn_provider_list", [])
+    for provider in provider_list:
+        if provider.startswith("https://"):
+            try:
+                response = requests.get(provider, timeout=5)
+            except Timeout:
+                continue
+            asn_set |= set(int(x) for x in ASN_REGEX.findall(response.text))
+        else:
+            asn_set |= set(int(x) for x in provider.split(","))
+    cache.set(cache_key, asn_set, ASN_LIST_TIMEOUT)
+    return asn_set
 
 
 IP_RE = re.compile(r"ExitAddress (\S+)")
@@ -131,7 +212,7 @@ class SpamProtectionMixin:
         if self.SPAM_PROTECTION.get("captcha") == "always":
             return True
         if self.SPAM_PROTECTION.get("captcha") == "ip" and self.request:
-            return suspicious_ip(self.request)
+            return bool(suspicious_ip(self.request))
         if self._too_many_actions(increment=False):
             return True
         return False
