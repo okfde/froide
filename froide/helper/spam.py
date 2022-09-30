@@ -117,7 +117,7 @@ def get_suspicious_asns(refresh: bool = False) -> Set[int]:
                 continue
             asn_set |= set(int(x) for x in ASN_REGEX.findall(response.text))
         else:
-            asn_set |= set(int(x) for x in provider.split(","))
+            asn_set |= set(int(x) for x in provider.split(",") if x)
     cache.set(cache_key, asn_set, ASN_LIST_TIMEOUT)
     return asn_set
 
