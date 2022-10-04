@@ -19,9 +19,9 @@ from froide.publicbody.models import Jurisdiction, PublicBody
 from .models import Document, DocumentCollection
 
 
-def get_document_read_qs(request, detail=False):
+def get_document_read_qs(request, read_unlisted=False):
     public_q = Q(public=True, listed=True)
-    if detail:
+    if read_unlisted:
         public_q = Q(public=True)
     return get_read_queryset(
         Document.objects.all(),

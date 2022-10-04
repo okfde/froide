@@ -120,7 +120,10 @@ class DocumentViewSet(FCDocumentViewSet):
     filterset_class = DocumentFilter
 
     def get_base_queryset(self):
-        return get_document_read_qs(self.request, detail=self.action == "retrieve")
+        read_unlisted = (
+            self.action == "retrieve" or self.can_read_unlisted_via_collection()
+        )
+        return get_document_read_qs(self.request, read_unlisted=read_unlisted)
 
     def get_queryset(self):
         qs = super().get_queryset()
