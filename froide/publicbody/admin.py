@@ -39,6 +39,7 @@ from .models import (
     Jurisdiction,
     ProposedPublicBody,
     PublicBody,
+    PublicBodyChangeProposal,
     PublicBodyTag,
     TaggedPublicBody,
 )
@@ -183,9 +184,7 @@ class PublicBodyBaseAdminMixin:
         "request_count",
     )
     list_filter = (
-        make_emptyfilter(
-            "change_proposals", _("Has change proposals"), empty_value=dict
-        ),
+        make_nullfilter("change_proposals", _("Has change proposals")),
         "jurisdiction",
         ("classification", TreeRelatedFieldListFilter),
         "classification",
@@ -656,6 +655,10 @@ class CategorizedPublicBodyAdmin(admin.ModelAdmin):
     raw_id_fields = ("content_object", "tag")
 
 
+class PublicBodyChangeProposalAdmin(admin.ModelAdmin):
+    raw_id_fields = ("publicbody", "user", "classification", "categories", "regions")
+
+
 admin.site.register(PublicBody, PublicBodyAdmin)
 admin.site.register(ProposedPublicBody, ProposedPublicBodyAdmin)
 admin.site.register(FoiLaw, FoiLawAdmin)
@@ -665,3 +668,4 @@ admin.site.register(TaggedPublicBody, TaggedPublicBodyAdmin)
 admin.site.register(Classification, ClassificationAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(CategorizedPublicBody, CategorizedPublicBodyAdmin)
+admin.site.register(PublicBodyChangeProposal, PublicBodyChangeProposalAdmin)
