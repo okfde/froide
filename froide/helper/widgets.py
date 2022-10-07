@@ -68,17 +68,64 @@ class PriceInput(forms.TextInput):
         return ctx
 
 
-class TagAutocompleteWidget(TagWidget):
+class AutocompleteMixin:
     template_name = "helper/forms/widgets/tag_autocomplete.html"
+    max_item_count = -1
+    use_tags = False
 
     def __init__(self, *args, **kwargs) -> None:
         self.autocomplete_url: Optional[str] = kwargs.pop("autocomplete_url", None)
+        self.allow_new: bool = kwargs.pop("allow_new", True)
+        self.query_param: str = kwargs.pop("query_param", "q")
+        self.max_item_count: int = kwargs.pop("max_item_count", self.max_item_count)
+        self.model: int = kwargs.pop("model", None)
         super().__init__(*args, **kwargs)
 
     @property
     def media(self):
         build_info = get_frontend_files("tagautocomplete.js")
         return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
+
+    def get_context(self, name, value, attrs):
+        ctx = super().get_context(name, value, attrs)
+        ctx["autocomplete_url"] = self.autocomplete_url
+        ctx["allow_new"] = self.allow_new
+        ctx["query_param"] = self.query_param
+        ctx["max_item_count"] = self.max_item_count
+        if value is not None:
+            if isinstance(value, str):
+                ctx["values"] = [{"label": x, "value": x} for x in parse_tags(value)]
+            else:
+                if self.model:
+                    value = self.model.objects.filter(pk__in=value)
+                ctx["values"] = [
+                    {"label": str(x), "value": str(x) if self.use_tags else x.pk}
+                    for x in value
+                ]
+        else:
+            ctx["values"] = []
+        return ctx
+
+
+class AutocompleteWidget(AutocompleteMixin, forms.TextInput):
+    max_item_count = 1
+
+
+class AutocompleteMultiWidget(AutocompleteWidget):
+    max_item_count = -1
+
+    def value_from_datadict(self, data, files, name):
+        value = data.get(name)
+        if value:
+            return value.split(",")
+
+    def format_value(self, value):
+        return ",".join(str(v) for v in value) if value else ""
+
+
+class TagAutocompleteWidget(AutocompleteMixin, TagWidget):
+    template_name = "helper/forms/widgets/tag_autocomplete.html"
+    use_tags = True
 
     def value_from_datadict(
         self, data: QueryDict, files: MultiValueDict, name: str
@@ -88,18 +135,6 @@ class TagAutocompleteWidget(TagWidget):
         if val is None:
             return ""
         return val + ","
-
-    def get_context(self, name, value, attrs):
-        ctx = super().get_context(name, value, attrs)
-        ctx["autocomplete_url"] = self.autocomplete_url
-        if value is not None:
-            if isinstance(value, str):
-                ctx["tags"] = parse_tags(value)
-            else:
-                ctx["tags"] = [v.name for v in value]
-        else:
-            ctx["tags"] = []
-        return ctx
 
 
 class DateRangeWidget(DFDateRangeWidget):

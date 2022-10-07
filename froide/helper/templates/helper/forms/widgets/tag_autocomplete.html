@@ -13,8 +13,12 @@
   data-nochoices="{% trans 'No results' %}"
   data-itemselect="{% trans 'Press to select' %}"
   data-fetchurl="{{ autocomplete_url }}"
-  id="{{ widget.attrs.id }}_select" multiple>
-  {% for tag in tags %}<option value="{{ tag }}" selected>{{ tag }}</option>{% endfor %}
+  data-allownew="{{ allow_new }}"
+  data-queryparam="{{ query_param }}"
+  {% if max_item_count %}data-maxitemcount="{{ max_item_count }}"{% endif %}
+  id="{{ widget.attrs.id }}_select"
+  {% if max_item_count != 1 %} multiple{% endif %}>
+  {% for value in values %}<option value="{{ value.value }}" selected>{{ value.label }}</option>{% endfor %}
 </select>
 
 {% getfrontendbuild "tagautocomplete.js" as assets %}

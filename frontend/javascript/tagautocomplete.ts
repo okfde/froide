@@ -6,7 +6,23 @@ interface IChoicesSearchEvent extends Event {
   detail: { value: string }
 }
 
+interface AutocompleteItem {
+  value: string
+  label: string
+}
+
+interface AutocompleteResponse {
+  objects: AutocompleteItem[]
+}
+
+declare global {
+  interface Window {
+    _choices_: any
+  }
+}
+
 function setupTagging(): void {
+  window._choices_ = window._choices_ ?? {}
   document
     .querySelectorAll<HTMLInputElement>('.tagautocomplete')
     .forEach((select) => {
@@ -16,12 +32,15 @@ function setupTagging(): void {
         return
       }
       const addItemText = select.dataset.additemtext ?? ''
+      const allowNew = select.dataset.allownew === 'true'
       const loadingText = select.dataset.loading ?? ''
       const noResultsText = select.dataset.noresults ?? ''
       const noChoicesText = select.dataset.nochoices ?? ''
       const itemSelectText = select.dataset.itemselect ?? ''
       const uniqueItemText = select.dataset.uniqueitemtext ?? ''
       const fetchUrl = select.dataset.fetchurl ?? ''
+      const queryParam = select.dataset.queryparam ?? 'q'
+      const maxItemCount = parseInt(select.dataset.maxitemcount ?? '-1') ?? -1
 
       const choices = new Choices(select, {
         addItemText(value) {
@@ -32,48 +51,65 @@ function setupTagging(): void {
         delimiter: ',',
         duplicateItemsAllowed: false,
         editItems: true,
+        maxItemCount,
         itemSelectText,
         loadingText,
         noChoicesText,
         noResultsText,
+        searchResultLimit: 8,
         removeItemButton: true,
         uniqueItemText
       })
 
-      select.addEventListener('change', function onchange() {
+      window._choices_[selectId] = choices
+
+      const setRealInput = (): void => {
         choices.hideDropdown()
         const value = choices.getValue(true)
         let valueString
-        if (Array.isArray(value)) {
-          valueString = value.join(', ')
-        } else if (typeof value !== 'string') {
-          valueString = value.label
+        if (value == null) {
+          valueString = ''
+        } else if (Array.isArray(value)) {
+          valueString = value.join(',')
         } else {
-          valueString = value
+          // eslint-disable-next-line @typescript-eslint/no-base-to-string
+          valueString = value.toString()
         }
-        realInput.value = valueString
-      })
+        realInput.value = valueString ?? ''
+      }
+      select.addEventListener('addItem', setRealInput)
+      select.addEventListener('removeItem', setRealInput)
 
       select.addEventListener('search', function onSearch(event) {
         const choicesEvent = event as IChoicesSearchEvent
-        const value = choicesEvent.detail.value
+        const searchValue = choicesEvent.detail.value
         if (fetchUrl !== '') {
-          void fetch(fetchUrl + '?query=' + encodeURIComponent(value)).then(
-            (response) => {
-              void response.json().then((data: string[]) => {
-                const present = data.filter((f) => f === value).length > 0
-                const transformed = data.map((x) => ({ value: x, label: x }))
-                if (!present) {
-                  transformed.push({ value, label: value })
-                }
-                // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                choices.setChoices(transformed, 'value', 'label', true)
-              })
-            }
-          )
+          const url = new URL(fetchUrl, window.location.origin)
+          url.searchParams.set(queryParam, searchValue)
+          void fetch(url.href).then((response) => {
+            void response.json().then((response: AutocompleteResponse) => {
+              const data = response.objects
+              let currentValue = choices.getValue(true) as string[] | string
+              if (!Array.isArray(currentValue)) {
+                currentValue = [currentValue]
+              }
+              const present =
+                data.filter((f) => currentValue.includes(f.value)).length > 0
+              if (!present && allowNew) {
+                data.push({ value: searchValue, label: searchValue })
+              }
+              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+              choices.setChoices(data, 'value', 'label', true)
+            })
+          })
         } else {
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          choices.setChoices([{ value, label: value }], 'value', 'label', true)
+          choices.setChoices(
+            [{ value: searchValue, label: searchValue }],
+            'value',
+            'label',
+            true
+          )
         }
       })
     })

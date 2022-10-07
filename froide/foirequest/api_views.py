@@ -558,12 +558,19 @@ class FoiRequestViewSet(
         url_name="tags-autocomplete",
     )
     def tags_autocomplete(self, request):
-        query = request.GET.get("query", "")
-        tags = []
+        query = request.GET.get("q", "")
+        tags = Tag.objects.none()
         if query:
-            tags = Tag.objects.filter(name__istartswith=query)
-            tags = [t for t in tags.values_list("name", flat=True)]
-        return Response(tags)
+            tags = (
+                Tag.objects.filter(name__istartswith=query)
+                .only("name")
+                .order_by("name")
+            )
+
+        page = self.paginate_queryset(tags)
+        return self.get_paginated_response(
+            [{"value": t.name, "label": t.name} for t in page]
+        )
 
     @throttle_action((MakeRequestThrottle,))
     def create(self, request, *args, **kwargs):
