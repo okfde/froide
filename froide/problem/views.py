@@ -69,9 +69,10 @@ def get_moderation_data(request):
 
     publicbodies = None
     if can_moderate_object(PublicBody, request):
+
         publicbodies = list(
             PublicBody._default_manager.filter(
-                ~Q(change_proposals={}) | Q(confirmed=False)
+                ~Q(change_proposals=None) | Q(confirmed=False)
             )
             .order_by("-updated_at")
             .values(
