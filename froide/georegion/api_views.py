@@ -5,6 +5,7 @@ from django.contrib.gis.geos import Point
 
 from django_filters import rest_framework as filters
 from rest_framework import serializers, viewsets
+from rest_framework.decorators import action
 from rest_framework.settings import api_settings
 from rest_framework_jsonp.renderers import JSONPRenderer
 
@@ -98,7 +99,7 @@ class GeoRegionFilter(filters.FilterSet):
         return queryset.filter(name__icontains=value)
 
     def kind_filter(self, queryset, name, value):
-        return queryset.filter(kind=value)
+        return queryset.filter(kind__in=value.split(","))
 
     def level_filter(self, queryset, name, value):
         return queryset.filter(level=value)
@@ -202,3 +203,22 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin, viewsets.ReadOnlyModelView
                 "score": 4,
                 "match": True,  # FIXME: this is quite arbitrary
             }
+
+    @action(
+        detail=False, methods=["get"], url_path="autocomplete", url_name="autocomplete"
+    )
+    def autocomplete(self, request):
+        page = self.paginate_queryset(
+            self.filter_queryset(self.get_queryset())
+            .only("id", "name", "kind", "kind_detail", "region_identifier")
+            .order_by("level", "name")
+        )
+        return self.get_paginated_response(
+            [
+                {
+                    "value": x.pk,
+                    "label": str(x),
+                }
+                for x in page
+            ]
+        )
