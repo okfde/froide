@@ -57,7 +57,11 @@ class GeoRegion(MP_Node):
         ordering = ("name",)
 
     def __str__(self):
-        return "%s (%s)" % (self.name, self.pk)
+        return "{name} ({kind} - {region_identifier})".format(
+            name=self.name,
+            kind=self.kind_detail or self.get_kind_display(),
+            region_identifier=self.region_identifier,
+        )
 
     def get_all_sub_regions(self):
         def get_subregions(region):
