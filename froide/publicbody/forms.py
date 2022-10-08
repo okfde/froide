@@ -1,18 +1,25 @@
 from django import forms
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
-from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
+from django.db.models import Model, Q, QuerySet
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import phonenumbers
+from taggit.forms import TagField
 
+from froide.georegion.models import GeoRegion
 from froide.helper.form_utils import JSONMixin
 from froide.helper.text_utils import slugify
+from froide.helper.widgets import (
+    AutocompleteMultiWidget,
+    BootstrapSelect,
+    TagAutocompleteWidget,
+)
 
-from .models import Classification, Jurisdiction, PublicBody
+from .models import Classification, Jurisdiction, PublicBody, PublicBodyChangeProposal
 from .widgets import PublicBodySelect
 
 
@@ -84,6 +91,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         widget=forms.Textarea(attrs={"class": "form-control", "rows": "3"}),
     )
     email = forms.EmailField(
+        label=_("Email"),
         help_text=_("Email address for general enquiry (e.g. press contact)."),
         widget=forms.EmailInput(
             attrs={"class": "form-control", "placeholder": "info@..."}
@@ -97,6 +105,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         ),
     )
     fax = forms.CharField(
+        label=_("Fax number"),
         help_text=_("The fax number of this authority."),
         required=False,
         widget=forms.TextInput(
@@ -109,6 +118,7 @@ class PublicBodyProposalForm(forms.ModelForm):
         ),
     )
     address = forms.CharField(
+        label=_("Address"),
         help_text=_("The postal address of this authority."),
         widget=forms.Textarea(
             attrs={
@@ -131,17 +141,44 @@ class PublicBodyProposalForm(forms.ModelForm):
     )
 
     classification = forms.ModelChoiceField(
-        required=False,
         label=_("Classification"),
+        required=False,
         help_text=_(
             "Try finding a matching classification for this authority. "
             "If you cannot find one, leave it blank and we will take care."
         ),
+        widget=BootstrapSelect,
         queryset=Classification.objects.all().order_by("name"),
     )
 
-    jurisdiction = forms.ModelChoiceField(
+    categories = TagField(
+        label=_("Categories"),
+        help_text=_(
+            "Categories represent the topics this authority is responsible for."
+        ),
+        widget=TagAutocompleteWidget(
+            autocomplete_url=reverse_lazy("api:category-autocomplete"),
+            allow_new=False,
+        ),
         required=False,
+    )
+
+    regions = forms.ModelMultipleChoiceField(
+        queryset=GeoRegion.objects.filter(level__gte=1).exclude(kind="zipcode"),
+        label=_("Geo Regions"),
+        help_text=_(
+            "If this authority is responsible for specific regions, you can select them here."
+        ),
+        widget=AutocompleteMultiWidget(
+            autocomplete_url=reverse_lazy("api:georegion-autocomplete"),
+            model=GeoRegion,
+            allow_new=False,
+        ),
+        required=False,
+    )
+
+    jurisdiction = forms.ModelChoiceField(
+        widget=BootstrapSelect,
         label=_("Jurisdiction"),
         help_text=_(
             "Give the jurisdiction under which this authority falls. "
@@ -151,33 +188,22 @@ class PublicBodyProposalForm(forms.ModelForm):
         ),
         queryset=Jurisdiction.objects.all(),
     )
-
-    class Meta:
-        model = PublicBody
-        fields = (
-            "name",
-            "other_names",
-            "jurisdiction",
-            "email",
-            "url",
-            "fax",
-            "address",
-            "contact",
-            "classification",
-        )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["jurisdiction"].required = True
-
-    def clean_name(self):
-        name = self.cleaned_data["name"]
-        slug = slugify(name)
-        if PublicBody._default_manager.filter(Q(name=name) | Q(slug=slug)).exists():
-            raise forms.ValidationError(
-                _("Public authority with a similar name already exists!")
-            )
-        return name
+    file_index = forms.URLField(
+        label=_("File Index"),
+        required=False,
+        help_text=_("URL to a file index of this authority."),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "https://"}
+        ),
+    )
+    org_chart = forms.URLField(
+        label=_("Organisational Chart"),
+        required=False,
+        help_text=_("URL to the organisational chart of this authority."),
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "https://"}
+        ),
+    )
 
     def clean_fax(self):
         fax = self.cleaned_data["fax"]
@@ -198,6 +224,38 @@ class PublicBodyProposalForm(forms.ModelForm):
         )
         return fax_number
 
+    class Meta:
+        model = PublicBody
+        fields = (
+            "name",
+            "other_names",
+            "jurisdiction",
+            "email",
+            "url",
+            "fax",
+            "address",
+            "contact",
+            "classification",
+            "categories",
+            "regions",
+            "file_index",
+            "org_chart",
+        )
+
+    def get_other_publicbodies(self):
+        return PublicBody._default_manager.all()
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        slug = slugify(name)
+        qs = self.get_other_publicbodies()
+        qs = qs.filter(Q(name=name) | Q(slug=slug))
+        if qs.exists():
+            raise forms.ValidationError(
+                _("Public authority with a similar name already exists!")
+            )
+        return name
+
     def save(self, user):
         pb = super().save(commit=False)
         pb.slug = slugify(pb.name)
@@ -205,55 +263,58 @@ class PublicBodyProposalForm(forms.ModelForm):
         pb._created_by = user
         pb.updated_at = timezone.now()
         pb.save()
+        self.save_m2m()
         pb.laws.set(pb.jurisdiction.get_all_laws())
         PublicBody.proposal_added.send(sender=pb, user=user)
         return pb
 
 
 class PublicBodyChangeProposalForm(PublicBodyProposalForm):
-    FK_FIELDS = {"classification": Classification, "jurisdiction": Jurisdiction}
+    class Meta(PublicBodyProposalForm.Meta):
+        model = PublicBodyChangeProposal
 
-    def clean_name(self):
-        return self.cleaned_data["name"]
+    def __init__(self, *args, publicbody=None, **kwargs):
+        self.publicbody = publicbody
+        super().__init__(*args, **kwargs)
 
-    def serializable_cleaned_data(self):
-        data = dict(self.cleaned_data)
-        for field in self.FK_FIELDS:
-            if data[field]:
-                data[field] = data[field].id
-        return data
+    def get_other_publicbodies(self):
+        return PublicBody._default_manager.all().exclude(id=self.publicbody.id)
 
-    def save(self, user):
+    def save(self, publicbody, user):
         """
         This doesn't save instance, but saves
         the change proposal.
         """
-        data = self.serializable_cleaned_data()
-        pb = PublicBody.objects.get(id=self.instance.id)
-        pb.change_proposals[user.id] = {
-            "data": data,
-            "timestamp": timezone.now().isoformat(),
-        }
-        pb.updated_at = timezone.now()
-        pb.save()
-        PublicBody.change_proposal_added.send(sender=pb, user=user)
-        return pb
+        pb_change = super(forms.ModelForm, self).save(commit=False)
+        pb_change.publicbody = publicbody
+        pb_change.user = user
+        pb_change.save()
+        self.save_m2m()
+        PublicBody.change_proposal_added.send(sender=publicbody, user=user)
+        return pb_change
 
 
-class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
+class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
+    def get_other_publicbodies(self):
+        return PublicBody._default_manager.all().exclude(id=self.instance.id)
+
     def get_proposals(self):
-        data = dict(self.instance.change_proposals)
-        user_ids = self.instance.change_proposals.keys()
-        user_map = {
-            str(u.id): u for u in get_user_model().objects.filter(id__in=user_ids)
-        }
-        for user_id, v in data.items():
-            v["user"] = user_map[user_id]
-            for key, model in self.FK_FIELDS.items():
-                if data[user_id]["data"][key]:
-                    data[user_id]["data"][key + "_label"] = model.objects.get(
-                        id=data[user_id]["data"][key]
-                    )
+        return [
+            {"obj": proposal, "data": proposal.as_form_data()}
+            for proposal in PublicBodyChangeProposal.objects.filter(
+                publicbody=self.instance
+            )
+            .select_related("publicbody")
+            .order_by("-created_at")
+        ]
+
+    def get_serializable_cleaned_data(self):
+        data = dict(self.cleaned_data)
+        for field in data:
+            if isinstance(data[field], Model):
+                data[field] = data[field].id
+            elif isinstance(data[field], QuerySet):
+                data[field] = list(data[field].values_list("id", flat=True))
         return data
 
     def save(
@@ -264,6 +325,7 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
         delete_unconfirmed=False,
         delete_reason="",
     ):
+        # skip super class save
         pb = super(forms.ModelForm, self).save(commit=False)
         pb._updated_by = user
         pb.updated_at = timezone.now()
@@ -271,10 +333,11 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
         if delete_proposals is None:
             delete_proposals = []
         if proposal_id:
-            proposals = self.get_proposals()
-            proposal_user = proposals[proposal_id]["user"]
-            if proposal_user != user:
-                proposal_user.send_mail(
+            proposal = PublicBodyChangeProposal.objects.get(
+                id=proposal_id, publicbody=self.instance
+            )
+            if proposal.user != user:
+                proposal.user.send_mail(
                     _("Changes to public body “{}” have been applied").format(pb.name),
                     _(
                         "Hello,\n\nYou can find the changed public body here:"
@@ -285,18 +348,20 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
                     priority=False,
                 )
             delete_proposals.append(proposal_id)
-        for pid in delete_proposals:
-            if pid in pb.change_proposals:
-                del pb.change_proposals[pid]
+
+        for proposal_id in delete_proposals:
+            PublicBodyChangeProposal.objects.filter(
+                publicbody=pb, id=proposal_id
+            ).delete()
 
         if not pb.confirmed and delete_unconfirmed:
-            self.delete_proposal(pb, user, delete_reason)
+            self.delete_proppsed_publicbody(pb, user, delete_reason)
             return None
         pb.change_history.append(
             {
                 "user_id": user.id,
                 "timestamp": timezone.now().isoformat(),
-                "data": self.serializable_cleaned_data(),
+                "data": self.get_serializable_cleaned_data(),
             }
         )
         pb.laws.set(pb.jurisdiction.get_all_laws())
@@ -305,9 +370,10 @@ class PublicBodyAcceptProposalForm(PublicBodyChangeProposalForm):
             PublicBody.change_proposal_accepted.send(sender=pb, user=user)
         else:
             pb.confirm(user=user)
+        self.save_m2m()
         return pb
 
-    def delete_proposal(self, pb, user, delete_reason=""):
+    def delete_proppsed_publicbody(self, pb, user, delete_reason=""):
         LogEntry.objects.log_action(
             user_id=user.id,
             content_type_id=ContentType.objects.get_for_model(pb).pk,

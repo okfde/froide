@@ -6,15 +6,14 @@
 <table class="table">
   <thead>
     <tr>
-      <th>{% trans "Field" %}</th>
-      <th>{% trans "Value" %}</th>
-      {% for key, proposal in proposals.items %}
+      <th></th>
+      {% for proposal in proposals %}
         <th>
-          <span title="{{ proposal.timestamp }}">
+          <span title="{{ proposal.obj.created_at }}">
             {% if request.user.is_staff and request.user|has_perm:"account.view_user" %}
-              {{ proposal.user.get_full_name }} ({{ proposal.user.email }})
+              {{ proposal.obj.user.get_full_name }} ({{ proposal.obj.user.email }})
             {% else %}
-              {{ proposal.timestamp | date:"SHORT_DATETIME" }}
+              {{ proposal.obj.created_at | date:"SHORT_DATETIME" }}
             {% endif %}
           </span>
         </th>
@@ -22,52 +21,19 @@
     </tr>
   </thead>
   <tbody>
-    {% if proposals %}
-    <tr>
-      <td>
-        {% trans "Proposal" %}
-      </td>
-      <td>
-        <div class="form-check">
-          <input class="form-check-input proposal" type="radio" id="proposal_id" name="proposal_id" value="" required>
-          <label class="form-label" for="proposal_id">
-            {% trans "Change, without accepting" %}
-          </label>
-        </div>
-      </td>
-      {% for key, proposal in proposals.items %}
-        <td>
-          <div class="form-check">
-            <input class="form-check-input proposal" type="radio" name="proposal_id" id="proposal_id-{{ key }}" value="{{ key }}" required>
-            <label class="form-check-label" for="proposal_id-{{ key }}">
-                {% trans "Accept this proposal" %}
-            </label>
-          </div>
-        </td>
-      {% endfor %}
-    </tr>
-    {% endif %}
     {% for field in form %}
       <tr>
-        <td>{{ field.label }}</td>
-        <td data-proposal="" data-value="{{ field.value }}" data-field="{{ field.name }}">
-          {{ field }}
+        <td data-proposal="" data-value="{% if field.value %}{{ field.value }}{% endif %}" data-field="{{ field.name }}">
+          {% render_field field %}
         </td>
-        {% for key, proposal in proposals.items %}
-          {% with val=proposal.data|get_item_by_key:field.name %}
-          <td data-proposal="{{ key }}" data-value="{{ val }}" data-field="{{ field.name }}" {% if val != field.value %} style="color:red"{% endif %}>
-            {% with label_name=field.name|add:"_label" %}
-              {% if proposal.data|get_item_by_key:label_name %}
-                {{ proposal.data|get_item_by_key:label_name }}
-              {% else %}
-                {{ val|linebreaksbr }}
-              {% endif %}
-            {% endwith %}
+        {% for proposal in proposals %}
+          {% with proposal_field_data=proposal.data|get_item_by_key:field.name %}
+          <td data-proposal="{{ proposal.obj.id }}" data-value="{{ proposal_field_data.value }}" data-field="{{ field.name }}" {% if proposal_field_data.is_changed %} style="color:red"{% endif %}>
+            {{ proposal_field_data.label }}
           </td>
           {% endwith %}
         {% endfor %}
       </tr>
-      {{ form.field }}
     {% endfor %}
 
     {% if proposals %}
@@ -75,13 +41,35 @@
       <td>
         {% trans "Delete proposal" %}
       </td>
-      <td></td>
-      {% for key, proposal in proposals.items %}
+      {% for proposal in proposals %}
         <td>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="proposal_delete" id="proposal_delete-{{ proposal.user.id }}" value="{{ proposal.user.id }}">
-            <label class="form-check-label" for="proposal_delete-{{ proposal.user.id }}">
+            <input class="form-check-input" type="checkbox" name="proposal_delete" id="proposal_delete-{{ proposal.obj.id }}" value="{{ proposal.obj.id }}">
+            <label class="form-check-label" for="proposal_delete-{{ proposal.obj.id }}">
               {% trans "Delete" %}
+            </label>
+          </div>
+          <button type="button" class="btn btn-primary proposal" value="{{ proposal.obj.id }}">
+            {% translate "Apply changes" %}
+          </button>
+        </td>
+      {% endfor %}
+    </tr>
+    <tr>
+      <td>
+        <div class="form-check float-end">
+          <input class="form-check-input" type="radio" id="proposal_id" name="proposal_id" value="" required>
+          <label class="form-label" for="proposal_id">
+            {% trans "Change, without accepting" %}
+          </label>
+        </div>
+      </td>
+      {% for proposal in proposals %}
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="proposal_id" id="proposal_id-{{ proposal.obj.id }}" value="{{ proposal.obj.id }}" required>
+            <label class="form-check-label" for="proposal_id-{{ proposal.obj.id }}">
+                {% trans "Accept this proposal" %}
             </label>
           </div>
         </td>

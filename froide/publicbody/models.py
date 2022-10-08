@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 
 from django.conf import settings
@@ -698,3 +699,51 @@ class PublicBodyChangeProposal(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.publicbody, self.user)
+
+    def as_form_data(self):
+        def field_data(field):
+            value = getattr(self, field)
+            return {
+                "value": value,
+                "label": value,
+                "is_changed": value != getattr(self.publicbody, field),
+            }
+
+        regions = self.regions.all()
+        categories = self.categories.all()
+        return {
+            "name": field_data("name"),
+            "other_names": field_data("other_names"),
+            "url": field_data("url"),
+            "classification": {
+                "label": str(self.classification),
+                "value": self.classification_id,
+                "is_changed": self.classification_id
+                != self.publicbody.classification_id,
+            },
+            "email": field_data("email"),
+            "fax": field_data("fax"),
+            "contact": field_data("contact"),
+            "address": field_data("address"),
+            "file_index": field_data("file_index"),
+            "org_chart": field_data("org_chart"),
+            "jurisdiction": {
+                "label": str(self.jurisdiction),
+                "value": self.jurisdiction_id,
+                "is_changed": self.jurisdiction_id != self.publicbody.jurisdiction_id,
+            },
+            "regions": {
+                "label": ", ".join(str(x) for x in regions),
+                "value": json.dumps(
+                    [{"label": str(x), "value": x.id} for x in regions]
+                ),
+                "is_changed": set(regions) != set(self.publicbody.regions.all()),
+            },
+            "categories": {
+                "label": ", ".join(str(x) for x in categories),
+                "value": json.dumps(
+                    [{"label": x.name, "value": x.name} for x in categories]
+                ),
+                "is_changed": set(categories) != set(self.publicbody.categories.all()),
+            },
+        }
