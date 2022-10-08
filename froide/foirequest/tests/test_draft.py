@@ -173,7 +173,7 @@ class RequestDraftTest(TestCase):
             reverse("foirequest-claim_draft", kwargs={"token": str(draft.token)})
         )
         self.assertEqual(response.status_code, 302)
-        # import ipdb ; ipdb.set_trace()
+
         self.assertTrue(response["Location"].endswith(draft.get_absolute_url()))
         draft = RequestDraft.objects.get(id=draft.id)
         self.assertEqual(draft.user, user)
