@@ -164,7 +164,7 @@ class PublicBodyBaseAdminMixin:
                     "wikidata_item",
                     "source_reference",
                     "extra_data",
-                    "change_proposals",
+                    "change_history",
                 ),
             },
         ),
