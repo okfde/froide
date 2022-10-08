@@ -19,6 +19,7 @@ from parler.admin import TranslatableAdmin
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
+from froide.georegion.models import GeoRegion
 from froide.helper.admin_utils import (
     TreeRelatedFieldListFilter,
     make_batch_tag_action,
@@ -28,7 +29,7 @@ from froide.helper.admin_utils import (
 )
 from froide.helper.csv_utils import dict_to_csv_stream, export_csv_response
 from froide.helper.search.utils import trigger_search_index_update_qs
-from froide.helper.widgets import TagAutocompleteWidget
+from froide.helper.widgets import AutocompleteMultiWidget, TagAutocompleteWidget
 
 from .csv_import import CSVImporter
 from .models import (
@@ -54,6 +55,11 @@ class PublicBodyAdminForm(forms.ModelForm):
         widgets = {
             "categories": TagAutocompleteWidget(
                 autocomplete_url=CATEGORY_AUTOCOMPLETE_URL
+            ),
+            "regions": AutocompleteMultiWidget(
+                autocomplete_url=reverse_lazy("api:georegion-autocomplete"),
+                model=GeoRegion,
+                allow_new=False,
             ),
         }
 
