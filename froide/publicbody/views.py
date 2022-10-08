@@ -1,10 +1,13 @@
+from typing import Any, Dict
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sitemaps import Sitemap
+from django.forms.models import model_to_dict
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import DetailView, FormView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 import markdown
 
@@ -20,7 +23,7 @@ from .forms import (
     PublicBodyChangeProposalForm,
     PublicBodyProposalForm,
 )
-from .models import FoiLaw, Jurisdiction, PublicBody
+from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 from .utils import LawExtension
 
 FILTER_ORDER = ("jurisdiction", "category")
@@ -192,7 +195,7 @@ class FoiLawSitemap(Sitemap):
         return obj.updated
 
 
-class PublicBodyProposalView(LoginRequiredMixin, FormView):
+class PublicBodyProposalView(LoginRequiredMixin, CreateView):
     template_name = "publicbody/propose.html"
     form_class = PublicBodyProposalForm
 
@@ -208,7 +211,7 @@ class PublicBodyProposalView(LoginRequiredMixin, FormView):
                 "Thank you for your proposal. We will send you an email when it has been approved."
             ),
         )
-        return super().form_valid(form)
+        return redirect(self.get_success_url())
 
     def handle_no_permission(self):
         messages.add_message(
@@ -226,11 +229,26 @@ class PublicBodyChangeProposalView(LoginRequiredMixin, UpdateView):
     form_class = PublicBodyChangeProposalForm
     queryset = PublicBody.objects.all()
 
+    def get_form_kwargs(self) -> Dict[str, Any]:
+        """
+        Use object to create initial data and reset instance
+        """
+        kwargs = super().get_form_kwargs()
+        fields = self.form_class.Meta.fields
+        change_proposal = PublicBodyChangeProposal.objects.filter(
+            publicbody=self.object, user=self.request.user
+        ).first()
+        initial = model_to_dict(change_proposal or self.object, fields=fields)
+        kwargs.update(
+            {"instance": change_proposal, "initial": initial, "publicbody": self.object}
+        )
+        return kwargs
+
     def get_success_url(self):
         return self.object.get_absolute_url()
 
     def form_valid(self, form):
-        self.object = form.save(self.request.user)
+        form.save(self.object, self.request.user)
         messages.add_message(
             self.request,
             messages.INFO,
