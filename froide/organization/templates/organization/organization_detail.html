@@ -31,7 +31,7 @@
           </h1>
           {% if user_member and user_member.is_owner %}
             <a class="btn btn-secondary"
-               href="{% url "organization-update" slug=object.slug %}">{% translate 'Edit Organization' %}</a>
+               href="{% url "organization-update" slug=object.slug %}">{% translate "Edit Organization" %}</a>
           {% endif %}
         </div>
         <div class="mt-3">{{ object.description | linebreaksbr }}</div>
