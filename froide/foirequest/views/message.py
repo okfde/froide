@@ -476,7 +476,7 @@ def set_message_recipient(request, foirequest, message_id):
             public_body=message.recipient_public_body,
         )
         return redirect(message)
-    messages.add_message(request, messages.ERROR, form._errors["sender"][0])
+    messages.add_message(request, messages.ERROR, form._errors["recipient"][0])
     return render_400(request)
 
 
