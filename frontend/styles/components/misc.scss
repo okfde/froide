@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@import '../variables.scss';
 
 .target-primary:target {
   @extend .border-success;
@@ -98,4 +98,8 @@ input.copy-text {
 
 .h-1em {
   height: 1em;
+}
+
+.h-1-5em {
+  height: 1.5em;
 }

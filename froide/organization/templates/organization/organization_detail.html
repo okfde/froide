@@ -23,7 +23,9 @@
           <h1 class="flex-grow-1">
             <a href="{{ object.website }}">
               {% if object.logo %}
-                <img src="{{ object.logo.url }}" class="h-1em" alt="{{ object.name }}" />
+                <img src="{{ object.logo.url }}"
+                     class="h-1-5em mw-100"
+                     alt="{{ object.name }}"/>
               {% else %}
                 {{ object.name }}
               {% endif %}
