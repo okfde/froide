@@ -87,6 +87,9 @@ class OrganizationManager(models.Manager):
             **kwargs
         )
 
+    def get_public(self):
+        return self.get_queryset().filter(show_in_list=True)
+
 
 class Organization(models.Model):
     name = models.CharField(max_length=255)
@@ -103,6 +106,7 @@ class Organization(models.Model):
         upload_to=logo_path,
         storage=HashedFilenameStorage(),
     )
+    show_in_list = models.BooleanField()
 
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
