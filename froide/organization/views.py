@@ -25,7 +25,7 @@ class OrganizationListView(ListView):
     def get_queryset(self) -> QuerySet[Organization]:
         return Organization.objects.exclude(
             Q(members=None) & (Q(description__isnull=True) | Q(description__exact=""))
-        )
+        ).exclude(show_in_list=False)
 
 
 class OrganizationListOwnView(LoginRequiredMixin, ListView):
