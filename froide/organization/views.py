@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F, Q, QuerySet
 from django.http import Http404
 from django.shortcuts import redirect, reverse
 from django.utils import timezone
@@ -20,6 +21,27 @@ from .models import Organization, OrganizationMembership
 
 class OrganizationListView(ListView):
     model = Organization
+
+    def get_queryset(self) -> QuerySet[Organization]:
+        return Organization.objects.exclude(
+            Q(members=None) & (Q(description__isnull=True) | Q(description__exact=""))
+        )
+
+
+class OrganizationListOwnView(LoginRequiredMixin, ListView):
+    model = Organization
+    template_name_suffix = "_list_own"
+
+    def get_queryset(self) -> QuerySet[Organization]:
+        return (
+            Organization.objects.get_for_user(self.request.user)
+            .distinct()
+            .annotate(
+                role=F("organizationmembership__role"),
+                status=F("organizationmembership__status"),
+                member_id=F("organizationmembership__id"),
+            )
+        )
 
 
 class OrganizationDetailView(DetailView):

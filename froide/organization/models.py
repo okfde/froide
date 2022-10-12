@@ -23,6 +23,7 @@ class OrganizationMembershipStatus(models.TextChoices):
 
 class OrganizationMembership(models.Model):
     ROLE = OrganizationRole
+    ROLES_DICT = dict(OrganizationRole.choices)
     STATUS = OrganizationMembershipStatus
 
     user = models.ForeignKey(
@@ -73,10 +74,17 @@ class OrganizationManager(models.Manager):
         return Organization.objects.filter(email_domain=email_domain).first()
 
     def get_owner_organizations(self, user, *args, **kwargs):
-        return self.get_queryset().filter(
+        return self.get_for_user(
+            user,
             organizationmembership__role=OrganizationMembership.ROLE.OWNER,
+        )
+
+    def get_for_user(self, user, *args, **kwargs):
+        return self.get_queryset().filter(
+            *args,
             organizationmembership__user=user,
             organizationmembership__status=OrganizationMembership.STATUS.ACTIVE,
+            **kwargs
         )
 
 
@@ -128,3 +136,8 @@ class Organization(models.Model):
 
     def get_absolute_url(self):
         return reverse("organization-detail", kwargs={"slug": self.slug})
+
+    def get_role_display(self):
+        if hasattr(self, "role"):
+            return OrganizationMembership.ROLES_DICT[self.role]
+        return ""

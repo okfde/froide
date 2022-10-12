@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-  <div class="container">
+  <div class="bg-gray-100">
     <nav class="container" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item">
@@ -18,6 +18,9 @@
         </li>
       </ol>
     </nav>
+  </div>
+  <div class="container">
+ 
     <h1 class="py-4">{% trans "Organizations" %}</h1>
     <ul>
       {% for object in object_list %}

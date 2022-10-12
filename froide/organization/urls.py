@@ -7,6 +7,7 @@ from .views import (
     InviteOrganizationMemberView,
     JoinOrganizationView,
     OrganizationDetailView,
+    OrganizationListOwnView,
     OrganizationListView,
     OrganizationUpdateView,
 )
@@ -16,6 +17,11 @@ urlpatterns = [
         "",
         OrganizationListView.as_view(),
         name="organization-list",
+    ),
+    path(
+        pgettext_lazy("url part", "my/"),
+        OrganizationListOwnView.as_view(),
+        name="organization-list_own",
     ),
     path(
         pgettext_lazy("url part", "<str:slug>/"),

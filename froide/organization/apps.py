@@ -1,6 +1,7 @@
 import json
 
 from django.apps import AppConfig
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -16,6 +17,17 @@ class OrganizationConfig(AppConfig):
             account_merged,
         )
         from froide.account.export import registry
+        from froide.account.menu import MenuItem, menu_registry
+
+        def get_organizations_menu_item(request):
+            return MenuItem(
+                section="before_settings",
+                order=0,
+                url=reverse("organization-list_own"),
+                label=_("My organizations"),
+            )
+
+        menu_registry.register(get_organizations_menu_item)
 
         registry.register(export_user_data)
 
