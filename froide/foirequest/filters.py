@@ -13,6 +13,7 @@ from froide.account.models import User
 from froide.campaign.models import Campaign
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.helper.widgets import BootstrapSelect, DateRangeWidget
+from froide.organization.models import Organization
 from froide.publicbody.models import Category, Classification, Jurisdiction, PublicBody
 
 from .models import FoiRequest
@@ -220,6 +221,12 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         method="filter_user",
         widget=forms.HiddenInput(),
     )
+    organization = django_filters.ModelChoiceFilter(
+        queryset=Organization.objects.get_public(),
+        to_field_name="slug",
+        method="filter_organization",
+        widget=forms.HiddenInput(),
+    )
 
     first = django_filters.DateFromToRangeFilter(
         method="filter_first",
@@ -286,6 +293,13 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_user(self, qs, name, value):
         return qs.filter(user=value.id)
+
+    def filter_organization(self, qs, name, value):
+        all_members = list(
+            value.active_members.filter(private=False).values_list("id", flat=True)
+        )
+        filtered_qs = qs.filter(user=all_members)
+        return filtered_qs
 
     def filter_first(self, qs, name, value):
         range_kwargs = {}

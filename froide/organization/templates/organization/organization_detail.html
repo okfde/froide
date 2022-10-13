@@ -40,24 +40,43 @@
       </div>
     </div>
   </div>
-  <div class="container pt-3">
+  <div class="container">
     {% block member_list %}
-      <h2>{% trans "Organization Members" %}</h2>
-      <ul>
-        {% for member in members %}
-          <li>
-            <a href="{{ member.user.get_absolute_url }}">{{ member.user.get_full_name }}</a>
-            {% if member.user.profile_text %}
-              {% if member.user.is_staff %}
-                {{ member.user.profile_text|markdown }}
-              {% else %}
-                <p>{{ member.user.profile_text|linebreaksbr }}</p>
+      <div class="py-4">
+        <h2 class="pb-3">{% trans "Organization Members" %}</h2>
+        <ul>
+          {% for member in members %}
+            <li>
+              <a href="{{ member.user.get_absolute_url }}">{{ member.user.get_full_name }}</a>
+              {% if member.user.profile_text %}
+                {% if member.user.is_staff %}
+                  {{ member.user.profile_text|markdown }}
+                {% else %}
+                  <p>{{ member.user.profile_text|linebreaksbr }}</p>
+                {% endif %}
               {% endif %}
-            {% endif %}
-          </li>
-        {% endfor %}
-      </ul>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     {% endblock %}
+    {% if foirequests %}
+      {% block member_requests %}
+        <div class="py-4">
+          <h2 class="pb-3">{% trans "Last requests" %}</h2>
+
+          <ul class="list-unstyled">
+            {% for foirequest in foirequests %}
+              <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
+            {% endfor %}
+          </ul>
+          <a href="{% url 'foirequest-list' %}?organization={{ object.slug }}">
+            {% blocktrans with name=organization.name %}See all requests of {{ name }}{% endblocktrans %}
+          </a>
+        </div>
+      {% endblock %}
+
+    {% endif %}
   </div>
 
 {% endblock %}
