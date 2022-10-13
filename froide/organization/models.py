@@ -124,7 +124,13 @@ class Organization(models.Model):
 
     @property
     def member_count(self):
-        return self.members.count()
+        return self.active_memberships.count()
+
+    @property
+    def active_memberships(self):
+        return OrganizationMembership.objects.filter(
+            organization=self, status=OrganizationMembershipStatus.ACTIVE
+        )
 
     def add_user(
         self,

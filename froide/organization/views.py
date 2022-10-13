@@ -9,6 +9,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
+from froide.foirequest.models import FoiRequest
 from froide.organization.services import OrganizationService
 
 from .forms import (
@@ -47,11 +48,18 @@ class OrganizationListOwnView(LoginRequiredMixin, ListView):
 class OrganizationDetailView(DetailView):
     model = Organization
 
+    def _get_last_foirequests(self, organization: Organization):
+        public_members = organization.active_memberships.filter(
+            user__private=False
+        ).values_list("user_id", flat=True)
+        foirequests = FoiRequest.published.filter(user__in=public_members)
+        return foirequests.order_by("-first_message")[:10]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         user_member = None
-        all_members = context["object"].organizationmembership_set.all()
+        all_members = context["object"].active_memberships
 
         if self.request.user.is_authenticated:
             user_member = all_members.filter(user=self.request.user).first()
@@ -60,6 +68,7 @@ class OrganizationDetailView(DetailView):
             "user"
         )
         context["user_member"] = user_member
+        context["foirequests"] = self._get_last_foirequests(kwargs["object"])
 
         return context
 
