@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-28 09:24+0200\n"
-"PO-Revision-Date: 2022-09-28 09:25+0200\n"
+"POT-Creation-Date: 2022-10-13 09:34+0200\n"
+"PO-Revision-Date: 2022-10-13 09:37+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -555,7 +555,8 @@ msgstr "Dies ist die Sprache, die wir für Kommunikation mit Ihnen verwenden."
 msgid "Private"
 msgstr "Privat"
 
-#: froide/account/models.py froide/publicbody/models.py
+#: froide/account/models.py froide/publicbody/forms.py
+#: froide/publicbody/models.py
 msgid "Address"
 msgstr "Adresse"
 
@@ -7820,7 +7821,7 @@ msgstr "Teil von"
 msgid "Geo Region"
 msgstr "Geographische Region"
 
-#: froide/georegion/models.py
+#: froide/georegion/models.py froide/publicbody/forms.py
 msgid "Geo Regions"
 msgstr "Geographische Regionen"
 
@@ -8958,6 +8959,10 @@ msgstr ""
 "Optional: die Abkürzung des Behördennamens, andere umgangssprachliche Namen, "
 "der Name der:der Behördenleiter:in etc."
 
+#: froide/publicbody/forms.py froide/publicbody/models.py
+msgid "Email"
+msgstr "E-Mail"
+
 #: froide/publicbody/forms.py
 msgid "Email address for general enquiry (e.g. press contact)."
 msgstr "E-Mail-Adresse für allgemeine Anfrage (z.B. Presse-Abteilung)"
@@ -8969,6 +8974,10 @@ msgstr "URL der Webseite"
 #: froide/publicbody/forms.py
 msgid "URL of this public body's website."
 msgstr "URL der Behördenwebseite."
+
+#: froide/publicbody/forms.py
+msgid "Fax number"
+msgstr "Faxnummer"
 
 #: froide/publicbody/forms.py
 msgid "The fax number of this authority."
@@ -9008,6 +9017,23 @@ msgstr ""
 "darum."
 
 #: froide/publicbody/forms.py
+msgid "Categories"
+msgstr "Kategorien"
+
+#: froide/publicbody/forms.py
+msgid "Categories represent the topics this authority is responsible for."
+msgstr ""
+"Kategorien repräsentieren die Themen, für die diese Behörde zuständig ist."
+
+#: froide/publicbody/forms.py
+msgid ""
+"If this authority is responsible for specific regions, you can select them "
+"here."
+msgstr ""
+"Wenn diese Behörde für bestimmte Regionen zuständig ist, können diese hier "
+"ausgewählt werden."
+
+#: froide/publicbody/forms.py
 msgid ""
 "Give the jurisdiction under which this authority falls. This determines what "
 "laws apply to it. Often it can determined by where the public body is based "
@@ -9019,8 +9045,20 @@ msgstr ""
 "bestimmt werden."
 
 #: froide/publicbody/forms.py
-msgid "Public authority with a similar name already exists!"
-msgstr "Eine Behörde mit einem ähnlichen Namen existiert bereits."
+msgid "File Index"
+msgstr "Aktenplan"
+
+#: froide/publicbody/forms.py
+msgid "URL to a file index of this authority."
+msgstr "URL zum Aktenplan dieser Behörde."
+
+#: froide/publicbody/forms.py
+msgid "Organisational Chart"
+msgstr "Organigramm"
+
+#: froide/publicbody/forms.py
+msgid "URL to the organisational chart of this authority."
+msgstr "URL zum Organigramm dieser Behörde."
 
 #: froide/publicbody/forms.py
 msgid "Fax number not a valid number!"
@@ -9033,6 +9071,10 @@ msgstr "Fax-Nummer ist unmöglich!"
 #: froide/publicbody/forms.py
 msgid "Fax number not valid!"
 msgstr "Fax-Nummer ist nicht gültig!"
+
+#: froide/publicbody/forms.py
+msgid "Public authority with a similar name already exists!"
+msgstr "Eine Behörde mit einem ähnlichen Namen existiert bereits."
 
 #: froide/publicbody/forms.py
 msgid "Changes to public body “{}” have been applied"
@@ -9244,10 +9286,6 @@ msgid "slug"
 msgstr "URL-Kürzel"
 
 #: froide/publicbody/models.py
-msgid "Email"
-msgstr "E-Mail"
-
-#: froide/publicbody/models.py
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -9306,6 +9344,22 @@ msgstr "Vorgeschlagene Behörde"
 #: froide/publicbody/models.py
 msgid "Proposed Public Bodies"
 msgstr "Vorgeschlagene Behörden"
+
+#: froide/publicbody/models.py
+msgid "Categorized Public Body Change Proposal"
+msgstr "Kategorisierter Behördenänderungsvorschlag"
+
+#: froide/publicbody/models.py
+msgid "Categorized Public Body Change Proposals"
+msgstr "Kategorisierte Behördenänderungsvorschläge"
+
+#: froide/publicbody/models.py
+msgid "Proposed Public Body Change"
+msgstr "Vorgeschlagene Behördenänderung"
+
+#: froide/publicbody/models.py
+msgid "Proposed Public Body Changes"
+msgstr "Vorgeschlagene Behördenänderungen"
 
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html
 msgid "Confirm this Public Body"
@@ -9635,7 +9689,6 @@ msgid "View on Admin site"
 msgstr "Im Admin-Bereich ansehen"
 
 #: froide/publicbody/templates/publicbody/show.html
-#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
 msgid "Proposal"
 msgstr "Vorschlag"
 
@@ -9725,12 +9778,8 @@ msgid "no requests yet"
 msgstr "noch keine Anfragen"
 
 #: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
-msgid "Field"
-msgstr "Feld"
-
-#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
-msgid "Value"
-msgstr "Wert"
+msgid "Apply changes"
+msgstr "Änderungen anwenden"
 
 #: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
 msgid "Change, without accepting"
@@ -11049,6 +11098,12 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#~ msgid "Field"
+#~ msgstr "Feld"
+
+#~ msgid "Value"
+#~ msgstr "Wert"
+
 #, fuzzy
 #~| msgid "Organization"
 #~ msgid "Organisations"
@@ -11860,10 +11915,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid "Comma-separated integers"
 #~ msgstr "Komma-separiert und ggf. in \"\""
-
-#, fuzzy
-#~ msgid "Decimal number"
-#~ msgstr "Besonderer Hinweis"
 
 #, fuzzy
 #~ msgid "Duration"
