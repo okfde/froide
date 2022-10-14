@@ -74,7 +74,7 @@ frontend = FrontendBuildLoader()
 
 FRONTEND_TEMPLATES = {
     "js": '<script type="module" src="{src}" crossorigin="anonymous"></script>',
-    "css": '<link rel="stylesheet" type="text/css" href="{src}" crossorigin="anonymous"/>',
+    "css": '<link rel="stylesheet" type="text/css" href="{src}"/>',
 }
 
 FrontendFiles = Dict[str, List[str]]
