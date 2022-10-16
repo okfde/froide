@@ -125,6 +125,7 @@ class AutocompleteMultiWidget(AutocompleteWidget):
 
 class TagAutocompleteWidget(AutocompleteMixin, TagWidget):
     template_name = "helper/forms/widgets/tag_autocomplete.html"
+    max_item_count = -1
     use_tags = True
 
     def value_from_datadict(

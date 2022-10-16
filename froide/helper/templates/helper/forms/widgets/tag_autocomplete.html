@@ -13,7 +13,7 @@
   data-nochoices="{% trans 'No results' %}"
   data-itemselect="{% trans 'Press to select' %}"
   data-fetchurl="{{ autocomplete_url }}"
-  data-allownew="{{ allow_new }}"
+  data-allownew="{% if allow_new %}true{% else %}false{% endif %}"
   data-queryparam="{{ query_param }}"
   {% if max_item_count %}data-maxitemcount="{{ max_item_count }}"{% endif %}
   id="{{ widget.attrs.id }}_select"
