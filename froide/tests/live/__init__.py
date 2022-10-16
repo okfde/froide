@@ -1,12 +1,10 @@
 import os
-import socket
 import time
 from typing import Union
 
 from django.conf import settings
-from django.core.management import call_command
-from django.db import connections
 
+from playwright.sync_api import sync_playwright
 from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -85,15 +83,19 @@ class LiveTestMixin(object):
 
     @classmethod
     def setUpClass(cls):
-        cls.host = socket.gethostbyname(socket.gethostname())
-        cls.selenium = get_selenium(**cls.ADDITIONAL_KWARGS)
-        cls.selenium.implicitly_wait(3)
+        # cls.host = socket.gethostbyname(socket.gethostname())
+        # cls.selenium = get_selenium(**cls.ADDITIONAL_KWARGS)
+        # cls.selenium.implicitly_wait(3)
         super(LiveTestMixin, cls).setUpClass()
+        cls.playwright = sync_playwright()
+        cls.browser = cls.playwright.chromium.launch(headless=False)
 
     @classmethod
     def tearDownClass(cls):
-        cls.selenium.quit()
+        # cls.selenium.quit()
         super(LiveTestMixin, cls).tearDownClass()
+        cls.browser.close()
+        cls.playwright.stop()
 
     def scrollTo(self, selector: str):
         # self.selenium.find_element_by_id(id).location_once_scrolled_into_view
@@ -115,23 +117,23 @@ class LiveTestMixin(object):
         """
         # Allow TRUNCATE ... CASCADE and don't emit the post_migrate signal
         # when flushing only a subset of the apps
-        for db_name in self._databases_names(include_mirrors=False):
-            # Flush the database
-            inhibit_post_migrate = (
-                self.available_apps is not None
-                or (  # Inhibit the post_migrate signal when using serialized
-                    # rollback to avoid trying to recreate the serialized data.
-                    self.serialized_rollback
-                    and hasattr(connections[db_name], "_test_serialized_contents")
-                )
-            )
-            call_command(
-                "flush",
-                verbosity=0,
-                interactive=False,
-                database=db_name,
-                reset_sequences=False,
-                # In the real TransactionTestCase this is conditionally set to False.
-                allow_cascade=True,
-                inhibit_post_migrate=inhibit_post_migrate,
-            )
+        # for db_name in self._databases_names(include_mirrors=False):
+        #     # Flush the database
+        #     inhibit_post_migrate = (
+        #         self.available_apps is not None
+        #         or (  # Inhibit the post_migrate signal when using serialized
+        #             # rollback to avoid trying to recreate the serialized data.
+        #             self.serialized_rollback
+        #             and hasattr(connections[db_name], "_test_serialized_contents")
+        #         )
+        #     )
+        #     call_command(
+        #         "flush",
+        #         verbosity=0,
+        #         interactive=False,
+        #         database=db_name,
+        #         reset_sequences=False,
+        #         # In the real TransactionTestCase this is conditionally set to False.
+        #         allow_cascade=True,
+        #         inhibit_post_migrate=inhibit_post_migrate,
+        #     )
