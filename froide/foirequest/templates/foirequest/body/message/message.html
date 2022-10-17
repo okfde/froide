@@ -4,9 +4,9 @@
 {% load problemreport_tags %}
 {% load guidance_tags %}
 {% load content_helper %}
+{% load thumbnail %}
 
 {% get_comment_list message as comment_list %}
-
 
 {% block before_message_container %}{% endblock %}
 
@@ -19,7 +19,11 @@
 
     {# avatar #}
     <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
-      <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
+      {% if not message.is_response and not message.sender_user.private and message.sender_user.profile_photo %}
+        <img src="{% thumbnail message.sender_user.profile_photo 64x64 %}" alt="{{ message.sender_user.get_full_name }}" class="img-fluid rounded-circle">
+      {% else %}
+        <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
+      {% endif %}
     </div>
 
     {# sender, recipient, message preview, meta infos #}
