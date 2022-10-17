@@ -48,6 +48,7 @@ class Base(Configuration):
             "django_json_widget",
             "django_celery_beat",
             "mfa",
+            "easy_thumbnails",
             # local
             "froide.foirequest",
             "froide.follow",

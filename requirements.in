@@ -24,6 +24,7 @@ Django>=4.0,<4.1
 djangorestframework
 djangorestframework-csv
 djangorestframework-jsonp
+easy-thumbnails
 elasticsearch-dsl>=7.0.0<8.0.0
 elasticsearch<8.0.0,>=7.0.0
 geoip2

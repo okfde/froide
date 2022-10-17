@@ -59,6 +59,7 @@ setup(
         "pygtail",
         "django-filingcabinet",
         "icalendar",
+        "easy-thumbnails",
     ],
     extras_require=extras,
     include_package_data=True,
