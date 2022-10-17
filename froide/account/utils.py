@@ -91,7 +91,7 @@ def make_account_private(user):
     user.organization_url = ""
     user.profile_text = ""
     if user.profile_photo:
-        user.profile_photo.delete(save=False)
+        user.delete_profile_photo()
     user.save()
 
     make_account_private_task.delay(user.id)

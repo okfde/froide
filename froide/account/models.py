@@ -23,7 +23,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.csv_utils import export_csv, get_dict
-from froide.helper.storage import HashedFilenameStorage
+from froide.helper.storage import HashedFilenameStorage, delete_file_if_last_reference
 
 
 class UserTag(TagBase):
@@ -322,6 +322,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def deactivate_and_block(self):
         self.is_blocked = True
         self.deactivate()
+
+    def delete_profile_photo(self):
+        if self.profile_photo:
+            delete_file_if_last_reference(self, "profile_photo", delete_prefix=True)
+            self.profile_photo = None
 
 
 class Application(AbstractApplication):
