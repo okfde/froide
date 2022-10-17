@@ -9,15 +9,7 @@ import pytest
 from playwright.sync_api import expect
 
 from froide.foirequest.models import FoiRequest, RequestDraft
-from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
-
-# import time
-
-
-# from selenium.webdriver.support.ui import Select
-# from selenium.webdriver.support.wait import WebDriverWait
-
 
 User = get_user_model()
 
@@ -98,6 +90,7 @@ def test_make_not_logged_in_request(page, live_server, public_body_with_index):
 @pytest.mark.django_db
 def test_make_not_logged_in_request_to_public_body(page, live_server, world):
     pb = PublicBody.objects.all().first()
+    assert pb
     go_to_make_request_url(page, live_server, pb=pb)
 
     user_first_name = "Peter"
@@ -232,64 +225,64 @@ def test_collapsed_menu(page, live_server):
     expect(page.locator(".navbar form[role=search]")).to_be_visible()
 
 
-@pytest.mark.django_db
-@pytest.mark.parametrize(
-    "from_resolution, to_resolution",
-    [
-        ("", "successful"),
-        ("successful", "refused"),
-        ("refused", "partially_successful"),
-    ],
-)
-def test_set_status(
-    page,
-    live_server,
-    world,
-    foi_request_factory,
-    foi_message_factory,
-    from_resolution,
-    to_resolution,
-):
-    factories.rebuild_index()
-    user = User.objects.get(username="dummy")
-    req = foi_request_factory(
-        user=user, first_message=timezone.now(), status="resolved"
-    )
-    foi_message_factory(request=req, is_response=False, sender_user=user)
-    do_login(page, live_server)
-    req.refresh_from_db()
-    assert req.resolution == from_resolution
-    go_to_request_page(req)
-    expect(page.locator(".info-box__edit-panel > form")).not_to_be_visible()
-    page.locator("info-box__edit-button").click()
-    expect(page.locator(".info-box__edit-panel > form")).to_be_visible()
+# @pytest.mark.django_db
+# @pytest.mark.parametrize(
+#     "from_resolution, to_resolution",
+#     [
+#         ("", "successful"),
+#         ("successful", "refused"),
+#         ("refused", "partially_successful"),
+#     ],
+# )
+# def test_set_status(
+#     page,
+#     live_server,
+#     world,
+#     foi_request_factory,
+#     foi_message_factory,
+#     from_resolution,
+#     to_resolution,
+# ):
+#     factories.rebuild_index()
+#     user = User.objects.get(username="dummy")
+#     req = foi_request_factory(
+#         user=user, first_message=timezone.now(), status="resolved"
+#     )
+#     foi_message_factory(request=req, is_response=False, sender_user=user)
+#     do_login(page, live_server)
+#     req.refresh_from_db()
+#     assert req.resolution == from_resolution
+#     go_to_request_page(req)
+#     expect(page.locator(".info-box__edit-panel > form")).not_to_be_visible()
+#     page.locator("info-box__edit-button").click()
+#     expect(page.locator(".info-box__edit-panel > form")).to_be_visible()
 
-    resolution_select = page.locator("#id_resolution")
-    expect(resolution_select).to_be_visible()
-    expect(page.locator('#id_resolution > option[selected="selected"]')).to_have_text(
-        from_resolution
-    )
+#     resolution_select = page.locator("#id_resolution")
+#     expect(resolution_select).to_be_visible()
+#     expect(page.locator('#id_resolution > option[selected="selected"]')).to_have_text(
+#         from_resolution
+#     )
 
-    # self.assertEquals(
-    #     resolution_select.first_selected_option.get_attribute("value"),
-    #     from_resolution,
-    # )
-    # reason = page.locator("#id_refusal_reason")
+# self.assertEquals(
+#     resolution_select.first_selected_option.get_attribute("value"),
+#     from_resolution,
+# )
+# reason = page.locator("#id_refusal_reason")
 
-    # resolution_select.select_by_value("successful")
-    # time.sleep(1)
-    # self.assertFalse(reason.is_displayed())
+# resolution_select.select_by_value("successful")
+# time.sleep(1)
+# self.assertFalse(reason.is_displayed())
 
-    # resolution_select.select_by_value("refused")
-    # time.sleep(1)
-    # self.assertTrue(reason.is_displayed())
+# resolution_select.select_by_value("refused")
+# time.sleep(1)
+# self.assertTrue(reason.is_displayed())
 
-    # resolution_select.select_by_value(to_resolution)
-    # self.scrollTo("set-status-submit")
-    # editForm.find_element_by_id("set-status-submit").click()
+# resolution_select.select_by_value(to_resolution)
+# self.scrollTo("set-status-submit")
+# editForm.find_element_by_id("set-status-submit").click()
 
-    # self.req.refresh_from_db()
-    # self.assertEquals(self.req.resolution, to_resolution)
+# self.req.refresh_from_db()
+# self.assertEquals(self.req.resolution, to_resolution)
 
 
 # @tag("ui", "slow")

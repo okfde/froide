@@ -96,6 +96,7 @@ jobs:
           python -m pip install --upgrade pip~=22.0.1 pip-tools
           pip-sync requirements-test.txt
           pip install -e .
+          playwright install
           yarn install
       - name: Build frontend
         run: yarn run build
