@@ -7,7 +7,12 @@
 
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
 
-{% block metadescription %}{% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a {{ classification }} in {{ juris }} on {{ site_name }}{% endblocktrans %}{% endblock %}
+{% block metadescription %}{% spaceless %}
+{% if object.classification %}
+  {% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a public body ({{ classification }}) in {{ juris }} on {{ site_name }}{% endblocktrans %}
+{% else %}
+  {% blocktrans with name=object.name juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a public body in {{ juris }} on {{ site_name }}{% endblocktrans %}
+{% endif %}{% endspaceless %}{% endblock %}
 
 {% block extra_head %}
   {% if not object.confirmed %}
