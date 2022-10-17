@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-13 09:34+0200\n"
-"PO-Revision-Date: 2022-10-13 09:37+0200\n"
+"POT-Creation-Date: 2022-10-17 12:27+0200\n"
+"PO-Revision-Date: 2022-10-17 12:28+0200\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -9423,7 +9423,6 @@ msgstr "Importiere %(name)s"
 
 #: froide/publicbody/templates/publicbody/accept_proposals.html
 #: froide/publicbody/templates/publicbody/add_proposal.html
-#: froide/publicbody/templates/publicbody/show.html
 #, python-format
 msgid "%(name)s is a %(classification)s in %(juris)s on %(site_name)s"
 msgstr "%(name)s ist ein(e) %(classification)s in %(juris)s auf %(site_name)s"
@@ -9630,6 +9629,18 @@ msgstr ""
 #: froide/publicbody/templates/publicbody/propose.html
 msgid "Propose new public body"
 msgstr "Behörde vorschlagen"
+
+#: froide/publicbody/templates/publicbody/show.html
+#, python-format
+msgid ""
+"%(name)s is a public body (%(classification)s) in %(juris)s on %(site_name)s"
+msgstr ""
+"%(name)s ist eine Behörde (%(classification)s) in %(juris)s auf %(site_name)s"
+
+#: froide/publicbody/templates/publicbody/show.html
+#, python-format
+msgid "%(name)s is a public body in %(juris)s on %(site_name)s"
+msgstr "%(name)s ist eine Behörde in %(juris)s auf %(site_name)s"
 
 #: froide/publicbody/templates/publicbody/show.html
 msgid "Make a Request to this public body!"
