@@ -152,6 +152,7 @@ django==4.0.7
     #   django-taggit
     #   django-treebeard
     #   djangorestframework
+    #   easy-thumbnails
 django-appconf==1.0.4
     # via django-celery-email
 django-cache-url==3.2.3
@@ -217,6 +218,8 @@ dnspython==2.1.0
     # via pyisemail
 docopt==0.6.2
     # via coveralls
+easy-thumbnails==2.8.3
+    # via -r requirements.in
 elasticsearch==7.13.2
     # via
     #   -r requirements.in
@@ -346,6 +349,7 @@ pillow==9.2.0
     #   -r requirements.in
     #   cairosvg
     #   django-filingcabinet
+    #   easy-thumbnails
     #   pikepdf
     #   reportlab
     #   weasyprint
@@ -375,6 +379,8 @@ pycodestyle==2.7.0
     #   flake8
 pycparser==2.20
     # via cffi
+pycryptodome==3.15.0
+    # via django-filingcabinet
 pyflakes==2.3.1
     # via
     #   -r requirements-test.in
