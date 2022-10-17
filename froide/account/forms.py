@@ -580,6 +580,9 @@ class ProfileForm(forms.ModelForm):
         self.fields["profile_photo"].help_text = _(
             "Image must be square and between 480 to 960 pixels " "in both dimensions."
         )
+        self.old_profile_photo = None
+        if self.instance.profile_photo:
+            self.old_profile_photo = self.instance.profile_photo
 
     def clean_profile_photo(self):
         image_field = self.cleaned_data["profile_photo"]
@@ -595,6 +598,12 @@ class ProfileForm(forms.ModelForm):
         if image.width > self.DIMS[1]:
             raise forms.ValidationError(_("Image dimensions are too large."))
         return image_field
+
+    def save(self, commit=True):
+        if not self.cleaned_data["profile_photo"] and self.old_profile_photo:
+            self.instance.profile_photo = self.old_profile_photo
+            self.instance.delete_profile_photo()
+        return super().save(commit=commit)
 
 
 class AccountSettingsForm(forms.ModelForm):
