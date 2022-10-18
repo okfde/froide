@@ -97,6 +97,7 @@ jobs:
           pip-sync requirements-test.txt
           pip install -e .
           playwright install
+          sudo npx playwright install-deps
           yarn install
       - name: Build frontend
         run: yarn run build
