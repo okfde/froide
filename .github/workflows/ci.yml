@@ -122,9 +122,3 @@ jobs:
         options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
           - '9200:9200'
-      selenium:
-        image: selenium/standalone-chrome
-        env:
-          START_XVFB: false
-        ports:
-          - 4444:4444
