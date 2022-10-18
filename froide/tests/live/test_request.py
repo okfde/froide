@@ -229,11 +229,7 @@ def test_collapsed_menu(page, live_server):
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
-    [
-        ("", "successful"),
-        ("successful", "refused"),
-        ("refused", "partially_successful"),
-    ],
+    [("", "successful"), ("successful", "refused")],
 )
 def test_set_status(
     page,
@@ -247,7 +243,10 @@ def test_set_status(
     factories.rebuild_index()
     user = User.objects.get(username="dummy")
     req = foi_request_factory(
-        user=user, first_message=timezone.now(), status="resolved"
+        user=user,
+        first_message=timezone.now(),
+        status="resolved",
+        resolution=from_resolution,
     )
     foi_message_factory(request=req, is_response=False, sender_user=user)
     do_login(page, live_server)
