@@ -111,25 +111,26 @@ class MaillogParseTest(TestCase):
         )
 
     def test_parse_file(self):
-        parser = PostfixLogfileParser(open(p("maillog_001.txt")))
-        msg1 = next(parser)
-        self.assertEqual(msg1["data"]["message-id"], self.MAIL_1_ID)
-        self.assertEqual(len(msg1["log"]), 5)
+        with open(p("maillog_001.txt")) as f:
+            parser = PostfixLogfileParser(f)
+            msg1 = next(parser)
+            self.assertEqual(msg1["data"]["message-id"], self.MAIL_1_ID)
+            self.assertEqual(len(msg1["log"]), 5)
 
-        self.assertEqual(len(parser._msg_log), 1)
+            self.assertEqual(len(parser._msg_log), 1)
 
-        msg2 = next(parser)
-        self.assertEqual(
-            msg2["data"],
-            self.MAIL_2_DATA,
-        )
-        self.assertEqual(
-            msg2["log"],
-            self.MAIL_2_LOG,
-        )
-        self.assertEqual(next(parser, None), None)
+            msg2 = next(parser)
+            self.assertEqual(
+                msg2["data"],
+                self.MAIL_2_DATA,
+            )
+            self.assertEqual(
+                msg2["log"],
+                self.MAIL_2_LOG,
+            )
+            self.assertEqual(next(parser, None), None)
 
-        self.assertEqual(len(parser._msg_log), 0)
+            self.assertEqual(len(parser._msg_log), 0)
 
     def test_parse_file_with_partial_log(self):
         with open(p("maillog_002.txt")) as f:
@@ -202,7 +203,8 @@ class MaillogParseTest(TestCase):
             def on_empty_log(_):
                 invocation_count[0] += 1
 
-        parser = LogParser(open(p("maillog_001.txt")))
-        for _ in parser:
-            pass
+        with open(p("maillog_001.txt")) as f:
+            parser = LogParser(f)
+            for _ in parser:
+                pass
         self.assertEqual(invocation_count[0], 1)
