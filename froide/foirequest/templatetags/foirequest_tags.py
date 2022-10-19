@@ -59,6 +59,13 @@ def highlight_request(message, request):
     redacted_content = unify(message.get_content())
 
     description = unify(message.request.description)
+    redacted_description = unify(message.request.get_description())
+    description_with_markup = markup_redacted_content(
+        description,
+        redacted_description,
+        authenticated_read=auth_read,
+        message_id=message.id,
+    )
 
     if auth_read:
         content = real_content
@@ -95,7 +102,7 @@ def highlight_request(message, request):
         format_html(
             """<div class="highlight">{description}</div><div class="collapse" id="letter_end">{post}</div>
 <div class="d-print-none"><a data-bs-toggle="collapse" href="#letter_end" aria-expanded="false" aria-controls="letter_end" class="muted hideparent">{show_letter}</a>""",
-            description=description,
+            description=description_with_markup,
             post=html_post,
             show_letter=_("[... Show complete request text]"),
         )
