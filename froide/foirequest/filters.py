@@ -296,7 +296,9 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_organization(self, qs, name, value):
         all_members = list(
-            value.active_members.filter(private=False).values_list("id", flat=True)
+            value.active_memberships.filter(user__private=False).values_list(
+                "user_id", flat=True
+            )
         )
         filtered_qs = qs.filter(user=all_members)
         return filtered_qs
