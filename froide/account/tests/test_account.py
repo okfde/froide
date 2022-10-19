@@ -762,7 +762,8 @@ def test_signup_blocklisted(world, client):
 def test_send_mail(world, rf):
     user = User.objects.get(username="sw")
     user.is_superuser = True
-    users = User.objects.all()[:1]
+    to_user = User.objects.first()
+    users = User.objects.filter(id__in=[to_user.id])
 
     admin_site = AdminSite()
     user_admin = UserAdmin(User, admin_site)
