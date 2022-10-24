@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.db.models.functions import Length
 from django.utils import translation
 
+from froide.helper.text_diff import get_differences
+
 
 class Command(BaseCommand):
     help = "Pre-calculate cached redaction markup for long texts."
@@ -17,9 +19,13 @@ class Command(BaseCommand):
             unify,
         )
 
-        needs_calculation = Q(content_rendered_auth__isnull=True) | Q(
-            content_rendered_anon__isnull=True
+        needs_calculation = (
+            Q(content_rendered_auth__isnull=True)
+            | Q(content_rendered_anon__isnull=True)
+            | Q(redacted_content_auth__isnull=True)
+            | Q(redacted_content_anon__isnull=True)
         )
+
         msgs = (
             FoiMessage.objects.annotate(plaintext_length=Length("plaintext"))
             .filter(plaintext_length__gt=CONTENT_CACHE_THRESHOLD)
@@ -34,3 +40,12 @@ class Command(BaseCommand):
                 continue
             render_message_content(message, True)
             render_message_content(message, False)
+
+            # Also cache the `redacted_content` property for the api
+            message.redacted_content_auth = list(
+                get_differences(message.plaintext_redacted, message.plaintext)
+            )
+            message.redacted_content_anon = list(
+                get_differences(message.plaintext_redacted, message.plaintext)
+            )
+            message.save()

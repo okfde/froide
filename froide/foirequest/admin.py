@@ -106,7 +106,12 @@ class FoiMessageInline(admin.StackedInline):
         "recipient_public_body",
         "original",
     )
-    exclude = ("content_rendered_auth", "content_rendered_anon")
+    exclude = (
+        "content_rendered_auth",
+        "content_rendered_anon",
+        "redacted_content_auth",
+        "redacted_content_anon",
+    )
 
 
 class FoiRequestAdminForm(forms.ModelForm):
@@ -532,7 +537,12 @@ class FoiMessageAdmin(admin.ModelAdmin):
         DeliveryStatusInline,
         FoiAttachmentInline,
     ]
-    exclude = ("content_rendered_auth", "content_rendered_anon")
+    exclude = (
+        "content_rendered_auth",
+        "content_rendered_anon",
+        "redacted_content_auth",
+        "redacted_content_anon",
+    )
     actions = [
         "check_delivery_status",
         "resend_messages",
