@@ -29,7 +29,7 @@ from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
 
 from ..models import FoiAttachment, FoiMessage, FoiRequest
-from ..models.message import MessageKind
+from ..models.message import BULK_TAG, MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
 from ..utils import (
     MailAttachmentSizeChecker,
@@ -354,6 +354,9 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         message = self.make_message(self.foirequest, recipient_email)
         message.save()
 
+        if bulk:
+            message.tags.add(BULK_TAG)
+
         if self.cleaned_data.get("files"):
             self.save_attachments(self.files.getlist("%s-files" % self.prefix), message)
 
@@ -377,7 +380,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
 
         message.send(attachments=attachments)
         self.foirequest.message_sent.send(
-            sender=self.foirequest, message=message, user=user, bulk=bulk
+            sender=self.foirequest, message=message, user=user
         )
 
         return message
