@@ -425,6 +425,7 @@ class FoiRequest(models.Model):
     # Custom Signals
     message_sent = django.dispatch.Signal()  # args: ["message", "user"]
     message_received = django.dispatch.Signal()  # args: ["message"]
+    message_delivered = django.dispatch.Signal()  # args: ["message", "bulk"]
     request_created = django.dispatch.Signal()  # args: []
     request_sent = django.dispatch.Signal()  # args: []
     request_to_public_body = django.dispatch.Signal()  # args: []

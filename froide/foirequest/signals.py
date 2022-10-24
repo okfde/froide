@@ -197,7 +197,9 @@ def send_foiproject_created_confirmation(sender, **kwargs):
     )
 
 
-@receiver(FoiRequest.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
+@receiver(
+    FoiRequest.message_delivered, dispatch_uid="send_foimessage_sent_confirmation"
+)
 def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
     if message.is_not_email:
         # All non-email sent messages are not interesting to users.

@@ -1,5 +1,6 @@
 import json
 from datetime import timedelta
+from unittest import mock
 from urllib.parse import urlencode
 
 from django.conf import settings
@@ -11,6 +12,7 @@ from django.utils import timezone
 
 from oauth2_provider.models import get_access_token_model, get_application_model
 
+from froide.foirequest.delivery import DeliveryReport
 from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
@@ -309,6 +311,15 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(old_count, new_count)
         self.assertEqual(len(mail.outbox), 0)
 
+    @mock.patch(
+        "froide.foirequest.delivery.get_delivery_report",
+        lambda *_args, **_kwargs: DeliveryReport(
+            log="loglines",
+            time_diff=None,
+            status="sent",
+            message_id="message_id",
+        ),
+    )
     def test_request_creation_with_scope(self):
         self.access_token.scope = "read:user make:request"
         self.access_token.save()
