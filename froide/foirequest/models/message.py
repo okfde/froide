@@ -141,6 +141,8 @@ class FoiMessage(models.Model):
     html = models.TextField(_("HTML"), blank=True, null=True)
     content_rendered_auth = models.TextField(blank=True, null=True)
     content_rendered_anon = models.TextField(blank=True, null=True)
+    redacted_content_auth = models.JSONField(blank=True, null=True)
+    redacted_content_anon = models.JSONField(blank=True, null=True)
     redacted = models.BooleanField(_("Was Redacted?"), default=False)
     not_publishable = models.BooleanField(_("Not publishable"), default=False)
     email_headers = models.JSONField(null=True, default=None, blank=True)
@@ -478,6 +480,8 @@ class FoiMessage(models.Model):
     def clear_render_cache(self):
         self.content_rendered_auth = None
         self.content_rendered_anon = None
+        self.redacted_content_auth = None
+        self.redacted_content_anon = None
 
     def get_content(self):
         self.plaintext = self.plaintext or ""

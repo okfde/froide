@@ -217,11 +217,20 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_redacted_content(self, obj):
         request = self.context["request"]
+        authenticated_read = can_read_foirequest_authenticated(
+            obj.request, request, allow_code=False
+        )
 
-        if can_read_foirequest_authenticated(obj.request, request, allow_code=False):
+        if authenticated_read and obj.redacted_content_auth is not None:
+            return obj.redacted_content_auth
+        if not authenticated_read and obj.redacted_content_anon is not None:
+            return obj.redacted_content_anon
+
+        if authenticated_read:
             show, hide = obj.plaintext, obj.plaintext_redacted
         else:
             show, hide = obj.plaintext_redacted, obj.plaintext
+
         return list(get_differences(show, hide))
 
     def get_attachments(self, obj):
