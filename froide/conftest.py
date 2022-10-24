@@ -7,6 +7,8 @@ import pytest
 from pytest_factoryboy import register
 
 from froide.account.factories import UserFactory
+from froide.foirequest import delivery
+from froide.foirequest.delivery import DeliveryReport
 from froide.foirequest.tests.factories import (
     FoiMessageFactory,
     FoiRequestFactory,
@@ -19,6 +21,7 @@ from froide.publicbody.factories import (
     FoiLawFactory,
     JurisdictionFactory,
     PublicBodyFactory,
+    ClassificationFactory,
 )
 
 os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
@@ -29,6 +32,9 @@ register(FoiRequestFactory)
 register(FoiRequestFollowerFactory)
 register(PublicBodyFactory)
 register(FoiMessageFactory)
+register(ClassificationFactory)
+register(FoiLawFactory)
+register(JurisdictionFactory)
 
 
 @pytest.fixture
@@ -69,3 +75,20 @@ def page(browser):
     page = context.new_page()
     yield page
     page.close()
+
+
+@pytest.fixture(autouse=True)
+def email_always_send(monkeypatch, request):
+    """Instantly mark all messages as delivered"""
+    if "no_delivery_mock" in request.keywords:
+        return
+    monkeypatch.setattr(
+        delivery,
+        "get_delivery_report",
+        lambda *_args, **_kwargs: DeliveryReport(
+            log="loglines",
+            time_diff=None,
+            status="sent",
+            message_id="message_id",
+        ),
+    )

@@ -23,6 +23,9 @@ import pytest
 import time_machine
 from pytest_django.asserts import assertContains, assertFormError, assertNotContains
 
+import pytest
+
+from froide.foirequest.delivery import DeliveryReport
 from froide.foirequest.foi_mail import (
     add_message_from_email,
     generate_foirequest_files,
@@ -35,6 +38,7 @@ from froide.foirequest.models import (
     FoiMessage,
     FoiRequest,
 )
+from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
 from froide.helper.content_urls import get_content_url
@@ -1759,6 +1763,7 @@ def test_extend_deadline(world, client):
     assert foirequest.due_date == foirequest.law.calculate_due_date(old_due_date, 2)
 
 
+@pytest.mark.no_delivery_mock
 @pytest.mark.django_db
 def test_resend_message(world, client):
     foirequest = FoiRequest.objects.all()[0]
@@ -2154,3 +2159,95 @@ def test_postal_after_last(world, client, pb, faker):
     assert created_msg.timestamp > message.timestamp
     assert created_msg.timestamp.date() == date(2011, 1, 1)
     message = req.foimessage_set.all()[1]
+
+
+@pytest.mark.django_db
+@pytest.mark.no_delivery_mock
+def test_mail_confirmation_after_success(world, user, client, faker):
+    pb = PublicBody.objects.first()
+    foirequest_post = {
+        "subject": faker.text(max_nb_chars=50),
+        "body": faker.text(max_nb_chars=500),
+        "publicbody": pb.pk,
+    }
+
+    client.login(email=user.email, password="froide")
+    response = client.post(reverse("foirequest-make_request"), foirequest_post)
+    assert response.status_code == 302
+    req = FoiRequest.objects.filter(
+        user=user, public_body=foirequest_post["publicbody"]
+    ).get()
+    assert req.title == foirequest_post["subject"]
+    assert req.description == foirequest_post["body"]
+
+    # Test that we queue the email for the public body
+    assert len(mail.outbox) == 1
+    message = mail.outbox[0]
+    assert mail.outbox[0].to[0] == pb.email
+    assert foirequest_post["body"] in message.body
+
+    # Now mark the email as sent
+    foimessage = req.foimessage_set.get()
+    with mock.patch(
+        "froide.foirequest.delivery.get_delivery_report",
+        lambda *_args, **_kwargs: DeliveryReport(
+            log="loglines",
+            time_diff=None,
+            status="sent",
+            message_id=foimessage.email_message_id,
+        ),
+    ):
+        foimessage.check_delivery_status()
+        assert foimessage.deliverystatus is not None
+        ds = foimessage.get_delivery_status()
+        assert ds.status == "sent"
+
+    # Expectation: The user should receive a confirmation that the request was sent
+    assert len(mail.outbox) == 2
+    confirmation_message = mail.outbox[1]
+    assert (
+        "Your Freedom of Information Request was sent" in confirmation_message.subject
+    )
+
+    # Action: Send a new foimessage in the request
+    foimessage: FoiMessage = factories.FoiMessageFactory(
+        request=req,
+        subject=faker.text(max_nb_chars=50),
+        kind=MessageKind.EMAIL,
+        is_response=False,
+        sender_user=user,
+        sender_name=user.display_name(),
+        sender_email=req.secret_address,
+        recipient_email=req.public_body.email,
+        recipient_public_body=req.public_body,
+        recipient=req.public_body.name,
+        plaintext=faker.text(max_nb_chars=50),
+    )
+    foimessage.send()
+
+    # Expectation: The message is send to the public body
+    assert len(mail.outbox) == 3
+    message = mail.outbox[2]
+    assert message.to[0] == pb.email
+    assert foimessage.plaintext in message.body
+
+    # Action: Mark the email as sent
+    with mock.patch(
+        "froide.foirequest.delivery.get_delivery_report",
+        lambda *_args, **_kwargs: DeliveryReport(
+            log="loglines",
+            time_diff=None,
+            status="sent",
+            message_id=foimessage.email_message_id,
+        ),
+    ):
+        foimessage.check_delivery_status()
+        assert foimessage.deliverystatus is not None
+        ds = foimessage.get_delivery_status()
+        assert ds is not None
+        assert ds.status == "sent"
+
+    # Expectation: The user should receive a confirmation that the message was sent
+    assert len(mail.outbox) == 4
+    confirmation_message = mail.outbox[3]
+    assert "Your message was sent" in confirmation_message.subject
