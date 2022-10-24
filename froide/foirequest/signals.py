@@ -200,12 +200,12 @@ def send_foiproject_created_confirmation(sender, **kwargs):
 @receiver(
     FoiRequest.message_delivered, dispatch_uid="send_foimessage_sent_confirmation"
 )
-def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
+def send_foimessage_sent_confirmation(sender, message: FoiMessage = None, **kwargs):
     if message.is_not_email:
         # All non-email sent messages are not interesting to users.
         # Don't inform them about it.
         return
-    if kwargs.get("bulk"):
+    if message.is_bulk:
         # Don't notify on bulk message sending
         return
 

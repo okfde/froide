@@ -25,6 +25,7 @@ BOUNCE_TAG = "bounce"
 HAS_BOUNCED_TAG = "bounced"
 AUTO_REPLY_TAG = "auto-reply"
 BOUNCE_RESENT_TAG = "bounce-resent"
+BULK_TAG = "bulk"
 
 
 class FoiMessageManager(models.Manager):
@@ -229,6 +230,10 @@ class FoiMessage(models.Model):
     @property
     def is_bounce_resent(self):
         return BOUNCE_RESENT_TAG in self.tag_set
+
+    @property
+    def is_bulk(self):
+        return BULK_TAG in self.tag_set
 
     @cached_property
     def tag_set(self):

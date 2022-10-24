@@ -11,6 +11,7 @@ from froide.foirequest import delivery
 from froide.foirequest.delivery import DeliveryReport
 from froide.foirequest.tests.factories import (
     FoiMessageFactory,
+    FoiProjectFactory,
     FoiRequestFactory,
     RequestDraftFactory,
     make_world,
@@ -18,10 +19,10 @@ from froide.foirequest.tests.factories import (
 )
 from froide.foirequestfollower.tests import FoiRequestFollowerFactory
 from froide.publicbody.factories import (
+    ClassificationFactory,
     FoiLawFactory,
     JurisdictionFactory,
     PublicBodyFactory,
-    ClassificationFactory,
 )
 
 os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
@@ -35,6 +36,8 @@ register(FoiMessageFactory)
 register(ClassificationFactory)
 register(FoiLawFactory)
 register(JurisdictionFactory)
+register(PublicBodyFactory)
+register(FoiProjectFactory)
 
 
 @pytest.fixture
