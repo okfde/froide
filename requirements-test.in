@@ -13,7 +13,7 @@ pycodestyle
 pyflakes
 pytest-django
 pytest-factoryboy
-selenium
+pytest-playwright
 text-unidecode
 django-coverage-plugin
 tblib

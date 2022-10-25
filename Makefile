@@ -12,7 +12,7 @@ testci:
 	coverage report
 
 testui:
-	coverage run --branch -m pytest froide/tests/live/ --reuse-db
+	coverage run --branch -m pytest --browser chromium froide/tests/live/ --reuse-db
 
 .PHONY: htmlcov
 htmlcov:
