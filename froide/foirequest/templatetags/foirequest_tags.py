@@ -39,8 +39,6 @@ Comment = get_model()
 
 register = template.Library()
 
-CONTENT_CACHE_THRESHOLD = 5000
-
 
 def unify(text):
     text = text or ""
@@ -117,14 +115,12 @@ def highlight_request(message, request):
 
 
 def render_message_content(message, authenticated_read=False, render_footer=True):
-    if authenticated_read and message.content_rendered_auth is not None:
-        return mark_safe(message.content_rendered_auth)
-    if not authenticated_read and message.content_rendered_anon is not None:
-        return mark_safe(message.content_rendered_anon)
+    cached_content = message.get_cached_rendered_content(authenticated_read)
+    if cached_content is not None:
+        return cached_content
 
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
-    needs_caching = len(real_content) > CONTENT_CACHE_THRESHOLD
 
     content = markup_redacted_content(
         real_content,
@@ -133,12 +129,8 @@ def render_message_content(message, authenticated_read=False, render_footer=True
         message_id=message.id,
         render_footer=render_footer,
     )
-    if needs_caching:
-        if authenticated_read:
-            update = {"content_rendered_auth": content}
-        else:
-            update = {"content_rendered_anon": content}
-        FoiMessage.objects.filter(id=message.id).update(**update)
+
+    message.set_cached_rendered_content(authenticated_read, content)
 
     return content
 

@@ -1,6 +1,6 @@
 import calendar
 from email.utils import formatdate
-from typing import List
+from typing import List, Tuple
 
 from django.conf import settings
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -14,6 +14,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.email_utils import make_address
+from froide.helper.text_diff import get_differences
 from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
@@ -77,6 +78,8 @@ MANUAL_MESSAGE_KINDS = {MessageKind.POST, MessageKind.PHONE, MessageKind.VISIT}
 
 
 class FoiMessage(models.Model):
+    CONTENT_CACHE_THRESHOLD = 5000
+
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
@@ -700,6 +703,43 @@ class FoiMessage(models.Model):
             kwargs["attachments"] = list(att_gen)
 
         resend_message(self, **kwargs)
+
+    def get_redacted_content(self, auth: bool) -> List[Tuple[bool, str]]:
+        if auth:
+            show, hide, cache_field = (
+                self.plaintext,
+                self.plaintext_redacted,
+                "redacted_content_auth",
+            )
+        else:
+            show, hide, cache_field = (
+                self.plaintext_redacted,
+                self.plaintext,
+                "redacted_content_anon",
+            )
+
+        if getattr(self, cache_field) is None:
+            redacted_content = [list(x) for x in get_differences(show, hide)]
+            setattr(self, cache_field, redacted_content)
+            FoiMessage.objects.filter(id=self.id).update(
+                **{cache_field: redacted_content}
+            )
+        return getattr(self, cache_field)
+
+    def get_cached_rendered_content(self, authenticated_read):
+        if authenticated_read:
+            return self.content_rendered_auth
+        else:
+            return self.content_rendered_anon
+
+    def set_cached_rendered_content(self, authenticated_read, content):
+        needs_caching = len(self.content) > self.CONTENT_CACHE_THRESHOLD
+        if needs_caching:
+            if authenticated_read:
+                update = {"content_rendered_auth": content}
+            else:
+                update = {"content_rendered_anon": content}
+            FoiMessage.objects.filter(id=self.id).update(**update)
 
 
 class Delivery(models.TextChoices):
