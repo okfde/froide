@@ -233,8 +233,15 @@ const applyMarkToMessage = (
   let charIndex = 0
   for (let i = 0; i < messageText.childNodes.length; i++) {
     const node = messageText.childNodes[i]
-    console.log(node, guidanceId, span, charIndex)
-    const content = node.textContent || ''
+    let content = node.textContent || ''
+    // Links are shortened in the backend, but guidance spans are calculated with the unshortened
+    // plaintext urls. Therefore we have to use the href value, which contains the unshortened link,
+    // to calculate the guidance highlight position
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      if ((node as HTMLElement).tagName === 'A') {
+        content = (node as HTMLAnchorElement).href
+      }
+    }
     if (span[0] > charIndex && span[0] < charIndex + content.length) {
       const match = content.substring(span[0] - charIndex, span[1] - charIndex)
       const mark = document.createElement('mark')
