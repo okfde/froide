@@ -6,6 +6,8 @@ from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
 
+import pytest
+
 from froide.comments.models import FroideComment
 from froide.foirequest.models import FoiMessage, FoiRequest
 from froide.foirequest.notifications import batch_update_requester
@@ -191,3 +193,69 @@ class RenderMessageContentTest(TestCase):
             request=self.req, plaintext="aaaaa", plaintext_redacted="[redacted]"
         )
         self.assertEqual(render_message_content(msg), expected)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("auth", [True, False])
+def test_redacted_content_cache(foi_message_factory, django_assert_num_queries, auth):
+    redacted_foi_message = foi_message_factory(
+        plaintext="Dear Mx. Example,\n\nPlease send me the following documents:\n\nGreetings,\nAlex Example",
+        plaintext_redacted="Dear <<Redacted>>,\n\nPlease send me the following documents:\n\nGreetings,\n<<Redacted>>",
+    )
+    expected_redacted_content = {
+        True: [
+            [False, "Dear "],
+            [True, "Mx. Example"],
+            [False, ",\n\nPlease send me the following documents:\n\nGreetings,\n"],
+            [True, "Alex Example"],
+        ],
+        False: [
+            [False, "Dear "],
+            [True, "<<Redacted>>"],
+            [False, ",\n\nPlease send me the following documents:\n\nGreetings,\n"],
+            [True, "<<Redacted>>"],
+        ],
+    }
+
+    with django_assert_num_queries(1):
+        redacted_content = redacted_foi_message.get_redacted_content(auth=auth)
+        assert redacted_content == expected_redacted_content[auth]
+
+    redacted_foi_message = FoiMessage.objects.get(id=redacted_foi_message.id)
+    with django_assert_num_queries(0):
+        redacted_content = redacted_foi_message.get_redacted_content(auth=auth)
+        assert redacted_content == expected_redacted_content[auth]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("auth", [True, False])
+def test_cached_rendered_content(
+    foi_message_factory, django_assert_num_queries, auth, faker
+):
+    req_text = faker.text(max_nb_chars=FoiMessage.CONTENT_CACHE_THRESHOLD)
+    redacted_foi_message = foi_message_factory(
+        plaintext=f"Dear Mx. Example,\n\nPlease send me the following documents:\n{req_text}\n\nGreetings,\nAlex Example",
+        plaintext_redacted=f"Dear <<Redacted>>,\n\nPlease send me the following documents:\n{req_text}\n\nGreetings,\n<<Redacted>>",
+    )
+    expected_redacted_content = {
+        True: (
+            'Dear <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="Only '
+            'visible to you">Mx. Example</span>,\n\nPlease send me the following documents:\n'
+            f'{req_text}\n\nGreetings,\n<span class="redacted-dummy redacted-hover" data-bs-toggle='
+            '"tooltip" title="Only visible to you">Alex Example</span>'
+        ),
+        False: (
+            'Dear <span class="redacted">&lt;&lt;Redacted&gt;&gt;</span>,\n\nPlease send me the fol'
+            f'lowing documents:\n{req_text}\n\nGreetings,\n<span class="redacted">&lt;&lt;Redacted&'
+            "gt;&gt;</span>"
+        ),
+    }
+
+    with django_assert_num_queries(1):
+        redacted_content = render_message_content(redacted_foi_message, auth)
+        assert redacted_content == expected_redacted_content[auth]
+
+    redacted_foi_message = FoiMessage.objects.get(id=redacted_foi_message.id)
+    with django_assert_num_queries(0):
+        redacted_content = render_message_content(redacted_foi_message, auth)
+        assert redacted_content == expected_redacted_content[auth]
