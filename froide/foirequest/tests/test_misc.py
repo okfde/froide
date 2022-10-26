@@ -149,12 +149,12 @@ class RenderMessageContentTest(TestCase):
 
     def test_escapes_a_tag(self):
         plaintext = '<a href="https://example.com">test</a>'
-        expected = '&lt;a href="<a href="https://example.com" rel="nofollow">https://example.com</a>"&gt;test&lt;/a&gt;'
+        expected = '&lt;a href="<a href="https://example.com" rel="nofollow" class="urlized" >https://example.com</a>"&gt;test&lt;/a&gt;'
 
         msg = factories.FoiMessageFactory.create(
             request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
         )
-        self.assertEqual(render_message_content(msg), expected)
+        self.assertHTMLEqual(render_message_content(msg), expected)
 
     def test_no_mail(self):
         """
