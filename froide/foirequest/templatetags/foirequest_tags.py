@@ -196,27 +196,20 @@ MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 def urlizetrunc_no_mail(content, chars, **kwargs):
     """
-    Transform urls in the text to proper links, shortening the displayed text
-    to not be longer than `chars`.
+    Transform urls in the text to proper links, marking them with the `data-urlized` attribute
 
     This will not create mailto links, as they make it to easy to accidentally
     reply with your own email client.
     """
 
-    def truncate_link_texts(attrs, new=False):
-        if not new:
-            return attrs
-
-        text = attrs["_text"]
-        if len(text) > chars:
-            text = text[: chars - 3] + "..."
-        attrs["_text"] = text
+    def mark_as_urlized(attrs, new=False):
+        attrs[(None, "class")] = "urlized"
         return attrs
 
     result = bleach.linkify(
         content,
         parse_email=False,
-        callbacks=[bleach.callbacks.nofollow, truncate_link_texts],
+        callbacks=[bleach.callbacks.nofollow, mark_as_urlized],
     )
 
     return mark_safe(result)

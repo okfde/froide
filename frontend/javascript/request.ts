@@ -233,7 +233,6 @@ const applyMarkToMessage = (
   let charIndex = 0
   for (let i = 0; i < messageText.childNodes.length; i++) {
     const node = messageText.childNodes[i]
-    console.log(node, guidanceId, span, charIndex)
     const content = node.textContent || ''
     if (span[0] > charIndex && span[0] < charIndex + content.length) {
       const match = content.substring(span[0] - charIndex, span[1] - charIndex)

@@ -174,4 +174,11 @@
   &--expanded &__footer {
     display: block;
   }
+  a.urlized {
+    max-width: 30ch;
+    white-space: nowrap;
+    overflow-x: clip;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
 }
