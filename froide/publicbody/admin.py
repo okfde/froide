@@ -283,7 +283,7 @@ class PublicBodyBaseAdminMixin:
             self.message_user(request, str(e))
         else:
             self.message_user(request, _("Public Bodies were imported."))
-        return redirect("admin:publicbody_publicbody_changelist")
+        return redirect("%s:publicbody_publicbody_changelist" % self.admin_site.name)
 
     def geo_match(self, request):
         from froide.georegion.models import GeoRegion
@@ -318,13 +318,19 @@ class PublicBodyBaseAdminMixin:
                     "api:jurisdiction-detail", kwargs={"pk": 0}
                 ),
                 "georegionAdminUrl": reverse(
-                    "admin:georegion_georegion_change", kwargs={"object_id": 0}
+                    "%s:georegion_georegion_change" % self.admin_site.name,
+                    kwargs={"object_id": 0},
                 ),
-                "publicbodyAdminUrl": reverse("admin:publicbody_publicbody_changelist"),
+                "publicbodyAdminUrl": reverse(
+                    "%s:publicbody_publicbody_changelist" % self.admin_site.name
+                ),
                 "publicbodyAdminChangeUrl": reverse(
-                    "admin:publicbody_publicbody_change", kwargs={"object_id": 0}
+                    "%s:publicbody_publicbody_change" % self.admin_site.name,
+                    kwargs={"object_id": 0},
                 ),
-                "publicbodyAddAdminUrl": reverse("admin:publicbody_publicbody_add"),
+                "publicbodyAddAdminUrl": reverse(
+                    "%s:publicbody_publicbody_add" % self.admin_site.name
+                ),
             }
         }
         ctx = {"app_label": opts.app_label, "opts": opts, "config": json.dumps(config)}
@@ -456,7 +462,7 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 % {"count": result},
             )
 
-        return redirect("admin:publicbody_publicbody_change", pb.id)
+        return redirect("%s:publicbody_publicbody_change" % self.admin_site.name, pb.id)
 
     def _confirm_pb(self, pb, user):
         pb._updated_by = user
@@ -504,7 +510,9 @@ class ProposedPublicBodyAdminMixin(PublicBodyBaseAdminMixin):
                 priority=False,
             )
             self.message_user(request, _("E-Mail was sent to public body creator."))
-        return redirect("admin:publicbody_proposedpublicbody_change", pb.id)
+        return redirect(
+            "%s:publicbody_proposedpublicbody_change" % self.admin_site.name, pb.id
+        )
 
 
 class ProposedPublicBodyAdmin(ProposedPublicBodyAdminMixin, admin.ModelAdmin):
@@ -609,7 +617,7 @@ class ClassificationAdmin(TreeAdmin):
     def publicbody_link(self, obj):
         return format_html(
             '<a href="{}">{}</a>',
-            reverse("admin:publicbody_publicbody_changelist")
+            reverse("%s:publicbody_publicbody_changelist" % self.admin_site.name)
             + ("?classification__id__exact={}".format(obj.id)),
             _("Public bodies with this classification"),
         )
@@ -636,7 +644,7 @@ class CategoryAdmin(TreeAdmin):
     def get_queryset(self, request):
         """Use this so we can annotate with additional info."""
 
-        qs = super(CategoryAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         return qs.annotate(
             num_publicbodies=Count("categorized_publicbodies", distinct=True)
         )
@@ -651,7 +659,7 @@ class CategoryAdmin(TreeAdmin):
     def publicbody_link(self, obj):
         return format_html(
             '<a href="{}">{}</a>',
-            reverse("admin:publicbody_publicbody_changelist")
+            reverse("%s:publicbody_publicbody_changelist" % self.admin_site.name)
             + ("?categories__id__exact={}".format(obj.id)),
             _("Public bodies with this category"),
         )
@@ -675,3 +683,15 @@ admin.site.register(Classification, ClassificationAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(CategorizedPublicBody, CategorizedPublicBodyAdmin)
 admin.site.register(PublicBodyChangeProposal, PublicBodyChangeProposalAdmin)
+
+
+class PublicBodyAdminSite(admin.AdminSite):
+    site_title = settings.SITE_NAME
+    site_header = _("Public Body Admin")
+    site_url = None
+
+
+pb_admin_site = PublicBodyAdminSite(name="pbadmin")
+pb_admin_site.register(PublicBody, PublicBodyAdmin)
+pb_admin_site.register(Classification, ClassificationAdmin)
+pb_admin_site.register(Category, CategoryAdmin)
