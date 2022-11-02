@@ -2,16 +2,19 @@
 {% load i18n %}
 
 {% block object-tools-items %}
-  <li>
-    <a href="{% url 'admin:publicbody-publicbody-geo_match' %}">
-      {% trans "Geo Match Interface" %}
-    </a>
-  </li>
+  {% if perms.publicbody.change_publicbody %}
+    <li>
+      <a href="{% url 'admin:publicbody-publicbody-geo_match' %}">
+        {% trans "Geo Match Interface" %}
+      </a>
+    </li>
+  {% endif %}
   {{ block.super }}
 {% endblock %}
 
 {% block content %}
   {{ block.super }}
+  {% if perms.publicbody.change_publicbody %}
   <div>
     <form enctype="multipart/form-data" method="post" action="{% url 'admin:publicbody-publicbody-import_csv' %}">{% csrf_token %}
       <input type="url" name="url" value="" placeholder="http://example.com/data.csv"/>
@@ -20,4 +23,5 @@
       <input type="submit" value="{% blocktrans with cl.opts.verbose_name_plural as name %}Import {{ name }}{% endblocktrans %}"/>
     </form>
   </div>
+  {% endif %}
 {% endblock %}

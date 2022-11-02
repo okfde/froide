@@ -2,21 +2,23 @@
 {% load i18n %}
 {% block object-tools-items %}
 {% if original.pk %}
-  <li>
-    <a href="{% url 'admin:foirequest_foirequest_changelist' %}?public_body={{ original.pk }}">
-      {% trans "This public body's requests" %}
-    </a>
-  </li>
-  <li>
-    <a href="{% url 'admin:foirequest_foimessage_changelist' %}?recipient_public_body={{ original.pk }}">
-      {% trans "This public body's received messages" %}
-    </a>
-  </li>
-  <li>
-    <a href="{% url 'admin:foirequest_foimessage_changelist' %}?sender_public_body={{ original.pk }}">
-      {% trans "This public body's sent messages" %}
-    </a>
-  </li>
+  {% if perms.foirequest %}
+    <li>
+      <a href="{% url 'admin:foirequest_foirequest_changelist' %}?public_body={{ original.pk }}">
+        {% trans "This public body's requests" %}
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'admin:foirequest_foimessage_changelist' %}?recipient_public_body={{ original.pk }}">
+        {% trans "This public body's received messages" %}
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'admin:foirequest_foimessage_changelist' %}?sender_public_body={{ original.pk }}">
+        {% trans "This public body's sent messages" %}
+      </a>
+    </li>
+  {% endif %}
   {% if original.change_proposal_count %}
     <li>
       <a href="{% url 'publicbody-accept' pk=original.pk %}" target="_blank">
