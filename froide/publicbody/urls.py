@@ -1,3 +1,4 @@
+from django.contrib.auth.views import redirect_to_login
 from django.urls import include, path, re_path
 from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
@@ -14,6 +15,10 @@ from .views import (
 
 entities_url_patterns = [
     path(pgettext_lazy("url part", "admin/"), pb_admin_site.urls),
+    path(
+        "%slogin/" % pgettext_lazy("url part", "admin/"),
+        lambda request: redirect_to_login(request.get_full_path()),
+    ),
     path(
         pgettext_lazy("url part", "propose/"),
         PublicBodyProposalView.as_view(),
