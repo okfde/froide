@@ -68,3 +68,4 @@ def page(browser):
     context = browser.new_context(locale="en")
     page = context.new_page()
     yield page
+    page.close()
