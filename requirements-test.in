@@ -1,7 +1,6 @@
 -r requirements.in
 black
 coverage
-coveralls
 factory-boy
 faker
 flake8
