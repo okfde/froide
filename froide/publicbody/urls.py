@@ -14,11 +14,12 @@ from .views import (
 )
 
 entities_url_patterns = [
-    path(pgettext_lazy("url part", "admin/"), pb_admin_site.urls),
+    # Overwrite login route of admin to our own login view
     path(
         "%slogin/" % pgettext_lazy("url part", "admin/"),
         lambda request: redirect_to_login(request.get_full_path()),
     ),
+    path(pgettext_lazy("url part", "admin/"), pb_admin_site.urls),
     path(
         pgettext_lazy("url part", "propose/"),
         PublicBodyProposalView.as_view(),
