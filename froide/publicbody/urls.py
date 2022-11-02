@@ -1,7 +1,8 @@
-from django.contrib.auth.views import redirect_to_login
 from django.urls import include, path, re_path
 from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
+
+from froide.account.views import bad_login_view_redirect
 
 from .admin import pb_admin_site
 from .views import (
@@ -15,10 +16,7 @@ from .views import (
 
 entities_url_patterns = [
     # Overwrite login route of admin to our own login view
-    path(
-        "%slogin/" % pgettext_lazy("url part", "admin/"),
-        lambda request: redirect_to_login(request.get_full_path()),
-    ),
+    path("%slogin/" % pgettext_lazy("url part", "admin/"), bad_login_view_redirect),
     path(pgettext_lazy("url part", "admin/"), pb_admin_site.urls),
     path(
         pgettext_lazy("url part", "propose/"),

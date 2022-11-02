@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth.views import redirect_to_login
 from django.contrib.sitemaps import Sitemap
 from django.contrib.sitemaps import views as sitemaps_views
 from django.template.response import TemplateResponse
@@ -11,6 +10,7 @@ from django.utils.translation import pgettext_lazy
 from rest_framework.schemas import get_schema_view
 
 from froide.account.api_views import ProfileView, UserPreferenceView
+from froide.account.views import bad_login_view_redirect
 from froide.campaign.api_views import CampaignViewSet
 from froide.document.api_views import (
     DocumentCollectionViewSet,
@@ -176,10 +176,7 @@ froide_urlpatterns += document_media_urlpatterns
 
 admin_urls = [
     # Disable admin login page, by overriding URL and redirecting
-    path(
-        "%s/login/" % SECRET_URLS.get("admin", "admin"),
-        lambda request: redirect_to_login(request.get_full_path()),
-    ),
+    path("%s/login/" % SECRET_URLS.get("admin", "admin"), bad_login_view_redirect),
     path("%s/" % SECRET_URLS.get("admin", "admin"), admin.site.urls),
 ]
 

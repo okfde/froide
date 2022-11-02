@@ -3,11 +3,13 @@ from typing import Any, Dict, Optional, Union
 from urllib.parse import urlencode
 
 from django.contrib import auth, messages
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
     INTERNAL_RESET_SESSION_TOKEN,
     PasswordResetConfirmView,
+    redirect_to_login,
 )
 from django.db import models
 from django.http import Http404, HttpRequest
@@ -265,6 +267,15 @@ def logout(request: HttpRequest) -> HttpResponseRedirect:
     auth.logout(request)
     messages.add_message(request, messages.INFO, _("You have been logged out."))
     return redirect("/")
+
+
+def bad_login_view_redirect(request):
+    next_url = (
+        request.GET.get(REDIRECT_FIELD_NAME)
+        or request.POST.get(REDIRECT_FIELD_NAME)
+        or reverse("admin:index")
+    )
+    return redirect_to_login(next_url)
 
 
 class LoginView(MFALoginView):
