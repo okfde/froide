@@ -364,7 +364,10 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
                 "data": self.get_serializable_cleaned_data(),
             }
         )
-        pb.laws.set(pb.jurisdiction.get_all_laws())
+        for law in pb.laws.all():
+            if law.jurisdiction and law.jurisdiction != pb.jurisdiction:
+                pb.laws.remove(law)
+        pb.laws.add(*pb.jurisdiction.get_all_laws())
         if pb.confirmed:
             pb.save()
             PublicBody.change_proposal_accepted.send(sender=pb, user=user)
