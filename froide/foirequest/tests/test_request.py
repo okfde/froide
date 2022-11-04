@@ -687,6 +687,14 @@ def test_postal_reply(world, client, pb):
     )
     assert "postal_reply_form" in response.context
     assert response.status_code == 400
+    # Reply cant be send before request start data
+    post["postal_reply-date"] = "2010-31-11"
+    response = client.post(
+        reverse("foirequest-add_postal_reply", kwargs={"slug": req.slug}), post
+    )
+    assert "postal_reply_form" in response.context
+    assert response.status_code == 400
+    # Reply date must be a valid date
     post["postal_reply-date"] = "2011-01-02"
     post["postal_reply-publicbody"] = str(pb.pk)
     post["postal_reply-text"] = ""
