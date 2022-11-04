@@ -9,28 +9,11 @@ from elasticsearch_dsl.connections import connections
 from ..tasks import search_instance_delete, search_instance_save
 
 
-def run_commit_hooks(testcase):
-    """
-    Fake transaction commit to run delayed on_commit functions
-    :return:
-    """
-    from unittest import mock
-
-    for db_name in reversed(testcase._databases_names()):
-        with mock.patch(
-            "django.db.backends.base.base.BaseDatabaseWrapper.validate_no_atomic_block",
-            lambda a: False,
-        ):
-            transaction.get_connection(using=db_name).run_and_clear_commit_hooks()
-
-
 @contextmanager
 def realtime_search(testcase, test=True):
     signal_processor = CelerySignalProcessor(connections)
     signal_processor.setup()
     yield
-    if test:
-        run_commit_hooks(testcase)
     signal_processor.teardown()
 
 
