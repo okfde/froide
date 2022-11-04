@@ -6,11 +6,11 @@ from django.utils.translation import activate
 import pytest
 from pytest_factoryboy import register
 
+from froide.account.factories import UserFactory
 from froide.foirequest.tests.factories import (
     FoiMessageFactory,
     FoiRequestFactory,
     RequestDraftFactory,
-    UserFactory,
     make_world,
     rebuild_index,
 )
