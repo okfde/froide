@@ -1,14 +1,17 @@
 import unittest
+from datetime import datetime
 from unittest import mock
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.test import Client
 from django.test.utils import override_settings
 from django.urls import reverse
 
 import pytest
 from pytest_django.asserts import (
     assertContains,
+    assertInHTML,
     assertNotContains,
     assertNumQueries,
     assertRedirects,
@@ -552,3 +555,70 @@ def test_queries_foirequest_loggedin(world, client):
     ContentType.objects.clear_cache()
     with assertNumQueries(TOTAL_EXPECTED_REQUESTS):
         client.get(req.get_absolute_url())
+
+
+@pytest.fixture
+def req_with_unordered_messages(
+    foi_request_factory, foi_message_factory, faker
+) -> FoiRequest:
+    req_text = faker.text(max_nb_chars=1000)
+    req = foi_request_factory(description=req_text)
+    foi_message_factory(
+        request=req,
+        is_response=True,
+        timestamp=datetime(2022, 1, 1),
+        plaintext="Some random response text",
+        plaintext_redacted="Some random response text",
+    )
+    foi_message_factory(
+        request=req,
+        is_response=False,
+        timestamp=datetime(2022, 1, 5),
+        plaintext=f"To whom it may concern\n\n{req_text}\n\nGreetings",
+        plaintext_redacted=f"To whom it may concern\n\n{req_text}\n\nGreetings",
+    )
+    return req
+
+
+@pytest.fixture
+def req_with_ordered_messages(
+    foi_request_factory, foi_message_factory, faker
+) -> FoiRequest:
+    req_text = faker.text(max_nb_chars=1000)
+    req = foi_request_factory(description=req_text)
+
+    foi_message_factory(
+        request=req,
+        is_response=False,
+        timestamp=datetime(2022, 1, 1),
+        plaintext=f"To whom it may concern\n\n{req_text}\n\nGreetings",
+        plaintext_redacted=f"To whom it may concern\n\n{req_text}\n\nGreetings",
+    )
+    foi_message_factory(
+        request=req,
+        is_response=True,
+        timestamp=datetime(2022, 1, 5),
+        plaintext="Some random response text",
+        plaintext_redacted="Some random response text",
+    )
+    return req
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "req_fixture", ["req_with_ordered_messages", "req_with_unordered_messages"]
+)
+def test_message_highlight(client: Client, req_fixture: str, request):
+    """
+    Test that highlighting works (even if the message with the request content is not the first message)
+    """
+    req = request.getfixturevalue(req_fixture)
+    response = client.get(req.get_absolute_url())
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert req.description in content
+
+    assertInHTML(
+        f'<div class="highlight">{req.description}</div>',
+        content,
+    )
