@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase
 
+from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import PublicBody
 from froide.team.models import Team
 
@@ -148,3 +149,7 @@ class FoiProject(models.Model):
 
         self.request_count = len(requests)
         self.save()
+
+    def get_description(self):
+        user_replacements = self.user.get_redactions()
+        return redact_plaintext(self.description, user_replacements=user_replacements)

@@ -8,7 +8,7 @@
 
 {% block title %}{{ object.title }}{% endblock %}
 
-{% block metadescription %}{{ object.description }}{% endblock %}
+{% block metadescription %}{{ object.get_description }}{% endblock %}
 
 {% block extra_head %}
   {% if not object.private %}

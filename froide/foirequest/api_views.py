@@ -301,6 +301,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True, view_name="api:campaign-detail", lookup_field="pk"
     )
     tags = TagListField()
+    description = serializers.CharField(source="get_description")
 
     class Meta:
         model = FoiRequest
