@@ -858,6 +858,12 @@ class FoiRequest(models.Model):
             return None
         return (mes.timestamp - self.first_message).days
 
+    @property
+    def first_outgoing_message(self):
+        sent_msg = self.sent_messages()
+        if sent_msg:
+            return sent_msg[0]
+
 
 def get_absolute_short_url(pk):
     return reverse("foirequest-shortlink", kwargs={"obj_id": pk})

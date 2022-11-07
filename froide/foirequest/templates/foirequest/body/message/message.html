@@ -143,8 +143,8 @@
       {% include "foirequest/body/message/attachments/attachments.html" %}
 
       {# text #}
-      {% if forloop.counter0 == 0 %}
-        {# Render first message with highlight, cannot be hidden #}
+      {% if message == object.first_outgoing_message %}
+        {# First outgoing message should (🤞) contain the request-message, render with highlight, cannot be hidden #}
         <div class="alpha-message__content-text">{% highlight_request message request %}</div>
       {% else %}
 
