@@ -521,11 +521,31 @@ class MessageEditMixin(forms.Form):
 
     def set_data_on_message(self, message):
         # TODO: Check if timezone support is correct
-        message.timestamp = datetime.datetime.combine(
+        uploaded_date_midday = datetime.datetime.combine(
             self.cleaned_data["date"],
-            datetime.datetime.now().time(),
+            datetime.time(12, 00, 00),
             tzinfo=timezone.get_current_timezone(),
         )
+
+        # The problem we have when uploading postal messages is that they do not have a time, so we
+        # need to invent one. 12am is a good assumption, however if we already have messages on this
+        # date, we need to add it *after* all those messages
+        # Example: User sends a foi request on 2011-01-01 at 3pm, the public body is fast and sends
+        # out the reply letter on the same day. If we would assume 12am as the letter time, we would
+        # place the postal reply earlier than the users message
+        possible_message_timestamps = [
+            msg.timestamp + datetime.timedelta(seconds=1)
+            for msg in self.foirequest.messages
+            if msg.timestamp.date() == self.cleaned_data["date"]
+        ] + [uploaded_date_midday]
+
+        message.timestamp = max(possible_message_timestamps)
+
+        # If the last message on that date was sent out 1 sec before midnight, there is no good way
+        # to place the postal reply, so just assume midday
+        if message.timestamp.date() != self.cleaned_data["date"]:
+            message.timestamp = uploaded_date_midday
+
         message.subject = self.cleaned_data.get("subject", "")
         user_replacements = self.foirequest.user.get_redactions()
         subject_redacted = redact_subject(message.subject, user_replacements)
