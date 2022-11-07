@@ -12,7 +12,7 @@
 
 {% block title %}{{ object.title }}{% endblock %}
 
-{% block metadescription %}{{ object.description }}{% endblock %}
+{% block metadescription %}{{ object.get_description }}{% endblock %}
 
 {% block extra_head %}
   {% if not object.is_foi or object.same_as %}
@@ -23,13 +23,13 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="og:title" content="{{ object.title }}">
-  <meta property="og:description" content="{{ object.description }}">
+  <meta property="og:description" content="{{ object.get_description }}">
 
 
   {# Twitter #}
   <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
   <meta property="twitter:title" content="{{ object.title }}">
-  <meta property="twitter:description" content="{{ object.description }}">
+  <meta property="twitter:description" content="{{ object.get_description }}">
   {% block share_image %}
     <meta property="twitter:card" content="summary">
     {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
