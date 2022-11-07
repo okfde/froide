@@ -2,7 +2,7 @@ import copy
 import os
 import re
 import zipfile
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from email.parser import BytesParser as Parser
 from io import BytesIO
 from unittest import mock
@@ -18,6 +18,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pytest
+import time_machine
 from pytest_django.asserts import assertContains, assertFormError, assertNotContains
 
 from froide.foirequest.foi_mail import (
@@ -2100,3 +2101,51 @@ def test_package(world):
     assert len(filenames) == len(zip_names)
     for zname, fname in zip(zip_names, filenames):
         assert bool(re.match(r"^%s$" % fname, zname))
+
+
+@pytest.mark.django_db
+def test_postal_after_last(world, client, pb, faker):
+    """
+    Test that the postal upload sets the datetime of the uploaded message *after* the last message
+    that already exists on that day
+    """
+
+    with time_machine.travel(datetime(2011, 1, 1, 15, 00, 00), tick=False):
+        client.login(email="info@fragdenstaat.de", password="froide")
+        pb = PublicBody.objects.all()[0]
+        post = {
+            "subject": "Totally Random Request",
+            "body": "This is another test body",
+            "publicbody": str(pb.pk),
+            "public": "on",
+        }
+        response = client.post(reverse("foirequest-make_request"), post)
+        assert response.status_code == 302
+        req = FoiRequest.objects.get(title=post["subject"])
+        response = client.get(reverse("foirequest-show", kwargs={"slug": req.slug}))
+        assert response.status_code == 200
+        message = req.foimessage_set.all()[0]
+
+    with time_machine.travel(datetime(2011, 1, 2, 10, 00, 00), tick=False):
+        post = QueryDict(mutable=True)
+        msg_text = faker.text()
+        post.update(
+            {
+                "postal_reply-date": "2011-01-01",
+                "postal_reply-sender": "Some Sender",
+                "postal_reply-subject": "",
+                "postal_reply-text": msg_text,
+                "postal_reply-publicbody": str(pb.pk),
+            }
+        )
+        response = client.post(
+            reverse("foirequest-add_postal_reply", kwargs={"slug": req.slug}), post
+        )
+        assert response.status_code == 302
+
+    msg_queryset = req.foimessage_set.filter(plaintext=msg_text)
+    assert msg_queryset.count() == 1
+    created_msg = msg_queryset.get()
+    assert created_msg.timestamp > message.timestamp
+    assert created_msg.timestamp.date() == date(2011, 1, 1)
+    message = req.foimessage_set.all()[1]
