@@ -1,5 +1,5 @@
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/mixins";
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/mixins';
 
 /* Bootstrap Theme */
 
@@ -62,21 +62,21 @@ $spacer: 1rem;
 $spacers: (
   0: 0,
   1: (
-    $spacer * 0.25,
+    $spacer * 0.25
   ),
   2: (
-    $spacer * 0.5,
+    $spacer * 0.5
   ),
   3: $spacer,
   4: (
-    $spacer * 1.5,
+    $spacer * 1.5
   ),
   5: (
-    $spacer * 3,
+    $spacer * 3
   ),
   6: (
-    $spacer * 4,
-  ),
+    $spacer * 4
+  )
 );
 
 // Grid containers
@@ -85,7 +85,7 @@ $container-max-widths: (
   sm: 540px,
   md: 780px,
   lg: 960px,
-  xl: 1140px,
+  xl: 1140px
 );
 
 // Typography
@@ -105,20 +105,12 @@ $box-shadow-gray-sm: 2px 2px 0 transparentize($gray-300, 0.6);
 $box-shadow-yellow: 7px 7px 0 transparentize($yellow-300, 0.85);
 $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
-@import "bootstrap/scss/variables";
+@import 'bootstrap/scss/variables';
 
 :root {
   --shadow-blue: #{transparentize($blue-30, 0.85)};
   --shadow-gray: #{transparentize($gray-300, 0.6)};
   --shadow-yellow: #{transparentize($yellow-300, 0.85)};
-
-  @each $color, $value in $colors {
-    --#{$color}: #{$value};
-  }
-
-  @each $color, $value in $theme-colors {
-    --#{$color}: #{$value};
-  }
 }
 
 /* Bootstrap theme end*/
@@ -126,4 +118,4 @@ $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 // Other colors
 $highlight-yellow: #fffc78;
 
-$breadcrumb-divider: quote("›");
+$breadcrumb-divider: quote('›');
