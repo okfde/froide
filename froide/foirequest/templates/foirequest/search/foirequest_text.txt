@@ -1,6 +1,6 @@
 {{ object.title }}
 
-{{ object.description }}
+{{ object.get_description }}
 
 {{ object.get_resolution_display }} {{ object.refusal_reason }}
 
