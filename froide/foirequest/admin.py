@@ -188,6 +188,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         ("user", ForeignKeyFilter),
         ("public_body", ForeignKeyFilter),
         ("project", ForeignKeyFilter),
+        ("tags", ForeignKeyFilter),
         make_greaterzerofilter("costs", _("Costs given")),
         ("law", LawRelatedFieldListFilter),
         "refusal_reason",
