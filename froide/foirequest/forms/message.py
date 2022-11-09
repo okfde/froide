@@ -510,7 +510,7 @@ class MessageEditMixin(forms.Form):
             raise forms.ValidationError(
                 _("Your reply date is in the future, that is not possible.")
             )
-        if date < self.foirequest.first_message.date():
+        if date < self.foirequest.created_at.date():
             raise forms.ValidationError(
                 _(
                     "Your reply date is before the request was made, "

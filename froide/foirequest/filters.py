@@ -228,8 +228,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         widget=forms.HiddenInput(),
     )
 
-    first = django_filters.DateFromToRangeFilter(
-        method="filter_first",
+    created = django_filters.DateFromToRangeFilter(
+        method="filter_created",
         widget=DateRangeWidget,
     )
     last = django_filters.DateFromToRangeFilter(
@@ -239,8 +239,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         choices=[
             ("-last", _("last message (newest first)")),
             ("last", _("last message (oldest first)")),
-            ("-first", _("request date (newest first)")),
-            ("first", _("request date (oldest first)")),
+            ("-created", _("request date (newest first)")),
+            ("created", _("request date (oldest first)")),
         ],
         label=_("sort"),
         empty_label=_("default sort"),
@@ -259,7 +259,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             "classification",
             "tag",
             "publicbody",
-            "first",
+            "created",
         ]
 
     def __init__(self, *args, **kwargs):
@@ -303,14 +303,14 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         filtered_qs = qs.filter(user=all_members)
         return filtered_qs
 
-    def filter_first(self, qs, name, value):
+    def filter_created(self, qs, name, value):
         range_kwargs = {}
         if value.start is not None:
             range_kwargs["gte"] = value.start
         if value.stop is not None:
             range_kwargs["lte"] = value.stop
 
-        return qs.filter(Q("range", first_message=range_kwargs))
+        return qs.filter(Q("range", created_at=range_kwargs))
 
     def filter_last(self, qs, name, value):
         range_kwargs = {}

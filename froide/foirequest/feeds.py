@@ -74,7 +74,7 @@ class LatestFoiRequestsFeed(Feed):
         return self.make_url(self.url_name)
 
     def items(self):
-        return self.items.order_by("-first_message")[:15]
+        return self.items.order_by("-created_at")[:15]
 
     @clean_feed_output
     def item_title(self, item):
@@ -92,7 +92,7 @@ class LatestFoiRequestsFeed(Feed):
         return linebreaksbr(item.get_description())
 
     def item_pubdate(self, item):
-        return item.first_message
+        return item.created_at
 
 
 class LatestFoiRequestsFeedAtom(LatestFoiRequestsFeed):

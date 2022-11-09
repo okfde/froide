@@ -53,7 +53,7 @@ class OrganizationDetailView(DetailView):
             user__private=False
         ).values_list("user_id", flat=True)
         foirequests = FoiRequest.published.filter(user__in=public_members)
-        return foirequests.order_by("-first_message")[:10]
+        return foirequests.order_by("-created_at")[:10]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

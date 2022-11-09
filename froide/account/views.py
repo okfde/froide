@@ -198,7 +198,7 @@ class ProfileView(DetailView):
 
         aggregates = foirequests.aggregate(
             count=models.Count("id"),
-            first_date=models.Min("first_message"),
+            first_date=models.Min("created_at"),
             successful=models.Count(
                 "id",
                 filter=models.Q(
@@ -251,7 +251,7 @@ class ProfileView(DetailView):
 
         ctx.update(
             {
-                "foirequests": foirequests.order_by("-first_message")[:10],
+                "foirequests": foirequests.order_by("-created_at")[:10],
                 "aggregates": aggregates,
                 "campaigns": campaigns,
                 "top_followers": top_followers,

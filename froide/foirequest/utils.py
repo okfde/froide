@@ -45,7 +45,7 @@ class PublicBodyEmailInfo:
         return self.label if self.label is not None else self.name
 
 
-def throttle(qs, throttle_config, date_param="first_message"):
+def throttle(qs, throttle_config, date_param="created_at"):
     if throttle_config is None:
         return False
 

@@ -93,7 +93,7 @@
       {# date #}
       <li class="info-box__list-item">
         <div class="info-box__list-label">{% blocktrans %}Date{% endblocktrans %}</div>
-        <div class="info-box__list-value">{{ object.first_message|date:"j. F Y" }}</div>
+        <div class="info-box__list-value">{{ object.created_at|date:"j. F Y" }}</div>
       </li>
 
       {# due date #}

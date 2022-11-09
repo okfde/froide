@@ -313,7 +313,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             "due_date",
             "resolved_on",
             "last_message",
-            "first_message",
+            "created_at",
             "status",
             "public_body",
             "resolution",
@@ -397,12 +397,8 @@ class FoiRequestFilter(filters.FilterSet):
         lookup_expr="isnull",
         method="campaign_filter",
     )
-    first_message_after = filters.DateFilter(
-        field_name="first_message", lookup_expr="gte"
-    )
-    first_message_before = filters.DateFilter(
-        field_name="first_message", lookup_expr="lt"
-    )
+    created_at_after = filters.DateFilter(field_name="created_at", lookup_expr="gte")
+    created_at_before = filters.DateFilter(field_name="created_at", lookup_expr="lt")
     has_same = filters.BooleanFilter(
         field_name="same_as", lookup_expr="isnull", exclude=True
     )
