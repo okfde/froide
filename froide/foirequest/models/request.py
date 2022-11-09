@@ -2,6 +2,7 @@ import json
 import re
 from collections import namedtuple
 from datetime import timedelta
+from typing import TYPE_CHECKING, Optional
 
 import django.dispatch
 from django.conf import settings
@@ -25,6 +26,9 @@ from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
 from froide.team.models import Team
 
 from .project import FoiProject
+
+if TYPE_CHECKING:
+    from .message import FoiMessage
 
 MODERATOR_CLASSIFICATION_OFFSET = timedelta(days=31)
 
@@ -76,7 +80,7 @@ class FoiRequestManager(CurrentSiteManager):
 
     def get_throttle_filter(self, qs, user, extra_filters=None):
         qs = qs.filter(user=user)
-        return qs, "first_message"
+        return qs, "created_at"
 
     def delete_private_requests(self, user):
         if not user:
@@ -320,9 +324,7 @@ class FoiRequest(models.Model):
         Team, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Team")
     )
 
-    first_message = models.DateTimeField(
-        _("Date of first message"), blank=True, null=True
-    )
+    created_at = models.DateTimeField(_("Created at"), blank=True, null=True)
     last_message = models.DateTimeField(
         _("Date of last message"), blank=True, null=True
     )
@@ -856,13 +858,20 @@ class FoiRequest(models.Model):
                 break
         if final is None or mes is None:
             return None
-        return (mes.timestamp - self.first_message).days
+        return (mes.timestamp - self.created_at).days
 
     @property
-    def first_outgoing_message(self):
+    def first_outgoing_message(self) -> Optional["FoiMessage"]:
         sent_msg = self.sent_messages()
         if sent_msg:
             return sent_msg[0]
+
+    @property
+    def first_message(self):
+        if self.first_outgoing_message:
+            return self.first_outgoing_message.timestamp
+        else:
+            return self.created_at
 
 
 def get_absolute_short_url(pk):

@@ -647,7 +647,7 @@ def test_postal_reply(world, client, pb):
     message = req.foimessage_set.all()[0]
     message.timestamp = datetime(2011, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
     message.save()
-    req.first_message = message.timestamp
+    req.created_at = message.timestamp
     req.save()
 
     file_size = os.path.getsize(factories.TEST_PDF_PATH)
@@ -1546,7 +1546,7 @@ def test_resolution(world, client):
     assert req.costs == 0.0
     assert req.status == FoiRequest.STATUS.RESOLVED
     assert req.resolution == FoiRequest.RESOLUTION.SUCCESSFUL
-    assert req.days_to_resolution() == (mes.timestamp - req.first_message).days
+    assert req.days_to_resolution() == (mes.timestamp - req.created_at).days
 
 
 @pytest.mark.django_db

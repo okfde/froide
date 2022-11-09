@@ -1,4 +1,4 @@
-{% load i18n %}{% autoescape off %}{% blocktrans with title=foirequest.title name=foirequest.user.get_full_name due=due date=foirequest.first_message|date:"SHORT_DATE_FORMAT" num=foirequest.pk %}Dear Sir or Madam,
+{% load i18n %}{% autoescape off %}{% blocktrans with title=foirequest.title name=foirequest.user.get_full_name due=due date=foirequest.created_at|date:"SHORT_DATE_FORMAT" num=foirequest.pk %}Dear Sir or Madam,
 
 My Freedom of Information request "{{ title }}" ({{ date }}, #{{ num }}) was not answered in the time defined by law and is now {{ due }} late.
 Please update me on the status of my request as soon as possible.

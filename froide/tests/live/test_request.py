@@ -162,7 +162,7 @@ def test_make_logged_in_request_too_many(
     for _i in range(5):
         req = foi_request_factory(
             user=dummy_user,
-            first_message=timezone.now(),
+            created_at=timezone.now(),
         )
         foi_message_factory(request=req, is_response=False, sender_user=dummy_user)
     do_login(page, live_server)
@@ -244,7 +244,7 @@ def test_set_status(
     user = User.objects.get(username="dummy")
     req = foi_request_factory(
         user=user,
-        first_message=timezone.now(),
+        created_at=timezone.now(),
         status="resolved",
         resolution=from_resolution,
     )

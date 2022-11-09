@@ -175,7 +175,7 @@ class CreateRequestService(BaseService):
             language=data.get("language", ""),
             site=Site.objects.get_current(),
             reference=data.get("reference", ""),
-            first_message=now,
+            created_at=now,
             last_message=now,
             project=data.get("project"),
             project_order=data.get("project_order"),
@@ -381,12 +381,12 @@ class ReceiveEmailService(BaseService):
             message.timestamp = timezone.now()
         else:
             if email.date < foirequest.first_message:
-                # Mail timestamp is earlier than first message due to bad time on mail server
+                # Mail timestamp is earlier than first outgoing message due to bad time on mail server
                 message.timestamp = timezone.now()
             else:
                 message.timestamp = email.date
 
-        # if the message timestamp is still before or equal request start
+        # if the message timestamp is still before or equal first outgoing message
         if message.timestamp <= foirequest.first_message:
             # bump it by one second
             message.timestamp = foirequest.first_message + timedelta(seconds=1)

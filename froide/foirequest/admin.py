@@ -163,7 +163,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     ]
     list_display = (
         "title",
-        "first_message",
+        "created_at",
         "secret_address",
         "request_page",
         "public_body",
@@ -173,7 +173,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     )
     list_filter = (
         "jurisdiction",
-        "first_message",
+        "created_at",
         "last_message",
         "status",
         "resolution",
@@ -195,7 +195,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
     )
     search_fields = ["title", "description", "secret_address", "reference"]
     ordering = ("-last_message",)
-    date_hierarchy = "first_message"
+    date_hierarchy = "created_at"
 
     actions = [
         "mark_checked",
@@ -409,7 +409,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
                 mes.timestamp = timezone.now()
                 if req.law:
                     req.due_date = req.law.calculate_due_date()
-                req.first_message = mes.timestamp
+                req.created_at = mes.timestamp
 
             req.is_blocked = False
             req.save()

@@ -54,7 +54,7 @@ class FoiRequestFactory(DjangoModelFactory):
     status = ""
     visibility = 2
     user = factory.LazyAttribute(lambda o: UserFactory())
-    first_message = timezone.now() - timedelta(days=14)
+    created_at = timezone.now() - timedelta(days=14)
     last_message = timezone.now() - timedelta(days=2)
     resolved_on = None
     due_date = timezone.now() + timedelta(days=14)

@@ -31,7 +31,7 @@ def foirequest_with_msg(world):
     req = factories.FoiRequestFactory.create(
         site=world,
         secret_address=secret_address,
-        first_message=date,
+        created_at=date,
         last_message=date,
     )
     factories.FoiMessageFactory.create(request=req, timestamp=date)
