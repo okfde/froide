@@ -199,7 +199,7 @@ class DummyExpiringKeysManager(BaseExpiringKeysManager):
 
     async def remove_key_value(self, key, value):
         try:
-            if self.keys[self.prefix][key] == value:
+            if self.keys[self.prefix][key][1] == value:
                 del self.keys[self.prefix][key]
         except KeyError:
             pass
