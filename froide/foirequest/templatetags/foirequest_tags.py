@@ -117,7 +117,7 @@ def highlight_request(message, request):
 def render_message_content(message, authenticated_read=False, render_footer=True):
     cached_content = message.get_cached_rendered_content(authenticated_read)
     if cached_content is not None:
-        return cached_content
+        return mark_safe(cached_content)
 
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
