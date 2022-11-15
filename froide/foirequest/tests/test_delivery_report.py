@@ -1,11 +1,10 @@
 from io import StringIO
-from unittest import mock
 
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
-from ..delivery import DeliveryReport, PostfixDeliveryReporter
+from ..delivery import PostfixDeliveryReporter
 from . import factories
 
 log_string = """
@@ -41,39 +40,3 @@ class PostfixDeliveryReportTest(TestCase):
         result = pdl.search_log(log_file, sender, recipient, timestamp)
         self.assertEqual(result.status, "sent")
         self.assertEqual(result.message_id, "20171211133019.12503.3873@fragdenstaat.de")
-
-    @mock.patch(
-        "froide.foirequest.delivery.get_delivery_report",
-        lambda a, b, c, extended=False: DeliveryReport(
-            "loglines", None, "sent", "message-id"
-        ),
-    )
-    def test_delivery_report_sent(self):
-        mes = factories.FoiMessageFactory.create(is_response=False)
-        mes.check_delivery_status()
-        self.assertIsNotNone(mes.deliverystatus)
-        ds = mes.get_delivery_status()
-        self.assertEqual(ds.status, "sent")
-        self.assertEqual(mes.email_message_id, "message-id")
-
-    def test_delivery_report_unavailable(self):
-        mock_obj = mock.Mock(return_value=None)
-        mes = factories.FoiMessageFactory.create(is_response=False)
-        with mock.patch("froide.foirequest.delivery.get_delivery_report", mock_obj):
-            mes.check_delivery_status(count=0)
-
-        self.assertEqual(mock_obj.call_count, 7)
-        self.assertIsNone(mes.get_delivery_status())
-
-    def test_delivery_report_deferred(self):
-        mock_obj = mock.Mock(
-            return_value=DeliveryReport("loglines", None, "deferred", "message-id-2")
-        )
-        mes = factories.FoiMessageFactory.create(is_response=False)
-        with mock.patch("froide.foirequest.delivery.get_delivery_report", mock_obj):
-            mes.check_delivery_status(count=0)
-
-        self.assertEqual(mock_obj.call_count, 7)
-        ds = mes.get_delivery_status()
-        self.assertEqual(ds.status, "deferred")
-        self.assertEqual(mes.email_message_id, "message-id-2")

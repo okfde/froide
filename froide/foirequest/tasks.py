@@ -13,7 +13,7 @@ from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
 from .foi_mail import _fetch_mail, _process_mail
-from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
+from .models import FoiAttachment, FoiProject, FoiRequest
 from .notifications import batch_update_requester, send_classification_reminder
 
 logger = logging.getLogger(__name__)
@@ -61,11 +61,9 @@ def classification_reminder():
 
 @celery_app.task
 def check_delivery_status(message_id, count=None, extended=False):
-    try:
-        message = FoiMessage.objects.get(id=message_id)
-    except FoiMessage.DoesNotExist:
-        return
-    message.check_delivery_status(count=count, extended=extended)
+    # Keep until task queue is empty
+    # Replaced with froide.helper.tasks.check_mail_log
+    pass
 
 
 @celery_app.task
