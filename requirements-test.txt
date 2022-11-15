@@ -322,7 +322,7 @@ phonenumbers==8.12.25
     # via -r requirements.in
 pikepdf==5.6.1
     # via django-filingcabinet
-pillow==9.2.0
+pillow==9.3.0
     # via
     #   -r requirements.in
     #   cairosvg
