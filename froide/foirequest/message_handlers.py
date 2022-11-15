@@ -128,8 +128,3 @@ class EmailMessageHandler(MessageHandler):
                 last_update=timezone.now(),
             ),
         )
-
-        # Check delivery status in 2 minutes
-        from .tasks import check_delivery_status
-
-        check_delivery_status.apply_async((message.id,), {"count": 0}, countdown=2 * 60)

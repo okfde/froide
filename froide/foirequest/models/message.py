@@ -645,49 +645,6 @@ class FoiMessage(models.Model):
             self._delivery_status = None
         return self._delivery_status
 
-    def check_delivery_status(self, count=None, extended=False):
-        if self.is_not_email or self.is_response:
-            return
-        if not self.sender_email or not self.recipient_email:
-            return
-
-        from froide.foirequest.delivery import get_delivery_report
-
-        from ..tasks import check_delivery_status
-
-        report = get_delivery_report(
-            self.sender_email, self.recipient_email, self.timestamp, extended=extended
-        )
-        if report is None:
-            if count is None or count > 5:
-                return
-            count += 1
-            check_delivery_status.apply_async(
-                (self.id,), {"count": count}, countdown=5**count * 60
-            )
-            return
-
-        if not self.email_message_id and report.message_id:
-            self.email_message_id = report.message_id
-            self.save()
-
-        ds, created = DeliveryStatus.objects.update_or_create(
-            message=self,
-            defaults=dict(
-                log=report.log,
-                status=report.status,
-                last_update=timezone.now(),
-            ),
-        )
-        if count is None or count > 5:
-            return
-
-        count += 1
-        if not ds.is_log_status_final():
-            check_delivery_status.apply_async(
-                (self.id,), {"count": count}, countdown=5**count * 60
-            )
-
     def send(self, **kwargs):
         from ..message_handlers import send_message
 
