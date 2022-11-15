@@ -75,6 +75,7 @@ MESSAGE_KIND_ICONS = {
 }
 
 MANUAL_MESSAGE_KINDS = {MessageKind.POST, MessageKind.PHONE, MessageKind.VISIT}
+MESSAGE_ID_PREFIX = "foimsg."
 
 
 class FoiMessage(models.Model):
@@ -537,7 +538,9 @@ class FoiMessage(models.Model):
         assert self.timestamp is not None
         domain = settings.FOI_MAIL_SERVER_HOST
         assert domain and "." in domain
-        return "<foimsg.{}.{}@{}>".format(self.id, self.timestamp.timestamp(), domain)
+        return "<{}{}.{}@{}>".format(
+            MESSAGE_ID_PREFIX, self.id, self.timestamp.timestamp(), domain
+        )
 
     def as_mime_message(self):
         klass = EmailMessage

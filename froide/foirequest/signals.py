@@ -16,6 +16,7 @@ from .models import (
     FoiProject,
     FoiRequest,
 )
+from .models.message import MESSAGE_ID_PREFIX
 from .utils import send_request_user_email, short_request_url
 
 became_overdue_email = mail_registry.register(
@@ -469,7 +470,7 @@ def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
 def save_delivery_status(
     message_id: Optional[str], status: str, log: List[str], **kwargs
 ):
-    if message_id is None or not message_id.startswith("<foimsg."):
+    if message_id is None or not message_id.startswith("<{}".format(MESSAGE_ID_PREFIX)):
         return
 
     try:
