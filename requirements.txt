@@ -100,7 +100,7 @@ deprecation==2.1.0
     # via pikepdf
 dj-database-url==0.5.0
     # via -r requirements.in
-django==4.0.7
+django==4.0.8
     # via
     #   -r requirements.in
     #   channels
@@ -353,9 +353,7 @@ twisted[tls]==22.4.0
 txaio==21.2.1
     # via autobahn
 typing-extensions==3.10.0.0
-    # via
-    #   pypdf2
-    #   twisted
+    # via twisted
 tzdata==2022.2
     # via django-celery-beat
 unicodecsv==0.14.1
