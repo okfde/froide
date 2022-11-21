@@ -513,13 +513,17 @@ export default {
     },
     setCurrentPage(pageNum) {
       this.currentPage = pageNum
+      // Reset dragging before loading new page
+      this.cancelDrag()
       return this.loadPage(pageNum)
     },
     toggleText() {
+      this.cancelDrag()
       this.textOnly = !this.textOnly
       this.textDisabled = !this.textOnly
     },
     toggleDrawing() {
+      this.cancelDrag()
       this.textDisabled = !this.textDisabled
       this.textOnly = !this.textDisabled
     },
@@ -694,7 +698,11 @@ export default {
       this.mouseMove(e, true)
     },
     touchCancel() {
+      this.cancelDrag()
+    },
+    cancelDrag() {
       this.startDrag = null
+      this.endDrag = null
     },
     mouseMove(e, override) {
       if (this.hasTouch && !override) {
@@ -715,6 +723,7 @@ export default {
         return
       }
       this.startDrag = this.getOffset(e)
+      this.endDrag = null
     },
     mouseUp(e, override) {
       if (this.hasTouch && !override) {
@@ -733,7 +742,7 @@ export default {
       if (this.startDrag === null) {
         return
       }
-
+      this.endDrag = null
       const endDrag = this.getOffset(e)
       if (
         Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
