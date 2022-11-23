@@ -40,7 +40,7 @@ class FoiRequestDocument(Document):
     campaign = fields.IntegerField()
 
     due_date = fields.DateField()
-    created_at = fields.DateField()
+    first_message = fields.DateField()
     last_message = fields.DateField()
 
     publicbody = fields.IntegerField(attr="public_body_id")
