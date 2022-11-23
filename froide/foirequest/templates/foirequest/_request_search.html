@@ -61,14 +61,14 @@
     <details>
       <summary>{% translate "More search options" %}</summary>
       <div class="row mt-2">
-        <div class="col-md-6">
+        <div class="col-md-8">
           <label class="form-label">
             {% trans "request date" %}
-            {{ form.first }}
+            {{ form.first_message }}
           </label>
         </div>
         {% if "sort" in show_filters %}
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label">
               {% trans "sort" %}
               {{ form.sort }}
