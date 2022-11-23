@@ -56,9 +56,8 @@
     {{ form.tag }}
     {{ form.user }}
   </div>
-
   {% if 'first' in show_filters or 'sort' in show_filters %}
-    <details>
+    <details{% if form.first.value.0 or form.first.value.1 or form.sort.value %} open{% endif %}>
       <summary>{% translate "More search options" %}</summary>
       <div class="row mt-2">
         <div class="col-md-8">
