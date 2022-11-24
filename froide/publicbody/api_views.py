@@ -130,6 +130,8 @@ class FoiLawSerializer(SimpleFoiLawSerializer):
 
 class FoiLawFilter(filters.FilterSet):
     id = filters.CharFilter(method="id_filter")
+    q = filters.CharFilter(method="search_filter")
+    meta = filters.BooleanFilter()
 
     class Meta:
         model = FoiLaw
@@ -142,6 +144,9 @@ class FoiLawFilter(filters.FilterSet):
         except ValueError:
             return queryset
         return queryset.filter(pk__in=ids)
+
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(translations__name__icontains=value)
 
 
 class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
@@ -159,6 +164,21 @@ class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
             "jurisdiction",
             "mediator",
         ).prefetch_related("combined", "translations")
+
+    @action(
+        detail=False, methods=["get"], url_path="autocomplete", url_name="autocomplete"
+    )
+    def autocomplete(self, request):
+        page = self.paginate_queryset(self.filter_queryset(self.get_queryset()))
+        return self.get_paginated_response(
+            [
+                {
+                    "value": x.pk,
+                    "label": str(x.name),
+                }
+                for x in page
+            ]
+        )
 
 
 class TreeMixin(object):
@@ -522,6 +542,15 @@ class PublicBodyViewSet(
     @action(detail=False, methods=["get"])
     def search(self, request):
         return self.search_view(request)
+
+    @action(
+        detail=False, methods=["get"], url_path="autocomplete", url_name="autocomplete"
+    )
+    def autocomplete(self, request):
+        page = self.paginate_queryset(self.filter_queryset(self.get_queryset()))
+        return self.get_paginated_response(
+            [{"value": t.id, "label": t.name} for t in page]
+        )
 
     def get_serializer_context(self):
         ctx = super(PublicBodyViewSet, self).get_serializer_context()
