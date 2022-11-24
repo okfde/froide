@@ -97,6 +97,8 @@ class AutocompleteMixin:
                 ctx["values"] = [{"label": x, "value": x} for x in parse_tags(value)]
             else:
                 if self.model:
+                    if not isinstance(value, list):
+                        value = [value]
                     value = self.model.objects.filter(pk__in=value)
                 ctx["values"] = [
                     {"label": str(x), "value": str(x) if self.use_tags else x.pk}
