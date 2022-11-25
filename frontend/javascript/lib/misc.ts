@@ -83,6 +83,19 @@ const toggleSlide = (el: HTMLElement, seconds = 0.3): void => {
   }
 }
 
+const slideUp = (el: HTMLElement, seconds = 0.3): void => {
+  const elMaxHeight = `${getHeight(el)}px`
+  el.style.maxHeight = elMaxHeight
+  el.setAttribute('data-max-height', elMaxHeight)
+
+  el.style.transition = `max-height ${seconds}s ease-in-out`
+  el.style.overflow = 'hidden'
+
+  requestAnimationFrame(() => {
+    el.style.maxHeight = '0'
+  })
+}
+
 const addText = (dataset: DOMStringMap): void => {
   if (!dataset.addtextfield) {
     return
@@ -112,4 +125,4 @@ const addText = (dataset: DOMStringMap): void => {
   textField.value = text
 }
 
-export { scrollToAnchor, toggleSlide, addText }
+export { scrollToAnchor, toggleSlide, slideUp, addText }
