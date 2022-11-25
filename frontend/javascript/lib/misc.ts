@@ -54,7 +54,7 @@ const getHeight = (el: HTMLElement): number => {
  * toggleSlide mimics the jQuery version of slideDown and slideUp
  * all in one function comparing the max-heigth to 0
  */
-const toggleSlide = (el: HTMLElement, seconds = 2): void => {
+const toggleSlide = (el: HTMLElement, seconds = 0.3): void => {
   let elMaxHeight = '0px'
 
   const dataMaxHeight = el.getAttribute('data-max-height')
