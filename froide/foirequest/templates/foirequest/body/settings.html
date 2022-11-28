@@ -33,7 +33,7 @@ aria-labelledby="settings-tab"
       <div class="row justify-content-center">
         <div class="col-md-8">
           <div role="tabpanel" class="tab-pane d-print-none" id="concrete-law">
-            <h4>{% trans "Set Law" %}</h4>
+            <h5>{% trans "Set Law" %}</h5>
             <form method="post" class="disable-submit" action="{% url 'foirequest-set_law' slug=object.slug %}">
               {% csrf_token %}
               <p>
@@ -52,7 +52,7 @@ aria-labelledby="settings-tab"
     <div class="container bg-white mt-3 p-3">
       <div class="row justify-content-center">
         <div class="col-md-8">
-          <h4>{% trans "Secret Short URL" %}</h4>
+          <h5>{% trans "Secret Short URL" %}</h5>
           <p class="small help">
             {% trans "This URL gives read access to others." %}
           </p>
