@@ -34,6 +34,7 @@ from froide.helper.email_parsing import parse_email
 from froide.helper.forms import get_fake_fk_form_class
 from froide.helper.widgets import TagAutocompleteWidget
 from froide.publicbody.models import FoiLaw
+from froide.team.models import Team
 
 from .models import (
     DeferredMessage,
@@ -95,6 +96,10 @@ assign_tag_to_foirequest_user = make_choose_object_action(
     execute_assign_tag_to_foirequest_user,
     _("Tag users of selected requests..."),
 )
+
+
+def execute_set_team(admin, request, queryset, action_obj):
+    queryset.update(team=action_obj)
 
 
 class FoiMessageInline(admin.StackedInline):
@@ -209,6 +214,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "publish",
         "unpublish",
         "add_to_project",
+        "set_team",
         "unblock_request",
         "close_requests",
         "attach_guidance_to_last_message",
@@ -468,6 +474,10 @@ class FoiRequestAdmin(admin.ModelAdmin):
         )
 
     add_to_project.short_description = _("Add selected requests to project...")
+
+    set_team = make_choose_object_action(
+        Team, execute_set_team, _("Set team for requests...")
+    )
 
 
 class FoiAttachmentInline(admin.TabularInline):
