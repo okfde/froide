@@ -372,13 +372,14 @@ class ConcreteLawForm(forms.Form):
         else:
             self.possible_laws = []
         self.fields["law"] = forms.TypedChoiceField(
-            label=_("Information Law"),
+            label=_("Law"),
             choices=(
                 [("", "-------")] + [(law.pk, law.name) for law in self.possible_laws]
             ),
             coerce=int,
             empty_value="",
             initial=foirequest.law.pk if foirequest.law else None,
+            widget=BootstrapSelect,
         )
 
     def clean(self):

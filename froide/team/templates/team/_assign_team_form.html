@@ -1,29 +1,24 @@
 {% load i18n %}
 {% load form_helper %}
 
-<div class="row justify-content-center">
-  <div class="col-md-8">
-    <form method="post" action="{{ submit_url }}">
-      {% csrf_token %}
-      <h5 class="card-title">{{ legend }}</h5>
-      <p>
-        {% if object.team %}
-          {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
-            Currently assigned team: <a href="{{ url }}">{{ name }}</a>.
-          {% endblocktrans %}
-        {% else %}
-          {% trans "Currently no team assigned." %}
-        {% endif %}
-      </p>
-      {% render_form form %}
-      <p>
-        <button type="submit" class="btn btn-primary">
-          {{ submit_button }}
-        </button>
-      </p>
-      <p class="mt-5">
-        <a href="{% url 'team-list' %}">{% trans "Create a new team." %}</a>
-      </p>
-    </form>
+
+<form method="post" action="{{ submit_url }}" class="tight-margin d-flex flex-column w-100">
+  <h5>{{ legend }}</h5>
+  {% csrf_token %}{# needs to be below <h5> for `tight-margin` class to work #}
+  <p>
+    {% if object.team %}
+      {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
+        Currently, the team <a href="{{ url }}">{{ name }}</a> is assigned to this project.
+      {% endblocktrans %}
+    {% else %}
+      {% trans "Currently no team assigned." %}
+    {% endif %}
+  </p>
+  {% render_form form %}
+  <div class="d-flex flex-wrap align-items-center mt-auto">
+    <button type="submit" class="btn btn-primary">
+      {{ submit_button }}
+    </button>
+    <a href="{% url 'team-list' %}" class="ms-3">{% trans "or create a new team" %}</a>
   </div>
-</div>
+</form>
