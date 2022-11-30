@@ -161,6 +161,8 @@ class FoiMessage(models.Model):
     )
     tags = TaggableManager(through=TaggedMessage, verbose_name=_("tags"), blank=True)
 
+    confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
+
     objects = FoiMessageManager()
 
     class Meta:

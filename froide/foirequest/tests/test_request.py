@@ -23,9 +23,6 @@ import pytest
 import time_machine
 from pytest_django.asserts import assertContains, assertFormError, assertNotContains
 
-import pytest
-
-from froide.foirequest.delivery import DeliveryReport
 from froide.foirequest.foi_mail import (
     add_message_from_email,
     generate_foirequest_files,
@@ -39,6 +36,7 @@ from froide.foirequest.models import (
     FoiRequest,
 )
 from froide.foirequest.models.message import MessageKind
+from froide.foirequest.signals import email_left_queue
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
 from froide.helper.content_urls import get_content_url
@@ -1763,7 +1761,6 @@ def test_extend_deadline(world, client):
     assert foirequest.due_date == foirequest.law.calculate_due_date(old_due_date, 2)
 
 
-@pytest.mark.no_delivery_mock
 @pytest.mark.django_db
 def test_resend_message(world, client):
     foirequest = FoiRequest.objects.all()[0]
@@ -2188,19 +2185,15 @@ def test_mail_confirmation_after_success(world, user, client, faker):
 
     # Now mark the email as sent
     foimessage = req.foimessage_set.get()
-    with mock.patch(
-        "froide.foirequest.delivery.get_delivery_report",
-        lambda *_args, **_kwargs: DeliveryReport(
-            log="loglines",
-            time_diff=None,
-            status="sent",
-            message_id=foimessage.email_message_id,
-        ),
-    ):
-        foimessage.check_delivery_status()
-        assert foimessage.deliverystatus is not None
-        ds = foimessage.get_delivery_status()
-        assert ds.status == "sent"
+
+    email_left_queue.send(
+        sender=__name__,
+        to=foimessage.recipient_email,
+        from_address=foimessage.sender_email,
+        message_id=foimessage.email_message_id,
+        status="sent",
+        log=[],
+    )
 
     # Expectation: The user should receive a confirmation that the request was sent
     assert len(mail.outbox) == 2
@@ -2232,22 +2225,29 @@ def test_mail_confirmation_after_success(world, user, client, faker):
     assert foimessage.plaintext in message.body
 
     # Action: Mark the email as sent
-    with mock.patch(
-        "froide.foirequest.delivery.get_delivery_report",
-        lambda *_args, **_kwargs: DeliveryReport(
-            log="loglines",
-            time_diff=None,
-            status="sent",
-            message_id=foimessage.email_message_id,
-        ),
-    ):
-        foimessage.check_delivery_status()
-        assert foimessage.deliverystatus is not None
-        ds = foimessage.get_delivery_status()
-        assert ds is not None
-        assert ds.status == "sent"
+    email_left_queue.send(
+        sender=__name__,
+        to=foimessage.recipient_email,
+        from_address=foimessage.sender_email,
+        message_id=foimessage.email_message_id,
+        status="sent",
+        log=[],
+    )
 
     # Expectation: The user should receive a confirmation that the message was sent
     assert len(mail.outbox) == 4
     confirmation_message = mail.outbox[3]
     assert "Your message was sent" in confirmation_message.subject
+
+    # Action: Mark the email as sent *again*
+    email_left_queue.send(
+        sender=__name__,
+        to=foimessage.recipient_email,
+        from_address=foimessage.sender_email,
+        message_id=foimessage.email_message_id,
+        status="sent",
+        log=[],
+    )
+
+    # Expectation: The user should not receive another confirmation that the message was sent
+    assert len(mail.outbox) == 4

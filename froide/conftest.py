@@ -7,8 +7,8 @@ import pytest
 from pytest_factoryboy import register
 
 from froide.account.factories import UserFactory
-from froide.foirequest import delivery
-from froide.foirequest.delivery import DeliveryReport
+from froide.foirequest.models import FoiMessage, FoiRequest
+from froide.foirequest.signals import email_left_queue
 from froide.foirequest.tests.factories import (
     FoiMessageFactory,
     FoiProjectFactory,
@@ -85,13 +85,20 @@ def email_always_send(monkeypatch, request):
     """Instantly mark all messages as delivered"""
     if "no_delivery_mock" in request.keywords:
         return
-    monkeypatch.setattr(
-        delivery,
-        "get_delivery_report",
-        lambda *_args, **_kwargs: DeliveryReport(
-            log="loglines",
-            time_diff=None,
+
+    def deliver_send_messages(sender, message: FoiMessage, **kwargs):
+        email_left_queue.send(
+            sender=sender,
+            to=message.recipient_email,
+            from_address=message.sender_email,
+            message_id=message.email_message_id,
             status="sent",
-            message_id="message_id",
-        ),
-    )
+            log=[],
+        )
+
+    FoiRequest.message_sent.connect(deliver_send_messages)
+
+    def remove_signal_handler():
+        FoiRequest.message_sent.disconnect(deliver_send_messages)
+
+    request.addfinalizer(remove_signal_handler)
