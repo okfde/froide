@@ -197,51 +197,6 @@ def send_foiproject_created_confirmation(sender, **kwargs):
     )
 
 
-@receiver(
-    FoiRequest.message_delivered, dispatch_uid="send_foimessage_sent_confirmation"
-)
-def send_foimessage_sent_confirmation(sender, message: FoiMessage = None, **kwargs):
-    if message.is_not_email:
-        # All non-email sent messages are not interesting to users.
-        # Don't inform them about it.
-        return
-    if message.is_bulk:
-        # Don't notify on bulk message sending
-        return
-
-    messages = sender.get_messages()
-    start_thread = False
-    if len(messages) == 1:
-        if sender.project_id is not None:
-            # Don't notify on first message in a project
-            return
-        subject = _("Your Freedom of Information Request was sent")
-        mail_intent = confirm_foi_request_sent_email
-        action_url = sender.get_absolute_domain_short_url()
-        start_thread = True
-    else:
-        subject = _("Your message was sent")
-        mail_intent = confirm_foi_message_sent_email
-        action_url = message.get_absolute_domain_short_url()
-
-    upload_url = sender.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", sender)
-    )
-
-    context = {
-        "foirequest": sender,
-        "user": sender.user,
-        "publicbody": message.recipient_public_body,
-        "message": message,
-        "action_url": action_url,
-        "upload_action_url": upload_url,
-    }
-
-    send_request_user_email(
-        mail_intent, sender, subject=subject, context=context, start_thread=start_thread
-    )
-
-
 # Updating public body request counts
 @receiver(
     FoiRequest.request_to_public_body, dispatch_uid="foirequest_increment_request_count"
@@ -488,3 +443,60 @@ def save_delivery_status(
             "last_update": timezone.now(),
         },
     )
+
+    if status == "sent":
+        send_foimessage_sent_confirmation(message)
+
+
+def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
+    request = message.request
+    if message.is_not_email:
+        # All non-email sent messages are not interesting to users.
+        # Don't inform them about it.
+        return
+    if message.is_bulk:
+        # Don't notify on bulk message sending
+        return
+
+    if message.confirmation_sent:
+        # Don't send a second confirmation for this message
+        return
+
+    messages = request.get_messages()
+    start_thread = False
+    if len(messages) == 1:
+        if request.project_id is not None:
+            # Don't notify on first message in a project
+            return
+        subject = _("Your Freedom of Information Request was sent")
+        mail_intent = confirm_foi_request_sent_email
+        action_url = request.get_absolute_domain_short_url()
+        start_thread = True
+    else:
+        subject = _("Your message was sent")
+        mail_intent = confirm_foi_message_sent_email
+        action_url = message.get_absolute_domain_short_url()
+
+    upload_url = request.user.get_autologin_url(
+        short_request_url("foirequest-upload_postal_message", request)
+    )
+
+    context = {
+        "foirequest": request,
+        "user": request.user,
+        "publicbody": message.recipient_public_body,
+        "message": message,
+        "action_url": action_url,
+        "upload_action_url": upload_url,
+    }
+
+    send_request_user_email(
+        mail_intent,
+        request,
+        subject=subject,
+        context=context,
+        start_thread=start_thread,
+    )
+
+    message.confirmation_sent = True
+    message.save(update_fields=["confirmation_sent"])
