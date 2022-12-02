@@ -356,6 +356,17 @@ def parse_email(bytesfile: BytesIO) -> ParsedEmail:
     body = "\n".join(body).strip()
     html = "\n".join(html).strip()
 
+    # Some mailclient put the html mail in the plaintext part as well 🙃
+    # If the body looks html-y and the conversion from html generates the same
+    # result, ignore the body
+    if (
+        body
+        and html
+        and body.strip().startswith("<")
+        and convert_html_to_text(html) == convert_html_to_text(body)
+    ):
+        body = convert_html_to_text(body)
+
     if not body and html:
         body = convert_html_to_text(html)
 

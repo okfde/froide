@@ -488,3 +488,11 @@ def test_closed(req_with_msgs):
     assert count_messages == FoiMessage.objects.filter(request=req_with_msgs).count()
     dms = DeferredMessage.objects.filter(recipient=recipient)
     assert len(dms) == 0
+
+
+@pytest.mark.parametrize("testfile", ["test_mail_14.txt", "test_mail_15.txt"])
+def test_handle_html_in_plaintext(testfile):
+    with open(p(testfile), "rb") as f:
+        mail = parse_email(f)
+    assert mail.html != mail.body
+    assert "<p>" not in mail.body
