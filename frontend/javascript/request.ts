@@ -136,6 +136,30 @@ const initRequestPage = (): void => {
       startTour(t.dataset.tour, t.dataset.tourdone)
     })
   })
+
+  initWriteMessageButtons()
+}
+
+function initWriteMessageButtons(): void {
+  document.querySelectorAll<HTMLElement>('[data-write-message]')?.forEach((t) =>
+    t.addEventListener('click', function () {
+      document.getElementById('write-message')?.scrollIntoView()
+      const formDataRaw = t?.dataset?.writeMessage
+      if (formDataRaw !== undefined) {
+        const formData: Record<string, string> = JSON.parse(
+          decodeURIComponent(formDataRaw)
+        )
+        for (const [k, v] of Object.entries(formData)) {
+          const elem = document.querySelector<HTMLInputElement>(
+            `[name=sendmessage-${k}]`
+          )
+          if (elem !== null) {
+            elem.value = v
+          }
+        }
+      }
+    })
+  )
 }
 
 const startTour = (

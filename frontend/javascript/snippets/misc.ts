@@ -1,4 +1,5 @@
 import { scrollToAnchor } from '../lib/misc'
+import { Modal } from 'bootstrap'
 
 const runOnPage = (): void => {
   document
@@ -87,6 +88,10 @@ const runOnPage = (): void => {
 
   document.querySelectorAll('.honigtopf input').forEach((input) => {
     input.removeAttribute('required')
+  })
+
+  document.querySelectorAll('.modal.modal-show-default').forEach((modal) => {
+    Modal.getOrCreateInstance(modal).show()
   })
 }
 
