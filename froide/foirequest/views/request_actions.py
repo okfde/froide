@@ -116,6 +116,8 @@ def set_status(request, slug):
         messages.add_message(
             request, messages.SUCCESS, _("Status of request has been updated.")
         )
+        if form.cleaned_data["resolution"] in ("user_withdrew", "user_withdrew_costs"):
+            request.session["show_withdrawal_popup"] = foirequest.id
         response = registry.run_hook(
             "post_status_set",
             request,

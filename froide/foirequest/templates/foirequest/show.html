@@ -76,6 +76,10 @@
       {% include "foirequest/header/tabs.html" %}
     </div>
 
+    {% if show_withdrawal_popup %}
+     {% include "foirequest/snippets/withdrawal_popup.html" %}
+    {% endif %}
+
     {# body, tabs content #}
     {% include "foirequest/body/body.html" %}
 

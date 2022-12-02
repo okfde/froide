@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="modal fade modal-show-default" tabindex="-1" id="withdrawalModal" aria-labelledby="withdrawalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="withdrawalModalLabel">{% trans "Withdraw Request?" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% trans "Please also inform the public body that you want to widthdraw your request by sending them a message."%}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary me-auto" data-bs-dismiss="modal">{% trans "I already told them" %}</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="withdrawalModalButton" data-write-message="{{ default_withdrawal_message }}">{% trans "Send message" %}</button>
+      </div>
+    </div>
+  </div>
+</div>

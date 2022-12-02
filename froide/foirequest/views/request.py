@@ -1,4 +1,8 @@
+import json
+from urllib.parse import quote
+
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 
@@ -8,6 +12,7 @@ from froide.helper.utils import render_403
 from ..auth import can_read_foirequest, can_write_foirequest, check_foirequest_auth_code
 from ..forms.preferences import message_received_tour_pref, request_page_tour_pref
 from ..models import FoiAttachment, FoiEvent, FoiRequest
+from ..utils import select_foirequest_template
 
 
 def shortlink(request, obj_id, url_path=""):
@@ -161,6 +166,26 @@ def get_foirequest_context(request, obj):
             )
         elif not preferences["foirequest_requestpage_tour"].value:
             context.update({"foirequest_requestpage_tour": get_requestpage_tour_data()})
+
+    context["show_withdrawal_popup"] = (
+        request.session.pop("show_withdrawal_popup", None) == obj.id
+    )
+    context["default_withdrawal_message"] = quote(
+        json.dumps(
+            {
+                "subject": _("Withdrawal of My FOI Request"),
+                "message": render_to_string(
+                    select_foirequest_template(
+                        obj, "foirequest/emails/withdrawal_reply.txt"
+                    ),
+                    {
+                        "foirequest": obj,
+                    },
+                ),
+            }
+        )
+    )
+
     return context
 
 
