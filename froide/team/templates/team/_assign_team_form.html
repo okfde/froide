@@ -5,6 +5,7 @@
 <form method="post" action="{{ submit_url }}" class="tight-margin d-flex flex-column w-100">
   <h5>{{ legend }}</h5>
   {% csrf_token %}{# needs to be below <h5> for `tight-margin` class to work #}
+  
   <p>
     {% if object.team %}
       {% blocktrans with name=object.team.name url=object.team.get_absolute_url %}
@@ -14,7 +15,9 @@
       {% trans "Currently no team assigned." %}
     {% endif %}
   </p>
+
   {% render_form form %}
+  
   <div class="d-flex flex-wrap align-items-center mt-auto">
     <button type="submit" class="btn btn-primary">
       {{ submit_button }}
