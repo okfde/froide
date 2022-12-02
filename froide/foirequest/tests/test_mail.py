@@ -98,6 +98,11 @@ def test_wrong_address(foirequest_with_msg):
     for manager in settings.MANAGERS:
         assert manager[1] in recipients
 
+    def test_invalid_mail_address(self):
+        with open(p("test_mail_14.txt"), "rb") as f:
+            mail = parse_email(f)
+            self.assertEqual('john.doe@example.com', mail.to[0][1])
+
 
 def test_inline_attachments():
     with open(p("test_mail_03.txt"), "rb") as f:

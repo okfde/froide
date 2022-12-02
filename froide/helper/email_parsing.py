@@ -267,11 +267,21 @@ def try_decoding(encoded, encoding=None):
     return decoded
 
 
+def check_mail(email: str):
+    # Credit for regex to Anđela Niketić at https://stackabuse.com/python-validate-email-address-with-regular-expressions-regex/
+    regex_mail = r"([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-[^-~ \t]|(\\[\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\.[-!#-'*+/-9=?A-Z^-~]+)*|\[[\t -Z^-~]*])"
+    if not re.search(regex_mail, email):
+        return False
+    return True
+
+
 def get_address_list(values):
     values = [parse_header_field(value) for value in values]
     address_list = getaddresses(values)
     fixed = []
     for addr in address_list:
+        if not check_mail(addr[1]):
+            continue
         fixed.append(EmailAddress(parse_header_field(addr[0]), addr[1]))
     return fixed
 
