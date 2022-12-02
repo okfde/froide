@@ -1,0 +1,52 @@
+From: <info-zentrum@baua.bund.de>
+To: <a.musterperson.123456789@foisite.example>
+Subject: Testsubject
+Content-Type: multipart/alternative;
+	boundary="=_boundary"
+MIME-Version: 1.0
+
+--=_boundary
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+
+<p>Sehr geehrte*r,</p>=0D=0A=0D=0A<p>systematische Reviews zum Thema sin=
+d nicht Bestandteil der hiesigen Akten und k&ouml;nnen nicht zur Verf&uu=
+ml;gung gestellt werden. </p>=0D=0A=0D=0A<p> </p>=0D=0A=0D=0A<p>Mit freu=
+ndlichen Gr&uuml;=DFen<br />=0D=0A<br />=0D=0A<br />=0D=0ABundesanstalt =
+f&uuml;r Arbeitsschutz und Arbeitsmedizin<br />=0D=0AInformationszentrum=
+<br />=0D=0AFriedrich-Henkel-Weg 1-25<br />=0D=0A44149 Dortmund<br />=0D=
+=0ATelefon: +49 231 9071-2071<br />=0D=0AFax: +49 231 9071-2070<br />=0D=
+=0AE-Mail: info-zentrum@baua.bund.de</p>
+
+--=_boundary
+Content-Type: text/html; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>body{font-family:Arial}h3.custom_style_title,.custom_=
+style_title{color:#000;font-family:Arial;font-weight:bold;text-decoratio=
+n:underline;margin-bottom:0}.custom_style_title_red{color:red;font-famil=
+y:Arial;font-weight:bold;text-decoration:underline}body#content,#content=
+ a{color:#00f;font-size:110%}body#content,#content p,.custom_style_text{=
+color:#000;font-weight:normal;text-decoration:none;font-family:Arial}.cu=
+stom_style_text_red{color:red;font-weight:normal;text-decoration:none;fo=
+nt-family:Arial}.custom_style_text_green{color:#396;font-weight:normal;t=
+ext-decoration:none;font-family:Arial}.custom_style_text_blue{color:#00f=
+;font-weight:normal;text-decoration:none;font-family:Arial}.custom_style=
+_yellow_marked{color:#000;font-weight:normal;text-decoration:none;backgr=
+ound-color:#ff0;font-family:Arial}a:link{color:blue}a:visited{color:blue=
+}a:focus{color:blue}a:hover{color:blue}a:active{color:blue}#div01>textar=
+ea,#div02>textarea,iframe,.cke_editable>textarea{font-size:110%}</style>=
+<!--[if gte mso 9]>=0A                         <style type=3D"text/css">=
+=0A                          h1,h2,h3,h4,h5,h6,p,a,span,td,strong{font-f=
+amily: Arial, Helvetica !important; font-size: 12pt !important;}=0A     =
+         </style>=0A            <![endif]-->=0A<!-- / Outlook --></head>=
+<p>Sehr geehrte*r,</p>=0D=0A=0D=0A<p>systematische Reviews zum Thema sin=
+d nicht Bestandteil der hiesigen Akten und k&ouml;nnen nicht zur Verf&uu=
+ml;gung gestellt werden. </p>=0D=0A=0D=0A<p> </p>=0D=0A=0D=0A<p>Mit freu=
+ndlichen Gr&uuml;=DFen<br />=0D=0A<br />=0D=0A<br />=0D=0ABundesanstalt =
+f&uuml;r Arbeitsschutz und Arbeitsmedizin<br />=0D=0AInformationszentrum=
+<br />=0D=0AFriedrich-Henkel-Weg 1-25<br />=0D=0A44149 Dortmund<br />=0D=
+=0ATelefon: +49 231 9071-2071<br />=0D=0AFax: +49 231 9071-2070<br />=0D=
+=0AE-Mail: info-zentrum@baua.bund.de</p></html>
+
+--=_boundary--
