@@ -3,6 +3,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.models import FoiProject, FoiRequest
 from froide.helper.widgets import BootstrapSelect
 
 from .models import Team, TeamMembership
@@ -106,4 +107,8 @@ class AssignTeamForm(forms.Form):
         team = self.cleaned_data["team"]
         self.instance.team = team
         self.instance.save()
+
+        if isinstance(self.instance, FoiProject):
+            FoiRequest.objects.filter(project=self.instance).update(team=team)
+
         return self.instance
