@@ -582,6 +582,7 @@ class Base(Configuration):
             r"^documents?$",
             r"^information$",
         ],
+        address_regex=None,
     )
 
     TESSERACT_DATA_PATH = values.Value("/usr/local/share/tessdata")

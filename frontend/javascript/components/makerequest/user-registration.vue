@@ -54,6 +54,9 @@
                 :class="{ 'is-invalid': errors.address }"
                 :placeholder="formFields.address.placeholder"
                 :required="requiresPostalAddress" />
+              <div v-if="!isAllowedAddress" class="mt-3 alert alert-warning">
+                {{ i18n.pleaseFollowAddressFormat }}
+              </div>
               <p v-for="e in errors.address" :key="e.message">
                 {{ e.message }}
               </p>
@@ -190,6 +193,12 @@ export default {
         return !this.defaultLaw.email_only
       }
       return true
+    },
+    isAllowedAddress() {
+      if (!this.address || !this.config.settings.address_regex) {
+        return true
+      }
+      return new RegExp(this.config.settings.address_regex).test(this.address)
     }
   }
 }
