@@ -136,6 +136,7 @@ class MakeRequestView(FormView):
                 "non_meaningful_subject_regex": settings.FROIDE_CONFIG.get(
                     "non_meaningful_subject_regex", []
                 ),
+                "address_regex": settings.FROIDE_CONFIG.get("address_regex", ""),
             },
             "url": {
                 "searchRequests": reverse("api:request-search"),
@@ -267,6 +268,10 @@ class MakeRequestView(FormView):
                 "enterMeaningfulSubject": _(
                     "Please enter a subject which describes the information you are requesting."
                 ),
+                "pleaseFollowAddressFormat": _(
+                    "Please enter an address in the following format: %(format)s",
+                )
+                % {"format": _("Street address,\nPost Code, City")},
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
