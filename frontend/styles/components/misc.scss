@@ -96,10 +96,11 @@ input.copy-text {
   }
 }
 
-.h-1em {
-  height: 1em;
-}
-
-.h-1-5em {
-  height: 1.5em;
+.partner-logos img,
+.partner-logo {
+  display: block;
+  width: 100%;
+  height: 5rem;
+  aspect-ratio: 3/2;
+  object-fit: contain;
 }
