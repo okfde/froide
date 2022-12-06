@@ -113,9 +113,6 @@ def set_status(request, slug):
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
         form.save(user=request.user)
-        messages.add_message(
-            request, messages.SUCCESS, _("Status of request has been updated.")
-        )
         response = registry.run_hook(
             "post_status_set",
             request,
