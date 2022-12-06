@@ -191,7 +191,7 @@ def make_project_public(request, foiproject):
     else:
         form = MakeProjectPublicForm(request.POST)
         if not form.is_valid():
-            return render_400()
+            return render_400(request)
         foiproject.make_public(
             publish_requests=form.cleaned_data["publish_requests"], user=request.user
         )
