@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-17 12:27+0200\n"
-"PO-Revision-Date: 2022-10-17 12:28+0200\n"
+"POT-Creation-Date: 2022-12-06 15:33+0100\n"
+"PO-Revision-Date: 2022-12-06 15:38+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -260,7 +260,7 @@ msgstr ""
 msgid "Mailing Address"
 msgstr "Postadresse"
 
-#: froide/account/forms.py
+#: froide/account/forms.py froide/foirequest/views/make_request.py
 msgid ""
 "Street address,\n"
 "Post Code, City"
@@ -1143,10 +1143,12 @@ msgstr[0] "eine Anfrage"
 msgstr[1] "%(count)s Anfragen"
 
 #: froide/account/templates/account/profile.html
+#: froide/organization/templates/organization/organization_detail.html
 msgid "Last requests"
 msgstr "Letzte Anfragen"
 
 #: froide/account/templates/account/profile.html
+#: froide/organization/templates/organization/organization_detail.html
 #, python-format
 msgid "See all requests of %(name)s"
 msgstr "Zeige alle Anfragen von %(name)s"
@@ -1708,6 +1710,7 @@ msgstr "Kommentare"
 #: froide/comments/forms.py froide/foirequest/models/attachment.py
 #: froide/foirequest/views/make_request.py froide/foisite/models.py
 #: froide/georegion/models.py froide/organization/forms.py
+#: froide/organization/templates/organization/organization_list_own.html
 #: froide/problem/views.py froide/publicbody/forms.py
 #: froide/publicbody/models.py froide/team/templates/team/team_list.html
 msgid "Name"
@@ -2172,6 +2175,10 @@ msgid "Add selected requests to project..."
 msgstr "Füge ausgewählte Anfragen zu Projekt hinzu.."
 
 #: froide/foirequest/admin.py
+msgid "Set team for requests..."
+msgstr "Weisen Sie diesen Anfragen ein Team zu…"
+
+#: froide/foirequest/admin.py
 msgid "Has delivery status"
 msgstr "Hat Zustellungsstatus"
 
@@ -2205,14 +2212,6 @@ msgstr "Hinweise generieren"
 #: froide/foirequest/admin.py froide/foirequest/models/message.py
 msgid "delivery status"
 msgstr "Zustellungsstatus"
-
-#: froide/foirequest/admin.py
-msgid "Selected messages are being checked for delivery."
-msgstr "Ausgewählte Nachrichten werden auf ihren Zustellungsstatus überprüft."
-
-#: froide/foirequest/admin.py
-msgid "Check delivery status"
-msgstr "Zustellungsstatus überprüfen"
 
 #: froide/foirequest/admin.py
 msgid "Message was send again."
@@ -2918,8 +2917,8 @@ msgid "Please give a resolution to this request"
 msgstr "Bitte geben Sie ein Ergebnis dieser Anfrage an"
 
 #: froide/foirequest/forms/request.py
-msgid "Information Law"
-msgstr "Informationsgesetz"
+msgid "Law"
+msgstr "Gesetz"
 
 #: froide/foirequest/models/attachment.py
 msgid "Belongs to message"
@@ -3695,9 +3694,9 @@ msgstr "Zusammenfassung"
 msgid "Visibility"
 msgstr "Sichtbarkeit"
 
-#: froide/foirequest/models/request.py
-msgid "Date of first message"
-msgstr "Datum der ersten Nachricht"
+#: froide/foirequest/models/request.py froide/publicbody/models.py
+msgid "Created at"
+msgstr "Erstellt am"
 
 #: froide/foirequest/models/request.py
 msgid "Date of last message"
@@ -3914,11 +3913,13 @@ msgstr "Anzahl eindeutiger Nutzer:innen:"
 #, python-format
 msgid ""
 "\n"
-"            Currently assigned project: <a href=\"%(url)s\">%(title)s</a>.\n"
-"          "
+"        Currently, the project <a href=\"%(url)s\">%(title)s</a> is "
+"assigned.\n"
+"      "
 msgstr ""
 "\n"
-"           Gerade zugewiesenes Projekt: <a href=\"%(url)s\">%(title)s</a>\n"
+"           Momentan ist das Projekt <a href=\"%(url)s\">%(title)s</a> "
+"zugewiesen.\n"
 "          "
 
 #: froide/foirequest/templates/foirequest/_assign_project_form.html
@@ -4468,6 +4469,7 @@ msgid "It will still go to your request here."
 msgstr "Es wird trotzdem an Ihre Anfrage zugestellt."
 
 #: froide/foirequest/templates/foirequest/body/body.html
+#: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
 msgid "Send message"
 msgstr "Nachricht versenden"
 
@@ -5285,6 +5287,7 @@ msgstr ""
 "%(name)s"
 
 #: froide/foirequest/templates/foirequest/emails/overdue_reply.txt
+#: froide/foirequest/templates/foirequest/emails/withdrawal_reply.txt
 msgid "-------- Forwarded Message --------"
 msgstr "-------- Weitergeleitete Nachricht --------"
 
@@ -5368,6 +5371,24 @@ msgstr ""
 "\n"
 "Grüße,\n"
 "%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/emails/withdrawal_reply.txt
+#, python-format
+msgid ""
+"Dear Sir or Madam,\n"
+"\n"
+"I hereby withdraw my Freedom of Information request \"%(title)s\" (%(date)s, "
+"#%(num)s).\n"
+"\n"
+"Sincerely yours,\n"
+"%(name)s"
+msgstr ""
+"Sehr geehrte Damen und Herren,\n"
+"\n"
+"hiermit ziehe ich meine Anfrage „%(title)s“ (%(date)s, #%(num)s) zurück.\n"
+"\n"
+"Mit freundlichen Grüßen\n"
+"%(name)s"
 
 #: froide/foirequest/templates/foirequest/events/status_changed.txt
 #, python-format
@@ -6310,6 +6331,22 @@ msgid_plural "%(counter)s identical requests"
 msgstr[0] "Eine identische Anfrage"
 msgstr[1] "%(counter)s identische Anfragen"
 
+#: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
+msgid "Withdraw Request?"
+msgstr "Anfrage zurückziehen?"
+
+#: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
+msgid ""
+"Please also inform the public body that you want to widthdraw your request "
+"by sending them a message."
+msgstr ""
+"Bitte informieren Sie auch die Behörde, dass Sie Ihre Anfrage zurückziehen "
+"wollen, indem Sie der Behörde eine Nachricht schicken."
+
+#: froide/foirequest/templates/foirequest/snippets/withdrawal_popup.html
+msgid "I already told them"
+msgstr "Mitteilung ist schon erfolgt"
+
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #, python-format
 msgid "Upload postal mail for “%(title)s”"
@@ -7013,6 +7050,12 @@ msgstr ""
 "möchten kurz beschreibt."
 
 #: froide/foirequest/views/make_request.py
+#, python-format
+#| msgid "Please send me the following information:"
+msgid "Please enter an address in the following format: %(format)s"
+msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
+
+#: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
 msgstr "Mit freundlichen Grüßen"
 
@@ -7210,6 +7253,10 @@ msgstr "Nachrichten versenden"
 #: froide/foirequest/views/project.py
 msgid "Messages are being sent now."
 msgstr "Nachrichten werden nun versendet."
+
+#: froide/foirequest/views/request.py
+msgid "Withdrawal of My FOI Request"
+msgstr "Zurückziehen meines IFG-Antrags"
 
 #: froide/foirequest/views/request.py
 msgid "👋 Goodbye!"
@@ -8246,6 +8293,14 @@ msgstr "brief-erstellen/<int:letter_id>/<int:message_id>/vorschau/"
 msgid "letter-sent/<int:letter_id>/<int:message_id>/"
 msgstr "brief-versendet/<int:letter_id>/<int:message_id>/"
 
+#: froide/organization/admin.py
+msgid "Show selected organizations in public list"
+msgstr "Zeige ausgewählte Organisationen in öffentlicher Liste"
+
+#: froide/organization/apps.py
+msgid "My organizations"
+msgstr "Meine Organisationen"
+
 #: froide/organization/forms.py
 msgid "Member already present in organization."
 msgstr "Das Mitglied gehört schon zur Organisation."
@@ -8315,10 +8370,13 @@ msgstr ""
 
 #: froide/organization/templates/organization/organization_detail.html
 #: froide/organization/templates/organization/organization_list.html
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/organization/templates/organization/organization_update_form.html
 msgid "Organizations"
 msgstr "Organisationen"
 
 #: froide/organization/templates/organization/organization_detail.html
+#: froide/organization/templates/organization/organization_update_form.html
 msgid "Edit Organization"
 msgstr "Organisation bearbeiten"
 
@@ -8326,9 +8384,71 @@ msgstr "Organisation bearbeiten"
 msgid "Organization Members"
 msgstr "Organisationsmitglieder"
 
+#: froide/organization/templates/organization/organization_join.html
+#, python-format
+msgid ""
+"\n"
+"        Organization “%(name)s” has invited you\n"
+"      "
+msgstr ""
+"\n"
+"             Organisation „%(name)s“ hat Sie eingeladen\n"
+"            "
+
+#: froide/organization/templates/organization/organization_join.html
+#: froide/team/templates/team/team_join.html
+#, python-format
+msgid ""
+"\n"
+"          This invite was sent to “%(email)s” which is different from the "
+"current account “%(account)s”!\n"
+"      "
+msgstr ""
+"\n"
+"        Diese Einladung wurde an „%(email)s“ gesendet, was nicht mit Ihrem "
+"aktuellen Konto „%(account)s“ identisch ist!\n"
+"      "
+
+#: froide/organization/templates/organization/organization_join.html
+#, python-format
+msgid ""
+"\n"
+"        Do you want to join this organization with the account "
+"“%(account)s”?\n"
+"      "
+msgstr ""
+"\n"
+"        Wollen Sie dieser Organisation mit Ihrem Konto „%(account)s“ "
+"beitreten?\n"
+"      "
+
+#: froide/organization/templates/organization/organization_join.html
+msgid "Join this organization"
+msgstr "Dieser Organisation beitreten"
+
 #: froide/organization/templates/organization/organization_list.html
 msgid "No organizations found."
 msgstr "Keine Organisation gefunden."
+
+#: froide/organization/templates/organization/organization_list_own.html
+msgid "Your Organizations"
+msgstr "Ihre Organisationen"
+
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/team/templates/team/team_list.html
+msgid "Your Role"
+msgstr "Ihre Funktion"
+
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/team/templates/team/team_list.html
+msgid "Members"
+msgstr "Mitglieder"
+
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/team/templates/team/team_join.html
+#: froide/team/templates/team/team_list.html
+msgid "Join this team"
+msgstr "Treten Sie diesem Team bei"
 
 #: froide/organization/templates/organization/organization_update_form.html
 #, python-format
@@ -8405,6 +8525,11 @@ msgstr "Einladung"
 #: froide/organization/templates/organization/organization_update_form.html
 msgid "Edit organization"
 msgstr "Organisation bearbeiten"
+
+#: froide/organization/urls.py
+msgctxt "url part"
+msgid "my/"
+msgstr "meine/"
 
 #: froide/organization/urls.py
 msgctxt "url part"
@@ -8909,6 +9034,10 @@ msgstr "Behörden mit dieser Klassifikation"
 msgid "Public bodies with this category"
 msgstr "Behörden mit dieser Kategorie"
 
+#: froide/publicbody/admin.py
+msgid "Public Body Admin"
+msgstr "Behörden-Admin"
+
 #: froide/publicbody/apps.py froide/publicbody/models.py
 #: froide/publicbody/templates/publicbody/base.html
 #: froide/publicbody/templates/publicbody/list.html
@@ -9314,10 +9443,6 @@ msgid "Updated by"
 msgstr "Aktualisiert von"
 
 #: froide/publicbody/models.py
-msgid "Created at"
-msgstr "Erstellt am"
-
-#: froide/publicbody/models.py
 msgid "Updated at"
 msgstr "Aktualisiert am"
 
@@ -9362,33 +9487,8 @@ msgid "Proposed Public Body Changes"
 msgstr "Vorgeschlagene Behördenänderungen"
 
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html
-msgid "Confirm this Public Body"
-msgstr "Bestätigen Sie diese Behörde"
-
-#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html
-msgid "Send message to creator"
-msgstr "Nachricht an Ersteller:in senden"
-
-#: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html
-#, python-format
-msgid ""
-"Dear %(user_name)s,\n"
-"  the public body “%(name)s” you proposed already exists. You can find it "
-"here:\n"
-"\n"
-"\n"
-"\n"
-"  All the Best\n"
-"  %(site_name)s"
-msgstr ""
-"Hallo %(user_name)s,\n"
-"die Behörde „%(name)s“, die Sie vorgeschlagen haben, existiert schon. Sie "
-"finden die Behörde hier:\n"
-"\n"
-"\n"
-"\n"
-"Beste Grüße\n"
-"%(site_name)s"
+msgid "Accept/reject this proposal"
+msgstr "Vorschlag annehmen/ablehnen"
 
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_form.html
 msgid "This public body's requests"
@@ -9837,6 +9937,11 @@ msgstr "Bitte sagen Sie uns Bescheid!"
 
 #: froide/publicbody/urls.py
 msgctxt "url part"
+msgid "admin/"
+msgstr "admin/"
+
+#: froide/publicbody/urls.py
+msgctxt "url part"
 msgid "propose/"
 msgstr "vorschlagen/"
 
@@ -10026,11 +10131,13 @@ msgstr "Team-Einladung von %(name)s"
 #, python-format
 msgid ""
 "\n"
-"            Currently assigned team: <a href=\"%(url)s\">%(name)s</a>.\n"
-"          "
+"        Currently, the team <a href=\"%(url)s\">%(name)s</a> is assigned to "
+"this project.\n"
+"      "
 msgstr ""
 "\n"
-"           Gerade zugewiesenes Team: <a href=\"%(url)s\">%(name)s</a>\n"
+"           Gerade ist das Team <a href=\"%(url)s\">%(name)s</a> diesem "
+"Projekt zugewiesen.\n"
 "          "
 
 #: froide/team/templates/team/_assign_team_form.html
@@ -10038,8 +10145,8 @@ msgid "Currently no team assigned."
 msgstr "Aktuell kein Team ausgewählt."
 
 #: froide/team/templates/team/_assign_team_form.html
-msgid "Create a new team."
-msgstr "Lege ein neues Team an."
+msgid "or create a new team"
+msgstr "oder legen Sie ein neues Team an"
 
 #: froide/team/templates/team/emails/team_invite.txt
 #, python-format
@@ -10175,19 +10282,6 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"          This invite was sent to “%(email)s” which is different from the "
-"current account “%(account)s”!\n"
-"      "
-msgstr ""
-"\n"
-"        Diese Einladung wurde an „%(email)s“ gesendet, was nicht mit Ihrem "
-"aktuellen Konto „%(account)s“ identisch ist!\n"
-"      "
-
-#: froide/team/templates/team/team_join.html
-#, python-format
-msgid ""
-"\n"
 "        Do you want to join this team with the account “%(account)s”?\n"
 "      "
 msgstr ""
@@ -10195,22 +10289,9 @@ msgstr ""
 "        Wollen Sie diesem Team mit Ihrem Konto “%(account)s” beitreten?\n"
 "      "
 
-#: froide/team/templates/team/team_join.html
-#: froide/team/templates/team/team_list.html
-msgid "Join this team"
-msgstr "Treten Sie diesem Team bei"
-
 #: froide/team/templates/team/team_list.html
 msgid "Your Teams"
 msgstr "Ihre Teams"
-
-#: froide/team/templates/team/team_list.html
-msgid "Your Role"
-msgstr "Ihre Funktion"
-
-#: froide/team/templates/team/team_list.html
-msgid "Members"
-msgstr "Mitglieder"
 
 #: froide/team/templates/team/team_list.html
 msgid "Create a new team"
@@ -11109,6 +11190,48 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#~ msgid "Selected messages are being checked for delivery."
+#~ msgstr ""
+#~ "Ausgewählte Nachrichten werden auf ihren Zustellungsstatus überprüft."
+
+#~ msgid "Check delivery status"
+#~ msgstr "Zustellungsstatus überprüfen"
+
+#~ msgid "Information Law"
+#~ msgstr "Informationsgesetz"
+
+#~ msgid "Date of first message"
+#~ msgstr "Datum der ersten Nachricht"
+
+#~ msgid "Confirm this Public Body"
+#~ msgstr "Bestätigen Sie diese Behörde"
+
+#~ msgid "Send message to creator"
+#~ msgstr "Nachricht an Ersteller:in senden"
+
+#, python-format
+#~ msgid ""
+#~ "Dear %(user_name)s,\n"
+#~ "  the public body “%(name)s” you proposed already exists. You can find it "
+#~ "here:\n"
+#~ "\n"
+#~ "\n"
+#~ "\n"
+#~ "  All the Best\n"
+#~ "  %(site_name)s"
+#~ msgstr ""
+#~ "Hallo %(user_name)s,\n"
+#~ "die Behörde „%(name)s“, die Sie vorgeschlagen haben, existiert schon. Sie "
+#~ "finden die Behörde hier:\n"
+#~ "\n"
+#~ "\n"
+#~ "\n"
+#~ "Beste Grüße\n"
+#~ "%(site_name)s"
+
+#~ msgid "Create a new team."
+#~ msgstr "Lege ein neues Team an."
+
 #~ msgid "Field"
 #~ msgstr "Feld"
 
@@ -11530,9 +11653,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid "Save Summary"
 #~ msgstr "Zusammenfassung speichern"
 
-#~ msgid "Set team for request"
-#~ msgstr "Weisen Sie dieser Anfrage ein Team zu"
-
 #~ msgid "You can suggest a public body for this request."
 #~ msgstr "Sie können eine Behörde für diese Anfrage vorschlagen."
 
@@ -11648,9 +11768,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid "Requests and activities of %(name)s"
 #~ msgstr "Anfragen und Aktionen von %(name)s"
 
-#~ msgid "Your Organisation:"
-#~ msgstr "Ihre Organisation:"
-
 #~ msgid "Organization URL"
 #~ msgstr "Organisations-URL"
 
@@ -11751,10 +11868,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgctxt "url part"
 #~ msgid "entity"
 #~ msgstr "behoerde"
-
-#~ msgctxt "url part"
-#~ msgid "law"
-#~ msgstr "gesetz"
 
 #~ msgctxt "url part"
 #~ msgid "jurisdiction"
@@ -12049,10 +12162,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid "apr"
-#~ msgstr "Zusammenfassung"
-
-#, fuzzy
-#~ msgid "may"
 #~ msgstr "Zusammenfassung"
 
 #, fuzzy
@@ -13189,9 +13298,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "/Kind Regards/"
 #~ msgstr "/Mit freundlichen Grüßen/"
-
-#~ msgid "Write a request"
-#~ msgstr "Schreiben Sie eine Anfrage"
 
 #~ msgid ""
 #~ "Don't select a public body for now. Let others help to find the right "
