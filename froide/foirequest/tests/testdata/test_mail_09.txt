@@ -37,7 +37,7 @@ Content-Type: text/plain;
 	charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 
-Sehr geehrte Damen und Herren,
+Guten Tag,
 vielen Dank f=FCr Ihre elektronische Nachricht. Wir werden Ihre Anfrage s=
 chnellst m=F6glich bearbeiten
 
@@ -57,7 +57,7 @@ Content-Transfer-Encoding: quoted-printable
 Type>
 <META name=3DGENERATOR content=3D"MSHTML 11.00.9600.17842"></HEAD>
 <BODY><FONT size=3D2 face=3DArial>
-<P><FONT size=3D2 face=3DArial>Sehr geehrte Damen und Herren,</FONT></P>
+<P><FONT size=3D2 face=3DArial>Guten Tag,</FONT></P>
 <P><FONT size=3D2 face=3DArial>vielen Dank f=FCr Ihre elektronische Nachr=
 icht. Wir=20
 werden Ihre Anfrage schnellst m=F6glich bearbeiten</FONT></P><FONT size=3D=

@@ -1595,8 +1595,7 @@ def test_redaction_config(world, client, msgobj):
                 "date": timezone.now(),
                 "subject": "Reply",
                 "body": (
-                    "Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
-                    "Mit freundlichen Grüßen\n" + name
+                    "Guten Tag,\nblub\nbla\n\n" "Mit freundlichen Grüßen\n" + name
                 ),
                 "html": "html",
                 "from_": EmailAddress(name, "petra.radetsky@bund.example.org"),
