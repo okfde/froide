@@ -370,6 +370,7 @@ class FoiRequest(models.Model):
     not_publishable = models.BooleanField(_("Not publishable"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
     closed = models.BooleanField(_("is closed"), default=False)
+    no_index = models.BooleanField(_("Disable search machine indexing"), default=False)
 
     campaign = models.ForeignKey(
         Campaign,
@@ -395,8 +396,6 @@ class FoiRequest(models.Model):
     site = models.ForeignKey(
         Site, null=True, on_delete=models.SET_NULL, verbose_name=_("Site")
     )
-
-    no_index = models.BooleanField(_("Disable search machine indexing"), default=False)
 
     non_filtered_objects = models.Manager()
     objects = FoiRequestManager()
