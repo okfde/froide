@@ -371,6 +371,7 @@ class FoiRequest(models.Model):
     is_foi = models.BooleanField(_("is FoI request"), default=True)
     closed = models.BooleanField(_("is closed"), default=False)
     no_index = models.BooleanField(_("Disable search machine indexing"), default=False)
+    banner = models.TextField(_("Show extra info on request page"), blank=True)
 
     campaign = models.ForeignKey(
         Campaign,

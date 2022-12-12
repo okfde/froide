@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load markup %}
 {% load foirequest_tags %}
 
 <div class="container pt-2">
@@ -69,6 +70,11 @@
     </div>
   {% endif %}
 
+  {% if object.banner %}
+    <div class="alert alert-info">
+      {{ object.banner | markdown }}
+    </div>
+  {% endif %}
 
   {% block foirequest_header %}{% endblock %}
 
