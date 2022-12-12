@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-06 15:33+0100\n"
-"PO-Revision-Date: 2022-12-06 15:38+0100\n"
+"POT-Creation-Date: 2022-12-12 16:42+0100\n"
+"PO-Revision-Date: 2022-12-12 16:43+0100\n"
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German (http://www.transifex.com/ddie/froide/language/de/)\n"
 "Language: de\n"
@@ -3755,6 +3755,14 @@ msgstr "ist eine IF-Anfrage"
 msgid "is closed"
 msgstr "ist geschlossen"
 
+#: froide/foirequest/models/request.py
+msgid "Disable search machine indexing"
+msgstr "Deaktiviere Suchmaschinen-Indizierung"
+
+#: froide/foirequest/models/request.py
+msgid "Show extra info on request page"
+msgstr "Zeige weitere Informationen auf der Anfrageseite"
+
 #: froide/foirequest/models/request.py froide/foirequest/views/make_request.py
 #: froide/publicbody/forms.py froide/publicbody/models.py
 #: froide/publicbody/templates/publicbody/show.html
@@ -6126,8 +6134,8 @@ msgid "Your project was created!"
 msgstr "Ihr Projekt wurde erstellt!"
 
 #: froide/foirequest/templates/foirequest/sent.html
-msgid "Your request has been sent!"
-msgstr "Ihre Anfrage wurde gesendet!"
+msgid "Your request is being sent!"
+msgstr "Ihre Anfrage wird gesendet!"
 
 #: froide/foirequest/templates/foirequest/sent.html
 msgid "view your request"
@@ -7051,7 +7059,6 @@ msgstr ""
 
 #: froide/foirequest/views/make_request.py
 #, python-format
-#| msgid "Please send me the following information:"
 msgid "Please enter an address in the following format: %(format)s"
 msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
 
