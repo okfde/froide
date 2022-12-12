@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('foirequest', '0059_foirequest_no_index'),
+        ("foirequest", "0059_foirequest_no_index"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='foirequest',
-            name='banner',
-            field=models.TextField(blank=True, verbose_name='Show extra info on request page'),
+            model_name="foirequest",
+            name="banner",
+            field=models.TextField(
+                blank=True, verbose_name="Show extra info on request page"
+            ),
         ),
     ]
