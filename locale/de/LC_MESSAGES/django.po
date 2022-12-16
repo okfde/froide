@@ -16,8 +16,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2022-12-12 16:42+0100\n"
 "PO-Revision-Date: 2022-12-12 16:43+0100\n"
+||||||| d0fdd055
+"POT-Creation-Date: 2022-12-06 15:33+0100\n"
+"PO-Revision-Date: 2022-12-06 15:38+0100\n"
+=======
+"POT-Creation-Date: 2022-12-06 15:33+0100\n"
+"PO-Revision-Date: 2022-12-07 17:11+0000\n"
+>>>>>>> weblate/main
 "Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
