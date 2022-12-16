@@ -77,7 +77,6 @@ export default class Message {
 
   onHeadClick(e: Event): void {
     this.toggleMessage()
-    e.preventDefault()
   }
 
   toggleMessage(): void {

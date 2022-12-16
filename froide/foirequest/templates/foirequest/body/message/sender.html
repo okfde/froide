@@ -21,11 +21,13 @@
     {% else %}
       {% if object.user.private %}
         <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
+          {{ message.user_real_sender }}
+        </span>
       {% else %}
-        <span>
+        <a href="{% url "account-profile" slug=message.sender_user.username %}">
+          {{ message.user_real_sender }}
+        </a>
       {% endif %}
-        {{ message.user_real_sender }}
-      </span>
     {% endif %}
     </span>
   {% else %}

@@ -20,7 +20,7 @@
     {# avatar #}
     <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
       {% if not message.is_response and not message.sender_user.private and message.sender_user.profile_photo %}
-        <img src="{% thumbnail message.sender_user.profile_photo 64x64 %}" alt="{{ message.sender_user.get_full_name }}" class="img-fluid rounded-circle">
+        <a href="{% url "account-profile" slug=message.sender_user.username %}"><img src="{% thumbnail message.sender_user.profile_photo 64x64 %}" alt="{{ message.sender_user.get_full_name }}" class="img-fluid rounded-circle"></a>
       {% else %}
         <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
       {% endif %}
