@@ -168,6 +168,8 @@ class FoiMessage(models.Model):
         verbose_name = _("Freedom of Information Message")
         verbose_name_plural = _("Freedom of Information Messages")
 
+        indexes = [models.Index(fields=["email_message_id"])]
+
     def __str__(self):
         return _("Message in '%(request)s' at %(time)s") % {
             "request": self.request,
