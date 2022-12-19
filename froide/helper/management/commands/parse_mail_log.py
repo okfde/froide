@@ -9,8 +9,9 @@ class Command(BaseCommand):
     help = "Processes mail logs for deliveries"
 
     def add_arguments(self, parser):
-        parser.add_argument("log_path", default=None)
+        parser.add_argument("log_path")
+        parser.add_argument("offset_path")
 
     def handle(self, *args, **options):
         translation.activate(settings.LANGUAGE_CODE)
-        check_delivery_from_log(options["log_path"])
+        check_delivery_from_log(str(options["log_path"]), str(options["offset_path"]))
