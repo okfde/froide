@@ -72,7 +72,8 @@ class CustomTimestampSigner(TimestampSigner):
     Signs in base32 so that only lower case characters are used.
     """
 
-    def signature(self, value):
+    def signature(self, value, key=None):
+        key = key or self.key
         return base32_hmac(self.salt + "signer", value, self.key)
 
     def timestamp(self):

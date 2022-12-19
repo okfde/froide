@@ -100,7 +100,7 @@ class CustomPageAnnotationAdmin(PageAnnotationAdmin):
 
 class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
     raw_id_fields = DocumentCollectionBaseAdmin.raw_id_fields + ("team", "foirequests")
-    actions = DocumentCollectionBaseAdmin.actions + [
+    actions = list(DocumentCollectionBaseAdmin.actions) + [
         "reindex_collection",
         "collect_documents_from_foirequests",
     ]
@@ -121,7 +121,7 @@ class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
         ("collection", ForeignKeyFilter),
         ("directory", ForeignKeyFilter),
     )
-    actions = CollectionDirectoryAdmin.actions + ["move_to_directory"]
+    actions = list(CollectionDirectoryAdmin.actions) + ["move_to_directory"]
 
     def execute_move_to_directory(self, request, queryset, action_obj):
         queryset.update(directory=action_obj)
