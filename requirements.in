@@ -4,7 +4,7 @@ channels
 coreapi
 dj-database-url
 django-cache-url
-django-celery-beat
+django-celery-beat>=2.4.0
 django-celery-email
 django-configurations
 django-contrib-comments
@@ -15,12 +15,12 @@ django-fsm
 django-json-widget
 django-leaflet
 django-mfa3
-django-oauth-toolkit
+django-oauth-toolkit<2.0.0
 django-parler
 django-storages
 django-taggit>=2
 django-treebeard
-Django>=4.0,<4.1
+Django>=4.1,<4.2
 djangorestframework
 djangorestframework-csv
 djangorestframework-jsonp
