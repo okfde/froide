@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
+import autoprefixer from 'autoprefixer'
 import devManifest from 'vite-plugin-dev-manifest'
 import vue from '@vitejs/plugin-vue2'
 
@@ -61,5 +62,10 @@ export default defineConfig({
     origin: 'http://127.0.0.1:5173',
     fs: { allow: ['..'] }
   },
-  plugins: [vue(), devManifest()]
+  plugins: [vue(), devManifest()],
+  css: {
+    postcss: {
+      plugins: [autoprefixer]
+    }
+  }
 })
