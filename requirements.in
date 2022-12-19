@@ -34,7 +34,6 @@ phonenumbers
 Pillow>=9.0.0
 psycopg2-binary
 pyisemail
-pygtail>=0.14.0
 pypdf2>=2
 python-magic
 python-mimeparse
@@ -46,3 +45,4 @@ WeasyPrint
 websockets
 
 -e git+https://github.com/okfde/django-filingcabinet.git@main#egg=django-filingcabinet
+-e git+https://github.com/okfde/pygtail.git@3be17b00f55781caba62d589bcf8aceb0805a58c#egg=pygtail
