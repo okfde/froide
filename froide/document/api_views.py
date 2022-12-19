@@ -1,5 +1,4 @@
 from django.db.models import BooleanField, Case, Q, Value, When
-from django.utils.decorators import method_decorator
 
 from filingcabinet.api_renderers import RSSRenderer
 from filingcabinet.api_serializers import (
@@ -18,7 +17,6 @@ from rest_framework import permissions, serializers, viewsets
 
 from froide.helper.api_utils import SearchFacetListSerializer
 from froide.helper.auth import can_write_object, get_read_queryset, get_write_queryset
-from froide.helper.cache import cache_anonymous_page
 from froide.helper.search.api_views import ESQueryMixin
 
 from .documents import PageDocument
@@ -129,7 +127,6 @@ class DocumentViewSet(FCDocumentViewSet):
         qs = super().get_queryset()
         return qs.prefetch_related("original")
 
-    @method_decorator(cache_anonymous_page(60 * 60))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
 
@@ -153,7 +150,6 @@ class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
             scope="read:document",
         )
 
-    @method_decorator(cache_anonymous_page(60 * 60))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
