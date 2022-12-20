@@ -1,6 +1,9 @@
 {% extends "admin/base_site.html" %}
 
 {% load i18n %}
+{% load frontendbuild %}
+
+{% block extrahead %}{{ blocl.super }}{% renderfrontendhmr %}{% endblock %}
 
 {% block branding %}
 {% blocktrans with site_name=SITE_NAME %}{{ site_name }} admin{% endblocktrans %}

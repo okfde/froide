@@ -20,6 +20,3 @@
   {% if max_item_count != 1 %} multiple{% endif %}>
   {% for value in values %}<option value="{{ value.value }}" selected>{{ value.label }}</option>{% endfor %}
 </select>
-
-{% getfrontendbuild "tagautocomplete.js" as assets %}
-{% for block, output_list in assets %}{% for output in output_list %}{{ output|safe }}{% endfor %}{% endfor %}

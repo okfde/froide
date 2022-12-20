@@ -46,7 +46,9 @@ class TestFrontendBuild(TestCase):
         result = get_frontend_files("non_existant.js", frontend=frontend)
         self.assertEqual(result, {})
 
-    @override_settings(FRONTEND_DEBUG=True)
+    @override_settings(
+        FRONTEND_DEBUG=True, FRONTEND_SERVER_URL="http://localhost:5173/static/"
+    )
     def test_entry_point_debug(self):
         frontend = FrontendBuildLoader()
         frontend.entry_points = frontend.generate_entry_points(MANIFEST_DATA)
@@ -54,7 +56,9 @@ class TestFrontendBuild(TestCase):
         self.assertEqual(
             files,
             {
-                "js": ["node_modules/froide/frontend/javascript/makerequest.js"],
+                "js": [
+                    "http://localhost:5173/static/node_modules/froide/frontend/javascript/makerequest.js"
+                ],
                 "css": (),
             },
         )
@@ -67,7 +71,11 @@ class TestFrontendBuild(TestCase):
         self.assertEqual(
             files,
             {
-                "js": ["makerequest.js"],
-                "css": ["css/mixin.css", "css/user-terms.css", "css/makerequest.css"],
+                "js": ["/static/makerequest.js"],
+                "css": [
+                    "/static/css/mixin.css",
+                    "/static/css/user-terms.css",
+                    "/static/css/makerequest.css",
+                ],
             },
         )
