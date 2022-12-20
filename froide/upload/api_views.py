@@ -244,7 +244,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
         if not self._is_valid_content_type(request):
             return Response(
                 'Invalid value for "Content-Type" header: {}. Expected "{}".'.format(
-                    request.META["CONTENT_TYPE"], TusUploadStreamParser.media_type
+                    request.headers["content-type"], TusUploadStreamParser.media_type
                 ),
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -300,7 +300,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
             )
 
         # Write file
-        chunk_size = int(request.META.get("CONTENT_LENGTH", 102400))
+        chunk_size = int(request.headers.get("content-length", 102400))
         try:
             upload.write_data(chunk_bytes, chunk_size)
         except Exception as e:
@@ -320,7 +320,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
         return Response(headers=headers, status=status.HTTP_204_NO_CONTENT)
 
     def _is_valid_content_type(self, request):
-        return request.META["CONTENT_TYPE"] == TusUploadStreamParser.media_type
+        return request.headers["content-type"] == TusUploadStreamParser.media_type
 
 
 class TusTerminateMixin(mixins.DestroyModelMixin):

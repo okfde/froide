@@ -7,7 +7,7 @@ class XForwardedForMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
-        if "HTTP_X_FORWARDED_FOR" in request.META:
+        if "x-forwarded-for" in request.headers:
             x_fwd = request.META["HTTP_X_FORWARDED_FOR"]
             request.META["REMOTE_ADDR"] = x_fwd.split(",")[0].strip()
 
