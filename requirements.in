@@ -3,7 +3,6 @@ celery>=5.2.2
 channels
 coreapi
 dj-database-url
-django-cache-url
 django-celery-beat>=2.4.0
 django-celery-email
 django-configurations

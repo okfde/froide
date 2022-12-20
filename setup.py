@@ -53,7 +53,6 @@ setup(
         "django-crossdomainmedia",
         "django-storages",
         "dj-database-url",
-        "django-cache-url",
         "django-filter",
         "phonenumbers",
         "pygtail>=0.14.0",

@@ -80,7 +80,11 @@ class Base(Configuration):
     DATABASES = values.DatabaseURLValue("postgis://froide:froide@localhost:5432/froide")
     DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-    CACHES = values.CacheURLValue("dummy://")
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }
 
     CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
@@ -704,7 +708,12 @@ class TestBase(Base):
     ELASTICSEARCH_INDEX_PREFIX = "froide_test"
 
     MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
-    CACHES = values.CacheURLValue("locmem://")
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
 
     TEST_SELENIUM_DRIVER = values.Value("chrome_headless")
 
