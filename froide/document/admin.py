@@ -43,6 +43,7 @@ class DocumentTagsFilter(TaggitListFilter):
     tag_class = TaggedDocument
 
 
+@admin.register(Document)
 class DocumentAdmin(DocumentBaseAdmin):
     raw_id_fields = DocumentBaseAdmin.raw_id_fields + (
         "original",
@@ -75,29 +76,30 @@ class DocumentAdmin(DocumentBaseAdmin):
         update_document_index(obj)
         return res
 
+    @admin.action(description=_("Mark as listed"))
     def mark_listed(self, request, queryset):
         super().mark_listed(request, queryset)
         for doc in queryset:
             update_document_index(doc)
 
-    mark_listed.short_description = _("Mark as listed")
-
+    @admin.action(description=_("Mark as unlisted"))
     def mark_unlisted(self, request, queryset):
         super().mark_unlisted(request, queryset)
         for doc in queryset:
             update_document_index(doc)
 
-    mark_unlisted.short_description = _("Mark as unlisted")
 
-
+@admin.register(Page)
 class CustomPageAdmin(PageAdmin):
     list_filter = PageAdmin.list_filter + (("document", ForeignKeyFilter),)
 
 
+@admin.register(PageAnnotation)
 class CustomPageAnnotationAdmin(PageAnnotationAdmin):
     list_filter = [("page__document", ForeignKeyFilter), "page__number"]
 
 
+@admin.register(DocumentCollection)
 class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
     raw_id_fields = DocumentCollectionBaseAdmin.raw_id_fields + ("team", "foirequests")
     actions = list(DocumentCollectionBaseAdmin.actions) + [
@@ -115,6 +117,7 @@ class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
             collection.update_from_foirequests()
 
 
+@admin.register(CollectionDocument)
 class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
     list_filter = CollectionDocumentBaseAdmin.list_filter + (
         ("document", ForeignKeyFilter),
@@ -133,6 +136,7 @@ class CollectionDocumentAdmin(CollectionDocumentBaseAdmin):
     )
 
 
+@admin.register(CollectionDirectory)
 class CustomCollectionDirectoryAdmin(CollectionDirectoryAdmin):
     list_filter = CollectionDirectoryAdmin.list_filter + (
         ("collection", ForeignKeyFilter),
@@ -140,10 +144,4 @@ class CustomCollectionDirectoryAdmin(CollectionDirectoryAdmin):
     )
 
 
-admin.site.register(Document, DocumentAdmin)
-admin.site.register(Page, CustomPageAdmin)
-admin.site.register(PageAnnotation, CustomPageAnnotationAdmin)
-admin.site.register(DocumentCollection, DocumentCollectionAdmin)
-admin.site.register(CollectionDocument, CollectionDocumentAdmin)
 admin.site.register(DocumentPortal, DocumentPortalAdmin)
-admin.site.register(CollectionDirectory, CustomCollectionDirectoryAdmin)

@@ -11,9 +11,7 @@ class TeamMembershipInline(admin.StackedInline):
     )
 
 
+@admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
     list_display = ("name", "created", "member_count")
     inlines = [TeamMembershipInline]
-
-
-admin.site.register(Team, TeamAdmin)
