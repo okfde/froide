@@ -13,7 +13,7 @@ from django.utils.http import url_has_allowed_host_and_scheme, urlencode
 
 def get_next(request: HttpRequest) -> str:
     # This is not a view
-    return request.GET.get("next", request.META.get("HTTP_REFERER", "/"))
+    return request.GET.get("next", request.headers.get("referer", "/"))
 
 
 def render_code(
@@ -51,7 +51,7 @@ def redirect_to_login(request: HttpRequest):
 
 
 def get_client_ip(request: HttpRequest) -> str:
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+    x_forwarded_for = request.headers.get("x-forwarded-for")
     if x_forwarded_for:
         ip = x_forwarded_for.split(",")[-1].strip()
     else:
@@ -88,7 +88,7 @@ def get_redirect_url(
             url=next, allowed_hosts=allowed_hosts
         )
     if next is None or not url_allowed:
-        next = request.META.get("HTTP_REFERER")
+        next = request.headers.get("referer")
         url_allowed = url_has_allowed_host_and_scheme(
             url=next, allowed_hosts=allowed_hosts
         )
