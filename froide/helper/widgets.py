@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.http.request import QueryDict
 from django.utils.datastructures import MultiValueDict
+from django.utils.html import html_safe
 
 from django_filters.widgets import DateRangeWidget as DFDateRangeWidget
 from django_filters.widgets import RangeWidget
@@ -68,6 +69,17 @@ class PriceInput(forms.TextInput):
         return ctx
 
 
+@html_safe
+class JSModulePath:
+    def __init__(self, src: str) -> None:
+        self.src = src
+
+    def __str__(self):
+        return '<script src="{path}" type="module" crossorigin="anonymous"></script>'.format(
+            path=self.src
+        )
+
+
 class AutocompleteMixin:
     template_name = "helper/forms/widgets/tag_autocomplete.html"
     max_item_count = -1
@@ -84,7 +96,10 @@ class AutocompleteMixin:
     @property
     def media(self):
         build_info = get_frontend_files("tagautocomplete.js")
-        return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
+        return forms.Media(
+            css={"all": build_info["css"]},
+            js=[JSModulePath(src) for src in build_info["js"]],
+        )
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)
