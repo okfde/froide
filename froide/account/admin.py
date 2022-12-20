@@ -35,10 +35,12 @@ from .utils import (
 )
 
 
+@admin.register(UserTag)
 class UserTagAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+@admin.register(TaggedUser)
 class TaggedUserAdmin(admin.ModelAdmin):
     raw_id_fields = ("tag", "content_object")
 
@@ -50,6 +52,7 @@ class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
     lookup_name = "__in"
 
 
+@admin.register(User)
 class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
@@ -154,18 +157,20 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         if "email" in form.changed_data:
             account_email_changed.send_robust(sender=obj)
 
+    @admin.display(
+        description=_("requests"),
+        ordering="request_count",
+    )
     def request_count(self, obj):
         return obj.request_count
 
-    request_count.admin_order_field = "request_count"
-    request_count.short_description = _("requests")
-
+    @admin.display(
+        description=_("2FA"),
+        boolean=True,
+        ordering="has_mfa",
+    )
     def has_mfa(self, obj):
         return obj.has_mfa
-
-    has_mfa.admin_order_field = "has_mfa"
-    has_mfa.short_description = _("2FA")
-    has_mfa.boolean = True
 
     def become_user(self, request, pk):
         if not request.method == "POST":
@@ -208,13 +213,13 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
         return redirect("/")
 
+    @admin.action(description=_("Export to CSV"))
     def export_csv(self, request, queryset):
         if not request.user.is_superuser:
             raise PermissionDenied
         return export_csv_response(User.export_csv(queryset))
 
-    export_csv.short_description = _("Export to CSV")
-
+    @admin.action(description=_("Resend activation mail"))
     def resend_activation(self, request, queryset):
         rows_updated = 0
 
@@ -238,8 +243,10 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
         self.message_user(request, _("%d activation mails sent." % rows_updated))
 
-    resend_activation.short_description = _("Resend activation mail")
-
+    @admin.action(
+        description=_("Send mail to users..."),
+        permissions=("change",),
+    )
     def send_mail(
         self, request: HttpRequest, queryset: QuerySet
     ) -> Optional[TemplateResponse]:
@@ -269,53 +276,42 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         # Display the confirmation page
         return TemplateResponse(request, "account/admin_send_mail.html", context)
 
-    send_mail.short_description = _("Send mail to users...")
-    send_mail.allowed_permissions = ("change",)
-
+    @admin.action(description=_("Delete sessions of users"))
     def delete_sessions(self, request, queryset):
         for user in queryset:
             delete_all_unexpired_sessions_for_user(user)
         self.message_user(request, _("Sessions deleted."))
         return None
 
-    delete_sessions.short_description = _("Delete sessions of users")
-
+    @admin.action(description=_("Cancel account by user request"))
     def cancel_users_by_request(self, request, queryset):
         for user in queryset:
             start_cancel_account_process(user)
         self.message_user(request, _("Accounts canceled."))
         return None
 
-    cancel_users_by_request.short_description = _("Cancel account by user request")
-
+    @admin.action(description=_("Future cancel accounts + notify of terms violation"))
     def future_cancel_users_notify(self, request, queryset):
         for user in queryset:
             future_cancel_user(user, notify=True)
         self.message_user(request, _("Users future canceled and notified."))
         return None
 
-    future_cancel_users_notify.short_description = _(
-        "Future cancel accounts + notify of terms violation"
-    )
-
+    @admin.action(description=_("Future cancel accounts (no notification)"))
     def future_cancel_users(self, request, queryset):
         for user in queryset:
             future_cancel_user(user)
         self.message_user(request, _("Users future canceled."))
         return None
 
-    future_cancel_users.short_description = _(
-        "Future cancel accounts (no notification)"
-    )
-
+    @admin.action(description=_("Deactivate and block users"))
     def deactivate_users(self, request, queryset):
         for user in queryset:
             user.deactivate_and_block()
         self.message_user(request, _("Users logged out, deactivated and blocked."))
         return None
 
-    deactivate_users.short_description = _("Deactivate and block users")
-
+    @admin.action(description=_("Make user private"))
     def make_private(self, request, queryset):
         user = queryset[0]
         if user.private:
@@ -323,8 +319,6 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         make_account_private(user)
         self.message_user(request, _("User made private."))
         return None
-
-    make_private.short_description = _("Make user private")
 
     def merge_accounts(self, request, queryset, keep_older=True):
         if queryset.count() != 2:
@@ -341,11 +335,11 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     merge_accounts.short_description = _("Merge accounts (keep older)")
 
+    @admin.action(description=_("Merge accounts (keep newer)"))
     def merge_accounts_keep_newer(self, request, queryset):
         return self.merge_accounts(request, queryset, keep_older=False)
 
-    merge_accounts_keep_newer.short_description = _("Merge accounts (keep newer)")
-
+    @admin.action(description=_("Start export of user data"))
     def export_user_data(self, request, queryset):
         from .export import get_export_access_token
 
@@ -374,13 +368,13 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         )
         return None
 
-    export_user_data.short_description = _("Start export of user data")
 
-
+@admin.register(AccountBlocklist)
 class AccountBlocklistAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+@admin.register(UserPreference)
 class UserPreferenceAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
     list_display = ("key", "user", "timestamp")
@@ -397,12 +391,6 @@ class CustomMFAKeyAdmin(MFAAndRecentAuthRequiredAdminMixin, MFAKeyAdmin):
     exclude = ("secret",)
     readonly_fields = ("user", "method", "last_code")
 
-
-admin.site.register(User, UserAdmin)
-admin.site.register(TaggedUser, TaggedUserAdmin)
-admin.site.register(UserTag, UserTagAdmin)
-admin.site.register(AccountBlocklist, AccountBlocklistAdmin)
-admin.site.register(UserPreference, UserPreferenceAdmin)
 
 admin.site.unregister(MFAKey)
 admin.site.register(MFAKey, CustomMFAKeyAdmin)
