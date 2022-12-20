@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.formats import date_format
 from django.utils.html import avoid_wrapping
 from django.utils.http import urlencode
-from django.utils.timezone import is_aware, utc
+from django.utils.timezone import is_aware
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext_lazy, pgettext
 
@@ -62,7 +62,7 @@ def relativetime(d):
     if not isinstance(d, datetime.datetime):
         d = datetime.datetime(d.year, d.month, d.day)
 
-    now = datetime.datetime.now(utc if is_aware(d) else None)
+    now = datetime.datetime.now(datetime.timezone.utc if is_aware(d) else None)
     delta = now - d
 
     # Deal with leapyears by subtracing the number of leapdays
