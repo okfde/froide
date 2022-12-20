@@ -1,5 +1,6 @@
 import io
 import os.path
+import shutil
 import tempfile
 
 import pytest
@@ -198,3 +199,38 @@ def test_multiple_partial():
 
     assert invocations[0]["message_id"] == MAIL_1_ID
     assert invocations[0]["log"] == MAIL_1_LOG
+
+
+def test_logfile_rotation():
+    invocations = []
+
+    def callback(**kwargs):
+        invocations.append(kwargs)
+
+    email_left_queue.connect(callback)
+
+    with open(p("maillog_004.txt")) as f:
+        lines = f.readlines()
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        logfile_path = str(tmpdir + "/mail.log")
+        logfile_1_path = str(tmpdir + "/mail.log.1")
+        offset_file_path = str(tmpdir + "/mail_log.offset")
+        with open(logfile_path, "w") as logfile:
+            logfile.write("".join(lines[:4]))
+            logfile.flush()
+
+        check_delivery_from_log(logfile_path, offset_file_path)
+        assert len(invocations) == 0
+
+        shutil.move(logfile_path, logfile_1_path)
+
+        with open(logfile_path, "w") as logfile:
+            logfile.write("".join(lines[4:]))
+            logfile.flush()
+
+        check_delivery_from_log(logfile_path, offset_file_path)
+        assert len(invocations) == 1
+        print(invocations[0])
+        assert invocations[0]["message_id"] == MAIL_1_ID
+        assert invocations[0]["log"] == MAIL_1_LOG
