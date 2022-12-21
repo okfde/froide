@@ -114,6 +114,7 @@ django==4.1.4
     #   django-taggit
     #   django-treebeard
     #   djangorestframework
+    #   drf-spectacular
     #   easy-thumbnails
 django-appconf==1.0.5
     # via django-celery-email
@@ -170,12 +171,15 @@ djangorestframework==3.14.0
     #   -r requirements.in
     #   django-filingcabinet
     #   djangorestframework-csv
+    #   drf-spectacular
 djangorestframework-csv==2.1.1
     # via -r requirements.in
 djangorestframework-jsonp==1.0.2
     # via -r requirements.in
 dnspython==2.2.1
     # via pyisemail
+drf-spectacular==0.25.1
+    # via -r requirements.in
 easy-thumbnails==2.8.4
     # via -r requirements.in
 elasticsearch==7.17.8
@@ -233,7 +237,9 @@ idna==3.4
 importlib-metadata==5.2.0
     # via markdown
 inflection==0.5.1
-    # via pytest-factoryboy
+    # via
+    #   drf-spectacular
+    #   pytest-factoryboy
 iniconfig==1.1.1
     # via pytest
 isort==5.11.3
@@ -243,7 +249,9 @@ itypes==1.2.0
 jinja2==3.1.2
     # via coreschema
 jsonschema==4.17.3
-    # via django-filingcabinet
+    # via
+    #   django-filingcabinet
+    #   drf-spectacular
 jwcrypto==1.4.2
     # via django-oauth-toolkit
 kombu==5.2.4
@@ -386,6 +394,7 @@ pytz==2022.7
     #   icalendar
 pyyaml==6.0
     # via
+    #   drf-spectacular
     #   libcst
     #   pre-commit
 qrcode==7.3.1
@@ -462,7 +471,9 @@ tzdata==2022.7
 unicodecsv==0.14.1
     # via djangorestframework-csv
 uritemplate==4.1.1
-    # via coreapi
+    # via
+    #   coreapi
+    #   drf-spectacular
 urllib3==1.26.13
     # via
     #   elasticsearch
