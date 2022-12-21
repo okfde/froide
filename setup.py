@@ -59,6 +59,7 @@ setup(
         "django-filingcabinet",
         "icalendar",
         "easy-thumbnails",
+        "drf-spectacular",
     ],
     extras_require=extras,
     include_package_data=True,
