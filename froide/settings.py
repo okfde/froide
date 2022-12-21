@@ -74,6 +74,7 @@ class Base(Configuration):
             # API
             "oauth2_provider",
             "rest_framework",
+            "drf_spectacular",
         ]
     )
 
@@ -505,6 +506,7 @@ class Base(Configuration):
             "froide.helper.api_renderers.CustomPaginatedCSVRenderer",
             "rest_framework.renderers.BrowsableAPIRenderer",
         ),
+        "DEFAULT_SCHEMA_CLASSES": ("drf_spectacular.openapi.AutoSchema",),
     }
 
     # ######### Froide settings ########
