@@ -55,7 +55,7 @@ setup(
         "dj-database-url",
         "django-filter",
         "phonenumbers",
-        "pygtail @ git+https://github.com/okfde/pygtail.git@3be17b00f55781caba62d589bcf8aceb0805a58c#egg=pygtail",
+        "pygtail",
         "django-filingcabinet",
         "icalendar",
         "easy-thumbnails",
