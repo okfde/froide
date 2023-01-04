@@ -1,4 +1,3 @@
-import functools
 import re
 from urllib.parse import urlencode
 
@@ -6,13 +5,12 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-from froide.helper.search.facets import make_filter_url
 from froide.helper.search.views import BaseSearchView
 from froide.publicbody.models import Jurisdiction
 
 from ..documents import FoiRequestDocument
 from ..feeds import LatestFoiRequestsFeed, LatestFoiRequestsFeedAtom
-from ..filters import FoiRequestFilterSet, get_active_filters, get_filter_data
+from ..filters import FILTER_ORDER, SUB_FILTERS, FoiRequestFilterSet
 from ..models import FoiRequest
 
 NUM_RE = re.compile(r"^\[?\#?(\d+)\]?$")
@@ -38,12 +36,13 @@ class BaseListRequestView(BaseSearchView):
     model = FoiRequest
     document = FoiRequestDocument
     filterset = FoiRequestFilterSet
+    search_manager_kwargs = {
+        "filter_order": FILTER_ORDER,
+        "sub_filters": SUB_FILTERS,
+    }
 
     def get_base_search(self):
         return super().get_base_search().filter("term", public=True)
-
-    def get_filter_data(self, kwargs, get_dict):
-        return get_filter_data(kwargs, get_dict)
 
 
 class ListRequestView(BaseListRequestView):
@@ -63,28 +62,13 @@ class ListRequestView(BaseListRequestView):
     def show_facets(self):
         return self.has_query
 
-    def make_filter_url(self, data):
-        return make_filter_url(
-            self.request.resolver_match.url_name,
-            data,
-            get_active_filters=get_active_filters,
-        )
-
     def render_to_response(self, context, **response_kwargs):
         if self.feed is not None:
             if self.feed == "rss":
                 klass = LatestFoiRequestsFeed
             else:
                 klass = LatestFoiRequestsFeedAtom
-            feed_obj = klass(
-                context["object_list"],
-                data=self.filtered_objs,
-                make_url=functools.partial(
-                    make_filter_url,
-                    data=self.filter_data,
-                    get_active_filters=get_active_filters,
-                ),
-            )
+            feed_obj = klass(context["object_list"], data=self.filtered_objs)
             return feed_obj(self.request)
 
         return super().render_to_response(context, **response_kwargs)

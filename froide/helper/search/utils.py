@@ -1,15 +1,8 @@
 from functools import partial
 
 from django.db import transaction
-from django.utils.http import urlencode
 
 from ..tasks import search_instance_save
-
-
-def get_pagination_vars(data):
-    d = data.copy()
-    d.pop("page", None)
-    return "&" + urlencode(d)
 
 
 def trigger_search_index_update(instance):

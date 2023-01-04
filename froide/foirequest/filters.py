@@ -116,27 +116,6 @@ FOIREQUEST_LIST_FILTER_CHOICES = [
 ]
 
 
-def get_active_filters(data):
-    for key in FILTER_ORDER:
-        if not data.get(key):
-            continue
-        yield key
-        sub_filters = SUB_FILTERS.get(key, ())
-        for sub_key in sub_filters:
-            if data.get(sub_key):
-                yield sub_key
-                break
-        break
-
-
-def get_filter_data(filter_kwargs, data):
-    query = {}
-    for key in get_active_filters(filter_kwargs):
-        query[key] = filter_kwargs[key]
-    data.update(query)
-    return data
-
-
 class DropDownStatusFilterWidget(DropDownFilterWidget):
     def create_option(
         self, name, value, label, selected, index, subindex=None, attrs=None
@@ -264,7 +243,9 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.view is not None:
-            self.filters["status"].field.widget.get_url = self.view.make_filter_url
+            self.filters[
+                "status"
+            ].field.widget.get_url = self.view.search_manager.make_filter_url
 
     def filter_status(self, qs, name, value):
         entry = self.FOIREQUEST_FILTER_DICT[value]

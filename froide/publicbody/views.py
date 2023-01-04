@@ -26,30 +26,6 @@ from .forms import (
 from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 from .utils import LawExtension
 
-FILTER_ORDER = ("jurisdiction", "category")
-SUB_FILTERS = {"jurisdiction": ("category",)}
-
-
-def get_active_filters(data):
-    for key in FILTER_ORDER:
-        if not data.get(key):
-            continue
-        yield key
-        sub_filters = SUB_FILTERS.get(key, ())
-        for sub_key in sub_filters:
-            if data.get(sub_key):
-                yield sub_key
-                break
-        break
-
-
-def get_filter_data(filter_kwargs, data):
-    query = {}
-    for key in get_active_filters(filter_kwargs):
-        query[key] = filter_kwargs[key]
-    data.update(query)
-    return data
-
 
 class PublicBodySearch(BaseSearchView):
     search_name = "publicbody"
@@ -71,9 +47,10 @@ class PublicBodySearch(BaseSearchView):
             "label": _("jurisdictions"),
         }
     }
-
-    def get_filter_data(self, kwargs, get_dict):
-        return get_filter_data(kwargs, get_dict)
+    search_manager_kwargs = {
+        "filter_order": ("jurisdiction", "category"),
+        "sub_filters": {"jurisdiction": ("category",)},
+    }
 
 
 @cache_anonymous_page(15 * 60)
