@@ -1,7 +1,7 @@
 import datetime
 import logging
 import re
-from typing import Callable
+from functools import partial
 
 from django import forms
 from django.conf import settings
@@ -78,9 +78,6 @@ class AttachmentSaverMixin(object):
             att.name for att in FoiAttachment.objects.filter(belongs_to=message)
         }
 
-        def get_convert_callback(att: FoiAttachment) -> Callable:
-            return lambda: convert_attachment_task.delay(att.id)
-
         for file in files:
             filename = make_unique_filename(file.name, attachment_names)
             attachment_names.add(filename)
@@ -97,7 +94,7 @@ class AttachmentSaverMixin(object):
             added.append(att)
 
             if save_file and att.can_convert_to_pdf():
-                transaction.on_commit(get_convert_callback(att))
+                transaction.on_commit(partial(convert_attachment_task.delay, att.id))
 
         message._attachments = None
 
@@ -756,7 +753,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
         att = result[0]
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(att.id, upload.id)
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
         )
 
         return result
@@ -891,6 +888,6 @@ class PublicBodyUploader:
         upload.save()
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(att.id, upload.id)
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
         )
         return att

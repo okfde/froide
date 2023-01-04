@@ -1,8 +1,10 @@
 import json
 import logging
 import re
+from functools import partial
 
 from django.contrib import messages
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
@@ -338,7 +340,9 @@ def redact_attachment(request, foirequest, attachment_id):
             attachment.approved = False
             attachment.save()
 
-        redact_attachment_task.delay(attachment.id, att.id, instructions)
+        transaction.on_commit(
+            partial(redact_attachment_task.delay, attachment.id, att.id, instructions)
+        )
 
         att.attachment_redacted.send(
             sender=att,

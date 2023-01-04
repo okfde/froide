@@ -1,3 +1,5 @@
+from functools import partial
+
 from django.db import transaction
 from django.utils.http import urlencode
 
@@ -12,7 +14,7 @@ def get_pagination_vars(data):
 
 def trigger_search_index_update(instance):
     transaction.on_commit(
-        lambda: search_instance_save.delay(instance._meta.label_lower, instance.pk)
+        partial(search_instance_save.delay, instance._meta.label_lower, instance.pk)
     )
 
 

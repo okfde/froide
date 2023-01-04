@@ -1,3 +1,5 @@
+from functools import partial
+
 from django import forms
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
@@ -137,6 +139,6 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         upload.save()
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(att.id, upload.id)
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
         )
         return att

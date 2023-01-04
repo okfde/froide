@@ -1,4 +1,7 @@
+from functools import partial
+
 from django import forms
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.forms.message import get_default_initial_message
@@ -87,7 +90,12 @@ class SendMessageProjectForm(SendMessageForm):
         return self.foiproject.user
 
     def save(self, user):
-        create_project_messages.delay(
-            [f.id for f in self.foirequests], user.id, **self.cleaned_data
+        transaction.on_commit(
+            partial(
+                create_project_messages.delay,
+                [f.id for f in self.foirequests],
+                user.id,
+                **self.cleaned_data
+            )
         )
         return self.foiproject

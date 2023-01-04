@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from functools import partial
 
 from django.db import models, transaction
 
@@ -47,7 +48,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         Update the related objects either.
         """
         transaction.on_commit(
-            lambda: search_instance_save.delay(instance._meta.label_lower, instance.pk)
+            partial(search_instance_save.delay, instance._meta.label_lower, instance.pk)
         )
 
     def handle_pre_delete(self, sender, instance, **kwargs):
@@ -65,7 +66,7 @@ class CelerySignalProcessor(RealTimeSignalProcessor):
         if instance.pk is None:
             return
         transaction.on_commit(
-            lambda: search_instance_delete.delay(
-                instance._meta.label_lower, instance.pk
+            partial(
+                search_instance_delete.delay, instance._meta.label_lower, instance.pk
             )
         )

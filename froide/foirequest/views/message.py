@@ -1,8 +1,10 @@
 import json
 import logging
+from functools import partial
 
 from django.conf import settings
 from django.contrib import messages
+from django.db import transaction
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -277,8 +279,15 @@ def convert_to_pdf(request, foirequest, message, data):
     )
     instructions = {d["id"]: d for d in data["images"] if d["id"] in att_ids}
     instructions = [instructions[i] for i in att_ids]
-    convert_images_to_pdf_task.delay(
-        att_ids, att.id, instructions, can_approve=can_approve
+
+    transaction.on_commit(
+        partial(
+            convert_images_to_pdf_task.delay,
+            att_ids,
+            att.id,
+            instructions,
+            can_approve=can_approve,
+        )
     )
 
     attachment_data = FoiAttachmentSerializer(att, context={"request": request}).data

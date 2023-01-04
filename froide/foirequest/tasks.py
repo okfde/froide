@@ -1,5 +1,6 @@
 import logging
 import os
+from functools import partial
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -175,9 +176,12 @@ def ocr_pdf_attachment(att):
     att.approved = False
     att.save()
 
-    ocr_pdf_task.delay(
-        att.pk,
-        ocred_att.pk,
+    transaction.on_commit(
+        partial(
+            ocr_pdf_task.delay,
+            att.pk,
+            ocred_att.pk,
+        )
     )
 
 
