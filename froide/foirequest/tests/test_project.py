@@ -39,7 +39,8 @@ class RequestProjectTest(TestCase):
             "publicbody": pb_ids.split("+"),
         }
         mail.outbox = []
-        response = self.client.post(reverse("foirequest-make_request"), data)
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(reverse("foirequest-make_request"), data)
         self.assertEqual(response.status_code, 302)
         project = FoiProject.objects.get(title=data["subject"])
         self.assertEqual(
@@ -79,7 +80,8 @@ class RequestProjectTest(TestCase):
             "publicbody": pb_ids,
             "full_text": "on",
         }
-        response = self.client.post(reverse("foirequest-make_request"), data)
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(reverse("foirequest-make_request"), data)
         self.assertEqual(response.status_code, 302)
         project = FoiProject.objects.get(title=data["subject"])
         requests = project.foirequest_set.all()
@@ -127,7 +129,8 @@ class RequestProjectTest(TestCase):
         draft.project = None
         draft.save()
 
-        response = self.client.post(request_url, data)
+        with self.captureOnCommitCallbacks(execute=True):
+            response = self.client.post(request_url, data)
         self.assertEqual(response.status_code, 302)
 
         project = FoiProject.objects.get(title=data["subject"])
