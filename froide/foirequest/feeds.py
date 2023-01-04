@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.models.event import EVENT_DETAILS
 from froide.helper.feed_utils import clean_feed_output
+from froide.helper.search.facets import make_filter_url
 
 from .filters import FOIREQUEST_FILTER_DICT
 from .models import FoiRequest
@@ -16,11 +17,10 @@ from .models import FoiRequest
 class LatestFoiRequestsFeed(Feed):
     url_name = "foirequest-list_feed"
 
-    def __init__(self, items, data, make_url):
+    def __init__(self, items, data):
         self.items = items
         self.data = data
-        self.make_url = make_url
-        super(LatestFoiRequestsFeed, self).__init__()
+        super().__init__()
 
     def get_filter_string(self):
         by = []
@@ -71,7 +71,7 @@ class LatestFoiRequestsFeed(Feed):
         ) % {"sitename": settings.SITE_NAME}
 
     def link(self):
-        return self.make_url(self.url_name)
+        return make_filter_url(self.url_name)
 
     def items(self):
         return self.items.order_by("-created_at")[:15]

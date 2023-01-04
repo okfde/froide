@@ -91,14 +91,10 @@ class SearchQuerySetWrapper(object):
         self.sqs.aggs.bucket(date_field, a)
         return self
 
-    def get_facets(self, resolvers=None):
-        if resolvers is None:
-            resolvers = {}
-        return {
-            k: resolvers[k](k, self.response["aggregations"][k])
-            for k in self.response["aggregations"]
-            if k in resolvers
-        }
+    def get_facet_data(self):
+        if "aggregations" in self.response:
+            return self.response["aggregations"]
+        return {}
 
     def get_aggregations(self):
         if self.broken_query or "aggregations" not in self.response:

@@ -2,11 +2,10 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import ListView
 
-from .facets import make_filter_url, resolve_facet
+from .facets import SearchManager
 from .filters import BaseSearchFilterSet
 from .paginator import ElasticsearchPaginator
 from .queryset import SearchQuerySetWrapper
-from .utils import get_pagination_vars
 
 
 class BaseSearchView(ListView):
@@ -26,7 +25,19 @@ class BaseSearchView(ListView):
     filtered_objs = None
     select_related = ()
     search_url_name = ""
+    search_manager_kwargs = {}
     object_template = None
+
+    def get_search_manager(self):
+        get_data = dict(self.request.GET.items())
+        get_data.pop(self.page_kwarg, None)
+        return SearchManager(
+            self.facet_config,
+            self.kwargs,
+            get_data,
+            search_url_name=self.search_url_name,
+            **self.search_manager_kwargs
+        )
 
     def get_base_search(self):
         return self.document.search()
@@ -36,17 +47,12 @@ class BaseSearchView(ListView):
             return self.filterset(*args, **kwargs, view=self)
         return None
 
-    def get_filter_data(self, kwargs, get_dict):
-        return get_dict
-
     @cached_property
     def has_advanced_filters(self):
         return bool(set(self.filtered_objs) & self.advanced_filters)
 
     def get_search(self):
-        self.filter_data = self.get_filter_data(
-            self.kwargs, dict(self.request.GET.items())
-        )
+        self.search_manager = self.get_search_manager()
 
         s = self.get_base_search()
         self.has_query = self.request.GET.get("q")
@@ -61,7 +67,7 @@ class BaseSearchView(ListView):
         s = self.get_search()
         sqs = SearchQuerySetWrapper(s, self.model)
 
-        filtered = self.get_filterset(self.filter_data, queryset=sqs)
+        filtered = self.get_filterset(self.search_manager.filter_data, queryset=sqs)
         self.form = None
         if filtered is not None:
             self.form = filtered.form
@@ -72,7 +78,9 @@ class BaseSearchView(ListView):
 
             # Set only valid data on widgets so they can render filter links
             data_clean_only = {
-                k: v for k, v in self.filter_data.items() if k in self.form.cleaned_data
+                k: v
+                for k, v in self.search_manager.filter_data.items()
+                if k in self.form.cleaned_data
             }
             for _n, field in filtered.form.fields.items():
                 field.widget.data = data_clean_only
@@ -86,9 +94,6 @@ class BaseSearchView(ListView):
 
         return sqs
 
-    def make_filter_url(self, data):
-        return make_filter_url(self.search_url_name, data)
-
     def show_facets(self):
         return self.has_facets
 
@@ -96,24 +101,6 @@ class BaseSearchView(ListView):
         if self.show_facets():
             sqs = sqs.add_aggregation(list(self.facet_config.keys()))
         return sqs
-
-    def get_facet_resolvers(self):
-        return {
-            key: resolve_facet(
-                self.filter_data,
-                getter=config.get("getter"),
-                model=config.get("model"),
-                query_param=config.get("query_param", key),
-                label_getter=config.get("label_getter"),
-                make_url=self.make_filter_url,
-            )
-            for key, config in self.facet_config.items()
-        }
-
-    def resolve_facets(self, sqs):
-        if self.show_facets():
-            return sqs.get_facets(resolvers=self.get_facet_resolvers())
-        return None
 
     def paginate_queryset(self, sqs, page_size):
         """
@@ -129,7 +116,7 @@ class BaseSearchView(ListView):
         queryset = sqs.wrap_queryset(qs)
 
         if queryset:
-            self.facets = self.resolve_facets(sqs)
+            self.facets = self.search_manager.get_facets(sqs.get_facet_data())
         else:
             # Empty facets
             self.facets = {k: {"buckets": []} for k in self.facet_config}
@@ -150,8 +137,8 @@ class BaseSearchView(ListView):
                 "has_query": self.has_query,
                 "object_template": self.object_template,
                 "show_filters": self.show_filters,
-                "is_filtered": bool(set(self.filter_data) - {"q"}),
-                "getvars": get_pagination_vars(self.filter_data),
+                "is_filtered": bool(set(self.search_manager.filter_data) - {"q"}),
+                "getvars": self.search_manager.get_pagination_vars(),
                 "filtered_objects": self.filtered_objs,
             }
         )
