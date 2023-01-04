@@ -1,7 +1,8 @@
 from datetime import timedelta
+from functools import partial
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.dispatch import Signal
 from django.urls import reverse
 from django.utils import timezone
@@ -401,6 +402,6 @@ class FoiAttachment(models.Model):
 
         from filingcabinet.tasks import process_document_task
 
-        process_document_task.delay(doc.pk)
+        transaction.on_commit(partial(process_document_task.delay, doc.pk))
 
         return doc

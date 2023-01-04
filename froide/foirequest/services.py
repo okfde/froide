@@ -1,6 +1,7 @@
 import re
 import uuid
 from datetime import timedelta
+from functools import partial
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -158,7 +159,9 @@ class CreateRequestService(BaseService):
             "address": data.get("address"),
             "full_text": data.get("full_text", False),
         }
-        create_project_requests.delay(project.id, publicbody_ids, **extra)
+        transaction.on_commit(
+            partial(create_project_requests.delay, project.id, publicbody_ids, **extra)
+        )
         return project
 
     def create_request(self, publicbody, sequence=0):
@@ -528,7 +531,7 @@ class ReceiveEmailService(BaseService):
                 self.trigger_convert_pdf(att.id)
 
     def trigger_convert_pdf(self, att_id):
-        transaction.on_commit(lambda: convert_attachment_task.delay(att_id))
+        transaction.on_commit(partial(convert_attachment_task.delay, att_id))
 
 
 class ActivatePendingRequestService(BaseService):
