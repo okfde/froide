@@ -30,7 +30,7 @@
         {% if object.organization_url and object.organization_name %}
           <p>
             <strong>
-              <a href="{{ object.organization_url }}">{{ object.organization_name }}</a>
+              <a rel="external nofollow" href="{{ object.organization_url }}">{{ object.organization_name }}</a>
             </strong>
           </p>
         {% elif object.organization_name %}
