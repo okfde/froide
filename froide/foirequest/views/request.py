@@ -3,16 +3,22 @@ from urllib.parse import quote
 
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 
+from filingcabinet import get_document_model
+
 from froide.account.preferences import get_preferences_for_user
+from froide.helper.auth import get_read_queryset
 from froide.helper.utils import render_403
 
 from ..auth import can_read_foirequest, can_write_foirequest, check_foirequest_auth_code
 from ..forms.preferences import message_received_tour_pref, request_page_tour_pref
 from ..models import FoiAttachment, FoiEvent, FoiRequest
 from ..utils import select_foirequest_template
+
+Document = get_document_model()
 
 
 def shortlink(request, obj_id, url_path=""):
@@ -88,12 +94,40 @@ class FoiRequestView(DetailView):
         return context
 
 
+def get_foirequest_documents_context(request, obj):
+    if not request.user.is_staff:
+        return {
+            "has_documents": False,
+        }
+    context = {}
+    docs = get_read_queryset(
+        Document.objects.filter(foirequest=obj, pending=False), request
+    )
+    serialized_documents = Document.get_serializer_class()(
+        docs, many=True, context={"request": request}
+    ).data
+    doc_count = docs.count()
+    context["document_count"] = doc_count
+    context["has_documents"] = doc_count > 0
+    context["documentcollection_data"] = {
+        "documents": serialized_documents,
+        "document_directory_count": doc_count,
+        "document_count": doc_count,
+        "documents_uri": reverse("api:document-list") + "?foirequest=%s" % obj.pk,
+        "pages_uri": reverse("api:page-list") + "?foirequest=%s" % obj.pk,
+        "directories": [],
+    }
+    return context
+
+
 def get_foirequest_context(request, obj):
     context = {}
 
     all_attachments = FoiAttachment.objects.select_related("redacted").filter(
         belongs_to__request=obj
     )
+    context.update(get_foirequest_documents_context(request, obj))
+    context["show_documents"] = obj.status_is_final() and context["has_documents"]
 
     can_write = can_write_foirequest(obj, request)
 
