@@ -3,6 +3,7 @@ import os
 import re
 import zipfile
 from datetime import date, datetime, timedelta
+from datetime import timezone as dt_timezone
 from email.parser import BytesParser as Parser
 from io import BytesIO
 from unittest import mock
@@ -645,7 +646,7 @@ def test_postal_reply(world, client, pb):
     assert response.status_code == 200
     # Date message back
     message = req.foimessage_set.all()[0]
-    message.timestamp = datetime(2011, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    message.timestamp = datetime(2011, 1, 1, 0, 0, 0, tzinfo=dt_timezone.utc)
     message.save()
     req.created_at = message.timestamp
     req.save()

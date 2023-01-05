@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from datetime import timezone as dt_timezone
 
 from django.conf import settings
 from django.core import mail
@@ -27,7 +28,7 @@ def p(path: str) -> str:
 @pytest.fixture
 def foirequest_with_msg(world):
     secret_address = "sw+yurpykc1hr@fragdenstaat.de"
-    date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
+    date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
     req = factories.FoiRequestFactory.create(
         site=world,
         secret_address=secret_address,
@@ -77,7 +78,7 @@ def test_working(foirequest_with_msg):
     assert len(messages) == 2
     assert "Jörg Gahl-Killen" in [m.sender_name for m in messages]
     message = messages[1]
-    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc)
+    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
     assert (
         message.subject
         == "Anfrage nach dem Informationsfreiheitsgesetz;  Förderanträge und Verwendungsnachweise der Hanns-Seidel-Stiftung;  Vg. 375-2018"
@@ -255,7 +256,7 @@ def test_additional_domains(foirequest_with_msg):
     assert len(messages) == 2
     assert "Jörg Gahl-Killen" in [m.sender_name for m in messages]
     message = messages[1]
-    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc)
+    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
 
 
 def test_eml_attachments():
