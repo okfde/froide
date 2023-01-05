@@ -1,5 +1,5 @@
 import unittest
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest import mock
 
 from django.conf import settings
@@ -566,14 +566,14 @@ def req_with_unordered_messages(
     foi_message_factory(
         request=req,
         is_response=True,
-        timestamp=datetime(2022, 1, 1),
+        timestamp=datetime(2022, 1, 1, tzinfo=timezone.utc),
         plaintext="Some random response text",
         plaintext_redacted="Some random response text",
     )
     foi_message_factory(
         request=req,
         is_response=False,
-        timestamp=datetime(2022, 1, 5),
+        timestamp=datetime(2022, 1, 5, tzinfo=timezone.utc),
         plaintext=f"To whom it may concern\n\n{req_text}\n\nGreetings",
         plaintext_redacted=f"To whom it may concern\n\n{req_text}\n\nGreetings",
     )
@@ -590,14 +590,14 @@ def req_with_ordered_messages(
     foi_message_factory(
         request=req,
         is_response=False,
-        timestamp=datetime(2022, 1, 1),
+        timestamp=datetime(2022, 1, 1, tzinfo=timezone.utc),
         plaintext=f"To whom it may concern\n\n{req_text}\n\nGreetings",
         plaintext_redacted=f"To whom it may concern\n\n{req_text}\n\nGreetings",
     )
     foi_message_factory(
         request=req,
         is_response=True,
-        timestamp=datetime(2022, 1, 5),
+        timestamp=datetime(2022, 1, 5, tzinfo=timezone.utc),
         plaintext="Some random response text",
         plaintext_redacted="Some random response text",
     )
