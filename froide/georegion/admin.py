@@ -48,5 +48,5 @@ class GeoRegionMixin(object):
 
 
 @admin.register(GeoRegion)
-class GeoRegionAdmin(GeoRegionMixin, admin.GeoModelAdmin):
+class GeoRegionAdmin(GeoRegionMixin, admin.GISModelAdmin):
     pass
