@@ -10,7 +10,7 @@
 
   <div
     role="tabpanel"
-    class="tab-pane fade active show bg-gray-200"
+    class="tab-pane fade {% if not show_documents %}active show{% endif %} bg-gray-200"
     id="correspondence-panel"
     aria-labelledby="correspondence-tab"
   >
@@ -149,6 +149,10 @@
     {% endif %}
 
   </div>
+
+  {% if has_documents %}
+    {% include "foirequest/body/documents.html" %}
+  {% endif %}
 
   {% block request_top_pane %}{% endblock %}
 

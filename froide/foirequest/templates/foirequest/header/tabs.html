@@ -5,13 +5,13 @@
 {# tabs #}
 <div class="container-sm-full px-0 mt-4">
   <div style="position: relative; bottom: -2px;">
-    <ul class="nav alpha-tabs" role="tablist" data-active-tab="{{ active_tab }}">
+    <ul class="nav alpha-tabs" role="tablist">
       <li class="alpha-tabs__tab">
         <a
           href="#correspondence-panel"
           id="correspondence-tab"
           data-bs-toggle="tab"
-          class="alpha-tabs__tab-link active"
+          class="alpha-tabs__tab-link{% if not show_documents %} active{% endif %}"
           data-bs-toggle="tab"
           aria-controls="correspondence-panel"
           aria-selected="true"
@@ -21,6 +21,24 @@
           <span class="alpha-tabs__counter">{{ object.messages|length }}</span>
         </a>
       </li>
+
+      {% if has_documents %}
+        <li class="alpha-tabs__tab">
+          <a
+            href="#documents-panel"
+            id="documents-tab"
+            data-bs-toggle="tab"
+            class="alpha-tabs__tab-link{% if show_documents %} active{% endif %}"
+            data-bs-toggle="tab"
+            aria-controls="documents-panel"
+            aria-selected="true"
+            role="tab"
+          >
+            <span>{% trans "Documents" %}</span>
+            <span class="alpha-tabs__counter">{{ document_count }}</span>
+          </a>
+        </li>
+      {% endif %}
 
       {% block request_top_menu %}{% endblock %}
 
