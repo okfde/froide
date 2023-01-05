@@ -390,8 +390,12 @@ def test_public_body_not_logged_in_request(world, client, pb):
         },
     )
     assert response.status_code == 400
-    assertFormError(response, "user_form", "first_name", ["This field is required."])
-    assertFormError(response, "user_form", "last_name", ["This field is required."])
+    assertFormError(
+        response.context["user_form"], "first_name", ["This field is required."]
+    )
+    assertFormError(
+        response.context["user_form"], "last_name", ["This field is required."]
+    )
 
 
 @pytest.mark.django_db
