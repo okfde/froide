@@ -10,6 +10,7 @@ import re
 from contextlib import closing
 from dataclasses import dataclass, field
 from datetime import datetime
+from datetime import timezone as dt_timezone
 from email.header import decode_header
 from email.message import EmailMessage
 from email.parser import BytesParser as Parser
@@ -284,7 +285,7 @@ def parse_email_date(date_str: Optional[str]) -> Optional[datetime]:
     except ValueError:
         return None
     if timezone.is_naive(date):
-        date = date.replace(tzinfo=timezone.utc)
+        date = date.replace(tzinfo=dt_timezone.utc)
     return date
 
 
