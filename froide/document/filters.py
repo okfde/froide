@@ -84,6 +84,11 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method="filter_tag",
         widget=forms.HiddenInput(),
     )
+    foirequest = django_filters.ModelChoiceFilter(
+        queryset=None,
+        to_field_name="pk",
+        method="filter_foirequest",
+    )
     publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody._default_manager.all(),
         to_field_name="slug",
@@ -148,6 +153,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         if request is None:
             request = self.view.request
         self.request = request
+        self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
 
     def filter_queryset(self, queryset):
         required_unlisted_filters = {"document", "collection"}
@@ -173,6 +179,9 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def filter_publicbody(self, qs, name, value):
         return qs.filter(publicbody=value.id)
+
+    def filter_foirequest(self, qs, name, value):
+        return qs.filter(foirequest=value)
 
     def filter_collection(self, qs, name, collection):
         if not collection.can_read(self.request):
