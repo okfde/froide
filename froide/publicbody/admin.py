@@ -536,6 +536,7 @@ class FoiLawAdmin(TranslatableAdmin):
         "priority",
         "law_type",
         "jurisdiction",
+        "num_publicbodies",
     )
     list_filter = ("meta", "law_type", "jurisdiction")
     raw_id_fields = ("mediator", "combined")
@@ -556,7 +557,14 @@ class FoiLawAdmin(TranslatableAdmin):
             "combined__translations",
             "combined__jurisdiction",
         )
-        return qs
+        return qs.annotate(num_publicbodies=Count("publicbody", distinct=True))
+
+    @admin.display(
+        description=_("public bodies"),
+        ordering="num_publicbodies",
+    )
+    def num_publicbodies(self, obj):
+        return obj.num_publicbodies
 
 
 @admin.register(Jurisdiction)
