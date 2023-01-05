@@ -6,7 +6,6 @@ from django_elasticsearch_dsl.management.commands.search_index import (
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch.exceptions import ConnectionError
 
-# FIXME: DB chunk size only starting Django 2.0
 DB_CHUNK_SIZE = 2000
 CHUNK_SIZE = 128
 
@@ -32,7 +31,7 @@ class Command(DESCommand):
                 )
             )
             working_chunk_divider = None
-            obj_iterator = qs.iterator()
+            obj_iterator = qs.iterator(chunk_size=DB_CHUNK_SIZE)
             for i, obj_group in enumerate(grouper(CHUNK_SIZE, obj_iterator)):
                 percentage = round((i * CHUNK_SIZE) / count * 100, 2)
                 self.stdout.write("Indexing {}%".format(percentage), ending="\r")
