@@ -287,10 +287,6 @@ class Base(Configuration):
     # to load the internationalization machinery.
     USE_I18N = values.BooleanValue(True)
 
-    # If you set this to False, Django will not format dates, numbers and
-    # calendars according to the current locale
-    USE_L10N = values.BooleanValue(True)
-
     DATE_FORMAT = values.Value("d. F Y")
     SHORT_DATE_FORMAT = values.Value("d.m.Y")
     DATE_INPUT_FORMATS = values.TupleValue(("%d.%m.%Y",))
