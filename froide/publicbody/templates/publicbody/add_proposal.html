@@ -2,6 +2,7 @@
 
 {% load i18n %}
 {% load form_helper %}
+{% load block_helper %}
 
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
 
@@ -22,4 +23,13 @@
     </form>
   </div>
 </div>
+
+{% addtoblock "css" %}
+  {{ form.media.css }}
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+  {{ form.media.js }}
+{% endaddtoblock %}
+
 {% endblock %}

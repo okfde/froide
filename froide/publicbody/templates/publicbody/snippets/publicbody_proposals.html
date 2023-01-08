@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load form_helper %}
+{% load block_helper %}
 {% load permission_helper %}
 
 <div class="table-responsive">
@@ -80,3 +81,11 @@
 
 </table>
 </div>
+
+{% addtoblock "css" %}
+  {{ form.media.css }}
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+  {{ form.media.js }}
+{% endaddtoblock %}
