@@ -7,7 +7,7 @@ from django.template.response import TemplateResponse
 from django.urls import include, path, reverse
 from django.utils.translation import pgettext_lazy
 
-from drf_spectacular.views import SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.schemas import get_schema_view
 
 from froide.account.api_views import ProfileView, UserPreferenceView
@@ -135,11 +135,6 @@ if settings.FROIDE_CONFIG.get("api_activated", True):
             "api/v1/schema/swagger-ui/",
             SpectacularSwaggerView.as_view(url_name="schema"),
             name="swagger-ui",
-        ),
-        path(
-            "api/v1/schema/redoc/",
-            SpectacularRedocView.as_view(url_name="schema"),
-            name="redoc",
         ),
     ]
 
