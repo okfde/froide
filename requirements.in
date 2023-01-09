@@ -23,7 +23,7 @@ Django>=4.1,<4.2
 djangorestframework
 djangorestframework-csv
 djangorestframework-jsonp
-drf-spectacular
+drf-spectacular[sidecar]
 easy-thumbnails
 elasticsearch-dsl>=7.0.0<8.0.0
 elasticsearch<8.0.0,>=7.0.0

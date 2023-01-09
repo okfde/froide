@@ -75,6 +75,7 @@ class Base(Configuration):
             "oauth2_provider",
             "rest_framework",
             "drf_spectacular",
+            "drf_spectacular_sidecar",
         ]
     )
 
@@ -649,6 +650,12 @@ class Base(Configuration):
     UNSUBSCRIBE_EMAIL_ACCOUNT_NAME = values.Value("")
     UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD = values.Value("")
     UNSUBSCRIBE_EMAIL_USE_SSL = values.Value(False)
+
+    SPECTACULAR_SETTINGS = {
+        "SWAGGER_UI_DIST": "SIDECAR",
+        "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+        "REDOC_DIST": "SIDECAR",
+    }
 
 
 class Dev(Base):

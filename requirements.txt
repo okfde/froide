@@ -100,6 +100,7 @@ django==4.1.4
     #   django-treebeard
     #   djangorestframework
     #   drf-spectacular
+    #   drf-spectacular-sidecar
     #   easy-thumbnails
 django-appconf==1.0.5
     # via django-celery-email
@@ -157,8 +158,10 @@ djangorestframework-jsonp==1.0.2
     # via -r requirements.in
 dnspython==2.2.1
     # via pyisemail
-drf-spectacular==0.25.1
+drf-spectacular[sidecar]==0.25.1
     # via -r requirements.in
+drf-spectacular-sidecar==2022.12.1
+    # via drf-spectacular
 easy-thumbnails==2.8.4
     # via -r requirements.in
 elasticsearch==7.17.8
