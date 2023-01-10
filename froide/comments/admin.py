@@ -3,6 +3,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_comments.admin import CommentsAdmin as DjangoCommentsAdmin
 
+from froide.helper.admin_utils import ForeignKeyFilter
+
 from .models import FroideComment
 
 REMOVED = {"ip_address"}
@@ -22,5 +24,8 @@ class CommentAdmin(DjangoCommentsAdmin):
         ),
     )
     list_display = [c for c in DjangoCommentsAdmin.list_display if c not in REMOVED]
+    list_filter = [c for c in DjangoCommentsAdmin.list_filter if c not in REMOVED] + [
+        ("object_pk", ForeignKeyFilter)
+    ]
     search_fields = [c for c in DjangoCommentsAdmin.search_fields if c not in REMOVED]
     actions = []
