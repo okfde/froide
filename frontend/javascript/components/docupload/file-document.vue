@@ -134,7 +134,7 @@
                     type="text"
                     class="form-control"
                     :placeholder="i18n.title" />
-                  <small class="form-text text-muted">{{
+                  <small class="form-text text-body-secondary">{{
                     i18n.documentTitleHelp
                   }}</small>
                 </div>
@@ -151,7 +151,7 @@
                     v-model="description"
                     class="form-control"
                     rows="3" />
-                  <small class="form-text text-muted">{{
+                  <small class="form-text text-body-secondary">{{
                     i18n.descriptionHelp
                   }}</small>
                 </div>

@@ -21,7 +21,7 @@
             <label class="form-check-label" for="id_public">
               {{ form.fields.public.label }}
             </label>
-            <small class="form-text text-muted">
+            <small class="form-text text-body-secondary">
               {{ form.fields.public.help_text }}
             </small>
           </div>

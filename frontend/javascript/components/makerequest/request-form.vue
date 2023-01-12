@@ -194,7 +194,7 @@
                 :disabled="fullTextDisabled" />
               <label
                 for="full_text_checkbox"
-                class="form-check-label small text-muted">
+                class="form-check-label small text-body-secondary">
                 <i
                   v-if="warnFullText"
                   class="fa fa-exclamation-triangle"

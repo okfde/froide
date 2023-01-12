@@ -142,7 +142,7 @@
           </h5>
             <div id="request-summary">
             {% if not object.summary and object|can_write_foirequest:request %}
-              <p class="text-muted smaller font-italic mb-0">
+              <p class="text-body-secondary smaller font-italic mb-0">
                 {% translate "What have you learned from this request? Write a short summary of the results." %}
               </p>
             {% endif %}
