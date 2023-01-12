@@ -10,6 +10,9 @@ const outputDir = resolve(__dirname, 'build')
 export default defineConfig({
   base: '/static/',
   resolve: {
+    alias: {
+      '~froide': resolve(__dirname)
+    },
     dedupe: ['bootstrap', 'vue', 'pdfjs-dist'],
     extensions: ['.mjs', '.js', '.ts', '.vue', '.json']
   },
