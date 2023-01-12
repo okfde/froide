@@ -25,7 +25,7 @@
         {% endif %}
 
       {% else %}
-        <span class="text-muted font-italic">{% trans "Only visible if logged in" %}</span>
+        <span class="text-body-secondary font-italic">{% trans "Only visible if logged in" %}</span>
       {% endif %}
     </strong>
 
@@ -37,7 +37,7 @@
 
   {# body #}
   {% if comment.is_removed %}
-    <div class="text-muted">{% trans "Comment was removed." %}</div>
+    <div class="text-body-secondary">{% trans "Comment was removed." %}</div>
   {% else %}
     <div>
       {% if comment.is_moderation %}

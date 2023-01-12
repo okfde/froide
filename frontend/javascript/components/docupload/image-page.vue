@@ -14,7 +14,9 @@
     <div class="row justify-content-center">
       <div class="scol">
         <div class="text-start">
-          <button class="btn btn-sm text-muted small" @click="rotatePage">
+          <button
+            class="btn btn-sm text-body-secondary small"
+            @click="rotatePage">
             <span class="fa fa-rotate-right" />
           </button>
         </div>
@@ -26,7 +28,9 @@
       </div>
       <div class="scol">
         <div v-if="!isLast" class="text-end">
-          <button class="btn btn-sm text-muted small" @click="splitPages">
+          <button
+            class="btn btn-sm text-body-secondary small"
+            @click="splitPages">
             <span class="fa fa-scissors" />
           </button>
         </div>

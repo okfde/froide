@@ -19,7 +19,7 @@
             aria-valuemax="100" />
         </div>
         <div v-else>
-          <p class="text-muted">
+          <p class="text-body-secondary">
             {{ i18n.imageDocumentExplanation }}
           </p>
           <div class="mb-3">

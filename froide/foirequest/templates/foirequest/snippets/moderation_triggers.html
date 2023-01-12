@@ -1,7 +1,7 @@
 {% for trigger in triggers %}
   <li class="list-inline-item">
     {% if trigger.is_applied %}
-      <button disabled class="btn btn-link text-muted">✔️{{ trigger.label }}</button>
+      <button disabled class="btn btn-link text-body-secondary">✔️{{ trigger.label }}</button>
     {% else %}
       <form class="ajaxified" method="post" data-confirm="{{ trigger.label}}?" action="{% url 'foirequest-apply_moderation' slug=object.slug %}">
         {% csrf_token %}

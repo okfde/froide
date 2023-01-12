@@ -27,7 +27,7 @@
     <form action="{% url 'publicbody-propose' %}" method="post">
       {% csrf_token %}
       {% render_form form %}
-      <p class="text-muted">
+      <p class="text-body-secondary">
         {% trans "If you'd like to add a lot of public bodies at once, please contact the site moderators." %}
       </p>
       <div class="text-end">
