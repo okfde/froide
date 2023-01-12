@@ -141,25 +141,27 @@ const initRequestPage = (): void => {
 }
 
 function initWriteMessageButtons(): void {
-  document.querySelectorAll<HTMLElement>('[data-write-message]')?.forEach((t) =>
-    t.addEventListener('click', function () {
-      document.getElementById('write-message')?.scrollIntoView()
-      const formDataRaw = t?.dataset?.writeMessage
-      if (formDataRaw !== undefined) {
-        const formData: Record<string, string> = JSON.parse(
-          decodeURIComponent(formDataRaw)
-        )
-        for (const [k, v] of Object.entries(formData)) {
-          const elem = document.querySelector<HTMLInputElement>(
-            `[name=sendmessage-${k}]`
+  document
+    .querySelectorAll<HTMLElement>('[data-write-message]')
+    ?.forEach((t) => {
+      t.addEventListener('click', function () {
+        document.getElementById('write-message')?.scrollIntoView()
+        const formDataRaw = t?.dataset?.writeMessage
+        if (formDataRaw !== undefined) {
+          const formData: Record<string, string> = JSON.parse(
+            decodeURIComponent(formDataRaw)
           )
-          if (elem !== null) {
-            elem.value = v
+          for (const [k, v] of Object.entries(formData)) {
+            const elem = document.querySelector<HTMLInputElement>(
+              `[name=sendmessage-${k}]`
+            )
+            if (elem !== null) {
+              elem.value = v
+            }
           }
         }
-      }
+      })
     })
-  )
 }
 
 const startTour = (
@@ -308,7 +310,9 @@ const initExpandableDescriptions = (): void => {
     if (scrollHeight <= clientHeight) {
       expand()
     } else {
-      expandButton?.addEventListener('click', () => expand())
+      expandButton?.addEventListener('click', () => {
+        expand()
+      })
     }
   })
 }
@@ -446,10 +450,9 @@ let refusalInputIsVisible = false
 const setStatus = (): void => {
   const container = document.querySelector('.status-refusal') as HTMLElement
   if (container !== null) {
-    const resolutionElement = document.querySelector(
-      '#id_resolution'
-    ) as HTMLInputElement
-    if (resolutionElement) {
+    const resolutionElement =
+      document.querySelector<HTMLInputElement>('#id_resolution')
+    if (resolutionElement != null) {
       const resolutionValue = resolutionElement.value
       const resolutionValueTriggersInput =
         /refus/.exec(resolutionValue) !== null ||
@@ -466,9 +469,9 @@ const setStatus = (): void => {
 }
 
 const initReplyForm = (): void => {
-  const replyContainer = document.querySelector('.reply-form') as HTMLElement
+  const replyContainer = document.querySelector<HTMLElement>('.reply-form')
 
-  if (!replyContainer) {
+  if (replyContainer == null) {
     return
   }
 

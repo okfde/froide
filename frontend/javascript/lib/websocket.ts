@@ -7,9 +7,7 @@
 const HEARTBEAT_SECONDS = 30
 const RETRY_SECONDS = 3
 
-interface CallbackMapping {
-  [key: string]: Function[]
-}
+type CallbackMapping = Record<string, Function[]>
 
 interface EventData {
   type: string
