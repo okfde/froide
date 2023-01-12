@@ -1,5 +1,5 @@
 {% load i18n %}{% load static %}{% load block_helper %}<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
+<html lang="{{ LANGUAGE_CODE }}"{% if request.user.is_staff %} data-bs-theme="light"{% endif %}>
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -25,6 +25,13 @@
 </head>
 <body {% if request.user.is_authenticated %}data-user="{{ request.user.id }}" data-useremail="{{ request.user.email }}"{% endif %}{% block body_extra_attributes %}{% endblock %}>
   {% block body_tag %}{% endblock %}
+  
+  {% if request.user.is_staff %}
+  <button id="darkmode-toggle">
+    <i class="fa fa-moon-o" aria-hidden="true"></i>
+  </button>
+  {% endif %}
+  
   {% block extra_footer %}{% endblock %}
 
   {% block scripts %}{% endblock %}
