@@ -36,18 +36,20 @@
         </div>
       </div>
     </div>
-    <div v-if="page.uploading" class="progress">
+    <div
+      v-if="page.uploading"
+      class="progress"
+      role="progressbar"
+      :aria-valuenow="document.progress"
+      aria-valuemin="0"
+      aria-valuemax="100">
       <div
         class="progress-bar"
         :class="{
           'progress-bar-animated progress-bar-striped': progressAlmostComplete,
           'bg-info progress-bar-striped': progressUnknown
         }"
-        :style="{ width: progressPercentLabel }"
-        role="progressbar"
-        :aria-valuenow="document.progress"
-        aria-valuemin="0"
-        aria-valuemax="100" />
+        :style="{ width: progressPercentLabel }" />
     </div>
   </div>
 </template>

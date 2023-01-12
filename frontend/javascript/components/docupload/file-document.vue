@@ -56,7 +56,13 @@
           <span class="visually-hidden">{{ i18n.openAttachmentPage }}</span>
         </a>
 
-        <div v-if="document.uploading" class="progress">
+        <div
+          v-if="document.uploading"
+          class="progress"
+          role="progressbar"
+          :aria-valuenow="document.progress"
+          aria-valuemin="0"
+          aria-valuemax="100">
           <div
             class="progress-bar"
             :class="{
@@ -64,11 +70,7 @@
                 progressAlmostComplete,
               'bg-info progress-bar-striped': progressUnknown
             }"
-            :style="{ width: progressPercentLabel }"
-            role="progressbar"
-            :aria-valuenow="document.progress"
-            aria-valuemin="0"
-            aria-valuemax="100" />
+            :style="{ width: progressPercentLabel }" />
         </div>
       </div>
       <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">

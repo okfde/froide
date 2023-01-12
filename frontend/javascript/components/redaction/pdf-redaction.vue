@@ -34,16 +34,17 @@
             {{ i18n.sending }}
           </h3>
         </div>
-        <div class="progress">
+        <div
+          class="progress"
+          role="progressbar"
+          :aria-valuenow="progressPercent"
+          aria-valuemin="0"
+          aria-valuemax="100">
           <div
             class="progress-bar"
             :class="{
               'progress-bar-striped progress-bar-animated': progressUnknown
             }"
-            role="progressbar"
-            :aria-valuenow="progressPercent"
-            aria-valuemin="0"
-            aria-valuemax="100"
             :style="progressWidth" />
         </div>
         <div class="text-center mt-3">

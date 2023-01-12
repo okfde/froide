@@ -5,18 +5,20 @@
         {{ i18n._('newDocumentPageCount', { count: numPages }) }}
       </div>
       <div class="card-body" :class="{ 'is-new': document.new }">
-        <div v-if="converting" class="progress">
+        <div
+          v-if="converting"
+          class="progress"
+          role="progressbar"
+          :aria-valuenow="progressCurrent ? progressCurrent : 0"
+          aria-valuemin="0"
+          aria-valuemax="100">
           <div
             class="progress-bar"
             :class="{
               'progress-bar-animated progress-bar-striped':
                 progressCurrent === null
             }"
-            :style="{ width: progressCurrent ? progressCurrent : '100%' }"
-            role="progressbar"
-            :aria-valuenow="progressCurrent ? progressCurrent : 0"
-            aria-valuemin="0"
-            aria-valuemax="100" />
+            :style="{ width: progressCurrent ? progressCurrent : '100%' }" />
         </div>
         <div v-else>
           <p class="text-body-secondary">
