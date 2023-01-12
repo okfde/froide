@@ -4,14 +4,13 @@
       <h4>
         {{ blockMessage }}
       </h4>
-      <div class="progress">
-        <div
-          class="progress-bar"
-          :style="blockProgressWidth"
-          role="progressbar"
-          :aria-valuenow="blockProgress"
-          aria-valuemin="0"
-          aria-valuemax="100"></div>
+      <div
+        class="progress"
+        role="progressbar"
+        :aria-valuenow="blockProgress"
+        aria-valuemin="0"
+        aria-valuemax="100">
+        <div class="progress-bar" :style="blockProgressWidth"></div>
       </div>
     </div>
     <template v-else>
