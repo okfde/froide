@@ -1,17 +1,13 @@
 import Message from './Message'
 
-interface TimelineItemsInterface {
-  [key: string]: {
-    isActive: boolean
-    element: HTMLElement
-    msgIdsVisibleMap: MessagesVisbileMap
-    updateItemVisibility: Function
-  }
+type MessagesVisibleMap = Record<string, boolean>
+interface TimelineItem {
+  isActive: boolean
+  element: HTMLElement
+  msgIdsVisibleMap: MessagesVisibleMap
+  updateItemVisibility: Function
 }
-
-interface MessagesVisbileMap {
-  [key: string]: boolean
-}
+type TimelineItemsInterface = Record<string, TimelineItem>
 
 export default class Timeline {
   element: HTMLElement
@@ -74,7 +70,7 @@ export default class Timeline {
         isActive: false,
         element: item,
         msgIdsVisibleMap: (() => {
-          const result: MessagesVisbileMap = {}
+          const result: MessagesVisibleMap = {}
           const msgContainersByKey = this.messagesContainer.querySelectorAll(
             `[data-timeline-key^="${key as string}"]`
           )

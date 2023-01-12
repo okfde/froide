@@ -23,9 +23,9 @@ export default class Message {
       ?.addEventListener('click', this.toggleMetaContainer.bind(this))
     element
       .querySelectorAll('.alpha-attachment__more-trigger')
-      .forEach((el) =>
+      .forEach((el) => {
         el.addEventListener('click', this.showAllAttachments.bind(this))
-      )
+      })
 
     // create storage item and/or expand message
     if (!this.storageItem) {
