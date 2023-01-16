@@ -83,10 +83,11 @@
       </div>
     </div>
   {% endif %}
-
+  {% if object|can_write_foiproject:request %}
   <form method="post" action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
     {% csrf_token %}
     <input type="hidden" name="actionstep" value="initial"/>
+  {% endif %}
     <div class="mb-1">
       <p class="mb-0">
         {% translate "Perform action for selected requests:" %}
@@ -96,9 +97,11 @@
           {% translate "Publish..." %}
         </button>
       {% endif %}
-      <button class="btn btn-light btn-sm ms-2" name="action" value="writemessage">
-        {% translate "Write message..." %}
-      </button>
+      {% if object|can_write_foiproject:request %}
+        <button class="btn btn-light btn-sm ms-2" name="action" value="writemessage">
+          {% translate "Write message..." %}
+        </button>
+      {% endif %}
     </div>
     <div class="table-responsive">
       <table class="table table-hover table-sm">
@@ -172,7 +175,9 @@
         </tbody>
       </table>
     </div>
+  {% if object|can_write_foiproject:request %}
   </form>
+  {% endif %}
 
   {% if team_form %}
     {% trans "Assign team to project" as legend %}
