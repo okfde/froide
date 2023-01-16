@@ -4,7 +4,7 @@
 
 {% if message.can_edit %}
   <div class="btn-group btn-group-sm mx-sm-1 mb-1">
-    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#message-edit-{{ message.pk }}">
+    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#message-edit-{{ message.pk }}">
       <i class="fa fa-edit"></i>
       {% trans "Edit" %}
     </button>

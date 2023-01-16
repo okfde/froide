@@ -52,7 +52,7 @@
         <div class="col-auto">
           <button
             @click.prevent="selectAll"
-            class="btn btn-sm btn-light"
+            class="btn btn-sm btn-outline-secondary"
             :disabled="selectAllButtonDisabled">
             {{ i18n._('selectAll', { count: searchResultsLength }) }}
           </button>
@@ -61,7 +61,7 @@
           <button
             :disabled="!hasSearchResults"
             @click.prevent="clearSearch"
-            class="btn-sm btn btn-light">
+            class="btn-sm btn btn-outline-secondary">
             {{ i18n.clearSearchResults }}
           </button>
         </div>

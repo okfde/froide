@@ -1,6 +1,6 @@
 <div class="dropdown show mt-2 mt-md-0">
   <input type="hidden" name="{{ widget.name }}" value="{{ widget.value.0 }}"/>
-  <a class="btn btn-light text-truncate dropdown-toggle w-100" href="#" role="button" id="dropdown-{{ widget.attrs.id }}" title="{{ selected_label }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <a class="btn btn-outline-secondary text-truncate dropdown-toggle w-100" href="#" role="button" id="dropdown-{{ widget.attrs.id }}" title="{{ selected_label }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     {% if selected_label == default_label %}
       {{ default_label }}
     {% else %}

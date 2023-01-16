@@ -13,7 +13,7 @@
           v-if="hasSearchResults"
           href="#"
           @click="selectAll"
-          class="btn btn-light float-end">
+          class="btn btn-outline-secondary float-end">
           Select all
         </a>
       </div>

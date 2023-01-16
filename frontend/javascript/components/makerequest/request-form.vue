@@ -157,7 +157,7 @@
             <slot name="request-hints" />
             <button
               v-if="fullTextDisabled"
-              class="btn btn-light btn-sm"
+              class="btn btn-outline-secondary btn-sm"
               @click.prevent="resetFullText">
               {{ i18n.resetFullText }}
             </button>

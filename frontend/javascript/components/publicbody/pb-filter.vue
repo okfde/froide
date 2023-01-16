@@ -203,8 +203,9 @@ export default {
     },
     setFilter(item) {
       if (this.config.multi) {
+        let val
         if (!this.value) {
-          var val = [item]
+          val = [item]
         } else if (!this.value.some((x) => item.id === x.id)) {
           val = [...this.value, item]
         }

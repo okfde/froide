@@ -56,14 +56,14 @@
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group me-1">
           <button
-            class="btn btn-light"
+            class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
             @click="undo">
             <i class="fa fa-share fa-flip-horizontal" />
           </button>
           <button
-            class="btn btn-light"
+            class="btn btn-outline-secondary"
             :disabled="!canRedo"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
@@ -95,7 +95,7 @@
 
         <div class="btn-group me-1">
           <button
-            class="pdf-prev btn btn-light"
+            class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
             @click="goPrevious">
             &laquo;
@@ -105,7 +105,7 @@
             {{ pageOfTotal }}
           </span>
           <button
-            class="pdf-next btn btn-light"
+            class="pdf-next btn btn-outline-secondary"
             :disabled="!hasNext"
             @click="goNext">
             <span class="visually-hidden">{{ i18n.nextPage }}</span>
@@ -140,7 +140,7 @@
               class="btn"
               :class="{
                 'btn-success': !hasRedactions,
-                'btn-light': hasRedactions
+                'btn-outline-secondary': hasRedactions
               }"
               type="submit"
               @click="confirmNoRedactions">
@@ -191,7 +191,7 @@
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="btn-group me-auto ms-auto">
           <button
-            class="pdf-prev btn btn-light"
+            class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
             @click="goPrevious">
             &laquo;
@@ -201,7 +201,7 @@
             {{ pageOfTotal }}
           </span>
           <button
-            class="pdf-next btn btn-light"
+            class="pdf-next btn btn-outline-secondary"
             :disabled="!hasNext"
             @click="goNext">
             {{ i18n.nextPage }}

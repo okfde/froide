@@ -23,7 +23,7 @@
       <div class="btn-group-sm" role="group">
         <button
           type="button"
-          class="btn btn-light dropdown-toggle"
+          class="btn btn-outline-secondary dropdown-toggle"
           ref="dropdown"
           data-bs-toggle="dropdown"
           aria-haspopup="true"
