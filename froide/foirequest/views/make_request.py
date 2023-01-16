@@ -361,7 +361,7 @@ class MakeRequestView(FormView):
         )
         publicbody_slug = self.kwargs.get("publicbody_slug")
         publicbodies = []
-        if publicbody_ids is not None:
+        if publicbody_ids:
             publicbody_ids = publicbody_ids.split("+")
             try:
                 publicbodies = PublicBody.objects.filter(pk__in=publicbody_ids)
