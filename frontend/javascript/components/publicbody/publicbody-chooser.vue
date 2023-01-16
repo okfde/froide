@@ -2,7 +2,7 @@
   <div class="publicbody-chooser mb-3">
     <button
       v-if="!showSearch"
-      class="btn btn-sm btn-light float-end"
+      class="btn btn-sm btn-outline-secondary float-end"
       @click.prevent="showSearch = true">
       {{ i18n.searchPublicBodyLabel }}
     </button>

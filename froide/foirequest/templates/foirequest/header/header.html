@@ -123,7 +123,7 @@
           <div class="request-descr request-descr--collapsed">
             {{ object.get_description|urlizetrunc:40|linebreaks }}
             <div class="request-descr-read-more d-grid">
-              <button type="button" class="btn btn-light btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@
               <div class="request-descr request-descr--collapsed">
                 {{ object.summary|urlizetrunc:40|linebreaks }}
                 <div class="request-descr-read-more d-grid">
-                  <button type="button" class="btn btn-light btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
                 </div>
               </div>
             {% endif %}

@@ -94,11 +94,11 @@
         {% translate "Perform action for selected requests:" %}
       </p>
       {% if object|can_manage_foiproject:request %}
-        <button class="btn btn-light btn-sm ms-2" name="action" value="publish">
+        <button class="btn btn-outline-secondary btn-sm ms-2" name="action" value="publish">
           {% translate "Publish..." %}
         </button>
       {% endif %}
-      <button class="btn btn-light btn-sm ms-2" name="action" value="writemessage">
+      <button class="btn btn-outline-secondary btn-sm ms-2" name="action" value="writemessage">
         {% translate "Write message..." %}
       </button>
     </div>

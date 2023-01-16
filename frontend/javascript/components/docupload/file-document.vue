@@ -89,7 +89,7 @@
           v-else-if="hasDocument"
           class="btn btn-sm ms-1"
           :class="{
-            'btn-light': !editDocumentMeta,
+            'btn-outline-secondary': !editDocumentMeta,
             'btn-secondary': editDocumentMeta
           }"
           @click.prevent="editDocumentMeta = !editDocumentMeta">
@@ -107,7 +107,7 @@
         <button
           v-if="ready && attachment.is_pdf"
           class="btn btn-sm d-none d-md-inline"
-          :class="{'btn-light': !document.previewPdf, 'btn-secondary': document.previewPdf}"
+          :class="{'btn-outline-secondary': !document.previewPdf, 'btn-secondary': document.previewPdf}"
           @click.prevent="$emit('docupdated', {previewPdf: !document.previewPdf})"
         >
           <i

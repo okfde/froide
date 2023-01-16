@@ -243,7 +243,7 @@
       </a>
       <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-sm btn-light">{% trans "Rerun guidance" %}</button>
+        <button type="submit" class="btn btn-sm btn-outline-secondary">{% trans "Rerun guidance" %}</button>
         <input name="notify" value="🚨 {% trans 'Run + Notify' %}" type="submit" class="btn btn-sm btn-outline-warning"/>
       </form>
     </dd>

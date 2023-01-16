@@ -11,7 +11,7 @@
   </div>
   <div class="col-5">
     {% if widget.token %}
-      <button type="submit" name="reset" value="{{ widget.purpose }}" class="btn btn-light">
+      <button type="submit" name="reset" value="{{ widget.purpose }}" class="btn btn-outline-secondary">
         <span class="fa fa-refresh"></span>
         {% trans "Reset" %}
       </button>
@@ -20,7 +20,7 @@
         {% trans "Remove" %}
       </button>
     {% else %}
-      <button type="submit" name="create" value="{{ widget.purpose }}" class="btn btn-light">
+      <button type="submit" name="create" value="{{ widget.purpose }}" class="btn btn-outline-secondary">
         <span class="fa fa-plus-square"></span>
         {% trans "Create URL" %}
       </button>

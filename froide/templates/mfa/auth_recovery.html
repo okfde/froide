@@ -39,12 +39,12 @@
   </button>
   <p class="mt-3">
     {% if mfa_keys.by_method.FIDO2 %}
-      <a class="btn btn-light" href="{% url 'mfa:auth' 'FIDO2' %}">
+      <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'FIDO2' %}">
         {% translate "Use hardware security key" %}
       </a>
     {% endif %}
     {% if mfa_keys.by_method.recovery %}
-      <a class="btn btn-light" href="{% url 'mfa:auth' 'recovery' %}">
+      <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'recovery' %}">
         {% translate "Use recovery code" %}
       </a>
     {% endif %}

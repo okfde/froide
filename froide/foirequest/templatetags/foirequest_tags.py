@@ -256,7 +256,7 @@ def markup_redacted_content(
                     '<div class="text-content-visible">',
                     content_1,
                     (
-                        '</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-bs-toggle="collapse" '
+                        '</div><a class="btn btn-sm btn-outline-secondary btn-block" href="#message-footer-{message_id}" data-bs-toggle="collapse" '
                         ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
                         '<div id="message-footer-{message_id}" class="collapse">'.format(
                             message_id=message_id, label=_("Show the quoted message")

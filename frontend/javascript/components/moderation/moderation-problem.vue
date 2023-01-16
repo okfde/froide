@@ -24,14 +24,14 @@
 
       <a
         :href="report.message_url"
-        class="btn btn-light btn-sm"
+        class="btn btn-outline-secondary btn-sm"
         target="_blank">
         {{ i18n.toMessage }}
       </a>
 
       <a
         v-if="showPublicBodyLink"
-        class="ms-3 btn btn-light btn-sm"
+        class="ms-3 btn btn-outline-secondary btn-sm"
         :href="publicBodyLink"
         target="_blank">
         {{ i18n.toPublicBody }}
