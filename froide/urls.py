@@ -125,7 +125,7 @@ if settings.FROIDE_CONFIG.get("api_activated", True):
     api_urlpatterns = [
         path("api/v1/user/", ProfileView.as_view(), name="api-user-profile"),
         path(
-            "api/v1/userpreference/",
+            "api/v1/userpreference/<str:key>/",
             UserPreferenceView.as_view(),
             name="api-user-preference",
         ),

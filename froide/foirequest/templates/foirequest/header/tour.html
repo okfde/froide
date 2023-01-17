@@ -12,9 +12,8 @@
       </button>
     </div>
     <div class="col-auto">
-      <form class="ajaxified" action="{% url 'api-user-preference' %}" method="post">
+      <form class="ajaxified" action="{% url 'api-user-preference' key='foirequest_requestpage_tour' %}" method="post">
         {% csrf_token %}
-        {{ preferences.foirequest_requestpage_tour.form.key }}
         <input type="hidden" name="value" value="1"/>
         <button type="submit" id="cancel-tour" class="btn btn-secondary">
           {% translate "No, thanks." %}
@@ -35,9 +34,8 @@
         </button>
       </div>
       <div class="col-auto">
-        <form class="ajaxified" action="{% url 'api-user-preference' %}" method="post">
+        <form class="ajaxified" action="{% url 'api-user-preference' key='foirequest_messagereceived_tour' %}" method="post">
           {% csrf_token %}
-          {{ preferences.foirequest_messagereceived_tour.form.key }}
           <input type="hidden" name="value" value="1"/>
           <button type="submit" id="cancel-tour" class="btn btn-secondary">
             {% translate "No, thanks." %}
