@@ -414,7 +414,7 @@ class AccountBlocklist(models.Model):
 
 
 class UserPreferenceManager(models.Manager):
-    def get_preference(self, user, key):
+    def get_preference(self, user, key: str):
         try:
             return self.get_queryset().get(user=user, key=key).value
         except UserPreference.DoesNotExist:
