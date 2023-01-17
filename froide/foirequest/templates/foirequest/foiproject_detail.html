@@ -88,6 +88,7 @@
     {% csrf_token %}
     <input type="hidden" name="actionstep" value="initial"/>
   {% endif %}
+  {% if object|can_write_foiproject:request %}
     <div class="mb-1">
       <p class="mb-0">
         {% translate "Perform action for selected requests:" %}
@@ -97,12 +98,11 @@
           {% translate "Publish..." %}
         </button>
       {% endif %}
-      {% if object|can_write_foiproject:request %}
-        <button class="btn btn-light btn-sm ms-2" name="action" value="writemessage">
-          {% translate "Write message..." %}
-        </button>
-      {% endif %}
+      <button class="btn btn-light btn-sm ms-2" name="action" value="writemessage">
+        {% translate "Write message..." %}
+      </button>
     </div>
+    {% endif %}
     <div class="table-responsive">
       <table class="table table-hover table-sm">
         <thead>
