@@ -880,7 +880,7 @@ class PublicBodyUploader:
             name=name,
             size=upload.size,
             filetype=upload.content_type,
-            can_approve=True,
+            can_approve=not message.request.not_publishable,
             approved=False,
             pending=True,
         )
