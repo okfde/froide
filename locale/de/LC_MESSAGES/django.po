@@ -3452,7 +3452,7 @@ msgstr "wird gesendet"
 
 #: froide/foirequest/models/message.py
 msgid "sent"
-msgstr "gesendet"
+msgstr "Versendet"
 
 #: froide/foirequest/models/message.py
 msgid "received"
@@ -11207,6 +11207,20 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/models/message.py
+#, python-format
+msgid "You exceeded your message limit of %(count)s messages in %(time)s."
+msgstr ""
+"Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
+"überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
+
+#: froide/foirequest/models/request.py
+#, python-format
+msgid "You exceeded your request limit of %(count)s requests in %(time)s."
+msgstr ""
+"Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
+"Dies ist eine automatische Vorsichtsmaßnahme."
+
 #~ msgid "Selected messages are being checked for delivery."
 #~ msgstr ""
 #~ "Ausgewählte Nachrichten werden auf ihren Zustellungsstatus überprüft."
@@ -11256,7 +11270,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Wert"
 
 #, fuzzy
-#~| msgid "Organization"
 #~ msgid "Organisations"
 #~ msgstr "Organisation"
 
