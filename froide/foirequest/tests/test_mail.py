@@ -497,3 +497,14 @@ def test_handle_html_in_plaintext(testfile):
         mail = parse_email(f)
     assert mail.html != mail.body
     assert "<p>" not in mail.body
+
+
+def test_parsing_attachment_without_content_disposition():
+    with open(p("test_mail_16.txt"), "rb") as f:
+        email = parse_email(f)
+
+    assert len(email.attachments) == 1
+    attachment = email.attachments[0]
+    assert attachment.name == "_1_0CCE8CEC0CCE8894004AF2EFC125893A.gif"
+    assert attachment.size == 35
+    assert attachment.content_type == "image/gif"
