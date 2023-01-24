@@ -45,6 +45,7 @@ from .auth import (
     requires_recent_auth,
     set_last_auth,
     start_mfa_auth,
+    try_login_user_without_mfa,
 )
 from .export import (
     ExportCrossDomainMediaAuth,
@@ -132,7 +133,8 @@ def confirm(
         )
         return redirect("account-login")
 
-    auth.login(request, user)
+    # mfa can't be setup yet, so login should succeed
+    try_login_user_without_mfa(request, user)
 
     params = {}
 
@@ -171,9 +173,7 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
                     # Confirm user account (link came from email)
                     account_manager.reactivate_account()
 
-                if not user.mfakey_set.exists():
-                    # Perform login
-                    auth.login(request, user)
+                if try_login_user_without_mfa(request, user):
                     return redirect(url)
                 return start_mfa_auth(request, user, url)
 
@@ -484,13 +484,14 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
         # Login after post reset only if no MFA keys are set
         # leave post_reset_login class setting as False
-        if not user.mfakey_set.exists():
+        if try_login_user_without_mfa(
+            self.request, user, backend=self.post_reset_login_backend
+        ):
             messages.add_message(
                 self.request,
                 messages.SUCCESS,
                 _("Your password has been set and you are now logged in."),
             )
-            auth.login(self.request, user, self.post_reset_login_backend)
             # Skip parent class implemntation
             return super(PasswordResetConfirmView, self).form_valid(form)
 
