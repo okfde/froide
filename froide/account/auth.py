@@ -3,7 +3,7 @@ from enum import Enum
 from functools import wraps
 from typing import Optional
 
-from django.contrib import messages
+from django.contrib import auth, messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
@@ -21,6 +21,16 @@ from .models import User
 RECENT_AUTH_DURATION = timedelta(minutes=30)
 RECENT_AUTH_POST_DURATION = timedelta(minutes=40)
 LAST_AUTH_KEY = "last_auth"
+
+
+def try_login_user_without_mfa(
+    request: HttpRequest, user: User, backend: Optional[str] = None
+) -> bool:
+    if not user.mfakey_set.exists():
+        # Perform login
+        auth.login(request, user, backend=backend)
+        return True
+    return False
 
 
 class MFAMethod(str, Enum):
