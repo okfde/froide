@@ -3452,7 +3452,7 @@ msgstr "wird gesendet"
 
 #: froide/foirequest/models/message.py
 msgid "sent"
-msgstr "Versendet"
+msgstr "gesendet"
 
 #: froide/foirequest/models/message.py
 msgid "received"
