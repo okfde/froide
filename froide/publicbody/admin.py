@@ -21,6 +21,7 @@ from treebeard.forms import movenodeform_factory
 
 from froide.georegion.models import GeoRegion
 from froide.helper.admin_utils import (
+    ForeignKeyFilter,
     TreeRelatedFieldListFilter,
     make_batch_tag_action,
     make_choose_object_action,
@@ -201,13 +202,14 @@ class PublicBodyBaseAdminMixin:
     list_filter = (
         make_nullfilter("change_proposals", _("Has change proposals")),
         "jurisdiction",
-        ("classification", TreeRelatedFieldListFilter),
-        "classification",
-        "categories",
         make_nullfilter("geo", _("Has geo coordinates")),
         make_nullfilter("regions", _("Has regions")),
         make_emptyfilter("email", "E-Mail"),
         make_emptyfilter("fax", "Fax"),
+        ("laws", ForeignKeyFilter),
+        ("classification", TreeRelatedFieldListFilter),
+        ("classification", ForeignKeyFilter),
+        "categories",
     )
     filter_horizontal = ("laws",)
     list_max_show_all = 5000
