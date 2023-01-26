@@ -566,7 +566,12 @@ class FoiLawAdmin(TranslatableAdmin):
         ordering="num_publicbodies",
     )
     def num_publicbodies(self, obj):
-        return obj.num_publicbodies
+        return format_html(
+            '<a href="{}">{}</a>',
+            reverse("%s:publicbody_publicbody_changelist" % self.admin_site.name)
+            + ("?laws={}".format(obj.id)),
+            obj.num_publicbodies,
+        )
 
 
 @admin.register(Jurisdiction)
