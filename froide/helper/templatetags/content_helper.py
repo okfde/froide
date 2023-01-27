@@ -3,10 +3,10 @@ import datetime
 
 from django import template
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.html import avoid_wrapping
 from django.utils.http import urlencode
-from django.utils.timezone import is_aware
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext_lazy, pgettext
 
@@ -58,11 +58,12 @@ def relativetime(d):
     https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#date
     """
 
+    d = timezone.localtime(d)
     # Convert datetime.date to datetime.datetime for comparison.
     if not isinstance(d, datetime.datetime):
         d = datetime.datetime(d.year, d.month, d.day)
 
-    now = datetime.datetime.now(datetime.timezone.utc if is_aware(d) else None)
+    now = timezone.now()
     delta = now - d
 
     # Deal with leapyears by subtracing the number of leapdays
