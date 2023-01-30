@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 
 import icalendar
 
+from froide.helper.content_urls import get_content_url
 from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
 from froide.helper.tasks import search_instance_save
@@ -74,7 +75,11 @@ def check_throttle(user, klass, extra_filters=None):
         mail_managers(_("User exceeded request limit"), str(user.pk))
     return forms.ValidationError(
         klass.get_throttle_message(),
-        params={"count": throttle_kind[0], "time": format_seconds(throttle_kind[1])},
+        params={
+            "count": throttle_kind[0],
+            "time": format_seconds(throttle_kind[1]),
+            "url": get_content_url("throttled"),
+        },
         code="throttled",
     )
 

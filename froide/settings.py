@@ -544,6 +544,7 @@ class Base(Configuration):
             "privary": "/privacy/",
             "about": "/about/",
             "help": "/help/",
+            "throttled": "/help/",
         },
         moderation_triggers=[
             {

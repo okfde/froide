@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
@@ -667,7 +668,11 @@ class FoiRequest(models.Model):
 
     @classmethod
     def get_throttle_message(cls):
-        return _("You exceeded your request limit of %(count)s requests in %(time)s.")
+        return mark_safe(
+            _(
+                'You exceeded your request limit of %(count)s requests in %(time)s. <a href="%(url)s">Learn more</a>'
+            )
+        )
 
     def should_apply_throttle(self):
         last_message = self.messages[-1]
