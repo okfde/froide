@@ -36,6 +36,7 @@ from froide.foirequest.models import (
 )
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
+from froide.helper.content_urls import get_content_url
 from froide.helper.email_parsing import EmailAddress, ParsedEmail
 from froide.publicbody.models import FoiLaw, PublicBody
 
@@ -1900,6 +1901,11 @@ def test_throttling(world, client, pb, request_throttle):
     assertContains(
         response,
         "exceeded your request limit of 2 requests in 1",
+        status_code=400,
+    )
+    assertContains(
+        response,
+        '<a href="{}">'.format(get_content_url("throttled")),
         status_code=400,
     )
 

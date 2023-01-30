@@ -8,6 +8,7 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import formats, timezone
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
@@ -518,7 +519,11 @@ class FoiMessage(models.Model):
 
     @classmethod
     def get_throttle_message(cls):
-        return _("You exceeded your message limit of %(count)s messages in %(time)s.")
+        return mark_safe(
+            _(
+                'You exceeded your message limit of %(count)s messages in %(time)s. <a href="%(url)s">Learn more</a>'
+            )
+        )
 
     def get_postal_attachment_form(self):
         from ..forms import get_postal_attachment_form
