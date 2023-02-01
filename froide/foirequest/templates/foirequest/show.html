@@ -19,21 +19,22 @@
     <meta name="robots" content="noindex"/>
   {% endif %}
 
-  {# Open Graph / Facebook #}
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
-  <meta property="og:title" content="{{ object.title }}">
-  <meta property="og:description" content="{{ object.get_description }}">
+  {% if not object.no_index %}
+    {# Open Graph / Facebook #}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
+    <meta property="og:title" content="{{ object.title }}">
+    <meta property="og:description" content="{{ object.get_description }}">
 
-
-  {# Twitter #}
-  <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
-  <meta property="twitter:title" content="{{ object.title }}">
-  <meta property="twitter:description" content="{{ object.get_description }}">
-  {% block share_image %}
-    <meta property="twitter:card" content="summary">
-    {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
-  {% endblock share_image %}
+    {# Twitter #}
+    <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
+    <meta property="twitter:title" content="{{ object.title }}">
+    <meta property="twitter:description" content="{{ object.get_description }}">
+    {% block share_image %}
+      <meta property="twitter:card" content="summary">
+      {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
+    {% endblock share_image %}
+  {% endif %}
 
   <link rel="self" type="text/html" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
   {% if DEFAULT_LANGUAGE_CODE != CURRENT_LANGUAGE_CODE %}

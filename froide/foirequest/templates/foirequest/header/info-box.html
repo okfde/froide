@@ -160,14 +160,14 @@
 
       {# follow request #}
       {% block followers %}
-        {% if object.is_public %}
+        {% if object.is_public and not object.no_index %}
           <li class="info-box__list-item info-box__list-item--has-divider d-print-none">
             {% show_follow "request" object %}
           </li>
         {% endif %}
       {% endblock followers %}
 
-      {% if object.is_public %}
+      {% if object.is_public and not object.no_index %}
         <li id="share-links" class="info-box__list-item info-box__list-item--has-divider d-print-none">
 
           {# copy url #}
