@@ -113,6 +113,7 @@ class MyBaseListRequestView(BaseListRequestView):
     document = FoiRequestDocument
     filterset = AccountRequestFilterSet
     search_name = ""
+    has_facets = True
 
 
 class MyRequestsView(BaseAccountMixin, MyBaseListRequestView):

@@ -37,7 +37,9 @@ class SearchManager:
         return data
 
     def get_active_filters(self, data):
-        return get_active_filters(data, self.filter_order, sub_filters=self.sub_filters)
+        return list(
+            get_active_filters(data, self.filter_order, sub_filters=self.sub_filters)
+        )
 
     def make_filter_url(self, data=None):
         if data is None:

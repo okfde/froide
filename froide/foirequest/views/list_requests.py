@@ -36,10 +36,6 @@ class BaseListRequestView(BaseSearchView):
     model = FoiRequest
     document = FoiRequestDocument
     filterset = FoiRequestFilterSet
-    search_manager_kwargs = {
-        "filter_order": FILTER_ORDER,
-        "sub_filters": SUB_FILTERS,
-    }
 
     def get_base_search(self):
         return super().get_base_search().filter("term", public=True)
@@ -47,6 +43,10 @@ class BaseListRequestView(BaseSearchView):
 
 class ListRequestView(BaseListRequestView):
     feed = None
+    search_manager_kwargs = {
+        "filter_order": FILTER_ORDER,
+        "sub_filters": SUB_FILTERS,
+    }
 
     def get(self, request, *args, **kwargs):
         q = request.GET.get("q", "")
