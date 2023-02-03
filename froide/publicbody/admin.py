@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.apps import apps
 from django.conf import settings
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
@@ -47,6 +48,7 @@ from .models import (
 )
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy("api:category-autocomplete")
+has_foirequests = apps.is_installed("froide.foirequest")
 
 
 class PublicBodyAdminSite(admin.AdminSite):
@@ -190,15 +192,14 @@ class PublicBodyBaseAdminMixin:
             },
         ),
     )
-    list_display = (
+    list_display = [
         "name",
         "email",
         "url",
         "classification",
         "jurisdiction",
         "category_list",
-        "request_count",
-    )
+    ] + (["request_count"] if has_foirequests else [])
     list_filter = (
         make_nullfilter("change_proposals", _("Has change proposals")),
         "jurisdiction",
@@ -247,17 +248,20 @@ class PublicBodyBaseAdminMixin:
     )
 
     def get_queryset(self, request):
-        qs = super(PublicBodyBaseAdminMixin, self).get_queryset(request)
-        qs = qs.annotate(request_count=Count("foirequest"))
+        qs = super().get_queryset(request)
+        if has_foirequests:
+            qs = qs.annotate(request_count=Count("foirequest"))
         qs = qs.select_related("classification", "jurisdiction")
         return qs
 
-    @admin.display(
-        description=_("requests"),
-        ordering="request_count",
-    )
-    def request_count(self, obj):
-        return obj.request_count
+    if has_foirequests:
+
+        @admin.display(
+            description=_("requests"),
+            ordering="request_count",
+        )
+        def request_count(self, obj):
+            return obj.request_count
 
     def get_urls(self):
         urls = super(PublicBodyBaseAdminMixin, self).get_urls()
