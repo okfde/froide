@@ -18,6 +18,7 @@ class FoiRequestConfig(AppConfig):
         from froide.account.export import registry
         from froide.foirequest import signals  # noqa
         from froide.helper.search import search_registry
+        from froide.team import team_changed
 
         from .utils import (
             cancel_user,
@@ -32,6 +33,7 @@ class FoiRequestConfig(AppConfig):
         registry.register(export_user_data)
         search_registry.register(add_search)
         comment_will_be_posted.connect(signals.pre_comment_foimessage)
+        team_changed.connect(keep_foiproject_teams_synced_with_requests)
 
 
 def add_search(request):
@@ -40,3 +42,10 @@ def add_search(request):
         "name": "foirequest",
         "url": reverse("foirequest-list"),
     }
+
+
+def keep_foiproject_teams_synced_with_requests(sender, team=None, **kwargs):
+    from froide.foirequest.models import FoiProject, FoiRequest
+
+    if isinstance(sender, FoiProject):
+        FoiRequest.objects.filter(project=sender).update(team=team)
