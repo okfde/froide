@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Dict, Union
 
 from django import forms
@@ -27,6 +26,7 @@ from froide.helper.widgets import (
 from . import account_email_changed
 from .auth import complete_mfa_authenticate_for_method
 from .models import AccountBlocklist, User
+from .registries import user_extra_registry
 from .services import AccountService, get_user_for_email
 from .widgets import ConfirmationWidget, PinInputWidget
 
@@ -51,27 +51,6 @@ class UserChangeForm(DjangoUserChangeForm):
         fields = "__all__"
 
 
-class UserExtrasRegistry:
-    def __init__(self):
-        self.registry = defaultdict(list)
-
-    def register(self, key, form_extender):
-        self.registry[key].append(form_extender)
-
-    def on_init(self, key: str, form) -> None:
-        for fe in self.registry[key]:
-            fe.on_init(form)
-
-    def on_clean(self, key: str, form) -> None:
-        for fe in self.registry[key]:
-            fe.on_clean(form)
-
-    def on_save(self, key: str, form, user: Union[SimpleLazyObject, User]) -> None:
-        for fe in self.registry[key]:
-            fe.on_save(form, user)
-
-
-user_extra_registry = UserExtrasRegistry()
 ADDRESS_REQUIRED_HELP_TEXT = _(
     "Your address will not be displayed "
     "publicly and is only needed because a public body "
