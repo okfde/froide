@@ -32,7 +32,6 @@ from froide.helper.email_utils import (
     get_unread_mails,
 )
 
-from .models import Bounce
 from .signals import email_bounced, email_unsubscribed, user_email_bounced
 
 BOUNCE_FORMAT = settings.FROIDE_CONFIG["bounce_format"]
@@ -246,6 +245,8 @@ def add_bounce_mail(email):
 
 
 def update_bounce(email, recipient):
+    from .models import Bounce
+
     bounce = Bounce.objects.update_bounce(recipient, email.bounce_info)
     should_deactivate = check_deactivation_condition(bounce)
 
@@ -300,6 +301,8 @@ def handle_smtp_error(exc):
     """
     Handle SMTPRecipientsRefused exceptions
     """
+    from .models import Bounce
+
     recipients = exc.recipients
     for recipient, info in recipients.items():
         recipient = parse_header_field(recipient)
