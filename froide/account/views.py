@@ -31,10 +31,9 @@ from django.views.generic import DetailView, FormView, RedirectView, TemplateVie
 from crossdomainmedia import CrossDomainMediaMixin
 from mfa.views import LoginView as MFALoginView
 
-from froide.foirequest.models import FoiRequest
-from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import get_redirect, get_redirect_url, render_403
 
+from . import account_confirmed
 from .auth import (
     MFAMethod,
     begin_mfa_authenticate_for_method,
@@ -96,7 +95,9 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
         context["ref"] = self.request.GET.get("ref")
         return context
 
-    def get_foirequest(self) -> Optional[FoiRequest]:
+    def get_foirequest(self):
+        from froide.foirequest.models import FoiRequest
+
         request_pk = self.request.GET.get("request")
         if request_pk:
             try:
@@ -109,6 +110,7 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
 def confirm(
     request: HttpRequest, user_id: int, secret: str, request_id: Optional[int] = None
 ) -> HttpResponseRedirect:
+
     if request.user.is_authenticated:
         if request.user.id != user_id:
             messages.add_message(
@@ -121,6 +123,7 @@ def confirm(
     if user.is_active or (not user.is_active and user.email is None):
         return redirect("account-login")
     account_service = AccountService(user)
+    # Todo: remove request_id from confirm_account
     result = account_service.confirm_account(secret, request_id)
     if not result:
         messages.add_message(
@@ -141,11 +144,12 @@ def confirm(
     if request.GET.get("ref"):
         params["ref"] = request.GET["ref"]
 
-    if request_id is not None:
-        req_service = ActivatePendingRequestService({"request_id": request_id})
-        foirequest = req_service.process(request=request)
-        if foirequest:
-            params["request"] = str(foirequest.pk)
+    # Confirm account
+    results = account_confirmed.send_robust(sender=user, request=request)
+    extra_params_list = [result for _receiver, result in results if result]
+    for extra_params in extra_params_list:
+        params.update(extra_params)
+
     default_url = "%s?%s" % (reverse("account-confirmed"), urlencode(params))
     return get_redirect(request, default=default_url, params=params)
 
@@ -189,6 +193,7 @@ class ProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         from froide.campaign.models import Campaign
+        from froide.foirequest.models import FoiRequest
         from froide.publicbody.models import PublicBody
 
         ctx = super().get_context_data(**kwargs)

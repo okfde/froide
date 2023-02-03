@@ -226,27 +226,12 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     @admin.action(description=_("Resend activation mail"))
     def resend_activation(self, request, queryset):
-        from froide.foirequest.models import FoiRequest
-
         rows_updated = 0
-
         for user in queryset:
             if user.is_active:
                 continue
-            foi_request = FoiRequest.objects.filter(
-                user=user, status=FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
-            )
-            if len(foi_request) == 1:
-                foi_request = foi_request[0].pk
-            elif len(foi_request) > 1:
-                # Something is borken!
-                continue
-            else:
-                foi_request = None
             rows_updated += 1
-            AccountService(user).send_confirmation_mail(
-                request_id=foi_request,
-            )
+            AccountService(user).send_confirmation_mail()
 
         self.message_user(request, _("%d activation mails sent." % rows_updated))
 
