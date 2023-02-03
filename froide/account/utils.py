@@ -2,13 +2,13 @@ import re
 from datetime import timedelta
 from typing import Any, Dict, Optional, Tuple, Union
 
+from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 from django.db import transaction
 from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 
-from froide.accesstoken.models import AccessToken
 from froide.helper.date_utils import get_midnight
 from froide.helper.email_sending import (
     mail_middleware_registry,
@@ -17,7 +17,6 @@ from froide.helper.email_sending import (
 )
 
 from . import account_canceled, account_future_canceled, account_merged
-from .models import User
 from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r"(\d{5})\s+(.*)")
@@ -26,6 +25,8 @@ TRAILING_COMMA = re.compile(r"\s*,\s*$")
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
 CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
 FUTURE_CANCEL_PERIOD = timedelta(days=31)
+
+User = get_user_model()
 
 
 def send_mail_users(subject, body, users, **kwargs):
@@ -312,6 +313,8 @@ def check_account_compatibility(groups):
 
 
 def delete_expired_onetime_login_tokens():
+    from froide.accesstoken.models import AccessToken
+
     from .services import ONE_TIME_LOGIN_EXPIRY, ONE_TIME_LOGIN_PURPOSE
 
     time_ago = timezone.now() - ONE_TIME_LOGIN_EXPIRY
