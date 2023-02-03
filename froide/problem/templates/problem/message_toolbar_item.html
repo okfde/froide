@@ -46,7 +46,7 @@
             {% trans "In order to report a problem with this message, you need to be logged in." %}
           </p>
           <p>
-            <a class="btn btn-primary" href="{% url LOGIN_URL %}?next={{ message.get_absolute_url|urlencode }}">{% trans "Please login" %}</a>
+            <a class="btn btn-primary" href="{% url 'account-login' %}?next={{ message.get_absolute_url|urlencode }}">{% trans "Please login" %}</a>
           </p>
         {% else %}
           {% if message.problemreports %}

@@ -141,7 +141,7 @@
         </div>
         {% if not request.user.is_authenticated %}
           <div class="alert alert-warning">
-            <a href="{% url LOGIN_URL %}">
+            <a href="{% url 'account-login' %}">
               {% trans "You have to login or signup first in order to make a request." %}
             </a>
           </div>

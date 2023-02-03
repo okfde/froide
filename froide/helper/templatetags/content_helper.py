@@ -2,7 +2,6 @@ import calendar
 import datetime
 
 from django import template
-from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
@@ -104,7 +103,7 @@ def relativetime(d):
 
 @register.filter
 def make_login_redirect_url(url):
-    return reverse(settings.LOGIN_URL) + "?" + urlencode({"next": url})
+    return reverse("account-login") + "?" + urlencode({"next": url})
 
 
 @register.filter

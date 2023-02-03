@@ -82,7 +82,7 @@
           </li>
           {% else %}
             <li class="nav-item {% block nav_login %}{% endblock %}">
-              <a class="nav-link" href="{% url LOGIN_URL %}?next={{ request.get_full_path|urlencode }}">
+              <a class="nav-link" href="{% url 'account-login' %}?next={{ request.get_full_path|urlencode }}">
                 {% blocktrans %}Sign in{% endblocktrans %}
               </a>
             </li>

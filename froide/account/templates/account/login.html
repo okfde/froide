@@ -20,7 +20,7 @@
             {% endblock %}
           </a>
         </p>
-        <form class="form-horizontal" method="post" action="{% url LOGIN_URL %}">
+        <form class="form-horizontal" method="post" action="{% url 'account-login' %}">
           {% csrf_token %}
           {% if next %}<input type="hidden" name="next" value="{{ next }}"/>{% endif %}
           {% render_form form %}
