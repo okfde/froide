@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from django.apps import apps
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
@@ -17,7 +18,6 @@ from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
 from froide.account.export import ExportCrossDomainMediaAuth
-from froide.foirequest.models import FoiRequest
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
 
@@ -33,6 +33,8 @@ from .utils import (
     make_account_private,
     start_cancel_account_process,
 )
+
+has_foirequests = apps.is_installed("froide.foirequest")
 
 
 @admin.register(UserTag)
@@ -58,7 +60,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = (
+    list_display = [
         "username",
         "email",
         "first_name",
@@ -70,8 +72,8 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "is_trusted",
         "is_deleted",
         "has_mfa",
-        "request_count",
-    )
+    ] + (["request_count"] if has_foirequests else [])
+
     date_hierarchy = "date_joined"
     ordering = ("-date_joined",)
 
@@ -133,7 +135,8 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.annotate(request_count=Count("foirequest"))
+        if has_foirequests:
+            qs = qs.annotate(request_count=Count("foirequest"))
         user_has_mfa = MFAKey.objects.filter(
             user_id=OuterRef("pk"),
         )
@@ -157,12 +160,14 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         if "email" in form.changed_data:
             account_email_changed.send_robust(sender=obj)
 
-    @admin.display(
-        description=_("requests"),
-        ordering="request_count",
-    )
-    def request_count(self, obj):
-        return obj.request_count
+    if has_foirequests:
+
+        @admin.display(
+            description=_("requests"),
+            ordering="request_count",
+        )
+        def request_count(self, obj):
+            return obj.request_count
 
     @admin.display(
         description=_("2FA"),
@@ -221,6 +226,8 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     @admin.action(description=_("Resend activation mail"))
     def resend_activation(self, request, queryset):
+        from froide.foirequest.models import FoiRequest
+
         rows_updated = 0
 
         for user in queryset:
