@@ -2,6 +2,7 @@ from datetime import timedelta
 from typing import Any, Dict, Optional, Union
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required
@@ -121,7 +122,7 @@ def confirm(
         return redirect("account-show")
     user = get_object_or_404(User, pk=int(user_id))
     if user.is_active or (not user.is_active and user.email is None):
-        return redirect("account-login")
+        return redirect(settings.LOGIN_URL)
     account_service = AccountService(user)
     # Todo: remove request_id from confirm_account
     result = account_service.confirm_account(secret, request_id)
@@ -134,7 +135,7 @@ def confirm(
                 "please login with your password."
             ),
         )
-        return redirect("account-login")
+        return redirect(settings.LOGIN_URL)
 
     # mfa can't be setup yet, so login should succeed
     try_login_user_without_mfa(request, user)

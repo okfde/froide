@@ -13,6 +13,7 @@ def site_settings(request):
         "SITE_EMAIL": settings.SITE_EMAIL,
         "SITE_URL": settings.SITE_URL,
         "SITE_LOGO": settings.SITE_LOGO,
+        "LOGIN_URL": settings.LOGIN_URL,
         "CURRENT_LANGUAGE_CODE": getattr(
             request, "LANGUAGE_CODE", settings.LANGUAGE_CODE
         ),
