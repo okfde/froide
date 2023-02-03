@@ -129,7 +129,7 @@ def test_public_body_new_user_request(world, client, pb):
     assert len(mail.outbox) == 1
     message = mail.outbox[0]
     assert mail.outbox[0].to[0] == post["user_email"]
-    match = re.search(r"/%d/%d/(\w+)/" % (user.pk, req.pk), message.body)
+    match = re.search(r"/%d/(\w+)/" % user.pk, message.body)
     match_full = re.search(r"http://[^/]+(/.+)", message.body)
     assert match is not None
     assert match_full is not None
@@ -139,7 +139,7 @@ def test_public_body_new_user_request(world, client, pb):
     secret = match.group(1)
     generated_url = reverse(
         "account-confirm",
-        kwargs={"user_id": user.pk, "secret": secret, "request_id": req.pk},
+        kwargs={"user_id": user.pk, "secret": secret},
     )
     assert generated_url in url
     assert not user.is_active
@@ -503,7 +503,7 @@ def test_redirect_after_request_new_account(world, client, pb):
     req = FoiRequest.objects.get(title=post["subject"])
     message = mail.outbox[0]
     assert message.to[0] == post["user_email"]
-    match = re.search(r"http://[\w:]+(/[\w/]+/\d+/%d/\w+/\S*)" % (req.pk), message.body)
+    match = re.search(r"http://[\w:]+(/[\w/]+/\d+/\w+/\S*)", message.body)
     assert match is not None
     url = match.group(1)
     response = client.get(url)
@@ -1475,7 +1475,7 @@ def test_make_same_request(world, client):
     assert len(mail.outbox) == 1
     message = mail.outbox[0]
     assert message.to[0] == post["user_email"]
-    match = re.search(r"/(\d+)/%d/(\w+)/" % (same_req2.pk), message.body)
+    match = re.search(r"/(\d+)/(\w+)/", message.body)
     assert match is not None
     new_user = User.objects.get(id=int(match.group(1)))
     assert not new_user.is_active
@@ -1483,11 +1483,7 @@ def test_make_same_request(world, client):
     response = client.get(
         reverse(
             "account-confirm",
-            kwargs={
-                "user_id": new_user.pk,
-                "secret": secret,
-                "request_id": same_req2.pk,
-            },
+            kwargs={"user_id": new_user.pk, "secret": secret},
         )
     )
     assert response.status_code == 302

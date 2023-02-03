@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.apps import AppConfig
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
@@ -12,6 +15,7 @@ class FoiRequestConfig(AppConfig):
 
         from froide.account import (
             account_canceled,
+            account_confirmed,
             account_made_private,
             account_merged,
         )
@@ -34,6 +38,7 @@ class FoiRequestConfig(AppConfig):
         search_registry.register(add_search)
         comment_will_be_posted.connect(signals.pre_comment_foimessage)
         team_changed.connect(keep_foiproject_teams_synced_with_requests)
+        account_confirmed.connect(send_request_when_account_confirmed)
 
 
 def add_search(request):
@@ -45,7 +50,31 @@ def add_search(request):
 
 
 def keep_foiproject_teams_synced_with_requests(sender, team=None, **kwargs):
-    from froide.foirequest.models import FoiProject, FoiRequest
+    from .models import FoiProject, FoiRequest
 
     if isinstance(sender, FoiProject):
         FoiRequest.objects.filter(project=sender).update(team=team)
+
+
+def send_request_when_account_confirmed(sender, request=None, **kwargs):
+    from .models import FoiRequest
+    from .services import ActivatePendingRequestService
+
+    # request cannot be too old for confirmation
+    # otherwise it has to be confirmed manually
+    MAX_DAYS_OLD = 3
+    not_older_than = timezone.now() - timedelta(days=MAX_DAYS_OLD)
+
+    foirequest = FoiRequest.objects.filter(
+        user=sender,
+        status=FoiRequest.STATUS.AWAITING_USER_CONFIRMATION,
+        created_at__gte=not_older_than,
+    ).first()
+
+    if not foirequest:
+        return
+
+    req_service = ActivatePendingRequestService({"foirequest": foirequest})
+    foirequest = req_service.process(request=request)
+    if foirequest:
+        return {"request": str(foirequest.pk)}

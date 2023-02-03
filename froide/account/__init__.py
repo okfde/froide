@@ -1,5 +1,6 @@
 from django.dispatch import Signal
 
+account_confirmed = Signal()  # args: ['request']
 account_canceled = Signal()  # args: ['user']
 account_activated = Signal()  # args: ['user']
 account_email_changed = Signal()  # args: ['old_email']

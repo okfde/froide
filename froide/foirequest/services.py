@@ -85,7 +85,6 @@ class CreateRequestService(BaseService):
 
             if user_created:
                 AccountService(user).send_confirmation_mail(
-                    request_id=foi_object.pk,
                     reference=foi_object.reference,
                     redirect_url=self.data.get("redirect_url"),
                 )
