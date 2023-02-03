@@ -65,6 +65,8 @@ setup(
         "icalendar",
         "easy-thumbnails",
         "drf-spectacular[sidecar]",
+        "python-slugify",
+        "django-parler",
     ],
     extras_require=extras,
     include_package_data=True,
