@@ -1,12 +1,13 @@
 from typing import Any, Iterator
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db.models.query import QuerySet
 from django.utils import translation
 
 from froide.celery import app as celery_app
 
-from .models import User
+User = get_user_model()
 
 
 @celery_app.task
