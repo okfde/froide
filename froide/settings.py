@@ -396,6 +396,10 @@ class Base(Configuration):
             "task": "froide.foirequest.tasks.fetch_mail",
             "schedule": crontab(),
         },
+        "check_mail_log": {
+            "task": "froide.helper.tasks.check_mail_log",
+            "schedule": crontab(),
+        },
         "detect-asleep": {
             "task": "froide.foirequest.tasks.detect_asleep",
             "schedule": crontab(hour=0, minute=0),
