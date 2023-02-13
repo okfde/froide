@@ -65,29 +65,5 @@ $footer-color-hover: $gray-100;
     a:hover {
       color: $footer-color-hover;
     }
-
-    @keyframes highlight_pulse {
-      0% {
-        transform: scale(1, 1);
-      }
-
-      50% {
-        transform: scale(1.1, 1.1);
-      }
-
-      100% {
-        transform: scale(1, 1);
-      }
-    }
-
-    .footer__highlight {
-      display: block;
-      transform-origin: left bottom;
-      animation: 3s linear 0s highlight_pulse;
-      animation-iteration-count: infinite;
-    }
-    .footer__highlight:hover {
-      animation: none;
-    }
   }
 }
