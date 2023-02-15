@@ -14,10 +14,7 @@
     <div class="row justify-content-center">
       <div class="scol">
         <div class="text-start">
-          <button
-            class="btn btn-sm text-muted small"
-            :class="{ 'btn-info': page.needsRotation }"
-            @click="rotatePage">
+          <button class="btn btn-sm text-muted small" @click="rotatePage">
             <span class="fa fa-rotate-right" />
           </button>
         </div>
@@ -52,7 +49,7 @@
 </template>
 
 <script>
-import EXIF from 'exif-js'
+import ExifReader from 'exifreader'
 
 export default {
   name: 'ImagePage',
@@ -70,8 +67,12 @@ export default {
     return {
       loaded: false,
       width: null,
-      height: null
+      height: null,
+      imgBitmap: null
     }
+  },
+  created() {
+    this.fetchImage()
   },
   computed: {
     totalRotate() {
@@ -81,24 +82,11 @@ export default {
       }
       return rotDegree + (this.page.implicitRotate || 0)
     },
-    image() {
-      const image = new window.Image()
-      image.crossOrigin = 'Anonymous'
-      image.addEventListener('load', this.imageLoaded, false)
-      image.src = this.page.file_url
-      return image
-    },
     pageUrl() {
-      if (!this.page.file_url) {
+      if (!this.loaded) {
         return false
       }
-      if (this.image) {
-        if (this.totalRotate === 0) {
-          return this.page.file_url
-        }
-        return this.rotateImage(this.totalRotate)
-      }
-      return false
+      return this.rotateImage(this.totalRotate)
     },
     pageNum() {
       return this.page.pageNum
@@ -141,17 +129,16 @@ export default {
       })
     },
     rotateImage(degree) {
-      if (!this.loaded) {
+      if (!this.imgBitmap) {
         return null
       }
-      const img = this.image
       const canvas = document.createElement('canvas')
       if (degree % 180 === 0) {
-        canvas.width = this.width
-        canvas.height = this.height
+        canvas.width = this.imgBitmap.width
+        canvas.height = this.imgBitmap.height
       } else {
-        canvas.width = this.height
-        canvas.height = this.width
+        canvas.width = this.imgBitmap.height
+        canvas.height = this.imgBitmap.width
       }
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -159,25 +146,32 @@ export default {
 
       ctx.translate(canvas.width / 2, canvas.height / 2)
       ctx.rotate((degree * Math.PI) / 180)
-      ctx.drawImage(img, -img.width / 2, -img.height / 2)
+      ctx.drawImage(
+        this.imgBitmap,
+        -this.imgBitmap.width / 2,
+        -this.imgBitmap.height / 2
+      )
 
       ctx.restore()
       return canvas.toDataURL('image/jpeg', 1.0)
     },
-    imageLoaded(e) {
-      this.loaded = true
-      const width = (this.width = e.target.width)
-      const height = (this.height = e.target.height)
-      const page = this.page
-      if (page.exif === undefined) {
-        const self = this
-        EXIF.getData(e.target, function () {
+    fetchImage() {
+      fetch(this.page.file_url)
+        .then((response) => {
+          return response.blob()
+        })
+        .then((blob) => {
+          return Promise.all([blob.arrayBuffer(), createImageBitmap(blob)])
+        })
+        .then(([ab, v]) => {
+          const reader = ExifReader.load(ab, { expanded: true })
           const data = {
             exif: true,
-            width,
-            height
+            width: v.width,
+            heigh: v.height,
+            implicitRotate: 0
           }
-          const orientation = EXIF.getTag(this, 'Orientation')
+          const orientation = reader.exif?.Orientation.value
           if (orientation === 6) {
             data.implicitRotate = 90
           } else if (orientation === 8) {
@@ -185,15 +179,13 @@ export default {
           } else if (orientation === 3) {
             data.implicitRotate = 180
           }
-          if (self.width > self.height && data.implicitRotate % 180 === 0) {
-            data.needsRotation = true
-          }
-          self.$emit('pageupdated', {
-            pageNum: self.pageNum,
+          this.$emit('pageupdated', {
+            pageNum: this.pageNum,
             data
           })
+          this.imgBitmap = v
+          this.loaded = true
         })
-      }
     }
   }
 }
