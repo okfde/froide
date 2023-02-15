@@ -17,8 +17,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-01-30 10:29+0100\n"
-"PO-Revision-Date: 2023-01-30 10:30+0100\n"
-"Last-Translator: Stefan Wehrmeyer <stefan.wehrmeyer@okfn.de>\n"
+"PO-Revision-Date: 2023-02-16 17:49+0000\n"
+"Last-Translator: Karl Engelhardt <karl.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -3244,7 +3244,7 @@ msgstr "Informationsfreiheitsanfrage"
 #: froide/foirequest/models/request.py froide/foirequest/models/suggestion.py
 #: froide/follow/models.py froide/frontpage/models.py
 msgid "User"
-msgstr "Nutzer:in"
+msgstr "Nutzer"
 
 #: froide/foirequest/models/event.py froide/foirequest/models/request.py
 #: froide/foirequest/models/suggestion.py
@@ -3443,8 +3443,8 @@ msgid ""
 "\"%(url)s\">Learn more</a>"
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
-"überschritten. Dies ist eine automatische Vorsichtsmaßnahme. <a "
-"href=“%(url)s”>Mehr erfahren</a>"
+"überschritten. Dies ist eine automatische Vorsichtsmaßnahme. <a href=\"%(url)"
+"s\">Mehr erfahren</a>"
 
 #: froide/foirequest/models/message.py
 msgid "sending"
@@ -3811,7 +3811,7 @@ msgid ""
 "\"%(url)s\">Learn more</a>"
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
-"Dies ist eine automatische Vorsichtsmaßnahme. <a href=“%(url)s”>Mehr "
+"Dies ist eine automatische Vorsichtsmaßnahme. <a href=\"%(url)s\">Mehr "
 "erfahren</a>"
 
 #: froide/foirequest/models/suggestion.py
