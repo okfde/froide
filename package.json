@@ -63,7 +63,7 @@
     "bootstrap": "^5.2.0",
     "choices.js": "^10.1.0",
     "driver.js": "^0.9.8",
-    "exif-js": "^2.3.0",
+    "exifreader": "^4.9.1",
     "font-awesome": "^4.7.0",
     "js-base64": "3.6.1",
     "leaflet": "^1.5.1",
