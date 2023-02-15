@@ -78,7 +78,7 @@ deprecation==2.1.0
     # via pikepdf
 dj-database-url==1.2.0
     # via -r requirements.in
-django==4.1.4
+django==4.1.7
     # via
     #   -r requirements.in
     #   channels
@@ -194,8 +194,6 @@ idna==3.4
     # via
     #   requests
     #   yarl
-importlib-metadata==5.2.0
-    # via markdown
 inflection==0.5.1
     # via drf-spectacular
 itypes==1.2.0
@@ -277,6 +275,8 @@ python-magic==0.4.27
     # via -r requirements.in
 python-mimeparse==1.6.0
     # via -r requirements.in
+python-poppler==0.3.0
+    # via django-filingcabinet
 python-slugify==7.0.0
     # via -r requirements.in
 pytz==2022.7
@@ -316,8 +316,6 @@ tinycss2==1.2.1
     # via
     #   cssselect2
     #   weasyprint
-typing-extensions==4.4.0
-    # via pypdf2
 tzdata==2022.7
     # via django-celery-beat
 unicodecsv==0.14.1
@@ -356,7 +354,7 @@ wrapt==1.14.1
     # via deprecated
 yarl==1.8.2
     # via aiohttp
-zipp==3.11.0
-    # via importlib-metadata
+zipstream==1.1.4
+    # via django-filingcabinet
 zopfli==0.2.2
     # via fonttools
