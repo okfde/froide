@@ -78,5 +78,12 @@
     "vue-slide-up-down": "^2.0.1",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.1.1"
+  },
+  "exifreader": {
+    "include": {
+      "exif": [
+        "Orientation"
+      ]
+    }
   }
 }
