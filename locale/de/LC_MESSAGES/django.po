@@ -3050,7 +3050,7 @@ msgstr "Anhang"
 
 #: froide/foirequest/models/attachment.py
 #: froide/foirequest/templates/foirequest/pdf/foirequest.html
-#: froide/problem/views.py
+#: froide/problem/views.py froide/foirequest/forms/message.py
 msgid "Attachments"
 msgstr "Anhänge"
 
@@ -8274,7 +8274,6 @@ msgstr "Enter zum Auswählen"
 
 #: froide/helper/templates/helper/search/multi_search.html
 #, fuzzy
-#| msgid "Search Terms"
 msgid "Search term"
 msgstr "Suchbegriffe"
 
@@ -11071,8 +11070,8 @@ msgid ""
 "Freedom of Information Requests, Freedom of Information Law, Public Body "
 "Information"
 msgstr ""
-"Informationsfreiheitsanfragen, Informationsfreiheitsgesetz, "
-"Informationsfreiheit, IFG, Behörde, Amt, Ämter, Transparenz"
+"Informationsfreiheitsanfragen, Informationsfreiheitsgesetze, "
+"Behördeninformationen"
 
 #: froide/upload/api_views.py
 msgid "Unable to terminate upload while in state \"{}\"."
@@ -11482,36 +11481,110 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/templates/500.html
 #, python-format
-#~ msgid ""
-#~ "If you need assistance, you may reference this error as <strong>%(ref)s</"
-#~ "strong>."
-#~ msgstr ""
-#~ "Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: "
-#~ "<strong>%(ref)s</strong>."
+msgid ""
+"If you need assistance, you may reference this error as <strong>%(ref)s</"
+"strong>."
+msgstr ""
+"Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: <strong>"
+"%(ref)s</strong>."
 
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
 #, fuzzy
-#~| msgid ""
-#~| "This message has an attached proof of identity that I kindly ask you to "
-#~| "delete after you have verifyied it (Art. 17 GDPR)."
-#~ msgid ""
-#~ "This message has an attached proof of identity that I kindly ask you to "
-#~ "delete after you have verifyed it (Art. 17 GDPR)."
-#~ msgstr ""
-#~ "Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte "
-#~ "nach Verifizierung löschen (Art. 17 DSGVO)."
+msgid ""
+"This message has an attached proof of identity that I kindly ask you to "
+"delete after you have verifyed it (Art. 17 GDPR)."
+msgstr ""
+"Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte nach "
+"Verifizierung löschen (Art. 17 DSGVO)."
 
+#: froide/foirequest/models/message.py
 #, python-format
-#~ msgid "You exceeded your message limit of %(count)s messages in %(time)s."
-#~ msgstr ""
-#~ "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
-#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
+msgid "You exceeded your message limit of %(count)s messages in %(time)s."
+msgstr ""
+"Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
+"überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
 
+#: froide/foirequest/models/request.py
 #, python-format
-#~ msgid "You exceeded your request limit of %(count)s requests in %(time)s."
-#~ msgstr ""
-#~ "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s "
-#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
+msgid "You exceeded your request limit of %(count)s requests in %(time)s."
+msgstr ""
+"Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
+"Dies ist eine automatische Vorsichtsmaßnahme."
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
+msgid ""
+"This message has an attached proof of identity that I kindly ask you to "
+"delete after you have verifyied it (Art. 17 GDPR)."
+msgstr ""
+"Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte nach "
+"Verifizierung löschen (Art. 17 DSGVO)."
+
+#: froide/proof/templates/proof/proof_settings.html
+msgid ""
+"When you upload an identity document, please redact all information except "
+"your name, the city and the validity date. You can use the redaction tool "
+"below to do this."
+msgstr ""
+"Wenn Sie ein Identitätsnachweis hochladen, entfernen Sie bitte alle "
+"Informationen außer Ihren Namen, die Stadt und das Gültigkeitsdatum. Sie "
+"können das Schwärzungswerkzeug weiter unten dafür nutzen."
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "awaiting-classification"
+msgstr "braucht-klassifikation"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "successful"
+msgstr "erfolgreich"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "partially-successful"
+msgstr "teilweise-erfolgreich"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "refused"
+msgstr "abgelehnt"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "withdrawn"
+msgstr "zurueckgezogen"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "withdrawn-costs"
+msgstr "zurueckgezogen-wegen-kosten"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "awaiting-response"
+msgstr "warte-auf-antwort"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "overdue"
+msgstr "verspaetet"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "asleep"
+msgstr "eingeschlafen"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "not-held"
+msgstr "nicht-vorhanden"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "has-fee"
+msgstr "gebuehr-erhoben"
 
 #~ msgid "Selected messages are being checked for delivery."
 #~ msgstr ""
@@ -13884,3 +13957,21 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "As a moderator you are still able to publish it."
 #~ msgstr "As a moderator you are still able to publish it."
+
+#~ msgid "Search Terms"
+#~ msgstr "Suchbegriffe"
+
+#, fuzzy
+#~ msgid "Information needs to be redacted."
+#~ msgstr "Was Sie schwärzen sollten"
+
+#~ msgctxt "url part"
+#~ msgid "account/mfa/"
+#~ msgstr "account/mfa/"
+
+#~ msgid "Upload and manage attachments"
+#~ msgstr "Anhänge hochladen und verwalten"
+
+#, fuzzy
+#~ msgid "Number of Periods"
+#~ msgstr "Anzahl der Nutzer"
