@@ -9,22 +9,15 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: 3.x
+          cache: 'pip'
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
           cache: 'yarn'
-      - name: Cache pip
-        uses: actions/cache@v1
-        with:
-          key: v0-${{ runner.os }}-pip-lint-${{ hashFiles('setup.py') }}
-          path: ~/.cache/pip
-          restore-keys: |
-            v0-${{ runner.os }}-pip-lint-
-            v0-${{ runner.os }}-pip-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -45,10 +38,11 @@ jobs:
       matrix:
         python-version: ['3.8', '3.10']
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Install system-level dependencies
         run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python3-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev
       - name: Install dependencies
@@ -85,10 +79,11 @@ jobs:
       matrix:
         python-version: ['3.8']
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
       - name: Install system-level dependencies
         run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python3-dev libgdal-dev gdal-bin python3-gdal libmagic-dev libmagickwand-dev libpoppler-cpp-dev
       - name: Install dependencies
