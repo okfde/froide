@@ -50,12 +50,14 @@ class SearchManager:
         )
 
     def get_pagination_vars(self):
+        """
+        Returns the query parameters the should be kept when pagination (i.e. filters etc that
+        should be kept on the next pages)
+        """
         data = self.filter_data.copy()
         active_filters = self.get_active_filters(data)
-        for key in active_filters:
-            data.pop(key)
 
-        data = {k: v for k, v in data.items() if v}
+        data = {k: v for k, v in data.items() if v and k in active_filters}
         if data:
             return "&" + urlencode(data)
         return ""

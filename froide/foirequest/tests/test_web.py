@@ -1,14 +1,17 @@
 import unittest
+import urllib.parse
 from datetime import datetime, timezone
 from unittest import mock
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.test import Client
 from django.test.utils import override_settings
 from django.urls import reverse
 
 import pytest
+from bs4 import BeautifulSoup
 from pytest_django.asserts import (
     assertContains,
     assertInHTML,
@@ -21,8 +24,9 @@ from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
 from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
 from froide.helper.search.signal_processor import realtime_search
-from froide.publicbody.models import Category, Jurisdiction, PublicBody
+from froide.publicbody.models import Category, FoiLaw, Jurisdiction, PublicBody
 
+User = get_user_model()
 MEDIA_DOMAIN = "media.frag-den-staat.de"
 
 
@@ -622,3 +626,56 @@ def test_message_highlight(client: Client, req_fixture: str, request):
         f'<div class="highlight">{req.description}</div>',
         content,
     )
+
+
+@pytest.fixture
+def jurisdiction_with_many_requests(world):
+    site = world
+    user = User.objects.first()
+    jurisdiction = Jurisdiction.objects.first()
+    for _ in range(40):
+        law = FoiLaw.objects.filter(site=site, jurisdiction=jurisdiction).first()
+        public_body = PublicBody.objects.filter(jurisdiction=jurisdiction).first()
+        req = factories.FoiRequestFactory.create(
+            site=site,
+            user=user,
+            jurisdiction=jurisdiction,
+            law=law,
+            public_body=public_body,
+        )
+        factories.FoiMessageFactory.create(
+            request=req, sender_user=user, recipient_public_body=public_body
+        )
+        mes = factories.FoiMessageFactory.create(
+            request=req, sender_public_body=public_body
+        )
+        factories.FoiAttachmentFactory.create(belongs_to=mes, approved=False)
+        factories.FoiAttachmentFactory.create(belongs_to=mes, approved=True)
+    return jurisdiction
+
+
+@pytest.mark.django_db
+def test_list_requests_filter_pagination(jurisdiction_with_many_requests, client):
+    factories.rebuild_index()
+
+    jurisdiction_url = reverse(
+        "foirequest-list",
+        kwargs={"jurisdiction": jurisdiction_with_many_requests.slug},
+    )
+    response = client.get(jurisdiction_url)
+    assert response.status_code == 200
+
+    saw_page_link = True
+    soup = BeautifulSoup(response.content.decode())
+    for link in soup.find_all("a", class_="page-link"):
+        href = link.get("href")
+        if href == "#":
+            continue
+        assert f"jurisdiction={jurisdiction_with_many_requests.slug}" in href
+        saw_page_link = True
+        link_url = urllib.parse.urljoin(jurisdiction_url, link.get("href"))
+
+        response = client.get(link_url)
+        assert response.status_code == 200
+
+    assert saw_page_link
