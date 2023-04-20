@@ -275,7 +275,7 @@ python-magic==0.4.27
     # via -r requirements.in
 python-mimeparse==1.6.0
     # via -r requirements.in
-python-poppler==0.3.0
+python-poppler==0.4.0
     # via django-filingcabinet
 python-slugify==7.0.0
     # via -r requirements.in
