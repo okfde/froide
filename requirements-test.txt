@@ -195,8 +195,6 @@ elasticsearch-dsl==7.4.0
     # via
     #   -r requirements.in
     #   django-elasticsearch-dsl
-exceptiongroup==1.1.1
-    # via pytest
 factory-boy==3.2.1
     # via
     #   -r requirements-test.in
@@ -239,8 +237,6 @@ idna==3.4
     # via
     #   requests
     #   yarl
-importlib-metadata==6.1.0
-    # via markdown
 inflection==0.5.1
     # via
     #   drf-spectacular
@@ -428,7 +424,7 @@ six==1.16.0
     #   python-dateutil
 soupsieve==2.4
     # via beautifulsoup4
-sqlparse==0.4.3
+sqlparse==0.4.4
     # via django
 tblib==1.7.0
     # via -r requirements-test.in
@@ -445,11 +441,7 @@ tinycss2==1.2.1
 toml==0.10.2
     # via pre-commit
 tomli==2.0.1
-    # via
-    #   black
-    #   django-stubs
-    #   mypy
-    #   pytest
+    # via django-stubs
 types-markdown==3.4.2.1
     # via -r requirements-test.in
 types-python-dateutil==2.8.19.5
@@ -464,13 +456,11 @@ types-urllib3==1.26.25.4
     # via types-requests
 typing-extensions==4.4.0
     # via
-    #   black
     #   django-stubs
     #   django-stubs-ext
     #   libcst
     #   mypy
     #   pyee
-    #   pypdf2
     #   pytest-factoryboy
     #   typing-inspect
 typing-inspect==0.8.0
@@ -515,8 +505,6 @@ wrapt==1.14.1
     # via deprecated
 yarl==1.8.2
     # via aiohttp
-zipp==3.15.0
-    # via importlib-metadata
 zipstream==1.1.4
     # via django-filingcabinet
 zopfli==0.2.2
