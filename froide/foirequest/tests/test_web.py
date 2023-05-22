@@ -1,6 +1,8 @@
+import itertools
 import unittest
 import urllib.parse
 from datetime import datetime, timezone
+from typing import Callable, Optional
 from unittest import mock
 
 from django.conf import settings
@@ -8,7 +10,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.test import Client
 from django.test.utils import override_settings
-from django.urls import reverse
+from django.urls import resolve, reverse
 
 import pytest
 from bs4 import BeautifulSoup
@@ -654,28 +656,116 @@ def jurisdiction_with_many_requests(world):
     return jurisdiction
 
 
+def jurisdiction_with_many_requests_slug(request: pytest.FixtureRequest):
+    return request.getfixturevalue("jurisdiction_with_many_requests").slug
+
+
 @pytest.mark.django_db
-def test_list_requests_filter_pagination(jurisdiction_with_many_requests, client):
+@pytest.mark.parametrize(
+    "filter_field,filter_value,filter_value_function",
+    [["jurisdiction", None, jurisdiction_with_many_requests_slug], ["q", "*", None]],
+)
+@pytest.mark.usefixtures(
+    "jurisdiction_with_many_requests"
+)  # We always need enough requests to have a second page we can filter for
+def test_request_list_filter_pagination(
+    request: pytest.FixtureRequest,
+    client,
+    filter_field: str,
+    filter_value: Optional[str],
+    filter_value_function: Optional[Callable],
+):
+    if filter_value is None and filter_value_function is not None:
+        filter_value = filter_value_function(request)
+
     factories.rebuild_index()
 
-    jurisdiction_url = reverse(
-        "foirequest-list",
-        kwargs={"jurisdiction": jurisdiction_with_many_requests.slug},
+    list_url = (
+        reverse(
+            "foirequest-list",
+        )
+        + "?"
+        + urllib.parse.urlencode({filter_field: filter_value})
     )
-    response = client.get(jurisdiction_url)
+    response = client.get(list_url)
     assert response.status_code == 200
 
-    saw_page_link = True
-    soup = BeautifulSoup(response.content.decode())
+    saw_page_link = False
+    soup = BeautifulSoup(response.content.decode(), "lxml")
     for link in soup.find_all("a", class_="page-link"):
         href = link.get("href")
         if href == "#":
             continue
-        assert f"jurisdiction={jurisdiction_with_many_requests.slug}" in href
+        query = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
+        assert query.get(filter_field) == [filter_value]
+
         saw_page_link = True
-        link_url = urllib.parse.urljoin(jurisdiction_url, link.get("href"))
+        link_url = urllib.parse.urljoin(list_url, link.get("href"))
 
         response = client.get(link_url)
         assert response.status_code == 200
 
     assert saw_page_link
+
+
+def dict_combinations_all_r(sequence):
+    for r in range(len(sequence) + 1):
+        for parts in itertools.combinations(sequence, r=r):
+            yield dict(parts)
+
+
+@pytest.mark.django_db
+def test_request_list_path_filter(
+    client: Client,
+    jurisdiction_with_many_requests: Jurisdiction,
+):
+    factories.rebuild_index()
+
+    kwargs_elements = [
+        ("jurisdiction", jurisdiction_with_many_requests.slug),
+        ("status", next(iter(FOIREQUEST_FILTER_DICT))),
+    ]
+
+    query_elements = [("q", "*"), ("sort", "last")]
+
+    for kwargs in dict_combinations_all_r(kwargs_elements):
+        qe = query_elements + [x for x in kwargs_elements if x[0] not in kwargs]
+        for query in dict_combinations_all_r(qe):
+            list_url = (
+                reverse("foirequest-list", kwargs=kwargs)
+                + "?"
+                + urllib.parse.urlencode(query)
+            )
+            print(list_url)
+            response = client.get(list_url)
+            assert response.status_code == 200
+
+            saw_page_link = False
+            soup = BeautifulSoup(response.content.decode(), "lxml")
+            for link in soup.find_all("a", class_="page-link"):
+                href = link.get("href")
+                if href == "#":
+                    continue
+                target_url = urllib.parse.urljoin(list_url, href)
+                target_path = urllib.parse.urlparse(target_url).path
+                target_resolved = resolve(target_path)
+                # Pagination should link to a foirequest-list again
+                assert target_resolved.url_name == "foirequest-list"
+                target_query = urllib.parse.parse_qs(
+                    urllib.parse.urlparse(target_url).query
+                )
+
+                # Query filters and filters set via the path should not overlap
+                assert not (target_query.keys() & target_resolved.kwargs.keys())
+                for k, v in itertools.chain(kwargs.items(), query.items()):
+                    assert k in target_query or k in target_resolved.kwargs
+                    assert (
+                        target_query.get(k) == [v] or target_resolved.kwargs.get(k) == v
+                    )
+
+                saw_page_link = True
+
+                response = client.get(target_url)
+                assert response.status_code == 200
+
+            assert saw_page_link
