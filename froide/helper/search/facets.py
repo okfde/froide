@@ -26,6 +26,7 @@ class SearchManager:
         self.filter_order = filter_order
         self.sub_filters = sub_filters
         self.search_url_name = search_url_name
+        self.url_kwargs = url_kwargs
 
         self.filter_data = self.get_filter_data(url_kwargs, filter_data)
 
@@ -53,11 +54,13 @@ class SearchManager:
         """
         Returns the query parameters the should be kept when pagination (i.e. filters etc that
         should be kept on the next pages)
+
+        This is used to remove filters in the path (i.e. /requests/<jurisdiction>/) from filters
+        in the query parameters, so we don't generate a url like
+        /requests/example-jurisdiction/?jurisdiction=example-jurisdiction
         """
         data = self.filter_data.copy()
-        active_filters = self.get_active_filters(data)
-
-        data = {k: v for k, v in data.items() if v and k in active_filters}
+        data = {k: v for k, v in data.items() if v and k not in self.url_kwargs}
         if data:
             return "&" + urlencode(data)
         return ""
