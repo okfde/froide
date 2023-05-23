@@ -4,15 +4,15 @@ export PYTHONWARNINGS=default
 
 test:
 	flake8 froide
-	coverage run --branch -m pytest froide/ --reuse-db
+	coverage run --branch -m pytest froide/
 	coverage report
 
 testci:
-	coverage run --branch -m pytest froide/ --reuse-db --ignore=froide/tests/live/
+	coverage run --branch -m pytest froide/ --ignore=froide/tests/live/
 	coverage report
 
 testui:
-	coverage run --branch -m pytest --browser chromium froide/tests/live/ --reuse-db
+	coverage run --branch -m pytest --browser chromium froide/tests/live/
 
 .PHONY: htmlcov
 htmlcov:
