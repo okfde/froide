@@ -31,10 +31,10 @@ def get_follower_updates(
 
     notifications = sorted(notifications, key=key_func)
 
-    for (section, _obj_id), update_list in itertools.groupby(
+    for (section, _obj_id), update_list_generator in itertools.groupby(
         notifications, lambda n: (n.section, n.object.id)
     ):
-        update_list = list(update_list)
+        update_list = list(update_list_generator)
         if not update_list:
             continue
 
