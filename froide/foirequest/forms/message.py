@@ -236,7 +236,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         required=False,
         validators=[validate_upload_document],
         help_text=files_help_text,
-        widget=BootstrapFileInput(attrs={"multiple": True, "accept": ACCEPT_FILETYPES}),
+        widget=BootstrapFileInput(multiple=True, attrs={"accept": ACCEPT_FILETYPES}),
     )
 
     send_address = forms.BooleanField(
@@ -583,7 +583,7 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
         required=False,
         validators=[validate_upload_document],
         help_text=scan_help_text,
-        widget=BootstrapFileInput(attrs={"multiple": True, "accept": ACCEPT_FILETYPES}),
+        widget=BootstrapFileInput(multiple=True, attrs={"accept": ACCEPT_FILETYPES}),
     )
     FIELD_ORDER = ["publicbody", "date", "subject", "text", "files"]
 
@@ -717,7 +717,7 @@ class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
         label=_("Scanned Document"),
         help_text=PostalBaseForm.scan_help_text,
         validators=[validate_upload_document],
-        widget=BootstrapFileInput(attrs={"multiple": True}),
+        widget=BootstrapFileInput(multiple=True),
     )
 
     def save(self, message):

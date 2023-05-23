@@ -49,8 +49,11 @@ class BootstrapSelect(forms.Select):
 
 
 class BootstrapFileInput(forms.FileInput):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, multiple=False, **kwargs) -> None:
         kwargs.setdefault("attrs", {})
+        if multiple:
+            kwargs["attrs"].update({"multiple": True})
+            self.allow_multiple_selected = True
         kwargs["attrs"].update({"class": "form-control"})
         super().__init__(*args, **kwargs)
 
