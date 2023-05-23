@@ -78,7 +78,7 @@ deprecation==2.1.0
     # via pikepdf
 dj-database-url==1.2.0
     # via -r requirements.in
-django==4.1.7
+django==4.1.9
     # via
     #   -r requirements.in
     #   channels
