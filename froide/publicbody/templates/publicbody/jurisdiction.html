@@ -32,7 +32,7 @@
           </p>
         </div>
         <div class="card-footer text-center">
-          <a class="btn btn-secondary" href="{{ url }}">
+          <a class="btn btn-secondary" href="{{ pb_url }}">
             {% blocktrans with pb_count=pb_count url=pb_url %}Check out the {{ pb_count }} Public Bodies.{% endblocktrans %}
           </a>
         </div>
@@ -57,7 +57,6 @@
           <h5 class="card-title">
             {% trans "What right?" %}
           </h5>
-          {% url 'publicbody-list' jurisdiction=object.slug as pb_url %}
           <p class="card-text">
             {% blocktrans with name=object.name %}The freedom of information law in {{ name }} allows you access to administrative information. {% endblocktrans %}
           </p>
