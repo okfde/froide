@@ -13,6 +13,7 @@ from django.utils.translation import ngettext_lazy
 
 from froide.account.forms import AddressBaseForm
 from froide.account.services import AccountService
+from froide.helper.fields import MultipleFileField
 from froide.helper.storage import make_filename, make_unique_filename
 from froide.helper.text_diff import get_diff_chunks
 from froide.helper.text_utils import redact_subject
@@ -231,7 +232,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         "Uploaded scans can be PDF, JPG, PNG or GIF. They will be non-public "
         "by default and can be redacted after upload."
     )
-    files = forms.FileField(
+    files = MultipleFileField(
         label=_("Attachments"),
         required=False,
         validators=[validate_upload_document],
@@ -578,7 +579,7 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
         widget=PublicBodySelect,
     )
 
-    files = forms.FileField(
+    files = MultipleFileField(
         label=_("Scanned Letter"),
         required=False,
         validators=[validate_upload_document],
@@ -713,7 +714,7 @@ def get_postal_attachment_form(*args, **kwargs):
 
 
 class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
-    files = forms.FileField(
+    files = MultipleFileField(
         label=_("Scanned Document"),
         help_text=PostalBaseForm.scan_help_text,
         validators=[validate_upload_document],
