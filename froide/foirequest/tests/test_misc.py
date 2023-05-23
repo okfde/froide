@@ -5,6 +5,7 @@ from django.contrib.sites.models import Site
 from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
+from django.utils.safestring import SafeString
 
 import pytest
 
@@ -173,18 +174,20 @@ class RenderMessageContentTest(TestCase):
         "@No.spacesAndDot"
         """
         expected = """
-        '@ with spaces'
-        "@ with spaces"
-        '@NoSpaces'
-        "@NoSpaces"
-        '@No.spacesAndDot'
-        "@No.spacesAndDot"
+        &#x27;@ with spaces&#x27;
+        &quot;@ with spaces&quot;
+        &#x27;@NoSpaces&#x27;
+        &quot;@NoSpaces&quot;
+        &#x27;@No.spacesAndDot&#x27;
+        &quot;@No.spacesAndDot&quot;
         """
 
         msg = factories.FoiMessageFactory.create(
             request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
         )
-        self.assertEqual(render_message_content(msg), expected)
+        actual = render_message_content(msg)
+        self.assertIsInstance(actual, SafeString)
+        self.assertEqual(actual, expected)
 
     def test_redaction(self):
         expected = '<span class="redacted">[redacted]</span>'
@@ -258,4 +261,5 @@ def test_cached_rendered_content(
     redacted_foi_message = FoiMessage.objects.get(id=redacted_foi_message.id)
     with django_assert_num_queries(0):
         redacted_content = render_message_content(redacted_foi_message, auth)
+        assert redacted_content == expected_redacted_content[auth]
         assert redacted_content == expected_redacted_content[auth]

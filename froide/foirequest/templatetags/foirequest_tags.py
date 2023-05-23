@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, Value, When
 from django.template.defaultfilters import truncatechars_html
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
+from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
 
 import bleach
@@ -193,11 +193,11 @@ def redact_subject(message, request):
 MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 
-def urlizetrunc_no_mail(content, chars, **kwargs):
+def urlizetrunc_no_mail(content: SafeString, chars, **kwargs) -> SafeString:
     """
     Transform urls in the text to proper links, marking them with the `data-urlized` attribute
 
-    This will not create mailto links, as they make it to easy to accidentally
+    This will not create mailto links, as they make it too easy to accidentally
     reply with your own email client.
     """
 
@@ -214,9 +214,9 @@ def urlizetrunc_no_mail(content, chars, **kwargs):
     return mark_safe(result)
 
 
-def mark_redacted(original="", redacted="", authenticated_read=False):
+def mark_redacted(original="", redacted="", authenticated_read=False) -> SafeString:
     if authenticated_read:
-        content = mark_differences(
+        content: SafeString = mark_differences(
             original,
             redacted,
             attrs='class="redacted-dummy redacted-hover"'
@@ -225,7 +225,9 @@ def mark_redacted(original="", redacted="", authenticated_read=False):
             ),
         )
     else:
-        content = mark_differences(redacted, original, attrs='class="redacted"')
+        content: SafeString = mark_differences(
+            redacted, original, attrs='class="redacted"'
+        )
 
     return urlizetrunc_no_mail(content, 40, autoescape=False)
 
@@ -236,14 +238,14 @@ def markup_redacted_content(
     authenticated_read=False,
     message_id=None,
     render_footer=True,
-):
+) -> SafeString:
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
 
-    content_1 = mark_redacted(
+    content_1: SafeString = mark_redacted(
         original=c_1, redacted=r_1, authenticated_read=authenticated_read
     )
-    content_2 = mark_redacted(
+    content_2: SafeString = mark_redacted(
         original=c_2, redacted=r_2, authenticated_read=authenticated_read
     )
 
@@ -266,7 +268,7 @@ def markup_redacted_content(
             )
         )
 
-    return mark_safe(content_1)
+    return content_1
 
 
 @register.simple_tag
