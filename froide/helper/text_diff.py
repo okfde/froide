@@ -69,11 +69,12 @@ def get_tagged_differences(
     end_tag: str = "</span>",
     attrs: Optional[str] = None,
     min_part_len: int = 3,
-) -> Iterator[str]:
+) -> Iterator[SafeString]:
 
     if attrs is None:
         attrs = ""
-    start_tag = start_tag.format(attrs=attrs)
+    start_tag = SafeString(start_tag.format(attrs=attrs))
+    end_tag = SafeString(end_tag)
 
     diff_chunks = get_differences(content_a, content_b, min_part_len=min_part_len)
 
