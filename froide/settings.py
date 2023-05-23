@@ -79,7 +79,7 @@ class Base(Configuration):
         ]
     )
 
-    DATABASES = values.DatabaseURLValue("postgis://froide:froide@localhost:5432/froide")
+    DATABASES = values.DatabaseURLValue("postgis://froide:froide@127.0.0.1:5432/froide")
     DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
     CACHES = {
