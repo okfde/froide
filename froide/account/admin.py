@@ -6,6 +6,7 @@ from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Exists, OuterRef
+from django.db.models.functions import Collate
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.shortcuts import redirect
@@ -115,7 +116,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "is_blocked",
         UserTagListFilter,
     ]
-    search_fields = ("email", "username", "first_name", "last_name")
+    search_fields = ("email_deterministic", "username", "first_name", "last_name")
     readonly_fields = ("is_superuser", "user_permissions")
 
     actions = [
@@ -137,6 +138,10 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         qs = super().get_queryset(request)
         if has_foirequests:
             qs = qs.annotate(request_count=Count("foirequest"))
+
+        qs = qs.annotate(
+            email_deterministic=Collate("email", "und-x-icu"),
+        )
         user_has_mfa = MFAKey.objects.filter(
             user_id=OuterRef("pk"),
         )
