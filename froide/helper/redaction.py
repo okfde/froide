@@ -13,7 +13,7 @@ from filingcabinet.pdf_utils import (
     rewrite_hard_pdf_in_place,
     rewrite_pdf_in_place,
 )
-from PyPDF2 import PdfFileReader, PdfFileWriter
+from PyPDF2 import PdfReader, PdfWriter
 from PyPDF2.errors import PdfReadError
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
@@ -101,9 +101,9 @@ def try_redacting_file(pdf_file, outpath, instructions):
 def _redact_file(pdf_file, outpath, instructions, tries=0):
     dpi = 300
     load_invisible_font()
-    output = PdfFileWriter()
+    output = PdfWriter()
     try:
-        pdf_reader = PdfFileReader(pdf_file, strict=False)
+        pdf_reader = PdfReader(pdf_file, strict=False)
     except (PdfReadError, ValueError, OSError) as e:
         raise PDFException(e, "rewrite")
 
@@ -196,7 +196,7 @@ def get_redacted_page(image_filename, instr, dpi):
         pdf.save()
 
     writer.seek(0)
-    temp_reader = PdfFileReader(writer)
+    temp_reader = PdfReader(writer)
     return temp_reader.getPage(0)
 
 
