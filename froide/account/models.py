@@ -11,7 +11,6 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.contrib.postgres.fields import CIEmailField
 from django.db import models
 from django.db.models.query import QuerySet
 from django.urls import reverse
@@ -123,7 +122,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
-    email = CIEmailField(_("email address"), unique=True, null=True, blank=True)
+    email = models.EmailField(
+        _("email address"),
+        db_collation="case_insensitive",
+        unique=True,
+        null=True,
+        blank=True,
+    )
 
     is_staff = models.BooleanField(
         _("staff status"),
