@@ -23,10 +23,10 @@ def find_version(*file_paths):
 
 extras = {
     "lint": [
-        "flake8==5.0.4",
-        "black==22.6.0",
-        "isort==5.10.1",
-        "flake8-bugbear==21.4.3",
+        "flake8==6.0.0",
+        "black==23.3.0",
+        "isort==5.11.5",
+        "flake8-bugbear==23.5.9",
     ],
 }
 
