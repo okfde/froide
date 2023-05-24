@@ -107,13 +107,13 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     except (PdfReadError, ValueError, OSError) as e:
         raise PDFException(e, "rewrite")
 
-    if pdf_reader.isEncrypted:
+    if pdf_reader.is_encrypted:
         if not instructions.get("password"):
             raise Exception("PDF Rewrite Error")
         pdf_reader.decrypt(instructions["password"])
 
     try:
-        num_pages = pdf_reader.getNumPages()
+        num_pages = len(pdf_reader.pages)
     except KeyError as e:  # catch KeyError '/Pages'
         raise PDFException(e, "rewrite")
     except PdfReadError as e:
@@ -142,13 +142,13 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
         instr["width"] = float(instr["width"])
         try:
             if not image_filename:
-                page = pdf_reader.getPage(page_idx)
+                page = pdf_reader.pages[page_idx]
             else:
                 page = get_redacted_page(image_filename, instr, dpi)
         except (WandError, DelegateError, ValueError) as e:
             raise PDFException(e, "rewrite")
 
-        output.addPage(page)
+        output.add_page(page)
 
     output_filename = os.path.join(outpath, "final.pdf")
     with open(output_filename, "wb") as f:
@@ -197,7 +197,7 @@ def get_redacted_page(image_filename, instr, dpi):
 
     writer.seek(0)
     temp_reader = PdfReader(writer)
-    return temp_reader.getPage(0)
+    return temp_reader.pages[0]
 
 
 def add_text_on_pdf(pdf, text_obj, dpi, scale, height):
