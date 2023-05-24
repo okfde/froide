@@ -9,7 +9,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("georegion", "0003_auto_20180306_1730"),
+        ("georegion", "0003_auto_20180508_1347"),
         ("publicbody", "0014_auto_20180306_1730"),
     ]
 
