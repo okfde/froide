@@ -8,6 +8,7 @@ from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.contrib.messages.storage import default_storage
 from django.core import mail
+from django.db import IntegrityError
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.html import escape
@@ -786,3 +787,18 @@ def test_send_mail(world, rf):
     assert "|%s|" % user.first_name in message.body
     assert "|%s|" % user.last_name in message.body
     assert "^%s|" % user.get_full_name() in message.body
+
+
+@pytest.mark.django_db
+def test_email_case_insensitive_search():
+    user = User.objects.create(email="Hacker@example.com")
+    user2 = User.objects.get(email="hacker@example.com")
+    assert user == user2
+
+
+@pytest.mark.django_db
+def test_email_case_insensitive_unique():
+    User.objects.create(email="Hacker@example.com")
+    msg = 'duplicate key value violates unique constraint "account_user_username_key"'
+    with pytest.raises(IntegrityError, match=msg):
+        User.objects.create(email="hacker@example.com")
