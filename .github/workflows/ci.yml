@@ -59,7 +59,7 @@ jobs:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide
     services:
       postgres:
-        image: postgis/postgis:12-3.0
+        image: postgis/postgis:14-3.3
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
