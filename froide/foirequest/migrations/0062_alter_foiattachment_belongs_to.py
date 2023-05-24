@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0061_foimessage_foirequest__email_m_304d80_idx"),
     ]

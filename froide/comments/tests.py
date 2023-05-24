@@ -7,7 +7,6 @@ from .apps import CommentConfig, cancel_user, merge_user
 
 
 class CommentConfigTest(TestCase):
-
     # Check if class parameters exist and have correct type
     def test_constructor(self):
         comment_config = apps.get_app_config("comments")

@@ -7,7 +7,6 @@ import froide.helper.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0036_auto_20190209_1801"),
     ]

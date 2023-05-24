@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("organization", "0003_organization_display_option_and_more"),
         ("organization", "0004_remove_organization_display_option"),

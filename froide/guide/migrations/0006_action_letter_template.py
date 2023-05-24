@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("letter", "0002_auto_20200303_1117"),
         ("guide", "0005_action_mail_intent"),

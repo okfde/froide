@@ -116,7 +116,6 @@ def add_postal_reply(
     signal=FoiRequest.message_received,
     form_key="postal_reply_form",
 ):
-
     if not foirequest.public_body:
         return render_400(request)
 

@@ -70,7 +70,6 @@ def get_tagged_differences(
     attrs: Optional[str] = None,
     min_part_len: int = 3,
 ) -> Iterator[SafeString]:
-
     if attrs is None:
         attrs = ""
     start_tag = SafeString(start_tag.format(attrs=attrs))

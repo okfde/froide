@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0028_auto_20180807_1520"),
         ("publicbody", "0022_auto_20180726_1151"),

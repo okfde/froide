@@ -137,7 +137,6 @@ def get_frontend_build(
 
 @register.simple_tag(takes_context=True)
 def addfrontendbuild(context, name: str) -> str:
-
     result = get_frontend_build(name)
     if not result:
         return ""

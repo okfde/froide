@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0044_auto_20200728_1536"),
     ]

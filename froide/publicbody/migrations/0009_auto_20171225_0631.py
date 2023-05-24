@@ -9,7 +9,6 @@ import taggit.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0008_auto_20171224_0819"),
     ]

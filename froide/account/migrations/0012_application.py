@@ -11,7 +11,6 @@ import oauth2_provider.validators
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0011_auto_20171106_1503"),
     ]

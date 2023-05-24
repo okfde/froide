@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0018_requestdraft_law_type"),
         ("document", "0009_document_original"),

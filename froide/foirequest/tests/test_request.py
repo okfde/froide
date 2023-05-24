@@ -1874,7 +1874,6 @@ def request_throttle(settings):
 
 @pytest.mark.django_db
 def test_throttling(world, client, pb, request_throttle):
-
     pb = PublicBody.objects.all()[0]
     client.login(email="dummy@example.org", password="froide")
 
@@ -1908,7 +1907,6 @@ def test_throttling(world, client, pb, request_throttle):
 
 @pytest.mark.django_db
 def test_throttling_same_as(world, client, request_throttle):
-
     requests = []
     for i in range(3):
         requests.append(

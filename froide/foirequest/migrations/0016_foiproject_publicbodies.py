@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0012_auto_20180227_1926"),
         ("foirequest", "0015_deferredmessage_delivered"),

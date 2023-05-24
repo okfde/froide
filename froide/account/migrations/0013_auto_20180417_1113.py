@@ -9,7 +9,6 @@ import froide.helper.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0012_application"),
     ]

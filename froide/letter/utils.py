@@ -62,7 +62,6 @@ class MessageSender:
         self.form_data = form_data
 
     def send(self):
-
         if self.letter_template.email_subject:
             sent_message = self.send_email_message_form()
         else:

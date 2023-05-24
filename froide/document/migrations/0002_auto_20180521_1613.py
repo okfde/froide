@@ -8,7 +8,6 @@ import filingcabinet.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0001_initial"),
     ]

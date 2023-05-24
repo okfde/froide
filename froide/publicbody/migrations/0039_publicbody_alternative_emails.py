@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0038_foilaw_scale_of_fees"),
     ]

@@ -16,7 +16,6 @@ def set_email_empty(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0007_auto_20170912_1032"),
     ]

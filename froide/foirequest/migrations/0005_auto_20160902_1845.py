@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0004_foirequest_is_blocked"),
     ]

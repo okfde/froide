@@ -10,7 +10,6 @@ import django_fsm
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [

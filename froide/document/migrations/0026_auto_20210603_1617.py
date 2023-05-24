@@ -8,7 +8,6 @@ import filingcabinet.validators
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("document", "0025_auto_20210505_1720"),

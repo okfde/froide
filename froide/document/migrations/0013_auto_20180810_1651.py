@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0012_documentcollection"),
         ("filingcabinet", "0004_auto_20180810_1642"),

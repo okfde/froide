@@ -57,7 +57,6 @@ def _get_translation(object, MyModelTranslation):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0034_add_translation_laws"),
     ]

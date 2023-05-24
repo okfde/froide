@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0032_auto_20201221_1953"),
     ]

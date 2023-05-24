@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("georegion", "0001_initial"),
         ("georegion", "0002_georegion_kind_detail"),

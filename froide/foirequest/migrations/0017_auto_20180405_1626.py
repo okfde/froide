@@ -9,7 +9,6 @@ import froide.helper.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0016_foiproject_publicbodies"),
     ]
