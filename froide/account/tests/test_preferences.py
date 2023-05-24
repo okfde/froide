@@ -48,3 +48,13 @@ def test_set_preferences_bad_format(client, dummy_user, preference_key):
     response = client.post(api_url, data={"value": "blub"})
     assert response.status_code == 400
     assert UserPreference.objects.get_preference(dummy_user, preference_key) is None
+
+
+@pytest.mark.django_db
+def test_set_preferences_bad_key(client, dummy_user):
+    bad_preference_key = "bad_key"
+    client.force_login(dummy_user)
+    api_url = reverse("api-user-preference", kwargs={"key": bad_preference_key})
+    response = client.post(api_url, data={"value": "blub"})
+    assert response.status_code == 404
+    assert UserPreference.objects.get_preference(dummy_user, bad_preference_key) is None
