@@ -54,7 +54,6 @@ def can_see_attachment(att, can_write):
 def show_foirequest(
     request, obj, template_name="foirequest/show.html", context=None, status=200
 ):
-
     if context is None:
         context = {}
 

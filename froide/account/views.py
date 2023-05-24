@@ -110,7 +110,6 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
 def confirm(
     request: HttpRequest, user_id: int, secret: str, request_id: Optional[int] = None
 ) -> HttpResponseRedirect:
-
     if request.user.is_authenticated:
         if request.user.id != user_id:
             messages.add_message(

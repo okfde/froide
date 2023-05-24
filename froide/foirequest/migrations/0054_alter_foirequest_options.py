@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0053_alter_foimessage_email_headers"),
     ]

@@ -9,7 +9,6 @@ import taggit.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0031_auto_20181106_1510"),
     ]

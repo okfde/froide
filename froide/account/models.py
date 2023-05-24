@@ -105,7 +105,6 @@ Redactions = List[Union[Tuple[str, str], Tuple[Pattern, str]]]
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(

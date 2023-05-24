@@ -168,7 +168,6 @@ def get_redacted_page(image_filename, instr, dpi):
         scale = image.width / instr["width"]
 
         with Drawing() as draw:
-
             for rect in instr["rects"]:
                 rect = [r * scale for r in rect]
                 draw.border_color = Color("black")

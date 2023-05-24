@@ -9,7 +9,6 @@ import taggit.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("taggit", "0001_initial"),
         ("sites", "0001_initial"),

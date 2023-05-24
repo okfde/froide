@@ -27,7 +27,6 @@ def create_categories(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0009_auto_20171225_0631"),
     ]

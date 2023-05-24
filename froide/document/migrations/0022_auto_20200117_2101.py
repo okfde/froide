@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("filingcabinet", "0016_auto_20200108_1228"),
         ("document", "0021_document_allow_annotation"),

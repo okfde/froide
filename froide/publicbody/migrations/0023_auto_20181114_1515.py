@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("georegion", "0004_georegion_description"),
         ("publicbody", "0022_auto_20180726_1151"),

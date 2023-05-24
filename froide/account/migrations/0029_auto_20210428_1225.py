@@ -11,7 +11,6 @@ def copy_email_address(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0028_user_email_ci"),
     ]

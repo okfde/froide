@@ -42,7 +42,6 @@ def create_classifications(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0006_auto_20171224_0732"),
     ]

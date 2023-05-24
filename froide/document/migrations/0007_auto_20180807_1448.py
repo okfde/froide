@@ -15,7 +15,6 @@ import froide.helper.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0006_auto_20180522_0114"),
         ("filingcabinet", "0001_initial"),

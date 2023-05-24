@@ -17,7 +17,6 @@ def create_tags(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0017_auto_20190309_1153"),
     ]

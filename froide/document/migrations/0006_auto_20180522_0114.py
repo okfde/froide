@@ -11,7 +11,6 @@ import filingcabinet.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0005_auto_20180521_2048"),
     ]

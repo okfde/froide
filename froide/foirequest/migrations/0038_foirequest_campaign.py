@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("campaign", "__first__"),
         ("foirequest", "0037_auto_20190309_1153"),

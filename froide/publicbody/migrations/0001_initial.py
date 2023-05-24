@@ -14,7 +14,6 @@ import froide.publicbody.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("sites", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

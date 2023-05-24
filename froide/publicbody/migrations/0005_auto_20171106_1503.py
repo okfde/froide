@@ -9,7 +9,6 @@ import froide.publicbody.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0004_auto_20161130_0128"),
     ]

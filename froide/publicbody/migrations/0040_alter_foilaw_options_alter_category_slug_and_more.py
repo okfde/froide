@@ -10,7 +10,6 @@ import taggit.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("georegion", "0011_georegion_invalid_on"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

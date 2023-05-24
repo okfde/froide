@@ -513,7 +513,6 @@ class DateRangeFilter(admin.filters.SimpleListFilter):
     parameter_name = ""
 
     def __init__(self, request, params, model, model_admin):
-
         super().__init__(request, params, model, model_admin)
         self.lookup_kwarg_gte = "{0}__range__gte".format(self.parameter_name)
         self.lookup_kwarg_lte = "{0}__range__lte".format(self.parameter_name)

@@ -388,7 +388,6 @@ def get_publicbody_emails(publicbody: PublicBody, include_mediator=True):
 def get_emails_from_request_iterator(
     foirequest, include_mediator=True
 ) -> Iterator[PublicBodyEmailInfo]:
-
     if foirequest.public_body:
         # Get emails from public body / mediator
         yield from get_publicbody_emails(
@@ -612,7 +611,6 @@ def permanently_anonymize_requests(foirequests):
         user_replacements = user.get_redactions(replacements)
         user.private = True
         for message in foirequest.messages:
-
             message.plaintext_redacted = redact_user_strings(
                 message.plaintext_redacted,
                 user_replacements=user_replacements,
@@ -688,7 +686,6 @@ def add_ical_events(foirequest, cal):
         foirequest.resolution
         in (foirequest.RESOLUTION.PARTIALLY_SUCCESSFUL, foirequest.RESOLUTION.REFUSED)
     ):
-
         responses = foirequest.response_messages()
         if responses:
             appeal_deadline = foirequest.law.calculate_due_date(

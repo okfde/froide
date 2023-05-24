@@ -11,7 +11,6 @@ import filingcabinet.storage
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0004_pageannotation_image"),
     ]

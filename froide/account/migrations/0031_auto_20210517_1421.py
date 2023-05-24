@@ -9,7 +9,6 @@ def update_email_address(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0030_auto_20210517_1420"),
     ]

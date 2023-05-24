@@ -6,7 +6,6 @@ import taggit.managers
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("account", "0020_auto_20190309_1223"),
     ]
