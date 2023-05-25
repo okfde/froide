@@ -596,6 +596,7 @@ class MakeRequestView(FormView):
                 "publicbodies": publicbodies,
                 "publicbodies_json": publicbodies_json,
                 "multi_request": is_multi,
+                "beta_ui": self.request.GET.get("beta") is not None,
                 "config": config,
                 "campaigns": campaigns,
                 "js_config": json.dumps(self.get_js_context()),

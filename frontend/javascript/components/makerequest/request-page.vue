@@ -35,13 +35,23 @@
               </div>
               <div class="row">
                 <div class="col-lg-8">
-                  <publicbody-chooser
-                    name="publicbody"
-                    :defaultsearch="publicBodySearch"
-                    :scope="pbScope"
-                    :form="publicbodyForm"
-                    :config="config"
-                    :list-view="publicBodyListView" />
+                  <template v-if="betaUi">
+                    <publicbody-beta-chooser
+                      name="publicbody"
+                      :defaultsearch="publicBodySearch"
+                      :scope="pbScope"
+                      :form="publicbodyForm"
+                      :config="config" />
+                  </template>
+                  <template v-else>
+                    <publicbody-chooser
+                      name="publicbody"
+                      :defaultsearch="publicBodySearch"
+                      :scope="pbScope"
+                      :form="publicbodyForm"
+                      :config="config"
+                      :list-view="publicBodyListView" />
+                  </template>
                 </div>
                 <div class="col-lg-4 small">
                   <slot name="publicbody-missing" />
@@ -154,6 +164,7 @@
 <script>
 import SimilarRequests from './similar-requests'
 import PublicbodyChooser from '../publicbody/publicbody-chooser'
+import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
 import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
@@ -193,6 +204,7 @@ export default {
   name: 'RequestPage',
   components: {
     PublicbodyChooser,
+    PublicbodyBetaChooser,
     PublicbodyMultiChooser,
     UserRegistration,
     SimilarRequests,
@@ -254,6 +266,10 @@ export default {
       default: false
     },
     multiRequest: {
+      type: Boolean,
+      default: false
+    },
+    betaUi: {
       type: Boolean,
       default: false
     }
