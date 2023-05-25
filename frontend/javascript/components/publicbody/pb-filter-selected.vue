@@ -1,11 +1,12 @@
 <template>
   <div v-if="hasValue">
     <div v-for="v in valueList" :key="v.id" class="filter-badge">
-      {{ v.label }}
-      <i
+      <span class="text-truncate">{{ v.label }}</span>
+      <button
         @click="removeFilter(v)"
-        class="remove-filter fa fa-close"
-        aria-hidden="true"></i>
+        type="button"
+        class="btn btn-close btn-close-white"
+        aria-label="Close"></button>
     </div>
   </div>
 </template>
@@ -30,15 +31,7 @@ export default {
   border-radius: 4px;
   padding: 0.25rem 0.5rem;
   margin: 0.5rem 0;
-
-  .remove-filter {
-    color: #eee;
-    padding: 0.25rem 0.5rem;
-    float: right;
-    &:hover {
-      color: #fff;
-    }
-    cursor: pointer;
-  }
+  display: flex;
+  justify-content: space-between;
 }
 </style>

@@ -4,27 +4,36 @@
       <li
         v-for="item in filteredItems"
         :key="item.id"
-        :class="{ active: isActive(item.id) }">
-        <a href="#" @click.prevent="setFilter(item)">
-          {{ item.label }}
-        </a>
-        <small v-if="item.count">({{ item.count }})</small>
-        <i
-          v-if="item.children && item.children.length > 0 && !item.subItems"
-          class="fa fa-chevron-down load-children"
-          @click="loadChildren(item)"></i>
+        :class="{ active: item.isActive }">
+        <div class="form-check">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            :id="item.labelId"
+            @change="setFilter(item)"
+            :data-test="item.isActive"
+            :checked="item.isActive" />
+          <label class="form-check-label" :for="item.labelId">
+            {{ item.label }}
+          </label>
+          <small v-if="item.count">({{ item.count }})</small>
+          <i
+            v-if="item.children && item.children.length > 0 && !item.subItems"
+            class="fa fa-chevron-down load-children"
+            @click="loadChildren(item)"></i>
 
-        <pb-filter-list
-          v-if="item.subItems && item.subItems.length > 0"
-          :config="config"
-          :i18n="i18n"
-          :scope="scope"
-          :value="value"
-          :items="item.subItems"
-          @removeFilter="removeFilter"
-          @setFilter="setFilter"
-          @loadMore="loadMore"
-          @loadChildren="loadChildren"></pb-filter-list>
+          <pb-filter-list
+            v-if="item.subItems && item.subItems.length > 0"
+            :config="config"
+            :i18n="i18n"
+            :scope="scope"
+            :value="value"
+            :items="item.subItems"
+            @removeFilter="removeFilter"
+            @setFilter="setFilter"
+            @loadMore="loadMore"
+            @loadChildren="loadChildren"></pb-filter-list>
+        </div>
       </li>
     </ul>
     <small v-if="hasMore" class="text-end">
@@ -56,10 +65,11 @@ export default {
       return {}
     },
     filteredItems() {
-      // if (!this.value) {
-      //   return this.items.filter((x) => x.count && x.count > 0)
-      // }
-      return this.items
+      return this.items.map((x) => {
+        x.isActive = this.isActive(x.id)
+        x.labelId = `${this.config.key}_${x.id}`
+        return x
+      })
     },
     orderedItems() {
       const items = this.items
@@ -85,6 +95,10 @@ export default {
       this.$emit('removeFilter', item)
     },
     setFilter(item) {
+      if (this.isActive(item.id)) {
+        this.removeFilter(item)
+        return
+      }
       this.$emit('setFilter', item)
     },
     loadMore() {
@@ -100,20 +114,11 @@ export default {
 <style lang="scss" scoped>
 @import '../../../styles/variables';
 .filter-list-wrapper {
-  padding-bottom: 2em;
+  padding-bottom: 1rem;
 }
 .filter-list {
   list-style: none;
   padding-left: 0;
-
-  li a {
-    cursor: pointer;
-  }
-
-  ul.filter-list {
-    list-style-type: '-';
-    padding-left: 15px;
-  }
 
   .active {
     font-weight: bold;

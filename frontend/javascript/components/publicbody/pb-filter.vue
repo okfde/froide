@@ -14,11 +14,12 @@
           v-if="hasChoices"
           v-model="choice"
           @change="triggerSearch"
-          class="form-control">
+          class="form-select">
           <option
             v-for="opt in config.choices[1]"
+            :key="opt[0]"
             :value="opt[0]"
-            :key="opt[0]">
+            :selected="choice == opt[0]">
             {{ opt[1] }}
           </option>
         </select>
@@ -71,10 +72,14 @@ export default {
   mixins: [FilterMixin],
   components: { PbFilterList },
   data() {
+    let choice = null
+    if (this.config.choices) {
+      choice = this.config.choices[1][0][0]
+    }
     return {
       items: [],
       search: '',
-      choice: null,
+      choice,
       lastSearch: null,
       searchMeta: null,
       loading: false
