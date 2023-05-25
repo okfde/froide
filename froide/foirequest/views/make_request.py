@@ -278,7 +278,11 @@ class MakeRequestView(FormView):
                 "closings": [_("Kind Regards")],
             },
             "fixtures": {
-                "georegion_kind": [[str(k), str(v)] for k, v in GeoRegion.KIND_CHOICES]
+                "georegion_kind": [
+                    [str(k), str(v)]
+                    for k, v in GeoRegion.KIND_CHOICES
+                    if k in settings.FROIDE_CONFIG.get("filter_georegion_kinds", [])
+                ],
             },
         }
         pb_ctx = get_widget_context()
