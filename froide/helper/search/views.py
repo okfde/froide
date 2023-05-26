@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import ListView
@@ -71,10 +72,8 @@ class BaseSearchView(ListView):
         self.form = None
         if filtered is not None:
             self.form = filtered.form
-            try:
-                self.form.is_valid()
-            except Exception:
-                pass
+            if not self.form.is_valid():
+                raise Http404
 
             # Set only valid data on widgets so they can render filter links
             data_clean_only = {
