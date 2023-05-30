@@ -546,7 +546,6 @@ class FoiMessageAdmin(admin.ModelAdmin):
         "redacted_content_anon",
     )
     actions = [
-        "check_delivery_status",
         "mark_as_not_sent",
         "resend_messages",
         "run_guidance",

@@ -61,13 +61,6 @@ def classification_reminder():
 
 
 @celery_app.task
-def check_delivery_status(message_id, count=None, extended=False):
-    # Keep until task queue is empty
-    # Replaced with froide.helper.tasks.check_mail_log
-    pass
-
-
-@celery_app.task
 def create_project_requests(project_id, publicbody_ids, **kwargs):
     for seq, pb_id in enumerate(publicbody_ids):
         create_project_request.delay(project_id, pb_id, sequence=seq, **kwargs)
