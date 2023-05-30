@@ -23,7 +23,7 @@ class BaseSearchFilterSet(django_filters.FilterSet):
     def apply_filter(self, qs, name, *args, **kwargs):
         if name in self.facet_config:
             return qs.post_filter(name, *args, **kwargs)
-        return qs.filter(name, *args, **kwargs)
+        return qs.filter(*args, **kwargs)
 
     def filter_queryset(self, queryset):
         """

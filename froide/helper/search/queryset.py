@@ -129,7 +129,7 @@ class SearchQuerySetWrapper(object):
             return Q("terms", **_make_values_lists(kwargs))
         return args[0]
 
-    def filter(self, name, *args, **kwargs):
+    def filter(self, *args, **kwargs):
         query = self._make_query(*args, **kwargs)
         self.filters.append(query)
         return self
