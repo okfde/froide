@@ -269,30 +269,32 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_status(self, qs, name, value):
         entry = get_status_filter_by_slug(value)
-        return qs.filter(entry.filter(entry.key))
+        return self.apply_filter(qs, name, entry.filter(entry.key))
 
     def filter_jurisdiction(self, qs, name, value):
-        return qs.filter(jurisdiction=value.id)
+        return self.apply_filter(qs, name, jurisdiction=value.id)
 
     def filter_campaign(self, qs, name, value):
         if value == "-":
-            return qs.filter(Q("bool", must_not={"exists": {"field": "campaign"}}))
-        return qs.filter(campaign=value.id)
+            return self.apply_filter(
+                qs, name, Q("bool", must_not={"exists": {"field": "campaign"}})
+            )
+        return self.apply_filter(qs, name, campaign=value.id)
 
     def filter_category(self, qs, name, value):
-        return qs.filter(categories=value.id)
+        return self.apply_filter(qs, name, categories=value.id)
 
     def filter_classification(self, qs, name, value):
-        return qs.filter(classification=value.id)
+        return self.apply_filter(qs, name, classification=value.id)
 
     def filter_tag(self, qs, name, value):
-        return qs.filter(tags=value.id)
+        return self.apply_filter(qs, name, tags=value.id)
 
     def filter_publicbody(self, qs, name, value):
-        return qs.filter(publicbody=value.id)
+        return self.apply_filter(qs, name, publicbody=value.id)
 
     def filter_user(self, qs, name, value):
-        return qs.filter(user=value.id)
+        return self.apply_filter(qs, name, user=value.id)
 
     def filter_organization(self, qs, name, value):
         all_members = list(
@@ -300,8 +302,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
                 "user_id", flat=True
             )
         )
-        filtered_qs = qs.filter(user=all_members)
-        return filtered_qs
+        return self.apply_filter(qs, name, user=all_members)
 
     def filter_first(self, qs, name, value):
         range_kwargs = {}
@@ -310,7 +311,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         if value.stop is not None:
             range_kwargs["lte"] = value.stop
 
-        return qs.filter(Q("range", first_message=range_kwargs))
+        return self.apply_filter(qs, name, Q("range", first_message=range_kwargs))
 
     def filter_last(self, qs, name, value):
         range_kwargs = {}
@@ -318,7 +319,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             range_kwargs["gte"] = value.start
         if value.stop is not None:
             range_kwargs["lte"] = value.stop
-        return qs.filter(Q("range", last_message=range_kwargs))
+        return self.apply_filter(qs, name, Q("range", last_message=range_kwargs))
 
     def add_sort(self, qs, name, value):
         if value:

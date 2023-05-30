@@ -583,7 +583,7 @@ class PublicBodyViewSet(
                     sqs = sqs.filter(**{key: [o.pk for o in obj]})
                 except ValueError:
                     # Make result set empty, no 0 pk present
-                    sqs = sqs.filter(**{key: 0})
+                    sqs = sqs.filter(key, **{key: 0})
 
         other_filters = {"regions_kind": "regions_kind"}
         for key, search_key in other_filters.items():

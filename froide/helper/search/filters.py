@@ -16,8 +16,14 @@ class BaseSearchFilterSet(django_filters.FilterSet):
     )
 
     def __init__(self, *args, **kwargs):
+        self.facet_config = kwargs.pop("facet_config", {})
         self.view = kwargs.pop("view", None)
         super().__init__(*args, **kwargs)
+
+    def apply_filter(self, qs, name, *args, **kwargs):
+        if name in self.facet_config:
+            return qs.post_filter(name, *args, **kwargs)
+        return qs.filter(name, *args, **kwargs)
 
     def filter_queryset(self, queryset):
         """

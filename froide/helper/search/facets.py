@@ -69,7 +69,7 @@ class SearchManager:
         return {
             key: self.resolve_facet(
                 key,
-                aggregation_data[key],
+                aggregation_data[key][key],  # the data is nested due to aggs filter
                 getter=config.get("getter"),
                 model=config.get("model"),
                 query_param=config.get("query_param", key),
