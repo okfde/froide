@@ -10,7 +10,7 @@ from froide.foirequest.models.event import EVENT_DETAILS
 from froide.helper.feed_utils import clean_feed_output
 from froide.helper.search.facets import make_filter_url
 
-from .filters import FOIREQUEST_FILTER_DICT
+from .filters import get_status_filter_by_slug
 from .models import FoiRequest
 
 
@@ -33,7 +33,7 @@ class LatestFoiRequestsFeed(Feed):
         if self.data.get("status"):
             by.append(
                 _("by status %(status)s")
-                % {"status": FOIREQUEST_FILTER_DICT[self.data["status"]][1]}
+                % {"status": get_status_filter_by_slug(self.data["status"]).label}
             )
         if self.data.get("tag"):
             by.append(_("by tag %(tag)s") % {"tag": self.data["tag"].name})

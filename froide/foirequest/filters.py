@@ -3,7 +3,7 @@ from collections import namedtuple
 from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext
+from django.utils.translation import pgettext_lazy
 
 import django_filters
 from elasticsearch_dsl.query import Q
@@ -31,12 +31,15 @@ def status_filter(x):
 FILTER_ORDER = ("jurisdiction", "publicbody", "status", "category", "tag")
 SUB_FILTERS = {"jurisdiction": ("status", "category", "tag", "publicbody")}
 
-FoiRequestFilter = namedtuple("FoiRequestFilter", "slug filter key label description")
+FoiRequestFilter = namedtuple(
+    "FoiRequestFilter", "slug url_part filter key label description"
+)
 
 
-def make_filter(slug, filter_func, key):
+def make_filter(slug, url_part, filter_func, key):
     return FoiRequestFilter(
         slug=slug,
+        url_part=url_part,
         filter=filter_func,
         key=key,
         label=key.label,
@@ -46,42 +49,50 @@ def make_filter(slug, filter_func, key):
 
 FOIREQUEST_FILTERS = [
     make_filter(
-        pgettext("URL part", "awaiting-classification"),
+        pgettext_lazy("slug", "awaiting-classification"),
+        pgettext_lazy("URL part", "^(?P<status>awaiting-classification)/"),
         status_filter,
         FoiRequest.STATUS.AWAITING_CLASSIFICATION,
     ),
     make_filter(
-        pgettext("URL part", "successful"),
+        pgettext_lazy("slug", "successful"),
+        pgettext_lazy("URL part", "^(?P<status>successful)/"),
         resolution_filter,
         FoiRequest.RESOLUTION.SUCCESSFUL,
     ),
     make_filter(
-        pgettext("URL part", "partially-successful"),
+        pgettext_lazy("slug", "partially-successful"),
+        pgettext_lazy("URL part", "^(?P<status>partially-successful)/"),
         resolution_filter,
         FoiRequest.RESOLUTION.PARTIALLY_SUCCESSFUL,
     ),
     make_filter(
-        pgettext("URL part", "refused"),
+        pgettext_lazy("slug", "refused"),
+        pgettext_lazy("URL part", "^(?P<status>refused)/"),
         resolution_filter,
         FoiRequest.RESOLUTION.REFUSED,
     ),
     make_filter(
-        pgettext("URL part", "withdrawn"),
+        pgettext_lazy("slug", "withdrawn"),
+        pgettext_lazy("URL part", "^(?P<status>withdrawn)/"),
         resolution_filter,
         FoiRequest.RESOLUTION.USER_WITHDREW,
     ),
     make_filter(
-        pgettext("URL part", "withdrawn-costs"),
+        pgettext_lazy("slug", "withdrawn-costs"),
+        pgettext_lazy("URL part", "^(?P<status>withdrawn-costs)/"),
         resolution_filter,
         FoiRequest.RESOLUTION.USER_WITHDREW_COSTS,
     ),
     make_filter(
-        pgettext("URL part", "awaiting-response"),
+        pgettext_lazy("slug", "awaiting-response"),
+        pgettext_lazy("URL part", "^(?P<status>awaiting-response)/"),
         status_filter,
         FoiRequest.STATUS.AWAITING_RESPONSE,
     ),
     make_filter(
-        pgettext("URL part", "overdue"),
+        pgettext_lazy("slug", "overdue"),
+        pgettext_lazy("URL part", "^(?P<status>overdue)/"),
         (
             lambda x: Q("range", due_date={"lt": timezone.now()})
             & Q("term", status="awaiting_response")
@@ -89,15 +100,20 @@ FOIREQUEST_FILTERS = [
         FoiRequest.FILTER_STATUS.OVERDUE,
     ),
     make_filter(
-        pgettext("URL part", "asleep"), status_filter, FoiRequest.STATUS.ASLEEP
+        pgettext_lazy("slug", "asleep"),
+        pgettext_lazy("URL part", "^(?P<status>asleep)/"),
+        status_filter,
+        FoiRequest.STATUS.ASLEEP,
     ),
     make_filter(
-        pgettext("URL part", "not-held"),
+        pgettext_lazy("slug", "not-held"),
+        pgettext_lazy("URL part", "^(?P<status>not-held)/"),
         resolution_filter,
         FoiRequest.RESOLUTION.NOT_HELD,
     ),
     FoiRequestFilter(
-        slug=pgettext("URL part", "has-fee"),
+        slug=pgettext_lazy("slug", "has-fee"),
+        url_part=pgettext_lazy("URL part", "^(?P<status>has-fee)/"),
         filter=lambda x: Q("range", costs={"gt": 0}),
         key=None,
         label=_("Fee charged"),
@@ -106,14 +122,19 @@ FOIREQUEST_FILTERS = [
 ]
 
 FOIREQUEST_FILTER_CHOICES = [(x.slug, x.label) for x in FOIREQUEST_FILTERS]
-FOIREQUEST_FILTER_DICT = dict([(x.slug, x) for x in FOIREQUEST_FILTERS])
 REVERSE_FILTER_DICT = dict([(str(x.key), x) for x in FOIREQUEST_FILTERS])
 
 FOIREQUEST_LIST_FILTER_CHOICES = [
     x
     for x in FOIREQUEST_FILTER_CHOICES
-    if x[0] not in {pgettext("URL part", "awaiting-classification")}
+    if x[0] not in {pgettext_lazy("slug", "awaiting-classification")}
 ]
+
+
+def get_status_filter_by_slug(slug):
+    for status_filter in FOIREQUEST_FILTERS:
+        if status_filter.slug == slug:
+            return status_filter
 
 
 class DropDownStatusFilterWidget(DropDownFilterWidget):
@@ -124,7 +145,7 @@ class DropDownStatusFilterWidget(DropDownFilterWidget):
             name, value, label, selected, index, subindex=subindex, attrs=attrs
         )
         if value:
-            status = FOIREQUEST_FILTER_DICT[value].key
+            status = get_status_filter_by_slug(value).key
             option["icon"] = "status-%s" % status
         return option
 
@@ -138,7 +159,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             attrs={"placeholder": _("Search requests"), "class": "form-control"}
         ),
     )
-    FOIREQUEST_FILTER_DICT = FOIREQUEST_FILTER_DICT
     status = django_filters.ChoiceFilter(
         choices=FOIREQUEST_LIST_FILTER_CHOICES,
         label=_("status"),
@@ -248,7 +268,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             ].field.widget.get_url = self.view.search_manager.make_filter_url
 
     def filter_status(self, qs, name, value):
-        entry = self.FOIREQUEST_FILTER_DICT[value]
+        entry = get_status_filter_by_slug(value)
         return qs.filter(entry.filter(entry.key))
 
     def filter_jurisdiction(self, qs, name, value):

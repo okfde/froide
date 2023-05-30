@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-30 10:29+0100\n"
-"PO-Revision-Date: 2023-02-16 17:49+0000\n"
+"POT-Creation-Date: 2023-05-26 22:12+0200\n"
+"PO-Revision-Date: 2023-05-30 09:50+0200\n"
 "Last-Translator: Karl Engelhardt <karl.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Poedit 3.3.1\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -2419,59 +2419,114 @@ msgid "'%(title)s' to %(publicbody)s"
 msgstr "'%(title)s' an %(publicbody)s"
 
 #: froide/foirequest/filters.py
-msgctxt "URL part"
+msgctxt "slug"
 msgid "awaiting-classification"
 msgstr "braucht-klassifikation"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>awaiting-classification)/"
+msgstr "^(?P<status>braucht-klassifikation)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "successful"
 msgstr "erfolgreich"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>successful)/"
+msgstr "^(?P<status>erfolgreich)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "partially-successful"
 msgstr "teilweise-erfolgreich"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>partially-successful)/"
+msgstr "^(?P<status>teilweise-erfolgreich)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "refused"
 msgstr "abgelehnt"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>refused)/"
+msgstr "^(?P<status>abgelehnt)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "withdrawn"
 msgstr "zurueckgezogen"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>withdrawn)/"
+msgstr "^(?P<status>zurueckgezogen)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "withdrawn-costs"
 msgstr "zurueckgezogen-wegen-kosten"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>withdrawn-costs)/"
+msgstr "^(?P<status>zurueckgezogen-wegen-kosten)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "awaiting-response"
 msgstr "warte-auf-antwort"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>awaiting-response)/"
+msgstr "^(?P<status>warte-auf-antwort)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "overdue"
 msgstr "verspaetet"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>overdue)/"
+msgstr "^(?P<status>verspaetet)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "asleep"
 msgstr "eingeschlafen"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>asleep)/"
+msgstr "^(?P<status>eingeschlafen)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "not-held"
 msgstr "nicht-vorhanden"
 
 #: froide/foirequest/filters.py
 msgctxt "URL part"
+msgid "^(?P<status>not-held)/"
+msgstr "^(?P<status>nicht-vorhanden)/"
+
+#: froide/foirequest/filters.py
+msgctxt "slug"
 msgid "has-fee"
 msgstr "gebuehr-erhoben"
+
+#: froide/foirequest/filters.py
+msgctxt "URL part"
+msgid "^(?P<status>has-fee)/"
+msgstr "^(?P<status>gebuehr-erhoben)/"
 
 #: froide/foirequest/filters.py
 msgid "Fee charged"
