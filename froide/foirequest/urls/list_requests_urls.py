@@ -1,6 +1,4 @@
-import re
-
-from django.urls import include, path, register_converter
+from django.urls import include, path, re_path
 from django.utils.translation import pgettext_lazy
 from django.views.generic.base import RedirectView
 
@@ -12,21 +10,6 @@ from ..views import (
     delete_draft,
     user_calendar,
 )
-
-STATUS_URLS = [str(x[0]) for x in FOIREQUEST_FILTERS]
-
-
-class StatusUrlPartConverter:
-    regex = "|".join(re.escape(x) for x in STATUS_URLS)
-
-    def to_python(self, value):
-        return value
-
-    def to_url(self, value):
-        return value
-
-
-register_converter(StatusUrlPartConverter, "status")
 
 urlpatterns = [
     # Old feed URL
@@ -68,7 +51,7 @@ foirequest_urls = [
         ListRequestView.as_view(feed="rss"),
         name="foirequest-list_feed",
     ),
-    # # Translators: part in request filter URL
+    # Translators: part in request filter URL
     path(
         pgettext_lazy("url part", "tag/<slug:tag>/"),
         ListRequestView.as_view(),
@@ -115,22 +98,30 @@ foirequest_urls = [
         user_calendar,
         name="foirequest-user_ical_calendar",
     ),
+]
+
+status_url_patterns = [
     path(
-        "<status:status>/",
+        "",
         ListRequestView.as_view(),
         name="foirequest-list",
     ),
     path(
-        "<status:status>/feed/",
+        "feed/",
         ListRequestView.as_view(feed="atom"),
         name="foirequest-list_feed_atom",
     ),
     path(
-        "<status:status>/rss/",
+        "rss/",
         ListRequestView.as_view(feed="rss"),
         name="foirequest-list_feed",
     ),
 ]
+
+foirequest_urls += [
+    re_path(filt.url_part, include(status_url_patterns)) for filt in FOIREQUEST_FILTERS
+]
+
 
 urlpatterns += foirequest_urls
 

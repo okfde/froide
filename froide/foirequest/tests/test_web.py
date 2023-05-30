@@ -22,7 +22,7 @@ from pytest_django.asserts import (
     assertRedirects,
 )
 
-from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
+from froide.foirequest.filters import FOIREQUEST_LIST_FILTER_CHOICES
 from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
 from froide.helper.search.signal_processor import realtime_search
@@ -98,10 +98,9 @@ def test_list_requests(world, client):
     factories.rebuild_index()
     response = client.get(reverse("foirequest-list"))
     assert response.status_code == 200
-    for urlpart in FOIREQUEST_FILTER_DICT:
-        response = client.get(
-            reverse("foirequest-list", kwargs={"status": str(urlpart)})
-        )
+    for slug, _label in FOIREQUEST_LIST_FILTER_CHOICES:
+        request_list_url = reverse("foirequest-list", kwargs={"status": slug})
+        response = client.get(request_list_url)
         assert response.status_code == 200
 
     for topic in Category.objects.filter(is_topic=True):
@@ -109,6 +108,10 @@ def test_list_requests(world, client):
             reverse("foirequest-list", kwargs={"category": topic.slug})
         )
         assert response.status_code == 200
+
+    bad_request_list_url = request_list_url.replace(str(slug), "bad")
+    response = client.get(bad_request_list_url)
+    assert response.status_code == 404
 
     response = client.get(reverse("foirequest-list") + "?page=99999")
     assert response.status_code == 404
@@ -119,14 +122,20 @@ def test_list_jurisdiction_requests(world, client):
     factories.rebuild_index()
     juris = Jurisdiction.objects.all()[0]
     response = client.get(
-        reverse("foirequest-list"), kwargs={"jurisdiction": juris.slug}
+        reverse("foirequest-list", kwargs={"jurisdiction": juris.slug})
     )
     assert response.status_code == 200
-    for urlpart in FOIREQUEST_FILTER_DICT:
+
+    response = client.get(
+        reverse("foirequest-list", kwargs={"jurisdiction": "bad-juris"})
+    )
+    assert response.status_code == 404
+
+    for slug, _label in FOIREQUEST_LIST_FILTER_CHOICES:
         response = client.get(
             reverse(
                 "foirequest-list",
-                kwargs={"status": urlpart, "jurisdiction": juris.slug},
+                kwargs={"status": slug, "jurisdiction": juris.slug},
             )
         )
         assert response.status_code == 200
@@ -307,7 +316,7 @@ def test_feed(world, client):
     )
     assert response.status_code == 200
 
-    status = FOIREQUEST_FILTERS[0][0]
+    status = FOIREQUEST_LIST_FILTER_CHOICES[0][0]
     response = client.get(
         reverse(
             "foirequest-list_feed",
@@ -641,6 +650,7 @@ def jurisdiction_with_many_requests(world):
         req = factories.FoiRequestFactory.create(
             site=site,
             user=user,
+            resolution="successful",
             jurisdiction=jurisdiction,
             law=law,
             public_body=public_body,
@@ -723,7 +733,7 @@ def test_request_list_path_filter(
 
     kwargs_elements = [
         ("jurisdiction", jurisdiction_with_many_requests.slug),
-        ("status", next(iter(FOIREQUEST_FILTER_DICT))),
+        ("status", "successful"),
     ]
 
     query_elements = [("q", "*"), ("sort", "last")]
@@ -736,7 +746,6 @@ def test_request_list_path_filter(
                 + "?"
                 + urllib.parse.urlencode(query)
             )
-            print(list_url)
             response = client.get(list_url)
             assert response.status_code == 200
 

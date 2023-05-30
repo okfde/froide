@@ -20,7 +20,6 @@ from froide.publicbody.models import Jurisdiction, PublicBody
 from ..documents import FoiRequestDocument
 from ..filters import (
     FOIREQUEST_FILTER_CHOICES,
-    FOIREQUEST_FILTER_DICT,
     BaseFoiRequestFilterSet,
     DropDownStatusFilterWidget,
 )
@@ -32,8 +31,6 @@ ACCOUNT_FILTERS = {"q", "first", "status", "project", "sort"}
 
 
 class AccountRequestFilterSet(BaseFoiRequestFilterSet):
-    FOIREQUEST_FILTER_DICT = FOIREQUEST_FILTER_DICT
-
     status = django_filters.ChoiceFilter(
         choices=FOIREQUEST_FILTER_CHOICES,
         empty_label=_("any status"),
