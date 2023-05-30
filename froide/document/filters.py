@@ -51,10 +51,10 @@ class DocumentFilter(FCDocumentFilter):
         self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
 
     def filter_publicbody(self, qs, name, value):
-        return qs.filter(publicbody=value)
+        return self.apply_filter(qs, name, publicbody=value)
 
     def filter_foirequest(self, qs, name, value):
-        return qs.filter(foirequest=value)
+        return self.apply_filter(qs, name, foirequest=value)
 
 
 class PageDocumentFilterset(BaseSearchFilterSet):
@@ -167,37 +167,37 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         return super().filter_queryset(queryset)
 
     def filter_jurisdiction(self, qs, name, value):
-        return qs.filter(jurisdiction=value.id)
+        return self.apply_filter(qs, name, jurisdiction=value.id)
 
     def filter_campaign(self, qs, name, value):
         if value == "-":
             return qs.filter(Q("bool", must_not={"exists": {"field": "campaign"}}))
-        return qs.filter(campaign=value.id)
+        return self.apply_filter(qs, name, campaign=value.id)
 
     def filter_tag(self, qs, name, value):
-        return qs.filter(tags=value.id)
+        return self.apply_filter(qs, name, tags=value.id)
 
     def filter_publicbody(self, qs, name, value):
-        return qs.filter(publicbody=value.id)
+        return self.apply_filter(qs, name, publicbody=value.id)
 
     def filter_foirequest(self, qs, name, value):
-        return qs.filter(foirequest=value)
+        return self.apply_filter(qs, name, foirequest=value)
 
     def filter_collection(self, qs, name, collection):
         if not collection.can_read(self.request):
             return qs.none()
-        qs = qs.filter(collections=collection.id)
+        qs = self.apply_filter(qs, name, collections=collection.id)
         qs = self.apply_data_filters(qs, collection.settings.get("filters", []))
         return qs
 
     def filter_directory(self, qs, name, directory):
         if not directory.collection.can_read(self.request):
             return qs.none()
-        qs = qs.filter(directories=directory.id)
+        qs = self.apply_filter(qs, name, directories=directory.id)
         return qs
 
     def filter_portal(self, qs, name, portal):
-        qs = qs.filter(portal=portal.id)
+        qs = self.apply_filter(qs, name, portal=portal.id)
         qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
         return qs
 
@@ -234,13 +234,13 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     def filter_document(self, qs, name, value):
         if not value.can_read(self.request):
             return qs.none()
-        return qs.filter(document=value.id)
+        return self.apply_filter(qs, name, document=value.id)
 
     def filter_user(self, qs, name, value):
-        return qs.filter(user=value.id)
+        return self.apply_filter(qs, name, user=value.id)
 
     def filter_number(self, qs, name, value):
-        return qs.filter(number=int(value))
+        return self.apply_filter(qs, name, number=int(value))
 
     def filter_created_at(self, qs, name, value):
         range_kwargs = {}
@@ -249,4 +249,4 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         if value.stop is not None:
             range_kwargs["lte"] = value.stop
 
-        return qs.filter(ESQ("range", created_at=range_kwargs))
+        return self.apply_filter(qs, name, ESQ("range", created_at=range_kwargs))

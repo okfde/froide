@@ -62,7 +62,7 @@ class AccountRequestFilterSet(BaseFoiRequestFilterSet):
                 self.filters[field].field.widget = forms.HiddenInput()
 
     def filter_project(self, qs, name, value):
-        return qs.filter(project=value.id)
+        return self.apply_filter(qs, name, project=value.id)
 
 
 class BaseAccountMixin(LoginRequiredMixin):

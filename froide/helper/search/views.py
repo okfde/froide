@@ -45,7 +45,9 @@ class BaseSearchView(ListView):
 
     def get_filterset(self, *args, **kwargs):
         if self.filterset:
-            return self.filterset(*args, **kwargs, view=self)
+            return self.filterset(
+                *args, **kwargs, view=self, facet_config=self.facet_config
+            )
         return None
 
     @cached_property
@@ -68,7 +70,10 @@ class BaseSearchView(ListView):
         s = self.get_search()
         sqs = SearchQuerySetWrapper(s, self.model)
 
-        filtered = self.get_filterset(self.search_manager.filter_data, queryset=sqs)
+        filtered = self.get_filterset(
+            self.search_manager.filter_data,
+            queryset=sqs,
+        )
         self.form = None
         if filtered is not None:
             self.form = filtered.form
