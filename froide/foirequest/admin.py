@@ -547,6 +547,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
     )
     actions = [
         "check_delivery_status",
+        "mark_as_not_sent",
         "resend_messages",
         "run_guidance",
         "run_guidance_notify",
@@ -648,6 +649,10 @@ class FoiMessageAdmin(admin.ModelAdmin):
             "Content-Disposition"
         ] = 'attachment; filename="message-{}.eml"'.format(message.id)
         return response
+
+    @admin.action(description=_("Mark as not sent"))
+    def mark_as_not_sent(self, request, queryset):
+        queryset.update(sent=False)
 
     def resend_messages(self, request, queryset):
         if not request.method == "POST":
