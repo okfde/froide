@@ -212,6 +212,7 @@ def cancel_user(user: User, delete: bool = False) -> None:
     user.profile_text = ""
     user.profile_photo.delete()
     user.save()
+    user.groups.clear()
     user.first_name = ""
     user.last_name = ""
     user.is_trusted = False
