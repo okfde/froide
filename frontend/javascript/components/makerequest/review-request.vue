@@ -18,9 +18,7 @@
               {{ i18n.reviewFrom }}
             </dt>
             <dd class="col-sm-9" :class="{ 'text-danger': !userValid }">
-              {{ user.first_name }} {{ user.last_name }} &lt;{{
-                user.email
-              }}&gt;
+              {{ user.first_name }} {{ user.last_name }}
             </dd>
             <dt class="col-sm-3">{{ i18n.reviewTo }}</dt>
             <dd class="col-sm-9" v-if="publicBodies.length > 1">
