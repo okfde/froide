@@ -292,7 +292,8 @@ def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
     if not spf_headers:
         return
     header = spf_headers[0]
-    status = header.split(" ", 1)[0]
+    match = SPF_MATCH.search(header)
+    status = match.group(1)
     return AuthenticityStatus(
         check=AuthenticityCheck.SPF,
         status=status,
