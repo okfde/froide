@@ -26,7 +26,7 @@
 
 .hover-btn-success {
   @include button-outline-variant(map-get($theme-colors, "success"));
-  background-color: #fff;
+  background-color: var(--#{$prefix}body-bg);
 }
 
 .hover-btn-success:hover {
@@ -47,6 +47,12 @@
 }
 .btn-warning-blink:hover {
   animation: none;
+}
+
+.btn-outline-redact {
+  @include button-outline-variant(map-get($theme-colors, "dark"));
+  border-color: var(--#{$prefix}body);
+  color: var(--#{$prefix}body);
 }
 
 @keyframes warning-blink {

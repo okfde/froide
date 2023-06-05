@@ -4,7 +4,7 @@
 
 {% if show_button %}
 <div class="btn-group btn-group-sm mx-sm-1 mb-1">
-  <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#message-redact-{{ message.pk }}">
+  <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-outline-redact" data-bs-toggle="modal" data-bs-target="#message-redact-{{ message.pk }}">
     <i class="fa fa-paint-brush"></i>
     {% trans "Redact" %}
   </button>

@@ -11,18 +11,9 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 2px;
-  background-color: $white;
+  background-color: var(--#{$prefix}body-bg);
   @include media-breakpoint-up(md) {
     box-shadow: $message_box_shadow;
-  }
-
-  .redacted,
-  .redacted a {
-    background-color: $gray-200 !important;
-    color: $gray-200 !important;
-  }
-  .redacted-dummy {
-    background-color: $gray-200 !important;
   }
 
   &__head {
@@ -35,9 +26,9 @@
     justify-content: center;
     width: $avatar_size_mobile;
     height: $avatar_size_mobile;
-    background-color: $gray-200;
+    background-color: var(--#{$prefix}tertiary-bg);
     border-radius: 50%;
-    color: $gray-500;
+    color: var(--#{$prefix}tertiary-color);
     margin-right: $avatar_right_margin_mobile;
     &--house {
       font-size: 14px;
@@ -71,8 +62,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: $gray-600;
-    background-color: $gray-200;
+    color: var(--#{$prefix}tertiary-color);
+    background-color: var(--#{$prefix}tertiary-bg);
     border-radius: 50%;
     min-width: 20px;
     min-height: 20px;
@@ -138,7 +129,7 @@
     }
   }
   &__toolbar {
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}tertiary-bg);
     box-shadow: $blue-box-shadow, inset 0px 1px 2px $gray-200;
     &--sticky {
       @include media-breakpoint-up(sm) {
@@ -154,7 +145,7 @@
   }
   &__footer {
     display: none;
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}tertiary-bg);
     box-shadow: $blue-box-shadow, inset 0px 1px 2px $gray-200;
   }
 

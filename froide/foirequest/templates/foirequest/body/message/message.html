@@ -238,7 +238,7 @@
       {# comments list #}
       <div id="comments-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
         {% block before_comments %}{% endblock %}
-        <div class="alpha-message__wrap pb-4">
+        <div class="alpha-message__wrap py-4">
 
           {% include "froide_comments/comments.html" with object=message comment_list=comment_list %}
 

@@ -14,7 +14,7 @@
 
     &,
     > * {
-      color: $gray-700;
+      color: var(--#{$prefix}tertiary-color);
       font-size: small;
       white-space: nowrap;
 
@@ -28,7 +28,7 @@
 
       &,
       > * {
-        color: $blue-800;
+        color: var(--#{$prefix}body-color);
       }
     }
   }
@@ -37,24 +37,4 @@
     padding-left: 0;
   }
 
-  &-light {
-    .breadcrumb-item {
-      &,
-      > * {
-        color: $gray-200;
-      }
-
-      &:last-child,
-      &.active {
-        &,
-        > * {
-          color: $white;
-        }
-      }
-    }
-
-    .breadcrumb-item + .breadcrumb-item::before {
-      color: $gray-300;
-    }
-  }
 }

@@ -1,10 +1,12 @@
+$footer-bg: $gray-900;
 $footer-color: $gray-400;
+$footer-color-subtle: $gray-700;
 $footer-color-hover: $gray-100;
 
 .footer {
   padding-top: $spacer;
 
-  background-color: $gray-900;
+  background-color: $footer-bg;
   color: $footer-color;
 
   .container {
@@ -65,5 +67,18 @@ $footer-color-hover: $gray-100;
     a:hover {
       color: $footer-color-hover;
     }
+  }
+}
+
+.footer__aside {
+  color: $footer-color-subtle;
+  a, a:hover {
+    color: $footer-color-subtle;
+  }
+}
+
+@include color-mode(dark) {
+  .footer {
+    border-top: 1px solid $footer-color-subtle;
   }
 }

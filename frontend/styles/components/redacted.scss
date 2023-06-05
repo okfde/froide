@@ -1,4 +1,12 @@
-$redacted: #e3e3e3;
+:root {
+  --redacted: $grey-200;
+}
+
+@include color-mode(dark) {
+  --redacted: #000;
+}
+
+$redacted: var(--redacted);
 
 @media screen {
   .redacted,

@@ -36,7 +36,7 @@
 
     {# edit button #}
     {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
-      <div id="set-status" class="bg-blue-10 px-4 py-2 d-print-none">
+      <div id="set-status" class="bg-primary-subtle px-4 py-2 d-print-none">
         <a href="#" class="info-box__edit-button">
           <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit request status" %}</span>
           <span class="{% if active_tab != 'set-status' %}d-none{% endif %}"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> {% trans "Back" %}</span>
@@ -63,7 +63,7 @@
 
       {# Admin/moderation links #}
       {% if object|can_mark_not_foi:request %}
-        <li class="info-box__list-item info-box__list-item--inset bg-blue-200 d-flex my-0 border-top border-blue-20 py-2 d-print-none">
+        <li class="info-box__list-item info-box__list-item--inset bg-primary-subtle d-flex my-0 border-top py-2 d-print-none">
           <ul class="list-inline">
             {% if request.user.is_staff and request.user|has_perm:"foirequest.view_foirequest" %}
               <li class="list-inline-item">
