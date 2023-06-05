@@ -25,4 +25,4 @@ class BounceAdmin(admin.ModelAdmin):
         ).select_related("user")
 
         for bounce in queryset:
-            bounce.user.deactivate()
+            bounce.user.deactivate(reason="admin action for bounced")

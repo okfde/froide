@@ -314,18 +314,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         return send_mail_user(subject, body, self, **kwargs)
 
-    def deactivate(self):
+    def deactivate(self, reason: str = ""):
         from .utils import delete_all_unexpired_sessions_for_user
 
         delete_all_unexpired_sessions_for_user(self)
 
         self.is_active = False
         self.date_deactivated = timezone.now()
+        self.notes += "\n\nDeactivated: {}".format(reason)
         self.save()
 
-    def deactivate_and_block(self):
+    def deactivate_and_block(self, reason: str = ""):
         self.is_blocked = True
-        self.deactivate()
+        self.deactivate(reason=reason)
 
     def delete_profile_photo(self):
         if self.profile_photo:

@@ -165,7 +165,7 @@ def future_cancel_user(user, notify=False):
     user.is_deleted = False
     now = timezone.localtime(timezone.now())
     user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
-    user.notes += "Canceled on {} for {}\n\n".format(
+    user.notes += "\n\nCanceled on {} for {}\n\n".format(
         now.isoformat(), user.date_left.isoformat()
     )
     user.save()
@@ -176,7 +176,9 @@ def future_cancel_user(user, notify=False):
         future_cancel_mail.send(user=user)
 
 
-def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -> None:
+def start_cancel_account_process(
+    user: SimpleLazyObject, delete: bool = False, reason: str = ""
+) -> None:
     from .tasks import cancel_account_task
 
     user.private = True
@@ -185,6 +187,9 @@ def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -
     user.is_active = False
     user.set_unusable_password()
     user.date_deactivated = timezone.now()
+    user.notes += "\n\nAccount canceled {}: {}\n\n".format(
+        timezone.now().isoformat(), reason
+    )
 
     user.save()
     delete_all_unexpired_sessions_for_user(user)
@@ -239,7 +244,11 @@ def delete_unconfirmed_users():
         date_joined__lt=time_ago,
     )
     for user in expired_users:
-        start_cancel_account_process(user, delete=True)
+        start_cancel_account_process(
+            user,
+            delete=True,
+            reason="unconfirmed for {}".format(EXPIRE_UNCONFIRMED_USERS_AGE),
+        )
 
 
 def delete_deactivated_users():
@@ -248,7 +257,10 @@ def delete_deactivated_users():
         is_active=False, is_deleted=False, date_deactivated__lt=time_ago
     )
     for user in expired_users:
-        start_cancel_account_process(user)
+        start_cancel_account_process(
+            user,
+            reason="deactivated for {}".format(CANCEL_DEACTIVATED_USERS_AGE),
+        )
 
 
 def delete_undeleted_left_users():
@@ -257,7 +269,10 @@ def delete_undeleted_left_users():
         date_left__isnull=False, date_left__lt=now, is_deleted=False
     )
     for user in canceled_but_undeleted:
-        start_cancel_account_process(user)
+        start_cancel_account_process(
+            user,
+            reason="marked for deletion",
+        )
 
 
 def parse_address(address):

@@ -670,7 +670,7 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         )
         return account_settings(request, context={"user_delete_form": form}, status=400)
     # Removing all personal data from account
-    start_cancel_account_process(request.user)
+    start_cancel_account_process(request.user, reason="by user request")
     auth.logout(request)
     messages.add_message(
         request,

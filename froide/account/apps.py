@@ -47,7 +47,7 @@ def deactivate_user_after_bounce(sender, bounce, should_deactivate=False, **kwar
         return
     if not bounce.user:
         return
-    bounce.user.deactivate()
+    bounce.user.deactivate(reason="email bounced")
 
 
 def get_request_menu_item(request: HttpRequest) -> MenuItem:

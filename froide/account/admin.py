@@ -283,7 +283,9 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     @admin.action(description=_("Cancel account by user request"))
     def cancel_users_by_request(self, request, queryset):
         for user in queryset:
-            start_cancel_account_process(user)
+            start_cancel_account_process(
+                user, reason="via admin by {}".format(request.user.pk)
+            )
         self.message_user(request, _("Accounts canceled."))
         return None
 
@@ -304,7 +306,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     @admin.action(description=_("Deactivate and block users"))
     def deactivate_users(self, request, queryset):
         for user in queryset:
-            user.deactivate_and_block()
+            user.deactivate_and_block(reason="via admin by {}".format(request.user.pk))
         self.message_user(request, _("Users logged out, deactivated and blocked."))
         return None
 
