@@ -283,8 +283,12 @@ def detect_auto_reply(from_field, subject="", msgobj=None):
     return False
 
 
+SPF_MATCH = re.compile(r"\sspf=(\w+);?\s")
+
+
 def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
-    spf_headers = msgobj.get_all("Received-SPF", [])
+    auth_headers = msgobj.get_all("Authentication-Results", [])
+    spf_headers = [h for h in auth_headers if SPF_MATCH.search(h) is not None]
     if not spf_headers:
         return
     header = spf_headers[0]
