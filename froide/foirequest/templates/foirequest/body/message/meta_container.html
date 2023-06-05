@@ -106,7 +106,7 @@
         {% if object|can_read_foirequest_authenticated:request %}
           {{ message.subject }}
         {% endif %}
-        <span class="badge text-bg-light">{% trans "Subject hidden" %}</span>
+        <span class="badge text-bg-body-secondary">{% trans "Subject hidden" %}</span>
       {% else %}
         {% redact_subject message request %}
       {% endif %}
@@ -226,7 +226,7 @@
     <dd class="d-print-none col-sm-9">
       <a href="{% url 'admin:foirequest_foimessage_change' message.id %}">{% trans "View message in admin" %}</a>
       {% for tag_name in message.tag_set %}
-        <span class="badge text-bg-light">{{ tag_name }}</span>
+        <span class="badge text-bg-body-secondary">{{ tag_name }}</span>
       {% endfor %}
     </dd>
   {% endif %}

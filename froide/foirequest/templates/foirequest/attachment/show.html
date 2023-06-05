@@ -7,7 +7,7 @@
 {% block title %}{% blocktrans with name=attachment.name title=foirequest.title %}{{ name }} in request „{{ title }}“{% endblocktrans %}{% endblock %}
 
 {% block body %}
-<div class="bg-gray-100">
+<div class="bg-body-tertiary">
   {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachment of message from {{ date }}{% endblocktrans %}
   {% include "foirequest/header/breadcrumb.html" with object=foirequest last_item=breadcrumb_label %}
 </div>

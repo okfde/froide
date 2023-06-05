@@ -19,7 +19,7 @@
         <span class="fa fa-exclamation-circle"></span>
       {% endif %}
       {% if message.problemreports_count > 1 %}{% trans "Problem" %}{% else %}{% trans "Problems" %}{% endif %}
-      <span class="badge {% if message.problemreports_unresolved_count %}text-bg-warning{% else %}text-bg-light{% endif %}">
+      <span class="badge {% if message.problemreports_unresolved_count %}text-bg-warning{% else %}text-bg-body-secondary{% endif %}">
         {{ message.problemreports_count }}
       </span>
     {% endif %}
@@ -72,7 +72,7 @@
                   {% for report in message.problemreports %}
                     <tr>
                       <td>
-                        <span class="badge text-bg-light">
+                        <span class="badge text-bg-body-secondary">
                           {{ report.get_kind_display }}
                         </span>
                       </td>

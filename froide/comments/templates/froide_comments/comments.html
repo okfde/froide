@@ -2,7 +2,7 @@
 {% load content_helper %}
 
 {% if not comment_list|length %}
-  <span class="text-gray-600">{% translate "No comments yet." %}</span>
+  <span class="text-body-secondary">{% translate "No comments yet." %}</span>
 {% else %}
   {% include "froide_comments/list.html" with object=object comment_list=comment_list %}
 {% endif %}

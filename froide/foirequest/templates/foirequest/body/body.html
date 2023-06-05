@@ -10,7 +10,7 @@
 
   <div
     role="tabpanel"
-    class="tab-pane fade {% if not show_documents %}active show{% endif %} bg-gray-200"
+    class="tab-pane fade {% if not show_documents %}active show{% endif %} bg-body-secondary"
     id="correspondence-panel"
     aria-labelledby="correspondence-tab"
   >
@@ -101,7 +101,7 @@
     {# Reply form #}
     {% if object|can_write_foirequest:request and object.public_body %}
       <div id="reply-form-helper" class="d-print-none"></div>
-      <div id="write-messages" class="reply-form bg-white d-print-none">
+      <div id="write-messages" class="reply-form bg-body d-print-none">
         <a href="#" class="btn btn-link reply-form__toggle-sticky-btn d-none d-md-inline">
           <i class="fa fa-unlock" aria-hidden="true"></i>
           {% trans "Sticky" %}
