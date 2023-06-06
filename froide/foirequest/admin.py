@@ -214,6 +214,7 @@ class FoiRequestAdmin(admin.ModelAdmin):
         "confirm_request",
         "publish",
         "unpublish",
+        "unpublish_permanently",
         "add_to_project",
         "set_team",
         "unblock_request",
@@ -392,6 +393,18 @@ class FoiRequestAdmin(admin.ModelAdmin):
         )
         update_foirequest_index(queryset)
         self.message_user(request, _("Selected requests are now unpublished."))
+
+    @admin.action(description=_("Unpublish permanently"))
+    def unpublish_permanently(self, request, queryset):
+        from .utils import update_foirequest_index
+
+        queryset.update(
+            public=True, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+        )
+        update_foirequest_index(queryset)
+        self.message_user(
+            request, _("Selected requests are now permanently unpublished.")
+        )
 
     @admin.action(description=_("Publish"))
     def publish(self, request, queryset):
