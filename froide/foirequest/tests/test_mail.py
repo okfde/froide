@@ -136,12 +136,12 @@ def test_long_attachment_names(foirequest_with_msg):
 def test_authenticity_pass():
     with open(p("test_mail_05.txt"), "rb") as f:
         mail = parse_email(f)
-    assert not mail.fails_authenticity
+    assert mail.fails_authenticity
     authenticity_checks = mail.get_authenticity_checks()
     assert authenticity_checks[0].check.value == "SPF"
     assert authenticity_checks[1].check.value == "DMARC"
     assert authenticity_checks[2].check.value == "DKIM"
-    assert not authenticity_checks[0].failed
+    assert authenticity_checks[0].failed
     assert not authenticity_checks[1].failed
     assert not authenticity_checks[2].failed
 

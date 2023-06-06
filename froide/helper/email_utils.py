@@ -287,13 +287,19 @@ SPF_MATCH = re.compile(r"\sspf=(\w+);?\s")
 
 
 def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
-    auth_headers = msgobj.get_all("Authentication-Results", [])
-    spf_headers = [h for h in auth_headers if SPF_MATCH.search(h) is not None]
-    if not spf_headers:
-        return
-    header = spf_headers[0]
-    match = SPF_MATCH.search(header)
-    status = match.group(1)
+    spf_headers = msgobj.get_all("Received-SPF", [])
+    if spf_headers:
+        header = spf_headers[0]
+        status = header.split(" ", 1)[0]
+    else:
+        auth_headers = msgobj.get_all("Authentication-Results", [])
+        spf_headers = [h for h in auth_headers if SPF_MATCH.search(h) is not None]
+        if not spf_headers:
+            return
+        header = spf_headers[0]
+        match = SPF_MATCH.search(header)
+        status = match.group(1)
+
     return AuthenticityStatus(
         check=AuthenticityCheck.SPF,
         status=status,
