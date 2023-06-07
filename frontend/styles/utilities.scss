@@ -1,0 +1,37 @@
+@use "sass:map";
+
+@each $name in $froide-theme {
+  .text-bg-#{$name} {
+    color: var(--froide-#{$name}-color);
+    background-color: var(--froide-#{$name}-bg);
+  }
+  .bg-#{$name} {
+    background-color: var(--froide-#{$name}-bg);
+  }
+  .text-#{$name} {
+    color: var(--froide-#{$name}-color);
+  }
+}
+
+// This gives us text-bg classes for the color-mode compatibole
+// bootstrap colors
+
+$bootstrap-extras: (
+  "body": (
+    "variable": "body",
+  ),
+  "body-secondary": (
+    "variable": "secondary",
+  ),
+  "body-tertiary": (
+    "variable": "tertiary",
+  ),
+);
+
+@each $name, $data in $bootstrap-extras {
+  $varname: map.get($data, "variable");
+  .text-bg-#{$name} {
+    color: var(--#{$prefix}#{$varname}-color);
+    background-color: var(--#{$prefix}#{$varname}-bg);
+  }
+}

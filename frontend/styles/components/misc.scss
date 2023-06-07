@@ -5,7 +5,7 @@
 }
 
 .highlight {
-  background: $highlight-yellow;
+  background: $highlight;
 }
 
 [v-cloak] {
@@ -81,7 +81,7 @@ input.copy-text {
 
 @keyframes is-new-flash {
   0% {
-    background-color: $highlight-yellow;
+    background-color: $highlight;
     opacity: 1;
   }
   100% {

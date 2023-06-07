@@ -56,6 +56,9 @@
 @import "bootstrap/scss/utilities/api";
 // scss-docs-end import-stack
 
+@import "root";
+@import "utilities";
+
 // Icon font
 $fa-font-path: "font-awesome/fonts";
 @import "font-awesome/scss/font-awesome";
