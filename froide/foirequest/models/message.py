@@ -16,7 +16,7 @@ from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.email_utils import make_address
 from froide.helper.text_diff import get_differences
-from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
+from froide.helper.text_utils import quote_text, redact_subject
 from froide.publicbody.models import PublicBody
 
 from .request import FoiRequest, get_absolute_domain_short_url, get_absolute_short_url
@@ -493,11 +493,13 @@ class FoiMessage(models.Model):
     def get_content(self):
         self.plaintext = self.plaintext or ""
         if self.plaintext_redacted is None:
-            user_replacements = self.request.user.get_redactions()
-            self.plaintext_redacted = redact_plaintext(
+            from ..utils import redact_plaintext_with_request
+
+            self.plaintext_redacted = redact_plaintext_with_request(
                 self.plaintext,
+                self.request,
+                redact_greeting=not self.is_response,
                 redact_closing=self.is_response,
-                user_replacements=user_replacements,
             )
             self.clear_render_cache()
             self.save()

@@ -579,11 +579,11 @@ def rerun_message_redaction(foirequests):
             message.subject_redacted = redact_subject(
                 message.subject, user_replacements
             )
-            message.plaintext_redacted = redact_plaintext(
+            message.plaintext_redacted = redact_plaintext_with_request(
                 message.plaintext,
+                message.request,
                 redact_closing=message.is_response,
                 redact_greeting=not message.is_response,
-                user_replacements=user_replacements,
             )
             message.clear_render_cache()
             message.save()
