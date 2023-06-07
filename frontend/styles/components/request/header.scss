@@ -89,7 +89,7 @@ $header-bg: var(--#{$prefix}tertiary-bg);
       margin: $y-spacing-desktop $x-spacing-desktop;
     }
     a .fa-question-circle-o {
-      color: $blue-800;
+      color: var(--#{$prefix}primary-text-emphasis);
     }
     p {
       margin: 0;
@@ -112,8 +112,8 @@ $header-bg: var(--#{$prefix}tertiary-bg);
       }
     }
     &--is-danger {
-      color: darken($red, 7%);
-      background-color: #ffdcd4;
+      color: var(--#{$prefix}danger-text-emphasis);
+      background-color: var(--#{$prefix}danger-bg-subtle);
       padding-top: $y-spacing-mobile;
       padding-bottom: $y-spacing-mobile;
       @include media-breakpoint-up(lg) {
@@ -121,7 +121,7 @@ $header-bg: var(--#{$prefix}tertiary-bg);
         padding-bottom: $y-spacing-desktop;
       }
       a .fa-question-circle-o {
-        color: darken($red, 7%);
+        color: var(--#{$prefix}danger-text-emphasis);
       }
     }
   }
@@ -141,44 +141,44 @@ $header-bg: var(--#{$prefix}tertiary-bg);
     background-color: var(--#{$prefix}secondary-bg-subtle);
   }
   &--regular &__title {
-    color: var(--#{$prefix}secondary-color-subtle);
+    color: var(--#{$prefix}secondary-text-emphasis);
   }
   &--regular &__subtitle {
-    color: var(--#{$prefix}secondary-color-subtle);
+    color: var(--#{$prefix}secondary-text-emphasis);
   }
 
   /*
     Info-box theme danger
   */
   &--danger {
-    border: 2px solid $red;
-    box-shadow: 6px 6px 0px var(--#{$prefix}danger-bg-subtle);
+    border: 2px solid var(--#{$prefix}danger-bg-subtle);
+    box-shadow: 6px 6px 0px rgba(var(--#{$prefix}danger-bg-subtle-rgb), 0.76);
   }
   &--danger &__header {
-    background-color:  var(--#{$prefix}danger);
+    background-color: var(--#{$prefix}danger-bg-subtle);
   }
   &--danger &__title {
-    color:  var(--#{$prefix}danger-text-emphasis);
+    color: var(--#{$prefix}danger-text-emphasis);
   }
   &--danger &__subtitle {
-    color: $white;
+    color: var(--#{$prefix}danger-text-emphasis);
   }
 
   /*
     Info-box thesme success
   */
   &--success {
-    border: 2px solid $green;
-    box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
+    border: 2px solid var(--#{$prefix}success-bg-subtle);
+    box-shadow: 6px 6px 0px rgba(var(--#{$prefix}success-bg-subtle-rgb), 0.76);
   }
   &--success &__header {
-    background-color: $green;
+    background-color: var(--#{$prefix}success-bg-subtle);
   }
   &--success &__title {
-    color: $white;
+    color: var(--#{$prefix}success-text-emphasis);
   }
   &--success &__subtitle {
-    color: $white;
+    color: var(--#{$prefix}success-text-emphasis);
   }
 }
 
