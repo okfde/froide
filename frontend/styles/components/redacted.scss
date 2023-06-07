@@ -1,5 +1,5 @@
 :root {
-  --redacted: $grey-200;
+  --redacted: #{$gray-200};
 }
 
 @include color-mode(dark) {
