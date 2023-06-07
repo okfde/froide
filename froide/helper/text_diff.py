@@ -5,7 +5,6 @@ from typing import Iterator, List, Optional, Tuple
 from django.utils.html import escape
 from django.utils.safestring import SafeString, mark_safe
 
-SPLITTER = r"([^\w\-@/\.\:])"
 SPLITTER = r"([\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E])"
 SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile("^%s$" % SPLITTER)
