@@ -155,7 +155,7 @@ $header-bg: var(--#{$prefix}tertiary-bg);
     box-shadow: 6px 6px 0px var(--#{$prefix}danger-bg-subtle);
   }
   &--danger &__header {
-    background-color:  var(--#{$prefix}danger-bg);
+    background-color:  var(--#{$prefix}danger);
   }
   &--danger &__title {
     color:  var(--#{$prefix}danger-text-emphasis);
