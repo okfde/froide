@@ -278,7 +278,7 @@ export default {
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.95) 50%
+    rgba(var(--#{$prefix}body-bg-rgb), 0.95) 50%
   );
   z-index: 1;
 }

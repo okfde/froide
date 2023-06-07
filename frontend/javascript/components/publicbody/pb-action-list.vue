@@ -109,7 +109,8 @@ export default {
   .row {
     padding: 1rem 0;
     &:hover {
-      background-color: $gray-200;
+      background-color: var(--#{$prefix}light-bg-subtle);
+      color: var(--#{$prefix}light-text-emphasis);
     }
   }
   .btn {

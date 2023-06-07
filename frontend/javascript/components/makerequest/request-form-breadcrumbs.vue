@@ -1,5 +1,5 @@
 <template>
-  <div class="process-breadcrumbs-container">
+  <div class="bg-body-secondary">
     <div class="container">
       <div class="row">
         <ol class="process-breadcrumbs col-md-8">
@@ -168,13 +168,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../styles/variables';
-
-.process-breadcrumbs-container {
-  background-color: #f5f5f5;
-  // position: sticky;
-  // top: 0;
-  // z-index: 500;
-}
 
 .process-breadcrumbs {
   margin-bottom: 0;
