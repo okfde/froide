@@ -48,7 +48,7 @@
 
 
       {% if not object.public and object.is_foi and object|can_write_foirequest:request %}
-        <li class="info-box__list-item info-box__list-item--inset bg-yellow-10 d-flex my-0 py-2 border-top border-yellow-20 d-print-none">
+        <li class="info-box__list-item info-box__list-item--inset text-bg-highlight d-flex my-0 py-2 border-top border-yellow-20 d-print-none">
           <form class="disable-submit" data-confirm="{% translate 'Are you sure you want to publish this request?' %}" action="{% url 'foirequest-make_public' slug=object.slug %}" method="post">
             {% csrf_token %}
             <p>

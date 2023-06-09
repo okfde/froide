@@ -21,7 +21,7 @@
         {% if comment.is_requester %}
           <span class="badge text-bg-blue-20 ms-1">{% trans "Requester" %}</span>
         {% elif comment.is_moderation %}
-          <span class="badge text-bg-yellow-100 ms-1">{% trans "Moderation" %}</span>
+          <span class="badge text-bg-highlight ms-1">{% trans "Moderation" %}</span>
         {% endif %}
 
       {% else %}
