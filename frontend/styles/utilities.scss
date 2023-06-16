@@ -4,12 +4,16 @@
   .text-bg-#{$name} {
     color: var(--froide-#{$name}-color);
     background-color: var(--froide-#{$name}-bg);
+    --bs-link-color-rgb: var(--froide-#{$name}-color-rgb);
+    --bs-link-hover-color-rgb: var(--froide-#{$name}-color-rgb);
   }
   .bg-#{$name} {
     background-color: var(--froide-#{$name}-bg);
   }
   .text-#{$name} {
     color: var(--froide-#{$name}-color);
+    --bs-link-color-rgb: var(--froide-#{$name}-color-rgb);
+    --bs-link-hover-color-rgb: var(--froide-#{$name}-color-rgb);
   }
 }
 
