@@ -434,7 +434,9 @@ class PublicBody(models.Model):
     geo = models.PointField(null=True, blank=True, geography=True)
     regions = models.ManyToManyField(GeoRegion, blank=True)
 
-    laws = models.ManyToManyField(FoiLaw, verbose_name=_("Freedom of Information Laws"))
+    laws = models.ManyToManyField(
+        FoiLaw, blank=True, verbose_name=_("Freedom of Information Laws")
+    )
     tags = TaggableManager(through=TaggedPublicBody, blank=True)
     categories = TaggableManager(
         through=CategorizedPublicBody, verbose_name=_("categories"), blank=True
