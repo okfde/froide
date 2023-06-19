@@ -17,7 +17,10 @@ from .tasks import store_document_upload
 
 class DocumentUploadForm(forms.Form):
     collection = forms.ModelChoiceField(
-        label=_("Add all to collection"), queryset=None, required=False
+        label=_("Add all to collection"),
+        queryset=None,
+        required=False,
+        widget=BootstrapSelect,
     )
     collection_title = forms.CharField(
         label=_("Or add all to new collection with this title"),
