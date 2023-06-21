@@ -14,6 +14,21 @@ from taggit.utils import parse_tags
 from froide.helper.templatetags.frontendbuild import get_frontend_files
 
 
+class BootstrapWidgetMixin:
+    def __init__(self, *args, **kwargs) -> None:
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"].update({"class": "form-control"})
+        super().__init__(*args, **kwargs)
+
+
+class BootstrapTextInput(BootstrapWidgetMixin, forms.TextInput):
+    pass
+
+
+class BootstrapTextarea(BootstrapWidgetMixin, forms.Textarea):
+    pass
+
+
 class BootstrapChoiceMixin(object):
     def __init__(self, *args, **kwargs) -> None:
         kwargs.setdefault("attrs", {})
