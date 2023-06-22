@@ -124,6 +124,7 @@ export default {
       }
     })
     this.uppy.use(Dashboard, {
+      theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
       inline: true,
       target: this.$refs.uppy,
       height: 250,
