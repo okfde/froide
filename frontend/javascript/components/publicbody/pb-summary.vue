@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-light p-3 mt-5 mb-5">
+  <div class="bg-body-secondary p-3 mt-5 mb-5">
     <div class="row">
       <div v-for="item in summary" :key="item.label" class="col-sm-6 col-md-4">
         <strong>

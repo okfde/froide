@@ -36,7 +36,7 @@
           </div>
           <draggable
             v-model="pages"
-            class="row pages bg-light"
+            class="row pages bg-body-secondary"
             @start="drag = true"
             @end="drag = false">
             <image-page

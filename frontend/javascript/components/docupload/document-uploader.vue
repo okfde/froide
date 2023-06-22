@@ -18,7 +18,7 @@
     <div v-if="pdfDocuments.length > 0" class="documents mt-5">
       <slot name="documents" />
       <div class="mt-3 mb-3">
-        <div class="row bg-light pb-2 pt-2 mb-2 border-bottom">
+        <div class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom">
           <div class="col-auto me-md-auto">
             <input
               v-model="selectAll"

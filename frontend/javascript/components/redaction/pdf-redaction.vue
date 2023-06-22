@@ -1141,13 +1141,14 @@ export default {
 </script>
 
 <style lang="scss">
+@import '../../../styles/variables';
 .toolbar {
   position: sticky;
   top: 0;
   z-index: 100;
   opacity: 1;
   padding: 5px;
-  background-color: #fff;
+  background-color: var(--#{$prefix}body);
 }
 .redactContainer {
   position: relative;
