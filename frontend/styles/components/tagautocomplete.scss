@@ -1,7 +1,16 @@
 @import "../variables.scss";
 
-$choices-primary-color: $gray-500;
+$choices-bg-color: var(--#{$prefix}body-bg);
+$choices-bg-color-disabled: var(--#{$prefix}tertiary-bg);
+$choices-bg-color-dropdown: var(--#{$prefix}body-bg);
+$choices-text-color: var(--#{$prefix}body-color);
+$choices-keyline-color: $body-tertiary-color;
+$choices-primary-color: $secondary;
+$choices-disabled-color: $dark;
 $choices-guttering: 0;
+
+$choices-icon-cross-inverse: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM5OTkiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+$choices-icon-cross: none;
 
 @import "choices.js/src/styles/choices.scss";
 
@@ -11,4 +20,29 @@ $choices-guttering: 0;
 
 .form-row:has(.choices__list) {
   overflow: visible;
+}
+
+.#{$choices-selector}[data-type*='select-one'] {
+  .#{$choices-selector}__input {
+    background-color: var(--#{$prefix}body-bg);
+    border-bottom-color: var(--#{$prefix}border-color) !important;
+  }
+  .#{$choices-selector}__button,
+  .#{$choices-selector}__button:hover {
+    opacity: 1;
+    &::after {
+      content: "×";
+      color: var(--#{$prefix}secondary-color);
+    }
+  }
+}
+
+.#{$choices-selector}__list--dropdown .#{$choices-selector}__item--selectable.is-highlighted,
+.#{$choices-selector}__list[aria-expanded] .#{$choices-selector}__item--selectable.is-highlighted {
+  background-color: var(--#{$prefix}body-bg);
+}
+
+.#{$choices-selector}__inner, .#{$choices-selector}__list {
+  border-color: var(--#{$prefix}border-color) !important;
+  font-size: inherit !important;
 }
