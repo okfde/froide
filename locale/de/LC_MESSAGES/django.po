@@ -2767,7 +2767,7 @@ msgstr "Briefzusammenfassung"
 
 #: froide/foirequest/forms/message.py
 msgid "Optionally give a summary of the letter contents"
-msgstr "Optional können Sie einen Zusammenfassung des Briefinhalts angeben."
+msgstr "Optional können Sie eine Zusammenfassung des Briefinhalts angeben."
 
 #: froide/foirequest/forms/message.py
 msgid "Your reply date is in the future, that is not possible."
