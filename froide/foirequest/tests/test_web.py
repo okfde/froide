@@ -540,7 +540,7 @@ def test_queries_foirequest(world, client):
     mes2 = factories.FoiMessageFactory.create(request=req)
     factories.FoiAttachmentFactory.create(belongs_to=mes2)
     ContentType.objects.clear_cache()
-    with assertNumQueries(10):
+    with assertNumQueries(11):
         client.get(req.get_absolute_url())
 
 
@@ -561,7 +561,7 @@ def test_queries_foirequest_loggedin(world, client):
     - Problem reports - even for non-requester (+1)
     - ContentType + Comments for each FoiMessage (+2)
     """
-    TOTAL_EXPECTED_REQUESTS = 16
+    TOTAL_EXPECTED_REQUESTS = 17
     req = factories.FoiRequestFactory.create(site=world)
     factories.FoiMessageFactory.create(request=req, is_response=False)
     mes2 = factories.FoiMessageFactory.create(request=req)

@@ -94,20 +94,22 @@ class FoiRequestView(DetailView):
 
 
 def get_foirequest_documents_context(request, obj):
-    if not request.user.is_staff:
-        return {
-            "has_documents": False,
-        }
     context = {}
     docs = get_read_queryset(
-        Document.objects.filter(foirequest=obj, pending=False), request
+        Document.objects.filter(foirequest=obj, pending=False),
+        request,
+        public_field="public",
     )
+    doc_count = docs.count()
+
+    context["has_documents"] = doc_count > 0
+    if not doc_count:
+        return context
+
+    context["document_count"] = doc_count
     serialized_documents = Document.get_serializer_class()(
         docs, many=True, context={"request": request}
     ).data
-    doc_count = docs.count()
-    context["document_count"] = doc_count
-    context["has_documents"] = doc_count > 0
     context["documentcollection_data"] = {
         "documents": serialized_documents,
         "document_directory_count": doc_count,
