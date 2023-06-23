@@ -34,3 +34,15 @@ const domSearchForm = document.querySelector<HTMLFormElement>('.search-form')
 if (domSearchForm !== null) {
   applyToForm(domSearchForm)
 }
+
+document.addEventListener('shown.bs.modal', (event) => {
+  if (event.target == null) {
+    return
+  }
+  if (event.target instanceof HTMLElement) {
+    const focussable = event.target.querySelector('[data-focus]')
+    if (focussable instanceof HTMLInputElement) {
+      focussable.focus()
+    }
+  }
+})
