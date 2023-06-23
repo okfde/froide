@@ -113,10 +113,10 @@ $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
 $froide-theme: ("highlight", "callout");
 
-$highlight: $yellow-100;
+$highlight: var(--froide-highlight-bg);
 $froide-theme-light: (
   "highlight": (
-    "bg": $highlight,
+    "bg": $yellow-100,
     "color": $blue-700,
   ),
   "callout": (
