@@ -39,3 +39,13 @@ $bootstrap-extras: (
     background-color: var(--#{$prefix}#{$varname}-bg);
   }
 }
+
+.text-bg-light-subtle {
+  color: var(--#{$prefix}light-text-emphasis);
+  background-color: var(--#{$prefix}light-bg-subtle);
+}
+
+.text-bg-dark-subtle {
+  color: var(--#{$prefix}dark-text-emphasis);
+  background-color: var(--#{$prefix}dark-bg-subtle);
+}
