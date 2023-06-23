@@ -16,10 +16,7 @@ const getCurrentTheme = (): string | null => {
 const toggle = document.getElementById('darkmode-toggle')
 
 const setTheme = (theme: string): void => {
-  const currentTheme = getCurrentTheme()
-  if (currentTheme === null) {
-    return
-  }
+  document.documentElement.setAttribute('data-bs-theme', theme)
 
   if (toggle === null) {
     return
@@ -29,10 +26,8 @@ const setTheme = (theme: string): void => {
     return
   }
   if (theme === 'dark') {
-    document.documentElement.setAttribute('data-bs-theme', 'dark')
     icon.classList.replace('fa-moon-o', 'fa-sun-o')
   } else {
-    document.documentElement.setAttribute('data-bs-theme', theme)
     icon.classList.replace('fa-sun-o', 'fa-moon-o')
   }
   localStorage.setItem(storageKey, theme)
