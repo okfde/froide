@@ -6,7 +6,6 @@ from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Exists, OuterRef
-from django.db.models.functions import Collate
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
 from django.shortcuts import redirect
@@ -139,9 +138,6 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         if has_foirequests:
             qs = qs.annotate(request_count=Count("foirequest"))
 
-        qs = qs.annotate(
-            email_deterministic=Collate("email", "und-x-icu"),
-        )
         user_has_mfa = MFAKey.objects.filter(
             user_id=OuterRef("pk"),
         )

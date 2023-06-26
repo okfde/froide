@@ -12,6 +12,7 @@ from django.contrib.auth.models import (
 )
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.db.models.functions import Collate
 from django.db.models.query import QuerySet
 from django.urls import reverse
 from django.utils import timezone
@@ -48,6 +49,13 @@ class TaggedUser(TaggedItemBase):
 class UserManager(BaseUserManager):
     def get_public_profiles(self) -> QuerySet:
         return super().get_queryset().filter(is_active=True, private=False)
+
+    def get_queryset(self) -> QuerySet:
+        qs = super().get_queryset()
+        qs = qs.annotate(
+            email_deterministic=Collate("email", "und-x-icu"),
+        )
+        return qs
 
     def _create_user(
         self,
