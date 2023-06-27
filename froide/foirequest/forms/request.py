@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import List
 
 from django import forms
@@ -274,10 +275,13 @@ class FoiRequestStatusForm(forms.Form):
         help_text=_("How would you describe the current outcome of this request?"),
     )
     if payment_possible:
-        costs = forms.FloatField(
+        costs = forms.DecimalField(
             label=_("Costs"),
             required=False,
-            min_value=0.0,
+            min_value=Decimal(0.0),
+            max_value=Decimal("10000000000"),
+            max_digits=9,
+            decimal_places=2,
             localize=True,
             widget=PriceInput,
             help_text=_(
