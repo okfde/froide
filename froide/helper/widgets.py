@@ -73,7 +73,7 @@ class BootstrapFileInput(forms.FileInput):
         super().__init__(*args, **kwargs)
 
 
-class PriceInput(forms.TextInput):
+class PriceInput(forms.NumberInput):
     template_name = "helper/forms/widgets/price_input.html"
 
     def get_context(
@@ -82,7 +82,10 @@ class PriceInput(forms.TextInput):
         ctx = super().get_context(name, value, attrs)
         ctx["widget"].setdefault("attrs", {})
         ctx["widget"]["attrs"]["class"] = "form-control col-3"
-        ctx["widget"]["attrs"]["pattern"] = "[\\d\\.,]*"
+        ctx["widget"]["attrs"]["pattern"] = r"[0-9]+([\.,][0-9]+)?"
+        ctx["widget"]["attrs"]["inputmode"] = "decimal"
+        ctx["widget"]["attrs"]["step"] = "0.01"
+        ctx["widget"]["attrs"]["style"] = "appearance: textfield; text-align: right"
         ctx["currency"] = settings.FROIDE_CONFIG["currency"]
         return ctx
 
