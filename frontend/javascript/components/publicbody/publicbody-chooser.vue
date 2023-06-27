@@ -1,11 +1,12 @@
 <template>
   <div class="publicbody-chooser mb-3">
-    <button
-      v-if="!showSearch"
-      class="btn btn-sm btn-outline-secondary float-end"
-      @click.prevent="showSearch = true">
-      {{ i18n.searchPublicBodyLabel }}
-    </button>
+    <p v-if="!showSearch">
+      <button
+        class="btn btn-sm btn-outline-secondary text-end"
+        @click.prevent="showSearch = true">
+        {{ i18n.searchPublicBodyLabel }}
+      </button>
+    </p>
     <div v-if="showSearch" class="form-search">
       <div class="input-group">
         <input

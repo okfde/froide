@@ -91,6 +91,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../styles/variables';
+
 .search-results {
   overflow-y: auto;
   outline: 1px solid #aaa;
@@ -101,11 +103,12 @@ export default {
 }
 
 .search-result:hover {
-  background-color: #f5f5f5;
+  background-color: var(--#{$prefix}light-bg-subtle);
+  color: var(--#{$prefix}light-text-emphasis);
 }
 
 .search-result.selected {
-  background-color: #dff0d8;
+  background-color: var(--#{$prefix}body-secondary-bg);
 }
 
 .search-result > label {
