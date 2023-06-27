@@ -4,6 +4,7 @@ import re
 import zipfile
 from datetime import date, datetime, timedelta
 from datetime import timezone as dt_timezone
+from decimal import Decimal
 from email.parser import BytesParser as Parser
 from io import BytesIO
 from unittest import mock
@@ -210,7 +211,7 @@ def test_new_email_received_set_status(world, client, pb, msgobj):
         {"status": status, "costs": costs},
     )
     req = FoiRequest.objects.get(pk=req.pk)
-    assert req.costs == float(costs)
+    assert req.costs == Decimal(costs)
     assert req.status == status
 
 
@@ -1511,7 +1512,7 @@ def test_empty_costs(world, client):
     )
     assert response.status_code == 302
     req = FoiRequest.objects.get(pk=req.pk)
-    assert req.costs == 0.0
+    assert req.costs == Decimal(0.0)
     assert req.status == status
 
 
@@ -1545,7 +1546,7 @@ def test_resolution(world, client):
     )
     assert response.status_code == 302
     req = FoiRequest.objects.get(pk=req.pk)
-    assert req.costs == 0.0
+    assert req.costs == Decimal(0.0)
     assert req.status == FoiRequest.STATUS.RESOLVED
     assert req.resolution == FoiRequest.RESOLUTION.SUCCESSFUL
     assert req.days_to_resolution() == (mes.timestamp - req.created_at).days
