@@ -31,8 +31,6 @@
               class="btn btn-sm"
               :class="{ 'btn-success': canMakeResult }"
               :disabled="!canMakeResult"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
               :title="i18n.makeResultsExplanation"
               @click="makeResults">
               <i class="fa fa-certificate" />

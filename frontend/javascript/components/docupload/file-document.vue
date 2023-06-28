@@ -177,6 +177,7 @@
 </template>
 
 <script>
+import { Tooltip } from 'bootstrap'
 import I18nMixin from '../../lib/i18n-mixin'
 import { DocumentMixin } from './lib/document_utils'
 
@@ -328,7 +329,8 @@ export default {
     }
   },
   methods: {
-    makeResult() {
+    makeResult(e) {
+      Tooltip.getInstance(e.target).dispose()
       this.updateDocument({
         creatingDocument: true
       })
