@@ -12,11 +12,23 @@
               v-if="!hidePublicbodyChooser"
               href="#step-publicbody"
               @click.prevent="setStepSelectPublicBody">
-              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              <i
+                class="fa"
+                :class="{
+                  'fa-check-circle': stepSelectPublicBodyDone,
+                  'fa-circle-o': !stepSelectPublicBodyDone
+                }"
+                aria-hidden="true"></i>
               {{ i18n.choosePublicBody }}
             </a>
             <span v-else>
-              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              <i
+                class="fa"
+                :class="{
+                  'fa-check-circle': stepSelectPublicBodyDone,
+                  'fa-circle-o': !stepSelectPublicBodyDone
+                }"
+                aria-hidden="true"></i>
               {{ i18n.choosePublicBody }}
             </span>
           </li>
@@ -34,13 +46,13 @@
                 class="fa"
                 :class="{
                   'fa-check-circle': stepReviewPublicBodiesDone,
-                  'fa-check-circle-o': !stepReviewPublicBodiesDone
+                  'fa-circle-o': !stepReviewPublicBodiesDone
                 }"
                 aria-hidden="true"></i>
               {{ i18n.checkSelection }}
             </a>
             <span v-else>
-              <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+              <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkSelection }}
             </span>
           </li>
@@ -53,7 +65,7 @@
                 class="fa"
                 :class="{
                   'fa-check-circle': stepWriteRequestDone,
-                  'fa-check-circle-o': !stepWriteRequestDone
+                  'fa-circle-o': !stepWriteRequestDone
                 }"
                 aria-hidden="true"></i>
               {{ i18n.makeRequest }}
@@ -63,7 +75,7 @@
                 class="fa"
                 :class="{
                   'fa-check-circle': stepWriteRequestDone,
-                  'fa-check-circle-o': !stepWriteRequestDone
+                  'fa-circle-o': !stepWriteRequestDone
                 }"
                 aria-hidden="true"></i>
               {{ i18n.makeRequest }}
@@ -74,11 +86,11 @@
               href="#step-review"
               data-bs-toggle="modal"
               v-if="stepWriteRequest">
-              <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+              <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkRequest }}
             </a>
             <span v-else>
-              <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+              <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkRequest }}
             </span>
           </li>
@@ -182,15 +194,15 @@ export default {
 
     & > *,
     *:hover {
-      color: $gray-500;
+      color: var(--#{$prefix}body-color);
       text-decoration: none;
     }
     &.active > * {
-      color: $black;
+      color: var(--#{$prefix}emphasis-color);
       font-weight: bold;
     }
     &.done > * {
-      color: $success;
+      color: var(--#{$prefix}success);
     }
   }
 }
