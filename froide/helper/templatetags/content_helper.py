@@ -108,6 +108,11 @@ def make_login_redirect_url(url):
 
 
 @register.filter
+def startswith(haystack, needle):
+    return haystack.startswith(needle)
+
+
+@register.filter
 def fontawesome_filetype_icon(attachment):
     if attachment.is_pdf:
         return "fa-file-pdf-o"
