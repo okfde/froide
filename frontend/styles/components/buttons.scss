@@ -51,8 +51,8 @@
 
 .btn-outline-redact {
   @include button-outline-variant(map-get($theme-colors, "dark"));
-  border-color: var(--#{$prefix}body);
-  color: var(--#{$prefix}body);
+  border-color: var(--#{$prefix}body-color);
+  color: var(--#{$prefix}body-color);
 }
 
 @keyframes warning-blink {

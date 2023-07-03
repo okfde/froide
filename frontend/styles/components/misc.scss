@@ -22,10 +22,10 @@
 
 .text-unlink {
   cursor: default;
-  color: var(--#{$prefix}body);
+  color: var(--#{$prefix}body-color);
   &:hover {
     text-decoration: none;
-    color: var(--#{$prefix}body);
+    color: var(--#{$prefix}body-color);
   }
 }
 
