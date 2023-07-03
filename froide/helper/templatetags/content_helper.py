@@ -109,6 +109,10 @@ def make_login_redirect_url(url):
 
 @register.filter
 def startswith(haystack, needle):
+    if not isinstance(haystack, str):
+        return False
+    if not isinstance(needle, str):
+        return False
     return haystack.startswith(needle)
 
 
