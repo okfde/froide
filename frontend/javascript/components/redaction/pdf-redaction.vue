@@ -1148,7 +1148,7 @@ export default {
   z-index: 100;
   opacity: 1;
   padding: 5px;
-  background-color: var(--#{$prefix}body);
+  background-color: var(--#{$prefix}body-bg);
 }
 .redactContainer {
   position: relative;
