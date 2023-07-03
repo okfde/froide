@@ -87,9 +87,10 @@ $spacers: (
 // Define the maximum width of `.container` for different screen sizes.
 $container-max-widths: (
   sm: 540px,
-  md: 780px,
+  md: 780px, // changed from original Bootstrap 720px for extra space!
   lg: 960px,
-  xl: 1140px
+  xl: 1140px,
+  xxl: 1320px
 );
 
 // Typography
