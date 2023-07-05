@@ -6,13 +6,13 @@
   {% translate "Some authorities require a proof of identity. Here you can upload and redact pictures of identity documents." %}
 </p>
 
-{% get_proof_form as form %}
+{% get_proof_settings_form as form %}
 
 <form action="{% url 'proof-add' %}" method="POST" enctype="multipart/form-data" class="disable-submit">
   {% csrf_token %}
   <p>
     <i class="fa fa-exclamation-triangle"></i>
-    {% translate "When you upload an identity document, please redact all information except your name, the city of your address and the validity date. You can use the redaction tool below to do this." %}
+    {% translate "When you upload an identity document, please redact all information except your name, the city and the validity date. You can use the redaction tool below to do this." %}
   </p>
   {% render_form form %}
   <p class="text-end">

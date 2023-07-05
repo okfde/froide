@@ -1,0 +1,41 @@
+{% load i18n %}
+{% load proofupload %}
+{% load form_helper %}
+{% load block_helper %}
+
+{% get_proof_message_form as form %}
+
+{% if form.proof %}
+  {% render_field form.proof horizontal=False %}
+
+  <details class="card mb-3">
+    <summary class="card-header">
+      {% translate "Include a new proof" %}
+    </summary>
+    <div class="card-body">
+      {% render_field form.proof_name horizontal=False %}
+      {% render_field form.proof_image horizontal=False %}
+      {% render_field form.proof_store horizontal=False %}
+    </div>
+  </details>
+{% else %}
+  <div class="card mb-3">
+    <div class="card-header">
+      {% translate "Include a proof" %}
+    </div>
+    <div class="card-body">
+      <p>
+        {% translate "Some authorities require a proof of identity. Here you can select and redact a picture of an identity document." %}
+      </p>
+      {% render_form form horizontal=False %}
+    </div>
+  </div>
+{% endif %}
+
+{% addtoblock "css" %}
+{{ form.media.css }}
+{% endaddtoblock %}
+
+{% addtoblock "js" %}
+{{ form.media.js }}
+{% endaddtoblock %}

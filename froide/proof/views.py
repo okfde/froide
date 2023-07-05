@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
 
-from .forms import ProofForm
+from .forms import ProofSettingsForm
 from .models import Proof
 
 
@@ -13,7 +14,7 @@ from .models import Proof
 @login_required
 @sensitive_post_parameters()
 def add_proof(request):
-    form = ProofForm(data=request.POST, files=request.FILES)
+    form = ProofSettingsForm(data=request.POST, files=request.FILES)
     if form.is_valid():
         form.save(request)
         messages.add_message(
@@ -27,7 +28,7 @@ def add_proof(request):
             messages.ERROR,
             _("There was a problem."),
         )
-    return redirect("account-settings")
+    return redirect(reverse("account-settings") + "#proofs")
 
 
 @require_POST
@@ -41,4 +42,4 @@ def delete_proof(request, proof_id):
         messages.SUCCESS,
         _("Proof successfully removed."),
     )
-    return redirect("account-settings")
+    return redirect(reverse("account-settings") + "#proofs")

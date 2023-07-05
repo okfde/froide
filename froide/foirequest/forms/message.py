@@ -2,6 +2,7 @@ import datetime
 import logging
 import re
 from functools import partial
+from typing import Optional
 
 from django import forms
 from django.conf import settings
@@ -22,6 +23,7 @@ from froide.helper.widgets import (
     BootstrapFileInput,
     BootstrapRadioSelect,
 )
+from froide.proof.forms import ProofAttachment
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
@@ -233,7 +235,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         "by default and can be redacted after upload."
     )
     files = MultipleFileField(
-        label=_("Attachments"),
+        label=_("Other attachments"),
         required=False,
         validators=[validate_upload_document],
         help_text=files_help_text,
@@ -287,7 +289,13 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             )
         return cleaned_data
 
-    def add_message_body(self, message, attachment_names=(), attachment_missing=()):
+    def add_message_body(
+        self,
+        message,
+        attachment_names=(),
+        attachment_missing=(),
+        proof: Optional[ProofAttachment] = None,
+    ):
         message_body = self.cleaned_data["message"]
         send_address = self.cleaned_data.get("send_address", True)
         message.plaintext = construct_message_body(
@@ -296,6 +304,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             send_address=send_address,
             attachment_names=attachment_names,
             attachment_missing=attachment_missing,
+            proof=proof,
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext, self.foirequest, redact_greeting=True
@@ -339,7 +348,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         return message
 
-    def save(self, user=None, bulk=False):
+    def save(self, user=None, bulk=False, proof: Optional[ProofAttachment] = None):
         recipient_email = self.cleaned_data["to"]
         message = self.make_message(self.foirequest, recipient_email)
         message.save()
@@ -348,7 +357,12 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             self.save_attachments(self.files.getlist("%s-files" % self.prefix), message)
 
         message._attachments = None
-        files = message.get_mime_attachments()
+        files = list(message.get_mime_attachments())
+
+        if proof:
+            # prepend to files list so it is definitely sent
+            files = [proof.get_mime_attachment()] + files
+
         att_gen = MailAttachmentSizeChecker(files)
         attachments = list(att_gen)
 
@@ -356,6 +370,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             message,
             attachment_names=att_gen.send_files,
             attachment_missing=att_gen.non_send_files,
+            proof=proof,
         )
         message.save()
 

@@ -6,6 +6,8 @@
 {% if attachment_missing %}{% trans "The following attachments could not be sent via email because of their size. You can find them via the provided link:" %}
 {% for att in attachment_missing %} - {{ att }}
 {% endfor %}{% endif %}
+{% if proof %}{% translate "This message has an attached proof of identity that I kindly ask you to delete after you have verifyied it (Art. 17 GDPR)." %}
+{% endif %}
 {% blocktrans with num=request.pk %}Request Number: {{ num }}{% endblocktrans %}
 {% blocktrans with email=request.secret_address %}Reply To: {{ email }}{% endblocktrans %}
 

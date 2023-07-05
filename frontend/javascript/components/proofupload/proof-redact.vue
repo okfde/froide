@@ -21,6 +21,9 @@ by dexmo007 licensed under MIT license
 </template>
 
 <script>
+// Scale images down to 1200px
+const MAX_WIDTH = 1200
+
 export default {
   name: 'proof-redact',
   props: {
@@ -64,16 +67,32 @@ export default {
     },
     imageLoaded() {
       const { canvas } = this.$refs
-      canvas.width = this.image.width
-      canvas.height = this.image.height
-      const ctx = canvas.getContext('2d')
-      ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height)
+      if (this.image.width > MAX_WIDTH) {
+        canvas.height = Math.floor(
+          this.image.height * (MAX_WIDTH / this.image.width)
+        )
+        canvas.width = MAX_WIDTH
+      } else {
+        canvas.width = this.image.width
+        canvas.height = this.image.height
+      }
+      this.renderAndUpdate()
     },
     renderCanvas() {
       const { canvas } = this.$refs
       const ctx = canvas.getContext('2d')
       ctx.clearRect(0, 0, canvas.width, canvas.height) // clear canvas
-      ctx.drawImage(this.image, 0, 0, canvas.width, canvas.height)
+      ctx.drawImage(
+        this.image,
+        0,
+        0,
+        this.image.width,
+        this.image.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      )
       if (this.rects.length > 0) {
         this.rects.forEach(({ topLeft, width, height }) => {
           ctx.beginPath()
@@ -173,19 +192,23 @@ export default {
         this.rects.pop()
       } else {
         this.$emit('hasredaction', this.rects.length > 0)
-        this.$refs.canvas.toBlob(
-          (blob) => {
-            this.$emit('redacted', blob)
-          },
-          'image/jpeg',
-          0.85
-        )
       }
+      this.renderAndUpdate()
+    },
+    renderAndUpdate() {
+      this.renderCanvas()
+      this.$refs.canvas.toBlob(
+        (blob) => {
+          this.$emit('redacted', blob)
+        },
+        'image/jpeg',
+        0.85
+      )
     },
     revert() {
       this.rects.pop()
       this.$emit('hasredaction', this.rects.length > 0)
-      this.renderCanvas()
+      this.renderAndUpdate()
     },
     deleteActives() {
       if (this.actives.length === 0) {
