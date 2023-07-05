@@ -1,8 +1,8 @@
+import vue from '@vitejs/plugin-vue2'
+import autoprefixer from 'autoprefixer'
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
-import autoprefixer from 'autoprefixer'
 import devManifest from 'vite-plugin-dev-manifest'
-import vue from '@vitejs/plugin-vue2'
 
 const outputDir = resolve(__dirname, 'build')
 
@@ -33,6 +33,7 @@ export default defineConfig({
         makerequest: './frontend/javascript/makerequest.js',
         messageredaction: './frontend/javascript/messageredaction.js',
         moderation: './frontend/javascript/moderation.js',
+        proofupload: './frontend/javascript/proofupload.js',
         publicbody: './frontend/javascript/publicbody.js',
         publicbodyupload: './frontend/javascript/publicbodyupload.js',
         redact: './frontend/javascript/redact.js',

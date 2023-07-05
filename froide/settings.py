@@ -64,6 +64,7 @@ class Base(Configuration):
             "froide.foisite",
             "froide.problem",
             "froide.accesstoken",
+            "froide.proof",
             "froide.guide",
             "froide.comments",
             "froide.campaign",
