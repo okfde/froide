@@ -1,14 +1,34 @@
 import base64
+import io
 import zlib
+from typing import Protocol, Tuple
 
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import models
 from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.translation import gettext_lazy as _
 
 from cryptography.fernet import Fernet
 from slugify import slugify
+
+MimeAttachment = Tuple[str, bytes, str]
+
+
+class ProofAttachment(Protocol):
+    def get_mime_attachment(self) -> MimeAttachment:
+        ...
+
+
+class TemporaryProof:
+    def __init__(self, name: str, file: io.BytesIO):
+        self.name = name
+        self.file_bytes = file.read()
+
+    def get_mime_attachment(self):
+        filename = "{}.jpg".format(slugify(self.name))
+        return (filename, self.file_bytes, Proof.mimetype)
 
 
 class Proof(models.Model):
@@ -24,7 +44,7 @@ class Proof(models.Model):
     mimetype = "image/jpeg"
 
     def __str__(self):
-        return "{name} (uploaded {timestamp})".format(
+        return _("{name} (uploaded {timestamp})").format(
             name=self.name, timestamp=date_format(self.timestamp, "SHORT_DATE_FORMAT")
         )
 

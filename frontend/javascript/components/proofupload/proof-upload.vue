@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-3 mt-3">
+  <div class="mb-3">
     <input
       class="form-control"
       type="file"
@@ -9,18 +9,20 @@
       accept="image/*" />
 
     <div v-if="img" class="mt-3">
-      <p>
-        {{ i18n.redactionInstructions }}
-      </p>
-      <div class="d-flex justify-content-end">
-        <button
-          class="btn btn-outline-secondary"
-          :disabled="!hasRedaction"
-          :title="i18n.undo"
-          @click.prevent="undoRedaction">
-          <i class="fa fa-share fa-flip-horizontal" />
-          {{ i18n.undo }}
-        </button>
+      <div class="row">
+        <div class="col d-flex align-items-center">
+          {{ i18n.redactionInstructions }}
+        </div>
+        <div class="col-auto d-flex align-items-center">
+          <button
+            class="btn btn-sm btn-outline-secondary"
+            :disabled="!hasRedaction"
+            :title="i18n.undo"
+            @click.prevent="undoRedaction">
+            <i class="fa fa-share fa-flip-horizontal" />
+            {{ i18n.undo }}
+          </button>
+        </div>
       </div>
       <div class="mt-2">
         <proof-redact
@@ -73,8 +75,7 @@ export default {
   data() {
     return {
       img: null,
-      hasRedaction: false,
-      originalFile: null
+      hasRedaction: false
     }
   },
   computed: {
@@ -89,8 +90,7 @@ export default {
         this.img = null
         return
       }
-      this.originalFile = imageInput.files[0]
-      readImage(this.originalFile)
+      readImage(imageInput.files[0])
         .then((img) => {
           this.img = img
         })
@@ -103,14 +103,15 @@ export default {
     },
     updateHasRedation(hasRedaction) {
       this.hasRedaction = hasRedaction
-      if (!hasRedaction) {
-        const dataTransfer = new DataTransfer()
-        dataTransfer.items.add(this.originalFile)
-        this.$refs.image.files = dataTransfer.files
-      }
     },
     updateFile(blob) {
-      const updatedFile = new File([blob], 'redacted.jpg', {
+      let filename
+      if (this.hasRedaction) {
+        filename = 'redacted_proof.jpg'
+      } else {
+        filename = 'resized_proof.jpg'
+      }
+      const updatedFile = new File([blob], filename, {
         type: 'image/jpeg',
         lastModified: new Date()
       })

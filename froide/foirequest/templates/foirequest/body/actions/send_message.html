@@ -23,13 +23,35 @@
     {% endif %}
   {% endif %}
   {% block send_message_form_pre %}{% endblock %}
-  {% if send_message_form %}
-    {% render_form send_message_form horizontal=False %}
-  {% else %}
-    {% with send_message_form=object.get_send_message_form %}
-      {% render_form send_message_form horizontal=False %}
-    {% endwith %}
-  {% endif %}
+
+  {% with form=send_message_form|default:object.get_send_message_form %}
+    {% render_field form.to horizontal=False %}
+    {% render_field form.subject horizontal=False %}
+    {% render_field form.message horizontal=False %}
+    {% render_field form.send_address horizontal=False %}
+    {% render_field form.address horizontal=False %}
+
+    {% if request.user.is_staff %}
+      <details class="mb-3">
+        <summary>{% translate "Include proofs and other attachments" %}</summary>
+
+            {% if request.user != object.user %}
+              <div class="alert alert-warning">
+                {% blocktranslate with name=object.user.get_full_name %}
+                  The proof will be sent in the name of {{ name }}. Storing them will store them in your account.
+                {% endblocktranslate %}
+              </div>
+          {% endif %}
+          {% include "proof/proof_message.html" %}
+
+          {% render_field form.files horizontal=False %}
+      </details>
+    {% else %}
+      {% render_field form.files horizontal=False %}
+    {% endif %}
+
+  {% endwith %}
+
   <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
   <p class="form-text text-body-secondary">
     <small>

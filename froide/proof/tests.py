@@ -45,7 +45,7 @@ def test_send_message_with_proof(world, client):
         "sendmessage-address": user.address,
         "sendmessage-send_address": "1",
         "sendmessage-to": pb.email,
-        "sendmessage-proof": "",
+        "proof": "",
     }
     response = client.post(
         reverse("foirequest-send_message", kwargs={"slug": req.slug}), post
@@ -64,7 +64,7 @@ def test_send_message_with_proof(world, client):
     assert len(message.attachments) == 0
 
     # Send again with proof
-    post["sendmessage-proof"] = str(proof.pk)
+    post["proof"] = str(proof.pk)
     old_len = len(mail.outbox)
     response = client.post(
         reverse("foirequest-send_message", kwargs={"slug": req.slug}), post

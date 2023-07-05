@@ -16,6 +16,7 @@ from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
 from froide.helper.utils import is_ajax, render_400, render_403
+from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
 from ..api_views import FoiAttachmentSerializer, FoiMessageSerializer
@@ -60,7 +61,8 @@ def send_message(request, foirequest):
             form.add_error(None, throttle_message)
 
     if form.is_valid():
-        mes = form.save(user=request.user)
+        include_proof = handle_proof_form(request)
+        mes = form.save(user=request.user, proof=include_proof)
         messages.add_message(
             request, messages.SUCCESS, _("Your message has been sent.")
         )

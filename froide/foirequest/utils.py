@@ -27,6 +27,7 @@ from froide.helper.text_utils import (
     redact_subject,
     redact_user_strings,
 )
+from froide.proof.models import ProofAttachment
 from froide.publicbody.models import PublicBody
 
 from .models import FoiRequest
@@ -115,6 +116,7 @@ def construct_message_body(
     attachment_names: Optional[List[str]] = None,
     attachment_missing: Optional[List[str]] = None,
     template: str = "foirequest/emails/mail_with_userinfo.txt",
+    proof: Optional[ProofAttachment] = None,
 ):
     return render_to_string(
         template,
@@ -124,6 +126,7 @@ def construct_message_body(
             "attachment_names": attachment_names,
             "attachment_missing": attachment_missing,
             "send_address": send_address,
+            "proof": proof,
         },
     )
 
