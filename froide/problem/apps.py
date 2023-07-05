@@ -33,7 +33,6 @@ class ProblemConfig(AppConfig):
             )
 
         menu_registry.register(get_moderation_menu_item)
-        registry.register(export_user_data)
 
 
 def merge_user(sender, old_user=None, new_user=None, **kwargs):
