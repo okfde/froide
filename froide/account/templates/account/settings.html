@@ -156,6 +156,19 @@
   </div>
 </div>
 
+{% if request.user.is_staff %}
+<div id="proofs" class="card mb-3">
+  <h5 class="card-header">
+    {% translate "Proofs" %}
+  </h5>
+  <div class="card-body">
+    {% recentauthrequired "account-proofs" %}
+      {% include "proof/proof_settings.html" %}
+    {% endrecentauthrequired %}
+  </div>
+</div>
+{% endif %}
+
 {% block post_password %}{% endblock %}
 
 <hr/>
