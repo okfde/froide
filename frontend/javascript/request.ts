@@ -1,12 +1,12 @@
-import '../styles/components/request/index.scss'
-import Message from './components/request/Message'
-import Timeline from './components/request/Timeline'
-import ScrollIndicator from './components/request/ScrollIndicator'
-import InfoBox from './components/request/InfoBox'
-import { toggleSlide, addText } from './lib/misc'
 import { Tab, Tooltip } from 'bootstrap'
 import Driver from 'driver.js'
 import 'driver.js/dist/driver.min.css'
+import '../styles/components/request/index.scss'
+import InfoBox from './components/request/InfoBox'
+import Message from './components/request/Message'
+import ScrollIndicator from './components/request/ScrollIndicator'
+import Timeline from './components/request/Timeline'
+import { addText, toggleSlide } from './lib/misc'
 
 const initRequestPage = (): void => {
   initSetStatusForm()
@@ -59,7 +59,6 @@ const initRequestPage = (): void => {
       })
     }, 0)
   }
-  writeForm?.addEventListener('show.bs.collapse', scrollToWriteForm, false)
   replyButtonTop?.addEventListener('click', (e) => {
     e.preventDefault()
     goToReplyForm()
