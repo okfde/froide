@@ -599,7 +599,6 @@ export default {
                 this.waitOnAttachment(JSON.parse(xhr.responseText))
                   .then(resolve)
                   .catch(reject)
-                return
               } catch (e) {
                 console.error('Failed to decode JSON', e, xhr.responseText)
                 reject(this.i18n.redactionError)
