@@ -86,6 +86,7 @@
               :initial-first-name.sync="firstName"
               :initial-last-name.sync="lastName"
               :initial-private.sync="userPrivate"
+              :submitting="submitting"
               @setStepSelectPublicBody="setStepSelectPublicBody">
               <template slot="request-hints">
                 <slot name="request-hints" />

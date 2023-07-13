@@ -126,6 +126,7 @@
               type="text"
               name="subject"
               class="form-control"
+              minlength="4"
               :class="{ 'is-invalid': errors.subject }"
               :placeholder="formFields.subject.placeholder"
               @keydown.enter.prevent />
@@ -155,6 +156,15 @@
               </div>
             </transition>
             <slot name="request-hints" />
+            <div
+              v-if="submitting && bodyCustomErrors.length > 0"
+              class="alert alert-warning">
+              <ul class="list-unstyled">
+                <li v-for="error in bodyCustomErrors" :key="error">
+                  {{ error }}
+                </li>
+              </ul>
+            </div>
             <button
               v-if="fullTextDisabled"
               class="btn btn-outline-secondary btn-sm"
@@ -176,11 +186,14 @@
               v-show="!editingDisabled"
               id="id_body"
               v-model="body"
+              minlength="8"
               name="body"
+              ref="body"
               class="form-control body-textarea"
               :class="{ 'is-invalid': errors.body, attention: !hasBody }"
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
+              required
               @keyup="bodyChanged" />
             <div
               v-if="allowFullText && !editingDisabled"
@@ -307,6 +320,7 @@
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
+const PLACEHOLDER_MARKER = '…'
 const MAX_BODY_ROWS = 12
 const MIN_BODY_ROWS = 3
 
@@ -382,12 +396,17 @@ export default {
     initialLastName: {
       type: String,
       default: ''
+    },
+    submitting: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
       bodyRows: MIN_BODY_ROWS,
       bodyBeforeChange: '',
+      bodyCustomErrors: [],
       savedFullTextBody: '',
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
@@ -570,7 +589,7 @@ export default {
       if (this.fullText) {
         this.fullTextDisabled = true
       }
-      const ta = document.querySelector('[name=body]')
+      const ta = this.$refs.body
       while (ta.scrollHeight > ta.clientHeight && ta.rows < MAX_BODY_ROWS) {
         ta.style.overflow = 'hidden'
         ta.rows += 1
@@ -579,6 +598,13 @@ export default {
         ta.style.overflow = 'auto'
       }
       this.bodyRows = ta.rows
+      if (this.body.includes(PLACEHOLDER_MARKER)) {
+        this.bodyCustomErrors = [this.i18n.replacePlaceholderMarker]
+        ta.setCustomValidity(this.i18n.replacePlaceholderMarker)
+      } else {
+        this.bodyCustomErrors = []
+        ta.setCustomValidity('')
+      }
     },
     showFullLetter() {
       this.fullLetter = true
