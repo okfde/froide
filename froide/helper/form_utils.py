@@ -33,6 +33,17 @@ class JSONMixin(object):
         }
 
     def field_to_dict(self, name, field):
+        choices = getattr(field, "choices", None)
+        if choices and not field.widget.is_hidden:
+            choices = [
+                {
+                    "value": str(c[0]),
+                    "label": str(c[1]),
+                }
+                for c in choices
+            ]
+        else:
+            choices = None
         return {
             "type": field.__class__.__name__,
             "widget_type": field.widget.__class__.__name__,
@@ -43,4 +54,5 @@ class JSONMixin(object):
             "initial": self.get_initial_for_field(field, name),
             "placeholder": str(field.widget.attrs.get("placeholder", "")),
             "value": self[name].value() if self.is_bound else None,
+            "choices": choices,
         }

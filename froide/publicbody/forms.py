@@ -53,6 +53,7 @@ class MultiplePublicBodyForm(PublicBodyForm):
             "laws",
         ),
         label=_("Search for a topic or a public body:"),
+        widget=forms.MultipleHiddenInput,
     )
 
     is_multi = True
