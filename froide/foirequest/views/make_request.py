@@ -28,6 +28,7 @@ from ..forms import RequestForm
 from ..models import FoiProject, FoiRequest, RequestDraft
 from ..services import CreateRequestService, SaveDraftService
 from ..utils import check_throttle
+from ..validators import PLACEHOLDER_MARKER
 
 csrf_middleware_class = import_string(
     getattr(
@@ -227,6 +228,11 @@ class MakeRequestView(FormView):
                     "If you write the full text, we cannot customize it according to "
                     "applicable laws. Instead you have to write the text to be "
                     "jurisdiction agnostic."
+                ),
+                "replacePlaceholderMarker": _(
+                    "Please replace all placeholder values marked by “{}”.".format(
+                        PLACEHOLDER_MARKER
+                    )
                 ),
                 "resetFullText": _("Reset text to template version"),
                 "savedFullTextChanges": _("Your previous customized text"),
