@@ -10,7 +10,12 @@ from froide.helper.widgets import JSModulePath
 def get_widget_context():
     return {
         "i18n": {
+            "orUploadNewProof": _("or upload a new proof"),
             "undo": _("Undo"),
+            "reset": _("Reset"),
+            "redactionWarning": _(
+                "When you upload an identity document, please redact all information except your name, the city and the validity date. After selecting an image, you can apply redactions to it."
+            ),
             "redactionInstructions": _(
                 "Click or touch and drag over the image to redact parts of it."
             ),

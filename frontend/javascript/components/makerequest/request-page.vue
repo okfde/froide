@@ -74,6 +74,7 @@
               :user="user.id ? user : null"
               :request-form="requestForm"
               :user-form="userForm"
+              :proof-form="conditionalProofForm"
               :hide-publicbody-chooser="hidePublicbodyChooser"
               :hide-full-text="hideFullText"
               :hide-editing="hideEditing"
@@ -242,6 +243,10 @@ export default {
     userForm: {
       type: Object
     },
+    proofForm: {
+      type: Object,
+      default: null
+    },
     showSimilar: {
       type: Boolean,
       default: false
@@ -293,6 +298,13 @@ export default {
     },
     userformFields() {
       return this.userForm.fields
+    },
+    conditionalProofForm() {
+      if (this.proofForm && this.proofForm.fields.proof) {
+        return this.proofForm
+      } else {
+        return null
+      }
     },
     publicBodySearch() {
       if (this.publicBody) {

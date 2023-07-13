@@ -1,16 +1,31 @@
 <template>
   <div class="mb-3">
-    <input
-      class="form-control"
-      type="file"
-      :name="name"
-      ref="image"
-      @change="fileChanged"
-      accept="image/*" />
-
+    <p class="small">
+      <i class="fa fa-exclamation-triangle"></i>
+      {{ i18n.redactionWarning }}
+    </p>
+    <div class="input-group mb-3">
+      <input
+        class="form-control"
+        type="file"
+        :name="name"
+        ref="image"
+        :required="required"
+        :disabled="disabled"
+        @change="fileChanged"
+        accept="image/*" />
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        :disabled="!hasFile"
+        :title="i18n.reset"
+        @click.prevent="resetFile">
+        <i class="fa fa-times-circle" />
+        {{ i18n.reset }}
+      </button>
+    </div>
     <div v-if="img" class="mt-3">
       <div class="row">
-        <div class="col d-flex align-items-center">
+        <div class="col-12 col-md d-flex align-items-center">
           {{ i18n.redactionInstructions }}
         </div>
         <div class="col-auto d-flex align-items-center">
@@ -68,8 +83,17 @@ export default {
       required: true
     },
     config: {
-      type: Object,
-      required: true
+      type: Object
+    },
+    required: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -81,6 +105,9 @@ export default {
   computed: {
     canUndo() {
       return this.$refs.redactor.canUndo
+    },
+    hasFile() {
+      return this.img !== null
     }
   },
   methods: {
@@ -104,6 +131,12 @@ export default {
     updateHasRedation(hasRedaction) {
       this.hasRedaction = hasRedaction
     },
+    resetFile() {
+      this.$refs.image.value = ''
+      this.img = null
+      this.hasRedaction = false
+      this.$emit('input', null)
+    },
     updateFile(blob) {
       let filename
       if (this.hasRedaction) {
@@ -120,6 +153,7 @@ export default {
       const dataTransfer = new DataTransfer()
       dataTransfer.items.add(updatedFile)
       this.$refs.image.files = dataTransfer.files
+      this.$emit('input', updatedFile)
     }
   }
 }
