@@ -2,7 +2,7 @@
   <div>
     <div class="card mb-3">
       <div class="card-body">
-        <div class="mb-3 row">
+        <div v-if="!user" class="mb-3 row">
           <label
             for="id_user_email"
             class="col-sm-3 col-form-label"
@@ -13,25 +13,20 @@
             {{ i18n.yourEmail }}
           </label>
           <div class="col-sm-9">
-            <p v-if="user" id="email_address" class="form-control-plaintext">
-              {{ user.email }}
+            <input
+              v-model="email"
+              type="email"
+              name="user_email"
+              class="form-control"
+              :class="{ 'is-invalid': errors.user_email }"
+              :placeholder="formFields.user_email.placeholder"
+              required />
+            <p
+              v-for="e in errors.user_email"
+              :key="e.message"
+              class="text-danger">
+              {{ e.message }}
             </p>
-            <div v-else>
-              <input
-                v-model="email"
-                type="email"
-                name="user_email"
-                class="form-control"
-                :class="{ 'is-invalid': errors.user_email }"
-                :placeholder="formFields.user_email.placeholder"
-                required />
-              <p
-                v-for="e in errors.user_email"
-                :key="e.message"
-                class="text-danger">
-                {{ e.message }}
-              </p>
-            </div>
           </div>
         </div>
 
