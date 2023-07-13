@@ -313,12 +313,37 @@
         </div>
       </div>
     </div>
+
+    <div v-if="hasUser && proofForm" class="card mb-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-8 col-md-10">
+            <template v-if="proofRequired">
+              <h5>{{ i18n.includeProof }}</h5>
+              <proof-form
+                :form="proofForm"
+                :required="proofRequired"
+                :config="config.proof_config"></proof-form>
+            </template>
+            <details v-else>
+              <summary>{{ i18n.includeProof }}</summary>
+              <proof-form
+                :form="proofForm"
+                :required="proofRequired"
+                :config="config.proof_config"></proof-form>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
+
+import ProofForm from '../proofupload/proof-form.vue'
 
 const PLACEHOLDER_MARKER = '…'
 const MAX_BODY_ROWS = 12
@@ -327,6 +352,9 @@ const MIN_BODY_ROWS = 3
 export default {
   name: 'RequestForm',
   mixins: [I18nMixin, LetterMixin],
+  components: {
+    ProofForm
+  },
   props: {
     config: {
       type: Object
@@ -396,6 +424,14 @@ export default {
     initialLastName: {
       type: String,
       default: ''
+    },
+    proofForm: {
+      type: Object,
+      default: null
+    },
+    proofRequired: {
+      type: Boolean,
+      default: false
     },
     submitting: {
       type: Boolean,

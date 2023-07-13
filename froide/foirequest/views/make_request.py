@@ -19,6 +19,7 @@ from froide.campaign.models import Campaign
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
+from froide.proof.forms import ProofMessageForm
 from froide.publicbody.api_views import PublicBodyListSerializer
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
 from froide.publicbody.models import PublicBody
@@ -278,6 +279,7 @@ class MakeRequestView(FormView):
                     "Please enter an address in the following format: %(format)s",
                 )
                 % {"format": _("Street address,\nPost Code, City")},
+                "includeProof": _("Attach a proof of identity"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
@@ -297,6 +299,9 @@ class MakeRequestView(FormView):
                 ctx[key].update(pb_ctx[key])
             else:
                 ctx[key] = pb_ctx[key]
+        proof_form = self.get_proof_form()
+        if proof_form:
+            ctx["proof_config"] = proof_form.get_js_context()
         return ctx
 
     def get_form_config_initial(self):
@@ -406,6 +411,16 @@ class MakeRequestView(FormView):
             return form_class(**self.get_publicbody_form_kwargs())
         return FakePublicBodyForm(publicbodies)
 
+    def get_proof_form(self):
+        if not self.request.user.is_authenticated:
+            # Can't send proof if not logged in
+            return None
+        if self.request.method in ("POST", "PUT"):
+            return ProofMessageForm(
+                self.request.POST, self.request.FILES, user=self.request.user
+            )
+        return ProofMessageForm(user=self.request.user)
+
     def csrf_valid(self):
         """
         This runs a replaceable csrf view middleware
@@ -466,6 +481,7 @@ class MakeRequestView(FormView):
             "request_form": request_form,
             "user_form": user_form,
             "publicbody_form": publicbody_form,
+            "proof_form": self.get_proof_form(),
         }
 
         if not error:
@@ -503,7 +519,9 @@ class MakeRequestView(FormView):
             )
         return self.render_to_response(self.get_context_data(**form_kwargs), status=400)
 
-    def form_valid(self, request_form=None, publicbody_form=None, user_form=None):
+    def form_valid(
+        self, request_form=None, publicbody_form=None, user_form=None, proof_form=None
+    ):
         user = self.request.user
         data = dict(request_form.cleaned_data)
         data["user"] = user
@@ -514,6 +532,8 @@ class MakeRequestView(FormView):
         elif user_form is not None:
             data["address"] = user_form.cleaned_data.get("address")
             user_form.save(user=user)
+        if proof_form and proof_form.is_valid():
+            data["proof"] = proof_form.save()
 
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
@@ -567,6 +587,9 @@ class MakeRequestView(FormView):
 
         if "publicbody_form" not in kwargs:
             kwargs["publicbody_form"] = self.get_publicbody_form()
+
+        if "proof_form" not in kwargs:
+            kwargs["proof_form"] = self.get_proof_form()
 
         publicbodies_json = "[]"
         publicbodies = self.get_publicbodies()

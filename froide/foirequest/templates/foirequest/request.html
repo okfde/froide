@@ -42,7 +42,7 @@
     {% endif %}
   {% endblock %}
 
-  <form method="post" action="{% url 'foirequest-make_request' %}" novalidate>
+  <form method="post" action="{% url 'foirequest-make_request' %}" enctype="multipart/form-data" novalidate>
 
     {% csrf_token %}
     {{ request_form.reference }}
@@ -66,6 +66,7 @@
         :user-form="{{ user_form.as_json }}"
         {% if request.user.is_authenticated %}:user-info="{{ request.user.as_json }}"{% endif %}
         {% if publicbody_form %}:publicbody-form="{{ publicbody_form.as_json }}"{% endif %}
+        {% if proof_form %}:proof-form="{{ proof_form.as_json }}"{% endif %}
         {% if not config.hide_similar %}:show-similar="true"{% endif %}
         {% if not config.hide_draft %}:show-draft="true"{% endif %}
         {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %}

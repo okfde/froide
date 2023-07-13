@@ -10,10 +10,6 @@
 
 <form action="{% url 'proof-add' %}" method="POST" enctype="multipart/form-data" class="disable-submit">
   {% csrf_token %}
-  <p>
-    <i class="fa fa-exclamation-triangle"></i>
-    {% translate "When you upload an identity document, please redact all information except your name, the city and the validity date. You can use the redaction tool below to do this." %}
-  </p>
   {% render_form form %}
   <p class="text-end">
     <button type="submit" class="btn btn-primary">

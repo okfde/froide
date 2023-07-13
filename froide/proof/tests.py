@@ -60,7 +60,6 @@ def test_send_message_with_proof(world, client):
 
     assert user.address in message.body
 
-    assert "GDPR" not in message.body
     assert len(message.attachments) == 0
 
     # Send again with proof
@@ -79,8 +78,7 @@ def test_send_message_with_proof(world, client):
 
     assert user.address in message.body
 
-    # Proof makes a GDPR message appear in body
-    assert "GDPR" in message.body
+    assert "testproof.jpg" in message.body
 
     proof_attachment = message.attachments[0]
     assert proof_attachment[0] == "testproof.jpg"

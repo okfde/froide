@@ -233,6 +233,14 @@ class CreateRequestService(BaseService):
             subject_redacted=redact_subject(subject, user_replacements),
         )
 
+        proof = self.data.get("proof")
+        attachments = []
+        attachment_names = []
+        if send_now and proof:
+            proof_attachment = proof.get_mime_attachment()
+            attachment_names.append(proof_attachment[0])
+            attachments.append(proof_attachment)
+
         send_address = bool(self.data.get("address"))
         message.plaintext = construct_initial_message_body(
             request,
@@ -240,6 +248,8 @@ class CreateRequestService(BaseService):
             foilaw=foilaw,
             full_text=data.get("full_text", False),
             send_address=send_address,
+            attachment_names=attachment_names,
+            proof=proof,
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
@@ -257,7 +267,7 @@ class CreateRequestService(BaseService):
             sender=request, reference=data.get("reference", "")
         )
         if send_now:
-            message.send()
+            message.send(attachments=attachments)
             message.save()
             FoiRequest.message_sent.send(
                 sender=request,

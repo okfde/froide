@@ -3,6 +3,7 @@ from typing import Optional
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.form_utils import JSONMixin
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
     BootstrapSelect,
@@ -10,7 +11,7 @@ from froide.helper.widgets import (
 )
 
 from .models import Proof, ProofAttachment, TemporaryProof
-from .widgets import ProofImageWidget
+from .widgets import ProofImageWidget, get_widget_context
 
 
 def get_proof_choice_field(user):
@@ -45,7 +46,7 @@ class ProofSettingsForm(forms.Form):
         return proof
 
 
-class ProofMessageForm(ProofSettingsForm):
+class ProofMessageForm(JSONMixin, ProofSettingsForm):
     proof_store = forms.BooleanField(
         required=False,
         label=_("Store this proof in your account for repeated use."),
@@ -57,27 +58,33 @@ class ProofMessageForm(ProofSettingsForm):
         super().__init__(*args, **kwargs)
         self.fields["proof_name"].required = False
         self.fields["proof_image"].required = False
+        self.user = user
         if user.is_authenticated:
             proof_choice = get_proof_choice_field(user)
             if proof_choice:
                 self.fields["proof"] = proof_choice
+        # FIXME: not authenticated users can't send proof
+        # They can't send messages either, so this is a non-case
         if not user.is_authenticated:
             del self.fields["proof_store"]
 
         self.order_fields(self.field_order)
 
-    def save_proof(self, user, name):
-        proof = Proof(user=user, name=name)
+    def get_js_context(self):
+        return get_widget_context()
+
+    def save_proof(self, name):
+        proof = Proof(user=self.user, name=name)
         proof.save_with_file(self.cleaned_data["proof_image"])
         return proof
 
-    def save(self, user) -> Optional[ProofAttachment]:
+    def save(self) -> Optional[ProofAttachment]:
         if self.cleaned_data["proof_image"]:
             name = self.cleaned_data["proof_name"]
             if not name:
                 name = str(_("Proof of identity"))
-            if user.is_authenticated and self.cleaned_data["proof_store"]:
-                return self.save_proof(user, name)
+            if self.user.is_authenticated and self.cleaned_data["proof_store"]:
+                return self.save_proof(name)
             return TemporaryProof(name, self.cleaned_data["proof_image"])
 
         if self.cleaned_data.get("proof"):
@@ -88,5 +95,5 @@ class ProofMessageForm(ProofSettingsForm):
 def handle_proof_form(request) -> Optional[ProofAttachment]:
     form = ProofMessageForm(request.POST, request.FILES, user=request.user)
     if form.is_valid():
-        return form.save(request.user)
+        return form.save()
     return None

@@ -28,7 +28,7 @@ from froide.helper.text_utils import (
     redact_user_strings,
 )
 from froide.proof.models import ProofAttachment
-from froide.publicbody.models import PublicBody
+from froide.publicbody.models import FoiLaw, PublicBody
 
 from .models import FoiRequest
 
@@ -109,28 +109,6 @@ def generate_secret_address(user, length=10):
     return "%s.%s@%s" % (username, secret, FOI_EMAIL_DOMAIN)
 
 
-def construct_message_body(
-    foirequest: FoiRequest,
-    text: str,
-    send_address: bool = True,
-    attachment_names: Optional[List[str]] = None,
-    attachment_missing: Optional[List[str]] = None,
-    template: str = "foirequest/emails/mail_with_userinfo.txt",
-    proof: Optional[ProofAttachment] = None,
-):
-    return render_to_string(
-        template,
-        {
-            "request": foirequest,
-            "body": text,
-            "attachment_names": attachment_names,
-            "attachment_missing": attachment_missing,
-            "send_address": send_address,
-            "proof": proof,
-        },
-    )
-
-
 def build_secret_url_regexes(url_name):
     obj_id = "0"
     code = "deadbeef"
@@ -192,11 +170,14 @@ def redact_plaintext_with_request(
 
 
 def construct_initial_message_body(
-    foirequest,
-    text="",
-    foilaw=None,
-    full_text=False,
-    send_address=True,
+    foirequest: FoiRequest,
+    text: str = "",
+    foilaw: Optional[FoiLaw] = None,
+    full_text: bool = False,
+    send_address: bool = True,
+    attachment_names: Optional[List[str]] = None,
+    attachment_missing: Optional[List[str]] = None,
+    proof: Optional[ProofAttachment] = None,
     template="foirequest/emails/mail_with_userinfo.txt",
 ):
     if full_text:
@@ -212,13 +193,35 @@ def construct_initial_message_body(
             letter_end=letter_end,
             name=foirequest.user.get_full_name(),
         )
+    return construct_message_body(
+        foirequest,
+        text=body,
+        send_address=send_address,
+        attachment_names=attachment_names,
+        attachment_missing=attachment_missing,
+        proof=proof,
+        template=template,
+    )
 
+
+def construct_message_body(
+    foirequest: FoiRequest,
+    text: str,
+    send_address: bool = True,
+    attachment_names: Optional[List[str]] = None,
+    attachment_missing: Optional[List[str]] = None,
+    template: str = "foirequest/emails/mail_with_userinfo.txt",
+    proof: Optional[ProofAttachment] = None,
+):
     return render_to_string(
         template,
         {
             "request": foirequest,
-            "body": body,
+            "body": text,
+            "attachment_names": attachment_names,
+            "attachment_missing": attachment_missing,
             "send_address": send_address,
+            "proof": proof,
         },
     )
 
