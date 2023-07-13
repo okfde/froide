@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-10 14:44+0200\n"
-"PO-Revision-Date: 2023-07-10 17:05+0200\n"
+"POT-Creation-Date: 2023-07-13 10:43+0200\n"
+"PO-Revision-Date: 2023-07-13 10:45+0200\n"
 "Last-Translator: Karl Engelhardt <karl.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -71,6 +71,7 @@ msgid "URL copied"
 msgstr "URL kopiert"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html
+#: froide/proof/widgets.py
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -5265,9 +5266,13 @@ msgstr ""
 "werden. Sie können sie auf der Anfrageseite finden:"
 
 #: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
+#, fuzzy
+#| msgid ""
+#| "This message has an attached proof of identity that I kindly ask you to "
+#| "delete after you have verifyied it (Art. 17 GDPR)."
 msgid ""
 "This message has an attached proof of identity that I kindly ask you to "
-"delete after you have verifyied it (Art. 17 GDPR)."
+"delete after you have verifyed it (Art. 17 GDPR)."
 msgstr ""
 "Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte nach "
 "Verifizierung löschen (Art. 17 DSGVO)."
@@ -6723,7 +6728,7 @@ msgstr ""
 "Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, "
 "wurde aber als %(content_type)s erkannt!"
 
-#: froide/foirequest/validators.py
+#: froide/foirequest/validators.py froide/foirequest/views/make_request.py
 msgid "Please replace all placeholder values marked by “{}”."
 msgstr ""
 "Bitte ersetzen Sie alle Platzhalter-Werte, die mit „{}“ markiert sind."
@@ -7189,6 +7194,10 @@ msgstr ""
 #, python-format
 msgid "Please enter an address in the following format: %(format)s"
 msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
+
+#: froide/foirequest/views/make_request.py
+msgid "Attach a proof of identity"
+msgstr "Identitätsnachweis beifügen"
 
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
@@ -9069,7 +9078,7 @@ msgstr "Bild eines Nachweis auswählen"
 #: froide/proof/forms.py
 msgid "Store this proof in your account for repeated use."
 msgstr ""
-"Wenn Sie diesen Nachweis öfter verwenden, können Sie ihn in ihrem Konto "
+"Wenn Sie diesen Nachweis öfter verwenden, können Sie ihn in Ihrem Konto "
 "speichern."
 
 #: froide/proof/forms.py
@@ -9078,7 +9087,6 @@ msgstr "Identitätsnachweis"
 
 #: froide/proof/models.py
 #, python-brace-format
-#| msgid "{name} (via {via})"
 msgid "{name} (uploaded {timestamp})"
 msgstr "{name} (hochgeladen am {timestamp})"
 
@@ -9107,25 +9115,11 @@ msgstr ""
 "Ihrer Identitätsdokumente hochladen und schwärzen."
 
 #: froide/proof/templates/proof/proof_settings.html
-msgid ""
-"When you upload an identity document, please redact all information except "
-"your name, the city and the validity date. You can use the redaction tool "
-"below to do this."
-msgstr ""
-"Wenn Sie ein Identitätsnachweis hochladen, entfernen Sie bitte alle "
-"Informationen außer Ihren Namen, die Stadt und das Gültigkeitsdatum. Sie "
-"können das Schwärzungswerkzeug weiter unten dafür nutzen."
-
-#: froide/proof/templates/proof/proof_settings.html
 msgid "Upload proof"
 msgstr "Nachweis hochladen"
 
 #: froide/proof/templates/proof/proof_settings.html
 #, python-format
-#| msgid ""
-#| "\n"
-#| "                Hello %(name)s\n"
-#| "              "
 msgid ""
 "\n"
 "                  Uploaded on %(date)s as “%(name)s”.\n"
@@ -9150,6 +9144,20 @@ msgstr "Es gab ein Problem."
 #: froide/proof/views.py
 msgid "Proof successfully removed."
 msgstr "Nachweis erfolgreich gelöscht."
+
+#: froide/proof/widgets.py
+msgid "or upload a new proof"
+msgstr "oder laden Sie einen neuen Nachweis hoch"
+
+#: froide/proof/widgets.py
+msgid ""
+"When you upload an identity document, please redact all information except "
+"your name, the city and the validity date. After selecting an image, you "
+"can apply redactions to it."
+msgstr ""
+"Wenn Sie ein Identitätsnachweis hochladen, entfernen Sie bitte alle "
+"Informationen außer Ihren Namen, die Stadt und das Gültigkeitsdatum. "
+"Nachdem Sie ein Bild ausgewählt haben, können Sie es hier schwärzen."
 
 #: froide/proof/widgets.py
 msgid "Click or touch and drag over the image to redact parts of it."
