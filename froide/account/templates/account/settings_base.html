@@ -34,10 +34,10 @@
       <a href="#mfa" class="list-group-item list-group-item-action">
         {% trans "Setup two-factor login" %}
       </a>
+      {% block post_password_menu %}{% endblock %}
       <a href="#proofs" class="list-group-item list-group-item-action">
         {% trans "Proofs" %}
       </a>
-      {% block post_password_menu %}{% endblock %}
       <a href="#export" class="list-group-item list-group-item-action">
         {% trans "Data export" %}
       </a>

@@ -156,6 +156,8 @@
   </div>
 </div>
 
+{% block post_password %}{% endblock %}
+
 {% if request.user.is_staff %}
 <div id="proofs" class="card mb-3">
   <h5 class="card-header">
@@ -168,8 +170,6 @@
   </div>
 </div>
 {% endif %}
-
-{% block post_password %}{% endblock %}
 
 <hr/>
 
