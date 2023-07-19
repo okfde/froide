@@ -231,7 +231,7 @@ class MakeRequestView(FormView):
                     "jurisdiction agnostic."
                 ),
                 "replacePlaceholderMarker": _(
-                    "Please replace all placeholder values marked by “{}”.".format(
+                    _("Please replace all placeholder values marked by “{}”.").format(
                         PLACEHOLDER_MARKER
                     )
                 ),
