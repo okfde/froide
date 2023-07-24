@@ -1,4 +1,5 @@
-from functools import lru_cache
+from functools import lru_cache, reduce
+from operator import or_
 
 from django.contrib.auth import get_permission_codename
 from django.db.models import Q
@@ -114,26 +115,29 @@ def get_read_queryset(
     public_q=None,
     scope=None,
     fk_path=None,
+    user_read_filter=None,
 ):
     user = request.user
-    filters = None
+    filters = []
     if public_field is not None:
-        filters = Q(**{public_field: True})
-        result_qs = qs.filter(filters)
-    elif public_q is not None:
-        filters = public_q
-        result_qs = qs.filter(filters)
+        if public_q is not None:
+            raise ValueError("Cannot use both public_field and public_q")
+        public_q = Q(**{public_field: True})
+
+    if public_q is not None:
+        filters.append(public_q)
+        unauth_qs = qs.filter(public_q)
     else:
-        result_qs = qs.none()
+        unauth_qs = qs.none()
 
     if not user.is_authenticated:
-        return result_qs
+        return unauth_qs
 
     # OAuth token
     token = getattr(request, "auth", None)
     if token and (not scope or not token.is_valid([scope])):
         # API access, but no scope
-        return result_qs
+        return unauth_qs
 
     if user.is_superuser:
         return qs
@@ -144,17 +148,17 @@ def get_read_queryset(
     if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
         return qs
 
+    if user_read_filter:
+        filters.append(user_read_filter)
+
     teams = None
     if has_team:
         teams = Team.objects.get_for_user(user)
 
     user_filter = get_user_filter(request, teams=teams, fk_path=fk_path)
-    if filters is None:
-        filters = user_filter
-    else:
-        filters |= user_filter
+    filters.append(user_filter)
 
-    return qs.filter(filters)
+    return qs.filter(reduce(or_, filters))
 
 
 def get_write_queryset(
