@@ -19,20 +19,35 @@ from froide.helper.auth import (
     get_read_queryset,
     get_write_queryset,
     has_authenticated_access,
+    make_q,
 )
 
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 
 
+def get_campaign_auth_foirequests_filter(request: HttpRequest, fk_path=None):
+    if not request.user.is_staff:
+        return None
+
+    # staff user can act on all campaign-requests
+    # via auth group associated with campaigns
+    auth_group_campaigns = (
+        request.user.groups.all().filter(campaign__isnull=False).values_list("campaign")
+    )
+    return make_q("campaign__in", auth_group_campaigns, fk_path=fk_path)
+
+
 def get_read_foirequest_queryset(request: HttpRequest, queryset=None):
     if queryset is None:
         queryset = FoiRequest.objects.all()
+
     return get_read_queryset(
         queryset,
         request,
         has_team=True,
         public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope="read:request",
+        user_read_filter=get_campaign_auth_foirequests_filter(request),
     )
 
 
@@ -44,6 +59,7 @@ def get_write_foirequest_queryset(request: HttpRequest, queryset=None):
         request,
         has_team=True,
         scope="write:request",
+        user_write_filter=get_campaign_auth_foirequests_filter(request),
     )
 
 
@@ -57,6 +73,9 @@ def get_read_foimessage_queryset(request: HttpRequest, queryset=None):
         public_q=Q(request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
         scope="read:request",
         fk_path="request",
+        user_read_filter=get_campaign_auth_foirequests_filter(
+            request, fk_path="request"
+        ),
     )
 
 
@@ -73,6 +92,9 @@ def get_read_foiattachment_queryset(request: HttpRequest, queryset=None):
         ),
         scope="read:request",
         fk_path="belongs_to__request",
+        user_read_filter=get_campaign_auth_foirequests_filter(
+            request, fk_path="belongs_to__request"
+        ),
     )
 
 
