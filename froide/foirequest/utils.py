@@ -617,10 +617,11 @@ def permanently_anonymize_requests(foirequests):
         user_replacements = user.get_redactions(replacements)
         user.private = True
         for message in foirequest.messages:
-            message.plaintext_redacted = redact_user_strings(
-                message.plaintext_redacted,
-                user_replacements=user_replacements,
-            )
+            if message.plaintext_redacted:
+                message.plaintext_redacted = redact_user_strings(
+                    message.plaintext_redacted,
+                    user_replacements=user_replacements,
+                )
             message.plaintext = redact_user_strings(
                 message.plaintext,
                 user_replacements=user_replacements,
