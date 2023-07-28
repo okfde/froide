@@ -6,7 +6,7 @@ export default class InfoBox {
   copyUrlTrigger: HTMLElement | null
   editPanel: HTMLElement | null
   infoList: HTMLElement | null
-  editPanelIsVisible: boolean = false
+  editPanelIsVisible = false
 
   constructor() {
     this.element = document.getElementById('infobox') as HTMLElement

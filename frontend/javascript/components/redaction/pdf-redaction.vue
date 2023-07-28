@@ -1098,7 +1098,9 @@ export default {
 
       div.textContent = text
 
-      let [x, y] = this.getDivPos(div)
+      const pos = this.getDivPos(div)
+      let x = pos[0]
+      const y = pos[1]
       if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
         return null
       }

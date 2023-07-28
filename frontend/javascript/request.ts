@@ -214,11 +214,7 @@ const parseMessageContainers = (): Message[] => {
     const isLastItem = idx === messageContainers.length - 1
     const forceExpand = collapsedMsgId && collapsedMsgId === el.id
     messages.push(
-      new Message(
-        el as HTMLElement,
-        forceExpand as Boolean,
-        isLastItem as Boolean
-      )
+      new Message(el as HTMLElement, forceExpand as boolean, isLastItem)
     )
   })
   return messages
