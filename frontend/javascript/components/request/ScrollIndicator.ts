@@ -3,7 +3,7 @@ import throttle from 'lodash.throttle'
 export default class ScrollIndicator {
   eventAttached: boolean
   messagesContainer: HTMLElement
-  maxWidthBreakpoint: number = 992
+  maxWidthBreakpoint = 992
   scrollEventCallbackThrottled: EventListenerOrEventListenerObject
   element: HTMLElement
   lineElement: HTMLElement

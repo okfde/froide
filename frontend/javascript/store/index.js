@@ -1,39 +1,37 @@
 import { createStore } from 'vuex'
 
 import {
-  SET_CONFIG,
-  SET_STEP,
-  SET_STEP_SELECT_PUBLICBODY,
-  SET_STEP_REVIEW_PUBLICBODY,
-  SET_STEP_REQUEST,
-  STEPS,
-  SET_PUBLICBODY,
-  SET_PUBLICBODIES,
-  SET_PUBLICBODY_ID,
   ADD_PUBLICBODY_ID,
-  REMOVE_PUBLICBODY_ID,
-  CLEAR_PUBLICBODIES,
-  CACHE_PUBLICBODIES,
   CACHE_LAWS,
-  SET_SEARCHRESULTS,
+  CACHE_PUBLICBODIES,
+  CLEAR_PUBLICBODIES,
   CLEAR_SEARCHRESULTS,
-  UPDATE_LAW_TYPE,
+  REMOVE_PUBLICBODY_ID,
+  SET_CONFIG,
+  SET_PUBLICBODIES,
+  SET_PUBLICBODY,
+  SET_PUBLICBODY_ID,
+  SET_SEARCHRESULTS,
+  SET_STEP,
+  SET_STEP_REQUEST,
+  SET_STEP_REVIEW_PUBLICBODY,
+  SET_STEP_SELECT_PUBLICBODY,
   SET_USER,
-  UPDATE_SUBJECT,
-  UPDATE_BODY,
-  UPDATE_FULL_TEXT,
-  UPDATE_FIRST_NAME,
-  UPDATE_LAST_NAME,
-  UPDATE_EMAIL,
+  STEPS,
   UPDATE_ADDRESS,
+  UPDATE_BODY,
+  UPDATE_EMAIL,
+  UPDATE_FIRST_NAME,
+  UPDATE_FULL_TEXT,
+  UPDATE_LAST_NAME,
+  UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
+  UPDATE_SUBJECT,
   UPDATE_USER_ID
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
-
-const debug = process.env.NODE_ENV !== 'production'
 
 export default createStore({
   state() {
@@ -62,7 +60,7 @@ export default createStore({
       }
       return pbs[0]
     },
-    getPublicBodiesByScope: (state, getters) => (scope) => {
+    getPublicBodiesByScope: (state) => (scope) => {
       const pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return []
@@ -79,7 +77,7 @@ export default createStore({
     getPublicBody: (state) => (id) => {
       return state.publicBodies[id]
     },
-    getScopedSearchResults: (state, getters) => (scope) => {
+    getScopedSearchResults: (state) => (scope) => {
       const srs = state.scopedSearchResults[scope]
       if (srs === undefined) {
         return []
@@ -331,7 +329,7 @@ export default createStore({
     }
   },
   actions: {
-    setSearchResults({ commit, state, dispatch }, { scope, results }) {
+    setSearchResults({ commit, dispatch }, { scope, results }) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,
         searchFacets: results.facets.fields,
@@ -373,18 +371,18 @@ export default createStore({
       commit(SET_STEP_REQUEST)
       dispatch('getLawsForPublicBodies', [result])
     },
-    getSearchResultsUrl({ commit, state, getters, dispatch }, { scope, url }) {
+    getSearchResultsUrl({ commit, state, dispatch }, { scope, url }) {
       commit(CLEAR_SEARCHRESULTS, { scope })
       const searcher = new FroideAPI(state.config)
       return searcher.getJson(url).then((results) => {
         dispatch('setSearchResults', { results, scope })
       })
     },
-    getNextSearchResults({ state, getters, dispatch }, scope) {
+    getNextSearchResults({ getters, dispatch }, scope) {
       const meta = getters.getScopedSearchMeta(scope)
       return dispatch('getSearchResultsUrl', { url: meta.next, scope })
     },
-    getPreviousSearchResults({ state, getters, dispatch }, scope) {
+    getPreviousSearchResults({ getters, dispatch }, scope) {
       const meta = getters.getScopedSearchMeta(scope)
       return dispatch('getSearchResultsUrl', {
         url: meta.previous,
@@ -392,5 +390,5 @@ export default createStore({
       })
     }
   },
-  strict: debug
+  strict: false
 })

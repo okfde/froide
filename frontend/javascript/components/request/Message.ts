@@ -1,3 +1,7 @@
+interface StorageItem {
+  isExpanded: boolean
+}
+
 export default class Message {
   id: string
   element: HTMLElement
@@ -5,7 +9,7 @@ export default class Message {
   expandedClassName = 'alpha-message--expanded'
   metaExpandedClassName = 'alpha-message__meta-container--visible'
 
-  constructor(element: HTMLElement, forceExpand: Boolean, isLastItem: Boolean) {
+  constructor(element: HTMLElement, forceExpand: boolean, isLastItem: boolean) {
     this.id = element.id || ''
     this.element = element
     this.metaContainer = this.element.querySelector(
@@ -36,7 +40,9 @@ export default class Message {
           this.id,
           JSON.stringify({ isExpanded: isLastItem || forceExpand })
         )
-      } catch {}
+      } catch {
+        console.warn('Could not create localStorage item')
+      }
       // maybe expand
       if (isLastItem || forceExpand) this.expandMessage()
     } else {
@@ -45,7 +51,7 @@ export default class Message {
     }
   }
 
-  get storageItem(): any | null {
+  get storageItem(): StorageItem | null {
     try {
       // localStorage access may cause DOMException if blocked
       const item = localStorage.getItem(this.id)
@@ -55,7 +61,7 @@ export default class Message {
     }
   }
 
-  get isExpanded(): string | false {
+  get isExpanded(): boolean {
     const storageItem = this.storageItem
     return storageItem ? storageItem.isExpanded : false
   }
@@ -65,14 +71,18 @@ export default class Message {
     return storageItem ? storageItem.isExpanded === false : false
   }
 
-  updateStorageItem(data: Object): void {
+  updateStorageItem(data: StorageItem): void {
+    const storageItem = {
+      ...this.storageItem,
+      ...data
+    }
+
     try {
       // localStorage access may cause DOMException if blocked
-      localStorage.setItem(
-        this.id,
-        JSON.stringify(Object.assign(this.storageItem, data))
-      )
-    } catch {}
+      localStorage.setItem(this.id, JSON.stringify(storageItem))
+    } catch {
+      console.warn('Could not update localStorage item')
+    }
   }
 
   onHeadClick(e: Event): void {

@@ -1,6 +1,6 @@
 function scrollToAnchor(
   id: string,
-  options: boolean | Object | undefined = true
+  options: boolean | Record<string, unknown> | undefined = true
 ): void {
   window.setTimeout(() => {
     const el = document.getElementById(id)
@@ -125,4 +125,4 @@ const addText = (dataset: DOMStringMap): void => {
   textField.value = text
 }
 
-export { scrollToAnchor, toggleSlide, slideUp, addText }
+export { addText, scrollToAnchor, slideUp, toggleSlide }

@@ -15,13 +15,13 @@ repos:
       - id: flake8
         additional_dependencies: [flake8-bugbear==23.5.9]
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.21.0
+    rev: v8.45.0
     hooks:
       - id: eslint
         files: \.(js|ts|vue)?$
         types: [file]
         additional_dependencies:
-          - eslint@8.21.0
+          - eslint@8.45.0
           - eslint-config-standard-with-typescript
           - eslint-plugin-html
           - eslint-plugin-import
@@ -31,4 +31,4 @@ repos:
           - prettier
           - eslint-plugin-prettier
           - eslint-config-standard
-exclude: ^.*/migrations/.*$
+exclude: ^.*/migrations/.*$|eslintrc.js

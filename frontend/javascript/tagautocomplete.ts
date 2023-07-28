@@ -17,7 +17,7 @@ interface AutocompleteResponse {
 
 declare global {
   interface Window {
-    _choices_: any
+    _choices_: Record<string, Choices>
   }
 }
 

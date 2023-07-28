@@ -7,7 +7,10 @@
 const HEARTBEAT_SECONDS = 30
 const RETRY_SECONDS = 3
 
-type CallbackMapping = Record<string, Function[]>
+type AppData = Record<string, unknown>
+type Callback = (data: AppData) => void
+
+type CallbackMapping = Record<string, Callback[]>
 
 interface EventData {
   type: string
@@ -88,13 +91,13 @@ class Room {
     }
   }
 
-  on(event: string, callback: Function): this {
+  on(event: string, callback: Callback): this {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event].push(callback)
     return this
   }
 
-  off(event: string, callback: Function): this {
+  off(event: string, callback: Callback): this {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event] = this.callbacks[event].filter(
       (cb) => cb !== callback
@@ -102,7 +105,7 @@ class Room {
     return this
   }
 
-  trigger(event: string, data: Object): void {
+  trigger(event: string, data: AppData): void {
     if (!this.callbacks[event]) {
       return
     }

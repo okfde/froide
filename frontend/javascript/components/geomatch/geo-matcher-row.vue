@@ -109,7 +109,6 @@ export default {
       return `${this.$root.config.url.publicbodyAdminUrl}?q=${name}`
     }
   },
-  mounted() {},
   methods: {
     addPublicBodyAdminUrl(pb) {
       pb.url = this.$root.config.url.publicbodyAdminChangeUrl.replace(

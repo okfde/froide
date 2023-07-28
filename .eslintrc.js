@@ -3,8 +3,14 @@ module.exports = {
     sourceType: 'module',
     project: ['./tsconfig.json']
   },
-  extends: ['plugin:vue/essential', 'standard-with-typescript'],
-  plugins: ['prettier', 'html'],
+  parser: 'vue-eslint-parser',
+  extends: [
+    'plugin:vue/strongly-recommended',
+    'eslint:recommended',
+    '@vue/typescript/recommended',
+    'prettier'
+  ],
+  plugins: ['@typescript-eslint', 'prettier', 'html'],
   ignorePatterns: ['node_modules/**', '**/static/**'],
   rules: {
     indent: 'off',
