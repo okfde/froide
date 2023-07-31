@@ -1,13 +1,15 @@
 module.exports = {
   parserOptions: {
     sourceType: 'module',
-    project: ['./tsconfig.json']
+    parser: '@typescript-eslint/parser',
+    project: ['./tsconfig.json'],
+    extraFileExtensions: ['.vue']
   },
   parser: 'vue-eslint-parser',
   extends: [
-    'plugin:vue/strongly-recommended',
     'eslint:recommended',
-    '@vue/typescript/recommended',
+    'plugin:vue/vue3-essential',
+    'plugin:vue/vue3-strongly-recommended',
     'prettier'
   ],
   plugins: ['@typescript-eslint', 'prettier', 'html'],
@@ -22,7 +24,9 @@ module.exports = {
         named: 'never',
         asyncArrow: 'always'
       }
-    ]
+    ],
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "error"
   },
   overrides: [
     {
