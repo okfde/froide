@@ -1,14 +1,22 @@
-import { createApp } from 'vue'
+import { VueElement, createApp } from 'vue'
 
-function snakeToCamel(s) {
+type PropValue = string | boolean | Record<string, unknown> | Array<unknown>
+type Props = Record<string, PropValue>
+type Slots = Record<string, string>
+interface OtherAttrs {
+  attrs: Record<string, string>
+  class: Record<string, boolean>
+}
+
+function snakeToCamel(s: string) {
   return s.replace(/(-\w)/g, function (m) {
     return m[1].toUpperCase()
   })
 }
 
-function getPropsFromElement(el) {
+function getPropsFromElement(el: HTMLElement): Props {
   const attrs = el.attributes
-  const props = {}
+  const props: Props = {}
 
   for (let i = 0; i < attrs.length; i += 1) {
     const attr = attrs[i]
@@ -18,7 +26,7 @@ function getPropsFromElement(el) {
     if (attr.name === 'id' || attr.name === 'class') {
       continue
     }
-    let val = attr.value
+    let val: PropValue = attr.value
     let name = attr.name
     if (attr.name[0] === ':') {
       name = attr.name.substring(1)
@@ -36,9 +44,9 @@ function getPropsFromElement(el) {
   return props
 }
 
-function getSlotData(el) {
+function getSlotData(el: HTMLElement): Slots {
   const slotEls = el.querySelectorAll('template')
-  const slots = {}
+  const slots: Slots = {}
   for (let i = 0; i < slotEls.length; i += 1) {
     const slotEl = slotEls[i]
     const attrs = slotEl.attributes
@@ -56,8 +64,11 @@ function getSlotData(el) {
   }
   return slots
 }
-function getOtherAttrs(el) {
-  const other = {}
+function getOtherAttrs(el: HTMLElement): OtherAttrs {
+  const other: OtherAttrs = {
+    attrs: {},
+    class: {}
+  }
   if (el.id) {
     other.attrs = {
       id: el.id
@@ -65,7 +76,6 @@ function getOtherAttrs(el) {
   }
   if (el.className) {
     const classes = el.className.split(' ')
-    other.class = {}
     classes.forEach((c) => {
       other.class[c.trim()] = true
     })
@@ -73,7 +83,7 @@ function getOtherAttrs(el) {
   return other
 }
 
-function createAppWithProps(el, component) {
+function createAppWithProps(el: string | HTMLElement, component: VueElement) {
   /*
     Fake VueJS compiler which does only the following:
     - takes class and id attributes and sets them on new element
@@ -81,12 +91,18 @@ function createAppWithProps(el, component) {
     - takes containing slot content elements and
       adds them as *static* slots with their innerhtml
   */
+  let checkedEl: HTMLElement | null = null
   if (typeof el === 'string') {
-    el = document.querySelector(el)
+    checkedEl = document.querySelector(el)
+  } else {
+    checkedEl = el
   }
-  const props = getPropsFromElement(el)
-  const slotData = getSlotData(el)
-  const otherAttrs = getOtherAttrs(el)
+  if (checkedEl === null) {
+    return
+  }
+  const props = getPropsFromElement(checkedEl)
+  const slotData = getSlotData(checkedEl)
+  const otherAttrs = getOtherAttrs(checkedEl)
 
   return createApp(component, {
     slots: slotData,
