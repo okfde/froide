@@ -46,7 +46,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'pb-filter-list',
+  name: 'PbFilterList',
   props: ['config', 'items', 'i18n', 'scope', 'value', 'hasMore'],
   computed: {
     facetMap() {

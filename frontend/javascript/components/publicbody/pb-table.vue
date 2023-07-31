@@ -45,7 +45,7 @@ import {
 import PbTableRow from './pb-table-row'
 
 export default {
-  name: 'pb-table',
+  name: 'PbTable',
   props: ['name', 'headers', 'options', 'scope', 'i18n', 'rows'],
   data() {
     return {

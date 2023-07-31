@@ -144,7 +144,7 @@ function treeLabel(item) {
 }
 
 export default {
-  name: 'publicbody-multi-chooser',
+  name: 'PublicbodyMultiChooser',
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
   props: {
     name: {

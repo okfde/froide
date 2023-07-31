@@ -66,7 +66,7 @@ import FilterMixin from './lib/filter-mixin'
 import PbFilterList from './pb-filter-list'
 
 export default {
-  name: 'pb-filter',
+  name: 'PbFilter',
   props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
   mixins: [FilterMixin],
   components: { PbFilterList },

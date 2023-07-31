@@ -115,7 +115,7 @@ import {
 } from '../../store/mutation_types'
 
 export default {
-  name: 'request-form-breadcrumbs',
+  name: 'RequestFormBreadcrumbs',
   props: {
     i18n: {
       type: Object

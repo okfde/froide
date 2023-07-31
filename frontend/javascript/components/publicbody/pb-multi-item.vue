@@ -24,7 +24,7 @@ import {
 } from '../../store/mutation_types'
 
 export default {
-  name: 'pb-multi-item',
+  name: 'PbMultiItem',
   props: ['name', 'result', 'scope'],
   computed: {
     value: {

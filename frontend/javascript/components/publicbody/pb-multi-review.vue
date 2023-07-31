@@ -57,7 +57,7 @@ import PbTable from './pb-table'
 import PbSummary from './pb-summary'
 
 export default {
-  name: 'pb-multi-review',
+  name: 'PbMultiReview',
   mixins: [PBChooserMixin, PBListMixin],
   props: ['name', 'scope', 'i18n'],
   components: {

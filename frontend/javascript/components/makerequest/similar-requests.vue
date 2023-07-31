@@ -52,7 +52,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 const MAX_SIMILAR = 5
 
 export default {
-  name: 'similar-requests',
+  name: 'SimilarRequests',
   props: ['config', 'publicbodies', 'subject'],
   mixins: [I18nMixin],
   data() {

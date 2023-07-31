@@ -64,7 +64,7 @@ function getChunks(redactedParts) {
 }
 
 export default {
-  name: 'message-redaction-field',
+  name: 'MessageRedactionField',
   props: ['redactedParts', 'fieldName'],
   components: {
     MessageRedactionWord
