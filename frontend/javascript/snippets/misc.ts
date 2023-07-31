@@ -1,5 +1,5 @@
-import { scrollToAnchor } from '../lib/misc'
 import { Modal } from 'bootstrap'
+import { scrollToAnchor } from '../lib/misc'
 
 const runOnPage = (): void => {
   document

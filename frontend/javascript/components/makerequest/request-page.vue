@@ -81,12 +81,12 @@
               :multi-request="multiRequest"
               :default-law="defaultLaw"
               :law-type="lawType"
-              :initial-subject.sync="subject"
-              :initial-body.sync="body"
-              :initial-full-text.sync="fullText"
-              :initial-first-name.sync="firstName"
-              :initial-last-name.sync="lastName"
-              :initial-private.sync="userPrivate"
+              v-model:initial-subject="subject"
+              v-model:initial-body="body"
+              v-model:initial-full-text="fullText"
+              v-model:initial-first-name="firstName"
+              v-model:initial-last-name="lastName"
+              v-model:initial-private="userPrivate"
               :submitting="submitting"
               @setStepSelectPublicBody="setStepSelectPublicBody">
               <template v-slot:request-hints>
@@ -102,8 +102,8 @@
               :config="config"
               :user="user.id ? user : null"
               :default-law="defaultLaw"
-              :initial-email.sync="email"
-              :initial-address.sync="address"
+              v-model:initial-email="email"
+              v-model:initial-address="address"
               :address-help-text="userForm.fields.address.help_text" />
 
             <request-public :form="requestForm" :hide-public="hidePublic" />

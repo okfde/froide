@@ -12,7 +12,7 @@
           </th>
         </tr>
       </thead>
-      <tbody is="transition-group" name="moderation-problem">
+      <TransitionGroup tag="tbody" name="moderation-problem">
         <moderation-problem
           v-for="report in reports"
           :key="report.id"
@@ -22,7 +22,7 @@
           @unclaim="unclaim"
           @resolve="resolve"
           @escalate="escalate" />
-      </tbody>
+      </TransitionGroup>
     </table>
   </div>
 </template>

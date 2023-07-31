@@ -234,7 +234,7 @@ function isTouchDevice() {
 }
 
 export default {
-  name: 'pdf-redaction',
+  name: 'PdfRedaction',
   components: { ConfirmNoRedaction },
   props: {
     config: {
@@ -1130,7 +1130,7 @@ export default {
         modal.show()
       }
     },
-    submitRedactions(event) {
+    submitRedactions() {
       document.getElementById('redaction-submit-form').submit()
     }
   }

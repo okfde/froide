@@ -1,4 +1,6 @@
-// interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null; }
+interface IHTMLToolTipElement extends HTMLInputElement {
+  Tooltip: any | null
+}
 
 export default class InfoBox {
   element: HTMLElement

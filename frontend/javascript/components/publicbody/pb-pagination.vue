@@ -36,7 +36,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'pb-pagination',
+  name: 'PbPagination',
   props: ['scope', 'i18n'],
   computed: {
     searchResults() {
@@ -96,10 +96,10 @@ export default {
     ])
   },
   methods: {
-    getNext(e) {
+    getNext() {
       this.getNextSearchResults(this.scope)
     },
-    getPrevious(e) {
+    getPrevious() {
       this.getPreviousSearchResults(this.scope)
     },
     ...mapActions(['getNextSearchResults', 'getPreviousSearchResults'])
