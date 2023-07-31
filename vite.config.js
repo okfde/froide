@@ -4,6 +4,7 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import devManifest from 'vite-plugin-dev-manifest'
 
+// eslint-disable-next-line no-undef
 const outputDir = resolve(__dirname, 'build')
 
 // https://vitejs.dev/config/
@@ -11,6 +12,7 @@ export default defineConfig({
   base: '/static/',
   resolve: {
     alias: {
+      // eslint-disable-next-line no-undef
       '~froide': resolve(__dirname)
     },
     dedupe: ['bootstrap', 'vue', 'pdfjs-dist'],

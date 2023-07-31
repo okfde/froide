@@ -2,7 +2,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     parser: '@typescript-eslint/parser',
-    project: ['./tsconfig.json'],
+    project: true,
     extraFileExtensions: ['.vue']
   },
   parser: 'vue-eslint-parser',
@@ -25,8 +25,8 @@ module.exports = {
         asyncArrow: 'always'
       }
     ],
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": "error"
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'error'
   },
   overrides: [
     {
