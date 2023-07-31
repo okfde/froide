@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["DOM", "ESNext", "dom.iterable"],
+    "lib": [
+      "DOM",
+      "ESNext",
+      "dom.iterable"
+    ],
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es6",
@@ -15,7 +19,9 @@
     "downlevelIteration": true
   },
   "include": [
-    "./frontend/javascript/**/*"
+    "./frontend/javascript/**/*",
+    ".eslintrc.js",
+    "vite.config.js"
   ],
   "exclude": [
     "node_modules"
