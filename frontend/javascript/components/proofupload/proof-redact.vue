@@ -25,7 +25,7 @@ by dexmo007 licensed under MIT license
 const MAX_WIDTH = 1200
 
 export default {
-  name: 'proof-redact',
+  name: 'ProofRedact',
   props: {
     src: {
       type: String,

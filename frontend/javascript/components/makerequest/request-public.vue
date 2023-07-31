@@ -37,7 +37,7 @@
 
 <script>
 export default {
-  name: 'request-public',
+  name: 'RequestPublic',
   props: {
     form: {
       type: Object

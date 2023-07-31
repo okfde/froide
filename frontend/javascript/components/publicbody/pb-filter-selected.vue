@@ -15,7 +15,7 @@
 import FilterMixin from './lib/filter-mixin'
 
 export default {
-  name: 'pb-filter-selected',
+  name: 'PbFilterSelected',
   props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
   mixins: [FilterMixin]
 }

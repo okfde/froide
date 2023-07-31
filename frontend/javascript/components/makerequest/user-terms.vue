@@ -31,7 +31,7 @@
 
 <script>
 export default {
-  name: 'user-terms',
+  name: 'UserTerms',
   props: {
     form: {
       type: Object

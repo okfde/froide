@@ -43,7 +43,7 @@ import { getData } from '../../lib/api.js'
 import MessageRedactionField from './message-redaction-field.vue'
 
 export default {
-  name: 'message-redaction',
+  name: 'MessageRedaction',
   props: ['config', 'messageUrl'],
   components: {
     MessageRedactionField

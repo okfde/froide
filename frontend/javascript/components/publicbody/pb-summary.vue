@@ -20,7 +20,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'pb-summary',
+  name: 'PbSummary',
   props: ['scope', 'dimensions', 'i18n'],
   computed: {
     summary() {

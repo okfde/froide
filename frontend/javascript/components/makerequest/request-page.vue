@@ -21,7 +21,7 @@
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
                 :config="config">
-                <template v-slot:publicbody-missing>
+                <template #publicbody-missing>
                   <template v-html="slots['publicbody-missing']" />
                 </template>
               </publicbody-multi-chooser>
@@ -89,10 +89,10 @@
               v-model:initial-private="userPrivate"
               :submitting="submitting"
               @setStepSelectPublicBody="setStepSelectPublicBody">
-              <template v-slot:request-hints>
+              <template #request-hints>
                 <slot name="request-hints" />
               </template>
-              <template v-slot:request-legend-title>
+              <template #request-legend-title>
                 <slot name="request-legend-title" />
               </template>
             </request-form>

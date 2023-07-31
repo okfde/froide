@@ -71,7 +71,7 @@ import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
-  name: 'pb-action-list',
+  name: 'PbActionList',
   mixins: [PBListMixin, I18nMixin],
   props: ['name', 'scope', 'config'],
   methods: {

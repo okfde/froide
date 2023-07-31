@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: 'message-redaction-word',
+  name: 'MessageRedactionWord',
   props: ['word', 'redacted', 'index'],
   data() {
     return {

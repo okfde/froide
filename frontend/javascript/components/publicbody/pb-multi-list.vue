@@ -47,7 +47,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 import PbMultiItem from './pb-multi-item'
 
 export default {
-  name: 'pb-multi-list',
+  name: 'PbMultiList',
   props: ['name', 'scope', 'config'],
   mixins: [PBListMixin, I18nMixin],
   methods: {
