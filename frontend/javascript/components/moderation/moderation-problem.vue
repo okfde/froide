@@ -8,18 +8,19 @@
       {{ emoji }}
     </td>
     <td :title="report.timestamp">
-      {{ report.timestamp | date }}
+      {{ reportTimestampFormatted }}
       <span
         v-if="!report.is_requester && !report.auto_submitted"
         class="badge text-bg-secondary">
         {{ i18n.isNotRequester }}
       </span>
     </td>
-    <td>{{ report.message_subject | truncatechars }}</td>
+    <td>{{ reportMessageSubjectTruncated }}</td>
     <td>
       <template v-if="claimedByMe"> {{ report.description }}<br /> </template>
       <template v-else>
-        {{ report.description | truncatechars(120) }}<br />
+        {{ reportDescriptionTruncated }}
+        <br />
       </template>
 
       <a
@@ -114,22 +115,22 @@ const calcMinutesAgo = (val) => {
   return Math.round((now - t) / (1000 * 60))
 }
 
+const truncatechars = (val, len = 25) => {
+  return val.length > len ? val.substring(0, len) + '…' : val
+}
+
+const formatDate = (val) => {
+  const d = new Date(val)
+  const today = new Date().toLocaleDateString()
+  const res = d.toLocaleString()
+  if (d.toLocaleDateString() === today) {
+    return res.split(',')[1].trim()
+  }
+  return res
+}
+
 export default {
   name: 'ModerationRow',
-  filters: {
-    date: (val) => {
-      const d = new Date(val)
-      const today = new Date().toLocaleDateString()
-      const res = d.toLocaleString()
-      if (d.toLocaleDateString() === today) {
-        return res.split(',')[1].trim()
-      }
-      return res
-    },
-    truncatechars: (val, len = 25) => {
-      return val.length > len ? val.substring(0, len) + '…' : val
-    }
-  },
   props: {
     report: {
       type: Object,
@@ -164,6 +165,15 @@ export default {
         /0/,
         this.report.related_publicbody_id
       )
+    },
+    reportTimestampFormatted() {
+      return formatDate(this.report.timestamp)
+    },
+    reportMessageSubjectTruncated() {
+      return truncatechars(this.report.message_subject)
+    },
+    reportDescriptionTruncated() {
+      return truncatechars(this.report.description, 120)
     },
     emoji() {
       return EMOJI_MAPPING[this.report.kind] || ''

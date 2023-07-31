@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  name: 'pb-table-row',
+  name: 'PbTableRow',
   props: ['name', 'row', 'selected', 'headers'],
   computed: {
     rowCategories() {
@@ -53,7 +53,7 @@ export default {
     }
   },
   methods: {
-    toggleRow(event) {
+    toggleRow() {
       this.value = !this.value
     }
   }

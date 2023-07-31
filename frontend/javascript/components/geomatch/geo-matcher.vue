@@ -270,7 +270,7 @@ export default {
         georegion: payload.georegionId,
         publicbody: payload.publicbodyId
       }
-      postData('', data, this.$root.csrfToken).then((data) => {
+      postData('', data, this.$root.csrfToken).then(() => {
         const gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
         gr.links = [...(gr.links || []), payload.publicbody]
         gr.matches = []

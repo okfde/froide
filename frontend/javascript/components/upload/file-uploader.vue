@@ -146,7 +146,7 @@ export default {
       delete this.files[file.id]
       this.$emit('ready', this.canSubmit)
     })
-    this.uppy.on('upload', (data) => {
+    this.uppy.on('upload', () => {
       this.uploading = true
       this.$emit('uploading', true)
     })

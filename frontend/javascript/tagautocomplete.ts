@@ -16,6 +16,7 @@ interface AutocompleteResponse {
 }
 
 declare global {
+  // eslint-disable-next-line no-unused-vars
   interface Window {
     _choices_: Record<string, Choices>
   }
