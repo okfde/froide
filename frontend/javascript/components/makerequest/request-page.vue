@@ -374,6 +374,22 @@ export default {
         this.updateAddress(value)
       }
     },
+    firstName: {
+      get() {
+        return this.$store.state.user.first_name
+      },
+      set(value) {
+        this.updateFirstName(value)
+      }
+    },
+    lastName: {
+      get() {
+        return this.$store.state.user.last_name
+      },
+      set(value) {
+        this.updateLastName(value)
+      }
+    },
     userPrivate: {
       get() {
         return this.$store.state.user.private
