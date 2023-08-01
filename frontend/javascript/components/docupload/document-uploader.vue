@@ -38,7 +38,7 @@
             </button>
             <button
               v-if="canApprove"
-              class="btn btn-sm"
+              class="btn btn-sm ms-2"
               :class="{ 'btn-success': canApprove }"
               :disabled="!canApprove"
               @click="approveSelected">
