@@ -64,15 +64,12 @@ const getMessageUrl = (templ, att) => {
 export default {
   name: 'ModerationAttachments',
   props: {
-    config: {
-      type: Object,
-      required: true
-    },
     attachments: {
       type: Array,
       required: true
     }
   },
+  inject: ['config', 'csrfToken'],
   computed: {
     i18n() {
       return this.config.i18n
@@ -91,7 +88,7 @@ export default {
       postData(
         getRedactionUrl(this.config.url.mark_attachment_as_moderated, att),
         {},
-        this.$root.csrfToken
+        this.csrfToken
       ).then(() => {
         const index = this.attachments.findIndex((x) => x.id === att.id)
         if (index !== -1) {

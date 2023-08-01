@@ -59,19 +59,15 @@
       <div class="tab-content pt-3">
         <moderation-problems
           v-if="tab === 'problemreports'"
-          :config="config"
           :reports="reports" />
         <moderation-publicbodies
           v-if="tab === 'publicbodies'"
-          :config="config"
           :publicbodies="publicbodies" />
         <moderation-unclassified
           v-if="tab === 'unclassified'"
-          :config="config"
           :unclassified="unclassified" />
         <moderation-attachments
           v-if="tab === 'attachments'"
-          :config="config"
           :attachments="attachments" />
       </div>
     </div>
@@ -147,6 +143,13 @@ export default {
       tab: 'problemreports'
     }
   },
+  provide() {
+    return {
+      config: this.config,
+      csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+      room: this.room
+    }
+  },
   computed: {
     i18n() {
       return this.config.i18n
@@ -165,10 +168,6 @@ export default {
     }
   },
   created() {
-    this.$root.config = this.config
-    this.$root.csrfToken = document.querySelector(
-      '[name=csrfmiddlewaretoken]'
-    ).value
     this.room = new Room(this.config.url.moderationWebsocket)
     getData(this.config.url.listReports).then((data) => {
       this.reports = [...this.reports, ...data.objects]

@@ -141,6 +141,8 @@ export default {
       default: true
     }
   },
+  inject: ['config'],
+  emits: ['claim', 'unclaim', 'resolve', 'escalate'],
   data() {
     return {
       resolving: false,
@@ -152,7 +154,7 @@ export default {
   },
   computed: {
     i18n() {
-      return this.$root.config.i18n
+      return this.config.i18n
     },
     showPublicBodyLink() {
       return (
@@ -161,7 +163,7 @@ export default {
       )
     },
     publicBodyLink() {
-      return this.$root.config.url.publicBody.replace(
+      return this.config.url.publicBody.replace(
         /0/,
         this.report.related_publicbody_id
       )
@@ -182,7 +184,7 @@ export default {
       return !!this.report.claimed && !this.claimedByMe
     },
     claimedByMe() {
-      return this.report.moderator_id === this.$root.config.settings.user_id
+      return this.report.moderator_id === this.config.settings.user_id
     },
     longClaim() {
       return this.claimedMinutes > MAX_CLAIMED_MINUTES
