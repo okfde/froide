@@ -1,7 +1,7 @@
 {% extends "helper/admin_base_action.html" %}
 
 {% load i18n l10n %}
-{% load static %}
+{% load frontendbuild %}
 
 {% block action_title %}{% trans 'Match Georegions' %}{% endblock %}
 
@@ -11,10 +11,8 @@
 
 {% block extrahead %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/geomatch.css' %}">
-  <link rel="stylesheet" href="{% static 'css/common.css' %}"/>
-  <script src="{% static 'js/common.js' %}" charset="utf-8"></script>
-  <script src="{% static 'js/geomatch.js' %}" charset="utf-8"></script>
+  {% getfrontendbuild "geomatch.js" as assets %}
+  {% for block, output_list in assets %}{% for output in output_list %}{{ output|safe }}{% endfor %}{% endfor %}
 {% endblock %}
 
 {% block action_content %}

@@ -57,7 +57,12 @@ export default {
   components: {
     GeoMatcherRow
   },
-  props: ['config'],
+  props: {
+    config: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       georegions: [],
@@ -68,7 +73,14 @@ export default {
       jurisdictionName: '',
       category: '',
       categoryName: '',
-      searchHint: ''
+      searchHint: '',
+      csrfToken: document.querySelector('input[name="csrfmiddlewaretoken"]')
+        .value
+    }
+  },
+  provide() {
+    return {
+      config: this.config
     }
   },
   computed: {
@@ -98,11 +110,6 @@ export default {
     }
   },
   mounted() {
-    this.$root.config = this.config
-    this.$root.csrfToken = document.querySelector(
-      'input[name="csrfmiddlewaretoken"]'
-    ).value
-
     const entries = new URLSearchParams(window.location.search)
 
     this.ancestor = entries.get('ancestor') || ''
@@ -270,7 +277,7 @@ export default {
         georegion: payload.georegionId,
         publicbody: payload.publicbodyId
       }
-      postData('', data, this.$root.csrfToken).then(() => {
+      postData('', data, this.csrfToken).then(() => {
         const gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
         gr.links = [...(gr.links || []), payload.publicbody]
         gr.matches = []
