@@ -58,9 +58,12 @@ export default {
   name: 'GeoMatcherRow',
   props: {
     georegion: {
-      type: Object
+      type: Object,
+      required: true
     }
   },
+  inject: ['config'],
+  emits: ['connectpublicbody'],
   data() {
     return {}
   },
