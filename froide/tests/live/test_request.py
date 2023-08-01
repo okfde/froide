@@ -176,8 +176,8 @@ def test_make_logged_in_request_too_many(
     page.locator("#send-request-button").click()
     make_request = reverse("foirequest-make_request")
     assert make_request in page.url
-    alert = page.locator(".alert-danger")
-    expect(alert).to_contain_text("exceeded your request limit")
+    alert = page.locator(".alert-danger", has_text="exceeded your request limit")
+    expect(alert).to_be_visible()
 
 
 @pytest.mark.django_db
