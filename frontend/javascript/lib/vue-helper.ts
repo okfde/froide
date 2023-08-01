@@ -14,6 +14,8 @@ function snakeToCamel(s: string) {
   })
 }
 
+const isNumber = /^-?[0-9.]+$/
+
 function getPropsFromElement(el: HTMLElement): Props {
   const attrs = el.attributes
   const props: Props = {}
@@ -30,10 +32,13 @@ function getPropsFromElement(el: HTMLElement): Props {
     let name = attr.name
     if (attr.name[0] === ':') {
       name = attr.name.substring(1)
-      if (attr.value[0] === '{' || attr.value[0] === '[') {
+      if (
+        attr.value[0] === '{' ||
+        attr.value[0] === '[' ||
+        isNumber.test(attr.value)
+      ) {
         val = JSON.parse(attr.value)
-      }
-      if (attr.value === 'true') {
+      } else if (attr.value === 'true') {
         val = true
       } else if (attr.value === 'false') {
         val = false
