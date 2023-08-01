@@ -7,7 +7,7 @@
       :hide-publicbody-chooser="hidePublicbodyChooser" />
 
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
-      <slot name="messages" />
+      <div v-html="slots['messages']" />
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
@@ -22,15 +22,15 @@
                 :scope="pbScope"
                 :config="config">
                 <template #publicbody-missing>
-                  <template v-html="slots['publicbody-missing']" />
+                  <div v-html="slots['publicbody-missing']" />
                 </template>
               </publicbody-multi-chooser>
             </div>
             <div v-else>
               <div class="row">
                 <div class="col-lg-7">
-                  <template v-html="slots['publicbody-legend-title']" />
-                  <template v-html="slots['publicbody-help-text']" />
+                  <div v-html="slots['publicbody-legend-title']" />
+                  <div v-html="slots['publicbody-help-text']" />
                 </div>
               </div>
               <div class="row">
@@ -54,7 +54,7 @@
                   </template>
                 </div>
                 <div class="col-lg-4 small">
-                  <slot name="publicbody-missing" />
+                  <div v-html="slots['publicbody-missing']" />
                 </div>
               </div>
             </div>
@@ -90,10 +90,10 @@
               :submitting="submitting"
               @setStepSelectPublicBody="setStepSelectPublicBody">
               <template #request-hints>
-                <slot name="request-hints" />
+                <div v-html="slots['request-hints']" />
               </template>
               <template #request-legend-title>
-                <slot name="request-legend-title" />
+                <div v-html="slots['request-legend-title']" />
               </template>
             </request-form>
 
@@ -356,22 +356,6 @@ export default {
       },
       set(value) {
         this.updateFullText(value)
-      }
-    },
-    firstName: {
-      get() {
-        return this.$store.state.user.first_name
-      },
-      set(value) {
-        this.updateFirstName(value)
-      }
-    },
-    lastName: {
-      get() {
-        return this.$store.state.user.last_name
-      },
-      set(value) {
-        this.updateLastName(value)
       }
     },
     email: {

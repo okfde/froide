@@ -1,7 +1,7 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
     <div v-if="imageDocuments.length > 0" class="images mt-5">
-      <template v-html="slots['convert-images']" />
+      <div v-html="slots['convert-images']" />
       <image-document
         v-for="doc in imageDocuments"
         :key="doc.id"
@@ -16,7 +16,7 @@
         @notnew="doc.new = false" />
     </div>
     <div v-if="pdfDocuments.length > 0" class="documents mt-5">
-      <template v-html="slots['documents']" />
+      <div v-html="slots['documents']" />
       <div class="mt-3 mb-3">
         <div class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom">
           <div class="col-auto me-md-auto">
@@ -64,7 +64,7 @@
 
     <div v-if="otherAttachments.length > 0" class="mt-5">
       <hr />
-      <template v-html="slots['other-files']" />
+      <div v-html="slots['other-files']" />
       <file-document
         v-for="doc in otherAttachments"
         :key="doc.id"
@@ -76,7 +76,7 @@
     </div>
 
     <div v-if="canUpload" class="upload mt-5">
-      <template v-html="slots['upload-header']" />
+      <div v-html="slots['upload-header']" />
       <file-uploader
         class="mb-3 mt-2"
         :config="config"
