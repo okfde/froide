@@ -223,7 +223,7 @@
                   href="#"
                   @click.prevent="showFullLetter"
                   v-text="'[…]'" />
-                <template>{{ letterEndShort }}</template>
+                <template v-if="true">{{ letterEndShort }}</template>
               </template>
               <template v-else>{{ letterEnd }}</template>
             </div>
