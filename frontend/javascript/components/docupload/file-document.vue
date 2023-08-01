@@ -330,7 +330,7 @@ export default {
   },
   methods: {
     makeResult(e) {
-      Tooltip.getInstance(e.target).dispose()
+      Tooltip.getInstance(e.target)?.dispose()
       this.updateDocument({
         creatingDocument: true
       })
