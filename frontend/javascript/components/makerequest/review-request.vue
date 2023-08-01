@@ -205,8 +205,8 @@ export default {
 @import '../../../styles/variables';
 
 .review-body-text {
-  color: #333;
-  background-color: #eaeaea;
+  color: var(--#{$prefix}body-color);
+  background-color: var(--#{$prefix}body-bg);
   border: 1px dashed #777;
   padding: 0.25em;
   height: 14em;
