@@ -36,7 +36,7 @@ Pillow>=9.0.0
 pikepdf==7.0.0
 psycopg[binary]>=3.1.8
 pyisemail
-pypdf2>=2
+pypdf>=3
 python-magic
 python-mimeparse
 python-slugify

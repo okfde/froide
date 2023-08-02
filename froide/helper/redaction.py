@@ -13,8 +13,8 @@ from filingcabinet.pdf_utils import (
     rewrite_hard_pdf_in_place,
     rewrite_pdf_in_place,
 )
-from PyPDF2 import PdfReader, PdfWriter
-from PyPDF2.errors import PdfReadError
+from pypdf import PdfReader, PdfWriter
+from pypdf.errors import PdfReadError
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
