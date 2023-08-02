@@ -196,6 +196,8 @@ elasticsearch-dsl==7.4.1
     # via
     #   -r requirements.in
     #   django-elasticsearch-dsl
+exceptiongroup==1.1.2
+    # via pytest
 factory-boy==3.2.1
     # via
     #   -r requirements-test.in
@@ -359,10 +361,10 @@ pyisemail==2.0.1
     # via -r requirements.in
 pyotp==2.8.0
     # via django-mfa3
+pypdf==3.14.0
+    # via -r requirements.in
 pypdf2==3.0.1
-    # via
-    #   -r requirements.in
-    #   django-filingcabinet
+    # via django-filingcabinet
 pyphen==0.14.0
     # via weasyprint
 pyrsistent==0.19.3
