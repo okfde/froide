@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-13 10:43+0200\n"
-"PO-Revision-Date: 2023-07-13 10:45+0200\n"
+"POT-Creation-Date: 2023-08-03 13:45+0200\n"
+"PO-Revision-Date: 2023-08-03 12:46+0100\n"
 "Last-Translator: Karl Engelhardt <karl.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -5266,18 +5266,6 @@ msgstr ""
 "werden. Sie können sie auf der Anfrageseite finden:"
 
 #: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
-#, fuzzy
-#| msgid ""
-#| "This message has an attached proof of identity that I kindly ask you to "
-#| "delete after you have verifyied it (Art. 17 GDPR)."
-msgid ""
-"This message has an attached proof of identity that I kindly ask you to "
-"delete after you have verifyed it (Art. 17 GDPR)."
-msgstr ""
-"Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte nach "
-"Verifizierung löschen (Art. 17 DSGVO)."
-
-#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
 #, python-format
 msgid "Request Number: %(num)s"
 msgstr "Anfragenr: %(num)s"
@@ -6531,6 +6519,10 @@ msgstr "Nachricht"
 msgid "Message is loading..."
 msgstr "Nachricht wird geladen..."
 
+#: froide/foirequest/templatetags/foirequest_tags.py
+msgid "This word needs to stay redacted."
+msgstr "Dieses Wort muss geschwärzt bleiben."
+
 #. Translators: request URL
 #: froide/foirequest/urls/__init__.py
 msgctxt "url part"
@@ -6689,6 +6681,10 @@ msgstr "<slug:slug>/<int:message_id>/upload/"
 #: froide/foirequest/utils.py
 msgid "User exceeded request limit"
 msgstr "Nutzer:in hat Anfragenbeschränkung überschritten"
+
+#: froide/foirequest/utils.py froide/helper/text_utils.py
+msgid "<<email address>>"
+msgstr "<<E-Mail-Adresse>>"
 
 #: froide/foirequest/utils.py
 #, python-brace-format
@@ -8366,10 +8362,6 @@ msgstr "<< Anrede >>"
 #: froide/helper/text_utils.py
 msgid "<<name and email address>>"
 msgstr "<<Name und E-Mail-Adresse>>"
-
-#: froide/helper/text_utils.py
-msgid "<<email address>>"
-msgstr "<<E-Mail-Adresse>>"
 
 #: froide/helper/text_utils.py
 msgid "<<removed>>"
@@ -11468,6 +11460,17 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#, fuzzy
+#~| msgid ""
+#~| "This message has an attached proof of identity that I kindly ask you to "
+#~| "delete after you have verifyied it (Art. 17 GDPR)."
+#~ msgid ""
+#~ "This message has an attached proof of identity that I kindly ask you to "
+#~ "delete after you have verifyed it (Art. 17 GDPR)."
+#~ msgstr ""
+#~ "Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte "
+#~ "nach Verifizierung löschen (Art. 17 DSGVO)."
+
 #, python-format
 #~ msgid "You exceeded your message limit of %(count)s messages in %(time)s."
 #~ msgstr ""
@@ -13269,10 +13272,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "I want to publish this message"
 #~ msgstr "Ich möchte diese Nachricht veröffentlichen"
-
-#, fuzzy
-#~ msgid "Information needs to be redacted."
-#~ msgstr "Was Sie schwärzen sollten"
 
 #~ msgid "You can write a reply by clicking here"
 #~ msgstr "Um eine Antwort an die Behörde zu schreiben klicken Sie hier"
