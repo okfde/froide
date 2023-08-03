@@ -20,8 +20,9 @@
         <div>
           <message-redaction-field
             field-name="content"
-            :redacted-parts="
-              message.redacted_content
+            :redacted-parts="message.redacted_content"
+            :blocked-patterns="
+              config.settings.blockedPatterns
             "></message-redaction-field>
         </div>
       </div>
@@ -44,9 +45,23 @@ import MessageRedactionField from './message-redaction-field.vue'
 
 export default {
   name: 'MessageRedaction',
-  props: ['config', 'messageUrl'],
+  props: {
+    config: {
+      type: Object,
+      required: true
+    },
+    messageUrl: {
+      type: String,
+      required: true
+    }
+  },
   components: {
     MessageRedactionField
+  },
+  provide() {
+    return {
+      config: this.config
+    }
   },
   data() {
     return {
@@ -65,5 +80,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss"></style>

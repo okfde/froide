@@ -8,6 +8,7 @@
           :word="word.word"
           :redacted="word.redacted"
           :index="word.index"
+          :blocked="word.blocked"
           @redact="redact" />
         <template v-else>{{ word.word }}</template>
       </template>
@@ -24,7 +25,7 @@ import MessageRedactionWord from './message-redaction-word.vue'
 // eslint-disable-next-line no-control-regex
 const SPLITTER = /[\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E]/g
 
-function getChunks(redactedParts) {
+function getChunks(redactedParts, blockPattern) {
   let counter = 0
   const chunks = []
   for (const redactedPart of redactedParts) {
@@ -33,11 +34,13 @@ function getChunks(redactedParts) {
     const part = redactedPart[1]
     while ((result = SPLITTER.exec(part))) {
       if (result.index > partIndex) {
+        let word = part.substring(partIndex, result.index)
         chunks.push({
           separator: false,
           redacted: redactedPart[0],
           index: counter,
-          word: part.substring(partIndex, result.index)
+          word: word,
+          blocked: blockPattern.test(word)
         })
         counter += 1
       }
@@ -45,17 +48,20 @@ function getChunks(redactedParts) {
         separator: true,
         redacted: false,
         index: counter,
-        word: result[0]
+        word: result[0],
+        blocked: false
       })
       counter += 1
       partIndex = result.index + 1
     }
     if (partIndex < part.length) {
+      let word = part.substring(partIndex, part.length + 1)
       chunks.push({
         separator: false,
         redacted: redactedPart[0],
         index: counter,
-        word: part.substring(partIndex, part.length + 1)
+        word: word,
+        blocked: blockPattern.test(word)
       })
       counter += 1
     }
@@ -65,7 +71,20 @@ function getChunks(redactedParts) {
 
 export default {
   name: 'MessageRedactionField',
-  props: ['redactedParts', 'fieldName'],
+  props: {
+    redactedParts: {
+      type: Array,
+      required: true
+    },
+    fieldName: {
+      type: String,
+      required: true
+    },
+    blockedPatterns: {
+      type: Array,
+      default: () => []
+    }
+  },
   components: {
     MessageRedactionWord
   },
@@ -75,7 +94,13 @@ export default {
     }
   },
   mounted() {
-    this.words = getChunks(this.redactedParts)
+    let blockPattern
+    if (this.blockedPatterns.length === 0) {
+      blockPattern = /a^/
+    } else {
+      blockPattern = new RegExp(this.blockedPatterns.join('|'), 'g')
+    }
+    this.words = getChunks(this.redactedParts, blockPattern)
   },
   computed: {
     serializedValue() {
