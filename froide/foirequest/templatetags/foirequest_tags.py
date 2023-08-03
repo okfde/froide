@@ -34,6 +34,7 @@ from ..foi_mail import get_alternative_mail
 from ..forms import AssignProjectForm, EditMessageForm
 from ..models import DeliveryStatus, FoiMessage, FoiRequest
 from ..moderation import get_moderation_triggers
+from ..utils import get_minimum_redaction_replacements
 
 Comment = get_model()
 
@@ -412,6 +413,10 @@ def render_message_edit_button(message):
 
 @register.inclusion_tag("foirequest/snippets/message_redact.html")
 def render_message_redact_button(message):
+    blocked_patterns = [
+        pat.pattern
+        for pat in get_minimum_redaction_replacements(message.request).keys()
+    ]
     return {
         "foirequest": message.request,
         "message": message,
@@ -422,7 +427,11 @@ def render_message_redact_button(message):
                     "subject": _("Subject"),
                     "message": _("Message"),
                     "messageLoading": _("Message is loading..."),
-                }
+                    "blockedRedaction": _("This word needs to stay redacted."),
+                },
+                "settings": {
+                    "blockedPatterns": blocked_patterns,
+                },
             }
         ),
     }

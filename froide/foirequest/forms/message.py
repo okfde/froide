@@ -33,6 +33,7 @@ from ..models.message import MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
 from ..utils import (
     MailAttachmentSizeChecker,
+    apply_minimum_redaction,
     construct_message_body,
     get_info_for_email,
     get_publicbody_for_email,
@@ -844,6 +845,9 @@ class RedactMessageForm(forms.Form):
                 message.plaintext,
                 self.cleaned_data["content"],
                 self.cleaned_data["content_length"],
+            )
+            redacted_content = apply_minimum_redaction(
+                message.request, redacted_content
             )
             message.plaintext_redacted = redacted_content
         except IndexError as e:

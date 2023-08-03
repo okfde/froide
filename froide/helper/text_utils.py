@@ -87,6 +87,7 @@ def split_text_by_separator(
 
 
 Replacements = List[Union[Tuple[str, str], Tuple[Pattern[str], str]]]
+ReplacementsDict = Dict[Union[str, Pattern[str]], str]
 
 
 def redact_user_strings(content: str, user_replacements: Replacements) -> str:
@@ -108,12 +109,21 @@ def redact_subject(
     return content[:255]
 
 
+def apply_text_replacements(content: str, replacements: ReplacementsDict) -> str:
+    for key, val in replacements.items():
+        if isinstance(key, re.Pattern):
+            content = key.sub(val, content)
+        else:
+            content = content.replace(key, val)
+    return content
+
+
 def redact_plaintext(
     content: Union[str, SafeString],
     redact_greeting: bool = False,
     redact_closing: bool = False,
     user_replacements: Optional[Replacements] = None,
-    replacements: Optional[Dict[Union[str, Pattern[str]], str]] = None,
+    replacements: Optional[ReplacementsDict] = None,
 ) -> str:
     content = redact_content(content)
 
@@ -129,11 +139,7 @@ def redact_plaintext(
         content = redact_user_strings(content, user_replacements)
 
     if replacements is not None:
-        for key, val in replacements.items():
-            if isinstance(key, re.Pattern):
-                content = key.sub(val, content)
-            else:
-                content = content.replace(key, val)
+        content = apply_text_replacements(content, replacements)
 
     return content
 

@@ -22,6 +22,7 @@ from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
 from froide.helper.tasks import search_instance_save
 from froide.helper.text_utils import (
+    apply_text_replacements,
     find_all_emails,
     redact_plaintext,
     redact_subject,
@@ -153,6 +154,19 @@ def short_request_url(name, foirequest, message=None):
         "foirequest-shortlink_url",
         kwargs={"obj_id": foirequest.pk, "url_path": url_path},
     )
+
+
+def get_minimum_redaction_replacements(foirequest: FoiRequest):
+    replacements = dict(get_secret_url_replacements())
+    pattern = re.compile(re.escape(foirequest.secret_address))
+    replacements[pattern] = str(_("<<email address>>"))
+    return replacements
+
+
+def apply_minimum_redaction(foirequest: FoiRequest, plaintext: str) -> str:
+    replacements = get_minimum_redaction_replacements(foirequest)
+    plaintext = apply_text_replacements(plaintext, replacements)
+    return plaintext
 
 
 def redact_plaintext_with_request(
