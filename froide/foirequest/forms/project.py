@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.forms.message import get_default_initial_message
 from froide.foirequest.tasks import create_project_messages
-from froide.helper.widgets import BootstrapCheckboxInput
+from froide.helper.widgets import BootstrapCheckboxInput, BootstrapSelect
 
 from ..auth import get_write_foirequest_queryset
 from ..forms import SendMessageForm
@@ -22,7 +22,9 @@ class MakeProjectPublicForm(forms.Form):
 
 
 class AssignProjectForm(forms.Form):
-    project = forms.ModelChoiceField(queryset=None, required=False)
+    project = forms.ModelChoiceField(
+        queryset=None, required=False, widget=BootstrapSelect
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
