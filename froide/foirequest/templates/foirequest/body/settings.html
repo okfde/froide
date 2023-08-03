@@ -16,10 +16,10 @@
         </div>
       </div>
 
+      {% get_project_form object as project_form %}
       {% if project_form.fields.project.queryset %}
       <div class="col-12 col-md-6 d-flex">
         <div class="border-gray p-3 w-100 d-flex">
-          {% get_project_form object as project_form %}
           {% trans "Assign request to project" as legend %}
           {% trans "Set project" as submit_button %}
           {% url 'foirequest-set_project' slug=object.slug as submit_url %}
