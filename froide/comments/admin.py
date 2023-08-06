@@ -25,7 +25,14 @@ class CommentAdmin(DjangoCommentsAdmin):
     )
     list_display = [c for c in DjangoCommentsAdmin.list_display if c not in REMOVED]
     list_filter = [c for c in DjangoCommentsAdmin.list_filter if c not in REMOVED] + [
-        ("object_pk", ForeignKeyFilter)
+        ("object_pk", ForeignKeyFilter),
+        "is_moderation",
     ]
-    search_fields = [c for c in DjangoCommentsAdmin.search_fields if c not in REMOVED]
+    search_fields = (
+        "comment",
+        "user__email_deterministic",
+        "user_name",
+        "user_email",
+        "user_url",
+    )
     actions = []
