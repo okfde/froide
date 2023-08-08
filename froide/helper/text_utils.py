@@ -12,7 +12,7 @@ from slugify import slugify as _slugify
 
 try:
     from lxml import html as html_parser
-    from lxml.html import HtmlElement
+    from lxml.html import HtmlElement, HTMLParser
 except ImportError:
     html_parser = None
 
@@ -289,7 +289,8 @@ def convert_html_to_text(html_str: str, ignore_tags: None = None) -> str:
     if html_parser is None:
         return strip_tags(html_str)
 
-    root = html_parser.fromstring(html_str)
+    parser = HTMLParser(encoding="utf-8")
+    root = html_parser.fromstring(html_str.encode("utf-8"), parser=parser)
     try:
         body = root.xpath("./body")[0]
     except IndexError:
