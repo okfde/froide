@@ -9,7 +9,7 @@ const LetterMixin = {
     },
     letterSignatureName() {
       let name = ''
-      if (this.user.first_name || this.user.last_name) {
+      if (this.user && (this.user.first_name || this.user.last_name)) {
         name = `${this.user.first_name || ''} ${this.user.last_name || ''}`
       }
       return name.trim()
