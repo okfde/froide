@@ -43,11 +43,12 @@ SEP_REPL = "+"
 MAX_BOUNCE_AGE = settings.FROIDE_CONFIG["bounce_max_age"]
 
 MAX_BOUNCE_COUNT = 20
-HARD_BOUNCE_COUNT = 3
-HARD_BOUNCE_PERIOD = datetime.timedelta(seconds=3 * 7 * 24 * 60 * 60)  # 3 weeks
+HARD_BOUNCE_COUNT = 2
+WEEK = 7 * 24 * 60 * 60
+HARD_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * WEEK)
 
 SOFT_BOUNCE_COUNT = 5
-SOFT_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * 7 * 24 * 60 * 60)  # 5 weeks
+SOFT_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * WEEK)
 
 
 def b32_encode(s):
