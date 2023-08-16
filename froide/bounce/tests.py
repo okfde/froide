@@ -78,13 +78,13 @@ class BounceTest(TestCase):
             ]
 
         bounce = Bounce(
-            user=None, email="a@example.org", bounces=bounce_factory([1, 5])
+            user=None, email="a@example.org", bounces=bounce_factory([1, 40])
         )
         result = check_deactivation_condition(bounce)
         self.assertFalse(result)
 
         user = UserFactory()
-        bounce = Bounce(user=user, email=user.email, bounces=bounce_factory([1, 5]))
+        bounce = Bounce(user=user, email=user.email, bounces=bounce_factory([1, 40]))
         result = check_deactivation_condition(bounce)
         self.assertFalse(result)
 
