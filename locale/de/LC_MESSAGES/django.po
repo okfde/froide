@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-03 13:45+0200\n"
-"PO-Revision-Date: 2023-08-03 12:46+0100\n"
+"POT-Creation-Date: 2023-08-23 12:24+0200\n"
+"PO-Revision-Date: 2023-08-23 12:32+0200\n"
 "Last-Translator: Karl Engelhardt <karl.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -1324,6 +1324,7 @@ msgstr "Zwei-Faktor-Login-Methoden verwalten"
 
 #: froide/account/templates/account/settings.html
 #: froide/account/templates/account/settings_base.html froide/proof/apps.py
+#: froide/proof/models.py
 msgid "Proofs"
 msgstr "Nachweise"
 
@@ -9044,7 +9045,7 @@ msgstr "Konto-Überprüfung durch Moderator:in angefordert"
 msgid "Admins have been notified."
 msgstr "Admins wurden benachrichtigt."
 
-#: froide/proof/forms.py
+#: froide/proof/forms.py froide/proof/models.py
 msgid "Proof"
 msgstr "Nachweis"
 
@@ -9072,6 +9073,28 @@ msgid "Store this proof in your account for repeated use."
 msgstr ""
 "Wenn Sie diesen Nachweis öfter verwenden, können Sie ihn in Ihrem Konto "
 "speichern."
+
+#: froide/proof/forms.py
+#, python-brace-format
+msgid ""
+"By checking this box, I agree that the image file I have selected and "
+"redacted may be stored by {site_name} in my user account, so that I can use "
+"it as proof of identity in future requests if necessary. I certify that I "
+"am the owner of this document. I understand that my consent is voluntary "
+"and that I can revoke it at any time with effect for the future. I have "
+"taken note of the information on the recommended redactions and the <a "
+"href=\"{url_privacy}\" target=\"_blank\">data protection declaration</a>."
+msgstr ""
+"Mit dem Anhaken willige ich ein, dass die von mir ausgewählte und "
+"geschwärzte Bilddatei von der Open Knowledge Foundation Deutschland e.V. "
+"(Projekt {site_name}) in meinem {site_name}-Konto hinterlegt wird, damit "
+"ich sie bei zukünftigen Anfragen im Bedarfsfall als Identitätsnachweis an "
+"Behörden übermitteln kann. Zudem versichere ich, der im Nachweis angegebene "
+"Inhaber dieses Dokuments zu sein. Ich weiß, dass meine Einwilligung "
+"freiwillig ist und ich Sie jederzeit mit Wirkung für die Zukunft widerrufen "
+"kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a "
+"href=\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe "
+"ich zur Kenntnis genommen."
 
 #: froide/proof/forms.py
 msgid "Proof of identity"
