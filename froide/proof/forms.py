@@ -1,8 +1,11 @@
 from typing import Optional
 
 from django import forms
+from django.conf import settings
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.content_urls import get_content_url
 from froide.helper.form_utils import JSONMixin
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
@@ -63,11 +66,21 @@ class ProofMessageForm(JSONMixin, ProofSettingsForm):
             proof_choice = get_proof_choice_field(user)
             if proof_choice:
                 self.fields["proof"] = proof_choice
-        # FIXME: not authenticated users can't send proof
-        # They can't send messages either, so this is a non-case
-        if not user.is_authenticated:
-            del self.fields["proof_store"]
-
+        self.fields["proof_store"].help_text = format_html(
+            _(
+                "By checking this box, I agree that the image file I have selected "
+                "and redacted may be stored by {site_name} in my user account, so "
+                "that I can use it as proof of identity in future requests if "
+                "necessary. I certify that I am the owner of this document. I "
+                "understand that my consent is voluntary and that I can revoke it "
+                "at any time with effect for the future. I have taken note of the "
+                "information on the recommended redactions and the "
+                '<a href="{url_privacy}" target="_blank">data protection '
+                "declaration</a>."
+            ),
+            site_name=settings.SITE_NAME,
+            url_privacy=get_content_url("privacy"),
+        )
         self.order_fields(self.field_order)
 
     def get_js_context(self):
