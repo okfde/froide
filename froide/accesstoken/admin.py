@@ -9,4 +9,4 @@ from .models import AccessToken
 class AccessTokenAdmin(MFAAndRecentAuthRequiredAdminMixin, admin.ModelAdmin):
     raw_id_fields = ("user",)
     list_filter = ("purpose",)
-    search_fields = ("user__email",)
+    search_fields = ("user__email_deterministic",)

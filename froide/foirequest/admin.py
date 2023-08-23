@@ -1055,7 +1055,7 @@ class RequestDraftAdmin(admin.ModelAdmin):
         "subject",
     )
     list_filter = ("public", "full_text")
-    search_fields = ["subject", "user__email"]
+    search_fields = ["subject", "user__email_deterministic"]
     ordering = ("-save_date",)
     date_hierarchy = "save_date"
     raw_id_fields = ("user", "publicbodies", "request", "project")
