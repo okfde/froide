@@ -43,6 +43,10 @@ class Proof(models.Model):
 
     mimetype = "image/jpeg"
 
+    class Meta:
+        verbose_name = _("Proof")
+        verbose_name_plural = _("Proofs")
+
     def __str__(self):
         return _("{name} (uploaded {timestamp})").format(
             name=self.name, timestamp=date_format(self.timestamp, "SHORT_DATE_FORMAT")
