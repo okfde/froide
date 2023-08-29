@@ -51,10 +51,10 @@ class DocumentFilter(FCDocumentFilter):
         self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
 
     def filter_publicbody(self, qs, name, value):
-        return self.apply_filter(qs, name, publicbody=value)
+        return qs.filter(publicbody=value)
 
     def filter_foirequest(self, qs, name, value):
-        return self.apply_filter(qs, name, foirequest=value)
+        return qs.filter(foirequest=value)
 
 
 class PageDocumentFilterset(BaseSearchFilterSet):
