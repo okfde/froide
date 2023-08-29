@@ -181,7 +181,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         return self.apply_filter(qs, name, publicbody=value.id)
 
     def filter_foirequest(self, qs, name, value):
-        return self.apply_filter(qs, name, foirequest=value)
+        return self.apply_filter(qs, name, foirequest=value.id)
 
     def filter_collection(self, qs, name, collection):
         if not collection.can_read(self.request):
