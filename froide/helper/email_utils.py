@@ -303,7 +303,7 @@ def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
     return AuthenticityStatus(
         check=AuthenticityCheck.SPF,
         status=status,
-        failed=status.lower() == "fail",
+        failed=status.lower() == "fail" or status.lower() == "softfail",
         details=header,
     )
 
