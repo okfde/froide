@@ -93,7 +93,7 @@
           </button>
         </div>
 
-        <div class="btn-group me-1">
+        <div class="input-group me-1">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -117,7 +117,7 @@
           v-if="hasRedactions || hasPassword"
           class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
           <button class="btn btn-dark" @click="redact">
-            <i class="fa fa-paint-brush" />
+            <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
             </template>
@@ -144,8 +144,7 @@
               }"
               type="submit"
               @click="confirmNoRedactions">
-              <i class="fa fa-check" />
-              {{ i18n.publishWithoutRedaction }}
+              <i class="fa fa-check me-2" />{{ i18n.publishWithoutRedaction }}
             </button>
           </form>
           <a v-else class="btn btn-secondary" :href="attachmentUrl">
@@ -189,7 +188,7 @@
     </div>
     <div class="row">
       <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-auto ms-auto">
+        <div class="input-group me-auto ms-auto">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
