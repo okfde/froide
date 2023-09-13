@@ -20,7 +20,7 @@
       {{ i18n.review }}
     </a>
     <template v-if="hasSubMenu">
-      <div class="btn-group-sm" role="group">
+      <div class="btn-group btn-group-sm" role="group">
         <button
           type="button"
           class="btn btn-outline-secondary dropdown-toggle"
