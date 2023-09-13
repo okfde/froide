@@ -51,7 +51,7 @@
 
         <!-- approved or redacted badges-->
         {% if attachment.redacted or attachment.converted and not attachment.approved %}
-          <span class="me-1 px-1 small text-nowrap bg-gray-600 text-white">
+          <span class="me-1 badge small text-nowrap bg-gray-600 text-white">
             {% blocktrans %}protected original{% endblocktrans %}
           </span>
         {% endif %}
@@ -63,7 +63,7 @@
           {% endif %}
         {% endif %}
         {% if attachment.is_redacted %}
-          <span class="me-1 px-1 small text-nowrap bg-dark text-white">
+          <span class="me-1 badge small text-nowrap bg-dark text-white">
             {% blocktrans %}redacted{% endblocktrans %}
           </span>
         {% endif %}
