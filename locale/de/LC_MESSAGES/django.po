@@ -684,9 +684,9 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"            Ihre Anfrage „<a href=\"%(url)s\">%(title)s</a>“ wurde "
+"              Ihre Anfrage „<a href=\"%(url)s\">%(title)s</a>“ wurde "
 "versendet.\n"
-"          "
+"            "
 
 #: froide/account/templates/account/confirmed.html
 #: froide/foirequest/templates/foirequest/sent.html
@@ -5861,7 +5861,7 @@ msgstr "RSS-Feed"
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #: froide/foirequest/views/request.py
 msgid "Download"
-msgstr "Download"
+msgstr "Herunterladen"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Download as ZIP"
@@ -11491,12 +11491,11 @@ msgstr ""
 "%(ref)s</strong>."
 
 #: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
-#, fuzzy
 msgid ""
 "This message has an attached proof of identity that I kindly ask you to "
 "delete after you have verifyed it (Art. 17 GDPR)."
 msgstr ""
-"Diese Nachricht hat einen Identitätsnachweis beigefügt, den Sie bitte nach "
+"Dieser Nachricht ist ein Identitätsnachweis beigefügt, den Sie bitte nach "
 "Verifizierung löschen (Art. 17 DSGVO)."
 
 #: froide/foirequest/models/message.py
