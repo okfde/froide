@@ -31,4 +31,12 @@ repos:
           - prettier
           - eslint-plugin-prettier
           - eslint-config-standard
+  - repo: local
+    hooks:
+    - id: make-messages
+      name: Update translation files
+      entry: make messagesde
+      language: system
+      pass_filenames: false
+
 exclude: ^.*/migrations/.*$|eslintrc.js
