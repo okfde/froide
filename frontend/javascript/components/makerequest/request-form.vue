@@ -82,9 +82,7 @@
     <div class="row">
       <div class="col-md-12">
         <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
-          <p v-for="error in nonFieldErrors" :key="error">
-            {{ error }}
-          </p>
+          <p v-for="error in nonFieldErrors" :key="error" v-html="error" />
         </div>
 
         <div class="mb-3">
