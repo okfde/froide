@@ -12,6 +12,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="foimessage",
             name="confirmation_sent",
+            field=models.BooleanField(verbose_name="Confirmation sent?", default=True),
+            preserve_default=False,
+        ),
+        migrations.AlterField(
+            model_name="foimessage",
+            name="confirmation_sent",
             field=models.BooleanField(default=False, verbose_name="Confirmation sent?"),
         ),
     ]
