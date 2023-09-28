@@ -255,7 +255,7 @@ export default {
         !(
           !!this.attachment.redacted ||
           !!this.attachment.converted ||
-          this.creatingDocument
+          this.document.creatingDocument
         )
       )
     },
