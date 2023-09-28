@@ -360,9 +360,17 @@ const initTabs = (): void => {
     const hashNav = Tab.getInstance(hashSelector)
     if (hashNav != null) {
       hashNav.show()
-      // scroll tab into view
-      hashElement.scrollIntoView()
+    } else {
+      // Show correspondence tab if hash does not belong to a tab
+      const correspondenceTabLink = document.querySelector(
+        '#correspondence-tab'
+      )
+      if (correspondenceTabLink) {
+        const tabInstance = Tab.getInstance(correspondenceTabLink)
+        tabInstance?.show()
+      }
     }
+    hashElement.scrollIntoView()
   }
 }
 
