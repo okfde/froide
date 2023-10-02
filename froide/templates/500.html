@@ -1,14 +1,10 @@
-{% extends 'base.html' %}
+{% extends "./error_base.html" %}
 {% load i18n %}
-{% load static %}
 
-{% block css %}
-<link href="{% static 'css/main.css' %}" rel="stylesheet">
-{% endblock %}
+{% block error %}
+{% blocktrans %}500 - Server Error{% endblocktrans %}
+{% endblock error %}
 
-{% block app_body %}
-<h2>{% blocktrans %}500 - Server Error{% endblocktrans %}</h2>
-{% if request.sentry.id %}
-<p>{% blocktrans with ref=request.sentry.id %}If you need assistance, you may reference this error as <strong>{{ ref }}</strong>.{% endblocktrans %}</p>
-{% endif %}
-{% endblock %}
+{% block error_description %}
+{% blocktrans with ref=request.sentry.id %}We logged the error and are working on fixing it. If you need to contact us, please use the reference <code>{{ ref }}</code>.{% endblocktrans %}
+{% endblock error_description %}
