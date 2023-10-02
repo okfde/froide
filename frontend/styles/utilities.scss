@@ -1,19 +1,18 @@
-@use "sass:map";
+@use 'sass:map';
+@use 'sass:list';
 
 @each $name in $froide-theme {
   .text-bg-#{$name} {
     color: var(--froide-#{$name}-color);
     background-color: var(--froide-#{$name}-bg);
-    --bs-link-color-rgb: var(--froide-#{$name}-color-rgb);
-    --bs-link-hover-color-rgb: var(--froide-#{$name}-color-rgb);
+    --#{$prefix}heading-color: var(--froide-#{$name}-color);
   }
   .bg-#{$name} {
     background-color: var(--froide-#{$name}-bg);
   }
   .text-#{$name} {
     color: var(--froide-#{$name}-color);
-    --bs-link-color-rgb: var(--froide-#{$name}-color-rgb);
-    --bs-link-hover-color-rgb: var(--froide-#{$name}-color-rgb);
+    --#{$prefix}heading-color: var(--froide-#{$name}-color);
   }
 }
 
@@ -21,31 +20,35 @@
 // bootstrap colors
 
 $bootstrap-extras: (
-  "body": (
-    "variable": "body",
+  'body': (
+    'body-color',
+    'body-bg'
   ),
-  "body-secondary": (
-    "variable": "secondary",
+  'body-secondary': (
+    'secondary-color',
+    'secondary-bg'
   ),
-  "body-tertiary": (
-    "variable": "tertiary",
+  'body-tertiary': (
+    'tertiary',
+    'tertiary-bg'
   ),
+  'light-subtle': (
+    'light-text-emphasis',
+    'light-bg-subtle'
+  ),
+  'dark-subtle': (
+    'dark-text-emphasis',
+    'dark-bg-subtle'
+  )
 );
 
-@each $name, $data in $bootstrap-extras {
-  $varname: map.get($data, "variable");
+@each $name, $vars in $bootstrap-extras {
   .text-bg-#{$name} {
-    color: var(--#{$prefix}#{$varname}-color);
-    background-color: var(--#{$prefix}#{$varname}-bg);
+    $color: list.nth($vars, 1);
+    $bg: list.nth($vars, 2);
+
+    color: var(--#{$prefix}#{$color});
+    background-color: var(--#{$prefix}#{$bg});
+    --#{$prefix}heading-color: var(--froide-#{$name}-color);
   }
-}
-
-.text-bg-light-subtle {
-  color: var(--#{$prefix}light-text-emphasis);
-  background-color: var(--#{$prefix}light-bg-subtle);
-}
-
-.text-bg-dark-subtle {
-  color: var(--#{$prefix}dark-text-emphasis);
-  background-color: var(--#{$prefix}dark-bg-subtle);
 }

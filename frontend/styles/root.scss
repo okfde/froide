@@ -20,7 +20,7 @@
 
   --shadow-blue: #{transparentize($blue-700, 0.85)};
   --shadow-gray: #{transparentize($gray-700, 0.6)};
-  --shadow-yellow: #{transparentize($yellow-700, 0.85)};
+  --shadow-yellow: #{transparentize($yellow-300, 0.85)};
 
   @each $name, $value in $froide-theme-dark {
     $bg: map.get($value, "bg");
