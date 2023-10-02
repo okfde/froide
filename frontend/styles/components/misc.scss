@@ -124,3 +124,28 @@ input.copy-text {
   aspect-ratio: 3/2;
   object-fit: contain;
 }
+
+.error-redacted-bar {
+  height: 1.25em;
+}
+
+.error-page-description {
+  position: relative;
+
+  span {
+    background-color: var(--#{$prefix}body-bg);
+    padding-bottom: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--redacted);
+    height: 1.25em;
+    z-index: -1;
+  }
+}

@@ -1,6 +1,10 @@
-{% extends 'base.html' %}
+{% extends "./error_base.html" %}
 {% load i18n %}
 
-{% block app_body %}
-<h2>{% blocktrans %}400 - Bad Request{% endblocktrans %}</h2>
-{% endblock %}
+{% block error %}
+{% blocktrans %}400 - Bad Request{% endblocktrans %}
+{% endblock error %}
+
+{% block error_description %}
+{% blocktrans %}This one seems to be on you. Please contact us, if this error comes as a surprise.{% endblocktrans %}
+{% endblock error_description %}
