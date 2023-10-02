@@ -1,8 +1,8 @@
 {% load i18n %}
 
-<form action="{% url "foirequest-list" %}" method="get">
+<form action="{% url "foirequest-list" %}" method="get" class="froide-multi-search">
   <div class="d-grid gap-2 d-md-flex">
-    <select class="form-select flex-grow-0 w-auto">
+    <select class="form-select flex-grow-0">
       {% for search in searches %}
       <option value="{{ search.url }}">
         {{ search.title }}
@@ -12,7 +12,7 @@
     <input
       name="q"
       type="search"
-      class="form-control"
+      class="form-control w-100"
       placeholder="{% trans "Search term" %}" />
     <button type="submit" class="btn btn-outline-primary text-nowrap">
       <i class="fa fa-search"></i>
