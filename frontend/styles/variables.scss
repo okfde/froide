@@ -1,3 +1,4 @@
+@use 'sass:map';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/mixins';
 
@@ -58,8 +59,7 @@ $body-color-dark: $gray-400;
 $component-active-color: $white;
 $component-active-bg: $primary;
 $headings-color-dark: $white;
-$body-tertiary-color: rgba($body-color, .75);
-
+$body-tertiary-color: rgba($body-color, 0.75);
 
 // spacing
 $spacer: 1rem;
@@ -87,7 +87,8 @@ $spacers: (
 // Define the maximum width of `.container` for different screen sizes.
 $container-max-widths: (
   sm: 540px,
-  md: 780px, // changed from original Bootstrap 720px for extra space!
+  md: 780px,
+  // changed from original Bootstrap 720px for extra space!
   lg: 960px,
   xl: 1140px,
   xxl: 1320px
@@ -112,31 +113,39 @@ $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
 @import 'bootstrap/scss/variables';
 
-$froide-theme: ("highlight", "callout");
+$froide-theme: ('subtle', 'highlight', 'callout');
 
 $highlight: var(--froide-highlight-bg);
 $highlight-color: var(--froide-highlight-color);
 
 $froide-theme-light: (
-  "highlight": (
-    "bg": $yellow-100,
-    "color": $blue-700,
+  'subtle': (
+    'bg': $blue-100,
+    'color': $blue-800
   ),
-  "callout": (
-    "bg": $blue-10,
-    "color": $blue-700
+  'highlight': (
+    'bg': $yellow-100,
+    'color': $blue-800
   ),
+  'callout': (
+    'bg': $blue-10,
+    'color': $blue-800
+  )
 );
 
 $froide-theme-dark: (
-  "highlight": (
-    "bg": $yellow-600,
-    "color": $white
+  'subtle': (
+    'bg': $blue-900,
+    'color': $white
   ),
-  "callout": (
-    "bg": $blue-800,
-    "color": $white
+  'highlight': (
+    'bg': $yellow-300,
+    'color': $blue-900
   ),
+  'callout': (
+    'bg': $blue-800,
+    'color': $white
+  )
 );
 
 $breadcrumb-divider: quote('›');
