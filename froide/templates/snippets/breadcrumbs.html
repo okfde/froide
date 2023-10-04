@@ -1,0 +1,17 @@
+{% load breadcrumb_helper %}
+
+{% if view.breadcrumbs != None %}
+<nav class="container" aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    {% for breadcrumb in view.breadcrumbs %}
+      <li class="breadcrumb-item">
+        {% if breadcrumb|is_tuple %}
+          <a href="{% url breadcrumb.1 %}">{{ breadcrumb.0 }}</a>
+        {% else %}
+          {{ breadcrumb }}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ol>
+  </nav>
+{% endif %}
