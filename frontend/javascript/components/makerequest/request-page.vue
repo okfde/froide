@@ -7,7 +7,7 @@
       :hide-publicbody-chooser="hidePublicbodyChooser" />
 
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
-      <div v-html="slots['messages']" />
+      <django-slot name="messages" />
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
@@ -22,15 +22,15 @@
                 :scope="pbScope"
                 :config="config">
                 <template #publicbody-missing>
-                  <div v-html="slots['publicbody-missing']" />
+                  <django-slot name="publicbody-missing" />
                 </template>
               </publicbody-multi-chooser>
             </div>
             <div v-else>
               <div class="row">
                 <div class="col-lg-7">
-                  <div v-html="slots['publicbody-legend-title']" />
-                  <div v-html="slots['publicbody-help-text']" />
+                  <django-slot name="publicbody-legend-title" />
+                  <django-slot name="publicbody-help-text" />
                 </div>
               </div>
               <div class="row">
@@ -54,7 +54,7 @@
                   </template>
                 </div>
                 <div class="col-lg-4 small">
-                  <div v-html="slots['publicbody-missing']" />
+                  <django-slot name="publicbody-missing" />
                 </div>
               </div>
             </div>
@@ -90,10 +90,10 @@
               :submitting="submitting"
               @setStepSelectPublicBody="setStepSelectPublicBody">
               <template #request-hints>
-                <div v-html="slots['request-hints']" />
+                <django-slot name="request-hints" />
               </template>
               <template #request-legend-title>
-                <div v-html="slots['request-legend-title']" />
+                <django-slot name="request-legend-title" />
               </template>
             </request-form>
 
@@ -175,6 +175,7 @@ import RequestForm from './request-form'
 import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
+import DjangoSlot from '../../lib/django-slot.vue'
 
 import { Modal } from 'bootstrap'
 
@@ -215,7 +216,8 @@ export default {
     RequestForm,
     RequestFormBreadcrumbs,
     RequestPublic,
-    UserTerms
+    UserTerms,
+    DjangoSlot
   },
   mixins: [I18nMixin, LetterMixin],
   props: {
