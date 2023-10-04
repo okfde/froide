@@ -2,7 +2,7 @@
 
 <form action="{% url "foirequest-list" %}" method="get" class="froide-multi-search">
   <div class="d-grid gap-2 d-md-flex">
-    <select class="form-select flex-grow-0">
+    <select class="form-select flex-grow-0{% if small %} form-select-sm{% endif %}">
       {% for search in searches %}
       <option value="{{ search.url }}">
         {{ search.title }}
@@ -12,11 +12,12 @@
     <input
       name="q"
       type="search"
-      class="form-control w-100"
+      class="form-control w-100{% if small %} form-control-sm{% endif %}"
       placeholder="{% trans "Search term" %}" />
-    <button type="submit" class="btn btn-outline-primary text-nowrap">
+    <button type="submit" class="btn btn-outline-primary text-nowrap{% if small %} btn-sm{% endif %}">
       <i class="fa fa-search"></i>
-      {% trans "Search" %}
+      <span class="visually-hidden">{% trans "Search" %}</span>
+      <span class="d-md-none d-lg-inline" aria-hidden="true">{% trans "Search" %}</span>
     </button>
   </div>
 </form>
