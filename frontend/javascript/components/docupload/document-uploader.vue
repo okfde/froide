@@ -1,7 +1,7 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
     <div v-if="imageDocuments.length > 0" class="images mt-5">
-      <div v-html="slots['convert-images']" />
+      <django-slot name="convert-images" />
       <image-document
         v-for="doc in imageDocuments"
         :key="doc.id"
@@ -16,7 +16,7 @@
         @notnew="doc.new = false" />
     </div>
     <div v-if="pdfDocuments.length > 0" class="documents mt-5">
-      <div v-html="slots['documents']" />
+      <django-slot name="documents" />
       <div class="mt-3 mb-3">
         <div class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom">
           <div class="col-auto me-md-auto">
@@ -64,7 +64,7 @@
 
     <div v-if="otherAttachments.length > 0" class="mt-5">
       <hr />
-      <div v-html="slots['other-files']" />
+      <django-slot name="other-files" />
       <file-document
         v-for="doc in otherAttachments"
         :key="doc.id"
@@ -76,7 +76,7 @@
     </div>
 
     <div v-if="canUpload" class="upload mt-5">
-      <div v-html="slots['upload-header']" />
+      <django-slot name="upload-header" />
       <file-uploader
         class="mb-3 mt-2"
         :config="config"
@@ -90,6 +90,7 @@
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
 import { postData } from '../../lib/api.js'
+import DjangoSlot from '../../lib/django-slot.vue'
 
 import { approveAttachment, createDocument } from './lib/document_utils'
 import ImageDocument from './image-document.vue'
@@ -99,6 +100,7 @@ import FileUploader from '../upload/file-uploader.vue'
 export default {
   name: 'DocumentUploader',
   components: {
+    DjangoSlot,
     ImageDocument,
     FileDocument,
     FileUploader

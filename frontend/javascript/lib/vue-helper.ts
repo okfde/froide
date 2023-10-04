@@ -2,7 +2,7 @@ import { VueElement, createApp } from 'vue'
 
 type PropValue = string | boolean | Record<string, unknown> | Array<unknown>
 type Props = Record<string, PropValue>
-type Slots = Record<string, string>
+export type DjangoSlots = Record<string, DocumentFragment> | undefined
 interface OtherAttrs {
   attrs: Record<string, string>
   class: Record<string, boolean>
@@ -49,26 +49,22 @@ function getPropsFromElement(el: HTMLElement): Props {
   return props
 }
 
-function getSlotData(el: HTMLElement): Slots {
+function getSlotData(el: HTMLElement): DjangoSlots {
   const slotEls = el.querySelectorAll('template')
-  const slots: Slots = {}
-  for (let i = 0; i < slotEls.length; i += 1) {
-    const slotEl = slotEls[i]
-    const attrs = slotEl.attributes
-    let slotName = null
-    for (let i = 0; i < attrs.length; i++) {
-      if (attrs[i].name.startsWith('v-slot:')) {
-        slotName = attrs[i].name.replace('v-slot:', '')
-        break
-      }
+  const slots: DjangoSlots = {}
+
+  for (const slotEl of slotEls) {
+    const slotName = slotEl.dataset.slot
+
+    if (slotName) {
+      slots[slotName] = Object.freeze(
+        (slotEl.cloneNode(true) as HTMLTemplateElement).content
+      )
     }
-    if (slotName === null) {
-      continue
-    }
-    slots[slotName] = slotEl.innerHTML
   }
   return slots
 }
+
 function getOtherAttrs(el: HTMLElement): OtherAttrs {
   const other: OtherAttrs = {
     attrs: {},
@@ -93,8 +89,7 @@ function createAppWithProps(el: string | HTMLElement, component: VueElement) {
     Fake VueJS compiler which does only the following:
     - takes class and id attributes and sets them on new element
     - takes other attributes of element and makes them to props object
-    - takes containing slot content elements and
-      adds them as *static* slots with their innerhtml
+    - takes containing slot content elements, which are accessible using <django-slot>
   */
   let checkedEl: HTMLElement | null = null
   if (typeof el === 'string') {
@@ -107,13 +102,17 @@ function createAppWithProps(el: string | HTMLElement, component: VueElement) {
   }
   const props = getPropsFromElement(checkedEl)
   const slotData = getSlotData(checkedEl)
+
   const otherAttrs = getOtherAttrs(checkedEl)
 
-  return createApp(component, {
-    slots: slotData,
+  const app = createApp(component, {
     ...props,
     ...otherAttrs
   })
+
+  app.provide('django-slots', slotData)
+
+  return app
 }
 
 export { createAppWithProps }
