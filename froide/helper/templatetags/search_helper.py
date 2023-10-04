@@ -17,7 +17,7 @@ def render_search_list(context, current, num_results=None, query=""):
 
 
 @register.inclusion_tag("helper/search/multi_search.html", takes_context=True)
-def multi_search(context):
+def multi_search(context, small=False):
     searches = search_registry.get_searches(context["request"])
 
-    return {"searches": searches}
+    return {"searches": searches, "small": small}
