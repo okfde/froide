@@ -295,6 +295,7 @@ class FoiRequest(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
+    description_redacted = models.TextField(_("Redacted Description"), blank=True)
     summary = models.TextField(_("Summary"), blank=True)
 
     public_body = models.ForeignKey(
@@ -627,8 +628,13 @@ class FoiRequest(models.Model):
         return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
-        user_replacements = self.user.get_redactions()
-        return redact_plaintext(self.description, user_replacements=user_replacements)
+        if not self.description_redacted:
+            user_replacements = self.user.get_redactions()
+            self.description_redacted = redact_plaintext(
+                self.description, user_replacements=user_replacements
+            )
+            self.save()
+        return self.description_redacted
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))
