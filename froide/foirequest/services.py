@@ -16,7 +16,7 @@ from froide.account.services import AccountService
 from froide.helper.db_utils import save_obj_with_slug
 from froide.helper.email_parsing import ParsedEmail
 from froide.helper.storage import make_unique_filename
-from froide.helper.text_utils import redact_subject
+from froide.helper.text_utils import redact_plaintext, redact_subject
 from froide.problem.models import ProblemReport
 
 from .hooks import registry
@@ -166,6 +166,7 @@ class CreateRequestService(BaseService):
     def create_request(self, publicbody, sequence=0):
         data = self.data
         user = data["user"]
+        user_replacements = user.get_redactions()
 
         now = timezone.now()
         request = FoiRequest(
@@ -173,6 +174,9 @@ class CreateRequestService(BaseService):
             public_body=publicbody,
             user=data["user"],
             description=data["body"],
+            description_redacted=redact_plaintext(
+                data["body"], user_replacements=user_replacements
+            ),
             public=data["public"],
             language=data.get("language", ""),
             site=Site.objects.get_current(),
@@ -219,7 +223,6 @@ class CreateRequestService(BaseService):
             request.tags.add(*[t[:100] for t in data["tags"]])
 
         subject = "%s [#%s]" % (request.title, request.pk)
-        user_replacements = user.get_redactions()
         message = FoiMessage(
             request=request,
             sent=False,
