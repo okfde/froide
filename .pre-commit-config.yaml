@@ -31,12 +31,17 @@ repos:
           - prettier
           - eslint-plugin-prettier
           - eslint-config-standard
+  - repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.33.0
+    hooks:
+      - id: djlint-reformat-django
+      - id: djlint-django
   - repo: local
     hooks:
-    - id: make-messages
-      name: Update translation files
-      entry: make messagesde
-      language: system
-      pass_filenames: false
+      - id: make-messages
+        name: Update translation files
+        entry: make messagesde
+        language: system
+        pass_filenames: false
 
 exclude: ^.*/migrations/.*$|eslintrc.js
