@@ -17,8 +17,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-10-09 14:38+0200\n"
-"PO-Revision-Date: 2023-09-13 17:38+0200\n"
-"Last-Translator: Karl Engelhardt <karl.engelhardt@okfn.de>\n"
+"PO-Revision-Date: 2023-10-09 16:55+0000\n"
+"Last-Translator: krmax44 <hi@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -8273,9 +8273,8 @@ msgid "Press to select"
 msgstr "Enter zum Auswählen"
 
 #: froide/helper/templates/helper/search/multi_search.html
-#, fuzzy
 msgid "Search term"
-msgstr "Suchbegriffe"
+msgstr "Suchbegriff"
 
 #: froide/helper/templates/helper/search/search_base.html
 #, python-format
@@ -10579,6 +10578,8 @@ msgid ""
 "This one seems to be on you. Please contact us, if this error comes as a "
 "surprise."
 msgstr ""
+"Wir vermuten, dass Sie fehlerhafte Eingaben gemacht haben. Bitte "
+"kontaktieren Sie uns, falls dies nicht der Fall sein sollte."
 
 #: froide/templates/403.html
 msgid "403 - Forbidden"
@@ -10598,7 +10599,7 @@ msgstr "404 - Nicht Gefunden"
 
 #: froide/templates/404.html
 msgid "Nothing to see here."
-msgstr ""
+msgstr "Hier gibt es nichts zu sehen."
 
 #: froide/templates/500.html
 msgid "500 - Server Error"
@@ -10610,6 +10611,9 @@ msgid ""
 "We logged the error and are working on fixing it. If you need to contact us, "
 "please use the reference <code>%(ref)s</code>."
 msgstr ""
+"Wir haben den Fehler festgehalten und arbeiten an einer Lösung. Falls Sie "
+"uns kontaktieren möchten, geben Sie bitte die Referenz <code>%(ref)s</code> "
+"an."
 
 #: froide/templates/admin/base_site.html
 #, python-format
@@ -10643,6 +10647,8 @@ msgstr ""
 #: froide/templates/error_base.html
 msgid "You can try searching or go back to the <a href=\"/\">Home page</a>."
 msgstr ""
+"Mit der Suche können Sie vielleicht finden, wonach Sie suchen – oder <a href="
+"\"/\">zurück zur Startseite</a>."
 
 #: froide/templates/footer.html
 msgid ""
