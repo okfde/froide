@@ -7,6 +7,9 @@ register = template.Library()
 
 @register.inclusion_tag("helper/search/search_list.html", takes_context=True)
 def render_search_list(context, current, num_results=None, query=""):
+    if context.get("request") is None:
+        return {}
+
     searches = search_registry.get_searches(context["request"])
     return {
         "current": current,
