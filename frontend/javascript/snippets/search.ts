@@ -10,6 +10,11 @@ document
       form.action = select.value
     })
 
+    /*
+      the select has options like /documents/search/.
+      if the first path segment (here /documents/) of that url matches the
+      first path segment of the current window URL, select that option.
+    */
     const searchBases = [...select.querySelectorAll('option')].map((o) => [
       firstPathSegment(o.value),
       o.value
