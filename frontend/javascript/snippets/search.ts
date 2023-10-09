@@ -23,7 +23,6 @@ document
     ])
     const currentBase = firstPathSegment(window.location.pathname)
     const bestMatch = searchBases.find((s) => s[0] === currentBase)?.[1]
-    console.log(bestMatch)
 
     if (bestMatch !== undefined) {
       form.action = bestMatch
