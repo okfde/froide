@@ -1,3 +1,5 @@
+// multi-search form
+
 const firstPathSegment = (path: string) => path.split('/')[1]
 
 document
@@ -27,4 +29,15 @@ document
       form.action = bestMatch
       select.value = bestMatch
     }
+  })
+
+// auto-submit form helper
+// form.froide-auto-submit will submit the form when the value of any of its
+// select inputs changes
+document
+  .querySelectorAll<HTMLFormElement>('form.froide-auto-submit')
+  .forEach((form) => {
+    form.querySelectorAll('select').forEach((select) => {
+      select.addEventListener('change', () => form.submit())
+    })
   })
