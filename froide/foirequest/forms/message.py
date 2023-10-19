@@ -16,8 +16,7 @@ from froide.account.forms import AddressBaseForm
 from froide.account.services import AccountService
 from froide.helper.fields import MultipleFileField
 from froide.helper.storage import make_filename, make_unique_filename
-from froide.helper.text_diff import get_diff_chunks
-from froide.helper.text_utils import redact_subject
+from froide.helper.text_utils import apply_user_redaction, redact_subject
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
     BootstrapFileInput,
@@ -809,32 +808,9 @@ class RedactMessageForm(forms.Form):
             if not self.cleaned_data.get("subject_length"):
                 raise forms.ValidationError
 
-    def redact_part(self, original, instructions, length):
-        REDACTION_MARKER = str(_("[redacted]"))
-
-        if not instructions:
-            return original
-
-        chunks = get_diff_chunks(original)
-
-        # Sanity check chunk length
-        if len(chunks) != length:
-            raise IndexError
-
-        for index in instructions:
-            chunks[index] = REDACTION_MARKER
-
-        redacted = "".join(chunks)
-        # Replace multiple connecting redactions with one
-        return re.sub(
-            "{marker}(?: {marker})+".format(marker=re.escape(REDACTION_MARKER)),
-            REDACTION_MARKER,
-            redacted,
-        )
-
     def save(self, message):
         try:
-            redacted_subject = self.redact_part(
+            redacted_subject = apply_user_redaction(
                 message.subject,
                 self.cleaned_data["subject"],
                 self.cleaned_data["subject_length"],
@@ -844,7 +820,7 @@ class RedactMessageForm(forms.Form):
             logging.warning(e)
 
         try:
-            redacted_content = self.redact_part(
+            redacted_content = apply_user_redaction(
                 message.plaintext,
                 self.cleaned_data["content"],
                 self.cleaned_data["content_length"],

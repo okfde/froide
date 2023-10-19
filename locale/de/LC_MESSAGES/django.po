@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-06 14:37+0100\n"
+"POT-Creation-Date: 2023-11-07 14:49+0100\n"
 "PO-Revision-Date: 2023-10-09 16:55+0000\n"
 "Last-Translator: krmax44 <hi@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -2839,10 +2839,6 @@ msgstr "Gescanntes Dokument"
 msgid "Bad URL"
 msgstr "Falsche URL"
 
-#: froide/foirequest/forms/message.py
-msgid "[redacted]"
-msgstr "[geschwärzt]"
-
 #. Translators: replacement for person name in filename
 #: froide/foirequest/forms/message.py froide/foirequest/forms/postal.py
 #: froide/foirequest/services.py
@@ -2996,6 +2992,13 @@ msgstr "Bitte geben Sie ein Ergebnis dieser Anfrage an"
 #: froide/foirequest/forms/request.py
 msgid "Law"
 msgstr "Gesetz"
+
+#: froide/foirequest/forms/request.py
+msgid ""
+"Could not automatically redact first message. Please check the message "
+"manually."
+msgstr "Die erste Nachricht konnte nicht automatisch geschwärzt werden. "
+"Bitte überprüfen sie die Nachricht manuell"
 
 #: froide/foirequest/models/attachment.py
 msgid "Belongs to message"
@@ -3221,6 +3224,10 @@ msgstr "eine Behörde wurde vorgeschlagen"
 #: froide/foirequest/models/event.py
 msgid "the request was redirected"
 msgstr "die Anfrage wurde umgeleitet"
+
+#: froide/foirequest/models/event.py
+msgid "the description was redacted"
+msgstr "die Beschreibung wurde geschwärzt"
 
 #: froide/foirequest/models/event.py
 #, python-brace-format
@@ -3775,6 +3782,10 @@ msgstr "Sichtbar für Anfragesteller:in"
 #: froide/foirequest/models/request.py
 msgid "Visible to public"
 msgstr "Sichtbar für Öffentlichkeit"
+
+#: froide/foirequest/models/request.py
+msgid "Redacted Description"
+msgstr "Geschwärzte Beschreibung"
 
 #: froide/foirequest/models/request.py
 msgid "Summary"
@@ -4461,6 +4472,7 @@ msgid "Don't forget to set the status of this request!"
 msgstr "Bitte vergessen Sie nicht den Status dieser Anfrage anzugeben!"
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 #: froide/foirequest/views/message.py
 msgid "Redact"
@@ -6278,6 +6290,15 @@ msgstr "RSS-Feed für Anfrage '%(title)s'"
 msgid "Atom feed for request '%(title)s'"
 msgstr "Atom-Feed für Anfrage '%(title)s'"
 
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
+#: froide/foirequest/templates/foirequest/snippets/message_redact.html
+msgid "Click on the words you wish to redact or unredact."
+msgstr "Klicken Sie auf die Worte, die Sie schwärzen oder entschwärzen wollen."
+
+#: froide/foirequest/templates/foirequest/snippets/description_redact.html
+msgid "Change request text redaction"
+msgstr "Schwärzungen ändern"
+
 #: froide/foirequest/templates/foirequest/snippets/make_same_request.html
 #, python-format
 msgid ""
@@ -6385,10 +6406,6 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 msgid "Unredact footer"
 msgstr "Ende der Nachricht entschwärzen"
-
-#: froide/foirequest/templates/foirequest/snippets/message_redact.html
-msgid "Click on the words you wish to redact or unredact."
-msgstr "Klicken Sie auf die Worte, die Sie schwärzen oder entschwärzen wollen."
 
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 msgid "Change message redaction"
@@ -8358,6 +8375,10 @@ msgstr "<<Name und E-Mail-Adresse>>"
 #: froide/helper/text_utils.py
 msgid "<<removed>>"
 msgstr "<<entfernt>>"
+
+#: froide/helper/text_utils.py
+msgid "[redacted]"
+msgstr "[geschwärzt]"
 
 #: froide/letter/apps.py
 msgid "Letter"

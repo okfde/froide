@@ -2,7 +2,7 @@ import json
 import re
 from collections import namedtuple
 from datetime import timedelta
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 import django.dispatch
 from django.conf import settings
@@ -22,6 +22,7 @@ from taggit.models import TaggedItemBase
 
 from froide.campaign.models import Campaign
 from froide.helper.email_utils import make_address
+from froide.helper.text_diff import get_differences
 from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
 from froide.team.models import Team
@@ -633,8 +634,22 @@ class FoiRequest(models.Model):
             self.description_redacted = redact_plaintext(
                 self.description, user_replacements=user_replacements
             )
-            self.save()
+            self.save(update_fields=["description_redacted"])
         return self.description_redacted
+
+    def get_redacted_description(self, auth: bool) -> List[Tuple[bool, str]]:
+        if auth:
+            show, hide = (
+                self.description,
+                self.get_description(),
+            )
+        else:
+            show, hide = (
+                self.get_description(),
+                self.description,
+            )
+
+        return [x for x in get_differences(show, hide)]
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))

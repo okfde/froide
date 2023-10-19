@@ -5,161 +5,160 @@
 {% load foirequest_tags %}
 {% load form_helper %}
 {% block title %}{{ object.title }}{% endblock %}
-{% block metadescription %}{{ object.get_description }}{% endblock %}
 {% block extra_head %}
-    {% if not object.private %}<meta name="robots" content="noindex" />{% endif %}
-    <link rel="self"
-          type="text/html"
-          href="{% url 'foirequest-project' slug=object.slug %}" />
-    <link rel="canonical"
-          href="{% url 'foirequest-project' slug=object.slug %}" />
-    {% if request.user.is_staff %}
-        {% with object.get_set_tags_form as set_tags_form %}{{ set_tags_form.media.css }}{% endwith %}
-    {% endif %}
+  {% if not object.private %}<meta name="robots" content="noindex" />{% endif %}
+  <link rel="self"
+        type="text/html"
+        href="{% url 'foirequest-project' slug=object.slug %}" />
+  <link rel="canonical"
+        href="{% url 'foirequest-project' slug=object.slug %}" />
+  {% if request.user.is_staff %}
+    {% with object.get_set_tags_form as set_tags_form %}{{ set_tags_form.media.css }}{% endwith %}
+  {% endif %}
 {% endblock %}
 {% block app_body %}
-    <h1>{{ object.title }}</h1>
-    <p>
-        {% if object|can_read_foiproject_authenticated:request %}
-            {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
+  <h1>{{ object.title }}</h1>
+  <p>
+    {% if object|can_read_foiproject_authenticated:request %}
+      {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=object.request_count %}
       Created on {{ date }} with currently {{ num }} requests.
       {% endblocktrans %}
-        {% else %}
-            {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=public_requests %}
+    {% else %}
+      {% blocktrans with date=object.created|date:"SHORT_DATE_FORMAT" num=public_requests %}
       Created on {{ date }} with currently {{ num }} public requests.
       {% endblocktrans %}
-        {% endif %}
-    </p>
-    {% if object|can_read_foiproject_authenticated:request and not all_public or not object.public %}
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card mt-2 mb-5">
-                    <div class="card-body">
-                        {% if object.public %}
-                            {% if all_public %}
-                                {% trans "This project and all its requests are <strong>public</strong>." %}
-                            {% else %}
-                                {% trans "This project is public, but some of its requests are <strong>not public</strong>." %}
-                            {% endif %}
-                        {% else %}
-                            {% if all_non_public %}
-                                {% trans "This project and all its requests are <strong>not public</strong>." %}
-                            {% else %}
-                                {% trans "This project is <strong>not public</strong>, but some of its requests are public." %}
-                            {% endif %}
-                        {% endif %}
-                        {% if object|can_manage_foiproject:request %}
-                            <form method="post"
-                                  action="{% url 'foirequest-project_make_public' slug=object.slug %}">
-                                {% csrf_token %}
-                                {% if not object.public and not all_public %}
-                                    {% render_form make_public_form %}
-                                {% endif %}
-                                <div class="text-end">
-                                    <button type="submit" class="btn btn-primary">
-                                        {% if not object.public %}
-                                            {% translate "Publish project" %}
-                                        {% else %}
-                                            {% translate "Publish all requests" %}
-                                        {% endif %}
-                                    </button>
-                                </div>
-                            </form>
-                        {% endif %}
-                    </div>
+    {% endif %}
+  </p>
+  {% if object|can_read_foiproject_authenticated:request and not all_public or not object.public %}
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card mt-2 mb-5">
+          <div class="card-body">
+            {% if object.public %}
+              {% if all_public %}
+                {% trans "This project and all its requests are <strong>public</strong>." %}
+              {% else %}
+                {% trans "This project is public, but some of its requests are <strong>not public</strong>." %}
+              {% endif %}
+            {% else %}
+              {% if all_non_public %}
+                {% trans "This project and all its requests are <strong>not public</strong>." %}
+              {% else %}
+                {% trans "This project is <strong>not public</strong>, but some of its requests are public." %}
+              {% endif %}
+            {% endif %}
+            {% if object|can_manage_foiproject:request %}
+              <form method="post"
+                    action="{% url 'foirequest-project_make_public' slug=object.slug %}">
+                {% csrf_token %}
+                {% if not object.public and not all_public %}
+                  {% render_form make_public_form %}
+                {% endif %}
+                <div class="text-end">
+                  <button type="submit" class="btn btn-primary">
+                    {% if not object.public %}
+                      {% translate "Publish project" %}
+                    {% else %}
+                      {% translate "Publish all requests" %}
+                    {% endif %}
+                  </button>
                 </div>
-            </div>
+              </form>
+            {% endif %}
+          </div>
         </div>
+      </div>
+    </div>
+  {% endif %}
+  {% if object|can_write_foiproject:request %}
+    <form method="post"
+          action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
+      {% csrf_token %}
+      <input type="hidden" name="actionstep" value="initial" />
     {% endif %}
     {% if object|can_write_foiproject:request %}
-        <form method="post"
-              action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
-            {% csrf_token %}
-            <input type="hidden" name="actionstep" value="initial" />
+      <div class="mb-1">
+        <p class="mb-0">{% translate "Perform action for selected requests:" %}</p>
+        {% if object|can_manage_foiproject:request %}
+          <button class="btn btn-outline-secondary btn-sm ms-2"
+                  name="action"
+                  value="publish">{% translate "Publish..." %}</button>
         {% endif %}
-        {% if object|can_write_foiproject:request %}
-            <div class="mb-1">
-                <p class="mb-0">{% translate "Perform action for selected requests:" %}</p>
-                {% if object|can_manage_foiproject:request %}
-                    <button class="btn btn-outline-secondary btn-sm ms-2"
-                            name="action"
-                            value="publish">{% translate "Publish..." %}</button>
-                {% endif %}
-                <button class="btn btn-outline-secondary btn-sm ms-2"
-                        name="action"
-                        value="writemessage">{% translate "Write message..." %}</button>
-            </div>
-        {% endif %}
-        <div class="table-responsive">
-            <table class="table table-hover table-sm">
-                <thead>
-                    <tr>
-                        <th scope="col">
-                            {% if object|can_write_foiproject:request %}
-                                <label class="visually-hidden" for="check-all-foirequests">{% translate "Check all requests" %}</label>
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       id="check-all-foirequests"
-                                       data-checkall="foirequest">
-                            {% else %}
-                                #
-                            {% endif %}
-                        </th>
-                        <th scope="col">{% trans "status" %}</th>
-                        <th scope="col">{% trans "last message" %}</th>
-                        <th scope="col">{% trans "public body" %}</th>
-                        {% if object|can_read_foiproject_authenticated:request %}
-                            <th scope="col">{% trans "is public?" %}</th>
-                        {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in foirequests %}
-                        <tr>
-                            <td>
-                                {% if object|can_write_foiproject:request %}
-                                    <label class="visually-hidden" for="check-foirequest-{{ req.id }}">
-                                        {% blocktranslate with num=req.id %}Check request #{{ num }}{% endblocktranslate %}
-                                    </label>
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="foirequest"
-                                           id="check-foirequest-{{ req.id }}"
-                                           value="{{ req.id }}">
-                                {% else %}
-                                    {{ req.project_number }}
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ req.get_absolute_url }}">{{ req.readable_status }}</a>
-                            </td>
-                            <td>
-                                <a href="{{ req.get_absolute_url_last_message }}">{{ req.last_message|date:"SHORT_DATE_FORMAT" }}</a>
-                            </td>
-                            <td>
-                                <a href="{{ req.public_body.get_absolute_url }}">{{ req.public_body.name }}</a>
-                            </td>
-                            {% if object|can_read_foiproject_authenticated:request %}
-                                <td class="text-center">
-                                    {% if req.is_public %}
-                                        <span class="fa fa-check"></span>
-                                        <span class="visually-hidden">{% translate "Yes" %}</span>
-                                    {% else %}
-                                        <span class="fa fa-ban"></span>
-                                        <span class="visually-hidden">{% translate "No" %}</span>
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% if object|can_write_foiproject:request %}</form>{% endif %}
-    {% if team_form %}
-        {% trans "Assign team to project" as legend %}
-        {% trans "Set team for project" as submit_button %}
-        {% url 'foirequest-project_set_team' slug=object.slug as submit_url %}
-        {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
+        <button class="btn btn-outline-secondary btn-sm ms-2"
+                name="action"
+                value="writemessage">{% translate "Write message..." %}</button>
+      </div>
     {% endif %}
+    <div class="table-responsive">
+      <table class="table table-hover table-sm">
+        <thead>
+          <tr>
+            <th scope="col">
+              {% if object|can_write_foiproject:request %}
+                <label class="visually-hidden" for="check-all-foirequests">{% translate "Check all requests" %}</label>
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="check-all-foirequests"
+                       data-checkall="foirequest">
+              {% else %}
+                #
+              {% endif %}
+            </th>
+            <th scope="col">{% trans "status" %}</th>
+            <th scope="col">{% trans "last message" %}</th>
+            <th scope="col">{% trans "public body" %}</th>
+            {% if object|can_read_foiproject_authenticated:request %}
+              <th scope="col">{% trans "is public?" %}</th>
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in foirequests %}
+            <tr>
+              <td>
+                {% if object|can_write_foiproject:request %}
+                  <label class="visually-hidden" for="check-foirequest-{{ req.id }}">
+                    {% blocktranslate with num=req.id %}Check request #{{ num }}{% endblocktranslate %}
+                  </label>
+                  <input class="form-check-input"
+                         type="checkbox"
+                         name="foirequest"
+                         id="check-foirequest-{{ req.id }}"
+                         value="{{ req.id }}">
+                {% else %}
+                  {{ req.project_number }}
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ req.get_absolute_url }}">{{ req.readable_status }}</a>
+              </td>
+              <td>
+                <a href="{{ req.get_absolute_url_last_message }}">{{ req.last_message|date:"SHORT_DATE_FORMAT" }}</a>
+              </td>
+              <td>
+                <a href="{{ req.public_body.get_absolute_url }}">{{ req.public_body.name }}</a>
+              </td>
+              {% if object|can_read_foiproject_authenticated:request %}
+                <td class="text-center">
+                  {% if req.is_public %}
+                    <span class="fa fa-check"></span>
+                    <span class="visually-hidden">{% translate "Yes" %}</span>
+                  {% else %}
+                    <span class="fa fa-ban"></span>
+                    <span class="visually-hidden">{% translate "No" %}</span>
+                  {% endif %}
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if object|can_write_foiproject:request %}</form>{% endif %}
+  {% if team_form %}
+    {% trans "Assign team to project" as legend %}
+    {% trans "Set team for project" as submit_button %}
+    {% url 'foirequest-project_set_team' slug=object.slug as submit_url %}
+    {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
+  {% endif %}
 {% endblock %}

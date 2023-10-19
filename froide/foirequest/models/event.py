@@ -66,6 +66,8 @@ class EventName(models.TextChoices):
     PUBLIC_BODY_SUGGESTED = "public_body_suggested", _("a public body was suggested")
     REQUEST_REDIRECTED = "request_redirected", _("the request was redirected")
 
+    DESCRIPTION_REDACTED = "description_redacted", _("the description was redacted")
+
 
 EVENT_KEYS = dict(EventName.choices).keys()
 

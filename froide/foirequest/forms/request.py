@@ -3,6 +3,8 @@ from typing import List
 
 from django import forms
 from django.conf import settings
+from django.contrib import messages
+from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.html import escape
@@ -16,7 +18,7 @@ from froide.campaign.validators import validate_not_campaign
 from froide.helper.auth import get_read_queryset
 from froide.helper.form_utils import JSONMixin
 from froide.helper.forms import TagObjectForm
-from froide.helper.text_utils import redact_plaintext, slugify
+from froide.helper.text_utils import apply_user_redaction, redact_plaintext, slugify
 from froide.helper.widgets import BootstrapRadioSelect, BootstrapSelect, PriceInput
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
@@ -449,3 +451,43 @@ class ApplyModerationForm(forms.Form):
             m for m in trigger.apply_actions(self.foirequest, self.request) if m
         ]
         return messages
+
+
+class RedactDescriptionForm(forms.Form):
+    description = forms.CharField(required=False)
+    description_length = forms.IntegerField()
+
+    def clean_description(self):
+        val = self.cleaned_data["description"]
+        if not val:
+            return []
+        try:
+            val = [int(x) for x in val.split(",")]
+        except ValueError:
+            raise forms.ValidationError("Bad value")
+        return val
+
+    def save(self, request: HttpRequest, foirequest: FoiRequest):
+        redacted_description = apply_user_redaction(
+            foirequest.description,
+            self.cleaned_data["description"],
+            self.cleaned_data["description_length"],
+        )
+        first_message = foirequest.first_outgoing_message
+        if foirequest.description_redacted in first_message.plaintext_redacted:
+            first_message.plaintext_redacted = first_message.plaintext_redacted.replace(
+                foirequest.description_redacted, redacted_description
+            )
+            first_message.save()
+        else:
+            messages.add_message(
+                request,
+                messages.WARNING,
+                _(
+                    "Could not automatically redact first message. Please check the message manually."
+                ),
+            )
+
+        foirequest.description_redacted = redacted_description
+
+        foirequest.save()
