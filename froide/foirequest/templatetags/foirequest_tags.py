@@ -5,6 +5,7 @@ from collections import defaultdict
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, Value, When
+from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars_html
 from django.utils.html import format_html
 from django.utils.safestring import SafeString, mark_safe
@@ -59,10 +60,10 @@ def highlight_request(message, request):
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
 
-    description = unify(message.request.description)
+    real_description = unify(message.request.description)
     redacted_description = unify(message.request.get_description())
     description_with_markup = markup_redacted_content(
-        description,
+        real_description,
         redacted_description,
         authenticated_read=auth_read,
         message_id=message.id,
@@ -70,8 +71,10 @@ def highlight_request(message, request):
 
     if auth_read:
         content = real_content
+        description = real_description
     else:
         content = redacted_content
+        description = redacted_description
 
     try:
         index = content.index(description)
@@ -147,6 +150,24 @@ def render_message_content(message, authenticated_read=False, render_footer=True
 def redact_message(message, request):
     authenticated_read = is_authenticated_read(message, request)
     content = render_message_content(message, authenticated_read=authenticated_read)
+
+    return content
+
+
+@register.simple_tag
+def redact_request_description(
+    foirequest: FoiRequest, request: HttpRequest
+) -> SafeString:
+    authenticated_read = can_read_foirequest_authenticated(foirequest, request)
+
+    real_content = unify(foirequest.description)
+    redacted_content = unify(foirequest.get_description())
+
+    content = mark_redacted(
+        real_content,
+        redacted_content,
+        authenticated_read=authenticated_read,
+    )
 
     return content
 
@@ -431,6 +452,23 @@ def render_message_redact_button(message):
                 },
                 "settings": {
                     "blockedPatterns": blocked_patterns,
+                },
+            }
+        ),
+    }
+
+
+@register.inclusion_tag("foirequest/snippets/description_redact.html")
+def render_description_redact_button(request):
+    return {
+        "foirequest": request,
+        "js_config": json.dumps(
+            {
+                "i18n": {
+                    "subject": _("Subject"),
+                    "message": _("Message"),
+                    "messageLoading": _("Message is loading..."),
+                    "blockedRedaction": _("This word needs to stay redacted."),
                 },
             }
         ),

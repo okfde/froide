@@ -290,7 +290,8 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True, view_name="api:campaign-detail", lookup_field="pk"
     )
     tags = TagListField()
-    description = serializers.CharField(source="get_description")
+
+    redacted_description = serializers.SerializerMethodField()
 
     class Meta:
         model = FoiRequest
@@ -307,6 +308,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             "public",
             "law",
             "description",
+            "redacted_description",
             "summary",
             "same_as_count",
             "same_as",
@@ -335,6 +337,13 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         if obj.user.private:
             return None
         return obj.user.pk
+
+    def get_redacted_description(self, obj):
+        request = self.context["request"]
+        authenticated_read = can_read_foirequest_authenticated(
+            obj, request, allow_code=False
+        )
+        return obj.get_redacted_description(authenticated_read)
 
 
 class FoiRequestDetailSerializer(FoiRequestListSerializer):

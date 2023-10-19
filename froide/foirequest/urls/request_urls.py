@@ -30,6 +30,7 @@ from ..views import (
     message_shortlink,
     publicbody_upload,
     redact_attachment,
+    redact_description,
     redact_message,
     resend_message,
     send_message,
@@ -122,6 +123,11 @@ urlpatterns = [
         "<slug:slug>/set-project/",
         SetProjectView.as_view(),
         name="foirequest-set_project",
+    ),
+    path(
+        "<slug:slug>/redact-description/",
+        redact_description,
+        name="foirequest-redact_description",
     ),
     # Messages
     path(

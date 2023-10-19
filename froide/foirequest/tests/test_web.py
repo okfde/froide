@@ -526,6 +526,7 @@ def test_queries_foirequest(world, client):
     """
     FoiRequest page should query for non-loggedin users
     - FoiRequest (+1)
+    - Save FoiRequest redacted description (+1)
     - FoiRequest Tags (+1)
     - FoiMessages of that request (+1)
     - FoiAttachments of that request (+1)
@@ -540,7 +541,7 @@ def test_queries_foirequest(world, client):
     mes2 = factories.FoiMessageFactory.create(request=req)
     factories.FoiAttachmentFactory.create(belongs_to=mes2)
     ContentType.objects.clear_cache()
-    with assertNumQueries(11):
+    with assertNumQueries(12):
         client.get(req.get_absolute_url())
 
 
@@ -550,6 +551,7 @@ def test_queries_foirequest_loggedin(world, client):
     FoiRequest page should query for non-staff loggedin users
     - Django session + Django user (+3)
     - FoiRequest (+1)
+    - Save FoiRequest redacted description (+1)
     - FoiRequest Tags (+1)
     - User and group permissions (+2)
     - FoiMessages of that request (+1)
@@ -561,7 +563,7 @@ def test_queries_foirequest_loggedin(world, client):
     - Problem reports - even for non-requester (+1)
     - ContentType + Comments for each FoiMessage (+2)
     """
-    TOTAL_EXPECTED_REQUESTS = 17
+    TOTAL_EXPECTED_REQUESTS = 18
     req = factories.FoiRequestFactory.create(site=world)
     factories.FoiMessageFactory.create(request=req, is_response=False)
     mes2 = factories.FoiMessageFactory.create(request=req)

@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 
 from slugify import slugify as _slugify
 
+from .text_diff import get_diff_chunks
+
 try:
     from lxml import html as html_parser
     from lxml.html import HtmlElement, HTMLParser
@@ -326,3 +328,27 @@ def convert_element(
                 repl_tag = html_parser.Element("span")
                 repl_tag.text = replacement
                 el.getparent().replace(el, repl_tag)
+
+
+def apply_user_redaction(original, instructions, length):
+    REDACTION_MARKER = str(_("[redacted]"))
+
+    if not instructions:
+        return original
+
+    chunks = get_diff_chunks(original)
+
+    # Sanity check chunk length
+    if len(chunks) != length:
+        raise IndexError
+
+    for index in instructions:
+        chunks[index] = REDACTION_MARKER
+
+    redacted = "".join(chunks)
+    # Replace multiple connecting redactions with one
+    return re.sub(
+        "{marker}(?: {marker})+".format(marker=re.escape(REDACTION_MARKER)),
+        REDACTION_MARKER,
+        redacted,
+    )
