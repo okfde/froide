@@ -106,6 +106,7 @@ input.copy-text {
 .img-sm-vertical {
   height: 5rem;
   max-width: 100%;
+  width: auto;
 }
 
 @include media-breakpoint-down(sm) {
