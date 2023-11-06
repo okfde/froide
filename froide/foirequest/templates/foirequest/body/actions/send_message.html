@@ -25,6 +25,7 @@
   {% block send_message_form_pre %}{% endblock %}
 
   {% with form=send_message_form|default:object.get_send_message_form %}
+    {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
     {% render_field form.to horizontal=False %}
     {% render_field form.subject horizontal=False %}
     {% render_field form.message horizontal=False %}
