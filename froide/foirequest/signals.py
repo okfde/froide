@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.helper.email_sending import mail_registry
 from froide.helper.signals import email_left_queue
+from froide.problem.models import ProblemReport
 
 from .models import (
     DeliveryStatus,
@@ -435,7 +436,7 @@ def save_delivery_status(
     except FoiMessage.DoesNotExist:
         return
 
-    DeliveryStatus.objects.update_or_create(
+    delivery_status, _ = DeliveryStatus.objects.update_or_create(
         message=message,
         defaults={
             "log": "".join(log),
@@ -446,6 +447,16 @@ def save_delivery_status(
 
     if status == "sent":
         send_foimessage_sent_confirmation(message)
+    elif delivery_status.is_failed():
+        if not ProblemReport.objects.filter(
+            message=message, kind=ProblemReport.PROBLEM.BOUNCE_PUBLICBODY
+        ).exists():
+            ProblemReport.objects.report(
+                message=message,
+                kind=ProblemReport.PROBLEM.BOUNCE_PUBLICBODY,
+                description=delivery_status.log,
+                auto_submitted=True,
+            )
 
 
 def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):

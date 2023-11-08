@@ -5,6 +5,10 @@ import tempfile
 
 import pytest
 
+from froide.foirequest.models.request import FoiRequest
+from froide.foirequest.tests import factories
+from froide.problem.models import ProblemReport
+
 from ..email_log_parsing import (
     PostfixLogfileParser,
     PostfixLogLine,
@@ -51,6 +55,17 @@ MAIL_2_DATA = {
     "status": "sent",
     "removed": "",
 }
+
+
+@pytest.fixture
+def req_with_msgs(world):
+    secret_address = "sw+yurpykc1hr@fragdenstaat.de"
+    req = factories.FoiRequestFactory.create(
+        site=world, secret_address=secret_address, closed=True
+    )
+    factories.FoiMessageFactory.create(request=req)
+    factories.FoiMessageFactory.create(request=req, is_response=True)
+    return req
 
 
 def test_parse_field_minimal():
@@ -234,3 +249,23 @@ def test_logfile_rotation():
         print(invocations[0])
         assert invocations[0]["message_id"] == MAIL_1_ID
         assert invocations[0]["log"] == MAIL_1_LOG
+
+
+@pytest.mark.django_db
+def test_bouncing_email(req_with_msgs: FoiRequest):
+    msg = req_with_msgs.messages[0]
+    msg.email_message_id = "<foimsg.123123@example.com>"
+    msg.save()
+    problem_reports_before = ProblemReport.objects.filter(message=msg).count()
+    # Check that problem report gets created
+    with tempfile.TemporaryDirectory() as tmpdir:
+        check_delivery_from_log(p("maillog_006.txt"), str(tmpdir + "/mail_log.offset"))
+    assert (
+        ProblemReport.objects.filter(message=msg).count() == problem_reports_before + 1
+    )
+    # Check that problem report does not created again
+    with tempfile.TemporaryDirectory() as tmpdir:
+        check_delivery_from_log(p("maillog_006.txt"), str(tmpdir + "/mail_log.offset"))
+    assert (
+        ProblemReport.objects.filter(message=msg).count() == problem_reports_before + 1
+    )
