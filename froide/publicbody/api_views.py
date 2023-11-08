@@ -53,6 +53,7 @@ class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
             "slug",
             "site_url",
             "region",
+            "last_modified_at",
         )
 
 
@@ -72,6 +73,7 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
         view_name="api:publicbody-detail", lookup_field="pk", read_only=True
     )
     site_url = serializers.SerializerMethodField()
+    last_modified_at = serializers.CharField(source="updated")
 
     class Meta:
         model = FoiLaw
@@ -85,7 +87,6 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
             "long_description",
             "law_type",
             "created",
-            "updated",
             "request_note",
             "request_note_html",
             "meta",
@@ -101,6 +102,7 @@ class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
             "max_response_time_unit",
             "letter_start",
             "letter_end",
+            "last_modified_at",
         )
 
     def get_site_url(self, obj):
@@ -330,6 +332,7 @@ class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
 
     site_url = serializers.CharField(source="get_absolute_domain_url")
     geo = serializers.SerializerMethodField()
+    last_modified_at = serializers.CharField(source="updated_at")
 
     class Meta:
         model = PublicBody
@@ -354,6 +357,7 @@ class SimplePublicBodySerializer(serializers.HyperlinkedModelSerializer):
             "jurisdiction",
             "request_note_html",
             "geo",
+            "last_modified_at",
         )
 
     def get_geo(self, obj):

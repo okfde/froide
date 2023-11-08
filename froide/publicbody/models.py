@@ -72,6 +72,8 @@ class Jurisdiction(models.Model):
 
     objects = JurisdictionManager()
 
+    last_modified_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
@@ -94,6 +96,14 @@ class Jurisdiction(models.Model):
         meta_ids = laws.filter(meta=True).values_list("combined", flat=True)
         meta_laws = FoiLaw.objects.filter(pk__in=meta_ids)
         return laws.union(meta_laws)
+
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs:
+            kwargs["update_fields"] = {"last_modified_at"}.union(
+                kwargs["update_fields"]
+            )
+
+        super().save(*args, **kwargs)
 
 
 class FoiLaw(TranslatableModel):
