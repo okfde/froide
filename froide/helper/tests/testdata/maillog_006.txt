@@ -1,0 +1,6 @@
+Jul  7 13:01:25 brooke postfix/smtpd[581830]: ABCDEF12345: client=localhost.localdomain[127.0.0.1], sasl_method=PLAIN, sasl_username=examplemail@example.com
+Jul  7 13:01:25 brooke postfix/cleanup[580201]: ABCDEF12345: message-id=<foimsg.123123@example.com>
+Jul  7 13:01:25 brooke postfix/qmgr[61174]: ABCDEF12345: from=<e.example.abcdefed@example.com>, size=5264, nrcpt=1 (queue active)
+Jul  7 13:01:27 brooke postfix/smtp[586922]: ABCDEF12345: to=<bouncing@exapmle.com>, relay=exapmle.com[1.2.3.4]:25, delay=2.6, delays=0.09/0/1/1.4, dsn=5.0.0, status=bounced (host example.com[1.2.3.4] said: 550-Callout verification failed: 550-550 5.1.1 <bouncing@example.com>: Recipient address rejected: 550 Ungueltige Mail-Domain example.com (in reply to RCPT TO command))
+Jul  7 13:01:27 brooke postfix/bounce[589205]: ABCDEF12345: sender non-delivery notification: 12345ABCDEF
+Jul  7 13:01:27 brooke postfix/qmgr[61174]: ABCDEF12345: removed
