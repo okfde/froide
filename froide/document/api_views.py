@@ -41,6 +41,7 @@ class DocumentSerializer(FCDocumentSerializer):
         lookup_field="pk",
         read_only=True,
     )
+    last_modified_at = serializers.CharField(source="updated_at", read_only=True)
 
     class Meta:
         model = Document
@@ -48,6 +49,7 @@ class DocumentSerializer(FCDocumentSerializer):
             "original",
             "foirequest",
             "publicbody",
+            "last_modified_at",
         )
 
 

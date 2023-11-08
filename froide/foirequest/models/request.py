@@ -333,6 +333,7 @@ class FoiRequest(models.Model):
     )
     resolved_on = models.DateTimeField(_("Resolution date"), blank=True, null=True)
     due_date = models.DateTimeField(_("Due Date"), blank=True, null=True)
+    last_modified_at = models.DateTimeField(auto_now=True)
 
     secret_address = models.CharField(
         _("Secret address"), max_length=255, db_index=True, unique=True
@@ -446,6 +447,14 @@ class FoiRequest(models.Model):
 
     def __str__(self):
         return _("Request '%s'") % self.title
+
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs:
+            kwargs["update_fields"] = {"last_modified_at"}.union(
+                kwargs["update_fields"]
+            )
+
+        super().save(*args, **kwargs)
 
     @property
     def same_as_set(self):

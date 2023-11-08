@@ -135,6 +135,8 @@ class FoiMessage(models.Model):
     )
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
+    last_modified_at = models.DateTimeField(auto_now=True)
+
     email_message_id = models.CharField(max_length=512, blank=True, default="")
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     subject_redacted = models.CharField(
@@ -179,6 +181,14 @@ class FoiMessage(models.Model):
             "request": self.request,
             "time": self.timestamp,
         }
+
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs:
+            kwargs["update_fields"] = {"last_modified_at"}.union(
+                kwargs["update_fields"]
+            )
+
+        super().save(*args, **kwargs)
 
     @property
     def is_postal(self):

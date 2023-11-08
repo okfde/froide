@@ -204,6 +204,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "redacted_content",
             "sender",
             "status_name",
+            "last_modified_at",
         )
 
     def get_redacted_subject(self, obj):
@@ -318,6 +319,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             "resolved_on",
             "last_message",
             "created_at",
+            "last_modified_at",
             "status",
             "public_body",
             "resolution",
