@@ -2,3 +2,5 @@
 59bd3eeded3c3ed00fbc858fe20bfea99c8dbefa
 # Migrate import style to isort + Black stable
 3fae2ecb54ce1297c5734074709d336024a91153
+# Format html files with djlint
+3698b97c143c773639dd0e75617cd8d8fb034131
