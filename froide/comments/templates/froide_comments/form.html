@@ -2,35 +2,27 @@
 {% load form_helper %}
 {% load foirequest_tags %}
 {% load froide_comment_tags %}
-
 {% get_froide_comment_form object as form %}
-
-<form action="{% comment_form_target %}" method="post">{% csrf_token %}
-  <input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
-  {% for field in form %}
-    {% if field.is_hidden %}
-      {{ field }}
+<form action="{% comment_form_target %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ object.get_absolute_url }}" />
+    {% for field in form %}
+        {% if field.is_hidden %}{{ field }}{% endif %}
+    {% endfor %}
+    {% if request.user.private and request.user == object.request.user %}
+        <div class="alert alert-info">
+            {% trans "You have a private account. Your comment will show “requester” as the author." %}
+        </div>
+    {% else %}
+        {% render_field form.name %}
     {% endif %}
-  {% endfor %}
-
-  {% if request.user.private and request.user == object.request.user %}
-    <div class="alert alert-info">
-      {% trans "You have a private account. Your comment will show “requester” as the author." %}
+    {% render_field form.comment %}
+    {% if object.request|can_moderate_foirequest:request and not request.user == object.request.user %}
+        {% render_field form.is_moderation %}
+    {% endif %}
+    <div class="text-end">
+        <button type="submit" name="post" class="btn btn-secondary">
+            <span class="fa fa-comment"></span> {% trans "Post Comment" %}
+        </button>
     </div>
-  {% else %}
-    {% render_field form.name %}
-  {% endif %}
-
-  {% render_field form.comment %}
-
-  {% if object.request|can_moderate_foirequest:request and not request.user == object.request.user %}
-    {% render_field form.is_moderation %}
-  {% endif %}
-
-  <div class="text-end">
-    <button type="submit" name="post" class="btn btn-secondary">
-      <span class="fa fa-comment"></span> {% trans "Post Comment" %}
-    </button>
-  </div>
 </form>
-

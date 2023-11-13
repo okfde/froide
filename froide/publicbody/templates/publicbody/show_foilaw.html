@@ -1,85 +1,77 @@
 {% extends 'publicbody/base.html' %}
-
 {% load i18n %}
 {% load markup %}
-
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
-
 {% block app_body %}
-<h2>{{ object.name }}</h2>
-
-<div class="row mt-4">
-  <div class="col-md-3">
-    <dl class="my-0">
-      {% if object.created %}
-        <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
-        <dd>{{ object.created|date:"DATE_FORMAT" }}</dd>
-      {% endif %}
-      {% if object.updated %}
-        <dt>{% blocktrans %}Last update on{% endblocktrans %}:</dt>
-        <dd>{{ object.updated|date:"DATE_FORMAT" }}</dd>
-      {% endif %}
-      {% if object.mediator %}
-        <dt>{% blocktrans %}Mediating authority{% endblocktrans %}:</dt>
-        <dd><a href="{{ object.mediator.get_absolute_url }}">{{ object.mediator.name }}</a></dd>
-      {% endif %}
-
-      {% if object.scale_of_fees or not legal_text %}
-      <p class="my-0">
-        <strong>{% blocktrans %}Legal documents:{% endblocktrans %}</strong>
-      </p>
-      {% endif %}
-
-      {% if not legal_text %}
-        <p class="my-0">
-          <a href="{{ object.url }}" target="_blank" rel="noopener">
-            → {% blocktrans %}Official law text{% endblocktrans %}
-          </a>
-        </p>
-      {% endif %}
-      {% if object.scale_of_fees %}
-        <p class="my-0">
-          <a href="{{ object.scale_of_fees }}" target="_blank" rel="noopener">
-            → {% blocktrans %}Scale of fees{% endblocktrans %}
-          </a>
-        </p>
-      {% endif %} 
-    </dl>
-  </div>
-
-  <div class="col-md-9">
-    {% if legal_text %}
-    <ul class="nav nav-tabs mb-3">
-      <li class="nav-item">
-        <a class="nav-link active" href="#legaltext" data-bs-toggle="tab">
-          {% trans "Legal text" %}
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#description" data-bs-toggle="tab">{% trans "Description" %}</a>
-      </li>
-    </ul>
-    {% endif %}
-
-    <div class="tab-content">
-      {% if legal_text %}
-      <div class="tab-pane active" id="legaltext">
-        <div class="alert alert-info">
-          {% blocktrans %}
+    <h2>{{ object.name }}</h2>
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <dl class="my-0">
+                {% if object.created %}
+                    <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
+                    <dd>
+                        {{ object.created|date:"DATE_FORMAT" }}
+                    </dd>
+                {% endif %}
+                {% if object.updated %}
+                    <dt>{% blocktrans %}Last update on{% endblocktrans %}:</dt>
+                    <dd>
+                        {{ object.updated|date:"DATE_FORMAT" }}
+                    </dd>
+                {% endif %}
+                {% if object.mediator %}
+                    <dt>{% blocktrans %}Mediating authority{% endblocktrans %}:</dt>
+                    <dd>
+                        <a href="{{ object.mediator.get_absolute_url }}">{{ object.mediator.name }}</a>
+                    </dd>
+                {% endif %}
+                {% if object.scale_of_fees or not legal_text %}
+                    <p class="my-0">
+                        <strong>{% blocktrans %}Legal documents:{% endblocktrans %}</strong>
+                    </p>
+                {% endif %}
+                {% if not legal_text %}
+                    <p class="my-0">
+                        <a href="{{ object.url }}" target="_blank" rel="noopener">→ {% blocktrans %}Official law text{% endblocktrans %}</a>
+                    </p>
+                {% endif %}
+                {% if object.scale_of_fees %}
+                    <p class="my-0">
+                        <a href="{{ object.scale_of_fees }}" target="_blank" rel="noopener">
+                            → {% blocktrans %}Scale of fees{% endblocktrans %}
+                        </a>
+                    </p>
+                {% endif %}
+            </dl>
+        </div>
+        <div class="col-md-9">
+            {% if legal_text %}
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#legaltext" data-bs-toggle="tab">{% trans "Legal text" %}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#description" data-bs-toggle="tab">{% trans "Description" %}</a>
+                    </li>
+                </ul>
+            {% endif %}
+            <div class="tab-content">
+                {% if legal_text %}
+                    <div class="tab-pane active" id="legaltext">
+                        <div class="alert alert-info">
+                            {% blocktrans %}
             This is a copy of the law, for which we can't guarantee correctness.
           {% endblocktrans %}
-          <a href="{{ object.url }}" target="_blank" rel="noopener">
-            {% blocktrans with name=object.name %}Official law text of {{ name }}{% endblocktrans %}
-          </a>
+                            <a href="{{ object.url }}" target="_blank" rel="noopener">
+                                {% blocktrans with name=object.name %}Official law text of {{ name }}{% endblocktrans %}
+                            </a>
+                        </div>
+                        {{ legal_text|safe }}
+                    </div>
+                {% endif %}
+                <div class="tab-pane {% if not legal_text %}active{% else %}fade{% endif %}"
+                     id="description">{{ object.long_description|markdown }}</div>
+            </div>
         </div>
-
-        {{ legal_text|safe }}
-      </div>
-      {% endif %}
-      <div class="tab-pane {% if not legal_text %}active{% else %}fade{% endif %}" id="description">
-        {{ object.long_description|markdown }}
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}

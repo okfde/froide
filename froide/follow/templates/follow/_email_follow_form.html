@@ -1,26 +1,29 @@
 {% load i18n %}
 {% load form_helper %}
-
 {% if can_follow and not request.user.is_authenticated %}
-
-<form class="ajaxified {% if not embed %}modal-content{% endif %}" method="post" action="{{ follow_url }}" id="follow-form-{{ object.pk }}" data-modal="follow-form-{{ object.pk }}-modal-trigger">
-  <div class="modal-header">
-    <h5 class="modal-title" id="follow-form-{{ object.pk }}-modal-label">{% trans "Get updates for this request via email" %}</h5>
-    {% if not embed %}
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
-    {% endif %}
-  </div>
-  <div class="modal-body">
-    <p class="pb-4">
-      {{ action_labels.follow_description }}
-    </p>
-    {% csrf_token %}
-    {% render_form form %}
-
-  </div>
-  <div class="modal-footer">
-    <button type="submit" class="btn btn-sm btn-primary">{{ action_labels.follow }}</button>
-  </div>
-</form>
-
+    <form class="ajaxified {% if not embed %}modal-content{% endif %}"
+          method="post"
+          action="{{ follow_url }}"
+          id="follow-form-{{ object.pk }}"
+          data-modal="follow-form-{{ object.pk }}-modal-trigger">
+        <div class="modal-header">
+            <h5 class="modal-title" id="follow-form-{{ object.pk }}-modal-label">
+                {% trans "Get updates for this request via email" %}
+            </h5>
+            {% if not embed %}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="{% translate 'Close' %}"></button>
+            {% endif %}
+        </div>
+        <div class="modal-body">
+            <p class="pb-4">{{ action_labels.follow_description }}</p>
+            {% csrf_token %}
+            {% render_form form %}
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-sm btn-primary">{{ action_labels.follow }}</button>
+        </div>
+    </form>
 {% endif %}

@@ -1,8 +1,9 @@
-{% load i18n %}<!doctype html>
+{% load i18n %}
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <style>
+    <head>
+        <meta charset="utf-8">
+        <style>
         @charset "UTF-8";
         @page {
           margin: 1cm 2.5cm 2cm;
@@ -73,53 +74,67 @@
           white-space: pre-line;
         }
         {% endblock %}
-    </style>
-    <title>{% block title %}{{ object.title }}{% endblock %}</title>
-    <meta name="description" content="{{ object.description }}">
-    <meta name="author" content="{{ SITE_NAME }}">
-  </head>
-  <body>
-
-    {% if recipient_address %}
-      <address id="to">
-        {{ recipient_address }}
-      </address>
-    {% endif %}
-
-    {% block from_address %}
-    <address id="from">{% block from_address_text %}{{ object.real_sender }}
-{% if object.sender_user.address %}{{ object.sender_user.address }}{% endif %}{% endblock %}
-      {% block from_address_links %}<a href="mailto:{{ object.sender_email }}">{{ object.sender_email }}</a>
-      <a href="{{ object.request.get_absolute_domain_short_url }}">{{ object.request.get_absolute_domain_short_url }}</a>
-      {% endblock %}
-    </address>
-    {% endblock %}
-
-    <dl id="meta">
-      {% block meta %}
-      <dt>{% trans "Date" %}</dt>
-      <dd>{{ object.timestamp|date:"SHORT_DATE_FORMAT" }}</dd>
-      <dt>{% trans "My reference" %}</dt>
-      <dd>#{{ object.request.pk }}</dd>
-      {% endblock meta %}
-      {% block extra_meta %}{% endblock %}
-    </dl>
-
-    <main>
-    {% block subject %}
-    <p>
-      <strong>{% trans "Subject:" %} {% block subject_text %}{{ object.subject }}{% endblock subject_text %}</strong>
-    </p>
-    {% endblock subject %}
-<div>{% block letter %}{% block letter_text %}
-{{ text|urlize }}{% endblock letter_text %}
-
-{% block letter_closing %}
-{% trans "Kind Regards," %}
-{% block letter_closing_name %}{{ object.real_sender }}{% endblock letter_closing_name %}
-{% endblock letter_closing %}{% endblock letter%}
-</div>
-</main>
-
-  </body>
-  </html>
+        </style>
+        <title>
+            {% block title %}{{ object.title }}{% endblock %}
+        </title>
+        <meta name="description" content="{{ object.description }}">
+        <meta name="author" content="{{ SITE_NAME }}">
+    </head>
+    <body>
+        {% if recipient_address %}
+            <address id="to">
+                {{ recipient_address }}
+            </address>
+        {% endif %}
+        {% block from_address %}
+            <address id="from">
+                {% block from_address_text %}
+                    {{ object.real_sender }}
+                    {% if object.sender_user.address %}{{ object.sender_user.address }}{% endif %}
+                {% endblock %}
+                {% block from_address_links %}
+                    <a href="mailto:{{ object.sender_email }}">{{ object.sender_email }}</a>
+                    <a href="{{ object.request.get_absolute_domain_short_url }}">{{ object.request.get_absolute_domain_short_url }}</a>
+                {% endblock %}
+            </address>
+        {% endblock %}
+        <dl id="meta">
+            {% block meta %}
+                <dt>{% trans "Date" %}</dt>
+                <dd>
+                    {{ object.timestamp|date:"SHORT_DATE_FORMAT" }}
+                </dd>
+                <dt>{% trans "My reference" %}</dt>
+                <dd>
+                    #{{ object.request.pk }}
+                </dd>
+            {% endblock meta %}
+            {% block extra_meta %}{% endblock %}
+        </dl>
+        <main>
+            {% block subject %}
+                <p>
+                    <strong>{% trans "Subject:" %}
+                        {% block subject_text %}
+                            {{ object.subject }}
+                        {% endblock subject_text %}
+                    </strong>
+                </p>
+            {% endblock subject %}
+            <div>
+                {% block letter %}
+                    {% block letter_text %}
+                        {{ text|urlize }}
+                    {% endblock letter_text %}
+                    {% block letter_closing %}
+                        {% trans "Kind Regards," %}
+                        {% block letter_closing_name %}
+                            {{ object.real_sender }}
+                        {% endblock letter_closing_name %}
+                    {% endblock letter_closing %}
+                {% endblock letter %}
+            </div>
+        </main>
+    </body>
+</html>

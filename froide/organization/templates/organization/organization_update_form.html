@@ -1,168 +1,155 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 {% load form_helper %}
-
 {% block title %}
-  {% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}
+    {% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}
 {% endblock %}
-
 {% block navbar %}
-  {{ block.super }}
-
-  <div class="bg-body-tertiary">
-    <nav class="container" aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="{% url "organization-update" slug=object.slug %}">{% translate "Edit Organization" %}</a>
-        </li>
-      </ol>
-    </nav>
-  </div>
+    {{ block.super }}
+    <div class="bg-body-tertiary">
+        <nav class="container" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url "organization-update" slug=object.slug %}">{% translate "Edit Organization" %}</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
 {% endblock %}
-
 {% block app_body %}
-  <div class="row mb-3 mt-3">
-    <div class="col-lg-8">
-      <h2>{% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}</h2>
+    <div class="row mb-3 mt-3">
+        <div class="col-lg-8">
+            <h2>{% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}</h2>
+        </div>
+        <div class="col-lg-4">
+            <a href="{% url 'organization-detail' slug=object.slug %}"
+               class="btn btn-secondary float-end">
+                <i class="fa fa-back"></i>
+                {% trans "back to organization" %}
+            </a>
+        </div>
     </div>
-    <div class="col-lg-4">
-      <a href="{% url 'organization-detail' slug=object.slug %}"
-         class="btn btn-secondary float-end">
-        <i class="fa fa-back"></i>
-        {% trans "back to organization" %}
-      </a>
-    </div>
-  </div>
-
-  {% if object.members %}
-    <div class="row">
-      <div class="col-lg-8">
-        <table class="table table-responsive">
-          <thead>
-            <tr>
-              <th>{% trans "Member" %}</th>
-              <th>{% trans "Role" %}</th>
-              <th>{% trans "Status" %}</th>
-              {% if user_member.is_owner %}
-                <th>{% trans "Remove" %}</th>
-              {% endif %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for member in members %}
-              <tr{% if member.is_invited %} class="Secondary"{% endif %}>
-                <td>
-                  {% if member.is_invited %}
-                    {% if user_member.is_owner %}
-                      <i>{{ member.email }}</i>
-                      <br />
-                      -
-                    {% endif %}
-                    {% trans "invited" %}
-                  {% else %}
-                    {{ member.user.get_full_name }}
-                  {% endif %}
-                  {% if user_member == member %}
-                    <span class="fa fa-user"></span>
-                    <em class="visually-hidden">{% trans "– that's you!" %}</em>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if member.change_role_form %}
-                    <form method="post"
-                          action="{% url 'organization-change_member' slug=object.slug pk=member.pk %}">
-                      {% csrf_token %}
-                      <div class="input-group input-group-sm">
-                        {{ member.change_role_form.role }}
-                        <button type="submit" class="btn btn-primary btn-sm">{% trans "Change" %}</button>
-                      </div>
-                    </form>
-                  {% else %}
-                    {{ member.get_role_display }}
-                  {% endif %}
-                </td>
-                <td>{{ member.get_status_display }}</td>
-                {% if user_member.is_owner %}
-                  <td>
-                    {% if user_member != member %}
-                      <form method="post"
-                            action="{% url 'organization-delete_member' slug=object.slug pk=member.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">
-                          <i class="fa fa-close"></i>
-                          {% trans "Remove" %}
-                        </button>
-                      </form>
-                    {% endif %}
-                  </td>
-                {% endif %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col-lg-4">
-        <h3>{% trans "Roles" %}</h3>
-        <dl>
-          <dt>
-            {% trans "Member" %}
-          </dt>
-          <dd>
-            {% blocktrans %}
+    {% if object.members %}
+        <div class="row">
+            <div class="col-lg-8">
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Member" %}</th>
+                            <th>{% trans "Role" %}</th>
+                            <th>{% trans "Status" %}</th>
+                            {% if user_member.is_owner %}
+                                <th>{% trans "Remove" %}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                            <tr {% if member.is_invited %}class="Secondary"{% endif %}>
+                                <td>
+                                    {% if member.is_invited %}
+                                        {% if user_member.is_owner %}
+                                            <i>{{ member.email }}</i>
+                                            <br />
+                                            -
+                                        {% endif %}
+                                        {% trans "invited" %}
+                                    {% else %}
+                                        {{ member.user.get_full_name }}
+                                    {% endif %}
+                                    {% if user_member == member %}
+                                        <span class="fa fa-user"></span>
+                                        <em class="visually-hidden">{% trans "– that's you!" %}</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if member.change_role_form %}
+                                        <form method="post"
+                                              action="{% url 'organization-change_member' slug=object.slug pk=member.pk %}">
+                                            {% csrf_token %}
+                                            <div class="input-group input-group-sm">
+                                                {{ member.change_role_form.role }}
+                                                <button type="submit" class="btn btn-primary btn-sm">{% trans "Change" %}</button>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        {{ member.get_role_display }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ member.get_status_display }}</td>
+                                {% if user_member.is_owner %}
+                                    <td>
+                                        {% if user_member != member %}
+                                            <form method="post"
+                                                  action="{% url 'organization-delete_member' slug=object.slug pk=member.pk %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-close"></i>
+                                                    {% trans "Remove" %}
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                <h3>{% trans "Roles" %}</h3>
+                <dl>
+                    <dt>{% trans "Member" %}</dt>
+                    <dd>
+                        {% blocktrans %}
             A member is shown on the team page.
           {% endblocktrans %}
-          </dd>
-          <dt>
-            {% trans "Owner" %}
-          </dt>
-          <dd>
-            {% blocktrans %}
+                    </dd>
+                    <dt>{% trans "Owner" %}</dt>
+                    <dd>
+                        {% blocktrans %}
             An owner can do everything a member can. In addition they can also change the organization details, add or remove members from the organization and change their roles.
           {% endblocktrans %}
-          </dd>
-        </dl>
-      </div>
-    </div>
-  {% endif %}
-
-  {% if invite_form %}
-    <div class="row">
-      <div class="col-md-8">
-        <h4>{% trans "Add organization member" %}</h4>
-        <form method="post"
-              action="{% url 'organization-invite' slug=object.slug %}">
-          {% csrf_token %}
-          {% render_form invite_form %}
-          <p>
-            <button type="submit" class="btn btn-primary">{% trans "Invite" %}</button>
-          </p>
-        </form>
-      </div>
-    </div>
-  {% endif %}
-
-  {% if form %}
-    <div class="row mt-5">
-      <div class="col-md-8">
-        <h4>{% trans "Edit organization" %}</h4>
-        <form method="post"
-              action="{% url 'organization-update' slug=object.slug %}"
-              enctype="multipart/form-data">
-          {% csrf_token %}
-          {% render_form form %}
-          <p>
-            <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
-          </p>
-        </form>
-      </div>
-    </div>
-  {% endif %}
-
+                    </dd>
+                </dl>
+            </div>
+        </div>
+    {% endif %}
+    {% if invite_form %}
+        <div class="row">
+            <div class="col-md-8">
+                <h4>{% trans "Add organization member" %}</h4>
+                <form method="post"
+                      action="{% url 'organization-invite' slug=object.slug %}">
+                    {% csrf_token %}
+                    {% render_form invite_form %}
+                    <p>
+                        <button type="submit" class="btn btn-primary">{% trans "Invite" %}</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    {% if form %}
+        <div class="row mt-5">
+            <div class="col-md-8">
+                <h4>{% trans "Edit organization" %}</h4>
+                <form method="post"
+                      action="{% url 'organization-update' slug=object.slug %}"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% render_form form %}
+                    <p>
+                        <button type="submit" class="btn btn-primary">{% trans "Save" %}</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

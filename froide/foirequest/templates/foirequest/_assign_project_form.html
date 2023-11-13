@@ -1,25 +1,21 @@
 {% load i18n %}
 {% load form_helper %}
-
-<form method="post" action="{{ submit_url }}" class="tight-margin d-flex flex-column w-100">
-  <h5 class="card-title">{{ legend }}</h5>
-  {% csrf_token %}{# needs to be below <h5> for `tight-margin` class to work #}
-  
-  <p>
-    {% if object.project %}
-      {% blocktrans with title=object.project.title url=object.project.get_absolute_url %}
+<form method="post"
+      action="{{ submit_url }}"
+      class="tight-margin d-flex flex-column w-100">
+    <h5 class="card-title">{{ legend }}</h5>
+    {% csrf_token %}{# needs to be below <h5> for `tight-margin` class to work #}
+    <p>
+        {% if object.project %}
+            {% blocktrans with title=object.project.title url=object.project.get_absolute_url %}
         Currently, the project <a href="{{ url }}">{{ title }}</a> is assigned.
       {% endblocktrans %}
-    {% else %}
-      {% trans "Currently no project assigned." %}
-    {% endif %}
-  </p>
-  
-  {% render_form form %}
-  
-  <div class="mt-auto">
-    <button type="submit" class="btn btn-primary">
-      {{ submit_button }}
-    </button>
-  </div>
+        {% else %}
+            {% trans "Currently no project assigned." %}
+        {% endif %}
+    </p>
+    {% render_form form %}
+    <div class="mt-auto">
+        <button type="submit" class="btn btn-primary">{{ submit_button }}</button>
+    </div>
 </form>

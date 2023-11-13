@@ -1,83 +1,70 @@
 {% load i18n %}
 {% load humanize %}
-
-<form action="{{ search_url }}" method="get" class="mb-3 froide-auto-submit">
-  <div class="row mt-2 mb-2 align-items-start">
-    <div class="col-md-6">
-      <div class="input-group">
-        {{ form.q }}
-        <button type="submit" class="btn btn-outline-primary">
-          {% trans "Search" %}
-        </button>
-      </div>
-    </div>
-    {% if "status" in show_filters %}
-    <div class="col-md-5">
-      {{ form.status }}
-    </div>
-    {% else %}
-      {{ form.status }}
-    {% endif %}
-    <div class="col-md-1 ms-auto text-end mt-2 mt-md-0">
-      {% if filtered_objects %}
-      <a class="btn btn btn-outline-secondary" href="./">
-        <i class="fa fa-remove"></i>
-        <span class="visually-hidden">{% trans "Show all FoI requests" %}</span>
-      </a>
-      {% endif %}
-    </div>
-  </div>
-  <div class="row align-items-start">
-    {% if "jurisdiction" in show_filters or form.jurisdiction.field.choices|length > 1 %}
-      <div class="col-md-4">
-        {{ form.jurisdiction }}
-      </div>
-    {% else %}
-      {{ form.jurisdiction }}
-    {% endif %}
-
-    {% if "campaign" in show_filters %}
-      <div class="col-md-4">
-        {{ form.campaign }}
-      </div>
-    {% else %}
-      {{ form.campaign }}
-    {% endif %}
-
-    {% if "category" in show_filters %}
-      <div class="col-md-4">
-        {{ form.category }}
-      </div>
-    {% else %}
-      {{ form.category }}
-    {% endif %}
-
-    {{ form.publicbody }}
-    {{ form.tag }}
-    {{ form.user }}
-  </div>
-  {% if 'first' in show_filters or 'sort' in show_filters %}
-    <details{% if form.first.value.0 or form.first.value.1 or form.sort.value %} open{% endif %}>
-      <summary>{% translate "More search options" %}</summary>
-      <div class="row mt-2">
-        <div class="col-md-8">
-          <label class="form-label">
-            {% trans "request date" %}
-            {{ form.first }}
-          </label>
+<form action="{{ search_url }}"
+      method="get"
+      class="mb-3 froide-auto-submit">
+    <div class="row mt-2 mb-2 align-items-start">
+        <div class="col-md-6">
+            <div class="input-group">
+                {{ form.q }}
+                <button type="submit" class="btn btn-outline-primary">{% trans "Search" %}</button>
+            </div>
         </div>
-        {% if "sort" in show_filters %}
-          <div class="col-md-4">
-            <label class="form-label">
-              {% trans "sort" %}
-              {{ form.sort }}
-            </label>
-          </div>
+        {% if "status" in show_filters %}
+            <div class="col-md-5">{{ form.status }}</div>
         {% else %}
-          {{ form.sort }}
+            {{ form.status }}
         {% endif %}
-      </div>
-    </details>
-  {% endif %}
-  
+        <div class="col-md-1 ms-auto text-end mt-2 mt-md-0">
+            {% if filtered_objects %}
+                <a class="btn btn btn-outline-secondary" href="./">
+                    <i class="fa fa-remove"></i>
+                    <span class="visually-hidden">{% trans "Show all FoI requests" %}</span>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row align-items-start">
+        {% if "jurisdiction" in show_filters or form.jurisdiction.field.choices|length > 1 %}
+            <div class="col-md-4">{{ form.jurisdiction }}</div>
+        {% else %}
+            {{ form.jurisdiction }}
+        {% endif %}
+        {% if "campaign" in show_filters %}
+            <div class="col-md-4">{{ form.campaign }}</div>
+        {% else %}
+            {{ form.campaign }}
+        {% endif %}
+        {% if "category" in show_filters %}
+            <div class="col-md-4">{{ form.category }}</div>
+        {% else %}
+            {{ form.category }}
+        {% endif %}
+        {{ form.publicbody }}
+        {{ form.tag }}
+        {{ form.user }}
+    </div>
+    {% if 'first' in show_filters or 'sort' in show_filters %}
+        <details {% if form.first.value.0 or form.first.value.1 or form.sort.value %}open{% endif %}>
+            <summary>{% translate "More search options" %}</summary>
+            <div class="row mt-2">
+                <div class="col-md-8">
+                    <label class="form-label">
+                        {% trans "request date" %}
+                        {{ form.first }}
+                    </label>
+                </div>
+                {% if "sort" in show_filters %}
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            {% trans "sort" %}
+                            {{ form.sort }}
+                        </label>
+                    </div>
+                {% else %}
+                    {{ form.sort }}
+                {% endif %}
+            </div>
+        </details>
+    {% endif %}
 </form>

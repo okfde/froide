@@ -1,65 +1,64 @@
 {% load i18n %}
 {% load foirequest_tags %}
 {% load form_helper %}
-
-<form class="disable-submit" method="post" action="{% url 'foirequest-send_message' slug=object.slug %}#write-message" enctype="multipart/form-data">
-  {% csrf_token %}
-  <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
-  {% if object.is_overdue %}
-    <p>{% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}</p>
-  {% else %}
-    {% if object.reply_received %}
-      <p>
-        {% blocktrans %}
+<form class="disable-submit"
+      method="post"
+      action="{% url 'foirequest-send_message' slug=object.slug %}#write-message"
+      enctype="multipart/form-data">
+    {% csrf_token %}
+    <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
+    {% if object.is_overdue %}
+        <p>
+            {% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}
+        </p>
+    {% else %}
+        {% if object.reply_received %}
+            <p>
+                {% blocktrans %}
         You can reply to the public body here.
         {% endblocktrans %}
-      </p>
-    {% else %}
-      <p>
-        {% blocktrans %}
+            </p>
+        {% else %}
+            <p>
+                {% blocktrans %}
         Here you can send another message to this public body.
         {% endblocktrans %}
-      </p>
+            </p>
+        {% endif %}
     {% endif %}
-  {% endif %}
-  {% block send_message_form_pre %}{% endblock %}
-
-  {% with form=send_message_form|default:object.get_send_message_form %}
-    {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
-    {% render_field form.to horizontal=False %}
-    {% render_field form.subject horizontal=False %}
-    {% render_field form.message horizontal=False %}
-    {% render_field form.send_address horizontal=False %}
-    {% render_field form.address horizontal=False %}
-
-    {% if request.user.is_staff %}
-      <details class="mb-3">
-        <summary>{% translate "Include proofs and other attachments" %}</summary>
-
-            {% if request.user != object.user %}
-              <div class="alert alert-warning">
-                {% blocktranslate with name=object.user.get_full_name %}
+    {% block send_message_form_pre %}{% endblock %}
+    {% with form=send_message_form|default:object.get_send_message_form %}
+        {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
+        {% render_field form.to horizontal=False %}
+        {% render_field form.subject horizontal=False %}
+        {% render_field form.message horizontal=False %}
+        {% render_field form.send_address horizontal=False %}
+        {% render_field form.address horizontal=False %}
+        {% if request.user.is_staff %}
+            <details class="mb-3">
+                <summary>{% translate "Include proofs and other attachments" %}</summary>
+                {% if request.user != object.user %}
+                    <div class="alert alert-warning">
+                        {% blocktranslate with name=object.user.get_full_name %}
                   The proof will be sent in the name of {{ name }}. Storing them will store them in your account.
                 {% endblocktranslate %}
-              </div>
-          {% endif %}
-          {% include "proof/proof_message.html" %}
-
-          {% render_field form.files horizontal=False %}
-      </details>
-    {% else %}
-      {% render_field form.files horizontal=False %}
-    {% endif %}
-
-  {% endwith %}
-
-  <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-  <p class="form-text text-body-secondary">
-    <small>
-      {% trans "If you need to provide an alternative email address, use this one:" %}<br/>
-      <strong>{% alternative_address object %}</strong>
-      <br/>
-      {% trans "It will still go to your request here." %}
-    </small>
-  </p>
+                    </div>
+                {% endif %}
+                {% include "proof/proof_message.html" %}
+                {% render_field form.files horizontal=False %}
+            </details>
+        {% else %}
+            {% render_field form.files horizontal=False %}
+        {% endif %}
+    {% endwith %}
+    <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+    <p class="form-text text-body-secondary">
+        <small>
+            {% trans "If you need to provide an alternative email address, use this one:" %}
+            <br />
+            <strong>{% alternative_address object %}</strong>
+            <br />
+            {% trans "It will still go to your request here." %}
+        </small>
+    </p>
 </form>

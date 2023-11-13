@@ -3,85 +3,74 @@
 {% load humanize %}
 {% load searchtags %}
 {% load search_helper %}
-
 {% block extra_head %}
-  <link href="./rss/" rel="alternate nofollow" type="application/rss+xml" title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
-  <link rel="alternate nofollow" type="application/atom+xml" title="{% blocktrans %}Atom feed for these request{% endblocktrans %}" href="./feed/" />
+    <link href="./rss/"
+          rel="alternate nofollow"
+          type="application/rss+xml"
+          title="{% blocktrans %}RSS Feed for these requests{% endblocktrans %}">
+    <link rel="alternate nofollow"
+          type="application/atom+xml"
+          title="{% blocktrans %}Atom feed for these request{% endblocktrans %}"
+          href="./feed/" />
 {% endblock %}
-
 {% block search_title %}
-  {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.category or filtered_objects.user %}
-    {% trans "Requests" %}
-    {% if filtered_objects.publicbody %}
-      <small>
-        {% blocktrans with name=filtered_objects.publicbody.name %}to {{ name }}{% endblocktrans %}
-      </small>
-    {% endif %}
-    {% if filtered_objects.tag %}
-      <small>
-        {% blocktrans with name=filtered_objects.tag.name %}with tag “{{ name }}”{% endblocktrans %}
-      </small>
-    {% endif %}
-    {% if filtered_objects.category %}
-      <small>
-        {% blocktrans with name=filtered_objects.category.name %}in category “{{ name }}”{% endblocktrans %}
-      </small>
-    {% endif %}
-    {% if filtered_objects.user %}
-      <small>
-        {% blocktrans with name=filtered_objects.user.get_full_name %}by {{ name }}{% endblocktrans %}
-      </small>
-    {% endif %}
-  {% else %}
-    {% trans "FoI Requests" %}
-  {% endif %}
-{% endblock %}
-
-{% block search_form %}
-  {% include "foirequest/_request_search.html" with search_url=search_url %}
-{% endblock %}
-
-{% block search_results %}
-  <ul class="list-unstyled">
-    {% for object in object_list %}
-      <li>
-        {% include "foirequest/snippets/request_item.html" %}
-      </li>
-    {% empty %}
-      <li>
-        {% if filtered_objects %}
-          {% trans "No requests with these filters." %}
-        {% else %}
-          {% trans "No requests yet." %}
+    {% if filtered_objects.publicbody or filtered_objects.tag or filtered_objects.category or filtered_objects.user %}
+        {% trans "Requests" %}
+        {% if filtered_objects.publicbody %}
+            <small>{% blocktrans with name=filtered_objects.publicbody.name %}to {{ name }}{% endblocktrans %}</small>
         {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-
-  {% if paginator.num_pages > 1 %}
-    {% include "pagination/pagination.html" with page_obj=page_obj %}
-  {% endif %}
-
+        {% if filtered_objects.tag %}
+            <small>{% blocktrans with name=filtered_objects.tag.name %}with tag “{{ name }}”{% endblocktrans %}</small>
+        {% endif %}
+        {% if filtered_objects.category %}
+            <small>{% blocktrans with name=filtered_objects.category.name %}in category “{{ name }}”{% endblocktrans %}</small>
+        {% endif %}
+        {% if filtered_objects.user %}
+            <small>{% blocktrans with name=filtered_objects.user.get_full_name %}by {{ name }}{% endblocktrans %}</small>
+        {% endif %}
+    {% else %}
+        {% trans "FoI Requests" %}
+    {% endif %}
 {% endblock %}
-
+{% block search_form %}
+    {% include "foirequest/_request_search.html" with search_url=search_url %}
+{% endblock %}
+{% block search_results %}
+    <ul class="list-unstyled">
+        {% for object in object_list %}
+            <li>{% include "foirequest/snippets/request_item.html" %}</li>
+        {% empty %}
+            <li>
+                {% if filtered_objects %}
+                    {% trans "No requests with these filters." %}
+                {% else %}
+                    {% trans "No requests yet." %}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    {% if paginator.num_pages > 1 %}
+        {% include "pagination/pagination.html" with page_obj=page_obj %}
+    {% endif %}
+{% endblock %}
 {% block sidebar_bottom %}
-  <div class="card mb-3">
-    <div class="card-body">
-      <h6>{% blocktrans %}Feeds for these requests{% endblocktrans %}</h6>
-      <ul class="list-unstyled">
-        <li>
-          <a href="{% url 'foirequest-list_feed' %}?{{ getvars }}">
-            <i class="fa fa-rss" aria-hidden="true"></i>
-            {% trans "RSS Feed" %}
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'foirequest-list_feed_atom' %}?{{ getvars }}">
-            <i class="fa fa-rss-square" aria-hidden="true"></i>
-            {% trans "Atom Feed" %}
-          </a>
-        </li>
-      </ul>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>{% blocktrans %}Feeds for these requests{% endblocktrans %}</h6>
+            <ul class="list-unstyled">
+                <li>
+                    <a href="{% url 'foirequest-list_feed' %}?{{ getvars }}">
+                        <i class="fa fa-rss" aria-hidden="true"></i>
+                        {% trans "RSS Feed" %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'foirequest-list_feed_atom' %}?{{ getvars }}">
+                        <i class="fa fa-rss-square" aria-hidden="true"></i>
+                        {% trans "Atom Feed" %}
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
 {% endblock %}

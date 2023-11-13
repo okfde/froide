@@ -1,38 +1,33 @@
 {% extends "base.html" %}
-
 {% load i18n %}
-
 {% block title %}
-  {% trans "Organizations" %}
+    {% trans "Organizations" %}
 {% endblock %}
-
 {% block body %}
-  <div class="bg-body-tertiary">
-    <nav class="container" aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
-        </li>
-        <li class="breadcrumb-item">
-          <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
-        </li>
-      </ol>
-    </nav>
-  </div>
-  <div class="container">
-    <h1 class="py-4">{% trans "Organizations" %}</h1>
-    
-    <ul>
-      {% for object in object_list %}
-        <li>
-          <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
-        </li>
-      {% empty %}
-        <div class="col-md-4">
-          <p>{% trans "No organizations found." %}</p>
-        </div>
-      {% endfor %}
-    </ul>
-  </div>
-
+    <div class="bg-body-tertiary">
+        <nav class="container" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container">
+        <h1 class="py-4">{% trans "Organizations" %}</h1>
+        <ul>
+            {% for object in object_list %}
+                <li>
+                    <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+                </li>
+            {% empty %}
+                <div class="col-md-4">
+                    <p>{% trans "No organizations found." %}</p>
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

@@ -2,177 +2,151 @@
 {% load i18n %}
 {% load markup %}
 {% load humanize %}
-
 {% block title %}{{ object.get_full_name }} - {{ SITE_NAME }}{% endblock %}
-
-{% block metadescription %}{% blocktrans with name=object.get_full_name site_name=SITE_NAME %}Profil and requests of {{ name }} on {{ site_name }}{% endblocktrans %}{% endblock %}
-
-{% block extra_head %}
-  {{ block.super }}
-  {% if no_index %}
-    <meta name="robots" content="noindex"/>
-  {% endif %}
+{% block metadescription %}
+    {% blocktrans with name=object.get_full_name site_name=SITE_NAME %}Profil and requests of {{ name }} on {{ site_name }}{% endblocktrans %}
 {% endblock %}
-
+{% block extra_head %}
+    {{ block.super }}
+    {% if no_index %}<meta name="robots" content="noindex" />{% endif %}
+{% endblock %}
 {% block app_container %}
-<div class="row mt-3">
-  <div class="col-md-3">
-    <div class="row mb-3">
-      {% if object.profile_photo %}
-        <div class="col-4 col-md-12">
-          <img class="img-fluid rounded" src="{{ object.profile_photo.url }}" alt="{{ object.get_full_name }}">
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <div class="row mb-3">
+                {% if object.profile_photo %}
+                    <div class="col-4 col-md-12">
+                        <img class="img-fluid rounded"
+                             src="{{ object.profile_photo.url }}"
+                             alt="{{ object.get_full_name }}">
+                    </div>
+                {% endif %}
+                <div class="col-8 col-md-12 mt-3">
+                    <h2>{{ object.get_full_name }}</h2>
+                    {% if object.organization_url and object.organization_name %}
+                        <p>
+                            <strong>
+                                <a rel="external nofollow" href="{{ object.organization_url }}">{{ object.organization_name }}</a>
+                            </strong>
+                        </p>
+                    {% elif object.organization_name %}
+                        <p>{{ object.organization_name }}</p>
+                    {% endif %}
+                    <dl>
+                        {% if aggregates.first_date %}
+                            <dt>{% translate "First request:" %}</dt>
+                            <dd>
+                                {{ aggregates.first_date|date }}
+                            </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+            {% if object.profile_text %}
+                {% if object.is_staff %}
+                    {{ object.profile_text|markdown }}
+                {% else %}
+                    <p>{{ object.profile_text|linebreaksbr }}</p>
+                {% endif %}
+            {% endif %}
+            {% block profile_details %}{% endblock %}
+            {% if object == request.user %}
+                <a href="{% url 'account-settings' %}#profile"
+                   class="btn btn-secondary mb-2">{% translate "Edit profile" %}</a>
+                <a href="{% url 'account-settings' %}#general"
+                   class="btn btn-secondary mb-2">{% translate "Make private" %}</a>
+            {% endif %}
         </div>
-      {% endif %}
-      <div class="col-8 col-md-12 mt-3">
-        <h2>
-          {{ object.get_full_name }}
-        </h2>
-        {% if object.organization_url and object.organization_name %}
-          <p>
-            <strong>
-              <a rel="external nofollow" href="{{ object.organization_url }}">{{ object.organization_name }}</a>
-            </strong>
-          </p>
-        {% elif object.organization_name %}
-          <p>
-            {{ object.organization_name }}
-          </p>
-        {% endif %}
-        <dl>
-          {% if aggregates.first_date %}
-            <dt>{% translate "First request:" %}</dt>
-            <dd>{{ aggregates.first_date|date }}</dd>
-          {% endif %}
-        </dl>
-      </div>
-    </div>
-
-    {% if object.profile_text %}
-      {% if object.is_staff %}
-        {{ object.profile_text|markdown }}
-      {% else %}
-        <p>{{ object.profile_text|linebreaksbr }}</p>
-      {% endif %}
-    {% endif %}
-
-    {% block profile_details %}{% endblock %}
-
-    {% if object == request.user %}
-      <a href="{% url 'account-settings' %}#profile" class="btn btn-secondary mb-2">
-        {% translate "Edit profile" %}
-      </a>
-      <a href="{% url 'account-settings' %}#general" class="btn btn-secondary mb-2">
-        {% translate "Make private" %}
-      </a>
-    {% endif %}
-
-  </div>
-
-  <div class="col-md-9">
-    <div class="row">
-      <div class="col-md-12 col-lg-4">
-        <div class="rounded-3 pt-3 pb-2 px-2 bg-body-secondary mb-3">
-          <div class="display-3 text-center">{{ aggregates.count|intcomma }}</div>
-          <p class="lead text-center no-hyphens">{% translate "Number of public requests" %}</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="rounded-3 pt-3 pb-2 px-2 bg-body-secondary mb-3">
-          <div class="display-3 text-center">{{ aggregates.successful|intcomma }}</div>
-          <p class="lead text-center no-hyphens">{% translate "Number of successful requests" %}</p>
-        </div>
-      </div>
-      <div class="col-md-6 col-lg-4">
-        <div class="rounded-3 pt-3 pb-2 px-2 bg-body-secondary mb-3">
-          <div class="display-3 text-center">{{ aggregates.refused|intcomma }}</div>
-          <p class="lead text-center no-hyphens">{% translate "Number of refused requests" %}</p>
-        </div>
-      </div>
-      {% if top_followers %}
-      <div class="col-12">
-        <div class="card mb-3">
-          <div class="card-body">
-            <h4 class="text-center">
-              {% translate "Most followed requests" %}
-            </h4>
-            <ul class="list-unstyled">
-              {% for foirequest in top_followers %}
-                <li>
-                  {% include "foirequest/snippets/request_item.html" with object=foirequest %}
-                </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-      </div>
-      {% endif %}
-      {% if top_publicbodies %}
-      <div class="col-12">
-        <div class="rounded-3 px-3 pt-3 pb-2 mb-3 bg-body-secondary">
-          <h4 class="text-center">
-            {% translate "Top requested public bodies" %}
-          </h4>
-          <ol class="lead">
-            {% for pb in top_publicbodies %}
-              <li>
-                <a href="{{ pb.get_absolute_url }}">
-                  {{ pb.name }}
-                </a>
-                <span class="badge text-bg-secondary">
-                  {% blocktranslate count count=pb.user_request_count %}one request{% plural %}{{ count }} requests{% endblocktranslate %}
-                </span>
-              </li>
-            {% endfor %}
-          </ol>
-        </div>
-      </div>
-      {% endif %}
-    </div>
-
-    {% if foirequests %}
-    <div class="card mb-3">
-      <div class="card-header">
-        <h4 class="my-1">{% translate "Last requests" %}</h4>
-      </div>
-      <div class="card-body">
-        <ul class="list-unstyled">
-          {% for foirequest in foirequests %}
-            <li>
-              {% include "foirequest/snippets/request_item.html" with object=foirequest %}
-            </li>
-          {% endfor %}
-        </ul>
-        <a href="{% url 'foirequest-list' %}?user={{ object.username }}">
-          {% blocktrans with name=object.get_full_name %}See all requests of {{ name }}{% endblocktrans %}
-        </a>
-      </div>
-    </div>
-    {% endif %}
-
-    {% if campaigns %}
-      <hr/>
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            {% blocktrans with name=object.first_name %}
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-12 col-lg-4">
+                    <div class="rounded-3 pt-3 pb-2 px-2 bg-body-secondary mb-3">
+                        <div class="display-3 text-center">{{ aggregates.count|intcomma }}</div>
+                        <p class="lead text-center no-hyphens">{% translate "Number of public requests" %}</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="rounded-3 pt-3 pb-2 px-2 bg-body-secondary mb-3">
+                        <div class="display-3 text-center">{{ aggregates.successful|intcomma }}</div>
+                        <p class="lead text-center no-hyphens">{% translate "Number of successful requests" %}</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="rounded-3 pt-3 pb-2 px-2 bg-body-secondary mb-3">
+                        <div class="display-3 text-center">{{ aggregates.refused|intcomma }}</div>
+                        <p class="lead text-center no-hyphens">{% translate "Number of refused requests" %}</p>
+                    </div>
+                </div>
+                {% if top_followers %}
+                    <div class="col-12">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h4 class="text-center">{% translate "Most followed requests" %}</h4>
+                                <ul class="list-unstyled">
+                                    {% for foirequest in top_followers %}
+                                        <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if top_publicbodies %}
+                    <div class="col-12">
+                        <div class="rounded-3 px-3 pt-3 pb-2 mb-3 bg-body-secondary">
+                            <h4 class="text-center">{% translate "Top requested public bodies" %}</h4>
+                            <ol class="lead">
+                                {% for pb in top_publicbodies %}
+                                    <li>
+                                        <a href="{{ pb.get_absolute_url }}">{{ pb.name }}</a>
+                                        <span class="badge text-bg-secondary">
+                                            {% blocktranslate count count=pb.user_request_count %}one request{% plural %}{{ count }} requests{% endblocktranslate %}
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            {% if foirequests %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h4 class="my-1">{% translate "Last requests" %}</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% for foirequest in foirequests %}
+                                <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
+                            {% endfor %}
+                        </ul>
+                        <a href="{% url 'foirequest-list' %}?user={{ object.username }}">
+                            {% blocktrans with name=object.get_full_name %}See all requests of {{ name }}{% endblocktrans %}
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+            {% if campaigns %}
+                <hr />
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5>
+                            {% blocktrans with name=object.first_name %}
               {{ name }} has taken part in these campaigns
             {% endblocktrans %}
-          </h5>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            {% for campaign in campaigns %}
+                                <li>
+                                    <a href="{{ campaign.url }}">{{ campaign.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        <div class="card-body">
-          <ul class="list-unstyled">
-            {% for campaign in campaigns %}
-              <li>
-                <a href="{{ campaign.url }}">
-                  {{ campaign.name }}
-                </a>
-              </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    {% endif %}
-
-  </div>
-</div>
+    </div>
 {% endblock %}

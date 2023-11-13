@@ -1,16 +1,12 @@
 {% extends "account/settings_base.html" %}
-
 {% load i18n %}
-
 {% block title %}Applications{% endblock %}
-
 {% block breadcrumbs %}
-{% url "account-settings" as settings_url %}
-{% translate "Settings" as settings_name %}
-{% translate "OAuth applications" as last_item %}
-{% include "account/includes/breadcrumbs.html" with section_name=settings_name section_url=settings_url last_item=last_item %}
+    {% url "account-settings" as settings_url %}
+    {% translate "Settings" as settings_name %}
+    {% translate "OAuth applications" as last_item %}
+    {% include "account/includes/breadcrumbs.html" with section_name=settings_name section_url=settings_url last_item=last_item %}
 {% endblock %}
-
 {% block app_container %}
-{% block content %}{% endblock %}
+    {% block content %}{% endblock %}
 {% endblock %}

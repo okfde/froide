@@ -1,58 +1,50 @@
 {% extends "account/show.html" %}
-
 {% load i18n %}
-
-{% block title %}{% translate "Followed requests" %}{% endblock %}
-
-{% block breadcrumbs %}
-{% url "account-following" as section_url %}
-{% translate "Followed requests" as section_name %}
-{% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% block title %}
+    {% translate "Followed requests" %}
 {% endblock %}
-
+{% block breadcrumbs %}
+    {% url "account-following" as section_url %}
+    {% translate "Followed requests" as section_name %}
+    {% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% endblock %}
 {% block pre_table %}
-  <div class="row">
-    <div class="col-lg-8 mt-2">
-
-      <h2 class="mb-3">{% translate "Requests you follow" %}</h2>
-
-      {% trans "Search the requests you follow" as search_title %}
-      <p>
-        {% if view.query %}
-          {% blocktrans with query=view.query count request_count=page_obj.paginator.count %}
+    <div class="row">
+        <div class="col-lg-8 mt-2">
+            <h2 class="mb-3">{% translate "Requests you follow" %}</h2>
+            {% trans "Search the requests you follow" as search_title %}
+            <p>
+                {% if view.query %}
+                    {% blocktrans with query=view.query count request_count=page_obj.paginator.count %}
             You follow one request matching your search for “{{ query }}”.
           {% plural %}
             You follow {{ request_count }} requests matching your search for “{{ query }}”.
           {% endblocktrans %}
-        {% else %}
-          {% blocktrans count request_count=page_obj.paginator.count %}
+                {% else %}
+                    {% blocktrans count request_count=page_obj.paginator.count %}
             You follow one request so far.
           {% plural %}
             You follow {{ request_count }} requests.
           {% endblocktrans %}
-        {% endif %}
-      </p>
+                {% endif %}
+            </p>
+        </div>
     </div>
-  </div>
 {% endblock %}
-
-
 {% block table_row %}
-  <tr>
-    <td>
-      <a class="icon status-{{ object.status_representation }}" href="{{ object.url }}" title="{{ object.readable_status }}"></a>
-    </td>
-    <td>
-      {% include "foirequest/snippets/request_item_inner.html" %}
-
-      {% if object.status == "awaiting_response" %}
-        {% if object.due_date %}
-          <small>
-            {% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}
-          </small>
-        {% endif %}
-      {% endif %}
-
-    </td>
-  </tr>
+    <tr>
+        <td>
+            <a class="icon status-{{ object.status_representation }}"
+               href="{{ object.url }}"
+               title="{{ object.readable_status }}"></a>
+        </td>
+        <td>
+            {% include "foirequest/snippets/request_item_inner.html" %}
+            {% if object.status == "awaiting_response" %}
+                {% if object.due_date %}
+                    <small>{% blocktrans with date=object.due_date|date:"DATE_FORMAT" %}Deadline: {{ date }}{% endblocktrans %}</small>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
 {% endblock %}

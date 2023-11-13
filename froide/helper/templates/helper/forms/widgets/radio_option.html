@@ -1,2 +1,5 @@
 {% include "django/forms/widgets/input.html" %}
-{% if widget.wrap_label %}<label class="form-check-label"{% if widget.attrs.id %} for="{{ widget.attrs.id }}"{% endif %}> {{ widget.label }}</label>{% endif %}
+{% if widget.wrap_label %}
+    <label class="form-check-label"
+           {% if widget.attrs.id %}for="{{ widget.attrs.id }}"{% endif %}>{{ widget.label }}</label>
+{% endif %}

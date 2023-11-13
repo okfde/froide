@@ -1,64 +1,64 @@
 {% load i18n %}
 {% load markup %}
 {% load foirequest_tags %}
-
 <div class="message-guidance-sticky">
-  {% for guidance in message.guidances %}
-    <div class="card mb-2">
-      <div class="card-body">
-        <h5 class="card-title" {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>
-          {{ guidance.get_label }}
-        </h5>
-        <div class="card-text">
-          {{ guidance.get_description | markdown }}
+    {% for guidance in message.guidances %}
+        <div class="card mb-2">
+            <div class="card-body">
+                <h5 class="card-title"
+                    {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>
+                    {{ guidance.get_label }}
+                </h5>
+                <div class="card-text">{{ guidance.get_description | markdown }}</div>
+                {% if guidance.has_snippet and foirequest|can_write_foirequest:request %}
+                    {% with snippet=guidance.get_snippet %}
+                        {% if snippet|length < 250 %}
+                            <h6>{% trans "Suggested reply" %}</h6>
+                            <blockquote class="card-text small bg-body-secondary ps-2">
+                                <p>{{ snippet|linebreaksbr }}</p>
+                            </blockquote>
+                        {% endif %}
+                        <a data-tabgo="tab"
+                           data-name="sendmessage-to"
+                           data-addtextfield="#id_sendmessage-message"
+                           data-value="{% if message.is_response %}{{ message.sender_email }}{% else %}{{ message.recipient_email }}{% endif %}"
+                           data-addtext="{{ snippet }}"
+                           href="#write-message"
+                           class="btn btn-sm btn-secondary">
+                            <span class="fa fa-reply"></span>
+                            {% if snippet|length < 250 %}
+                                {% trans "Add to reply" %}
+                            {% else %}
+                                {% trans "Prepare message" %}
+                            {% endif %}
+                        </a>
+                    {% endwith %}
+                {% endif %}
+                {% if guidance.has_letter and foirequest|can_write_foirequest:request %}
+                    <a href="{{ guidance.get_letter_url }}" class="btn btn-primary">
+                        <span class="fa fa-envelope"></span>
+                        {% trans "Generate letter" %}
+                    </a>
+                {% endif %}
+            </div>
         </div>
-      {% if guidance.has_snippet and foirequest|can_write_foirequest:request %}
-        {% with snippet=guidance.get_snippet %}
-          {% if snippet|length < 250 %}
-          <h6>{% trans "Suggested reply" %}</h6>
-          <blockquote class="card-text small bg-body-secondary ps-2">
-            <p>
-            {{ snippet|linebreaksbr }}
-            </p>
-          </blockquote>
-          {% endif %}
-          <a data-tabgo="tab" data-name="sendmessage-to"
-            data-addtextfield="#id_sendmessage-message"
-            data-value="{% if message.is_response %}{{ message.sender_email }}{% else %}{{ message.recipient_email }}{% endif %}"
-            data-addtext="{{ snippet }}"
-            href="#write-message" class="btn btn-sm btn-secondary">
-            <span class="fa fa-reply"></span>
-            {% if snippet|length < 250 %}
-              {% trans "Add to reply" %}
-            {% else %}
-              {% trans "Prepare message" %}
-            {% endif %}
-          </a>
-        {% endwith %}
-      {% endif %}
-
-      {% if guidance.has_letter and foirequest|can_write_foirequest:request %}
-        <a href="{{ guidance.get_letter_url }}" class="btn btn-primary">
-          <span class="fa fa-envelope"></span>
-          {% trans "Generate letter" %}
-        </a>
-      {% endif %}
-
-      </div>
-    </div>
-  {% endfor %}
-
-  {% if request.user.is_staff %}
-    <form action="{% url 'guide-rerun_rules' message_id=message.id %}" method="post" class="text-end mt-1">
-      {% csrf_token %}
-      <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}" class="btn btn-sm btn-outline-secondary" target="_blank">
-        {% trans "In admin" %}
-      </a>
-      <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}" class="btn btn-sm btn-outline-secondary" target="_blank">
-        {% trans "Add custom" %}
-      </a>
-      <button type="submit" class="btn btn-sm btn-info">{% trans "Rerun guidance" %}</button>
-      <input name="notify" value="🚨 {% trans "Run + Notify" %}" type="submit" class="btn btn-sm btn-info"/>
-    </form>
-  {% endif %}
+    {% endfor %}
+    {% if request.user.is_staff %}
+        <form action="{% url 'guide-rerun_rules' message_id=message.id %}"
+              method="post"
+              class="text-end mt-1">
+            {% csrf_token %}
+            <a href="{% url 'admin:guide_guidance_changelist' %}?message={{ message.id }}"
+               class="btn btn-sm btn-outline-secondary"
+               target="_blank">{% trans "In admin" %}</a>
+            <a href="{% url 'admin:guide_guidance_add' %}?prefill_message={{ message.id }}"
+               class="btn btn-sm btn-outline-secondary"
+               target="_blank">{% trans "Add custom" %}</a>
+            <button type="submit" class="btn btn-sm btn-info">{% trans "Rerun guidance" %}</button>
+            <input name="notify"
+                   value="🚨 {% trans "Run + Notify" %}"
+                   type="submit"
+                   class="btn btn-sm btn-info" />
+        </form>
+    {% endif %}
 </div>

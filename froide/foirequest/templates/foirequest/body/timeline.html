@@ -1,38 +1,43 @@
 {% load i18n %}
 {% load content_helper %}
-
 {% block foirequest_timeline %}
-  <div id="timeline" class="alpha-timeline d-none d-lg-block">
-    <div class="alpha-timeline__wrap">
-        {% for group in object.messages_by_month %}
-          <div class="alpha-timeline__item {% if group.show_overdue_message %}alpha-timeline__item--overdue{% endif %} {% if forloop.last %}alpha-timeline__item--last{% endif %}" data-key="{{ group.date|date:'Y-m' }}">
-            <a href="#{{ group.first_message_id }}" class="alpha-timeline__link text-decoration-none">
-              <div class="alpha-timeline__month">{{ group.date|date:'F Y' }}</div>
-              <div>
-                {% spaceless %}
-                  {% blocktrans count counter=group.messages|length %}
+    <div id="timeline" class="alpha-timeline d-none d-lg-block">
+        <div class="alpha-timeline__wrap">
+            {% for group in object.messages_by_month %}
+                <div class="alpha-timeline__item {% if group.show_overdue_message %}alpha-timeline__item--overdue{% endif %} {% if forloop.last %}alpha-timeline__item--last{% endif %}"
+                     data-key="{{ group.date|date:'Y-m' }}">
+                    <a href="#{{ group.first_message_id }}"
+                       class="alpha-timeline__link text-decoration-none">
+                        <div class="alpha-timeline__month">{{ group.date|date:'F Y' }}</div>
+                        <div>
+                            {% spaceless %}
+                                {% blocktrans count counter=group.messages|length %}
                     One Message
                   {% plural %}
                     {{ counter }} Messages
                   {% endblocktrans %}
-                  {% if not group.show_overdue_message and group.indicate_overdue %} ({% trans 'overdue' %}){% endif %}
-                {% endspaceless %}
-              </div>
-              {% if group.show_overdue_message %}
-                <div class="alpha-timeline__overdue-time">{% blocktranslate with ago=object.due_date|relativetime %}Deadline expired {{ ago }}{% endblocktranslate %}</div>
-              {% endif %}
-            </a>
-          </div>
-        {% endfor %}
+                                {% if not group.show_overdue_message and group.indicate_overdue %}
+                                    ({% trans 'overdue' %})
+                                {% endif %}
+                            {% endspaceless %}
+                        </div>
+                        {% if group.show_overdue_message %}
+                            <div class="alpha-timeline__overdue-time">
+                                {% blocktranslate with ago=object.due_date|relativetime %}Deadline expired {{ ago }}{% endblocktranslate %}
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% with object.get_messages_by_month|last as last_month %}
+            {% with last_month.messages|last as last_message %}
+                <a href="#"
+                   class="text-decoration-none alpha-timeline__scroll-end-link js-trigger-scroll-to-end">
+                    <i class="fa fa-long-arrow-down" aria-hidden="true"></i>
+                    {% trans 'Scroll to end' %}
+                </a>
+            {% endwith %}
+        {% endwith %}
     </div>
-
-    {% with object.get_messages_by_month|last as last_month %}
-      {% with last_month.messages|last as last_message %}
-        <a href="#" class="text-decoration-none alpha-timeline__scroll-end-link js-trigger-scroll-to-end">
-          <i class="fa fa-long-arrow-down" aria-hidden="true"></i>
-          {% trans 'Scroll to end' %}
-        </a>
-      {% endwith %}
-    {% endwith %}
-  </div>
 {% endblock foirequest_timeline %}

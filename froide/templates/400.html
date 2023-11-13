@@ -1,10 +1,8 @@
 {% extends "./error_base.html" %}
 {% load i18n %}
-
 {% block error %}
-{% blocktrans %}400 - Bad Request{% endblocktrans %}
+    {% blocktrans %}400 - Bad Request{% endblocktrans %}
 {% endblock error %}
-
 {% block error_description %}
-{% blocktrans %}This one seems to be on you. Please contact us, if this error comes as a surprise.{% endblocktrans %}
+    {% blocktrans %}This one seems to be on you. Please contact us, if this error comes as a surprise.{% endblocktrans %}
 {% endblock error_description %}

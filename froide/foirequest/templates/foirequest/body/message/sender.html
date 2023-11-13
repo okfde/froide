@@ -1,51 +1,50 @@
 {% load i18n %}
 {% load foirequest_tags %}
-
 <div class="alpha-message__sender text-truncate">
-  {% if object|can_read_foirequest_authenticated:request %}
-    {% if message.is_response %}
-      <span title="{{ message.sender_email }}">
-        {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
-          {% if message.sender_public_body %}
-            <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
-              {{ message.user_real_sender }}
+    {% if object|can_read_foirequest_authenticated:request %}
+        {% if message.is_response %}
+            <span title="{{ message.sender_email }}">
+                {% if message.user_real_sender and message.user_real_sender != message.sender_public_body.name %}
+                    {% if message.sender_public_body %}
+                        <span class="redacted-dummy redacted-hover"
+                              data-bs-toggle="tooltip"
+                              title="{% trans 'Only visible to you' %}">{{ message.user_real_sender }}</span>
+                        <span>– {{ message.sender_public_body.name }}</span>
+                    {% else %}
+                        {{ message.sender_name }}
+                    {% endif %}
+                {% else %}
+                    {{ message.sender_public_body.name }}
+                {% endif %}
             </span>
-            <span> – {{ message.sender_public_body.name }}</span>
-          {% else %}
-            {{ message.sender_name }}
-          {% endif %}
         {% else %}
-          {{ message.sender_public_body.name }}
-        {% endif %}
-      </span>
+            {% if object.user.private %}
+                <span class="redacted-dummy redacted-hover"
+                      data-bs-toggle="tooltip"
+                      title="{% trans 'Only visible to you' %}">
+                {% else %}
+                    <span>
+                    {% endif %}
+                    {{ message.user_real_sender }}
+                </span>
+            {% endif %}
+        </span>
     {% else %}
-      {% if object.user.private %}
-        <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Only visible to you' %}">
-      {% else %}
-        <span>
-      {% endif %}
-        {{ message.user_real_sender }}
-      </span>
-    {% endif %}
-    </span>
-  {% else %}
-    {% if message.is_response %}
-      {% if froide.public_body_officials_public %}
-        {% if message.sender != message.sender_public_body.name %}
-          <span title="{{ message.sender }}">{{ message.sender }}</span>
-        {% endif %}
-        {% if message.sender_public_body %}
-          <span> – {{ message.sender_public_body.name }}</span>
-        {% endif %}
-      {% else %}
-        {% if message.sender_public_body %}
-          <span title="{{ message.sender_public_body.name }}">{{ message.sender_public_body.name }}</span>
+        {% if message.is_response %}
+            {% if froide.public_body_officials_public %}
+                {% if message.sender != message.sender_public_body.name %}
+                    <span title="{{ message.sender }}">{{ message.sender }}</span>
+                {% endif %}
+                {% if message.sender_public_body %}<span>– {{ message.sender_public_body.name }}</span>{% endif %}
+            {% else %}
+                {% if message.sender_public_body %}
+                    <span title="{{ message.sender_public_body.name }}">{{ message.sender_public_body.name }}</span>
+                {% else %}
+                    {{ message.sender_name }}
+                {% endif %}
+            {% endif %}
         {% else %}
-          {{ message.sender_name }}
+            <span title="{{ message.sender }}">{{ message.sender }}</span>
         {% endif %}
-      {% endif %}
-    {% else %}
-      <span title="{{ message.sender }}">{{ message.sender }}</span>
     {% endif %}
-  {% endif %}
 </div>

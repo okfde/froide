@@ -1,10 +1,8 @@
 {% extends "./error_base.html" %}
 {% load i18n %}
-
 {% block error %}
-{% blocktrans %}500 - Server Error{% endblocktrans %}
+    {% blocktrans %}500 - Server Error{% endblocktrans %}
 {% endblock error %}
-
 {% block error_description %}
-{% blocktrans with ref=request.sentry.id %}We logged the error and are working on fixing it. If you need to contact us, please use the reference <code>{{ ref }}</code>.{% endblocktrans %}
+    {% blocktrans with ref=request.sentry.id %}We logged the error and are working on fixing it. If you need to contact us, please use the reference <code>{{ ref }}</code>.{% endblocktrans %}
 {% endblock error_description %}

@@ -1,55 +1,38 @@
 {% extends "base.html" %}
-
 {% load static i18n %}
 {% load account_tags %}
-
-{% block title %}{% translate "Two-factor login" %}{% endblock %}
-
+{% block title %}
+    {% translate "Two-factor login" %}
+{% endblock %}
 {% block navbar %}
-  {% include "header_minimal.html" %}
+    {% include "header_minimal.html" %}
 {% endblock %}
-
 {% block app_body %}
-<h1>
-  {% translate "Two-factor login" %}
-</h1>
-<p>
-  {% translate "When you are ready to verify your hardware security key, press the button below." %}
-</p>
-
-{% get_mfa_keys as mfa_keys %}
-
-<form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
-  {% csrf_token %}
-  {% if form.non_field_errors %}
-    <div class="alert alert-danger">
-      {% for error in form.non_field_errors %}
-        <p>{{ error }}</p>
-      {% endfor %}
-    </div>
-  {% endif %}
-  {{ form.code.as_hidden }}
-  <button autofocus class="btn btn-lg btn-primary">
-    {% translate "Verify hardware security key" %}
-  </button>
-  <p class="mt-3">
-    {% if mfa_keys.by_method.TOTP %}
-      <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'TOTP' %}">
-        {% translate "Use authenticator app" %}
-      </a>
-    {% endif %}
-    {% if mfa_keys.by_method.recovery %}
-      <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'recovery' %}">
-        {% translate "Use recovery code" %}
-      </a>
-    {% endif %}
-  </p>
-</form>
-
+    <h1>{% translate "Two-factor login" %}</h1>
+    <p>{% translate "When you are ready to verify your hardware security key, press the button below." %}</p>
+    {% get_mfa_keys as mfa_keys %}
+    <form data-fido2-auth="{{ mfa_data }}" method="POST" class="disable-submit">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+        {% endif %}
+        {{ form.code.as_hidden }}
+        <button autofocus class="btn btn-lg btn-primary">{% translate "Verify hardware security key" %}</button>
+        <p class="mt-3">
+            {% if mfa_keys.by_method.TOTP %}
+                <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'TOTP' %}">{% translate "Use authenticator app" %}</a>
+            {% endif %}
+            {% if mfa_keys.by_method.recovery %}
+                <a class="btn btn-outline-secondary"
+                   href="{% url 'mfa:auth' 'recovery' %}">{% translate "Use recovery code" %}</a>
+            {% endif %}
+        </p>
+    </form>
 {% endblock %}
-
 {% block scripts %}
-  {{ block.super }}
-  <script src="{% static 'account/cbor.js' %}"></script>
-  <script src="{% static 'mfa/fido2.js' %}"></script>
+    {{ block.super }}
+    <script src="{% static 'account/cbor.js' %}"></script>
+    <script src="{% static 'mfa/fido2.js' %}"></script>
 {% endblock %}

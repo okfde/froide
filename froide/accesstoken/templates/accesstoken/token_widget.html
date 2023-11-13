@@ -1,29 +1,37 @@
 {% load i18n %}
 <div class="row">
-  <div class="col-7">
-    <input type="text" {% if widget.token %}value="{{ widget.url }}"{% endif %}
-      {% if not widget.token %}placeholder="{% trans 'No URL created yet.' %}"{% endif %}
-      {% if widget.token %}data-bs-toggle="tooltip"
-      title="{% trans 'Click to copy' %}"
-      data-copied="{% trans 'URL copied' %}"
-      {% endif %}
-      class="form-control{% if widget.token %} copy-text{% endif %}" readonly/>
-  </div>
-  <div class="col-5">
-    {% if widget.token %}
-      <button type="submit" name="reset" value="{{ widget.purpose }}" class="btn btn-outline-secondary">
-        <span class="fa fa-refresh"></span>
-        {% trans "Reset" %}
-      </button>
-      <button type="submit" name="remove" value="{{ widget.purpose }}" class="btn hover-btn-danger">
-        <span class="fa fa-close"></span>
-        {% trans "Remove" %}
-      </button>
-    {% else %}
-      <button type="submit" name="create" value="{{ widget.purpose }}" class="btn btn-outline-secondary">
-        <span class="fa fa-plus-square"></span>
-        {% trans "Create URL" %}
-      </button>
-    {% endif %}
-  </div>
+    <div class="col-7">
+        <input type="text"
+               {% if widget.token %}value="{{ widget.url }}"{% endif %}
+               {% if not widget.token %}placeholder="{% trans 'No URL created yet.' %}"{% endif %}
+               {% if widget.token %}data-bs-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" {% endif %}
+               class="form-control{% if widget.token %} copy-text{% endif %}"
+               readonly />
+    </div>
+    <div class="col-5">
+        {% if widget.token %}
+            <button type="submit"
+                    name="reset"
+                    value="{{ widget.purpose }}"
+                    class="btn btn-outline-secondary">
+                <span class="fa fa-refresh"></span>
+                {% trans "Reset" %}
+            </button>
+            <button type="submit"
+                    name="remove"
+                    value="{{ widget.purpose }}"
+                    class="btn hover-btn-danger">
+                <span class="fa fa-close"></span>
+                {% trans "Remove" %}
+            </button>
+        {% else %}
+            <button type="submit"
+                    name="create"
+                    value="{{ widget.purpose }}"
+                    class="btn btn-outline-secondary">
+                <span class="fa fa-plus-square"></span>
+                {% trans "Create URL" %}
+            </button>
+        {% endif %}
+    </div>
 </div>

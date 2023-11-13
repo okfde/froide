@@ -1,17 +1,14 @@
 {% extends 'account/base.html' %}
-
 {% load i18n %}
-
 {% block navbar %}
-  {% include "header_reduced.html" %}
+    {% include "header_reduced.html" %}
 {% endblock %}
-
 {% block breadcrumbs %}
-{% url "account-settings" as settings_url %}
-{% translate "Settings" as settings_name %}
-{% translate "Two-factor setup" as last_item %}
-{% include "account/includes/breadcrumbs.html" with section_name=settings_name section_url=settings_url last_item=last_item %}
+    {% url "account-settings" as settings_url %}
+    {% translate "Settings" as settings_name %}
+    {% translate "Two-factor setup" as last_item %}
+    {% include "account/includes/breadcrumbs.html" with section_name=settings_name section_url=settings_url last_item=last_item %}
 {% endblock %}
-
-
-{% block title %}{% translate "Two Factor Setup" %}{% endblock %}
+{% block title %}
+    {% translate "Two Factor Setup" %}
+{% endblock %}

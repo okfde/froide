@@ -1,17 +1,12 @@
 {% load i18n %}
 {% load filingcabinet %}
-
-<div
-role="tabpanel"
-class="tab-pane fade {% if show_documents %}active show{% endif %} bg-body-secondary"
-id="documents-panel"
-aria-labelledby="documents-tab"
->
-  <div class="container py-3">
-    <h2>{% translate "Documents" %}</h2>
-    
-    {% get_document_list_viewer documentcollection_data %}
-  </div>
+<div role="tabpanel"
+     class="tab-pane fade {% if show_documents %}active show{% endif %} bg-body-secondary"
+     id="documents-panel"
+     aria-labelledby="documents-tab">
+    <div class="container py-3">
+        <h2>{% translate "Documents" %}</h2>
+        {% get_document_list_viewer documentcollection_data %}
+    </div>
 </div>
-
 {% include "_frontend.html" with entry_point="filingcabinet.js" %}

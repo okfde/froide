@@ -2,65 +2,65 @@
 {% load team_tags %}
 {% load form_helper %}
 {% load foirequest_tags %}
-
-<div role="tabpanel" class="tab-pane fade" id="settings-panel" aria-labelledby="settings-tab">
-  <div class="container py-3">
-    <div class="row g-3">
-      <div class="col-12 col-md-6 d-flex">
-        <div class="border-gray p-3 w-100 d-flex">
-          {% get_team_form object as team_form %}
-          {% trans "Assign team to request" as legend %}
-          {% trans "Set team" as submit_button %}
-          {% url 'foirequest-set_team' slug=object.slug as submit_url %}
-          {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
+<div role="tabpanel"
+     class="tab-pane fade"
+     id="settings-panel"
+     aria-labelledby="settings-tab">
+    <div class="container py-3">
+        <div class="row g-3">
+            <div class="col-12 col-md-6 d-flex">
+                <div class="border-gray p-3 w-100 d-flex">
+                    {% get_team_form object as team_form %}
+                    {% trans "Assign team to request" as legend %}
+                    {% trans "Set team" as submit_button %}
+                    {% url 'foirequest-set_team' slug=object.slug as submit_url %}
+                    {% include "team/_assign_team_form.html" with object=object form=team_form submit_url=submit_url legend=legend submit_button=submit_button %}
+                </div>
+            </div>
+            {% get_project_form object as project_form %}
+            {% if project_form.fields.project.queryset %}
+                <div class="col-12 col-md-6 d-flex">
+                    <div class="border-gray p-3 w-100 d-flex">
+                        {% trans "Assign request to project" as legend %}
+                        {% trans "Set project" as submit_button %}
+                        {% url 'foirequest-set_project' slug=object.slug as submit_url %}
+                        {% include "foirequest/_assign_project_form.html" with object=object form=project_form submit_url=submit_url legend=legend submit_button=submit_button %}
+                    </div>
+                </div>
+            {% endif %}
+            {% if object.response_messages %}
+                <div class="col-12 col-md-6 d-flex">
+                    <div class="border-gray p-3 w-100">
+                        <h5>{% trans "Set Law" %}</h5>
+                        <form method="post"
+                              class="disable-submit"
+                              action="{% url 'foirequest-set_law' slug=object.slug %}">
+                            {% csrf_token %}
+                            <p>
+                                {% blocktrans %}Please choose the law under which you received an answer. If it is not obvious, leave it as it is.{% endblocktrans %}
+                            </p>
+                            {% render_form object.get_concrete_law_form %}
+                            <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+            {% if not object.public %}
+                <div class="col-12 col-md-6 d-flex">
+                    <div class="border-gray p-3 w-100">
+                        <h5>{% trans "Secret Short URL" %}</h5>
+                        <p class="small help">{% trans "This URL gives read access to others." %}</p>
+                        <p>
+                            <input type="text"
+                                   value="{{ object.get_accessible_link }}"
+                                   data-bs-toggle="tooltip"
+                                   title="{% trans 'Click to copy' %}"
+                                   data-copied="{% trans 'URL copied' %}"
+                                   class="form-control input-sm copy-text"
+                                   readonly />
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-      </div>
-
-      {% get_project_form object as project_form %}
-      {% if project_form.fields.project.queryset %}
-      <div class="col-12 col-md-6 d-flex">
-        <div class="border-gray p-3 w-100 d-flex">
-          {% trans "Assign request to project" as legend %}
-          {% trans "Set project" as submit_button %}
-          {% url 'foirequest-set_project' slug=object.slug as submit_url %}
-          {% include "foirequest/_assign_project_form.html" with object=object form=project_form submit_url=submit_url legend=legend submit_button=submit_button %}
-        </div>
-      </div>
-      {% endif %}
-
-      {% if object.response_messages %}
-      <div class="col-12 col-md-6 d-flex">
-        <div class="border-gray p-3 w-100">
-          <h5>{% trans "Set Law" %}</h5>
-          <form method="post" class="disable-submit" action="{% url 'foirequest-set_law' slug=object.slug %}">
-            {% csrf_token %}
-            <p>
-              {% blocktrans %}Please choose the law under which you received an answer. If it is not obvious, leave it as it is.{% endblocktrans %}
-            </p>
-            {% render_form object.get_concrete_law_form %}
-            <button type="submit" class="btn btn-primary">{% blocktrans %}Set Concrete Law{% endblocktrans %}</button>
-          </form>
-        </div>
-      </div>
-      {% endif %}
-
-      {% if not object.public %}
-      <div class="col-12 col-md-6 d-flex">
-        <div class="border-gray p-3 w-100">
-          <h5>{% trans "Secret Short URL" %}</h5>
-          <p class="small help">
-            {% trans "This URL gives read access to others." %}
-          </p>
-          <p>
-            <input type="text"
-              value="{{ object.get_accessible_link }}"
-              data-bs-toggle="tooltip"
-              title="{% trans 'Click to copy' %}"
-              data-copied="{% trans 'URL copied' %}"
-              class="form-control input-sm copy-text" readonly/>
-          </p>
-        </div>
-      </div>
-      {% endif %}
-  </div>
-</div>
+    </div>

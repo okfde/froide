@@ -1,57 +1,34 @@
 {% extends 'account/base.html' %}
-
 {% load i18n %}
-
 {% block breadcrumbs %}
-{% url "account-settings" as settings_url %}
-{% translate "Settings" as settings_name %}
-{% include "account/includes/breadcrumbs.html" with section_name=settings_name section_url=settings_url last_item=last_item %}
+    {% url "account-settings" as settings_url %}
+    {% translate "Settings" as settings_name %}
+    {% include "account/includes/breadcrumbs.html" with section_name=settings_name section_url=settings_url last_item=last_item %}
 {% endblock %}
-
 {% block app_container %}
-
-<div class="row">
-  <div class="col-md-4">
-
-    <div class="d-grid">
-      <a href="{% url 'account-show' %}" class="btn btn-secondary mb-3">
-        {% trans "back to your account" %}
-      </a>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="d-grid">
+                <a href="{% url 'account-show' %}" class="btn btn-secondary mb-3">{% trans "back to your account" %}</a>
+            </div>
+            <div class="list-group sticky-top mb-3">
+                <a href="#general" class="list-group-item list-group-item-action">{% trans "General settings" %}</a>
+                {% if not request.user.private %}
+                    <a href="#profile" class="list-group-item list-group-item-action">{% trans "Public profile" %}</a>
+                {% endif %}
+                <a href="#change-password-now"
+                   class="list-group-item list-group-item-action">{% trans "Change password" %}</a>
+                <a href="#mfa" class="list-group-item list-group-item-action">{% trans "Setup two-factor login" %}</a>
+                {% block post_password_menu %}{% endblock %}
+                <a href="#proofs" class="list-group-item list-group-item-action">{% trans "Proofs" %}</a>
+                <a href="#export" class="list-group-item list-group-item-action">{% trans "Data export" %}</a>
+                <a href="#delete-account-section"
+                   class="list-group-item list-group-item-action">{% trans "Account deletion" %}</a>
+                <a href="#developer" class="list-group-item list-group-item-action">{% trans "Developer" %}</a>
+            </div>
+        </div>
+        <div class="col-md-8">
+            {% block settings_body %}{% endblock %}
+        </div>
     </div>
-
-    <div class="list-group sticky-top mb-3">
-      <a href="#general" class="list-group-item list-group-item-action">
-        {% trans "General settings" %}
-      </a>
-      {% if not request.user.private %}
-        <a href="#profile" class="list-group-item list-group-item-action">
-          {% trans "Public profile" %}
-        </a>
-      {% endif %}
-      <a href="#change-password-now" class="list-group-item list-group-item-action">
-        {% trans "Change password" %}
-      </a>
-      <a href="#mfa" class="list-group-item list-group-item-action">
-        {% trans "Setup two-factor login" %}
-      </a>
-      {% block post_password_menu %}{% endblock %}
-      <a href="#proofs" class="list-group-item list-group-item-action">
-        {% trans "Proofs" %}
-      </a>
-      <a href="#export" class="list-group-item list-group-item-action">
-        {% trans "Data export" %}
-      </a>
-      <a href="#delete-account-section" class="list-group-item list-group-item-action">
-        {% trans "Account deletion" %}
-      </a>
-      <a href="#developer" class="list-group-item list-group-item-action">
-        {% trans "Developer" %}
-      </a>
-    </div>
-  </div>
-  <div class="col-md-8">
-    {% block settings_body %}{% endblock %}
-  </div>
-</div>
-
 {% endblock %}

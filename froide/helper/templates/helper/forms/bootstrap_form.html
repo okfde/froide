@@ -1,18 +1,16 @@
 {% load form_helper %}
 {% if form.non_field_errors %}
-  <div class="alert alert-danger">
-    {% for error in form.non_field_errors %}
-      {{ error }}
-      {% if not forloop.last %}<br />{% endif %}
-    {% endfor %}
-</div>
+    <div class="alert alert-danger">
+        {% for error in form.non_field_errors %}
+            {{ error }}
+            {% if not forloop.last %}<br />{% endif %}
+        {% endfor %}
+    </div>
 {% endif %}
-
 {% for field in form.hidden_fields %}
-  {% include "helper/forms/errors.html" with errors=field.errors %}
+    {% include "helper/forms/errors.html" with errors=field.errors %}
 {% endfor %}
-
 {% for field in form.visible_fields %}
-  {% render_field field horizontal %}
+    {% render_field field horizontal %}
 {% endfor %}
 {% for field in form.hidden_fields %}{{ field }}{% endfor %}
