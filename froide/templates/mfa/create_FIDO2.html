@@ -1,36 +1,26 @@
 {% extends "mfa/base_create.html" %}
-
 {% load static %}
 {% load i18n %}
 {% load form_helper %}
-
-{% block title %}{% translate "Setup Hardware security key" %}{% endblock %}
-
-{% block mfa_heading %}{% translate "Setup Hardware security key" %}{% endblock %}
-
-{% block mfa_inner %}
-  <form data-fido2-create="{{ mfa_data }}" method="POST">
-    {% csrf_token %}
-    {% include "helper/forms/errors.html" with errors=form.code.errors %}
-
-    <p>
-      {% translate "Please give your key a name, e.g. main blue key." %}
-    </p>
-
-    {% render_field form.name %}
-    {{ form.code.as_hidden }}
-    <p>
-      {% translate "You will be prompted to activate the device once you submit the form." %}
-    </p>
-    <button type="submit" class="btn btn-primary">
-      {% translate "Start setup now" %}
-    </button>
-  </form>
-
+{% block title %}
+    {% translate "Setup Hardware security key" %}
 {% endblock %}
-
+{% block mfa_heading %}
+    {% translate "Setup Hardware security key" %}
+{% endblock %}
+{% block mfa_inner %}
+    <form data-fido2-create="{{ mfa_data }}" method="POST">
+        {% csrf_token %}
+        {% include "helper/forms/errors.html" with errors=form.code.errors %}
+        <p>{% translate "Please give your key a name, e.g. main blue key." %}</p>
+        {% render_field form.name %}
+        {{ form.code.as_hidden }}
+        <p>{% translate "You will be prompted to activate the device once you submit the form." %}</p>
+        <button type="submit" class="btn btn-primary">{% translate "Start setup now" %}</button>
+    </form>
+{% endblock %}
 {% block scripts %}
-  {{ block.super }}
-  <script src="{% static 'account/cbor.js' %}"></script>
-  <script src="{% static 'mfa/fido2.js' %}"></script>
+    {{ block.super }}
+    <script src="{% static 'account/cbor.js' %}"></script>
+    <script src="{% static 'mfa/fido2.js' %}"></script>
 {% endblock %}

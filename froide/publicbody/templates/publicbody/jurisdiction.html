@@ -1,142 +1,116 @@
 {% extends 'base.html' %}
-
 {% load i18n %}
 {% load static %}
 {% load flatpages %}
-
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
-
 {% block body %}
-<div class="state-header">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-12 state-headline {% block header_headline_extraclass %}{% endblock %}">
-        <h1>
-          {% block header_headline %}
-            {% blocktrans with name=object.name %}Freedom of Information<br/>in {{ name }}{% endblocktrans %}
-          {% endblock %}
-        </h1>
-        <h2>
-          {% blocktrans %}Ask Public Bodies for administrative information — it's your right.{% endblocktrans %}
-        </h2>
-      </div>
+    <div class="state-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 state-headline {% block header_headline_extraclass %}{% endblock %}">
+                    <h1>
+                        {% block header_headline %}
+                            {% blocktrans with name=object.name %}Freedom of Information<br />in {{ name }}{% endblocktrans %}
+                        {% endblock %}
+                    </h1>
+                    <h2>{% blocktrans %}Ask Public Bodies for administrative information — it's your right.{% endblocktrans %}</h2>
+                </div>
+            </div>
+            <div class="pb-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{% trans "Which Public Bodies?" %}</h5>
+                        {% url 'publicbody-list' jurisdiction=object.slug as pb_url %}
+                        <p class="card-text">{% trans "All bodies that work on administrative tasks of this jurisdiction." %}</p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a class="btn btn-secondary" href="{{ pb_url }}">
+                            {% blocktrans with pb_count=pb_count %}Check out the {{ pb_count }} Public Bodies.{% endblocktrans %}
+                        </a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{% trans "What Information?" %}</h5>
+                        <p class="card-text">
+                            {% trans "Contracts, memos, reports and other documents of the administration: you have the right to know." %}
+                        </p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'foirequest-make_request' %}"
+                           class="btn btn-primary btn-lg">{% trans "Make a request!" %}</a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{% trans "What right?" %}</h5>
+                        <p class="card-text">
+                            {% blocktrans with name=object.name %}The freedom of information law in {{ name }} allows you access to administrative information. {% endblocktrans %}
+                        </p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a class="btn btn-secondary" href="{{ laws.0.get_absolute_url }}">{% trans "Get to know your right!" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="pb-5">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">{% trans "Which Public Bodies?" %}</h5>
-          {% url 'publicbody-list' jurisdiction=object.slug as pb_url %}
-          <p class="card-text">
-            {% trans "All bodies that work on administrative tasks of this jurisdiction." %}
-          </p>
-        </div>
-        <div class="card-footer text-center">
-          <a class="btn btn-secondary" href="{{ pb_url }}">
-            {% blocktrans with pb_count=pb_count %}Check out the {{ pb_count }} Public Bodies.{% endblocktrans %}
-          </a>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            {% trans "What Information?" %}
-          </h5>
-          <p class="card-text">
-            {% trans "Contracts, memos, reports and other documents of the administration: you have the right to know." %}
-          </p>
-        </div>
-        <div class="card-footer text-center">
-          <a href="{% url 'foirequest-make_request' %}" class="btn btn-primary btn-lg">{% trans "Make a request!" %}</a>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">
-            {% trans "What right?" %}
-          </h5>
-          <p class="card-text">
-            {% blocktrans with name=object.name %}The freedom of information law in {{ name }} allows you access to administrative information. {% endblocktrans %}
-          </p>
-        </div>
-        <div class="card-footer text-center">
-          <a class="btn btn-secondary" href="{{ laws.0.get_absolute_url }}">{% trans "Get to know your right!" %}</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container mt-5">
-
-{% block jurisdiction_body %}
-<div class="row">
-  <div class="col-lg-offset-1 col-lg-7 col-md-7 col-md-offset-1">
-    {% block jurisdiction_text %}
-      {% with page_url="/"|add:object.slug|add:"/text/" %}
-        {% get_flatpages page_url as content_page %}
-        {% if content_page %}
-          <h3>
-            {{ content_page.0.title }}
-          </h3>
-          {{ content_page.0.content|safe }}
-        {% endif %}
-      {% endwith %}
-    {% endblock %}
-  </div>
-
-  <div class="col-lg-4 col-md-4">
-    {% block jurisdiction_sidebar %}
-      <h3>
-        {% block jurisdiction_sidebar_header %}
-        {% blocktrans with name=SITE_NAME %}Facts about {{ name }}{% endblocktrans %}
+    <div class="container mt-5">
+        {% block jurisdiction_body %}
+            <div class="row">
+                <div class="col-lg-offset-1 col-lg-7 col-md-7 col-md-offset-1">
+                    {% block jurisdiction_text %}
+                        {% with page_url="/"|add:object.slug|add:"/text/" %}
+                            {% get_flatpages page_url as content_page %}
+                            {% if content_page %}
+                                <h3>{{ content_page.0.title }}</h3>
+                                {{ content_page.0.content|safe }}
+                            {% endif %}
+                        {% endwith %}
+                    {% endblock %}
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    {% block jurisdiction_sidebar %}
+                        <h3>
+                            {% block jurisdiction_sidebar_header %}
+                                {% blocktrans with name=SITE_NAME %}Facts about {{ name }}{% endblocktrans %}
+                            {% endblock %}
+                        </h3>
+                        {% block jurisdiction_sidebar_content %}{% endblock %}
+                        {% block jurisdiction_sidebar_laws %}
+                            <h3>
+                                {% block jurisdiction_sidebar_laws_header %}
+                                    {% blocktrans with name=object.name %}Information laws in {{ name }}{% endblocktrans %}
+                                {% endblock %}
+                            </h3>
+                            {% for law in laws %}
+                                {% block jurisdiction_sidebar_laws_law %}
+                                    <p>
+                                        <strong>{{ law.name }}</strong>
+                                        {% if law.created %}
+                                            {% blocktrans with date=law.created %}came into effect on {{ date }}{% endblocktrans %}
+                                        {% endif %}
+                                        -
+                                        <a href="{{ law.get_absolute_url }}">{% trans "get to know this law..." %}</a>
+                                    </p>
+                                {% endblock %}
+                            {% endfor %}
+                        {% endblock %}
+                        {% block jurisdiction_sidebar_requests %}
+                            <h3>
+                                {% block jurisdiction_sidebar_requests_header %}
+                                    {% blocktrans with name=object.name %}Requests in {{ name }}{% endblocktrans %}
+                                {% endblock %}
+                            </h3>
+                            <ul class="list-unstyled">
+                                {% for foirequest in foirequests %}
+                                    <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endblock %}
+                    {% endblock %}
+                </div>
+            </div>
         {% endblock %}
-      </h3>
-      {% block jurisdiction_sidebar_content %}
-      {% endblock %}
-      {% block jurisdiction_sidebar_laws %}
-        <h3>
-          {% block jurisdiction_sidebar_laws_header %}
-          {% blocktrans with name=object.name %}Information laws in {{ name }}{% endblocktrans %}
-          {% endblock %}
-        </h3>
-        {% for law in laws %}
-          {% block jurisdiction_sidebar_laws_law %}
-          <p>
-            <strong>{{ law.name }}</strong>
-            {% if law.created %}
-              {% blocktrans with date=law.created %}came into effect on {{ date }}{% endblocktrans %}
-            {% endif %}
-            -
-            <a href="{{ law.get_absolute_url }}">
-              {% trans "get to know this law..." %}
-            </a>
-          </p>
-          {% endblock %}
-        {% endfor %}
-      {% endblock %}
-
-      {% block jurisdiction_sidebar_requests %}
-        <h3>
-          {% block jurisdiction_sidebar_requests_header %}
-          {% blocktrans with name=object.name %}Requests in {{ name }}{% endblocktrans %}
-          {% endblock %}
-        </h3>
-        <ul class="list-unstyled">
-        {% for foirequest in foirequests %}
-          <li>
-            {% include "foirequest/snippets/request_item.html" with object=foirequest %}
-          </li>
-        {% endfor %}
-        </ul>
-      {% endblock %}
-    {% endblock %}
-  </div>
-</div>
-{% endblock %}
-
-</div>
-
+    </div>
 {% endblock %}

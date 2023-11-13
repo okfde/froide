@@ -1,33 +1,26 @@
 {% load i18n %}
-
 {% with shown_attachments=attachment_list|slice:":3" wrapped_attachments=attachment_list|slice:"3:" %}
-
-  <div class="d-flex flex-wrap mb-2">
-
-    {% for attachment in shown_attachments %}
-      {% include "foirequest/body/message/attachments/item.html" %}
-    {% endfor %}
-
-    {# If we only have 1 item left, we can show it as well #}
-    {% if wrapped_attachments|length == 1 %}
-      {% include "foirequest/body/message/attachments/item.html" with attachment=wrapped_attachments|first %}
-
-    {# else wrap all remaining items#}
-    {% elif wrapped_attachments|length > 1 %}
-      <div style="display: none;">
-        {% for attachment in wrapped_attachments %}
-          {% include "foirequest/body/message/attachments/item.html" %}
+    <div class="d-flex flex-wrap mb-2">
+        {% for attachment in shown_attachments %}
+            {% include "foirequest/body/message/attachments/item.html" %}
         {% endfor %}
-      </div>
-      <div class="d-flex flex-fill align-items-center justify-content-center mb-2 me-2 rounded border border-light">
-        <a href="#" class="fw-bold small py-3 alpha-attachment__more-trigger">
-          {% blocktrans with count=attachment_list|length|add:"-3" %}
+        {# If we only have 1 item left, we can show it as well #}
+        {% if wrapped_attachments|length == 1 %}
+            {% include "foirequest/body/message/attachments/item.html" with attachment=wrapped_attachments|first %}
+            {# else wrap all remaining items#}
+        {% elif wrapped_attachments|length > 1 %}
+            <div style="display: none;">
+                {% for attachment in wrapped_attachments %}
+                    {% include "foirequest/body/message/attachments/item.html" %}
+                {% endfor %}
+            </div>
+            <div class="d-flex flex-fill align-items-center justify-content-center mb-2 me-2 rounded border border-light">
+                <a href="#" class="fw-bold small py-3 alpha-attachment__more-trigger">
+                    {% blocktrans with count=attachment_list|length|add:"-3" %}
             Show {{ count }} more attachments
           {% endblocktrans %}
-        </a>
-      </div>
-    {% endif %}
-  </div>
-
+                </a>
+            </div>
+        {% endif %}
+    </div>
 {% endwith %}
-

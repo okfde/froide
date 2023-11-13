@@ -1,85 +1,76 @@
 {% extends "base.html" %}
-
 {% load markup %}
 {% load i18n %}
-
 {% block title %}{{ object.name }}{% endblock %}
-
 {% block body %}
-  <div class="bg-body-tertiary">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
-          </li>
-        </ol>
-      </nav>
-      <div class="pt-3 pb-5">
-        <div class="col tight-margin d-flex align-items-center">
-          <h1>
-            <a href="{{ object.website }}">
-              {% if object.logo %}
-                <img src="{{ object.logo.url }}" class="img-lg" alt="{{ object.name }}"/>
-              {% else %}
-                {{ object.name }}
-              {% endif %}
-            </a>
-          </h1>
-        </div>
-
-        <div class="my-3">{{ object.description | linebreaksbr }}</div>
-        
-        {% if user_member and user_member.is_owner %}
-            <a href="{% url "organization-update" slug=object.slug %}">
-              <i class="fa fa-edit"></i>
-              {% translate "Edit Organization" %}
-            </a>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  <div class="container">
-    {% if foirequests %}
-      {% block member_requests %}
-        <div class="py-4">
-          <h2 class="pb-3">{% trans "Last requests" %}</h2>
-
-          <ul class="list-unstyled row row-cols-md-2">
-            {% for foirequest in foirequests %}
-              <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
-            {% endfor %}
-          </ul>
-          
-          <a href="{% url 'foirequest-list' %}?organization={{ object.slug }}">
-            {% blocktrans with name=organization.name %}See all requests of {{ name }}{% endblocktrans %}
-          </a>
-        </div>
-      {% endblock %}
-    {% endif %}
-
-    {% block member_list %}
-      <div class="py-4">
-        <h2 class="pb-3">{% trans "Organization Members" %}</h2>
-        <ul>
-          {% for member in members %}
-            <li>
-              <a href="{{ member.user.get_absolute_url }}">{{ member.user.get_full_name }}</a>
-              {% if member.user.profile_text %}
-                {% if member.user.is_staff %}
-                  {{ member.user.profile_text|markdown }}
-                {% else %}
-                  <p>{{ member.user.profile_text|linebreaksbr }}</p>
+    <div class="bg-body-tertiary">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
+                    </li>
+                </ol>
+            </nav>
+            <div class="pt-3 pb-5">
+                <div class="col tight-margin d-flex align-items-center">
+                    <h1>
+                        <a href="{{ object.website }}">
+                            {% if object.logo %}
+                                <img src="{{ object.logo.url }}" class="img-lg" alt="{{ object.name }}" />
+                            {% else %}
+                                {{ object.name }}
+                            {% endif %}
+                        </a>
+                    </h1>
+                </div>
+                <div class="my-3">{{ object.description | linebreaksbr }}</div>
+                {% if user_member and user_member.is_owner %}
+                    <a href="{% url "organization-update" slug=object.slug %}">
+                        <i class="fa fa-edit"></i>
+                        {% translate "Edit Organization" %}
+                    </a>
                 {% endif %}
-              {% endif %}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endblock %}
-  </div>
-
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        {% if foirequests %}
+            {% block member_requests %}
+                <div class="py-4">
+                    <h2 class="pb-3">{% trans "Last requests" %}</h2>
+                    <ul class="list-unstyled row row-cols-md-2">
+                        {% for foirequest in foirequests %}
+                            <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{% url 'foirequest-list' %}?organization={{ object.slug }}">
+                        {% blocktrans with name=organization.name %}See all requests of {{ name }}{% endblocktrans %}
+                    </a>
+                </div>
+            {% endblock %}
+        {% endif %}
+        {% block member_list %}
+            <div class="py-4">
+                <h2 class="pb-3">{% trans "Organization Members" %}</h2>
+                <ul>
+                    {% for member in members %}
+                        <li>
+                            <a href="{{ member.user.get_absolute_url }}">{{ member.user.get_full_name }}</a>
+                            {% if member.user.profile_text %}
+                                {% if member.user.is_staff %}
+                                    {{ member.user.profile_text|markdown }}
+                                {% else %}
+                                    <p>{{ member.user.profile_text|linebreaksbr }}</p>
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endblock %}
+    </div>
 {% endblock %}

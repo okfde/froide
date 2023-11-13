@@ -1,42 +1,31 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text required=field.field.required %}
-
-{% if field_type == "radio" or is_checkboxmultiple %}
-  <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
-    {% if label and show_label %}<p class="form-label">{{ label }}</p>{% endif %}
-    {% for widget in field %}
-      <div class="form-check form-check-inline">
-        {{ widget }}
-      </div>
-    {% endfor %}
-    {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
-    {% if field.errors %}
-      <small class="form-text">
-        {% include "helper/forms/errors.html" with errors=field.errors %}
-      </small>
+    {% if field_type == "radio" or is_checkboxmultiple %}
+        <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
+            {% if label and show_label %}<p class="form-label">{{ label }}</p>{% endif %}
+            {% for widget in field %}<div class="form-check form-check-inline">{{ widget }}</div>{% endfor %}
+            {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
+            {% if field.errors %}
+                <small class="form-text">{% include "helper/forms/errors.html" with errors=field.errors %}</small>
+            {% endif %}
+        </div>
+    {% elif field_type == "checkbox" %}
+        <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
+            <div class="form-check form-check-inline">
+                {{ field }}
+                <label class="form-check-label">{{ label }}</label>
+            </div>
+            {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
+            {% if field.errors %}
+                <small class="form-text">{% include "helper/forms/errors.html" with errors=field.errors %}</small>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="mb-3{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
+            {{ field }}
+            {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
+            {% if field.errors %}
+                <small class="form-text">{% include "helper/forms/errors.html" with errors=field.errors %}</small>
+            {% endif %}
+        </div>
     {% endif %}
-  </div>
-{% elif field_type == "checkbox" %}
-  <div class="mb-3{% if classes %} {{ classes }}{% endif %}">
-    <div class="form-check form-check-inline">
-      {{ field }}
-      <label class="form-check-label">{{ label }}</label>
-    </div>
-    {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
-    {% if field.errors %}
-      <small class="form-text">
-        {% include "helper/forms/errors.html" with errors=field.errors %}
-      </small>
-    {% endif %}
-  </div>
-{% else %}
-  <div class="mb-3{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
-    {{ field }}
-    {% if help_text %}<small class="form-text">{{ help_text }}</small>{% endif %}
-    {% if field.errors %}
-      <small class="form-text">
-        {% include "helper/forms/errors.html" with errors=field.errors %}
-      </small>
-    {% endif %}
-  </div>
-{% endif %}
 {% endwith %}

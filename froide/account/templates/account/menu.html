@@ -1,29 +1,18 @@
 {% load i18n %}
-
 {% block menu_block %}
-
-{% block before_requests %}
-  {% for menu_item in menu_items.before_request %}
-    <a class="dropdown-item top-menu__link" href="{{ menu_item.url }}">
-      {{ menu_item.label }}
-    </a>
-  {% endfor %}
-{% endblock %}
-
-{% block before_settings %}
-  {% for menu_item in menu_items.before_settings %}
-    <a class="dropdown-item top-menu__link" href="{{ menu_item.url }}">
-      {{ menu_item.label }}
-    </a>
-  {% endfor %}
-{% endblock %}
-
-{% block after_settings %}
-  {% for menu_item in menu_items.after_settings %}
-    <a class="dropdown-item top-menu__link" href="{{ menu_item.url }}">
-      {{ menu_item.label }}
-    </a>
-  {% endfor %}
-{% endblock %}
-
+    {% block before_requests %}
+        {% for menu_item in menu_items.before_request %}
+            <a class="dropdown-item top-menu__link" href="{{ menu_item.url }}">{{ menu_item.label }}</a>
+        {% endfor %}
+    {% endblock %}
+    {% block before_settings %}
+        {% for menu_item in menu_items.before_settings %}
+            <a class="dropdown-item top-menu__link" href="{{ menu_item.url }}">{{ menu_item.label }}</a>
+        {% endfor %}
+    {% endblock %}
+    {% block after_settings %}
+        {% for menu_item in menu_items.after_settings %}
+            <a class="dropdown-item top-menu__link" href="{{ menu_item.url }}">{{ menu_item.label }}</a>
+        {% endfor %}
+    {% endblock %}
 {% endblock %}

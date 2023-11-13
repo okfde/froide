@@ -1,131 +1,110 @@
 {% extends 'foirequest/base.html' %}
 {% load i18n %}
 {% load static %}
-
 {% load frontendbuild %}
 {% load block_helper %}
-
-{% block title %}{% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}{% endblock %}
-
-
+{% block title %}
+    {% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}
+{% endblock %}
 {% block app_body %}
-<div class="row">
-  <div class="col-lg-12">
-    <h2>
-      {% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}
-    </h2>
-  </div>
-</div>
-
-<div class="row mb-3 mt-3">
-
-{% block redaction_removal_explanation %}
-  <div class="col-lg-6">
-    <div class="card mt-3">
-      <h5 class="card-header">
-        {% trans "What you need to redact" %}
-      </h5>
-      <div class="card-body">
-        <p>
-          {% trans "If this document <strong>is not a letter to you</strong> from a public body, but any other kind of document, it very likely <strong>does not need a redaction</strong>." %}
-        </p>
-        <ul>
-          <li>
-            {% if foirequest.user == request.user %}
-              {% if foirequest.user.private %}
-                {% trans "Please remove all your personally identifying information." %}
-              {% else %}
-                {% trans "Please remove all your personally identifying information except your name." %}
-              {% endif %}
-            {% else %}
-              {% if foirequest.user.private %}
-                {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}.{% endblocktrans %}
-              {% else %}
-                  {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }} except the name itself.{% endblocktrans %}
-              {% endif %}
-            {% endif %}
-          </li>
-          <li>{% trans "Please remove email addresses of this site." %}</li>
-          <li>{% trans "Please remove all names of public body employees." %}</li>
-          {% block redaction_removal_explanation_addition %}
-          <li>{% trans "Please remove hand-written signatures." %}</li>
-          {% endblock %}
-        </ul>
-        <p>
-          {% blocktrans %}The original version of the document will still be available to you (but not to the public).{% endblocktrans %}
-        </p>
-      </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
+        </div>
     </div>
-  </div>
-{% endblock %}
-
-{% block redaction_removal_intro %}
-  <div class="col-lg-6">
-    <div class="card mt-3">
-      <h5 class="card-header">{% trans "How to redact" %}</h5>
-      <div class="card-body">
-        <p>
-          {% trans "If this document is a letter to you:" %}
-        </p>
-        <p>{% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. On desktop redact text by selecting it. You can also draw rectangles by clicking the mouse or double tapping and dragging. {% endblocktrans %}</p>
-        <p>
-          {% trans "Check the text only view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator." %}
-        </p>
-      </div>
-    </div>
-  </div>
-{% endblock %}
-
-</div>
-{% if attachment.file %}
-<div class="row mb-5">
-  <div class="col-lg-12">
-    <form id="redaction-form" method="post" style="display:none">
-      {% csrf_token %}
-    </form>
-    <div class="card">
-      <div class="card-body">
-        <pdf-redaction
-          id="redact"
-          pdf-path="{{ attachment_url }}"
-          attachment-url="{{ attachment.get_anchor_url }}"
-          :redact-regex="{{ foirequest.get_redaction_regexes }}"
-          {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
-          :config="{{ config }}"
-          >
-          <div class="text-center">
-            <h3>
-                {% trans "Redaction tool is loading..." %}
-            </h3>
-            <div class="spinner-border" role="status">
-              <span class="visually-hidden">{% trans "Loading..." %}</span>
+    <div class="row mb-3 mt-3">
+        {% block redaction_removal_explanation %}
+            <div class="col-lg-6">
+                <div class="card mt-3">
+                    <h5 class="card-header">{% trans "What you need to redact" %}</h5>
+                    <div class="card-body">
+                        <p>
+                            {% trans "If this document <strong>is not a letter to you</strong> from a public body, but any other kind of document, it very likely <strong>does not need a redaction</strong>." %}
+                        </p>
+                        <ul>
+                            <li>
+                                {% if foirequest.user == request.user %}
+                                    {% if foirequest.user.private %}
+                                        {% trans "Please remove all your personally identifying information." %}
+                                    {% else %}
+                                        {% trans "Please remove all your personally identifying information except your name." %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if foirequest.user.private %}
+                                        {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}.{% endblocktrans %}
+                                    {% else %}
+                                        {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }} except the name itself.{% endblocktrans %}
+                                    {% endif %}
+                                {% endif %}
+                            </li>
+                            <li>{% trans "Please remove email addresses of this site." %}</li>
+                            <li>{% trans "Please remove all names of public body employees." %}</li>
+                            {% block redaction_removal_explanation_addition %}
+                                <li>{% trans "Please remove hand-written signatures." %}</li>
+                            {% endblock %}
+                        </ul>
+                        <p>
+                            {% blocktrans %}The original version of the document will still be available to you (but not to the public).{% endblocktrans %}
+                        </p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </pdf-redaction>
-      </div>
+        {% endblock %}
+        {% block redaction_removal_intro %}
+            <div class="col-lg-6">
+                <div class="card mt-3">
+                    <h5 class="card-header">{% trans "How to redact" %}</h5>
+                    <div class="card-body">
+                        <p>{% trans "If this document is a letter to you:" %}</p>
+                        <p>
+                            {% blocktrans with name=SITE_NAME %}Go to each page of the PDF and locate the parts that need to be blacked out. On desktop redact text by selecting it. You can also draw rectangles by clicking the mouse or double tapping and dragging. {% endblocktrans %}
+                        </p>
+                        <p>
+                            {% trans "Check the text only view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator." %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
     </div>
-  </div>
-</div>
-{% else %}
-<div class="row mb-5">
-  <div class="col-lg-12">
-    <div class="alert alert-warning">
-      {% trans "This file is probably still being processed and is not available yet. Please wait, this page will automatically refresh." %}
-    </div>
-  </div>
-</div>
-{% endif %}
+    {% if attachment.file %}
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <form id="redaction-form" method="post" style="display:none">
+                    {% csrf_token %}
+                </form>
+                <div class="card">
+                    <div class="card-body">
+                        <pdf-redaction id="redact" pdf-path="{{ attachment_url }}" attachment-url="{{ attachment.get_anchor_url }}" :redact-regex="{{ foirequest.get_redaction_regexes }}"
+                        {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
+                        :config="{{ config }}">
+                        <div class="text-center">
+                            <h3>{% trans "Redaction tool is loading..." %}</h3>
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">{% trans "Loading..." %}</span>
+                            </div>
+                        </div>
+                        </pdf-redaction>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row mb-5">
+            <div class="col-lg-12">
+                <div class="alert alert-warning">
+                    {% trans "This file is probably still being processed and is not available yet. Please wait, this page will automatically refresh." %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
-
 {% block scripts %}
-  {{ block.super }}
-
-  {% addfrontendbuild "redact.js" %}
-
-  {% if not attachment.file %}
-    {% addtoblock "css" %}
-      <meta http-equiv="refresh" content="15">
+    {{ block.super }}
+    {% addfrontendbuild "redact.js" %}
+    {% if not attachment.file %}
+        {% addtoblock "css" %}
+        <meta http-equiv="refresh" content="15">
     {% endaddtoblock %}
-  {% endif %}
-
+{% endif %}
 {% endblock %}

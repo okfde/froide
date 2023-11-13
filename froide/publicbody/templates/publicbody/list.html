@@ -3,57 +3,40 @@
 {% load humanize %}
 {% load searchtags %}
 {% load search_helper %}
-
 {% block search_title %}
-  {% trans "Public Bodies" %}
+    {% trans "Public Bodies" %}
 {% endblock %}
-
-
 {% block search_form_filters %}
-  <div class="row">
-    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
-      <div class="col-md-4">
-        {{ form.jurisdiction }}
-      </div>
-    {% else %}
-      {{ form.jurisdiction }}
-    {% endif %}
-
-    {% if "category" in show_filters %}
-      <div class="col-md-4">
-        {{ form.category }}
-      </div>
-    {% else %}
-      {{ form.category }}
-    {% endif %}
-    {% if "classification" in show_filters %}
-      <div class="col-md-4">
-        {{ form.classification }}
-      </div>
-    {% else %}
-      {{ form.classification }}
-    {% endif %}
-  </div>
+    <div class="row">
+        {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+            <div class="col-md-4">{{ form.jurisdiction }}</div>
+        {% else %}
+            {{ form.jurisdiction }}
+        {% endif %}
+        {% if "category" in show_filters %}
+            <div class="col-md-4">{{ form.category }}</div>
+        {% else %}
+            {{ form.category }}
+        {% endif %}
+        {% if "classification" in show_filters %}
+            <div class="col-md-4">{{ form.classification }}</div>
+        {% else %}
+            {{ form.classification }}
+        {% endif %}
+    </div>
 {% endblock %}
-
 {% block search_results_label %}
-  {% if page_obj.paginator.count == 0 %}
-    <p>
-      <a href="{% url 'publicbody-propose' %}">
-        {% trans "Public body missing? Propose a new public body!" %}
-      </a>
-    </p>
-  {% endif %}
-
-  {{ block.super }}
+    {% if page_obj.paginator.count == 0 %}
+        <p>
+            <a href="{% url 'publicbody-propose' %}">{% trans "Public body missing? Propose a new public body!" %}</a>
+        </p>
+    {% endif %}
+    {{ block.super }}
 {% endblock %}
-
 {% block sidebar_bottom %}
-  {% if page_obj.paginator.count > 0 %}
-    <p>
-      <a href="{% url 'publicbody-propose' %}">
-        {% trans "Public body missing? Propose a new public body!" %}
-      </a>
-    </p>
-  {% endif %}
+    {% if page_obj.paginator.count > 0 %}
+        <p>
+            <a href="{% url 'publicbody-propose' %}">{% trans "Public body missing? Propose a new public body!" %}</a>
+        </p>
+    {% endif %}
 {% endblock %}

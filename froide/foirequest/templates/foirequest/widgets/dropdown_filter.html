@@ -1,22 +1,30 @@
 <div class="dropdown show mt-2 mt-md-0">
-  <input type="hidden" name="{{ widget.name }}" value="{{ widget.value.0 }}"/>
-  <a class="btn btn-outline-secondary text-truncate dropdown-toggle w-100" href="#" role="button" id="dropdown-{{ widget.attrs.id }}" title="{{ selected_label }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    {% if selected_label == default_label %}
-      {{ default_label }}
-    {% else %}
-      {{ selected_label|truncatewords:4 }}
-    {% endif %}
-  </a>
-  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdown-{{ widget.attrs.id }}">
-    {% for group_name, group_choices, group_index in widget.optgroups %}
-      {% for option in group_choices %}
-        <a class="dropdown-item{% if option.selected %} active{% endif %}" href="{{ option.url }}" data-value="{{ option.value }}">
-          {% if option.icon %}
-            <span class="small-icon {{ option.icon }}"></span>
-          {% endif %}
-          {{ option.label }}
-        </a>
-      {% endfor %}
-    {% endfor %}
-  </div>
+    <input type="hidden" name="{{ widget.name }}" value="{{ widget.value.0 }}" />
+    <a class="btn btn-outline-secondary text-truncate dropdown-toggle w-100"
+       href="#"
+       role="button"
+       id="dropdown-{{ widget.attrs.id }}"
+       title="{{ selected_label }}"
+       data-bs-toggle="dropdown"
+       aria-haspopup="true"
+       aria-expanded="false">
+        {% if selected_label == default_label %}
+            {{ default_label }}
+        {% else %}
+            {{ selected_label|truncatewords:4 }}
+        {% endif %}
+    </a>
+    <div class="dropdown-menu dropdown-menu-right"
+         aria-labelledby="dropdown-{{ widget.attrs.id }}">
+        {% for group_name, group_choices, group_index in widget.optgroups %}
+            {% for option in group_choices %}
+                <a class="dropdown-item{% if option.selected %} active{% endif %}"
+                   href="{{ option.url }}"
+                   data-value="{{ option.value }}">
+                    {% if option.icon %}<span class="small-icon {{ option.icon }}"></span>{% endif %}
+                    {{ option.label }}
+                </a>
+            {% endfor %}
+        {% endfor %}
+    </div>
 </div>

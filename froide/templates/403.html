@@ -1,10 +1,8 @@
 {% extends "error_base.html" %}
 {% load i18n %}
-
 {% block error %}
-{% blocktrans %}403 - Forbidden{% endblocktrans %}
+    {% blocktrans %}403 - Forbidden{% endblocktrans %}
 {% endblock error %}
-
 {% block error_description %}
-{% blocktrans %}You tried to access a site that you are not authorized to access or you triggered a security warning.{% endblocktrans %}
+    {% blocktrans %}You tried to access a site that you are not authorized to access or you triggered a security warning.{% endblocktrans %}
 {% endblock error_description %}

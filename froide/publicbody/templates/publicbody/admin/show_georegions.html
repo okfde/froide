@@ -1,41 +1,32 @@
 {% extends "helper/admin_base_action.html" %}
-
 {% load i18n l10n %}
 {% load leaflet_tags %}
-
-{% block action_title %}{% trans 'Show Georegions' %}{% endblock %}
-
-{% block breadcrumbs_action_label %}
-  {% trans 'Show Georegions' %}
+{% block action_title %}
+    {% trans 'Show Georegions' %}
 {% endblock %}
-
+{% block breadcrumbs_action_label %}
+    {% trans 'Show Georegions' %}
+{% endblock %}
 {% block action_content %}
-{% leaflet_js %}
-{% leaflet_css %}
-<style>
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <style>
   .leaflet-container {  /* all maps */
     width:  100%;
     height: 80vh;
 }
-</style>
-{% leaflet_map "map" callback="main_map_init" creatediv=False %}
-<div id="map" class="leaflet-container"></div>
-
-{% if no_regions %}
-  <h2>{% trans "No geo region available for these public bodies" %}</h2>
-  <ul>
-  {% for obj in no_regions %}
-    <li>
-      {{ obj.name}}
-    </li>
-  {% endfor %}
-  </ul>
-{% endif %}
-
-<button id="generate-geojson">Generate GeoJSON</button>
-<a href="" id="download-geojson">Download</a>
-
-<script type="text/javascript">
+    </style>
+    {% leaflet_map "map" callback="main_map_init" creatediv=False %}
+    <div id="map" class="leaflet-container"></div>
+    {% if no_regions %}
+        <h2>{% trans "No geo region available for these public bodies" %}</h2>
+        <ul>
+            {% for obj in no_regions %}<li>{{ obj.name }}</li>{% endfor %}
+        </ul>
+    {% endif %}
+    <button id="generate-geojson">Generate GeoJSON</button>
+    <a href="" id="download-geojson">Download</a>
+    <script type="text/javascript">
   var initUrl = '/api/v1/georegion/?id='
   var regions = {{ regions|safe }};
   var geoGetter = window.location.hash.indexOf('centroid') !== -1 ? 'centroid' : 'geom'
@@ -103,6 +94,5 @@
         map.fitBounds(layer.getBounds())
       })
     }
-</script>
-
+    </script>
 {% endblock %}

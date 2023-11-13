@@ -1,66 +1,49 @@
 {% extends 'foirequest/base.html' %}
-
 {% load i18n %}
 {% load static %}
 {% load block_helper %}
 {% load frontendbuild %}
 {% load form_helper %}
-
-{% block title %}{% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}{% endblock %}
-
+{% block title %}
+    {% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}
+{% endblock %}
 {% block navbar %}
-  {% include "header_reduced.html" %}
+    {% include "header_reduced.html" %}
 {% endblock %}
-
-
 {% block body %}
-
-<div class="bg-body-tertiary">
-  {% translate "Upload postal mail" as breadcrumb_label %}
-  {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
-</div>
-
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-md-9">
-
-      <h3 class="mt-3">
-        {% blocktranslate with title=object.title %}Upload postal mail for your request “{{ title }}”{% endblocktranslate %}
-      </h3>
-
-      <p>
-        {% blocktranslate %}Please give details of the letter, upload a scan or photo if possible and update the status of this request.{% endblocktranslate %}
-      </p>
-
-      <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset>
-          {% render_form form horizontal=False %}
-        </fieldset>
-        <fieldset>
-          <legend>
-            {% trans "What is the status of your request after this letter?" %}
-          </legend>
-          {% include "foirequest/header/_set_status.html" with status_form=status_form inline=False %}
-        </fieldset>
-        <p class="text-end">
-          <button type="submit" class="btn btn-primary">
-            {% trans "Add letter" %}
-          </button>
-        </p>
-      </form>
+    <div class="bg-body-tertiary">
+        {% translate "Upload postal mail" as breadcrumb_label %}
+        {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
     </div>
-  </div>
-</div>
-
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9">
+                <h3 class="mt-3">
+                    {% blocktranslate with title=object.title %}Upload postal mail for your request “{{ title }}”{% endblocktranslate %}
+                </h3>
+                <p>
+                    {% blocktranslate %}Please give details of the letter, upload a scan or photo if possible and update the status of this request.{% endblocktranslate %}
+                </p>
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <fieldset>
+                        {% render_form form horizontal=False %}
+                    </fieldset>
+                    <fieldset>
+                        <legend>{% trans "What is the status of your request after this letter?" %}</legend>
+                        {% include "foirequest/header/_set_status.html" with status_form=status_form inline=False %}
+                    </fieldset>
+                    <p class="text-end">
+                        <button type="submit" class="btn btn-primary">{% trans "Add letter" %}</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
-
-
 {% block scripts %}
-  {{ block.super }}
-
-  {% addfrontendbuild "request.js" %}
-  {% addfrontendbuild "publicbody.js" %}
-  {% addfrontendbuild "fileuploader.js" %}
-
-  {% endblock %}
+    {{ block.super }}
+    {% addfrontendbuild "request.js" %}
+    {% addfrontendbuild "publicbody.js" %}
+    {% addfrontendbuild "fileuploader.js" %}
+{% endblock %}

@@ -1,251 +1,225 @@
 {% extends 'team/base.html' %}
-
 {% load i18n %}
 {% load form_helper %}
-
-{% block title %}{% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}{% endblock %}
-
+{% block title %}
+    {% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}
+{% endblock %}
 {% block app_body %}
-<div class="row mb-3 mt-3">
-  <div class="col-lg-8">
-    <h2>{% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}</h2>
-  </div>
-  <div class="col-lg-4">
-    <a href="{% url 'team-list' %}" class="btn btn-secondary float-end">
-      <i class="fa fa-back"></i>
-      {% trans "back to team overview" %}
-    </a>
-  </div>
-</div>
-
-{% if members %}
-    <div class="row">
-      <div class="col-lg-8">
-      <table class="table table-responsive">
-        <thead>
-          <tr>
-            <th>{% trans "Member" %}</th>
-            <th>{% trans "Role" %}</th>
-            <th>{% trans "Status" %}</th>
-            {% if user_member.is_owner %}
-            <th>{% trans "Remove" %}</th>
-            {% endif %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for member in members %}
-            <tr{% if member.is_invited %} class="Secondary"{% endif %}>
-              <td>
-                {% if member.is_invited %}
-                  {% if user_member.is_owner %}
-                    <i>{{ member.email }}</i>
-                    <br /> -
-                  {% endif %}
-                    {% trans "invited" %}
-                {% else %}
-                  {{ member.user.get_full_name }}
-                {% endif %}
-                {% if user_member == member %}
-                  <span class="fa fa-user"></span>
-                  <em class="visually-hidden">{% trans "– that's you!" %}</em>
-                {% endif %}
-              </td>
-              <td>
-                {% if member.change_role_form %}
-                  <form method="post" action="{% url 'team-change_member' pk=member.pk %}">
-                    {% csrf_token %}
-                    <div class="input-group input-group-sm">
-                      {{ member.change_role_form.role }}
-                      <button type="submit" class="btn btn-primary btn-sm">
-                        {% trans "Change" %}
-                      </button>
-                    </div>
-                  </form>
-                {% else %}
-                  {{ member.get_role_display }}
-                {% endif %}
-              </td>
-              <td>
-                {{ member.get_status_display }}
-              </td>
-              {% if user_member.is_owner %}
-                <td>
-                  {% if user_member != member %}
-                    <form method="post" action="{% url 'team-delete_member' pk=member.pk %}">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fa fa-close"></i>
-                        {% trans "Remove" %}
-                      </button>
-                    </form>
-                  {% endif %}
-                </td>
-              {% endif %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+    <div class="row mb-3 mt-3">
+        <div class="col-lg-8">
+            <h2>{% blocktrans with name=object.name %}Team “{{ name }}”{% endblocktrans %}</h2>
+        </div>
+        <div class="col-lg-4">
+            <a href="{% url 'team-list' %}" class="btn btn-secondary float-end">
+                <i class="fa fa-back"></i>
+                {% trans "back to team overview" %}
+            </a>
+        </div>
     </div>
-    <div class="col-lg-4">
-      <h3>{% trans "Roles" %}</h3>
-      <dl>
-        <dt>{% trans "Viewer" %}</dt>
-        <dd>
-          {% blocktrans %}
+    {% if members %}
+        <div class="row">
+            <div class="col-lg-8">
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Member" %}</th>
+                            <th>{% trans "Role" %}</th>
+                            <th>{% trans "Status" %}</th>
+                            {% if user_member.is_owner %}
+                                <th>{% trans "Remove" %}</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                            <tr {% if member.is_invited %}class="Secondary"{% endif %}>
+                                <td>
+                                    {% if member.is_invited %}
+                                        {% if user_member.is_owner %}
+                                            <i>{{ member.email }}</i>
+                                            <br />
+                                            -
+                                        {% endif %}
+                                        {% trans "invited" %}
+                                    {% else %}
+                                        {{ member.user.get_full_name }}
+                                    {% endif %}
+                                    {% if user_member == member %}
+                                        <span class="fa fa-user"></span>
+                                        <em class="visually-hidden">{% trans "– that's you!" %}</em>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if member.change_role_form %}
+                                        <form method="post" action="{% url 'team-change_member' pk=member.pk %}">
+                                            {% csrf_token %}
+                                            <div class="input-group input-group-sm">
+                                                {{ member.change_role_form.role }}
+                                                <button type="submit" class="btn btn-primary btn-sm">{% trans "Change" %}</button>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        {{ member.get_role_display }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ member.get_status_display }}</td>
+                                {% if user_member.is_owner %}
+                                    <td>
+                                        {% if user_member != member %}
+                                            <form method="post" action="{% url 'team-delete_member' pk=member.pk %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fa fa-close"></i>
+                                                    {% trans "Remove" %}
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-lg-4">
+                <h3>{% trans "Roles" %}</h3>
+                <dl>
+                    <dt>{% trans "Viewer" %}</dt>
+                    <dd>
+                        {% blocktrans %}
             A viewer has read-only access to all team projects and requests.
           {% endblocktrans %}
-        </dd>
-        <dt>{% trans "Editor" %}</dt>
-        <dd>
-          {% blocktrans %}
+                    </dd>
+                    <dt>{% trans "Editor" %}</dt>
+                    <dd>
+                        {% blocktrans %}
             An editor can make requests in team projects, send messages, set the status of requests.
           {% endblocktrans %}
-        </dd>
-        <dt>{% trans "Owner" %}</dt>
-        <dd>
-          {% blocktrans %}
+                    </dd>
+                    <dt>{% trans "Owner" %}</dt>
+                    <dd>
+                        {% blocktrans %}
             An owner can do everything an editor can do. In addition they can also add or remove team members, change their roles and delete the team.
           {% endblocktrans %}
-        </dd>
-      </dl>
-    </div>
-  </div>
-{% endif %}
-
-{% if form %}
-  <div class="row mt-5">
-    <div class="col-md-8">
-      <h4>{% trans "Add team member" %}</h4>
-      <form method="post" action="{% url 'team-invite' pk=object.pk %}">
-        {% csrf_token %}
-        {% render_form form %}
-        <p>
-          <button type="submit" class="btn btn-primary">
-            {% trans "Invite as team member" %}
-          </button>
-        </p>
-      </form>
-    </div>
-  </div>
-{% endif %}
-
-
-<div class="row mt-5">
-  <div class="col-md-12">
-    <h3>{% trans "Requests accessible to this team" %}</h3>
-    <table class="table table-responsive table-condensed">
-      <thead>
-        <th>{% blocktrans %}Title{% endblocktrans %}</th>
-        <th>{% blocktrans %}Public Body{% endblocktrans %}</th>
-        <th>{% blocktrans %}Status{% endblocktrans %}</th>
-        <th>{% blocktrans %}Requester{% endblocktrans %}</th>
-        <th>{% blocktrans %}Date{% endblocktrans %}</th>
-      </thead>
-      <tbody>
-        {% for foirequest in foirequests %}
-          <tr>
-            <td>
-              <a href="{{ foirequest.get_absolute_url }}">
-                {{ foirequest.title }}
-              </a>
-            </td>
-            <td>
-              <a href="{{ foirequest.public_body.get_absolute_url }}">
-                {{ foirequest.public_body.name }}
-              </a>
-            </td>
-            <td>
-              <a href="{{ foirequest.get_absolute_url }}">
-                {{ foirequest.get_status_display }}
-              </a>
-            </td>
-            <td>
-              {{ foirequest.user.get_full_name }}
-            </td>
-            <td>
-              {{ foirequest.last_message|date:"DATETIME_FORMAT" }}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="row mt-5">
-  <div class="col-md-12">
-    <h3>{% trans "Team projects" %}</h3>
-    <table class="table table-responsive">
-      <thead>
-        <th>{% blocktrans %}Title{% endblocktrans %}</th>
-        <th>{% blocktrans %}Requests{% endblocktrans %}</th>
-        <th>{% blocktrans %}Date{% endblocktrans %}</th>
-      </thead>
-      <tbody>
-        {% for project in projects %}
-          <tr>
-            <td>
-              <a href="{{ project.get_absolute_url }}">
-                {{ project.title }}
-              </a>
-            </td>
-            <td>
-              {{ project.request_count }}
-            </td>
-            <td>
-              {{ project.last_update|date:"DATETIME_FORMAT" }}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-{% if user_member.is_owner %}
-  <div class="row mt-5">
-    <div class="col-md-8">
-      <h3>{% trans "Delete team" %}</h3>
-      <p>
-        {% trans "Deleting the team will remove access of team members to all requests and projects they did not create." %}
-      </p>
-      
-      <p class="text-end">
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete-team-modal">
-          <i class="fa fa-ban"></i>
-          {% trans "Delete team" %}
-        </button>
-      </p>
-
-      {# Modal #}
-      <div class="modal fade" id="delete-team-modal" tabindex="-1" role="dialog" aria-labelledby="delete-team-modal-label" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="delete-team-modal-label">
-                {% trans "Are you sure you want to delete this team?" %}
-              </h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
+                    </dd>
+                </dl>
             </div>
-            <div class="modal-body">
-              <p>
-                {% trans "Deleting a team cannot be undone." %}
-              </p>
-              <form method="post" action="{% url 'team-delete' pk=object.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger">
-                  <i class="fa fa-ban"></i>
-                  {% blocktrans with name=object.name %}Delete team “{{ name }}”{% endblocktrans %}
-                </button>
-              </form>
-
-            </div>
-          </div>
         </div>
-      </div>
-
+    {% endif %}
+    {% if form %}
+        <div class="row mt-5">
+            <div class="col-md-8">
+                <h4>{% trans "Add team member" %}</h4>
+                <form method="post" action="{% url 'team-invite' pk=object.pk %}">
+                    {% csrf_token %}
+                    {% render_form form %}
+                    <p>
+                        <button type="submit" class="btn btn-primary">{% trans "Invite as team member" %}</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>{% trans "Requests accessible to this team" %}</h3>
+            <table class="table table-responsive table-condensed">
+                <thead>
+                    <th>{% blocktrans %}Title{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Public Body{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Status{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Requester{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Date{% endblocktrans %}</th>
+                </thead>
+                <tbody>
+                    {% for foirequest in foirequests %}
+                        <tr>
+                            <td>
+                                <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.title }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ foirequest.public_body.get_absolute_url }}">{{ foirequest.public_body.name }}</a>
+                            </td>
+                            <td>
+                                <a href="{{ foirequest.get_absolute_url }}">{{ foirequest.get_status_display }}</a>
+                            </td>
+                            <td>{{ foirequest.user.get_full_name }}</td>
+                            <td>{{ foirequest.last_message|date:"DATETIME_FORMAT" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
-{% endif %}
-
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <h3>{% trans "Team projects" %}</h3>
+            <table class="table table-responsive">
+                <thead>
+                    <th>{% blocktrans %}Title{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Requests{% endblocktrans %}</th>
+                    <th>{% blocktrans %}Date{% endblocktrans %}</th>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                        <tr>
+                            <td>
+                                <a href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+                            </td>
+                            <td>{{ project.request_count }}</td>
+                            <td>{{ project.last_update|date:"DATETIME_FORMAT" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if user_member.is_owner %}
+        <div class="row mt-5">
+            <div class="col-md-8">
+                <h3>{% trans "Delete team" %}</h3>
+                <p>
+                    {% trans "Deleting the team will remove access of team members to all requests and projects they did not create." %}
+                </p>
+                <p class="text-end">
+                    <button type="button"
+                            class="btn btn-danger"
+                            data-bs-toggle="modal"
+                            data-bs-target="#delete-team-modal">
+                        <i class="fa fa-ban"></i>
+                        {% trans "Delete team" %}
+                    </button>
+                </p>
+                {# Modal #}
+                <div class="modal fade"
+                     id="delete-team-modal"
+                     tabindex="-1"
+                     role="dialog"
+                     aria-labelledby="delete-team-modal-label"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="delete-team-modal-label">{% trans "Are you sure you want to delete this team?" %}</h5>
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="{% translate 'Close' %}"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>{% trans "Deleting a team cannot be undone." %}</p>
+                                <form method="post" action="{% url 'team-delete' pk=object.pk %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fa fa-ban"></i>
+                                        {% blocktrans with name=object.name %}Delete team “{{ name }}”{% endblocktrans %}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

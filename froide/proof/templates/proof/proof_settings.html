@@ -1,72 +1,67 @@
 {% load i18n %}
 {% load form_helper block_helper %}
 {% load proofupload %}
-
 <p>
-  {% translate "Some authorities require a proof of identity. Here you can upload and redact pictures of identity documents." %}
+    {% translate "Some authorities require a proof of identity. Here you can upload and redact pictures of identity documents." %}
 </p>
-
 {% get_proof_settings_form as form %}
-
-<form action="{% url 'proof-add' %}" method="POST" enctype="multipart/form-data" class="disable-submit">
-  {% csrf_token %}
-  {% render_form form %}
-  <p class="text-end">
-    <button type="submit" class="btn btn-primary">
-      {% translate "Upload proof" %}
-    </button>
-  </p>
+<form action="{% url 'proof-add' %}"
+      method="POST"
+      enctype="multipart/form-data"
+      class="disable-submit">
+    {% csrf_token %}
+    {% render_form form %}
+    <p class="text-end">
+        <button type="submit" class="btn btn-primary">{% translate "Upload proof" %}</button>
+    </p>
 </form>
-
 {% get_user_proofs as proofs %}
-
 {% if proofs %}
-  <hr class="my-3">
-  {% if proofs|length > 1 %}
-    <div class="row">
-      <div class="col-4">
-        <div class="list-group" role="tablist">
-          {% for proof in proofs %}
-            <a class="list-group-item list-group-item-action {% if forloop.first %}active{% endif %}" data-bs-toggle="list" href="#proof-{{ proof.id }}" role="tab">
-              {{ proof.name }}
-            </a>
-          {% endfor %}
-        </div>
-      </div>
-      <div class="col-8">
-    {% endif %}
-      <!-- Tab panes -->
-      <div class="tab-content">
-        {% for proof in proofs %}
-          <div class="tab-pane {% if forloop.first %}active{% endif %}" id="proof-{{ proof.id}}" role="tabpanel">
-            <form action="{% url 'proof-delete' proof_id=proof.id %}" method="POST">
-              {% csrf_token %}
-              <p>
-                {% blocktranslate with date=proof.timestamp|date name=proof.name %}
+    <hr class="my-3">
+    {% if proofs|length > 1 %}
+        <div class="row">
+            <div class="col-4">
+                <div class="list-group" role="tablist">
+                    {% for proof in proofs %}
+                        <a class="list-group-item list-group-item-action {% if forloop.first %}active{% endif %}"
+                           data-bs-toggle="list"
+                           href="#proof-{{ proof.id }}"
+                           role="tab">{{ proof.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-8">
+            {% endif %}
+            <!-- Tab panes -->
+            <div class="tab-content">
+                {% for proof in proofs %}
+                    <div class="tab-pane {% if forloop.first %}active{% endif %}"
+                         id="proof-{{ proof.id }}"
+                         role="tabpanel">
+                        <form action="{% url 'proof-delete' proof_id=proof.id %}" method="POST">
+                            {% csrf_token %}
+                            <p>
+                                {% blocktranslate with date=proof.timestamp|date name=proof.name %}
                   Uploaded on {{ date }} as “{{ name }}”.
                 {% endblocktranslate %}
-              </p>
-              <img src="{{ proof.get_image_data_url }}" class="img-fluid">
-              <button type="submit" class="btn btn-outline-danger mt-3">
-                <i class="fa fa-trash"></i>
-                {% translate "Delete this proof" %}
-              </button>
-            </form>
-          </div>
-        {% endfor %}
-      </div>
-    {% if proofs|length > 1 %}
-    </div>
-  </div>
-  {% endif %}
+                            </p>
+                            <img src="{{ proof.get_image_data_url }}" class="img-fluid">
+                            <button type="submit" class="btn btn-outline-danger mt-3">
+                                <i class="fa fa-trash"></i>
+                                {% translate "Delete this proof" %}
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if proofs|length > 1 %}
+            </div>
+        </div>
+    {% endif %}
 {% endif %}
-
-
 {% addtoblock "css" %}
-  {{ form.media.css }}
+{{ form.media.css }}
 {% endaddtoblock %}
-
 {% addtoblock "js" %}
-  {{ form.media.js }}
+{{ form.media.js }}
 {% endaddtoblock %}
-

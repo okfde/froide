@@ -1,15 +1,9 @@
 {% extends "filingcabinet/documentcollection_detail.html" %}
-
 {% load markup %}
 {% load frontendbuild %}
-
 {% block documentcollection_top %}
-<div class="container mt-3 mb-5">
-    <h2>{{ object.title }}</h2>
-    {% if object.description %}
-      <p>
-         {{ object.description|markdown }}
-      </p>
-    {% endif %}
-</div>
+    <div class="container mt-3 mb-5">
+        <h2>{{ object.title }}</h2>
+        {% if object.description %}<p>{{ object.description|markdown }}</p>{% endif %}
+    </div>
 {% endblock documentcollection_top %}

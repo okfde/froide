@@ -1,31 +1,34 @@
 {% load i18n %}
-
-<button type="button" class="btn btn-sm mb-1 mx-sm-1 btn-warning" data-bs-toggle="modal" data-bs-target="#resend-{{ message.pk }}">
-  {% translate "Resend" %}
-</button>
-
-<div class="modal" data-teleport="body" tabindex="-1" role="dialog" id="resend-{{ message.pk }}">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          {% translate "Resend message" %}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
-      </div>
-      <div class="modal-body">
-        <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
-        method="post" class="ajaxified"
-        data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
-          {% csrf_token %}
-          <p>
-            {% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}
-          </p>
-          <button class="btn btn-sm btn-warning" type="submit">
-            {% trans "Resend message" %}
-          </button>
-        </form>
-      </div>
+<button type="button"
+        class="btn btn-sm mb-1 mx-sm-1 btn-warning"
+        data-bs-toggle="modal"
+        data-bs-target="#resend-{{ message.pk }}">{% translate "Resend" %}</button>
+<div class="modal"
+     data-teleport="body"
+     tabindex="-1"
+     role="dialog"
+     id="resend-{{ message.pk }}">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% translate "Resend message" %}</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="{% translate 'Close' %}"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'foirequest-resend_message' slug=object.slug message_id=message.id %}"
+                      method="post"
+                      class="ajaxified"
+                      data-confirm="{% blocktrans with name=object.public_body.name %}Resend to updated “{{ name }}” default email address?{% endblocktrans %}">
+                    {% csrf_token %}
+                    <p>
+                        {% blocktrans with name=object.public_body.name %}Resend to default email address of “{{ name }}”.{% endblocktrans %}
+                    </p>
+                    <button class="btn btn-sm btn-warning" type="submit">{% trans "Resend message" %}</button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 </div>

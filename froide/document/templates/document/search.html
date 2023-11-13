@@ -1,44 +1,31 @@
 {% extends 'helper/search/search_base.html' %}
-
 {% load i18n %}
-
 {% block search_title %}
-  {% trans "Documents" %}
+    {% trans "Documents" %}
 {% endblock %}
-
-
 {% block search_form_filters %}
-  <div class="row align-items-start">
-    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
-      <div class="col-md-4">
-        {{ form.jurisdiction }}
-      </div>
-    {% else %}
-      {{ form.jurisdiction }}
-    {% endif %}
-
-    {% if "campaign" in show_filters %}
-      <div class="col-md-4">
-        {{ form.campaign }}
-      </div>
-    {% else %}
-      {{ form.campaign }}
-    {% endif %}
-
-    {{ form.publicbody }}
-    {{ form.tag }}
-  </div>
+    <div class="row align-items-start">
+        {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+            <div class="col-md-4">{{ form.jurisdiction }}</div>
+        {% else %}
+            {{ form.jurisdiction }}
+        {% endif %}
+        {% if "campaign" in show_filters %}
+            <div class="col-md-4">{{ form.campaign }}</div>
+        {% else %}
+            {{ form.campaign }}
+        {% endif %}
+        {{ form.publicbody }}
+        {{ form.tag }}
+    </div>
 {% endblock %}
-
 {% block sidebar_bottom %}
-<div class="card mb-3">
-  <div class="card-body">
-    <h6>
-      <i class="fa fa-rss" aria-hidden="true"></i>
-      <a href="{% url 'document-search_feed' %}?{{ getvars }}">
-        {% trans "RSS feed for this search" %}
-      </a>
-    </h6>
-  </div>
-</div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>
+                <i class="fa fa-rss" aria-hidden="true"></i>
+                <a href="{% url 'document-search_feed' %}?{{ getvars }}">{% trans "RSS feed for this search" %}</a>
+            </h6>
+        </div>
+    </div>
 {% endblock %}

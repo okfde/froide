@@ -1,75 +1,62 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 {% load foirequest_tags %}
-
-{% block title %}{% translate "User moderation" %}{% endblock %}
-
+{% block title %}
+    {% translate "User moderation" %}
+{% endblock %}
 {% block body %}
-<div class="container">
-  <h2 class="mt-3">{% translate "User moderation" %}</h2>
-  <div class="row">
-    <div class="col-12">
-      <dl>
-        <dt>{% translate "User Tags" %}</dt>
-        <dd>
-          {% for tag in object.tags.all %}
-            {{ tag.name }}{% if not forloop.last %},{% endif %}
-          {% endfor %}
-        </dd>
-        <dt>{% translate "Account notes" %}</dt>
-        <dd>
-          {{ object.notes|linebreaksbr }}
-        </dd>
-        <dt>
-          {% translate "Problems for this users' requests" %}
-        </dt>
-        <dd>
-          {% if report_count %}
-            <ul>
-            {% for report in report_count %}
-              <li>{{ report.count }}x {{ report.kind }}</li>
-            {% endfor %}
-            </ul>
-          {% else %}
-            -
-          {% endif %}
-        </dd>
-      </dl>
-
-      <h4>{% translate "Requests" %}</h4>
-      {% for foirequest in foirequests %}
-        <div class="mb-3 p-2 {% if foirequest.pk|slugify == highlighted %}highlight{% endif %}">
-          {% include "foirequest/snippets/request_item_mini.html" with object=foirequest %}
-          {% if not foirequest.is_foi %}
-            <span class="badge text-bg-warning">{% translate "Not FOI" %}</span>
-          {% endif %}
-          {% if foirequest.visibility != 2 and foirequest.public %}
-            <span class="badge text-bg-warning">{% translate "Depublished" %}</span>
-          {% endif %}
-          <div class="bg-blue-200 p-2">
-            {% render_moderation_actions foirequest %}
-          </div>
+    <div class="container">
+        <h2 class="mt-3">{% translate "User moderation" %}</h2>
+        <div class="row">
+            <div class="col-12">
+                <dl>
+                    <dt>{% translate "User Tags" %}</dt>
+                    <dd>
+                        {% for tag in object.tags.all %}
+                            {{ tag.name }}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </dd>
+                    <dt>{% translate "Account notes" %}</dt>
+                    <dd>
+                        {{ object.notes|linebreaksbr }}
+                    </dd>
+                    <dt>{% translate "Problems for this users' requests" %}</dt>
+                    <dd>
+                        {% if report_count %}
+                            <ul>
+                                {% for report in report_count %}<li>{{ report.count }}x {{ report.kind }}</li>{% endfor %}
+                            </ul>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </dd>
+                </dl>
+                <h4>{% translate "Requests" %}</h4>
+                {% for foirequest in foirequests %}
+                    <div class="mb-3 p-2 {% if foirequest.pk|slugify == highlighted %}highlight{% endif %}">
+                        {% include "foirequest/snippets/request_item_mini.html" with object=foirequest %}
+                        {% if not foirequest.is_foi %}
+                            <span class="badge text-bg-warning">{% translate "Not FOI" %}</span>
+                        {% endif %}
+                        {% if foirequest.visibility != 2 and foirequest.public %}
+                            <span class="badge text-bg-warning">{% translate "Depublished" %}</span>
+                        {% endif %}
+                        <div class="bg-blue-200 p-2">{% render_moderation_actions foirequest %}</div>
+                    </div>
+                {% endfor %}
+                <div class="mb-3 p-2 bg-body-secondary border">
+                    <h4>{% translate "Administrative review of account" %}</h4>
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>{% translate "Please give reasons why this account should be reviewed." %}</p>
+                        <p>
+                            <textarea class="form-control" name="note"></textarea>
+                        </p>
+                        <button type="submit" class="btn btn-danger">{% translate "Request admin review" %}</button>
+                    </form>
+                </div>
+            </div>
         </div>
-      {% endfor %}
-
-      <div class="mb-3 p-2 bg-body-secondary border">
-        <h4>{% translate "Administrative review of account" %}</h4>
-        <form method="post">
-          {% csrf_token %}
-          <p>
-            {% translate "Please give reasons why this account should be reviewed." %}
-          </p>
-          <p>
-            <textarea class="form-control" name="note"></textarea>
-          </p>
-          <button type="submit" class="btn btn-danger">
-            {% translate "Request admin review" %}
-          </button>
-        </form>
-      </div>
-
     </div>
-  </div>
-</div>
 {% endblock %}

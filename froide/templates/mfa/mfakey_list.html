@@ -1,144 +1,117 @@
 {% extends "mfa/base.html" %}
-
 {% load i18n %}
 {% load account_tags %}
-
 {% block app_container %}
-
-<div class="row">
-  <div class="col-lg-4 ms-auto">
-    <a href="{% url 'account-settings' %}" class="btn btn-secondary float-end">
-      {% trans "back to account settings" %}
-    </a>
-  </div>
-</div>
-
-<h3>
-  {% translate "Manage two-factor authentication" %}
-</h3>
-
-<p>
-  {% translate "Two-factor authentication adds an additional layer of security to your account by requiring more than just a password to log in." %}
-</p>
-
-{% get_mfa_keys as mfa_keys %}
-
-{% if object_list|length == 1 %}
-  <div class="alert alert-warning">
-    {% blocktranslate %}
+    <div class="row">
+        <div class="col-lg-4 ms-auto">
+            <a href="{% url 'account-settings' %}"
+               class="btn btn-secondary float-end">{% trans "back to account settings" %}</a>
+        </div>
+    </div>
+    <h3>{% translate "Manage two-factor authentication" %}</h3>
+    <p>
+        {% translate "Two-factor authentication adds an additional layer of security to your account by requiring more than just a password to log in." %}
+    </p>
+    {% get_mfa_keys as mfa_keys %}
+    {% if object_list|length == 1 %}
+        <div class="alert alert-warning">
+            {% blocktranslate %}
     <strong>WARNING</strong>:
     You have registered only a single key. If you lose access to that key you won't be able log into your account again.
     {% endblocktranslate %}
-  </div>
-{% endif %}
-
-{% if object_list|length >= 1 and not mfa_keys.by_method.recovery %}
-  <div class="alert alert-warning">
-    {% translate "You have not created any recovery codes!" %}
-  </div>
-{% endif %}
-
-<div class="card mb-3">
-  <div class="card-body">
-    <h4>{% translate "Hardware security keys" %}</h4>
-
-    <p>
-      <a class="btn btn-primary" href="{% url 'mfa:create' 'FIDO2' %}">
-        {% if mfa_keys.by_method.FIDO2 %}
-          {% translate "Setup another hardware security key" %}
-        {% else %}
-          {% translate "Setup hardware security key" %}
-        {% endif %}
-      </a>
-    </p>
-
-
-    {% if mfa_keys.by_method.FIDO2 %}
-      <p>{% translate "You have the following hardware security keys:" %}</p>
-      <ul>
-        {% for key in mfa_keys.by_method.FIDO2 %}
-          <li>
-            {{ key.name }}
-            <a class="btn btn-sm btn-danger" href="{% url 'mfa:delete' key.id %}">
-              <i class="fa fa-ban"></i>
-              {% translate "Delete" %}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>{% translate "No hardware security keys set up." %}</p>
+        </div>
     {% endif %}
-  </div>
-</div>
-
-<div class="card mb-3">
-  <div class="card-body">
-    <h4>{% translate "Authenticator Apps" %}</h4>
-
-    <p>
-      <a class="btn btn-primary" href="{% url 'mfa:create' 'TOTP' %}">
-        {% if mfa_keys.by_method.TOTP %}
-          {% translate "Setup another authenticator app" %}
-        {% else %}
-          {% translate "Setup authenticator app" %}
-        {% endif %}
-      </a>
-    </p>
-
-    {% if mfa_keys.by_method.TOTP %}
-    <p>{% translate "You have the following authenticator apps:" %}</p>
-      <ul>
-        {% for key in mfa_keys.by_method.TOTP %}
-          <li>
-            {{ key.name }}
-            <a class="btn btn-sm btn-danger" href="{% url 'mfa:delete' key.id %}">
-              <i class="fa fa-ban"></i>
-              {% translate "Delete" %}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>{% translate "No authenticator apps set up." %}</p>
+    {% if object_list|length >= 1 and not mfa_keys.by_method.recovery %}
+        <div class="alert alert-warning">{% translate "You have not created any recovery codes!" %}</div>
     {% endif %}
-  </div>
-</div>
-    
-
-<div class="card mb-3">
-  <div class="card-body">
-    <h4>{% translate "Recovery Codes" %}</h4>
-
-    {% if mfa_keys.by_method.TOTP or mfa_keys.by_method.FIDO2 %}
-      <p>
-        <a class="btn btn-primary" href="{% url 'mfa:create' 'recovery' %}">
-          {% translate "Setup recovery code" %}
-        </a>
-      </p>
-    {% else %}
-      <p>
-        {% translate "You need to setup a hardware security key or an authenticator app before you can create recovery codes." %}
-      </p>
-    {% endif %}
-
-    {% if mfa_keys.by_method.recovery %}
-      <p>{% translate "You have the following recovery codes:" %}</p>
-      <ul>
-        {% for key in mfa_keys.by_method.recovery %}
-          <li>
-            {{ key.name }}
-            <a class="btn btn-sm btn-danger" href="{% url 'mfa:delete' key.id %}">
-              <i class="fa fa-ban"></i>
-              {% translate "Delete" %}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>{% translate "No recovery codes created." %}</p>
-    {% endif %}
-  </div>
-</div>
-
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4>{% translate "Hardware security keys" %}</h4>
+            <p>
+                <a class="btn btn-primary" href="{% url 'mfa:create' 'FIDO2' %}">
+                    {% if mfa_keys.by_method.FIDO2 %}
+                        {% translate "Setup another hardware security key" %}
+                    {% else %}
+                        {% translate "Setup hardware security key" %}
+                    {% endif %}
+                </a>
+            </p>
+            {% if mfa_keys.by_method.FIDO2 %}
+                <p>{% translate "You have the following hardware security keys:" %}</p>
+                <ul>
+                    {% for key in mfa_keys.by_method.FIDO2 %}
+                        <li>
+                            {{ key.name }}
+                            <a class="btn btn-sm btn-danger" href="{% url 'mfa:delete' key.id %}">
+                                <i class="fa fa-ban"></i>
+                                {% translate "Delete" %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>{% translate "No hardware security keys set up." %}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4>{% translate "Authenticator Apps" %}</h4>
+            <p>
+                <a class="btn btn-primary" href="{% url 'mfa:create' 'TOTP' %}">
+                    {% if mfa_keys.by_method.TOTP %}
+                        {% translate "Setup another authenticator app" %}
+                    {% else %}
+                        {% translate "Setup authenticator app" %}
+                    {% endif %}
+                </a>
+            </p>
+            {% if mfa_keys.by_method.TOTP %}
+                <p>{% translate "You have the following authenticator apps:" %}</p>
+                <ul>
+                    {% for key in mfa_keys.by_method.TOTP %}
+                        <li>
+                            {{ key.name }}
+                            <a class="btn btn-sm btn-danger" href="{% url 'mfa:delete' key.id %}">
+                                <i class="fa fa-ban"></i>
+                                {% translate "Delete" %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>{% translate "No authenticator apps set up." %}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4>{% translate "Recovery Codes" %}</h4>
+            {% if mfa_keys.by_method.TOTP or mfa_keys.by_method.FIDO2 %}
+                <p>
+                    <a class="btn btn-primary" href="{% url 'mfa:create' 'recovery' %}">{% translate "Setup recovery code" %}</a>
+                </p>
+            {% else %}
+                <p>
+                    {% translate "You need to setup a hardware security key or an authenticator app before you can create recovery codes." %}
+                </p>
+            {% endif %}
+            {% if mfa_keys.by_method.recovery %}
+                <p>{% translate "You have the following recovery codes:" %}</p>
+                <ul>
+                    {% for key in mfa_keys.by_method.recovery %}
+                        <li>
+                            {{ key.name }}
+                            <a class="btn btn-sm btn-danger" href="{% url 'mfa:delete' key.id %}">
+                                <i class="fa fa-ban"></i>
+                                {% translate "Delete" %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>{% translate "No recovery codes created." %}</p>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

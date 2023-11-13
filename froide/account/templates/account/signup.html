@@ -1,34 +1,29 @@
 {% extends "account/base.html" %}
-
 {% load i18n %}
 {% load static %}
 {% load form_helper %}
 {% load block_helper %}
-
-{% block title %}{% blocktrans %}Create an account{% endblocktrans %}{% endblock %}
-
+{% block title %}
+    {% blocktrans %}Create an account{% endblocktrans %}
+{% endblock %}
 {% block app_container %}
-<div class="row justify-content-center">
-  <div class="col-lg-8 col-md-8">
-    <div class="card mb-3 target-primary" id="signup">
-      <h5 class="card-header">
-        {% blocktrans %}Create an account{% endblocktrans %}
-      </h5>
-      <div class="card-body">
-        <form class="form-horizontal" method="post" action="{% url 'account-signup' %}">
-          {% csrf_token %}
-          {% if next %}
-            <input type="hidden" name="next" value="{{ next }}"/>
-          {% endif %}
-          {% render_form form %}
-          <div class="clearfix">
-            <button type="submit" class="btn btn-success float-end btn-lg">
-              {% blocktrans %}Sign Up{% endblocktrans %}
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-8">
+            <div class="card mb-3 target-primary" id="signup">
+                <h5 class="card-header">{% blocktrans %}Create an account{% endblocktrans %}</h5>
+                <div class="card-body">
+                    <form class="form-horizontal"
+                          method="post"
+                          action="{% url 'account-signup' %}">
+                        {% csrf_token %}
+                        {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+                        {% render_form form %}
+                        <div class="clearfix">
+                            <button type="submit" class="btn btn-success float-end btn-lg">{% blocktrans %}Sign Up{% endblocktrans %}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 {% endblock %}

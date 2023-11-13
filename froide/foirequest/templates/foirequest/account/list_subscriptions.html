@@ -2,36 +2,28 @@
 {% load i18n %}
 {% load form_helper %}
 {% load token_tags %}
-
-{% block title %}{% translate "Subscriptions" %}{% endblock %}
-
-{% block breadcrumbs %}
-{% url "account-subscriptions" as section_url %}
-{% translate "Subscriptions" as section_name %}
-{% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% block title %}
+    {% translate "Subscriptions" %}
 {% endblock %}
-
+{% block breadcrumbs %}
+    {% url "account-subscriptions" as section_url %}
+    {% translate "Subscriptions" as section_name %}
+    {% include "account/includes/breadcrumbs.html" with section_name=section_name section_url=section_url %}
+{% endblock %}
 {% block tab_content %}
-<div class="mt-2">
-  <h2 id="subscription-urls" class="mb-3">
-    {% trans "Private Subscription URLs" %}
-  </h2>
-  <p>
-    {% trans "You can generate private URLs to subscribe to your requests in other applications." %}
-  </p>
-
-  <form action="{% url 'accesstoken-reset' %}#subscription-urls" method="POST">
-    {% csrf_token %}
-    <input type="hidden" name="next" value="{{ request.get_full_path }}"/>
-
-    {% trans "Private RSS feed URL" as url_label %}
-    {% get_token_url_form purpose='user-request-feed' label=url_label url_name='foirequest-user_list_feed' as url_form %}
-    {% render_form url_form %}
-
-    {% trans "Private iCal subscription URL (beta)" as url_label %}
-    {% get_token_url_form purpose='user-request-calendar' label=url_label url_name='foirequest-user_ical_calendar' as url_form %}
-    {% render_form url_form %}
-
-  </form>
-</div>
+    <div class="mt-2">
+        <h2 id="subscription-urls" class="mb-3">{% trans "Private Subscription URLs" %}</h2>
+        <p>{% trans "You can generate private URLs to subscribe to your requests in other applications." %}</p>
+        <form action="{% url 'accesstoken-reset' %}#subscription-urls"
+              method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}" />
+            {% trans "Private RSS feed URL" as url_label %}
+            {% get_token_url_form purpose='user-request-feed' label=url_label url_name='foirequest-user_list_feed' as url_form %}
+            {% render_form url_form %}
+            {% trans "Private iCal subscription URL (beta)" as url_label %}
+            {% get_token_url_form purpose='user-request-calendar' label=url_label url_name='foirequest-user_ical_calendar' as url_form %}
+            {% render_form url_form %}
+        </form>
+    </div>
 {% endblock %}
