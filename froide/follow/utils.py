@@ -86,6 +86,7 @@ def handle_unsubscribe(sender, email, reference, **kwargs):
         follow_model, follow_id = follow_part.split("-", 1)
     except ValueError:
         follow_model = "foirequestfollower.foirequestfollower"
+        follow_id = follow_part
     try:
         configuration = follow_registry.get_by_model_name(follow_model)
     except LookupError:
