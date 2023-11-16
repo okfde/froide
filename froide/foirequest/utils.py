@@ -1,12 +1,16 @@
 import json
 import re
+import zipfile
 from dataclasses import dataclass
 from datetime import timedelta
+from io import BytesIO
+from pathlib import PurePath
 from typing import Iterator, List, Optional, Tuple, Union
 
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.core.mail import mail_managers
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
@@ -20,6 +24,7 @@ import icalendar
 from froide.helper.content_urls import get_content_url
 from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
+from froide.helper.storage import make_unique_filename
 from froide.helper.tasks import search_instance_save
 from froide.helper.text_utils import (
     apply_text_replacements,
@@ -31,7 +36,7 @@ from froide.helper.text_utils import (
 from froide.proof.models import ProofAttachment
 from froide.publicbody.models import FoiLaw, PublicBody
 
-from .models import FoiRequest
+from .models import FoiAttachment, FoiRequest
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
@@ -880,3 +885,52 @@ def select_foirequest_template(foirequest, base_template: str):
 
     templates.append(base_template)
     return templates
+
+
+ZIP_BLOCK_LIST = set(["__MACOSX", ".DS_Store"])
+PATH_REPLACEMENT = "___"  # 3 underscores
+
+
+def unpack_zipfile_attachment(attachment: FoiAttachment):
+    import magic
+    from filingcabinet.services import remove_common_root_path
+
+    file_obj = attachment.file
+
+    if not zipfile.is_zipfile(file_obj):
+        return
+
+    with zipfile.ZipFile(file_obj, "r") as zf:
+        zip_paths = []
+        for zip_info in zf.infolist():
+            if zip_info.is_dir():
+                continue
+            path = PurePath(zip_info.filename)
+            parts = path.parts
+            if parts[0] in ZIP_BLOCK_LIST:
+                continue
+            zip_paths.append(path)
+        if not zip_paths:
+            return
+
+        doc_paths = remove_common_root_path(zip_paths)
+        names = set(
+            attachment.belongs_to.foiattachment_set.all().values_list("name", flat=True)
+        )
+        for doc_path, zip_path in zip(doc_paths, zip_paths):
+            attachment_name = PATH_REPLACEMENT.join(doc_path.parts)
+            attachment_name = make_unique_filename(attachment_name, names)
+            names.add(attachment_name)
+
+            file_obj = BytesIO(zf.read(str(zip_path)))
+            content_type = magic.from_buffer(file_obj.read(1024), mime=True)
+            file_obj.seek(0)
+
+            new_attachment = FoiAttachment(
+                belongs_to=attachment.belongs_to,
+                name=attachment_name,
+                size=file_obj.getbuffer().nbytes,
+                filetype=content_type,
+                can_approve=not attachment.belongs_to.request.not_publishable,
+            )
+            new_attachment.file.save(attachment_name, File(file_obj))

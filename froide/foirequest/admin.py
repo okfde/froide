@@ -756,6 +756,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         "convert",
         "ocr_attachment",
         "make_document",
+        "unpack_zipfile",
     ]
 
     def get_queryset(self, request):
@@ -823,6 +824,13 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
 
         for att in queryset:
             ocr_pdf_attachment(att)
+
+    @admin.action(description=_("Unpack ZIP file"))
+    def unpack_zipfile(self, request, queryset):
+        from .tasks import unpack_zipfile_attachment_task
+
+        for att in queryset:
+            unpack_zipfile_attachment_task.delay(att.id)
 
 
 @admin.register(FoiEvent)
