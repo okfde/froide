@@ -386,3 +386,17 @@ def move_upload_to_attachment(att_id, upload_id):
 
     if att.can_convert_to_pdf():
         convert_attachment_task.delay(att.id)
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.unpack_zipfile_attachment_task", time_limit=360
+)
+def unpack_zipfile_attachment_task(instance_id):
+    from .utils import unpack_zipfile_attachment
+
+    try:
+        att = FoiAttachment.objects.get(pk=instance_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    unpack_zipfile_attachment(att)
