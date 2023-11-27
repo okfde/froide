@@ -4,7 +4,9 @@
       class="froide-multi-search">
     <div class="d-grid gap-2 d-md-flex">
         <select class="form-select flex-grow-0{% if small %} form-select-sm{% endif %}">
-            {% for search in searches %}<option value="{{ search.url }}">{{ search.title }}</option>{% endfor %}
+            {% for search in searches %}
+                <option value="{{ search.url }}">{{ search.menu_title|default:search.title }}</option>
+            {% endfor %}
         </select>
         <input name="q"
                type="search"
