@@ -285,7 +285,7 @@ class PublicBodyBaseAdminMixin:
         if not self.has_change_permission(request):
             raise PermissionDenied
 
-        importer = CSVImporter()
+        importer = CSVImporter(user=request.user)
         url = request.POST.get("url")
         csv_file = request.FILES.get("file")
         try:
