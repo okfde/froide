@@ -199,6 +199,10 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     def filter_portal(self, qs, name, portal):
         qs = self.apply_filter(qs, name, portal=portal.id)
         qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
+        has_query = self.request.GET.get("q")
+        if not has_query:
+            qs = qs.add_sort()
+            qs = qs.add_sort("-created_at")
         return qs
 
     def apply_data_filters(self, qs, filters):
