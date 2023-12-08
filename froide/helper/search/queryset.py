@@ -117,7 +117,7 @@ class SearchQuerySetWrapper(object):
         return {
             "fields": {
                 k: [
-                    [i["key"], self.response["aggregations"][k]["doc_count"]]
+                    [i["key"], i["doc_count"]]
                     for i in self.response["aggregations"][k][k]["buckets"]
                 ]
                 for k in self.response["aggregations"]
