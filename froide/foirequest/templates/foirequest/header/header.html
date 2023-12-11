@@ -93,7 +93,11 @@
                 {# description #}
                 <div class="mt-3">
                     <div class="request-descr request-descr--collapsed">
-                        {{ object.get_description|urlizetrunc:40|linebreaks }}
+                        {% redact_request_description object request as redacted_description %}
+                        {{ redacted_description|linebreaks }}
+                        {% if object|can_write_foirequest:request %}
+                            {% render_description_redact_button object %}
+                        {% endif %}
                         <div class="request-descr-read-more d-grid">
                             <button type="button"
                                     class="btn btn-outline-secondary btn-sm expand-descr-btn">
@@ -124,12 +128,7 @@
                             {% endif %}
                             {% if object.summary %}
                                 <div class="request-descr request-descr--collapsed">
-                                    {% redact_request_description object request as redacted_description %}
-                                    {{ redacted_description|linebreaks }}
-
-                                    {% if object|can_write_foirequest:request %}
-                                        {% render_description_redact_button object %}
-                                    {% endif %}
+                                    {{ object.summary|urlizetrunc:40|linebreaks }}
                                     <div class="request-descr-read-more d-grid">
                                         <button type="button"
                                                 class="btn btn-outline-secondary btn-sm expand-descr-btn">
