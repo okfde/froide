@@ -634,7 +634,10 @@ class FoiRequest(models.Model):
             self.description_redacted = redact_plaintext(
                 self.description, user_replacements=user_replacements
             )
-            self.save(update_fields=["description_redacted"])
+            if (
+                self.description_redacted
+            ):  # description might be empty, if so, don't save again
+                self.save(update_fields=["description_redacted"])
         return self.description_redacted
 
     def get_redacted_description(self, auth: bool) -> List[Tuple[bool, str]]:
