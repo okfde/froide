@@ -291,6 +291,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
     )
     tags = TagListField()
 
+    description = serializers.CharField(source="get_description")
     redacted_description = serializers.SerializerMethodField()
     costs = serializers.SerializerMethodField()
 
