@@ -114,7 +114,7 @@ django-configurations==2.4.1
     # via -r requirements.in
 django-contrib-comments==2.2.0
     # via -r requirements.in
-django-crossdomainmedia==0.0.3
+django-crossdomainmedia==0.0.4
     # via -r requirements.in
 django-elasticsearch-dsl==7.3
     # via -r requirements.in

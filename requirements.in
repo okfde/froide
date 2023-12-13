@@ -7,7 +7,7 @@ django-celery-beat>=2.5.0
 django-celery-email
 django-configurations
 django-contrib-comments
-django-crossdomainmedia
+django-crossdomainmedia>=0.0.4
 django-elasticsearch-dsl
 django-filter
 django-fsm
