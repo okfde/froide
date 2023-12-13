@@ -292,6 +292,7 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
     tags = TagListField()
 
     redacted_description = serializers.SerializerMethodField()
+    costs = serializers.SerializerMethodField()
 
     class Meta:
         model = FoiRequest
@@ -344,6 +345,9 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             obj, request, allow_code=False
         )
         return obj.get_redacted_description(authenticated_read)
+
+    def get_costs(self, obj):
+        return float(obj.costs)
 
 
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
