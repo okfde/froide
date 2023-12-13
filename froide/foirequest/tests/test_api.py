@@ -9,6 +9,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
+import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
 
 from froide.foirequest.models import FoiAttachment, FoiRequest
@@ -338,3 +339,16 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
                 {"subject": "Test", "body": "Testing", "publicbodies": [self.pb.pk]},
             )
         self.assertEqual(response.status_code, 429)
+
+
+@pytest.mark.django_db
+def test_redacted_description(world, client):
+    fr = FoiRequest.objects.all()[0]
+    fr.description = "This is a test description"
+    fr.description_redacted = "This is a [redacted] description"
+    fr.save()
+    response = client.get("/api/v1/request/%d/" % fr.pk)
+    assert response.status_code == 200
+    assert fr.description not in str(response.json())
+    assert fr.description_redacted in str(response.json())
+    assert fr.description_redacted in str(response.json())
