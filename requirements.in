@@ -8,7 +8,7 @@ django-celery-email
 django-configurations
 django-contrib-comments
 django-crossdomainmedia>=0.0.4
-django-elasticsearch-dsl
+django-elasticsearch-dsl>=8.0,<9.0
 django-filter
 django-fsm
 django-json-widget
@@ -25,8 +25,8 @@ djangorestframework-csv
 djangorestframework-jsonp
 drf-spectacular[sidecar]
 easy-thumbnails
-elasticsearch-dsl>=7.0.0<8.0.0
-elasticsearch<8.0.0,>=7.0.0
+elasticsearch-dsl>=8.0.0,<9.0.0
+elasticsearch<9.0.0,>=8.0.0
 geoip2
 icalendar
 lxml>=4.6.5
