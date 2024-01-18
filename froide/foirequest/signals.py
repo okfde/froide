@@ -475,7 +475,7 @@ def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
 
     messages = request.get_messages()
     start_thread = False
-    if len(messages) == 1:
+    if len(messages) >= 1 and message == messages[0]:
         if request.project_id is not None:
             # Don't notify on first message in a project
             return
