@@ -2,6 +2,12 @@
 <nav class="container" aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item">
+            <a href="/">
+                <i class="fa fa-home"></i>
+                <span class="sr-only">{% trans "Home Page" %}</span>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
             {% if object.user == request.user %}
                 <a href="{% url 'account-show' %}">{% trans "My requests" %}</a>
             {% else %}
