@@ -161,16 +161,19 @@ class PygtailPostfixLogfileParser(PostfixLogfileParser):
         )
         super().__init__(self.logfile_reader)
         self._msg_log = defaultdict(lambda: {"log": [], "data": {}, "offset": None})
+        self._log_read = False
 
     def iteration_done(self):
         if not self._msg_log:
-            self.logfile_reader.update_offset_file()
+            if self._log_read:
+                self.logfile_reader.update_offset_file()
         else:
             first_logoffset = min(x["offset"] for x in self._msg_log.values())
             self.logfile_reader.write_offset_to_file(first_logoffset)
 
     def __next__(self):
         for line, offset in self.logfile_reader.with_offsets(offset_position="pre"):
+            self._log_read = True
             parsed_line = self._parse_line(line)
             if parsed_line is None:
                 continue
