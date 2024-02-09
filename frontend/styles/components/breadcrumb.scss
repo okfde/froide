@@ -1,21 +1,27 @@
 .breadcrumb {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   padding: $spacer * 0.5 0;
   background-color: inherit;
-  overflow: hidden;
+  overflow: auto;
   margin: 0;
+  gap: $spacer * 0.5;
+  scroll-snap-type: x;
 
   &-item {
-    margin-right: $spacer * 0.5;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    float: none;
     white-space: nowrap;
+    scroll-snap-align: end;
+
+    & + .breadcrumb-item::before {
+      float: none;
+    }
 
     &,
     > * {
       color: var(--#{$prefix}tertiary-color);
-      font-size: small;
+      font-size: $font-size-sm;
       white-space: nowrap;
 
       @include media-breakpoint-up(lg) {
@@ -24,8 +30,6 @@
     }
 
     &:last-child {
-      margin-right: none;
-
       &,
       > * {
         color: var(--#{$prefix}body-color);
@@ -36,5 +40,4 @@
   &-item + &-item {
     padding-left: 0;
   }
-
 }
