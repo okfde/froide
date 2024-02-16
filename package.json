@@ -61,7 +61,7 @@
     "@uppy/core": "^3.0.4",
     "@uppy/dashboard": "^3.2.0",
     "@uppy/tus": "^3.0.5",
-    "bootstrap": "^5.3.0",
+    "bootstrap": "^5.3.2",
     "choices.js": "^10.1.0",
     "driver.js": "^0.9.8",
     "exifreader": "^4.12.1",
