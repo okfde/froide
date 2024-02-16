@@ -1,19 +1,21 @@
 {% load breadcrumb_helper %}
-
+{# Renders breadcrumbs that are defined in view #}
 {% get_breadcrumbs view as breadcrumbs %}
 {% if breadcrumbs != None %}
-  <nav class="container-md" aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      {% for breadcrumb in breadcrumbs %}
-        <li class="breadcrumb-item{% if forloop.last %} active{% endif %}"
-            {% if forloop.last %}aria-current="page"{% endif %}>
-          {% if breadcrumb|has_link %}
-            <a href="{{ breadcrumb.1 }}">{{ breadcrumb.0 }}</a>
-          {% else %}
-            {{ breadcrumb }}
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ol>
-  </nav>
+    {% if breadcrumbs_background %}<div class="text-bg-{{ breadcrumbs_background }}">{% endif %}
+        <nav class="container-md" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
+                        {% if breadcrumb|has_link %}
+                            <a href="{{ breadcrumb.1 }}"
+                               {% if forloop.last %}aria-current="page"{% endif %}>{{ breadcrumb.0 }}</a>
+                        {% else %}
+                            {{ breadcrumb }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        </nav>
+        {% if breadcrumbs_background %}</div>{% endif %}
 {% endif %}

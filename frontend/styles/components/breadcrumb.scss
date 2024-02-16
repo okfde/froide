@@ -16,13 +16,15 @@
 
     & + .breadcrumb-item::before {
       float: none;
+      color: inherit;
     }
 
     &,
     > * {
-      color: var(--#{$prefix}tertiary-color);
+      color: inherit;
       font-size: $font-size-sm;
       white-space: nowrap;
+      opacity: 0.9;
 
       @include media-breakpoint-up(lg) {
         font-size: $font-size-sm;
@@ -32,7 +34,8 @@
     &:last-child {
       &,
       > * {
-        color: var(--#{$prefix}body-color);
+        color: inherit;
+        opacity: 1;
       }
     }
   }
