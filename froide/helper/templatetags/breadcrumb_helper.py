@@ -17,10 +17,10 @@ def normalize_breadcrumb(breadcrumb):
         return (breadcrumb, None)
 
 
-@register.simple_tag()
-def get_breadcrumbs(view=None):
+@register.simple_tag(takes_context=True)
+def get_breadcrumbs(context, view=None):
     if hasattr(view, "get_breadcrumbs") and callable(view.get_breadcrumbs):
-        return view.get_breadcrumbs()
+        view.get_breadcrumbs(context)
 
     if hasattr(view, "breadcrumbs"):
         return map(normalize_breadcrumb, view.breadcrumbs)
