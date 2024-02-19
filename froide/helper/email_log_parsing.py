@@ -1,13 +1,22 @@
 import collections
 import re
 from collections import defaultdict, namedtuple
-from typing import Iterable, Optional
-
-from pygtail import Pygtail
+from pathlib import Path
+from typing import Iterable, List, Optional
 
 from .signals import email_left_queue
 
 PostfixLogLine = namedtuple("PostfixLogLine", ["date", "queue_id", "data"])
+
+
+DEFAULT_POSTFIX_LOG_PATHS = ["/var/log/mail.log", "/var/log/mail.log.1"]
+
+
+def read_from_files(paths: List[str]):
+    for path in paths[::-1]:
+        if Path(path).exists():
+            with open(path) as f:
+                yield from f
 
 
 class PostfixLogfileParser(collections.abc.Iterator):
@@ -26,7 +35,9 @@ class PostfixLogfileParser(collections.abc.Iterator):
     LINE_RE = rf"^{TIMESTAMP_RE} {USER_RE} {PROCESS_RE}: {QUEUE_ID_REGEX}: {FIELDS_RE}$"
 
     def __init__(
-        self, logfile_reader: Iterable[str], relevant_fields: Optional[Iterable] = None
+        self,
+        logfile_reader: Iterable[str],
+        relevant_fields: Optional[Iterable] = None,
     ):
         self.logfile_reader = logfile_reader
         self.relevant_fields = (
@@ -127,77 +138,13 @@ class PostfixLogfileParser(collections.abc.Iterator):
         return kv_map
 
 
-class PygtailPostfixLogfileParser(PostfixLogfileParser):
-    """A logfile parser that keeps track of its position in the logfile using pygtail.
-
-    It tries to ignore parts of the log that were already fully processed.
-    However it can only ignore parts at the beginning of the log where all mails
-    where queue ids seen in the logfile until then left the queue.
-    This means that if a message bounces for a longer time, the log position
-    cannot be updated until this message is either delivered successfully or is
-    deleted from the queue.
-    Until then parts of the log will be processed again and again and the messages
-    is this part will be returned by the iterator on every invocation.
-    """
-
-    DEFAULT_POSTFIX_LOG_PATH = "/var/log/mail.log"
-    DEFAULT_PYGTAIL_OFFSET_PATH = "./mail_log.offset"
-
-    def __init__(
-        self, log_path: Optional[str] = None, offset_path: Optional[str] = None
-    ):
-        if log_path is None:
-            log_path = self.DEFAULT_POSTFIX_LOG_PATH
-
-        if offset_path is None:
-            offset_path = self.DEFAULT_PYGTAIL_OFFSET_PATH
-
-        self.logfile_reader = Pygtail(
-            log_path,
-            offset_file=offset_path,
-            full_lines=True,
-            save_on_end=False,
-            copytruncate=False,
+def check_delivery_from_log(log_paths: Optional[List[str]] = None):
+    parser = PostfixLogfileParser(
+        read_from_files(
+            log_paths if log_paths is not None else DEFAULT_POSTFIX_LOG_PATHS
         )
-        super().__init__(self.logfile_reader)
-        self._msg_log = defaultdict(lambda: {"log": [], "data": {}, "offset": None})
-        self._log_read = False
+    )
 
-    def iteration_done(self):
-        if not self._msg_log:
-            if self._log_read:
-                self.logfile_reader.update_offset_file()
-        else:
-            first_logoffset = min(x["offset"] for x in self._msg_log.values())
-            self.logfile_reader.write_offset_to_file(first_logoffset)
-
-    def __next__(self):
-        for line, offset in self.logfile_reader.with_offsets(offset_position="pre"):
-            self._log_read = True
-            parsed_line = self._parse_line(line)
-            if parsed_line is None:
-                continue
-
-            self._msg_log[parsed_line.queue_id]["log"].append(line)
-            self._msg_log[parsed_line.queue_id]["data"].update(parsed_line.data)
-
-            if self._msg_log[parsed_line.queue_id]["offset"] is None:
-                self._msg_log[parsed_line.queue_id]["offset"] = offset
-
-            if self._is_completed_message(self._msg_log[parsed_line.queue_id]):
-                msg = self._msg_log[parsed_line.queue_id]
-                del self._msg_log[parsed_line.queue_id]
-                return msg
-
-        self.iteration_done()
-
-        raise StopIteration
-
-
-def check_delivery_from_log(
-    log_path: Optional[str] = None, offset_path: Optional[str] = None
-):
-    parser = PygtailPostfixLogfileParser(log_path, offset_path)
     for message in parser:
         email_left_queue.send(
             sender=__name__,
