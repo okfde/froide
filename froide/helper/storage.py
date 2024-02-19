@@ -63,7 +63,8 @@ class MinioStorage(FileSystemStorage):
 
     def _open(self, name, mode="rb"):
         "Read file from proper storage"
-        if self.exists(name):
+        print(f"*** _open {name=} {mode=}")
+        if super().exists(name):
             return FileSystemStorage().open(name, mode)
         return S3Boto3Storage().open(name, mode)
 
@@ -79,6 +80,8 @@ class MinioStorage(FileSystemStorage):
 
     def exists(self, name):
         "Check if file exists in the file system"
+        print(f"*** _open {name=}")
+
         if FileSystemStorage().exists(name):
             return FileSystemStorage().exists(name)
         return S3Boto3Storage().exists(name)

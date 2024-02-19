@@ -5,14 +5,14 @@ from functools import partial
 
 from django.contrib import messages
 from django.db import transaction
-from django.http import HttpResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
-
 from crossdomainmedia import CrossDomainMediaMixin
+from froide.helper.storage import MinioStorage
 
 from froide.helper.utils import is_ajax, render_400, render_403
 
@@ -174,7 +174,19 @@ def create_document(request, foirequest, attachment_id):
     return redirect(att.get_anchor_url())
 
 
-class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
+class AttachmentCrossDomainMediaMixin(CrossDomainMediaMixin):
+    def render_to_response(self, context):
+        mauth = self.media_auth_class(context)
+
+        return self.respond_media(mauth)
+
+    def send_media_file(self, mauth):
+        url = mauth.get_file_path(self.request)
+        file = MinioStorage().open(url, mode="rb")
+        return FileResponse(file)
+
+
+class AttachmentFileDetailView(AttachmentCrossDomainMediaMixin, DetailView):
     """
     Add the CrossDomainMediaMixin
     and set your custom media_auth_class
@@ -184,11 +196,15 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
 
     def get_object(self):
         self.message = get_object_or_404(FoiMessage, id=int(self.kwargs["message_id"]))
+        print(f"{self.message=}")
         try:
-            return FoiAttachment.objects.get_for_message(
+            att = FoiAttachment.objects.get_for_message(
                 self.message, self.kwargs["attachment_name"]
             )
-        except FoiAttachment.DoesNotExist:
+            print(f"{att=}")
+            return att
+        except FoiAttachment.DoesNotExist as e:
+            print(f"{e=}")
             raise Http404
 
     def get_context_data(self, **kwargs):
