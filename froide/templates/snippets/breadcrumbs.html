@@ -1,3 +1,4 @@
+{% load i18n %}
 {% load breadcrumb_helper %}
 {# Renders breadcrumbs that are defined in view #}
 {% get_breadcrumbs view as breadcrumbs %}
@@ -5,6 +6,13 @@
     {% if breadcrumbs_background %}<div class="text-bg-{{ breadcrumbs_background }}">{% endif %}
         <nav class="container-md" aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    {# djlint:off D018 #}
+                    <a href="/"> {# djlint:on #}
+                        <i class="fa fa-home"></i>
+                        <span class="sr-only">{% trans "Home Page" %}</span>
+                    </a>
+                </li>
                 {% for breadcrumb in breadcrumbs %}
                     <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
                         {% if breadcrumb|has_link %}
