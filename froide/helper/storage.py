@@ -4,6 +4,8 @@ import os
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 
+from storages.backends.s3boto3 import S3Boto3Storage
+
 from froide.helper.text_utils import slugify
 
 
@@ -47,6 +49,51 @@ def delete_file_if_last_reference(
         for dir_file in dir_files:
             if dir_file.startswith(prefix_name):
                 field_file.storage.delete(os.path.join(prefix_dir, dir_file))
+
+
+class MinioStorage(FileSystemStorage):
+    """
+    Minio S3 Storage
+
+    This class will check if a file exists in the filesystem,
+    if not it will try to fetch the file via S3.
+
+    New files will always be stored on S3.
+    """
+
+    def _open(self, name, mode="rb"):
+        "Read file from proper storage"
+        if self.exists(name):
+            return FileSystemStorage().open(name, mode)
+        return S3Boto3Storage().open(name, mode)
+
+    def _save(self, name, content):
+        "Save files to S3 storage"
+        return S3Boto3Storage().save(name, content)
+
+    def delete(self, name):
+        "Choose the proper file system for deletion"
+        if self.exists(name):
+            return FileSystemStorage().delete(name)
+        return S3Boto3Storage().delete(name)
+
+    def exists(self, name):
+        "Check if file exists in the file system"
+        if FileSystemStorage().exists(name):
+            return FileSystemStorage().exists(name)
+        return S3Boto3Storage().exists(name)
+
+    def url(self, name):
+        "Get URL for name"
+        if self.exists(name):
+            return FileSystemStorage().url(name)
+        return S3Boto3Storage().url(name)
+
+    def path(self, name):
+        "Get path for name"
+        if self.exists(name):
+            return FileSystemStorage().path(name)
+        return S3Boto3Storage().path(name)
 
 
 class HashedFilenameStorage(FileSystemStorage):

@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from froide.document.models import Document
-from froide.helper.storage import HashedFilenameStorage
+from froide.helper.storage import HashedFilenameStorage, MinioStorage
 
 from .message import FoiMessage
 
@@ -135,7 +135,7 @@ class FoiAttachment(models.Model):
         _("File"),
         upload_to=upload_to,
         max_length=255,
-        storage=HashedFilenameStorage(),
+        storage=MinioStorage(),
         db_index=True,
     )
     size = models.IntegerField(_("Size"), blank=True, null=True)

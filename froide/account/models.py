@@ -23,7 +23,11 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.csv_utils import export_csv, get_dict
-from froide.helper.storage import HashedFilenameStorage, delete_file_if_last_reference
+from froide.helper.storage import (
+    HashedFilenameStorage,
+    MinioStorage,
+    delete_file_if_last_reference,
+)
 
 
 class UserTag(TagBase):
