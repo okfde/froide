@@ -84,36 +84,43 @@ input.copy-text {
 
 /* images */
 .hero-illustration,
+.img-sm,
 .img-lg,
-.img-sm {
-  width: 12rem;
+.img-xl {
+  width: var(--image-size);
   max-width: 100%;
   height: auto;
-  max-height: 12rem;
+  max-height: var(--image-size);
   object-fit: contain;
 
-  @include media-breakpoint-up(lg) {
-    width: 16rem;
-    max-height: 16rem;
+  &.img-vertical {
+    width: auto;
+    height: var(--image-size);
   }
 }
 
 .img-sm {
-  width: 5rem;
+  --image-size: 5rem;
   max-height: 5rem;
 }
 
-.img-sm-vertical {
-  height: 5rem;
-  max-width: 100%;
-  width: auto;
+.img-lg {
+  --image-size: 12rem;
+
+  @include media-breakpoint-up(lg) {
+    --image-size: 16rem;
+  }
 }
 
-@include media-breakpoint-down(sm) {
-  .hero-illustration-vertical {
-    width: auto;
-    max-width: 100%;
-    height: 12rem;
+.img-xl {
+  --image-size: 12rem;
+
+  @include media-breakpoint-up(md) {
+    --image-size: 24rem;
+  }
+
+  @include media-breakpoint-up(lg) {
+    --image-size: 36rem;
   }
 }
 
