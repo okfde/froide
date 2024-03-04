@@ -117,6 +117,7 @@ class FoiLaw(TranslatableModel):
         letter_start=models.TextField(_("Start of Letter"), blank=True),
         letter_end=models.TextField(_("End of Letter"), blank=True),
         refusal_reasons=models.TextField(_("refusal reasons"), blank=True),
+        overdue_reply=models.TextField(_("overdue reply"), blank=True),
     )
 
     created = models.DateField(_("Creation Date"), blank=True, null=True)

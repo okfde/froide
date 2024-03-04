@@ -1,0 +1,4 @@
+{% load i18n %}{% autoescape off%}
+{% translate "-------- Forwarded Message --------" %}
+{{ first_message.get_quoted_message }}
+{% endautoescape %}

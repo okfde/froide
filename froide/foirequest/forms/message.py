@@ -7,6 +7,7 @@ from typing import Optional
 from django import forms
 from django.conf import settings
 from django.db import transaction
+from django.template import Context, Template
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -122,17 +123,32 @@ def get_send_message_form(*args, **kwargs):
     if foirequest.is_overdue() and foirequest.awaits_response():
         days = (timezone.now() - foirequest.due_date).days + 1
         first_message = foirequest.messages[0]
-        message = render_to_string(
-            select_foirequest_template(
-                foirequest, "foirequest/emails/overdue_reply.txt"
-            ),
-            {
-                "due": ngettext_lazy("%(count)s day", "%(count)s days", days)
-                % {"count": days},
-                "foirequest": foirequest,
-                "first_message": first_message,
-            },
-        )
+
+        context = {
+            "due": ngettext_lazy("%(count)s day", "%(count)s days", days)
+            % {"count": days},
+            "foirequest": foirequest,
+            "first_message": first_message,
+        }
+
+        message = None
+
+        if foirequest.law.overdue_reply:
+            template_str = "{top}{body}{bottom}{footer}".format(
+                top="{% autoescape off %}",
+                body=foirequest.law.overdue_reply,
+                bottom="{% endautoescape %}",
+                footer='\r\n{% include "foirequest/emails/overdue_reply_footer.txt" %}',
+            )
+            message = Template(template_str).render(Context(context))
+        if not message:
+            message = render_to_string(
+                select_foirequest_template(
+                    foirequest, "foirequest/emails/overdue_reply.txt"
+                ),
+                context,
+            )
+
     else:
         message = get_default_initial_message(foirequest.user)
 

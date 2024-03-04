@@ -5,6 +5,5 @@ Please update me on the status of my request as soon as possible.
 
 Sincerely yours,
 {{ name }}{% endblocktrans %}
-
-{% translate "-------- Forwarded Message --------" %}
-{{ first_message.get_quoted_message }}{% endautoescape %}
+{% endautoescape %}
+{% include "foirequest/emails/overdue_reply_footer.txt" %}
