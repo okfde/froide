@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-07 14:49+0100\n"
-"PO-Revision-Date: 2024-02-24 13:31+0000\n"
+"PO-Revision-Date: 2024-03-05 20:31+0000\n"
 "Last-Translator: krmax44 <hi@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -1438,7 +1438,7 @@ msgstr "Konto erstellen"
 
 #: froide/account/templates/account/signup.html
 msgid "Sign Up"
-msgstr "Konto erstellen"
+msgstr "Registrieren"
 
 #: froide/account/templates/account/widgets/confirmation.html
 #, python-format
