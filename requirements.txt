@@ -6,7 +6,7 @@
 #
 -e git+https://github.com/okfde/django-filingcabinet.git@main#egg=django-filingcabinet
     # via -r requirements.in
--e git+https://github.com/okfde/pygtail.git@2e890afd61ca0c4e16c53301e2359e6270bf79c1#egg=pygtail
+-e git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946#egg=pygtail
     # via -r requirements.in
 aiohttp==3.8.4
     # via geoip2
