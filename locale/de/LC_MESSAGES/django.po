@@ -17,8 +17,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-07 14:49+0100\n"
-"PO-Revision-Date: 2024-03-23 16:31+0000\n"
-"Last-Translator: krmax44 <hi@krmax44.de>\n"
+"PO-Revision-Date: 2024-03-26 13:31+0000\n"
+"Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -209,7 +209,7 @@ msgstr "Export von Nutzer:in '{}' gestartet."
 #: froide/account/apps.py
 #: froide/account/templates/account/includes/breadcrumbs.html
 msgid "Account"
-msgstr "Account"
+msgstr "Konto"
 
 #: froide/account/apps.py
 msgid "You are now logged in."
@@ -8152,7 +8152,7 @@ msgstr "Hat Wert"
 
 #: froide/helper/admin_utils.py
 msgid "None"
-msgstr "None"
+msgstr "Nichts"
 
 #: froide/helper/admin_utils.py
 msgid "Greater zero"
