@@ -13,7 +13,7 @@ const strings = {
     error: 'Could not copy.'
   }
 }
-const lang = window.location.pathname.startsWith('/en/') ? 'en' : 'de'
+const lang = document.documentElement.lang === 'de' ? 'de' : 'en'
 const i18n = strings[lang]
 
 document.querySelectorAll<HTMLElement>('.copy-text').forEach((copyEl) => {
