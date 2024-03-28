@@ -18,18 +18,13 @@ const toggle = document.getElementById('darkmode-toggle')
 const setTheme = (theme: string): void => {
   document.documentElement.setAttribute('data-bs-theme', theme)
 
-  if (toggle === null) {
-    return
-  }
-  const icon = toggle.querySelector('i')
-  if (icon === null) {
-    return
-  }
+  const icon = toggle?.querySelector('i')
   if (theme === 'dark') {
-    icon.classList.replace('fa-moon-o', 'fa-sun-o')
+    icon?.classList.replace('fa-moon-o', 'fa-sun-o')
   } else {
-    icon.classList.replace('fa-sun-o', 'fa-moon-o')
+    icon?.classList.replace('fa-sun-o', 'fa-moon-o')
   }
+
   localStorage.setItem(storageKey, theme)
 }
 
@@ -41,10 +36,7 @@ window.addEventListener('DOMContentLoaded', () => {
     return
   }
 
-  if (toggle === null) {
-    return
-  }
-  toggle.addEventListener('click', () => {
+  toggle?.addEventListener('click', () => {
     const currentTheme = getCurrentTheme()
     if (currentTheme === null) {
       return
