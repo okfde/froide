@@ -17,8 +17,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-11-07 14:49+0100\n"
-"PO-Revision-Date: 2023-10-09 16:55+0000\n"
-"Last-Translator: krmax44 <hi@krmax44.de>\n"
+"PO-Revision-Date: 2024-03-26 13:31+0000\n"
+"Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -61,7 +61,7 @@ msgstr "Noch keine URL erstellt."
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #: froide/templates/mfa/create_recovery.html
 msgid "Click to copy"
-msgstr "Klicken zum Kopieren"
+msgstr "In Zwischenablage kopieren"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html
 #: froide/foirequest/templates/foirequest/body/settings.html
@@ -87,7 +87,7 @@ msgstr "URL erstellen"
 
 #: froide/accesstoken/views.py
 msgid "Failed to reset token."
-msgstr "Konnte URL nicht zurücksetzen."
+msgstr "Konnte Token nicht zurücksetzen."
 
 #: froide/account/admin.py
 msgid "Profile info"
@@ -101,7 +101,7 @@ msgstr "Fortgeschritten"
 #: froide/account/admin.py froide/foirequest/views/make_request.py
 #: froide/publicbody/admin.py
 msgid "requests"
-msgstr "anfragen"
+msgstr "Anfragen"
 
 #: froide/account/admin.py
 msgid "2FA"
@@ -113,7 +113,7 @@ msgstr "Exportiere als CSV"
 
 #: froide/account/admin.py
 msgid "Resend activation mail"
-msgstr "Aktivierungs-Mail neuversenden"
+msgstr "Aktivierungs-Mail erneut versenden"
 
 #: froide/account/admin.py
 #, python-format
@@ -209,7 +209,7 @@ msgstr "Export von Nutzer:in '{}' gestartet."
 #: froide/account/apps.py
 #: froide/account/templates/account/includes/breadcrumbs.html
 msgid "Account"
-msgstr "Account"
+msgstr "Konto"
 
 #: froide/account/apps.py
 msgid "You are now logged in."
@@ -8152,7 +8152,7 @@ msgstr "Hat Wert"
 
 #: froide/helper/admin_utils.py
 msgid "None"
-msgstr "None"
+msgstr "Nichts"
 
 #: froide/helper/admin_utils.py
 msgid "Greater zero"
