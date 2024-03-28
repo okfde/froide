@@ -4,7 +4,6 @@
         <input type="text"
                {% if widget.token %}value="{{ widget.url }}"{% endif %}
                {% if not widget.token %}placeholder="{% trans 'No URL created yet.' %}"{% endif %}
-               {% if widget.token %}data-bs-toggle="tooltip" title="{% trans 'Click to copy' %}" data-copied="{% trans 'URL copied' %}" {% endif %}
                class="form-control{% if widget.token %} copy-text{% endif %}"
                readonly />
     </div>

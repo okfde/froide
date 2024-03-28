@@ -1,7 +1,7 @@
 import '../styles/main.scss'
 
 import './snippets/bootstrap.ts'
-import './snippets/copy-input.ts'
+import './snippets/copy-text'
 import './snippets/form-ajax.ts'
 import './snippets/inline-edit-forms.ts'
 import './snippets/misc.ts'
