@@ -3,7 +3,7 @@
     <div class="col-7">
         <input type="text"
                {% if widget.token %}value="{{ widget.url }}"{% endif %}
-               {% if not widget.token %}placeholder="{% trans 'No URL created yet.' %}"{% endif %}
+               {% if not widget.token %}placeholder="{% trans "No URL created yet." %}"{% endif %}
                class="form-control{% if widget.token %} copy-text{% endif %}"
                readonly />
     </div>

@@ -4,10 +4,10 @@
 {% load form_helper %}
 {% block title %}
     {% translate "Setup recovery code" %}
-{% endblock %}
+{% endblock title %}
 {% block mfa_heading %}
     {% translate "Setup recovery code" %}
-{% endblock %}
+{% endblock mfa_heading %}
 {% block mfa_inner %}
     <p>
         {% translate "A recovery code can be used when you lose access to your other two-factor login options. Each recovery code can only be used once." %}
@@ -15,7 +15,7 @@
     <p>
         {% translate "Make sure to store it in a safe place! If you lose your other two-factor login options and don’t have the recovery codes you will lose access to your account." %}
     </p>
-    <form method="POST">
+    <form method="post">
         {% csrf_token %}
         {% include "helper/forms/errors.html" with errors=form.non_field_errors %}
         {% render_field form.name %}
@@ -32,7 +32,7 @@
                     <div>
                         <button class="btn btn-outline-secondary"
                                 type="button"
-                                data-downloadtxt="{{ SITE_NAME }} {% translate 'recovery code:' %} {{ mfa_data.code }}">
+                                data-downloadtxt="{{ SITE_NAME }} {% translate "recovery code:" %} {{ mfa_data.code }}">
                             {% translate "Download as TXT file" %}
                         </button>
                     </div>
@@ -49,8 +49,8 @@
         </div>
         <button type="submit" class="btn btn-primary">{% translate "Setup code" %}</button>
     </form>
-{% endblock %}
+{% endblock mfa_inner %}
 {% block scripts %}
     {{ block.super }}
     <script src="{% static 'account/mfa.js' %}"></script>
-{% endblock %}
+{% endblock scripts %}
