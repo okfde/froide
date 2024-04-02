@@ -4,17 +4,18 @@
 }
 
 .field-required {
-  &:after {
-    content: "*";
-    margin-left: 0.25rem;
-    color: darken($red, 20%);
+  text-wrap: nowrap; // to prevent the asterisk from wrapping to the next line
+
+  &::after {
+    content: '*';
+    color: var(--#{$prefix}danger);
   }
 }
 
 .no-required-asterisk {
   .field-required {
-    &:after {
-      content: "";
+    &::after {
+      content: '';
     }
   }
 }
