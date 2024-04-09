@@ -46,16 +46,19 @@ class TaggedUser(TaggedItemBase):
         verbose_name_plural = _("tagged users")
 
 
+def annotate_deterministic_email(queryset):
+    return queryset.annotate(
+        email_deterministic=Collate("email", "und-x-icu"),
+    )
+
+
 class UserManager(BaseUserManager):
     def get_public_profiles(self) -> QuerySet:
         return super().get_queryset().filter(is_active=True, private=False)
 
     def get_queryset(self) -> QuerySet:
         qs = super().get_queryset()
-        qs = qs.annotate(
-            email_deterministic=Collate("email", "und-x-icu"),
-        )
-        return qs
+        return annotate_deterministic_email(qs)
 
     def _create_user(
         self,

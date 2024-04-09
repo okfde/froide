@@ -24,7 +24,14 @@ from froide.helper.csv_utils import export_csv_response
 from . import account_email_changed
 from .auth import MFAAndRecentAuthRequiredAdminMixin, RecentAuthRequiredAdminMixin
 from .forms import UserChangeForm, UserCreationForm
-from .models import AccountBlocklist, TaggedUser, User, UserPreference, UserTag
+from .models import (
+    AccountBlocklist,
+    TaggedUser,
+    User,
+    UserPreference,
+    UserTag,
+    annotate_deterministic_email,
+)
 from .services import AccountService
 from .tasks import merge_accounts_task, send_bulk_mail, start_export_task
 from .utils import (
@@ -135,6 +142,12 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
+        # Anotate deterministic email on queryset
+        # as the user admin may also be used on
+        # subclasses of User with other default managers
+        # where deterministic email would otherwise not be available
+        qs = annotate_deterministic_email(qs)
+
         if has_foirequests:
             qs = qs.annotate(request_count=Count("foirequest"))
 
