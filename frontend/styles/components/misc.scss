@@ -134,6 +134,12 @@ input.copy-text {
   object-fit: contain;
 }
 
+img.img-text,
+svg.img-text {
+  height: 1em;
+  width: auto;
+}
+
 .error-redacted-bar {
   height: 1.25em;
 }

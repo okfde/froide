@@ -23,7 +23,8 @@ document.querySelectorAll<HTMLElement>('.copy-text').forEach((copyEl) => {
     title: i18n.clickToCopy
   })
 
-  copyEl.addEventListener('click', () => {
+  copyEl.addEventListener('click', (e) => {
+    e.preventDefault()
     if (i) clearTimeout(i)
 
     const setTooltipText = (text: string) =>
