@@ -17,8 +17,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-15 16:48+0200\n"
-"PO-Revision-Date: 2023-10-09 16:55+0000\n"
-"Last-Translator: krmax44 <hi@krmax44.de>\n"
+"PO-Revision-Date: 2024-04-15 15:06+0000\n"
+"Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -817,15 +817,12 @@ msgstr ""
 "\n"
 
 #: froide/account/templates/account/emails/confirmation_mail.html
-#, fuzzy, python-format
-#| msgid ""
-#| "Cheers,<br/>\n"
-#| "%(site_name)s"
+#, python-format
 msgid ""
 "Cheers,<br />\n"
 "%(site_name)s"
 msgstr ""
-"Beste Grüße,\n"
+"Beste Grüße,<br /> \n"
 "%(site_name)s"
 
 #: froide/account/templates/account/emails/confirmation_mail.txt
@@ -959,10 +956,8 @@ msgstr "Weiter"
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/templates/snippets/breadcrumbs.html
-#, fuzzy
-#| msgid "Help Pages"
 msgid "Home Page"
-msgstr "Hilfe-Seiten"
+msgstr "Startseite"
 
 #: froide/account/templates/account/includes/change_password_form.html
 #: froide/account/templates/account/settings_base.html
@@ -2332,7 +2327,7 @@ msgstr "Texterkennung auf PDF"
 
 #: froide/foirequest/admin.py
 msgid "Unpack ZIP file"
-msgstr ""
+msgstr "ZIP-Datei entpacken"
 
 #: froide/foirequest/admin.py
 msgid "Has request"
@@ -5865,10 +5860,8 @@ msgid "Edit costs"
 msgstr "Kosten bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
-#, fuzzy
-#| msgid "Share request"
 msgid "Share your request"
-msgstr "Anfrage teilen"
+msgstr "Teilen Sie Ihre Anfrage"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Share this request"
@@ -5883,10 +5876,8 @@ msgid "Check out this #FOI request:"
 msgstr "Schaut mal diese #IFG Anfrage an:"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
-#, fuzzy
-#| msgid "Copy link"
 msgid "Copy short link"
-msgstr "Link kopieren"
+msgstr "Kurzlink kopieren"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #: froide/foirequest/templates/foirequest/list.html
@@ -9621,10 +9612,8 @@ msgid "refusal reasons"
 msgstr "Verweigerungsgründe"
 
 #: froide/publicbody/models.py
-#, fuzzy
-#| msgid "overdue"
 msgid "overdue reply"
-msgstr "verspätet"
+msgstr "Antwort verspätet"
 
 #: froide/publicbody/models.py
 msgid "Creation Date"
@@ -10741,7 +10730,7 @@ msgstr "Hilfe"
 
 #: froide/templates/header.html
 msgid "Skip to main content"
-msgstr ""
+msgstr "Zum Hauptinhalt sprengen"
 
 #: froide/templates/header.html
 msgid "Menu"
@@ -11148,31 +11137,27 @@ msgstr ""
 
 #: froide/templates/snippets/share_buttons.html
 msgid "Share on social media"
-msgstr ""
+msgstr "Auf sozialen Netzwerken teilen"
 
 #: froide/templates/snippets/share_buttons.html
 msgid "Share on Mastodon"
-msgstr ""
+msgstr "Auf Mastodon teilen"
 
 #: froide/templates/snippets/share_buttons.html
 msgid "Please enter the domain of your Mastodon instance."
-msgstr ""
+msgstr "Bitte geben Sie die Domain Ihrer Mastodon-Instanz ein."
 
 #: froide/templates/snippets/share_buttons.html
-#, fuzzy
-#| msgid "Your last name"
 msgid "Your Mastodon instance"
-msgstr "Ihr Nachname"
+msgstr "Ihre Mastodon-Instanz"
 
 #: froide/templates/snippets/share_buttons.html
-#, fuzzy
-#| msgid "Link copied to clipboard"
 msgid "Copy link to clipboard"
-msgstr "Link in die Zwischenablage kopiert"
+msgstr "Link in Zwischenablage kopieren"
 
 #: froide/templates/snippets/share_buttons.html
 msgid "Share…"
-msgstr ""
+msgstr "Teilen…"
 
 #: froide/upload/api_views.py
 msgid "Unable to terminate upload while in state \"{}\"."
