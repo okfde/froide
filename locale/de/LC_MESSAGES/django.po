@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 14:49+0100\n"
+"POT-Creation-Date: 2024-04-15 16:48+0200\n"
 "PO-Revision-Date: 2023-10-09 16:55+0000\n"
 "Last-Translator: krmax44 <hi@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -55,20 +55,6 @@ msgstr "Zugangs-Tokens"
 #: froide/accesstoken/templates/accesstoken/token_widget.html
 msgid "No URL created yet."
 msgstr "Noch keine URL erstellt."
-
-#: froide/accesstoken/templates/accesstoken/token_widget.html
-#: froide/foirequest/templates/foirequest/body/settings.html
-#: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/templates/mfa/create_recovery.html
-msgid "Click to copy"
-msgstr "Klicken zum Kopieren"
-
-#: froide/accesstoken/templates/accesstoken/token_widget.html
-#: froide/foirequest/templates/foirequest/body/settings.html
-#: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/templates/mfa/create_recovery.html
-msgid "URL copied"
-msgstr "URL kopiert"
 
 #: froide/accesstoken/templates/accesstoken/token_widget.html
 #: froide/proof/widgets.py
@@ -802,11 +788,20 @@ msgstr ""
 "Mail. Sie müssen dann nichts weiter tun."
 
 #: froide/account/templates/account/emails/confirmation_mail.html
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "Hello %(name)s,</p>\n"
+#| "\n"
+#| "<p>This is an email from %(site_name)s to confirm your email address.<br/"
+#| ">\n"
+#| "Please visit the link below:</p>\n"
+#| "<p><a href=\"%(action_url)s\">Click here to confirm your email address</"
+#| "a></p>\n"
+#| "\n"
 msgid ""
 "Hello %(name)s,</p>\n"
 "\n"
-"<p>This is an email from %(site_name)s to confirm your email address.<br/>\n"
+"<p>This is an email from %(site_name)s to confirm your email address.<br />\n"
 "Please visit the link below:</p>\n"
 "<p><a href=\"%(action_url)s\">Click here to confirm your email address</a></"
 "p>\n"
@@ -822,9 +817,12 @@ msgstr ""
 "\n"
 
 #: froide/account/templates/account/emails/confirmation_mail.html
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "Cheers,<br/>\n"
+#| "%(site_name)s"
 msgid ""
-"Cheers,<br/>\n"
+"Cheers,<br />\n"
 "%(site_name)s"
 msgstr ""
 "Beste Grüße,\n"
@@ -953,6 +951,18 @@ msgstr "Wird geladen..."
 #: froide/letter/templates/letter/default.html
 msgid "Continue"
 msgstr "Weiter"
+
+#: froide/account/templates/account/includes/breadcrumbs.html
+#: froide/foirequest/templates/foirequest/header/breadcrumb.html
+#: froide/organization/templates/organization/organization_detail.html
+#: froide/organization/templates/organization/organization_list.html
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/templates/snippets/breadcrumbs.html
+#, fuzzy
+#| msgid "Help Pages"
+msgid "Home Page"
+msgstr "Hilfe-Seiten"
 
 #: froide/account/templates/account/includes/change_password_form.html
 #: froide/account/templates/account/settings_base.html
@@ -1242,8 +1252,12 @@ msgstr ""
 "              "
 
 #: froide/account/templates/account/settings.html
+#, fuzzy
+#| msgid ""
+#| "This account-wide setting <b>cannot be undone</b>.<br/> Your account will "
+#| "<b>stay private</b> once you set it to private."
 msgid ""
-"This account-wide setting <b>cannot be undone</b>.<br/> Your account will "
+"This account-wide setting <b>cannot be undone</b>.<br /> Your account will "
 "<b>stay private</b> once you set it to private."
 msgstr ""
 "Diese Einstellung für das gesamte Konto kann <b>nicht rückgängig</b> gemacht "
@@ -1789,8 +1803,9 @@ msgid "Write a comment"
 msgstr "Schreiben Sie einen Kommentar"
 
 #: froide/comments/templates/froide_comments/comments.html
-#, python-format
-msgid "Please <a href=\"%(link)s\" >login</a> to write a comment."
+#, fuzzy, python-format
+#| msgid "Please <a href=\"%(link)s\" >login</a> to write a comment."
+msgid "Please <a href=\"%(link)s\">login</a> to write a comment."
 msgstr ""
 "Bitte <a href=\"%(link)s\">melden Sie sich an</a>, um Kommentare zu lesen "
 "oder zu schreiben."
@@ -2314,6 +2329,10 @@ msgstr "%s Dokument(e) erstellt"
 #: froide/foirequest/admin.py
 msgid "OCR PDF"
 msgstr "Texterkennung auf PDF"
+
+#: froide/foirequest/admin.py
+msgid "Unpack ZIP file"
+msgstr ""
 
 #: froide/foirequest/admin.py
 msgid "Has request"
@@ -2997,8 +3016,9 @@ msgstr "Gesetz"
 msgid ""
 "Could not automatically redact first message. Please check the message "
 "manually."
-msgstr "Die erste Nachricht konnte nicht automatisch geschwärzt werden. "
-"Bitte überprüfen sie die Nachricht manuell"
+msgstr ""
+"Die erste Nachricht konnte nicht automatisch geschwärzt werden. Bitte "
+"überprüfen sie die Nachricht manuell"
 
 #: froide/foirequest/models/attachment.py
 msgid "Belongs to message"
@@ -4929,6 +4949,7 @@ msgstr "Erneut senden"
 #: froide/problem/templates/problem/message_toolbar_item.html
 #: froide/team/templates/team/team_detail.html
 #: froide/templates/snippets/messages.html
+#: froide/templates/snippets/share_buttons.html
 msgid "Close"
 msgstr "Schließen"
 
@@ -5417,7 +5438,7 @@ msgstr ""
 "Mit freundlichen Grüßen\n"
 "%(name)s"
 
-#: froide/foirequest/templates/foirequest/emails/overdue_reply.txt
+#: froide/foirequest/templates/foirequest/emails/overdue_reply_footer.txt
 #: froide/foirequest/templates/foirequest/emails/withdrawal_reply.txt
 msgid "-------- Forwarded Message --------"
 msgstr "-------- Weitergeleitete Nachricht --------"
@@ -5844,8 +5865,14 @@ msgid "Edit costs"
 msgstr "Kosten bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
-msgid "Copy Short-URL"
-msgstr "Kurz-URL kopieren"
+#, fuzzy
+#| msgid "Share request"
+msgid "Share your request"
+msgstr "Anfrage teilen"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+msgid "Share this request"
+msgstr "Anfrage teilen"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "I made an #FOI request:"
@@ -5856,14 +5883,10 @@ msgid "Check out this #FOI request:"
 msgstr "Schaut mal diese #IFG Anfrage an:"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/foirequest/templates/foirequest/sent.html
-msgid "Tweet request"
-msgstr "Anfrage tweeten"
-
-#: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/foirequest/templates/foirequest/sent.html
-msgid "Share request"
-msgstr "Anfrage teilen"
+#, fuzzy
+#| msgid "Copy link"
+msgid "Copy short link"
+msgstr "Link kopieren"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #: froide/foirequest/templates/foirequest/list.html
@@ -6279,6 +6302,14 @@ msgstr "Teilen Sie Ihr Projekt mit anderen!"
 #: froide/foirequest/templates/foirequest/sent.html
 msgid "Share your request with others!"
 msgstr "Teilen Sie Ihre Anfrage mit anderen!"
+
+#: froide/foirequest/templates/foirequest/sent.html
+msgid "Tweet request"
+msgstr "Anfrage tweeten"
+
+#: froide/foirequest/templates/foirequest/sent.html
+msgid "Share request"
+msgstr "Anfrage teilen"
 
 #: froide/foirequest/templates/foirequest/show.html
 #, python-format
@@ -9375,6 +9406,7 @@ msgstr ""
 "der Name der Behördenleitung etc."
 
 #: froide/publicbody/forms.py froide/publicbody/models.py
+#: froide/templates/snippets/share_buttons.html
 msgid "Email"
 msgstr "E-Mail"
 
@@ -9587,6 +9619,12 @@ msgstr "Briefende"
 #: froide/publicbody/models.py
 msgid "refusal reasons"
 msgstr "Verweigerungsgründe"
+
+#: froide/publicbody/models.py
+#, fuzzy
+#| msgid "overdue"
+msgid "overdue reply"
+msgstr "verspätet"
 
 #: froide/publicbody/models.py
 msgid "Creation Date"
@@ -9894,8 +9932,9 @@ msgid "No geo region available for these public bodies"
 msgstr "Keine Georegionen für diese Behörden verfügbar"
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html
-#, python-format
-msgid "Freedom of Information<br/>in %(name)s"
+#, fuzzy, python-format
+#| msgid "Freedom of Information<br/>in %(name)s"
+msgid "Freedom of Information<br />in %(name)s"
 msgstr "Informationsfreiheit<br/> in %(name)s"
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html
@@ -10701,6 +10740,10 @@ msgid "Help"
 msgstr "Hilfe"
 
 #: froide/templates/header.html
+msgid "Skip to main content"
+msgstr ""
+
+#: froide/templates/header.html
 msgid "Menu"
 msgstr "Menü"
 
@@ -10903,6 +10946,10 @@ msgstr ""
 "Wiederherstellungs-Code haben, dann verlieren Sie den Zugriff zu Ihrem Konto."
 
 #: froide/templates/mfa/create_recovery.html
+msgid "Click to copy"
+msgstr "Klicken zum Kopieren"
+
+#: froide/templates/mfa/create_recovery.html
 msgid "recovery code:"
 msgstr "Wiederherstellungs-Code:"
 
@@ -11025,7 +11072,6 @@ msgstr "Paginierung"
 msgid "(current page)"
 msgstr "(aktuelle Seite)"
 
-#. Translators: meta description
 #: froide/templates/scaffold.html
 #, python-format
 msgid ""
@@ -11092,7 +11138,6 @@ msgstr ""
 msgid "Write a Request Now!"
 msgstr "Schreiben Sie jetzt eine Anfrage!"
 
-#. Translators: meta keywords
 #: froide/templates/snippets/meta.html
 msgid ""
 "Freedom of Information Requests, Freedom of Information Law, Public Body "
@@ -11100,6 +11145,34 @@ msgid ""
 msgstr ""
 "Informationsfreiheitsanfragen, Informationsfreiheitsgesetze, "
 "Behördeninformationen"
+
+#: froide/templates/snippets/share_buttons.html
+msgid "Share on social media"
+msgstr ""
+
+#: froide/templates/snippets/share_buttons.html
+msgid "Share on Mastodon"
+msgstr ""
+
+#: froide/templates/snippets/share_buttons.html
+msgid "Please enter the domain of your Mastodon instance."
+msgstr ""
+
+#: froide/templates/snippets/share_buttons.html
+#, fuzzy
+#| msgid "Your last name"
+msgid "Your Mastodon instance"
+msgstr "Ihr Nachname"
+
+#: froide/templates/snippets/share_buttons.html
+#, fuzzy
+#| msgid "Link copied to clipboard"
+msgid "Copy link to clipboard"
+msgstr "Link in die Zwischenablage kopiert"
+
+#: froide/templates/snippets/share_buttons.html
+msgid "Share…"
+msgstr ""
 
 #: froide/upload/api_views.py
 msgid "Unable to terminate upload while in state \"{}\"."
@@ -11508,6 +11581,12 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "URL copied"
+#~ msgstr "URL kopiert"
+
+#~ msgid "Copy Short-URL"
+#~ msgstr "Kurz-URL kopieren"
 
 #, python-format
 #~ msgid ""
@@ -12132,9 +12211,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Please login to write a comment."
 #~ msgstr "Um einen Kommentar zu schreiben, loggen Sie sich bitte ein."
-
-#~ msgid "Share this request"
-#~ msgstr "Anfrage teilen"
 
 #~ msgid "Twitter"
 #~ msgstr "Twitter"
@@ -13803,9 +13879,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Change address"
 #~ msgstr "Adresse ändern"
-
-#~ msgid "Help Pages"
-#~ msgstr "Hilfe-Seiten"
 
 #~ msgid "One request that needs your attention"
 #~ msgid_plural "%(counter)s requests that need your attention"
