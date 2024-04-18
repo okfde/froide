@@ -497,10 +497,11 @@ class FoiRequest(models.Model):
         due_date = self.due_date
         has_overdue_messages = False
         for msg in self.messages:
-            key = str(msg.timestamp)[:7]
+            local_msg_timestamp = timezone.localtime(msg.timestamp)
+            key = local_msg_timestamp.strftime("%Y-%m")
             if key not in groups:
                 groups[key] = {
-                    "date": msg.timestamp.replace(
+                    "date": local_msg_timestamp.replace(
                         day=1, hour=0, minute=0, second=0, microsecond=0
                     ),
                     "messages": [],
