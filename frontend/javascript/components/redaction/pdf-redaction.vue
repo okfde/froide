@@ -627,7 +627,7 @@ export default {
                 }
                 return
               }
-              console.error('Attachment redacted.')
+              console.info('Attachment redacted.')
               resolve(attachment)
             })
             .catch(() => {
