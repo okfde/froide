@@ -10,7 +10,9 @@
     <nav class="navbar navbar-secondary navbar-expand-md navbar-light justify-content-between {% block navbar-class %}{% endblock %}">
         <div class="container">
             {% block nav_brand %}
+                {# djlint:off D018 #}
                 <a class="navbar-brand" href="/">
+                    {# djlint:on #}
                     {% block nav_brand_image %}
                         <img src="{% static 'img/logo/logo.svg' %}"
                              height="60"

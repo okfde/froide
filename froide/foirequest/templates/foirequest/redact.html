@@ -70,7 +70,7 @@
     {% if attachment.file %}
         <div class="row mb-5">
             <div class="col-lg-12">
-                <form id="redaction-form" method="post" style="display:none">
+                <form id="redaction-form" method="post" class="d-none">
                     {% csrf_token %}
                 </form>
                 <div class="card">

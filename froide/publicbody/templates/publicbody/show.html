@@ -122,7 +122,7 @@
                           data-bs-toggle="tooltip"
                           data-placement="top"
                           title="{% trans 'You must be logged in.' %}">
-                        <button class="btn btn-secondary" disabled style="pointer-events: none;">{% trans "Propose change" %}</button>
+                        <button class="btn btn-secondary" disabled>{% trans "Propose change" %}</button>
                     </span>
                 {% endif %}
                 {% if request.user.is_staff and request.user|has_perm:"publicbody.view_publicbody" %}

@@ -50,6 +50,7 @@
     {% if attachment.can_embed %}
         {% if attachment.is_pdf %}
             <div class="container-sm-full d-none d-md-block">
+                {# djlint:off H021 #}
                 <iframe src="{{ attachment_url }}"
                         frameborder="0"
                         style="width: 100%;
@@ -57,6 +58,7 @@
                                border: 0"
                         loading="lazy">
                 </iframe>
+                {# djlint:on #}
             </div>
             <div class="container d-block d-md-none text-center">
                 <a class="btn btn-outline-secondary"

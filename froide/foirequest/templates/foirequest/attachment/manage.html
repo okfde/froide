@@ -37,7 +37,9 @@
         <document-uploader id="document-uploader" :message="{{ message_json }}" :config="{{ config_json }}">
         <div class="text-center">
             <h4>{% trans "Attachments are loading..." %}</h4>
+            {# djlint:off H021 #}
             <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+                {# djlint:on #}
                 <span class="visually-hidden">{% trans "Loading..." %}</span>
             </div>
         </div>
