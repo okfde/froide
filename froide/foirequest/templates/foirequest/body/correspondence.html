@@ -16,7 +16,7 @@
     {% endblock foirequest_messages %}
     {% block after_foirequest_messages %}
         {% if object|can_write_foirequest:request and object.awaits_classification %}
-            <div class="position-sticky d-print-none" style="bottom: 0">
+            <div class="position-sticky d-print-none bottom-0">
                 <div class="bg-warning-subtle text-center p-2">
                     <a href="#set-status" data-scrollto="set-status">{% translate "Please set the status of this request!" %}</a>
                 </div>

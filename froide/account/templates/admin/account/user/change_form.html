@@ -15,7 +15,9 @@
         <form method="post"
               action="{% url 'admin:admin-account_user-become_user' pk=original.pk %}">
             {% csrf_token %}
+            {# djlint:off H021 #}
             <button type="submit" style="text-align:left">{% blocktrans %}Become user{% endblocktrans %}</button>
+            {# djlint:on #}
         </form>
     {% endif %}
 {% endblock %}

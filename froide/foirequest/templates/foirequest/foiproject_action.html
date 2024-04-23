@@ -11,7 +11,9 @@
           action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
         {% csrf_token %}
         <input type="hidden" name="action" value="{{ action.action }}" />
+        {# djlint:off H021 #}
         <div style="max-height: 20vh" class="border my-2 overflow-auto">
+            {# dhjlint:on #}
             <ul class="mb-0">
                 {% for foirequest in foirequests %}
                     <li>

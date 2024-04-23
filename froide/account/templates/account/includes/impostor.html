@@ -1,5 +1,6 @@
 {% load i18n %}
 {# style inline so it works everywhere #}
+{# djlint:off H021 #}
 <div style="background-color: red;
             color: #fff;
             text-align: center;
@@ -9,15 +10,15 @@
             left:0;
             top: 0;
             z-index: 99999999">
-    {% blocktrans with user=request.user.get_full_name impostor=request.session.impostor %}
+  {% blocktrans with user=request.user.get_full_name impostor=request.session.impostor %}
   WARNING! {{ impostor}}, you are an impostor! You pretend to be <strong>{{ user }}</strong>!
   {% endblocktrans %}
-    <form action="{% url 'account-logout' %}"
-          method="post"
-          class="d-inline float-end">
-        {% csrf_token %}
-        <button type="submit" class="btn-warning">{% blocktrans %}Eject{% endblocktrans %}</button>
-    </form>
+  <form action="{% url 'account-logout' %}"
+        method="post"
+        class="d-inline float-end">
+    {% csrf_token %}
+    <button type="submit" class="btn-warning">{% blocktrans %}Eject{% endblocktrans %}</button>
+  </form>
 </div>
 <div style="border: 2px red dashed;
             top:0;

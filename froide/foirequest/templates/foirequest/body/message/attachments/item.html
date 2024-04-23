@@ -54,11 +54,13 @@
                 {% endif %}
                 {% if attachment.approved %}
                     {% if attachment.is_mail_decoration %}
+                        {# djlint:off H008 #}
                         <span data-bs-toggle="tooltip" data-bs-html="true" title="
                             <h6>{{ attachment.name }}</h6>
                             <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'
                                  alt='{{ attachment.name }}'/>
                             ">
+                            {# djlint:on #}
                             <i class="fa fa-picture-o" aria-hidden="true"></i>
                         </span>
                     {% endif %}
@@ -71,11 +73,13 @@
                 {% if attachment.pending %}
                     <span class="me-1 badge text-bg-info">{% blocktrans %}PDF Pending{% endblocktrans %}</span>
                 {% elif attachment.is_mail_decoration and object|can_read_foirequest_authenticated:request %}
+                    {# djlint:off H008 #}
                     <span data-bs-toggle="tooltip" data-bs-html="true" title="
                         <h6>{{ attachment.name }}</h6>
                         <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'
                              alt='{{ attachment.name }}'/>
                         ">
+                        {# djlint:on #}
                         <i class="fa fa-picture-o" aria-hidden="true"></i>
                     </span>
                 {% endif %}

@@ -9,7 +9,7 @@
             {% include "foirequest/body/message/attachments/item.html" with attachment=wrapped_attachments|first %}
             {# else wrap all remaining items#}
         {% elif wrapped_attachments|length > 1 %}
-            <div style="display: none;">
+            <div class="d-none">
                 {% for attachment in wrapped_attachments %}
                     {% include "foirequest/body/message/attachments/item.html" %}
                 {% endfor %}

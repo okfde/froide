@@ -2,21 +2,17 @@
 {% load i18n %}
 {% load static %}
 {% load frontendbuild %}
-
 {% block body_tag %}
     <main class="main" id="main">
         {% include "snippets/messages.html" %}
-
         {% block body %}
             <div class="container">
                 {% block app_body %}{% endblock %}
             </div>
         {% endblock %}
     </main>
-
     {% block extra_footer %}{% endblock %}
 {% endblock body_tag %}
-
 {% block scripts %}
     {% addfrontendbuild "main.js" %}
     {{ block.super }}

@@ -12,8 +12,9 @@
         <li class="nav-item dropdown account-dropdown {% block nav_account %}{% endblock %}">
             <span class="d-none d-md-none d-lg-inline">
                 {% blocktrans with name=request.user.first_name|truncatechars:12 %}
-      Hello {{ name}}
-    {% endblocktrans %}
-            </li>
-        {% endif %}
-    {% endblock nav_account_login %}
+                    Hello {{ name}}
+                {% endblocktrans %}
+            </span>
+        </li>
+    {% endif %}
+{% endblock nav_account_login %}

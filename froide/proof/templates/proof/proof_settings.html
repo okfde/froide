@@ -45,7 +45,9 @@
                   Uploaded on {{ date }} as “{{ name }}”.
                 {% endblocktranslate %}
                             </p>
-                            <img src="{{ proof.get_image_data_url }}" class="img-fluid">
+                            <img src="{{ proof.get_image_data_url }}"
+                                 class="img-fluid"
+                                 alt="{% blocktranslate with name=proof.name%}Image of Proof {{ name }}{% endblocktranslate %}">
                             <button type="submit" class="btn btn-outline-danger mt-3">
                                 <i class="fa fa-trash"></i>
                                 {% translate "Delete this proof" %}
