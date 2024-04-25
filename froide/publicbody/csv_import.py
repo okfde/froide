@@ -194,7 +194,9 @@ class CSVImporter(object):
             if id is not None:
                 return GeoRegion.objects.get(id=id)
             if identifier is not None:
-                return GeoRegion.objects.get(region_identifier=identifier)
+                return GeoRegion.objects.exclude(kind="zipcode").get(
+                    region_identifier=identifier
+                )
         except GeoRegion.DoesNotExist:
             raise ValueError(_("GeoRegion %s/%s does not exist.") % (id, identifier))
         return None
