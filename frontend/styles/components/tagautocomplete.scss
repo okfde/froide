@@ -40,6 +40,7 @@ $choices-icon-cross: none;
 .#{$choices-selector}__list--dropdown .#{$choices-selector}__item--selectable.is-highlighted,
 .#{$choices-selector}__list[aria-expanded] .#{$choices-selector}__item--selectable.is-highlighted {
   background-color: var(--#{$prefix}body-bg);
+  z-index: 2000;
 }
 
 .#{$choices-selector}__inner, .#{$choices-selector}__list {
