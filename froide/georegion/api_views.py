@@ -2,6 +2,7 @@ import json
 import re
 
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 
 from django_filters import rest_framework as filters
 from rest_framework import serializers, viewsets
@@ -96,7 +97,9 @@ class GeoRegionFilter(filters.FilterSet):
         return qs
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(name__icontains=value)
+        return queryset.filter(
+            Q(name__icontains=value) | Q(region_identifier__startswith=value)
+        )
 
     def kind_filter(self, queryset, name, value):
         return queryset.filter(kind__in=value.split(","))
