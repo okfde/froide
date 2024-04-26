@@ -538,7 +538,7 @@ class FoiMessage(models.Model):
     def get_throttle_message(cls):
         return mark_safe(
             _(
-                'You exceeded your message limit of %(count)s messages in %(time)s. <a href="%(url)s">Learn more</a>'
+                "You exceeded your message limit of %(count)s messages in %(time)s. Find out more in the Help area."
             )
         )
 

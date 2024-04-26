@@ -5,7 +5,6 @@
 # Translators:
 # arne <arne.semsrott@okfn.de>, 2015
 # fin <fin+transifex@xbhd.org>, 2015
-# Karl Engelhardt <karl.engelhardt@okfn.de>, 2022
 # m_hoerz <hoerz@michael-hoerz.de>, 2011
 # m_hoerz <hoerz@michael-hoerz.de>, 2011
 # Stefan Wehrmeyer <mail@stefanwehrmeyer.com>, 2011
@@ -16,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 16:48+0200\n"
+"POT-Creation-Date: 2024-04-26 16:54+0200\n"
 "PO-Revision-Date: 2024-04-15 15:08+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -3545,12 +3544,12 @@ msgstr "An:"
 #: froide/foirequest/models/message.py
 #, python-format
 msgid ""
-"You exceeded your message limit of %(count)s messages in %(time)s. <a "
-"href=\"%(url)s\">Learn more</a>"
+"You exceeded your message limit of %(count)s messages in %(time)s. Find out "
+"more in the Help area."
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
-"überschritten. Dies ist eine automatische Vorsichtsmaßnahme. <a "
-"href=\"%(url)s\">Mehr erfahren</a>"
+"überschritten. Dies ist eine automatische Vorsichtsmaßnahme. Weitere "
+"Informationen finden Sie im Hilfe-Bereich."
 
 #: froide/foirequest/models/message.py
 msgid "sending"
@@ -11587,18 +11586,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr ""
 #~ "Dieser Nachricht ist ein Identitätsnachweis beigefügt, den Sie bitte nach "
 #~ "Verifizierung löschen (Art. 17 DSGVO)."
-
-#, python-format
-#~ msgid "You exceeded your message limit of %(count)s messages in %(time)s."
-#~ msgstr ""
-#~ "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
-#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
-
-#, python-format
-#~ msgid "You exceeded your request limit of %(count)s requests in %(time)s."
-#~ msgstr ""
-#~ "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s "
-#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
 
 #~ msgid ""
 #~ "This message has an attached proof of identity that I kindly ask you to "
