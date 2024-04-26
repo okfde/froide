@@ -2607,6 +2607,7 @@ msgid "all classifications"
 msgstr "Alle Behördentypen"
 
 #: froide/foirequest/filters.py froide/publicbody/filters.py
+#: froide/foirequest/views/make_request.py froide/publicbody/models.py
 msgid "classification"
 msgstr "Behördentyp"
 
@@ -4841,6 +4842,7 @@ msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/views/make_request.py
 msgid "change"
 msgstr "ändern"
 
@@ -11590,17 +11592,43 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#~ msgid "make request"
-#~ msgstr "Anfrage stellen"
+#: froide/foirequest/views/make_request.py
+msgid "make request"
+msgstr "Anfrage stellen"
 
-#~ msgid "topic"
-#~ msgstr "Thema"
+#: froide/foirequest/views/make_request.py
+msgid "topic"
+msgstr "Thema"
 
-#~ msgid "topics"
-#~ msgstr "Themen"
+#: froide/foirequest/views/make_request.py
+msgid "topics"
+msgstr "Themen"
 
-#~ msgid "classifications"
-#~ msgstr "Behördentypen"
+#: froide/foirequest/views/make_request.py froide/publicbody/models.py
+msgid "classifications"
+msgstr "Behördentypen"
+
+#: froide/foirequest/views/make_request.py
+msgid "part of administrative region"
+msgstr "Teil von Verwaltungseinheit"
+
+#: froide/foirequest/views/make_request.py
+msgid "part of administrative regions"
+msgstr "Teil von Verwaltungseinheiten"
+
+#: froide/foirequest/views/make_request.py
+msgid "type of administrative unit"
+msgstr "Art der Verwaltungseinheit"
+
+#: froide/foirequest/models/message.py
+#, python-format
+msgid ""
+"You exceeded your message limit of %(count)s messages in %(time)s. <a href="
+"\"%(url)s\">Learn more</a>"
+msgstr ""
+"Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
+"überschritten. Dies ist eine automatische Vorsichtsmaßnahme. Mehr Infos dazu "
+"finden Sie im Hilfebereich."
 
 #~ msgid "URL copied"
 #~ msgstr "URL kopiert"
@@ -14060,3 +14088,15 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid_plural "%(site_name)s: Update on %(count)s of your requests"
 #~ msgstr[0] "%(site_name)s: Neues bei einer Ihrer Anfragen"
 #~ msgstr[1] "%(site_name)s: Neues bei %(count)s Ihrer Anfragen"
+
+#, python-format
+#~ msgid "You exceeded your message limit of %(count)s messages in %(time)s."
+#~ msgstr ""
+#~ "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
+#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
+
+#, python-format
+#~ msgid "You exceeded your request limit of %(count)s requests in %(time)s."
+#~ msgstr ""
+#~ "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s "
+#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
