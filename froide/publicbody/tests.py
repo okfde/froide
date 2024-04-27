@@ -3,10 +3,12 @@ import os
 import tempfile
 from io import BytesIO
 
+from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from django.urls import reverse
 
 from froide.foirequest.tests.factories import make_world, rebuild_index
+from froide.georegion.models import GeoRegion
 from froide.helper.csv_utils import export_csv_bytes
 from froide.publicbody.factories import (
     CategoryFactory,
@@ -92,20 +94,60 @@ class PublicBodyTest(TestCase):
 
     def test_csv_existing_import(self):
         classification = ClassificationFactory.create(name="Ministry")
-        PublicBodyFactory.create(
-            site=self.site, name="Public Body 76 X", classification=classification
+        source_reference = "source:42"
+        pb = PublicBodyFactory.create(
+            site=self.site,
+            name="Public Body 76 X",
+            classification=classification,
+            source_reference=source_reference,
         )
-        # reenable when django-taggit support atomic transaction wrapping
-        # factories.PublicBodyTagFactory.create(slug='public-body-topic-76-x', is_topic=True)
+        georegion_identifier = "01234"
+        region = GeoRegion.add_root(
+            name="Region 1",
+            slug="region-1",
+            kind="district",
+            region_identifier=georegion_identifier,
+            geom=MultiPolygon(),
+        )
+        pb.regions.add(region)
 
         prev_count = PublicBody.objects.all().count()
-        # Existing entity via slug, no id reference
-        csv = """name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,website_dump,request_note
-Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,,"""
+        # Existing entity via id
         imp = CSVImporter()
+        csv = """id,name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address
+{},Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address""".format(
+            pb.id
+        )
         imp.import_from_file(BytesIO(csv.encode("utf-8")))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
+
+        # Existing entity via source reference
+        csv = """name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,source_reference
+Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,{}""".format(
+            source_reference
+        )
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count)
+
+        # Existing entity via slug and georegion identifier
+        csv = """name,slug,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,georegion_identifier
+Public Body 76 X,{},pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,{}""".format(
+            pb.slug, georegion_identifier
+        )
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count)
+
+        # Add entity if only same slug
+        csv = """name,slug,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address
+Public Body 76 X,{},pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address""".format(
+            pb.slug
+        )
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count + 1)
 
     def test_csv_new_import(self):
         # Make sure classification exist
