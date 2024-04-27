@@ -17,6 +17,10 @@ from froide.publicbody.models import Category, Classification, Jurisdiction, Pub
 User = get_user_model()
 
 
+class NotUniquelyIdentifiable(Exception):
+    pass
+
+
 class CSVImporter(object):
     def __init__(self, user=None):
         if user is None:
@@ -127,8 +131,13 @@ class CSVImporter(object):
                 pb = PublicBody._default_manager.get(
                     source_reference=row["source_reference"]
                 )
+            elif regions is not None:
+                pb = PublicBody._default_manager.get(
+                    slug=row["slug"], regions__in=regions
+                )
             else:
-                pb = PublicBody._default_manager.get(slug=row["slug"])
+                raise NotUniquelyIdentifiable
+
             # If it exists, update it
             row.pop("id", None)  # Do not update id though
             row.pop("slug", None)  # Do not update slug either
@@ -143,7 +152,7 @@ class CSVImporter(object):
             if categories:
                 pb.categories.set(categories)
             return pb
-        except PublicBody.DoesNotExist:
+        except (PublicBody.DoesNotExist, NotUniquelyIdentifiable):
             pass
         row.pop("id", None)  # Remove id if present
         pb = PublicBody(**row)
