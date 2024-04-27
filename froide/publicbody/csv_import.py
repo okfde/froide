@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 import requests
 
 from froide.georegion.models import GeoRegion
+from froide.helper.search.utils import trigger_search_index_update_qs
 from froide.helper.text_utils import slugify
 from froide.publicbody.models import Category, Classification, Jurisdiction, PublicBody
 
@@ -45,10 +46,18 @@ class CSVImporter(object):
         """
         csv_file should be encoded in utf-8
         """
+        self.import_time = timezone.now()
         csv_file = StringIO(csv_file.read().decode("utf-8"))
         reader = csv.DictReader(csv_file)
         for row in reader:
             self.import_row(row)
+
+        # Trigger search index update for updated pbs
+        # as update did not trigger it.
+        updated_pbs = PublicBody.objects.filter(updated_at=self.import_time).exclude(
+            created_at=self.import_time
+        )
+        trigger_search_index_update_qs(updated_pbs)
 
     def import_row(self, row):
         # generate slugs
@@ -142,7 +151,7 @@ class CSVImporter(object):
             row.pop("id", None)  # Do not update id though
             row.pop("slug", None)  # Do not update slug either
             row["_updated_by"] = self.user
-            row["updated_at"] = timezone.now()
+            row["updated_at"] = self.import_time
             PublicBody._default_manager.filter(id=pb.id).update(**row)
             if row.get("jurisdiction"):
                 pb.laws.clear()
@@ -158,8 +167,8 @@ class CSVImporter(object):
         pb = PublicBody(**row)
         pb._created_by = self.user
         pb._updated_by = self.user
-        pb.created_at = timezone.now()
-        pb.updated_at = timezone.now()
+        pb.created_at = self.import_time
+        pb.updated_at = self.import_time
         pb.confirmed = True
         pb.site = self.site
         pb.save()
