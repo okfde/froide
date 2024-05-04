@@ -12,7 +12,7 @@
         <button
           class="btn btn-primary btn-lg"
           @click.prevent="setStepSelectPublicBody">
-          &larr; weitere Behörden hinzufügen
+          &larr; {{ i18n.addMoreAuthorities }}
         </button>
       </div>
     </div>

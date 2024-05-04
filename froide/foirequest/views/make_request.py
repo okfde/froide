@@ -175,7 +175,7 @@ class MakeRequestView(FormView):
                 # Translators: not url
                 "requests": _("requests"),
                 "close": _("close"),
-                "makeRequest": _("make request"),
+                "makeRequest": _("Make request"),
                 "writingRequestTo": _("You are writing a request to"),
                 "toMultiPublicBodies": _("To: {count} public bodies").format(
                     count="${count}"
@@ -190,20 +190,20 @@ class MakeRequestView(FormView):
                     _("Jurisdictions"),
                 ],
                 "topicPlural": [
-                    _("topic"),
-                    _("topics"),
+                    _("Topic"),
+                    _("Topics"),
                 ],
                 "classificationPlural": [
-                    _("classification"),
-                    _("classifications"),
+                    _("Classification"),
+                    _("Classifications"),
                 ],
                 "containingGeoregionsPlural": [
-                    _("part of administrative region"),
-                    _("part of administrative regions"),
+                    _("Part of administrative region"),
+                    _("Part of administrative regions"),
                 ],
-                "administrativeUnitKind": _("type of administrative unit"),
+                "administrativeUnitKind": _("Type of administrative unit"),
                 "toPublicBody": _("To: {name}").format(name="${name}"),
-                "change": _("change"),
+                "change": _("Change"),
                 "searchPlaceholder": _("Search..."),
                 "clearSearchResults": _("clear search"),
                 "clearSelection": _("clear selection"),
@@ -280,6 +280,7 @@ class MakeRequestView(FormView):
                 )
                 % {"format": _("Street address,\nPost Code, City")},
                 "includeProof": _("Attach a proof of identity"),
+                'addMoreAuthorities': _('Add more authorities'),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
