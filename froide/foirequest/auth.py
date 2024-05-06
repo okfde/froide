@@ -4,6 +4,7 @@ from typing import List
 from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
+from django.test import RequestFactory
 from django.urls import reverse
 from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.translation import override
@@ -23,6 +24,13 @@ from froide.helper.auth import (
 )
 
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
+
+
+def get_request_for_user(user, path: str):
+    request_factory = RequestFactory()
+    request = request_factory.get(path)
+    request.user = user
+    return request
 
 
 def get_campaign_auth_foirequests_filter(request: HttpRequest, fk_path=None):
