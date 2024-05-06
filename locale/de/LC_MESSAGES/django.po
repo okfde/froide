@@ -202,7 +202,7 @@ msgstr "Erfolgreich ausgeführt."
 #: froide/account/apps.py
 #: froide/account/templates/account/includes/breadcrumbs.html
 msgid "Account"
-msgstr "Account"
+msgstr "Konto"
 
 #: froide/account/apps.py
 msgid "You are now logged in."
@@ -8210,7 +8210,7 @@ msgstr "Hat Wert"
 
 #: froide/helper/admin_utils.py
 msgid "None"
-msgstr "None"
+msgstr "Nichts"
 
 #: froide/helper/admin_utils.py
 msgid "Greater zero"
@@ -11128,7 +11128,7 @@ msgstr "Lesen Sie den Blogeintrag"
 
 #: froide/templates/snippets/homepage_hero.html
 msgid "Visit this request"
-msgstr "Lesen Sie die Anfrage"
+msgstr "Anfrage besuchen"
 
 #: froide/templates/snippets/homepage_hero.html
 msgid ""
