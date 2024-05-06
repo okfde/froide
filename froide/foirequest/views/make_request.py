@@ -280,7 +280,7 @@ class MakeRequestView(FormView):
                 )
                 % {"format": _("Street address,\nPost Code, City")},
                 "includeProof": _("Attach a proof of identity"),
-                'addMoreAuthorities': _('Add more authorities'),
+                "addMoreAuthorities": _("Add more authorities"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
