@@ -16,6 +16,8 @@ $choices-icon-cross: none;
 
 .#{$choices-selector} {
   width: 100%;
+  // Bootstrap level $zindex-dropdown but +1 to be higher than leaflet map controls
+  z-index: 1001;
 }
 
 .form-row:has(.choices__list) {
@@ -39,8 +41,8 @@ $choices-icon-cross: none;
 
 .#{$choices-selector}__list--dropdown .#{$choices-selector}__item--selectable.is-highlighted,
 .#{$choices-selector}__list[aria-expanded] .#{$choices-selector}__item--selectable.is-highlighted {
-  background-color: var(--#{$prefix}body-bg);
-  z-index: 1001;
+  // Bootstrap background body and fall back to Django admin background body
+  background-color: var(--#{$prefix}body-bg, var(--body-bg));
 }
 
 .#{$choices-selector}__inner, .#{$choices-selector}__list {
