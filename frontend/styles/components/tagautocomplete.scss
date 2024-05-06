@@ -24,28 +24,31 @@ $choices-icon-cross: none;
   overflow: visible;
 }
 
+.#{$choices-selector}__input {
+  background-color: var(--#{$prefix}body-bg, var(--body-bg));
+  color: var(--#{$prefix}body-color, var(--body-fg));
+}
+
 .#{$choices-selector}[data-type*='select-one'] {
   .#{$choices-selector}__input {
-    background-color: var(--#{$prefix}body-bg);
-    border-bottom-color: var(--#{$prefix}border-color) !important;
+    background-color: var(--#{$prefix}body-bg, var(--body-bg));
+    border-bottom-color: var(--#{$prefix}border-color, var(--body-loud-color)) !important;
   }
   .#{$choices-selector}__button,
   .#{$choices-selector}__button:hover {
     opacity: 1;
     &::after {
       content: "×";
-      color: var(--#{$prefix}secondary-color);
+      color: var(--#{$prefix}secondary-color, var(--secondary));
     }
   }
 }
 
-.#{$choices-selector}__list--dropdown .#{$choices-selector}__item--selectable.is-highlighted,
-.#{$choices-selector}__list[aria-expanded] .#{$choices-selector}__item--selectable.is-highlighted {
-  // Bootstrap background body and fall back to Django admin background body
+.#{$choices-selector}__list--dropdown {
   background-color: var(--#{$prefix}body-bg, var(--body-bg));
 }
 
 .#{$choices-selector}__inner, .#{$choices-selector}__list {
-  border-color: var(--#{$prefix}border-color) !important;
+  border-color: var(--#{$prefix}border-color, var(--body-loud-color)) !important;
   font-size: inherit !important;
 }
