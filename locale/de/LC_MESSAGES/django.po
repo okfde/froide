@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-26 16:54+0200\n"
-"PO-Revision-Date: 2024-04-15 15:08+0000\n"
+"POT-Creation-Date: 2024-05-06 14:44+0200\n"
+"PO-Revision-Date: 2024-05-06 14:46+0200\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.14.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -787,16 +787,7 @@ msgstr ""
 "Mail. Sie müssen dann nichts weiter tun."
 
 #: froide/account/templates/account/emails/confirmation_mail.html
-#, fuzzy, python-format
-#| msgid ""
-#| "Hello %(name)s,</p>\n"
-#| "\n"
-#| "<p>This is an email from %(site_name)s to confirm your email address.<br/"
-#| ">\n"
-#| "Please visit the link below:</p>\n"
-#| "<p><a href=\"%(action_url)s\">Click here to confirm your email address</"
-#| "a></p>\n"
-#| "\n"
+#, python-format
 msgid ""
 "Hello %(name)s,</p>\n"
 "\n"
@@ -1246,10 +1237,6 @@ msgstr ""
 "              "
 
 #: froide/account/templates/account/settings.html
-#, fuzzy
-#| msgid ""
-#| "This account-wide setting <b>cannot be undone</b>.<br/> Your account will "
-#| "<b>stay private</b> once you set it to private."
 msgid ""
 "This account-wide setting <b>cannot be undone</b>.<br /> Your account will "
 "<b>stay private</b> once you set it to private."
@@ -1797,8 +1784,7 @@ msgid "Write a comment"
 msgstr "Schreiben Sie einen Kommentar"
 
 #: froide/comments/templates/froide_comments/comments.html
-#, fuzzy, python-format
-#| msgid "Please <a href=\"%(link)s\" >login</a> to write a comment."
+#, python-format
 msgid "Please <a href=\"%(link)s\">login</a> to write a comment."
 msgstr ""
 "Bitte <a href=\"%(link)s\">melden Sie sich an</a>, um Kommentare zu lesen "
@@ -2597,8 +2583,7 @@ msgstr "alle Kategorien"
 msgid "all classifications"
 msgstr "Alle Behördentypen"
 
-#: froide/foirequest/filters.py froide/foirequest/views/make_request.py
-#: froide/publicbody/filters.py froide/publicbody/models.py
+#: froide/foirequest/filters.py froide/publicbody/filters.py
 msgid "classification"
 msgstr "Behördentyp"
 
@@ -4833,7 +4818,6 @@ msgid "Only visible to you"
 msgstr "Nur für Sie sichtbar"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#: froide/foirequest/views/make_request.py
 msgid "change"
 msgstr "ändern"
 
@@ -6966,7 +6950,7 @@ msgid "close"
 msgstr "Schließen"
 
 #: froide/foirequest/views/make_request.py
-msgid "make request"
+msgid "Make request"
 msgstr "Anfrage stellen"
 
 #: froide/foirequest/views/make_request.py
@@ -7003,33 +6987,45 @@ msgid "Jurisdictions"
 msgstr "Zuständigkeitsbereiche"
 
 #: froide/foirequest/views/make_request.py
-msgid "topic"
+msgid "Topic"
 msgstr "Thema"
 
 #: froide/foirequest/views/make_request.py
-msgid "topics"
+msgid "Topics"
 msgstr "Themen"
 
+#: froide/foirequest/views/make_request.py froide/publicbody/forms.py
+#: froide/publicbody/models.py
+msgid "Classification"
+msgstr "Behörden-Typ"
+
 #: froide/foirequest/views/make_request.py froide/publicbody/models.py
-msgid "classifications"
-msgstr "Behördentypen"
+msgid "Classifications"
+msgstr "Behörden-Typen"
 
 #: froide/foirequest/views/make_request.py
-msgid "part of administrative region"
+msgid "Part of administrative region"
 msgstr "Teil von Verwaltungseinheit"
 
 #: froide/foirequest/views/make_request.py
-msgid "part of administrative regions"
+msgid "Part of administrative regions"
 msgstr "Teil von Verwaltungseinheiten"
 
 #: froide/foirequest/views/make_request.py
-msgid "type of administrative unit"
+msgid "Type of administrative unit"
 msgstr "Art der Verwaltungseinheit"
 
 #: froide/foirequest/views/make_request.py
 #, python-brace-format
 msgid "To: {name}"
 msgstr "An: {name}"
+
+#: froide/foirequest/views/make_request.py
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/publicbody/templates/publicbody/show.html
+#: froide/team/templates/team/team_detail.html
+msgid "Change"
+msgstr "Ändern"
 
 #: froide/foirequest/views/make_request.py
 msgid "Search..."
@@ -7223,6 +7219,10 @@ msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
 #: froide/foirequest/views/make_request.py
 msgid "Attach a proof of identity"
 msgstr "Identitätsnachweis beifügen"
+
+#: froide/foirequest/views/make_request.py
+msgid "Add more authorities"
+msgstr "weitere Behörden hinzufügen"
 
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
@@ -8648,12 +8648,6 @@ msgid "– that's you!"
 msgstr "– das sind Sie!"
 
 #: froide/organization/templates/organization/organization_update_form.html
-#: froide/publicbody/templates/publicbody/show.html
-#: froide/team/templates/team/team_detail.html
-msgid "Change"
-msgstr "Ändern"
-
-#: froide/organization/templates/organization/organization_update_form.html
 #: froide/team/templates/team/team_detail.html
 msgid "Roles"
 msgstr "Funktionen"
@@ -9441,10 +9435,6 @@ msgid "Other contact info like phone numbers or opening hours."
 msgstr "Andere Kontakt-Infos wie Telefonnummer oder Öffnungszeiten."
 
 #: froide/publicbody/forms.py
-msgid "Classification"
-msgstr "Behörden-Typ"
-
-#: froide/publicbody/forms.py
 msgid ""
 "Try finding a matching classification for this authority. If you cannot find "
 "one, leave it blank and we will take care."
@@ -9920,8 +9910,7 @@ msgid "No geo region available for these public bodies"
 msgstr "Keine Georegionen für diese Behörden verfügbar"
 
 #: froide/publicbody/templates/publicbody/jurisdiction.html
-#, fuzzy, python-format
-#| msgid "Freedom of Information<br/>in %(name)s"
+#, python-format
 msgid "Freedom of Information<br />in %(name)s"
 msgstr "Informationsfreiheit<br/> in %(name)s"
 
@@ -11565,6 +11554,18 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "make request"
+#~ msgstr "Anfrage stellen"
+
+#~ msgid "topic"
+#~ msgstr "Thema"
+
+#~ msgid "topics"
+#~ msgstr "Themen"
+
+#~ msgid "classifications"
+#~ msgstr "Behördentypen"
 
 #~ msgid "URL copied"
 #~ msgstr "URL kopiert"
@@ -13349,9 +13350,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid "Show all public bodies"
 #~ msgstr "Zeige alle Behörden"
 
-#~ msgid "Topics"
-#~ msgstr "Themen"
-
 #~ msgid "Search Results for \"%(query)s\""
 #~ msgstr "Suchergebnisse für „%(query)s“"
 
@@ -13955,9 +13953,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Rank"
 #~ msgstr "Rank"
-
-#~ msgid "Topic"
-#~ msgstr "Topic"
 
 #~ msgid "Public Bodies by Topic"
 #~ msgstr "Public Bodies by Topic"

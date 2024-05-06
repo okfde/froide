@@ -330,8 +330,8 @@ class Classification(MP_Node):
     objects = ClassificationManager()
 
     class Meta:
-        verbose_name = _("classification")
-        verbose_name_plural = _("classifications")
+        verbose_name = _("Classification")
+        verbose_name_plural = _("Classifications")
 
     def __str__(self):
         return self.name
