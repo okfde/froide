@@ -1,0 +1,8 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with group_name=group.name %}Hello {{ name }},
+
+You have been added to the group "{{ group_name }}".
+
+Cheers
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}

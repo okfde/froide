@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
@@ -41,6 +42,9 @@ reminder_mail = mail_registry.register(
 )
 change_email_mail = mail_registry.register(
     "account/emails/change_email", ("action_url", "name")
+)
+add_to_group_mail = mail_registry.register(
+    "account/emails/add_to_group", ("user", "group", "name")
 )
 
 
@@ -359,3 +363,15 @@ class AccountService(object):
 
         if self.user.organization_name:
             yield (self.user.organization_name, repl["name"])
+
+    def add_to_group(self, group: Group):
+        if group not in self.user.groups.all():
+            self.user.groups.add(group)
+            add_to_group_mail.send(
+                user=self.user,
+                template_base=f"account/emails/add_to_group/{group.pk}",
+                context={
+                    "group": group,
+                    "name": self.user.get_full_name(),
+                },
+            )

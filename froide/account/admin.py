@@ -4,6 +4,7 @@ from django.apps import apps
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Exists, OuterRef
 from django.db.models.query import QuerySet
@@ -18,7 +19,11 @@ from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
 from froide.account.export import ExportCrossDomainMediaAuth
-from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
+from froide.helper.admin_utils import (
+    MultiFilterMixin,
+    TaggitListFilter,
+    make_choose_object_action,
+)
 from froide.helper.csv_utils import export_csv_response
 
 from . import account_email_changed
@@ -138,6 +143,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "export_user_data",
         "merge_accounts",
         "merge_accounts_keep_newer",
+        "add_to_group_and_mail",
     ]
 
     def get_queryset(self, request):
@@ -373,6 +379,16 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
             request, _("Export of user '{}' started.").format(export_user)
         )
         return None
+
+    def execute_add_to_group_and_mail(self, request, queryset, action_obj):
+        for user in queryset:
+            AccountService(user).add_to_group(action_obj)
+
+    add_to_group_and_mail = make_choose_object_action(
+        Group,
+        execute_add_to_group_and_mail,
+        _("Add users to group and send mail..."),
+    )
 
 
 @admin.register(AccountBlocklist)
