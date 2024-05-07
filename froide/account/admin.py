@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from django import forms
 from django.apps import apps
 from django.contrib import admin
 from django.contrib.admin import helpers
@@ -19,12 +20,9 @@ from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
 from froide.account.export import ExportCrossDomainMediaAuth
-from froide.helper.admin_utils import (
-    MultiFilterMixin,
-    TaggitListFilter,
-    make_choose_object_action,
-)
+from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
+from froide.helper.forms import get_fk_raw_id_widget
 
 from . import account_email_changed
 from .auth import MFAAndRecentAuthRequiredAdminMixin, RecentAuthRequiredAdminMixin
@@ -64,6 +62,17 @@ class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
     title = "Tags"
     parameter_name = "tags__slug"
     lookup_name = "__in"
+
+
+class AddToGroupForm(forms.Form):
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+    )
+    set_trusted = forms.BooleanField()
+
+    def __init__(self, *args, admin_site, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["group"].widget = get_fk_raw_id_widget(Group, admin_site)
 
 
 @admin.register(User)
@@ -380,15 +389,35 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         )
         return None
 
-    def execute_add_to_group_and_mail(self, request, queryset, action_obj):
-        for user in queryset:
-            AccountService(user).add_to_group(action_obj)
-
-    add_to_group_and_mail = make_choose_object_action(
-        Group,
-        execute_add_to_group_and_mail,
-        _("Add users to group and send mail..."),
+    @admin.action(
+        description=_("Add users to group and send mail..."),
+        permissions=("change",),
     )
+    def add_to_group_and_mail(self, request, queryset):
+        form = AddToGroupForm(request.POST, admin_site=self.admin_site)
+        if form.is_valid():
+            for user in queryset:
+                if form.cleaned_data["set_trusted"]:
+                    user.is_trusted = True
+                    user.save(update_fields=["is_trusted"])
+                AccountService(user).add_to_group(form.cleaned_data["group"])
+                self.message_user(request, _("Successfully executed."))
+                return None
+
+        opts = self.model._meta
+        context = {
+            "opts": opts,
+            "queryset": queryset,
+            "media": self.media,
+            "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            "form": form,
+            "headline": _("Add users to group and send mail..."),
+            "actionname": request.POST.get("action"),
+            "applabel": opts.app_label,
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(request, "helper/admin/apply_action.html", context)
 
 
 @admin.register(AccountBlocklist)
