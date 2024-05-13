@@ -20,6 +20,7 @@ from .project import (
     MakeProjectPublicForm,
     PublishRequestsForm,
     SendMessageProjectForm,
+    SetStatusProjectForm,
 )
 from .request import (
     ApplyModerationForm,
@@ -55,6 +56,7 @@ __all__ = [
     "PublicBodyUploader",
     "PostalUploadForm",
     "FoiRequestBulkForm",
+    "SetStatusProjectForm",
     "MakeProjectPublicForm",
     "PublishRequestsForm",
     "ApplyModerationForm",

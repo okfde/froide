@@ -138,6 +138,38 @@ def create_project_message(foirequest_id, user_id, **form_data):
         form.save(user=user, bulk=True)
 
 
+@celery_app.task
+def set_project_request_status_bulk(foirequest_ids, user_id, **form_data):
+    for req_id in foirequest_ids:
+        set_project_request_status.delay(req_id, user_id, **form_data)
+
+
+@celery_app.task
+def set_project_request_status(foirequest_id, user_id, **form_data):
+    from django.contrib.auth import get_user_model
+
+    from froide.foirequest.forms.request import FoiRequestStatusForm
+
+    User = get_user_model()
+
+    try:
+        foirequest = FoiRequest.objects.get(id=foirequest_id)
+    except FoiRequest.DoesNotExist:
+        # request does not exist anymore?
+        return
+    assert foirequest.project
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return
+
+    # Set foirequest status via form
+    form = FoiRequestStatusForm(foirequest=foirequest, data=form_data)
+    if form.is_valid():
+        form.save(user=user)
+
+
 @celery_app.task(name="froide.foirequest.tasks.convert_attachment_task", time_limit=60)
 def convert_attachment_task(instance_id):
     try:

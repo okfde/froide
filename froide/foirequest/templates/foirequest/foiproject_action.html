@@ -1,7 +1,10 @@
-{% extends 'foirequest/base.html' %}
+{% extends "foirequest/base.html" %}
 {% load i18n %}
 {% load form_helper %}
-{% block title %}{{ object.title }}{% endblock %}
+{% load frontendbuild %}
+{% block title %}
+    {{ object.title }}
+{% endblock title %}
 {% block app_body %}
     <h1>{{ object.title }}</h1>
     <a href="{{ object.get_absolute_url }}"
@@ -11,7 +14,9 @@
           action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
         {% csrf_token %}
         <input type="hidden" name="action" value="{{ action.action }}" />
+        {# djlint:off H021 #}
         <div style="max-height: 20vh" class="border my-2 overflow-auto">
+            {# djlint:on H021 #}
             <ul class="mb-0">
                 {% for foirequest in foirequests %}
                     <li>
@@ -23,7 +28,10 @@
                 {% endfor %}
             </ul>
         </div>
-        {% render_form form %}
+        {% block app_form %}
+            {% render_form form %}
+        {% endblock app_form %}
         <button type="submit" class="btn btn-primary">{{ action.button }}</button>
     </form>
-{% endblock %}
+    {% addfrontendbuild "request.js" %}
+{% endblock app_body %}
