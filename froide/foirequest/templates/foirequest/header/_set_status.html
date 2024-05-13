@@ -3,9 +3,13 @@
 {{ status_form.non_field_errors }}
 {% render_field status_form.status inline=inline %}
 {% render_field status_form.resolution inline=inline %}
-<div class="status-refusal status-section" style="display: none;">
-    {% render_field status_form.refusal_reason inline=inline %}
-</div>
+{% if status_form.refusal_reason %}
+    {# djlint:off H021 #}
+    <div class="status-refusal status-section" style="display: none;">
+        {% render_field status_form.refusal_reason inline=inline %}
+    </div>
+    {# djlint:on H021 #}
+{% endif %}
 {% if froide.payment_possible %}
     {% render_field status_form.costs inline=inline %}
 {% endif %}
