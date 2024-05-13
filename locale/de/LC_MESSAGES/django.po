@@ -193,7 +193,7 @@ msgstr "Export von Nutzer:in '{}' gestartet."
 
 #: froide/account/admin.py
 msgid "Add users to group and send mail..."
-msgstr ""
+msgstr "Füge Nutzer*innen zur Gruppe hinzu und sende E-Mail..."
 
 #: froide/account/admin.py froide/helper/admin_utils.py
 msgid "Successfully executed."
@@ -756,11 +756,17 @@ msgid ""
 "Cheers\n"
 "%(site_name)s"
 msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"du wurdest zur Gruppe „%(group_name)s“ hinzugefügt..\n"
+"\n"
+"Viele Grüße\n"
+"%(site_name)s"
 
 #: froide/account/templates/account/emails/add_to_group_subject.txt
-#, fuzzy, python-format
+#, python-format
 msgid "%(site_name)s: Added to group \"%(group_name)s\""
-msgstr "%(site_name)s: Neues bei einer Ihrer Anfragen"
+msgstr "%(site_name)s: Hinzugefügt zur Gruppe „%(group_name)s“"
 
 #: froide/account/templates/account/emails/change_email.txt
 #, python-format
@@ -5643,9 +5649,8 @@ msgid "Write message..."
 msgstr "Nachricht schreiben..."
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
-#, fuzzy
 msgid "Set status..."
-msgstr "Status festlegen"
+msgstr "Status festlegen..."
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Check all requests"
@@ -7455,14 +7460,12 @@ msgid "Messages are being sent now."
 msgstr "Nachrichten werden nun versendet."
 
 #: froide/foirequest/views/project.py
-#, fuzzy
 msgid "Set status on selected requests"
-msgstr "Nutzer:in der ausgewählten Anfragen taggen..."
+msgstr "Legen Sie den Status der ausgewählten Anfragen fest"
 
 #: froide/foirequest/views/project.py
-#, fuzzy
 msgid "Status has been set."
-msgstr "URL wurde zurückgesetzt."
+msgstr "Status wurde festgelegt."
 
 #: froide/foirequest/views/request.py
 msgid "Withdrawal of My FOI Request"
