@@ -4,8 +4,6 @@
 }
 
 .field-required {
-  text-wrap: nowrap; // to prevent the asterisk from wrapping to the next line
-
   &::after {
     content: '*';
     color: var(--#{$prefix}danger);
