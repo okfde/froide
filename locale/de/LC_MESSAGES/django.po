@@ -14136,3 +14136,12 @@ msgstr "Informationsfreiheitsanfragen"
 #~ msgstr ""
 #~ "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s "
 #~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme."
+
+#, python-format
+#~ msgid ""
+#~ "You exceeded your message limit of %(count)s messages in %(time)s. <a "
+#~ "href=\"%(url)s\">Learn more</a>"
+#~ msgstr ""
+#~ "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
+#~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme. Mehr Infos "
+#~ "dazu finden Sie im Hilfebereich."
