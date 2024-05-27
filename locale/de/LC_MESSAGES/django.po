@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-06 14:44+0200\n"
+"POT-Creation-Date: 2024-05-27 12:03+0200\n"
 "PO-Revision-Date: 2024-05-06 14:46+0200\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -190,6 +190,14 @@ msgstr "Export von Nutzer:in ‚{user}‘ ist bereit: {url}"
 #: froide/account/admin.py
 msgid "Export of user '{}' started."
 msgstr "Export von Nutzer:in '{}' gestartet."
+
+#: froide/account/admin.py
+msgid "Add users to group and send mail..."
+msgstr ""
+
+#: froide/account/admin.py froide/helper/admin_utils.py
+msgid "Successfully executed."
+msgstr "Erfolgreich ausgeführt."
 
 #: froide/account/apps.py
 #: froide/account/templates/account/includes/breadcrumbs.html
@@ -738,6 +746,24 @@ msgid ""
 msgstr ""
 "Grüße,\n"
 "%(site_name)s"
+
+#: froide/account/templates/account/emails/add_to_group.txt
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"You have been added to the group \"%(group_name)s\".\n"
+"\n"
+"Cheers\n"
+"%(site_name)s"
+msgstr ""
+
+#: froide/account/templates/account/emails/add_to_group_subject.txt
+#, fuzzy, python-format
+#| msgid "%(site_name)s: Update on one of your request"
+#| msgid_plural "%(site_name)s: Update on %(count)s of your requests"
+msgid "%(site_name)s: Added to group \"%(group_name)s\""
+msgstr "%(site_name)s: Neues bei einer Ihrer Anfragen"
 
 #: froide/account/templates/account/emails/change_email.txt
 #, python-format
@@ -2875,6 +2901,22 @@ msgstr ""
 msgid "Publish all requests"
 msgstr "Alle Anfragen veröffentlichen"
 
+#: froide/foirequest/forms/project.py froide/foirequest/forms/request.py
+msgid "Refusal Reason"
+msgstr "Verweigerungsgrund"
+
+#: froide/foirequest/forms/project.py froide/foirequest/forms/request.py
+msgid "No or other reason given"
+msgstr "Kein oder anderer Grund"
+
+#: froide/foirequest/forms/project.py froide/foirequest/forms/request.py
+msgid ""
+"When you are (partially) denied access to information, the Public Body "
+"should always state the reason."
+msgstr ""
+"Wenn Ihnen (auch nur teilweise) Auskunft verweigert wird, sollte die Behörde "
+"immer eine Begründung angeben."
+
 #: froide/foirequest/forms/request.py
 msgid "Body"
 msgstr "Nachricht"
@@ -2966,22 +3008,6 @@ msgid "Please specify what the Public Body charges for the information."
 msgstr ""
 "Bitte geben Sie an, welchen Betrag die Behörde für diese Information "
 "verlangt."
-
-#: froide/foirequest/forms/request.py
-msgid "Refusal Reason"
-msgstr "Verweigerungsgrund"
-
-#: froide/foirequest/forms/request.py
-msgid "No or other reason given"
-msgstr "Kein oder anderer Grund"
-
-#: froide/foirequest/forms/request.py
-msgid ""
-"When you are (partially) denied access to information, the Public Body "
-"should always state the reason."
-msgstr ""
-"Wenn Ihnen (auch nur teilweise) Auskunft verweigert wird, sollte die Behörde "
-"immer eine Begründung angeben."
 
 #: froide/foirequest/forms/request.py
 msgid "Please give a resolution to this request"
@@ -5618,6 +5644,12 @@ msgid "Write message..."
 msgstr "Nachricht schreiben..."
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
+#, fuzzy
+#| msgid "Set status"
+msgid "Set status..."
+msgstr "Status festlegen"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Check all requests"
 msgstr "Alle Anfragen prüfen"
 
@@ -5882,6 +5914,7 @@ msgid "Download as PDF"
 msgstr "Download als PDF"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
+#: froide/foirequest/views/project.py
 msgid "Set status"
 msgstr "Status festlegen"
 
@@ -7423,6 +7456,18 @@ msgstr "Nachrichten versenden"
 msgid "Messages are being sent now."
 msgstr "Nachrichten werden nun versendet."
 
+#: froide/foirequest/views/project.py
+#, fuzzy
+#| msgid "Tag users of selected requests..."
+msgid "Set status on selected requests"
+msgstr "Nutzer:in der ausgewählten Anfragen taggen..."
+
+#: froide/foirequest/views/project.py
+#, fuzzy
+#| msgid "URL has been reset."
+msgid "Status has been set."
+msgstr "URL wurde zurückgesetzt."
+
 #: froide/foirequest/views/request.py
 msgid "Withdrawal of My FOI Request"
 msgstr "Zurückziehen meines IFG-Antrags"
@@ -8146,10 +8191,6 @@ msgstr "Wähle einen Hinweis zum Anhängen aus..."
 #: froide/guide/views.py
 msgid "Guidance refreshed for message."
 msgstr "Beratung wurde für diese Nachricht neugeneriert."
-
-#: froide/helper/admin_utils.py
-msgid "Successfully executed."
-msgstr "Erfolgreich ausgeführt."
 
 #: froide/helper/admin_utils.py
 msgid "Successfully added tags"
@@ -13441,11 +13482,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid "Full date"
 #~ msgstr "Frist:"
-
-#~ msgid "%(site_name)s: Update on one of your request"
-#~ msgid_plural "%(site_name)s: Update on %(count)s of your requests"
-#~ msgstr[0] "%(site_name)s: Neues bei einer Ihrer Anfragen"
-#~ msgstr[1] "%(site_name)s: Neues bei %(count)s Ihrer Anfragen"
 
 #~ msgid "%(site_name)s: Your Freedom of Information Request was sent"
 #~ msgstr "%(site_name)s: Ihre Anfrage wurde versendet"
