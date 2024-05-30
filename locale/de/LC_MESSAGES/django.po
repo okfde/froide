@@ -11623,16 +11623,6 @@ msgstr "Teil von Verwaltungseinheiten"
 msgid "type of administrative unit"
 msgstr "Art der Verwaltungseinheit"
 
-#: froide/foirequest/models/message.py
-#, python-format
-msgid ""
-"You exceeded your message limit of %(count)s messages in %(time)s. Find"
-" out more in the Help area."
-msgstr ""
-"Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
-"überschritten. Dies ist eine automatische Vorsichtsmaßnahme. Mehr Infos dazu "
-"finden Sie im Hilfebereich."
-
 #~ msgid "URL copied"
 #~ msgstr "URL kopiert"
 
