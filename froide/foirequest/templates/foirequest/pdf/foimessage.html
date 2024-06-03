@@ -1,0 +1,63 @@
+{% load i18n %}
+{# djlint:off #}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+        @charset "UTF-8";
+        @page {
+          margin: 2cm;
+          @bottom-left {
+            content: '{{ SITE_NAME }} / [#{{ object.request_id }}] - {{ object.timestamp|date:"DATETIME_FORMAT" }}';
+            font-size: 9pt;
+          }
+          @bottom-right {
+            content: "{% trans 'Page' %} " counter(page) " / " counter(pages);
+            font-size: 9pt;
+          }
+        }
+        h1 {
+          font-size: 16pt;
+        }
+        h1 a {
+          font-size: 9pt
+        }
+        section {
+          break-after: always;
+        }
+        a {
+         color: #000; 
+        }
+        dl {
+          line-height: 1.3em;
+        }
+        dl dt, dl dd {
+          display: inline;
+          margin: 0;
+        }
+        dl dt {
+          font-weight: bold;
+        }
+        dl dt::before {
+          content: '';
+          display: block;
+        }
+        dl dt::after {
+          content: ':';
+        }
+        h2 {
+          visibility: hidden;
+          position: absolute;
+        }
+</style>
+        <title>{{ object.real_sender }} ({{ object.timestamp|date:"DATETIME_FORMAT" }}) / [#{{ object.request_id }}]</title>
+        <meta name="description" content="{{ object.request.get_description }}">
+        <meta name="author" content="{{ SITE_NAME }}">
+    </head>
+    <body>
+        <h1>{{ object.real_sender }} - {{ object.timestamp|date:"DATETIME_FORMAT" }}</h1>
+        <a href="{{ object.get_absolute_domain_short_url }}">{{ object.request.title }} / [#{{ object.request_id }}]</a>
+        {% include "foirequest/pdf/_foimessage.html" with message=object %}
+    </body>
+</html>
