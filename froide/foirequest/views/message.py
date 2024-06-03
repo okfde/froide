@@ -22,6 +22,7 @@ from froide.upload.forms import get_uppy_i18n
 from ..api_views import FoiAttachmentSerializer, FoiMessageSerializer
 from ..decorators import (
     allow_moderate_foirequest,
+    allow_read_foirequest_authenticated,
     allow_write_foirequest,
     allow_write_or_moderate_foirequest,
     allow_write_or_moderate_pii_foirequest,
@@ -230,7 +231,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
             foirequest,
             message=message,
             user=request.user,
-            **{"added": str(added)}
+            **{"added": str(added)},
         )
 
         if is_ajax(request):
@@ -304,7 +305,7 @@ def add_tus_attachment(request, foirequest, message, data):
             foirequest,
             message=message,
             user=request.user,
-            **{"added": str(added)}
+            **{"added": str(added)},
         )
         return get_attachment_update_response(request, added)
 
@@ -520,7 +521,7 @@ def edit_message(request, foirequest, message_id):
             foirequest,
             message=message,
             user=request.user,
-            **form.cleaned_data
+            **form.cleaned_data,
         )
     return redirect(message.get_absolute_url())
 
@@ -542,7 +543,7 @@ def redact_message(request, foirequest, message_id):
             foirequest,
             message=message,
             user=request.user,
-            **{"action": "unredact_closing"}
+            **{"action": "unredact_closing"},
         )
         return redirect(message.get_absolute_url())
     form = RedactMessageForm(request.POST)
@@ -553,13 +554,28 @@ def redact_message(request, foirequest, message_id):
             foirequest,
             message=message,
             user=request.user,
-            **form.cleaned_data
+            **form.cleaned_data,
         )
     return redirect(message.get_absolute_url())
 
 
-@allow_write_foirequest
+@allow_read_foirequest_authenticated
 def download_message_pdf(request, foirequest, message_id):
+    from ..pdf_generator import FoiRequestMessagePDFGenerator
+
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+
+    pdf_generator = FoiRequestMessagePDFGenerator(message)
+    response = HttpResponse(
+        pdf_generator.get_pdf_bytes(), content_type="application/pdf"
+    )
+    name = "%s-%s" % (message.timestamp.date().isoformat(), message.pk)
+    response["Content-Disposition"] = 'attachment; filename="%s.pdf"' % name
+    return response
+
+
+@allow_write_foirequest
+def download_message_letter_pdf(request, foirequest, message_id):
     from ..pdf_generator import LetterPDFGenerator
 
     message = get_object_or_404(
@@ -570,7 +586,22 @@ def download_message_pdf(request, foirequest, message_id):
     response = HttpResponse(
         pdf_generator.get_pdf_bytes(), content_type="application/pdf"
     )
-    response["Content-Disposition"] = 'attachment; filename="%s.pdf"' % foirequest.pk
+    name = "%s-%s" % (message.timestamp.date().isoformat(), message.pk)
+    response["Content-Disposition"] = 'attachment; filename="%s.pdf"' % name
+    return response
+
+
+@allow_read_foirequest_authenticated
+def download_message_package(request, foirequest, message_id):
+    from ..foi_mail import package_message
+
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    response = HttpResponse(package_message(message), content_type="application/zip")
+    name = "%s-%s" % (
+        foirequest.slug,
+        message.pk,
+    )
+    response["Content-Disposition"] = 'attachment; filename="%s.zip"' % name
     return response
 
 
@@ -588,10 +619,11 @@ def download_original_email(request, foirequest, message_id):
         return redirect(foirequest)
 
     response = HttpResponse(data, content_type="application/octet-stream")
-    response["Content-Disposition"] = 'attachment; filename="%s-%s.eml"' % (
+    name = "%s-%s" % (
         foirequest.slug,
         message.pk,
     )
+    response["Content-Disposition"] = 'attachment; filename="%s.eml"' % name
     return response
 
 

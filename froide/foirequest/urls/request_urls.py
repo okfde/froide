@@ -19,6 +19,8 @@ from ..views import (
     delete_request,
     download_foirequest_pdf,
     download_foirequest_zip,
+    download_message_letter_pdf,
+    download_message_package,
     download_message_pdf,
     download_original_email,
     edit_message,
@@ -164,6 +166,16 @@ urlpatterns = [
         "<slug:slug>/<int:message_id>/resend/",
         resend_message,
         name="foirequest-resend_message",
+    ),
+    path(
+        "<slug:slug>/<int:message_id>/letter/",
+        download_message_letter_pdf,
+        name="foirequest-download_message_letter_pdf",
+    ),
+    path(
+        "<slug:slug>/<int:message_id>/zip/",
+        download_message_package,
+        name="foirequest-download_message_package",
     ),
     path(
         "<slug:slug>/<int:message_id>/pdf/",
