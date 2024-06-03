@@ -7,6 +7,7 @@ from froide.helper.utils import render_403
 from .auth import (
     can_moderate_foirequest,
     can_moderate_pii_foirequest,
+    can_read_foirequest_authenticated,
     can_write_foirequest,
 )
 from .models import FoiRequest
@@ -38,4 +39,7 @@ allow_write_or_moderate_foirequest = allow_foirequest_if_any(
 )
 allow_write_or_moderate_pii_foirequest = allow_foirequest_if_any(
     can_write_foirequest, can_moderate_pii_foirequest
+)
+allow_read_foirequest_authenticated = allow_foirequest_if_any(
+    can_read_foirequest_authenticated
 )
