@@ -1,0 +1,42 @@
+{% load i18n %}
+<section>
+    <h2>{{ message.timestamp|date:"DATETIME_FORMAT" }} {{ message.real_sender }}</h2>
+    <dl>
+        <dt>{% trans "From" %}</dt>
+        <dd>
+            {{ message.real_sender }}
+        </dd>
+        <dt>{% trans "To" %}</dt>
+        <dd>
+            {{ message.get_text_recipient }}
+        </dd>
+        <dt>{% trans "Date" %}</dt>
+        <dd>
+            {{ message.timestamp|date:"DATETIME_FORMAT" }}
+        </dd>
+        <dt>{% trans "Via" %}</dt>
+        <dd>
+            {{ message.get_kind_display }}
+        </dd>
+        <dt>{% trans "URL" %}</dt>
+        <dd>
+            <a href="{{ message.get_accessible_link }}">{{ message.get_accessible_link }}</a>
+        </dd>
+        <dt>{% trans "Subject" %}</dt>
+        <dd>
+            {{ message.subject }}
+        </dd>
+        {% with attachments=message.get_original_attachments %}
+            {% if attachments %}
+                <dt>{% trans "Attachments" %}</dt>
+                <dd>
+                    <ul>
+                        {% for att in attachments %}<li>{{ att.name }}</li>{% endfor %}
+                    </ul>
+                </dd>
+            {% endif %}
+        {% endwith %}
+    </dl>
+    <hr />
+    {{ message.plaintext|urlize|linebreaks }}
+</section>
