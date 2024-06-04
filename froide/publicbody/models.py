@@ -528,6 +528,13 @@ class PublicBody(models.Model):
     def change_proposal_count(self):
         return self.change_proposals.count()
 
+    @property
+    def reason(self):
+        try:
+            return self.change_history[-1].get("data", {}).get("reason", "")
+        except IndexError:
+            return ""
+
     def get_applicable_law(self, law_type=None):
         return get_applicable_law(pb=self, law_type=law_type)
 
@@ -736,6 +743,7 @@ class PublicBodyChangeProposal(models.Model):
                 != self.publicbody.classification_id,
             },
             "email": field_data("email"),
+            "reason": field_data("reason"),
             "fax": field_data("fax"),
             "contact": field_data("contact"),
             "address": field_data("address"),
