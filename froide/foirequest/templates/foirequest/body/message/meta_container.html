@@ -243,13 +243,23 @@
                             </a>
                         </li>
                     {% endif %}
-                    {% if message.can_get_original_from_imap and object|can_write_foirequest:request %}
-                        <li>
-                            <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
-                                <i class="fa fa-download"></i>
-                                {% translate "Download original email" %}
-                            </a>
-                        </li>
+                    {% if object|can_write_foirequest:request %}
+                        {% if not message.is_response %}
+                            <li>
+                                <a href="{% url 'foirequest-download_message_letter_pdf' slug=object.slug message_id=message.id %}">
+                                    <i class="fa fa-sticky-note-o"></i>
+                                    {% translate "Download as PDF letter" %}
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if message.can_get_original_from_imap %}
+                            <li>
+                                <a href="{% url 'foirequest-download_original_email' slug=object.slug message_id=message.id %}">
+                                    <i class="fa fa-download"></i>
+                                    {% translate "Download original email" %}
+                                </a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </dd>
