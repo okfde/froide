@@ -665,6 +665,7 @@ class PublicBodyChangeProposal(models.Model):
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(_("Created at"), default=timezone.now)
+    reason = models.TextField(blank=True)
 
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)
