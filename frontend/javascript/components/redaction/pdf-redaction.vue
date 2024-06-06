@@ -1,5 +1,9 @@
 <template>
-  <div id="pdf-viewer" ref="top" class="pdf-redaction-tool">
+  <div
+    id="pdf-viewer"
+    ref="top"
+    class="pdf-redaction-tool"
+    :class="{ 'pdf-redaction-tool--minimalui': minimalUi }">
     <div v-if="hasPassword && ready" class="row">
       <div class="col-lg-12">
         <div class="alert alert-info" role="alert">
@@ -56,8 +60,9 @@
     </div>
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-1">
+        <div class="btn-group me-1 toolbar-undo-redo">
           <button
+            type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
@@ -66,6 +71,7 @@
             <i class="fa fa-share fa-flip-horizontal" />
           </button>
           <button
+            type="button"
             class="btn btn-outline-secondary"
             :disabled="!canRedo"
             data-bs-toggle="tooltip"
@@ -75,9 +81,20 @@
           >
             <i class="fa fa-share" />
           </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            :disabled="!canUndo"
+            :title="'TODO'"
+            @click="undoAll">
+            <i class="fa fa-eraser" />
+          </button>
+          <span style="font-size: 50%; margin-left: 0.5rem"
+            >TODO:<br />Zoom</span
+          >
         </div>
 
-        <div class="btn-group me-1">
+        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes">
           <button
             class="btn"
             :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
@@ -99,7 +116,7 @@
           </button>
         </div>
 
-        <div class="input-group me-1">
+        <div class="input-group me-1 toolbar-pages">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -122,9 +139,8 @@
         </div>
 
         <div
-          v-if="hasRedactions || hasPassword"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0"
-        >
+          v-if="!minimalUi && (hasRedactions || hasPassword)"
+          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
@@ -135,7 +151,7 @@
             </template>
           </button>
         </div>
-        <div class="btn-group ms-auto mt-1 mt-lg-0">
+        <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0">
           <form
             v-if="canPublish && !hasPassword"
             method="post"
@@ -201,7 +217,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div v-if="!minimalUi" class="row">
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="input-group me-auto ms-auto">
           <button
@@ -267,11 +283,25 @@ export default {
       type: String,
       required: true
     },
+    postUrl: {
+      type: String
+    },
+    approveUrl: {
+      type: String
+    },
+    noRedirect: {
+      type: Boolean,
+      default: false
+    },
     redactRegex: {
       type: Array,
       default: () => []
     },
     canPublish: {
+      type: Boolean,
+      default: false
+    },
+    minimalUi: {
       type: Boolean,
       default: false
     }
@@ -397,6 +427,11 @@ export default {
     },
     csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
+    }
+  },
+  watch: {
+    hasRedactions: function (newValue) {
+      this.$emit('hasredactionsupdate', newValue)
     }
   },
   created() {
@@ -545,6 +580,29 @@ export default {
       this.textDisabled = !this.textDisabled
       this.textOnly = !this.textDisabled
     },
+    redactOrApprove() {
+      if (this.hasRedactions || this.hasPassword) {
+        console.log('### redactOrApprove redact')
+        return this.redact()
+      } else {
+        console.log('### redactOrApprove approve')
+        return this.approve()
+      }
+    },
+    approve() {
+      // TODO like redact(), this should emulate what the form above does
+      const url = this.approveUrl
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': this.csrfToken }
+      }).then((response) => {
+        if (!response.ok) {
+          console.error('approve error', response)
+          throw new Error(`approve error: ${response.status}`)
+        }
+        this.$emit('uploaded')
+      })
+    },
     redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
       this.ready = false
@@ -572,6 +630,11 @@ export default {
                 this.progressCurrent = 100
                 this.progressTotal = 100
                 bustCache(attachment.file_url).then(() => {
+                  // FIXME WIP emit a success event here instead
+                  if (this.noRedirect) {
+                    this.$emit('uploaded')
+                    return
+                  }
                   document.location.href = this.config.urls.messageUpload
                 })
               } else {
@@ -595,7 +658,10 @@ export default {
       this.progressTotal = 100
       return new Promise((resolve, reject) => {
         const xhr = new window.XMLHttpRequest()
-        xhr.open('POST', document.location.href)
+        // TODO
+        // should be like /anfrage/foo/redact/123456/
+        const url = this.postUrl || document.location.href
+        xhr.open('POST', url)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.csrfToken)
         const xhrUpload = xhr.upload ? xhr.upload : xhr
@@ -968,6 +1034,11 @@ export default {
       const lastAction = this.actionsPerPage[this.currentPage][actionIndex]
       this.unapplyAction(lastAction)
     },
+    undoAll() {
+      while (this.canUndo) {
+        this.undo()
+      }
+    },
     redo() {
       if (!this.canRedo) {
         return
@@ -1209,5 +1280,29 @@ export default {
 .textLayer.textActive > div,
 .textLayer.textActive > span {
   color: #000;
+}
+
+.pdf-redaction-tool--minimalui {
+  .toolbar-btn {
+    width: 100%;
+  }
+  .toolbar-undo-redo {
+    background: #eee;
+    padding: 0.5rem 0;
+    border-top: 1px solid #bbb;
+    width: 100%;
+    justify-content: center;
+    &.btn-group > .btn {
+      flex: 0 0 auto;
+    }
+  }
+  .toolbar-pages {
+    background: #eee;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    padding: 0.5rem 0;
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

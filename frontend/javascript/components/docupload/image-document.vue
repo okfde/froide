@@ -1,10 +1,10 @@
 <template>
   <div class="document mb-3">
-    <div class="card">
-      <div ref="top" class="card-header">
+    <div :class="{ card: !simple }">
+      <div v-show="!simple" ref="top" class="card-header">
         {{ i18n._('newDocumentPageCount', { count: numPages }) }}
       </div>
-      <div class="card-body" :class="{ 'is-new': document.new }">
+      <div :class="{ 'is-new': document.new, 'card-body': !simple }">
         <div
           v-if="converting"
           class="progress"
@@ -21,10 +21,10 @@
             :style="{ width: progressCurrent ? progressCurrent : '100%' }" />
         </div>
         <div v-else>
-          <p class="text-body-secondary">
+          <p v-if="!simple" class="text-body-secondary">
             {{ i18n.imageDocumentExplanation }}
           </p>
-          <div class="mb-3">
+          <div v-if="!simple" class="mb-3">
             <label class="form-label" for="page-label">{{
               i18n.attachmentName
             }}</label>
@@ -36,8 +36,8 @@
           </div>
           <!-- akward @update because Vue 2-ish vs 3.2 interop -->
           <image-document-pages-sortable
-            class="row bg-body-secondary"
             :pages="pages"
+            :dense="simple"
             @update:pages="
               ($event) => {
                 pages = $event
@@ -46,16 +46,23 @@
             @pageupdated="$emit('pageupdated', { document, ...$event })"
             @splitpages="splitPages" />
         </div>
-        <div class="row mt-3">
+        <div v-if="!simple" class="row mt-3">
           <div class="col-md-12">
             <p class="text-end">
               <button
                 class="btn btn-primary mt-2"
+                data-ref="image-document-convert-button"
                 :disabled="anyUploads || converting"
                 @click="convertImages">
                 {{ i18n.convertImages }}
               </button>
               <file-review
+                v-if="!basicOperations"
+                :config="config"
+                :document="document"
+                @docupdated="updateDocument" />
+              <file-basic-operations
+                v-else
                 :config="config"
                 :document="document"
                 @docupdated="updateDocument" />
@@ -70,6 +77,7 @@
 <script>
 import ImageDocumentPagesSortable from './image-document-pages-sortable.vue'
 import FileReview from './file-review.vue'
+import FileBasicOperations from './file-basic-operations.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
 import { DocumentMixin } from './lib/document_utils'
@@ -91,6 +99,14 @@ export default {
     document: {
       type: Object,
       required: true
+    },
+    simple: {
+      type: Boolean,
+      default: false
+    },
+    basicOperations: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
