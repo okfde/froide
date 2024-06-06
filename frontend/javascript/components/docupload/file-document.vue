@@ -5,12 +5,33 @@
     :class="{ 'is-new': document.new }">
     <div class="row">
       <div class="col-auto">
-        <input v-if="ready" v-model="selected" type="checkbox" />
-        <div v-else class="spinner-border spinner-border-sm" role="status">
+        <input
+          v-if="ready && !hideSelection"
+          v-model="selected"
+          type="checkbox" />
+        <div
+          v-if="!ready"
+          class="spinner-border spinner-border-sm"
+          role="status">
           <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
       </div>
-      <div class="col-auto ps-0 doc-status">
+      <div v-if="iconStyle === 'icon'" class="col-auto ps-0">
+        <i class="fa fa-file-o"></i>
+      </div>
+      <div v-else-if="iconStyle === 'thumbnail'" class="col-auto ps-0">
+        <div
+          style="
+            width: 3rem;
+            height: 4rem;
+            border: 1px solid #aaa;
+            background: #e8e8e8;
+            font-size: 0.5rem;
+          ">
+          TODO<br />Thumbnail
+        </div>
+      </div>
+      <div v-if="!hideAdvancedOperations" class="col-auto ps-0 doc-status">
         <template v-if="hasAttachment">
           <span
             v-if="!approved"
@@ -57,6 +78,15 @@
         </a>
 
         <div
+          v-if="highlightRedaction"
+          class="redaction"
+          :class="{ 'redaction__is-redacted': document.is_redacted }">
+          <div class="redaction-badge">
+            {{ document.is_redacted ? 'geschwärzt' : 'ungeschwärzt' }}
+          </div>
+        </div>
+
+        <div
           v-if="document.uploading"
           class="progress"
           role="progressbar"
@@ -73,7 +103,9 @@
             :style="{ width: progressPercentLabel }" />
         </div>
       </div>
-      <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
+      <div
+        v-if="!hideAdvancedOperations"
+        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
         <button
           v-if="canMakeResult"
           class="btn btn-sm btn-outline-success"
@@ -102,6 +134,15 @@
           :document="document"
           @docupdated="updateDocument"
           @makerelevant="$emit('makerelevant')" />
+      </div>
+      <div
+        v-if="showBasicOperations"
+        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
+        <file-basic-operations
+          v-if="ready"
+          :config="config"
+          :document="document"
+          @docupdated="updateDocument" />
       </div>
       <!-- <div class="col-auto">
         <button
@@ -183,15 +224,25 @@ import { DocumentMixin } from './lib/document_utils'
 
 import FileReview from './file-review.vue'
 import PdfPreview from './pdf-preview.vue'
+import FileBasicOperations from './file-basic-operations.vue'
 
 export default {
   name: 'FileDocument',
   components: {
     FileReview,
-    PdfPreview
+    PdfPreview,
+    FileBasicOperations
   },
   mixins: [I18nMixin, DocumentMixin],
-  props: ['config', 'document'],
+  props: [
+    'config',
+    'document',
+    'hideSelection',
+    'hideAdvancedOperations',
+    'iconStyle',
+    'showBasicOperations',
+    'highlightRedaction'
+  ],
   data() {
     return {
       progressTotal: null,
@@ -399,5 +450,15 @@ export default {
 }
 .doc-status .badge {
   cursor: help;
+}
+.redaction-badge {
+  font-size: 80%;
+  display: inline-block;
+  padding: 0 0.2em;
+  border-radius: 0.1em;
+  background-color: lightyellow;
+  .redaction__is-redacted & {
+    background-color: lightgreen;
+  }
 }
 </style>

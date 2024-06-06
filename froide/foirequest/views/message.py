@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 from functools import partial
@@ -8,6 +9,7 @@ from django.db import transaction
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
@@ -15,7 +17,7 @@ from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
-from froide.helper.utils import is_ajax, render_400, render_403
+from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
 from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
@@ -29,6 +31,7 @@ from ..decorators import (
 )
 from ..forms import (
     EditMessageForm,
+    PostalEditForm,
     PostalUploadForm,
     RedactMessageForm,
     TransferUploadForm,
@@ -42,6 +45,7 @@ from ..forms import (
 )
 from ..models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from ..models.attachment import IMAGE_FILETYPES, PDF_FILETYPES, POSTAL_CONTENT_TYPES
+from ..models.message import MessageKind
 from ..services import ResendBouncedMessageService
 from ..tasks import convert_images_to_pdf_task
 from ..utils import check_throttle
@@ -145,6 +149,266 @@ def add_postal_message(request, slug):
         success_message=_("A sent letter was successfully added!"),
         error_message=_("There were errors with your form submission!"),
         form_key="postal_message_form",
+    )
+
+
+@allow_write_foirequest
+def upload_postal_message_create(request, foirequest):
+    message = FoiMessage(request=foirequest, kind=MessageKind.POST)
+    # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
+    # this will be set to "proper" (noon) when finally submitted
+    message.timestamp = datetime.datetime.now()
+    # TODO set dirty/draft?
+    message.save()
+    return redirect(
+        reverse(
+            "foirequest-edit_postal_message",
+            kwargs={"slug": foirequest.slug, "message_id": message.id},
+        )
+    )
+
+
+@allow_write_foirequest
+def edit_postal_message(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=int(message_id))
+    if not message.can_edit:
+        return render_400(request)
+    form = PostalEditForm(
+        data=request.POST,
+        foirequest=foirequest,
+        message=message,
+        user=request.user,  # needs to be request user for upload ident
+    )
+    status_form = foirequest.get_status_form(data=request.POST)
+    if request.method == "POST":
+        if form.is_valid():
+            message = form.save()
+
+            if status_form.is_valid():
+                status_form.save()
+
+            if message.is_response:
+                signal = FoiRequest.message_received
+                success_message = _("A postal reply was successfully added!")
+            else:
+                signal = FoiRequest.message_sent
+                success_message = _("A sent letter was successfully added!")
+
+            signal.send(sender=foirequest, message=message, user=request.user)
+
+            if is_fetch(request):
+                return JsonResponse({"success": 1})
+
+            messages.add_message(request, messages.SUCCESS, success_message)
+            url = reverse(
+                # after a successfully saved form, redirect to request
+                "foirequest-show",
+                kwargs={"slug": foirequest.slug},
+            )
+            return redirect(url)
+        else:
+            if is_fetch(request):
+                return JsonResponse({"errors": form._errors})
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _("There were errors with your form submission!"),
+            )
+    ctx = {
+        "settings": {
+            "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
+            "can_make_document": request.user.is_staff,
+        },
+        "i18n": {
+            "uppy": get_uppy_i18n(),
+            # from publicbody/widgets
+            "missingPublicBody": _("Are we missing a public body?"),
+            "publicBodySearchPlaceholder": _("Ministry of..."),
+            "search": _("Search"),
+            "searchPublicBodyLabel": _("Search for public authorities"),
+            "examples": _("Examples:"),
+            "environment": _("Environment"),
+            "ministryOfLabour": _("Ministry of Labour"),
+            "or": _("or"),
+            "noPublicBodiesFound": _("No Public Bodies found for this query."),
+            "letUsKnow": _("Please let us know!"),
+            # from views/attachment for <pdf-redaction>; not all might be necessary
+            "previousPage": _("Previous Page"),
+            "nextPage": _("Next Page"),
+            "pageCurrentOfTotal": _("{current} of {total}").format(
+                current="$current", total="$total"
+            ),
+            "redactAndPublish": _("Save redaction"),
+            "publishWithoutRedaction": _("No redaction needed"),
+            "toggleText": _("Text only"),
+            "disableText": _("Hide text"),
+            "cancel": _("Cancel"),
+            "undo": _("Undo"),
+            "redo": _("Redo"),
+            "loadingPdf": _("Loading PDF..."),
+            "sending": _("Uploading redaction instructions, please wait..."),
+            "redacting": _("Redacting PDF, please wait..."),
+            "redactionError": _(
+                "There was a problem with your redaction. Please contact moderators."
+            ),
+            "redactionTimeout": _(
+                "Your redaction took too long. It may become available soon, if not, contact moderators."
+            ),
+            "autoRedacted": _(
+                "We automatically redacted some text for you already. Please check if we got everything."
+            ),
+            "passwordRequired": _(
+                "This PDF requires a password to open. Please provide the password here:"
+            ),
+            "passwordCancel": _(
+                "The password you provided was incorrect. Do you want to abort?"
+            ),
+            "passwordMissing": _(
+                "The PDF could not be opened because of a missing password. Please ask the authority to provide you with a password."
+            ),
+            "removePasswordAndPublish": _("Remove password and publish"),
+            "hasPassword": _(
+                "The original document is protected with a password. The password is getting removed on publication."
+            ),
+            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
+            "confirmNoRedactionsText": _(
+                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
+            ),
+            "close": _("Close"),
+            # from upload_attachments
+            "attachmentName": _("Name of attachment to create"),
+            "newDocumentPageCount": [
+                _("New document with one page"),
+                _("New document with {count} pages").format(count="${count}"),
+            ],
+            "takePicture": _("Take / Choose picture"),
+            "convertImages": _("Convert images to document"),
+            "openAttachmentPage": _("Open attachment page"),
+            "loadPreview": _("Preview"),
+            "approveAll": _("Approve all"),
+            "markAllAsResult": _("Mark all as result"),
+            "otherAttachments": _("Other attachments that are not documents"),
+            "imageDocumentExplanation": _(
+                "Here you can combine your uploaded images to a PDF document. "
+                "You can rearrange the pages and "
+                "split it into multiple documents. "
+                "You can redact the PDF in the next step."
+            ),
+            "documentPending": _(
+                "This document is being generated. " "This can take several minutes."
+            ),
+            "documentDeleting": _("This document is being deleted..."),
+            "documentTitle": _("Document title"),
+            "documentTitleHelp": _("Give this document a proper title"),
+            "documentTitlePlaceholder": _("e.g. Letter from date"),
+            "showIrrelevantAttachments": _("Show irrelevant attachments"),
+            "makeRelevant": _("Make relevant"),
+            "loading": _("Loading..."),
+            "description": _("Description"),
+            "descriptionHelp": _("Describe the contents of the document"),
+            "edit": _("Edit"),
+            "save": _("Save"),
+            "review": _("Review"),
+            "approve": _("Approve"),
+            "notPublic": _("not public"),
+            "redacted": _("redacted"),
+            "redact": _("Redact"),
+            "delete": _("Delete"),
+            "confirmDelete": _("Are you sure you want to delete this attachment?"),
+            "protectedOriginal": _("protected original"),
+            "protectedOriginalExplanation": _(
+                "This attachment has been converted to PDF and " "cannot be published."
+            ),
+            "isResult": _("Result?"),
+            "makeResultExplanation": _(
+                "Is this document a result of your request and not only correspondence?"
+            ),
+            "makeResultsExplanation": _(
+                "Are these documents a result of your request and not only correspondence?"
+            ),
+        },
+        "url": {
+            "tusEndpoint": reverse("api:upload-list"),
+            # from makerequest.py
+            "searchPublicBody": reverse("api:publicbody-search"),
+            "listJurisdictions": reverse("api:jurisdiction-list"),
+            "listCategories": reverse("api:category-list"),
+            "listClassifications": reverse("api:classification-list"),
+            "listGeoregions": reverse("api:georegion-list"),
+            "listPublicBodies": reverse("api:publicbody-list"),
+            "listLaws": reverse("api:law-list"),
+            # from upload_attachments() TODO: might not need all
+            "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
+            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
+            "convertAttachments": reverse(
+                "foirequest-manage_attachments",
+                kwargs={"slug": foirequest.slug, "message_id": message.id},
+            ),
+            "addAttachment": reverse(
+                "foirequest-add_postal_reply_attachment",
+                kwargs={"slug": foirequest.slug, "message_id": message.id},
+            ),
+            "redactAttachment": reverse(
+                "foirequest-redact_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "approveAttachment": reverse(
+                "foirequest-approve_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "deleteAttachment": reverse(
+                "foirequest-delete_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "createDocument": reverse(
+                "foirequest-create_document",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+        },
+        "urls": {
+            # from views/attachment for <pdf-redaction>
+            "publishUrl": reverse(
+                "foirequest-approve_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},  # attachment.pk},
+            ),
+            "messageUpload": reverse(
+                "foirequest-manage_attachments",
+                kwargs={
+                    "slug": foirequest.slug,
+                    "message_id": 0,  # attachment.belongs_to_id,
+                },
+            ),
+        },
+    }
+    return render(
+        request,
+        "foirequest/upload_postal_message_new.html",
+        {
+            "object": foirequest,
+            "object_public_body_id": foirequest.public_body_id,
+            "object_public_body": {
+                "id": foirequest.public_body.id,
+                "name": foirequest.public_body.name,
+            },
+            "object_public_body_json": json.dumps(
+                {
+                    "id": foirequest.public_body.id,
+                    "name": foirequest.public_body.name,
+                }
+            ),
+            "date_max": timezone.localdate().isoformat(),
+            "date_min": foirequest.created_at.date().isoformat(),
+            "object_public_json": json.dumps(foirequest.public),
+            "user_is_staff": json.dumps(request.user.is_staff),
+            "form": form,
+            "message_json": "null"
+            if message is None
+            else json.dumps(
+                FoiMessageSerializer(message, context={"request": request}).data
+            ),
+            "status_form": status_form,
+            "config_json": json.dumps(ctx),
+        },
     )
 
 
