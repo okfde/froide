@@ -7,6 +7,7 @@
         :key="doc.id"
         :document="doc"
         :config="config"
+        :hide-selection="hideSelection"
         @pageschanged="pagesChanged(doc, $event)"
         @splitpages="splitPages(doc, $event)"
         @imagesconverted="imagesConverted"
@@ -52,6 +53,7 @@
           :key="doc.id"
           :document="doc"
           :config="config"
+          :hide-selection="hideSelection"
           @pageschanged="pagesChanged(doc, $event)"
           @splitpages="splitPages(doc, $event)"
           @imagesconverted="imagesConverted"
@@ -70,12 +72,13 @@
         :key="doc.id"
         :document="doc"
         :config="config"
+        :hide-selection="hideSelection"
         @docupdated="documentUpdated(doc, $event)"
         @makerelevant="makeRelevant(doc)"
         @notnew="doc.new = false" />
     </div>
 
-    <div v-if="canUpload" class="upload mt-5">
+    <div v-if="canUpload && showUpload" class="upload mt-5">
       <django-slot name="upload-header" />
       <file-uploader
         class="mb-3 mt-2"
@@ -118,6 +121,14 @@ export default {
     message: {
       type: Object,
       required: true
+    },
+    showUpload: {
+      type: Boolean,
+      default: true
+    },
+    hideSelection: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -153,6 +164,10 @@ export default {
     otherAttachments() {
       return this.documents.filter((d) => d.irrelevant)
     },
+    selectedDocuments() {
+      console.log('# ocmputed selectedDocuments')
+      return this.documents.filter((d) => d.selected)
+    },
     canMakeResultDocs() {
       return this.pdfDocuments.filter((d) => {
         return (
@@ -184,6 +199,15 @@ export default {
     },
     canApprove() {
       return this.canApproveDocs.length > 0
+    }
+  },
+  watch: {
+    selectedDocuments() {
+      console.log(
+        '# watch selectedDocuments, emit',
+        this.selectedDocuments.length
+      )
+      this.$emit('selectionupdated', this.selectedDocuments)
     }
   },
   mounted() {

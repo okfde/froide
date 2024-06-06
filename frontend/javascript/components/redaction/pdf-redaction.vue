@@ -248,6 +248,13 @@ export default {
       type: String,
       required: true
     },
+    postUrl: {
+      type: String
+    },
+    noRedirect: {
+      type: Boolean,
+      default: false
+    },
     redactRegex: {
       type: Array,
       default: () => []
@@ -552,6 +559,11 @@ export default {
                 this.progressCurrent = 100
                 this.progressTotal = 100
                 bustCache(attachment.file_url).then(() => {
+                  // FIXME WIP emit a success event here instead
+                  if (this.noRedirect) {
+                    this.$emit('uploaded')
+                    return
+                  }
                   document.location.href = this.config.urls.messageUpload
                 })
               } else {
@@ -575,7 +587,10 @@ export default {
       this.progressTotal = 100
       return new Promise((resolve, reject) => {
         const xhr = new window.XMLHttpRequest()
-        xhr.open('POST', document.location.href)
+        // TODO
+        // should be like /anfrage/foo/redact/123456/
+        const url = this.postUrl || document.location.href
+        xhr.open('POST', url)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.csrfToken)
         const xhrUpload = xhr.upload ? xhr.upload : xhr

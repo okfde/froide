@@ -34,11 +34,17 @@
               class="form-control"
               :placeholder="i18n.documentTitlePlaceholder" />
           </div>
-          <draggable
+          <!-- FIXME WIP: vuedraggable is not compatible with Vue3,
+            will have to migrate to https://github.com/SortableJS/vue.draggable.next
+            which is not drop-in replacement, esp. now use
+            <template #item="{element}">...</template>
+          -->
+          <!--<draggable
             v-model="pages"
             class="row pages bg-body-secondary"
             @start="drag = true"
-            @end="drag = false">
+            @end="drag = false">-->
+          <div class="would-be-draggable">
             <image-page
               v-for="page in pages"
               :key="page.pageNum"
@@ -46,7 +52,8 @@
               :page-count="pages.length"
               @pageupdated="$emit('pageupdated', { document, ...$event })"
               @splitpages="splitPages" />
-          </draggable>
+            <!--</draggable>-->
+          </div>
         </div>
         <div class="row mt-3">
           <div class="col-md-12">
@@ -70,7 +77,8 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable'
+// FIXME, see above
+// import draggable from 'vuedraggable'
 
 import ImagePage from './image-page.vue'
 import FileReview from './file-review.vue'
@@ -83,7 +91,7 @@ import { postData } from '../../lib/api.js'
 export default {
   name: 'ImageDocument',
   components: {
-    draggable,
+    // draggable,
     ImagePage,
     FileReview
   },

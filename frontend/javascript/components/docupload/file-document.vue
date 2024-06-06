@@ -5,8 +5,14 @@
     :class="{ 'is-new': document.new }">
     <div class="row">
       <div class="col-auto">
-        <input v-if="ready" v-model="selected" type="checkbox" />
-        <div v-else class="spinner-border spinner-border-sm" role="status">
+        <input
+          v-if="ready && !hideSelection"
+          v-model="selected"
+          type="checkbox" />
+        <div
+          v-if="!ready"
+          class="spinner-border spinner-border-sm"
+          role="status">
           <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
       </div>
@@ -191,7 +197,7 @@ export default {
     PdfPreview
   },
   mixins: [I18nMixin, DocumentMixin],
-  props: ['config', 'document'],
+  props: ['config', 'document', 'hideSelection'],
   data() {
     return {
       progressTotal: null,

@@ -259,7 +259,7 @@ class PublicBodySuggestionsForm(forms.Form):
             req.message_sent.send(sender=req, message=message, user=user)
 
 
-class FoiRequestStatusForm(forms.Form):
+class FoiRequestStatusForm(forms.Form, JSONMixin):
     status = forms.ChoiceField(
         label=_("Status"),
         widget=BootstrapRadioSelect,

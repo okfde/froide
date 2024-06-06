@@ -104,6 +104,13 @@ urlpatterns = [
         name="foirequest-upload_postal_message",
     ),
     path(
+        pgettext_lazy(
+            "url part", "<slug:slug>/upload-postal-message/<int:message_id>/"
+        ),
+        upload_postal_message,
+        name="foirequest-upload_postal_message_with-id",
+    ),
+    path(
         "<slug:slug>/apply-moderation/",
         apply_moderation,
         name="foirequest-apply_moderation",

@@ -5,6 +5,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
+from froide.helper.form_utils import JSONMixin
 from froide.helper.storage import make_unique_filename
 from froide.helper.widgets import BootstrapRadioSelect
 from froide.publicbody.models import PublicBody
@@ -19,7 +20,7 @@ from ..validators import validate_postal_content_type
 from .message import MessageEditMixin
 
 
-class PostalUploadForm(MessageEditMixin, forms.Form):
+class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
     sent = forms.TypedChoiceField(
         widget=BootstrapRadioSelect,
         choices=(
@@ -76,16 +77,16 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        text = cleaned_data.get("text")
-        uploads = cleaned_data.get("uploads")
-
-        if not (text or uploads):
-            raise forms.ValidationError(
-                _(
-                    "You need to provide either a letter summary or "
-                    "a scan or photo of the letter."
-                )
-            )
+        # FIXME WIP disable too early validation
+        # text = cleaned_data.get("text")
+        # uploads = cleaned_data.get("uploads")
+        # if not (text or uploads):
+        #    raise forms.ValidationError(
+        #        _(
+        #            "You need to provide either a letter summary or "
+        #            "a scan or photo of the letter."
+        #        )
+        #    )
         return cleaned_data
 
     def save(self):

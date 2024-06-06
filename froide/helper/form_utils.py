@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 
 from django.db import models
 
@@ -18,9 +19,35 @@ def get_data(error):
     return error.get_json_data()
 
 
+# FIXME WIP this is maybe not the smartest way to do this
+# use simplejson instead?
+def serialize_extra(obj):
+    if isinstance(obj, Decimal):
+        return {
+            "__Decimal": True,
+            "intValue": int(obj * 100),
+            "strValue": str(obj),
+        }
+    if obj.__class__.__name__ == "PublicBody":
+        return {
+            "__PublicBody": True,
+            "id": obj.id,
+            "name": obj.name,
+            "jurisdiction": {"name": obj.jurisdiction.name},
+        }
+    raise TypeError
+
+
 class JSONMixin(object):
     def as_json(self):
-        return json.dumps(self.as_data(), cls=DjangoJSONEncoder)
+        return json.dumps(
+            self.as_data(), default=serialize_extra, cls=DjangoJSONEncoder
+        )
+
+    def as_json_pretty(self):
+        return json.dumps(
+            self.as_data(), default=serialize_extra, cls=DjangoJSONEncoder, indent="  "
+        )
 
     def as_data(self):
         return {
