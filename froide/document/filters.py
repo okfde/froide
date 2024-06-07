@@ -190,7 +190,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
 
     def filter_campaign(self, qs, name, value):
         if value == "-":
-            return qs.filter(Q("bool", must_not={"exists": {"field": "campaign"}}))
+            return qs.filter(ESQ("bool", must_not={"exists": {"field": "campaign"}}))
         return self.apply_filter(qs, name, campaign=value.id)
 
     def filter_tag(self, qs, name, value):
