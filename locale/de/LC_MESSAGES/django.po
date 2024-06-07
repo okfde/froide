@@ -641,6 +641,7 @@ msgstr "Sende E-Mail an Nutzer:innen"
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/foirequest/templatetags/foirequest_tags.py
 #: froide/foirequest/views/make_request.py
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "Subject"
 msgstr "Betreff"
 
@@ -2738,6 +2739,7 @@ msgstr "Empfänger-Behörde"
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/foirequest/views/make_request.py
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "To"
 msgstr "An"
 
@@ -3107,6 +3109,7 @@ msgstr "Anhang"
 #: froide/foirequest/models/attachment.py
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/problem/views.py
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "Attachments"
 msgstr "Anhänge"
 
@@ -4163,6 +4166,7 @@ msgstr[1] ""
 #: froide/letter/templates/letter/pdf/default.html
 #: froide/problem/templates/problem/message_toolbar_item.html
 #: froide/problem/views.py froide/team/templates/team/team_detail.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "Date"
 msgstr "Datum"
 
@@ -4536,6 +4540,7 @@ msgid "Open PDF"
 msgstr "PDF öffnen"
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
 msgid "Download original"
 msgstr "Original-Datei herunterladen"
 
@@ -4856,6 +4861,7 @@ msgstr "Antworten"
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/foirequest/views/make_request.py froide/helper/admin_utils.py
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "From"
 msgstr "Von"
 
@@ -4883,6 +4889,7 @@ msgstr "Weitere Empfänger:innen"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "Via"
 msgstr "Via"
 
@@ -6031,6 +6038,7 @@ msgstr "Atom-Feed"
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/foisite/models.py froide/frontpage/models.py
 #: froide/publicbody/models.py
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
 msgid "URL"
 msgstr "URL"
 
