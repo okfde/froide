@@ -35,6 +35,7 @@ class DocumentSearchView(BaseSearchView):
     show_filters = {
         "jurisdiction",
         "campaign",
+        "portal",
     }
     advanced_filters = {"jurisdiction", "campaign"}
     has_facets = True
@@ -58,7 +59,7 @@ class DocumentSearchView(BaseSearchView):
         if self.request.user.is_authenticated:
             q |= Q("term", user=self.request.user.pk)
             q |= Q("terms", team=Team.objects.get_list_for_user(self.request.user))
-        return super().get_base_search().filter(q).filter("term", portal=0)
+        return super().get_base_search().filter(q)
 
 
 class DocumentSearchFeedView(DocumentSearchView):

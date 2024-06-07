@@ -1,8 +1,8 @@
-{% extends 'helper/search/search_base.html' %}
+{% extends "helper/search/search_base.html" %}
 {% load i18n %}
 {% block search_title %}
     {% trans "Documents" %}
-{% endblock %}
+{% endblock search_title %}
 {% block search_form_filters %}
     <div class="row align-items-start">
         {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
@@ -15,10 +15,11 @@
         {% else %}
             {{ form.campaign }}
         {% endif %}
+        <div class="col-md-4">{{ form.portal }}</div>
         {{ form.publicbody }}
         {{ form.tag }}
     </div>
-{% endblock %}
+{% endblock search_form_filters %}
 {% block sidebar_bottom %}
     <div class="card mb-3">
         <div class="card-body">
@@ -28,4 +29,4 @@
             </h6>
         </div>
     </div>
-{% endblock %}
+{% endblock sidebar_bottom %}

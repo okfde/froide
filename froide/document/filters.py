@@ -57,6 +57,12 @@ class DocumentFilter(FCDocumentFilter):
         return qs.filter(foirequest=value)
 
 
+def get_portal_queryset(request):
+    if not request.user.is_staff:
+        return DocumentPortal.objects.filter(public=True)
+    return DocumentPortal.objects.all()
+
+
 class PageDocumentFilterset(BaseSearchFilterSet):
     query_fields = ["title^3", "description^2", "content"]
 
@@ -107,11 +113,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method="filter_directory",
         widget=forms.HiddenInput(),
     )
-    portal = django_filters.ModelChoiceFilter(
-        queryset=DocumentPortal.objects.filter(public=True),
-        to_field_name="pk",
+    portal = django_filters.ChoiceFilter(
+        empty_label=_("FoI requests"),
+        null_value="",
         method="filter_portal",
-        widget=forms.HiddenInput(),
+        label=_("Source"),
+        widget=BootstrapSelect,
     )
     document = django_filters.ModelChoiceFilter(
         queryset=Document.objects.all(),
@@ -155,6 +162,13 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         self.request = request
         self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
 
+        self.filters["portal"].extra["choices"] = [
+            (p.pk, str(p)) for p in get_portal_queryset(request)
+        ] + [("-", _("All"))]
+
+    def has_query(self):
+        return bool(self.request.GET.get("q"))
+
     def filter_queryset(self, queryset):
         required_unlisted_filters = {"document", "collection"}
         filter_present = any(
@@ -164,6 +178,11 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         )
         if not filter_present:
             queryset = queryset.filter(listed=True)
+        if not self.form.cleaned_data.get("portal"):
+            queryset = self.apply_filter(queryset, "portal", portal=0)
+        if not self.has_query():
+            # Only show first page when there's no query
+            queryset = self.apply_filter(queryset, "number", number=1)
         return super().filter_queryset(queryset)
 
     def filter_jurisdiction(self, qs, name, value):
@@ -196,21 +215,27 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         qs = self.apply_filter(qs, name, directories=directory.id)
         return qs
 
-    def filter_portal(self, qs, name, portal):
-        qs = self.apply_filter(qs, name, portal=portal.id)
-        qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
-        has_query = self.request.GET.get("q")
-        if not has_query:
-            qs = qs.add_sort()
-            qs = qs.add_sort("-created_at")
+    def filter_portal(self, qs, name, portal_value):
+        if portal_value == "-":
+            pass
+        else:
+            try:
+                portal_qs = get_portal_queryset(self.request)
+                portal = portal_qs.get(id=int(portal_value))
+            except (DocumentPortal.DoesNotExist, IndexError):
+                return qs.none()
+            qs = self.apply_filter(qs, name, portal=portal.id)
+            qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
+
+            if not self.has_query():
+                qs = qs.add_sort()
+                qs = qs.add_sort("-created_at")
         return qs
 
     def apply_data_filters(self, qs, filters):
-        has_query = self.request.GET.get("q")
-
         for filt in filters:
             es_key = filt["key"].replace("__", ".")
-            if has_query and filt.get("facet"):
+            if self.has_query() and filt.get("facet"):
                 facet = filt.get("facet_config", {"type": "term"})
                 if facet["type"] == "term":
                     qs = qs.add_aggregation([es_key])
