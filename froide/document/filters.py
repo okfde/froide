@@ -180,6 +180,11 @@ class PageDocumentFilterset(BaseSearchFilterSet):
             queryset = queryset.filter(listed=True)
         if not self.form.cleaned_data.get("portal"):
             queryset = self.apply_filter(queryset, "portal", portal=0)
+            queryset = self.apply_filter(
+                queryset,
+                "foirequest",
+                ESQ("bool", must={"exists": {"field": "foirequest"}}),
+            )
         if not self.has_query():
             # Only show first page when there's no query
             queryset = self.apply_filter(queryset, "number", number=1)
