@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load i18n %}
 {% load humanize %}
 {% load searchtags %}
@@ -8,7 +8,8 @@
         <div class="col-md-8 order-2">
             <div class="mb-3 mt-2">
                 <h2>
-                    {% block search_title %}{% endblock %}
+                    {% block search_title %}
+                    {% endblock search_title %}
                 </h2>
             </div>
             {% block search_form %}
@@ -24,10 +25,11 @@
                                 </div>
                             </div>
                         </div>
-                    {% endblock %}
-                    {% block search_form_filters %}{% endblock %}
+                    {% endblock search_form_query %}
+                    {% block search_form_filters %}
+                    {% endblock search_form_filters %}
                 </form>
-            {% endblock %}
+            {% endblock search_form %}
             {% block search_results_label %}
                 <div class="mb-4 text-end">
                     <p>
@@ -42,7 +44,7 @@
                         {% endif %}
                     </p>
                 </div>
-            {% endblock %}
+            {% endblock search_results_label %}
             {% block search_results %}
                 <ul class="list-unstyled">
                     {% for object in object_list %}
@@ -66,12 +68,12 @@
                 {% if paginator.num_pages > 1 %}
                     {% include "pagination/pagination.html" with page_obj=page_obj %}
                 {% endif %}
-            {% endblock %}
+            {% endblock search_results %}
         </div>
         <div class="col-md-4 order-1">
             {% render_search_list search_name query=form.q.value num_results=page_obj.paginator.formatted_count %}
             {% block sidebar_facets %}
-                {% if has_query and facet_config and count %}
+                {% if has_query and facet_config and has_facets and count %}
                     <div class="card mb-3">
                         <div class="card-body">
                             <dl>
@@ -82,8 +84,9 @@
                         </div>
                     </div>
                 {% endif %}
-            {% endblock %}
-            {% block sidebar_bottom %}{% endblock %}
+            {% endblock sidebar_facets %}
+            {% block sidebar_bottom %}
+            {% endblock sidebar_bottom %}
         </div>
     </div>
-{% endblock %}
+{% endblock app_body %}

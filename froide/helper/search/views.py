@@ -138,6 +138,7 @@ class BaseSearchView(ListView):
                 "search_name": self.search_name,
                 "search_url": reverse(self.search_url_name),
                 "facet_config": self.facet_config,
+                "has_facets": any(bool(self.facets[x]["buckets"]) for x in self.facets),
                 "has_query": self.has_query,
                 "object_template": self.object_template,
                 "show_filters": self.show_filters,
