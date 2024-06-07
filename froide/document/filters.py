@@ -114,7 +114,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         widget=forms.HiddenInput(),
     )
     portal = django_filters.ChoiceFilter(
-        empty_label=_("FoI requests"),
+        empty_label=_("Freedom of Information Requests"),
         null_value="",
         method="filter_portal",
         label=_("Source"),
