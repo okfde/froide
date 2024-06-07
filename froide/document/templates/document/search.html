@@ -1,5 +1,12 @@
 {% extends "helper/search/search_base.html" %}
 {% load i18n %}
+{% block title %}
+    {% if has_query %}
+        {% blocktranslate with query=form.cleaned_data.q %}{{ query }} document search{% endblocktranslate %}
+    {% else %}
+        {% translate "Document search" %}
+    {% endif %}
+{% endblock title %}
 {% block search_title %}
     {% trans "Documents" %}
 {% endblock search_title %}
