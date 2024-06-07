@@ -11640,6 +11640,11 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/document/filters.py
+#, fuzzy
+msgid "FoI requests"
+msgstr "Informationsfreiheitsanfragen"
+
 #~ msgid "make request"
 #~ msgstr "Anfrage stellen"
 
