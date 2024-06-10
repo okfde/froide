@@ -1945,7 +1945,7 @@ msgstr "Informationsfreiheitsanfragen"
 
 #: froide/document/filters.py
 msgid "Source"
-msgstr ""
+msgstr "Quelle"
 
 #: froide/document/filters.py froide/helper/admin_utils.py
 msgid "All"
@@ -2009,12 +2009,11 @@ msgstr "Seite"
 #: froide/document/templates/document/search.html
 #, python-format
 msgid "%(query)s document search"
-msgstr ""
+msgstr "%(query)s Dokumentensuche"
 
 #: froide/document/templates/document/search.html
-#, fuzzy
 msgid "Document search"
-msgstr "Dokumente"
+msgstr "Dokumentensuche"
 
 #: froide/document/templates/document/search.html
 msgid "RSS feed for this search"
@@ -4946,19 +4945,16 @@ msgid "Download as PDF"
 msgstr "Download als PDF"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#, fuzzy
 msgid "Download with attachments"
-msgstr "Andere Anhänge"
+msgstr "Download mit Anhängen"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#, fuzzy
 msgid "Download as PDF letter"
-msgstr "Download als PDF"
+msgstr "Download als PDF-Brief"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
-#, fuzzy
 msgid "Download original email"
-msgstr "Original-Datei herunterladen"
+msgstr "Original-E-Mail herunterladen"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
 #: froide/foirequest/templates/foirequest/header/info-box.html
