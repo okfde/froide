@@ -25,6 +25,7 @@ class BaseSearchView(ListView):
     default_sort = "_score"
     filtered_objs = None
     select_related = ()
+    prefetch_related = ()
     search_url_name = ""
     search_manager_kwargs = {}
     object_template = None
@@ -37,7 +38,7 @@ class BaseSearchView(ListView):
             self.kwargs,
             get_data,
             search_url_name=self.search_url_name,
-            **self.search_manager_kwargs
+            **self.search_manager_kwargs,
         )
 
     def get_base_search(self):
@@ -116,6 +117,8 @@ class BaseSearchView(ListView):
         qs = sqs.to_queryset()
         if self.select_related:
             qs = qs.select_related(*self.select_related)
+        if self.prefetch_related:
+            qs = qs.prefetch_related(*self.prefetch_related)
 
         queryset = sqs.wrap_queryset(qs)
 
