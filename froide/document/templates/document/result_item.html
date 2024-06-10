@@ -17,6 +17,16 @@
             {% endif %}
         </a>
     </h5>
+    {% if object.document.foirequest %}
+        <a href="{{ object.document.foirequest.get_absolute_url }}">
+            <small class="badge text-bg-secondary">{{ object.document.foirequest.title|truncatechars:25 }}</small>
+        </a>
+    {% endif %}
+    {% if object.document.publicbody %}
+        <a href="{{ object.document.publicbody.get_absolute_url }}">
+            <small class="badge text-bg-info">{{ object.document.publicbody.name|truncatechars:25 }}</small>
+        </a>
+    {% endif %}
     {% if object.document.description %}
         <small>{{ object.document.description|truncatewords:20 }}</small>
     {% elif not has_query %}
