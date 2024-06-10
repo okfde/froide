@@ -97,7 +97,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     )
     publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody._default_manager.all(),
-        to_field_name="slug",
+        to_field_name="pk",
         method="filter_publicbody",
         widget=forms.HiddenInput(),
     )
