@@ -102,7 +102,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         widget=forms.HiddenInput(),
     )
     collection = django_filters.ModelChoiceFilter(
-        queryset=DocumentCollection.objects.all(),
+        queryset=DocumentCollection.objects.filter(public=True),
         to_field_name="pk",
         method="filter_collection",
         widget=forms.HiddenInput(),

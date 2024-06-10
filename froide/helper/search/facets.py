@@ -72,6 +72,7 @@ class SearchManager:
                 aggregation_data[key][key],  # the data is nested due to aggs filter
                 getter=config.get("getter"),
                 model=config.get("model"),
+                queryset=config.get("queryset"),
                 query_param=config.get("query_param", key),
                 label_getter=config.get("label_getter"),
             )
@@ -80,7 +81,14 @@ class SearchManager:
         }
 
     def resolve_facet(
-        self, key, info, getter=None, label_getter=None, query_param=None, model=None
+        self,
+        key,
+        info,
+        getter=None,
+        label_getter=None,
+        query_param=None,
+        model=None,
+        queryset=None,
     ):
         if getter is None:
             getter = key_getter
@@ -89,9 +97,14 @@ class SearchManager:
             label_getter = key_getter
 
         query_key = query_param or key
-        if model is not None:
-            pks = [item["key"] for item in info["buckets"]]
+        objs = None
+        pks = [item["key"] for item in info["buckets"]]
+        if queryset is not None:
+            objs = {str(o.pk): o for o in queryset.filter(pk__in=pks)}
+        elif model is not None:
             objs = {str(o.pk): o for o in model._default_manager.filter(pk__in=pks)}
+
+        if objs is not None:
             for item in info["buckets"]:
                 item_key = str(item["key"])
                 if item_key in objs:
