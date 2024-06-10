@@ -71,8 +71,14 @@ class Breadcrumbs:
                 yield BreadcrumbItem(title=item)
             elif type(item) is tuple and len(item) == 2:
                 yield BreadcrumbItem(title=item[0], url=item[1])
+            else:
+                # i.e. lazy translation objects
+                yield BreadcrumbItem(title=str(item))
 
-    def __add__(self, items):
+    def __len__(self):
+        return len(self.items)
+
+    def __add__(self, items: BreadcrumbItems):
         """
         Add items using the plus operator: breadcrumbs + [...]
         """
