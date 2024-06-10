@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Generator, Sequence
 from dataclasses import dataclass
-from typing import Optional, Tuple, Union
+from typing import Generator, Optional, Sequence, Tuple, Union
 
 from django.template.context import Context
 from django.urls import NoReverseMatch, reverse
