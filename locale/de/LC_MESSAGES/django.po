@@ -11671,8 +11671,9 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#~ msgid "Documents (beta)"
-#~ msgstr "Dokumente (beta)"
+#: froide/document/apps.py
+msgid "Documents (beta)"
+msgstr "Dokumente (beta)"
 
 #, fuzzy
 #~ msgid "FoI requests"
