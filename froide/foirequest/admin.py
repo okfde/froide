@@ -139,8 +139,14 @@ class FoiRequestChangeList(ChangeList):
         ret = super().get_results(*args, **kwargs)
         q = self.queryset.aggregate(
             user_count=models.Count("user", distinct=True),
+            publicbody_count=models.Count("public_body", distinct=True),
+            jurisdiction_count=models.Count("jurisdiction", distinct=True),
+            campaign_count=models.Count("campaign", distinct=True),
         )
         self.user_count = q["user_count"]
+        self.publicbody_count = q["publicbody_count"]
+        self.jurisdiction_count = q["jurisdiction_count"]
+        self.campaign_count = q["campaign_count"]
 
         return ret
 

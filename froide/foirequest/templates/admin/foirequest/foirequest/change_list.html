@@ -1,6 +1,11 @@
 {% extends "admin/change_list.html" %}
 {% load i18n %}
 {% block result_list %}
-    <p>{% trans "Distinct users:" %} {{ cl.user_count }}</p>
+    <ul>
+        <li>{% trans "Distinct users:" %} {{ cl.user_count }}</li>
+        <li>{% trans "Distinct public bodies:" %} {{ cl.publicbody_count }}</li>
+        <li>{% trans "Distinct jurisdictions:" %} {{ cl.jurisdiction_count }}</li>
+        <li>{% trans "Distinct campaigns:" %} {{ cl.campaign_count }}</li>
+    </ul>
     {{ block.super }}
-{% endblock %}
+{% endblock result_list %}
