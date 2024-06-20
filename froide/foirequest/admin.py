@@ -1,14 +1,18 @@
 import re
 from io import BytesIO
+from typing import Optional
 
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.admin.views.main import ChangeList
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.db.models.functions import RowNumber
-from django.http import HttpResponse
+from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path, reverse, reverse_lazy
@@ -17,6 +21,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.models import UserTag
+from froide.comments.models import FroideComment
 from froide.guide.models import Action
 from froide.guide.utils import assign_guidance_action
 from froide.helper.admin_utils import (
@@ -571,6 +576,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         "run_guidance_notify",
         "attach_guidance_action",
         "tag_all",
+        "add_comment",
     ]
 
     tag_all = make_batch_tag_action()
@@ -694,6 +700,53 @@ class FoiMessageAdmin(admin.ModelAdmin):
             _("{num} of {total} selected messages were sent.").format(
                 num=count, total=total
             ),
+        )
+
+    @admin.action(
+        description=_("Add comment..."),
+        permissions=("change",),
+    )
+    def add_comment(
+        self, request: HttpRequest, queryset: QuerySet
+    ) -> Optional[TemplateResponse]:
+        """
+        Add moderation comment to selected messages.
+
+        """
+
+        if request.POST.get("comment"):
+            comment = request.POST["comment"]
+
+            now = timezone.now()
+            ct = ContentType.objects.get_for_model(FoiMessage)
+            site = Site.objects.get_current()
+            for message in queryset:
+                FroideComment.objects.create(
+                    content_type=ct,
+                    object_pk=message.id,
+                    user_name=request.user.first_name,
+                    comment=comment,
+                    is_moderation=True,
+                    submit_date=now,
+                    site=site,
+                )
+
+            count = queryset.count()
+            self.message_user(request, _("comment posted to %d messages." % count))
+            return None
+
+        select_across = request.POST.get("select_across", "0") == "1"
+        context = {
+            "opts": self.model._meta,
+            "action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+            "queryset": queryset,
+            "action_name": "add_comment",
+            "select_across": select_across,
+        }
+
+        # Display basic comment text form
+        return TemplateResponse(
+            request, "admin/foirequest/foimessage/add_comment.html", context
         )
 
 
