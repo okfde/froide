@@ -617,6 +617,9 @@ def rerun_message_redaction(foirequests):
 def permanently_anonymize_requests(foirequests):
     from .models import FoiAttachment
 
+    # Old secret address contained plus, new dot, split by either
+    SECRET_ADDRESS_SPLITTER = re.compile(r"[\.\+]")
+
     replacements = {
         "name": str(_("<information-removed>")),
         "email": str(_("<information-removed>")),
@@ -629,7 +632,7 @@ def permanently_anonymize_requests(foirequests):
         foirequest.closed = True
         # Cut off name part of secret address
         foirequest.secret_address = "~" + ".".join(
-            foirequest.secret_address.split(".")[2:]
+            SECRET_ADDRESS_SPLITTER.split(foirequest.secret_address)[2:]
         )
         foirequest.save()
         user = foirequest.user
