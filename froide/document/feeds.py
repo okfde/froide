@@ -72,8 +72,9 @@ class DocumentSearchFeed(Feed):
     @clean_feed_output
     def item_description(self, item):
         return format_html(
-            "<p>{description}</p><p>%s</p>" % item.query_highlight,
+            "<p>{description}</p><p>{highlight}</p>",
             description=item.document.description,
+            highlight=item.query_highlight,
         )
 
     def item_pubdate(self, item):
