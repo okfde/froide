@@ -1,9 +1,26 @@
 <script setup>
-import { ref, reactive, computed, defineProps } from 'vue'
+import { ref, reactive, computed, defineProps, nextTick, watch } from 'vue'
 import AppShell from './app-shell.vue'
 import PublicbodyChooser from '../publicbody/publicbody-chooser'
+// TODO linter wrong? the two above are just fine...
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import DocumentUploader from '../docupload/document-uploader.vue'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
+
+/* DEBUG
+const delay = function (duration) {
+  return function (x) {
+    return new Promise((resolve) => {
+      console.info('delaying', duration, resolve)
+      setTimeout(function () {
+        console.log('delay done')
+        resolve(x)
+      }, duration)
+    })
+  }
+}
+*/
 
 const props = defineProps({
   config: Object,
@@ -11,6 +28,7 @@ const props = defineProps({
   message: Object,
   status_form: Object,
   object_public_body_id: String,
+  object_public_body: Object,
   object_public: Boolean,
   date_min: String,
   date_max: String,
@@ -23,7 +41,9 @@ const step = computed(() =>
 )
 
 const formSent = ref(
-  props.form.fields.sent.value || props.form.fields.sent.initial
+  props.form.fields.sent.value?.toString() ||
+    props.form.fields.sent.initial?.toString() ||
+    '0'
 )
 const formIsSent = computed(() => formSent.value === '1')
 
@@ -35,6 +55,24 @@ const formStatus = ref(
 )
 const formStatusWasResolved = formStatus.value === 'resolved'
 
+// remove nonsensical combos
+const formStatusChoices = computed(() =>
+  props.status_form.fields.resolution.choices.filter((choice) => {
+    if (formIsSent.value) {
+      switch (choice.value) {
+        case 'successful':
+        case 'partially_successful':
+        case 'not_held':
+        case 'refused':
+          return false
+      }
+    } else {
+      if (choice.value === 'user_withdrew_costs') return false
+    }
+    return true
+  })
+)
+
 const formCost = props.status_form.fields.costs.initial?.intValue || 0
 const formHasHadCost = formCost > 0
 
@@ -45,16 +83,60 @@ const formPublicbodyId =
   props.form.fields.publicbody?.initial?.id?.toString() ||
   props.object_public_body_id
 
-const formPublicbodyLabel =
-  props.form.fields.publicbody.choices.find(
-    (choice) => choice.value === formPublicbodyId
-  )?.label || 'Error'
+const formPublicbodyLabel = props.object_public_body?.name || 'Error'
 
 const documentsSelectedPdfRedaction = ref([])
-const documentsPdfRedactionIndex = ref(0)
-const currentPdfRedactionDoc = computed(
-  () => documentsSelectedPdfRedaction.value[documentsPdfRedactionIndex.value]
-)
+const documentsPdfRedactionIndex = computed(() => {
+  if (3000 < step.value && step.value < 3100) return step.value - 3001
+  return false
+})
+
+const currentPdfRedactionDoc = computed(() => {
+  if (documentsPdfRedactionIndex.value === false) return
+  return documentsSelectedPdfRedaction.value[documentsPdfRedactionIndex.value]
+})
+
+const documentUploader = ref()
+const documentsImagesConverting = ref(false)
+const documentsConvertImages = () => {
+  if (documentUploader.value.$refs.imageDocument.length === 0) {
+    console.log('no images to convert')
+    gotoStep()
+    return
+  }
+  documentsImagesConverting.value = true
+  // XXX wild mix of Vue2&3 refs, not the cleanest, but a bus was basically impossible
+  // we are calling a grand-child component's method
+  documentUploader.value.$refs.imageDocument?.[0]?.convertImages?.()
+  // ^child              ^vue2 ^grandchild...REN!  ^method
+  // alternative: pass a prop, watch it, react?
+}
+const documentsImagesDocumentFilename = ref('brief.pdf')
+
+const documentsBasicOperations = ref(false)
+
+const pdfRedaction = ref()
+const pdfRedactionCurrentHasRedactions = ref(false)
+const pdfRedactionProcessing = ref(false)
+const pdfRedactionRedact = () => {
+  pdfRedactionProcessing.value = true
+  // XXX calling child's method
+  // alternatively, could listen to an event
+  pdfRedaction.value
+    .redactOrApprove()
+    // .then(delay(3000))
+    .then(() => {
+      pdfRedactionProcessing.value = false
+      pdfRedactionCurrentHasRedactions.value = false
+      gotoStep()
+    })
+}
+const pdfRedactionUploaded = () => {
+  // TODO handle errors?
+  // XXX again, we're calling child's method, could handle attachments here, store-like,
+  //   and pass as a "override prop" to the components
+  documentUploader.value.refreshAttachments()
+}
 
 const mobileHeaderTitle2 = computed(() => {
   if (2000 <= step.value && step.value < 3000) {
@@ -81,14 +163,14 @@ const progress = computed(() => {
   return Math.min(Math.floor(step.value / 1000), 3) / 3
 })
 
-const gotoStep = () => {
-  stepHistory.push(getNextStep())
+const gotoStep = (nextStep) => {
+  stepHistory.push(nextStep || getNextStep())
 }
 
 const gotoValid = computed(() => {
   switch (step.value) {
     case 2382:
-      return validity.yellowDate
+      return validity.yellow_date
     case 2384:
       return validity.date
   }
@@ -109,6 +191,13 @@ const getNextStep = () => {
     case 1100:
       return 1110
     case 1110:
+      if (documentsImageMode.value) return 1201
+      return 2376
+    case 1201:
+      return 1202
+    case 1202:
+      return 1300
+    case 1300:
       return 2376
     case 2376:
       return 2380
@@ -136,7 +225,8 @@ const getNextStep = () => {
       return 3402
     case 3402:
       if (documentsSelectedPdfRedaction.value.length === 0) return 4413
-      return 3001
+      return 3001 // TODO
+    /*
     case 3001:
       if (
         documentsPdfRedactionIndex.value <
@@ -146,25 +236,66 @@ const getNextStep = () => {
         return 3001
       }
       return 4413
+    */
     case 4413:
       return 4570
     case 4570:
       return 4570
   }
+  if (3000 < step.value && step.value < 3100) {
+    if (
+      documentsPdfRedactionIndex.value <
+      documentsSelectedPdfRedaction.value.length - 1
+    ) {
+      return step.value + 1
+    }
+    return 4413
+  }
 }
+
+// side effects for (entering) steps
+watch(step, (newStep) => {
+  console.log('# watch step', newStep)
+  switch (newStep) {
+    case 2384:
+      updateValidity('date')
+      break
+    case 4413:
+      documentsBasicOperations.value = false
+      break
+  }
+})
 
 const stepUiConf = {
   1110: {
     documents: true,
     documentsUpload: true,
-    documentsHideSelection: true
+    documentsHideSelection: true,
+    documentsHidePdf: true,
+    documentsImagesSimple: true
+  },
+  1201: {
+    documents: true,
+    documentsUpload: true,
+    documentsHideSelection: true,
+    documentsHidePdf: true,
+    documentsImagesSimple: true
+  },
+  1300: {
+    documents: true,
+    documentsUpload: false,
+    documentsHideSelection: true,
+    documentsIconStyle: 'icon'
   },
   3402: {
-    documents: true
+    documents: true,
+    documentsIconStyle: 'thumbnail'
   },
   4413: {
     documents: true,
-    documentsHideSelection: !(props.object_public && props.user_is_staff)
+    documentsHideSelection: !(props.object_public && props.user_is_staff),
+    documentsIconStyle: 'thumbnail',
+    documentsHighlightRedactions: true
   }
 }
 
@@ -175,23 +306,61 @@ const uiDocumentsUpload = computed(
 const uiDocumentsHideSelection = computed(
   () => stepUiConf[step.value]?.documentsHideSelection || false
 )
+const uiDocumentsHidePdf = computed(
+  () => stepUiConf[step.value]?.documentsHidePdf || false
+)
+const uiDocumentsIconStyle = computed(
+  () => stepUiConf[step.value]?.documentsIconStyle || ''
+)
+const uiDocumentsImagesSimple = computed(
+  () => stepUiConf[step.value]?.documentsImagesSimple || false
+)
+const uiDocumentsHighlightRedactions = computed(
+  () => stepUiConf[step.value]?.documentsHighlightRedactions || false
+)
 
-const pdfRedactionUploaded = () => {
+const documentsImageMode = ref(false)
+const documentsImagesAdded = () => {
+  if (step.value !== 1110) {
+    console.error("you shouldn't be able to upload images from here")
+    return
+  }
+  documentsImageMode.value = true
+  gotoStep()
+}
+const documentsImagesConverted = () => {
+  documentsImagesConverting.value = false
+  if (step.value !== 1202) {
+    console.error("conversion shouldn't have happened here")
+    return
+  }
   gotoStep()
 }
 
 const validity = reactive({
   date: false,
-  yellowDate: false
+  yellow_date: false
 })
 
-const updateValidity = (key, evt) => {
-  console.log(evt, evt.currentTarget.checkValidity())
+// TODO updateValidity should (maybe) be called on gotoStep(2384), too
+const updateValidity = (key) => {
+  const el = document.forms.postupload.elements[key]
   // just assume true if browser doesn't support checkValidity
-  validity[key] =
-    'checkValidity' in evt.currentTarget
-      ? evt.currentTarget.checkValidity()
-      : true
+  validity[key] = 'checkValidity' in el ? el.checkValidity() : true
+  // console.log('updateValidity', el, 'value=', el.value, 'checkValidity()', el.checkValidity(), validity[key], validity, values)
+  /*
+  console.log(
+    'updateValidity',
+    el,
+    JSON.stringify({
+      value: el.value,
+      'checkValidity()': el.checkValidity(),
+      'validity[key]': validity[key],
+      validity,
+      values
+    })
+  )
+  */
 }
 
 const values = reactive({
@@ -202,6 +371,23 @@ const values = reactive({
     props.status_form.fields.costs.initial.strValue,
   isYellow: false
 })
+
+const uppyClick = () => {
+  // wait until gotoStep, called immediately before, unveils uppy in DOM (v-if)
+  nextTick(() => {
+    const button = documentUploader.value.$el.querySelector(
+      '.uppy-Dashboard-browse'
+    )
+    console.log('# uppyClick', button)
+    button.click()
+  })
+}
+
+const debugSkipDate = () => {
+  values.date = document.forms.postupload.elements.date.max
+  updateValidity('date')
+  gotoStep()
+}
 </script>
 
 <template>
@@ -245,20 +431,25 @@ const values = reactive({
       </button>
     </template>
     <template #main>
-      <pre style="border: 2px solid mauve" v-if="form.nonFieldErrors.length">
-        form.nonFieldErrors =
-        {{ form.nonFieldErrors }}
-      </pre>
-      <pre
-        style="border: 2px solid mauve"
-        v-if="Object.keys(form.errors).length">
-        form.errors =
-        {{ form.errors }}
-      </pre>
+      <details v-if="form.nonFieldErrors.length">
+        <summary class="debug">DEBUG form.nonFieldErrors</summary>
+        <pre>{{ form.nonFieldErrors }}</pre>
+      </details>
+      <details v-if="Object.keys(form.errors).length">
+        <summary class="debug">DEBUG form.errors</summary>
+        <pre>{{ form.errors }}</pre>
+      </details>
+
       <div v-show="step === 1100">
         <button disabled class="btn btn-primary">Dokumente scannen</button>
         <p>Handykamera verwenden...</p>
-        <button type="button" @click="gotoStep" class="btn btn-primary">
+        <button
+          type="button"
+          @click="
+            gotoStep()
+            uppyClick()
+          "
+          class="btn btn-primary">
           Dateien hochladen
         </button>
         <p>Wenn Sie den Brief...</p>
@@ -270,6 +461,31 @@ const values = reactive({
 
       <div v-show="step === 1110">
         <!-- document-uploader see below -->
+      </div>
+
+      <div v-show="step === 1201">
+        <label class="fw-bold form-label field-required">
+          Ziehen Sie die Seiten in die richtige Reihenfolge
+        </label>
+      </div>
+
+      <div v-show="step === 1202">
+        <div>(TODO Bild)</div>
+        <div>Wir erstellen aus Ihren Bildern ein PDF-Dokument</div>
+        <div class="documents-filename">
+          <div class="form-group">
+            <input
+              id="documents_filename"
+              v-model="documentsImagesDocumentFilename"
+              class="form-control" />
+            <label for="documents_filename"> Dateiname ändern </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- there is another for this step, further down below document-uploader -->
+      <div v-show="step === 1300">
+        <div>Bisher vorhandene Dokumente</div>
       </div>
 
       <div v-show="step === 2376">
@@ -372,17 +588,25 @@ const values = reactive({
           Wann wurde der Brief versendet?
           <!--{{ form.fields.date.label }}-->
         </label>
+        <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
+        <!-- TODO "always" required might break early post/submit
+          :required="step === 2384 || step === 2380"
+          maybe: step > 2380 ?
+        -->
         <input
           id="id_date"
           class="form-control"
           type="date"
           name="date"
           v-model="values.date"
-          :class="{ 'is-invalid': form.errors.date }"
-          :required="step === 2384"
+          :class="{
+            'is-invalid': validity.date === false,
+            'is-valid': validity.date === true
+          }"
+          required
           :min="props.date_min"
           :max="props.date_max"
-          @input="updateValidity('date', $event)"
+          @input="updateValidity('date')"
           :x-placeholder="form.fields.date.placeholder" />
         <!--<div class="form-text">
           {{ form.fields.date.help_text }}
@@ -417,8 +641,8 @@ const values = reactive({
           :min="props.date_min"
           :max="props.date_max"
           :required="step === 2382"
-          @input="updateValidity('yellowDate', $event)"
-          v-model="values.yellowDate" />
+          @input="updateValidity('yellow_date')"
+          v-model="values.yellow_date" />
       </div>
 
       <div v-show="step === 2437">
@@ -478,7 +702,7 @@ const values = reactive({
         </label>
         <div
           class="form-check"
-          v-for="(choice, choiceIndex) in status_form.fields.resolution.choices"
+          v-for="(choice, choiceIndex) in formStatusChoices"
           :key="choice.value">
           <input
             type="radio"
@@ -524,7 +748,7 @@ const values = reactive({
       </div>
 
       <div v-show="step === 2390">
-        <label class="fw-bold col-md-4 col-form-label" for="id_nowcost">
+        <label class="fw-bold col-form-label" for="id_nowcost">
           Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von
           {{
             status_form.fields.costs.value?.strValue ||
@@ -554,8 +778,8 @@ const values = reactive({
       </div>
 
       <div v-show="step === 3402">
-        <label class="fw-bold col-md-4 col-form-label">
-          Welche Dieser Dokumente möchen Sie schwärzen?
+        <label class="fw-bold col-form-label">
+          Welche dieser Dokumente möchen Sie schwärzen?
         </label>
         <div>
           <a>Alle auswählen TODO</a>
@@ -563,7 +787,7 @@ const values = reactive({
         </div>
       </div>
 
-      <div v-show="step === 3001">
+      <div v-show="3000 < step && step < 3100">
         <label class="fw-bold col-md-4 col-form-label">
           Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
           {{ documentsSelectedPdfRedaction.length }})
@@ -577,11 +801,11 @@ const values = reactive({
         <div>
           <a><u>Ich habe technische Probleme TODO</u></a>
         </div>
-        <pre>documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre>
-        <pre>currentPdfRedactionDoc = {{ currentPdfRedactionDoc }}</pre>
-        <!-- optionally iframe? -->
+        <pre class="debug">
+DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
+        >
         <pdf-redaction
-          v-if="step === 3001 && currentPdfRedactionDoc"
+          v-if="currentPdfRedactionDoc"
           :key="currentPdfRedactionDoc.id"
           :pdf-path="currentPdfRedactionDoc.attachment.file_url"
           :attachment-url="currentPdfRedactionDoc.attachment.anchor_url"
@@ -591,18 +815,26 @@ const values = reactive({
               '/' + currentPdfRedactionDoc.id + '/'
             )
           "
+          :approve-url="
+            config.url.approveAttachment.replace(
+              '/0/',
+              '/' + currentPdfRedactionDoc.id + '/'
+            )
+          "
+          :minimal-ui="true"
           :no-redirect="true"
           :redact-regex="['teststraße\ 1']"
           :can-publish="true"
           :config="config"
-          @uploaded="pdfRedactionUploaded" />
+          @uploaded="pdfRedactionUploaded"
+          @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
+          ref="pdfRedaction" />
       </div>
 
       <div v-show="step === 4413">
         <label class="fw-bold col-md-4 col-form-label">
           Diese Dokumente werden der Anfrage hinzugefügt:
         </label>
-        <div><a>Bearbeiten TODO</a></div>
       </div>
 
       <div v-show="step === 2565">
@@ -612,21 +844,18 @@ const values = reactive({
         </label>
         <div class="col-md-8">
           <div class="input-group" style="width: 10rem">
+            <!-- type=number does not support pattern -->
+            <!-- TODO: client-side validation like with type=date -->
             <input
               type="number"
               name="costs"
               id="id_costs"
               class="form-control col-3"
               inputmode="decimal"
-              pattern="[0-9]+([\.,][0-9]+)?"
               style="appearance: textfield; text-align: right"
               min="0"
               max="1000000000"
               step="0.01"
-              x-value="
-                status_form.fields.costs.value?.strValue ||
-                status_form.fields.costs.initial.strValue
-              "
               v-model="values.costs"
               :class="{ 'is-invalid': status_form.errors.costs }" />
             <span class="input-group-text">Euro</span>
@@ -646,24 +875,81 @@ const values = reactive({
 
       <!-- not in v-show="step ..." -->
       <div v-show="uiDocuments">
+        <div v-if="step === 4413" class="d-flex justify-content-end">
+          <button
+            type="button"
+            class="btn-linklike"
+            @click="documentsBasicOperations = !documentsBasicOperations">
+            {{ documentsBasicOperations ? 'Fertig' : 'Bearbeiten' }}
+          </button>
+        </div>
+        <!-- TODO maybe :hide-documents (PDFs) in step 1110 -->
         <document-uploader
           :config="config"
           :message="message"
           :show-upload="uiDocumentsUpload"
+          :icon-style="uiDocumentsIconStyle"
           :hide-selection="uiDocumentsHideSelection"
-          @selectionupdated="documentsSelectedPdfRedaction = $event" />
+          :hide-other="true"
+          :hide-pdf="uiDocumentsHidePdf"
+          :hide-status-tools="true"
+          :images-simple="uiDocumentsImagesSimple"
+          :images-document-filename="documentsImagesDocumentFilename"
+          :file-basic-operations="documentsBasicOperations"
+          :highlight-redactions="uiDocumentsHighlightRedactions"
+          @selectionupdated="documentsSelectedPdfRedaction = $event"
+          @imagesadded="documentsImagesAdded"
+          @imagesconverted="documentsImagesConverted"
+          ref="documentUploader" />
+      </div>
+
+      <div v-show="step === 1300">
+        <div class="my-1">
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block"
+            :disabled="true">
+            + Weiteres Dokument scannen
+          </button>
+        </div>
+        <div class="my-1">
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block"
+            @click="gotoStep(1110)">
+            + Weitere Dateien hochladen
+          </button>
+        </div>
       </div>
     </template>
 
     <template #actions>
-      <template v-if="step === 3001">
-        <button type="button" @click="gotoStep" class="action btn btn-primary">
+      <!--<template v-if="step === 3001">-->
+      <template v-if="3000 < step && step < 3100">
+        <button
+          type="button"
+          @click="pdfRedactionRedact()"
+          class="action btn btn-primary"
+          :disabled="pdfRedactionProcessing">
+          <span
+            class="spinner-border spinner-border-sm"
+            v-if="pdfRedactionProcessing"
+            role="status"
+            aria-hidden="true" />
           Ich bin fertig mit Schwärzen
         </button>
-        <div class="action-info">Wichtig: Haben Sie alle Seiten überprüft?</div>
+        <div class="action-info">
+          Wichtig: Haben Sie alle Seiten überprüft?
+          <div class="debug">
+            DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
+          </div>
+        </div>
       </template>
       <template v-else-if="step === 4413">
-        <button type="button" @click="gotoStep" class="action btn btn-primary">
+        <button
+          type="button"
+          @click="gotoStep()"
+          class="action btn btn-primary">
           Bestätigen
         </button>
         <div class="action-info">
@@ -682,10 +968,77 @@ const values = reactive({
           Anfrage ansehen
         </button>
       </template>
+      <template v-else-if="step === 1100">
+        <!-- should be blank -->
+        <button
+          type="button"
+          @click="gotoStep()"
+          class="action btn btn-outline-primary btn-sm mt-1">
+          DEBUG skip
+        </button>
+      </template>
+      <template v-else-if="step === 1110">
+        <!-- this could be completely hidden -->
+        <button type="button" :disabled="true" class="action btn btn-primary">
+          weiter
+        </button>
+        <button
+          type="button"
+          @click="gotoStep()"
+          class="action btn btn-outline-primary btn-sm mt-1">
+          DEBUG skip
+        </button>
+      </template>
+      <template v-else-if="step === 1201">
+        <button
+          type="button"
+          @click="gotoStep()"
+          class="action btn btn-primary">
+          Fertig mit Sortieren
+        </button>
+      </template>
+      <template v-else-if="step === 1202">
+        DEBUG: {{ documentUploader.$refs.imageDocument.length }}
+        <button
+          v-if="documentUploader.$refs.imageDocument.length > 0"
+          type="button"
+          @click="documentsConvertImages"
+          class="action btn btn-primary"
+          :disabled="documentsImagesConverting">
+          <span
+            class="spinner-border spinner-border-sm"
+            v-if="documentsImagesConverting"
+            role="status"
+            aria-hidden="true" />
+          PDF erstellen
+        </button>
+        <button
+          v-else
+          type="button"
+          @click="gotoStep()"
+          class="action btn btn-primary">
+          weiter (skippdf)
+        </button>
+      </template>
+      <template v-else-if="step === 2384">
+        <button
+          type="button"
+          :disabled="!gotoValid"
+          @click="gotoStep()"
+          class="action btn btn-primary">
+          weiter
+        </button>
+        <button
+          type="button"
+          @click="debugSkipDate"
+          class="action btn btn-outline-primary btn-sm mt-1">
+          DEBUG set today
+        </button>
+      </template>
       <template v-else>
         <button
           type="button"
-          @click="gotoStep"
+          @click="gotoStep()"
           :disabled="!gotoValid"
           class="action btn btn-primary">
           weiter
@@ -713,6 +1066,14 @@ a.btnlike {
   color: var(--bs-link-color);
 }
 
+.btn-linklike {
+  border: none;
+  padding: 0;
+  color: var(--bs-link-color);
+  text-decoration: underline;
+  background: transparent;
+}
+
 .action-info {
   margin: 0.5rem auto 0 auto;
   font-size: 66%;
@@ -727,11 +1088,35 @@ a.btnlike {
   margin: 0 auto;
 }
 
+/*
 input[type='date']:valid {
   border-color: green;
 }
 
 input[type='date']:invalid {
   border-color: red;
+}
+*/
+
+.documents-filename {
+  input {
+    font-weight: bolder;
+  }
+
+  /* "hide" that this is a regular, editable Bootstrap input... */
+  input:not(:focus) {
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  /* ...until its label (looking like a link-button) is clicked, which gives it focus */
+  label {
+    cursor: pointer;
+    color: red;
+    text-decoration: underline;
+    color: var(--bs-link-color);
+    /* padding-left matches bootstrap's form-group>input for indent */
+    padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+  }
 }
 </style>

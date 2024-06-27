@@ -30,6 +30,7 @@ from ..decorators import (
 )
 from ..forms import (
     EditMessageForm,
+    PostalEditForm,
     PostalUploadForm,
     RedactMessageForm,
     TransferUploadForm,
@@ -154,29 +155,34 @@ def add_postal_message(request, slug):
 
 
 @allow_write_foirequest
-def upload_postal_message(request, foirequest, message_id=None):
-    # FIXME WIP create a message when no id is provided, and redirecto to the new message
-    #   the new message has the bare minimum of properties/metadata
-    #   which isn't PATCHed with the subsequent POST...
-    if message_id is None or message_id == 0:
-        message = FoiMessage(request=foirequest, kind=MessageKind.POST)
-        # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
-        message.timestamp = datetime.datetime.now()
-        message.save()
-        return redirect(
-            reverse(
-                "foirequest-upload_postal_message_with-id",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            )
+def upload_postal_message_create(request, foirequest):
+    message = FoiMessage(request=foirequest, kind=MessageKind.POST)
+    # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
+    # this will be set to "proper" (noon) when finally submitted
+    message.timestamp = datetime.datetime.now()
+    # TODO set dirty/draft?
+    message.save()
+    return redirect(
+        reverse(
+            "foirequest-edit_postal_message",
+            kwargs={"slug": foirequest.slug, "message_id": message.id},
         )
-    message = None
+    )
+
+
+@allow_write_foirequest
+def edit_postal_message(request, foirequest, message_id):
+    message = get_object_or_404(FoiMessage, request=foirequest, pk=int(message_id))
+    if not message.can_edit:
+        return render_400(request)
+    form = PostalEditForm(
+        data=request.POST,
+        foirequest=foirequest,
+        message=message,
+        user=request.user,  # needs to be request user for upload ident
+    )
+    status_form = foirequest.get_status_form(data=request.POST)
     if request.method == "POST":
-        form = PostalUploadForm(
-            data=request.POST,
-            foirequest=foirequest,
-            user=request.user,  # needs to be request user for upload ident
-        )
-        status_form = foirequest.get_status_form(data=request.POST)
         if form.is_valid():
             message = form.save()
 
@@ -205,14 +211,10 @@ def upload_postal_message(request, foirequest, message_id=None):
                 messages.ERROR,
                 _("There were errors with your form submission!"),
             )
-    else:
-        form = PostalUploadForm(foirequest=foirequest)
-        status_form = foirequest.get_status_form()
-    if message_id:
-        message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
     ctx = {
         "settings": {
-            "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024)
+            "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
+            "can_make_document": request.user.is_staff,
         },
         "i18n": {
             "uppy": get_uppy_i18n(),
@@ -377,7 +379,7 @@ def upload_postal_message(request, foirequest, message_id=None):
     }
     return render(
         request,
-        "foirequest/upload_postal_message.html",
+        "foirequest/upload_postal_message_new.html",
         {
             "object": foirequest,
             "object_public_body_id": foirequest.public_body_id,
@@ -385,6 +387,12 @@ def upload_postal_message(request, foirequest, message_id=None):
                 "id": foirequest.public_body.id,
                 "name": foirequest.public_body.name,
             },
+            "object_public_body_json": json.dumps(
+                {
+                    "id": foirequest.public_body.id,
+                    "name": foirequest.public_body.name,
+                }
+            ),
             "date_max": timezone.localdate().isoformat(),
             "date_min": foirequest.created_at.date().isoformat(),
             "object_public_json": json.dumps(foirequest.public),
@@ -397,6 +405,56 @@ def upload_postal_message(request, foirequest, message_id=None):
             ),
             "status_form": status_form,
             "config_json": json.dumps(ctx),
+        },
+    )
+
+
+@allow_write_foirequest
+def upload_postal_message(request, foirequest):
+    if request.method == "POST":
+        form = PostalUploadForm(
+            data=request.POST,
+            foirequest=foirequest,
+            user=request.user,  # needs to be request user for upload ident
+        )
+        status_form = foirequest.get_status_form(data=request.POST)
+        if form.is_valid():
+            message = form.save()
+
+            if status_form.is_valid():
+                status_form.save()
+
+            if message.is_response:
+                signal = FoiRequest.message_received
+                success_message = _("A postal reply was successfully added!")
+            else:
+                signal = FoiRequest.message_sent
+                success_message = _("A sent letter was successfully added!")
+
+            signal.send(sender=foirequest, message=message, user=request.user)
+            messages.add_message(request, messages.SUCCESS, success_message)
+
+            url = reverse(
+                "foirequest-manage_attachments",
+                kwargs={"slug": foirequest.slug, "message_id": message.id},
+            )
+            return redirect(url)
+        else:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                _("There were errors with your form submission!"),
+            )
+    else:
+        form = PostalUploadForm(foirequest=foirequest)
+        status_form = foirequest.get_status_form()
+    return render(
+        request,
+        "foirequest/upload_postal_message.html",
+        {
+            "object": foirequest,
+            "form": form,
+            "status_form": status_form,
         },
     )
 

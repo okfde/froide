@@ -1,5 +1,9 @@
 <template>
-  <div id="pdf-viewer" ref="top" class="pdf-redaction-tool">
+  <div
+    id="pdf-viewer"
+    ref="top"
+    class="pdf-redaction-tool"
+    :class="{ 'pdf-redaction-tool--minimalui': minimalUi }">
     <div v-if="hasPassword && ready" class="row">
       <div class="col-lg-12">
         <div class="alert alert-info" role="alert">
@@ -54,26 +58,37 @@
     </div>
     <div class="row toolbar">
       <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-1">
+        <div class="btn-group me-1 toolbar-undo-redo">
           <button
+            type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
             @click="undo">
-            <i class="fa fa-share fa-flip-horizontal" />
+            <i class="fa fa-undo" />
           </button>
           <button
+            type="button"
             class="btn btn-outline-secondary"
             :disabled="!canRedo"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
             @click="redo">
-            <i class="fa fa-share" />
+            <i class="fa fa-undo fa-flip-horizontal" />
           </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            :disabled="!canUndo"
+            :title="'TODO'"
+            @click="undoAll">
+            <i class="fa fa-eraser" />
+          </button>
+          <span style="font-size: 50%">TODO:<br />Zoom</span>
         </div>
 
-        <div class="btn-group me-1">
+        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes">
           <button
             class="btn"
             :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
@@ -93,7 +108,7 @@
           </button>
         </div>
 
-        <div class="input-group me-1">
+        <div class="input-group me-1 toolbar-pages">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -114,7 +129,7 @@
         </div>
 
         <div
-          v-if="hasRedactions || hasPassword"
+          v-if="!minimalUi && (hasRedactions || hasPassword)"
           class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
@@ -126,7 +141,7 @@
             </template>
           </button>
         </div>
-        <div class="btn-group ms-auto mt-1 mt-lg-0">
+        <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0">
           <form
             v-if="canPublish && !hasPassword"
             method="post"
@@ -186,7 +201,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div v-if="!minimalUi" class="row">
       <div v-if="ready" class="btn-toolbar col-lg-12">
         <div class="input-group me-auto ms-auto">
           <button
@@ -251,6 +266,9 @@ export default {
     postUrl: {
       type: String
     },
+    approveUrl: {
+      type: String
+    },
     noRedirect: {
       type: Boolean,
       default: false
@@ -260,6 +278,10 @@ export default {
       default: () => []
     },
     canPublish: {
+      type: Boolean,
+      default: false
+    },
+    minimalUi: {
       type: Boolean,
       default: false
     }
@@ -385,6 +407,11 @@ export default {
     },
     csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
+    }
+  },
+  watch: {
+    hasRedactions: function (newValue) {
+      this.$emit('hasredactionsupdate', newValue)
     }
   },
   created() {
@@ -531,6 +558,29 @@ export default {
       this.cancelDrag()
       this.textDisabled = !this.textDisabled
       this.textOnly = !this.textDisabled
+    },
+    redactOrApprove() {
+      if (this.hasRedactions || this.hasPassword) {
+        console.log('### redactOrApprove redact')
+        return this.redact()
+      } else {
+        console.log('### redactOrApprove approve')
+        return this.approve()
+      }
+    },
+    approve() {
+      // TODO like redact(), this should emulate what the form above does
+      const url = this.approveUrl
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': this.csrfToken }
+      }).then((response) => {
+        if (!response.ok) {
+          console.error('approve error', response)
+          throw new Error(`approve error: ${response.status}`)
+        }
+        this.$emit('uploaded')
+      })
     },
     redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -963,6 +1013,11 @@ export default {
       const lastAction = this.actionsPerPage[this.currentPage][actionIndex]
       this.unapplyAction(lastAction)
     },
+    undoAll() {
+      while (this.canUndo) {
+        this.undo()
+      }
+    },
     redo() {
       if (!this.canRedo) {
         return
@@ -1204,5 +1259,22 @@ export default {
 .textLayer.textActive > div,
 .textLayer.textActive > span {
   color: #000;
+}
+
+.pdf-redaction-tool--minimalui {
+  .toolbar-btn {
+    width: 100%;
+  }
+  .toolbar-undo-redo {
+    width: 100%;
+    justify-content: center;
+    &.btn-group > .btn {
+      flex: 0 0 auto;
+    }
+  }
+  .toolbar-pages {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

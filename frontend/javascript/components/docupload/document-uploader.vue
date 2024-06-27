@@ -1,5 +1,8 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
+    <button type="button" @click="refreshAttachments" style="font-size: 50%">
+      DEBUG: refresh
+    </button>
     <div v-if="imageDocuments.length > 0" class="images mt-5">
       <django-slot name="convert-images" />
       <image-document
@@ -8,6 +11,9 @@
         :document="doc"
         :config="config"
         :hide-selection="hideSelection"
+        :basic-operations="fileBasicOperations"
+        :simple="imagesSimple"
+        ref="imageDocument"
         @pageschanged="pagesChanged(doc, $event)"
         @splitpages="splitPages(doc, $event)"
         @imagesconverted="imagesConverted"
@@ -16,17 +22,23 @@
         @pageupdated="pageUpdated"
         @notnew="doc.new = false" />
     </div>
-    <div v-if="pdfDocuments.length > 0" class="documents mt-5">
+    <component
+      v-if="pdfDocuments.length > 0"
+      :is="hidePdf ? 'details' : 'div'"
+      class="documents mt-5">
+      <summary v-if="hidePdf" class="debug">DEBUG: pdf documents</summary>
       <django-slot name="documents" />
       <div class="mt-3 mb-3">
-        <div class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom">
+        <div
+          class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom"
+          v-if="!hideSelection">
           <div class="col-auto me-md-auto">
             <input
               v-model="selectAll"
               type="checkbox"
               @click="clickSelectAll" />
           </div>
-          <div class="col-auto ms-auto">
+          <div class="col-auto ms-auto" v-if="!hideStatusTools">
             <button
               v-if="canMakeDocument && canMakeResult"
               class="btn btn-sm"
@@ -54,6 +66,10 @@
           :document="doc"
           :config="config"
           :hide-selection="hideSelection"
+          :icon-style="iconStyle"
+          :show-basic-operations="fileBasicOperations"
+          :hide-advanced-operations="true"
+          :highlight-redaction="highlightRedactions"
           @pageschanged="pagesChanged(doc, $event)"
           @splitpages="splitPages(doc, $event)"
           @imagesconverted="imagesConverted"
@@ -62,9 +78,14 @@
           @pageupdated="pageUpdated"
           @notnew="doc.new = false" />
       </div>
-    </div>
+    </component>
+    <div style="color: red" v-else>DEBUG: no pdf documents</div>
 
-    <div v-if="otherAttachments.length > 0" class="mt-5">
+    <component
+      v-if="otherAttachments.length > 0"
+      :is="hideOther ? 'details' : 'div'"
+      class="mt-5">
+      <summary v-if="hideOther" class="debug">DEBUG: other attachments</summary>
       <hr />
       <django-slot name="other-files" />
       <file-document
@@ -73,10 +94,11 @@
         :document="doc"
         :config="config"
         :hide-selection="hideSelection"
+        :basic-operations="fileBasicOperations"
         @docupdated="documentUpdated(doc, $event)"
         @makerelevant="makeRelevant(doc)"
         @notnew="doc.new = false" />
-    </div>
+    </component>
 
     <div v-if="canUpload && showUpload" class="upload mt-5">
       <django-slot name="upload-header" />
@@ -126,7 +148,38 @@ export default {
       type: Boolean,
       default: true
     },
+    imagesSimple: {
+      type: Boolean,
+      default: false
+    },
+    fileBasicOperations: {
+      type: Boolean,
+      default: false
+    },
+    iconStyle: {
+      type: String,
+      default: ''
+    },
     hideSelection: {
+      type: Boolean,
+      default: false
+    },
+    hideStatusTools: {
+      type: Boolean,
+      default: false
+    },
+    hidePdf: {
+      type: Boolean,
+      default: false
+    },
+    hideOther: {
+      type: Boolean,
+      default: false
+    },
+    imagesDocumentFilename: {
+      type: String
+    },
+    highlightRedactions: {
       type: Boolean,
       default: false
     }
@@ -157,9 +210,13 @@ export default {
       )
     },
     pdfDocuments() {
-      return this.documents.filter(
-        (d) => !d.irrelevant && d.type !== 'imagedoc'
-      )
+      return this.documents.filter((d) => {
+        let ret = !d.irrelevant && d.type !== 'imagedoc'
+        if (this.highlightRedactions) {
+          ret = ret && !d.has_redacted
+        }
+        return ret
+      })
     },
     otherAttachments() {
       return this.documents.filter((d) => d.irrelevant)
@@ -208,9 +265,18 @@ export default {
         this.selectedDocuments.length
       )
       this.$emit('selectionupdated', this.selectedDocuments)
+    },
+    imagesDocumentFilename(newName) {
+      if (!this.imageDocuments.length) {
+        console.warn('imagesDocumentFilename changed, but no imageDocuments')
+        return
+      }
+      // there is only one
+      this.imageDocuments[0].name = newName
     }
   },
   mounted() {
+    // TODO: this is modifying $root ?!
     this.$root.exifSupport = this.exifSupport = null
     this.testExifSupport()
     this.$root.url = this.config.url
@@ -266,6 +332,8 @@ export default {
           filetype: att.filetype,
           pending: att.pending,
           file_url: att.file_url,
+          is_redacted: att.is_redacted,
+          has_redacted: !!att.redacted,
           pages: null,
           attachment: att,
           ...extra
@@ -367,6 +435,7 @@ export default {
         }),
         ...this.documents.filter((d) => d.type !== 'imagedoc')
       ]
+      this.$emit('imagesconverted')
     },
     documentUpdated(doc, update) {
       if (update === null) {
@@ -421,6 +490,7 @@ export default {
       )
     },
     addImages(images) {
+      this.$emit('imagesadded')
       const imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
       if (imageDocs.length === 0) {
         this.documents = [
@@ -465,6 +535,33 @@ export default {
           )
         })
       )
+    },
+    refreshAttachments() {
+      const url =
+        this.config.url.getAttachment.replace('/0/', '/') +
+        '?belongs_to=' +
+        this.message.id
+      return fetch(url, {
+        headers: { 'X-CSRFToken': this.$root.csrfToken }
+      })
+        .then((response) => {
+          if (!response.ok) {
+            console.error('fetch attachment error', url, response)
+            // TODO
+            throw new Error(response.message)
+          }
+          return response.json()
+        })
+        .then((response) => {
+          console.log(response)
+          if (response.meta.next) {
+            // TODO
+            // the API has a hardcoded limit/pagesize of 50
+            // would have to fetch multiple times to get all
+            console.warn('not all attachments fetched')
+          }
+          this.documents = this.buildDocuments(response.objects)
+        })
     }
   }
 }

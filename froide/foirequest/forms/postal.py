@@ -2,6 +2,7 @@ from functools import partial
 
 from django import forms
 from django.db import transaction
+from django.forms.models import ModelChoiceField, ModelChoiceIterator
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
@@ -77,16 +78,15 @@ class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        # FIXME WIP disable too early validation
-        # text = cleaned_data.get("text")
-        # uploads = cleaned_data.get("uploads")
-        # if not (text or uploads):
-        #    raise forms.ValidationError(
-        #        _(
-        #            "You need to provide either a letter summary or "
-        #            "a scan or photo of the letter."
-        #        )
-        #    )
+        text = cleaned_data.get("text")
+        uploads = cleaned_data.get("uploads")
+        if not (text or uploads):
+            raise forms.ValidationError(
+                _(
+                    "You need to provide either a letter summary or "
+                    "a scan or photo of the letter."
+                )
+            )
         return cleaned_data
 
     def save(self):
@@ -143,3 +143,73 @@ class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
             partial(move_upload_to_attachment.delay, att.id, upload.id)
         )
         return att
+
+
+class ThinModelChoiceIterator(ModelChoiceIterator):
+    def __init__(self, field):
+        self.field = field
+        # basically empty the queryset so the thousands of choices are not rendered into context
+        self.queryset = field.queryset[:0]
+
+
+class ThinModelChoiceField(ModelChoiceField):
+    iterator = ThinModelChoiceIterator
+
+
+class PostalEditForm(MessageEditMixin, JSONMixin, forms.Form):
+    sent = forms.TypedChoiceField(
+        choices=(
+            (0, _("I have received the letter")),
+            (1, _("I have sent the letter")),
+        ),
+        coerce=lambda x: bool(int(x)),
+        required=True,
+        initial=0,
+        label=_("Did you receive or sent the letter?"),
+        error_messages={"required": _("You have to decide!")},
+    )
+
+    publicbody = ThinModelChoiceField(
+        label=_("Public body"),
+        queryset=PublicBody.objects.all(),
+        # queryset=PublicBody.objects.filter(id__gte=7600, id__lte=7700),
+        required=True
+        # widget=PublicBodySelect,
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.message = kwargs.pop("message")  # XXX
+
+        self.foirequest = kwargs.pop("foirequest")
+        self.user = kwargs.pop("user", None)
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["sent"].initial = 1 if self.message.sent else 0
+        self.fields["publicbody"].initial = (
+            self.message.sender_public_body or self.message.recipient_public_body
+        )
+        self.account_service = AccountService(self.foirequest.user)
+
+    def save(self):
+        foirequest = self.foirequest
+        # set subject, text, date via MessageEditMixin
+        message = self.set_data_on_message(self.message)
+
+        if self.cleaned_data["sent"]:
+            message.is_response = False
+            message.sender_user = message.request.user
+            message.recipient_public_body = self.cleaned_data["publicbody"]
+        else:
+            message.is_response = True
+            message.sender_public_body = self.cleaned_data["publicbody"]
+
+        message.save()
+
+        foirequest._messages = None
+        foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
+        foirequest.save()
+
+        # we don't need to handle/attach uploads, this has already been done
+
+        return message
