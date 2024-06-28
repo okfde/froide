@@ -1,4 +1,4 @@
-{% extends 'foirequest/base.html' %}
+{% extends "foirequest/base.html" %}
 {% load i18n %}
 {% load static %}
 {% load block_helper %}
@@ -6,10 +6,10 @@
 {% load form_helper %}
 {% block title %}
     {% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}
-{% endblock %}
+{% endblock title %}
 {% block navbar %}
     {% include "header_reduced.html" %}
-{% endblock %}
+{% endblock navbar %}
 {% block body %}
     <div class="bg-body-tertiary">
         {% translate "Upload postal mail" as breadcrumb_label %}
@@ -29,10 +29,12 @@
                     <fieldset>
                         {% render_form form horizontal=False %}
                     </fieldset>
-                    <fieldset>
-                        <legend>{% trans "What is the status of your request after this letter?" %}</legend>
-                        {% include "foirequest/header/_set_status.html" with status_form=status_form inline=False %}
-                    </fieldset>
+                    {% if status_form %}
+                        <fieldset>
+                            <legend>{% trans "What is the status of your request after this letter?" %}</legend>
+                            {% include "foirequest/header/_set_status.html" with status_form=status_form inline=False %}
+                        </fieldset>
+                    {% endif %}
                     <p class="text-end">
                         <button type="submit" class="btn btn-primary">{% trans "Add letter" %}</button>
                     </p>
@@ -40,10 +42,10 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock body %}
 {% block scripts %}
     {{ block.super }}
     {% addfrontendbuild "request.js" %}
     {% addfrontendbuild "publicbody.js" %}
     {% addfrontendbuild "fileuploader.js" %}
-{% endblock %}
+{% endblock scripts %}
