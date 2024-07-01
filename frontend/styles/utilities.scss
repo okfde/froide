@@ -52,3 +52,7 @@ $bootstrap-extras: (
     --#{$prefix}heading-color: var(--froide-#{$name}-color);
   }
 }
+
+.d-contents {
+  display: contents;
+}
