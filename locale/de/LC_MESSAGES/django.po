@@ -11685,6 +11685,11 @@ msgstr "Nutzer:in deaktivieren und blocken"
 msgid "Users logged out, deactivated and blocked."
 msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
 
+#: froide/foirequest/views/make_request.py
+#, python-format
+msgid "Please enter an address in the following format: %(format)s"
+msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
+
 #~ msgid "Documents (beta)"
 #~ msgstr "Dokumente (beta)"
 
@@ -14189,10 +14194,6 @@ msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
 #~ "Sie haben die Begrenzung von %(count)s Nachrichten in %(time)s "
 #~ "überschritten. Dies ist eine automatische Vorsichtsmaßnahme. Mehr Infos "
 #~ "dazu finden Sie im Hilfebereich."
-
-#, python-format
-#~ msgid "Please enter an address in the following format: %(format)s"
-#~ msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
 
 #~ msgid "Add guidance action to messages..."
 #~ msgstr "Füge Hinweisvorlage zu Nachrichten hinzu..."
