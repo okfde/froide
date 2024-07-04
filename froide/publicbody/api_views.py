@@ -2,10 +2,11 @@ import json
 
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 from django.utils import translation
 
 from django_filters import rest_framework as filters
-from elasticsearch_dsl.query import Q
+from elasticsearch_dsl.query import Q as ESQ
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.settings import api_settings
@@ -30,6 +31,18 @@ def get_language_from_query(request):
         if lang in lang_dict:
             return lang
     return settings.LANGUAGE_CODE
+
+
+def make_search_filter(field):
+    def search_filter(self, queryset, name, value):
+        return queryset.filter(
+            Q.create(
+                [("{}__icontains".format(field), bit) for bit in value.split()],
+                connector=Q.AND,
+            )
+        )
+
+    return search_filter
 
 
 class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
@@ -147,8 +160,7 @@ class FoiLawFilter(filters.FilterSet):
             return queryset
         return queryset.filter(pk__in=ids)
 
-    def search_filter(self, queryset, name, value):
-        return queryset.filter(translations__name__icontains=value)
+    search_filter = make_search_filter("translations__name")
 
 
 class FoiLawViewSet(viewsets.ReadOnlyModelViewSet):
@@ -217,11 +229,6 @@ class ClassificationSerializer(SimpleClassificationSerializer):
         fields = SimpleClassificationSerializer.Meta.fields + ("parent", "children")
 
 
-class SearchFilterMixin(object):
-    def search_filter(self, queryset, name, value):
-        return queryset.filter(name__icontains=value)
-
-
 class TreeFilterMixin(object):
     def parent_filter(self, queryset, name, value):
         return queryset.intersection(value.get_children())
@@ -230,7 +237,7 @@ class TreeFilterMixin(object):
         return queryset.intersection(value.get_descendants())
 
 
-class ClassificationFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
+class ClassificationFilter(TreeFilterMixin, filters.FilterSet):
     q = filters.CharFilter(method="search_filter")
     parent = filters.ModelChoiceFilter(
         method="parent_filter", queryset=Classification.objects.all()
@@ -238,6 +245,8 @@ class ClassificationFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet
     ancestor = filters.ModelChoiceFilter(
         method="ancestor_filter", queryset=Classification.objects.all()
     )
+
+    search_filter = make_search_filter("name")
 
     class Meta:
         model = Classification
@@ -281,7 +290,7 @@ class CategorySerializer(SimpleCategorySerializer):
         fields = SimpleCategorySerializer.Meta.fields + ("parent", "children")
 
 
-class CategoryFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
+class CategoryFilter(TreeFilterMixin, filters.FilterSet):
     q = filters.CharFilter(method="search_filter")
     parent = filters.ModelChoiceFilter(
         method="parent_filter", queryset=Category.objects.all()
@@ -297,6 +306,8 @@ class CategoryFilter(SearchFilterMixin, TreeFilterMixin, filters.FilterSet):
             "is_topic",
             "depth",
         )
+
+    search_filter = make_search_filter("name")
 
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -436,7 +447,7 @@ class PublicBodySerializer(PublicBodyListSerializer):
     laws = FoiLawSerializer(many=True, read_only=True)
 
 
-class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
+class PublicBodyFilter(filters.FilterSet):
     q = filters.CharFilter(method="search_filter")
     classification = filters.ModelChoiceFilter(
         method="classification_filter", queryset=Classification.objects.all()
@@ -454,6 +465,8 @@ class PublicBodyFilter(SearchFilterMixin, filters.FilterSet):
             "slug",
             "classification_id",
         )
+
+    search_filter = make_search_filter("name")
 
     def classification_filter(self, queryset, name, value):
         tree_list = Classification.get_tree(parent=value)
@@ -570,7 +583,7 @@ class PublicBodyViewSet(
 
         if len(query) > 2:
             sqs = sqs.set_query(
-                Q("multi_match", query=query, fields=["name_auto", "content"])
+                ESQ("multi_match", query=query, fields=["name_auto", "content"])
             )
 
         model_filters = {
