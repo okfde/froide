@@ -11856,9 +11856,10 @@ msgstr "Nutzer:in deaktivieren und blocken"
 msgid "Users logged out, deactivated and blocked."
 msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
 
+#: froide/foirequest/views/make_request.py
 #, python-format
-#~ msgid "Please enter an address in the following format: %(format)s"
-#~ msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
+msgid "Please enter an address in the following format: %(format)s"
+msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
 
 #~ msgid "Documents (beta)"
 #~ msgstr "Dokumente (beta)"
