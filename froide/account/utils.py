@@ -16,7 +16,7 @@ from froide.helper.email_sending import (
     send_mail,
 )
 
-from . import account_banned, account_canceled, account_future_canceled, account_merged
+from . import account_canceled, account_future_canceled, account_merged
 from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r"(\d{5})\s+(.*)")
@@ -179,9 +179,7 @@ def future_cancel_user(user, notify=False, immediately=False):
         future_cancel_mail.send(user=user)
 
     if immediately:
-        # Depublish content
-        account_banned.send(user)
-        # 10 minutes delay to allow for backup/undo
+        # 10 minutes delay to allow signal processing
         start_cancel_account_process(user, delete=False, cancel_countdown=60 * 10)
 
 
