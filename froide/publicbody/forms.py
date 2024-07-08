@@ -237,7 +237,6 @@ class PublicBodyProposalForm(forms.ModelForm):
     class Meta:
         model = PublicBody
         fields = (
-            "reason",
             "name",
             "other_names",
             "jurisdiction",
@@ -251,6 +250,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             "regions",
             "file_index",
             "org_chart",
+            "reason",
         )
 
     def get_other_publicbodies(self):
