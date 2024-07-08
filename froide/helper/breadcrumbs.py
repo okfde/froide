@@ -89,21 +89,22 @@ class Breadcrumbs:
         view: BreadcrumbView, context: Union[Context, dict[str, object]]
     ) -> Optional[Breadcrumbs]:
         if hasattr(view, "get_breadcrumbs") and callable(view.get_breadcrumbs):
-            value = view.get_breadcrumbs(context)
+            items = view.get_breadcrumbs(context)
 
-            if isinstance(value, Breadcrumbs):
-                return value
+            if isinstance(items, Breadcrumbs):
+                return items
 
-            items = map(normalize_breadcrumb, value)
-            return Breadcrumbs(items=items)
+            return Breadcrumbs(items=[normalize_breadcrumb(item) for item in items])
 
         if hasattr(view, "breadcrumbs"):
-            items = map(normalize_breadcrumb, view.breadcrumbs)
-            items = map(reverse_breadcrumb, items)
+            items = [
+                reverse_breadcrumb(normalize_breadcrumb(item))
+                for item in view.breadcrumbs
+            ]
             return Breadcrumbs(items=items)
 
 
-def normalize_breadcrumb(breadcrumb: Union[str, BreadcrumbTuple]):
+def normalize_breadcrumb(breadcrumb: Union[str, BreadcrumbTuple]) -> BreadcrumbTuple:
     if type(breadcrumb) is tuple:
         return breadcrumb
     elif type(breadcrumb) is str:
