@@ -11677,11 +11677,13 @@ msgstr "Anfrage tweeten"
 msgid "Share request"
 msgstr "Anfrage teilen"
 
-#~ msgid "Deactivate and block users"
-#~ msgstr "Nutzer:in deaktivieren und blocken"
+#: froide/account/admin.py
+msgid "Deactivate and block users"
+msgstr "Nutzer:in deaktivieren und blocken"
 
-#~ msgid "Users logged out, deactivated and blocked."
-#~ msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
+#: froide/account/admin.py
+msgid "Users logged out, deactivated and blocked."
+msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
 
 #~ msgid "Documents (beta)"
 #~ msgstr "Dokumente (beta)"
