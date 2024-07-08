@@ -49,9 +49,10 @@
                 :class="{ 'is-invalid': errors.address }"
                 :placeholder="formFields.address.placeholder"
                 :required="requiresPostalAddress" />
-              <div v-if="!isAllowedAddress" class="mt-3 alert alert-warning">
-                {{ i18n.pleaseFollowAddressFormat }}
-              </div>
+              <div
+                v-if="!isAllowedAddress"
+                class="mt-3 alert alert-warning pre"
+                v-html="i18n.pleaseFollowAddressFormat" />
               <p v-for="e in errors.address" :key="e.message">
                 {{ e.message }}
               </p>
