@@ -16,7 +16,7 @@ from froide.helper.email_sending import (
     send_mail,
 )
 
-from . import account_canceled, account_future_canceled, account_merged
+from . import account_banned, account_canceled, account_future_canceled, account_merged
 from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r"(\d{5})\s+(.*)")
@@ -158,13 +158,16 @@ future_cancel_mail = mail_registry.register(
 )
 
 
-def future_cancel_user(user, notify=False):
+def future_cancel_user(user, notify=False, immediately=False):
     user.is_trusted = False
     user.is_blocked = True
     # Do not delete yet!
     user.is_deleted = False
     now = timezone.localtime(timezone.now())
-    user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
+    if immediately:
+        user.date_left = now
+    else:
+        user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
     user.notes += "Canceled on {} for {}\n\n".format(
         now.isoformat(), user.date_left.isoformat()
     )
@@ -175,9 +178,15 @@ def future_cancel_user(user, notify=False):
     if notify:
         future_cancel_mail.send(user=user)
 
+    if immediately:
+        # Depublish content
+        account_banned.send(user)
+        # 10 minutes delay to allow for backup/undo
+        start_cancel_account_process(user, delete=False, cancel_countdown=60 * 10)
+
 
 def start_cancel_account_process(
-    user: SimpleLazyObject, delete: bool = False, note: str = ""
+    user: SimpleLazyObject, delete: bool = False, note: str = "", cancel_countdown=0.0
 ) -> None:
     from .tasks import cancel_account_task
 
@@ -195,7 +204,9 @@ def start_cancel_account_process(
 
     # Asynchronously delete account
     # So more expensive anonymization can run in the background
-    cancel_account_task.delay(user.pk, delete=delete)
+    cancel_account_task.apply_async(
+        args=(user.pk,), kwargs={"delete": delete}, countdown=cancel_countdown
+    )
 
 
 def cancel_user(user: User, delete: bool = False) -> None:

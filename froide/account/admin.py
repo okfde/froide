@@ -149,6 +149,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "cancel_users_by_request",
         "future_cancel_users_notify",
         "future_cancel_users",
+        "cancel_immediately",
         "deactivate_users",
         "export_user_data",
         "merge_accounts",
@@ -327,6 +328,13 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         for user in queryset:
             future_cancel_user(user)
         self.message_user(request, _("Users future canceled."))
+        return None
+
+    @admin.action(description=_("Cancel account immediately (no notification)"))
+    def cancel_immediately(self, request, queryset):
+        for user in queryset:
+            future_cancel_user(user, immediately=True)
+        self.message_user(request, _("Users canceled immediately."))
         return None
 
     @admin.action(description=_("Deactivate and block users"))
