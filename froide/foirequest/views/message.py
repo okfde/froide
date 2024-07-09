@@ -17,7 +17,7 @@ from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
-from froide.helper.utils import is_ajax, render_400, render_403
+from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
 from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
@@ -198,8 +198,11 @@ def edit_postal_message(request, foirequest, message_id):
                 success_message = _("A sent letter was successfully added!")
 
             signal.send(sender=foirequest, message=message, user=request.user)
-            messages.add_message(request, messages.SUCCESS, success_message)
 
+            if is_fetch(request):
+                return JsonResponse({"success": 1})
+
+            messages.add_message(request, messages.SUCCESS, success_message)
             url = reverse(
                 # after a successfully saved form, redirect to request
                 "foirequest-show",
@@ -207,6 +210,8 @@ def edit_postal_message(request, foirequest, message_id):
             )
             return redirect(url)
         else:
+            if is_fetch(request):
+                return JsonResponse({"errors": form._errors})
             messages.add_message(
                 request,
                 messages.ERROR,

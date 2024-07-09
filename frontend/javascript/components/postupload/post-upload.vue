@@ -181,8 +181,53 @@ const backStep = () => {
   stepHistory.pop()
 }
 
-const submit = () => {
+const isSubmitting = ref(false)
+
+const submit = async () => {
   document.forms.postupload.submit()
+}
+
+const submitFetch = async () => {
+  const action = document.forms.postupload.action
+  const formdata = new FormData(document.forms.postupload)
+  return fetch(action, {
+    method: 'post',
+    headers: {
+      'x-requested-with': 'fetch'
+    },
+    body: formdata
+  })
+    .then((response) => {
+      if (!response.ok) throw new Error('form submit error')
+      return response.json()
+    })
+    .then((response) => {
+      isSubmitting.value = false
+      if ('errors' in response) {
+        console.error('fetch submit errors', response.errors)
+        // TODO handle this better: at least use a proper modal,
+        // better: link to steps which are wrong?
+        // like: if 'date' in errors link to step with <input type=date>
+        alert('errors: ' + JSON.stringify(response.errors, false, 2))
+        return
+      }
+    })
+}
+
+const approveDocsAndSubmit = async () => {
+  isSubmitting.value = true
+  try {
+    // unnecessary since redacted documents are auto-approved
+    // and staff users will ... be handled differently? TODO
+    // await approveDocs()
+    await submitFetch()
+    gotoStep()
+  } catch (err) {
+    console.error('fetch submit error', err)
+    alert('error' + JSON.stringify(err))
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 // TODO WIP numbers from Figma frames
@@ -428,6 +473,13 @@ const debugSkipDate = () => {
         type="submit"
         style="font-size: 50%; margin-left: 1em">
         submit/save
+      </button>
+      <button
+        class="btn btn-secondary btn-sm debug"
+        type="button"
+        @click="submitFetch"
+        style="font-size: 50%; margin-left: 1em">
+        submit/fetch
       </button>
     </template>
     <template #main>
@@ -948,8 +1000,14 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
       <template v-else-if="step === 4413">
         <button
           type="button"
-          @click="gotoStep()"
-          class="action btn btn-primary">
+          @click="approveDocsAndSubmit()"
+          class="action btn btn-primary"
+          :disabled="isSubmitting || !validity.form">
+          <span
+            class="spinner-border spinner-border-sm"
+            v-show="isSubmitting"
+            role="status"
+            aria-hidden="true" />
           Bestätigen
         </button>
         <div class="action-info">
