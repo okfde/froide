@@ -88,6 +88,7 @@ class FoiMessage(models.Model):
         verbose_name=_("Freedom of Information Request"),
         on_delete=models.CASCADE,
     )
+    is_draft = models.BooleanField(_("is message a draft?"), default=False)
     sent = models.BooleanField(_("has message been sent?"), default=True)
     is_response = models.BooleanField(_("response?"), default=True)
     kind = models.CharField(
