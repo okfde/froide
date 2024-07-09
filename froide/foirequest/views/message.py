@@ -158,7 +158,7 @@ def upload_postal_message_create(request, foirequest):
     # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
     # this will be set to "proper" (noon) when finally submitted
     message.timestamp = datetime.datetime.now()
-    # TODO set dirty/draft?
+    message.is_draft = True
     message.save()
     return redirect(
         reverse(
@@ -182,6 +182,7 @@ def edit_postal_message(request, foirequest, message_id):
     status_form = foirequest.get_status_form(data=request.POST)
     if request.method == "POST":
         if form.is_valid():
+            message.is_draft = False
             message = form.save()
 
             if status_form.is_valid():

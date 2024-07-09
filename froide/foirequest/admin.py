@@ -522,6 +522,7 @@ class MessageTagsFilter(MultiFilterMixin, TaggitListFilter):
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
+        "is_draft",
         "subject",
         "timestamp",
         "message_page",
