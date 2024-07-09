@@ -1,5 +1,13 @@
 <script setup>
-import { ref, reactive, computed, defineProps, nextTick, watch } from 'vue'
+import {
+  ref,
+  reactive,
+  computed,
+  defineProps,
+  defineEmits,
+  nextTick,
+  watch
+} from 'vue'
 import AppShell from './app-shell.vue'
 import PublicbodyChooser from '../publicbody/publicbody-chooser'
 // TODO linter wrong? the two above are just fine...
@@ -159,9 +167,14 @@ const mobileHeaderTitle2 = computed(() => {
 })
 
 const progress = computed(() => {
-  // roughly map to {⅓ ,⅔,1}
-  return Math.min(Math.floor(step.value / 1000), 3) / 3
+  // roughly map to {0, ½, 1}
+  return Math.min(Math.floor((step.value - 1000) / 1000), 2) / 2
 })
+
+const progressStep = computed(() =>
+  // map to {0, 1, 2}
+  Math.min(Math.floor((step.value - 1000) / 1000), 2)
+)
 
 const gotoStep = (nextStep) => {
   stepHistory.push(nextStep || getNextStep())
@@ -173,6 +186,8 @@ const gotoValid = computed(() => {
       return validity.yellow_date
     case 2384:
       return validity.date
+    case 2565:
+      return validity.costs
   }
   return true
 })
@@ -305,8 +320,12 @@ watch(step, (newStep) => {
     case 2384:
       updateValidity('date')
       break
+    case 2565:
+      updateValidity('costs')
+      break
     case 4413:
       documentsBasicOperations.value = false
+      updateValidity('form')
       break
   }
 })
@@ -338,7 +357,7 @@ const stepUiConf = {
   },
   4413: {
     documents: true,
-    documentsHideSelection: !(props.object_public && props.user_is_staff),
+    documentsHideSelection: false, // !(props.object_public && props.user_is_staff),
     documentsIconStyle: 'thumbnail',
     documentsHighlightRedactions: true
   }
@@ -373,6 +392,13 @@ const documentsImagesAdded = () => {
   documentsImageMode.value = true
   gotoStep()
 }
+const documentsDocumentsAdded = () => {
+  if (step.value !== 1110) {
+    console.error("you shouldn't be able to upload images from here")
+    return
+  }
+  gotoStep()
+}
 const documentsImagesConverted = () => {
   documentsImagesConverting.value = false
   if (step.value !== 1202) {
@@ -389,7 +415,10 @@ const validity = reactive({
 
 // TODO updateValidity should (maybe) be called on gotoStep(2384), too
 const updateValidity = (key) => {
-  const el = document.forms.postupload.elements[key]
+  const el =
+    key === 'form'
+      ? document.forms.postupload
+      : document.forms.postupload.elements[key]
   // just assume true if browser doesn't support checkValidity
   validity[key] = 'checkValidity' in el ? el.checkValidity() : true
   // console.log('updateValidity', el, 'value=', el.value, 'checkValidity()', el.checkValidity(), validity[key], validity, values)
@@ -433,10 +462,15 @@ const debugSkipDate = () => {
   updateValidity('date')
   gotoStep()
 }
+
+defineEmits(['showhelp'])
 </script>
 
 <template>
-  <app-shell :progress="progress">
+  <app-shell
+    :progress="progress"
+    :step="progressStep"
+    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
     <template #mobile-header-title1>
       <template v-if="false"> Frag den Staat </template>
       <template v-else-if="step < 4000">
@@ -447,6 +481,12 @@ const debugSkipDate = () => {
         <small>Fertig</small>
       </template>
       <span class="debug">({{ step }})</span>
+      <span class="debug">
+        <!-- eslint-disable-next-line vue/no-mutating-props -->
+        <button type="button" @click="user_is_staff = !user_is_staff">
+          {{ user_is_staff ? '☑' : '☐' }} staff
+        </button>
+      </span>
       <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
       <!--<span class="debug">p{{ progress }}</span>-->
       <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
@@ -482,7 +522,7 @@ const debugSkipDate = () => {
         submit/fetch
       </button>
     </template>
-    <template #main>
+    <template #main="{ onShowhelp }">
       <details v-if="form.nonFieldErrors.length">
         <summary class="debug">DEBUG form.nonFieldErrors</summary>
         <pre>{{ form.nonFieldErrors }}</pre>
@@ -851,7 +891,16 @@ const debugSkipDate = () => {
           </ul>
         </aside>
         <div>
-          <a><u>Ich habe technische Probleme TODO</u></a>
+          <a
+            target="_blank"
+            href="/hilfe/funktionen-der-plattform/schwaerzungen-durchfuehren/"
+            @click.prevent="
+              onShowhelp(
+                '/hilfe/funktionen-der-plattform/schwaerzungen-durchfuehren/'
+              )
+            "
+            >Ich habe technische Probleme / benötige Hilfe</a
+          >
         </div>
         <pre class="debug">
 DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
@@ -909,7 +958,11 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
               max="1000000000"
               step="0.01"
               v-model="values.costs"
-              :class="{ 'is-invalid': status_form.errors.costs }" />
+              @input="updateValidity('costs')"
+              :class="{
+                'is-invalid': validity.costs === false,
+                'is-valid': validity.costs === true
+              }" />
             <span class="input-group-text">Euro</span>
           </div>
           <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
@@ -927,7 +980,9 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
 
       <!-- not in v-show="step ..." -->
       <div v-show="uiDocuments">
-        <div v-if="step === 4413" class="d-flex justify-content-end">
+        <div
+          v-if="step === 4413 && !user_is_staff"
+          class="d-flex justify-content-end">
           <button
             type="button"
             class="btn-linklike"
@@ -948,9 +1003,11 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           :images-simple="uiDocumentsImagesSimple"
           :images-document-filename="documentsImagesDocumentFilename"
           :file-basic-operations="documentsBasicOperations"
+          :hide-advanced-operations="!user_is_staff"
           :highlight-redactions="uiDocumentsHighlightRedactions"
           @selectionupdated="documentsSelectedPdfRedaction = $event"
           @imagesadded="documentsImagesAdded"
+          @documentsadded="documentsDocumentsAdded"
           @imagesconverted="documentsImagesConverted"
           ref="documentUploader" />
       </div>
@@ -1011,14 +1068,18 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           Bestätigen
         </button>
         <div class="action-info">
+          <template v-if="!validity.form">
+            Das Formular enthält noch Fehler.
+            <!-- TODO: we could go through all elements, validate, and report here -->
+          </template>
           <template v-if="!object_public">
             Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente werden
             deshalb nicht öffentlich verfügbar.
           </template>
-          <template v-if="object_public && user_is_staff">
+          <!--<template v-if="object_public && user_is_staff">
             Um Dokumente vorerst nicht zu veröffentlichen, die Häkchen
             entfernen. TODO
-          </template>
+          </template>-->
         </div>
       </template>
       <template v-else-if="step === 4570">
@@ -1155,6 +1216,11 @@ input[type='date']:invalid {
   border-color: red;
 }
 */
+
+aside {
+  padding: 1em;
+  background-color: #fbde85;
+}
 
 .documents-filename {
   input {

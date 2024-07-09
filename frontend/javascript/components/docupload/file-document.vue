@@ -31,7 +31,7 @@
           TODO<br />Thumbnail
         </div>
       </div>
-      <div v-else class="col-auto ps-0 doc-status">
+      <div v-if="!hideAdvancedOperations" class="col-auto ps-0 doc-status">
         <template v-if="hasAttachment">
           <span
             v-if="!approved"

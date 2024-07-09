@@ -1,13 +1,30 @@
 <script setup>
-defineProps({
-  progress: Number
+import { ref, computed } from 'vue'
+import OnlineHelp from './online-help.vue'
+
+const props = defineProps({
+  step: Number,
+  steps: Array
 })
+
+const progressDesktop = computed(() => props.step / (props.steps.length - 1))
+
+const progressMobile = computed(() => (props.step + 1) / props.steps.length)
+
+const onlineHelpShow = ref(false)
+const onlineHelpPath = ref('')
+
+const showhelp = (e) => {
+  onlineHelpShow.value = true
+  onlineHelpPath.value = e
+}
 </script>
 
 <template>
   <div class="appshell">
     <header class="appshell-header">
-      <div class="appshell-header-container container">
+      <div
+        class="appshell-header-container appshell-header-container--mobile container">
         <div class="appshell-header-logo">
           <div class="appshell-header-logo-image">
             <span class="visually-hidden">FragDenStaat</span>
@@ -20,17 +37,42 @@ defineProps({
           <slot name="mobile-header-title2" />
         </div>
       </div>
-      <div class="appshell-header-progress">
+      <div class="appshell-header-container appshell-header-container--desktop">
+        <ol class="appshell-header-steps">
+          <li
+            v-for="(stepLabel, stepIndex) in steps"
+            :key="stepIndex"
+            class="appshell-header-step"
+            :class="{ 'appshell-header-step--active': stepIndex <= step }">
+            <div class="appshell-header-step-marker">{{ stepIndex + 1 }}</div>
+            <div>{{ stepLabel }}</div>
+          </li>
+        </ol>
+        <div class="appshell-header-progress appshell-header-progress--desktop">
+          <div
+            class="appshell-header-progress-bar"
+            :style="{ width: progressDesktop * 100 + '%' }"></div>
+        </div>
+      </div>
+      <div class="appshell-header-progress appshell-header-progress--mobile">
         <div
           class="appshell-header-progress-bar"
-          :style="{ width: progress * 100 + '%' }"></div>
+          :style="{ width: progressMobile * 100 + '%' }"></div>
       </div>
     </header>
     <div class="appshell-nav">
       <slot name="nav" />
     </div>
     <div class="appshell-main">
-      <slot name="main" />
+      <slot name="main" @showhelp="showhelp" />
+    </div>
+    <div class="appshell-help" v-if="onlineHelpShow">
+      <!-- .close should be provided by bootstrap, hmm -->
+      <button
+        type="button"
+        class="close appshell-help-close"
+        @click="onlineHelpShow = false"></button>
+      <online-help :path="onlineHelpPath" />
     </div>
     <div class="appshell-actions">
       <slot name="actions" />
@@ -80,6 +122,7 @@ $ci-accent-text: rgb(
 $header-height: 4em;
 $actions-min-height: 4em;
 $header-progress-height: 4px;
+$step-width: 10em;
 
 .appshell,
 .appshell * {
@@ -92,6 +135,8 @@ $header-progress-height: 4px;
   width: 100%;
   height: $header-height;
   background: white;
+  position: relative;
+  z-index: 2;
 
   @media (max-width: $breakpoint) {
     // regular fixed header gets in the way
@@ -99,15 +144,25 @@ $header-progress-height: 4px;
   }
 }
 
-.appshell-header-container {
+.appshell-header-container--mobile {
   height: calc($header-height - $header-progress-height);
-  display: grid;
+  display: none;
   grid-template-rows: 0.45fr 0.55fr;
   grid-template-columns: 3em auto;
   grid-template-areas:
     'logo     title1'
     'logo     title2';
   gap: 0.2em;
+
+  @media (max-width: $breakpoint) {
+    display: grid;
+  }
+}
+
+.appshell-header-container--desktop {
+  @media (max-width: $breakpoint) {
+    display: none;
+  }
 }
 
 .appshell-header-logo {
@@ -140,9 +195,69 @@ $header-progress-height: 4px;
   font-weight: bold;
 }
 
+.appshell-header-steps {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.appshell-header-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: $step-width;
+  color: $ci-accent-text;
+}
+
+.appshell-header-step--active {
+  font-weight: bold;
+}
+
+.appshell-header-step-marker {
+  display: block;
+  width: 2em;
+  height: 2em;
+  box-sizing: border-box;
+  border: 2px solid $ci-accent-text;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.8em;
+  background: white;
+
+  .appshell-header-step--active & {
+    background: $ci-accent-text;
+    color: white;
+  }
+}
+
 .appshell-header-progress {
   height: $header-progress-height;
   background: lightgrey;
+}
+
+.appshell-header-progress--mobile {
+  display: none;
+
+  @media (max-width: $breakpoint) {
+    display: block;
+    position: static;
+    width: 100%;
+  }
+}
+
+.appshell-header-progress--desktop {
+  position: absolute;
+  top: calc(1em - ($header-progress-height / 2));
+  left: $step-width / 2;
+  width: $step-width * 2;
+  z-index: 0;
+
+  @media (max-width: $breakpoint) {
+    display: none;
+  }
 }
 
 .appshell-header-progress-bar {
@@ -157,6 +272,41 @@ $header-progress-height: 4px;
 
 .appshell-main {
   padding-bottom: calc($actions-min-height + 4em);
+}
+
+.appshell-help {
+  position: fixed;
+  right: 0;
+  // TODO this value was eyeballed from the bootstrap container width
+  width: calc((100vw - 1000px) / 2);
+  top: $header-height;
+  bottom: 0;
+  overflow-y: scroll;
+
+  @media (max-width: $breakpoint) {
+    top: $header-height;
+    left: 0;
+    width: 100%;
+    bottom: 0;
+    z-index: 100;
+  }
+}
+
+.appshell-help-close {
+  position: fixed;
+  right: 1em;
+  top: calc(1em + $header-height);
+  width: 3em;
+  height: 3em;
+  background: 0;
+  border: 0;
+
+  &::after {
+    content: '×';
+    font-weight: bold;
+    font-size: 200%;
+    line-height: 1;
+  }
 }
 
 .appshell-actions {

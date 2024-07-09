@@ -68,7 +68,7 @@
           :hide-selection="hideSelection"
           :icon-style="iconStyle"
           :show-basic-operations="fileBasicOperations"
-          :hide-advanced-operations="true"
+          :hide-advanced-operations="hideAdvancedOperations"
           :highlight-redaction="highlightRedactions"
           @pageschanged="pagesChanged(doc, $event)"
           @splitpages="splitPages(doc, $event)"
@@ -168,6 +168,10 @@ export default {
       type: Boolean,
       default: false
     },
+    hideAdvancedOperations: {
+      type: Boolean,
+      default: false
+    },
     hidePdf: {
       type: Boolean,
       default: false
@@ -243,10 +247,9 @@ export default {
     canMakeResult() {
       return this.canMakeDocument && this.canMakeResultDocs.length > 0
     },
-    canApproveDocs() {
+    approvableDocs() {
       return this.pdfDocuments.filter((d) => {
         return (
-          d.selected &&
           d.approving === undefined &&
           d.attachment &&
           !d.attachment.approved &&
@@ -254,8 +257,11 @@ export default {
         )
       })
     },
+    approvableSelectedDocs() {
+      return this.approvableDocs.filter((d) => d.selected)
+    },
     canApprove() {
-      return this.canApproveDocs.length > 0
+      return this.approvableSelectedDocs.length > 0
     }
   },
   watch: {
@@ -476,9 +482,22 @@ export default {
         d.selected = !this.selectAll
       })
     },
+    approveAll() {
+      return Promise.all(
+        this.approvableDocs.map((d) => {
+          d.approving = true
+          return approveAttachment(d, this.config, this.$root.csrfToken).then(
+            (att) => {
+              d.approving = false
+              d.attachment = att
+            }
+          )
+        })
+      )
+    },
     approveSelected() {
       return Promise.all(
-        this.canApproveDocs.map((d) => {
+        this.approvableSelectedDocs.map((d) => {
           d.approving = true
           return approveAttachment(d, this.config, this.$root.csrfToken).then(
             (att) => {
@@ -490,7 +509,6 @@ export default {
       )
     },
     addImages(images) {
-      this.$emit('imagesadded')
       const imageDocs = this.documents.filter((d) => d.type === 'imagedoc')
       if (imageDocs.length === 0) {
         this.documents = [
@@ -512,6 +530,7 @@ export default {
           })
         ]
       }
+      this.$emit('imagesadded')
     },
     addAttachment(att) {
       if (att.is_image) {
@@ -521,6 +540,7 @@ export default {
           ...this.buildDocuments([att], { new: true }),
           ...this.documents
         ]
+        this.$emit('documentsadded')
       }
     },
     makeResults() {
