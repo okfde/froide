@@ -34,19 +34,17 @@
               class="form-control"
               :placeholder="i18n.documentTitlePlaceholder" />
           </div>
-          <draggable
-            v-model="pages"
-            class="row pages bg-body-secondary"
-            @start="drag = true"
-            @end="drag = false">
-            <image-page
-              v-for="page in pages"
-              :key="page.pageNum"
-              :page="page"
-              :page-count="pages.length"
-              @pageupdated="$emit('pageupdated', { document, ...$event })"
-              @splitpages="splitPages" />
-          </draggable>
+          <!-- akward @update because Vue 2-ish vs 3.2 interop -->
+          <image-document-pages-sortable
+            class="row bg-body-secondary"
+            :pages="pages"
+            @update:pages="
+              ($event) => {
+                pages = $event
+              }
+            "
+            @pageupdated="$emit('pageupdated', { document, ...$event })"
+            @splitpages="splitPages" />
         </div>
         <div class="row mt-3">
           <div class="col-md-12">
@@ -70,9 +68,7 @@
 </template>
 
 <script>
-import draggable from 'vuedraggable'
-
-import ImagePage from './image-page.vue'
+import ImageDocumentPagesSortable from './image-document-pages-sortable.vue'
 import FileReview from './file-review.vue'
 
 import I18nMixin from '../../lib/i18n-mixin'
@@ -83,8 +79,7 @@ import { postData } from '../../lib/api.js'
 export default {
   name: 'ImageDocument',
   components: {
-    draggable,
-    ImagePage,
+    ImageDocumentPagesSortable,
     FileReview
   },
   mixins: [I18nMixin, DocumentMixin],
@@ -167,15 +162,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.pages {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  overflow: auto;
-  overflow-x: scroll;
-  overflow-scrolling: touch;
-  padding-bottom: 2rem;
-}
-</style>
