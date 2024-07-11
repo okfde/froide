@@ -4,7 +4,7 @@ which looks like the most reasonable replacement for vuedraggable (Vue2 only);
 other alternatives did not work (vuedraggable-next and a different thin SortableJS wrapper). */
 
 import { useSortable } from '@vueuse/integrations/useSortable'
-import { ref, defineEmits, computed } from 'vue'
+import { computed, defineEmits, ref } from 'vue'
 import ImagePage from './image-page.vue'
 
 const props = defineProps({ pages: Array })
@@ -27,7 +27,7 @@ useSortable(pagesEl, pages, { animation: 200 })
 </script>
 
 <template>
-  <div ref="pagesEl" class="pages">
+  <div ref="pagesEl" class="pages d-flex flex-nowrap align-items-baseline pb-3">
     <image-page
       v-for="page in pages"
       :key="page.id"
@@ -40,12 +40,8 @@ useSortable(pagesEl, pages, { animation: 200 })
 
 <style lang="scss" scoped>
 .pages {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: baseline;
   overflow: auto;
   overflow-x: scroll;
   overflow-scrolling: touch;
-  padding-bottom: 2rem;
 }
 </style>
