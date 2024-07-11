@@ -15,9 +15,8 @@ class DocumentConfig(AppConfig):
 
 
 def add_search(request):
-    if request.user.is_staff:
-        return {
-            "title": _("Documents (beta)"),
-            "name": "document",
-            "url": reverse("document-search"),
-        }
+    return {
+        "title": _("Documents"),
+        "name": "document",
+        "url": reverse("document-search"),
+    }

@@ -1,20 +1,16 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.sitemaps import Sitemap
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import render
 
 from froide.frontpage.models import FeaturedRequest
 from froide.helper.cache import cache_anonymous_page
-from froide.helper.utils import render_403
 from froide.publicbody.models import PublicBody
 
-from ..auth import can_read_foirequest_authenticated
+from ..decorators import allow_read_foirequest_authenticated
 from ..foi_mail import package_foirequest
 from ..models import FoiRequest
 from ..pdf_generator import FoiRequestPDFGenerator
-
-User = get_user_model()
 
 
 @cache_anonymous_page(15 * 60)
@@ -35,26 +31,30 @@ def index(request):
     )
 
 
-def download_foirequest_zip(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not can_read_foirequest_authenticated(foirequest, request):
-        return render_403(request)
+@allow_read_foirequest_authenticated
+def download_foirequest_zip(request, foirequest):
     response = HttpResponse(
         package_foirequest(foirequest), content_type="application/zip"
     )
-    response["Content-Disposition"] = 'attachment; filename="%s.zip"' % foirequest.pk
+    name = "%s-%s" % (
+        foirequest.slug,
+        foirequest.pk,
+    )
+    response["Content-Disposition"] = 'attachment; filename="%s.zip"' % name
     return response
 
 
-def download_foirequest_pdf(request, slug):
-    foirequest = get_object_or_404(FoiRequest, slug=slug)
-    if not can_read_foirequest_authenticated(foirequest, request):
-        return render_403(request)
+@allow_read_foirequest_authenticated
+def download_foirequest_pdf(request, foirequest):
     pdf_generator = FoiRequestPDFGenerator(foirequest)
     response = HttpResponse(
         pdf_generator.get_pdf_bytes(), content_type="application/pdf"
     )
-    response["Content-Disposition"] = 'attachment; filename="%s.pdf"' % foirequest.pk
+    name = "%s-%s" % (
+        foirequest.slug,
+        foirequest.pk,
+    )
+    response["Content-Disposition"] = 'attachment; filename="%s.pdf"' % name
     return response
 
 

@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import override
 
-from froide.foirequest.models import DeferredMessage, FoiRequest
+from froide.foirequest.models import DeferredMessage, FoiMessage, FoiRequest
 from froide.helper.email_parsing import ParsedEmail, parse_email, parse_email_address
 from froide.helper.email_utils import (
     get_mail_client,
@@ -47,7 +47,7 @@ def send_foi_mail(
     recipient_list,
     attachments=None,
     fail_silently=False,
-    **kwargs
+    **kwargs,
 ):
     backend_kwargs = {}
     if kwargs.get("dsn"):
@@ -61,7 +61,7 @@ def send_foi_mail(
         port=settings.FOI_EMAIL_PORT,
         use_tls=settings.FOI_EMAIL_USE_TLS,
         fail_silently=fail_silently,
-        **backend_kwargs
+        **backend_kwargs,
     )
     headers = {}
     if settings.FOI_EMAIL_FIXED_FROM_ADDRESS:
@@ -352,37 +352,64 @@ def generate_foirequest_files(foirequest):
 
     pdf_generator = FoiRequestPDFGenerator(foirequest)
     correspondence_bytes = pdf_generator.get_pdf_bytes()
-    yield ("%s.pdf" % foirequest.pk, correspondence_bytes, "application/pdf")
-    yield from get_attachments_for_package(foirequest)
+    yield ("_%s.pdf" % foirequest.pk, correspondence_bytes, "application/pdf")
+    yield from get_message_attachments_for_package(foirequest)
 
 
-def get_attachments_for_package(foirequest):
+def get_message_and_attachments(
+    foimessage: FoiMessage, date_prefix: Optional[str] = None
+):
+    from .pdf_generator import FoiRequestMessagePDFGenerator
+
+    if date_prefix is None:
+        date_prefix = foimessage.timestamp.date().isoformat()
+
+    pdf_generator = FoiRequestMessagePDFGenerator(foimessage)
+    yield ("%s.pdf" % date_prefix, pdf_generator.get_pdf_bytes(), "application/pdf")
+
+    att_queryset = foimessage.foiattachment_set.filter(
+        is_redacted=False, is_converted=False
+    )
+
+    for attachment in att_queryset:
+        if not attachment.file:
+            continue
+        filename = "%s-%s" % (date_prefix, attachment.name)
+        with open(attachment.file.path, "rb") as f:
+            yield (filename, f.read(), attachment.filetype)
+
+
+def package_message(foimessage: FoiMessage):
+    zfile_obj = BytesIO()
+    with override(settings.LANGUAGE_CODE):
+        zfile = zipfile.ZipFile(zfile_obj, "w")
+        path = str(foimessage.request_id)
+        atts = get_message_and_attachments(foimessage)
+        for filename, filebytes, _ct in atts:
+            zfile.writestr("%s/%s" % (path, filename), filebytes)
+        zfile.close()
+    return zfile_obj.getvalue()
+
+
+def get_message_attachments_for_package(foirequest):
     last_date = None
     date_count = 1
 
-    for message in foirequest.messages:
-        current_date = message.timestamp.date()
+    for foimessage in foirequest.messages:
+        current_date = foimessage.timestamp.date()
         date_prefix = current_date.isoformat()
         if current_date == last_date:
             date_count += 1
         else:
             date_count = 1
-        date_prefix += "_%d" % date_count
+        if date_count > 1:
+            date_prefix += "_%d" % date_count
+
         last_date = current_date
-
-        att_queryset = message.foiattachment_set.filter(
-            is_redacted=False, is_converted=False
-        )
-
-        for attachment in att_queryset:
-            if not attachment.file:
-                continue
-            filename = "%s-%s" % (date_prefix, attachment.name)
-            with open(attachment.file.path, "rb") as f:
-                yield (filename, f.read(), attachment.filetype)
+        yield from get_message_and_attachments(foimessage, date_prefix=date_prefix)
 
 
-def package_foirequest(foirequest):
+def package_foirequest(foirequest: FoiRequest):
     from .pdf_generator import FoiRequestPDFGenerator
 
     zfile_obj = BytesIO()
@@ -391,8 +418,8 @@ def package_foirequest(foirequest):
         path = str(foirequest.pk)
         pdf_generator = FoiRequestPDFGenerator(foirequest)
         correspondence_bytes = pdf_generator.get_pdf_bytes()
-        zfile.writestr("%s/%s.pdf" % (path, foirequest.pk), correspondence_bytes)
-        atts = get_attachments_for_package(foirequest)
+        zfile.writestr("%s/_%s.pdf" % (path, foirequest.pk), correspondence_bytes)
+        atts = get_message_attachments_for_package(foirequest)
         for filename, filebytes, _ct in atts:
             zfile.writestr("%s/%s" % (path, filename), filebytes)
         zfile.close()

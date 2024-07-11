@@ -90,7 +90,7 @@ class FoiProject(models.Model):
     class Meta:
         verbose_name = _("FOI Project")
         verbose_name_plural = _("FOI Projects")
-        ordering = ("last_update",)
+        ordering = ("-last_update",)
 
     project_created = Signal()  # args: []
 

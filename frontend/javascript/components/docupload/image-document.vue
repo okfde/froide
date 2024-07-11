@@ -34,70 +34,17 @@
               class="form-control"
               :placeholder="i18n.documentTitlePlaceholder" />
           </div>
-          <!-- FIXME WIP: vuedraggable is not compatible with Vue3,
-            could migrate to https://github.com/SortableJS/vue.draggable.next,
-            but it is pracitically unmaintained and incompatible with our vue version?
-            https://github.com/SortableJS/vue.draggable.next/issues/234
-            there is an alternative
-            https://github.com/SortableJS/vue.draggable.next/issues/186
-            but it would not install with our current package.json/yarn.lock,
-            `yarn add` just runs out of memory (circular dependency somehow?
-            in an empty project it adds just fine)
-          -->
-          <!--
-          <draggable
-            v-model="pages"
-            class="row pages bg-body-secondary"
-            item-key="id"
-            @start="drag = true"
-            @end="drag = false">
-            <template #item="{page}">
-              <image-page
-                :x-key="page.pageNum"
-                :page="page"
-                :page-count="pages.length"
-                @pageupdated="$emit('pageupdated', { document, ...$event })"
-                @splitpages="splitPages" />
-            </template>
-            <template #header>
-              <span>header</span>
-            </template>
-            <template #footer>
-              <span>footer</span>
-            </template>
-          </draggable>
-          -->
-          <!--
-          <sortable
-            :list="pages"
-            item-key="id"
-            tag="div"
-            :options="{}">
-            <template #header>
-              <span>header</span>
-            </template>
-            <template #footer>
-              <span>footer</span>
-            </template>
-            <template #item="{page, index}">
-              <image-page
-                :x-key="page.pageNum"
-                :page="page"
-                :page-count="pages.length"
-                @pageupdated="$emit('pageupdated', { document, ...$event })"
-                @splitpages="splitPages" />
-            </template>
-          </sortable>
-          -->
-          <div class="would-be-draggable">
-            <image-page
-              v-for="page in pages"
-              :key="page.pageNum"
-              :page="page"
-              :page-count="pages.length"
-              @pageupdated="$emit('pageupdated', { document, ...$event })"
-              @splitpages="splitPages" />
-          </div>
+          <!-- akward @update because Vue 2-ish vs 3.2 interop -->
+          <image-document-pages-sortable
+            class="row bg-body-secondary"
+            :pages="pages"
+            @update:pages="
+              ($event) => {
+                pages = $event
+              }
+            "
+            @pageupdated="$emit('pageupdated', { document, ...$event })"
+            @splitpages="splitPages" />
         </div>
         <div v-if="!simple" class="row mt-3">
           <div class="col-md-12">
@@ -128,10 +75,7 @@
 </template>
 
 <script>
-// import draggable from 'vuedraggable'
-// import { Sortable } from 'sortablejs-vue3'
-
-import ImagePage from './image-page.vue'
+import ImageDocumentPagesSortable from './image-document-pages-sortable.vue'
 import FileReview from './file-review.vue'
 import FileBasicOperations from './file-basic-operations.vue'
 
@@ -143,8 +87,7 @@ import { postData } from '../../lib/api.js'
 export default {
   name: 'ImageDocument',
   components: {
-    // draggable,
-    ImagePage,
+    ImageDocumentPagesSortable,
     FileReview,
     FileBasicOperations
   },
@@ -236,15 +179,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.pages {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  overflow: auto;
-  overflow-x: scroll;
-  overflow-scrolling: touch;
-  padding-bottom: 2rem;
-}
-</style>

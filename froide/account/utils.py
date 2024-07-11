@@ -176,7 +176,9 @@ def future_cancel_user(user, notify=False):
         future_cancel_mail.send(user=user)
 
 
-def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -> None:
+def start_cancel_account_process(
+    user: SimpleLazyObject, delete: bool = False, note: str = ""
+) -> None:
     from .tasks import cancel_account_task
 
     user.private = True
@@ -185,6 +187,8 @@ def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -
     user.is_active = False
     user.set_unusable_password()
     user.date_deactivated = timezone.now()
+    if note:
+        user.notes += "\n\n" + note
 
     user.save()
     delete_all_unexpired_sessions_for_user(user)

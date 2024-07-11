@@ -16,6 +16,7 @@ from froide.helper.text_utils import slugify
 from froide.helper.widgets import (
     AutocompleteMultiWidget,
     BootstrapSelect,
+    BootstrapTextarea,
     TagAutocompleteWidget,
 )
 
@@ -73,6 +74,14 @@ class MultiplePublicBodyForm(PublicBodyForm):
 
 
 class PublicBodyProposalForm(forms.ModelForm):
+    reason = forms.CharField(
+        label=_("Reason"),
+        required=False,
+        help_text=_(
+            "Please give a reason why this public body should be added if that is not obvious."
+        ),
+        widget=BootstrapTextarea,
+    )
     name = forms.CharField(
         label=_("Name"),
         help_text=_("Official name of the public authority."),
@@ -228,6 +237,7 @@ class PublicBodyProposalForm(forms.ModelForm):
     class Meta:
         model = PublicBody
         fields = (
+            "reason",
             "name",
             "other_names",
             "jurisdiction",
@@ -263,6 +273,14 @@ class PublicBodyProposalForm(forms.ModelForm):
         pb.confirmed = False
         pb._created_by = user
         pb.updated_at = timezone.now()
+        pb.change_history = [
+            {
+                "user_id": user.id,
+                "timestamp": pb.updated_at.isoformat(),
+                "data": {"reason": self.cleaned_data["reason"]},
+            }
+        ]
+
         pb.save()
         self.save_m2m()
         pb.laws.set(pb.jurisdiction.get_all_laws())
@@ -296,6 +314,10 @@ class PublicBodyChangeProposalForm(PublicBodyProposalForm):
 
 
 class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["reason"].initial = self.instance.reason
+
     def get_other_publicbodies(self):
         return PublicBody._default_manager.all().exclude(id=self.instance.id)
 

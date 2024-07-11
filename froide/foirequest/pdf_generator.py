@@ -42,6 +42,10 @@ class FoiRequestPDFGenerator(PDFGenerator):
     template_name = "foirequest/pdf/foirequest.html"
 
 
+class FoiRequestMessagePDFGenerator(PDFGenerator):
+    template_name = "foirequest/pdf/foimessage.html"
+
+
 class LetterPDFGenerator(PDFGenerator):
     template_name = "foirequest/pdf/message_letter.html"
 

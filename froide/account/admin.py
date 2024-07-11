@@ -14,6 +14,7 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.urls.resolvers import URLPattern
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from mfa.admin import MFAKeyAdmin
@@ -306,8 +307,11 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     @admin.action(description=_("Cancel account by user request"))
     def cancel_users_by_request(self, request, queryset):
+        note = "Canceled account by user request on {}".format(
+            timezone.now().isoformat()
+        )
         for user in queryset:
-            start_cancel_account_process(user)
+            start_cancel_account_process(user, note=note)
         self.message_user(request, _("Accounts canceled."))
         return None
 

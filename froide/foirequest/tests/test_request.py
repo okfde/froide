@@ -187,7 +187,7 @@ def test_new_email_received_set_status(world, client, pb, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.get(pk=req.pk)
@@ -858,7 +858,7 @@ def test_set_message_sender(world, client, pb, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.get(title=post["subject"])
@@ -1052,7 +1052,7 @@ def test_escalation_message(world, client):
     assert req.get_auth_link() not in req.messages[-1].plaintext_redacted
     assert len(mail.outbox) == 2
     message = list(filter(lambda x: x.to[0] == req.law.mediator.email, mail.outbox))[-1]
-    assert message.attachments[0][0] == "%s.pdf" % req.pk
+    assert message.attachments[0][0] == "_%s.pdf" % req.pk
     assert message.attachments[0][2] == "application/pdf"
     assert len(message.attachments) == len(attachments)
     assert [x[0] for x in message.attachments] == [x[0] for x in attachments]
@@ -1609,7 +1609,7 @@ def test_redaction_config(world, client, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.all()[0]
@@ -1988,7 +1988,7 @@ def test_invalid_emails_not_shown_in_reply(world, client, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
 
@@ -2046,7 +2046,7 @@ def test_hiding_content(world, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.all()[0]
@@ -2100,9 +2100,11 @@ def test_package(world):
     bytes = package_foirequest(fr)
     zfile = zipfile.ZipFile(BytesIO(bytes), "r")
     filenames = [
-        r"%s/%s\.pdf" % (fr.pk, fr.pk),
-        r"%s/20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf" % fr.pk,
-        r"%s/20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf" % fr.pk,
+        "%s/_%s.pdf" % (fr.pk, fr.pk),
+        "%s/%s.pdf" % (fr.pk, fr.messages[0].timestamp.date().isoformat()),
+        "%s/%s.pdf" % (fr.pk, fr.messages[1].timestamp.date().isoformat()),
+        r"%s/%s-file_\d+.pdf" % (fr.pk, fr.messages[1].timestamp.date().isoformat()),
+        r"%s/%s-file_\d+.pdf" % (fr.pk, fr.messages[1].timestamp.date().isoformat()),
     ]
     zip_names = zfile.namelist()
     assert len(filenames) == len(zip_names)

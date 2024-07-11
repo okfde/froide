@@ -18,6 +18,7 @@ from taggit.models import Tag
 from froide.helper.search.views import BaseSearchView
 from froide.helper.text_utils import slugify
 from froide.helper.utils import render_400, render_403
+from froide.publicbody.models import PublicBody
 from froide.team.models import Team
 
 from .auth import DocumentCrossDomainMediaAuth
@@ -25,7 +26,7 @@ from .documents import PageDocument
 from .feeds import DocumentSearchFeed
 from .filters import PageDocumentFilterset
 from .forms import DocumentUploadForm
-from .models import Document
+from .models import Document, DocumentCollection
 
 
 class DocumentSearchView(BaseSearchView):
@@ -35,6 +36,7 @@ class DocumentSearchView(BaseSearchView):
     show_filters = {
         "jurisdiction",
         "campaign",
+        "portal",
     }
     advanced_filters = {"jurisdiction", "campaign"}
     has_facets = True
@@ -45,20 +47,35 @@ class DocumentSearchView(BaseSearchView):
             "query_param": "tag",
             "label_getter": lambda x: x["object"].name,
             "label": _("tags"),
-        }
+        },
+        "publicbody": {
+            "model": PublicBody,
+            "getter": lambda x: str(x["object"].pk),
+            "query_param": "publicbody",
+            "label_getter": lambda x: x["object"].name,
+            "label": _("public bodies"),
+        },
+        "collections": {
+            "queryset": DocumentCollection.objects.filter(public=True),
+            "getter": lambda x: str(x["object"].pk),
+            "query_param": "collection",
+            "label_getter": lambda x: x["object"].title,
+            "label": _("document collections"),
+        },
     }
     model = Page
     document = PageDocument
     filterset = PageDocumentFilterset
     search_url_name = "document-search"
     select_related = ("document",)
+    prefetch_related = ("document__foirequest", "document__publicbody")
 
     def get_base_search(self):
         q = Q("term", public=True)
         if self.request.user.is_authenticated:
             q |= Q("term", user=self.request.user.pk)
             q |= Q("terms", team=Team.objects.get_list_for_user(self.request.user))
-        return super().get_base_search().filter(q).filter("term", portal=0)
+        return super().get_base_search().filter(q)
 
 
 class DocumentSearchFeedView(DocumentSearchView):
