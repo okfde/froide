@@ -36,8 +36,8 @@
           </div>
           <!-- akward @update because Vue 2-ish vs 3.2 interop -->
           <image-document-pages-sortable
-            class="row bg-body-secondary"
             :pages="pages"
+            :dense="simple"
             @update:pages="
               ($event) => {
                 pages = $event

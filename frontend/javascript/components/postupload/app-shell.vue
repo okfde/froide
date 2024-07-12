@@ -60,7 +60,7 @@ const showhelp = (e) => {
           :style="{ width: progressMobile * 100 + '%' }"></div>
       </div>
     </header>
-    <div class="appshell-nav">
+    <div class="appshell-nav container">
       <slot name="nav" />
     </div>
     <div class="appshell-main">

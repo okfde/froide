@@ -85,7 +85,9 @@
             @click="undoAll">
             <i class="fa fa-eraser" />
           </button>
-          <span style="font-size: 50%">TODO:<br />Zoom</span>
+          <span style="font-size: 50%; margin-left: 0.5rem"
+            >TODO:<br />Zoom</span
+          >
         </div>
 
         <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes">
@@ -1266,6 +1268,9 @@ export default {
     width: 100%;
   }
   .toolbar-undo-redo {
+    background: #eee;
+    padding: 0.5rem 0;
+    border-top: 1px solid #bbb;
     width: 100%;
     justify-content: center;
     &.btn-group > .btn {
@@ -1273,6 +1278,10 @@ export default {
     }
   }
   .toolbar-pages {
+    background: #eee;
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    padding: 0.5rem 0;
     width: 100%;
     justify-content: center;
   }

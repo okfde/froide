@@ -43,6 +43,12 @@ const props = defineProps({
   user_is_staff: Boolean
 })
 
+const debug = ref(!!localStorage.getItem('fds-postupload-debug'))
+window.FDSdebug = (val) => {
+  debug.value = typeof val === 'boolean' ? val : !debug.value
+  localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
+}
+
 const stepHistory = reactive([1100])
 const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
@@ -119,7 +125,10 @@ const documentsConvertImages = () => {
   // ^child              ^vue2 ^grandchild...REN!  ^method
   // alternative: pass a prop, watch it, react?
 }
-const documentsImagesDocumentFilename = ref('brief.pdf')
+const documentsImagesDocumentFilenameDefault = 'brief'
+const documentsImagesDocumentFilename = ref(
+  documentsImagesDocumentFilenameDefault
+)
 
 const documentsBasicOperations = ref(false)
 
@@ -146,7 +155,20 @@ const pdfRedactionUploaded = () => {
   documentUploader.value.refreshAttachments()
 }
 
+const documentUploaderSelectAll = (val) => {
+  documentUploader.value.setAllSelect(val)
+}
+
 const mobileHeaderTitle2 = computed(() => {
+  switch (step.value) {
+    case 1100:
+      return 'Brief hinzufügen'
+    case 4570:
+      return 'Fertig'
+  }
+  if (step.value < 2000) {
+    return 'Brief hochladen oder scannen'
+  }
   if (2000 <= step.value && step.value < 3000) {
     return 'Infos eingeben'
   }
@@ -156,14 +178,7 @@ const mobileHeaderTitle2 = computed(() => {
   if (step.value >= 4000) {
     return 'Vorschau'
   }
-  switch (step.value) {
-    case 1100:
-      return 'Brief hinzufügen'
-    case 1110:
-      return 'Brief hochladen oder scannen'
-    default:
-      return '(Untertitel)'
-  }
+  return '(Untertitel)'
 })
 
 const progress = computed(() => {
@@ -205,6 +220,9 @@ const submit = async () => {
 const submitFetch = async () => {
   const action = document.forms.postupload.action
   const formdata = new FormData(document.forms.postupload)
+  if (debug.value) {
+    console.log('submit', { action, formdata })
+  }
   return fetch(action, {
     method: 'post',
     headers: {
@@ -317,6 +335,13 @@ const getNextStep = () => {
 watch(step, (newStep) => {
   console.log('# watch step', newStep)
   switch (newStep) {
+    case 1110:
+      documentsImagesDocumentFilename.value =
+        documentsImagesDocumentFilenameDefault
+      break
+    case 1300:
+      pdfRedactionUploaded()
+      break
     case 2384:
       updateValidity('date')
       break
@@ -326,6 +351,7 @@ watch(step, (newStep) => {
     case 4413:
       documentsBasicOperations.value = false
       updateValidity('form')
+      pdfRedactionUploaded()
       break
   }
 })
@@ -349,6 +375,8 @@ const stepUiConf = {
     documents: true,
     documentsUpload: false,
     documentsHideSelection: true,
+    // would make sense "if has geschwärzte docs", i.e. when we expect users to go back
+    // documentsHighlightRedactions: true,
     documentsIconStyle: 'icon'
   },
   3402: {
@@ -357,7 +385,7 @@ const stepUiConf = {
   },
   4413: {
     documents: true,
-    documentsHideSelection: false, // !(props.object_public && props.user_is_staff),
+    documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
     documentsIconStyle: 'thumbnail',
     documentsHighlightRedactions: true
   }
@@ -446,8 +474,9 @@ const values = reactive({
   isYellow: false
 })
 
-const uppyClick = () => {
-  // wait until gotoStep, called immediately before, unveils uppy in DOM (v-if)
+const stepAndUppyClick = () => {
+  gotoStep()
+  // wait until gotoStep unveils uppy in DOM (v-if)
   nextTick(() => {
     const button = documentUploader.value.$el.querySelector(
       '.uppy-Dashboard-browse'
@@ -480,8 +509,8 @@ defineEmits(['showhelp'])
       <template v-else-if="step >= 4000">
         <small>Fertig</small>
       </template>
-      <span class="debug">({{ step }})</span>
-      <span class="debug">
+      <span v-if="debug" class="debug">({{ step }})</span>
+      <span v-if="debug" class="debug">
         <!-- eslint-disable-next-line vue/no-mutating-props -->
         <button type="button" @click="user_is_staff = !user_is_staff">
           {{ user_is_staff ? '☑' : '☐' }} staff
@@ -504,17 +533,21 @@ defineEmits(['showhelp'])
     </template>
     <template #nav>
       <!-- TODO button does not support going back throug documentsPdfRedactionIndex -->
-      <a v-if="step === 1100" href="../.." class="btnlike"
-        >← <u>Abbrechen</u></a
-      >
-      <a v-else @click="backStep" class="btnlike">← <u>Zurück</u></a>
+      <div v-if="step === 1100" class="my-3">
+        <a href="../.." class="btnlike">← <u>Abbrechen</u></a>
+      </div>
+      <div v-else-if="step !== 4570" class="my-3">
+        <a @click="backStep" class="btnlike">← <u>Zurück</u></a>
+      </div>
       <button
+        v-if="debug"
         class="btn btn-secondary btn-sm debug"
         type="submit"
         style="font-size: 50%; margin-left: 1em">
         submit/save
       </button>
       <button
+        v-if="debug"
         class="btn btn-secondary btn-sm debug"
         type="button"
         @click="submitFetch"
@@ -523,31 +556,40 @@ defineEmits(['showhelp'])
       </button>
     </template>
     <template #main="{ onShowhelp }">
-      <details v-if="form.nonFieldErrors.length">
+      <details v-if="debug && form.nonFieldErrors.length">
         <summary class="debug">DEBUG form.nonFieldErrors</summary>
         <pre>{{ form.nonFieldErrors }}</pre>
       </details>
-      <details v-if="Object.keys(form.errors).length">
+      <details v-if="debug && Object.keys(form.errors).length">
         <summary class="debug">DEBUG form.errors</summary>
         <pre>{{ form.errors }}</pre>
       </details>
 
       <div v-show="step === 1100">
-        <button disabled class="btn btn-primary">Dokumente scannen</button>
-        <p>Handykamera verwenden...</p>
+        <button disabled class="btn btn-outline-primary d-block w-100">
+          <i class="fa fa-camera"></i>
+          Dokumente scannen
+        </button>
+        <p class="mt-1">
+          Handykamera verwenden, um automatisch ein PDF zu erstellen
+        </p>
         <button
           type="button"
-          @click="
-            gotoStep()
-            uppyClick()
-          "
-          class="btn btn-primary">
+          @click="stepAndUppyClick"
+          class="btn btn-outline-primary d-block w-100">
+          <i class="fa fa-upload"></i>
           Dateien hochladen
         </button>
-        <p>Wenn Sie den Brief...</p>
+        <p class="mt-1">
+          Wenn Sie den Brief schon als PDF oder Foto vorliegen haben
+        </p>
         <aside>
-          <b>TIPP</b>
-          <p>Sie brauchen den Brief...</p>
+          <h4><i class="fa fa-lightbulb-o fa-lg"></i> TIPP</h4>
+          <p>
+            Sie brauchen den Brief vorher <strong>nicht</strong> zu schwärzen.
+            Das erledigen Sie später mit unserem Online-Tool.
+          </p>
+          <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
         </aside>
       </div>
 
@@ -556,15 +598,25 @@ defineEmits(['showhelp'])
       </div>
 
       <div v-show="step === 1201">
-        <label class="fw-bold form-label field-required">
+        <label class="fw-bold form-label">
           Ziehen Sie die Seiten in die richtige Reihenfolge
         </label>
       </div>
 
       <div v-show="step === 1202">
-        <div>(TODO Bild)</div>
-        <div>Wir erstellen aus Ihren Bildern ein PDF-Dokument</div>
-        <div class="documents-filename">
+        <div>
+          <div class="text-center my-3">
+            <i class="fa fa-file-image-o fa-4x"></i>
+            <i class="fa fa-arrow-right fa-2x"></i>
+            <i class="fa fa-file-pdf-o fa-4x"></i>
+            <br />
+            (TODO Bild)
+          </div>
+        </div>
+        <div class="fw-bold form-label">
+          Wir erstellen aus Ihren Bildern ein PDF-Dokument
+        </div>
+        <div class="documents-filename p-2 my-3 mx-auto">
           <div class="form-group">
             <input
               id="documents_filename"
@@ -577,11 +629,11 @@ defineEmits(['showhelp'])
 
       <!-- there is another for this step, further down below document-uploader -->
       <div v-show="step === 1300">
-        <div>Bisher vorhandene Dokumente</div>
+        <div class="fw-bold">Bisher vorhandene Dokumente</div>
       </div>
 
       <div v-show="step === 2376">
-        <label class="fw-bold form-label field-required">
+        <label class="fw-bold form-label">
           Haben Sie den hochgeladenen Brief erhalten oder versendet?
           <!--{{ form.fields.sent.label }}-->
         </label>
@@ -698,8 +750,7 @@ defineEmits(['showhelp'])
           required
           :min="props.date_min"
           :max="props.date_max"
-          @input="updateValidity('date')"
-          :x-placeholder="form.fields.date.placeholder" />
+          @input="updateValidity('date')" />
         <!--<div class="form-text">
           {{ form.fields.date.help_text }}
         </div>-->
@@ -873,24 +924,43 @@ defineEmits(['showhelp'])
         <label class="fw-bold col-form-label">
           Welche dieser Dokumente möchen Sie schwärzen?
         </label>
-        <div>
-          <a>Alle auswählen TODO</a>
-          <a>Keine auswählen</a>
+        <!-- TODO: if we expect users to go back a lot, the document-uploader list
+          shown here should exclude/disable "has schwärzung" docs -->
+        <p>
+          Ein Dokument sollte geschwärzt werden, wenn es personenbezogene
+          Informationen über Sie selbst oder Behördenmitarbeiter:innen enthält.
+        </p>
+        <div class="text-end">
+          <button
+            type="button"
+            class="btn-linklike mx-2"
+            @click="documentUploaderSelectAll(true)">
+            Alle auswählen
+          </button>
+          <button
+            type="button"
+            class="btn-linklike mx-2"
+            @click="documentUploaderSelectAll(false)">
+            Keine auswählen
+          </button>
         </div>
       </div>
 
       <div v-show="3000 < step && step < 3100">
-        <label class="fw-bold col-md-4 col-form-label">
+        <label class="fw-bold col-form-label">
           Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
           {{ documentsSelectedPdfRedaction.length }})
         </label>
         <aside>
           Das sollten Sie schwärzen:
           <ul>
-            <li>Ihre Namen…</li>
+            <li>Ihren Namen und Ihre Adresse</li>
+            <li>Namen von Behördenmitarbeiter:innen</li>
+            <li>Unterschriften</li>
+            <li>E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden</li>
           </ul>
         </aside>
-        <div>
+        <div class="mt-2 mb-3">
           <a
             target="_blank"
             href="/hilfe/funktionen-der-plattform/schwaerzungen-durchfuehren/"
@@ -899,10 +969,10 @@ defineEmits(['showhelp'])
                 '/hilfe/funktionen-der-plattform/schwaerzungen-durchfuehren/'
               )
             "
-            >Ich habe technische Probleme / benötige Hilfe</a
+            ><u>Ich habe technische Probleme / benötige Hilfe</u></a
           >
         </div>
-        <pre class="debug">
+        <pre class="debug" v-if="debug">
 DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
         >
         <pdf-redaction
@@ -933,7 +1003,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
       </div>
 
       <div v-show="step === 4413">
-        <label class="fw-bold col-md-4 col-form-label">
+        <label class="fw-bold col-form-label">
           Diese Dokumente werden der Anfrage hinzugefügt:
         </label>
       </div>
@@ -970,7 +1040,10 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
       </div>
 
       <div v-show="step === 4570">
-        <label class="fw-bold col-md-4 col-form-label">
+        <div class="text-center my-3">
+          <i class="fa fa-check-square fa-4x"></i>
+        </div>
+        <label class="fw-bold col-form-label">
           Dokumente erfolgreich hinzugefügt
         </label>
         <div>
@@ -992,18 +1065,20 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
         </div>
         <!-- TODO maybe :hide-documents (PDFs) in step 1110 -->
         <document-uploader
+          :debug="debug"
           :config="config"
           :message="message"
           :show-upload="uiDocumentsUpload"
           :icon-style="uiDocumentsIconStyle"
           :hide-selection="uiDocumentsHideSelection"
+          :hide-selection-bar="true"
           :hide-other="true"
           :hide-pdf="uiDocumentsHidePdf"
           :hide-status-tools="true"
           :images-simple="uiDocumentsImagesSimple"
           :images-document-filename="documentsImagesDocumentFilename"
-          :file-basic-operations="documentsBasicOperations"
-          :hide-advanced-operations="!user_is_staff"
+          :file-basic-operations="step === 1300 || documentsBasicOperations"
+          :hide-advanced-operations="!(debug && user_is_staff)"
           :highlight-redactions="uiDocumentsHighlightRedactions"
           @selectionupdated="documentsSelectedPdfRedaction = $event"
           @imagesadded="documentsImagesAdded"
@@ -1013,20 +1088,22 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
       </div>
 
       <div v-show="step === 1300">
-        <div class="my-1">
+        <div class="mb-2 mt-5 mx-auto" style="max-width: 20em">
           <button
             type="button"
-            class="btn btn-outline-primary d-block"
+            class="btn btn-outline-primary d-block w-100"
             :disabled="true">
-            + Weiteres Dokument scannen
+            <i class="fa fa-plus"></i>
+            Weiteres Dokument scannen
           </button>
         </div>
-        <div class="my-1">
+        <div class="my-2 mx-auto" style="max-width: 20em">
           <button
             type="button"
-            class="btn btn-outline-primary d-block"
+            class="btn btn-outline-primary d-block w-100"
             @click="gotoStep(1110)">
-            + Weitere Dateien hochladen
+            <i class="fa fa-plus"></i>
+            Weitere Dateien hochladen
           </button>
         </div>
       </div>
@@ -1049,7 +1126,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
         </button>
         <div class="action-info">
           Wichtig: Haben Sie alle Seiten überprüft?
-          <div class="debug">
+          <div v-if="debug" class="debug">
             DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
           </div>
         </div>
@@ -1090,6 +1167,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
       <template v-else-if="step === 1100">
         <!-- should be blank -->
         <button
+          v-if="debug"
           type="button"
           @click="gotoStep()"
           class="action btn btn-outline-primary btn-sm mt-1">
@@ -1102,6 +1180,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           weiter
         </button>
         <button
+          v-if="debug"
           type="button"
           @click="gotoStep()"
           class="action btn btn-outline-primary btn-sm mt-1">
@@ -1117,7 +1196,6 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
         </button>
       </template>
       <template v-else-if="step === 1202">
-        DEBUG: {{ documentUploader.$refs.imageDocument.length }}
         <button
           v-if="documentUploader.$refs.imageDocument.length > 0"
           type="button"
@@ -1136,7 +1214,8 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           type="button"
           @click="gotoStep()"
           class="action btn btn-primary">
-          weiter (skippdf)
+          weiter
+          <span class="debug" v-if="debug">DEBUG: skip pdf</span>
         </button>
       </template>
       <template v-else-if="step === 2384">
@@ -1148,6 +1227,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           weiter
         </button>
         <button
+          v-if="debug"
           type="button"
           @click="debugSkipDate"
           class="action btn btn-outline-primary btn-sm mt-1">
@@ -1183,6 +1263,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
 
 a.btnlike {
   color: var(--bs-link-color);
+  cursor: pointer;
 }
 
 .btn-linklike {
@@ -1191,6 +1272,29 @@ a.btnlike {
   color: var(--bs-link-color);
   text-decoration: underline;
   background: transparent;
+}
+
+.form-check {
+  background-color: #eee;
+  // padding: 1em 1em 1em 2.25em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.form-check label {
+  padding: 1em;
+  display: block;
+}
+
+.form-check-input {
+  margin-top: 1.25em;
+  margin-left: -0.66em;
+  border-color: black;
+  border-width: 2px;
+
+  &:checked {
+    background-color: black;
+  }
 }
 
 .action-info {
@@ -1223,12 +1327,17 @@ aside {
 }
 
 .documents-filename {
+  max-width: 20em;
+  --bs-link-color-as-light-bg: #0047e120;
+  background-color: var(--bs-link-color-as-light-bg);
+
   input {
     font-weight: bolder;
   }
 
   /* "hide" that this is a regular, editable Bootstrap input... */
   input:not(:focus) {
+    background: transparent;
     border-color: transparent;
     box-shadow: none;
   }

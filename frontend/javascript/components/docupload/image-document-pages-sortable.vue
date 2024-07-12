@@ -7,7 +7,10 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 import { ref, defineEmits, computed } from 'vue'
 import ImagePage from './image-page.vue'
 
-const props = defineProps({ pages: Array })
+const props = defineProps({
+  pages: Array,
+  dense: Boolean
+})
 
 // once updated to Vue>=3.4
 // we might be able to simplify this to
@@ -33,6 +36,9 @@ useSortable(pagesEl, pages, { animation: 200 })
       :key="page.id"
       :page="page"
       :page-count="pages.length"
+      :dense="dense"
+      :hide-rotate="dense"
+      :hide-split="dense"
       @pageupdated="emit('pageupdated', $event)"
       @splitpages="emit('splitpages', $event)" />
   </div>
@@ -41,11 +47,8 @@ useSortable(pagesEl, pages, { animation: 200 })
 <style lang="scss" scoped>
 .pages {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   align-items: baseline;
-  overflow: auto;
-  overflow-x: scroll;
-  overflow-scrolling: touch;
   padding-bottom: 2rem;
 }
 </style>

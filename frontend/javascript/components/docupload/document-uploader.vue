@@ -1,6 +1,10 @@
 <template>
   <div class="document-uploader mb-3 mt-3">
-    <button type="button" @click="refreshAttachments" style="font-size: 50%">
+    <button
+      v-if="debug"
+      type="button"
+      @click="refreshAttachments"
+      style="font-size: 50%">
       DEBUG: refresh
     </button>
     <div v-if="imageDocuments.length > 0" class="images mt-5">
@@ -23,16 +27,18 @@
         @notnew="doc.new = false" />
     </div>
     <component
-      v-if="pdfDocuments.length > 0"
-      :is="hidePdf ? 'details' : 'div'"
+      v-if="pdfDocuments.length > 0 && (!hidePdf || debug)"
+      :is="hidePdf && debug ? 'details' : 'div'"
       class="documents mt-5">
-      <summary v-if="hidePdf" class="debug">DEBUG: pdf documents</summary>
+      <summary v-if="debug && hidePdf" class="debug">
+        DEBUG: pdf documents
+      </summary>
       <django-slot name="documents" />
       <div class="mt-3 mb-3">
         <div
           class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom"
-          v-if="!hideSelection">
-          <div class="col-auto me-md-auto">
+          v-if="!hideStatusTools || !hideSelectionBar">
+          <div class="col-auto me-md-auto" v-if="!hideSelectionBar">
             <input
               v-model="selectAll"
               type="checkbox"
@@ -79,13 +85,15 @@
           @notnew="doc.new = false" />
       </div>
     </component>
-    <div style="color: red" v-else>DEBUG: no pdf documents</div>
+    <div style="color: red" v-else-if="debug">DEBUG: no pdf documents</div>
 
     <component
-      v-if="otherAttachments.length > 0"
+      v-if="otherAttachments.length > 0 && (!hideOther || debug)"
       :is="hideOther ? 'details' : 'div'"
       class="mt-5">
-      <summary v-if="hideOther" class="debug">DEBUG: other attachments</summary>
+      <summary v-if="hideOther && debug" class="debug">
+        DEBUG: other attachments
+      </summary>
       <hr />
       <django-slot name="other-files" />
       <file-document
@@ -132,6 +140,10 @@ export default {
   },
   mixins: [I18nMixin],
   props: {
+    debug: {
+      type: Boolean,
+      default: false
+    },
     slots: {
       type: Object,
       default: () => ({})
@@ -161,6 +173,10 @@ export default {
       default: ''
     },
     hideSelection: {
+      type: Boolean,
+      default: false
+    },
+    hideSelectionBar: {
       type: Boolean,
       default: false
     },
@@ -476,6 +492,11 @@ export default {
       } else {
         doc.irrelevant = false
       }
+    },
+    setAllSelect(value) {
+      this.pdfDocuments.forEach((d) => {
+        d.selected = value
+      })
     },
     clickSelectAll() {
       this.pdfDocuments.forEach((d) => {
