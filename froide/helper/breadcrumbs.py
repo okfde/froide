@@ -40,7 +40,7 @@ class BreadcrumbView(View):
             return [("Foo", "/foo/"), "Bar"]
     """
 
-    breadcrumbs: Optional[Sequence]
+    breadcrumbs: Optional[BreadcrumbItems]
 
     def get_breadcrumbs(self) -> Union[BreadcrumbItems, Breadcrumbs]:
         raise NotImplementedError("No breadcrumb provider implemented")
