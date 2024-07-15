@@ -2,7 +2,7 @@
 {% load breadcrumb_helper %}
 {# Renders breadcrumbs that are defined in view #}
 {% get_breadcrumbs view as breadcrumbs %}
-{% if breadcrumbs != None %}
+{% if breadcrumbs %}
     {% with breadcrumbs_background=breadcrumbs_background|default:breadcrumbs.color %}
         {% if breadcrumbs_background %}
             <div class="text-bg-{{ breadcrumbs_background }}{% if overlay|default:breadcrumbs.overlay %} breadcrumb-overlay{% endif %}">
