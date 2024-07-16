@@ -30,7 +30,7 @@ useSortable(pagesEl, pages, { animation: 200 })
 </script>
 
 <template>
-  <div ref="pagesEl" class="pages d-flex flex-nowrap align-items-baseline pb-3">
+  <div ref="pagesEl" class="pages d-flex flex-wrap align-items-baseline pb-3">
     <image-page
       v-for="page in pages"
       :key="page.id"
@@ -43,11 +43,3 @@ useSortable(pagesEl, pages, { animation: 200 })
       @splitpages="emit('splitpages', $event)" />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.pages {
-  overflow: auto;
-  overflow-x: scroll;
-  overflow-scrolling: touch;
-}
-</style>
