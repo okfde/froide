@@ -136,7 +136,7 @@ $step-width: 10em;
   height: $header-height;
   background: white;
   position: relative;
-  z-index: 2;
+  z-index: 1000;
 
   @media (max-width: $breakpoint) {
     // regular fixed header gets in the way
