@@ -521,6 +521,17 @@ class MessageEditMixin(forms.Form):
         help_text=_("Please give the date the reply was sent."),
         localize=True,
     )
+    registered_mail = forms.DateField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": _("mm/dd/YYYY")}
+        ),
+        label=_("Registered mail date"),
+        required=False,
+        help_text=_(
+            "If this letter was registered on a different date than it was sent, enter it here"
+        ),
+        localize=True,
+    )
     subject = forms.CharField(
         label=_("Subject"),
         required=False,
@@ -579,6 +590,7 @@ class MessageEditMixin(forms.Form):
         if message.timestamp.date() != self.cleaned_data["date"]:
             message.timestamp = uploaded_date_midday
 
+        message.registered_mail = self.cleaned_data.get("registered_mail", None)
         message.subject = self.cleaned_data.get("subject", "")
         user_replacements = self.foirequest.user.get_redactions()
         subject_redacted = redact_subject(message.subject, user_replacements)
