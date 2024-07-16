@@ -16,12 +16,19 @@ $choices-icon-cross: none;
 
 .#{$choices-selector} {
   width: 100%;
+}
+
+.#{$choices-selector}.is-open {
   // Bootstrap level $zindex-dropdown but +1 to be higher than leaflet map controls
   z-index: 1001;
 }
 
 .form-row:has(.choices__list) {
   overflow: visible;
+}
+
+.#{$choices-selector}__list {
+  background-color : var(--bs-body-bg, var(--body-bg));
 }
 
 .#{$choices-selector}__input {

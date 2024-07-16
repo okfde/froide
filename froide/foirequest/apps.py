@@ -14,6 +14,7 @@ class FoiRequestConfig(AppConfig):
         from django_comments.signals import comment_will_be_posted
 
         from froide.account import (
+            account_banned,
             account_canceled,
             account_confirmed,
             account_made_private,
@@ -26,11 +27,13 @@ class FoiRequestConfig(AppConfig):
 
         from .utils import (
             cancel_user,
+            depublish_requests,
             export_user_data,
             make_account_private,
             merge_user,
         )
 
+        account_banned.connect(depublish_requests)
         account_canceled.connect(cancel_user)
         account_merged.connect(merge_user)
         account_made_private.connect(make_account_private)

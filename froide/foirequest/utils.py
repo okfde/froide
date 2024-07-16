@@ -574,6 +574,14 @@ def cancel_user(sender, user=None, **kwargs):
     permanently_anonymize_requests(user_foirequests.select_related("user"))
 
 
+def depublish_requests(user, **kwargs):
+    from .models import FoiRequest
+
+    user_foirequests = FoiRequest.objects.filter(user=user)
+    user_foirequests.update(visibility=FoiRequest.VISIBILITY.INVISIBLE)
+    update_foirequest_index(FoiRequest.objects.filter(user=user))
+
+
 def delete_foirequest_emails_from_imap(user_foirequests) -> int:
     from .foi_mail import get_foi_mail_client
 

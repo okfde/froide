@@ -8,6 +8,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils.decorators import decorator_from_middleware, method_decorator
+from django.utils.html import linebreaks
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext
@@ -275,10 +276,12 @@ class MakeRequestView(FormView):
                 "enterMeaningfulSubject": _(
                     "Please enter a subject which describes the information you are requesting."
                 ),
-                "pleaseFollowAddressFormat": _(
-                    "Please enter an address in the following format: %(format)s",
-                )
-                % {"format": _("Street address,\nPost Code, City")},
+                "pleaseFollowAddressFormat": linebreaks(
+                    _(
+                        "Please enter an address in the following format:\n%(format)s",
+                    )
+                    % {"format": _("Street address,\nPost Code, City")}
+                ),
                 "includeProof": _("Attach a proof of identity"),
                 "addMoreAuthorities": _("Add more authorities"),
             },

@@ -120,9 +120,8 @@ def send_notification_became_asleep(sender, **kwargs):
 
 @receiver(FoiRequest.message_received, dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    if message.received_by_user:
-        # All non-email/upload received messages the user actively contributed
-        # Don't inform them about it
+    if kwargs.get("user") == sender.user:
+        # If the same user has uploaded this, don't notify
         return
 
     send_request_user_email(

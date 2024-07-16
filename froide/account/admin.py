@@ -20,6 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
+from froide.account import account_banned
 from froide.account.export import ExportCrossDomainMediaAuth
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
@@ -149,7 +150,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "cancel_users_by_request",
         "future_cancel_users_notify",
         "future_cancel_users",
-        "deactivate_users",
+        "cancel_users_immediately",
         "export_user_data",
         "merge_accounts",
         "merge_accounts_keep_newer",
@@ -329,11 +330,12 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         self.message_user(request, _("Users future canceled."))
         return None
 
-    @admin.action(description=_("Deactivate and block users"))
-    def deactivate_users(self, request, queryset):
+    @admin.action(description=_("Cancel account immediately (no notification)"))
+    def cancel_users_immediately(self, request, queryset):
         for user in queryset:
-            user.deactivate_and_block()
-        self.message_user(request, _("Users logged out, deactivated and blocked."))
+            account_banned.send_robust(sender=user)
+            future_cancel_user(user, notify=False, immediately=True)
+        self.message_user(request, _("Users canceled immediately."))
         return None
 
     @admin.action(description=_("Make user private"))

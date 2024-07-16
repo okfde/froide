@@ -1,9 +1,5 @@
 body {
   hyphens: auto;
-  hyphenate-limit-chars: 6 3 3;
-  hyphenate-limit-lines: 2;
-  hyphenate-limit-last: always;
-  hyphenate-limit-zone: 8%;
 }
 
 h1,
@@ -15,6 +11,11 @@ h6 {
   &:not(:first-child) {
     margin-top: ($spacer * 1.5);
   }
+}
+
+h1,
+h2 {
+  hyphens: manual;
 }
 
 .no-hyphens {

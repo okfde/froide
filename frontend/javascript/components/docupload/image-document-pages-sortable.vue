@@ -46,9 +46,8 @@ useSortable(pagesEl, pages, { animation: 200 })
 
 <style lang="scss" scoped>
 .pages {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  padding-bottom: 2rem;
+  overflow: auto;
+  overflow-x: scroll;
+  overflow-scrolling: touch;
 }
 </style>
