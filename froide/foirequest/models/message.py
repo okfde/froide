@@ -138,6 +138,10 @@ class FoiMessage(models.Model):
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     last_modified_at = models.DateTimeField(auto_now=True)
 
+    registered_mail = models.DateTimeField(
+        _("Registered mail date"), blank=True, null=True, default=None
+    )  # "Gelber Brief"
+
     email_message_id = models.CharField(max_length=512, blank=True, default="")
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     subject_redacted = models.CharField(

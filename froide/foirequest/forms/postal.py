@@ -52,7 +52,15 @@ class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
         ),
     )
 
-    FIELD_ORDER = ["sent", "publicbody", "date", "subject", "uploads", "text"]
+    FIELD_ORDER = [
+        "sent",
+        "publicbody",
+        "date",
+        "registered_mail",
+        "subject",
+        "uploads",
+        "text",
+    ]
 
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop("foirequest")

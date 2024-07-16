@@ -198,7 +198,7 @@ const gotoStep = (nextStep) => {
 const gotoValid = computed(() => {
   switch (step.value) {
     case 2382:
-      return validity.yellow_date
+      return validity.registered_mail
     case 2384:
       return validity.date
     case 2565:
@@ -284,7 +284,7 @@ const getNextStep = () => {
     case 2381:
       return 2384
     case 2384:
-      return values.isYellow ? 2382 : 2437
+      return values.is_registered_mail ? 2382 : 2437
     case 2382:
       return 2437
     case 2437:
@@ -342,11 +342,17 @@ watch(step, (newStep) => {
     case 1300:
       pdfRedactionUploaded()
       break
+    case 2382:
+      updateValidity('registered_mail')
+      break
     case 2384:
       updateValidity('date')
       break
     case 2565:
       updateValidity('costs')
+      break
+    case 3402:
+      pdfRedactionUploaded()
       break
     case 4413:
       documentsBasicOperations.value = false
@@ -438,7 +444,7 @@ const documentsImagesConverted = () => {
 
 const validity = reactive({
   date: false,
-  yellow_date: false
+  registered_mail: false
 })
 
 // TODO updateValidity should (maybe) be called on gotoStep(2384), too
@@ -471,7 +477,7 @@ const values = reactive({
   costs:
     props.status_form.fields.costs.value?.strValue ||
     props.status_form.fields.costs.initial.strValue,
-  isYellow: false
+  is_registered_mail: false
 })
 
 const stepAndUppyClick = () => {
@@ -751,41 +757,39 @@ defineEmits(['showhelp'])
           :min="props.date_min"
           :max="props.date_max"
           @input="updateValidity('date')" />
-        <!--<div class="form-text">
-          {{ form.fields.date.help_text }}
-        </div>-->
-        <div class="form-check">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="values.isYellow"
-            id="id_yellow" />
-          <label class="form-check-label" for="id_yellow">
-            Es handelt sich um einen gelben Brief ⓘ TODO
-          </label>
-        </div>
         <div class="invalid-feedback" v-if="form.errors.date">
           <p class="text-danger">
             {{ form.errors.date.map((_) => _.message).join(' ') }}
           </p>
         </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="values.is_registered_mail"
+            id="id_is_registered_mail" />
+          <label class="form-check-label" for="id_is_registered_mail">
+            Es handelt sich um einen gelben Brief ⓘ TODO
+          </label>
+        </div>
       </div>
 
       <div v-show="step === 2382">
-        <label class="fw-bold form-label field-required" for="id_yellowdate">
+        <label
+          class="fw-bold form-label field-required"
+          for="id_registered_mail">
           Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag
           eingetragen?
         </label>
-        <!-- TODO these are the same as the other date-->
+        <!-- TODO set min/max? -->
         <input
           type="date"
           class="form-control"
-          name="yellow_date"
-          :min="props.date_min"
-          :max="props.date_max"
-          :required="step === 2382"
-          @input="updateValidity('yellow_date')"
-          v-model="values.yellow_date" />
+          id="id_registered_mail"
+          name="registered_mail"
+          :required="values.is_registered_mail"
+          @input="updateValidity('registered_mail')"
+          v-model="values.registered_mail" />
       </div>
 
       <div v-show="step === 2437">
