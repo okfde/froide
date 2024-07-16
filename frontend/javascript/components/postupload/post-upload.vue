@@ -15,6 +15,7 @@ import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import DocumentUploader from '../docupload/document-uploader.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
+import { Tooltip } from 'bootstrap'
 
 /* DEBUG
 const delay = function (duration) {
@@ -29,6 +30,13 @@ const delay = function (duration) {
   }
 }
 */
+
+// this could possibly move to lib/vue-helper.ts
+const vBsTooltip = {
+  mounted: (el) => {
+    new Tooltip(el)
+  }
+}
 
 const props = defineProps({
   config: Object,
@@ -769,7 +777,16 @@ defineEmits(['showhelp'])
             v-model="values.is_registered_mail"
             id="id_is_registered_mail" />
           <label class="form-check-label" for="id_is_registered_mail">
-            Es handelt sich um einen gelben Brief ⓘ TODO
+            Es handelt sich um einen gelben Brief
+            <span
+              type="button"
+              v-bs-tooltip
+              tabindex="0"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen.">
+              <i class="fa fa-info-circle"></i>
+            </span>
           </label>
         </div>
       </div>
@@ -965,16 +982,12 @@ defineEmits(['showhelp'])
           </ul>
         </aside>
         <div class="mt-2 mb-3">
-          <a
-            target="_blank"
-            href="/hilfe/funktionen-der-plattform/schwaerzungen-durchfuehren/"
-            @click.prevent="
-              onShowhelp(
-                '/hilfe/funktionen-der-plattform/schwaerzungen-durchfuehren/'
-              )
-            "
-            ><u>Ich habe technische Probleme / benötige Hilfe</u></a
-          >
+          <button
+            type="button"
+            class="btn-linklike"
+            @click="onShowhelp(config.urls.helpPostuploadRedaction)">
+            Ich habe technische Probleme / benötige Hilfe
+          </button>
         </div>
         <pre class="debug" v-if="debug">
 DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre

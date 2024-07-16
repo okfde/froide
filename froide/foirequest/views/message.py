@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
+from froide.helper.content_urls import get_content_url
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
 from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
@@ -379,6 +380,7 @@ def edit_postal_message(request, foirequest, message_id):
                     "message_id": 0,  # attachment.belongs_to_id,
                 },
             ),
+            "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
         },
     }
     return render(
