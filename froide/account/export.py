@@ -35,6 +35,7 @@ class ExportRegistry:
 
     def register(self, func):
         self.callbacks.append(func)
+        return func
 
     def get_export_files(self, user):
         for callback in self.callbacks:
