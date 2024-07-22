@@ -2680,7 +2680,7 @@ msgstr "Sortierung"
 
 #: froide/foirequest/filters.py
 msgid "default sort"
-msgstr "Standard-Sortierung"
+msgstr "Relevanz (Standard)"
 
 #: froide/foirequest/foi_mail.py froide/foirequest/tests/test_mail.py
 msgid "Unknown FoI-Mail Recipient"
