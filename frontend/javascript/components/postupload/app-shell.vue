@@ -90,7 +90,8 @@ const showhelp = (e) => {
 <style lang="scss">
 // TODO: arbitrarily switch to "appshell" under this breakpoint
 //   not really usable, but also not broken. WIP
-$breakpoint: 1600px;
+// TODO: sync this with PostUpload's matchMedia and scss
+$breakpoint: 1000px;
 
 @media (max-width: $breakpoint) {
   #header,
@@ -115,7 +116,7 @@ $breakpoint: 1600px;
 
 <style lang="scss" scoped>
 // TODO: again, arbitrary breakpoint
-$breakpoint: 1600px;
+$breakpoint: 1000px;
 $ci-accent-text: rgb(
   41,
   109,
