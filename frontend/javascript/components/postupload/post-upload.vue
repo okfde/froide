@@ -428,7 +428,6 @@ const uiDocumentsHighlightRedactions = computed(
 const documentsImageMode = ref(false)
 const documentsImagesAdded = () => {
   if (step.value !== 1110) {
-    console.error("you shouldn't be able to upload images from here")
     return
   }
   documentsImageMode.value = true
@@ -436,7 +435,6 @@ const documentsImagesAdded = () => {
 }
 const documentsDocumentsAdded = () => {
   if (step.value !== 1110) {
-    console.error("you shouldn't be able to upload images from here")
     return
   }
   gotoStep()
@@ -444,7 +442,7 @@ const documentsDocumentsAdded = () => {
 const documentsImagesConverted = () => {
   documentsImagesConverting.value = false
   if (step.value !== 1202) {
-    console.error("conversion shouldn't have happened here")
+    console.warn("conversion shouldn't have happened here")
     return
   }
   gotoStep()
