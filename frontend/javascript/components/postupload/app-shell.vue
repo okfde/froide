@@ -38,20 +38,23 @@ const showhelp = (e) => {
         </div>
       </div>
       <div class="appshell-header-container appshell-header-container--desktop">
-        <ol class="appshell-header-steps">
-          <li
-            v-for="(stepLabel, stepIndex) in steps"
-            :key="stepIndex"
-            class="appshell-header-step"
-            :class="{ 'appshell-header-step--active': stepIndex <= step }">
-            <div class="appshell-header-step-marker">{{ stepIndex + 1 }}</div>
-            <div>{{ stepLabel }}</div>
-          </li>
-        </ol>
-        <div class="appshell-header-progress appshell-header-progress--desktop">
+        <div class="appshell-header-steps my-3">
+          <ol>
+            <li
+              v-for="(stepLabel, stepIndex) in steps"
+              :key="stepIndex"
+              class="appshell-header-step"
+              :class="{ 'appshell-header-step--active': stepIndex <= step }">
+              <div class="appshell-header-step-marker">{{ stepIndex + 1 }}</div>
+              <div>{{ stepLabel }}</div>
+            </li>
+          </ol>
           <div
-            class="appshell-header-progress-bar"
-            :style="{ width: progressDesktop * 100 + '%' }"></div>
+            class="appshell-header-progress appshell-header-progress--desktop">
+            <div
+              class="appshell-header-progress-bar"
+              :style="{ width: progressDesktop * 100 + '%' }"></div>
+          </div>
         </div>
       </div>
       <div class="appshell-header-progress appshell-header-progress--mobile">
@@ -196,12 +199,18 @@ $step-width: 10em;
 }
 
 .appshell-header-steps {
+  width: $step-width * 3;
+  margin: 0 auto;
+  position: relative;
+}
+
+.appshell-header-steps ol {
   display: flex;
   list-style-type: none;
   padding: 0;
-  margin: 0;
-  position: relative;
+  margin: 0 auto;
   z-index: 1;
+  position: relative;
 }
 
 .appshell-header-step {
