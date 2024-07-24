@@ -40,3 +40,21 @@ $font-sizes: map.merge(
     'base': $font-size-base
   )
 );
+
+$utilities: (
+  'display': (
+    responsive: true,
+    print: true,
+    property: display,
+    class: d,
+    values: inline inline-block block grid inline-grid flex inline-flex contents
+      none
+  ),
+  'bg-opacity': (
+    css-var: true,
+    class: bg-opacity,
+    values: (
+      90: 0.9
+    )
+  )
+);

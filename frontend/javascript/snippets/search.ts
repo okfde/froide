@@ -2,6 +2,8 @@
 
 const firstPathSegment = (path: string) => path.split('/')[1]
 
+const additionalBases = [['recherchen', '/artikel/search/']]
+
 document
   .querySelectorAll<HTMLFormElement>('.froide-multi-search')
   .forEach((form) => {
@@ -21,6 +23,8 @@ document
       firstPathSegment(o.value),
       o.value
     ])
+    searchBases.push(...additionalBases)
+
     const currentBase = firstPathSegment(window.location.pathname)
     const bestMatch = searchBases.find((s) => s[0] === currentBase)?.[1]
 

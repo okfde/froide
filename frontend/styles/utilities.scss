@@ -1,18 +1,24 @@
 @use 'sass:map';
 @use 'sass:list';
 
+// TODO: refactor this to use the same map as bootstrap
+
 @each $name in $froide-theme {
   .text-bg-#{$name} {
-    color: var(--froide-#{$name}-color);
-    background-color: var(--froide-#{$name}-bg);
-    --#{$prefix}heading-color: var(--froide-#{$name}-color);
+    color: var(--froide-#{$name}-color) !important;
+    background-color: RGBA(
+      var(--froide-#{$name}-bg-rgb),
+      var(--#{$prefix}bg-opacity, 1)
+    ) !important;
   }
   .bg-#{$name} {
-    background-color: var(--froide-#{$name}-bg);
+    background-color: RGBA(
+      var(--froide-#{$name}-bg-rgb),
+      var(--#{$prefix}bg-opacity, 1)
+    ) !important;
   }
   .text-#{$name} {
-    color: var(--froide-#{$name}-color);
-    --#{$prefix}heading-color: var(--froide-#{$name}-color);
+    color: var(--froide-#{$name}-color) !important;
   }
 }
 
@@ -48,11 +54,9 @@ $bootstrap-extras: (
     $bg: list.nth($vars, 2);
 
     color: var(--#{$prefix}#{$color});
-    background-color: var(--#{$prefix}#{$bg});
-    --#{$prefix}heading-color: var(--froide-#{$name}-color);
+    background-color: RGBA(
+      var(--#{$prefix}#{$bg}-rgb),
+      var(--#{$prefix}bg-opacity, 1)
+    ) !important;
   }
-}
-
-.d-contents {
-  display: contents;
 }

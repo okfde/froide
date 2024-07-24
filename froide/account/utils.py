@@ -188,9 +188,6 @@ def start_cancel_account_process(
 ) -> None:
     from .tasks import cancel_account_task
 
-    user.private = True
-    user.email = None
-    user.tags.clear()
     user.is_active = False
     user.set_unusable_password()
     user.date_deactivated = timezone.now()
@@ -208,6 +205,11 @@ def start_cancel_account_process(
 
 
 def cancel_user(user: User, delete: bool = False) -> None:
+    # Set user to private here to ensure that
+    # all data is anonymized before deletion
+    user.private = True
+    user.save()
+
     with transaction.atomic():
         account_canceled.send(sender=User, user=user)
 
@@ -219,11 +221,11 @@ def cancel_user(user: User, delete: bool = False) -> None:
 
     user.organization_name = ""
     user.organization_url = ""
-    user.private = True
     user.terms = False
     user.address = ""
     user.profile_text = ""
     user.profile_photo.delete()
+    user.tags.clear()
     user.save()
     user.groups.clear()
     user.first_name = ""
