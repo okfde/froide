@@ -459,6 +459,11 @@ class Base(Configuration):
     CELERY_EMAIL_BACKEND = "froide.foirequest.smtp.EmailBackend"
     EMAIL_BULK_QUEUE = "emailsend_bulk"
 
+    # Monitoring
+
+    CELERY_WORKER_SEND_TASK_EVENTS = values.BooleanValue(False)
+    CELERY_TASK_SEND_SENT_EVENT = values.BooleanValue(False)
+
     # ######## Search ###########
 
     ELASTICSEARCH_INDEX_PREFIX = "froide"
