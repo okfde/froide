@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
+from froide.georegion.models import GeoRegion
 from froide.helper.content_urls import get_content_url
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
@@ -328,6 +329,33 @@ def edit_postal_message(request, foirequest, message_id):
             "makeResultsExplanation": _(
                 "Are these documents a result of your request and not only correspondence?"
             ),
+            # for public body beta chooser, mostly from MakeRequestView
+            "publicBodiesFound": [
+                _("one public body found"),
+                _("{count} public bodies found").format(count="${count}"),
+            ],
+            "classificationPlural"
+            "jurisdictionPlural": [
+                _("Jurisdiction"),
+                _("Jurisdictions"),
+            ],
+            "administrativeUnitKind": _("Type of administrative unit"),
+            "topicPlural": [
+                _("Topic"),
+                _("Topics"),
+            ],
+            "jurisdictionPlural": [
+                _("Jurisdiction"),
+                _("Jurisdictions"),
+            ],
+            "classificationPlural": [
+                _("Classification"),
+                _("Classifications"),
+            ],
+            "containingGeoregionsPlural": [
+                _("Part of administrative region"),
+                _("Part of administrative regions"),
+            ],
             # new
             "step": _("Step"),
             "addLetter": _("Add letter"),
@@ -384,6 +412,13 @@ def edit_postal_message(request, foirequest, message_id):
                 },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+        },
+        "fixtures": {
+            "georegion_kind": [
+                [str(k), str(v)]
+                for k, v in GeoRegion.KIND_CHOICES
+                if k in settings.FROIDE_CONFIG.get("filter_georegion_kinds", [])
+            ],
         },
     }
     return render(

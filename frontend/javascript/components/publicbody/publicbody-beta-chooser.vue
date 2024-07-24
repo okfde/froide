@@ -24,7 +24,7 @@
         </button>
       </div>
 
-      <div class="row mt-3">
+      <div v-if="showFilters" class="row mt-3">
         <!-- <div class="col-4 filter-column position-relative">
           <pb-filter
             :global-config="config"
@@ -53,11 +53,14 @@
       </div>
     </div>
     <div class="row mt-3">
-      <p v-show="!searching && lastQuery">
+      <p
+        v-show="
+          !searching && lastQuery && (showFoundCountIfIdle || searchMeta)
+        ">
         {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
       </p>
     </div>
-    <div class="row">
+    <div v-if="showBadges" class="row">
       <div v-if="search" class="col-3">
         <div class="filter-badge">
           <span class="text-truncate">{{ search }}</span>
@@ -151,6 +154,18 @@ export default {
     listView: {
       type: String,
       default: 'betaList'
+    },
+    showFilters: {
+      type: Boolean,
+      default: true
+    },
+    showBadges: {
+      type: Boolean,
+      default: true
+    },
+    showFoundCountIfIdle: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
