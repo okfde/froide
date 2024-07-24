@@ -16,6 +16,7 @@ import DocumentUploader from '../docupload/document-uploader.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 import { Tooltip } from 'bootstrap'
+import { useI18n } from '../../lib/i18n'
 
 /* DEBUG
 const delay = function (duration) {
@@ -50,6 +51,8 @@ const props = defineProps({
   date_max: String,
   user_is_staff: Boolean
 })
+
+const { i18n } = useI18n(props.config)
 
 const debug = ref(!!localStorage.getItem('fds-postupload-debug'))
 window.FDSdebug = (val) => {
@@ -173,7 +176,7 @@ const documentUploaderSelectAll = (val) => {
 const mobileHeaderTitle2 = computed(() => {
   switch (step.value) {
     case 1100:
-      return 'Brief hinzufügen'
+      return i18n.value.addLetter
     case 4570:
       return 'Fertig'
   }
@@ -518,7 +521,7 @@ defineEmits(['showhelp'])
     <template #mobile-header-title1>
       <template v-if="false"> Frag den Staat </template>
       <template v-else-if="step < 4000">
-        Schritt {{ Math.floor(step / 1000)
+        {{ i18n.step }} {{ Math.floor(step / 1000)
         }}<b class="header-title1-bold">/3</b>
       </template>
       <template v-else-if="step >= 4000">
