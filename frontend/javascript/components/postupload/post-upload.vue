@@ -9,7 +9,8 @@ import {
   watch
 } from 'vue'
 import AppShell from './app-shell.vue'
-import PublicbodyChooser from '../publicbody/publicbody-chooser'
+// import PublicbodyChooser from '../publicbody/publicbody-chooser'
+import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import DocumentUploader from '../docupload/document-uploader.vue'
@@ -760,15 +761,19 @@ defineEmits(['showhelp'])
           </template>
           <template v-else> Von welcher Behörde stammt der Brief? </template>
         </label>
+        <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
         <publicbody-chooser
           v-if="!formPublicbodyIsDefault"
-          :search-collapsed="true"
+          :search-collapsed="false"
           scope="foo_publicbody"
           name="publicbody"
           :config="config"
           :form="form"
           :value="formPublicbodyId"
           list-view="resultList"
+          :show-filters="false"
+          :show-badges="false"
+          :show-found-count-if-idle="false"
           :class="{ 'is-invalid': form.errors.publicbody }" />
       </div>
 
