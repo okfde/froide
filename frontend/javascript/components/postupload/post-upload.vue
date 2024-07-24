@@ -133,9 +133,12 @@ const documentsConvertImages = () => {
   // ^child              ^vue2 ^grandchild...REN!  ^method
   // alternative: pass a prop, watch it, react?
 }
-const documentsImagesDocumentFilenameDefault = 'brief'
+const documentsImagesDocumentFilenameDefault = 'brief.pdf'
 const documentsImagesDocumentFilename = ref(
   documentsImagesDocumentFilenameDefault
+)
+const documentsImagesDocumentFilenameNormalized = computed(() =>
+  documentsImagesDocumentFilename.value.replace(/\.pdf$/, '')
 )
 
 const documentsBasicOperations = ref(false)
@@ -1089,7 +1092,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           :hide-pdf="uiDocumentsHidePdf"
           :hide-status-tools="true"
           :images-simple="uiDocumentsImagesSimple"
-          :images-document-filename="documentsImagesDocumentFilename"
+          :images-document-filename="documentsImagesDocumentFilenameNormalized"
           :file-basic-operations="step === 1300 || documentsBasicOperations"
           :hide-advanced-operations="!(debug && user_is_staff)"
           :highlight-redactions="uiDocumentsHighlightRedactions"
