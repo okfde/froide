@@ -623,8 +623,6 @@ defineEmits(['showhelp'])
             <i class="fa fa-file-image-o fa-4x"></i>
             <i class="fa fa-arrow-right fa-2x"></i>
             <i class="fa fa-file-pdf-o fa-4x"></i>
-            <br />
-            (TODO Bild)
           </div>
         </div>
         <div class="fw-bold form-label">
@@ -1281,6 +1279,10 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
 a.btnlike {
   color: var(--bs-link-color);
   cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+  }
 }
 
 .btn-linklike {
