@@ -328,6 +328,9 @@ def edit_postal_message(request, foirequest, message_id):
             "makeResultsExplanation": _(
                 "Are these documents a result of your request and not only correspondence?"
             ),
+            # new
+            "step": _("Step"),
+            "addLetter": _("Add letter"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
