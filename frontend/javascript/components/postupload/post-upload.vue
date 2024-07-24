@@ -60,6 +60,15 @@ window.FDSdebug = (val) => {
   localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
 }
 
+const isDesktop = ref(false)
+const updateIsDesktop = (mql) => {
+  isDesktop.value = mql.matches
+}
+// TODO sync this media query with AppShell's + also with scss here
+const isDesktopMediaQueryList = window.matchMedia('(min-width: 1000px)')
+updateIsDesktop(isDesktopMediaQueryList)
+isDesktopMediaQueryList.addEventListener('change', updateIsDesktop)
+
 const stepHistory = reactive([1100])
 const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
@@ -79,6 +88,7 @@ const formStatus = ref(
     props.status_form.fields.status.initial
 )
 const formStatusWasResolved = formStatus.value === 'resolved'
+const formStatusIsResolved = computed(() => formStatus.value === 'resolved')
 
 // remove nonsensical combos
 const formStatusChoices = computed(() =>
@@ -100,7 +110,6 @@ const formStatusChoices = computed(() =>
 
 const formCost = props.status_form.fields.costs.initial?.intValue || 0
 const formHasHadCost = formCost > 0
-
 const formDoUpdateCost = ref(false)
 
 const formPublicbodyId =
@@ -210,13 +219,22 @@ const gotoStep = (nextStep) => {
 }
 
 const gotoValid = computed(() => {
-  switch (step.value) {
-    case 2382:
-      return validity.registered_mail
-    case 2384:
-      return validity.date
-    case 2565:
-      return validity.costs
+  if (
+    step.value === 2565 ||
+    (isDesktop.value &&
+      (step.value === 2388 || step.value === 2390) &&
+      formDoUpdateCost.value)
+  ) {
+    return validity.costs
+  }
+  if (isDesktop.value && step.value === 2384 && values.is_registered_mail) {
+    return validity.date && validity.registered_mail
+  }
+  if (step.value === 2382) {
+    return validity.registered_mail
+  }
+  if (step.value === 2384) {
+    return validity.date
   }
   return true
 })
@@ -294,15 +312,17 @@ const getNextStep = () => {
     case 2376:
       return 2380
     case 2380:
+      if (isDesktop.value) return 2384
       return formPublicbodyIsDefault.value ? 2384 : 2381
     case 2381:
       return 2384
     case 2384:
+      if (isDesktop.value) return 2437
       return values.is_registered_mail ? 2382 : 2437
     case 2382:
       return 2437
     case 2437:
-      if (formStatus.value === 'resolved') return 2438
+      if (!isDesktop.value && formStatusIsResolved.value) return 2438
       // TODO: replace all 3402 with `if uploadedDocuments.length === 1 ? ... : 3402`
       if (formIsSent.value) return 3402
       return formHasHadCost ? 2390 : 2388
@@ -534,6 +554,7 @@ defineEmits(['showhelp'])
           {{ user_is_staff ? '☑' : '☐' }} staff
         </button>
       </span>
+      <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
       <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
       <!--<span class="debug">p{{ progress }}</span>-->
       <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
@@ -542,7 +563,8 @@ defineEmits(['showhelp'])
       <!--<span class="debug">
         {{ { pbv: props.form.fields.publicbody.value, pbii:  props.form.fields.publicbody?.initial?.id, opbi: object_public_body_id } }}
       </span>-->
-      <!--<span class="debug">formStatus={{formStatus}}</span>-->
+      <!-- <span class="debug">formStatus={{formStatus}},</span> -->
+      <!-- <span class="debug">formDoUpdateCost={{formDoUpdateCost}},</span> -->
       <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
       <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
     </template>
@@ -649,6 +671,7 @@ defineEmits(['showhelp'])
       </div>
 
       <div v-show="step === 2376">
+        <div class="step-questioncounter">Frage 1 von 5</div>
         <label class="fw-bold form-label">
           Haben Sie den hochgeladenen Brief erhalten oder versendet?
           <!--{{ form.fields.sent.label }}-->
@@ -685,6 +708,7 @@ defineEmits(['showhelp'])
 
       <div v-show="step === 2380">
         <!-- also 2428 -->
+        <div class="step-questioncounter">Frage 2 von 5</div>
         <label class="fw-bold form-label" for="id_subject">
           <template v-if="formSent === '1'">
             Ist dies die Behörde, an die Sie den Brief gesendet haben?
@@ -723,7 +747,12 @@ defineEmits(['showhelp'])
           :value="formPublicbodyId" />
       </div>
 
-      <div v-show="step === 2381">
+      <div
+        v-show="
+          step === 2381 ||
+          (isDesktop && step === 2380 && !formPublicbodyIsDefault)
+        "
+        class="step--desktopindent">
         <!-- also 2429 -->
         <label class="fw-bold form-label" for="id_subject">
           <template v-if="formSent === '1'">
@@ -744,6 +773,7 @@ defineEmits(['showhelp'])
       </div>
 
       <div v-show="step === 2384">
+        <div class="step-questioncounter">Frage 3 von 5</div>
         <label class="fw-bold form-label field-required" for="id_date">
           Wann wurde der Brief versendet?
           <!--{{ form.fields.date.label }}-->
@@ -793,7 +823,12 @@ defineEmits(['showhelp'])
         </div>
       </div>
 
-      <div v-show="step === 2382">
+      <div
+        v-show="
+          step === 2382 ||
+          (isDesktop && step === 2384 && values.is_registered_mail)
+        "
+        class="step--desktopindent">
         <label
           class="fw-bold form-label field-required"
           for="id_registered_mail">
@@ -813,6 +848,7 @@ defineEmits(['showhelp'])
 
       <div v-show="step === 2437">
         <!-- also 2386,2435,2440 -->
+        <div class="step-questioncounter">Frage 4 von 5</div>
         <label class="fw-bold form-label" for="id_subject">
           <template v-if="!formIsSent && formStatusWasResolved">
             Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des
@@ -860,9 +896,13 @@ defineEmits(['showhelp'])
         </div>
       </div>
 
-      <div v-show="step === 2438">
+      <div
+        v-show="
+          step === 2438 || (isDesktop && step === 2437 && formStatusIsResolved)
+        "
+        class="step--desktopindent">
         <!-- also 2387,2436,2439 -->
-        <label class="fw-bold col-md-4 col-form-label" for="id_resolution">
+        <label class="fw-bold col-form-label" for="id_resolution">
           <!-- {{ status_form.fields.resolution.label }} -->
           Wie würde Sie das Ergebnis beschreiben?
         </label>
@@ -890,7 +930,8 @@ defineEmits(['showhelp'])
       </div>
 
       <div v-show="step === 2388">
-        <label class="fw-bold col-md-4 col-form-label" for="">
+        <div class="step-questioncounter">Frage 5 von 5</div>
+        <label class="fw-bold col-form-label" for="">
           Hat die Behörde Kosten verlangt?
         </label>
         <div
@@ -914,6 +955,7 @@ defineEmits(['showhelp'])
       </div>
 
       <div v-show="step === 2390">
+        <div class="step-questioncounter">Frage 5 von 5</div>
         <label class="fw-bold col-form-label" for="id_nowcost">
           Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von
           {{
@@ -1027,8 +1069,13 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
         </label>
       </div>
 
-      <div v-show="step === 2565">
-        <label class="fw-bold col-md-4 col-form-label" for="id_costs">
+      <div
+        v-show="
+          step === 2565 ||
+          (isDesktop && (step === 2388 || step === 2390) && formDoUpdateCost)
+        "
+        class="step--desktopindent">
+        <label class="fw-bold col-form-label" for="id_costs">
           <!--{{ status_form.fields.costs.label }}-->
           Welchen Betrag hat die Behörde verlangt?
         </label>
@@ -1267,6 +1314,8 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
 </template>
 
 <style lang="scss" scoped>
+$breakpoint: 1000px;
+
 .debug {
   opacity: 0.5 !important;
   color: #888 !important;
@@ -1295,6 +1344,20 @@ a.btnlike {
   color: var(--bs-link-color);
   text-decoration: underline;
   background: transparent;
+}
+
+@media (min-width: $breakpoint) {
+  .step--desktopindent {
+    padding: 2em 0 0 4em;
+  }
+}
+
+.step-questioncounter {
+  display: none;
+
+  @media (min-width: $breakpoint) {
+    display: block;
+  }
 }
 
 .form-check {
