@@ -11669,6 +11669,14 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/templates/foirequest/sent.html
+msgid "Tweet request"
+msgstr "Anfrage tweeten"
+
+#: froide/foirequest/templates/foirequest/sent.html
+msgid "Share request"
+msgstr "Anfrage teilen"
+
 #~ msgid "Deactivate and block users"
 #~ msgstr "Nutzer:in deaktivieren und blocken"
 
@@ -11677,12 +11685,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Documents (beta)"
 #~ msgstr "Dokumente (beta)"
-
-#~ msgid "Tweet request"
-#~ msgstr "Anfrage tweeten"
-
-#~ msgid "Share request"
-#~ msgstr "Anfrage teilen"
 
 #, fuzzy
 #~ msgid "FoI requests"
