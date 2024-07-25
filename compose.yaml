@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    volumes:
+      - pg-data:/var/lib/postgresql/
+    ports:
+      - '127.0.0.1:5432:5432'
+    environment:
+      POSTGRES_USER: fragdenstaat_de
+      POSTGRES_DB: fragdenstaat_de
+      POSTGRES_PASSWORD: fragdenstaat_de
+
+  elasticsearch:
+    build: ./deps/elasticsearch/
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - es-logs:/var/log
+    environment:
+      - 'discovery.type=single-node'
+      - 'cluster.routing.allocation.disk.threshold_enabled=false'
+      - 'cluster.routing.allocation.disk.watermark.low=3gb'
+      - 'cluster.routing.allocation.disk.watermark.high=2gb'
+      - 'cluster.routing.allocation.disk.watermark.flood_stage=1gb'
+      - 'xpack.security.enabled=false'
+    ports:
+      - '127.0.0.1:9200:9200'
+
+volumes:
+  es-data:
+  es-logs:
+  pg-data:
