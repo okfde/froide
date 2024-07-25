@@ -11839,11 +11839,13 @@ msgstr ""
 "ich beantrage Auskunft zu folgender Sachlage:\n"
 "…"
 
-#~ msgid "Tweet request"
-#~ msgstr "Anfrage tweeten"
+#: froide/foirequest/templates/foirequest/sent.html
+msgid "Tweet request"
+msgstr "Anfrage tweeten"
 
-#~ msgid "Share request"
-#~ msgstr "Anfrage teilen"
+#: froide/foirequest/templates/foirequest/sent.html
+msgid "Share request"
+msgstr "Anfrage teilen"
 
 #~ msgid "Deactivate and block users"
 #~ msgstr "Nutzer:in deaktivieren und blocken"
