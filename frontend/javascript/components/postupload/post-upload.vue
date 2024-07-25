@@ -632,6 +632,16 @@ defineEmits(['showhelp'])
           </p>
           <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
         </aside>
+        <aside>
+          <h4><i class="fa fa-exclamation-circle fa-lg"></i> Neu</h4>
+          <p>Wir haben diesen Bereich stark überarbeitet.</p>
+          <p>
+            Sollte etwas nicht funktionieren, gibt es
+            <a :href="config.url.legacyPostupload"
+              >hier noch das alte Upload-Formular</a
+            >. Wir würden uns über Feedback freuen.
+          </p>
+        </aside>
       </div>
 
       <div v-show="step === 1110">
@@ -1415,6 +1425,11 @@ input[type='date']:invalid {
 aside {
   padding: 1em;
   background-color: #fbde85;
+  margin: 1em 0;
+
+  a {
+    text-decoration: underline;
+  }
 }
 
 .documents-filename {
