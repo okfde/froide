@@ -362,6 +362,9 @@ def edit_postal_message(request, foirequest, message_id):
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
+            "legacyPostupload": reverse(
+                "foirequest-upload_postal_message", kwargs={"slug": foirequest.slug}
+            ),
             # from makerequest.py
             "searchPublicBody": reverse("api:publicbody-search"),
             "listJurisdictions": reverse("api:jurisdiction-list"),
@@ -370,6 +373,9 @@ def edit_postal_message(request, foirequest, message_id):
             "listGeoregions": reverse("api:georegion-list"),
             "listPublicBodies": reverse("api:publicbody-list"),
             "listLaws": reverse("api:law-list"),
+            "makeRequestTo": reverse(
+                "foirequest-make_request", kwargs={"publicbody_ids": "0"}
+            ),
             # from upload_attachments() TODO: might not need all
             "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
             "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
