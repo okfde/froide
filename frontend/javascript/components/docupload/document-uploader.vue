@@ -601,7 +601,7 @@ export default {
             // would have to fetch multiple times to get all
             console.warn('not all attachments fetched')
           }
-          const saveSelection = this.selectDocuments.map((d) => d.id)
+          const saveSelection = this.selectedDocuments.map((d) => d.id)
           this.documents = this.buildDocuments(response.objects)
           this.documents.forEach(
             (d) => (d.selected = saveSelection.includes(d.id))
