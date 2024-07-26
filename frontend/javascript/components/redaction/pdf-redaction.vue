@@ -2,7 +2,7 @@
   <div
     id="pdf-viewer"
     ref="top"
-    class="pdf-redaction-tool"
+    class="pdf-redaction-tool container"
     :class="{ 'pdf-redaction-tool--minimalui': minimalUi }">
     <div v-if="hasPassword && ready" class="row">
       <div class="col-lg-12">
@@ -57,15 +57,22 @@
       </div>
     </div>
     <div class="row toolbar">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-1 toolbar-undo-redo">
+      <div
+        v-if="ready"
+        class="btn-toolbar col-lg-12 align-items-center justify-content-around justify-content-sm-between px-2">
+        <div
+          class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
           <button
             type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
             @click="undo">
-            <i class="fa fa-undo" />
+            <i class="fa fa-lg fa-share fa-flip-horizontal" />
+            <!-- could be ok for non-minimalUi, but messes up layout in a medium viewport -->
+            <small v-if="minimalUi" class="d-none d-lg-block">{{
+              i18n.undo
+            }}</small>
           </button>
           <button
             type="button"
@@ -75,7 +82,10 @@
             data-bs-placement="top"
             :title="i18n.redo"
             @click="redo">
-            <i class="fa fa-undo fa-flip-horizontal" />
+            <i class="fa fa-lg fa-share" />
+            <small v-if="minimalUi" class="d-none d-lg-block">{{
+              i18n.redo
+            }}</small>
           </button>
           <button
             type="button"
@@ -83,11 +93,11 @@
             :disabled="!canUndo"
             :title="'TODO'"
             @click="undoAll">
-            <i class="fa fa-eraser" />
+            <i class="fa fa-lg fa-eraser" />
+            <small v-if="minimalUi" class="d-none d-lg-block"
+              >Alle Schwärzungen<br />entfernen</small
+            >
           </button>
-          <span style="font-size: 50%; margin-left: 0.5rem"
-            >TODO:<br />Zoom</span
-          >
         </div>
 
         <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes">
@@ -110,7 +120,8 @@
           </button>
         </div>
 
-        <div class="input-group me-1 toolbar-pages">
+        <div
+          class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -143,6 +154,7 @@
             </template>
           </button>
         </div>
+
         <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0">
           <form
             v-if="canPublish && !hasPassword"
@@ -168,10 +180,12 @@
             {{ i18n.cancel }}
           </a>
         </div>
+
+        <slot name="toolbar-right"></slot>
       </div>
     </div>
-    <div class="row mt-3">
-      <div ref="containerWrapper" class="col-lg-12 overflow-auto">
+    <div class="py-3 row preview">
+      <div ref="containerWrapper" class="overflow-auto">
         <div
           :id="containerId"
           ref="container"
@@ -480,6 +494,12 @@ export default {
         this.page = page
         if (this.maxWidth === null) {
           this.maxWidth = this.$refs.containerWrapper.offsetWidth
+          // subtract the paddings (from bootstrap's row child),
+          // fall back to the value calculated in default settings (like base font size)
+          this.maxWidth -=
+            parseInt(
+              window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
+            ) * 2 || 24
         }
 
         if (this.pageScaleFactor[pageNum] === undefined) {
@@ -1263,27 +1283,19 @@ export default {
   color: #000;
 }
 
+.toolbar {
+  padding: 0;
+}
+
 .pdf-redaction-tool--minimalui {
-  .toolbar-btn {
-    width: 100%;
-  }
-  .toolbar-undo-redo {
+  background: #aaa;
+
+  .btn-toolbar {
     background: #eee;
-    padding: 0.5rem 0;
-    border-top: 1px solid #bbb;
-    width: 100%;
-    justify-content: center;
-    &.btn-group > .btn {
-      flex: 0 0 auto;
-    }
   }
-  .toolbar-pages {
-    background: #eee;
-    border-top: 1px solid #bbb;
-    border-bottom: 1px solid #bbb;
-    padding: 0.5rem 0;
-    width: 100%;
-    justify-content: center;
+
+  .preview {
+    box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
   }
 }
 </style>
