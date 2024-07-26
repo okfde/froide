@@ -183,6 +183,18 @@ const documentUploaderSelectAll = (val) => {
   documentUploader.value.setAllSelect(val)
 }
 
+const scrollHeaderIntoViewIfNecessary = () => {
+  // we could bail early if !isDesktop.value,
+  // but this check fill automagically still work as the header is always in viewport on mobile
+  // alt: check appshell-header-container--desktop, if hidden all rect attributes == 0
+  const header = document.querySelector('.appshell-header')
+  const rect = header.getBoundingClientRect()
+  if (rect.bottom < 0) {
+    // timeout to make it feel less jarring
+    setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
+  }
+}
+
 const mobileHeaderTitle2 = computed(() => {
   switch (step.value) {
     case 1100:
@@ -395,6 +407,7 @@ watch(step, (newStep) => {
       pdfRedactionUploaded()
       break
   }
+  scrollHeaderIntoViewIfNecessary()
 })
 
 const stepUiConf = {
