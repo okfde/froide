@@ -1075,7 +1075,27 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           :config="config"
           @uploaded="pdfRedactionUploaded"
           @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
-          ref="pdfRedaction" />
+          ref="pdfRedaction">
+          <template #toolbar-right>
+            <div class="btn-group" v-show="isDesktop">
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="pdfRedactionRedact()"
+                :disabled="pdfRedactionProcessing">
+                <i
+                  v-show="!pdfRedactionProcessing"
+                  class="fa fa-thumbs-o-up"></i>
+                <span
+                  class="spinner-border spinner-border-sm"
+                  v-show="pdfRedactionProcessing"
+                  role="status"
+                  aria-hidden="true" />
+                Ich bin fertig mit Schwärzen
+              </button>
+            </div>
+          </template>
+        </pdf-redaction>
       </div>
 
       <div v-show="step === 4413">
@@ -1200,7 +1220,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           :disabled="pdfRedactionProcessing">
           <span
             class="spinner-border spinner-border-sm"
-            v-if="pdfRedactionProcessing"
+            v-show="pdfRedactionProcessing"
             role="status"
             aria-hidden="true" />
           Ich bin fertig mit Schwärzen
