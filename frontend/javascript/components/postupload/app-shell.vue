@@ -117,6 +117,7 @@ $breakpoint: 1000px;
 <style lang="scss" scoped>
 // TODO: again, arbitrary breakpoint
 $breakpoint: 1000px;
+$breakpoint-onlinehelp: 600px;
 $ci-accent-text: rgb(
   41,
   109,
@@ -287,25 +288,25 @@ $step-width: 10em;
 .appshell-help {
   position: fixed;
   right: 0;
-  // TODO this value was eyeballed from the bootstrap container width
-  width: calc((100vw - 1000px) / 2);
+  width: 20em;
+  max-width: 100%;
   top: $header-height;
   bottom: 0;
   overflow-y: scroll;
+  z-index: 100;
 
-  @media (max-width: $breakpoint) {
+  @media (max-width: $breakpoint-onlinehelp) {
     top: $header-height;
     left: 0;
     width: 100%;
     bottom: 0;
-    z-index: 100;
   }
 }
 
 .appshell-help-close {
   position: fixed;
-  right: 1em;
-  top: calc(1em + $header-height);
+  right: 0.5em;
+  top: calc(0.5em + $header-height);
   width: 3em;
   height: 3em;
   background: 0;

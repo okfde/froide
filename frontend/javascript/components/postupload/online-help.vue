@@ -53,9 +53,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .onlinehelp {
-  background-color: #fbde85;
+  background-color: transparentize(#fbde85, 0.05);
   min-height: 100%;
-  padding: 2em;
+  padding: 4em 2em 2em 2em;
 }
 .spinner {
   position: absolute;
