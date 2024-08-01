@@ -29,7 +29,7 @@ elasticsearch-dsl>=8.0.0,<9.0.0
 elasticsearch<9.0.0,>=8.0.0
 geoip2
 icalendar
-lxml>=4.6.5
+lxml[html_clean]>=5.2.0
 markdown
 phonenumbers
 Pillow>=9.0.0
