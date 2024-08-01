@@ -1,38 +1,43 @@
 import logging
+from types import ModuleType
+from typing import Optional
 
 from django.conf import settings
 from django.template.loader import render_to_string
 
-try:
-    import weasyprint as wp
-
-    PDF_EXPORT_AVAILABLE = True
-
-except ImportError:
-    PDF_EXPORT_AVAILABLE = False
-
 from froide.helper.text_utils import remove_closing_inclusive
+
+
+def get_wp() -> Optional[ModuleType]:
+    try:
+        import weasyprint as _wp
+
+        return _wp
+    except ImportError:
+        pass
+
 
 logger = logging.getLogger(__name__)
 
 
 class PDFGenerator(object):
+    template_name: str
+
     def __init__(self, obj):
         self.obj = obj
 
     def get_pdf_bytes(self):
-        if not PDF_EXPORT_AVAILABLE:
+        wp = get_wp()
+        if wp is None:
             return b""
-        return self.make_doc()
+
+        html = self.get_html_string()
+        doc = wp.HTML(string=html)
+        return doc.write_pdf()
 
     def get_html_string(self):
         ctx = self.get_context_data(self.obj)
         return render_to_string(self.template_name, ctx)
-
-    def make_doc(self):
-        html = self.get_html_string()
-        doc = wp.HTML(string=html)
-        return doc.write_pdf()
 
     def get_context_data(self, obj):
         return {"object": obj, "SITE_NAME": settings.SITE_NAME}
