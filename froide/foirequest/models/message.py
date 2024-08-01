@@ -692,12 +692,12 @@ class FoiMessage(models.Model):
         if auth:
             show, hide, cache_field = (
                 self.plaintext,
-                self.plaintext_redacted,
+                self.get_content(),
                 "redacted_content_auth",
             )
         else:
             show, hide, cache_field = (
-                self.plaintext_redacted,
+                self.get_content(),
                 self.plaintext,
                 "redacted_content_anon",
             )
