@@ -453,7 +453,7 @@ class Base(Configuration):
     # which doesn't work well in JSON
     CELERY_TASK_SERIALIZER = "pickle"
     CELERY_RESULT_SERIALIZER = "pickle"
-    CELERY_ACCEPT_CONTENT = ["pickle"]
+    CELERY_ACCEPT_CONTENT = ["application/json", "pickle"]
 
     CELERY_EMAIL_TASK_CONFIG = {"queue": "emailsend"}
     CELERY_EMAIL_BACKEND = "froide.foirequest.smtp.EmailBackend"
