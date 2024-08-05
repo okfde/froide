@@ -24,7 +24,7 @@ djangorestframework
 djangorestframework-csv
 djangorestframework-jsonp
 drf-spectacular[sidecar]
-easy-thumbnails
+easy-thumbnails>=2.9.0
 elasticsearch-dsl>=8.0.0,<9.0.0
 elasticsearch<9.0.0,>=8.0.0
 geoip2

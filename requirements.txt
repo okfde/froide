@@ -164,7 +164,7 @@ drf-spectacular[sidecar]==0.27.2
     # via -r requirements.in
 drf-spectacular-sidecar==2024.7.1
     # via drf-spectacular
-easy-thumbnails==2.8.5
+easy-thumbnails==2.9
     # via -r requirements.in
 elastic-transport==8.13.1
     # via elasticsearch
