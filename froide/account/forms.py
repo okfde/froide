@@ -197,6 +197,12 @@ class TermsForm(forms.Form):
         )
 
 
+class NewTermsForm(TermsForm):
+    def save(self, user: User) -> None:
+        user.terms = True
+        user.save()
+
+
 CleanedData = Dict[str, Union[str, bool]]
 
 

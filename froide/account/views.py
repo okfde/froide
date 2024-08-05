@@ -54,12 +54,12 @@ from .export import (
 )
 from .forms import (
     AccountSettingsForm,
+    NewTermsForm,
     PasswordResetForm,
     ProfileForm,
     ReAuthForm,
     SetPasswordForm,
     SignUpForm,
-    TermsForm,
     UserChangeDetailsForm,
     UserDeleteForm,
     UserEmailConfirmationForm,
@@ -689,9 +689,9 @@ def new_terms(request):
     if request.user.terms:
         return get_redirect(request, default=next)
 
-    form = TermsForm()
+    form = NewTermsForm()
     if request.POST:
-        form = TermsForm(request.POST)
+        form = NewTermsForm(request.POST)
         if form.is_valid():
             form.save(request.user)
             messages.add_message(
