@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-05 12:27+0200\n"
-"PO-Revision-Date: 2024-06-10 15:39+0200\n"
+"PO-Revision-Date: 2024-08-12 10:37+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -147,14 +147,12 @@ msgid "Users future canceled."
 msgstr "Nutzer:in zur Kündigung vorgemerkt."
 
 #: froide/account/admin.py
-#, fuzzy
 msgid "Cancel account immediately (no notification)"
-msgstr "Konto zur Kündigung vormerken (ohne Benachrichtigung)"
+msgstr "Konto sofort kündigen (ohne Benachrichtigung)"
 
 #: froide/account/admin.py
-#, fuzzy
 msgid "Users canceled immediately."
-msgstr "Nutzer:in zur Kündigung vorgemerkt und benachrichtigt."
+msgstr "Nutzer:in sofort gekündigt."
 
 #: froide/account/admin.py
 msgid "Make user private"
@@ -2101,9 +2099,8 @@ msgid "public bodies"
 msgstr "Behörden"
 
 #: froide/document/views.py
-#, fuzzy
 msgid "document collections"
-msgstr "Füge Dokumente zu Sammlung hinzu..."
+msgstr "Dokuemtensammlungen"
 
 #: froide/document/views.py
 #, python-format
@@ -2306,14 +2303,13 @@ msgid "{num} of {total} selected messages were sent."
 msgstr "{num} von {total} ausgewählten Nachrichten wurden versendet."
 
 #: froide/foirequest/admin.py
-#, fuzzy
 msgid "Add comment..."
-msgstr "Hat Kommentare"
+msgstr "Kommentar hinzufügen..."
 
 #: froide/foirequest/admin.py
 #, python-format
 msgid "comment posted to %d messages."
-msgstr ""
+msgstr "Kommentar zu %d Nachrichten hinzugefügt."
 
 #: froide/foirequest/admin.py
 msgid "Export public body tag stats to CSV"
@@ -4070,21 +4066,20 @@ msgid "{name}_converted{ext}"
 msgstr "{name}_konvertiert{ext}"
 
 #: froide/foirequest/templates/admin/foirequest/foimessage/add_comment.html
-#, fuzzy
 msgid "Add comment to messages"
-msgstr "Füge Hinweisvorlage zu Nachrichten hinzu..."
+msgstr "Füge Kommentar zu Nachrichten hinzu"
 
 #: froide/foirequest/templates/admin/foirequest/foimessage/add_comment.html
-#, fuzzy, python-format
+#, python-format
 msgid "Name: %(name)s"
-msgstr "An: %(name)s"
+msgstr "Name: %(name)s"
 
 #: froide/foirequest/templates/admin/foirequest/foimessage/add_comment.html
-#, fuzzy, python-format
+#, python-format
 msgid "Add comment to one message"
 msgid_plural "Add comment to %(count)s messages"
-msgstr[0] "Füge Hinweisvorlage zu Nachrichten hinzu..."
-msgstr[1] "Füge Hinweisvorlage zu Nachrichten hinzu..."
+msgstr[0] "Füge Kommentar zu einer Nachricht hinzu"
+msgstr[1] "Füge Kommentar zu %(count)s Nachrichten hinzu"
 
 #: froide/foirequest/templates/admin/foirequest/foimessage/change_form.html
 #: froide/foirequest/templates/foirequest/body/message/toolbar/resend.html
@@ -4104,19 +4099,16 @@ msgid "Distinct users:"
 msgstr "Anzahl eindeutiger Nutzer:innen:"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_list.html
-#, fuzzy
 msgid "Distinct public bodies:"
-msgstr "Behörden auswählen"
+msgstr "Eindeutige Behörden:"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_list.html
-#, fuzzy
 msgid "Distinct jurisdictions:"
-msgstr "Zuständigkeitsbereiche"
+msgstr "Eindeutige Zuständigkeitsbereiche:"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_list.html
-#, fuzzy
 msgid "Distinct campaigns:"
-msgstr "Keine Kampagne"
+msgstr "Eindeutige Kampagnen:"
 
 #: froide/foirequest/templates/foirequest/_assign_project_form.html
 #, python-format
@@ -7316,11 +7308,13 @@ msgstr ""
 "möchten kurz beschreibt."
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Please enter an address in the following format:\n"
 "%(format)s"
-msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
+msgstr ""
+"Bitte geben Sie eine Adresse in diesem Format an: \n"
+"%(format)s"
 
 #: froide/foirequest/views/make_request.py
 msgid "Attach a proof of identity"
