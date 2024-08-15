@@ -400,6 +400,7 @@ class AccountBlocklist(models.Model):
 
     address = models.TextField(blank=True)
     email = models.TextField(blank=True)
+    full_name = models.TextField(blank=True)
 
     objects = AccountBlocklistManager()
 
@@ -411,7 +412,11 @@ class AccountBlocklist(models.Model):
         return self.name
 
     def match_user(self, user: User) -> bool:
-        return self.match_field(user, "address") or self.match_field(user, "email")
+        return (
+            self.match_field(user, "address")
+            or self.match_field(user, "email")
+            or self.match_content(self.full_name, user.get_full_name())
+        )
 
     def match_field(self, user: User, key: str) -> bool:
         content = getattr(self, key)
