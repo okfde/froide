@@ -466,7 +466,7 @@ class MakeRequestView(FormView):
             request_form.add_error(None, _("Draft cannot be used again."))
             error = True
 
-        if request.user.is_authenticated:
+        if request_form.is_valid() and request.user.is_authenticated:
             if request.POST.get("save_draft", ""):
                 return self.save_draft(request_form, publicbody_form)
             if request.user.is_blocked:
