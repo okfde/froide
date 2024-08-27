@@ -386,7 +386,7 @@ class PublicBody(models.Model):
         Classification, null=True, blank=True, on_delete=models.SET_NULL
     )
 
-    email = models.EmailField(_("Email"), blank=True, default="")
+    email = models.EmailField(_("Email"), blank=True, default="", max_length=255)
     fax = models.CharField(max_length=50, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
