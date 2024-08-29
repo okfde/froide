@@ -22,7 +22,7 @@ const showhelp = (e) => {
 
 <template>
   <div class="appshell">
-    <header class="appshell-header">
+    <header class="appshell-header d-">
       <div
         class="appshell-header-container appshell-header-container--mobile container">
         <div class="appshell-header-logo">
@@ -88,12 +88,9 @@ const showhelp = (e) => {
   else would have to guard via body.appshell
 -->
 <style lang="scss">
-// TODO: arbitrarily switch to "appshell" under this breakpoint
-//   not really usable, but also not broken. WIP
-// TODO: sync this with PostUpload's matchMedia and scss
-$breakpoint: 1000px;
+@import '../../../styles/variables.scss';
 
-@media (max-width: $breakpoint) {
+@media (max-width: $froide-appshell-breakpoint) {
   #header,
   #footer {
     display: none;
@@ -115,9 +112,8 @@ $breakpoint: 1000px;
 </style>
 
 <style lang="scss" scoped>
-// TODO: again, arbitrary breakpoint
-$breakpoint: 1000px;
-$breakpoint-onlinehelp: 600px;
+@import '../../../styles/variables.scss';
+// FIXME: should this be $primary == $blue-600 ?
 $ci-accent-text: rgb(
   41,
   109,
@@ -143,7 +139,8 @@ $step-width: 10em;
   position: relative;
   z-index: 1000;
 
-  @media (max-width: $breakpoint) {
+  // TODO replace; BS doesn't have responsive position
+  @media (max-width: $froide-appshell-breakpoint) {
     // regular fixed header gets in the way
     position: fixed;
   }
@@ -159,13 +156,13 @@ $step-width: 10em;
     'logo     title2';
   gap: 0.2em;
 
-  @media (max-width: $breakpoint) {
+  @media (max-width: $froide-appshell-breakpoint) {
     display: grid;
   }
 }
 
 .appshell-header-container--desktop {
-  @media (max-width: $breakpoint) {
+  @media (max-width: $froide-appshell-breakpoint) {
     display: none;
   }
 }
@@ -252,7 +249,7 @@ $step-width: 10em;
 .appshell-header-progress--mobile {
   display: none;
 
-  @media (max-width: $breakpoint) {
+  @media (max-width: $froide-appshell-breakpoint) {
     display: block;
     position: static;
     width: 100%;
@@ -266,7 +263,7 @@ $step-width: 10em;
   width: $step-width * 2;
   z-index: 0;
 
-  @media (max-width: $breakpoint) {
+  @media (max-width: $froide-appshell-breakpoint) {
     display: none;
   }
 }
@@ -295,7 +292,7 @@ $step-width: 10em;
   overflow-y: scroll;
   z-index: 100;
 
-  @media (max-width: $breakpoint-onlinehelp) {
+  @media (max-width: $froide-onlinehelp-breakpoint) {
     top: $header-height;
     left: 0;
     width: 100%;
@@ -321,7 +318,7 @@ $step-width: 10em;
 }
 
 .appshell-actions {
-  @media (max-width: $breakpoint) {
+  @media (max-width: $froide-appshell-breakpoint) {
     position: fixed;
   }
 

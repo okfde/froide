@@ -1,3 +1,4 @@
+@use "sass:map";
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/mixins';
 
@@ -146,6 +147,13 @@ $froide-theme-dark: (
     'color': $white
   )
 );
+
+$froide-appshell-breakpoint: map.get($grid-breakpoints, "md");
+:root {
+  --froide-appshell-breakpoint: #{$froide-appshell-breakpoint};
+}
+
+$froide-onlinehelp-breakpoint: map.get($grid-breakpoints, "lg");
 
 $breadcrumb-divider: quote('→');
 

@@ -63,10 +63,15 @@ window.FDSdebug = (val) => {
 
 const isDesktop = ref(false)
 const updateIsDesktop = (mql) => {
-  isDesktop.value = mql.matches
+  isDesktop.value = !mql.matches
 }
-// TODO sync this media query with AppShell's + also with scss here
-const isDesktopMediaQueryList = window.matchMedia('(min-width: 1000px)')
+const froideAppshellBreakpoint = getComputedStyle(
+  document.body
+).getPropertyValue('--froide-appshell-breakpoint')
+// TODO use :not(max-width) ?
+const isDesktopMediaQueryList = window.matchMedia(
+  `(max-width: ${froideAppshellBreakpoint})`
+)
 updateIsDesktop(isDesktopMediaQueryList)
 isDesktopMediaQueryList.addEventListener('change', updateIsDesktop)
 
@@ -593,6 +598,7 @@ defineEmits(['showhelp'])
       <div v-else-if="step !== 4570" class="my-3">
         <a @click="backStep" class="btnlike">← <u>Zurück</u></a>
       </div>
+      <span class="debug">{{ isDesktop }}</span>
       <button
         v-if="debug"
         class="btn btn-secondary btn-sm debug"
@@ -694,40 +700,48 @@ defineEmits(['showhelp'])
         <div class="fw-bold">Bisher vorhandene Dokumente</div>
       </div>
 
-      <div v-show="step === 2376">
-        <div class="step-questioncounter">Frage 1 von 5</div>
-        <label class="fw-bold form-label">
-          Haben Sie den hochgeladenen Brief erhalten oder versendet?
-          <!--{{ form.fields.sent.label }}-->
-        </label>
-        <div
-          class="form-check"
-          v-for="(choice, choiceIndex) in form.fields.sent.choices"
-          :key="choice.value"
-          :class="{ 'is-invalid': choice.errors }">
-          <input
-            type="radio"
-            name="sent"
-            v-model="formSent"
-            required=""
-            class="form-check-input"
-            :id="'id_sent_' + choiceIndex"
-            :value="choice.value"
-            :data-x-checked="
-              form.fields.sent.value === choice.value ||
-              form.fields.sent.initial === choiceIndex
-            " />
-          <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
-            choice.label
-          }}</label>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div v-show="step === 2376">
+              <div class="step-questioncounter">Frage 1 von 5</div>
+              <label class="fw-bold form-label">
+                Haben Sie den hochgeladenen Brief erhalten oder versendet?
+                <!--{{ form.fields.sent.label }}-->
+              </label>
+              <div
+                class="form-check"
+                v-for="(choice, choiceIndex) in form.fields.sent.choices"
+                :key="choice.value"
+                :class="{ 'is-invalid': choice.errors }">
+                <input
+                  type="radio"
+                  name="sent"
+                  v-model="formSent"
+                  required=""
+                  class="form-check-input"
+                  :id="'id_sent_' + choiceIndex"
+                  :value="choice.value"
+                  :data-x-checked="
+                    form.fields.sent.value === choice.value ||
+                    form.fields.sent.initial === choiceIndex
+                  " />
+                <label
+                  class="form-check-label"
+                  :for="'id_sent_' + choiceIndex"
+                  >{{ choice.label }}</label
+                >
+              </div>
+              <!--
+              <div class="invalid-feedback" v-if="form.errors.sent">
+                <p class="text-danger">
+                  {{ form.errors.sent.map((_) => _.message).join(' ') }}
+                </p>
+              </div>
+              -->
+            </div>
+          </div>
         </div>
-        <!--
-        <div class="invalid-feedback" v-if="form.errors.sent">
-          <p class="text-danger">
-            {{ form.errors.sent.map((_) => _.message).join(' ') }}
-          </p>
-        </div>
-        -->
       </div>
 
       <div v-show="step === 2380">
@@ -1362,7 +1376,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
 </template>
 
 <style lang="scss" scoped>
-$breakpoint: 1000px;
+@import '../../../styles/variables.scss';
 
 .debug {
   opacity: 0.5 !important;
@@ -1394,7 +1408,7 @@ a.btnlike {
   background: transparent;
 }
 
-@media (min-width: $breakpoint) {
+@media (min-width: $froide-appshell-breakpoint) {
   .step--desktopindent {
     padding: 2em 0 0 4em;
   }
@@ -1403,7 +1417,7 @@ a.btnlike {
 .step-questioncounter {
   display: none;
 
-  @media (min-width: $breakpoint) {
+  @media (min-width: $froide-appshell-breakpoint) {
     display: block;
   }
 }
