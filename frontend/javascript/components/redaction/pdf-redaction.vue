@@ -2,8 +2,7 @@
   <div
     id="pdf-viewer"
     ref="top"
-    class="pdf-redaction-tool container"
-    :class="{ 'pdf-redaction-tool--minimalui': minimalUi }">
+    class="pdf-redaction-tool container bg-dark-subtle">
     <div v-if="hasPassword && ready" class="row">
       <div class="col-lg-12">
         <div class="alert alert-info" role="alert">
@@ -61,17 +60,33 @@
     <div class="row toolbar">
       <div
         v-if="ready"
-        class="btn-toolbar col-lg-12 align-items-center justify-content-around justify-content-sm-between px-2">
+        class="btn-toolbar col-lg-12 align-items-center justify-content-around justify-content-sm-between px-2 bg-light">
         <div
           class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
+          <input
+            v-if="hasTouch"
+            type="checkbox"
+            class="btn-check"
+            id="btn-check-paint"
+            v-model="allowSingleTap" />
+          <label
+            v-if="hasTouch"
+            class="btn btn-outline-secondary d-flex"
+            for="btn-check-paint">
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-paint-brush" />
+              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+            </div>
+          </label>
           <button
             type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
-            @click="undo"
-          >
-            <i class="fa fa-share fa-flip-horizontal" />
+            @click="undo">
+            <i class="fa fa-lg fa-share fa-flip-horizontal" />
+            <small class="d-none d-xl-block">{{ i18n.undo }}</small>
           </button>
           <button
             type="button"
@@ -80,9 +95,9 @@
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
-            @click="redo"
-          >
-            <i class="fa fa-share" />
+            @click="redo">
+            <i class="fa fa-lg fa-share" />
+            <small class="d-none d-xl-block">{{ i18n.redo }}</small>
           </button>
           <button
             type="button"
@@ -91,13 +106,13 @@
             :title="'TODO'"
             @click="undoAll">
             <i class="fa fa-lg fa-eraser" />
-            <small v-if="minimalUi" class="d-none d-lg-block"
+            <small class="d-none d-xl-block"
               >Alle Schwärzungen<br />entfernen</small
             >
           </button>
         </div>
 
-        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes">
+        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes py-2">
           <button
             class="btn"
             :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
@@ -105,6 +120,7 @@
             @click.stop="toggleText"
           >
             <i class="fa fa-align-justify" />
+            <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
           </button>
           <button
             class="btn"
@@ -116,6 +132,7 @@
             @click.stop="toggleDrawing"
           >
             <i class="fa fa-image" />
+            <small class="d-none d-xl-block">{{ i18n.disableText }}</small>
           </button>
         </div>
 
@@ -144,7 +161,7 @@
 
         <div
           v-if="!minimalUi && (hasRedactions || hasPassword)"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
+          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0 py-2">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
@@ -156,7 +173,7 @@
           </button>
         </div>
 
-        <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0">
+        <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0 py-2">
           <form
             v-if="canPublish && !hasPassword"
             method="post"
@@ -225,7 +242,7 @@
       </div>
     </div>
     <div v-if="!minimalUi" class="row">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
+      <div v-if="ready" class="btn-toolbar col-lg-12 bg-light py-2">
         <div class="input-group me-auto ms-auto">
           <button
             class="pdf-prev btn btn-outline-secondary"
@@ -342,6 +359,7 @@ export default {
       progressCurrent: null,
       progressTotal: null,
       hasTouch: isTouchDevice(),
+      allowSingleTap: true,
       doubleTap: false
     }
   },
@@ -777,7 +795,7 @@ export default {
       return [offsetX, offsetY]
     },
     touchStart(e) {
-      if (!this.doubleTap) {
+      if (!this.doubleTap && !this.allowSingleTap) {
         this.doubleTap = true
         setTimeout(() => {
           this.doubleTap = false
@@ -1299,15 +1317,7 @@ export default {
   padding: 0;
 }
 
-.pdf-redaction-tool--minimalui {
-  background: #aaa;
-
-  .btn-toolbar {
-    background: #eee;
-  }
-
-  .preview {
-    box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
-  }
+.preview {
+  box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
 }
 </style>

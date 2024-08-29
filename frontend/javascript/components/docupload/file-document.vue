@@ -20,16 +20,8 @@
         <i class="fa fa-file-o"></i>
       </div>
       <div v-else-if="iconStyle === 'thumbnail'" class="col-auto ps-0">
-        <div
-          style="
-            width: 3rem;
-            height: 4rem;
-            border: 1px solid #aaa;
-            background: #e8e8e8;
-            font-size: 0.5rem;
-          ">
-          TODO<br />Thumbnail
-        </div>
+        <!-- TODO: generated PDF thumbnail -->
+        <i class="fa fa-file-pdf-o fa-lg"></i>
       </div>
       <div v-if="!hideAdvancedOperations" class="col-auto ps-0 doc-status">
         <template v-if="hasAttachment">
