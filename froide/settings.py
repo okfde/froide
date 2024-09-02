@@ -482,6 +482,14 @@ class Base(Configuration):
     # Do not include xml by default, so lxml doesn't need to be present
     TASTYPIE_DEFAULT_FORMATS = ["json"]
 
+    def is_pkce_required(client_id):
+        from froide.account.models import Application
+
+        # Require PKCE only for public clients
+        return Application.objects.filter(
+            client_id=client_id, client_type=Application.CLIENT_PUBLIC
+        ).exists()
+
     OAUTH2_PROVIDER = {
         "SCOPES": {
             "read:user": _("Access to user status"),
@@ -491,7 +499,8 @@ class Base(Configuration):
             "make:request": _("Make requests on your behalf"),
             "follow:request": _("Follow/Unfollow requests"),
             "read:document": _("Read your (private) documents"),
-        }
+        },
+        "PKCE_REQUIRED": is_pkce_required,
     }
     OAUTH2_PROVIDER_APPLICATION_MODEL = "account.Application"
 
