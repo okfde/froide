@@ -46,5 +46,5 @@ Wand
 WeasyPrint
 websockets
 
--e git+https://github.com/okfde/django-filingcabinet.git@main#egg=django-filingcabinet
--e git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946#egg=pygtail
+git+https://github.com/okfde/django-filingcabinet.git@main#egg=django-filingcabinet
+git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946#egg=pygtail
