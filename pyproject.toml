@@ -22,7 +22,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = ["froide"]
 
-
 [tool.ruff]
 exclude = ["migrations", "build", "node_modules"]
 
@@ -35,7 +34,6 @@ max-line-length = 88
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
-
 
 [tool.ruff.lint.isort]
 section-order = [
@@ -52,8 +50,11 @@ known-first-party = ["froide"]
 [tool.ruff.lint.isort.sections]
 django = ["django"]
 
+[tool.djlint]
+ignore = "T002,T003,H005,H006,H021,H023,H029,H030,H031"
+
 [tool.coverage.run]
-source = "froide"
+source = ["froide"]
 omit = ["*/migrations/*", "*/wsgi.py", "*/asgi.py"]
 plugins = ["django_coverage_plugin"]
 branch = true
@@ -62,7 +63,6 @@ branch = true
 show_missing = true
 skip_covered = true
 exclude_lines = ["pragma: no cover"]
-
 
 [tool.pytest.ini_options]
 DJANGO_CONFIGURATION = "Test"
