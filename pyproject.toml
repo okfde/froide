@@ -1,0 +1,94 @@
+[project]
+name = "froide"
+readme = "README.md"
+license = { file = "LICENSE.txt" }
+requires-python = ">=3.10"
+description = "German Freedom of Information Portal"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: Django",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Utilities",
+]
+dynamic = ["version"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["froide"]
+
+
+[tool.ruff]
+exclude = ["migrations", "build", "node_modules"]
+
+[tool.ruff.lint]
+ignore = ["E501", "C901"]
+select = ["C", "E", "F", "W", "B", "I001"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 88
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+
+[tool.ruff.lint.isort]
+section-order = [
+  "future",
+  "standard-library",
+  "django",
+  "third-party",
+  "first-party",
+  "local-folder",
+]
+default-section = "third-party"
+known-first-party = ["froide"]
+
+[tool.ruff.lint.isort.sections]
+django = ["django"]
+
+[tool.coverage.run]
+source = "froide"
+omit = ["*/migrations/*", "*/wsgi.py", "*/asgi.py"]
+plugins = ["django_coverage_plugin"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = ["pragma: no cover"]
+
+
+[tool.pytest.ini_options]
+DJANGO_CONFIGURATION = "Test"
+DJANGO_SETTINGS_MODULE = "froide.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = ["--reuse-db"]
+markers = ["no_delivery_mock"]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+ignore_errors = false
+ignore_missing_imports = true
+implicit_reexport = false
+strict_optional = true
+strict_equality = true
+no_implicit_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_no_return = true
+python_version = 3.10
+
+[tool.django-stubs]
+django_settings_module = "froide.settings"

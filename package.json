@@ -5,14 +5,14 @@
   "main": "frontend/javascript/main.js",
   "files": [
     "frontend/",
-    ".eslintrc.js"
+    "eslint.config.mjs"
   ],
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint frontend --ext .js,.ts,.vue",
+    "lint": "eslint frontend/**/*.{js,ts,vue}",
     "serve": "vite",
     "dev": "vite",
     "build": "vite build",
@@ -29,31 +29,18 @@
   },
   "homepage": "https://github.com/okfde/froide#readme",
   "devDependencies": {
+    "@okfde/eslint-config-froide": "okfde/eslint-config-froide",
     "@types/bootstrap": "^5.2.1",
     "@types/glidejs__glide": "^3.4.2",
     "@types/lodash.throttle": "^4.1.6",
-    "@typescript-eslint/eslint-plugin": "^5",
-    "@typescript-eslint/parser": "^5",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vue/eslint-config-typescript": "^11.0.3",
     "autoprefixer": "^10.4.13",
     "cli-real-favicon": "0.0.8",
-    "eslint": "^8.45.0",
-    "eslint-config-prettier": "^8.9.0",
-    "eslint-plugin-html": "^7.1.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.2.4",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-vue": "^9.15.1",
     "postcss": "^8.4.20",
-    "prettier": "^2.4.0",
-    "prettier-config-standard": "^5.0.0",
     "sass": "^1.58.3",
     "typescript": "^5.1.6",
     "vite": "^4.1.2",
-    "vite-plugin-dev-manifest": "^1.0.9",
-    "vue-eslint-parser": "^9.3.1"
+    "vite-plugin-dev-manifest": "^1.0.9"
   },
   "dependencies": {
     "@okfde/filingcabinet": "^0.0.4",
@@ -86,5 +73,6 @@
         "Orientation"
       ]
     }
-  }
+  },
+  "prettier": "prettier-config-standard"
 }

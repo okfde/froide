@@ -1,4 +1,5 @@
-include README.md LICENSE.txt
+include README.md LICENSE.txt package.json
 recursive-include froide/templates *.html *.txt
 recursive-include froide/**/templates *.html *.txt
 recursive-include locale *.po
+recursive-include frontend *
