@@ -1,0 +1,58 @@
+{% extends "oauth2_provider/base.html" %}
+{% load i18n %}
+{% block content %}
+    <div class="block-center">
+        <h1>{% trans "External applications with access to your account" %}</h1>
+        <p>{% trans "You have given the following applications access to your account." %}</p>
+        <ul class="list-unstyled">
+            {% for authorized_token in authorized_tokens %}
+                <li>
+                    <details>
+                        <summary>
+                            {{ authorized_token.application.name }}
+                            {% if authorized_token.is_expired %}
+                                <span class="badge text-bg-secondary">{% trans "Expired" %}</span>
+                            {% endif %}
+                        </summary>
+                        {% if authorized_token.application.description %}
+                            <blockquote>
+                                {{ authorized_token.application.description|linebreaks }}
+                            </blockquote>
+                        {% endif %}
+                        <ul>
+                            {% for scope_name, scope_description in authorized_token.scopes.items %}
+                                <li>
+                                    <span title="{{ scope_name }}">{{ scope_description }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <dl>
+                            <dt>{% trans "Created" %}</dt>
+                            <dd>
+                                {{ authorized_token.created|date:"DATETIME_FORMAT" }}
+                            </dd>
+                            {% if authorized_token.updated|date:"DATETIME_FORMAT" != authorized_token.created|date:"DATETIME_FORMAT" %}
+                                <dt>{% trans "Updated" %}</dt>
+                                <dd>
+                                    {{ authorized_token.updated|date:"DATETIME_FORMAT" }}
+                                </dd>
+                            {% endif %}
+                            <dt>{% trans "Expires" %}</dt>
+                            <dd>
+                                {{ authorized_token.expires|date:"DATETIME_FORMAT" }}
+                            </dd>
+                        </dl>
+                        <form class="mb-3"
+                              action="{% url 'oauth2_provider:authorized-token-delete' authorized_token.pk %}"
+                              method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">{% trans "Revoke access" %}</button>
+                        </form>
+                    </details>
+                </li>
+            {% empty %}
+                <li>{% trans "There are no external applications with." %}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock content %}

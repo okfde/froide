@@ -501,6 +501,7 @@ class Base(Configuration):
             "read:document": _("Read your (private) documents"),
         },
         "PKCE_REQUIRED": is_pkce_required,
+        "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 180,  # half a year
     }
     OAUTH2_PROVIDER_APPLICATION_MODEL = "account.Application"
 

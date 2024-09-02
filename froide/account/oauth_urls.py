@@ -1,3 +1,4 @@
+from django.forms.models import modelform_factory
 from django.http import HttpResponseRedirect
 from django.urls import path
 
@@ -8,10 +9,14 @@ from oauth2_provider.views import (
     ApplicationRegistration,
     ApplicationUpdate,
     AuthorizationView,
+    AuthorizedTokenDeleteView,
+    AuthorizedTokensListView,
+    RevokeTokenView,
     TokenView,
 )
 
 from .auth import recent_auth_required
+from .models import Application
 
 
 class CustomAuthorizationView(AuthorizationView):
@@ -36,11 +41,38 @@ class CustomAuthorizationView(AuthorizationView):
 urlpatterns = [
     path("authorize/", CustomAuthorizationView.as_view(), name="authorize"),
     path("token/", TokenView.as_view(), name="token"),
+    path("revoke_token/", RevokeTokenView.as_view(), name="revoke-token"),
 ]
 
 
-class CustomApplicationUpdate(ApplicationUpdate):
-    fields = ["name", "redirect_uris", "description", "homepage", "image_url"]
+class ApplicationEditMixin:
+    fields = [
+        "name",
+        "description",
+        "homepage",
+        "redirect_uris",
+        "post_logout_redirect_uris",
+        "allowed_origins",
+        "client_type",
+        "authorization_grant_type",
+    ]
+
+    def get_form_class(self):
+        """
+        Returns the form class for the application model
+        """
+        return modelform_factory(
+            Application,
+            fields=self.fields,
+        )
+
+
+class CustomApplicationRegistration(ApplicationEditMixin, ApplicationRegistration):
+    fields = ApplicationEditMixin.fields + ["client_secret"]
+
+
+class CustomApplicationUpdate(ApplicationEditMixin, ApplicationUpdate):
+    pass
 
 
 # Application management views
@@ -49,7 +81,7 @@ urlpatterns += [
     path("applications/", recent_auth_required(ApplicationList.as_view()), name="list"),
     path(
         "applications/register/",
-        recent_auth_required(ApplicationRegistration.as_view()),
+        recent_auth_required(CustomApplicationRegistration.as_view()),
         name="register",
     ),
     path(
@@ -66,5 +98,18 @@ urlpatterns += [
         "applications/<int:pk>/update/",
         recent_auth_required(CustomApplicationUpdate.as_view()),
         name="update",
+    ),
+]
+
+urlpatterns += [
+    path(
+        "authorized-tokens/",
+        AuthorizedTokensListView.as_view(),
+        name="authorized-token-list",
+    ),
+    path(
+        "authorized-tokens/<pk>/delete/",
+        AuthorizedTokenDeleteView.as_view(),
+        name="authorized-token-delete",
     ),
 ]
