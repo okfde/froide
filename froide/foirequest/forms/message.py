@@ -711,6 +711,13 @@ class PostalReplyForm(PostalBaseForm):
         message.not_publishable = self.cleaned_data.get("not_publishable", False)
         return message
 
+    def save(self, user):
+        message = super().save()
+        FoiRequest.message_received.send(
+            sender=self.foirequest, message=message, user=user
+        )
+        return message
+
 
 def get_postal_message_form(*args, **kwargs):
     foirequest = kwargs.pop("foirequest")
@@ -738,6 +745,11 @@ class PostalMessageForm(PostalBaseForm):
         message.recipient_public_body = self.cleaned_data["publicbody"]
         if self.cleaned_data.get("recipient"):
             message.recipient = self.cleaned_data["recipient"]
+        return message
+
+    def save(self, user):
+        message = super().save()
+        FoiRequest.message_sent.send(sender=self.foirequest, message=message, user=user)
         return message
 
 

@@ -116,7 +116,6 @@ def add_postal_reply(
     form_func=get_postal_reply_form,
     success_message=POSTAL_REPLY_SUCCESS,
     error_message=POSTAL_REPLY_ERROR,
-    signal=FoiRequest.message_received,
     form_key="postal_reply_form",
 ):
     if not foirequest.public_body:
@@ -125,9 +124,8 @@ def add_postal_reply(
     form = form_func(request.POST, request.FILES, foirequest=foirequest)
 
     if form.is_valid():
-        message = form.save()
+        message = form.save(request.user)
 
-        signal.send(sender=foirequest, message=message, user=request.user)
         messages.add_message(request, messages.SUCCESS, success_message)
         url = reverse(
             "foirequest-manage_attachments",
@@ -146,7 +144,6 @@ def add_postal_message(request, slug):
         form_func=get_postal_message_form,
         success_message=_("A sent letter was successfully added!"),
         error_message=_("There were errors with your form submission!"),
-        signal=FoiRequest.message_sent,
         form_key="postal_message_form",
     )
 
