@@ -44,11 +44,11 @@ def has_authenticated_access(obj, request, verb="write", scope=None):
         # The object owner always has the capability
         return True
 
-    if user.is_superuser:
-        # Superusers can do everything
+    if token is None and user.is_superuser:
+        # Superusers can do everything but not via token
         return True
 
-    if check_permission(obj, request, verb):
+    if token is None and check_permission(obj, request, verb):
         return True
 
     if hasattr(obj, "team") and obj.team and obj.team.can_do(verb, user):
@@ -139,13 +139,17 @@ def get_read_queryset(
         # API access, but no scope
         return unauth_qs
 
-    if user.is_superuser:
+    if token is None and user.is_superuser:
         return qs
 
     model = qs.model
     opts = model._meta
     codename = get_permission_codename("view", opts)
-    if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
+    if (
+        token is None
+        and user.is_staff
+        and user.has_perm("%s.%s" % (opts.app_label, codename))
+    ):
         return qs
 
     if user_read_filter:
@@ -175,13 +179,17 @@ def get_write_queryset(
         # API access, but no scope
         return qs.none()
 
-    if user.is_superuser:
+    if token is None and user.is_superuser:
         return qs
 
     model = qs.model
     opts = model._meta
     codename = get_permission_codename("change", opts)
-    if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
+    if (
+        token is None
+        and user.is_staff
+        and user.has_perm("%s.%s" % (opts.app_label, codename))
+    ):
         return qs
 
     filters = None
