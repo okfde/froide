@@ -4,9 +4,9 @@
 #
 #    pip-compile requirements-test.in
 #
--e git+https://github.com/okfde/django-filingcabinet.git@main#egg=django-filingcabinet
+git+https://github.com/okfde/django-filingcabinet.git@main#egg=django-filingcabinet
     # via -r requirements.in
--e git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946#egg=pygtail
+git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946#egg=pygtail
     # via -r requirements.in
 aiohttp==3.9.5
     # via geoip2
