@@ -1,17 +1,18 @@
-{% extends 'account/settings_base.html' %}
+{% extends "account/settings_base.html" %}
 {% load i18n %}
 {% load form_helper %}
 {% load account_tags %}
 {% block title %}
     {% trans "Account Settings" %}
-{% endblock %}
+{% endblock title %}
 {% block settings_body %}
     <h2>{% trans "Account Settings" %}</h2>
     <dl id="general">
         <dt>{% blocktrans %}Your name:{% endblocktrans %}</dt>
         <dd>
             {{ request.user.get_full_name }}
-            {% block settings_name %}{% endblock %}
+            {% block settings_name %}
+            {% endblock settings_name %}
         </dd>
         <dt>{% trans "Account Privacy:" %}</dt>
         <dd>
@@ -20,7 +21,8 @@
                 {% blocktrans %}Your name is hidden on the web.{% endblocktrans %}
             {% else %}
                 {% blocktrans %}Your name is visible.{% endblocktrans %}
-                {% block settings_privacy %}{% endblock %}
+                {% block settings_privacy %}
+                {% endblock settings_privacy %}
                 <a class="btn btn-sm btn-secondary float-end"
                    data-bs-toggle="collapse"
                    href="#make-private">{% trans "Make my account private" %}</a>
@@ -133,12 +135,24 @@
         {% endrecentauthrequired %}
     </div>
 </div>
-{% block post_password %}{% endblock %}
+{% block post_password %}
+{% endblock post_password %}
 <div id="proofs" class="card mb-3">
     <h5 class="card-header">{% translate "Proofs" %}</h5>
     <div class="card-body">
         {% recentauthrequired "proofs" %}
         {% include "proof/proof_settings.html" %}
+    {% endrecentauthrequired %}
+</div>
+</div>
+<hr />
+<div id="apps" class="card mb-3">
+    <h5 class="card-header">{% trans "External apps" %}</h5>
+    <div class="card-body">
+        {% recentauthrequired "export" %}
+        <a href="{% url 'oauth2_provider:authorized-token-list' %}">
+            {% trans "Show external apps with access to your account" %}
+        </a>
     {% endrecentauthrequired %}
 </div>
 </div>
@@ -191,4 +205,4 @@
     {% endif %}
 </div>
 </div>
-{% endblock %}
+{% endblock settings_body %}

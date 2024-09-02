@@ -8,6 +8,9 @@
                     <h3 class="block-center-heading">
                         {% blocktrans with name=application.name %}Authorize the application '{{ name }}'?{% endblocktrans %}
                     </h3>
+                    <blockquote>
+                        {{ application.description }}
+                    </blockquote>
                     {% csrf_token %}
                     {% for field in form %}
                         {% if field.is_hidden %}{{ field }}{% endif %}
@@ -20,11 +23,11 @@
                     {{ form.non_field_errors }}
                     <div class="control-group">
                         <div class="controls">
-                            <input type="submit" class="btn btn-large" value="{% trans 'Cancel' %}" />
+                            <input type="submit" class="btn btn-large" value="{% trans "Cancel" %}" />
                             <input type="submit"
                                    class="btn btn-large btn-primary"
                                    name="allow"
-                                   value="{% trans 'Authorize' %}" />
+                                   value="{% trans "Authorize" %}" />
                         </div>
                     </div>
                 </form>
@@ -34,4 +37,4 @@
             {% endif %}
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
