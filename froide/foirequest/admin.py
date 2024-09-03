@@ -529,7 +529,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         "sender_email",
         "recipient_email",
         "is_response",
-        "registered_mail",
+        "registered_mail_date",
         "kind",
         "get_deliverystatus_display",
     )
