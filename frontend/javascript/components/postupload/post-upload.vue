@@ -63,14 +63,13 @@ window.FDSdebug = (val) => {
 
 const isDesktop = ref(false)
 const updateIsDesktop = (mql) => {
-  isDesktop.value = !mql.matches
+  isDesktop.value = mql.matches
 }
 const froideAppshellBreakpoint = getComputedStyle(
   document.body
 ).getPropertyValue('--froide-appshell-breakpoint')
-// TODO use :not(max-width) ?
 const isDesktopMediaQueryList = window.matchMedia(
-  `(max-width: ${froideAppshellBreakpoint})`
+  `(min-width: ${froideAppshellBreakpoint})`
 )
 updateIsDesktop(isDesktopMediaQueryList)
 isDesktopMediaQueryList.addEventListener('change', updateIsDesktop)
@@ -625,164 +624,189 @@ defineEmits(['showhelp'])
         <pre>{{ form.errors }}</pre>
       </details>
 
-      <div v-show="step === 1100">
-        <button disabled class="btn btn-outline-primary d-block w-100">
-          <i class="fa fa-camera"></i>
-          Dokumente scannen
-        </button>
-        <p class="mt-1">
-          Handykamera verwenden, um automatisch ein PDF zu erstellen
-        </p>
-        <button
-          type="button"
-          @click="stepAndUppyClick"
-          class="btn btn-outline-primary d-block w-100">
-          <i class="fa fa-upload"></i>
-          Dateien hochladen
-        </button>
-        <p class="mt-1">
-          Wenn Sie den Brief schon als PDF oder Foto vorliegen haben
-        </p>
-        <aside>
-          <h4><i class="fa fa-lightbulb-o fa-lg"></i> TIPP</h4>
-          <p>
-            Sie brauchen den Brief vorher <strong>nicht</strong> zu schwärzen.
-            Das erledigen Sie später mit unserem Online-Tool.
-          </p>
-          <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
-        </aside>
-        <aside>
-          <h4><i class="fa fa-exclamation-circle fa-lg"></i> Neu</h4>
-          <p>Wir haben diesen Bereich stark überarbeitet.</p>
-          <p>
-            Sollte etwas nicht funktionieren, gibt es
-            <a :href="config.url.legacyPostupload"
-              >hier noch das alte Upload-Formular</a
-            >. Wir würden uns über Feedback freuen.
-          </p>
-        </aside>
+      <div v-show="step === 1100" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="row my-5">
+              <div class="col-md-6">
+                <button disabled class="btn btn-outline-primary d-block w-100">
+                  <i class="fa fa-camera"></i>
+                  Dokumente scannen
+                </button>
+                <p class="mt-1">
+                  Handykamera verwenden, um automatisch ein PDF zu erstellen
+                </p>
+              </div>
+              <div class="col-md-6">
+                <button
+                  type="button"
+                  @click="stepAndUppyClick"
+                  class="btn btn-outline-primary d-block w-100">
+                  <i class="fa fa-upload"></i>
+                  Dateien hochladen
+                </button>
+                <p class="mt-1">
+                  Wenn Sie den Brief schon als PDF oder Foto vorliegen haben
+                </p>
+              </div>
+            </div>
+            <div class="alert alert-warning">
+              <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
+              <p>
+                Sie brauchen den Brief vorher <strong>nicht</strong> zu
+                schwärzen. Das erledigen Sie später mit unserem Online-Tool.
+              </p>
+              <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
+              <p>
+                <a
+                  href="#"
+                  @click="onShowhelp(config.urls.helpPostuploadRedaction)"
+                  >online help demo</a
+                >
+              </p>
+            </div>
+            <div class="alert alert-warning">
+              <h4><i class="fa fa-exclamation-circle fa-lg"></i> Neu</h4>
+              <p>Wir haben diesen Bereich stark überarbeitet.</p>
+              <p>
+                Sollte etwas nicht funktionieren, gibt es
+                <a :href="config.url.legacyPostupload"
+                  >hier noch das alte Upload-Formular</a
+                >. Wir würden uns über Feedback freuen.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-show="step === 1110">
         <!-- document-uploader see below -->
       </div>
 
-      <div v-show="step === 1201">
-        <label class="fw-bold form-label">
-          Ziehen Sie die Seiten in die richtige Reihenfolge
-        </label>
-      </div>
-
-      <div v-show="step === 1202">
-        <div>
-          <div class="text-center my-3">
-            <i class="fa fa-file-image-o fa-4x"></i>
-            <i class="fa fa-arrow-right fa-2x"></i>
-            <i class="fa fa-file-pdf-o fa-4x"></i>
-          </div>
-        </div>
-        <div class="fw-bold form-label">
-          Wir erstellen aus Ihren Bildern ein PDF-Dokument
-        </div>
-        <div class="documents-filename p-2 my-3 mx-auto">
-          <div class="form-group">
-            <input
-              id="documents_filename"
-              v-model="documentsImagesDocumentFilename"
-              class="form-control" />
-            <label for="documents_filename"> Dateiname ändern </label>
+      <div v-show="step === 1201" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9 fw-bold">
+            Ziehen Sie die Seiten in die richtige Reihenfolge
           </div>
         </div>
       </div>
 
-      <!-- there is another for this step, further down below document-uploader -->
-      <div v-show="step === 1300">
-        <div class="fw-bold">Bisher vorhandene Dokumente</div>
-      </div>
-
-      <div class="container">
+      <div v-show="step === 1202" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
-            <div v-show="step === 2376">
-              <div class="step-questioncounter">Frage 1 von 5</div>
-              <label class="fw-bold form-label">
-                Haben Sie den hochgeladenen Brief erhalten oder versendet?
-                <!--{{ form.fields.sent.label }}-->
-              </label>
-              <div
-                class="form-check"
-                v-for="(choice, choiceIndex) in form.fields.sent.choices"
-                :key="choice.value"
-                :class="{ 'is-invalid': choice.errors }">
-                <input
-                  type="radio"
-                  name="sent"
-                  v-model="formSent"
-                  required=""
-                  class="form-check-input"
-                  :id="'id_sent_' + choiceIndex"
-                  :value="choice.value"
-                  :data-x-checked="
-                    form.fields.sent.value === choice.value ||
-                    form.fields.sent.initial === choiceIndex
-                  " />
-                <label
-                  class="form-check-label"
-                  :for="'id_sent_' + choiceIndex"
-                  >{{ choice.label }}</label
-                >
-              </div>
-              <!--
-              <div class="invalid-feedback" v-if="form.errors.sent">
-                <p class="text-danger">
-                  {{ form.errors.sent.map((_) => _.message).join(' ') }}
-                </p>
-              </div>
-              -->
+            <div class="text-center my-3">
+              <i class="fa fa-file-image-o fa-4x"></i>
+              <i class="fa fa-arrow-right fa-2x"></i>
+              <i class="fa fa-file-pdf-o fa-4x"></i>
+            </div>
+          </div>
+          <div class="text-center fw-bold my-3">
+            Wir erstellen aus Ihren Bildern ein PDF-Dokument
+          </div>
+          <div class="documents-filename p-2 my-3 mx-auto">
+            <div class="form-group">
+              <input
+                id="documents_filename"
+                v-model="documentsImagesDocumentFilename"
+                class="form-control" />
+              <label for="documents_filename"> Dateiname ändern </label>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-show="step === 2380">
-        <!-- also 2428 -->
-        <div class="step-questioncounter">Frage 2 von 5</div>
-        <label class="fw-bold form-label" for="id_subject">
-          <template v-if="formSent === '1'">
-            Ist dies die Behörde, an die Sie den Brief gesendet haben?
-          </template>
-          <template v-else>
-            Ist dies die Behörde, von der der Brief stammt?
-          </template>
-        </label>
-        <div style="margin: 1em 0; font-style: italic">
-          {{ formPublicbodyLabel }}
+      <!-- there is another for this step, further down below document-uploader -->
+      <div v-show="step === 1300" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="fw-bold">Bisher vorhandene Dokumente</div>
+          </div>
         </div>
-        <div
-          class="form-check"
-          v-for="(choice, choiceIndex) in [
-            { value: true, label: 'Ja.' },
-            { value: false, label: 'Nein, andere Behörde wählen' }
-          ]"
-          :key="choiceIndex">
-          <input
-            type="radio"
-            required=""
-            class="form-check-input"
-            v-model="formPublicbodyIsDefault"
-            :id="'id_pbisdefault_' + choiceIndex"
-            :value="choice.value" />
-          <label
-            class="form-check-label"
-            :for="'id_pbisdefault_' + choiceIndex"
-            >{{ choice.label }}</label
-          >
+      </div>
+
+      <div v-show="step === 2376" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="step-questioncounter">Frage 1 von 5</div>
+            <label class="fw-bold form-label">
+              Haben Sie den hochgeladenen Brief erhalten oder versendet?
+              <!--{{ form.fields.sent.label }}-->
+            </label>
+            <div
+              class="form-check"
+              v-for="(choice, choiceIndex) in form.fields.sent.choices"
+              :key="choice.value"
+              :class="{ 'is-invalid': choice.errors }">
+              <input
+                type="radio"
+                name="sent"
+                v-model="formSent"
+                required=""
+                class="form-check-input"
+                :id="'id_sent_' + choiceIndex"
+                :value="choice.value"
+                :data-x-checked="
+                  form.fields.sent.value === choice.value ||
+                  form.fields.sent.initial === choiceIndex
+                " />
+              <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
+                choice.label
+              }}</label>
+            </div>
+            <!--
+            <div class="invalid-feedback" v-if="form.errors.sent">
+              <p class="text-danger">
+                {{ form.errors.sent.map((_) => _.message).join(' ') }}
+              </p>
+            </div>
+            -->
+          </div>
         </div>
-        <input
-          type="hidden"
-          name="publicbody"
-          v-if="formPublicbodyIsDefault"
-          :value="formPublicbodyId" />
+      </div>
+
+      <!-- also 2428 -->
+      <div v-show="step === 2380" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="step-questioncounter">Frage 2 von 5</div>
+            <label class="fw-bold form-label" for="id_subject">
+              <template v-if="formSent === '1'">
+                Ist dies die Behörde, an die Sie den Brief gesendet haben?
+              </template>
+              <template v-else>
+                Ist dies die Behörde, von der der Brief stammt?
+              </template>
+            </label>
+            <div style="margin: 1em 0; font-style: italic">
+              {{ formPublicbodyLabel }}
+            </div>
+            <div
+              class="form-check"
+              v-for="(choice, choiceIndex) in [
+                { value: true, label: 'Ja.' },
+                { value: false, label: 'Nein, andere Behörde wählen' }
+              ]"
+              :key="choiceIndex">
+              <input
+                type="radio"
+                required=""
+                class="form-check-input"
+                v-model="formPublicbodyIsDefault"
+                :id="'id_pbisdefault_' + choiceIndex"
+                :value="choice.value" />
+              <label
+                class="form-check-label"
+                :for="'id_pbisdefault_' + choiceIndex"
+                >{{ choice.label }}</label
+              >
+            </div>
+            <input
+              type="hidden"
+              name="publicbody"
+              v-if="formPublicbodyIsDefault"
+              :value="formPublicbodyId" />
+          </div>
+        </div>
       </div>
 
       <div
@@ -790,78 +814,89 @@ defineEmits(['showhelp'])
           step === 2381 ||
           (isDesktop && step === 2380 && !formPublicbodyIsDefault)
         "
-        class="step--desktopindent">
-        <!-- also 2429 -->
-        <label class="fw-bold form-label" for="id_subject">
-          <template v-if="formSent === '1'">
-            An welche Behörde haben Sie den Brief gesendet?
-          </template>
-          <template v-else> Von welcher Behörde stammt der Brief? </template>
-        </label>
-        <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-        <publicbody-chooser
-          v-if="!formPublicbodyIsDefault"
-          :search-collapsed="false"
-          scope="foo_publicbody"
-          name="publicbody"
-          :config="config"
-          :form="form"
-          :value="formPublicbodyId"
-          list-view="resultList"
-          :show-filters="false"
-          :show-badges="false"
-          :show-found-count-if-idle="false"
-          :class="{ 'is-invalid': form.errors.publicbody }" />
+        class="container">
+        <!-- appears "indented" on md=isDesktop viewport -->
+        <div class="row justify-content-center">
+          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+            <!-- also 2429 -->
+            <label class="fw-bold form-label" for="id_subject">
+              <template v-if="formSent === '1'">
+                An welche Behörde haben Sie den Brief gesendet?
+              </template>
+              <template v-else>
+                Von welcher Behörde stammt der Brief?
+              </template>
+            </label>
+            <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
+            <publicbody-chooser
+              v-if="!formPublicbodyIsDefault"
+              :search-collapsed="false"
+              scope="foo_publicbody"
+              name="publicbody"
+              :config="config"
+              :form="form"
+              :value="formPublicbodyId"
+              list-view="resultList"
+              :show-filters="false"
+              :show-badges="false"
+              :show-found-count-if-idle="false"
+              :class="{ 'is-invalid': form.errors.publicbody }" />
+          </div>
+        </div>
       </div>
 
-      <div v-show="step === 2384">
-        <div class="step-questioncounter">Frage 3 von 5</div>
-        <label class="fw-bold form-label field-required" for="id_date">
-          Wann wurde der Brief versendet?
-          <!--{{ form.fields.date.label }}-->
-        </label>
-        <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
-        <!-- TODO "always" required might break early post/submit
-          :required="step === 2384 || step === 2380"
-          maybe: step > 2380 ?
-        -->
-        <input
-          id="id_date"
-          class="form-control"
-          type="date"
-          name="date"
-          v-model="values.date"
-          :class="{
-            'is-invalid': validity.date === false,
-            'is-valid': validity.date === true
-          }"
-          required
-          :min="props.date_min"
-          :max="props.date_max"
-          @input="updateValidity('date')" />
-        <div class="invalid-feedback" v-if="form.errors.date">
-          <p class="text-danger">
-            {{ form.errors.date.map((_) => _.message).join(' ') }}
-          </p>
-        </div>
-        <div class="form-check">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="values.is_registered_mail"
-            id="id_is_registered_mail" />
-          <label class="form-check-label" for="id_is_registered_mail">
-            Es handelt sich um einen gelben Brief
-            <span
-              type="button"
-              v-bs-tooltip
-              tabindex="0"
-              data-bs-toggle="tooltip"
-              data-bs-placement="bottom"
-              title="Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen.">
-              <i class="fa fa-info-circle"></i>
-            </span>
-          </label>
+      <div v-show="step === 2384" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="step-questioncounter">Frage 3 von 5</div>
+            <label class="fw-bold form-label field-required" for="id_date">
+              Wann wurde der Brief versendet?
+              <!--{{ form.fields.date.label }}-->
+            </label>
+            <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
+            <!-- TODO "always" required might break early post/submit
+              :required="step === 2384 || step === 2380"
+              maybe: step > 2380 ?
+            -->
+            <input
+              id="id_date"
+              class="form-control"
+              type="date"
+              name="date"
+              v-model="values.date"
+              :class="{
+                'is-invalid': validity.date === false,
+                'is-valid': validity.date === true
+              }"
+              required
+              :min="props.date_min"
+              :max="props.date_max"
+              @input="updateValidity('date')" />
+            <div class="invalid-feedback" v-if="form.errors.date">
+              <p class="text-danger">
+                {{ form.errors.date.map((_) => _.message).join(' ') }}
+              </p>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="values.is_registered_mail"
+                id="id_is_registered_mail" />
+              <label class="form-check-label" for="id_is_registered_mail">
+                Es handelt sich um einen gelben Brief
+                <span
+                  type="button"
+                  v-bs-tooltip
+                  tabindex="0"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  title="Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen.">
+                  <i class="fa fa-info-circle"></i>
+                </span>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -870,265 +905,302 @@ defineEmits(['showhelp'])
           step === 2382 ||
           (isDesktop && step === 2384 && values.is_registered_mail)
         "
-        class="step--desktopindent">
-        <label
-          class="fw-bold form-label field-required"
-          for="id_registered_mail">
-          Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag
-          eingetragen?
-        </label>
-        <!-- TODO set min/max? -->
-        <input
-          type="date"
-          class="form-control"
-          id="id_registered_mail_date"
-          name="registered_mail_date"
-          :required="values.is_registered_mail"
-          @input="updateValidity('registered_mail_date')"
-          v-model="values.registered_mail_date" />
-      </div>
-
-      <div v-show="step === 2437">
-        <!-- also 2386,2435,2440 -->
-        <div class="step-questioncounter">Frage 4 von 5</div>
-        <label class="fw-bold form-label" for="id_subject">
-          <template v-if="!formIsSent && formStatusWasResolved">
-            Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des
-            Briefes immer noch der Fall?
-          </template>
-          <template v-if="!formIsSent && !formStatusWasResolved">
-            Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?
-          </template>
-          <template v-if="formIsSent && formStatusWasResolved">
-            Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden des
-            Briefes noch immer der Fall?
-          </template>
-          <template v-if="formIsSent && !formStatusWasResolved">
-            Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?
-          </template>
-        </label>
-        <div
-          class="form-check"
-          v-for="(choice, choiceIndex) in status_form.fields.status.choices"
-          :key="choice.value">
-          <input
-            type="radio"
-            name="status"
-            required=""
-            class="form-check-input"
-            :class="{ 'is-invalid': choice.errors }"
-            :id="'id_status_' + choiceIndex"
-            v-model="formStatus"
-            :value="choice.value"
-            :data-x-checked="formStatus.value === choice.value" />
-          <label class="form-check-label" :for="'id_status_' + choiceIndex">
-            <template v-if="formStatusWasResolved">
-              <template v-if="choice.value === 'resolved'">
-                Meine Anfrage ist nach wie vor abgeschlossen.
-              </template>
-              <template v-else> Meine Anfrage läuft nun wieder. </template>
-            </template>
-            <template v-else>
-              <template v-if="choice.value === 'resolved'">
-                Ja, Anfrage ist jetzt abgeschlossen.
-              </template>
-              <template v-else> Nein, Anfrage läuft noch. </template>
-            </template>
-          </label>
+        class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+            <label
+              class="fw-bold form-label field-required"
+              for="id_registered_mail">
+              Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag
+              eingetragen?
+            </label>
+            <!-- TODO set min/max? -->
+            <input
+              type="date"
+              class="form-control"
+              id="id_registered_mail_date"
+              name="registered_mail_date"
+              :required="values.is_registered_mail"
+              @input="updateValidity('registered_mail_date')"
+              v-model="values.registered_mail_date" />
+          </div>
         </div>
       </div>
 
+      <!-- also 2386,2435,2440 -->
+      <div v-show="step === 2437" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="step-questioncounter">Frage 4 von 5</div>
+            <label class="fw-bold form-label" for="id_subject">
+              <template v-if="!formIsSent && formStatusWasResolved">
+                Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des
+                Briefes immer noch der Fall?
+              </template>
+              <template v-if="!formIsSent && !formStatusWasResolved">
+                Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?
+              </template>
+              <template v-if="formIsSent && formStatusWasResolved">
+                Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden
+                des Briefes noch immer der Fall?
+              </template>
+              <template v-if="formIsSent && !formStatusWasResolved">
+                Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?
+              </template>
+            </label>
+            <div
+              class="form-check"
+              v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+              :key="choice.value">
+              <input
+                type="radio"
+                name="status"
+                required=""
+                class="form-check-input"
+                :class="{ 'is-invalid': choice.errors }"
+                :id="'id_status_' + choiceIndex"
+                v-model="formStatus"
+                :value="choice.value"
+                :data-x-checked="formStatus.value === choice.value" />
+              <label class="form-check-label" :for="'id_status_' + choiceIndex">
+                <template v-if="formStatusWasResolved">
+                  <template v-if="choice.value === 'resolved'">
+                    Meine Anfrage ist nach wie vor abgeschlossen.
+                  </template>
+                  <template v-else> Meine Anfrage läuft nun wieder. </template>
+                </template>
+                <template v-else>
+                  <template v-if="choice.value === 'resolved'">
+                    Ja, Anfrage ist jetzt abgeschlossen.
+                  </template>
+                  <template v-else> Nein, Anfrage läuft noch. </template>
+                </template>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- also 2387,2436,2439 -->
       <div
         v-show="
           step === 2438 || (isDesktop && step === 2437 && formStatusIsResolved)
         "
-        class="step--desktopindent">
-        <!-- also 2387,2436,2439 -->
-        <label class="fw-bold col-form-label" for="id_resolution">
-          <!-- {{ status_form.fields.resolution.label }} -->
-          Wie würde Sie das Ergebnis beschreiben?
-        </label>
-        <div
-          class="form-check"
-          v-for="(choice, choiceIndex) in formStatusChoices"
-          :key="choice.value">
-          <input
-            type="radio"
-            name="resolution"
-            required=""
-            class="form-check-input"
-            :id="'id_resolution_' + choiceIndex"
-            :value="choice.value"
-            :checked="
-              status_form.fields.resolution.value === choice.value ||
-              status_form.fields.resolution.initial === choice.value
-            " />
-          <label
-            class="form-check-label"
-            :for="'id_resolution_' + choiceIndex"
-            >{{ choice.label }}</label
-          >
+        class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+            <label class="fw-bold col-form-label" for="id_resolution">
+              <!-- {{ status_form.fields.resolution.label }} -->
+              Wie würde Sie das Ergebnis beschreiben?
+            </label>
+            <div
+              class="form-check"
+              v-for="(choice, choiceIndex) in formStatusChoices"
+              :key="choice.value">
+              <input
+                type="radio"
+                name="resolution"
+                required=""
+                class="form-check-input"
+                :id="'id_resolution_' + choiceIndex"
+                :value="choice.value"
+                :checked="
+                  status_form.fields.resolution.value === choice.value ||
+                  status_form.fields.resolution.initial === choice.value
+                " />
+              <label
+                class="form-check-label"
+                :for="'id_resolution_' + choiceIndex"
+                >{{ choice.label }}</label
+              >
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-show="step === 2388">
-        <div class="step-questioncounter">Frage 5 von 5</div>
-        <label class="fw-bold col-form-label" for="">
-          Hat die Behörde Kosten verlangt?
-        </label>
-        <div
-          class="form-check"
-          v-for="(choice, choiceIndex) in [
-            { label: 'Nein.', value: false },
-            { label: 'Ja.', value: true }
-          ]"
-          :key="choiceIndex">
-          <input
-            type="radio"
-            required=""
-            class="form-check-input"
-            v-model="formDoUpdateCost"
-            :id="'id_nowcost_' + choiceIndex"
-            :value="choice.value" />
-          <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{
-            choice.label
-          }}</label>
+      <div v-show="step === 2388" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="step-questioncounter">Frage 5 von 5</div>
+            <label class="fw-bold col-form-label">
+              Hat die Behörde Kosten verlangt?
+            </label>
+            <div
+              class="form-check"
+              v-for="(choice, choiceIndex) in [
+                { label: 'Nein.', value: false },
+                { label: 'Ja.', value: true }
+              ]"
+              :key="choiceIndex">
+              <input
+                type="radio"
+                required=""
+                class="form-check-input"
+                v-model="formDoUpdateCost"
+                :id="'id_nowcost_' + choiceIndex"
+                :value="choice.value" />
+              <label
+                class="form-check-label"
+                :for="'id_nowcost_' + choiceIndex"
+                >{{ choice.label }}</label
+              >
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-show="step === 2390">
-        <div class="step-questioncounter">Frage 5 von 5</div>
-        <label class="fw-bold col-form-label" for="id_nowcost">
-          Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von
-          {{
-            status_form.fields.costs.value?.strValue ||
-            status_form.fields.costs.initial?.strValue ||
-            'error'
-          }}€ verlangt hat.<br />
-          Ist dieser Betrag noch korrekt?
-        </label>
-        <div
-          class="form-check"
-          v-for="(choice, choiceIndex) in [
-            { label: 'Ja.', value: false },
-            { label: 'Nein.', value: true }
-          ]"
-          :key="choiceIndex">
-          <input
-            type="radio"
-            required=""
-            class="form-check-input"
-            v-model="formDoUpdateCost"
-            :id="'id_nowcost_' + choiceIndex"
-            :value="choice.value" />
-          <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{
-            choice.label
-          }}</label>
+      <div v-show="step === 2390" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="step-questioncounter">Frage 5 von 5</div>
+            <label class="fw-bold col-form-label" for="id_nowcost">
+              Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von
+              {{
+                status_form.fields.costs.value?.strValue ||
+                status_form.fields.costs.initial?.strValue ||
+                'error'
+              }}€ verlangt hat.<br />
+              Ist dieser Betrag noch korrekt?
+            </label>
+            <div
+              class="form-check"
+              v-for="(choice, choiceIndex) in [
+                { label: 'Ja.', value: false },
+                { label: 'Nein.', value: true }
+              ]"
+              :key="choiceIndex">
+              <input
+                type="radio"
+                required=""
+                class="form-check-input"
+                v-model="formDoUpdateCost"
+                :id="'id_nowcost_' + choiceIndex"
+                :value="choice.value" />
+              <label
+                class="form-check-label"
+                :for="'id_nowcost_' + choiceIndex"
+                >{{ choice.label }}</label
+              >
+            </div>
+          </div>
         </div>
       </div>
 
-      <div v-show="step === 3402">
-        <label class="fw-bold col-form-label">
-          Welche dieser Dokumente möchen Sie schwärzen?
-        </label>
-        <!-- TODO: if we expect users to go back a lot, the document-uploader list
-          shown here should exclude/disable "has schwärzung" docs -->
-        <p>
-          Ein Dokument sollte geschwärzt werden, wenn es personenbezogene
-          Informationen über Sie selbst oder Behördenmitarbeiter:innen enthält.
-        </p>
-        <div class="text-end">
-          <button
-            type="button"
-            class="btn-linklike mx-2"
-            @click="documentUploaderSelectAll(true)">
-            Alle auswählen
-          </button>
-          <button
-            type="button"
-            class="btn-linklike mx-2"
-            @click="documentUploaderSelectAll(false)">
-            Keine auswählen
-          </button>
-        </div>
-      </div>
-
-      <div v-show="3000 < step && step < 3100">
-        <label class="fw-bold col-form-label">
-          Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
-          {{ documentsSelectedPdfRedaction.length }})
-        </label>
-        <aside>
-          Das sollten Sie schwärzen:
-          <ul>
-            <li>Ihren Namen und Ihre Adresse</li>
-            <li>Namen von Behördenmitarbeiter:innen</li>
-            <li>Unterschriften</li>
-            <li>E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden</li>
-          </ul>
-        </aside>
-        <div class="mt-2 mb-3">
-          <button
-            type="button"
-            class="btn-linklike"
-            @click="onShowhelp(config.urls.helpPostuploadRedaction)">
-            Ich habe technische Probleme / benötige Hilfe
-          </button>
-        </div>
-        <pre class="debug" v-if="debug">
-DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
-        >
-        <pdf-redaction
-          v-if="currentPdfRedactionDoc"
-          :key="currentPdfRedactionDoc.id"
-          :pdf-path="currentPdfRedactionDoc.attachment.file_url"
-          :attachment-url="currentPdfRedactionDoc.attachment.anchor_url"
-          :post-url="
-            config.url.redactAttachment.replace(
-              '/0/',
-              '/' + currentPdfRedactionDoc.id + '/'
-            )
-          "
-          :approve-url="
-            config.url.approveAttachment.replace(
-              '/0/',
-              '/' + currentPdfRedactionDoc.id + '/'
-            )
-          "
-          :minimal-ui="true"
-          :no-redirect="true"
-          :redact-regex="['teststraße\ 1']"
-          :can-publish="true"
-          :config="config"
-          @uploaded="pdfRedactionUploaded"
-          @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
-          ref="pdfRedaction">
-          <template #toolbar-right>
-            <div class="btn-group" v-show="isDesktop">
+      <div v-show="step === 3402" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <label class="fw-bold col-form-label">
+              Welche dieser Dokumente möchen Sie schwärzen?
+            </label>
+            <!-- TODO: if we expect users to go back a lot, the document-uploader list
+              shown here should exclude/disable "has schwärzung" docs -->
+            <p>
+              Ein Dokument sollte geschwärzt werden, wenn es personenbezogene
+              Informationen über Sie selbst oder Behördenmitarbeiter:innen
+              enthält.
+            </p>
+            <div class="text-end">
               <button
                 type="button"
-                class="btn btn-primary"
-                @click="pdfRedactionRedact()"
-                :disabled="pdfRedactionProcessing">
-                <i
-                  v-show="!pdfRedactionProcessing"
-                  class="fa fa-thumbs-o-up"></i>
-                <span
-                  class="spinner-border spinner-border-sm"
-                  v-show="pdfRedactionProcessing"
-                  role="status"
-                  aria-hidden="true" />
-                Ich bin fertig mit Schwärzen
+                class="btn-linklike mx-2"
+                @click="documentUploaderSelectAll(true)">
+                Alle auswählen
+              </button>
+              <button
+                type="button"
+                class="btn-linklike mx-2"
+                @click="documentUploaderSelectAll(false)">
+                Keine auswählen
               </button>
             </div>
-          </template>
-        </pdf-redaction>
+          </div>
+        </div>
       </div>
 
-      <div v-show="step === 4413">
-        <label class="fw-bold col-form-label">
-          Diese Dokumente werden der Anfrage hinzugefügt:
-        </label>
+      <div v-show="3000 < step && step < 3100" class="container">
+        <div class="row">
+          <div class="col">
+            <label class="fw-bold col-form-label">
+              Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
+              {{ documentsSelectedPdfRedaction.length }})
+            </label>
+            <div class="alert alert-warning">
+              Das sollten Sie schwärzen:
+              <ul>
+                <li>Ihren Namen und Ihre Adresse</li>
+                <li>Namen von Behördenmitarbeiter:innen</li>
+                <li>Unterschriften</li>
+                <li>E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden</li>
+              </ul>
+            </div>
+            <div class="mt-2 mb-3">
+              <button
+                type="button"
+                class="btn-linklike"
+                @click="onShowhelp(config.urls.helpPostuploadRedaction)">
+                Ich habe technische Probleme / benötige Hilfe
+              </button>
+            </div>
+            <pre class="debug" v-if="debug">
+    DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
+            >
+            <pdf-redaction
+              v-if="currentPdfRedactionDoc"
+              :key="currentPdfRedactionDoc.id"
+              :pdf-path="currentPdfRedactionDoc.attachment.file_url"
+              :attachment-url="currentPdfRedactionDoc.attachment.anchor_url"
+              :post-url="
+                config.url.redactAttachment.replace(
+                  '/0/',
+                  '/' + currentPdfRedactionDoc.id + '/'
+                )
+              "
+              :approve-url="
+                config.url.approveAttachment.replace(
+                  '/0/',
+                  '/' + currentPdfRedactionDoc.id + '/'
+                )
+              "
+              :minimal-ui="true"
+              :no-redirect="true"
+              :redact-regex="['teststraße\ 1']"
+              :can-publish="true"
+              :config="config"
+              @uploaded="pdfRedactionUploaded"
+              @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
+              ref="pdfRedaction">
+              <template #toolbar-right>
+                <div class="btn-group" v-show="isDesktop">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="pdfRedactionRedact()"
+                    :disabled="pdfRedactionProcessing">
+                    <i
+                      v-show="!pdfRedactionProcessing"
+                      class="fa fa-thumbs-o-up"></i>
+                    <span
+                      class="spinner-border spinner-border-sm"
+                      v-show="pdfRedactionProcessing"
+                      role="status"
+                      aria-hidden="true" />
+                    Ich bin fertig mit Schwärzen
+                  </button>
+                </div>
+              </template>
+            </pdf-redaction>
+          </div>
+        </div>
+      </div>
+
+      <div v-show="step === 4413" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div class="fw-bold col-form-label">
+              Diese Dokumente werden der Anfrage hinzugefügt:
+            </div>
+          </div>
+        </div>
       </div>
 
       <div
@@ -1136,103 +1208,124 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           step === 2565 ||
           (isDesktop && (step === 2388 || step === 2390) && formDoUpdateCost)
         "
-        class="step--desktopindent">
-        <label class="fw-bold col-form-label" for="id_costs">
-          <!--{{ status_form.fields.costs.label }}-->
-          Welchen Betrag hat die Behörde verlangt?
-        </label>
-        <div class="col-md-8">
-          <div class="input-group" style="width: 10rem">
-            <!-- type=number does not support pattern -->
-            <!-- TODO: client-side validation like with type=date -->
-            <input
-              type="number"
-              name="costs"
-              id="id_costs"
-              class="form-control col-3"
-              inputmode="decimal"
-              style="appearance: textfield; text-align: right"
-              min="0"
-              max="1000000000"
-              step="0.01"
-              v-model="values.costs"
-              @input="updateValidity('costs')"
-              :class="{
-                'is-invalid': validity.costs === false,
-                'is-valid': validity.costs === true
-              }" />
-            <span class="input-group-text">Euro</span>
+        class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+            <label class="fw-bold col-form-label" for="id_costs">
+              <!--{{ status_form.fields.costs.label }}-->
+              Welchen Betrag hat die Behörde verlangt?
+            </label>
+            <div class="col-md-8">
+              <div class="input-group" style="width: 10rem">
+                <!-- type=number does not support pattern -->
+                <!-- TODO: client-side validation like with type=date -->
+                <input
+                  type="number"
+                  name="costs"
+                  id="id_costs"
+                  class="form-control col-3"
+                  inputmode="decimal"
+                  style="appearance: textfield; text-align: right"
+                  min="0"
+                  max="1000000000"
+                  step="0.01"
+                  v-model="values.costs"
+                  @input="updateValidity('costs')"
+                  :class="{
+                    'is-invalid': validity.costs === false,
+                    'is-valid': validity.costs === true
+                  }" />
+                <span class="input-group-text">Euro</span>
+              </div>
+              <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
+            </div>
           </div>
-          <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
         </div>
       </div>
 
-      <div v-show="step === 4570">
-        <div class="text-center my-3">
-          <i class="fa fa-check-square fa-4x"></i>
-        </div>
-        <label class="fw-bold col-form-label">
-          Dokumente erfolgreich hinzugefügt
-        </label>
-        <div>
-          Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht haben!
+      <div v-show="step === 4570" class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9 text-center">
+            <div class="my-3">
+              <i class="fa fa-check-square fa-4x"></i>
+            </div>
+            <div class="fw-bold col-form-label">
+              Dokumente erfolgreich hinzugefügt
+            </div>
+            <div>
+              Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht
+              haben!
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- not in v-show="step ..." -->
       <div v-show="uiDocuments">
-        <div
-          v-if="step === 4413 && !user_is_staff"
-          class="d-flex justify-content-end">
-          <button
-            type="button"
-            class="btn-linklike"
-            @click="documentsBasicOperations = !documentsBasicOperations">
-            {{ documentsBasicOperations ? 'Fertig' : 'Bearbeiten' }}
-          </button>
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-9">
+              <div
+                v-if="step === 4413 && !user_is_staff"
+                class="d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="btn-linklike"
+                  @click="
+                    documentsBasicOperations = !doctumentsBasicOperations
+                  ">
+                  {{ documentsBasicOperations ? 'Fertig' : 'Bearbeiten' }}
+                </button>
+              </div>
+              <!-- TODO maybe :hide-documents (PDFs) in step 1110 -->
+              <document-uploader
+                :debug="debug"
+                :config="config"
+                :message="message"
+                :show-upload="uiDocumentsUpload"
+                :icon-style="uiDocumentsIconStyle"
+                :hide-selection="uiDocumentsHideSelection"
+                :hide-selection-bar="true"
+                :hide-other="true"
+                :hide-pdf="uiDocumentsHidePdf"
+                :hide-status-tools="true"
+                :images-simple="uiDocumentsImagesSimple"
+                :images-document-filename="
+                  documentsImagesDocumentFilenameNormalized
+                "
+                :file-basic-operations="
+                  step === 1300 || documentsBasicOperations
+                "
+                :hide-advanced-operations="true || !(debug && user_is_staff)"
+                :highlight-redactions="uiDocumentsHighlightRedactions"
+                @selectionupdated="documentsSelectedPdfRedaction = $event"
+                @imagesadded="documentsImagesAdded"
+                @documentsadded="documentsDocumentsAdded"
+                @imagesconverted="documentsImagesConverted"
+                ref="documentUploader" />
+            </div>
+          </div>
         </div>
-        <!-- TODO maybe :hide-documents (PDFs) in step 1110 -->
-        <document-uploader
-          :debug="debug"
-          :config="config"
-          :message="message"
-          :show-upload="uiDocumentsUpload"
-          :icon-style="uiDocumentsIconStyle"
-          :hide-selection="uiDocumentsHideSelection"
-          :hide-selection-bar="true"
-          :hide-other="true"
-          :hide-pdf="uiDocumentsHidePdf"
-          :hide-status-tools="true"
-          :images-simple="uiDocumentsImagesSimple"
-          :images-document-filename="documentsImagesDocumentFilenameNormalized"
-          :file-basic-operations="step === 1300 || documentsBasicOperations"
-          :hide-advanced-operations="true || !(debug && user_is_staff)"
-          :highlight-redactions="uiDocumentsHighlightRedactions"
-          @selectionupdated="documentsSelectedPdfRedaction = $event"
-          @imagesadded="documentsImagesAdded"
-          @documentsadded="documentsDocumentsAdded"
-          @imagesconverted="documentsImagesConverted"
-          ref="documentUploader" />
       </div>
 
-      <div v-show="step === 1300">
-        <div class="mb-2 mt-5 mx-auto" style="max-width: 20em">
-          <button
-            type="button"
-            class="btn btn-outline-primary d-block w-100"
-            :disabled="true">
-            <i class="fa fa-plus"></i>
-            Weiteres Dokument scannen
-          </button>
-        </div>
-        <div class="my-2 mx-auto" style="max-width: 20em">
-          <button
-            type="button"
-            class="btn btn-outline-primary d-block w-100"
-            @click="gotoStep(1110)">
-            <i class="fa fa-plus"></i>
-            Weitere Dateien hochladen
-          </button>
+      <div v-show="step === 1300" class="container">
+        <div class="row justify-content-center">
+          <div class="col-sm-9 col-md-6 mt-3">
+            <button
+              type="button"
+              class="btn btn-outline-primary d-block w-100 mb-3"
+              :disabled="true">
+              <i class="fa fa-plus"></i>
+              Weiteres Dokument scannen
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary d-block w-100"
+              @click="gotoStep(1110)">
+              <i class="fa fa-plus"></i>
+              Weitere Dateien hochladen
+            </button>
+          </div>
         </div>
       </div>
     </template>
@@ -1408,12 +1501,7 @@ a.btnlike {
   background: transparent;
 }
 
-@media (min-width: $froide-appshell-breakpoint) {
-  .step--desktopindent {
-    padding: 2em 0 0 4em;
-  }
-}
-
+// TODO: bootstrapize? or leave it centralized like this?
 .step-questioncounter {
   display: none;
 
@@ -1469,11 +1557,7 @@ input[type='date']:invalid {
 }
 */
 
-aside {
-  padding: 1em;
-  background-color: #fbde85;
-  margin: 1em 0;
-
+.alert {
   a {
     text-decoration: underline;
   }

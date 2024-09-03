@@ -153,7 +153,7 @@ $froide-appshell-breakpoint: map.get($grid-breakpoints, "md");
   --froide-appshell-breakpoint: #{$froide-appshell-breakpoint};
 }
 
-$froide-onlinehelp-breakpoint: map.get($grid-breakpoints, "lg");
+$froide-onlinehelp-breakpoint: map.get($grid-breakpoints, "md");
 
 $breadcrumb-divider: quote('→');
 
