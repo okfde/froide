@@ -139,10 +139,6 @@ def is_ajax(request: HttpRequest) -> bool:
     return request.headers.get("x-requested-with") == "XMLHttpRequest"
 
 
-def is_fetch(request: HttpRequest) -> bool:
-    return request.headers.get("x-requested-with") == "fetch"
-
-
 def get_module_attr_from_dotted_path(path):
     module, attr = path.rsplit(".", 1)
     module = importlib.import_module(module)

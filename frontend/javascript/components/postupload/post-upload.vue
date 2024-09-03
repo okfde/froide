@@ -276,7 +276,7 @@ const submitFetch = async () => {
   return fetch(action, {
     method: 'post',
     headers: {
-      'x-requested-with': 'fetch'
+      Accept: 'application/json'
     },
     body: formdata
   })
