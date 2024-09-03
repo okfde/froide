@@ -138,7 +138,7 @@ class FoiMessage(models.Model):
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     last_modified_at = models.DateTimeField(auto_now=True)
 
-    registered_mail = models.DateTimeField(
+    registered_mail_date = models.DateTimeField(
         _("Registered mail date"), blank=True, null=True, default=None
     )  # "Gelber Brief"
 

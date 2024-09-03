@@ -56,7 +56,7 @@ class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
         "sent",
         "publicbody",
         "date",
-        "registered_mail",
+        "registered_mail_date",
         "subject",
         "uploads",
         "text",
@@ -181,7 +181,7 @@ class PostalEditForm(MessageEditMixin, JSONMixin, forms.Form):
         label=_("Public body"),
         queryset=PublicBody.objects.all(),
         # queryset=PublicBody.objects.filter(id__gte=7600, id__lte=7700),
-        required=True
+        required=True,
         # widget=PublicBodySelect,
     )
 

@@ -246,10 +246,10 @@ const gotoValid = computed(() => {
     return validity.costs
   }
   if (isDesktop.value && step.value === 2384 && values.is_registered_mail) {
-    return validity.date && validity.registered_mail
+    return validity.date && validity.registered_mail_date
   }
   if (step.value === 2382) {
-    return validity.registered_mail
+    return validity.registered_mail_date
   }
   if (step.value === 2384) {
     return validity.date
@@ -395,7 +395,7 @@ watch(step, (newStep) => {
       pdfRedactionUploaded()
       break
     case 2382:
-      updateValidity('registered_mail')
+      updateValidity('registered_mail_date')
       break
     case 2384:
       updateValidity('date')
@@ -495,7 +495,7 @@ const documentsImagesConverted = () => {
 
 const validity = reactive({
   date: false,
-  registered_mail: false
+  registered_mail_date: false
 })
 
 // TODO updateValidity should (maybe) be called on gotoStep(2384), too
@@ -881,11 +881,11 @@ defineEmits(['showhelp'])
         <input
           type="date"
           class="form-control"
-          id="id_registered_mail"
-          name="registered_mail"
+          id="id_registered_mail_date"
+          name="registered_mail_date"
           :required="values.is_registered_mail"
-          @input="updateValidity('registered_mail')"
-          v-model="values.registered_mail" />
+          @input="updateValidity('registered_mail_date')"
+          v-model="values.registered_mail_date" />
       </div>
 
       <div v-show="step === 2437">
@@ -1206,7 +1206,7 @@ DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
           :images-simple="uiDocumentsImagesSimple"
           :images-document-filename="documentsImagesDocumentFilenameNormalized"
           :file-basic-operations="step === 1300 || documentsBasicOperations"
-          :hide-advanced-operations="!(debug && user_is_staff)"
+          :hide-advanced-operations="true || !(debug && user_is_staff)"
           :highlight-redactions="uiDocumentsHighlightRedactions"
           @selectionupdated="documentsSelectedPdfRedaction = $event"
           @imagesadded="documentsImagesAdded"
