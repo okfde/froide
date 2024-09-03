@@ -90,24 +90,16 @@ const showhelp = (e) => {
 <style lang="scss">
 @import '../../../styles/variables.scss';
 
-@media (max-width: $froide-appshell-breakpoint) {
-  #header,
-  #footer {
-    display: none;
-  }
+#header,
+#footer,
+.postupload-breadcrumbs,
+.postupload-main-heading,
+.postupload-main-intro {
+  display: none;
 
-  .postupload-breadcrumbs,
-  .postupload-main-heading,
-  .postupload-main-intro {
-    display: none;
+  @media (min-width: $froide-appshell-breakpoint) {
+    display: block;
   }
-
-  /*
-  .postupload-main-container {
-    width: 100% !important;
-    max-width: 600px !important;
-  }
-  */
 }
 </style>
 
@@ -136,19 +128,19 @@ $step-width: 10em;
   width: 100%;
   height: $header-height;
   background: white;
-  position: relative;
+  position: fixed;
+  // regular fixed header gets in the way
   z-index: 1000;
 
-  // TODO replace; BS doesn't have responsive position
-  @media (max-width: $froide-appshell-breakpoint) {
-    // regular fixed header gets in the way
-    position: fixed;
+  // TODO replace; BS doesn't have responsive position without enabling extra compilation (Utility API)
+  @media (min-width: $froide-appshell-breakpoint) {
+    position: relative;
   }
 }
 
 .appshell-header-container--mobile {
   height: calc($header-height - $header-progress-height);
-  display: none;
+  display: grid;
   grid-template-rows: 0.45fr 0.55fr;
   grid-template-columns: 3em auto;
   grid-template-areas:
@@ -156,14 +148,16 @@ $step-width: 10em;
     'logo     title2';
   gap: 0.2em;
 
-  @media (max-width: $froide-appshell-breakpoint) {
-    display: grid;
+  @media (min-width: $froide-appshell-breakpoint) {
+    display: none;
   }
 }
 
 .appshell-header-container--desktop {
-  @media (max-width: $froide-appshell-breakpoint) {
-    display: none;
+  display: none;
+
+  @media (min-width: $froide-appshell-breakpoint) {
+    display: block;
   }
 }
 
@@ -247,24 +241,25 @@ $step-width: 10em;
 }
 
 .appshell-header-progress--mobile {
-  display: none;
+  display: block;
+  position: static;
+  width: 100%;
 
-  @media (max-width: $froide-appshell-breakpoint) {
-    display: block;
-    position: static;
-    width: 100%;
+  @media (min-width: $froide-appshell-breakpoint) {
+    display: none;
   }
 }
 
 .appshell-header-progress--desktop {
+  display: none;
   position: absolute;
   top: calc(1em - ($header-progress-height / 2));
   left: $step-width / 2;
   width: $step-width * 2;
   z-index: 0;
 
-  @media (max-width: $froide-appshell-breakpoint) {
-    display: none;
+  @media (min-width: $froide-appshell-breakpoint) {
+    display: block;
   }
 }
 
@@ -285,23 +280,25 @@ $step-width: 10em;
 .appshell-help {
   position: fixed;
   right: 0;
-  width: 20em;
-  max-width: 100%;
+  max-width: 30em;
   top: $header-height;
+  left: auto;
+  width: 100%;
   bottom: 0;
   overflow-y: scroll;
-  z-index: 100;
+  z-index: 1001;
 
-  @media (max-width: $froide-onlinehelp-breakpoint) {
-    top: $header-height;
-    left: 0;
-    width: 100%;
+  @media (min-width: $froide-onlinehelp-breakpoint) {
+    top: 0;
+    left: auto;
     bottom: 0;
+    width: 20em;
   }
 }
 
 .appshell-help-close {
   position: fixed;
+  z-index: 1002;
   right: 0.5em;
   top: calc(0.5em + $header-height);
   width: 3em;
@@ -318,10 +315,8 @@ $step-width: 10em;
 }
 
 .appshell-actions {
-  @media (max-width: $froide-appshell-breakpoint) {
-    position: fixed;
-  }
-
+  position: fixed;
+  z-index: 100;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -330,8 +325,16 @@ $step-width: 10em;
   background-color: white;
   transition: background-color 500ms;
 
+  @media (min-width: $froide-appshell-breakpoint) {
+    position: static;
+  }
+
   &:has(.action-info) {
     background-color: #eee;
+  }
+
+  &:empty {
+    display: none;
   }
 }
 </style>
