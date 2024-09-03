@@ -11,10 +11,14 @@ const isFetching = ref(false)
 
 const fetchContents = (url) => {
   isFetching.value = true
-  // TODO this is a hack to get going, we shall not parse html
-  // remove once plain cms "api" lands
   return fetch(url)
-    .then((response) => response.text())
+    .then((response) => {
+      if (!response.ok) {
+        console.error('online help fetch error', response)
+        return `<h1>${response.status} ${response.statusText}</h1>`
+      }
+      return response.text()
+    })
     .then((response) => {
       contents.value = response
     })
@@ -50,7 +54,7 @@ onMounted(() => {
 .onlinehelp {
   background-color: transparentize(#fbde85, 0.05);
   min-height: 100%;
-  padding: 4em 2em 2em 2em;
+  padding: 8em 2em 2em 2em;
 }
 .spinner {
   position: absolute;
