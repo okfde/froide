@@ -3,6 +3,8 @@ from decimal import Decimal
 
 from django.db import models
 
+from froide.publicbody.models import PublicBody
+
 
 class DjangoJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -28,7 +30,7 @@ def serialize_extra(obj):
             "intValue": int(obj * 100),
             "strValue": str(obj),
         }
-    if obj.__class__.__name__ == "PublicBody":
+    if isinstance(obj, PublicBody):
         return {
             "__PublicBody": True,
             "id": obj.id,
