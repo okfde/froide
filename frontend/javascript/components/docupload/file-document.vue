@@ -3,7 +3,7 @@
     :id="attachmentId"
     class="document mb-1"
     :class="{ 'is-new': document.new }">
-    <div class="row">
+    <div class="row" @click.self="toggleSelected">
       <div class="col-auto">
         <input
           v-if="ready && !hideSelection"
@@ -16,7 +16,10 @@
           <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
       </div>
-      <div v-if="iconStyle === 'icon'" class="col-auto ps-0">
+      <div
+        v-if="iconStyle === 'icon'"
+        class="col-auto ps-0"
+        @click="toggleSelected">
         <i class="fa fa-file-o"></i>
       </div>
       <div v-else-if="iconStyle === 'thumbnail'" class="col-auto ps-0">
@@ -51,7 +54,7 @@
           </span>
         </template>
       </div>
-      <div class="col-auto col-sm px-0">
+      <div class="col-auto col-sm px-0" @click.self="toggleSelected">
         <small v-if="document.pending">
           {{ i18n.documentPending }}
         </small>
@@ -59,12 +62,16 @@
           {{ i18n.documentDeleting }}
         </small>
 
-        <small :title="attachment.name">{{ documentTitle }}</small>
+        <small :title="attachment.name" @click="toggleSelected">{{
+          documentTitle
+        }}</small>
 
         <a
           v-if="canOpen"
           :href="attachment.site_url"
-          :title="i18n.openAttachmentPage">
+          :title="i18n.openAttachmentPage"
+          target="_blank"
+          class="px-2">
           <i class="fa fa-external-link" />
           <span class="visually-hidden">{{ i18n.openAttachmentPage }}</span>
         </a>
@@ -412,6 +419,9 @@ export default {
         .catch(() => {
           window.setTimeout(() => this.checkProgress(), 5000)
         })
+    },
+    toggleSelected() {
+      this.selected = !this.selected
     }
   }
 }

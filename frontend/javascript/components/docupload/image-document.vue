@@ -88,7 +88,8 @@ export default {
   name: 'ImageDocument',
   components: {
     ImageDocumentPagesSortable,
-    FileReview
+    FileReview,
+    FileBasicOperations
   },
   mixins: [I18nMixin, DocumentMixin],
   props: {

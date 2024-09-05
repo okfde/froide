@@ -318,7 +318,12 @@ const getNextStep = () => {
     case 1100:
       return 1110
     case 1110:
-      if (documentsImageMode.value) return 1201
+      if (documentsImageMode.value) {
+        console.log(
+          'uploads were documents, not images, passing by image sorting'
+        )
+        return 1201
+      }
       return 2376
     case 1201:
       return 1202
