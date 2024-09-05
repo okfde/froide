@@ -317,6 +317,16 @@ const approveDocsAndSubmit = async () => {
   }
 }
 
+const beforeunloadHandler = (e) => e.preventDefault()
+
+const guardBeforeunload = (enable) => {
+  if (enable) {
+    window.addEventListener('beforeunload', beforeunloadHandler)
+  } else {
+    window.removeEventListener('beforeunload', beforeunloadHandler)
+  }
+}
+
 // TODO WIP numbers from Figma frames
 const getNextStep = () => {
   switch (step.value) {
@@ -397,6 +407,7 @@ watch(step, (newStep) => {
   console.log('# watch step', newStep)
   switch (newStep) {
     case 1110:
+      guardBeforeunload(true)
       documentsImagesDocumentFilename.value =
         documentsImagesDocumentFilenameDefault
       break
@@ -420,6 +431,8 @@ watch(step, (newStep) => {
       updateValidity('form')
       pdfRedactionUploaded()
       break
+    case 4570:
+      guardBeforeunload(false)
   }
   scrollIfNecessary()
 })
