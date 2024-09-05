@@ -187,15 +187,20 @@ const documentUploaderSelectAll = (val) => {
   documentUploader.value.setAllSelect(val)
 }
 
-const scrollHeaderIntoViewIfNecessary = () => {
-  // we could bail early if !isDesktop.value,
-  // but this check fill automagically still work as the header is always in viewport on mobile
-  // alt: check appshell-header-container--desktop, if hidden all rect attributes == 0
-  const header = document.querySelector('.appshell-header')
-  const rect = header.getBoundingClientRect()
-  if (rect.bottom < 0) {
-    // timeout to make it feel less jarring
-    setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
+const scrollIfNecessary = () => {
+  if (isDesktop.value) {
+    // on desktop viewport, scroll the header into view, if necessary
+    const header = document.querySelector('.appshell-header')
+    const rect = header.getBoundingClientRect()
+    // alt: check appshell-header-container--desktop, if hidden all rect attributes == 0
+    if (rect.bottom < 0) {
+      // timeout to make it feel less jarring
+      setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
+    }
+  } else {
+    // on mobile, always scroll to top
+    // when we use a hash-router, this might need to be blocked "on history.back"
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 
@@ -416,7 +421,7 @@ watch(step, (newStep) => {
       pdfRedactionUploaded()
       break
   }
-  scrollHeaderIntoViewIfNecessary()
+  scrollIfNecessary()
 })
 
 const stepUiConf = {
