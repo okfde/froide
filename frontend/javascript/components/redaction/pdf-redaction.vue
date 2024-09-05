@@ -136,6 +136,7 @@
           </button>
         </div>
 
+        <!-- TODO: hide if numPages === 1 ? -->
         <div
           class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2">
           <button
