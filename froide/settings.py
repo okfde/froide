@@ -109,6 +109,9 @@ class Base(Configuration):
     def MFA_SITE_TITLE(self):
         return self.SITE_NAME
 
+    # Valid TOTP windows before and after, see https://pyauth.github.io/pyotp/#pyotp.totp.TOTP.verify
+    MFA_TOTP_VALID_WINDOW = 1
+
     SITE_ID = values.IntegerValue(1)
 
     ADMINS = (
