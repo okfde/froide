@@ -7,10 +7,6 @@ test:
 	coverage run --branch -m pytest froide/
 	coverage report
 
-testci:
-	coverage run --branch -m pytest froide/ --ignore=froide/tests/live/
-	coverage report
-
 testui:
 	coverage run --branch -m pytest --browser chromium froide/tests/live/
 

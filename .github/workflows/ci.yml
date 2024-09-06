@@ -56,7 +56,9 @@ jobs:
       - name: Build frontend
         run: yarn run build
       - name: Run tests
-        run: make testci
+        run: |
+          coverage run --branch -m pytest froide/ --ignore=froide/tests/live/
+          coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide
       - name: Run in-browser tests
