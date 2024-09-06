@@ -36,20 +36,16 @@ Comment = get_comment_model()
 
 # Interesting events
 # message sent/received are already in instant updates
-INTERESTING_EVENTS = set(EVENT_DETAILS.keys()) - set(
-    [
-        FoiEvent.EVENTS.MESSAGE_RECEIVED,
-        FoiEvent.EVENTS.MESSAGE_SENT,
-    ]
-)
+INTERESTING_EVENTS = set(EVENT_DETAILS.keys()) - {
+    FoiEvent.EVENTS.MESSAGE_RECEIVED,
+    FoiEvent.EVENTS.MESSAGE_SENT,
+}
 
-COMBINE_EVENTS = set(
-    [
-        FoiEvent.EVENTS.SET_SUMMARY,
-        FoiEvent.EVENTS.ATTACHMENT_APPROVED,
-        FoiEvent.EVENTS.STATUS_CHANGED,
-    ]
-)
+COMBINE_EVENTS = {
+    FoiEvent.EVENTS.SET_SUMMARY,
+    FoiEvent.EVENTS.ATTACHMENT_APPROVED,
+    FoiEvent.EVENTS.STATUS_CHANGED,
+}
 
 
 def get_event_updates(start: datetime, end: datetime, **filter_kwargs):

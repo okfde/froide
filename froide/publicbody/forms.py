@@ -224,7 +224,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             # FIXME: language code used for country code
             number = phonenumbers.parse(fax, settings.LANGUAGE_CODE.upper())
         except phonenumbers.phonenumberutil.NumberParseException:
-            raise forms.ValidationError(_("Fax number not a valid number!"))
+            raise forms.ValidationError(_("Fax number not a valid number!")) from None
         if not phonenumbers.is_possible_number(number):
             raise forms.ValidationError(_("Fax number not possible!"))
         if not phonenumbers.is_valid_number(number):

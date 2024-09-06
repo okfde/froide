@@ -10,24 +10,28 @@ from .utils import inform_user_problem_resolved
 
 
 class ProblemChoices(models.TextChoices):
-    MESSAGE_NOT_DELIVERED = "message_not_delivered", _(
-        "Your message was not delivered."
+    MESSAGE_NOT_DELIVERED = (
+        "message_not_delivered",
+        _("Your message was not delivered."),
     )
     ATTACHMENT_BROKEN = "attachment_broken", _("The attachments don't seem to work.")
     REDACTION_NEEDED = "redaction_needed", _("More redactions are needed.")
-    FOI_HELP_NEEDED = "foi_help_needed", _(
-        "You need help to understand or reply to this message."
+    FOI_HELP_NEEDED = (
+        "foi_help_needed",
+        _("You need help to understand or reply to this message."),
     )
     OTHER = "other", _("Something else...")
     NOT_FOI = "not_foi", _("This is not a proper FOI request.")
     NOT_NICE = "not_nice", _("Content is against netiquette.")
     INFO_OUTDATED = "info_outdated", _("Published information is outdated.")
     INFO_WRONG = "info_wrong", _("Published information is wrong.")
-    BOUNCE_PUBLICBODY = "bounce_publicbody", _(
-        "You received a bounce mail from the public body."
+    BOUNCE_PUBLICBODY = (
+        "bounce_publicbody",
+        _("You received a bounce mail from the public body."),
     )
-    MAIL_INAUTHENTIC = "mail_inauthentic", _(
-        "Received mail does not pass authenticity checks."
+    MAIL_INAUTHENTIC = (
+        "mail_inauthentic",
+        _("Received mail does not pass authenticity checks."),
     )
 
 

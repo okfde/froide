@@ -157,7 +157,7 @@ def get_send_message_form(*args, **kwargs):
         foirequest=foirequest,
         prefix="sendmessage",
         initial={"subject": subject, "message": message},
-        **kwargs
+        **kwargs,
     )
 
 
@@ -420,7 +420,7 @@ def get_escalation_message_form(*args, **kwargs):
                     "name": foirequest.user.get_full_name(),
                 },
             ),
-        }
+        },
     )
 
 
@@ -807,7 +807,7 @@ class RedactMessageForm(forms.Form):
         try:
             val = [int(x) for x in val.split(",")]
         except ValueError:
-            raise forms.ValidationError("Bad value")
+            raise forms.ValidationError("Bad value") from None
         return val
 
     def clean_subject(self):

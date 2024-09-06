@@ -24,7 +24,7 @@ def get_configuration(slug: str) -> FollowConfiguration:
     try:
         return follow_registry.get_by_slug(slug)
     except LookupError:
-        raise Http404
+        raise Http404 from None
 
 
 @require_POST

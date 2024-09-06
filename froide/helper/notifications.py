@@ -4,11 +4,9 @@ from typing import Optional, Protocol
 
 
 class Event(Protocol):
-    def as_text(self) -> str:
-        ...
+    def as_text(self) -> str: ...
 
-    def as_html(self) -> str:
-        ...
+    def as_html(self) -> str: ...
 
 
 class TemplatedEvent(Event):

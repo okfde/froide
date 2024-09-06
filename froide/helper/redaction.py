@@ -85,7 +85,7 @@ def try_redacting_file(pdf_file, outpath, instructions):
         except PDFException as e:
             tries += 1
             if tries > 2:
-                raise Exception("PDF Redaction Error")
+                raise Exception("PDF Redaction Error") from None
             next_pdf_file = None
             if e.reason == "rewrite":
                 next_pdf_file = rewrite_pdf(pdf_file, instructions)
@@ -94,7 +94,7 @@ def try_redacting_file(pdf_file, outpath, instructions):
             elif e.reason == "decrypt":
                 next_pdf_file = decrypt_pdf(pdf_file, instructions)
             if next_pdf_file is None:
-                raise Exception("PDF Rewrite Error")
+                raise Exception("PDF Rewrite Error") from None
             pdf_file = next_pdf_file
 
 
@@ -105,7 +105,7 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     try:
         pdf_reader = PdfReader(pdf_file, strict=False)
     except (PdfReadError, ValueError, OSError) as e:
-        raise PDFException(e, "rewrite")
+        raise PDFException(e, "rewrite") from None
 
     if pdf_reader.is_encrypted:
         if not instructions.get("password"):
@@ -115,9 +115,9 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
     try:
         num_pages = len(pdf_reader.pages)
     except KeyError as e:  # catch KeyError '/Pages'
-        raise PDFException(e, "rewrite")
+        raise PDFException(e, "rewrite") from None
     except PdfReadError as e:
-        raise PDFException(e, "decrypt")
+        raise PDFException(e, "decrypt") from None
 
     page_instructions = instructions.get("pages", [])
     assert num_pages == len(page_instructions)
@@ -146,7 +146,7 @@ def _redact_file(pdf_file, outpath, instructions, tries=0):
             else:
                 page = get_redacted_page(image_filename, instr, dpi)
         except (WandError, DelegateError, ValueError) as e:
-            raise PDFException(e, "rewrite")
+            raise PDFException(e, "rewrite") from None
 
         output.add_page(page)
 
@@ -249,9 +249,7 @@ pL26nlWN2K+W1LhRjxlVGKmRTFYVo7CiJug09E+GJb+QocMCPMWBK1wvEOfRFF2U0klK8CppqqvG
 pylRc2Zn+XDQWZIL8iO5KC9S+1RekOex1uOyZGR/w/Hf1lhzqVfFsxE39B/ws7Rm3N3nDrhPuMfc
 w3R/aE28KsfY2J+RPNp+j+KaOoCey4h+Dd48b9O5G0v2K7j0AM6s+5WQ/E0wVoK+pA6/3bup7bJf
 CMGjwvxTsr74/f/F95m3TH9x8o0/TU//N+7/D/ScVcA=
-""".encode(
-        "latin1"
-    )
+""".encode("latin1")
     uncompressed = bytearray(zlib.decompress(base64.decodebytes(font)))
     ttf = io.BytesIO(uncompressed)
     ttf.name = "(invisible.ttf)"

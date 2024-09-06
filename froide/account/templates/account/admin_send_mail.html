@@ -10,31 +10,30 @@
     <form action="" method="post">
         {% csrf_token %}
         <div>
+            <label>
+                {% trans "Subject" %}:
+                <input type="text" name="subject" value="" />
+            </label>
+            <textarea name="body" rows="8" style="width: 100%">{% include "emails/footer.txt" %}</textarea>
+            <br />
+            <small>{% trans "You can use the following placeholders:" %} <code>{name}, {first_name}, {last_name}, {url}</code></small>
+            <input type="hidden" name="action" value="send_mail" />
             <p>
-                <label>
-                    {% trans "Subject" %}:
-                    <input type="text" name="subject" value="" />
-                </p>
-                <textarea name="body" rows="8" style="width: 100%">{% include "emails/footer.txt" %}</textarea>
-                <br />
-                <small>{% trans "You can use the following placeholders:" %} <code>{name}, {first_name}, {last_name}, {url}</code></small>
-                <input type="hidden" name="action" value="send_mail" />
-                <p>
-                    <input type="submit"
-                           value="{% blocktrans count count=queryset.count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />
-                </p>
-            </div>
-            <input type="hidden" name="action" value="{{ action_name }}" />
-            {% if select_across %}
-                <input type="hidden" name="select_across" value="1" />
-                {# set invalid selected, so confirmation action path is chosen in admin #}
-                <input type="hidden" name="{{ action_checkbox_name }}" value="_" />
-            {% else %}
-                {% for obj in queryset %}
-                    <input type="hidden"
-                           name="{{ action_checkbox_name }}"
-                           value="{{ obj.pk|unlocalize }}" />
-                {% endfor %}
-            {% endif %}
-        </form>
-    {% endblock %}
+                <input type="submit"
+                       value="{% blocktrans count count=queryset.count %}Send mail to one user{% plural %}Send mail to {{ count }} users{% endblocktrans %}" />
+            </p>
+        </div>
+        <input type="hidden" name="action" value="{{ action_name }}" />
+        {% if select_across %}
+            <input type="hidden" name="select_across" value="1" />
+            {# set invalid selected, so confirmation action path is chosen in admin #}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="_" />
+        {% else %}
+            {% for obj in queryset %}
+                <input type="hidden"
+                       name="{{ action_checkbox_name }}"
+                       value="{{ obj.pk|unlocalize }}" />
+            {% endfor %}
+        {% endif %}
+    </form>
+{% endblock %}

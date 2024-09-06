@@ -10,6 +10,7 @@ from django.views.generic.edit import UpdateView
 from django.views.generic.list import ListView
 
 from froide.foirequest.models import FoiRequest
+from froide.helper.breadcrumbs import Breadcrumbs, BreadcrumbView
 from froide.organization.services import OrganizationService
 
 from .forms import (
@@ -45,7 +46,7 @@ class OrganizationListOwnView(LoginRequiredMixin, ListView):
         )
 
 
-class OrganizationDetailView(DetailView):
+class OrganizationDetailView(DetailView, BreadcrumbView):
     model = Organization
 
     def _get_last_foirequests(self, organization: Organization):
@@ -71,6 +72,18 @@ class OrganizationDetailView(DetailView):
         context["foirequests"] = self._get_last_foirequests(kwargs["object"])
 
         return context
+
+    def get_breadcrumbs(self, context):
+        return Breadcrumbs(
+            items=[
+                str(_("Organizations")),
+                (
+                    self.object.name,
+                    self.object.get_absolute_url(),
+                ),
+            ],
+            color="body-tertiary",
+        )
 
 
 class OrganizationUpdateView(LoginRequiredMixin, UpdateView):

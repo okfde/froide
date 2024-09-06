@@ -54,6 +54,7 @@
                 {% endif %}
                 {% if attachment.approved %}
                     {% if attachment.is_mail_decoration %}
+                        {# djlint:off #}
                         <span data-bs-toggle="tooltip" data-bs-html="true" title="
                             <h6>{{ attachment.name }}</h6>
                             <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'

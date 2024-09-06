@@ -114,7 +114,7 @@ class SetStatusProjectForm(FoiRequestStatusForm):
         # Skip super class
         super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
         refusal_choices = []
-        same_law = len(set(f.law_id for f in self.foirequests)) == 1
+        same_law = len({f.law_id for f in self.foirequests}) == 1
         # Get prototypical requests
         foirequest = self.foirequests[0]
         if same_law and foirequest.law:

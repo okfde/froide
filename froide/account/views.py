@@ -320,9 +320,9 @@ class ReAuthView(FormView):
     def get_form_kwargs(self) -> Dict[str, Any]:
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
-        self.mfa_methods = set(
+        self.mfa_methods = {
             x["method"] for x in list_mfa_methods(self.request.user)
-        ) - {"recovery"}
+        } - {"recovery"}
         kwargs["mfa_methods"] = self.mfa_methods
         return kwargs
 

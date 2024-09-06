@@ -328,7 +328,7 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(old_count, new_count - 1)
         self.assertEqual(len(mail.outbox), 2)
         new_req = FoiRequest.objects.get(title="OAUth-Test")
-        self.assertEqual(set([t.name for t in new_req.tags.all()]), set(data["tags"]))
+        self.assertEqual({t.name for t in new_req.tags.all()}, set(data["tags"]))
 
         # Check throttling
         froide_config = dict(settings.FROIDE_CONFIG)

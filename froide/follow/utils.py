@@ -12,7 +12,7 @@ def get_context(
     request: HttpRequest,
     content_object: models.Model,
     configuration: FollowConfiguration,
-    **kwargs
+    **kwargs,
 ):
     follow_form_class = configuration.get_follow_form_class()
     form = follow_form_class(

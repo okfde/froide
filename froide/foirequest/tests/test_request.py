@@ -1648,9 +1648,7 @@ def test_redaction_urls(world):
         Really{url1}
         !!{url2}
         {url3}#also
-    """.format(
-        url1=url1, url2=url2, url3=url3
-    )
+    """.format(url1=url1, url2=url2, url3=url3)
     assert url1 in plaintext
     assert url2 in plaintext
     assert url3 in plaintext
@@ -2108,7 +2106,7 @@ def test_package(world):
     ]
     zip_names = zfile.namelist()
     assert len(filenames) == len(zip_names)
-    for zname, fname in zip(zip_names, filenames):
+    for zname, fname in zip(zip_names, filenames, strict=False):
         assert bool(re.match(r"^%s$" % fname, zname))
 
 

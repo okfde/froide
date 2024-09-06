@@ -5,22 +5,6 @@
 {% block body %}
     <div class="bg-body-tertiary">
         <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="/">
-                            <i class="fa fa-home"></i>
-                            <span class="sr-only">{% trans "Home Page" %}</span>
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{{ object.name }}</a>
-                    </li>
-                </ol>
-            </nav>
             <div class="pt-3 pb-5">
                 <div class="col tight-margin d-flex align-items-center">
                     <h1>

@@ -332,7 +332,7 @@ const scrollToAnchor = (messages: Message[]): void => {
     let element: HTMLElement | null = null
     try {
       element = document.querySelector(window.location.hash)
-    } catch (e) {
+    } catch {
       return
     }
     if (element != null) {

@@ -475,6 +475,6 @@ def redact_description(request, foirequest):
             FoiEvent.EVENTS.DESCRIPTION_REDACTED,
             foirequest,
             user=request.user,
-            **form.cleaned_data
+            **form.cleaned_data,
         )
     return redirect(foirequest.get_absolute_url())

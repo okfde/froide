@@ -208,7 +208,7 @@ class PublicBodySuggestionsForm(forms.Form):
         try:
             self.publicbody = PublicBody.objects.get(pk=pb_pk)
         except PublicBody.DoesNotExist:
-            raise forms.ValidationError(_("Missing or invalid input!"))
+            raise forms.ValidationError(_("Missing or invalid input!")) from None
         return pb_pk
 
     def clean(self):
@@ -389,7 +389,7 @@ class ConcreteLawForm(forms.Form):
         )
 
     def clean(self):
-        indexed_laws = dict([(law.pk, law) for law in self.possible_laws])
+        indexed_laws = {law.pk: law for law in self.possible_laws}
         if "law" not in self.cleaned_data:
             return
         if self.cleaned_data["law"]:
@@ -464,7 +464,7 @@ class RedactDescriptionForm(forms.Form):
         try:
             val = [int(x) for x in val.split(",")]
         except ValueError:
-            raise forms.ValidationError("Bad value")
+            raise forms.ValidationError("Bad value") from None
         return val
 
     def save(self, request: HttpRequest, foirequest: FoiRequest):

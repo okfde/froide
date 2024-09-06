@@ -94,7 +94,7 @@ def test_wrong_address(foirequest_with_msg):
     with open(p("test_mail_01.txt"), "rb") as f:
         process_mail.delay(f.read())
     assert len(mail.outbox) == len(settings.MANAGERS)
-    assert all([_("Unknown FoI-Mail Recipient") in m.subject for m in mail.outbox])
+    assert all(_("Unknown FoI-Mail Recipient") in m.subject for m in mail.outbox)
     recipients = [m.to[0] for m in mail.outbox]
     for manager in settings.MANAGERS:
         assert manager[1] in recipients
@@ -126,7 +126,7 @@ def test_long_attachment_names(foirequest_with_msg):
     assert len(messages) == 2
     assert messages[1].subject == mail.subject
     assert len(messages[1].attachments) == 2
-    names = set([a.name for a in messages[1].attachments])
+    names = {a.name for a in messages[1].attachments}
     assert names == {
         "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06-12-2012-anlage.pdf",
         "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06-12-2012-awvom08-01-2013-rs.pdf",

@@ -14,14 +14,14 @@ from rest_framework.parsers import BaseParser, DataAndFiles
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from . import constants
-from . import settings as tus_settings
 from . import (
+    constants,
     tus_api_checksum_algorithms,
     tus_api_extensions,
     tus_api_version,
     tus_api_version_supported,
 )
+from . import settings as tus_settings
 from .exceptions import Conflict, TusParseError
 from .models import Upload, states
 from .serializers import UploadCreateSerializer, UploadSerializer
@@ -65,7 +65,7 @@ class TusMixin(object):
         try:
             request = augment_request(request)
         except ValueError as e:
-            raise TusParseError(str(e))
+            raise TusParseError(str(e)) from None
 
         super().initial(request, *args, **kwargs)
 

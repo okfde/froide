@@ -67,7 +67,7 @@ class UserManager(BaseUserManager):
         password: str,
         is_staff: bool,
         is_superuser: bool,
-        **extra_fields
+        **extra_fields,
     ):
         """
         Creates and saves a User with the given email and password.
@@ -89,7 +89,7 @@ class UserManager(BaseUserManager):
             is_superuser=is_superuser,
             last_login=None,
             date_joined=now,
-            **extra_fields
+            **extra_fields,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -356,9 +356,7 @@ class Application(AbstractApplication):
     def allows_grant_type(self, *grant_types):
         # only allow GRANT_AUTHORIZATION_CODE
         # regardless of application setting
-        return bool(
-            set([AbstractApplication.GRANT_AUTHORIZATION_CODE]) & set(grant_types)
-        )
+        return bool({AbstractApplication.GRANT_AUTHORIZATION_CODE} & set(grant_types))
 
     def can_auto_approve(self, scopes):
         """

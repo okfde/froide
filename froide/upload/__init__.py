@@ -5,7 +5,6 @@ available under MIT License, Copyright (c) 2017, Dirk Moors
 
 """
 
-
 tus_api_version = "1.0.0"
 tus_api_version_supported = ["1.0.0"]
 tus_api_extensions = [

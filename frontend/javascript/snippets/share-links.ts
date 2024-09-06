@@ -32,7 +32,7 @@ document.querySelectorAll<HTMLElement>('.share-native').forEach((btn) => {
           } else {
             throw new Error('Could not share image.')
           }
-        } catch (e) {
+        } catch {
           const a = document.createElement('a')
           a.href = window.URL.createObjectURL(blob)
           a.download = filename

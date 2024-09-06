@@ -27,9 +27,7 @@ class Command(BaseCommand):
         models = self._get_models(options["models"])
 
         for doc in registry.get_documents(models):
-            es_ids = set(
-                int(hit.meta.id) for hit in doc().search().source(False).scan()
-            )
+            es_ids = {int(hit.meta.id) for hit in doc().search().source(False).scan()}
             db_ids = set(doc().get_queryset().values_list("pk", flat=True))
             deleted_ids = es_ids - db_ids
             print(

@@ -103,7 +103,7 @@ def can_access_object(verb, obj, request):
     try:
         access_func = ACCESS_MAPPING[verb]
     except KeyError:
-        raise ValueError("Invalid auth verb")
+        raise ValueError("Invalid auth verb") from None
     return access_func(obj, request)
 
 

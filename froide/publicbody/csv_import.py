@@ -185,7 +185,9 @@ class CSVImporter(object):
             try:
                 jur = Jurisdiction.objects.get(slug=slug)
             except Jurisdiction.DoesNotExist:
-                raise ValueError(_('Jurisdiction slug "%s" does not exist.') % slug)
+                raise ValueError(
+                    _('Jurisdiction slug "%s" does not exist.') % slug
+                ) from None
             jur.laws = jur.get_all_laws()
             self.jur_cache[slug] = jur
         return self.jur_cache[slug]
@@ -203,7 +205,9 @@ class CSVImporter(object):
                         cat_string = str(cat).replace('"', "")
                         category = Category.objects.get(name=cat_string)
                 except Category.DoesNotExist:
-                    raise ValueError(_('Category name "%s" does not exist.') % cat)
+                    raise ValueError(
+                        _('Category name "%s" does not exist.') % cat
+                    ) from None
                 self.category_cache[cat] = category
                 yield category
 
@@ -216,7 +220,9 @@ class CSVImporter(object):
                     region_identifier=identifier
                 )
         except GeoRegion.DoesNotExist:
-            raise ValueError(_("GeoRegion %s/%s does not exist.") % (id, identifier))
+            raise ValueError(
+                _("GeoRegion %s/%s does not exist.") % (id, identifier)
+            ) from None
         return None
 
     def get_classification(self, name):
@@ -226,5 +232,7 @@ class CSVImporter(object):
             try:
                 self.classification_cache[name] = Classification.objects.get(name=name)
             except Classification.DoesNotExist:
-                raise ValueError(_('Classification "%s" does not exist.') % name)
+                raise ValueError(
+                    _('Classification "%s" does not exist.') % name
+                ) from None
         return self.classification_cache[name]

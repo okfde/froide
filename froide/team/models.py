@@ -63,7 +63,7 @@ class TeamManager(models.Manager):
             *args,
             teammembership__user=user,
             teammembership__status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
-            **kwargs
+            **kwargs,
         )
 
     def get_list_for_user(self, user, *args, **kwargs):
@@ -118,7 +118,7 @@ class Team(models.Model):
         raise ValueError("Invalid auth verb")
 
     def _can_do(self, user, *args):
-        kwargs = dict(status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE, user=user)
+        kwargs = {"status": TeamMembership.MEMBERSHIP_STATUS.ACTIVE, "user": user}
         return self.teammembership_set.filter(*args, **kwargs).exists()
 
     def can_read(self, user):

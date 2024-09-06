@@ -38,7 +38,7 @@ def show_attachment(request, slug, message_id, attachment_name):
     try:
         attachment = FoiAttachment.objects.get_for_message(message, attachment_name)
     except FoiAttachment.DoesNotExist:
-        raise Http404
+        raise Http404 from None
 
     if not has_attachment_access(request, foirequest, attachment):
         if attachment.redacted and has_attachment_access(
@@ -189,7 +189,7 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
                 self.message, self.kwargs["attachment_name"]
             )
         except FoiAttachment.DoesNotExist:
-            raise Http404
+            raise Http404 from None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

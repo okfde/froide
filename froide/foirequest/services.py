@@ -100,14 +100,14 @@ class CreateRequestService(BaseService):
         from .views import MakeRequestView
 
         data = self.data
-        additional_kwargs = dict(
-            subject=data.get("subject", ""),
-            body=data.get("body", ""),
-            full_text=data.get("full_text", False),
-            public=data["public"],
-            reference=data.get("reference", ""),
-            law_type=data.get("law_type", ""),
-        )
+        additional_kwargs = {
+            "subject": data.get("subject", ""),
+            "body": data.get("body", ""),
+            "full_text": data.get("full_text", False),
+            "public": data["public"],
+            "reference": data.get("reference", ""),
+            "law_type": data.get("law_type", ""),
+        }
 
         flag_keys = set(MakeRequestView.FORM_CONFIG_PARAMS) | {"redirect_url"}
         flags = {k: v for k, v in data.items() if k in flag_keys}
@@ -322,14 +322,14 @@ class SaveDraftService(BaseService):
         data = self.data
         request_form = data["request_form"]
         draft = request_form.cleaned_data.get("draft", None)
-        additional_kwargs = dict(
-            subject=request_form.cleaned_data.get("subject", ""),
-            body=request_form.cleaned_data.get("body", ""),
-            full_text=request_form.cleaned_data.get("full_text", False),
-            public=request_form.cleaned_data["public"],
-            reference=request_form.cleaned_data.get("reference", ""),
-            law_type=request_form.cleaned_data.get("law_type", ""),
-        )
+        additional_kwargs = {
+            "subject": request_form.cleaned_data.get("subject", ""),
+            "body": request_form.cleaned_data.get("body", ""),
+            "full_text": request_form.cleaned_data.get("full_text", False),
+            "public": request_form.cleaned_data["public"],
+            "reference": request_form.cleaned_data.get("reference", ""),
+            "law_type": request_form.cleaned_data.get("law_type", ""),
+        }
         if draft is None:
             draft = RequestDraft.objects.create(user=request.user, **additional_kwargs)
         else:

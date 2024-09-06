@@ -51,7 +51,7 @@ class UserDetailSerializer(UserSerializer):
     def get_full_name(self, obj: Union[User, SimpleLazyObject]) -> str:
         return obj.get_full_name()
 
-    def profile_photo(self, obj):
+    def get_profile_photo(self, obj):
         if obj.profile_photo:
             return obj.profile_photo.url
         return None

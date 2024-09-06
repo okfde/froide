@@ -84,7 +84,7 @@ class OrganizationManager(models.Manager):
             *args,
             organizationmembership__user=user,
             organizationmembership__status=OrganizationMembership.STATUS.ACTIVE,
-            **kwargs
+            **kwargs,
         )
 
     def get_public(self):

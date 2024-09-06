@@ -58,14 +58,15 @@
                                 </form>
                             </li>
                         {% endif %}
-                    </div>
+                    </ul>
                 </div>
             </div>
         </div>
-    {% endblock body %}
-    {% block scripts %}
-        {{ block.super }}
-        <script src="{% static 'account/cbor.js' %}"></script>
-        <script src="{% static 'mfa/fido2.js' %}"></script>
-        <script async src="{% static 'account/mfa.js' %}"></script>
-    {% endblock %}
+    </div>
+{% endblock body %}
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'account/cbor.js' %}"></script>
+    <script src="{% static 'mfa/fido2.js' %}"></script>
+    <script async src="{% static 'account/mfa.js' %}"></script>
+{% endblock %}

@@ -235,7 +235,7 @@ class MailIntent:
             email_address,
             user_email=email_address,
             html=email_content.html,
-            **email_kwargs
+            **email_kwargs,
         )
 
 
@@ -251,7 +251,7 @@ def send_template_email(
     template=None,
     html_template=None,
     context=None,
-    **kwargs
+    **kwargs,
 ):
     if subject_template is not None:
         subject = render_to_string(subject_template, context)
@@ -283,7 +283,7 @@ def send_mail(
     queue=None,
     auto_bounce=True,
     unsubscribe_reference=None,
-    **kwargs
+    **kwargs,
 ):
     if not email_address:
         return

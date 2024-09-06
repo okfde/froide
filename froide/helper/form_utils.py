@@ -8,7 +8,7 @@ class DjangoJSONEncoder(json.JSONEncoder):
         if isinstance(obj, models.Model) and hasattr(obj, "as_data"):
             return obj.as_data()
         if isinstance(obj, models.query.QuerySet):
-            return json.JSONEncoder.default(self, [x for x in obj])
+            return json.JSONEncoder.default(self, list(obj))
         return json.JSONEncoder.default(self, obj)
 
 

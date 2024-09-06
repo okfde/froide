@@ -49,7 +49,7 @@ class RequestProjectTest(TestCase):
         self.assertEqual(response.status_code, 302)
         project = FoiProject.objects.get(title=data["subject"])
         self.assertEqual(
-            set([str(x.pk) for x in project.publicbodies.all()]), set(pb_ids.split("+"))
+            {str(x.pk) for x in project.publicbodies.all()}, set(pb_ids.split("+"))
         )
         request_sent = reverse("foirequest-request_sent") + "?project=%s" % project.pk
         self.assertEqual(response["Location"], request_sent)
@@ -139,7 +139,7 @@ class RequestProjectTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
         project = FoiProject.objects.get(title=data["subject"])
-        self.assertEqual(set(pb_ids), set(x.id for x in project.publicbodies.all()))
+        self.assertEqual(set(pb_ids), {x.id for x in project.publicbodies.all()})
         self.assertEqual(len(mail.outbox), 3)  # two pbs, one user to user
 
 
@@ -201,7 +201,7 @@ def test_project_mass_mail(project_with_requests, faker):
     # Expectation: Messages are send out to all public bodies in the request
     # Expectation: The user is not notified of the sent messages
     assert len(mail.outbox) == project_foireqs.count()
-    out_mails = set(msg.to[0] for msg in mail.outbox)
+    out_mails = {msg.to[0] for msg in mail.outbox}
     assert project_with_requests.user.email not in out_mails
     pb_mails = set(project_foireqs.values_list("public_body__email", flat=True))
     assert out_mails == pb_mails

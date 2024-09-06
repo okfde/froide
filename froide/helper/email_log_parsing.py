@@ -98,7 +98,7 @@ class PostfixLogfileParser(collections.abc.Iterator):
         Returns:
             dict: A dictionary containing the key-value pairs from the given fields
         """
-        kv_map = dict()
+        kv_map = {}
 
         for field in fields:
             if "=" in field:

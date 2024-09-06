@@ -4,12 +4,13 @@ from filingcabinet.models import (
     AbstractDocument,
     AbstractDocumentCollection,
     CollectionDocument,
+    Page,
+    get_page_image_filename,
 )
 from filingcabinet.models import (
     DocumentCollectionManager as FCDocumentCollectionManager,
 )
 from filingcabinet.models import DocumentManager as FCDocumentManager
-from filingcabinet.models import Page, get_page_image_filename
 
 from froide.helper.auth import (
     can_read_object_authenticated,
