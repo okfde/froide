@@ -8,7 +8,7 @@ from django.utils.timesince import timeuntil
 
 MONTHS_IN_YEAR = 12
 
-TIME_ZERO = dict(hour=0, minute=0, second=0, microsecond=0)
+TIME_ZERO = {"hour": 0, "minute": 0, "second": 0, "microsecond": 0}
 
 
 def get_yesterday_datetime_range() -> Tuple[datetime, datetime]:

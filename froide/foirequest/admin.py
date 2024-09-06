@@ -669,9 +669,9 @@ class FoiMessageAdmin(admin.ModelAdmin):
             message.as_mime_message().as_bytes(),
             content_type="application/octet-stream",
         )
-        response[
-            "Content-Disposition"
-        ] = 'attachment; filename="message-{}.eml"'.format(message.id)
+        response["Content-Disposition"] = (
+            'attachment; filename="message-{}.eml"'.format(message.id)
+        )
         return response
 
     @admin.action(description=_("Mark as not sent"))

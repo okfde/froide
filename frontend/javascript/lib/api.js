@@ -11,7 +11,7 @@ class FroideAPI {
         if (request.status >= 400) {
           try {
             return reject(JSON.parse(request.responseText))
-          } catch (e) {
+          } catch {
             return reject(request.responseText)
           }
         }

@@ -24,7 +24,7 @@ class ElasticsearchPaginator(Paginator):
         try:
             self.object_list = self.object_list[bottom:top]
         except ValueError:
-            raise InvalidPage()
+            raise InvalidPage() from None
 
         # ignore top boundary
         # if top + self.orphans >= self.count:

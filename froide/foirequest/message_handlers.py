@@ -115,7 +115,7 @@ class EmailMessageHandler(MessageHandler):
             from_addr,
             [message.recipient_email.strip()],
             attachments=attachments,
-            **extra_kwargs
+            **extra_kwargs,
         )
 
         message.sent = True
@@ -123,8 +123,8 @@ class EmailMessageHandler(MessageHandler):
 
         DeliveryStatus.objects.update_or_create(
             message=message,
-            defaults=dict(
-                status=DeliveryStatus.Delivery.STATUS_SENDING,
-                last_update=timezone.now(),
-            ),
+            defaults={
+                "status": DeliveryStatus.Delivery.STATUS_SENDING,
+                "last_update": timezone.now(),
+            },
         )

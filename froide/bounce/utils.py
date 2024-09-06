@@ -3,6 +3,7 @@ This contains a basic implementation of VERP and bounce detection
 https://en.wikipedia.org/wiki/Variable_envelope_return_path
 
 """
+
 import base64
 import datetime
 import time
@@ -206,7 +207,7 @@ def process_unsubscribe_mail(mail_bytes):
     with closing(BytesIO(mail_bytes)) as stream:
         email = parse_email(stream)
     recipient_list = list(
-        set([get_recipient_address_from_unsubscribe(x.email) for x in email.to])
+        {get_recipient_address_from_unsubscribe(x.email) for x in email.to}
     )
     if len(recipient_list) != 1:
         return
@@ -234,7 +235,7 @@ def process_bounce_mail(mail_bytes):
 
 
 def add_bounce_mail(email):
-    recipient_list = set([get_recipient_address_from_bounce(x.email) for x in email.to])
+    recipient_list = {get_recipient_address_from_bounce(x.email) for x in email.to}
     for recipient, status in recipient_list:
         if status:
             update_bounce(email, recipient)

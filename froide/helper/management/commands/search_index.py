@@ -25,8 +25,7 @@ class Command(DESCommand):
             qs = doc().get_queryset()
             count = qs.count()
             self.stdout.write(
-                "Indexing {} '{}' objects "
-                "with custom chunk_size {}".format(
+                "Indexing {} '{}' objects " "with custom chunk_size {}".format(
                     count, doc.django.model.__name__, CHUNK_SIZE
                 )
             )

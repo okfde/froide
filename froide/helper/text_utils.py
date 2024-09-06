@@ -166,7 +166,7 @@ def replace_word(needle: str, replacement: str, content: str) -> str:
         r"(^|[\W_])%s($|[\W_])" % re.escape(needle),
         "\\1%s\\2" % replacement,
         content,
-        re.U | re.I,
+        flags=re.U | re.I,
     )
 
 

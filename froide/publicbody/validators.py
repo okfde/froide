@@ -89,7 +89,7 @@ def validate_url(url):
     try:
         response = requests.get(url, timeout=10)
     except Exception as e:
-        raise forms.ValidationError(str(e))
+        raise forms.ValidationError(str(e)) from e
     if response.history:
         return response.url
 
@@ -98,8 +98,8 @@ def validate_fax(fax):
     try:
         number = phonenumbers.parse(fax, settings.LANGUAGE_CODE.upper())
     except phonenumbers.phonenumberutil.NumberParseException:
-        raise forms.ValidationError("Fax number cannot be parsed")
+        raise forms.ValidationError("Fax number cannot be parsed") from None
     if not phonenumbers.is_possible_number(number):
-        raise forms.ValidationError("Impossible fax number")
+        raise forms.ValidationError("Impossible fax number") from None
     if not phonenumbers.is_valid_number(number):
-        raise forms.ValidationError("Invalid fax number")
+        raise forms.ValidationError("Invalid fax number") from None

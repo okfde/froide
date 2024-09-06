@@ -539,7 +539,7 @@ def test_go(world, client):
 
     # Try logging in via link: wrong user id
     autologin = reverse(
-        "account-go", kwargs=dict(user_id="80000", token="a" * 32, url=test_url)
+        "account-go", kwargs={"user_id": "80000", "token": "a" * 32, "url": test_url}
     )
     response = client.post(autologin)
     assert response.status_code == 302
@@ -552,7 +552,7 @@ def test_go(world, client):
     # Try logging in via link: wrong secret
     autologin = reverse(
         "account-go",
-        kwargs=dict(user_id=str(user.id), token="a" * 32, url=test_url),
+        kwargs={"user_id": str(user.id), "token": "a" * 32, "url": test_url},
     )
     response = client.post(autologin)
     assert response.status_code == 302

@@ -36,8 +36,9 @@ class EventName(models.TextChoices):
 
     ATTACHMENT_UPLOADED = "attachment_uploaded", _("attachments were uploaded")
     ATTACHMENT_APPROVED = "attachment_approved", _("an attachment was approved")
-    ATTACHMENT_DEPUBLISHED = "attachment_depublished", _(
-        "an attachment was depublished"
+    ATTACHMENT_DEPUBLISHED = (
+        "attachment_depublished",
+        _("an attachment was depublished"),
     )
     ATTACHMENT_REDACTED = "attachment_redacted", _("an attachment was redacted")
     ATTACHMENT_DELETED = "attachment_deleted", _("an attachment was deleted")
@@ -46,8 +47,9 @@ class EventName(models.TextChoices):
     STATUS_CHANGED = "status_changed", _("the status was changed")
     REPORTED_COSTS = "reported_costs", _("costs were reported for this request")
     REQUEST_REFUSED = "request_refused", _("the request was marked as refused")
-    PARTIALLY_SUCCESSFUL = "partially_successful", _(
-        "the request was marked as partially successful"
+    PARTIALLY_SUCCESSFUL = (
+        "partially_successful",
+        _("the request was marked as partially successful"),
     )
     BECAME_OVERDUE = "became_overdue", _("request became overdue")
 
@@ -55,8 +57,9 @@ class EventName(models.TextChoices):
     SET_SUMMARY = "set_summary", _("set summary of result")
     SET_TAGS = "set_tags", _("set tags on request")
 
-    DEADLINE_EXTENDED = "deadline_extended", _(
-        "the deadline for the request was extended"
+    DEADLINE_EXTENDED = (
+        "deadline_extended",
+        _("the deadline for the request was extended"),
     )
     MARK_NOT_FOI = "mark_not_foi", _("the request was marked as not an FOI request")
     MODERATOR_ACTION = "moderator_action", _("the request was moderated")
@@ -129,7 +132,7 @@ class FoiEventManager(models.Manager):
         message=None,
         user=None,
         public_body=None,
-        **context
+        **context,
     ):
         assert event_name in EVENT_KEYS
         context = {k: str(v) for k, v in context.items()}

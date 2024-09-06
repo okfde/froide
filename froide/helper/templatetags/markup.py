@@ -32,7 +32,7 @@ def markdown(value, arg=""):
         if settings.DEBUG:
             raise template.TemplateSyntaxError(
                 "Error in 'markdown' filter: The Python markdown library isn't installed."
-            )
+            ) from None
         return force_str(value)
     else:
         return mark_safe(markdown.markdown(force_str(value)))

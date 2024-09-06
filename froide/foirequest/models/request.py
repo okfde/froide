@@ -196,16 +196,19 @@ class InternalTaggableManager(TaggitTaggableManager):
 
 
 class Status(models.TextChoices):
-    AWAITING_USER_CONFIRMATION = "awaiting_user_confirmation", _(
-        "Awaiting user confirmation"
+    AWAITING_USER_CONFIRMATION = (
+        "awaiting_user_confirmation",
+        _("Awaiting user confirmation"),
     )
     PUBLICBODY_NEEDED = "publicbody_needed", _("Public Body needed")
-    AWAITING_PUBLICBODY_CONFIRMATION = "awaiting_publicbody_confirmation", _(
-        "Awaiting Public Body confirmation"
+    AWAITING_PUBLICBODY_CONFIRMATION = (
+        "awaiting_publicbody_confirmation",
+        _("Awaiting Public Body confirmation"),
     )
     AWAITING_RESPONSE = "awaiting_response", _("Awaiting response")
-    AWAITING_CLASSIFICATION = "awaiting_classification", _(
-        "Request awaits classification"
+    AWAITING_CLASSIFICATION = (
+        "awaiting_classification",
+        _("Request awaits classification"),
     )
     ASLEEP = "asleep", _("Request asleep")
     RESOLVED = "resolved", _("Request resolved")
@@ -661,7 +664,7 @@ class FoiRequest(models.Model):
                 self.description,
             )
 
-        return [x for x in get_differences(show, hide)]
+        return list(get_differences(show, hide))
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))

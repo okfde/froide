@@ -169,8 +169,8 @@ class FileUploader(forms.widgets.Input):
 class FileUploaderField(forms.fields.CharField):
     def __init__(self, allowed_file_types=None, *args, **kwargs):
         super().__init__(
-            widget=FileUploader(allowed_file_types=allowed_file_types),
             *args,
+            widget=FileUploader(allowed_file_types=allowed_file_types),
             **kwargs,
         )
 

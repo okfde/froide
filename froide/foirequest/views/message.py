@@ -218,7 +218,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
     try:
         message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
-        raise Http404
+        raise Http404 from None
     if not message.is_postal:
         return render_400(request)
 
@@ -317,13 +317,13 @@ def upload_attachments(request, foirequest, message_id):
     try:
         message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
-        raise Http404
+        raise Http404 from None
 
     if request.method == "POST":
         try:
             data = json.loads(request.body.decode("utf-8"))
         except ValueError:
-            raise Http404
+            raise Http404 from None
         actions = {
             "convert_to_pdf": convert_to_pdf,
             "add_tus_attachment": add_tus_attachment,

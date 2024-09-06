@@ -415,7 +415,7 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
             # #### MPTT ADDITION END
             return queryset.filter(**self.used_parameters)
         except ValidationError as e:
-            raise IncorrectLookupParameters(e)
+            raise IncorrectLookupParameters(e) from e
 
     # Adding padding_style to each choice tuple
     def field_choices(self, field, request, model_admin):

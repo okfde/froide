@@ -4,9 +4,8 @@ from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
 
-from configurations import Configuration, importer, values
-
 from celery.schedules import crontab
+from configurations import Configuration, importer, values
 
 importer.install(check_options=True)
 
@@ -521,44 +520,44 @@ class Base(Configuration):
 
     # ######### Froide settings ########
 
-    FROIDE_CONFIG = dict(
-        spam_protection=True,
-        user_can_hide_web=True,
-        public_body_officials_public=True,
-        public_body_officials_email_public=False,
-        request_public_after_due_days=14,
-        payment_possible=True,
-        currency="Euro",
-        default_law=1,
-        search_engine_query="http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images",
-        greetings=[rec(r"Dear (?:Mr\.?|Mr?s\.? .*?)")],
-        redact_salutation=r"(?:Mr\.?|Mr?s\.?)",
-        custom_replacements=[],
-        closings=[rec(r"Sincerely yours,?")],
-        public_body_boosts={},
-        autocomplete_body_boosts={},
-        read_receipt=False,
-        delivery_receipt=False,
-        dsn=False,
-        target_countries=None,
-        suspicious_asn_provider_list=None,
-        request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
-        message_throttle=[
+    FROIDE_CONFIG = {
+        "spam_protection": True,
+        "user_can_hide_web": True,
+        "public_body_officials_public": True,
+        "public_body_officials_email_public": False,
+        "request_public_after_due_days": 14,
+        "payment_possible": True,
+        "currency": "Euro",
+        "default_law": 1,
+        "search_engine_query": "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images",
+        "greetings": [rec(r"Dear (?:Mr\.?|Mr?s\.? .*?)")],
+        "redact_salutation": r"(?:Mr\.?|Mr?s\.?)",
+        "custom_replacements": [],
+        "closings": [rec(r"Sincerely yours,?")],
+        "public_body_boosts": {},
+        "autocomplete_body_boosts": {},
+        "read_receipt": False,
+        "delivery_receipt": False,
+        "dsn": False,
+        "target_countries": None,
+        "suspicious_asn_provider_list": None,
+        "request_throttle": None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
+        "message_throttle": [
             (2, 5 * 60),  # X messages in X seconds
             (6, 6 * 60 * 60),
             (8, 24 * 60 * 60),
         ],
-        allow_pseudonym=False,
-        doc_conversion_binary=None,  # replace with libreoffice instance
-        doc_conversion_call_func=None,  # see settings_test for use
-        content_urls={
+        "allow_pseudonym": False,
+        "doc_conversion_binary": None,  # replace with libreoffice instance
+        "doc_conversion_call_func": None,  # see settings_test for use
+        "content_urls": {
             "terms": "/terms/",
             "privary": "/privacy/",
             "about": "/about/",
             "help": "/help/",
             "throttled": "/help/",
         },
-        moderation_triggers=[
+        "moderation_triggers": [
             {
                 "name": "nonfoi",
                 "label": _("Non-FOI"),
@@ -581,20 +580,20 @@ class Base(Configuration):
                 ],
             },
         ],
-        message_handlers={
+        "message_handlers": {
             "email": "froide.foirequest.message_handlers.EmailMessageHandler"
         },
-        recipient_blocklist_regex=None,
-        max_attachment_size=1024 * 1024 * 10,  # 10 MB
-        bounce_enabled=False,
-        bounce_max_age=60 * 60 * 24 * 14,  # 14 days
-        bounce_format="bounce+{token}@example.com",
-        unsubscribe_enabled=False,
-        unsubscribe_format="unsub+{token}@example.com",
-        auto_reply_subject_regex=rec("^(Auto-?Reply|Out of office)"),
-        auto_reply_email_regex=rec("^auto(reply|responder)@"),
-        hide_content_funcs=[],
-        filter_georegion_kinds=[
+        "recipient_blocklist_regex": None,
+        "max_attachment_size": 1024 * 1024 * 10,  # 10 MB
+        "bounce_enabled": False,
+        "bounce_max_age": 60 * 60 * 24 * 14,  # 14 days
+        "bounce_format": "bounce+{token}@example.com",
+        "unsubscribe_enabled": False,
+        "unsubscribe_format": "unsub+{token}@example.com",
+        "auto_reply_subject_regex": rec("^(Auto-?Reply|Out of office)"),
+        "auto_reply_email_regex": rec("^auto(reply|responder)@"),
+        "hide_content_funcs": [],
+        "filter_georegion_kinds": [
             "state",
             "admin_district",
             "district",
@@ -602,13 +601,13 @@ class Base(Configuration):
             "municipality",
             "borought",
         ],
-        non_meaningful_subject_regex=[
+        "non_meaningful_subject_regex": [
             r"^(foi[- ])?request$",
             r"^documents?$",
             r"^information$",
         ],
-        address_regex=None,
-    )
+        "address_regex": None,
+    }
 
     TESSERACT_DATA_PATH = values.Value("/usr/local/share/tessdata")
     # allow override of settings.LANGUAGE_CODE for Tesseract
@@ -711,17 +710,20 @@ class TestBase(Base):
     def FROIDE_CONFIG(self):
         config = dict(super().FROIDE_CONFIG)
         config.update(
-            dict(
-                spam_protection=False,
-                doc_conversion_call_func=self._fake_convert_pdf,
-                default_law=10000,
-                greetings=[
+            {
+                "spam_protection": False,
+                "doc_conversion_call_func": self._fake_convert_pdf,
+                "default_law": 10000,
+                "greetings": [
                     rec(r"Dear ((?:Mr\.?|Ms\.?) .*),?"),
                     rec(r"Sehr geehrter? ((Herr|Frau) .*),?"),
                 ],
-                closings=[rec(r"Sincerely yours,?"), rec(r"Mit freundlichen Grüßen")],
-                public_body_officials_public=False,
-            )
+                "closings": [
+                    rec(r"Sincerely yours,?"),
+                    rec(r"Mit freundlichen Grüßen"),
+                ],
+                "public_body_officials_public": False,
+            }
         )
         return config
 

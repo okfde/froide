@@ -337,7 +337,7 @@ def send_request_user_email(
     add_idmark=True,
     priority=True,
     start_thread=False,
-    **kwargs
+    **kwargs,
 ):
     if not foirequest.user:
         return
@@ -365,7 +365,7 @@ def send_request_user_email(
         context=context,
         priority=priority,
         headers=headers,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -898,7 +898,7 @@ def select_foirequest_template(foirequest, base_template: str):
     return templates
 
 
-ZIP_BLOCK_LIST = set(["__MACOSX", ".DS_Store"])
+ZIP_BLOCK_LIST = {"__MACOSX", ".DS_Store"}
 PATH_REPLACEMENT = "___"  # 3 underscores
 
 
@@ -928,7 +928,7 @@ def unpack_zipfile_attachment(attachment: FoiAttachment):
         names = set(
             attachment.belongs_to.foiattachment_set.all().values_list("name", flat=True)
         )
-        for doc_path, zip_path in zip(doc_paths, zip_paths):
+        for doc_path, zip_path in zip(doc_paths, zip_paths, strict=False):
             attachment_name = PATH_REPLACEMENT.join(doc_path.parts)
             attachment_name = make_unique_filename(attachment_name, names)
             names.add(attachment_name)

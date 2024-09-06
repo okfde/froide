@@ -17,8 +17,7 @@ MimeAttachment = Tuple[str, bytes, str]
 
 
 class ProofAttachment(Protocol):
-    def get_mime_attachment(self) -> MimeAttachment:
-        ...
+    def get_mime_attachment(self) -> MimeAttachment: ...
 
 
 class TemporaryProof:

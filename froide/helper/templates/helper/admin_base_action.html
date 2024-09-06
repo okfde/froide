@@ -4,7 +4,7 @@
 {% block title %}
     {% block action_title %}{% endblock %}
     {{ block.super }}
-{% endblock %}
+{% endblock title %}
 {% block breadcrumbs %}
     <div class="breadcrumbs">
         <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
@@ -13,12 +13,10 @@
         &rsaquo;
         {% block breadcrumbs_action_label %}{% endblock %}
     </div>
-{% endblock %}
+{% endblock breadcrumbs %}
 {% block content %}
     <div id="content-main">
         {% block action_content %}{% endblock %}
         {% block admin_change_form_document_ready %}{{ block.super }}{% endblock %}
     </div>
-</form>
-</div>
-{% endblock %}
+{% endblock content %}

@@ -57,7 +57,7 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
         try:
             value = qs.get(id=value.id)
         except FoiRequest.DoesNotExist:
-            raise serializers.ValidationError("No access")
+            raise serializers.ValidationError("No access") from None
         if value.user == user:
             raise serializers.ValidationError("Cannot follow your own requests")
         return value

@@ -49,7 +49,7 @@ class SiteAdivsor(object):
 
     def update(self):
         sites = FoiSite.objects.filter(enabled=True)
-        self.sites = dict([(f.country_code, f) for f in sites])
+        self.sites = {f.country_code: f for f in sites}
 
     def refresh(self):
         self.sites = None

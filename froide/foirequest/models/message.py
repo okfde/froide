@@ -622,7 +622,7 @@ class FoiMessage(models.Model):
         checks = self.email_headers.get("authenticity")
         if not checks:
             return False
-        return any([c["failed"] for c in checks])
+        return any(c["failed"] for c in checks)
 
     def has_authenticity_info(self):
         return bool(self.email_headers.get("authenticity"))

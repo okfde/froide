@@ -52,11 +52,9 @@ def get_follower_updates(
             ).select_related("user")
             for follower in followers:
                 if not any(
-                    [
-                        n
-                        for n in update_list
-                        if n.user_id is None or n.user_id != follower.user_id
-                    ]
+                    n
+                    for n in update_list
+                    if n.user_id is None or n.user_id != follower.user_id
                 ):
                     continue
                 ident = follower.get_ident()
