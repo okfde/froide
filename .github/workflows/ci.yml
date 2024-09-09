@@ -10,12 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: 'pnpm'
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
       - uses: pre-commit/action@v3.0.1
 
   test:
@@ -32,10 +36,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'yarn'
+          cache: 'pnpm'
       - name: Install system-level dependencies
         run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python3-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev
       - name: uv cache
@@ -52,9 +60,9 @@ jobs:
           uv pip install -r requirements-test.txt
           uv pip install -e .
           playwright install --with-deps chromium
-          yarn install
+          pnpm install
       - name: Build frontend
-        run: yarn run build
+        run: pnpm run build
       - name: Run tests
         run: |
           coverage run --branch -m pytest froide/ --ignore=froide/tests/live/

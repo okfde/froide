@@ -1,29 +1,28 @@
 {
   "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
     "lib": [
+      "ES2020",
       "DOM",
-      "ESNext",
-      "dom.iterable"
+      "DOM.Iterable"
     ],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "target": "es6",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "preserve",
+    "allowJs": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitAny": true,
-    "downlevelIteration": true
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "./frontend/javascript/**/*",
-    ".eslintrc.js",
+    "./frontend/**/*",
     "vite.config.js"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

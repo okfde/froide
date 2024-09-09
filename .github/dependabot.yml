@@ -2,7 +2,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: yarn
+  - package-ecosystem: pnpm
     directory: /
     schedule:
       interval: weekly
