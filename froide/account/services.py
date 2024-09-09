@@ -321,7 +321,13 @@ class AccountService(object):
             # No more info present about user to redact
             return content
 
-        needles = [self.user.last_name, self.user.first_name, self.user.get_full_name()]
+        needles = [
+            self.user.last_name,
+            self.user.first_name,
+            self.user.get_full_name(),
+            *self.user.first_name.split(),
+            *self.user.last_name.split(),
+        ]
         if self.user.organization_name:
             needles.append(self.user.organization_name)
 

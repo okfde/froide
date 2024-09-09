@@ -802,3 +802,15 @@ def test_email_case_insensitive_unique():
     msg = 'duplicate key value violates unique constraint "account_user_username_key"'
     with pytest.raises(IntegrityError, match=msg):
         User.objects.create(email="hacker@example.com")
+
+
+@pytest.mark.django_db
+def test_multipart_name_redaction():
+    user = User.objects.create(
+        first_name="Alex", last_name="Random Example", private=True
+    )
+    account_service = AccountService(user)
+    name = "Reply-Alex-Random-Example.pdf"
+    repl = "NAME"
+    redacted_name = account_service.apply_name_redaction(name, repl)
+    assert redacted_name == "Reply-NAME-NAME-NAME.pdf"
