@@ -72,7 +72,7 @@ Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode
 ```json
 {
   "eslint.format.enable": true,
-  "eslint.packageManager": "yarn",
+  "eslint.packageManager": "pnpm",
   "vetur.format.defaultFormatter.css": "prettier",
   "vetur.format.defaultFormatter.html": "prettier",
   "vetur.format.defaultFormatter.js": "prettier-eslint"
