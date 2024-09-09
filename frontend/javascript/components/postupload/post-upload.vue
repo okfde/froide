@@ -100,6 +100,7 @@ const formStatusChoices = computed(() =>
   props.status_form.fields.resolution.choices.filter((choice) => {
     if (formIsSent.value) {
       switch (choice.value) {
+        case '':
         case 'successful':
         case 'partially_successful':
         case 'not_held':
