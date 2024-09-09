@@ -96,23 +96,14 @@ const formStatusWasResolved = formStatus.value === 'resolved'
 const formStatusIsResolved = computed(() => formStatus.value === 'resolved')
 
 // remove nonsensical combos
-const formStatusChoices = computed(() =>
-  props.status_form.fields.resolution.choices.filter((choice) => {
-    if (formIsSent.value) {
-      switch (choice.value) {
-        case '':
-        case 'successful':
-        case 'partially_successful':
-        case 'not_held':
-        case 'refused':
-          return false
-      }
-    } else {
-      if (choice.value === 'user_withdrew_costs') return false
-    }
-    return true
-  })
-)
+const formStatusChoices = computed(() => {
+  const badCombinations = formIsSent.value
+    ? ['', 'successful', 'partially_successful', 'not_held', 'refused']
+    : ['user_withdrew_costs']
+  return props.status_form.fields.resolution.choices.filter(
+    (choice) => !badCombinations.includes(choice.value)
+  )
+})
 
 const formCost = props.status_form.fields.costs.initial?.intValue || 0
 const formHasHadCost = formCost > 0
