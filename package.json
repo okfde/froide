@@ -33,7 +33,6 @@
     "@okfde/eslint-config-froide": "okfde/eslint-config-froide",
     "@types/bootstrap": "^5.2.1",
     "@types/glidejs__glide": "^3.4.2",
-    "@types/lodash.throttle": "^4.1.6",
     "@vitejs/plugin-vue": "^4.0.0",
     "autoprefixer": "^10.4.13",
     "cli-real-favicon": "0.0.8",
@@ -46,6 +45,7 @@
   "dependencies": {
     "@okfde/filingcabinet": "^0.0.4",
     "@popperjs/core": "^2.11.5",
+    "@types/lodash.throttle": "^4.1.9",
     "@uppy/core": "^3.0.4",
     "@uppy/dashboard": "^3.2.0",
     "@uppy/tus": "^3.0.5",
@@ -61,6 +61,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.range": "^3.2.0",
     "lodash.sortby": "^4.7.0",
+    "lodash.throttle": "^4.1.1",
     "pdfjs-dist": "==2.9.359",
     "sortablejs": "^1",
     "string.prototype.repeat": "^1.0.0",
