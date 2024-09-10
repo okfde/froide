@@ -17,6 +17,6 @@ htmlcov:
 messagesde:
 	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file
 
-requirements: requirements.in requirements-test.in
-	uv pip compile requirements.in -o requirements.txt
-	uv pip compile requirements-test.in -o requirements-test.txt
+requirements: pyproject.toml
+	uv pip compile -o requirements.txt pyproject.toml
+	uv pip compile -o requirements-test.txt --extra test pyproject.toml
