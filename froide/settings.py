@@ -126,7 +126,7 @@ class Base(Configuration):
     PROJECT_ROOT = Path(__file__).resolve().parent
     BASE_DIR = PROJECT_ROOT.parent
 
-    LOCALE_PATHS = [BASE_DIR / "locale"]
+    LOCALE_PATHS = [PROJECT_ROOT / "locale"]
 
     GEOIP_PATH = None
     GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
