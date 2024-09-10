@@ -158,8 +158,10 @@ $SA98G: (
 
     // Calculate the SAPC contrast value and scale
     $SAPC: (
-        math.pow($bgY, map.get($SA98G, 'normBG')) -
-          math.pow($txtY, map.get($SA98G, 'normTXT'))
+        math.pow($bgY, map.get($SA98G, 'normBG')) - math.pow(
+            $txtY,
+            map.get($SA98G, 'normTXT')
+          )
       ) *
       map.get($SA98G, 'scaleBoW');
 
@@ -176,8 +178,10 @@ $SA98G: (
     $polCat: 'WoB';
 
     $SAPC: (
-        math.pow($bgY, map.get($SA98G, 'revBG')) -
-          math.pow($txtY, map.get($SA98G, 'revTXT'))
+        math.pow($bgY, map.get($SA98G, 'revBG')) - math.pow(
+            $txtY,
+            map.get($SA98G, 'revTXT')
+          )
       ) *
       map.get($SA98G, 'scaleWoB');
 
@@ -241,7 +245,6 @@ $min-lc-body-text: 75;
   $color-contrast-light: $color-contrast-light,
   $min-contrast-ratio: $min-lc-body-text
 ) {
-  @debug 'foo';
   $foregrounds: $color-contrast-light, $color-contrast-dark, $white, $black;
   $max-ratio: 0;
   $max-ratio-color: null;
