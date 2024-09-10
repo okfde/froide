@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
+import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 const range = (len) => [...Array(len).keys()]
 

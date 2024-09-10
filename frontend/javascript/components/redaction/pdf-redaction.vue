@@ -39,13 +39,15 @@
           role="progressbar"
           :aria-valuenow="progressPercent"
           aria-valuemin="0"
-          aria-valuemax="100">
+          aria-valuemax="100"
+        >
           <div
             class="progress-bar"
             :class="{
               'progress-bar-striped progress-bar-animated': progressUnknown
             }"
-            :style="progressWidth" />
+            :style="progressWidth"
+          />
         </div>
         <div class="text-center mt-3">
           <div class="spinner-border" role="status" />
@@ -59,7 +61,8 @@
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
-            @click="undo">
+            @click="undo"
+          >
             <i class="fa fa-share fa-flip-horizontal" />
           </button>
           <button
@@ -68,7 +71,8 @@
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
-            @click="redo">
+            @click="redo"
+          >
             <i class="fa fa-share" />
           </button>
         </div>
@@ -78,7 +82,8 @@
             class="btn"
             :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
             :title="i18n.toggleText"
-            @click.stop="toggleText">
+            @click.stop="toggleText"
+          >
             <i class="fa fa-align-justify" />
           </button>
           <button
@@ -88,7 +93,8 @@
               'btn-info': textDisabled
             }"
             :title="i18n.disableText"
-            @click.stop="toggleDrawing">
+            @click.stop="toggleDrawing"
+          >
             <i class="fa fa-image" />
           </button>
         </div>
@@ -97,7 +103,8 @@
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
-            @click="goPrevious">
+            @click="goPrevious"
+          >
             &laquo;
             <span class="visually-hidden">{{ i18n.previousPage }}</span>
           </button>
@@ -107,7 +114,8 @@
           <button
             class="pdf-next btn btn-outline-secondary"
             :disabled="!hasNext"
-            @click="goNext">
+            @click="goNext"
+          >
             <span class="visually-hidden">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
@@ -115,7 +123,8 @@
 
         <div
           v-if="hasRedactions || hasPassword"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
+          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0"
+        >
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
@@ -131,11 +140,13 @@
             v-if="canPublish && !hasPassword"
             method="post"
             id="redaction-submit-form"
-            :action="config.urls.publishUrl">
+            :action="config.urls.publishUrl"
+          >
             <input
               type="hidden"
               name="csrfmiddlewaretoken"
-              :value="csrfToken" />
+              :value="csrfToken"
+            />
             <button
               class="btn"
               :class="{
@@ -143,7 +154,8 @@
                 'btn-outline-secondary': hasRedactions
               }"
               type="submit"
-              @click="confirmNoRedactions">
+              @click="confirmNoRedactions"
+            >
               <i class="fa fa-check me-2" />{{ i18n.publishWithoutRedaction }}
             </button>
           </form>
@@ -159,7 +171,8 @@
           :id="containerId"
           ref="container"
           class="redactContainer"
-          :class="{ 'hide-redacting': working }">
+          :class="{ 'hide-redacting': working }"
+        >
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
           <canvas
             v-show="!textOnly"
@@ -171,7 +184,8 @@
             @touchstart="touchStart"
             @touchend="touchEnd"
             @touchmove="touchMove"
-            @touchcancel="touchCancel" />
+            @touchcancel="touchCancel"
+          />
           <div
             :id="textLayerId"
             class="textLayer"
@@ -182,7 +196,8 @@
             @touchstart="touchStart"
             @touchend="touchEnd"
             @touchmove="touchMove"
-            @touchcancel="touchCancel" />
+            @touchcancel="touchCancel"
+          />
         </div>
       </div>
     </div>
@@ -192,7 +207,8 @@
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
-            @click="goPrevious">
+            @click="goPrevious"
+          >
             &laquo;
             {{ i18n.previousPage }}
           </button>
@@ -202,7 +218,8 @@
           <button
             class="pdf-next btn btn-outline-secondary"
             :disabled="!hasNext"
-            @click="goNext">
+            @click="goNext"
+          >
             {{ i18n.nextPage }}
             &raquo;
           </button>
@@ -212,7 +229,8 @@
     <confirm-no-redaction
       :i18n="config.i18n"
       ref="confirmmodal"
-      @submit="submitRedactions" />
+      @submit="submitRedactions"
+    />
   </div>
 </template>
 
@@ -220,7 +238,7 @@
 import 'string.prototype.repeat'
 import ConfirmNoRedaction from './confirm-no-redaction'
 
-import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
+import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 
 import range from 'lodash.range'
 
