@@ -3,7 +3,7 @@ export DJANGO_CONFIGURATION=Test
 export PYTHONWARNINGS=default
 
 test:
-	flake8 check
+	ruff check
 	coverage run --branch -m pytest froide/
 	coverage report
 
