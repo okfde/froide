@@ -13,7 +13,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Utilities",
 ]
-dynamic = ["version"]
+version = "5.0.0"
 dependencies = [
   "bleach",
   "celery>=5.2.2",
