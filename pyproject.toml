@@ -69,15 +69,11 @@ dependencies = [
 [project.optional-dependencies]
 test = [
   "beautifulsoup4",
-  "black",
   "coverage",
   "django-coverage-plugin",
   "django-stubs",
   "factory-boy",
   "faker",
-  "flake8",
-  "flake8-bugbear",
-  "isort",
   "monkeytype",
   "mypy",
   "pbr",
