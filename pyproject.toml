@@ -99,8 +99,8 @@ test = [
 requires = ["setuptools>=74"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["froide"]
+[tool.setuptools.packages.find]
+include = ["froide*"]
 
 [tool.ruff]
 exclude = ["migrations", "build", "node_modules"]
