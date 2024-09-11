@@ -36,7 +36,7 @@ dependencies = [
   "django-storages",
   "django-taggit>=2",
   "django-treebeard",
-  "django>=4.2",
+  "django>=4.2,<5",
   "djangorestframework",
   "djangorestframework-csv",
   "djangorestframework-jsonp",
