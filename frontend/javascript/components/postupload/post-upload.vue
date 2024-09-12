@@ -1,14 +1,6 @@
 <script setup>
-import {
-  ref,
-  reactive,
-  computed,
-  defineProps,
-  defineEmits,
-  nextTick,
-  watch
-} from 'vue'
-import AppShell from './app-shell.vue'
+import { ref, reactive, computed, defineProps, nextTick, watch } from 'vue'
+import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
@@ -16,6 +8,8 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 import DocumentUploader from '../docupload/document-uploader.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import OnlineHelp from './online-help.vue'
 import { Tooltip } from 'bootstrap'
 import { useI18n } from '../../lib/i18n'
 
@@ -180,19 +174,11 @@ const documentUploaderSelectAll = (val) => {
 }
 
 const scrollIfNecessary = () => {
-  if (isDesktop.value) {
-    // on desktop viewport, scroll the header into view, if necessary
-    const header = document.querySelector('.appshell-header')
-    const rect = header.getBoundingClientRect()
-    // alt: check appshell-header-container--desktop, if hidden all rect attributes == 0
-    if (rect.bottom < 0) {
-      // timeout to make it feel less jarring
-      setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
-    }
-  } else {
-    // on mobile, always scroll to top
-    // when we use a hash-router, this might need to be blocked "on history.back"
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+  const header = document.querySelector('main nav')
+  const rect = header.getBoundingClientRect()
+  if (rect.bottom < 0) {
+    // timeout to make it feel less jarring
+    setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
   }
 }
 
@@ -216,11 +202,6 @@ const mobileHeaderTitle2 = computed(() => {
     return 'Vorschau'
   }
   return '(Untertitel)'
-})
-
-const progress = computed(() => {
-  // roughly map to {0, ½, 1}
-  return Math.min(Math.floor((step.value - 1000) / 1000), 2) / 2
 })
 
 const progressStep = computed(() =>
@@ -254,6 +235,10 @@ const gotoValid = computed(() => {
 })
 
 const backStep = () => {
+  if (step.value === 1201) {
+    // we go back two steps
+    stepHistory.pop()
+  }
   stepHistory.pop()
 }
 
@@ -563,80 +548,85 @@ const debugSkipDate = () => {
   gotoStep()
 }
 
-defineEmits(['showhelp'])
+const onlineHelp = ref()
 </script>
 
 <template>
-  <app-shell
-    :progress="progress"
-    :step="progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
-    <template #mobile-header-title1>
-      <template v-if="false"> Frag den Staat </template>
-      <template v-else-if="step < 4000">
-        {{ i18n.step }} {{ Math.floor(step / 1000)
-        }}<b class="header-title1-bold">/3</b>
-      </template>
-      <template v-else-if="step >= 4000">
-        <small>Fertig</small>
-      </template>
-      <span v-if="debug" class="debug">({{ step }})</span>
-      <span v-if="debug" class="debug">
-        <!-- eslint-disable-next-line vue/no-mutating-props -->
-        <button type="button" @click="user_is_staff = !user_is_staff">
-          {{ user_is_staff ? '☑' : '☐' }} staff
+  <online-help ref="onlineHelp" />
+  <div class="root">
+    <div class="postupload-main">
+      <simple-stepper
+        class="sticky-top position-md-static"
+        :step="progressStep"
+        :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
+        <template v-if="step < 4000">
+          {{ i18n.step }} {{ Math.floor(step / 1000) }}<strong>/3</strong>:
+          {{ mobileHeaderTitle2 }}
+        </template>
+        <template v-else-if="step >= 4000">
+          <small>{{ i18n.done }}</small>
+        </template>
+      </simple-stepper>
+
+      <div class="container">
+        <!-- TODO button does not support going back throug documentsPdfRedactionIndex -->
+        <div v-if="step === 1100" class="my-3">
+          <a class="btn btn-link text-decoration-none ps-0" href="../.."
+            >← <u>{{ i18n.cancel }}</u></a
+          >
+        </div>
+        <div v-else-if="step !== 4570" class="my-3">
+          <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
+            >← <u>{{ i18n.back }}</u></a
+          >
+        </div>
+      </div>
+
+      <details v-if="debug" class="container">
+        <summary class="DEBUG">DEBUG</summary>
+        <div>step={{ step }}</div>
+        <div>history={{ stepHistory.join(',') }}</div>
+        <span>
+          <!-- eslint-disable-next-line vue/no-mutating-props -->
+          <button type="button" @click="user_is_staff = !user_is_staff">
+            {{ user_is_staff ? '☑' : '☐' }} staff
+          </button>
+        </span>
+        <span>isDesktop={{ isDesktop }}</span>
+        <button
+          class="btn btn-secondary btn-sm"
+          type="submit"
+          style="font-size: 50%; margin-left: 1em">
+          submit/save
         </button>
-      </span>
-      <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
-      <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
-      <!--<span class="debug">p{{ progress }}</span>-->
-      <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
-      <!--<span class="debug">{{ values.isYellow }}</span>-->
-      <!--<span class="debug">{{ gotoValid }}</span>-->
-      <!--<span class="debug">
-        {{ { pbv: props.form.fields.publicbody.value, pbii:  props.form.fields.publicbody?.initial?.id, opbi: object_public_body_id } }}
-      </span>-->
-      <!-- <span class="debug">formStatus={{formStatus}},</span> -->
-      <!-- <span class="debug">formDoUpdateCost={{formDoUpdateCost}},</span> -->
-      <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
-      <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
-    </template>
-    <template #mobile-header-title2>
-      {{ mobileHeaderTitle2 }}
-    </template>
-    <template #nav>
-      <!-- TODO button does not support going back throug documentsPdfRedactionIndex -->
-      <div v-if="step === 1100" class="my-3">
-        <a href="../.." class="btnlike">← <u>Abbrechen</u></a>
-      </div>
-      <div v-else-if="step !== 4570" class="my-3">
-        <a @click="backStep" class="btnlike">← <u>Zurück</u></a>
-      </div>
-      <span class="debug">{{ isDesktop }}</span>
-      <button
-        v-if="debug"
-        class="btn btn-secondary btn-sm debug"
-        type="submit"
-        style="font-size: 50%; margin-left: 1em">
-        submit/save
-      </button>
-      <button
-        v-if="debug"
-        class="btn btn-secondary btn-sm debug"
-        type="button"
-        @click="submitFetch"
-        style="font-size: 50%; margin-left: 1em">
-        submit/fetch
-      </button>
-    </template>
-    <template #main="{ onShowhelp }">
-      <details v-if="debug && form.nonFieldErrors.length">
-        <summary class="debug">DEBUG form.nonFieldErrors</summary>
-        <pre>{{ form.nonFieldErrors }}</pre>
-      </details>
-      <details v-if="debug && Object.keys(form.errors).length">
-        <summary class="debug">DEBUG form.errors</summary>
-        <pre>{{ form.errors }}</pre>
+        <button
+          class="btn btn-secondary btn-sm"
+          type="button"
+          @click="submitFetch"
+          style="font-size: 50%; margin-left: 1em">
+          submit/fetch
+        </button>
+        <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
+        <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
+        <!--<span class="debug">p{{ progress }}</span>-->
+        <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
+        <!--<span class="debug">{{ values.isYellow }}</span>-->
+        <!--<span class="debug">{{ gotoValid }}</span>-->
+        <!--<span class="debug">
+          {{ { pbv: props.form.fields.publicbody.value, pbii:  props.form.fields.publicbody?.initial?.id, opbi: object_public_body_id } }}
+        </span>-->
+        <!-- <span class="debug">formStatus={{formStatus}},</span> -->
+        <!-- <span class="debug">formDoUpdateCost={{formDoUpdateCost}},</span> -->
+        <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
+        <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
+        <details v-if="form.nonFieldErrors.length">
+          <summary class="debug">DEBUG form.nonFieldErrors</summary>
+          <pre>{{ form.nonFieldErrors }}</pre>
+        </details>
+        <details v-if="Object.keys(form.errors).length">
+          <summary class="debug">DEBUG form.errors</summary>
+          <pre>{{ form.errors }}</pre>
+        </details>
       </details>
 
       <div v-show="step === 1100" class="container">
@@ -673,9 +663,7 @@ defineEmits(['showhelp'])
               </p>
               <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
               <p>
-                <a
-                  href="#"
-                  @click="onShowhelp(config.urls.helpPostuploadRedaction)"
+                <a @click="onlineHelp.show(config.urls.helpPostuploadRedaction)"
                   >online help demo</a
                 >
               </p>
@@ -1117,13 +1105,13 @@ defineEmits(['showhelp'])
             <div class="text-end">
               <button
                 type="button"
-                class="btn-linklike mx-2"
+                class="btn btn-link mx-2 text-decoration-underline"
                 @click="documentUploaderSelectAll(true)">
                 Alle auswählen
               </button>
               <button
                 type="button"
-                class="btn-linklike mx-2"
+                class="btn btn-link mx-2 text-decoration-underline"
                 @click="documentUploaderSelectAll(false)">
                 Keine auswählen
               </button>
@@ -1132,79 +1120,83 @@ defineEmits(['showhelp'])
         </div>
       </div>
 
-      <div v-show="3000 < step && step < 3100" class="container">
-        <div class="row">
-          <div class="col">
-            <label class="fw-bold col-form-label">
-              Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
-              {{ documentsSelectedPdfRedaction.length }})
-            </label>
-            <div class="alert alert-warning">
-              Das sollten Sie schwärzen:
-              <ul>
-                <li>Ihren Namen und Ihre Adresse</li>
-                <li>Namen von Behördenmitarbeiter:innen</li>
-                <li>Unterschriften</li>
-                <li>E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden</li>
-              </ul>
+      <div v-show="3000 < step && step < 3100">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <label class="fw-bold col-form-label">
+                Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
+                {{ documentsSelectedPdfRedaction.length }})
+              </label>
+              <div class="alert alert-warning">
+                Das sollten Sie schwärzen:
+                <ul>
+                  <li>Ihren Namen und Ihre Adresse</li>
+                  <li>Namen von Behördenmitarbeiter:innen</li>
+                  <li>Unterschriften</li>
+                  <li>E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden</li>
+                </ul>
+              </div>
+              <div class="mt-2 mb-3">
+                <button
+                  type="button"
+                  class="btn btn-link text-decoration-underline"
+                  @click="onlineHelp.show(config.urls.helpPostuploadRedaction)">
+                  Ich habe technische Probleme / benötige Hilfe
+                </button>
+              </div>
             </div>
-            <div class="mt-2 mb-3">
-              <button
-                type="button"
-                class="btn-linklike"
-                @click="onShowhelp(config.urls.helpPostuploadRedaction)">
-                Ich habe technische Probleme / benötige Hilfe
-              </button>
-            </div>
-            <pre class="debug" v-if="debug">
-    DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
-            >
-            <pdf-redaction
-              v-if="currentPdfRedactionDoc"
-              :key="currentPdfRedactionDoc.id"
-              :pdf-path="currentPdfRedactionDoc.attachment.file_url"
-              :attachment-url="currentPdfRedactionDoc.attachment.anchor_url"
-              :post-url="
-                config.url.redactAttachment.replace(
-                  '/0/',
-                  '/' + currentPdfRedactionDoc.id + '/'
-                )
-              "
-              :approve-url="
-                config.url.approveAttachment.replace(
-                  '/0/',
-                  '/' + currentPdfRedactionDoc.id + '/'
-                )
-              "
-              :minimal-ui="true"
-              :no-redirect="true"
-              :redact-regex="['teststraße\ 1']"
-              :can-publish="true"
-              :config="config"
-              @uploaded="pdfRedactionUploaded"
-              @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
-              ref="pdfRedaction">
-              <template #toolbar-right>
-                <div class="btn-group" v-show="isDesktop">
-                  <button
-                    type="button"
-                    class="btn btn-primary"
-                    @click="pdfRedactionRedact()"
-                    :disabled="pdfRedactionProcessing">
-                    <i
-                      v-show="!pdfRedactionProcessing"
-                      class="fa fa-thumbs-o-up"></i>
-                    <span
-                      class="spinner-border spinner-border-sm"
-                      v-show="pdfRedactionProcessing"
-                      role="status"
-                      aria-hidden="true" />
-                    Ich bin fertig mit Schwärzen
-                  </button>
-                </div>
-              </template>
-            </pdf-redaction>
           </div>
+        </div>
+        <div>
+          <pre class="debug" v-if="debug">
+    DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
+          >
+          <pdf-redaction
+            v-if="currentPdfRedactionDoc"
+            :key="currentPdfRedactionDoc.id"
+            :pdf-path="currentPdfRedactionDoc.attachment.file_url"
+            :attachment-url="currentPdfRedactionDoc.attachment.anchor_url"
+            :post-url="
+              config.url.redactAttachment.replace(
+                '/0/',
+                '/' + currentPdfRedactionDoc.id + '/'
+              )
+            "
+            :approve-url="
+              config.url.approveAttachment.replace(
+                '/0/',
+                '/' + currentPdfRedactionDoc.id + '/'
+              )
+            "
+            :minimal-ui="true"
+            :no-redirect="true"
+            :redact-regex="['teststraße\ 1']"
+            :can-publish="true"
+            :config="config"
+            @uploaded="pdfRedactionUploaded"
+            @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
+            ref="pdfRedaction">
+            <template #toolbar-right>
+              <div class="btn-group" v-show="isDesktop">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="pdfRedactionRedact()"
+                  :disabled="pdfRedactionProcessing">
+                  <i
+                    v-show="!pdfRedactionProcessing"
+                    class="fa fa-thumbs-o-up"></i>
+                  <span
+                    class="spinner-border spinner-border-sm"
+                    v-show="pdfRedactionProcessing"
+                    role="status"
+                    aria-hidden="true" />
+                  Ich bin fertig mit Schwärzen
+                </button>
+              </div>
+            </template>
+          </pdf-redaction>
         </div>
       </div>
 
@@ -1285,7 +1277,7 @@ defineEmits(['showhelp'])
                 class="d-flex justify-content-end">
                 <button
                   type="button"
-                  class="btn-linklike"
+                  class="btn btn-link text-decoration-underline"
                   @click="
                     documentsBasicOperations = !doctumentsBasicOperations
                   ">
@@ -1343,147 +1335,166 @@ defineEmits(['showhelp'])
           </div>
         </div>
       </div>
-    </template>
+    </div>
 
-    <template #actions>
-      <!--<template v-if="step === 3001">-->
-      <template v-if="3000 < step && step < 3100">
-        <button
-          type="button"
-          @click="pdfRedactionRedact()"
-          class="action btn btn-primary"
-          :disabled="pdfRedactionProcessing">
-          <span
-            class="spinner-border spinner-border-sm"
-            v-show="pdfRedactionProcessing"
-            role="status"
-            aria-hidden="true" />
-          Ich bin fertig mit Schwärzen
-        </button>
-        <div class="action-info">
-          Wichtig: Haben Sie alle Seiten überprüft?
-          <div v-if="debug" class="debug">
-            DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
-          </div>
-        </div>
-      </template>
-      <template v-else-if="step === 4413">
-        <button
-          type="button"
-          @click="approveDocsAndSubmit()"
-          class="action btn btn-primary"
-          :disabled="isSubmitting || !validity.form">
-          <span
-            class="spinner-border spinner-border-sm"
-            v-show="isSubmitting"
-            role="status"
-            aria-hidden="true" />
-          Bestätigen
-        </button>
-        <div class="action-info">
-          <template v-if="!validity.form">
-            Das Formular enthält noch Fehler.
-            <!-- TODO: we could go through all elements, validate, and report here -->
-          </template>
-          <template v-if="!object_public">
-            Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente werden
-            deshalb nicht öffentlich verfügbar.
-          </template>
-          <!--<template v-if="object_public && user_is_staff">
+    <div class="sticky-bottom bg-body py-2">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-9 col-lg-6 text-center">
+            <template v-if="3000 < step && step < 3100">
+              <button
+                type="button"
+                @click="pdfRedactionRedact()"
+                class="btn btn-primary d-block w-100"
+                :disabled="pdfRedactionProcessing">
+                <span
+                  class="spinner-border spinner-border-sm"
+                  v-show="pdfRedactionProcessing"
+                  role="status"
+                  aria-hidden="true" />
+                Ich bin fertig mit Schwärzen
+              </button>
+              <div class="mt-2">
+                <small> Wichtig: Haben Sie alle Seiten überprüft? </small>
+                <div v-if="debug" class="debug">
+                  DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
+                </div>
+              </div>
+            </template>
+            <template v-else-if="step === 4413">
+              <button
+                type="button"
+                @click="approveDocsAndSubmit()"
+                class="btn btn-primary d-block w-100"
+                :disabled="isSubmitting || !validity.form">
+                <span
+                  class="spinner-border spinner-border-sm"
+                  v-show="isSubmitting"
+                  role="status"
+                  aria-hidden="true" />
+                Bestätigen
+              </button>
+              <div class="mt-2">
+                <small>
+                  <template v-if="!validity.form">
+                    Das Formular enthält noch Fehler.
+                    <!-- TODO: we could go through all elements, validate, and report here -->
+                  </template>
+                  <template v-if="!object_public">
+                    Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente
+                    werden deshalb nicht öffentlich verfügbar.
+                  </template>
+                  <!--<template v-if="object_public && user_is_staff">
             Um Dokumente vorerst nicht zu veröffentlichen, die Häkchen
             entfernen. TODO
           </template>-->
+                </small>
+              </div>
+            </template>
+            <template v-else-if="step === 4570">
+              <button
+                type="button"
+                @click="submit"
+                class="btn btn-primary d-block w-100">
+                Anfrage ansehen
+              </button>
+            </template>
+            <template v-else-if="step === 1100">
+              <!-- should be blank -->
+              <button
+                v-if="debug"
+                type="button"
+                @click="gotoStep()"
+                class="action btn btn-outline-primary btn-sm mt-1">
+                DEBUG skip
+              </button>
+            </template>
+            <template v-else-if="step === 1110">
+              <!-- this could be completely hidden -->
+              <button
+                type="button"
+                :disabled="true"
+                class="btn btn-primary d-block w-100">
+                weiter
+              </button>
+              <button
+                v-if="debug"
+                type="button"
+                @click="gotoStep()"
+                class="action btn btn-outline-primary btn-sm mt-1">
+                DEBUG skip
+              </button>
+            </template>
+            <template v-else-if="step === 1201">
+              <button
+                type="button"
+                @click="gotoStep()"
+                class="btn btn-primary d-block w-100">
+                Fertig mit Sortieren
+              </button>
+            </template>
+            <template v-else-if="step === 1202">
+              <button
+                v-if="documentUploader.$refs.imageDocument.length > 0"
+                type="button"
+                @click="documentsConvertImages"
+                class="btn btn-primary d-block w-100"
+                :disabled="documentsImagesConverting">
+                <span
+                  class="spinner-border spinner-border-sm"
+                  v-if="documentsImagesConverting"
+                  role="status"
+                  aria-hidden="true" />
+                PDF erstellen
+              </button>
+              <button
+                v-else
+                type="button"
+                @click="gotoStep()"
+                class="btn btn-primary d-block">
+                weiter
+                <span class="debug" v-if="debug">DEBUG: skip pdf</span>
+              </button>
+            </template>
+            <template v-else-if="step === 2384">
+              <button
+                type="button"
+                :disabled="!gotoValid"
+                @click="gotoStep()"
+                class="btn btn-primary d-block w-100">
+                weiter
+              </button>
+              <button
+                v-if="debug"
+                type="button"
+                @click="debugSkipDate"
+                class="btn btn-outline-primary btn-sm mt-1 d-block w-100">
+                DEBUG set today
+              </button>
+            </template>
+            <template v-else>
+              <button
+                type="button"
+                @click="gotoStep()"
+                :disabled="!gotoValid"
+                class="btn btn-primary d-block w-100">
+                weiter
+              </button>
+            </template>
+          </div>
+          <!--/.col-lg-9-->
         </div>
-      </template>
-      <template v-else-if="step === 4570">
-        <button type="button" @click="submit" class="action btn btn-primary">
-          Anfrage ansehen
-        </button>
-      </template>
-      <template v-else-if="step === 1100">
-        <!-- should be blank -->
-        <button
-          v-if="debug"
-          type="button"
-          @click="gotoStep()"
-          class="action btn btn-outline-primary btn-sm mt-1">
-          DEBUG skip
-        </button>
-      </template>
-      <template v-else-if="step === 1110">
-        <!-- this could be completely hidden -->
-        <button type="button" :disabled="true" class="action btn btn-primary">
-          weiter
-        </button>
-        <button
-          v-if="debug"
-          type="button"
-          @click="gotoStep()"
-          class="action btn btn-outline-primary btn-sm mt-1">
-          DEBUG skip
-        </button>
-      </template>
-      <template v-else-if="step === 1201">
-        <button
-          type="button"
-          @click="gotoStep()"
-          class="action btn btn-primary">
-          Fertig mit Sortieren
-        </button>
-      </template>
-      <template v-else-if="step === 1202">
-        <button
-          v-if="documentUploader.$refs.imageDocument.length > 0"
-          type="button"
-          @click="documentsConvertImages"
-          class="action btn btn-primary"
-          :disabled="documentsImagesConverting">
-          <span
-            class="spinner-border spinner-border-sm"
-            v-if="documentsImagesConverting"
-            role="status"
-            aria-hidden="true" />
-          PDF erstellen
-        </button>
-        <button
-          v-else
-          type="button"
-          @click="gotoStep()"
-          class="action btn btn-primary">
-          weiter
-          <span class="debug" v-if="debug">DEBUG: skip pdf</span>
-        </button>
-      </template>
-      <template v-else-if="step === 2384">
-        <button
-          type="button"
-          :disabled="!gotoValid"
-          @click="gotoStep()"
-          class="action btn btn-primary">
-          weiter
-        </button>
-        <button
-          v-if="debug"
-          type="button"
-          @click="debugSkipDate"
-          class="action btn btn-outline-primary btn-sm mt-1">
-          DEBUG set today
-        </button>
-      </template>
-      <template v-else>
-        <button
-          type="button"
-          @click="gotoStep()"
-          :disabled="!gotoValid"
-          class="action btn btn-primary">
-          weiter
-        </button>
-      </template>
-    </template>
-  </app-shell>
+        <!--/.row-->
+      </div>
+      <!--/.container-->
+    </div>
+    <!--/.sticky-bottom-->
+  </div>
 </template>
 
 <style lang="scss" scoped>
+@use 'sass:map';
+@import 'bootstrap/scss/functions';
 @import '../../../styles/variables.scss';
 
 .debug {
@@ -1495,88 +1506,68 @@ defineEmits(['showhelp'])
   }
 }
 
-.header-title1-bold {
-  color: black;
+/* stretch "main" so actions-footer always sticks to the bottom,
+ * giving it an app-like feel */
+
+.postupload-main {
+  // header
+  //   #header nav's padding
+  //   #header nav .navlogo svg's height
+  //   .breadcrumb's padding
+  //   breadcrumb-item's line-height
+  // footer (sticky)
+  //   py-2
+  //   btn's padding
+  //   btn's height
+  min-height: calc(
+    100vh - (2 * 1rem + 2.5rem) - (2 * 0.5rem + 1.5rem * 14 / 16) -
+      (2 * 0.5rem + 2 * 0.375rem + 1.5rem)
+  );
 }
 
-a.btnlike {
-  color: var(--bs-link-color);
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: none;
-  }
-}
-
-.btn-linklike {
-  border: none;
-  padding: 0;
-  color: var(--bs-link-color);
-  text-decoration: underline;
-  background: transparent;
-}
-
-// TODO: bootstrapize? or leave it centralized like this?
-.step-questioncounter {
-  display: none;
-
-  @media (min-width: $froide-appshell-breakpoint) {
-    display: block;
-  }
-}
+/* make form-check more accessible; whole block is padded + clickable */
 
 .form-check {
-  background-color: #eee;
-  // padding: 1em 1em 1em 2.25em;
+  background-color: var(--bs-tertiary-bg);
+  padding: 0;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+
+  &:hover {
+    background-color: var(--bs-secondary-bg);
+  }
 }
 
 .form-check label {
-  padding: 1em;
+  padding: 1em 1em 1em 2.5em;
   display: block;
 }
 
 .form-check-input {
   margin-top: 1.25em;
-  margin-left: -0.66em;
-  border-color: black;
+  margin-left: 0.75em;
+  border-color: var(--bs-body-color);
   border-width: 2px;
+
+  .form-check:hover & {
+    border-color: var(--bs-primary);
+  }
 
   &:checked {
     background-color: black;
   }
 }
 
-.action-info {
-  margin: 0.5rem auto 0 auto;
-  font-size: 66%;
-  max-width: 30em;
-  text-align: center;
-}
-
-.action.btn {
-  display: block;
-  width: 100%;
-  max-width: 30em;
-  margin: 0 auto;
-}
-
-/*
-input[type='date']:valid {
-  border-color: green;
-}
-
-input[type='date']:invalid {
-  border-color: red;
-}
-*/
+/* make links stand out more in alert boxes */
 
 .alert {
   a {
     text-decoration: underline;
   }
 }
+
+/* re-style the component's filename-dialog so first it looks less interactive,
+ * until you click "change filename" */
 
 .documents-filename {
   max-width: 20em;
@@ -1597,11 +1588,20 @@ input[type='date']:invalid {
   /* ...until its label (looking like a link-button) is clicked, which gives it focus */
   label {
     cursor: pointer;
-    color: red;
     text-decoration: underline;
     color: var(--bs-link-color);
     /* padding-left matches bootstrap's form-group>input for indent */
     padding: 0.25rem 0.25rem 0.25rem 0.75rem;
+  }
+}
+
+/* bootstrap doesn't provide this responsive position class out of the box
+ * (it could be compiled in with utils/helpers)
+ * used here to un-sticky the stepper in the header */
+
+.position-md-static {
+  @media (min-width: map.get($grid-breakpoints, 'md')) {
+    position: static;
   }
 }
 </style>
