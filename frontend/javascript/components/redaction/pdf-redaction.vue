@@ -4,28 +4,28 @@
     ref="top"
     class="pdf-redaction-tool container bg-dark-subtle">
     <div v-if="hasPassword && ready" class="row">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="alert alert-info" role="alert">
           {{ i18n.hasPassword }}
         </div>
       </div>
     </div>
     <div v-if="message" class="row">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="alert alert-info" role="alert">
           {{ message }}
         </div>
       </div>
     </div>
     <div v-if="errors" class="row">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="alert alert-danger" role="alert">
           {{ errors }}
         </div>
       </div>
     </div>
     <div v-if="working" class="row mt-5">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="text-center">
           <h3 v-if="loading">
             {{ i18n.loadingPdf }}
@@ -60,7 +60,7 @@
     <div class="row toolbar">
       <div
         v-if="ready"
-        class="btn-toolbar col-lg-12 align-items-center justify-content-around justify-content-sm-between px-2 bg-light">
+        class="btn-toolbar col align-items-center justify-content-around justify-content-sm-between bg-light">
         <div
           class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
           <input
@@ -243,7 +243,7 @@
       </div>
     </div>
     <div v-if="!minimalUi" class="row">
-      <div v-if="ready" class="btn-toolbar col-lg-12 bg-light py-2">
+      <div v-if="ready" class="btn-toolbar col bg-light py-2">
         <div class="input-group me-auto ms-auto">
           <button
             class="pdf-prev btn btn-outline-secondary"
