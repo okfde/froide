@@ -18,20 +18,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-          cache-dependency-path: |
-            setup.py
-            requirements.txt
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v2
       - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python3-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev gettext libpoppler-cpp-dev
+        run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev gettext
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements*.txt
+            pyproject.toml
+      - name: Setup venv
+        run: |
+          uv venv --python 3.12
+          source .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip pip-tools
-          pip-sync requirements.txt
-          pip install -e .
+          uv pip sync requirements-test.txt
+          uv pip install -e . --no-deps
       - name: Setup Git
         run: |
           git config user.name "fdsbot"
