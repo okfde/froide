@@ -461,7 +461,7 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-spectacular
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   elastic-transport
     #   requests
