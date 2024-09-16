@@ -69,7 +69,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
   "beautifulsoup4",
-  "coverage",
+  "coverage[toml]",
   "django-coverage-plugin",
   "django-stubs",
   "factory-boy",
