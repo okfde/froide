@@ -972,6 +972,7 @@ msgstr "Weiter"
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/templates/snippets/breadcrumbs.html
+#: froide/organization/templates/organization/organization_detail.html
 msgid "Home Page"
 msgstr "Startseite"
 
@@ -8892,6 +8893,7 @@ msgstr "Dieser Organisation beitreten"
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/organization/views.py
+#: froide/organization/templates/organization/organization_detail.html
 msgid "Organizations"
 msgstr "Organisationen"
 
@@ -11819,6 +11821,24 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/templates/snippets/homepage_hero.html
+msgid ""
+"Freedom of Information Request\n"
+"\n"
+"      To: Ministry of Interior\n"
+"\n"
+"      Dear Sir or Madam,\n"
+"      I request information about the following:\n"
+"      ..."
+msgstr ""
+"Anfrage nach dem Informationsfreiheitsgesetz\n"
+"\n"
+"An: Bundesministerium des Innern\n"
+"\n"
+"Guten Tag,\n"
+"ich beantrage Auskunft zu folgender Sachlage:\n"
+"…"
+
 #~ msgid "Tweet request"
 #~ msgstr "Anfrage tweeten"
 
@@ -14312,23 +14332,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid "Register a new application"
 #~ msgstr "Ihre OAuth-Anwendungen"
-
-#~ msgid ""
-#~ "Freedom of Information Request\n"
-#~ "\n"
-#~ "      To: Ministry of Interior\n"
-#~ "\n"
-#~ "      Dear Sir or Madam,\n"
-#~ "      I request information about the following:\n"
-#~ "      ..."
-#~ msgstr ""
-#~ "Anfrage nach dem Informationsfreiheitsgesetz\n"
-#~ "\n"
-#~ "An: Bundesministerium des Innern\n"
-#~ "\n"
-#~ "Guten Tag,\n"
-#~ "ich beantrage Auskunft zu folgender Sachlage:\n"
-#~ "…"
 
 #~ msgid "Team access"
 #~ msgstr "Team-Zugang"
