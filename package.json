@@ -43,7 +43,7 @@
     "vite-plugin-dev-manifest": "^1.0.9"
   },
   "dependencies": {
-    "@okfde/filingcabinet": "github:okfde/django-filingcabinet#krmax44/tooling",
+    "@okfde/filingcabinet": "github:okfde/django-filingcabinet",
     "@popperjs/core": "^2.11.5",
     "@types/lodash.throttle": "^4.1.9",
     "@uppy/core": "^3.0.4",
