@@ -13,18 +13,17 @@ asgiref==3.8.1
     #   channels
     #   django
     #   django-stubs
+async-timeout==4.0.3
+    # via aiohttp
 attrs==24.2.0
     # via
     #   aiohttp
-    #   flake8-bugbear
     #   jsonschema
     #   referencing
 beautifulsoup4==4.12.3
     # via froide (pyproject.toml)
 billiard==4.2.0
     # via celery
-black==24.8.0
-    # via froide (pyproject.toml)
 bleach==6.1.0
     # via froide (pyproject.toml)
 brotli==1.1.0
@@ -53,7 +52,6 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via
-    #   black
     #   celery
     #   click-didyoumean
     #   click-plugins
@@ -86,7 +84,7 @@ distlib==0.3.8
     # via virtualenv
 dj-database-url==2.2.0
     # via froide (pyproject.toml)
-django==5.1.1
+django==4.2.16
     # via
     #   froide (pyproject.toml)
     #   channels
@@ -129,7 +127,7 @@ django-crossdomainmedia==0.0.4
     # via froide (pyproject.toml)
 django-elasticsearch-dsl==8.0
     # via froide (pyproject.toml)
-django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@c88db78b1f420136beb775541587b76d99df1f48
+django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@c3d7fcca61d7a684b741161a9ef8da329a6681c8
     # via froide (pyproject.toml)
 django-filter==24.3
     # via
@@ -193,6 +191,8 @@ elasticsearch-dsl==8.15.2
     # via
     #   froide (pyproject.toml)
     #   django-elasticsearch-dsl
+exceptiongroup==1.2.2
+    # via pytest
 factory-boy==3.3.1
     # via
     #   froide (pyproject.toml)
@@ -207,12 +207,6 @@ fido2==1.1.3
     # via django-mfa3
 filelock==3.16.0
     # via virtualenv
-flake8==7.1.1
-    # via
-    #   froide (pyproject.toml)
-    #   flake8-bugbear
-flake8-bugbear==24.8.19
-    # via froide (pyproject.toml)
 fonttools==4.53.1
     # via weasyprint
 frozenlist==1.4.1
@@ -239,8 +233,6 @@ inflection==0.5.1
     #   pytest-factoryboy
 iniconfig==2.0.0
     # via pytest
-isort==5.13.2
-    # via froide (pyproject.toml)
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.4
@@ -271,8 +263,6 @@ markupsafe==2.1.5
     # via jinja2
 maxminddb==2.6.2
     # via geoip2
-mccabe==0.7.0
-    # via flake8
 monkeytype==23.3.0
     # via froide (pyproject.toml)
 multidict==6.1.0
@@ -283,7 +273,6 @@ mypy==1.11.2
     # via froide (pyproject.toml)
 mypy-extensions==1.0.0
     # via
-    #   black
     #   monkeytype
     #   mypy
 nodeenv==1.9.1
@@ -292,12 +281,9 @@ oauthlib==3.2.2
     # via django-oauth-toolkit
 packaging==24.1
     # via
-    #   black
     #   pikepdf
     #   pytest
     #   pytest-factoryboy
-pathspec==0.12.1
-    # via black
 pbr==6.1.0
     # via froide (pyproject.toml)
 phonenumbers==8.13.45
@@ -315,9 +301,7 @@ pillow==10.4.0
     #   reportlab
     #   weasyprint
 platformdirs==4.3.2
-    # via
-    #   black
-    #   virtualenv
+    # via virtualenv
 playwright==1.46.0
     # via pytest-playwright
 pluggy==1.5.0
@@ -331,9 +315,7 @@ psycopg==3.2.1
 psycopg-binary==3.2.1
     # via psycopg
 pycodestyle==2.12.1
-    # via
-    #   froide (pyproject.toml)
-    #   flake8
+    # via froide (pyproject.toml)
 pycparser==2.22
     # via cffi
 pycryptodome==3.20.0
@@ -343,9 +325,7 @@ pydyf==0.11.0
 pyee==11.1.0
     # via playwright
 pyflakes==3.2.0
-    # via
-    #   froide (pyproject.toml)
-    #   flake8
+    # via froide (pyproject.toml)
 pygtail @ git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946
     # via froide (pyproject.toml)
 pyisemail==2.0.1
@@ -445,6 +425,12 @@ tinycss2==1.3.0
     # via
     #   cssselect2
     #   weasyprint
+tomli==2.0.1
+    # via
+    #   coverage
+    #   django-stubs
+    #   mypy
+    #   pytest
 types-markdown==3.7.0.20240822
     # via froide (pyproject.toml)
 types-python-dateutil==2.9.0.20240906
@@ -455,14 +441,17 @@ types-requests==2.32.0.20240907
     # via froide (pyproject.toml)
 typing-extensions==4.12.2
     # via
+    #   asgiref
     #   dj-database-url
     #   django-stubs
     #   django-stubs-ext
     #   elasticsearch-dsl
     #   jwcrypto
+    #   multidict
     #   mypy
     #   psycopg
     #   pyee
+    #   pypdf
     #   pytest-factoryboy
 tzdata==2024.1
     # via
