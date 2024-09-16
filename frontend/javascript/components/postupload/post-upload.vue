@@ -68,10 +68,63 @@ const isDesktopMediaQueryList = window.matchMedia(
 updateIsDesktop(isDesktopMediaQueryList)
 isDesktopMediaQueryList.addEventListener('change', updateIsDesktop)
 
-const stepHistory = reactive([1100])
-const step = computed(() =>
+const beforeunloadHandler = (e) => e.preventDefault()
+let isBeforeunloadGuarded = false
+const guardBeforeunload = (enable) => {
+  if (enable) {
+    if (!isBeforeunloadGuarded) {
+      window.addEventListener('beforeunload', beforeunloadHandler)
+      isBeforeunloadGuarded = true
+    }
+  } else {
+    window.removeEventListener('beforeunload', beforeunloadHandler)
+  }
+}
+
+const firstStep = 1100
+
+/*
+// This naive implementation of a hash-router for steps works
+// - back button works as intended
+// - load into any step, too
+// but
+// - there are timing issues, i.e. uppyClick doesn't really fire - probably due to nextTick not waiting long enough for the hashchange to settle
+// - going history.back arbitrarily breaks state in subtle ways, i.e. when going from 1202 to 1201
+// A better implementation:
+// - hash is not "reactively equivalent" to the step
+// - instead, on gotoStep, strategically decide whether to pushState or just silently update the internal step
+// - this way history.back goes back to certain "checkpoints"
+// - only these checkpoints are exposed for arbitrary (re-)entry into the flow
+// - it could *maybe* use vue-router
+
+const getStepFromHash = () => {
+  const step = parseInt(document.location.hash.substring(1))
+  if (!step) {
+    console.warn('step not valid')
+    return 1100
+  }
+  return step
+}
+const step = ref(getStepFromHash())
+if (step.value !== firstStep) {
+  guardBeforeunload(true)
+}
+gotoStep(step.value)
+addEventListener('hashchange', () => {
+  step.value = getStepFromHash()
+})
+*/
+
+const stepHistory = reactive([firstStep])
+const step = computed(() => 
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
 )
+
+const gotoStep = (nextStep) => {
+  nextStep = nextStep || getNextStep()
+  // document.location.href = '#' + nextStep
+  stepHistory.push(nextStep)
+}
 
 const formSent = ref(
   props.form.fields.sent.value?.toString() ||
@@ -209,10 +262,6 @@ const progressStep = computed(() =>
   Math.min(Math.floor((step.value - 1000) / 1000), 2)
 )
 
-const gotoStep = (nextStep) => {
-  stepHistory.push(nextStep || getNextStep())
-}
-
 const gotoValid = computed(() => {
   if (
     step.value === 2565 ||
@@ -238,8 +287,10 @@ const backStep = () => {
   if (step.value === 1201) {
     // we go back two steps
     stepHistory.pop()
+    // history.back()
   }
   stepHistory.pop()
+  // history.back()
 }
 
 const isSubmitting = ref(false)
@@ -257,7 +308,7 @@ const submitFetch = async () => {
   return fetch(action, {
     method: 'post',
     headers: {
-      Accept: 'application/json'
+      'x-requested-with': 'fetch'
     },
     body: formdata
   })
@@ -291,16 +342,6 @@ const approveDocsAndSubmit = async () => {
     alert('error' + JSON.stringify(err))
   } finally {
     isSubmitting.value = false
-  }
-}
-
-const beforeunloadHandler = (e) => e.preventDefault()
-
-const guardBeforeunload = (enable) => {
-  if (enable) {
-    window.addEventListener('beforeunload', beforeunloadHandler)
-  } else {
-    window.removeEventListener('beforeunload', beforeunloadHandler)
   }
 }
 
@@ -392,10 +433,12 @@ watch(step, (newStep) => {
       pdfRedactionUploaded()
       break
     case 2382:
+      updateValidity('date')
       updateValidity('registered_mail_date')
       break
     case 2384:
       updateValidity('date')
+      updateValidity('registered_mail_date')
       break
     case 2565:
       updateValidity('costs')
@@ -505,6 +548,16 @@ const updateValidity = (key) => {
       : document.forms.postupload.elements[key]
   // just assume true if browser doesn't support checkValidity
   validity[key] = 'checkValidity' in el ? el.checkValidity() : true
+  if (debug.value) {
+    if (key === 'form' && !el.checkValidity()) {
+      console.log(
+        'updateValidity form failed, offending elements:',
+        [...document.forms.postupload.elements].filter(
+          (el) => !el.checkValidity()
+        )
+      )
+    }
+  }
   // console.log('updateValidity', el, 'value=', el.value, 'checkValidity()', el.checkValidity(), validity[key], validity, values)
   /*
   console.log(
@@ -524,6 +577,7 @@ const updateValidity = (key) => {
 const values = reactive({
   // FIXME date doesn't populate from a saved form?
   date: props.form.fields.date.value,
+  registered_mail_date: props.form.fields.registered_mail_date.value,
   costs:
     props.status_form.fields.costs.value?.strValue ||
     props.status_form.fields.costs.initial.strValue,
@@ -544,7 +598,9 @@ const stepAndUppyClick = () => {
 
 const debugSkipDate = () => {
   values.date = document.forms.postupload.elements.date.max
+  values.registered_mail_date = document.forms.postupload.elements.date.max
   updateValidity('date')
+  updateValidity('registered_mail_date')
   gotoStep()
 }
 
@@ -606,6 +662,7 @@ const onlineHelp = ref()
           style="font-size: 50%; margin-left: 1em">
           submit/fetch
         </button>
+        <!--<pre>{{ validity }}</pre>-->
         <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
         <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
         <!--<span class="debug">p{{ progress }}</span>-->
@@ -1003,7 +1060,7 @@ const onlineHelp = ref()
               <input
                 type="radio"
                 name="resolution"
-                required=""
+                :required="formStatusIsResolved"
                 class="form-check-input"
                 :id="'id_resolution_' + choiceIndex"
                 :value="choice.value"
@@ -1219,13 +1276,11 @@ const onlineHelp = ref()
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label class="fw-bold col-form-label" for="id_costs">
-              <!--{{ status_form.fields.costs.label }}-->
               Welchen Betrag hat die Behörde verlangt?
             </label>
             <div class="col-md-8">
               <div class="input-group" style="width: 10rem">
                 <!-- type=number does not support pattern -->
-                <!-- TODO: client-side validation like with type=date -->
                 <input
                   type="number"
                   name="costs"
@@ -1374,22 +1429,28 @@ const onlineHelp = ref()
                   aria-hidden="true" />
                 Bestätigen
               </button>
-              <div class="mt-2">
+              <div class="mt-2" v-if="!validity.form">
                 <small>
-                  <template v-if="!validity.form">
-                    Das Formular enthält noch Fehler.
-                    <!-- TODO: we could go through all elements, validate, and report here -->
-                  </template>
-                  <template v-if="!object_public">
-                    Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente
-                    werden deshalb nicht öffentlich verfügbar.
-                  </template>
-                  <!--<template v-if="object_public && user_is_staff">
-            Um Dokumente vorerst nicht zu veröffentlichen, die Häkchen
-            entfernen. TODO
-          </template>-->
+                  Das Formular enthält noch Fehler.
+                  <!-- TODO: we could go through all elements, validate, and report here -->
                 </small>
               </div>
+              <div class="mt-2" v-if="!object_public">
+                <small>
+                  Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente
+                  werden deshalb nicht öffentlich verfügbar.
+                </small>
+              </div>
+              <!-- 
+                TODO
+                There is a feature missing here:
+                if public and is_staff, offer checkboxes to opt-out of auto-approving the uploaded attachments.
+                Approval is currently set by the redact_attachment_task.
+                Changing this default would necessitate deeper changes to how/when/where approval is set.
+                <template v-if="object_public && user_is_staff">
+                  Um Dokumente vorerst nicht zu veröffentlichen, die Häkchen entfernen.
+                </template>
+              -->
             </template>
             <template v-else-if="step === 4570">
               <button
@@ -1451,9 +1512,8 @@ const onlineHelp = ref()
                 v-else
                 type="button"
                 @click="gotoStep()"
-                class="btn btn-primary d-block">
+                class="btn btn-primary d-block w-100">
                 weiter
-                <span class="debug" v-if="debug">DEBUG: skip pdf</span>
               </button>
             </template>
             <template v-else-if="step === 2384">

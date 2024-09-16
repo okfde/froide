@@ -334,8 +334,7 @@ def edit_postal_message(request, foirequest, message_id):
                 _("one public body found"),
                 _("{count} public bodies found").format(count="${count}"),
             ],
-            "classificationPlural"
-            "jurisdictionPlural": [
+            "classificationPlural" "jurisdictionPlural": [
                 _("Jurisdiction"),
                 _("Jurisdictions"),
             ],
@@ -357,6 +356,7 @@ def edit_postal_message(request, foirequest, message_id):
                 _("Part of administrative regions"),
             ],
             # new
+            "back": _("Back"),
             "step": _("Step"),
             "addLetter": _("Add letter"),
         },
