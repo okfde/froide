@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "detachhead.basedpyright",
+    "vue.volar",
+    "vue.vscode-typescript-vue-plugin",
+    "charliermarsh.ruff",
+    "dbaeumer.vscode-eslint"
+  ]
+}
