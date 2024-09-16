@@ -15,6 +15,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
       - es-logs:/var/log
     environment:
+      - xpack.security.enabled=false
       - discovery.type=single-node
       - cluster.routing.allocation.disk.threshold_enabled=false
       - cluster.routing.allocation.disk.watermark.low=3gb

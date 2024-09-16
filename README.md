@@ -24,15 +24,13 @@ pre-commit install
 
 ### Start services
 
-You can run your own Postgres+PostGIS database and Elasticsearch service or run them with Docker.
-
-You need [docker](https://www.docker.com/community-edition) and [docker-compose](https://docs.docker.com/compose/). Make sure Docker is running and use the following command:
+You can run your own Postgres+PostGIS database and Elasticsearch service or run them with [Docker](https://docker.com):
 
 ```
-docker-compose up
+docker compose -f compose-dev.yaml up
 ```
 
-This will start Postgres and Elasticsearch and listen on port 5432 and 9200 respectively. You can adjust the port mapping in the `docker-compose.yml`.
+This will start Postgres and Elasticsearch and listen on port 5432 and 9200 respectively. You can adjust the port mapping in the `compose-dev.yaml`.
 
 ### Setup database and search index, start server
 
@@ -65,9 +63,9 @@ make testui
 
 ### Development tooling
 
-For Python code, we use flake8 following black code style. JavaScript, Vue and SCSS files are formatted and linted with ESLint and Prettier.
+For Python code, we use ruff for linting and formatting. JavaScript, Vue and SCSS files are formatted and linted with ESLint and Prettier.
 
-Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode, the [Python](https://code.visualstudio.com/docs/python/linting), [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur) extensions are helpful, with these workspace settings recommended:
+Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode, [we recommend some extensions](./.vscode/extensions.json)
 
 ```json
 {
