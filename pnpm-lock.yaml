@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@okfde/filingcabinet':
-        specifier: github:okfde/django-filingcabinet#krmax44/tooling
-        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c88db78b1f420136beb775541587b76d99df1f48
+        specifier: github:okfde/django-filingcabinet
+        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c3d7fcca61d7a684b741161a9ef8da329a6681c8
       '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.8
@@ -351,8 +351,8 @@ packages:
     resolution: {tarball: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c}
     version: 1.0.0
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c88db78b1f420136beb775541587b76d99df1f48':
-    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c88db78b1f420136beb775541587b76d99df1f48}
+  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c3d7fcca61d7a684b741161a9ef8da329a6681c8':
+    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c3d7fcca61d7a684b741161a9ef8da329a6681c8}
     version: 0.0.4
 
   '@popperjs/core@2.11.8':
@@ -2161,7 +2161,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c88db78b1f420136beb775541587b76d99df1f48':
+  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/c3d7fcca61d7a684b741161a9ef8da329a6681c8':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.2(@popperjs/core@2.11.8)
