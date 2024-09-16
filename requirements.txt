@@ -12,6 +12,8 @@ asgiref==3.8.1
     # via
     #   channels
     #   django
+async-timeout==4.0.3
+    # via aiohttp
 attrs==24.2.0
     # via
     #   aiohttp
@@ -71,7 +73,7 @@ deprecated==1.2.14
     # via pikepdf
 dj-database-url==2.2.0
     # via froide (pyproject.toml)
-django==5.1.1
+django==4.2.16
     # via
     #   froide (pyproject.toml)
     #   channels
@@ -110,7 +112,7 @@ django-crossdomainmedia==0.0.4
     # via froide (pyproject.toml)
 django-elasticsearch-dsl==8.0
     # via froide (pyproject.toml)
-django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@c88db78b1f420136beb775541587b76d99df1f48
+django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@c3d7fcca61d7a684b741161a9ef8da329a6681c8
     # via froide (pyproject.toml)
 django-filter==24.3
     # via
@@ -325,10 +327,13 @@ tinycss2==1.3.0
     #   weasyprint
 typing-extensions==4.12.2
     # via
+    #   asgiref
     #   dj-database-url
     #   elasticsearch-dsl
     #   jwcrypto
+    #   multidict
     #   psycopg
+    #   pypdf
 tzdata==2024.1
     # via
     #   celery
