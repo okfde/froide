@@ -1,6 +1,6 @@
 {% load i18n %}
 {% if messages %}
-    <div class="container mb-3 mt-3">
+    <div class="container h-list g-3">
         {% for message in messages %}
             <div class="alert {% if message.tags == "error" %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} show alert-dismissible"
                  role="alert">
