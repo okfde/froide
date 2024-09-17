@@ -197,9 +197,11 @@ class PostalEditForm(MessageEditMixin, JSONMixin, forms.Form):
             message.is_response = False
             message.sender_user = message.request.user
             message.recipient_public_body = self.cleaned_data["publicbody"]
+            message.sender_public_body = None
         else:
             message.is_response = True
             message.sender_public_body = self.cleaned_data["publicbody"]
+            message.recipient_public_body = None
 
         message.save()
 

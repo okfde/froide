@@ -126,10 +126,13 @@ const gotoStep = (nextStep) => {
   stepHistory.push(nextStep)
 }
 
+/* untangle ambiguous semantics:
+ * there is message.sent, but this is not the same.
+ * sent in the Form's context means "negated is_response"
+ * TODO: this should be cleaned up at the model level.
+ */
 const formSent = ref(
-  props.form.fields.sent.value?.toString() ||
-    props.form.fields.sent.initial?.toString() ||
-    '0'
+  props.message?.is_response ? '0' : '1'
 )
 const formIsSent = computed(() => formSent.value === '1')
 
@@ -804,11 +807,7 @@ const onlineHelp = ref()
                 required=""
                 class="form-check-input"
                 :id="'id_sent_' + choiceIndex"
-                :value="choice.value"
-                :data-x-checked="
-                  form.fields.sent.value === choice.value ||
-                  form.fields.sent.initial === choiceIndex
-                " />
+                :value="choice.value" />
               <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
                 choice.label
               }}</label>
