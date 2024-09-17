@@ -567,6 +567,7 @@ class Base(Configuration):
             "about": "/about/",
             "help": "/help/",
             "throttled": "/help/",
+            "help_postupload_redaction": "/plain/test-2/",
         },
         "moderation_triggers": [
             {
