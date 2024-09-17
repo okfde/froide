@@ -238,7 +238,7 @@
 import 'string.prototype.repeat'
 import ConfirmNoRedaction from './confirm-no-redaction'
 
-import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
+import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.js?url'
 
 import range from 'lodash.range'
 
