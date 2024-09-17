@@ -127,7 +127,7 @@ django-crossdomainmedia==0.0.4
     # via froide (pyproject.toml)
 django-elasticsearch-dsl==8.0
     # via froide (pyproject.toml)
-django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@c3d7fcca61d7a684b741161a9ef8da329a6681c8
+django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70
     # via froide (pyproject.toml)
 django-filter==24.3
     # via
