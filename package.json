@@ -34,7 +34,7 @@
     "@types/bootstrap": "^5.2.1",
     "@types/glidejs__glide": "^3.4.2",
     "@vitejs/plugin-vue": "^4.0.0",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.20",
     "cli-real-favicon": "0.0.8",
     "postcss": "^8.4.20",
     "sass": "^1.58.3",
