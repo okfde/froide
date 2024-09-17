@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@okfde/filingcabinet':
         specifier: github:okfde/django-filingcabinet
-        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))
+        version: git+https://git@github.com:okfde/django-filingcabinet.git#24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))
       '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.8
@@ -86,7 +86,7 @@ importers:
     devDependencies:
       '@okfde/eslint-config-froide':
         specifier: okfde/eslint-config-froide
-        version: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)
+        version: git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)
       '@types/bootstrap':
         specifier: ^5.2.1
         version: 5.2.7
@@ -98,13 +98,13 @@ importers:
         version: 4.3.4(vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))(vue@3.3.4)
       autoprefixer:
         specifier: ^10.4.13
-        version: 10.4.16(postcss@8.4.30)
+        version: 10.4.16(postcss@8.4.47)
       cli-real-favicon:
         specifier: 0.0.8
         version: 0.0.8
       postcss:
-        specifier: ^8.4.20
-        version: 8.4.30
+        specifier: ^8.4.47
+        version: 8.4.47
       sass:
         specifier: ^1.58.3
         version: 1.68.0
@@ -343,12 +343,12 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@okfde/eslint-config-froide@https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c':
-    resolution: {tarball: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c}
+  '@okfde/eslint-config-froide@git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c':
+    resolution: {commit: daabc1889e3b91e8c09eed6326ce4788a8cd116c, repo: git@github.com:okfde/eslint-config-froide.git, type: git}
     version: 1.0.0
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70':
-    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70}
+  '@okfde/filingcabinet@git+https://git@github.com:okfde/django-filingcabinet.git#24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70':
+    resolution: {commit: 24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70, repo: git@github.com:okfde/django-filingcabinet.git, type: git}
     version: 0.0.4
 
   '@popperjs/core@2.11.8':
@@ -1469,8 +1469,8 @@ packages:
   namespace-emitter@2.0.1:
     resolution: {integrity: sha512-N/sMKHniSDJBjfrkbS/tpkPj4RAbvW3mr8UAzvlMHyun93XEm83IAvhWtJVHo+RHn/oO8Job5YN4b+wRjSVp5g==}
 
-  nanoid@3.3.6:
-    resolution: {integrity: sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==}
+  nanoid@3.3.7:
+    resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
@@ -1583,8 +1583,8 @@ packages:
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
-  postcss@8.4.30:
-    resolution: {integrity: sha512-7ZEao1g4kd68l97aWG/etQKPKq07us0ieSZ2TnFDk11i0ZfDW2AwKHYU8qv4MZKqN2fdBfg+7q0ES06UA73C1g==}
+  postcss@8.4.47:
+    resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
     engines: {node: ^10 || ^12 || >=14}
 
   preact@10.17.1:
@@ -1735,6 +1735,10 @@ packages:
 
   source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
+    engines: {node: '>=0.10.0'}
+
+  source-map-js@1.2.1:
+    resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
   source-map-support@0.5.21:
@@ -2183,7 +2187,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@okfde/eslint-config-froide@https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)':
+  '@okfde/eslint-config-froide@git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)':
     dependencies:
       eslint: 9.9.1
       eslint-config-prettier: 9.1.0(eslint@9.9.1)
@@ -2196,7 +2200,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))':
+  '@okfde/filingcabinet@git+https://git@github.com:okfde/django-filingcabinet.git#24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.2(@popperjs/core@2.11.8)
@@ -2419,7 +2423,7 @@ snapshots:
       '@vue/shared': 3.3.4
       estree-walker: 2.0.2
       magic-string: 0.30.2
-      postcss: 8.4.30
+      postcss: 8.4.47
       source-map-js: 1.0.2
 
   '@vue/compiler-ssr@3.3.4':
@@ -2625,14 +2629,14 @@ snapshots:
 
   async@3.2.4: {}
 
-  autoprefixer@10.4.16(postcss@8.4.30):
+  autoprefixer@10.4.16(postcss@8.4.47):
     dependencies:
       browserslist: 4.21.11
       caniuse-lite: 1.0.30001539
       fraction.js: 4.3.6
       normalize-range: 0.1.2
       picocolors: 1.0.0
-      postcss: 8.4.30
+      postcss: 8.4.47
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.5: {}
@@ -3492,7 +3496,7 @@ snapshots:
 
   namespace-emitter@2.0.1: {}
 
-  nanoid@3.3.6: {}
+  nanoid@3.3.7: {}
 
   nanoid@4.0.2: {}
 
@@ -3593,11 +3597,11 @@ snapshots:
 
   postcss-value-parser@4.2.0: {}
 
-  postcss@8.4.30:
+  postcss@8.4.47:
     dependencies:
-      nanoid: 3.3.6
-      picocolors: 1.0.0
-      source-map-js: 1.0.2
+      nanoid: 3.3.7
+      picocolors: 1.1.0
+      source-map-js: 1.2.1
 
   preact@10.17.1: {}
 
@@ -3756,6 +3760,8 @@ snapshots:
 
   source-map-js@1.0.2: {}
 
+  source-map-js@1.2.1: {}
+
   source-map-support@0.5.21:
     dependencies:
       buffer-from: 1.1.2
@@ -3909,7 +3915,7 @@ snapshots:
     dependencies:
       browserslist: 4.21.11
       escalade: 3.1.1
-      picocolors: 1.0.0
+      picocolors: 1.1.0
 
   update-browserslist-db@1.1.0(browserslist@4.23.3):
     dependencies:
@@ -3935,7 +3941,7 @@ snapshots:
   vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0):
     dependencies:
       esbuild: 0.18.20
-      postcss: 8.4.30
+      postcss: 8.4.47
       rollup: 3.29.3
     optionalDependencies:
       '@types/node': 22.5.5
