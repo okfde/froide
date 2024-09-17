@@ -2,7 +2,8 @@ from functools import partial
 
 from django import forms
 from django.db import transaction
-from django.forms.models import ModelChoiceField, ModelChoiceIterator
+from django.forms import HiddenInput
+from django.forms.models import ModelChoiceField
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
@@ -153,17 +154,6 @@ class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
         return att
 
 
-class ThinModelChoiceIterator(ModelChoiceIterator):
-    def __init__(self, field):
-        self.field = field
-        # basically empty the queryset so the thousands of choices are not rendered into context
-        self.queryset = field.queryset[:0]
-
-
-class ThinModelChoiceField(ModelChoiceField):
-    iterator = ThinModelChoiceIterator
-
-
 class PostalEditForm(MessageEditMixin, JSONMixin, forms.Form):
     sent = forms.TypedChoiceField(
         choices=(
@@ -177,12 +167,11 @@ class PostalEditForm(MessageEditMixin, JSONMixin, forms.Form):
         error_messages={"required": _("You have to decide!")},
     )
 
-    publicbody = ThinModelChoiceField(
+    publicbody = ModelChoiceField(
         label=_("Public body"),
         queryset=PublicBody.objects.all(),
-        # queryset=PublicBody.objects.filter(id__gte=7600, id__lte=7700),
         required=True,
-        # widget=PublicBodySelect,
+        widget=HiddenInput(),
     )
 
     def __init__(self, *args, **kwargs):
