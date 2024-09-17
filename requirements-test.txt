@@ -44,7 +44,7 @@ cffi==1.17.1
     #   weasyprint
 cfgv==3.4.0
     # via pre-commit
-channels==4.1.0
+channels==4.0.0
     # via froide (pyproject.toml)
 chardet==5.2.0
     # via reportlab
@@ -374,7 +374,9 @@ python-slugify==8.0.4
     #   froide (pyproject.toml)
     #   pytest-playwright
 pytz==2024.1
-    # via icalendar
+    # via
+    #   django-oauth-toolkit
+    #   icalendar
 pyyaml==6.0.2
     # via
     #   drf-spectacular
