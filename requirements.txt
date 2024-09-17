@@ -39,7 +39,7 @@ cffi==1.17.1
     # via
     #   cryptography
     #   weasyprint
-channels==4.1.0
+channels==4.0.0
     # via froide (pyproject.toml)
 chardet==5.2.0
     # via reportlab
@@ -286,7 +286,9 @@ python-poppler==0.4.1
 python-slugify==8.0.4
     # via froide (pyproject.toml)
 pytz==2024.1
-    # via icalendar
+    # via
+    #   django-oauth-toolkit
+    #   icalendar
 pyyaml==6.0.2
     # via drf-spectacular
 qrcode==7.3.1
