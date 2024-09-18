@@ -245,6 +245,7 @@ import range from 'lodash.range'
 import { Modal } from 'bootstrap'
 
 import { bustCache, getData } from '../../lib/api.js'
+import { toRaw } from 'vue'
 
 function isTouchDevice() {
   return 'ontouchstart' in window
@@ -457,7 +458,8 @@ export default {
     },
     loadPage(pageNum) {
       this.pageLoading = true
-      return this.doc.getPage(pageNum).then((page) => {
+      const doc = toRaw(this.doc)
+      return doc.getPage(pageNum).then((page) => {
         console.log('# Page ' + pageNum)
         this.page = page
         if (this.maxWidth === null) {
