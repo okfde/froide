@@ -21,7 +21,13 @@ class FoiRequestConfig(AppConfig):
             account_merged,
         )
         from froide.account.export import registry
+        from froide.api import api_router
         from froide.foirequest import signals  # noqa
+        from froide.foirequest.api_views import (
+            FoiAttachmentViewSet,
+            FoiMessageViewSet,
+            FoiRequestViewSet,
+        )
         from froide.helper.search import search_registry
         from froide.team import team_changed
 
@@ -42,6 +48,10 @@ class FoiRequestConfig(AppConfig):
         comment_will_be_posted.connect(signals.pre_comment_foimessage)
         team_changed.connect(keep_foiproject_teams_synced_with_requests)
         account_confirmed.connect(send_request_when_account_confirmed)
+
+        api_router.register(r"request", FoiRequestViewSet, basename="request")
+        api_router.register(r"message", FoiMessageViewSet, basename="message")
+        api_router.register(r"attachment", FoiAttachmentViewSet, basename="attachment")
 
 
 def add_search(request):

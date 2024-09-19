@@ -18,6 +18,26 @@ class PublicBodyConfig(AppConfig):
         account_merged.connect(merge_user)
         search_registry.register(add_search)
 
+        from froide.api import api_router
+
+        from .api_views import (
+            CategoryViewSet,
+            ClassificationViewSet,
+            FoiLawViewSet,
+            JurisdictionViewSet,
+            PublicBodyViewSet,
+        )
+
+        api_router.register(r"publicbody", PublicBodyViewSet, basename="publicbody")
+        api_router.register(r"category", CategoryViewSet, basename="category")
+        api_router.register(
+            r"classification", ClassificationViewSet, basename="classification"
+        )
+        api_router.register(
+            r"jurisdiction", JurisdictionViewSet, basename="jurisdiction"
+        )
+        api_router.register(r"law", FoiLawViewSet, basename="law")
+
 
 def add_search(request):
     return {

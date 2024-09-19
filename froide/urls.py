@@ -12,36 +12,13 @@ from rest_framework.schemas import get_schema_view
 
 from froide.account.api_views import ProfileView, UserPreferenceView
 from froide.account.views import bad_login_view_redirect
-from froide.campaign.api_views import CampaignViewSet
-from froide.document.api_views import (
-    DocumentCollectionViewSet,
-    DocumentViewSet,
-    PageAnnotationViewSet,
-    PageViewSet,
-)
 from froide.document.urls import document_media_urlpatterns
-from froide.foirequest.api_views import (
-    FoiAttachmentViewSet,
-    FoiMessageViewSet,
-    FoiRequestViewSet,
-)
 from froide.foirequest.views import FoiRequestSitemap, index
-from froide.foirequestfollower.api_views import FoiRequestFollowerViewSet
-from froide.georegion.api_views import GeoRegionViewSet
-from froide.problem.api_views import ProblemReportViewSet
-from froide.publicbody.api_views import (
-    CategoryViewSet,
-    ClassificationViewSet,
-    FoiLawViewSet,
-    JurisdictionViewSet,
-    PublicBodyViewSet,
-)
 from froide.publicbody.views import (
     FoiLawSitemap,
     JurisdictionSitemap,
     PublicBodySitemap,
 )
-from froide.upload.api_views import UploadViewSet
 
 from .api import api_router
 
@@ -54,27 +31,6 @@ def handler500(request):
     from django.shortcuts import render
 
     return render(request, "500.html", {"request": request}, status=500)
-
-
-api_router.register(r"request", FoiRequestViewSet, basename="request")
-api_router.register(r"message", FoiMessageViewSet, basename="message")
-api_router.register(r"attachment", FoiAttachmentViewSet, basename="attachment")
-api_router.register(r"publicbody", PublicBodyViewSet, basename="publicbody")
-api_router.register(r"category", CategoryViewSet, basename="category")
-api_router.register(r"classification", ClassificationViewSet, basename="classification")
-api_router.register(r"jurisdiction", JurisdictionViewSet, basename="jurisdiction")
-api_router.register(r"law", FoiLawViewSet, basename="law")
-api_router.register(r"georegion", GeoRegionViewSet, basename="georegion")
-api_router.register(r"following", FoiRequestFollowerViewSet, basename="following")
-api_router.register(r"campaign", CampaignViewSet, basename="campaign")
-api_router.register(r"upload", UploadViewSet, basename="upload")
-api_router.register(r"problemreport", ProblemReportViewSet, basename="problemreport")
-api_router.register(r"document", DocumentViewSet, basename="document")
-api_router.register(
-    r"documentcollection", DocumentCollectionViewSet, basename="documentcollection"
-)
-api_router.register(r"page", PageViewSet, basename="page")
-api_router.register(r"pageannotation", PageAnnotationViewSet, basename="pageannotation")
 
 
 class StaticViewSitemap(Sitemap):
