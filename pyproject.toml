@@ -164,7 +164,7 @@ warn_redundant_casts = true
 warn_unused_configs = true
 warn_unreachable = true
 warn_no_return = true
-python_version = 3.10
+python_version = "3.10"
 
 [tool.django-stubs]
 django_settings_module = "froide.settings"
