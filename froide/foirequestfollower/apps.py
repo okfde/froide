@@ -8,10 +8,16 @@ class FoiRequestFollowerConfig(AppConfig):
 
     def ready(self):
         import froide.foirequestfollower.listeners  # noqa
+        from froide.api import api_router
         from froide.foirequest.models import FoiRequest
         from froide.follow.configuration import follow_registry
 
+        from .api_views import FoiRequestFollowerViewSet
         from .configuration import FoiRequestFollowConfiguration
+
+        api_router.register(
+            r"following", FoiRequestFollowerViewSet, basename="following"
+        )
 
         FoiRequest.made_private.connect(remove_followers)
 

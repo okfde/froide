@@ -13,8 +13,14 @@ class ProblemConfig(AppConfig):
         from froide.account import account_merged
         from froide.account.export import registry
         from froide.account.menu import MenuItem, menu_registry
+        from froide.api import api_router
 
         from . import signals  # noqa
+        from .api_views import ProblemReportViewSet
+
+        api_router.register(
+            r"problemreport", ProblemReportViewSet, basename="problemreport"
+        )
 
         registry.register(export_user_data)
         account_merged.connect(merge_user)
