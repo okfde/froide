@@ -722,11 +722,6 @@ const onlineHelp = ref()
                 schwärzen. Das erledigen Sie später mit unserem Online-Tool.
               </p>
               <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
-              <p>
-                <a @click="onlineHelp.show(config.urls.helpPostuploadRedaction)"
-                  >online help demo</a
-                >
-              </p>
             </div>
             <div class="alert alert-warning">
               <h4><i class="fa fa-exclamation-circle fa-lg"></i> Neu</h4>
