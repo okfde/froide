@@ -148,13 +148,6 @@ $froide-theme-dark: (
   )
 );
 
-$froide-appshell-breakpoint: map.get($grid-breakpoints, "md");
-:root {
-  --froide-appshell-breakpoint: #{$froide-appshell-breakpoint};
-}
-
-$froide-onlinehelp-breakpoint: map.get($grid-breakpoints, "md");
-
 $breadcrumb-divider: quote('→');
 
 $enable-smooth-scroll: false;
