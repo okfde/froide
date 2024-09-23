@@ -59,11 +59,11 @@ const isDesktop = ref(false)
 const updateIsDesktop = (mql) => {
   isDesktop.value = mql.matches
 }
-const froideAppshellBreakpoint = getComputedStyle(
+const desktopBreakpoint = getComputedStyle(
   document.body
-).getPropertyValue('--froide-appshell-breakpoint')
+).getPropertyValue('--bs-breakpoint-md')
 const isDesktopMediaQueryList = window.matchMedia(
-  `(min-width: ${froideAppshellBreakpoint})`
+  `(min-width: ${desktopBreakpoint})`
 )
 updateIsDesktop(isDesktopMediaQueryList)
 isDesktopMediaQueryList.addEventListener('change', updateIsDesktop)
