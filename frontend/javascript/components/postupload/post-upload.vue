@@ -1228,6 +1228,7 @@ const onlineHelp = ref()
             @uploaded="pdfRedactionUploaded"
             @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
             ref="pdfRedaction">
+            <!--
             <template #toolbar-right>
               <div class="btn-group" v-show="isDesktop">
                 <button
@@ -1247,6 +1248,7 @@ const onlineHelp = ref()
                 </button>
               </div>
             </template>
+            -->
           </pdf-redaction>
         </div>
       </div>
