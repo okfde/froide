@@ -203,7 +203,7 @@
           </a>
         </div>
 
-        <slot name="toolbar-right"></slot>
+        <!-- <slot name="toolbar-right"></slot> -->
       </div>
     </div>
     <div class="py-3 row preview">
