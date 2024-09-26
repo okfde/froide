@@ -374,7 +374,7 @@ class UploadViewSet(
     )
     parser_classes = [TusUploadStreamParser]
     permission_classes = (UploadWithScopePermission,)
-    required_scopes = ["write:request"]
+    required_scopes = ["upload:message"]
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
