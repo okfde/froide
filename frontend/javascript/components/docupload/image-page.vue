@@ -8,7 +8,8 @@
           :alt="page.name"
           :title="page.name"
           class="page-image"
-          :src="pageUrl" />
+          :src="pageUrl"
+        />
       </div>
     </div>
     <div class="row justify-content-center">
@@ -16,7 +17,8 @@
         <div class="text-start">
           <button
             class="btn btn-sm text-body-secondary small"
-            @click="rotatePage">
+            @click="rotatePage"
+          >
             <span class="fa fa-rotate-right" />
           </button>
         </div>
@@ -30,7 +32,8 @@
         <div v-if="!isLast" class="text-end">
           <button
             class="btn btn-sm text-body-secondary small"
-            @click="splitPages">
+            @click="splitPages"
+          >
             <span class="fa fa-scissors" />
           </button>
         </div>
@@ -42,14 +45,16 @@
       role="progressbar"
       :aria-valuenow="document.progress"
       aria-valuemin="0"
-      aria-valuemax="100">
+      aria-valuemax="100"
+    >
       <div
         class="progress-bar"
         :class="{
           'progress-bar-animated progress-bar-striped': progressAlmostComplete,
           'bg-info progress-bar-striped': progressUnknown
         }"
-        :style="{ width: progressPercentLabel }" />
+        :style="{ width: progressPercentLabel }"
+      />
     </div>
   </div>
 </template>
@@ -177,7 +182,7 @@ export default {
             heigh: v.height,
             implicitRotate: 0
           }
-          const orientation = reader.exif?.Orientation.value
+          const orientation = reader.exif?.Orientation?.value
           if (orientation === 6) {
             data.implicitRotate = 90
           } else if (orientation === 8) {
