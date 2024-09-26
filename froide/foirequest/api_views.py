@@ -238,8 +238,20 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         return serializer.data
 
 
+class FoiMessageFilter(filters.FilterSet):
+    class Meta:
+        model = FoiMessage
+        fields = (
+            "request",
+            "kind",
+            "is_response",
+        )
+
+
 class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FoiMessageSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = FoiMessageFilter
 
     def get_queryset(self):
         qs = get_read_foimessage_queryset(self.request).order_by()
