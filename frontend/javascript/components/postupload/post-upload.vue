@@ -1651,13 +1651,4 @@ const onlineHelp = ref()
   }
 }
 
-/* bootstrap doesn't provide this responsive position class out of the box
- * (it could be compiled in with utils/helpers)
- * used here to un-sticky the stepper in the header */
-
-.position-md-static {
-  @media (min-width: map.get($grid-breakpoints, 'md')) {
-    position: static;
-  }
-}
 </style>
