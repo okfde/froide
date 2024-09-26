@@ -10,6 +10,9 @@ from taggit.models import Tag
 
 from froide.campaign.models import Campaign
 from froide.document.api_views import DocumentSerializer
+from froide.foirequest.forms.message import TransferUploadForm
+from froide.foirequest.models.message import MessageKind
+from froide.helper.auth import get_write_queryset
 from froide.helper.search.api_views import ESQueryMixin
 from froide.helper.text_diff import get_differences
 from froide.publicbody.api_views import (
@@ -71,6 +74,15 @@ def filter_by_authenticated_user_queryset(request):
     return User.objects.none()
 
 
+class CreateOnlyWithScopePermission(TokenHasScope):
+    def has_permission(self, request, view):
+        if view.action not in ("create", "update"):
+            return True
+        if not request.user.is_authenticated:
+            return False
+        return super().has_permission(request, view)
+
+
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name="api:attachment-detail", lookup_field="pk"
@@ -125,6 +137,40 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         return obj.get_absolute_domain_file_url(authorized=True)
 
 
+class FoiAttachmentTusSerializer(serializers.Serializer):
+    message = serializers.IntegerField()
+    upload = serializers.CharField()
+
+    def validate_message(self, value):
+        writable_requests = get_write_queryset(
+            FoiRequest.objects.all(),
+            self.context["request"],
+            has_team=True,
+            scope="upload:message",
+        )
+        try:
+            return FoiMessage.objects.get(
+                pk=value,
+                request__in=writable_requests,
+                kind=MessageKind.POST,
+            )
+        except FoiMessage.DoesNotExist as e:
+            raise serializers.ValidationError("Message not found") from e
+
+    def validate(self, data):
+        self.form = TransferUploadForm(
+            data=data, foimessage=data["message"], user=self.context["request"].user
+        )
+        if not self.form.is_valid():
+            raise serializers.ValidationError("Invalid upload")
+
+        return data
+
+    def create(self, validated_data):
+        added = self.form.save(self.context["request"])
+        return added[0]
+
+
 class FoiAttachmentFilter(filters.FilterSet):
     class Meta:
         model = FoiAttachment
@@ -137,10 +183,27 @@ class FoiAttachmentFilter(filters.FilterSet):
         )
 
 
-class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = FoiAttachmentSerializer
+class FoiAttachmentViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
+):
+    serializer_action_classes = {
+        "create": FoiAttachmentTusSerializer,
+        "list": FoiAttachmentSerializer,
+        "retrieve": FoiAttachmentSerializer,
+    }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiAttachmentFilter
+    permission_classes = (CreateOnlyWithScopePermission,)
+    required_scopes = ["upload:message"]
+
+    def get_serializer_class(self):
+        try:
+            return self.serializer_action_classes[self.action]
+        except (KeyError, AttributeError):
+            return FoiRequestListSerializer
 
     def get_queryset(self):
         qs = get_read_foiattachment_queryset(self.request)
@@ -152,6 +215,16 @@ class FoiAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
             "belongs_to__request",
             "belongs_to__request__user",
         )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        data = FoiAttachmentSerializer(instance, context={"request": request}).data
+        return Response(data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        return serializer.save()
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
@@ -500,15 +573,6 @@ class FoiRequestFilter(filters.FilterSet):
         if value == "-":
             return queryset.filter(campaign__isnull=True)
         return queryset.filter(campaign=value)
-
-
-class CreateOnlyWithScopePermission(TokenHasScope):
-    def has_permission(self, request, view):
-        if view.action not in ("create", "update"):
-            return True
-        if not request.user.is_authenticated:
-            return False
-        return super(CreateOnlyWithScopePermission, self).has_permission(request, view)
 
 
 class MakeRequestThrottle(throttling.BaseThrottle):

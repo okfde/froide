@@ -15,6 +15,7 @@ from oauth2_provider.models import get_access_token_model, get_application_model
 from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
+from froide.upload.models import Upload
 
 User = get_user_model()
 Application = get_application_model()
@@ -339,6 +340,38 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
                 {"subject": "Test", "body": "Testing", "publicbodies": [self.pb.pk]},
             )
         self.assertEqual(response.status_code, 429)
+
+    def test_foiattachment_upload(self):
+        mes = factories.FoiMessageFactory.create(request=self.req, kind="post")
+        att_url = reverse("api:attachment-list")
+
+        upload = Upload.objects.create(
+            state="done",
+            filename="test.pdf",
+            user=self.test_user,
+            upload_metadata='{"filetype": "application/pdf"}',
+        )
+        upload_url = reverse("api:upload-detail", kwargs={"guid": str(upload.guid)})
+
+        response, result = self.api_post(
+            att_url, {"message": mes.pk, "upload": upload_url}
+        )
+        assert response.status_code == 403
+
+        # Set correct scope
+        self.access_token.scope = "read:request upload:message"
+        self.access_token.save()
+
+        fake_upload_url = "y" + upload_url[1:]
+        response, result = self.api_post(
+            att_url, {"message": mes.pk, "upload": fake_upload_url}
+        )
+        assert response.status_code == 400
+
+        response, result = self.api_post(
+            att_url, {"message": mes.pk, "upload": upload_url}
+        )
+        assert response.status_code == 201
 
 
 @pytest.mark.django_db
