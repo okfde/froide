@@ -15,6 +15,7 @@ from django.utils.translation import ngettext_lazy
 
 from froide.account.forms import AddressBaseForm
 from froide.account.services import AccountService
+from froide.foirequest.models.event import FoiEvent
 from froide.helper.fields import MultipleFileField
 from froide.helper.storage import make_filename, make_unique_filename
 from froide.helper.text_utils import apply_user_redaction, redact_subject
@@ -790,10 +791,10 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
             validate_postal_content_type(upload.content_type)
         return upload
 
-    def save(self, foimessage):
+    def save(self, request):
         upload = self.cleaned_data["upload"]
 
-        result = self.save_attachments([upload], foimessage, save_file=False)
+        result = self.save_attachments([upload], self.foimessage, save_file=False)
         upload.ensure_saving()
         upload.save()
 
@@ -801,6 +802,14 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
 
         transaction.on_commit(
             partial(move_upload_to_attachment.delay, att.id, upload.id)
+        )
+
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
+            self.foimessage.request,
+            message=self.foimessage,
+            user=request.user,
+            **{"added": str(result)},
         )
 
         return result
