@@ -296,14 +296,7 @@ def convert_to_pdf(request, foirequest, message, data):
 def add_tus_attachment(request, foirequest, message, data):
     form = TransferUploadForm(data=data, foimessage=message, user=request.user)
     if form.is_valid():
-        added = form.save(message)
-        FoiEvent.objects.create_event(
-            FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
-            foirequest,
-            message=message,
-            user=request.user,
-            **{"added": str(added)},
-        )
+        added = form.save(request)
         return get_attachment_update_response(request, added)
 
     return JsonResponse({"error": True, "message": str(form.errors)})
