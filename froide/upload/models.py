@@ -2,6 +2,7 @@ import json
 import os
 import tempfile
 import uuid
+from urllib.parse import urlparse
 
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -167,8 +168,10 @@ class AbstractUpload(models.Model):
 
 class UploadManager(models.Manager):
     def get_by_url(self, upload_url, user=None, token=None):
+        parsed_upload_url = urlparse(upload_url)
+        upload_path = parsed_upload_url.path
         try:
-            match = resolve(upload_url)
+            match = resolve(upload_path)
         except Resolver404:
             return None
         guid = match.kwargs.get("guid")
