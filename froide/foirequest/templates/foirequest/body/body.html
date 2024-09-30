@@ -22,11 +22,19 @@
                             <i class="fa fa-send" aria-hidden="true"></i>
                             <span class="d-none d-sm-inline">{% trans "Send message" %}</span>
                         </a>
-                        <a href="{% url "foirequest-upload_postal_message_create" slug=object.slug %}"
-                           class="btn btn-primary btn-sm upload-post-link">
-                            <i class="fa fa-envelope" aria-hidden="true"></i>
-                            <span>{% trans "Upload Mail" %}</span>
-                        </a>
+                        {% if request.user.is_staff %}
+                            <a href="{% url "foirequest-upload_postal_message_create" slug=object.slug %}"
+                               class="btn btn-primary btn-sm upload-post-link">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                <span>{% trans "Upload Mail" %}</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url "foirequest-upload_postal_message" slug=object.slug %}"
+                               class="btn btn-primary btn-sm upload-post-link">
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                <span>{% trans "Upload Mail" %}</span>
+                            </a>
+                        {% endif %}
                     {% endif %}
                     {% with hide_label=object|can_write_foirequest:request %}
                         <a href="#" class="btn btn-outline-secondary btn-sm js-trigger-expand-all-messages ms-auto" title="{% trans "Expand/collapse all" %}">
