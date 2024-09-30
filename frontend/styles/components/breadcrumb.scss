@@ -48,5 +48,6 @@
 .breadcrumb-overlay {
   margin-bottom: -2.3rem;
   z-index: 40;
-  --#{$prefix}bg-opacity: 0.9;
+  --#{$prefix}bg-opacity: 0.75;
+  background-blend-mode: screen;
 }
