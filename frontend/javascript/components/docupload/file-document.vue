@@ -77,12 +77,15 @@
         </a>
 
         <div
-          v-if="highlightRedaction"
-          class="redaction"
-          :class="{ 'redaction__is-redacted': document.is_redacted }">
-          <div class="redaction-badge">
-            {{ document.is_redacted ? 'geschwärzt' : 'ungeschwärzt' }}
-          </div>
+          v-if="highlightRedaction">
+          <span
+            v-if="isRedacted"
+            class="badge text-bg-success"
+            >geschwärzt</span>
+          <span
+            v-else
+            class="badge text-bg-warning"
+            >ungeschwärzt</span>
         </div>
 
         <div
@@ -452,15 +455,5 @@ export default {
 }
 .doc-status .badge {
   cursor: help;
-}
-.redaction-badge {
-  font-size: 80%;
-  display: inline-block;
-  padding: 0 0.2em;
-  border-radius: 0.1em;
-  background-color: lightyellow;
-  .redaction__is-redacted & {
-    background-color: lightgreen;
-  }
 }
 </style>
