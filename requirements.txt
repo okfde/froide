@@ -246,7 +246,7 @@ pillow==10.4.0
     #   weasyprint
 prompt-toolkit==3.0.47
     # via click-repl
-psycopg==3.2.1
+psycopg==3.2.3
     # via froide (pyproject.toml)
 psycopg-binary==3.2.1
     # via psycopg
