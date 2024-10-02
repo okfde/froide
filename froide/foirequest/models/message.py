@@ -38,6 +38,11 @@ class FoiMessageManager(models.Manager):
         return qs, "timestamp"
 
 
+class FoiMessageNoDraftsManager(FoiMessageManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_draft=False)
+
+
 class MessageTag(TagBase):
     class Meta:
         verbose_name = _("message tag")
@@ -171,6 +176,7 @@ class FoiMessage(models.Model):
     confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
 
     objects = FoiMessageManager()
+    no_drafts = FoiMessageNoDraftsManager()
 
     class Meta:
         get_latest_by = "timestamp"
