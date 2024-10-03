@@ -703,7 +703,8 @@ addEventListener('hashchange', () => {
       <div v-show="step === STEP_INTRO" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
-            <div class="row my-5">
+            <div class="row my-5 justify-content-center">
+              <!--
               <div class="col-md-6">
                 <button disabled class="btn btn-outline-primary d-block w-100">
                   <i class="fa fa-camera"></i>
@@ -724,6 +725,16 @@ addEventListener('hashchange', () => {
                 <p class="mt-1">
                   Wenn Sie den Brief schon als PDF oder Foto vorliegen haben
                 </p>
+              </div>
+              -->
+              <div class="col-md-6">
+                <button
+                  type="button"
+                  @click="stepAndUppyClick"
+                  class="btn btn-outline-primary btn-lg d-block w-100">
+                  <i class="fa fa-upload fa-2x"></i><br/>
+                  Dateien hochladen
+                </button>
               </div>
             </div>
             <div class="alert alert-warning">
