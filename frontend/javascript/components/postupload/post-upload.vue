@@ -584,6 +584,19 @@ const stepsConfig = {
   }
 }
 
+/* --- state machine, visualization --- */
+
+const stepsConfigVisualize = (c) => 'dot -Tpng << eot | display -\n' +
+  'digraph "postupload" {\n' +
+  Object.keys(c).map(state => `  "${state}";\n`).join('') +
+  Object.keys(c).map(from => c[from].next.toString().match(/\bSTEP_\w+/g)
+    .map(to =>`  "${from}" -> "${to}";\n`).join('')
+  ).join('') +
+  '}\n' +
+  'eot\n'
+
+if (debug.value) console.info(stepsConfigVisualize(stepsConfig))
+
 /* --- state machine, hash-router style ---
 
 // This naive implementation of a hash-router for steps works
