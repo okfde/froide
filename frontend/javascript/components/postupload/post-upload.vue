@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, defineProps, nextTick, watch } from 'vue'
+import { ref, reactive, computed, defineProps, nextTick } from 'vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
@@ -10,29 +10,10 @@ import DocumentUploader from '../docupload/document-uploader.vue'
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from './online-help.vue'
-import { Tooltip } from 'bootstrap'
 import { useI18n } from '../../lib/i18n'
-
-/* DEBUG
-const delay = function (duration) {
-  return function (x) {
-    return new Promise((resolve) => {
-      console.info('delaying', duration, resolve)
-      setTimeout(function () {
-        console.log('delay done')
-        resolve(x)
-      }, duration)
-    })
-  }
-}
-*/
-
-// this could possibly move to lib/vue-helper.ts
-const vBsTooltip = {
-  mounted: (el) => {
-    new Tooltip(el)
-  }
-}
+import { vBsTooltip } from '../../lib/vue-bootstrap'
+import { useIsDesktop } from '../../lib/vue-helpers-layout'
+import { scrollNavIntoViewIfNecessary, guardBeforeunload } from '../../lib/misc'
 
 const props = defineProps({
   config: Object,
@@ -49,82 +30,25 @@ const props = defineProps({
 
 const { i18n } = useI18n(props.config)
 
+const { isDesktop } = useIsDesktop()
+
+/* --- debug --- */
+
 const debug = ref(!!localStorage.getItem('fds-postupload-debug'))
 window.FDSdebug = (val) => {
   debug.value = typeof val === 'boolean' ? val : !debug.value
   localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
 }
 
-const isDesktop = ref(false)
-const updateIsDesktop = (mql) => {
-  isDesktop.value = mql.matches
-}
-const desktopBreakpoint = getComputedStyle(
-  document.body
-).getPropertyValue('--bs-breakpoint-md')
-const isDesktopMediaQueryList = window.matchMedia(
-  `(min-width: ${desktopBreakpoint})`
-)
-updateIsDesktop(isDesktopMediaQueryList)
-isDesktopMediaQueryList.addEventListener('change', updateIsDesktop)
-
-const beforeunloadHandler = (e) => e.preventDefault()
-let isBeforeunloadGuarded = false
-const guardBeforeunload = (enable) => {
-  if (enable) {
-    if (!isBeforeunloadGuarded) {
-      window.addEventListener('beforeunload', beforeunloadHandler)
-      isBeforeunloadGuarded = true
-    }
-  } else {
-    window.removeEventListener('beforeunload', beforeunloadHandler)
-  }
+const debugSkipDate = () => {
+  values.date = document.forms.postupload.elements.date.max
+  values.registered_mail_date = document.forms.postupload.elements.date.max
+  updateValidity('date')
+  updateValidity('registered_mail_date')
+  gotoStep()
 }
 
-const firstStep = 1100
-
-/*
-// This naive implementation of a hash-router for steps works
-// - back button works as intended
-// - load into any step, too
-// but
-// - there are timing issues, i.e. uppyClick doesn't really fire - probably due to nextTick not waiting long enough for the hashchange to settle
-// - going history.back arbitrarily breaks state in subtle ways, i.e. when going from 1202 to 1201
-// A better implementation:
-// - hash is not "reactively equivalent" to the step
-// - instead, on gotoStep, strategically decide whether to pushState or just silently update the internal step
-// - this way history.back goes back to certain "checkpoints"
-// - only these checkpoints are exposed for arbitrary (re-)entry into the flow
-// - it could *maybe* use vue-router
-
-const getStepFromHash = () => {
-  const step = parseInt(document.location.hash.substring(1))
-  if (!step) {
-    console.warn('step not valid')
-    return 1100
-  }
-  return step
-}
-const step = ref(getStepFromHash())
-if (step.value !== firstStep) {
-  guardBeforeunload(true)
-}
-gotoStep(step.value)
-addEventListener('hashchange', () => {
-  step.value = getStepFromHash()
-})
-*/
-
-const stepHistory = reactive([firstStep])
-const step = computed(() => 
-  stepHistory.length ? stepHistory[stepHistory.length - 1] : false
-)
-
-const gotoStep = (nextStep) => {
-  nextStep = nextStep || getNextStep()
-  // document.location.href = '#' + nextStep
-  stepHistory.push(nextStep)
-}
+/* --- form handling --- */
 
 /* untangle ambiguous semantics:
  * there is message.sent, but this is not the same.
@@ -166,135 +90,44 @@ const formPublicbodyId =
 
 const formPublicbodyLabel = props.object_public_body?.name || 'Error'
 
-const documentsSelectedPdfRedaction = ref([])
-const documentsPdfRedactionIndex = computed(() => {
-  if (3000 < step.value && step.value < 3100) return step.value - 3001
-  return false
+const values = reactive({
+  // FIXME date doesn't populate from a saved form?
+  date: props.form.fields.date.value,
+  registered_mail_date: props.form.fields.registered_mail_date.value,
+  costs:
+    props.status_form.fields.costs.value?.strValue ||
+    props.status_form.fields.costs.initial.strValue,
+  is_registered_mail: false
 })
 
-const currentPdfRedactionDoc = computed(() => {
-  if (documentsPdfRedactionIndex.value === false) return
-  return documentsSelectedPdfRedaction.value[documentsPdfRedactionIndex.value]
+/* --- form handling, validity --- */
+
+const validity = reactive({
+  date: false,
+  registered_mail_date: false
 })
 
-const documentUploader = ref()
-const documentsImagesConverting = ref(false)
-const documentsConvertImages = () => {
-  if (documentUploader.value.$refs.imageDocument.length === 0) {
-    console.log('no images to convert')
-    gotoStep()
-    return
-  }
-  documentsImagesConverting.value = true
-  // XXX wild mix of Vue2&3 refs, not the cleanest, but a bus was basically impossible
-  // we are calling a grand-child component's method
-  documentUploader.value.$refs.imageDocument?.[0]?.convertImages?.()
-  // ^child              ^vue2 ^grandchild...REN!  ^method
-  // alternative: pass a prop, watch it, react?
-}
-const documentsImagesDocumentFilenameDefault = 'brief.pdf'
-const documentsImagesDocumentFilename = ref(
-  documentsImagesDocumentFilenameDefault
-)
-const documentsImagesDocumentFilenameNormalized = computed(() =>
-  documentsImagesDocumentFilename.value.replace(/\.pdf$/, '')
-)
-
-const documentsBasicOperations = ref(false)
-
-const pdfRedaction = ref()
-const pdfRedactionCurrentHasRedactions = ref(false)
-const pdfRedactionProcessing = ref(false)
-const pdfRedactionRedact = () => {
-  pdfRedactionProcessing.value = true
-  // XXX calling child's method
-  // alternatively, could listen to an event
-  pdfRedaction.value
-    .redactOrApprove()
-    // .then(delay(3000))
-    .then(() => {
-      pdfRedactionProcessing.value = false
-      pdfRedactionCurrentHasRedactions.value = false
-      gotoStep()
-    })
-}
-const pdfRedactionUploaded = () => {
-  // TODO handle errors?
-  // XXX again, we're calling child's method, could handle attachments here, store-like,
-  //   and pass as a "override prop" to the components
-  documentUploader.value.refreshAttachments()
-}
-
-const documentUploaderSelectAll = (val) => {
-  documentUploader.value.setAllSelect(val)
-}
-
-const scrollIfNecessary = () => {
-  const header = document.querySelector('main nav')
-  const rect = header.getBoundingClientRect()
-  if (rect.bottom < 0) {
-    // timeout to make it feel less jarring
-    setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
+// TODO updateValidity should (maybe) be called on gotoStep(STEP_MESSAGE_DATE), too
+const updateValidity = (key) => {
+  const el =
+    key === 'form'
+      ? document.forms.postupload
+      : document.forms.postupload.elements[key]
+  // just assume true if browser doesn't support checkValidity
+  validity[key] = 'checkValidity' in el ? el.checkValidity() : true
+  if (debug.value) {
+    if (key === 'form' && !el.checkValidity()) {
+      console.log(
+        'updateValidity form failed, offending elements:',
+        [...document.forms.postupload.elements].filter(
+          (el) => !el.checkValidity()
+        )
+      )
+    }
   }
 }
 
-const mobileHeaderTitle2 = computed(() => {
-  switch (step.value) {
-    case 1100:
-      return i18n.value.addLetter
-    case 4570:
-      return 'Fertig'
-  }
-  if (step.value < 2000) {
-    return 'Brief hochladen oder scannen'
-  }
-  if (2000 <= step.value && step.value < 3000) {
-    return 'Infos eingeben'
-  }
-  if (3000 <= step.value && step.value < 4000) {
-    return 'Schwärzen'
-  }
-  if (step.value >= 4000) {
-    return 'Vorschau'
-  }
-  return '(Untertitel)'
-})
-
-const progressStep = computed(() =>
-  // map to {0, 1, 2}
-  Math.min(Math.floor((step.value - 1000) / 1000), 2)
-)
-
-const gotoValid = computed(() => {
-  if (
-    step.value === 2565 ||
-    (isDesktop.value &&
-      (step.value === 2388 || step.value === 2390) &&
-      formDoUpdateCost.value)
-  ) {
-    return validity.costs
-  }
-  if (isDesktop.value && step.value === 2384 && values.is_registered_mail) {
-    return validity.date && validity.registered_mail_date
-  }
-  if (step.value === 2382) {
-    return validity.registered_mail_date
-  }
-  if (step.value === 2384) {
-    return validity.date
-  }
-  return true
-})
-
-const backStep = () => {
-  if (step.value === 1201) {
-    // we go back two steps
-    stepHistory.pop()
-    // history.back()
-  }
-  stepHistory.pop()
-  // history.back()
-}
+/* --- form handling, submit --- */
 
 const isSubmitting = ref(false)
 
@@ -348,244 +181,43 @@ const approveDocsAndSubmit = async () => {
   }
 }
 
-// TODO WIP numbers from Figma frames
-const getNextStep = () => {
-  switch (step.value) {
-    case 1100:
-      return 1110
-    case 1110:
-      if (documentsImageMode.value) {
-        console.log(
-          'uploads were documents, not images, passing by image sorting'
-        )
-        return 1201
-      }
-      return 2376
-    case 1201:
-      return 1202
-    case 1202:
-      return 1300
-    case 1300:
-      return 2376
-    case 2376:
-      return 2380
-    case 2380:
-      if (isDesktop.value) return 2384
-      return formPublicbodyIsDefault.value ? 2384 : 2381
-    case 2381:
-      return 2384
-    case 2384:
-      if (isDesktop.value) return 2437
-      return values.is_registered_mail ? 2382 : 2437
-    case 2382:
-      return 2437
-    case 2437:
-      if (!isDesktop.value && formStatusIsResolved.value) return 2438
-      // TODO: replace all 3402 with `if uploadedDocuments.length === 1 ? ... : 3402`
-      if (formIsSent.value) return 3402
-      return formHasHadCost ? 2390 : 2388
-    case 2438:
-      if (formIsSent.value) return 3402
-      return formHasHadCost ? 2390 : 2388
-    case 2388:
-    case 2390:
-      if (formDoUpdateCost.value) return 2565
-      return 3402
-    case 2565:
-      return 3402
-    case 3402:
-      if (documentsSelectedPdfRedaction.value.length === 0) return 4413
-      return 3001 // TODO
-    /*
-    case 3001:
-      if (
-        documentsPdfRedactionIndex.value <
-        documentsSelectedPdfRedaction.value.length - 1
-      ) {
-        documentsPdfRedactionIndex.value++
-        return 3001
-      }
-      return 4413
-    */
-    case 4413:
-      return 4570
-    case 4570:
-      return 4570
-  }
-  if (3000 < step.value && step.value < 3100) {
-    if (
-      documentsPdfRedactionIndex.value <
-      documentsSelectedPdfRedaction.value.length - 1
-    ) {
-      return step.value + 1
-    }
-    return 4413
-  }
-}
+/* --- <online-help> interaction --- */
 
-// side effects for (entering) steps
-watch(step, (newStep) => {
-  console.log('# watch step', newStep)
-  switch (newStep) {
-    case 1110:
-      guardBeforeunload(true)
-      documentsImagesDocumentFilename.value =
-        documentsImagesDocumentFilenameDefault
-      break
-    case 1300:
-      pdfRedactionUploaded()
-      break
-    case 2382:
-      updateValidity('date')
-      updateValidity('registered_mail_date')
-      break
-    case 2384:
-      updateValidity('date')
-      updateValidity('registered_mail_date')
-      break
-    case 2565:
-      updateValidity('costs')
-      break
-    case 3402:
-      pdfRedactionUploaded()
-      break
-    case 4413:
-      documentsBasicOperations.value = false
-      updateValidity('form')
-      pdfRedactionUploaded()
-      break
-    case 4570:
-      guardBeforeunload(false)
-  }
-  scrollIfNecessary()
-})
+const onlineHelp = ref()
 
-const stepUiConf = {
-  1110: {
-    documents: true,
-    documentsUpload: true,
-    documentsHideSelection: true,
-    documentsHidePdf: true,
-    documentsImagesSimple: true
-  },
-  1201: {
-    documents: true,
-    documentsUpload: true,
-    documentsHideSelection: true,
-    documentsHidePdf: true,
-    documentsImagesSimple: true
-  },
-  1300: {
-    documents: true,
-    documentsUpload: false,
-    documentsHideSelection: true,
-    // would make sense "if has geschwärzte docs", i.e. when we expect users to go back
-    // documentsHighlightRedactions: true,
-    documentsIconStyle: 'icon'
-  },
-  3402: {
-    documents: true,
-    documentsIconStyle: 'thumbnail'
-  },
-  4413: {
-    documents: true,
-    documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
-    documentsIconStyle: 'thumbnail',
-    documentsHighlightRedactions: true
-  }
-}
+/* --- <document-uploader> interaction --- */
 
-const uiDocuments = computed(() => stepUiConf[step.value]?.documents || false)
-const uiDocumentsUpload = computed(
-  () => stepUiConf[step.value]?.documentsUpload || false
-)
-const uiDocumentsHideSelection = computed(
-  () => stepUiConf[step.value]?.documentsHideSelection || false
-)
-const uiDocumentsHidePdf = computed(
-  () => stepUiConf[step.value]?.documentsHidePdf || false
-)
-const uiDocumentsIconStyle = computed(
-  () => stepUiConf[step.value]?.documentsIconStyle || ''
-)
-const uiDocumentsImagesSimple = computed(
-  () => stepUiConf[step.value]?.documentsImagesSimple || false
-)
-const uiDocumentsHighlightRedactions = computed(
-  () => stepUiConf[step.value]?.documentsHighlightRedactions || false
-)
+const documentUploader = ref()
 
-const documentsImageMode = ref(false)
-const documentsImagesAdded = () => {
-  if (step.value !== 1110) {
+const documentsSelectedPdfRedaction = ref([])
+
+const documentsImagesConverting = ref(false)
+const documentsConvertImages = () => {
+  if (documentUploader.value.$refs.imageDocument.length === 0) {
+    console.log('no images to convert')
+    gotoStep()
     return
   }
-  documentsImageMode.value = true
-  gotoStep()
+  documentsImagesConverting.value = true
+  // XXX wild mix of Vue2&3 refs, not the cleanest, but a bus was basically impossible
+  // we are calling a grand-child component's method
+  documentUploader.value.$refs.imageDocument?.[0]?.convertImages?.()
+  // ^child              ^vue2 ^grandchild...REN!  ^method
+  // alternative: pass a prop, watch it, react?
 }
-const documentsDocumentsAdded = () => {
-  if (step.value !== 1110) {
-    return
-  }
-  gotoStep()
-}
-const documentsImagesConverted = () => {
-  documentsImagesConverting.value = false
-  if (step.value !== 1202) {
-    console.warn("conversion shouldn't have happened here")
-    return
-  }
-  gotoStep()
-}
+const documentsImagesDocumentFilenameDefault = 'brief.pdf'
+const documentsImagesDocumentFilename = ref(
+  documentsImagesDocumentFilenameDefault
+)
+const documentsImagesDocumentFilenameNormalized = computed(() =>
+  documentsImagesDocumentFilename.value.replace(/\.pdf$/, '')
+)
 
-const validity = reactive({
-  date: false,
-  registered_mail_date: false
-})
+const documentsBasicOperations = ref(false)
 
-// TODO updateValidity should (maybe) be called on gotoStep(2384), too
-const updateValidity = (key) => {
-  const el =
-    key === 'form'
-      ? document.forms.postupload
-      : document.forms.postupload.elements[key]
-  // just assume true if browser doesn't support checkValidity
-  validity[key] = 'checkValidity' in el ? el.checkValidity() : true
-  if (debug.value) {
-    if (key === 'form' && !el.checkValidity()) {
-      console.log(
-        'updateValidity form failed, offending elements:',
-        [...document.forms.postupload.elements].filter(
-          (el) => !el.checkValidity()
-        )
-      )
-    }
-  }
-  // console.log('updateValidity', el, 'value=', el.value, 'checkValidity()', el.checkValidity(), validity[key], validity, values)
-  /*
-  console.log(
-    'updateValidity',
-    el,
-    JSON.stringify({
-      value: el.value,
-      'checkValidity()': el.checkValidity(),
-      'validity[key]': validity[key],
-      validity,
-      values
-    })
-  )
-  */
+const documentUploaderSelectAll = (val) => {
+  documentUploader.value.setAllSelect(val)
 }
-
-const values = reactive({
-  // FIXME date doesn't populate from a saved form?
-  date: props.form.fields.date.value,
-  registered_mail_date: props.form.fields.registered_mail_date.value,
-  costs:
-    props.status_form.fields.costs.value?.strValue ||
-    props.status_form.fields.costs.initial.strValue,
-  is_registered_mail: false
-})
 
 const stepAndUppyClick = () => {
   gotoStep()
@@ -599,15 +231,392 @@ const stepAndUppyClick = () => {
   })
 }
 
-const debugSkipDate = () => {
-  values.date = document.forms.postupload.elements.date.max
-  values.registered_mail_date = document.forms.postupload.elements.date.max
-  updateValidity('date')
-  updateValidity('registered_mail_date')
+const documentsImageMode = ref(false)
+const documentsImagesAdded = () => {
+  if (step.value !== STEP_DOCUMENTS_UPLOAD) {
+    return
+  }
+  documentsImageMode.value = true
+  gotoStep()
+}
+const documentsDocumentsAdded = () => {
+  if (step.value !== STEP_DOCUMENTS_UPLOAD) {
+    return
+  }
+  gotoStep()
+}
+const documentsImagesConverted = () => {
+  documentsImagesConverting.value = false
+  if (step.value !== STEP_DOCUMENTS_CONVERT_PDF) {
+    console.warn("conversion shouldn't have happened here")
+    return
+  }
   gotoStep()
 }
 
-const onlineHelp = ref()
+/* --- <pdf-redaction> interaction --- */
+
+const pdfRedaction = ref()
+
+const pdfRedactionCurrentIndex = computed(() => {
+  // stepHistory can contain the same step multiple times;
+  // we'll use the amount of the REDACT step implicitly to select the nth document for redaction
+  const index1based = stepHistory.filter(_ => _ === STEP_REDACTION_REDACT).length
+  if (index1based === 0) return false
+  return index1based - 1
+})
+const pdfRedactionCurrentDoc = computed(() => {
+  if (pdfRedactionCurrentIndex.value === false) return
+  return documentsSelectedPdfRedaction.value[pdfRedactionCurrentIndex.value]
+})
+
+const pdfRedactionCurrentHasRedactions = ref(false)
+const pdfRedactionProcessing = ref(false)
+const pdfRedactionRedact = () => {
+  pdfRedactionProcessing.value = true
+  // XXX calling child's method
+  // alternatively, could listen to an event
+  pdfRedaction.value
+    .redactOrApprove()
+    // .then(delay(3000))
+    .then(() => {
+      pdfRedactionProcessing.value = false
+      pdfRedactionCurrentHasRedactions.value = false
+      gotoStep()
+    })
+}
+const pdfRedactionUploaded = () => {
+  // TODO handle errors?
+  // XXX again, we're calling child's method, could handle attachments here, store-like,
+  //   and pass as a "override prop" to the components
+  documentUploader.value.refreshAttachments()
+}
+
+/* --- state machine, functionality --- */
+
+const firstStep = STEP_INTRO
+const stepHistory = reactive([firstStep])
+const step = computed(() => 
+  stepHistory.length ? stepHistory[stepHistory.length - 1] : false
+)
+const stepContext = computed(() => stepsConfig[step.value].context || {})
+
+const gotoStep = (nextStep) => {
+  if (!nextStep) nextStep = typeof stepsConfig[step.value].next === 'function'
+    ? stepsConfig[step.value].next()
+    : stepsConfig[step.value].next
+  stepHistory.push(nextStep)
+  stepsConfig[nextStep].onEnter?.()
+  scrollNavIntoViewIfNecessary()
+}
+
+const backStep = () => {
+  stepsConfig[step.value].onBack?.()
+  stepHistory.pop()
+}
+
+const isGotoValid = computed(() => {
+  if ('isGotoValid' in stepContext.value) return stepContext.value.isGotoValid()
+  return true
+})
+
+/* --- state machine, config: states, transitions --- */
+
+// vuex mutation style constants/"symbols"
+const STEP_INTRO = 'STEP_INTRO' // 1100
+const STEP_DOCUMENTS_UPLOAD = 'STEP_DOCUMENTS_UPLOAD' // 1110
+const STEP_DOCUMENTS_SORT = 'STEP_DOCUMENTS_SORT' // 1201
+const STEP_DOCUMENTS_CONVERT_PDF = 'STEP_DOCUMENTS_CONVERT_PDF' // 1202
+const STEP_DOCUMENTS_OVERVIEW = 'STEP_DOCUMENTS_OVERVIEW' // 1300
+const STEP_MESSAGE_SENT_OR_RECEIVED = 'STEP_MESSAGE_SENT_OR_RECEIVED' // 2376
+const STEP_MESSAGE_PUBLICBODY_CHECK = 'STEP_MESSAGE_PUBLICBODY_CHECK' // 2380
+const STEP_MESSAGE_PUBLICBODY_UPDATE = 'STEP_MESSAGE_PUBLICBODY_UPDATE' // 2381
+const STEP_MESSAGE_DATE = 'STEP_MESSAGE_DATE' // 2384
+const STEP_MESSAGE_DATE_REGISTERED_MAIL = 'STEP_MESSAGE_DATE_REGISTERED_MAIL' // 2382
+const STEP_MESSAGE_STATUS = 'STEP_MESSAGE_STATUS' // 2437
+const STEP_MESSAGE_MESSAGE_RESOLUTION = 'STEP_MESSAGE_MESSAGE_RESOLUTION' // 2438
+const STEP_MESSAGE_COST_CHECK_ANY = 'STEP_MESSAGE_COST_CHECK_ANY' // 2388
+const STEP_MESSAGE_COST_CHECK_LAST = 'STEP_MESSAGE_COST_CHECK_LAST' // 2390
+const STEP_REDACTION_PICKER = 'STEP_REDACTION_PICKER' // 3402
+const STEP_REDACTION_REDACT = 'STEP_REDACTION_REDACT' // 3001
+const STEP_DOCUMENTS_OVERVIEW_REDACTED = 'STEP_DOCUMENTS_OVERVIEW_REDACTED' // 4413
+const STEP_MESSAGE_COST_UPDATE = 'STEP_MESSAGE_COST_UPDATE' // 2565
+const STEP_OUTRO = 'STEP_OUTRO' // 4570
+
+const stepsConfig = {
+  [STEP_INTRO]: {
+    next: STEP_DOCUMENTS_UPLOAD,
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: i18n.value.addLetter
+    }
+  },
+  [STEP_DOCUMENTS_UPLOAD]: {
+    next: () => {
+      if (documentsImageMode.value) {
+        console.log(
+          'uploads were documents, not images, passing by image sorting'
+        )
+        return STEP_DOCUMENTS_SORT
+      }
+      return STEP_MESSAGE_SENT_OR_RECEIVED
+    },
+    onEnter: () => {
+      guardBeforeunload(true)
+      documentsImagesDocumentFilename.value =
+        documentsImagesDocumentFilenameDefault
+    },
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      documents: true,
+      documentsUpload: true,
+      documentsHideSelection: true,
+      documentsHidePdf: true,
+      documentsImagesSimple: true
+    }
+  },
+  [STEP_DOCUMENTS_SORT]: {
+    next: STEP_DOCUMENTS_CONVERT_PDF,
+    onBack: () => {
+      // go back two steps, to INTRO
+      stepHistory.pop()
+    },
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      documents: true,
+      documentsUpload: true,
+      documentsHideSelection: true,
+      documentsHidePdf: true,
+      documentsImagesSimple: true
+    }
+  },
+  [STEP_DOCUMENTS_CONVERT_PDF]: {
+    next: STEP_DOCUMENTS_OVERVIEW,
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: 'Brief hochladen oder scannen',
+    }
+  },
+  [STEP_DOCUMENTS_OVERVIEW]: {
+    next: STEP_MESSAGE_SENT_OR_RECEIVED,
+    onEnter: () => {
+      pdfRedactionUploaded()
+    },
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      documents: true,
+      documentsUpload: false,
+      documentsHideSelection: true,
+      // would make sense "if has geschwärzte docs", i.e. when we expect users to go back
+      // documentsHighlightRedactions: true,
+      documentsIconStyle: 'icon'
+    }
+  },
+  [STEP_MESSAGE_SENT_OR_RECEIVED]: {
+    next: STEP_MESSAGE_PUBLICBODY_CHECK,
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_MESSAGE_PUBLICBODY_CHECK]: {
+    next: () => {
+      if (isDesktop.value) return STEP_MESSAGE_DATE
+      return formPublicbodyIsDefault.value ? STEP_MESSAGE_DATE : STEP_MESSAGE_PUBLICBODY_UPDATE
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_MESSAGE_PUBLICBODY_UPDATE]: {
+    next: STEP_MESSAGE_DATE,
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_MESSAGE_DATE]: {
+    next: () => {
+      if (isDesktop.value) return STEP_MESSAGE_STATUS
+      return values.is_registered_mail ? STEP_MESSAGE_DATE_REGISTERED_MAIL : STEP_MESSAGE_STATUS
+    },
+    onEnter: () => {
+      updateValidity('date')
+      updateValidity('registered_mail_date')
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben',
+      isGotoValid: () => {
+        if (isDesktop.value && values.is_registered_mail) return validity.date && validity.registered_mail_date
+        return validity.date
+      }
+    }
+  },
+  [STEP_MESSAGE_DATE_REGISTERED_MAIL]: {
+    next: STEP_MESSAGE_STATUS,
+    onEnter: () => {
+      updateValidity('date')
+      updateValidity('registered_mail_date')
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben',
+      isGotoValid: () => validity.registered_mail_date
+    }
+  },
+  [STEP_MESSAGE_STATUS]: {
+    next: () => {
+      if (!isDesktop.value && formStatusIsResolved.value) return STEP_MESSAGE_MESSAGE_RESOLUTION
+      // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
+      if (formIsSent.value) return STEP_REDACTION_PICKER
+      return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
+    next: () => {
+      if (formIsSent.value) return STEP_REDACTION_PICKER
+      return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_MESSAGE_COST_CHECK_ANY]: {
+    next: () => {
+      if (!isDesktop.value && formDoUpdateCost.value) return STEP_MESSAGE_COST_UPDATE
+      return STEP_REDACTION_PICKER
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_MESSAGE_COST_CHECK_LAST]: {
+    next: () => {
+      if (!isDesktop.value && formDoUpdateCost.value) return STEP_MESSAGE_COST_UPDATE
+      return STEP_REDACTION_PICKER
+    },
+    context: {
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben',
+      isGotoValid: () => {
+        if (isDesktop.value && formDoUpdateCost.value) return validity.costs
+        return true
+      }
+    }
+  },
+  [STEP_MESSAGE_COST_UPDATE]: {
+    next: STEP_REDACTION_PICKER,
+    onEnter: () => {
+      updateValidity('costs')
+    },
+    context: {
+      isGotoValid: () => validity.costs,
+      progressStep: 1,
+      mobileHeaderTitle: 'Infos eingeben'
+    }
+  },
+  [STEP_REDACTION_PICKER]: {
+    next: () => {
+      if (documentsSelectedPdfRedaction.value.length === 0) return STEP_DOCUMENTS_OVERVIEW_REDACTED
+      return STEP_REDACTION_REDACT // TODO
+    },
+    onEnter: () => {
+      pdfRedactionUploaded()
+    },
+    context: {
+      progressStep: 2,
+      mobileHeaderTitle: 'Schwärzen',
+      documents: true,
+      documentsIconStyle: 'thumbnail'
+    }
+  },
+  [STEP_REDACTION_REDACT]: {
+    next: () => {
+      if (
+        pdfRedactionCurrentIndex.value <
+        documentsSelectedPdfRedaction.value.length - 1
+      ) {
+        return STEP_REDACTION_REDACT
+      }
+      return STEP_DOCUMENTS_OVERVIEW_REDACTED
+    },
+    context: {
+      progressStep: 2,
+      mobileHeaderTitle: 'Schwärzen',
+    }
+  },
+  [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
+    next: STEP_OUTRO,
+    onEnter: () => {
+      documentsBasicOperations.value = false
+      updateValidity('form')
+      pdfRedactionUploaded()
+    },
+    context: {
+      progressStep: 2,
+      mobileHeaderTitle: 'Vorschau',
+      documents: true,
+      documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
+      documentsIconStyle: 'thumbnail',
+      documentsHighlightRedactions: true
+    }
+  },
+  [STEP_OUTRO]: {
+    next: STEP_OUTRO,
+    onEnter: () => {
+      guardBeforeunload(false)
+    },
+    context: {
+      progressStep: 2,
+      mobileHeaderTitle: 'Fertig'
+    }
+  }
+}
+
+/* --- state machine, hash-router style ---
+
+// This naive implementation of a hash-router for steps works
+// - back button works as intended
+// - load into any step, too
+// but
+// - there are timing issues, i.e. uppyClick doesn't really fire - probably due to nextTick not waiting long enough for the hashchange to settle
+// - going history.back arbitrarily breaks state in subtle ways, i.e. when going from STEP_DOCUMENTS_CONVERT_PDF to STEP_DOCUMENTS_SORT
+// A better implementation:
+// - hash is not "reactively equivalent" to the step
+// - instead, on gotoStep, strategically decide whether to pushState or just silently update the internal step
+// - this way history.back goes back to certain "checkpoints"
+// - only these checkpoints are exposed for arbitrary (re-)entry into the flow
+// - it could *maybe* use vue-router
+
+const getStepFromHash = () => {
+  const step = parseInt(document.location.hash.substring(1))
+  if (!step) {
+    console.warn('step not valid')
+    return STEP_INTRO
+  }
+  return step
+}
+const step = ref(getStepFromHash())
+if (step.value !== firstStep) {
+  guardBeforeunload(true)
+}
+gotoStep(step.value)
+addEventListener('hashchange', () => {
+  step.value = getStepFromHash()
+})
+*/
+
 </script>
 
 <template>
@@ -616,25 +625,25 @@ const onlineHelp = ref()
     <div class="postupload-main">
       <simple-stepper
         class="sticky-top position-md-static"
-        :step="progressStep"
+        :step="stepContext.progressStep"
         :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
-        <template v-if="step < 4000">
-          {{ i18n.step }} {{ Math.floor(step / 1000) }}<strong>/3</strong>:
-          {{ mobileHeaderTitle2 }}
-        </template>
-        <template v-else-if="step >= 4000">
+        <template v-if="step === STEP_OUTRO">
           <small>{{ i18n.done }}</small>
+        </template>
+        <template v-else>
+          {{ i18n.step }} {{ stepContext.progressStep + 1 }}<strong>/3</strong>:
+          {{ stepContext.mobileHeaderTitle }}
         </template>
       </simple-stepper>
 
       <div class="container">
-        <!-- TODO button does not support going back throug documentsPdfRedactionIndex -->
-        <div v-if="step === 1100" class="my-3">
+        <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
+        <div v-if="step === STEP_INTRO" class="my-3">
           <a class="btn btn-link text-decoration-none ps-0" href="../.."
             >← <u>{{ i18n.cancel }}</u></a
           >
         </div>
-        <div v-else-if="step !== 4570" class="my-3">
+        <div v-else-if="step !== STEP_OUTRO" class="my-3">
           <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
             >← <u>{{ i18n.back }}</u></a
           >
@@ -644,7 +653,9 @@ const onlineHelp = ref()
       <details v-if="debug" class="container">
         <summary class="DEBUG">DEBUG</summary>
         <div>step={{ step }}</div>
-        <div>history={{ stepHistory.join(',') }}</div>
+        <div>history={{ stepHistory.join(' ') }}</div>
+        <div>stepContext={{ stepContext }}</div>
+        <div>isGotoValid={{ isGotoValid }}</div>
         <span>
           <!-- eslint-disable-next-line vue/no-mutating-props -->
           <button type="button" @click="user_is_staff = !user_is_staff">
@@ -671,7 +682,7 @@ const onlineHelp = ref()
         <!--<span class="debug">p{{ progress }}</span>-->
         <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
         <!--<span class="debug">{{ values.isYellow }}</span>-->
-        <!--<span class="debug">{{ gotoValid }}</span>-->
+        <!--<span class="debug">{{ isGotoValid }}</span>-->
         <!--<span class="debug">
           {{ { pbv: props.form.fields.publicbody.value, pbii:  props.form.fields.publicbody?.initial?.id, opbi: object_public_body_id } }}
         </span>-->
@@ -689,7 +700,7 @@ const onlineHelp = ref()
         </details>
       </details>
 
-      <div v-show="step === 1100" class="container">
+      <div v-show="step === STEP_INTRO" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="row my-5">
@@ -737,11 +748,11 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 1110">
+      <div v-show="step === STEP_DOCUMENTS_UPLOAD">
         <!-- document-uploader see below -->
       </div>
 
-      <div v-show="step === 1201" class="container">
+      <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9 fw-bold">
             Ziehen Sie die Seiten in die richtige Reihenfolge
@@ -749,7 +760,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 1202" class="container">
+      <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="text-center my-3">
@@ -774,7 +785,7 @@ const onlineHelp = ref()
       </div>
 
       <!-- there is another for this step, further down below document-uploader -->
-      <div v-show="step === 1300" class="container">
+      <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="fw-bold">Bisher vorhandene Dokumente</div>
@@ -782,7 +793,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 2376" class="container">
+      <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 1 von 5</div>
@@ -818,8 +829,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <!-- also 2428 -->
-      <div v-show="step === 2380" class="container">
+      <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 2 von 5</div>
@@ -865,14 +875,13 @@ const onlineHelp = ref()
 
       <div
         v-show="
-          step === 2381 ||
-          (isDesktop && step === 2380 && !formPublicbodyIsDefault)
+          step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
+          (isDesktop && step === STEP_MESSAGE_PUBLICBODY_CHECK && !formPublicbodyIsDefault)
         "
         class="container">
         <!-- appears "indented" on md=isDesktop viewport -->
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-            <!-- also 2429 -->
             <label class="fw-bold form-label" for="id_subject">
               <template v-if="formSent === '1'">
                 An welche Behörde haben Sie den Brief gesendet?
@@ -899,7 +908,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 2384" class="container">
+      <div v-show="step === STEP_MESSAGE_DATE" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 3 von 5</div>
@@ -909,8 +918,8 @@ const onlineHelp = ref()
             </label>
             <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
             <!-- TODO "always" required might break early post/submit
-              :required="step === 2384 || step === 2380"
-              maybe: step > 2380 ?
+              :required="step === STEP_MESSAGE_DATE || step === STEP_MESSAGE_PUBLICBODY_CHECK"
+              maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
             -->
             <input
               id="id_date"
@@ -956,8 +965,8 @@ const onlineHelp = ref()
 
       <div
         v-show="
-          step === 2382 ||
-          (isDesktop && step === 2384 && values.is_registered_mail)
+          step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
+          (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
         "
         class="container">
         <div class="row justify-content-center">
@@ -981,8 +990,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <!-- also 2386,2435,2440 -->
-      <div v-show="step === 2437" class="container">
+      <div v-show="step === STEP_MESSAGE_STATUS" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 4 von 5</div>
@@ -1035,10 +1043,9 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <!-- also 2387,2436,2439 -->
       <div
         v-show="
-          step === 2438 || (isDesktop && step === 2437 && formStatusIsResolved)
+          step === STEP_MESSAGE_MESSAGE_RESOLUTION || (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
         "
         class="container">
         <div class="row justify-content-center">
@@ -1072,7 +1079,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 2388" class="container">
+      <div v-show="step === STEP_MESSAGE_COST_CHECK_ANY" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 5 von 5</div>
@@ -1103,7 +1110,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 2390" class="container">
+      <div v-show="step === STEP_MESSAGE_COST_CHECK_LAST" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 5 von 5</div>
@@ -1140,7 +1147,45 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 3402" class="container">
+      <div
+        v-show="
+          step === STEP_MESSAGE_COST_UPDATE ||
+          (isDesktop && (step === STEP_MESSAGE_COST_CHECK_ANY || step === STEP_MESSAGE_COST_CHECK_LAST) && formDoUpdateCost)
+        "
+        class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+            <label class="fw-bold col-form-label" for="id_costs">
+              Welchen Betrag hat die Behörde verlangt?
+            </label>
+            <div class="col-md-8">
+              <div class="input-group" style="width: 10rem">
+                <!-- type=number does not support pattern -->
+                <input
+                  type="number"
+                  name="costs"
+                  id="id_costs"
+                  class="form-control col-3"
+                  inputmode="decimal"
+                  style="appearance: textfield; text-align: right"
+                  min="0"
+                  max="1000000000"
+                  step="0.01"
+                  v-model="values.costs"
+                  @input="updateValidity('costs')"
+                  :class="{
+                    'is-invalid': validity.costs === false,
+                    'is-valid': validity.costs === true
+                  }" />
+                <span class="input-group-text">Euro</span>
+              </div>
+              <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div v-show="step === STEP_REDACTION_PICKER" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <label class="fw-bold col-form-label">
@@ -1171,12 +1216,12 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="3000 < step && step < 3100">
+      <div v-show="step === STEP_REDACTION_REDACT">
         <div class="container">
           <div class="row">
             <div class="col">
               <label class="fw-bold col-form-label">
-                Dokument schwärzen ({{ documentsPdfRedactionIndex + 1 }} von
+                Dokument schwärzen ({{ pdfRedactionCurrentIndex + 1 }} von
                 {{ documentsSelectedPdfRedaction.length }})
               </label>
               <div class="alert alert-warning">
@@ -1201,23 +1246,23 @@ const onlineHelp = ref()
         </div>
         <div>
           <pre class="debug" v-if="debug">
-    DEBUG: documentsPdfRedactionIndex = {{ documentsPdfRedactionIndex }}</pre
+    DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex}}</pre
           >
           <pdf-redaction
-            v-if="currentPdfRedactionDoc"
-            :key="currentPdfRedactionDoc.id"
-            :pdf-path="currentPdfRedactionDoc.attachment.file_url"
-            :attachment-url="currentPdfRedactionDoc.attachment.anchor_url"
+            v-if="pdfRedactionCurrentDoc"
+            :key="pdfRedactionCurrentDoc.id"
+            :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
+            :attachment-url="pdfRedactionCurrentDoc.attachment.anchor_url"
             :post-url="
               config.url.redactAttachment.replace(
                 '/0/',
-                '/' + currentPdfRedactionDoc.id + '/'
+                '/' + pdfRedactionCurrentDoc.id + '/'
               )
             "
             :approve-url="
               config.url.approveAttachment.replace(
                 '/0/',
-                '/' + currentPdfRedactionDoc.id + '/'
+                '/' + pdfRedactionCurrentDoc.id + '/'
               )
             "
             :minimal-ui="true"
@@ -1253,7 +1298,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 4413" class="container">
+      <div v-show="step === STEP_DOCUMENTS_OVERVIEW_REDACTED" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="fw-bold col-form-label">
@@ -1263,45 +1308,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div
-        v-show="
-          step === 2565 ||
-          (isDesktop && (step === 2388 || step === 2390) && formDoUpdateCost)
-        "
-        class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-            <label class="fw-bold col-form-label" for="id_costs">
-              Welchen Betrag hat die Behörde verlangt?
-            </label>
-            <div class="col-md-8">
-              <div class="input-group" style="width: 10rem">
-                <!-- type=number does not support pattern -->
-                <input
-                  type="number"
-                  name="costs"
-                  id="id_costs"
-                  class="form-control col-3"
-                  inputmode="decimal"
-                  style="appearance: textfield; text-align: right"
-                  min="0"
-                  max="1000000000"
-                  step="0.01"
-                  v-model="values.costs"
-                  @input="updateValidity('costs')"
-                  :class="{
-                    'is-invalid': validity.costs === false,
-                    'is-valid': validity.costs === true
-                  }" />
-                <span class="input-group-text">Euro</span>
-              </div>
-              <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === 4570" class="container">
+      <div v-show="step === STEP_OUTRO" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9 text-center">
             <div class="my-3">
@@ -1319,12 +1326,12 @@ const onlineHelp = ref()
       </div>
 
       <!-- not in v-show="step ..." -->
-      <div v-show="uiDocuments">
+      <div v-show="stepContext.documents">
         <div class="container">
           <div class="row justify-content-center">
             <div class="col-lg-9">
               <div
-                v-if="step === 4413 && !user_is_staff"
+                v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
                 class="d-flex justify-content-end">
                 <button
                   type="button"
@@ -1335,27 +1342,27 @@ const onlineHelp = ref()
                   {{ documentsBasicOperations ? 'Fertig' : 'Bearbeiten' }}
                 </button>
               </div>
-              <!-- TODO maybe :hide-documents (PDFs) in step 1110 -->
+              <!-- TODO maybe :hide-documents (PDFs) in step STEP_DOCUMENTS_UPLOAD -->
               <document-uploader
                 :debug="debug"
                 :config="config"
                 :message="message"
-                :show-upload="uiDocumentsUpload"
-                :icon-style="uiDocumentsIconStyle"
-                :hide-selection="uiDocumentsHideSelection"
+                :show-upload="stepContext.documentsUpload"
+                :icon-style="stepContext.documentsIconStyle"
+                :hide-selection="stepContext.documentsHideSelection"
                 :hide-selection-bar="true"
                 :hide-other="true"
-                :hide-pdf="uiDocumentsHidePdf"
+                :hide-pdf="stepContext.documentsHidePdf"
                 :hide-status-tools="true"
-                :images-simple="uiDocumentsImagesSimple"
+                :images-simple="stepContext.documentsImagesSimple"
                 :images-document-filename="
                   documentsImagesDocumentFilenameNormalized
                 "
                 :file-basic-operations="
-                  step === 1300 || documentsBasicOperations
+                  step === STEP_DOCUMENTS_OVERVIEW || documentsBasicOperations
                 "
                 :hide-advanced-operations="true || !(debug && user_is_staff)"
-                :highlight-redactions="uiDocumentsHighlightRedactions"
+                :highlight-redactions="stepContext.documentsHighlightRedactions"
                 @selectionupdated="documentsSelectedPdfRedaction = $event"
                 @imagesadded="documentsImagesAdded"
                 @documentsadded="documentsDocumentsAdded"
@@ -1366,7 +1373,7 @@ const onlineHelp = ref()
         </div>
       </div>
 
-      <div v-show="step === 1300" class="container">
+      <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
         <div class="row justify-content-center">
           <div class="col-sm-9 col-md-6 mt-3">
             <button
@@ -1379,7 +1386,7 @@ const onlineHelp = ref()
             <button
               type="button"
               class="btn btn-outline-primary d-block w-100"
-              @click="gotoStep(1110)">
+              @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
               <i class="fa fa-plus"></i>
               Weitere Dateien hochladen
             </button>
@@ -1392,7 +1399,7 @@ const onlineHelp = ref()
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-md-9 col-lg-6 text-center">
-            <template v-if="3000 < step && step < 3100">
+            <template v-if="step === STEP_REDACTION_REDACT">
               <button
                 type="button"
                 @click="pdfRedactionRedact()"
@@ -1412,7 +1419,7 @@ const onlineHelp = ref()
                 </div>
               </div>
             </template>
-            <template v-else-if="step === 4413">
+            <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
               <button
                 type="button"
                 @click="approveDocsAndSubmit()"
@@ -1448,7 +1455,7 @@ const onlineHelp = ref()
                 </template>
               -->
             </template>
-            <template v-else-if="step === 4570">
+            <template v-else-if="step === STEP_OUTRO">
               <button
                 type="button"
                 @click="submit"
@@ -1456,7 +1463,7 @@ const onlineHelp = ref()
                 Anfrage ansehen
               </button>
             </template>
-            <template v-else-if="step === 1100">
+            <template v-else-if="step === STEP_INTRO">
               <!-- should be blank -->
               <button
                 v-if="debug"
@@ -1466,7 +1473,7 @@ const onlineHelp = ref()
                 DEBUG skip
               </button>
             </template>
-            <template v-else-if="step === 1110">
+            <template v-else-if="step === STEP_DOCUMENTS_UPLOAD">
               <!-- this could be completely hidden -->
               <button
                 type="button"
@@ -1482,7 +1489,7 @@ const onlineHelp = ref()
                 DEBUG skip
               </button>
             </template>
-            <template v-else-if="step === 1201">
+            <template v-else-if="step === STEP_DOCUMENTS_SORT">
               <button
                 type="button"
                 @click="gotoStep()"
@@ -1490,7 +1497,7 @@ const onlineHelp = ref()
                 Fertig mit Sortieren
               </button>
             </template>
-            <template v-else-if="step === 1202">
+            <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
               <button
                 v-if="documentUploader.$refs.imageDocument.length > 0"
                 type="button"
@@ -1512,10 +1519,10 @@ const onlineHelp = ref()
                 weiter
               </button>
             </template>
-            <template v-else-if="step === 2384">
+            <template v-else-if="step === STEP_MESSAGE_DATE">
               <button
                 type="button"
-                :disabled="!gotoValid"
+                :disabled="!isGotoValid"
                 @click="gotoStep()"
                 class="btn btn-primary d-block w-100">
                 weiter
@@ -1532,7 +1539,7 @@ const onlineHelp = ref()
               <button
                 type="button"
                 @click="gotoStep()"
-                :disabled="!gotoValid"
+                :disabled="!isGotoValid"
                 class="btn btn-primary d-block w-100">
                 weiter
               </button>

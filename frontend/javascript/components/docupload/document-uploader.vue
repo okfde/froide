@@ -242,7 +242,6 @@ export default {
       return this.documents.filter((d) => d.irrelevant)
     },
     selectedDocuments() {
-      console.log('# ocmputed selectedDocuments')
       return this.documents.filter((d) => d.selected)
     },
     canMakeResultDocs() {
