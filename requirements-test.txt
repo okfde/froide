@@ -153,7 +153,7 @@ django-stubs==5.0.4
     # via froide (pyproject.toml)
 django-stubs-ext==5.0.4
     # via django-stubs
-django-taggit==6.0.0
+django-taggit==6.1.0
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
