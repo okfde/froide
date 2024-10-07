@@ -39,7 +39,7 @@
     "postcss": "^8.4.20",
     "sass": "^1.58.3",
     "typescript": "^5.1.6",
-    "vite": "^4.1.2",
+    "vite": "^4.5.5",
     "vite-plugin-dev-manifest": "^1.0.9"
   },
   "dependencies": {

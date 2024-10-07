@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@okfde/filingcabinet':
         specifier: github:okfde/django-filingcabinet
-        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))
+        version: git+https://git@github.com:okfde/django-filingcabinet.git#3b1dc92d89da48af9851e37a22ac1310922b9c73(worker-loader@3.0.8(webpack@5.94.0))
       '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.8
@@ -86,7 +86,7 @@ importers:
     devDependencies:
       '@okfde/eslint-config-froide':
         specifier: okfde/eslint-config-froide
-        version: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)
+        version: git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)
       '@types/bootstrap':
         specifier: ^5.2.1
         version: 5.2.7
@@ -95,7 +95,7 @@ importers:
         version: 3.6.2
       '@vitejs/plugin-vue':
         specifier: ^4.0.0
-        version: 4.3.4(vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))(vue@3.3.4)
+        version: 4.3.4(vite@4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))(vue@3.3.4)
       autoprefixer:
         specifier: ^10.4.13
         version: 10.4.16(postcss@8.4.30)
@@ -112,11 +112,11 @@ importers:
         specifier: ^5.1.6
         version: 5.2.2
       vite:
-        specifier: ^4.1.2
-        version: 4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)
+        specifier: ^4.5.5
+        version: 4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)
       vite-plugin-dev-manifest:
         specifier: ^1.0.9
-        version: 1.2.0(vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))
+        version: 1.2.0(vite@4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))
 
 packages:
 
@@ -343,12 +343,12 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@okfde/eslint-config-froide@https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c':
-    resolution: {tarball: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c}
+  '@okfde/eslint-config-froide@git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c':
+    resolution: {commit: daabc1889e3b91e8c09eed6326ce4788a8cd116c, repo: git@github.com:okfde/eslint-config-froide.git, type: git}
     version: 1.0.0
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70':
-    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70}
+  '@okfde/filingcabinet@git+https://git@github.com:okfde/django-filingcabinet.git#3b1dc92d89da48af9851e37a22ac1310922b9c73':
+    resolution: {commit: 3b1dc92d89da48af9851e37a22ac1310922b9c73, repo: git@github.com:okfde/django-filingcabinet.git, type: git}
     version: 0.0.4
 
   '@popperjs/core@2.11.8':
@@ -1899,8 +1899,8 @@ packages:
     peerDependencies:
       vite: ^2.7.0 || ^3.0.0 || ^4.0.0
 
-  vite@4.4.9:
-    resolution: {integrity: sha512-2mbUn2LlUmNASWwSCNSJ/EG2HuSRTnVNaydp6vMCm5VIqJsjMfbIWtbH2kDuwUVW5mMUKKZvGPX/rqeqVvv1XA==}
+  vite@4.5.5:
+    resolution: {integrity: sha512-ifW3Lb2sMdX+WU91s3R0FyQlAyLxOzCSCP37ujw0+r5POeHPwe6udWVIElKQq8gk3t7b8rkmvqC6IHBpCff4GQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -2183,7 +2183,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@okfde/eslint-config-froide@https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)':
+  '@okfde/eslint-config-froide@git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)':
     dependencies:
       eslint: 9.9.1
       eslint-config-prettier: 9.1.0(eslint@9.9.1)
@@ -2196,7 +2196,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))':
+  '@okfde/filingcabinet@git+https://git@github.com:okfde/django-filingcabinet.git#3b1dc92d89da48af9851e37a22ac1310922b9c73(worker-loader@3.0.8(webpack@5.94.0))':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.2(@popperjs/core@2.11.8)
@@ -2392,9 +2392,9 @@ snapshots:
       lodash: 4.17.21
       preact: 10.17.1
 
-  '@vitejs/plugin-vue@4.3.4(vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))(vue@3.3.4)':
+  '@vitejs/plugin-vue@4.3.4(vite@4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0))(vue@3.3.4)':
     dependencies:
-      vite: 4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)
+      vite: 4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)
       vue: 3.3.4
 
   '@vue/compiler-core@3.3.4':
@@ -3928,11 +3928,11 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite-plugin-dev-manifest@1.2.0(vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)):
+  vite-plugin-dev-manifest@1.2.0(vite@4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)):
     dependencies:
-      vite: 4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)
+      vite: 4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0)
 
-  vite@4.4.9(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0):
+  vite@4.5.5(@types/node@22.5.5)(sass@1.68.0)(terser@5.33.0):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.30
