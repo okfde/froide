@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@okfde/filingcabinet':
         specifier: github:okfde/django-filingcabinet
-        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))
+        version: git+https://git@github.com:okfde/django-filingcabinet.git#3b1dc92d89da48af9851e37a22ac1310922b9c73(worker-loader@3.0.8(webpack@5.94.0))
       '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.8
@@ -86,7 +86,7 @@ importers:
     devDependencies:
       '@okfde/eslint-config-froide':
         specifier: okfde/eslint-config-froide
-        version: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)
+        version: git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)
       '@types/bootstrap':
         specifier: ^5.2.1
         version: 5.2.7
@@ -343,12 +343,12 @@ packages:
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
 
-  '@okfde/eslint-config-froide@https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c':
-    resolution: {tarball: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c}
+  '@okfde/eslint-config-froide@git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c':
+    resolution: {commit: daabc1889e3b91e8c09eed6326ce4788a8cd116c, repo: git@github.com:okfde/eslint-config-froide.git, type: git}
     version: 1.0.0
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70':
-    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70}
+  '@okfde/filingcabinet@git+https://git@github.com:okfde/django-filingcabinet.git#3b1dc92d89da48af9851e37a22ac1310922b9c73':
+    resolution: {commit: 3b1dc92d89da48af9851e37a22ac1310922b9c73, repo: git@github.com:okfde/django-filingcabinet.git, type: git}
     version: 0.0.4
 
   '@popperjs/core@2.11.8':
@@ -1668,8 +1668,8 @@ packages:
     deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
-  rollup@3.29.3:
-    resolution: {integrity: sha512-T7du6Hum8jOkSWetjRgbwpM6Sy0nECYrYRSmZjayFcOddtKJWU4d17AC3HNUk7HRuqy4p+G7aEZclSHytqUmEg==}
+  rollup@3.29.5:
+    resolution: {integrity: sha512-GVsDdsbJzzy4S/v3dqWPJ7EfvZJfCHiDqe80IyrF59LYuP+e6U1LJoUqeuqRbwAWoMNoXivMNeNAOf5E22VA1w==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -2183,7 +2183,7 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@okfde/eslint-config-froide@https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)':
+  '@okfde/eslint-config-froide@git+https://git@github.com:okfde/eslint-config-froide.git#daabc1889e3b91e8c09eed6326ce4788a8cd116c(typescript@5.2.2)':
     dependencies:
       eslint: 9.9.1
       eslint-config-prettier: 9.1.0(eslint@9.9.1)
@@ -2196,7 +2196,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/24c86ee9c327f4ac21cf9901e24fb5e6c1f97e70(worker-loader@3.0.8(webpack@5.94.0))':
+  '@okfde/filingcabinet@git+https://git@github.com:okfde/django-filingcabinet.git#3b1dc92d89da48af9851e37a22ac1310922b9c73(worker-loader@3.0.8(webpack@5.94.0))':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.2(@popperjs/core@2.11.8)
@@ -3683,7 +3683,7 @@ snapshots:
     dependencies:
       glob: 7.2.3
 
-  rollup@3.29.3:
+  rollup@3.29.5:
     optionalDependencies:
       fsevents: 2.3.3
 
@@ -3936,7 +3936,7 @@ snapshots:
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.30
-      rollup: 3.29.3
+      rollup: 3.29.5
     optionalDependencies:
       '@types/node': 22.5.5
       fsevents: 2.3.3
