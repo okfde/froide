@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-05 12:27+0200\n"
+"POT-Creation-Date: 2024-10-07 11:36+0200\n"
 "PO-Revision-Date: 2024-08-12 10:37+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -968,11 +968,11 @@ msgstr "Weiter"
 
 #: froide/account/templates/account/includes/breadcrumbs.html
 #: froide/foirequest/templates/foirequest/header/breadcrumb.html
-#: froide/organization/templates/organization/organization_detail.html
 #: froide/organization/templates/organization/organization_list.html
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/templates/snippets/breadcrumbs.html
+#: froide/organization/templates/organization/organization_detail.html
 msgid "Home Page"
 msgstr "Startseite"
 
@@ -1349,6 +1349,14 @@ msgid "Proofs"
 msgstr "Nachweise"
 
 #: froide/account/templates/account/settings.html
+msgid "External apps"
+msgstr ""
+
+#: froide/account/templates/account/settings.html
+msgid "Show external apps with access to your account"
+msgstr ""
+
+#: froide/account/templates/account/settings.html
 msgid "Export your data"
 msgstr "Exportieren Sie Ihre Daten"
 
@@ -1400,6 +1408,10 @@ msgstr "zurück zu Ihren Anfragen"
 #: froide/account/templates/account/settings_base.html
 msgid "General settings"
 msgstr "Allgemeine Einstellungen"
+
+#: froide/account/templates/account/settings_base.html
+msgid "External Apps"
+msgstr ""
 
 #: froide/account/templates/account/settings_base.html
 msgid "Data export"
@@ -1475,6 +1487,79 @@ msgstr "Anfragen des:der Nutzer:in"
 msgid "Become user"
 msgstr "Impostor-Modus"
 
+#: froide/account/templates/oauth2_provider/application_detail.html
+#, fuzzy
+msgid "Client id"
+msgstr "Dateityp"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#, fuzzy
+msgid "Client secret"
+msgstr "Dateityp"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+msgid "Client secret has been hashed and can no longer be viewed."
+msgstr ""
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#, fuzzy
+msgid "Client type"
+msgstr "Dateityp"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+msgid "Authorization Grant Type"
+msgstr ""
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#, fuzzy
+msgid "Redirect Uris"
+msgstr "Weitergeleitet an"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#, fuzzy
+msgid "Post Logout Redirect Uris"
+msgstr "Weitergeleitet an"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+msgid "Allowed Origins"
+msgstr ""
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#: froide/account/templates/oauth2_provider/application_form.html
+#, fuzzy
+msgid "Go Back"
+msgstr "Zurück"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#: froide/foirequest/templates/foirequest/account/list_drafts.html
+#: froide/foirequest/templates/foirequest/snippets/message_edit.html
+#: froide/foirequest/views/make_request.py froide/foirequest/views/message.py
+#: froide/upload/forms.py
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: froide/account/templates/oauth2_provider/application_detail.html
+#: froide/foirequest/templates/foirequest/account/list_drafts.html
+#: froide/foirequest/views/message.py
+#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
+#: froide/templates/mfa/mfakey_list.html
+msgid "Delete"
+msgstr "Löschen"
+
+#: froide/account/templates/oauth2_provider/application_form.html
+#, fuzzy
+msgid "Edit application"
+msgstr "Ihre OAuth-Anwendungen"
+
+#: froide/account/templates/oauth2_provider/application_form.html
+#: froide/document/templates/filingcabinet/_base_set_form.html
+#: froide/foirequest/templates/foirequest/header/header.html
+#: froide/foirequest/templates/foirequest/snippets/message_edit.html
+#: froide/foirequest/views/message.py
+#: froide/organization/templates/organization/organization_update_form.html
+msgid "Save"
+msgstr "Speichern"
+
 #: froide/account/templates/oauth2_provider/application_list.html
 msgid "back to your account settings"
 msgstr "zurück zu Ihren Einstellungen"
@@ -1502,6 +1587,45 @@ msgstr "Abbrechen"
 #: froide/account/templates/oauth2_provider/authorize.html
 msgid "Authorize"
 msgstr "Zugriff erlauben"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+msgid "External applications with access to your account"
+msgstr ""
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "You have given the following applications access to your account."
+msgstr "Sie haben die folgenden Zwei-Faktor-Login-Methoden aktiviert:"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "Expired"
+msgstr "abgelaufen"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "Created"
+msgstr "Erstellt am"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "Updated"
+msgstr "Aktualisiert von"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "Expires"
+msgstr "abgelaufen"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "Revoke access"
+msgstr "Team-Zugang"
+
+#: froide/account/templates/oauth2_provider/authorized-tokens.html
+#, fuzzy
+msgid "There are no external applications with."
+msgstr "Es gibt noch keine Vorschläge"
 
 #: froide/account/templates/oauth2_provider/base.html
 msgid "OAuth applications"
@@ -2027,14 +2151,6 @@ msgstr ""
 #: froide/document/templates/document/upload.html
 msgid "Create documents"
 msgstr "Dokumente erstellen"
-
-#: froide/document/templates/filingcabinet/_base_set_form.html
-#: froide/foirequest/templates/foirequest/header/header.html
-#: froide/foirequest/templates/foirequest/snippets/message_edit.html
-#: froide/foirequest/views/message.py
-#: froide/organization/templates/organization/organization_update_form.html
-msgid "Save"
-msgstr "Speichern"
 
 #: froide/document/templates/filingcabinet/document_detail.html
 msgid "Edit title"
@@ -4237,20 +4353,6 @@ msgstr ""
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 msgid "no request made yet"
 msgstr "noch keine Anfrage gestellt"
-
-#: froide/foirequest/templates/foirequest/account/list_drafts.html
-#: froide/foirequest/templates/foirequest/snippets/message_edit.html
-#: froide/foirequest/views/make_request.py froide/foirequest/views/message.py
-#: froide/upload/forms.py
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: froide/foirequest/templates/foirequest/account/list_drafts.html
-#: froide/foirequest/views/message.py
-#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
-#: froide/templates/mfa/mfakey_list.html
-msgid "Delete"
-msgstr "Löschen"
 
 #: froide/foirequest/templates/foirequest/account/list_following.html
 msgid "Requests you follow"
@@ -8085,6 +8187,10 @@ msgstr "Anfrage der Woche"
 msgid "Relative to"
 msgstr "Relativ zu"
 
+#: froide/georegion/apps.py froide/georegion/models.py
+msgid "Geo Region"
+msgstr "Geographische Region"
+
 #: froide/georegion/models.py
 msgid "country"
 msgstr "Land"
@@ -8140,10 +8246,6 @@ msgstr "Regierungssitz"
 #: froide/georegion/models.py
 msgid "Part of"
 msgstr "Teil von"
-
-#: froide/georegion/models.py
-msgid "Geo Region"
-msgstr "Geographische Region"
 
 #: froide/georegion/models.py froide/publicbody/forms.py
 msgid "Geo Regions"
@@ -8642,13 +8744,6 @@ msgstr ""
 "eines an.\n"
 
 #: froide/organization/templates/organization/organization_detail.html
-#: froide/organization/templates/organization/organization_list.html
-#: froide/organization/templates/organization/organization_list_own.html
-#: froide/organization/templates/organization/organization_update_form.html
-msgid "Organizations"
-msgstr "Organisationen"
-
-#: froide/organization/templates/organization/organization_detail.html
 #: froide/organization/templates/organization/organization_update_form.html
 msgid "Edit Organization"
 msgstr "Organisation bearbeiten"
@@ -8698,6 +8793,14 @@ msgstr ""
 #: froide/organization/templates/organization/organization_join.html
 msgid "Join this organization"
 msgstr "Dieser Organisation beitreten"
+
+#: froide/organization/templates/organization/organization_list.html
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/organization/views.py
+#: froide/organization/templates/organization/organization_detail.html
+msgid "Organizations"
+msgstr "Organisationen"
 
 #: froide/organization/templates/organization/organization_list.html
 msgid "No organizations found."
@@ -10481,6 +10584,11 @@ msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
 #: froide/settings.py
+#, fuzzy
+msgid "Upload postal messages"
+msgstr "Post hochladen"
+
+#: froide/settings.py
 msgid "Follow/Unfollow requests"
 msgstr "Folge/Entfolge Anfragen"
 
@@ -11202,9 +11310,9 @@ msgid "Visit this request"
 msgstr "Anfrage besuchen"
 
 #: froide/templates/snippets/homepage_hero.html
+#, fuzzy
 msgid ""
 "Freedom of Information Request\n"
-"\n"
 "      To: Ministry of Interior\n"
 "\n"
 "      Dear Sir or Madam,\n"
@@ -11662,6 +11770,24 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid ""
+"Freedom of Information Request\n"
+"\n"
+"      To: Ministry of Interior\n"
+"\n"
+"      Dear Sir or Madam,\n"
+"      I request information about the following:\n"
+"      ..."
+msgstr ""
+"Anfrage nach dem Informationsfreiheitsgesetz\n"
+"\n"
+"An: Bundesministerium des Innern\n"
+"\n"
+"Guten Tag,\n"
+"ich beantrage Auskunft zu folgender Sachlage:\n"
+"…"
 
 #: froide/foirequest/templates/foirequest/sent.html
 msgid "Tweet request"
@@ -12173,9 +12299,6 @@ msgstr "Dokumente (beta)"
 #~ msgid "Set law"
 #~ msgstr "Gesetz festlegen"
 
-#~ msgid "Team access"
-#~ msgstr "Team-Zugang"
-
 #, python-format
 #~ msgid ""
 #~ "Please <a href=\"%(url)s\">read the reply</a> and choose a new status"
@@ -12261,9 +12384,6 @@ msgstr "Dokumente (beta)"
 #, fuzzy
 #~ msgid "Reason given by the user:"
 #~ msgstr "Begründung des Nutzers:"
-
-#~ msgid "There are no suggestions yet"
-#~ msgstr "Es gibt noch keine Vorschläge"
 
 #~ msgid "Suggest this Public Body"
 #~ msgstr "Schlagen Sie diese Behörde vor"
@@ -12897,30 +13017,6 @@ msgstr "Dokumente (beta)"
 #, fuzzy
 #~ msgid "Are you sure to delete the application"
 #~ msgstr "Sind Sie sicher, dass Sie dieses Team löschen wollen?"
-
-#, fuzzy
-#~ msgid "Client id"
-#~ msgstr "Dateityp"
-
-#, fuzzy
-#~ msgid "Client secret"
-#~ msgstr "Dateityp"
-
-#, fuzzy
-#~ msgid "Client type"
-#~ msgstr "Dateityp"
-
-#, fuzzy
-#~ msgid "Redirect Uris"
-#~ msgstr "Weitergeleitet an"
-
-#, fuzzy
-#~ msgid "Go Back"
-#~ msgstr "Zurück"
-
-#, fuzzy
-#~ msgid "Edit application"
-#~ msgstr "Ihre OAuth-Anwendungen"
 
 #, fuzzy
 #~ msgid "Your applications"
@@ -14192,3 +14288,9 @@ msgstr "Dokumente (beta)"
 
 #~ msgid "Add guidance action to messages..."
 #~ msgstr "Füge Hinweisvorlage zu Nachrichten hinzu..."
+
+#~ msgid "Team access"
+#~ msgstr "Team-Zugang"
+
+#~ msgid "There are no suggestions yet"
+#~ msgstr "Es gibt noch keine Vorschläge"
