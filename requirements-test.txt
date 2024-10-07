@@ -300,7 +300,7 @@ pillow==10.4.0
     #   pikepdf
     #   reportlab
     #   weasyprint
-platformdirs==4.3.2
+platformdirs==4.3.6
     # via virtualenv
 playwright==1.46.0
     # via pytest-playwright
