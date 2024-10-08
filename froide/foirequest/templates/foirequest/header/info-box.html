@@ -26,7 +26,7 @@
     {# body  #}
     <div class="info-box__body">
         {# edit button #}
-        {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
+        {% if object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
             <div id="set-status" class="bg-primary-subtle px-4 py-2 d-print-none">
                 <a href="#" class="info-box__edit-button">
                     <span class="{% if active_tab == 'set-status' %}d-none{% endif %}"><i class="fa fa-pencil" aria-hidden="true"></i> {% trans "Edit request status" %}</span>
@@ -208,7 +208,7 @@
             </li>
         </ul>
         {# edit interface #}
-        {% if object.moderate_classification and object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
+        {% if object|can_moderate_foirequest:request or object|can_write_foirequest:request %}
             <div class="info-box__edit-panel px-4 mt-2 mb-4 {% if active_tab != 'set-status' %}d-none{% endif %}">
                 <form class="disable-submit"
                       method="post"
