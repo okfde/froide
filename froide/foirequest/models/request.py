@@ -742,9 +742,6 @@ class FoiRequest(models.Model):
     def awaits_classification(self):
         return self.status == Status.AWAITING_CLASSIFICATION
 
-    def moderate_classification(self):
-        return self.awaits_classification() and self.available_for_moderator_action()
-
     def available_for_moderator_action(self):
         ago = timezone.now() - MODERATOR_CLASSIFICATION_OFFSET
         return self.last_message < ago
