@@ -13,6 +13,14 @@ const approveAttachment = (doc, config, csrf) => {
   })
 }
 
+const unpublishAttachment = (doc, config, csrf) => {
+  const approveUrl = config.url.unpublishAttachment.replace('/0/', `/${doc.id}/`)
+  const attachmentUrl = config.url.getAttachment.replace('/0/', `/${doc.id}/`)
+  return postData(approveUrl, {}, csrf).then(() => {
+    return getData(attachmentUrl)
+  })
+}
+
 const createDocument = (doc, config, csrf) => {
   const createDocumentUrl = config.url.createDocument.replace(
     '/0/',
@@ -56,6 +64,19 @@ const DocumentMixin = {
           })
         })
       }
+      if (payload.unpublishing) {
+        return unpublishAttachment(
+          this.document,
+          this.config,
+          this.$root.csrfToken
+        ).then((data) => {
+          this.$emit('docupdated', {
+            unpublishing: false,
+            new: true,
+            attachment: data
+          })
+        })
+      }
       if (payload.creatingDocument) {
         return createDocument(
           this.document,
@@ -87,4 +108,4 @@ const DocumentMixin = {
   }
 }
 
-export { DocumentMixin, approveAttachment, createDocument, deleteAttachment }
+export { DocumentMixin, approveAttachment, createDocument, deleteAttachment, unpublishAttachment }

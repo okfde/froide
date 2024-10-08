@@ -45,6 +45,14 @@
                     <button type="submit" class="btn btn-sm btn-success">{% translate "Approve" %}</button>
                 </form>
             {% endif %}
+            {% if attachment.approved and foirequest|can_moderate_pii_foirequest:request %}
+                <form class="d-inline ajaxified ajax-parent"
+                      action="{% url 'foirequest-unpublish_attachment' slug=foirequest.slug attachment_id=attachment.id %}"
+                      method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger">{% translate "Unpublish" %}</button>
+                </form>
+            {% endif %}
         {% endif %}
     </div>
     {% if attachment.can_embed %}

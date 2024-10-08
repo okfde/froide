@@ -46,6 +46,7 @@ from ..views import (
     shortlink,
     show_attachment,
     suggest_public_body,
+    unpublish_attachment,
     upload_attachments,
     upload_postal_message,
 )
@@ -211,6 +212,11 @@ urlpatterns = [
         "<slug:slug>/approve/<int:attachment_id>/",
         approve_attachment,
         name="foirequest-approve_attachment",
+    ),
+    path(
+        "<slug:slug>/unpublish/<int:attachment_id>/",
+        unpublish_attachment,
+        name="foirequest-unpublish_attachment",
     ),
     path(
         "<slug:slug>/delete/<int:attachment_id>/",
