@@ -94,6 +94,29 @@ def approve_attachment(request, foirequest, attachment_id):
 
 
 @require_POST
+@allow_write_or_moderate_pii_foirequest
+def unpublish_attachment(request, foirequest, attachment_id):
+    att = get_object_or_404(
+        FoiAttachment, id=attachment_id, belongs_to__request=foirequest
+    )
+    if not att.approved:
+        return render_403(request)
+
+    att.unpublish()
+
+    if is_ajax(request):
+        if request.content_type == "application/json":
+            return JsonResponse({})
+        return HttpResponse(
+            '<div class="alert alert-success">{}</div>'.format(
+                _("Attachment unpublished.")
+            )
+        )
+    messages.add_message(request, messages.SUCCESS, _("Attachment unpublished."))
+    return redirect(att.get_anchor_url())
+
+
+@require_POST
 @allow_moderate_pii_foirequest
 def mark_attachment_as_moderated(request, foirequest, attachment_id):
     att = get_object_or_404(

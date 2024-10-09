@@ -1247,6 +1247,111 @@ def test_approve_attachment(world, client):
 
 
 @pytest.mark.django_db
+def test_unpublish_attachment(world, client):
+    req = FoiRequest.objects.all()[0]
+    mes = req.messages[-1]
+    att = factories.FoiAttachmentFactory.create(belongs_to=mes, approved=True)
+
+    # Bad method
+    response = client.get(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": att.id},
+        )
+    )
+    assert response.status_code == 405
+
+    # Bad slug
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug + "blub", "attachment_id": att.id},
+        )
+    )
+    assert response.status_code == 404
+
+    # Not logged in
+    client.logout()
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": att.id},
+        )
+    )
+    assert_forbidden(response)
+
+    # Not user of request
+    client.login(email="dummy@example.org", password="froide")
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": att.id},
+        )
+    )
+    assert response.status_code == 403
+    client.logout()
+
+    # invalid user id
+    client.login(email="info@fragdenstaat.de", password="froide")
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": "9" * 8},
+        )
+    )
+    assert response.status_code == 404
+
+    user = User.objects.get(username="sw")
+    user.is_staff = False
+    user.save()
+
+    client.login(email="info@fragdenstaat.de", password="froide")
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": att.id},
+        )
+    )
+    assert response.status_code == 302
+    att.refresh_from_db()
+    assert not att.approved
+
+    att.approve_and_save()
+
+    client.logout()
+    client.login(email="dummy_staff@example.org", password="froide")
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": att.id},
+        )
+    )
+    assert response.status_code == 302
+    att.refresh_from_db()
+    assert not att.approved
+
+    att.approve_and_save()
+    att.create_document()
+    att.document.pending = False
+    att.document.save()
+
+    assert att.document
+    assert att.document.public
+
+    response = client.post(
+        reverse(
+            "foirequest-unpublish_attachment",
+            kwargs={"slug": req.slug, "attachment_id": att.id},
+        )
+    )
+    assert response.status_code == 302
+    att.refresh_from_db()
+    assert not att.approved
+    assert att.document
+    assert not att.document.public
+
+
+@pytest.mark.django_db
 def test_delete_attachment(world, client):
     from froide.foirequest.models.attachment import DELETE_TIMEFRAME
 

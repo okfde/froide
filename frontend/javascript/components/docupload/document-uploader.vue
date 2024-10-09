@@ -23,7 +23,7 @@
             <input
               v-model="selectAll"
               type="checkbox"
-              @click="clickSelectAll" />
+              @change="clickSelectAll" />
           </div>
           <div class="col-auto ms-auto">
             <button
@@ -44,6 +44,13 @@
               @click="approveSelected">
               <i class="fa fa-check" />
               {{ i18n.approveAll }}
+            </button>
+            <button
+              v-if="canUnpublish"
+              class="btn btn-sm ms-2 btn-danger"
+              @click="unpublishSelected">
+              <i class="fa fa-check" />
+              {{ i18n.unpublishAll }}
             </button>
           </div>
         </div>
@@ -92,7 +99,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 import { postData } from '../../lib/api.js'
 import DjangoSlot from '../../lib/django-slot.vue'
 
-import { approveAttachment, createDocument } from './lib/document_utils'
+import { approveAttachment, unpublishAttachment, createDocument } from './lib/document_utils'
 import ImageDocument from './image-document.vue'
 import FileDocument from './file-document.vue'
 import FileUploader from '../upload/file-uploader.vue'
@@ -184,6 +191,19 @@ export default {
     },
     canApprove() {
       return this.canApproveDocs.length > 0
+    },
+    canUnpublishDocs() {
+      return this.pdfDocuments.filter((d) => {
+        return (
+          d.selected &&
+          d.unpublishing === undefined &&
+          d.attachment &&
+          d.attachment.approved
+        )
+      })
+    },
+    canUnpublish() {
+      return this.config.settings.can_unpublish && this.canUnpublishDocs.length > 0
     }
   },
   mounted() {
@@ -380,7 +400,7 @@ export default {
     },
     clickSelectAll() {
       this.pdfDocuments.forEach((d) => {
-        d.selected = !this.selectAll
+        d.selected = this.selectAll
       })
     },
     approveSelected() {
@@ -390,6 +410,19 @@ export default {
           return approveAttachment(d, this.config, this.$root.csrfToken).then(
             (att) => {
               d.approving = false
+              d.attachment = att
+            }
+          )
+        })
+      )
+    },
+    unpublishSelected() {
+      return Promise.all(
+        this.canUnpublishDocs.map((d) => {
+          d.unpublishing = true
+          return unpublishAttachment(d, this.config, this.$root.csrfToken).then(
+            (att) => {
+              d.unpublishing = false
               d.attachment = att
             }
           )

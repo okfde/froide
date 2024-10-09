@@ -11,6 +11,14 @@
       <i class="fa fa-check" />
       {{ i18n.approve }}
     </button>
+    <button
+      v-if="canUnpublish"
+      class="btn btn-sm btn-outline-danger"
+      :disabled="working"
+      @click="unpublish">
+      <i class="fa fa-eye-slash" />
+      {{ i18n.unpublish }}
+    </button>
 
     <a
       v-if="canReview && !approved"
@@ -98,6 +106,10 @@ export default {
     canOpen() {
       return !this.canApprove
     },
+    canUnpublish() {
+      return this.config.settings.can_unpublish && this.attachment &&
+        this.attachment.approved
+    },
     reviewUrl() {
       return this.config.url.redactAttachment.replace(
         '/0/',
@@ -126,6 +138,11 @@ export default {
     approve() {
       this.$emit('docupdated', {
         approving: true
+      })
+    },
+    unpublish() {
+      this.$emit('docupdated', {
+        unpublishing: true
       })
     },
     makeRelevant() {

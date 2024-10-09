@@ -8,6 +8,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from filingcabinet.tasks import publish_document
+
 from froide.document.models import Document
 from froide.helper.storage import HashedFilenameStorage
 
@@ -356,8 +358,7 @@ class FoiAttachment(models.Model):
             foirequest = self.belongs_to.request
             should_be_public = foirequest.public
             if self.document.public != should_be_public:
-                self.document.public = should_be_public
-                self.document.save()
+                publish_document.delay(self.document.pk, public=should_be_public)
 
     def remove_file_and_delete(self):
         if self.file:
@@ -404,3 +405,9 @@ class FoiAttachment(models.Model):
         transaction.on_commit(partial(process_document_task.delay, doc.pk))
 
         return doc
+
+    def unpublish(self):
+        self.approved = False
+        if self.document:
+            publish_document.delay(self.document.pk, public=False)
+        self.save()

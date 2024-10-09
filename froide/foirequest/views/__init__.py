@@ -15,6 +15,7 @@ from .attachment import (
     mark_attachment_as_moderated,
     redact_attachment,
     show_attachment,
+    unpublish_attachment,
 )
 from .draft import claim_draft, delete_draft
 from .list_requests import ListRequestView, search
@@ -83,6 +84,7 @@ __all__ = [
     "delete_attachment",
     "create_document",
     "approve_attachment",
+    "unpublish_attachment",
     "AttachmentFileDetailView",
     "redact_attachment",
     "delete_draft",

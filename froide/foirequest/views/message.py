@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
-from froide.foirequest.auth import can_read_foirequest
+from froide.foirequest.auth import can_moderate_pii_foirequest, can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
@@ -333,6 +333,7 @@ def upload_attachments(request, foirequest, message_id):
     ctx = {
         "settings": {
             "can_make_document": request.user.is_staff,
+            "can_unpublish": can_moderate_pii_foirequest(foirequest, request),
             "document_filetypes": POSTAL_CONTENT_TYPES,
             "image_filetypes": IMAGE_FILETYPES,
             "pdf_filetypes": PDF_FILETYPES,
@@ -367,6 +368,10 @@ def upload_attachments(request, foirequest, message_id):
             "tusEndpoint": reverse("api:upload-list"),
             "createDocument": reverse(
                 "foirequest-create_document",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "unpublishAttachment": reverse(
+                "foirequest-unpublish_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
         },
@@ -409,6 +414,8 @@ def upload_attachments(request, foirequest, message_id):
             "redacted": _("redacted"),
             "redact": _("Redact"),
             "delete": _("Delete"),
+            "unpublish": _("Unpublish"),
+            "unpublishAll": _("Unpublish all"),
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(

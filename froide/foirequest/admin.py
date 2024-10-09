@@ -812,6 +812,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         "approve",
         "disapprove",
         "cannot_approve",
+        "unpublish",
         "convert",
         "ocr_attachment",
         "make_document",
@@ -854,6 +855,12 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
                 % rows_updated
             ),
         )
+
+    @admin.action(description=_("Unpublish selected"))
+    def unpublish(self, request, queryset):
+        for row in queryset:
+            row.unpublish()
+        self.message_user(request, _("Attachment(s) successfully unpublished."))
 
     @admin.action(description=_("Convert to PDF"))
     def convert(self, request, queryset):
