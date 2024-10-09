@@ -23,7 +23,7 @@
             <input
               v-model="selectAll"
               type="checkbox"
-              @click="clickSelectAll" />
+              @change="clickSelectAll" />
           </div>
           <div class="col-auto ms-auto">
             <button
@@ -400,7 +400,7 @@ export default {
     },
     clickSelectAll() {
       this.pdfDocuments.forEach((d) => {
-        d.selected = !this.selectAll
+        d.selected = this.selectAll
       })
     },
     approveSelected() {
