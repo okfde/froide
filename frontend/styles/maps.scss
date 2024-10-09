@@ -56,5 +56,10 @@ $utilities: (
     values: (
       90: 0.9
     )
+  ),
+  'position': (
+    responsive: true,
+    property: position,
+    values: static relative absolute fixed sticky
   )
 );

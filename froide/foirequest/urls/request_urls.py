@@ -24,6 +24,7 @@ from ..views import (
     download_message_pdf,
     download_original_email,
     edit_message,
+    edit_postal_message,
     escalation_message,
     extend_deadline,
     make_public,
@@ -48,6 +49,7 @@ from ..views import (
     suggest_public_body,
     upload_attachments,
     upload_postal_message,
+    upload_postal_message_create,
 )
 
 urlpatterns = [
@@ -104,6 +106,16 @@ urlpatterns = [
         pgettext_lazy("url part", "<slug:slug>/upload-postal-message/"),
         upload_postal_message,
         name="foirequest-upload_postal_message",
+    ),
+    path(
+        pgettext_lazy("url part", "<slug:slug>/upload-postal-message-create/"),
+        upload_postal_message_create,
+        name="foirequest-upload_postal_message_create",
+    ),
+    path(
+        pgettext_lazy("url part", "<slug:slug>/<int:message_id>/edit-postal-message/"),
+        edit_postal_message,
+        name="foirequest-edit_postal_message",
     ),
     path(
         "<slug:slug>/apply-moderation/",

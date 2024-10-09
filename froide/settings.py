@@ -567,6 +567,8 @@ class Base(Configuration):
             "about": "/about/",
             "help": "/help/",
             "throttled": "/help/",
+            # TODO english?
+            "help_postupload_redaction": "/hilfe/plain/funktionen-der-plattform/schwaerzungen-durchfuehren/",
         },
         "moderation_triggers": [
             {

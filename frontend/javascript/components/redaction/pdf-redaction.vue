@@ -1,28 +1,31 @@
 <template>
-  <div id="pdf-viewer" ref="top" class="pdf-redaction-tool">
+  <div
+    id="pdf-viewer"
+    ref="top"
+    class="pdf-redaction-tool container bg-dark-subtle">
     <div v-if="hasPassword && ready" class="row">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="alert alert-info" role="alert">
           {{ i18n.hasPassword }}
         </div>
       </div>
     </div>
     <div v-if="message" class="row">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="alert alert-info" role="alert">
           {{ message }}
         </div>
       </div>
     </div>
     <div v-if="errors" class="row">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="alert alert-danger" role="alert">
           {{ errors }}
         </div>
       </div>
     </div>
     <div v-if="working" class="row mt-5">
-      <div class="col-lg-12">
+      <div class="col">
         <div class="text-center">
           <h3 v-if="loading">
             {{ i18n.loadingPdf }}
@@ -55,29 +58,61 @@
       </div>
     </div>
     <div class="row toolbar">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-1">
+      <div
+        v-if="ready"
+        class="btn-toolbar col align-items-center justify-content-around justify-content-sm-between bg-light">
+        <div
+          class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
+          <input
+            v-if="hasTouch"
+            type="checkbox"
+            class="btn-check"
+            id="btn-check-paint"
+            v-model="allowSingleTap" />
+          <label
+            v-if="hasTouch"
+            class="btn btn-outline-secondary d-flex"
+            for="btn-check-paint">
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-paint-brush" />
+              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+            </div>
+          </label>
           <button
+            type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
-            @click="undo"
-          >
-            <i class="fa fa-share fa-flip-horizontal" />
+            @click="undo">
+            <i class="fa fa-lg fa-share fa-flip-horizontal" />
+            <small class="d-none d-xl-block">{{ i18n.undo }}</small>
           </button>
           <button
+            type="button"
             class="btn btn-outline-secondary"
             :disabled="!canRedo"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
-            @click="redo"
-          >
-            <i class="fa fa-share" />
+            @click="redo">
+            <i class="fa fa-lg fa-share" />
+            <small class="d-none d-xl-block">{{ i18n.redo }}</small>
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            :disabled="!canUndo"
+            :title="'TODO'"
+            @click="undoAll">
+            <i class="fa fa-lg fa-eraser" />
+            <small class="d-none d-xl-block"
+              >Alle Schwärzungen<br />entfernen</small
+            >
           </button>
         </div>
 
-        <div class="btn-group me-1">
+        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes py-2">
           <button
             class="btn"
             :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
@@ -85,6 +120,7 @@
             @click.stop="toggleText"
           >
             <i class="fa fa-align-justify" />
+            <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
           </button>
           <button
             class="btn"
@@ -96,10 +132,13 @@
             @click.stop="toggleDrawing"
           >
             <i class="fa fa-image" />
+            <small class="d-none d-xl-block">{{ i18n.disableText }}</small>
           </button>
         </div>
 
-        <div class="input-group me-1">
+        <!-- TODO: hide if numPages === 1 ? -->
+        <div
+          class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -122,9 +161,8 @@
         </div>
 
         <div
-          v-if="hasRedactions || hasPassword"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0"
-        >
+          v-if="!minimalUi && (hasRedactions || hasPassword)"
+          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0 py-2">
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
@@ -135,7 +173,8 @@
             </template>
           </button>
         </div>
-        <div class="btn-group ms-auto mt-1 mt-lg-0">
+
+        <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0 py-2">
           <form
             v-if="canPublish && !hasPassword"
             method="post"
@@ -163,10 +202,12 @@
             {{ i18n.cancel }}
           </a>
         </div>
+
+        <!-- <slot name="toolbar-right"></slot> -->
       </div>
     </div>
-    <div class="row mt-3">
-      <div ref="containerWrapper" class="col-lg-12 overflow-auto">
+    <div class="py-3 row preview">
+      <div ref="containerWrapper" class="overflow-auto">
         <div
           :id="containerId"
           ref="container"
@@ -201,8 +242,8 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
+    <div v-if="!minimalUi" class="row">
+      <div v-if="ready" class="btn-toolbar col bg-light py-2">
         <div class="input-group me-auto ms-auto">
           <button
             class="pdf-prev btn btn-outline-secondary"
@@ -267,11 +308,25 @@ export default {
       type: String,
       required: true
     },
+    postUrl: {
+      type: String
+    },
+    approveUrl: {
+      type: String
+    },
+    noRedirect: {
+      type: Boolean,
+      default: false
+    },
     redactRegex: {
       type: Array,
       default: () => []
     },
     canPublish: {
+      type: Boolean,
+      default: false
+    },
+    minimalUi: {
       type: Boolean,
       default: false
     }
@@ -305,6 +360,7 @@ export default {
       progressCurrent: null,
       progressTotal: null,
       hasTouch: isTouchDevice(),
+      allowSingleTap: true,
       doubleTap: false
     }
   },
@@ -399,6 +455,11 @@ export default {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
     }
   },
+  watch: {
+    hasRedactions: function (newValue) {
+      this.$emit('hasredactionsupdate', newValue)
+    }
+  },
   created() {
     import('pdfjs-dist')
       .then((PDFJS) => {
@@ -464,6 +525,12 @@ export default {
         this.page = page
         if (this.maxWidth === null) {
           this.maxWidth = this.$refs.containerWrapper.offsetWidth
+          // subtract the paddings (from bootstrap's row child),
+          // fall back to the value calculated in default settings (like base font size)
+          this.maxWidth -=
+            parseInt(
+              window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
+            ) * 2 || 24
         }
 
         if (this.pageScaleFactor[pageNum] === undefined) {
@@ -545,6 +612,29 @@ export default {
       this.textDisabled = !this.textDisabled
       this.textOnly = !this.textDisabled
     },
+    redactOrApprove() {
+      if (this.hasRedactions || this.hasPassword) {
+        console.log('### redactOrApprove redact')
+        return this.redact()
+      } else {
+        console.log('### redactOrApprove approve')
+        return this.approve()
+      }
+    },
+    approve() {
+      // TODO like redact(), this should emulate what the form above does
+      const url = this.approveUrl
+      return fetch(url, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': this.csrfToken }
+      }).then((response) => {
+        if (!response.ok) {
+          console.error('approve error', response)
+          throw new Error(`approve error: ${response.status}`)
+        }
+        this.$emit('uploaded')
+      })
+    },
     redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
       this.ready = false
@@ -572,6 +662,11 @@ export default {
                 this.progressCurrent = 100
                 this.progressTotal = 100
                 bustCache(attachment.file_url).then(() => {
+                  // FIXME WIP emit a success event here instead
+                  if (this.noRedirect) {
+                    this.$emit('uploaded')
+                    return
+                  }
                   document.location.href = this.config.urls.messageUpload
                 })
               } else {
@@ -595,7 +690,10 @@ export default {
       this.progressTotal = 100
       return new Promise((resolve, reject) => {
         const xhr = new window.XMLHttpRequest()
-        xhr.open('POST', document.location.href)
+        // TODO
+        // should be like /anfrage/foo/redact/123456/
+        const url = this.postUrl || document.location.href
+        xhr.open('POST', url)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.csrfToken)
         const xhrUpload = xhr.upload ? xhr.upload : xhr
@@ -698,7 +796,7 @@ export default {
       return [offsetX, offsetY]
     },
     touchStart(e) {
-      if (!this.doubleTap) {
+      if (!this.doubleTap && !this.allowSingleTap) {
         this.doubleTap = true
         setTimeout(() => {
           this.doubleTap = false
@@ -968,6 +1066,11 @@ export default {
       const lastAction = this.actionsPerPage[this.currentPage][actionIndex]
       this.unapplyAction(lastAction)
     },
+    undoAll() {
+      while (this.canUndo) {
+        this.undo()
+      }
+    },
     redo() {
       if (!this.canRedo) {
         return
@@ -1209,5 +1312,13 @@ export default {
 .textLayer.textActive > div,
 .textLayer.textActive > span {
   color: #000;
+}
+
+.toolbar {
+  padding: 0;
+}
+
+.preview {
+  box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
 }
 </style>

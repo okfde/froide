@@ -23,6 +23,7 @@
         :key="result.id"
         class="search-result">
         <div class="form-check">
+          <!-- TODO: escape could/should "reset" -->
           <input
             v-model="value"
             type="radio"
@@ -30,9 +31,17 @@
             :data-label="result.name"
             :name="name"
             :value="result.id"
-            @change="selectSearchResult"
-            @click="selectSearchResult" />
-          <label class="form-check-label">
+            :id="`pb_${this.scope}_${result.id}`"
+            tabindex="0"
+            @change="selectSearchResult($event, false)"
+            @click="selectSearchResult($event, true)"
+            @keydown.enter.prevent="clear"
+            @keydown.space.prevent="clear" />
+          <!-- clearDelayed prevents in some browser the change on input not firing -->
+          <label
+            class="form-check-label"
+            @click="clearDelayed"
+            :for="`pb_${this.scope}_${result.id}`">
             {{ result.name }}
             <small>
               {{ result.jurisdiction.name }}
@@ -78,13 +87,26 @@ export default {
           publicBody: this.getPublicBody(value),
           scope: this.scope
         })
-        this.clearSearchResults({ scope: this.scope })
       }
     }
   },
   methods: {
-    selectSearchResult(event) {
+    selectSearchResult(event, doClear) {
+      // keyboard navigation (arrow keys) can send a fake click event
+      // it can be distinguished by detail attribute,
+      // which usually holds the amount of clicks (e.g. 2 for a double click)
+      // should this not suffice, we could check clientX === 0
+      if (event.type === 'click' && event.detail === 0) {
+        return
+      }
       this.value = event.target.value
+      if (doClear) this.clear()
+    },
+    clear() {
+      this.clearSearchResults({ scope: this.scope })
+    },
+    clearDelayed() {
+      setTimeout(() => this.clear(), 100)
     }
   }
 }
@@ -111,18 +133,9 @@ export default {
   background-color: var(--#{$prefix}body-secondary-bg);
 }
 
-.search-result > label {
-  font-weight: normal;
+.form-check label {
+  display: block;
   cursor: pointer;
-}
-
-.search-result > label > small {
-  margin-left: 5px;
-  color: #999;
-}
-
-.search-result > label > input {
-  margin: 0 5px;
 }
 
 /* Enter and leave animations can use different */

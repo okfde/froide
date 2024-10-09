@@ -1,42 +1,33 @@
 <template>
-  <div class="page col-2 mt-3">
-    <div class="row justify-content-center">
-      <div class="col-auto">
-        <img
-          v-if="pageUrl"
-          ref="pageImage"
-          :alt="page.name"
-          :title="page.name"
-          class="page-image"
-          :src="pageUrl"
-        />
-      </div>
+  <div class="page" :class="{ 'page--dense': dense }">
+    <div class="page-frame">
+      <img
+        v-if="pageUrl"
+        ref="pageImage"
+        :alt="page.name"
+        :title="page.name"
+        class="page-image"
+        :src="pageUrl" />
     </div>
-    <div class="row justify-content-center">
-      <div class="scol">
-        <div class="text-start">
-          <button
-            class="btn btn-sm text-body-secondary small"
-            @click="rotatePage"
-          >
-            <span class="fa fa-rotate-right" />
-          </button>
-        </div>
+    <div class="page-controls">
+      <div class="page-control" v-if="!hideRotate">
+        <button
+          class="btn btn-sm text-body-secondary small"
+          @click="rotatePage">
+          <span class="fa fa-rotate-right" />
+        </button>
       </div>
-      <div class="scol">
-        <div class="text-center">
-          {{ page.pageNum }}
-        </div>
+      <div
+        class="page-control page-control--number"
+        :class="{ 'text-center': !hideRotate }">
+        {{ page.pageNum }}
       </div>
-      <div class="scol">
-        <div v-if="!isLast" class="text-end">
-          <button
-            class="btn btn-sm text-body-secondary small"
-            @click="splitPages"
-          >
-            <span class="fa fa-scissors" />
-          </button>
-        </div>
+      <div class="page-control text-end" v-if="!hideSplit && !isLast">
+        <button
+          class="btn btn-sm text-body-secondary small"
+          @click="splitPages">
+          <span class="fa fa-scissors" />
+        </button>
       </div>
     </div>
     <div
@@ -72,6 +63,18 @@ export default {
     pageCount: {
       type: Number,
       required: true
+    },
+    dense: {
+      type: Boolean,
+      default: false
+    },
+    hideRotate: {
+      type: Boolean,
+      default: false
+    },
+    hideSplit: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -204,21 +207,51 @@ export default {
 
 <style lang="scss" scoped>
 .page {
-  flex: 0 0 120px;
-  padding: 0 15px;
-  margin: 0 1rem;
+  --page-width: 60px;
+
+  @media (min-width: 800px) {
+    --page-width: 120px;
+  }
+
+  position: relative;
+  flex: 0 0 var(--page-width);
+  padding: 0;
+  margin: 0 0.5rem 2rem 0;
   cursor: move;
+}
+.page-frame {
+  width: var(--page-width);
+  height: calc(var(--page-width) * 1.414);
+  display: flex;
+  align-items: flex-end;
 }
 .page-image {
   display: block;
-  width: 100%;
   max-width: 100%;
+  max-height: 100%;
   border: 1px solid #bbb;
   image-orientation: none; /* Always read exif ourselves */
 }
-.scol {
+.page-controls {
+  display: flex;
+}
+.page-control {
   flex-basis: 0;
   flex-grow: 1;
   max-width: 100%;
+}
+.page--dense .page-control--number {
+  position: absolute;
+  bottom: 0.2rem;
+  left: 0.2rem;
+  font-size: 60%;
+  background: var(--bs-link-color);
+  color: white;
+  width: 1.75em;
+  height: 1.75em;
+  text-align: center;
+  line-height: 1.75em;
+  border-radius: 50%;
+  font-weight: bolder;
 }
 </style>

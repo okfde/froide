@@ -474,9 +474,13 @@ class FoiRequest(models.Model):
         return "[#{}]".format(self.id)
 
     def get_messages(self, with_tags=False):
-        qs = self.foimessage_set.select_related(
-            "sender_user", "sender_public_body", "recipient_public_body"
-        ).order_by("timestamp")
+        qs = (
+            self.foimessage_set(manager="no_drafts")
+            .select_related(
+                "sender_user", "sender_public_body", "recipient_public_body"
+            )
+            .order_by("timestamp")
+        )
         if with_tags:
             qs = qs.prefetch_related("tags")
 

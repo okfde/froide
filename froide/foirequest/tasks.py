@@ -1,11 +1,12 @@
 import logging
 import os
+from datetime import timedelta
 from functools import partial
 
 from django.conf import settings
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
 from celery.exceptions import SoftTimeLimitExceeded
@@ -433,3 +434,12 @@ def unpack_zipfile_attachment_task(instance_id):
         return
 
     unpack_zipfile_attachment(att)
+
+
+@celery_app.task(name="froide.foirequest.tasks.remove_old_drafts", time_limit=10)
+def remove_old_drafts():
+    from .models import FoiMessage
+
+    FoiMessage.objects.filter(
+        is_draft=True, last_modified_at__lt=timezone.now() - timedelta(days=30)
+    ).delete()

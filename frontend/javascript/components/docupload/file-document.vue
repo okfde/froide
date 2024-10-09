@@ -3,14 +3,30 @@
     :id="attachmentId"
     class="document mb-1"
     :class="{ 'is-new': document.new }">
-    <div class="row">
+    <div class="row" @click.self="toggleSelected">
       <div class="col-auto">
-        <input v-if="ready" v-model="selected" type="checkbox" />
-        <div v-else class="spinner-border spinner-border-sm" role="status">
+        <input
+          v-if="ready && !hideSelection"
+          v-model="selected"
+          type="checkbox" />
+        <div
+          v-if="!ready"
+          class="spinner-border spinner-border-sm"
+          role="status">
           <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
       </div>
-      <div class="col-auto ps-0 doc-status">
+      <div
+        v-if="iconStyle === 'icon'"
+        class="col-auto ps-0"
+        @click="toggleSelected">
+        <i class="fa fa-file-o"></i>
+      </div>
+      <div v-else-if="iconStyle === 'thumbnail'" class="col-auto ps-0">
+        <!-- TODO: generated PDF thumbnail -->
+        <i class="fa fa-file-pdf-o fa-lg"></i>
+      </div>
+      <div v-if="!hideAdvancedOperations" class="col-auto ps-0 doc-status">
         <template v-if="hasAttachment">
           <span
             v-if="!approved"
@@ -38,7 +54,7 @@
           </span>
         </template>
       </div>
-      <div class="col-auto col-sm px-0">
+      <div class="col-auto col-sm px-0" @click.self="toggleSelected">
         <small v-if="document.pending">
           {{ i18n.documentPending }}
         </small>
@@ -46,15 +62,31 @@
           {{ i18n.documentDeleting }}
         </small>
 
-        <small :title="attachment.name">{{ documentTitle }}</small>
+        <small :title="attachment.name" @click="toggleSelected">{{
+          documentTitle
+        }}</small>
 
         <a
           v-if="canOpen"
           :href="attachment.site_url"
-          :title="i18n.openAttachmentPage">
+          :title="i18n.openAttachmentPage"
+          target="_blank"
+          class="px-2">
           <i class="fa fa-external-link" />
           <span class="visually-hidden">{{ i18n.openAttachmentPage }}</span>
         </a>
+
+        <div
+          v-if="highlightRedaction">
+          <span
+            v-if="isRedacted"
+            class="badge text-bg-success"
+            >geschwärzt</span>
+          <span
+            v-else
+            class="badge text-bg-warning"
+            >ungeschwärzt</span>
+        </div>
 
         <div
           v-if="document.uploading"
@@ -73,7 +105,9 @@
             :style="{ width: progressPercentLabel }" />
         </div>
       </div>
-      <div class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
+      <div
+        v-if="!hideAdvancedOperations"
+        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
         <button
           v-if="canMakeResult"
           class="btn btn-sm btn-outline-success"
@@ -102,6 +136,15 @@
           :document="document"
           @docupdated="updateDocument"
           @makerelevant="$emit('makerelevant')" />
+      </div>
+      <div
+        v-if="showBasicOperations"
+        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
+        <file-basic-operations
+          v-if="ready"
+          :config="config"
+          :document="document"
+          @docupdated="updateDocument" />
       </div>
       <!-- <div class="col-auto">
         <button
@@ -183,15 +226,25 @@ import { DocumentMixin } from './lib/document_utils'
 
 import FileReview from './file-review.vue'
 import PdfPreview from './pdf-preview.vue'
+import FileBasicOperations from './file-basic-operations.vue'
 
 export default {
   name: 'FileDocument',
   components: {
     FileReview,
-    PdfPreview
+    PdfPreview,
+    FileBasicOperations
   },
   mixins: [I18nMixin, DocumentMixin],
-  props: ['config', 'document'],
+  props: [
+    'config',
+    'document',
+    'hideSelection',
+    'hideAdvancedOperations',
+    'iconStyle',
+    'showBasicOperations',
+    'highlightRedaction'
+  ],
   data() {
     return {
       progressTotal: null,
@@ -369,6 +422,9 @@ export default {
         .catch(() => {
           window.setTimeout(() => this.checkProgress(), 5000)
         })
+    },
+    toggleSelected() {
+      this.selected = !this.selected
     }
   }
 }

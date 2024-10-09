@@ -15,6 +15,16 @@ function scrollToAnchor(
   }, 200)
 }
 
+const scrollNavIntoViewIfNecessary = (): void => {
+  const header = document.querySelector('main nav') as HTMLElement
+  if (header === null) return
+  const rect = header.getBoundingClientRect()
+  if (rect.bottom < 0) {
+    // timeout to make it feel less jarring
+    setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
+  }
+}
+
 const getHeight = (el: HTMLElement): number => {
   const style = window.getComputedStyle(el)
   const display = style.display
@@ -125,4 +135,17 @@ const addText = (dataset: DOMStringMap): void => {
   textField.value = text
 }
 
-export { addText, scrollToAnchor, slideUp, toggleSlide }
+const beforeunloadHandler = (e: BeforeUnloadEvent) => e.preventDefault()
+let isBeforeunloadGuarded = false
+const guardBeforeunload = (enable: boolean): void => {
+  if (enable) {
+    if (!isBeforeunloadGuarded) {
+      window.addEventListener('beforeunload', beforeunloadHandler)
+      isBeforeunloadGuarded = true
+    }
+  } else {
+    window.removeEventListener('beforeunload', beforeunloadHandler)
+  }
+}
+
+export { addText, scrollToAnchor, scrollNavIntoViewIfNecessary, slideUp, toggleSlide, guardBeforeunload }

@@ -522,12 +522,14 @@ class MessageTagsFilter(MultiFilterMixin, TaggitListFilter):
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
+        "is_draft",
         "subject",
         "timestamp",
         "message_page",
         "sender_email",
         "recipient_email",
         "is_response",
+        "registered_mail_date",
         "kind",
         "get_deliverystatus_display",
     )

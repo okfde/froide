@@ -38,6 +38,11 @@ class FoiMessageManager(models.Manager):
         return qs, "timestamp"
 
 
+class FoiMessageNoDraftsManager(FoiMessageManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_draft=False)
+
+
 class MessageTag(TagBase):
     class Meta:
         verbose_name = _("message tag")
@@ -88,6 +93,7 @@ class FoiMessage(models.Model):
         verbose_name=_("Freedom of Information Request"),
         on_delete=models.CASCADE,
     )
+    is_draft = models.BooleanField(_("is message a draft?"), default=False)
     sent = models.BooleanField(_("has message been sent?"), default=True)
     is_response = models.BooleanField(_("response?"), default=True)
     kind = models.CharField(
@@ -137,6 +143,10 @@ class FoiMessage(models.Model):
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
     last_modified_at = models.DateTimeField(auto_now=True)
 
+    registered_mail_date = models.DateTimeField(
+        _("Registered mail date"), blank=True, null=True, default=None
+    )  # "Gelber Brief"
+
     email_message_id = models.CharField(max_length=512, blank=True, default="")
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     subject_redacted = models.CharField(
@@ -166,6 +176,7 @@ class FoiMessage(models.Model):
     confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
 
     objects = FoiMessageManager()
+    no_drafts = FoiMessageNoDraftsManager()
 
     class Meta:
         get_latest_by = "timestamp"

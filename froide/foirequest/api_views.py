@@ -261,6 +261,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "sent",
             "is_response",
             "is_postal",
+            "is_draft",
             "kind",
             "is_escalation",
             "content_hidden",

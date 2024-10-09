@@ -7,7 +7,10 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 import { computed, defineEmits, ref } from 'vue'
 import ImagePage from './image-page.vue'
 
-const props = defineProps({ pages: Array })
+const props = defineProps({
+  pages: Array,
+  dense: Boolean
+})
 
 // once updated to Vue>=3.4
 // we might be able to simplify this to
@@ -27,21 +30,16 @@ useSortable(pagesEl, pages, { animation: 200 })
 </script>
 
 <template>
-  <div ref="pagesEl" class="pages d-flex flex-nowrap align-items-baseline pb-3">
+  <div ref="pagesEl" class="pages d-flex flex-wrap align-items-baseline pb-3">
     <image-page
       v-for="page in pages"
       :key="page.id"
       :page="page"
       :page-count="pages.length"
+      :dense="dense"
+      :hide-rotate="dense"
+      :hide-split="dense"
       @pageupdated="emit('pageupdated', $event)"
       @splitpages="emit('splitpages', $event)" />
   </div>
 </template>
-
-<style lang="scss" scoped>
-.pages {
-  overflow: auto;
-  overflow-x: scroll;
-  overflow-scrolling: touch;
-}
-</style>
