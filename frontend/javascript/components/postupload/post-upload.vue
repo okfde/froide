@@ -762,13 +762,7 @@ addEventListener('hashchange', () => {
               <p>
                 {{ i18n.newWarning }}
               </p>
-              <p v-html="i18n._('newLinkOldFlow', { todo: config.url.legacyPostupload })"></p>
-              <p>
-                Sollte etwas nicht funktionieren, gibt es
-                <a :href="config.url.legacyPostupload"
-                  >hier noch das alte Upload-Formular</a
-                >. Wir würden uns über Feedback freuen.
-              </p>
+              <p v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })"></p>
             </div>
           </div>
         </div>
@@ -1145,17 +1139,11 @@ addEventListener('hashchange', () => {
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 5 von 5</div>
+            <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
             <label class="fw-bold col-form-label" for="id_nowcost"
-              v-html="i18n._('messageCostCheckLast', { todo: 'TODO' })"></label>
-            <div>
-              Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von
-              {{
-                status_form.fields.costs.value?.strValue ||
+              v-html="i18n._('messageCostCheckLast', { amount: status_form.fields.costs.value?.strValue ||
                 status_form.fields.costs.initial?.strValue ||
-                'error'
-              }}€ verlangt hat.<br />
-              Ist dieser Betrag noch korrekt?
-            </div>
+                'error' })"></label>
             <div
               class="form-check"
               v-for="(choice, choiceIndex) in [
@@ -1252,9 +1240,7 @@ addEventListener('hashchange', () => {
           <div class="row">
             <div class="col">
               <label class="fw-bold col-form-label">
-                {{ i18n._('redactionCounter', { current: 'TODO', total: 'TODO' }) }}
-                Dokument schwärzen ({{ pdfRedactionCurrentIndex + 1 }} von
-                {{ documentsSelectedPdfRedaction.length }})
+                {{ i18n._('redactionCounter', { current: pdfRedactionCurrentIndex + 1, total: documentsSelectedPdfRedaction.length }) }}
               </label>
               <div class="alert alert-warning">
                 {{ i18n.redactionInfoWhat }}
