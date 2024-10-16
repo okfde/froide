@@ -6742,6 +6742,7 @@ msgstr "Was ist der Status Ihrer Anfrage nach Erhalt der Post?"
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #: froide/foirequest/templates/foirequest/upload_postal_message_new.html
 #: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Add letter"
 msgstr "Brief hinzufügen"
 
@@ -7591,6 +7592,7 @@ msgid "Open attachment page"
 msgstr "Anhangsseite öffnen"
 
 #: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -7707,6 +7709,21 @@ msgstr "Ihre Nachricht wurde erneut gesendet."
 #: frontend/javascript/components/postupload/post-upload.vue
 msgid "New"
 msgstr "Neu"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "letter.pdf"
+msgstr "brief.pdf"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Upload or scan letter"
+msgstr "Brief hochladen oder scannen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Enter information"
+msgstr "Infos eingeben"
 
 #: froide/foirequest/views/message.py
 #: frontend/javascript/components/postupload/post-upload.vue
