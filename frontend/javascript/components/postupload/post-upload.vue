@@ -205,7 +205,7 @@ const documentsConvertImages = () => {
   // ^child              ^vue2 ^grandchild...REN!  ^method
   // alternative: pass a prop, watch it, react?
 }
-const documentsImagesDocumentFilenameDefault = 'brief.pdf'
+const documentsImagesDocumentFilenameDefault = i18n.value.documentsUploadDefaultFilename
 const documentsImagesDocumentFilename = ref(
   documentsImagesDocumentFilenameDefault
 )
@@ -368,7 +368,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      mobileHeaderTitle: i18n.value.letterUploadOrScan,
       documents: true,
       documentsUpload: true,
       documentsHideSelection: true,
@@ -384,7 +384,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      mobileHeaderTitle: i18n.value.letterUploadOrScan,
       documents: true,
       documentsUpload: true,
       documentsHideSelection: true,
@@ -396,7 +396,7 @@ const stepsConfig = {
     next: STEP_DOCUMENTS_OVERVIEW,
     context: {
       progressStep: 0,
-      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      mobileHeaderTitle: i18n.value.letterUploadOrScan,
     }
   },
   [STEP_DOCUMENTS_OVERVIEW]: {
@@ -406,7 +406,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      mobileHeaderTitle: i18n.value.letterUploadOrScan,
       documents: true,
       documentsUpload: false,
       documentsHideSelection: true,
@@ -419,7 +419,7 @@ const stepsConfig = {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
@@ -429,14 +429,14 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_MESSAGE_PUBLICBODY_UPDATE]: {
     next: STEP_MESSAGE_DATE,
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_MESSAGE_DATE]: {
@@ -450,7 +450,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben',
+      mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => {
         if (isDesktop.value && values.is_registered_mail) return validity.date && validity.registered_mail_date
         return validity.date
@@ -465,7 +465,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben',
+      mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => validity.registered_mail_date
     }
   },
@@ -478,7 +478,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
@@ -488,7 +488,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_MESSAGE_COST_CHECK_ANY]: {
@@ -498,7 +498,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
@@ -508,7 +508,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben',
+      mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => {
         if (isDesktop.value && formDoUpdateCost.value) return validity.costs
         return true
@@ -523,7 +523,7 @@ const stepsConfig = {
     context: {
       isGotoValid: () => validity.costs,
       progressStep: 1,
-      mobileHeaderTitle: 'Infos eingeben'
+      mobileHeaderTitle: i18n.value.enterInformation
     }
   },
   [STEP_REDACTION_PICKER]: {
@@ -536,7 +536,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: 'Schwärzen',
+      mobileHeaderTitle: i18n.value.redact,
       documents: true,
       documentsIconStyle: 'thumbnail'
     }
@@ -553,7 +553,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: 'Schwärzen',
+      mobileHeaderTitle: i18n.value.redact,
     }
   },
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
@@ -565,7 +565,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: 'Vorschau',
+      mobileHeaderTitle: i18n.value.preview,
       documents: true,
       documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
       documentsIconStyle: 'thumbnail',
@@ -579,7 +579,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: 'Fertig'
+      mobileHeaderTitle: i18n.value.done
     }
   }
 }
