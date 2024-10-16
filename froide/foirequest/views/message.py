@@ -355,10 +355,101 @@ def edit_postal_message(request, foirequest, message_id):
                 _("Part of administrative region"),
                 _("Part of administrative regions"),
             ],
-            # new
-            "back": _("Back"),
+            # post-upload.vue
             "step": _("Step"),
-            "addLetter": _("Add letter"),
+            "done": _("Done"),
+            "back": _("Back"),
+            "next": _("Next"),
+            "new": _("New"),
+            "scanDocuments": _("Scan documents"),
+            "scanDocumentsAddendum": _("Use your phone's camera to create a PDF "),
+            "uploadFiles": _("Upload files"),
+            "uploadFilesAddendum": _("If you have the letter as PDF already"),
+            "redactLaterHint1": _(
+                "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
+            ),
+            "redactLaterHint2": _(
+                "We will guide you through the process step-by-step."
+            ),
+            "newLinkOldFlow": _(
+                'Sollte etwas nicht funktionieren, gibt es <a href="%s">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback freuen.'
+            ),
+            "newWarning": _("We have redone this part of the app."),
+            "documentsDragOrder": _("Drag the documents in the right order"),
+            "documentsFromImages": _("We will convert your images into a PDF"),
+            "changeFilename": _("Change filename"),
+            "documentsAvailable": _("Documents available so far"),
+            "letterSentOrReceived": _(
+                "Have you received or sent the uploaded document?"
+            ),
+            "messagePublicbodyCheckTo": _(
+                "Is this the public body you have sent the letter to?"
+            ),
+            "messagePublicbodyCheckFrom": _(
+                "Is this the public body that sent the letter?"
+            ),
+            "messagePublicbodyUpdateTo": _(
+                "Which public body have you sent this letter to?"
+            ),
+            "messagePublicbodyUpdateFrom": _("Which public body has sent this letter?"),
+            "messageDate": _("When was the letter sent?"),
+            "messageIsRegisteredMail": _("The letter is registered mail"),
+            "messageRegisteredMailInfo": _(
+                "Registered mail is a postal service which allows the sender proof of mailing via a receipt. The letter can have a special envelope."
+            ),
+            "messageDateRegisteredMail": _(
+                "Registered mail: what is the date stamped on the envelope?"
+            ),
+            "messageStatusIsResolvedAfterReceivedStill": _(
+                "Your request was resolved. Is this still the case after you have received the letter?"
+            ),
+            "messageStatusIsResolvedAfterReceived": _(
+                "Was your request resolved by this letter?"
+            ),
+            "messageStatusIsResolvedAfterSentStill": _(
+                "Your request had already been resolved. Is this still the case after you have sent the letter?"
+            ),
+            "messageStatusIsResolvedAfterSent": _(
+                "Was your request resolv by sending this letter?"
+            ),
+            "messageStatusIsResolvedStill": _("My request remains resolved."),
+            "messageStatusIsResolvedNotAgain": _("My request is now unresolved."),
+            "messageStatusIsResolved": _("Yes, the request is resolved."),
+            "messageStatusIsResolvedNot": _("No, the request is not resolved yet."),
+            "messageResolution": _("How would you characterize the result?"),
+            "messageCost": _("How much compensation does the public body demand?"),
+            "messageCostCheck": _("Did the public body demand compensation?"),
+            "messageCostCheckLast": _(
+                "You have noted that the public body had demanded compensation to the amount of €%s.<br/>Is this amount still correct?"
+            ),
+            "redactionPick": _("Which documents do you want to redact?"),
+            "redactionInfo": _(
+                "A document should be redacted when it contains information about yourself or the public body's employees."
+            ),
+            "selectAll": _("Select all"),
+            "selectNone": _("Select none"),
+            "redactionCounter": _("Redacting document %d of %d"),
+            "redactionInfoWhat": _("You should redact:"),
+            "redactionInfoWhat1": _("Your name and your address"),
+            "redactionInfoWhat2": _("Names of public body employees"),
+            "redactionInfoWhat3": _("Signatures"),
+            "redactionInfoWhat4": _("E-mail addresses that end in @fragdenstaat.de"),
+            "helpNeeded": _("I have technical difficulties / I need help"),
+            "documentsOverview": _("These documents will be added to the request:"),
+            "documentsAddedSuccessfully": _("Documents added successfully"),
+            "requestUpdatedThanks": _("Thank you for updating your request!"),
+            "scanDocumentsAnother": _("Scan another document"),
+            "uploadFilesAnother": _("Upload another file"),
+            "redactionDone": _("I have finished redacting"),
+            "redactionCheck": _("Important: Have you checked all pages?"),
+            "confirm": _("Confirm"),
+            "formHasErrors": _("The form has errors"),
+            "requestNonPublicHint": _(
+                "Your request is not public at the moment. The documents will not be public, either."
+            ),
+            "requestShow": _("See request"),
+            "doneSorting": _("Done sorting"),
+            "createPdf": _("Create PDF"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),

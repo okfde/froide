@@ -721,10 +721,10 @@ addEventListener('hashchange', () => {
               <div class="col-md-6">
                 <button disabled class="btn btn-outline-primary d-block w-100">
                   <i class="fa fa-camera"></i>
-                  Dokumente scannen
+                  {{ i18n.scanDocuments }}
                 </button>
                 <p class="mt-1">
-                  Handykamera verwenden, um automatisch ein PDF zu erstellen
+                  {{ i18n.scanDocumentsAddendum }}
                 </p>
               </div>
               <div class="col-md-6">
@@ -733,10 +733,10 @@ addEventListener('hashchange', () => {
                   @click="stepAndUppyClick"
                   class="btn btn-outline-primary d-block w-100">
                   <i class="fa fa-upload"></i>
-                  Dateien hochladen
+                  {{ i18n.uploadFiles }}
                 </button>
                 <p class="mt-1">
-                  Wenn Sie den Brief schon als PDF oder Foto vorliegen haben
+                  {{ i18n.uploadFilesAddendum }}
                 </p>
               </div>
               -->
@@ -746,21 +746,23 @@ addEventListener('hashchange', () => {
                   @click="stepAndUppyClick"
                   class="btn btn-outline-primary btn-lg d-block w-100">
                   <i class="fa fa-upload fa-2x"></i><br/>
-                  Dateien hochladen
+                  {{ i18n.uploadFiles }}
                 </button>
               </div>
             </div>
             <div class="alert alert-warning">
               <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
-              <p>
-                Sie brauchen den Brief vorher <strong>nicht</strong> zu
-                schwärzen. Das erledigen Sie später mit unserem Online-Tool.
-              </p>
-              <p>Wir führen Sie Schritt für Schritt durch den Prozess.</p>
+              <p v-html="i18n.redactLaterHint1"></p>
+              <p v-html="i18n.redactLaterHint2"></p>
             </div>
             <div class="alert alert-warning">
-              <h4><i class="fa fa-exclamation-circle fa-lg"></i> Neu</h4>
-              <p>Wir haben diesen Bereich stark überarbeitet.</p>
+              <h4><i class="fa fa-exclamation-circle fa-lg"></i>
+                {{ i18n.new }}
+              </h4>
+              <p>
+                {{ i18n.newWarning }}
+              </p>
+              <p v-html="i18n._('newLinkOldFlow', { todo: config.url.legacyPostupload })"></p>
               <p>
                 Sollte etwas nicht funktionieren, gibt es
                 <a :href="config.url.legacyPostupload"
@@ -779,7 +781,7 @@ addEventListener('hashchange', () => {
       <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9 fw-bold">
-            Ziehen Sie die Seiten in die richtige Reihenfolge
+            {{ i18n.documentsDragOrder }}
           </div>
         </div>
       </div>
@@ -794,7 +796,7 @@ addEventListener('hashchange', () => {
             </div>
           </div>
           <div class="text-center fw-bold my-3">
-            Wir erstellen aus Ihren Bildern ein PDF-Dokument
+            {{ i18n.documentsFromImages }}
           </div>
           <div class="documents-filename p-2 my-3 mx-auto">
             <div class="form-group">
@@ -802,7 +804,9 @@ addEventListener('hashchange', () => {
                 id="documents_filename"
                 v-model="documentsImagesDocumentFilename"
                 class="form-control" />
-              <label for="documents_filename"> Dateiname ändern </label>
+              <label for="documents_filename">
+                {{ i18n.changeFilename }}
+              </label>
             </div>
           </div>
         </div>
@@ -812,7 +816,9 @@ addEventListener('hashchange', () => {
       <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
-            <div class="fw-bold">Bisher vorhandene Dokumente</div>
+            <div class="fw-bold">
+              {{ i18n.documentsAvailable }}
+            </div>
           </div>
         </div>
       </div>
@@ -822,7 +828,7 @@ addEventListener('hashchange', () => {
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 1 von 5</div>
             <label class="fw-bold form-label">
-              Haben Sie den hochgeladenen Brief erhalten oder versendet?
+              {{ i18n.letterSentOrReceived }}
               <!--{{ form.fields.sent.label }}-->
             </label>
             <div
@@ -859,10 +865,10 @@ addEventListener('hashchange', () => {
             <div class="step-questioncounter">Frage 2 von 5</div>
             <label class="fw-bold form-label" for="id_subject">
               <template v-if="formSent === '1'">
-                Ist dies die Behörde, an die Sie den Brief gesendet haben?
+                {{ i18n.messagePublicbodyCheckTo }}
               </template>
               <template v-else>
-                Ist dies die Behörde, von der der Brief stammt?
+                {{ i18n.messagePublicbodyCheckFrom }}
               </template>
             </label>
             <div style="margin: 1em 0; font-style: italic">
@@ -908,10 +914,10 @@ addEventListener('hashchange', () => {
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label class="fw-bold form-label" for="id_subject">
               <template v-if="formSent === '1'">
-                An welche Behörde haben Sie den Brief gesendet?
+                {{ i18n.messagePublicbodyUpdateTo }}
               </template>
               <template v-else>
-                Von welcher Behörde stammt der Brief?
+                {{ i18n.messagePublicbodyUpdateFrom }}
               </template>
             </label>
             <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
@@ -937,7 +943,7 @@ addEventListener('hashchange', () => {
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 3 von 5</div>
             <label class="fw-bold form-label field-required" for="id_date">
-              Wann wurde der Brief versendet?
+              {{ i18n.messageDate }}
               <!--{{ form.fields.date.label }}-->
             </label>
             <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
@@ -971,14 +977,14 @@ addEventListener('hashchange', () => {
                 v-model="values.is_registered_mail"
                 id="id_is_registered_mail" />
               <label class="form-check-label" for="id_is_registered_mail">
-                Es handelt sich um einen gelben Brief
+                {{ i18n.messageIsRegisteredMail }}
                 <span
                   type="button"
                   v-bs-tooltip
                   tabindex="0"
                   data-bs-toggle="tooltip"
                   data-bs-placement="bottom"
-                  title="Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen.">
+                  :title="i18n.messageRegisteredMailInfo">
                   <i class="fa fa-info-circle"></i>
                 </span>
               </label>
@@ -998,8 +1004,7 @@ addEventListener('hashchange', () => {
             <label
               class="fw-bold form-label field-required"
               for="id_registered_mail">
-              Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag
-              eingetragen?
+              {{ i18n.messageDateRegisteredMail }}
             </label>
             <!-- TODO set min/max? -->
             <input
@@ -1020,18 +1025,16 @@ addEventListener('hashchange', () => {
             <div class="step-questioncounter">Frage 4 von 5</div>
             <label class="fw-bold form-label" for="id_subject">
               <template v-if="!formIsSent && formStatusWasResolved">
-                Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des
-                Briefes immer noch der Fall?
+                {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
               </template>
               <template v-if="!formIsSent && !formStatusWasResolved">
-                Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?
+                {{ i18n.messageStatusIsResolvedAfterReceived }}
               </template>
               <template v-if="formIsSent && formStatusWasResolved">
-                Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden
-                des Briefes noch immer der Fall?
+                {{ i18n.messageStatusIsResolvedAfterSentStill }}
               </template>
               <template v-if="formIsSent && !formStatusWasResolved">
-                Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?
+                {{ i18n.messageStatusIsResolvedAfterSent }}
               </template>
             </label>
             <div
@@ -1051,15 +1054,19 @@ addEventListener('hashchange', () => {
               <label class="form-check-label" :for="'id_status_' + choiceIndex">
                 <template v-if="formStatusWasResolved">
                   <template v-if="choice.value === 'resolved'">
-                    Meine Anfrage ist nach wie vor abgeschlossen.
+                    {{ i18n.messageStatusIsResolvedStill }}
                   </template>
-                  <template v-else> Meine Anfrage läuft nun wieder. </template>
+                  <template v-else>
+                    {{ i18n.messageStatusIsResolvedNotAgain }}
+                  </template>
                 </template>
                 <template v-else>
                   <template v-if="choice.value === 'resolved'">
-                    Ja, Anfrage ist jetzt abgeschlossen.
+                    {{ i18n.messageStatusIsResolved }}
                   </template>
-                  <template v-else> Nein, Anfrage läuft noch. </template>
+                  <template v-else>
+                    {{ i18n.messageStatusIsResolvedNot }}
+                  </template>
                 </template>
               </label>
             </div>
@@ -1076,7 +1083,7 @@ addEventListener('hashchange', () => {
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label class="fw-bold col-form-label" for="id_resolution">
               <!-- {{ status_form.fields.resolution.label }} -->
-              Wie würde Sie das Ergebnis beschreiben?
+              {{ i18n.messageResolution }}
             </label>
             <div
               class="form-check"
@@ -1108,7 +1115,7 @@ addEventListener('hashchange', () => {
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 5 von 5</div>
             <label class="fw-bold col-form-label">
-              Hat die Behörde Kosten verlangt?
+              {{ i18n.messageCostCheck }}
             </label>
             <div
               class="form-check"
@@ -1138,7 +1145,9 @@ addEventListener('hashchange', () => {
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="step-questioncounter">Frage 5 von 5</div>
-            <label class="fw-bold col-form-label" for="id_nowcost">
+            <label class="fw-bold col-form-label" for="id_nowcost"
+              v-html="i18n._('messageCostCheckLast', { todo: 'TODO' })"></label>
+            <div>
               Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von
               {{
                 status_form.fields.costs.value?.strValue ||
@@ -1146,7 +1155,7 @@ addEventListener('hashchange', () => {
                 'error'
               }}€ verlangt hat.<br />
               Ist dieser Betrag noch korrekt?
-            </label>
+            </div>
             <div
               class="form-check"
               v-for="(choice, choiceIndex) in [
@@ -1180,7 +1189,7 @@ addEventListener('hashchange', () => {
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label class="fw-bold col-form-label" for="id_costs">
-              Welchen Betrag hat die Behörde verlangt?
+              {{ i18n.messageCost }}
             </label>
             <div class="col-md-8">
               <div class="input-group" style="width: 10rem">
@@ -1213,27 +1222,25 @@ addEventListener('hashchange', () => {
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <label class="fw-bold col-form-label">
-              Welche dieser Dokumente möchen Sie schwärzen?
+              {{ i18n.redactionPick }}
             </label>
             <!-- TODO: if we expect users to go back a lot, the document-uploader list
               shown here should exclude/disable "has schwärzung" docs -->
             <p>
-              Ein Dokument sollte geschwärzt werden, wenn es personenbezogene
-              Informationen über Sie selbst oder Behördenmitarbeiter:innen
-              enthält.
+              {{ i18n.redactionInfo }}
             </p>
             <div class="text-end">
               <button
                 type="button"
                 class="btn btn-link mx-2 text-decoration-underline"
                 @click="documentUploaderSelectAll(true)">
-                Alle auswählen
+                {{ i18n.selectAll }}
               </button>
               <button
                 type="button"
                 class="btn btn-link mx-2 text-decoration-underline"
                 @click="documentUploaderSelectAll(false)">
-                Keine auswählen
+                {{ i18n.selectNone }}
               </button>
             </div>
           </div>
@@ -1245,16 +1252,25 @@ addEventListener('hashchange', () => {
           <div class="row">
             <div class="col">
               <label class="fw-bold col-form-label">
+                {{ i18n._('redactionCounter', { current: 'TODO', total: 'TODO' }) }}
                 Dokument schwärzen ({{ pdfRedactionCurrentIndex + 1 }} von
                 {{ documentsSelectedPdfRedaction.length }})
               </label>
               <div class="alert alert-warning">
-                Das sollten Sie schwärzen:
+                {{ i18n.redactionInfoWhat }}
                 <ul>
-                  <li>Ihren Namen und Ihre Adresse</li>
-                  <li>Namen von Behördenmitarbeiter:innen</li>
-                  <li>Unterschriften</li>
-                  <li>E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden</li>
+                  <li>
+                    {{ i18n.redactionInfoWhat1 }}
+                  </li>
+                  <li>
+                    {{ i18n.redactionInfoWhat2 }}
+                  </li>
+                  <li>
+                    {{ i18n.redactionInfoWhat3 }}
+                  </li>
+                  <li>
+                    {{ i18n.redactionInfoWhat4 }}
+                  </li>
                 </ul>
               </div>
               <div class="mt-2 mb-3">
@@ -1262,7 +1278,7 @@ addEventListener('hashchange', () => {
                   type="button"
                   class="btn btn-link text-decoration-underline"
                   @click="onlineHelp.show(config.urls.helpPostuploadRedaction)">
-                  Ich habe technische Probleme / benötige Hilfe
+                  {{ i18n.helpNeeded }}
                 </button>
               </div>
             </div>
@@ -1326,7 +1342,7 @@ addEventListener('hashchange', () => {
         <div class="row justify-content-center">
           <div class="col-lg-9">
             <div class="fw-bold col-form-label">
-              Diese Dokumente werden der Anfrage hinzugefügt:
+              {{ i18n.documentsOverview }}
             </div>
           </div>
         </div>
@@ -1339,11 +1355,10 @@ addEventListener('hashchange', () => {
               <i class="fa fa-check-square fa-4x"></i>
             </div>
             <div class="fw-bold col-form-label">
-              Dokumente erfolgreich hinzugefügt
+              {{ i18n.documentsAddedSuccessfully }}
             </div>
             <div>
-              Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht
-              haben!
+              {{ i18n.requestUpdatedThanks }}
             </div>
           </div>
         </div>
@@ -1363,7 +1378,7 @@ addEventListener('hashchange', () => {
                   @click="
                     documentsBasicOperations = !doctumentsBasicOperations
                   ">
-                  {{ documentsBasicOperations ? 'Fertig' : 'Bearbeiten' }}
+                  {{ documentsBasicOperations ? i18n.done : i18n.edit }}
                 </button>
               </div>
               <!-- TODO maybe :hide-documents (PDFs) in step STEP_DOCUMENTS_UPLOAD -->
@@ -1405,14 +1420,14 @@ addEventListener('hashchange', () => {
               class="btn btn-outline-primary d-block w-100 mb-3"
               :disabled="true">
               <i class="fa fa-plus"></i>
-              Weiteres Dokument scannen
+              {{ i18n.scanDocumentsAnother }}
             </button>
             <button
               type="button"
               class="btn btn-outline-primary d-block w-100"
               @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
               <i class="fa fa-plus"></i>
-              Weitere Dateien hochladen
+              {{ i18n.uploadFilesAnother }}
             </button>
           </div>
         </div>
@@ -1434,10 +1449,12 @@ addEventListener('hashchange', () => {
                   v-show="pdfRedactionProcessing"
                   role="status"
                   aria-hidden="true" />
-                Ich bin fertig mit Schwärzen
+                {{ i18n.redactionDone }}
               </button>
               <div class="mt-2">
-                <small> Wichtig: Haben Sie alle Seiten überprüft? </small>
+                <small>
+                  {{ i18n.redactionCheck }}
+                </small>
                 <div v-if="debug" class="debug">
                   DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
                 </div>
@@ -1454,18 +1471,17 @@ addEventListener('hashchange', () => {
                   v-show="isSubmitting"
                   role="status"
                   aria-hidden="true" />
-                Bestätigen
+                {{ i18n.confirm }}
               </button>
               <div class="mt-2" v-if="!validity.form">
                 <small>
-                  Das Formular enthält noch Fehler.
+                  {{ i18n.formHasErrors }}
                   <!-- TODO: we could go through all elements, validate, and report here -->
                 </small>
               </div>
               <div class="mt-2" v-if="!object_public">
                 <small>
-                  Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente
-                  werden deshalb nicht öffentlich verfügbar.
+                  {{ i18n.requestNonPublicHint }}
                 </small>
               </div>
               <!-- 
@@ -1484,7 +1500,7 @@ addEventListener('hashchange', () => {
                 type="button"
                 @click="submit"
                 class="btn btn-primary d-block w-100">
-                Anfrage ansehen
+                {{ i18n.requestShow }}
               </button>
             </template>
             <template v-else-if="step === STEP_INTRO">
@@ -1503,7 +1519,7 @@ addEventListener('hashchange', () => {
                 type="button"
                 :disabled="true"
                 class="btn btn-primary d-block w-100">
-                weiter
+                {{ i18n.next }}
               </button>
               <button
                 v-if="debug"
@@ -1518,7 +1534,7 @@ addEventListener('hashchange', () => {
                 type="button"
                 @click="gotoStep()"
                 class="btn btn-primary d-block w-100">
-                Fertig mit Sortieren
+                {{ i18n.doneSorting }}
               </button>
             </template>
             <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
@@ -1533,14 +1549,14 @@ addEventListener('hashchange', () => {
                   v-if="documentsImagesConverting"
                   role="status"
                   aria-hidden="true" />
-                PDF erstellen
+                {{ i18n.createPdf }}
               </button>
               <button
                 v-else
                 type="button"
                 @click="gotoStep()"
                 class="btn btn-primary d-block w-100">
-                weiter
+                {{ i18n.next }}
               </button>
             </template>
             <template v-else-if="step === STEP_MESSAGE_DATE">
@@ -1549,7 +1565,7 @@ addEventListener('hashchange', () => {
                 :disabled="!isGotoValid"
                 @click="gotoStep()"
                 class="btn btn-primary d-block w-100">
-                weiter
+                {{ i18n.next }}
               </button>
               <button
                 v-if="debug"
@@ -1565,7 +1581,7 @@ addEventListener('hashchange', () => {
                 @click="gotoStep()"
                 :disabled="!isGotoValid"
                 class="btn btn-primary d-block w-100">
-                weiter
+                {{ i18n.next }}
               </button>
             </template>
           </div>
