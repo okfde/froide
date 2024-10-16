@@ -1647,14 +1647,6 @@ addEventListener('hashchange', () => {
   }
 }
 
-/* make links stand out more in alert boxes */
-
-.alert {
-  a {
-    text-decoration: underline;
-  }
-}
-
 /* re-style the component's filename-dialog so first it looks less interactive,
  * until you click "change filename" */
 
@@ -1684,4 +1676,13 @@ addEventListener('hashchange', () => {
   }
 }
 
+</style>
+
+<style lang="scss">
+/* make links stand out more in alert boxes.
+   needs to be unscoped because i18n/v-html */
+
+.post-upload .alert a {
+  text-decoration: underline;
+}
 </style>
