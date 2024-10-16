@@ -372,7 +372,7 @@ def edit_postal_message(request, foirequest, message_id):
                 "We will guide you through the process step-by-step."
             ),
             "newLinkOldFlow": _(
-                'Sollte etwas nicht funktionieren, gibt es <a href="%s">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback freuen.'
+                'Should you experience problems, you can use <a href="${url}">the older version</a> here. We welcome feedback!'
             ),
             "newWarning": _("We have redone this part of the app."),
             "documentsDragOrder": _("Drag the documents in the right order"),
@@ -420,7 +420,7 @@ def edit_postal_message(request, foirequest, message_id):
             "messageCost": _("How much compensation does the public body demand?"),
             "messageCostCheck": _("Did the public body demand compensation?"),
             "messageCostCheckLast": _(
-                "You have noted that the public body had demanded compensation to the amount of €%s.<br/>Is this amount still correct?"
+                "You have noted that the public body had demanded compensation to the amount of €${amount}.<br/>Is this amount still correct?"
             ),
             "redactionPick": _("Which documents do you want to redact?"),
             "redactionInfo": _(
@@ -428,7 +428,7 @@ def edit_postal_message(request, foirequest, message_id):
             ),
             "selectAll": _("Select all"),
             "selectNone": _("Select none"),
-            "redactionCounter": _("Redacting document %d of %d"),
+            "redactionCounter": _("Redacting document ${current} of ${total}"),
             "redactionInfoWhat": _("You should redact:"),
             "redactionInfoWhat1": _("Your name and your address"),
             "redactionInfoWhat2": _("Names of public body employees"),
