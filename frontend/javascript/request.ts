@@ -1,6 +1,6 @@
 import { Tab, Tooltip } from 'bootstrap'
-import Driver from 'driver.js'
-import 'driver.js/dist/driver.min.css'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 import '../styles/components/request/index.scss'
 import InfoBox from './components/request/InfoBox'
 import Message from './components/request/Message'
@@ -170,36 +170,31 @@ const startTour = (
   if (!tourId) {
     return
   }
+
   const tourDataEl = document.querySelector(`#${tourId}`)
-  if (tourDataEl == null || !tourDataEl.textContent) {
+  if (tourDataEl === null || !tourDataEl.textContent) {
     return
   }
-  let tourData
-  try {
-    tourData = JSON.parse(tourDataEl.textContent)
-  } catch {
-    return
-  }
-  const lastStep = tourData.steps[tourData.steps.length - 1]
-  const driver = new Driver({
+  const tourData = JSON.parse(tourDataEl.textContent)
+
+  driver({
     animate: true, // Animate while changing highlighted element
     doneBtnText: tourData.i18n.done, // Text on the final button
-    closeBtnText: tourData.i18n.close, // Text on the close button for this step
     nextBtnText: tourData.i18n.next, // Next button text for this step
     prevBtnText: tourData.i18n.previous, // Previous button text for this step
-    scrollIntoViewOptions: { behavior: 'smooth', block: 'center' },
-    onReset: (el: any) => {
-      if (el.node === document.querySelector(lastStep.element)) {
+    smoothScroll: true,
+    steps: tourData.steps,
+    onDestroyed(_el, step) {
+      const lastStep = tourData.steps[tourData.steps.length - 1]
+      if (step.element === lastStep.element) {
         // Done button clicked
         if (tourDoneSelector) {
-          const done = document.querySelector(tourDoneSelector) as HTMLElement
+          const done = document.querySelector<HTMLElement>(tourDoneSelector)
           done?.click()
         }
       }
     }
-  })
-  driver.defineSteps(tourData.steps)
-  driver.start()
+  }).drive()
 }
 
 const parseMessageContainers = (): Message[] => {
