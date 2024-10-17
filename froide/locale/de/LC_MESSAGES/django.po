@@ -10968,7 +10968,7 @@ msgstr "Hilfe"
 
 #: froide/templates/header.html
 msgid "Skip to main content"
-msgstr "Zum Hauptinhalt sprengen"
+msgstr "Zum Hauptinhalt springen"
 
 #: froide/templates/header.html
 msgid "Menu"
