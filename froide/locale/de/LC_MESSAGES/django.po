@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-17 10:41+0200\n"
-"PO-Revision-Date: 2024-08-12 10:37+0000\n"
+"PO-Revision-Date: 2024-10-17 08:59+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -1350,11 +1350,11 @@ msgstr "Nachweise"
 
 #: froide/account/templates/account/settings.html
 msgid "External apps"
-msgstr ""
+msgstr "Externe Apps"
 
 #: froide/account/templates/account/settings.html
 msgid "Show external apps with access to your account"
-msgstr ""
+msgstr "Externe Apps, die Zugriff auf Ihr Konto haben anzeigen"
 
 #: froide/account/templates/account/settings.html
 msgid "Export your data"
@@ -1411,7 +1411,7 @@ msgstr "Allgemeine Einstellungen"
 
 #: froide/account/templates/account/settings_base.html
 msgid "External Apps"
-msgstr ""
+msgstr "Externe Apps"
 
 #: froide/account/templates/account/settings_base.html
 msgid "Data export"
@@ -1488,41 +1488,36 @@ msgid "Become user"
 msgstr "Impostor-Modus"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
-#, fuzzy
 msgid "Client id"
-msgstr "Dateityp"
+msgstr "Client-ID"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
-#, fuzzy
 msgid "Client secret"
-msgstr "Dateityp"
+msgstr "Client-Secret"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
 msgid "Client secret has been hashed and can no longer be viewed."
-msgstr ""
+msgstr "Client-Secret wurde gehasht und kann nicht mehr angezeigt werden."
 
 #: froide/account/templates/oauth2_provider/application_detail.html
-#, fuzzy
 msgid "Client type"
-msgstr "Dateityp"
+msgstr "Client-Typ"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
 msgid "Authorization Grant Type"
-msgstr ""
+msgstr "Authorization Grant Type"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
-#, fuzzy
 msgid "Redirect Uris"
-msgstr "Weitergeleitet an"
+msgstr "Weiterleitungs-URIs"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
-#, fuzzy
 msgid "Post Logout Redirect Uris"
-msgstr "Weitergeleitet an"
+msgstr "Post-Logout Redirect-URIs"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
 msgid "Allowed Origins"
-msgstr ""
+msgstr "Erlaubte Origins"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
 #: froide/account/templates/oauth2_provider/application_form.html
@@ -1547,9 +1542,8 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: froide/account/templates/oauth2_provider/application_form.html
-#, fuzzy
 msgid "Edit application"
-msgstr "Ihre OAuth-Anwendungen"
+msgstr "Anwendung bearbeiten"
 
 #: froide/account/templates/oauth2_provider/application_form.html
 #: froide/document/templates/filingcabinet/_base_set_form.html
@@ -1590,17 +1584,15 @@ msgstr "Zugriff erlauben"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
 msgid "External applications with access to your account"
-msgstr ""
+msgstr "Externe Anwendungen mit Zugriff auf Ihr Konto"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "You have given the following applications access to your account."
-msgstr "Sie haben die folgenden Zwei-Faktor-Login-Methoden aktiviert:"
+msgstr "Sie haben den folgenden Anwendungen Zugriff auf Ihr Konto gewährt."
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "Expired"
-msgstr "abgelaufen"
+msgstr "Abgelaufen"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
 #, fuzzy
@@ -1608,19 +1600,16 @@ msgid "Created"
 msgstr "Erstellt am"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "Updated"
-msgstr "Aktualisiert von"
+msgstr "Aktualisiert am"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "Expires"
-msgstr "abgelaufen"
+msgstr "Läuft ab am"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "Revoke access"
-msgstr "Team-Zugang"
+msgstr "Zugang widerrufen"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
 #, fuzzy
@@ -2943,15 +2932,14 @@ msgid "Please give the date the reply was sent."
 msgstr "Bitte geben Sie das Datum an, an dem der Brief versendet wurde."
 
 #: froide/foirequest/forms/message.py froide/foirequest/models/message.py
-#, fuzzy
 msgid "Registered mail date"
-msgstr "Ihre OAuth-Anwendungen"
+msgstr "Datum des Einschreibens"
 
 #: froide/foirequest/forms/message.py
 msgid ""
 "If this letter was registered on a different date than it was sent, enter it "
 "here"
-msgstr ""
+msgstr "Falls dieser Brief an einem anderen Tag zugestellt als versendet wurde"
 
 #: froide/foirequest/forms/message.py
 msgid "Letter text summary"
@@ -3608,9 +3596,8 @@ msgid "automatically imported"
 msgstr "automatischem Import"
 
 #: froide/foirequest/models/message.py
-#, fuzzy
 msgid "is message a draft?"
-msgstr "Nachricht wurde geschwärzt"
+msgstr "Ist Nachricht ein Entwurf?"
 
 #: froide/foirequest/models/message.py
 msgid "has message been sent?"
@@ -6912,16 +6899,14 @@ msgid "<slug:slug>/upload-postal-message/"
 msgstr "<slug:slug>/post-hochladen/"
 
 #: froide/foirequest/urls/request_urls.py
-#, fuzzy
 msgctxt "url part"
 msgid "<slug:slug>/upload-postal-message-create/"
-msgstr "<slug:slug>/post-hochladen/"
+msgstr "<slug:slug>/postnachricht-erstellen/"
 
 #: froide/foirequest/urls/request_urls.py
-#, fuzzy
 msgctxt "url part"
 msgid "<slug:slug>/<int:message_id>/edit-postal-message/"
-msgstr "<slug:slug>/<int:message_id>/upload/"
+msgstr "<slug:slug>/<int:message_id>/postnachricht-bearbeiten/"
 
 #: froide/foirequest/urls/request_urls.py
 msgctxt "url part"
@@ -7677,7 +7662,7 @@ msgstr ""
 
 #: froide/foirequest/views/message.py
 msgid "Step"
-msgstr ""
+msgstr "Schritt"
 
 #: froide/foirequest/views/message.py
 #, python-format
@@ -10634,7 +10619,6 @@ msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
 #: froide/settings.py
-#, fuzzy
 msgid "Upload postal messages"
 msgstr "Post hochladen"
 
@@ -11360,7 +11344,6 @@ msgid "Visit this request"
 msgstr "Anfrage besuchen"
 
 #: froide/templates/snippets/homepage_hero.html
-#, fuzzy
 msgid ""
 "Freedom of Information Request\n"
 "      To: Ministry of Interior\n"
@@ -11370,12 +11353,11 @@ msgid ""
 "      ..."
 msgstr ""
 "Anfrage nach dem Informationsfreiheitsgesetz\n"
+"      An: Bundesministerium des Innern\n"
 "\n"
-"An: Bundesministerium des Innern\n"
-"\n"
-"Guten Tag,\n"
-"ich beantrage Auskunft zu folgender Sachlage:\n"
-"…"
+"      Guten Tag,\n"
+"      ich beantrage Auskunft zu folgender Sachlage:\n"
+"      ..."
 
 #: froide/templates/snippets/homepage_hero.html
 msgid "Write a Request Now!"
