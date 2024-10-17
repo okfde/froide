@@ -5,10 +5,12 @@
 {% blocktrans with title=title %}We have resolved the problem you reported on the request “{{ title }}”.{% endblocktrans %}
 {% endif %}
 {% if report.resolution %}{{ report.resolution }}{% endif %}
+{% if can_read_request %}
 
 {% trans "You can go to the request here:" %}
 
 {{ url }}
+{% endif %}
 {% blocktrans with site_name=site_name %}
 Cheers,
 {{ site_name }}{% endblocktrans %}
