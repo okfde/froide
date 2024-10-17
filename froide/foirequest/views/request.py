@@ -253,7 +253,6 @@ def get_base_tour_data():
             "done": _("👋 Goodbye!"),
             "next": _("Next"),
             "previous": _("Previous"),
-            "close": _("Close"),
             "start": _("Next"),
         }
     }
