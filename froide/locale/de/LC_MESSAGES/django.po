@@ -4571,7 +4571,9 @@ msgstr "Anhänge der Nachricht vom %(date)s"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/foirequest/views/message.py froide/upload/forms.py
+#: froide/upload/forms.py
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Back"
 msgstr "Zurück"
 
@@ -6224,6 +6226,8 @@ msgstr "m.muster.1234abc"
 
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
 #: froide/foirequest/views/request.py
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Next"
 msgstr "Weiter"
 
@@ -7669,6 +7673,7 @@ msgstr ""
 "Sind diese Dokumente das Ergebnis Ihrer Anfrage und nicht bloß Korrespondenz?"
 
 #: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Step"
 msgstr "Schritt"
 
@@ -7692,6 +7697,302 @@ msgstr "Konnte Original nicht herunterladen."
 #: froide/foirequest/views/message.py
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
+
+# #: froide/foirequest/views/message.py
+# #: frontend/javascript/components/postupload/post-upload.vue
+# msgid "Done"
+# msgstr "Fertig"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "New"
+msgstr "Neu"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Scan documents"
+msgstr "Dokumente scannen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Use your phone's camera to create a PDF "
+msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Upload files"
+msgstr "Dateien hochladen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "If you have the letter as PDF already"
+msgstr "Wenn Sie den Brief schon als PDF oder Foto vorliegen haben"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
+msgstr "Sie brauchen den Brief vorher <strong>nicht</strong> zu schwärzen. Das erledigen Sie später mit unserem Online-Tool."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "We will guide you through the process step-by-step."
+msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Should you experience problems, you can use <a href=\"${url}\">the older version</a> here. We welcome feedback!"
+msgstr "Sollte etwas nicht funktionieren, gibt es <a href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback freuen."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "We have redone this part of the app."
+msgstr "Wir haben diesen Bereich stark überarbeitet."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Drag the documents in the right order"
+msgstr "Ziehen Sie die Seiten in die richtige Reihenfolge"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "We will convert your images into a PDF"
+msgstr "Wir erstellen aus Ihren Bildern ein PDF-Dokument"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Change filename"
+msgstr "Dateiname ändern"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Documents available so far"
+msgstr "Bisher vorhandene Dokumente"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Have you received or sent the uploaded document?"
+msgstr "Haben Sie den hochgeladenen Brief erhalten oder versendet?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Is this the public body you have sent the letter to?"
+msgstr "Ist dies die Behörde, an die Sie den Brief gesendet haben?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Is this the public body that sent the letter?"
+msgstr "Ist dies die Behörde, von der der Brief stammt?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Which public body have you sent this letter to?"
+msgstr "An welche Behörde haben Sie den Brief gesendet?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Which public body has sent this letter?"
+msgstr "Von welcher Behörde stammt der Brief?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "When was the letter sent?"
+msgstr "Wann wurde der Brief versendet?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "The letter is registered mail"
+msgstr "Es handelt sich um einen gelben Brief"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Registered mail is a postal service which allows the sender proof of mailing via a receipt. The letter can have a special envelope."
+msgstr "Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Registered mail: what is the date stamped on the envelope?"
+msgstr "Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag eingetragen?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Your request was resolved. Is this still the case after you have received the letter?"
+msgstr "Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des Briefes immer noch der Fall?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Was your request resolved by this letter?"
+msgstr "Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Your request had already been resolved. Is this still the case after you have sent the letter?"
+msgstr "Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden des Briefes noch immer der Fall?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Was your request resolv by sending this letter?"
+msgstr "Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "My request remains resolved."
+msgstr "Meine Anfrage ist nach wie vor abgeschlossen."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "My request is now unresolved."
+msgstr "Meine Anfrage läuft nun wieder."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Yes, the request is resolved."
+msgstr "Ja, Anfrage ist jetzt abgeschlossen."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "No, the request is not resolved yet."
+msgstr "Nein, Anfrage läuft noch."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "How would you characterize the result?"
+msgstr "Wie würde Sie das Ergebnis beschreiben?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "How much compensation does the public body demand?"
+msgstr "Welchen Betrag hat die Behörde verlangt?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Did the public body demand compensation?"
+msgstr "Hat die Behörde Kosten verlangt?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "You have noted that the public body had demanded compensation to the amount of €${amount}.<br/>Is this amount still correct?"
+msgstr "Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von ${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Which documents do you want to redact?"
+msgstr "Welche dieser Dokumente möchen Sie schwärzen?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "A document should be redacted when it contains information about yourself or the public body's employees."
+msgstr "Ein Dokument sollte geschwärzt werden, wenn es Informationen über Sie selbst oder Behördenmitarbeiter:innen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Select all"
+msgstr "Alle auswählen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Select none"
+msgstr "Keine auswählen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Redacting document ${current} of ${total}"
+msgstr "Dokument schwärzen ${current} von ${total}"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "You should redact:"
+msgstr "Das sollten Sie schwärzen:"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Your name and your address"
+msgstr "Ihren Namen und Ihre Adresse"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Names of public body employees"
+msgstr "Namen von Behördenmitarbeiter:innen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Signatures"
+msgstr "Unterschriften"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "E-mail addresses that end in @fragdenstaat.de"
+msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "I have technical difficulties / I need help"
+msgstr "Ich habe technische Probleme / benötige Hilfe"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "These documents will be added to the request:"
+msgstr "Diese Dokumente werden der Anfrage hinzugefügt:"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Documents added successfully"
+msgstr "Dokumente erfolgreich hinzugefügt"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Thank you for updating your request!"
+msgstr "Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht haben!"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Scan another document"
+msgstr "Weiteres Dokument scannen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Upload another file"
+msgstr "Weitere Dateien hochladen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "I have finished redacting"
+msgstr "Ich bin fertig mit Schwärzen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Important: Have you checked all pages?"
+msgstr "Wichtig: Haben Sie alle Seiten überprüft?"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "The form has errors"
+msgstr "Das Formular enthält noch Fehler."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Your request is not public at the moment. The documents will not be public, either."
+msgstr "Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente werden deshalb nicht öffentlich verfügbar."
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "See request"
+msgstr "Anfrage ansehen"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Done sorting"
+msgstr "Fertig mit Sortieren"
+
+#: froide/foirequest/views/message.py
+#: frontend/javascript/components/postupload/post-upload.vue
+msgid "Create PDF"
+msgstr "PDF erstellen"
+
 
 #: froide/foirequest/views/project.py
 msgid "Publish selected requests."
