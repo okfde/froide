@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-17 10:41+0200\n"
-"PO-Revision-Date: 2024-10-17 08:59+0000\n"
+"POT-Creation-Date: 2024-10-17 11:07+0200\n"
+"PO-Revision-Date: 2024-10-18 15:09+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -10968,7 +10968,7 @@ msgstr "Hilfe"
 
 #: froide/templates/header.html
 msgid "Skip to main content"
-msgstr "Zum Hauptinhalt sprengen"
+msgstr "Zum Hauptinhalt springen"
 
 #: froide/templates/header.html
 msgid "Menu"
