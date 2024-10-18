@@ -3,28 +3,28 @@
     id="pdf-viewer"
     ref="top"
     class="pdf-redaction-tool container bg-dark-subtle">
-    <div v-if="hasPassword && ready" class="row">
+    <div v-if="hasPassword && ready" class="row bg-light pt-2">
       <div class="col">
-        <div class="alert alert-info" role="alert">
+        <div class="alert alert-info mb-0" role="alert">
           {{ i18n.hasPassword }}
         </div>
       </div>
     </div>
-    <div v-if="message" class="row">
+    <div v-if="message" class="row bg-light pt-2">
       <div class="col">
-        <div class="alert alert-info" role="alert">
+        <div class="alert alert-info mb-0" role="alert">
           {{ message }}
         </div>
       </div>
     </div>
-    <div v-if="errors" class="row">
+    <div v-if="errors" class="row bg-light pt-2">
       <div class="col">
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger mb-0" role="alert">
           {{ errors }}
         </div>
       </div>
     </div>
-    <div v-if="working" class="row mt-5">
+    <div v-if="working" class="row py-3 bg-light">
       <div class="col">
         <div class="text-center">
           <h3 v-if="loading">
@@ -212,7 +212,7 @@
           :id="containerId"
           ref="container"
           class="redactContainer"
-          :class="{ 'hide-redacting': working }"
+          :class="{ 'invisible': working }"
         >
           <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
           <canvas
@@ -1273,9 +1273,6 @@ export default {
   position: relative;
   padding: 0;
   margin: 0 auto;
-}
-.hide-redacting {
-  visibility: hidden;
 }
 
 .textLayer,
