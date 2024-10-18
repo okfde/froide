@@ -104,12 +104,10 @@
             class="btn btn-outline-secondary"
             style="max-width: 12em"
             :disabled="!canUndo"
-            :title="'TODO'"
+            :title="i18n.removeAllRedaction"
             @click="undoAll">
             <i class="fa fa-lg fa-eraser" />
-            <small class="d-none d-xl-block"
-              >Alle Schwärzungen<br />entfernen</small
-            >
+            <small class="d-none d-xl-block">{{ i18n.removeAllRedaction }}</small>
           </button>
         </div>
 
