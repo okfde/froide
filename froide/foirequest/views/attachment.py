@@ -246,6 +246,7 @@ def get_redact_context(foirequest, attachment):
             ),
             "redactAndPublish": _("Save redaction"),
             "publishWithoutRedaction": _("No redaction needed"),
+            "removeAllRedaction": _("Remove all redaction"),
             "toggleText": _("Text only"),
             "disableText": _("Hide text"),
             "cancel": _("Cancel"),

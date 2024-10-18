@@ -7036,6 +7036,10 @@ msgid "Text only"
 msgstr "Nur Text"
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
+msgid "Remove all redaction"
+msgstr "Alle Schwärzungen entfernen"
+
+#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "Hide text"
 msgstr "Text ausblenden"
 

@@ -243,6 +243,7 @@ def edit_postal_message(request, foirequest, message_id):
             ),
             "redactAndPublish": _("Save redaction"),
             "publishWithoutRedaction": _("No redaction needed"),
+            "removeAllRedaction": _("Remove all redaction"),
             "toggleText": _("Text only"),
             "disableText": _("Hide text"),
             "cancel": _("Cancel"),
