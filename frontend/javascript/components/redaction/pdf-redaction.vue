@@ -60,7 +60,7 @@
     <div class="row toolbar">
       <div
         v-if="ready"
-        class="btn-toolbar col align-items-center justify-content-around justify-content-sm-between bg-light">
+        class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light">
         <div
           class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
           <input
@@ -102,6 +102,7 @@
           <button
             type="button"
             class="btn btn-outline-secondary"
+            style="max-width: 12em"
             :disabled="!canUndo"
             :title="'TODO'"
             @click="undoAll">
@@ -161,9 +162,9 @@
         </div>
 
         <div
-          v-if="!minimalUi && (hasRedactions || hasPassword)"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0 py-2">
-          <button class="btn btn-dark" @click="redact">
+          v-if="!minimalUi && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
+          class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25">
+          <button v-if="hasRedactions || hasPassword" class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
@@ -172,9 +173,6 @@
               {{ i18n.removePasswordAndPublish }}
             </template>
           </button>
-        </div>
-
-        <div v-if="!minimalUi" class="btn-group ms-auto mt-1 mt-lg-0 py-2">
           <form
             v-if="canPublish && !hasPassword"
             method="post"
@@ -202,8 +200,6 @@
             {{ i18n.cancel }}
           </a>
         </div>
-
-        <!-- <slot name="toolbar-right"></slot> -->
       </div>
     </div>
     <div class="py-3 row preview">
@@ -1259,7 +1255,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '../../../styles/variables';
 .toolbar {
   position: sticky;
@@ -1269,6 +1265,16 @@ export default {
   padding: 5px;
   background-color: var(--#{$prefix}body-bg);
 }
+
+.toolbar button {
+  hyphens: none;
+}
+
+.toolbar form {
+  display: flex;
+  display: contents;
+}
+
 .redactContainer {
   position: relative;
   padding: 0;
