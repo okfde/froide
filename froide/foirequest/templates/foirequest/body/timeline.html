@@ -5,10 +5,10 @@
         <div class="alpha-timeline__wrap">
             {% for group in object.messages_by_month %}
                 <div class="alpha-timeline__item {% if group.show_overdue_message %}alpha-timeline__item--overdue{% endif %} {% if forloop.last %}alpha-timeline__item--last{% endif %}"
-                     data-key="{{ group.start_date|date:'Y-m' }}">
+                     data-key="{{ group.date|date:'Y-m' }}">
                     <a href="#{{ group.first_message_id }}"
                        class="alpha-timeline__link text-decoration-none">
-                        <div class="alpha-timeline__month">{{ group.start_date|date:'F Y' }}</div>
+                        <div class="alpha-timeline__month">{{ group.date|date:'F Y' }}</div>
                         <div>
                             {% spaceless %}
                                 {% blocktrans count counter=group.messages|length %}
