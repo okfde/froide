@@ -13,7 +13,7 @@ class BaseSearchFilterSet(django_filters.FilterSet):
         widget=forms.TextInput(
             attrs={"placeholder": _("Enter search term"), "class": "form-control"}
         ),
-        label=_("Search"),
+        label=_("Search Term"),
     )
 
     def __init__(self, *args, **kwargs):
