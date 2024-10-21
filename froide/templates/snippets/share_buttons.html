@@ -97,7 +97,7 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
                 {# on by default #}
                 <a href="#!"
                    class="{% if not links %}btn btn-outline-primary{% endif %} copy-text"
-                   data-copy-text="{{ url }}">
+                   data-copy-text="{{ short_url|default:url }}">
                     <i class="fa fa-clipboard"></i>
                     {% if icons_only %}<span class="sr-only">{% endif %}
                         {% trans "Copy link to clipboard" as copy_default %}
