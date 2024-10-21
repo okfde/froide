@@ -158,6 +158,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         widget=forms.TextInput(
             attrs={"placeholder": _("Search requests"), "class": "form-control"}
         ),
+        label=_("Search Term"),
     )
     status = django_filters.ChoiceFilter(
         choices=FOIREQUEST_LIST_FILTER_CHOICES,
@@ -228,11 +229,10 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     )
 
     first = django_filters.DateFromToRangeFilter(
-        method="filter_first",
-        widget=DateRangeWidget,
+        method="filter_first", widget=DateRangeWidget, label=_("first message")
     )
     last = django_filters.DateFromToRangeFilter(
-        method="filter_last", widget=DateRangeWidget
+        method="filter_last", widget=DateRangeWidget, label=_("last message")
     )
     sort = django_filters.ChoiceFilter(
         choices=[
