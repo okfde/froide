@@ -4273,6 +4273,7 @@ msgstr "Aktuell kein Projekt ausgewählt."
 #: froide/helper/templates/helper/search/search_base.html
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 #: froide/publicbody/widgets.py froide/templates/header.html
+#: froide/helper/search/filters.py
 msgid "Search"
 msgstr "Suchen"
 
