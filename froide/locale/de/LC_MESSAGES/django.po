@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-10-21 17:24+0200\n"
-"PO-Revision-Date: 2024-10-17 08:59+0000\n"
-"Last-Translator: krmax44 <github@krmax44.de>\n"
+"PO-Revision-Date: 2024-10-22 11:09+0000\n"
+"Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -1521,7 +1521,6 @@ msgstr "Erlaubte Origins"
 
 #: froide/account/templates/oauth2_provider/application_detail.html
 #: froide/account/templates/oauth2_provider/application_form.html
-#, fuzzy
 msgid "Go Back"
 msgstr "Zurück"
 
@@ -1595,7 +1594,6 @@ msgid "Expired"
 msgstr "Abgelaufen"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "Created"
 msgstr "Erstellt am"
 
@@ -1612,9 +1610,8 @@ msgid "Revoke access"
 msgstr "Zugang widerrufen"
 
 #: froide/account/templates/oauth2_provider/authorized-tokens.html
-#, fuzzy
 msgid "There are no external applications with."
-msgstr "Es gibt noch keine Vorschläge"
+msgstr "Es gibt keine externen Anwendungen mit Zugriff auf Ihr Konto."
 
 #: froide/account/templates/oauth2_provider/base.html
 msgid "OAuth applications"
@@ -5201,7 +5198,7 @@ msgid "This URL gives read access to others."
 msgstr "Diese URL gibt anderen Lese-Zugriff."
 
 #: froide/foirequest/templates/foirequest/body/timeline.html
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "                                    One Message\n"
@@ -5212,12 +5209,12 @@ msgid_plural ""
 "                                "
 msgstr[0] ""
 "\n"
-"                    Eine Nachricht\n"
-"                  "
+"                                    Eine Nachricht\n"
+"                                "
 msgstr[1] ""
 "\n"
-"                    %(counter)s Nachrichten\n"
-"                  "
+"                                    %(counter)s Nachrichten\n"
+"                                "
 
 #: froide/foirequest/templates/foirequest/body/timeline.html
 msgid "overdue"
