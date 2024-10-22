@@ -2,6 +2,7 @@ from functools import lru_cache, reduce
 from operator import or_
 
 from django.contrib.auth import get_permission_codename
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 
 from froide.team.models import Team
@@ -222,6 +223,15 @@ def get_user_filter(request, teams=None, fk_path=None):
         # or their team
         filter_arg |= make_q("team__in", teams, fk_path=fk_path)
     return filter_arg
+
+
+def require_staff(view_func):
+    def decorator(request, *args, **kwargs):
+        if not hasattr(request, "user") or not request.user.is_staff:
+            raise PermissionDenied
+        return view_func(request, *args, **kwargs)
+
+    return decorator
 
 
 def clear_lru_caches():
