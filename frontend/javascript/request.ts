@@ -1,6 +1,6 @@
 import { Tab, Tooltip } from 'bootstrap'
-import Driver from 'driver.js'
-import 'driver.js/dist/driver.min.css'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 import '../styles/components/request/index.scss'
 import InfoBox from './components/request/InfoBox'
 import Message from './components/request/Message'
@@ -14,9 +14,8 @@ const initRequestPage = (): void => {
   console.debug('Init request page...')
 
   // init message containers
-  const messagesContainer = document.getElementById(
-    'correspondence'
-  ) as HTMLElement
+  const messagesContainer =
+    document.querySelector<HTMLElement>('#correspondence')!
   const messages: Message[] = parseMessageContainers()
   if (messages.length === 0) return
 
@@ -31,11 +30,9 @@ const initRequestPage = (): void => {
   }
 
   // init timeline
-  // eslint-disable-next-line no-new
   new Timeline(messagesContainer, messages)
 
   // init ScrollIndicator on mobile view
-  // eslint-disable-next-line no-new
   new ScrollIndicator(messagesContainer)
 
   initTabs()
@@ -65,7 +62,7 @@ const initRequestPage = (): void => {
   })
 
   const tabLinks = document.querySelectorAll('a[data-tabgo]')
-  Array.from(tabLinks).forEach((tabLink) => {
+  tabLinks.forEach((tabLink) => {
     tabLink.addEventListener('click', function (this: HTMLElement) {
       const hrefAttr = this.attributes.getNamedItem('href')
       if (hrefAttr === null) {
@@ -95,7 +92,7 @@ const initRequestPage = (): void => {
   }
 
   const fieldFillLinks = document.querySelectorAll('[data-fieldname]')
-  Array.from(fieldFillLinks).forEach((el) => {
+  fieldFillLinks.forEach((el) => {
     el.addEventListener('click', fieldFillLinkClick)
   })
 
@@ -170,36 +167,31 @@ const startTour = (
   if (!tourId) {
     return
   }
+
   const tourDataEl = document.querySelector(`#${tourId}`)
-  if (tourDataEl == null || !tourDataEl.textContent) {
+  if (tourDataEl === null || !tourDataEl.textContent) {
     return
   }
-  let tourData
-  try {
-    tourData = JSON.parse(tourDataEl.textContent)
-  } catch {
-    return
-  }
-  const lastStep = tourData.steps[tourData.steps.length - 1]
-  const driver = new Driver({
+  const tourData = JSON.parse(tourDataEl.textContent)
+
+  driver({
     animate: true, // Animate while changing highlighted element
     doneBtnText: tourData.i18n.done, // Text on the final button
-    closeBtnText: tourData.i18n.close, // Text on the close button for this step
     nextBtnText: tourData.i18n.next, // Next button text for this step
     prevBtnText: tourData.i18n.previous, // Previous button text for this step
-    scrollIntoViewOptions: { behavior: 'smooth', block: 'center' },
-    onReset: (el: any) => {
-      if (el.node === document.querySelector(lastStep.element)) {
+    smoothScroll: true,
+    steps: tourData.steps,
+    onDestroyed(_el, step) {
+      const lastStep = tourData.steps[tourData.steps.length - 1]
+      if (step.element === lastStep.element) {
         // Done button clicked
         if (tourDoneSelector) {
-          const done = document.querySelector(tourDoneSelector) as HTMLElement
+          const done = document.querySelector<HTMLElement>(tourDoneSelector)
           done?.click()
         }
       }
     }
-  })
-  driver.defineSteps(tourData.steps)
-  driver.start()
+  }).drive()
 }
 
 const parseMessageContainers = (): Message[] => {
@@ -271,7 +263,7 @@ const applyMarkToMessage = (
           span[1] - charIndex,
           content.length
         )
-        // eslint-disable-next-line no-new
+
         new Tooltip(mark, {
           html: true,
           title: '<i class="fa fa-info-circle"></i>'
@@ -344,10 +336,9 @@ const scrollToAnchor = (messages: Message[]): void => {
 }
 
 const initTabs = (): void => {
-  const container = document.querySelector('.alpha-tabs') as HTMLElement
-  const tabCollection = container.getElementsByTagName('A')
-  Array.from(tabCollection).forEach((tab) => {
-    // eslint-disable-next-line no-new
+  const container = document.querySelector<HTMLElement>('.alpha-tabs')
+  const tabCollection = container?.querySelectorAll('a')
+  tabCollection?.forEach((tab) => {
     new Tab(tab)
   })
 
@@ -378,11 +369,11 @@ const initCorrespondenceTopMenu = (
   messagesContainer: HTMLElement,
   messages: Message[]
 ): void => {
-  const expandAllLink = document.querySelector(
+  const expandAllLink = document.querySelector<HTMLElement>(
     '.js-trigger-expand-all-messages'
-  ) as HTMLElement
+  )
 
-  expandAllLink.addEventListener('click', (e: MouseEvent) => {
+  expandAllLink?.addEventListener('click', (e: MouseEvent) => {
     e.preventDefault()
     expandAll(messagesContainer, messages)
   })
@@ -451,7 +442,7 @@ const initSetStatusForm = (): void => {
 
 let refusalInputIsVisible = false
 const setStatus = (): void => {
-  const container = document.querySelector('.status-refusal') as HTMLElement
+  const container = document.querySelector<HTMLElement>('.status-refusal')
   if (container !== null) {
     const resolutionElement =
       document.querySelector<HTMLInputElement>('#id_resolution')
@@ -478,13 +469,12 @@ const initReplyForm = (): void => {
     return
   }
 
-  const replyContainerHelper = document.getElementById(
-    'reply-form-helper'
-  ) as HTMLElement
+  const replyContainerHelper =
+    document.querySelector<HTMLElement>('#reply-form-helper')!
   const replyContainerOffsetTop = replyContainerHelper.offsetTop
-  const stickyButton = replyContainer.querySelector(
+  const stickyButton = replyContainer.querySelector<HTMLElement>(
     '.reply-form__toggle-sticky-btn'
-  ) as HTMLElement
+  )!
   let stickyModeEnabled = false
   let userScrolledPastEnd = false
 
