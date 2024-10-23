@@ -122,9 +122,11 @@ class FoiRequestFeed(Feed):
         return obj.get_description()
 
     def items(self, obj):
-        return obj.foievent_set.filter(event_name__in=EVENT_DETAILS).order_by(
-            "-timestamp"
-        )[:15]
+        return (
+            obj.foievent_set.filter(event_name__in=EVENT_DETAILS)
+            .order_by("-timestamp")
+            .select_related("public_body", "user")[:15]
+        )
 
     @clean_feed_output
     def item_title(self, item):
