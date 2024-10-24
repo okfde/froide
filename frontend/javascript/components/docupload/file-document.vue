@@ -55,13 +55,6 @@
         </template>
       </div>
       <div class="col-auto col-sm px-0" @click.self="toggleSelected">
-        <small v-if="document.pending">
-          {{ i18n.documentPending }}
-        </small>
-        <small v-if="document.deleting">
-          {{ i18n.documentDeleting }}
-        </small>
-
         <small :title="attachment.name" @click="toggleSelected">{{
           documentTitle
         }}</small>
@@ -75,6 +68,13 @@
           <i class="fa fa-external-link" />
           <span class="visually-hidden">{{ i18n.openAttachmentPage }}</span>
         </a>
+
+        <small v-if="document.pending" class="ms-1">
+          {{ i18n.documentPending }}
+        </small>
+        <small v-if="document.deleting" class="ms-1">
+          {{ i18n.documentDeleting }}
+        </small>
 
         <div
           v-if="highlightRedaction">
@@ -145,6 +145,13 @@
           :config="config"
           :document="document"
           @docupdated="updateDocument" />
+      </div>
+      <div class="col-auto"
+        v-if="ready && showAutoApprove && selected"
+        >
+        <input
+          v-model="doAutoApprove"
+          type="checkbox" />
       </div>
       <!-- <div class="col-auto">
         <button
@@ -239,6 +246,7 @@ export default {
   props: [
     'config',
     'document',
+    'showAutoApprove',
     'hideSelection',
     'hideAdvancedOperations',
     'iconStyle',
@@ -365,6 +373,14 @@ export default {
       },
       set() {
         this.$emit('docupdated', { selected: !this.document.selected })
+      }
+    },
+    doAutoApprove: {
+      get() {
+        return !!this.document.auto_approve
+      },
+      set() {
+        this.$emit('docupdated', { auto_approve: !this.document.auto_approve })
       }
     }
   },
