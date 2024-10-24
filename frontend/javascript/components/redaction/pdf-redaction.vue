@@ -308,6 +308,10 @@ export default {
     approveUrl: {
       type: String
     },
+    autoApprove: {
+      type: Boolean,
+      default: true
+    },
     noRedirect: {
       type: Boolean,
       default: false
@@ -606,17 +610,16 @@ export default {
       this.textDisabled = !this.textDisabled
       this.textOnly = !this.textDisabled
     },
-    redactOrApprove() {
+    async redactOrApprove() {
       if (this.hasRedactions || this.hasPassword) {
-        console.log('### redactOrApprove redact')
+        // .redact() handles autoApprove
         return this.redact()
-      } else {
-        console.log('### redactOrApprove approve')
+      }
+      if (this.autoApprove) {
         return this.approve()
       }
     },
     approve() {
-      // TODO like redact(), this should emulate what the form above does
       const url = this.approveUrl
       return fetch(url, {
         method: 'POST',
@@ -648,7 +651,7 @@ export default {
         }, Promise.resolve())
         .then(() => {
           console.log(serialized)
-          const data = { pages: serialized, password: this.password }
+          const data = { pages: serialized, password: this.password, auto_approve: this.autoApprove }
           this.progressCurrent = null
           return this.sendSerializedPages(data)
             .then((attachment) => {
@@ -656,7 +659,6 @@ export default {
                 this.progressCurrent = 100
                 this.progressTotal = 100
                 bustCache(attachment.file_url).then(() => {
-                  // FIXME WIP emit a success event here instead
                   if (this.noRedirect) {
                     this.$emit('uploaded')
                     return
@@ -684,8 +686,6 @@ export default {
       this.progressTotal = 100
       return new Promise((resolve, reject) => {
         const xhr = new window.XMLHttpRequest()
-        // TODO
-        // should be like /anfrage/foo/redact/123456/
         const url = this.postUrl || document.location.href
         xhr.open('POST', url)
         xhr.setRequestHeader('Content-Type', 'application/json')
@@ -705,7 +705,7 @@ export default {
               try {
                 this.progressCurrent = null
                 this.workingState = 'redacting'
-                this.waitOnAttachment(JSON.parse(xhr.responseText))
+                this.waitOnAttachment(JSON.parse(xhr.responseText), serialized.auto_approve)
                   .then(resolve)
                   .catch(reject)
               } catch (e) {
@@ -721,14 +721,14 @@ export default {
         xhr.send(JSON.stringify(serialized))
       })
     },
-    waitOnAttachment(response) {
+    waitOnAttachment(response, wasAutoApprove) {
       return new Promise((resolve, reject) => {
         const attachmentUrl = response.resource_uri
         let waitTime = 0
         const checkAttachment = () => {
           getData(attachmentUrl)
             .then((attachment) => {
-              if (attachment.pending || !attachment.approved) {
+              if (attachment.pending || (wasAutoApprove && !attachment.approved)) {
                 waitTime += 5
                 if (waitTime > 60 * 3) {
                   console.error('Timeout while waiting for redaction')

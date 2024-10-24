@@ -360,6 +360,7 @@ def edit_postal_message(request, foirequest, message_id):
             "back": _("Back"),
             "step": _("Step"),
             "addLetter": _("Add letter"),
+            "documentsApproveLater": _("Uncheck to leave unpublished for now"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
