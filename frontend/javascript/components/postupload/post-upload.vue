@@ -131,7 +131,7 @@ const updateValidity = (key) => {
 
 const isSubmitting = ref(false)
 
-const submit = async () => {
+const submitForm = async () => {
   document.forms.postupload.submit()
 }
 
@@ -141,6 +141,7 @@ const submitFetch = async () => {
   if (debug.value) {
     console.log('submit', { action, formdata })
   }
+  isSubmitting.value = true
   return fetch(action, {
     method: 'post',
     headers: {
@@ -149,36 +150,29 @@ const submitFetch = async () => {
     body: formdata
   })
     .then((response) => {
-      if (!response.ok) throw new Error('form submit error')
+      if (!response.ok) throw new Error(`form submitFetch error ${response.status} ${response.statusText}`)
       return response.json()
     })
     .then((response) => {
-      isSubmitting.value = false
       if ('errors' in response) {
-        console.error('fetch submit errors', response.errors)
-        // TODO handle this better: at least use a proper modal,
-        // better: link to steps which are wrong?
-        // like: if 'date' in errors link to step with <input type=date>
-        alert('errors: ' + JSON.stringify(response.errors, false, 2))
-        return
+        throw new Error('form submitFetch error: ' +  JSON.stringify(response.errors, false, 2))
       }
+      console.log('form submitFetch successful')
+      gotoStep()
     })
-}
-
-const approveDocsAndSubmit = async () => {
-  isSubmitting.value = true
-  try {
-    // unnecessary since redacted documents are auto-approved
-    // and staff users will ... be handled differently? TODO
-    // await approveDocs()
-    await submitFetch()
-    gotoStep()
-  } catch (err) {
-    console.error('fetch submit error', err)
-    alert('error' + JSON.stringify(err))
-  } finally {
-    isSubmitting.value = false
-  }
+    .catch((err) => {
+      console.error('fetch submit errors', err)
+      // TODO this will be replaced once we have an API instead of the form submit,
+      // for now it is better than nothing.
+      // Eventually this should trigger a modal and maybe
+      // link to steps which are invalid?
+      // Theoretical implementation now could be:
+      // if 'date' in errors then link to STEP_ with linked <input type=date>
+      alert(err.message)
+    })
+    .finally(() => {
+      isSubmitting.value = false
+    })
 }
 
 /* --- <online-help> interaction --- */
@@ -278,7 +272,6 @@ const pdfRedactionRedact = () => {
   // alternatively, could listen to an event
   pdfRedaction.value
     .redactOrApprove()
-    // .then(delay(3000))
     .then(() => {
       pdfRedactionProcessing.value = false
       pdfRedactionCurrentHasRedactions.value = false
@@ -538,7 +531,8 @@ const stepsConfig = {
       progressStep: 2,
       mobileHeaderTitle: i18n.value.redact,
       documents: true,
-      documentsIconStyle: 'thumbnail'
+      documentsIconStyle: 'thumbnail',
+      documentsShowAutoApprove: props.user_is_staff
     }
   },
   [STEP_REDACTION_REDACT]: {
@@ -678,7 +672,7 @@ addEventListener('hashchange', () => {
         <span>isDesktop={{ isDesktop }}</span>
         <button
           class="btn btn-secondary btn-sm"
-          type="submit"
+          type="submitForm"
           style="font-size: 50%; margin-left: 1em">
           submit/save
         </button>
@@ -1271,14 +1265,16 @@ addEventListener('hashchange', () => {
           </div>
         </div>
         <div>
-          <pre class="debug" v-if="debug">
-    DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex}}</pre
-          >
+          <div class="debug" v-if="debug">
+            DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex}}<br/>
+            auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
+          </div>
           <pdf-redaction
             v-if="pdfRedactionCurrentDoc"
             :key="pdfRedactionCurrentDoc.id"
             :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
             :attachment-url="pdfRedactionCurrentDoc.attachment.anchor_url"
+            :auto-approve="pdfRedactionCurrentDoc.auto_approve"
             :post-url="
               config.url.redactAttachment.replace(
                 '/0/',
@@ -1374,6 +1370,7 @@ addEventListener('hashchange', () => {
                 :message="message"
                 :show-upload="stepContext.documentsUpload"
                 :icon-style="stepContext.documentsIconStyle"
+                :show-auto-approve="stepContext.documentsShowAutoApprove"
                 :hide-selection="stepContext.documentsHideSelection"
                 :hide-selection-bar="true"
                 :hide-other="true"
@@ -1449,7 +1446,7 @@ addEventListener('hashchange', () => {
             <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
               <button
                 type="button"
-                @click="approveDocsAndSubmit()"
+                @click="submitFetch()"
                 class="btn btn-primary d-block w-100"
                 :disabled="isSubmitting || !validity.form">
                 <span
@@ -1470,21 +1467,11 @@ addEventListener('hashchange', () => {
                   {{ i18n.requestNonPublicHint }}
                 </small>
               </div>
-              <!-- 
-                TODO
-                There is a feature missing here:
-                if public and is_staff, offer checkboxes to opt-out of auto-approving the uploaded attachments.
-                Approval is currently set by the redact_attachment_task.
-                Changing this default would necessitate deeper changes to how/when/where approval is set.
-                <template v-if="object_public && user_is_staff">
-                  Um Dokumente vorerst nicht zu veröffentlichen, die Häkchen entfernen.
-                </template>
-              -->
             </template>
             <template v-else-if="step === STEP_OUTRO">
               <button
                 type="button"
-                @click="submit"
+                @click="submitForm"
                 class="btn btn-primary d-block w-100">
                 {{ i18n.requestShow }}
               </button>

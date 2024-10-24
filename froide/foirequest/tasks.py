@@ -359,7 +359,7 @@ def redact_attachment_task(att_id, target_id, instructions):
         if attachment.redacted:
             attachment.redacted = None
         if attachment.is_redacted:
-            attachment.approved = True
+            attachment.approved = instructions["auto_approve"]
             attachment.can_approve = True
         attachment.pending = False
         attachment.save()
@@ -396,8 +396,11 @@ def redact_attachment_task(att_id, target_id, instructions):
 
     target.can_approve = True
     target.pending = False
-    target.approve_and_save()
-    FoiAttachment.attachment_approved.send(sender=target, user=None, redacted=True)
+    if instructions["auto_approve"]:
+        target.approve_and_save()
+        FoiAttachment.attachment_approved.send(sender=target, user=None, redacted=True)
+    else:
+        target.save()
 
 
 @celery_app.task(name="froide.foirequest.tasks.move_upload_to_attachment")

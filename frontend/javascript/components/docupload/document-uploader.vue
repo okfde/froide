@@ -73,6 +73,7 @@
           :config="config"
           :hide-selection="hideSelection"
           :icon-style="iconStyle"
+          :show-auto-approve="showAutoApprove"
           :show-basic-operations="fileBasicOperations"
           :hide-advanced-operations="hideAdvancedOperations"
           :highlight-redaction="highlightRedactions"
@@ -83,8 +84,16 @@
           @docupdated="documentUpdated(doc, $event)"
           @pageupdated="pageUpdated"
           @notnew="doc.new = false" />
+        <div class="row" v-if="showAutoApprove"
+          :style="{ visibility: selectedDocuments.length > 0 ? 'visible' : 'hidden' }">
+          <div class="col-auto ms-auto">
+            {{ i18n.documentsApproveLater }}
+            ⮥
+          </div>
+        </div>
       </div>
     </component>
+
     <div style="color: red" v-else-if="debug">DEBUG: no pdf documents</div>
 
     <component
@@ -161,6 +170,10 @@ export default {
       default: true
     },
     imagesSimple: {
+      type: Boolean,
+      default: false
+    },
+    showAutoApprove: {
       type: Boolean,
       default: false
     },
@@ -357,6 +370,7 @@ export default {
           has_redacted: !!att.redacted,
           pages: null,
           attachment: att,
+          auto_approve: true,
           ...extra
         }
         let imagePage = false
@@ -600,11 +614,15 @@ export default {
             // would have to fetch multiple times to get all
             console.warn('not all attachments fetched')
           }
-          const saveSelection = this.selectedDocuments.map((d) => d.id)
+          const savedAttrs = this.documents.reduce((a, d) => {
+            a[d.id] = {
+              selected: d.selected,
+              auto_approve: d.auto_approve
+            }
+            return a
+          }, {})
           this.documents = this.buildDocuments(response.objects)
-          this.documents.forEach(
-            (d) => (d.selected = saveSelection.includes(d.id))
-          )
+            .map((d) => ({ ...d, ...savedAttrs[d.id] }))
         })
     }
   }

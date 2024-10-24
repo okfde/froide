@@ -456,6 +456,7 @@ def edit_postal_message(request, foirequest, message_id):
             "requestShow": _("See request"),
             "doneSorting": _("Done sorting"),
             "createPdf": _("Create PDF"),
+            "documentsApproveLater": _("Uncheck to leave unpublished for now"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
