@@ -1599,6 +1599,18 @@ addEventListener('hashchange', () => {
     100vh - (2 * 1rem + 2.5rem) - (2 * 0.5rem + 1.5rem * 14 / 16) -
       (2 * 0.5rem + 2 * 0.375rem + 1.5rem)
   );
+
+  // limit on viewports taller than "HD + browser chrome + taskbar"
+  // to not have a huge negative space desert
+  // note that this is the same formula as above, with 100vh replaced
+  // by the media-query min-height
+  // (should calc to something around 780px, as established empirically)
+  @media (min-height: 940px) {
+    min-height: calc(
+      945px - (2 * 1rem + 2.5rem) - (2 * 0.5rem + 1.5rem * 14 / 16) -
+        (2 * 0.5rem + 2 * 0.375rem + 1.5rem)
+    );
+  }
 }
 
 /* make form-check more accessible; whole block is padded + clickable */
