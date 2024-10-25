@@ -104,15 +104,18 @@ const values = reactive({
 
 const validity = reactive({
   date: false,
-  registered_mail_date: false
+  registered_mail_date: false,
+  status: false
 })
 
 // TODO updateValidity should (maybe) be called on gotoStep(STEP_MESSAGE_DATE), too
 const updateValidity = (key) => {
-  const el =
+  let el =
     key === 'form'
       ? document.forms.postupload
       : document.forms.postupload.elements[key]
+  // checkValidity is same for any radio button of a given name, we pick the first
+  if (el instanceof RadioNodeList) el = el[0]
   // just assume true if browser doesn't support checkValidity
   validity[key] = 'checkValidity' in el ? el.checkValidity() : true
   if (debug.value) {
@@ -469,9 +472,13 @@ const stepsConfig = {
       if (formIsSent.value) return STEP_REDACTION_PICKER
       return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
     },
+    onEnter: () => {
+      updateValidity('status')
+    },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: i18n.value.enterInformation,
+      isGotoValid: () => validity.status
     }
   },
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
@@ -1040,7 +1047,7 @@ addEventListener('hashchange', () => {
                 :id="'id_status_' + choiceIndex"
                 v-model="formStatus"
                 :value="choice.value"
-                :data-x-checked="formStatus.value === choice.value" />
+                @input="updateValidity('status')" />
               <label class="form-check-label" :for="'id_status_' + choiceIndex">
                 <template v-if="formStatusWasResolved">
                   <template v-if="choice.value === 'resolved'">
