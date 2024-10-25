@@ -379,7 +379,7 @@ const stepsConfig = {
       progressStep: 0,
       mobileHeaderTitle: i18n.value.letterUploadOrScan,
       documents: true,
-      documentsUpload: true,
+      documentsUpload: false,
       documentsHideSelection: true,
       documentsHidePdf: true,
       documentsImagesSimple: true
@@ -531,6 +531,7 @@ const stepsConfig = {
       progressStep: 2,
       mobileHeaderTitle: i18n.value.redact,
       documents: true,
+      documentsUpload: false,
       documentsIconStyle: 'thumbnail',
       documentsShowAutoApprove: props.user_is_staff
     }
@@ -561,6 +562,7 @@ const stepsConfig = {
       progressStep: 2,
       mobileHeaderTitle: i18n.value.preview,
       documents: true,
+      documentsUpload: false,
       documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
       documentsIconStyle: 'thumbnail',
       documentsHighlightRedactions: true
