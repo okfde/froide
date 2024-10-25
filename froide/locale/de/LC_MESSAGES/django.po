@@ -2728,9 +2728,8 @@ msgid "Search requests"
 msgstr "Anfragen durchsuchen"
 
 #: froide/foirequest/filters.py froide/helper/search/filters.py
-#, fuzzy
 msgid "Search Term"
-msgstr "Suchbegriffe"
+msgstr "Suchbegriff"
 
 #: froide/foirequest/filters.py
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
@@ -2760,9 +2759,8 @@ msgid "classification"
 msgstr "Behördentyp"
 
 #: froide/foirequest/filters.py
-#, fuzzy
 msgid "first message"
-msgstr "letzte Nachricht"
+msgstr "erste Nachricht"
 
 #: froide/foirequest/filters.py
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
