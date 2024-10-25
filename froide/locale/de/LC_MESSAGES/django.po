@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-21 17:24+0200\n"
+"POT-Creation-Date: 2024-10-25 10:48+0200\n"
 "PO-Revision-Date: 2024-10-22 11:09+0000\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -591,7 +591,7 @@ msgstr "Blocklist-Eintrag"
 
 #: froide/account/models.py
 msgid "Blocklist"
-msgstr "Blocklist"
+msgstr "Blockliste"
 
 #: froide/account/models.py
 msgid "User preference"
@@ -972,7 +972,6 @@ msgstr "Weiter"
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/templates/snippets/breadcrumbs.html
-#: froide/organization/templates/organization/organization_detail.html
 msgid "Home Page"
 msgstr "Startseite"
 
@@ -2728,6 +2727,11 @@ msgstr "Bei dieser Anfrage wurde eine Gebühr erhoben."
 msgid "Search requests"
 msgstr "Anfragen durchsuchen"
 
+#: froide/foirequest/filters.py froide/helper/search/filters.py
+#, fuzzy
+msgid "Search Term"
+msgstr "Suchbegriffe"
+
 #: froide/foirequest/filters.py
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 #: froide/foirequest/views/account_requests.py
@@ -2754,6 +2758,17 @@ msgstr "Alle Behördentypen"
 #: froide/foirequest/filters.py froide/publicbody/filters.py
 msgid "classification"
 msgstr "Behördentyp"
+
+#: froide/foirequest/filters.py
+#, fuzzy
+msgid "first message"
+msgstr "letzte Nachricht"
+
+#: froide/foirequest/filters.py
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/views.py
+msgid "last message"
+msgstr "letzte Nachricht"
 
 #: froide/foirequest/filters.py
 msgid "last message (newest first)"
@@ -4244,11 +4259,12 @@ msgid "Currently no project assigned."
 msgstr "Aktuell kein Projekt ausgewählt."
 
 #: froide/foirequest/templates/foirequest/_request_search.html
-#: froide/foirequest/views/message.py froide/helper/search/filters.py
+#: froide/foirequest/views/message.py
 #: froide/helper/templates/helper/search/multi_search.html
 #: froide/helper/templates/helper/search/search_base.html
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 #: froide/publicbody/widgets.py froide/templates/header.html
+#: froide/helper/search/filters.py
 msgid "Search"
 msgstr "Suchen"
 
@@ -5840,11 +5856,6 @@ msgstr "Status festlegen..."
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Check all requests"
 msgstr "Alle Anfragen prüfen"
-
-#: froide/foirequest/templates/foirequest/foiproject_detail.html
-#: froide/problem/views.py
-msgid "last message"
-msgstr "letzte Nachricht"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "public body"
@@ -8875,7 +8886,6 @@ msgstr "Dieser Organisation beitreten"
 #: froide/organization/templates/organization/organization_list_own.html
 #: froide/organization/templates/organization/organization_update_form.html
 #: froide/organization/views.py
-#: froide/organization/templates/organization/organization_detail.html
 msgid "Organizations"
 msgstr "Organisationen"
 
@@ -11800,67 +11810,59 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#: froide/foirequest/templates/foirequest/body/timeline.html
 #, python-format
-msgid ""
-"\n"
-"                    One Message\n"
-"                  "
-msgid_plural ""
-"\n"
-"                    %(counter)s Messages\n"
-"                  "
-msgstr[0] ""
-"\n"
-"                    Eine Nachricht\n"
-"                  "
-msgstr[1] ""
-"\n"
-"                    %(counter)s Nachrichten\n"
-"                  "
+#~ msgid ""
+#~ "\n"
+#~ "                    One Message\n"
+#~ "                  "
+#~ msgid_plural ""
+#~ "\n"
+#~ "                    %(counter)s Messages\n"
+#~ "                  "
+#~ msgstr[0] ""
+#~ "\n"
+#~ "                    Eine Nachricht\n"
+#~ "                  "
+#~ msgstr[1] ""
+#~ "\n"
+#~ "                    %(counter)s Nachrichten\n"
+#~ "                  "
 
-#: froide/templates/snippets/homepage_hero.html
-msgid ""
-"Freedom of Information Request\n"
-"\n"
-"      To: Ministry of Interior\n"
-"\n"
-"      Dear Sir or Madam,\n"
-"      I request information about the following:\n"
-"      ..."
-msgstr ""
-"Anfrage nach dem Informationsfreiheitsgesetz\n"
-"\n"
-"An: Bundesministerium des Innern\n"
-"\n"
-"Guten Tag,\n"
-"ich beantrage Auskunft zu folgender Sachlage:\n"
-"…"
+#~ msgid ""
+#~ "Freedom of Information Request\n"
+#~ "\n"
+#~ "      To: Ministry of Interior\n"
+#~ "\n"
+#~ "      Dear Sir or Madam,\n"
+#~ "      I request information about the following:\n"
+#~ "      ..."
+#~ msgstr ""
+#~ "Anfrage nach dem Informationsfreiheitsgesetz\n"
+#~ "\n"
+#~ "An: Bundesministerium des Innern\n"
+#~ "\n"
+#~ "Guten Tag,\n"
+#~ "ich beantrage Auskunft zu folgender Sachlage:\n"
+#~ "…"
 
-#: froide/foirequest/templates/foirequest/sent.html
-msgid "Tweet request"
-msgstr "Anfrage tweeten"
+#~ msgid "Tweet request"
+#~ msgstr "Anfrage tweeten"
 
-#: froide/foirequest/templates/foirequest/sent.html
-msgid "Share request"
-msgstr "Anfrage teilen"
+#~ msgid "Share request"
+#~ msgstr "Anfrage teilen"
 
-#: froide/account/admin.py
-msgid "Deactivate and block users"
-msgstr "Nutzer:in deaktivieren und blocken"
+#~ msgid "Deactivate and block users"
+#~ msgstr "Nutzer:in deaktivieren und blocken"
 
-#: froide/account/admin.py
-msgid "Users logged out, deactivated and blocked."
-msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
+#~ msgid "Users logged out, deactivated and blocked."
+#~ msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
 
-#: froide/foirequest/views/make_request.py
 #, python-format
-msgid "Please enter an address in the following format: %(format)s"
-msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
+#~ msgid "Please enter an address in the following format: %(format)s"
+#~ msgstr "Bitte geben Sie eine Adresse in diesem Format an: %(format)s"
 
-#: froide/document/apps.py
-msgid "Documents (beta)"
-msgstr "Dokumente (beta)"
+#~ msgid "Documents (beta)"
+#~ msgstr "Dokumente (beta)"
 
 #, fuzzy
 #~ msgid "FoI requests"
@@ -14286,9 +14288,6 @@ msgstr "Dokumente (beta)"
 #~ msgid "As a moderator you are still able to publish it."
 #~ msgstr "As a moderator you are still able to publish it."
 
-#~ msgid "Search Terms"
-#~ msgstr "Suchbegriffe"
-
 #, fuzzy
 #~ msgid "Information needs to be redacted."
 #~ msgstr "Was Sie schwärzen sollten"
@@ -14342,3 +14341,6 @@ msgstr "Dokumente (beta)"
 
 #~ msgid "There are no suggestions yet"
 #~ msgstr "Es gibt noch keine Vorschläge"
+
+#~ msgid "Search Terms"
+#~ msgstr "Suchbegriffe"
