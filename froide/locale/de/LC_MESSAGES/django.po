@@ -5167,6 +5167,7 @@ msgstr "Erneut senden"
 #: froide/team/templates/team/team_detail.html
 #: froide/templates/snippets/messages.html
 #: froide/templates/snippets/share_buttons.html
+#: froide/foirequest/views/request.py
 msgid "Close"
 msgstr "Schließen"
 
