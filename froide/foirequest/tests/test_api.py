@@ -81,7 +81,13 @@ class ApiTest(TestCase):
 
     def test_content_hidden(self):
         marker = "TESTMARKER"
-        mes = factories.FoiMessageFactory.create(content_hidden=True, plaintext=marker)
+        mes = factories.FoiMessageFactory.create(
+            content_hidden=True,
+            plaintext=marker,
+            plaintext_redacted=marker,
+            subject=marker,
+            subject_redacted=marker,
+        )
         response = self.client.get("/api/v1/message/%d/" % mes.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, marker)
@@ -90,7 +96,7 @@ class ApiTest(TestCase):
         user = factories.UserFactory.create(first_name="Reinhardt")
         user.private = True
         user.save()
-        mes = factories.FoiMessageFactory.create(content_hidden=True, sender_user=user)
+        mes = factories.FoiMessageFactory.create(sender_user=user)
         response = self.client.get("/api/v1/message/%d/" % mes.pk)
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, user.username)
