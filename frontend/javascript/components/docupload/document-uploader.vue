@@ -84,8 +84,7 @@
           @docupdated="documentUpdated(doc, $event)"
           @pageupdated="pageUpdated"
           @notnew="doc.new = false" />
-        <div class="row" v-if="showAutoApprove"
-          :style="{ visibility: selectedDocuments.length > 0 ? 'visible' : 'hidden' }">
+        <div class="row" v-if="showAutoApprove">
           <div class="col-auto ms-auto">
             {{ i18n.documentsApproveLater }}
             ⮥
@@ -516,17 +515,19 @@ export default {
         d.selected = !this.selectAll
       })
     },
-    approveAll() {
+    approveUnredacted () {
       return Promise.all(
-        this.approvableDocs.map((d) => {
-          d.approving = true
-          return approveAttachment(d, this.config, this.$root.csrfToken).then(
-            (att) => {
-              d.approving = false
-              d.attachment = att
-            }
-          )
-        })
+        this.approvableDocs
+          .filter((d) => !d.has_redacted && !d.is_redacted && !d.approved && d.auto_approve)
+          .map((d) => {
+            d.approving = true
+            return approveAttachment(d, this.config, this.$root.csrfToken).then(
+              (att) => {
+                d.approving = false
+                d.attachment = att
+              }
+            )
+          })
       )
     },
     approveSelected() {

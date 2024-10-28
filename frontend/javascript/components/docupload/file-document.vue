@@ -147,11 +147,12 @@
           @docupdated="updateDocument" />
       </div>
       <div class="col-auto"
-        v-if="ready && showAutoApprove && selected"
+        v-if="ready && showAutoApprove"
         >
         <input
           v-model="doAutoApprove"
-          type="checkbox" />
+          type="checkbox"
+          :style="{ visibility: (isRedacted || hasRedacted || approved) ? 'hidden' : 'visible' }" />
       </div>
       <!-- <div class="col-auto">
         <button
