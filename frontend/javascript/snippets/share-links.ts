@@ -50,7 +50,13 @@ document.querySelectorAll<HTMLElement>('.share-native').forEach((btn) => {
       btn.hidden = false
 
       btn.addEventListener('click', () => {
-        navigator.share(shareObj)
+        try {
+          navigator.share(shareObj)
+        } catch (e) {
+          if (!(e instanceof DOMException)) {
+            throw e
+          }
+        }
       })
     }
   }
