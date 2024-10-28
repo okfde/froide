@@ -242,8 +242,8 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True, view_name="api:publicbody-detail"
     )
 
-    subject = serializers.CharField(source="get_subject")
-    content = serializers.CharField(source="get_content")
+    subject = serializers.SerializerMethodField(source="get_subject")
+    content = serializers.SerializerMethodField(source="get_content")
     redacted_subject = serializers.SerializerMethodField(source="get_redacted_subject")
     redacted_content = serializers.SerializerMethodField(source="get_redacted_content")
     sender = serializers.CharField()
@@ -281,20 +281,33 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "last_modified_at",
         )
 
-    def get_redacted_subject(self, obj):
+    def _is_authenticated_read(self, obj):
         request = self.context["request"]
+        return can_read_foirequest_authenticated(obj.request, request, allow_code=False)
 
-        if can_read_foirequest_authenticated(obj.request, request, allow_code=False):
+    def get_subject(self, obj):
+        if obj.content_hidden and not self._is_authenticated_read(obj):
+            return ""
+        return obj.get_subject()
+
+    def get_content(self, obj):
+        if obj.content_hidden and not self._is_authenticated_read(obj):
+            return ""
+        return obj.get_subject()
+
+    def get_redacted_subject(self, obj):
+        if self._is_authenticated_read(obj):
             show, hide = obj.subject, obj.subject_redacted
         else:
+            if obj.content_hidden:
+                return []
             show, hide = obj.subject_redacted, obj.subject
         return list(get_differences(show, hide))
 
     def get_redacted_content(self, obj):
-        request = self.context["request"]
-        authenticated_read = can_read_foirequest_authenticated(
-            obj.request, request, allow_code=False
-        )
+        authenticated_read = self._is_authenticated_read(obj)
+        if obj.content_hidden and not authenticated_read:
+            return []
         return obj.get_redacted_content(authenticated_read)
 
     def get_attachments(self, obj):
