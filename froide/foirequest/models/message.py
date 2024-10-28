@@ -415,7 +415,7 @@ class FoiMessage(models.Model):
         return pb_id == request.law.mediator_id
 
     @property
-    def sender(self):
+    def sender(self) -> str:
         if self.sender_user:
             return self.sender_user.display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public", False):
@@ -425,10 +425,10 @@ class FoiMessage(models.Model):
             and self.sender_name
         ):
             return self.sender_name
-        else:
-            if self.sender_public_body:
-                return self.sender_public_body.name
-            return self.sender_public_body
+
+        if self.sender_public_body:
+            return self.sender_public_body.name
+        return ""
 
     @property
     def user_real_sender(self):
