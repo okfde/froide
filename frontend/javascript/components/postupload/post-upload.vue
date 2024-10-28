@@ -138,13 +138,26 @@ const submitForm = async () => {
   document.forms.postupload.submit()
 }
 
+const approveAndSubmit = async () => {
+  isSubmitting.value = true
+  try {
+    await documentUploader.value.approveUnredacted()
+    await submitFetch()
+    gotoStep()
+  } catch (err) {
+    console.error('fetch submit error', err)
+    alert('error' + JSON.stringify(err))
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
 const submitFetch = async () => {
   const action = document.forms.postupload.action
   const formdata = new FormData(document.forms.postupload)
   if (debug.value) {
     console.log('submit', { action, formdata })
   }
-  isSubmitting.value = true
   return fetch(action, {
     method: 'post',
     headers: {
@@ -172,9 +185,6 @@ const submitFetch = async () => {
       // Theoretical implementation now could be:
       // if 'date' in errors then link to STEP_ with linked <input type=date>
       alert(err.message)
-    })
-    .finally(() => {
-      isSubmitting.value = false
     })
 }
 
@@ -572,7 +582,8 @@ const stepsConfig = {
       documentsUpload: false,
       documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
       documentsIconStyle: 'thumbnail',
-      documentsHighlightRedactions: true
+      documentsHighlightRedactions: true,
+      documentsShowAutoApprove: props.user_is_staff
     }
   },
   [STEP_OUTRO]: {
@@ -1455,7 +1466,7 @@ addEventListener('hashchange', () => {
             <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
               <button
                 type="button"
-                @click="submitFetch()"
+                @click="approveAndSubmit()"
                 class="btn btn-primary d-block w-100"
                 :disabled="isSubmitting || !validity.form">
                 <span
