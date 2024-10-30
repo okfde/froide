@@ -152,7 +152,7 @@ class FoiMessage(models.Model):
     subject_redacted = models.CharField(
         _("Redacted Subject"), blank=True, max_length=255
     )
-    plaintext = models.TextField(_("plain text"), blank=True, null=True)
+    plaintext = models.TextField(_("plain text"), blank=True, null=False, default="")
     plaintext_redacted = models.TextField(
         _("redacted plain text"), blank=True, null=True
     )
