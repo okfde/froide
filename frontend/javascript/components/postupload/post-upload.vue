@@ -1676,13 +1676,9 @@ addEventListener('hashchange', () => {
   }
 }
 
-</style>
+/* make links stand out more in alert boxes. needs :deep because <a> in gettext msg */
 
-<style lang="scss">
-/* make links stand out more in alert boxes.
-   needs to be unscoped because i18n/v-html */
-
-.post-upload .alert a {
+.alert :deep(a) {
   text-decoration: underline;
 }
 </style>
