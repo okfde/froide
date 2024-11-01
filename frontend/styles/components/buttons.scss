@@ -1,7 +1,3 @@
-.btn {
-  white-space: normal;
-  cursor: pointer;
-}
 .btn .on-hover {
   display: none;
 }
@@ -25,24 +21,33 @@
 }
 
 .hover-btn-success {
-  @include button-outline-variant(map-get($theme-colors, "success"));
+  @include button-outline-variant(map-get($theme-colors, 'success'));
   background-color: var(--#{$prefix}body-bg);
 }
 
 .hover-btn-success:hover {
-  @include button-variant(map-get($theme-colors, "success"), map-get($theme-colors, "success"));
+  @include button-variant(
+    map-get($theme-colors, 'success'),
+    map-get($theme-colors, 'success')
+  );
 }
 
 .hover-btn-danger {
-  @include button-outline-variant(map-get($theme-colors, "secondary"));
+  @include button-outline-variant(map-get($theme-colors, 'secondary'));
 }
 
 .btn.hover-btn-danger:hover {
-  @include button-variant(map-get($theme-colors, "danger"), map-get($theme-colors, "danger"));
+  @include button-variant(
+    map-get($theme-colors, 'danger'),
+    map-get($theme-colors, 'danger')
+  );
 }
 
 .btn-warning-blink {
-  @include button-variant(map-get($theme-colors, "warning"), map-get($theme-colors, "warning"));
+  @include button-variant(
+    map-get($theme-colors, 'warning'),
+    map-get($theme-colors, 'warning')
+  );
   animation: warning-blink 1s ease-in-out infinite;
 }
 .btn-warning-blink:hover {
@@ -50,7 +55,7 @@
 }
 
 .btn-outline-redact {
-  @include button-outline-variant(map-get($theme-colors, "dark"));
+  @include button-outline-variant(map-get($theme-colors, 'dark'));
   border-color: var(--#{$prefix}body-color);
   color: var(--#{$prefix}body-color);
 }
