@@ -9,6 +9,7 @@ from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.translation import override
 
 from crossdomainmedia import CrossDomainMediaAuth
+from oauth2_provider.contrib.rest_framework import TokenHasScope
 
 from froide.helper.auth import (
     can_manage_object,
@@ -345,3 +346,26 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
         """
         obj = self.context["object"]
         return obj.file.name
+
+
+def throttle_action(throttle_classes):
+    def inner(method):
+        def _inner(self, request, *args, **kwargs):
+            for throttle_class in throttle_classes:
+                throttle = throttle_class()
+                if not throttle.allow_request(request, self):
+                    self.throttled(request, throttle.wait())
+            return method(self, request, *args, **kwargs)
+
+        return _inner
+
+    return inner
+
+
+class CreateOnlyWithScopePermission(TokenHasScope):
+    def has_permission(self, request, view):
+        if view.action not in ("create", "update"):
+            return True
+        if not request.user.is_authenticated:
+            return False
+        return super().has_permission(request, view)
