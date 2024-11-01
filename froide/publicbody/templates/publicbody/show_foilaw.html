@@ -60,9 +60,12 @@
                     <div class="tab-pane active" id="legaltext">
                         <div class="alert alert-info">
                             {% blocktrans %}
-            This is a copy of the law, for which we can't guarantee correctness.
-          {% endblocktrans %}
-                            <a href="{{ object.url }}" target="_blank" rel="noopener">
+                                This is a copy of the law, for which we can't guarantee correctness.
+                            {% endblocktrans %}
+                            <a href="{{ object.url }}"
+                               target="_blank"
+                               rel="noopener"
+                               class="alert-link">
                                 {% blocktrans with name=object.name %}Official law text of {{ name }}{% endblocktrans %}
                             </a>
                         </div>

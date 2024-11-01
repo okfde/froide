@@ -119,7 +119,7 @@
             </div>
             {% if not request.user.is_authenticated %}
                 <div class="alert alert-warning">
-                    <a href="{% url 'account-login' %}">{% trans "You have to login or signup first in order to make a request." %}</a>
+                    <a href="{% url 'account-login' %}" class="alert-link">{% trans "You have to login or signup first in order to make a request." %}</a>
                 </div>
             {% else %}
                 {% if publicbodies %}

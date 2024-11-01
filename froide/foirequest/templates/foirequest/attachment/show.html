@@ -25,9 +25,8 @@
         {% if foirequest|can_write_foirequest:request or foirequest|can_moderate_pii_foirequest:request %}
             {% if foirequest.awaits_classification %}
                 <div class="alert alert-warning">
-                    <a href="{% url 'foirequest-show' slug=foirequest.slug %}#set-status">
-                        {% translate "Don't forget to set the status of this request!" %}
-                    </a>
+                    <a href="{% url 'foirequest-show' slug=foirequest.slug %}#set-status"
+                       class="alert-link">{% translate "Don't forget to set the status of this request!" %}</a>
                 </div>
             {% endif %}
             {% if attachment.can_redact %}
