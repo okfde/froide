@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint frontend/**/*.{js,ts,vue}",
+    "lint": "eslint frontend",
     "eslint": "eslint",
     "serve": "vite",
     "dev": "vite",
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/okfde/froide#readme",
   "devDependencies": {
-    "@okfde/eslint-config-froide": "okfde/eslint-config-froide",
+    "@okfde/eslint-config-froide": "github:okfde/eslint-config-froide",
     "@types/bootstrap": "^5.2.1",
     "@types/glidejs__glide": "^3.4.2",
     "@vitejs/plugin-vue": "^4.0.0",
