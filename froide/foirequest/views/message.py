@@ -377,7 +377,7 @@ def edit_postal_message(request, foirequest, message_id):
                 "We will guide you through the process step-by-step."
             ),
             "newLinkOldFlow": _(
-                'Should you experience problems, you can use <a href="${url}">the older version</a> here. We welcome feedback!'
+                'Should you experience problems, you can use <a class="alert-link" href="${url}">the older version</a> here. We welcome feedback!'
             ),
             "newWarning": _("We have redone this part of the app."),
             "documentsDragOrder": _("Drag the documents in the right order"),

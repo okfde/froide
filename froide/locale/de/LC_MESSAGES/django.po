@@ -7757,8 +7757,8 @@ msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
 
 #: froide/foirequest/views/message.py
 #: frontend/javascript/components/postupload/post-upload.vue
-msgid "Should you experience problems, you can use <a href=\"${url}\">the older version</a> here. We welcome feedback!"
-msgstr "Sollte etwas nicht funktionieren, gibt es <a href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback freuen."
+msgid "Should you experience problems, you can use <a class=\"alert-link\" href=\"${url}\">the older version</a> here. We welcome feedback!"
+msgstr "Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback freuen."
 
 #: froide/foirequest/views/message.py
 #: frontend/javascript/components/postupload/post-upload.vue

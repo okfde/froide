@@ -1675,10 +1675,4 @@ addEventListener('hashchange', () => {
     padding: 0.25rem 0.25rem 0.25rem 0.75rem;
   }
 }
-
-/* make links stand out more in alert boxes. needs :deep because <a> in gettext msg */
-
-.alert :deep(a) {
-  text-decoration: underline;
-}
 </style>
