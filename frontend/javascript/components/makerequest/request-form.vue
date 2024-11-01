@@ -4,7 +4,8 @@
 
     <div
       v-if="multiRequest && canBatchRequest"
-      class="publicbody-summary-container">
+      class="publicbody-summary-container"
+    >
       <div class="publicbody-summary">
         <p>
           <template v-if="publicBodies.length < 20">
@@ -21,7 +22,8 @@
             <a
               class="pb-change-link badge rounded-pill text-bg-primary ms-3"
               :href="config.url.makeRequest"
-              @click.prevent="$emit('setStepSelectPublicBody')">
+              @click.prevent="$emit('setStepSelectPublicBody')"
+            >
               {{ i18n.change }}
             </a>
           </span>
@@ -52,7 +54,8 @@
               <a
                 class="pb-change-link badge rounded-pill text-bg-primary ms-3"
                 :href="config.url.makeRequest"
-                @click.prevent="$emit('setStepSelectPublicBody')">
+                @click.prevent="$emit('setStepSelectPublicBody')"
+              >
                 {{ i18n.change }}
               </a>
             </span>
@@ -76,7 +79,8 @@
       :key="pb.id"
       type="hidden"
       name="publicbody"
-      :value="pb.id" />
+      :value="pb.id"
+    />
     <input type="hidden" name="law_type" :value="lawType" />
 
     <div class="row">
@@ -89,18 +93,21 @@
           <label
             class="form-check-label"
             for="id_subject"
-            :class="{ 'text-danger': errors.subject }">
+            :class="{ 'text-danger': errors.subject }"
+          >
             {{ i18n.subject }}
           </label>
           <div
             v-if="
               editingDisabled && !(errors.subject && errors.subject.length > 0)
-            ">
+            "
+          >
             <input type="hidden" name="subject" :value="subject" />
             <strong>{{ subject }}</strong>
             <button
               class="btn btn-sm btn-white float-end"
-              @click.prevent="editingDisabled = false">
+              @click.prevent="editingDisabled = false"
+            >
               <small class="d-none d-md-block">{{ i18n.reviewEdit }}</small>
               <small class="d-md-none fa fa-edit">
                 <span class="visually-hidden">{{ i18n.reviewEdit }}</span>
@@ -110,7 +117,8 @@
           <template v-else>
             <div
               v-if="errors.subject && errors.subject.length > 0"
-              class="alert alert-danger">
+              class="alert alert-danger"
+            >
               <p v-for="error in errors.subject" :key="error.message">
                 {{ error.message }}
               </p>
@@ -127,7 +135,8 @@
               minlength="4"
               :class="{ 'is-invalid': errors.subject }"
               :placeholder="formFields.subject.placeholder"
-              @keydown.enter.prevent />
+              @keydown.enter.prevent
+            />
           </template>
         </div>
       </div>
@@ -150,13 +159,15 @@
                 <textarea
                   v-model="savedFullTextBody"
                   class="saved-body"
-                  readonly />
+                  readonly
+                />
               </div>
             </transition>
             <slot name="request-hints" />
             <div
               v-if="submitting && bodyCustomErrors.length > 0"
-              class="alert alert-warning">
+              class="alert alert-warning"
+            >
               <ul class="list-unstyled">
                 <li v-for="error in bodyCustomErrors" :key="error">
                   {{ error }}
@@ -166,14 +177,16 @@
             <button
               v-if="fullTextDisabled"
               class="btn btn-outline-secondary btn-sm"
-              @click.prevent="resetFullText">
+              @click.prevent="resetFullText"
+            >
               {{ i18n.resetFullText }}
             </button>
           </div>
           <div class="col-md-8 order-1">
             <div
               v-if="errors.body && errors.body.length > 0"
-              class="alert alert-danger">
+              class="alert alert-danger"
+            >
               <p v-for="error in errors.body" :key="error.message">
                 {{ error.message }}
               </p>
@@ -192,24 +205,29 @@
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
               required
-              @keyup="bodyChanged" />
+              @keyup="bodyChanged"
+            />
             <div
               v-if="allowFullText && !editingDisabled"
-              class="form-check form-check-inline float-end">
+              class="form-check form-check-inline float-end"
+            >
               <input
                 id="full_text_checkbox"
                 class="form-check-input"
                 v-model="fullText"
                 type="checkbox"
                 name="full_text_checkbox"
-                :disabled="fullTextDisabled" />
+                :disabled="fullTextDisabled"
+              />
               <label
                 for="full_text_checkbox"
-                class="form-check-label small text-body-secondary">
+                class="form-check-label small text-body-secondary"
+              >
                 <i
                   v-if="warnFullText"
                   class="fa fa-exclamation-triangle"
-                  aria-hidden="true" />
+                  aria-hidden="true"
+                />
                 {{ formFields.full_text.label }}
               </label>
             </div>
@@ -220,7 +238,8 @@
                   class="show-full-letter"
                   href="#"
                   @click.prevent="showFullLetter"
-                  v-text="'[…]'" />
+                  v-text="'[…]'"
+                />
                 <template v-if="true">{{ letterEndShort }}</template>
               </template>
               <template v-else>{{ letterEnd }}</template>
@@ -231,7 +250,8 @@
             <div
               v-if="!letterSignature && fullText"
               class="body-text"
-              v-text="letterSignatureName" />
+              v-text="letterSignatureName"
+            />
           </div>
         </div>
         <div v-if="!hasUser" class="row">
@@ -239,11 +259,13 @@
             <div class="mb-3 row">
               <div
                 class="col-sm-6"
-                :class="{ 'text-danger': usererrors.first_name }">
+                :class="{ 'text-danger': usererrors.first_name }"
+              >
                 <label
                   class="form-label field-required"
                   for="id_first_name"
-                  :class="{ 'text-danger': usererrors.first_name }">
+                  :class="{ 'text-danger': usererrors.first_name }"
+                >
                   {{ i18n.yourFirstName }}
                 </label>
                 <input
@@ -254,7 +276,8 @@
                   class="form-control"
                   :class="{ 'is-invalid': usererrors.first_name }"
                   :placeholder="userformFields.first_name.placeholder"
-                  required />
+                  required
+                />
                 <p v-for="e in usererrors.first_name" :key="e.message">
                   {{ e.message }}
                 </p>
@@ -262,11 +285,13 @@
 
               <div
                 class="col-sm-6"
-                :class="{ 'text-danger': usererrors.last_name }">
+                :class="{ 'text-danger': usererrors.last_name }"
+              >
                 <label
                   class="form-label field-required"
                   for="id_last_name"
-                  :class="{ 'text-danger': usererrors.last_name }">
+                  :class="{ 'text-danger': usererrors.last_name }"
+                >
                   {{ i18n.yourLastName }}
                 </label>
                 <input
@@ -277,7 +302,8 @@
                   class="form-control"
                   :class="{ 'is-invalid': usererrors.last_name }"
                   :placeholder="userformFields.last_name.placeholder"
-                  required />
+                  required
+                />
                 <p v-for="e in usererrors.last_name" :key="e.message">
                   {{ e.message }}
                 </p>
@@ -287,13 +313,15 @@
           <div v-if="usePseudonym" class="col-md-4 mt-md-4">
             <small
               v-if="userformFields.last_name.help_text"
-              v-html="userformFields.last_name.help_text" />
+              v-html="userformFields.last_name.help_text"
+            />
           </div>
         </div>
 
         <div
           v-if="config.settings.user_can_hide_web && !hasUser"
-          class="row mt-2">
+          class="row mt-2"
+        >
           <div class="col-md-8">
             <div class="form-check">
               <input
@@ -301,7 +329,8 @@
                 class="form-check-input"
                 v-model="userPrivate"
                 type="checkbox"
-                name="private" />
+                name="private"
+              />
               <label for="id_private" class="form-check-label">
                 {{ userformFields.private.label }}
               </label>
@@ -321,14 +350,16 @@
               <proof-form
                 :form="proofForm"
                 :required="proofRequired"
-                :config="config.proof_config"></proof-form>
+                :config="config.proof_config"
+              ></proof-form>
             </template>
             <details v-else>
               <summary>{{ i18n.includeProof }}</summary>
               <proof-form
                 :form="proofForm"
                 :required="proofRequired"
-                :config="config.proof_config"></proof-form>
+                :config="config.proof_config"
+              ></proof-form>
             </details>
           </div>
         </div>

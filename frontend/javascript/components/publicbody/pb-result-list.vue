@@ -8,7 +8,8 @@
           type="radio"
           :data-label="publicBody.name"
           :name="name"
-          :value="publicBody.id" />
+          :value="publicBody.id"
+        />
         <label class="form-check-label">
           {{ publicBody.name }}
           <small>
@@ -21,7 +22,8 @@
       <li
         v-for="result in searchResults"
         :key="result.id"
-        class="search-result">
+        class="search-result"
+      >
         <div class="form-check">
           <!-- TODO: escape could/should "reset" -->
           <input
@@ -36,12 +38,14 @@
             @change="selectSearchResult($event, false)"
             @click="selectSearchResult($event, true)"
             @keydown.enter.prevent="clear"
-            @keydown.space.prevent="clear" />
+            @keydown.space.prevent="clear"
+          />
           <!-- clearDelayed prevents in some browser the change on input not firing -->
           <label
             class="form-check-label"
             @click="clearDelayed"
-            :for="`pb_${this.scope}_${result.id}`">
+            :for="`pb_${this.scope}_${result.id}`"
+          >
             {{ result.name }}
             <small>
               {{ result.jurisdiction.name }}

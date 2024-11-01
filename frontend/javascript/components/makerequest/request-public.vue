@@ -5,7 +5,8 @@
         type="hidden"
         name="hide_public"
         :value="hidePublic"
-        id="id_hide_public" />
+        id="id_hide_public"
+      />
       <div class="card mb-3" v-if="!hidePublic">
         <div class="card-body">
           <div class="form-check">
@@ -14,7 +15,8 @@
               name="public"
               class="form-check-input"
               id="id_public"
-              v-model="publicValue" />
+              v-model="publicValue"
+            />
             <label class="form-check-label" for="id_public">
               {{ form.fields.public.label }}
             </label>
@@ -29,7 +31,8 @@
           type="checkbox"
           name="public"
           id="id_public"
-          v-model="publicValue" />
+          v-model="publicValue"
+        />
       </div>
     </div>
   </div>

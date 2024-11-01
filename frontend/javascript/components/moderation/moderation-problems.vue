@@ -21,7 +21,8 @@
           @claim="claim"
           @unclaim="unclaim"
           @resolve="resolve"
-          @escalate="escalate" />
+          @escalate="escalate"
+        />
       </TransitionGroup>
     </table>
   </div>

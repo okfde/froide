@@ -62,10 +62,12 @@ defineExpose({
       class="modal"
       tabindex="-1"
       role="dialog"
-      id="onlinehelp-modal">
+      id="onlinehelp-modal"
+    >
       <div
         class="modal-dialog modal-fullscreen modal-dialog-scrollable ms-auto"
-        role="document">
+        role="document"
+      >
         <div class="modal-content bg-warning-subtle">
           <div class="modal-header">
             <h5 class="modal-title">Hilfe</h5>
@@ -73,12 +75,14 @@ defineExpose({
               @click="hide"
               type="button"
               class="btn-close"
-              aria-label="Close"></button>
+              aria-label="Close"
+            ></button>
           </div>
           <div class="modal-body">
             <span
               class="spinner spinner-border position-absolute top-50 start-50 translate-middle"
-              v-show="isFetching" />
+              v-show="isFetching"
+            />
             <div v-html="contents"></div>
           </div>
         </div>

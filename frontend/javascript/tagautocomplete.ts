@@ -16,7 +16,6 @@ interface AutocompleteResponse {
 }
 
 declare global {
-  // eslint-disable-next-line no-unused-vars
   interface Window {
     _choices_: Record<string, Choices>
   }
@@ -45,7 +44,6 @@ function setupTagging(): void {
 
       const choices = new Choices(select, {
         addItemText(value) {
-          // eslint-disable-next-line no-template-curly-in-string
           return addItemText.replace('${value}', value)
         },
         addItems: true,
@@ -73,7 +71,6 @@ function setupTagging(): void {
         } else if (Array.isArray(value)) {
           valueString = value.join(',')
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
           valueString = value.toString()
         }
         realInput.value = valueString ?? ''
@@ -99,12 +96,11 @@ function setupTagging(): void {
               if (!present && allowNew) {
                 data.push({ value: searchValue, label: searchValue })
               }
-              // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
               choices.setChoices(data, 'value', 'label', true)
             })
           })
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           choices.setChoices(
             [{ value: searchValue, label: searchValue }],
             'value',

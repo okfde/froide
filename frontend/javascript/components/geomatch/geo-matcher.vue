@@ -41,7 +41,8 @@
           v-for="georegion in georegions"
           :key="georegion.id"
           :georegion="georegion"
-          @connectpublicbody="connectPublicBody" />
+          @connectpublicbody="connectPublicBody"
+        />
       </tbody>
     </table>
   </div>

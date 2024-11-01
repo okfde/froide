@@ -6,7 +6,8 @@
         :class="{
           'fa-chevron-down': !expanded,
           'fa-chevron-up': expanded
-        }"></i>
+        }"
+      ></i>
     </h5>
     <transition name="expand">
       <div v-show="expanded" class="filter-container">
@@ -14,12 +15,14 @@
           v-if="hasChoices"
           v-model="choice"
           @change="triggerSearch"
-          class="form-select">
+          class="form-select"
+        >
           <option
             v-for="opt in config.choices[1]"
             :key="opt[0]"
             :value="opt[0]"
-            :selected="choice == opt[0]">
+            :selected="choice == opt[0]"
+          >
             {{ opt[1] }}
           </option>
         </select>
@@ -30,12 +33,14 @@
           :placeholder="i18n.searchPlaceholder"
           v-model="search"
           @keyup="triggerSearch"
-          @keydown.enter.prevent="triggerSearch" />
+          @keydown.enter.prevent="triggerSearch"
+        />
         <div class="filter-list-container">
           <div
             v-if="loading"
             class="spinner-border text-secondary"
-            role="status">
+            role="status"
+          >
             <span class="visually-hidden">{{ i18n.loading }}</span>
           </div>
           <pb-filter-list
@@ -46,10 +51,11 @@
             :has-more="hasMore"
             :items="orderedItems"
             :value="value"
-            @removeFilter="removeFilter"
-            @setFilter="setFilter"
-            @loadMore="loadMore"
-            @loadChildren="loadChildren"></pb-filter-list>
+            @remove-filter="removeFilter"
+            @set-filter="setFilter"
+            @load-more="loadMore"
+            @load-children="loadChildren"
+          ></pb-filter-list>
         </div>
       </div>
     </transition>

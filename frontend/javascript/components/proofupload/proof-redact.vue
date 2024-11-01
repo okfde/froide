@@ -17,7 +17,8 @@ by dexmo007 licensed under MIT license
     :style="{
       maxWidth: '100%',
       cursor: cursor
-    }"></canvas>
+    }"
+  ></canvas>
 </template>
 
 <script>

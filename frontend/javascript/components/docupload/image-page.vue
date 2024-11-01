@@ -7,25 +7,29 @@
         :alt="page.name"
         :title="page.name"
         class="page-image"
-        :src="pageUrl" />
+        :src="pageUrl"
+      />
     </div>
     <div class="page-controls">
       <div class="page-control" v-if="!hideRotate">
         <button
           class="btn btn-sm text-body-secondary small"
-          @click="rotatePage">
+          @click="rotatePage"
+        >
           <span class="fa fa-rotate-right" />
         </button>
       </div>
       <div
         class="page-control page-control--number"
-        :class="{ 'text-center': !hideRotate }">
+        :class="{ 'text-center': !hideRotate }"
+      >
         {{ page.pageNum }}
       </div>
       <div class="page-control text-end" v-if="!hideSplit && !isLast">
         <button
           class="btn btn-sm text-body-secondary small"
-          @click="splitPages">
+          @click="splitPages"
+        >
           <span class="fa fa-scissors" />
         </button>
       </div>

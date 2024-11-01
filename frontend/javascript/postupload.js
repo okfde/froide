@@ -10,5 +10,5 @@ function createPostUpload(element) {
 
 const els = document.querySelectorAll('.post-upload')
 for (let i = 0; i < els.length; i += 1) {
-createPostUpload(els[i])
+  createPostUpload(els[i])
 }

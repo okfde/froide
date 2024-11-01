@@ -9,7 +9,8 @@
         role="progressbar"
         :aria-valuenow="blockProgress"
         aria-valuemin="0"
-        aria-valuemax="100">
+        aria-valuemax="100"
+      >
         <div class="progress-bar" :style="blockProgressWidth"></div>
       </div>
     </div>
@@ -27,11 +28,13 @@
               v-model="search"
               :placeholder="i18n.publicBodySearchPlaceholder"
               @keyup="triggerAutocomplete"
-              @keydown.enter.prevent="triggerAutocomplete" />
+              @keydown.enter.prevent="triggerAutocomplete"
+            />
             <button
               type="button"
               class="btn btn-primary search-public_bodies-submit"
-              @click="triggerAutocomplete">
+              @click="triggerAutocomplete"
+            >
               <i class="fa fa-search"></i>
               {{ i18n.search }}
             </button>
@@ -53,7 +56,8 @@
           <button
             @click.prevent="selectAll"
             class="btn btn-sm btn-outline-secondary"
-            :disabled="selectAllButtonDisabled">
+            :disabled="selectAllButtonDisabled"
+          >
             {{ i18n._('selectAll', { count: searchResultsLength }) }}
           </button>
         </div>
@@ -61,7 +65,8 @@
           <button
             :disabled="!hasSearchResults"
             @click.prevent="clearSearch"
-            class="btn-sm btn btn-outline-secondary">
+            class="btn-sm btn btn-outline-secondary"
+          >
             {{ i18n.clearSearchResults }}
           </button>
         </div>
@@ -75,11 +80,13 @@
             :headers="currentHeaders"
             :options="selectOptions"
             :rows="searchResults"
-            @selectAllRows="selectAllRows"></pb-table>
+            @select-all-rows="selectAllRows"
+          ></pb-table>
           <div
             v-show="searching"
             class="spinner-border text-secondary"
-            role="status">
+            role="status"
+          >
             <span class="visually-hidden">{{ i18n.loading }}</span>
           </div>
           <slot name="publicbody-missing" v-if="!searching"></slot>
@@ -91,13 +98,15 @@
             :key="filterKey"
             :config="filterConfig[filterKey]"
             @update="updateFilter"
-            :value="filters[filterKey]">
+            :value="filters[filterKey]"
+          >
           </pb-filter-selected>
           <div class="row mt-3">
             <div
               v-for="filterKey in filterOrder"
               :key="filterKey"
-              class="col-sm-4 col-md-12 filter-column position-relative">
+              class="col-sm-4 col-md-12 filter-column position-relative"
+            >
               <pb-filter
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
@@ -106,7 +115,8 @@
                 :scope="scope"
                 :value="filters[filterKey]"
                 @update="updateFilter"
-                @setFilterExpand="setFilterExpand"></pb-filter>
+                @set-filter-expand="setFilterExpand"
+              ></pb-filter>
             </div>
           </div>
         </div>

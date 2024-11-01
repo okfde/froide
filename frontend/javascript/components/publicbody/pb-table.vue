@@ -15,7 +15,8 @@
               'fa-sort-alpha-desc': sortOrder < 0,
               'sort-control--active': sortHeader === header.label
             }"
-            @click="changeSort(header.label)"></i>
+            @click="changeSort(header.label)"
+          ></i>
         </th>
       </tr>
     </thead>
@@ -27,7 +28,8 @@
         :row="row"
         :headers="headers"
         :selected="row.isSelected"
-        @update:row="updateRow"></pb-table-row>
+        @update:row="updateRow"
+      ></pb-table-row>
     </transition-group>
   </table>
 </template>

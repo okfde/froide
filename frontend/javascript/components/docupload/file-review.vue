@@ -2,12 +2,14 @@
   <div
     class="btn-group btn-group-sm"
     role="group"
-    aria-label="Button group with nested dropdown">
+    aria-label="Button group with nested dropdown"
+  >
     <button
       v-if="canApprove"
       class="btn btn-sm btn-outline-success"
       :disabled="working"
-      @click="approve">
+      @click="approve"
+    >
       <i class="fa fa-check" />
       {{ i18n.approve }}
     </button>
@@ -15,7 +17,8 @@
     <a
       v-if="canReview && !approved"
       class="btn btn-sm btn-outline-primary"
-      :href="reviewUrl">
+      :href="reviewUrl"
+    >
       <i class="fa fa-eye" />
       {{ i18n.review }}
     </a>
@@ -27,14 +30,17 @@
           ref="dropdown"
           data-bs-toggle="dropdown"
           aria-haspopup="true"
-          aria-expanded="false" />
+          aria-expanded="false"
+        />
         <div
           class="dropdown-menu dropdown-menu-right"
-          :aria-labelledby="'docupload-dropdown-' + attachment.id">
+          :aria-labelledby="'docupload-dropdown-' + attachment.id"
+        >
           <a
             v-if="canReview && approved"
             class="dropdown-item btn btn-sm btn-dark"
-            :href="reviewUrl">
+            :href="reviewUrl"
+          >
             <i class="fa fa-paint-brush" />
             {{ i18n.redact }}
           </a>
@@ -43,14 +49,16 @@
             v-if="canDelete"
             class="dropdown-item"
             :disabled="working"
-            @click="deleteAttachment">
+            @click="deleteAttachment"
+          >
             <i class="fa fa-ban" />
             {{ i18n.delete }}
           </button>
           <button
             v-if="attachment.is_irrelevant && attachment.is_image"
             class="dropdown-item btn-danger"
-            @click="makeRelevant">
+            @click="makeRelevant"
+          >
             {{ i18n.makeRelevant }}
           </button>
         </div>

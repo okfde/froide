@@ -25,14 +25,16 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             class="step col d-flex flex-column align-items-center text-primary"
             :class="{
               'fw-bold': stepIndex <= step
-            }">
+            }"
+          >
             <div
               :class="`step-marker d-block rounded-circle text-center border border-primary
                   ${
                     stepIndex <= step
                       ? 'text-white bg-primary'
                       : 'text-primary bg-body'
-                  }`">
+                  }`"
+            >
               {{ stepIndex + 1 }}
             </div>
             <div>{{ stepLabel }}</div>
@@ -42,10 +44,12 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             :style="{
               width: 100 * (1 - 1 / props.steps.length) + '%',
               left: 50 / props.steps.length + '%'
-            }">
+            }"
+          >
             <div
               class="progress-bar"
-              :style="{ width: progressDesktop * 100 + '%' }"></div>
+              :style="{ width: progressDesktop * 100 + '%' }"
+            ></div>
           </div>
         </div>
       </div>
@@ -64,7 +68,8 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
       <div class="d-lg-none progress progress--mobile">
         <div
           class="progress-bar"
-          :style="{ width: progressMobile * 100 + '%' }"></div>
+          :style="{ width: progressMobile * 100 + '%' }"
+        ></div>
       </div>
     </div>
   </div>

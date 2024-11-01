@@ -13,11 +13,13 @@
                   class="form-check-input"
                   :class="{ 'is-invalid': errors.terms }"
                   required=""
-                  id="id_terms" />
+                  id="id_terms"
+                />
                 <label
                   for="id_terms"
                   class="form-check-label field-required"
-                  :class="{ 'text-danger': errors.terms }">
+                  :class="{ 'text-danger': errors.terms }"
+                >
                   <span v-html="form.fields.terms.label"></span>
                 </label>
               </div>

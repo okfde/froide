@@ -4,7 +4,8 @@
       <li
         v-for="item in filteredItems"
         :key="item.id"
-        :class="{ active: item.isActive }">
+        :class="{ active: item.isActive }"
+      >
         <div class="form-check">
           <input
             type="checkbox"
@@ -12,7 +13,8 @@
             :id="item.labelId"
             @change="setFilter(item)"
             :data-test="item.isActive"
-            :checked="item.isActive" />
+            :checked="item.isActive"
+          />
           <label class="form-check-label" :for="item.labelId">
             {{ item.label }}
           </label>
@@ -20,7 +22,8 @@
           <i
             v-if="item.children && item.children.length > 0 && !item.subItems"
             class="fa fa-chevron-down load-children"
-            @click="loadChildren(item)"></i>
+            @click="loadChildren(item)"
+          ></i>
 
           <pb-filter-list
             v-if="item.subItems && item.subItems.length > 0"
@@ -29,10 +32,11 @@
             :scope="scope"
             :value="value"
             :items="item.subItems"
-            @removeFilter="removeFilter"
-            @setFilter="setFilter"
-            @loadMore="loadMore"
-            @loadChildren="loadChildren"></pb-filter-list>
+            @remove-filter="removeFilter"
+            @set-filter="setFilter"
+            @load-more="loadMore"
+            @load-children="loadChildren"
+          ></pb-filter-list>
         </div>
       </li>
     </ul>

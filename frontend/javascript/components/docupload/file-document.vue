@@ -2,24 +2,28 @@
   <div
     :id="attachmentId"
     class="document mb-1"
-    :class="{ 'is-new': document.new }">
+    :class="{ 'is-new': document.new }"
+  >
     <div class="row" @click.self="toggleSelected">
       <div class="col-auto">
         <input
           v-if="ready && !hideSelection"
           v-model="selected"
-          type="checkbox" />
+          type="checkbox"
+        />
         <div
           v-if="!ready"
           class="spinner-border spinner-border-sm"
-          role="status">
+          role="status"
+        >
           <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
       </div>
       <div
         v-if="iconStyle === 'icon'"
         class="col-auto ps-0"
-        @click="toggleSelected">
+        @click="toggleSelected"
+      >
         <i class="fa fa-file-o"></i>
       </div>
       <div v-else-if="iconStyle === 'thumbnail'" class="col-auto ps-0">
@@ -33,7 +37,8 @@
             class="badge rounded-pill text-bg-secondary"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            :title="i18n.notPublic">
+            :title="i18n.notPublic"
+          >
             &nbsp;
           </span>
           <span
@@ -41,7 +46,8 @@
             class="badge rounded-pill text-bg-dark"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            :title="i18n.redacted">
+            :title="i18n.redacted"
+          >
             &nbsp;
           </span>
           <span
@@ -49,7 +55,8 @@
             class="badge rounded-pill text-bg-info"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
-            :title="i18n.protectedOriginalExplanation">
+            :title="i18n.protectedOriginalExplanation"
+          >
             &nbsp;
           </span>
         </template>
@@ -71,21 +78,17 @@
           :href="attachment.site_url"
           :title="i18n.openAttachmentPage"
           target="_blank"
-          class="px-2">
+          class="px-2"
+        >
           <i class="fa fa-external-link" />
           <span class="visually-hidden">{{ i18n.openAttachmentPage }}</span>
         </a>
 
-        <div
-          v-if="highlightRedaction">
-          <span
-            v-if="isRedacted"
-            class="badge text-bg-success"
-            >geschwärzt</span>
-          <span
-            v-else
-            class="badge text-bg-warning"
-            >ungeschwärzt</span>
+        <div v-if="highlightRedaction">
+          <span v-if="isRedacted" class="badge text-bg-success"
+            >geschwärzt</span
+          >
+          <span v-else class="badge text-bg-warning">ungeschwärzt</span>
         </div>
 
         <div
@@ -94,7 +97,8 @@
           role="progressbar"
           :aria-valuenow="document.progress"
           aria-valuemin="0"
-          aria-valuemax="100">
+          aria-valuemax="100"
+        >
           <div
             class="progress-bar"
             :class="{
@@ -102,12 +106,14 @@
                 progressAlmostComplete,
               'bg-info progress-bar-striped': progressUnknown
             }"
-            :style="{ width: progressPercentLabel }" />
+            :style="{ width: progressPercentLabel }"
+          />
         </div>
       </div>
       <div
         v-if="!hideAdvancedOperations"
-        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
+        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center"
+      >
         <button
           v-if="canMakeResult"
           class="btn btn-sm btn-outline-success"
@@ -115,7 +121,8 @@
           data-bs-toggle="tooltip"
           data-bs-placement="top"
           :title="i18n.makeResultExplanation"
-          @click="makeResult">
+          @click="makeResult"
+        >
           <i class="fa fa-certificate" />
           {{ i18n.isResult }}
         </button>
@@ -126,7 +133,8 @@
             'btn-outline-secondary': !editDocumentMeta,
             'btn-secondary': editDocumentMeta
           }"
-          @click.prevent="editDocumentMeta = !editDocumentMeta">
+          @click.prevent="editDocumentMeta = !editDocumentMeta"
+        >
           <span class="visually-hidden">{{ i18n.edit }}</span>
           <i class="fa fa-edit" />
         </button>
@@ -135,16 +143,19 @@
           :config="config"
           :document="document"
           @docupdated="updateDocument"
-          @makerelevant="$emit('makerelevant')" />
+          @makerelevant="$emit('makerelevant')"
+        />
       </div>
       <div
         v-if="showBasicOperations"
-        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center">
+        class="col-12 col-sm-auto mt-2 mt-sm-0 text-end text-sm-center"
+      >
         <file-basic-operations
           v-if="ready"
           :config="config"
           :document="document"
-          @docupdated="updateDocument" />
+          @docupdated="updateDocument"
+        />
       </div>
       <!-- <div class="col-auto">
         <button
@@ -178,7 +189,8 @@
                     v-model="title"
                     type="text"
                     class="form-control"
-                    :placeholder="i18n.title" />
+                    :placeholder="i18n.title"
+                  />
                   <small class="form-text text-body-secondary">{{
                     i18n.documentTitleHelp
                   }}</small>
@@ -195,7 +207,8 @@
                     :id="'doc-description' + doc.id"
                     v-model="description"
                     class="form-control"
-                    rows="3" />
+                    rows="3"
+                  />
                   <small class="form-text text-body-secondary">{{
                     i18n.descriptionHelp
                   }}</small>

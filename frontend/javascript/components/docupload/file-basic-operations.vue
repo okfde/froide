@@ -42,13 +42,15 @@ onMounted(() => {
     <button
       class="btn btn-outline-dark me-1"
       disabled
-      @click="renameAttachment">
+      @click="renameAttachment"
+    >
       <i class="fa fa-pencil" />
     </button>
     <button
       class="btn btn-outline-dark"
       :disabled="!canDelete"
-      @click="deleteAttachment">
+      @click="deleteAttachment"
+    >
       <i class="fa fa-trash" />
     </button>
   </div>

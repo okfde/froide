@@ -2,7 +2,8 @@
   <div
     id="pdf-viewer"
     ref="top"
-    class="pdf-redaction-tool container bg-dark-subtle">
+    class="pdf-redaction-tool container bg-dark-subtle"
+  >
     <div v-if="hasPassword && ready" class="row">
       <div class="col">
         <div class="alert alert-info" role="alert">
@@ -60,19 +61,23 @@
     <div class="row toolbar">
       <div
         v-if="ready"
-        class="btn-toolbar col align-items-center justify-content-around justify-content-sm-between bg-light">
+        class="btn-toolbar col align-items-center justify-content-around justify-content-sm-between bg-light"
+      >
         <div
-          class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
+          class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2"
+        >
           <input
             v-if="hasTouch"
             type="checkbox"
             class="btn-check"
             id="btn-check-paint"
-            v-model="allowSingleTap" />
+            v-model="allowSingleTap"
+          />
           <label
             v-if="hasTouch"
             class="btn btn-outline-secondary d-flex"
-            for="btn-check-paint">
+            for="btn-check-paint"
+          >
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
               <i class="fa fa-lg fa-paint-brush" />
@@ -84,7 +89,8 @@
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
-            @click="undo">
+            @click="undo"
+          >
             <i class="fa fa-lg fa-share fa-flip-horizontal" />
             <small class="d-none d-xl-block">{{ i18n.undo }}</small>
           </button>
@@ -95,7 +101,8 @@
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
-            @click="redo">
+            @click="redo"
+          >
             <i class="fa fa-lg fa-share" />
             <small class="d-none d-xl-block">{{ i18n.redo }}</small>
           </button>
@@ -104,7 +111,8 @@
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="'TODO'"
-            @click="undoAll">
+            @click="undoAll"
+          >
             <i class="fa fa-lg fa-eraser" />
             <small class="d-none d-xl-block"
               >Alle Schwärzungen<br />entfernen</small
@@ -138,7 +146,8 @@
 
         <!-- TODO: hide if numPages === 1 ? -->
         <div
-          class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2">
+          class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2"
+        >
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -162,7 +171,8 @@
 
         <div
           v-if="!minimalUi && (hasRedactions || hasPassword)"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0 py-2">
+          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0 py-2"
+        >
           <button class="btn btn-dark" @click="redact">
             <i class="fa fa-paint-brush me-2" />
             <template v-if="hasRedactions">
@@ -1146,7 +1156,7 @@ export default {
       matches.forEach((div) => {
         const text = div.textContent
         let result
-        /* eslint-disable no-cond-assign */
+
         while ((result = regex.exec(text))) {
           const pos = result.index
           const match = result[0]

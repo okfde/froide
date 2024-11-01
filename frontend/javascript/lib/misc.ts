@@ -148,4 +148,11 @@ const guardBeforeunload = (enable: boolean): void => {
   }
 }
 
-export { addText, scrollToAnchor, scrollNavIntoViewIfNecessary, slideUp, toggleSlide, guardBeforeunload }
+export {
+  addText,
+  scrollToAnchor,
+  scrollNavIntoViewIfNecessary,
+  slideUp,
+  toggleSlide,
+  guardBeforeunload
+}

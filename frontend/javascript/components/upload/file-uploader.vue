@@ -7,13 +7,15 @@
         :key="upload"
         type="hidden"
         :name="name"
-        :value="upload" />
+        :value="upload"
+      />
       <input
         v-if="!canSubmit"
         type="hidden"
         name="upload-pending"
         value=""
-        required />
+        required
+      />
     </template>
   </div>
 </template>

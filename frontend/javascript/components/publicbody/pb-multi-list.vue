@@ -6,14 +6,16 @@
           class="btn btn-primary"
           href="#step-request"
           @click="setStepRequest"
-          v-show="hasPublicBodies">
+          v-show="hasPublicBodies"
+        >
           Continue
         </a>
         <a
           v-if="hasSearchResults"
           href="#"
           @click="selectAll"
-          class="btn btn-outline-secondary float-end">
+          class="btn btn-outline-secondary float-end"
+        >
           Select all
         </a>
       </div>
@@ -21,11 +23,13 @@
         <li
           v-for="result in searchResults"
           :key="result.id"
-          class="search-result">
+          class="search-result"
+        >
           <pb-multi-item
             :name="name"
             :result="result"
-            :scope="scope"></pb-multi-item>
+            :scope="scope"
+          ></pb-multi-item>
         </li>
       </ul>
       <p v-if="hasPublicBodies">

@@ -11,7 +11,8 @@
       <div class="col-auto">
         <button
           class="btn btn-primary btn-lg"
-          @click.prevent="setStepSelectPublicBody">
+          @click.prevent="setStepSelectPublicBody"
+        >
           &larr; {{ i18n.addMoreAuthorities }}
         </button>
       </div>
@@ -19,14 +20,16 @@
     <pb-summary
       :scope="scope"
       :i18n="i18n"
-      :dimensions="summaryDimensions"></pb-summary>
+      :dimensions="summaryDimensions"
+    ></pb-summary>
 
     <div class="row mb-2">
       <div class="col-auto ms-auto">
         <button
           v-if="publicBodies.length > 0"
           @click.prevent="clearSelection"
-          class="btn btn-sm hover-btn-danger">
+          class="btn btn-sm hover-btn-danger"
+        >
           <i class="fa fa-ban" aria-hidden="true"></i>
           {{ i18n.clearSelection }}
         </button>
@@ -40,8 +43,9 @@
       :headers="headers"
       :options="chosenOptions"
       :rows="publicBodies"
-      @selectAllRows="selectAllRows"
-      class="transition"></pb-table>
+      @select-all-rows="selectAllRows"
+      class="transition"
+    ></pb-table>
   </div>
 </template>
 

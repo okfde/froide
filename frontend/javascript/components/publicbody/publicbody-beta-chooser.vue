@@ -3,7 +3,8 @@
     <button
       v-if="!showSearch"
       class="btn btn-sm btn-light float-end"
-      @click.prevent="showSearch = true">
+      @click.prevent="showSearch = true"
+    >
       {{ i18n.searchPublicBodyLabel }}
     </button>
     <div v-if="showSearch" class="form-search">
@@ -14,11 +15,13 @@
           class="search-public_bodies form-control"
           :placeholder="i18n.publicBodySearchPlaceholder"
           @keyup="triggerAutocomplete"
-          @keydown.enter.prevent="triggerAutocomplete" />
+          @keydown.enter.prevent="triggerAutocomplete"
+        />
         <button
           type="button"
           class="btn btn-outline-primary search-public_bodies-submit"
-          @click="triggerAutocomplete">
+          @click="triggerAutocomplete"
+        >
           <i class="fa fa-search" />
           {{ i18n.search }}
         </button>
@@ -39,7 +42,8 @@
         <div
           v-for="filterKey in filterOrder"
           :key="filterKey"
-          class="col-3 filter-column position-relative">
+          class="col-3 filter-column position-relative"
+        >
           <pb-filter
             :global-config="config"
             :expanded="filterExpanded[filterKey]"
@@ -48,15 +52,15 @@
             :scope="scope"
             :value="filters[filterKey]"
             @update="updateFilter"
-            @setFilterExpand="setFilterExpand"></pb-filter>
+            @set-filter-expand="setFilterExpand"
+          ></pb-filter>
         </div>
       </div>
     </div>
     <div class="row mt-3">
       <p
-        v-show="
-          !searching && lastQuery && (showFoundCountIfIdle || searchMeta)
-        ">
+        v-show="!searching && lastQuery && (showFoundCountIfIdle || searchMeta)"
+      >
         {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
       </p>
     </div>
@@ -68,14 +72,16 @@
             @click="search = ''"
             type="button"
             class="btn btn-close btn-close-white"
-            aria-label="Close"></button>
+            aria-label="Close"
+          ></button>
         </div>
       </div>
       <div v-for="filterKey in activeFilters" :key="filterKey" class="col-4">
         <pb-filter-selected
           :config="filterConfig[filterKey]"
           @update="updateFilter"
-          :value="filters[filterKey]">
+          :value="filters[filterKey]"
+        >
         </pb-filter-selected>
       </div>
     </div>

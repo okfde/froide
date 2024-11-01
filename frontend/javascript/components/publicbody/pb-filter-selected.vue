@@ -6,7 +6,8 @@
         @click="removeFilter(v)"
         type="button"
         class="btn btn-close btn-close-white"
-        aria-label="Close"></button>
+        aria-label="Close"
+      ></button>
     </div>
   </div>
 </template>

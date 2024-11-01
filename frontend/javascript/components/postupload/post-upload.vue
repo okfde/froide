@@ -55,9 +55,7 @@ const debugSkipDate = () => {
  * sent in the Form's context means "negated is_response"
  * TODO: this should be cleaned up at the model level.
  */
-const formSent = ref(
-  props.message?.is_response ? '0' : '1'
-)
+const formSent = ref(props.message?.is_response ? '0' : '1')
 const formIsSent = computed(() => formSent.value === '1')
 
 const formPublicbodyIsDefault = ref(true)
@@ -261,7 +259,9 @@ const pdfRedaction = ref()
 const pdfRedactionCurrentIndex = computed(() => {
   // stepHistory can contain the same step multiple times;
   // we'll use the amount of the REDACT step implicitly to select the nth document for redaction
-  const index1based = stepHistory.filter(_ => _ === STEP_REDACTION_REDACT).length
+  const index1based = stepHistory.filter(
+    (_) => _ === STEP_REDACTION_REDACT
+  ).length
   if (index1based === 0) return false
   return index1based - 1
 })
@@ -296,15 +296,17 @@ const pdfRedactionUploaded = () => {
 
 const firstStep = STEP_INTRO
 const stepHistory = reactive([firstStep])
-const step = computed(() => 
+const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
 )
 const stepContext = computed(() => stepsConfig[step.value].context || {})
 
 const gotoStep = (nextStep) => {
-  if (!nextStep) nextStep = typeof stepsConfig[step.value].next === 'function'
-    ? stepsConfig[step.value].next()
-    : stepsConfig[step.value].next
+  if (!nextStep)
+    nextStep =
+      typeof stepsConfig[step.value].next === 'function'
+        ? stepsConfig[step.value].next()
+        : stepsConfig[step.value].next
   stepHistory.push(nextStep)
   stepsConfig[nextStep].onEnter?.()
   scrollNavIntoViewIfNecessary()
@@ -396,7 +398,7 @@ const stepsConfig = {
     next: STEP_DOCUMENTS_OVERVIEW,
     context: {
       progressStep: 0,
-      mobileHeaderTitle: 'Brief hochladen oder scannen',
+      mobileHeaderTitle: 'Brief hochladen oder scannen'
     }
   },
   [STEP_DOCUMENTS_OVERVIEW]: {
@@ -425,7 +427,9 @@ const stepsConfig = {
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
     next: () => {
       if (isDesktop.value) return STEP_MESSAGE_DATE
-      return formPublicbodyIsDefault.value ? STEP_MESSAGE_DATE : STEP_MESSAGE_PUBLICBODY_UPDATE
+      return formPublicbodyIsDefault.value
+        ? STEP_MESSAGE_DATE
+        : STEP_MESSAGE_PUBLICBODY_UPDATE
     },
     context: {
       progressStep: 1,
@@ -442,7 +446,9 @@ const stepsConfig = {
   [STEP_MESSAGE_DATE]: {
     next: () => {
       if (isDesktop.value) return STEP_MESSAGE_STATUS
-      return values.is_registered_mail ? STEP_MESSAGE_DATE_REGISTERED_MAIL : STEP_MESSAGE_STATUS
+      return values.is_registered_mail
+        ? STEP_MESSAGE_DATE_REGISTERED_MAIL
+        : STEP_MESSAGE_STATUS
     },
     onEnter: () => {
       updateValidity('date')
@@ -452,7 +458,8 @@ const stepsConfig = {
       progressStep: 1,
       mobileHeaderTitle: 'Infos eingeben',
       isGotoValid: () => {
-        if (isDesktop.value && values.is_registered_mail) return validity.date && validity.registered_mail_date
+        if (isDesktop.value && values.is_registered_mail)
+          return validity.date && validity.registered_mail_date
         return validity.date
       }
     }
@@ -471,10 +478,13 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_STATUS]: {
     next: () => {
-      if (!isDesktop.value && formStatusIsResolved.value) return STEP_MESSAGE_MESSAGE_RESOLUTION
+      if (!isDesktop.value && formStatusIsResolved.value)
+        return STEP_MESSAGE_MESSAGE_RESOLUTION
       // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
       if (formIsSent.value) return STEP_REDACTION_PICKER
-      return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
+      return formHasHadCost
+        ? STEP_MESSAGE_COST_CHECK_LAST
+        : STEP_MESSAGE_COST_CHECK_ANY
     },
     context: {
       progressStep: 1,
@@ -484,7 +494,9 @@ const stepsConfig = {
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
     next: () => {
       if (formIsSent.value) return STEP_REDACTION_PICKER
-      return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
+      return formHasHadCost
+        ? STEP_MESSAGE_COST_CHECK_LAST
+        : STEP_MESSAGE_COST_CHECK_ANY
     },
     context: {
       progressStep: 1,
@@ -493,7 +505,8 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_COST_CHECK_ANY]: {
     next: () => {
-      if (!isDesktop.value && formDoUpdateCost.value) return STEP_MESSAGE_COST_UPDATE
+      if (!isDesktop.value && formDoUpdateCost.value)
+        return STEP_MESSAGE_COST_UPDATE
       return STEP_REDACTION_PICKER
     },
     context: {
@@ -503,7 +516,8 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
     next: () => {
-      if (!isDesktop.value && formDoUpdateCost.value) return STEP_MESSAGE_COST_UPDATE
+      if (!isDesktop.value && formDoUpdateCost.value)
+        return STEP_MESSAGE_COST_UPDATE
       return STEP_REDACTION_PICKER
     },
     context: {
@@ -528,7 +542,8 @@ const stepsConfig = {
   },
   [STEP_REDACTION_PICKER]: {
     next: () => {
-      if (documentsSelectedPdfRedaction.value.length === 0) return STEP_DOCUMENTS_OVERVIEW_REDACTED
+      if (documentsSelectedPdfRedaction.value.length === 0)
+        return STEP_DOCUMENTS_OVERVIEW_REDACTED
       return STEP_REDACTION_REDACT // TODO
     },
     onEnter: () => {
@@ -553,7 +568,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: 'Schwärzen',
+      mobileHeaderTitle: 'Schwärzen'
     }
   },
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
@@ -586,12 +601,21 @@ const stepsConfig = {
 
 /* --- state machine, visualization --- */
 
-const stepsConfigVisualize = (c) => 'dot -Tpng << eot | display -\n' +
+const stepsConfigVisualize = (c) =>
+  'dot -Tpng << eot | display -\n' +
   'digraph "postupload" {\n' +
-  Object.keys(c).map(state => `  "${state}";\n`).join('') +
-  Object.keys(c).map(from => c[from].next.toString().match(/\bSTEP_\w+/g)
-    .map(to =>`  "${from}" -> "${to}";\n`).join('')
-  ).join('') +
+  Object.keys(c)
+    .map((state) => `  "${state}";\n`)
+    .join('') +
+  Object.keys(c)
+    .map((from) =>
+      c[from].next
+        .toString()
+        .match(/\bSTEP_\w+/g)
+        .map((to) => `  "${from}" -> "${to}";\n`)
+        .join('')
+    )
+    .join('') +
   '}\n' +
   'eot\n'
 
@@ -629,7 +653,6 @@ addEventListener('hashchange', () => {
   step.value = getStepFromHash()
 })
 */
-
 </script>
 
 <template>
@@ -639,7 +662,8 @@ addEventListener('hashchange', () => {
       <simple-stepper
         class="sticky-top position-md-static"
         :step="stepContext.progressStep"
-        :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
+        :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+      >
         <template v-if="step === STEP_OUTRO">
           <small>{{ i18n.done }}</small>
         </template>
@@ -679,14 +703,16 @@ addEventListener('hashchange', () => {
         <button
           class="btn btn-secondary btn-sm"
           type="submit"
-          style="font-size: 50%; margin-left: 1em">
+          style="font-size: 50%; margin-left: 1em"
+        >
           submit/save
         </button>
         <button
           class="btn btn-secondary btn-sm"
           type="button"
           @click="submitFetch"
-          style="font-size: 50%; margin-left: 1em">
+          style="font-size: 50%; margin-left: 1em"
+        >
           submit/fetch
         </button>
         <!--<pre>{{ validity }}</pre>-->
@@ -744,8 +770,9 @@ addEventListener('hashchange', () => {
                 <button
                   type="button"
                   @click="stepAndUppyClick"
-                  class="btn btn-outline-primary btn-lg d-block w-100">
-                  <i class="fa fa-upload fa-2x"></i><br/>
+                  class="btn btn-outline-primary btn-lg d-block w-100"
+                >
+                  <i class="fa fa-upload fa-2x"></i><br />
                   Dateien hochladen
                 </button>
               </div>
@@ -801,7 +828,8 @@ addEventListener('hashchange', () => {
               <input
                 id="documents_filename"
                 v-model="documentsImagesDocumentFilename"
-                class="form-control" />
+                class="form-control"
+              />
               <label for="documents_filename"> Dateiname ändern </label>
             </div>
           </div>
@@ -829,7 +857,8 @@ addEventListener('hashchange', () => {
               class="form-check"
               v-for="(choice, choiceIndex) in form.fields.sent.choices"
               :key="choice.value"
-              :class="{ 'is-invalid': choice.errors }">
+              :class="{ 'is-invalid': choice.errors }"
+            >
               <input
                 type="radio"
                 name="sent"
@@ -837,7 +866,8 @@ addEventListener('hashchange', () => {
                 required=""
                 class="form-check-input"
                 :id="'id_sent_' + choiceIndex"
-                :value="choice.value" />
+                :value="choice.value"
+              />
               <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
                 choice.label
               }}</label>
@@ -874,14 +904,16 @@ addEventListener('hashchange', () => {
                 { value: true, label: 'Ja.' },
                 { value: false, label: 'Nein, andere Behörde wählen' }
               ]"
-              :key="choiceIndex">
+              :key="choiceIndex"
+            >
               <input
                 type="radio"
                 required=""
                 class="form-check-input"
                 v-model="formPublicbodyIsDefault"
                 :id="'id_pbisdefault_' + choiceIndex"
-                :value="choice.value" />
+                :value="choice.value"
+              />
               <label
                 class="form-check-label"
                 :for="'id_pbisdefault_' + choiceIndex"
@@ -892,7 +924,8 @@ addEventListener('hashchange', () => {
               type="hidden"
               name="publicbody"
               v-if="formPublicbodyIsDefault"
-              :value="formPublicbodyId" />
+              :value="formPublicbodyId"
+            />
           </div>
         </div>
       </div>
@@ -900,9 +933,12 @@ addEventListener('hashchange', () => {
       <div
         v-show="
           step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
-          (isDesktop && step === STEP_MESSAGE_PUBLICBODY_CHECK && !formPublicbodyIsDefault)
+          (isDesktop &&
+            step === STEP_MESSAGE_PUBLICBODY_CHECK &&
+            !formPublicbodyIsDefault)
         "
-        class="container">
+        class="container"
+      >
         <!-- appears "indented" on md=isDesktop viewport -->
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
@@ -927,7 +963,8 @@ addEventListener('hashchange', () => {
               :show-filters="false"
               :show-badges="false"
               :show-found-count-if-idle="false"
-              :class="{ 'is-invalid': form.errors.publicbody }" />
+              :class="{ 'is-invalid': form.errors.publicbody }"
+            />
           </div>
         </div>
       </div>
@@ -958,7 +995,8 @@ addEventListener('hashchange', () => {
               required
               :min="props.date_min"
               :max="props.date_max"
-              @input="updateValidity('date')" />
+              @input="updateValidity('date')"
+            />
             <div class="invalid-feedback" v-if="form.errors.date">
               <p class="text-danger">
                 {{ form.errors.date.map((_) => _.message).join(' ') }}
@@ -969,7 +1007,8 @@ addEventListener('hashchange', () => {
                 class="form-check-input"
                 type="checkbox"
                 v-model="values.is_registered_mail"
-                id="id_is_registered_mail" />
+                id="id_is_registered_mail"
+              />
               <label class="form-check-label" for="id_is_registered_mail">
                 Es handelt sich um einen gelben Brief
                 <span
@@ -978,7 +1017,8 @@ addEventListener('hashchange', () => {
                   tabindex="0"
                   data-bs-toggle="tooltip"
                   data-bs-placement="bottom"
-                  title="Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen.">
+                  title="Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen."
+                >
                   <i class="fa fa-info-circle"></i>
                 </span>
               </label>
@@ -992,12 +1032,14 @@ addEventListener('hashchange', () => {
           step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
           (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
         "
-        class="container">
+        class="container"
+      >
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label
               class="fw-bold form-label field-required"
-              for="id_registered_mail">
+              for="id_registered_mail"
+            >
               Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag
               eingetragen?
             </label>
@@ -1009,7 +1051,8 @@ addEventListener('hashchange', () => {
               name="registered_mail_date"
               :required="values.is_registered_mail"
               @input="updateValidity('registered_mail_date')"
-              v-model="values.registered_mail_date" />
+              v-model="values.registered_mail_date"
+            />
           </div>
         </div>
       </div>
@@ -1037,7 +1080,8 @@ addEventListener('hashchange', () => {
             <div
               class="form-check"
               v-for="(choice, choiceIndex) in status_form.fields.status.choices"
-              :key="choice.value">
+              :key="choice.value"
+            >
               <input
                 type="radio"
                 name="status"
@@ -1047,7 +1091,8 @@ addEventListener('hashchange', () => {
                 :id="'id_status_' + choiceIndex"
                 v-model="formStatus"
                 :value="choice.value"
-                :data-x-checked="formStatus.value === choice.value" />
+                :data-x-checked="formStatus.value === choice.value"
+              />
               <label class="form-check-label" :for="'id_status_' + choiceIndex">
                 <template v-if="formStatusWasResolved">
                   <template v-if="choice.value === 'resolved'">
@@ -1069,9 +1114,11 @@ addEventListener('hashchange', () => {
 
       <div
         v-show="
-          step === STEP_MESSAGE_MESSAGE_RESOLUTION || (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
+          step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
+          (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
         "
-        class="container">
+        class="container"
+      >
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label class="fw-bold col-form-label" for="id_resolution">
@@ -1081,7 +1128,8 @@ addEventListener('hashchange', () => {
             <div
               class="form-check"
               v-for="(choice, choiceIndex) in formStatusChoices"
-              :key="choice.value">
+              :key="choice.value"
+            >
               <input
                 type="radio"
                 name="resolution"
@@ -1092,7 +1140,8 @@ addEventListener('hashchange', () => {
                 :checked="
                   status_form.fields.resolution.value === choice.value ||
                   status_form.fields.resolution.initial === choice.value
-                " />
+                "
+              />
               <label
                 class="form-check-label"
                 :for="'id_resolution_' + choiceIndex"
@@ -1116,14 +1165,16 @@ addEventListener('hashchange', () => {
                 { label: 'Nein.', value: false },
                 { label: 'Ja.', value: true }
               ]"
-              :key="choiceIndex">
+              :key="choiceIndex"
+            >
               <input
                 type="radio"
                 required=""
                 class="form-check-input"
                 v-model="formDoUpdateCost"
                 :id="'id_nowcost_' + choiceIndex"
-                :value="choice.value" />
+                :value="choice.value"
+              />
               <label
                 class="form-check-label"
                 :for="'id_nowcost_' + choiceIndex"
@@ -1153,14 +1204,16 @@ addEventListener('hashchange', () => {
                 { label: 'Ja.', value: false },
                 { label: 'Nein.', value: true }
               ]"
-              :key="choiceIndex">
+              :key="choiceIndex"
+            >
               <input
                 type="radio"
                 required=""
                 class="form-check-input"
                 v-model="formDoUpdateCost"
                 :id="'id_nowcost_' + choiceIndex"
-                :value="choice.value" />
+                :value="choice.value"
+              />
               <label
                 class="form-check-label"
                 :for="'id_nowcost_' + choiceIndex"
@@ -1174,9 +1227,13 @@ addEventListener('hashchange', () => {
       <div
         v-show="
           step === STEP_MESSAGE_COST_UPDATE ||
-          (isDesktop && (step === STEP_MESSAGE_COST_CHECK_ANY || step === STEP_MESSAGE_COST_CHECK_LAST) && formDoUpdateCost)
+          (isDesktop &&
+            (step === STEP_MESSAGE_COST_CHECK_ANY ||
+              step === STEP_MESSAGE_COST_CHECK_LAST) &&
+            formDoUpdateCost)
         "
-        class="container">
+        class="container"
+      >
         <div class="row justify-content-center">
           <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
             <label class="fw-bold col-form-label" for="id_costs">
@@ -1200,7 +1257,8 @@ addEventListener('hashchange', () => {
                   :class="{
                     'is-invalid': validity.costs === false,
                     'is-valid': validity.costs === true
-                  }" />
+                  }"
+                />
                 <span class="input-group-text">Euro</span>
               </div>
               <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
@@ -1226,13 +1284,15 @@ addEventListener('hashchange', () => {
               <button
                 type="button"
                 class="btn btn-link mx-2 text-decoration-underline"
-                @click="documentUploaderSelectAll(true)">
+                @click="documentUploaderSelectAll(true)"
+              >
                 Alle auswählen
               </button>
               <button
                 type="button"
                 class="btn btn-link mx-2 text-decoration-underline"
-                @click="documentUploaderSelectAll(false)">
+                @click="documentUploaderSelectAll(false)"
+              >
                 Keine auswählen
               </button>
             </div>
@@ -1261,7 +1321,8 @@ addEventListener('hashchange', () => {
                 <button
                   type="button"
                   class="btn btn-link text-decoration-underline"
-                  @click="onlineHelp.show(config.urls.helpPostuploadRedaction)">
+                  @click="onlineHelp.show(config.urls.helpPostuploadRedaction)"
+                >
                   Ich habe technische Probleme / benötige Hilfe
                 </button>
               </div>
@@ -1270,7 +1331,7 @@ addEventListener('hashchange', () => {
         </div>
         <div>
           <pre class="debug" v-if="debug">
-    DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex}}</pre
+    DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}</pre
           >
           <pdf-redaction
             v-if="pdfRedactionCurrentDoc"
@@ -1296,7 +1357,8 @@ addEventListener('hashchange', () => {
             :config="config"
             @uploaded="pdfRedactionUploaded"
             @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
-            ref="pdfRedaction">
+            ref="pdfRedaction"
+          >
             <!--
             <template #toolbar-right>
               <div class="btn-group" v-show="isDesktop">
@@ -1355,14 +1417,16 @@ addEventListener('hashchange', () => {
           <div class="row justify-content-center">
             <div class="col-lg-9">
               <div
-                v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
-                class="d-flex justify-content-end">
+                v-if="
+                  step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff
+                "
+                class="d-flex justify-content-end"
+              >
                 <button
                   type="button"
                   class="btn btn-link text-decoration-underline"
-                  @click="
-                    documentsBasicOperations = !doctumentsBasicOperations
-                  ">
+                  @click="documentsBasicOperations = !doctumentsBasicOperations"
+                >
                   {{ documentsBasicOperations ? 'Fertig' : 'Bearbeiten' }}
                 </button>
               </div>
@@ -1391,7 +1455,8 @@ addEventListener('hashchange', () => {
                 @imagesadded="documentsImagesAdded"
                 @documentsadded="documentsDocumentsAdded"
                 @imagesconverted="documentsImagesConverted"
-                ref="documentUploader" />
+                ref="documentUploader"
+              />
             </div>
           </div>
         </div>
@@ -1403,14 +1468,16 @@ addEventListener('hashchange', () => {
             <button
               type="button"
               class="btn btn-outline-primary d-block w-100 mb-3"
-              :disabled="true">
+              :disabled="true"
+            >
               <i class="fa fa-plus"></i>
               Weiteres Dokument scannen
             </button>
             <button
               type="button"
               class="btn btn-outline-primary d-block w-100"
-              @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
+              @click="gotoStep(STEP_DOCUMENTS_UPLOAD)"
+            >
               <i class="fa fa-plus"></i>
               Weitere Dateien hochladen
             </button>
@@ -1428,12 +1495,14 @@ addEventListener('hashchange', () => {
                 type="button"
                 @click="pdfRedactionRedact()"
                 class="btn btn-primary d-block w-100"
-                :disabled="pdfRedactionProcessing">
+                :disabled="pdfRedactionProcessing"
+              >
                 <span
                   class="spinner-border spinner-border-sm"
                   v-show="pdfRedactionProcessing"
                   role="status"
-                  aria-hidden="true" />
+                  aria-hidden="true"
+                />
                 Ich bin fertig mit Schwärzen
               </button>
               <div class="mt-2">
@@ -1448,12 +1517,14 @@ addEventListener('hashchange', () => {
                 type="button"
                 @click="approveDocsAndSubmit()"
                 class="btn btn-primary d-block w-100"
-                :disabled="isSubmitting || !validity.form">
+                :disabled="isSubmitting || !validity.form"
+              >
                 <span
                   class="spinner-border spinner-border-sm"
                   v-show="isSubmitting"
                   role="status"
-                  aria-hidden="true" />
+                  aria-hidden="true"
+                />
                 Bestätigen
               </button>
               <div class="mt-2" v-if="!validity.form">
@@ -1483,7 +1554,8 @@ addEventListener('hashchange', () => {
               <button
                 type="button"
                 @click="submit"
-                class="btn btn-primary d-block w-100">
+                class="btn btn-primary d-block w-100"
+              >
                 Anfrage ansehen
               </button>
             </template>
@@ -1493,7 +1565,8 @@ addEventListener('hashchange', () => {
                 v-if="debug"
                 type="button"
                 @click="gotoStep()"
-                class="action btn btn-outline-primary btn-sm mt-1">
+                class="action btn btn-outline-primary btn-sm mt-1"
+              >
                 DEBUG skip
               </button>
             </template>
@@ -1502,14 +1575,16 @@ addEventListener('hashchange', () => {
               <button
                 type="button"
                 :disabled="true"
-                class="btn btn-primary d-block w-100">
+                class="btn btn-primary d-block w-100"
+              >
                 weiter
               </button>
               <button
                 v-if="debug"
                 type="button"
                 @click="gotoStep()"
-                class="action btn btn-outline-primary btn-sm mt-1">
+                class="action btn btn-outline-primary btn-sm mt-1"
+              >
                 DEBUG skip
               </button>
             </template>
@@ -1517,7 +1592,8 @@ addEventListener('hashchange', () => {
               <button
                 type="button"
                 @click="gotoStep()"
-                class="btn btn-primary d-block w-100">
+                class="btn btn-primary d-block w-100"
+              >
                 Fertig mit Sortieren
               </button>
             </template>
@@ -1527,19 +1603,22 @@ addEventListener('hashchange', () => {
                 type="button"
                 @click="documentsConvertImages"
                 class="btn btn-primary d-block w-100"
-                :disabled="documentsImagesConverting">
+                :disabled="documentsImagesConverting"
+              >
                 <span
                   class="spinner-border spinner-border-sm"
                   v-if="documentsImagesConverting"
                   role="status"
-                  aria-hidden="true" />
+                  aria-hidden="true"
+                />
                 PDF erstellen
               </button>
               <button
                 v-else
                 type="button"
                 @click="gotoStep()"
-                class="btn btn-primary d-block w-100">
+                class="btn btn-primary d-block w-100"
+              >
                 weiter
               </button>
             </template>
@@ -1548,14 +1627,16 @@ addEventListener('hashchange', () => {
                 type="button"
                 :disabled="!isGotoValid"
                 @click="gotoStep()"
-                class="btn btn-primary d-block w-100">
+                class="btn btn-primary d-block w-100"
+              >
                 weiter
               </button>
               <button
                 v-if="debug"
                 type="button"
                 @click="debugSkipDate"
-                class="btn btn-outline-primary btn-sm mt-1 d-block w-100">
+                class="btn btn-outline-primary btn-sm mt-1 d-block w-100"
+              >
                 DEBUG set today
               </button>
             </template>
@@ -1564,7 +1645,8 @@ addEventListener('hashchange', () => {
                 type="button"
                 @click="gotoStep()"
                 :disabled="!isGotoValid"
-                class="btn btn-primary d-block w-100">
+                class="btn btn-primary d-block w-100"
+              >
                 weiter
               </button>
             </template>
@@ -1681,5 +1763,4 @@ addEventListener('hashchange', () => {
     padding: 0.25rem 0.25rem 0.25rem 0.75rem;
   }
 }
-
 </style>

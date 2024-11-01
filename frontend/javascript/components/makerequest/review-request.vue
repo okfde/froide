@@ -10,7 +10,8 @@
             type="button"
             class="btn-close"
             :aria-label="i18n.close"
-            @click="close" />
+            @click="close"
+          />
         </div>
         <div class="modal-body">
           <dl class="message-meta row">
@@ -63,7 +64,8 @@
             type="button"
             class="btn"
             :class="{ 'btn-secondary': canSend, 'btn-primary': !canSend }"
-            @click="close">
+            @click="close"
+          >
             <i class="fa fa-edit" aria-hidden="true" />
             {{ i18n.reviewEdit }}
           </button>
@@ -72,7 +74,8 @@
             id="send-request-button"
             type="submit"
             class="btn btn-primary"
-            @click="$emit('submit')">
+            @click="$emit('submit')"
+          >
             <i class="fa fa-send" aria-hidden="true" />
             {{ i18n.submitRequest }}
           </button>

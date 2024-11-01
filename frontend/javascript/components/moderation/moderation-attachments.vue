@@ -30,7 +30,8 @@
               <button
                 @click="() => markModerated(att)"
                 class="btn btn-dark"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.markModerated }}
               </button>
             </div>

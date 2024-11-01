@@ -40,6 +40,7 @@ useSortable(pagesEl, pages, { animation: 200 })
       :hide-rotate="dense"
       :hide-split="dense"
       @pageupdated="emit('pageupdated', $event)"
-      @splitpages="emit('splitpages', $event)" />
+      @splitpages="emit('splitpages', $event)"
+    />
   </div>
 </template>

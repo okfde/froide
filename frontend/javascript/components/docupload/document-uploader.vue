@@ -4,7 +4,8 @@
       v-if="debug"
       type="button"
       @click="refreshAttachments"
-      style="font-size: 50%">
+      style="font-size: 50%"
+    >
       DEBUG: refresh
     </button>
     <div v-if="imageDocuments.length > 0" class="images mt-5">
@@ -24,12 +25,14 @@
         @namechanged="doc.name = $event"
         @docupdated="documentUpdated(doc, $event)"
         @pageupdated="pageUpdated"
-        @notnew="doc.new = false" />
+        @notnew="doc.new = false"
+      />
     </div>
     <component
       v-if="pdfDocuments.length > 0 && (!hidePdf || debug)"
       :is="hidePdf && debug ? 'details' : 'div'"
-      class="documents mt-5">
+      class="documents mt-5"
+    >
       <summary v-if="debug && hidePdf" class="debug">
         DEBUG: pdf documents
       </summary>
@@ -37,12 +40,14 @@
       <div class="mt-3 mb-3">
         <div
           class="row bg-body-secondary pb-2 pt-2 mb-2 border-bottom"
-          v-if="!hideStatusTools || !hideSelectionBar">
+          v-if="!hideStatusTools || !hideSelectionBar"
+        >
           <div class="col-auto me-md-auto" v-if="!hideSelectionBar">
             <input
               v-model="selectAll"
               type="checkbox"
-              @click="clickSelectAll" />
+              @click="clickSelectAll"
+            />
           </div>
           <div class="col-auto ms-auto" v-if="!hideStatusTools">
             <button
@@ -51,7 +56,8 @@
               :class="{ 'btn-success': canMakeResult }"
               :disabled="!canMakeResult"
               :title="i18n.makeResultsExplanation"
-              @click="makeResults">
+              @click="makeResults"
+            >
               <i class="fa fa-certificate" />
               {{ i18n.markAllAsResult }}
             </button>
@@ -60,7 +66,8 @@
               class="btn btn-sm ms-2"
               :class="{ 'btn-success': canApprove }"
               :disabled="!canApprove"
-              @click="approveSelected">
+              @click="approveSelected"
+            >
               <i class="fa fa-check" />
               {{ i18n.approveAll }}
             </button>
@@ -82,7 +89,8 @@
           @namechanged="doc.name = $event"
           @docupdated="documentUpdated(doc, $event)"
           @pageupdated="pageUpdated"
-          @notnew="doc.new = false" />
+          @notnew="doc.new = false"
+        />
       </div>
     </component>
     <div style="color: red" v-else-if="debug">DEBUG: no pdf documents</div>
@@ -90,7 +98,8 @@
     <component
       v-if="otherAttachments.length > 0 && (!hideOther || debug)"
       :is="hideOther ? 'details' : 'div'"
-      class="mt-5">
+      class="mt-5"
+    >
       <summary v-if="hideOther && debug" class="debug">
         DEBUG: other attachments
       </summary>
@@ -105,7 +114,8 @@
         :basic-operations="fileBasicOperations"
         @docupdated="documentUpdated(doc, $event)"
         @makerelevant="makeRelevant(doc)"
-        @notnew="doc.new = false" />
+        @notnew="doc.new = false"
+      />
     </component>
 
     <div v-if="canUpload && showUpload" class="upload mt-5">
@@ -115,7 +125,8 @@
         :config="config"
         :auto-proceed="true"
         :allowed-file-types="config.settings.allowed_filetypes"
-        @upload-success="uploadSuccess" />
+        @upload-success="uploadSuccess"
+      />
     </div>
   </div>
 </template>

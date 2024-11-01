@@ -4,7 +4,8 @@
       :i18n="i18n"
       :multi-request="multiRequest"
       :has-public-bodies="hasPublicBodies"
-      :hide-publicbody-chooser="hidePublicbodyChooser" />
+      :hide-publicbody-chooser="hidePublicbodyChooser"
+    />
 
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
       <django-slot name="messages" />
@@ -14,13 +15,15 @@
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
-            class="mt-5">
+            class="mt-5"
+          >
             <div v-if="multiRequest">
               <publicbody-multi-chooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
-                :config="config">
+                :config="config"
+              >
                 <template #publicbody-missing>
                   <django-slot name="publicbody-missing" />
                 </template>
@@ -41,7 +44,8 @@
                       :defaultsearch="publicBodySearch"
                       :scope="pbScope"
                       :form="publicbodyForm"
-                      :config="config" />
+                      :config="config"
+                    />
                   </template>
                   <template v-else>
                     <publicbody-chooser
@@ -50,7 +54,8 @@
                       :scope="pbScope"
                       :form="publicbodyForm"
                       :config="config"
-                      :list-view="publicBodyListView" />
+                      :list-view="publicBodyListView"
+                    />
                   </template>
                 </div>
                 <div class="col-lg-4 small">
@@ -63,7 +68,8 @@
           <fieldset
             v-if="stepReviewPublicBodies && !stepWriteRequest"
             id="step-review-publicbody"
-            class="mt-5">
+            class="mt-5"
+          >
             <pb-multi-review name="publicbody" :i18n="i18n" :scope="pbScope" />
           </fieldset>
 
@@ -88,7 +94,8 @@
               v-model:initial-last-name="lastName"
               v-model:initial-private="userPrivate"
               :submitting="submitting"
-              @setStepSelectPublicBody="setStepSelectPublicBody">
+              @set-step-select-public-body="setStepSelectPublicBody"
+            >
               <template #request-hints>
                 <django-slot name="request-hints" />
               </template>
@@ -104,7 +111,8 @@
               :default-law="defaultLaw"
               v-model:initial-email="email"
               v-model:initial-address="address"
-              :address-help-text="userForm.fields.address.help_text" />
+              :address-help-text="userForm.fields.address.help_text"
+            />
 
             <request-public :form="requestForm" :hide-public="hidePublic" />
 
@@ -115,7 +123,8 @@
             v-if="showSimilar && stepWriteRequest"
             :publicbodies="publicBodies"
             :subject="subject"
-            :config="config" />
+            :config="config"
+          />
 
           <review-request
             :i18n="i18n"
@@ -127,14 +136,16 @@
             :full-text="fullText"
             ref="reviewrequest"
             @close="showReview = false"
-            @submit="submitting = true" />
+            @submit="submitting = true"
+          />
 
           <button
             v-if="stepWriteRequest && shouldCheckRequest"
             id="review-button"
             type="button"
             class="btn btn-primary btn-lg mt-3"
-            @click="showReview = true">
+            @click="showReview = true"
+          >
             <i class="fa fa-check" aria-hidden="true" />
             {{ i18n.reviewRequest }}
           </button>
@@ -143,7 +154,8 @@
             id="send-request-button"
             type="submit"
             class="btn btn-primary btn-lg mt-3"
-            @click="submitting = true">
+            @click="submitting = true"
+          >
             <i class="fa fa-send" aria-hidden="true" />
             {{ i18n.submitRequest }}
           </button>
@@ -153,7 +165,8 @@
             class="btn btn-secondary mt-3 ms-2"
             name="save_draft"
             value="true"
-            @click="submitting = true">
+            @click="submitting = true"
+          >
             <i class="fa fa-save" aria-hidden="true" />
             {{ i18n.saveAsDraft }}
           </button>

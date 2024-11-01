@@ -9,7 +9,8 @@
             :class="{
               'text-danger': errors.user_email,
               'field-required': !user
-            }">
+            }"
+          >
             {{ i18n.yourEmail }}
           </label>
           <div class="col-sm-9">
@@ -20,11 +21,13 @@
               class="form-control"
               :class="{ 'is-invalid': errors.user_email }"
               :placeholder="formFields.user_email.placeholder"
-              required />
+              required
+            />
             <p
               v-for="e in errors.user_email"
               :key="e.message"
-              class="text-danger">
+              class="text-danger"
+            >
               {{ e.message }}
             </p>
           </div>
@@ -37,7 +40,8 @@
             :class="{
               'text-danger': errors.address,
               'field-required': requiresPostalAddress
-            }">
+            }"
+          >
             {{ i18n.yourAddress }}
           </label>
           <div class="col-sm-9">
@@ -48,11 +52,13 @@
                 class="form-control"
                 :class="{ 'is-invalid': errors.address }"
                 :placeholder="formFields.address.placeholder"
-                :required="requiresPostalAddress" />
+                :required="requiresPostalAddress"
+              />
               <div
                 v-if="!isAllowedAddress"
                 class="mt-3 alert alert-warning pre"
-                v-html="i18n.pleaseFollowAddressFormat" />
+                v-html="i18n.pleaseFollowAddressFormat"
+              />
               <p v-for="e in errors.address" :key="e.message">
                 {{ e.message }}
               </p>
@@ -75,7 +81,8 @@
                 id="id_phone"
                 class="form-control"
                 type="text"
-                name="phone" />
+                name="phone"
+              />
             </div>
           </div>
         </template>
@@ -87,7 +94,8 @@
                 'text-danger': errors.test,
                 'field-required': formFields.test.required
               }"
-              for="id_test">
+              for="id_test"
+            >
               {{ formFields.test.label }}
             </label>
             <div class="col-lg-9">

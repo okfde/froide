@@ -11,14 +11,16 @@
           role="progressbar"
           :aria-valuenow="progressCurrent ? progressCurrent : 0"
           aria-valuemin="0"
-          aria-valuemax="100">
+          aria-valuemax="100"
+        >
           <div
             class="progress-bar"
             :class="{
               'progress-bar-animated progress-bar-striped':
                 progressCurrent === null
             }"
-            :style="{ width: progressCurrent ? progressCurrent : '100%' }" />
+            :style="{ width: progressCurrent ? progressCurrent : '100%' }"
+          />
         </div>
         <div v-else>
           <p v-if="!simple" class="text-body-secondary">
@@ -32,7 +34,8 @@
               v-model="documentName"
               type="text"
               class="form-control"
-              :placeholder="i18n.documentTitlePlaceholder" />
+              :placeholder="i18n.documentTitlePlaceholder"
+            />
           </div>
           <!-- akward @update because Vue 2-ish vs 3.2 interop -->
           <image-document-pages-sortable
@@ -44,7 +47,8 @@
               }
             "
             @pageupdated="$emit('pageupdated', { document, ...$event })"
-            @splitpages="splitPages" />
+            @splitpages="splitPages"
+          />
         </div>
         <div v-if="!simple" class="row mt-3">
           <div class="col-md-12">
@@ -53,19 +57,22 @@
                 class="btn btn-primary mt-2"
                 data-ref="image-document-convert-button"
                 :disabled="anyUploads || converting"
-                @click="convertImages">
+                @click="convertImages"
+              >
                 {{ i18n.convertImages }}
               </button>
               <file-review
                 v-if="!basicOperations"
                 :config="config"
                 :document="document"
-                @docupdated="updateDocument" />
+                @docupdated="updateDocument"
+              />
               <file-basic-operations
                 v-else
                 :config="config"
                 :document="document"
-                @docupdated="updateDocument" />
+                @docupdated="updateDocument"
+              />
             </p>
           </div>
         </div>

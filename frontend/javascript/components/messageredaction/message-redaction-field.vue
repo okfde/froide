@@ -9,7 +9,8 @@
           :redacted="word.redacted"
           :index="word.index"
           :blocked="word.blocked"
-          @redact="redact" />
+          @redact="redact"
+        />
         <template v-else>{{ word.word }}</template>
       </template>
     </div>
