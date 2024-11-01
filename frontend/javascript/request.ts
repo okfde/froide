@@ -61,27 +61,22 @@ const initRequestPage = (): void => {
     goToReplyForm()
   })
 
-  const tabLinks = document.querySelectorAll('a[data-tabgo]')
-  tabLinks.forEach((tabLink) => {
-    tabLink.addEventListener('click', function (this: HTMLElement) {
-      const hrefAttr = this.attributes.getNamedItem('href')
-      if (hrefAttr === null) {
-        return
-      }
-      const href = hrefAttr?.value
-      const el = document.querySelector(href)
-      if (el === null) {
-        return
-      }
-      const display = window.getComputedStyle(el, null).display
-      if (display === 'none') {
-        const navLink = Tab.getInstance(`.nav-link[href="${href}"]`)
-        if (navLink !== null) {
-          navLink.show()
+  document
+    .querySelectorAll<HTMLAnchorElement>('a[data-tabgo]')
+    .forEach((tabLink) => {
+      tabLink.addEventListener('click', () => {
+        const { hash } = tabLink
+        const tab = document.querySelector(hash)
+        if (!tab) return
+
+        const { display } = window.getComputedStyle(tab)
+
+        if (display === 'none') {
+          const triggerEl = document.querySelector(`.nav-link[href="${hash}"]`)
+          Tab.getOrCreateInstance(triggerEl!).show()
         }
-      }
+      })
     })
-  })
 
   const goToReplyForm = (): void => {
     if (!writeForm?.classList.contains('show')) {
