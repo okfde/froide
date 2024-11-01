@@ -12112,6 +12112,29 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foisite/templates/foisite/banner.html
+#, python-format
+msgid ""
+"It looks like you are visiting from %(country_name)s. Did you know that "
+"there is an <a href=\"%(url)s\">FOI site for %(country_name)s called "
+"%(name)s</a>?"
+msgstr ""
+"Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
+"eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</a> "
+"gibt?"
+
+#: froide/publicbody/templates/publicbody/show_foilaw.html
+msgid ""
+"\n"
+"            This is a copy of the law, for which we can't guarantee "
+"correctness.\n"
+"          "
+msgstr ""
+"\n"
+"Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht "
+"garantieren können.\n"
+"          "
+
 #, python-format
 #~ msgid ""
 #~ "\n"
@@ -14646,24 +14669,3 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Search Terms"
 #~ msgstr "Suchbegriffe"
-
-#, python-format
-#~ msgid ""
-#~ "It looks like you are visiting from %(country_name)s. Did you know that "
-#~ "there is an <a href=\"%(url)s\">FOI site for %(country_name)s called "
-#~ "%(name)s</a>?"
-#~ msgstr ""
-#~ "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
-#~ "eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</"
-#~ "a> gibt?"
-
-#~ msgid ""
-#~ "\n"
-#~ "            This is a copy of the law, for which we can't guarantee "
-#~ "correctness.\n"
-#~ "          "
-#~ msgstr ""
-#~ "\n"
-#~ "Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht "
-#~ "garantieren können.\n"
-#~ "          "
