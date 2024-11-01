@@ -8382,15 +8382,15 @@ msgid "FOI Sites"
 msgstr "IFG-Seiten"
 
 #: froide/foisite/templates/foisite/banner.html
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "It looks like you are visiting from %(country_name)s. Did you know that "
 "there is an <a href=\"%(url)s\" class=\"alert-link\">FOI site for "
 "%(country_name)s called %(name)s</a>?"
 msgstr ""
 "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
-"eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</a> "
-"gibt?"
+"eine <a href=\"%(url)s\" class=\"alert-link\">IFG-Seite für %(country_name)s "
+"namens %(name)s</a> gibt?"
 
 #: froide/follow/apps.py
 msgid "Follow App"
@@ -10760,7 +10760,6 @@ msgid "Legal text"
 msgstr "Gesetzestext"
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html
-#, fuzzy
 msgid ""
 "\n"
 "                                This is a copy of the law, for which we "
@@ -10768,9 +10767,9 @@ msgid ""
 "                            "
 msgstr ""
 "\n"
-"Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht "
-"garantieren können.\n"
-"          "
+"                                Dies ist eine Kopie des Gesetzes, deren "
+"rechtliche Gültigkeit wir nicht garantieren können.\n"
+"                            "
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html
 #, python-format
