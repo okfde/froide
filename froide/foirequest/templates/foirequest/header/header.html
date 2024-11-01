@@ -35,12 +35,15 @@
                 <li>
                     {% blocktrans %}Have you received a reply by <b>postal mail</b>?{% endblocktrans %}
                     &rarr;
-                    <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}">{% translate "Upload the letter now!" %}</a>
+                    <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}"
+                       class="alert-link">{% translate "Upload the letter now!" %}</a>
                 </li>
                 <li>
                     {% blocktrans %}Have you not gotten any reply?{% endblocktrans %}
                     &rarr;
-                    <a href="#write-messages" data-scrollto="write-messages">{% translate "Write a reminder to the public body!" %}</a>
+                    <a href="#write-messages"
+                       data-scrollto="write-messages"
+                       class="alert-link">{% translate "Write a reminder to the public body!" %}</a>
                 </li>
                 {% block aditional_actions %}{% endblock %}
             </ul>
@@ -49,9 +52,10 @@
     {% if object|can_write_foirequest:request and object.has_been_refused and object.can_be_escalated %}
         <div class="alert alert-info d-print-none">
             {% blocktrans %}You request has been refused.{% endblocktrans %}
-            <a href="#escalate" data-tabgo="tab" data-scrollto="escalate">
-                {% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}
-            </a>
+            <a href="#escalate"
+               data-tabgo
+               data-scrollto="escalate"
+               class="alert-link">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
         </div>
     {% endif %}
     {% if object.banner %}<div class="alert alert-info">{{ object.banner | markdown }}</div>{% endif %}
