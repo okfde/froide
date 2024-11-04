@@ -35,7 +35,7 @@
                 <li>
                     {% blocktrans %}Have you received a reply by <b>postal mail</b>?{% endblocktrans %}
                     &rarr;
-                    <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}"
+                    <a href="{% url 'foirequest-upload_postal_message_create' slug=object.slug %}"
                        class="alert-link">{% translate "Upload the letter now!" %}</a>
                 </li>
                 <li>
