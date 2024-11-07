@@ -17,6 +17,9 @@ importers:
       '@okfde/filingcabinet':
         specifier: github:okfde/django-filingcabinet
         version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803(worker-loader@3.0.8(webpack@5.94.0))
+      '@panzoom/panzoom':
+        specifier: ^4.5.1
+        version: 4.5.1
       '@popperjs/core':
         specifier: ^2.11.5
         version: 2.11.8
@@ -373,6 +376,9 @@ packages:
   '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803':
     resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803}
     version: 0.0.4
+
+  '@panzoom/panzoom@4.5.1':
+    resolution: {integrity: sha512-QOr/t7314XTwgAUDazR+RDcTAWSbkpjDnZJddd9f56jSUA8ptUsyDblAb+sp/O5O1o5Fiu9KpWxVHKuhGUgp5w==}
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
@@ -2417,6 +2423,8 @@ snapshots:
       vue-virtual-scroller: 2.0.0-beta.8(vue@3.3.4)
     transitivePeerDependencies:
       - worker-loader
+
+  '@panzoom/panzoom@4.5.1': {}
 
   '@popperjs/core@2.11.8': {}
 

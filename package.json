@@ -47,6 +47,7 @@
     "@hey-api/client-fetch": "^0.4.3",
     "@hey-api/openapi-ts": "^0.55.2",
     "@okfde/filingcabinet": "github:okfde/django-filingcabinet",
+    "@panzoom/panzoom": "^4.5.1",
     "@popperjs/core": "^2.11.5",
     "@types/lodash.throttle": "^4.1.9",
     "@uppy/core": "^3.0.4",
