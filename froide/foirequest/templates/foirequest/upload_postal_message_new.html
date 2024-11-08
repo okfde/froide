@@ -1,4 +1,4 @@
-{% extends "foirequest/base.html" %}
+{% extends "fullscreen_app.html" %}
 {% load i18n %}
 {% load static %}
 {% load block_helper %}
@@ -10,26 +10,22 @@
 {% block navbar %}
     {% include "header_reduced.html" %}
 {% endblock navbar %}
-{% block body_extra_attributes %}
-    class="postupload"
-{% endblock body_extra_attributes %}
 {% block body %}
     <div class="bg-body-tertiary postupload-breadcrumbs">
         {% translate "Upload postal mail" as breadcrumb_label %}
         {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
     </div>
-    <div class="postupload-main">
-        <form action=""
-              method="post"
-              enctype="multipart/form-data"
-              name="postupload">
-            {% csrf_token %}
-            <post-upload class="post-upload" :config="{{ config_json }}" :form="{{ form.as_json }}" :object_public_body="{{ object_public_body_json }}" object_public_body_id="{{ object_public_body_id }}" :object_public="{{ object_public_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :status_form="{{ status_form.as_json }}" :message="{{ message_json }}">
-            <template data-slot="submit-text">{% trans "Add letter" %}</template>
-            <template data-slot="status-legend">{% trans "What is the status of your request after this letter?" %}</template>
-            </post-upload>
-        </form>
-    </div>
+    <form action=""
+          method="post"
+          enctype="multipart/form-data"
+          name="postupload"
+          class="d-flex flex-col flex-grow-1">
+        {% csrf_token %}
+        <post-upload class="d-flex flex-column flex-grow-1" :config="{{ config_json }}" :form="{{ form.as_json }}" :object_public_body="{{ object_public_body_json }}" object_public_body_id="{{ object_public_body_id }}" :object_public="{{ object_public_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :status_form="{{ status_form.as_json }}" :message="{{ message_json }}">
+        <template data-slot="submit-text">{% trans "Add letter" %}</template>
+        <template data-slot="status-legend">{% trans "What is the status of your request after this letter?" %}</template>
+        </post-upload>
+    </form>
 {% endblock body %}
 {% block scripts %}
     {{ block.super }}
