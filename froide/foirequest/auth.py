@@ -366,6 +366,8 @@ class CreateOnlyWithScopePermission(TokenHasScope):
     def has_permission(self, request, view):
         if view.action not in ("create", "update"):
             return True
-        if not request.user.is_authenticated:
-            return False
+        if request.user.is_authenticated and request.auth is None:
+            # allow api use with session authentication
+            # see https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
+            return True
         return super().has_permission(request, view)
