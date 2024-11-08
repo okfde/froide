@@ -7,13 +7,15 @@
         :key="upload"
         type="hidden"
         :name="name"
-        :value="upload" />
+        :value="upload"
+      />
       <input
         v-if="!canSubmit"
         type="hidden"
         name="upload-pending"
         value=""
-        required />
+        required
+      />
     </template>
   </div>
 </template>
@@ -125,12 +127,8 @@ export default {
       theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
       inline: true,
       target: this.$refs.uppy,
-      // width is given in pixels and set to uppy-Dashboard.inner's inline style
-      // but also limited by max-width:100%, hence we can set it to a high enough
-      // number (here a bootstrap upper bound; default is 750),
-      // and it will appear like 100%, and thus always centered
-      width: 1320,
-      height: 250,
+      width: '100%',
+      height: '16rem',
       showLinkToFileUploadResult: false,
       proudlyDisplayPoweredByUppy: false,
       showRemoveButtonAfterComplete: this.allowRemove,
