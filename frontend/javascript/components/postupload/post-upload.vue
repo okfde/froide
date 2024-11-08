@@ -55,9 +55,7 @@ const debugSkipDate = () => {
  * sent in the Form's context means "negated is_response"
  * TODO: this should be cleaned up at the model level.
  */
-const formSent = ref(
-  props.message?.is_response ? '0' : '1'
-)
+const formSent = ref(props.message?.is_response ? '0' : '1')
 const formIsSent = computed(() => formSent.value === '1')
 
 const formPublicbodyIsDefault = ref(true)
@@ -166,12 +164,17 @@ const submitFetch = async () => {
     body: formdata
   })
     .then((response) => {
-      if (!response.ok) throw new Error(`form submitFetch error ${response.status} ${response.statusText}`)
+      if (!response.ok)
+        throw new Error(
+          `form submitFetch error ${response.status} ${response.statusText}`
+        )
       return response.json()
     })
     .then((response) => {
       if ('errors' in response) {
-        throw new Error('form submitFetch error: ' +  JSON.stringify(response.errors, false, 2))
+        throw new Error(
+          'form submitFetch error: ' + JSON.stringify(response.errors, false, 2)
+        )
       }
       console.log('form submitFetch successful')
       gotoStep()
@@ -212,7 +215,8 @@ const documentsConvertImages = () => {
   // ^child              ^vue2 ^grandchild...REN!  ^method
   // alternative: pass a prop, watch it, react?
 }
-const documentsImagesDocumentFilenameDefault = i18n.value.documentsUploadDefaultFilename
+const documentsImagesDocumentFilenameDefault =
+  i18n.value.documentsUploadDefaultFilename
 const documentsImagesDocumentFilename = ref(
   documentsImagesDocumentFilenameDefault
 )
@@ -268,7 +272,9 @@ const pdfRedaction = ref()
 const pdfRedactionCurrentIndex = computed(() => {
   // stepHistory can contain the same step multiple times;
   // we'll use the amount of the REDACT step implicitly to select the nth document for redaction
-  const index1based = stepHistory.filter(_ => _ === STEP_REDACTION_REDACT).length
+  const index1based = stepHistory.filter(
+    (_) => _ === STEP_REDACTION_REDACT
+  ).length
   if (index1based === 0) return false
   return index1based - 1
 })
@@ -283,13 +289,11 @@ const pdfRedactionRedact = () => {
   pdfRedactionProcessing.value = true
   // XXX calling child's method
   // alternatively, could listen to an event
-  pdfRedaction.value
-    .redactOrApprove()
-    .then(() => {
-      pdfRedactionProcessing.value = false
-      pdfRedactionCurrentHasRedactions.value = false
-      gotoStep()
-    })
+  pdfRedaction.value.redactOrApprove().then(() => {
+    pdfRedactionProcessing.value = false
+    pdfRedactionCurrentHasRedactions.value = false
+    gotoStep()
+  })
 }
 const pdfRedactionUploaded = () => {
   // TODO handle errors?
@@ -302,15 +306,17 @@ const pdfRedactionUploaded = () => {
 
 const firstStep = STEP_INTRO
 const stepHistory = reactive([firstStep])
-const step = computed(() => 
+const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
 )
 const stepContext = computed(() => stepsConfig[step.value].context || {})
 
 const gotoStep = (nextStep) => {
-  if (!nextStep) nextStep = typeof stepsConfig[step.value].next === 'function'
-    ? stepsConfig[step.value].next()
-    : stepsConfig[step.value].next
+  if (!nextStep)
+    nextStep =
+      typeof stepsConfig[step.value].next === 'function'
+        ? stepsConfig[step.value].next()
+        : stepsConfig[step.value].next
   stepHistory.push(nextStep)
   stepsConfig[nextStep].onEnter?.()
   scrollNavIntoViewIfNecessary()
@@ -402,7 +408,7 @@ const stepsConfig = {
     next: STEP_DOCUMENTS_OVERVIEW,
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan,
+      mobileHeaderTitle: i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_OVERVIEW]: {
@@ -431,7 +437,9 @@ const stepsConfig = {
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
     next: () => {
       if (isDesktop.value) return STEP_MESSAGE_DATE
-      return formPublicbodyIsDefault.value ? STEP_MESSAGE_DATE : STEP_MESSAGE_PUBLICBODY_UPDATE
+      return formPublicbodyIsDefault.value
+        ? STEP_MESSAGE_DATE
+        : STEP_MESSAGE_PUBLICBODY_UPDATE
     },
     context: {
       progressStep: 1,
@@ -448,7 +456,9 @@ const stepsConfig = {
   [STEP_MESSAGE_DATE]: {
     next: () => {
       if (isDesktop.value) return STEP_MESSAGE_STATUS
-      return values.is_registered_mail ? STEP_MESSAGE_DATE_REGISTERED_MAIL : STEP_MESSAGE_STATUS
+      return values.is_registered_mail
+        ? STEP_MESSAGE_DATE_REGISTERED_MAIL
+        : STEP_MESSAGE_STATUS
     },
     onEnter: () => {
       updateValidity('date')
@@ -458,7 +468,8 @@ const stepsConfig = {
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => {
-        if (isDesktop.value && values.is_registered_mail) return validity.date && validity.registered_mail_date
+        if (isDesktop.value && values.is_registered_mail)
+          return validity.date && validity.registered_mail_date
         return validity.date
       }
     }
@@ -477,10 +488,13 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_STATUS]: {
     next: () => {
-      if (!isDesktop.value && formStatusIsResolved.value) return STEP_MESSAGE_MESSAGE_RESOLUTION
+      if (!isDesktop.value && formStatusIsResolved.value)
+        return STEP_MESSAGE_MESSAGE_RESOLUTION
       // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
       if (formIsSent.value) return STEP_REDACTION_PICKER
-      return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
+      return formHasHadCost
+        ? STEP_MESSAGE_COST_CHECK_LAST
+        : STEP_MESSAGE_COST_CHECK_ANY
     },
     onEnter: () => {
       updateValidity('status')
@@ -494,7 +508,9 @@ const stepsConfig = {
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
     next: () => {
       if (formIsSent.value) return STEP_REDACTION_PICKER
-      return formHasHadCost ? STEP_MESSAGE_COST_CHECK_LAST : STEP_MESSAGE_COST_CHECK_ANY
+      return formHasHadCost
+        ? STEP_MESSAGE_COST_CHECK_LAST
+        : STEP_MESSAGE_COST_CHECK_ANY
     },
     context: {
       progressStep: 1,
@@ -503,7 +519,8 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_COST_CHECK_ANY]: {
     next: () => {
-      if (!isDesktop.value && formDoUpdateCost.value) return STEP_MESSAGE_COST_UPDATE
+      if (!isDesktop.value && formDoUpdateCost.value)
+        return STEP_MESSAGE_COST_UPDATE
       return STEP_REDACTION_PICKER
     },
     context: {
@@ -513,7 +530,8 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
     next: () => {
-      if (!isDesktop.value && formDoUpdateCost.value) return STEP_MESSAGE_COST_UPDATE
+      if (!isDesktop.value && formDoUpdateCost.value)
+        return STEP_MESSAGE_COST_UPDATE
       return STEP_REDACTION_PICKER
     },
     context: {
@@ -538,7 +556,8 @@ const stepsConfig = {
   },
   [STEP_REDACTION_PICKER]: {
     next: () => {
-      if (documentsSelectedPdfRedaction.value.length === 0) return STEP_DOCUMENTS_OVERVIEW_REDACTED
+      if (documentsSelectedPdfRedaction.value.length === 0)
+        return STEP_DOCUMENTS_OVERVIEW_REDACTED
       return STEP_REDACTION_REDACT // TODO
     },
     onEnter: () => {
@@ -565,7 +584,7 @@ const stepsConfig = {
     },
     context: {
       progressStep: 2,
-      mobileHeaderTitle: i18n.value.redact,
+      mobileHeaderTitle: i18n.value.redact
     }
   },
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
@@ -600,12 +619,21 @@ const stepsConfig = {
 
 /* --- state machine, visualization --- */
 
-const stepsConfigVisualize = (c) => 'dot -Tpng << eot | display -\n' +
+const stepsConfigVisualize = (c) =>
+  'dot -Tpng << eot | display -\n' +
   'digraph "postupload" {\n' +
-  Object.keys(c).map(state => `  "${state}";\n`).join('') +
-  Object.keys(c).map(from => c[from].next.toString().match(/\bSTEP_\w+/g)
-    .map(to =>`  "${from}" -> "${to}";\n`).join('')
-  ).join('') +
+  Object.keys(c)
+    .map((state) => `  "${state}";\n`)
+    .join('') +
+  Object.keys(c)
+    .map((from) =>
+      c[from].next
+        .toString()
+        .match(/\bSTEP_\w+/g)
+        .map((to) => `  "${from}" -> "${to}";\n`)
+        .join('')
+    )
+    .join('') +
   '}\n' +
   'eot\n'
 
@@ -643,949 +671,1002 @@ addEventListener('hashchange', () => {
   step.value = getStepFromHash()
 })
 */
-
 </script>
 
 <template>
   <online-help ref="onlineHelp" />
-  <div class="root">
-    <div class="postupload-main">
-      <simple-stepper
-        class="sticky-top position-md-static"
-        :step="stepContext.progressStep"
-        :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
-        <template v-if="step === STEP_OUTRO">
-          <small>{{ i18n.done }}</small>
-        </template>
-        <template v-else>
-          {{ i18n.step }} {{ stepContext.progressStep + 1 }}<strong>/3</strong>:
-          {{ stepContext.mobileHeaderTitle }}
-        </template>
-      </simple-stepper>
 
-      <div class="container">
-        <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
-        <div v-if="step === STEP_INTRO" class="my-3">
-          <a class="btn btn-link text-decoration-none ps-0" href="../.."
-            >← <u>{{ i18n.cancel }}</u></a
-          >
-        </div>
-        <div v-else-if="step !== STEP_OUTRO" class="my-3">
-          <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
-            >← <u>{{ i18n.back }}</u></a
-          >
-        </div>
-      </div>
+  <simple-stepper
+    class="sticky-top position-md-static"
+    :step="stepContext.progressStep"
+    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+  >
+    <template v-if="step === STEP_OUTRO">
+      <small>{{ i18n.done }}</small>
+    </template>
+    <template v-else>
+      {{ i18n.step }} {{ stepContext.progressStep + 1 }}<strong>/3</strong>:
+      {{ stepContext.mobileHeaderTitle }}
+    </template>
+  </simple-stepper>
 
-      <details v-if="debug" class="container">
-        <summary class="DEBUG">DEBUG</summary>
-        <div>step={{ step }}</div>
-        <div>history={{ stepHistory.join(' ') }}</div>
-        <div>stepContext={{ stepContext }}</div>
-        <div>isGotoValid={{ isGotoValid }}</div>
-        <span>
-          <!-- eslint-disable-next-line vue/no-mutating-props -->
-          <button type="button" @click="user_is_staff = !user_is_staff">
-            {{ user_is_staff ? '☑' : '☐' }} staff
-          </button>
-        </span>
-        <span>isDesktop={{ isDesktop }}</span>
-        <button
-          class="btn btn-secondary btn-sm"
-          type="submitForm"
-          style="font-size: 50%; margin-left: 1em">
-          submit/save
-        </button>
-        <button
-          class="btn btn-secondary btn-sm"
-          type="button"
-          @click="submitFetch"
-          style="font-size: 50%; margin-left: 1em">
-          submit/fetch
-        </button>
-        <!--<pre>{{ validity }}</pre>-->
-        <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
-        <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
-        <!--<span class="debug">p{{ progress }}</span>-->
-        <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
-        <!--<span class="debug">{{ values.isYellow }}</span>-->
-        <!--<span class="debug">{{ isGotoValid }}</span>-->
-        <!--<span class="debug">
+  <div class="container">
+    <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
+    <div v-if="step === STEP_INTRO" class="my-3">
+      <a class="btn btn-link text-decoration-none ps-0" href="../.."
+        >← <u>{{ i18n.cancel }}</u></a
+      >
+    </div>
+    <div v-else-if="step !== STEP_OUTRO" class="my-3">
+      <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
+        >← <u>{{ i18n.back }}</u></a
+      >
+    </div>
+  </div>
+
+  <details v-if="debug" class="container">
+    <summary class="DEBUG">DEBUG</summary>
+    <div>step={{ step }}</div>
+    <div>history={{ stepHistory.join(' ') }}</div>
+    <div>stepContext={{ stepContext }}</div>
+    <div>isGotoValid={{ isGotoValid }}</div>
+    <span>
+      <!-- eslint-disable-next-line vue/no-mutating-props -->
+      <button type="button" @click="user_is_staff = !user_is_staff">
+        {{ user_is_staff ? '☑' : '☐' }} staff
+      </button>
+    </span>
+    <span>isDesktop={{ isDesktop }}</span>
+    <button
+      class="btn btn-secondary btn-sm"
+      type="submitForm"
+      style="font-size: 50%; margin-left: 1em"
+    >
+      submit/save
+    </button>
+    <button
+      class="btn btn-secondary btn-sm"
+      type="button"
+      @click="submitFetch"
+      style="font-size: 50%; margin-left: 1em"
+    >
+      submit/fetch
+    </button>
+    <!--<pre>{{ validity }}</pre>-->
+    <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
+    <!--<span class="debug">{{ stepHistory.join(',') }}</span>-->
+    <!--<span class="debug">p{{ progress }}</span>-->
+    <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
+    <!--<span class="debug">{{ values.isYellow }}</span>-->
+    <!--<span class="debug">{{ isGotoValid }}</span>-->
+    <!--<span class="debug">
           {{ { pbv: props.form.fields.publicbody.value, pbii:  props.form.fields.publicbody?.initial?.id, opbi: object_public_body_id } }}
         </span>-->
-        <!-- <span class="debug">formStatus={{formStatus}},</span> -->
-        <!-- <span class="debug">formDoUpdateCost={{formDoUpdateCost}},</span> -->
-        <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
-        <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
-        <details v-if="form.nonFieldErrors.length">
-          <summary class="debug">DEBUG form.nonFieldErrors</summary>
-          <pre>{{ form.nonFieldErrors }}</pre>
-        </details>
-        <details v-if="Object.keys(form.errors).length">
-          <summary class="debug">DEBUG form.errors</summary>
-          <pre>{{ form.errors }}</pre>
-        </details>
-      </details>
+    <!-- <span class="debug">formStatus={{formStatus}},</span> -->
+    <!-- <span class="debug">formDoUpdateCost={{formDoUpdateCost}},</span> -->
+    <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
+    <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
+    <details v-if="form.nonFieldErrors.length">
+      <summary class="debug">DEBUG form.nonFieldErrors</summary>
+      <pre>{{ form.nonFieldErrors }}</pre>
+    </details>
+    <details v-if="Object.keys(form.errors).length">
+      <summary class="debug">DEBUG form.errors</summary>
+      <pre>{{ form.errors }}</pre>
+    </details>
+  </details>
 
-      <div v-show="step === STEP_INTRO" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="row my-5 justify-content-center">
-              <!--
-              <div class="col-md-6">
-                <button disabled class="btn btn-outline-primary d-block w-100">
-                  <i class="fa fa-camera"></i>
-                  {{ i18n.scanDocuments }}
-                </button>
-                <p class="mt-1">
-                  {{ i18n.scanDocumentsAddendum }}
-                </p>
-              </div>
-              <div class="col-md-6">
-                <button
-                  type="button"
-                  @click="stepAndUppyClick"
-                  class="btn btn-outline-primary d-block w-100">
-                  <i class="fa fa-upload"></i>
-                  {{ i18n.uploadFiles }}
-                </button>
-                <p class="mt-1">
-                  {{ i18n.uploadFilesAddendum }}
+  <div class="step-container">
+    <div v-show="step === STEP_INTRO" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="row my-5 justify-content-center">
+            <!--
+                <div class="col-md-6">
+                  <button disabled class="btn btn-outline-primary d-block w-100">
+                    <i class="fa fa-camera"></i>
+                    {{ i18n.scanDocuments }}
+                  </button>
+                  <p class="mt-1">
+                    {{ i18n.scanDocumentsAddendum }}
+                  </p>
+                </div>
+                <div class="col-md-6">
+                  <button
+                    type="button"
+                    @click="stepAndUppyClick"
+                    class="btn btn-outline-primary d-block w-100">
+                    <i class="fa fa-upload"></i>
+                    {{ i18n.uploadFiles }}
+                  </button>
+                  <p class="mt-1">
+                    {{ i18n.uploadFilesAddendum }}
+                  </p>
+                </div>
+                -->
+            <div class="col-md-6">
+              <button
+                type="button"
+                @click="stepAndUppyClick"
+                class="btn btn-outline-primary btn-lg d-block w-100"
+              >
+                <i class="fa fa-upload fa-2x"></i><br />
+                {{ i18n.uploadFiles }}
+              </button>
+            </div>
+          </div>
+          <div class="alert alert-warning">
+            <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
+            <p v-html="i18n.redactLaterHint1"></p>
+            <p v-html="i18n.redactLaterHint2"></p>
+          </div>
+          <div class="alert alert-warning">
+            <h4>
+              <i class="fa fa-exclamation-circle fa-lg"></i>
+              {{ i18n.new }}
+            </h4>
+            <p>
+              {{ i18n.newWarning }}
+            </p>
+            <p
+              v-html="
+                i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
+              "
+            ></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_DOCUMENTS_UPLOAD">
+      <!-- document-uploader see below -->
+    </div>
+    <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9 fw-bold">
+          {{ i18n.documentsDragOrder }}
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="text-center my-3">
+            <i class="fa fa-file-image-o fa-4x"></i>
+            <i class="fa fa-arrow-right fa-2x"></i>
+            <i class="fa fa-file-pdf-o fa-4x"></i>
+          </div>
+        </div>
+        <div class="text-center fw-bold my-3">
+          {{ i18n.documentsFromImages }}
+        </div>
+        <div class="documents-filename p-2 my-3 mx-auto">
+          <div class="form-group">
+            <input
+              id="documents_filename"
+              v-model="documentsImagesDocumentFilename"
+              class="form-control"
+            />
+            <label for="documents_filename">
+              {{ i18n.changeFilename }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- there is another for this step, further down below document-uploader -->
+    <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="fw-bold">
+            {{ i18n.documentsAvailable }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="step-questioncounter">Frage 1 von 5</div>
+          <label class="fw-bold form-label">
+            {{ i18n.letterSentOrReceived }}
+            <!--{{ form.fields.sent.label }}-->
+          </label>
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in form.fields.sent.choices"
+            :key="choice.value"
+            :class="{ 'is-invalid': choice.errors }"
+          >
+            <input
+              type="radio"
+              name="sent"
+              v-model="formSent"
+              required=""
+              class="form-check-input"
+              :id="'id_sent_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
+              choice.label
+            }}</label>
+          </div>
+          <!--
+              <div class="invalid-feedback" v-if="form.errors.sent">
+                <p class="text-danger">
+                  {{ form.errors.sent.map((_) => _.message).join(' ') }}
                 </p>
               </div>
               -->
-              <div class="col-md-6">
-                <button
-                  type="button"
-                  @click="stepAndUppyClick"
-                  class="btn btn-outline-primary btn-lg d-block w-100">
-                  <i class="fa fa-upload fa-2x"></i><br/>
-                  {{ i18n.uploadFiles }}
-                </button>
-              </div>
-            </div>
-            <div class="alert alert-warning">
-              <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
-              <p v-html="i18n.redactLaterHint1"></p>
-              <p v-html="i18n.redactLaterHint2"></p>
-            </div>
-            <div class="alert alert-warning">
-              <h4><i class="fa fa-exclamation-circle fa-lg"></i>
-                {{ i18n.new }}
-              </h4>
-              <p>
-                {{ i18n.newWarning }}
-              </p>
-              <p v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })"></p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_DOCUMENTS_UPLOAD">
-        <!-- document-uploader see below -->
-      </div>
-
-      <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9 fw-bold">
-            {{ i18n.documentsDragOrder }}
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="text-center my-3">
-              <i class="fa fa-file-image-o fa-4x"></i>
-              <i class="fa fa-arrow-right fa-2x"></i>
-              <i class="fa fa-file-pdf-o fa-4x"></i>
-            </div>
-          </div>
-          <div class="text-center fw-bold my-3">
-            {{ i18n.documentsFromImages }}
-          </div>
-          <div class="documents-filename p-2 my-3 mx-auto">
-            <div class="form-group">
-              <input
-                id="documents_filename"
-                v-model="documentsImagesDocumentFilename"
-                class="form-control" />
-              <label for="documents_filename">
-                {{ i18n.changeFilename }}
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- there is another for this step, further down below document-uploader -->
-      <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="fw-bold">
-              {{ i18n.documentsAvailable }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="step-questioncounter">Frage 1 von 5</div>
-            <label class="fw-bold form-label">
-              {{ i18n.letterSentOrReceived }}
-              <!--{{ form.fields.sent.label }}-->
-            </label>
-            <div
-              class="form-check"
-              v-for="(choice, choiceIndex) in form.fields.sent.choices"
-              :key="choice.value"
-              :class="{ 'is-invalid': choice.errors }">
-              <input
-                type="radio"
-                name="sent"
-                v-model="formSent"
-                required=""
-                class="form-check-input"
-                :id="'id_sent_' + choiceIndex"
-                :value="choice.value" />
-              <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
-                choice.label
-              }}</label>
-            </div>
-            <!--
-            <div class="invalid-feedback" v-if="form.errors.sent">
-              <p class="text-danger">
-                {{ form.errors.sent.map((_) => _.message).join(' ') }}
-              </p>
-            </div>
-            -->
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="step-questioncounter">Frage 2 von 5</div>
-            <label class="fw-bold form-label" for="id_subject">
-              <template v-if="formSent === '1'">
-                {{ i18n.messagePublicbodyCheckTo }}
-              </template>
-              <template v-else>
-                {{ i18n.messagePublicbodyCheckFrom }}
-              </template>
-            </label>
-            <div style="margin: 1em 0; font-style: italic">
-              {{ formPublicbodyLabel }}
-            </div>
-            <div
-              class="form-check"
-              v-for="(choice, choiceIndex) in [
-                { value: true, label: 'Ja.' },
-                { value: false, label: 'Nein, andere Behörde wählen' }
-              ]"
-              :key="choiceIndex">
-              <input
-                type="radio"
-                required=""
-                class="form-check-input"
-                v-model="formPublicbodyIsDefault"
-                :id="'id_pbisdefault_' + choiceIndex"
-                :value="choice.value" />
-              <label
-                class="form-check-label"
-                :for="'id_pbisdefault_' + choiceIndex"
-                >{{ choice.label }}</label
-              >
-            </div>
-            <input
-              type="hidden"
-              name="publicbody"
-              v-if="formPublicbodyIsDefault"
-              :value="formPublicbodyId" />
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-show="
-          step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
-          (isDesktop && step === STEP_MESSAGE_PUBLICBODY_CHECK && !formPublicbodyIsDefault)
-        "
-        class="container">
-        <!-- appears "indented" on md=isDesktop viewport -->
-        <div class="row justify-content-center">
-          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-            <label class="fw-bold form-label" for="id_subject">
-              <template v-if="formSent === '1'">
-                {{ i18n.messagePublicbodyUpdateTo }}
-              </template>
-              <template v-else>
-                {{ i18n.messagePublicbodyUpdateFrom }}
-              </template>
-            </label>
-            <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-            <publicbody-chooser
-              v-if="!formPublicbodyIsDefault"
-              :search-collapsed="false"
-              scope="foo_publicbody"
-              name="publicbody"
-              :config="config"
-              :form="form"
-              :value="formPublicbodyId"
-              list-view="resultList"
-              :show-filters="false"
-              :show-badges="false"
-              :show-found-count-if-idle="false"
-              :class="{ 'is-invalid': form.errors.publicbody }" />
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_MESSAGE_DATE" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="step-questioncounter">Frage 3 von 5</div>
-            <label class="fw-bold form-label field-required" for="id_date">
-              {{ i18n.messageDate }}
-              <!--{{ form.fields.date.label }}-->
-            </label>
-            <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
-            <!-- TODO "always" required might break early post/submit
-              :required="step === STEP_MESSAGE_DATE || step === STEP_MESSAGE_PUBLICBODY_CHECK"
-              maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
-            -->
-            <input
-              id="id_date"
-              class="form-control"
-              type="date"
-              name="date"
-              v-model="values.date"
-              :class="{
-                'is-invalid': validity.date === false,
-                'is-valid': validity.date === true
-              }"
-              required
-              :min="props.date_min"
-              :max="props.date_max"
-              @input="updateValidity('date')" />
-            <div class="invalid-feedback" v-if="form.errors.date">
-              <p class="text-danger">
-                {{ form.errors.date.map((_) => _.message).join(' ') }}
-              </p>
-            </div>
-            <div class="form-check">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                v-model="values.is_registered_mail"
-                id="id_is_registered_mail" />
-              <label class="form-check-label" for="id_is_registered_mail">
-                {{ i18n.messageIsRegisteredMail }}
-                <span
-                  type="button"
-                  v-bs-tooltip
-                  tabindex="0"
-                  data-bs-toggle="tooltip"
-                  data-bs-placement="bottom"
-                  :title="i18n.messageRegisteredMailInfo">
-                  <i class="fa fa-info-circle"></i>
-                </span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-show="
-          step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
-          (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
-        "
-        class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-            <label
-              class="fw-bold form-label field-required"
-              for="id_registered_mail">
-              {{ i18n.messageDateRegisteredMail }}
-            </label>
-            <!-- TODO set min/max? -->
-            <input
-              type="date"
-              class="form-control"
-              id="id_registered_mail_date"
-              name="registered_mail_date"
-              :required="values.is_registered_mail"
-              @input="updateValidity('registered_mail_date')"
-              v-model="values.registered_mail_date" />
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_MESSAGE_STATUS" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="step-questioncounter">Frage 4 von 5</div>
-            <label class="fw-bold form-label" for="id_subject">
-              <template v-if="!formIsSent && formStatusWasResolved">
-                {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
-              </template>
-              <template v-if="!formIsSent && !formStatusWasResolved">
-                {{ i18n.messageStatusIsResolvedAfterReceived }}
-              </template>
-              <template v-if="formIsSent && formStatusWasResolved">
-                {{ i18n.messageStatusIsResolvedAfterSentStill }}
-              </template>
-              <template v-if="formIsSent && !formStatusWasResolved">
-                {{ i18n.messageStatusIsResolvedAfterSent }}
-              </template>
-            </label>
-            <div
-              class="form-check"
-              v-for="(choice, choiceIndex) in status_form.fields.status.choices"
-              :key="choice.value">
-              <input
-                type="radio"
-                name="status"
-                required=""
-                class="form-check-input"
-                :class="{ 'is-invalid': choice.errors }"
-                :id="'id_status_' + choiceIndex"
-                v-model="formStatus"
-                :value="choice.value"
-                @input="updateValidity('status')" />
-              <label class="form-check-label" :for="'id_status_' + choiceIndex">
-                <template v-if="formStatusWasResolved">
-                  <template v-if="choice.value === 'resolved'">
-                    {{ i18n.messageStatusIsResolvedStill }}
-                  </template>
-                  <template v-else>
-                    {{ i18n.messageStatusIsResolvedNotAgain }}
-                  </template>
-                </template>
-                <template v-else>
-                  <template v-if="choice.value === 'resolved'">
-                    {{ i18n.messageStatusIsResolved }}
-                  </template>
-                  <template v-else>
-                    {{ i18n.messageStatusIsResolvedNot }}
-                  </template>
-                </template>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-show="
-          step === STEP_MESSAGE_MESSAGE_RESOLUTION || (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
-        "
-        class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-            <label class="fw-bold col-form-label" for="id_resolution">
-              <!-- {{ status_form.fields.resolution.label }} -->
-              {{ i18n.messageResolution }}
-            </label>
-            <div
-              class="form-check"
-              v-for="(choice, choiceIndex) in formStatusChoices"
-              :key="choice.value">
-              <input
-                type="radio"
-                name="resolution"
-                :required="formStatusIsResolved"
-                class="form-check-input"
-                :id="'id_resolution_' + choiceIndex"
-                :value="choice.value"
-                :checked="
-                  status_form.fields.resolution.value === choice.value ||
-                  status_form.fields.resolution.initial === choice.value
-                " />
-              <label
-                class="form-check-label"
-                :for="'id_resolution_' + choiceIndex"
-                >{{ choice.label }}</label
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_MESSAGE_COST_CHECK_ANY" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="step-questioncounter">Frage 5 von 5</div>
-            <label class="fw-bold col-form-label">
-              {{ i18n.messageCostCheck }}
-            </label>
-            <div
-              class="form-check"
-              v-for="(choice, choiceIndex) in [
-                { label: 'Nein.', value: false },
-                { label: 'Ja.', value: true }
-              ]"
-              :key="choiceIndex">
-              <input
-                type="radio"
-                required=""
-                class="form-check-input"
-                v-model="formDoUpdateCost"
-                :id="'id_nowcost_' + choiceIndex"
-                :value="choice.value" />
-              <label
-                class="form-check-label"
-                :for="'id_nowcost_' + choiceIndex"
-                >{{ choice.label }}</label
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_MESSAGE_COST_CHECK_LAST" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="step-questioncounter">Frage 5 von 5</div>
-            <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
-            <label class="fw-bold col-form-label" for="id_nowcost"
-              v-html="i18n._('messageCostCheckLast', { amount: status_form.fields.costs.value?.strValue ||
-                status_form.fields.costs.initial?.strValue ||
-                'error' })"></label>
-            <div
-              class="form-check"
-              v-for="(choice, choiceIndex) in [
-                { label: 'Ja.', value: false },
-                { label: 'Nein.', value: true }
-              ]"
-              :key="choiceIndex">
-              <input
-                type="radio"
-                required=""
-                class="form-check-input"
-                v-model="formDoUpdateCost"
-                :id="'id_nowcost_' + choiceIndex"
-                :value="choice.value" />
-              <label
-                class="form-check-label"
-                :for="'id_nowcost_' + choiceIndex"
-                >{{ choice.label }}</label
-              >
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        v-show="
-          step === STEP_MESSAGE_COST_UPDATE ||
-          (isDesktop && (step === STEP_MESSAGE_COST_CHECK_ANY || step === STEP_MESSAGE_COST_CHECK_LAST) && formDoUpdateCost)
-        "
-        class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-            <label class="fw-bold col-form-label" for="id_costs">
-              {{ i18n.messageCost }}
-            </label>
-            <div class="col-md-8">
-              <div class="input-group" style="width: 10rem">
-                <!-- type=number does not support pattern -->
-                <input
-                  type="number"
-                  name="costs"
-                  id="id_costs"
-                  class="form-control col-3"
-                  inputmode="decimal"
-                  style="appearance: textfield; text-align: right"
-                  min="0"
-                  max="1000000000"
-                  step="0.01"
-                  v-model="values.costs"
-                  @input="updateValidity('costs')"
-                  :class="{
-                    'is-invalid': validity.costs === false,
-                    'is-valid': validity.costs === true
-                  }" />
-                <span class="input-group-text">Euro</span>
-              </div>
-              <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_REDACTION_PICKER" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <label class="fw-bold col-form-label">
-              {{ i18n.redactionPick }}
-            </label>
-            <!-- TODO: if we expect users to go back a lot, the document-uploader list
-              shown here should exclude/disable "has schwärzung" docs -->
-            <p>
-              {{ i18n.redactionInfo }}
-            </p>
-            <div class="text-end">
-              <button
-                type="button"
-                class="btn btn-link mx-2 text-decoration-underline"
-                @click="documentUploaderSelectAll(true)">
-                {{ i18n.selectAll }}
-              </button>
-              <button
-                type="button"
-                class="btn btn-link mx-2 text-decoration-underline"
-                @click="documentUploaderSelectAll(false)">
-                {{ i18n.selectNone }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_REDACTION_REDACT">
-        <div class="container">
-          <div class="row">
-            <div class="col">
-              <label class="fw-bold col-form-label">
-                {{ i18n._('redactionCounter', { current: pdfRedactionCurrentIndex + 1, total: documentsSelectedPdfRedaction.length }) }}
-              </label>
-              <div class="alert alert-warning">
-                {{ i18n.redactionInfoWhat }}
-                <ul>
-                  <li>
-                    {{ i18n.redactionInfoWhat1 }}
-                  </li>
-                  <li>
-                    {{ i18n.redactionInfoWhat2 }}
-                  </li>
-                  <li>
-                    {{ i18n.redactionInfoWhat3 }}
-                  </li>
-                  <li>
-                    {{ i18n.redactionInfoWhat4 }}
-                  </li>
-                </ul>
-              </div>
-              <div class="mt-2 mb-3">
-                <button
-                  type="button"
-                  class="btn btn-link text-decoration-underline"
-                  @click="onlineHelp.show(config.urls.helpPostuploadRedaction)">
-                  {{ i18n.helpNeeded }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="debug" v-if="debug">
-            DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex}}<br/>
-            auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
-          </div>
-          <pdf-redaction
-            v-if="pdfRedactionCurrentDoc"
-            :key="pdfRedactionCurrentDoc.id"
-            :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
-            :attachment-url="pdfRedactionCurrentDoc.attachment.anchor_url"
-            :auto-approve="pdfRedactionCurrentDoc.auto_approve"
-            :post-url="
-              config.url.redactAttachment.replace(
-                '/0/',
-                '/' + pdfRedactionCurrentDoc.id + '/'
-              )
-            "
-            :approve-url="
-              config.url.approveAttachment.replace(
-                '/0/',
-                '/' + pdfRedactionCurrentDoc.id + '/'
-              )
-            "
-            :minimal-ui="true"
-            :no-redirect="true"
-            :redact-regex="['teststraße\ 1']"
-            :can-publish="true"
-            :config="config"
-            @uploaded="pdfRedactionUploaded"
-            @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
-            ref="pdfRedaction">
-            <!--
-            <template #toolbar-right>
-              <div class="btn-group" v-show="isDesktop">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  @click="pdfRedactionRedact()"
-                  :disabled="pdfRedactionProcessing">
-                  <i
-                    v-show="!pdfRedactionProcessing"
-                    class="fa fa-thumbs-o-up"></i>
-                  <span
-                    class="spinner-border spinner-border-sm"
-                    v-show="pdfRedactionProcessing"
-                    role="status"
-                    aria-hidden="true" />
-                  Ich bin fertig mit Schwärzen
-                </button>
-              </div>
-            </template>
-            -->
-          </pdf-redaction>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_DOCUMENTS_OVERVIEW_REDACTED" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div class="fw-bold col-form-label">
-              {{ i18n.documentsOverview }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_OUTRO" class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9 text-center">
-            <div class="my-3">
-              <i class="fa fa-check-square fa-4x"></i>
-            </div>
-            <div class="fw-bold col-form-label">
-              {{ i18n.documentsAddedSuccessfully }}
-            </div>
-            <div>
-              {{ i18n.requestUpdatedThanks }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- not in v-show="step ..." -->
-      <div v-show="stepContext.documents">
-        <div class="container">
-          <div class="row justify-content-center">
-            <div class="col-lg-9">
-              <div
-                v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
-                class="d-flex justify-content-end">
-                <button
-                  type="button"
-                  class="btn btn-link text-decoration-underline"
-                  @click="
-                    documentsBasicOperations = !doctumentsBasicOperations
-                  ">
-                  {{ documentsBasicOperations ? i18n.done : i18n.edit }}
-                </button>
-              </div>
-              <!-- TODO maybe :hide-documents (PDFs) in step STEP_DOCUMENTS_UPLOAD -->
-              <document-uploader
-                :debug="debug"
-                :config="config"
-                :message="message"
-                :show-upload="stepContext.documentsUpload"
-                :icon-style="stepContext.documentsIconStyle"
-                :show-auto-approve="stepContext.documentsShowAutoApprove"
-                :hide-selection="stepContext.documentsHideSelection"
-                :hide-selection-bar="true"
-                :hide-other="true"
-                :hide-pdf="stepContext.documentsHidePdf"
-                :hide-status-tools="true"
-                :images-simple="stepContext.documentsImagesSimple"
-                :images-document-filename="
-                  documentsImagesDocumentFilenameNormalized
-                "
-                :file-basic-operations="
-                  step === STEP_DOCUMENTS_OVERVIEW || documentsBasicOperations
-                "
-                :hide-advanced-operations="true || !(debug && user_is_staff)"
-                :highlight-redactions="stepContext.documentsHighlightRedactions"
-                @selectionupdated="documentsSelectedPdfRedaction = $event"
-                @imagesadded="documentsImagesAdded"
-                @documentsadded="documentsDocumentsAdded"
-                @imagesconverted="documentsImagesConverted"
-                ref="documentUploader" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
-        <div class="row justify-content-center">
-          <div class="col-sm-9 col-md-6 mt-3">
-            <button
-              type="button"
-              class="btn btn-outline-primary d-block w-100 mb-3"
-              :disabled="true">
-              <i class="fa fa-plus"></i>
-              {{ i18n.scanDocumentsAnother }}
-            </button>
-            <button
-              type="button"
-              class="btn btn-outline-primary d-block w-100"
-              @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
-              <i class="fa fa-plus"></i>
-              {{ i18n.uploadFilesAnother }}
-            </button>
-          </div>
         </div>
       </div>
     </div>
-
-    <div class="sticky-bottom bg-body py-2">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-9 col-lg-6 text-center">
-            <template v-if="step === STEP_REDACTION_REDACT">
-              <button
-                type="button"
-                @click="pdfRedactionRedact()"
-                class="btn btn-primary d-block w-100"
-                :disabled="pdfRedactionProcessing">
-                <span
-                  class="spinner-border spinner-border-sm"
-                  v-show="pdfRedactionProcessing"
-                  role="status"
-                  aria-hidden="true" />
-                {{ i18n.redactionDone }}
-              </button>
-              <div class="mt-2">
-                <small>
-                  {{ i18n.redactionCheck }}
-                </small>
-                <div v-if="debug" class="debug">
-                  DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
-                </div>
-              </div>
-            </template>
-            <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
-              <button
-                type="button"
-                @click="approveAndSubmit()"
-                class="btn btn-primary d-block w-100"
-                :disabled="isSubmitting || !validity.form">
-                <span
-                  class="spinner-border spinner-border-sm"
-                  v-show="isSubmitting"
-                  role="status"
-                  aria-hidden="true" />
-                {{ i18n.confirm }}
-              </button>
-              <div class="mt-2" v-if="!validity.form">
-                <small>
-                  {{ i18n.formHasErrors }}
-                  <!-- TODO: we could go through all elements, validate, and report here -->
-                </small>
-              </div>
-              <div class="mt-2" v-if="!object_public">
-                <small>
-                  {{ i18n.requestNonPublicHint }}
-                </small>
-              </div>
-            </template>
-            <template v-else-if="step === STEP_OUTRO">
-              <button
-                type="button"
-                @click="submitForm"
-                class="btn btn-primary d-block w-100">
-                {{ i18n.requestShow }}
-              </button>
-            </template>
-            <template v-else-if="step === STEP_INTRO">
-              <!-- should be blank -->
-              <button
-                v-if="debug"
-                type="button"
-                @click="gotoStep()"
-                class="action btn btn-outline-primary btn-sm mt-1">
-                DEBUG skip
-              </button>
-            </template>
-            <template v-else-if="step === STEP_DOCUMENTS_UPLOAD">
-              <!-- this could be completely hidden -->
-              <button
-                type="button"
-                :disabled="true"
-                class="btn btn-primary d-block w-100">
-                {{ i18n.next }}
-              </button>
-              <button
-                v-if="debug"
-                type="button"
-                @click="gotoStep()"
-                class="action btn btn-outline-primary btn-sm mt-1">
-                DEBUG skip
-              </button>
-            </template>
-            <template v-else-if="step === STEP_DOCUMENTS_SORT">
-              <button
-                type="button"
-                @click="gotoStep()"
-                class="btn btn-primary d-block w-100">
-                {{ i18n.doneSorting }}
-              </button>
-            </template>
-            <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
-              <button
-                v-if="documentUploader.$refs.imageDocument.length > 0"
-                type="button"
-                @click="documentsConvertImages"
-                class="btn btn-primary d-block w-100"
-                :disabled="documentsImagesConverting">
-                <span
-                  class="spinner-border spinner-border-sm"
-                  v-if="documentsImagesConverting"
-                  role="status"
-                  aria-hidden="true" />
-                {{ i18n.createPdf }}
-              </button>
-              <button
-                v-else
-                type="button"
-                @click="gotoStep()"
-                class="btn btn-primary d-block w-100">
-                {{ i18n.next }}
-              </button>
-            </template>
-            <template v-else-if="step === STEP_MESSAGE_DATE">
-              <button
-                type="button"
-                :disabled="!isGotoValid"
-                @click="gotoStep()"
-                class="btn btn-primary d-block w-100">
-                {{ i18n.next }}
-              </button>
-              <button
-                v-if="debug"
-                type="button"
-                @click="debugSkipDate"
-                class="btn btn-outline-primary btn-sm mt-1 d-block w-100">
-                DEBUG set today
-              </button>
+    <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="step-questioncounter">Frage 2 von 5</div>
+          <label class="fw-bold form-label" for="id_subject">
+            <template v-if="formSent === '1'">
+              {{ i18n.messagePublicbodyCheckTo }}
             </template>
             <template v-else>
+              {{ i18n.messagePublicbodyCheckFrom }}
+            </template>
+          </label>
+          <div style="margin: 1em 0; font-style: italic">
+            {{ formPublicbodyLabel }}
+          </div>
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in [
+              { value: true, label: 'Ja.' },
+              { value: false, label: 'Nein, andere Behörde wählen' }
+            ]"
+            :key="choiceIndex"
+          >
+            <input
+              type="radio"
+              required=""
+              class="form-check-input"
+              v-model="formPublicbodyIsDefault"
+              :id="'id_pbisdefault_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_pbisdefault_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
+          </div>
+          <input
+            type="hidden"
+            name="publicbody"
+            v-if="formPublicbodyIsDefault"
+            :value="formPublicbodyId"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      v-show="
+        step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
+        (isDesktop &&
+          step === STEP_MESSAGE_PUBLICBODY_CHECK &&
+          !formPublicbodyIsDefault)
+      "
+      class="container"
+    >
+      <!-- appears "indented" on md=isDesktop viewport -->
+      <div class="row justify-content-center">
+        <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+          <label class="fw-bold form-label" for="id_subject">
+            <template v-if="formSent === '1'">
+              {{ i18n.messagePublicbodyUpdateTo }}
+            </template>
+            <template v-else>
+              {{ i18n.messagePublicbodyUpdateFrom }}
+            </template>
+          </label>
+          <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
+          <publicbody-chooser
+            v-if="!formPublicbodyIsDefault"
+            :search-collapsed="false"
+            scope="foo_publicbody"
+            name="publicbody"
+            :config="config"
+            :form="form"
+            :value="formPublicbodyId"
+            list-view="resultList"
+            :show-filters="false"
+            :show-badges="false"
+            :show-found-count-if-idle="false"
+            :class="{ 'is-invalid': form.errors.publicbody }"
+          />
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_MESSAGE_DATE" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="step-questioncounter">Frage 3 von 5</div>
+          <label class="fw-bold form-label field-required" for="id_date">
+            {{ i18n.messageDate }}
+            <!--{{ form.fields.date.label }}-->
+          </label>
+          <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
+          <!-- TODO "always" required might break early post/submit
+                :required="step === STEP_MESSAGE_DATE || step === STEP_MESSAGE_PUBLICBODY_CHECK"
+                maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
+              -->
+          <input
+            id="id_date"
+            class="form-control"
+            type="date"
+            name="date"
+            v-model="values.date"
+            :class="{
+              'is-invalid': validity.date === false,
+              'is-valid': validity.date === true
+            }"
+            required
+            :min="props.date_min"
+            :max="props.date_max"
+            @input="updateValidity('date')"
+          />
+          <div class="invalid-feedback" v-if="form.errors.date">
+            <p class="text-danger">
+              {{ form.errors.date.map((_) => _.message).join(' ') }}
+            </p>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              v-model="values.is_registered_mail"
+              id="id_is_registered_mail"
+            />
+            <label class="form-check-label" for="id_is_registered_mail">
+              {{ i18n.messageIsRegisteredMail }}
+              <span
+                type="button"
+                v-bs-tooltip
+                tabindex="0"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                :title="i18n.messageRegisteredMailInfo"
+              >
+                <i class="fa fa-info-circle"></i>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-show="
+        step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
+        (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
+      "
+      class="container"
+    >
+      <div class="row justify-content-center">
+        <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+          <label
+            class="fw-bold form-label field-required"
+            for="id_registered_mail"
+          >
+            {{ i18n.messageDateRegisteredMail }}
+          </label>
+          <!-- TODO set min/max? -->
+          <input
+            type="date"
+            class="form-control"
+            id="id_registered_mail_date"
+            name="registered_mail_date"
+            :required="values.is_registered_mail"
+            @input="updateValidity('registered_mail_date')"
+            v-model="values.registered_mail_date"
+          />
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_MESSAGE_STATUS" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="step-questioncounter">Frage 4 von 5</div>
+          <label class="fw-bold form-label" for="id_subject">
+            <template v-if="!formIsSent && formStatusWasResolved">
+              {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
+            </template>
+            <template v-if="!formIsSent && !formStatusWasResolved">
+              {{ i18n.messageStatusIsResolvedAfterReceived }}
+            </template>
+            <template v-if="formIsSent && formStatusWasResolved">
+              {{ i18n.messageStatusIsResolvedAfterSentStill }}
+            </template>
+            <template v-if="formIsSent && !formStatusWasResolved">
+              {{ i18n.messageStatusIsResolvedAfterSent }}
+            </template>
+          </label>
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+            :key="choice.value"
+          >
+            <input
+              type="radio"
+              name="status"
+              required=""
+              class="form-check-input"
+              :class="{ 'is-invalid': choice.errors }"
+              :id="'id_status_' + choiceIndex"
+              v-model="formStatus"
+              :value="choice.value"
+              @input="updateValidity('status')"
+            />
+            <label class="form-check-label" :for="'id_status_' + choiceIndex">
+              <template v-if="formStatusWasResolved">
+                <template v-if="choice.value === 'resolved'">
+                  {{ i18n.messageStatusIsResolvedStill }}
+                </template>
+                <template v-else>
+                  {{ i18n.messageStatusIsResolvedNotAgain }}
+                </template>
+              </template>
+              <template v-else>
+                <template v-if="choice.value === 'resolved'">
+                  {{ i18n.messageStatusIsResolved }}
+                </template>
+                <template v-else>
+                  {{ i18n.messageStatusIsResolvedNot }}
+                </template>
+              </template>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-show="
+        step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
+        (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
+      "
+      class="container"
+    >
+      <div class="row justify-content-center">
+        <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+          <label class="fw-bold col-form-label" for="id_resolution">
+            <!-- {{ status_form.fields.resolution.label }} -->
+            {{ i18n.messageResolution }}
+          </label>
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in formStatusChoices"
+            :key="choice.value"
+          >
+            <input
+              type="radio"
+              name="resolution"
+              :required="formStatusIsResolved"
+              class="form-check-input"
+              :id="'id_resolution_' + choiceIndex"
+              :value="choice.value"
+              :checked="
+                status_form.fields.resolution.value === choice.value ||
+                status_form.fields.resolution.initial === choice.value
+              "
+            />
+            <label
+              class="form-check-label"
+              :for="'id_resolution_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_MESSAGE_COST_CHECK_ANY" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="step-questioncounter">Frage 5 von 5</div>
+          <label class="fw-bold col-form-label">
+            {{ i18n.messageCostCheck }}
+          </label>
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in [
+              { label: 'Nein.', value: false },
+              { label: 'Ja.', value: true }
+            ]"
+            :key="choiceIndex"
+          >
+            <input
+              type="radio"
+              required=""
+              class="form-check-input"
+              v-model="formDoUpdateCost"
+              :id="'id_nowcost_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_nowcost_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_MESSAGE_COST_CHECK_LAST" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="step-questioncounter">Frage 5 von 5</div>
+          <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
+          <label
+            class="fw-bold col-form-label"
+            for="id_nowcost"
+            v-html="
+              i18n._('messageCostCheckLast', {
+                amount:
+                  status_form.fields.costs.value?.strValue ||
+                  status_form.fields.costs.initial?.strValue ||
+                  'error'
+              })
+            "
+          ></label>
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in [
+              { label: 'Ja.', value: false },
+              { label: 'Nein.', value: true }
+            ]"
+            :key="choiceIndex"
+          >
+            <input
+              type="radio"
+              required=""
+              class="form-check-input"
+              v-model="formDoUpdateCost"
+              :id="'id_nowcost_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_nowcost_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      v-show="
+        step === STEP_MESSAGE_COST_UPDATE ||
+        (isDesktop &&
+          (step === STEP_MESSAGE_COST_CHECK_ANY ||
+            step === STEP_MESSAGE_COST_CHECK_LAST) &&
+          formDoUpdateCost)
+      "
+      class="container"
+    >
+      <div class="row justify-content-center">
+        <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
+          <label class="fw-bold col-form-label" for="id_costs">
+            {{ i18n.messageCost }}
+          </label>
+          <div class="col-md-8">
+            <div class="input-group" style="width: 10rem">
+              <!-- type=number does not support pattern -->
+              <input
+                type="number"
+                name="costs"
+                id="id_costs"
+                class="form-control col-3"
+                inputmode="decimal"
+                style="appearance: textfield; text-align: right"
+                min="0"
+                max="1000000000"
+                step="0.01"
+                v-model="values.costs"
+                @input="updateValidity('costs')"
+                :class="{
+                  'is-invalid': validity.costs === false,
+                  'is-valid': validity.costs === true
+                }"
+              />
+              <span class="input-group-text">Euro</span>
+            </div>
+            <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_REDACTION_PICKER" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <label class="fw-bold col-form-label">
+            {{ i18n.redactionPick }}
+          </label>
+          <!-- TODO: if we expect users to go back a lot, the document-uploader list
+                shown here should exclude/disable "has schwärzung" docs -->
+          <p>
+            {{ i18n.redactionInfo }}
+          </p>
+          <div class="text-end">
+            <button
+              type="button"
+              class="btn btn-link mx-2 text-decoration-underline"
+              @click="documentUploaderSelectAll(true)"
+            >
+              {{ i18n.selectAll }}
+            </button>
+            <button
+              type="button"
+              class="btn btn-link mx-2 text-decoration-underline"
+              @click="documentUploaderSelectAll(false)"
+            >
+              {{ i18n.selectNone }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_REDACTION_REDACT">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <label class="fw-bold col-form-label">
+              {{
+                i18n._('redactionCounter', {
+                  current: pdfRedactionCurrentIndex + 1,
+                  total: documentsSelectedPdfRedaction.length
+                })
+              }}
+            </label>
+            <div class="alert alert-warning">
+              {{ i18n.redactionInfoWhat }}
+              <ul>
+                <li>
+                  {{ i18n.redactionInfoWhat1 }}
+                </li>
+                <li>
+                  {{ i18n.redactionInfoWhat2 }}
+                </li>
+                <li>
+                  {{ i18n.redactionInfoWhat3 }}
+                </li>
+                <li>
+                  {{ i18n.redactionInfoWhat4 }}
+                </li>
+              </ul>
+            </div>
+            <div class="mt-2 mb-3">
               <button
                 type="button"
-                @click="gotoStep()"
-                :disabled="!isGotoValid"
-                class="btn btn-primary d-block w-100">
-                {{ i18n.next }}
+                class="btn btn-link text-decoration-underline"
+                @click="onlineHelp.show(config.urls.helpPostuploadRedaction)"
+              >
+                {{ i18n.helpNeeded }}
               </button>
-            </template>
+            </div>
           </div>
-          <!--/.col-lg-9-->
         </div>
-        <!--/.row-->
       </div>
-      <!--/.container-->
+      <div>
+        <div class="debug" v-if="debug">
+          DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}<br />
+          auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
+        </div>
+        <pdf-redaction
+          v-if="pdfRedactionCurrentDoc"
+          :key="pdfRedactionCurrentDoc.id"
+          :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
+          :attachment-url="pdfRedactionCurrentDoc.attachment.anchor_url"
+          :auto-approve="pdfRedactionCurrentDoc.auto_approve"
+          :post-url="
+            config.url.redactAttachment.replace(
+              '/0/',
+              '/' + pdfRedactionCurrentDoc.id + '/'
+            )
+          "
+          :approve-url="
+            config.url.approveAttachment.replace(
+              '/0/',
+              '/' + pdfRedactionCurrentDoc.id + '/'
+            )
+          "
+          :minimal-ui="true"
+          :no-redirect="true"
+          :redact-regex="['teststraße\ 1']"
+          :can-publish="true"
+          :config="config"
+          @uploaded="pdfRedactionUploaded"
+          @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
+          ref="pdfRedaction"
+        >
+          <!--
+              <template #toolbar-right>
+                <div class="btn-group" v-show="isDesktop">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    @click="pdfRedactionRedact()"
+                    :disabled="pdfRedactionProcessing">
+                    <i
+                      v-show="!pdfRedactionProcessing"
+                      class="fa fa-thumbs-o-up"></i>
+                    <span
+                      class="spinner-border spinner-border-sm"
+                      v-show="pdfRedactionProcessing"
+                      role="status"
+                      aria-hidden="true" />
+                    Ich bin fertig mit Schwärzen
+                  </button>
+                </div>
+              </template>
+              -->
+        </pdf-redaction>
+      </div>
     </div>
-    <!--/.sticky-bottom-->
+    <div v-show="step === STEP_DOCUMENTS_OVERVIEW_REDACTED" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="fw-bold col-form-label">
+            {{ i18n.documentsOverview }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_OUTRO" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9 text-center">
+          <div class="my-3">
+            <i class="fa fa-check-square fa-4x"></i>
+          </div>
+          <div class="fw-bold col-form-label">
+            {{ i18n.documentsAddedSuccessfully }}
+          </div>
+          <div>
+            {{ i18n.requestUpdatedThanks }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- not in v-show="step ..." -->
+    <div v-show="stepContext.documents">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-9">
+            <div
+              v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
+              class="d-flex justify-content-end"
+            >
+              <button
+                type="button"
+                class="btn btn-link text-decoration-underline"
+                @click="documentsBasicOperations = !doctumentsBasicOperations"
+              >
+                {{ documentsBasicOperations ? i18n.done : i18n.edit }}
+              </button>
+            </div>
+            <!-- TODO maybe :hide-documents (PDFs) in step STEP_DOCUMENTS_UPLOAD -->
+            <document-uploader
+              :debug="debug"
+              :config="config"
+              :message="message"
+              :show-upload="stepContext.documentsUpload"
+              :icon-style="stepContext.documentsIconStyle"
+              :show-auto-approve="stepContext.documentsShowAutoApprove"
+              :hide-selection="stepContext.documentsHideSelection"
+              :hide-selection-bar="true"
+              :hide-other="true"
+              :hide-pdf="stepContext.documentsHidePdf"
+              :hide-status-tools="true"
+              :images-simple="stepContext.documentsImagesSimple"
+              :images-document-filename="
+                documentsImagesDocumentFilenameNormalized
+              "
+              :file-basic-operations="
+                step === STEP_DOCUMENTS_OVERVIEW || documentsBasicOperations
+              "
+              :hide-advanced-operations="true || !(debug && user_is_staff)"
+              :highlight-redactions="stepContext.documentsHighlightRedactions"
+              @selectionupdated="documentsSelectedPdfRedaction = $event"
+              @imagesadded="documentsImagesAdded"
+              @documentsadded="documentsDocumentsAdded"
+              @imagesconverted="documentsImagesConverted"
+              ref="documentUploader"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
+      <div class="row justify-content-center">
+        <div class="col-sm-9 col-md-6 mt-3">
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block w-100 mb-3"
+            :disabled="true"
+          >
+            <i class="fa fa-plus"></i>
+            {{ i18n.scanDocumentsAnother }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block w-100"
+            @click="gotoStep(STEP_DOCUMENTS_UPLOAD)"
+          >
+            <i class="fa fa-plus"></i>
+            {{ i18n.uploadFilesAnother }}
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <div class="sticky-bottom mt-auto mt-md-0 bg-body py-2">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-9 col-lg-6 text-center">
+          <template v-if="step === STEP_REDACTION_REDACT">
+            <button
+              type="button"
+              @click="pdfRedactionRedact()"
+              class="btn btn-primary d-block w-100"
+              :disabled="pdfRedactionProcessing"
+            >
+              <span
+                class="spinner-border spinner-border-sm"
+                v-show="pdfRedactionProcessing"
+                role="status"
+                aria-hidden="true"
+              />
+              {{ i18n.redactionDone }}
+            </button>
+            <div class="mt-2">
+              <small>
+                {{ i18n.redactionCheck }}
+              </small>
+              <div v-if="debug" class="debug">
+                DEBUG: hasRedactions={{ pdfRedactionCurrentHasRedactions }}
+              </div>
+            </div>
+          </template>
+          <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
+            <button
+              type="button"
+              @click="approveAndSubmit()"
+              class="btn btn-primary d-block w-100"
+              :disabled="isSubmitting || !validity.form"
+            >
+              <span
+                class="spinner-border spinner-border-sm"
+                v-show="isSubmitting"
+                role="status"
+                aria-hidden="true"
+              />
+              {{ i18n.confirm }}
+            </button>
+            <div class="mt-2" v-if="!validity.form">
+              <small>
+                {{ i18n.formHasErrors }}
+                <!-- TODO: we could go through all elements, validate, and report here -->
+              </small>
+            </div>
+            <div class="mt-2" v-if="!object_public">
+              <small>
+                {{ i18n.requestNonPublicHint }}
+              </small>
+            </div>
+          </template>
+          <template v-else-if="step === STEP_OUTRO">
+            <button
+              type="button"
+              @click="submitForm"
+              class="btn btn-primary d-block w-100"
+            >
+              {{ i18n.requestShow }}
+            </button>
+          </template>
+          <template v-else-if="step === STEP_INTRO">
+            <!-- should be blank -->
+            <button
+              v-if="debug"
+              type="button"
+              @click="gotoStep()"
+              class="action btn btn-outline-primary btn-sm mt-1"
+            >
+              DEBUG skip
+            </button>
+          </template>
+          <template v-else-if="step === STEP_DOCUMENTS_UPLOAD">
+            <!-- this could be completely hidden -->
+            <button
+              type="button"
+              :disabled="true"
+              class="btn btn-primary d-block w-100"
+            >
+              {{ i18n.next }}
+            </button>
+            <button
+              v-if="debug"
+              type="button"
+              @click="gotoStep()"
+              class="action btn btn-outline-primary btn-sm mt-1"
+            >
+              DEBUG skip
+            </button>
+          </template>
+          <template v-else-if="step === STEP_DOCUMENTS_SORT">
+            <button
+              type="button"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
+              {{ i18n.doneSorting }}
+            </button>
+          </template>
+          <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
+            <button
+              v-if="documentUploader.$refs.imageDocument.length > 0"
+              type="button"
+              @click="documentsConvertImages"
+              class="btn btn-primary d-block w-100"
+              :disabled="documentsImagesConverting"
+            >
+              <span
+                class="spinner-border spinner-border-sm"
+                v-if="documentsImagesConverting"
+                role="status"
+                aria-hidden="true"
+              />
+              {{ i18n.createPdf }}
+            </button>
+            <button
+              v-else
+              type="button"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
+              {{ i18n.next }}
+            </button>
+          </template>
+          <template v-else-if="step === STEP_MESSAGE_DATE">
+            <button
+              type="button"
+              :disabled="!isGotoValid"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
+              {{ i18n.next }}
+            </button>
+            <button
+              v-if="debug"
+              type="button"
+              @click="debugSkipDate"
+              class="btn btn-outline-primary btn-sm mt-1 d-block w-100"
+            >
+              DEBUG set today
+            </button>
+          </template>
+          <template v-else>
+            <button
+              type="button"
+              @click="gotoStep()"
+              :disabled="!isGotoValid"
+              class="btn btn-primary d-block w-100"
+            >
+              {{ i18n.next }}
+            </button>
+          </template>
+        </div>
+        <!--/.col-lg-9-->
+      </div>
+      <!--/.row-->
+    </div>
+    <!--/.container-->
+  </div>
+  <!--/.sticky-bottom-->
 </template>
 
 <style lang="scss" scoped>
@@ -1593,43 +1674,18 @@ addEventListener('hashchange', () => {
 @import 'bootstrap/scss/functions';
 @import '../../../styles/variables.scss';
 
+@include media-breakpoint-up(xl) {
+  .step-container {
+    min-height: 48rem; // so that buttons are always at the same position
+  }
+}
+
 .debug {
   opacity: 0.5 !important;
   color: #888 !important;
 
   &.btn {
     color: black !important;
-  }
-}
-
-/* stretch "main" so actions-footer always sticks to the bottom,
- * giving it an app-like feel */
-
-.postupload-main {
-  // header
-  //   #header nav's padding
-  //   #header nav .navlogo svg's height
-  //   .breadcrumb's padding
-  //   breadcrumb-item's line-height
-  // footer (sticky)
-  //   py-2
-  //   btn's padding
-  //   btn's height
-  min-height: calc(
-    100vh - (2 * 1rem + 2.5rem) - (2 * 0.5rem + 1.5rem * 14 / 16) -
-      (2 * 0.5rem + 2 * 0.375rem + 1.5rem)
-  );
-
-  // limit on viewports taller than "HD + browser chrome + taskbar"
-  // to not have a huge negative space desert
-  // note that this is the same formula as above, with 100vh replaced
-  // by the media-query min-height
-  // (should calc to something around 780px, as established empirically)
-  @media (min-height: 940px) {
-    min-height: calc(
-      945px - (2 * 1rem + 2.5rem) - (2 * 0.5rem + 1.5rem * 14 / 16) -
-        (2 * 0.5rem + 2 * 0.375rem + 1.5rem)
-    );
   }
 }
 
