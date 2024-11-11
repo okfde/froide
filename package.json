@@ -17,6 +17,7 @@
     "serve": "vite",
     "dev": "vite",
     "build": "vite build",
+    "openapi": "openapi-ts",
     "favicon": "real-favicon generate froide/static/img/logo/favicon.json favicon-result.json froide/static/img/logo"
   },
   "repository": {
@@ -43,6 +44,8 @@
     "vite-plugin-dev-manifest": "^1.0.9"
   },
   "dependencies": {
+    "@hey-api/client-fetch": "^0.4.3",
+    "@hey-api/openapi-ts": "^0.55.2",
     "@okfde/filingcabinet": "github:okfde/django-filingcabinet",
     "@popperjs/core": "^2.11.5",
     "@types/lodash.throttle": "^4.1.9",
