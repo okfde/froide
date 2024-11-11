@@ -72,13 +72,16 @@
             id="btn-check-paint"
             v-model="tool"
             />
+          <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
+            they overstay their welcome and get in the way. As a simple workaround,
+            we make them autohide after a timeout. -->
           <label
             class="btn btn-outline-secondary d-flex"
-            v-bs-tooltip
+            v-bs-tooltip.focus-autohide
             data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
+            data-bs-placement="top"
             tabindex="0"
-            :title="i18n.redactRedactTooltip + ' ' + i18n.redactToolsTooltip"
+            :title="i18n.redactRedactTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
             for="btn-check-paint">
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
@@ -96,11 +99,11 @@
             />
           <label
             class="btn btn-outline-secondary d-flex"
-            v-bs-tooltip
+            v-bs-tooltip.focus-autohide
             data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
+            data-bs-placement="top"
             tabindex="0"
-            :title="i18n.redactMoveTooltip + ' ' + i18n.redactToolsTooltip"
+            :title="i18n.redactMoveTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
             for="btn-check-move">
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">

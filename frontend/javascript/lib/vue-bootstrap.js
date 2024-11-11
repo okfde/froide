@@ -10,7 +10,12 @@ import { Tooltip } from 'bootstrap'
   })
 */
 export const vBsTooltip = {
-  mounted: (el) => {
-    new Tooltip(el)
+  mounted: (el, binding) => {
+    const tooltip = new Tooltip(el)
+    if (binding.modifiers['focus-autohide']) {
+      el.addEventListener('focusin', () => {
+        window.setTimeout(() => tooltip.hide(), 3000)
+      })
+    }
   }
 }
