@@ -20,7 +20,7 @@ class PublicBodyConfig(AppConfig):
 
         from froide.api import api_router
 
-        from .api_views import (
+        from .api.views import (
             CategoryViewSet,
             ClassificationViewSet,
             FoiLawViewSet,

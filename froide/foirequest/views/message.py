@@ -23,6 +23,7 @@ from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
 from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
+from ..api.serializers import FoiAttachmentSerializer, FoiMessageSerializer
 from ..decorators import (
     allow_moderate_foirequest,
     allow_read_foirequest_authenticated,
@@ -47,7 +48,6 @@ from ..forms import (
 from ..models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from ..models.attachment import IMAGE_FILETYPES, PDF_FILETYPES, POSTAL_CONTENT_TYPES
 from ..models.message import MessageKind
-from ..serializers import FoiAttachmentSerializer, FoiMessageSerializer
 from ..services import ResendBouncedMessageService
 from ..tasks import convert_images_to_pdf_task
 from ..utils import check_throttle

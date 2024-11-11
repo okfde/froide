@@ -10,20 +10,20 @@ from taggit.models import Tag
 from froide.campaign.models import Campaign
 from froide.helper.search.api_views import ESQueryMixin
 
-from ..auth import (
+from ...auth import (
     CreateOnlyWithScopePermission,
     get_read_foirequest_queryset,
     throttle_action,
 )
-from ..documents import FoiRequestDocument
-from ..filters import FoiRequestFilterSet
-from ..models import FoiRequest
+from ...documents import FoiRequestDocument
+from ...filters import FoiRequestFilterSet
+from ...models import FoiRequest
+from ...utils import check_throttle
 from ..serializers import (
     FoiRequestDetailSerializer,
     FoiRequestListSerializer,
     MakeRequestSerializer,
 )
-from ..utils import check_throttle
 
 User = get_user_model()
 

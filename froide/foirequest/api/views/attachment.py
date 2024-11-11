@@ -4,11 +4,13 @@ from django_filters import rest_framework as filters
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
-from ..auth import (
+from froide.foirequest.api.permissions import WriteFoiRequestPermission
+
+from ...auth import (
     CreateOnlyWithScopePermission,
     get_read_foiattachment_queryset,
 )
-from ..models import FoiAttachment
+from ...models import FoiAttachment
 from ..serializers import (
     FoiAttachmentSerializer,
     FoiAttachmentTusSerializer,
@@ -43,8 +45,11 @@ class FoiAttachmentViewSet(
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiAttachmentFilter
-    permission_classes = (CreateOnlyWithScopePermission,)
-    required_scopes = ["upload:message"]
+    permission_classes = [
+        CreateOnlyWithScopePermission,
+        WriteFoiRequestPermission,
+    ]
+    required_scopes = ["make:message"]
 
     def get_serializer_class(self):
         try:
