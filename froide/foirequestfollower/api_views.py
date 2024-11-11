@@ -188,11 +188,17 @@ class FoiRequestFollowerViewSet(
 
     def get_request_filter(self):
         if not hasattr(self, "_requests_filter"):
-            requests = self.request.query_params.get("request", "").split(",")
+            requests = []
             try:
-                requests = [int(r) for r in requests]
+                # request is not available when called from manage.py generateschema
+                if self.request:
+                    requests = self.request.query_params.get("request", "").split(",")
+                    requests = [
+                        int(r) for r in requests if r
+                    ]  # filter out empty strings
             except ValueError:
-                requests = []
+                pass
+
             self._requests_filter = requests
         return self._requests_filter
 
