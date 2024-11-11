@@ -27,7 +27,8 @@ from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 
 
 def get_campaign_auth_foirequests_filter(request: HttpRequest, fk_path=None):
-    if not request.user.is_staff:
+    # request is not available when called from manage.py generateschema
+    if not request or not request.user.is_staff:
         return None
 
     # staff user can act on all campaign-requests
@@ -157,8 +158,10 @@ def can_read_foiproject_authenticated(
 
 
 @lru_cache()
-def can_write_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
-    if can_write_object(foirequest, request):
+def can_write_foirequest(
+    foirequest: FoiRequest, request: HttpRequest, scope=None
+) -> bool:
+    if can_write_object(foirequest, request, scope):
         return True
 
     if foirequest.project:
