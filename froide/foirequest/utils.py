@@ -746,12 +746,12 @@ def add_ical_events(foirequest, cal):
 def export_user_data(user):
     from froide.helper.api_utils import get_fake_api_context
 
-    from .api_views import (
+    from .models import FoiAttachment, FoiProject
+    from .serializers import (
         FoiAttachmentSerializer,
         FoiMessageSerializer,
         FoiRequestListSerializer,
     )
-    from .models import FoiAttachment, FoiProject
 
     ctx = get_fake_api_context()
     foirequests = user.foirequest_set.all().iterator()

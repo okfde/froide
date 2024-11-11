@@ -21,9 +21,9 @@ from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
 from froide.helper.utils import update_query_params
 from froide.proof.forms import ProofMessageForm
-from froide.publicbody.api_views import PublicBodyListSerializer
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
 from froide.publicbody.models import PublicBody
+from froide.publicbody.serializers import PublicBodyListSerializer
 from froide.publicbody.widgets import get_widget_context
 
 from ..forms import RequestForm

@@ -1,22 +1,28 @@
 from django.db.models import Prefetch
+from django.utils import timezone
+from django.utils.translation import gettext as _
 
-from rest_framework import serializers
+from rest_framework import permissions, serializers
+from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
 from froide.foirequest.forms.message import TransferUploadForm
-from froide.foirequest.models.message import MessageKind
-from froide.helper.auth import get_write_queryset
+from froide.foirequest.models.message import MESSAGE_KIND_USER_ALLOWED, MessageKind
 from froide.helper.text_diff import get_differences
-from froide.publicbody.api_views import (
+from froide.publicbody.models import PublicBody
+from froide.publicbody.serializers import (
     FoiLawSerializer,
     PublicBodySerializer,
     SimplePublicBodySerializer,
 )
-from froide.publicbody.models import PublicBody
 
 from .auth import (
+    can_moderate_pii_foirequest,
     can_read_foirequest_authenticated,
+    can_write_foirequest,
     get_read_foiattachment_queryset,
+    get_read_foirequest_queryset,
+    get_write_foirequest_queryset,
 )
 from .models import FoiAttachment, FoiMessage, FoiRequest
 from .services import CreateRequestService
@@ -96,8 +102,9 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
     def get_user(self, obj):
         if obj.user is None:
             return None
-        user = self.context["request"].user
-        if obj.user == user or user.is_superuser:
+        request = self.context["request"]
+        user = request.user
+        if obj.user == user or can_moderate_pii_foirequest(obj, request):
             return obj.user.pk
         if obj.user.private:
             return None
@@ -157,13 +164,20 @@ class MakeRequestSerializer(serializers.Serializer):
         return service.execute(validated_data["request"])
 
 
+class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
+    view_name = "api:request-detail"
+
+    def get_queryset(self):
+        request = self.context["request"]
+        if request.method in permissions.SAFE_METHODS:
+            return get_read_foirequest_queryset(request)
+        else:
+            return get_write_foirequest_queryset(request)
+
+
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
-    resource_uri = serializers.HyperlinkedIdentityField(
-        view_name="api:message-detail", lookup_field="pk"
-    )
-    request = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name="api:request-detail"
-    )
+    resource_uri = serializers.HyperlinkedIdentityField(view_name="api:message-detail")
+    request = FoiRequestRelatedField()
     attachments = serializers.SerializerMethodField(source="get_attachments")
     sender_public_body = serializers.HyperlinkedRelatedField(
         read_only=True, view_name="api:publicbody-detail"
@@ -176,9 +190,14 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.SerializerMethodField(source="get_content")
     redacted_subject = serializers.SerializerMethodField(source="get_redacted_subject")
     redacted_content = serializers.SerializerMethodField(source="get_redacted_content")
-    sender = serializers.CharField()
-    url = serializers.CharField(source="get_absolute_domain_url")
-    status_name = serializers.CharField(source="get_status_display")
+    sender = serializers.CharField(read_only=True)
+    url = serializers.CharField(source="get_absolute_domain_url", read_only=True)
+    status = serializers.ChoiceField(choices=FoiRequest.STATUS.choices, required=False)
+    kind = serializers.ChoiceField(choices=MessageKind.choices, required=True)
+    is_draft = serializers.BooleanField(required=False)
+    status_name = serializers.CharField(source="get_status_display", read_only=True)
+    not_publishable = serializers.BooleanField(read_only=True)
+    timestamp = serializers.DateTimeField(default=timezone.now)
 
     class Meta:
         model = FoiMessage
@@ -254,6 +273,21 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         )
         return serializer.data
 
+    def validate_kind(self, value):
+        # forbid users from e.g. creating a fake e-mail message
+        if value not in MESSAGE_KIND_USER_ALLOWED:
+            raise serializers.ValidationError(
+                "This message kind can not be created via the API."
+            )
+        return value
+
+    def validate_request(self, value):
+        if not can_write_foirequest(value, self.context["request"]):
+            raise PermissionDenied(
+                _("You do not have permission to add a message to this request.")
+            )
+        return value
+
 
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
@@ -310,24 +344,12 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class FoiAttachmentTusSerializer(serializers.Serializer):
-    message = serializers.IntegerField()
+    message = serializers.HyperlinkedRelatedField(
+        view_name="api:message-detail",
+        lookup_field="pk",
+        queryset=FoiMessage.objects.all(),
+    )
     upload = serializers.CharField()
-
-    def validate_message(self, value):
-        writable_requests = get_write_queryset(
-            FoiRequest.objects.all(),
-            self.context["request"],
-            has_team=True,
-            scope="upload:message",
-        )
-        try:
-            return FoiMessage.objects.get(
-                pk=value,
-                request__in=writable_requests,
-                kind=MessageKind.POST,
-            )
-        except FoiMessage.DoesNotExist as e:
-            raise serializers.ValidationError("Message not found") from e
 
     def validate(self, data):
         self.form = TransferUploadForm(
