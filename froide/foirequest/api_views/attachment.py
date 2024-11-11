@@ -9,6 +9,7 @@ from ..auth import (
     get_read_foiattachment_queryset,
 )
 from ..models import FoiAttachment
+from ..permissions import WriteFoiRequestPermission
 from ..serializers import (
     FoiAttachmentSerializer,
     FoiAttachmentTusSerializer,
@@ -43,8 +44,11 @@ class FoiAttachmentViewSet(
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiAttachmentFilter
-    permission_classes = (CreateOnlyWithScopePermission,)
-    required_scopes = ["upload:message"]
+    permission_classes = [
+        CreateOnlyWithScopePermission,
+        WriteFoiRequestPermission,
+    ]
+    required_scopes = ["make:message"]
 
     def get_serializer_class(self):
         try:

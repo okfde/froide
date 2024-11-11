@@ -37,10 +37,8 @@ class FoiMessageManager(models.Manager):
             qs = qs.filter(**extra_filters)
         return qs, "timestamp"
 
-
-class FoiMessageNoDraftsManager(FoiMessageManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_draft=False)
+    def get_drafts(self, drafts=True):
+        return super().get_queryset().filter(is_draft=drafts)
 
 
 class MessageTag(TagBase):
@@ -64,11 +62,20 @@ class MessageKind(models.TextChoices):
     EMAIL = ("email", _("email"))
     POST = ("post", _("postal mail"))
     FAX = ("fax", _("fax"))
+    # uploads by public bodies using link in foirequest
     UPLOAD = ("upload", _("upload"))
     PHONE = ("phone", _("phone call"))
     VISIT = ("visit", _("visit in person"))
     IMPORT = ("import", _("automatically imported"))
 
+
+# users are allowed to only create messages of these kinds
+# the other kinds can only be created by the system
+MESSAGE_KIND_USER_ALLOWED = [
+    MessageKind.POST,
+    MessageKind.PHONE,
+    MessageKind.VISIT,
+]
 
 MESSAGE_KIND_ICONS = {
     MessageKind.EMAIL: "mail",
@@ -174,7 +181,6 @@ class FoiMessage(models.Model):
     confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
 
     objects = FoiMessageManager()
-    no_drafts = FoiMessageNoDraftsManager()
 
     class Meta:
         get_latest_by = "timestamp"
@@ -198,6 +204,9 @@ class FoiMessage(models.Model):
             )
 
         super().save(*args, **kwargs)
+
+    def is_public(self) -> bool:
+        return not self.is_draft
 
     @property
     def is_postal(self):

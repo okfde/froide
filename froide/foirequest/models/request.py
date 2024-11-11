@@ -480,7 +480,7 @@ class FoiRequest(models.Model):
 
     def get_messages(self, with_tags=False):
         qs = (
-            self.foimessage_set(manager="no_drafts")
+            self.foimessage_set.filter(is_draft=False)
             .select_related(
                 "sender_user", "sender_public_body", "recipient_public_body"
             )
