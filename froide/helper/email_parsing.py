@@ -305,7 +305,7 @@ def parse_email_date(date_str: Optional[str]) -> Optional[datetime]:
     if date_str is None:
         return None
     try:
-        date = parsedate_to_datetime(date_str)
+        date = parsedate_to_datetime(parse_header_field(date_str))
     except ValueError:
         return None
     if timezone.is_naive(date):
