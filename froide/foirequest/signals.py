@@ -77,7 +77,7 @@ def trigger_index_update(klass, instance_pk):
 def send_notification_became_overdue(sender, **kwargs):
     req_url = sender.user.get_autologin_url(sender.get_absolute_short_url())
     upload_url = sender.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", sender)
+        short_request_url("foirequest-upload_postal_message_create", sender)
     )
     send_request_user_email(
         became_overdue_email,
@@ -99,7 +99,7 @@ def send_notification_became_overdue(sender, **kwargs):
 def send_notification_became_asleep(sender, **kwargs):
     req_url = sender.user.get_autologin_url(sender.get_absolute_short_url())
     upload_url = sender.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", sender)
+        short_request_url("foirequest-upload_postal_message_create", sender)
     )
 
     send_request_user_email(
@@ -488,7 +488,7 @@ def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
         action_url = message.get_absolute_domain_short_url()
 
     upload_url = request.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", request)
+        short_request_url("foirequest-upload_postal_message_create", request)
     )
 
     context = {
