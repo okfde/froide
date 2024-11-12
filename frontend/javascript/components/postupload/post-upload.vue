@@ -685,7 +685,7 @@ addEventListener('hashchange', () => {
       <small>{{ i18n.done }}</small>
     </template>
     <template v-else>
-      {{ i18n.step }} {{ stepContext.progressStep + 1 }}<strong>/3</strong>:
+      {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/3</strong>:
       {{ stepContext.mobileHeaderTitle }}
     </template>
   </simple-stepper>
