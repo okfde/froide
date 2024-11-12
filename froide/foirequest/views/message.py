@@ -336,10 +336,6 @@ def edit_postal_message(request, foirequest, message_id):
                 _("one public body found"),
                 _("{count} public bodies found").format(count="${count}"),
             ],
-            "classificationPlural" "jurisdictionPlural": [
-                _("Jurisdiction"),
-                _("Jurisdictions"),
-            ],
             "administrativeUnitKind": _("Type of administrative unit"),
             "topicPlural": [
                 _("Topic"),
