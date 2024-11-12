@@ -1475,7 +1475,11 @@ addEventListener('hashchange', () => {
               @documentsadded="documentsDocumentsAdded"
               @imagesconverted="documentsImagesConverted"
               ref="documentUploader"
-            />
+            >
+              <template #fileuploader-after>
+                <div class="form-text text-center">{{  i18n.scanHelpText }}</div>
+              </template>
+            </document-uploader>
           </div>
         </div>
       </div>

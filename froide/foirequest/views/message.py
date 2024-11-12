@@ -221,6 +221,7 @@ def edit_postal_message(request, foirequest, message_id):
         "settings": {
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
             "can_make_document": request.user.is_staff,
+            "allowed_filetypes": [".pdf", ".jpg", ".jpeg", ".png", ".gif"],
         },
         "i18n": {
             "uppy": get_uppy_i18n(),
@@ -356,6 +357,8 @@ def edit_postal_message(request, foirequest, message_id):
                 _("Part of administrative region"),
                 _("Part of administrative regions"),
             ],
+            # from forms/message.py
+            "scanHelpText": _("Uploaded scans can be PDF, JPG, PNG or GIF."),
             # post-upload.vue
             "step": _("Step"),
             "done": _("Done"),

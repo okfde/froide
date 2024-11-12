@@ -124,6 +124,7 @@
         :auto-proceed="true"
         :allowed-file-types="config.settings.allowed_filetypes"
         @upload-success="uploadSuccess" />
+      <slot name="fileuploader-after"></slot>
     </div>
   </div>
 </template>
