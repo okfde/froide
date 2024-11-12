@@ -5,6 +5,7 @@ from functools import partial
 
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.core.mail import mail_managers
 from django.db import transaction
 from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
@@ -15,7 +16,7 @@ from froide.celery import app as celery_app
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
-from .foi_mail import _fetch_mail, _process_mail
+from .foi_mail import _fetch_mail, _process_mail, get_foi_mail_client
 from .models import FoiAttachment, FoiProject, FoiRequest
 from .notifications import batch_update_requester, send_classification_reminder
 
@@ -443,3 +444,17 @@ def remove_old_drafts():
     FoiMessage.objects.filter(
         is_draft=True, last_modified_at__lt=timezone.now() - timedelta(days=30)
     ).delete()
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.warn_on_unprocessed_mail", time_limit=120
+)
+def warn_on_unprocessed_mail():
+    with get_foi_mail_client() as client:
+        status, count = client.select("Inbox")
+        typ, [msg_ids] = client.search(None, "FLAGGED")
+        if len(msg_ids) > 0:
+            mail_managers(
+                _("Unprocessed FOI Mail: {count}").format(count=len(msg_ids)),
+                _("There are unprocessed FOI Mails, inform system administrators!"),
+            )
