@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-25 10:48+0200\n"
+"POT-Creation-Date: 2024-11-13 01:46+0100\n"
 "PO-Revision-Date: 2024-10-22 11:09+0000\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -330,9 +330,9 @@ msgid ""
 "Conditions</a> and <a href=\"{url_privacy}\" target=\"_blank\">Privacy "
 "Statement</a>"
 msgstr ""
-"Sie stimmen den <a href=\"{url_terms}\" target=\"_blank"
-"\">Nutzungsbedingungen</a> und <a href=\"{url_privacy}\" target=\"_blank"
-"\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
+"Sie stimmen den <a href=\"{url_terms}\" "
+"target=\"_blank\">Nutzungsbedingungen</a> und <a href=\"{url_privacy}\" "
+"target=\"_blank\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
 
 #: froide/account/forms.py
 msgid "Password"
@@ -984,8 +984,8 @@ msgstr "Passwort ändern"
 #, python-format
 msgid ""
 "\n"
-"  WARNING! %(impostor)s, you are an impostor! You pretend to be <strong>"
-"%(user)s</strong>!\n"
+"  WARNING! %(impostor)s, you are an impostor! You pretend to be "
+"<strong>%(user)s</strong>!\n"
 "  "
 msgstr ""
 "\n"
@@ -1814,13 +1814,13 @@ msgstr "Kampagnen"
 #, python-format
 msgid ""
 "\n"
-"              This request was made as part of the campaign <a href=\"%(url)s"
-"\">“%(name)s”</a>.\n"
+"              This request was made as part of the campaign <a "
+"href=\"%(url)s\">“%(name)s”</a>.\n"
 "            "
 msgstr ""
 "\n"
-"           Diese Anfrage wurde als Teil der Kampagne <a href=\"%(url)s"
-"\">„%(name)s“</a> gestellt.\n"
+"           Diese Anfrage wurde als Teil der Kampagne <a "
+"href=\"%(url)s\">„%(name)s“</a> gestellt.\n"
 "          "
 
 #: froide/campaign/templates/campaign/request_banner.html
@@ -2153,13 +2153,13 @@ msgstr "Beschreibung bearbeiten"
 #, python-format
 msgid ""
 "\n"
-"        This document is part of the request ”<a href=\"%(request_url)s\">"
-"%(title)s</a>”.\n"
+"        This document is part of the request ”<a "
+"href=\"%(request_url)s\">%(title)s</a>”.\n"
 "        "
 msgstr ""
 "\n"
-"        Dieses Dokument ist Teil der Anfrage „<a href=\"%(request_url)s\">"
-"%(title)s</a>“\n"
+"        Dieses Dokument ist Teil der Anfrage „<a "
+"href=\"%(request_url)s\">%(title)s</a>“\n"
 "        "
 
 #. Translators: request URL
@@ -4094,8 +4094,8 @@ msgstr "Anfrage '%s'"
 #: froide/foirequest/models/request.py
 #, python-format
 msgid ""
-"You exceeded your request limit of %(count)s requests in %(time)s. <a href="
-"\"%(url)s\">Learn more</a>"
+"You exceeded your request limit of %(count)s requests in %(time)s. <a "
+"href=\"%(url)s\">Learn more</a>"
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
 "Dies ist eine automatische Vorsichtsmaßnahme. <a href=\"%(url)s\">Mehr "
@@ -4196,6 +4196,15 @@ msgstr "{name}_ocr{ext}"
 msgid "{name}_converted{ext}"
 msgstr "{name}_konvertiert{ext}"
 
+#: froide/foirequest/tasks.py
+#, python-brace-format
+msgid "Unprocessed FOI Mail: {count}"
+msgstr ""
+
+#: froide/foirequest/tasks.py
+msgid "There are unprocessed FOI Mails, inform system administrators!"
+msgstr ""
+
 #: froide/foirequest/templates/admin/foirequest/foimessage/add_comment.html
 msgid "Add comment to messages"
 msgstr "Füge Kommentar zu Nachrichten hinzu"
@@ -4264,7 +4273,6 @@ msgstr "Aktuell kein Projekt ausgewählt."
 #: froide/helper/templates/helper/search/search_base.html
 #: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 #: froide/publicbody/widgets.py froide/templates/header.html
-#: froide/helper/search/filters.py
 msgid "Search"
 msgstr "Suchen"
 
@@ -4571,9 +4579,7 @@ msgstr "Anhänge der Nachricht vom %(date)s"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/upload/forms.py
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
+#: froide/foirequest/views/message.py froide/upload/forms.py
 msgid "Back"
 msgstr "Zurück"
 
@@ -4586,13 +4592,13 @@ msgstr "Anhänge verwalten"
 #, python-format
 msgid ""
 "\n"
-"      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from <b>"
-"%(sender)s</b> in request “%(title)s”.\n"
+"      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from "
+"<b>%(sender)s</b> in request “%(title)s”.\n"
 "      "
 msgstr ""
 "\n"
-"      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
-"%(sender)s</b> bei Anfrage “%(title)s”.\n"
+"      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von "
+"<b>%(sender)s</b> bei Anfrage “%(title)s”.\n"
 "      "
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
@@ -4668,13 +4674,13 @@ msgstr "Anhang „%(name)s“"
 #, python-format
 msgid ""
 "\n"
-"    This attachment is part of the request ”<a href=\"%(message_url)s\">"
-"%(title)s</a>”.\n"
+"    This attachment is part of the request ”<a "
+"href=\"%(message_url)s\">%(title)s</a>”.\n"
 "    "
 msgstr ""
 "\n"
-"        Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">"
-"%(title)s</a>“.\n"
+"        Dieser Anhang ist Teil der Anfrage „<a "
+"href=\"%(message_url)s\">%(title)s</a>“.\n"
 "        "
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
@@ -5156,7 +5162,6 @@ msgstr "Erneut senden"
 #: froide/foirequest/templates/foirequest/snippets/message_edit.html
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
-#: froide/foirequest/views/request.py
 #: froide/follow/templates/follow/_email_follow_form.html
 #: froide/problem/templates/problem/message_toolbar_item.html
 #: froide/team/templates/team/team_detail.html
@@ -6225,9 +6230,7 @@ msgid "j.doe.1234abc"
 msgstr "m.muster.1234abc"
 
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
-#: froide/foirequest/views/request.py
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
+#: froide/foirequest/views/message.py froide/foirequest/views/request.py
 msgid "Next"
 msgstr "Weiter"
 
@@ -6742,7 +6745,6 @@ msgstr "Was ist der Status Ihrer Anfrage nach Erhalt der Post?"
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #: froide/foirequest/templates/foirequest/upload_postal_message_new.html
 #: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Add letter"
 msgstr "Brief hinzufügen"
 
@@ -7032,12 +7034,12 @@ msgid "No redaction needed"
 msgstr "Keine Schwärzung benötigt"
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
-msgid "Text only"
-msgstr "Nur Text"
-
-#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "Remove all redaction"
 msgstr "Alle Schwärzungen entfernen"
+
+#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
+msgid "Text only"
+msgstr "Nur Text"
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "Hide text"
@@ -7596,7 +7598,6 @@ msgid "Open attachment page"
 msgstr "Anhangsseite öffnen"
 
 #: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -7679,9 +7680,302 @@ msgstr ""
 "Sind diese Dokumente das Ergebnis Ihrer Anfrage und nicht bloß Korrespondenz?"
 
 #: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
 msgid "Step"
 msgstr "Schritt"
+
+#: froide/foirequest/views/message.py froide/upload/forms.py
+msgid "Done"
+msgstr "Abgeschlossen"
+
+# #: froide/foirequest/views/message.py
+# #: frontend/javascript/components/postupload/post-upload.vue
+# msgid "Done"
+# msgstr "Fertig"
+#: froide/foirequest/views/message.py
+msgid "New"
+msgstr "Neu"
+
+#: froide/foirequest/views/message.py
+msgid "letter.pdf"
+msgstr "brief.pdf"
+
+#: froide/foirequest/views/message.py
+msgid "Upload or scan letter"
+msgstr "Brief hochladen oder scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Enter information"
+msgstr "Infos eingeben"
+
+#: froide/foirequest/views/message.py
+msgid "Scan documents"
+msgstr "Dokumente scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Use your phone's camera to create a PDF "
+msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
+
+#: froide/foirequest/views/message.py
+msgid "Upload files"
+msgstr "Dateien hochladen"
+
+#: froide/foirequest/views/message.py
+msgid "If you have the letter as PDF already"
+msgstr "Wenn Sie den Brief schon als PDF oder Foto vorliegen haben"
+
+#: froide/foirequest/views/message.py
+msgid ""
+"You don't need to redact your letter <strong>beforehand</strong>. You can do "
+"this later in the process using our browser tool."
+msgstr ""
+"Sie brauchen den Brief vorher <strong>nicht</strong> zu schwärzen. Das "
+"erledigen Sie später mit unserem Online-Tool."
+
+#: froide/foirequest/views/message.py
+msgid "We will guide you through the process step-by-step."
+msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"Should you experience problems, you can use <a class=\"alert-link\" "
+"href=\"${url}\">the older version</a> here. We welcome feedback!"
+msgstr ""
+"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" "
+"href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über "
+"Feedback freuen."
+
+#: froide/foirequest/views/message.py
+msgid "We have redone this part of the app."
+msgstr "Wir haben diesen Bereich stark überarbeitet."
+
+#: froide/foirequest/views/message.py
+msgid "Drag the documents in the right order"
+msgstr "Ziehen Sie die Seiten in die richtige Reihenfolge"
+
+#: froide/foirequest/views/message.py
+msgid "We will convert your images into a PDF"
+msgstr "Wir erstellen aus Ihren Bildern ein PDF-Dokument"
+
+#: froide/foirequest/views/message.py
+msgid "Change filename"
+msgstr "Dateiname ändern"
+
+#: froide/foirequest/views/message.py
+msgid "Documents available so far"
+msgstr "Bisher vorhandene Dokumente"
+
+#: froide/foirequest/views/message.py
+msgid "Have you received or sent the uploaded document?"
+msgstr "Haben Sie den hochgeladenen Brief erhalten oder versendet?"
+
+#: froide/foirequest/views/message.py
+msgid "Is this the public body you have sent the letter to?"
+msgstr "Ist dies die Behörde, an die Sie den Brief gesendet haben?"
+
+#: froide/foirequest/views/message.py
+msgid "Is this the public body that sent the letter?"
+msgstr "Ist dies die Behörde, von der der Brief stammt?"
+
+#: froide/foirequest/views/message.py
+msgid "Which public body have you sent this letter to?"
+msgstr "An welche Behörde haben Sie den Brief gesendet?"
+
+#: froide/foirequest/views/message.py
+msgid "Which public body has sent this letter?"
+msgstr "Von welcher Behörde stammt der Brief?"
+
+#: froide/foirequest/views/message.py
+msgid "When was the letter sent?"
+msgstr "Wann wurde der Brief versendet?"
+
+#: froide/foirequest/views/message.py
+msgid "The letter is registered mail"
+msgstr "Es handelt sich um einen gelben Brief"
+
+#: froide/foirequest/views/message.py
+msgid ""
+"Registered mail is a postal service which allows the sender proof of mailing "
+"via a receipt. The letter can have a special envelope."
+msgstr ""
+"Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. "
+"Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber "
+"es gibt auch Ausnahmen."
+
+#: froide/foirequest/views/message.py
+msgid "Registered mail: what is the date stamped on the envelope?"
+msgstr ""
+"Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag eingetragen?"
+
+#: froide/foirequest/views/message.py
+msgid ""
+"Your request was resolved. Is this still the case after you have received "
+"the letter?"
+msgstr ""
+"Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des Briefes "
+"immer noch der Fall?"
+
+#: froide/foirequest/views/message.py
+msgid "Was your request resolved by this letter?"
+msgstr "Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?"
+
+#: froide/foirequest/views/message.py
+msgid ""
+"Your request had already been resolved. Is this still the case after you "
+"have sent the letter?"
+msgstr ""
+"Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden des Briefes "
+"noch immer der Fall?"
+
+#: froide/foirequest/views/message.py
+msgid "Was your request resolv by sending this letter?"
+msgstr "Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?"
+
+#: froide/foirequest/views/message.py
+msgid "My request remains resolved."
+msgstr "Meine Anfrage ist nach wie vor abgeschlossen."
+
+#: froide/foirequest/views/message.py
+msgid "My request is now unresolved."
+msgstr "Meine Anfrage läuft nun wieder."
+
+#: froide/foirequest/views/message.py
+msgid "Yes, the request is resolved."
+msgstr "Ja, Anfrage ist jetzt abgeschlossen."
+
+#: froide/foirequest/views/message.py
+msgid "No, the request is not resolved yet."
+msgstr "Nein, Anfrage läuft noch."
+
+#: froide/foirequest/views/message.py
+msgid "How would you characterize the result?"
+msgstr "Wie würde Sie das Ergebnis beschreiben?"
+
+#: froide/foirequest/views/message.py
+msgid "How much compensation does the public body demand?"
+msgstr "Welchen Betrag hat die Behörde verlangt?"
+
+#: froide/foirequest/views/message.py
+msgid "Did the public body demand compensation?"
+msgstr "Hat die Behörde Kosten verlangt?"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"You have noted that the public body had demanded compensation to the amount "
+"of €${amount}.<br/>Is this amount still correct?"
+msgstr ""
+"Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
+"${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+
+#: froide/foirequest/views/message.py
+msgid "Which documents do you want to redact?"
+msgstr "Welche dieser Dokumente möchen Sie schwärzen?"
+
+#: froide/foirequest/views/message.py
+msgid ""
+"A document should be redacted when it contains information about yourself or "
+"the public body's employees."
+msgstr ""
+"Ein Dokument sollte geschwärzt werden, wenn es Informationen über Sie selbst "
+"oder Behördenmitarbeiter:innen"
+
+#: froide/foirequest/views/message.py
+msgid "Select all"
+msgstr "Alle auswählen"
+
+#: froide/foirequest/views/message.py
+msgid "Select none"
+msgstr "Keine auswählen"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "Redacting document ${current} of ${total}"
+msgstr "Dokument schwärzen ${current} von ${total}"
+
+#: froide/foirequest/views/message.py
+msgid "You should redact:"
+msgstr "Das sollten Sie schwärzen:"
+
+#: froide/foirequest/views/message.py
+msgid "Your name and your address"
+msgstr "Ihren Namen und Ihre Adresse"
+
+#: froide/foirequest/views/message.py
+msgid "Names of public body employees"
+msgstr "Namen von Behördenmitarbeiter:innen"
+
+#: froide/foirequest/views/message.py
+msgid "Signatures"
+msgstr "Unterschriften"
+
+#: froide/foirequest/views/message.py
+msgid "E-mail addresses that end in @fragdenstaat.de"
+msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
+
+#: froide/foirequest/views/message.py
+msgid "I have technical difficulties / I need help"
+msgstr "Ich habe technische Probleme / benötige Hilfe"
+
+#: froide/foirequest/views/message.py
+msgid "These documents will be added to the request:"
+msgstr "Diese Dokumente werden der Anfrage hinzugefügt:"
+
+#: froide/foirequest/views/message.py
+msgid "Documents added successfully"
+msgstr "Dokumente erfolgreich hinzugefügt"
+
+#: froide/foirequest/views/message.py
+msgid "Thank you for updating your request!"
+msgstr "Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht haben!"
+
+#: froide/foirequest/views/message.py
+msgid "Scan another document"
+msgstr "Weiteres Dokument scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Upload another file"
+msgstr "Weitere Dateien hochladen"
+
+#: froide/foirequest/views/message.py
+msgid "I have finished redacting"
+msgstr "Ich bin fertig mit Schwärzen"
+
+#: froide/foirequest/views/message.py
+msgid "Important: Have you checked all pages?"
+msgstr "Wichtig: Haben Sie alle Seiten überprüft?"
+
+#: froide/foirequest/views/message.py
+msgid "Confirm"
+msgstr "Bestätigen"
+
+#: froide/foirequest/views/message.py
+msgid "The form has errors"
+msgstr "Das Formular enthält noch Fehler."
+
+#: froide/foirequest/views/message.py
+msgid ""
+"Your request is not public at the moment. The documents will not be public, "
+"either."
+msgstr ""
+"Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente werden deshalb "
+"nicht öffentlich verfügbar."
+
+#: froide/foirequest/views/message.py
+msgid "See request"
+msgstr "Anfrage ansehen"
+
+#: froide/foirequest/views/message.py
+msgid "Done sorting"
+msgstr "Fertig mit Sortieren"
+
+#: froide/foirequest/views/message.py
+msgid "Create PDF"
+msgstr "PDF erstellen"
+
+#: froide/foirequest/views/message.py
+msgid "Uncheck to leave unpublished for now"
+msgstr ""
 
 #: froide/foirequest/views/message.py
 #, python-format
@@ -7703,317 +7997,6 @@ msgstr "Konnte Original nicht herunterladen."
 #: froide/foirequest/views/message.py
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
-
-# #: froide/foirequest/views/message.py
-# #: frontend/javascript/components/postupload/post-upload.vue
-# msgid "Done"
-# msgstr "Fertig"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "New"
-msgstr "Neu"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "letter.pdf"
-msgstr "brief.pdf"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Upload or scan letter"
-msgstr "Brief hochladen oder scannen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Enter information"
-msgstr "Infos eingeben"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Scan documents"
-msgstr "Dokumente scannen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Use your phone's camera to create a PDF "
-msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Upload files"
-msgstr "Dateien hochladen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "If you have the letter as PDF already"
-msgstr "Wenn Sie den Brief schon als PDF oder Foto vorliegen haben"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
-msgstr "Sie brauchen den Brief vorher <strong>nicht</strong> zu schwärzen. Das erledigen Sie später mit unserem Online-Tool."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "We will guide you through the process step-by-step."
-msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Should you experience problems, you can use <a class=\"alert-link\" href=\"${url}\">the older version</a> here. We welcome feedback!"
-msgstr "Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback freuen."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "We have redone this part of the app."
-msgstr "Wir haben diesen Bereich stark überarbeitet."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Drag the documents in the right order"
-msgstr "Ziehen Sie die Seiten in die richtige Reihenfolge"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "We will convert your images into a PDF"
-msgstr "Wir erstellen aus Ihren Bildern ein PDF-Dokument"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Change filename"
-msgstr "Dateiname ändern"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Documents available so far"
-msgstr "Bisher vorhandene Dokumente"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Have you received or sent the uploaded document?"
-msgstr "Haben Sie den hochgeladenen Brief erhalten oder versendet?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Is this the public body you have sent the letter to?"
-msgstr "Ist dies die Behörde, an die Sie den Brief gesendet haben?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Is this the public body that sent the letter?"
-msgstr "Ist dies die Behörde, von der der Brief stammt?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Which public body have you sent this letter to?"
-msgstr "An welche Behörde haben Sie den Brief gesendet?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Which public body has sent this letter?"
-msgstr "Von welcher Behörde stammt der Brief?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "When was the letter sent?"
-msgstr "Wann wurde der Brief versendet?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "The letter is registered mail"
-msgstr "Es handelt sich um einen gelben Brief"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Registered mail is a postal service which allows the sender proof of mailing via a receipt. The letter can have a special envelope."
-msgstr "Ein gelber Brief ist eine förmliche Zustellung mit Zustellungsurkunde. Normalerweise befindet sich solch ein Brief in einem gelben Umschlag, aber es gibt auch Ausnahmen."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Registered mail: what is the date stamped on the envelope?"
-msgstr "Gelber Brief: Welches Zustelldatum wurde auf dem Briefumschlag eingetragen?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Your request was resolved. Is this still the case after you have received the letter?"
-msgstr "Ihre Anfrage war bereits abgeschlossen. Ist dies nach Erhalt des Briefes immer noch der Fall?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Was your request resolved by this letter?"
-msgstr "Wurde ihre Anfrage durch Erhalt dieses Briefes abgeschlossen?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Your request had already been resolved. Is this still the case after you have sent the letter?"
-msgstr "Ihre Anfrage war bereits abgeschlossen. Ist dies nach Versenden des Briefes noch immer der Fall?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Was your request resolv by sending this letter?"
-msgstr "Wurde Ihre Anfrage durch Versenden dieses Briefes abgeschlossen?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "My request remains resolved."
-msgstr "Meine Anfrage ist nach wie vor abgeschlossen."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "My request is now unresolved."
-msgstr "Meine Anfrage läuft nun wieder."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Yes, the request is resolved."
-msgstr "Ja, Anfrage ist jetzt abgeschlossen."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "No, the request is not resolved yet."
-msgstr "Nein, Anfrage läuft noch."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "How would you characterize the result?"
-msgstr "Wie würde Sie das Ergebnis beschreiben?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "How much compensation does the public body demand?"
-msgstr "Welchen Betrag hat die Behörde verlangt?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Did the public body demand compensation?"
-msgstr "Hat die Behörde Kosten verlangt?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "You have noted that the public body had demanded compensation to the amount of €${amount}.<br/>Is this amount still correct?"
-msgstr "Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von ${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Which documents do you want to redact?"
-msgstr "Welche dieser Dokumente möchen Sie schwärzen?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "A document should be redacted when it contains information about yourself or the public body's employees."
-msgstr "Ein Dokument sollte geschwärzt werden, wenn es Informationen über Sie selbst oder Behördenmitarbeiter:innen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Select all"
-msgstr "Alle auswählen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Select none"
-msgstr "Keine auswählen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Redacting document ${current} of ${total}"
-msgstr "Dokument schwärzen ${current} von ${total}"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "You should redact:"
-msgstr "Das sollten Sie schwärzen:"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Your name and your address"
-msgstr "Ihren Namen und Ihre Adresse"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Names of public body employees"
-msgstr "Namen von Behördenmitarbeiter:innen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Signatures"
-msgstr "Unterschriften"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "E-mail addresses that end in @fragdenstaat.de"
-msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "I have technical difficulties / I need help"
-msgstr "Ich habe technische Probleme / benötige Hilfe"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "These documents will be added to the request:"
-msgstr "Diese Dokumente werden der Anfrage hinzugefügt:"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Documents added successfully"
-msgstr "Dokumente erfolgreich hinzugefügt"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Thank you for updating your request!"
-msgstr "Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht haben!"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Scan another document"
-msgstr "Weiteres Dokument scannen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Upload another file"
-msgstr "Weitere Dateien hochladen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "I have finished redacting"
-msgstr "Ich bin fertig mit Schwärzen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Important: Have you checked all pages?"
-msgstr "Wichtig: Haben Sie alle Seiten überprüft?"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Confirm"
-msgstr "Bestätigen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "The form has errors"
-msgstr "Das Formular enthält noch Fehler."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Your request is not public at the moment. The documents will not be public, either."
-msgstr "Ihre Anfrage ist derzeit nicht öffentlich. Diese Dokumente werden deshalb nicht öffentlich verfügbar."
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "See request"
-msgstr "Anfrage ansehen"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Done sorting"
-msgstr "Fertig mit Sortieren"
-
-#: froide/foirequest/views/message.py
-#: frontend/javascript/components/postupload/post-upload.vue
-msgid "Create PDF"
-msgstr "PDF erstellen"
-
 
 #: froide/foirequest/views/project.py
 msgid "Publish selected requests."
@@ -8399,11 +8382,15 @@ msgid "FOI Sites"
 msgstr "IFG-Seiten"
 
 #: froide/foisite/templates/foisite/banner.html
-#, python-format
+#, fuzzy, python-format
+#| msgid ""
+#| "It looks like you are visiting from %(country_name)s. Did you know that "
+#| "there is an <a href=\"%(url)s\">FOI site for %(country_name)s called "
+#| "%(name)s</a>?"
 msgid ""
 "It looks like you are visiting from %(country_name)s. Did you know that "
-"there is an <a href=\"%(url)s\">FOI site for %(country_name)s called "
-"%(name)s</a>?"
+"there is an <a href=\"%(url)s\" class=\"alert-link\">FOI site for "
+"%(country_name)s called %(name)s</a>?"
 msgstr ""
 "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
 "eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</a> "
@@ -9720,8 +9707,8 @@ msgid ""
 "it as proof of identity in future requests if necessary. I certify that I am "
 "the owner of this document. I understand that my consent is voluntary and "
 "that I can revoke it at any time with effect for the future. I have taken "
-"note of the information on the recommended redactions and the <a href="
-"\"{url_privacy}\" target=\"_blank\">data protection declaration</a>."
+"note of the information on the recommended redactions and the <a "
+"href=\"{url_privacy}\" target=\"_blank\">data protection declaration</a>."
 msgstr ""
 "Mit dem Anhaken willige ich ein, dass die von mir ausgewählte und "
 "geschwärzte Bilddatei von der Open Knowledge Foundation Deutschland e.V. "
@@ -9730,9 +9717,9 @@ msgstr ""
 "Behörden übermitteln kann. Zudem versichere ich, der im Nachweis angegebene "
 "Inhaber dieses Dokuments zu sein. Ich weiß, dass meine Einwilligung "
 "freiwillig ist und ich Sie jederzeit mit Wirkung für die Zukunft widerrufen "
-"kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a href="
-"\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe ich "
-"zur Kenntnis genommen."
+"kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a "
+"href=\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe "
+"ich zur Kenntnis genommen."
 
 #: froide/proof/forms.py
 msgid "Proof of identity"
@@ -10777,11 +10764,17 @@ msgid "Legal text"
 msgstr "Gesetzestext"
 
 #: froide/publicbody/templates/publicbody/show_foilaw.html
+#, fuzzy
+#| msgid ""
+#| "\n"
+#| "            This is a copy of the law, for which we can't guarantee "
+#| "correctness.\n"
+#| "          "
 msgid ""
 "\n"
-"            This is a copy of the law, for which we can't guarantee "
-"correctness.\n"
-"          "
+"                                This is a copy of the law, for which we "
+"can't guarantee correctness.\n"
+"                            "
 msgstr ""
 "\n"
 "Dies ist eine Kopie des Gesetzes, deren rechtliche Gültigkeit wir nicht "
@@ -11264,8 +11257,8 @@ msgstr ""
 #: froide/templates/error_base.html
 msgid "You can try searching or go back to the <a href=\"/\">Home page</a>."
 msgstr ""
-"Mit der Suche können Sie vielleicht finden, wonach Sie suchen – oder <a href="
-"\"/\">zurück zur Startseite</a>."
+"Mit der Suche können Sie vielleicht finden, wonach Sie suchen – oder <a "
+"href=\"/\">zurück zur Startseite</a>."
 
 #: froide/templates/footer.html
 msgid ""
@@ -11273,10 +11266,10 @@ msgid ""
 "Open Knowledge Foundation</a>. If you want to support Froide, please visit "
 "the <a href=\"https://github.com/okfde/froide\">repository on GitHub</a>."
 msgstr ""
-"Froide ist ein freies und Open Source Projekt der <a href=\"https://okfn.de"
-"\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen möchten, "
-"besuchen Sie bitte unser <a href=\"https://github.com/okfde/froide\">GitHub-"
-"Repo</a>"
+"Froide ist ein freies und Open Source Projekt der <a href=\"https://okfn."
+"de\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen "
+"möchten, besuchen Sie bitte unser <a href=\"https://github.com/okfde/"
+"froide\">GitHub-Repo</a>"
 
 #: froide/templates/footer.html froide/templates/header.html
 msgid "About"
@@ -11811,10 +11804,6 @@ msgstr "Datei-Uploader-Fenster (Esc drücken zum Schließen)"
 #, python-brace-format
 msgid "%{complete} of %{total}"
 msgstr "%{complete} von %{total}"
-
-#: froide/upload/forms.py
-msgid "Done"
-msgstr "Abgeschlossen"
 
 #: froide/upload/forms.py
 #, python-brace-format
@@ -12354,8 +12343,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Anzahl der Nutzer:innen"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
-#~ "\">the Open Knowledge Foundation</a>."
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn."
+#~ "org\">the Open Knowledge Foundation</a>."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
 #~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
@@ -12607,8 +12596,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "status."
 #~ msgstr ""
 #~ "Diese Anfrage hat eine Antwort erhalten und ist in einem unbekannten "
-#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href="
-#~ "\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
+#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a "
+#~ "href=\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
 #~ "Status."
 
 #, python-format
@@ -12616,9 +12605,9 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "<b>Hey %(name)s</b>, please read the latest response and <a href=\"#set-"
 #~ "status\" data-tabgo=\"tab\">set a new status for this request</a>!"
 #~ msgstr ""
-#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a href="
-#~ "\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für diese "
-#~ "Anfrage an!</a>"
+#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a "
+#~ "href=\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für "
+#~ "diese Anfrage an!</a>"
 
 #, python-format
 #~ msgid ""
@@ -12630,19 +12619,19 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ " Bitte handeln Sie jetzt:"
 
 #~ msgid ""
-#~ "Have you received a reply by <b>postal mail</b>? &rarr; <a data-tabgo="
-#~ "\"tab\" href=\"#add-postal-reply\">Add it to the records below!</a>"
+#~ "Have you received a reply by <b>postal mail</b>? &rarr; <a data-"
+#~ "tabgo=\"tab\" href=\"#add-postal-reply\">Add it to the records below!</a>"
 #~ msgstr ""
-#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-tabgo="
-#~ "\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort unbedingt "
-#~ "hinzu!</a>"
+#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-"
+#~ "tabgo=\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort "
+#~ "unbedingt hinzu!</a>"
 
 #~ msgid ""
 #~ "Have you not gotten any reply? &rarr; <a data-tabgo=\"tab\" href=\"#write-"
 #~ "message\">Write a reminder to the public body!</a>"
 #~ msgstr ""
-#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" href="
-#~ "\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
+#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" "
+#~ "href=\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
 
 #~ msgid "This request is <strong>not public</strong> at the moment."
 #~ msgstr "Diese Anfrage ist momentan <strong>nicht öffentlich</strong>."
@@ -13510,13 +13499,13 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "Benachrichtigungs-E-Mails."
 
 #~ msgid ""
-#~ "This email address already has an account. <a href=\"%s?simple\" class="
-#~ "\"target-small\">Please login using that email address in order to follow "
-#~ "this account.</a>"
+#~ "This email address already has an account. <a href=\"%s?simple\" "
+#~ "class=\"target-small\">Please login using that email address in order to "
+#~ "follow this account.</a>"
 #~ msgstr ""
-#~ "Diese E-Mail-Adresse hat schon einen Account. <a href=\"%s?simple\" class="
-#~ "\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse ein um "
-#~ "Benachrichtigungen zu erhalten.</a>"
+#~ "Diese E-Mail-Adresse hat schon einen Account. <a href=\"%s?simple\" "
+#~ "class=\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse "
+#~ "ein um Benachrichtigungen zu erhalten.</a>"
 
 #~ msgid "TIME_FORMAT"
 #~ msgstr "H:i"
@@ -13722,19 +13711,19 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "new status."
 #~ msgstr ""
 #~ "Diese Anfrage hat eine Antwort erhalten und ist in einem unbekannten "
-#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href="
-#~ "\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
+#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a "
+#~ "href=\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
 #~ "Status."
 
 #, fuzzy
 #~ msgid ""
-#~ "&lt;b>Hey %(name)s&lt;/b>, please read the latest response and &lt;a href="
-#~ "\"#set-status\" data-tabgo=\"tab\">set a new status for this request&lt;/"
-#~ "a>!"
+#~ "&lt;b>Hey %(name)s&lt;/b>, please read the latest response and &lt;a "
+#~ "href=\"#set-status\" data-tabgo=\"tab\">set a new status for this "
+#~ "request&lt;/a>!"
 #~ msgstr ""
-#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a href="
-#~ "\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für diese "
-#~ "Anfrage an!</a>"
+#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a "
+#~ "href=\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für "
+#~ "diese Anfrage an!</a>"
 
 #, fuzzy
 #~ msgid ""
@@ -13742,17 +13731,17 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "data-tabgo=\"tab\" href=\"#add-postal-reply\">Add it to the records below!"
 #~ "&lt;/a>"
 #~ msgstr ""
-#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-tabgo="
-#~ "\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort unbedingt "
-#~ "hinzu!</a>"
+#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-"
+#~ "tabgo=\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort "
+#~ "unbedingt hinzu!</a>"
 
 #, fuzzy
 #~ msgid ""
-#~ "Have you not gotten any reply? &amp;rarr; &lt;a data-tabgo=\"tab\" href="
-#~ "\"#write-message\">Write a reminder to the public body!&lt;/a>"
+#~ "Have you not gotten any reply? &amp;rarr; &lt;a data-tabgo=\"tab\" "
+#~ "href=\"#write-message\">Write a reminder to the public body!&lt;/a>"
 #~ msgstr ""
-#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" href="
-#~ "\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
+#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" "
+#~ "href=\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
 
 #, fuzzy
 #~ msgid "This request is &lt;strong>not public&lt;/strong> at the moment."
@@ -13776,8 +13765,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a href=\"%(urlp)s\">"
-#~ "%(count)s other public bodies&lt;/a>"
+#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a "
+#~ "href=\"%(urlp)s\">%(count)s other public bodies&lt;/a>"
 #~ msgstr ""
 #~ "an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s "
 #~ "andere Behörden</a>"
@@ -13836,8 +13825,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "If you need assistance, you may reference this error as &lt;strong>"
-#~ "%(ref)s&lt;/strong>."
+#~ "If you need assistance, you may reference this error as &lt;"
+#~ "strong>%(ref)s&lt;/strong>."
 #~ msgstr ""
 #~ "Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: "
 #~ "<strong>%(ref)s</strong>."
@@ -14085,13 +14074,13 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid ""
 #~ "\n"
-#~ "            Check your emails for your account <strong class=\"highlight"
-#~ "\">%(email)s</strong>\n"
+#~ "            Check your emails for your account <strong "
+#~ "class=\"highlight\">%(email)s</strong>\n"
 #~ "          "
 #~ msgstr ""
 #~ "\n"
-#~ "            Rufen Sie Ihre E-Mails für diese Adresse ab: <strong class="
-#~ "\"highlight\">%(email)s</strong>\n"
+#~ "            Rufen Sie Ihre E-Mails für diese Adresse ab: <strong "
+#~ "class=\"highlight\">%(email)s</strong>\n"
 #~ "          "
 
 #~ msgid "Login using that email address"
@@ -14116,11 +14105,11 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "Ihre Postadresse (<a href=\"%(url)s#change-address\">hier ändern</a>):"
 
 #~ msgid ""
-#~ "You do not have a postal address set. <a href=\"%(url)s#change-address"
-#~ "\">You can enter enter an address here.</a>"
+#~ "You do not have a postal address set. <a href=\"%(url)s#change-"
+#~ "address\">You can enter enter an address here.</a>"
 #~ msgstr ""
-#~ "Sie haben keine Postadresse hinterlegt. <a href=\"%(url)s#change-address"
-#~ "\">Sie können hier eine Adresse eingeben.</a>"
+#~ "Sie haben keine Postadresse hinterlegt. <a href=\"%(url)s#change-"
+#~ "address\">Sie können hier eine Adresse eingeben.</a>"
 
 #~ msgid "The request '%(request)s' received a postal reply."
 #~ msgstr "Die Anfrage „%(request)s“ hat eine Antwort per Post erhalten."
@@ -14314,9 +14303,9 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Vorschau im Browser"
 
 #~ msgid ""
-#~ "This email address already has an account. <a href=\"%(url)s?simple&email="
-#~ "%(email)s\" class=\"btn btn-warning target-small\">Click here to login "
-#~ "using that email address.</a>"
+#~ "This email address already has an account. <a href=\"%(url)s?"
+#~ "simple&email=%(email)s\" class=\"btn btn-warning target-small\">Click "
+#~ "here to login using that email address.</a>"
 #~ msgstr ""
 #~ "Diese E-Mail-Adresse hat schon einen Account. <a href=\"%(url)s?"
 #~ "simple&email=%(email)s\" class=\"btn btn-warning target-small\">Klicken "
