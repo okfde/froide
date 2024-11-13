@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-11-13 01:46+0100\n"
-"PO-Revision-Date: 2024-10-22 11:09+0000\n"
+"PO-Revision-Date: 2024-11-13 19:58+0000\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -4197,11 +4197,12 @@ msgstr "{name}_konvertiert{ext}"
 #: froide/foirequest/tasks.py
 #, python-brace-format
 msgid "Unprocessed FOI Mail: {count}"
-msgstr ""
+msgstr "Unverarbeitete IF-Mail: {count}"
 
 #: froide/foirequest/tasks.py
 msgid "There are unprocessed FOI Mails, inform system administrators!"
 msgstr ""
+"Es gibt unverarbeitete IF-Mails, System-Administrator*innen informieren!"
 
 #: froide/foirequest/templates/admin/foirequest/foimessage/add_comment.html
 msgid "Add comment to messages"
@@ -7975,7 +7976,7 @@ msgstr "PDF erstellen"
 
 #: froide/foirequest/views/message.py
 msgid "Uncheck to leave unpublished for now"
-msgstr ""
+msgstr "Deaktivieren um zunächst unveröffentlicht zu lassen"
 
 #: froide/foirequest/views/message.py
 #, python-format
