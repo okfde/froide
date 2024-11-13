@@ -396,7 +396,7 @@ def redact_attachment_task(att_id, target_id, instructions):
 
     target.can_approve = True
     target.pending = False
-    if instructions["auto_approve"]:
+    if instructions.get("auto_approve"):
         target.approve_and_save()
         FoiAttachment.attachment_approved.send(sender=target, user=None, redacted=True)
     else:
