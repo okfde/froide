@@ -30,6 +30,8 @@ export default defineConfig({
         fileuploader: './frontend/javascript/fileuploader.js',
         filingcabinet:
           'node_modules/@okfde/filingcabinet/frontend/javascript/filingcabinet.js',
+        fcdownloader:
+          'node_modules/@okfde/filingcabinet/frontend/javascript/fcdownloader.js',
         geomatch: './frontend/javascript/geomatch.js',
         main: './frontend/javascript/main.ts',
         makerequest: './frontend/javascript/makerequest.js',
