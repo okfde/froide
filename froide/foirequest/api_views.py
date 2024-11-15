@@ -351,7 +351,7 @@ class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
 def optimize_message_queryset(request, qs):
     atts = get_read_foiattachment_queryset(
         request, queryset=FoiAttachment.objects.filter(belongs_to__in=qs)
-    )
+    ).prefetch_related("belongs_to", "document", "converted", "redacted")
     return qs.prefetch_related(
         "request",
         "request__user",
