@@ -293,7 +293,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     def get_content(self, obj):
         if obj.content_hidden and not self._is_authenticated_read(obj):
             return ""
-        return obj.get_subject()
+        return obj.get_content()
 
     def get_redacted_subject(self, obj):
         if self._is_authenticated_read(obj):
