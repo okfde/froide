@@ -315,7 +315,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             obj.visible_attachments = get_read_foiattachment_queryset(
                 self.context["request"],
                 queryset=FoiAttachment.objects.filter(belongs_to=obj),
-            )
+            ).prefetch_related("belongs_to", "document", "converted", "redacted")
 
         serializer = FoiAttachmentSerializer(
             obj.visible_attachments,  # already filtered by prefetch
