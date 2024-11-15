@@ -4,14 +4,18 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.core import mail
-from django.test import TestCase
+from django.db import connection
+from django.test import RequestFactory, TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from django.utils import timezone
 
 import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
 
+from froide.foirequest.api_views import FoiMessageSerializer
 from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
@@ -391,3 +395,60 @@ def test_redacted_description(world, client):
     assert fr.description not in str(response.json())
     assert fr.description_redacted in str(response.json())
     assert fr.description_redacted in str(response.json())
+
+
+@pytest.fixture
+def many_attachment_foimessage(foi_message):
+    for i in range(100):
+        red_att = FoiAttachment(
+            belongs_to=foi_message,
+            name=f"{i}_redacted.pdf",
+            is_redacted=True,
+            filetype="application/pdf",
+            approved=True,
+            can_approve=True,
+        )
+        red_att.approve_and_save()
+        orig_att = FoiAttachment(
+            belongs_to=foi_message,
+            name=f"{i}.pdf",
+            is_redacted=False,
+            filetype="application/pdf",
+            approved=False,
+            can_approve=False,
+            redacted=red_att,
+        )
+        orig_att.approve_and_save()
+    return foi_message
+
+
+def selective_equal_dicts(a, b, ignore_keys):
+    ka = set(a).difference(ignore_keys)
+    kb = set(b).difference(ignore_keys)
+    return ka == kb and all(a[k] == b[k] for k in ka)
+
+
+@pytest.mark.django_db
+def test_foi_message_serializer_performance(world, client, many_attachment_foimessage):
+    request = RequestFactory().get("/")
+    request.user = AnonymousUser()
+
+    with CaptureQueriesContext(connection) as ctx:
+        serializer = FoiMessageSerializer(
+            many_attachment_foimessage, context={"request": request}
+        )
+        data = serializer.data
+        assert len(ctx.captured_queries) < 10
+
+    with CaptureQueriesContext(connection) as ctx:
+        api_data = client.get(
+            reverse("api:message-detail", kwargs={"pk": many_attachment_foimessage.pk})
+        )
+        assert len(ctx.captured_queries) < 10
+        assert api_data.json().keys() == data.keys()
+        assert len(api_data.json()["attachments"]) == len(data["attachments"])
+        for (
+            a,
+            b,
+        ) in zip(api_data.json()["attachments"], data["attachments"], strict=True):
+            assert selective_equal_dicts(a, b, {"file_url"})
