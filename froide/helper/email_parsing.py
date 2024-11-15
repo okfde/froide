@@ -12,8 +12,8 @@ from contextlib import closing
 from dataclasses import dataclass, field
 from datetime import datetime
 from datetime import timezone as dt_timezone
-from email.header import decode_header
-from email.message import EmailMessage
+from email.header import Header, decode_header
+from email.message import EmailMessage, Message
 from email.parser import BytesParser as Parser
 from email.utils import getaddresses, parseaddr, parsedate_to_datetime
 from io import BytesIO
@@ -87,7 +87,7 @@ class EmailAttachment(BytesIO):
 
 
 def parse_email_body(
-    msgobj: EmailMessage,
+    msgobj: Message,
 ) -> Tuple[List[str], List[str], List[EmailAttachment]]:
     body = []
     html = []
@@ -141,7 +141,7 @@ def parse_dispositions(dispo):
     return dispo_name, dispo_dict
 
 
-def parse_attachment(message_part, ignore_content_types=None):
+def parse_attachment(message_part: Message, ignore_content_types=None):
     # this gives more info then message_part.get_content_disposition()
     content_disposition = message_part.get("Content-Disposition", None)
     content_type = message_part.get_content_type()
@@ -245,6 +245,8 @@ def parse_header_field(field):
         # But encoded words may have been split up!
         # Let's remove newlines that are not preceded by
         # encoded word terminator and try again
+        if isinstance(field, Header):
+            field = str(field)
         field = re.sub(r"(?<!\?\=)\n ", "=20", field)
         decodefrag = decode_header(field)
 
