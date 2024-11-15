@@ -1,0 +1,10 @@
+Return-Path: <MAILER-DAEMON>
+Message-Id: <12345678@localhost>
+From:  Mitgliederservice  <1234@localhost>
+Subject: utf8-subject - =?utf-8?Q?=C3=A4=C3=B6=C3=BC=C3=9F?= - 🥲
+To: mail@mail.example.com
+Content-Transfer-Encoding: 7bit
+Content-Type: text/html; charset=UTF-8
+Date: Wed, 13 Nov 2024 20:49:29 +0100
+
+EMail-Body
