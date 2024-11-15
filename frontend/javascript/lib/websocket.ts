@@ -64,13 +64,13 @@ class Room {
       this.trigger(data.type, data)
     }
     this.socket.onerror = (e) => {
-      console.error(e)
+      console.error('websocket error', e)
     }
     this.socket.onclose = () => {
       this.clearHeartbeat()
       window.removeEventListener('beforeunload', this.onunload)
       if (!this.closed) {
-        console.error('Socket closed unexpectedly. Retrying...')
+        console.info('Socket closed unexpectedly. Retrying...')
         this.setupRetry()
       }
     }
