@@ -70,7 +70,7 @@ def approve_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
         FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
-    if not att.can_approve and not request.user.is_staff:
+    if not att.can_approve and not request.user.is_crew:
         return render_403(request)
 
     # hard guard against publishing of non publishable requests

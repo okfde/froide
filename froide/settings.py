@@ -119,6 +119,10 @@ class Base(Configuration):
 
     MANAGERS = ADMINS
 
+    # instead of relying on user's `is_staff` attribute, you can also
+    # specify a user group that should be considered as "crew"
+    CREW_GROUP = None
+
     INTERNAL_IPS = values.TupleValue(("127.0.0.1",))
 
     # ############## PATHS ###############
