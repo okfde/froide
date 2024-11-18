@@ -1,3 +1,5 @@
+// TODO rename this file
+
 import { createAppWithProps } from './lib/vue-helper'
 
 import FileUploader from './components/upload/file-uploader.vue'
