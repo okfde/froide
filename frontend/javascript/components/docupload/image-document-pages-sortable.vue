@@ -12,17 +12,12 @@ const props = defineProps({
   dense: Boolean
 })
 
-// once updated to Vue>=3.4
-// we might be able to simplify this to
-//   const pages = defineModel()
-// this is even more manual than supported by Vue3.2
-// it was the only way to get the interaction with useSortable working
 const pages = computed({
   get: () => props.pages,
-  set: (val) => emit('update:pages', val)
+  set: (val) => emit('resorted', val.map((page, i) => ({ ...page, pageNum: i + 1 })))
 })
 
-const emit = defineEmits(['update:pages', 'pageupdated', 'splitpages'])
+const emit = defineEmits(['resorted', 'pageupdated', 'splitpages'])
 
 const pagesEl = ref()
 
