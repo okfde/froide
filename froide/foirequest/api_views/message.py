@@ -2,6 +2,11 @@ from django.contrib.auth import get_user_model
 
 from django_filters import rest_framework as filters
 from rest_framework import permissions, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import mixins
+
+from froide.foirequest.models.message import FoiMessageDraft
 
 from ..auth import (
     get_read_foimessage_queryset,
@@ -11,7 +16,11 @@ from ..permissions import (
     OnlyEditableWhenDraftPermission,
     WriteFoiRequestPermission,
 )
-from ..serializers import FoiMessageSerializer, optimize_message_queryset
+from ..serializers import (
+    FoiMessageDraftSerializer,
+    FoiMessageSerializer,
+    optimize_message_queryset,
+)
 
 User = get_user_model()
 
@@ -19,13 +28,36 @@ User = get_user_model()
 class FoiMessageFilter(filters.FilterSet):
     class Meta:
         model = FoiMessage
-        fields = ("request", "kind", "is_response", "is_draft")
+        fields = ("request", "kind", "is_response")
 
 
-class FoiMessageViewSet(viewsets.ModelViewSet):
+class FoiMessageDraftFilter(filters.FilterSet):
+    class Meta:
+        model = FoiMessageDraft
+        fields = ("request",)
+
+
+class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FoiMessageSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiMessageFilter
+
+    def get_queryset(self):
+        qs = get_read_foimessage_queryset(self.request).order_by()
+        return self.optimize_query(qs)
+
+    def optimize_query(self, qs):
+        return optimize_message_queryset(self.request, qs)
+
+
+class FoiMessageDraftViewSet(
+    FoiMessageViewSet,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+):
+    serializer_class = FoiMessageDraftSerializer
+    filterset_class = FoiMessageDraftFilter
     required_scopes = ["make:message"]
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
@@ -34,8 +66,18 @@ class FoiMessageViewSet(viewsets.ModelViewSet):
     ]
 
     def get_queryset(self):
-        qs = get_read_foimessage_queryset(self.request).order_by()
+        qs = get_read_foimessage_queryset(
+            self.request, queryset=FoiMessageDraft.objects.all()
+        ).order_by()
         return self.optimize_query(qs)
 
-    def optimize_query(self, qs):
-        return optimize_message_queryset(self.request, qs)
+    @action(detail=True, methods=["post"])
+    def publish(self, request, pk=None):
+        message = self.get_object()
+        message.is_draft = False
+        message.save()
+
+        serializer = FoiMessageSerializer(
+            message, context=self.get_serializer_context()
+        )
+        return Response(serializer.data)
