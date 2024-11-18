@@ -110,6 +110,7 @@ class ApiTest(TestCase):
         response = self.client.get("/api/v1/request/search/?q=Number")
         self.assertEqual(response.status_code, 200)
 
+    @pytest.mark.elasticsearch
     def test_search_similar(self):
         factories.delete_index()
         search_url = "/api/v1/request/search/"

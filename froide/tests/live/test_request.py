@@ -42,6 +42,7 @@ def do_login(page, live_server, navigate=True):
         expect(page.locator("#navbaraccount-link")).to_have_count(1)
 
 
+@pytest.mark.elasticsearch
 @pytest.mark.django_db
 def test_make_not_logged_in_request(page, live_server, public_body_with_index):
     pb = PublicBody.objects.all().first()
@@ -120,6 +121,7 @@ def test_make_not_logged_in_request_to_public_body(page, live_server, world):
     assert req.status == FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
 
 
+@pytest.mark.elasticsearch
 @pytest.mark.django_db
 def test_make_logged_in_request(page, live_server, public_body_with_index, dummy_user):
     do_login(page, live_server)
@@ -227,6 +229,7 @@ def test_collapsed_menu(page, live_server):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
     [("", "successful"), ("successful", "refused")],
