@@ -67,6 +67,7 @@
     "lodash.sortby": "^4.7.0",
     "lodash.throttle": "^4.1.1",
     "pdfjs-dist": "^2.9.359",
+    "pinia": "^2.2.6",
     "sortablejs": "^1",
     "string.prototype.repeat": "^1.0.0",
     "vue": "^3.2.38",

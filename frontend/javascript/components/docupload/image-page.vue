@@ -2,12 +2,14 @@
   <div class="page" :class="{ 'page--dense': dense }">
     <div class="page-frame">
       <img
-        v-if="pageUrl"
+        v-if="page.file_url"
         ref="pageImage"
         :alt="page.name"
         :title="page.name"
         class="page-image"
-        :src="pageUrl" />
+        :src="page.file_url"
+        :style="{ transform: `rotate(${totalRotate}deg)`}"
+        />
     </div>
     <div class="page-controls">
       <div class="page-control" v-if="!hideRotate">
@@ -134,6 +136,7 @@ export default {
       this.$emit('splitpages', this.page.pageNum)
     },
     rotatePage() {
+      this.$emit('rotatepage', this.page.pageNum)
       const degree = ((this.page.rotate || 0) + 90) % 360
       this.$emit('pageupdated', {
         pageNum: this.pageNum,
@@ -231,6 +234,7 @@ export default {
   max-height: 100%;
   border: 1px solid #bbb;
   image-orientation: none; /* Always read exif ourselves */
+  transition: transform 1s;
 }
 .page-controls {
   display: flex;
