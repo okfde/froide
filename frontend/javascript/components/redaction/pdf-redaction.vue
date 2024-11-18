@@ -198,7 +198,7 @@
           v-if="!minimalUi && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
           class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25">
           <button v-if="hasRedactions || hasPassword" class="btn btn-dark" @click="redact">
-            <i class="fa fa-paint-brush me-2" />
+            <i class="fa fa-check me-2" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
             </template>
@@ -207,7 +207,7 @@
             </template>
           </button>
           <form
-            v-if="canPublish && !hasPassword"
+            v-if="canPublish && !hasPassword && !hasRedactions"
             method="post"
             id="redaction-submit-form"
             :action="config.urls.publishUrl"
@@ -218,20 +218,13 @@
               :value="csrfToken"
             />
             <button
-              class="btn"
-              :class="{
-                'btn-success': !hasRedactions,
-                'btn-outline-secondary': hasRedactions
-              }"
+              class="btn btn-dark"
               type="submit"
               @click="confirmNoRedactions"
             >
               <i class="fa fa-check me-2" />{{ i18n.publishWithoutRedaction }}
             </button>
           </form>
-          <a v-else class="btn btn-secondary" :href="attachmentUrl">
-            {{ i18n.cancel }}
-          </a>
         </div>
       </div>
     </div>

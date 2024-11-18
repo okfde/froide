@@ -9,6 +9,9 @@
 {% block app_body %}
     <div class="row">
         <div class="col-lg-12">
+            <div>
+                <a href="{{ attachment.get_anchor_url }}" class="text-decoration-none">&larr; <u>{% trans "Cancel redaction" %} / {% trans "Back" %}</u></a>
+            </div>
             <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
         </div>
     </div>
