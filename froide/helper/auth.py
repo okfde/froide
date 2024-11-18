@@ -148,7 +148,7 @@ def get_read_queryset(
     codename = get_permission_codename("view", opts)
     if (
         token is None
-        and user.is_staff
+        and user.is_crew
         and user.has_perm("%s.%s" % (opts.app_label, codename))
     ):
         return qs
@@ -188,7 +188,7 @@ def get_write_queryset(
     codename = get_permission_codename("change", opts)
     if (
         token is None
-        and user.is_staff
+        and user.is_crew
         and user.has_perm("%s.%s" % (opts.app_label, codename))
     ):
         return qs
@@ -225,9 +225,9 @@ def get_user_filter(request, teams=None, fk_path=None):
     return filter_arg
 
 
-def require_staff(view_func):
+def require_crew(view_func):
     def decorator(request, *args, **kwargs):
-        if not hasattr(request, "user") or not request.user.is_staff:
+        if not request.user.is_crew:
             raise PermissionDenied
         return view_func(request, *args, **kwargs)
 

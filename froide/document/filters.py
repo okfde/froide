@@ -58,7 +58,7 @@ class DocumentFilter(FCDocumentFilter):
 
 
 def get_portal_queryset(request):
-    if not request.user.is_staff:
+    if not request.user.is_crew:
         return DocumentPortal.objects.filter(public=True)
     return DocumentPortal.objects.all()
 
