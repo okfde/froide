@@ -233,8 +233,9 @@
       class="preview py-3 position-relative"
       :class="{ ['preview--do-paint']: doPaint }"
       ref="containerWrapper"
-      @wheel="mouseWheel">
-      <!--<div ref="containerWrapper" class="overflow-auto">-->
+      @wheel="mouseWheel"
+      @pointerleave="pointerLeaveWrapper"
+      >
         <div
           :id="containerId"
           ref="container"
@@ -972,6 +973,12 @@ export default {
         return
       }
       this.mouseMove(e, true)
+    },
+    pointerLeaveWrapper(e) {
+      if (!this.doPaint) {
+        panzoom.handleUp(e)
+        this.isDragging = false
+      }
     },
     mouseWheel(e) {
       if (!this.doPaint) {
