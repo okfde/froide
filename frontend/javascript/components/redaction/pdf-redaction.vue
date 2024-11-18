@@ -141,7 +141,7 @@
             :disabled="!canUndo"
             :title="i18n.removeAllRedaction"
             @click="undoAll">
-            <i class="fa fa-lg fa-eraser" />
+            <i class="fa fa-lg fa-trash" />
             <small class="d-none d-xl-block">{{ i18n.removeAllRedaction }}</small>
           </button>
         </div>
@@ -149,7 +149,7 @@
         <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes py-2">
           <button
             class="btn"
-            :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
+            :class="{ 'btn-outline-secondary': !textOnly, 'btn-secondary': textOnly }"
             :title="i18n.toggleText"
             @click.stop="toggleText"
           >
@@ -159,8 +159,8 @@
           <button
             class="btn"
             :class="{
-              'btn-outline-info': !textDisabled,
-              'btn-info': textDisabled
+              'btn-outline-secondary': !textDisabled,
+              'btn-secondary': textDisabled
             }"
             :title="i18n.disableText"
             @click.stop="toggleDrawing"
