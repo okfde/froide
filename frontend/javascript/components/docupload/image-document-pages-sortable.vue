@@ -6,23 +6,31 @@ other alternatives did not work (vuedraggable-next and a different thin Sortable
 import { useSortable } from '@vueuse/integrations/useSortable'
 import { computed, defineEmits, ref } from 'vue'
 import ImagePage from './image-page.vue'
+import { useAttachments } from './lib/attachments'
+// import { useAttachmentsStore } from './lib/attachments-store'
+// import { pinia } from '../../lib/pinia'
+
+// const attachments = useAttachmentsStore(pinia)
+const { attachments, splitPages, rotatePage, convertImage } = useAttachments()
 
 const props = defineProps({
-  pages: Array,
+  idx: Number,
+  image: Object,
   dense: Boolean
 })
 
-// once updated to Vue>=3.4
-// we might be able to simplify this to
-//   const pages = defineModel()
-// this is even more manual than supported by Vue3.2
-// it was the only way to get the interaction with useSortable working
+/*
 const pages = computed({
-  get: () => props.pages,
-  set: (val) => emit('update:pages', val)
+  get: () => props.image.pages,
+  set: (val) => props.image.pages = val.map((page, i) => ({ ...page, pageNum: i + 1 }))
+})
+*/
+
+const pages = computed(() => {
+  return attachments.images[props.idx].pages
 })
 
-const emit = defineEmits(['update:pages', 'pageupdated', 'splitpages'])
+const emit = defineEmits(['resorted', 'pageupdated', 'splitpages'])
 
 const pagesEl = ref()
 
@@ -40,6 +48,8 @@ useSortable(pagesEl, pages, { animation: 200 })
       :hide-rotate="dense"
       :hide-split="dense"
       @pageupdated="emit('pageupdated', $event)"
-      @splitpages="emit('splitpages', $event)" />
+      @splitpages="splitPages(image, $event)"
+      @rotatepage="rotatePage(page)" />
   </div>
+  <div><button type="button" @click="convertImage(image)">convert i</button></div>
 </template>

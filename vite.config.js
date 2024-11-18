@@ -27,6 +27,7 @@ export default defineConfig({
       input: {
         document: './frontend/javascript/document.js',
         docupload: './frontend/javascript/docupload.js',
+        attachmentmanager: './frontend/javascript/attachmentmanager.js',
         fileuploader: './frontend/javascript/fileuploader.js',
         filingcabinet:
           'node_modules/@okfde/filingcabinet/frontend/javascript/filingcabinet.js',
