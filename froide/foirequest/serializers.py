@@ -1,4 +1,5 @@
 from django.db.models import Prefetch
+from django.template.defaultfilters import default
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -7,7 +8,11 @@ from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
 from froide.foirequest.forms.message import TransferUploadForm
-from froide.foirequest.models.message import MESSAGE_KIND_USER_ALLOWED, MessageKind
+from froide.foirequest.models.message import (
+    MESSAGE_KIND_USER_ALLOWED,
+    FoiMessageDraft,
+    MessageKind,
+)
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
 from froide.publicbody.serializers import (
@@ -175,6 +180,26 @@ class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
             return get_write_foirequest_queryset(request)
 
 
+class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
+    def __init__(self, **kwargs):
+        super().__init__("api:message-detail", **kwargs)
+
+    def get_url(self, obj, view_name, request, format):
+        # Unsaved objects will not yet have a valid URL.
+        if hasattr(obj, "pk") and obj.pk in (None, ""):
+            return None
+
+        lookup_value = getattr(obj, self.lookup_field)
+        kwargs = {self.lookup_url_kwarg: lookup_value}
+
+        if isinstance(obj, FoiMessageDraft):
+            view_name = "api:message-draft-detail"
+        else:
+            view_name = "api:message-detail"
+
+        return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
+
+
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(view_name="api:message-detail")
     request = FoiRequestRelatedField()
@@ -193,8 +218,8 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     sender = serializers.CharField(read_only=True)
     url = serializers.CharField(source="get_absolute_domain_url", read_only=True)
     status = serializers.ChoiceField(choices=FoiRequest.STATUS.choices, required=False)
-    kind = serializers.ChoiceField(choices=MessageKind.choices, required=True)
-    is_draft = serializers.BooleanField(required=False)
+    kind = serializers.ChoiceField(choices=MessageKind.choices, default="post")
+    is_draft = serializers.BooleanField(read_only=True)
     status_name = serializers.CharField(source="get_status_display", read_only=True)
     not_publishable = serializers.BooleanField(read_only=True)
     timestamp = serializers.DateTimeField(default=timezone.now)
@@ -289,6 +314,15 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         return value
 
 
+class FoiMessageDraftSerializer(FoiMessageSerializer):
+    resource_uri = serializers.HyperlinkedIdentityField(
+        view_name="api:message-draft-detail"
+    )
+
+    class Meta(FoiMessageSerializer.Meta):
+        model = FoiMessageDraft
+
+
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name="api:attachment-detail", lookup_field="pk"
@@ -303,9 +337,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field="pk",
         read_only=True,
     )
-    belongs_to = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name="api:message-detail"
-    )
+    belongs_to = FoiMessageRelatedField(read_only=True)
     document = DocumentSerializer()
     site_url = serializers.CharField(source="get_absolute_domain_url", read_only=True)
     anchor_url = serializers.CharField(source="get_domain_anchor_url", read_only=True)
