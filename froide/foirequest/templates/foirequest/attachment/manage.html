@@ -70,9 +70,11 @@
             <h4>{% translate "Other files" %}</h4>
         </template>
         </document-uploader>
+        <attachment-manager id="attachment-manager" :message="{{ message_json }}" :config="{{ config_json }}" />
         <p class="text-end">
             <a href="{{ message.get_absolute_url }}" class="btn btn-secondary">{% trans "Return to message" %}</a>
         </p>
     </div>
     {% addfrontendbuild "docupload.js" %}
+    {% addfrontendbuild "attachmentmanager.js" %}
 {% endblock %}
