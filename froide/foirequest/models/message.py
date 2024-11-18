@@ -37,8 +37,18 @@ class FoiMessageManager(models.Manager):
             qs = qs.filter(**extra_filters)
         return qs, "timestamp"
 
-    def get_drafts(self, drafts=True):
-        return super().get_queryset().filter(is_draft=drafts)
+    def get_queryset(self):
+        return super().get_queryset().filter(is_draft=False)
+
+
+class FoiMessageDraftManager(FoiMessageManager):
+    def get_queryset(self):
+        # need to call models.Manager, since FoiMessageManager removes drafts
+        return super(models.Manager, self).get_queryset().filter(is_draft=True)
+
+    def create(self, **kwargs):
+        kwargs.setdefault("is_draft", True)
+        return super().create(**kwargs)
 
 
 class MessageTag(TagBase):
@@ -742,6 +752,15 @@ class FoiMessage(models.Model):
             else:
                 update = {"content_rendered_anon": content}
             FoiMessage.objects.filter(id=self.id).update(**update)
+
+
+class FoiMessageDraft(FoiMessage):
+    objects = FoiMessageDraftManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = _("Freedom of Information Message Draft")
+        verbose_name_plural = _("Freedom of Information Message Drafts")
 
 
 class Delivery(models.TextChoices):

@@ -1,7 +1,13 @@
 from .attachment import FoiAttachment
 from .deferred import DeferredMessage
 from .draft import RequestDraft
-from .message import DeliveryStatus, FoiMessage, MessageTag, TaggedMessage
+from .message import (
+    DeliveryStatus,
+    FoiMessage,
+    FoiMessageDraft,
+    MessageTag,
+    TaggedMessage,
+)
 from .project import FoiProject
 from .request import FoiRequest, TaggedFoiRequest
 from .suggestion import PublicBodySuggestion
@@ -12,6 +18,7 @@ __all__ = [
     "FoiRequest",
     "TaggedFoiRequest",
     "FoiMessage",
+    "FoiMessageDraft",
     "FoiAttachment",
     "FoiEvent",
     "DeferredMessage",
