@@ -58,60 +58,10 @@
         </div>
       </div>
     </div>
-    <div class="row toolbar">
+    <div class="row toolbar sticky-top z-3">
       <div
         v-if="ready"
         class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light">
-        <div
-          class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
-          <input
-            type="radio"
-            class="btn-check"
-            name="pdfredaction-tool"
-            value="paint"
-            id="btn-check-paint"
-            v-model="tool"
-            />
-          <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
-            they overstay their welcome and get in the way. As a simple workaround,
-            we make them autohide after a timeout. -->
-          <label
-            class="btn btn-outline-secondary d-flex"
-            v-bs-tooltip.focus-autohide
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            tabindex="0"
-            :title="i18n.redactRedactTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
-            for="btn-check-paint">
-            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
-            <div class="align-self-center">
-              <i class="fa fa-lg fa-paint-brush" />
-              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
-            </div>
-          </label>
-          <input
-            type="radio"
-            class="btn-check"
-            name="pdfredaction-tool"
-            value="move"
-            id="btn-check-move"
-            v-model="tool"
-            />
-          <label
-            class="btn btn-outline-secondary d-flex"
-            v-bs-tooltip.focus-autohide
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            tabindex="0"
-            :title="i18n.redactMoveTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
-            for="btn-check-move">
-            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
-            <div class="align-self-center">
-              <i class="fa fa-lg fa-arrows" />
-              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
-            </div>
-          </label>
-        </div>
         <div
           class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
           <button
@@ -121,7 +71,7 @@
             :title="i18n.undo"
             @click="undo">
             <i class="fa fa-lg fa-share fa-flip-horizontal" />
-            <small class="d-none d-xxl-block">{{ i18n.undo }}</small>
+            <small class="d-none d-xl-block">{{ i18n.undo }}</small>
           </button>
           <button
             type="button"
@@ -132,12 +82,11 @@
             :title="i18n.redo"
             @click="redo">
             <i class="fa fa-lg fa-share" />
-            <small class="d-none d-xxl-block">{{ i18n.redo }}</small>
+            <small class="d-none d-xl-block">{{ i18n.redo }}</small>
           </button>
           <button
             type="button"
             class="btn btn-outline-secondary"
-            style="max-width: 12em"
             :disabled="!canUndo"
             :title="i18n.removeAllRedaction"
             @click="undoAll">
@@ -169,31 +118,6 @@
             <small class="d-none d-xl-block">{{ i18n.disableText }}</small>
           </button>
         </div>
-
-        <!-- TODO: hide if numPages === 1 ? -->
-        <div
-          class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2">
-          <button
-            class="pdf-prev btn btn-outline-secondary"
-            :disabled="!hasPrevious"
-            @click="goPrevious"
-          >
-            &laquo;
-            <span class="visually-hidden">{{ i18n.previousPage }}</span>
-          </button>
-          <span class="input-group-text">
-            {{ pageOfTotal }}
-          </span>
-          <button
-            class="pdf-next btn btn-outline-secondary"
-            :disabled="!hasNext"
-            @click="goNext"
-          >
-            <span class="visually-hidden">{{ i18n.nextPage }}</span>
-            &raquo;
-          </button>
-        </div>
-
         <div
           v-if="!minimalUi && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
           class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25">
@@ -229,52 +153,112 @@
       </div>
     </div>
     <div class="row">
-    <div
-      class="preview py-3 position-relative"
-      :class="{ ['preview--do-paint']: doPaint }"
-      ref="containerWrapper"
-      @wheel="mouseWheel"
-      @pointerleave="pointerLeaveWrapper"
-      >
-        <div
-          :id="containerId"
-          ref="container"
-          class="redactContainer"
-          :class="{ 'invisible': working }"
-        >
-          <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
-          <canvas
-            v-show="!textOnly"
-            :id="redactCanvasId"
-            class="redactLayer"
-            @pointerdown="pointerDown"
-            @pointerup="pointerUp"
-            @pointermove="pointerMove"
-          />
-          <div
-            :id="textLayerId"
-            class="textLayer"
-            :class="{ textActive: textOnly, textDisabled: textDisabled }"
-            @pointerdown="pointerDown"
-            @pointerup="pointerUp"
-            @pointermove="pointerMove"
-          />
-        </div>
       <div
-        class="btn-group-vertical w-auto position-absolute top-0 end-0 me-2 mt-2">
-        <button type="button" class="btn btn-secondary" @click="zoomIn()">
-          <i class="fa fa-lg fa-plus" />
-        </button>
-        <button type="button" class="btn btn-secondary" @click="zoomReset()">
-          <i class="fa fa-lg fa-compress" />
-        </button>
-        <button type="button" class="btn btn-secondary" @click="zoomOut()">
-          <i class="fa fa-lg fa-minus" />
-        </button>
-      </div>
+        class="preview position-relative"
+        :class="{ ['preview--do-paint']: doPaint }"
+        ref="containerWrapper"
+        @wheel="mouseWheel"
+        @pointerleave="pointerLeaveWrapper"
+        >
+        <div class="position-absolute top-0 bottom-0 start-0 px-2 py-3">
+          <div class="d-flex flex-column position-sticky z-1 previewToolbar">
+            <div
+              class="btn-group-vertical w-auto mb-3">
+              <input
+                type="radio"
+                class="btn-check"
+                name="pdfredaction-tool"
+                value="paint"
+                id="btn-check-paint"
+                v-model="tool"
+                />
+              <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
+                they overstay their welcome and get in the way. As a simple workaround,
+                we make them autohide after a timeout. -->
+              <label
+                class="btn btn-secondary d-flex"
+                v-bs-tooltip.focus-autohide
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                tabindex="0"
+                :title="i18n.redactRedactTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
+                for="btn-check-paint">
+                <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+                <div class="align-self-center">
+                  <i class="fa fa-lg fa-paint-brush" />
+                  <!--<small class="d-none d-xl-block">{{ i18n.redact }}</small>-->
+                </div>
+              </label>
+              <input
+                type="radio"
+                class="btn-check"
+                name="pdfredaction-tool"
+                value="move"
+                id="btn-check-move"
+                v-model="tool"
+                />
+              <label
+                class="btn btn-secondary"
+                v-bs-tooltip.focus-autohide
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                tabindex="0"
+                :title="i18n.redactMoveTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
+                for="btn-check-move">
+                <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+                <div class="align-self-center">
+                  <i class="fa fa-lg fa-arrows" />
+                  <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+                </div>
+              </label>
+            </div>
+            <div
+              class="btn-group-vertical w-auto position-sticky z-1"
+              :class="{
+                'pe-none': isDragging,
+              }"
+              >
+              <button type="button" class="btn btn-secondary" @click="zoomIn()">
+                <i class="fa fa-lg fa-plus" />
+              </button>
+              <button type="button" class="btn btn-secondary" @click="zoomReset()">
+                <i class="fa fa-lg fa-compress" />
+              </button>
+              <button type="button" class="btn btn-secondary" @click="zoomOut()">
+                <i class="fa fa-lg fa-minus" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="position-static row py-3">
+          <div
+            :id="containerId"
+            ref="container"
+            class="redactContainer"
+            :class="{ 'invisible': working }"
+          >
+            <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
+            <canvas
+              v-show="!textOnly"
+              :id="redactCanvasId"
+              class="redactLayer"
+              @pointerdown="pointerDown"
+              @pointerup="pointerUp"
+              @pointermove="pointerMove"
+            />
+            <div
+              :id="textLayerId"
+              class="textLayer"
+              :class="{ textActive: textOnly, textDisabled: textDisabled }"
+              @pointerdown="pointerDown"
+              @pointerup="pointerUp"
+              @pointermove="pointerMove"
+            />
+          </div>
+        </div>
       </div>
     </div>
-    <div v-if="!minimalUi" class="row">
+    <div v-if="!minimalUi" class="row sticky-bottom z-2">
       <div v-if="ready" class="btn-toolbar col bg-light py-2">
         <div class="input-group me-auto ms-auto">
           <button
@@ -283,7 +267,7 @@
             @click="goPrevious"
           >
             &laquo;
-            {{ i18n.previousPage }}
+            <span class="d-none d-md-inline-block">{{ i18n.previousPage }}</span>
           </button>
           <span class="input-group-text">
             {{ pageOfTotal }}
@@ -293,7 +277,7 @@
             :disabled="!hasNext"
             @click="goNext"
           >
-            {{ i18n.nextPage }}
+            <span class="d-none d-md-inline-block">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
         </div>
@@ -406,6 +390,7 @@ export default {
       maxWidth: null,
       startDrag: null,
       endDrag: null,
+      isDragging: false,
       initialAutoRedact: {},
       errors: null,
       message: null,
@@ -956,6 +941,7 @@ export default {
     pointerDown(e) {
       if (!this.doPaint) {
         panzoom.handleDown(e)
+        this.isDragging = true
         return
       }
       this.mouseDown(e, true)
@@ -963,6 +949,7 @@ export default {
     pointerUp(e) {
       if (!this.doPaint) {
         panzoom.handleUp(e)
+        this.isDragging = false
         return
       }
       this.mouseUp(e, true)
@@ -1451,7 +1438,14 @@ export default {
 }
 
 .preview {
+  min-height: 10em;
   box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+}
+
+.previewToolbar {
+  // leave enough space for the toolbars
+  // (which break/wrap on narrow viewports)
+  top: 8em;
+  bottom: 0;
 }
 </style>
