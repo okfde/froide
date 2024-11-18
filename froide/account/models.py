@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from functools import cached_property
 from re import Pattern
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -242,6 +243,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def trusted(self) -> bool:
         return self.is_trusted or self.is_staff or self.is_superuser
+
+    @cached_property
+    def is_crew(self) -> bool:
+        if hasattr(settings, "CREW_GROUP") and settings.CREW_GROUP:
+            return self.groups.filter(pk=settings.CREW_GROUP).exists()
+        else:
+            return self.is_staff
 
     @classmethod
     def export_csv(cls, queryset, fields=None):
