@@ -14,6 +14,7 @@ from django.views.generic import DetailView
 
 from crossdomainmedia import CrossDomainMediaMixin
 
+from froide.helper.auth import is_crew
 from froide.helper.utils import is_ajax, render_400, render_403
 
 from ..auth import (
@@ -70,7 +71,7 @@ def approve_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
         FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
-    if not att.can_approve and not request.user.is_crew:
+    if not att.can_approve and not is_crew(request.user):
         return render_403(request)
 
     # hard guard against publishing of non publishable requests
