@@ -1,0 +1,17 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls admin_action_helper %}
+{% block object-tools %}
+    {{ block.super }}
+    {% if not add %}
+        {% render_admin_action_form adminform.model_admin original as action_form %}
+        {% if action_form %}
+            <form class="submit-row"
+                  action="{% url opts|admin_urlname:'changelist' %}"
+                  method="post">
+                {% csrf_token %}
+                {{ action_form }}
+                <input type="submit" value="{% translate "Go" %}">
+            </form>
+        {% endif %}
+    {% endif %}
+{% endblock object-tools %}
