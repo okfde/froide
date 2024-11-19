@@ -227,7 +227,7 @@ def get_user_filter(request, teams=None, fk_path=None):
 
 def require_crew(view_func):
     def decorator(request, *args, **kwargs):
-        if not request.user.is_crew:
+        if not request.user.is_authenticated or not request.user.is_crew:
             raise PermissionDenied
         return view_func(request, *args, **kwargs)
 
