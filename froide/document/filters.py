@@ -11,7 +11,7 @@ from taggit.models import Tag
 from froide.account.models import User
 from froide.campaign.models import Campaign
 from froide.foirequest.auth import get_read_foirequest_queryset
-from froide.helper.auth import get_read_queryset
+from froide.helper.auth import get_read_queryset, is_crew
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.helper.widgets import BootstrapSelect, DateRangeWidget
 from froide.publicbody.models import Jurisdiction, PublicBody
@@ -58,7 +58,7 @@ class DocumentFilter(FCDocumentFilter):
 
 
 def get_portal_queryset(request):
-    if not request.user.is_authenticated or not request.user.is_crew:
+    if is_crew(request.user):
         return DocumentPortal.objects.filter(public=True)
     return DocumentPortal.objects.all()
 

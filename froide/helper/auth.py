@@ -2,9 +2,11 @@ from functools import lru_cache, reduce
 from operator import or_
 
 from django.contrib.auth import get_permission_codename
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 
+from froide.account.models import User
 from froide.team.models import Team
 
 AUTH_MAPPING = {
@@ -148,7 +150,7 @@ def get_read_queryset(
     codename = get_permission_codename("view", opts)
     if (
         token is None
-        and user.is_crew
+        and is_crew(user)
         and user.has_perm("%s.%s" % (opts.app_label, codename))
     ):
         return qs
@@ -188,7 +190,7 @@ def get_write_queryset(
     codename = get_permission_codename("change", opts)
     if (
         token is None
-        and user.is_crew
+        and is_crew(user)
         and user.has_perm("%s.%s" % (opts.app_label, codename))
     ):
         return qs
@@ -227,7 +229,7 @@ def get_user_filter(request, teams=None, fk_path=None):
 
 def require_crew(view_func):
     def decorator(request, *args, **kwargs):
-        if not request.user.is_authenticated or not request.user.is_crew:
+        if not is_crew(request.user):
             raise PermissionDenied
         return view_func(request, *args, **kwargs)
 
@@ -237,3 +239,9 @@ def require_crew(view_func):
 def clear_lru_caches():
     for f in ACCESS_MAPPING.values():
         f.cache_clear()
+
+
+def is_crew(user: User | AnonymousUser) -> bool:
+    if user.is_authenticated:
+        return user.is_crew
+    return False
