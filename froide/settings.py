@@ -26,6 +26,9 @@ class Base(Configuration):
             "django.contrib.sites",
             "django.contrib.messages",
             "django.contrib.staticfiles",
+            # overwrite admin templates and
+            # management command in django_elasticsearch_dsl
+            "froide.helper",
             "django.contrib.admin",
             "django_comments",
             "django.contrib.flatpages",
@@ -33,9 +36,6 @@ class Base(Configuration):
             "django.contrib.humanize",
             "django.contrib.gis",
             "channels",
-            # overwrite management command in
-            # django_elasticsearch_dsl
-            "froide.helper",
             # external
             "django_elasticsearch_dsl",
             "taggit",
