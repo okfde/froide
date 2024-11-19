@@ -2251,3 +2251,29 @@ def test_mail_confirmation_after_success(world, user, client, faker):
 
     # Expectation: The user should not receive another confirmation that the message was sent
     assert len(mail.outbox) == 4
+
+
+@pytest.mark.django_db
+def test_request_body_leading_indent(world, client, pb):
+    ok = client.login(email="info@fragdenstaat.de", password="froide")
+    assert ok
+
+    user = User.objects.get(username="sw")
+    user.organization_name = "ACME Org"
+    user.save()
+
+    pb = PublicBody.objects.all()[0]
+    post = {
+        "subject": "Test-Subject",
+        "body": "  1. Indented\n  2. Indented",
+        "publicbody": pb.pk,
+    }
+    response = client.post(reverse("foirequest-make_request"), post)
+    assert response.status_code == 302
+
+    req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
+    foi_message = req.foimessage_set.all()[0]
+    assert post["body"] in foi_message.plaintext
+    assert len(mail.outbox) == 2
+    message = mail.outbox[0]
+    assert post["body"] in message.body
