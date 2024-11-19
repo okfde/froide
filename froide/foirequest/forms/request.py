@@ -52,6 +52,7 @@ class RequestForm(JSONMixin, forms.Form):
                 "class": "form-control",
             }
         ),
+        strip=False,
     )
     full_text = forms.BooleanField(
         required=False,
