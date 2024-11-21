@@ -243,11 +243,6 @@ def edit_postal_message(request, foirequest, message_id):
             "pageCurrentOfTotal": _("{current} of {total}").format(
                 current="$current", total="$total"
             ),
-            "redactMoveTooltip": _("Pan tool"),
-            "redactRedactTooltip": _("Paint tool"),
-            "redactToolsTooltip": _(
-                "(press shift key to quickly toggle between Pan and Paint tool)"
-            ),
             "redactAndPublish": _("Save redaction"),
             "publishWithoutRedaction": _("No redaction needed"),
             "removeAllRedaction": _("Remove all redaction"),
