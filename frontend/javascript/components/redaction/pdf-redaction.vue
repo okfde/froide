@@ -181,9 +181,6 @@
                 we make them autohide after a timeout. -->
               <label
                 class="btn btn-secondary d-flex"
-                v-bs-tooltip.focus-autohide
-                data-bs-toggle="tooltip"
-                data-bs-placement="right"
                 tabindex="0"
                 :title="i18n.redactRedactTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
                 for="btn-check-paint">
@@ -203,9 +200,6 @@
                 />
               <label
                 class="btn btn-secondary"
-                v-bs-tooltip.focus-autohide
-                data-bs-toggle="tooltip"
-                data-bs-placement="right"
                 tabindex="0"
                 :title="i18n.redactMoveTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
                 for="btn-check-move">
