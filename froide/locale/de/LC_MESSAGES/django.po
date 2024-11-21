@@ -6282,6 +6282,10 @@ msgid "Redacting attachment %(name)s"
 msgstr "Schwärzen des Anhangs %(name)s"
 
 #: froide/foirequest/templates/foirequest/redact.html
+msgid "Cancel redaction"
+msgstr "Schwärzen abbrechen"
+
+#: froide/foirequest/templates/foirequest/redact.html
 #, python-format
 msgid "Redact \"%(name)s\""
 msgstr "„%(name)s“ schwärzen"
@@ -6352,21 +6356,31 @@ msgid "If this document is a letter to you:"
 msgstr "Falls dieses Dokument ein Brief an Sie ist:"
 
 #: froide/foirequest/templates/foirequest/redact.html
+#, python-format
 msgid ""
 "Go to each page of the PDF and locate the parts that need to be blacked out. "
-"On desktop redact text by selecting it. You can also draw rectangles by "
-"clicking the mouse or double tapping and dragging. "
+"While the %(icon_paint)s&nbsp;<b>paint tool</b> is active, draw rectangles with "
+"your finger, or by clicking and dragging your mouse. Use the %(icon_plus)s "
+"%(icon_minus)s buttons to zoom in and out. Switch to the %(icon_move)s&nbsp;"
+"<b>move tool</b> to pan the document. Hit the shift key to quickly toggle "
+"between paint and move."
 msgstr ""
 "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
-"die geschwärzt werden müssen. Ziehen Sie durch Klicken und Bewegen der Maus "
-"oder durch Doppel-Tippen mit dem Finger ein Viereck über die Stelle. "
+"die geschwärzt werden müssen. "
+"Während das %(icon_paint)s&nbsp;<b>Pinsel-Werkzeug</b> aktiv ist, zeichnen sie "
+"mit ihrem Finger Rechtecke, oder, indem sie mit der Maus klicken und ziehen. "
+"Mit den Buttons %(icon_plus)s %(icon_minus)s können Sie rein- und raus-zoomen. "
+"Wechseln Sie zum %(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. "
+"Mit der Shift-/Umschalttaste können sie schnell zwischen Pinsel und Bewegen wechseln."
 
 #: froide/foirequest/templates/foirequest/redact.html
+#, python-format
 msgid ""
-"Check the text only view to see if the underlying text is also gone. If the "
-"document does not load correctly, cancel and inform a site moderator."
+"Check the %(icon_text)s&nbsp;<b>Hide text</b> view to see if the underlying text "
+"is also gone. If the document does not load correctly, cancel and inform a "
+"site moderator."
 msgstr ""
-"Prüfen Sie auch, dass die Text-Ansicht die Informationen nicht mehr enthält. "
+"Prüfen Sie auch in der Ansicht %(icon_text)s&nbsp;<b>Nur Text</b>, dass das Dokument die Informationen nicht mehr enthält. "
 "Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie "
 "eine:n Moderator:in der Seite."
 
