@@ -160,7 +160,11 @@
         @wheel="mouseWheel"
         @pointerleave="pointerLeaveWrapper"
         >
-        <div class="position-absolute top-0 bottom-0 start-0 px-2 py-3">
+        <div class="position-absolute top-0 bottom-0 start-0 px-2 py-4"
+          :class="{
+            'pe-none': isDragging,
+          }"
+          >
           <div class="d-flex flex-column position-sticky z-1 previewToolbar">
             <div
               class="btn-group-vertical w-auto mb-3">
@@ -214,9 +218,6 @@
             </div>
             <div
               class="btn-group-vertical w-auto position-sticky z-1"
-              :class="{
-                'pe-none': isDragging,
-              }"
               >
               <button type="button" class="btn btn-secondary" @click="zoomIn()">
                 <i class="fa fa-lg fa-plus" />
@@ -230,7 +231,11 @@
             </div>
           </div>
         </div>
-        <div class="position-static row py-3">
+        <div class="position-static row py-3"
+          @pointerdown="pointerDown"
+          @pointerup="pointerUp"
+          @pointermove="pointerMove"
+          >
           <div
             :id="containerId"
             ref="container"
@@ -242,17 +247,11 @@
               v-show="!textOnly"
               :id="redactCanvasId"
               class="redactLayer"
-              @pointerdown="pointerDown"
-              @pointerup="pointerUp"
-              @pointermove="pointerMove"
             />
             <div
               :id="textLayerId"
               class="textLayer"
               :class="{ textActive: textOnly, textDisabled: textDisabled }"
-              @pointerdown="pointerDown"
-              @pointerup="pointerUp"
-              @pointermove="pointerMove"
             />
           </div>
         </div>
@@ -902,8 +901,9 @@ export default {
       if (this.startDrag === null) {
         return
       }
+
+      const endDrag = this.endDrag
       this.endDrag = null
-      const endDrag = this.getOffset(e)
       if (
         Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
         Math.abs(endDrag[1] - this.startDrag[1]) < 3
@@ -939,17 +939,21 @@ export default {
       this.startDrag = null
     },
     pointerDown(e) {
+      this.isDragging = true
       if (!this.doPaint) {
         panzoom.handleDown(e)
-        this.isDragging = true
+        return
+      }
+      // only click on canvas starts painting a rectangle
+      if (e.target.tagName !== 'CANVAS') {
         return
       }
       this.mouseDown(e, true)
     },
     pointerUp(e) {
+      this.isDragging = false
       if (!this.doPaint) {
         panzoom.handleUp(e)
-        this.isDragging = false
         return
       }
       this.mouseUp(e, true)
@@ -959,13 +963,18 @@ export default {
         panzoom.handleMove(e)
         return
       }
+      // only click on canvas starts painting a rectangle
+      if (e.target.tagName !== 'CANVAS') {
+        return
+      }
       this.mouseMove(e, true)
     },
     pointerLeaveWrapper(e) {
+      this.isDragging = false
       if (!this.doPaint) {
         panzoom.handleUp(e)
-        this.isDragging = false
       }
+      this.mouseUp(e, true)
     },
     mouseWheel(e) {
       if (!this.doPaint) {
@@ -1438,7 +1447,7 @@ export default {
 }
 
 .preview {
-  min-height: 10em;
+  min-height: 16em;
   box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
 }
 
