@@ -64,7 +64,7 @@ class Room {
       this.trigger(data.type, data)
     }
     this.socket.onerror = (e) => {
-      console.error('websocket error', e)
+      console.info('websocket error', e)
     }
     this.socket.onclose = () => {
       this.clearHeartbeat()
