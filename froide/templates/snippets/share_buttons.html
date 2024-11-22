@@ -6,8 +6,8 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
     <div class="d-inline-flex flex-wrap no-hyphens {% if links %}column-gap-3 row-gap-1{% else %}gap-1{% endif %}"
          aria-label="{% trans "Share on social media" %}">
         {% if not image %}
-            {% if twitter != False %}
-                {# on by default #}
+            {% if twitter %}
+                {# off by default #}
                 <a class="{% if not links %}btn btn-share-twitter{% endif %}"
                    rel="noopener"
                    target="_blank"
@@ -18,7 +18,24 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
                         {% if icons_only %}</span>{% endif %}
                 </a>
             {% endif %}
-            {% if mastodon != False %}
+            {% if bluesky|default_if_none:True %}
+                {# on by default #}
+                <a class="{% if not links %}btn btn-share-bluesky{% endif %}"
+                   rel="noopener"
+                   target="_blank"
+                   href="https://bsky.app/intent/compose?text={{ text|urlencode }}{% if text %}%20-%20{% endif %}{{ url|urlencode }}">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 512 512"
+                         class="img-text">
+                        <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path d="M111.8 62.2C170.2 105.9 233 194.7 256 242.4c23-47.6 85.8-136.4 144.2-180.2c42.1-31.6 110.3-56 110.3 21.8c0 15.5-8.9 130.5-14.1 149.2C478.2 298 412 314.6 353.1 304.5c102.9 17.5 129.1 75.5 72.5 133.5c-107.4 110.2-154.3-27.6-166.3-62.9l0 0c-1.7-4.9-2.6-7.8-3.3-7.8s-1.6 3-3.3 7.8l0 0c-12 35.3-59 173.1-166.3 62.9c-56.5-58-30.4-116 72.5-133.5C100 314.6 33.8 298 15.7 233.1C10.4 214.4 1.5 99.4 1.5 83.9c0-77.8 68.2-53.4 110.3-21.8z"  fill="currentColor" />
+                    </svg>
+                    {% if icons_only %}<span class="sr-only">{% endif %}
+                        Bluesky
+                        {% if icons_only %}</span>{% endif %}
+                </a>
+            {% endif %}
+            {% if mastodon|default_if_none:True %}
                 {# on by default #}
                 <a href="#!"
                    class="{% if not links %}btn btn-share-mastodon{% endif %}"
@@ -93,7 +110,7 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
                         {% if icons_only %}</span>{% endif %}
                 </a>
             {% endif %}
-            {% if clipboard != False %}
+            {% if clipboard|default_if_none:True %}
                 {# on by default #}
                 <a href="#!"
                    class="{% if not links %}btn btn-outline-primary{% endif %} copy-text"
@@ -106,7 +123,7 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
                 </a>
             {% endif %}
         {% endif %}
-        {% if native_share != False %}
+        {% if native_share|default_if_none:True %}
             {# on by default #}
             <a href="#!"
                class="{% if not links %}btn btn-outline-primary{% endif %} share-native"
