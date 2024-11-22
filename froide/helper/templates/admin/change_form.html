@@ -1,11 +1,15 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_urls admin_action_helper %}
+{% load i18n admin_urls admin_action_helper static %}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static "admin/css/inline-actions.css" %}">
+{% endblock %}
 {% block object-tools %}
     {{ block.super }}
     {% if not add %}
         {% render_admin_action_form adminform.model_admin original as action_form %}
         {% if action_form %}
-            <form class="submit-row"
+            <form class="object-action-row"
                   action="{% url opts|admin_urlname:'changelist' %}"
                   method="post">
                 {% csrf_token %}
