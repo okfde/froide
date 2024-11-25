@@ -63,7 +63,7 @@ dependencies = [
   "weasyprint",
   "websockets",
   "django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@main",
-  "pygtail @ git+https://github.com/okfde/pygtail.git@dac8bc6fc8d65c7ac820806e570242919616e946",
+  "dogtail @ git+https://github.com/okfde/dogtail.git@main",
 ]
 
 [project.optional-dependencies]
@@ -94,6 +94,9 @@ test = [
 [build-system]
 requires = ["setuptools>=74"]
 build-backend = "setuptools.build_meta"
+
+[tool.uv.pip]
+universal = true
 
 [tool.setuptools.packages.find]
 include = ["froide*"]
