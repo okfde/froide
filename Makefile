@@ -18,5 +18,5 @@ messagesde:
 	python manage.py makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file
 
 requirements: pyproject.toml
-	uv pip compile -o requirements.txt pyproject.toml
-	uv pip compile -o requirements-test.txt --extra test pyproject.toml
+	uv pip compile -o requirements.txt pyproject.toml -p 3.10
+	uv pip compile -o requirements-test.txt --extra test pyproject.toml -p 3.10
