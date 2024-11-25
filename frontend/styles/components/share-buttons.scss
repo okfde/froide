@@ -1,8 +1,8 @@
 @import 'bootstrap/scss/mixins/buttons';
 
 .btn-share {
-  &-twitter {
-    @include button-outline-variant(#1da1f2, #fff);
+  &-bluesky {
+    @include button-outline-variant(#0085ff, #fff);
   }
 
   &-facebook {

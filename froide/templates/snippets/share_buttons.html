@@ -6,18 +6,6 @@ If there are multiple share buttons on a page, make sure to pass a unique id for
     <div class="d-inline-flex flex-wrap no-hyphens {% if links %}column-gap-3 row-gap-1{% else %}gap-1{% endif %}"
          aria-label="{% trans "Share on social media" %}">
         {% if not image %}
-            {% if twitter %}
-                {# off by default #}
-                <a class="{% if not links %}btn btn-share-twitter{% endif %}"
-                   rel="noopener"
-                   target="_blank"
-                   href="https://twitter.com/share?text={{ text|urlencode }}&url={{ url|urlencode }}">
-                    <i class="fa fa-twitter"></i>
-                    {% if icons_only %}<span class="sr-only">{% endif %}
-                        Twitter
-                        {% if icons_only %}</span>{% endif %}
-                </a>
-            {% endif %}
             {% if bluesky|default_if_none:True %}
                 {# on by default #}
                 <a class="{% if not links %}btn btn-share-bluesky{% endif %}"
