@@ -2,6 +2,7 @@ import io
 import os.path
 import shutil
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -151,7 +152,7 @@ def test_email_signal():
     email_left_queue.connect(callback)
     assert len(invocations) == 0
     with tempfile.TemporaryDirectory() as dir:
-        check_delivery_from_log(p("maillog_001.txt"), str(dir + "/mail_log.offset"))
+        check_delivery_from_log([p("maillog_001.txt")], Path(dir + "/mail_log.offset"))
     assert len(invocations) == 2
     assert invocations[0]["message_id"] == MAIL_1_ID
     assert invocations[1]["message_id"] == MAIL_2_ID
@@ -160,7 +161,7 @@ def test_email_signal():
 
 
 @pytest.mark.django_db
-def test_pygtail_log_append():
+def test_log_append():
     invocations = []
 
     def callback(**kwargs):
@@ -170,24 +171,24 @@ def test_pygtail_log_append():
     assert len(invocations) == 0
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        logfile_path = str(tmpdir + "/mail_log")
-        offset_file_path = str(tmpdir + "/mail_log.offset")
+        logfile_path = Path(tmpdir + "/mail_log")
+        offset_file_path = Path(tmpdir + "/mail_log.offset")
         with open(logfile_path, "w") as logfile:
-            check_delivery_from_log(logfile_path, offset_file_path)
+            check_delivery_from_log([logfile_path], offset_file_path)
             assert len(invocations) == 0
             with open(p("maillog_003.txt")) as fixture:
                 logfile.write(fixture.read())
                 logfile.flush()
-            check_delivery_from_log(logfile_path, offset_file_path)
+            check_delivery_from_log([logfile_path], offset_file_path)
             assert len(invocations) == 1
 
             with open(p("maillog_004.txt")) as fixture:
                 logfile.write(fixture.read())
                 logfile.flush()
-            check_delivery_from_log(logfile_path, offset_file_path)
+            check_delivery_from_log([logfile_path], offset_file_path)
             assert len(invocations) == 2
 
-            check_delivery_from_log(logfile_path, offset_file_path)
+            check_delivery_from_log([logfile_path], offset_file_path)
             assert len(invocations) == 2
 
     assert invocations[0]["message_id"] == MAIL_2_ID
@@ -206,10 +207,10 @@ def test_multiple_partial():
     email_left_queue.connect(callback)
     assert len(invocations) == 0
     with tempfile.TemporaryDirectory() as dir:
-        check_delivery_from_log(p("maillog_005.txt"), str(dir + "/mail_log.offset"))
+        check_delivery_from_log([p("maillog_005.txt")], Path(dir + "/mail_log.offset"))
         assert len(invocations) == 1
 
-        check_delivery_from_log(p("maillog_005.txt"), str(dir + "/mail_log.offset"))
+        check_delivery_from_log([p("maillog_005.txt")], Path(dir + "/mail_log.offset"))
         assert len(invocations) == 1
 
     assert invocations[0]["message_id"] == MAIL_1_ID
@@ -228,14 +229,14 @@ def test_logfile_rotation():
         lines = f.readlines()
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        logfile_path = str(tmpdir + "/mail.log")
-        logfile_1_path = str(tmpdir + "/mail.log.1")
-        offset_file_path = str(tmpdir + "/mail_log.offset")
+        logfile_path = Path(tmpdir + "/mail.log")
+        logfile_1_path = Path(tmpdir + "/mail.log.1")
+        offset_file_path = Path(tmpdir + "/mail_log.offset")
         with open(logfile_path, "w") as logfile:
             logfile.write("".join(lines[:4]))
             logfile.flush()
 
-        check_delivery_from_log(logfile_path, offset_file_path)
+        check_delivery_from_log([logfile_path, logfile_1_path], offset_file_path)
         assert len(invocations) == 0
 
         shutil.move(logfile_path, logfile_1_path)
@@ -244,7 +245,7 @@ def test_logfile_rotation():
             logfile.write("".join(lines[4:]))
             logfile.flush()
 
-        check_delivery_from_log(logfile_path, offset_file_path)
+        check_delivery_from_log([logfile_path, logfile_1_path], offset_file_path)
         assert len(invocations) == 1
         print(invocations[0])
         assert invocations[0]["message_id"] == MAIL_1_ID
@@ -259,13 +260,17 @@ def test_bouncing_email(req_with_msgs: FoiRequest):
     problem_reports_before = ProblemReport.objects.filter(message=msg).count()
     # Check that problem report gets created
     with tempfile.TemporaryDirectory() as tmpdir:
-        check_delivery_from_log(p("maillog_006.txt"), str(tmpdir + "/mail_log.offset"))
+        check_delivery_from_log(
+            [p("maillog_006.txt")], Path(tmpdir + "/mail_log.offset")
+        )
     assert (
         ProblemReport.objects.filter(message=msg).count() == problem_reports_before + 1
     )
     # Check that problem report does not created again
     with tempfile.TemporaryDirectory() as tmpdir:
-        check_delivery_from_log(p("maillog_006.txt"), str(tmpdir + "/mail_log.offset"))
+        check_delivery_from_log(
+            [p("maillog_006.txt")], Path(tmpdir + "/mail_log.offset")
+        )
     assert (
         ProblemReport.objects.filter(message=msg).count() == problem_reports_before + 1
     )
