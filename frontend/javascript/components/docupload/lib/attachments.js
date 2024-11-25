@@ -1,11 +1,14 @@
-import { onMounted } from 'vue'
 import { postData } from '../../../lib/api'
 
-import { useAttachmentsStore } from './attachments-store'
+//import { createPinia } from 'pinia'
+import { pinia } from '../../../lib/pinia'
+import { useAttachmentsStore, getNewImageDoc } from './attachments-store'
+
+import ExifReader from 'exifreader'
 
 console.log('### attachments.js "root" 1')
 
-let attachments
+const attachments = useAttachmentsStore(pinia)
 
 console.log('### attachments.js "root" 2')
 
@@ -19,20 +22,6 @@ const prepareImages = (images) => images
     x.pageNum = i + 1
     return x
   })
-
-let imageDocId = 0
-
-const getNewImageDoc = (data) => {
-  imageDocId += 1
-  return {
-    id: 'imagedoc' + imageDocId,
-    filetype: null,
-    type: 'imagedoc',
-    new: true,
-    name: '',
-    ...data
-  }
-}
 
 const processAttachmentsFromFetch = (attachments, extra = {}) => {
   const ret = []
@@ -114,9 +103,30 @@ const addImages = (images) => {
   // this.$emit('imagesadded')
 }
 
-const convertImages = () => {
+const convertImage = (image) => {
+  attachments.isConverting = true
+  return postData(
+    config.urls.convertAttachments,
+    {
+      action: 'convert_to_pdf',
+      title: 'TODO',
+      images: image.pages.map((p) => ({
+        id: p.id,
+        rotate: (p.rotate || 0) + (p.implicitRotate || 0)
+      }))
+    },
+    config.csrfToken
+  )
+    .then((newAttachment) => {
+      // remove converted
+      attachments.all = attachments.all.filter((a) => a.id != image.id)
+      // append new
+      attachments.all.push(...processAttachmentsFromFetch([newAttachment], { new: true }))
+    })
+    .finally(() => {
+      attachments.isConverting = false
+    })
 }
-convertImages()
 
 const fetchAttachments = (url, csrfToken) => {
   return fetch(url, {
@@ -152,15 +162,46 @@ const fetchAttachments = (url, csrfToken) => {
     })
 }
 
-const addFromUppy = ({ csrfToken, convertAttachmentsUrl, onImagesAdded, onDocumentsAdded }) => ({ uppy, response, file }) => {
+const fetchImagePage = (page) => {
+  fetch(page.file_url)
+    .then((response) => {
+      return response.blob()
+    })
+    .then((blob) => {
+      return Promise.all([blob.arrayBuffer(), createImageBitmap(blob)])
+    })
+    .then(([ab, v]) => {
+      const reader = ExifReader.load(ab, { expanded: true })
+      const metadata = {
+        exif: true,
+        width: v.width,
+        heigh: v.height,
+        implicitRotate: 0
+      }
+      const orientation = reader.exif?.Orientation?.value
+      if (orientation === 6) {
+        metadata.implicitRotate = 90
+      } else if (orientation === 8) {
+        metadata.implicitRotate = 270
+      } else if (orientation === 3) {
+        metadata.implicitRotate = 180
+      }
+      page.metadata = metadata
+      page.imgBitmap = v
+      page.loaded = true
+    })
+}
+
+// const addFromUppy = ({ csrfToken, convertAttachmentsUrl, onImagesAdded, onDocumentsAdded }) => ({ uppy, response, file }) => {
+const addFromUppy = ({ uppy, response, file }) => {
   const uploadUrl = response.uploadURL
   return postData(
-    convertAttachmentsUrl,
+    config.urls.convertAttachmentsUrl,
     {
       action: 'add_tus_attachment',
       upload: uploadUrl
     },
-    csrfToken
+    config.csrfToken
   )
     .then((result) => {
       if (result.error) {
@@ -169,7 +210,7 @@ const addFromUppy = ({ csrfToken, convertAttachmentsUrl, onImagesAdded, onDocume
       const att = result.added[0]
       if (att.is_image) {
         addImages([att])
-        onImagesAdded()
+        // onImagesAdded()
       } else {
         /*
         documents.value = [
@@ -180,7 +221,7 @@ const addFromUppy = ({ csrfToken, convertAttachmentsUrl, onImagesAdded, onDocume
         // TODO again, weird prepend?
         attachments.all.push(processAttachmentsFromFetch([att], { 'new': true }))
         // this.$emit('documentsadded')
-        onDocumentsAdded()
+        // onDocumentsAdded()
       }
     })
     .then(() => {
@@ -188,16 +229,41 @@ const addFromUppy = ({ csrfToken, convertAttachmentsUrl, onImagesAdded, onDocume
     })
 }
 
-export function useAttachments({ url, csrfToken, convertAttachmentsUrl, onDocumentsAdded = () => {}, onImagesAdded = () => {} }) {
+const config = {}
+
+const refresh = () => fetchAttachments(config.urls.getAttachment, config.csrfToken)
+
+attachments.$subscribe(() => {
+  attachments.images.forEach(image => {
+    image.pages.forEach(page => {
+      if (!page.loaded && !page.loading) {
+        fetchImagePage(page)
+      }
+    })
+  })
+})
+
+const rotatePage = (page) => {
+  page.rotate = ((page.rotate || 0) + 90) % 360
+}
+
+export function useAttachments({ urls = null, csrfToken = null} = {}) {
+  if (urls) config.urls = urls
+  if (csrfToken) config.csrfToken = csrfToken
   console.log('### attachments.js useAttachments')
-  attachments = useAttachmentsStore()
-  const refresh = () => fetchAttachments(url, csrfToken)
+  /*
   onMounted(() => {
     console.log('### attachments.js onMounted')
     refresh()
   })
+  */
   return {
+    pinia,
     refresh,
-    addFromUppy: addFromUppy({ csrfToken, convertAttachmentsUrl, onDocumentsAdded, onImagesAdded }),
+    attachments,
+    convertImage,
+    splitPages: attachments.splitPages,
+    rotatePage,
+    addFromUppy,
   }
 }

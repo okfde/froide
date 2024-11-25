@@ -35,6 +35,8 @@
               :placeholder="i18n.documentTitlePlaceholder" />
           </div>
           <!-- akward @update because Vue 2-ish vs 3.2 interop -->
+          <!--
+
           <image-document-pages-sortable
             :pages="pages"
             :dense="simple"
@@ -45,6 +47,7 @@
             "
             @pageupdated="$emit('pageupdated', { document, ...$event })"
             @splitpages="splitPages" />
+          -->
         </div>
         <div v-if="!simple" class="row mt-3">
           <div class="col-md-12">
@@ -75,7 +78,7 @@
 </template>
 
 <script>
-import ImageDocumentPagesSortable from './image-document-pages-sortable.vue'
+// import ImageDocumentPagesSortable from './image-document-pages-sortable.vue'
 import FileReview from './file-review.vue'
 import FileBasicOperations from './file-basic-operations.vue'
 
@@ -87,7 +90,7 @@ import { postData } from '../../lib/api.js'
 export default {
   name: 'ImageDocument',
   components: {
-    ImageDocumentPagesSortable,
+    // ImageDocumentPagesSortable,
     FileReview,
     FileBasicOperations
   },
