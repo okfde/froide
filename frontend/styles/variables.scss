@@ -1,4 +1,4 @@
-@use "sass:map";
+@use 'sass:map';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/mixins';
 
@@ -96,6 +96,7 @@ $container-max-widths: (
 
 // Typography
 $btn-font-weight: 600;
+$btn-box-shadow: 0 0 0 transparent; // shadow only when focused or active
 $badge-font-weight: 400;
 
 $link-decoration: none;
