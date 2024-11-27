@@ -10,7 +10,7 @@ from .signals import email_left_queue
 
 PostfixLogLine = namedtuple("PostfixLogLine", ["date", "queue_id", "data"])
 
-DEFAULT_POSTFIX_LOG_PATHS = ["/var/log/mail.log", "/var/log/mail.log.1"]
+DEFAULT_POSTFIX_LOG_PATHS = [Path("/var/log/mail.log"), Path("/var/log/mail.log.1")]
 
 
 class PostfixLogfileParser(collections.abc.Iterator):
@@ -145,7 +145,7 @@ class DogtailPostfixLogfileParser(PostfixLogfileParser):
     is this part will be returned by the iterator on every invocation.
     """
 
-    DEFAULT_DOGTAIL_OFFSET_PATH = "./mail_log.offset"
+    DEFAULT_DOGTAIL_OFFSET_PATH = Path("./mail_log.offset")
 
     def __init__(
         self,
