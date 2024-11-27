@@ -80,9 +80,12 @@ test = [
   "pre-commit",
   "pycodestyle",
   "pyflakes",
+  "pytest",
+  "pytest-cov",
   "pytest-django",
   "pytest-factoryboy",
   "pytest-playwright",
+  "pytest-xdist",
   "tblib",
   "text-unidecode",
   "time-machine",
@@ -137,15 +140,18 @@ branch = true
 
 [tool.coverage.report]
 show_missing = true
-skip_covered = true
+skip_covered = false
 exclude_lines = ["pragma: no cover"]
+
+[toolcoverage.files]
+source = ["froide"]
 
 [tool.pytest.ini_options]
 DJANGO_CONFIGURATION = "Test"
 DJANGO_SETTINGS_MODULE = "froide.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 addopts = ["--reuse-db"]
-markers = ["no_delivery_mock"]
+markers = ["no_delivery_mock", "elasticsearch"]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]

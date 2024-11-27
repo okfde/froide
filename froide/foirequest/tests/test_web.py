@@ -94,6 +94,7 @@ def test_request_prefilled_redirect(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
 def test_list_requests(world, client):
     factories.rebuild_index()
     response = client.get(reverse("foirequest-list"))
@@ -117,6 +118,7 @@ def test_list_requests(world, client):
     assert response.status_code == 404
 
 
+@pytest.mark.elasticsearch
 @pytest.mark.django_db
 def test_list_jurisdiction_requests(world, client):
     factories.rebuild_index()
@@ -151,6 +153,7 @@ def test_list_jurisdiction_requests(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
 def test_tagged_requests(world, client):
     tag_slug = "awesome"
     req = FoiRequest.published.all()[0]
@@ -170,6 +173,7 @@ def test_tagged_requests(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
 def test_publicbody_requests(world, client):
     factories.rebuild_index()
     req = FoiRequest.published.all()[0]
@@ -188,6 +192,7 @@ def test_publicbody_requests(world, client):
 
 
 @pytest.mark.django_db(transaction=True)
+@pytest.mark.elasticsearch
 def test_list_no_identical(world, client):
     factories.FoiRequestFactory.create(site=world)
     factories.rebuild_index()
@@ -277,6 +282,7 @@ def test_auth_links(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
 def test_feed(world, client):
     factories.rebuild_index()
 
@@ -673,6 +679,7 @@ def jurisdiction_with_many_requests_slug(request: pytest.FixtureRequest):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
 @pytest.mark.parametrize(
     "filter_field,filter_value,filter_value_function",
     [["jurisdiction", None, jurisdiction_with_many_requests_slug], ["q", "*", None]],
@@ -726,6 +733,7 @@ def dict_combinations_all_r(sequence):
             yield dict(parts)
 
 
+@pytest.mark.elasticsearch
 @pytest.mark.django_db
 def test_request_list_path_filter(
     client: Client,
