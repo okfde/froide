@@ -64,6 +64,56 @@
         class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light">
         <div
           class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
+          <input
+            type="radio"
+            class="btn-check"
+            name="pdfredaction-tool"
+            value="paint"
+            id="btn-check-paint"
+            v-model="tool"
+            />
+          <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
+            they overstay their welcome and get in the way. As a simple workaround,
+            we make them autohide after a timeout. -->
+          <label
+            class="btn btn-outline-secondary d-flex"
+            v-bs-tooltip.focus-autohide
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            tabindex="0"
+            :title="i18n.redactRedactTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
+            for="btn-check-paint">
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-paint-brush" />
+              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+            </div>
+          </label>
+          <input
+            type="radio"
+            class="btn-check"
+            name="pdfredaction-tool"
+            value="move"
+            id="btn-check-move"
+            v-model="tool"
+            />
+          <label
+            class="btn btn-outline-secondary d-flex"
+            v-bs-tooltip.focus-autohide
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            tabindex="0"
+            :title="i18n.redactMoveTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
+            for="btn-check-move">
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-arrows" />
+              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+            </div>
+          </label>
+        </div>
+        <div
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
           <button
             type="button"
             class="btn btn-outline-secondary"
@@ -71,7 +121,7 @@
             :title="i18n.undo"
             @click="undo">
             <i class="fa fa-lg fa-share fa-flip-horizontal" />
-            <small class="d-none d-xl-block">{{ i18n.undo }}</small>
+            <small class="d-none d-xxl-block">{{ i18n.undo }}</small>
           </button>
           <button
             type="button"
@@ -82,7 +132,7 @@
             :title="i18n.redo"
             @click="redo">
             <i class="fa fa-lg fa-share" />
-            <small class="d-none d-xl-block">{{ i18n.redo }}</small>
+            <small class="d-none d-xxl-block">{{ i18n.redo }}</small>
           </button>
           <button
             type="button"
@@ -91,11 +141,11 @@
             :title="i18n.removeAllRedaction"
             @click="undoAll">
             <i class="fa fa-lg fa-trash" />
-            <small class="d-none d-xl-block">{{ i18n.removeAllRedaction }}</small>
+            <small class="d-none d-xxl-block">{{ i18n.removeAllRedaction }}</small>
           </button>
         </div>
 
-        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes py-2">
+        <div class="btn-group me-1 toolbar-modes py-2">
           <button
             class="btn"
             :class="{ 'btn-outline-secondary': !textOnly, 'btn-secondary': textOnly }"
@@ -118,8 +168,33 @@
             <small class="d-none d-xl-block">{{ i18n.disableText }}</small>
           </button>
         </div>
+
         <div
-          v-if="!minimalUi && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
+          v-if="!bottomToolbar"
+          class="input-group me-1 justify-content-center justify-content-lg-start py-2">
+          <button
+            class="pdf-prev btn btn-outline-secondary"
+            :disabled="!hasPrevious"
+            @click="goPrevious"
+          >
+            &laquo;
+            <span class="visually-hidden">{{ i18n.previousPage }}</span>
+          </button>
+          <span class="input-group-text pageOfTotal">
+            {{ pageOfTotal }}
+          </span>
+          <button
+            class="pdf-next btn btn-outline-secondary"
+            :disabled="!hasNext"
+            @click="goNext"
+          >
+            <span class="visually-hidden">{{ i18n.nextPage }}</span>
+            &raquo;
+          </button>
+        </div>
+
+        <div
+          v-if="!hideDoneButton && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
           class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25">
           <button v-if="hasRedactions || hasPassword" class="btn btn-dark" @click="redact">
             <i class="fa fa-check me-2" />
@@ -167,50 +242,6 @@
           >
           <div class="d-flex flex-column position-sticky z-1 previewToolbar">
             <div
-              class="btn-group-vertical w-auto mb-3">
-              <input
-                type="radio"
-                class="btn-check"
-                name="pdfredaction-tool"
-                value="paint"
-                id="btn-check-paint"
-                v-model="tool"
-                />
-              <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
-                they overstay their welcome and get in the way. As a simple workaround,
-                we make them autohide after a timeout. -->
-              <label
-                class="btn btn-secondary d-flex"
-                tabindex="0"
-                :title="i18n.redactRedactTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
-                for="btn-check-paint">
-                <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
-                <div class="align-self-center">
-                  <i class="fa fa-lg fa-paint-brush" />
-                  <!--<small class="d-none d-xl-block">{{ i18n.redact }}</small>-->
-                </div>
-              </label>
-              <input
-                type="radio"
-                class="btn-check"
-                name="pdfredaction-tool"
-                value="move"
-                id="btn-check-move"
-                v-model="tool"
-                />
-              <label
-                class="btn btn-secondary"
-                tabindex="0"
-                :title="i18n.redactMoveTooltip + (hasTouch ? '' : ' ' + i18n.redactToolsTooltip)"
-                for="btn-check-move">
-                <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
-                <div class="align-self-center">
-                  <i class="fa fa-lg fa-arrows" />
-                  <small class="d-none d-xl-block">{{ i18n.redact }}</small>
-                </div>
-              </label>
-            </div>
-            <div
               class="btn-group-vertical w-auto position-sticky z-1"
               >
               <button type="button" class="btn btn-secondary" @click="zoomIn()">
@@ -251,7 +282,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!minimalUi" class="row sticky-bottom z-2">
+    <div v-if="bottomToolbar" class="row sticky-bottom z-2">
       <div v-if="ready" class="btn-toolbar col bg-light py-2">
         <div class="input-group me-auto ms-auto">
           <button
@@ -355,7 +386,11 @@ export default {
       type: Boolean,
       default: false
     },
-    minimalUi: {
+    hideDoneButton: {
+      type: Boolean,
+      default: false
+    },
+    bottomToolbar: {
       type: Boolean,
       default: false
     }
