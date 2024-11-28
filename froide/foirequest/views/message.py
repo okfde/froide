@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 
 from froide.foirequest.auth import can_read_foirequest
@@ -319,6 +320,7 @@ def edit_postal_message(request, foirequest, message_id):
             "notPublic": _("not public"),
             "redacted": _("redacted"),
             "redact": _("Redact"),
+            "moveTool": pgettext("redact tool", "Move"),
             "delete": _("Delete"),
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
             "protectedOriginal": _("protected original"),
