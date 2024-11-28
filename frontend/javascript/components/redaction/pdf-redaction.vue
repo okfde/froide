@@ -538,7 +538,6 @@ export default {
       .catch((err) => {
         console.log(err)
       })
-    document.addEventListener('keyup', this.toggleTool)
   },
   mounted() {
     panzoom = Panzoom(this.$refs.container, {
@@ -1376,11 +1375,6 @@ export default {
     },
     submitRedactions() {
       document.getElementById('redaction-submit-form').submit()
-    },
-    toggleTool(e) {
-      if (e.key === 'Shift') {
-        this.tool = this.tool === 'paint' ? 'move' : 'paint'
-      }
     }
   }
 }
