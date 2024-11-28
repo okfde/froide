@@ -1361,7 +1361,8 @@ addEventListener('hashchange', () => {
               '/' + pdfRedactionCurrentDoc.id + '/'
             )
           "
-          :minimal-ui="true"
+          :hide-done-button="true"
+          :bottom-toolbar="false"
           :no-redirect="true"
           :redact-regex="['teststraße\ 1']"
           :can-publish="true"

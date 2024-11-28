@@ -26,7 +26,7 @@
                     <div class="card-body p-0">
                         <pdf-redaction id="redact" pdf-path="{{ attachment_url }}" attachment-url="{{ attachment.get_anchor_url }}" :redact-regex="{{ foirequest.get_redaction_regexes }}"
                         {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
-                        :config="{{ config }}">
+                        :config="{{ config }}" :bottom-toolbar="true">
                         <div class="text-center">
                             <h3>{% trans "Redaction tool is loading..." %}</h3>
                             <div class="spinner-border" role="status">
