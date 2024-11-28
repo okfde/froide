@@ -15,61 +15,7 @@
             <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
         </div>
     </div>
-    <div class="row mb-3 mt-3">
-        {% block redaction_removal_explanation %}
-            <div class="col-lg-6">
-                <div class="card mt-3">
-                    <h5 class="card-header">{% trans "What you need to redact" %}</h5>
-                    <div class="card-body">
-                        <p>
-                            {% trans "If this document <strong>is not a letter to you</strong> from a public body, but any other kind of document, it very likely <strong>does not need a redaction</strong>." %}
-                        </p>
-                        <ul>
-                            <li>
-                                {% if foirequest.user == request.user %}
-                                    {% if foirequest.user.private %}
-                                        {% trans "Please remove all your personally identifying information." %}
-                                    {% else %}
-                                        {% trans "Please remove all your personally identifying information except your name." %}
-                                    {% endif %}
-                                {% else %}
-                                    {% if foirequest.user.private %}
-                                        {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}.{% endblocktrans %}
-                                    {% else %}
-                                        {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }} except the name itself.{% endblocktrans %}
-                                    {% endif %}
-                                {% endif %}
-                            </li>
-                            <li>{% trans "Please remove email addresses of this site." %}</li>
-                            <li>{% trans "Please remove all names of public body employees." %}</li>
-                            {% block redaction_removal_explanation_addition %}
-                                <li>{% trans "Please remove hand-written signatures." %}</li>
-                            {% endblock %}
-                        </ul>
-                        <p>
-                            {% blocktrans %}The original version of the document will still be available to you (but not to the public).{% endblocktrans %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        {% endblock %}
-        {% block redaction_removal_intro %}
-            <div class="col-lg-6">
-                <div class="card mt-3">
-                    <h5 class="card-header">{% trans "How to redact" %}</h5>
-                    <div class="card-body">
-                        <p>{% trans "If this document is a letter to you:" %}</p>
-                        <p>
-                            {% blocktrans with icon_paint="<i class=\"fa fa-paint-brush\"></i>" icon_plus="<i class=\"fa fa-plus\"></i>" icon_minus="<i class=\"fa fa-minus\"></i>" icon_move="<i class=\"fa fa-arrows\"></i>" %}Go to each page of the PDF and locate the parts that need to be blacked out. While the {{ icon_paint }}&nbsp;<b>paint tool</b> is active, draw rectangles with your finger, or by clicking and dragging your mouse. Use the {{ icon_plus }} {{ icon_minus }} buttons to zoom in and out. Switch to the {{ icon_move }}&nbsp;<b>move tool</b> to pan the document. Hit the shift key to quickly toggle between paint and move.{% endblocktrans %}
-                        </p>
-                        <p>
-                            {% blocktrans with icon_text="<i class=\"fa fa-align-justify\"></i>" %}Check the {{ icon_text }}&nbsp;<b>Hide text</b> view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        {% endblock %}
-    </div>
+    <div class="row mb-3 mt-3">{% include "foirequest/snippets/redaction_explanation.html" %}</div>
     {% if attachment.file %}
         <div class="row mb-5">
             <div class="col-lg-12">
