@@ -4693,6 +4693,11 @@ msgstr "Bitte vergessen Sie nicht den Status dieser Anfrage anzugeben!"
 msgid "Redact"
 msgstr "Schwärzen"
 
+#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
+msgctxt "redact tool"
+msgid "Move"
+msgstr "Bewegen"
+
 #: froide/foirequest/templates/foirequest/attachment/show.html
 #: froide/foirequest/views/message.py
 msgid "Approve"
