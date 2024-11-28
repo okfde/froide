@@ -293,7 +293,7 @@
             &laquo;
             <span class="d-none d-md-inline-block">{{ i18n.previousPage }}</span>
           </button>
-          <span class="input-group-text">
+          <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
           </span>
           <button
@@ -1489,5 +1489,10 @@ export default {
   // (which break/wrap on narrow viewports)
   top: 8em;
   bottom: 0;
+}
+
+.pageOfTotal {
+  // reduces jitter when variable-width numbers change
+  font-variant-numeric: tabular-nums;
 }
 </style>
