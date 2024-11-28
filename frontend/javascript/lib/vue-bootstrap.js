@@ -1,13 +1,13 @@
 import { Tooltip } from 'bootstrap'
 
-/* alternatively, to register globally, we could add to vue-helpers.ts:
-   (note also snippets/bootstrap.ts)
-   (see also redact.js for less global, Options API application)
-  app.directive('bsTooltip', {
-    mounted: (el) => {
-      new Tooltip(el)
-    }
-  })
+/* Note also snippets/bootstrap.ts
+   To register globally, we could add to vue-helpers.ts:
+     app.directive('bsTooltip', vBsTooltip
+   Or, more locally, e.g. in redact.js:
+     const app = createAppWithProps...
+     app.directive('bsTooltip', vBsTooltip)
+     // register directive before mount!
+     app.mount...
 */
 export const vBsTooltip = {
   mounted: (el, binding) => {

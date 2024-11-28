@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 
@@ -252,6 +253,8 @@ def get_redact_context(foirequest, attachment):
             "removeAllRedaction": _("Remove all redaction"),
             "toggleText": _("Text only"),
             "disableText": _("Hide text"),
+            "redact": _("Redact"),
+            "moveTool": pgettext("redact tool", "Move"),
             "cancel": _("Cancel"),
             "undo": _("Undo"),
             "redo": _("Redo"),
