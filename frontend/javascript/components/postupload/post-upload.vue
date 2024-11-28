@@ -1344,6 +1344,7 @@ addEventListener('hashchange', () => {
           auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
         </div>
         <pdf-redaction
+          :class="pdf-redaction-tool"
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
@@ -1742,4 +1743,14 @@ addEventListener('hashchange', () => {
     padding: 0.25rem 0.25rem 0.25rem 0.75rem;
   }
 }
+
+/* respect simple-stepper's height when sticky */
+
+@include media-breakpoint-down(md) {
+  .pdf-redaction-tool :deep(.sticky-top) {
+    top: 41px; // height of .simple-stepper/breadcrumbs
+  }
+}
+
+
 </style>
