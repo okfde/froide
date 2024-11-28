@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed, defineProps, nextTick } from 'vue'
+import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
@@ -1322,22 +1323,8 @@ addEventListener('hashchange', () => {
                 })
               }}
             </label>
-            <div class="alert alert-warning">
-              {{ i18n.redactionInfoWhat }}
-              <ul>
-                <li>
-                  {{ i18n.redactionInfoWhat1 }}
-                </li>
-                <li>
-                  {{ i18n.redactionInfoWhat2 }}
-                </li>
-                <li>
-                  {{ i18n.redactionInfoWhat3 }}
-                </li>
-                <li>
-                  {{ i18n.redactionInfoWhat4 }}
-                </li>
-              </ul>
+            <div class="row">
+              <django-slot name="redaction_explanation"></django-slot>
             </div>
             <div class="mt-2 mb-3">
               <button
