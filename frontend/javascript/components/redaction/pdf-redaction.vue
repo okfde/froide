@@ -227,7 +227,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row flex-grow-1">
       <div
         class="preview position-relative"
         :class="{ ['preview--do-paint']: doPaint }"
@@ -256,7 +256,7 @@
             </div>
           </div>
         </div>
-        <div class="position-static row py-3"
+        <div class="position-static row py-3 h-100"
           @pointerdown="pointerDown"
           @pointerup="pointerUp"
           @pointermove="pointerMove"
@@ -1396,6 +1396,11 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../styles/variables';
+
+.pdf-redaction-tool {
+  min-height: calc(100vh - 10em);
+}
+
 .toolbar {
   padding: 5px;
   background-color: var(--#{$prefix}body-bg);
@@ -1476,7 +1481,6 @@ export default {
 }
 
 .preview {
-  min-height: 16em;
   box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
 }
 
