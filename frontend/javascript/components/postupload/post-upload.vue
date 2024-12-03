@@ -1324,6 +1324,8 @@ addEventListener('hashchange', () => {
               }}
             </label>
             <div class="row">
+              <!-- no need to import vBsCollapsePersistent,
+                snippets/bootstrap DOMContentLoaded will just work -->
               <django-slot name="redaction_explanation"></django-slot>
             </div>
             <div class="mt-2 mb-3">
