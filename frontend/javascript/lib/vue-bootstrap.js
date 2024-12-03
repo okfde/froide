@@ -1,4 +1,5 @@
 import { Tooltip } from 'bootstrap'
+import { collapsePersistent } from './bootstrap-helpers'
 
 /* Note also snippets/bootstrap.ts
    To register globally, we could add to vue-helpers.ts:
@@ -18,4 +19,8 @@ export const vBsTooltip = {
       })
     }
   }
+}
+
+export const vBsCollapsePersistent = {
+  mounted: (el) => collapsePersistent(el)
 }
