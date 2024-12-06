@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.account.models import UserTag
 from froide.comments.models import FroideComment
+from froide.foirequest.models.message import FoiMessageDraft
 from froide.guide.models import Action
 from froide.guide.utils import assign_guidance_action
 from froide.helper.admin_utils import (
@@ -522,7 +523,6 @@ class MessageTagsFilter(MultiFilterMixin, TaggitListFilter):
 class FoiMessageAdmin(admin.ModelAdmin):
     save_on_top = True
     list_display = (
-        "is_draft",
         "subject",
         "timestamp",
         "message_page",
@@ -600,9 +600,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         return my_urls + urls
 
     def get_queryset(self, request):
-        qs = super(FoiMessageAdmin, self).get_queryset(request)
-        qs = qs.prefetch_related("deliverystatus")
-        return qs
+        return self.model.objects.with_drafts(False).prefetch_related("deliverystatus")
 
     def save_model(self, request, obj, form, change):
         if (
@@ -750,6 +748,12 @@ class FoiMessageAdmin(admin.ModelAdmin):
         return TemplateResponse(
             request, "admin/foirequest/foimessage/add_comment.html", context
         )
+
+
+@admin.register(FoiMessageDraft)
+class FoiMessageDraftAdmin(FoiMessageAdmin):
+    def get_queryset(self, request):
+        return self.model.objects.all().prefetch_related("deliverystatus")
 
 
 @admin.register(MessageTag)

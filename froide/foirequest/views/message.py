@@ -23,7 +23,7 @@ from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
 from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
-from ..api_views import FoiAttachmentSerializer, FoiMessageSerializer
+from ..api.serializers import FoiAttachmentSerializer, FoiMessageSerializer
 from ..decorators import (
     allow_moderate_foirequest,
     allow_read_foirequest_authenticated,
