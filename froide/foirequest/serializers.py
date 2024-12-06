@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from rest_framework import permissions, serializers
+from rest_framework.generics import ValidationError
 from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
@@ -179,6 +180,11 @@ class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
         else:
             return get_write_foirequest_queryset(request)
 
+    def run_validation(self, data):
+        if self.context["view"].action == "create":
+            return super().run_validation(data)
+        raise ValidationError(_("Can only set request reference when creating."))
+
 
 class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
     def __init__(self, **kwargs):
@@ -302,7 +308,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         # forbid users from e.g. creating a fake e-mail message
         if value not in MESSAGE_KIND_USER_ALLOWED:
             raise serializers.ValidationError(
-                "This message kind can not be created via the API."
+                _("This message kind can not be created via the API.")
             )
         return value
 
@@ -388,7 +394,7 @@ class FoiAttachmentTusSerializer(serializers.Serializer):
             data=data, foimessage=data["message"], user=self.context["request"].user
         )
         if not self.form.is_valid():
-            raise serializers.ValidationError("Invalid upload")
+            raise serializers.ValidationError(_("Invalid upload"))
 
         return data
 
