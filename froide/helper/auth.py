@@ -77,8 +77,8 @@ def can_read_object_authenticated(obj, request=None):
 
 
 @lru_cache()
-def can_write_object(obj, request):
-    return has_authenticated_access(obj, request)
+def can_write_object(obj, request, scope=None):
+    return has_authenticated_access(obj, request, scope=scope)
 
 
 @lru_cache()
@@ -120,7 +120,6 @@ def get_read_queryset(
     fk_path=None,
     user_read_filter=None,
 ):
-    user = request.user
     filters = []
     if public_field is not None:
         if public_q is not None:
@@ -132,6 +131,11 @@ def get_read_queryset(
         unauth_qs = qs.filter(public_q)
     else:
         unauth_qs = qs.none()
+
+    # request is not available when called from manage.py generateschema
+    if not request:
+        return unauth_qs
+    user = request.user
 
     if not user.is_authenticated:
         return unauth_qs
@@ -171,10 +175,9 @@ def get_read_queryset(
 def get_write_queryset(
     qs, request, has_team=False, user_write_filter=None, scope=None, fk_path=None
 ):
-    user = request.user
-
-    if not user.is_authenticated:
+    if not request or not request.user.is_authenticated:
         return qs.none()
+    user = request.user
 
     # OAuth token
     token = getattr(request, "auth", None)

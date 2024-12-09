@@ -501,7 +501,7 @@ class Base(Configuration):
             "read:email": _("Read user email"),
             "read:request": _("Read your (private) requests"),
             "make:request": _("Make requests on your behalf"),
-            "upload:message": _("Upload postal messages"),
+            "create:message": _("Add messages and attachments to user's request"),
             "follow:request": _("Follow/Unfollow requests"),
             "read:document": _("Read your (private) documents"),
         },
