@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { Modal } from 'bootstrap'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import BsModal from '../bs-modal.vue'
 
 const props = defineProps({
   path: String
@@ -8,10 +9,7 @@ const props = defineProps({
 
 const contents = ref('')
 
-// "Vue3 Bootstrap Modal" adapted from https://stackoverflow.com/a/71461086/629238
-// this could be probably spun out into a reusable component
-const modalEl = ref()
-let bsModal
+const bsModal = ref()
 
 const isFetching = ref(false)
 
@@ -38,15 +36,10 @@ const fetchContents = (url) => {
 
 const show = (path) => {
   fetchContents(path)
-  bsModal.show()
-}
-
-const hide = () => {
-  bsModal.hide()
+  bsModal.value.show()
 }
 
 onMounted(() => {
-  bsModal = new Modal(modalEl.value)
   if (props.path) fetchContents(props.path)
 })
 
@@ -56,40 +49,29 @@ defineExpose({
 </script>
 
 <template>
-  <Teleport to="body">
-    <div
-      ref="modalEl"
-      class="modal"
-      tabindex="-1"
-      role="dialog"
-      id="onlinehelp-modal">
-      <div
-        class="modal-dialog modal-fullscreen modal-dialog-scrollable ms-auto"
-        role="document">
-        <div class="modal-content bg-warning-subtle">
-          <div class="modal-header">
-            <h5 class="modal-title">Hilfe</h5>
-            <button
-              @click="hide"
-              type="button"
-              class="btn-close"
-              aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <span
-              class="spinner spinner-border position-absolute top-50 start-50 translate-middle"
-              v-show="isFetching" />
-            <div v-html="contents"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </Teleport>
+  <bs-modal
+    ref="bsModal"
+    dialog-classes="modal-fullscreen modal-dialog-scrollable ms-auto modal-online-help"
+    content-classes="bg-warning-subtle"
+    >
+    <template #header>
+      <h5 class="modal-title">Hilfe</h5>
+    </template>
+    <template #body>
+      <span
+        class="spinner spinner-border position-absolute top-50 start-50 translate-middle"
+        v-show="isFetching" />
+      <div v-html="contents"></div>
+    </template>
+  </bs-modal>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
+// unscoped, because getting scoped to work thorugh BsModal's Teleport is hard or not yet possible
+// https://github.com/vuejs/core/issues/2669
+
 // makes this into a "right-sidebar-like"
-.modal-fullscreen.ms-auto {
+.modal-online-help.modal-fullscreen.ms-auto {
   max-width: 30em;
 }
 </style>
