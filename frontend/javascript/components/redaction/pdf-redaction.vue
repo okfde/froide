@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div v-if="working" class="row py-3 bg-light">
+    <div v-if="working" class="row py-3 text-bg-light">
       <div class="col">
         <div class="text-center">
           <h3 v-if="loading">
