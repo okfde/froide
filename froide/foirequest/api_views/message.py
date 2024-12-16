@@ -69,7 +69,7 @@ class FoiMessageDraftViewSet(
         ).order_by()
         return self.optimize_query(qs)
 
-    @action(detail=True, methods=["get", "post"])
+    @action(detail=True, methods=["post"])
     def publish(self, request, pk=None):
         message = self.get_object()
         message.is_draft = False
