@@ -120,3 +120,25 @@ def test_auth(client, user):
         content_type="application/json",
     )
     assert response.status_code == 400
+
+    # create message draft
+    request2 = factories.FoiRequestFactory.create(user=user)
+    response = client.post(
+        "/api/v1/message/draft/",
+        data={
+            "request": reverse("api:request-detail", kwargs={"pk": request2.pk}),
+            "kind": "post",
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+
+    # can't change it to other's people request
+    response = client.patch(
+        response.json()["resource_uri"],
+        data={
+            "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 400

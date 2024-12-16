@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from rest_framework import permissions, serializers
-from rest_framework.generics import ValidationError
 from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
@@ -179,11 +178,6 @@ class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
             return get_read_foirequest_queryset(request)
         else:
             return get_write_foirequest_queryset(request)
-
-    def run_validation(self, data):
-        if self.context["view"].action == "create":
-            return super().run_validation(data)
-        raise ValidationError(_("Can only set request reference when creating."))
 
 
 class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
