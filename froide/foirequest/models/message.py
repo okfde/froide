@@ -37,10 +37,18 @@ class FoiMessageManager(models.Manager):
             qs = qs.filter(**extra_filters)
         return qs, "timestamp"
 
-
-class FoiMessageNoDraftsManager(FoiMessageManager):
     def get_queryset(self):
         return super().get_queryset().filter(is_draft=False)
+
+
+class FoiMessageDraftManager(FoiMessageManager):
+    def get_queryset(self):
+        # need to call models.Manager, since FoiMessageManager removes drafts
+        return super(models.Manager, self).get_queryset().filter(is_draft=True)
+
+    def create(self, **kwargs):
+        kwargs.setdefault("is_draft", True)
+        return super().create(**kwargs)
 
 
 class MessageTag(TagBase):
@@ -64,11 +72,20 @@ class MessageKind(models.TextChoices):
     EMAIL = ("email", _("email"))
     POST = ("post", _("postal mail"))
     FAX = ("fax", _("fax"))
+    # uploads by public bodies using link in foirequest
     UPLOAD = ("upload", _("upload"))
     PHONE = ("phone", _("phone call"))
     VISIT = ("visit", _("visit in person"))
     IMPORT = ("import", _("automatically imported"))
 
+
+# users are allowed to only create messages of these kinds
+# the other kinds can only be created by the system
+MESSAGE_KIND_USER_ALLOWED = [
+    MessageKind.POST,
+    MessageKind.PHONE,
+    MessageKind.VISIT,
+]
 
 MESSAGE_KIND_ICONS = {
     MessageKind.EMAIL: "mail",
@@ -176,7 +193,6 @@ class FoiMessage(models.Model):
     confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
 
     objects = FoiMessageManager()
-    no_drafts = FoiMessageNoDraftsManager()
 
     class Meta:
         get_latest_by = "timestamp"
@@ -200,6 +216,9 @@ class FoiMessage(models.Model):
             )
 
         super().save(*args, **kwargs)
+
+    def is_public(self) -> bool:
+        return not self.is_draft
 
     @property
     def is_postal(self):
@@ -735,6 +754,29 @@ class FoiMessage(models.Model):
             else:
                 update = {"content_rendered_anon": content}
             FoiMessage.objects.filter(id=self.id).update(**update)
+
+
+class FoiMessageDraft(FoiMessage):
+    objects = FoiMessageDraftManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = _("Freedom of Information Message Draft")
+        verbose_name_plural = _("Freedom of Information Message Drafts")
+
+    def can_be_published(self) -> bool:
+        # see constraints of FoiMessage
+        if self.is_response:
+            return (
+                self.sender_public_body is not None
+                and self.recipient_public_body is None
+                and self.sender_user is None
+            )
+        else:
+            return (
+                self.sender_public_body is None
+                and self.recipient_public_body is not None
+            )
 
 
 class Delivery(models.TextChoices):

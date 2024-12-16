@@ -20,3 +20,7 @@ messagesde:
 requirements: pyproject.toml
 	uv pip compile -o requirements.txt pyproject.toml -p 3.10
 	uv pip compile -o requirements-test.txt --extra test pyproject.toml -p 3.10
+
+openapi:
+	python manage.py generateschema --file froide/openapi-schema.yaml
+	pnpm run openapi

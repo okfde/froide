@@ -216,7 +216,7 @@ class FoiLaw(TranslatableModel):
     def as_data(self, request=None):
         from froide.helper.api_utils import get_fake_api_context
 
-        from .api_views import FoiLawSerializer
+        from .serializers import FoiLawSerializer
 
         if request is None:
             ctx = get_fake_api_context()
@@ -584,12 +584,12 @@ class PublicBody(models.Model):
         return serializer_klass(self, context=ctx).data
 
     def as_data(self, request=None):
-        from .api_views import PublicBodyListSerializer
+        from .serializers import PublicBodyListSerializer
 
         return self._as_data(PublicBodyListSerializer)
 
     def as_simple_data(self, request=None):
-        from .api_views import SimplePublicBodySerializer
+        from .serializers import SimplePublicBodySerializer
 
         return self._as_data(SimplePublicBodySerializer)
 

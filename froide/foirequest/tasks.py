@@ -442,10 +442,10 @@ def unpack_zipfile_attachment_task(instance_id):
 
 @celery_app.task(name="froide.foirequest.tasks.remove_old_drafts", time_limit=10)
 def remove_old_drafts():
-    from .models import FoiMessage
+    from .models import FoiMessageDraft
 
-    FoiMessage.objects.filter(
-        is_draft=True, last_modified_at__lt=timezone.now() - timedelta(days=30)
+    FoiMessageDraft.objects.filter(
+        last_modified_at__lt=timezone.now() - timedelta(days=30)
     ).delete()
 
 
