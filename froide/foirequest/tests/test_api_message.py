@@ -72,6 +72,13 @@ def test_message_draft(client: Client, user):
     message_id = response.json()["id"]
     resource_uri = reverse("api:message-draft-detail", kwargs={"pk": message_id})
 
+    # can't set sent stauts
+    assert response.json()["sent"] is True
+    response = client.patch(
+        resource_uri, data={"sent": False}, content_type="application/json"
+    )
+    assert response.json()["sent"] is True
+
     # doesn't appear in regular messages
     response = client.get(reverse("api:message-detail", kwargs={"pk": message_id}))
     assert response.status_code == 404
