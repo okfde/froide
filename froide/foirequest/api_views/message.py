@@ -6,12 +6,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import mixins
 
-from froide.foirequest.models.message import FoiMessageDraft
-
 from ..auth import (
     get_read_foimessage_queryset,
 )
-from ..models import FoiMessage
+from ..models import FoiMessage, FoiMessageDraft, FoiRequest
 from ..permissions import (
     OnlyEditableWhenDraftPermission,
     WriteFoiRequestPermission,
@@ -71,12 +69,26 @@ class FoiMessageDraftViewSet(
         ).order_by()
         return self.optimize_query(qs)
 
-    @action(detail=True, methods=["post"])
+    @action(detail=True, methods=["get", "post"])
     def publish(self, request, pk=None):
         message = self.get_object()
         message.is_draft = False
+
+        if not message.is_response:
+            message.sender_user = request.user
+
         message.save()
 
+        if message.is_response:
+            FoiRequest.message_received.send(
+                sender=message.request, message=message, user=request.user
+            )
+        else:
+            FoiRequest.message_sent.send(
+                sender=message.request, message=message, uer=request.user
+            )
+
+        # return it as a regular message
         serializer = FoiMessageSerializer(
             message, context=self.get_serializer_context()
         )
