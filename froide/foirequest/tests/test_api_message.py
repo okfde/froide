@@ -84,9 +84,28 @@ def test_message_draft(client: Client, user):
     response = client.get(reverse("api:message-detail", kwargs={"pk": message_id}))
     assert response.status_code == 404
 
+    # can't publish without recipient
+    publish_uri = reverse("api:message-draft-publish", kwargs={"pk": message_id})
+    response = client.post(publish_uri)
+    assert response.status_code == 400
+
+    # letter was sent by public body to user
+    public_body = factories.PublicBodyFactory.create()
+    response = client.patch(
+        resource_uri,
+        data={
+            "sender_public_body": reverse(
+                "api:publicbody-detail", kwargs={"pk": public_body.pk}
+            ),
+            "recipient_public_body": None,
+            "is_response": True,
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
     # publish
-    resource_uri = reverse("api:message-draft-publish", kwargs={"pk": message_id})
-    response = client.post(resource_uri)
+    response = client.post(publish_uri)
     assert response.status_code == 200
     assert "/draft/" not in response.json()["resource_uri"]
 
@@ -104,6 +123,34 @@ def test_message_draft(client: Client, user):
     response = client.delete(resource_uri)
     assert response.status_code == 404
 
+    # user send a message to public body
+    response = client.post(
+        "/api/v1/message/draft/",
+        data={
+            "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
+            "kind": "post",
+            "recipient_public_body": reverse(
+                "api:publicbody-detail", kwargs={"pk": public_body.pk}
+            ),
+            "sender_public_body": None,
+            "is_response": False,
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+    print(response.json())
+
+    message_id = response.json()["id"]
+    publish_uri = reverse("api:message-draft-publish", kwargs={"pk": message_id})
+
+    response = client.post(publish_uri)
+    assert response.status_code == 200
+
+    # ensure event was created
+    assert FoiEvent.objects.get(
+        message=message_id, event_name="message_sent", user=user
+    )
+
 
 @pytest.mark.django_db
 def test_auth(client, user):
@@ -119,6 +166,13 @@ def test_auth(client, user):
             "kind": "post",
         },
         content_type="application/json",
+    )
+    assert response.status_code == 401
+
+    # can't publish drafts
+    draft = factories.FoiMessageDraftFactory.create(request=request)
+    response = client.post(
+        reverse("api:message-draft-publish", kwargs={"pk": draft.pk})
     )
     assert response.status_code == 401
 

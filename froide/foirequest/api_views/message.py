@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
 from rest_framework import permissions, viewsets
@@ -77,6 +78,18 @@ class FoiMessageDraftViewSet(
         if not message.is_response:
             message.sender_user = request.user
 
+        if not message.can_be_published():
+            if message.is_response:
+                error_message = _(
+                    "Response messages must have a sender public body, no sender user and no recipient public body."
+                )
+            else:
+                error_message = _(
+                    "Non-response messages must have a recipent public body, but no sender public body."
+                )
+
+            return Response({"detail": error_message}, status=400)
+
         message.save()
 
         if message.is_response:
@@ -85,7 +98,7 @@ class FoiMessageDraftViewSet(
             )
         else:
             FoiRequest.message_sent.send(
-                sender=message.request, message=message, uer=request.user
+                sender=message.request, message=message, user=request.user
             )
 
         # return it as a regular message
