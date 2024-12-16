@@ -762,6 +762,20 @@ class FoiMessageDraft(FoiMessage):
         verbose_name = _("Freedom of Information Message Draft")
         verbose_name_plural = _("Freedom of Information Message Drafts")
 
+    def can_be_published(self) -> bool:
+        # see constraints of FoiMessage
+        if self.is_response:
+            return (
+                self.sender_public_body is not None
+                and self.recipient_public_body is None
+                and self.sender_user is None
+            )
+        else:
+            return (
+                self.sender_public_body is None
+                and self.recipient_public_body is not None
+            )
+
 
 class Delivery(models.TextChoices):
     STATUS_UNKNOWN = ("unknown", _("unknown"))
