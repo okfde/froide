@@ -1,5 +1,4 @@
 from django.db.models import Prefetch
-from django.template.defaultfilters import default
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
@@ -17,6 +16,7 @@ from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
 from froide.publicbody.serializers import (
     FoiLawSerializer,
+    PublicBodyRelatedField,
     PublicBodySerializer,
     SimplePublicBodySerializer,
 )
@@ -181,8 +181,7 @@ class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
 
 
 class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
-    def __init__(self, **kwargs):
-        super().__init__("api:message-detail", **kwargs)
+    view_name = "api:message-detail"
 
     def get_url(self, obj, view_name, request, format):
         # Unsaved objects will not yet have a valid URL.
@@ -204,12 +203,8 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(view_name="api:message-detail")
     request = FoiRequestRelatedField()
     attachments = serializers.SerializerMethodField(source="get_attachments")
-    sender_public_body = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name="api:publicbody-detail"
-    )
-    recipient_public_body = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name="api:publicbody-detail"
-    )
+    sender_public_body = PublicBodyRelatedField(required=False, allow_null=True)
+    recipient_public_body = PublicBodyRelatedField(required=False, allow_null=True)
 
     subject = serializers.SerializerMethodField(source="get_subject")
     content = serializers.SerializerMethodField(source="get_content")
@@ -217,11 +212,11 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     redacted_content = serializers.SerializerMethodField(source="get_redacted_content")
     sender = serializers.CharField(read_only=True)
     url = serializers.CharField(source="get_absolute_domain_url", read_only=True)
-    status = serializers.ChoiceField(choices=FoiRequest.STATUS.choices, required=False)
+    status = serializers.ChoiceField(
+        choices=FoiRequest.STATUS.choices, required=False, allow_blank=True
+    )
     kind = serializers.ChoiceField(choices=MessageKind.choices, default="post")
-    is_draft = serializers.BooleanField(read_only=True)
     status_name = serializers.CharField(source="get_status_display", read_only=True)
-    not_publishable = serializers.BooleanField(read_only=True)
     timestamp = serializers.DateTimeField(default=timezone.now)
 
     class Meta:
@@ -254,6 +249,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "status_name",
             "last_modified_at",
         )
+        read_only_fields = ("sent", "is_draft", "not_publishable", "last_modified_at")
 
     def _is_authenticated_read(self, obj):
         request = self.context["request"]
