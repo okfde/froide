@@ -293,3 +293,10 @@ class PublicBodyListSerializer(serializers.HyperlinkedModelSerializer):
 
 class PublicBodySerializer(PublicBodyListSerializer):
     laws = FoiLawSerializer(many=True, read_only=True)
+
+
+class PublicBodyRelatedField(serializers.HyperlinkedRelatedField):
+    view_name = "api:publicbody-detail"
+
+    def get_queryset(self):
+        return PublicBody.objects.all()
