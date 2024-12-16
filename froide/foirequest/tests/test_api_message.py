@@ -3,6 +3,7 @@ from django.urls import reverse
 
 import pytest
 
+from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.tests import factories
 
 
@@ -88,6 +89,11 @@ def test_message_draft(client: Client, user):
     response = client.post(resource_uri)
     assert response.status_code == 200
     assert "/draft/" not in response.json()["resource_uri"]
+
+    # ensure event was created
+    assert FoiEvent.objects.get(
+        message=response.json()["id"], event_name="message_received", user=user
+    )
 
     # can't delete anymore
     resource_uri = reverse("api:message-detail", kwargs={"pk": message_id})
