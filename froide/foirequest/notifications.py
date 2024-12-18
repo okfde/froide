@@ -143,7 +143,7 @@ def send_update(notifications: List[Notification], user):
 
     count = len(request_list)
     subject = ngettext_lazy(
-        "Update on one of your request", "Update on %(count)s of your requests", count
+        "Update on one of your requests", "Update on %(count)s of your requests", count
     ) % {"count": count}
 
     update_requester_email.send(
