@@ -4137,7 +4137,7 @@ msgstr "Nutzer:in wurde eine E-Mail gesendet."
 
 #: froide/foirequest/notifications.py
 #, python-format
-msgid "Update on one of your request"
+msgid "Update on one of your requests"
 msgid_plural "Update on %(count)s of your requests"
 msgstr[0] "Neues bei einer Ihrer Anfragen"
 msgstr[1] "Neues bei %(count)s Ihrer Anfragen"
