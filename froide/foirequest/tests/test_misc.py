@@ -1,4 +1,5 @@
 from datetime import timedelta
+from unittest.mock import MagicMock, patch
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
@@ -11,7 +12,11 @@ import pytest
 
 from froide.comments.models import FroideComment
 from froide.foirequest.models import FoiMessage, FoiRequest
-from froide.foirequest.notifications import batch_update_requester
+from froide.foirequest.notifications import (
+    Notification,
+    batch_update_requester,
+    send_update,
+)
 from froide.foirequest.tasks import (
     classification_reminder,
     detect_asleep,
@@ -119,6 +124,126 @@ class TaskTest(TestCase):
         batch_update_requester(start=start, end=end)
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn("Update on one of your request", mail.outbox[0].subject)
+
+
+class SendUpdateTest(TestCase):
+    def setUp(self):
+        self.user1 = factories.UserFactory.create()
+        self.user2 = factories.UserFactory.create()
+        self.user3 = factories.UserFactory.create()
+
+        # Some requests, all created by user 1.
+        self.request1a = self.get_request(self.user1)
+        self.request1b = self.get_request(self.user1)
+        self.request1c = self.get_request(self.user1)
+
+        # Notifications for comments by user X on request Y.
+        self.comment_request1a_user1 = self.get_notification(
+            self.request1a, self.user1, "Comment 1"
+        )
+        self.comment_request1a_user2 = self.get_notification(
+            self.request1a, self.user2, "Comment 2"
+        )
+        self.comment_request1b_user2 = self.get_notification(
+            self.request1b, self.user2, "Comment 3"
+        )
+        self.comment_request1c_user3 = self.get_notification(
+            self.request1c, self.user3, "Comment 4"
+        )
+        self.comment_request1c_user2 = self.get_notification(
+            self.request1c, self.user2, "Comment 5"
+        )
+
+        # Path to the send function to be patched.
+        self.send_path = "froide.foirequest.notifications.update_requester_email.send"
+
+    def get_request(self, user):
+        request = factories.FoiRequestFactory.create()
+        request.user = user
+        return request
+
+    def get_notification(self, request, user, event_name):
+        notification = MagicMock(spec=Notification)
+        notification.object = request
+        notification.user_id = user.id
+        notification.event = self.get_event(event_name)
+        return notification
+
+    def get_event(self, event_name):
+        event = MagicMock()
+        event.as_text.return_value = event_name
+        return event
+
+    def test_does_not_send_email_if_no_notifications(self):
+        notifications = []
+
+        with patch(self.send_path) as mock_send:
+            send_update(notifications, self.user1)
+            mock_send.assert_not_called()
+
+    def test_does_not_include_requests_with_only_requester_comments(self):
+        notifications = [self.comment_request1a_user1]
+
+        with patch(self.send_path) as mock_send:
+            send_update(notifications, self.user1)
+            mock_send.assert_not_called()
+
+    def test_includes_requests_with_only_non_requester_comments(self):
+        notifications = [self.comment_request1a_user2]
+
+        with patch(self.send_path) as mock_send:
+            send_update(notifications, self.user1)
+            mock_send.assert_called_once()
+
+            context = mock_send.call_args[1]["context"]
+            request_list = context["request_list"]
+
+            assert context["user"] == self.user1
+            assert context["count"] == 1
+            assert len(request_list) == 1
+            assert request_list[0]["request"] == self.request1a
+            assert request_list[0]["events"] == ["Comment 2"]
+            assert mock_send.call_args[1]["subject"] == "Update on one of your request"
+
+    def test_includes_requests_with_both_requester_and_non_requester_comments(self):
+        notifications = [self.comment_request1a_user1, self.comment_request1a_user2]
+
+        with patch(self.send_path) as mock_send:
+            send_update(notifications, self.user1)
+            mock_send.assert_called_once()
+
+            context = mock_send.call_args[1]["context"]
+            request_list = context["request_list"]
+
+            assert context["user"] == self.user1
+            assert context["count"] == 1
+            assert len(request_list) == 1
+            assert request_list[0]["request"] == self.request1a
+            assert request_list[0]["events"] == ["Comment 1", "Comment 2"]
+            assert mock_send.call_args[1]["subject"] == "Update on one of your request"
+
+    def test_includes_multiple_requests_with_comments_from_multiple_users(self):
+        notifications = [
+            self.comment_request1b_user2,
+            self.comment_request1c_user3,
+            self.comment_request1c_user2,
+        ]
+
+        with patch(self.send_path) as mock_send:
+            send_update(notifications, self.user1)
+            mock_send.assert_called_once()
+
+            context = mock_send.call_args[1]["context"]
+            request_list = context["request_list"]
+
+            assert context["user"] == self.user1
+            assert context["count"] == 2
+            assert len(request_list) == 2
+            assert request_list[0]["request"] == self.request1b
+            assert request_list[0]["events"] == ["Comment 3"]
+            assert request_list[1]["request"] == self.request1c
+            assert request_list[1]["events"] == ["Comment 4", "Comment 5"]
+            assert mock_send.call_args[1]["subject"] == "Update on 2 of your requests"
 
 
 class MailAttachmentSizeCheckerTest(TestCase):
