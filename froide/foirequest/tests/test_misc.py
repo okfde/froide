@@ -123,7 +123,7 @@ class TaskTest(TestCase):
         )
         batch_update_requester(start=start, end=end)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn("Update on one of your request", mail.outbox[0].subject)
+        self.assertIn("Update on one of your requests", mail.outbox[0].subject)
 
 
 class SendUpdateTest(TestCase):
@@ -203,7 +203,7 @@ class SendUpdateTest(TestCase):
             assert len(request_list) == 1
             assert request_list[0]["request"] == self.request1a
             assert request_list[0]["events"] == ["Comment 2"]
-            assert mock_send.call_args[1]["subject"] == "Update on one of your request"
+            assert mock_send.call_args[1]["subject"] == "Update on one of your requests"
 
     def test_includes_requests_with_both_requester_and_non_requester_comments(self):
         notifications = [self.comment_request1a_user1, self.comment_request1a_user2]
@@ -220,7 +220,7 @@ class SendUpdateTest(TestCase):
             assert len(request_list) == 1
             assert request_list[0]["request"] == self.request1a
             assert request_list[0]["events"] == ["Comment 1", "Comment 2"]
-            assert mock_send.call_args[1]["subject"] == "Update on one of your request"
+            assert mock_send.call_args[1]["subject"] == "Update on one of your requests"
 
     def test_includes_multiple_requests_with_comments_from_multiple_users(self):
         notifications = [
