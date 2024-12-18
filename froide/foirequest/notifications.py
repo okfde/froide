@@ -118,11 +118,6 @@ def batch_update_requester(
 def send_update(notifications: List[Notification], user):
     translation.activate(user.language or settings.LANGUAGE_CODE)
 
-    count = len(notifications)
-    subject = ngettext_lazy(
-        "Update on one of your request", "Update on %(count)s of your requests", count
-    ) % {"count": count}
-
     # Add additional info to template context
     request_list = []
     grouped_notifications = groupby(notifications, lambda n: n.object.id)
@@ -145,6 +140,11 @@ def send_update(notifications: List[Notification], user):
 
     if not request_list:
         return
+
+    count = len(request_list)
+    subject = ngettext_lazy(
+        "Update on one of your request", "Update on %(count)s of your requests", count
+    ) % {"count": count}
 
     update_requester_email.send(
         user=user,
