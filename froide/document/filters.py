@@ -178,7 +178,7 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         )
         if not filter_present:
             queryset = queryset.filter(listed=True)
-        if not self.form.cleaned_data.get("portal"):
+        if not self.form.cleaned_data.get("portal") and not filter_present:
             queryset = self.apply_filter(queryset, "portal", portal=0)
             queryset = self.apply_filter(
                 queryset,
