@@ -1,0 +1,10 @@
+2025-01-01T00:01:02.456789+01:00 mail postfix/smtpd[1234567]: 163CB3EE5E7F: client=localhost.localdomain[127.0.0.1], sasl_method=PLAIN, sasl_username=examplemail@example.com
+2025-01-08T10:29:21.062584+01:00 mail postfix/cleanup[2345678]: 163CB3EE5E7F: message-id=<foirequest/123123@example.com>
+2025-01-01T00:01:02.456789+01:00 mail opendkim[2345678]: 163CB3EE5E7F: DKIM-Signature field added (s=mail, d=example.com)
+2025-01-01T00:01:02.456789+01:00 mail postfix/qmgr[2345678]: 163CB3EE5E7F: from=<bounce+asdadasd=+132kl12j31n12d1190+a.foo=example.com@example.com>, size=12321, nrcpt=1 (queue active)
+2025-01-01T00:01:02.456789+01:00 mail postfix/smtp[2345678]: 163CB3EE5E7F: to=<a.foo@example.com>, relay=example.com[123.456.789.123]:25, delay=0.67, delays=0.1/0.37/0.13/0.07, dsn=2.0.0, status=sent (250 Requested mail action okay, completed: id=aaaaa-bbbbb-ccccc-ddddd
+)
+2025-01-01T00:01:02.456789+01:00 mail postfix/qmgr[2345678]: 163CB3EE5E7F: removed
+2025-01-01T00:01:02.456789+01:00 mail postfix/smtpd[2345678]: 065AB16D682C: client=localhost.localdomain[127.0.0.1], sasl_method=PLAIN, sasl_username=examplemail@example.com
+2025-01-01T00:01:02.456789+01:00 mail postfix/cleanup[2345678]: 065AB16D682C: message-id=<foimsg.1324123.12312312312312.1231@mail.example.com>
+2025-01-01T00:01:02.456789+01:00 mail opendkim[2345678]: 065AB16D682C: DKIM-Signature field added (s=mail, d=example.com)
