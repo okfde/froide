@@ -383,6 +383,10 @@ def parse_email(bytesfile: BytesIO) -> ParsedEmail:
     body = "\n".join(body).strip()
     html = "\n".join(html).strip()
 
+    # Replace null characters with replacement character, so postgres stores it
+    body = body.replace("\x00", "\ufffd")
+    html = html.replace("\x00", "\ufffd")
+
     # Some mailclient put the html mail in the plaintext part as well 🙃
     # If the body looks html-y and the conversion from html generates the same
     # result, ignore the body
