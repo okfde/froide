@@ -22,7 +22,7 @@ class PostfixLogfileParser(collections.abc.Iterator):
 
     DEFAULT_RELEVANT_FIELDS = {"message-id", "from", "to", "status", "removed"}
     QUEUE_ID_REGEX = r"(?P<queue_id>[0-9A-F]{6,}|[0-9a-zA-Z]{12,})"
-    TIMESTAMP_RE = r"(?P<timestamp>\w{3}\s+\d+\s+\d+:\d+:\d+)"
+    TIMESTAMP_RE = r"(?P<timestamp>(\w{3}\s+\d+\s+\d+:\d+:\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)))"
     USER_RE = r"(?P<user>[^ ]+)"
     PROCESS_RE = r"(?P<process>[^:]+)"
     FIELDS_RE = r"(?P<fields>.*)"

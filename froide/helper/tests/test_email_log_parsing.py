@@ -274,3 +274,18 @@ def test_bouncing_email(req_with_msgs: FoiRequest):
     assert (
         ProblemReport.objects.filter(message=msg).count() == problem_reports_before + 1
     )
+
+
+def test_isodate():
+    invocations = []
+
+    def callback(**kwargs):
+        invocations.append(kwargs)
+
+    email_left_queue.connect(callback)
+    assert len(invocations) == 0
+    with tempfile.TemporaryDirectory() as dir:
+        check_delivery_from_log([p("maillog_007.txt")], Path(dir + "/mail_log.offset"))
+        assert len(invocations) == 1
+
+    assert invocations[0]["message_id"] == MAIL_1_ID
