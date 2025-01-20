@@ -70,7 +70,7 @@
             <h4>{% translate "Other files" %}</h4>
         </template>
         </document-uploader>
-        <attachment-manager id="attachment-manager" :message="{{ message_json }}" :config="{{ config_json }}" />
+        <attachment-manager id="attachment-manager" :message="{{ message_json }}" :config="{{ config_json }}" :user_is_staff="{{ user_is_staff }}" />
         <p class="text-end">
             <a href="{{ message.get_absolute_url }}" class="btn btn-secondary">{% trans "Return to message" %}</a>
         </p>

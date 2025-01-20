@@ -1,116 +1,27 @@
-import { postData } from '../../../lib/api'
+import { getData, postData } from '../../../lib/api'
 
-//import { createPinia } from 'pinia'
 import { pinia } from '../../../lib/pinia'
-import { useAttachmentsStore, getNewImageDoc } from './attachments-store'
+import { useAttachmentsStore } from './attachments-store'
 
 import ExifReader from 'exifreader'
 
-console.log('### attachments.js "root" 1')
+const store = useAttachmentsStore(pinia)
 
-const attachments = useAttachmentsStore(pinia)
-
-console.log('### attachments.js "root" 2')
-
-const prepareImages = (images) => images
-  .sort((a, b) => {
-    if (a.name < b.name) return -1
-    if (a.name > b.name) return 1
-    return 0
-  })
-  .map((x, i) => {
-    x.pageNum = i + 1
-    return x
-  })
-
-const processAttachmentsFromFetch = (attachments, extra = {}) => {
-  const ret = []
-  let images = []
-  attachments.forEach((att) => {
-    const a = {
-      id: att.id,
-      name: att.name,
-      filetype: att.filetype,
-      pending: att.pending,
-      file_url: att.file_url,
-      is_redacted: att.is_redacted,
-      has_redacted: !!att.redacted,
-      pages: null,
-      attachment: att,
-      auto_approve: true,
-      ...extra
-    }
-    let imagePage = false
-
-    if (att.is_irrelevant) {
-      a.irrelevant = true
-    } else if (att.is_pdf) {
-      a.type = 'pdf'
-    } else if (att.is_image) {
-      if (att.converted) {
-        a.irrelevant = true
-      } else {
-        imagePage = true
-        images.push({
-          id: att.id,
-          name: att.name,
-          attachment: att,
-          file_url: att.file_url
-        })
-      }
-    }
-    if (!imagePage) {
-      ret.push(a)
-    }
-    // unused?
-    // this.names[att.name] = true
-  })
-  if (images.length > 0) {
-    images = prepareImages(images)
-    ret.unshift(
-      getNewImageDoc({
-        pages: images,
-        new: false
-      })
-    )
-  }
-  return ret
+const makeRelevant = (attachment) => {
+  store.addImages([attachment])
+  store.removeAttachment(attachment)
 }
 
-const addImages = (images) => {
-  // if there are no image documents yet, create a new one
-  // otherwise, append a page to the existing image
-  if (attachments.images.length === 0) {
-    // TODO this used to be a complicated prepend, maybe unnecessary?
-    attachments.all.push(
-      getNewImageDoc({
-        pages: images.map((i, c) => {
-          i.pageNum = c + 1
-          return i
-        })
-      })
-    )
-  } else {
-    const imageAtt = attachments.images[0]
-    imageAtt.pages = [
-      ...imageAtt.pages,
-      ...images.map((i, c) => {
-        i.pageNum = imageAtt.pages.length + c + 1
-        return i
-      })
-    ]
-  }
-  // this.$emit('imagesadded')
-}
-
-const convertImage = (image) => {
-  attachments.isConverting = true
+const convertImage = (imageIndex) => {
+  store.isConverting = true
+  store.images[imageIndex].isConverting = true
   return postData(
     config.urls.convertAttachments,
     {
       action: 'convert_to_pdf',
-      title: 'TODO',
-      images: image.pages.map((p) => ({
+      // normalize possible .pdf extension away
+      title: store.images[imageIndex].name.replace(/\.pdf$/, ''),
+      images: store.images[imageIndex].pages.map((p) => ({
         id: p.id,
         rotate: (p.rotate || 0) + (p.implicitRotate || 0)
       }))
@@ -118,16 +29,30 @@ const convertImage = (image) => {
     config.csrfToken
   )
     .then((newAttachment) => {
-      // remove converted
-      attachments.all = attachments.all.filter((a) => a.id != image.id)
+      newAttachment.new = true
+      store.images = store.images.filter((_, i) => i !== imageIndex)
       // append new
-      attachments.all.push(...processAttachmentsFromFetch([newAttachment], { new: true }))
+      store.all.push(newAttachment)
     })
+    // TODO handle error
     .finally(() => {
-      attachments.isConverting = false
+      store.isConverting = false
     })
 }
 
+const createDocument = (attachment) => {
+  const createDocumentUrl = config.urls.createDocument.replace(
+    '/0/',
+    `/${attachment.id}/`
+  )
+  return postData(createDocumentUrl, {}, config.csrfToken)
+    .then((data) => {
+      console.log('###', getData(data.resource_uri))
+      return refetchAttachment(attachment)
+    })
+}
+
+// TODO: check how this relates to the post upload API work
 const fetchAttachments = (url, csrfToken) => {
   return fetch(url, {
     headers: { 'X-CSRFToken': csrfToken }
@@ -148,17 +73,18 @@ const fetchAttachments = (url, csrfToken) => {
         // would have to fetch multiple times to get all
         console.warn('not all attachments fetched')
       }
-      const savedAttrs = attachments.all.reduce((a, d) => {
-        a[d.id] = {
-          selected: d.selected,
-          auto_approve: d.auto_approve
-        }
-        return a
-      }, {})
-      attachments.$patch({
-        all: processAttachmentsFromFetch(response.objects)
-          .map((d) => ({ ...d, ...savedAttrs[d.id] }))
+      store.$patch({
+        all: response.objects
       })
+    })
+}
+
+const refetchAttachment = (attachment) => {
+  const updateUrl = attachment.resource_uri
+  return getData(updateUrl, { 'X-CSRFToken': config.csrfToken })
+    .then((response) => {
+      const index = store.all.findIndex(att => att.id === attachment.id)
+      store.all[index] = response
     })
 }
 
@@ -192,11 +118,10 @@ const fetchImagePage = (page) => {
     })
 }
 
-// const addFromUppy = ({ csrfToken, convertAttachmentsUrl, onImagesAdded, onDocumentsAdded }) => ({ uppy, response, file }) => {
-const addFromUppy = ({ uppy, response, file }) => {
+const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
   const uploadUrl = response.uploadURL
   return postData(
-    config.urls.convertAttachmentsUrl,
+    config.urls.convertAttachments,
     {
       action: 'add_tus_attachment',
       upload: uploadUrl
@@ -209,19 +134,9 @@ const addFromUppy = ({ uppy, response, file }) => {
       }
       const att = result.added[0]
       if (att.is_image) {
-        addImages([att])
-        // onImagesAdded()
+        store.addImages([att], { imageDefaultFilename })
       } else {
-        /*
-        documents.value = [
-          ...buildDocuments([att], { new: true }),
-          ...documents.value
-        ]
-        */
-        // TODO again, weird prepend?
-        attachments.all.push(processAttachmentsFromFetch([att], { 'new': true }))
-        // this.$emit('documentsadded')
-        // onDocumentsAdded()
+        store.all.push({ ...att, new: true })
       }
     })
     .then(() => {
@@ -229,12 +144,49 @@ const addFromUppy = ({ uppy, response, file }) => {
     })
 }
 
+const handleErrorAndRefresh = (err) => {
+  alert(err)
+  console.error(err)
+  refresh()
+}
+
+const deleteAttachment = (attachment) => {
+  const deleteUrl = config.urls.deleteAttachment.replace('/0/', `/${attachment.id}/`)
+  // optimistically...
+  store.removeAttachment(attachment)
+  return postData(deleteUrl, {}, config.csrfToken, 'POST', true)
+    .catch(handleErrorAndRefresh)
+}
+
+const approveAttachment = (attachment) => {
+  const approveUrl = config.urls.approveAttachment.replace('/0/', `/${attachment.id}/`)
+  return postData(approveUrl, {}, config.csrfToken, 'POST', true)
+    .then(() => {
+      refetchAttachment(attachment, config.csrfToken)
+    })
+    .catch(handleErrorAndRefresh)
+}
+
+const approveAllUnredactedAttachments = (excludeIds = []) => {
+  const approvable = store.all.filter(att =>
+    !att.approved &&
+    att.can_approve &&
+    !att.redacted &&
+    !att.is_redacted &&
+    !excludeIds.includes(att.id)
+  )
+  return Promise.all(approvable.map(attachment => {
+    const approveUrl = config.urls.approveAttachment.replace('/0/', `/${attachment.id}/`)
+    return postData(approveUrl, {}, config.csrfToken, 'POST')
+  }))
+}
+
 const config = {}
 
 const refresh = () => fetchAttachments(config.urls.getAttachment, config.csrfToken)
 
-attachments.$subscribe(() => {
-  attachments.images.forEach(image => {
+store.$subscribe(() => {
+  store.images.forEach(image => {
     image.pages.forEach(page => {
       if (!page.loaded && !page.loading) {
         fetchImagePage(page)
@@ -247,23 +199,26 @@ const rotatePage = (page) => {
   page.rotate = ((page.rotate || 0) + 90) % 360
 }
 
+const getRedactUrl = (attachment) => {
+  return config.urls.redactAttachment.replace('/0/', `/${attachment.id}/`)
+}
+
 export function useAttachments({ urls = null, csrfToken = null} = {}) {
   if (urls) config.urls = urls
   if (csrfToken) config.csrfToken = csrfToken
-  console.log('### attachments.js useAttachments')
-  /*
-  onMounted(() => {
-    console.log('### attachments.js onMounted')
-    refresh()
-  })
-  */
   return {
     pinia,
     refresh,
-    attachments,
+    attachments: store,
     convertImage,
-    splitPages: attachments.splitPages,
+    createDocument,
+    splitPages: store.splitPages,
     rotatePage,
     addFromUppy,
+    makeRelevant,
+    deleteAttachment,
+    approveAttachment,
+    approveAllUnredactedAttachments,
+    getRedactUrl
   }
 }

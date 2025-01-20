@@ -226,6 +226,12 @@ def edit_postal_message(request, foirequest, message_id):
             "can_make_document": request.user.is_staff,
             "allowed_filetypes": [".pdf", ".jpg", ".jpeg", ".png", ".gif"],
         },
+        "user": {
+            "can_edit_approval": request.user.is_staff,
+        },
+        "foirequest": {
+            "public": foirequest.public,
+        },
         "i18n": {
             "uppy": get_uppy_i18n(),
             # from publicbody/widgets
@@ -514,6 +520,12 @@ def edit_postal_message(request, foirequest, message_id):
                 },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            # duplicated from url for compatibility with attachments.js TODO undup
+            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
+            "convertAttachments": reverse(
+                "foirequest-manage_attachments",
+                kwargs={"slug": foirequest.slug, "message_id": message.id},
+            ),
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
             if request.user.is_staff
             else None,
@@ -747,6 +759,12 @@ def upload_attachments(request, foirequest, message_id):
     attachment_form = get_postal_attachment_form(foimessage=message)
 
     ctx = {
+        "user": {
+            "can_edit_approval": request.user.is_staff,
+        },
+        "foirequest": {
+            "public": foirequest.public,
+        },
         "settings": {
             "can_make_document": request.user.is_staff,
             "document_filetypes": POSTAL_CONTENT_TYPES,
