@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { nextTick } from 'vue'
+
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
@@ -65,6 +67,11 @@ export default {
     allowRemove: {
       type: Boolean,
       default: true,
+      required: false
+    },
+    onmountPick: {
+      type: Boolean,
+      default: false,
       required: false
     }
   },
@@ -164,6 +171,15 @@ export default {
       this.uploading = false
       this.$emit('uploading', false)
     })
+    if (this.onmountPick) {
+      nextTick(() => {
+        const button = this.$refs.uppy.querySelector(
+          '.uppy-Dashboard-browse'
+        )
+        console.log('# uppyClick', button)
+        button.click()
+      })
+    }
   }
 }
 </script>

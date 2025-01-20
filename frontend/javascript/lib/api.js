@@ -148,7 +148,7 @@ class FroideAPI {
   }
 }
 
-function postData(url = '', data = {}, csrfToken, method = 'POST') {
+function postData(url = '', data = {}, csrfToken, method = 'POST', throwErrorEarly = false) {
   return window
     .fetch(url, {
       method,
@@ -161,7 +161,12 @@ function postData(url = '', data = {}, csrfToken, method = 'POST') {
       },
       body: JSON.stringify(data)
     })
-    .then((response) => response.json())
+    .then((response) => {
+      if (throwErrorEarly && !response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`)
+      }
+      return response.json()
+    })
 }
 
 function putData(url = '', data = {}, csrfToken) {
