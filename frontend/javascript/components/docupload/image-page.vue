@@ -1,36 +1,33 @@
 <template>
-  <div class="page" :class="{ 'page--dense': dense }">
-    <div class="page-frame">
+  <div class="page">
+    <div class="page-frame d-flex align-items-center justify-content-center position-relative">
       <img
         v-if="page.file_url"
         ref="pageImage"
         :alt="page.name"
         :title="page.name"
-        class="page-image"
+        class="page-image d-block mw-100 mh-100 border"
         :src="page.file_url"
         :style="{ transform: `rotate(${totalRotate}deg)`}"
         />
-    </div>
-    <div class="page-controls">
-      <div class="page-control" v-if="!hideRotate">
-        <button
-          class="btn btn-sm text-body-secondary small"
-          @click="rotatePage">
-          <span class="fa fa-rotate-right" />
-        </button>
-      </div>
       <div
-        class="page-control page-control--number"
-        :class="{ 'text-center': !hideRotate }">
-        {{ page.pageNum }}
+        class="page-control page-control--number position-absolute bottom-0 mb-1 start-0 ms-1 text-bg-primary badge rounded-pill fw-bold lh-sm">
+        {{ pageNum }}
       </div>
-      <div class="page-control text-end" v-if="!hideSplit && !isLast">
-        <button
-          class="btn btn-sm text-body-secondary small"
-          @click="splitPages">
-          <span class="fa fa-scissors" />
-        </button>
-      </div>
+    </div>
+    <div class="page-controls d-flex align-items-center">
+      <button
+        v-if="showRotate"
+        class="btn btn-sm text-body-secondary small"
+        @click="rotatePage">
+        <span class="fa fa-rotate-right" />
+      </button>
+      <button
+        v-if="showSplit && !isLast"
+        class="btn btn-sm text-body-secondary small ms-auto"
+        @click="splitPages">
+        <span class="fa fa-scissors" />
+      </button>
     </div>
     <div
       v-if="page.uploading"
@@ -62,19 +59,19 @@ export default {
       type: Object,
       required: true
     },
+    pageNum: {
+      type: Number,
+      required: true
+    },
     pageCount: {
       type: Number,
       required: true
     },
-    dense: {
+    showRotate: {
       type: Boolean,
       default: false
     },
-    hideRotate: {
-      type: Boolean,
-      default: false
-    },
-    hideSplit: {
+    showSplit: {
       type: Boolean,
       default: false
     }
@@ -98,17 +95,8 @@ export default {
       }
       return rotDegree + (this.page.implicitRotate || 0)
     },
-    pageUrl() {
-      if (!this.loaded) {
-        return false
-      }
-      return this.rotateImage(this.totalRotate)
-    },
-    pageNum() {
-      return this.page.pageNum
-    },
     isLast() {
-      return this.page.pageNum === this.pageCount
+      return this.pageNum === this.pageCount
     },
     progressAlmostComplete() {
       return (
@@ -133,44 +121,10 @@ export default {
   },
   methods: {
     splitPages() {
-      this.$emit('splitpages', this.page.pageNum)
+      this.$emit('splitpages')
     },
     rotatePage() {
-      this.$emit('rotatepage', this.page.pageNum)
-      const degree = ((this.page.rotate || 0) + 90) % 360
-      this.$emit('pageupdated', {
-        pageNum: this.pageNum,
-        data: {
-          rotate: degree
-        }
-      })
-    },
-    rotateImage(degree) {
-      if (!this.imgBitmap) {
-        return null
-      }
-      const canvas = document.createElement('canvas')
-      if (degree % 180 === 0) {
-        canvas.width = this.imgBitmap.width
-        canvas.height = this.imgBitmap.height
-      } else {
-        canvas.width = this.imgBitmap.height
-        canvas.height = this.imgBitmap.width
-      }
-      const ctx = canvas.getContext('2d')
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.save()
-
-      ctx.translate(canvas.width / 2, canvas.height / 2)
-      ctx.rotate((degree * Math.PI) / 180)
-      ctx.drawImage(
-        this.imgBitmap,
-        -this.imgBitmap.width / 2,
-        -this.imgBitmap.height / 2
-      )
-
-      ctx.restore()
-      return canvas.toDataURL('image/jpeg', 1.0)
+      this.$emit('rotatepage')
     },
     fetchImage() {
       fetch(this.page.file_url)
@@ -216,46 +170,15 @@ export default {
     --page-width: 120px;
   }
 
-  position: relative;
   flex: 0 0 var(--page-width);
-  padding: 0;
-  margin: 0 0.5rem 2rem 0;
   cursor: move;
 }
 .page-frame {
   width: var(--page-width);
-  height: calc(var(--page-width) * 1.414);
-  display: flex;
-  align-items: flex-end;
+  height: var(--page-width);
 }
 .page-image {
-  display: block;
-  max-width: 100%;
-  max-height: 100%;
-  border: 1px solid #bbb;
   image-orientation: none; /* Always read exif ourselves */
   transition: transform 1s;
-}
-.page-controls {
-  display: flex;
-}
-.page-control {
-  flex-basis: 0;
-  flex-grow: 1;
-  max-width: 100%;
-}
-.page--dense .page-control--number {
-  position: absolute;
-  bottom: 0.2rem;
-  left: 0.2rem;
-  font-size: 60%;
-  background: var(--bs-link-color);
-  color: white;
-  width: 1.75em;
-  height: 1.75em;
-  text-align: center;
-  line-height: 1.75em;
-  border-radius: 50%;
-  font-weight: bolder;
 }
 </style>
