@@ -107,9 +107,6 @@ def set_status(request, slug):
     if not can_write_foirequest(foirequest, request):
         if not can_moderate_foirequest(foirequest, request):
             return render_403(request)
-        else:
-            if not foirequest.moderate_classification():
-                return render_403(request)
 
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
