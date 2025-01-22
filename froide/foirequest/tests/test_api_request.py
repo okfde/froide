@@ -15,8 +15,8 @@ from django.utils import timezone
 import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
 
-from froide.foirequest.api_views import FoiMessageSerializer
 from froide.foirequest.models import FoiAttachment, FoiRequest
+from froide.foirequest.serializers import FoiMessageSerializer
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
@@ -29,6 +29,7 @@ AccessToken = get_access_token_model()
 class ApiTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
+        self.test_user = User.objects.get(username="dummy")
 
     def test_list(self):
         response = self.client.get("/api/v1/request/")
@@ -219,6 +220,7 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         self.assertEqual(response.status_code, 200)
         result = json.loads(response.content.decode("utf-8"))
         self.assertEqual(result["meta"]["total_count"], 2)
+        self.client.logout()
 
     def test_list_private_requests_without_scope(self):
         response, result = self.api_get(self.request_list_url)
@@ -353,6 +355,7 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
 
     def test_foiattachment_upload(self):
         mes = factories.FoiMessageFactory.create(request=self.req, kind="post")
+        mes_url = reverse("api:message-detail", kwargs={"pk": mes.pk})
         att_url = reverse("api:attachment-list")
 
         upload = Upload.objects.create(
@@ -364,22 +367,22 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         upload_url = reverse("api:upload-detail", kwargs={"guid": str(upload.guid)})
 
         response, result = self.api_post(
-            att_url, {"message": mes.pk, "upload": upload_url}
+            att_url, {"message": mes_url, "upload": upload_url}
         )
         assert response.status_code == 403
 
         # Set correct scope
-        self.access_token.scope = "read:request upload:message"
+        self.access_token.scope = "read:request make:message"
         self.access_token.save()
 
         fake_upload_url = "y" + upload_url[1:]
         response, result = self.api_post(
-            att_url, {"message": mes.pk, "upload": fake_upload_url}
+            att_url, {"message": mes_url, "upload": fake_upload_url}
         )
         assert response.status_code == 400
 
         response, result = self.api_post(
-            att_url, {"message": mes.pk, "upload": upload_url}
+            att_url, {"message": mes_url, "upload": upload_url}
         )
         assert response.status_code == 201
 

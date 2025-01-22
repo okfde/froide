@@ -174,11 +174,12 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin, viewsets.ReadOnlyModelView
         properties_dict = {p["id"]: p for p in properties}
 
     def get_serializer_class(self):
-        if self.request.user.is_superuser:
-            return GeoRegionDetailSerializer
         try:
+            # request is not available when called from manage.py generateschema
+            if self.request and self.request.user.is_superuser:
+                return GeoRegionDetailSerializer
             return self.serializer_action_classes[self.action]
-        except (KeyError, AttributeError):
+        except KeyError:
             return GeoRegionSerializer
 
     def _search_reconciliation_results(self, query, filters, limit):

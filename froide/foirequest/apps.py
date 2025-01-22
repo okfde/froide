@@ -23,11 +23,12 @@ class FoiRequestConfig(AppConfig):
         from froide.account.export import registry
         from froide.api import api_router
         from froide.foirequest import signals  # noqa
-        from froide.foirequest.api_views import (
-            FoiAttachmentViewSet,
+        from froide.foirequest.api_views.attachment import FoiAttachmentViewSet
+        from froide.foirequest.api_views.message import (
+            FoiMessageDraftViewSet,
             FoiMessageViewSet,
-            FoiRequestViewSet,
         )
+        from froide.foirequest.api_views.request import FoiRequestViewSet
         from froide.helper.search import search_registry
         from froide.team import team_changed
 
@@ -50,6 +51,9 @@ class FoiRequestConfig(AppConfig):
         account_confirmed.connect(send_request_when_account_confirmed)
 
         api_router.register(r"request", FoiRequestViewSet, basename="request")
+        api_router.register(
+            r"message/draft", FoiMessageDraftViewSet, basename="message-draft"
+        )
         api_router.register(r"message", FoiMessageViewSet, basename="message")
         api_router.register(r"attachment", FoiAttachmentViewSet, basename="attachment")
 
