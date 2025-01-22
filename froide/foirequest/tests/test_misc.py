@@ -23,6 +23,7 @@ from froide.foirequest.templatetags.foirequest_tags import (
 )
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import MailAttachmentSizeChecker
+from froide.helper.text_diff import CONTENT_CACHE_THRESHOLD
 
 
 class TemplateTagTest(TestCase):
@@ -235,7 +236,7 @@ def test_redacted_content_cache(foi_message_factory, django_assert_num_queries, 
 def test_cached_rendered_content(
     foi_message_factory, django_assert_num_queries, auth, faker
 ):
-    req_text = faker.text(max_nb_chars=FoiMessage.CONTENT_CACHE_THRESHOLD)
+    req_text = faker.text(max_nb_chars=CONTENT_CACHE_THRESHOLD)
     redacted_foi_message = foi_message_factory(
         plaintext=f"Dear Mx. Example,\n\nPlease send me the following documents:\n{req_text}\n\nGreetings,\nAlex Example",
         plaintext_redacted=f"Dear <<Redacted>>,\n\nPlease send me the following documents:\n{req_text}\n\nGreetings,\n<<Redacted>>",
