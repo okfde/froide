@@ -22,7 +22,7 @@ from taggit.models import TaggedItemBase
 
 from froide.campaign.models import Campaign
 from froide.helper.email_utils import make_address
-from froide.helper.text_diff import get_differences
+from froide.helper.text_diff import CONTENT_CACHE_THRESHOLD, get_differences
 from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
 from froide.team.models import Team
@@ -300,6 +300,11 @@ class FoiRequest(models.Model):
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
     description_redacted = models.TextField(_("Redacted Description"), blank=True)
+    redacted_description_auth = models.JSONField(blank=True, null=True)
+    redacted_description_anon = models.JSONField(blank=True, null=True)
+    rendered_description_auth = models.TextField(blank=True, null=True)
+    rendered_description_anon = models.TextField(blank=True, null=True)
+
     summary = models.TextField(_("Summary"), blank=True)
 
     public_body = models.ForeignKey(
@@ -651,25 +656,53 @@ class FoiRequest(models.Model):
             self.description_redacted = redact_plaintext(
                 self.description, user_replacements=user_replacements
             )
+            self.clear_render_cache()
             if (
                 self.description_redacted
             ):  # description might be empty, if so, don't save again
-                self.save(update_fields=["description_redacted"])
+                self.save()
         return self.description_redacted
 
     def get_redacted_description(self, auth: bool) -> List[Tuple[bool, str]]:
         if auth:
-            show, hide = (
+            show, hide, cache_field = (
                 self.description,
                 self.get_description(),
+                "redacted_description_auth",
             )
         else:
-            show, hide = (
+            show, hide, cache_field = (
                 self.get_description(),
                 self.description,
+                "redacted_description_anon",
             )
 
-        return list(get_differences(show, hide))
+        if getattr(self, cache_field) is None:
+            redacted_content = [list(x) for x in get_differences(show, hide)]
+            setattr(self, cache_field, redacted_content)
+            FoiRequest.objects.filter(id=self.pk).update(
+                **{cache_field: redacted_content}
+            )
+        return getattr(self, cache_field)
+
+    def clear_render_cache(self):
+        self.redacted_description_anon = None
+        self.redacted_description_auth = None
+
+    def get_cached_rendered_description(self, authenticated_read):
+        if authenticated_read:
+            return self.rendered_description_auth
+        else:
+            return self.rendered_description_anon
+
+    def set_cached_rendered_description(self, authenticated_read, description):
+        needs_caching = len(self.description) > CONTENT_CACHE_THRESHOLD
+        if needs_caching:
+            if authenticated_read:
+                update = {"rendered_description_auth": description}
+            else:
+                update = {"rendered_description_anon": description}
+            FoiRequest.objects.filter(id=self.pk).update(**update)
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))

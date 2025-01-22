@@ -15,7 +15,7 @@ from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.email_utils import make_address
-from froide.helper.text_diff import get_differences
+from froide.helper.text_diff import CONTENT_CACHE_THRESHOLD, get_differences
 from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
@@ -86,8 +86,6 @@ MESSAGE_ID_PREFIX = "foimsg."
 
 
 class FoiMessage(models.Model):
-    CONTENT_CACHE_THRESHOLD = 5000
-
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
@@ -728,7 +726,7 @@ class FoiMessage(models.Model):
             return self.content_rendered_anon
 
     def set_cached_rendered_content(self, authenticated_read, content):
-        needs_caching = len(self.content) > self.CONTENT_CACHE_THRESHOLD
+        needs_caching = len(self.content) > CONTENT_CACHE_THRESHOLD
         if needs_caching:
             if authenticated_read:
                 update = {"content_rendered_auth": content}

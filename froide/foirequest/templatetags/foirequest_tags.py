@@ -62,12 +62,7 @@ def highlight_request(message, request):
 
     real_description = unify(message.request.description)
     redacted_description = unify(message.request.get_description())
-    description_with_markup = markup_redacted_content(
-        real_description,
-        redacted_description,
-        authenticated_read=auth_read,
-        message_id=message.id,
-    )
+    description_with_markup = render_request_description(message.request, auth_read)
 
     if auth_read:
         content = real_content
@@ -159,6 +154,15 @@ def redact_request_description(
     foirequest: FoiRequest, request: HttpRequest
 ) -> SafeString:
     authenticated_read = can_read_foirequest_authenticated(foirequest, request)
+    return render_request_description(foirequest, authenticated_read)
+
+
+def render_request_description(
+    foirequest: FoiRequest, authenticated_read: bool
+) -> SafeString:
+    cached_content = foirequest.get_cached_rendered_description(authenticated_read)
+    if cached_content is not None:
+        return mark_safe(cached_content)
 
     real_content = unify(foirequest.description)
     redacted_content = unify(foirequest.get_description())
@@ -167,6 +171,10 @@ def redact_request_description(
         real_content,
         redacted_content,
         authenticated_read=authenticated_read,
+    )
+
+    foirequest.set_cached_rendered_description(
+        authenticated_read=authenticated_read, description=content
     )
 
     return content

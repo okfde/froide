@@ -8,6 +8,7 @@ from django.utils.safestring import SafeString, mark_safe
 SPLITTER = r"([\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E])"
 SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile("^%s$" % SPLITTER)
+CONTENT_CACHE_THRESHOLD = 5000
 
 
 def get_diff_chunks(content: str) -> List[str]:

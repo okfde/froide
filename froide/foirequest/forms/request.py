@@ -490,5 +490,6 @@ class RedactDescriptionForm(forms.Form):
             )
 
         foirequest.description_redacted = redacted_description
+        foirequest.clear_render_cache()
 
         foirequest.save()
