@@ -55,7 +55,7 @@ class LetterPDFGenerator(PDFGenerator):
     template_name = "foirequest/pdf/message_letter.html"
 
     def get_publicbody(self):
-        return self.obj.request.public_body
+        return self.obj.recipient_public_body
 
     def get_recipient_address(self):
         pb = self.get_publicbody()
