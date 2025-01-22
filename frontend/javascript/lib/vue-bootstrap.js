@@ -1,15 +1,26 @@
 import { Tooltip } from 'bootstrap'
+import { collapsePersistent } from './bootstrap-helpers'
 
-/* alternatively, to register globally, we could add to vue-helpers.ts:
-   (note also snippets/bootstrap.ts)
-  app.directive('bsTooltip', {
-    mounted: (el) => {
-      new Tooltip(el)
-    }
-  })
+/* Note also snippets/bootstrap.ts
+   To register globally, we could add to vue-helpers.ts:
+     app.directive('bsTooltip', vBsTooltip
+   Or, more locally, e.g. in redact.js:
+     const app = createAppWithProps...
+     app.directive('bsTooltip', vBsTooltip)
+     // register directive before mount!
+     app.mount...
 */
 export const vBsTooltip = {
-  mounted: (el) => {
-    new Tooltip(el)
+  mounted: (el, binding) => {
+    const tooltip = new Tooltip(el)
+    if (binding.modifiers['focus-autohide']) {
+      el.addEventListener('focusin', () => {
+        window.setTimeout(() => tooltip.hide(), 3000)
+      })
+    }
   }
+}
+
+export const vBsCollapsePersistent = {
+  mounted: (el) => collapsePersistent(el)
 }

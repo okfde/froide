@@ -2,8 +2,9 @@
   <div
     id="pdf-viewer"
     ref="top"
-    class="pdf-redaction-tool container bg-dark-subtle">
-    <div v-if="hasPassword && ready" class="row bg-light pt-2">
+    class="pdf-redaction-tool container-md bg-dark-subtle d-flex flex-column"
+    >
+    <div v-if="hasPassword && ready" class="row">
       <div class="col">
         <div class="alert alert-info mb-0" role="alert">
           {{ i18n.hasPassword }}
@@ -57,21 +58,26 @@
         </div>
       </div>
     </div>
-    <div class="row toolbar">
+    <div class="row toolbar sticky-top z-3">
       <div
         v-if="ready"
         class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light">
         <div
-          class="btn-group me-1 toolbar-undo-redo justify-content-center justify-content-lg-start py-2">
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
           <input
-            v-if="hasTouch"
-            type="checkbox"
+            type="radio"
             class="btn-check"
+            name="pdfredaction-tool"
+            value="paint"
             id="btn-check-paint"
-            v-model="allowSingleTap" />
+            v-model="tool"
+            />
+          <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
+            they overstay their welcome and get in the way. As a simple workaround,
+            we make them autohide after a timeout. -->
           <label
-            v-if="hasTouch"
             class="btn btn-outline-secondary d-flex"
+            :title="i18n.redact"
             for="btn-check-paint">
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
@@ -79,6 +85,27 @@
               <small class="d-none d-xl-block">{{ i18n.redact }}</small>
             </div>
           </label>
+          <input
+            type="radio"
+            class="btn-check"
+            name="pdfredaction-tool"
+            value="move"
+            id="btn-check-move"
+            v-model="tool"
+            />
+          <label
+            class="btn btn-outline-secondary d-flex"
+            :title="i18n.moveTool"
+            for="btn-check-move">
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-arrows" />
+              <small class="d-none d-xl-block">{{ i18n.moveTool }}</small>
+            </div>
+          </label>
+        </div>
+        <div
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
           <button
             type="button"
             class="btn btn-outline-secondary"
@@ -86,7 +113,7 @@
             :title="i18n.undo"
             @click="undo">
             <i class="fa fa-lg fa-share fa-flip-horizontal" />
-            <small class="d-none d-xl-block">{{ i18n.undo }}</small>
+            <small class="d-none d-xxl-block">{{ i18n.undo }}</small>
           </button>
           <button
             type="button"
@@ -97,24 +124,23 @@
             :title="i18n.redo"
             @click="redo">
             <i class="fa fa-lg fa-share" />
-            <small class="d-none d-xl-block">{{ i18n.redo }}</small>
+            <small class="d-none d-xxl-block">{{ i18n.redo }}</small>
           </button>
           <button
             type="button"
             class="btn btn-outline-secondary"
-            style="max-width: 12em"
             :disabled="!canUndo"
             :title="i18n.removeAllRedaction"
             @click="undoAll">
-            <i class="fa fa-lg fa-eraser" />
-            <small class="d-none d-xl-block">{{ i18n.removeAllRedaction }}</small>
+            <i class="fa fa-lg fa-trash" />
+            <small class="d-none d-xxl-block">{{ i18n.removeAllRedaction }}</small>
           </button>
         </div>
 
-        <div v-if="!minimalUi" class="btn-group me-1 toolbar-modes py-2">
+        <div class="btn-group me-1 toolbar-modes py-2">
           <button
             class="btn"
-            :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
+            :class="{ 'btn-outline-secondary': !textOnly, 'btn-secondary': textOnly }"
             :title="i18n.toggleText"
             @click.stop="toggleText"
           >
@@ -124,8 +150,8 @@
           <button
             class="btn"
             :class="{
-              'btn-outline-info': !textDisabled,
-              'btn-info': textDisabled
+              'btn-outline-secondary': !textDisabled,
+              'btn-secondary': textDisabled
             }"
             :title="i18n.disableText"
             @click.stop="toggleDrawing"
@@ -135,9 +161,9 @@
           </button>
         </div>
 
-        <!-- TODO: hide if numPages === 1 ? -->
         <div
-          class="input-group me-1 toolbar-pages justify-content-center justify-content-lg-start py-2">
+          v-if="!bottomToolbar"
+          class="input-group me-1 justify-content-center justify-content-lg-start py-2">
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -146,7 +172,7 @@
             &laquo;
             <span class="visually-hidden">{{ i18n.previousPage }}</span>
           </button>
-          <span class="input-group-text">
+          <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
           </span>
           <button
@@ -160,10 +186,10 @@
         </div>
 
         <div
-          v-if="!minimalUi && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
+          v-if="!hideDoneButton && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
           class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25">
           <button v-if="hasRedactions || hasPassword" class="btn btn-dark" @click="redact">
-            <i class="fa fa-paint-brush me-2" />
+            <i class="fa fa-check me-2" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
             </template>
@@ -172,7 +198,7 @@
             </template>
           </button>
           <form
-            v-if="canPublish && !hasPassword"
+            v-if="canPublish && !hasPassword && !hasRedactions"
             method="post"
             id="redaction-submit-form"
             :action="config.urls.publishUrl"
@@ -183,60 +209,72 @@
               :value="csrfToken"
             />
             <button
-              class="btn"
-              :class="{
-                'btn-success': !hasRedactions,
-                'btn-outline-secondary': hasRedactions
-              }"
+              class="btn btn-dark"
               type="submit"
               @click="confirmNoRedactions"
             >
               <i class="fa fa-check me-2" />{{ i18n.publishWithoutRedaction }}
             </button>
           </form>
-          <a v-else class="btn btn-secondary" :href="attachmentUrl">
-            {{ i18n.cancel }}
-          </a>
         </div>
       </div>
     </div>
-    <div class="py-3 row preview">
-      <div ref="containerWrapper" class="overflow-auto">
-        <div
-          :id="containerId"
-          ref="container"
-          class="redactContainer"
-          :class="{ 'invisible': working }"
+    <div class="row flex-grow-1">
+      <div
+        class="preview position-relative"
+        :class="{ ['preview--do-paint']: doPaint }"
+        ref="containerWrapper"
+        @wheel="mouseWheel"
+        @pointerleave="pointerLeaveWrapper"
         >
-          <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
-          <canvas
-            v-show="!textOnly"
-            :id="redactCanvasId"
-            class="redactLayer"
-            @mousedown="mouseDown"
-            @mousemove="mouseMove"
-            @mouseup="mouseUp"
-            @touchstart="touchStart"
-            @touchend="touchEnd"
-            @touchmove="touchMove"
-            @touchcancel="touchCancel"
-          />
+        <div class="position-absolute top-0 bottom-0 start-0 px-2 py-4"
+          :class="{
+            'pe-none': isDragging,
+          }"
+          >
+          <div class="d-flex flex-column position-sticky z-1 previewToolbar">
+            <div
+              class="btn-group-vertical w-auto position-sticky z-1"
+              >
+              <button type="button" class="btn btn-secondary" @click="zoomIn()">
+                <i class="fa fa-lg fa-plus" />
+              </button>
+              <button type="button" class="btn btn-secondary" @click="zoomReset()">
+                <i class="fa fa-lg fa-compress" />
+              </button>
+              <button type="button" class="btn btn-secondary" @click="zoomOut()">
+                <i class="fa fa-lg fa-minus" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="position-static row py-3 h-100"
+          @pointerdown="pointerDown"
+          @pointerup="pointerUp"
+          @pointermove="pointerMove"
+          >
           <div
-            :id="textLayerId"
-            class="textLayer"
-            :class="{ textActive: textOnly, textDisabled: textDisabled }"
-            @mousedown="mouseDown"
-            @mousemove="mouseMove"
-            @mouseup="mouseUp"
-            @touchstart="touchStart"
-            @touchend="touchEnd"
-            @touchmove="touchMove"
-            @touchcancel="touchCancel"
-          />
+            :id="containerId"
+            ref="container"
+            class="redactContainer"
+            :class="{ 'invisible': working }"
+          >
+            <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
+            <canvas
+              v-show="!textOnly"
+              :id="redactCanvasId"
+              class="redactLayer"
+            />
+            <div
+              :id="textLayerId"
+              class="textLayer"
+              :class="{ textActive: textOnly, textDisabled: textDisabled }"
+            />
+          </div>
         </div>
       </div>
     </div>
-    <div v-if="!minimalUi" class="row">
+    <div v-if="bottomToolbar" class="row sticky-bottom z-2">
       <div v-if="ready" class="btn-toolbar col bg-light py-2">
         <div class="input-group me-auto ms-auto">
           <button
@@ -245,9 +283,9 @@
             @click="goPrevious"
           >
             &laquo;
-            {{ i18n.previousPage }}
+            <span class="d-none d-md-inline-block">{{ i18n.previousPage }}</span>
           </button>
-          <span class="input-group-text">
+          <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
           </span>
           <button
@@ -255,7 +293,7 @@
             :disabled="!hasNext"
             @click="goNext"
           >
-            {{ i18n.nextPage }}
+            <span class="d-none d-md-inline-block">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
         </div>
@@ -275,6 +313,8 @@ import ConfirmNoRedaction from './confirm-no-redaction'
 
 import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.js?url'
 
+import Panzoom from '@panzoom/panzoom'
+
 import range from 'lodash.range'
 
 import { Modal } from 'bootstrap'
@@ -282,9 +322,23 @@ import { Modal } from 'bootstrap'
 import { bustCache, getData } from '../../lib/api.js'
 import { toRaw } from 'vue'
 
+// TODO should this depend on screen size?
+// (could also cap rendered PDF at 1000px...)
+const renderDensityFactor = 1
+
+const scaleCssProp = (styleObject, propName, factor) => {
+  const value = parseFloat(styleObject[propName])
+  if (!isNaN(value)) {
+    // we'll assume they're all in px
+    styleObject[propName] = (value * factor) + 'px'
+  }
+}
+
 function isTouchDevice() {
   return 'ontouchstart' in window
 }
+
+let panzoom
 
 export default {
   name: 'PdfRedaction',
@@ -324,7 +378,11 @@ export default {
       type: Boolean,
       default: false
     },
-    minimalUi: {
+    hideDoneButton: {
+      type: Boolean,
+      default: false
+    },
+    bottomToolbar: {
       type: Boolean,
       default: false
     }
@@ -352,13 +410,14 @@ export default {
       maxWidth: null,
       startDrag: null,
       endDrag: null,
+      isDragging: false,
       initialAutoRedact: {},
       errors: null,
       message: null,
       progressCurrent: null,
       progressTotal: null,
       hasTouch: isTouchDevice(),
-      allowSingleTap: true,
+      tool: isTouchDevice() ? 'move' : 'paint',
       doubleTap: false
     }
   },
@@ -451,11 +510,21 @@ export default {
     },
     csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
+    },
+    doPaint() {
+      return this.tool === 'paint'
     }
   },
   watch: {
     hasRedactions: function (newValue) {
       this.$emit('hasredactionsupdate', newValue)
+    },
+    doPaint: function (newValue) {
+      if (newValue) {
+        panzoom.setOptions({ disableZoom: true, disablePan: true, cursor: 'auto' })
+      } else {
+        panzoom.setOptions({ disableZoom: false, disablePan: false, cursor: 'move' })
+      }
     }
   },
   created() {
@@ -469,6 +538,15 @@ export default {
       .catch((err) => {
         console.log(err)
       })
+  },
+  mounted() {
+    panzoom = Panzoom(this.$refs.container, {
+      canvas: true,
+      pinchAndPan: true,
+      cursor: 'move',
+      noBind: true
+    })
+    if (this.doPaint) panzoom.setOptions({ disableZoom: true, disablePan: true, cursor: 'auto' })
   },
   methods: {
     loadDocument() {
@@ -533,7 +611,7 @@ export default {
 
         if (this.pageScaleFactor[pageNum] === undefined) {
           // Make sure scaleFactor is fixed to page, doesn't change
-          const scaleFactor = this.maxWidth / page.view[2]
+          const scaleFactor = renderDensityFactor * this.maxWidth / page.view[2]
           this.pageScaleFactor[pageNum] = scaleFactor
         }
 
@@ -550,12 +628,20 @@ export default {
         const canvas = this.canvas
         canvas.width = viewport.width
         canvas.height = viewport.height
+        // TODO textLayer missing here?
         this.redactCanvas.width = viewport.width
         this.redactCanvas.height = viewport.height
-        this.container.style.width = Math.floor(viewport.width) + 'px'
-        this.container.style.height = Math.floor(viewport.height) + 'px'
-        this.textLayer.style.width = Math.floor(viewport.width) + 'px'
-        this.textLayer.style.height = Math.floor(viewport.height) + 'px'
+        // TODO need Math.floor?
+        const wPx = (viewport.width / renderDensityFactor) + 'px'
+        const hPx = (viewport.height / renderDensityFactor) + 'px'
+        canvas.style.width = wPx
+        canvas.style.height = hPx
+        this.redactCanvas.style.width = wPx
+        this.redactCanvas.style.height = hPx
+        this.textLayer.style.width = wPx
+        this.textLayer.style.height = hPx
+        this.container.style.width = wPx
+        this.container.style.height = hPx
         const ctx = canvas.getContext('2d')
         const renderTask = page.render({
           canvasContext: ctx,
@@ -785,29 +871,13 @@ export default {
         clientX = e.changedTouches[0].clientX
         clientY = e.changedTouches[0].clientY
       }
-      const offsetX = clientX - rect.left
-      const offsetY = clientY - rect.top
+      let offsetX
+      let offsetY
+      // eslint-disable-next-line no-case-declarations
+      const scale = panzoom.getScale()
+      offsetX = renderDensityFactor * (clientX - rect.left) / scale
+      offsetY = renderDensityFactor * (clientY - rect.top) / scale
       return [offsetX, offsetY]
-    },
-    touchStart(e) {
-      if (!this.doubleTap && !this.allowSingleTap) {
-        this.doubleTap = true
-        setTimeout(() => {
-          this.doubleTap = false
-        }, 500)
-        return false
-      }
-      e.preventDefault()
-      this.mouseDown(e, true)
-    },
-    touchEnd(e) {
-      this.mouseUp(e, true)
-    },
-    touchMove(e) {
-      this.mouseMove(e, true)
-    },
-    touchCancel() {
-      this.cancelDrag()
     },
     cancelDrag() {
       this.startDrag = null
@@ -828,7 +898,7 @@ export default {
       this.drawRectangles()
     },
     mouseDown(e, override) {
-      if (this.hasTouch && !override) {
+      if (!this.doPaint && !override) {
         return
       }
       this.startDrag = this.getOffset(e)
@@ -851,8 +921,9 @@ export default {
       if (this.startDrag === null) {
         return
       }
+
+      const endDrag = this.endDrag
       this.endDrag = null
-      const endDrag = this.getOffset(e)
       if (
         Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
         Math.abs(endDrag[1] - this.startDrag[1]) < 3
@@ -886,6 +957,58 @@ export default {
         texts
       })
       this.startDrag = null
+    },
+    pointerDown(e) {
+      this.isDragging = true
+      if (!this.doPaint) {
+        panzoom.handleDown(e)
+        return
+      }
+      // only click on canvas starts painting a rectangle
+      if (e.target.tagName !== 'CANVAS') {
+        return
+      }
+      this.mouseDown(e, true)
+    },
+    pointerUp(e) {
+      this.isDragging = false
+      if (!this.doPaint) {
+        panzoom.handleUp(e)
+        return
+      }
+      this.mouseUp(e, true)
+    },
+    pointerMove(e) {
+      if (!this.doPaint) {
+        panzoom.handleMove(e)
+        return
+      }
+      // only click on canvas starts painting a rectangle
+      if (e.target.tagName !== 'CANVAS') {
+        return
+      }
+      this.mouseMove(e, true)
+    },
+    pointerLeaveWrapper(e) {
+      this.isDragging = false
+      if (!this.doPaint) {
+        panzoom.handleUp(e)
+      }
+      this.mouseUp(e, true)
+    },
+    mouseWheel(e) {
+      if (!this.doPaint) {
+        panzoom.zoomWithWheel(e)
+      }
+    },
+    zoomReset() {
+      panzoom.reset({ force: true })
+    },
+    zoomIn() {
+      panzoom.zoomIn({ force: true })
+    },
+    zoomOut() {
+      panzoom.zoomOut({ force: true })
     },
     getRect(start, end) {
       let x, y, w, h
@@ -1013,10 +1136,14 @@ export default {
     },
     textAvailable() {
       // mark every div with an index number
+      // and shrink according to renderDensityFactor
       let i = 0
       Array.prototype.forEach.call(this.textLayer.children, (c) => {
         c.dataset.index = i
         i += 1
+        scaleCssProp(c.style, 'left', 1 / renderDensityFactor)
+        scaleCssProp(c.style, 'top', 1 / renderDensityFactor)
+        scaleCssProp(c.style, 'fontSize', 1 / renderDensityFactor)
       })
       if (this.initialAutoRedact[this.currentPage] === undefined) {
         this.regexList.forEach((r) => this.autoRedact(r))
@@ -1255,11 +1382,12 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../styles/variables';
+
+.pdf-redaction-tool {
+  min-height: calc(100vh - 10em);
+}
+
 .toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  opacity: 1;
   padding: 5px;
   background-color: var(--#{$prefix}body-bg);
 }
@@ -1287,20 +1415,39 @@ export default {
   right: 0;
   bottom: 0;
   overflow: hidden;
+}
+
+.preview--do-paint[style],
+.preview--do-paint .redactContainer[style] {
+  user-select: text !important;
+}
+
+.preview--do-paint .redactLayer {
   cursor: crosshair;
 }
+
 .textLayer {
   opacity: 0.2;
   line-height: 1;
+  background: white;
 }
-.textLayer > div,
-.textLayer > span,
-.textLayer > br {
+
+.textLayer > :deep(div),
+.textLayer > :deep(span),
+.textLayer > :deep(br) {
   color: transparent;
   position: absolute;
   white-space: pre;
   cursor: text;
   transform-origin: 0% 0%;
+}
+
+.preview:not(.preview--do-paint) {
+  .textLayer > :deep(div),
+  .textLayer > :deep(span),
+  .textLayer > :deep(br) {
+    pointer-events: none;
+  }
 }
 
 .textLayer.textActive {
@@ -1310,8 +1457,8 @@ export default {
   visibility: hidden;
 }
 
-.textLayer.textActive > div,
-.textLayer.textActive > span {
+.textLayer.textActive > :deep(div),
+.textLayer.textActive > :deep(span) {
   color: #000;
 }
 
@@ -1321,5 +1468,17 @@ export default {
 
 .preview {
   box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
+}
+
+.previewToolbar {
+  // leave enough space for the toolbars
+  // (which break/wrap on narrow viewports)
+  top: 8em;
+  bottom: 0;
+}
+
+.pageOfTotal {
+  // reduces jitter when variable-width numbers change
+  font-variant-numeric: tabular-nums;
 }
 </style>
