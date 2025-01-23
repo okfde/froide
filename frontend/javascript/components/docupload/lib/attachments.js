@@ -52,8 +52,10 @@ const createDocument = (attachment) => {
     })
 }
 
+// const wait = (ms) => (x) => new Promise(resolve => setTimeout(() => { console.log('#wait<'); resolve(x) }, ms))
+
 // TODO: check how this relates to the post upload API work
-const fetchAttachments = (url, csrfToken) => {
+const fetchAttachments = (url, csrfToken, paged = false) => {
   return fetch(url, {
     headers: { 'X-CSRFToken': csrfToken }
   })
@@ -66,16 +68,17 @@ const fetchAttachments = (url, csrfToken) => {
       return response.json()
     })
     .then((response) => {
-      console.log(response)
-      if (response.meta.next) {
-        // TODO
-        // the API has a hardcoded limit/pagesize of 50
-        // would have to fetch multiple times to get all
-        console.warn('not all attachments fetched')
+      // console.log('### fetchAttachments', paged, response)
+      if (!paged) {
+        store.$patch({
+          all: response.objects
+        })
+      } else {
+        store.all.push(...response.objects)
       }
-      store.$patch({
-        all: response.objects
-      })
+      if (response.meta.next) {
+        return fetchAttachments(response.meta.next, csrfToken, true)
+      }
     })
 }
 
@@ -145,9 +148,10 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
 }
 
 const handleErrorAndRefresh = (err) => {
-  alert(err)
   console.error(err)
-  refresh()
+  if (confirm('Fehler: ' + err + '\nNeu laden versuchen?') === true) {
+    refresh()
+  }
 }
 
 const deleteAttachment = (attachment) => {
@@ -184,6 +188,7 @@ const approveAllUnredactedAttachments = (excludeIds = []) => {
 const config = {}
 
 const refresh = () => fetchAttachments(config.urls.getAttachment, config.csrfToken)
+  .catch(handleErrorAndRefresh)
 
 store.$subscribe(() => {
   store.images.forEach(image => {

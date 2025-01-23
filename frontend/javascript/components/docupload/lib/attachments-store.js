@@ -58,6 +58,12 @@ const useAttachmentsStore = defineStore('attachments', {
       } else {
         this.images[0].pages.push(...newImages)
       }
+    },
+    selectSubset(subset) {
+      subset.forEach(_ => this.selectedIds.add(_.id))
+    },
+    unselectSubset(subset) {
+      subset.forEach(_ => this.selectedIds.delete(_.id))
     }
   }
 })
