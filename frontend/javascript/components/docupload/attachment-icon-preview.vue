@@ -28,7 +28,7 @@ const previewModal = ref()
     </a>
     <bs-modal
       ref="previewModal"
-      dialog-classes="modal-dialog-scrollable ms-auto modal-lg"
+      dialog-classes="modal-dialog-scrollable ms-auto modal-xl"
       content-classes="h-100"
       >
       <template #header>
