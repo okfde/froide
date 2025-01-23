@@ -12,7 +12,7 @@ const i18n = inject('i18n')
 
 <template>
   <div v-for="(image, idx) in attachments.images" :key="idx">
-    <div class="card">
+    <div class="card my-3">
       <div class="card-header">
         {{ i18n._('newDocumentPageCount', { count: image.pages.length }) }}
       </div>
