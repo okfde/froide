@@ -246,19 +246,19 @@ const submitFetch = async () => {
 
 const onlineHelp = ref()
 
-/* --- <document-uploader> interaction --- */
+/* --- <attachment-manager> interaction --- */
 
 onMounted(() => {
   refreshAttachments()
 })
 
 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-const documentsSelectedPdfRedaction = computed(() => attachments.selected
+const attachmentsSelectedPdfRedaction = computed(() => attachments.selected
   .sort((a, b) => a.id - b.id)
 )
 
-const documentsImagesConverting = computed(() => attachments.isConverting)
-const documentsConvertImages = () => {
+const attachmentsImagesConverting = computed(() => attachments.isConverting)
+const attachmentsConvertImages = () => {
   if (attachments.images.length === 0) {
     console.log('no images to convert')
     gotoStep()
@@ -268,13 +268,8 @@ const documentsConvertImages = () => {
     .then(() => gotoStep())
 }
 
-const documentsBasicOperations = ref(false)
-
-
-const stepAndUppyClick = () => {
-  gotoStep()
-}
-
+// TODO
+// const documentsBasicOperations = ref(false)
 
 const fileUploaderSucceeded = (uppyResult) => {
   addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
@@ -310,7 +305,7 @@ const pdfRedactionCurrentIndex = computed(() => {
 })
 const pdfRedactionCurrentDoc = computed(() => {
   if (pdfRedactionCurrentIndex.value === false) return
-  return documentsSelectedPdfRedaction.value[pdfRedactionCurrentIndex.value]
+  return attachmentsSelectedPdfRedaction.value[pdfRedactionCurrentIndex.value]
 })
 
 const pdfRedactionCurrentHasRedactions = ref(false)
@@ -583,7 +578,7 @@ const stepsConfig = {
   },
   [STEP_REDACTION_PICKER]: {
     next: () => {
-      if (documentsSelectedPdfRedaction.value.length === 0)
+      if (attachmentsSelectedPdfRedaction.value.length === 0)
         return STEP_DOCUMENTS_OVERVIEW_REDACTED
       return STEP_REDACTION_REDACT // TODO
     },
@@ -603,7 +598,7 @@ const stepsConfig = {
     next: () => {
       if (
         pdfRedactionCurrentIndex.value <
-        documentsSelectedPdfRedaction.value.length - 1
+        attachmentsSelectedPdfRedaction.value.length - 1
       ) {
         return STEP_REDACTION_REDACT
       }
@@ -617,7 +612,8 @@ const stepsConfig = {
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
     next: STEP_OUTRO,
     onEnter: () => {
-      documentsBasicOperations.value = false
+      attachments.unselectSubset(attachments.relevant)
+      // documentsBasicOperations.value = false
       updateValidity('form')
       pdfRedactionUploaded()
     },
@@ -805,7 +801,11 @@ addEventListener('hashchange', () => {
               </div>
             </div>
             <div class="col-md-6">
-              <button type="button" @click="stepAndUppyClick" class="btn btn-outline-primary btn-lg d-block w-100">
+              <button
+                type="button"
+                @click="gotoStep()"
+                class="btn btn-outline-primary btn-lg d-block w-100"
+              >
                 <i class="fa fa-upload fa-2x"></i><br />
                 {{ i18n.uploadFiles }}
               </button>
@@ -830,21 +830,24 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div v-if="step === STEP_DOCUMENTS_UPLOAD">
-      <file-uploader
-        :config="config"
-        :allowed-file-types="config.settings.allowed_filetypes"
-        :auto-proceed="true"
-        onmount-pick
-        @upload-success="fileUploaderSucceeded"
-        />
+    <div v-if="step === STEP_DOCUMENTS_UPLOAD" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <file-uploader
+            :config="config"
+            :allowed-file-types="config.settings.allowed_filetypes"
+            :auto-proceed="true"
+            onmount-pick
+            @upload-success="fileUploaderSucceeded"
+            />
+        </div>
+      </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9 fw-bold">
           {{ i18n.documentsDragOrder }}
         </div>
-        <!--images-converter /-->
         <image-document-pages-sortable
           :idx="0"
           show-rotate
@@ -1158,15 +1161,29 @@ addEventListener('hashchange', () => {
             {{ i18n.redactionInfo }}
           </p>
           <attachments-table :subset="attachments.relevant" selection selection-buttons>
-            <template #right="rightProps">
-              <input type="checkbox" v-model="attachmentsAutoApproveSelection[rightProps.attachment.id]" :value="true" />
+            <template #after-row="slotProps">
+              <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
+                <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />
+              </label>
+            </template>
+            <template #after-card="slotProps">
+              <label class="text-center">
+                <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />
+                veröffentlichen*
+              </label>
+            </template>
+            <template #after-table>
+              <div class="text-end px-2">
+                {{ i18n.documentsApproveLater }}
+                ⮥
+              </div>
+            </template>
+            <template #after-cards>
+              <div class="text-end px-2">
+                * {{ i18n.documentsApproveLater }}
+              </div>
             </template>
           </attachments-table>
-          <div>
-            <!-- TODO align right -->
-            {{ i18n.documentsApproveLater }}
-            ⮥
-          </div>
         </div>
       </div>
     </div>
@@ -1178,7 +1195,7 @@ addEventListener('hashchange', () => {
               {{
                 i18n._('redactionCounter', {
                   current: pdfRedactionCurrentIndex + 1,
-                  total: documentsSelectedPdfRedaction.length
+                  total: attachmentsSelectedPdfRedaction.length
                 })
               }}
             </label>
@@ -1285,11 +1302,19 @@ addEventListener('hashchange', () => {
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
-            <div v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff" class="d-flex justify-content-end">
-              <button type="button" class="btn btn-link text-decoration-underline"
-                @click="documentsBasicOperations = !doctumentsBasicOperations">
+            <div
+              v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
+              class="d-flex justify-content-end"
+            >
+              <!-- TODO
+              <button
+                type="button"
+                class="btn btn-link text-decoration-underline"
+                @click="documentsBasicOperations = !doctumentsBasicOperations"
+              >
                 {{ documentsBasicOperations ? i18n.done : i18n.edit }}
               </button>
+               -->
             </div>
           </div>
         </div>
@@ -1387,13 +1412,13 @@ addEventListener('hashchange', () => {
             <button
               v-if="attachments.images.length > 0"
               type="button"
-              @click="documentsConvertImages"
+              @click="attachmentsConvertImages"
               class="btn btn-primary d-block w-100"
-              :disabled="documentsImagesConverting"
+              :disabled="attachmentsImagesConverting"
             >
               <span
                 class="spinner-border spinner-border-sm"
-                v-if="documentsImagesConverting"
+                v-if="attachmentsImagesConverting"
                 role="status"
                 aria-hidden="true"
               />
