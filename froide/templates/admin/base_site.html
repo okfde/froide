@@ -9,5 +9,4 @@
     {% if request.user.is_authenticated and request.session.impostor %}
         {% include "account/includes/impostor.html" %}
     {% endif %}
-    {% block userlinks %}{% endblock %}
 {% endblock %}
