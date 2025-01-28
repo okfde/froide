@@ -83,6 +83,7 @@ test = [
   "pytest-django",
   "pytest-factoryboy",
   "pytest-playwright",
+  "ruff",
   "tblib",
   "text-unidecode",
   "time-machine",
