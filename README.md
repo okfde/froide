@@ -102,9 +102,7 @@ Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode
 ### Upgrade dependencies
 
 ```
-# with uv
-uv pip compile -o requirements.txt pyproject.toml -p 3.10
-uv pip compile -o requirements-test.txt --extra test pyproject.toml -p 3.10
+make requirements
 ```
 
 ## Docs
