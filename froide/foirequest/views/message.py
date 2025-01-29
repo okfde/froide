@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 from functools import partial
@@ -17,6 +16,7 @@ from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
 from froide.helper.content_urls import get_content_url
+from froide.helper.form_utils import serialize_extra
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
 from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
@@ -156,17 +156,345 @@ def add_postal_message(request, slug):
 
 @allow_write_foirequest
 def upload_postal_message_create(request, foirequest):
-    message = FoiMessageDraft(request=foirequest, kind=MessageKind.POST)
+    ctx = {
+        "settings": {
+            "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
+            "can_make_document": request.user.is_staff,
+            "allowed_filetypes": [".pdf", ".jpg", ".jpeg", ".png", ".gif"],
+        },
+        "i18n": {
+            "uppy": get_uppy_i18n(),
+            # from publicbody/widgets
+            "missingPublicBody": _("Are we missing a public body?"),
+            "publicBodySearchPlaceholder": _("Ministry of..."),
+            "search": _("Search"),
+            "searchPublicBodyLabel": _("Search for public authorities"),
+            "examples": _("Examples:"),
+            "environment": _("Environment"),
+            "ministryOfLabour": _("Ministry of Labour"),
+            "or": _("or"),
+            "noPublicBodiesFound": _("No Public Bodies found for this query."),
+            "letUsKnow": _("Please let us know!"),
+            # from views/attachment for <pdf-redaction>; not all might be necessary
+            "previousPage": _("Previous Page"),
+            "nextPage": _("Next Page"),
+            "pageCurrentOfTotal": _("{current} of {total}").format(
+                current="$current", total="$total"
+            ),
+            "redactAndPublish": _("Save redaction"),
+            "publishWithoutRedaction": _("No redaction needed"),
+            "removeAllRedaction": _("Remove all redaction"),
+            "toggleText": _("Text only"),
+            "disableText": _("Hide text"),
+            "cancel": _("Cancel"),
+            "undo": _("Undo"),
+            "redo": _("Redo"),
+            "loadingPdf": _("Loading PDF..."),
+            "sending": _("Uploading redaction instructions, please wait..."),
+            "redacting": _("Redacting PDF, please wait..."),
+            "redactionError": _(
+                "There was a problem with your redaction. Please contact moderators."
+            ),
+            "redactionTimeout": _(
+                "Your redaction took too long. It may become available soon, if not, contact moderators."
+            ),
+            "autoRedacted": _(
+                "We automatically redacted some text for you already. Please check if we got everything."
+            ),
+            "passwordRequired": _(
+                "This PDF requires a password to open. Please provide the password here:"
+            ),
+            "passwordCancel": _(
+                "The password you provided was incorrect. Do you want to abort?"
+            ),
+            "passwordMissing": _(
+                "The PDF could not be opened because of a missing password. Please ask the authority to provide you with a password."
+            ),
+            "removePasswordAndPublish": _("Remove password and publish"),
+            "hasPassword": _(
+                "The original document is protected with a password. The password is getting removed on publication."
+            ),
+            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
+            "confirmNoRedactionsText": _(
+                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
+            ),
+            "close": _("Close"),
+            # from upload_attachments
+            "attachmentName": _("Name of attachment to create"),
+            "newDocumentPageCount": [
+                _("New document with one page"),
+                _("New document with {count} pages").format(count="${count}"),
+            ],
+            "takePicture": _("Take / Choose picture"),
+            "convertImages": _("Convert images to document"),
+            "openAttachmentPage": _("Open attachment page"),
+            "loadPreview": _("Preview"),
+            "approveAll": _("Approve all"),
+            "markAllAsResult": _("Mark all as result"),
+            "otherAttachments": _("Other attachments that are not documents"),
+            "imageDocumentExplanation": _(
+                "Here you can combine your uploaded images to a PDF document. "
+                "You can rearrange the pages and "
+                "split it into multiple documents. "
+                "You can redact the PDF in the next step."
+            ),
+            "documentPending": _(
+                "This document is being generated. " "This can take several minutes."
+            ),
+            "documentDeleting": _("This document is being deleted..."),
+            "documentTitle": _("Document title"),
+            "documentTitleHelp": _("Give this document a proper title"),
+            "documentTitlePlaceholder": _("e.g. Letter from date"),
+            "showIrrelevantAttachments": _("Show irrelevant attachments"),
+            "makeRelevant": _("Make relevant"),
+            "loading": _("Loading..."),
+            "description": _("Description"),
+            "descriptionHelp": _("Describe the contents of the document"),
+            "edit": _("Edit"),
+            "save": _("Save"),
+            "review": _("Review"),
+            "approve": _("Approve"),
+            "notPublic": _("not public"),
+            "redacted": _("redacted"),
+            "redact": _("Redact"),
+            "delete": _("Delete"),
+            "confirmDelete": _("Are you sure you want to delete this attachment?"),
+            "protectedOriginal": _("protected original"),
+            "protectedOriginalExplanation": _(
+                "This attachment has been converted to PDF and " "cannot be published."
+            ),
+            "isResult": _("Result?"),
+            "makeResultExplanation": _(
+                "Is this document a result of your request and not only correspondence?"
+            ),
+            "makeResultsExplanation": _(
+                "Are these documents a result of your request and not only correspondence?"
+            ),
+            # for public body beta chooser, mostly from MakeRequestView
+            "publicBodiesFound": [
+                _("one public body found"),
+                _("{count} public bodies found").format(count="${count}"),
+            ],
+            "administrativeUnitKind": _("Type of administrative unit"),
+            "topicPlural": [
+                _("Topic"),
+                _("Topics"),
+            ],
+            "jurisdictionPlural": [
+                _("Jurisdiction"),
+                _("Jurisdictions"),
+            ],
+            "classificationPlural": [
+                _("Classification"),
+                _("Classifications"),
+            ],
+            "containingGeoregionsPlural": [
+                _("Part of administrative region"),
+                _("Part of administrative regions"),
+            ],
+            # from forms/message.py
+            "scanHelpText": _("Uploaded scans can be PDF, JPG, PNG or GIF."),
+            # post-upload.vue
+            "step": _("Step"),
+            "done": _("Done"),
+            "back": _("Back"),
+            "next": _("Next"),
+            "new": _("New"),
+            "documentsUploadDefaultFilename": _("letter.pdf"),
+            "addLetter": _("Add letter"),
+            "letterUploadOrScan": _("Upload or scan letter"),
+            "enterInformation": _("Enter information"),
+            "preview": _("Preview"),
+            "scanDocuments": _("Scan documents"),
+            "scanDocumentsAddendum": _("Use your phone's camera to create a PDF "),
+            "uploadFiles": _("Upload files"),
+            "uploadFilesAddendum": _("If you have the letter as PDF already"),
+            "redactLaterHint1": _(
+                "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
+            ),
+            "redactLaterHint2": _(
+                "We will guide you through the process step-by-step."
+            ),
+            "newLinkOldFlow": _(
+                'Should you experience problems, you can use <a class="alert-link" href="${url}">the older version</a> here. We welcome feedback!'
+            ),
+            "newWarning": _("We have redone this part of the app."),
+            "documentsDragOrder": _("Drag the documents in the right order"),
+            "documentsFromImages": _("We will convert your images into a PDF"),
+            "changeFilename": _("Change filename"),
+            "documentsAvailable": _("Documents available so far"),
+            "letterSentOrReceived": _(
+                "Have you received or sent the uploaded document?"
+            ),
+            "messagePublicbodyCheckTo": _(
+                "Is this the public body you have sent the letter to?"
+            ),
+            "messagePublicbodyCheckFrom": _(
+                "Is this the public body that sent the letter?"
+            ),
+            "messagePublicbodyUpdateTo": _(
+                "Which public body have you sent this letter to?"
+            ),
+            "messagePublicbodyUpdateFrom": _("Which public body has sent this letter?"),
+            "messageDate": _("When was the letter sent?"),
+            "messageIsRegisteredMail": _("The letter is registered mail"),
+            "messageRegisteredMailInfo": _(
+                "Registered mail is a postal service which allows the sender proof of mailing via a receipt. The letter can have a special envelope."
+            ),
+            "messageDateRegisteredMail": _(
+                "Registered mail: what is the date stamped on the envelope?"
+            ),
+            "messageStatusIsResolvedAfterReceivedStill": _(
+                "Your request was resolved. Is this still the case after you have received the letter?"
+            ),
+            "messageStatusIsResolvedAfterReceived": _(
+                "Was your request resolved by this letter?"
+            ),
+            "messageStatusIsResolvedAfterSentStill": _(
+                "Your request had already been resolved. Is this still the case after you have sent the letter?"
+            ),
+            "messageStatusIsResolvedAfterSent": _(
+                "Was your request resolv by sending this letter?"
+            ),
+            "messageStatusIsResolvedStill": _("My request remains resolved."),
+            "messageStatusIsResolvedNotAgain": _("My request is now unresolved."),
+            "messageStatusIsResolved": _("Yes, the request is resolved."),
+            "messageStatusIsResolvedNot": _("No, the request is not resolved yet."),
+            "messageResolution": _("How would you characterize the result?"),
+            "messageCost": _("How much compensation does the public body demand?"),
+            "messageCostCheck": _("Did the public body demand compensation?"),
+            "messageCostCheckLast": _(
+                "You have noted that the public body had demanded compensation to the amount of €${amount}.<br/>Is this amount still correct?"
+            ),
+            "redactionPick": _("Which documents do you want to redact?"),
+            "redactionInfo": _(
+                "A document should be redacted when it contains information about yourself or the public body's employees."
+            ),
+            "selectAll": _("Select all"),
+            "selectNone": _("Select none"),
+            "redactionCounter": _("Redacting document ${current} of ${total}"),
+            "redactionInfoWhat": _("You should redact:"),
+            "redactionInfoWhat1": _("Your name and your address"),
+            "redactionInfoWhat2": _("Names of public body employees"),
+            "redactionInfoWhat3": _("Signatures"),
+            "redactionInfoWhat4": _("E-mail addresses that end in @fragdenstaat.de"),
+            "helpNeeded": _("I have technical difficulties / I need help"),
+            "documentsOverview": _("These documents will be added to the request:"),
+            "documentsAddedSuccessfully": _("Documents added successfully"),
+            "requestUpdatedThanks": _("Thank you for updating your request!"),
+            "scanDocumentsAnother": _("Scan another document"),
+            "uploadFilesAnother": _("Upload another file"),
+            "redactionDone": _("I have finished redacting"),
+            "redactionCheck": _("Important: Have you checked all pages?"),
+            "confirm": _("Confirm"),
+            "formHasErrors": _("The form has errors"),
+            "requestNonPublicHint": _(
+                "Your request is not public at the moment. The documents will not be public, either."
+            ),
+            "requestShow": _("See request"),
+            "doneSorting": _("Done sorting"),
+            "createPdf": _("Create PDF"),
+            "documentsApproveLater": _("Uncheck to leave unpublished for now"),
+        },
+        "url": {
+            "tusEndpoint": reverse("api:upload-list"),
+            "legacyPostupload": reverse(
+                "foirequest-upload_postal_message", kwargs={"slug": foirequest.slug}
+            ),
+            # from makerequest.py
+            "searchPublicBody": reverse("api:publicbody-search"),
+            "listJurisdictions": reverse("api:jurisdiction-list"),
+            "listCategories": reverse("api:category-list"),
+            "listClassifications": reverse("api:classification-list"),
+            "listGeoregions": reverse("api:georegion-list"),
+            "listPublicBodies": reverse("api:publicbody-list"),
+            "listLaws": reverse("api:law-list"),
+            "makeRequestTo": reverse(
+                "foirequest-make_request", kwargs={"publicbody_ids": "0"}
+            ),
+            # from upload_attachments() TODO: might not need all
+            "getMessage": reverse("api:message-detail", kwargs={"pk": 0}),
+            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
+            "convertAttachments": reverse(
+                "foirequest-manage_attachments",
+                kwargs={"slug": foirequest.slug, "message_id": 0},
+            ),
+            "addAttachment": reverse(
+                "foirequest-add_postal_reply_attachment",
+                kwargs={"slug": foirequest.slug, "message_id": 0},
+            ),
+            "redactAttachment": reverse(
+                "foirequest-redact_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "approveAttachment": reverse(
+                "foirequest-approve_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "deleteAttachment": reverse(
+                "foirequest-delete_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+            "createDocument": reverse(
+                "foirequest-create_document",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},
+            ),
+        },
+        "urls": {
+            # from views/attachment for <pdf-redaction>
+            "publishUrl": reverse(
+                "foirequest-approve_attachment",
+                kwargs={"slug": foirequest.slug, "attachment_id": 0},  # attachment.pk},
+            ),
+            "messageUpload": reverse(
+                "foirequest-manage_attachments",
+                kwargs={
+                    "slug": foirequest.slug,
+                    "message_id": 0,  # attachment.belongs_to_id,
+                },
+            ),
+            "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+        },
+    }
+    # import pdb; pdb.set_trace()
+    return render(
+        request,
+        "foirequest/upload_postal_message_newer.html",
+        {
+            "foirequest": foirequest,
+            # TODO how/where to get this programmatically? maybe clientside?
+            "foirequest_apiurl": "/api/v1/request/" + str(foirequest.id) + "/",
+            "object_public_body_id": foirequest.public_body_id,
+            "object_public_body": {
+                "id": foirequest.public_body.id,
+                "name": foirequest.public_body.name,
+            },
+            "object_public_body_json": json.dumps(
+                {
+                    "id": foirequest.public_body.id,
+                    "name": foirequest.public_body.name,
+                }
+            ),
+            "foirequest_costs": json.dumps(serialize_extra(foirequest.costs)),
+            "date_max": timezone.localdate().isoformat(),
+            "date_min": foirequest.created_at.date().isoformat(),
+            "object_public_json": json.dumps(foirequest.public),
+            "user_is_staff": json.dumps(request.user.is_staff),
+            "config_json": json.dumps(ctx),
+        },
+    )
+    # message = FoiMessage(request=foirequest, kind=MessageKind.POST)
     # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
     # this will be set to "proper" (noon) when finally submitted
-    message.timestamp = datetime.datetime.now()
-    message.save()
-    return redirect(
-        reverse(
-            "foirequest-edit_postal_message",
-            kwargs={"slug": foirequest.slug, "message_id": message.id},
-        )
-    )
+    # message.timestamp = datetime.datetime.now()
+    # message.is_draft = True
+    # message.save()
+    # return redirect(
+    #    reverse(
+    #        "foirequest-edit_postal_message",
+    #        kwargs={"slug": foirequest.slug, "message_id": message.id},
+    #    )
+    # )
 
 
 @allow_write_foirequest

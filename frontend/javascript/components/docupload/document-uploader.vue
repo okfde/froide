@@ -359,6 +359,7 @@ export default {
     buildDocuments(attachments, extra = {}) {
       const documents = []
       let images = []
+      if (!attachments) { console.log('buildDocuments bailing'); return }
       attachments.forEach((att) => {
         const doc = {
           id: att.id,
