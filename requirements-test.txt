@@ -411,6 +411,8 @@ rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
+ruff==0.9.3
+    # via froide (pyproject.toml)
 setuptools==74.1.2
     # via geoip2
 six==1.16.0
