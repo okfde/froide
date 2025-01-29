@@ -34,6 +34,9 @@ uv pip install -e . --no-deps
 # install UI test browser
 playwright install --with-deps chromium
 
+# install node 20
+pnpm env use --global 20
+
 #install frontend dependencies
 pnpm install
 
