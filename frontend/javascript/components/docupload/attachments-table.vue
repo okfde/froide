@@ -114,9 +114,11 @@ const deleteSelected = async () => {
       <input type="checkbox" ref="selectAllEl" :checked="selectAllState" :indeterminate.prop="selectAllState === undefined" @click="selectAllClick" />
     </label>
     <div v-if="selectionActions" class="d-flex flex-grow-1 justify-content-end">
+      <!-- TODO, needs backend support
       <button type="button" class="btn btn-link fw-bold">
         {{  i18n.downloadSelected }}
       </button>
+      -->
       <button type="button" class="btn btn-link fw-bold" :disabled="!isSelectionDeletable" @click="deleteSelected">
         {{ i18n.deleteSelected }}
       </button>
