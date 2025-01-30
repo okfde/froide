@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 
 from froide.foirequest.auth import can_read_foirequest
@@ -824,6 +825,7 @@ def upload_attachments(request, foirequest, message_id):
             "documentTitlePlaceholder": _("e.g. Letter from date"),
             "showIrrelevantAttachments": _("Show irrelevant attachments"),
             "makeRelevant": _("Make relevant"),
+            "makePublic": pgettext("Attachment manager", "Make public"),
             "loading": _("Loading..."),
             "description": _("Description"),
             "descriptionHelp": _("Describe the contents of the document"),
@@ -833,6 +835,8 @@ def upload_attachments(request, foirequest, message_id):
             "approve": _("Approve"),
             "notPublic": _("not public"),
             "redacted": _("redacted"),
+            "nonRedacted": _("non-redacted"),
+            "new": _("New"),
             "redact": _("Redact"),
             "delete": _("Delete"),
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
@@ -847,6 +851,17 @@ def upload_attachments(request, foirequest, message_id):
             "makeResultsExplanation": _(
                 "Are these documents a result of your request and not only correspondence?"
             ),
+            "selectAll": _("Select all"),
+            "selectNone": _("Select none"),
+            "deleteSelected": _("Delete selected"),
+            "downloadSelected": _("Download selected"),
+            "markResult": _("Mark as result"),
+            "markNotIrrelevant": _("Mark as important"),
+            "editRedaction": _("Edit redaction"),
+            "download": _("Download"),
+            "downloadUnredacted": _("Download non-redacted"),
+            "downloadOriginal": _("Download original"),
+            "otherActions": _("Other actions"),
             "uppy": get_uppy_i18n(),
         },
     }
