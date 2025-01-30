@@ -36,7 +36,7 @@ onMounted(() => refresh())
   <div v-if="attachments.approved.length" class="my-5">
     <attachments-table
       :subset="attachments.approved"
-      actions table-selection selection-actions
+      actions table-selection selection-actions badges-type
       />
   </div>
 
@@ -44,7 +44,7 @@ onMounted(() => refresh())
     <django-slot name="notapproved-attachments" />
     <attachments-table
       :subset="attachments.notApproved"
-      actions table-selection selection-actions
+      actions table-selection selection-actions badges-type
       />
   </div>
 
@@ -52,7 +52,7 @@ onMounted(() => refresh())
     <django-slot name="irrelevant-attachments" />
     <attachments-table
       :subset="attachments.irrelevant"
-      actions table-selection selection-actions
+      actions table-selection selection-actions badges-type
       />
   </div>
 

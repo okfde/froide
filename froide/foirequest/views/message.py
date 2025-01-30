@@ -869,6 +869,11 @@ def upload_attachments(request, foirequest, message_id):
             "downloadUnredacted": _("Download non-redacted"),
             "downloadOriginal": _("Download original"),
             "otherActions": _("Other actions"),
+            "imageFile": _("Image file"),
+            "size": _("Size"),
+            "fileType": _("File type"),
+            "actions": _("Actions"),
+            "properties": _("Properties"),
             "uppy": get_uppy_i18n(),
         },
     }
