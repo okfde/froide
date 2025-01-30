@@ -56,6 +56,7 @@ const createDocument = (attachment) => {
 
 // TODO: check how this relates to the post upload API work
 const fetchAttachments = (url, csrfToken, paged = false) => {
+  store.isFetching = true
   return fetch(url, {
     headers: { 'X-CSRFToken': csrfToken }
   })
@@ -79,6 +80,9 @@ const fetchAttachments = (url, csrfToken, paged = false) => {
       if (response.meta.next) {
         return fetchAttachments(response.meta.next, csrfToken, true)
       }
+    })
+    .finally(() => {
+      store.isFetching = false
     })
 }
 

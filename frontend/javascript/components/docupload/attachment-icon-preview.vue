@@ -32,7 +32,7 @@ const previewModal = ref()
     <a
       v-if="attachment.is_image"
       :href="attachment.site_url"
-      class="d-block"
+      class="d-flex align-items-center justify-content-center"
       :style="{ width: thumbnailSize, height: thumbnailSize }"
       @click.prevent="previewModal.show()"
       >
