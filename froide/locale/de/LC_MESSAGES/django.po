@@ -13623,9 +13623,6 @@ msgstr ""
 #~ msgid "There are no authorized tokens yet."
 #~ msgstr "Es gibt noch keine Vorschläge"
 
-#~ msgid "Actions"
-#~ msgstr "Beratungsvorlagen"
-
 #~ msgid "Mark as checked"
 #~ msgstr "Als gesehen markieren"
 
