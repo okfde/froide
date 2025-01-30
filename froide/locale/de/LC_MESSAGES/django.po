@@ -8136,6 +8136,18 @@ msgid "Other actions"
 msgstr "Weitere Aktionen"
 
 #: froide/foirequest/views/message.py
+msgid "Image file"
+msgstr "Bilddatei"
+
+#: froide/foirequest/views/message.py
+msgid "Actions"
+msgstr "Aktionen"
+
+#: froide/foirequest/views/message.py
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: froide/foirequest/views/message.py
 msgid "Content published."
 msgstr "Nachricht veröffentlicht."
 

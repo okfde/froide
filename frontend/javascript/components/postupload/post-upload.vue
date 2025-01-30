@@ -883,7 +883,7 @@ addEventListener('hashchange', () => {
           </div>
         </div>
       </div>
-      <attachments-table :subset="attachments.relevant" action-delete />
+      <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent />
     </div>
     <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
       <div class="row justify-content-center">
