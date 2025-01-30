@@ -62,7 +62,7 @@ dependencies = [
   "wand",
   "weasyprint",
   "websockets",
-  "django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@main",
+  "django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@pajowu/missing_migrations",
   "dogtail @ git+https://github.com/okfde/dogtail.git@main",
 ]
 
