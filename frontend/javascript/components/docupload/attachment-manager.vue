@@ -7,7 +7,7 @@ import AttachmentsTable from './attachments-table.vue'
 import { useI18n } from '../../lib/i18n'
 import { useAttachments } from './lib/attachments'
 
-import { onMounted, provide } from 'vue'
+import { onMounted, nextTick, provide, ref, watch } from 'vue'
 
 const props = defineProps(['config', 'message'])
 
@@ -27,11 +27,28 @@ provide('config', props.config)
 
 onMounted(() => refresh())
 
+const imagesConverterContainer = ref()
+
+watch(
+  () => attachments.images.length,
+  (newValue) => {
+    if (newValue > 0) {
+      nextTick().then(() => {
+        imagesConverterContainer.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+      })
+    }
+  }
+)
+
 </script>
 
 <template>
 
   <p><a href="#">Ich benötige Hilfe. TODO</a></p>
+
+  <div
+    v-show="attachments.isFetching" 
+    class="spinner-border"></div>
 
   <div v-if="attachments.approved.length" class="my-5">
     <attachments-table
@@ -64,7 +81,9 @@ onMounted(() => refresh())
       :auto-proceed="true"
       @upload-success="addFromUppy"
       />
-    <images-converter />
+    <div ref="imagesConverterContainer">
+      <images-converter />
+    </div>
   </div>
 
 </template>
