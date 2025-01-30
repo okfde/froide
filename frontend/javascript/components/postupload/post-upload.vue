@@ -889,7 +889,7 @@ addEventListener('hashchange', () => {
           </div>
         </div>
       </div>
-      <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent />
+      <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
     </div>
     <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
       <div class="row justify-content-center">
@@ -1160,7 +1160,7 @@ addEventListener('hashchange', () => {
           <p>
             {{ i18n.redactionInfo }}
           </p>
-          <attachments-table :subset="attachments.relevant" selection selection-buttons>
+          <attachments-table :subset="attachments.relevant" selection selection-buttons :as-card-threshold="0">
             <template #after-row="slotProps">
               <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
                 <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />

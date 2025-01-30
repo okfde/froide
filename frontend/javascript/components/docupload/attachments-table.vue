@@ -11,12 +11,14 @@ import AttachmentActions from './attachment-actions.vue'
 
 const i18n = inject('i18n')
 
-const asCardThreshold =  6
-
-const { subset, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, cardsBgTransparent } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, cardsBgTransparent } = defineProps({
   subset: {
     type: Array,
     required: true
+  },
+  asCardThreshold: {
+    type: Number,
+    default: 6
   },
   actions: Boolean,
   actionDelete: {
@@ -165,8 +167,7 @@ const deleteSelected = async () => {
         </label>
         <attachment-icon-preview
           :attachment="att"
-          icon-size="4em"
-          thumbnail-size="4em"
+          big
           class="text-center pb-1"
           />
         <div
@@ -230,8 +231,6 @@ const deleteSelected = async () => {
       </label>
       <attachment-icon-preview
         :attachment="att"
-        icon-size="2em"
-        thumbnail-size="2em"
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         />
       <div
