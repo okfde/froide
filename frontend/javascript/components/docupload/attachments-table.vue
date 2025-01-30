@@ -4,12 +4,14 @@ import { useAttachments } from './lib/attachments';
 
 const { attachments, deleteAttachment } = useAttachments()
 
-import { computed, inject, ref } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 
 import AttachmentIconPreview from './attachment-icon-preview.vue'
 import AttachmentActions from './attachment-actions.vue'
 
 const i18n = inject('i18n')
+
+const asCardThreshold =  6
 
 const { subset, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, cardsBgTransparent } = defineProps({
   subset: {
@@ -49,7 +51,6 @@ const { subset, actions, actionDelete, cardsSelection, tableSelection, selection
   cardsBgTransparent: Boolean
 })
 
-const asCardThreshold = 6
 const asCards = computed(() => subset.length < asCardThreshold)
 
 const selectAllEl = ref()
@@ -77,8 +78,16 @@ const selectAllClick = () => {
   }
 }
 
-const toggleSelection = (id) => {
-  if (!(tableSelection || cardsSelection)) return
+/* when asCard flips over/under threshold (when something is uploaded/deleted)
+ * we need to prevent things being still selected without the possibility to
+ * change the selection */
+watch(asCards, (newValue) => {
+  if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
+})
+
+const toggleSelection = (from, id) => {
+  if (from === 'table' && !tableSelection) return
+  if (from === 'card' && !cardsSelection) return
   if (attachments.selectedIds.has(id)) {
     attachments.selectedIds.delete(id)
   } else {
@@ -146,7 +155,7 @@ const deleteSelected = async () => {
         v-for="att in subset" :key="att.id"
         class="d-flex flex-column px-md-1 py-1 position-relative align-items-center item--card"
         :class="{ 'bg-primary-subtle': attachments.selectedIds.has(att.id) }"
-        @click.self="toggleSelection(att.id)"
+        @click.self="toggleSelection('card', att.id)"
         >
         <label
           v-if="cardsSelection"
@@ -156,12 +165,13 @@ const deleteSelected = async () => {
         </label>
         <attachment-icon-preview
           :attachment="att"
-          size="4em"
+          icon-size="4em"
+          thumbnail-size="4em"
           class="text-center pb-1"
           />
         <div
-          class="text-center"
-          @click.self="toggleSelection(att.id)"
+          class="text-center mb-1"
+          @click.self="toggleSelection('card', att.id)"
           >
           {{ att.name }}
           <span v-if="badgesNew && att.new" class="badge text-bg-success"
@@ -211,7 +221,7 @@ const deleteSelected = async () => {
         'bg-primary-subtle': attachments.selectedIds.has(att.id),
         'border-top': subset.length > 1
       }"
-      @click.self="toggleSelection(att.id)"
+      @click.self="toggleSelection('table', att.id)"
       >
       <label
         v-if="tableSelection"
@@ -220,12 +230,13 @@ const deleteSelected = async () => {
       </label>
       <attachment-icon-preview
         :attachment="att"
-        size="1.5em"
-        class="position-absolute position-md-static top-0 start-0 py-2 ps-2 ps-md-0 ms-3 mt-1 ms-md-0"
+        icon-size="2em"
+        thumbnail-size="2em"
+        class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1"
-        @click.self="toggleSelection(att.id)"
+        @click.self="toggleSelection('table', att.id)"
         >
         {{ att.name }}
         <span
