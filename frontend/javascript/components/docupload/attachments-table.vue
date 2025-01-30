@@ -11,7 +11,7 @@ import AttachmentActions from './attachment-actions.vue'
 
 const i18n = inject('i18n')
 
-const { subset, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction } = defineProps({
+const { subset, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, cardsBgTransparent } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -44,7 +44,9 @@ const { subset, actions, actionDelete, cardsSelection, tableSelection, selection
     }
   },
   badgesNew: Boolean,
-  badgesRedaction: Boolean
+  badgesRedaction: Boolean,
+  badgesType: Boolean,
+  cardsBgTransparent: Boolean
 })
 
 const asCardThreshold = 6
@@ -137,8 +139,9 @@ const deleteSelected = async () => {
 
   <div
     v-if="asCards"
+    :class="cardsBgTransparent ? '' : 'bg-body-tertiary p-3 p-md-5'"
     >
-    <div class="d-flex flex-row flex-wrap gap-3">
+    <div class="d-flex flex-row flex-wrap gap-5 justify-content-around justify-content-lg-start">
       <div
         v-for="att in subset" :key="att.id"
         class="d-flex flex-column px-md-1 py-1 position-relative align-items-center item--card"
@@ -161,7 +164,8 @@ const deleteSelected = async () => {
           @click.self="toggleSelection(att.id)"
           >
           {{ att.name }}
-          <span v-if="badgesNew && att.new" class="badge text-bg-success">New</span>
+          <span v-if="badgesNew && att.new" class="badge text-bg-success"
+            >{{ i18n.new }}</span>
         </div>
         <div
           v-if="badgesRedaction">
@@ -172,7 +176,14 @@ const deleteSelected = async () => {
           <span
             v-else
             class="badge text-bg-warning"
-            >{{ 18n.nonRedacted }}</span>
+            >{{ i18n.nonRedacted }}</span>
+        </div>
+        <div
+          v-if="badgesType">
+          <span
+            v-if="att.is_image"
+            class="badge text-bg-secondary"
+            >{{ i18n.imageFile }}</span>
         </div>
         <a v-if="actionDelete && att.can_delete" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
           <i class="fa fa-trash"></i>
@@ -222,6 +233,10 @@ const deleteSelected = async () => {
           class="badge text-bg-success"
           >{{ i18n.new }}</span>
         <span
+          v-if="badgesType && att.is_image"
+          class="badge text-bg-secondary"
+          >{{ i18n.imageFile }}</span>
+        <span
           v-if="badgesRedaction && att.is_redacted"
           class="badge text-bg-success"
           >{{ i18n.redacted }}</span>
@@ -256,7 +271,7 @@ const deleteSelected = async () => {
 <style scoped>
 
 .item--card {
-  width: 16em;
+  width: 15em;
 }
 
 </style>
