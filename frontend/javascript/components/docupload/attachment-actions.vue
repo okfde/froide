@@ -141,18 +141,21 @@ const dropdownHasItems = computed(() => canRedact.value || unredacted.value || u
           </template>
         </button>
       </li>
-      <!-- needs new API! -->
+      <!-- postpone until new message API can handle it?
       <li v-else-if="config.user.can_edit_approval && attachment.approved">
         <button type="button" class="dropdown-item" @click="unapproveAttachment(att, { approved: false })">
           <i class="fa fa-times"></i>
           <template v-if="config.foirequest.public">
-            Nicht-öffentlich machen TODO
+            {{ i18n.makeNonPublic }}
+            Nicht-öffentlich machen
           </template>
           <template v-else>
-            Freigabe zurücknehmen TODO
+            {{ i18n.unapprove }}
+            Freigabe zurücknehmen
           </template>
         </button>
       </li>
+      -->
     </ul>
   </div>
 </template>
