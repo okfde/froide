@@ -7,6 +7,7 @@ let imageDocId = 0
 const useAttachmentsStore = defineStore('attachments', {
   state: () => { console.trace('att-store state()'); return {
     isConverting: false,
+    isFetching: false,
     all: [],
     images: [],
     selectedIds: new Set
