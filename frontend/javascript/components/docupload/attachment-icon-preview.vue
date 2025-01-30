@@ -8,19 +8,12 @@ import BsModal from '../bs-modal.vue'
 
 const i18n = inject('i18n')
 
-const { attachment, iconSize, thumbnailSize } = defineProps({
+const { attachment, big } = defineProps({
   attachment: {
     type: Object,
     required: true
   },
-  iconSize: {
-    type: String,
-    default: '2em'
-  },
-  thumbnailSize: {
-    type: String,
-    default: '4em'
-  }
+  big: Boolean
 })
 
 const previewModal = ref()
@@ -28,27 +21,27 @@ const previewModal = ref()
 </script>
 
 <template>
-  <div>
+  <div :class="big ? 'attachment-icon-preview--big': ''">
     <a
       v-if="attachment.is_image"
       :href="attachment.site_url"
-      class="d-flex align-items-center justify-content-center"
-      :style="{ width: thumbnailSize, height: thumbnailSize }"
+      class="d-flex align-items-center justify-content-center icon--image"
+      :style="{ width: size, height: size }"
       @click.prevent="previewModal.show()"
       >
       <img
         :src="attachment.file_url"
         class="object-fit-contain shadow-sm"
-        :style="{ maxWidth: thumbnailSize, maxHeight: thumbnailSize }"
+        :style="{ maxWidth: size, maxHeight: size }"
         />
     </a>
     <a
       v-else
       :href="attachment.site_url"
-      class="btn btn-link d-block p-0 me-2"
+      class="btn btn-link lh-1 d-block p-0 me-2 icon--fa"
       type="button"
       @click.prevent="previewModal.show()">
-      <i class="fa fa-file" :style="{ fontSize: iconSize }"></i>
+      <i class="fa fa-file" :style="{ fontSize: Size }"></i>
     </a>
     <bs-modal
       ref="previewModal"
@@ -109,7 +102,41 @@ const previewModal = ref()
 </template>
 
 <style lang="scss" scoped>
+@use 'sass:map';
+@import 'bootstrap/scss/functions';
+@import '../../../styles/variables.scss';
+
 .actions :deep(.btn) {
   text-align: left;
 }
+
+.icon--image {
+  font-size: 1.5rem;
+  width: 1em;
+  height: 1em;
+
+  img {
+    max-width: 1em;
+    max-height: 1em;
+  }
+}
+
+.icon--fa {
+  font-size: 1.5rem;
+}
+
+@include media-breakpoint-up(md) {
+  .icon--image,
+  .icon--fa {
+    font-size: 2.5rem;
+  }
+}
+
+.attachment-icon-preview--big {
+  .icon--image,
+  .icon--fa {
+    font-size: 4rem;
+  }
+}
+
 </style>
