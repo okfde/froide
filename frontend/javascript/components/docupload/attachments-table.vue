@@ -4,10 +4,12 @@ import { useAttachments } from './lib/attachments';
 
 const { attachments, deleteAttachment } = useAttachments()
 
-import { computed, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 
 import AttachmentIconPreview from './attachment-icon-preview.vue'
 import AttachmentActions from './attachment-actions.vue'
+
+const i18n = inject('i18n')
 
 const { subset, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction } = defineProps({
   subset: {
@@ -113,18 +115,18 @@ const deleteSelected = async () => {
     </label>
     <div v-if="selectionActions" class="d-flex flex-grow-1 justify-content-end">
       <button type="button" class="btn btn-link fw-bold">
-        Ausgewählte herunterladen
+        {{  i18n.downloadSelected }}
       </button>
       <button type="button" class="btn btn-link fw-bold" :disabled="!isSelectionDeletable" @click="deleteSelected">
-        Ausgewählte löschen 
+        {{ i18n.deleteSelected }}
       </button>
     </div>
     <div v-if="selectionButtons" class="d-flex flex-grow-1 justify-content-end">
       <button type="button" class="btn btn-link" @click="selectAll">
-        Alle auswählen
+        {{ i18n.selectAll }}
       </button>
       <button type="button" class="btn btn-link" @click="selectNone">
-        Keine auswählen
+        {{ i18n.selectNone }}
       </button>
     </div>
   </div>
@@ -164,15 +166,14 @@ const deleteSelected = async () => {
           <span
             v-if="att.is_redacted"
             class="badge text-bg-success"
-            >geschwärzt</span>
+            >{{ i18n.redacted }}</span>
           <span
             v-else
             class="badge text-bg-warning"
-            >ungeschwärzt</span>
+            >{{ 18n.nonRedacted }}</span>
         </div>
         <a v-if="actionDelete && att.can_delete" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
           <i class="fa fa-trash"></i>
-          <!--Löschen-->
         </a>
         <div v-if="actions" class="d-flex flex-column align-items-start flex-grow-0 flex-shrink-1">
           <attachment-actions
@@ -217,15 +218,15 @@ const deleteSelected = async () => {
         <span
           v-if="badgesNew && att.new"
           class="badge text-bg-success"
-          >New</span>
+          >{{ i18n.new }}</span>
         <span
           v-if="badgesRedaction && att.is_redacted"
           class="badge text-bg-success"
-          >geschwärzt</span>
+          >{{ i18n.redacted }}</span>
         <span
           v-if="badgesRedaction && !att.is_redacted"
           class="badge text-bg-warning"
-          >ungeschwärzt</span>
+          >{{ i18n.nonRedacted }}</span>
       </div>
       <a
         v-if="actionDelete && att.can_delete"
@@ -233,7 +234,6 @@ const deleteSelected = async () => {
         @click="deleteAttachment(att)"
         >
         <i class="fa fa-trash"></i>
-        <!--Löschen-->
       </a>
       <div
         v-if="actions"
