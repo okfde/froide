@@ -7,7 +7,7 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import OnlineHelp from './online-help.vue'
+import OnlineHelp from '../online-help.vue'
 import { useI18n } from '../../lib/i18n'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
