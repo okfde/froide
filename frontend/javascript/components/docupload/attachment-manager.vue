@@ -4,6 +4,9 @@ import DjangoSlot from '../../lib/django-slot.vue'
 import FileUploader from '../upload/file-uploader.vue'
 import ImagesConverter from '../docupload/images-converter.vue'
 import AttachmentsTable from './attachments-table.vue'
+// TODO linter wrong? the two above are just fine...
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import OnlineHelp from '../online-help.vue'
 import { useI18n } from '../../lib/i18n'
 import { useAttachments } from './lib/attachments'
 
@@ -40,11 +43,22 @@ watch(
   }
 )
 
+const onlineHelp = ref()
+
 </script>
 
 <template>
+  <online-help ref="onlineHelp" />
 
-  <p><a href="#">Ich benötige Hilfe. TODO</a></p>
+  <p>
+    <button
+      type="button"
+      class="btn btn-link text-decoration-underline ps-0"
+      @click="onlineHelp.show(config.url.helpAttachmentsManagement)"
+    >
+      {{ i18n.helpNeeded }}
+    </button>
+  </p>
 
   <div
     v-show="attachments.isFetching" 
