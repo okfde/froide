@@ -803,6 +803,7 @@ def upload_attachments(request, foirequest, message_id):
                 "foirequest-create_document",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
+            "helpAttachmentsManagement": get_content_url("help_attachments_management"),
         },
         "i18n": {
             "attachmentName": _("Name of attachment to create"),
@@ -874,6 +875,7 @@ def upload_attachments(request, foirequest, message_id):
             "fileType": _("File type"),
             "actions": _("Actions"),
             "properties": _("Properties"),
+            "helpNeeded": _("I have technical difficulties / I need help"),
             "uppy": get_uppy_i18n(),
         },
     }

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import BsModal from '../bs-modal.vue'
+import BsModal from './bs-modal.vue'
 
 const props = defineProps({
   path: String
