@@ -887,9 +887,9 @@ addEventListener('hashchange', () => {
           <div class="fw-bold">
             {{ i18n.documentsAvailable }}
           </div>
+          <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
         </div>
       </div>
-      <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
     </div>
     <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
       <div class="row justify-content-center">
@@ -1160,7 +1160,7 @@ addEventListener('hashchange', () => {
           <p>
             {{ i18n.redactionInfo }}
           </p>
-          <attachments-table :subset="attachments.relevant" selection selection-buttons :as-card-threshold="0">
+          <attachments-table :subset="attachments.relevant" table-selection selection-buttons :as-card-threshold="0">
             <template #after-row="slotProps">
               <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
                 <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />
@@ -1277,10 +1277,10 @@ addEventListener('hashchange', () => {
           <div class="fw-bold col-form-label">
             {{ i18n.documentsOverview }}
           </div>
+          <attachments-table :subset="attachments.relevant.filter(att => !att.redacted)" badges-redaction />
         </div>
       </div>
       <!-- filter hides unredacted attachments that have a redaction version -->
-      <attachments-table :subset="attachments.relevant.filter(att => !att.redacted)" badges-redaction />
     </div>
     <div v-show="step === STEP_OUTRO" class="container">
       <div class="row justify-content-center">
