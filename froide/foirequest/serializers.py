@@ -2,10 +2,15 @@ from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from rest_framework import permissions, serializers
+from rest_framework import serializers
 from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
+from froide.foirequest.fields import (
+    FoiMessageRelatedField,
+    FoiRequestRelatedField,
+    TagListField,
+)
 from froide.foirequest.forms.message import TransferUploadForm
 from froide.foirequest.models.message import (
     MESSAGE_KIND_USER_ALLOWED,
@@ -26,19 +31,10 @@ from .auth import (
     can_read_foirequest_authenticated,
     can_write_foirequest,
     get_read_foiattachment_queryset,
-    get_read_foirequest_queryset,
-    get_write_foirequest_queryset,
 )
 from .models import FoiAttachment, FoiMessage, FoiRequest
 from .services import CreateRequestService
 from .validators import clean_reference
-
-
-class TagListField(serializers.CharField):
-    child = serializers.CharField()
-
-    def to_representation(self, data):
-        return [t.name for t in data.all()]
 
 
 class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
@@ -167,36 +163,6 @@ class MakeRequestSerializer(serializers.Serializer):
     def create(self, validated_data):
         service = CreateRequestService(validated_data)
         return service.execute(validated_data["request"])
-
-
-class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
-    view_name = "api:request-detail"
-
-    def get_queryset(self):
-        request = self.context["request"]
-        if request.method in permissions.SAFE_METHODS:
-            return get_read_foirequest_queryset(request)
-        else:
-            return get_write_foirequest_queryset(request)
-
-
-class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
-    view_name = "api:message-detail"
-
-    def get_url(self, obj, view_name, request, format):
-        # Unsaved objects will not yet have a valid URL.
-        if hasattr(obj, "pk") and obj.pk in (None, ""):
-            return None
-
-        lookup_value = getattr(obj, self.lookup_field)
-        kwargs = {self.lookup_url_kwarg: lookup_value}
-
-        if isinstance(obj, FoiMessageDraft):
-            view_name = "api:message-draft-detail"
-        else:
-            view_name = "api:message-detail"
-
-        return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
@@ -372,11 +338,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class FoiAttachmentTusSerializer(serializers.Serializer):
-    message = serializers.HyperlinkedRelatedField(
-        view_name="api:message-detail",
-        lookup_field="pk",
-        queryset=FoiMessage.objects.all(),
-    )
+    message = FoiMessageRelatedField()
     upload = serializers.CharField()
 
     def validate(self, data):
