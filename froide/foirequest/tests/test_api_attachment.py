@@ -15,7 +15,8 @@ from froide.upload.factories import UploadFactory
 def test_upload_attachment(client: Client, user):
     request = factories.FoiRequestFactory.create(user=user)
     message = factories.FoiMessageFactory.create(request=request, kind=MessageKind.POST)
-    upload = UploadFactory.create(user=user)
+    other_user = factories.UserFactory.create()
+    upload = UploadFactory.create(user=other_user)
 
     # needs to be logged in
     response = client.post(
@@ -30,7 +31,19 @@ def test_upload_attachment(client: Client, user):
 
     assert client.login(email=user.email, password="froide")
 
-    # add attachment to message
+    # wrong user
+    response = client.post(
+        "/api/v1/attachment/",
+        data={
+            "message": reverse("api:message-detail", kwargs={"pk": message.pk}),
+            "upload": reverse("api:upload-detail", kwargs={"guid": upload.guid}),
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+    # everything correct
+    upload = UploadFactory.create(user=user)
     response = client.post(
         "/api/v1/attachment/",
         data={
@@ -40,6 +53,8 @@ def test_upload_attachment(client: Client, user):
         content_type="application/json",
     )
     assert response.status_code == 201
+
+    # TODO: test that file is properly saved and accessible via its url
 
 
 @pytest.mark.django_db
