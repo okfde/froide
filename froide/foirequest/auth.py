@@ -11,6 +11,9 @@ from django.utils.translation import override
 
 from crossdomainmedia import CrossDomainMediaAuth
 from oauth2_provider.contrib.rest_framework import TokenHasScope
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.request import Request
+from rest_framework.viewsets import ViewSet
 
 from froide.helper.auth import (
     can_manage_object,
@@ -374,8 +377,8 @@ def throttle_action(throttle_classes):
 
 
 class CreateOnlyWithScopePermission(TokenHasScope):
-    def has_permission(self, request, view):
-        if view.action not in ("create", "update"):
+    def has_permission(self, request: Request, view: ViewSet):
+        if request.method in SAFE_METHODS:
             return True
         if request.user.is_authenticated and request.auth is None:
             # allow api use with session authentication
