@@ -11,7 +11,6 @@ from froide.foirequest.fields import (
     FoiRequestRelatedField,
     TagListField,
 )
-from froide.foirequest.forms.message import TransferUploadForm
 from froide.foirequest.models.message import (
     MESSAGE_KIND_USER_ALLOWED,
     FoiMessageDraft,
@@ -25,6 +24,7 @@ from froide.publicbody.serializers import (
     PublicBodySerializer,
     SimplePublicBodySerializer,
 )
+from froide.upload.fields import UploadRelatedField
 
 from .auth import (
     can_moderate_pii_foirequest,
@@ -339,20 +339,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
 
 class FoiAttachmentTusSerializer(serializers.Serializer):
     message = FoiMessageRelatedField()
-    upload = serializers.CharField()
-
-    def validate(self, data):
-        self.form = TransferUploadForm(
-            data=data, foimessage=data["message"], user=self.context["request"].user
-        )
-        if not self.form.is_valid():
-            raise serializers.ValidationError(_("Invalid upload"))
-
-        return data
-
-    def create(self, validated_data):
-        added = self.form.save(self.context["request"])
-        return added[0]
+    upload = UploadRelatedField()
 
 
 def optimize_message_queryset(request, qs):
