@@ -88,6 +88,3 @@ class FoiAttachmentViewSet(
 
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def perform_create(self, serializer):
-        return serializer.save()
