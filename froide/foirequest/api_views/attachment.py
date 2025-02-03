@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
 from rest_framework import mixins, status, viewsets
@@ -35,12 +36,14 @@ class FoiAttachmentViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     serializer_action_classes = {
         "create": FoiAttachmentTusSerializer,
         "list": FoiAttachmentSerializer,
         "retrieve": FoiAttachmentSerializer,
+        "delete": FoiAttachmentSerializer,
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiAttachmentFilter
@@ -73,6 +76,18 @@ class FoiAttachmentViewSet(
         instance = self.perform_create(serializer)
         data = FoiAttachmentSerializer(instance, context={"request": request}).data
         return Response(data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if not instance.can_delete:
+            return Response(
+                data={"detail": _("Can't delete this attachment.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_create(self, serializer):
         return serializer.save()
