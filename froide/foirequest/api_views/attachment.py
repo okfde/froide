@@ -1,4 +1,7 @@
+from functools import partial
+
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
@@ -9,13 +12,14 @@ from ..auth import (
     CreateOnlyWithScopePermission,
     get_read_foiattachment_queryset,
 )
-from ..models import FoiAttachment
+from ..models import FoiAttachment, FoiEvent
 from ..permissions import WriteFoiRequestPermission
 from ..serializers import (
     FoiAttachmentSerializer,
     FoiAttachmentTusSerializer,
     FoiRequestListSerializer,
 )
+from ..tasks import move_upload_to_attachment
 
 User = get_user_model()
 
@@ -73,8 +77,34 @@ class FoiAttachmentViewSet(
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = self.perform_create(serializer)
-        data = FoiAttachmentSerializer(instance, context={"request": request}).data
+
+        upload = serializer.validated_data["upload"]
+        foimessage = serializer.validated_data["message"]
+
+        att = FoiAttachment(belongs_to=foimessage, name=upload.filename)
+        att.size = upload.size
+        att.filetype = upload.content_type
+        att.pending = True  # file needs to be moved by task
+        att.can_approve = not foimessage.request.not_publishable
+        att.save()
+
+        foimessage._attachments = None
+        upload.ensure_saving()
+        upload.save()
+
+        transaction.on_commit(
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
+        )
+
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
+            foimessage.request,
+            message=foimessage,
+            user=request.user,
+            **{"added": str(att)},
+        )
+
+        data = FoiAttachmentSerializer(att, context={"request": request}).data
         return Response(data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
