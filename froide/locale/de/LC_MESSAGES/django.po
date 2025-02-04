@@ -4730,6 +4730,13 @@ msgid "Non-public attachments"
 msgstr "Nicht-öffentliche Anhänge"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid ""
+"Your request is not public at the moment. Non-published attachments will "
+"remain so even after the request is published."
+msgstr ""
+"Aktuell ist die Anfrage nicht öffentlich. Nicht-freigegebene Anhänge werden auch nach Öffentlich-Schalten der Anfrage nicht veröffentlicht."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/upload/apps.py froide/upload/forms.py
 msgid "Upload"
 msgstr "Upload"
