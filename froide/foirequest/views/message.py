@@ -476,6 +476,7 @@ def edit_postal_message(request, foirequest, message_id):
             "actions": _("Actions"),
             "properties": _("Properties"),
             "nonRedacted": _("non-redacted"),
+            "publish": _("Publish"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
