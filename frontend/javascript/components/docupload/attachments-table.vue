@@ -169,6 +169,7 @@ const deleteSelected = async () => {
           :attachment="att"
           big
           class="text-center pb-1"
+          :actions="actions"
           />
         <div
           class="text-center mb-1"
@@ -232,6 +233,7 @@ const deleteSelected = async () => {
       <attachment-icon-preview
         :attachment="att"
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
+        :actions="actions"
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1"

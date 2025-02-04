@@ -8,11 +8,12 @@ import BsModal from '../bs-modal.vue'
 
 const i18n = inject('i18n')
 
-const { attachment, big } = defineProps({
+const { attachment, actions, big } = defineProps({
   attachment: {
     type: Object,
     required: true
   },
+  actions: Boolean,
   big: Boolean
 })
 
@@ -86,7 +87,10 @@ const previewModal = ref()
                 </div>
               </div>
             </div>
-            <div class="card actions">
+            <div
+              v-if="actions"
+              class="card actions"
+              >
               <div class="card-body">
                 <h5 class="card-title">
                   {{ i18n.actions }}
