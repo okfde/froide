@@ -99,6 +99,11 @@
                     {% translate "Non-public attachments" %}
                 {% endif %}
             </h2>
+            {% if not foirequest.public %}
+                <p>
+                    {% translate "Your request is not public at the moment. Non-published attachments will remain so even after the request is published." %}
+                </p>
+            {% endif %}
         </template>
         <template data-slot="upload-header">
             <h2>{% translate "Upload" %}</h2>
