@@ -250,6 +250,7 @@ const fileUploaderSucceeded = (uppyResult) => {
     })
 }
 
+// mark new attachments "auto_approve"
 const attachmentsAutoApproveSelection = ref({})
 watch(() => attachments.relevant, () => {
   attachments.relevant.forEach(att => {
@@ -1299,7 +1300,7 @@ addEventListener('hashchange', () => {
             <template #after-card="slotProps">
               <label class="text-center">
                 <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />
-                veröffentlichen*
+                {{ i18n.publish }}*
               </label>
             </template>
             <template #after-table>
