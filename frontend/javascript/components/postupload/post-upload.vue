@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, defineProps, onMounted, provide, watch } from 'vue'
+import { ref, reactive, computed, defineProps, onMounted, provide } from 'vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
@@ -157,7 +157,7 @@ const approveAndSubmit = async () => {
   isSubmitting.value = true
   try {
     // "flatten/reduce" the {id:bool} object into an array (where false!)
-    const excludeIds = Object.entries(attachmentsAutoApproveSelection.value)
+    const excludeIds = Object.entries(attachments.autoApproveSelection)
       .filter((kv) => kv[1] === false).map((kv) => +kv[0])
     await approveAllUnredactedAttachments(excludeIds)
     await submitFetch()
@@ -237,8 +237,7 @@ const attachmentsConvertImages = () => {
     .then(() => gotoStep())
 }
 
-// TODO
-// const documentsBasicOperations = ref(false)
+const attachmentsOverviewActions = ref(false)
 
 const fileUploaderSucceeded = (uppyResult) => {
   addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
@@ -249,16 +248,6 @@ const fileUploaderSucceeded = (uppyResult) => {
       gotoStep()
     })
 }
-
-// mark new attachments "auto_approve"
-const attachmentsAutoApproveSelection = ref({})
-watch(() => attachments.relevant, () => {
-  attachments.relevant.forEach(att => {
-    if (!(att.id in attachmentsAutoApproveSelection.value)) {
-      attachmentsAutoApproveSelection.value[att.id] = true
-    }
-  })
-})
 
 /* --- <pdf-redaction> interaction --- */
 
@@ -577,7 +566,7 @@ const stepsConfig = {
     next: STEP_OUTRO,
     onEnter: () => {
       attachments.unselectSubset(attachments.relevant)
-      // documentsBasicOperations.value = false
+      attachmentsOverviewActions.value = false
       updateValidity('form')
       pdfRedactionUploaded()
     },
@@ -697,6 +686,7 @@ addEventListener('hashchange', () => {
     <div>history={{ stepHistory.join(' ') }}</div>
     <div>stepContext={{ stepContext }}</div>
     <div>isGotoValid={{ isGotoValid }}</div>
+    <div>attachments.autoApproveSelection={{ attachments.autoApproveSelection }}</div>
     <span>
       <!-- eslint-disable-next-line vue/no-mutating-props -->
       <button type="button" @click="user_is_staff = !user_is_staff">
@@ -1294,14 +1284,40 @@ addEventListener('hashchange', () => {
           <attachments-table :subset="attachments.relevant" table-selection selection-buttons :as-card-threshold="0">
             <template #after-row="slotProps">
               <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
-                <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />
+                <!-- like v-model, but default true -->
+                <input
+                  v-if="!slotProps.attachment.approved"
+                  type="checkbox"
+                  :checked="attachments.autoApproveSelection[slotProps.attachment.id] !== false"
+                  @input="(evt) => { attachments.autoApproveSelection[slotProps.attachment.id] = evt.target.checked }"
+                  />
+                <input
+                  v-else
+                  type="checkbox"
+                  checked
+                  disabled
+                  v-bs-tooltip
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  :title="i18n.alreadyPublished"
+                  />
               </label>
             </template>
             <template #after-card="slotProps">
-              <label class="text-center">
-                <input type="checkbox" v-model="attachmentsAutoApproveSelection[slotProps.attachment.id]" :value="true" />
+              <label
+                v-if="!slotProps.attachment.approved"
+                class="text-center"
+                >
+                <input
+                  type="checkbox"
+                  :checked="attachments.autoApproveSelection[slotProps.attachment.id] !== false"
+                  @input="(evt) => { attachments.autoApproveSelection[slotProps.attachment.id] = evt.target.checked }"
+                  />
                 {{ i18n.publish }}*
               </label>
+              <div v-else>
+                {{ i18n.alreadyPublished }}
+              </div>
             </template>
             <template #after-table>
               <div class="text-end px-2">
@@ -1328,7 +1344,8 @@ addEventListener('hashchange', () => {
                   current: pdfRedactionCurrentIndex + 1,
                   total: attachmentsSelectedPdfRedaction.length
                 })
-              }}
+              }},
+              {{ pdfRedactionCurrentDoc?.name }}
             </label>
             <div class="alert alert-warning">
               {{ i18n.redactionInfoWhat }}
@@ -1361,15 +1378,14 @@ addEventListener('hashchange', () => {
       </div>
       <div>
         <div class="debug" v-if="debug">
-          DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}<br />
-          auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
+          DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}
         </div>
         <pdf-redaction
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.file_url"
           :attachment-url="pdfRedactionCurrentDoc.anchor_url"
-          :auto-approve="attachmentsAutoApproveSelection[pdfRedactionCurrentDoc.id] === true"
+          :auto-approve="attachments.autoApproveSelection[pdfRedactionCurrentDoc.id] !== false"
           :post-url="
             config.url.redactAttachment.replace(
               '/0/',
@@ -1421,7 +1437,25 @@ addEventListener('hashchange', () => {
           <div class="fw-bold col-form-label">
             {{ i18n.documentsOverview }}
           </div>
-          <attachments-table :subset="attachments.relevant.filter(att => !att.redacted)" badges-redaction />
+          <attachments-table
+            :subset="attachments.relevant.filter(att => !att.redacted)"
+            badges-redaction
+            :actions="attachmentsOverviewActions"
+            >
+            <template #before-cards>
+              <div class="text-end mb-2">
+                <button
+                  type="button"
+                  class="btn btn-link"
+                  @click="() => attachmentsOverviewActions = !attachmentsOverviewActions"
+                  >
+                  {{ attachmentsOverviewActions ? i18n.done : i18n.edit }}
+                </button>
+              </div>
+            </template>
+            <template #before-table>
+            </template>
+          </attachments-table>
         </div>
       </div>
       <!-- filter hides unredacted attachments that have a redaction version -->

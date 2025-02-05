@@ -144,6 +144,7 @@ const deleteSelected = async () => {
     v-if="asCards"
     :class="cardsBgTransparent ? '' : 'bg-body-tertiary p-3 p-md-5'"
     >
+    <slot name="before-cards"></slot>
     <div class="d-flex flex-row flex-wrap gap-5 justify-content-around justify-content-lg-start">
       <div
         v-for="att in subset" :key="att.id"
@@ -208,6 +209,7 @@ const deleteSelected = async () => {
   <!-- AS TABLE/ROWS -->
 
   <div v-else>
+    <slot name="before-table"></slot>
     <div
       v-for="att in subset" :key="att.id"
       class="d-flex flex-column px-md-1 py-1 position-relative flex-md-row align-items-md-center px-5"
