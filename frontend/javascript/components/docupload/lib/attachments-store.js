@@ -5,14 +5,14 @@ let imageDocId = 0
 /* has to be called with the global pinia instance imported from lib/pinia.js
   due to our late ("onDom") app.use(pinia) call, cf. attachments.js */
 const useAttachmentsStore = defineStore('attachments', {
-  state: () => { console.trace('att-store state()'); return {
+  state: () => ({
     isConverting: false,
     isFetching: false,
     all: [],
     images: [],
     selectedIds: new Set,
     autoApproveSelection: {}
-  }},
+  }),
   getters: {
     approved: (state) => state.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
     notApproved: (state) => state.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
@@ -33,7 +33,6 @@ const useAttachmentsStore = defineStore('attachments', {
   },
   actions: {
     splitPages(imageIndex, pageNum) {
-      console.log('# att store splitPages')
       const newPages = this.images[imageIndex].pages.slice(pageNum)
       this.images[imageIndex].pages = this.images[imageIndex].pages.slice(0, pageNum)
       this.images[imageIndex].new = true
