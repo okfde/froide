@@ -50,7 +50,7 @@ const previewModal = ref()
       content-classes="h-100"
       >
       <template #header>
-        <h2>{{  attachment.name }}</h2>
+        <h2>{{ attachment.name }}</h2>
       </template>
       <template #body>
         <div class="row h-100">

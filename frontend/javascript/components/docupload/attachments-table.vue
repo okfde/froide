@@ -57,19 +57,15 @@ const asCards = computed(() => subset.length < asCardThreshold)
 
 const selectAllEl = ref()
 
-// const selectAllState = computed(() => selectionIds.value.size === 0 ? false : (selectionIds.value.size === subset.length ? true : undefined))
 const selectAllState = computed(() => {
   if (attachments.selectedIds.size === 0) return false
   const subsetSelected = subset.map(_ => attachments.selectedIds.has(_.id))
   if (subsetSelected.every(_ => _)) return true
   if (subsetSelected.some(_ => _)) return undefined
-  // "subsecSelected.none"
   return false
 })
 
-// const selectAll = () => subset.forEach(_ => attachments.selectedIds.add(_.id))
 const selectAll = () => attachments.selectSubset(subset)
-// const selectNone = () => subset.forEach(_ => attachments.selectedIds.delete(_.id))
 const selectNone = () => attachments.unselectSubset(subset)
 
 const selectAllClick = () => {
@@ -97,15 +93,11 @@ const toggleSelection = (from, id) => {
   }
 }
 
-/*const isSelectionDeletable = computed(() => selection.value.length && 
-  selection.value.every(att => att.can_delete && !att.approving)
-)*/
 const isSelectionDeletable = computed(() => attachments.selected.length && 
   attachments.selected.every(att => att.can_delete && !att.approving)
 )
 
 const deleteSelected = async () => {
-  // for (const att of selection.value) {
   for (const att of attachments.selected) {
     await deleteAttachment(att)
   }
