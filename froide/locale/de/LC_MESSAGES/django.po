@@ -1988,7 +1988,6 @@ msgstr "Dokument"
 #: froide/document/apps.py
 #: froide/document/templates/admin/document/documentcollection/change_form.html
 #: froide/document/templates/document/search.html
-#: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/body/documents.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
 msgid "Documents"
@@ -2336,7 +2335,7 @@ msgstr "Markierte Anfragen sind nun dauerhaft depubliziert."
 
 #: froide/foirequest/admin.py
 #: froide/foirequest/templates/foirequest/account/list_requests.html
-#: froide/foirequest/views/project.py
+#: froide/foirequest/views/message.py froide/foirequest/views/project.py
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -3248,11 +3247,11 @@ msgstr "Gehört zu Nachricht"
 msgid "File"
 msgstr "Datei"
 
-#: froide/foirequest/models/attachment.py
+#: froide/foirequest/models/attachment.py froide/foirequest/views/message.py
 msgid "Size"
 msgstr "Größe"
 
-#: froide/foirequest/models/attachment.py
+#: froide/foirequest/models/attachment.py froide/foirequest/views/message.py
 msgid "File type"
 msgstr "Dateityp"
 

@@ -26,7 +26,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         document: './frontend/javascript/document.js',
-        docupload: './frontend/javascript/docupload.js',
         attachmentmanager: './frontend/javascript/attachmentmanager.js',
         fileuploader: './frontend/javascript/fileuploader.js',
         filingcabinet:

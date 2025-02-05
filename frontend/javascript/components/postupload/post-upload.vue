@@ -1326,29 +1326,6 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <!-- not in v-show="step ..." -->
-    <div v-show="stepContext.documents">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div
-              v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
-              class="d-flex justify-content-end"
-            >
-              <!-- TODO
-              <button
-                type="button"
-                class="btn btn-link text-decoration-underline"
-                @click="documentsBasicOperations = !doctumentsBasicOperations"
-              >
-                {{ documentsBasicOperations ? i18n.done : i18n.edit }}
-              </button>
-               -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
       <div class="row justify-content-center">
         <div class="col-sm-9 col-md-6 mt-3">
