@@ -901,7 +901,6 @@ def upload_attachments(request, foirequest, message_id):
         request,
         "foirequest/attachment/manage.html",
         {
-            "object": foirequest,
             "message_json": json.dumps(serializer.data),
             "message": message,
             "foirequest": foirequest,
