@@ -10,7 +10,8 @@ const useAttachmentsStore = defineStore('attachments', {
     isFetching: false,
     all: [],
     images: [],
-    selectedIds: new Set
+    selectedIds: new Set,
+    autoApproveSelection: {}
   }},
   getters: {
     approved: (state) => state.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
