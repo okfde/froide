@@ -45,7 +45,7 @@ const initialize = ()  => {
 
 onMounted(() => {
   if (props.showOnMounted) {
-    bsModal.show()
+    show()
   }
 })
 
@@ -78,6 +78,9 @@ defineExpose({
           </div>
           <div class="modal-body">
             <slot name="body"></slot>
+          </div>
+          <div v-if="$slots.footer" class="modal-footer">
+            <slot name="footer"></slot>
           </div>
         </div>
       </div>

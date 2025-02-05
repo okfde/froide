@@ -893,6 +893,50 @@ def upload_attachments(request, foirequest, message_id):
             "properties": _("Properties"),
             "helpNeeded": _("I have technical difficulties / I need help"),
             "uppy": get_uppy_i18n(),
+            "redactionDone": _("I have finished redacting"),
+            "previousPage": _("Previous Page"),
+            "nextPage": _("Next Page"),
+            "pageCurrentOfTotal": _("{current} of {total}").format(
+                current="$current", total="$total"
+            ),
+            "redactAndPublish": _("Save redaction"),
+            "publishWithoutRedaction": _("No redaction needed"),
+            "removeAllRedaction": _("Remove all redaction"),
+            "toggleText": _("Text only"),
+            "disableText": _("Hide text"),
+            "cancel": _("Cancel"),
+            "undo": _("Undo"),
+            "redo": _("Redo"),
+            "loadingPdf": _("Loading PDF..."),
+            "sending": _("Uploading redaction instructions, please wait..."),
+            "redacting": _("Redacting PDF, please wait..."),
+            "redactionError": _(
+                "There was a problem with your redaction. Please contact moderators."
+            ),
+            "redactionTimeout": _(
+                "Your redaction took too long. It may become available soon, if not, contact moderators."
+            ),
+            "autoRedacted": _(
+                "We automatically redacted some text for you already. Please check if we got everything."
+            ),
+            "passwordRequired": _(
+                "This PDF requires a password to open. Please provide the password here:"
+            ),
+            "passwordCancel": _(
+                "The password you provided was incorrect. Do you want to abort?"
+            ),
+            "passwordMissing": _(
+                "The PDF could not be opened because of a missing password. Please ask the authority to provide you with a password."
+            ),
+            "removePasswordAndPublish": _("Remove password and publish"),
+            "hasPassword": _(
+                "The original document is protected with a password. The password is getting removed on publication."
+            ),
+            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
+            "confirmNoRedactionsText": _(
+                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
+            ),
+            "close": _("Close"),
         },
     }
     request.auth = None
