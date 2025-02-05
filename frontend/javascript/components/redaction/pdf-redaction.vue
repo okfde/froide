@@ -519,7 +519,6 @@ export default {
       this.pageLoading = true
       const doc = toRaw(this.doc)
       return doc.getPage(pageNum).then((page) => {
-        console.log('# Page ' + pageNum)
         this.page = page
         if (this.maxWidth === null) {
           this.maxWidth = this.$refs.containerWrapper.offsetWidth
