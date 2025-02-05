@@ -1,7 +1,4 @@
 <script setup>
-/* This is a separate component because we need to provide Vue3 composition setup for useSortable,
-which looks like the most reasonable replacement for vuedraggable (Vue2 only);
-other alternatives did not work (vuedraggable-next and a different thin SortableJS wrapper). */
 
 import { useSortable } from '@vueuse/integrations/useSortable'
 import { computed, ref } from 'vue'

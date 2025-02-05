@@ -176,7 +176,6 @@ export default {
         const button = this.$refs.uppy.querySelector(
           '.uppy-Dashboard-browse'
         )
-        console.log('# uppyClick', button)
         button.click()
       })
     }
