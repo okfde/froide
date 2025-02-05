@@ -1,7 +1,12 @@
 <script setup>
-import { computed, inject, ref } from 'vue'
+import { computed, inject, nextTick, ref } from 'vue'
 import { useAttachments } from './lib/attachments';
-const { attachments, createDocument, deleteAttachment, approveAttachment, makeRelevant, getRedactUrl } = useAttachments()
+const { attachments, refresh: refreshAttachments, createDocument, deleteAttachment, approveAttachment, makeRelevant, getRedactUrl } = useAttachments()
+
+import BsModal from '../bs-modal.vue'
+// TODO linter wrong?
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import PdfRedaction from '../redaction/pdf-redaction.vue'
 
 const { attachment, dropdown } = defineProps({
   attachment: Object,
@@ -55,6 +60,26 @@ const makeResult = () => {
 
 const dropdownHasItems = computed(() => canRedact.value || unredacted.value || unconverted.value)
 
+const pdfRedaction = ref()
+
+const pdfRedactionAtt = ref(null)
+
+const pdfRedactionUploaded = () => {
+  // handle v-if'ed modal
+  pdfRedactionModal.value.hide()
+  pdfRedactionAtt.value = null
+  refreshAttachments()
+}
+
+const pdfRedactionModal = ref()
+
+const redactClick = (evt, att) => {
+  evt.preventDefault()
+  // handle v-if'ed modal
+  pdfRedactionAtt.value = att
+  nextTick().then(() => pdfRedactionModal.value.show())
+}
+
 </script>
 
 <template>
@@ -63,12 +88,22 @@ const dropdownHasItems = computed(() => canRedact.value || unredacted.value || u
     <i class="fa fa-certificate"></i>
     {{ i18n.markResult }}
   </a>
-  <a v-if="!dropdown && canRedact" :href="getRedactUrl(attachment)" class="btn btn-sm btn-link text-start">
+  <a
+    v-if="!dropdown && canRedact && !attachment.is_redacted"
+    :href="getRedactUrl(attachment)"
+    class="btn btn-sm btn-link text-start"
+    @click="redactClick($event, attachment)"
+    >
     <i class="fa fa-square"></i>
     {{ i18n.redact }}
   </a>
   <!-- TODO: this is not really schwärzung bearbeiten, but instead ungeschwärztes original noch mal schwärzen -->
-  <a v-if="!dropdown && unredacted && unredacted.can_redact" :href="getRedactUrl(unredacted)" class="btn btn-sm btn-link text-start">
+  <a
+    v-if="!dropdown && unredacted && unredacted.can_redact"
+    :href="getRedactUrl(unredacted)"
+    class="btn btn-sm btn-link text-start"
+    @click="redactClick($event, unredacted)"
+    >
     <i class="fa fa-pencil-square"></i>
     {{ i18n.editRedaction }}
   </a>
@@ -158,4 +193,49 @@ const dropdownHasItems = computed(() => canRedact.value || unredacted.value || u
       -->
     </ul>
   </div>
+  <bs-modal
+    v-if="pdfRedactionAtt"
+    :key="pdfRedactionAtt.id"
+    ref="pdfRedactionModal"
+    dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
+    content-classes="h-100"
+    >
+    <template #header>
+      <h5 class="modal-title">
+        {{ i18n.redact }}, {{ pdfRedactionAtt.name }}
+      </h5>
+    </template>
+    <template #body>
+      <pdf-redaction
+        ref="pdfRedaction"
+        :pdf-path="pdfRedactionAtt.file_url"
+        :attachment-url="pdfRedactionAtt.anchor_url"
+        :auto-approve="attachments.autoApproveSelection[pdfRedactionAtt.id] !== false"
+        :post-url="
+          config.url.redactAttachment.replace(
+            '/0/',
+            '/' + pdfRedactionAtt.id + '/'
+          )
+        "
+        :approve-url="
+          config.url.approveAttachment.replace(
+            '/0/',
+            '/' + pdfRedactionAtt.id + '/'
+          )
+        "
+        :minimal-ui="true"
+        :no-redirect="true"
+        :can-publish="true"
+        :config="config"
+        @uploaded="pdfRedactionUploaded"
+        ></pdf-redaction>
+    </template>
+    <template #footer>
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="pdfRedaction.redactOrApprove()"
+        >{{ i18n.redactionDone }}</button>
+    </template>
+  </bs-modal>
 </template>
