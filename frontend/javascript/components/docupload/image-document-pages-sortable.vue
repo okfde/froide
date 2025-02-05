@@ -7,10 +7,7 @@ import { useSortable } from '@vueuse/integrations/useSortable'
 import { computed, ref } from 'vue'
 import ImagePage from './image-page.vue'
 import { useAttachments } from './lib/attachments'
-// import { useAttachmentsStore } from './lib/attachments-store'
-// import { pinia } from '../../lib/pinia'
 
-// const attachments = useAttachmentsStore(pinia)
 const { attachments, splitPages, rotatePage } = useAttachments()
 
 const props = defineProps({
