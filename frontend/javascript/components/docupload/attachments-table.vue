@@ -11,7 +11,7 @@ import AttachmentActions from './attachment-actions.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, cardsBgTransparent } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -50,6 +50,7 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
   badgesNew: Boolean,
   badgesRedaction: Boolean,
   badgesType: Boolean,
+  badgesResolution: Boolean,
   cardsBgTransparent: Boolean
 })
 
@@ -183,6 +184,10 @@ const deleteSelected = async () => {
             class="badge text-bg-warning"
             >{{ i18n.nonRedacted }}</span>
         </div>
+        <span
+          v-if="badgesResolution && att.document"
+          class="badge text-bg-success"
+          >{{ i18n.resolution }}</span>
         <div
           v-if="badgesType">
           <span
@@ -246,6 +251,10 @@ const deleteSelected = async () => {
           v-if="badgesRedaction && att.is_redacted"
           class="badge text-bg-success"
           >{{ i18n.redacted }}</span>
+        <span
+          v-if="badgesResolution && att.document"
+          class="badge text-bg-success"
+          >{{ i18n.resolution }}</span>
         <span
           v-if="badgesRedaction && !att.is_redacted"
           class="badge text-bg-warning"
