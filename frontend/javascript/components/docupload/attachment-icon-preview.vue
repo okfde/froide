@@ -19,6 +19,10 @@ const { attachment, actions, big } = defineProps({
 
 const previewModal = ref()
 
+const closePreviewModal = () => {
+  previewModal.value.hide()
+}
+
 </script>
 
 <template>
@@ -95,7 +99,11 @@ const previewModal = ref()
                 <h5 class="card-title">
                   {{ i18n.actions }}
                 </h5>
-                <attachment-actions :attachment="attachment" />
+                <attachment-actions
+                  :attachment="attachment"
+                  @action-done="closePreviewModal"
+                  @action-delete="closePreviewModal"
+                  />
               </div>
             </div>
           </div>
