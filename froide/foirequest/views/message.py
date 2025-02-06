@@ -476,6 +476,7 @@ def edit_postal_message(request, foirequest, message_id):
             "actions": _("Actions"),
             "properties": _("Properties"),
             "nonRedacted": _("non-redacted"),
+            "resolution": _("Resolution"),
             "publish": _("Publish"),
         },
         "url": {
@@ -860,6 +861,7 @@ def upload_attachments(request, foirequest, message_id):
             "notPublic": _("not public"),
             "redacted": _("redacted"),
             "nonRedacted": _("non-redacted"),
+            "resolution": _("Resolution"),
             "new": _("New"),
             "redact": _("Redact"),
             "delete": _("Delete"),

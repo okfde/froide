@@ -20,6 +20,8 @@ const { attachment, dropdown } = defineProps({
   }
 })
 
+const emit = defineEmits(['actionDelete', 'actionDone'])
+
 const config = inject('config')
 
 const i18n = inject('i18n')
@@ -55,6 +57,7 @@ const makeResult = () => {
   createDocument(attachment)
     .finally(() => {
       isMakingResult.value = false
+      emit('actionDone')
     })
 }
 
@@ -69,6 +72,7 @@ const pdfRedactionUploaded = () => {
   pdfRedactionModal.value.hide()
   pdfRedactionAtt.value = null
   refreshAttachments()
+  emit('actionDone')
 }
 
 const pdfRedactionModal = ref()
@@ -78,6 +82,23 @@ const redactClick = (evt, att) => {
   // handle v-if'ed modal
   pdfRedactionAtt.value = att
   nextTick().then(() => pdfRedactionModal.value.show())
+}
+
+const deleteClick = () => {
+  emit('actionDelete')
+  deleteAttachment(attachment)
+  // can't .then-emit actionDone here because the component will be optimistically gone by then
+  // and the modal's backdrop will remain in dom
+}
+
+const makeRelevantClick = () => {
+  makeRelevant(attachment)
+  emit('actionDone')
+}
+
+const approveClick = () => {
+  approveAttachment(attachment)
+    .then(() => emit('actionDone'))
 }
 
 </script>
@@ -107,7 +128,7 @@ const redactClick = (evt, att) => {
     <i class="fa fa-pencil-square"></i>
     {{ i18n.editRedaction }}
   </a>
-  <a v-if="attachment.is_irrelevant" @click="makeRelevant(attachment)" class="btn btn-sm btn-link text-start">
+  <a v-if="attachment.is_irrelevant" @click="makeRelevantClick" class="btn btn-sm btn-link text-start">
     <i class="fa fa-exclamation-circle"></i>
     {{ i18n.markNotIrrelevant }}
   </a>
@@ -126,7 +147,7 @@ const redactClick = (evt, att) => {
      XLS instead of application/vnd.mx-excel
      there is is_excel in attachment.py... -->
   </a>
-  <a v-if="canDelete" class="btn btn-sm btn-link text-start" @click="deleteAttachment(attachment)">
+  <a v-if="canDelete" class="btn btn-sm btn-link text-start" @click="deleteClick">
     <i class="fa fa-trash"></i>
     {{ i18n.delete }}
   </a>
@@ -166,7 +187,7 @@ const redactClick = (evt, att) => {
         </a>
       </li>
       <li v-if="config.user.can_edit_approval && !attachment.approved">
-        <button type="button" class="dropdown-item" @click="approveAttachment(attachment)">
+        <button type="button" class="dropdown-item" @click="approveClick">
           <i class="fa fa-check"></i>
           <template v-if="config.foirequest.public">
             {{ i18n.makePublic }}
