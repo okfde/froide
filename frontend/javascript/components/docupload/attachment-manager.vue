@@ -67,7 +67,7 @@ const onlineHelp = ref()
   <div v-if="attachments.approved.length" class="my-5">
     <attachments-table
       :subset="attachments.approved"
-      actions table-selection selection-actions badges-type
+      actions table-selection selection-actions badges-type badges-resolution
       />
   </div>
 
