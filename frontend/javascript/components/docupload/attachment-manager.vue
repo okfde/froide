@@ -14,6 +14,10 @@ import { onMounted, nextTick, provide, ref, watch } from 'vue'
 
 const props = defineProps(['config', 'message'])
 
+const { i18n } = useI18n(props.config)
+provide('i18n', i18n)
+provide('config', props.config)
+
 const { attachments, addFromUppy, refresh } = useAttachments({
   urls: {
     ...props.config.url,
@@ -22,11 +26,8 @@ const { attachments, addFromUppy, refresh } = useAttachments({
       props.message.id,
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+  i18n,
 })
-
-const { i18n } = useI18n(props.config)
-provide('i18n', i18n)
-provide('config', props.config)
 
 onMounted(() => refresh())
 
