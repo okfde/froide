@@ -8154,6 +8154,14 @@ msgid "Properties"
 msgstr "Eigenschaften"
 
 #: froide/foirequest/views/message.py
+msgid "Error"
+msgstr "Fehler"
+
+#: froide/foirequest/views/message.py
+msgid "Error! Try to reload the page?"
+msgstr "Fehler! Seite neu laden versuchen?"
+
+#: froide/foirequest/views/message.py
 msgid "Content published."
 msgstr "Nachricht veröffentlicht."
 

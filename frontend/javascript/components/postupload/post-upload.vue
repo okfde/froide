@@ -35,6 +35,10 @@ const props = defineProps({
   user_is_staff: Boolean
 })
 
+const { i18n } = useI18n(props.config)
+provide('i18n', i18n)
+provide('config', props.config)
+
 const { attachments, addFromUppy, refresh: refreshAttachments, convertImage, approveAllUnredactedAttachments } = useAttachments({
   urls: {
     ...props.config.url,
@@ -44,11 +48,8 @@ const { attachments, addFromUppy, refresh: refreshAttachments, convertImage, app
       props.message.id,
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+  i18n,
 })
-
-const { i18n } = useI18n(props.config)
-provide('i18n', i18n)
-provide('config', props.config)
 
 const { isDesktop } = useIsDesktop()
 
@@ -266,6 +267,10 @@ const attachmentsConvertImages = () => {
   }
   convertImage(0)
     .then(() => gotoStep())
+    .catch((err) => {
+      console.error(err)
+      window.alert(`${i18n.value.error}: ${err.message}`)
+    })
 }
 
 const attachmentsOverviewActions = ref(false)

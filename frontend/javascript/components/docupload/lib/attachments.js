@@ -34,7 +34,6 @@ const convertImage = (imageIndex) => {
       // append new
       store.all.push(newAttachment)
     })
-    // TODO handle error
     .finally(() => {
       store.isConverting = false
     })
@@ -151,7 +150,7 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
 
 const handleErrorAndRefresh = (err) => {
   console.error(err)
-  if (confirm('Fehler: ' + err + '\nNeu laden versuchen?') === true) {
+  if (confirm(`${config.i18n.value.genericErrorReload}\n\n(${err.message})`) === true) {
     refresh()
   }
 }
@@ -210,9 +209,14 @@ const getRedactUrl = (attachment) => {
   return config.urls.redactAttachment.replace('/0/', `/${attachment.id}/`)
 }
 
-export function useAttachments({ urls = null, csrfToken = null} = {}) {
+export function useAttachments({ urls = null, csrfToken = null, i18n = null} = {}) {
+  // urls, token and i18n could possibly overwrite what has been set before
+  // they shall only be used in the most-parent, ancestral component,
+  // like <post-upload> and <attachment-manager>
+  // they could also Object.extend, or throw an error/warning if already set...
   if (urls) config.urls = urls
   if (csrfToken) config.csrfToken = csrfToken
+  if (i18n) config.i18n = i18n
   return {
     pinia,
     refresh,

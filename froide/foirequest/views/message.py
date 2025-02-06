@@ -478,6 +478,8 @@ def edit_postal_message(request, foirequest, message_id):
             "nonRedacted": _("non-redacted"),
             "resolution": _("Resolution"),
             "publish": _("Publish"),
+            "error": _("Error"),
+            "genericErrorReload": _("Error! Try to reload the page?"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
@@ -939,6 +941,8 @@ def upload_attachments(request, foirequest, message_id):
                 "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
             ),
             "close": _("Close"),
+            "error": _("Error"),
+            "genericErrorReload": _("Error! Try to reload the page?"),
         },
     }
     request.auth = None
