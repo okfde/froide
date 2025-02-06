@@ -8,6 +8,14 @@ const { attachments, convertImage } = useAttachments()
 
 const i18n = inject('i18n')
 
+const convertImagesClick = (idx) => {
+  convertImage(idx)
+    .catch((err) => {
+      console.error(err)
+      window.alert(`${i18n.value.error}: ${err.message}`)
+    })
+}
+
 </script>
 
 <template>
@@ -39,7 +47,7 @@ const i18n = inject('i18n')
           <button
             type="button"
             class="btn btn-primary"
-            @click="convertImage(idx)"
+            @click="convertImagesClick(idx)"
             :disabled="attachments.isConverting">
             {{ i18n.convertImages }}
           </button>
