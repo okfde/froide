@@ -46,8 +46,7 @@ const createDocument = (attachment) => {
     `/${attachment.id}/`
   )
   return postData(createDocumentUrl, {}, config.csrfToken)
-    .then((data) => {
-      console.log('###', getData(data.resource_uri))
+    .then(() => {
       return refetchAttachment(attachment)
     })
 }
@@ -69,7 +68,6 @@ const fetchAttachments = (url, csrfToken, paged = false) => {
       return response.json()
     })
     .then((response) => {
-      // console.log('### fetchAttachments', paged, response)
       if (!paged) {
         store.$patch({
           all: response.objects
