@@ -1,5 +1,6 @@
 import logging
 import os
+from collections.abc import Collection
 from datetime import timedelta
 from functools import partial
 
@@ -249,6 +250,7 @@ def convert_attachment(att):
     att.save()
 
 
+# TODO: remove this once no longer needed in views/message.py
 @celery_app.task(
     name="froide.foirequest.tasks.convert_images_to_pdf_task",
     time_limit=60 * 5,
@@ -273,6 +275,39 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
 
     if pdf_bytes is None:
         att_qs.update(can_approve=can_approve)
+        target.delete()
+        return
+
+    new_file = ContentFile(pdf_bytes)
+    target.size = new_file.size
+    target.file.save(target.name, new_file)
+    target.save()
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.convert_images_to_pdf_api_task",
+    time_limit=60 * 5,
+    soft_time_limit=60 * 4,
+)
+def convert_images_to_pdf_api_task(
+    attachments: Collection[FoiAttachment],
+    target: FoiAttachment,
+    instructions,
+    can_approve=True,
+):
+    from filingcabinet.pdf_utils import convert_images_to_ocred_pdf
+
+    paths = [a.file.path for a in attachments]
+
+    try:
+        pdf_bytes = convert_images_to_ocred_pdf(paths, instructions=instructions)
+    except SoftTimeLimitExceeded:
+        pdf_bytes = None
+
+    if pdf_bytes is None:
+        FoiAttachment.objects.filter(id__in=[a.id for a in attachments]).update(
+            can_approve=can_approve
+        )
         target.delete()
         return
 

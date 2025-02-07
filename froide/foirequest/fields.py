@@ -4,6 +4,7 @@ from .auth import (
     get_read_foirequest_queryset,
     get_write_foirequest_queryset,
 )
+from .models.attachment import FoiAttachment
 from .models.message import FoiMessage, FoiMessageDraft
 
 
@@ -45,3 +46,10 @@ class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
 
     def get_queryset(self):
         return FoiMessage.objects.all()
+
+
+class FoiAttachmentRelatedField(serializers.HyperlinkedRelatedField):
+    view_name = "api:attachment-detail"
+
+    def get_queryset(self):
+        return self.queryset or FoiAttachment.objects.all()
