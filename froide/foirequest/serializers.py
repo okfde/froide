@@ -7,6 +7,7 @@ from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
 from froide.foirequest.fields import (
+    FoiAttachmentRelatedField,
     FoiMessageRelatedField,
     FoiRequestRelatedField,
     TagListField,
@@ -340,6 +341,21 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
 class FoiAttachmentTusSerializer(serializers.Serializer):
     message = FoiMessageRelatedField()
     upload = UploadRelatedField()
+
+
+class FoiAttachmentConvertImageItemSerializer(serializers.Serializer):
+    attachment = FoiAttachmentRelatedField(
+        queryset=FoiAttachment.objects.filter(filetype__startswith="image/"),
+        error_messages={
+            "does_not_exist": _("Attachment does not exist or is not an image.")
+        },
+    )
+    rotate = serializers.IntegerField(default=0, max_value=360, min_value=0)
+
+
+class FoiAttachmentConvertImageSerializer(serializers.Serializer):
+    title = serializers.CharField(default=_("Letter"), required=False)
+    images = FoiAttachmentConvertImageItemSerializer(many=True)
 
 
 def optimize_message_queryset(request, qs):
