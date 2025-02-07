@@ -23,11 +23,3 @@ class WriteFoiRequestPermission(permissions.BasePermission):
             return True
         foirequest = self.get_foirequest(obj)
         return can_write_foirequest(foirequest, request)
-
-
-class OnlyEditableWhenDraftPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        else:
-            return obj.is_draft
