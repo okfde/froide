@@ -61,7 +61,6 @@ class FoiMessageDraftViewSet(
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         WriteFoiRequestPermission,
-        OnlyEditableWhenDraftPermission,
     ]
 
     def get_queryset(self):
