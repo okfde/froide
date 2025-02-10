@@ -343,7 +343,7 @@ class FoiAttachmentTusSerializer(serializers.Serializer):
     upload = UploadRelatedField()
 
 
-class FoiAttachmentConvertImageItemSerializer(serializers.Serializer):
+class ImageAttachmentConverterItemSerializer(serializers.Serializer):
     attachment = FoiAttachmentRelatedField(
         queryset=FoiAttachment.objects.filter(filetype__startswith="image/"),
         error_messages={
@@ -353,9 +353,9 @@ class FoiAttachmentConvertImageItemSerializer(serializers.Serializer):
     rotate = serializers.IntegerField(default=0, max_value=360, min_value=0)
 
 
-class FoiAttachmentConvertImageSerializer(serializers.Serializer):
+class ImageAttachmentConverterSerializer(serializers.Serializer):
     title = serializers.CharField(default=_("Letter"), required=False)
-    images = FoiAttachmentConvertImageItemSerializer(many=True)
+    images = ImageAttachmentConverterItemSerializer(many=True)
 
 
 def optimize_message_queryset(request, qs):
