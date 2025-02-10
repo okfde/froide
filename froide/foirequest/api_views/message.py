@@ -1,4 +1,5 @@
 from functools import partial
+from typing import override
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -130,7 +131,6 @@ class FoiMessageDraftViewSet(
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
 ):
-    serializer_class = FoiMessageDraftSerializer
     filterset_class = FoiMessageDraftFilter
     required_scopes = ["make:message"]
     permission_classes = [
@@ -143,6 +143,11 @@ class FoiMessageDraftViewSet(
             self.request, queryset=FoiMessageDraft.objects.all()
         ).order_by()
         return self.optimize_query(qs)
+
+    @override
+    def get_serializer_class(self):
+        # override FoiMessageViewSet
+        return FoiMessageDraftSerializer
 
     @action(detail=True, methods=["post"])
     def publish(self, request, pk=None):
