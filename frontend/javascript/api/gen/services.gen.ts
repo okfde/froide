@@ -62,6 +62,9 @@ import {
   type RetrieveFoiAttachmentData,
   type RetrieveFoiAttachmentError,
   type RetrieveFoiAttachmentResponse,
+  type DestroyFoiRequestListData,
+  type DestroyFoiRequestListError,
+  type DestroyFoiRequestListResponse,
   type ListFoiRequestFollowsData,
   type ListFoiRequestFollowsError,
   type ListFoiRequestFollowsResponse,
@@ -208,6 +211,9 @@ import {
   type PublishFoiMessageDraftData,
   type PublishFoiMessageDraftError,
   type PublishFoiMessageDraftResponse,
+  type ConvertToPdfImageAttachmentConverterData,
+  type ConvertToPdfImageAttachmentConverterError,
+  type ConvertToPdfImageAttachmentConverterResponse,
   type ClaimProblemReportData,
   type ClaimProblemReportError,
   type ClaimProblemReportResponse,
@@ -591,6 +597,19 @@ export const retrieveFoiAttachment = <ThrowOnError extends boolean = false>(
     ...options,
     url: '/api/v1/attachment/{id}/',
     responseTransformer: RetrieveFoiAttachmentResponseTransformer
+  })
+}
+
+export const destroyFoiRequestList = <ThrowOnError extends boolean = false>(
+  options: Options<DestroyFoiRequestListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).delete<
+    DestroyFoiRequestListResponse,
+    DestroyFoiRequestListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/attachment/{id}/'
   })
 }
 
@@ -1436,6 +1455,21 @@ export const publishFoiMessageDraft = <ThrowOnError extends boolean = false>(
     ...options,
     url: '/api/v1/message/draft/{id}/publish/',
     responseTransformer: PublishFoiMessageDraftResponseTransformer
+  })
+}
+
+export const convertToPdfImageAttachmentConverter = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<ConvertToPdfImageAttachmentConverterData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    ConvertToPdfImageAttachmentConverterResponse,
+    ConvertToPdfImageAttachmentConverterError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/{id}/convert_to_pdf/'
   })
 }
 
