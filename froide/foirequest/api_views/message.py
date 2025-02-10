@@ -1,5 +1,4 @@
 from functools import partial
-from typing import override
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -19,10 +18,10 @@ from ..auth import (
 from ..models import FoiAttachment, FoiMessage, FoiMessageDraft, FoiRequest
 from ..permissions import WriteFoiRequestPermission
 from ..serializers import (
-    FoiAttachmentConvertImageSerializer,
     FoiAttachmentSerializer,
     FoiMessageDraftSerializer,
     FoiMessageSerializer,
+    ImageAttachmentConverterSerializer,
     optimize_message_queryset,
 )
 from ..tasks import convert_images_to_pdf_api_task
@@ -42,7 +41,8 @@ class FoiMessageDraftFilter(filters.FilterSet):
         fields = ("request",)
 
 
-class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
+class BaseFoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = FoiMessageSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiMessageFilter
     permission_classes = [
@@ -50,19 +50,20 @@ class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
         WriteFoiRequestPermission,
     ]
 
+    def optimize_query(self, qs):
+        return optimize_message_queryset(self.request, qs)
+
     def get_queryset(self):
         qs = get_read_foimessage_queryset(self.request).order_by()
         return self.optimize_query(qs)
 
-    def optimize_query(self, qs):
-        return optimize_message_queryset(self.request, qs)
 
-    def get_serializer_class(self):
-        if self.action == "convert_to_pdf":
-            return FoiAttachmentConvertImageSerializer
-        return FoiMessageSerializer
-
-    @action(detail=True, methods=["post"])
+class FoiMessageViewSet(BaseFoiMessageViewSet):
+    @action(
+        detail=True,
+        methods=["post"],
+        serializer_class=ImageAttachmentConverterSerializer,
+    )
     def convert_to_pdf(self, request, pk=None):
         message = self.get_object()
         foirequest = message.request
@@ -126,28 +127,20 @@ class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class FoiMessageDraftViewSet(
-    FoiMessageViewSet,
+    BaseFoiMessageViewSet,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
 ):
+    serializer_class = FoiMessageDraftSerializer
     filterset_class = FoiMessageDraftFilter
     required_scopes = ["make:message"]
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        WriteFoiRequestPermission,
-    ]
 
     def get_queryset(self):
         qs = get_read_foimessage_queryset(
             self.request, queryset=FoiMessageDraft.objects.all()
         ).order_by()
         return self.optimize_query(qs)
-
-    @override
-    def get_serializer_class(self):
-        # override FoiMessageViewSet
-        return FoiMessageDraftSerializer
 
     @action(detail=True, methods=["post"])
     def publish(self, request, pk=None):
