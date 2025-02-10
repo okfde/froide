@@ -51,10 +51,6 @@ class FoiMessageDraftManager(FoiMessageManager):
         # need to call models.Manager, since FoiMessageManager removes drafts
         return super(models.Manager, self).get_queryset().filter(is_draft=True)
 
-    def create(self, **kwargs):
-        kwargs.setdefault("is_draft", True)
-        return super().create(**kwargs)
-
 
 class MessageTag(TagBase):
     class Meta:
@@ -767,6 +763,11 @@ class FoiMessageDraft(FoiMessage):
         proxy = True
         verbose_name = _("Freedom of Information Message Draft")
         verbose_name_plural = _("Freedom of Information Message Drafts")
+
+    def __init__(self, *args, **kwargs):
+        if not args:
+            kwargs.update({"is_draft": True})
+        super().__init__(*args, **kwargs)
 
     def can_be_published(self) -> bool:
         # see constraints of FoiMessage
