@@ -31,6 +31,7 @@ from ..models import (
     FoiAttachment,
     FoiEvent,
     FoiMessage,
+    FoiMessageDraft,
     FoiProject,
     FoiRequest,
     PublicBodySuggestion,
@@ -154,6 +155,11 @@ class FoiMessageFactory(DjangoModelFactory):
     html = ""
     redacted = False
     not_publishable = False
+
+
+class FoiMessageDraftFactory(FoiMessageFactory):
+    class Meta:
+        model = FoiMessageDraft
 
 
 class FoiAttachmentFactory(DjangoModelFactory):

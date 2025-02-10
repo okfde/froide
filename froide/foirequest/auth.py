@@ -9,6 +9,10 @@ from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.translation import override
 
 from crossdomainmedia import CrossDomainMediaAuth
+from oauth2_provider.contrib.rest_framework import TokenHasScope
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.request import Request
+from rest_framework.viewsets import ViewSet
 
 from froide.helper.auth import (
     can_manage_object,
@@ -26,7 +30,8 @@ from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 
 
 def get_campaign_auth_foirequests_filter(request: HttpRequest, fk_path=None):
-    if not request.user.is_staff:
+    # request is not available when called from manage.py generateschema
+    if not request or not request.user.is_staff:
         return None
 
     # staff user can act on all campaign-requests
@@ -156,8 +161,10 @@ def can_read_foiproject_authenticated(
 
 
 @lru_cache()
-def can_write_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
-    if can_write_object(foirequest, request):
+def can_write_foirequest(
+    foirequest: FoiRequest, request: HttpRequest, scope=None
+) -> bool:
+    if can_write_object(foirequest, request, scope):
         return True
 
     if foirequest.project:
@@ -345,3 +352,28 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
         """
         obj = self.context["object"]
         return obj.file.name
+
+
+def throttle_action(throttle_classes):
+    def inner(method):
+        def _inner(self, request, *args, **kwargs):
+            for throttle_class in throttle_classes:
+                throttle = throttle_class()
+                if not throttle.allow_request(request, self):
+                    self.throttled(request, throttle.wait())
+            return method(self, request, *args, **kwargs)
+
+        return _inner
+
+    return inner
+
+
+class CreateOnlyWithScopePermission(TokenHasScope):
+    def has_permission(self, request: Request, view: ViewSet):
+        if request.method in SAFE_METHODS:
+            return True
+        if request.user.is_authenticated and request.auth is None:
+            # allow api use with session authentication
+            # see https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
+            return True
+        return super().has_permission(request, view)

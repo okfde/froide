@@ -184,7 +184,9 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
     media_auth_class = AttachmentCrossDomainMediaAuth
 
     def get_object(self):
-        self.message = get_object_or_404(FoiMessage, id=int(self.kwargs["message_id"]))
+        self.message = get_object_or_404(
+            FoiMessage.with_drafts, id=int(self.kwargs["message_id"])
+        )
         try:
             return FoiAttachment.objects.get_for_message(
                 self.message, self.kwargs["attachment_name"]
