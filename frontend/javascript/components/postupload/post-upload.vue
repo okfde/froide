@@ -1,5 +1,6 @@
 <script setup>
 import { ref, reactive, computed, defineProps, nextTick } from 'vue'
+import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
@@ -1322,22 +1323,10 @@ addEventListener('hashchange', () => {
                 })
               }}
             </label>
-            <div class="alert alert-warning">
-              {{ i18n.redactionInfoWhat }}
-              <ul>
-                <li>
-                  {{ i18n.redactionInfoWhat1 }}
-                </li>
-                <li>
-                  {{ i18n.redactionInfoWhat2 }}
-                </li>
-                <li>
-                  {{ i18n.redactionInfoWhat3 }}
-                </li>
-                <li>
-                  {{ i18n.redactionInfoWhat4 }}
-                </li>
-              </ul>
+            <div class="row">
+              <!-- no need to import vBsCollapsePersistent,
+                snippets/bootstrap DOMContentLoaded will just work -->
+              <django-slot name="redaction_explanation"></django-slot>
             </div>
             <div class="mt-2 mb-3">
               <button
@@ -1357,6 +1346,7 @@ addEventListener('hashchange', () => {
           auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
         </div>
         <pdf-redaction
+          :class="pdf-redaction-tool"
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
@@ -1374,7 +1364,8 @@ addEventListener('hashchange', () => {
               '/' + pdfRedactionCurrentDoc.id + '/'
             )
           "
-          :minimal-ui="true"
+          :hide-done-button="true"
+          :bottom-toolbar="false"
           :no-redirect="true"
           :redact-regex="['teststraße\ 1']"
           :can-publish="true"
@@ -1754,4 +1745,14 @@ addEventListener('hashchange', () => {
     padding: 0.25rem 0.25rem 0.25rem 0.75rem;
   }
 }
+
+/* respect simple-stepper's height when sticky */
+
+@include media-breakpoint-down(md) {
+  .pdf-redaction-tool :deep(.sticky-top) {
+    top: 41px; // height of .simple-stepper/breadcrumbs
+  }
+}
+
+
 </style>
