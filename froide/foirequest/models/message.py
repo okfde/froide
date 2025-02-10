@@ -41,6 +41,11 @@ class FoiMessageManager(models.Manager):
         return super().get_queryset().filter(is_draft=False)
 
 
+class FoiMessageWithDraftsManager(FoiMessageManager):
+    def get_queryset(self):
+        return super(models.Manager, self).get_queryset()
+
+
 class FoiMessageDraftManager(FoiMessageManager):
     def get_queryset(self):
         # need to call models.Manager, since FoiMessageManager removes drafts
@@ -191,6 +196,7 @@ class FoiMessage(models.Model):
     confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
 
     objects = FoiMessageManager()
+    with_drafts = FoiMessageWithDraftsManager()
 
     class Meta:
         get_latest_by = "timestamp"
