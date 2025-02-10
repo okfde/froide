@@ -330,12 +330,12 @@ const scaleCssProp = (styleObject, propName, factor) => {
   const value = parseFloat(styleObject[propName])
   if (!isNaN(value)) {
     // we'll assume they're all in px
-    styleObject[propName] = (value * factor) + 'px'
+    styleObject[propName] = value * factor + 'px'
   }
 }
 
 function isTouchDevice() {
-  return 'ontouchstart' in window
+  return matchMedia('(pointer: coarse)').matches
 }
 
 let panzoom
