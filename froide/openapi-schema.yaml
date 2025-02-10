@@ -1128,6 +1128,51 @@ paths:
           description: ''
       tags:
       - api
+    delete:
+      operationId: destroyFoiRequestList
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: name
+        required: false
+        in: query
+        description: name
+        schema:
+          type: string
+      - name: filetype
+        required: false
+        in: query
+        description: filetype
+        schema:
+          type: string
+      - name: approved
+        required: false
+        in: query
+        description: approved
+        schema:
+          type: string
+      - name: is_redacted
+        required: false
+        in: query
+        description: is_redacted
+        schema:
+          type: string
+      - name: belongs_to
+        required: false
+        in: query
+        description: belongs_to
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
   /api/v1/following/:
     get:
       operationId: listFoiRequestFollows
@@ -3683,6 +3728,40 @@ paths:
           description: ''
       tags:
       - api
+  /api/v1/message/{id}/convert_to_pdf/:
+    post:
+      operationId: convertToPdfImageAttachmentConverter
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAttachmentConverter'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ImageAttachmentConverter'
+          description: ''
+      tags:
+      - api
   /api/v1/problemreport/{id}/claim/:
     post:
       operationId: claimProblemReport
@@ -4591,6 +4670,7 @@ components:
           type: string
         sent:
           type: boolean
+          readOnly: true
         is_response:
           type: boolean
         is_postal:
@@ -4616,10 +4696,10 @@ components:
           type: boolean
         sender_public_body:
           type: string
-          readOnly: true
+          nullable: true
         recipient_public_body:
           type: string
-          readOnly: true
+          nullable: true
         status:
           enum:
           - awaiting_user_confirmation
@@ -4681,6 +4761,7 @@ components:
           type: string
         sent:
           type: boolean
+          readOnly: true
         is_response:
           type: boolean
         is_postal:
@@ -4706,10 +4787,10 @@ components:
           type: boolean
         sender_public_body:
           type: string
-          readOnly: true
+          nullable: true
         recipient_public_body:
           type: string
-          readOnly: true
+          nullable: true
         status:
           enum:
           - awaiting_user_confirmation
@@ -6080,6 +6161,28 @@ components:
       - publicbodies
       - subject
       - body
+    ImageAttachmentConverter:
+      type: object
+      properties:
+        title:
+          type: string
+          default: Letter
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              attachment:
+                type: string
+              rotate:
+                type: integer
+                maximum: 360
+                default: 0
+                minimum: 0
+            required:
+            - attachment
+      required:
+      - images
     FoiAttachmentTus:
       type: object
       properties:

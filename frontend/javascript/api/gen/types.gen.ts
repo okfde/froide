@@ -231,15 +231,15 @@ export type FoiMessage = {
   readonly id?: number
   readonly url?: string
   request: string
-  sent?: boolean
+  readonly sent?: boolean
   is_response?: boolean
   readonly is_postal?: string
   readonly is_draft?: boolean
   kind?: 'email' | 'post' | 'fax' | 'upload' | 'phone' | 'visit' | 'import'
   is_escalation?: boolean
   content_hidden?: boolean
-  readonly sender_public_body?: string
-  readonly recipient_public_body?: string
+  sender_public_body?: string | null
+  recipient_public_body?: string | null
   status?:
     | 'awaiting_user_confirmation'
     | 'publicbody_needed'
@@ -304,15 +304,15 @@ export type FoiMessageDraft = {
   readonly id?: number
   readonly url?: string
   request: string
-  sent?: boolean
+  readonly sent?: boolean
   is_response?: boolean
   readonly is_postal?: string
   readonly is_draft?: boolean
   kind?: 'email' | 'post' | 'fax' | 'upload' | 'phone' | 'visit' | 'import'
   is_escalation?: boolean
   content_hidden?: boolean
-  readonly sender_public_body?: string
-  readonly recipient_public_body?: string
+  sender_public_body?: string | null
+  recipient_public_body?: string | null
   status?:
     | 'awaiting_user_confirmation'
     | 'publicbody_needed'
@@ -656,6 +656,14 @@ export type GeoRegionDetail = {
   readonly centroid?: string
   readonly geom?: string
   readonly gov_seat?: string
+}
+
+export type ImageAttachmentConverter = {
+  title?: string
+  images: Array<{
+    attachment: string
+    rotate?: number
+  }>
 }
 
 export type Jurisdiction = {
@@ -1461,6 +1469,38 @@ export type RetrieveFoiAttachmentData = {
 export type RetrieveFoiAttachmentResponse = FoiAttachment
 
 export type RetrieveFoiAttachmentError = unknown
+
+export type DestroyFoiRequestListData = {
+  path: {
+    id: string
+  }
+  query?: {
+    /**
+     * approved
+     */
+    approved?: string
+    /**
+     * belongs_to
+     */
+    belongs_to?: string
+    /**
+     * filetype
+     */
+    filetype?: string
+    /**
+     * is_redacted
+     */
+    is_redacted?: string
+    /**
+     * name
+     */
+    name?: string
+  }
+}
+
+export type DestroyFoiRequestListResponse = void
+
+export type DestroyFoiRequestListError = unknown
 
 export type ListFoiRequestFollowsData = {
   query?: {
@@ -2472,6 +2512,18 @@ export type PublishFoiMessageDraftData = {
 export type PublishFoiMessageDraftResponse = FoiMessageDraft
 
 export type PublishFoiMessageDraftError = unknown
+
+export type ConvertToPdfImageAttachmentConverterData = {
+  body?: ImageAttachmentConverter
+  path: {
+    id: string
+  }
+}
+
+export type ConvertToPdfImageAttachmentConverterResponse =
+  ImageAttachmentConverter
+
+export type ConvertToPdfImageAttachmentConverterError = unknown
 
 export type ClaimProblemReportData = {
   body?: ProblemReport

@@ -823,7 +823,8 @@ export const FoiMessageDraftSchema = {
       type: 'string'
     },
     sent: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     is_response: {
       type: 'boolean'
@@ -849,11 +850,11 @@ export const FoiMessageDraftSchema = {
     },
     sender_public_body: {
       type: 'string',
-      readOnly: true
+      nullable: true
     },
     recipient_public_body: {
       type: 'string',
-      readOnly: true
+      nullable: true
     },
     status: {
       enum: [
@@ -934,7 +935,8 @@ export const FoiMessageSchema = {
       type: 'string'
     },
     sent: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     is_response: {
       type: 'boolean'
@@ -960,11 +962,11 @@ export const FoiMessageSchema = {
     },
     sender_public_body: {
       type: 'string',
-      readOnly: true
+      nullable: true
     },
     recipient_public_body: {
       type: 'string',
-      readOnly: true
+      nullable: true
     },
     status: {
       enum: [
@@ -2717,6 +2719,35 @@ export const MakeRequestSchema = {
     }
   },
   required: ['publicbodies', 'subject', 'body']
+} as const
+
+export const ImageAttachmentConverterSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      default: 'Letter'
+    },
+    images: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          attachment: {
+            type: 'string'
+          },
+          rotate: {
+            type: 'integer',
+            maximum: 360,
+            default: 0,
+            minimum: 0
+          }
+        },
+        required: ['attachment']
+      }
+    }
+  },
+  required: ['images']
 } as const
 
 export const FoiAttachmentTusSchema = {
