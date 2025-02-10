@@ -45,7 +45,7 @@ class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
     def get_queryset(self):
-        return FoiMessage.objects.all()
+        return FoiMessage.with_drafts.all()
 
 
 class FoiAttachmentRelatedField(serializers.HyperlinkedRelatedField):
