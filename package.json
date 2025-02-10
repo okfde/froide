@@ -76,5 +76,6 @@
       ]
     }
   },
-  "prettier": "prettier-config-standard"
+  "prettier": "prettier-config-standard",
+  "packageManager": "pnpm@9.15.5"
 }

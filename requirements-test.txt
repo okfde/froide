@@ -65,7 +65,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-colorama==0.4.6 ; sys_platform == 'win32' or platform_system == 'Windows'
+colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   click
     #   pytest
@@ -225,7 +225,7 @@ frozenlist==1.4.1
     #   aiosignal
 geoip2==4.8.0
     # via froide (pyproject.toml)
-greenlet==3.0.3
+greenlet==3.1.1
     # via playwright
 html5lib==1.1
     # via weasyprint
@@ -298,7 +298,7 @@ pbr==6.1.0
     # via froide (pyproject.toml)
 phonenumbers==8.13.45
     # via froide (pyproject.toml)
-pikepdf==9.0.0
+pikepdf==9.5.2
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet

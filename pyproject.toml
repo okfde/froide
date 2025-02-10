@@ -50,7 +50,7 @@ dependencies = [
   "markdown",
   "phonenumbers",
   "pillow>=9.0.0",
-  "pikepdf==9.0.0",
+  "pikepdf==9.5.2",
   "psycopg[binary]>=3.2.1",
   "pyisemail",
   "pypdf>=3",

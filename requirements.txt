@@ -60,7 +60,7 @@ click-plugins==1.1.1
     # via celery
 click-repl==0.3.0
     # via celery
-colorama==0.4.6 ; platform_system == 'Windows'
+colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   click
     #   qrcode
@@ -241,7 +241,7 @@ packaging==24.1
     # via pikepdf
 phonenumbers==8.13.45
     # via froide (pyproject.toml)
-pikepdf==9.0.0
+pikepdf==9.5.2
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
