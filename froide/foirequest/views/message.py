@@ -46,7 +46,7 @@ from ..forms import (
 )
 from ..models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from ..models.attachment import IMAGE_FILETYPES, PDF_FILETYPES, POSTAL_CONTENT_TYPES
-from ..models.message import MessageKind
+from ..models.message import FoiMessageDraft, MessageKind
 from ..serializers import FoiAttachmentSerializer, FoiMessageSerializer
 from ..services import ResendBouncedMessageService
 from ..tasks import convert_images_to_pdf_task
@@ -156,11 +156,10 @@ def add_postal_message(request, slug):
 
 @allow_write_foirequest
 def upload_postal_message_create(request, foirequest):
-    message = FoiMessage(request=foirequest, kind=MessageKind.POST)
+    message = FoiMessageDraft(request=foirequest, kind=MessageKind.POST)
     # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
     # this will be set to "proper" (noon) when finally submitted
     message.timestamp = datetime.datetime.now()
-    message.is_draft = True
     message.save()
     return redirect(
         reverse(
@@ -172,7 +171,9 @@ def upload_postal_message_create(request, foirequest):
 
 @allow_write_foirequest
 def edit_postal_message(request, foirequest, message_id):
-    message = get_object_or_404(FoiMessage, request=foirequest, pk=int(message_id))
+    message = get_object_or_404(
+        FoiMessage.with_drafts, request=foirequest, pk=int(message_id)
+    )
     if not message.can_edit:
         return render_400(request)
     form = PostalEditForm(
@@ -300,7 +301,7 @@ def edit_postal_message(request, foirequest, message_id):
                 "You can redact the PDF in the next step."
             ),
             "documentPending": _(
-                "This document is being generated. " "This can take several minutes."
+                "This document is being generated. This can take several minutes."
             ),
             "documentDeleting": _("This document is being deleted..."),
             "documentTitle": _("Document title"),
@@ -322,7 +323,7 @@ def edit_postal_message(request, foirequest, message_id):
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
-                "This attachment has been converted to PDF and " "cannot be published."
+                "This attachment has been converted to PDF and cannot be published."
             ),
             "isResult": _("Result?"),
             "makeResultExplanation": _(
@@ -621,7 +622,7 @@ def get_attachment_update_response(request, added_attachments):
 @allow_write_foirequest
 def add_postal_reply_attachment(request, foirequest, message_id):
     try:
-        message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
+        message = FoiMessage.with_drafts.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404 from None
     if not message.is_postal:
@@ -713,7 +714,7 @@ def add_tus_attachment(request, foirequest, message, data):
 @allow_write_foirequest
 def upload_attachments(request, foirequest, message_id):
     try:
-        message = FoiMessage.objects.get(request=foirequest, pk=int(message_id))
+        message = FoiMessage.with_drafts.get(request=foirequest, pk=int(message_id))
     except (ValueError, FoiMessage.DoesNotExist):
         raise Http404 from None
 
@@ -798,7 +799,7 @@ def upload_attachments(request, foirequest, message_id):
                 "You can redact the PDF in the next step."
             ),
             "documentPending": _(
-                "This document is being generated. " "This can take several minutes."
+                "This document is being generated. This can take several minutes."
             ),
             "documentDeleting": _("This document is being deleted..."),
             "documentTitle": _("Document title"),
@@ -820,7 +821,7 @@ def upload_attachments(request, foirequest, message_id):
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
-                "This attachment has been converted to PDF and " "cannot be published."
+                "This attachment has been converted to PDF and cannot be published."
             ),
             "isResult": _("Result?"),
             "makeResultExplanation": _(
