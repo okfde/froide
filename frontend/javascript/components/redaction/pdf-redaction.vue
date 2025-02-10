@@ -418,7 +418,8 @@ export default {
       progressTotal: null,
       hasTouch: isTouchDevice(),
       tool: isTouchDevice() ? 'move' : 'paint',
-      doubleTap: false
+      doubleTap: false,
+      altKey: false
     }
   },
   computed: {
@@ -516,15 +517,14 @@ export default {
     }
   },
   watch: {
-    hasRedactions: function (newValue) {
+    hasRedactions(newValue) {
       this.$emit('hasredactionsupdate', newValue)
     },
-    doPaint: function (newValue) {
-      if (newValue) {
-        panzoom.setOptions({ disableZoom: true, disablePan: true, cursor: 'auto' })
-      } else {
-        panzoom.setOptions({ disableZoom: false, disablePan: false, cursor: 'move' })
-      }
+    doPaint(doPaint) {
+      this.updateMode(doPaint)
+    },
+    altKey(altKey) {
+      this.tool = altKey ? 'move' : 'paint'
     }
   },
   created() {
@@ -540,13 +540,20 @@ export default {
       })
   },
   mounted() {
+    document.addEventListener('keydown', this.setAltKey)
+    document.addEventListener('keyup', this.setAltKey)
+
     panzoom = Panzoom(this.$refs.container, {
       canvas: true,
       pinchAndPan: true,
       cursor: 'move',
       noBind: true
     })
-    if (this.doPaint) panzoom.setOptions({ disableZoom: true, disablePan: true, cursor: 'auto' })
+    this.updateMode(this.doPaint)
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.setAltKey)
+    document.removeEventListener('keyup', this.setAltKey)
   },
   methods: {
     loadDocument() {
@@ -611,7 +618,8 @@ export default {
 
         if (this.pageScaleFactor[pageNum] === undefined) {
           // Make sure scaleFactor is fixed to page, doesn't change
-          const scaleFactor = renderDensityFactor * this.maxWidth / page.view[2]
+          const scaleFactor =
+            (renderDensityFactor * this.maxWidth) / page.view[2]
           this.pageScaleFactor[pageNum] = scaleFactor
         }
 
@@ -632,8 +640,8 @@ export default {
         this.redactCanvas.width = viewport.width
         this.redactCanvas.height = viewport.height
         // TODO need Math.floor?
-        const wPx = (viewport.width / renderDensityFactor) + 'px'
-        const hPx = (viewport.height / renderDensityFactor) + 'px'
+        const wPx = viewport.width / renderDensityFactor + 'px'
+        const hPx = viewport.height / renderDensityFactor + 'px'
         canvas.style.width = wPx
         canvas.style.height = hPx
         this.redactCanvas.style.width = wPx
@@ -737,7 +745,11 @@ export default {
         }, Promise.resolve())
         .then(() => {
           console.log(serialized)
-          const data = { pages: serialized, password: this.password, auto_approve: this.autoApprove }
+          const data = {
+            pages: serialized,
+            password: this.password,
+            auto_approve: this.autoApprove
+          }
           this.progressCurrent = null
           return this.sendSerializedPages(data)
             .then((attachment) => {
@@ -791,7 +803,10 @@ export default {
               try {
                 this.progressCurrent = null
                 this.workingState = 'redacting'
-                this.waitOnAttachment(JSON.parse(xhr.responseText), serialized.auto_approve)
+                this.waitOnAttachment(
+                  JSON.parse(xhr.responseText),
+                  serialized.auto_approve
+                )
                   .then(resolve)
                   .catch(reject)
               } catch (e) {
@@ -814,7 +829,10 @@ export default {
         const checkAttachment = () => {
           getData(attachmentUrl)
             .then((attachment) => {
-              if (attachment.pending || (wasAutoApprove && !attachment.approved)) {
+              if (
+                attachment.pending ||
+                (wasAutoApprove && !attachment.approved)
+              ) {
                 waitTime += 5
                 if (waitTime > 60 * 3) {
                   console.error('Timeout while waiting for redaction')
@@ -875,8 +893,8 @@ export default {
       let offsetY
       // eslint-disable-next-line no-case-declarations
       const scale = panzoom.getScale()
-      offsetX = renderDensityFactor * (clientX - rect.left) / scale
-      offsetY = renderDensityFactor * (clientY - rect.top) / scale
+      offsetX = (renderDensityFactor * (clientX - rect.left)) / scale
+      offsetY = (renderDensityFactor * (clientY - rect.top)) / scale
       return [offsetX, offsetY]
     },
     cancelDrag() {
@@ -1375,6 +1393,24 @@ export default {
     },
     submitRedactions() {
       document.getElementById('redaction-submit-form').submit()
+    },
+    updateMode(paint) {
+      if (paint) {
+        panzoom.setOptions({
+          disableZoom: true,
+          disablePan: true,
+          cursor: 'auto'
+        })
+      } else {
+        panzoom.setOptions({
+          disableZoom: false,
+          disablePan: false,
+          cursor: 'move'
+        })
+      }
+    },
+    setAltKey(e) {
+      if (this.doPaint || !e.altKey) this.altKey = e.altKey
     }
   }
 }
