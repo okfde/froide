@@ -154,6 +154,9 @@ def confirm(
 
 
 def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse:
+    if url == "/":
+        # If no further path is given, try extracting next parameter
+        url = get_redirect_url(request, default=url)
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(
@@ -182,7 +185,9 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
 
         # If login-link fails, prompt login with redirect
         return get_redirect(request, default="account-login", params={"next": url})
-    return render(request, "account/go.html", {"form_action": request.path})
+    return render(
+        request, "account/go.html", {"form_action": request.path, "next": url}
+    )
 
 
 class ProfileView(DetailView):

@@ -5,6 +5,7 @@
     <div class="container mt-5 text-center">
         <form action="{{ form_action }}" method="post" data-autosubmit="true">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">{% translate "Loading..." %}</span>
             </div>
