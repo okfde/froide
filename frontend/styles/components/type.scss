@@ -22,3 +22,10 @@ h3 {
 .no-hyphens {
   hyphens: none;
 }
+
+blockquote:not(.blockquote) {
+  border-left: 0.25rem solid $gray-300;
+  padding: 0.5rem 1rem;
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+}
