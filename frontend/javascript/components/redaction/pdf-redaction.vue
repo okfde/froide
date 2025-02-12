@@ -2,7 +2,7 @@
   <div
     id="pdf-viewer"
     ref="top"
-    class="pdf-redaction-tool container-md bg-dark-subtle d-flex flex-column"
+    class="pdf-redaction-tool container-xxl bg-dark-subtle d-flex flex-column"
     >
     <div v-if="hasPassword && ready" class="row">
       <div class="col">

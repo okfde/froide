@@ -1,4 +1,4 @@
-{% extends 'foirequest/base.html' %}
+{% extends 'foirequest/base_wide.html' %}
 {% load i18n %}
 {% load static %}
 {% load frontendbuild %}
@@ -7,42 +7,38 @@
     {% blocktrans with name=attachment.name %}Redacting attachment {{ name }}{% endblocktrans %}
 {% endblock %}
 {% block app_body %}
-    <div class="row">
-        <div class="col-lg-12">
-            <div>
-                <a href="{{ attachment.get_anchor_url }}" class="text-decoration-none">&larr; <u>{% trans "Cancel redaction" %} / {% trans "Back" %}</u></a>
-            </div>
-            <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
-        </div>
-    </div>
-    <div class="row mb-3 mt-3">{% include "foirequest/snippets/redaction_explanation.html" %}</div>
-    {% if attachment.file %}
-        <div class="row mb-5">
+    <div class="container mb-5 mt-3">
+        <div class="row">
             <div class="col-lg-12">
-                <form id="redaction-form" method="post" style="display:none">
-                    {% csrf_token %}
-                </form>
-                <div class="card">
-                    <div class="card-body p-0">
-                        <pdf-redaction id="redact" pdf-path="{{ attachment_url }}" attachment-url="{{ attachment.get_anchor_url }}" :redact-regex="{{ foirequest.get_redaction_regexes }}"
-                        {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
-                        :config="{{ config }}" :bottom-toolbar="true">
-                        <div class="text-center">
-                            <h3>{% trans "Redaction tool is loading..." %}</h3>
-                            <div class="spinner-border" role="status">
-                                <span class="visually-hidden">{% trans "Loading..." %}</span>
-                            </div>
-                        </div>
-                        </pdf-redaction>
-                    </div>
+                <div>
+                    <a href="{{ attachment.get_anchor_url }}" class="text-decoration-none">&larr; <u>{% trans "Cancel redaction" %} / {% trans "Back" %}</u></a>
                 </div>
+                <h2>{% blocktrans with name=attachment.name %}Redact "{{ name }}"{% endblocktrans %}</h2>
             </div>
         </div>
+        <div class="row mb-3 mt-3">{% include "foirequest/snippets/redaction_explanation.html" %}</div>
+    </div>
+    {% if attachment.file %}
+        <form id="redaction-form" method="post" style="display:none">
+            {% csrf_token %}
+        </form>
+        <pdf-redaction id="redact" pdf-path="{{ attachment_url }}" attachment-url="{{ attachment.get_anchor_url }}" :redact-regex="{{ foirequest.get_redaction_regexes }}"
+        {% if not attachment.redacted and not attachment.is_redacted %}can-publish="true"{% endif %}
+        :config="{{ config }}" :bottom-toolbar="true">
+        <div class="text-center">
+            <h3>{% trans "Redaction tool is loading..." %}</h3>
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">{% trans "Loading..." %}</span>
+            </div>
+        </div>
+        </pdf-redaction>
     {% else %}
-        <div class="row mb-5">
-            <div class="col-lg-12">
-                <div class="alert alert-warning">
-                    {% trans "This file is probably still being processed and is not available yet. Please wait, this page will automatically refresh." %}
+        <div class="container mb-5 mt-3">
+            <div class="row mb-5">
+                <div class="col-lg-12">
+                    <div class="alert alert-warning">
+                        {% trans "This file is probably still being processed and is not available yet. Please wait, this page will automatically refresh." %}
+                    </div>
                 </div>
             </div>
         </div>
