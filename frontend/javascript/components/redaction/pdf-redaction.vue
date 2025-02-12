@@ -543,6 +543,18 @@ export default {
     document.addEventListener('keydown', this.setAltKey)
     document.addEventListener('keyup', this.setAltKey)
 
+    let resizeTimeout = false
+    window.addEventListener('resize', () => {
+      if (resizeTimeout) {
+        console.log('debounce resize timeout')
+        window.clearTimeout(resizeTimeout)
+      }
+      resizeTimeout = window.setTimeout(() => {
+        this.reloadCurrentPage()
+        resizeTimeout = false
+      }, 500)
+    })
+
     panzoom = Panzoom(this.$refs.container, {
       canvas: true,
       pinchAndPan: true,
@@ -604,26 +616,17 @@ export default {
       this.pageLoading = true
       const doc = toRaw(this.doc)
       return doc.getPage(pageNum).then((page) => {
-        console.log('# Page ' + pageNum)
         this.page = page
-        if (this.maxWidth === null) {
-          this.maxWidth = this.$refs.containerWrapper.offsetWidth
-          // subtract the paddings (from bootstrap's row child),
-          // fall back to the value calculated in default settings (like base font size)
-          this.maxWidth -=
-            parseInt(
-              window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
-            ) * 2 || 24
-        }
 
-        if (this.pageScaleFactor[pageNum] === undefined) {
-          // Make sure scaleFactor is fixed to page, doesn't change
-          const scaleFactor =
-            (renderDensityFactor * this.maxWidth) / page.view[2]
-          this.pageScaleFactor[pageNum] = scaleFactor
-        }
+        let maxWidth = this.$refs.containerWrapper.offsetWidth
+        // subtract the paddings (from bootstrap's row child),
+        // fall back to the value calculated in default settings (like base font size)
+        maxWidth -=
+          parseInt(
+            window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
+          ) * 2 || 24
 
-        const scaleFactor = this.pageScaleFactor[pageNum]
+        const scaleFactor = (renderDensityFactor * maxWidth) / page.view[2]
         const viewport = page.getViewport({ scale: scaleFactor })
 
         this.viewport = viewport
@@ -631,7 +634,7 @@ export default {
           scaleFactor,
           'Size: ' + viewport.width + 'x' + viewport.height,
           'at maxwidth',
-          this.maxWidth
+          maxWidth
         )
         const canvas = this.canvas
         canvas.width = viewport.width
@@ -677,6 +680,9 @@ export default {
             this.pageLoading = false
           })
       })
+    },
+    reloadCurrentPage() {
+      this.loadPage(this.currentPage)
     },
     goNext() {
       if (this.hasNext) {
