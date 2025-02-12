@@ -11,6 +11,7 @@
             <ul>
               <li v-for="pb in publicBodies" :key="pb.id">
                 {{ pb.name }}
+                <div v-if="pb.request_note_html" class="col-lg-8 alert alert-warning pb-0" v-html="pb.request_note_html" />
               </li>
             </ul>
           </template>
