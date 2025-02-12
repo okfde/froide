@@ -1358,11 +1358,17 @@ export default {
         blockIndex += 1
       }
 
+      // PDFjs stretches lines; this is not reflected in offsetWidth
+      // approach without getBoundlingClientRect:
+      // const scaleX = parseFloat(div.style.transform?.match(/scaleX\(([\d.]+)\)/)?.[1]) || 1.0
+
       div.textContent = text.substr(0, start)
-      const startWidth = div.offsetWidth
+      const startWidth = div.getBoundingClientRect().width
+      // const startWidth = div.offsetWidth * scaleX
 
       div.textContent = text.substr(0, start + match.length)
-      const endWidth = div.offsetWidth
+      const endWidth = div.getBoundingClientRect().width
+      // const endWidth = div.offsetWidth * scaleX
 
       div.textContent = text
 
