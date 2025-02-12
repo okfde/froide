@@ -8,9 +8,15 @@
                     <h3 class="block-center-heading">
                         {% blocktrans with name=application.name %}Authorize the application '{{ name }}'?{% endblocktrans %}
                     </h3>
+                    <p>{% translate "The application has given the following description:" %}</p>
                     <blockquote>
                         {{ application.description }}
                     </blockquote>
+                    {% if application.client_type == "public" %}
+                        <div class="alert alert-info">
+                            {% translate "Please make sure you are using a trusted client that belongs to this application." %}
+                        </div>
+                    {% endif %}
                     {% csrf_token %}
                     {% for field in form %}
                         {% if field.is_hidden %}{{ field }}{% endif %}
