@@ -653,6 +653,7 @@ export default {
         this.textLayer.style.height = hPx
         this.container.style.width = wPx
         this.container.style.height = hPx
+        this.zoomReset()
         const ctx = canvas.getContext('2d')
         const renderTask = page.render({
           canvasContext: ctx,
