@@ -200,16 +200,26 @@ def test_auth(client, user):
         content_type="application/json",
     )
     assert response.status_code == 201
+    resource_uri = response.json()["resource_uri"]
 
     # can't change it to other's people request
     response = client.patch(
-        response.json()["resource_uri"],
+        resource_uri,
         data={
             "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
         },
         content_type="application/json",
     )
     assert response.status_code == 400
+
+    # drafts can't be seen by others
+    client.logout()
+    response = client.get(resource_uri)
+    assert response.status_code == 404
+
+    client.login(email=user2.email, password="froide")
+    response = client.get(resource_uri)
+    assert response.status_code == 404
 
 
 @pytest.mark.django_db

@@ -83,7 +83,9 @@ def get_read_foimessage_queryset(request: HttpRequest, queryset=None):
         queryset,
         request,
         has_team=True,
-        public_q=Q(request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
+        public_q=Q(
+            request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC, is_draft=False
+        ),
         scope="read:request",
         fk_path="request",
         user_read_filter=get_campaign_auth_foirequests_filter(
