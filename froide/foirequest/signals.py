@@ -5,10 +5,14 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from froide.helper.email_sending import mail_registry
 from froide.helper.signals import email_left_queue
 from froide.problem.models import ProblemReport
 
+from .consumers import MESSAGEEDIT_ROOM_PREFIX
 from .models import (
     DeliveryStatus,
     FoiAttachment,
@@ -510,3 +514,16 @@ def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
 
     message.confirmation_sent = True
     message.save(update_fields=["confirmation_sent"])
+
+
+@receiver(
+    signals.post_save, sender=FoiAttachment, dispatch_uid="broadcast_attachment_added"
+)
+def broadcast_attachment_added(instance, created=False, **kwargs):
+    if not created or kwargs.get("raw", False):
+        return
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        MESSAGEEDIT_ROOM_PREFIX.format(instance.belongs_to_id),
+        {"type": "attachment_added", "attachment": instance.id},
+    )
