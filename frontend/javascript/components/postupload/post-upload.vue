@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, defineProps, nextTick } from 'vue'
+import { computed, defineProps, nextTick, reactive, ref } from 'vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
@@ -10,11 +10,12 @@ import DocumentUploader from '../docupload/document-uploader.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import OnlineHelp from './online-help.vue'
 import { useI18n } from '../../lib/i18n'
+import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
-import { scrollNavIntoViewIfNecessary, guardBeforeunload } from '../../lib/misc'
+import Room from '../../lib/websocket.ts'
+import OnlineHelp from './online-help.vue'
 
 const props = defineProps({
   config: Object,
@@ -60,6 +61,23 @@ if (props.config.urls.mobileAppContent) {
     })
 }
 
+/* Websocket connection */
+
+if (props.config.urls.messageWebsocket) {
+  const room = new Room(props.config.urls.messageWebsocket)
+  room.connect().on('attachment_added', (data) => {
+    // When a new attachment is added, let the document uploader know
+    documentUploader.value.refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
+      if (!refreshed) {
+        return
+      }
+      if (step.value === STEP_INTRO) {
+        gotoStep(STEP_DOCUMENTS_OVERVIEW)
+      }
+    })
+  })
+}
+
 /* --- form handling --- */
 
 /* untangle ambiguous semantics:
@@ -74,7 +92,7 @@ const formPublicbodyIsDefault = ref(true)
 
 const formStatus = ref(
   props.status_form.fields.status.value ||
-    props.status_form.fields.status.initial
+  props.status_form.fields.status.initial
 )
 const formStatusWasResolved = formStatus.value === 'resolved'
 const formStatusIsResolved = computed(() => formStatus.value === 'resolved')
@@ -688,11 +706,8 @@ addEventListener('hashchange', () => {
 <template>
   <online-help ref="onlineHelp" />
 
-  <simple-stepper
-    class="sticky-top position-md-static"
-    :step="stepContext.progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
-  >
+  <simple-stepper class="sticky-top position-md-static" :step="stepContext.progressStep"
+    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
     </template>
@@ -705,14 +720,10 @@ addEventListener('hashchange', () => {
   <div class="container">
     <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
     <div v-if="step === STEP_INTRO" class="my-3">
-      <a class="btn btn-link text-decoration-none ps-0" href="../.."
-        >← <u>{{ i18n.cancel }}</u></a
-      >
+      <a class="btn btn-link text-decoration-none ps-0" href="../..">← <u>{{ i18n.cancel }}</u></a>
     </div>
     <div v-else-if="step !== STEP_OUTRO" class="my-3">
-      <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
-        >← <u>{{ i18n.back }}</u></a
-      >
+      <a @click="backStep" class="btn btn-link text-decoration-none ps-0">← <u>{{ i18n.back }}</u></a>
     </div>
   </div>
 
@@ -729,19 +740,11 @@ addEventListener('hashchange', () => {
       </button>
     </span>
     <span>isDesktop={{ isDesktop }}</span>
-    <button
-      class="btn btn-secondary btn-sm"
-      type="submitForm"
-      style="font-size: 50%; margin-left: 1em"
-    >
+    <button class="btn btn-secondary btn-sm" type="submitForm" style="font-size: 50%; margin-left: 1em">
       submit/save
     </button>
-    <button
-      class="btn btn-secondary btn-sm"
-      type="button"
-      @click="submitFetch"
-      style="font-size: 50%; margin-left: 1em"
-    >
+    <button class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
+      style="font-size: 50%; margin-left: 1em">
       submit/fetch
     </button>
     <!--<pre>{{ validity }}</pre>-->
@@ -805,11 +808,7 @@ addEventListener('hashchange', () => {
               </div>
             </div>
             <div class="col-md-6">
-              <button
-                type="button"
-                @click="stepAndUppyClick"
-                class="btn btn-outline-primary btn-lg d-block w-100"
-              >
+              <button type="button" @click="stepAndUppyClick" class="btn btn-outline-primary btn-lg d-block w-100">
                 <i class="fa fa-upload fa-2x"></i><br />
                 {{ i18n.uploadFiles }}
               </button>
@@ -828,11 +827,8 @@ addEventListener('hashchange', () => {
             <p>
               {{ i18n.newWarning }}
             </p>
-            <p
-              v-html="
-                i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
-              "
-            ></p>
+            <p v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
+              "></p>
           </div>
         </div>
       </div>
@@ -861,11 +857,7 @@ addEventListener('hashchange', () => {
         </div>
         <div class="documents-filename p-2 my-3 mx-auto">
           <div class="form-group">
-            <input
-              id="documents_filename"
-              v-model="documentsImagesDocumentFilename"
-              class="form-control"
-            />
+            <input id="documents_filename" v-model="documentsImagesDocumentFilename" class="form-control" />
             <label for="documents_filename">
               {{ i18n.changeFilename }}
             </label>
@@ -891,24 +883,13 @@ addEventListener('hashchange', () => {
             {{ i18n.letterSentOrReceived }}
             <!--{{ form.fields.sent.label }}-->
           </label>
-          <div
-            class="form-check"
-            v-for="(choice, choiceIndex) in form.fields.sent.choices"
-            :key="choice.value"
-            :class="{ 'is-invalid': choice.errors }"
-          >
-            <input
-              type="radio"
-              name="sent"
-              v-model="formSent"
-              required=""
-              class="form-check-input"
-              :id="'id_sent_' + choiceIndex"
-              :value="choice.value"
-            />
+          <div class="form-check" v-for="(choice, choiceIndex) in form.fields.sent.choices" :key="choice.value"
+            :class="{ 'is-invalid': choice.errors }">
+            <input type="radio" name="sent" v-model="formSent" required="" class="form-check-input"
+              :id="'id_sent_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
               choice.label
-            }}</label>
+              }}</label>
           </div>
           <!--
               <div class="invalid-feedback" v-if="form.errors.sent">
@@ -935,46 +916,23 @@ addEventListener('hashchange', () => {
           <div style="margin: 1em 0; font-style: italic">
             {{ formPublicbodyLabel }}
           </div>
-          <div
-            class="form-check"
-            v-for="(choice, choiceIndex) in [
-              { value: true, label: 'Ja.' },
-              { value: false, label: 'Nein, andere Behörde wählen' }
-            ]"
-            :key="choiceIndex"
-          >
-            <input
-              type="radio"
-              required=""
-              class="form-check-input"
-              v-model="formPublicbodyIsDefault"
-              :id="'id_pbisdefault_' + choiceIndex"
-              :value="choice.value"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_pbisdefault_' + choiceIndex"
-              >{{ choice.label }}</label
-            >
+          <div class="form-check" v-for="(choice, choiceIndex) in [
+            { value: true, label: 'Ja.' },
+            { value: false, label: 'Nein, andere Behörde wählen' }
+          ]" :key="choiceIndex">
+            <input type="radio" required="" class="form-check-input" v-model="formPublicbodyIsDefault"
+              :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
+            <label class="form-check-label" :for="'id_pbisdefault_' + choiceIndex">{{ choice.label }}</label>
           </div>
-          <input
-            type="hidden"
-            name="publicbody"
-            v-if="formPublicbodyIsDefault"
-            :value="formPublicbodyId"
-          />
+          <input type="hidden" name="publicbody" v-if="formPublicbodyIsDefault" :value="formPublicbodyId" />
         </div>
       </div>
     </div>
-    <div
-      v-show="
-        step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
-        (isDesktop &&
-          step === STEP_MESSAGE_PUBLICBODY_CHECK &&
-          !formPublicbodyIsDefault)
-      "
-      class="container"
-    >
+    <div v-show="step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
+      (isDesktop &&
+        step === STEP_MESSAGE_PUBLICBODY_CHECK &&
+        !formPublicbodyIsDefault)
+      " class="container">
       <!-- appears "indented" on md=isDesktop viewport -->
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
@@ -987,20 +945,10 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <publicbody-chooser
-            v-if="!formPublicbodyIsDefault"
-            :search-collapsed="false"
-            scope="foo_publicbody"
-            name="publicbody"
-            :config="config"
-            :form="form"
-            :value="formPublicbodyId"
-            list-view="resultList"
-            :show-filters="false"
-            :show-badges="false"
-            :show-found-count-if-idle="false"
-            :class="{ 'is-invalid': form.errors.publicbody }"
-          />
+          <publicbody-chooser v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="foo_publicbody"
+            name="publicbody" :config="config" :form="form" :value="formPublicbodyId" list-view="resultList"
+            :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
+            :class="{ 'is-invalid': form.errors.publicbody }" />
         </div>
       </div>
     </div>
@@ -1017,43 +965,22 @@ addEventListener('hashchange', () => {
                 :required="step === STEP_MESSAGE_DATE || step === STEP_MESSAGE_PUBLICBODY_CHECK"
                 maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
               -->
-          <input
-            id="id_date"
-            class="form-control"
-            type="date"
-            name="date"
-            v-model="values.date"
-            :class="{
-              'is-invalid': validity.date === false,
-              'is-valid': validity.date === true
-            }"
-            required
-            :min="props.date_min"
-            :max="props.date_max"
-            @input="updateValidity('date')"
-          />
+          <input id="id_date" class="form-control" type="date" name="date" v-model="values.date" :class="{
+            'is-invalid': validity.date === false,
+            'is-valid': validity.date === true
+          }" required :min="props.date_min" :max="props.date_max" @input="updateValidity('date')" />
           <div class="invalid-feedback" v-if="form.errors.date">
             <p class="text-danger">
-              {{ form.errors.date.map((_) => _.message).join(' ') }}
+              {{form.errors.date.map((_) => _.message).join(' ')}}
             </p>
           </div>
           <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              v-model="values.is_registered_mail"
-              id="id_is_registered_mail"
-            />
+            <input class="form-check-input" type="checkbox" v-model="values.is_registered_mail"
+              id="id_is_registered_mail" />
             <label class="form-check-label" for="id_is_registered_mail">
               {{ i18n.messageIsRegisteredMail }}
-              <span
-                type="button"
-                v-bs-tooltip
-                tabindex="0"
-                data-bs-toggle="tooltip"
-                data-bs-placement="bottom"
-                :title="i18n.messageRegisteredMailInfo"
-              >
+              <span type="button" v-bs-tooltip tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                :title="i18n.messageRegisteredMailInfo">
                 <i class="fa fa-info-circle"></i>
               </span>
             </label>
@@ -1061,31 +988,18 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div
-      v-show="
-        step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
-        (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
-      "
-      class="container"
-    >
+    <div v-show="step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
+      (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
+      " class="container">
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-          <label
-            class="fw-bold form-label field-required"
-            for="id_registered_mail"
-          >
+          <label class="fw-bold form-label field-required" for="id_registered_mail">
             {{ i18n.messageDateRegisteredMail }}
           </label>
           <!-- TODO set min/max? -->
-          <input
-            type="date"
-            class="form-control"
-            id="id_registered_mail_date"
-            name="registered_mail_date"
-            :required="values.is_registered_mail"
-            @input="updateValidity('registered_mail_date')"
-            v-model="values.registered_mail_date"
-          />
+          <input type="date" class="form-control" id="id_registered_mail_date" name="registered_mail_date"
+            :required="values.is_registered_mail" @input="updateValidity('registered_mail_date')"
+            v-model="values.registered_mail_date" />
         </div>
       </div>
     </div>
@@ -1107,22 +1021,11 @@ addEventListener('hashchange', () => {
               {{ i18n.messageStatusIsResolvedAfterSent }}
             </template>
           </label>
-          <div
-            class="form-check"
-            v-for="(choice, choiceIndex) in status_form.fields.status.choices"
-            :key="choice.value"
-          >
-            <input
-              type="radio"
-              name="status"
-              required=""
-              class="form-check-input"
-              :class="{ 'is-invalid': choice.errors }"
-              :id="'id_status_' + choiceIndex"
-              v-model="formStatus"
-              :value="choice.value"
-              @input="updateValidity('status')"
-            />
+          <div class="form-check" v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+            :key="choice.value">
+            <input type="radio" name="status" required="" class="form-check-input"
+              :class="{ 'is-invalid': choice.errors }" :id="'id_status_' + choiceIndex" v-model="formStatus"
+              :value="choice.value" @input="updateValidity('status')" />
             <label class="form-check-label" :for="'id_status_' + choiceIndex">
               <template v-if="formStatusWasResolved">
                 <template v-if="choice.value === 'resolved'">
@@ -1145,41 +1048,21 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div
-      v-show="
-        step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
-        (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
-      "
-      class="container"
-    >
+    <div v-show="step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
+      (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
+      " class="container">
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_resolution">
             <!-- {{ status_form.fields.resolution.label }} -->
             {{ i18n.messageResolution }}
           </label>
-          <div
-            class="form-check"
-            v-for="(choice, choiceIndex) in formStatusChoices"
-            :key="choice.value"
-          >
-            <input
-              type="radio"
-              name="resolution"
-              :required="formStatusIsResolved"
-              class="form-check-input"
-              :id="'id_resolution_' + choiceIndex"
-              :value="choice.value"
-              :checked="
-                status_form.fields.resolution.value === choice.value ||
+          <div class="form-check" v-for="(choice, choiceIndex) in formStatusChoices" :key="choice.value">
+            <input type="radio" name="resolution" :required="formStatusIsResolved" class="form-check-input"
+              :id="'id_resolution_' + choiceIndex" :value="choice.value" :checked="status_form.fields.resolution.value === choice.value ||
                 status_form.fields.resolution.initial === choice.value
-              "
-            />
-            <label
-              class="form-check-label"
-              :for="'id_resolution_' + choiceIndex"
-              >{{ choice.label }}</label
-            >
+                " />
+            <label class="form-check-label" :for="'id_resolution_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
@@ -1191,27 +1074,13 @@ addEventListener('hashchange', () => {
           <label class="fw-bold col-form-label">
             {{ i18n.messageCostCheck }}
           </label>
-          <div
-            class="form-check"
-            v-for="(choice, choiceIndex) in [
-              { label: 'Nein.', value: false },
-              { label: 'Ja.', value: true }
-            ]"
-            :key="choiceIndex"
-          >
-            <input
-              type="radio"
-              required=""
-              class="form-check-input"
-              v-model="formDoUpdateCost"
-              :id="'id_nowcost_' + choiceIndex"
-              :value="choice.value"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_nowcost_' + choiceIndex"
-              >{{ choice.label }}</label
-            >
+          <div class="form-check" v-for="(choice, choiceIndex) in [
+            { label: 'Nein.', value: false },
+            { label: 'Ja.', value: true }
+          ]" :key="choiceIndex">
+            <input type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
+              :id="'id_nowcost_' + choiceIndex" :value="choice.value" />
+            <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
@@ -1221,53 +1090,30 @@ addEventListener('hashchange', () => {
         <div class="col-lg-9">
           <div class="step-questioncounter">Frage 5 von 5</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
-          <label
-            class="fw-bold col-form-label"
-            for="id_nowcost"
-            v-html="
-              i18n._('messageCostCheckLast', {
-                amount:
-                  status_form.fields.costs.value?.strValue ||
-                  status_form.fields.costs.initial?.strValue ||
-                  'error'
-              })
-            "
-          ></label>
-          <div
-            class="form-check"
-            v-for="(choice, choiceIndex) in [
-              { label: 'Ja.', value: false },
-              { label: 'Nein.', value: true }
-            ]"
-            :key="choiceIndex"
-          >
-            <input
-              type="radio"
-              required=""
-              class="form-check-input"
-              v-model="formDoUpdateCost"
-              :id="'id_nowcost_' + choiceIndex"
-              :value="choice.value"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_nowcost_' + choiceIndex"
-              >{{ choice.label }}</label
-            >
+          <label class="fw-bold col-form-label" for="id_nowcost" v-html="i18n._('messageCostCheckLast', {
+            amount:
+              status_form.fields.costs.value?.strValue ||
+              status_form.fields.costs.initial?.strValue ||
+              'error'
+          })
+            "></label>
+          <div class="form-check" v-for="(choice, choiceIndex) in [
+            { label: 'Ja.', value: false },
+            { label: 'Nein.', value: true }
+          ]" :key="choiceIndex">
+            <input type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
+              :id="'id_nowcost_' + choiceIndex" :value="choice.value" />
+            <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
     </div>
-    <div
-      v-show="
-        step === STEP_MESSAGE_COST_UPDATE ||
-        (isDesktop &&
-          (step === STEP_MESSAGE_COST_CHECK_ANY ||
-            step === STEP_MESSAGE_COST_CHECK_LAST) &&
-          formDoUpdateCost)
-      "
-      class="container"
-    >
+    <div v-show="step === STEP_MESSAGE_COST_UPDATE ||
+      (isDesktop &&
+        (step === STEP_MESSAGE_COST_CHECK_ANY ||
+          step === STEP_MESSAGE_COST_CHECK_LAST) &&
+        formDoUpdateCost)
+      " class="container">
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_costs">
@@ -1276,23 +1122,12 @@ addEventListener('hashchange', () => {
           <div class="col-md-8">
             <div class="input-group" style="width: 10rem">
               <!-- type=number does not support pattern -->
-              <input
-                type="number"
-                name="costs"
-                id="id_costs"
-                class="form-control col-3"
-                inputmode="decimal"
-                style="appearance: textfield; text-align: right"
-                min="0"
-                max="1000000000"
-                step="0.01"
-                v-model="values.costs"
-                @input="updateValidity('costs')"
-                :class="{
+              <input type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="decimal"
+                style="appearance: textfield; text-align: right" min="0" max="1000000000" step="0.01"
+                v-model="values.costs" @input="updateValidity('costs')" :class="{
                   'is-invalid': validity.costs === false,
                   'is-valid': validity.costs === true
-                }"
-              />
+                }" />
               <span class="input-group-text">Euro</span>
             </div>
             <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
@@ -1312,18 +1147,12 @@ addEventListener('hashchange', () => {
             {{ i18n.redactionInfo }}
           </p>
           <div class="text-end">
-            <button
-              type="button"
-              class="btn btn-link mx-2 text-decoration-underline"
-              @click="documentUploaderSelectAll(true)"
-            >
+            <button type="button" class="btn btn-link mx-2 text-decoration-underline"
+              @click="documentUploaderSelectAll(true)">
               {{ i18n.selectAll }}
             </button>
-            <button
-              type="button"
-              class="btn btn-link mx-2 text-decoration-underline"
-              @click="documentUploaderSelectAll(false)"
-            >
+            <button type="button" class="btn btn-link mx-2 text-decoration-underline"
+              @click="documentUploaderSelectAll(false)">
               {{ i18n.selectNone }}
             </button>
           </div>
@@ -1348,11 +1177,8 @@ addEventListener('hashchange', () => {
               <django-slot name="redaction_explanation"></django-slot>
             </div>
             <div class="mt-2 mb-3">
-              <button
-                type="button"
-                class="btn btn-link text-decoration-underline"
-                @click="onlineHelp.show(config.urls.helpPostuploadRedaction)"
-              >
+              <button type="button" class="btn btn-link text-decoration-underline"
+                @click="onlineHelp.show(config.urls.helpPostuploadRedaction)">
                 {{ i18n.helpNeeded }}
               </button>
             </div>
@@ -1364,35 +1190,20 @@ addEventListener('hashchange', () => {
           DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}<br />
           auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
         </div>
-        <pdf-redaction
-          :class="pdf-redaction-tool"
-          v-if="pdfRedactionCurrentDoc"
-          :key="pdfRedactionCurrentDoc.id"
+        <pdf-redaction :class="pdf - redaction - tool" v-if="pdfRedactionCurrentDoc" :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
           :attachment-url="pdfRedactionCurrentDoc.attachment.anchor_url"
-          :auto-approve="pdfRedactionCurrentDoc.auto_approve"
-          :post-url="
-            config.url.redactAttachment.replace(
-              '/0/',
-              '/' + pdfRedactionCurrentDoc.id + '/'
-            )
-          "
-          :approve-url="
-            config.url.approveAttachment.replace(
-              '/0/',
-              '/' + pdfRedactionCurrentDoc.id + '/'
-            )
-          "
-          :hide-done-button="true"
-          :bottom-toolbar="false"
-          :no-redirect="true"
-          :redact-regex="['teststraße\ 1']"
-          :can-publish="true"
-          :config="config"
-          @uploaded="pdfRedactionUploaded"
-          @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event"
-          ref="pdfRedaction"
-        >
+          :auto-approve="pdfRedactionCurrentDoc.auto_approve" :post-url="config.url.redactAttachment.replace(
+            '/0/',
+            '/' + pdfRedactionCurrentDoc.id + '/'
+          )
+            " :approve-url="config.url.approveAttachment.replace(
+            '/0/',
+            '/' + pdfRedactionCurrentDoc.id + '/'
+          )
+            " :hide-done-button="true" :bottom-toolbar="false" :no-redirect="true" :redact-regex="['teststraße\ 1']"
+          :can-publish="true" :config="config" @uploaded="pdfRedactionUploaded"
+          @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event" ref="pdfRedaction">
           <!--
               <template #toolbar-right>
                 <div class="btn-group" v-show="isDesktop">
@@ -1446,48 +1257,27 @@ addEventListener('hashchange', () => {
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-9">
-            <div
-              v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
-              class="d-flex justify-content-end"
-            >
-              <button
-                type="button"
-                class="btn btn-link text-decoration-underline"
-                @click="documentsBasicOperations = !doctumentsBasicOperations"
-              >
+            <div v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff" class="d-flex justify-content-end">
+              <button type="button" class="btn btn-link text-decoration-underline"
+                @click="documentsBasicOperations = !doctumentsBasicOperations">
                 {{ documentsBasicOperations ? i18n.done : i18n.edit }}
               </button>
             </div>
             <!-- TODO maybe :hide-documents (PDFs) in step STEP_DOCUMENTS_UPLOAD -->
-            <document-uploader
-              :debug="debug"
-              :config="config"
-              :message="message"
-              :show-upload="stepContext.documentsUpload"
-              :icon-style="stepContext.documentsIconStyle"
+            <document-uploader :debug="debug" :config="config" :message="message"
+              :show-upload="stepContext.documentsUpload" :icon-style="stepContext.documentsIconStyle"
               :show-auto-approve="stepContext.documentsShowAutoApprove"
-              :hide-selection="stepContext.documentsHideSelection"
-              :hide-selection-bar="true"
-              :hide-other="true"
-              :hide-pdf="stepContext.documentsHidePdf"
-              :hide-status-tools="true"
-              :images-simple="stepContext.documentsImagesSimple"
-              :images-document-filename="
-                documentsImagesDocumentFilenameNormalized
-              "
-              :file-basic-operations="
-                step === STEP_DOCUMENTS_OVERVIEW || documentsBasicOperations
-              "
-              :hide-advanced-operations="true || !(debug && user_is_staff)"
+              :hide-selection="stepContext.documentsHideSelection" :hide-selection-bar="true" :hide-other="true"
+              :hide-pdf="stepContext.documentsHidePdf" :hide-status-tools="true"
+              :images-simple="stepContext.documentsImagesSimple" :images-document-filename="documentsImagesDocumentFilenameNormalized
+                " :file-basic-operations="step === STEP_DOCUMENTS_OVERVIEW || documentsBasicOperations
+                " :hide-advanced-operations="true || !(debug && user_is_staff)"
               :highlight-redactions="stepContext.documentsHighlightRedactions"
-              @selectionupdated="documentsSelectedPdfRedaction = $event"
-              @imagesadded="documentsImagesAdded"
-              @documentsadded="documentsDocumentsAdded"
-              @imagesconverted="documentsImagesConverted"
-              ref="documentUploader"
-            >
+              @selectionupdated="documentsSelectedPdfRedaction = $event" @imagesadded="documentsImagesAdded"
+              @documentsadded="documentsDocumentsAdded" @imagesconverted="documentsImagesConverted"
+              ref="documentUploader">
               <template #fileuploader-after>
-                <div class="form-text text-center">{{  i18n.scanHelpText }}</div>
+                <div class="form-text text-center">{{ i18n.scanHelpText }}</div>
               </template>
             </document-uploader>
           </div>
@@ -1497,19 +1287,11 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
       <div class="row justify-content-center">
         <div class="col-sm-9 col-md-6 mt-3">
-          <button
-            type="button"
-            class="btn btn-outline-primary d-block w-100 mb-3"
-            :disabled="true"
-          >
+          <button type="button" class="btn btn-outline-primary d-block w-100 mb-3" :disabled="true">
             <i class="fa fa-plus"></i>
             {{ i18n.scanDocumentsAnother }}
           </button>
-          <button
-            type="button"
-            class="btn btn-outline-primary d-block w-100"
-            @click="gotoStep(STEP_DOCUMENTS_UPLOAD)"
-          >
+          <button type="button" class="btn btn-outline-primary d-block w-100" @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
             <i class="fa fa-plus"></i>
             {{ i18n.uploadFilesAnother }}
           </button>
@@ -1523,18 +1305,10 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-md-9 col-lg-6 text-center">
           <template v-if="step === STEP_REDACTION_REDACT">
-            <button
-              type="button"
-              @click="pdfRedactionRedact()"
-              class="btn btn-primary d-block w-100"
-              :disabled="pdfRedactionProcessing"
-            >
-              <span
-                class="spinner-border spinner-border-sm"
-                v-show="pdfRedactionProcessing"
-                role="status"
-                aria-hidden="true"
-              />
+            <button type="button" @click="pdfRedactionRedact()" class="btn btn-primary d-block w-100"
+              :disabled="pdfRedactionProcessing">
+              <span class="spinner-border spinner-border-sm" v-show="pdfRedactionProcessing" role="status"
+                aria-hidden="true" />
               {{ i18n.redactionDone }}
             </button>
             <div class="mt-2">
@@ -1547,18 +1321,9 @@ addEventListener('hashchange', () => {
             </div>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
-            <button
-              type="button"
-              @click="approveAndSubmit()"
-              class="btn btn-primary d-block w-100"
-              :disabled="isSubmitting || !validity.form"
-            >
-              <span
-                class="spinner-border spinner-border-sm"
-                v-show="isSubmitting"
-                role="status"
-                aria-hidden="true"
-              />
+            <button type="button" @click="approveAndSubmit()" class="btn btn-primary d-block w-100"
+              :disabled="isSubmitting || !validity.form">
+              <span class="spinner-border spinner-border-sm" v-show="isSubmitting" role="status" aria-hidden="true" />
               {{ i18n.confirm }}
             </button>
             <div class="mt-2" v-if="!validity.form">
@@ -1574,102 +1339,52 @@ addEventListener('hashchange', () => {
             </div>
           </template>
           <template v-else-if="step === STEP_OUTRO">
-            <button
-              type="button"
-              @click="submitForm"
-              class="btn btn-primary d-block w-100"
-            >
+            <button type="button" @click="submitForm" class="btn btn-primary d-block w-100">
               {{ i18n.requestShow }}
             </button>
           </template>
           <template v-else-if="step === STEP_INTRO">
             <!-- should be blank -->
-            <button
-              v-if="debug"
-              type="button"
-              @click="gotoStep()"
-              class="action btn btn-outline-primary btn-sm mt-1"
-            >
+            <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
               DEBUG skip
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_UPLOAD">
             <!-- this could be completely hidden -->
-            <button
-              type="button"
-              :disabled="true"
-              class="btn btn-primary d-block w-100"
-            >
+            <button type="button" :disabled="true" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
-            <button
-              v-if="debug"
-              type="button"
-              @click="gotoStep()"
-              class="action btn btn-outline-primary btn-sm mt-1"
-            >
+            <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
               DEBUG skip
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_SORT">
-            <button
-              type="button"
-              @click="gotoStep()"
-              class="btn btn-primary d-block w-100"
-            >
+            <button type="button" @click="gotoStep()" class="btn btn-primary d-block w-100">
               {{ i18n.doneSorting }}
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
-            <button
-              v-if="documentUploader.$refs.imageDocument.length > 0"
-              type="button"
-              @click="documentsConvertImages"
-              class="btn btn-primary d-block w-100"
-              :disabled="documentsImagesConverting"
-            >
-              <span
-                class="spinner-border spinner-border-sm"
-                v-if="documentsImagesConverting"
-                role="status"
-                aria-hidden="true"
-              />
+            <button v-if="documentUploader.$refs.imageDocument.length > 0" type="button" @click="documentsConvertImages"
+              class="btn btn-primary d-block w-100" :disabled="documentsImagesConverting">
+              <span class="spinner-border spinner-border-sm" v-if="documentsImagesConverting" role="status"
+                aria-hidden="true" />
               {{ i18n.createPdf }}
             </button>
-            <button
-              v-else
-              type="button"
-              @click="gotoStep()"
-              class="btn btn-primary d-block w-100"
-            >
+            <button v-else type="button" @click="gotoStep()" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
           </template>
           <template v-else-if="step === STEP_MESSAGE_DATE">
-            <button
-              type="button"
-              :disabled="!isGotoValid"
-              @click="gotoStep()"
-              class="btn btn-primary d-block w-100"
-            >
+            <button type="button" :disabled="!isGotoValid" @click="gotoStep()" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
-            <button
-              v-if="debug"
-              type="button"
-              @click="debugSkipDate"
-              class="btn btn-outline-primary btn-sm mt-1 d-block w-100"
-            >
+            <button v-if="debug" type="button" @click="debugSkipDate"
+              class="btn btn-outline-primary btn-sm mt-1 d-block w-100">
               DEBUG set today
             </button>
           </template>
           <template v-else>
-            <button
-              type="button"
-              @click="gotoStep()"
-              :disabled="!isGotoValid"
-              class="btn btn-primary d-block w-100"
-            >
+            <button type="button" @click="gotoStep()" :disabled="!isGotoValid" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
           </template>
@@ -1772,6 +1487,4 @@ addEventListener('hashchange', () => {
     top: 41px; // height of .simple-stepper/breadcrumbs
   }
 }
-
-
 </style>
