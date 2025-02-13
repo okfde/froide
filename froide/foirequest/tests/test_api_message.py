@@ -85,6 +85,16 @@ def test_message_draft(client: Client, user):
     response = client.get(reverse("api:message-detail", kwargs={"pk": message_id}))
     assert response.status_code == 404
 
+    # appears in drafts list
+    response = client.get(reverse("api:message-draft-list"))
+    assert response.status_code == 200
+    assert resource_uri in str(response.content)
+
+    # appears in filtered drafts list
+    response = client.get(reverse("api:message-draft-list") + f"?request={request.pk}")
+    assert response.status_code == 200
+    assert resource_uri in str(response.content)
+
     # can't publish without recipient
     publish_uri = reverse("api:message-draft-publish", kwargs={"pk": message_id})
     response = client.post(publish_uri)
