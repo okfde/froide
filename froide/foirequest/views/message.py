@@ -300,7 +300,7 @@ def edit_postal_message(request, foirequest, message_id):
                 "You can redact the PDF in the next step."
             ),
             "documentPending": _(
-                "This document is being generated. " "This can take several minutes."
+                "This document is being generated. This can take several minutes."
             ),
             "documentDeleting": _("This document is being deleted..."),
             "documentTitle": _("Document title"),
@@ -322,7 +322,7 @@ def edit_postal_message(request, foirequest, message_id):
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
-                "This attachment has been converted to PDF and " "cannot be published."
+                "This attachment has been converted to PDF and cannot be published."
             ),
             "isResult": _("Result?"),
             "makeResultExplanation": _(
@@ -515,6 +515,9 @@ def edit_postal_message(request, foirequest, message_id):
                 },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
+            if request.user.is_staff
+            else None,
         },
         "fixtures": {
             "georegion_kind": [
@@ -798,7 +801,7 @@ def upload_attachments(request, foirequest, message_id):
                 "You can redact the PDF in the next step."
             ),
             "documentPending": _(
-                "This document is being generated. " "This can take several minutes."
+                "This document is being generated. This can take several minutes."
             ),
             "documentDeleting": _("This document is being deleted..."),
             "documentTitle": _("Document title"),
@@ -820,7 +823,7 @@ def upload_attachments(request, foirequest, message_id):
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
-                "This attachment has been converted to PDF and " "cannot be published."
+                "This attachment has been converted to PDF and cannot be published."
             ),
             "isResult": _("Result?"),
             "makeResultExplanation": _(
