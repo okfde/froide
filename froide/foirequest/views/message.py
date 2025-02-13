@@ -516,6 +516,7 @@ def edit_postal_message(request, foirequest, message_id):
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
             if request.user.is_staff
             else None,
+            "messageWebsocket": "/ws/foimessage/{}/edit/".format(message.id),
         },
         "fixtures": {
             "georegion_kind": [

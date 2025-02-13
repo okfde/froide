@@ -130,14 +130,14 @@
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
 import { postData } from '../../lib/api.js'
 import DjangoSlot from '../../lib/django-slot.vue'
+import I18nMixin from '../../lib/i18n-mixin'
 
-import { approveAttachment, createDocument } from './lib/document_utils'
-import ImageDocument from './image-document.vue'
-import FileDocument from './file-document.vue'
 import FileUploader from '../upload/file-uploader.vue'
+import FileDocument from './file-document.vue'
+import ImageDocument from './image-document.vue'
+import { approveAttachment, createDocument } from './lib/document_utils'
 
 export default {
   name: 'DocumentUploader',
@@ -210,13 +210,15 @@ export default {
       default: false
     },
     imagesDocumentFilename: {
-      type: String
+      type: String,
+      default: ''
     },
     highlightRedactions: {
       type: Boolean,
       default: false
     }
   },
+emits: {'selectionupdated': null, 'imagesconverted': null, 'imagesadded': null, 'documentsadded': null},
   data() {
     return {
       documents: [],
@@ -591,6 +593,12 @@ export default {
           )
         })
       )
+    },
+    refreshAttachmentsIfIdNotPresent(id) {
+      if (this.documents.find((d) => d.id === id)) {
+        return Promise.resolve(false)
+      }
+      return this.refreshAttachments().then(() => true)
     },
     refreshAttachments() {
       const url =
