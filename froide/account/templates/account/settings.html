@@ -149,7 +149,7 @@
 <div id="apps" class="card mb-3">
     <h5 class="card-header">{% trans "External apps" %}</h5>
     <div class="card-body">
-        {% recentauthrequired "export" %}
+        {% recentauthrequired "apps" %}
         <a href="{% url 'oauth2_provider:authorized-token-list' %}">
             {% trans "Show external apps with access to your account" %}
         </a>
