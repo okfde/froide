@@ -575,6 +575,7 @@ class Base(Configuration):
             # TODO english?
             "help_postupload_redaction": "/hilfe/plain/funktionen-der-plattform/schwaerzungen-durchfuehren/",
         },
+        "mobile_app_content_url": None,
         "moderation_triggers": [
             {
                 "name": "nonfoi",

@@ -49,6 +49,17 @@ const debugSkipDate = () => {
   gotoStep()
 }
 
+/* Mobile App Content */
+
+const mobileAppContent = ref(null)
+if (props.config.urls.mobileAppContent) {
+  fetch(props.config.urls.mobileAppContent.replace("{}", props.message.id))
+    .then((response) => response.text())
+    .then((text) => {
+      mobileAppContent.value = text
+    })
+}
+
 /* --- form handling --- */
 
 /* untangle ambiguous semantics:
@@ -785,6 +796,14 @@ addEventListener('hashchange', () => {
                   </p>
                 </div>
                 -->
+            <div v-if="config.urls.mobileAppContent" class="col-md-6">
+              <div v-if="mobileAppContent !== null" v-html="mobileAppContent"></div>
+              <div v-else>
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">{{ i18n.loading }}</span>
+                </div>
+              </div>
+            </div>
             <div class="col-md-6">
               <button
                 type="button"
