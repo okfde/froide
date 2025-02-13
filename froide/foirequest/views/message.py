@@ -513,6 +513,9 @@ def edit_postal_message(request, foirequest, message_id):
                 },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
+            if request.user.is_staff
+            else None,
         },
         "fixtures": {
             "georegion_kind": [
