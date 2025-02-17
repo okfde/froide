@@ -480,6 +480,7 @@ def edit_postal_message(request, foirequest, message_id):
             "publish": _("Publish"),
             "error": _("Error"),
             "genericErrorReload": _("Error! Try to reload the page?"),
+            "attachmentDeleted": _("an attachment was deleted"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
@@ -943,6 +944,7 @@ def upload_attachments(request, foirequest, message_id):
             "close": _("Close"),
             "error": _("Error"),
             "genericErrorReload": _("Error! Try to reload the page?"),
+            "attachmentDeleted": _("an attachment was deleted"),
         },
     }
     request.auth = None

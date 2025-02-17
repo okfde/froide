@@ -7,6 +7,7 @@ import AttachmentsTable from './attachments-table.vue'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from '../online-help.vue'
+import BsToast from '../bs-toast.vue'
 import { useI18n } from '../../lib/i18n'
 import { useAttachments } from './lib/attachments'
 
@@ -100,5 +101,14 @@ const onlineHelp = ref()
       <images-converter />
     </div>
   </div>
+
+  <bs-toast
+    v-for="(toast, toastIdx) in attachments.messages"
+    :key="toastIdx"
+    >
+    <template #body>
+      {{ toast }}
+    </template>
+  </bs-toast>
 
 </template>
