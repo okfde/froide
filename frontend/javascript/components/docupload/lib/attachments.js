@@ -160,6 +160,9 @@ const deleteAttachment = (attachment) => {
   // optimistically...
   store.removeAttachment(attachment)
   return postData(deleteUrl, {}, config.csrfToken, 'POST', true)
+    .then(() => {
+      store.messages.push(`${config.i18n.value.attachmentDeleted} (${attachment.name})`)
+    })
     .catch(handleErrorAndRefresh)
 }
 

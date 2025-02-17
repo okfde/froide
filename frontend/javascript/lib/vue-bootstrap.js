@@ -1,4 +1,4 @@
-import { Tooltip } from 'bootstrap'
+import { Tooltip, Toast } from 'bootstrap'
 
 /* alternatively, to register globally, we could add to vue-helpers.ts:
    (note also snippets/bootstrap.ts)
@@ -11,5 +11,11 @@ import { Tooltip } from 'bootstrap'
 export const vBsTooltip = {
   mounted: (el) => {
     new Tooltip(el)
+  }
+}
+
+export const vBsToast = {
+  mounted: (el) => {
+    new Toast(el)
   }
 }
