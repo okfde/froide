@@ -5,6 +5,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
@@ -17,7 +18,6 @@ from ..permissions import WriteFoiRequestPermission
 from ..serializers import (
     FoiAttachmentSerializer,
     FoiAttachmentTusSerializer,
-    FoiRequestListSerializer,
 )
 from ..tasks import move_upload_to_attachment
 
@@ -43,12 +43,7 @@ class FoiAttachmentViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
-    serializer_action_classes = {
-        "create": FoiAttachmentTusSerializer,
-        "list": FoiAttachmentSerializer,
-        "retrieve": FoiAttachmentSerializer,
-        "delete": FoiAttachmentSerializer,
-    }
+    serializer_class = FoiAttachmentSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiAttachmentFilter
     permission_classes = [
@@ -58,10 +53,9 @@ class FoiAttachmentViewSet(
     required_scopes = ["make:message"]
 
     def get_serializer_class(self):
-        try:
-            return self.serializer_action_classes[self.action]
-        except (KeyError, AttributeError):
-            return FoiRequestListSerializer
+        if self.action == "create":
+            return FoiAttachmentTusSerializer
+        return super().get_serializer_class()
 
     def get_queryset(self):
         qs = get_read_foiattachment_queryset(self.request)
@@ -74,6 +68,10 @@ class FoiAttachmentViewSet(
             "belongs_to__request__user",
         )
 
+    @extend_schema(
+        request=FoiAttachmentTusSerializer,
+        responses={status.HTTP_201_CREATED: FoiAttachmentSerializer},
+    )
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

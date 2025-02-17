@@ -22,5 +22,5 @@ requirements: pyproject.toml
 	uv pip compile -o requirements-test.txt --extra test pyproject.toml -p 3.10
 
 openapi:
-	python manage.py generateschema --file froide/openapi-schema.yaml
+	python manage.py spectacular --file froide/openapi-schema.yaml --validate
 	pnpm run openapi
