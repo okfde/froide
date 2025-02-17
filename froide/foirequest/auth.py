@@ -101,7 +101,7 @@ def get_write_foimessage_queryset(request: HttpRequest, queryset=None):
         queryset,
         request,
         has_team=True,
-        scope="write:request",
+        scope="write:message",
         fk_path="request",
         user_write_filter=get_campaign_auth_foirequests_filter(
             request, fk_path="request"

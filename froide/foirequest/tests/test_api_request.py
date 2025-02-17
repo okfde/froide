@@ -372,7 +372,7 @@ class OAuthApiTest(OAuthAPIMixin, TestCase):
         assert response.status_code == 403
 
         # Set correct scope
-        self.access_token.scope = "read:request make:message"
+        self.access_token.scope = "read:request write:message write:attachment"
         self.access_token.save()
 
         fake_upload_url = "y" + upload_url[1:]

@@ -14,6 +14,9 @@ import {
   type AttachmentDestroyData,
   type AttachmentDestroyError,
   type AttachmentDestroyResponse,
+  type ConvertImagesToPdfData,
+  type ConvertImagesToPdfError,
+  type ConvertImagesToPdfResponse,
   type CampaignListData,
   type CampaignListError,
   type CampaignListResponse,
@@ -122,9 +125,6 @@ import {
   type MessageRetrieveData,
   type MessageRetrieveError,
   type MessageRetrieveResponse,
-  type MessageConvertToPdfCreateData,
-  type MessageConvertToPdfCreateError,
-  type MessageConvertToPdfCreateResponse,
   type MessageDraftListData,
   type MessageDraftListError,
   type MessageDraftListResponse,
@@ -260,6 +260,7 @@ import {
   AttachmentListResponseTransformer,
   AttachmentCreateResponseTransformer,
   AttachmentRetrieveResponseTransformer,
+  ConvertImagesToPdfResponseTransformer,
   CampaignListResponseTransformer,
   CampaignRetrieveResponseTransformer,
   DocumentListResponseTransformer,
@@ -366,6 +367,20 @@ export const attachmentDestroy = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: '/api/v1/attachment/{id}/'
+  })
+}
+
+export const convertImagesToPdf = <ThrowOnError extends boolean = false>(
+  options: Options<ConvertImagesToPdfData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    ConvertImagesToPdfResponse,
+    ConvertImagesToPdfError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/attachment/convert_to_pdf/',
+    responseTransformer: ConvertImagesToPdfResponseTransformer
   })
 }
 
@@ -941,19 +956,6 @@ export const messageRetrieve = <ThrowOnError extends boolean = false>(
     ...options,
     url: '/api/v1/message/{id}/',
     responseTransformer: MessageRetrieveResponseTransformer
-  })
-}
-
-export const messageConvertToPdfCreate = <ThrowOnError extends boolean = false>(
-  options: Options<MessageConvertToPdfCreateData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    MessageConvertToPdfCreateResponse,
-    MessageConvertToPdfCreateError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/{id}/convert_to_pdf/'
   })
 }
 
