@@ -70,6 +70,7 @@ class UserFullSerializer(UserEmailDetailSerializer):
 
 
 class ProfileView(views.APIView):
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticatedOrTokenHasScope]
     required_scopes = ["read:user"]
 
