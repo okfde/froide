@@ -1,4 +1,4 @@
-import { getData, postData } from '../../../lib/api'
+import { getData, postData, putData } from '../../../lib/api'
 
 import { pinia } from '../../../lib/pinia'
 import { useAttachmentsStore } from './attachments-store'
@@ -45,6 +45,14 @@ const createDocument = (attachment) => {
     `/${attachment.id}/`
   )
   return postData(createDocumentUrl, {}, config.csrfToken)
+    .then(() => {
+      return refetchAttachment(attachment)
+    })
+}
+
+const updateDocument = (attachment, payload) => {
+  const updateDocumentUrl = attachment.document.resource_uri
+  return putData(updateDocumentUrl, payload, config.csrfToken)
     .then(() => {
       return refetchAttachment(attachment)
     })
@@ -226,6 +234,7 @@ export function useAttachments({ urls = null, csrfToken = null, i18n = null} = {
     attachments: store,
     convertImage,
     createDocument,
+    updateDocument,
     splitPages: store.splitPages,
     rotatePage,
     addFromUppy,
