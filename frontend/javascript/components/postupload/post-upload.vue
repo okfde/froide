@@ -18,6 +18,7 @@ import OnlineHelp from '../online-help.vue'
 
 import { useAttachments } from '../docupload/lib/attachments'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FileUploader from '../upload/file-uploader.vue'
 import ImageDocumentPagesSortable from '../docupload/image-document-pages-sortable.vue'
 import AttachmentsTable from '../docupload/attachments-table.vue'
@@ -291,6 +292,15 @@ const fileUploaderSucceeded = (uppyResult) => {
       gotoStep()
     })
 }
+
+/* --- <file-uploader> interaction --- */
+
+const fileUploader = ref()
+const fileUploaderForceShow = ref(false)
+onMounted(() => {
+  document.body.addEventListener('dragover', () => fileUploaderForceShow.value = true)
+  document.body.addEventListener('dragenter', () => fileUploaderForceShow.value = true)
+})
 
 /* --- <pdf-redaction> interaction --- */
 
@@ -800,12 +810,23 @@ addEventListener('hashchange', () => {
             <div class="col-md-6">
               <button
                 type="button"
-                @click="gotoStep()"
+                @click="fileUploader.clickFilepick()"
                 class="btn btn-outline-primary btn-lg d-block w-100"
               >
                 <i class="fa fa-upload fa-2x"></i><br />
                 {{ i18n.uploadFiles }}
               </button>
+              <file-uploader
+                :config="config"
+                :allowed-file-types="config.settings.allowed_filetypes"
+                :auto-proceed="true"
+                ref="fileUploader"
+                XX-onmount-pick
+                @upload-success="fileUploaderSucceeded"
+                />
+            </div>
+            <div class="col-md-6">
+              QR code goes here
             </div>
           </div>
           <div class="alert alert-warning">
@@ -830,13 +851,7 @@ addEventListener('hashchange', () => {
     <div v-if="step === STEP_DOCUMENTS_UPLOAD" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <file-uploader
-            :config="config"
-            :allowed-file-types="config.settings.allowed_filetypes"
-            :auto-proceed="true"
-            onmount-pick
-            @upload-success="fileUploaderSucceeded"
-            />
+          XXX DELETEME
         </div>
       </div>
     </div>

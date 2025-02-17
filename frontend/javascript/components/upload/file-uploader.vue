@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
+// import { nextTick } from 'vue'
 
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
@@ -112,6 +112,11 @@ export default {
       return uploads
     }
   },
+  methods: {
+    clickFilepick() {
+      this.$refs.uppy.querySelector('.uppy-Dashboard-browse').click()
+    }
+  },
   mounted() {
     const uppyLocale = {
       strings: this.config.i18n.uppy,
@@ -171,6 +176,7 @@ export default {
       this.uploading = false
       this.$emit('uploading', false)
     })
+    /* to
     if (this.onmountPick) {
       nextTick(() => {
         const button = this.$refs.uppy.querySelector(
@@ -179,6 +185,7 @@ export default {
         button.click()
       })
     }
+      */
   }
 }
 </script>
