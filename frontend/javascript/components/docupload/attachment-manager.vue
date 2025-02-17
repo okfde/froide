@@ -18,6 +18,7 @@ provide('i18n', i18n)
 provide('config', props.config)
 
 const { attachments, addFromUppy, refresh } = useAttachments({
+  message: props.message,
   urls: {
     ...props.config.url,
     getAttachment:

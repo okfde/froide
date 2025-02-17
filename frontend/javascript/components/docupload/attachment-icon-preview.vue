@@ -170,13 +170,12 @@ const iconTooltipTexts = computed(() => [
 }
 
 .icon--image {
-  font-size: 1.5rem;
-  width: 1em;
-  height: 1em;
+  width: 1.5rem;
+  height: 1.5rem;
 
   img {
-    max-width: 1em;
-    max-height: 1em;
+    max-width: 1.5rem;
+    max-height: 1.5rem;
   }
 }
 
@@ -185,14 +184,32 @@ const iconTooltipTexts = computed(() => [
 }
 
 @include media-breakpoint-up(md) {
-  .icon--image,
+  .icon--image {
+    width: 2.5rem;
+    height: 2.5rem;
+
+    img {
+      max-width: 2.5rem;
+      max-height: 2.5rem;
+    }
+  }
+
   .icon--fa {
     font-size: 2.5rem;
   }
 }
 
 .attachment-icon-preview--big {
-  .icon--image,
+  .icon--image {
+    width: 4rem;
+    height: 4rem;
+
+    img {
+      max-width: 4rem;
+      max-height: 4rem;
+    }
+  }
+
   .icon--fa {
     font-size: 4rem;
   }

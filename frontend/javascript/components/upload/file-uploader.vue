@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="uppy"></div>
+    <div ref="uppy" v-show="showUppy"></div>
     <template v-if="formFields">
       <input
         v-for="upload in uploads"
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
+// import { nextTick } from 'vue'
 
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
@@ -73,6 +73,10 @@ export default {
       type: Boolean,
       default: false,
       required: false
+    },
+    showUppy: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -110,6 +114,13 @@ export default {
         }
       }
       return uploads
+    }
+  },
+  methods: {
+    clickFilepick() {
+      const button = this.$refs.uppy.querySelector('.uppy-Dashboard-browse')
+      if (!button) return false
+      return button.click()
     }
   },
   mounted() {
@@ -170,7 +181,9 @@ export default {
       console.log('failed files:', result.failed)
       this.uploading = false
       this.$emit('uploading', false)
+      this.$emit('upload-complete', result)
     })
+    /* to
     if (this.onmountPick) {
       nextTick(() => {
         const button = this.$refs.uppy.querySelector(
@@ -179,6 +192,7 @@ export default {
         button.click()
       })
     }
+      */
   }
 }
 </script>
