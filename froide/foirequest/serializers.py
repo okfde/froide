@@ -356,6 +356,7 @@ class ImageAttachmentConverterItemSerializer(serializers.Serializer):
 class ImageAttachmentConverterSerializer(serializers.Serializer):
     title = serializers.CharField(default=_("Letter"), required=False)
     images = ImageAttachmentConverterItemSerializer(many=True)
+    message = FoiMessageRelatedField()
 
 
 def optimize_message_queryset(request, qs):

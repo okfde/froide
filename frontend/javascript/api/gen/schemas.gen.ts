@@ -1625,9 +1625,13 @@ export const ImageAttachmentConverterSchema = {
       items: {
         $ref: '#/components/schemas/ImageAttachmentConverterItem'
       }
+    },
+    message: {
+      type: 'string',
+      format: 'uri'
     }
   },
-  required: ['images']
+  required: ['images', 'message']
 } as const
 
 export const ImageAttachmentConverterItemSchema = {

@@ -50,7 +50,7 @@ paths:
       - attachment
       security:
       - oauth2:
-        - make:message
+        - write:attachment
       - cookieAuth: []
       responses:
         '200':
@@ -88,7 +88,7 @@ paths:
         required: true
       security:
       - oauth2:
-        - make:message
+        - write:attachment
       - cookieAuth: []
       responses:
         '201':
@@ -121,7 +121,7 @@ paths:
       - attachment
       security:
       - oauth2:
-        - make:message
+        - write:attachment
       - cookieAuth: []
       responses:
         '200':
@@ -153,11 +153,50 @@ paths:
       - attachment
       security:
       - oauth2:
-        - make:message
+        - write:attachment
       - cookieAuth: []
       responses:
         '204':
           description: No response body
+  /api/v1/attachment/convert_to_pdf/:
+    post:
+      operationId: convert_images_to_pdf
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
   /api/v1/campaign/:
     get:
       operationId: campaign_list
@@ -1526,50 +1565,6 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/FoiMessage'
-          description: ''
-  /api/v1/message/{id}/convert_to_pdf/:
-    post:
-      operationId: message_convert_to_pdf_create
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Freedom of Information
-          Message.
-        required: true
-      tags:
-      - message
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ImageAttachmentConverter'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/ImageAttachmentConverter'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/ImageAttachmentConverter'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ImageAttachmentConverter'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ImageAttachmentConverter'
           description: ''
   /api/v1/message/draft/:
     get:
@@ -4548,8 +4543,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ImageAttachmentConverterItem'
+        message:
+          type: string
+          format: uri
       required:
       - images
+      - message
     ImageAttachmentConverterItem:
       type: object
       properties:

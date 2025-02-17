@@ -360,6 +360,7 @@ export type GeoRegionDetail = {
 export type ImageAttachmentConverter = {
   title?: string
   images: Array<ImageAttachmentConverterItem>
+  message: string
 }
 
 export type ImageAttachmentConverterItem = {
@@ -1055,6 +1056,17 @@ export type AttachmentDestroyResponse = void
 
 export type AttachmentDestroyError = unknown
 
+export type ConvertImagesToPdfData = {
+  body: ImageAttachmentConverter
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type ConvertImagesToPdfResponse = FoiAttachment
+
+export type ConvertImagesToPdfError = unknown
+
 export type CampaignListData = {
   query?: {
     format?: 'csv' | 'json'
@@ -1604,23 +1616,6 @@ export type MessageRetrieveData = {
 export type MessageRetrieveResponse = FoiMessage
 
 export type MessageRetrieveError = unknown
-
-export type MessageConvertToPdfCreateData = {
-  body: ImageAttachmentConverter
-  path: {
-    /**
-     * A unique integer value identifying this Freedom of Information Message.
-     */
-    id: number
-  }
-  query?: {
-    format?: 'csv' | 'json'
-  }
-}
-
-export type MessageConvertToPdfCreateResponse = ImageAttachmentConverter
-
-export type MessageConvertToPdfCreateError = unknown
 
 export type MessageDraftListData = {
   query?: {
@@ -2356,6 +2351,16 @@ export type AttachmentRetrieveResponseTransformer = (
 ) => Promise<AttachmentRetrieveResponse>
 
 export const AttachmentRetrieveResponseTransformer: AttachmentRetrieveResponseTransformer =
+  async (data) => {
+    FoiAttachmentModelResponseTransformer(data)
+    return data
+  }
+
+export type ConvertImagesToPdfResponseTransformer = (
+  data: any
+) => Promise<ConvertImagesToPdfResponse>
+
+export const ConvertImagesToPdfResponseTransformer: ConvertImagesToPdfResponseTransformer =
   async (data) => {
     FoiAttachmentModelResponseTransformer(data)
     return data
