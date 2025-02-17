@@ -2,10 +2,11 @@ from rest_framework import permissions, serializers
 
 from .auth import (
     get_read_foirequest_queryset,
+    get_write_foimessage_queryset,
     get_write_foirequest_queryset,
 )
 from .models.attachment import FoiAttachment
-from .models.message import FoiMessage, FoiMessageDraft
+from .models.message import FoiMessageDraft
 
 
 class TagListField(serializers.CharField):
@@ -45,7 +46,11 @@ class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
 
     def get_queryset(self):
-        return FoiMessage.with_drafts.all()
+        request = self.context["request"]
+        if request.method in permissions.SAFE_METHODS:
+            return get_read_foirequest_queryset(request)
+        else:
+            return get_write_foimessage_queryset(request)
 
 
 class FoiAttachmentRelatedField(serializers.HyperlinkedRelatedField):

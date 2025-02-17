@@ -94,6 +94,21 @@ def get_read_foimessage_queryset(request: HttpRequest, queryset=None):
     )
 
 
+def get_write_foimessage_queryset(request: HttpRequest, queryset=None):
+    if queryset is None:
+        queryset = FoiMessage.objects.all()
+    return get_write_queryset(
+        queryset,
+        request,
+        has_team=True,
+        scope="write:request",
+        fk_path="request",
+        user_write_filter=get_campaign_auth_foirequests_filter(
+            request, fk_path="request"
+        ),
+    )
+
+
 def get_read_foiattachment_queryset(request: HttpRequest, queryset=None):
     if queryset is None:
         queryset = FoiAttachment.objects.all()
