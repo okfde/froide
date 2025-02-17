@@ -169,7 +169,7 @@ const deleteSelected = async () => {
           class="text-center mb-1"
           @click.self="toggleSelection('card', att.id)"
           >
-          {{ att.name }}
+          {{ att.document?.title || att.name }}
           <span v-if="badgesNew && att.new" class="badge text-bg-success"
             >{{ i18n.new }}</span>
         </div>
@@ -238,7 +238,7 @@ const deleteSelected = async () => {
         class="px-1 py-2 py-md-0 flex-md-grow-1"
         @click.self="toggleSelection('table', att.id)"
         >
-        {{ att.name }}
+        {{ att.document?.title || att.name }}
         <span
           v-if="badgesNew && att.new"
           class="badge text-bg-success"
