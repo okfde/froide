@@ -6,6 +6,8 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from froide.foirequest.utils import postal_date
+
 from ..auth import (
     get_read_foimessage_queryset,
 )
@@ -85,15 +87,25 @@ class FoiMessageDraftViewSet(
 
             return Response({"detail": error_message}, status=400)
 
+        if message.is_postal:
+            message.timestamp = postal_date(message)
+
         message.save()
+
+        published_message = FoiMessage.objects.get(pk=message.pk)
+        foirequest = published_message.request
 
         if message.is_response:
             FoiRequest.message_received.send(
-                sender=message.request, message=message, user=request.user
+                sender=foirequest,
+                message=published_message,
+                user=request.user,
             )
         else:
             FoiRequest.message_sent.send(
-                sender=message.request, message=message, user=request.user
+                sender=foirequest,
+                message=published_message,
+                user=request.user,
             )
 
         # return it as a regular message
