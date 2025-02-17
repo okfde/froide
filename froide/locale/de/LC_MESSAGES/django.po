@@ -3201,6 +3201,7 @@ msgid "This request is finished."
 msgstr "Diese Anfrage ist abgeschlossen."
 
 #: froide/foirequest/forms/request.py froide/foirequest/models/request.py
+#: froide/foirequest/views/message.py
 #: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Resolution"
 msgstr "Ergebnis"
@@ -3396,7 +3397,7 @@ msgstr "ein Anhang wurde depubliziert"
 msgid "an attachment was redacted"
 msgstr "ein Anhang wurde geschwärzt"
 
-#: froide/foirequest/models/event.py
+#: froide/foirequest/models/event.py froide/foirequest/views/message.py
 msgid "an attachment was deleted"
 msgstr "ein Anhang wurde gelöscht"
 
@@ -7794,6 +7795,10 @@ msgstr "Beschreiben Sie den Inhalt"
 #: froide/foirequest/views/message.py
 msgid "Review"
 msgstr "Überprüfen"
+
+#: froide/foirequest/views/message.py
+msgid "Approve without redaction?"
+msgstr "Ungeschwärzt freigeben?"
 
 #: froide/foirequest/views/message.py
 msgid "not public"
