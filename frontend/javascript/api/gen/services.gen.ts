@@ -2,610 +2,366 @@
 
 import { createClient, createConfig, type Options } from '@hey-api/client-fetch'
 import {
-  type ListProfilesError,
-  type ListProfilesResponse,
-  type RetrieveUserPreferenceData,
-  type RetrieveUserPreferenceError,
-  type RetrieveUserPreferenceResponse,
-  type CreateUserPreferenceData,
-  type CreateUserPreferenceError,
-  type CreateUserPreferenceResponse,
-  type UpdateUserPreferenceData,
-  type UpdateUserPreferenceError,
-  type UpdateUserPreferenceResponse,
-  type PartialUpdateUserPreferenceData,
-  type PartialUpdateUserPreferenceError,
-  type PartialUpdateUserPreferenceResponse,
-  type ListFoiRequestListsData,
-  type ListFoiRequestListsError,
-  type ListFoiRequestListsResponse,
-  type CreateMakeRequestData,
-  type CreateMakeRequestError,
-  type CreateMakeRequestResponse,
-  type SearchFoiRequestListError,
-  type SearchFoiRequestListResponse,
-  type TagsAutocompleteFoiRequestListError,
-  type TagsAutocompleteFoiRequestListResponse,
-  type RetrieveFoiRequestDetailData,
-  type RetrieveFoiRequestDetailError,
-  type RetrieveFoiRequestDetailResponse,
-  type ListFoiMessageDraftsData,
-  type ListFoiMessageDraftsError,
-  type ListFoiMessageDraftsResponse,
-  type CreateFoiMessageDraftData,
-  type CreateFoiMessageDraftError,
-  type CreateFoiMessageDraftResponse,
-  type RetrieveFoiMessageDraftData,
-  type RetrieveFoiMessageDraftError,
-  type RetrieveFoiMessageDraftResponse,
-  type UpdateFoiMessageDraftData,
-  type UpdateFoiMessageDraftError,
-  type UpdateFoiMessageDraftResponse,
-  type PartialUpdateFoiMessageDraftData,
-  type PartialUpdateFoiMessageDraftError,
-  type PartialUpdateFoiMessageDraftResponse,
-  type DestroyFoiMessageDraftData,
-  type DestroyFoiMessageDraftError,
-  type DestroyFoiMessageDraftResponse,
-  type ListFoiMessagesData,
-  type ListFoiMessagesError,
-  type ListFoiMessagesResponse,
-  type RetrieveFoiMessageData,
-  type RetrieveFoiMessageError,
-  type RetrieveFoiMessageResponse,
-  type ListFoiAttachmentsData,
-  type ListFoiAttachmentsError,
-  type ListFoiAttachmentsResponse,
-  type CreateFoiAttachmentTusData,
-  type CreateFoiAttachmentTusError,
-  type CreateFoiAttachmentTusResponse,
-  type RetrieveFoiAttachmentData,
-  type RetrieveFoiAttachmentError,
-  type RetrieveFoiAttachmentResponse,
-  type DestroyFoiRequestListData,
-  type DestroyFoiRequestListError,
-  type DestroyFoiRequestListResponse,
-  type ListFoiRequestFollowsData,
-  type ListFoiRequestFollowsError,
-  type ListFoiRequestFollowsResponse,
-  type CreateCreateFoiRequestFollowData,
-  type CreateCreateFoiRequestFollowError,
-  type CreateCreateFoiRequestFollowResponse,
-  type ListGeoRegionsData,
-  type ListGeoRegionsError,
-  type ListGeoRegionsResponse,
-  type AutocompleteGeoRegionError,
-  type AutocompleteGeoRegionResponse,
-  type ReconciliationGeoRegionError,
-  type ReconciliationGeoRegionResponse,
-  type ReconciliationGeoRegion1Data,
-  type ReconciliationGeoRegion1Error,
-  type ReconciliationGeoRegion1Response,
-  type ReconciliationFlyoutEntityGeoRegionError,
-  type ReconciliationFlyoutEntityGeoRegionResponse,
-  type ReconciliationFlyoutEntityGeoRegion1Data,
-  type ReconciliationFlyoutEntityGeoRegion1Error,
-  type ReconciliationFlyoutEntityGeoRegion1Response,
-  type ReconciliationProposePropertiesGeoRegionError,
-  type ReconciliationProposePropertiesGeoRegionResponse,
-  type ReconciliationProposePropertiesGeoRegion1Data,
-  type ReconciliationProposePropertiesGeoRegion1Error,
-  type ReconciliationProposePropertiesGeoRegion1Response,
-  type ReconciliationSuggestServiceGeoRegionError,
-  type ReconciliationSuggestServiceGeoRegionResponse,
-  type ReconciliationSuggestServiceGeoRegion1Data,
-  type ReconciliationSuggestServiceGeoRegion1Error,
-  type ReconciliationSuggestServiceGeoRegion1Response,
-  type RetrieveGeoRegionData,
-  type RetrieveGeoRegionError,
-  type RetrieveGeoRegionResponse,
-  type ListPublicBodyListsData,
-  type ListPublicBodyListsError,
-  type ListPublicBodyListsResponse,
-  type AutocompletePublicBodyListError,
-  type AutocompletePublicBodyListResponse,
-  type ReconciliationPublicBodyListError,
-  type ReconciliationPublicBodyListResponse,
-  type ReconciliationPublicBodyList1Data,
-  type ReconciliationPublicBodyList1Error,
-  type ReconciliationPublicBodyList1Response,
-  type ReconciliationFlyoutEntityPublicBodyListError,
-  type ReconciliationFlyoutEntityPublicBodyListResponse,
-  type ReconciliationFlyoutEntityPublicBodyList1Data,
-  type ReconciliationFlyoutEntityPublicBodyList1Error,
-  type ReconciliationFlyoutEntityPublicBodyList1Response,
-  type ReconciliationProposePropertiesPublicBodyListError,
-  type ReconciliationProposePropertiesPublicBodyListResponse,
-  type ReconciliationProposePropertiesPublicBodyList1Data,
-  type ReconciliationProposePropertiesPublicBodyList1Error,
-  type ReconciliationProposePropertiesPublicBodyList1Response,
-  type ReconciliationSuggestServicePublicBodyListError,
-  type ReconciliationSuggestServicePublicBodyListResponse,
-  type ReconciliationSuggestServicePublicBodyList1Data,
-  type ReconciliationSuggestServicePublicBodyList1Error,
-  type ReconciliationSuggestServicePublicBodyList1Response,
-  type SearchPublicBodyListError,
-  type SearchPublicBodyListResponse,
-  type RetrievePublicBodyData,
-  type RetrievePublicBodyError,
-  type RetrievePublicBodyResponse,
-  type ListCategoriesData,
-  type ListCategoriesError,
-  type ListCategoriesResponse,
-  type AutocompleteCategoryError,
-  type AutocompleteCategoryResponse,
-  type RetrieveCategoryData,
-  type RetrieveCategoryError,
-  type RetrieveCategoryResponse,
-  type ListClassificationsData,
-  type ListClassificationsError,
-  type ListClassificationsResponse,
-  type RetrieveClassificationData,
-  type RetrieveClassificationError,
-  type RetrieveClassificationResponse,
-  type ListJurisdictionsData,
-  type ListJurisdictionsError,
-  type ListJurisdictionsResponse,
-  type RetrieveJurisdictionData,
-  type RetrieveJurisdictionError,
-  type RetrieveJurisdictionResponse,
-  type ListFoiLawsData,
-  type ListFoiLawsError,
-  type ListFoiLawsResponse,
-  type AutocompleteFoiLawError,
-  type AutocompleteFoiLawResponse,
-  type RetrieveFoiLawData,
-  type RetrieveFoiLawError,
-  type RetrieveFoiLawResponse,
-  type ListDocumentsData,
-  type ListDocumentsError,
-  type ListDocumentsResponse,
-  type OembedDocumentError,
-  type OembedDocumentResponse,
-  type RetrieveDocumentDetailData,
-  type RetrieveDocumentDetailError,
-  type RetrieveDocumentDetailResponse,
-  type UpdateUpdateDocumentData,
-  type UpdateUpdateDocumentError,
-  type UpdateUpdateDocumentResponse,
-  type PartialUpdateDocumentData,
-  type PartialUpdateDocumentError,
-  type PartialUpdateDocumentResponse,
-  type ListDocumentCollectionsData,
-  type ListDocumentCollectionsError,
-  type ListDocumentCollectionsResponse,
-  type OembedDocumentCollectionError,
-  type OembedDocumentCollectionResponse,
-  type RetrieveDocumentCollectionData,
-  type RetrieveDocumentCollectionError,
-  type RetrieveDocumentCollectionResponse,
-  type ListPagesData,
-  type ListPagesError,
-  type ListPagesResponse,
-  type ListPageAnnotationsData,
-  type ListPageAnnotationsError,
-  type ListPageAnnotationsResponse,
-  type CreateCreatePageAnnotationData,
-  type CreateCreatePageAnnotationError,
-  type CreateCreatePageAnnotationResponse,
-  type RetrievePageAnnotationData,
-  type RetrievePageAnnotationError,
-  type RetrievePageAnnotationResponse,
-  type DestroyPageAnnotationData,
-  type DestroyPageAnnotationError,
-  type DestroyPageAnnotationResponse,
-  type ListProblemReportsData,
-  type ListProblemReportsError,
-  type ListProblemReportsResponse,
-  type RetrieveProblemReportData,
-  type RetrieveProblemReportError,
-  type RetrieveProblemReportResponse,
-  type ListCampaignsData,
-  type ListCampaignsError,
-  type ListCampaignsResponse,
-  type RetrieveCampaignData,
-  type RetrieveCampaignError,
-  type RetrieveCampaignResponse,
-  type ListSpectacularSwaggersError,
-  type ListSpectacularSwaggersResponse,
-  type PublishFoiMessageDraftData,
-  type PublishFoiMessageDraftError,
-  type PublishFoiMessageDraftResponse,
-  type ConvertToPdfImageAttachmentConverterData,
-  type ConvertToPdfImageAttachmentConverterError,
-  type ConvertToPdfImageAttachmentConverterResponse,
-  type ClaimProblemReportData,
-  type ClaimProblemReportError,
-  type ClaimProblemReportResponse,
-  type EscalateProblemReportData,
-  type EscalateProblemReportError,
-  type EscalateProblemReportResponse,
-  type ResolveProblemReportData,
-  type ResolveProblemReportError,
-  type ResolveProblemReportResponse,
-  type UnclaimProblemReportData,
-  type UnclaimProblemReportError,
-  type UnclaimProblemReportResponse,
-  type CreateUploadCreateData,
-  type CreateUploadCreateError,
-  type CreateUploadCreateResponse,
-  type UpdateUploadData,
-  type UpdateUploadError,
-  type UpdateUploadResponse,
-  type PartialUpdateUploadData,
-  type PartialUpdateUploadError,
-  type PartialUpdateUploadResponse,
-  type DestroyUploadData,
-  type DestroyUploadError,
-  type DestroyUploadResponse,
-  type DestroyFoiRequestFollowData,
-  type DestroyFoiRequestFollowError,
-  type DestroyFoiRequestFollowResponse,
-  ListFoiRequestListsResponseTransformer,
-  SearchFoiRequestListResponseTransformer,
-  TagsAutocompleteFoiRequestListResponseTransformer,
-  RetrieveFoiRequestDetailResponseTransformer,
-  ListFoiMessageDraftsResponseTransformer,
-  CreateFoiMessageDraftResponseTransformer,
-  RetrieveFoiMessageDraftResponseTransformer,
-  UpdateFoiMessageDraftResponseTransformer,
-  PartialUpdateFoiMessageDraftResponseTransformer,
-  ListFoiMessagesResponseTransformer,
-  RetrieveFoiMessageResponseTransformer,
-  ListFoiAttachmentsResponseTransformer,
-  RetrieveFoiAttachmentResponseTransformer,
-  ListFoiRequestFollowsResponseTransformer,
-  ListGeoRegionsResponseTransformer,
-  AutocompleteGeoRegionResponseTransformer,
-  ReconciliationGeoRegionResponseTransformer,
-  ReconciliationGeoRegion1ResponseTransformer,
-  ReconciliationFlyoutEntityGeoRegionResponseTransformer,
-  ReconciliationFlyoutEntityGeoRegion1ResponseTransformer,
-  ReconciliationProposePropertiesGeoRegionResponseTransformer,
-  ReconciliationProposePropertiesGeoRegion1ResponseTransformer,
-  ReconciliationSuggestServiceGeoRegionResponseTransformer,
-  ReconciliationSuggestServiceGeoRegion1ResponseTransformer,
-  RetrieveGeoRegionResponseTransformer,
-  ListPublicBodyListsResponseTransformer,
-  AutocompletePublicBodyListResponseTransformer,
-  ReconciliationPublicBodyListResponseTransformer,
-  ReconciliationPublicBodyList1ResponseTransformer,
-  ReconciliationFlyoutEntityPublicBodyListResponseTransformer,
-  ReconciliationFlyoutEntityPublicBodyList1ResponseTransformer,
-  ReconciliationProposePropertiesPublicBodyListResponseTransformer,
-  ReconciliationProposePropertiesPublicBodyList1ResponseTransformer,
-  ReconciliationSuggestServicePublicBodyListResponseTransformer,
-  ReconciliationSuggestServicePublicBodyList1ResponseTransformer,
-  SearchPublicBodyListResponseTransformer,
-  RetrievePublicBodyResponseTransformer,
-  ListJurisdictionsResponseTransformer,
-  RetrieveJurisdictionResponseTransformer,
-  ListFoiLawsResponseTransformer,
-  AutocompleteFoiLawResponseTransformer,
-  RetrieveFoiLawResponseTransformer,
-  ListDocumentsResponseTransformer,
-  OembedDocumentResponseTransformer,
-  RetrieveDocumentDetailResponseTransformer,
-  PartialUpdateDocumentResponseTransformer,
-  ListDocumentCollectionsResponseTransformer,
-  OembedDocumentCollectionResponseTransformer,
-  RetrieveDocumentCollectionResponseTransformer,
-  ListPageAnnotationsResponseTransformer,
-  RetrievePageAnnotationResponseTransformer,
-  ListProblemReportsResponseTransformer,
-  RetrieveProblemReportResponseTransformer,
-  ListCampaignsResponseTransformer,
-  RetrieveCampaignResponseTransformer,
-  PublishFoiMessageDraftResponseTransformer,
-  ClaimProblemReportResponseTransformer,
-  EscalateProblemReportResponseTransformer,
-  ResolveProblemReportResponseTransformer,
-  UnclaimProblemReportResponseTransformer,
-  CreateUploadCreateResponseTransformer,
-  UpdateUploadResponseTransformer,
-  PartialUpdateUploadResponseTransformer
+  type AttachmentListData,
+  type AttachmentListError,
+  type AttachmentListResponse,
+  type AttachmentCreateData,
+  type AttachmentCreateError,
+  type AttachmentCreateResponse,
+  type AttachmentRetrieveData,
+  type AttachmentRetrieveError,
+  type AttachmentRetrieveResponse,
+  type AttachmentDestroyData,
+  type AttachmentDestroyError,
+  type AttachmentDestroyResponse,
+  type CampaignListData,
+  type CampaignListError,
+  type CampaignListResponse,
+  type CampaignRetrieveData,
+  type CampaignRetrieveError,
+  type CampaignRetrieveResponse,
+  type CategoryListData,
+  type CategoryListError,
+  type CategoryListResponse,
+  type CategoryRetrieveData,
+  type CategoryRetrieveError,
+  type CategoryRetrieveResponse,
+  type CategoryAutocompleteRetrieveData,
+  type CategoryAutocompleteRetrieveError,
+  type CategoryAutocompleteRetrieveResponse,
+  type ClassificationListData,
+  type ClassificationListError,
+  type ClassificationListResponse,
+  type ClassificationRetrieveData,
+  type ClassificationRetrieveError,
+  type ClassificationRetrieveResponse,
+  type DocumentListData,
+  type DocumentListError,
+  type DocumentListResponse,
+  type DocumentRetrieveData,
+  type DocumentRetrieveError,
+  type DocumentRetrieveResponse,
+  type DocumentUpdateData,
+  type DocumentUpdateError,
+  type DocumentUpdateResponse,
+  type DocumentPartialUpdateData,
+  type DocumentPartialUpdateError,
+  type DocumentPartialUpdateResponse,
+  type DocumentOembedRetrieveData,
+  type DocumentOembedRetrieveError,
+  type DocumentOembedRetrieveResponse,
+  type DocumentcollectionListData,
+  type DocumentcollectionListError,
+  type DocumentcollectionListResponse,
+  type DocumentcollectionRetrieveData,
+  type DocumentcollectionRetrieveError,
+  type DocumentcollectionRetrieveResponse,
+  type DocumentcollectionOembedRetrieveData,
+  type DocumentcollectionOembedRetrieveError,
+  type DocumentcollectionOembedRetrieveResponse,
+  type FollowingListData,
+  type FollowingListError,
+  type FollowingListResponse,
+  type FollowingCreateData,
+  type FollowingCreateError,
+  type FollowingCreateResponse,
+  type FollowingDestroyData,
+  type FollowingDestroyError,
+  type FollowingDestroyResponse,
+  type GeoregionListData,
+  type GeoregionListError,
+  type GeoregionListResponse,
+  type GeoregionRetrieveData,
+  type GeoregionRetrieveError,
+  type GeoregionRetrieveResponse,
+  type GeoregionAutocompleteRetrieveData,
+  type GeoregionAutocompleteRetrieveError,
+  type GeoregionAutocompleteRetrieveResponse,
+  type GeoregionReconciliationRetrieveData,
+  type GeoregionReconciliationRetrieveError,
+  type GeoregionReconciliationRetrieveResponse,
+  type GeoregionReconciliationCreateData,
+  type GeoregionReconciliationCreateError,
+  type GeoregionReconciliationCreateResponse,
+  type GeoregionReconciliationFlyoutRetrieveData,
+  type GeoregionReconciliationFlyoutRetrieveError,
+  type GeoregionReconciliationFlyoutRetrieveResponse,
+  type GeoregionReconciliationFlyoutCreateData,
+  type GeoregionReconciliationFlyoutCreateError,
+  type GeoregionReconciliationFlyoutCreateResponse,
+  type GeoregionReconciliationProposePropertiesRetrieveData,
+  type GeoregionReconciliationProposePropertiesRetrieveError,
+  type GeoregionReconciliationProposePropertiesRetrieveResponse,
+  type GeoregionReconciliationProposePropertiesCreateData,
+  type GeoregionReconciliationProposePropertiesCreateError,
+  type GeoregionReconciliationProposePropertiesCreateResponse,
+  type GeoregionReconciliationSuggestServiceRetrieveData,
+  type GeoregionReconciliationSuggestServiceRetrieveError,
+  type GeoregionReconciliationSuggestServiceRetrieveResponse,
+  type GeoregionReconciliationSuggestServiceCreateData,
+  type GeoregionReconciliationSuggestServiceCreateError,
+  type GeoregionReconciliationSuggestServiceCreateResponse,
+  type JurisdictionListData,
+  type JurisdictionListError,
+  type JurisdictionListResponse,
+  type JurisdictionRetrieveData,
+  type JurisdictionRetrieveError,
+  type JurisdictionRetrieveResponse,
+  type LawListData,
+  type LawListError,
+  type LawListResponse,
+  type LawRetrieveData,
+  type LawRetrieveError,
+  type LawRetrieveResponse,
+  type LawAutocompleteRetrieveData,
+  type LawAutocompleteRetrieveError,
+  type LawAutocompleteRetrieveResponse,
+  type MessageListData,
+  type MessageListError,
+  type MessageListResponse,
+  type MessageRetrieveData,
+  type MessageRetrieveError,
+  type MessageRetrieveResponse,
+  type MessageConvertToPdfCreateData,
+  type MessageConvertToPdfCreateError,
+  type MessageConvertToPdfCreateResponse,
+  type MessageDraftListData,
+  type MessageDraftListError,
+  type MessageDraftListResponse,
+  type MessageDraftCreateData,
+  type MessageDraftCreateError,
+  type MessageDraftCreateResponse,
+  type MessageDraftRetrieveData,
+  type MessageDraftRetrieveError,
+  type MessageDraftRetrieveResponse,
+  type MessageDraftUpdateData,
+  type MessageDraftUpdateError,
+  type MessageDraftUpdateResponse,
+  type MessageDraftPartialUpdateData,
+  type MessageDraftPartialUpdateError,
+  type MessageDraftPartialUpdateResponse,
+  type MessageDraftDestroyData,
+  type MessageDraftDestroyError,
+  type MessageDraftDestroyResponse,
+  type MessageDraftPublishCreateData,
+  type MessageDraftPublishCreateError,
+  type MessageDraftPublishCreateResponse,
+  type PageListData,
+  type PageListError,
+  type PageListResponse,
+  type PageannotationListData,
+  type PageannotationListError,
+  type PageannotationListResponse,
+  type PageannotationCreateData,
+  type PageannotationCreateError,
+  type PageannotationCreateResponse,
+  type PageannotationRetrieveData,
+  type PageannotationRetrieveError,
+  type PageannotationRetrieveResponse,
+  type PageannotationDestroyData,
+  type PageannotationDestroyError,
+  type PageannotationDestroyResponse,
+  type ProblemreportListData,
+  type ProblemreportListError,
+  type ProblemreportListResponse,
+  type ProblemreportRetrieveData,
+  type ProblemreportRetrieveError,
+  type ProblemreportRetrieveResponse,
+  type ProblemreportClaimCreateData,
+  type ProblemreportClaimCreateError,
+  type ProblemreportClaimCreateResponse,
+  type ProblemreportEscalateCreateData,
+  type ProblemreportEscalateCreateError,
+  type ProblemreportEscalateCreateResponse,
+  type ProblemreportResolveCreateData,
+  type ProblemreportResolveCreateError,
+  type ProblemreportResolveCreateResponse,
+  type ProblemreportUnclaimCreateData,
+  type ProblemreportUnclaimCreateError,
+  type ProblemreportUnclaimCreateResponse,
+  type PublicbodyListData,
+  type PublicbodyListError,
+  type PublicbodyListResponse,
+  type PublicbodyRetrieveData,
+  type PublicbodyRetrieveError,
+  type PublicbodyRetrieveResponse,
+  type PublicbodyAutocompleteRetrieveData,
+  type PublicbodyAutocompleteRetrieveError,
+  type PublicbodyAutocompleteRetrieveResponse,
+  type PublicbodyReconciliationRetrieveData,
+  type PublicbodyReconciliationRetrieveError,
+  type PublicbodyReconciliationRetrieveResponse,
+  type PublicbodyReconciliationCreateData,
+  type PublicbodyReconciliationCreateError,
+  type PublicbodyReconciliationCreateResponse,
+  type PublicbodyReconciliationFlyoutRetrieveData,
+  type PublicbodyReconciliationFlyoutRetrieveError,
+  type PublicbodyReconciliationFlyoutRetrieveResponse,
+  type PublicbodyReconciliationFlyoutCreateData,
+  type PublicbodyReconciliationFlyoutCreateError,
+  type PublicbodyReconciliationFlyoutCreateResponse,
+  type PublicbodyReconciliationProposePropertiesRetrieveData,
+  type PublicbodyReconciliationProposePropertiesRetrieveError,
+  type PublicbodyReconciliationProposePropertiesRetrieveResponse,
+  type PublicbodyReconciliationProposePropertiesCreateData,
+  type PublicbodyReconciliationProposePropertiesCreateError,
+  type PublicbodyReconciliationProposePropertiesCreateResponse,
+  type PublicbodyReconciliationSuggestServiceRetrieveData,
+  type PublicbodyReconciliationSuggestServiceRetrieveError,
+  type PublicbodyReconciliationSuggestServiceRetrieveResponse,
+  type PublicbodyReconciliationSuggestServiceCreateData,
+  type PublicbodyReconciliationSuggestServiceCreateError,
+  type PublicbodyReconciliationSuggestServiceCreateResponse,
+  type PublicbodySearchRetrieveData,
+  type PublicbodySearchRetrieveError,
+  type PublicbodySearchRetrieveResponse,
+  type RequestListData,
+  type RequestListError,
+  type RequestListResponse,
+  type RequestCreateData,
+  type RequestCreateError,
+  type RequestCreateResponse,
+  type RequestRetrieveData,
+  type RequestRetrieveError,
+  type RequestRetrieveResponse,
+  type RequestSearchRetrieveData,
+  type RequestSearchRetrieveError,
+  type RequestSearchRetrieveResponse,
+  type RequestTagsAutocompleteRetrieveData,
+  type RequestTagsAutocompleteRetrieveError,
+  type RequestTagsAutocompleteRetrieveResponse,
+  type UploadCreateData,
+  type UploadCreateError,
+  type UploadCreateResponse,
+  type UploadUpdateData,
+  type UploadUpdateError,
+  type UploadUpdateResponse,
+  type UploadPartialUpdateData,
+  type UploadPartialUpdateError,
+  type UploadPartialUpdateResponse,
+  type UploadDestroyData,
+  type UploadDestroyError,
+  type UploadDestroyResponse,
+  type UserRetrieveData,
+  type UserRetrieveError,
+  type UserRetrieveResponse,
+  type UserpreferenceRetrieveData,
+  type UserpreferenceRetrieveError,
+  type UserpreferenceRetrieveResponse,
+  type UserpreferenceCreateData,
+  type UserpreferenceCreateError,
+  type UserpreferenceCreateResponse,
+  type UserpreferenceUpdateData,
+  type UserpreferenceUpdateError,
+  type UserpreferenceUpdateResponse,
+  type UserpreferencePartialUpdateData,
+  type UserpreferencePartialUpdateError,
+  type UserpreferencePartialUpdateResponse,
+  AttachmentListResponseTransformer,
+  AttachmentCreateResponseTransformer,
+  AttachmentRetrieveResponseTransformer,
+  CampaignListResponseTransformer,
+  CampaignRetrieveResponseTransformer,
+  DocumentListResponseTransformer,
+  DocumentRetrieveResponseTransformer,
+  DocumentPartialUpdateResponseTransformer,
+  DocumentOembedRetrieveResponseTransformer,
+  DocumentcollectionListResponseTransformer,
+  DocumentcollectionRetrieveResponseTransformer,
+  DocumentcollectionOembedRetrieveResponseTransformer,
+  FollowingListResponseTransformer,
+  GeoregionListResponseTransformer,
+  GeoregionRetrieveResponseTransformer,
+  GeoregionAutocompleteRetrieveResponseTransformer,
+  GeoregionReconciliationRetrieveResponseTransformer,
+  GeoregionReconciliationCreateResponseTransformer,
+  GeoregionReconciliationFlyoutRetrieveResponseTransformer,
+  GeoregionReconciliationFlyoutCreateResponseTransformer,
+  GeoregionReconciliationProposePropertiesRetrieveResponseTransformer,
+  GeoregionReconciliationProposePropertiesCreateResponseTransformer,
+  GeoregionReconciliationSuggestServiceRetrieveResponseTransformer,
+  GeoregionReconciliationSuggestServiceCreateResponseTransformer,
+  JurisdictionListResponseTransformer,
+  JurisdictionRetrieveResponseTransformer,
+  LawListResponseTransformer,
+  LawRetrieveResponseTransformer,
+  LawAutocompleteRetrieveResponseTransformer,
+  MessageListResponseTransformer,
+  MessageRetrieveResponseTransformer,
+  MessageDraftListResponseTransformer,
+  MessageDraftCreateResponseTransformer,
+  MessageDraftRetrieveResponseTransformer,
+  MessageDraftUpdateResponseTransformer,
+  MessageDraftPartialUpdateResponseTransformer,
+  MessageDraftPublishCreateResponseTransformer,
+  PageannotationListResponseTransformer,
+  PageannotationRetrieveResponseTransformer,
+  ProblemreportListResponseTransformer,
+  ProblemreportRetrieveResponseTransformer,
+  ProblemreportClaimCreateResponseTransformer,
+  ProblemreportEscalateCreateResponseTransformer,
+  ProblemreportResolveCreateResponseTransformer,
+  ProblemreportUnclaimCreateResponseTransformer,
+  PublicbodyRetrieveResponseTransformer,
+  RequestListResponseTransformer,
+  RequestRetrieveResponseTransformer,
+  RequestSearchRetrieveResponseTransformer,
+  RequestTagsAutocompleteRetrieveResponseTransformer,
+  UploadCreateResponseTransformer,
+  UploadUpdateResponseTransformer,
+  UploadPartialUpdateResponseTransformer
 } from './types.gen'
 
 export const client = createClient(createConfig())
 
-export const listProfiles = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
+export const attachmentList = <ThrowOnError extends boolean = false>(
+  options?: Options<AttachmentListData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListProfilesResponse,
-    ListProfilesError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/user/'
-  })
-}
-
-export const retrieveUserPreference = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveUserPreferenceData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveUserPreferenceResponse,
-    RetrieveUserPreferenceError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/userpreference/{key}/'
-  })
-}
-
-export const createUserPreference = <ThrowOnError extends boolean = false>(
-  options: Options<CreateUserPreferenceData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    CreateUserPreferenceResponse,
-    CreateUserPreferenceError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/userpreference/{key}/'
-  })
-}
-
-export const updateUserPreference = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateUserPreferenceData, ThrowOnError>
-) => {
-  return (options?.client ?? client).put<
-    UpdateUserPreferenceResponse,
-    UpdateUserPreferenceError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/userpreference/{key}/'
-  })
-}
-
-export const partialUpdateUserPreference = <
-  ThrowOnError extends boolean = false
->(
-  options: Options<PartialUpdateUserPreferenceData, ThrowOnError>
-) => {
-  return (options?.client ?? client).patch<
-    PartialUpdateUserPreferenceResponse,
-    PartialUpdateUserPreferenceError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/userpreference/{key}/'
-  })
-}
-
-export const listFoiRequestLists = <ThrowOnError extends boolean = false>(
-  options?: Options<ListFoiRequestListsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListFoiRequestListsResponse,
-    ListFoiRequestListsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/request/',
-    responseTransformer: ListFoiRequestListsResponseTransformer
-  })
-}
-
-export const createMakeRequest = <ThrowOnError extends boolean = false>(
-  options?: Options<CreateMakeRequestData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    CreateMakeRequestResponse,
-    CreateMakeRequestError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/request/'
-  })
-}
-
-export const searchFoiRequestList = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    SearchFoiRequestListResponse,
-    SearchFoiRequestListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/request/search/',
-    responseTransformer: SearchFoiRequestListResponseTransformer
-  })
-}
-
-export const tagsAutocompleteFoiRequestList = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    TagsAutocompleteFoiRequestListResponse,
-    TagsAutocompleteFoiRequestListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/request/tags/autocomplete/',
-    responseTransformer: TagsAutocompleteFoiRequestListResponseTransformer
-  })
-}
-
-export const retrieveFoiRequestDetail = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveFoiRequestDetailData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveFoiRequestDetailResponse,
-    RetrieveFoiRequestDetailError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/request/{id}/',
-    responseTransformer: RetrieveFoiRequestDetailResponseTransformer
-  })
-}
-
-export const listFoiMessageDrafts = <ThrowOnError extends boolean = false>(
-  options?: Options<ListFoiMessageDraftsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListFoiMessageDraftsResponse,
-    ListFoiMessageDraftsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/',
-    responseTransformer: ListFoiMessageDraftsResponseTransformer
-  })
-}
-
-export const createFoiMessageDraft = <ThrowOnError extends boolean = false>(
-  options?: Options<CreateFoiMessageDraftData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    CreateFoiMessageDraftResponse,
-    CreateFoiMessageDraftError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/',
-    responseTransformer: CreateFoiMessageDraftResponseTransformer
-  })
-}
-
-export const retrieveFoiMessageDraft = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveFoiMessageDraftData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveFoiMessageDraftResponse,
-    RetrieveFoiMessageDraftError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/{id}/',
-    responseTransformer: RetrieveFoiMessageDraftResponseTransformer
-  })
-}
-
-export const updateFoiMessageDraft = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateFoiMessageDraftData, ThrowOnError>
-) => {
-  return (options?.client ?? client).put<
-    UpdateFoiMessageDraftResponse,
-    UpdateFoiMessageDraftError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/{id}/',
-    responseTransformer: UpdateFoiMessageDraftResponseTransformer
-  })
-}
-
-export const partialUpdateFoiMessageDraft = <
-  ThrowOnError extends boolean = false
->(
-  options: Options<PartialUpdateFoiMessageDraftData, ThrowOnError>
-) => {
-  return (options?.client ?? client).patch<
-    PartialUpdateFoiMessageDraftResponse,
-    PartialUpdateFoiMessageDraftError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/{id}/',
-    responseTransformer: PartialUpdateFoiMessageDraftResponseTransformer
-  })
-}
-
-export const destroyFoiMessageDraft = <ThrowOnError extends boolean = false>(
-  options: Options<DestroyFoiMessageDraftData, ThrowOnError>
-) => {
-  return (options?.client ?? client).delete<
-    DestroyFoiMessageDraftResponse,
-    DestroyFoiMessageDraftError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/{id}/'
-  })
-}
-
-export const listFoiMessages = <ThrowOnError extends boolean = false>(
-  options?: Options<ListFoiMessagesData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListFoiMessagesResponse,
-    ListFoiMessagesError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/',
-    responseTransformer: ListFoiMessagesResponseTransformer
-  })
-}
-
-export const retrieveFoiMessage = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveFoiMessageData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveFoiMessageResponse,
-    RetrieveFoiMessageError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/{id}/',
-    responseTransformer: RetrieveFoiMessageResponseTransformer
-  })
-}
-
-export const listFoiAttachments = <ThrowOnError extends boolean = false>(
-  options?: Options<ListFoiAttachmentsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListFoiAttachmentsResponse,
-    ListFoiAttachmentsError,
+    AttachmentListResponse,
+    AttachmentListError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/attachment/',
-    responseTransformer: ListFoiAttachmentsResponseTransformer
+    responseTransformer: AttachmentListResponseTransformer
   })
 }
 
-export const createFoiAttachmentTus = <ThrowOnError extends boolean = false>(
-  options?: Options<CreateFoiAttachmentTusData, ThrowOnError>
+export const attachmentCreate = <ThrowOnError extends boolean = false>(
+  options: Options<AttachmentCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    CreateFoiAttachmentTusResponse,
-    CreateFoiAttachmentTusError,
+    AttachmentCreateResponse,
+    AttachmentCreateError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/attachment/'
+    url: '/api/v1/attachment/',
+    responseTransformer: AttachmentCreateResponseTransformer
   })
 }
 
-export const retrieveFoiAttachment = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveFoiAttachmentData, ThrowOnError>
+export const attachmentRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<AttachmentRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    RetrieveFoiAttachmentResponse,
-    RetrieveFoiAttachmentError,
+    AttachmentRetrieveResponse,
+    AttachmentRetrieveError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/attachment/{id}/',
-    responseTransformer: RetrieveFoiAttachmentResponseTransformer
+    responseTransformer: AttachmentRetrieveResponseTransformer
   })
 }
 
-export const destroyFoiRequestList = <ThrowOnError extends boolean = false>(
-  options: Options<DestroyFoiRequestListData, ThrowOnError>
+export const attachmentDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<AttachmentDestroyData, ThrowOnError>
 ) => {
   return (options?.client ?? client).delete<
-    DestroyFoiRequestListResponse,
-    DestroyFoiRequestListError,
+    AttachmentDestroyResponse,
+    AttachmentDestroyError,
     ThrowOnError
   >({
     ...options,
@@ -613,457 +369,40 @@ export const destroyFoiRequestList = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const listFoiRequestFollows = <ThrowOnError extends boolean = false>(
-  options?: Options<ListFoiRequestFollowsData, ThrowOnError>
+export const campaignList = <ThrowOnError extends boolean = false>(
+  options?: Options<CampaignListData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListFoiRequestFollowsResponse,
-    ListFoiRequestFollowsError,
+    CampaignListResponse,
+    CampaignListError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/following/',
-    responseTransformer: ListFoiRequestFollowsResponseTransformer
+    url: '/api/v1/campaign/',
+    responseTransformer: CampaignListResponseTransformer
   })
 }
 
-export const createCreateFoiRequestFollow = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<CreateCreateFoiRequestFollowData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    CreateCreateFoiRequestFollowResponse,
-    CreateCreateFoiRequestFollowError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/following/'
-  })
-}
-
-export const listGeoRegions = <ThrowOnError extends boolean = false>(
-  options?: Options<ListGeoRegionsData, ThrowOnError>
+export const campaignRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<CampaignRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListGeoRegionsResponse,
-    ListGeoRegionsError,
+    CampaignRetrieveResponse,
+    CampaignRetrieveError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/georegion/',
-    responseTransformer: ListGeoRegionsResponseTransformer
+    url: '/api/v1/campaign/{id}/',
+    responseTransformer: CampaignRetrieveResponseTransformer
   })
 }
 
-export const autocompleteGeoRegion = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
+export const categoryList = <ThrowOnError extends boolean = false>(
+  options?: Options<CategoryListData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    AutocompleteGeoRegionResponse,
-    AutocompleteGeoRegionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/autocomplete/',
-    responseTransformer: AutocompleteGeoRegionResponseTransformer
-  })
-}
-
-/**
- * This is a OpenRefine Reconciliation API endpoint
- */
-export const reconciliationGeoRegion = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationGeoRegionResponse,
-    ReconciliationGeoRegionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation/',
-    responseTransformer: ReconciliationGeoRegionResponseTransformer
-  })
-}
-
-/**
- * This is a OpenRefine Reconciliation API endpoint
- */
-export const reconciliationGeoRegion1 = <ThrowOnError extends boolean = false>(
-  options?: Options<ReconciliationGeoRegion1Data, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationGeoRegion1Response,
-    ReconciliationGeoRegion1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation/',
-    responseTransformer: ReconciliationGeoRegion1ResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Flyout Entry Point
- */
-export const reconciliationFlyoutEntityGeoRegion = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationFlyoutEntityGeoRegionResponse,
-    ReconciliationFlyoutEntityGeoRegionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation-flyout/',
-    responseTransformer: ReconciliationFlyoutEntityGeoRegionResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Flyout Entry Point
- */
-export const reconciliationFlyoutEntityGeoRegion1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<ReconciliationFlyoutEntityGeoRegion1Data, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationFlyoutEntityGeoRegion1Response,
-    ReconciliationFlyoutEntityGeoRegion1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation-flyout/',
-    responseTransformer: ReconciliationFlyoutEntityGeoRegion1ResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Data Extension API
- */
-export const reconciliationProposePropertiesGeoRegion = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationProposePropertiesGeoRegionResponse,
-    ReconciliationProposePropertiesGeoRegionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation-propose-properties/',
-    responseTransformer:
-      ReconciliationProposePropertiesGeoRegionResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Data Extension API
- */
-export const reconciliationProposePropertiesGeoRegion1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<ReconciliationProposePropertiesGeoRegion1Data, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationProposePropertiesGeoRegion1Response,
-    ReconciliationProposePropertiesGeoRegion1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation-propose-properties/',
-    responseTransformer:
-      ReconciliationProposePropertiesGeoRegion1ResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Suggest Entry Point
- */
-export const reconciliationSuggestServiceGeoRegion = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationSuggestServiceGeoRegionResponse,
-    ReconciliationSuggestServiceGeoRegionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation-suggest-service/',
-    responseTransformer:
-      ReconciliationSuggestServiceGeoRegionResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Suggest Entry Point
- */
-export const reconciliationSuggestServiceGeoRegion1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<ReconciliationSuggestServiceGeoRegion1Data, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationSuggestServiceGeoRegion1Response,
-    ReconciliationSuggestServiceGeoRegion1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/reconciliation-suggest-service/',
-    responseTransformer:
-      ReconciliationSuggestServiceGeoRegion1ResponseTransformer
-  })
-}
-
-export const retrieveGeoRegion = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveGeoRegionData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveGeoRegionResponse,
-    RetrieveGeoRegionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/georegion/{id}/',
-    responseTransformer: RetrieveGeoRegionResponseTransformer
-  })
-}
-
-export const listPublicBodyLists = <ThrowOnError extends boolean = false>(
-  options?: Options<ListPublicBodyListsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListPublicBodyListsResponse,
-    ListPublicBodyListsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/',
-    responseTransformer: ListPublicBodyListsResponseTransformer
-  })
-}
-
-export const autocompletePublicBodyList = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    AutocompletePublicBodyListResponse,
-    AutocompletePublicBodyListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/autocomplete/',
-    responseTransformer: AutocompletePublicBodyListResponseTransformer
-  })
-}
-
-/**
- * This is a OpenRefine Reconciliation API endpoint
- */
-export const reconciliationPublicBodyList = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationPublicBodyListResponse,
-    ReconciliationPublicBodyListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation/',
-    responseTransformer: ReconciliationPublicBodyListResponseTransformer
-  })
-}
-
-/**
- * This is a OpenRefine Reconciliation API endpoint
- */
-export const reconciliationPublicBodyList1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<ReconciliationPublicBodyList1Data, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationPublicBodyList1Response,
-    ReconciliationPublicBodyList1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation/',
-    responseTransformer: ReconciliationPublicBodyList1ResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Flyout Entry Point
- */
-export const reconciliationFlyoutEntityPublicBodyList = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationFlyoutEntityPublicBodyListResponse,
-    ReconciliationFlyoutEntityPublicBodyListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation-flyout/',
-    responseTransformer:
-      ReconciliationFlyoutEntityPublicBodyListResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Flyout Entry Point
- */
-export const reconciliationFlyoutEntityPublicBodyList1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<ReconciliationFlyoutEntityPublicBodyList1Data, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationFlyoutEntityPublicBodyList1Response,
-    ReconciliationFlyoutEntityPublicBodyList1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation-flyout/',
-    responseTransformer:
-      ReconciliationFlyoutEntityPublicBodyList1ResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Data Extension API
- */
-export const reconciliationProposePropertiesPublicBodyList = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationProposePropertiesPublicBodyListResponse,
-    ReconciliationProposePropertiesPublicBodyListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation-propose-properties/',
-    responseTransformer:
-      ReconciliationProposePropertiesPublicBodyListResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Data Extension API
- */
-export const reconciliationProposePropertiesPublicBodyList1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<
-    ReconciliationProposePropertiesPublicBodyList1Data,
-    ThrowOnError
-  >
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationProposePropertiesPublicBodyList1Response,
-    ReconciliationProposePropertiesPublicBodyList1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation-propose-properties/',
-    responseTransformer:
-      ReconciliationProposePropertiesPublicBodyList1ResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Suggest Entry Point
- */
-export const reconciliationSuggestServicePublicBodyList = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ReconciliationSuggestServicePublicBodyListResponse,
-    ReconciliationSuggestServicePublicBodyListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation-suggest-service/',
-    responseTransformer:
-      ReconciliationSuggestServicePublicBodyListResponseTransformer
-  })
-}
-
-/**
- * Implements OpenRefine Suggest Entry Point
- */
-export const reconciliationSuggestServicePublicBodyList1 = <
-  ThrowOnError extends boolean = false
->(
-  options?: Options<
-    ReconciliationSuggestServicePublicBodyList1Data,
-    ThrowOnError
-  >
-) => {
-  return (options?.client ?? client).post<
-    ReconciliationSuggestServicePublicBodyList1Response,
-    ReconciliationSuggestServicePublicBodyList1Error,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/reconciliation-suggest-service/',
-    responseTransformer:
-      ReconciliationSuggestServicePublicBodyList1ResponseTransformer
-  })
-}
-
-export const searchPublicBodyList = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    SearchPublicBodyListResponse,
-    SearchPublicBodyListError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/search/',
-    responseTransformer: SearchPublicBodyListResponseTransformer
-  })
-}
-
-export const retrievePublicBody = <ThrowOnError extends boolean = false>(
-  options: Options<RetrievePublicBodyData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrievePublicBodyResponse,
-    RetrievePublicBodyError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/publicbody/{id}/',
-    responseTransformer: RetrievePublicBodyResponseTransformer
-  })
-}
-
-export const listCategories = <ThrowOnError extends boolean = false>(
-  options?: Options<ListCategoriesData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListCategoriesResponse,
-    ListCategoriesError,
+    CategoryListResponse,
+    CategoryListError,
     ThrowOnError
   >({
     ...options,
@@ -1071,25 +410,12 @@ export const listCategories = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const autocompleteCategory = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
+export const categoryRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<CategoryRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    AutocompleteCategoryResponse,
-    AutocompleteCategoryError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/category/autocomplete/'
-  })
-}
-
-export const retrieveCategory = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveCategoryData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveCategoryResponse,
-    RetrieveCategoryError,
+    CategoryRetrieveResponse,
+    CategoryRetrieveError,
     ThrowOnError
   >({
     ...options,
@@ -1097,12 +423,27 @@ export const retrieveCategory = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const listClassifications = <ThrowOnError extends boolean = false>(
-  options?: Options<ListClassificationsData, ThrowOnError>
+export const categoryAutocompleteRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<CategoryAutocompleteRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListClassificationsResponse,
-    ListClassificationsError,
+    CategoryAutocompleteRetrieveResponse,
+    CategoryAutocompleteRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/category/autocomplete/'
+  })
+}
+
+export const classificationList = <ThrowOnError extends boolean = false>(
+  options?: Options<ClassificationListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    ClassificationListResponse,
+    ClassificationListError,
     ThrowOnError
   >({
     ...options,
@@ -1110,12 +451,12 @@ export const listClassifications = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const retrieveClassification = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveClassificationData, ThrowOnError>
+export const classificationRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<ClassificationRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    RetrieveClassificationResponse,
-    RetrieveClassificationError,
+    ClassificationRetrieveResponse,
+    ClassificationRetrieveError,
     ThrowOnError
   >({
     ...options,
@@ -1123,124 +464,40 @@ export const retrieveClassification = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const listJurisdictions = <ThrowOnError extends boolean = false>(
-  options?: Options<ListJurisdictionsData, ThrowOnError>
+export const documentList = <ThrowOnError extends boolean = false>(
+  options?: Options<DocumentListData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListJurisdictionsResponse,
-    ListJurisdictionsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/jurisdiction/',
-    responseTransformer: ListJurisdictionsResponseTransformer
-  })
-}
-
-export const retrieveJurisdiction = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveJurisdictionData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveJurisdictionResponse,
-    RetrieveJurisdictionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/jurisdiction/{id}/',
-    responseTransformer: RetrieveJurisdictionResponseTransformer
-  })
-}
-
-export const listFoiLaws = <ThrowOnError extends boolean = false>(
-  options?: Options<ListFoiLawsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListFoiLawsResponse,
-    ListFoiLawsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/law/',
-    responseTransformer: ListFoiLawsResponseTransformer
-  })
-}
-
-export const autocompleteFoiLaw = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    AutocompleteFoiLawResponse,
-    AutocompleteFoiLawError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/law/autocomplete/',
-    responseTransformer: AutocompleteFoiLawResponseTransformer
-  })
-}
-
-export const retrieveFoiLaw = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveFoiLawData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveFoiLawResponse,
-    RetrieveFoiLawError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/law/{id}/',
-    responseTransformer: RetrieveFoiLawResponseTransformer
-  })
-}
-
-export const listDocuments = <ThrowOnError extends boolean = false>(
-  options?: Options<ListDocumentsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListDocumentsResponse,
-    ListDocumentsError,
+    DocumentListResponse,
+    DocumentListError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/document/',
-    responseTransformer: ListDocumentsResponseTransformer
+    responseTransformer: DocumentListResponseTransformer
   })
 }
 
-export const oembedDocument = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
+export const documentRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<DocumentRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    OembedDocumentResponse,
-    OembedDocumentError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/document/oembed/',
-    responseTransformer: OembedDocumentResponseTransformer
-  })
-}
-
-export const retrieveDocumentDetail = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveDocumentDetailData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveDocumentDetailResponse,
-    RetrieveDocumentDetailError,
+    DocumentRetrieveResponse,
+    DocumentRetrieveError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/document/{id}/',
-    responseTransformer: RetrieveDocumentDetailResponseTransformer
+    responseTransformer: DocumentRetrieveResponseTransformer
   })
 }
 
-export const updateUpdateDocument = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateUpdateDocumentData, ThrowOnError>
+export const documentUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<DocumentUpdateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).put<
-    UpdateUpdateDocumentResponse,
-    UpdateUpdateDocumentError,
+    DocumentUpdateResponse,
+    DocumentUpdateError,
     ThrowOnError
   >({
     ...options,
@@ -1248,224 +505,451 @@ export const updateUpdateDocument = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const partialUpdateDocument = <ThrowOnError extends boolean = false>(
-  options: Options<PartialUpdateDocumentData, ThrowOnError>
+export const documentPartialUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<DocumentPartialUpdateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).patch<
-    PartialUpdateDocumentResponse,
-    PartialUpdateDocumentError,
+    DocumentPartialUpdateResponse,
+    DocumentPartialUpdateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/document/{id}/',
-    responseTransformer: PartialUpdateDocumentResponseTransformer
+    responseTransformer: DocumentPartialUpdateResponseTransformer
   })
 }
 
-export const listDocumentCollections = <ThrowOnError extends boolean = false>(
-  options?: Options<ListDocumentCollectionsData, ThrowOnError>
+export const documentOembedRetrieve = <ThrowOnError extends boolean = false>(
+  options?: Options<DocumentOembedRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListDocumentCollectionsResponse,
-    ListDocumentCollectionsError,
+    DocumentOembedRetrieveResponse,
+    DocumentOembedRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/document/oembed/',
+    responseTransformer: DocumentOembedRetrieveResponseTransformer
+  })
+}
+
+export const documentcollectionList = <ThrowOnError extends boolean = false>(
+  options?: Options<DocumentcollectionListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    DocumentcollectionListResponse,
+    DocumentcollectionListError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/documentcollection/',
-    responseTransformer: ListDocumentCollectionsResponseTransformer
+    responseTransformer: DocumentcollectionListResponseTransformer
   })
 }
 
-export const oembedDocumentCollection = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    OembedDocumentCollectionResponse,
-    OembedDocumentCollectionError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/documentcollection/oembed/',
-    responseTransformer: OembedDocumentCollectionResponseTransformer
-  })
-}
-
-export const retrieveDocumentCollection = <
+export const documentcollectionRetrieve = <
   ThrowOnError extends boolean = false
 >(
-  options: Options<RetrieveDocumentCollectionData, ThrowOnError>
+  options: Options<DocumentcollectionRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    RetrieveDocumentCollectionResponse,
-    RetrieveDocumentCollectionError,
+    DocumentcollectionRetrieveResponse,
+    DocumentcollectionRetrieveError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/documentcollection/{id}/',
-    responseTransformer: RetrieveDocumentCollectionResponseTransformer
+    responseTransformer: DocumentcollectionRetrieveResponseTransformer
   })
 }
 
-export const listPages = <ThrowOnError extends boolean = false>(
-  options?: Options<ListPagesData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListPagesResponse,
-    ListPagesError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/page/'
-  })
-}
-
-export const listPageAnnotations = <ThrowOnError extends boolean = false>(
-  options?: Options<ListPageAnnotationsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListPageAnnotationsResponse,
-    ListPageAnnotationsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/pageannotation/',
-    responseTransformer: ListPageAnnotationsResponseTransformer
-  })
-}
-
-export const createCreatePageAnnotation = <
+export const documentcollectionOembedRetrieve = <
   ThrowOnError extends boolean = false
 >(
-  options?: Options<CreateCreatePageAnnotationData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    CreateCreatePageAnnotationResponse,
-    CreateCreatePageAnnotationError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/pageannotation/'
-  })
-}
-
-export const retrievePageAnnotation = <ThrowOnError extends boolean = false>(
-  options: Options<RetrievePageAnnotationData, ThrowOnError>
+  options?: Options<DocumentcollectionOembedRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    RetrievePageAnnotationResponse,
-    RetrievePageAnnotationError,
+    DocumentcollectionOembedRetrieveResponse,
+    DocumentcollectionOembedRetrieveError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/pageannotation/{id}/',
-    responseTransformer: RetrievePageAnnotationResponseTransformer
+    url: '/api/v1/documentcollection/oembed/',
+    responseTransformer: DocumentcollectionOembedRetrieveResponseTransformer
   })
 }
 
-export const destroyPageAnnotation = <ThrowOnError extends boolean = false>(
-  options: Options<DestroyPageAnnotationData, ThrowOnError>
+export const followingList = <ThrowOnError extends boolean = false>(
+  options?: Options<FollowingListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    FollowingListResponse,
+    FollowingListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/following/',
+    responseTransformer: FollowingListResponseTransformer
+  })
+}
+
+export const followingCreate = <ThrowOnError extends boolean = false>(
+  options: Options<FollowingCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    FollowingCreateResponse,
+    FollowingCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/following/'
+  })
+}
+
+export const followingDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<FollowingDestroyData, ThrowOnError>
 ) => {
   return (options?.client ?? client).delete<
-    DestroyPageAnnotationResponse,
-    DestroyPageAnnotationError,
+    FollowingDestroyResponse,
+    FollowingDestroyError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/pageannotation/{id}/'
+    url: '/api/v1/following/{id}/'
   })
 }
 
-export const listProblemReports = <ThrowOnError extends boolean = false>(
-  options?: Options<ListProblemReportsData, ThrowOnError>
+export const georegionList = <ThrowOnError extends boolean = false>(
+  options?: Options<GeoregionListData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    ListProblemReportsResponse,
-    ListProblemReportsError,
+    GeoregionListResponse,
+    GeoregionListError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/problemreport/',
-    responseTransformer: ListProblemReportsResponseTransformer
+    url: '/api/v1/georegion/',
+    responseTransformer: GeoregionListResponseTransformer
   })
 }
 
-export const retrieveProblemReport = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveProblemReportData, ThrowOnError>
+export const georegionRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<GeoregionRetrieveData, ThrowOnError>
 ) => {
   return (options?.client ?? client).get<
-    RetrieveProblemReportResponse,
-    RetrieveProblemReportError,
+    GeoregionRetrieveResponse,
+    GeoregionRetrieveError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/problemreport/{id}/',
-    responseTransformer: RetrieveProblemReportResponseTransformer
+    url: '/api/v1/georegion/{id}/',
+    responseTransformer: GeoregionRetrieveResponseTransformer
   })
 }
 
-export const listCampaigns = <ThrowOnError extends boolean = false>(
-  options?: Options<ListCampaignsData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListCampaignsResponse,
-    ListCampaignsError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/campaign/',
-    responseTransformer: ListCampaignsResponseTransformer
-  })
-}
-
-export const retrieveCampaign = <ThrowOnError extends boolean = false>(
-  options: Options<RetrieveCampaignData, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    RetrieveCampaignResponse,
-    RetrieveCampaignError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/campaign/{id}/',
-    responseTransformer: RetrieveCampaignResponseTransformer
-  })
-}
-
-export const listSpectacularSwaggers = <ThrowOnError extends boolean = false>(
-  options?: Options<unknown, ThrowOnError>
-) => {
-  return (options?.client ?? client).get<
-    ListSpectacularSwaggersResponse,
-    ListSpectacularSwaggersError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/schema/swagger-ui/'
-  })
-}
-
-export const publishFoiMessageDraft = <ThrowOnError extends boolean = false>(
-  options: Options<PublishFoiMessageDraftData, ThrowOnError>
-) => {
-  return (options?.client ?? client).post<
-    PublishFoiMessageDraftResponse,
-    PublishFoiMessageDraftError,
-    ThrowOnError
-  >({
-    ...options,
-    url: '/api/v1/message/draft/{id}/publish/',
-    responseTransformer: PublishFoiMessageDraftResponseTransformer
-  })
-}
-
-export const convertToPdfImageAttachmentConverter = <
+export const georegionAutocompleteRetrieve = <
   ThrowOnError extends boolean = false
 >(
-  options: Options<ConvertToPdfImageAttachmentConverterData, ThrowOnError>
+  options?: Options<GeoregionAutocompleteRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    GeoregionAutocompleteRetrieveResponse,
+    GeoregionAutocompleteRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/autocomplete/',
+    responseTransformer: GeoregionAutocompleteRetrieveResponseTransformer
+  })
+}
+
+/**
+ * This is a OpenRefine Reconciliation API endpoint
+ * https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+ * It's a bit messy.
+ */
+export const georegionReconciliationRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<GeoregionReconciliationRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    GeoregionReconciliationRetrieveResponse,
+    GeoregionReconciliationRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation/',
+    responseTransformer: GeoregionReconciliationRetrieveResponseTransformer
+  })
+}
+
+/**
+ * This is a OpenRefine Reconciliation API endpoint
+ * https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+ * It's a bit messy.
+ */
+export const georegionReconciliationCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<GeoregionReconciliationCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    ConvertToPdfImageAttachmentConverterResponse,
-    ConvertToPdfImageAttachmentConverterError,
+    GeoregionReconciliationCreateResponse,
+    GeoregionReconciliationCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation/',
+    responseTransformer: GeoregionReconciliationCreateResponseTransformer
+  })
+}
+
+/**
+ * Implements OpenRefine Flyout Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+ */
+export const georegionReconciliationFlyoutRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<GeoregionReconciliationFlyoutRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    GeoregionReconciliationFlyoutRetrieveResponse,
+    GeoregionReconciliationFlyoutRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation-flyout/',
+    responseTransformer:
+      GeoregionReconciliationFlyoutRetrieveResponseTransformer
+  })
+}
+
+/**
+ * Implements OpenRefine Flyout Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+ */
+export const georegionReconciliationFlyoutCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<GeoregionReconciliationFlyoutCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    GeoregionReconciliationFlyoutCreateResponse,
+    GeoregionReconciliationFlyoutCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation-flyout/',
+    responseTransformer: GeoregionReconciliationFlyoutCreateResponseTransformer
+  })
+}
+
+/**
+ * Implements OpenRefine Data Extension API
+ * https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+ */
+export const georegionReconciliationProposePropertiesRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<
+    GeoregionReconciliationProposePropertiesRetrieveData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).get<
+    GeoregionReconciliationProposePropertiesRetrieveResponse,
+    GeoregionReconciliationProposePropertiesRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation-propose-properties/',
+    responseTransformer:
+      GeoregionReconciliationProposePropertiesRetrieveResponseTransformer
+  })
+}
+
+/**
+ * Implements OpenRefine Data Extension API
+ * https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+ */
+export const georegionReconciliationProposePropertiesCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<
+    GeoregionReconciliationProposePropertiesCreateData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).post<
+    GeoregionReconciliationProposePropertiesCreateResponse,
+    GeoregionReconciliationProposePropertiesCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation-propose-properties/',
+    responseTransformer:
+      GeoregionReconciliationProposePropertiesCreateResponseTransformer
+  })
+}
+
+/**
+ * Implements OpenRefine Suggest Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+ *
+ * Only implements prefix
+ */
+export const georegionReconciliationSuggestServiceRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<
+    GeoregionReconciliationSuggestServiceRetrieveData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).get<
+    GeoregionReconciliationSuggestServiceRetrieveResponse,
+    GeoregionReconciliationSuggestServiceRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation-suggest-service/',
+    responseTransformer:
+      GeoregionReconciliationSuggestServiceRetrieveResponseTransformer
+  })
+}
+
+/**
+ * Implements OpenRefine Suggest Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+ *
+ * Only implements prefix
+ */
+export const georegionReconciliationSuggestServiceCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<
+    GeoregionReconciliationSuggestServiceCreateData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).post<
+    GeoregionReconciliationSuggestServiceCreateResponse,
+    GeoregionReconciliationSuggestServiceCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/georegion/reconciliation-suggest-service/',
+    responseTransformer:
+      GeoregionReconciliationSuggestServiceCreateResponseTransformer
+  })
+}
+
+export const jurisdictionList = <ThrowOnError extends boolean = false>(
+  options?: Options<JurisdictionListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    JurisdictionListResponse,
+    JurisdictionListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/jurisdiction/',
+    responseTransformer: JurisdictionListResponseTransformer
+  })
+}
+
+export const jurisdictionRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<JurisdictionRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    JurisdictionRetrieveResponse,
+    JurisdictionRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/jurisdiction/{id}/',
+    responseTransformer: JurisdictionRetrieveResponseTransformer
+  })
+}
+
+export const lawList = <ThrowOnError extends boolean = false>(
+  options?: Options<LawListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    LawListResponse,
+    LawListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/law/',
+    responseTransformer: LawListResponseTransformer
+  })
+}
+
+export const lawRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<LawRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    LawRetrieveResponse,
+    LawRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/law/{id}/',
+    responseTransformer: LawRetrieveResponseTransformer
+  })
+}
+
+export const lawAutocompleteRetrieve = <ThrowOnError extends boolean = false>(
+  options?: Options<LawAutocompleteRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    LawAutocompleteRetrieveResponse,
+    LawAutocompleteRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/law/autocomplete/',
+    responseTransformer: LawAutocompleteRetrieveResponseTransformer
+  })
+}
+
+export const messageList = <ThrowOnError extends boolean = false>(
+  options?: Options<MessageListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    MessageListResponse,
+    MessageListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/',
+    responseTransformer: MessageListResponseTransformer
+  })
+}
+
+export const messageRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<MessageRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    MessageRetrieveResponse,
+    MessageRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/{id}/',
+    responseTransformer: MessageRetrieveResponseTransformer
+  })
+}
+
+export const messageConvertToPdfCreate = <ThrowOnError extends boolean = false>(
+  options: Options<MessageConvertToPdfCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    MessageConvertToPdfCreateResponse,
+    MessageConvertToPdfCreateError,
     ThrowOnError
   >({
     ...options,
@@ -1473,110 +957,604 @@ export const convertToPdfImageAttachmentConverter = <
   })
 }
 
-export const claimProblemReport = <ThrowOnError extends boolean = false>(
-  options: Options<ClaimProblemReportData, ThrowOnError>
+export const messageDraftList = <ThrowOnError extends boolean = false>(
+  options?: Options<MessageDraftListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    MessageDraftListResponse,
+    MessageDraftListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/',
+    responseTransformer: MessageDraftListResponseTransformer
+  })
+}
+
+export const messageDraftCreate = <ThrowOnError extends boolean = false>(
+  options: Options<MessageDraftCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    ClaimProblemReportResponse,
-    ClaimProblemReportError,
+    MessageDraftCreateResponse,
+    MessageDraftCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/',
+    responseTransformer: MessageDraftCreateResponseTransformer
+  })
+}
+
+export const messageDraftRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<MessageDraftRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    MessageDraftRetrieveResponse,
+    MessageDraftRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/{id}/',
+    responseTransformer: MessageDraftRetrieveResponseTransformer
+  })
+}
+
+export const messageDraftUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<MessageDraftUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).put<
+    MessageDraftUpdateResponse,
+    MessageDraftUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/{id}/',
+    responseTransformer: MessageDraftUpdateResponseTransformer
+  })
+}
+
+export const messageDraftPartialUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<MessageDraftPartialUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).patch<
+    MessageDraftPartialUpdateResponse,
+    MessageDraftPartialUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/{id}/',
+    responseTransformer: MessageDraftPartialUpdateResponseTransformer
+  })
+}
+
+export const messageDraftDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<MessageDraftDestroyData, ThrowOnError>
+) => {
+  return (options?.client ?? client).delete<
+    MessageDraftDestroyResponse,
+    MessageDraftDestroyError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/{id}/'
+  })
+}
+
+export const messageDraftPublishCreate = <ThrowOnError extends boolean = false>(
+  options: Options<MessageDraftPublishCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    MessageDraftPublishCreateResponse,
+    MessageDraftPublishCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/draft/{id}/publish/',
+    responseTransformer: MessageDraftPublishCreateResponseTransformer
+  })
+}
+
+export const pageList = <ThrowOnError extends boolean = false>(
+  options?: Options<PageListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PageListResponse,
+    PageListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/page/'
+  })
+}
+
+export const pageannotationList = <ThrowOnError extends boolean = false>(
+  options?: Options<PageannotationListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PageannotationListResponse,
+    PageannotationListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/pageannotation/',
+    responseTransformer: PageannotationListResponseTransformer
+  })
+}
+
+export const pageannotationCreate = <ThrowOnError extends boolean = false>(
+  options: Options<PageannotationCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    PageannotationCreateResponse,
+    PageannotationCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/pageannotation/'
+  })
+}
+
+export const pageannotationRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<PageannotationRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PageannotationRetrieveResponse,
+    PageannotationRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/pageannotation/{id}/',
+    responseTransformer: PageannotationRetrieveResponseTransformer
+  })
+}
+
+export const pageannotationDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<PageannotationDestroyData, ThrowOnError>
+) => {
+  return (options?.client ?? client).delete<
+    PageannotationDestroyResponse,
+    PageannotationDestroyError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/pageannotation/{id}/'
+  })
+}
+
+export const problemreportList = <ThrowOnError extends boolean = false>(
+  options?: Options<ProblemreportListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    ProblemreportListResponse,
+    ProblemreportListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/problemreport/',
+    responseTransformer: ProblemreportListResponseTransformer
+  })
+}
+
+export const problemreportRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<ProblemreportRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    ProblemreportRetrieveResponse,
+    ProblemreportRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/problemreport/{id}/',
+    responseTransformer: ProblemreportRetrieveResponseTransformer
+  })
+}
+
+export const problemreportClaimCreate = <ThrowOnError extends boolean = false>(
+  options: Options<ProblemreportClaimCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    ProblemreportClaimCreateResponse,
+    ProblemreportClaimCreateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/problemreport/{id}/claim/',
-    responseTransformer: ClaimProblemReportResponseTransformer
+    responseTransformer: ProblemreportClaimCreateResponseTransformer
   })
 }
 
-export const escalateProblemReport = <ThrowOnError extends boolean = false>(
-  options: Options<EscalateProblemReportData, ThrowOnError>
+export const problemreportEscalateCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<ProblemreportEscalateCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    EscalateProblemReportResponse,
-    EscalateProblemReportError,
+    ProblemreportEscalateCreateResponse,
+    ProblemreportEscalateCreateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/problemreport/{id}/escalate/',
-    responseTransformer: EscalateProblemReportResponseTransformer
+    responseTransformer: ProblemreportEscalateCreateResponseTransformer
   })
 }
 
-export const resolveProblemReport = <ThrowOnError extends boolean = false>(
-  options: Options<ResolveProblemReportData, ThrowOnError>
+export const problemreportResolveCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<ProblemreportResolveCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    ResolveProblemReportResponse,
-    ResolveProblemReportError,
+    ProblemreportResolveCreateResponse,
+    ProblemreportResolveCreateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/problemreport/{id}/resolve/',
-    responseTransformer: ResolveProblemReportResponseTransformer
+    responseTransformer: ProblemreportResolveCreateResponseTransformer
   })
 }
 
-export const unclaimProblemReport = <ThrowOnError extends boolean = false>(
-  options: Options<UnclaimProblemReportData, ThrowOnError>
+export const problemreportUnclaimCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<ProblemreportUnclaimCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    UnclaimProblemReportResponse,
-    UnclaimProblemReportError,
+    ProblemreportUnclaimCreateResponse,
+    ProblemreportUnclaimCreateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/problemreport/{id}/unclaim/',
-    responseTransformer: UnclaimProblemReportResponseTransformer
+    responseTransformer: ProblemreportUnclaimCreateResponseTransformer
   })
 }
 
-export const createUploadCreate = <ThrowOnError extends boolean = false>(
-  options?: Options<CreateUploadCreateData, ThrowOnError>
+export const publicbodyList = <ThrowOnError extends boolean = false>(
+  options?: Options<PublicbodyListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyListResponse,
+    PublicbodyListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/'
+  })
+}
+
+export const publicbodyRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<PublicbodyRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyRetrieveResponse,
+    PublicbodyRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/{id}/',
+    responseTransformer: PublicbodyRetrieveResponseTransformer
+  })
+}
+
+export const publicbodyAutocompleteRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<PublicbodyAutocompleteRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyAutocompleteRetrieveResponse,
+    PublicbodyAutocompleteRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/autocomplete/'
+  })
+}
+
+/**
+ * This is a OpenRefine Reconciliation API endpoint
+ * https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+ * It's a bit messy.
+ */
+export const publicbodyReconciliationRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<PublicbodyReconciliationRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyReconciliationRetrieveResponse,
+    PublicbodyReconciliationRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation/'
+  })
+}
+
+/**
+ * This is a OpenRefine Reconciliation API endpoint
+ * https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+ * It's a bit messy.
+ */
+export const publicbodyReconciliationCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<PublicbodyReconciliationCreateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).post<
-    CreateUploadCreateResponse,
-    CreateUploadCreateError,
+    PublicbodyReconciliationCreateResponse,
+    PublicbodyReconciliationCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation/'
+  })
+}
+
+/**
+ * Implements OpenRefine Flyout Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+ */
+export const publicbodyReconciliationFlyoutRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<PublicbodyReconciliationFlyoutRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyReconciliationFlyoutRetrieveResponse,
+    PublicbodyReconciliationFlyoutRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation-flyout/'
+  })
+}
+
+/**
+ * Implements OpenRefine Flyout Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+ */
+export const publicbodyReconciliationFlyoutCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<PublicbodyReconciliationFlyoutCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    PublicbodyReconciliationFlyoutCreateResponse,
+    PublicbodyReconciliationFlyoutCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation-flyout/'
+  })
+}
+
+/**
+ * Implements OpenRefine Data Extension API
+ * https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+ */
+export const publicbodyReconciliationProposePropertiesRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<
+    PublicbodyReconciliationProposePropertiesRetrieveData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyReconciliationProposePropertiesRetrieveResponse,
+    PublicbodyReconciliationProposePropertiesRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation-propose-properties/'
+  })
+}
+
+/**
+ * Implements OpenRefine Data Extension API
+ * https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+ */
+export const publicbodyReconciliationProposePropertiesCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<
+    PublicbodyReconciliationProposePropertiesCreateData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).post<
+    PublicbodyReconciliationProposePropertiesCreateResponse,
+    PublicbodyReconciliationProposePropertiesCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation-propose-properties/'
+  })
+}
+
+/**
+ * Implements OpenRefine Suggest Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+ *
+ * Only implements prefix
+ */
+export const publicbodyReconciliationSuggestServiceRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<
+    PublicbodyReconciliationSuggestServiceRetrieveData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).get<
+    PublicbodyReconciliationSuggestServiceRetrieveResponse,
+    PublicbodyReconciliationSuggestServiceRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation-suggest-service/'
+  })
+}
+
+/**
+ * Implements OpenRefine Suggest Entry Point
+ * https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+ *
+ * Only implements prefix
+ */
+export const publicbodyReconciliationSuggestServiceCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<
+    PublicbodyReconciliationSuggestServiceCreateData,
+    ThrowOnError
+  >
+) => {
+  return (options?.client ?? client).post<
+    PublicbodyReconciliationSuggestServiceCreateResponse,
+    PublicbodyReconciliationSuggestServiceCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/reconciliation-suggest-service/'
+  })
+}
+
+export const publicbodySearchRetrieve = <ThrowOnError extends boolean = false>(
+  options?: Options<PublicbodySearchRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    PublicbodySearchRetrieveResponse,
+    PublicbodySearchRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/publicbody/search/'
+  })
+}
+
+export const requestList = <ThrowOnError extends boolean = false>(
+  options?: Options<RequestListData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    RequestListResponse,
+    RequestListError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/',
+    responseTransformer: RequestListResponseTransformer
+  })
+}
+
+export const requestCreate = <ThrowOnError extends boolean = false>(
+  options: Options<RequestCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    RequestCreateResponse,
+    RequestCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/'
+  })
+}
+
+export const requestRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<RequestRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    RequestRetrieveResponse,
+    RequestRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/{id}/',
+    responseTransformer: RequestRetrieveResponseTransformer
+  })
+}
+
+export const requestSearchRetrieve = <ThrowOnError extends boolean = false>(
+  options?: Options<RequestSearchRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    RequestSearchRetrieveResponse,
+    RequestSearchRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/search/',
+    responseTransformer: RequestSearchRetrieveResponseTransformer
+  })
+}
+
+export const requestTagsAutocompleteRetrieve = <
+  ThrowOnError extends boolean = false
+>(
+  options?: Options<RequestTagsAutocompleteRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    RequestTagsAutocompleteRetrieveResponse,
+    RequestTagsAutocompleteRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/tags/autocomplete/',
+    responseTransformer: RequestTagsAutocompleteRetrieveResponseTransformer
+  })
+}
+
+export const uploadCreate = <ThrowOnError extends boolean = false>(
+  options?: Options<UploadCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    UploadCreateResponse,
+    UploadCreateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/upload/',
-    responseTransformer: CreateUploadCreateResponseTransformer
+    responseTransformer: UploadCreateResponseTransformer
   })
 }
 
-export const updateUpload = <ThrowOnError extends boolean = false>(
-  options: Options<UpdateUploadData, ThrowOnError>
+export const uploadUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<UploadUpdateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).put<
-    UpdateUploadResponse,
-    UpdateUploadError,
+    UploadUpdateResponse,
+    UploadUpdateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/upload/{guid}/',
-    responseTransformer: UpdateUploadResponseTransformer
+    responseTransformer: UploadUpdateResponseTransformer
   })
 }
 
-export const partialUpdateUpload = <ThrowOnError extends boolean = false>(
-  options: Options<PartialUpdateUploadData, ThrowOnError>
+export const uploadPartialUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<UploadPartialUpdateData, ThrowOnError>
 ) => {
   return (options?.client ?? client).patch<
-    PartialUpdateUploadResponse,
-    PartialUpdateUploadError,
+    UploadPartialUpdateResponse,
+    UploadPartialUpdateError,
     ThrowOnError
   >({
     ...options,
     url: '/api/v1/upload/{guid}/',
-    responseTransformer: PartialUpdateUploadResponseTransformer
+    responseTransformer: UploadPartialUpdateResponseTransformer
   })
 }
 
-export const destroyUpload = <ThrowOnError extends boolean = false>(
-  options: Options<DestroyUploadData, ThrowOnError>
+export const uploadDestroy = <ThrowOnError extends boolean = false>(
+  options: Options<UploadDestroyData, ThrowOnError>
 ) => {
   return (options?.client ?? client).delete<
-    DestroyUploadResponse,
-    DestroyUploadError,
+    UploadDestroyResponse,
+    UploadDestroyError,
     ThrowOnError
   >({
     ...options,
@@ -1584,15 +1562,69 @@ export const destroyUpload = <ThrowOnError extends boolean = false>(
   })
 }
 
-export const destroyFoiRequestFollow = <ThrowOnError extends boolean = false>(
-  options: Options<DestroyFoiRequestFollowData, ThrowOnError>
+export const userRetrieve = <ThrowOnError extends boolean = false>(
+  options?: Options<UserRetrieveData, ThrowOnError>
 ) => {
-  return (options?.client ?? client).delete<
-    DestroyFoiRequestFollowResponse,
-    DestroyFoiRequestFollowError,
+  return (options?.client ?? client).get<
+    UserRetrieveResponse,
+    UserRetrieveError,
     ThrowOnError
   >({
     ...options,
-    url: '/api/v1/following/{id}/'
+    url: '/api/v1/user/'
+  })
+}
+
+export const userpreferenceRetrieve = <ThrowOnError extends boolean = false>(
+  options: Options<UserpreferenceRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    UserpreferenceRetrieveResponse,
+    UserpreferenceRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/userpreference/{key}/'
+  })
+}
+
+export const userpreferenceCreate = <ThrowOnError extends boolean = false>(
+  options: Options<UserpreferenceCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    UserpreferenceCreateResponse,
+    UserpreferenceCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/userpreference/{key}/'
+  })
+}
+
+export const userpreferenceUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<UserpreferenceUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).put<
+    UserpreferenceUpdateResponse,
+    UserpreferenceUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/userpreference/{key}/'
+  })
+}
+
+export const userpreferencePartialUpdate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<UserpreferencePartialUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).patch<
+    UserpreferencePartialUpdateResponse,
+    UserpreferencePartialUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/userpreference/{key}/'
   })
 }
