@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, defineProps, nextTick } from 'vue'
+import { computed, defineProps, nextTick, reactive, ref } from 'vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
@@ -9,11 +9,12 @@ import DocumentUploader from '../docupload/document-uploader.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import OnlineHelp from './online-help.vue'
 import { useI18n } from '../../lib/i18n'
+import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
-import { scrollNavIntoViewIfNecessary, guardBeforeunload } from '../../lib/misc'
+import Room from '../../lib/websocket.ts'
+import OnlineHelp from './online-help.vue'
 
 const props = defineProps({
   config: Object,
@@ -46,6 +47,34 @@ const debugSkipDate = () => {
   updateValidity('date')
   updateValidity('registered_mail_date')
   gotoStep()
+}
+
+/* Mobile App Content */
+
+const mobileAppContent = ref(null)
+if (props.config.urls.mobileAppContent) {
+  fetch(props.config.urls.mobileAppContent.replace("{}", props.message.id))
+    .then((response) => response.text())
+    .then((text) => {
+      mobileAppContent.value = text
+    })
+}
+
+/* Websocket connection */
+
+if (props.config.urls.messageWebsocket) {
+  const room = new Room(props.config.urls.messageWebsocket)
+  room.connect().on('attachment_added', (data) => {
+    // When a new attachment is added, let the document uploader know
+    documentUploader.value.refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
+      if (!refreshed) {
+        return
+      }
+      if (step.value === STEP_INTRO) {
+        gotoStep(STEP_DOCUMENTS_OVERVIEW)
+      }
+    })
+  })
 }
 
 /* --- form handling --- */
@@ -784,6 +813,14 @@ addEventListener('hashchange', () => {
                   </p>
                 </div>
                 -->
+            <div v-if="config.urls.mobileAppContent" class="col-md-6">
+              <div v-if="mobileAppContent !== null" v-html="mobileAppContent"></div>
+              <div v-else>
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">{{ i18n.loading }}</span>
+                </div>
+              </div>
+            </div>
             <div class="col-md-6">
               <button
                 type="button"
