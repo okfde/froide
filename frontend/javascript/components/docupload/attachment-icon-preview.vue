@@ -3,6 +3,7 @@
 import { inject, ref } from 'vue'
 
 import AttachmentActions from './attachment-actions.vue'
+import AttachmentDocumentFields from './attachment-document-fields.vue'
 
 import BsModal from '../bs-modal.vue'
 
@@ -43,10 +44,16 @@ const closePreviewModal = () => {
     <a
       v-else
       :href="attachment.site_url"
-      class="btn btn-link lh-1 d-block p-0 me-2 icon--fa"
+      class="btn btn-link lh-1 d-block p-0 me-2 icon--fa position-relative"
       type="button"
       @click.prevent="previewModal.show()">
       <i class="fa fa-file" :style="{ fontSize: Size }"></i>
+      <span
+        v-if="attachment.document"
+        style="font-size: 25%"
+        class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary">
+        <i class="fa fa-edit"></i>
+      </span>
     </a>
     <bs-modal
       ref="previewModal"
@@ -54,7 +61,7 @@ const closePreviewModal = () => {
       content-classes="h-100"
       >
       <template #header>
-        <h2>{{ attachment.name }}</h2>
+        <h2>{{ attachment.document?.title || attachment.name }}</h2>
       </template>
       <template #body>
         <div class="row h-100">
@@ -74,7 +81,7 @@ const closePreviewModal = () => {
           </div>
           <div class="col-sm-4 d-flex flex-column">
             <div
-              v-if="attachment.size || attachment.filetype"
+              v-if="attachment.size || attachment.filetype || attachment.document"
               class="card mb-3"
               >
               <div class="card-body">
@@ -89,6 +96,9 @@ const closePreviewModal = () => {
                   {{ i18n.fileType }}:
                   {{ attachment.filetype }}
                 </div>
+              </div>
+              <div v-if="attachment.document" class="card-body border-top">
+                <attachment-document-fields :attachment="attachment" />
               </div>
             </div>
             <div

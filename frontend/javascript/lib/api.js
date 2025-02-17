@@ -169,8 +169,8 @@ function postData(url = '', data = {}, csrfToken, method = 'POST', throwErrorEar
     })
 }
 
-function putData(url = '', data = {}, csrfToken) {
-  return postData(url, data, csrfToken, 'PUT')
+function putData(url = '', data = {}, csrfToken, throwErrorEarly = false) {
+  return postData(url, data, csrfToken, 'PUT', throwErrorEarly)
 }
 
 function getData(url = '', headers = {}) {
