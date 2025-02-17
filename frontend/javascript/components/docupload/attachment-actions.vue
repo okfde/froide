@@ -36,7 +36,7 @@ const unconverted = computed(() => attachment.resource_uri
   : null
 )
 
-const canDelete = computed(() => attachment.can_delete && !attachment.approving)
+const canDelete = computed(() => attachment.can_delete && !attachment.approving && !attachment.document)
 
 const canRedact = computed(() => attachment.can_redact)
 
