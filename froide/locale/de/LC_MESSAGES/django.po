@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-12 11:05+0100\n"
-"PO-Revision-Date: 2025-02-12 11:19+0100\n"
+"PO-Revision-Date: 2025-02-17 13:11+0000\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -8857,7 +8857,7 @@ msgstr "Zu viele Aktionen."
 
 #: froide/helper/templates/admin/change_form.html
 msgid "Go"
-msgstr "GeoLos"
+msgstr "Los"
 
 #: froide/helper/templates/helper/admin/apply_action.html
 msgid "Execute"
