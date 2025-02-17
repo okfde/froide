@@ -29,6 +29,7 @@
             type="radio"
             class="form-check-input"
             :data-label="result.name"
+            :data-resource-uri="result.resource_uri"
             :name="name"
             :value="result.id"
             :id="`pb_${this.scope}_${result.id}`"
@@ -100,6 +101,10 @@ export default {
         return
       }
       this.value = event.target.value
+      this.$emit('update', {
+        id: event.target.value,
+        resourceUri: event.target.dataset.resourceUri
+      })
       if (doClear) this.clear()
     },
     clear() {

@@ -5995,9 +5995,25 @@ msgstr "Anfrage #%(num)s prüfen"
 msgid "Yes"
 msgstr "Ja"
 
+#: froide/foirequest/views/message.py
+msgid "Yes."
+msgstr "Ja."
+
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "No"
 msgstr "Nein"
+
+#: froide/foirequest/views/message.py
+msgid "No."
+msgstr "Nein."
+
+#: froide/foirequest/views/message.py
+msgid "No, pick different public body."
+msgstr "Nein, andere Behörde wählen."
+
+#: froide/foirequest/views/message.py
+msgid "Back to submit"
+msgstr "Zurück zum Abschluss"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Assign team to project"
@@ -7728,6 +7744,11 @@ msgid "New document with {count} pages"
 msgstr "Neues Dokument mit {count} Seiten"
 
 #: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "Question {current} of {total}"
+msgstr "Frage {current} von {total}"
+
+#: froide/foirequest/views/message.py
 msgid "Take / Choose picture"
 msgstr "Foto machen oder auswählen"
 
@@ -8033,10 +8054,10 @@ msgstr "Hat die Behörde Kosten verlangt?"
 #, python-brace-format
 msgid ""
 "You have noted that the public body had demanded compensation to the amount "
-"of €${amount}.<br/>Is this amount still correct?"
+"of ${amount}.<br/>Is this amount still correct?"
 msgstr ""
 "Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
-"${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+"${amount} verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
 
 #: froide/foirequest/views/message.py
 msgid "Which documents do you want to redact?"
