@@ -85,6 +85,7 @@ const redactClick = (evt, att) => {
 }
 
 const deleteClick = () => {
+  if (!window.confirm(i18n.value.confirmDelete)) return
   emit('actionDelete')
   deleteAttachment(attachment)
   // can't .then-emit actionDone here because the component will be optimistically gone by then
@@ -97,6 +98,7 @@ const makeRelevantClick = () => {
 }
 
 const approveClick = () => {
+  if (!window.confirm(i18n.value.confirmApproveUnredacted)) return
   approveAttachment(attachment)
     .then(() => emit('actionDone'))
 }
