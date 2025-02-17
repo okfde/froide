@@ -2,8 +2,12 @@ import { client } from './gen/services.gen'
 
 const token = document.cookie.match(/csrftoken=([^;]+)/)?.[1]
 
+const SAFE_METHODS = ['GET', 'HEAD', 'OPTIONS']
+
 client.interceptors.request.use((request) => {
-  request.headers.set('X-CSRFToken', token!)
+  if (!SAFE_METHODS.includes(request.method)) {
+    request.headers.set('X-CSRFToken', token!)
+  }
   return request
 })
 
