@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
+from froide.helper.auth import is_crew
 from froide.helper.content_urls import get_content_url
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
@@ -226,7 +227,7 @@ def edit_postal_message(request, foirequest, message_id):
             "allowed_filetypes": [".pdf", ".jpg", ".jpeg", ".png", ".gif"],
         },
         "user": {
-            "can_edit_approval": request.user.is_staff,
+            "can_edit_approval": is_crew(request.user),
         },
         "foirequest": {
             "public": foirequest.public,
@@ -770,7 +771,7 @@ def upload_attachments(request, foirequest, message_id):
 
     ctx = {
         "user": {
-            "can_edit_approval": request.user.is_staff,
+            "can_edit_approval": is_crew(request.user),
         },
         "foirequest": {
             "public": foirequest.public,
