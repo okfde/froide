@@ -1,3 +1,4 @@
+import datetime
 import json
 import re
 import zipfile
@@ -21,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 
 import icalendar
 
+from froide.foirequest.models.message import FoiMessage
 from froide.helper.content_urls import get_content_url
 from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
@@ -945,3 +947,37 @@ def unpack_zipfile_attachment(attachment: FoiAttachment):
                 can_approve=not attachment.belongs_to.request.not_publishable,
             )
             new_attachment.file.save(attachment_name, File(file_obj))
+
+
+def postal_date(
+    message: FoiMessage, specified_date: datetime.date | None = None
+) -> datetime.datetime:
+    if specified_date is None:
+        specified_date = message.timestamp.date()
+
+    uploaded_date_midday = datetime.datetime.combine(
+        specified_date,
+        datetime.time(12, 00, 00),
+        tzinfo=timezone.get_current_timezone(),
+    )
+
+    # The problem we have when uploading postal messages is that they do not have a time, so we
+    # need to invent one. 12am is a good assumption, however if we already have messages on this
+    # date, we need to add it *after* all those messages
+    # Example: User sends a foi request on 2011-01-01 at 3pm, the public body is fast and sends
+    # out the reply letter on the same day. If we would assume 12am as the letter time, we would
+    # place the postal reply earlier than the users message
+    possible_message_timestamps = [
+        msg.timestamp + datetime.timedelta(seconds=1)
+        for msg in message.request.messages
+        if msg.timestamp.date() == specified_date
+    ] + [uploaded_date_midday]
+
+    postal_date = max(possible_message_timestamps)
+
+    # If the last message on that date was sent out 1 sec before midnight, there is no good way
+    # to place the postal reply, so just assume midday
+    if postal_date.date() != specified_date:
+        return uploaded_date_midday
+    else:
+        return postal_date
