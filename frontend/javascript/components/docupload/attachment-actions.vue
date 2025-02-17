@@ -147,6 +147,19 @@ const approveClick = () => {
      XLS instead of application/vnd.mx-excel
      there is is_excel in attachment.py... -->
   </a>
+  <a
+    v-if="!dropdown && (attachment.can_approve || config.user.can_edit_approval) && !attachment.approved"
+    class="btn btn-sm btn-link text-start"
+    @click="approveClick"
+    >
+    <i class="fa fa-check"></i>
+    <template v-if="config.foirequest.public">
+      {{ i18n.makePublic }}
+    </template>
+    <template v-else>
+      {{ i18n.approve }}
+    </template>
+  </a>
   <a v-if="canDelete" class="btn btn-sm btn-link text-start" @click="deleteClick">
     <i class="fa fa-trash"></i>
     {{ i18n.delete }}
@@ -186,7 +199,7 @@ const approveClick = () => {
           there is is_excel in attachment.py... -->
         </a>
       </li>
-      <li v-if="config.user.can_edit_approval && !attachment.approved">
+      <li v-if="(attachment.can_approve || config.user.can_edit_approval) && !attachment.approved">
         <button type="button" class="dropdown-item" @click="approveClick">
           <i class="fa fa-check"></i>
           <template v-if="config.foirequest.public">
