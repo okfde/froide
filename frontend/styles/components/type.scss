@@ -23,9 +23,9 @@ h3 {
   hyphens: none;
 }
 
-blockquote:not(.blockquote) {
+.simple-blockquote {
   border-left: 0.25rem solid $gray-300;
   padding: 0.5rem 1rem;
   margin: 0 0 1rem 0;
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
