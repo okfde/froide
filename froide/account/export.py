@@ -191,9 +191,9 @@ def export_user_data(user):
             "profile_text",
             (
                 "profile_photo",
-                lambda x: os.path.basename(x.profile_photo.path)
-                if x.profile_photo
-                else None,
+                lambda x: (
+                    os.path.basename(x.profile_photo.path) if x.profile_photo else None
+                ),
             ),
             ("tags", lambda x: ",".join(str(t) for t in x.tags.all())),
             "is_trusted",
@@ -201,6 +201,7 @@ def export_user_data(user):
             "date_deactivated",
             "is_active",
             "is_staff",
+            "notes",
         ),
     )
     yield ("account.json", json.dumps(user_data).encode("utf-8"))
