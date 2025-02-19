@@ -44,6 +44,7 @@ def export_user_data(user):
         json.dumps(
             [
                 {
+                    "user_name": c.user_name,
                     "submit_date": (
                         c.submit_date.isoformat() if c.submit_date else None
                     ),
