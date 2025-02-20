@@ -12181,6 +12181,25 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+#, fuzzy, python-format
+msgid ""
+"Go to each page of the PDF and locate the parts that need to be blacked out. "
+"While the %(icon_paint)s&nbsp;<b>paint tool</b> is active, draw rectangles "
+"with your finger, or by clicking and dragging your mouse. Use the "
+"%(icon_plus)s %(icon_minus)s buttons to zoom in and out. Switch to the "
+"%(icon_move)s&nbsp;<b>move tool</b> to pan the document. In many browser, "
+"you can use the Alt key to toggle between paint and move tools."
+msgstr ""
+"Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
+"die geschwärzt werden müssen. Während das %(icon_paint)s&nbsp;<b>Pinsel-"
+"Werkzeug</b> aktiv ist, zeichnen sie mit ihrem Finger Rechtecke, oder, indem "
+"sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
+"%(icon_minus)s können Sie rein- und raus-zoomen. Wechseln Sie zum "
+"%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. "
+"In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem "
+"Bewegen-Werkzeug hin-und-her-schalten."
+
 #~ msgid "You should redact:"
 #~ msgstr "Das sollten Sie schwärzen:"
 
