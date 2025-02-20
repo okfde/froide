@@ -322,9 +322,10 @@ import { Modal } from 'bootstrap'
 import { bustCache, getData } from '../../lib/api.js'
 import { toRaw } from 'vue'
 
-// TODO should this depend on screen size?
-// (could also cap rendered PDF at 1000px...)
-const renderDensityFactor = 1
+// 1000px are good enough to redact an A4 page with 10pt text
+const minRenderWidth = 1000
+
+let renderDensityFactor
 
 const scaleCssProp = (styleObject, propName, factor) => {
   const value = parseFloat(styleObject[propName])
@@ -402,12 +403,10 @@ export default {
       pageLoading: false,
       textOnly: false,
       textDisabled: true,
-      pageScaleFactor: {},
       actionsPerPage: {},
       actionIndexPerPage: {},
       rectanglesPerPage: {},
       password: null,
-      maxWidth: null,
       startDrag: null,
       endDrag: null,
       isDragging: false,
@@ -626,25 +625,38 @@ export default {
             window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
           ) * 2 || 24
 
-        const scaleFactor = (renderDensityFactor * maxWidth) / page.view[2]
+        // We render/raster the PDF to roughly "viewport width pixels",
+        // which is too low to be useful on mobile,
+        // so we bump up the density on screens < minRenderWidth,
+        // so the render fills the minRenderWidth.
+        // On screens above, we use the full width
+        // (which is capped by bootstrap container to ~1300px).
+        // We could improve quality/comfort by further bumping the density
+        // - on highdpi displays (e.g. by DPR or just 2x),
+        // - or to leave headroom for zoom (e.g. sqrt(2)x for 1 level)
+        // - but would have to limit effective canvas size to prevent crashes
+        renderDensityFactor = Math.max(minRenderWidth / window.innerWidth, 1.0)
+
+        const pageWidth = page.view[2]
+        const scaleFactor = (renderDensityFactor * maxWidth) / pageWidth
         const viewport = page.getViewport({ scale: scaleFactor })
 
         this.viewport = viewport
-        console.log(
-          scaleFactor,
-          'Size: ' + viewport.width + 'x' + viewport.height,
-          'at maxwidth',
-          maxWidth
-        )
         const canvas = this.canvas
         canvas.width = viewport.width
         canvas.height = viewport.height
-        // TODO textLayer missing here?
         this.redactCanvas.width = viewport.width
         this.redactCanvas.height = viewport.height
-        // TODO need Math.floor?
-        const wPx = viewport.width / renderDensityFactor + 'px'
-        const hPx = viewport.height / renderDensityFactor + 'px'
+        const wPx = (viewport.width / renderDensityFactor) + 'px'
+        const hPx = (viewport.height / renderDensityFactor) + 'px'
+        console.log('PdfRedaction loadPage', {
+          renderDensityFactor,
+          scaleFactor,
+          maxWidth,
+          canvasViewportSize: [viewport.width, viewport.height],
+          canvasCss: [wPx, hPx],
+          pageSize: [pageWidth, page.view[3]]
+        })
         canvas.style.width = wPx
         canvas.style.height = hPx
         this.redactCanvas.style.width = wPx
