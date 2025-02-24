@@ -309,6 +309,8 @@ def edit_postal_message(request, foirequest, message_id):
                 "split it into multiple documents. "
                 "You can redact the PDF in the next step."
             ),
+            "rotatePage": _("Rotate page"),
+            "splitPagesHere": _("Split pages here"),
             "documentPending": _(
                 "This document is being generated. This can take several minutes."
             ),
@@ -446,6 +448,10 @@ def edit_postal_message(request, foirequest, message_id):
             "selectAll": _("Select all"),
             "selectNone": _("Select none"),
             "redactionCounter": _("Redacting document ${current} of ${total}"),
+            "editDescription": _("Edit description"),
+            "editTitle": _("Edit title"),
+            "attachmentsLoading": _("Attachments are loading..."),
+            "help": _("Help"),
             "helpNeeded": _("I have technical difficulties / I need help"),
             "documentsOverview": _("These documents will be added to the request:"),
             "documentsAddedSuccessfully": _("Documents added successfully"),
@@ -846,6 +852,8 @@ def upload_attachments(request, foirequest, message_id):
                 "split it into multiple documents. "
                 "You can redact the PDF in the next step."
             ),
+            "rotatePage": _("Rotate page"),
+            "splitPagesHere": _("Split pages here"),
             "documentPending": _(
                 "This document is being generated. This can take several minutes."
             ),
@@ -899,6 +907,11 @@ def upload_attachments(request, foirequest, message_id):
             "fileType": _("File type"),
             "actions": _("Actions"),
             "properties": _("Properties"),
+            "preview": _("Preview"),
+            "editDescription": _("Edit description"),
+            "editTitle": _("Edit title"),
+            "attachmentsLoading": _("Attachments are loading..."),
+            "help": _("Help"),
             "helpNeeded": _("I have technical difficulties / I need help"),
             "uppy": get_uppy_i18n(),
             "redactionDone": _("I have finished redacting"),
