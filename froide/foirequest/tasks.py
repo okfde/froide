@@ -395,7 +395,8 @@ def redact_attachment_task(att_id, target_id, instructions):
         if attachment.redacted:
             attachment.redacted = None
         if attachment.is_redacted:
-            attachment.approved = instructions["auto_approve"]
+            if instructions["auto_approve"]:
+                attachment.approve_and_save()
             attachment.can_approve = True
         attachment.pending = False
         attachment.save()
