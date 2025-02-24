@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-12 11:05+0100\n"
+"POT-Creation-Date: 2025-02-24 11:36+0100\n"
 "PO-Revision-Date: 2025-02-17 13:11+0000\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -2539,6 +2539,34 @@ msgstr "Verschiebe Anfragen in..."
 msgid "Publish project and all requests"
 msgstr "Veröffentliche Projekt und alle Anfragen"
 
+#: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "Redact this attachment"
+msgid "Can't delete this attachment."
+msgstr "Schwärzen Sie diesen Anhang"
+
+#: froide/foirequest/api_views/attachment.py
+msgid "All attachments need to belong to the provided message."
+msgstr ""
+
+#: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "Image is not square."
+msgid "Images must not be duplicated."
+msgstr "Bild ist nicht quadratisch."
+
+#: froide/foirequest/api_views/message.py
+msgid ""
+"Response messages must have a sender public body, no sender user and no "
+"recipient public body."
+msgstr ""
+
+#: froide/foirequest/api_views/message.py
+msgid ""
+"Non-response messages must have a recipent public body, but no sender public "
+"body."
+msgstr ""
+
 #: froide/foirequest/apps.py
 msgid "FOI Request"
 msgstr "Informationsfreiheitsanfrage"
@@ -3744,6 +3772,18 @@ msgstr ""
 "Informationen finden Sie im Hilfe-Bereich."
 
 #: froide/foirequest/models/message.py
+#, fuzzy
+#| msgid "Freedom of Information Message"
+msgid "Freedom of Information Message Draft"
+msgstr "Informationsfreiheitsnachricht"
+
+#: froide/foirequest/models/message.py
+#, fuzzy
+#| msgid "Freedom of Information Messages"
+msgid "Freedom of Information Message Drafts"
+msgstr "Informationsfreiheitsnachrichten"
+
+#: froide/foirequest/models/message.py
 msgid "sending"
 msgstr "wird gesendet"
 
@@ -4157,6 +4197,24 @@ msgstr[1] "Neues bei %(count)s Ihrer Anfragen"
 #: froide/foirequest/notifications.py
 msgid "Please classify the reply to your request"
 msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
+
+#: froide/foirequest/serializers.py
+#, fuzzy
+#| msgid "This message is not yet public."
+msgid "This message kind can not be created via the API."
+msgstr "Diese Nachricht ist noch nicht öffentlich."
+
+#: froide/foirequest/serializers.py
+msgid "You do not have permission to add a message to this request."
+msgstr ""
+
+#: froide/foirequest/serializers.py
+msgid "Attachment does not exist or is not an image."
+msgstr ""
+
+#: froide/foirequest/serializers.py froide/letter/apps.py
+msgid "Letter"
+msgstr "Brief"
 
 #: froide/foirequest/services.py
 #, python-format
@@ -4590,6 +4648,7 @@ msgstr "Anhänge der Nachricht vom %(date)s"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/header/info-box.html
+#: froide/foirequest/templates/foirequest/redact.html
 #: froide/foirequest/views/message.py froide/upload/forms.py
 msgid "Back"
 msgstr "Zurück"
@@ -4701,14 +4760,9 @@ msgstr "Bitte vergessen Sie nicht den Status dieser Anfrage anzugeben!"
 #: froide/foirequest/templates/foirequest/attachment/show.html
 #: froide/foirequest/templates/foirequest/snippets/description_redact.html
 #: froide/foirequest/templates/foirequest/snippets/message_redact.html
-#: froide/foirequest/views/message.py
+#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "Redact"
 msgstr "Schwärzen"
-
-#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
-msgctxt "redact tool"
-msgid "Move"
-msgstr "Bewegen"
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
 #: froide/foirequest/views/message.py
@@ -6296,82 +6350,6 @@ msgid "Redact \"%(name)s\""
 msgstr "„%(name)s“ schwärzen"
 
 #: froide/foirequest/templates/foirequest/redact.html
-msgid "What you need to redact"
-msgstr "Was Sie schwärzen sollten"
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid ""
-"If this document <strong>is not a letter to you</strong> from a public body, "
-"but any other kind of document, it very likely <strong>does not need a "
-"redaction</strong>."
-msgstr ""
-"Falls dieses Dokument <strong>kein Brief an Sie</strong> von einer Behörde "
-"ist, sondern eine andere Art von Dokument, dann müssen Sie es sehr "
-"wahrscheinlich <strong>nicht schwärzen</strong>."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid "Please remove all your personally identifying information."
-msgstr "Bitte entfernen Sie alle Ihre personenbezogenen Informationen."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid ""
-"Please remove all your personally identifying information except your name."
-msgstr "Bitte entfernen Sie alle personenbezogenen Daten bis auf Ihren Namen."
-
-#: froide/foirequest/templates/foirequest/redact.html
-#, python-format
-msgid "Please remove all personally identifying information of %(name)s."
-msgstr "Bitte entfernen Sie alle personenbezogenen Daten von %(name)s."
-
-#: froide/foirequest/templates/foirequest/redact.html
-#, python-format
-msgid ""
-"Please remove all personally identifying information of %(name)s except the "
-"name itself."
-msgstr ""
-"Bitte entfernen Sie alle personenbezogenen Daten von %(name)s bis auf den "
-"Namen selbst."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid "Please remove email addresses of this site."
-msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid "Please remove all names of public body employees."
-msgstr "Bitte entfernen Sie alle Namen von Behördenmitarbeiter:innen."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid "Please remove hand-written signatures."
-msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid ""
-"The original version of the document will still be available to you (but not "
-"to the public)."
-msgstr ""
-"Die Originalversion dieses Dokuments ist für Sie weiterhin verfügbar (aber "
-"nicht für die Öffentlichkeit)."
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid "How to redact"
-msgstr "So schwärzen Sie das Dokument"
-
-#: froide/foirequest/templates/foirequest/redact.html
-msgid "If this document is a letter to you:"
-msgstr "Falls dieses Dokument ein Brief an Sie ist:"
-
-#: froide/foirequest/templates/foirequest/redact.html
-#, python-format
-msgid ""
-"Check the %(icon_text)s&nbsp;<b>Hide text</b> view to see if the underlying text "
-"is also gone. If the document does not load correctly, cancel and inform a "
-"site moderator."
-msgstr ""
-"Prüfen Sie auch in der Ansicht %(icon_text)s&nbsp;<b>Nur Text</b>, dass das Dokument die Informationen nicht mehr enthält. "
-"Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie "
-"eine:n Moderator:in der Seite."
-
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "Redaction tool is loading..."
 msgstr "Schwärzungs-Werkzeug wird geladen..."
 
@@ -6653,6 +6631,72 @@ msgid "Change message redaction"
 msgstr "Schwärzungen ändern"
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "What you need to redact"
+msgstr "Was Sie schwärzen sollten"
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid ""
+"If this document <strong>is not a letter to you</strong> from a public body, "
+"but any other kind of document, it very likely <strong>does not need a "
+"redaction</strong>."
+msgstr ""
+"Falls dieses Dokument <strong>kein Brief an Sie</strong> von einer Behörde "
+"ist, sondern eine andere Art von Dokument, dann müssen Sie es sehr "
+"wahrscheinlich <strong>nicht schwärzen</strong>."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "Please remove all your personally identifying information."
+msgstr "Bitte entfernen Sie alle Ihre personenbezogenen Informationen."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid ""
+"Please remove all your personally identifying information except your name."
+msgstr "Bitte entfernen Sie alle personenbezogenen Daten bis auf Ihren Namen."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+#, python-format
+msgid "Please remove all personally identifying information of %(name)s."
+msgstr "Bitte entfernen Sie alle personenbezogenen Daten von %(name)s."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+#, python-format
+msgid ""
+"Please remove all personally identifying information of %(name)s except the "
+"name itself."
+msgstr ""
+"Bitte entfernen Sie alle personenbezogenen Daten von %(name)s bis auf den "
+"Namen selbst."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "Please remove email addresses of this site."
+msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "Please remove all names of public body employees."
+msgstr "Bitte entfernen Sie alle Namen von Behördenmitarbeiter:innen."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "Please remove hand-written signatures."
+msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid ""
+"The original version of the document will still be available to you (but not "
+"to the public)."
+msgstr ""
+"Die Originalversion dieses Dokuments ist für Sie weiterhin verfügbar (aber "
+"nicht für die Öffentlichkeit)."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "How to redact"
+msgstr "So schwärzen Sie das Dokument"
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+msgid "If this document is a letter to you:"
+msgstr "Falls dieses Dokument ein Brief an Sie ist:"
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+#, python-format
 msgid ""
 "Go to each page of the PDF and locate the parts that need to be blacked out. "
 "While the %(icon_paint)s&nbsp;<b>paint tool</b> is active, draw rectangles "
@@ -6669,6 +6713,18 @@ msgstr ""
 "%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. "
 "In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem "
 "Bewegen-Werkzeug hin-und-her-schalten."
+
+#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
+#, python-format
+msgid ""
+"Check the %(icon_text)s&nbsp;<b>Hide text</b> view to see if the underlying "
+"text is also gone. If the document does not load correctly, cancel and "
+"inform a site moderator."
+msgstr ""
+"Prüfen Sie auch in der Ansicht %(icon_text)s&nbsp;<b>Nur Text</b>, dass das "
+"Dokument die Informationen nicht mehr enthält. Falls das Dokument nicht "
+"ordentlich lädt, brechen Sie ab und informieren Sie eine:n Moderator:in der "
+"Seite."
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
 #, python-format
@@ -6768,12 +6824,10 @@ msgstr ""
 "Anfrage."
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
 msgid "What is the status of your request after this letter?"
 msgstr "Was ist der Status Ihrer Anfrage nach Erhalt der Post?"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
 #: froide/foirequest/views/message.py
 msgid "Add letter"
 msgstr "Brief hinzufügen"
@@ -7074,6 +7128,11 @@ msgstr "Nur Text"
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 msgid "Hide text"
 msgstr "Text ausblenden"
+
+#: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
+msgctxt "redact tool"
+msgid "Move"
+msgstr "Bewegen"
 
 #: froide/foirequest/views/attachment.py froide/foirequest/views/message.py
 #: froide/proof/widgets.py
@@ -7922,26 +7981,6 @@ msgstr "Keine auswählen"
 #, python-brace-format
 msgid "Redacting document ${current} of ${total}"
 msgstr "Dokument schwärzen ${current} von ${total}"
-
-#: froide/foirequest/views/message.py
-msgid "You should redact:"
-msgstr "Das sollten Sie schwärzen:"
-
-#: froide/foirequest/views/message.py
-msgid "Your name and your address"
-msgstr "Ihren Namen und Ihre Adresse"
-
-#: froide/foirequest/views/message.py
-msgid "Names of public body employees"
-msgstr "Namen von Behördenmitarbeiter:innen"
-
-#: froide/foirequest/views/message.py
-msgid "Signatures"
-msgstr "Unterschriften"
-
-#: froide/foirequest/views/message.py
-msgid "E-mail addresses that end in @fragdenstaat.de"
-msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
 
 #: froide/foirequest/views/message.py
 msgid "I have technical difficulties / I need help"
@@ -9029,10 +9068,6 @@ msgstr "<<entfernt>>"
 #: froide/helper/text_utils.py
 msgid "[redacted]"
 msgstr "[geschwärzt]"
-
-#: froide/letter/apps.py
-msgid "Letter"
-msgstr "Brief"
 
 #: froide/letter/forms.py
 msgid "Your name and address"
@@ -10965,8 +11000,16 @@ msgid "Make requests on your behalf"
 msgstr "Kann Anfragen in Ihrem Namen stellen"
 
 #: froide/settings.py
-msgid "Upload postal messages"
-msgstr "Post hochladen"
+#, fuzzy
+#| msgid "Add comment to messages"
+msgid "Add and edit messages"
+msgstr "Füge Kommentar zu Nachrichten hinzu"
+
+#: froide/settings.py
+#, fuzzy
+#| msgid "Upload and manage attachments"
+msgid "Add and edit attachments"
+msgstr "Anhänge hochladen und verwalten"
 
 #: froide/settings.py
 msgid "Follow/Unfollow requests"
@@ -12144,6 +12187,24 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "You should redact:"
+#~ msgstr "Das sollten Sie schwärzen:"
+
+#~ msgid "Your name and your address"
+#~ msgstr "Ihren Namen und Ihre Adresse"
+
+#~ msgid "Names of public body employees"
+#~ msgstr "Namen von Behördenmitarbeiter:innen"
+
+#~ msgid "Signatures"
+#~ msgstr "Unterschriften"
+
+#~ msgid "E-mail addresses that end in @fragdenstaat.de"
+#~ msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
+
+#~ msgid "Upload postal messages"
+#~ msgstr "Post hochladen"
 
 #, python-format
 #~ msgid ""
@@ -14427,9 +14488,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "veröffentlichen (falls Ihnen dies nicht ausdrücklich verboten wurde) oder "
 #~ "Sie können Stellen schwärzen."
 
-#~ msgid "Redact this attachment"
-#~ msgstr "Schwärzen Sie diesen Anhang"
-
 #~ msgid "You need to setup a default FOI Law object"
 #~ msgstr "Sie müssen mindestens ein Informationsgesetz-Objekt anlegen"
 
@@ -14651,9 +14709,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgctxt "url part"
 #~ msgid "account/mfa/"
 #~ msgstr "account/mfa/"
-
-#~ msgid "Upload and manage attachments"
-#~ msgstr "Anhänge hochladen und verwalten"
 
 #, fuzzy
 #~ msgid "Number of Periods"
