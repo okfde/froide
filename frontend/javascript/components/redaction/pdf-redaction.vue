@@ -201,7 +201,7 @@
             v-if="canPublish && !hasPassword && !hasRedactions"
             method="post"
             id="redaction-submit-form"
-            :action="config.urls.publishUrl"
+            :action="config.url.publishUrl"
           >
             <input
               type="hidden"
