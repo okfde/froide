@@ -5,7 +5,7 @@ from froide.foirequest.models.attachment import FoiAttachment
 from froide.foirequest.models.message import FoiMessage
 from froide.foirequest.models.request import FoiRequest
 
-from .auth import can_write_foirequest
+from .auth import can_read_foirequest, can_write_foirequest
 
 
 class WriteFoiRequestPermission(permissions.BasePermission):
@@ -19,7 +19,8 @@ class WriteFoiRequestPermission(permissions.BasePermission):
         raise ValueError("Cannot determine request from object")
 
     def has_object_permission(self, request: Request, view, obj) -> bool:
-        if request.method in permissions.SAFE_METHODS:
-            return True
         foirequest = self.get_foirequest(obj)
-        return can_write_foirequest(foirequest, request)
+        if request.method in permissions.SAFE_METHODS:
+            return can_read_foirequest(foirequest, request)
+        else:
+            return can_write_foirequest(foirequest, request)
