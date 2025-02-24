@@ -4988,10 +4988,6 @@ msgid "Unapproved attachments:"
 msgstr "Nicht-öffentliche Anhänge:"
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
-msgid "Manage attachments"
-msgstr "Anhänge verwalten"
-
-#: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
 #: froide/foirequest/views/message.py
 msgid "Show irrelevant attachments"
 msgstr "Zeige unwichtige Anhänge"
@@ -7762,6 +7758,14 @@ msgstr ""
 "Sie können Ihre hochgeladenen Bilder hier in ein PDF-Dokument umwandeln. Sie "
 "können die Seiten hier richtig anordnen und ggf. in mehrere Dokumente "
 "auftrennen. Das PDF können Sie im Anschluss schwärzen."
+
+#: froide/foirequest/views/message.py
+msgid "Rotate page"
+msgstr "Seite drehen"
+
+#: froide/foirequest/views/message.py
+msgid "Split pages here"
+msgstr "Seiten hier auftrennen"
 
 #: froide/foirequest/views/message.py
 msgid "This document is being generated. This can take several minutes."
