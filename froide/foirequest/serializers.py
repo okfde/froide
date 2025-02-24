@@ -205,6 +205,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "recipient_public_body",
             "status",
             "timestamp",
+            "registered_mail_date",
             "redacted",
             "not_publishable",
             "attachments",
