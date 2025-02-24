@@ -1,10 +1,11 @@
 <script setup>
 
-import { inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentDocumentFields from './attachment-document-fields.vue'
 
+import { vBsTooltip } from '../../lib/vue-bootstrap'
 import BsModal from '../bs-modal.vue'
 
 const i18n = inject('i18n')
@@ -24,6 +25,11 @@ const closePreviewModal = () => {
   previewModal.value.hide()
 }
 
+const iconTooltipTexts = computed(() => [
+  i18n.value.preview,
+  ...attachment.document ? [i18n.value.editTitle, i18n.value.editDescription] : []
+])
+
 </script>
 
 <template>
@@ -34,9 +40,14 @@ const closePreviewModal = () => {
       class="d-flex align-items-center justify-content-center icon--image"
       :style="{ width: size, height: size }"
       @click.prevent="previewModal.show()"
+      v-bs-tooltip
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      :title="i18n.preview"
       >
       <img
         :src="attachment.file_url"
+        :alt="i18n.preview"
         class="object-fit-contain shadow-sm"
         :style="{ maxWidth: size, maxHeight: size }"
         />
@@ -45,14 +56,27 @@ const closePreviewModal = () => {
       v-else
       :href="attachment.site_url"
       class="btn btn-link lh-1 d-block p-0 me-2 icon--fa position-relative"
-      type="button"
-      @click.prevent="previewModal.show()">
+      @click.prevent="previewModal.show()"
+      v-bs-tooltip
+      data-bs-toggle="tooltip"
+      data-bs-placement="top"
+      data-bs-html="true"
+      :title="iconTooltipTexts.join('\n')"
+      :data-bs-title="iconTooltipTexts.join('<br/>')"
+      >
       <i class="fa fa-file" :style="{ fontSize: Size }"></i>
+      <span class="sr-only">
+        {{ i18n.preview }}
+      </span>
       <span
         v-if="attachment.document"
         style="font-size: 25%"
         class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary">
         <i class="fa fa-edit"></i>
+        <span class="sr-only">
+          {{ i18n.editTitle }}<br/>
+          {{ i18n.editDescription }}
+        </span>
       </span>
     </a>
     <bs-modal

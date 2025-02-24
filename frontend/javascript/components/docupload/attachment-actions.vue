@@ -106,11 +106,11 @@ const approveClick = () => {
 </script>
 
 <template>
-  <a v-if="canMakeResult" @click="makeResult" class="btn btn-sm btn-link text-start"
+  <button v-if="canMakeResult" @click="makeResult" type="button" class="btn btn-sm btn-link text-start"
     :class="{ disabled: isMakingResult }">
     <i class="fa fa-certificate"></i>
     {{ i18n.markResult }}
-  </a>
+  </button>
   <a
     v-if="!dropdown && canRedact && !attachment.is_redacted"
     :href="getRedactUrl(attachment)"
@@ -130,10 +130,10 @@ const approveClick = () => {
     <i class="fa fa-pencil-square"></i>
     {{ i18n.editRedaction }}
   </a>
-  <a v-if="attachment.is_irrelevant" @click="makeRelevantClick" class="btn btn-sm btn-link text-start">
+  <button v-if="attachment.is_irrelevant" @click="makeRelevantClick" type="button" class="btn btn-sm btn-link text-start">
     <i class="fa fa-exclamation-circle"></i>
     {{ i18n.markNotIrrelevant }}
-  </a>
+  </button>
   <a class="btn btn-sm btn-link text-start" :href="attachment.file_url" download>
     <i class="fa fa-download"></i>
     {{ i18n.download }}
@@ -149,8 +149,9 @@ const approveClick = () => {
      XLS instead of application/vnd.mx-excel
      there is is_excel in attachment.py... -->
   </a>
-  <a
+  <button
     v-if="!dropdown && (attachment.can_approve || config.user.can_edit_approval) && !attachment.approved"
+    type="button"
     class="btn btn-sm btn-link text-start"
     @click="approveClick"
     >
@@ -161,11 +162,11 @@ const approveClick = () => {
     <template v-else><!--
       --> {{ i18n.approve }}
     </template>
-  </a>
-  <a v-if="canDelete" class="btn btn-sm btn-link text-start" @click="deleteClick">
+  </button>
+  <button v-if="canDelete" type="button" class="btn btn-sm btn-link text-start" @click="deleteClick">
     <i class="fa fa-trash"></i>
     {{ i18n.delete }}
-  </a>
+  </button>
   <div v-if="dropdown && dropdownHasItems" :class="'dropdown ' + dropdownClasses">
     <button class="d-none d-md-block btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
       <span>{{ i18n.otherActions }}</span>

@@ -64,7 +64,9 @@ const onlineHelp = ref()
 
   <div
     v-show="attachments.isFetching" 
-    class="spinner-border"></div>
+    class="spinner-border">
+    <span class="sr-only">{{ i18n.attachmentsLoading }}</span>
+  </div>
 
   <div v-if="attachments.approved.length" class="my-5">
     <attachments-table

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 
 import ExifReader from 'exifreader'
 
@@ -8,6 +8,8 @@ import { useAttachments } from './lib/attachments'
 
 const { hasExifSupport } = useExifSupport()
 const { splitPages, rotatePage } = useAttachments()
+
+const i18n = inject('i18n')
 
 const { idx, page, pageNum, pageCount, showRotate, showSplit } = defineProps({
   idx: {
@@ -115,22 +117,28 @@ fetchImage()
         :style="{ transform: `rotate(${totalRotate}deg)`}"
         />
       <div
-        class="page-control page-control--number position-absolute bottom-0 mb-1 start-0 ms-1 text-bg-primary badge rounded-pill fw-bold lh-sm">
+        class="page-control page-control--number position-absolute bottom-0 mb-2 start-0 ms-1 text-bg-primary badge rounded-pill fw-bold lh-sm">
         {{ pageNum }}
       </div>
     </div>
     <div class="page-controls d-flex align-items-center">
+      <!-- btn-link is not "semantically" appropriate here, but needed for focus-visible
+        btn-outline looks really noisy, unfortunately -->
       <button
         v-if="showRotate"
-        class="btn btn-sm text-body-secondary small"
+        class="btn btn-link btn-sm text-body-secondary small"
+        type="button"
         @click="rotatePage(page)">
         <span class="fa fa-rotate-right" />
+        <span class="sr-only">{{ i18n.rotatePage }}</span>
       </button>
       <button
         v-if="showSplit && !isLast"
-        class="btn btn-sm text-body-secondary small ms-auto"
+        class="btn btn-link btn-sm text-body-secondary small ms-auto"
+        type="button"
         @click="splitPages(idx, pageNum)">
         <span class="fa fa-scissors" />
+        <span class="sr-only">{{ i18n.splitPagesHere }}</span>
       </button>
     </div>
     <div

@@ -77,6 +77,12 @@ const selectAllClick = () => {
   }
 }
 
+const selectAllLabel = computed(() => {
+  return (selectAllState.value === true)
+    ? i18n.value.selectNone
+    : i18n.value.selectAll
+})
+
 /* when asCard flips over/under threshold (when something is uploaded/deleted)
  * we need to prevent things being still selected without the possibility to
  * change the selection */
@@ -117,7 +123,14 @@ const deleteSelected = async () => {
     }"
     >
     <label v-if="!asCards" class="d-flex flex-grow pe-3 align-self-stretch">
-      <input type="checkbox" ref="selectAllEl" :checked="selectAllState" :indeterminate.prop="selectAllState === undefined" @click="selectAllClick" />
+      <input
+        type="checkbox"
+        ref="selectAllEl"
+        :checked="selectAllState"
+        :indeterminate.prop="selectAllState === undefined"
+        @click="selectAllClick"
+        />
+      <span class="sr-only">{{ selectAllLabel }}</span>
     </label>
     <div v-if="selectionActions" class="d-flex flex-grow-1 justify-content-end">
       <!-- TODO, needs backend support
@@ -195,9 +208,10 @@ const deleteSelected = async () => {
             class="badge text-bg-secondary"
             >{{ i18n.imageFile }}</span>
         </div>
-        <a v-if="actionDelete && att.can_delete" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
+        <button v-if="actionDelete && att.can_delete" type="button" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
           <i class="fa fa-trash"></i>
-        </a>
+          <span class="sr-only">{{ i18n.delete }}</span>
+        </button>
         <div v-if="actions" class="d-flex flex-column align-items-start flex-grow-0 flex-shrink-1">
           <attachment-actions
             :attachment="att"
@@ -260,13 +274,15 @@ const deleteSelected = async () => {
           class="badge text-bg-warning"
           >{{ i18n.nonRedacted }}</span>
       </div>
-      <a
+      <button
         v-if="actionDelete && att.can_delete"
+        type="button"
         class="btn btn-outline-secondary position-absolute position-md-static top-0 end-0 mt-1 mt-md-0"
         @click="deleteAttachment(att)"
         >
         <i class="fa fa-trash"></i>
-      </a>
+        <span class="sr-only">{{ i18n.delete }}</span>
+      </button>
       <div
         v-if="actions"
         class="d-flex flex-grow-0 flex-shrink-1 justify-content-end"
