@@ -5,10 +5,13 @@ import { computed, ref } from 'vue'
 import ImagePage from './image-page.vue'
 import { useAttachments } from './lib/attachments'
 
-const { attachments, splitPages, rotatePage } = useAttachments()
+const { attachments } = useAttachments()
 
 const props = defineProps({
-  idx: Number,
+  idx: {
+    type: Number,
+    required: true
+  },
   showRotate: Boolean,
   showSplit: Boolean
 })
@@ -34,12 +37,12 @@ useSortable(pagesEl, pages, { animation: 200 })
     <image-page
       v-for="(page, pageNum) in pages"
       :key="page.id"
+      :idx="idx"
       :page="page"
       :page-num="pageNum + 1"
       :page-count="pages.length"
       :show-rotate="showRotate"
       :show-split="showSplit"
-      @splitpages="splitPages(idx, pageNum + 1)"
-      @rotatepage="rotatePage(page)" />
+      />
   </div>
 </template>
