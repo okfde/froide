@@ -122,6 +122,26 @@ class FoiAttachmentViewSet(
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def update_approval(self, request, approve: bool):
+        instance = self.get_object()
+        if instance.approve_if_allowed(approve):
+            return Response(
+                FoiAttachmentSerializer(instance, context={"request": request}).data
+            )
+        else:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={"detail": _("Can't approve this attachment.")},
+            )
+
+    @action(detail=True, methods=["post"])
+    def approve(self, request, pk):
+        return self.update_approval(request, approve=True)
+
+    @action(detail=True, methods=["post"])
+    def unapprove(self, request, pk):
+        return self.update_approval(request, approve=False)
+
     @extend_schema(
         responses={status.HTTP_201_CREATED: FoiAttachmentSerializer},
         operation_id="convert_images_to_pdf",
