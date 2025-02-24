@@ -13,7 +13,7 @@ from froide.helper.storage import HashedFilenameStorage
 
 from .message import FoiMessage
 
-DELETE_TIMEFRAME = timedelta(hours=36)
+UNAPPROVE_TIMEFRAME = DELETE_TIMEFRAME = timedelta(hours=36)
 
 PDF_FILETYPES = (
     "application/pdf",
@@ -143,6 +143,7 @@ class FoiAttachment(models.Model):
     format = models.CharField(_("Format"), blank=True, max_length=100)
     can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
+    approved_timestamp = models.DateTimeField(null=True, blank=True)
     redacted = models.ForeignKey(
         "self",
         verbose_name=_("Redacted Version"),
@@ -221,6 +222,18 @@ class FoiAttachment(models.Model):
             return False
         now = timezone.now()
         return self.timestamp > (now - DELETE_TIMEFRAME)
+
+    @property
+    def can_unapprove(self):
+        if not self.approved or not self.approved_timestamp:
+            return False
+
+        now = timezone.now()
+        return self.approved_timestamp > (now - DELETE_TIMEFRAME)
+
+    @property
+    def can_change_approval(self):
+        return self.can_unapprove if self.approved else self.can_approve
 
     @property
     def can_edit(self):
@@ -349,15 +362,23 @@ class FoiAttachment(models.Model):
     def get_absolute_domain_file_url(self, authorized=False):
         return self.get_crossdomain_auth().get_full_media_url(authorized=authorized)
 
-    def approve_and_save(self):
-        self.approved = True
+    def approve_and_save(self, approve: bool = True) -> None:
+        self.approved = approve
+        self.approved_timestamp = timezone.now() if approve else None
         self.save()
+
         if self.document:
             foirequest = self.belongs_to.request
-            should_be_public = foirequest.public
+            should_be_public = foirequest.public and approve
             if self.document.public != should_be_public:
                 self.document.public = should_be_public
                 self.document.save()
+
+    def approve_if_allowed(self, approve: bool = True) -> bool:
+        if self.can_change_approval:
+            self.approve_and_save(approve=approve)
+            return True
+        return False
 
     def remove_file_and_delete(self):
         if self.file:

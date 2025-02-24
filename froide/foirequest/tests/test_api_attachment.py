@@ -205,3 +205,65 @@ def test_convert_attachment(client: Client, user):
         content_type="application/json",
     )
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_change_approval(client: Client, user):
+    assert client.login(email=user.email, password="froide")
+
+    request = factories.FoiRequestFactory.create(user=user)
+    message = factories.FoiMessageFactory.create(request=request)
+
+    # can unapprove recently approved attachments
+
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message, approved=True, approved_timestamp=timezone.now()
+    )
+
+    response = client.post(
+        reverse("api:attachment-unapprove", kwargs={"pk": attachment.pk})
+    )
+    data = response.json()
+    assert response.status_code == 200
+    assert data["approved"] is False
+
+    # can't unapprove old attachments
+
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message,
+        approved=True,
+        approved_timestamp=timezone.now() - timedelta(days=3),
+    )
+
+    response = client.post(
+        reverse("api:attachment-unapprove", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 403
+    attachment.refresh_from_db()
+    assert attachment.approved
+
+    # can approve unapproved attachments
+
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message, approved=False
+    )
+
+    response = client.post(
+        reverse("api:attachment-approve", kwargs={"pk": attachment.pk})
+    )
+    data = response.json()
+    assert response.status_code == 200
+    assert data["approved"] is True
+
+    # can't approve, when can_unapprove is False
+
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message, approved=False, can_approve=False
+    )
+
+    response = client.post(
+        reverse("api:attachment-approve", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 403
+    attachment.refresh_from_db()
+    assert not attachment.approved
