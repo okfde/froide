@@ -7,8 +7,7 @@ from django.template.response import TemplateResponse
 from django.urls import include, path, reverse
 from django.utils.translation import pgettext_lazy
 
-from drf_spectacular.views import SpectacularSwaggerView
-from rest_framework.schemas import get_schema_view
+from drf_spectacular.views import SpectacularJSONAPIView, SpectacularSwaggerView
 
 from froide.account.api_views import ProfileView, UserPreferenceView
 from froide.account.views import bad_login_view_redirect
@@ -77,7 +76,6 @@ api_urlpatterns = []
 SECRET_URLS = getattr(settings, "SECRET_URLS", {})
 
 if settings.FROIDE_CONFIG.get("api_activated", True):
-    schema_view = get_schema_view(title="{name} API".format(name=settings.SITE_NAME))
     api_urlpatterns = [
         path("api/v1/user/", ProfileView.as_view(), name="api-user-profile"),
         path(
@@ -86,7 +84,11 @@ if settings.FROIDE_CONFIG.get("api_activated", True):
             name="api-user-preference",
         ),
         path("api/v1/", include((api_router.urls, "api"))),
-        path("api/v1/schema/", schema_view, name="schema"),
+        path(
+            "api/v1/schema/",
+            SpectacularJSONAPIView.as_view(),
+            name="schema",
+        ),
         path(
             "api/v1/schema/swagger-ui/",
             SpectacularSwaggerView.as_view(url_name="schema"),
