@@ -158,6 +158,96 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/attachment/{id}/approve/:
+    post:
+      operationId: attachment_approve_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+  /api/v1/attachment/{id}/unapprove/:
+    post:
+      operationId: attachment_unapprove_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
   /api/v1/attachment/convert_to_pdf/:
     post:
       operationId: convert_images_to_pdf
@@ -2991,6 +3081,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/FoiRequestList'
           description: ''
+  /api/v1/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - da-dk
+          - de
+          - en
+          - es
+          - fi-fi
+          - it
+          - pt
+          - sv-fi
+          - sv-se
+          - zh-cn
+          - zh-hk
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
   /api/v1/upload/:
     post:
       operationId: upload_create
@@ -3753,6 +3885,9 @@ components:
         can_approve:
           type: boolean
           title: User can approve
+        can_change_approval:
+          type: string
+          readOnly: true
         redacted:
           type: string
           format: uri
@@ -3779,6 +3914,7 @@ components:
       required:
       - anchor_url
       - belongs_to
+      - can_change_approval
       - can_delete
       - can_redact
       - converted
@@ -3966,6 +4102,10 @@ components:
         timestamp:
           type: string
           format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
         redacted:
           type: boolean
           title: Was Redacted?
@@ -4069,6 +4209,10 @@ components:
         timestamp:
           type: string
           format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
         redacted:
           type: boolean
           title: Was Redacted?
@@ -5277,6 +5421,10 @@ components:
         timestamp:
           type: string
           format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
         redacted:
           type: boolean
           title: Was Redacted?

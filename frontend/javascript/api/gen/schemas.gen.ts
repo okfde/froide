@@ -566,6 +566,10 @@ export const FoiAttachmentSchema = {
       type: 'boolean',
       title: 'User can approve'
     },
+    can_change_approval: {
+      type: 'string',
+      readOnly: true
+    },
     redacted: {
       type: 'string',
       format: 'uri',
@@ -601,6 +605,7 @@ export const FoiAttachmentSchema = {
   required: [
     'anchor_url',
     'belongs_to',
+    'can_change_approval',
     'can_delete',
     'can_redact',
     'converted',
@@ -852,6 +857,11 @@ export const FoiMessageSchema = {
       type: 'string',
       format: 'date-time'
     },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
     redacted: {
       type: 'boolean',
       title: 'Was Redacted?'
@@ -991,6 +1001,11 @@ export const FoiMessageDraftSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',
@@ -2547,6 +2562,11 @@ export const PatchedFoiMessageDraftSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',

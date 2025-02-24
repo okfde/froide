@@ -145,6 +145,7 @@ export type FoiAttachment = {
   readonly converted: string
   approved?: boolean
   can_approve?: boolean
+  readonly can_change_approval: string
   readonly redacted: string
   is_redacted?: boolean
   readonly can_redact: string
@@ -204,6 +205,7 @@ export type FoiMessage = {
   recipient_public_body?: string | null
   status?: StatusEnum | BlankEnum
   timestamp?: Date
+  registered_mail_date?: Date | null
   redacted?: boolean
   readonly not_publishable: boolean
   readonly attachments: string
@@ -232,6 +234,7 @@ export type FoiMessageDraft = {
   recipient_public_body?: string | null
   status?: StatusEnum | BlankEnum
   timestamp?: Date
+  registered_mail_date?: Date | null
   redacted?: boolean
   readonly not_publishable: boolean
   readonly attachments: string
@@ -675,6 +678,7 @@ export type PatchedFoiMessageDraft = {
   recipient_public_body?: string | null
   status?: StatusEnum | BlankEnum
   timestamp?: Date
+  registered_mail_date?: Date | null
   redacted?: boolean
   readonly not_publishable?: boolean
   readonly attachments?: string
@@ -1055,6 +1059,40 @@ export type AttachmentDestroyData = {
 export type AttachmentDestroyResponse = void
 
 export type AttachmentDestroyError = unknown
+
+export type AttachmentApproveCreateData = {
+  body: FoiAttachment
+  path: {
+    /**
+     * A unique integer value identifying this Attachment.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type AttachmentApproveCreateResponse = FoiAttachment
+
+export type AttachmentApproveCreateError = unknown
+
+export type AttachmentUnapproveCreateData = {
+  body: FoiAttachment
+  path: {
+    /**
+     * A unique integer value identifying this Attachment.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type AttachmentUnapproveCreateResponse = FoiAttachment
+
+export type AttachmentUnapproveCreateError = unknown
 
 export type ConvertImagesToPdfData = {
   body: ImageAttachmentConverter
@@ -2177,6 +2215,29 @@ export type RequestTagsAutocompleteRetrieveResponse = FoiRequestList
 
 export type RequestTagsAutocompleteRetrieveError = unknown
 
+export type SchemaRetrieveData = {
+  query?: {
+    lang?:
+      | 'da-dk'
+      | 'de'
+      | 'en'
+      | 'es'
+      | 'fi-fi'
+      | 'it'
+      | 'pt'
+      | 'sv-fi'
+      | 'sv-se'
+      | 'zh-cn'
+      | 'zh-hk'
+  }
+}
+
+export type SchemaRetrieveResponse = {
+  [key: string]: unknown
+}
+
+export type SchemaRetrieveError = unknown
+
 export type UploadCreateData = {
   body?: UploadCreate
   query?: {
@@ -2351,6 +2412,26 @@ export type AttachmentRetrieveResponseTransformer = (
 ) => Promise<AttachmentRetrieveResponse>
 
 export const AttachmentRetrieveResponseTransformer: AttachmentRetrieveResponseTransformer =
+  async (data) => {
+    FoiAttachmentModelResponseTransformer(data)
+    return data
+  }
+
+export type AttachmentApproveCreateResponseTransformer = (
+  data: any
+) => Promise<AttachmentApproveCreateResponse>
+
+export const AttachmentApproveCreateResponseTransformer: AttachmentApproveCreateResponseTransformer =
+  async (data) => {
+    FoiAttachmentModelResponseTransformer(data)
+    return data
+  }
+
+export type AttachmentUnapproveCreateResponseTransformer = (
+  data: any
+) => Promise<AttachmentUnapproveCreateResponse>
+
+export const AttachmentUnapproveCreateResponseTransformer: AttachmentUnapproveCreateResponseTransformer =
   async (data) => {
     FoiAttachmentModelResponseTransformer(data)
     return data
@@ -2816,6 +2897,9 @@ export const FoiMessageModelResponseTransformer: FoiMessageModelResponseTransfor
     if (data?.timestamp) {
       data.timestamp = new Date(data.timestamp)
     }
+    if (data?.registered_mail_date) {
+      data.registered_mail_date = new Date(data.registered_mail_date)
+    }
     if (data?.last_modified_at) {
       data.last_modified_at = new Date(data.last_modified_at)
     }
@@ -2862,6 +2946,9 @@ export const FoiMessageDraftModelResponseTransformer: FoiMessageDraftModelRespon
   (data) => {
     if (data?.timestamp) {
       data.timestamp = new Date(data.timestamp)
+    }
+    if (data?.registered_mail_date) {
+      data.registered_mail_date = new Date(data.registered_mail_date)
     }
     if (data?.last_modified_at) {
       data.last_modified_at = new Date(data.last_modified_at)
