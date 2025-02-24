@@ -155,11 +155,11 @@ const approveClick = () => {
     @click="approveClick"
     >
     <i class="fa fa-check"></i>
-    <template v-if="config.foirequest.public">
-      {{ i18n.makePublic }}
+    <template v-if="config.foirequest.public"><!-- comment preserves the one whitespace from collapsing to match other items
+      --> {{ i18n.makePublic }}
     </template>
-    <template v-else>
-      {{ i18n.approve }}
+    <template v-else><!--
+      --> {{ i18n.approve }}
     </template>
   </a>
   <a v-if="canDelete" class="btn btn-sm btn-link text-start" @click="deleteClick">

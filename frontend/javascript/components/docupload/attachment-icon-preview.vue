@@ -109,11 +109,13 @@ const closePreviewModal = () => {
                 <h5 class="card-title">
                   {{ i18n.actions }}
                 </h5>
-                <attachment-actions
-                  :attachment="attachment"
-                  @action-done="closePreviewModal"
-                  @action-delete="closePreviewModal"
-                  />
+                <div class="d-flex flex-column">
+                  <attachment-actions
+                    :attachment="attachment"
+                    @action-done="closePreviewModal"
+                    @action-delete="closePreviewModal"
+                    />
+                </div>
               </div>
             </div>
           </div>
