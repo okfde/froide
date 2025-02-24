@@ -325,6 +325,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
             "converted",
             "approved",
             "can_approve",
+            "can_change_approval",
             "redacted",
             "is_redacted",
             "can_redact",
