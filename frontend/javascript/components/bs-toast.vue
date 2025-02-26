@@ -1,5 +1,15 @@
 <script setup>
+import { inject } from 'vue'
 import { vBsToast } from '../lib/vue-bootstrap'
+
+const i18n = inject('i18n')
+
+const props = defineProps({
+  color: {
+    type: String,
+    default: 'body'
+  }
+})
 
 let teleportTo = document.getElementById('toastContainer')
 
@@ -13,9 +23,12 @@ if (!teleportTo) {
 
 <template>
   <Teleport :to="teleportTo">
-    <div v-bs-toast class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-body">
-        <slot name="body"></slot>
+    <div v-bs-toast :class="`toast show text-bg-${props.color}`" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          <slot name="body"></slot>
+        </div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" :aria-label="i18n.close"></button>
       </div>
     </div> 
   </Teleport>

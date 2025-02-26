@@ -1,4 +1,5 @@
-import { getData, postData, putData } from '../../../lib/api'
+import { getData, postData } from '../../../lib/api'
+import { documentUpdate } from '../../../api'
 
 import { pinia } from '../../../lib/pinia'
 import { useAttachmentsStore } from './attachments-store'
@@ -50,11 +51,17 @@ const createDocument = (attachment) => {
     })
 }
 
-const updateDocument = (attachment, payload) => {
-  const updateDocumentUrl = attachment.document.resource_uri
-  return putData(updateDocumentUrl, payload, config.csrfToken)
+const updateDocument = (attachment, { title, description }) => {
+  return documentUpdate({
+    path: { id: attachment.document.id },
+    body: { title, description },
+    throwOnError: true
+  })
     .then(() => {
       return refetchAttachment(attachment)
+    })
+    .catch((err) => {
+      store.messages.push({ body: err.detail || config.i18n.error || 'Error', color: 'danger' })
     })
 }
 
@@ -142,7 +149,9 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
   )
     .then((result) => {
       if (result.error) {
-        throw new Error(result.message)
+        // replace to cheaply "strip_tags" because this is a form snippet at the moment
+        store.messages.push({ body: result.message.replace(/<.*?>/g, ' '), color: 'danger' })
+        return
       }
       const att = result.added[0]
       if (att.is_image) {
@@ -169,7 +178,7 @@ const deleteAttachment = (attachment) => {
   store.removeAttachment(attachment)
   return postData(deleteUrl, {}, config.csrfToken, 'POST', true)
     .then(() => {
-      store.messages.push(`${config.i18n.value.attachmentDeleted} (${attachment.name})`)
+      store.messages.push({ body: `${config.i18n.value.attachmentDeleted} (${attachment.name})`, color: 'success-subtle' })
     })
     .catch(handleErrorAndRefresh)
 }
