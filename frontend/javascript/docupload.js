@@ -1,19 +1,12 @@
 import { createAppWithProps } from './lib/vue-helper'
 
-import DocumentUploader from './components/docupload/document-uploader.vue'
+import { pinia } from './lib/pinia'
 
-function createDocumentUploader(element) {
-  createAppWithProps(element, DocumentUploader).mount(element)
-}
-
-const els = document.querySelectorAll('.document-uploader')
-for (let i = 0; i < els.length; i += 1) {
-  createDocumentUploader(els[i])
-}
+import AttachmentManager from './components/docupload/attachment-manager.vue'
 
 document.addEventListener('DOMContentLoaded', function () {
-  const docUploader = document.querySelector('#document-uploader')
-  if (docUploader) {
-    createDocumentUploader(docUploader)
-  }
+  const el = document.getElementById('attachment-manager')
+  const app = createAppWithProps(el, AttachmentManager)
+  app.use(pinia)
+  app.mount(el)
 })
