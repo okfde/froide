@@ -8,6 +8,7 @@ import { computed, inject, ref, watch } from 'vue'
 
 import AttachmentIconPreview from './attachment-icon-preview.vue'
 import AttachmentActions from './attachment-actions.vue'
+import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
@@ -203,10 +204,9 @@ const deleteSelected = async () => {
           >{{ i18n.resolution }}</span>
         <div
           v-if="badgesType">
-          <span
-            v-if="att.is_image"
-            class="badge text-bg-secondary"
-            >{{ i18n.imageFile }}</span>
+          <attachment-badge-filetype
+            :attachment="att"
+            />
         </div>
         <button v-if="actionDelete && att.can_delete" type="button" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
           <i class="fa fa-trash"></i>
@@ -253,14 +253,10 @@ const deleteSelected = async () => {
         @click.self="toggleSelection('table', att.id)"
         >
         {{ att.document?.title || att.name }}
-        <span
-          v-if="badgesNew && att.new"
-          class="badge text-bg-success"
-          >{{ i18n.new }}</span>
-        <span
-          v-if="badgesType && att.is_image"
-          class="badge text-bg-secondary"
-          >{{ i18n.imageFile }}</span>
+        <attachment-badge-filetype
+          v-if="badgesType"
+          :attachment="att"
+          />
         <span
           v-if="badgesRedaction && att.is_redacted"
           class="badge text-bg-success"
