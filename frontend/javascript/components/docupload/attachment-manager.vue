@@ -107,9 +107,10 @@ const onlineHelp = ref()
   <bs-toast
     v-for="(toast, toastIdx) in attachments.messages"
     :key="toastIdx"
+    :color="toast.color"
     >
     <template #body>
-      {{ toast }}
+      {{ toast.body }}
     </template>
   </bs-toast>
 
