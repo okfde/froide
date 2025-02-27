@@ -10,6 +10,8 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from froide.document.api_views import DocumentSerializer
+from froide.helper.auth import is_crew
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
 
@@ -141,6 +143,52 @@ class FoiAttachmentViewSet(
     @action(detail=True, methods=["post"])
     def unapprove(self, request, pk):
         return self.update_approval(request, approve=False)
+
+    @extend_schema(responses={status.HTTP_201_CREATED: DocumentSerializer})
+    @action(detail=True, methods=["post"])
+    def to_document(self, request, pk=None):
+        att = self.get_object()
+
+        if not att.can_approve and not is_crew(request.user):
+            return Response(
+                {"detail": _("You can't convert this attachment to a document.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if att.redacted:
+            return Response(
+                {
+                    "detail": _(
+                        "Only the redacted version of this attachment can be converted to a document."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if att.document is not None:
+            return Response(
+                {
+                    "detail": _(
+                        "This attachment has already been converted to a document."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not att.is_pdf:
+            return Response(
+                {"detail": _("Only PDF attachments can be converted to a document.")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        doc = att.create_document()
+        att.document_created.send(
+            sender=att,
+            user=request.user,
+        )
+
+        data = DocumentSerializer(doc, context={"request": request}).data
+        return Response(data, status=status.HTTP_201_CREATED)
 
     @extend_schema(
         responses={status.HTTP_201_CREATED: FoiAttachmentSerializer},

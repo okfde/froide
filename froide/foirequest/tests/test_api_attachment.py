@@ -6,6 +6,7 @@ from django.utils import timezone
 
 import pytest
 
+from froide.document.factories import DocumentFactory
 from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
 from froide.upload.factories import UploadFactory
@@ -267,3 +268,53 @@ def test_change_approval(client: Client, user):
     assert response.status_code == 403
     attachment.refresh_from_db()
     assert not attachment.approved
+
+
+@pytest.mark.django_db
+def test_to_document(client: Client, user):
+    assert client.login(email=user.email, password="froide")
+
+    request = factories.FoiRequestFactory.create(user=user)
+    message = factories.FoiMessageFactory.create(request=request)
+
+    # can't convert unapprovable attachments
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message, can_approve=False
+    )
+
+    response = client.post(
+        reverse("api:attachment-to-document", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 403
+
+    # must be a pdf
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message, filetype="image/png"
+    )
+    response = client.post(
+        reverse("api:attachment-to-document", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 400
+
+    # has no document
+    document = DocumentFactory.create()
+    attachment = factories.FoiAttachmentFactory.create(
+        belongs_to=message, document=document
+    )
+
+    response = client.post(
+        reverse("api:attachment-to-document", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 400
+
+    # everything good
+    attachment = factories.FoiAttachmentFactory.create(belongs_to=message)
+
+    response = client.post(
+        reverse("api:attachment-to-document", kwargs={"pk": attachment.pk})
+    )
+    data = response.json()
+    assert response.status_code == 201
+    assert data["title"] == attachment.name
+    assert str(request.pk) in data["foirequest"]
+    assert str(message.sender_public_body.pk) in data["publicbody"]
