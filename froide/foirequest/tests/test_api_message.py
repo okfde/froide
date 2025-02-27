@@ -246,7 +246,7 @@ def test_auth(client, user):
     # drafts can't be seen by others
     client.logout()
     response = client.get(resource_uri)
-    assert response.status_code == 404
+    assert response.status_code == 401
 
     client.login(email=user2.email, password="froide")
     response = client.get(resource_uri)

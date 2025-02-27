@@ -60,6 +60,10 @@ class FoiMessageDraftViewSet(
     serializer_class = FoiMessageDraftSerializer
     filterset_class = FoiMessageDraftFilter
     required_scopes = ["write:message"]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        WriteFoiRequestPermission,
+    ]
 
     def get_queryset(self):
         qs = get_read_foimessage_queryset(
