@@ -1,8 +1,11 @@
+from typing import override
+
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import PermissionDenied
 
 from froide.document.api_views import DocumentSerializer
@@ -15,7 +18,6 @@ from froide.foirequest.fields import (
 from froide.foirequest.models.message import (
     MESSAGE_KIND_USER_ALLOWED,
     FoiMessageDraft,
-    MessageKind,
 )
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
@@ -168,7 +170,7 @@ class MakeRequestSerializer(serializers.Serializer):
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(view_name="api:message-detail")
-    request = FoiRequestRelatedField()
+    request = FoiRequestRelatedField(read_only=True)
     attachments = serializers.SerializerMethodField(source="get_attachments")
     sender_public_body = PublicBodyRelatedField(required=False, allow_null=True)
     recipient_public_body = PublicBodyRelatedField(required=False, allow_null=True)
@@ -177,19 +179,16 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.SerializerMethodField(source="get_content")
     redacted_subject = serializers.SerializerMethodField(source="get_redacted_subject")
     redacted_content = serializers.SerializerMethodField(source="get_redacted_content")
-    sender = serializers.CharField(read_only=True)
     url = serializers.CharField(source="get_absolute_domain_url", read_only=True)
     status = serializers.ChoiceField(
         choices=FoiRequest.STATUS.choices, required=False, allow_blank=True
     )
-    kind = serializers.ChoiceField(choices=MessageKind.choices, default="post")
     status_name = serializers.CharField(source="get_status_display", read_only=True)
-    timestamp = serializers.DateTimeField(default=timezone.now)
 
     class Meta:
         model = FoiMessage
         depth = 0
-        fields = (
+        fields = [
             "resource_uri",
             "id",
             "url",
@@ -216,8 +215,18 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "sender",
             "status_name",
             "last_modified_at",
-        )
-        read_only_fields = ("sent", "is_draft", "not_publishable", "last_modified_at")
+        ]
+        read_only_fields = [
+            "sent",
+            "is_response",
+            "kind",
+            "is_escalation",
+            "content_hidden",
+            "is_draft",
+            "not_publishable",
+            "timestamp",
+            "last_modified_at",
+        ]
 
     def _is_authenticated_read(self, obj):
         request = self.context["request"]
@@ -277,14 +286,58 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             )
         return value
 
+    @override
+    def validate(self, attrs):
+        sender_public_body = attrs.get(
+            "sender_public_body",
+            self.instance.sender_public_body if self.instance else None,
+        )
+        recipient_public_body = attrs.get(
+            "recipient_public_body",
+            self.instance.recipient_public_body if self.instance else None,
+        )
+        is_response = attrs.get(
+            "is_response", self.instance.is_response if self.instance else None
+        )
+
+        if is_response is None:
+            raise ValidationError(_("is_response is required"))
+        elif is_response:
+            if sender_public_body is None or recipient_public_body is not None:
+                raise ValidationError(
+                    _(
+                        "Response messages must have a sender public body, no sender user and no recipient public body."
+                    )
+                )
+        else:
+            if sender_public_body is not None or recipient_public_body is None:
+                raise ValidationError(
+                    _(
+                        "Non-response messages must have a recipent public body, but no sender public body."
+                    )
+                )
+
+        return super().validate(attrs)
+
 
 class FoiMessageDraftSerializer(FoiMessageSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name="api:message-draft-detail"
     )
+    request = FoiRequestRelatedField()
+    timestamp = serializers.DateTimeField(default=timezone.now)
 
     class Meta(FoiMessageSerializer.Meta):
         model = FoiMessageDraft
+        read_only_fields = [
+            "sent",
+            "is_escalation",
+            "content_hidden",
+            "is_draft",
+            "not_publishable",
+            "timestamp",
+            "last_modified_at",
+        ]
 
 
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
