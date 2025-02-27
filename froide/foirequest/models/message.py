@@ -764,20 +764,6 @@ class FoiMessageDraft(FoiMessage):
             kwargs.update({"is_draft": True})
         super().__init__(*args, **kwargs)
 
-    def can_be_published(self) -> bool:
-        # see constraints of FoiMessage
-        if self.is_response:
-            return (
-                self.sender_public_body is not None
-                and self.recipient_public_body is None
-                and self.sender_user is None
-            )
-        else:
-            return (
-                self.sender_public_body is None
-                and self.recipient_public_body is not None
-            )
-
 
 class Delivery(models.TextChoices):
     STATUS_UNKNOWN = ("unknown", _("unknown"))
