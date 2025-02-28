@@ -9,7 +9,28 @@ internationalized and written in English.
 
 ## Development on Froide
 
-After clone, create a Python 3.8+ virtual environment and install dependencies:
+First install the prerequisites to install the python packages. It depends on your os how to do this.
+On Ubuntu you do it by installing the following:
+
+Install the python headers:
+
+```
+apt install python3.11-dev build-essential libpoppler-cpp-dev pkg-config gdal-bin cmake
+```
+
+Install gdal-bin for the geospacial backend:
+
+```
+apt install gdal-bin
+```
+
+Install the build os dependencies
+
+```
+apt install build-essential libpoppler-cpp-dev pkg-config cmake
+```
+
+To install the projects python dependencies, create a Python 3.10+ virtual environment and install:
 
 ```
 python3 -m venv froide-env
