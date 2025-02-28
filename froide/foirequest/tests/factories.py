@@ -159,6 +159,8 @@ class FoiMessageFactory(DjangoModelFactory):
 
 
 class FoiMessageDraftFactory(FoiMessageFactory):
+    is_draft = True
+
     class Meta:
         model = FoiMessageDraft
 
