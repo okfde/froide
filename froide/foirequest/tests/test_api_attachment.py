@@ -94,6 +94,14 @@ def test_delete_attachment(client: Client, user):
     )
     assert response.status_code == 403
 
+    # must be postal
+    message = factories.FoiMessageFactory.create(request=request)
+    attachment = factories.FoiAttachmentFactory.create(belongs_to=message)
+    response = client.delete(
+        reverse("api:attachment-detail", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 403
+
 
 @pytest.mark.django_db
 def test_convert_attachment(client: Client, user):
