@@ -24,3 +24,12 @@ class WriteFoiRequestPermission(permissions.BasePermission):
             return can_read_foirequest(foirequest, request)
         else:
             return can_write_foirequest(foirequest, request)
+
+
+class OnlyPostalMessagesWritable(permissions.BasePermission):
+    def has_object_permission(self, request: Request, view, obj: FoiMessage) -> bool:
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if obj.is_postal:
+            return True
+        return False
