@@ -1,20 +1,24 @@
 <script setup>
-import { ref, reactive, computed, defineProps, nextTick } from 'vue'
+import { ref, reactive, computed, defineProps, onMounted, provide } from 'vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import DocumentUploader from '../docupload/document-uploader.vue'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import OnlineHelp from './online-help.vue'
+import OnlineHelp from '../online-help.vue'
 import { useI18n } from '../../lib/i18n'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import { scrollNavIntoViewIfNecessary, guardBeforeunload } from '../../lib/misc'
+
+import { useAttachments } from '../docupload/lib/attachments'
+
+import FileUploader from '../upload/file-uploader.vue'
+import ImageDocumentPagesSortable from '../docupload/image-document-pages-sortable.vue'
+import AttachmentsTable from '../docupload/attachments-table.vue'
 
 const props = defineProps({
   config: Object,
@@ -30,6 +34,20 @@ const props = defineProps({
 })
 
 const { i18n } = useI18n(props.config)
+provide('i18n', i18n)
+provide('config', props.config)
+
+const { attachments, addFromUppy, refresh: refreshAttachments, convertImage, approveAllUnredactedAttachments } = useAttachments({
+  urls: {
+    ...props.config.url,
+    ...props.config.urls,
+    getAttachment: props.config.url.getAttachment.replace('/0/', '/') +
+      '?belongs_to=' +
+      props.message.id,
+  },
+  csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+  i18n,
+})
 
 const { isDesktop } = useIsDesktop()
 
@@ -140,7 +158,10 @@ const submitForm = async () => {
 const approveAndSubmit = async () => {
   isSubmitting.value = true
   try {
-    await documentUploader.value.approveUnredacted()
+    // "flatten/reduce" the {id:bool} object into an array (where false!)
+    const excludeIds = Object.entries(attachments.autoApproveSelection)
+      .filter((kv) => kv[1] === false).map((kv) => +kv[0])
+    await approveAllUnredactedAttachments(excludeIds)
     await submitFetch()
     gotoStep()
   } catch (err) {
@@ -196,74 +217,42 @@ const submitFetch = async () => {
 
 const onlineHelp = ref()
 
-/* --- <document-uploader> interaction --- */
+/* --- <attachment-manager> interaction --- */
 
-const documentUploader = ref()
+onMounted(() => {
+  refreshAttachments()
+})
 
-const documentsSelectedPdfRedaction = ref([])
+// eslint-disable-next-line vue/no-side-effects-in-computed-properties
+const attachmentsSelectedPdfRedaction = computed(() => attachments.selected
+  .sort((a, b) => a.id - b.id)
+)
 
-const documentsImagesConverting = ref(false)
-const documentsConvertImages = () => {
-  if (documentUploader.value.$refs.imageDocument.length === 0) {
+const attachmentsImagesConverting = computed(() => attachments.isConverting)
+const attachmentsConvertImages = () => {
+  if (attachments.images.length === 0) {
     console.log('no images to convert')
     gotoStep()
     return
   }
-  documentsImagesConverting.value = true
-  // XXX wild mix of Vue2&3 refs, not the cleanest, but a bus was basically impossible
-  // we are calling a grand-child component's method
-  documentUploader.value.$refs.imageDocument?.[0]?.convertImages?.()
-  // ^child              ^vue2 ^grandchild...REN!  ^method
-  // alternative: pass a prop, watch it, react?
-}
-const documentsImagesDocumentFilenameDefault =
-  i18n.value.documentsUploadDefaultFilename
-const documentsImagesDocumentFilename = ref(
-  documentsImagesDocumentFilenameDefault
-)
-const documentsImagesDocumentFilenameNormalized = computed(() =>
-  documentsImagesDocumentFilename.value.replace(/\.pdf$/, '')
-)
-
-const documentsBasicOperations = ref(false)
-
-const documentUploaderSelectAll = (val) => {
-  documentUploader.value.setAllSelect(val)
+  convertImage(0)
+    .then(() => gotoStep())
+    .catch((err) => {
+      console.error(err)
+      window.alert(`${i18n.value.error}: ${err.message}`)
+    })
 }
 
-const stepAndUppyClick = () => {
-  gotoStep()
-  // wait until gotoStep unveils uppy in DOM (v-if)
-  nextTick(() => {
-    const button = documentUploader.value.$el.querySelector(
-      '.uppy-Dashboard-browse'
-    )
-    console.log('# uppyClick', button)
-    button.click()
-  })
-}
+const attachmentsOverviewActions = ref(false)
 
-const documentsImageMode = ref(false)
-const documentsImagesAdded = () => {
-  if (step.value !== STEP_DOCUMENTS_UPLOAD) {
-    return
-  }
-  documentsImageMode.value = true
-  gotoStep()
-}
-const documentsDocumentsAdded = () => {
-  if (step.value !== STEP_DOCUMENTS_UPLOAD) {
-    return
-  }
-  gotoStep()
-}
-const documentsImagesConverted = () => {
-  documentsImagesConverting.value = false
-  if (step.value !== STEP_DOCUMENTS_CONVERT_PDF) {
-    console.warn("conversion shouldn't have happened here")
-    return
-  }
-  gotoStep()
+const fileUploaderSucceeded = (uppyResult) => {
+  addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
+    .then(() => {
+      if (step.value !== STEP_DOCUMENTS_UPLOAD) {
+        return
+      }
+      gotoStep()
+    })
 }
 
 /* --- <pdf-redaction> interaction --- */
@@ -281,7 +270,7 @@ const pdfRedactionCurrentIndex = computed(() => {
 })
 const pdfRedactionCurrentDoc = computed(() => {
   if (pdfRedactionCurrentIndex.value === false) return
-  return documentsSelectedPdfRedaction.value[pdfRedactionCurrentIndex.value]
+  return attachmentsSelectedPdfRedaction.value[pdfRedactionCurrentIndex.value]
 })
 
 const pdfRedactionCurrentHasRedactions = ref(false)
@@ -297,10 +286,7 @@ const pdfRedactionRedact = () => {
   })
 }
 const pdfRedactionUploaded = () => {
-  // TODO handle errors?
-  // XXX again, we're calling child's method, could handle attachments here, store-like,
-  //   and pass as a "override prop" to the components
-  documentUploader.value.refreshAttachments()
+  refreshAttachments()
 }
 
 /* --- state machine, functionality --- */
@@ -366,18 +352,12 @@ const stepsConfig = {
   },
   [STEP_DOCUMENTS_UPLOAD]: {
     next: () => {
-      if (documentsImageMode.value) {
-        console.log(
-          'uploads were documents, not images, passing by image sorting'
-        )
-        return STEP_DOCUMENTS_SORT
-      }
+      if (attachments.images.length) return STEP_DOCUMENTS_SORT
+      console.log('uploads were documents, not images, passing by image sorting')
       return STEP_MESSAGE_SENT_OR_RECEIVED
     },
     onEnter: () => {
       guardBeforeunload(true)
-      documentsImagesDocumentFilename.value =
-        documentsImagesDocumentFilenameDefault
     },
     context: {
       progressStep: 0,
@@ -557,7 +537,7 @@ const stepsConfig = {
   },
   [STEP_REDACTION_PICKER]: {
     next: () => {
-      if (documentsSelectedPdfRedaction.value.length === 0)
+      if (attachmentsSelectedPdfRedaction.value.length === 0)
         return STEP_DOCUMENTS_OVERVIEW_REDACTED
       return STEP_REDACTION_REDACT // TODO
     },
@@ -577,7 +557,7 @@ const stepsConfig = {
     next: () => {
       if (
         pdfRedactionCurrentIndex.value <
-        documentsSelectedPdfRedaction.value.length - 1
+        attachmentsSelectedPdfRedaction.value.length - 1
       ) {
         return STEP_REDACTION_REDACT
       }
@@ -591,7 +571,8 @@ const stepsConfig = {
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
     next: STEP_OUTRO,
     onEnter: () => {
-      documentsBasicOperations.value = false
+      attachments.unselectSubset(attachments.relevant)
+      attachmentsOverviewActions.value = false
       updateValidity('form')
       pdfRedactionUploaded()
     },
@@ -711,6 +692,7 @@ addEventListener('hashchange', () => {
     <div>history={{ stepHistory.join(' ') }}</div>
     <div>stepContext={{ stepContext }}</div>
     <div>isGotoValid={{ isGotoValid }}</div>
+    <div>attachments.autoApproveSelection={{ attachments.autoApproveSelection }}</div>
     <span>
       <!-- eslint-disable-next-line vue/no-mutating-props -->
       <button type="button" @click="user_is_staff = !user_is_staff">
@@ -788,7 +770,7 @@ addEventListener('hashchange', () => {
             <div class="col-md-6">
               <button
                 type="button"
-                @click="stepAndUppyClick"
+                @click="gotoStep()"
                 class="btn btn-outline-primary btn-lg d-block w-100"
               >
                 <i class="fa fa-upload fa-2x"></i><br />
@@ -818,14 +800,28 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div v-show="step === STEP_DOCUMENTS_UPLOAD">
-      <!-- document-uploader see below -->
+    <div v-if="step === STEP_DOCUMENTS_UPLOAD" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <file-uploader
+            :config="config"
+            :allowed-file-types="config.settings.allowed_filetypes"
+            :auto-proceed="true"
+            onmount-pick
+            @upload-success="fileUploaderSucceeded"
+            />
+        </div>
+      </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9 fw-bold">
           {{ i18n.documentsDragOrder }}
         </div>
+        <image-document-pages-sortable
+          :idx="0"
+          show-rotate
+          />
       </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
@@ -840,11 +836,11 @@ addEventListener('hashchange', () => {
         <div class="text-center fw-bold my-3">
           {{ i18n.documentsFromImages }}
         </div>
-        <div class="documents-filename p-2 my-3 mx-auto">
+        <div v-if="attachments.images[0]" class="documents-filename p-2 my-3 mx-auto">
           <div class="form-group">
             <input
               id="documents_filename"
-              v-model="documentsImagesDocumentFilename"
+              v-model="attachments.images[0].name"
               class="form-control"
             />
             <label for="documents_filename">
@@ -861,6 +857,7 @@ addEventListener('hashchange', () => {
           <div class="fw-bold">
             {{ i18n.documentsAvailable }}
           </div>
+          <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
         </div>
       </div>
     </div>
@@ -1287,27 +1284,59 @@ addEventListener('hashchange', () => {
           <label class="fw-bold col-form-label">
             {{ i18n.redactionPick }}
           </label>
-          <!-- TODO: if we expect users to go back a lot, the document-uploader list
-                shown here should exclude/disable "has schwärzung" docs -->
           <p>
             {{ i18n.redactionInfo }}
           </p>
-          <div class="text-end">
-            <button
-              type="button"
-              class="btn btn-link mx-2 text-decoration-underline"
-              @click="documentUploaderSelectAll(true)"
-            >
-              {{ i18n.selectAll }}
-            </button>
-            <button
-              type="button"
-              class="btn btn-link mx-2 text-decoration-underline"
-              @click="documentUploaderSelectAll(false)"
-            >
-              {{ i18n.selectNone }}
-            </button>
-          </div>
+          <attachments-table :subset="attachments.relevant" table-selection selection-buttons :as-card-threshold="0">
+            <template #after-row="slotProps">
+              <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
+                <!-- like v-model, but default true -->
+                <input
+                  v-if="!slotProps.attachment.approved"
+                  type="checkbox"
+                  :checked="attachments.autoApproveSelection[slotProps.attachment.id] !== false"
+                  @input="(evt) => { attachments.autoApproveSelection[slotProps.attachment.id] = evt.target.checked }"
+                  />
+                <input
+                  v-else
+                  type="checkbox"
+                  checked
+                  disabled
+                  v-bs-tooltip
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  :title="i18n.alreadyPublished"
+                  />
+              </label>
+            </template>
+            <template #after-card="slotProps">
+              <label
+                v-if="!slotProps.attachment.approved"
+                class="text-center"
+                >
+                <input
+                  type="checkbox"
+                  :checked="attachments.autoApproveSelection[slotProps.attachment.id] !== false"
+                  @input="(evt) => { attachments.autoApproveSelection[slotProps.attachment.id] = evt.target.checked }"
+                  />
+                {{ i18n.publish }}*
+              </label>
+              <div v-else>
+                {{ i18n.alreadyPublished }}
+              </div>
+            </template>
+            <template #after-table>
+              <div class="text-end px-2">
+                {{ i18n.documentsApproveLater }}
+                ⮥
+              </div>
+            </template>
+            <template #after-cards>
+              <div class="text-end px-2">
+                * {{ i18n.documentsApproveLater }}
+              </div>
+            </template>
+          </attachments-table>
         </div>
       </div>
     </div>
@@ -1319,9 +1348,10 @@ addEventListener('hashchange', () => {
               {{
                 i18n._('redactionCounter', {
                   current: pdfRedactionCurrentIndex + 1,
-                  total: documentsSelectedPdfRedaction.length
+                  total: attachmentsSelectedPdfRedaction.length
                 })
-              }}
+              }},
+              {{ pdfRedactionCurrentDoc?.name }}
             </label>
             <div class="row">
               <!-- no need to import vBsCollapsePersistent,
@@ -1342,16 +1372,15 @@ addEventListener('hashchange', () => {
       </div>
       <div>
         <div class="debug" v-if="debug">
-          DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}<br />
-          auto_approve current = {{ pdfRedactionCurrentDoc?.auto_approve }}
+          DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}
         </div>
         <pdf-redaction
           :class="pdf-redaction-tool"
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
-          :pdf-path="pdfRedactionCurrentDoc.attachment.file_url"
-          :attachment-url="pdfRedactionCurrentDoc.attachment.anchor_url"
-          :auto-approve="pdfRedactionCurrentDoc.auto_approve"
+          :pdf-path="pdfRedactionCurrentDoc.file_url"
+          :attachment-url="pdfRedactionCurrentDoc.anchor_url"
+          :auto-approve="attachments.autoApproveSelection[pdfRedactionCurrentDoc.id] !== false"
           :post-url="
             config.url.redactAttachment.replace(
               '/0/',
@@ -1404,8 +1433,28 @@ addEventListener('hashchange', () => {
           <div class="fw-bold col-form-label">
             {{ i18n.documentsOverview }}
           </div>
+          <attachments-table
+            :subset="attachments.relevant.filter(att => !att.redacted)"
+            badges-redaction
+            :actions="attachmentsOverviewActions"
+            >
+            <template #before-cards>
+              <div class="text-end mb-2">
+                <button
+                  type="button"
+                  class="btn btn-link"
+                  @click="() => attachmentsOverviewActions = !attachmentsOverviewActions"
+                  >
+                  {{ attachmentsOverviewActions ? i18n.done : i18n.edit }}
+                </button>
+              </div>
+            </template>
+            <template #before-table>
+            </template>
+          </attachments-table>
         </div>
       </div>
+      <!-- filter hides unredacted attachments that have a redaction version -->
     </div>
     <div v-show="step === STEP_OUTRO" class="container">
       <div class="row justify-content-center">
@@ -1418,59 +1467,6 @@ addEventListener('hashchange', () => {
           </div>
           <div>
             {{ i18n.requestUpdatedThanks }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- not in v-show="step ..." -->
-    <div v-show="stepContext.documents">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-lg-9">
-            <div
-              v-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED && !user_is_staff"
-              class="d-flex justify-content-end"
-            >
-              <button
-                type="button"
-                class="btn btn-link text-decoration-underline"
-                @click="documentsBasicOperations = !doctumentsBasicOperations"
-              >
-                {{ documentsBasicOperations ? i18n.done : i18n.edit }}
-              </button>
-            </div>
-            <!-- TODO maybe :hide-documents (PDFs) in step STEP_DOCUMENTS_UPLOAD -->
-            <document-uploader
-              :debug="debug"
-              :config="config"
-              :message="message"
-              :show-upload="stepContext.documentsUpload"
-              :icon-style="stepContext.documentsIconStyle"
-              :show-auto-approve="stepContext.documentsShowAutoApprove"
-              :hide-selection="stepContext.documentsHideSelection"
-              :hide-selection-bar="true"
-              :hide-other="true"
-              :hide-pdf="stepContext.documentsHidePdf"
-              :hide-status-tools="true"
-              :images-simple="stepContext.documentsImagesSimple"
-              :images-document-filename="
-                documentsImagesDocumentFilenameNormalized
-              "
-              :file-basic-operations="
-                step === STEP_DOCUMENTS_OVERVIEW || documentsBasicOperations
-              "
-              :hide-advanced-operations="true || !(debug && user_is_staff)"
-              :highlight-redactions="stepContext.documentsHighlightRedactions"
-              @selectionupdated="documentsSelectedPdfRedaction = $event"
-              @imagesadded="documentsImagesAdded"
-              @documentsadded="documentsDocumentsAdded"
-              @imagesconverted="documentsImagesConverted"
-              ref="documentUploader"
-            >
-              <template #fileuploader-after>
-                <div class="form-text text-center">{{  i18n.scanHelpText }}</div>
-              </template>
-            </document-uploader>
           </div>
         </div>
       </div>
@@ -1530,7 +1526,7 @@ addEventListener('hashchange', () => {
           <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
             <button
               type="button"
-              @click="approveAndSubmit()"
+              @click="approveAndSubmit"
               class="btn btn-primary d-block w-100"
               :disabled="isSubmitting || !validity.form"
             >
@@ -1603,15 +1599,15 @@ addEventListener('hashchange', () => {
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_CONVERT_PDF">
             <button
-              v-if="documentUploader.$refs.imageDocument.length > 0"
+              v-if="attachments.images.length > 0"
               type="button"
-              @click="documentsConvertImages"
+              @click="attachmentsConvertImages"
               class="btn btn-primary d-block w-100"
-              :disabled="documentsImagesConverting"
+              :disabled="attachmentsImagesConverting"
             >
               <span
                 class="spinner-border spinner-border-sm"
-                v-if="documentsImagesConverting"
+                v-if="attachmentsImagesConverting"
                 role="status"
                 aria-hidden="true"
               />
