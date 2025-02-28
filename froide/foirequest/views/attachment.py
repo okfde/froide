@@ -66,6 +66,7 @@ def show_attachment(request, slug, message_id, attachment_name):
     )
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_or_moderate_pii_foirequest
 def approve_attachment(request, foirequest, attachment_id):
@@ -95,6 +96,7 @@ def approve_attachment(request, foirequest, attachment_id):
     return redirect(att.get_anchor_url())
 
 
+# TODO: move this to API
 @require_POST
 @allow_moderate_pii_foirequest
 def mark_attachment_as_moderated(request, foirequest, attachment_id):
@@ -120,6 +122,7 @@ def mark_attachment_as_moderated(request, foirequest, attachment_id):
     return redirect(att.get_anchor_url())
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_foirequest
 def delete_attachment(request, foirequest, attachment_id):
@@ -147,6 +150,7 @@ def delete_attachment(request, foirequest, attachment_id):
     return redirect(message.get_absolute_url())
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_or_moderate_pii_foirequest
 def create_document(request, foirequest, attachment_id):

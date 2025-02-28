@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
 from rest_framework import mixins, permissions, viewsets
@@ -12,7 +11,7 @@ from ..auth import (
     get_read_foimessage_queryset,
 )
 from ..models import FoiMessage, FoiMessageDraft, FoiRequest
-from ..permissions import WriteFoiRequestPermission
+from ..permissions import OnlyPostalMessagesWritable, WriteFoiRequestPermission
 from ..serializers import (
     FoiMessageDraftSerializer,
     FoiMessageSerializer,
@@ -34,13 +33,14 @@ class FoiMessageDraftFilter(filters.FilterSet):
         fields = ("request",)
 
 
-class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
+class FoiMessageViewSet(mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = FoiMessageSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiMessageFilter
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         WriteFoiRequestPermission,
+        OnlyPostalMessagesWritable,
     ]
 
     def optimize_query(self, qs):
@@ -54,12 +54,15 @@ class FoiMessageViewSet(viewsets.ReadOnlyModelViewSet):
 class FoiMessageDraftViewSet(
     FoiMessageViewSet,
     mixins.CreateModelMixin,
-    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
 ):
     serializer_class = FoiMessageDraftSerializer
     filterset_class = FoiMessageDraftFilter
     required_scopes = ["write:message"]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        WriteFoiRequestPermission,
+    ]
 
     def get_queryset(self):
         qs = get_read_foimessage_queryset(
@@ -74,18 +77,6 @@ class FoiMessageDraftViewSet(
 
         if not message.is_response:
             message.sender_user = request.user
-
-        if not message.can_be_published():
-            if message.is_response:
-                error_message = _(
-                    "Response messages must have a sender public body, no sender user and no recipient public body."
-                )
-            else:
-                error_message = _(
-                    "Non-response messages must have a recipent public body, but no sender public body."
-                )
-
-            return Response({"detail": error_message}, status=400)
 
         if message.is_postal:
             message.timestamp = postal_date(message)
