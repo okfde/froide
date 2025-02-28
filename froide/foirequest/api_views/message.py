@@ -11,7 +11,7 @@ from ..auth import (
     get_read_foimessage_queryset,
 )
 from ..models import FoiMessage, FoiMessageDraft, FoiRequest
-from ..permissions import WriteFoiRequestPermission
+from ..permissions import OnlyPostalMessagesWritable, WriteFoiRequestPermission
 from ..serializers import (
     FoiMessageDraftSerializer,
     FoiMessageSerializer,
@@ -40,6 +40,7 @@ class FoiMessageViewSet(mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         WriteFoiRequestPermission,
+        OnlyPostalMessagesWritable,
     ]
 
     def optimize_query(self, qs):
