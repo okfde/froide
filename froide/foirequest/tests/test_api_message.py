@@ -1,9 +1,13 @@
+from datetime import datetime
+
 from django.test import Client
 from django.urls import reverse
+from django.utils import timezone
 
 import pytest
 
 from froide.foirequest.models.event import FoiEvent
+from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
 
 
@@ -11,7 +15,9 @@ from froide.foirequest.tests import factories
 def test_message(client: Client, user):
     assert client.login(email=user.email, password="froide")
 
-    request = factories.FoiRequestFactory.create(user=user)
+    request = factories.FoiRequestFactory.create(
+        user=user, created_at=datetime(2000, 1, 1)
+    )
     other_request = factories.FoiRequestFactory.create()
     message = factories.FoiMessageFactory.create(request=request)
 
@@ -26,16 +32,28 @@ def test_message(client: Client, user):
     )
     assert response.status_code == 405
 
-    timestamp = "2000-01-01T12:00:00+01:00"
+    timestamp = "2000-01-01T00:00:00+00:00"
+
+    # must be a postal message
+    response = client.patch(
+        reverse("api:message-detail", kwargs={"pk": message.pk}),
+        data={
+            "registered_mail_date": timestamp,
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 403
 
     # can only update some fields
+    message = factories.FoiMessageFactory.create(
+        request=request, kind=MessageKind.POST, timestamp=timezone.now()
+    )
     response = client.patch(
         reverse("api:message-detail", kwargs={"pk": message.pk}),
         data={
             "sent": False,
-            "kind": "post",
+            "kind": MessageKind.EMAIL,
             "request": reverse("api:request-detail", kwargs={"pk": other_request.pk}),
-            "timestamp": timestamp,
             "is_draft": True,
             "not_publishable": True,
         },
@@ -43,9 +61,8 @@ def test_message(client: Client, user):
     )
     data = response.json()
     assert data["sent"]
-    assert data["kind"] == "email"
+    assert data["kind"] == MessageKind.POST
     assert reverse("api:request-detail", kwargs={"pk": request.pk}) in data["request"]
-    assert data["timestamp"] != timestamp
     assert not data["is_draft"]
     assert not data["not_publishable"]
 
@@ -54,12 +71,16 @@ def test_message(client: Client, user):
         reverse("api:message-detail", kwargs={"pk": message.pk}),
         data={
             "registered_mail_date": timestamp,
+            "timestamp": timestamp,
         },
         content_type="application/json",
     )
     data = response.json()
+    print(data)
     assert response.status_code == 200
     assert "2000-01-01" in data["registered_mail_date"]
+    assert "2000-01-01" in data["timestamp"]
+    assert "12:00:00" in data["timestamp"]  # converted to postal time
 
     # can't delete
     response = client.delete(reverse("api:message-detail", kwargs={"pk": message.pk}))

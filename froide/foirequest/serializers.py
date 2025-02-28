@@ -1,5 +1,3 @@
-from typing import override
-
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -19,6 +17,7 @@ from froide.foirequest.models.message import (
     MESSAGE_KIND_USER_ALLOWED,
     FoiMessageDraft,
 )
+from froide.foirequest.utils import postal_date
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
 from froide.publicbody.serializers import (
@@ -224,7 +223,6 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "content_hidden",
             "is_draft",
             "not_publishable",
-            "timestamp",
             "last_modified_at",
         ]
 
@@ -286,8 +284,33 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             )
         return value
 
-    @override
+    def validate_timestamp(self, value):
+        # this handles updating FoiMessages
+        # when creating a FoiMessageDraft, the timestamp is set correctly when publishing
+
+        now = timezone.now()
+        if value > now:
+            raise ValidationError(
+                _("The timestamp is in the future, that is not possible.")
+            )
+
+        if self.instance and self.instance.is_postal:
+            return postal_date(self.instance, value)
+        return value
+
+    def validate_registered_mail_date(self, value):
+        return self.validate_timestamp(value)
+
     def validate(self, attrs):
+        timestamp = attrs.get("timestamp") or self.instance.timestamp
+        foirequest = attrs.get("request") or self.instance.request
+
+        if timestamp < foirequest.created_at:
+            raise ValidationError(
+                _("Your message date is before the request was made.")
+            )
+
+        # TODO: find a better solution for this
         sender_public_body = attrs.get(
             "sender_public_body",
             self.instance.sender_public_body if self.instance else None,
