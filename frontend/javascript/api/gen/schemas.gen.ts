@@ -566,6 +566,10 @@ export const FoiAttachmentSchema = {
       type: 'boolean',
       title: 'User can approve'
     },
+    can_change_approval: {
+      type: 'string',
+      readOnly: true
+    },
     redacted: {
       type: 'string',
       format: 'uri',
@@ -601,6 +605,7 @@ export const FoiAttachmentSchema = {
   required: [
     'anchor_url',
     'belongs_to',
+    'can_change_approval',
     'can_delete',
     'can_redact',
     'converted',
@@ -792,7 +797,8 @@ export const FoiMessageSchema = {
     },
     request: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
+      readOnly: true
     },
     sent: {
       type: 'boolean',
@@ -801,6 +807,7 @@ export const FoiMessageSchema = {
     },
     is_response: {
       type: 'boolean',
+      readOnly: true,
       title: 'Response?'
     },
     is_postal: {
@@ -818,14 +825,16 @@ export const FoiMessageSchema = {
           $ref: '#/components/schemas/KindDccEnum'
         }
       ],
-      default: 'post'
+      readOnly: true
     },
     is_escalation: {
       type: 'boolean',
+      readOnly: true,
       title: 'Escalation?'
     },
     content_hidden: {
       type: 'boolean',
+      readOnly: true,
       title: 'Content hidden?'
     },
     sender_public_body: {
@@ -851,6 +860,11 @@ export const FoiMessageSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',
@@ -897,9 +911,13 @@ export const FoiMessageSchema = {
   required: [
     'attachments',
     'content',
+    'content_hidden',
     'id',
     'is_draft',
+    'is_escalation',
     'is_postal',
+    'is_response',
+    'kind',
     'last_modified_at',
     'not_publishable',
     'redacted_content',
@@ -953,19 +971,16 @@ export const FoiMessageDraftSchema = {
       title: 'Is message a draft?'
     },
     kind: {
-      allOf: [
-        {
-          $ref: '#/components/schemas/KindDccEnum'
-        }
-      ],
-      default: 'post'
+      $ref: '#/components/schemas/KindDccEnum'
     },
     is_escalation: {
       type: 'boolean',
+      readOnly: true,
       title: 'Escalation?'
     },
     content_hidden: {
       type: 'boolean',
+      readOnly: true,
       title: 'Content hidden?'
     },
     sender_public_body: {
@@ -991,6 +1006,11 @@ export const FoiMessageDraftSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',
@@ -1037,8 +1057,10 @@ export const FoiMessageDraftSchema = {
   required: [
     'attachments',
     'content',
+    'content_hidden',
     'id',
     'is_draft',
+    'is_escalation',
     'is_postal',
     'last_modified_at',
     'not_publishable',
@@ -2470,6 +2492,137 @@ export const PatchedDocumentSchema = {
   }
 } as const
 
+export const PatchedFoiMessageSchema = {
+  type: 'object',
+  properties: {
+    resource_uri: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    id: {
+      type: 'integer',
+      readOnly: true
+    },
+    url: {
+      type: 'string',
+      readOnly: true
+    },
+    request: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    sent: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Has message been sent?'
+    },
+    is_response: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Response?'
+    },
+    is_postal: {
+      type: 'string',
+      readOnly: true
+    },
+    is_draft: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Is message a draft?'
+    },
+    kind: {
+      allOf: [
+        {
+          $ref: '#/components/schemas/KindDccEnum'
+        }
+      ],
+      readOnly: true
+    },
+    is_escalation: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Escalation?'
+    },
+    content_hidden: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Content hidden?'
+    },
+    sender_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    recipient_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    status: {
+      oneOf: [
+        {
+          $ref: '#/components/schemas/StatusEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    timestamp: {
+      type: 'string',
+      format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    redacted: {
+      type: 'boolean',
+      title: 'Was Redacted?'
+    },
+    not_publishable: {
+      type: 'boolean',
+      readOnly: true
+    },
+    attachments: {
+      type: 'string',
+      readOnly: true
+    },
+    subject: {
+      type: 'string',
+      readOnly: true
+    },
+    content: {
+      type: 'string',
+      readOnly: true
+    },
+    redacted_subject: {
+      type: 'string',
+      readOnly: true
+    },
+    redacted_content: {
+      type: 'string',
+      readOnly: true
+    },
+    sender: {
+      type: 'string',
+      readOnly: true
+    },
+    status_name: {
+      type: 'string',
+      readOnly: true
+    },
+    last_modified_at: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true
+    }
+  }
+} as const
+
 export const PatchedFoiMessageDraftSchema = {
   type: 'object',
   properties: {
@@ -2509,19 +2662,16 @@ export const PatchedFoiMessageDraftSchema = {
       title: 'Is message a draft?'
     },
     kind: {
-      allOf: [
-        {
-          $ref: '#/components/schemas/KindDccEnum'
-        }
-      ],
-      default: 'post'
+      $ref: '#/components/schemas/KindDccEnum'
     },
     is_escalation: {
       type: 'boolean',
+      readOnly: true,
       title: 'Escalation?'
     },
     content_hidden: {
       type: 'boolean',
+      readOnly: true,
       title: 'Content hidden?'
     },
     sender_public_body: {
@@ -2547,6 +2697,11 @@ export const PatchedFoiMessageDraftSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',

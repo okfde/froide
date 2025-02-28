@@ -158,6 +158,141 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/attachment/{id}/approve/:
+    post:
+      operationId: attachment_approve_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+  /api/v1/attachment/{id}/to_document/:
+    post:
+      operationId: attachment_to_document_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /api/v1/attachment/{id}/unapprove/:
+    post:
+      operationId: attachment_unapprove_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
   /api/v1/attachment/convert_to_pdf/:
     post:
       operationId: convert_images_to_pdf
@@ -1566,6 +1701,90 @@ paths:
               schema:
                 $ref: '#/components/schemas/FoiMessage'
           description: ''
+    put:
+      operationId: message_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Message.
+        required: true
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
+    patch:
+      operationId: message_partial_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Message.
+        required: true
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiMessage'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
   /api/v1/message/draft/:
     get:
       operationId: message_draft_list
@@ -1597,7 +1816,6 @@ paths:
       - message
       security:
       - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -1666,7 +1884,6 @@ paths:
       - message
       security:
       - cookieAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -2991,6 +3208,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/FoiRequestList'
           description: ''
+  /api/v1/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - da-dk
+          - de
+          - en
+          - es
+          - fi-fi
+          - it
+          - pt
+          - sv-fi
+          - sv-se
+          - zh-cn
+          - zh-hk
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
   /api/v1/upload/:
     post:
       operationId: upload_create
@@ -3753,6 +4012,9 @@ components:
         can_approve:
           type: boolean
           title: User can approve
+        can_change_approval:
+          type: string
+          readOnly: true
         redacted:
           type: string
           format: uri
@@ -3779,6 +4041,7 @@ components:
       required:
       - anchor_url
       - belongs_to
+      - can_change_approval
       - can_delete
       - can_redact
       - converted
@@ -3927,12 +4190,14 @@ components:
         request:
           type: string
           format: uri
+          readOnly: true
         sent:
           type: boolean
           readOnly: true
           title: Has message been sent?
         is_response:
           type: boolean
+          readOnly: true
           title: Response?
         is_postal:
           type: string
@@ -3944,12 +4209,14 @@ components:
         kind:
           allOf:
           - $ref: '#/components/schemas/KindDccEnum'
-          default: post
+          readOnly: true
         is_escalation:
           type: boolean
+          readOnly: true
           title: Escalation?
         content_hidden:
           type: boolean
+          readOnly: true
           title: Content hidden?
         sender_public_body:
           type: string
@@ -3966,6 +4233,10 @@ components:
         timestamp:
           type: string
           format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
         redacted:
           type: boolean
           title: Was Redacted?
@@ -4000,9 +4271,13 @@ components:
       required:
       - attachments
       - content
+      - content_hidden
       - id
       - is_draft
+      - is_escalation
       - is_postal
+      - is_response
+      - kind
       - last_modified_at
       - not_publishable
       - redacted_content
@@ -4045,14 +4320,14 @@ components:
           readOnly: true
           title: Is message a draft?
         kind:
-          allOf:
-          - $ref: '#/components/schemas/KindDccEnum'
-          default: post
+          $ref: '#/components/schemas/KindDccEnum'
         is_escalation:
           type: boolean
+          readOnly: true
           title: Escalation?
         content_hidden:
           type: boolean
+          readOnly: true
           title: Content hidden?
         sender_public_body:
           type: string
@@ -4069,6 +4344,10 @@ components:
         timestamp:
           type: string
           format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
         redacted:
           type: boolean
           title: Was Redacted?
@@ -4103,8 +4382,10 @@ components:
       required:
       - attachments
       - content
+      - content_hidden
       - id
       - is_draft
+      - is_escalation
       - is_postal
       - last_modified_at
       - not_publishable
@@ -5222,6 +5503,100 @@ components:
         pages_uri:
           type: string
           readOnly: true
+    PatchedFoiMessage:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        request:
+          type: string
+          format: uri
+          readOnly: true
+        sent:
+          type: boolean
+          readOnly: true
+          title: Has message been sent?
+        is_response:
+          type: boolean
+          readOnly: true
+          title: Response?
+        is_postal:
+          type: string
+          readOnly: true
+        is_draft:
+          type: boolean
+          readOnly: true
+          title: Is message a draft?
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/KindDccEnum'
+          readOnly: true
+        is_escalation:
+          type: boolean
+          readOnly: true
+          title: Escalation?
+        content_hidden:
+          type: boolean
+          readOnly: true
+          title: Content hidden?
+        sender_public_body:
+          type: string
+          format: uri
+          nullable: true
+        recipient_public_body:
+          type: string
+          format: uri
+          nullable: true
+        status:
+          oneOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        timestamp:
+          type: string
+          format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
+        redacted:
+          type: boolean
+          title: Was Redacted?
+        not_publishable:
+          type: boolean
+          readOnly: true
+        attachments:
+          type: string
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          readOnly: true
+        redacted_subject:
+          type: string
+          readOnly: true
+        redacted_content:
+          type: string
+          readOnly: true
+        sender:
+          type: string
+          readOnly: true
+        status_name:
+          type: string
+          readOnly: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
     PatchedFoiMessageDraft:
       type: object
       properties:
@@ -5253,14 +5628,14 @@ components:
           readOnly: true
           title: Is message a draft?
         kind:
-          allOf:
-          - $ref: '#/components/schemas/KindDccEnum'
-          default: post
+          $ref: '#/components/schemas/KindDccEnum'
         is_escalation:
           type: boolean
+          readOnly: true
           title: Escalation?
         content_hidden:
           type: boolean
+          readOnly: true
           title: Content hidden?
         sender_public_body:
           type: string
@@ -5277,6 +5652,10 @@ components:
         timestamp:
           type: string
           format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
         redacted:
           type: boolean
           title: Was Redacted?
