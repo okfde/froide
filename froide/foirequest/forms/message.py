@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import datetime
 from functools import partial
 from typing import Optional
 
@@ -565,10 +566,12 @@ class MessageEditMixin(forms.Form):
 
     def set_data_on_message(self, message):
         message.timestamp = postal_date(message, self.cleaned_data["date"])
+        # TODO: registered_mail_date should probably be just a date field instead of datetime
+        if self.cleaned_data.get("registered_mail_date"):
+            message.registered_mail_date = datetime.combine(
+                self.cleaned_data.get("registered_mail_date"), datetime.min.time()
+            )
 
-        message.registered_mail_date = self.cleaned_data.get(
-            "registered_mail_date", None
-        )
         message.subject = self.cleaned_data.get("subject", "")
         user_replacements = self.foirequest.user.get_redactions()
         subject_redacted = redact_subject(message.subject, user_replacements)
@@ -588,6 +591,9 @@ class EditMessageForm(MessageEditMixin):
         self.foirequest = self.message.request
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = self.message.timestamp.date()
+        if self.message.registered_mail_date:
+            registered_mail_date = timezone.localtime(self.message.registered_mail_date)
+            self.fields["registered_mail_date"].initial = registered_mail_date.date()
         self.fields["subject"].initial = self.message.subject
         self.fields["text"].initial = self.message.plaintext
 
