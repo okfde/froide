@@ -15,7 +15,7 @@ from django.utils import timezone
 
 import factory
 from elasticsearch.exceptions import RequestError
-from factory.django import DjangoModelFactory
+from factory.django import DjangoModelFactory, FileField
 
 from froide.account.factories import UserFactory
 from froide.helper.text_utils import slugify
@@ -170,7 +170,7 @@ class FoiAttachmentFactory(DjangoModelFactory):
 
     belongs_to = factory.SubFactory(FoiMessageFactory)
     name = factory.Sequence(lambda n: "file_{0}.pdf".format(n))
-    file = TEST_PDF_URL
+    file = FileField(from_path=TEST_PDF_PATH)
     size = 500
     filetype = "application/pdf"
     format = "pdf"

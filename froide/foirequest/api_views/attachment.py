@@ -1,4 +1,5 @@
 from functools import partial
+from typing import override
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -112,8 +113,23 @@ class FoiAttachmentViewSet(
         data = FoiAttachmentSerializer(att, context={"request": request}).data
         return Response(data, status=status.HTTP_201_CREATED)
 
+    @override
+    def perform_destroy(self, instance):
+        instance.attachment_deleted.send(
+            sender=instance,
+            user=self.request.user,
+        )
+        instance.remove_file_and_delete()
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        message = instance.belongs_to
+
+        if not message.is_postal:
+            return Response(
+                data={"detail": _("Can't delete attachments on non-postal messages.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         if not instance.can_delete:
             return Response(
