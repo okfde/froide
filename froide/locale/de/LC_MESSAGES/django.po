@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-24 11:36+0100\n"
+"POT-Creation-Date: 2025-02-28 17:01+0100\n"
 "PO-Revision-Date: 2025-02-17 13:11+0000\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -6626,12 +6626,10 @@ msgid "Change message redaction"
 msgstr "Schwärzungen ändern"
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "What you need to redact"
 msgstr "Was Sie schwärzen sollten"
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid ""
 "If this document <strong>is not a letter to you</strong> from a public body, "
 "but any other kind of document, it very likely <strong>does not need a "
@@ -6642,24 +6640,20 @@ msgstr ""
 "wahrscheinlich <strong>nicht schwärzen</strong>."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "Please remove all your personally identifying information."
 msgstr "Bitte entfernen Sie alle Ihre personenbezogenen Informationen."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid ""
 "Please remove all your personally identifying information except your name."
 msgstr "Bitte entfernen Sie alle personenbezogenen Daten bis auf Ihren Namen."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 #, python-format
 msgid "Please remove all personally identifying information of %(name)s."
 msgstr "Bitte entfernen Sie alle personenbezogenen Daten von %(name)s."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 #, python-format
 msgid ""
 "Please remove all personally identifying information of %(name)s except the "
@@ -6669,22 +6663,18 @@ msgstr ""
 "Namen selbst."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "Please remove email addresses of this site."
 msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "Please remove all names of public body employees."
 msgstr "Bitte entfernen Sie alle Namen von Behördenmitarbeiter:innen."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "Please remove hand-written signatures."
 msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid ""
 "The original version of the document will still be available to you (but not "
 "to the public)."
@@ -6693,12 +6683,10 @@ msgstr ""
 "nicht für die Öffentlichkeit)."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "How to redact"
 msgstr "So schwärzen Sie das Dokument"
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
-#: froide/foirequest/templates/foirequest/redact.html
 msgid "If this document is a letter to you:"
 msgstr "Falls dieses Dokument ein Brief an Sie ist:"
 
@@ -6831,13 +6819,11 @@ msgstr ""
 "Anfrage."
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
 msgid "What is the status of your request after this letter?"
 msgstr "Was ist der Status Ihrer Anfrage nach Erhalt der Post?"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #: froide/foirequest/views/message.py
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
 msgid "Add letter"
 msgstr "Brief hinzufügen"
 
@@ -12193,63 +12179,55 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 #, python-format
-msgid ""
-"Go to each page of the PDF and locate the parts that need to be blacked out. "
-"While the %(icon_paint)s&nbsp;<b>paint tool</b> is active, draw rectangles "
-"with your finger, or by clicking and dragging your mouse. Use the "
-"%(icon_plus)s %(icon_minus)s buttons to zoom in and out. Switch to the "
-"%(icon_move)s&nbsp;<b>move tool</b> to pan the document. In many browser, "
-"you can use the Alt key to toggle between paint and move tools."
-msgstr ""
-"Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
-"die geschwärzt werden müssen. Während das %(icon_paint)s&nbsp;<b>Pinsel-"
-"Werkzeug</b> aktiv ist, zeichnen sie mit ihrem Finger Rechtecke, oder, indem "
-"sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
-"%(icon_minus)s können Sie rein- und raus-zoomen. Wechseln Sie zum "
-"%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. "
-"In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem "
-"Bewegen-Werkzeug hin-und-her-schalten."
+#~ msgid ""
+#~ "Go to each page of the PDF and locate the parts that need to be blacked "
+#~ "out. While the %(icon_paint)s&nbsp;<b>paint tool</b> is active, draw "
+#~ "rectangles with your finger, or by clicking and dragging your mouse. Use "
+#~ "the %(icon_plus)s %(icon_minus)s buttons to zoom in and out. Switch to "
+#~ "the %(icon_move)s&nbsp;<b>move tool</b> to pan the document. In many "
+#~ "browser, you can use the Alt key to toggle between paint and move tools."
+#~ msgstr ""
+#~ "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
+#~ "die geschwärzt werden müssen. Während das %(icon_paint)s&nbsp;<b>Pinsel-"
+#~ "Werkzeug</b> aktiv ist, zeichnen sie mit ihrem Finger Rechtecke, oder, "
+#~ "indem sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
+#~ "%(icon_minus)s können Sie rein- und raus-zoomen. Wechseln Sie zum "
+#~ "%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu "
+#~ "bewegen. In vielen Browsern können Sie mit der Alt-Taste zwischen dem "
+#~ "Pinsel- und dem Bewegen-Werkzeug hin-und-her-schalten."
 
-#: froide/foirequest/views/message.py
-msgid "You should redact:"
-msgstr "Das sollten Sie schwärzen:"
+#~ msgid "You should redact:"
+#~ msgstr "Das sollten Sie schwärzen:"
 
-#: froide/foirequest/views/message.py
-msgid "Your name and your address"
-msgstr "Ihren Namen und Ihre Adresse"
+#~ msgid "Your name and your address"
+#~ msgstr "Ihren Namen und Ihre Adresse"
 
-#: froide/foirequest/views/message.py
-msgid "Names of public body employees"
-msgstr "Namen von Behördenmitarbeiter:innen"
+#~ msgid "Names of public body employees"
+#~ msgstr "Namen von Behördenmitarbeiter:innen"
 
-#: froide/foirequest/views/message.py
-msgid "Signatures"
-msgstr "Unterschriften"
+#~ msgid "Signatures"
+#~ msgstr "Unterschriften"
 
-#: froide/foirequest/views/message.py
-msgid "E-mail addresses that end in @fragdenstaat.de"
-msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
+#~ msgid "E-mail addresses that end in @fragdenstaat.de"
+#~ msgstr "E-Mail-Adressen, die auf ‘@fragdenstaat.de’ enden"
 
-#: froide/foirequest/templates/foirequest/redact.html
-msgid ""
-"Go to each page of the PDF and locate the parts that need to be blacked out. "
-"On desktop redact text by selecting it. You can also draw rectangles by "
-"clicking the mouse or double tapping and dragging. "
-msgstr ""
-"Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
-"die geschwärzt werden müssen. Ziehen Sie durch Klicken und Bewegen der Maus "
-"oder durch Doppel-Tippen mit dem Finger ein Viereck über die Stelle. "
+#~ msgid ""
+#~ "Go to each page of the PDF and locate the parts that need to be blacked "
+#~ "out. On desktop redact text by selecting it. You can also draw rectangles "
+#~ "by clicking the mouse or double tapping and dragging. "
+#~ msgstr ""
+#~ "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
+#~ "die geschwärzt werden müssen. Ziehen Sie durch Klicken und Bewegen der "
+#~ "Maus oder durch Doppel-Tippen mit dem Finger ein Viereck über die Stelle. "
 
-#: froide/foirequest/templates/foirequest/redact.html
-msgid ""
-"Check the text only view to see if the underlying text is also gone. If the "
-"document does not load correctly, cancel and inform a site moderator."
-msgstr ""
-"Prüfen Sie auch, dass die Text-Ansicht die Informationen nicht mehr enthält. "
-"Falls das Dokument nicht ordentlich lädt, brechen Sie ab und informieren Sie "
-"eine:n Moderator:in der Seite."
+#~ msgid ""
+#~ "Check the text only view to see if the underlying text is also gone. If "
+#~ "the document does not load correctly, cancel and inform a site moderator."
+#~ msgstr ""
+#~ "Prüfen Sie auch, dass die Text-Ansicht die Informationen nicht mehr "
+#~ "enthält. Falls das Dokument nicht ordentlich lädt, brechen Sie ab und "
+#~ "informieren Sie eine:n Moderator:in der Seite."
 
 #~ msgid "Upload postal messages"
 #~ msgstr "Post hochladen"
