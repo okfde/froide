@@ -286,9 +286,6 @@ const attachmentsOverviewActions = ref(false)
 const fileUploaderSucceeded = (uppyResult) => {
   addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
     .then(() => {
-      if (step.value !== STEP_DOCUMENTS_UPLOAD) {
-        return
-      }
       gotoStep()
     })
 }
@@ -370,7 +367,6 @@ const isGotoValid = computed(() => {
 
 // vuex mutation style constants/"symbols"
 const STEP_INTRO = 'STEP_INTRO' // 1100
-const STEP_DOCUMENTS_UPLOAD = 'STEP_DOCUMENTS_UPLOAD' // 1110
 const STEP_DOCUMENTS_SORT = 'STEP_DOCUMENTS_SORT' // 1201
 const STEP_DOCUMENTS_CONVERT_PDF = 'STEP_DOCUMENTS_CONVERT_PDF' // 1202
 const STEP_DOCUMENTS_OVERVIEW = 'STEP_DOCUMENTS_OVERVIEW' // 1300
@@ -391,42 +387,30 @@ const STEP_OUTRO = 'STEP_OUTRO' // 4570
 
 const stepsConfig = {
   [STEP_INTRO]: {
-    next: STEP_DOCUMENTS_UPLOAD,
-    context: {
-      progressStep: 0,
-      mobileHeaderTitle: i18n.value.addLetter
-    }
-  },
-  [STEP_DOCUMENTS_UPLOAD]: {
     next: () => {
       if (attachments.images.length) return STEP_DOCUMENTS_SORT
       console.log('uploads were documents, not images, passing by image sorting')
       return STEP_MESSAGE_SENT_OR_RECEIVED
     },
-    onEnter: () => {
-      guardBeforeunload(true)
-    },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan,
-      documents: true,
-      documentsUpload: true,
-      documentsHideSelection: true,
-      documentsHidePdf: true,
-      documentsImagesSimple: true
+      mobileHeaderTitle: i18n.value.addLetter
     }
   },
   [STEP_DOCUMENTS_SORT]: {
     next: STEP_DOCUMENTS_CONVERT_PDF,
+    onEnter: () => {
+      guardBeforeunload(true)
+    },
     onBack: () => {
       // go back two steps, to INTRO
-      stepHistory.pop()
+      // stepHistory.pop()
     },
     context: {
       progressStep: 0,
       mobileHeaderTitle: i18n.value.letterUploadOrScan,
       documents: true,
-      documentsUpload: false,
+      documentsUpload: false, // TODO check how many of these are still relevant => cleanup
       documentsHideSelection: true,
       documentsHidePdf: true,
       documentsImagesSimple: true
@@ -811,6 +795,7 @@ addEventListener('hashchange', () => {
               <button
                 type="button"
                 @click="fileUploader.clickFilepick()"
+                v-if="!fileUploaderForceShow"
                 class="btn btn-outline-primary btn-lg d-block w-100"
               >
                 <i class="fa fa-upload fa-2x"></i><br />
@@ -820,14 +805,16 @@ addEventListener('hashchange', () => {
                 :config="config"
                 :allowed-file-types="config.settings.allowed_filetypes"
                 :auto-proceed="true"
+                :show-uppy="fileUploaderForceShow"
                 ref="fileUploader"
-                XX-onmount-pick
                 @upload-success="fileUploaderSucceeded"
                 />
             </div>
+            <!-- TODO
             <div class="col-md-6">
               QR code goes here
             </div>
+            -->
           </div>
           <div class="alert alert-warning">
             <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
@@ -1363,7 +1350,11 @@ addEventListener('hashchange', () => {
             <i class="fa fa-plus"></i>
             {{ i18n.scanDocumentsAnother }}
           </button>
-          <button type="button" class="btn btn-outline-primary d-block w-100" @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block w-100"
+            @click="gotoStep(STEP_DOCUMENTS_INTRO)"
+          >
             <i class="fa fa-plus"></i>
             {{ i18n.uploadFilesAnother }}
           </button>
@@ -1426,15 +1417,6 @@ addEventListener('hashchange', () => {
           </template>
           <template v-else-if="step === STEP_INTRO">
             <!-- should be blank -->
-            <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
-              DEBUG skip
-            </button>
-          </template>
-          <template v-else-if="step === STEP_DOCUMENTS_UPLOAD">
-            <!-- this could be completely hidden -->
-            <button type="button" :disabled="true" class="btn btn-primary d-block w-100">
-              {{ i18n.next }}
-            </button>
             <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
               DEBUG skip
             </button>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="uppy"></div>
+    <div ref="uppy" v-show="showUppy"></div>
     <template v-if="formFields">
       <input
         v-for="upload in uploads"
@@ -73,6 +73,10 @@ export default {
       type: Boolean,
       default: false,
       required: false
+    },
+    showUppy: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
