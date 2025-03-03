@@ -11,13 +11,6 @@ from .models.attachment import FoiAttachment
 from .models.message import FoiMessage, FoiMessageDraft
 
 
-class TagListField(serializers.CharField):
-    child = serializers.CharField()
-
-    def to_representation(self, data):
-        return [t.name for t in data.all()]
-
-
 class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
     view_name = "api:request-detail"
 
@@ -69,3 +62,12 @@ class FoiAttachmentRelatedField(serializers.HyperlinkedRelatedField):
 
     def get_queryset(self):
         return self.queryset or FoiAttachment.objects.all()
+
+
+class FoiRequestCostsField(serializers.DecimalField):
+    def __init__(self, **kwargs):
+        super().__init__(12, 2, **kwargs)
+
+    def to_representation(self, value):
+        result = super().to_representation(value)
+        return float(result) if result else result
