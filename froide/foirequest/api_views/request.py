@@ -2,17 +2,19 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 
 from django_filters import rest_framework as filters
-from rest_framework import mixins, status, throttling, viewsets
+from rest_framework import mixins, permissions, status, throttling, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from taggit.models import Tag
 
 from froide.campaign.models import Campaign
+from froide.foirequest.permissions import WriteFoiRequestPermission
 from froide.helper.search.api_views import ESQueryMixin
 
 from ..auth import (
     CreateOnlyWithScopePermission,
     get_read_foirequest_queryset,
+    get_write_foirequest_queryset,
     throttle_action,
 )
 from ..documents import FoiRequestDocument
@@ -167,17 +169,19 @@ class FoiRequestViewSet(
     mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     ESQueryMixin,
     viewsets.GenericViewSet,
 ):
     serializer_action_classes = {
         "create": MakeRequestSerializer,
         "list": FoiRequestListSerializer,
+        "update": FoiRequestListSerializer,
         "retrieve": FoiRequestDetailSerializer,
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiRequestFilter
-    permission_classes = (CreateOnlyWithScopePermission,)
+    permission_classes = (CreateOnlyWithScopePermission, WriteFoiRequestPermission)
     required_scopes = ["make:request"]
     search_model = FoiRequest
     search_document = FoiRequestDocument
@@ -191,7 +195,10 @@ class FoiRequestViewSet(
             return FoiRequestListSerializer
 
     def get_queryset(self):
-        qs = get_read_foirequest_queryset(self.request)
+        if self.request.method in permissions.SAFE_METHODS:
+            qs = get_read_foirequest_queryset(self.request)
+        else:
+            qs = get_write_foirequest_queryset(self.request)
         return self.optimize_query(qs)
 
     def optimize_query(self, qs):

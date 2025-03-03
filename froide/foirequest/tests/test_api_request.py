@@ -16,6 +16,7 @@ import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
 
 from froide.foirequest.models import FoiAttachment, FoiRequest
+from froide.foirequest.models.request import Resolution
 from froide.foirequest.serializers import FoiMessageSerializer
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
@@ -455,3 +456,79 @@ def test_foi_message_serializer_performance(world, client, many_attachment_foime
             b,
         ) in zip(api_data.json()["attachments"], data["attachments"], strict=True):
             assert selective_equal_dicts(a, b, {"file_url"})
+
+
+@pytest.mark.django_db
+def test_foi_message_update(client, user):
+    request = factories.FoiRequestFactory.create(user=user)
+    law = factories.FoiLawFactory()
+
+    # must be logged in
+    response = client.patch(
+        reverse("api:request-detail", kwargs={"pk": request.pk}),
+        data={"law": reverse("api:law-detail", kwargs={"pk": law.pk})},
+        content_type="application/json",
+    )
+    assert response.status_code == 401
+
+    # must be the owner
+    other_user = factories.UserFactory.create()
+    assert client.login(email=other_user.email, password="froide")
+
+    response = client.patch(
+        reverse("api:request-detail", kwargs={"pk": request.pk}),
+        data={"law": reverse("api:law-detail", kwargs={"pk": law.pk})},
+        content_type="application/json",
+    )
+    assert response.status_code == 404
+
+    # can update some fields
+    assert client.login(email=user.email, password="froide")
+
+    response = client.patch(
+        reverse("api:request-detail", kwargs={"pk": request.pk}),
+        data={"law": reverse("api:law-detail", kwargs={"pk": law.pk})},
+        content_type="application/json",
+    )
+    assert str(law.pk) in response.json()["law"]
+    assert response.status_code == 200
+
+    refusal_reason = law.get_refusal_reason_choices()
+
+    response = client.patch(
+        reverse("api:request-detail", kwargs={"pk": request.pk}),
+        data={
+            "costs": 2.34,
+            "resolution": Resolution.REFUSED,
+            "refusal_reason": refusal_reason[0][0],
+            "summary": "Lorem ipsum",
+            "tags": ["foo", "bar"],
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["costs"] == 2.34
+    assert data["resolution"] == Resolution.REFUSED
+    assert data["refusal_reason"] == refusal_reason[0][0]
+    assert data["summary"] == "Lorem ipsum"
+    assert data["tags"] == ["foo", "bar"]
+
+    # can't update read-only fields
+    pb = factories.PublicBodyFactory()
+    response = client.patch(
+        reverse("api:request-detail", kwargs={"pk": request.pk}),
+        data={
+            "is_foi": False,
+            "public_body": reverse("api:publicbody-detail", kwargs={"pk": pb.pk}),
+            "slug": "foo",
+            "reference": "bar",
+        },
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_foi"] is True
+    assert str(pb.pk) not in data["public_body"]
+    assert data["slug"] == request.slug
+    assert data["reference"] == request.reference

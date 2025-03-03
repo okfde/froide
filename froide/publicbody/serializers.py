@@ -300,3 +300,10 @@ class PublicBodyRelatedField(serializers.HyperlinkedRelatedField):
 
     def get_queryset(self):
         return PublicBody.objects.all()
+
+
+class LawRelatedField(serializers.HyperlinkedRelatedField):
+    view_name = "api:law-detail"
+
+    def get_queryset(self):
+        return FoiLaw.objects.all()
