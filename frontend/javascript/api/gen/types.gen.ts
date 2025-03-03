@@ -145,6 +145,7 @@ export type FoiAttachment = {
   readonly converted: string
   approved?: boolean
   can_approve?: boolean
+  readonly can_change_approval: string
   readonly redacted: string
   is_redacted?: boolean
   readonly can_redact: string
@@ -192,18 +193,19 @@ export type FoiMessage = {
   readonly resource_uri: string
   readonly id: number
   readonly url: string
-  request: string
+  readonly request: string
   readonly sent: boolean
-  is_response?: boolean
+  readonly is_response: boolean
   readonly is_postal: string
   readonly is_draft: boolean
-  kind?: KindDccEnum
-  is_escalation?: boolean
-  content_hidden?: boolean
+  readonly kind: KindDccEnum
+  readonly is_escalation: boolean
+  readonly content_hidden: boolean
   sender_public_body?: string | null
   recipient_public_body?: string | null
-  status?: StatusEnum | BlankEnum
+  readonly status: StatusEnum | BlankEnum
   timestamp?: Date
+  registered_mail_date?: Date | null
   redacted?: boolean
   readonly not_publishable: boolean
   readonly attachments: string
@@ -226,12 +228,13 @@ export type FoiMessageDraft = {
   readonly is_postal: string
   readonly is_draft: boolean
   kind?: KindDccEnum
-  is_escalation?: boolean
-  content_hidden?: boolean
+  readonly is_escalation: boolean
+  readonly content_hidden: boolean
   sender_public_body?: string | null
   recipient_public_body?: string | null
-  status?: StatusEnum | BlankEnum
+  readonly status: StatusEnum | BlankEnum
   timestamp?: Date
+  registered_mail_date?: Date | null
   redacted?: boolean
   readonly not_publishable: boolean
   readonly attachments: string
@@ -249,32 +252,32 @@ export type FoiRequestDetail = {
   readonly id: number
   readonly url: string
   readonly jurisdiction: string
-  is_foi?: boolean
-  checked?: boolean
-  refusal_reason?: string
-  readonly costs: string
-  public?: boolean
+  readonly is_foi: boolean
+  readonly checked: boolean
+  refusal_reason: string
+  costs: string
+  readonly public: boolean
   readonly law: FoiLaw
   description: string
   readonly redacted_description: string
   summary?: string
-  same_as_count?: number
+  readonly same_as_count: number
   readonly same_as: string
-  due_date?: Date | null
-  resolved_on?: Date | null
-  last_message?: Date | null
-  created_at?: Date | null
+  readonly due_date: Date | null
+  readonly resolved_on: Date | null
+  readonly last_message: Date | null
+  readonly created_at: Date | null
   readonly last_modified_at: Date
   status: StatusEnum
   readonly public_body: PublicBody
   resolution?: ResolutionEnum | BlankEnum
-  slug: string
-  title: string
-  reference?: string
+  readonly slug: string
+  readonly title: string
+  readonly reference: string
   readonly user: string
   readonly project: number
   readonly campaign: string
-  tags: string
+  tags: Array<string>
   readonly messages: string
 }
 
@@ -293,32 +296,32 @@ export type FoiRequestList = {
   readonly id: number
   readonly url: string
   readonly jurisdiction: string
-  is_foi?: boolean
-  checked?: boolean
-  refusal_reason?: string
-  readonly costs: string
-  public?: boolean
-  readonly law: string
+  readonly is_foi: boolean
+  readonly checked: boolean
+  refusal_reason: string
+  costs: string
+  readonly public: boolean
+  law: string
   description: string
   readonly redacted_description: string
   summary?: string
-  same_as_count?: number
+  readonly same_as_count: number
   readonly same_as: string
-  due_date?: Date | null
-  resolved_on?: Date | null
-  last_message?: Date | null
-  created_at?: Date | null
+  readonly due_date: Date | null
+  readonly resolved_on: Date | null
+  readonly last_message: Date | null
+  readonly created_at: Date | null
   readonly last_modified_at: Date
   status: StatusEnum
   readonly public_body: SimplePublicBody
   resolution?: ResolutionEnum | BlankEnum
-  slug: string
-  title: string
-  reference?: string
+  readonly slug: string
+  readonly title: string
+  readonly reference: string
   readonly user: string
   readonly project: number
   readonly campaign: string
-  tags: string
+  tags: Array<string>
 }
 
 export type GeoRegion = {
@@ -659,22 +662,23 @@ export type PatchedDocument = {
   readonly pages_uri?: string
 }
 
-export type PatchedFoiMessageDraft = {
+export type PatchedFoiMessage = {
   readonly resource_uri?: string
   readonly id?: number
   readonly url?: string
-  request?: string
+  readonly request?: string
   readonly sent?: boolean
-  is_response?: boolean
+  readonly is_response?: boolean
   readonly is_postal?: string
   readonly is_draft?: boolean
-  kind?: KindDccEnum
-  is_escalation?: boolean
-  content_hidden?: boolean
+  readonly kind?: KindDccEnum
+  readonly is_escalation?: boolean
+  readonly content_hidden?: boolean
   sender_public_body?: string | null
   recipient_public_body?: string | null
-  status?: StatusEnum | BlankEnum
+  readonly status?: StatusEnum | BlankEnum
   timestamp?: Date
+  registered_mail_date?: Date | null
   redacted?: boolean
   readonly not_publishable?: boolean
   readonly attachments?: string
@@ -685,6 +689,68 @@ export type PatchedFoiMessageDraft = {
   readonly sender?: string
   readonly status_name?: string
   readonly last_modified_at?: Date
+}
+
+export type PatchedFoiMessageDraft = {
+  readonly resource_uri?: string
+  readonly id?: number
+  readonly url?: string
+  request?: string
+  readonly sent?: boolean
+  is_response?: boolean
+  readonly is_postal?: string
+  readonly is_draft?: boolean
+  kind?: KindDccEnum
+  readonly is_escalation?: boolean
+  readonly content_hidden?: boolean
+  sender_public_body?: string | null
+  recipient_public_body?: string | null
+  readonly status?: StatusEnum | BlankEnum
+  timestamp?: Date
+  registered_mail_date?: Date | null
+  redacted?: boolean
+  readonly not_publishable?: boolean
+  readonly attachments?: string
+  readonly subject?: string
+  readonly content?: string
+  readonly redacted_subject?: string
+  readonly redacted_content?: string
+  readonly sender?: string
+  readonly status_name?: string
+  readonly last_modified_at?: Date
+}
+
+export type PatchedFoiRequestList = {
+  readonly resource_uri?: string
+  readonly id?: number
+  readonly url?: string
+  readonly jurisdiction?: string
+  readonly is_foi?: boolean
+  readonly checked?: boolean
+  refusal_reason?: string
+  costs?: string
+  readonly public?: boolean
+  law?: string
+  description?: string
+  readonly redacted_description?: string
+  summary?: string
+  readonly same_as_count?: number
+  readonly same_as?: string
+  readonly due_date?: Date | null
+  readonly resolved_on?: Date | null
+  readonly last_message?: Date | null
+  readonly created_at?: Date | null
+  readonly last_modified_at?: Date
+  status?: StatusEnum
+  readonly public_body?: SimplePublicBody
+  resolution?: ResolutionEnum | BlankEnum
+  readonly slug?: string
+  readonly title?: string
+  readonly reference?: string
+  readonly user?: string
+  readonly project?: number
+  readonly campaign?: string
+  tags?: Array<string>
 }
 
 export type PatchedUpload = {
@@ -1055,6 +1121,57 @@ export type AttachmentDestroyData = {
 export type AttachmentDestroyResponse = void
 
 export type AttachmentDestroyError = unknown
+
+export type AttachmentApproveCreateData = {
+  body: FoiAttachment
+  path: {
+    /**
+     * A unique integer value identifying this Attachment.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type AttachmentApproveCreateResponse = FoiAttachment
+
+export type AttachmentApproveCreateError = unknown
+
+export type AttachmentToDocumentCreateData = {
+  body: FoiAttachment
+  path: {
+    /**
+     * A unique integer value identifying this Attachment.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type AttachmentToDocumentCreateResponse = Document
+
+export type AttachmentToDocumentCreateError = unknown
+
+export type AttachmentUnapproveCreateData = {
+  body: FoiAttachment
+  path: {
+    /**
+     * A unique integer value identifying this Attachment.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type AttachmentUnapproveCreateResponse = FoiAttachment
+
+export type AttachmentUnapproveCreateError = unknown
 
 export type ConvertImagesToPdfData = {
   body: ImageAttachmentConverter
@@ -1617,6 +1734,40 @@ export type MessageRetrieveResponse = FoiMessage
 
 export type MessageRetrieveError = unknown
 
+export type MessageUpdateData = {
+  body?: FoiMessage
+  path: {
+    /**
+     * A unique integer value identifying this Freedom of Information Message.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type MessageUpdateResponse = FoiMessage
+
+export type MessageUpdateError = unknown
+
+export type MessagePartialUpdateData = {
+  body?: PatchedFoiMessage
+  path: {
+    /**
+     * A unique integer value identifying this Freedom of Information Message.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type MessagePartialUpdateResponse = FoiMessage
+
+export type MessagePartialUpdateError = unknown
+
 export type MessageDraftListData = {
   query?: {
     format?: 'csv' | 'json'
@@ -2157,6 +2308,40 @@ export type RequestRetrieveResponse = FoiRequestDetail
 
 export type RequestRetrieveError = unknown
 
+export type RequestUpdateData = {
+  body: FoiRequestList
+  path: {
+    /**
+     * A unique integer value identifying this Freedom of Information Request.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type RequestUpdateResponse = FoiRequestList
+
+export type RequestUpdateError = unknown
+
+export type RequestPartialUpdateData = {
+  body?: PatchedFoiRequestList
+  path: {
+    /**
+     * A unique integer value identifying this Freedom of Information Request.
+     */
+    id: number
+  }
+  query?: {
+    format?: 'csv' | 'json'
+  }
+}
+
+export type RequestPartialUpdateResponse = FoiRequestList
+
+export type RequestPartialUpdateError = unknown
+
 export type RequestSearchRetrieveData = {
   query?: {
     format?: 'csv' | 'json'
@@ -2176,6 +2361,29 @@ export type RequestTagsAutocompleteRetrieveData = {
 export type RequestTagsAutocompleteRetrieveResponse = FoiRequestList
 
 export type RequestTagsAutocompleteRetrieveError = unknown
+
+export type SchemaRetrieveData = {
+  query?: {
+    lang?:
+      | 'da-dk'
+      | 'de'
+      | 'en'
+      | 'es'
+      | 'fi-fi'
+      | 'it'
+      | 'pt'
+      | 'sv-fi'
+      | 'sv-se'
+      | 'zh-cn'
+      | 'zh-hk'
+  }
+}
+
+export type SchemaRetrieveResponse = {
+  [key: string]: unknown
+}
+
+export type SchemaRetrieveError = unknown
 
 export type UploadCreateData = {
   body?: UploadCreate
@@ -2351,6 +2559,36 @@ export type AttachmentRetrieveResponseTransformer = (
 ) => Promise<AttachmentRetrieveResponse>
 
 export const AttachmentRetrieveResponseTransformer: AttachmentRetrieveResponseTransformer =
+  async (data) => {
+    FoiAttachmentModelResponseTransformer(data)
+    return data
+  }
+
+export type AttachmentApproveCreateResponseTransformer = (
+  data: any
+) => Promise<AttachmentApproveCreateResponse>
+
+export const AttachmentApproveCreateResponseTransformer: AttachmentApproveCreateResponseTransformer =
+  async (data) => {
+    FoiAttachmentModelResponseTransformer(data)
+    return data
+  }
+
+export type AttachmentToDocumentCreateResponseTransformer = (
+  data: any
+) => Promise<AttachmentToDocumentCreateResponse>
+
+export const AttachmentToDocumentCreateResponseTransformer: AttachmentToDocumentCreateResponseTransformer =
+  async (data) => {
+    DocumentModelResponseTransformer(data)
+    return data
+  }
+
+export type AttachmentUnapproveCreateResponseTransformer = (
+  data: any
+) => Promise<AttachmentUnapproveCreateResponse>
+
+export const AttachmentUnapproveCreateResponseTransformer: AttachmentUnapproveCreateResponseTransformer =
   async (data) => {
     FoiAttachmentModelResponseTransformer(data)
     return data
@@ -2816,6 +3054,9 @@ export const FoiMessageModelResponseTransformer: FoiMessageModelResponseTransfor
     if (data?.timestamp) {
       data.timestamp = new Date(data.timestamp)
     }
+    if (data?.registered_mail_date) {
+      data.registered_mail_date = new Date(data.registered_mail_date)
+    }
     if (data?.last_modified_at) {
       data.last_modified_at = new Date(data.last_modified_at)
     }
@@ -2846,6 +3087,26 @@ export const MessageRetrieveResponseTransformer: MessageRetrieveResponseTransfor
     return data
   }
 
+export type MessageUpdateResponseTransformer = (
+  data: any
+) => Promise<MessageUpdateResponse>
+
+export const MessageUpdateResponseTransformer: MessageUpdateResponseTransformer =
+  async (data) => {
+    FoiMessageModelResponseTransformer(data)
+    return data
+  }
+
+export type MessagePartialUpdateResponseTransformer = (
+  data: any
+) => Promise<MessagePartialUpdateResponse>
+
+export const MessagePartialUpdateResponseTransformer: MessagePartialUpdateResponseTransformer =
+  async (data) => {
+    FoiMessageModelResponseTransformer(data)
+    return data
+  }
+
 export type MessageDraftListResponseTransformer = (
   data: any
 ) => Promise<MessageDraftListResponse>
@@ -2862,6 +3123,9 @@ export const FoiMessageDraftModelResponseTransformer: FoiMessageDraftModelRespon
   (data) => {
     if (data?.timestamp) {
       data.timestamp = new Date(data.timestamp)
+    }
+    if (data?.registered_mail_date) {
+      data.registered_mail_date = new Date(data.registered_mail_date)
     }
     if (data?.last_modified_at) {
       data.last_modified_at = new Date(data.last_modified_at)
@@ -3165,6 +3429,26 @@ export const FoiRequestDetailModelResponseTransformer: FoiRequestDetailModelResp
 export const RequestRetrieveResponseTransformer: RequestRetrieveResponseTransformer =
   async (data) => {
     FoiRequestDetailModelResponseTransformer(data)
+    return data
+  }
+
+export type RequestUpdateResponseTransformer = (
+  data: any
+) => Promise<RequestUpdateResponse>
+
+export const RequestUpdateResponseTransformer: RequestUpdateResponseTransformer =
+  async (data) => {
+    FoiRequestListModelResponseTransformer(data)
+    return data
+  }
+
+export type RequestPartialUpdateResponseTransformer = (
+  data: any
+) => Promise<RequestPartialUpdateResponse>
+
+export const RequestPartialUpdateResponseTransformer: RequestPartialUpdateResponseTransformer =
+  async (data) => {
+    FoiRequestListModelResponseTransformer(data)
     return data
   }
 
