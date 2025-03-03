@@ -334,6 +334,9 @@ def edit_postal_message(request, foirequest, message_id):
             "moveTool": pgettext("redact tool", "Move"),
             "delete": _("Delete"),
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
+            "confirmDeleteBulk": _(
+                "Are you sure you want to delete the selected attachments?"
+            ),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
@@ -880,6 +883,9 @@ def upload_attachments(request, foirequest, message_id):
             "redact": _("Redact"),
             "delete": _("Delete"),
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
+            "confirmDeleteBulk": _(
+                "Are you sure you want to delete the selected attachments?"
+            ),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
