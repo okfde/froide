@@ -14,6 +14,15 @@ import {
   type AttachmentDestroyData,
   type AttachmentDestroyError,
   type AttachmentDestroyResponse,
+  type AttachmentApproveCreateData,
+  type AttachmentApproveCreateError,
+  type AttachmentApproveCreateResponse,
+  type AttachmentToDocumentCreateData,
+  type AttachmentToDocumentCreateError,
+  type AttachmentToDocumentCreateResponse,
+  type AttachmentUnapproveCreateData,
+  type AttachmentUnapproveCreateError,
+  type AttachmentUnapproveCreateResponse,
   type ConvertImagesToPdfData,
   type ConvertImagesToPdfError,
   type ConvertImagesToPdfResponse,
@@ -125,6 +134,12 @@ import {
   type MessageRetrieveData,
   type MessageRetrieveError,
   type MessageRetrieveResponse,
+  type MessageUpdateData,
+  type MessageUpdateError,
+  type MessageUpdateResponse,
+  type MessagePartialUpdateData,
+  type MessagePartialUpdateError,
+  type MessagePartialUpdateResponse,
   type MessageDraftListData,
   type MessageDraftListError,
   type MessageDraftListResponse,
@@ -224,12 +239,21 @@ import {
   type RequestRetrieveData,
   type RequestRetrieveError,
   type RequestRetrieveResponse,
+  type RequestUpdateData,
+  type RequestUpdateError,
+  type RequestUpdateResponse,
+  type RequestPartialUpdateData,
+  type RequestPartialUpdateError,
+  type RequestPartialUpdateResponse,
   type RequestSearchRetrieveData,
   type RequestSearchRetrieveError,
   type RequestSearchRetrieveResponse,
   type RequestTagsAutocompleteRetrieveData,
   type RequestTagsAutocompleteRetrieveError,
   type RequestTagsAutocompleteRetrieveResponse,
+  type SchemaRetrieveData,
+  type SchemaRetrieveError,
+  type SchemaRetrieveResponse,
   type UploadCreateData,
   type UploadCreateError,
   type UploadCreateResponse,
@@ -260,6 +284,9 @@ import {
   AttachmentListResponseTransformer,
   AttachmentCreateResponseTransformer,
   AttachmentRetrieveResponseTransformer,
+  AttachmentApproveCreateResponseTransformer,
+  AttachmentToDocumentCreateResponseTransformer,
+  AttachmentUnapproveCreateResponseTransformer,
   ConvertImagesToPdfResponseTransformer,
   CampaignListResponseTransformer,
   CampaignRetrieveResponseTransformer,
@@ -289,6 +316,8 @@ import {
   LawAutocompleteRetrieveResponseTransformer,
   MessageListResponseTransformer,
   MessageRetrieveResponseTransformer,
+  MessageUpdateResponseTransformer,
+  MessagePartialUpdateResponseTransformer,
   MessageDraftListResponseTransformer,
   MessageDraftCreateResponseTransformer,
   MessageDraftRetrieveResponseTransformer,
@@ -306,6 +335,8 @@ import {
   PublicbodyRetrieveResponseTransformer,
   RequestListResponseTransformer,
   RequestRetrieveResponseTransformer,
+  RequestUpdateResponseTransformer,
+  RequestPartialUpdateResponseTransformer,
   RequestSearchRetrieveResponseTransformer,
   RequestTagsAutocompleteRetrieveResponseTransformer,
   UploadCreateResponseTransformer,
@@ -367,6 +398,50 @@ export const attachmentDestroy = <ThrowOnError extends boolean = false>(
   >({
     ...options,
     url: '/api/v1/attachment/{id}/'
+  })
+}
+
+export const attachmentApproveCreate = <ThrowOnError extends boolean = false>(
+  options: Options<AttachmentApproveCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    AttachmentApproveCreateResponse,
+    AttachmentApproveCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/attachment/{id}/approve/',
+    responseTransformer: AttachmentApproveCreateResponseTransformer
+  })
+}
+
+export const attachmentToDocumentCreate = <
+  ThrowOnError extends boolean = false
+>(
+  options: Options<AttachmentToDocumentCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    AttachmentToDocumentCreateResponse,
+    AttachmentToDocumentCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/attachment/{id}/to_document/',
+    responseTransformer: AttachmentToDocumentCreateResponseTransformer
+  })
+}
+
+export const attachmentUnapproveCreate = <ThrowOnError extends boolean = false>(
+  options: Options<AttachmentUnapproveCreateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).post<
+    AttachmentUnapproveCreateResponse,
+    AttachmentUnapproveCreateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/attachment/{id}/unapprove/',
+    responseTransformer: AttachmentUnapproveCreateResponseTransformer
   })
 }
 
@@ -959,6 +1034,34 @@ export const messageRetrieve = <ThrowOnError extends boolean = false>(
   })
 }
 
+export const messageUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<MessageUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).put<
+    MessageUpdateResponse,
+    MessageUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/{id}/',
+    responseTransformer: MessageUpdateResponseTransformer
+  })
+}
+
+export const messagePartialUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<MessagePartialUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).patch<
+    MessagePartialUpdateResponse,
+    MessagePartialUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/message/{id}/',
+    responseTransformer: MessagePartialUpdateResponseTransformer
+  })
+}
+
 export const messageDraftList = <ThrowOnError extends boolean = false>(
   options?: Options<MessageDraftListData, ThrowOnError>
 ) => {
@@ -1479,6 +1582,34 @@ export const requestRetrieve = <ThrowOnError extends boolean = false>(
   })
 }
 
+export const requestUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<RequestUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).put<
+    RequestUpdateResponse,
+    RequestUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/{id}/',
+    responseTransformer: RequestUpdateResponseTransformer
+  })
+}
+
+export const requestPartialUpdate = <ThrowOnError extends boolean = false>(
+  options: Options<RequestPartialUpdateData, ThrowOnError>
+) => {
+  return (options?.client ?? client).patch<
+    RequestPartialUpdateResponse,
+    RequestPartialUpdateError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/request/{id}/',
+    responseTransformer: RequestPartialUpdateResponseTransformer
+  })
+}
+
 export const requestSearchRetrieve = <ThrowOnError extends boolean = false>(
   options?: Options<RequestSearchRetrieveData, ThrowOnError>
 ) => {
@@ -1506,6 +1637,25 @@ export const requestTagsAutocompleteRetrieve = <
     ...options,
     url: '/api/v1/request/tags/autocomplete/',
     responseTransformer: RequestTagsAutocompleteRetrieveResponseTransformer
+  })
+}
+
+/**
+ * OpenApi3 schema for this API. Format can be selected via content negotiation.
+ *
+ * - YAML: application/vnd.oai.openapi
+ * - JSON: application/vnd.oai.openapi+json
+ */
+export const schemaRetrieve = <ThrowOnError extends boolean = false>(
+  options?: Options<SchemaRetrieveData, ThrowOnError>
+) => {
+  return (options?.client ?? client).get<
+    SchemaRetrieveResponse,
+    SchemaRetrieveError,
+    ThrowOnError
+  >({
+    ...options,
+    url: '/api/v1/schema/'
   })
 }
 
