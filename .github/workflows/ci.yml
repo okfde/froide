@@ -46,7 +46,7 @@ jobs:
           node-version: 22
           cache: 'pnpm'
       - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev
+        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev
       - name: Setup venv
         run: |
           uv venv --python ${{ matrix.python-version }}
