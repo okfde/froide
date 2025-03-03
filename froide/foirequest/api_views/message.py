@@ -9,6 +9,7 @@ from froide.foirequest.utils import postal_date
 
 from ..auth import (
     get_read_foimessage_queryset,
+    get_write_foimessage_queryset,
 )
 from ..models import FoiMessage, FoiMessageDraft, FoiRequest
 from ..permissions import OnlyPostalMessagesWritable, WriteFoiRequestPermission
@@ -47,7 +48,12 @@ class FoiMessageViewSet(mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet):
         return optimize_message_queryset(self.request, qs)
 
     def get_queryset(self):
-        qs = get_read_foimessage_queryset(self.request).order_by()
+        qs = self.serializer_class.Meta.model.objects.all()
+
+        if self.request.method in permissions.SAFE_METHODS:
+            qs = get_read_foimessage_queryset(self.request, qs).order_by()
+        else:
+            qs = get_write_foimessage_queryset(self.request, qs).order_by()
         return self.optimize_query(qs)
 
 
@@ -63,12 +69,6 @@ class FoiMessageDraftViewSet(
         permissions.IsAuthenticated,
         WriteFoiRequestPermission,
     ]
-
-    def get_queryset(self):
-        qs = get_read_foimessage_queryset(
-            self.request, queryset=FoiMessageDraft.objects.all()
-        ).order_by()
-        return self.optimize_query(qs)
 
     @action(detail=True, methods=["post"])
     def publish(self, request, pk=None):
