@@ -106,6 +106,7 @@ const isSelectionDeletable = computed(() => attachments.selected.length &&
 )
 
 const deleteSelected = async () => {
+  if (!window.confirm(i18n.value.confirmDeleteBulk)) return
   for (const att of attachments.selected) {
     await deleteAttachment(att)
   }

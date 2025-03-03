@@ -7813,6 +7813,10 @@ msgid "Are you sure you want to delete this attachment?"
 msgstr "Sind Sie sicher, dass Sie diesen Anhang löschen wollen?"
 
 #: froide/foirequest/views/message.py
+msgid "Are you sure you want to delete the selected attachments?"
+msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge löschen wollen?"
+
+#: froide/foirequest/views/message.py
 msgid "Result?"
 msgstr "Ergebnis?"
 
