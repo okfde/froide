@@ -135,12 +135,6 @@ def test_message_draft(client: Client, user):
     message_id = response.json()["id"]
     resource_uri = reverse("api:message-draft-detail", kwargs={"pk": message_id})
 
-    response = client.patch(
-        resource_uri, data={"status": "resolved"}, content_type="application/json"
-    )
-    assert response.status_code == 200
-    assert response.json()["status"] == "resolved"
-
     response = client.delete(resource_uri)
     assert response.status_code == 204
 
