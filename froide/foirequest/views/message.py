@@ -971,6 +971,7 @@ def upload_attachments(request, foirequest, message_id):
         {
             "message_json": json.dumps(serializer.data),
             "message": message,
+            "object": foirequest,
             "foirequest": foirequest,
             "config_json": json.dumps(ctx),
         },
