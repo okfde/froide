@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
+from froide.helper.auth import is_crew
 from froide.helper.content_urls import get_content_url
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
@@ -225,6 +226,12 @@ def edit_postal_message(request, foirequest, message_id):
             "can_make_document": request.user.is_staff,
             "allowed_filetypes": [".pdf", ".jpg", ".jpeg", ".png", ".gif"],
         },
+        "user": {
+            "can_edit_approval": is_crew(request.user),
+        },
+        "foirequest": {
+            "public": foirequest.public,
+        },
         "i18n": {
             "uppy": get_uppy_i18n(),
             # from publicbody/widgets
@@ -301,6 +308,8 @@ def edit_postal_message(request, foirequest, message_id):
                 "split it into multiple documents. "
                 "You can redact the PDF in the next step."
             ),
+            "rotatePage": _("Rotate page"),
+            "splitPagesHere": _("Split pages here"),
             "documentPending": _(
                 "This document is being generated. This can take several minutes."
             ),
@@ -317,6 +326,7 @@ def edit_postal_message(request, foirequest, message_id):
             "save": _("Save"),
             "review": _("Review"),
             "approve": _("Approve"),
+            "confirmApproveUnredacted": _("Approve without redaction?"),
             "notPublic": _("not public"),
             "redacted": _("redacted"),
             "redact": _("Redact"),
@@ -437,6 +447,10 @@ def edit_postal_message(request, foirequest, message_id):
             "selectAll": _("Select all"),
             "selectNone": _("Select none"),
             "redactionCounter": _("Redacting document ${current} of ${total}"),
+            "editDescription": _("Edit description"),
+            "editTitle": _("Edit title"),
+            "attachmentsLoading": _("Attachments are loading..."),
+            "help": _("Help"),
             "helpNeeded": _("I have technical difficulties / I need help"),
             "documentsOverview": _("These documents will be added to the request:"),
             "documentsAddedSuccessfully": _("Documents added successfully"),
@@ -454,6 +468,26 @@ def edit_postal_message(request, foirequest, message_id):
             "doneSorting": _("Done sorting"),
             "createPdf": _("Create PDF"),
             "documentsApproveLater": _("Uncheck to leave unpublished for now"),
+            "deleteSelected": _("Delete selected"),
+            "downloadSelected": _("Download selected"),
+            "markResult": _("Mark as result"),
+            "markNotIrrelevant": _("Mark as important"),
+            "editRedaction": _("Edit redaction"),
+            "download": _("Download"),
+            "downloadUnredacted": _("Download non-redacted"),
+            "downloadOriginal": _("Download original"),
+            "otherActions": _("Other actions"),
+            "imageFile": _("Image file"),
+            "size": _("Size"),
+            "fileType": _("File type"),
+            "actions": _("Actions"),
+            "properties": _("Properties"),
+            "nonRedacted": _("non-redacted"),
+            "resolution": _("Resolution"),
+            "publish": _("Publish"),
+            "error": _("Error"),
+            "genericErrorReload": _("Error! Try to reload the page?"),
+            "attachmentDeleted": _("an attachment was deleted"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
@@ -513,6 +547,12 @@ def edit_postal_message(request, foirequest, message_id):
                 },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            # duplicated from url for compatibility with attachments.js TODO undup
+            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
+            "convertAttachments": reverse(
+                "foirequest-manage_attachments",
+                kwargs={"slug": foirequest.slug, "message_id": message.id},
+            ),
         },
         "fixtures": {
             "georegion_kind": [
@@ -737,6 +777,12 @@ def upload_attachments(request, foirequest, message_id):
     attachment_form = get_postal_attachment_form(foimessage=message)
 
     ctx = {
+        "user": {
+            "can_edit_approval": is_crew(request.user),
+        },
+        "foirequest": {
+            "public": foirequest.public,
+        },
         "settings": {
             "can_make_document": request.user.is_staff,
             "document_filetypes": POSTAL_CONTENT_TYPES,
@@ -775,6 +821,7 @@ def upload_attachments(request, foirequest, message_id):
                 "foirequest-create_document",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
+            "helpAttachmentsManagement": get_content_url("help_attachments_management"),
         },
         "i18n": {
             "attachmentName": _("Name of attachment to create"),
@@ -795,6 +842,8 @@ def upload_attachments(request, foirequest, message_id):
                 "split it into multiple documents. "
                 "You can redact the PDF in the next step."
             ),
+            "rotatePage": _("Rotate page"),
+            "splitPagesHere": _("Split pages here"),
             "documentPending": _(
                 "This document is being generated. This can take several minutes."
             ),
@@ -804,6 +853,7 @@ def upload_attachments(request, foirequest, message_id):
             "documentTitlePlaceholder": _("e.g. Letter from date"),
             "showIrrelevantAttachments": _("Show irrelevant attachments"),
             "makeRelevant": _("Make relevant"),
+            "makePublic": pgettext("Attachment manager", "Make public"),
             "loading": _("Loading..."),
             "description": _("Description"),
             "descriptionHelp": _("Describe the contents of the document"),
@@ -811,8 +861,12 @@ def upload_attachments(request, foirequest, message_id):
             "save": _("Save"),
             "review": _("Review"),
             "approve": _("Approve"),
+            "confirmApproveUnredacted": _("Approve without redaction?"),
             "notPublic": _("not public"),
             "redacted": _("redacted"),
+            "nonRedacted": _("non-redacted"),
+            "resolution": _("Resolution"),
+            "new": _("New"),
             "redact": _("Redact"),
             "delete": _("Delete"),
             "confirmDelete": _("Are you sure you want to delete this attachment?"),
@@ -827,7 +881,76 @@ def upload_attachments(request, foirequest, message_id):
             "makeResultsExplanation": _(
                 "Are these documents a result of your request and not only correspondence?"
             ),
+            "selectAll": _("Select all"),
+            "selectNone": _("Select none"),
+            "deleteSelected": _("Delete selected"),
+            "downloadSelected": _("Download selected"),
+            "markResult": _("Mark as result"),
+            "markNotIrrelevant": _("Mark as important"),
+            "editRedaction": _("Edit redaction"),
+            "download": _("Download"),
+            "downloadUnredacted": _("Download non-redacted"),
+            "downloadOriginal": _("Download original"),
+            "otherActions": _("Other actions"),
+            "imageFile": _("Image file"),
+            "size": _("Size"),
+            "fileType": _("File type"),
+            "actions": _("Actions"),
+            "properties": _("Properties"),
+            "preview": _("Preview"),
+            "editDescription": _("Edit description"),
+            "editTitle": _("Edit title"),
+            "attachmentsLoading": _("Attachments are loading..."),
+            "help": _("Help"),
+            "helpNeeded": _("I have technical difficulties / I need help"),
             "uppy": get_uppy_i18n(),
+            "redactionDone": _("I have finished redacting"),
+            "previousPage": _("Previous Page"),
+            "nextPage": _("Next Page"),
+            "pageCurrentOfTotal": _("{current} of {total}").format(
+                current="$current", total="$total"
+            ),
+            "redactAndPublish": _("Save redaction"),
+            "publishWithoutRedaction": _("No redaction needed"),
+            "removeAllRedaction": _("Remove all redaction"),
+            "toggleText": _("Text only"),
+            "disableText": _("Hide text"),
+            "cancel": _("Cancel"),
+            "undo": _("Undo"),
+            "redo": _("Redo"),
+            "loadingPdf": _("Loading PDF..."),
+            "sending": _("Uploading redaction instructions, please wait..."),
+            "redacting": _("Redacting PDF, please wait..."),
+            "redactionError": _(
+                "There was a problem with your redaction. Please contact moderators."
+            ),
+            "redactionTimeout": _(
+                "Your redaction took too long. It may become available soon, if not, contact moderators."
+            ),
+            "autoRedacted": _(
+                "We automatically redacted some text for you already. Please check if we got everything."
+            ),
+            "passwordRequired": _(
+                "This PDF requires a password to open. Please provide the password here:"
+            ),
+            "passwordCancel": _(
+                "The password you provided was incorrect. Do you want to abort?"
+            ),
+            "passwordMissing": _(
+                "The PDF could not be opened because of a missing password. Please ask the authority to provide you with a password."
+            ),
+            "removePasswordAndPublish": _("Remove password and publish"),
+            "hasPassword": _(
+                "The original document is protected with a password. The password is getting removed on publication."
+            ),
+            "confirmNoRedactionTitle": _("Are you sure that no redaction is needed?"),
+            "confirmNoRedactionsText": _(
+                "You redacted parts of the document, but clicked that no redaction is needed. Are you sure that no redaction is needed?"
+            ),
+            "close": _("Close"),
+            "error": _("Error"),
+            "genericErrorReload": _("Error! Try to reload the page?"),
+            "attachmentDeleted": _("an attachment was deleted"),
         },
     }
     request.auth = None
@@ -836,9 +959,9 @@ def upload_attachments(request, foirequest, message_id):
         request,
         "foirequest/attachment/manage.html",
         {
-            "object": foirequest,
             "message_json": json.dumps(serializer.data),
             "message": message,
+            "object": foirequest,
             "foirequest": foirequest,
             "config_json": json.dumps(ctx),
         },

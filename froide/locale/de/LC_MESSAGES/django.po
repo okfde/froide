@@ -1987,7 +1987,6 @@ msgstr "Dokument"
 #: froide/document/apps.py
 #: froide/document/templates/admin/document/documentcollection/change_form.html
 #: froide/document/templates/document/search.html
-#: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/body/documents.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
 msgid "Documents"
@@ -2335,7 +2334,7 @@ msgstr "Markierte Anfragen sind nun dauerhaft depubliziert."
 
 #: froide/foirequest/admin.py
 #: froide/foirequest/templates/foirequest/account/list_requests.html
-#: froide/foirequest/views/project.py
+#: froide/foirequest/views/message.py froide/foirequest/views/project.py
 msgid "Publish"
 msgstr "Veröffentlichen"
 
@@ -3192,6 +3191,7 @@ msgid "This request is finished."
 msgstr "Diese Anfrage ist abgeschlossen."
 
 #: froide/foirequest/forms/request.py froide/foirequest/models/request.py
+#: froide/foirequest/views/message.py
 #: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Resolution"
 msgstr "Ergebnis"
@@ -3238,11 +3238,11 @@ msgstr "Gehört zu Nachricht"
 msgid "File"
 msgstr "Datei"
 
-#: froide/foirequest/models/attachment.py
+#: froide/foirequest/models/attachment.py froide/foirequest/views/message.py
 msgid "Size"
 msgstr "Größe"
 
-#: froide/foirequest/models/attachment.py
+#: froide/foirequest/models/attachment.py froide/foirequest/views/message.py
 msgid "File type"
 msgstr "Dateityp"
 
@@ -3387,7 +3387,7 @@ msgstr "ein Anhang wurde depubliziert"
 msgid "an attachment was redacted"
 msgstr "ein Anhang wurde geschwärzt"
 
-#: froide/foirequest/models/event.py
+#: froide/foirequest/models/event.py froide/foirequest/views/message.py
 msgid "an attachment was deleted"
 msgstr "ein Anhang wurde gelöscht"
 
@@ -4649,6 +4649,10 @@ msgid "Back"
 msgstr "Zurück"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Here you can download and edit documents you have uploaded previously."
+msgstr "Hier können Sie Dokumente herunterladen und nachträglich bearbeiten."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
 msgid "Manage attachments"
 msgstr "Anhänge verwalten"
@@ -4687,16 +4691,19 @@ msgid "Attachments are loading..."
 msgstr "Anhänge werden geladen..."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
-msgid "Convert images to documents"
-msgstr "Bilder in Dokumente umwandeln"
+msgid "Non-approved attachments"
+msgstr "Nicht-freigegebene Anhänge"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Non-public attachments"
+msgstr "Nicht-öffentliche Anhänge"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid ""
-"Here you can approve, redact documents and also mark them as a result of "
-"your request."
+"Your request is not public at the moment. Non-published attachments will "
+"remain so even after the request is published."
 msgstr ""
-"Hier können Sie Dokumente freigeben, schwärzen und markieren, welche der "
-"Dokumente ein Ergebnis der Anfrage ist."
+"Aktuell ist die Anfrage nicht öffentlich. Nicht-freigegebene Anhänge werden auch nach Öffentlich-Schalten der Anfrage nicht veröffentlicht."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 #: froide/upload/apps.py froide/upload/forms.py
@@ -4713,8 +4720,16 @@ msgstr ""
 "Sie können zusätzlich die folgenden Dateitypen zu dieser Nachricht hochladen:"
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
-msgid "Other files"
-msgstr "Andere Dateien"
+msgid "Unimportant attachments"
+msgstr "Unwichtige Anhänge"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid ""
+"Public bodies’ logos and similar images are automatically classified as "
+"unimportant."
+msgstr ""
+"Behördenlogos und ähnliche Bilddateien klassifizieren wir automatisch als "
+"unwichtig."
 
 #: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Return to message"
@@ -4769,6 +4784,7 @@ msgid "Open PDF"
 msgstr "PDF öffnen"
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
+#: froide/foirequest/views/message.py
 msgid "Download original"
 msgstr "Original-Datei herunterladen"
 
@@ -5164,7 +5180,7 @@ msgstr "Zeige Authentizitätsinformationen der E-Mail"
 
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
 #: froide/foirequest/templates/foirequest/header/info-box.html
-#: froide/foirequest/views/request.py
+#: froide/foirequest/views/message.py froide/foirequest/views/request.py
 msgid "Download"
 msgstr "Herunterladen"
 
@@ -6099,6 +6115,11 @@ msgstr "Diese Anfrage ist <strong>nicht öffentlich</strong>."
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Make public"
 msgstr "Veröffentlichen"
+
+#: froide/foirequest/views/message.py
+msgctxt "Attachment manager"
+msgid "Make public"
+msgstr "Öffentlich machen"
 
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Account details"
@@ -7722,6 +7743,14 @@ msgstr ""
 "auftrennen. Das PDF können Sie im Anschluss schwärzen."
 
 #: froide/foirequest/views/message.py
+msgid "Rotate page"
+msgstr "Seite drehen"
+
+#: froide/foirequest/views/message.py
+msgid "Split pages here"
+msgstr "Seiten hier auftrennen"
+
+#: froide/foirequest/views/message.py
 msgid "This document is being generated. This can take several minutes."
 msgstr ""
 "Dieses Dokument wird gerade erstellt. Dies kann mehrere Minuten dauern."
@@ -7753,6 +7782,10 @@ msgstr "Beschreiben Sie den Inhalt"
 #: froide/foirequest/views/message.py
 msgid "Review"
 msgstr "Überprüfen"
+
+#: froide/foirequest/views/message.py
+msgid "Approve without redaction?"
+msgstr "Ungeschwärzt freigeben?"
 
 #: froide/foirequest/views/message.py
 msgid "not public"
@@ -8063,6 +8096,62 @@ msgstr "Sie haben %d Dokument(e) zu der Nachricht hinzugefügt."
 #: froide/foirequest/views/message.py
 msgid "letter"
 msgstr "Brief"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "All attachments and options"
+msgstr "Alle Anhänge und Optionen"
+
+#: froide/foirequest/views/message.py
+msgid "non-redacted"
+msgstr "ungeschwärzt"
+
+#: froide/foirequest/views/message.py
+msgid "Delete selected"
+msgstr "Ausgewählte löschen"
+
+#: froide/foirequest/views/message.py
+msgid "Download selected"
+msgstr "Ausgewählte herunterladen"
+
+#: froide/foirequest/views/message.py
+msgid "Mark as result"
+msgstr "Als Ergebnis markieren"
+
+#: froide/foirequest/views/message.py
+msgid "Mark as important"
+msgstr "Als nicht unwichtig markieren"
+
+#: froide/foirequest/views/message.py
+msgid "Edit redaction"
+msgstr "Schwärzung bearbeiten"
+
+#: froide/foirequest/views/message.py
+msgid "Download non-redacted"
+msgstr "Ungeschwärzt herunterladen"
+
+#: froide/foirequest/views/message.py
+msgid "Other actions"
+msgstr "Weitere Aktionen"
+
+#: froide/foirequest/views/message.py
+msgid "Image file"
+msgstr "Bilddatei"
+
+#: froide/foirequest/views/message.py
+msgid "Actions"
+msgstr "Aktionen"
+
+#: froide/foirequest/views/message.py
+msgid "Properties"
+msgstr "Eigenschaften"
+
+#: froide/foirequest/views/message.py
+msgid "Error"
+msgstr "Fehler"
+
+#: froide/foirequest/views/message.py
+msgid "Error! Try to reload the page?"
+msgstr "Fehler! Seite neu laden versuchen?"
 
 #: froide/foirequest/views/message.py
 msgid "Content published."
@@ -13556,9 +13645,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "There are no authorized tokens yet."
 #~ msgstr "Es gibt noch keine Vorschläge"
-
-#~ msgid "Actions"
-#~ msgstr "Beratungsvorlagen"
 
 #~ msgid "Mark as checked"
 #~ msgstr "Als gesehen markieren"

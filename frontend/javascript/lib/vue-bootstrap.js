@@ -1,14 +1,13 @@
-import { Tooltip } from 'bootstrap'
+import { Tooltip, Toast } from 'bootstrap'
 import { collapsePersistent } from './bootstrap-helpers'
 
-/* Note also snippets/bootstrap.ts
-   To register globally, we could add to vue-helpers.ts:
-     app.directive('bsTooltip', vBsTooltip
-   Or, more locally, e.g. in redact.js:
-     const app = createAppWithProps...
-     app.directive('bsTooltip', vBsTooltip)
-     // register directive before mount!
-     app.mount...
+/* alternatively, to register globally, we could add to vue-helpers.ts:
+   (note also snippets/bootstrap.ts)
+  app.directive('bsTooltip', {
+    mounted: (el) => {
+      new Tooltip(el)
+    }
+  })
 */
 export const vBsTooltip = {
   mounted: (el, binding) => {
@@ -23,4 +22,11 @@ export const vBsTooltip = {
 
 export const vBsCollapsePersistent = {
   mounted: (el) => collapsePersistent(el)
+}
+
+
+export const vBsToast = {
+  mounted: (el) => {
+    new Toast(el)
+  }
 }
