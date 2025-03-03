@@ -7,7 +7,7 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
-import { listFoiMessageDrafts, createFoiMessageDraft, partialUpdateFoiMessageDraft } from '../../api/index.ts'
+import { messageDraftList, messageDraftCreate, messageDraftPartialUpdate } from '../../api/index.ts'
 import { useI18n } from '../../lib/i18n'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
@@ -16,7 +16,7 @@ import Room from '../../lib/websocket.ts'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from '../online-help.vue'
 
-import { resolution } from '../../api/index.ts'
+import { ResolutionEnum, requestRetrieve } from '../../api/index.ts'
 
 import { useAttachments } from '../docupload/lib/attachments'
 
@@ -30,10 +30,10 @@ const props = defineProps({
   // form: Object,
   // message: Object,
   // status_form: Object,
-  foirequest: Object,
+  // foirequest: Object,
   foirequest_id: String,
   foirequest_apiurl: String,
-  foirequest_costs: Object,
+  // foirequest_costs: Object,
   object_public_body_id: String,
   object_public_body: Object,
   object_public: Boolean,
@@ -59,11 +59,27 @@ const {
     ...props.config.urls,
     getAttachment: props.config.url.getAttachment.replace('/0/', '/') +
       '?belongs_to=' +
-      props.message.id,
+      970110 // props.message.id,
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
   i18n,
 })
+
+// const foirequest = ref({})
+requestRetrieve({ path: { id: props.foirequest_id }, throwOnError: true })
+  .then((response) => {
+    // foirequest.value = response.data
+    values.costs = response.data.costs
+    hasHadCost.value = response.data.costs > 0
+  })
+  .catch((err) => {
+    console.error(err)
+    window.alert('requestRetrieve error')
+  })
+
+// const refreshAttachments = () => {
+//   fetchAttachments(draft.value.id)
+// }
 
 const { isDesktop } = useIsDesktop()
 
@@ -90,7 +106,7 @@ const error = ref(false)
 const createOrRetrieveLastDraft = async () => {
   const requestParam = { query: { request: props.foirequest_id } }
   try {
-    const drafts = await listFoiMessageDrafts({ ...requestParam, throwOnError: true })
+    const drafts = await messageDraftList({ ...requestParam, throwOnError: true })
     if (drafts.data.objects.length) {
       // TODO: this is not the "newest"
       //   would have to get last page (or increase limit)
@@ -100,7 +116,7 @@ const createOrRetrieveLastDraft = async () => {
       // unnecessary, we already get all data from listFoi…
       //   await retrieveFoiMessageDraft({ path: { id: newestDraft.resource_uri }})
     } else {
-      draft.value = await createFoiMessageDraft({
+      draft.value = await messageDraftCreate({
         body: requestParam,
         throwOnError: true
         // body.timestamp: ...
@@ -108,6 +124,7 @@ const createOrRetrieveLastDraft = async () => {
     }
     formSent.value = draft.value.sent
     values.sent = draft.value.sent
+    refreshAttachments()
     /*
       draft.value = r
       formSent.value = r.is_response
@@ -120,7 +137,7 @@ const createOrRetrieveLastDraft = async () => {
 }
 
 const updateValue = async (key) => {
-  return partialUpdateFoiMessageDraft({
+  return messageDraftPartialUpdate({
     path: { id: draft.value.id },
     body: { [key]: values[key] },
     throwOnError: true
@@ -211,15 +228,15 @@ const formStatusChoices = computed(() => {
     ? ['', 'successful', 'partially_successful', 'not_held', 'refused']
     : ['user_withdrew_costs']
   // return props.status_form.fields.resolution.choices.filter(
-  return Object.keys(resolution)
-    .filter((key) => !badCombinations.includes(resolution[key]))
-    .map((key) => ({ value: resolution[key], label: formStatusLabels[key] }))
+  return Object.keys(ResolutionEnum)
+    .filter((key) => !badCombinations.includes(ResolutionEnum[key]))
+    .map((key) => ({ value: ResolutionEnum[key], label: formStatusLabels[key] }))
 })
 
 
 // const formCost = props.status_form.fields.costs.initial?.intValue || 0
 // const formHasHadCost = formCost > 0
-const formHasHadCost = props.foirequest_costs.intValue > 0
+const hasHadCost = ref()
 const formDoUpdateCost = ref(false)
 const formDoUpdateCostChoices = [
   { label: 'Ja.', value: true },
@@ -239,7 +256,7 @@ const values = reactive({
   // date: props.form.fields.date.value,
   date: '', // draft.value.timestamp,
   registered_mail_date: '', //: props.form.fields.registered_mail_date.value,
-  costs: props.foirequest_costs.strValue,
+  costs: 0, // props.foirequest_costs.strValue,
     // props.status_form.fields.costs.value?.strValue ||
     //props.status_form.fields.costs.initial.strValue,
   is_registered_mail: false
@@ -348,7 +365,7 @@ const onlineHelp = ref()
 /* --- <attachment-manager> interaction --- */
 
 onMounted(() => {
-  refreshAttachments()
+  // refreshAttachments()
 })
 
 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -607,7 +624,7 @@ const stepsConfig = {
       // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
       // TODO test formSent
       if (formSent.value) return STEP_REDACTION_PICKER
-      return formHasHadCost
+      return hasHadCost.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
     },
@@ -624,7 +641,7 @@ const stepsConfig = {
     next: () => {
       // TODO test formSent
       if (formSent.value) return STEP_REDACTION_PICKER
-      return formHasHadCost
+      return hasHadCost.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
     },
@@ -1313,8 +1330,7 @@ addEventListener('hashchange', () => {
             v-html="
               i18n._('messageCostCheckLast', {
                 amount:
-                  props.foirequest_costs.strValue ||
-                  'error'
+                  values.costs || 'error'
               })
             "
           ></label>

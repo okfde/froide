@@ -582,6 +582,7 @@ def edit_postal_message(request, foirequest, message_id):
         request,
         "foirequest/upload_postal_message_new.html",
         {
+            "foirequest_id": foirequest.id,
             "object": foirequest,
             "object_public_body_id": foirequest.public_body_id,
             "object_public_body": {

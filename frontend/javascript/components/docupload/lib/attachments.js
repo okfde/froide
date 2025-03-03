@@ -1,5 +1,5 @@
-import { getData, postData } from '../../../lib/api'
-import { documentUpdate } from '../../../api'
+import { postData } from '../../../lib/api'
+import { attachmentList, attachmentRetrieve, documentUpdate } from '../../../api'
 
 import { pinia } from '../../../lib/pinia'
 import { useAttachmentsStore } from './attachments-store'
@@ -71,30 +71,39 @@ const updateDocument = (attachment, { title, description }) => {
 
 // const wait = (ms) => (x) => new Promise(resolve => setTimeout(() => { console.log('#wait<'); resolve(x) }, ms))
 
-// TODO: check how this relates to the post upload API work
-const fetchAttachments = (url, csrfToken, paged = false) => {
-  store.isFetching = true
-  return fetch(url, {
-    headers: { 'X-CSRFToken': csrfToken }
+const fetchPagedObjects = (nextUrl, pageCb) => {
+  return fetch(nextUrl, {
+    headers: { 'X-CSRFToken': config.csrfToken }
   })
     .then((response) => {
       if (!response.ok) {
-        console.error('fetch attachment error', url, response)
+        console.error('fetch attachment error', response)
         // TODO
         throw new Error(response.message)
       }
       return response.json()
     })
     .then((response) => {
-      if (!paged) {
-        store.$patch({
-          allRaw: response.objects
-        })
-      } else {
-        store.allRaw.push(...response.objects)
-      }
+      pageCb(response.objects)
       if (response.meta.next) {
-        return fetchAttachments(response.meta.next, csrfToken, true)
+        return fetchPagedObjects(response.meta.next, pageCb)
+      }
+    })
+
+}
+
+const fetchAttachments = (messageId) => {
+  store.isFetching = true
+  return attachmentList({ query: { belongs_to: messageId, limit: 1 }, throwOnError: true })
+    .then((response) => {
+      store.$patch({
+        all: response.data.objects
+      })
+      if (response.data.meta.next) {
+        return fetchPagedObjects(
+          response.data.meta.next,
+          (objects) => store.all.push(...objects)
+        )
       }
     })
     .finally(() => {
@@ -103,8 +112,17 @@ const fetchAttachments = (url, csrfToken, paged = false) => {
 }
 
 const refetchAttachment = (attachment) => {
-  const updateUrl = attachment.resource_uri
-  return getData(updateUrl, { 'X-CSRFToken': config.csrfToken })
+  // const updateUrl = attachment.resource_uri
+  // return getData(updateUrl, { 'X-CSRFToken': config.csrfToken })
+  return attachmentRetrieve({ path: attachment.id, throwOnError: true })
+    .then((response) => {
+      if (!response.ok) {
+        console.error('refetch attachment / attachmentRetrieve error', attachment.id, response)
+        // TODO
+        throw new Error(response.message)
+      }
+      return response.json()
+    })
     .then((response) => {
       const index = store.allRaw.findIndex(att => att.id === attachment.id)
       store.allRaw[index] = response
@@ -171,7 +189,13 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
 
 const handleErrorAndRefresh = (err) => {
   console.error(err)
-  if (confirm(`${config.i18n.value.genericErrorReload}\n\n(${err.message})`) === true) {
+  let message = err?.message
+  try {
+    if (!message) message = JSON.stringify(err)
+  } catch {
+    message = '…'
+  }
+  if (confirm(`${config.i18n.value.genericErrorReload}\n\n(${message})`) === true) {
     refresh()
   }
 }
@@ -216,7 +240,7 @@ const approveAllUnredactedAttachments = (excludeIds = []) => {
 
 const config = {}
 
-const refresh = () => fetchAttachments(config.urls.getAttachment, config.csrfToken)
+const refresh = () => fetchAttachments(config.message.id)
   .catch(handleErrorAndRefresh)
 
 const refreshIfIdNotPresent = (attachment) => {
@@ -244,11 +268,12 @@ const getRedactUrl = (attachment) => {
   return config.urls.redactAttachment.replace('/0/', `/${attachment.id}/`)
 }
 
-export function useAttachments({ urls = null, csrfToken = null, i18n = null} = {}) {
+export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
   // like <post-upload> and <attachment-manager>
   // they could also Object.extend, or throw an error/warning if already set...
+  if (message) config.message = message
   if (urls) config.urls = urls
   if (csrfToken) config.csrfToken = csrfToken
   if (i18n) config.i18n = i18n

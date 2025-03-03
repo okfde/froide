@@ -17,7 +17,7 @@
     </div>
     <div>
         {% csrf_token %}
-        <post-upload class="d-flex flex-column flex-grow-1" :config="{{ config_json }}" :object_public_body="{{ object_public_body_json }}" object_public_body_id="{{ object_public_body_id }}" :object_public="{{ object_public_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :foirequest_id="{{ foirequest.id }}" :foirequest_apiurl="{{ foirequest_apiurl }}" :foirequest_costs="{{ foirequest_costs }}" :message="{{ message_json }}">
+        <post-upload class="d-flex flex-column flex-grow-1" :config="{{ config_json }}" :object_public_body="{{ object_public_body_json }}" object_public_body_id="{{ object_public_body_id }}" :object_public="{{ object_public_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :foirequest_id="{{ foirequest_id }}" :foirequest_apiurl="{{ foirequest_apiurl }}" :foirequest_costs="{{ foirequest_costs }}" :message="{{ message_json }}">
         <!--
             :form="{ form.as_json }"
             :status_form="{ status_form.as_json }"
