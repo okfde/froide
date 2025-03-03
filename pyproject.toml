@@ -7,10 +7,10 @@ description = "German Freedom of Information Portal"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Framework :: Django",
-  "Intended Audience :: Freedom of Information portal operators",
+  "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.12",
   "Topic :: Utilities",
 ]
 version = "5.0.0"
