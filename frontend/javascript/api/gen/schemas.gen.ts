@@ -566,6 +566,10 @@ export const FoiAttachmentSchema = {
       type: 'boolean',
       title: 'User can approve'
     },
+    can_change_approval: {
+      type: 'string',
+      readOnly: true
+    },
     redacted: {
       type: 'string',
       format: 'uri',
@@ -601,6 +605,7 @@ export const FoiAttachmentSchema = {
   required: [
     'anchor_url',
     'belongs_to',
+    'can_change_approval',
     'can_delete',
     'can_redact',
     'converted',
@@ -792,7 +797,8 @@ export const FoiMessageSchema = {
     },
     request: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
+      readOnly: true
     },
     sent: {
       type: 'boolean',
@@ -801,6 +807,7 @@ export const FoiMessageSchema = {
     },
     is_response: {
       type: 'boolean',
+      readOnly: true,
       title: 'Response?'
     },
     is_postal: {
@@ -818,14 +825,16 @@ export const FoiMessageSchema = {
           $ref: '#/components/schemas/KindDccEnum'
         }
       ],
-      default: 'post'
+      readOnly: true
     },
     is_escalation: {
       type: 'boolean',
+      readOnly: true,
       title: 'Escalation?'
     },
     content_hidden: {
       type: 'boolean',
+      readOnly: true,
       title: 'Content hidden?'
     },
     sender_public_body: {
@@ -839,6 +848,7 @@ export const FoiMessageSchema = {
       nullable: true
     },
     status: {
+      readOnly: true,
       oneOf: [
         {
           $ref: '#/components/schemas/StatusEnum'
@@ -851,6 +861,11 @@ export const FoiMessageSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',
@@ -897,9 +912,13 @@ export const FoiMessageSchema = {
   required: [
     'attachments',
     'content',
+    'content_hidden',
     'id',
     'is_draft',
+    'is_escalation',
     'is_postal',
+    'is_response',
+    'kind',
     'last_modified_at',
     'not_publishable',
     'redacted_content',
@@ -908,6 +927,7 @@ export const FoiMessageSchema = {
     'resource_uri',
     'sender',
     'sent',
+    'status',
     'status_name',
     'subject',
     'url'
@@ -953,19 +973,16 @@ export const FoiMessageDraftSchema = {
       title: 'Is message a draft?'
     },
     kind: {
-      allOf: [
-        {
-          $ref: '#/components/schemas/KindDccEnum'
-        }
-      ],
-      default: 'post'
+      $ref: '#/components/schemas/KindDccEnum'
     },
     is_escalation: {
       type: 'boolean',
+      readOnly: true,
       title: 'Escalation?'
     },
     content_hidden: {
       type: 'boolean',
+      readOnly: true,
       title: 'Content hidden?'
     },
     sender_public_body: {
@@ -979,6 +996,7 @@ export const FoiMessageDraftSchema = {
       nullable: true
     },
     status: {
+      readOnly: true,
       oneOf: [
         {
           $ref: '#/components/schemas/StatusEnum'
@@ -991,6 +1009,11 @@ export const FoiMessageDraftSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',
@@ -1037,8 +1060,10 @@ export const FoiMessageDraftSchema = {
   required: [
     'attachments',
     'content',
+    'content_hidden',
     'id',
     'is_draft',
+    'is_escalation',
     'is_postal',
     'last_modified_at',
     'not_publishable',
@@ -1048,6 +1073,7 @@ export const FoiMessageDraftSchema = {
     'resource_uri',
     'sender',
     'sent',
+    'status',
     'status_name',
     'subject',
     'url'
@@ -1077,21 +1103,24 @@ export const FoiRequestDetailSchema = {
     },
     is_foi: {
       type: 'boolean',
+      readOnly: true,
       title: 'Is FoI request'
     },
     checked: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     refusal_reason: {
-      type: 'string',
-      maxLength: 1024
+      type: 'string'
     },
     costs: {
       type: 'string',
-      readOnly: true
+      format: 'decimal',
+      pattern: '^-?\\d{0,10}(?:\\.\\d{0,2})?$'
     },
     public: {
       type: 'boolean',
+      readOnly: true,
       title: 'Published?'
     },
     law: {
@@ -1114,8 +1143,7 @@ export const FoiRequestDetailSchema = {
     },
     same_as_count: {
       type: 'integer',
-      maximum: 2147483647,
-      minimum: -2147483648,
+      readOnly: true,
       title: 'Identical request count'
     },
     same_as: {
@@ -1126,23 +1154,27 @@ export const FoiRequestDetailSchema = {
     due_date: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     resolved_on: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true,
       title: 'Resolution date'
     },
     last_message: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true,
       title: 'Date of last message'
     },
     created_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     last_modified_at: {
@@ -1173,16 +1205,16 @@ export const FoiRequestDetailSchema = {
     },
     slug: {
       type: 'string',
-      maxLength: 255,
+      readOnly: true,
       pattern: '^[-a-zA-Z0-9_]+$'
     },
     title: {
       type: 'string',
-      maxLength: 255
+      readOnly: true
     },
     reference: {
       type: 'string',
-      maxLength: 255
+      readOnly: true
     },
     user: {
       type: 'string',
@@ -1198,7 +1230,10 @@ export const FoiRequestDetailSchema = {
       readOnly: true
     },
     tags: {
-      type: 'string'
+      type: 'array',
+      items: {
+        type: 'string'
+      }
     },
     messages: {
       type: 'string',
@@ -1207,18 +1242,28 @@ export const FoiRequestDetailSchema = {
   },
   required: [
     'campaign',
+    'checked',
     'costs',
+    'created_at',
     'description',
+    'due_date',
     'id',
+    'is_foi',
     'jurisdiction',
+    'last_message',
     'last_modified_at',
     'law',
     'messages',
     'project',
+    'public',
     'public_body',
     'redacted_description',
+    'reference',
+    'refusal_reason',
+    'resolved_on',
     'resource_uri',
     'same_as',
+    'same_as_count',
     'slug',
     'status',
     'tags',
@@ -1296,27 +1341,29 @@ export const FoiRequestListSchema = {
     },
     is_foi: {
       type: 'boolean',
+      readOnly: true,
       title: 'Is FoI request'
     },
     checked: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     refusal_reason: {
-      type: 'string',
-      maxLength: 1024
+      type: 'string'
     },
     costs: {
       type: 'string',
-      readOnly: true
+      format: 'decimal',
+      pattern: '^-?\\d{0,10}(?:\\.\\d{0,2})?$'
     },
     public: {
       type: 'boolean',
+      readOnly: true,
       title: 'Published?'
     },
     law: {
       type: 'string',
-      format: 'uri',
-      readOnly: true
+      format: 'uri'
     },
     description: {
       type: 'string'
@@ -1330,8 +1377,7 @@ export const FoiRequestListSchema = {
     },
     same_as_count: {
       type: 'integer',
-      maximum: 2147483647,
-      minimum: -2147483648,
+      readOnly: true,
       title: 'Identical request count'
     },
     same_as: {
@@ -1342,23 +1388,27 @@ export const FoiRequestListSchema = {
     due_date: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     resolved_on: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true,
       title: 'Resolution date'
     },
     last_message: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true,
       title: 'Date of last message'
     },
     created_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     last_modified_at: {
@@ -1389,16 +1439,16 @@ export const FoiRequestListSchema = {
     },
     slug: {
       type: 'string',
-      maxLength: 255,
+      readOnly: true,
       pattern: '^[-a-zA-Z0-9_]+$'
     },
     title: {
       type: 'string',
-      maxLength: 255
+      readOnly: true
     },
     reference: {
       type: 'string',
-      maxLength: 255
+      readOnly: true
     },
     user: {
       type: 'string',
@@ -1414,22 +1464,35 @@ export const FoiRequestListSchema = {
       readOnly: true
     },
     tags: {
-      type: 'string'
+      type: 'array',
+      items: {
+        type: 'string'
+      }
     }
   },
   required: [
     'campaign',
+    'checked',
     'costs',
+    'created_at',
     'description',
+    'due_date',
     'id',
+    'is_foi',
     'jurisdiction',
+    'last_message',
     'last_modified_at',
     'law',
     'project',
+    'public',
     'public_body',
     'redacted_description',
+    'reference',
+    'refusal_reason',
+    'resolved_on',
     'resource_uri',
     'same_as',
+    'same_as_count',
     'slug',
     'status',
     'tags',
@@ -2470,7 +2533,7 @@ export const PatchedDocumentSchema = {
   }
 } as const
 
-export const PatchedFoiMessageDraftSchema = {
+export const PatchedFoiMessageSchema = {
   type: 'object',
   properties: {
     resource_uri: {
@@ -2488,7 +2551,8 @@ export const PatchedFoiMessageDraftSchema = {
     },
     request: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
+      readOnly: true
     },
     sent: {
       type: 'boolean',
@@ -2497,6 +2561,7 @@ export const PatchedFoiMessageDraftSchema = {
     },
     is_response: {
       type: 'boolean',
+      readOnly: true,
       title: 'Response?'
     },
     is_postal: {
@@ -2514,14 +2579,16 @@ export const PatchedFoiMessageDraftSchema = {
           $ref: '#/components/schemas/KindDccEnum'
         }
       ],
-      default: 'post'
+      readOnly: true
     },
     is_escalation: {
       type: 'boolean',
+      readOnly: true,
       title: 'Escalation?'
     },
     content_hidden: {
       type: 'boolean',
+      readOnly: true,
       title: 'Content hidden?'
     },
     sender_public_body: {
@@ -2535,6 +2602,7 @@ export const PatchedFoiMessageDraftSchema = {
       nullable: true
     },
     status: {
+      readOnly: true,
       oneOf: [
         {
           $ref: '#/components/schemas/StatusEnum'
@@ -2547,6 +2615,11 @@ export const PatchedFoiMessageDraftSchema = {
     timestamp: {
       type: 'string',
       format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
     },
     redacted: {
       type: 'boolean',
@@ -2588,6 +2661,285 @@ export const PatchedFoiMessageDraftSchema = {
       type: 'string',
       format: 'date-time',
       readOnly: true
+    }
+  }
+} as const
+
+export const PatchedFoiMessageDraftSchema = {
+  type: 'object',
+  properties: {
+    resource_uri: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    id: {
+      type: 'integer',
+      readOnly: true
+    },
+    url: {
+      type: 'string',
+      readOnly: true
+    },
+    request: {
+      type: 'string',
+      format: 'uri'
+    },
+    sent: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Has message been sent?'
+    },
+    is_response: {
+      type: 'boolean',
+      title: 'Response?'
+    },
+    is_postal: {
+      type: 'string',
+      readOnly: true
+    },
+    is_draft: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Is message a draft?'
+    },
+    kind: {
+      $ref: '#/components/schemas/KindDccEnum'
+    },
+    is_escalation: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Escalation?'
+    },
+    content_hidden: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Content hidden?'
+    },
+    sender_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    recipient_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    status: {
+      readOnly: true,
+      oneOf: [
+        {
+          $ref: '#/components/schemas/StatusEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    timestamp: {
+      type: 'string',
+      format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    redacted: {
+      type: 'boolean',
+      title: 'Was Redacted?'
+    },
+    not_publishable: {
+      type: 'boolean',
+      readOnly: true
+    },
+    attachments: {
+      type: 'string',
+      readOnly: true
+    },
+    subject: {
+      type: 'string',
+      readOnly: true
+    },
+    content: {
+      type: 'string',
+      readOnly: true
+    },
+    redacted_subject: {
+      type: 'string',
+      readOnly: true
+    },
+    redacted_content: {
+      type: 'string',
+      readOnly: true
+    },
+    sender: {
+      type: 'string',
+      readOnly: true
+    },
+    status_name: {
+      type: 'string',
+      readOnly: true
+    },
+    last_modified_at: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true
+    }
+  }
+} as const
+
+export const PatchedFoiRequestListSchema = {
+  type: 'object',
+  properties: {
+    resource_uri: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    id: {
+      type: 'integer',
+      readOnly: true
+    },
+    url: {
+      type: 'string',
+      readOnly: true
+    },
+    jurisdiction: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    is_foi: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Is FoI request'
+    },
+    checked: {
+      type: 'boolean',
+      readOnly: true
+    },
+    refusal_reason: {
+      type: 'string'
+    },
+    costs: {
+      type: 'string',
+      format: 'decimal',
+      pattern: '^-?\\d{0,10}(?:\\.\\d{0,2})?$'
+    },
+    public: {
+      type: 'boolean',
+      readOnly: true,
+      title: 'Published?'
+    },
+    law: {
+      type: 'string',
+      format: 'uri'
+    },
+    description: {
+      type: 'string'
+    },
+    redacted_description: {
+      type: 'string',
+      readOnly: true
+    },
+    summary: {
+      type: 'string'
+    },
+    same_as_count: {
+      type: 'integer',
+      readOnly: true,
+      title: 'Identical request count'
+    },
+    same_as: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    due_date: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true,
+      nullable: true
+    },
+    resolved_on: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true,
+      nullable: true,
+      title: 'Resolution date'
+    },
+    last_message: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true,
+      nullable: true,
+      title: 'Date of last message'
+    },
+    created_at: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true,
+      nullable: true
+    },
+    last_modified_at: {
+      type: 'string',
+      format: 'date-time',
+      readOnly: true
+    },
+    status: {
+      $ref: '#/components/schemas/StatusEnum'
+    },
+    public_body: {
+      allOf: [
+        {
+          $ref: '#/components/schemas/SimplePublicBody'
+        }
+      ],
+      readOnly: true
+    },
+    resolution: {
+      oneOf: [
+        {
+          $ref: '#/components/schemas/ResolutionEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    slug: {
+      type: 'string',
+      readOnly: true,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    title: {
+      type: 'string',
+      readOnly: true
+    },
+    reference: {
+      type: 'string',
+      readOnly: true
+    },
+    user: {
+      type: 'string',
+      readOnly: true
+    },
+    project: {
+      type: 'integer',
+      readOnly: true
+    },
+    campaign: {
+      type: 'string',
+      format: 'uri',
+      readOnly: true
+    },
+    tags: {
+      type: 'array',
+      items: {
+        type: 'string'
+      }
     }
   }
 } as const
