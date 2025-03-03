@@ -1,3 +1,5 @@
+from typing import override
+
 from rest_framework import permissions, serializers
 
 from .auth import (
@@ -6,7 +8,7 @@ from .auth import (
     get_write_foirequest_queryset,
 )
 from .models.attachment import FoiAttachment
-from .models.message import FoiMessageDraft
+from .models.message import FoiMessage, FoiMessageDraft
 
 
 class TagListField(serializers.CharField):
@@ -39,18 +41,27 @@ class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
         kwargs = {self.lookup_url_kwarg: lookup_value}
 
         if isinstance(obj, FoiMessageDraft):
-            view_name = "api:message-draft-detail"
+            self.view_name = view_name = "api:message-draft-detail"
         else:
-            view_name = "api:message-detail"
+            self.view_name = view_name = "api:message-detail"
 
         return self.reverse(view_name, kwargs=kwargs, request=request, format=format)
+
+    @override
+    def to_internal_value(self, data):
+        if "/draft/" in data:
+            self.view_name = "api:message-draft-detail"
+        else:
+            self.view_name = "api:message-detail"
+
+        return super().to_internal_value(data)
 
     def get_queryset(self):
         request = self.context["request"]
         if request.method in permissions.SAFE_METHODS:
             return get_read_foirequest_queryset(request)
         else:
-            return get_write_foimessage_queryset(request)
+            return get_write_foimessage_queryset(request, FoiMessage.with_drafts.all())
 
 
 class FoiAttachmentRelatedField(serializers.HyperlinkedRelatedField):
