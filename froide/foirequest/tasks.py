@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from celery.exceptions import SoftTimeLimitExceeded
 
 from froide.celery import app as celery_app
+from froide.foirequest.utils import find_attachment_name
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
@@ -496,3 +497,44 @@ def warn_on_unprocessed_mail():
                 _("Unprocessed FOI Mail: {count}").format(count=len(msg_ids)),
                 _("There are unprocessed FOI Mails, inform system administrators!"),
             )
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.decrypt_pdf_attachment_task", time_limit=600
+)
+def decrypt_pdf_attachment_task(att_id, password):
+    from filingcabinet.pdf_utils import decrypt_pdf
+    from filingcabinet.utils import get_local_file
+
+    try:
+        att = FoiAttachment.objects.get(pk=att_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    if not att.is_pdf:
+        return
+
+    with get_local_file(att.file.path) as file_path:
+        output_bytes = decrypt_pdf(file_path, password)
+
+    if output_bytes is None:
+        return
+
+    name, ext = os.path.splitext(att.name)
+    name = _("{name}_decrypted{ext}").format(name=name, ext=".pdf")
+    name = find_attachment_name(name, att.belongs_to)
+
+    decrypted_att = FoiAttachment.objects.create(
+        name=name,
+        belongs_to=att.belongs_to,
+        approved=False,
+        filetype="application/pdf",
+        is_converted=True,
+        can_approve=att.can_approve,
+    )
+    new_file = ContentFile(output_bytes)
+    decrypted_att.size = new_file.size
+    decrypted_att.file.save(att.name, new_file, save=True)
+
+    att.converted = decrypted_att
+    att.save()

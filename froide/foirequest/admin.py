@@ -834,6 +834,7 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
         "ocr_attachment",
         "make_document",
         "unpack_zipfile",
+        "decrypt_pdf",
     ]
 
     def get_queryset(self, request):
@@ -908,6 +909,35 @@ class FoiAttachmentAdmin(admin.ModelAdmin):
 
         for att in queryset:
             unpack_zipfile_attachment_task.delay(att.id)
+
+    @admin.action(description=_("Decrypt password protected PDF"))
+    def decrypt_pdf(self, request, queryset):
+        from .tasks import decrypt_pdf_attachment_task
+
+        if not queryset:
+            return
+
+        if request.POST.get("password"):
+            password = request.POST["password"]
+            count = 0
+            for instance in queryset:
+                if instance.is_pdf:
+                    count += 1
+                    decrypt_pdf_attachment_task.delay(instance.pk, password=password)
+            self.message_user(request, _("Decryption tasks started: %s") % count)
+            return
+
+        select_across = request.POST.get("select_across", "0") == "1"
+        context = {
+            "opts": self.model._meta,
+            "action_checkbox_name": helpers.ACTION_CHECKBOX_NAME,
+            "queryset": queryset,
+            "action_name": "decrypt_pdf",
+            "select_across": select_across,
+        }
+
+        # Display password input page
+        return TemplateResponse(request, "foirequest/admin/decrypt_pdf.html", context)
 
 
 @admin.register(FoiEvent)
