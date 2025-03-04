@@ -981,3 +981,12 @@ def postal_date(
         return uploaded_date_midday
     else:
         return postal_date
+
+
+def find_attachment_name(name: str, message_id: int) -> str:
+    attachment_names = set(
+        FoiAttachment.objects.filter(belongs_to_id=message_id).values_list(
+            "name", flat=True
+        )
+    )
+    return make_unique_filename(name, attachment_names)
