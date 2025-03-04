@@ -304,6 +304,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         service = AccountService(self)
         return service.get_autologin_url(url)
 
+    def can_autologin(self) -> bool:
+        from .services import AccountService
+
+        service = AccountService(self)
+        return service.can_autologin()
+
     def get_redactions(self, replacements: Replacements = None) -> Redactions:
         account_service = self.get_account_service()
         return list(account_service.get_user_redactions(replacements))
