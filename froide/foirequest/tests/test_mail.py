@@ -4,11 +4,13 @@ from datetime import timezone as dt_timezone
 
 from django.conf import settings
 from django.core import mail
+from django.db.models import signals
 from django.test.utils import override_settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import pytest
+from factory.django import mute_signals
 
 from froide.foirequest.foi_mail import add_message_from_email
 from froide.foirequest.models import DeferredMessage, FoiMessage, FoiRequest
@@ -29,13 +31,14 @@ def p(path: str) -> str:
 def foirequest_with_msg(world):
     secret_address = "sw+yurpykc1hr@fragdenstaat.de"
     date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
-    req = factories.FoiRequestFactory.create(
-        site=world,
-        secret_address=secret_address,
-        created_at=date,
-        last_message=date,
-    )
-    factories.FoiMessageFactory.create(request=req, timestamp=date)
+    with mute_signals(signals.pre_save, signals.post_save):
+        req = factories.FoiRequestFactory.create(
+            site=world,
+            secret_address=secret_address,
+            created_at=date,
+            last_message=date,
+        )
+        factories.FoiMessageFactory.create(request=req, timestamp=date)
     return req
 
 
