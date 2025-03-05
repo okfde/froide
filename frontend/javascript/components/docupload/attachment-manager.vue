@@ -10,6 +10,7 @@ import OnlineHelp from '../online-help.vue'
 import BsToast from '../bs-toast.vue'
 import { useI18n } from '../../lib/i18n'
 import { useAttachments } from './lib/attachments'
+import { csrfToken } from '../../api'
 
 import { onMounted, nextTick, provide, ref, watch } from 'vue'
 
@@ -26,7 +27,7 @@ const { attachments, addFromUppy, refresh } = useAttachments({
       '?belongs_to=' +
       props.message.id,
   },
-  csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+  csrfToken,
   i18n,
 })
 
