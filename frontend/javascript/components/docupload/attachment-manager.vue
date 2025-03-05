@@ -37,11 +37,10 @@ const imagesConverterContainer = ref()
 
 watch(
   () => attachments.images.length,
-  (newValue) => {
+  async (newValue) => {
     if (newValue > 0) {
-      nextTick().then(() => {
-        imagesConverterContainer.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-      })
+      await nextTick()
+      imagesConverterContainer.value?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }
   }
 )
