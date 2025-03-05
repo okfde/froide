@@ -41,7 +41,6 @@ const convertImagesClick = (idx) => {
             show-rotate
             show-split
             />
-          <div class="spinner-border position-absolute top-50 start-50 translate-middle" v-if="image.isConverting"></div>
         </div>
         <div>
           <button
@@ -51,6 +50,9 @@ const convertImagesClick = (idx) => {
             :disabled="attachments.isConverting">
             {{ i18n.convertImages }}
           </button>
+          <span v-show="image.isConverting" class="spinner-border spinner-border-sm ms-3" role="status">
+            <span class="sr-only">{{ i18n.loading }}</span>
+          </span>
         </div>
       </div>
     </div>
