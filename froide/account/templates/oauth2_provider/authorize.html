@@ -9,7 +9,7 @@
                         {% blocktrans with name=application.name %}Authorize the application '{{ name }}'?{% endblocktrans %}
                     </h3>
                     <p>{% translate "The application has given the following description:" %}</p>
-                    <blockquote>
+                    <blockquote class="simple-blockquote">
                         {{ application.description }}
                     </blockquote>
                     {% if application.client_type == "public" %}
