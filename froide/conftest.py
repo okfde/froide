@@ -1,9 +1,11 @@
 import os
 
 from django.contrib.sites.models import Site
+from django.db.models import signals
 from django.utils.translation import activate
 
 import pytest
+from factory.django import mute_signals
 from pytest_factoryboy import register
 
 from froide.account.factories import UserFactory
@@ -44,7 +46,9 @@ register(FoiProjectFactory)
 
 @pytest.fixture
 def world():
-    yield make_world()
+    with mute_signals(signals.pre_save, signals.post_save):
+        world = make_world()
+    yield world
 
 
 @pytest.fixture
