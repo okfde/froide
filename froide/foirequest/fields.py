@@ -42,6 +42,7 @@ class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
 
     @override
     def to_internal_value(self, data):
+        # TODO: find a better solution for this
         if "/draft/" in data:
             self.view_name = "api:message-draft-detail"
         else:
