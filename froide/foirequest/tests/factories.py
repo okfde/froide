@@ -10,6 +10,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.management import call_command
+from django.db.models import signals
 from django.utils import timezone
 
 import factory
@@ -162,6 +163,7 @@ class FoiMessageDraftFactory(FoiMessageFactory):
         model = FoiMessageDraft
 
 
+@factory.django.mute_signals(signals.pre_save, signals.post_save)
 class FoiAttachmentFactory(DjangoModelFactory):
     class Meta:
         model = FoiAttachment
