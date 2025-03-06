@@ -354,3 +354,8 @@ def test_to_document(client: Client, user):
     assert data["title"] == attachment.name
     assert str(request.pk) in data["foirequest"]
     assert str(message.sender_public_body.pk) in data["publicbody"]
+
+    assert FoiEvent.objects.get(
+        event_name=FoiEvent.EVENTS.DOCUMENT_CREATED,
+        context__attachment_id=str(attachment.pk),
+    )
