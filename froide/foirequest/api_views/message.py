@@ -75,9 +75,6 @@ class FoiMessageDraftViewSet(
         message = self.get_object()
         message.is_draft = False
 
-        if not message.is_response:
-            message.sender_user = request.user
-
         if message.is_postal:
             message.timestamp = postal_date(message)
 
