@@ -923,7 +923,10 @@ def edit_message(request, foirequest, message_id):
             user=request.user,
             **form.cleaned_data,
         )
-    return redirect(message.get_absolute_url())
+        return redirect(message.get_absolute_url())
+    else:
+        messages.add_message(request, messages.ERROR, form.errors)
+        return redirect(message.request.get_absolute_url())
 
 
 @require_POST
