@@ -16,7 +16,7 @@ def test_message(client: Client, user):
     assert client.login(email=user.email, password="froide")
 
     request = factories.FoiRequestFactory.create(
-        user=user, created_at=datetime(2000, 1, 1)
+        user=user, created_at=timezone.make_aware(datetime(2000, 1, 1))
     )
     other_request = factories.FoiRequestFactory.create()
     message = factories.FoiMessageFactory.create(request=request)
@@ -66,6 +66,12 @@ def test_message(client: Client, user):
     assert not data["is_draft"]
     assert not data["not_publishable"]
 
+    # nothing changed, so no event
+    with pytest.raises(FoiEvent.DoesNotExist):
+        FoiEvent.objects.get(
+            event_name=FoiEvent.EVENTS.MESSAGE_EDITED, message=message, user=user
+        )
+
     # can update some fields
     response = client.patch(
         reverse("api:message-detail", kwargs={"pk": message.pk}),
@@ -76,11 +82,17 @@ def test_message(client: Client, user):
         content_type="application/json",
     )
     data = response.json()
-    print(data)
     assert response.status_code == 200
     assert "2000-01-01" in data["registered_mail_date"]
     assert "2000-01-01" in data["timestamp"]
     assert "12:00:00" in data["timestamp"]  # converted to postal time
+
+    event = FoiEvent.objects.get(
+        event_name=FoiEvent.EVENTS.MESSAGE_EDITED, message=message, user=user
+    )
+    assert "2000-01-01" in event.context["registered_mail_date"]
+    assert "2000-01-01" in event.context["timestamp"]
+    assert "12:00:00" in event.context["timestamp"]  # converted to postal time
 
     # can't delete
     response = client.delete(reverse("api:message-detail", kwargs={"pk": message.pk}))
