@@ -214,6 +214,14 @@ class Status(models.TextChoices):
     RESOLVED = "resolved", _("Request resolved")
 
 
+# users are only allowed to set the status to one of the following values.
+# the others are only set by the system
+USER_ALLOWED_STATUS = (
+    Status.AWAITING_RESPONSE,
+    Status.RESOLVED,
+)
+
+
 class Resolution(models.TextChoices):
     SUCCESSFUL = "successful", _("Request Successful")
     PARTIALLY_SUCCESSFUL = "partially_successful", _("Request partially successful")
@@ -289,6 +297,7 @@ class Visibility(models.IntegerChoices):
 
 class FoiRequest(models.Model):
     STATUS = Status
+
     RESOLUTION = Resolution
     FILTER_STATUS = FilterStatus
     VISIBILITY = Visibility
@@ -445,6 +454,7 @@ class FoiRequest(models.Model):
     #    "previous_status", "previous_resolution"
     # ]
     status_changed = django.dispatch.Signal()
+    costs_reported = django.dispatch.Signal()  # args: ["costs"]
     became_overdue = django.dispatch.Signal()  # args: []
     became_asleep = django.dispatch.Signal()  # args: []
     public_body_suggested = django.dispatch.Signal()  # args: ["suggestion"]
