@@ -10,17 +10,6 @@ from rest_framework.views import PermissionDenied
 from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 from froide.document.api_views import DocumentSerializer
-from froide.foirequest.fields import (
-    FoiAttachmentRelatedField,
-    FoiMessageRelatedField,
-    FoiRequestCostsField,
-    FoiRequestRelatedField,
-)
-from froide.foirequest.models.message import (
-    MESSAGE_KIND_USER_ALLOWED,
-    FoiMessageDraft,
-)
-from froide.foirequest.utils import postal_date
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
 from froide.publicbody.serializers import (
@@ -38,8 +27,20 @@ from .auth import (
     can_write_foirequest,
     get_read_foiattachment_queryset,
 )
+from .fields import (
+    FoiAttachmentRelatedField,
+    FoiMessageRelatedField,
+    FoiRequestCostsField,
+    FoiRequestRelatedField,
+)
 from .models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
+from .models.message import (
+    MESSAGE_KIND_USER_ALLOWED,
+    FoiMessageDraft,
+)
+from .models.request import USER_ALLOWED_STATUS
 from .services import CreateRequestService
+from .utils import postal_date
 from .validators import clean_reference
 
 
@@ -58,6 +59,7 @@ class FoiRequestListSerializer(
         view_name="api:request-detail", lookup_field="pk", read_only=True
     )
     user = serializers.SerializerMethodField(source="get_user")
+    status = serializers.ChoiceField(choices=USER_ALLOWED_STATUS)
 
     # TODO: change to hyperlinked field
     project = serializers.PrimaryKeyRelatedField(
@@ -128,6 +130,13 @@ class FoiRequestListSerializer(
             "campaign",
         )
 
+    def validate_status(self, value):
+        if value not in USER_ALLOWED_STATUS:
+            raise serializers.ValidationError(
+                _("Choose a valid status: %s") % ", ".join(USER_ALLOWED_STATUS)
+            )
+        return value
+
     def validate_refusal_reson(self, value):
         request = self.context.get("request", None)
 
@@ -163,6 +172,38 @@ class FoiRequestListSerializer(
 
     def get_costs(self, obj):
         return float(obj.costs)
+
+    @override
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+
+        if "costs" in validated_data:
+            FoiRequest.costs_reported.send(
+                sender=instance, user=user, costs=validated_data["costs"]
+            )
+
+        if (
+            "status" in validated_data
+            or "resolution" in validated_data
+            or "refusal_reason" in validated_data
+        ):
+            previous_status = instance.status
+            previous_resolution = instance.resolution
+
+            FoiRequest.status_changed.send(
+                sender=instance,
+                user=user,
+                status=validated_data.get("status"),
+                resolution=validated_data.get("resolution"),
+                previous_status=previous_status,
+                previous_resolution=previous_resolution,
+                data={
+                    "costs": validated_data.get("costs", instance.costs),
+                    "refusal_reason": validated_data.get("refusal_reason"),
+                },
+            )
+
+        return super().update(instance, validated_data)
 
 
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
