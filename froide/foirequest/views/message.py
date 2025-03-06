@@ -558,6 +558,7 @@ def edit_postal_message(request, foirequest, message_id):
     )
 
 
+# TODO: remove in favor of API endpoint
 @allow_write_foirequest
 def upload_postal_message(request, foirequest):
     if request.method == "POST":
@@ -619,6 +620,7 @@ def get_attachment_update_response(request, added_attachments):
     )
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_foirequest
 def add_postal_reply_attachment(request, foirequest, message_id):
@@ -659,6 +661,7 @@ def add_postal_reply_attachment(request, foirequest, message_id):
     return render_400(request)
 
 
+# TODO: remove in favor of API endpoint
 def convert_to_pdf(request, foirequest, message, data):
     att_ids = [a["id"] for a in data["images"]]
     title = data.get("title") or _("letter")
@@ -703,6 +706,7 @@ def convert_to_pdf(request, foirequest, message, data):
     return JsonResponse(attachment_data)
 
 
+# TODO: remove in favor of API endpoint
 def add_tus_attachment(request, foirequest, message, data):
     form = TransferUploadForm(data=data, foimessage=message, user=request.user)
     if form.is_valid():
@@ -712,6 +716,7 @@ def add_tus_attachment(request, foirequest, message, data):
     return JsonResponse({"error": True, "message": str(form.errors)})
 
 
+# TODO: remove form in favor of API endpoint
 @allow_write_foirequest
 def upload_attachments(request, foirequest, message_id):
     try:
@@ -849,6 +854,7 @@ def upload_attachments(request, foirequest, message_id):
     )
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_or_moderate_foirequest
 def set_message_sender(request, foirequest, message_id):
@@ -870,6 +876,7 @@ def set_message_sender(request, foirequest, message_id):
     return render_400(request)
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_or_moderate_foirequest
 def set_message_recipient(request, foirequest, message_id):

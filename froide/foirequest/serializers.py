@@ -1,26 +1,20 @@
+from typing import override
+
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import PermissionDenied
+from taggit.serializers import TaggitSerializer, TagListSerializerField
 
 from froide.document.api_views import DocumentSerializer
-from froide.foirequest.fields import (
-    FoiAttachmentRelatedField,
-    FoiMessageRelatedField,
-    FoiRequestRelatedField,
-    TagListField,
-)
-from froide.foirequest.models.message import (
-    MESSAGE_KIND_USER_ALLOWED,
-    FoiMessageDraft,
-    MessageKind,
-)
 from froide.helper.text_diff import get_differences
 from froide.publicbody.models import PublicBody
 from froide.publicbody.serializers import (
     FoiLawSerializer,
+    LawRelatedField,
     PublicBodyRelatedField,
     PublicBodySerializer,
     SimplePublicBodySerializer,
@@ -33,19 +27,31 @@ from .auth import (
     can_write_foirequest,
     get_read_foiattachment_queryset,
 )
-from .models import FoiAttachment, FoiMessage, FoiRequest
+from .fields import (
+    FoiAttachmentRelatedField,
+    FoiMessageRelatedField,
+    FoiRequestCostsField,
+    FoiRequestRelatedField,
+)
+from .models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
+from .models.message import (
+    MESSAGE_KIND_USER_ALLOWED,
+    FoiMessageDraft,
+)
+from .models.request import USER_ALLOWED_STATUS
 from .services import CreateRequestService
+from .utils import postal_date
 from .validators import clean_reference
 
 
-class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
+class FoiRequestListSerializer(
+    TaggitSerializer, serializers.HyperlinkedModelSerializer
+):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name="api:request-detail", lookup_field="pk"
     )
     public_body = SimplePublicBodySerializer(read_only=True)
-    law = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name="api:law-detail", lookup_field="pk"
-    )
+    law = LawRelatedField()
     jurisdiction = serializers.HyperlinkedRelatedField(
         view_name="api:jurisdiction-detail", lookup_field="pk", read_only=True
     )
@@ -53,17 +59,21 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
         view_name="api:request-detail", lookup_field="pk", read_only=True
     )
     user = serializers.SerializerMethodField(source="get_user")
+    status = serializers.ChoiceField(choices=USER_ALLOWED_STATUS)
+
+    # TODO: change to hyperlinked field
     project = serializers.PrimaryKeyRelatedField(
         read_only=True,
     )
     campaign = serializers.HyperlinkedRelatedField(
         read_only=True, view_name="api:campaign-detail", lookup_field="pk"
     )
-    tags = TagListField()
+    tags = TagListSerializerField()
 
     description = serializers.CharField(source="get_description")
     redacted_description = serializers.SerializerMethodField()
-    costs = serializers.SerializerMethodField()
+    refusal_reason = serializers.CharField()
+    costs = FoiRequestCostsField()
 
     class Meta:
         model = FoiRequest
@@ -100,6 +110,47 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
             "campaign",
             "tags",
         )
+        read_only_fields = (
+            "is_foi",
+            "checked",
+            "public",
+            "same_as_count",
+            "same_as",
+            "due_date",
+            "resolved_on",
+            "last_message",
+            "created_at",
+            "last_modified_at",
+            "public_body",
+            "slug",
+            "title",
+            "reference",
+            "user",
+            "project",  # TODO: make this updatable
+            "campaign",
+        )
+
+    def validate_status(self, value):
+        if value not in USER_ALLOWED_STATUS:
+            raise serializers.ValidationError(
+                _("Choose a valid status: %s") % ", ".join(USER_ALLOWED_STATUS)
+            )
+        return value
+
+    def validate_refusal_reson(self, value):
+        request = self.context.get("request", None)
+
+        if request:
+            foirequest = request.object
+            if foirequest.law:
+                keys = [item[0] for item in foirequest.law.get_refusal_reason_choices()]
+
+                if value not in keys:
+                    raise serializers.ValidationError(
+                        "The refusal reason doesn't apply to the law."
+                    )
+
+        return value
 
     def get_user(self, obj):
         if obj.user is None:
@@ -121,6 +172,38 @@ class FoiRequestListSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_costs(self, obj):
         return float(obj.costs)
+
+    @override
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+
+        if "costs" in validated_data:
+            FoiRequest.costs_reported.send(
+                sender=instance, user=user, costs=validated_data["costs"]
+            )
+
+        if (
+            "status" in validated_data
+            or "resolution" in validated_data
+            or "refusal_reason" in validated_data
+        ):
+            previous_status = instance.status
+            previous_resolution = instance.resolution
+
+            FoiRequest.status_changed.send(
+                sender=instance,
+                user=user,
+                status=validated_data.get("status"),
+                resolution=validated_data.get("resolution"),
+                previous_status=previous_status,
+                previous_resolution=previous_resolution,
+                data={
+                    "costs": validated_data.get("costs", instance.costs),
+                    "refusal_reason": validated_data.get("refusal_reason"),
+                },
+            )
+
+        return super().update(instance, validated_data)
 
 
 class FoiRequestDetailSerializer(FoiRequestListSerializer):
@@ -168,7 +251,7 @@ class MakeRequestSerializer(serializers.Serializer):
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(view_name="api:message-detail")
-    request = FoiRequestRelatedField()
+    request = FoiRequestRelatedField(read_only=True)
     attachments = serializers.SerializerMethodField(source="get_attachments")
     sender_public_body = PublicBodyRelatedField(required=False, allow_null=True)
     recipient_public_body = PublicBodyRelatedField(required=False, allow_null=True)
@@ -177,19 +260,19 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.SerializerMethodField(source="get_content")
     redacted_subject = serializers.SerializerMethodField(source="get_redacted_subject")
     redacted_content = serializers.SerializerMethodField(source="get_redacted_content")
-    sender = serializers.CharField(read_only=True)
     url = serializers.CharField(source="get_absolute_domain_url", read_only=True)
     status = serializers.ChoiceField(
-        choices=FoiRequest.STATUS.choices, required=False, allow_blank=True
+        choices=FoiRequest.STATUS.choices,
+        required=False,
+        allow_blank=True,
+        read_only=True,
     )
-    kind = serializers.ChoiceField(choices=MessageKind.choices, default="post")
     status_name = serializers.CharField(source="get_status_display", read_only=True)
-    timestamp = serializers.DateTimeField(default=timezone.now)
 
     class Meta:
         model = FoiMessage
         depth = 0
-        fields = (
+        fields = [
             "resource_uri",
             "id",
             "url",
@@ -205,6 +288,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "recipient_public_body",
             "status",
             "timestamp",
+            "registered_mail_date",
             "redacted",
             "not_publishable",
             "attachments",
@@ -215,8 +299,17 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "sender",
             "status_name",
             "last_modified_at",
-        )
-        read_only_fields = ("sent", "is_draft", "not_publishable", "last_modified_at")
+        ]
+        read_only_fields = [
+            "sent",
+            "is_response",
+            "kind",
+            "is_escalation",
+            "content_hidden",
+            "is_draft",
+            "not_publishable",
+            "last_modified_at",
+        ]
 
     def _is_authenticated_read(self, obj):
         request = self.context["request"]
@@ -276,14 +369,97 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             )
         return value
 
+    def validate_timestamp(self, value):
+        # this handles updating FoiMessages
+        # when creating a FoiMessageDraft, the timestamp is set correctly when publishing
+
+        now = timezone.now()
+        if value > now:
+            raise ValidationError(
+                _("The timestamp is in the future, that is not possible.")
+            )
+
+        if self.instance and self.instance.is_postal:
+            return postal_date(self.instance, value)
+        return value
+
+    def validate_registered_mail_date(self, value):
+        return self.validate_timestamp(value)
+
+    def validate(self, attrs):
+        timestamp = attrs.get("timestamp") or self.instance.timestamp
+        foirequest = attrs.get("request") or self.instance.request
+
+        if timestamp < foirequest.created_at:
+            raise ValidationError(
+                _("Your message date is before the request was made.")
+            )
+
+        # TODO: find a better solution for this
+        sender_public_body = attrs.get(
+            "sender_public_body",
+            self.instance.sender_public_body if self.instance else None,
+        )
+        recipient_public_body = attrs.get(
+            "recipient_public_body",
+            self.instance.recipient_public_body if self.instance else None,
+        )
+        is_response = attrs.get(
+            "is_response", self.instance.is_response if self.instance else None
+        )
+
+        if is_response is None:
+            raise ValidationError(_("is_response is required"))
+        elif is_response:
+            if sender_public_body is None or recipient_public_body is not None:
+                raise ValidationError(
+                    _(
+                        "Response messages must have a sender public body, no sender user and no recipient public body."
+                    )
+                )
+        else:
+            if sender_public_body is not None or recipient_public_body is None:
+                raise ValidationError(
+                    _(
+                        "Non-response messages must have a recipent public body, but no sender public body."
+                    )
+                )
+
+        return super().validate(attrs)
+
+    @override
+    def update(self, instance, validated_data):
+        if not instance.is_draft and len(validated_data) != 0:
+            request = self.context["request"]
+            FoiEvent.objects.create_event(
+                FoiEvent.EVENTS.MESSAGE_EDITED,
+                instance.request,
+                message=instance,
+                user=request.user,
+                context=validated_data,
+            )
+
+        return super().update(instance, validated_data)
+
 
 class FoiMessageDraftSerializer(FoiMessageSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(
         view_name="api:message-draft-detail"
     )
+    request = FoiRequestRelatedField()
+    timestamp = serializers.DateTimeField(default=timezone.now)
 
     class Meta(FoiMessageSerializer.Meta):
         model = FoiMessageDraft
+        read_only_fields = [
+            "sent",
+            "is_escalation",
+            "content_hidden",
+            "is_draft",
+            "not_publishable",
+            "timestamp",
+            "last_modified_at",
+        ]
 
 
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
@@ -324,6 +500,7 @@ class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):
             "converted",
             "approved",
             "can_approve",
+            "can_change_approval",
             "redacted",
             "is_redacted",
             "can_redact",
