@@ -78,14 +78,6 @@ def set_default_language():
     activate("en")
 
 
-@pytest.fixture()
-def page(browser):
-    context = browser.new_context(locale="en")
-    page = context.new_page()
-    yield page
-    page.close()
-
-
 @pytest.fixture(autouse=True)
 def email_always_send(monkeypatch, request):
     """Instantly mark all messages as delivered"""
