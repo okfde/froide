@@ -132,9 +132,15 @@ class FoiEventManager(models.Manager):
         message=None,
         user=None,
         public_body=None,
-        **context,
+        context=None,
+        **kwargs,
     ):
         assert event_name in EVENT_KEYS
+
+        if not context:
+            context = {}
+
+        context.update(kwargs)
         context = {k: str(v) for k, v in context.items()}
         event = FoiEvent(
             request=foirequest,
