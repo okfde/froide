@@ -225,7 +225,7 @@ frozenlist==1.4.1
     #   aiosignal
 geoip2==4.8.0
     # via froide (pyproject.toml)
-greenlet==3.1.1
+greenlet==3.0.3
     # via playwright
 html5lib==1.1
     # via weasyprint
@@ -313,7 +313,7 @@ pillow==10.4.0
 platformdirs==4.3.2
     # via virtualenv
 playwright==1.46.0
-    # via pytest-playwright
+    # via pytest-playwright-asyncio
 pluggy==1.5.0
     # via pytest
 pre-commit==3.8.0
@@ -348,17 +348,23 @@ pyphen==0.16.0
     # via weasyprint
 pytest==8.3.3
     # via
+    #   froide (pyproject.toml)
+    #   pytest-asyncio
     #   pytest-base-url
     #   pytest-django
     #   pytest-factoryboy
-    #   pytest-playwright
+    #   pytest-playwright-asyncio
+pytest-asyncio==0.25.3
+    # via
+    #   froide (pyproject.toml)
+    #   pytest-playwright-asyncio
 pytest-base-url==2.1.0
-    # via pytest-playwright
+    # via pytest-playwright-asyncio
 pytest-django==4.9.0
     # via froide (pyproject.toml)
 pytest-factoryboy==2.7.0
     # via froide (pyproject.toml)
-pytest-playwright==0.5.2
+pytest-playwright-asyncio==0.7.0
     # via froide (pyproject.toml)
 python-crontab==3.2.0
     # via django-celery-beat
@@ -378,7 +384,7 @@ python-mimeparse==2.0.0
 python-slugify==8.0.4
     # via
     #   froide (pyproject.toml)
-    #   pytest-playwright
+    #   pytest-playwright-asyncio
 pytz==2024.1
     # via
     #   django-oauth-toolkit
