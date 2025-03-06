@@ -15,6 +15,7 @@ import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import Room from '../../lib/websocket.ts'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from './online-help.vue'
 
 const props = defineProps({
