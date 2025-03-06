@@ -1,3 +1,5 @@
+from typing import override
+
 from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -36,7 +38,7 @@ from .auth import (
     can_write_foirequest,
     get_read_foiattachment_queryset,
 )
-from .models import FoiAttachment, FoiMessage, FoiRequest
+from .models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from .services import CreateRequestService
 from .validators import clean_reference
 
@@ -383,6 +385,20 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
                 )
 
         return super().validate(attrs)
+
+    @override
+    def update(self, instance, validated_data):
+        if not instance.is_draft and len(validated_data) != 0:
+            request = self.context["request"]
+            FoiEvent.objects.create_event(
+                FoiEvent.EVENTS.MESSAGE_EDITED,
+                instance.request,
+                message=instance,
+                user=request.user,
+                context=validated_data,
+            )
+
+        return super().update(instance, validated_data)
 
 
 class FoiMessageDraftSerializer(FoiMessageSerializer):
