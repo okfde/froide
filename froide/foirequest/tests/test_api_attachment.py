@@ -7,6 +7,7 @@ from django.utils import timezone
 import pytest
 
 from froide.document.factories import DocumentFactory
+from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
 from froide.upload.factories import UploadFactory
@@ -253,6 +254,11 @@ def test_change_approval(client: Client, user):
     assert response.status_code == 200
     assert data["approved"] is False
 
+    event = FoiEvent.objects.get(
+        event_name=FoiEvent.EVENTS.ATTACHMENT_DEPUBLISHED, message=message
+    )
+    assert event.context["attachment_id"] == str(attachment.pk)
+
     # can't unapprove old attachments
 
     attachment = factories.FoiAttachmentFactory.create(
@@ -280,6 +286,11 @@ def test_change_approval(client: Client, user):
     data = response.json()
     assert response.status_code == 200
     assert data["approved"] is True
+
+    event = FoiEvent.objects.get(
+        event_name=FoiEvent.EVENTS.ATTACHMENT_APPROVED, message=message
+    )
+    assert event.context["attachment_id"] == str(attachment.pk)
 
     # can't approve, when can_unapprove is False
 

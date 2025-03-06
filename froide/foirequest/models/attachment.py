@@ -374,12 +374,6 @@ class FoiAttachment(models.Model):
                 self.document.public = should_be_public
                 self.document.save()
 
-    def approve_if_allowed(self, approve: bool = True) -> bool:
-        if self.can_change_approval:
-            self.approve_and_save(approve=approve)
-            return True
-        return False
-
     def remove_file_and_delete(self):
         if self.file:
             other_references = (

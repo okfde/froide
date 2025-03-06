@@ -142,7 +142,24 @@ class FoiAttachmentViewSet(
 
     def update_approval(self, request, approve: bool):
         instance = self.get_object()
-        if instance.approve_if_allowed(approve):
+
+        if instance.can_change_approval:
+            event_name = (
+                FoiEvent.EVENTS.ATTACHMENT_DEPUBLISHED
+                if instance.approved
+                else FoiEvent.EVENTS.ATTACHMENT_APPROVED
+            )
+
+            instance.approve_and_save(approve)
+
+            FoiEvent.objects.create_event(
+                event_name,
+                instance.belongs_to.request,
+                user=request.user,
+                message=instance.belongs_to,
+                attachment_id=instance.pk,
+            )
+
             return Response(
                 FoiAttachmentSerializer(instance, context={"request": request}).data
             )
