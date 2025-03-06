@@ -225,8 +225,10 @@ frozenlist==1.4.1
     #   aiosignal
 geoip2==4.8.0
     # via froide (pyproject.toml)
-greenlet==3.0.3
-    # via playwright
+greenlet==3.1.1
+    # via
+    #   froide (pyproject.toml)
+    #   playwright
 html5lib==1.1
     # via weasyprint
 icalendar==5.0.13
@@ -312,7 +314,7 @@ pillow==10.4.0
     #   weasyprint
 platformdirs==4.3.2
     # via virtualenv
-playwright==1.46.0
+playwright==1.50.0
     # via pytest-playwright-asyncio
 pluggy==1.5.0
     # via pytest
@@ -332,7 +334,7 @@ pycryptodome==3.20.0
     # via django-filingcabinet
 pydyf==0.11.0
     # via weasyprint
-pyee==11.1.0
+pyee==12.1.1
     # via playwright
 pyflakes==3.2.0
     # via froide (pyproject.toml)

@@ -85,6 +85,7 @@ test = [
   "pytest-django",
   "pytest-factoryboy",
   "pytest-playwright-asyncio>=0.7.0",
+  "greenlet>=3.1.1",
   "ruff",
   "tblib",
   "text-unidecode",
