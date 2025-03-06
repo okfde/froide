@@ -16,7 +16,8 @@ import pytest
 from oauth2_provider.models import get_access_token_model, get_application_model
 
 from froide.foirequest.models import FoiAttachment, FoiRequest
-from froide.foirequest.models.request import Resolution
+from froide.foirequest.models.event import FoiEvent
+from froide.foirequest.models.request import Resolution, Status
 from froide.foirequest.serializers import FoiMessageSerializer
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
@@ -459,7 +460,7 @@ def test_foi_message_serializer_performance(world, client, many_attachment_foime
 
 
 @pytest.mark.django_db
-def test_foi_message_update(client, user):
+def test_foirequest_update(client, user):
     request = factories.FoiRequestFactory.create(user=user)
     law = factories.FoiLawFactory()
 
@@ -499,6 +500,7 @@ def test_foi_message_update(client, user):
         reverse("api:request-detail", kwargs={"pk": request.pk}),
         data={
             "costs": 2.34,
+            "status": Status.RESOLVED,
             "resolution": Resolution.REFUSED,
             "refusal_reason": refusal_reason[0][0],
             "summary": "Lorem ipsum",
@@ -513,6 +515,22 @@ def test_foi_message_update(client, user):
     assert data["refusal_reason"] == refusal_reason[0][0]
     assert data["summary"] == "Lorem ipsum"
     assert data["tags"] == ["foo", "bar"]
+
+    assert FoiEvent.objects.get(
+        request=request,
+        event_name=FoiEvent.EVENTS.REPORTED_COSTS,
+        context__costs="2.34",
+    )
+    assert FoiEvent.objects.get(
+        request=request,
+        event_name=FoiEvent.EVENTS.STATUS_CHANGED,
+        context__status=Status.RESOLVED,
+        context__resolution=Resolution.REFUSED,
+        context__costs="2.34",
+        context__refusal_reason=refusal_reason[0][0],
+        context__previous_status="",
+        context__previous_resolution="",
+    )
 
     # can't update read-only fields
     pb = factories.PublicBodyFactory()
@@ -532,3 +550,11 @@ def test_foi_message_update(client, user):
     assert str(pb.pk) not in data["public_body"]
     assert data["slug"] == request.slug
     assert data["reference"] == request.reference
+
+    # can't set the status to system-only values
+    response = client.patch(
+        reverse("api:request-detail", kwargs={"pk": request.pk}),
+        data={"status": Status.PUBLICBODY_NEEDED},
+        content_type="application/json",
+    )
+    assert response.status_code == 400
