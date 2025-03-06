@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 from celery.exceptions import SoftTimeLimitExceeded
 
 from froide.celery import app as celery_app
+from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.utils import find_attachment_name
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
@@ -241,6 +242,12 @@ def convert_attachment(att):
             can_approve=att.can_approve,
         )
 
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_CONVERTED,
+            att.belongs_to.request,
+            originals=[att.id],
+        )
+
     new_file = ContentFile(output_bytes)
     new_att.size = new_file.size
     new_att.file.save(new_att.name, new_file)
@@ -284,6 +291,12 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
     target.file.save(target.name, new_file)
     target.save()
 
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ATTACHMENT_CONVERTED,
+        target.belongs_to.request,
+        originals=att_ids,
+    )
+
 
 @celery_app.task(
     name="froide.foirequest.tasks.convert_images_to_pdf_api_task",
@@ -316,6 +329,12 @@ def convert_images_to_pdf_api_task(
     target.size = new_file.size
     target.file.save(target.name, new_file)
     target.save()
+
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ATTACHMENT_CONVERTED,
+        target.belongs_to.request,
+        originals=[a.id for a in attachments],
+    )
 
 
 @celery_app.task(
