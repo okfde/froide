@@ -42,6 +42,10 @@ class EventName(models.TextChoices):
     )
     ATTACHMENT_REDACTED = "attachment_redacted", _("an attachment was redacted")
     ATTACHMENT_DELETED = "attachment_deleted", _("an attachment was deleted")
+    ATTACHMENT_CONVERTED = (
+        "attachment_converted",
+        _("one or more attachments were converted"),
+    )
     DOCUMENT_CREATED = "document_created", _("a document was created")
 
     STATUS_CHANGED = "status_changed", _("the status was changed")
