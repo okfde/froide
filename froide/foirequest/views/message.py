@@ -336,6 +336,13 @@ def edit_postal_message(request, foirequest, message_id):
             "confirmDeleteBulk": _(
                 "Are you sure you want to delete the selected attachments?"
             ),
+            "confirmApproveBulk": _(
+                "Are you sure you want to approve the selected attachments?"
+            ),
+            "confirmMakeResultBulk": _(
+                "Are you sure you want to mark the selected attachments as result?"
+            ),
+            "displayAsTable": _("Display as table"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
@@ -472,6 +479,8 @@ def edit_postal_message(request, foirequest, message_id):
             "createPdf": _("Create PDF"),
             "documentsApproveLater": _("Uncheck to leave unpublished for now"),
             "deleteSelected": _("Delete selected"),
+            "markResultSelected": _("Mark selected as result"),
+            "approveSelected": _("Approve selected"),
             "downloadSelected": _("Download selected"),
             "markResult": _("Mark as result"),
             "markNotIrrelevant": _("Mark as important"),
@@ -876,6 +885,13 @@ def upload_attachments(request, foirequest, message_id):
             "confirmDeleteBulk": _(
                 "Are you sure you want to delete the selected attachments?"
             ),
+            "confirmApproveBulk": _(
+                "Are you sure you want to approve the selected attachments?"
+            ),
+            "confirmMakeResultBulk": _(
+                "Are you sure you want to mark the selected attachments as result?"
+            ),
+            "displayAsTable": _("Display as table"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
@@ -890,6 +906,8 @@ def upload_attachments(request, foirequest, message_id):
             "selectAll": _("Select all"),
             "selectNone": _("Select none"),
             "deleteSelected": _("Delete selected"),
+            "markResultSelected": _("Mark selected as result"),
+            "approveSelected": _("Approve selected"),
             "downloadSelected": _("Download selected"),
             "markResult": _("Mark as result"),
             "markNotIrrelevant": _("Mark as important"),

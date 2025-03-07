@@ -2,7 +2,7 @@
 
 import { useAttachments } from './lib/attachments';
 
-const { attachments, deleteAttachment } = useAttachments()
+const { attachments, approveAttachment, deleteAttachment, createDocument } = useAttachments()
 
 import { computed, inject, ref, watch } from 'vue'
 
@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActions, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -40,7 +40,23 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
       return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
-  selectionActions: {
+  selectionActionDelete: {
+    type: Boolean,
+    default: false,
+    validator (value, props) {
+      // batch actions need selection to make sense
+      return !value || (value && (props.cardsSelection || props.tableSelection))
+    }
+  },
+  selectionActionApprove: {
+    type: Boolean,
+    default: false,
+    validator (value, props) {
+      // batch actions need selection to make sense
+      return !value || (value && (props.cardsSelection || props.tableSelection))
+    }
+  },
+  selectionActionMakeResult: {
     type: Boolean,
     default: false,
     validator (value, props) {
@@ -63,9 +79,8 @@ const selectAllEl = ref()
 
 const selectAllState = computed(() => {
   if (attachments.selectedIds.size === 0) return false
-  const subsetSelected = subset.map(_ => attachments.selectedIds.has(_.id))
-  if (subsetSelected.every(_ => _)) return true
-  if (subsetSelected.some(_ => _)) return undefined
+  if (selected.value.length === subset.length) return true
+  if (selected.value.length > 0) return undefined
   return false
 })
 
@@ -103,14 +118,36 @@ const toggleSelection = (from, id) => {
   }
 }
 
+const isSelectionApprovable = computed(() => selected.value.length && 
+  selected.value.every(att => att.canApprove)
+)
+
 const isSelectionDeletable = computed(() => selected.value.length && 
   selected.value.every(att => att.canDelete)
 )
 
+const isSelectionMakeResultable = computed(() => selected.value.length && 
+  selected.value.every(att => att.canMakeResult)
+)
+
+const approveSelected = async () => {
+  if (!window.confirm(i18n.value.confirmApproveBulk)) return
+  for (const att of selected.value) {
+    await approveAttachment(att)
+  }
+}
+
 const deleteSelected = async () => {
   if (!window.confirm(i18n.value.confirmDeleteBulk)) return
-  for (const att of attachments.selected) {
+  for (const att of selected.value) {
     await deleteAttachment(att)
+  }
+}
+
+const makeResultSelected = async () => {
+  if (!window.confirm(i18n.value.confirmMakeResultBulk)) return
+  for (const att of selected.value) {
+    await createDocument(att)
   }
 }
 
@@ -136,14 +173,34 @@ const deleteSelected = async () => {
         />
       <span class="sr-only">{{ selectAllLabel }}</span>
     </label>
-    <div v-if="selectionActions" class="d-flex flex-grow-1 justify-content-end">
-      <!-- TODO, needs backend support
-      <button type="button" class="btn btn-link fw-bold">
-        {{  i18n.downloadSelected }}
-      </button>
-      -->
-      <button type="button" class="btn btn-link fw-bold" :disabled="!isSelectionDeletable" @click="deleteSelected">
+    <div class="d-flex flex-column flex-md-row flex-grow-1 justify-content-end">
+      <!-- TODO bulk download button, needs backend support -->
+      <button
+        v-if="selectionActionDelete"
+        type="button"
+        class="btn btn-link fw-bold text-start"
+        :disabled="!isSelectionDeletable"
+        @click="deleteSelected"
+        >
         {{ i18n.deleteSelected }}
+      </button>
+      <button
+        v-if="selectionActionApprove"
+        type="button"
+        class="btn btn-link fw-bold text-start"
+        :disabled="!isSelectionApprovable"
+        @click="approveSelected"
+        >
+        {{ i18n.approveSelected }}
+      </button>
+      <button
+        v-if="selectionActionMakeResult"
+        type="button"
+        class="btn btn-link fw-bold text-start"
+        :disabled="!isSelectionMakeResultable"
+        @click="makeResultSelected"
+        >
+        {{ i18n.markResultSelected }}
       </button>
     </div>
     <div v-if="selectionButtons" class="d-flex flex-grow-1 justify-content-end">
