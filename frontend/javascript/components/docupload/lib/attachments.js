@@ -45,9 +45,13 @@ const createDocument = (attachment) => {
     '/0/',
     `/${attachment.id}/`
   )
+  store.creatingDocumentIds.add(attachment.id)
   return postData(createDocumentUrl, {}, config.csrfToken)
     .then(() => {
       return refetchAttachment(attachment)
+    })
+    .finally(() => {
+      store.creatingDocumentIds.delete(attachment.id)
     })
 }
 
@@ -185,11 +189,15 @@ const deleteAttachment = (attachment) => {
 
 const approveAttachment = (attachment) => {
   const approveUrl = config.urls.approveAttachment.replace('/0/', `/${attachment.id}/`)
+  store.approvingIds.add(attachment.id)
   return postData(approveUrl, {}, config.csrfToken, 'POST', true)
     .then(() => {
       refetchAttachment(attachment, config.csrfToken)
     })
     .catch(handleErrorAndRefresh)
+    .finally(() => {
+      store.approvingIds.delete(attachment.id)
+    })
 }
 
 const approveAllUnredactedAttachments = (excludeIds = []) => {
