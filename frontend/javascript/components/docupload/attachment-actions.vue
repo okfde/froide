@@ -36,32 +36,14 @@ const unconverted = computed(() => attachment.resource_uri
   : null
 )
 
-const canDelete = computed(() => attachment.can_delete && !attachment.approving && !attachment.document)
-
-const canRedact = computed(() => attachment.can_redact)
-
-const isMakingResult = ref(false)
-
-const canMakeResult = computed(() => {
-  if (!config.settings.can_make_document) {
-    return false
-  }
-  return !attachment.document && // not yet made result
-    attachment.approved &&
-    attachment.is_pdf &&
-    !attachment.redacted &&
-    !attachment.converted
-})
-
 const makeResult = () => {
   createDocument(attachment)
     .finally(() => {
-      isMakingResult.value = false
       emit('actionDone')
     })
 }
 
-const dropdownHasItems = computed(() => canRedact.value || unredacted.value || unconverted.value)
+const dropdownHasItems = computed(() => attachment.canRedact || unredacted.value || unconverted.value)
 
 const pdfRedaction = ref()
 
@@ -106,13 +88,13 @@ const approveClick = () => {
 </script>
 
 <template>
-  <button v-if="canMakeResult" @click="makeResult" type="button" class="btn btn-sm btn-link text-start"
-    :class="{ disabled: isMakingResult }">
+  <button v-if="attachment.canMakeResult" @click="makeResult" type="button" class="btn btn-sm btn-link text-start"
+    :class="{ disabled: attachment.creatingDocument }">
     <i class="fa fa-certificate"></i>
     {{ i18n.markResult }}
   </button>
   <a
-    v-if="!dropdown && canRedact && !attachment.is_redacted"
+    v-if="!dropdown && attachment.canRedact && !attachment.is_redacted"
     :href="getRedactUrl(attachment)"
     class="btn btn-sm btn-link text-start"
     @click="redactClick($event, attachment)"
@@ -150,7 +132,8 @@ const approveClick = () => {
      there is is_excel in attachment.py... -->
   </a>
   <button
-    v-if="!dropdown && (attachment.can_approve || config.user.can_edit_approval) && !attachment.approved"
+    v-if="!dropdown && attachment.canApprove"
+    :disabled="attachment.approving"
     type="button"
     class="btn btn-sm btn-link text-start"
     @click="approveClick"
@@ -163,7 +146,7 @@ const approveClick = () => {
       --> {{ i18n.approve }}
     </template>
   </button>
-  <button v-if="canDelete" type="button" class="btn btn-sm btn-link text-start" @click="deleteClick">
+  <button v-if="attachment.canDelete" type="button" class="btn btn-sm btn-link text-start" @click="deleteClick">
     <i class="fa fa-trash"></i>
     {{ i18n.delete }}
   </button>
@@ -175,7 +158,7 @@ const approveClick = () => {
       <i class="fa fa-ellipsis-h"></i>
     </button>
     <ul class="dropdown-menu">
-      <li v-if="canRedact">
+      <li v-if="attachment.canRedact">
         <a class="dropdown-item" :href="getRedactUrl(attachment)">
           <i class="fa fa-square"></i>
           {{ i18n.redact }}
@@ -202,7 +185,7 @@ const approveClick = () => {
           there is is_excel in attachment.py... -->
         </a>
       </li>
-      <li v-if="(attachment.can_approve || config.user.can_edit_approval) && !attachment.approved">
+      <li v-if="attachment.canApprove">
         <button type="button" class="dropdown-item" @click="approveClick">
           <i class="fa fa-check"></i>
           <template v-if="config.foirequest.public">

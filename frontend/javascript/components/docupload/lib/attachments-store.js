@@ -8,13 +8,24 @@ const useAttachmentsStore = defineStore('attachments', {
   state: () => ({
     isConverting: false,
     isFetching: false,
-    all: [],
+    allRaw: [],
     images: [],
     selectedIds: new Set,
     autoApproveSelection: {},
     messages: []
   }),
   getters: {
+    all: (state) => state.allRaw.map((d) => ({
+      ...d,
+      creatingDocument: false,
+      canDelete: d.can_delete && !d.approving && !d.document,
+      canRedact: d.can_redact,
+      // TODO: override by settings.can_edit_approval==is_crew ?
+      //   will probably be resolved by new API
+      canApprove: d.can_approve && !d.approving && !d.approved,
+      // TODO: include settings.can_make_document?
+      canMakeResult: d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document,
+    })),
     approved: (state) => state.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
     notApproved: (state) => state.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
     relevant: (state) => state.all.filter((d) => !d.is_irrelevant && !(d.converted && !d.is_image)),
@@ -40,7 +51,8 @@ const useAttachmentsStore = defineStore('attachments', {
       this.images.push({ pages: newPages, new: true })
     },
     removeAttachment(attachment) {
-      this.all = this.all.filter((a) => a.id !== attachment.id)
+      this.selectedIds.delete(attachment.id)
+      this.allRaw = this.allRaw.filter((a) => a.id !== attachment.id)
     },
     addImages(newImages, { isNew = false, imageDefaultFilename = '' } = {}) {
       // if there are no image documents yet, create a new one

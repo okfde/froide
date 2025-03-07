@@ -33,7 +33,7 @@ const convertImage = (imageIndex) => {
       newAttachment.new = true
       store.images = store.images.filter((_, i) => i !== imageIndex)
       // append new
-      store.all.push(newAttachment)
+      store.allRaw.push(newAttachment)
     })
     .finally(() => {
       store.isConverting = false
@@ -84,10 +84,10 @@ const fetchAttachments = (url, csrfToken, paged = false) => {
     .then((response) => {
       if (!paged) {
         store.$patch({
-          all: response.objects
+          allRaw: response.objects
         })
       } else {
-        store.all.push(...response.objects)
+        store.allRaw.push(...response.objects)
       }
       if (response.meta.next) {
         return fetchAttachments(response.meta.next, csrfToken, true)
@@ -102,8 +102,8 @@ const refetchAttachment = (attachment) => {
   const updateUrl = attachment.resource_uri
   return getData(updateUrl, { 'X-CSRFToken': config.csrfToken })
     .then((response) => {
-      const index = store.all.findIndex(att => att.id === attachment.id)
-      store.all[index] = response
+      const index = store.allRaw.findIndex(att => att.id === attachment.id)
+      store.allRaw[index] = response
     })
 }
 
@@ -157,7 +157,7 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
       if (att.is_image) {
         store.addImages([att], { imageDefaultFilename })
       } else {
-        store.all.push({ ...att, new: true })
+        store.allRaw.push({ ...att, new: true })
       }
     })
     .then(() => {
