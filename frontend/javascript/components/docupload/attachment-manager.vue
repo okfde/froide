@@ -71,7 +71,7 @@ const onlineHelp = ref()
   <div v-if="attachments.approved.length" class="my-5">
     <attachments-table
       :subset="attachments.approved"
-      actions table-selection selection-actions badges-type badges-resolution
+      actions table-selection selection-action-delete selection-action-make-result badges-type badges-resolution
       />
   </div>
 
@@ -79,7 +79,7 @@ const onlineHelp = ref()
     <django-slot name="notapproved-attachments" />
     <attachments-table
       :subset="attachments.notApproved"
-      actions table-selection selection-actions badges-type
+      actions table-selection selection-action-delete selection-action-approve badges-type
       />
   </div>
 
@@ -87,7 +87,7 @@ const onlineHelp = ref()
     <django-slot name="irrelevant-attachments" />
     <attachments-table
       :subset="attachments.irrelevant"
-      actions table-selection selection-actions badges-type
+      actions table-selection selection-action-delete badges-type
       />
   </div>
 
