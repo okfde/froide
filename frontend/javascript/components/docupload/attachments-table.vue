@@ -337,6 +337,8 @@ const makeResultSelected = async () => {
           v-if="badgesType"
           :attachment="att"
           />
+        <span v-if="badgesNew && att.new" class="badge text-bg-success"
+          >{{ i18n.new }}</span>
         <span
           v-if="badgesRedaction && att.is_redacted"
           class="badge text-bg-success"
@@ -361,7 +363,7 @@ const makeResultSelected = async () => {
       </button>
       <div
         v-if="actions"
-        class="d-flex flex-grow-0 flex-shrink-1 justify-content-end"
+        class="d-flex flex-column flex-sm-row flex-grow-0 flex-shrink-1 justify-content-end"
         >
         <attachment-actions
           :attachment="att"
