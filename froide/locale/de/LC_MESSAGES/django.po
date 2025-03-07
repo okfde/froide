@@ -2150,6 +2150,7 @@ msgid "Create documents"
 msgstr "Dokumente erstellen"
 
 #: froide/document/templates/filingcabinet/document_detail.html
+#: froide/foirequest/views/message.py
 msgid "Edit title"
 msgstr "Titel bearbeiten"
 
@@ -2158,6 +2159,7 @@ msgid "private"
 msgstr "privat"
 
 #: froide/document/templates/filingcabinet/document_detail.html
+#: froide/foirequest/views/message.py
 msgid "Edit description"
 msgstr "Beschreibung bearbeiten"
 
@@ -7817,6 +7819,18 @@ msgid "Are you sure you want to delete the selected attachments?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge löschen wollen?"
 
 #: froide/foirequest/views/message.py
+msgid "Are you sure you want to approve the selected attachments?"
+msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge freigeben/öffentlich machen wollen?"
+
+#: froide/foirequest/views/message.py
+msgid "Are you sure you want to mark the selected attachments as result?"
+msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge als Ergebnis markieren wollen?"
+
+#: froide/foirequest/views/message.py
+msgid "Display as table"
+msgstr "Als Tabelle darstellen"
+
+#: froide/foirequest/views/message.py
 msgid "Result?"
 msgstr "Ergebnis?"
 
@@ -8133,6 +8147,14 @@ msgstr "Ausgewählte löschen"
 #: froide/foirequest/views/message.py
 msgid "Download selected"
 msgstr "Ausgewählte herunterladen"
+
+#: froide/foirequest/views/message.py
+msgid "Mark selected as result"
+msgstr "Ausgewählte als Ergebnis markieren"
+
+#: froide/foirequest/views/message.py
+msgid "Approve selected"
+msgstr "Ausgewählte freigeben"
 
 #: froide/foirequest/views/message.py
 msgid "Mark as result"
