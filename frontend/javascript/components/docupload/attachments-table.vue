@@ -57,6 +57,8 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
 
 const asCards = computed(() => subset.length < asCardThreshold)
 
+const selected = computed(() => subset.filter(_ => attachments.selectedIds.has(_.id)))
+
 const selectAllEl = ref()
 
 const selectAllState = computed(() => {
@@ -101,8 +103,8 @@ const toggleSelection = (from, id) => {
   }
 }
 
-const isSelectionDeletable = computed(() => attachments.selected.length && 
-  attachments.selected.every(att => att.can_delete && !att.approving)
+const isSelectionDeletable = computed(() => selected.value.length && 
+  selected.value.every(att => att.canDelete)
 )
 
 const deleteSelected = async () => {
@@ -209,7 +211,7 @@ const deleteSelected = async () => {
             :attachment="att"
             />
         </div>
-        <button v-if="actionDelete && att.can_delete" type="button" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
+        <button v-if="actionDelete && att.canDelete" type="button" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
           <i class="fa fa-trash"></i>
           <span class="sr-only">{{ i18n.delete }}</span>
         </button>
