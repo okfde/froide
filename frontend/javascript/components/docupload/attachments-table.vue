@@ -71,7 +71,23 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
   cardsBgTransparent: Boolean
 })
 
-const asCards = computed(() => subset.length < asCardThreshold)
+const asCards = ref(subset.length < asCardThreshold)
+
+watch(
+  () => subset.length,
+  (newLength, oldLength) => {
+    if ((newLength > oldLength) && (newLength >= asCardThreshold)) {
+      asCards.value = false
+    }
+  }
+)
+
+/* when asCard flips over/under threshold (when something is uploaded/deleted)
+ * we need to prevent things being still selected without the possibility to
+ * change the selection */
+watch(asCards, (newValue) => {
+  if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
+})
 
 const selected = computed(() => subset.filter(_ => attachments.selectedIds.has(_.id)))
 
@@ -99,13 +115,6 @@ const selectAllLabel = computed(() => {
   return (selectAllState.value === true)
     ? i18n.value.selectNone
     : i18n.value.selectAll
-})
-
-/* when asCard flips over/under threshold (when something is uploaded/deleted)
- * we need to prevent things being still selected without the possibility to
- * change the selection */
-watch(asCards, (newValue) => {
-  if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
 })
 
 const toggleSelection = (from, id) => {
@@ -217,7 +226,7 @@ const makeResultSelected = async () => {
 
   <div
     v-if="asCards"
-    :class="cardsBgTransparent ? '' : 'bg-body-tertiary p-3 p-md-5'"
+    :class="cardsBgTransparent ? '' : 'bg-body-tertiary pt-3 px-3 pt-md-5 px-md-5'"
     >
     <slot name="before-cards"></slot>
     <div class="d-flex flex-row flex-wrap gap-5 justify-content-around justify-content-lg-start">
@@ -286,6 +295,11 @@ const makeResultSelected = async () => {
       </div>
     </div>
     <slot name="after-cards"></slot>
+    <div class="py-3 text-end">
+      <button type="button" class="btn btn-link btn-sm" @click="asCards = false">
+        {{ i18n.displayAsTable }}
+      </button>
+    </div>
   </div>
 
   <!-- AS TABLE/ROWS -->

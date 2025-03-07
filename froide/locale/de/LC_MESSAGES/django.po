@@ -7819,16 +7819,16 @@ msgid "Are you sure you want to delete the selected attachments?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge löschen wollen?"
 
 #: froide/foirequest/views/message.py
+msgid "Display as table"
+msgstr "Als Tabelle darstellen"
+
+#: froide/foirequest/views/message.py
 msgid "Are you sure you want to approve the selected attachments?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge freigeben/öffentlich machen wollen?"
 
 #: froide/foirequest/views/message.py
 msgid "Are you sure you want to mark the selected attachments as result?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge als Ergebnis markieren wollen?"
-
-#: froide/foirequest/views/message.py
-msgid "Display as table"
-msgstr "Als Tabelle darstellen"
 
 #: froide/foirequest/views/message.py
 msgid "Result?"
