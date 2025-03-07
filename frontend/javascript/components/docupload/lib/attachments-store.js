@@ -11,6 +11,8 @@ const useAttachmentsStore = defineStore('attachments', {
     allRaw: [],
     images: [],
     selectedIds: new Set,
+    approvingIds: new Set,
+    creatingDocumentIds: new Set,
     autoApproveSelection: {},
     messages: []
   }),
@@ -18,6 +20,8 @@ const useAttachmentsStore = defineStore('attachments', {
     all: (state) => state.allRaw.map((d) => ({
       ...d,
       creatingDocument: false,
+      isApproving: state.approvingIds.has(d.id) || d.approving,
+      isCreatingDocument: state.creatingDocumentIds.has(d.id),
       canDelete: d.can_delete && !d.approving && !d.document,
       canRedact: d.can_redact,
       // TODO: override by settings.can_edit_approval==is_crew ?
