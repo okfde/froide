@@ -1415,8 +1415,16 @@ export default {
         const modal = Modal.getOrCreateInstance(this.$refs.confirmmodal.$el)
         modal.show()
       }
+      if (this.noRedirect) {
+        event.preventDefault()
+        this.redactOrApprove()
+      }
     },
     submitRedactions() {
+      if (this.noRedirect) {
+        this.redactOrApprove()
+        return
+      }
       document.getElementById('redaction-submit-form').submit()
     },
     updateMode(paint) {

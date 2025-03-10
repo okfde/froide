@@ -258,12 +258,5 @@ const approveClick = () => {
         @uploaded="pdfRedactionUploaded"
         ></pdf-redaction>
     </template>
-    <template #footer>
-      <button
-        type="button"
-        class="btn btn-primary"
-        @click="pdfRedaction.redactOrApprove()"
-        >{{ i18n.redactionDone }}</button>
-    </template>
   </bs-modal>
 </template>
