@@ -13,6 +13,8 @@ from django.utils.translation import gettext as _
 from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 
+from filingcabinet.views import get_js_config
+
 from froide.foirequest.auth import can_read_foirequest
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
@@ -579,6 +581,9 @@ def edit_postal_message(request, foirequest, message_id):
             ],
         },
     }
+    filingcabinet_js_config = get_js_config(request)
+    ctx["i18n"] = ctx["i18n"] | filingcabinet_js_config["i18n"]
+    ctx["urls"] = ctx["urls"] | filingcabinet_js_config["urls"]
     return render(
         request,
         "foirequest/upload_postal_message_new.html",
@@ -798,6 +803,8 @@ def upload_attachments(request, foirequest, message_id):
 
     attachment_form = get_postal_attachment_form(foimessage=message)
 
+    filingcabinet_js_config = get_js_config(request)
+
     ctx = {
         "user": {
             "can_edit_approval": is_crew(request.user),
@@ -845,6 +852,8 @@ def upload_attachments(request, foirequest, message_id):
             ),
             "helpAttachmentsManagement": get_content_url("help_attachments_management"),
         },
+        # "urls" (plural) is used exclusively by the document-viewer component
+        "urls": filingcabinet_js_config["urls"],
         "i18n": {
             "attachmentName": _("Name of attachment to create"),
             "newDocumentPageCount": [
@@ -987,6 +996,7 @@ def upload_attachments(request, foirequest, message_id):
             "attachmentDeleted": _("an attachment was deleted"),
         },
     }
+    ctx["i18n"] = ctx["i18n"] | filingcabinet_js_config["i18n"]
     request.auth = None
     serializer = FoiMessageSerializer(message, context={"request": request})
     return render(
