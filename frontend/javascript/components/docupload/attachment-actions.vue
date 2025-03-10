@@ -116,7 +116,7 @@ const approveClick = () => {
     <i class="fa fa-exclamation-circle"></i>
     {{ i18n.markNotIrrelevant }}
   </button>
-  <a class="btn btn-sm btn-link text-start" :href="attachment.file_url" download>
+  <a class="btn btn-sm btn-link text-start" :href="attachment.file_url" :download="attachment.name">
     <i class="fa fa-download"></i>
     {{ i18n.download }}
   </a>
