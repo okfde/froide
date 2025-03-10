@@ -8,7 +8,10 @@ import AttachmentDocumentFields from './attachment-document-fields.vue'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import BsModal from '../bs-modal.vue'
 
+import DocumentViewer from './document-viewer.vue'
+
 const i18n = inject('i18n')
+const config = inject('config')
 
 const { attachment, actions, big } = defineProps({
   attachment: {
@@ -90,8 +93,15 @@ const iconTooltipTexts = computed(() => [
       <template #body>
         <div class="row h-100">
           <div class="col-sm-8 mb-3">
+            <document-viewer
+              v-if="attachment.document"
+              :document-url="attachment.document.resource_uri"
+              :document-preview="attachment.document"
+              :config="config"
+              :defaults="{ maxHeight: '100%' }"
+              ></document-viewer>
             <img
-              v-if="attachment.is_image"
+              v-else-if="attachment.is_image"
               :src="attachment.file_url"
               loading="lazy"
               class="w-100"
