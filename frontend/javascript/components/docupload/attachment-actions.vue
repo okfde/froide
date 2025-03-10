@@ -159,13 +159,21 @@ const approveClick = () => {
     </button>
     <ul class="dropdown-menu">
       <li v-if="attachment.canRedact">
-        <a class="dropdown-item" :href="getRedactUrl(attachment)">
+        <a
+          class="dropdown-item"
+          :href="getRedactUrl(attachment)"
+          @click="redactClick($event, attachment)"
+          >
           <i class="fa fa-square"></i>
           {{ i18n.redact }}
         </a>
       </li>
       <li v-if="unredacted && unredacted.can_redact">
-        <a class="dropdown-item" :href="getRedactUrl(unredacted)">
+        <a
+          class="dropdown-item"
+          :href="getRedactUrl(unredacted)"
+          @click="redactClick($event, unredacted)"
+          >
           <i class="fa fa-pencil-square"></i>
           {{ i18n.editRedaction }}
         </a>
