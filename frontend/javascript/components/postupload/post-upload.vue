@@ -1295,7 +1295,7 @@ addEventListener('hashchange', () => {
           </div>
           <attachments-table
             :subset="attachments.relevant.filter(att => !att.redacted)"
-            badges-redaction
+            badges-redaction badges-resolution
             :actions="attachmentsOverviewActions"
             >
             <template #before-cards>
