@@ -11,6 +11,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  bodyClasses: {
+    type: String,
+    default: ''
+  },
   showOnMounted: {
     type: Boolean,
     default: false
@@ -83,7 +87,7 @@ defineExpose({
               class="btn-close"
               aria-label="Close"></button>
           </div>
-          <div class="modal-body">
+          <div :class="'modal-body ' + bodyClasses">
             <slot name="body"></slot>
           </div>
           <div v-if="$slots.footer" class="modal-footer">
