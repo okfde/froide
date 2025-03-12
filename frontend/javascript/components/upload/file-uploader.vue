@@ -182,3 +182,53 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="scss">
+
+/* the following :deep styles override uppy's Dashboard to follow the Bootstrap colors;
+  they do not (yet) include: border-radiuses, dropFilesHereHint's svg background (icon);
+  also, the "table" headers&footers when uppy is processing (.uppy-StatusBar etc.) aren't perfect */
+
+:deep(.uppy-Dashboard-inner) {
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;
+  border-color: var(--bs-border-color);
+}
+
+:deep(.uppy-Dashboard-AddFiles) {
+  border-color: var(--bs-border-color);
+}
+
+:deep(.uppy-Dashboard-browse) {
+  color: var(--bs-link-color);
+  border-bottom: 0 !important;
+  border-block-end: 0 !important;
+  transition-duration: 0.15s; // hardcoded in bs
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: underline;
+  }
+}
+
+:deep(.uppy-Dashboard-inner),
+:deep(.uppy-Dashboard-AddFiles-title),
+:deep(.uppy-Dashboard-dropFilesHereHint) {
+  color: var(--bs-body-color);
+}
+
+:deep(.uppy-Dashboard-dropFilesHereHint) {
+  border-color: rgba(var(--bs-info-rgb), var(--bs-border-opacity));
+}
+
+/* "table" headers and footers */
+:deep(.uppy-DashboardContent-bar),
+:deep(.uppy-StatusBar),
+:deep(.uppy-StatusBar:not([aria-hidden="true"]).is-waiting),
+:deep(.uppy-StatusBar .uppy-StatusBar-actions),
+:deep(.uppy-StatusBar.is-waiting .uppy-StatusBar-actions) {
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;
+}
+
+</style>
