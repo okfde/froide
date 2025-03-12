@@ -17,6 +17,8 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits('close')
+
 const modalEl = ref()
 let bsModal
 
@@ -37,6 +39,9 @@ const show = async () => {
 
 const hide = () => {
   bsModal.hide()
+  if (props.showOnMounted) {
+    emit('close')
+  }
 }
 
 const initialize = ()  => {
