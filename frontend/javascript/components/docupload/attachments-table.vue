@@ -168,7 +168,7 @@ const makeResultSelected = async () => {
     v-if="(asCards && cardsSelection) || (!asCards && tableSelection)"
     class="d-flex px-1 py-2"
     :class="{
-      'bg-light': !asCards,
+      'bg-body-tertiary': !asCards,
       'border-top': !asCards
     }"
     >
