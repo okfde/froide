@@ -249,7 +249,7 @@ const makeResultSelected = async () => {
           :actions="actions"
           />
         <div
-          class="text-center mb-1"
+          class="text-center mb-1 mw-100 text-break"
           @click.self="toggleSelection('card', att.id)"
           >
           {{ att.document?.title || att.name }}
@@ -326,7 +326,7 @@ const makeResultSelected = async () => {
         :actions="actions"
         />
       <div
-        class="px-1 py-2 py-md-0 flex-md-grow-1"
+        class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"
         @click.self="toggleSelection('table', att.id)"
         >
         {{ att.document?.title || att.name }}
