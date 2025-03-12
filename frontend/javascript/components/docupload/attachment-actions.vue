@@ -227,6 +227,7 @@ const approveClick = () => {
     ref="pdfRedactionModal"
     dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
     content-classes="h-100"
+    body-classes="p-0"
     >
     <template #header>
       <h5 class="modal-title">
