@@ -25,8 +25,10 @@ const { attachment, actions, big } = defineProps({
 const previewModal = ref()
 
 const closePreviewModal = () => {
-  previewModal.value.hide()
+  showPreviewModal.value = false
 }
+
+const showPreviewModal = ref(false)
 
 const iconTooltipTexts = computed(() => [
   i18n.value.preview,
@@ -42,7 +44,7 @@ const iconTooltipTexts = computed(() => [
       :href="attachment.site_url"
       class="d-flex align-items-center justify-content-center icon--image"
       :style="{ width: size, height: size }"
-      @click.prevent="previewModal.show()"
+      @click.prevent="showPreviewModal = true"
       v-bs-tooltip
       data-bs-toggle="tooltip"
       data-bs-placement="top"
@@ -59,7 +61,7 @@ const iconTooltipTexts = computed(() => [
       v-else
       :href="attachment.site_url"
       class="btn btn-link lh-1 d-block p-0 me-2 icon--fa position-relative"
-      @click.prevent="previewModal.show()"
+      @click.prevent="showPreviewModal = true"
       v-bs-tooltip
       data-bs-toggle="tooltip"
       data-bs-placement="top"
@@ -84,6 +86,9 @@ const iconTooltipTexts = computed(() => [
     </a>
     <bs-modal
       ref="previewModal"
+      v-if="showPreviewModal"
+      show-on-mounted
+      @close="showPreviewModal = false"
       dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
       content-classes="h-100"
       >
