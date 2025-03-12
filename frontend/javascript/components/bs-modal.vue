@@ -74,7 +74,9 @@ defineExpose({
         role="document">
         <div :class="'modal-content ' + contentClasses">
           <div class="modal-header">
-            <slot name="header"></slot>
+            <div class="text-break">
+              <slot name="header"></slot>
+            </div>
             <button
               @click="hide"
               type="button"
