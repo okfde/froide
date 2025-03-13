@@ -6154,6 +6154,10 @@ msgctxt "Attachment manager"
 msgid "Make public"
 msgstr "Öffentlich machen"
 
+#: froide/foirequest/views/message.py
+msgid "Processing…"
+msgstr "Verarbeitung…"
+
 #: froide/foirequest/templates/foirequest/header/info-box.html
 msgid "Account details"
 msgstr "Konto-Details"

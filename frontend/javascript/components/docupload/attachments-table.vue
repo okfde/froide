@@ -253,8 +253,12 @@ const makeResultSelected = async () => {
           @click.self="toggleSelection('card', att.id)"
           >
           {{ att.document?.title || att.name }}
-          <span v-if="att.isApproving || att.creatingDocument" class="spinner-border spinner-border-sm">
+          <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
             <span class="sr-only">{{ i18n.loading }}</span>
+          </span>
+          <span v-if="att.pending" class="badge text-bg-secondary">
+            <i class="fa fa-hourglass-half"></i>
+            {{ i18n.pending}}
           </span>
           <span v-if="badgesNew && att.new" class="badge text-bg-success"
             >{{ i18n.new }}</span>
@@ -330,13 +334,17 @@ const makeResultSelected = async () => {
         @click.self="toggleSelection('table', att.id)"
         >
         {{ att.document?.title || att.name }}
-        <span v-if="att.isApproving || att.creatingDocument" class="spinner-border spinner-border-sm">
+        <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
           <span class="sr-only">{{ i18n.loading }}</span>
         </span>
         <attachment-badge-filetype
           v-if="badgesType"
           :attachment="att"
           />
+        <span v-if="att.pending" class="badge text-bg-secondary">
+          <i class="fa fa-hourglass-half"></i>
+          {{ i18n.pending}}
+        </span>
         <span v-if="badgesNew && att.new" class="badge text-bg-success"
           >{{ i18n.new }}</span>
         <span
