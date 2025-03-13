@@ -1228,8 +1228,11 @@ addEventListener('hashchange', () => {
               <django-slot name="redaction_explanation"></django-slot>
             </div>
             <div class="mt-2 mb-3">
-              <button type="button" class="btn btn-link text-decoration-underline"
-                @click="onlineHelp.show(config.urls.helpPostuploadRedaction)">
+              <button
+                type="button"
+                class="btn btn-link text-decoration-underline"
+                @click="onlineHelp.show(config.url.helpPostuploadRedaction)"
+              >
                 {{ i18n.helpNeeded }}
               </button>
             </div>
