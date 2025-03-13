@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-04 11:20+0100\n"
+"POT-Creation-Date: 2025-03-13 17:44+0100\n"
 "PO-Revision-Date: 2025-03-04 11:21+0100\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -1556,6 +1556,10 @@ msgstr "Speichern"
 #: froide/account/templates/oauth2_provider/application_list.html
 msgid "back to your account settings"
 msgstr "zurück zu Ihren Einstellungen"
+
+#: froide/account/templates/oauth2_provider/authorize.html
+msgid "App Permissions"
+msgstr ""
 
 #: froide/account/templates/oauth2_provider/authorize.html
 #, python-format
@@ -6264,6 +6268,12 @@ msgstr "in der Kategorie „%(name)s“"
 #, python-format
 msgid "by %(name)s"
 msgstr "von %(name)s"
+
+#: froide/foirequest/templates/foirequest/list.html
+#, fuzzy, python-format
+#| msgid "See all requests of %(name)s"
+msgid "by a member of %(name)s"
+msgstr "Zeige alle Anfragen von %(name)s"
 
 #: froide/foirequest/templates/foirequest/list.html
 msgid "FoI Requests"
