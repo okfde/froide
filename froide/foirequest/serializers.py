@@ -359,6 +359,11 @@ class ImageAttachmentConverterSerializer(serializers.Serializer):
     message = FoiMessageRelatedField()
 
 
+class DecryptAttachmentSerializer(serializers.Serializer):
+    password = serializers.CharField(required=True)
+    approved = serializers.BooleanField(default=False, required=False)
+
+
 def optimize_message_queryset(request, qs):
     atts = get_read_foiattachment_queryset(
         request, queryset=FoiAttachment.objects.filter(belongs_to__in=qs)
