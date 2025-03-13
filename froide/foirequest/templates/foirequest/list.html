@@ -28,6 +28,9 @@
         {% if filtered_objects.user %}
             <small>{% blocktrans with name=filtered_objects.user.get_full_name %}by {{ name }}{% endblocktrans %}</small>
         {% endif %}
+        {% if filtered_objects.organization %}
+            <small>{% blocktrans with name=filtered_objects.organization.name %}by a member of {{ name }}{% endblocktrans %}</small>
+        {% endif %}
     {% else %}
         {% trans "FoI Requests" %}
     {% endif %}

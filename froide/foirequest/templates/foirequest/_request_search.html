@@ -43,6 +43,7 @@
         {{ form.publicbody }}
         {{ form.tag }}
         {{ form.user }}
+        {{ form.organization }}
     </div>
     {% if 'first' in show_filters or 'sort' in show_filters %}
         <details {% if form.first.value.0 or form.first.value.1 or form.sort.value %}open{% endif %}>
