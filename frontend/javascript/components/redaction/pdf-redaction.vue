@@ -193,28 +193,15 @@
         </div>
 
         <div
-          v-if="
-            !hideDoneButton &&
-            (hasRedactions || hasPassword || (canPublish && !hasPassword))
-          "
+          v-if="!hideDoneButton"
           class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25"
         >
-          <button
-            v-if="hasRedactions || hasPassword"
-            class="btn btn-dark"
-            @click="redact"
-            data-testid="submit-redactions"
-          >
+          <button v-if="hasRedactions" class="btn btn-dark" @click="redact">
             <i class="fa fa-check me-2" />
-            <template v-if="hasRedactions">
-              {{ i18n.redactAndPublish }}
-            </template>
-            <template v-else-if="hasPassword">
-              {{ i18n.removePasswordAndPublish }}
-            </template>
+            {{ i18n.redactAndPublish }}
           </button>
           <form
-            v-if="canPublish && !hasPassword && !hasRedactions"
+            v-if="!hasRedactions"
             method="post"
             id="redaction-submit-form"
             :action="config.urls.publishUrl"
@@ -223,6 +210,12 @@
               type="hidden"
               name="csrfmiddlewaretoken"
               :value="csrfToken"
+            />
+            <input
+              v-if="hasPassword"
+              type="hidden"
+              name="password"
+              :value="password"
             />
             <button
               class="btn btn-dark"
@@ -426,10 +419,6 @@ export default {
     redactRegex: {
       type: Array,
       default: () => []
-    },
-    canPublish: {
-      type: Boolean,
-      default: false
     },
     hideDoneButton: {
       type: Boolean,
@@ -802,7 +791,7 @@ export default {
       this.textOnly = !this.textOnly
     },
     async redactOrApprove() {
-      if (this.hasRedactions || this.hasPassword) {
+      if (this.hasRedactions) {
         // .redact() handles autoApprove
         return this.redact()
       }
