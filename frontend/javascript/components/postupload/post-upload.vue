@@ -1362,7 +1362,7 @@ addEventListener('hashchange', () => {
               <button
                 type="button"
                 class="btn btn-link text-decoration-underline"
-                @click="onlineHelp.show(config.urls.helpPostuploadRedaction)"
+                @click="onlineHelp.show(config.url.helpPostuploadRedaction)"
               >
                 {{ i18n.helpNeeded }}
               </button>

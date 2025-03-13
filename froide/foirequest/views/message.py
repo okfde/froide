@@ -222,6 +222,7 @@ def edit_postal_message(request, foirequest, message_id):
                 messages.ERROR,
                 _("There were errors with your form submission!"),
             )
+    filingcabinet_js_config = get_js_config(request)
     ctx = {
         "settings": {
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
@@ -546,8 +547,6 @@ def edit_postal_message(request, foirequest, message_id):
                 "foirequest-create_document",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
-        },
-        "urls": {
             # from views/attachment for <pdf-redaction>
             "publishUrl": reverse(
                 "foirequest-approve_attachment",
@@ -561,13 +560,9 @@ def edit_postal_message(request, foirequest, message_id):
                 },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
-            # duplicated from url for compatibility with attachments.js TODO undup
-            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
-            "convertAttachments": reverse(
-                "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
         },
+        # "urls" (plural) is used exclusively by the document-viewer component
+        "urls": filingcabinet_js_config["urls"],
         "fixtures": {
             "georegion_kind": [
                 [str(k), str(v)]
@@ -576,9 +571,7 @@ def edit_postal_message(request, foirequest, message_id):
             ],
         },
     }
-    filingcabinet_js_config = get_js_config(request)
     ctx["i18n"] = ctx["i18n"] | filingcabinet_js_config["i18n"]
-    ctx["urls"] = ctx["urls"] | filingcabinet_js_config["urls"]
     return render(
         request,
         "foirequest/upload_postal_message_new.html",
