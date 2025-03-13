@@ -1203,7 +1203,7 @@ addEventListener('hashchange', () => {
             '/' + pdfRedactionCurrentDoc.id + '/'
           )
             " :hide-done-button="true" :bottom-toolbar="false" :no-redirect="true" :redact-regex="['teststraße\ 1']"
-          :can-publish="true" :config="config" @uploaded="pdfRedactionUploaded"
+          :config="config" @uploaded="pdfRedactionUploaded"
           @hasredactionsupdate="pdfRedactionCurrentHasRedactions = $event" ref="pdfRedaction">
           <!--
               <template #toolbar-right>

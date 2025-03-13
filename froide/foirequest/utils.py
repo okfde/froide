@@ -1,9 +1,11 @@
 import datetime
 import json
+import os
 import re
 import zipfile
 from dataclasses import dataclass
 from datetime import timedelta
+from functools import partial
 from io import BytesIO
 from pathlib import PurePath
 from typing import Iterator, List, Optional, Tuple, Union
@@ -14,6 +16,7 @@ from django.core.exceptions import ValidationError
 from django.core.files import File
 from django.core.mail import mail_managers
 from django.core.validators import validate_email
+from django.db import transaction
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
@@ -990,3 +993,55 @@ def find_attachment_name(name: str, message_id: int) -> str:
         )
     )
     return make_unique_filename(name, attachment_names)
+
+
+def make_converted_attachment(
+    att: FoiAttachment, postfix: str, att_kwargs: dict = None
+) -> FoiAttachment:
+    if att_kwargs is None:
+        att_kwargs = {}
+    name, ext = os.path.splitext(att.name)
+    name = "{name}_{postfix}{ext}".format(name=name, postfix=postfix, ext=ext)
+    name = find_attachment_name(name, att.belongs_to)
+
+    return FoiAttachment(
+        name=name,
+        belongs_to=att.belongs_to,
+        is_converted=True,
+        can_approve=att.can_approve,
+        **att_kwargs,
+    )
+
+
+def make_decrypted_attachment(att: FoiAttachment, att_kwargs=None) -> FoiAttachment:
+    # Translators: filename postfix for decrypted file
+    postfix = _("decrypted")
+    if att_kwargs is None:
+        att_kwargs = {}
+    att_kwargs.setdefault("filetype", "application/pdf")
+    return make_converted_attachment(att, postfix, att_kwargs=att_kwargs)
+
+
+def create_decrypted_attachment(
+    attachment: FoiAttachment, password: str, approved: bool = True
+) -> FoiAttachment:
+    from .tasks import decrypt_pdf_attachment_task
+
+    decrypted_att = make_decrypted_attachment(
+        attachment,
+        att_kwargs={
+            "pending": True,
+            "approved": approved,
+        },
+    )
+    decrypted_att.save()
+
+    transaction.on_commit(
+        partial(
+            decrypt_pdf_attachment_task.delay,
+            attachment.id,
+            decrypted_id=decrypted_att.id,
+            password=password,
+        )
+    )
+    return decrypted_att

@@ -15,6 +15,7 @@ from django.views.generic import DetailView
 
 from crossdomainmedia import CrossDomainMediaMixin
 
+from froide.foirequest.utils import create_decrypted_attachment
 from froide.helper.auth import is_crew
 from froide.helper.utils import is_ajax, render_400, render_403
 
@@ -77,7 +78,22 @@ def approve_attachment(request, foirequest, attachment_id):
 
     # hard guard against publishing of non publishable requests
     if not foirequest.not_publishable:
-        att.approve_and_save()
+        if att.redacted:
+            # if there are redacted versions, delete them
+            # as we are approving the original
+            redacted = att.redacted
+            redacted.attachment_deleted.send(
+                sender=redacted,
+                user=request.user,
+            )
+            redacted.remove_file_and_delete()
+
+        if att.is_pdf and request.POST.get("password") is not None:
+            att = create_decrypted_attachment(
+                att, request.POST["password"], approved=True
+            )
+        else:
+            att.approve_and_save()
         att.attachment_approved.send(
             sender=att,
             user=request.user,

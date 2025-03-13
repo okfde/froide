@@ -10,6 +10,7 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from froide.foirequest.utils import create_decrypted_attachment
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
 
@@ -20,11 +21,15 @@ from ..auth import (
 from ..models import FoiAttachment, FoiEvent
 from ..permissions import WriteFoiRequestPermission
 from ..serializers import (
+    DecryptAttachmentSerializer,
     FoiAttachmentSerializer,
     FoiAttachmentTusSerializer,
     ImageAttachmentConverterSerializer,
 )
-from ..tasks import convert_images_to_pdf_api_task, move_upload_to_attachment
+from ..tasks import (
+    convert_images_to_pdf_api_task,
+    move_upload_to_attachment,
+)
 
 User = get_user_model()
 
@@ -195,3 +200,34 @@ class FoiAttachmentViewSet(
             )
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        responses={status.HTTP_201_CREATED: FoiAttachmentSerializer},
+        operation_id="decrypt_pdf",
+    )
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="decrypt-pdf",
+        serializer_class=DecryptAttachmentSerializer,
+    )
+    def decrypt_pdf(self, request, pk=None):
+        attachment = self.get_object()
+        if not attachment.is_pdf:
+            return Response(
+                {"detail": _("Attachment is not a PDF.")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        decrypted_att = create_decrypted_attachment(
+            attachment, data["password"], approved=data["approved"]
+        )
+
+        return Response(
+            FoiAttachmentSerializer(decrypted_att, context={"request": request}).data,
+            status=status.HTTP_201_CREATED,
+        )

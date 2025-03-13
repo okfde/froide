@@ -3,6 +3,7 @@ import os
 from collections.abc import Collection
 from datetime import timedelta
 from functools import partial
+from typing import Optional
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -14,7 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from celery.exceptions import SoftTimeLimitExceeded
 
 from froide.celery import app as celery_app
-from froide.foirequest.utils import find_attachment_name
+from froide.foirequest.utils import make_decrypted_attachment
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
@@ -502,7 +503,9 @@ def warn_on_unprocessed_mail():
 @celery_app.task(
     name="froide.foirequest.tasks.decrypt_pdf_attachment_task", time_limit=600
 )
-def decrypt_pdf_attachment_task(att_id, password):
+def decrypt_pdf_attachment_task(
+    att_id: int, decrypted_id: Optional[int] = None, password: str = ""
+):
     from filingcabinet.pdf_utils import decrypt_pdf
     from filingcabinet.utils import get_local_file
 
@@ -517,24 +520,35 @@ def decrypt_pdf_attachment_task(att_id, password):
     with get_local_file(att.file.path) as file_path:
         output_bytes = decrypt_pdf(file_path, password)
 
+    if decrypted_id is not None:
+        try:
+            decrypted_att = FoiAttachment.objects.get(pk=decrypted_id)
+        except FoiAttachment.DoesNotExist:
+            return
+    else:
+        decrypted_att = make_decrypted_attachment(
+            att,
+            att_kwargs={
+                "approved": False,
+            },
+        )
+
     if output_bytes is None:
+        # Decryption failed, let's delete the decrypted attachment if already saved
+        if decrypted_att.pk is not None:
+            decrypted_att.delete()
+
         return
 
-    name, ext = os.path.splitext(att.name)
-    name = _("{name}_decrypted{ext}").format(name=name, ext=".pdf")
-    name = find_attachment_name(name, att.belongs_to)
-
-    decrypted_att = FoiAttachment.objects.create(
-        name=name,
-        belongs_to=att.belongs_to,
-        approved=False,
-        filetype="application/pdf",
-        is_converted=True,
-        can_approve=att.can_approve,
-    )
     new_file = ContentFile(output_bytes)
     decrypted_att.size = new_file.size
+    decrypted_att.pending = False
     decrypted_att.file.save(att.name, new_file, save=True)
 
-    att.converted = decrypted_att
-    att.save()
+    if att.converted != decrypted_att:
+        if att.converted is not None:
+            # Previously converted version is no longer needed
+            att.converted.remove_file_and_delete()
+
+        att.converted = decrypted_att
+        att.save()
