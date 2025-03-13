@@ -78,6 +78,16 @@ def approve_attachment(request, foirequest, attachment_id):
     # hard guard against publishing of non publishable requests
     if not foirequest.not_publishable:
         att.approve_and_save()
+        if att.redacted:
+            # if there are redacted versions, delete them
+            # as we are approving the original
+            redacted = att.redacted
+            redacted.attachment_deleted.send(
+                sender=redacted,
+                user=request.user,
+            )
+            redacted.remove_file_and_delete()
+
         att.attachment_approved.send(
             sender=att,
             user=request.user,
