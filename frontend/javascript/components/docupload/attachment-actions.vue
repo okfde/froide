@@ -89,7 +89,7 @@ const approveClick = () => {
 
 <template>
   <button v-if="attachment.canMakeResult" @click="makeResult" type="button" class="btn btn-sm btn-link text-start"
-    :class="{ disabled: attachment.creatingDocument }">
+    :class="{ disabled: attachment.isCreatingDocument }">
     <i class="fa fa-certificate"></i>
     {{ i18n.markResult }}
   </button>

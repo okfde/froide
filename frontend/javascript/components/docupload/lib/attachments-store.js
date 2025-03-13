@@ -19,11 +19,10 @@ const useAttachmentsStore = defineStore('attachments', {
   getters: {
     all: (state) => state.allRaw.map((d) => ({
       ...d,
-      creatingDocument: false,
       isApproving: state.approvingIds.has(d.id) || d.approving,
       isCreatingDocument: state.creatingDocumentIds.has(d.id),
       canDelete: d.can_delete && !d.approving && !d.document,
-      canRedact: d.can_redact,
+      canRedact: d.can_redact && !d.pending,
       // TODO: override by settings.can_edit_approval==is_crew ?
       //   will probably be resolved by new API
       canApprove: d.can_approve && !d.approving && !d.approved,
