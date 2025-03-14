@@ -1,4 +1,5 @@
 from functools import partial
+from typing import override
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -10,6 +11,8 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from froide.document.api_views import DocumentSerializer
+from froide.helper.auth import is_crew
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
 
@@ -110,8 +113,23 @@ class FoiAttachmentViewSet(
         data = FoiAttachmentSerializer(att, context={"request": request}).data
         return Response(data, status=status.HTTP_201_CREATED)
 
+    @override
+    def perform_destroy(self, instance):
+        instance.attachment_deleted.send(
+            sender=instance,
+            user=self.request.user,
+        )
+        instance.remove_file_and_delete()
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        message = instance.belongs_to
+
+        if not message.is_postal:
+            return Response(
+                data={"detail": _("Can't delete attachments on non-postal messages.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         if not instance.can_delete:
             return Response(
@@ -121,6 +139,89 @@ class FoiAttachmentViewSet(
 
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def update_approval(self, request, approve: bool):
+        instance = self.get_object()
+
+        if instance.can_change_approval:
+            event_name = (
+                FoiEvent.EVENTS.ATTACHMENT_DEPUBLISHED
+                if instance.approved
+                else FoiEvent.EVENTS.ATTACHMENT_APPROVED
+            )
+
+            instance.approve_and_save(approve)
+
+            FoiEvent.objects.create_event(
+                event_name,
+                instance.belongs_to.request,
+                user=request.user,
+                message=instance.belongs_to,
+                attachment_id=instance.pk,
+            )
+
+            return Response(
+                FoiAttachmentSerializer(instance, context={"request": request}).data
+            )
+        else:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN,
+                data={"detail": _("Can't approve this attachment.")},
+            )
+
+    @action(detail=True, methods=["post"])
+    def approve(self, request, pk):
+        return self.update_approval(request, approve=True)
+
+    @action(detail=True, methods=["post"])
+    def unapprove(self, request, pk):
+        return self.update_approval(request, approve=False)
+
+    @extend_schema(responses={status.HTTP_201_CREATED: DocumentSerializer})
+    @action(detail=True, methods=["post"])
+    def to_document(self, request, pk=None):
+        att = self.get_object()
+
+        if not att.can_approve and not is_crew(request.user):
+            return Response(
+                {"detail": _("You can't convert this attachment to a document.")},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if att.redacted:
+            return Response(
+                {
+                    "detail": _(
+                        "Only the redacted version of this attachment can be converted to a document."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if att.document is not None:
+            return Response(
+                {
+                    "detail": _(
+                        "This attachment has already been converted to a document."
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not att.is_pdf:
+            return Response(
+                {"detail": _("Only PDF attachments can be converted to a document.")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        doc = att.create_document()
+        att.document_created.send(
+            sender=att,
+            user=request.user,
+        )
+
+        data = DocumentSerializer(doc, context={"request": request}).data
+        return Response(data, status=status.HTTP_201_CREATED)
 
     @extend_schema(
         responses={status.HTTP_201_CREATED: FoiAttachmentSerializer},

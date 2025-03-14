@@ -360,6 +360,16 @@ def create_event_status_changed(sender, user=None, **kwargs):
     )
 
 
+@receiver(FoiRequest.costs_reported, dispatch_uid="create_event_costs_reported")
+def create_event_costs_reported(sender: FoiRequest, user=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.REPORTED_COSTS,
+        sender,
+        user=user,
+        costs=kwargs.get("costs"),
+    )
+
+
 @receiver(FoiRequest.made_public, dispatch_uid="create_event_made_public")
 def create_event_made_public(sender, user=None, **kwargs):
     FoiEvent.objects.create_event(
