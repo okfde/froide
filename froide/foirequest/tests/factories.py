@@ -32,7 +32,6 @@ from ..models import (
     FoiAttachment,
     FoiEvent,
     FoiMessage,
-    FoiMessageDraft,
     FoiProject,
     FoiRequest,
     PublicBodySuggestion,
@@ -156,13 +155,6 @@ class FoiMessageFactory(DjangoModelFactory):
     html = ""
     redacted = False
     not_publishable = False
-
-
-class FoiMessageDraftFactory(FoiMessageFactory):
-    is_draft = True
-
-    class Meta:
-        model = FoiMessageDraft
 
 
 @factory.django.mute_signals(signals.pre_save, signals.post_save)

@@ -17,8 +17,8 @@ from froide.upload.factories import UploadFactory
 def test_upload_attachment(client: Client, user):
     request = factories.FoiRequestFactory.create(user=user)
     message = factories.FoiMessageFactory.create(request=request, kind=MessageKind.POST)
-    draft_message = factories.FoiMessageDraftFactory.create(
-        request=request, kind=MessageKind.POST
+    draft_message = factories.FoiMessageFactory.create(
+        request=request, kind=MessageKind.POST, is_draft=True
     )
     other_user = factories.UserFactory.create()
     upload = UploadFactory.create(user=other_user)
@@ -64,9 +64,7 @@ def test_upload_attachment(client: Client, user):
     response = client.post(
         "/api/v1/attachment/",
         data={
-            "message": reverse(
-                "api:message-draft-detail", kwargs={"pk": draft_message.pk}
-            ),
+            "message": reverse("api:message-detail", kwargs={"pk": draft_message.pk}),
             "upload": reverse("api:upload-detail", kwargs={"guid": upload.guid}),
         },
         content_type="application/json",

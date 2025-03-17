@@ -1656,6 +1656,8 @@ paths:
       tags:
       - message
       security:
+      - oauth2:
+        - write:message
       - cookieAuth: []
       - {}
       responses:
@@ -1689,6 +1691,8 @@ paths:
       tags:
       - message
       security:
+      - oauth2:
+        - write:message
       - cookieAuth: []
       - {}
       responses:
@@ -1732,6 +1736,8 @@ paths:
             schema:
               $ref: '#/components/schemas/FoiMessage'
       security:
+      - oauth2:
+        - write:message
       - cookieAuth: []
       responses:
         '200':
@@ -1774,6 +1780,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchedFoiMessage'
       security:
+      - oauth2:
+        - write:message
       - cookieAuth: []
       responses:
         '200':
@@ -1785,86 +1793,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/FoiMessage'
           description: ''
-  /api/v1/message/draft/:
-    get:
-      operationId: message_draft_list
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      - name: limit
-        required: false
-        in: query
-        description: Number of results to return per page.
-        schema:
-          type: integer
-      - name: offset
-        required: false
-        in: query
-        description: The initial index from which to return the results.
-        schema:
-          type: integer
-      - in: query
-        name: request
-        schema:
-          type: integer
-      tags:
-      - message
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PaginatedFoiMessageDraftList'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/PaginatedFoiMessageDraftList'
-          description: ''
+  /api/v1/message/{id}/publish/:
     post:
-      operationId: message_draft_create
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      tags:
-      - message
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-          description: ''
-  /api/v1/message/draft/{id}/:
-    get:
-      operationId: message_draft_retrieve
+      operationId: message_publish_create
       parameters:
       - in: query
         name: format
@@ -1878,38 +1809,7 @@ paths:
         schema:
           type: integer
         description: A unique integer value identifying this Freedom of Information
-          Message Draft.
-        required: true
-      tags:
-      - message
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-          description: ''
-    put:
-      operationId: message_draft_update
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Freedom of Information
-          Message Draft.
+          Message.
         required: true
       tags:
       - message
@@ -1917,135 +1817,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
+              $ref: '#/components/schemas/FoiMessage'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
+              $ref: '#/components/schemas/FoiMessage'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-        required: true
+              $ref: '#/components/schemas/FoiMessage'
       security:
+      - oauth2:
+        - write:message
       - cookieAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
+                $ref: '#/components/schemas/FoiMessage'
             text/csv:
               schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-          description: ''
-    patch:
-      operationId: message_draft_partial_update
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Freedom of Information
-          Message Draft.
-        required: true
-      tags:
-      - message
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedFoiMessageDraft'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedFoiMessageDraft'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedFoiMessageDraft'
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-          description: ''
-    delete:
-      operationId: message_draft_destroy
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Freedom of Information
-          Message Draft.
-        required: true
-      tags:
-      - message
-      security:
-      - cookieAuth: []
-      responses:
-        '204':
-          description: No response body
-  /api/v1/message/draft/{id}/publish/:
-    post:
-      operationId: message_draft_publish_create
-      parameters:
-      - in: query
-        name: format
-        schema:
-          type: string
-          enum:
-          - csv
-          - json
-      - in: path
-        name: id
-        schema:
-          type: integer
-        description: A unique integer value identifying this Freedom of Information
-          Message Draft.
-        required: true
-      tags:
-      - message
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/FoiMessageDraft'
-        required: true
-      security:
-      - cookieAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/FoiMessageDraft'
+                $ref: '#/components/schemas/FoiMessage'
           description: ''
   /api/v1/page/:
     get:
@@ -4297,7 +4088,7 @@ components:
           title: Is message a draft?
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindDccEnum'
+          - $ref: '#/components/schemas/FoiMessageKindEnum'
           readOnly: true
         is_escalation:
           type: boolean
@@ -4318,7 +4109,7 @@ components:
         status:
           readOnly: true
           oneOf:
-          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/FoiMessageStatusEnum'
           - $ref: '#/components/schemas/BlankEnum'
         timestamp:
           type: string
@@ -4380,117 +4171,42 @@ components:
       - status_name
       - subject
       - url
-    FoiMessageDraft:
-      type: object
-      properties:
-        resource_uri:
-          type: string
-          format: uri
-          readOnly: true
-        id:
-          type: integer
-          readOnly: true
-        url:
-          type: string
-          readOnly: true
-        request:
-          type: string
-          format: uri
-        sent:
-          type: boolean
-          readOnly: true
-          title: Has message been sent?
-        is_response:
-          type: boolean
-          title: Response?
-        is_postal:
-          type: string
-          readOnly: true
-        is_draft:
-          type: boolean
-          readOnly: true
-          title: Is message a draft?
-        kind:
-          $ref: '#/components/schemas/KindDccEnum'
-        is_escalation:
-          type: boolean
-          readOnly: true
-          title: Escalation?
-        content_hidden:
-          type: boolean
-          readOnly: true
-          title: Content hidden?
-        sender_public_body:
-          type: string
-          format: uri
-          nullable: true
-        recipient_public_body:
-          type: string
-          format: uri
-          nullable: true
-        status:
-          readOnly: true
-          oneOf:
-          - $ref: '#/components/schemas/StatusEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-        timestamp:
-          type: string
-          format: date-time
-        registered_mail_date:
-          type: string
-          format: date-time
-          nullable: true
-        redacted:
-          type: boolean
-          title: Was Redacted?
-        not_publishable:
-          type: boolean
-          readOnly: true
-        attachments:
-          type: string
-          readOnly: true
-        subject:
-          type: string
-          readOnly: true
-        content:
-          type: string
-          readOnly: true
-        redacted_subject:
-          type: string
-          readOnly: true
-        redacted_content:
-          type: string
-          readOnly: true
-        sender:
-          type: string
-          readOnly: true
-        status_name:
-          type: string
-          readOnly: true
-        last_modified_at:
-          type: string
-          format: date-time
-          readOnly: true
-      required:
-      - attachments
-      - content
-      - content_hidden
-      - id
-      - is_draft
-      - is_escalation
-      - is_postal
-      - last_modified_at
-      - not_publishable
-      - redacted_content
-      - redacted_subject
-      - request
-      - resource_uri
-      - sender
-      - sent
-      - status
-      - status_name
-      - subject
-      - url
+    FoiMessageKindEnum:
+      enum:
+      - email
+      - post
+      - fax
+      - upload
+      - phone
+      - visit
+      - import
+      type: string
+      description: |-
+        * `email` - email
+        * `post` - postal mail
+        * `fax` - fax
+        * `upload` - upload
+        * `phone` - phone call
+        * `visit` - visit in person
+        * `import` - automatically imported
+    FoiMessageStatusEnum:
+      enum:
+      - awaiting_user_confirmation
+      - publicbody_needed
+      - awaiting_publicbody_confirmation
+      - awaiting_response
+      - awaiting_classification
+      - asleep
+      - resolved
+      type: string
+      description: |-
+        * `awaiting_user_confirmation` - Awaiting user confirmation
+        * `publicbody_needed` - Public Body needed
+        * `awaiting_publicbody_confirmation` - Awaiting Public Body confirmation
+        * `awaiting_response` - Awaiting response
+        * `awaiting_classification` - Request awaits classification
+        * `asleep` - Request asleep
+        * `resolved` - Request resolved
     FoiRequestDetail:
       type: object
       properties:
@@ -4571,7 +4287,7 @@ components:
           format: date-time
           readOnly: true
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/Status719Enum'
         public_body:
           allOf:
           - $ref: '#/components/schemas/PublicBody'
@@ -4750,7 +4466,7 @@ components:
           format: date-time
           readOnly: true
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/Status719Enum'
         public_body:
           allOf:
           - $ref: '#/components/schemas/SimplePublicBody'
@@ -5034,24 +4750,6 @@ components:
         * `borough` - borough
         * `zipcode` - zipcode
         * `admin_court_jurisdiction` - administrative court jurisdiction
-    KindDccEnum:
-      enum:
-      - email
-      - post
-      - fax
-      - upload
-      - phone
-      - visit
-      - import
-      type: string
-      description: |-
-        * `email` - email
-        * `post` - postal mail
-        * `fax` - fax
-        * `upload` - upload
-        * `phone` - phone call
-        * `visit` - visit in person
-        * `import` - automatically imported
     MakeRequest:
       type: object
       properties:
@@ -5339,29 +5037,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FoiLaw'
-    PaginatedFoiMessageDraftList:
-      type: object
-      required:
-      - count
-      - results
-      properties:
-        count:
-          type: integer
-          example: 123
-        next:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=400&limit=100
-        previous:
-          type: string
-          nullable: true
-          format: uri
-          example: http://api.example.org/accounts/?offset=200&limit=100
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/FoiMessageDraft'
     PaginatedFoiMessageList:
       type: object
       required:
@@ -5665,7 +5340,7 @@ components:
           title: Is message a draft?
         kind:
           allOf:
-          - $ref: '#/components/schemas/KindDccEnum'
+          - $ref: '#/components/schemas/FoiMessageKindEnum'
           readOnly: true
         is_escalation:
           type: boolean
@@ -5686,98 +5361,7 @@ components:
         status:
           readOnly: true
           oneOf:
-          - $ref: '#/components/schemas/StatusEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-        timestamp:
-          type: string
-          format: date-time
-        registered_mail_date:
-          type: string
-          format: date-time
-          nullable: true
-        redacted:
-          type: boolean
-          title: Was Redacted?
-        not_publishable:
-          type: boolean
-          readOnly: true
-        attachments:
-          type: string
-          readOnly: true
-        subject:
-          type: string
-          readOnly: true
-        content:
-          type: string
-          readOnly: true
-        redacted_subject:
-          type: string
-          readOnly: true
-        redacted_content:
-          type: string
-          readOnly: true
-        sender:
-          type: string
-          readOnly: true
-        status_name:
-          type: string
-          readOnly: true
-        last_modified_at:
-          type: string
-          format: date-time
-          readOnly: true
-    PatchedFoiMessageDraft:
-      type: object
-      properties:
-        resource_uri:
-          type: string
-          format: uri
-          readOnly: true
-        id:
-          type: integer
-          readOnly: true
-        url:
-          type: string
-          readOnly: true
-        request:
-          type: string
-          format: uri
-        sent:
-          type: boolean
-          readOnly: true
-          title: Has message been sent?
-        is_response:
-          type: boolean
-          title: Response?
-        is_postal:
-          type: string
-          readOnly: true
-        is_draft:
-          type: boolean
-          readOnly: true
-          title: Is message a draft?
-        kind:
-          $ref: '#/components/schemas/KindDccEnum'
-        is_escalation:
-          type: boolean
-          readOnly: true
-          title: Escalation?
-        content_hidden:
-          type: boolean
-          readOnly: true
-          title: Content hidden?
-        sender_public_body:
-          type: string
-          format: uri
-          nullable: true
-        recipient_public_body:
-          type: string
-          format: uri
-          nullable: true
-        status:
-          readOnly: true
-          oneOf:
-          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/FoiMessageStatusEnum'
           - $ref: '#/components/schemas/BlankEnum'
         timestamp:
           type: string
@@ -5896,7 +5480,7 @@ components:
           format: date-time
           readOnly: true
         status:
-          $ref: '#/components/schemas/StatusEnum'
+          $ref: '#/components/schemas/Status719Enum'
         public_body:
           allOf:
           - $ref: '#/components/schemas/SimplePublicBody'
@@ -6424,24 +6008,14 @@ components:
       - resource_uri
       - site_url
       - slug
-    StatusEnum:
+    Status719Enum:
       enum:
-      - awaiting_user_confirmation
-      - publicbody_needed
-      - awaiting_publicbody_confirmation
       - awaiting_response
-      - awaiting_classification
-      - asleep
       - resolved
       type: string
       description: |-
-        * `awaiting_user_confirmation` - Awaiting user confirmation
-        * `publicbody_needed` - Public Body needed
-        * `awaiting_publicbody_confirmation` - Awaiting Public Body confirmation
-        * `awaiting_response` - Awaiting response
-        * `awaiting_classification` - Request awaits classification
-        * `asleep` - Request asleep
-        * `resolved` - Request resolved
+        * `awaiting_response` - awaiting_response
+        * `resolved` - resolved
     UpdateDocument:
       type: object
       properties:

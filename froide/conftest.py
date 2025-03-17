@@ -12,7 +12,6 @@ from froide.account.factories import UserFactory
 from froide.foirequest.models import FoiMessage, FoiRequest
 from froide.foirequest.signals import email_left_queue
 from froide.foirequest.tests.factories import (
-    FoiMessageDraftFactory,
     FoiMessageFactory,
     FoiProjectFactory,
     FoiRequestFactory,
@@ -36,7 +35,6 @@ register(FoiRequestFactory)
 register(FoiRequestFollowerFactory)
 register(PublicBodyFactory)
 register(FoiMessageFactory)
-register(FoiMessageDraftFactory)
 register(ClassificationFactory)
 register(FoiLawFactory)
 register(JurisdictionFactory)
