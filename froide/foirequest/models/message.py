@@ -186,8 +186,9 @@ class FoiMessage(models.Model):
 
     confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
 
-    with_drafts = models.Manager()
     objects = FoiMessageManager()
+    with_drafts = models.Manager()
+    drafts_only = FoiMessageDraftManager()
 
     class Meta:
         get_latest_by = "timestamp"
