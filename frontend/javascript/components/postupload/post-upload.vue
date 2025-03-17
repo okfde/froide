@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, onMounted, provide, watch, reactive, ref } from 'vue'
+import { computed, defineProps, onMounted, provide, reactive, ref } from 'vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
@@ -14,7 +14,7 @@ import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import Room from '../../lib/websocket.ts'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import OnlineHelp from './online-help.vue'
+import OnlineHelp from '../online-help.vue'
 
 import { useAttachments } from '../docupload/lib/attachments'
 
@@ -39,7 +39,14 @@ const { i18n } = useI18n(props.config)
 provide('i18n', i18n)
 provide('config', props.config)
 
-const { attachments, addFromUppy, refresh: refreshAttachments, convertImage, approveAllUnredactedAttachments } = useAttachments({
+const {
+  attachments,
+  addFromUppy,
+  refresh: refreshAttachments,
+  refreshIfIdNotPresent: refreshAttachmentsIfIdNotPresent,
+  convertImage,
+  approveAllUnredactedAttachments
+} = useAttachments({
   urls: {
     ...props.config.url,
     ...props.config.urls,
@@ -72,8 +79,8 @@ const debugSkipDate = () => {
 /* Mobile App Content */
 
 const mobileAppContent = ref(null)
-if (props.config.urls.mobileAppContent) {
-  fetch(props.config.urls.mobileAppContent.replace("{}", props.message.id))
+if (props.config.url.mobileAppContent) {
+  fetch(props.config.url.mobileAppContent.replace("{}", props.message.id))
     .then((response) => response.text())
     .then((text) => {
       mobileAppContent.value = text
@@ -82,11 +89,11 @@ if (props.config.urls.mobileAppContent) {
 
 /* Websocket connection */
 
-if (props.config.urls.messageWebsocket) {
-  const room = new Room(props.config.urls.messageWebsocket)
+if (props.config.url.messageWebsocket) {
+  const room = new Room(props.config.url.messageWebsocket)
   room.connect().on('attachment_added', (data) => {
-    // When a new attachment is added, let the document uploader know
-    documentUploader.value.refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
+    // When a new attachment is added, refresh the attachments store
+    refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
       if (!refreshed) {
         return
       }
@@ -788,7 +795,7 @@ addEventListener('hashchange', () => {
                   </p>
                 </div>
                 -->
-            <div v-if="config.urls.mobileAppContent" class="col-md-6">
+            <div v-if="config.url.mobileAppContent" class="col-md-6">
               <div v-if="mobileAppContent !== null" v-html="mobileAppContent"></div>
               <div v-else>
                 <div class="spinner-border" role="status">
