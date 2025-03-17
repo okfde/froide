@@ -4264,7 +4264,7 @@ msgstr ""
 msgid "is_response is required"
 msgstr "Anfragen des Nutzers"
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Response messages must have a sender public body, no sender user and no "
 "recipient public body."
@@ -4272,7 +4272,7 @@ msgstr ""
 "Antwortnachrichten müssen eine Behörde als Sender, jedoch kein:e Nutzer:in "
 "als Sender und keine Behörde als Empfänger enthalten."
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Non-response messages must have a recipent public body, but no sender public "
 "body."
