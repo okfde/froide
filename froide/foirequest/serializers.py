@@ -34,10 +34,7 @@ from .fields import (
     FoiRequestRelatedField,
 )
 from .models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
-from .models.message import (
-    MESSAGE_KIND_USER_ALLOWED,
-    FoiMessageDraft,
-)
+from .models.message import MESSAGE_KIND_USER_ALLOWED
 from .models.request import USER_ALLOWED_STATUS
 from .services import CreateRequestService
 from .utils import postal_date
@@ -251,11 +248,13 @@ class MakeRequestSerializer(serializers.Serializer):
 
 class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
     resource_uri = serializers.HyperlinkedIdentityField(view_name="api:message-detail")
-    request = FoiRequestRelatedField(read_only=True)
+    request = FoiRequestRelatedField()
+    is_draft = serializers.BooleanField(default=True)
     attachments = serializers.SerializerMethodField(source="get_attachments")
     sender_public_body = PublicBodyRelatedField(required=False, allow_null=True)
     recipient_public_body = PublicBodyRelatedField(required=False, allow_null=True)
 
+    timestamp = serializers.DateTimeField(default=timezone.now)
     subject = serializers.SerializerMethodField(source="get_subject")
     content = serializers.SerializerMethodField(source="get_content")
     redacted_subject = serializers.SerializerMethodField(source="get_redacted_subject")
@@ -302,8 +301,6 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         ]
         read_only_fields = [
             "sent",
-            "is_response",
-            "kind",
             "is_escalation",
             "content_hidden",
             "is_draft",
@@ -371,7 +368,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate_timestamp(self, value):
         # this handles updating FoiMessages
-        # when creating a FoiMessageDraft, the timestamp is set correctly when publishing
+        # when creating a draft, the timestamp is set correctly when publishing
 
         now = timezone.now()
         if value > now:
@@ -379,23 +376,27 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
                 _("The timestamp is in the future, that is not possible.")
             )
 
-        if self.instance and self.instance.is_postal:
+        if self.instance and self.instance.is_postal and not self.instance.is_draft:
             return postal_date(self.instance, value)
         return value
 
     def validate_registered_mail_date(self, value):
         return self.validate_timestamp(value)
 
+    def validate_is_draft(self, value):
+        if self.instance is None and not value:
+            raise ValidationError(_("Message must created as draft."))
+        return value
+
     def validate(self, attrs):
-        timestamp = attrs.get("timestamp") or self.instance.timestamp
+        timestamp = attrs.get("timestamp")
         foirequest = attrs.get("request") or self.instance.request
 
-        if timestamp < foirequest.created_at:
+        if timestamp and timestamp < foirequest.created_at:
             raise ValidationError(
                 _("Your message date is before the request was made.")
             )
 
-        # TODO: find a better solution for this
         sender_public_body = attrs.get(
             "sender_public_body",
             self.instance.sender_public_body if self.instance else None,
@@ -440,26 +441,6 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             )
 
         return super().update(instance, validated_data)
-
-
-class FoiMessageDraftSerializer(FoiMessageSerializer):
-    resource_uri = serializers.HyperlinkedIdentityField(
-        view_name="api:message-draft-detail"
-    )
-    request = FoiRequestRelatedField()
-    timestamp = serializers.DateTimeField(default=timezone.now)
-
-    class Meta(FoiMessageSerializer.Meta):
-        model = FoiMessageDraft
-        read_only_fields = [
-            "sent",
-            "is_escalation",
-            "content_hidden",
-            "is_draft",
-            "not_publishable",
-            "timestamp",
-            "last_modified_at",
-        ]
 
 
 class FoiAttachmentSerializer(serializers.HyperlinkedModelSerializer):

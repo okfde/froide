@@ -21,7 +21,7 @@ def test_message(client: Client, user):
     other_request = factories.FoiRequestFactory.create()
     message = factories.FoiMessageFactory.create(request=request)
 
-    # can't create a message
+    # can't create an email message
     response = client.post(
         reverse("api:message-list"),
         data={
@@ -30,7 +30,7 @@ def test_message(client: Client, user):
         },
         content_type="application/json",
     )
-    assert response.status_code == 405
+    assert response.status_code == 400
 
     timestamp = "2000-01-01T00:00:00+00:00"
 
@@ -59,12 +59,7 @@ def test_message(client: Client, user):
         },
         content_type="application/json",
     )
-    data = response.json()
-    assert data["sent"]
-    assert data["kind"] == MessageKind.POST
-    assert reverse("api:request-detail", kwargs={"pk": request.pk}) in data["request"]
-    assert not data["is_draft"]
-    assert not data["not_publishable"]
+    assert response.status_code == 400
 
     # nothing changed, so no event
     with pytest.raises(FoiEvent.DoesNotExist):
@@ -101,30 +96,20 @@ def test_message(client: Client, user):
 
 @pytest.mark.django_db
 def test_message_draft(client: Client, user):
+    other_user = factories.UserFactory.create()
     request = factories.FoiRequestFactory.create(user=user)
     assert client.login(email=user.email, password="froide")
 
     # can't create an email
     response = client.post(
-        "/api/v1/message/draft/",
+        "/api/v1/message/",
         data={
             "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
             "kind": "email",
         },
         content_type="application/json",
     )
-    assert response.status_code == 400
-
-    # must use draft endpoint
-    response = client.post(
-        "/api/v1/message/",
-        data={
-            "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
-            "kind": "post",
-        },
-        content_type="application/json",
-    )
-    assert response.status_code == 405
+    assert response.status_code == 400, response.json()
 
     # create message draft
     data = {
@@ -137,29 +122,30 @@ def test_message_draft(client: Client, user):
     }
 
     response = client.post(
-        "/api/v1/message/draft/",
+        "/api/v1/message/",
         data=data,
         content_type="application/json",
     )
-    assert response.status_code == 201
-    assert "/draft/" in response.json()["resource_uri"]
+    assert response.status_code == 201, response.json()
+    message_response = response.json()
+    assert message_response["is_draft"]
 
-    message_id = response.json()["id"]
-    resource_uri = reverse("api:message-draft-detail", kwargs={"pk": message_id})
+    message_id = message_response["id"]
+    resource_uri = reverse("api:message-detail", kwargs={"pk": message_id})
 
     response = client.delete(resource_uri)
-    assert response.status_code == 204
+    assert response.status_code == 405, response.json()
 
     # create message draft
     response = client.post(
-        "/api/v1/message/draft/",
+        "/api/v1/message/",
         data=data,
         content_type="application/json",
     )
-    assert response.status_code == 201
+    assert response.status_code == 201, response.json()
 
     message_id = response.json()["id"]
-    resource_uri = reverse("api:message-draft-detail", kwargs={"pk": message_id})
+    resource_uri = reverse("api:message-detail", kwargs={"pk": message_id})
 
     # can't set sent stauts
     assert response.json()["sent"] is True
@@ -168,19 +154,54 @@ def test_message_draft(client: Client, user):
     )
     assert response.json()["sent"] is True
 
-    # doesn't appear in regular messages
+    # appears in regular messages
+    response = client.get(reverse("api:message-detail", kwargs={"pk": message_id}))
+    assert response.status_code == 200
+
+    # and appears in drafts list
+    response = client.get(reverse("api:message-list") + "?is_draft=1")
+    assert response.status_code == 200
+    assert resource_uri in str(response.content)
+
+    # and appears in filtered drafts list
+    response = client.get(
+        reverse("api:message-list") + f"?is_draft=1&request={request.pk}"
+    )
+    assert response.status_code == 200
+    assert resource_uri in str(response.content)
+
+    # but not for logged out users
+    client.logout()
     response = client.get(reverse("api:message-detail", kwargs={"pk": message_id}))
     assert response.status_code == 404
 
-    # appears in drafts list
-    response = client.get(reverse("api:message-draft-list"))
+    response = client.get(reverse("api:message-list") + "?is_draft=1")
     assert response.status_code == 200
-    assert resource_uri in str(response.content)
+    assert resource_uri not in str(response.content)
 
-    # appears in filtered drafts list
-    response = client.get(reverse("api:message-draft-list") + f"?request={request.pk}")
+    response = client.get(
+        reverse("api:message-list") + f"?is_draft=1&request={request.pk}"
+    )
     assert response.status_code == 200
-    assert resource_uri in str(response.content)
+    assert resource_uri not in str(response.content)
+
+    # and not for other users
+    client.force_login(other_user)
+    response = client.get(reverse("api:message-detail", kwargs={"pk": message_id}))
+    assert response.status_code == 404
+
+    response = client.get(reverse("api:message-list") + "?is_draft=1")
+    assert response.status_code == 200
+    assert resource_uri not in str(response.content)
+
+    response = client.get(
+        reverse("api:message-list") + f"?is_draft=1&request={request.pk}"
+    )
+    assert response.status_code == 200
+    assert resource_uri not in str(response.content)
+
+    client.logout()
+    assert client.login(email=user.email, password="froide")
 
     # user send a message to public body
     public_body = factories.PublicBodyFactory()
@@ -194,7 +215,7 @@ def test_message_draft(client: Client, user):
         "is_response": False,
     }
     response = client.post(
-        "/api/v1/message/draft/",
+        "/api/v1/message/",
         data=request_data,
         content_type="application/json",
     )
@@ -203,7 +224,7 @@ def test_message_draft(client: Client, user):
     assert reverse("api:request-detail", kwargs={"pk": request.pk}) in data["request"]
 
     message_id = response.json()["id"]
-    publish_uri = reverse("api:message-draft-publish", kwargs={"pk": message_id})
+    publish_uri = reverse("api:message-publish", kwargs={"pk": message_id})
 
     response = client.post(publish_uri)
     assert response.status_code == 200
@@ -222,20 +243,16 @@ def test_message_draft(client: Client, user):
     response = client.delete(resource_uri)
     assert response.status_code == 405
 
-    resource_uri = reverse("api:message-draft-detail", kwargs={"pk": message_id})
-    response = client.delete(resource_uri)
-    assert response.status_code == 404
-
     # create + publish another message draft
     response = client.post(
-        "/api/v1/message/draft/",
+        "/api/v1/message/",
         data=request_data,
         content_type="application/json",
     )
     assert response.status_code == 201
 
     message_id = response.json()["id"]
-    publish_uri = reverse("api:message-draft-publish", kwargs={"pk": message_id})
+    publish_uri = reverse("api:message-publish", kwargs={"pk": message_id})
 
     response = client.post(publish_uri)
     assert response.status_code == 200
@@ -247,9 +264,43 @@ def test_message_draft(client: Client, user):
 
 @pytest.mark.django_db
 def test_draft_auth(client, user):
-    user2 = factories.UserFactory.create()
-    request = factories.FoiRequestFactory.create(user=user2)
+    other_user = factories.UserFactory.create()
+    other_request = factories.FoiRequestFactory.create(user=other_user)
 
+    data = {
+        "request": reverse("api:request-detail", kwargs={"pk": other_request.pk}),
+        "kind": "post",
+        "is_response": True,
+        "sender_public_body": reverse(
+            "api:publicbody-detail", kwargs={"pk": other_request.public_body.pk}
+        ),
+    }
+
+    # need to be logged in
+    client.logout()
+    response = client.post(
+        "/api/v1/message/",
+        data=data,
+        content_type="application/json",
+    )
+    assert response.status_code == 401
+
+    # can't publish drafts
+    draft = factories.FoiMessageFactory.create(request=other_request, is_draft=True)
+    response = client.post(reverse("api:message-publish", kwargs={"pk": draft.pk}))
+    assert response.status_code == 401
+
+    # needs to be own request
+    client.login(email=user.email, password="froide")
+    response = client.post(
+        "/api/v1/message/",
+        data=data,
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+    # create message draft
+    request = factories.FoiRequestFactory.create(user=user)
     data = {
         "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
         "kind": "post",
@@ -259,55 +310,19 @@ def test_draft_auth(client, user):
         ),
     }
 
-    # need to be logged in
-    client.logout()
     response = client.post(
-        "/api/v1/message/draft/",
+        "/api/v1/message/",
         data=data,
         content_type="application/json",
     )
-    assert response.status_code == 401
-
-    # can't publish drafts
-    draft = factories.FoiMessageDraftFactory.create(request=request)
-    response = client.post(
-        reverse("api:message-draft-publish", kwargs={"pk": draft.pk})
-    )
-    assert response.status_code == 401
-
-    # needs to be own request
-    client.login(email=user.email, password="froide")
-    response = client.post(
-        "/api/v1/message/draft/",
-        data=data,
-        content_type="application/json",
-    )
-    assert response.status_code == 400
-
-    # create message draft
-    request2 = factories.FoiRequestFactory.create(user=user)
-    data = {
-        "request": reverse("api:request-detail", kwargs={"pk": request2.pk}),
-        "kind": "post",
-        "is_response": True,
-        "sender_public_body": reverse(
-            "api:publicbody-detail", kwargs={"pk": request2.public_body.pk}
-        ),
-    }
-
-    response = client.post(
-        "/api/v1/message/draft/",
-        data=data,
-        content_type="application/json",
-    )
-    assert response.status_code == 201
+    assert response.status_code == 201, response.json()
     resource_uri = response.json()["resource_uri"]
 
     # can't change it to other's people request
     response = client.patch(
         resource_uri,
         data={
-            "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
+            "request": reverse("api:request-detail", kwargs={"pk": other_request.pk}),
         },
         content_type="application/json",
     )
@@ -316,8 +331,8 @@ def test_draft_auth(client, user):
     # drafts can't be seen by others
     client.logout()
     response = client.get(resource_uri)
-    assert response.status_code == 401
+    assert response.status_code == 404
 
-    client.login(email=user2.email, password="froide")
+    client.login(email=other_user.email, password="froide")
     response = client.get(resource_uri)
     assert response.status_code == 404

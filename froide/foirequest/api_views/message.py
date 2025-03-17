@@ -11,10 +11,13 @@ from ..auth import (
     get_read_foimessage_queryset,
     get_write_foimessage_queryset,
 )
-from ..models import FoiMessage, FoiMessageDraft, FoiRequest
-from ..permissions import OnlyPostalMessagesWritable, WriteFoiRequestPermission
+from ..models import FoiMessage, FoiRequest
+from ..permissions import (
+    OnlyPostalMessagesWritable,
+    WriteFoiRequestPermission,
+    WriteMessageScopePermission,
+)
 from ..serializers import (
-    FoiMessageDraftSerializer,
     FoiMessageSerializer,
     optimize_message_queryset,
 )
@@ -25,22 +28,19 @@ User = get_user_model()
 class FoiMessageFilter(filters.FilterSet):
     class Meta:
         model = FoiMessage
-        fields = ("request", "kind", "is_response")
+        fields = ("request", "kind", "is_response", "is_draft")
 
 
-class FoiMessageDraftFilter(filters.FilterSet):
-    class Meta:
-        model = FoiMessageDraft
-        fields = ("request",)
-
-
-class FoiMessageViewSet(mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet):
+class FoiMessageViewSet(
+    mixins.UpdateModelMixin, mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet
+):
     serializer_class = FoiMessageSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiMessageFilter
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         WriteFoiRequestPermission,
+        WriteMessageScopePermission,
         OnlyPostalMessagesWritable,
     ]
 
@@ -48,7 +48,7 @@ class FoiMessageViewSet(mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet):
         return optimize_message_queryset(self.request, qs)
 
     def get_queryset(self):
-        qs = self.serializer_class.Meta.model.objects.all()
+        qs = self.serializer_class.Meta.model.with_drafts.all()
 
         if self.request.method in permissions.SAFE_METHODS:
             qs = get_read_foimessage_queryset(self.request, qs).order_by()
@@ -56,43 +56,35 @@ class FoiMessageViewSet(mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet):
             qs = get_write_foimessage_queryset(self.request, qs).order_by()
         return self.optimize_query(qs)
 
-
-class FoiMessageDraftViewSet(
-    FoiMessageViewSet,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-):
-    serializer_class = FoiMessageDraftSerializer
-    filterset_class = FoiMessageDraftFilter
-    required_scopes = ["write:message"]
-    permission_classes = [
-        permissions.IsAuthenticated,
-        WriteFoiRequestPermission,
-    ]
-
-    @action(detail=True, methods=["post"])
+    @action(
+        detail=True,
+        methods=["post"],
+    )
     def publish(self, request, pk=None):
         message = self.get_object()
-        message.is_draft = False
+        if not message.is_draft:
+            return Response({"detail": "Message is not a draft"}, status=400)
 
-        if message.is_postal:
-            message.timestamp = postal_date(message)
+        if not message.is_postal:
+            return Response({"detail": "Message must be postal message"}, status=400)
+
+        message.is_draft = False
+        message.timestamp = postal_date(message)
 
         message.save()
-
-        published_message = FoiMessage.objects.get(pk=message.pk)
-        foirequest = published_message.request
+        foirequest = message.request
+        foirequest._messages = None
 
         if message.is_response:
             FoiRequest.message_received.send(
                 sender=foirequest,
-                message=published_message,
+                message=message,
                 user=request.user,
             )
         else:
             FoiRequest.message_sent.send(
                 sender=foirequest,
-                message=published_message,
+                message=message,
                 user=request.user,
             )
 
