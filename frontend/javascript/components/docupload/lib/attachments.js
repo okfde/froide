@@ -219,6 +219,13 @@ const config = {}
 const refresh = () => fetchAttachments(config.urls.getAttachment, config.csrfToken)
   .catch(handleErrorAndRefresh)
 
+const refreshIfIdNotPresent = (attachment) => {
+  if (store.getById(attachment.id)) {
+    return Promise.resolve(false)
+  }
+  return refresh().then(() => true)
+}
+
 store.$subscribe(() => {
   store.images.forEach(image => {
     image.pages.forEach(page => {
@@ -247,8 +254,9 @@ export function useAttachments({ urls = null, csrfToken = null, i18n = null} = {
   if (i18n) config.i18n = i18n
   return {
     pinia,
-    refresh,
     attachments: store,
+    refresh,
+    refreshIfIdNotPresent,
     convertImage,
     createDocument,
     updateDocument,
