@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 from functools import partial
@@ -47,7 +46,7 @@ from ..forms import (
 )
 from ..models import FoiAttachment, FoiEvent, FoiMessage, FoiRequest
 from ..models.attachment import IMAGE_FILETYPES, PDF_FILETYPES, POSTAL_CONTENT_TYPES
-from ..models.message import FoiMessageDraft, MessageKind
+from ..models.message import MessageKind
 from ..serializers import FoiAttachmentSerializer, FoiMessageSerializer
 from ..services import ResendBouncedMessageService
 from ..tasks import convert_images_to_pdf_task
@@ -157,11 +156,13 @@ def add_postal_message(request, slug):
 
 @allow_write_foirequest
 def upload_postal_message_create(request, foirequest):
-    message = FoiMessageDraft(request=foirequest, kind=MessageKind.POST)
-    # hack, prevent: null value in column "timestamp" of relation "foirequest_foimessage" violates not-null constraint
-    # this will be set to "proper" (noon) when finally submitted
-    message.timestamp = datetime.datetime.now()
-    message.save()
+    message, _created = FoiMessage.with_drafts.get_or_create(
+        request=foirequest,
+        kind=MessageKind.POST,
+        is_draft=True,
+        defaults={"timestamp": timezone.now()},
+    )
+
     return redirect(
         reverse(
             "foirequest-edit_postal_message",
