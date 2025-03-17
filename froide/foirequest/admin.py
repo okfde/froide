@@ -600,7 +600,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         return my_urls + urls
 
     def get_queryset(self, request):
-        qs = super(FoiMessageAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         qs = qs.prefetch_related("deliverystatus")
         return qs
 
@@ -763,9 +763,6 @@ class FoiMessageDraftAdmin(FoiMessageAdmin):
 
     def user(self, obj):
         return obj.request.user
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("deliverystatus")
 
 
 @admin.register(MessageTag)
