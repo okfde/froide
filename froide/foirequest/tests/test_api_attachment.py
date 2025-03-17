@@ -6,6 +6,7 @@ from django.utils import timezone
 
 import pytest
 
+from froide.foirequest.models import FoiAttachment
 from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
 from froide.upload.factories import UploadFactory
@@ -205,3 +206,95 @@ def test_convert_attachment(client: Client, user):
         content_type="application/json",
     )
     assert response.status_code == 404
+
+
+@pytest.mark.django_db(transaction=True)
+def test_decrypt_attachment(client: Client, user, monkeypatch):
+    request = factories.FoiRequestFactory.create(user=user)
+    message = factories.FoiMessageFactory.create(request=request, kind=MessageKind.POST)
+
+    encrypted = factories.FoiAttachmentFactory.create(
+        belongs_to=message,
+        filetype="application/pdf",
+    )
+
+    data = {
+        "bad": "wrong",
+        "appoved": True,
+    }
+    url = reverse("api:attachment-decrypt-pdf", kwargs={"pk": encrypted.pk})
+
+    # needs to be logged in
+    response = client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
+    assert response.status_code == 401
+
+    # wrong user
+    other_user = factories.UserFactory.create()
+    assert client.login(email=other_user.email, password="froide")
+    response = client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
+    assert response.status_code == 403
+
+    # bad data
+    assert client.login(email=user.email, password="froide")
+    response = client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+    def mock_decrypt(path, password):
+        if password == "test":
+            return b"1"
+        return None
+
+    import filingcabinet.pdf_utils
+
+    monkeypatch.setattr(filingcabinet.pdf_utils, "decrypt_pdf", mock_decrypt)
+
+    # wrong password
+    data = {
+        "password": "wrong",
+        "approved": True,
+    }
+    assert client.login(email=user.email, password="froide")
+    response = client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
+    # Attachment gets created but in failed decryption task deleted
+    assert response.status_code == 201
+    result = response.json()
+    assert not FoiAttachment.objects.filter(id=result["id"]).exists()
+
+    # everything good
+    data["password"] = "test"
+    assert client.login(email=user.email, password="froide")
+    response = client.post(
+        url,
+        data=data,
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+    result = response.json()
+
+    assert result["name"].endswith("-decrypted.pdf")
+    assert result["filetype"] == "application/pdf"
+    assert result["is_converted"] is True
+
+    decrypted = FoiAttachment.objects.get(id=result["id"])
+    assert decrypted.belongs_to == message
+    assert decrypted.approved
+    assert decrypted.is_converted
+
+    encrypted.refresh_from_db()
+    assert encrypted.converted_id == decrypted.id

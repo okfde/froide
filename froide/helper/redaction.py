@@ -77,11 +77,7 @@ def try_redacting_file(pdf_file, outpath, instructions):
     tries = 0
     while True:
         try:
-            rewritten_pdf_file = rewrite_pdf(pdf_file, instructions)
-            if rewritten_pdf_file is None:
-                # Possibly encrypted with password, let's just try it anyway
-                rewritten_pdf_file = pdf_file
-            return _redact_file(rewritten_pdf_file, outpath, instructions)
+            return _redact_file(pdf_file, outpath, instructions)
         except PDFException as e:
             tries += 1
             if tries > 2:
