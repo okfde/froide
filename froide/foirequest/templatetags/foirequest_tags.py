@@ -161,7 +161,7 @@ def render_request_description(
     foirequest: FoiRequest, authenticated_read: bool
 ) -> SafeString:
     cached_content = foirequest.get_cached_rendered_description(authenticated_read)
-    if cached_content is not None:
+    if cached_content:
         return mark_safe(cached_content)
 
     real_content = unify(foirequest.description)
@@ -173,9 +173,10 @@ def render_request_description(
         authenticated_read=authenticated_read,
     )
 
-    foirequest.set_cached_rendered_description(
-        authenticated_read=authenticated_read, description=content
-    )
+    if content:
+        foirequest.set_cached_rendered_description(
+            authenticated_read=authenticated_read, description=content
+        )
 
     return content
 
