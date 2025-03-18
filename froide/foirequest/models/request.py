@@ -687,17 +687,20 @@ class FoiRequest(models.Model):
                 "redacted_description_anon",
             )
 
-        if getattr(self, cache_field) is None:
+        if not getattr(self, cache_field):
             redacted_content = [list(x) for x in get_differences(show, hide)]
             setattr(self, cache_field, redacted_content)
-            FoiRequest.objects.filter(id=self.pk).update(
-                **{cache_field: redacted_content}
-            )
+            if redacted_content:
+                FoiRequest.objects.filter(id=self.pk).update(
+                    **{cache_field: redacted_content}
+                )
         return getattr(self, cache_field)
 
     def clear_render_cache(self):
         self.redacted_description_anon = None
         self.redacted_description_auth = None
+        self.rendered_description_anon = None
+        self.rendered_description_auth = None
 
     def get_cached_rendered_description(self, authenticated_read):
         if authenticated_read:

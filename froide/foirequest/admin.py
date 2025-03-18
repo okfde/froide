@@ -129,6 +129,12 @@ class FoiRequestAdminForm(forms.ModelForm):
     class Meta:
         model = FoiRequest
         fields = "__all__"
+        exclude = [
+            "redacted_description_auth",
+            "redacted_description_anon",
+            "rendered_description_auth",
+            "rendered_description_anon",
+        ]
         widgets = {
             "tags": TagAutocompleteWidget(
                 autocomplete_url=reverse_lazy("api:request-tags-autocomplete")
