@@ -176,11 +176,11 @@ class FoiAttachment(models.Model):
 
     objects = FoiAttachmentManager()
 
-    attachment_approved = Signal()  # args: ['user', 'redacted']
-    attachment_unapproved = Signal()  # args: ['user']
-    attachment_deleted = Signal()  # args: ['user']
-    attachment_redacted = Signal()  # args: ['user']
-    document_created = Signal()  # args: ['user']
+    attachment_approved = Signal()  # args: ['user', 'request', 'redacted']
+    attachment_unapproved = Signal()  # args: ['user', 'request',]
+    attachment_deleted = Signal()  # args: ['user', 'request',]
+    attachment_redacted = Signal()  # args: ['user', 'request',]
+    document_created = Signal()  # args: ['user', 'request']
 
     class Meta:
         ordering = ("name",)

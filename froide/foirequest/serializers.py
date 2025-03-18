@@ -172,11 +172,15 @@ class FoiRequestListSerializer(
 
     @override
     def update(self, instance, validated_data):
-        user = self.context["request"].user
+        request = self.context["request"]
+        user = request.user
 
         if "costs" in validated_data:
             FoiRequest.costs_reported.send(
-                sender=instance, user=user, costs=validated_data["costs"]
+                sender=instance,
+                user=user,
+                costs=validated_data["costs"],
+                request=request,
             )
 
         if (
@@ -190,6 +194,7 @@ class FoiRequestListSerializer(
             FoiRequest.status_changed.send(
                 sender=instance,
                 user=user,
+                request=request,
                 status=validated_data.get("status"),
                 resolution=validated_data.get("resolution"),
                 previous_status=previous_status,
@@ -436,7 +441,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
                 FoiEvent.EVENTS.MESSAGE_EDITED,
                 instance.request,
                 message=instance,
-                user=request.user,
+                request=request,
                 context=validated_data,
             )
 
