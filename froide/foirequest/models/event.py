@@ -135,6 +135,7 @@ class FoiEventManager(models.Manager):
         foirequest,
         message=None,
         user=None,
+        request=None,
         public_body=None,
         context=None,
         **kwargs,
@@ -143,8 +144,18 @@ class FoiEventManager(models.Manager):
 
         if not context:
             context = {}
-
         context.update(kwargs)
+
+        if user is None and request is not None:
+            user = request.user
+        if user is not None:
+            user = user if user.is_authenticated else None
+
+        if request is not None:
+            token = getattr(request, "auth", None)
+            if token is not None:
+                context["oauth_application_id"] = token.application_id
+
         context = {k: str(v) for k, v in context.items()}
         event = FoiEvent(
             request=foirequest,

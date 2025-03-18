@@ -77,15 +77,11 @@ class FoiMessageViewSet(
 
         if message.is_response:
             FoiRequest.message_received.send(
-                sender=foirequest,
-                message=message,
-                user=request.user,
+                sender=foirequest, message=message, user=request.user, request=request
             )
         else:
             FoiRequest.message_sent.send(
-                sender=foirequest,
-                message=message,
-                user=request.user,
+                sender=foirequest, message=message, user=request.user, request=request
             )
 
         # return it as a regular message

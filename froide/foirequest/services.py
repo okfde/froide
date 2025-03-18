@@ -2,12 +2,14 @@ import re
 import uuid
 from datetime import timedelta
 from functools import partial
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.files import File
 from django.db import transaction
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -18,6 +20,7 @@ from froide.helper.email_parsing import ParsedEmail
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import redact_plaintext, redact_subject
 from froide.problem.models import ProblemReport
+from froide.publicbody.models import PublicBody
 
 from .hooks import registry
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest, RequestDraft
@@ -81,7 +84,9 @@ class CreateRequestService(BaseService):
         if len(self.data["publicbodies"]) > 1:
             foi_object = self.create_project()
         else:
-            foi_object = self.create_request(self.data["publicbodies"][0])
+            foi_object = self.create_request(
+                self.data["publicbodies"][0], request=request
+            )
 
             if user_created:
                 AccountService(user).send_confirmation_mail(
@@ -163,13 +168,18 @@ class CreateRequestService(BaseService):
         )
         return project
 
-    def create_request(self, publicbody, sequence=0):
+    def create_request(
+        self,
+        publicbody: PublicBody,
+        sequence: int = 0,
+        request: Optional[HttpRequest] = None,
+    ):
         data = self.data
         user = data["user"]
         user_replacements = user.get_redactions()
 
         now = timezone.now()
-        request = FoiRequest(
+        foirequest = FoiRequest(
             title=data["subject"],
             public_body=publicbody,
             user=data["user"],
@@ -190,14 +200,14 @@ class CreateRequestService(BaseService):
         send_now = False
 
         if not user.is_active:
-            request.status = FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
-            request.visibility = FoiRequest.VISIBILITY.INVISIBLE
+            foirequest.status = FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
+            foirequest.visibility = FoiRequest.VISIBILITY.INVISIBLE
         else:
-            request.status = FoiRequest.STATUS.AWAITING_RESPONSE
-            request.determine_visibility()
+            foirequest.status = FoiRequest.STATUS.AWAITING_RESPONSE
+            foirequest.determine_visibility()
             send_now = True
 
-        request.secret_address = generate_unique_secret_address(user)
+        foirequest.secret_address = generate_unique_secret_address(user)
         foilaw = None
         if data.get("law_type"):
             law_type = data["law_type"]
@@ -206,29 +216,29 @@ class CreateRequestService(BaseService):
         if foilaw is None:
             foilaw = publicbody.default_law
 
-        request.law = foilaw
-        request.jurisdiction = foilaw.jurisdiction
+        foirequest.law = foilaw
+        foirequest.jurisdiction = foilaw.jurisdiction
 
         if send_now:
-            request.due_date = request.law.calculate_due_date()
+            foirequest.due_date = foirequest.law.calculate_due_date()
 
         if data.get("blocked"):
             send_now = False
-            request.is_blocked = True
+            foirequest.is_blocked = True
 
-        self.pre_save_request(request)
-        save_obj_with_slug(request, count=sequence)
+        self.pre_save_request(foirequest)
+        save_obj_with_slug(foirequest, count=sequence)
 
         if "tags" in data and data["tags"]:
-            request.tags.add(*[t[:100] for t in data["tags"]])
+            foirequest.tags.add(*[t[:100] for t in data["tags"]])
 
-        subject = "%s [#%s]" % (request.title, request.pk)
+        subject = "%s [#%s]" % (foirequest.title, foirequest.pk)
         message = FoiMessage(
-            request=request,
+            request=foirequest,
             sent=False,
             is_response=False,
             sender_user=user,
-            sender_email=request.secret_address,
+            sender_email=foirequest.secret_address,
             sender_name=user.display_name(),
             timestamp=now,
             status="awaiting_response",
@@ -246,7 +256,7 @@ class CreateRequestService(BaseService):
 
         send_address = bool(self.data.get("address"))
         message.plaintext = construct_initial_message_body(
-            request,
+            foirequest,
             text=data["body"],
             foilaw=foilaw,
             full_text=data.get("full_text", False),
@@ -256,30 +266,31 @@ class CreateRequestService(BaseService):
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
-            request,
+            foirequest,
         )
 
         message.recipient_public_body = publicbody
         message.recipient = publicbody.name
         message.recipient_email = publicbody.get_email(data.get("law_type"))
 
-        FoiRequest.request_to_public_body.send(sender=request)
+        FoiRequest.request_to_public_body.send(sender=foirequest)
 
         message.save()
         FoiRequest.request_created.send(
-            sender=request, reference=data.get("reference", "")
+            sender=foirequest, reference=data.get("reference", "")
         )
         if send_now:
             message.send(attachments=attachments)
             message.save()
             FoiRequest.message_sent.send(
-                sender=request,
+                sender=foirequest,
                 message=message,
+                request=request,
             )
             FoiRequest.request_sent.send(
-                sender=request, reference=data.get("reference", "")
+                sender=foirequest, reference=data.get("reference", "")
             )
-        return request
+        return foirequest
 
     def pre_save_request(self, request):
         pass
@@ -301,14 +312,14 @@ class CreateRequestFromProjectService(CreateRequestService):
     def process(self, request=None):
         data = self.data
         pb = data["publicbody"]
-        return self.create_request(pb, sequence=data["project_order"])
+        return self.create_request(pb, sequence=data["project_order"], request=request)
 
 
 class CreateSameAsRequestService(CreateRequestService):
-    def create_request(self, publicbody, sequence=0):
+    def create_request(self, publicbody, sequence=0, request=None):
         original_request = self.data["original_foirequest"]
         sequence = original_request.same_as_count + 1
-        return super().create_request(publicbody, sequence=sequence)
+        return super().create_request(publicbody, sequence=sequence, request=request)
 
     def pre_save_request(self, request):
         original_request = self.data["original_foirequest"]

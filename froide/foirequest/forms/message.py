@@ -801,7 +801,7 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
             FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
             self.foimessage.request,
             message=self.foimessage,
-            user=request.user,
+            request=request,
             **{"added": str(result)},
         )
 

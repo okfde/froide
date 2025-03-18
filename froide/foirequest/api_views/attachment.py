@@ -106,7 +106,7 @@ class FoiAttachmentViewSet(
             FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
             foimessage.request,
             message=foimessage,
-            user=request.user,
+            request=request,
             **{"added": str(att)},
         )
 
@@ -115,10 +115,6 @@ class FoiAttachmentViewSet(
 
     @override
     def perform_destroy(self, instance):
-        instance.attachment_deleted.send(
-            sender=instance,
-            user=self.request.user,
-        )
         instance.remove_file_and_delete()
 
     def destroy(self, request, *args, **kwargs):
@@ -136,7 +132,10 @@ class FoiAttachmentViewSet(
                 data={"detail": _("Can't delete this attachment.")},
                 status=status.HTTP_403_FORBIDDEN,
             )
-
+        instance.attachment_deleted.send(
+            sender=instance,
+            request=request,
+        )
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -155,7 +154,7 @@ class FoiAttachmentViewSet(
             FoiEvent.objects.create_event(
                 event_name,
                 instance.belongs_to.request,
-                user=request.user,
+                request=request,
                 message=instance.belongs_to,
                 attachment_id=instance.pk,
             )
@@ -217,7 +216,7 @@ class FoiAttachmentViewSet(
         doc = att.create_document()
         att.document_created.send(
             sender=att,
-            user=request.user,
+            request=request,
         )
 
         data = DocumentSerializer(doc, context={"request": request}).data

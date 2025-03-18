@@ -272,23 +272,27 @@ def foiattachment_delayed_remove(instance, **kwargs):
 
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, message, user=None, **kwargs):
+def create_event_message_sent(sender, message, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_SENT,
         sender,
         message=message,
         user=user,
+        request=request,
         public_body=message.recipient_public_body,
     )
 
 
 @receiver(FoiRequest.message_received, dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, message=None, user=None, **kwargs):
+def create_event_message_received(
+    sender, message=None, user=None, request=None, **kwargs
+):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_RECEIVED,
         sender,
         message=message,
         user=user,
+        request=request,
         public_body=message.sender_public_body,
     )
 
@@ -323,11 +327,14 @@ def create_event_followers_attachments_redacted(sender, user=None, **kwargs):
     FoiAttachment.attachment_deleted,
     dispatch_uid="create_event_followers_attachment_deleted",
 )
-def create_event_followers_attachments_attachment_deleted(sender, user=None, **kwargs):
+def create_event_followers_attachments_attachment_deleted(
+    sender, user=None, request=None, **kwargs
+):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.ATTACHMENT_DELETED,
         sender.belongs_to.request,
         user=user,
+        request=request,
         attachment_id=sender.id,
     )
 
@@ -336,21 +343,25 @@ def create_event_followers_attachments_attachment_deleted(sender, user=None, **k
     FoiAttachment.document_created,
     dispatch_uid="create_event_followers_attachment_document_created",
 )
-def create_event_followers_attachments_document_created(sender, user=None, **kwargs):
+def create_event_followers_attachments_document_created(
+    sender, user=None, request=None, **kwargs
+):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.DOCUMENT_CREATED,
         sender.belongs_to.request,
         user=user,
+        request=request,
         attachment_id=sender.id,
     )
 
 
 @receiver(FoiRequest.status_changed, dispatch_uid="create_event_status_changed")
-def create_event_status_changed(sender, user=None, **kwargs):
+def create_event_status_changed(sender, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.STATUS_CHANGED,
         sender,
         user=user,
+        request=request,
         status=kwargs.get("status", ""),
         resolution=kwargs.get("resolution", ""),
         costs=kwargs["data"].get("costs"),
@@ -361,21 +372,20 @@ def create_event_status_changed(sender, user=None, **kwargs):
 
 
 @receiver(FoiRequest.costs_reported, dispatch_uid="create_event_costs_reported")
-def create_event_costs_reported(sender: FoiRequest, user=None, **kwargs):
+def create_event_costs_reported(sender: FoiRequest, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.REPORTED_COSTS,
         sender,
         user=user,
+        request=request,
         costs=kwargs.get("costs"),
     )
 
 
 @receiver(FoiRequest.made_public, dispatch_uid="create_event_made_public")
-def create_event_made_public(sender, user=None, **kwargs):
+def create_event_made_public(sender, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.MADE_PUBLIC,
-        sender,
-        user=user,
+        FoiEvent.EVENTS.MADE_PUBLIC, sender, user=user, request=request
     )
 
 
