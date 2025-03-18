@@ -23,12 +23,6 @@ class Migration(migrations.Migration):
             },
             bases=("foirequest.foimessage",),
         ),
-        migrations.AlterModelManagers(
-            name="foimessage",
-            managers=[
-                ("with_drafts", django.db.models.manager.Manager()),
-            ],
-        ),
         migrations.AddField(
             model_name="foiattachment",
             name="approved_timestamp",
