@@ -49,19 +49,17 @@ const pdfRedaction = ref()
 
 const pdfRedactionAtt = ref(null)
 
+const pdfRedactionModal = ref()
+
 const pdfRedactionUploaded = () => {
-  // handle v-if'ed modal
   pdfRedactionModal.value.hide()
   pdfRedactionAtt.value = null
   refreshAttachments()
   emit('actionDone')
 }
 
-const pdfRedactionModal = ref()
-
 const redactClick = (evt, att) => {
   evt.preventDefault()
-  // handle v-if'ed modal
   pdfRedactionAtt.value = att
   nextTick().then(() => pdfRedactionModal.value.show())
 }
@@ -94,7 +92,7 @@ const approveClick = () => {
     {{ i18n.markResult }}
   </button>
   <a
-    v-if="!dropdown && attachment.canRedact && !attachment.is_redacted"
+    v-if="!dropdown && attachment.canRedact"
     :href="getRedactUrl(attachment)"
     class="btn btn-sm btn-link text-start"
     @click="redactClick($event, attachment)"
@@ -222,9 +220,8 @@ const approveClick = () => {
     </ul>
   </div>
   <bs-modal
-    v-if="pdfRedactionAtt"
-    :key="pdfRedactionAtt.id"
     ref="pdfRedactionModal"
+    :key="(pdfRedactionAtt?.id || attachment.id)"
     dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
     content-classes="h-100"
     body-classes="p-0"

@@ -15,13 +15,8 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  showOnMounted: {
-    type: Boolean,
-    default: false
-  }
+  keepAlive: Boolean
 })
-
-const emit = defineEmits('close')
 
 const modalEl = ref()
 let bsModal
@@ -43,8 +38,8 @@ const show = async () => {
 
 const hide = () => {
   bsModal.hide()
-  if (props.showOnMounted) {
-    emit('close')
+  if (!props.keepAlive) {
+    doRender.value = false
   }
 }
 
