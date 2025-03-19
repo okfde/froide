@@ -341,6 +341,8 @@ function isTouchDevice() {
 
 let panzoom
 
+let resizeTimeout = false
+
 export default {
   name: 'PdfRedaction',
   components: { ConfirmNoRedaction },
@@ -541,18 +543,7 @@ export default {
   mounted() {
     document.addEventListener('keydown', this.setAltKey)
     document.addEventListener('keyup', this.setAltKey)
-
-    let resizeTimeout = false
-    window.addEventListener('resize', () => {
-      if (resizeTimeout) {
-        console.log('debounce resize timeout')
-        window.clearTimeout(resizeTimeout)
-      }
-      resizeTimeout = window.setTimeout(() => {
-        this.reloadCurrentPage()
-        resizeTimeout = false
-      }, 500)
-    })
+    window.addEventListener('resize', this.reloadPageAfterResizeDebounced)
 
     panzoom = Panzoom(this.$refs.container, {
       canvas: true,
@@ -565,6 +556,7 @@ export default {
   beforeUnmount() {
     document.removeEventListener('keydown', this.setAltKey)
     document.removeEventListener('keyup', this.setAltKey)
+    window.removeEventListener('resize', this.reloadPageAfterResizeDebounced)
   },
   methods: {
     loadDocument() {
@@ -1444,6 +1436,16 @@ export default {
     },
     setAltKey(e) {
       if (this.doPaint || !e.altKey) this.altKey = e.altKey
+    },
+    reloadPageAfterResizeDebounced() {
+      if (resizeTimeout) {
+        console.log('debounce resize timeout')
+        window.clearTimeout(resizeTimeout)
+      }
+      resizeTimeout = window.setTimeout(() => {
+        this.reloadCurrentPage()
+        resizeTimeout = false
+      }, 500)
     }
   }
 }
