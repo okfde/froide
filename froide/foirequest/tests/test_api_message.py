@@ -133,18 +133,20 @@ def test_message_draft(client: Client, user):
     message_id = message_response["id"]
     resource_uri = reverse("api:message-detail", kwargs={"pk": message_id})
 
+    # Can't delete drafts
     response = client.delete(resource_uri)
     assert response.status_code == 405, response.json()
 
-    # create message draft
+    # creating it again, returns same draft
     response = client.post(
         "/api/v1/message/",
         data=data,
         content_type="application/json",
     )
-    assert response.status_code == 201, response.json()
+    assert response.status_code == 200, response.json()
 
-    message_id = response.json()["id"]
+    new_message_id = response.json()["id"]
+    assert message_id == new_message_id
     resource_uri = reverse("api:message-detail", kwargs={"pk": message_id})
 
     # can't set sent stauts
@@ -220,7 +222,7 @@ def test_message_draft(client: Client, user):
         content_type="application/json",
     )
     data = response.json()
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert reverse("api:request-detail", kwargs={"pk": request.pk}) in data["request"]
 
     message_id = response.json()["id"]
