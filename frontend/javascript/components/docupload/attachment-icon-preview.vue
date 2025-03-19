@@ -95,7 +95,7 @@ const iconTooltipTexts = computed(() => [
         <div class="row h-100">
           <div class="col-sm-8 mb-3">
             <document-viewer
-              v-if="attachment.document"
+              v-if="attachment.document && !attachment.document.pending"
               :document-url="attachment.document.resource_uri"
               :document-preview="attachment.document"
               :config="config"
