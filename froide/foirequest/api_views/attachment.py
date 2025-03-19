@@ -12,6 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from froide.document.api_views import DocumentSerializer
+from froide.foirequest.models.message import FoiMessage
 from froide.helper.auth import is_crew
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
@@ -19,6 +20,7 @@ from froide.helper.text_utils import slugify
 from ..auth import (
     CreateOnlyWithScopePermission,
     get_read_foiattachment_queryset,
+    get_read_foimessage_queryset,
 )
 from ..models import FoiAttachment, FoiEvent
 from ..permissions import WriteFoiRequestPermission
@@ -33,6 +35,11 @@ User = get_user_model()
 
 
 class FoiAttachmentFilter(filters.FilterSet):
+    belongs_to = filters.ModelChoiceFilter(
+        queryset=FoiMessage.objects.none(),
+        field_name="belongs_to",
+    )
+
     class Meta:
         model = FoiAttachment
         fields = (
@@ -42,6 +49,15 @@ class FoiAttachmentFilter(filters.FilterSet):
             "is_redacted",
             "belongs_to",
         )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        request = kwargs.get("request")
+        if request is None:
+            request = self.view.request
+        self.filters["belongs_to"].queryset = get_read_foimessage_queryset(
+            request, FoiMessage.with_drafts.all()
+        ).order_by()
 
 
 class FoiAttachmentViewSet(
