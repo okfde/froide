@@ -118,6 +118,7 @@ def get_read_foiattachment_queryset(request: HttpRequest, queryset=None):
         has_team=True,
         public_q=Q(
             belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
+            belongs_to__is_draft=False,
             approved=True,
         ),
         scope="read:request",

@@ -357,3 +357,33 @@ def test_to_document(client: Client, user):
         event_name=FoiEvent.EVENTS.DOCUMENT_CREATED,
         context__attachment_id=str(attachment.pk),
     )
+
+
+@pytest.mark.django_db
+def test_retrieve_attachment_on_draft(client: Client, user):
+    request = factories.FoiRequestFactory.create(user=user)
+    message = factories.FoiMessageFactory.create(
+        request=request, kind=MessageKind.POST, is_draft=True
+    )
+
+    attachment = factories.FoiAttachmentFactory.create(belongs_to=message)
+
+    response = client.get(
+        reverse("api:attachment-detail", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 404
+
+    response = client.get(reverse("api:attachment-list") + f"?belongs_to={message.pk}")
+    assert response.status_code == 400
+
+    client.force_login(user)
+    response = client.get(
+        reverse("api:attachment-detail", kwargs={"pk": attachment.pk})
+    )
+    assert response.status_code == 200
+
+    response = client.get(reverse("api:attachment-list") + f"?belongs_to={message.pk}")
+    assert response.status_code == 200
+    data = response.json()
+    assert len(data["objects"]) == 1
+    assert data["objects"][0]["id"] == attachment.pk
