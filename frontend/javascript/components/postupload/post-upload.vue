@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, onMounted, provide, reactive, ref } from 'vue'
+import { computed, onMounted, provide, reactive, ref } from 'vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 // import PublicbodyChooser from '../publicbody/publicbody-chooser'
@@ -345,6 +345,12 @@ const gotoStep = (nextStep) => {
   stepsConfig[nextStep].onEnter?.()
   scrollNavIntoViewIfNecessary()
 }
+
+onMounted(() => {
+  if (props.message.attachments.length > 0 && step.value === STEP_INTRO) {
+    gotoStep(STEP_DOCUMENTS_OVERVIEW)
+  }
+})
 
 const backStep = () => {
   stepsConfig[step.value].onBack?.()

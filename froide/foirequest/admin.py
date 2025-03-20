@@ -551,6 +551,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
         "sender_user__is_deleted",
         "request__campaign",
         MessageTagsFilter,
+        ("request", ForeignKeyFilter),
         ("request__reference", SearchFilter),
         ("sender_public_body", ForeignKeyFilter),
         ("recipient_public_body", ForeignKeyFilter),

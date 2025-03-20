@@ -498,13 +498,22 @@ def unpack_zipfile_attachment_task(instance_id):
 
 @celery_app.task(name="froide.foirequest.tasks.remove_old_drafts", time_limit=10)
 def remove_old_drafts():
-    from .models import FoiMessageDraft, MessageKind
+    from .models import FoiAttachment, FoiMessageDraft, MessageKind
 
     # FIXME: remove? We should keep drafts around, especially when drafts are also used
     # for drafting email messages
-    FoiMessageDraft.objects.filter(
-        kind=MessageKind.POST, last_modified_at__lt=timezone.now() - timedelta(days=30)
-    ).delete()
+    draft_messages_to_be_deleted = FoiMessageDraft.objects.filter(
+        is_draft=True,
+        kind=MessageKind.POST,
+        last_modified_at__lt=timezone.now() - timedelta(days=30),
+    )
+    attachments = FoiAttachment.objects.filter(
+        belongs_to__in=draft_messages_to_be_deleted
+    )
+    for att in attachments:
+        att.remove_file_and_delete()
+
+    draft_messages_to_be_deleted.delete()
 
 
 @celery_app.task(
