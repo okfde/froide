@@ -7,7 +7,7 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
-import { messageDraftList, messageDraftCreate, messageDraftPartialUpdate } from '../../api/index.ts'
+import { messageRetrieve, messagePartialUpdate } from '../../api/index.ts'
 import { useI18n } from '../../lib/i18n'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
@@ -27,10 +27,11 @@ import AttachmentsTable from '../docupload/attachments-table.vue'
 
 const props = defineProps({
   config: Object,
-  // form: Object,
-  // message: Object,
+  form: Object,
+  message: Object,
   // status_form: Object,
   // foirequest: Object,
+  message_id: Number,
   foirequest_id: String,
   foirequest_apiurl: String,
   // foirequest_costs: Object,
@@ -54,12 +55,13 @@ const {
   convertImage,
   approveAllUnredactedAttachments
 } = useAttachments({
+  message: props.message,
   urls: {
     ...props.config.url,
     ...props.config.urls,
     getAttachment: props.config.url.getAttachment.replace('/0/', '/') +
       '?belongs_to=' +
-      970110 // props.message.id,
+      props.message.id,
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
   i18n,
@@ -103,6 +105,7 @@ const draft = ref({})
 
 const error = ref(false)
 
+/*
 const createOrRetrieveLastDraft = async () => {
   const requestParam = { query: { request: props.foirequest_id } }
   try {
@@ -125,19 +128,22 @@ const createOrRetrieveLastDraft = async () => {
     formSent.value = draft.value.sent
     values.sent = draft.value.sent
     refreshAttachments()
-    /*
-      draft.value = r
-      formSent.value = r.is_response
-      formStatus.value = r.status
-      formStatusWasResolved.value = r.status === 'resolved'
-      */
+    //  draft.value = r
+    //  formSent.value = r.is_response
+    //  formStatus.value = r.status
+    //  formStatusWasResolved.value = r.status === 'resolved'
   } catch (e) {
     error.value = e.message
   }
 }
+*/
+
+const retrieveDraft = async () => {
+  draft.value = await messageRetrieve({ path: { id: props.message.id }, throwOnError: true })
+}
 
 const updateValue = async (key) => {
-  return messageDraftPartialUpdate({
+  return messagePartialUpdate({
     path: { id: draft.value.id },
     body: { [key]: values[key] },
     throwOnError: true
@@ -156,7 +162,12 @@ const updateValue = async (key) => {
 const mobileAppContent = ref(null)
 if (props.config.url.mobileAppContent) {
   fetch(props.config.url.mobileAppContent.replace("{}", props.message.id))
-    .then((response) => response.text())
+    .then((response) => {
+      if (!response.ok) {
+        return i18n.value.error
+      }
+      return response.text()
+    })
     .then((text) => {
       mobileAppContent.value = text
     })
@@ -752,7 +763,8 @@ const stepsConfig = {
 }
 
 onMounted(() => {
-  createOrRetrieveLastDraft()
+  // createOrRetrieveLastDraft()
+  retrieveDraft()
 })
 
 /* --- state machine, visualization --- */

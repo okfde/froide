@@ -240,7 +240,7 @@ const approveAllUnredactedAttachments = (excludeIds = []) => {
 
 const config = {}
 
-const refresh = () => fetchAttachments(config.message.id)
+const refresh = (messageId) => fetchAttachments(messageId || config.message.id)
   .catch(handleErrorAndRefresh)
 
 const refreshIfIdNotPresent = (attachment) => {
