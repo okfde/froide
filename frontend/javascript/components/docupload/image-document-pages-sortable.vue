@@ -1,28 +1,27 @@
 <script setup>
-/* This is a separate component because we need to provide Vue3 composition setup for useSortable,
-which looks like the most reasonable replacement for vuedraggable (Vue2 only);
-other alternatives did not work (vuedraggable-next and a different thin SortableJS wrapper). */
 
 import { useSortable } from '@vueuse/integrations/useSortable'
-import { computed, defineEmits, ref } from 'vue'
+import { computed, ref } from 'vue'
 import ImagePage from './image-page.vue'
+import { useAttachments } from './lib/attachments'
+
+const { attachments } = useAttachments()
 
 const props = defineProps({
-  pages: Array,
-  dense: Boolean
+  idx: {
+    type: Number,
+    required: true
+  },
+  showRotate: Boolean,
+  showSplit: Boolean
 })
 
-// once updated to Vue>=3.4
-// we might be able to simplify this to
-//   const pages = defineModel()
-// this is even more manual than supported by Vue3.2
-// it was the only way to get the interaction with useSortable working
+const busy = computed(() => attachments.images[props.idx]?.isConverting)
+
 const pages = computed({
-  get: () => props.pages,
-  set: (val) => emit('update:pages', val)
+  get: () => attachments.images[props.idx]?.pages || [],
+  set: (val) => attachments.images[props.idx].pages = val
 })
-
-const emit = defineEmits(['update:pages', 'pageupdated', 'splitpages'])
 
 const pagesEl = ref()
 
@@ -30,16 +29,20 @@ useSortable(pagesEl, pages, { animation: 200 })
 </script>
 
 <template>
-  <div ref="pagesEl" class="pages d-flex flex-wrap align-items-baseline pb-3">
+  <div
+    ref="pagesEl"
+    class="pages d-flex flex-wrap row-gap-5 column-gap-3 my-5"
+    :class="{ 'pe-none': busy, 'opacity-50': busy}"
+    >
     <image-page
-      v-for="page in pages"
+      v-for="(page, pageNum) in pages"
       :key="page.id"
+      :idx="idx"
       :page="page"
+      :page-num="pageNum + 1"
       :page-count="pages.length"
-      :dense="dense"
-      :hide-rotate="dense"
-      :hide-split="dense"
-      @pageupdated="emit('pageupdated', $event)"
-      @splitpages="emit('splitpages', $event)" />
+      :show-rotate="showRotate"
+      :show-split="showSplit"
+      />
   </div>
 </template>
