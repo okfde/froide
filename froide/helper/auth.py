@@ -61,19 +61,19 @@ def has_authenticated_access(obj, request, verb="write", scope=None):
 
 
 @lru_cache()
-def can_read_object(obj, request=None):
+def can_read_object(obj, request=None, scope=None):
     if hasattr(obj, "is_public") and obj.is_public():
         return True
     if request is None:
         return False
-    return has_authenticated_access(obj, request, verb="read")
+    return has_authenticated_access(obj, request, verb="read", scope=scope)
 
 
 @lru_cache()
-def can_read_object_authenticated(obj, request=None):
+def can_read_object_authenticated(obj, request=None, scope=None):
     if request is None:
         return False
-    return has_authenticated_access(obj, request, verb="read")
+    return has_authenticated_access(obj, request, verb="read", scope=scope)
 
 
 @lru_cache()
