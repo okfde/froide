@@ -1,14 +1,18 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
 
 import pytest
+from oauth2_provider.models import get_access_token_model, get_application_model
 
 from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
+
+Application = get_application_model()
+AccessToken = get_access_token_model()
 
 
 @pytest.mark.django_db
@@ -338,3 +342,47 @@ def test_draft_auth(client, user):
     client.login(email=other_user.email, password="froide")
     response = client.get(resource_uri)
     assert response.status_code == 404
+
+
+def get_oauth_authorization_header(user, scope):
+    application = Application.objects.create(
+        name="Test Application",
+        redirect_uris="http://localhost http://example.com http://example.org",
+        user=user,
+        client_type=Application.CLIENT_CONFIDENTIAL,
+        authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+    )
+    access_token = AccessToken.objects.create(
+        user=user,
+        scope=scope,
+        expires=timezone.now() + timedelta(seconds=300),
+        token="secret-access-token-key",
+        application=application,
+    )
+    return "Bearer {0}".format(access_token.token)
+
+
+@pytest.mark.django_db
+def test_oauth_message_draft(client, user):
+    # create message draft
+    request = factories.FoiRequestFactory.create(user=user)
+    data = {
+        "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
+        "kind": "post",
+        "is_response": True,
+        "sender_public_body": reverse(
+            "api:publicbody-detail", kwargs={"pk": request.public_body.pk}
+        ),
+    }
+
+    response = client.post(
+        "/api/v1/message/",
+        data=data,
+        content_type="application/json",
+        headers={
+            "Authorization": get_oauth_authorization_header(
+                user, "write:request write:message"
+            )
+        },
+    )
+    assert response.status_code == 201, response.json()
