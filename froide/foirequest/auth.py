@@ -187,10 +187,8 @@ def can_read_foiproject_authenticated(
 
 
 @lru_cache()
-def can_write_foirequest(
-    foirequest: FoiRequest, request: HttpRequest, scope=None
-) -> bool:
-    if can_write_object(foirequest, request, scope):
+def can_write_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
+    if can_write_object(foirequest, request, scope="write:request"):
         return True
 
     if foirequest.project:
