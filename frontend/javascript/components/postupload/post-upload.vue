@@ -7,7 +7,7 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
-import { messageRetrieve, messagePartialUpdate } from '../../api/index.ts'
+import { messageRetrieve, messagePartialUpdate, messagePublishCreate } from '../../api/index.ts'
 import { useI18n } from '../../lib/i18n'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
@@ -16,25 +16,24 @@ import Room from '../../lib/websocket.ts'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from '../online-help.vue'
 
-import { ResolutionEnum, requestRetrieve } from '../../api/index.ts'
+import { requestRetrieve, requestPartialUpdate } from '../../api/index.ts'
 
 import { useAttachments } from '../docupload/lib/attachments'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FileUploader from '../upload/file-uploader.vue'
+import ImagesConverter from '../docupload/images-converter.vue'
 import ImageDocumentPagesSortable from '../docupload/image-document-pages-sortable.vue'
 import AttachmentsTable from '../docupload/attachments-table.vue'
 
 const props = defineProps({
   config: Object,
-  form: Object,
   message: Object,
-  // status_form: Object,
+  form: Object,
+  status_form: Object,
   // foirequest: Object,
-  message_id: Number,
   foirequest_id: String,
   foirequest_apiurl: String,
-  // foirequest_costs: Object,
   object_public_body_id: String,
   object_public_body: Object,
   object_public: Boolean,
@@ -66,18 +65,6 @@ const {
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
   i18n,
 })
-
-// const foirequest = ref({})
-requestRetrieve({ path: { id: props.foirequest_id }, throwOnError: true })
-  .then((response) => {
-    // foirequest.value = response.data
-    values.costs = response.data.costs
-    hasHadCost.value = response.data.costs > 0
-  })
-  .catch((err) => {
-    console.error(err)
-    window.alert('requestRetrieve error')
-  })
 
 // const refreshAttachments = () => {
 //   fetchAttachments(draft.value.id)
@@ -138,10 +125,62 @@ const createOrRetrieveLastDraft = async () => {
 }
 */
 
-const retrieveDraft = async () => {
-  draft.value = await messageRetrieve({ path: { id: props.message.id }, throwOnError: true })
+const values = reactive({
+  // FIXME date doesn't populate from a saved form?
+  /*
+  date: props.form.fields.date.value,
+  registered_mail_date: props.form.fields.registered_mail_date.value,
+  costs:
+    props.status_form.fields.costs.value?.strValue ||
+    props.status_form.fields.costs.initial.strValue,
+  is_registered_mail: false
+  */
+})
+
+const requestHadCosts = ref()
+const requestIsResolved = computed(() => values.status === 'resolved')
+const requestWasResolved = ref()
+const requestUpdateCosts = ref(false)
+
+const retrieveValues = async () => {
+  // TODO handle errors
+  const { data: request } = await requestRetrieve({
+    path: { id: props.foirequest_id },
+    throwOnError: true
+  })
+  values.status = request.status
+  values.public_body = request.public_body.resource_uri
+  values.costs = request.costs // string "12.34"!
+  requestHadCosts.value = parseFloat(request.costs) > 0
+  // TODO get value from schema?
+  // requestIsResolved.value = request.status === 'resolved'
+  values.resolution = request.resolution
+  requestWasResolved.value = request.status === 'resolved'
+  const { data: message } = await messageRetrieve({
+    path: { id: props.message.id },
+    throwOnError: true
+  })
+  values.is_response = message.is_response
+  values.date = ymdifyDate(message.timestamp)
+  values.registered_mail_date = message.registered_mail_date
+    ? ymdifyDate(message.registered_mail_date)
+    : ''
+  values.sender_public_body = message.sender_public_body
+  values.recipient_public_body = message.recipient_public_body
 }
 
+retrieveValues()
+  .catch((err) => {
+    console.error('retrieveValues error', err)
+    error.value = err
+  })
+
+const updatePublicBody = (pbUpdateEvt) => {
+  // form some reasone, this didn't work inline in the handler
+  values.public_body = pbUpdateEvt.resourceUri
+}
+
+/*
 const updateValue = async (key) => {
   return messagePartialUpdate({
     path: { id: draft.value.id },
@@ -156,6 +195,7 @@ const updateValue = async (key) => {
       return false
     })
 }
+*/
 
 /* Mobile App Content */
 
@@ -179,6 +219,8 @@ if (props.config.url.messageWebsocket) {
   const room = new Room(props.config.url.messageWebsocket)
   room.connect().on('attachment_added', (data) => {
     // When a new attachment is added, refresh the attachments store
+    // TODO: can this be a race condition vs. "just added attachment via web ui",
+    // which also triggers a websocket event, that can arrive before "the id is present"?
     refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
       if (!refreshed) {
         return
@@ -198,80 +240,30 @@ if (props.config.url.messageWebsocket) {
  * TODO: this should be cleaned up at the model level.
  */
 // const formSent = ref(props.message?.is_response ? '0' : '1')
-const formSent = ref(false) // computed(() => draft.value.is_response ? '0' : '1')
 // const formIsSent = computed(() => formSent.value === '1')
-// const formIsSent = computed(() => draft.value.is_response)
-
-const formSentChoices = [
-  { value: true, label: 'true TODO i18n' },
-  { value: false, label: 'false TODO i18n' },
-]
 
 const formPublicbodyIsDefault = ref(true)
 
-const formPublicBodyIsDefaultChoices = [
-  { value: true, label: 'Ja.' },
-  { value: false, label: 'Nein, andere Behörde wählen' }
-]
-
-// const formStatus = ref(
-//   props.status_form.fields.status.value ||
-//     props.status_form.fields.status.initial
-// )
-const formStatus = ref('')
-// const formStatusWasResolved = formStatus.value === 'resolved'
-const formStatusWasResolved = ref(false)
-const formStatusIsResolved = computed(() => formStatus.value === 'resolved')
-
-// TODO i18n
-const formStatusLabels = {
-  SUCCESSFUL: "Request Successful",
-  PARTIALLY_SUCCESSFUL: "Request partially successful",
-  NOT_HELD: "Information not held",
-  REFUSED: "Request refused",
-  USER_WITHDREW_COSTS: "Request was withdrawn due to costs",
-  USER_WITHDREW: "Request was withdrawn",
-}
-
 // remove nonsensical combos
-const formStatusChoices = computed(() => {
-  const badCombinations = formSent.value
+const requestResolutionChoices = computed(() => {
+  const badCombinations = !values.is_response
     ? ['', 'successful', 'partially_successful', 'not_held', 'refused']
     : ['user_withdrew_costs']
-  // return props.status_form.fields.resolution.choices.filter(
-  return Object.keys(ResolutionEnum)
-    .filter((key) => !badCombinations.includes(ResolutionEnum[key]))
-    .map((key) => ({ value: ResolutionEnum[key], label: formStatusLabels[key] }))
+  return props.status_form.fields.resolution.choices.filter(
+    (choice) => !badCombinations.includes(choice.value)
+  )
 })
-
 
 // const formCost = props.status_form.fields.costs.initial?.intValue || 0
 // const formHasHadCost = formCost > 0
-const hasHadCost = ref()
-const formDoUpdateCost = ref(false)
-const formDoUpdateCostChoices = [
-  { label: 'Ja.', value: true },
-  { label: 'Nein.', value: false },
-]
+// const formDoUpdateCost = ref(false)
 
-const formPublicbodyId = ref(props.object_public_body_id)
-  // TODO
-  // props.form.fields.publicbody.value ||
-  // props.form.fields.publicbody?.initial?.id?.toString() ||
+const formPublicbodyId =
+  props.form.fields.publicbody.value ||
+  props.form.fields.publicbody?.initial?.id?.toString() ||
+  props.object_public_body_id
 
 const formPublicbodyLabel = props.object_public_body?.name || 'Error'
-
-const values = reactive({
-  sent: undefined,
-  // FIXME date doesn't populate from a saved form?
-  // date: props.form.fields.date.value,
-  date: '', // draft.value.timestamp,
-  registered_mail_date: '', //: props.form.fields.registered_mail_date.value,
-  costs: 0, // props.foirequest_costs.strValue,
-    // props.status_form.fields.costs.value?.strValue ||
-    //props.status_form.fields.costs.initial.strValue,
-  is_registered_mail: false
-})
 
 /* --- form handling, validity --- */
 
@@ -307,10 +299,6 @@ const updateValidity = (key) => {
 
 const isSubmitting = ref(false)
 
-const submitForm = async () => {
-  document.forms.postupload.submit()
-}
-
 const approveAndSubmit = async () => {
   isSubmitting.value = true
   try {
@@ -319,16 +307,56 @@ const approveAndSubmit = async () => {
       .filter((kv) => kv[1] === false).map((kv) => +kv[0])
     await approveAllUnredactedAttachments(excludeIds)
     await submitFetch()
+    await publish()
     gotoStep()
   } catch (err) {
+    // error from the partialUpdates/PATCHes looks like
+    // { resolution: [ '"0" ist keine gültige Option'] }
+    // { non_field_errors: [ 'Antwortnachrichten müssen...' ] }
     console.error('fetch submit error', err)
-    alert('error' + JSON.stringify(err))
+    error.value = err
   } finally {
     isSubmitting.value = false
   }
 }
 
+const isoNoonifyDate = (dateYmdStr) =>
+  // "When the time zone offset is absent, date-only forms are interpreted as a UTC time
+  // and date-time forms are interpreted as a local time."
+  (new Date(dateYmdStr + 'T12:00:00')).toISOString()
+
+const ymdifyDate = (date) =>
+  `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
 const submitFetch = async () => {
+  await requestPartialUpdate({
+    path: { id: props.foirequest_id }, // TODO?
+    body: {
+      costs: values.costs,
+      status: values.status, // status_form.fields.resolution = awaiting_response, resolved
+      resolution: values.resolution, // status_form.fields.resolution = successful, partially_successful, not_held, refused, user_withdrew_costs, user_withdrew
+    },
+    throwOnError: true
+  })
+    .then(() => {
+      console.info('requestPartialUpdate successful')
+    })
+  const messageBody = {
+    is_response: values.is_response,
+    sender_public_body: values.is_response ? values.public_body : null,
+    recipient_public_body: values.is_response ? null : values.public_body,
+  }
+  if (values.date) messageBody.timestamp = isoNoonifyDate(values.date)
+  if (values.registered_mail_date) messageBody.registered_mail_date = isoNoonifyDate(values.registered_mail_date)
+  await messagePartialUpdate({
+    path: { id: props.message.id },
+    body: messageBody,
+    throwOnError: true
+  })
+    .then(() => {
+      console.info('messagePartialUpdate successful')
+    })
+  /*
   const action = document.forms.postupload.action
   const formdata = new FormData(document.forms.postupload)
   if (debug.value) {
@@ -367,6 +395,14 @@ const submitFetch = async () => {
       // if 'date' in errors then link to STEP_ with linked <input type=date>
       alert(err.message)
     })
+  */
+}
+
+const publish = () => {
+  return messagePublishCreate({
+    path: { id: props.message.id },
+    throwOnError: true
+  })
 }
 
 /* --- <online-help> interaction --- */
@@ -480,6 +516,20 @@ const gotoStep = async (nextStep) => {
   scrollNavIntoViewIfNecessary()
 }
 
+onMounted(async () => {
+  // TODO we only use props.message.attachments for this - use attachments store instead?
+  await refreshAttachments()
+  if (attachments.irrelevant.length > 0 && step.value === STEP_INTRO) {
+    console.info('onMounted, skipped intro because irrelevant attachments present')
+    // TODO new step goes here, see <image-converter>
+    gotoStep(STEP_DOCUMENTS_SORT)
+  }
+  else if (attachments.all.length > 0 && step.value === STEP_INTRO) {
+    console.info('onMounted, skipped intro because attachments present')
+    gotoStep(STEP_DOCUMENTS_OVERVIEW)
+  }
+})
+
 const backStep = () => {
   stepsConfig[step.value].onBack?.()
   stepHistory.pop()
@@ -568,9 +618,10 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
-    onBeforeNext: async () => {
+    /* onBeforeNext: async () => {
       return await updateValue('sent')
-    },
+      // todo handle validation
+    }, */
     context: {
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation
@@ -630,12 +681,11 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_STATUS]: {
     next: () => {
-      if (!isDesktop.value && formStatusIsResolved.value)
+      if (!isDesktop.value && requestIsResolved.value)
         return STEP_MESSAGE_MESSAGE_RESOLUTION
       // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
-      // TODO test formSent
-      if (formSent.value) return STEP_REDACTION_PICKER
-      return hasHadCost.value
+      if (!values.is_response) return STEP_REDACTION_PICKER
+      return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
     },
@@ -650,9 +700,8 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
     next: () => {
-      // TODO test formSent
-      if (formSent.value) return STEP_REDACTION_PICKER
-      return hasHadCost.value
+      if (values.is_reponse) return STEP_REDACTION_PICKER
+      return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
     },
@@ -663,7 +712,7 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_COST_CHECK_ANY]: {
     next: () => {
-      if (!isDesktop.value && formDoUpdateCost.value)
+      if (!isDesktop.value && requestUpdateCosts.value)
         return STEP_MESSAGE_COST_UPDATE
       return STEP_REDACTION_PICKER
     },
@@ -674,7 +723,7 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
     next: () => {
-      if (!isDesktop.value && formDoUpdateCost.value)
+      if (!isDesktop.value && requestUpdateCosts.value)
         return STEP_MESSAGE_COST_UPDATE
       return STEP_REDACTION_PICKER
     },
@@ -682,7 +731,7 @@ const stepsConfig = {
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => {
-        if (isDesktop.value && formDoUpdateCost.value) return validity.costs
+        if (isDesktop.value && requestUpdateCosts.value) return validity.costs
         return true
       }
     }
@@ -762,10 +811,16 @@ const stepsConfig = {
   }
 }
 
-onMounted(() => {
-  // createOrRetrieveLastDraft()
-  retrieveDraft()
-})
+const fieldErrorStep = {
+  costs: STEP_MESSAGE_COST_UPDATE,
+  date: STEP_MESSAGE_DATE,
+  registered_mail_date: STEP_MESSAGE_DATE,
+  status: STEP_MESSAGE_STATUS,
+  resolution: STEP_MESSAGE_STATUS,
+  recipient_public_body: STEP_MESSAGE_PUBLICBODY_CHECK,
+  sender_public_body: STEP_MESSAGE_PUBLICBODY_CHECK,
+  is_response: STEP_MESSAGE_SENT_OR_RECEIVED
+}
 
 /* --- state machine, visualization --- */
 
@@ -848,26 +903,44 @@ addEventListener('hashchange', () => {
   </div>
 
   <div v-if="error" class="container">
-    <div class="alert alert-danger" role="alert">
-      <div>Fehler</div>
-      <dl v-if="typeof error === 'object'">
+    <div class="alert alert-danger alert-dismissible show" role="alert">
+      <h4 class="alert-heading">
+        {{ i18n.error || 'Error' }}<!-- TODO i18n -->
+      </h4>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" :aria-label="i18n.close" @click="error = false" />
+      <ul v-if="error?.non_field_errors">
+        <li v-for="(errorMessage, errorIndex) in error.non_field_errors" :key="errorIndex">
+          {{ errorMessage }}
+        </li>
+      </ul>
+      <dl v-else-if="typeof error === 'object'">
         <template v-for="(value, key) in error" :key="key">
           <dt>{{ key }}</dt>
-          <dd>{{ value.join?.(', ') || value }}</dd>
+          <dd>
+            {{ value.join?.(', ') || value }}
+            <hr/>
+            <div v-if="key in fieldErrorStep" class="d-flex gap-1 flex-column flex-sm-row justify-content-sm-end">
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="gotoStep(fieldErrorStep[key])"
+                >
+                go to <!--{{ fieldErrorStep[key] }}--> <!-- TODO i18n -->
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="gotoStep(STEP_DOCUMENTS_OVERVIEW_REDACTED)"
+                >
+                return to submit<!-- TODO i18n -->
+              </button>
+            </div>
+          </dd>
         </template>
       </dl>
-    </div>
-  </div>
-
-  <div v-if="error" class="container">
-    <div class="alert alert-danger" role="alert">
-      <div>Fehler</div>
-      <dl v-if="typeof error === 'object'">
-        <template v-for="(value, key) in error" :key="key">
-          <dt>{{ key }}</dt>
-          <dd>{{ value.join?.(', ') || value }}</dd>
-        </template>
-      </dl>
+      <div v-if="Object.keys(error).length === 0 || typeof error === 'string'">
+        <pre>{{ error }}</pre>
+      </div>
     </div>
   </div>
 
@@ -886,12 +959,13 @@ addEventListener('hashchange', () => {
       </button>
     </span>
     <span>isDesktop={{ isDesktop }}</span>
-    <button class="btn btn-secondary btn-sm" type="submitForm" style="font-size: 50%; margin-left: 1em">
-      submit/save
+    <button class="btn btn-secondary btn-sm" type="button" @click="approveAndSubmit"
+      style="font-size: 50%; margin-left: 1em">
+      approveAndSubmit()
     </button>
     <button class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
       style="font-size: 50%; margin-left: 1em">
-      submit/fetch
+      submitFetch()
     </button>
     <!--<pre>{{ validity }}</pre>-->
     <!-- <span v-if="debug" class="debug">desktop={{ isDesktop }},</span> -->
@@ -918,6 +992,10 @@ addEventListener('hashchange', () => {
     </details>
     -->
   </details>
+  <pre style="color: darkred">
+values={{ values }}
+formStatusChoices={ formStatusChoices }
+  </pre>
 
   <div class="step-container">
     <div v-show="step === STEP_INTRO" class="container">
@@ -1015,6 +1093,14 @@ addEventListener('hashchange', () => {
           :idx="0"
           show-rotate
           />
+        <div v-if="false">
+          <!-- TODO put this into a separate step to continue after a reload -->
+        <attachments-table
+          :subset="attachments.irrelevant"
+          actions table-selection selection-action-delete badges-type
+          />
+        <images-converter />
+        </div>
       </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
@@ -1043,7 +1129,6 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <!-- there is another for this step, further down below document-uploader -->
     <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
@@ -1051,6 +1136,7 @@ addEventListener('hashchange', () => {
             {{ i18n.documentsAvailable }}
           </div>
           <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
+          <!-- TODO after a reload we land here. it might be good to also display "images" -->
         </div>
       </div>
     </div>
@@ -1060,33 +1146,32 @@ addEventListener('hashchange', () => {
           <div class="step-questioncounter">Frage 1 von 5</div>
           <label class="fw-bold form-label">
             {{ i18n.letterSentOrReceived }}
+            <!--{{ form.fields.sent.label }}-->
           </label>
-          <div class="form-check"
-            v-for="(choice, c) in formSentChoices"
-            :key="c"
-            >
-            <input
-              type="radio"
-              name="sent"
-              v-model="values.sent"
-              required=""
-              class="form-check-input"
-              :id="'id_sent_' + c"
-              :value="choice.value"
-            />
-            <label class="form-check-label" :for="'id_sent_' + c">{{
+          <div class="form-check" v-for="(choice, choiceIndex) in form.fields.sent.choices" :key="choice.value"
+            :class="{ 'is-invalid': choice.errors }">
+            <input type="radio" name="sent" v-model="values.is_response" required="" class="form-check-input"
+              :id="'id_sent_' + choiceIndex" :value="(choice.value === '0')" />
+            <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
               choice.label
               }}</label>
           </div>
+          <!--
+              <div class="invalid-feedback" v-if="form.errors.sent">
+                <p class="text-danger">
+                  {{ form.errors.sent.map((_) => _.message).join(' ') }}
+                </p>
+              </div>
+              -->
         </div>
       </div>
     </div>
     <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 2 von 5</div>
+          <div class="step-questioncounter">Frage 2 von 5</div><!-- FIXME i18n !! -->
           <label class="fw-bold form-label" for="id_subject">
-            <template v-if="formSent">
+            <template v-if="!values.is_response">
               {{ i18n.messagePublicbodyCheckTo }}
             </template>
             <template v-else>
@@ -1096,31 +1181,15 @@ addEventListener('hashchange', () => {
           <div style="margin: 1em 0; font-style: italic">
             {{ formPublicbodyLabel }}
           </div>
-          <div
-            class="form-check"
-            v-for="(choice, c) in formPublicBodyIsDefaultChoices"
-            :key="c"
-          >
-            <input
-              type="radio"
-              required=""
-              class="form-check-input"
-              v-model="formPublicbodyIsDefault"
-              :id="'id_pbisdefault_' + c"
-              :value="choice.value"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_pbisdefault_' + c"
-              >{{ choice.label }}</label
-            >
+          <div class="form-check" v-for="(choice, choiceIndex) in [
+            { value: true, label: 'Ja.' },
+            { value: false, label: 'Nein, andere Behörde wählen' }
+          ]" :key="choiceIndex">
+            <input type="radio" required="" class="form-check-input" v-model="formPublicbodyIsDefault"
+              :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
+            <label class="form-check-label" :for="'id_pbisdefault_' + choiceIndex">{{ choice.label }}</label>
           </div>
-          <!--input
-            type="hidden"
-            name="publicbody"
-            v-if="formPublicbodyIsDefault"
-            :value="formPublicbodyId"
-          /-->
+          <input type="hidden" name="publicbody" v-if="formPublicbodyIsDefault" :value="formPublicbodyId" />
         </div>
       </div>
     </div>
@@ -1141,19 +1210,12 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <publicbody-chooser
-            v-if="!formPublicbodyIsDefault"
-            :search-collapsed="false"
-            scope="foo_publicbody"
-            name="publicbody"
-            :config="config"
-            :form="form"
-            :value="formPublicbodyId"
-            list-view="resultList"
-            :show-filters="false"
-            :show-badges="false"
-            :show-found-count-if-idle="false"
-          />
+          <publicbody-chooser v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
+            name="publicbody" :config="config" :form="form" :value="formPublicbodyId" list-view="resultList"
+            :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
+            :class="{ 'is-invalid': form.errors.publicbody }"
+            @update="updatePublicBody"
+            />
         </div>
       </div>
     </div>
@@ -1170,21 +1232,10 @@ addEventListener('hashchange', () => {
                 :required="step === STEP_MESSAGE_DATE || step === STEP_MESSAGE_PUBLICBODY_CHECK"
                 maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
               -->
-          <input
-            id="id_date"
-            class="form-control"
-            type="date"
-            name="date"
-            v-model="values.date"
-            :class="{
-              'is-invalid': validity.date === false,
-              'is-valid': validity.date === true
-            }"
-            required
-            :min="props.date_min"
-            :max="props.date_max"
-            @input="updateValidity('date')"
-          />
+          <input id="id_date" class="form-control" type="date" name="date" v-model="values.date" :class="{
+            'is-invalid': validity.date === false,
+            'is-valid': validity.date === true
+          }" required :min="props.date_min" :max="props.date_max" @input="updateValidity('date')" />
           <div class="form-check">
             <input class="form-check-input" type="checkbox" v-model="values.is_registered_mail"
               id="id_is_registered_mail" />
@@ -1219,36 +1270,26 @@ addEventListener('hashchange', () => {
         <div class="col-lg-9">
           <div class="step-questioncounter">Frage 4 von 5</div>
           <label class="fw-bold form-label" for="id_subject">
-            <template v-if="!formSent && formStatusWasResolved">
+            <template v-if="values.is_response && requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
             </template>
-            <template v-if="!formSent && !formStatusWasResolved">
+            <template v-if="values.is_response && !requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterReceived }}
             </template>
-            <template v-if="formSent && formStatusWasResolved">
+            <template v-if="!values.is_response && requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterSentStill }}
             </template>
-            <template v-if="formSent && !formStatusWasResolved">
+            <template v-if="!values.is_response && !requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterSent }}
             </template>
           </label>
-          <div
-            class="form-check"
-            v-for="choice in formStatusChoices"
-            :key="choice.value"
-          >
-            <input
-              type="radio"
-              name="status"
-              required=""
-              class="form-check-input"
-              :id="'id_status_' + choice.value"
-              v-model="formStatus"
-              :value="choice.value"
-              @input="updateValidity('status')"
-            />
-            <label class="form-check-label" :for="'id_status_' + choice.value">
-              <template v-if="formStatusWasResolved">
+          <div class="form-check" v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+            :key="choice.value">
+            <input type="radio" name="status" required="" class="form-check-input"
+              :class="{ 'is-invalid': choice.errors }" :id="'id_status_' + choiceIndex" v-model="values.status"
+              :value="choice.value" @input="updateValidity('status')" />
+            <label class="form-check-label" :for="'id_status_' + choiceIndex">
+              <template v-if="requestWasResolved">
                 <template v-if="choice.value === 'resolved'">
                   {{ i18n.messageStatusIsResolvedStill }}
                 </template>
@@ -1270,34 +1311,19 @@ addEventListener('hashchange', () => {
       </div>
     </div>
     <div v-show="step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
-      (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
+      (isDesktop && step === STEP_MESSAGE_STATUS && requestIsResolved)
       " class="container">
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_resolution">
+            <!-- {{ status_form.fields.resolution.label }} -->
             {{ i18n.messageResolution }}
           </label>
-          <div
-            class="form-check"
-            v-for="choice  in formStatusChoices"
-            :key="choice.value"
-          >
-            <input
-              type="radio"
-              name="resolution"
-              :required="formStatusIsResolved"
-              class="form-check-input"
-              :id="'id_resolution_' + choice.value"
-              :value="choice"
-              :x-checked="
-                draft.status === choice
-              "
-            />
-            <label
-              class="form-check-label"
-              :for="'id_resolution_' + choice.value"
-              >{{ choice.label }}</label
-            >
+          <div class="form-check" v-for="(choice, choiceIndex) in requestResolutionChoices" :key="choice.value">
+            <input type="radio" name="resolution" :required="requestIsResolved" class="form-check-input"
+              v-model="values.resolution"
+              :id="'id_resolution_' + choiceIndex" :value="choice.value" />
+            <label class="form-check-label" :for="'id_resolution_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
@@ -1309,24 +1335,15 @@ addEventListener('hashchange', () => {
           <label class="fw-bold col-form-label">
             {{ i18n.messageCostCheck }}
           </label>
-          <div
-            class="form-check"
-            v-for="(choice, c) in formDoUpdateCostChoices"
-            :key="c"
-          >
-            <input
-              type="radio"
-              required=""
-              class="form-check-input"
-              v-model="formDoUpdateCost"
-              :id="'id_nowcost_' + c"
-              :value="choice.value"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_nowcost_' + c"
-              >{{ choice.label }}</label
-            >
+          <div class="form-check" v-for="(choice, choiceIndex) in [
+            { label: 'Nein.', value: false },
+            { label: 'Ja.', value: true }
+          ]" :key="choiceIndex">
+            <input type="radio" required="" class="form-check-input" v-model="requestUpdateCosts"
+              :id="'id_nowcost_' + choiceIndex" :value="choice.value"
+              @input="updateValidity('costs')"
+              />
+            <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
@@ -1336,34 +1353,22 @@ addEventListener('hashchange', () => {
         <div class="col-lg-9">
           <div class="step-questioncounter">Frage 5 von 5</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
-          <label
-            class="fw-bold col-form-label"
-            for="id_nowcost"
-            v-html="
-              i18n._('messageCostCheckLast', {
-                amount:
-                  values.costs || 'error'
-              })
-            "
-          ></label>
-          <div
-            class="form-check"
-            v-for="(choice, c) in formDoUpdateCostChoices"
-            :key="c"
-          >
-            <input
-              type="radio"
-              required=""
-              class="form-check-input"
-              v-model="formDoUpdateCost"
-              :id="'id_nowcost_' + c"
-              :value="choice.value"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_nowcost_' + c"
-              >{{ choice.label }}</label
-            >
+          <label class="fw-bold col-form-label" for="id_nowcost" v-html="i18n._('messageCostCheckLast', {
+            amount:
+              status_form.fields.costs.value?.strValue ||
+              status_form.fields.costs.initial?.strValue ||
+              'error'
+          })
+            "></label>
+          <div class="form-check" v-for="(choice, choiceIndex) in [
+            { label: 'Ja.', value: false },
+            { label: 'Nein.', value: true }
+          ]" :key="choiceIndex">
+            <input type="radio" required="" class="form-check-input" v-model="requestUpdateCosts"
+              :id="'id_nowcost_' + choiceIndex" :value="choice.value"
+              @input="updateValidity('costs')"
+              />
+            <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
@@ -1372,7 +1377,7 @@ addEventListener('hashchange', () => {
       (isDesktop &&
         (step === STEP_MESSAGE_COST_CHECK_ANY ||
           step === STEP_MESSAGE_COST_CHECK_LAST) &&
-        formDoUpdateCost)
+        requestUpdateCosts)
       " class="container">
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
