@@ -96,13 +96,15 @@ const fetchAttachments = (messageId) => {
   store.isFetching = true
   return attachmentList({ query: { belongs_to: messageId, limit: 1 }, throwOnError: true })
     .then((response) => {
-      store.$patch({
-        all: response.data.objects
-      })
+      store.$patch({ allRaw: response.data.objects }) //.filter(_ => !_.is_image) })
+      // store.$patch({ images: response.data.objects.filter(_ => _.is_image) })
       if (response.data.meta.next) {
         return fetchPagedObjects(
           response.data.meta.next,
-          (objects) => store.all.push(...objects)
+          (objects) => {
+            store.allRaw.push(...objects) // .filter(_ => !_.is_image))
+            // store.images.push(...objects.filter(_ => _.is_image))
+          }
         )
       }
     })

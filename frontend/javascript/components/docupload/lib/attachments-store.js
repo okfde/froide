@@ -29,12 +29,20 @@ const useAttachmentsStore = defineStore('attachments', {
       // TODO: include settings.can_make_document?
       canMakeResult: d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document,
     })),
-    approved: (state) => state.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
-    notApproved: (state) => state.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
-    relevant: (state) => state.all.filter((d) => !d.is_irrelevant && !(d.converted && !d.is_image)),
-    irrelevant: (state) => state.all.filter((d) => d.is_irrelevant),
-    getById: (state) => {
-      return (id) => state.all.find((d) => d.id === id)
+    approved() {
+      return this.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image)))
+    },
+    notApproved() {
+      return this.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.has_redacted && !(d.converted && !d.is_image)))
+    },
+    relevant() {
+      return this.all.filter((d) => !d.is_irrelevant && !(d.converted && !d.is_image))
+    },
+    irrelevant() {
+      return this.all.filter((d) => d.is_irrelevant)
+    },
+    getById () {
+      return (id) => this.all.find((d) => d.id === id)
     },
     selected (state) {
       return [...state.selectedIds].map(id => this.getById(id))
