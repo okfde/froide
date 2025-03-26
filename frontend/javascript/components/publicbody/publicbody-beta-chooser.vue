@@ -85,7 +85,9 @@
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
-    <component :is="listView" :name="name" :scope="scope" :config="config" />
+    <component :is="listView" :name="name" :scope="scope" :config="config"
+      @update="$emit('update', $event)"
+      />
   </div>
 </template>
 
