@@ -22,7 +22,7 @@ from froide.helper.auth import is_crew
 from froide.helper.content_urls import get_content_url
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
-from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
+from froide.helper.utils import is_ajax, render_400, render_403
 from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
@@ -188,41 +188,6 @@ def edit_postal_message(request, foirequest, message_id):
         user=request.user,  # needs to be request user for upload ident
     )
     status_form = foirequest.get_status_form(data=request.POST)
-    if request.method == "POST":
-        if form.is_valid():
-            message.is_draft = False
-            message = form.save()
-
-            if status_form.is_valid():
-                status_form.save()
-
-            if message.is_response:
-                signal = FoiRequest.message_received
-                success_message = _("A postal reply was successfully added!")
-            else:
-                signal = FoiRequest.message_sent
-                success_message = _("A sent letter was successfully added!")
-
-            signal.send(sender=foirequest, message=message, user=request.user)
-
-            if is_fetch(request):
-                return JsonResponse({"success": 1})
-
-            messages.add_message(request, messages.SUCCESS, success_message)
-            url = reverse(
-                # after a successfully saved form, redirect to request
-                "foirequest-show",
-                kwargs={"slug": foirequest.slug},
-            )
-            return redirect(url)
-        else:
-            if is_fetch(request):
-                return JsonResponse({"errors": form._errors})
-            messages.add_message(
-                request,
-                messages.ERROR,
-                _("There were errors with your form submission!"),
-            )
     filingcabinet_js_config = get_js_config(request)
     ctx = {
         "settings": {
@@ -583,6 +548,7 @@ def edit_postal_message(request, foirequest, message_id):
         "foirequest/upload_postal_message_new.html",
         {
             "foirequest_id": foirequest.id,
+            "message_id": message_id,
             "object": foirequest,
             "object_public_body_id": foirequest.public_body_id,
             "object_public_body": {
