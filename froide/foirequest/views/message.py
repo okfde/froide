@@ -188,7 +188,6 @@ def edit_postal_message(request, foirequest, message_id):
         message=message,
         user=request.user,  # needs to be request user for upload ident
     )
-    status_form = foirequest.get_status_form(data=request.POST)
     filingcabinet_js_config = get_js_config(request)
     ctx = {
         "settings": {
@@ -555,6 +554,7 @@ def edit_postal_message(request, foirequest, message_id):
         "resolution_choices": [
             {"value": str(x[0]), "label": str(x[1])} for x in Resolution.choices
         ],
+        # we don't use label here, could be almost hard coded...
         "status_choices": [
             {"value": str(x[0]), "label": str(x[1])}
             for x in Status.choices
@@ -590,7 +590,6 @@ def edit_postal_message(request, foirequest, message_id):
             else json.dumps(
                 FoiMessageSerializer(message, context={"request": request}).data
             ),
-            "status_form": status_form,
             "config_json": json.dumps(ctx),
         },
     )

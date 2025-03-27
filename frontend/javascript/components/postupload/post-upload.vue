@@ -31,7 +31,6 @@ const props = defineProps({
   message: Object,
   form: Object,
   schemas: Object,
-  status_form: Object,
   // foirequest: Object,
   foirequest_id: String,
   foirequest_apiurl: String,
@@ -126,18 +125,9 @@ const createOrRetrieveLastDraft = async () => {
 }
 */
 
-const values = reactive({
-  // FIXME date doesn't populate from a saved form?
-  /*
-  date: props.form.fields.date.value,
-  registered_mail_date: props.form.fields.registered_mail_date.value,
-  costs:
-    props.status_form.fields.costs.value?.strValue ||
-    props.status_form.fields.costs.initial.strValue,
-  is_registered_mail: false
-  */
-})
+const values = reactive({})
 
+const requestOldCosts = ref()
 const requestHadCosts = ref()
 const requestIsResolved = computed(() => values.status === 'resolved')
 const requestWasResolved = ref()
@@ -151,8 +141,9 @@ const retrieveValues = async () => {
   })
   values.status = request.status
   values.public_body = request.public_body.resource_uri
-  values.costs = request.costs // string "12.34"!
+  requestOldCosts.value = request.costs
   requestHadCosts.value = parseFloat(request.costs) > 0
+  values.costs = request.costs // string "12.34"!
   // TODO get value from schema?
   // requestIsResolved.value = request.status === 'resolved'
   values.resolution = request.resolution
@@ -255,10 +246,6 @@ const requestResolutionChoices = computed(() => {
   )
 })
 
-// const formCost = props.status_form.fields.costs.initial?.intValue || 0
-// const formHasHadCost = formCost > 0
-// const formDoUpdateCost = ref(false)
-
 const formPublicbodyId =
   props.form.fields.publicbody.value ||
   props.form.fields.publicbody?.initial?.id?.toString() ||
@@ -334,8 +321,8 @@ const submitFetch = async () => {
     path: { id: props.foirequest_id }, // TODO?
     body: {
       costs: values.costs,
-      status: values.status, // status_form.fields.resolution = awaiting_response, resolved
-      resolution: values.resolution, // status_form.fields.resolution = successful, partially_successful, not_held, refused, user_withdrew_costs, user_withdrew
+      status: values.status,
+      resolution: values.resolution,
     },
     throwOnError: true
   })
@@ -1375,14 +1362,15 @@ formStatusChoices={ formStatusChoices }
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="step-questioncounter">Frage 5 von 5</div>
-          <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
-          <label class="fw-bold col-form-label" for="id_nowcost" v-html="i18n._('messageCostCheckLast', {
-            amount:
-              status_form.fields.costs.value?.strValue ||
-              status_form.fields.costs.initial?.strValue ||
-              'error'
-          })
-            "></label>
+          <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00
+            also, API returns floats, so this actually should be decimalized i18n-awarely...
+            (or provided as a formatted string by the API)
+           -->
+          <label
+            class="fw-bold col-form-label"
+            for="id_nowcost"
+            v-html="i18n._('messageCostCheckLast', { amount: requestOldCosts })"
+            ></label>
           <div class="form-check" v-for="(choice, choiceIndex) in [
             { label: 'Ja.', value: false },
             { label: 'Nein.', value: true }
@@ -1416,7 +1404,7 @@ formStatusChoices={ formStatusChoices }
                   'is-invalid': validity.costs === false,
                   'is-valid': validity.costs === true
                 }" />
-              <span class="input-group-text">Euro</span>
+              <span class="input-group-text">Euro<!-- TODO i18n--></span>
             </div>
             <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
           </div>
