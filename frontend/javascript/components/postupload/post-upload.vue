@@ -1306,7 +1306,7 @@ formStatusChoices={ formStatusChoices }
               {{ i18n.messageStatusIsResolvedAfterSent }}
             </template>
           </label>
-          <div class="form-check" v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+          <div class="form-check" v-for="(choice, choiceIndex) in schemas.status_choices"
             :key="choice.value">
             <input type="radio" name="status" required="" class="form-check-input"
               :class="{ 'is-invalid': choice.errors }" :id="'id_status_' + choiceIndex" v-model="values.status"

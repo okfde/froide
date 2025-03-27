@@ -16,7 +16,7 @@ from django.views.decorators.http import require_POST
 from filingcabinet.views import get_js_config
 
 from froide.foirequest.auth import can_read_foirequest
-from froide.foirequest.models.request import Resolution
+from froide.foirequest.models.request import Resolution, Status
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import is_crew
@@ -554,7 +554,12 @@ def edit_postal_message(request, foirequest, message_id):
     schemas = {
         "resolution_choices": [
             {"value": str(x[0]), "label": str(x[1])} for x in Resolution.choices
-        ]
+        ],
+        "status_choices": [
+            {"value": str(x[0]), "label": str(x[1])}
+            for x in Status.choices
+            if x[0] in [Status.AWAITING_RESPONSE, Status.RESOLVED]
+        ],
     }
     return render(
         request,
