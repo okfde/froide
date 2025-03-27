@@ -374,6 +374,9 @@ def edit_postal_message(request, foirequest, message_id):
             ),
             "newWarning": _("We have redone this part of the app."),
             "documentsDragOrder": _("Drag the documents in the right order"),
+            "documentsConvertIrrelevant": _(
+                "Mark image attachments as important to convert them into PDFs."
+            ),
             "documentsFromImages": _("We will convert your images into a PDF"),
             "changeFilename": _("Change filename"),
             "documentsAvailable": _("Documents available so far"),

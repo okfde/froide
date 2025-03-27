@@ -521,8 +521,7 @@ onMounted(async () => {
   await refreshAttachments()
   if (attachments.irrelevant.length > 0 && step.value === STEP_INTRO) {
     console.info('onMounted, skipped intro because irrelevant attachments present')
-    // TODO new step goes here, see <image-converter>
-    gotoStep(STEP_DOCUMENTS_SORT)
+    gotoStep(STEP_DOCUMENTS_CONVERT)
   }
   else if (attachments.all.length > 0 && step.value === STEP_INTRO) {
     console.info('onMounted, skipped intro because attachments present')
@@ -544,6 +543,7 @@ const isGotoValid = computed(() => {
 
 // vuex mutation style constants/"symbols"
 const STEP_INTRO = 'STEP_INTRO' // 1100
+const STEP_DOCUMENTS_CONVERT = 'STEP_DOCUMENTS_CONVERT' // 1201
 const STEP_DOCUMENTS_SORT = 'STEP_DOCUMENTS_SORT' // 1201
 const STEP_DOCUMENTS_CONVERT_PDF = 'STEP_DOCUMENTS_CONVERT_PDF' // 1202
 const STEP_DOCUMENTS_OVERVIEW = 'STEP_DOCUMENTS_OVERVIEW' // 1300
@@ -565,13 +565,28 @@ const STEP_OUTRO = 'STEP_OUTRO' // 4570
 const stepsConfig = {
   [STEP_INTRO]: {
     next: () => {
-      if (attachments.images.length) return STEP_DOCUMENTS_SORT
+      if (attachments.images.length) {
+        return STEP_DOCUMENTS_SORT
+      }
+      if (attachments.irrelevant.length > 0) {
+        return STEP_DOCUMENTS_CONVERT
+      }
       console.log('uploads were documents, not images, passing by image sorting')
       return STEP_MESSAGE_SENT_OR_RECEIVED
     },
     context: {
       progressStep: 0,
       mobileHeaderTitle: i18n.value.addLetter
+    }
+  },
+  [STEP_DOCUMENTS_CONVERT]: {
+    next: STEP_DOCUMENTS_OVERVIEW,
+    onEnter: () => {
+      guardBeforeunload(true)
+    },
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_SORT]: {
@@ -1077,11 +1092,26 @@ formStatusChoices={ formStatusChoices }
         </div>
       </div>
     </div>
-    <div v-if="step === STEP_DOCUMENTS_UPLOAD" class="container">
+    <div v-show="step === STEP_DOCUMENTS_CONVERT" class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-9">
-          XXX DELETEME
+        <div class="col-lg-9 fw-bold">
+          {{ i18n.documentsConvertIrrelevant }}
         </div>
+        <div class="my-3">
+          <attachments-table
+            :subset="attachments.irrelevant"
+            actions table-selection action-delete selection-action-delete badges-type
+            />
+        </div>
+        <!-- irrelevant attachments re-appear after a refresh;
+           should they be (were they?) permantly marked "processed" or deleted?
+           "fresh" images have can_delete=true (among other unrelated props)
+           "converted" images don't...
+           not sure if there is a good distinction/semantics here.
+           -->
+        <images-converter
+          @converted="() => { if (attachments.irrelevant.length === 0) gotoStep() }"
+          />
       </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_SORT" class="container">
@@ -1093,14 +1123,6 @@ formStatusChoices={ formStatusChoices }
           :idx="0"
           show-rotate
           />
-        <div v-if="false">
-          <!-- TODO put this into a separate step to continue after a reload -->
-        <attachments-table
-          :subset="attachments.irrelevant"
-          actions table-selection selection-action-delete badges-type
-          />
-        <images-converter />
-        </div>
       </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
