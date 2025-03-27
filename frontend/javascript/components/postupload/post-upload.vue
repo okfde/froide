@@ -7,18 +7,18 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
-import { messageRetrieve, messagePartialUpdate, messagePublishCreate } from '../../api/index.ts'
-import { useI18n } from '../../lib/i18n'
+import { messageRetrieve, messagePartialUpdate, messagePublishCreate,
+  requestRetrieve, requestPartialUpdate
+  } from '../../api/index.ts'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
+import { useI18n } from '../../lib/i18n'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
+import { useAttachments } from '../docupload/lib/attachments'
 import Room from '../../lib/websocket.ts'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from '../online-help.vue'
 
-import { requestRetrieve, requestPartialUpdate } from '../../api/index.ts'
-
-import { useAttachments } from '../docupload/lib/attachments'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FileUploader from '../upload/file-uploader.vue'
@@ -52,6 +52,7 @@ const {
   urls: {
     ...props.config.url,
     ...props.config.urls,
+    // TODO: api?
     getAttachment: props.config.url.getAttachment.replace('/0/', '/') +
       '?belongs_to=' +
       props.message.id,
@@ -59,10 +60,6 @@ const {
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
   i18n,
 })
-
-// const refreshAttachments = () => {
-//   fetchAttachments(draft.value.id)
-// }
 
 const { isDesktop } = useIsDesktop()
 
@@ -82,11 +79,10 @@ const debugSkipDate = () => {
   gotoStep()
 }
 
-const draft = ref({})
+/* deprecated, unused stubs
 
-const error = ref(false)
+// get the message/draft clientsidedly, less via django template context
 
-/*
 const createOrRetrieveLastDraft = async () => {
   const requestParam = { query: { request: props.foirequest_id } }
   try {
@@ -115,56 +111,9 @@ const createOrRetrieveLastDraft = async () => {
     error.value = e.message
   }
 }
-*/
 
-const values = reactive({})
+// "PATCH on every relevant gotoStep"
 
-const requestOldCosts = ref()
-const requestHadCosts = ref()
-const requestIsResolved = computed(() => values.status === 'resolved')
-const requestWasResolved = ref()
-const requestUpdateCosts = ref(false)
-
-const retrieveValues = async () => {
-  // TODO handle errors
-  const { data: request } = await requestRetrieve({
-    path: { id: props.foirequest.id },
-    throwOnError: true
-  })
-  values.status = request.status
-  values.public_body = request.public_body.resource_uri
-  requestOldCosts.value = request.costs
-  requestHadCosts.value = parseFloat(request.costs) > 0
-  values.costs = request.costs // string "12.34"!
-  // TODO get value from schema?
-  // requestIsResolved.value = request.status === 'resolved'
-  values.resolution = request.resolution
-  requestWasResolved.value = request.status === 'resolved'
-  const { data: message } = await messageRetrieve({
-    path: { id: props.message.id },
-    throwOnError: true
-  })
-  values.is_response = message.is_response
-  values.date = ymdifyDate(message.timestamp)
-  values.registered_mail_date = message.registered_mail_date
-    ? ymdifyDate(message.registered_mail_date)
-    : ''
-  values.sender_public_body = message.sender_public_body
-  values.recipient_public_body = message.recipient_public_body
-}
-
-retrieveValues()
-  .catch((err) => {
-    console.error('retrieveValues error', err)
-    error.value = err
-  })
-
-const updatePublicBody = (pbUpdateEvt) => {
-  // form some reasone, this didn't work inline in the handler
-  values.public_body = pbUpdateEvt.resourceUri
-}
-
-/*
 const updateValue = async (key) => {
   return messagePartialUpdate({
     path: { id: draft.value.id },
@@ -180,6 +129,21 @@ const updateValue = async (key) => {
     })
 }
 */
+
+/* Form state */
+
+const error = ref(false)
+
+const values = reactive({})
+
+const requestOldCosts = ref()
+const requestHadCosts = ref()
+const requestIsResolved = computed(() => values.status === 'resolved')
+const requestWasResolved = ref()
+const requestUpdateCosts = ref(false)
+const messagePublicBodyIsDefault = ref(true)
+
+const isSubmitting = ref(false)
 
 /* Mobile App Content */
 
@@ -216,12 +180,15 @@ if (props.config.url.messageWebsocket) {
   })
 }
 
-/* --- form handling --- */
+/* Form helpers */
 
-const messagePublicBodyIsDefault = ref(true)
+const updateValuePublicBody = (pbUpdateEvt) => {
+  // form some reason, this didn't work inline in the handler
+  values.public_body = pbUpdateEvt.resourceUri
+}
 
-// remove nonsensical combos
 const requestResolutionChoices = computed(() => {
+  // remove nonsensical combos
   const badCombinations = !values.is_response
     ? ['', 'successful', 'partially_successful', 'not_held', 'refused']
     : ['user_withdrew_costs']
@@ -235,7 +202,15 @@ const messageIsResponseChoices = [
   { value: false, label: i18n.value.messageSentLetter }
 ]
 
-/* --- form handling, validity --- */
+const isoNoonifyDate = (dateYmdStr) =>
+  // "When the time zone offset is absent, date-only forms are interpreted as a UTC time
+  // and date-time forms are interpreted as a local time."
+  (new Date(dateYmdStr + 'T12:00:00')).toISOString()
+
+const ymdifyDate = (date) =>
+  `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+
+/* Form helpers, validity */
 
 const validity = reactive({
   date: false,
@@ -265,40 +240,44 @@ const updateValidity = (key) => {
   }
 }
 
-/* --- form handling, submit --- */
+/* Form API interaction: retrieval */
 
-const isSubmitting = ref(false)
-
-const approveAndSubmit = async () => {
-  isSubmitting.value = true
-  try {
-    // "flatten/reduce" the {id:bool} object into an array (where false!)
-    const excludeIds = Object.entries(attachments.autoApproveSelection)
-      .filter((kv) => kv[1] === false).map((kv) => +kv[0])
-    await approveAllUnredactedAttachments(excludeIds)
-    await submitFetch()
-    await publish()
-    gotoStep()
-  } catch (err) {
-    // error from the partialUpdates/PATCHes looks like
-    // { resolution: [ '"0" ist keine gültige Option'] }
-    // { non_field_errors: [ 'Antwortnachrichten müssen...' ] }
-    console.error('fetch submit error', err)
-    error.value = err
-  } finally {
-    isSubmitting.value = false
-  }
+const retrieveValues = async () => {
+  const { data: request } = await requestRetrieve({
+    path: { id: props.foirequest.id },
+    throwOnError: true
+  })
+  values.status = request.status
+  values.public_body = request.public_body.resource_uri
+  requestOldCosts.value = request.costs
+  requestHadCosts.value = parseFloat(request.costs) > 0
+  values.costs = request.costs
+  values.resolution = request.resolution
+  // the 'resolved' magic string could be symbolically imported from api/types.gen.ts to be super clean...
+  requestWasResolved.value = request.status === 'resolved'
+  const { data: message } = await messageRetrieve({
+    path: { id: props.message.id },
+    throwOnError: true
+  })
+  values.is_response = message.is_response
+  values.date = ymdifyDate(message.timestamp)
+  values.registered_mail_date = message.registered_mail_date
+    ? ymdifyDate(message.registered_mail_date)
+    : ''
+  values.sender_public_body = message.sender_public_body
+  values.recipient_public_body = message.recipient_public_body
 }
 
-const isoNoonifyDate = (dateYmdStr) =>
-  // "When the time zone offset is absent, date-only forms are interpreted as a UTC time
-  // and date-time forms are interpreted as a local time."
-  (new Date(dateYmdStr + 'T12:00:00')).toISOString()
+// note: even before onMounted!
+retrieveValues()
+  .catch((err) => {
+    console.error('retrieveValues error', err)
+    error.value = err
+  })
 
-const ymdifyDate = (date) =>
-  `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
+/* Form API interaction: update/submit --- */
 
-const submitFetch = async () => {
+const requestAndMessageUpdateValues = async () => {
   await requestPartialUpdate({
     path: { id: props.foirequest.id },
     body: {
@@ -328,11 +307,33 @@ const submitFetch = async () => {
     })
 }
 
-const publish = () => {
+const messagePublishDraft = () => {
   return messagePublishCreate({
     path: { id: props.message.id },
     throwOnError: true
   })
+}
+
+// TODO rename the Submit because they do not submit any more
+const approveAndPublish = async () => {
+  isSubmitting.value = true
+  try {
+    // "flatten/reduce" the {id:bool} object into an array (where false!)
+    const excludeIds = Object.entries(attachments.autoApproveSelection)
+      .filter((kv) => kv[1] === false).map((kv) => +kv[0])
+    await approveAllUnredactedAttachments(excludeIds)
+    await requestAndMessageUpdateValues()
+    await messagePublishDraft()
+    gotoStep()
+  } catch (err) {
+    // error from the partialUpdates/PATCHes looks like
+    // { resolution: [ '"0" ist keine gültige Option'] }
+    // { non_field_errors: [ 'Antwortnachrichten müssen...' ] }
+    console.error('fetch submit error', err)
+    error.value = err
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 /* --- <online-help> interaction --- */
@@ -341,16 +342,13 @@ const onlineHelp = ref()
 
 /* --- <attachment-manager> interaction --- */
 
-onMounted(() => {
-  // refreshAttachments()
-})
-
 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
 const attachmentsSelectedPdfRedaction = computed(() => attachments.selected
   .sort((a, b) => a.id - b.id)
 )
 
 const attachmentsImagesConverting = computed(() => attachments.isConverting)
+
 const attachmentsConvertImages = () => {
   if (attachments.images.length === 0) {
     console.log('no images to convert')
@@ -367,13 +365,6 @@ const attachmentsConvertImages = () => {
 
 const attachmentsOverviewActions = ref(false)
 
-const fileUploaderSucceeded = (uppyResult) => {
-  addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
-    .then(() => {
-      gotoStep()
-    })
-}
-
 /* --- <file-uploader> interaction --- */
 
 const fileUploader = ref()
@@ -382,6 +373,13 @@ onMounted(() => {
   document.body.addEventListener('dragover', () => fileUploaderForceShow.value = true)
   document.body.addEventListener('dragenter', () => fileUploaderForceShow.value = true)
 })
+
+const fileUploaderSucceeded = (uppyResult) => {
+  addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
+    .then(() => {
+      gotoStep()
+    })
+}
 
 /* --- <pdf-redaction> interaction --- */
 
@@ -447,7 +445,6 @@ const gotoStep = async (nextStep) => {
 }
 
 onMounted(async () => {
-  // TODO we only use props.message.attachments for this - use attachments store instead?
   await refreshAttachments()
   if (attachments.irrelevant.length > 0 && step.value === STEP_INTRO) {
     console.info('onMounted, skipped intro because irrelevant attachments present')
@@ -531,11 +528,6 @@ const stepsConfig = {
     context: {
       progressStep: 0,
       mobileHeaderTitle: i18n.value.letterUploadOrScan,
-      documents: true,
-      documentsUpload: false, // TODO check how many of these are still relevant => cleanup
-      documentsHideSelection: true,
-      documentsHidePdf: true,
-      documentsImagesSimple: true
     }
   },
   [STEP_DOCUMENTS_CONVERT_PDF]: {
@@ -553,12 +545,6 @@ const stepsConfig = {
     context: {
       progressStep: 0,
       mobileHeaderTitle: i18n.value.letterUploadOrScan,
-      documents: true,
-      documentsUpload: false,
-      documentsHideSelection: true,
-      // would make sense "if has geschwärzte docs", i.e. when we expect users to go back
-      // documentsHighlightRedactions: true,
-      documentsIconStyle: 'icon'
     }
   },
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
@@ -704,10 +690,6 @@ const stepsConfig = {
     context: {
       progressStep: 2,
       mobileHeaderTitle: i18n.value.redact,
-      documents: true,
-      documentsUpload: false,
-      documentsIconStyle: 'thumbnail',
-      documentsShowAutoApprove: props.user_is_staff
     }
   },
   [STEP_REDACTION_REDACT]: {
@@ -736,12 +718,6 @@ const stepsConfig = {
     context: {
       progressStep: 2,
       mobileHeaderTitle: i18n.value.preview,
-      documents: true,
-      documentsUpload: false,
-      documentsHideSelection: true, // !(props.object_public && props.user_is_staff),
-      documentsIconStyle: 'thumbnail',
-      documentsHighlightRedactions: true,
-      documentsShowAutoApprove: props.user_is_staff
     }
   },
   [STEP_OUTRO]: {
@@ -904,11 +880,11 @@ addEventListener('hashchange', () => {
       </button>
     </span>
     <span>isDesktop={{ isDesktop }}</span>
-    <button class="btn btn-secondary btn-sm" type="button" @click="approveAndSubmit"
+    <button class="btn btn-secondary btn-sm" type="button" @click="approveAndPublish"
       style="font-size: 50%; margin-left: 1em">
       approveAndSubmit()
     </button>
-    <button class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
+    <button class="btn btn-secondary btn-sm" type="button" @click="requestAndMessageUpdateValues"
       style="font-size: 50%; margin-left: 1em">
       submitFetch()
     </button>
@@ -1139,7 +1115,7 @@ values={{ values }}
           <publicbody-chooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
             name="publicbody" :config="config" :value="props.foirequest.public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
-            @update="updatePublicBody"
+            @update="updateValuePublicBody"
             />
         </div>
       </div>
@@ -1559,7 +1535,7 @@ values={{ values }}
           <template v-else-if="step === STEP_DOCUMENTS_OVERVIEW_REDACTED">
             <button
               type="button"
-              @click="approveAndSubmit"
+              @click="approveAndPublish"
               class="btn btn-primary d-block w-100"
               :disabled="isSubmitting || !validity.form"
             >
