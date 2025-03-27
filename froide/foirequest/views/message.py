@@ -357,6 +357,8 @@ def edit_postal_message(request, foirequest, message_id):
             "documentsUploadDefaultFilename": _("letter.pdf"),
             "addLetter": _("Add letter"),
             "letterUploadOrScan": _("Upload or scan letter"),
+            "messageReceivedLetter": _("I have received the letter"),
+            "messageSentLetter": _("I have sent the letter"),
             "enterInformation": _("Enter information"),
             "preview": _("Preview"),
             "scanDocuments": _("Scan documents"),
@@ -598,6 +600,7 @@ def edit_postal_message(request, foirequest, message_id):
 # TODO: remove in favor of API endpoint
 @allow_write_foirequest
 def upload_postal_message(request, foirequest):
+    # todo clean up here?
     if request.method == "POST":
         form = PostalUploadForm(
             data=request.POST,

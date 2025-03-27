@@ -246,6 +246,11 @@ const requestResolutionChoices = computed(() => {
   )
 })
 
+const messageIsResponseChoices = [
+  { value: true, label: i18n.value.messageReceivedLetter },
+  { value: false, label: i18n.value.messageSentLetter }
+]
+
 const formPublicbodyId =
   props.form.fields.publicbody.value ||
   props.form.fields.publicbody?.initial?.id?.toString() ||
@@ -1156,23 +1161,14 @@ formStatusChoices={ formStatusChoices }
           <div class="step-questioncounter">Frage 1 von 5</div>
           <label class="fw-bold form-label">
             {{ i18n.letterSentOrReceived }}
-            <!--{{ form.fields.sent.label }}-->
           </label>
-          <div class="form-check" v-for="(choice, choiceIndex) in form.fields.sent.choices" :key="choice.value"
-            :class="{ 'is-invalid': choice.errors }">
+          <div class="form-check" v-for="(choice, choiceIndex) in messageIsResponseChoices" :key="choiceIndex">
             <input type="radio" name="sent" v-model="values.is_response" required="" class="form-check-input"
-              :id="'id_sent_' + choiceIndex" :value="(choice.value === '0')" />
+              :id="'id_sent_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
               choice.label
               }}</label>
           </div>
-          <!--
-              <div class="invalid-feedback" v-if="form.errors.sent">
-                <p class="text-danger">
-                  {{ form.errors.sent.map((_) => _.message).join(' ') }}
-                </p>
-              </div>
-              -->
         </div>
       </div>
     </div>
