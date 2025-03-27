@@ -34,8 +34,7 @@ const props = defineProps({
   // foirequest: Object,
   foirequest_id: String,
   foirequest_apiurl: String,
-  object_public_body_id: String,
-  object_public_body: Object,
+  foirequest_public_body: Object,
   object_public: Boolean,
   date_min: String,
   date_max: String,
@@ -234,7 +233,7 @@ if (props.config.url.messageWebsocket) {
 // const formSent = ref(props.message?.is_response ? '0' : '1')
 // const formIsSent = computed(() => formSent.value === '1')
 
-const formPublicbodyIsDefault = ref(true)
+const messagePublicBodyIsDefault = ref(true)
 
 // remove nonsensical combos
 const requestResolutionChoices = computed(() => {
@@ -250,13 +249,6 @@ const messageIsResponseChoices = [
   { value: true, label: i18n.value.messageReceivedLetter },
   { value: false, label: i18n.value.messageSentLetter }
 ]
-
-const formPublicbodyId =
-  props.form.fields.publicbody.value ||
-  props.form.fields.publicbody?.initial?.id?.toString() ||
-  props.object_public_body_id
-
-const formPublicbodyLabel = props.object_public_body?.name || 'Error'
 
 /* --- form handling, validity --- */
 
@@ -638,7 +630,7 @@ const stepsConfig = {
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
     next: () => {
       if (isDesktop.value) return STEP_MESSAGE_DATE
-      return formPublicbodyIsDefault.value
+      return messagePublicBodyIsDefault.value
         ? STEP_MESSAGE_DATE
         : STEP_MESSAGE_PUBLICBODY_UPDATE
     },
@@ -1185,30 +1177,30 @@ formStatusChoices={ formStatusChoices }
             </template>
           </label>
           <div style="margin: 1em 0; font-style: italic">
-            {{ formPublicbodyLabel }}
+            {{ props.foirequest_public_body.name }}
           </div>
           <div class="form-check" v-for="(choice, choiceIndex) in [
             { value: true, label: 'Ja.' },
             { value: false, label: 'Nein, andere Behörde wählen' }
           ]" :key="choiceIndex">
-            <input type="radio" required="" class="form-check-input" v-model="formPublicbodyIsDefault"
+            <input type="radio" required="" class="form-check-input" v-model="messagePublicBodyIsDefault"
               :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_pbisdefault_' + choiceIndex">{{ choice.label }}</label>
           </div>
-          <input type="hidden" name="publicbody" v-if="formPublicbodyIsDefault" :value="formPublicbodyId" />
+          <input type="hidden" name="publicbody" v-if="messagePublicBodyIsDefault" :value="formPublicbodyId" />
         </div>
       </div>
     </div>
     <div v-show="step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
       (isDesktop &&
         step === STEP_MESSAGE_PUBLICBODY_CHECK &&
-        !formPublicbodyIsDefault)
+        !messagePublicBodyIsDefault)
       " class="container">
       <!-- appears "indented" on md=isDesktop viewport -->
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold form-label" for="id_subject">
-            <template v-if="formSent === '1'">
+            <template v-if="values.is_response">
               {{ i18n.messagePublicbodyUpdateTo }}
             </template>
             <template v-else>
@@ -1216,10 +1208,9 @@ formStatusChoices={ formStatusChoices }
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <publicbody-chooser v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
-            name="publicbody" :config="config" :form="form" :value="formPublicbodyId" list-view="resultList"
+          <publicbody-chooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
+            name="publicbody" :config="config" :form="form" :value="props.foirequest_public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
-            :class="{ 'is-invalid': form.errors.publicbody }"
             @update="updatePublicBody"
             />
         </div>

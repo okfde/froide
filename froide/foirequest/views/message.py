@@ -570,12 +570,7 @@ def edit_postal_message(request, foirequest, message_id):
             "foirequest_id": foirequest.id,
             "message_id": message_id,
             "object": foirequest,
-            "object_public_body_id": foirequest.public_body_id,
-            "object_public_body": {
-                "id": foirequest.public_body.id,
-                "name": foirequest.public_body.name,
-            },
-            "object_public_body_json": json.dumps(
+            "foirequest_public_body_json": json.dumps(
                 {
                     "id": foirequest.public_body.id,
                     "name": foirequest.public_body.name,

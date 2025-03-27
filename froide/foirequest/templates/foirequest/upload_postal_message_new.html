@@ -22,7 +22,7 @@
           class="d-flex flex-col flex-grow-1">
         {% csrf_token %}
         {# mw-100 crucial for pdf-redaction's dynamic maxWidth calculations #}
-        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :form="{{ form.as_json }}" :schemas="{{ schemas_json }}" :object_public_body="{{ object_public_body_json }}" object_public_body_id="{{ object_public_body_id }}" :object_public="{{ object_public_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :foirequest_id="{{ foirequest_id }}" :status_form="{{ status_form.as_json }}" :message="{{ message_json }}">
+        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :form="{{ form.as_json }}" :schemas="{{ schemas_json }}" :foirequest_public_body="{{ foirequest_public_body_json }}" :object_public="{{ object_public_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :foirequest_id="{{ foirequest_id }}" :status_form="{{ status_form.as_json }}" :message="{{ message_json }}">
         <template data-slot="redaction_explanation">
             {% include "foirequest/snippets/redaction_explanation.html" %}
         </template>
