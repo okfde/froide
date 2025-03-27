@@ -143,7 +143,7 @@ export default {
     },
     form: {
       type: Object,
-      required: true
+      required: false
     },
     config: {
       type: Object,

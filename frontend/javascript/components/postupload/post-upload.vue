@@ -1209,7 +1209,7 @@ formStatusChoices={ formStatusChoices }
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
           <publicbody-chooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
-            name="publicbody" :config="config" :form="form" :value="props.foirequest_public_body.id" list-view="resultList"
+            name="publicbody" :config="config" :value="props.foirequest_public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
             @update="updatePublicBody"
             />
