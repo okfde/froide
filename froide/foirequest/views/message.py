@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 from filingcabinet.views import get_js_config
 
 from froide.foirequest.auth import can_read_foirequest
+from froide.foirequest.models.request import Resolution
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import is_crew
@@ -546,6 +547,15 @@ def edit_postal_message(request, foirequest, message_id):
         },
     }
     ctx["i18n"] = ctx["i18n"] | filingcabinet_js_config["i18n"]
+    # somehow leverage/adapt form_utils JSONMixin ?
+    # another way to get this sans forms would be client-side:
+    #   import { ResolutionEnum } from '../../api/index.ts'
+    # but that has no i18n...
+    schemas = {
+        "resolution_choices": [
+            {"value": str(x[0]), "label": str(x[1])} for x in Resolution.choices
+        ]
+    }
     return render(
         request,
         "foirequest/upload_postal_message_new.html",
@@ -569,6 +579,7 @@ def edit_postal_message(request, foirequest, message_id):
             "object_public_json": json.dumps(foirequest.public),
             "user_is_staff": json.dumps(request.user.is_staff),
             "form": form,
+            "schemas_json": json.dumps(schemas),
             "message_json": "null"
             if message is None
             else json.dumps(

@@ -30,6 +30,7 @@ const props = defineProps({
   config: Object,
   message: Object,
   form: Object,
+  schemas: Object,
   status_form: Object,
   // foirequest: Object,
   foirequest_id: String,
@@ -249,7 +250,7 @@ const requestResolutionChoices = computed(() => {
   const badCombinations = !values.is_response
     ? ['', 'successful', 'partially_successful', 'not_held', 'refused']
     : ['user_withdrew_costs']
-  return props.status_form.fields.resolution.choices.filter(
+  return props.schemas.resolution_choices.filter(
     (choice) => !badCombinations.includes(choice.value)
   )
 })
