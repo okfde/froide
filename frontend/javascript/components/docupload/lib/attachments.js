@@ -94,7 +94,7 @@ const fetchPagedObjects = (nextUrl, pageCb) => {
 
 const fetchAttachments = (messageId) => {
   store.isFetching = true
-  return attachmentList({ query: { belongs_to: messageId, limit: 1 }, throwOnError: true })
+  return attachmentList({ query: { belongs_to: messageId }, throwOnError: true })
     .then((response) => {
       store.$patch({ allRaw: response.data.objects }) //.filter(_ => !_.is_image) })
       // store.$patch({ images: response.data.objects.filter(_ => _.is_image) })
