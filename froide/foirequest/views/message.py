@@ -36,7 +36,6 @@ from ..decorators import (
 )
 from ..forms import (
     EditMessageForm,
-    PostalEditForm,
     PostalUploadForm,
     RedactMessageForm,
     TransferUploadForm,
@@ -182,12 +181,6 @@ def edit_postal_message(request, foirequest, message_id):
     )
     if not message.can_edit:
         return render_400(request)
-    form = PostalEditForm(
-        data=request.POST,
-        foirequest=foirequest,
-        message=message,
-        user=request.user,  # needs to be request user for upload ident
-    )
     filingcabinet_js_config = get_js_config(request)
     ctx = {
         "settings": {
@@ -567,20 +560,22 @@ def edit_postal_message(request, foirequest, message_id):
         request,
         "foirequest/upload_postal_message_new.html",
         {
-            "foirequest_id": foirequest.id,
             "message_id": message_id,
             "object": foirequest,
-            "foirequest_public_body_json": json.dumps(
+            "foirequest_json": json.dumps(
                 {
-                    "id": foirequest.public_body.id,
-                    "name": foirequest.public_body.name,
+                    "id": foirequest.id,
+                    "url": foirequest.url,
+                    "public_body": {
+                        "id": foirequest.public_body.id,
+                        "name": foirequest.public_body.name,
+                    },
+                    "public": foirequest.public,
                 }
             ),
             "date_max": timezone.localdate().isoformat(),
             "date_min": foirequest.created_at.date().isoformat(),
-            "object_public_json": json.dumps(foirequest.public),
             "user_is_staff": json.dumps(request.user.is_staff),
-            "form": form,
             "schemas_json": json.dumps(schemas),
             "message_json": "null"
             if message is None

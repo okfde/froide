@@ -29,13 +29,8 @@ import AttachmentsTable from '../docupload/attachments-table.vue'
 const props = defineProps({
   config: Object,
   message: Object,
-  form: Object,
   schemas: Object,
-  // foirequest: Object,
-  foirequest_id: String,
-  foirequest_apiurl: String,
-  foirequest_public_body: Object,
-  object_public: Boolean,
+  foirequest: Object,
   date_min: String,
   date_max: String,
   user_is_staff: Boolean
@@ -111,11 +106,9 @@ const createOrRetrieveLastDraft = async () => {
         // body.timestamp: ...
       })
     }
-    formSent.value = draft.value.sent
     values.sent = draft.value.sent
     refreshAttachments()
     //  draft.value = r
-    //  formSent.value = r.is_response
     //  formStatus.value = r.status
     //  formStatusWasResolved.value = r.status === 'resolved'
   } catch (e) {
@@ -135,7 +128,7 @@ const requestUpdateCosts = ref(false)
 const retrieveValues = async () => {
   // TODO handle errors
   const { data: request } = await requestRetrieve({
-    path: { id: props.foirequest_id },
+    path: { id: props.foirequest.id },
     throwOnError: true
   })
   values.status = request.status
@@ -225,14 +218,6 @@ if (props.config.url.messageWebsocket) {
 
 /* --- form handling --- */
 
-/* untangle ambiguous semantics:
- * there is message.sent, but this is not the same.
- * sent in the Form's context means "negated is_response"
- * TODO: this should be cleaned up at the model level.
- */
-// const formSent = ref(props.message?.is_response ? '0' : '1')
-// const formIsSent = computed(() => formSent.value === '1')
-
 const messagePublicBodyIsDefault = ref(true)
 
 // remove nonsensical combos
@@ -315,7 +300,7 @@ const ymdifyDate = (date) =>
 
 const submitFetch = async () => {
   await requestPartialUpdate({
-    path: { id: props.foirequest_id }, // TODO?
+    path: { id: props.foirequest.id },
     body: {
       costs: values.costs,
       status: values.status,
@@ -341,46 +326,6 @@ const submitFetch = async () => {
     .then(() => {
       console.info('messagePartialUpdate successful')
     })
-  /*
-  const action = document.forms.postupload.action
-  const formdata = new FormData(document.forms.postupload)
-  if (debug.value) {
-    console.log('submit', { action, formdata })
-  }
-  return fetch(action, {
-    method: 'post',
-    headers: {
-      'x-requested-with': 'fetch'
-    },
-    body: formdata
-  })
-    .then((response) => {
-      if (!response.ok)
-        throw new Error(
-          `form submitFetch error ${response.status} ${response.statusText}`
-        )
-      return response.json()
-    })
-    .then((response) => {
-      if ('errors' in response) {
-        throw new Error(
-          'form submitFetch error: ' + JSON.stringify(response.errors, false, 2)
-        )
-      }
-      console.log('form submitFetch successful')
-      gotoStep()
-    })
-    .catch((err) => {
-      console.error('fetch submit errors', err)
-      // TODO this will be replaced once we have an API instead of the form submit,
-      // for now it is better than nothing.
-      // Eventually this should trigger a modal and maybe
-      // link to steps which are invalid?
-      // Theoretical implementation now could be:
-      // if 'date' in errors then link to STEP_ with linked <input type=date>
-      alert(err.message)
-    })
-  */
 }
 
 const publish = () => {
@@ -974,27 +919,11 @@ addEventListener('hashchange', () => {
     <!--<small>{{ { uiDocuments, uiDocumentsUpload } }}</small>-->
     <!--<span class="debug">{{ values.isYellow }}</span>-->
     <!--<span class="debug">{{ isGotoValid }}</span>-->
-    <!--<span class="debug">
-          {{ { pbv: props.form.fields.publicbody.value, pbii:  props.form.fields.publicbody?.initial?.id, opbi: object_public_body_id } }}
-        </span>-->
-    <!-- <span class="debug">formStatus={{formStatus}},</span> -->
-    <!-- <span class="debug">formDoUpdateCost={{formDoUpdateCost}},</span> -->
     <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
     <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
-    <!--
-    <details v-if="form.nonFieldErrors.length">
-      <summary class="debug">DEBUG form.nonFieldErrors</summary>
-      <pre>{{ form.nonFieldErrors }}</pre>
-    </details>
-    <details v-if="Object.keys(form.errors).length">
-      <summary class="debug">DEBUG form.errors</summary>
-      <pre>{{ form.errors }}</pre>
-    </details>
-    -->
   </details>
   <pre style="color: darkred">
 values={{ values }}
-formStatusChoices={ formStatusChoices }
   </pre>
 
   <div class="step-container">
@@ -1177,7 +1106,7 @@ formStatusChoices={ formStatusChoices }
             </template>
           </label>
           <div style="margin: 1em 0; font-style: italic">
-            {{ props.foirequest_public_body.name }}
+            {{ props.foirequest.public_body.name }}
           </div>
           <div class="form-check" v-for="(choice, choiceIndex) in [
             { value: true, label: 'Ja.' },
@@ -1187,7 +1116,6 @@ formStatusChoices={ formStatusChoices }
               :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_pbisdefault_' + choiceIndex">{{ choice.label }}</label>
           </div>
-          <input type="hidden" name="publicbody" v-if="messagePublicBodyIsDefault" :value="formPublicbodyId" />
         </div>
       </div>
     </div>
@@ -1209,7 +1137,7 @@ formStatusChoices={ formStatusChoices }
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
           <publicbody-chooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
-            name="publicbody" :config="config" :value="props.foirequest_public_body.id" list-view="resultList"
+            name="publicbody" :config="config" :value="props.foirequest.public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
             @update="updatePublicBody"
             />
@@ -1222,7 +1150,6 @@ formStatusChoices={ formStatusChoices }
           <div class="step-questioncounter">Frage 3 von 5</div>
           <label class="fw-bold form-label field-required" for="id_date">
             {{ i18n.messageDate }}
-            <!--{{ form.fields.date.label }}-->
           </label>
           <!-- has to be @required "one too early" so checkValidity doesn't return true when empty on enter step -->
           <!-- TODO "always" required might break early post/submit
@@ -1313,7 +1240,6 @@ formStatusChoices={ formStatusChoices }
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_resolution">
-            <!-- {{ status_form.fields.resolution.label }} -->
             {{ i18n.messageResolution }}
           </label>
           <div class="form-check" v-for="(choice, choiceIndex) in requestResolutionChoices" :key="choice.value">
@@ -1393,7 +1319,6 @@ formStatusChoices={ formStatusChoices }
                 }" />
               <span class="input-group-text">Euro<!-- TODO i18n--></span>
             </div>
-            <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
           </div>
         </div>
       </div>
@@ -1652,16 +1577,16 @@ formStatusChoices={ formStatusChoices }
                 <!-- TODO: we could go through all elements, validate, and report here -->
               </small>
             </div>
-            <div class="mt-2" v-if="!object_public">
+            <div class="mt-2" v-if="!foirequest.public">
               <small>
                 {{ i18n.requestNonPublicHint }}
               </small>
             </div>
           </template>
           <template v-else-if="step === STEP_OUTRO">
-            <button type="button" @click="submitForm" class="btn btn-primary d-block w-100">
+            <a :href="props.foirequest.url" class="btn btn-primary d-block w-100">
               {{ i18n.requestShow }}
-            </button>
+            </a>
           </template>
           <template v-else-if="step === STEP_INTRO">
             <!-- should be blank -->
