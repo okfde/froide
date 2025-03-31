@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-04 11:20+0100\n"
+"POT-Creation-Date: 2025-03-31 18:05+0200\n"
 "PO-Revision-Date: 2025-03-04 11:21+0100\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -1558,6 +1558,10 @@ msgid "back to your account settings"
 msgstr "zurück zu Ihren Einstellungen"
 
 #: froide/account/templates/oauth2_provider/authorize.html
+msgid "App Permissions"
+msgstr ""
+
+#: froide/account/templates/oauth2_provider/authorize.html
 #, python-format
 msgid "Authorize the application '%(name)s'?"
 msgstr "Der Anwendung '%(name)s' Zugriff geben?"
@@ -2550,8 +2554,45 @@ msgid "Publish project and all requests"
 msgstr "Veröffentliche Projekt und alle Anfragen"
 
 #: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "Can't delete this attachment."
+msgid "Can't delete attachments on non-postal messages."
+msgstr "Dieser Anhang kann nicht gelöscht werden."
+
+#: froide/foirequest/api_views/attachment.py
 msgid "Can't delete this attachment."
 msgstr "Dieser Anhang kann nicht gelöscht werden."
+
+#: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "Can't delete this attachment."
+msgid "Can't approve this attachment."
+msgstr "Dieser Anhang kann nicht gelöscht werden."
+
+#: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "Can't delete this attachment."
+msgid "You can't convert this attachment to a document."
+msgstr "Dieser Anhang kann nicht gelöscht werden."
+
+#: froide/foirequest/api_views/attachment.py
+msgid ""
+"Only the redacted version of this attachment can be converted to a document."
+msgstr ""
+
+#: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "This attachment has been converted to PDF and cannot be published."
+msgid "This attachment has already been converted to a document."
+msgstr ""
+"Dieser Anhang wurde in ein PDF konvertiert und kann nicht veröffentlicht "
+"werden."
+
+#: froide/foirequest/api_views/attachment.py
+#, fuzzy
+#| msgid "Other attachments that are not documents"
+msgid "Only PDF attachments can be converted to a document."
+msgstr "Andere Anhänge, die keine Dokumente sind"
 
 #: froide/foirequest/api_views/attachment.py
 msgid "All attachments need to belong to the provided message."
@@ -2560,22 +2601,6 @@ msgstr "Alle Anhänge müssen zu der angegebenen Nachricht gehören."
 #: froide/foirequest/api_views/attachment.py
 msgid "Images must not be duplicated."
 msgstr "Bilder dürfen nicht gedoppelt sein."
-
-#: froide/foirequest/api_views/message.py
-msgid ""
-"Response messages must have a sender public body, no sender user and no "
-"recipient public body."
-msgstr ""
-"Antwortnachrichten müssen eine Behörde als Sender, jedoch kein:e Nutzer:in "
-"als Sender und keine Behörde als Empfänger enthalten."
-
-#: froide/foirequest/api_views/message.py
-msgid ""
-"Non-response messages must have a recipent public body, but no sender public "
-"body."
-msgstr ""
-"Nachrichten, die keine Antwort sind, benötigen eine Behörde als Empfänger, "
-"jedoch keine Behörde als Sender."
 
 #: froide/foirequest/apps.py
 msgid "FOI Request"
@@ -3402,6 +3427,12 @@ msgid "an attachment was deleted"
 msgstr "ein Anhang wurde gelöscht"
 
 #: froide/foirequest/models/event.py
+#, fuzzy
+#| msgid "attachments were uploaded"
+msgid "one or more attachments were converted"
+msgstr "Anhänge wurden hochgeladen"
+
+#: froide/foirequest/models/event.py
 msgid "a document was created"
 msgstr "ein Dokument wurde erstellt"
 
@@ -4205,6 +4236,11 @@ msgid "Please classify the reply to your request"
 msgstr "🔔 Bitte klassifizieren Sie Ihre Anfrage"
 
 #: froide/foirequest/serializers.py
+#, python-format
+msgid "Choose a valid status: %s"
+msgstr ""
+
+#: froide/foirequest/serializers.py
 msgid "This message kind can not be created via the API."
 msgstr "Nachrichten dieser Art können nicht über die API erstellt werden."
 
@@ -4212,6 +4248,47 @@ msgstr "Nachrichten dieser Art können nicht über die API erstellt werden."
 msgid "You do not have permission to add a message to this request."
 msgstr ""
 "Sie haben nicht die Berechtigung, Nachrichten zu dieser Anfrage hinzuzufügen."
+
+#: froide/foirequest/serializers.py
+#, fuzzy
+#| msgid "Your reply date is in the future, that is not possible."
+msgid "The timestamp is in the future, that is not possible."
+msgstr "Ihr Sendedatum ist in der Zukunft, das ist nicht möglich."
+
+#: froide/foirequest/serializers.py
+#, fuzzy
+#| msgid "Message was send again."
+msgid "Message must created as draft."
+msgstr "Die Nachricht wurde noch einmal gesendet."
+
+#: froide/foirequest/serializers.py
+#, fuzzy
+#| msgid ""
+#| "Your reply date is before the request was made, that is not possible."
+msgid "Your message date is before the request was made."
+msgstr ""
+"Ihr Sendedatum liegt vor dem Datum dieser Anfrage, das ist nicht möglich."
+
+#: froide/foirequest/serializers.py
+#, fuzzy
+msgid "is_response is required"
+msgstr "Anfragen des Nutzers"
+
+#: froide/foirequest/serializers.py
+msgid ""
+"Response messages must have a sender public body, no sender user and no "
+"recipient public body."
+msgstr ""
+"Antwortnachrichten müssen eine Behörde als Sender, jedoch kein:e Nutzer:in "
+"als Sender und keine Behörde als Empfänger enthalten."
+
+#: froide/foirequest/serializers.py
+msgid ""
+"Non-response messages must have a recipent public body, but no sender public "
+"body."
+msgstr ""
+"Nachrichten, die keine Antwort sind, benötigen eine Behörde als Empfänger, "
+"jedoch keine Behörde als Sender."
 
 #: froide/foirequest/serializers.py
 msgid "Attachment does not exist or is not an image."
@@ -4312,6 +4389,16 @@ msgstr "Download als .eml"
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Events"
 msgstr "Ereignisse"
+
+#: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
+msgid "Messages"
+msgstr "Nachrichten"
+
+#: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
+#, fuzzy
+#| msgid "Messages"
+msgid "Message Drafts"
+msgstr "Nachrichten"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_list.html
 msgid "Distinct users:"
@@ -6264,6 +6351,12 @@ msgstr "in der Kategorie „%(name)s“"
 #, python-format
 msgid "by %(name)s"
 msgstr "von %(name)s"
+
+#: froide/foirequest/templates/foirequest/list.html
+#, fuzzy, python-format
+#| msgid "See all requests of %(name)s"
+msgid "by a member of %(name)s"
+msgstr "Zeige alle Anfragen von %(name)s"
 
 #: froide/foirequest/templates/foirequest/list.html
 msgid "FoI Requests"
@@ -13135,9 +13228,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgid "^sent/$"
 #~ msgstr "^gesendet/$"
 
-#~ msgid "Messages"
-#~ msgstr "Nachrichten"
-
 #~ msgid "Wants Newsletter"
 #~ msgstr "Möchte Newsletter"
 
@@ -13304,10 +13394,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid "%(model)s instance with %(field)s %(value)r does not exist."
 #~ msgstr "Es existiert bereits eine Nutzerin mit dieser E-Mail-Adresse."
-
-#, fuzzy
-#~ msgid "This field is required."
-#~ msgstr "Anfragen des Nutzers"
 
 #, fuzzy
 #~ msgid "Enter a whole number."
