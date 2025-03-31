@@ -3,6 +3,10 @@
     <dl>
       <dd>Region Kind</dd>
       <dt><input v-model="regionKind" /></dt>
+      <dd>GeoRegion Kind Detail</dd>
+      <dt>
+        <input v-model="regionKindDetail" />
+      </dt>
       <dd>Ancestor GeoRegion</dd>
       <dt>
         <input v-model="ancestor" @change="ancestorChanged" />
@@ -12,6 +16,7 @@
       <dt>
         <input v-model="category" @change="categoryChanged" />
         {{ categoryName }}
+        <label><input type="checkbox" v-model="useCategoryForSearch" />Use for search</label>
       </dt>
       <dd>Jurisdiction</dd>
       <dt>
@@ -48,7 +53,7 @@
 </template>
 
 <script>
-import { getAllData, FroideAPI, getData, postData } from '../../lib/api.js'
+import { FroideAPI, getAllData, getData, postData } from '../../lib/api.js'
 
 import GeoMatcherRow from './geo-matcher-row.vue'
 
@@ -67,10 +72,12 @@ export default {
     return {
       georegions: [],
       regionKind: '',
+      regionKindDetail: '',
       ancestor: '',
       ancestorName: '',
       jurisdiction: '',
       jurisdictionName: '',
+      useCategoryForSearch: true,
       category: '',
       categoryName: '',
       searchHint: '',
@@ -114,6 +121,7 @@ export default {
 
     this.ancestor = entries.get('ancestor') || ''
     this.regionKind = entries.get('kind') || ''
+    this.regionKindDetail = entries.get('kind_detail') || ''
     this.category = entries.get('category') || ''
     this.jurisdiction = entries.get('jurisdiction') || ''
     this.searchHint = entries.get('searchhint') || ''
@@ -195,6 +203,9 @@ export default {
     },
     loadGeoRegions() {
       let apiUrl = `${this.config.url.listGeoregion}?kind=${this.regionKind}`
+      if (this.regionKindDetail) {
+        apiUrl += `&kind_detail=${encodeURIComponent(this.regionKindDetail)}`
+      }
       if (this.ancestor) {
         apiUrl += `&ancestor=${this.ancestor}`
       }
@@ -261,7 +272,7 @@ export default {
       }
 
       const filter = {}
-      if (this.category) {
+      if (this.category && this.useCategoryForSearch) {
         filter.categories = this.category
       }
       if (this.jurisdiction) {
@@ -275,7 +286,11 @@ export default {
     connectPublicBody(payload) {
       const data = {
         georegion: payload.georegionId,
-        publicbody: payload.publicbodyId
+        publicbody: payload.publicbodyId,
+      }
+      if (this.category && !this.useCategoryForSearch) {
+        // Add category to public body
+        data.category = this.category
       }
       postData('', data, this.csrfToken).then(() => {
         const gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
