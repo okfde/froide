@@ -135,7 +135,7 @@ django-crossdomainmedia==0.0.4
     # via froide (pyproject.toml)
 django-elasticsearch-dsl==8.0
     # via froide (pyproject.toml)
-django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@99d75e0903629436234f6d30d4fdbf8cddc15f13
+django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@2be6eb0988ee51a37d83f2f30d139d4c6d73f703
     # via froide (pyproject.toml)
 django-filter==24.3
     # via
@@ -270,7 +270,9 @@ lxml==5.3.0
 lxml-html-clean==0.2.2
     # via lxml
 markdown==3.7
-    # via froide (pyproject.toml)
+    # via
+    #   froide (pyproject.toml)
+    #   django-filingcabinet
 markupsafe==2.1.5
     # via jinja2
 maxminddb==2.6.2
@@ -287,6 +289,8 @@ mypy-extensions==1.0.0
     # via
     #   monkeytype
     #   mypy
+nh3==0.2.21
+    # via django-filingcabinet
 nodeenv==1.9.1
     # via pre-commit
 oauthlib==3.2.2
