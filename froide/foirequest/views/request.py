@@ -117,6 +117,8 @@ def get_foirequest_documents_context(request, obj):
         "documents_uri": reverse("api:document-list") + "?foirequest=%s" % obj.pk,
         "pages_uri": reverse("api:page-list") + "?foirequest=%s" % obj.pk,
         "directories": [],
+        "current_directory": None,
+        "directory_stack": [],
     }
     return context
 
