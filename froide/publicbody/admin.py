@@ -319,6 +319,15 @@ class PublicBodyBaseAdminMixin:
                 return HttpResponse(status=404)
 
             pb.regions.add(georegion)
+
+            category = data.get("category")
+            if category:
+                try:
+                    cat = Category.objects.get(id=data["category"])
+                    pb.categories.add(cat)
+                except PublicBody.DoesNotExist:
+                    return HttpResponse(status=404)
+
             return HttpResponse(status=201, content=b"{}")
 
         opts = self.model._meta

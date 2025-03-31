@@ -84,6 +84,7 @@ class GeoRegionFilter(filters.FilterSet):
     )
     latlng = filters.CharFilter(method="latlng_filter")
     name = filters.CharFilter(method="name_filter")
+    kind_detail = filters.CharFilter(method="kind_detail_filter")
     region_identifier = filters.CharFilter(method="region_identifier_filter")
 
     class Meta:
@@ -120,6 +121,9 @@ class GeoRegionFilter(filters.FilterSet):
 
     def region_identifier_filter(self, queryset, name, value):
         return queryset.filter(region_identifier=value)
+
+    def kind_detail_filter(self, queryset, name, value):
+        return queryset.filter(kind_detail=value)
 
     def latlng_filter(self, queryset, name, value):
         try:
