@@ -416,7 +416,7 @@ def edit_postal_message(request, foirequest, message_id):
             "messageCost": _("How much compensation does the public body demand?"),
             "messageCostCheck": _("Did the public body demand compensation?"),
             "messageCostCheckLast": _(
-                "You have noted that the public body had demanded compensation to the amount of €${amount}.<br/>Is this amount still correct?"
+                "You have noted that the public body had demanded compensation to the amount of ${amount}.<br/>Is this amount still correct?"
             ),
             "redactionPick": _("Which documents do you want to redact?"),
             "redactionInfo": _(
@@ -468,6 +468,13 @@ def edit_postal_message(request, foirequest, message_id):
             "error": _("Error"),
             "genericErrorReload": _("Error! Try to reload the page?"),
             "attachmentDeleted": _("an attachment was deleted"),
+            "yes": _("Yes."),
+            "no": _("No."),
+            "noDifferentPublicBody": _("No, pick different public body."),
+            "questionOf": _("Question {current} of {total}").format(
+                current="${current}", total="${total}"
+            ),
+            "backToSubmit": _("Back to submit"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),

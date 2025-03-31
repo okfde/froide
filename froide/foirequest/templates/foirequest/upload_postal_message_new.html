@@ -19,7 +19,7 @@
     <form name="postupload" class="d-flex flex-col flex-grow-1">
         {% csrf_token %}
         {# mw-100 crucial for pdf-redaction's dynamic maxWidth calculations #}
-        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}">
+        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}" :currency="{{ froide.currency }}">
         <template data-slot="redaction_explanation">
             {% include "foirequest/snippets/redaction_explanation.html" %}
         </template>

@@ -33,7 +33,8 @@ const props = defineProps({
   foirequest: Object,
   date_min: String,
   date_max: String,
-  user_is_staff: Boolean
+  user_is_staff: Boolean,
+  currency: String
 })
 
 const { i18n } = useI18n(props.config)
@@ -826,7 +827,7 @@ addEventListener('hashchange', () => {
   <div v-if="error" class="container">
     <div class="alert alert-danger alert-dismissible show" role="alert">
       <h4 class="alert-heading">
-        {{ i18n.error || 'Error' }}<!-- TODO i18n -->
+        {{ i18n.error || 'Error' }}
       </h4>
       <button type="button" class="btn-close" data-bs-dismiss="alert" :aria-label="i18n.close" @click="error = false" />
       <ul v-if="error?.non_field_errors">
@@ -846,14 +847,14 @@ addEventListener('hashchange', () => {
                 class="btn btn-primary"
                 @click="gotoStep(fieldErrorStep[key])"
                 >
-                go to <!--{{ fieldErrorStep[key] }}--> <!-- TODO i18n -->
+                {{ i18n.review }}<!--{{ fieldErrorStep[key] }}-->
               </button>
               <button
                 type="button"
                 class="btn btn-secondary"
                 @click="gotoStep(STEP_DOCUMENTS_OVERVIEW_REDACTED)"
                 >
-                return to submit<!-- TODO i18n -->
+                {{ i18n.backToSubmit }}
               </button>
             </div>
           </dd>
@@ -1055,7 +1056,7 @@ values={{ values }}
     <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 1 von 5</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 1, total: 5 }) }}</div>
           <label class="fw-bold form-label">
             {{ i18n.letterSentOrReceived }}
           </label>
@@ -1072,7 +1073,7 @@ values={{ values }}
     <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 2 von 5</div><!-- FIXME i18n !! -->
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 2, total: 5 }) }}</div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="!values.is_response">
               {{ i18n.messagePublicbodyCheckTo }}
@@ -1085,8 +1086,8 @@ values={{ values }}
             {{ props.foirequest.public_body.name }}
           </div>
           <div class="form-check" v-for="(choice, choiceIndex) in [
-            { value: true, label: 'Ja.' },
-            { value: false, label: 'Nein, andere Behörde wählen' }
+            { value: true, label: i18n.yes },
+            { value: false, label: i18n.noDifferentPublicBody }
           ]" :key="choiceIndex">
             <input type="radio" required="" class="form-check-input" v-model="messagePublicBodyIsDefault"
               :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
@@ -1123,7 +1124,7 @@ values={{ values }}
     <div v-show="step === STEP_MESSAGE_DATE" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 3 von 5</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 3, total: 5 }) }}</div>
           <label class="fw-bold form-label field-required" for="id_date">
             {{ i18n.messageDate }}
           </label>
@@ -1168,7 +1169,7 @@ values={{ values }}
     <div v-show="step === STEP_MESSAGE_STATUS" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 4 von 5</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 4, total: 5 }) }}</div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="values.is_response && requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
@@ -1230,13 +1231,13 @@ values={{ values }}
     <div v-show="step === STEP_MESSAGE_COST_CHECK_ANY" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 5 von 5</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 5, total: 5 }) }}</div>
           <label class="fw-bold col-form-label">
             {{ i18n.messageCostCheck }}
           </label>
           <div class="form-check" v-for="(choice, choiceIndex) in [
-            { label: 'Nein.', value: false },
-            { label: 'Ja.', value: true }
+            { label: i18n.no, value: false },
+            { label: i18n.yes, value: true }
           ]" :key="choiceIndex">
             <input type="radio" required="" class="form-check-input" v-model="requestUpdateCosts"
               :id="'id_nowcost_' + choiceIndex" :value="choice.value"
@@ -1250,19 +1251,20 @@ values={{ values }}
     <div v-show="step === STEP_MESSAGE_COST_CHECK_LAST" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">Frage 5 von 5</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 5, total: 5 }) }}</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00
             also, API returns floats, so this actually should be decimalized i18n-awarely...
             (or provided as a formatted string by the API)
+            also, the order of "number currency" is currently hardcoded here
            -->
           <label
             class="fw-bold col-form-label"
             for="id_nowcost"
-            v-html="i18n._('messageCostCheckLast', { amount: requestOldCosts })"
+            v-html="i18n._('messageCostCheckLast', { amount: `${requestOldCosts}&nbsp;${currency}` })"
             ></label>
           <div class="form-check" v-for="(choice, choiceIndex) in [
-            { label: 'Ja.', value: false },
-            { label: 'Nein.', value: true }
+            { label: i18n.yes, value: false },
+            { label: i18n.no, value: true }
           ]" :key="choiceIndex">
             <input type="radio" required="" class="form-check-input" v-model="requestUpdateCosts"
               :id="'id_nowcost_' + choiceIndex" :value="choice.value"
@@ -1293,7 +1295,7 @@ values={{ values }}
                   'is-invalid': validity.costs === false,
                   'is-valid': validity.costs === true
                 }" />
-              <span class="input-group-text">Euro<!-- TODO i18n--></span>
+              <span class="input-group-text">{{ currency }}</span>
             </div>
           </div>
         </div>
