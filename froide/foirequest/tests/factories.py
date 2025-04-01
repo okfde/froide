@@ -24,7 +24,6 @@ from froide.publicbody.factories import (
     FoiLawFactory,
     JurisdictionFactory,
     PublicBodyFactory,
-    PublicBodyTagFactory,
 )
 
 from ..models import (
@@ -251,9 +250,6 @@ def make_world() -> Site:
     topic_1 = CategoryFactory.create(is_topic=True)
     topic_2 = CategoryFactory.create(is_topic=True)
 
-    tag_1 = PublicBodyTagFactory.create(is_topic=True)
-    tag_2 = PublicBodyTagFactory.create(is_topic=True)
-
     mediator_bund = PublicBodyFactory.create(jurisdiction=bund, site=site)
     mediator_bund.categories.add(topic_1)
 
@@ -283,12 +279,10 @@ def make_world() -> Site:
     for _ in range(5):
         pb_bund_1 = PublicBodyFactory.create(jurisdiction=bund, site=site)
         pb_bund_1.categories.add(topic_1)
-        pb_bund_1.tags.add(tag_1)
         pb_bund_1.laws.add(ifg_bund, uig_bund, meta_bund)
     for _ in range(5):
         pb_nrw_1 = PublicBodyFactory.create(jurisdiction=nrw, site=site)
         pb_nrw_1.categories.add(topic_2)
-        pb_nrw_1.tags.add(tag_2)
         pb_nrw_1.laws.add(ifg_nrw, uig_nrw, meta_nrw)
     req = FoiRequestFactory.create(
         site=site, user=user1, jurisdiction=bund, law=meta_bund, public_body=pb_bund_1
