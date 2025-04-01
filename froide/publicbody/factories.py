@@ -18,7 +18,6 @@ from .models import (
     Jurisdiction,
     PublicBody,
     PublicBodyChangeProposal,
-    PublicBodyTag,
 )
 
 
@@ -35,14 +34,6 @@ class JurisdictionFactory(DjangoModelFactory):
     description = ""
     hidden = False
     rank = factory.Sequence(lambda n: n)
-
-
-class PublicBodyTagFactory(DjangoModelFactory):
-    class Meta:
-        model = PublicBodyTag
-
-    name = factory.Sequence(lambda n: "Public Body Tag {0}".format(n))
-    slug = factory.LazyAttribute(lambda o: slugify(o.name))
 
 
 class CategoryFactory(DjangoModelFactory):
