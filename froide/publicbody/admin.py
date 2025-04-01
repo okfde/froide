@@ -43,8 +43,6 @@ from .models import (
     ProposedPublicBody,
     PublicBody,
     PublicBodyChangeProposal,
-    PublicBodyTag,
-    TaggedPublicBody,
 )
 
 CATEGORY_AUTOCOMPLETE_URL = reverse_lazy("api:category-autocomplete")
@@ -82,7 +80,7 @@ def execute_replace_publicbody(admin, request, queryset, action_obj):
     that point to obj with assign_obj.
     Dark magic ahead.
     """
-    BLOCK_LIST = [CategorizedPublicBody, TaggedPublicBody, PublicBody]
+    BLOCK_LIST = [CategorizedPublicBody, PublicBody]
     relations = [
         f
         for f in PublicBody._meta.get_fields()
@@ -597,20 +595,6 @@ class JurisdictionAdmin(admin.ModelAdmin):
     ]
     list_display = ["name", "hidden", "rank"]
     raw_id_fields = ("region",)
-
-
-@admin.register(PublicBodyTag)
-class PublicBodyTagAdmin(admin.ModelAdmin):
-    list_display = ["name", "slug", "is_topic", "rank"]
-    list_filter = ["is_topic", "rank"]
-    ordering = ["rank", "name"]
-    search_fields = ["name"]
-    prepopulated_fields = {"slug": ["name"]}
-
-
-@admin.register(TaggedPublicBody)
-class TaggedPublicBodyAdmin(admin.ModelAdmin):
-    raw_id_fields = ("content_object", "tag")
 
 
 def execute_assign_parent(admin, request, queryset, action_obj):
