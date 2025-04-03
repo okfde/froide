@@ -860,6 +860,7 @@ def upload_attachments(request, foirequest, message_id):
             "documentTitle": _("Document title"),
             "documentTitleHelp": _("Give this document a proper title"),
             "documentTitlePlaceholder": _("e.g. Letter from date"),
+            "documentsUploadDefaultFilename": _("letter.pdf"),
             "showIrrelevantAttachments": _("Show irrelevant attachments"),
             "makeRelevant": _("Make relevant"),
             "makePublic": pgettext("Attachment manager", "Make public"),

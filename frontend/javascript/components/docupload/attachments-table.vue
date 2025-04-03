@@ -253,7 +253,7 @@ const makeResultSelected = async () => {
           @click.self="toggleSelection('card', att.id)"
           >
           {{ att.document?.title || att.name }}
-          <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
+          <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
             <span class="sr-only">{{ i18n.loading }}</span>
           </span>
           <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
@@ -334,7 +334,7 @@ const makeResultSelected = async () => {
         @click.self="toggleSelection('table', att.id)"
         >
         {{ att.document?.title || att.name }}
-        <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
+        <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
           <span class="sr-only">{{ i18n.loading }}</span>
         </span>
         <attachment-badge-filetype

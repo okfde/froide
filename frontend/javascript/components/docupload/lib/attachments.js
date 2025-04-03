@@ -1,5 +1,13 @@
 import { postData } from '../../../lib/api'
-import { attachmentList, attachmentRetrieve, documentUpdate } from '../../../api'
+import {
+  attachmentList,
+  attachmentRetrieve,
+  documentUpdate,
+  convertImagesToPdf,
+  attachmentDestroy,
+  attachmentApproveCreate,
+  attachmentToDocumentCreate
+} from '../../../api'
 
 import { pinia } from '../../../lib/pinia'
 import { useAttachmentsStore } from './attachments-store'
@@ -16,20 +24,23 @@ const makeRelevant = (attachment) => {
 const convertImage = (imageIndex) => {
   store.isConverting = true
   store.images[imageIndex].isConverting = true
-  return postData(
-    config.urls.convertAttachments,
-    {
-      action: 'convert_to_pdf',
-      // normalize possible .pdf extension away
-      title: store.images[imageIndex].name.replace(/\.pdf$/, ''),
+  const title = (store.images[imageIndex].name || config.i18n.value.documentsUploadDefaultFilename)
+    // normalize possible .pdf extension away
+    ?.replace(/\.pdf$/, '')
+  return convertImagesToPdf({
+    body: {
+      title,
       images: store.images[imageIndex].pages.map((p) => ({
-        id: p.id,
+        attachment: p.resource_uri,
         rotate: (p.rotate || 0) + (p.implicitRotate || 0)
-      }))
+      })),
+      message: config.message.resource_uri
     },
-    config.csrfToken
-  )
-    .then((newAttachment) => {
+    throwOnError: true
+  })
+    .catch(handleError)
+    .then(({ data }) => {
+      const newAttachment = data
       newAttachment.new = true
       store.images = store.images.filter((_, i) => i !== imageIndex)
       // append new
@@ -41,18 +52,20 @@ const convertImage = (imageIndex) => {
 }
 
 const createDocument = (attachment) => {
-  const createDocumentUrl = config.urls.createDocument.replace(
-    '/0/',
-    `/${attachment.id}/`
-  )
-  store.creatingDocumentIds.add(attachment.id)
-  return postData(createDocumentUrl, {}, config.csrfToken)
-    .then(() => {
-      return refetchAttachment(attachment)
+  return attachmentToDocumentCreate({
+    path: { id: attachment.id },
+    throwOnError: true
+  })
+    .then(({ data }) => {
+      // note: .getById and .all are not reactive, only allRaw
+      store.allRaw.find(att => att.id === attachment.id).document = data
     })
-    .finally(() => {
-      store.creatingDocumentIds.delete(attachment.id)
+    .catch((err) => {
+      store.messages.push({ body: err.detail || config.i18n.error || 'Error', color: 'danger' })
     })
+    // note there's no .finally here -- we don't know when it's done
+    // for now it remains in process until reload
+    // (or until we gain a websocket-y signal)
 }
 
 const updateDocument = (attachment, { title, description }) => {
@@ -114,21 +127,18 @@ const fetchAttachments = (messageId) => {
 }
 
 const refetchAttachment = (attachment) => {
-  // const updateUrl = attachment.resource_uri
-  // return getData(updateUrl, { 'X-CSRFToken': config.csrfToken })
-  return attachmentRetrieve({ path: attachment.id, throwOnError: true })
-    .then((response) => {
-      if (!response.ok) {
-        console.error('refetch attachment / attachmentRetrieve error', attachment.id, response)
-        // TODO
-        throw new Error(response.message)
-      }
-      return response.json()
-    })
-    .then((response) => {
-      const index = store.allRaw.findIndex(att => att.id === attachment.id)
-      store.allRaw[index] = response
-    })
+  return attachmentRetrieve({
+    path: { id: attachment.id },
+    throwOnError: true
+  })
+    .then(({ data }) => replaceAttachment(data))
+    .catch(handleError)
+}
+
+const replaceAttachment = (attachment) => {
+  const index = store.allRaw.findIndex(att => att.id === attachment.id)
+  if (index === -1) throw new Error(`attachment not found ${attachment.id}`)
+  store.allRaw[index] = attachment
 }
 
 const fetchImagePage = (page) => {
@@ -202,11 +212,24 @@ const handleErrorAndRefresh = (err) => {
   }
 }
 
+const handleError = (err) => {
+  console.error(err)
+  let message = err?.message
+  try {
+    if (!message) message = JSON.stringify(err)
+  } catch {
+    message = '…'
+  }
+  window.alert(`${config.i18n.value.genericError || 'Error'}\n\n${message}`)
+}
+
 const deleteAttachment = (attachment) => {
-  const deleteUrl = config.urls.deleteAttachment.replace('/0/', `/${attachment.id}/`)
   // optimistically...
   store.removeAttachment(attachment)
-  return postData(deleteUrl, {}, config.csrfToken, 'POST', true)
+  return attachmentDestroy({
+    path: { id: attachment.id },
+    throwOnError: true
+  })
     .then(() => {
       store.messages.push({ body: `${config.i18n.value.attachmentDeleted} (${attachment.name})`, color: 'success-subtle' })
     })
@@ -214,12 +237,12 @@ const deleteAttachment = (attachment) => {
 }
 
 const approveAttachment = (attachment) => {
-  const approveUrl = config.urls.approveAttachment.replace('/0/', `/${attachment.id}/`)
   store.approvingIds.add(attachment.id)
-  return postData(approveUrl, {}, config.csrfToken, 'POST', true)
-    .then(() => {
-      refetchAttachment(attachment, config.csrfToken)
-    })
+  return attachmentApproveCreate({
+    path: { id: attachment.id },
+    throwOnError: true
+  })
+    .then(({ data }) => replaceAttachment(data))
     .catch(handleErrorAndRefresh)
     .finally(() => {
       store.approvingIds.delete(attachment.id)
@@ -235,8 +258,7 @@ const approveAllUnredactedAttachments = (excludeIds = []) => {
     !excludeIds.includes(att.id)
   )
   return Promise.all(approvable.map(attachment => {
-    const approveUrl = config.urls.approveAttachment.replace('/0/', `/${attachment.id}/`)
-    return postData(approveUrl, {}, config.csrfToken, 'POST')
+    return attachmentApproveCreate({ path: { id: attachment.id }})
   }))
 }
 
