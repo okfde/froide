@@ -222,24 +222,11 @@ const validity = reactive({
 
 // TODO updateValidity should (maybe) be called on gotoStep(STEP_MESSAGE_DATE), too
 const updateValidity = (key) => {
-  let el =
-    key === 'form'
-      ? document.forms.postupload
-      : document.forms.postupload.elements[key]
+  let el = document.forms.postupload.elements[key]
   // checkValidity is same for any radio button of a given name, we pick the first
   if (el instanceof RadioNodeList) el = el[0]
   // just assume true if browser doesn't support checkValidity
   validity[key] = 'checkValidity' in el ? el.checkValidity() : true
-  if (debug.value) {
-    if (key === 'form' && !el.checkValidity()) {
-      console.log(
-        'updateValidity form failed, offending elements:',
-        [...document.forms.postupload.elements].filter(
-          (el) => !el.checkValidity()
-        )
-      )
-    }
-  }
 }
 
 /* Form API interaction: retrieval */
@@ -720,7 +707,6 @@ const stepsConfig = {
     onEnter: () => {
       attachments.unselectSubset(attachments.relevant)
       attachmentsOverviewActions.value = false
-      updateValidity('form')
       pdfRedactionUploaded()
     },
     context: {
@@ -1548,7 +1534,7 @@ values={{ values }}
               type="button"
               @click="approveAndPublish"
               class="btn btn-primary d-block w-100"
-              :disabled="isSubmitting || !validity.form"
+              :disabled="isSubmitting"
             >
               <span
                 class="spinner-border spinner-border-sm"
@@ -1558,12 +1544,6 @@ values={{ values }}
               />
               {{ i18n.confirm }}
             </button>
-            <div class="mt-2" v-if="!validity.form">
-              <small>
-                {{ i18n.formHasErrors }}
-                <!-- TODO: we could go through all elements, validate, and report here -->
-              </small>
-            </div>
             <div class="mt-2" v-if="!foirequest.public">
               <small>
                 {{ i18n.requestNonPublicHint }}

@@ -438,7 +438,6 @@ def edit_postal_message(request, foirequest, message_id):
             "redactionDone": _("I have finished redacting"),
             "redactionCheck": _("Important: Have you checked all pages?"),
             "confirm": _("Confirm"),
-            "formHasErrors": _("The form has errors"),
             "requestNonPublicHint": _(
                 "Your request is not public at the moment. The documents will not be public, either."
             ),
