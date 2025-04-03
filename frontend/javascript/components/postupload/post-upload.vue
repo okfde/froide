@@ -216,7 +216,8 @@ const ymdifyDate = (date) =>
 const validity = reactive({
   date: false,
   registered_mail_date: false,
-  status: false
+  status: false,
+  resolution: false
 })
 
 // TODO updateValidity should (maybe) be called on gotoStep(STEP_MESSAGE_DATE), too
@@ -627,7 +628,12 @@ const stepsConfig = {
     context: {
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
-      isGotoValid: () => validity.status
+      isGotoValid: () => {
+        if (isDesktop.value && requestIsResolved) {
+          return validity.status && validity.resolution
+        }
+        return validity.status
+      }
     }
   },
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
@@ -639,7 +645,8 @@ const stepsConfig = {
     },
     context: {
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: i18n.value.enterInformation,
+      isGotoValid: () => validity.resolution
     }
   },
   [STEP_MESSAGE_COST_CHECK_ANY]: {
@@ -1222,7 +1229,9 @@ values={{ values }}
           <div class="form-check" v-for="(choice, choiceIndex) in requestResolutionChoices" :key="choice.value">
             <input type="radio" name="resolution" :required="requestIsResolved" class="form-check-input"
               v-model="values.resolution"
-              :id="'id_resolution_' + choiceIndex" :value="choice.value" />
+              :id="'id_resolution_' + choiceIndex" :value="choice.value"
+              @input="updateValidity('resolution')"
+              />
             <label class="form-check-label" :for="'id_resolution_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
