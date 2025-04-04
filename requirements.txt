@@ -80,7 +80,7 @@ deprecated==1.2.14
     # via pikepdf
 dj-database-url==2.2.0
     # via froide (pyproject.toml)
-django==4.2.16
+django==4.2.17
     # via
     #   froide (pyproject.toml)
     #   channels
