@@ -9,10 +9,9 @@ def create_categories(apps, schema_editor):
     """
     Copy all PublicBodyTags to Categories
     """
-    from ..models import Category, TaggedPublicBody  # Use treebeard API
+    TaggedPublicBody = apps.get_model("publicbody", "TaggedPublicBody")
+    Category = apps.get_model("publicbody", "Category")
 
-    # Category = apps.get_model('publicbody', 'Category')
-    # PublicBody = apps.get_model('publicbody', 'PublicBody')
     categories = {}
     for tpb in TaggedPublicBody.objects.all():
         if tpb.tag.slug in categories:
