@@ -115,6 +115,8 @@ class MakeRequestView(FormView):
 
         if "law_type" in request.GET:
             initial["law_type"] = request.GET["law_type"]
+        if "responsibility" in request.GET:
+            initial["responsibility"] = request.GET["responsibility"]
 
         if "full_text" in request.GET:
             initial["full_text"] = request.GET["full_text"] == "1"
