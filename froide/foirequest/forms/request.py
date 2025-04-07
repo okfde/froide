@@ -20,7 +20,7 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.forms import TagObjectForm
 from froide.helper.text_utils import apply_user_redaction, redact_plaintext, slugify
 from froide.helper.widgets import BootstrapRadioSelect, BootstrapSelect, PriceInput
-from froide.publicbody.models import PublicBody
+from froide.publicbody.models import Category, PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 
 from ..models import FoiRequest, PublicBodySuggestion, RequestDraft
@@ -84,6 +84,12 @@ class RequestForm(JSONMixin, forms.Form):
 
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     law_type = forms.CharField(widget=forms.HiddenInput, required=False)
+    # Helps select the right contact at the public body
+    responsibility = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        widget=forms.HiddenInput,
+        required=False,
+    )
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
     hide_public = forms.BooleanField(
         widget=forms.HiddenInput, initial=False, required=False
