@@ -93,16 +93,19 @@ const toggleSlide = (el: HTMLElement, seconds = 0.3): void => {
   }
 }
 
-const slideUp = (el: HTMLElement, seconds = 0.3): void => {
-  const elMaxHeight = `${getHeight(el)}px`
-  el.style.maxHeight = elMaxHeight
-  el.setAttribute('data-max-height', elMaxHeight)
+const slideUp = (el: HTMLElement, seconds = 0.3): Promise<void> => {
+  return new Promise((resolve) => {
+    const elMaxHeight = `${getHeight(el)}px`
+    el.style.maxHeight = elMaxHeight
+    el.setAttribute('data-max-height', elMaxHeight)
 
-  el.style.transition = `max-height ${seconds}s ease-in-out`
-  el.style.overflow = 'hidden'
+    el.style.transition = `max-height ${seconds}s ease-in-out`
+    el.style.overflow = 'hidden'
 
-  requestAnimationFrame(() => {
-    el.style.maxHeight = '0'
+    setTimeout(() => {
+      el.style.maxHeight = '0px'
+      resolve()
+    }, 1)
   })
 }
 
@@ -148,4 +151,11 @@ const guardBeforeunload = (enable: boolean): void => {
   }
 }
 
-export { addText, scrollToAnchor, scrollNavIntoViewIfNecessary, slideUp, toggleSlide, guardBeforeunload }
+export {
+  addText,
+  scrollToAnchor,
+  scrollNavIntoViewIfNecessary,
+  slideUp,
+  toggleSlide,
+  guardBeforeunload
+}
