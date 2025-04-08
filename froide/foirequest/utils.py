@@ -144,7 +144,7 @@ def get_secret_url_replacements():
     replacement_url = reverse("foirequest-shortlink", kwargs={"obj_id": "0"})
     replacement_url = replacement_url.replace("0", r"\1")
 
-    replacements = {key: replacement_url for key in url_regexes}
+    replacements = dict.fromkeys(url_regexes, replacement_url)
     SECRET_URL_REPLACEMENTS.update(replacements)
     return SECRET_URL_REPLACEMENTS
 
