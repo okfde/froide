@@ -131,7 +131,15 @@ class DocumentCollection(AbstractDocumentCollection):
     )
     foirequests = models.ManyToManyField("foirequest.FoiRequest", blank=True)
 
+    allow_zip_download = models.BooleanField(default=True)
+
     objects = DocumentCollectionManager()
+
+    def get_zip_download_url(self):
+        if self.allow_zip_download:
+            return super().get_zip_download_url()
+        else:
+            return ""
 
     def is_public(self):
         return self.public
