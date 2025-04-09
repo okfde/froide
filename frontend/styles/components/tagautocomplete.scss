@@ -53,6 +53,12 @@ $choices-icon-cross: none;
 
 .#{$choices-selector}__list--dropdown {
   background-color: var(--#{$prefix}body-bg, var(--body-bg));
+
+  .#{$choices-selector}__item--selectable.is-highlighted,
+  .#{$choices-selector}__list[aria-expanded],
+  .#{$choices-selector}__item--selectable.is-highlighted {
+    background-color: var(--#{$prefix}secondary-color, var(--secondary)) !important;
+  }
 }
 
 .#{$choices-selector}__inner, .#{$choices-selector}__list {
