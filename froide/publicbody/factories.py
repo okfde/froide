@@ -17,6 +17,7 @@ from .models import (
     FoiLaw,
     Jurisdiction,
     PublicBody,
+    PublicBodyChangeProposal,
     PublicBodyTag,
 )
 
@@ -92,6 +93,28 @@ class PublicBodyFactory(DjangoModelFactory):
     site = factory.LazyAttribute(lambda o: Site.objects.get(id=1))
 
     jurisdiction = factory.SubFactory(JurisdictionFactory)
+
+
+class PublicBodyChangeProposalFactory(DjangoModelFactory):
+    class Meta:
+        model = PublicBodyChangeProposal
+
+    publicbody = factory.SubFactory(PublicBodyFactory)
+    user = factory.SubFactory(UserFactory)
+    reason = "Some reason"
+
+    name = factory.Sequence(lambda n: "Changed Pübli€ Body {0}".format(random_name()))
+    other_names = ""
+    url = "http://example.com/change"
+    email = factory.Sequence(lambda n: "changed-pb-{0}@{0}.example.com".format(n))
+    contact = "Changed Some contact stuff"
+    address = "Changed An address"
+    fax = ""
+    file_index = ""
+    org_chart = ""
+
+    jurisdiction = factory.SubFactory(JurisdictionFactory)
+    classification = factory.SubFactory(ClassificationFactory)
 
 
 class FoiLawFactory(DjangoModelFactory):

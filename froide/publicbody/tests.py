@@ -7,18 +7,21 @@ from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from django.urls import reverse
 
+import pytest
+
 from froide.foirequest.tests.factories import make_world, rebuild_index
 from froide.georegion.models import GeoRegion
 from froide.helper.csv_utils import export_csv_bytes
-from froide.publicbody.factories import (
+
+from .csv_import import CSVImporter
+from .factories import (
     CategoryFactory,
     ClassificationFactory,
     JurisdictionFactory,
+    PublicBodyChangeProposalFactory,
     PublicBodyFactory,
 )
-
-from .csv_import import CSVImporter
-from .models import FoiLaw, Jurisdiction, PublicBody
+from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 
 
 class PublicBodyTest(TestCase):
@@ -265,3 +268,24 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode("utf-8"))
         self.assertEqual(obj["objects"], [])
+
+
+@pytest.mark.django_db
+def test_accept_change_proposal():
+    pb = PublicBodyFactory.create()
+    change_proposal = PublicBodyChangeProposalFactory.create(publicbody=pb)
+    change_proposal.categories.set([CategoryFactory.create(), CategoryFactory.create()])
+    change_proposal_categories = set(change_proposal.categories.all())
+    assert len(change_proposal_categories) == 2
+    ok = change_proposal.accept(pb._created_by)
+    assert ok
+    pb.refresh_from_db()
+    assert pb.name == change_proposal.name
+    assert pb.fax == change_proposal.fax
+    assert pb.address == change_proposal.address
+    assert pb.classification_id == change_proposal.classification_id
+    assert pb.jurisdiction_id == change_proposal.jurisdiction_id
+    assert set(pb.categories.all()) == change_proposal_categories
+
+    with pytest.raises(PublicBodyChangeProposal.DoesNotExist):
+        change_proposal.refresh_from_db()
