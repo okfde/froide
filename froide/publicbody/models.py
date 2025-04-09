@@ -6,6 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.dispatch import Signal
+from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape
@@ -769,3 +770,26 @@ class PublicBodyChangeProposal(models.Model):
                 "is_changed": set(categories) != set(self.publicbody.categories.all()),
             },
         }
+
+    def accept(self, user, batch=False):
+        from .forms import PublicBodyAcceptProposalForm
+
+        fields = PublicBodyAcceptProposalForm.Meta.fields
+        initial = model_to_dict(self, fields=fields)
+        form = PublicBodyAcceptProposalForm(instance=self.publicbody, initial=initial)
+        data = {
+            k: form.fields[k].widget.format_value(
+                form.fields[k].prepare_value(initial[k])
+            )
+            for k in fields
+        }
+        data["jurisdiction"] = str(initial["jurisdiction"])
+        data["classification"] = str(initial["classification"])
+        data["categories"] = edit_string_for_tags(self.categories.all())
+        data["regions"] = ",".join(str(x.id) for x in self.regions.all())
+
+        form = PublicBodyAcceptProposalForm(instance=self.publicbody, data=data)
+        if form.is_valid():
+            form.save(user, proposal_id=self.pk, batch=batch)
+            return True
+        return False

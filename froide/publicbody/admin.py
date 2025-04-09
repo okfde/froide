@@ -716,3 +716,32 @@ class CategorizedPublicBodyAdmin(admin.ModelAdmin):
 @admin.register(PublicBodyChangeProposal)
 class PublicBodyChangeProposalAdmin(admin.ModelAdmin):
     raw_id_fields = ("publicbody", "user", "classification", "categories", "regions")
+
+    list_display = (
+        "publicbody",
+        "user",
+        "created_at",
+        "reason",
+    )
+
+    list_filter = (
+        ("user", ForeignKeyFilter),
+        ("publicbody", ForeignKeyFilter),
+    )
+    date_hierarchy = "created_at"
+
+    actions = ["accept_change_proposal"]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        qs = qs.select_related("publicbody", "user")
+        return qs
+
+    def accept_change_proposal(self, request, queryset):
+        count = queryset.count()
+        for obj in queryset:
+            obj.accept(request.user, batch=True)
+
+        self.message_user(
+            request, _("{} change proposals were accepted.").format(count)
+        )

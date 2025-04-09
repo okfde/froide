@@ -343,6 +343,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
     def save(
         self,
         user,
+        batch=False,
         proposal_id=None,
         delete_proposals=None,
         delete_unconfirmed=False,
@@ -359,7 +360,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
             proposal = PublicBodyChangeProposal.objects.get(
                 id=proposal_id, publicbody=self.instance
             )
-            if proposal.user != user:
+            if proposal.user != user and not batch:
                 proposal.user.send_mail(
                     _("Changes to public body “{}” have been applied").format(pb.name),
                     _(
@@ -378,7 +379,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
             ).delete()
 
         if not pb.confirmed and delete_unconfirmed:
-            self.delete_proppsed_publicbody(pb, user, delete_reason)
+            self.delete_proposed_publicbody(pb, user, delete_reason, batch=batch)
             return None
         pb.change_history.append(
             {
@@ -399,7 +400,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
         self.save_m2m()
         return pb
 
-    def delete_proppsed_publicbody(self, pb, user, delete_reason=""):
+    def delete_proposed_publicbody(self, pb, user, delete_reason="", batch=False):
         LogEntry.objects.log_action(
             user_id=user.id,
             content_type_id=ContentType.objects.get_for_model(pb).pk,
@@ -409,7 +410,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
         )
 
         creator = pb.created_by
-        if creator:
+        if creator and not batch:
             creator.send_mail(
                 _("Your public body proposal “%s” was rejected") % pb.name,
                 _(
