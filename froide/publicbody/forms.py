@@ -122,7 +122,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "type": "tel",
-                "pattern": "[\\d\\+ \\-/]+",
+                "pattern": "\\+?[\\d -\\/]+",
                 "placeholder": "+49 ...",
             }
         ),
