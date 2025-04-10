@@ -30,6 +30,13 @@ from froide.helper.auth import (
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 
 
+class FoiRequestScope:
+    READ_REQUEST = "read:request"
+    WRITE_REQUEST = "write:request"
+    MAKE_REQUEST = "make:request"
+    WRITE_MESSAGE = "write:message"
+
+
 def get_request_for_user(user, path: str):
     request_factory = RequestFactory()
     request = request_factory.get(path)
@@ -59,7 +66,7 @@ def get_read_foirequest_queryset(request: HttpRequest, queryset=None):
         request,
         has_team=True,
         public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
-        scope="read:request",
+        scope=FoiRequestScope.READ_REQUEST,
         user_read_filter=get_campaign_auth_foirequests_filter(request),
     )
 
@@ -71,7 +78,7 @@ def get_write_foirequest_queryset(request: HttpRequest, queryset=None):
         queryset,
         request,
         has_team=True,
-        scope="write:request",
+        scope=FoiRequestScope.WRITE_REQUEST,
         user_write_filter=get_campaign_auth_foirequests_filter(request),
     )
 
@@ -86,7 +93,7 @@ def get_read_foimessage_queryset(request: HttpRequest, queryset=None):
         public_q=Q(
             request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC, is_draft=False
         ),
-        scope="read:request",
+        scope=FoiRequestScope.READ_REQUEST,
         fk_path="request",
         user_read_filter=get_campaign_auth_foirequests_filter(
             request, fk_path="request"
@@ -101,7 +108,7 @@ def get_write_foimessage_queryset(request: HttpRequest, queryset=None):
         queryset,
         request,
         has_team=True,
-        scope="write:message",
+        scope=FoiRequestScope.WRITE_MESSAGE,
         fk_path="request",
         user_write_filter=get_campaign_auth_foirequests_filter(
             request, fk_path="request"
@@ -121,7 +128,7 @@ def get_read_foiattachment_queryset(request: HttpRequest, queryset=None):
             belongs_to__is_draft=False,
             approved=True,
         ),
-        scope="read:request",
+        scope=FoiRequestScope.READ_REQUEST,
         fk_path="belongs_to__request",
         user_read_filter=get_campaign_auth_foirequests_filter(
             request, fk_path="belongs_to__request"
@@ -152,11 +159,13 @@ def can_read_foirequest_authenticated(
     An authenticated read allows seeing redactions and unapproved attachments.
     """
     user = request.user
-    if has_authenticated_access(foirequest, request, verb="read", scope="read:request"):
+    if has_authenticated_access(
+        foirequest, request, verb="read", scope=FoiRequestScope.READ_REQUEST
+    ):
         return True
 
     if foirequest.project and has_authenticated_access(
-        foirequest.project, request, verb="read", scope="read:request"
+        foirequest.project, request, verb="read", scope=FoiRequestScope.READ_REQUEST
     ):
         return True
 
@@ -182,7 +191,7 @@ def can_read_foiproject_authenticated(
 ) -> bool:
     assert isinstance(foiproject, FoiProject)
     return has_authenticated_access(
-        foiproject, request, verb="read", scope="read:request"
+        foiproject, request, verb="read", scope=FoiRequestScope.READ_REQUEST
     )
 
 
