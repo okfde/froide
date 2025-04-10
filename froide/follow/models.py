@@ -143,6 +143,16 @@ class Follower(models.Model):
             "content_object": self.content_object,
         }
 
+    def get_full_name(self):
+        if self.user:
+            return self.user.get_full_name()
+        return ""
+
+    def get_email(self):
+        if self.user:
+            return self.user.email
+        return self.email
+
     @property
     def configuration(self) -> FollowConfiguration:
         return follow_registry.get_by_model(self.__class__)
