@@ -136,7 +136,7 @@ def can_read_foirequest(
     if foirequest.visibility == FoiRequest.VISIBILITY.INVISIBLE:
         return False
 
-    if can_read_object(foirequest, request):
+    if can_read_object(foirequest, request, scope="read:request"):
         return True
 
     if allow_code:
@@ -187,10 +187,8 @@ def can_read_foiproject_authenticated(
 
 
 @lru_cache()
-def can_write_foirequest(
-    foirequest: FoiRequest, request: HttpRequest, scope=None
-) -> bool:
-    if can_write_object(foirequest, request, scope):
+def can_write_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
+    if can_write_object(foirequest, request, scope="write:request"):
         return True
 
     if foirequest.project:
