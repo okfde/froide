@@ -1,14 +1,18 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
 
 import pytest
+from oauth2_provider.models import get_access_token_model, get_application_model
 
-from froide.foirequest.models.event import FoiEvent
-from froide.foirequest.models.message import MessageKind
-from froide.foirequest.tests import factories
+from ..models import FoiEvent, FoiRequest
+from ..models.message import MessageKind
+from ..tests import factories
+
+Application = get_application_model()
+AccessToken = get_access_token_model()
 
 
 @pytest.mark.django_db
@@ -337,4 +341,99 @@ def test_draft_auth(client, user):
 
     client.login(email=other_user.email, password="froide")
     response = client.get(resource_uri)
+    assert response.status_code == 404
+
+
+@pytest.fixture
+def get_oauth_header(dummy_user):
+    application = Application.objects.create(
+        name="Test Application",
+        redirect_uris="http://localhost http://example.com http://example.org",
+        user=dummy_user,
+        client_type=Application.CLIENT_CONFIDENTIAL,
+        authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+    )
+
+    def make_token(scope):
+        access_token = AccessToken.objects.create(
+            user=dummy_user,
+            scope=scope,
+            expires=timezone.now() + timedelta(seconds=300),
+            token="secret-access-token-key",
+            application=application,
+        )
+        return "Bearer {0}".format(access_token.token)
+
+    return make_token
+
+
+@pytest.mark.django_db
+def test_private_message_api(client, dummy_user, get_oauth_header):
+    foirequest = factories.FoiRequestFactory.create(
+        user=dummy_user, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+    )
+    foimessage = factories.FoiMessageFactory.create(
+        request=foirequest,
+        kind=MessageKind.POST,
+        is_draft=True,
+    )
+
+    working_scopes = " ".join(
+        [
+            "read:request",
+        ]
+    )
+
+    auth_header = get_oauth_header(working_scopes)
+    foirequest_url = reverse("api:request-detail", kwargs={"pk": foirequest.pk})
+    response = client.get(foirequest_url, HTTP_AUTHORIZATION=auth_header)
+    assert response.status_code == 200
+
+    foimessage_list_url = reverse("api:message-list") + "?request={}".format(
+        foirequest.pk
+    )
+    response = client.get(foimessage_list_url, HTTP_AUTHORIZATION=auth_header)
+    assert response.status_code == 200
+    assert len(response.json()["objects"]) == 1
+
+    foimessage_url = reverse("api:message-detail", kwargs={"pk": foimessage.pk})
+    response = client.get(foimessage_url, HTTP_AUTHORIZATION=auth_header)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_private_message_api_insufficient(client, dummy_user, get_oauth_header):
+    foirequest = factories.FoiRequestFactory.create(
+        user=dummy_user, visibility=FoiRequest.VISIBILITY.VISIBLE_TO_REQUESTER
+    )
+    foimessage = factories.FoiMessageFactory.create(
+        request=foirequest,
+        kind=MessageKind.POST,
+        is_draft=True,
+    )
+
+    bad_scopes = " ".join(
+        [
+            "write:request",
+        ]
+    )
+
+    auth_header = get_oauth_header(bad_scopes)
+    foirequest_url = reverse("api:request-detail", kwargs={"pk": foirequest.pk})
+    response = client.get(foirequest_url, HTTP_AUTHORIZATION=auth_header)
+    assert response.status_code == 404
+
+    foimessage_list_url = reverse("api:message-list") + "?request={}".format(
+        foirequest.pk
+    )
+    response = client.get(foimessage_list_url, HTTP_AUTHORIZATION=auth_header)
+    assert response.status_code == 200
+    assert len(response.json()["objects"]) == 0
+
+    # make it public, but message is draft!
+    foirequest.visibility = FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC
+    foirequest.save()
+
+    foimessage_url = reverse("api:message-detail", kwargs={"pk": foimessage.pk})
+    response = client.get(foimessage_url, HTTP_AUTHORIZATION=auth_header)
     assert response.status_code == 404
