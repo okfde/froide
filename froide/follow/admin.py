@@ -16,6 +16,7 @@ class FollowerAdmin(admin.ModelAdmin):
         ("user", ForeignKeyFilter),
     )
     search_fields = ("email",)
+    actions = []
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
