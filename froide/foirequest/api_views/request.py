@@ -13,6 +13,7 @@ from froide.helper.search.api_views import ESQueryMixin
 
 from ..auth import (
     CreateOnlyWithScopePermission,
+    FoiRequestScope,
     get_read_foirequest_queryset,
     get_write_foirequest_queryset,
     throttle_action,
@@ -42,7 +43,7 @@ def filter_by_user_queryset(request):
         return User.objects.all()
 
     # Either not OAuth or OAuth and valid token
-    if not token or token.is_valid(["read:request"]):
+    if not token or token.is_valid([FoiRequestScope.READ_REQUEST]):
         # allow filter by own user
         user_filter |= Q(pk=request.user.pk)
 
@@ -60,7 +61,7 @@ def filter_by_authenticated_user_queryset(request):
         # Allow superusers complete access
         return User.objects.all()
 
-    if not token or token.is_valid(["read:request"]):
+    if not token or token.is_valid([FoiRequestScope.READ_REQUEST]):
         # allow filter by own user
         return User.objects.filter(id=user.id)
     return User.objects.none()
@@ -182,10 +183,10 @@ class FoiRequestViewSet(
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = FoiRequestFilter
     permission_classes = (CreateOnlyWithScopePermission, WriteFoiRequestPermission)
-    required_scopes = ["make:request"]
+    required_scopes = [FoiRequestScope.MAKE_REQUEST]
     search_model = FoiRequest
     search_document = FoiRequestDocument
-    read_token_scopes = ["read:request"]
+    read_token_scopes = [FoiRequestScope.READ_REQUEST]
     searchfilterset_class = FoiRequestFilterSet
 
     def get_serializer_class(self):
