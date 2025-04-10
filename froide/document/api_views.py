@@ -139,7 +139,7 @@ class DocumentCollectionViewSet(FCDocumentCollectionViewSet):
         "retrieve": DocumentCollectionSerializer,
     }
 
-    def get_queryset(self):
+    def get_base_queryset(self):
         if self.action == "list":
             public_q = Q(public=True, listed=True)
         else:
