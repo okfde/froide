@@ -143,7 +143,7 @@ def can_read_foirequest(
     if foirequest.visibility == FoiRequest.VISIBILITY.INVISIBLE:
         return False
 
-    if can_read_object(foirequest, request):
+    if can_read_object(foirequest, request, scope=FoiRequestScope.READ_REQUEST):
         return True
 
     if allow_code:
