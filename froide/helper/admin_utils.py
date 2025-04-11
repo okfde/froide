@@ -44,6 +44,13 @@ def make_choose_object_action(model_or_queryset, callback, label):
                 callback(model_admin, request, queryset, action_obj)
                 model_admin.message_user(request, _("Successfully executed."))
                 return None
+            else:
+                model_name = model._meta.verbose_name
+                msg = _("Please enter a valid %(model_name)s ID.") % {
+                    "model_name": model_name
+                }
+                model_admin.message_user(request, msg, level="error")
+                form = Form()
         else:
             form = Form()
 
