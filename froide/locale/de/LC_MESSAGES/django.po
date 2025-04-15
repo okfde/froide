@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-04 11:20+0100\n"
+"POT-Creation-Date: 2025-04-15 11:02+0200\n"
 "PO-Revision-Date: 2025-03-04 11:21+0100\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -8963,6 +8963,11 @@ msgstr "Wähle einen Hinweis zum Anhängen aus..."
 #: froide/guide/views.py
 msgid "Guidance refreshed for message."
 msgstr "Beratung wurde für diese Nachricht neugeneriert."
+
+#: froide/helper/admin_utils.py
+#, python-format
+msgid "Please enter a valid %(model_name)s ID."
+msgstr "Bitte eine gültige %(model_name)s-ID eingeben."
 
 #: froide/helper/admin_utils.py
 msgid "Successfully added tags"
