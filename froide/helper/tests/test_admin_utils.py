@@ -15,6 +15,10 @@ class MockModel(models.Model):
         verbose_name = "Mock Model"
 
 
+class MockQuerySet:
+    model = MockModel
+
+
 @pytest.fixture
 def mock_model_admin():
     model_admin = Mock()
@@ -33,7 +37,13 @@ def mock_request():
 
 
 class TestMakeChooseObjectAction:
-    def test_executes_callback_with_valid_form(self, mock_model_admin, mock_request):
+    @pytest.mark.parametrize(
+        "model_or_queryset",
+        [MockModel, MockQuerySet],
+    )
+    def test_executes_callback_with_valid_form(
+        self, model_or_queryset, mock_model_admin, mock_request
+    ):
         mock_request.POST["obj"] = "1"
         mock_form = Mock()
         mock_form.is_valid.return_value = True
@@ -43,7 +53,9 @@ class TestMakeChooseObjectAction:
 
         with patch("froide.helper.admin_utils.get_fake_fk_form_class") as mock_get_form:
             mock_get_form.return_value = Mock(return_value=mock_form)
-            action = make_choose_object_action(MockModel, mock_callback, "Test Action")
+            action = make_choose_object_action(
+                model_or_queryset, mock_callback, "Test Action"
+            )
             response = action(mock_model_admin, mock_request, mock_queryset)
 
         assert response is None
@@ -55,22 +67,32 @@ class TestMakeChooseObjectAction:
             mock_request, "Successfully executed."
         )
 
+    @pytest.mark.parametrize(
+        "model_or_queryset",
+        [MockModel, MockQuerySet],
+    )
     def test_denies_access_without_change_permission(
-        self, mock_model_admin, mock_request
+        self, model_or_queryset, mock_model_admin, mock_request
     ):
         mock_model_admin.has_change_permission.return_value = False
         mock_callback = Mock()
         mock_queryset = Mock()
 
-        action = make_choose_object_action(MockModel, mock_callback, "Test Action")
+        action = make_choose_object_action(
+            model_or_queryset, mock_callback, "Test Action"
+        )
 
         with pytest.raises(PermissionDenied):
             action(mock_model_admin, mock_request, mock_queryset)
 
         mock_callback.assert_not_called()
 
+    @pytest.mark.parametrize(
+        "model_or_queryset",
+        [MockModel, MockQuerySet],
+    )
     def test_renders_confirmation_page_with_invalid_form(
-        self, mock_model_admin, mock_request
+        self, model_or_queryset, mock_model_admin, mock_request
     ):
         mock_request.POST["obj"] = "1"
         mock_form = Mock()
@@ -80,7 +102,9 @@ class TestMakeChooseObjectAction:
 
         with patch("froide.helper.admin_utils.get_fake_fk_form_class") as mock_get_form:
             mock_get_form.return_value = Mock(return_value=mock_form)
-            action = make_choose_object_action(MockModel, mock_callback, "Test Action")
+            action = make_choose_object_action(
+                model_or_queryset, mock_callback, "Test Action"
+            )
             response = action(mock_model_admin, mock_request, mock_queryset)
 
         assert isinstance(response, TemplateResponse)
@@ -99,8 +123,12 @@ class TestMakeChooseObjectAction:
             mock_request, "Please enter a valid Mock Model ID.", level="error"
         )
 
+    @pytest.mark.parametrize(
+        "model_or_queryset",
+        [MockModel, MockQuerySet],
+    )
     def test_renders_confirmation_page_without_obj_in_post_data(
-        self, mock_model_admin, mock_request
+        self, model_or_queryset, mock_model_admin, mock_request
     ):
         mock_form = Mock()
         mock_callback = Mock()
@@ -108,7 +136,9 @@ class TestMakeChooseObjectAction:
 
         with patch("froide.helper.admin_utils.get_fake_fk_form_class") as mock_get_form:
             mock_get_form.return_value = Mock(return_value=mock_form)
-            action = make_choose_object_action(MockModel, mock_callback, "Test Action")
+            action = make_choose_object_action(
+                model_or_queryset, mock_callback, "Test Action"
+            )
             response = action(mock_model_admin, mock_request, mock_queryset)
 
         assert isinstance(response, TemplateResponse)
