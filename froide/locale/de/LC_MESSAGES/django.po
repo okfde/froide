@@ -2006,6 +2006,7 @@ msgstr "Dokument"
 #: froide/document/templates/document/search.html
 #: froide/foirequest/templates/foirequest/body/documents.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Documents"
 msgstr "Dokumente"
 
@@ -5050,6 +5051,7 @@ msgid "Unapproved attachments:"
 msgstr "Nicht-öffentliche Anhänge:"
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Manage attachments"
 msgstr "Anhänge verwalten"
 
@@ -12426,29 +12428,50 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 #, python-format
-#~ msgid ""
-#~ "\n"
-#~ "      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from "
-#~ "<b>%(sender)s</b> in request “%(title)s”.\n"
-#~ "      "
-#~ msgstr ""
-#~ "\n"
-#~ "      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
-#~ "%(sender)s</b> bei Anfrage “%(title)s”.\n"
-#~ "      "
+msgid ""
+"\n"
+"      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from <b>"
+"%(sender)s</b> in request “%(title)s”.\n"
+"      "
+msgstr ""
+"\n"
+"      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
+"%(sender)s</b> bei Anfrage “%(title)s”.\n"
+"      "
 
-#~ msgid "Here you can:"
-#~ msgstr "Hier können Sie:"
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Here you can:"
+msgstr "Hier können Sie:"
 
-#~ msgid "Approve or redact attachments."
-#~ msgstr "Anhänge freigeben oder schwärzen."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Approve or redact attachments."
+msgstr "Anhänge freigeben oder schwärzen."
 
-#~ msgid "Convert multiple pictures to pages in a PDF document."
-#~ msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert multiple pictures to pages in a PDF document."
+msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
 
-#~ msgid "Upload more pictures or PDFs."
-#~ msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Upload more pictures or PDFs."
+msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert images to documents"
+msgstr "Bilder in Dokumente umwandeln"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid ""
+"Here you can approve, redact documents and also mark them as a result of "
+"your request."
+msgstr ""
+"Hier können Sie Dokumente freigeben, schwärzen und markieren, welche der "
+"Dokumente ein Ergebnis der Anfrage ist."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Other files"
+msgstr "Andere Dateien"
 
 #, python-format
 #~ msgid ""
