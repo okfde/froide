@@ -620,6 +620,10 @@ class PublicBody(models.Model):
             "request_note",
             "parent__id",
             ("regions", lambda obj: ",".join(str(x.id) for x in obj.regions.all())),
+            (
+                "alternative_emails",
+                lambda obj: json.dumps(obj.alternative_emails or {}),
+            ),
         )
 
         return export_csv(queryset, fields)
