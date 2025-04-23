@@ -39,6 +39,12 @@ const useAttachmentsStore = defineStore('attachments', {
     irrelevant() {
       return this.all.filter((d) => d.is_irrelevant)
     },
+    redactable() {
+      return this.all.filter((d) => d.canRedact)
+    },
+    convertable() {
+      return this.all.filter((d) => d.is_irrelevant || (d.is_image && !d.converted))
+    },
     getById () {
       return (id) => this.all.find((d) => d.id === id)
     },

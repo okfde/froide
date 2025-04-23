@@ -114,6 +114,11 @@ const approveClick = () => {
     <i class="fa fa-exclamation-circle"></i>
     {{ i18n.markNotIrrelevant }}
   </button>
+  <button v-if="attachment.is_image && !attachment.converted" @click="makeRelevantClick" type="button" class="btn btn-sm btn-link text-start">
+    <i class="fa fa-exclamation-circle"></i>
+    <!-- these are not actually strictly irrelevant, but we use the language in the instruction above -->
+    {{ i18n.markNotIrrelevant }}
+  </button>
   <a class="btn btn-sm btn-link text-start" :href="attachment.file_url" :download="attachment.name">
     <i class="fa fa-download"></i>
     {{ i18n.download }}

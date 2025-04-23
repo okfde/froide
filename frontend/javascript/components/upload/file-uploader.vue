@@ -118,7 +118,9 @@ export default {
   },
   methods: {
     clickFilepick() {
-      this.$refs.uppy.querySelector('.uppy-Dashboard-browse').click()
+      const button = this.$refs.uppy.querySelector('.uppy-Dashboard-browse')
+      if (!button) return false
+      return button.click()
     }
   },
   mounted() {
@@ -179,6 +181,7 @@ export default {
       console.log('failed files:', result.failed)
       this.uploading = false
       this.$emit('uploading', false)
+      this.$emit('upload-complete', result)
     })
     /* to
     if (this.onmountPick) {

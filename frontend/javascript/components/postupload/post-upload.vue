@@ -357,17 +357,27 @@ const attachmentsOverviewActions = ref(false)
 /* --- <file-uploader> interaction --- */
 
 const fileUploader = ref()
-const fileUploaderForceShow = ref(false)
+const fileUploaderShow = ref(false)
+const fileUploaderUploading = ref(false)
+
 onMounted(() => {
-  document.body.addEventListener('dragover', () => fileUploaderForceShow.value = true)
-  document.body.addEventListener('dragenter', () => fileUploaderForceShow.value = true)
+  document.body.addEventListener('dragover', () => fileUploaderShow.value = true)
+  document.body.addEventListener('dragenter', () => fileUploaderShow.value = true)
 })
+
+const fileUploaderFileAdded = () => {
+  fileUploaderShow.value = true
+  fileUploaderUploading.value = true
+}
 
 const fileUploaderSucceeded = (uppyResult) => {
   addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
-    .then(() => {
-      gotoStep()
-    })
+}
+
+const fileUploaderCompleted = (uppyResult) => {
+  fileUploaderUploading.value = false
+  if (uppyResult.failed?.length > 0) return
+  gotoStep()
 }
 
 /* --- <pdf-redaction> interaction --- */
@@ -435,7 +445,7 @@ const gotoStep = async (nextStep) => {
 
 onMounted(async () => {
   await refreshAttachments()
-  if (attachments.irrelevant.length > 0 && step.value === STEP_INTRO) {
+  if (attachments.convertable.length > 0 && step.value === STEP_INTRO) {
     console.info('onMounted, skipped intro because irrelevant attachments present')
     gotoStep(STEP_DOCUMENTS_CONVERT)
   }
@@ -484,7 +494,7 @@ const stepsConfig = {
       if (attachments.images.length) {
         return STEP_DOCUMENTS_SORT
       }
-      if (attachments.irrelevant.length > 0) {
+      if (attachments.convertable.length > 0) {
         return STEP_DOCUMENTS_CONVERT
       }
       console.log('uploads were documents, not images, passing by image sorting')
@@ -616,7 +626,7 @@ const stepsConfig = {
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => {
-        if (isDesktop.value && requestIsResolved) {
+        if (isDesktop.value && requestIsResolved.value) {
           return validity.status && validity.resolution
         }
         return validity.status
@@ -705,7 +715,7 @@ const stepsConfig = {
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
     next: STEP_OUTRO,
     onEnter: () => {
-      attachments.unselectSubset(attachments.relevant)
+      attachments.unselectSubset(attachments.redactable)
       attachmentsOverviewActions.value = false
       pdfRedactionUploaded()
     },
@@ -935,8 +945,8 @@ values={{ values }}
             <div class="col-md-6">
               <button
                 type="button"
-                @click="fileUploader.clickFilepick()"
-                v-if="!fileUploaderForceShow"
+                @click="fileUploader.clickFilepick() || (fileUploaderShow = true)"
+                v-if="!fileUploaderShow"
                 class="btn btn-outline-primary btn-lg d-block w-100"
               >
                 <i class="fa fa-upload fa-2x"></i><br />
@@ -946,9 +956,11 @@ values={{ values }}
                 :config="config"
                 :allowed-file-types="config.settings.allowed_filetypes"
                 :auto-proceed="true"
-                :show-uppy="fileUploaderForceShow"
+                :show-uppy="fileUploaderShow"
                 ref="fileUploader"
+                @file-added="fileUploaderFileAdded"
                 @upload-success="fileUploaderSucceeded"
+                @upload-complete="fileUploaderCompleted"
                 />
             </div>
             <!-- TODO
@@ -983,7 +995,7 @@ values={{ values }}
         </div>
         <div class="my-3">
           <attachments-table
-            :subset="attachments.irrelevant"
+            :subset="attachments.convertable"
             actions table-selection action-delete selection-action-delete badges-type
             />
         </div>
@@ -994,7 +1006,7 @@ values={{ values }}
            not sure if there is a good distinction/semantics here.
            -->
         <images-converter
-          @converted="() => { if (attachments.irrelevant.length === 0) gotoStep() }"
+          @converted="() => { if (attachments.convertable.length === 0) gotoStep() }"
           />
       </div>
     </div>
@@ -1041,7 +1053,7 @@ values={{ values }}
           <div class="fw-bold">
             {{ i18n.documentsAvailable }}
           </div>
-          <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
+          <attachments-table :subset="attachments.redactable" action-delete cards-bg-transparent :as-card-threshold="0" />
           <!-- TODO after a reload we land here. it might be good to also display "images" -->
         </div>
       </div>
@@ -1305,7 +1317,7 @@ values={{ values }}
           <p>
             {{ i18n.redactionInfo }}
           </p>
-          <attachments-table :subset="attachments.relevant" table-selection selection-buttons :as-card-threshold="0">
+          <attachments-table :subset="attachments.redactable" table-selection selection-buttons :as-card-threshold="0">
             <template #after-row="slotProps">
               <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
                 <!-- like v-model, but default true -->
@@ -1452,7 +1464,7 @@ values={{ values }}
             {{ i18n.documentsOverview }}
           </div>
           <attachments-table
-            :subset="attachments.relevant.filter(att => !att.redacted)"
+            :subset="attachments.relevant.filter(att => !att.redacted && !att.is_image)"
             badges-redaction badges-resolution
             :actions="attachmentsOverviewActions"
             >
@@ -1499,7 +1511,7 @@ values={{ values }}
           <button
             type="button"
             class="btn btn-outline-primary d-block w-100"
-            @click="gotoStep(STEP_DOCUMENTS_INTRO)"
+            @click="gotoStep(STEP_INTRO)"
           >
             <i class="fa fa-plus"></i>
             {{ i18n.uploadFilesAnother }}
@@ -1559,6 +1571,9 @@ values={{ values }}
             <!-- should be blank -->
             <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
               DEBUG skip
+            </button>
+            <button v-if="fileUploaderShow" type="button" :disabled="fileUploaderUploading" @click="gotoStep()" class="btn btn-primary d-block w-100">
+              {{ i18n.next }}
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_SORT">
