@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 import { Modal } from 'bootstrap'
 
@@ -43,7 +43,7 @@ const hide = () => {
   }
 }
 
-const initialize = ()  => {
+const initialize = () => {
   bsModal = new Modal(modalEl.value)
 }
 
@@ -67,10 +67,8 @@ defineExpose({
       tabindex="-1"
       role="dialog"
       v-if="doRender"
-      >
-      <div
-        :class="'modal-dialog ' + dialogClasses"
-        role="document">
+    >
+      <div :class="'modal-dialog ' + dialogClasses" role="document">
         <div :class="'modal-content ' + contentClasses">
           <div class="modal-header">
             <div class="text-break">
@@ -80,7 +78,8 @@ defineExpose({
               @click="hide"
               type="button"
               class="btn-close"
-              aria-label="Close"></button>
+              aria-label="Close"
+            ></button>
           </div>
           <div :class="'modal-body ' + bodyClasses">
             <slot name="body"></slot>

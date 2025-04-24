@@ -30,7 +30,8 @@
               <button
                 @click="() => markModerated(att)"
                 class="btn btn-dark"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.markModerated }}
               </button>
             </div>
@@ -69,6 +70,7 @@ export default {
       required: true
     }
   },
+  emits: ['resolved'],
   inject: ['config', 'csrfToken'],
   computed: {
     i18n() {
@@ -90,10 +92,7 @@ export default {
         {},
         this.csrfToken
       ).then(() => {
-        const index = this.attachments.findIndex((x) => x.id === att.id)
-        if (index !== -1) {
-          this.$delete(this.attachments, index)
-        }
+        this.$emit('resolved', att)
       })
     }
   }

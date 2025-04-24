@@ -9,7 +9,8 @@
           :redacted="word.redacted"
           :index="word.index"
           :blocked="word.blocked"
-          @redact="redact" />
+          @redact="redact"
+        />
         <template v-else>{{ word.word }}</template>
       </template>
     </div>
@@ -34,7 +35,7 @@ function getChunks(redactedParts, blockPattern) {
     const part = redactedPart[1]
     while ((result = SPLITTER.exec(part))) {
       if (result.index > partIndex) {
-        let word = part.substring(partIndex, result.index)
+        const word = part.substring(partIndex, result.index)
         chunks.push({
           separator: false,
           redacted: redactedPart[0],
@@ -55,7 +56,7 @@ function getChunks(redactedParts, blockPattern) {
       partIndex = result.index + 1
     }
     if (partIndex < part.length) {
-      let word = part.substring(partIndex, part.length + 1)
+      const word = part.substring(partIndex, part.length + 1)
       chunks.push({
         separator: false,
         redacted: redactedPart[0],

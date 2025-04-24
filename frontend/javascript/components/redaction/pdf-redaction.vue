@@ -3,7 +3,7 @@
     id="pdf-viewer"
     ref="top"
     class="pdf-redaction-tool container-xxl bg-dark-subtle d-flex flex-column"
-    >
+  >
     <div v-if="hasPassword && ready" class="row">
       <div class="col">
         <div class="alert alert-info mb-0" role="alert">
@@ -61,9 +61,11 @@
     <div class="row toolbar sticky-top z-3">
       <div
         v-if="ready"
-        class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light">
+        class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light"
+      >
         <div
-          class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2"
+        >
           <input
             type="radio"
             class="btn-check"
@@ -71,14 +73,15 @@
             value="paint"
             id="btn-check-paint"
             v-model="tool"
-            />
+          />
           <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
             they overstay their welcome and get in the way. As a simple workaround,
             we make them autohide after a timeout. -->
           <label
             class="btn btn-outline-secondary d-flex"
             :title="i18n.redact"
-            for="btn-check-paint">
+            for="btn-check-paint"
+          >
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
               <i class="fa fa-lg fa-paint-brush" />
@@ -92,11 +95,12 @@
             value="move"
             id="btn-check-move"
             v-model="tool"
-            />
+          />
           <label
             class="btn btn-outline-secondary d-flex"
             :title="i18n.moveTool"
-            for="btn-check-move">
+            for="btn-check-move"
+          >
             <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
             <div class="align-self-center">
               <i class="fa fa-lg fa-arrows" />
@@ -105,13 +109,15 @@
           </label>
         </div>
         <div
-          class="btn-group me-1 justify-content-center justify-content-lg-start py-2">
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2"
+        >
           <button
             type="button"
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
-            @click="undo">
+            @click="undo"
+          >
             <i class="fa fa-lg fa-share fa-flip-horizontal" />
             <small class="d-none d-xxl-block">{{ i18n.undo }}</small>
           </button>
@@ -122,7 +128,8 @@
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
-            @click="redo">
+            @click="redo"
+          >
             <i class="fa fa-lg fa-share" />
             <small class="d-none d-xxl-block">{{ i18n.redo }}</small>
           </button>
@@ -131,16 +138,22 @@
             class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.removeAllRedaction"
-            @click="undoAll">
+            @click="undoAll"
+          >
             <i class="fa fa-lg fa-trash" />
-            <small class="d-none d-xxl-block">{{ i18n.removeAllRedaction }}</small>
+            <small class="d-none d-xxl-block">{{
+              i18n.removeAllRedaction
+            }}</small>
           </button>
         </div>
 
         <div class="btn-group me-1 toolbar-modes py-2">
           <button
             class="btn"
-            :class="{ 'btn-outline-secondary': !textOnly, 'btn-secondary': textOnly }"
+            :class="{
+              'btn-outline-secondary': !textOnly,
+              'btn-secondary': textOnly
+            }"
             :title="i18n.toggleText"
             @click.stop="toggleText"
           >
@@ -163,7 +176,8 @@
 
         <div
           v-if="!bottomToolbar"
-          class="input-group me-1 justify-content-center justify-content-lg-start py-2">
+          class="input-group me-1 justify-content-center justify-content-lg-start py-2"
+        >
           <button
             class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
@@ -186,9 +200,17 @@
         </div>
 
         <div
-          v-if="!hideDoneButton && (hasRedactions || hasPassword || (canPublish && !hasPassword))"
-          class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25">
-          <button v-if="hasRedactions || hasPassword" class="btn btn-dark" @click="redact">
+          v-if="
+            !hideDoneButton &&
+            (hasRedactions || hasPassword || (canPublish && !hasPassword))
+          "
+          class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25"
+        >
+          <button
+            v-if="hasRedactions || hasPassword"
+            class="btn btn-dark"
+            @click="redact"
+          >
             <i class="fa fa-check me-2" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
@@ -226,38 +248,46 @@
         ref="containerWrapper"
         @wheel="mouseWheel"
         @pointerleave="pointerLeaveWrapper"
-        >
-        <div class="position-absolute top-0 bottom-0 start-0 px-2 py-4"
+      >
+        <div
+          class="position-absolute top-0 bottom-0 start-0 px-2 py-4"
           :class="{
-            'pe-none': isDragging,
+            'pe-none': isDragging
           }"
-          >
+        >
           <div class="d-flex flex-column position-sticky z-1 previewToolbar">
-            <div
-              class="btn-group-vertical w-auto position-sticky z-1"
-              >
+            <div class="btn-group-vertical w-auto position-sticky z-1">
               <button type="button" class="btn btn-secondary" @click="zoomIn()">
                 <i class="fa fa-lg fa-plus" />
               </button>
-              <button type="button" class="btn btn-secondary" @click="zoomReset()">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="zoomReset()"
+              >
                 <i class="fa fa-lg fa-compress" />
               </button>
-              <button type="button" class="btn btn-secondary" @click="zoomOut()">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="zoomOut()"
+              >
                 <i class="fa fa-lg fa-minus" />
               </button>
             </div>
           </div>
         </div>
-        <div class="position-static row py-3 h-100"
+        <div
+          class="position-static row py-3 h-100"
           @pointerdown="pointerDown"
           @pointerup="pointerUp"
           @pointermove="pointerMove"
-          >
+        >
           <div
             :id="containerId"
             ref="container"
             class="redactContainer"
-            :class="{ 'invisible': working }"
+            :class="{ invisible: working }"
           >
             <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
             <canvas
@@ -283,7 +313,9 @@
             @click="goPrevious"
           >
             &laquo;
-            <span class="d-none d-md-inline-block">{{ i18n.previousPage }}</span>
+            <span class="d-none d-md-inline-block">{{
+              i18n.previousPage
+            }}</span>
           </button>
           <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
@@ -639,8 +671,8 @@ export default {
         canvas.height = viewport.height
         this.redactCanvas.width = viewport.width
         this.redactCanvas.height = viewport.height
-        const wPx = (viewport.width / renderDensityFactor) + 'px'
-        const hPx = (viewport.height / renderDensityFactor) + 'px'
+        const wPx = viewport.width / renderDensityFactor + 'px'
+        const hPx = viewport.height / renderDensityFactor + 'px'
         console.log('PdfRedaction loadPage', {
           renderDensityFactor,
           scaleFactor,
@@ -900,12 +932,11 @@ export default {
         clientX = e.changedTouches[0].clientX
         clientY = e.changedTouches[0].clientY
       }
-      let offsetX
-      let offsetY
+
       // eslint-disable-next-line no-case-declarations
       const scale = panzoom.getScale()
-      offsetX = (renderDensityFactor * (clientX - rect.left)) / scale
-      offsetY = (renderDensityFactor * (clientY - rect.top)) / scale
+      const offsetX = (renderDensityFactor * (clientX - rect.left)) / scale
+      const offsetY = (renderDensityFactor * (clientY - rect.top)) / scale
       return [offsetX, offsetY]
     },
     cancelDrag() {
