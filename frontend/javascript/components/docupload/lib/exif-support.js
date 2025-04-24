@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 // is async, but seems to work so far
-let hasExifSupport = ref(undefined)
+const hasExifSupport = ref(undefined)
 
 const img = new Image()
 img.onload = () => {

@@ -18,7 +18,8 @@
             class="nav-link"
             :class="{ active: tab === 'problemreports' }"
             href="#problemreports"
-            @click="tab = 'problemreports'">
+            @click="tab = 'problemreports'"
+          >
             {{ i18n.problemReports }}
             <span class="badge text-bg-secondary">{{
               problemreportsCount
@@ -30,7 +31,8 @@
             class="nav-link"
             :class="{ active: tab === 'publicbodies' }"
             href="#publicbodies"
-            @click="tab = 'publicbodies'">
+            @click="tab = 'publicbodies'"
+          >
             {{ i18n.publicBodyChangeProposals }}
             <span class="badge text-bg-secondary">{{ publicbodiesCount }}</span>
           </a>
@@ -40,7 +42,8 @@
             class="nav-link"
             :class="{ active: tab === 'unclassified' }"
             href="#unclassified"
-            @click="tab = 'unclassified'">
+            @click="tab = 'unclassified'"
+          >
             {{ i18n.unclassifiedRequests }}
             <span class="badge text-bg-secondary">{{ unclassifiedCount }}</span>
           </a>
@@ -50,7 +53,8 @@
             class="nav-link"
             :class="{ active: tab === 'attachments' }"
             href="#attachments"
-            @click="tab = 'attachments'">
+            @click="tab = 'attachments'"
+          >
             {{ i18n.attachments }}
             <span class="badge text-bg-secondary">{{ attachmentsCount }}</span>
           </a>
@@ -59,16 +63,21 @@
       <div class="tab-content pt-3">
         <moderation-problems
           v-if="tab === 'problemreports'"
-          :reports="reports" />
+          :reports="reports"
+        />
         <moderation-publicbodies
           v-if="tab === 'publicbodies'"
-          :publicbodies="publicbodies" />
+          :publicbodies="publicbodies"
+        />
         <moderation-unclassified
           v-if="tab === 'unclassified'"
-          :unclassified="unclassified" />
+          :unclassified="unclassified"
+        />
         <moderation-attachments
           v-if="tab === 'attachments'"
-          :attachments="attachments" />
+          :attachments="attachments"
+          @resolved="resolveAttachment"
+        />
       </div>
     </div>
   </div>
@@ -238,6 +247,12 @@ export default {
         this.unclassifiedCount = data.unclassified_count
         this.publicbodies = data.publicbodies
       })
+    },
+    resolveAttachment(att) {
+      const index = this.attachments.findIndex((x) => x.id === att.id)
+      if (index !== -1) {
+        this.attachments.splice(index, 1)
+      }
     }
   }
 }
