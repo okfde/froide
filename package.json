@@ -12,8 +12,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint frontend/**/*.{js,ts,vue}",
-    "eslint": "eslint",
+    "lint": "eslint",
     "serve": "vite",
     "dev": "vite",
     "build": "vite build",
@@ -31,17 +30,20 @@
   },
   "homepage": "https://github.com/okfde/froide#readme",
   "devDependencies": {
-    "@okfde/eslint-config-froide": "okfde/eslint-config-froide",
+    "@okfde/eslint-config-froide": "^1.1.0",
     "@types/bootstrap": "^5.2.1",
     "@types/glidejs__glide": "^3.4.2",
-    "@vitejs/plugin-vue": "^4.0.0",
-    "autoprefixer": "^10.4.13",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "autoprefixer": "^10.4.21",
     "cli-real-favicon": "0.0.8",
+    "eslint": "^9.25.1",
     "postcss": "^8.4.20",
-    "sass": "^1.58.3",
-    "typescript": "^5.1.6",
-    "vite": "^4.1.2",
-    "vite-plugin-dev-manifest": "^1.0.9"
+    "prettier": "^3.5.3",
+    "prettier-config-standard": "^7.0.0",
+    "sass": "^1.87.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.3",
+    "vite-plugin-dev-manifest": "^1.4.0"
   },
   "dependencies": {
     "@hey-api/client-fetch": "^0.4.3",

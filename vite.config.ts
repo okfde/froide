@@ -4,7 +4,6 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import devManifest from 'vite-plugin-dev-manifest'
 
-// eslint-disable-next-line no-undef
 const outputDir = resolve(__dirname, 'build')
 
 // https://vitejs.dev/config/
@@ -12,7 +11,6 @@ export default defineConfig({
   base: '/static/',
   resolve: {
     alias: {
-      // eslint-disable-next-line no-undef
       '~froide': resolve(__dirname)
     },
     dedupe: ['bootstrap', 'vue', 'pdfjs-dist'],
@@ -50,17 +48,18 @@ export default defineConfig({
         entryFileNames: '[name].js',
         chunkFileNames: 'js/[name].js',
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name.endsWith('.css')) {
+          // TODO: assetInfo.name is deprecated! Use "names" instead.
+
+          if (assetInfo.name?.endsWith('.css')) {
             return 'css/[name][extname]'
           } else if (
-            assetInfo.name.match(/(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/)
+            assetInfo.name?.match(/(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/)
           ) {
             return 'fonts/[name][extname]'
-          } else if (assetInfo.name.match(/\.(jpg|png|svg)$/)) {
+          } else if (assetInfo.name?.match(/\.(jpg|png|svg)$/)) {
             return 'img/[name][extname]'
           }
 
-          console.log('assetInfo', assetInfo)
           return 'js/[name][extname]'
         }
       }

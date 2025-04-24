@@ -23,7 +23,7 @@
   },
   "include": [
     "./frontend/**/*",
-    "vite.config.js",
+    "vite.config.ts",
     "openapi-ts.config.ts"
   ]
 }

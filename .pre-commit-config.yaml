@@ -12,7 +12,7 @@ repos:
         name: eslint
         language: node
         files: \.(js|ts|vue)?$
-        entry: pnpx eslint
+        entry: pnpm lint
         args: [--no-warn-ignored]
 
   - repo: https://github.com/Riverside-Healthcare/djLint
