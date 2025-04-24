@@ -88,7 +88,7 @@
               v-model:initial-last-name="lastName"
               v-model:initial-private="userPrivate"
               :submitting="submitting"
-              @setStepSelectPublicBody="setStepSelectPublicBody">
+              @set-step-select-public-body="setStepSelectPublicBody">
               <template #request-hints>
                 <django-slot name="request-hints" />
               </template>

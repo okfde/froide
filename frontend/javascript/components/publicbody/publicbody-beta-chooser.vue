@@ -48,7 +48,7 @@
             :scope="scope"
             :value="filters[filterKey]"
             @update="updateFilter"
-            @setFilterExpand="setFilterExpand"></pb-filter>
+            @set-filter-expand="setFilterExpand"></pb-filter>
         </div>
       </div>
     </div>
