@@ -61,6 +61,7 @@ const createDocument = (attachment) => {
       store.allRaw.find(att => att.id === attachment.id).document = data
     })
     .catch((err) => {
+      // TODO where do these land in post-upload?
       store.messages.push({ body: err.detail || config.i18n.error || 'Error', color: 'danger' })
     })
     // note there's no .finally here -- we don't know when it's done

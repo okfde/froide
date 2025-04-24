@@ -281,6 +281,7 @@ def edit_postal_message(request, foirequest, message_id):
             "documentTitlePlaceholder": _("e.g. Letter from date"),
             "showIrrelevantAttachments": _("Show irrelevant attachments"),
             "makeRelevant": _("Make relevant"),
+            "makePublic": pgettext("Attachment manager", "Make public"),
             "pending": _("Processing…"),
             "loading": _("Loading..."),
             "description": _("Description"),
@@ -491,44 +492,14 @@ def edit_postal_message(request, foirequest, message_id):
             "makeRequestTo": reverse(
                 "foirequest-make_request", kwargs={"publicbody_ids": "0"}
             ),
-            # from upload_attachments() TODO: might not need all
-            "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
-            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
+            # from upload_attachments()
             "convertAttachments": reverse(
                 "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
-            "addAttachment": reverse(
-                "foirequest-add_postal_reply_attachment",
                 kwargs={"slug": foirequest.slug, "message_id": message.id},
             ),
             "redactAttachment": reverse(
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "approveAttachment": reverse(
-                "foirequest-approve_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "deleteAttachment": reverse(
-                "foirequest-delete_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "createDocument": reverse(
-                "foirequest-create_document",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            # from views/attachment for <pdf-redaction>
-            "publishUrl": reverse(
-                "foirequest-approve_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},  # attachment.pk},
-            ),
-            "messageUpload": reverse(
-                "foirequest-manage_attachments",
-                kwargs={
-                    "slug": foirequest.slug,
-                    "message_id": 0,  # attachment.belongs_to_id,
-                },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
@@ -801,33 +772,15 @@ def upload_attachments(request, foirequest, message_id):
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
         },
         "url": {
-            "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
-            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
             "convertAttachments": reverse(
                 "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
-            "addAttachment": reverse(
-                "foirequest-add_postal_reply_attachment",
                 kwargs={"slug": foirequest.slug, "message_id": message.id},
             ),
             "redactAttachment": reverse(
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
-            "approveAttachment": reverse(
-                "foirequest-approve_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "deleteAttachment": reverse(
-                "foirequest-delete_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
             "tusEndpoint": reverse("api:upload-list"),
-            "createDocument": reverse(
-                "foirequest-create_document",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
             "helpAttachmentsManagement": get_content_url("help_attachments_management"),
         },
         # "urls" (plural) is used exclusively by the document-viewer component

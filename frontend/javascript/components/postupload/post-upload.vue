@@ -52,11 +52,7 @@ const {
   message: props.message,
   urls: {
     ...props.config.url,
-    ...props.config.urls,
-    // TODO: api?
-    getAttachment: props.config.url.getAttachment.replace('/0/', '/') +
-      '?belongs_to=' +
-      props.message.id,
+    ...props.config.urls
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
   i18n,
@@ -1413,12 +1409,6 @@ values={{ values }}
           :auto-approve="attachments.autoApproveSelection[pdfRedactionCurrentDoc.id] !== false"
           :post-url="
             config.url.redactAttachment.replace(
-              '/0/',
-              '/' + pdfRedactionCurrentDoc.id + '/'
-            )
-          "
-          :approve-url="
-            config.url.approveAttachment.replace(
               '/0/',
               '/' + pdfRedactionCurrentDoc.id + '/'
             )
