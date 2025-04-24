@@ -16,7 +16,7 @@ importers:
         version: 0.55.2(typescript@5.2.2)
       '@okfde/filingcabinet':
         specifier: github:okfde/django-filingcabinet
-        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803(worker-loader@3.0.8(webpack@5.94.0))
+        version: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/382a62e5948356118ab9ad6b5b980007f2d5b998(typescript@5.2.2)(worker-loader@3.0.8(webpack@5.94.0))
       '@panzoom/panzoom':
         specifier: ^4.5.1
         version: 4.5.1
@@ -107,7 +107,7 @@ importers:
         version: 3.6.2
       '@vitejs/plugin-vue':
         specifier: ^4.0.0
-        version: 4.3.4(vite@4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0))(vue@3.3.4)
+        version: 4.3.4(vite@4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0))(vue@3.5.13(typescript@5.2.2))
       autoprefixer:
         specifier: ^10.4.13
         version: 10.4.16(postcss@8.4.30)
@@ -125,10 +125,10 @@ importers:
         version: 5.2.2
       vite:
         specifier: ^4.1.2
-        version: 4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0)
+        version: 4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0)
       vite-plugin-dev-manifest:
         specifier: ^1.0.9
-        version: 1.2.0(vite@4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0))
+        version: 1.2.0(vite@4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0))
 
 packages:
 
@@ -373,8 +373,8 @@ packages:
     resolution: {tarball: https://codeload.github.com/okfde/eslint-config-froide/tar.gz/daabc1889e3b91e8c09eed6326ce4788a8cd116c}
     version: 1.0.0
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803':
-    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803}
+  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/382a62e5948356118ab9ad6b5b980007f2d5b998':
+    resolution: {tarball: https://codeload.github.com/okfde/django-filingcabinet/tar.gz/382a62e5948356118ab9ad6b5b980007f2d5b998}
     version: 0.0.4
 
   '@panzoom/panzoom@4.5.1':
@@ -407,8 +407,8 @@ packages:
   '@types/lodash@4.14.196':
     resolution: {integrity: sha512-22y3o88f4a94mKljsZcanlNWPzO0uBsBdzLAngf2tp533LzZcQzb6+eZPJ+vCTt+bqF2XnvT9gejTLsAcJAJyQ==}
 
-  '@types/node@22.9.0':
-    resolution: {integrity: sha512-vuyHg81vvWA1Z1ELfvLko2c8f34gyA0zaic0+Rllc5lbCnbSyuvb2Oxpm6TAUAC/2xZN3QGqxBNggD1nNR2AfQ==}
+  '@types/node@22.13.14':
+    resolution: {integrity: sha512-Zs/Ollc1SJ8nKUAgc7ivOEdIBM8JAKgrqqUYi2J997JuKO7/tpQC+WCetQ1sypiKCQWHdvdg9wBNpUPEWZae7w==}
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
@@ -534,14 +534,8 @@ packages:
   '@vue/devtools-api@6.5.0':
     resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==}
 
-  '@vue/devtools-api@6.6.4':
-    resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
-
-  '@vue/reactivity-transform@3.3.4':
-    resolution: {integrity: sha512-MXgwjako4nu5WFLAjpBnCj/ieqcjE2aJBINUNQzkZQfzIZA4xn+0fV1tIYBJvvva3N3OvKGofRLvQIwEQPpaXw==}
-
-  '@vue/reactivity@3.3.4':
-    resolution: {integrity: sha512-kLTDLwd0B1jG08NBF3R5rqULtv/f8x3rOFByTDz4J53ttIQEDmALqKqXY0J+XQeN0aV2FBxY8nJDf88yvOPAqQ==}
+  '@vue/reactivity@3.5.13':
+    resolution: {integrity: sha512-NaCwtw8o48B9I6L1zl2p41OHo/2Z4wqYGGIK1Khu5T7yxrn+ATOixn/Udn2m+6kZKB/J7cuT9DbWWhRxqixACg==}
 
   '@vue/runtime-core@3.5.13':
     resolution: {integrity: sha512-Fj4YRQ3Az0WTZw1sFe+QDb0aXCerigEpw418pw1HBUKFtnQHWzwojaukAs2X/c9DQz4MQ4bsXTGlcpGxU/RCIw==}
@@ -789,8 +783,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
-  browserslist@4.24.2:
-    resolution: {integrity: sha512-ZIc+Q62revdMcqC6aChtW4jz3My3klmCO1fEmINZY/8J3EpBg5/A/D0AKmBveUh6pgoeycoMkVMko84tuYS+Gg==}
+  browserslist@4.24.4:
+    resolution: {integrity: sha512-KDi1Ny1gSePi1vm0q4oxSF8b4DR44GF4BbmS2YdhPLOEqd8pDviZOGH/GsmRwoWJ2+5Lr085X7naowMwKHDG1A==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
@@ -819,8 +813,8 @@ packages:
   caniuse-lite@1.0.30001539:
     resolution: {integrity: sha512-hfS5tE8bnNiNvEOEkm8HElUHroYwlqMMENEzELymy77+tJ6m+gA2krtHl5hxJaj71OlpC2cHZbdSMX1/YEqEkA==}
 
-  caniuse-lite@1.0.30001680:
-    resolution: {integrity: sha512-rPQy70G6AGUMnbwS1z6Xg+RkHYPAi18ihs47GH0jcxIG7wArmPgY3XbS2sRdBbxJljp3thdT8BIqv9ccCypiPA==}
+  caniuse-lite@1.0.30001707:
+    resolution: {integrity: sha512-3qtRjw/HQSMlDWf+X79N206fepf4SOOU6SQLMaq/0KkZLmSjPxAkBOQQ+FxbHKfHmYLZFfdWsO3KA90ceHPSnw==}
 
   chainsaw@0.1.0:
     resolution: {integrity: sha512-75kWfWt6MEKNC8xYXIdRpDehRYY/tNSgwKaJq+dbbDcxORuVrrQ+SEHoWsniVn9XPYfP4gmdWIeDk/4YNp1rNQ==}
@@ -974,8 +968,8 @@ packages:
   electron-to-chromium@1.4.528:
     resolution: {integrity: sha512-UdREXMXzLkREF4jA8t89FQjA8WHI6ssP38PMY4/4KhXFQbtImnghh4GkCgrtiZwLKUKVD2iTVXvDVQjfomEQuA==}
 
-  electron-to-chromium@1.5.58:
-    resolution: {integrity: sha512-al2l4r+24ZFL7WzyPTlyD0fC33LLzvxqLCwurtBibVPghRGO9hSTl+tis8t1kD7biPiH/en4U0I7o/nQbYeoVA==}
+  electron-to-chromium@1.5.128:
+    resolution: {integrity: sha512-bo1A4HH/NS522Ws0QNFIzyPcyUUNV/yyy70Ho1xqfGYzPUme2F/xr4tlEOuM6/A538U1vDA7a4XfCd1CKRegKQ==}
 
   emojis-list@3.0.0:
     resolution: {integrity: sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==}
@@ -1785,7 +1779,6 @@ packages:
         optional: true
       typescript:
         optional: true
-
   pkg-types@1.2.1:
     resolution: {integrity: sha512-sQoqa8alT3nHjGuTjuKgOnvjo4cljkufdtLMnO2LBP/wRwuDlo1tkaEdMxCRhyGRPacv/ztlZgDPm2b7FAmEvw==}
 
@@ -2179,17 +2172,6 @@ packages:
       terser:
         optional: true
 
-  vue-demi@0.14.10:
-    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
-    engines: {node: '>=12'}
-    hasBin: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-
   vue-demi@0.14.8:
     resolution: {integrity: sha512-Uuqnk9YE9SsWeReYqK2alDI5YzciATE0r2SkA6iMAtuXvNTMNACJLJEXNXaEy94ECuBe4Sk6RzRU80kjdbIo1Q==}
     engines: {node: '>=12'}
@@ -2487,7 +2469,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/69cde01cf767ebf6447d057b1400b87c32d03803(worker-loader@3.0.8(webpack@5.94.0))':
+  '@okfde/filingcabinet@https://codeload.github.com/okfde/django-filingcabinet/tar.gz/382a62e5948356118ab9ad6b5b980007f2d5b998(typescript@5.2.2)(worker-loader@3.0.8(webpack@5.94.0))':
     dependencies:
       '@popperjs/core': 2.11.8
       bootstrap: 5.3.2(@popperjs/core@2.11.8)
@@ -2524,7 +2506,7 @@ snapshots:
 
   '@types/lodash@4.14.196': {}
 
-  '@types/node@22.9.0':
+  '@types/node@22.13.14':
     dependencies:
       undici-types: 6.20.0
 
@@ -2686,10 +2668,10 @@ snapshots:
       lodash: 4.17.21
       preact: 10.17.1
 
-  '@vitejs/plugin-vue@4.3.4(vite@4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0))(vue@3.3.4)':
+  '@vitejs/plugin-vue@4.3.4(vite@4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0))(vue@3.5.13(typescript@5.2.2))':
     dependencies:
-      vite: 4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0)
-      vue: 3.3.4
+      vite: 4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0)
+      vue: 3.5.13(typescript@5.2.2)
 
   '@vue/compiler-core@3.5.13':
     dependencies:
@@ -2723,36 +2705,27 @@ snapshots:
 
   '@vue/devtools-api@6.5.0': {}
 
-  '@vue/devtools-api@6.6.4': {}
-
-  '@vue/reactivity-transform@3.3.4':
+  '@vue/reactivity@3.5.13':
     dependencies:
-      '@babel/parser': 7.22.7
-      '@vue/compiler-core': 3.3.4
-      '@vue/shared': 3.3.4
-      estree-walker: 2.0.2
-      magic-string: 0.30.2
+      '@vue/shared': 3.5.13
 
-  '@vue/reactivity@3.3.4':
+  '@vue/runtime-core@3.5.13':
     dependencies:
-      '@vue/shared': 3.3.4
+      '@vue/reactivity': 3.5.13
+      '@vue/shared': 3.5.13
 
-  '@vue/runtime-core@3.3.4':
+  '@vue/runtime-dom@3.5.13':
     dependencies:
-      '@vue/reactivity': 3.3.4
-      '@vue/shared': 3.3.4
+      '@vue/reactivity': 3.5.13
+      '@vue/runtime-core': 3.5.13
+      '@vue/shared': 3.5.13
+      csstype: 3.1.3
 
-  '@vue/runtime-dom@3.3.4':
+  '@vue/server-renderer@3.5.13(vue@3.5.13(typescript@5.2.2))':
     dependencies:
-      '@vue/runtime-core': 3.3.4
-      '@vue/shared': 3.3.4
-      csstype: 3.1.2
-
-  '@vue/server-renderer@3.3.4(vue@3.3.4)':
-    dependencies:
-      '@vue/compiler-ssr': 3.3.4
-      '@vue/shared': 3.3.4
-      vue: 3.3.4
+      '@vue/compiler-ssr': 3.5.13
+      '@vue/shared': 3.5.13
+      vue: 3.5.13(typescript@5.2.2)
 
   '@vue/shared@3.5.13': {}
 
@@ -2870,9 +2843,9 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  acorn-import-attributes@1.9.5(acorn@8.14.0):
+  acorn-import-attributes@1.9.5(acorn@8.14.1):
     dependencies:
-      acorn: 8.14.0
+      acorn: 8.14.1
 
   acorn-jsx@5.3.2(acorn@8.12.1):
     dependencies:
@@ -2881,6 +2854,12 @@ snapshots:
   acorn@8.12.1: {}
 
   acorn@8.14.0: {}
+
+  acorn@8.14.1: {}
+
+  ajv-formats@2.1.1(ajv@8.17.1):
+    optionalDependencies:
+      ajv: 8.17.1
 
   ajv-keywords@3.5.2(ajv@6.12.6):
     dependencies:
@@ -2992,12 +2971,12 @@ snapshots:
       node-releases: 2.0.13
       update-browserslist-db: 1.0.13(browserslist@4.21.11)
 
-  browserslist@4.24.2:
+  browserslist@4.24.4:
     dependencies:
-      caniuse-lite: 1.0.30001680
-      electron-to-chromium: 1.5.58
-      node-releases: 2.0.18
-      update-browserslist-db: 1.1.1(browserslist@4.24.2)
+      caniuse-lite: 1.0.30001707
+      electron-to-chromium: 1.5.128
+      node-releases: 2.0.19
+      update-browserslist-db: 1.1.3(browserslist@4.24.4)
 
   buffer-from@1.1.2: {}
 
@@ -3027,7 +3006,7 @@ snapshots:
 
   caniuse-lite@1.0.30001539: {}
 
-  caniuse-lite@1.0.30001680: {}
+  caniuse-lite@1.0.30001707: {}
 
   chainsaw@0.1.0:
     dependencies:
@@ -3200,7 +3179,7 @@ snapshots:
 
   electron-to-chromium@1.4.528: {}
 
-  electron-to-chromium@1.5.58: {}
+  electron-to-chromium@1.5.128: {}
 
   emojis-list@3.0.0: {}
 
@@ -3725,7 +3704,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.13.14
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -4036,14 +4015,6 @@ snapshots:
 
   picomatch@2.3.1: {}
 
-  pinia@2.2.6(typescript@5.2.2)(vue@3.3.4):
-    dependencies:
-      '@vue/devtools-api': 6.6.4
-      vue: 3.3.4
-      vue-demi: 0.14.10(vue@3.3.4)
-    optionalDependencies:
-      typescript: 5.2.2
-
   pkg-types@1.2.1:
     dependencies:
       confbox: 0.1.8
@@ -4321,7 +4292,7 @@ snapshots:
   terser@5.39.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.14.0
+      acorn: 8.14.1
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -4415,9 +4386,9 @@ snapshots:
       escalade: 3.1.1
       picocolors: 1.0.0
 
-  update-browserslist-db@1.1.1(browserslist@4.24.2):
+  update-browserslist-db@1.1.3(browserslist@4.24.4):
     dependencies:
-      browserslist: 4.24.2
+      browserslist: 4.24.4
       escalade: 3.2.0
       picocolors: 1.1.1
 
@@ -4432,26 +4403,22 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite-plugin-dev-manifest@1.2.0(vite@4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0)):
+  vite-plugin-dev-manifest@1.2.0(vite@4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0)):
     dependencies:
-      vite: 4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0)
+      vite: 4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0)
 
-  vite@4.4.9(@types/node@22.9.0)(sass@1.68.0)(terser@5.36.0):
+  vite@4.4.9(@types/node@22.13.14)(sass@1.68.0)(terser@5.39.0):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.4.30
       rollup: 3.29.3
     optionalDependencies:
-      '@types/node': 22.9.0
+      '@types/node': 22.13.14
       fsevents: 2.3.3
       sass: 1.68.0
       terser: 5.39.0
 
-  vue-demi@0.14.10(vue@3.3.4):
-    dependencies:
-      vue: 3.3.4
-
-  vue-demi@0.14.8(vue@3.3.4):
+  vue-demi@0.14.8(vue@3.5.13(typescript@5.2.2)):
     dependencies:
       vue: 3.5.13(typescript@5.2.2)
 
@@ -4511,13 +4478,13 @@ snapshots:
 
   webpack@5.94.0:
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.7
       '@webassemblyjs/ast': 1.14.1
       '@webassemblyjs/wasm-edit': 1.14.1
       '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.14.0
-      acorn-import-attributes: 1.9.5(acorn@8.14.0)
-      browserslist: 4.24.2
+      acorn: 8.14.1
+      acorn-import-attributes: 1.9.5(acorn@8.14.1)
+      browserslist: 4.24.4
       chrome-trace-event: 1.0.4
       enhanced-resolve: 5.18.1
       es-module-lexer: 1.6.0
