@@ -933,7 +933,7 @@ export default {
         clientY = e.changedTouches[0].clientY
       }
 
-      // eslint-disable-next-line no-case-declarations
+       
       const scale = panzoom.getScale()
       const offsetX = (renderDensityFactor * (clientX - rect.left)) / scale
       const offsetY = (renderDensityFactor * (clientY - rect.top)) / scale
@@ -1327,7 +1327,7 @@ export default {
       matches.forEach((div) => {
         const text = div.textContent
         let result
-        /* eslint-disable no-cond-assign */
+         
         while ((result = regex.exec(text))) {
           const pos = result.index
           const match = result[0]

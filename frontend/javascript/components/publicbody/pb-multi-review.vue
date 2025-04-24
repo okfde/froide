@@ -40,7 +40,7 @@
       :headers="headers"
       :options="chosenOptions"
       :rows="publicBodies"
-      @selectAllRows="selectAllRows"
+      @select-all-rows="selectAllRows"
       class="transition"></pb-table>
   </div>
 </template>

@@ -75,7 +75,7 @@
             :headers="currentHeaders"
             :options="selectOptions"
             :rows="searchResults"
-            @selectAllRows="selectAllRows"></pb-table>
+            @select-all-rows="selectAllRows"></pb-table>
           <div
             v-show="searching"
             class="spinner-border text-secondary"
@@ -106,7 +106,7 @@
                 :scope="scope"
                 :value="filters[filterKey]"
                 @update="updateFilter"
-                @setFilterExpand="setFilterExpand"></pb-filter>
+                @set-filter-expand="setFilterExpand"></pb-filter>
             </div>
           </div>
         </div>

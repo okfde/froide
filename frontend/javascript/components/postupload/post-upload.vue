@@ -7,7 +7,7 @@ import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
 // TODO linter wrong? the two above are just fine...
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 import { useI18n } from '../../lib/i18n'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
@@ -701,7 +701,8 @@ addEventListener('hashchange', () => {
 <template>
   <online-help ref="onlineHelp" />
 
-  <simple-stepper class="sticky-top position-md-static" :step="stepContext.progressStep"
+  <simple-stepper
+class="sticky-top position-md-static" :step="stepContext.progressStep"
     :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
@@ -739,7 +740,8 @@ addEventListener('hashchange', () => {
     <button class="btn btn-secondary btn-sm" type="submitForm" style="font-size: 50%; margin-left: 1em">
       submit/save
     </button>
-    <button class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
+    <button
+class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
       style="font-size: 50%; margin-left: 1em">
       submit/fetch
     </button>
@@ -827,7 +829,8 @@ addEventListener('hashchange', () => {
             <p>
               {{ i18n.newWarning }}
             </p>
-            <p v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
+            <p
+v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
               "></p>
           </div>
         </div>
@@ -902,9 +905,11 @@ addEventListener('hashchange', () => {
             {{ i18n.letterSentOrReceived }}
             <!--{{ form.fields.sent.label }}-->
           </label>
-          <div class="form-check" v-for="(choice, choiceIndex) in form.fields.sent.choices" :key="choice.value"
+          <div
+class="form-check" v-for="(choice, choiceIndex) in form.fields.sent.choices" :key="choice.value"
             :class="{ 'is-invalid': choice.errors }">
-            <input type="radio" name="sent" v-model="formSent" required="" class="form-check-input"
+            <input
+type="radio" name="sent" v-model="formSent" required="" class="form-check-input"
               :id="'id_sent_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
               choice.label
@@ -935,11 +940,13 @@ addEventListener('hashchange', () => {
           <div style="margin: 1em 0; font-style: italic">
             {{ formPublicbodyLabel }}
           </div>
-          <div class="form-check" v-for="(choice, choiceIndex) in [
+          <div
+class="form-check" v-for="(choice, choiceIndex) in [
             { value: true, label: 'Ja.' },
             { value: false, label: 'Nein, andere Behörde wählen' }
           ]" :key="choiceIndex">
-            <input type="radio" required="" class="form-check-input" v-model="formPublicbodyIsDefault"
+            <input
+type="radio" required="" class="form-check-input" v-model="formPublicbodyIsDefault"
               :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_pbisdefault_' + choiceIndex">{{ choice.label }}</label>
           </div>
@@ -947,7 +954,8 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div v-show="step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
+    <div
+v-show="step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
       (isDesktop &&
         step === STEP_MESSAGE_PUBLICBODY_CHECK &&
         !formPublicbodyIsDefault)
@@ -964,7 +972,8 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <publicbody-chooser v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="foo_publicbody"
+          <publicbody-chooser
+v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="foo_publicbody"
             name="publicbody" :config="config" :form="form" :value="formPublicbodyId" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
             :class="{ 'is-invalid': form.errors.publicbody }" />
@@ -984,7 +993,8 @@ addEventListener('hashchange', () => {
                 :required="step === STEP_MESSAGE_DATE || step === STEP_MESSAGE_PUBLICBODY_CHECK"
                 maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
               -->
-          <input id="id_date" class="form-control" type="date" name="date" v-model="values.date" :class="{
+          <input
+id="id_date" class="form-control" type="date" name="date" v-model="values.date" :class="{
             'is-invalid': validity.date === false,
             'is-valid': validity.date === true
           }" required :min="props.date_min" :max="props.date_max" @input="updateValidity('date')" />
@@ -994,11 +1004,13 @@ addEventListener('hashchange', () => {
             </p>
           </div>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" v-model="values.is_registered_mail"
+            <input
+class="form-check-input" type="checkbox" v-model="values.is_registered_mail"
               id="id_is_registered_mail" />
             <label class="form-check-label" for="id_is_registered_mail">
               {{ i18n.messageIsRegisteredMail }}
-              <span type="button" v-bs-tooltip tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
+              <span
+type="button" v-bs-tooltip tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
                 :title="i18n.messageRegisteredMailInfo">
                 <i class="fa fa-info-circle"></i>
               </span>
@@ -1007,7 +1019,8 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div v-show="step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
+    <div
+v-show="step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
       (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
       " class="container">
       <div class="row justify-content-center">
@@ -1016,7 +1029,8 @@ addEventListener('hashchange', () => {
             {{ i18n.messageDateRegisteredMail }}
           </label>
           <!-- TODO set min/max? -->
-          <input type="date" class="form-control" id="id_registered_mail_date" name="registered_mail_date"
+          <input
+type="date" class="form-control" id="id_registered_mail_date" name="registered_mail_date"
             :required="values.is_registered_mail" @input="updateValidity('registered_mail_date')"
             v-model="values.registered_mail_date" />
         </div>
@@ -1040,9 +1054,11 @@ addEventListener('hashchange', () => {
               {{ i18n.messageStatusIsResolvedAfterSent }}
             </template>
           </label>
-          <div class="form-check" v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+          <div
+class="form-check" v-for="(choice, choiceIndex) in status_form.fields.status.choices"
             :key="choice.value">
-            <input type="radio" name="status" required="" class="form-check-input"
+            <input
+type="radio" name="status" required="" class="form-check-input"
               :class="{ 'is-invalid': choice.errors }" :id="'id_status_' + choiceIndex" v-model="formStatus"
               :value="choice.value" @input="updateValidity('status')" />
             <label class="form-check-label" :for="'id_status_' + choiceIndex">
@@ -1067,7 +1083,8 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div v-show="step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
+    <div
+v-show="step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
       (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
       " class="container">
       <div class="row justify-content-center">
@@ -1077,7 +1094,8 @@ addEventListener('hashchange', () => {
             {{ i18n.messageResolution }}
           </label>
           <div class="form-check" v-for="(choice, choiceIndex) in formStatusChoices" :key="choice.value">
-            <input type="radio" name="resolution" :required="formStatusIsResolved" class="form-check-input"
+            <input
+type="radio" name="resolution" :required="formStatusIsResolved" class="form-check-input"
               :id="'id_resolution_' + choiceIndex" :value="choice.value" :checked="status_form.fields.resolution.value === choice.value ||
                 status_form.fields.resolution.initial === choice.value
                 " />
@@ -1093,11 +1111,13 @@ addEventListener('hashchange', () => {
           <label class="fw-bold col-form-label">
             {{ i18n.messageCostCheck }}
           </label>
-          <div class="form-check" v-for="(choice, choiceIndex) in [
+          <div
+class="form-check" v-for="(choice, choiceIndex) in [
             { label: 'Nein.', value: false },
             { label: 'Ja.', value: true }
           ]" :key="choiceIndex">
-            <input type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
+            <input
+type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
               :id="'id_nowcost_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
           </div>
@@ -1109,25 +1129,29 @@ addEventListener('hashchange', () => {
         <div class="col-lg-9">
           <div class="step-questioncounter">Frage 5 von 5</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
-          <label class="fw-bold col-form-label" for="id_nowcost" v-html="i18n._('messageCostCheckLast', {
+          <label
+class="fw-bold col-form-label" for="id_nowcost" v-html="i18n._('messageCostCheckLast', {
             amount:
               status_form.fields.costs.value?.strValue ||
               status_form.fields.costs.initial?.strValue ||
               'error'
           })
             "></label>
-          <div class="form-check" v-for="(choice, choiceIndex) in [
+          <div
+class="form-check" v-for="(choice, choiceIndex) in [
             { label: 'Ja.', value: false },
             { label: 'Nein.', value: true }
           ]" :key="choiceIndex">
-            <input type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
+            <input
+type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
               :id="'id_nowcost_' + choiceIndex" :value="choice.value" />
             <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
           </div>
         </div>
       </div>
     </div>
-    <div v-show="step === STEP_MESSAGE_COST_UPDATE ||
+    <div
+v-show="step === STEP_MESSAGE_COST_UPDATE ||
       (isDesktop &&
         (step === STEP_MESSAGE_COST_CHECK_ANY ||
           step === STEP_MESSAGE_COST_CHECK_LAST) &&
@@ -1141,7 +1165,8 @@ addEventListener('hashchange', () => {
           <div class="col-md-8">
             <div class="input-group" style="width: 10rem">
               <!-- type=number does not support pattern -->
-              <input type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="decimal"
+              <input
+type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="decimal"
                 style="appearance: textfield; text-align: right" min="0" max="1000000000" step="0.01"
                 v-model="values.costs" @input="updateValidity('costs')" :class="{
                   'is-invalid': validity.costs === false,
@@ -1368,9 +1393,11 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-md-9 col-lg-6 text-center">
           <template v-if="step === STEP_REDACTION_REDACT">
-            <button type="button" @click="pdfRedactionRedact()" class="btn btn-primary d-block w-100"
+            <button
+type="button" @click="pdfRedactionRedact()" class="btn btn-primary d-block w-100"
               :disabled="pdfRedactionProcessing">
-              <span class="spinner-border spinner-border-sm" v-show="pdfRedactionProcessing" role="status"
+              <span
+class="spinner-border spinner-border-sm" v-show="pdfRedactionProcessing" role="status"
                 aria-hidden="true" />
               {{ i18n.redactionDone }}
             </button>
@@ -1459,7 +1486,8 @@ addEventListener('hashchange', () => {
             <button type="button" :disabled="!isGotoValid" @click="gotoStep()" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
-            <button v-if="debug" type="button" @click="debugSkipDate"
+            <button
+v-if="debug" type="button" @click="debugSkipDate"
               class="btn btn-outline-primary btn-sm mt-1 d-block w-100">
               DEBUG set today
             </button>

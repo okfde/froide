@@ -29,10 +29,10 @@
             :scope="scope"
             :value="value"
             :items="item.subItems"
-            @removeFilter="removeFilter"
-            @setFilter="setFilter"
-            @loadMore="loadMore"
-            @loadChildren="loadChildren"></pb-filter-list>
+            @remove-filter="removeFilter"
+            @set-filter="setFilter"
+            @load-more="loadMore"
+            @load-children="loadChildren"></pb-filter-list>
         </div>
       </li>
     </ul>
