@@ -4,6 +4,7 @@ from functools import wraps
 from typing import Optional
 
 from django.contrib import auth, messages
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.utils import timezone
@@ -14,7 +15,7 @@ from mfa import settings
 from mfa.methods import fido2, totp
 from mfa.models import MFAKey
 
-from froide.helper.utils import get_redirect, redirect_to_login
+from froide.helper.utils import get_redirect
 
 from .models import User
 
@@ -147,7 +148,7 @@ def check_recent_auth_decorator(mfa_required=False):
         def _wrapped_view(request: HttpRequest, *args, **kwargs):
             if not request.user.is_authenticated:
                 # in case login required runs later, check here
-                return redirect_to_login(request)
+                return redirect_to_login(request.get_full_path())
             if mfa_required and not user_has_mfa(request.user):
                 messages.add_message(
                     request,
@@ -156,11 +157,11 @@ def check_recent_auth_decorator(mfa_required=False):
                         "You need to have two-factor login set on your account. Please set it up now."
                     ),
                 )
-                return get_redirect(request, default="account-settings")
+                return get_redirect(request, next="account-settings")
             if requires_recent_auth(request):
                 return get_redirect(
                     request,
-                    default="account-reauth",
+                    next="account-reauth",
                     params={"next": request.get_full_path()},
                 )
             return view_func(request, *args, **kwargs)
