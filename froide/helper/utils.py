@@ -4,7 +4,7 @@ import json
 from typing import Dict, Optional, Union
 from urllib.parse import parse_qs, urlsplit, urlunsplit
 
-from django.conf import settings
+from django.contrib.auth.views import redirect_to_login
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import NoReverseMatch, reverse
@@ -36,18 +36,9 @@ def render_403(
     request: HttpRequest, message: str = ""
 ) -> Union[HttpResponseRedirect, HttpResponse]:
     if not request.user.is_authenticated:
-        return get_redirect(
-            request,
-            default=settings.LOGIN_URL,
-            params={"next": request.get_full_path()},
-        )
+        return redirect_to_login(request.get_full_path())
+
     return render_code(403, request, context={"message": message})
-
-
-def redirect_to_login(request: HttpRequest):
-    return get_redirect(
-        request, default=settings.LOGIN_URL, params={"next": request.get_full_path()}
-    )
 
 
 def get_client_ip(request: HttpRequest) -> str:
@@ -62,11 +53,14 @@ def get_client_ip(request: HttpRequest) -> str:
 def get_redirect_url(
     request: HttpRequest,
     default: str = "/",
-    next: None = None,
+    next: Optional[str] = None,
     allowed_hosts: None = None,
     params: Optional[Dict[str, str]] = None,
     keep_session: bool = False,
 ) -> str:
+    if next and not next.startswith("/"):
+        next = reverse(next)
+
     if next is None:
         next = request.POST.get(
             "next", request.GET.get("next", request.session.get("next"))
@@ -94,7 +88,10 @@ def get_redirect_url(
         )
     if next is None or not url_allowed:
         next = "/"
-    if params is not None:
+    if next is not None and params and params.get("next") == next:
+        # Avoid infinite redirect loop
+        del params["next"]
+    if params:
         next = update_query_params(next, params)
     return next
 

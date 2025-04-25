@@ -184,7 +184,7 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
                 return start_mfa_auth(request, user, url)
 
         # If login-link fails, prompt login with redirect
-        return get_redirect(request, default="account-login", params={"next": url})
+        return redirect_to_login(url)
     return render(
         request, "account/go.html", {"form_action": request.path, "next": url}
     )

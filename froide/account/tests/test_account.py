@@ -15,6 +15,8 @@ from django.utils.html import escape
 
 import pytest
 
+from froide.accesstoken.models import AccessToken
+from froide.account.factories import UserFactory
 from froide.account.management.commands.send_mass_mail import Command
 from froide.foirequest.models import FoiMessage, FoiRequest
 from froide.foirequest.tests import factories
@@ -559,6 +561,30 @@ def test_go(world, client):
     assert response["Location"].startswith(login_url)
     response = client.get(test_url)
     assert response.context["user"].is_anonymous
+
+
+@pytest.mark.django_db
+def test_go_redirect_without_loop(client):
+    user = UserFactory.create()
+    # Foirequest is private
+    foirequest = factories.FoiRequestFactory.create(user=user, visibility=1)
+
+    # Super users are not logged in
+    next_url = foirequest.get_absolute_short_url()
+    autologin_url = user.get_autologin_url(next_url)
+
+    # Invalidate access token to prevent login
+    AccessToken.objects.filter(user=user).delete()
+
+    # Get autologin url
+    response = client.get(autologin_url)
+    form_action = response.context["form_action"]
+    next_url = response.context["next"]
+    # Post to autologin url
+    response = client.post(form_action, {"next": next_url})
+    assert response.status_code == 302
+    qs = urlencode({"next": next_url}, safe="/")
+    assert response["Location"] == f"{reverse(settings.LOGIN_URL)}?{qs}"
 
 
 @pytest.mark.django_db
