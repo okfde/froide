@@ -67,17 +67,17 @@ const iconTooltipTexts = computed(() => [
       :title="iconTooltipTexts.join('\n')"
       :data-bs-title="iconTooltipTexts.join('<br/>')"
       >
-      <i class="fa fa-file" :style="{ fontSize: Size }"></i>
-      <span class="sr-only">
-        {{ i18n.preview }}
+      <i class="fa fa-file" :style="{ fontSize: Size }" aria-hidden="true"></i>
+      <span class="visually-hidden">
+        {{ i18n.preview }}.
       </span>
       <span
         v-if="attachment.document"
         style="font-size: 25%"
         class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary">
-        <i class="fa fa-edit"></i>
-        <span class="sr-only">
-          {{ i18n.editTitle }}<br/>
+        <i class="fa fa-edit" aria-hidden="true"></i>
+        <span class="visually-hidden">
+          {{ i18n.editTitle }},
           {{ i18n.editDescription }}
         </span>
       </span>
