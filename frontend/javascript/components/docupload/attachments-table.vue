@@ -242,7 +242,7 @@ const makeResultSelected = async () => {
           >
           <input v-model="attachments.selectedIds" type="checkbox" :value="att.id" />
         </label>
-        <attachment-icon-preview
+        <AttachmentIconPreview
           :attachment="att"
           big
           class="text-center pb-1"
@@ -280,7 +280,7 @@ const makeResultSelected = async () => {
           >{{ i18n.resolution }}</span>
         <div
           v-if="badgesType">
-          <attachment-badge-filetype
+          <AttachmentBadgeFiletype
             :attachment="att"
             />
         </div>
@@ -289,7 +289,7 @@ const makeResultSelected = async () => {
           <span class="sr-only">{{ i18n.delete }}</span>
         </button>
         <div v-if="actions" class="d-flex flex-column align-items-start flex-grow-0 flex-shrink-1">
-          <attachment-actions
+          <AttachmentActions
             :attachment="att"
             :dropdown="false"
             dropdown-classes=""
@@ -324,7 +324,7 @@ const makeResultSelected = async () => {
         class="d-flex flex-grow ps-1 ps-md-0 pe-3 py-3 py-md-0 align-self-stretch position-absolute position-md-static top-0 start-0">
         <input v-model="attachments.selectedIds" type="checkbox" :value="att.id" />
       </label>
-      <attachment-icon-preview
+      <AttachmentIconPreview
         :attachment="att"
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         :actions="actions"
@@ -337,7 +337,7 @@ const makeResultSelected = async () => {
         <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
           <span class="sr-only">{{ i18n.loading }}</span>
         </span>
-        <attachment-badge-filetype
+        <AttachmentBadgeFiletype
           v-if="badgesType"
           :attachment="att"
           />
@@ -373,7 +373,7 @@ const makeResultSelected = async () => {
         v-if="actions"
         class="d-flex flex-column flex-sm-row flex-grow-0 flex-shrink-1 justify-content-end"
         >
-        <attachment-actions
+        <AttachmentActions
           :attachment="att"
           :dropdown="true"
           dropdown-classes="position-absolute position-md-static top-0 end-0 mt-1 mt-md-0 d-flex align-items-center"

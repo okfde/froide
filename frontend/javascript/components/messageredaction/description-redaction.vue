@@ -6,11 +6,11 @@
           {{ i18n.description }}
         </h5>
         <div>
-          <message-redaction-field
+          <MessageRedactionField
             field-name="description"
             :redacted-parts="
               request.redacted_description
-            "></message-redaction-field>
+            "></MessageRedactionField>
         </div>
       </div>
     </template>

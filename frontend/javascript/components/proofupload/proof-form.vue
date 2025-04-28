@@ -60,7 +60,7 @@
         for="id_proof_image"
         >{{ formFields.proof_image.label }}</label
       >
-      <proof-upload
+      <ProofUpload
         name="proof_image"
         v-model="proofImage"
         :disabled="!!proof"

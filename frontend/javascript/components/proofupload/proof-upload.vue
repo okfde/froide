@@ -40,7 +40,7 @@
         </div>
       </div>
       <div class="mt-2">
-        <proof-redact
+        <ProofRedact
           :src="img.src"
           ref="redactor"
           @redacted="updateFile"

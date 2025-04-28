@@ -20,14 +20,14 @@
       </tr>
     </thead>
     <transition-group name="table" tag="tbody">
-      <pb-table-row
+      <PbTableRow
         v-for="row in sortedRows"
         :key="row.id"
         :name="name"
         :row="row"
         :headers="headers"
         :selected="row.isSelected"
-        @update:row="updateRow"></pb-table-row>
+        @update:row="updateRow"></PbTableRow>
     </transition-group>
   </table>
 </template>

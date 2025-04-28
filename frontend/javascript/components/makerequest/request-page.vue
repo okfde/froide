@@ -1,13 +1,13 @@
 <template>
   <div class="make-request-container">
-    <request-form-breadcrumbs
+    <RequestFormBreadcrumbs
       :i18n="i18n"
       :multi-request="multiRequest"
       :has-public-bodies="hasPublicBodies"
       :hide-publicbody-chooser="hidePublicbodyChooser" />
 
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
-      <django-slot name="messages" />
+      <DjangoSlot name="messages" />
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
@@ -16,27 +16,27 @@
             id="step-publicbody"
             class="mt-5">
             <div v-if="multiRequest">
-              <publicbody-multi-chooser
+              <PublicbodyMultiChooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
                 :scope="pbScope"
                 :config="config">
                 <template #publicbody-missing>
-                  <django-slot name="publicbody-missing" />
+                  <DjangoSlot name="publicbody-missing" />
                 </template>
-              </publicbody-multi-chooser>
+              </PublicbodyMultiChooser>
             </div>
             <div v-else>
               <div class="row">
                 <div class="col-lg-7">
-                  <django-slot name="publicbody-legend-title" />
-                  <django-slot name="publicbody-help-text" />
+                  <DjangoSlot name="publicbody-legend-title" />
+                  <DjangoSlot name="publicbody-help-text" />
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg-8">
                   <template v-if="betaUi">
-                    <publicbody-beta-chooser
+                    <PublicbodyBetaChooser
                       name="publicbody"
                       :defaultsearch="publicBodySearch"
                       :scope="pbScope"
@@ -44,7 +44,7 @@
                       :config="config" />
                   </template>
                   <template v-else>
-                    <publicbody-chooser
+                    <PublicbodyChooser
                       name="publicbody"
                       :defaultsearch="publicBodySearch"
                       :scope="pbScope"
@@ -54,7 +54,7 @@
                   </template>
                 </div>
                 <div class="col-lg-4 small">
-                  <django-slot name="publicbody-missing" />
+                  <DjangoSlot name="publicbody-missing" />
                 </div>
               </div>
             </div>
@@ -64,11 +64,11 @@
             v-if="stepReviewPublicBodies && !stepWriteRequest"
             id="step-review-publicbody"
             class="mt-5">
-            <pb-multi-review name="publicbody" :i18n="i18n" :scope="pbScope" />
+            <PbMultiReview name="publicbody" :i18n="i18n" :scope="pbScope" />
           </fieldset>
 
           <fieldset v-if="stepWriteRequest" id="step-request" class="mt-3">
-            <request-form
+            <RequestForm
               :config="config"
               :publicbodies="publicBodies"
               :user="user.id ? user : null"
@@ -90,14 +90,14 @@
               :submitting="submitting"
               @set-step-select-public-body="setStepSelectPublicBody">
               <template #request-hints>
-                <django-slot name="request-hints" />
+                <DjangoSlot name="request-hints" />
               </template>
               <template #request-legend-title>
-                <django-slot name="request-legend-title" />
+                <DjangoSlot name="request-legend-title" />
               </template>
-            </request-form>
+            </RequestForm>
 
-            <user-registration
+            <UserRegistration
               :form="userForm"
               :config="config"
               :user="user.id ? user : null"
@@ -106,18 +106,18 @@
               v-model:initial-address="address"
               :address-help-text="userForm.fields.address.help_text" />
 
-            <request-public :form="requestForm" :hide-public="hidePublic" />
+            <RequestPublic :form="requestForm" :hide-public="hidePublic" />
 
-            <user-terms v-if="!user.id" :form="userForm" />
+            <UserTerms v-if="!user.id" :form="userForm" />
           </fieldset>
 
-          <similar-requests
+          <SimilarRequests
             v-if="showSimilar && stepWriteRequest"
             :publicbodies="publicBodies"
             :subject="subject"
             :config="config" />
 
-          <review-request
+          <ReviewRequest
             :i18n="i18n"
             :publicbodies="publicBodies"
             :user="user"

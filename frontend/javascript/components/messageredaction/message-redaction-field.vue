@@ -2,7 +2,7 @@
   <div class="redaction-area">
     <div class="content-text">
       <template v-for="word in words">
-        <message-redaction-word
+        <MessageRedactionWord
           v-if="!word.separator"
           :key="word.index"
           :word="word.word"

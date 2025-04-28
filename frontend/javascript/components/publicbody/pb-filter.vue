@@ -38,7 +38,7 @@
             role="status">
             <span class="visually-hidden">{{ i18n.loading }}</span>
           </div>
-          <pb-filter-list
+          <PbFilterList
             v-else
             :config="config"
             :i18n="i18n"
@@ -49,7 +49,7 @@
             @remove-filter="removeFilter"
             @set-filter="setFilter"
             @load-more="loadMore"
-            @load-children="loadChildren"></pb-filter-list>
+            @load-children="loadChildren"></PbFilterList>
         </div>
       </div>
     </transition>

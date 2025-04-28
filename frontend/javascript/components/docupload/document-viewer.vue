@@ -1,13 +1,13 @@
 <!-- the purpose of this component is to provide $root.config, specifically .i18n,
   to filingcabinet's document-viewer and its descendants -->
 <template>
-  <document-viewer
+  <DocumentViewer
     :document-url="this.documentUrl"
     :document-preview="this.documentPreview"
     :page="this.page"
     :config="this.config"
     :defaults="this.defaults"
-    ></document-viewer>
+    ></DocumentViewer>
 </template>
 
 <script>

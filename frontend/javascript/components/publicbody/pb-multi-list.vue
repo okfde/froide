@@ -22,10 +22,10 @@
           v-for="result in searchResults"
           :key="result.id"
           class="search-result">
-          <pb-multi-item
+          <PbMultiItem
             :name="name"
             :result="result"
-            :scope="scope"></pb-multi-item>
+            :scope="scope"></PbMultiItem>
         </li>
       </ul>
       <p v-if="hasPublicBodies">

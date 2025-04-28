@@ -14,7 +14,7 @@
         {{ i18n.createResponse }}
       </button>
     </div>
-    <file-uploader
+    <FileUploader
       :config="config"
       class="mb-3 mt-3"
       :auto-proceed="true"
