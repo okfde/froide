@@ -307,6 +307,7 @@ def edit_postal_message(request, foirequest, message_id):
                 "Are you sure you want to mark the selected attachments as result?"
             ),
             "displayAsTable": _("Display as table"),
+            "displayAsCards": _("Display as icons"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
@@ -844,6 +845,7 @@ def upload_attachments(request, foirequest, message_id):
                 "Are you sure you want to mark the selected attachments as result?"
             ),
             "displayAsTable": _("Display as table"),
+            "displayAsCards": _("Display as icons"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
