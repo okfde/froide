@@ -382,6 +382,11 @@ const makeResultSelected = async () => {
       <slot name="after-row" :attachment="att"></slot>
     </div>
     <slot name="after-table"></slot>
+    <div class="py-3 text-end border-top px-md-1">
+      <button type="button" class="btn btn-link btn-sm" @click="asCards = true">
+        {{ i18n.displayAsCards }}
+      </button>
+    </div>
   </div>
 </template>
 
