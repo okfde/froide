@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <TransitionGroup tag="tbody" name="moderation-problem">
-        <moderation-problem
+        <ModerationProblem
           v-for="report in reports"
           :key="report.id"
           :report="report"

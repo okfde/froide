@@ -68,14 +68,14 @@
       </div>
       <div class="row">
         <div class="col-md-8 col-lg-9 order-2">
-          <pb-table
+          <PbTable
             :name="name"
             :scope="scope"
             :i18n="i18n"
             :headers="currentHeaders"
             :options="selectOptions"
             :rows="searchResults"
-            @select-all-rows="selectAllRows"></pb-table>
+            @select-all-rows="selectAllRows"></PbTable>
           <div
             v-show="searching"
             class="spinner-border text-secondary"
@@ -83,22 +83,22 @@
             <span class="visually-hidden">{{ i18n.loading }}</span>
           </div>
           <slot name="publicbody-missing" v-if="!searching"></slot>
-          <pb-pagination :scope="scope" :i18n="i18n"></pb-pagination>
+          <PbPagination :scope="scope" :i18n="i18n"></PbPagination>
         </div>
         <div class="col-md-4 col-lg-3 order-md-1">
-          <pb-filter-selected
+          <PbFilterSelected
             v-for="filterKey in filterOrder"
             :key="filterKey"
             :config="filterConfig[filterKey]"
             @update="updateFilter"
             :value="filters[filterKey]">
-          </pb-filter-selected>
+          </PbFilterSelected>
           <div class="row mt-3">
             <div
               v-for="filterKey in filterOrder"
               :key="filterKey"
               class="col-sm-4 col-md-12 filter-column position-relative">
-              <pb-filter
+              <PbFilter
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
                 :config="filterConfig[filterKey]"
@@ -106,7 +106,7 @@
                 :scope="scope"
                 :value="filters[filterKey]"
                 @update="updateFilter"
-                @set-filter-expand="setFilterExpand"></pb-filter>
+                @set-filter-expand="setFilterExpand"></PbFilter>
             </div>
           </div>
         </div>

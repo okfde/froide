@@ -6,11 +6,11 @@
           <h5>{{ i18n.subject }}</h5>
         </div>
         <div class="col-md-9">
-          <message-redaction-field
+          <MessageRedactionField
             field-name="subject"
             :redacted-parts="
               message.redacted_subject
-            "></message-redaction-field>
+            "></MessageRedactionField>
         </div>
       </div>
       <div v-if="message.content" class="mb-3">
@@ -18,12 +18,12 @@
           {{ i18n.message }}
         </h5>
         <div>
-          <message-redaction-field
+          <MessageRedactionField
             field-name="content"
             :redacted-parts="message.redacted_content"
             :blocked-patterns="
               config.settings.blockedPatterns
-            "></message-redaction-field>
+            "></MessageRedactionField>
         </div>
       </div>
     </template>

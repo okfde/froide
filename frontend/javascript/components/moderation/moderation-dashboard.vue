@@ -61,19 +61,19 @@
         </li>
       </ul>
       <div class="tab-content pt-3">
-        <moderation-problems
+        <ModerationProblems
           v-if="tab === 'problemreports'"
           :reports="reports"
         />
-        <moderation-publicbodies
+        <ModerationPublicbodies
           v-if="tab === 'publicbodies'"
           :publicbodies="publicbodies"
         />
-        <moderation-unclassified
+        <ModerationUnclassified
           v-if="tab === 'unclassified'"
           :unclassified="unclassified"
         />
-        <moderation-attachments
+        <ModerationAttachments
           v-if="tab === 'attachments'"
           :attachments="attachments"
           @resolved="resolveAttachment"

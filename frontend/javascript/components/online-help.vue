@@ -1,6 +1,5 @@
 <script setup>
 import { inject, ref, onMounted } from 'vue'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import BsModal from './bs-modal.vue'
 
 const i18n = inject('i18n')
@@ -51,23 +50,24 @@ defineExpose({
 </script>
 
 <template>
-  <bs-modal
+  <BsModal
     ref="bsModal"
     dialog-classes="modal-fullscreen modal-dialog-scrollable ms-auto modal-online-help"
     content-classes="bg-warning-subtle"
-    >
+  >
     <template #header>
       <h5 class="modal-title">{{ i18n.help }}</h5>
     </template>
     <template #body>
       <span
         class="spinner spinner-border position-absolute top-50 start-50 translate-middle"
-        v-show="isFetching">
+        v-show="isFetching"
+      >
         <span class="sr-only">{{ i18n.attachmentsLoading }}</span>
       </span>
       <div v-html="contents"></div>
     </template>
-  </bs-modal>
+  </BsModal>
 </template>
 
 <style lang="scss">

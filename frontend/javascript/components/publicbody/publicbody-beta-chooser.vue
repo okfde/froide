@@ -40,7 +40,7 @@
           v-for="filterKey in filterOrder"
           :key="filterKey"
           class="col-3 filter-column position-relative">
-          <pb-filter
+          <PbFilter
             :global-config="config"
             :expanded="filterExpanded[filterKey]"
             :config="filterConfig[filterKey]"
@@ -48,7 +48,7 @@
             :scope="scope"
             :value="filters[filterKey]"
             @update="updateFilter"
-            @set-filter-expand="setFilterExpand"></pb-filter>
+            @set-filter-expand="setFilterExpand"></PbFilter>
         </div>
       </div>
     </div>
@@ -72,11 +72,11 @@
         </div>
       </div>
       <div v-for="filterKey in activeFilters" :key="filterKey" class="col-4">
-        <pb-filter-selected
+        <PbFilterSelected
           :config="filterConfig[filterKey]"
           @update="updateFilter"
           :value="filters[filterKey]">
-        </pb-filter-selected>
+        </PbFilterSelected>
       </div>
     </div>
 

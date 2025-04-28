@@ -2,18 +2,14 @@
 import { computed, defineProps, onMounted, provide, reactive, ref } from 'vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
-// import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
-// TODO linter wrong? the two above are just fine...
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedaction from '../redaction/pdf-redaction.vue'
- 
+
 import { useI18n } from '../../lib/i18n'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import Room from '../../lib/websocket.ts'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import OnlineHelp from '../online-help.vue'
 
 import { useAttachments } from '../docupload/lib/attachments'
@@ -50,12 +46,13 @@ const {
   urls: {
     ...props.config.url,
     ...props.config.urls,
-    getAttachment: props.config.url.getAttachment.replace('/0/', '/') +
+    getAttachment:
+      props.config.url.getAttachment.replace('/0/', '/') +
       '?belongs_to=' +
-      props.message.id,
+      props.message.id
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
-  i18n,
+  i18n
 })
 
 const { isDesktop } = useIsDesktop()
@@ -80,7 +77,7 @@ const debugSkipDate = () => {
 
 const mobileAppContent = ref(null)
 if (props.config.url.mobileAppContent) {
-  fetch(props.config.url.mobileAppContent.replace("{}", props.message.id))
+  fetch(props.config.url.mobileAppContent.replace('{}', props.message.id))
     .then((response) => response.text())
     .then((text) => {
       mobileAppContent.value = text
@@ -118,7 +115,7 @@ const formPublicbodyIsDefault = ref(true)
 
 const formStatus = ref(
   props.status_form.fields.status.value ||
-  props.status_form.fields.status.initial
+    props.status_form.fields.status.initial
 )
 const formStatusWasResolved = formStatus.value === 'resolved'
 const formStatusIsResolved = computed(() => formStatus.value === 'resolved')
@@ -197,7 +194,8 @@ const approveAndSubmit = async () => {
   try {
     // "flatten/reduce" the {id:bool} object into an array (where false!)
     const excludeIds = Object.entries(attachments.autoApproveSelection)
-      .filter((kv) => kv[1] === false).map((kv) => +kv[0])
+      .filter((kv) => kv[1] === false)
+      .map((kv) => +kv[0])
     await approveAllUnredactedAttachments(excludeIds)
     await submitFetch()
     gotoStep()
@@ -283,13 +281,14 @@ const attachmentsConvertImages = () => {
 const attachmentsOverviewActions = ref(false)
 
 const fileUploaderSucceeded = (uppyResult) => {
-  addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename)
-    .then(() => {
+  addFromUppy(uppyResult, i18n.value.documentsUploadDefaultFilename).then(
+    () => {
       if (step.value !== STEP_DOCUMENTS_UPLOAD) {
         return
       }
       gotoStep()
-    })
+    }
+  )
 }
 
 /* --- <pdf-redaction> interaction --- */
@@ -396,7 +395,9 @@ const stepsConfig = {
   [STEP_DOCUMENTS_UPLOAD]: {
     next: () => {
       if (attachments.images.length) return STEP_DOCUMENTS_SORT
-      console.log('uploads were documents, not images, passing by image sorting')
+      console.log(
+        'uploads were documents, not images, passing by image sorting'
+      )
       return STEP_MESSAGE_SENT_OR_RECEIVED
     },
     onEnter: () => {
@@ -699,11 +700,13 @@ addEventListener('hashchange', () => {
 </script>
 
 <template>
-  <online-help ref="onlineHelp" />
+  <OnlineHelp ref="onlineHelp" />
 
-  <simple-stepper
-class="sticky-top position-md-static" :step="stepContext.progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']">
+  <SimpleStepper
+    class="sticky-top position-md-static"
+    :step="stepContext.progressStep"
+    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+  >
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
     </template>
@@ -711,15 +714,19 @@ class="sticky-top position-md-static" :step="stepContext.progressStep"
       {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/3</strong>:
       {{ stepContext.mobileHeaderTitle }}
     </template>
-  </simple-stepper>
+  </SimpleStepper>
 
   <div class="container">
     <!-- TODO button does not support going back throug pdfRedactionCurrentIndex-->
     <div v-if="step === STEP_INTRO" class="my-3">
-      <a class="btn btn-link text-decoration-none ps-0" href="../..">← <u>{{ i18n.cancel }}</u></a>
+      <a class="btn btn-link text-decoration-none ps-0" href="../.."
+        >← <u>{{ i18n.cancel }}</u></a
+      >
     </div>
     <div v-else-if="step !== STEP_OUTRO" class="my-3">
-      <a @click="backStep" class="btn btn-link text-decoration-none ps-0">← <u>{{ i18n.back }}</u></a>
+      <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
+        >← <u>{{ i18n.back }}</u></a
+      >
     </div>
   </div>
 
@@ -729,7 +736,9 @@ class="sticky-top position-md-static" :step="stepContext.progressStep"
     <div>history={{ stepHistory.join(' ') }}</div>
     <div>stepContext={{ stepContext }}</div>
     <div>isGotoValid={{ isGotoValid }}</div>
-    <div>attachments.autoApproveSelection={{ attachments.autoApproveSelection }}</div>
+    <div>
+      attachments.autoApproveSelection={{ attachments.autoApproveSelection }}
+    </div>
     <span>
       <!-- eslint-disable-next-line vue/no-mutating-props -->
       <button type="button" @click="user_is_staff = !user_is_staff">
@@ -737,12 +746,19 @@ class="sticky-top position-md-static" :step="stepContext.progressStep"
       </button>
     </span>
     <span>isDesktop={{ isDesktop }}</span>
-    <button class="btn btn-secondary btn-sm" type="submitForm" style="font-size: 50%; margin-left: 1em">
+    <button
+      class="btn btn-secondary btn-sm"
+      type="submitForm"
+      style="font-size: 50%; margin-left: 1em"
+    >
       submit/save
     </button>
     <button
-class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
-      style="font-size: 50%; margin-left: 1em">
+      class="btn btn-secondary btn-sm"
+      type="button"
+      @click="submitFetch"
+      style="font-size: 50%; margin-left: 1em"
+    >
       submit/fetch
     </button>
     <!--<pre>{{ validity }}</pre>-->
@@ -798,7 +814,10 @@ class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
                 </div>
                 -->
             <div v-if="config.url.mobileAppContent" class="col-md-6">
-              <div v-if="mobileAppContent !== null" v-html="mobileAppContent"></div>
+              <div
+                v-if="mobileAppContent !== null"
+                v-html="mobileAppContent"
+              ></div>
               <div v-else>
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">{{ i18n.loading }}</span>
@@ -830,8 +849,10 @@ class="btn btn-secondary btn-sm" type="button" @click="submitFetch"
               {{ i18n.newWarning }}
             </p>
             <p
-v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
-              "></p>
+              v-html="
+                i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
+              "
+            ></p>
           </div>
         </div>
       </div>
@@ -839,13 +860,13 @@ v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
     <div v-if="step === STEP_DOCUMENTS_UPLOAD" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <file-uploader
+          <FileUploader
             :config="config"
             :allowed-file-types="config.settings.allowed_filetypes"
             :auto-proceed="true"
             onmount-pick
             @upload-success="fileUploaderSucceeded"
-            />
+          />
         </div>
       </div>
     </div>
@@ -854,10 +875,7 @@ v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
         <div class="col-lg-9 fw-bold">
           {{ i18n.documentsDragOrder }}
         </div>
-        <image-document-pages-sortable
-          :idx="0"
-          show-rotate
-          />
+        <ImageDocumentPagesSortable :idx="0" show-rotate />
       </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_CONVERT_PDF" class="container">
@@ -872,7 +890,10 @@ v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
         <div class="text-center fw-bold my-3">
           {{ i18n.documentsFromImages }}
         </div>
-        <div v-if="attachments.images[0]" class="documents-filename p-2 my-3 mx-auto">
+        <div
+          v-if="attachments.images[0]"
+          class="documents-filename p-2 my-3 mx-auto"
+        >
           <div class="form-group">
             <input
               id="documents_filename"
@@ -893,7 +914,12 @@ v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
           <div class="fw-bold">
             {{ i18n.documentsAvailable }}
           </div>
-          <attachments-table :subset="attachments.relevant" action-delete cards-bg-transparent :as-card-threshold="0" />
+          <AttachmentsTable
+            :subset="attachments.relevant"
+            action-delete
+            cards-bg-transparent
+            :as-card-threshold="0"
+          />
         </div>
       </div>
     </div>
@@ -906,14 +932,23 @@ v-html="i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
             <!--{{ form.fields.sent.label }}-->
           </label>
           <div
-class="form-check" v-for="(choice, choiceIndex) in form.fields.sent.choices" :key="choice.value"
-            :class="{ 'is-invalid': choice.errors }">
+            class="form-check"
+            v-for="(choice, choiceIndex) in form.fields.sent.choices"
+            :key="choice.value"
+            :class="{ 'is-invalid': choice.errors }"
+          >
             <input
-type="radio" name="sent" v-model="formSent" required="" class="form-check-input"
-              :id="'id_sent_' + choiceIndex" :value="choice.value" />
+              type="radio"
+              name="sent"
+              v-model="formSent"
+              required=""
+              class="form-check-input"
+              :id="'id_sent_' + choiceIndex"
+              :value="choice.value"
+            />
             <label class="form-check-label" :for="'id_sent_' + choiceIndex">{{
               choice.label
-              }}</label>
+            }}</label>
           </div>
           <!--
               <div class="invalid-feedback" v-if="form.errors.sent">
@@ -941,25 +976,45 @@ type="radio" name="sent" v-model="formSent" required="" class="form-check-input"
             {{ formPublicbodyLabel }}
           </div>
           <div
-class="form-check" v-for="(choice, choiceIndex) in [
-            { value: true, label: 'Ja.' },
-            { value: false, label: 'Nein, andere Behörde wählen' }
-          ]" :key="choiceIndex">
+            class="form-check"
+            v-for="(choice, choiceIndex) in [
+              { value: true, label: 'Ja.' },
+              { value: false, label: 'Nein, andere Behörde wählen' }
+            ]"
+            :key="choiceIndex"
+          >
             <input
-type="radio" required="" class="form-check-input" v-model="formPublicbodyIsDefault"
-              :id="'id_pbisdefault_' + choiceIndex" :value="choice.value" />
-            <label class="form-check-label" :for="'id_pbisdefault_' + choiceIndex">{{ choice.label }}</label>
+              type="radio"
+              required=""
+              class="form-check-input"
+              v-model="formPublicbodyIsDefault"
+              :id="'id_pbisdefault_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_pbisdefault_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
           </div>
-          <input type="hidden" name="publicbody" v-if="formPublicbodyIsDefault" :value="formPublicbodyId" />
+          <input
+            type="hidden"
+            name="publicbody"
+            v-if="formPublicbodyIsDefault"
+            :value="formPublicbodyId"
+          />
         </div>
       </div>
     </div>
     <div
-v-show="step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
-      (isDesktop &&
-        step === STEP_MESSAGE_PUBLICBODY_CHECK &&
-        !formPublicbodyIsDefault)
-      " class="container">
+      v-show="
+        step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
+        (isDesktop &&
+          step === STEP_MESSAGE_PUBLICBODY_CHECK &&
+          !formPublicbodyIsDefault)
+      "
+      class="container"
+    >
       <!-- appears "indented" on md=isDesktop viewport -->
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
@@ -972,11 +1027,20 @@ v-show="step === STEP_MESSAGE_PUBLICBODY_UPDATE ||
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <publicbody-chooser
-v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="foo_publicbody"
-            name="publicbody" :config="config" :form="form" :value="formPublicbodyId" list-view="resultList"
-            :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
-            :class="{ 'is-invalid': form.errors.publicbody }" />
+          <PublicbodyChooser
+            v-if="!formPublicbodyIsDefault"
+            :search-collapsed="false"
+            scope="foo_publicbody"
+            name="publicbody"
+            :config="config"
+            :form="form"
+            :value="formPublicbodyId"
+            list-view="resultList"
+            :show-filters="false"
+            :show-badges="false"
+            :show-found-count-if-idle="false"
+            :class="{ 'is-invalid': form.errors.publicbody }"
+          />
         </div>
       </div>
     </div>
@@ -994,24 +1058,42 @@ v-if="!formPublicbodyIsDefault" :search-collapsed="false" scope="foo_publicbody"
                 maybe: step > STEP_MESSAGE_PUBLICBODY_CHECK ?
               -->
           <input
-id="id_date" class="form-control" type="date" name="date" v-model="values.date" :class="{
-            'is-invalid': validity.date === false,
-            'is-valid': validity.date === true
-          }" required :min="props.date_min" :max="props.date_max" @input="updateValidity('date')" />
+            id="id_date"
+            class="form-control"
+            type="date"
+            name="date"
+            v-model="values.date"
+            :class="{
+              'is-invalid': validity.date === false,
+              'is-valid': validity.date === true
+            }"
+            required
+            :min="props.date_min"
+            :max="props.date_max"
+            @input="updateValidity('date')"
+          />
           <div class="invalid-feedback" v-if="form.errors.date">
             <p class="text-danger">
-              {{form.errors.date.map((_) => _.message).join(' ')}}
+              {{ form.errors.date.map((_) => _.message).join(' ') }}
             </p>
           </div>
           <div class="form-check">
             <input
-class="form-check-input" type="checkbox" v-model="values.is_registered_mail"
-              id="id_is_registered_mail" />
+              class="form-check-input"
+              type="checkbox"
+              v-model="values.is_registered_mail"
+              id="id_is_registered_mail"
+            />
             <label class="form-check-label" for="id_is_registered_mail">
               {{ i18n.messageIsRegisteredMail }}
               <span
-type="button" v-bs-tooltip tabindex="0" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                :title="i18n.messageRegisteredMailInfo">
+                type="button"
+                v-bs-tooltip
+                tabindex="0"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                :title="i18n.messageRegisteredMailInfo"
+              >
                 <i class="fa fa-info-circle"></i>
               </span>
             </label>
@@ -1020,19 +1102,30 @@ type="button" v-bs-tooltip tabindex="0" data-bs-toggle="tooltip" data-bs-placeme
       </div>
     </div>
     <div
-v-show="step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
-      (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
-      " class="container">
+      v-show="
+        step === STEP_MESSAGE_DATE_REGISTERED_MAIL ||
+        (isDesktop && step === STEP_MESSAGE_DATE && values.is_registered_mail)
+      "
+      class="container"
+    >
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
-          <label class="fw-bold form-label field-required" for="id_registered_mail">
+          <label
+            class="fw-bold form-label field-required"
+            for="id_registered_mail"
+          >
             {{ i18n.messageDateRegisteredMail }}
           </label>
           <!-- TODO set min/max? -->
           <input
-type="date" class="form-control" id="id_registered_mail_date" name="registered_mail_date"
-            :required="values.is_registered_mail" @input="updateValidity('registered_mail_date')"
-            v-model="values.registered_mail_date" />
+            type="date"
+            class="form-control"
+            id="id_registered_mail_date"
+            name="registered_mail_date"
+            :required="values.is_registered_mail"
+            @input="updateValidity('registered_mail_date')"
+            v-model="values.registered_mail_date"
+          />
         </div>
       </div>
     </div>
@@ -1055,12 +1148,21 @@ type="date" class="form-control" id="id_registered_mail_date" name="registered_m
             </template>
           </label>
           <div
-class="form-check" v-for="(choice, choiceIndex) in status_form.fields.status.choices"
-            :key="choice.value">
+            class="form-check"
+            v-for="(choice, choiceIndex) in status_form.fields.status.choices"
+            :key="choice.value"
+          >
             <input
-type="radio" name="status" required="" class="form-check-input"
-              :class="{ 'is-invalid': choice.errors }" :id="'id_status_' + choiceIndex" v-model="formStatus"
-              :value="choice.value" @input="updateValidity('status')" />
+              type="radio"
+              name="status"
+              required=""
+              class="form-check-input"
+              :class="{ 'is-invalid': choice.errors }"
+              :id="'id_status_' + choiceIndex"
+              v-model="formStatus"
+              :value="choice.value"
+              @input="updateValidity('status')"
+            />
             <label class="form-check-label" :for="'id_status_' + choiceIndex">
               <template v-if="formStatusWasResolved">
                 <template v-if="choice.value === 'resolved'">
@@ -1084,22 +1186,40 @@ type="radio" name="status" required="" class="form-check-input"
       </div>
     </div>
     <div
-v-show="step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
-      (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
-      " class="container">
+      v-show="
+        step === STEP_MESSAGE_MESSAGE_RESOLUTION ||
+        (isDesktop && step === STEP_MESSAGE_STATUS && formStatusIsResolved)
+      "
+      class="container"
+    >
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_resolution">
             <!-- {{ status_form.fields.resolution.label }} -->
             {{ i18n.messageResolution }}
           </label>
-          <div class="form-check" v-for="(choice, choiceIndex) in formStatusChoices" :key="choice.value">
+          <div
+            class="form-check"
+            v-for="(choice, choiceIndex) in formStatusChoices"
+            :key="choice.value"
+          >
             <input
-type="radio" name="resolution" :required="formStatusIsResolved" class="form-check-input"
-              :id="'id_resolution_' + choiceIndex" :value="choice.value" :checked="status_form.fields.resolution.value === choice.value ||
+              type="radio"
+              name="resolution"
+              :required="formStatusIsResolved"
+              class="form-check-input"
+              :id="'id_resolution_' + choiceIndex"
+              :value="choice.value"
+              :checked="
+                status_form.fields.resolution.value === choice.value ||
                 status_form.fields.resolution.initial === choice.value
-                " />
-            <label class="form-check-label" :for="'id_resolution_' + choiceIndex">{{ choice.label }}</label>
+              "
+            />
+            <label
+              class="form-check-label"
+              :for="'id_resolution_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
           </div>
         </div>
       </div>
@@ -1112,14 +1232,26 @@ type="radio" name="resolution" :required="formStatusIsResolved" class="form-chec
             {{ i18n.messageCostCheck }}
           </label>
           <div
-class="form-check" v-for="(choice, choiceIndex) in [
-            { label: 'Nein.', value: false },
-            { label: 'Ja.', value: true }
-          ]" :key="choiceIndex">
+            class="form-check"
+            v-for="(choice, choiceIndex) in [
+              { label: 'Nein.', value: false },
+              { label: 'Ja.', value: true }
+            ]"
+            :key="choiceIndex"
+          >
             <input
-type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
-              :id="'id_nowcost_' + choiceIndex" :value="choice.value" />
-            <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
+              type="radio"
+              required=""
+              class="form-check-input"
+              v-model="formDoUpdateCost"
+              :id="'id_nowcost_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_nowcost_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
           </div>
         </div>
       </div>
@@ -1130,33 +1262,52 @@ type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
           <div class="step-questioncounter">Frage 5 von 5</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00 -->
           <label
-class="fw-bold col-form-label" for="id_nowcost" v-html="i18n._('messageCostCheckLast', {
-            amount:
-              status_form.fields.costs.value?.strValue ||
-              status_form.fields.costs.initial?.strValue ||
-              'error'
-          })
-            "></label>
+            class="fw-bold col-form-label"
+            for="id_nowcost"
+            v-html="
+              i18n._('messageCostCheckLast', {
+                amount:
+                  status_form.fields.costs.value?.strValue ||
+                  status_form.fields.costs.initial?.strValue ||
+                  'error'
+              })
+            "
+          ></label>
           <div
-class="form-check" v-for="(choice, choiceIndex) in [
-            { label: 'Ja.', value: false },
-            { label: 'Nein.', value: true }
-          ]" :key="choiceIndex">
+            class="form-check"
+            v-for="(choice, choiceIndex) in [
+              { label: 'Ja.', value: false },
+              { label: 'Nein.', value: true }
+            ]"
+            :key="choiceIndex"
+          >
             <input
-type="radio" required="" class="form-check-input" v-model="formDoUpdateCost"
-              :id="'id_nowcost_' + choiceIndex" :value="choice.value" />
-            <label class="form-check-label" :for="'id_nowcost_' + choiceIndex">{{ choice.label }}</label>
+              type="radio"
+              required=""
+              class="form-check-input"
+              v-model="formDoUpdateCost"
+              :id="'id_nowcost_' + choiceIndex"
+              :value="choice.value"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_nowcost_' + choiceIndex"
+              >{{ choice.label }}</label
+            >
           </div>
         </div>
       </div>
     </div>
     <div
-v-show="step === STEP_MESSAGE_COST_UPDATE ||
-      (isDesktop &&
-        (step === STEP_MESSAGE_COST_CHECK_ANY ||
-          step === STEP_MESSAGE_COST_CHECK_LAST) &&
-        formDoUpdateCost)
-      " class="container">
+      v-show="
+        step === STEP_MESSAGE_COST_UPDATE ||
+        (isDesktop &&
+          (step === STEP_MESSAGE_COST_CHECK_ANY ||
+            step === STEP_MESSAGE_COST_CHECK_LAST) &&
+          formDoUpdateCost)
+      "
+      class="container"
+    >
       <div class="row justify-content-center">
         <div class="col-md-11 offset-md-1 col-lg-8 mt-md-5">
           <label class="fw-bold col-form-label" for="id_costs">
@@ -1166,12 +1317,22 @@ v-show="step === STEP_MESSAGE_COST_UPDATE ||
             <div class="input-group" style="width: 10rem">
               <!-- type=number does not support pattern -->
               <input
-type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="decimal"
-                style="appearance: textfield; text-align: right" min="0" max="1000000000" step="0.01"
-                v-model="values.costs" @input="updateValidity('costs')" :class="{
+                type="number"
+                name="costs"
+                id="id_costs"
+                class="form-control col-3"
+                inputmode="decimal"
+                style="appearance: textfield; text-align: right"
+                min="0"
+                max="1000000000"
+                step="0.01"
+                v-model="values.costs"
+                @input="updateValidity('costs')"
+                :class="{
                   'is-invalid': validity.costs === false,
                   'is-valid': validity.costs === true
-                }" />
+                }"
+              />
               <span class="input-group-text">Euro</span>
             </div>
             <!--<div class="form-text">{{ status_form.fields.costs.help_text }}</div>-->
@@ -1188,16 +1349,33 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
           <p>
             {{ i18n.redactionInfo }}
           </p>
-          <attachments-table :subset="attachments.relevant" table-selection selection-buttons :as-card-threshold="0">
+          <AttachmentsTable
+            :subset="attachments.relevant"
+            table-selection
+            selection-buttons
+            :as-card-threshold="0"
+          >
             <template #after-row="slotProps">
-              <label class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1">
+              <label
+                class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1"
+              >
                 <!-- like v-model, but default true -->
                 <input
                   v-if="!slotProps.attachment.approved"
                   type="checkbox"
-                  :checked="attachments.autoApproveSelection[slotProps.attachment.id] !== false"
-                  @input="(evt) => { attachments.autoApproveSelection[slotProps.attachment.id] = evt.target.checked }"
-                  />
+                  :checked="
+                    attachments.autoApproveSelection[
+                      slotProps.attachment.id
+                    ] !== false
+                  "
+                  @input="
+                    (evt) => {
+                      attachments.autoApproveSelection[
+                        slotProps.attachment.id
+                      ] = evt.target.checked
+                    }
+                  "
+                />
                 <input
                   v-else
                   type="checkbox"
@@ -1207,19 +1385,26 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   :title="i18n.alreadyPublished"
-                  />
+                />
               </label>
             </template>
             <template #after-card="slotProps">
-              <label
-                v-if="!slotProps.attachment.approved"
-                class="text-center"
-                >
+              <label v-if="!slotProps.attachment.approved" class="text-center">
                 <input
                   type="checkbox"
-                  :checked="attachments.autoApproveSelection[slotProps.attachment.id] !== false"
-                  @input="(evt) => { attachments.autoApproveSelection[slotProps.attachment.id] = evt.target.checked }"
-                  />
+                  :checked="
+                    attachments.autoApproveSelection[
+                      slotProps.attachment.id
+                    ] !== false
+                  "
+                  @input="
+                    (evt) => {
+                      attachments.autoApproveSelection[
+                        slotProps.attachment.id
+                      ] = evt.target.checked
+                    }
+                  "
+                />
                 {{ i18n.publish }}*
               </label>
               <div v-else>
@@ -1237,7 +1422,7 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
                 * {{ i18n.documentsApproveLater }}
               </div>
             </template>
-          </attachments-table>
+          </AttachmentsTable>
         </div>
       </div>
     </div>
@@ -1257,7 +1442,7 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
             <div class="row">
               <!-- no need to import vBsCollapsePersistent,
                 snippets/bootstrap DOMContentLoaded will just work -->
-              <django-slot name="redaction_explanation"></django-slot>
+              <DjangoSlot name="redaction_explanation"></DjangoSlot>
             </div>
             <div class="mt-2 mb-3">
               <button
@@ -1275,13 +1460,16 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
         <div class="debug" v-if="debug">
           DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}
         </div>
-        <pdf-redaction
-          :class="pdf-redaction-tool"
+        <PdfRedaction
+          :class="pdf - redaction - tool"
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.file_url"
           :attachment-url="pdfRedactionCurrentDoc.anchor_url"
-          :auto-approve="attachments.autoApproveSelection[pdfRedactionCurrentDoc.id] !== false"
+          :auto-approve="
+            attachments.autoApproveSelection[pdfRedactionCurrentDoc.id] !==
+            false
+          "
           :post-url="
             config.url.redactAttachment.replace(
               '/0/',
@@ -1325,7 +1513,7 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
                 </div>
               </template>
               -->
-        </pdf-redaction>
+        </PdfRedaction>
       </div>
     </div>
     <div v-show="step === STEP_DOCUMENTS_OVERVIEW_REDACTED" class="container">
@@ -1334,25 +1522,28 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
           <div class="fw-bold col-form-label">
             {{ i18n.documentsOverview }}
           </div>
-          <attachments-table
-            :subset="attachments.relevant.filter(att => !att.redacted)"
-            badges-redaction badges-resolution
+          <AttachmentsTable
+            :subset="attachments.relevant.filter((att) => !att.redacted)"
+            badges-redaction
+            badges-resolution
             :actions="attachmentsOverviewActions"
-            >
+          >
             <template #before-cards>
               <div class="text-end mb-2">
                 <button
                   type="button"
                   class="btn btn-link"
-                  @click="() => attachmentsOverviewActions = !attachmentsOverviewActions"
-                  >
+                  @click="
+                    () =>
+                      (attachmentsOverviewActions = !attachmentsOverviewActions)
+                  "
+                >
                   {{ attachmentsOverviewActions ? i18n.done : i18n.edit }}
                 </button>
               </div>
             </template>
-            <template #before-table>
-            </template>
-          </attachments-table>
+            <template #before-table> </template>
+          </AttachmentsTable>
         </div>
       </div>
       <!-- filter hides unredacted attachments that have a redaction version -->
@@ -1375,11 +1566,19 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
     <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
       <div class="row justify-content-center">
         <div class="col-sm-9 col-md-6 mt-3">
-          <button type="button" class="btn btn-outline-primary d-block w-100 mb-3" :disabled="true">
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block w-100 mb-3"
+            :disabled="true"
+          >
             <i class="fa fa-plus"></i>
             {{ i18n.scanDocumentsAnother }}
           </button>
-          <button type="button" class="btn btn-outline-primary d-block w-100" @click="gotoStep(STEP_DOCUMENTS_UPLOAD)">
+          <button
+            type="button"
+            class="btn btn-outline-primary d-block w-100"
+            @click="gotoStep(STEP_DOCUMENTS_UPLOAD)"
+          >
             <i class="fa fa-plus"></i>
             {{ i18n.uploadFilesAnother }}
           </button>
@@ -1394,11 +1593,17 @@ type="number" name="costs" id="id_costs" class="form-control col-3" inputmode="d
         <div class="col-md-9 col-lg-6 text-center">
           <template v-if="step === STEP_REDACTION_REDACT">
             <button
-type="button" @click="pdfRedactionRedact()" class="btn btn-primary d-block w-100"
-              :disabled="pdfRedactionProcessing">
+              type="button"
+              @click="pdfRedactionRedact()"
+              class="btn btn-primary d-block w-100"
+              :disabled="pdfRedactionProcessing"
+            >
               <span
-class="spinner-border spinner-border-sm" v-show="pdfRedactionProcessing" role="status"
-                aria-hidden="true" />
+                class="spinner-border spinner-border-sm"
+                v-show="pdfRedactionProcessing"
+                role="status"
+                aria-hidden="true"
+              />
               {{ i18n.redactionDone }}
             </button>
             <div class="mt-2">
@@ -1438,27 +1643,49 @@ class="spinner-border spinner-border-sm" v-show="pdfRedactionProcessing" role="s
             </div>
           </template>
           <template v-else-if="step === STEP_OUTRO">
-            <button type="button" @click="submitForm" class="btn btn-primary d-block w-100">
+            <button
+              type="button"
+              @click="submitForm"
+              class="btn btn-primary d-block w-100"
+            >
               {{ i18n.requestShow }}
             </button>
           </template>
           <template v-else-if="step === STEP_INTRO">
             <!-- should be blank -->
-            <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
+            <button
+              v-if="debug"
+              type="button"
+              @click="gotoStep()"
+              class="action btn btn-outline-primary btn-sm mt-1"
+            >
               DEBUG skip
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_UPLOAD">
             <!-- this could be completely hidden -->
-            <button type="button" :disabled="true" class="btn btn-primary d-block w-100">
+            <button
+              type="button"
+              :disabled="true"
+              class="btn btn-primary d-block w-100"
+            >
               {{ i18n.next }}
             </button>
-            <button v-if="debug" type="button" @click="gotoStep()" class="action btn btn-outline-primary btn-sm mt-1">
+            <button
+              v-if="debug"
+              type="button"
+              @click="gotoStep()"
+              class="action btn btn-outline-primary btn-sm mt-1"
+            >
               DEBUG skip
             </button>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_SORT">
-            <button type="button" @click="gotoStep()" class="btn btn-primary d-block w-100">
+            <button
+              type="button"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
               {{ i18n.doneSorting }}
             </button>
           </template>
@@ -1478,22 +1705,40 @@ class="spinner-border spinner-border-sm" v-show="pdfRedactionProcessing" role="s
               />
               {{ i18n.createPdf }}
             </button>
-            <button v-else type="button" @click="gotoStep()" class="btn btn-primary d-block w-100">
+            <button
+              v-else
+              type="button"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
               {{ i18n.next }}
             </button>
           </template>
           <template v-else-if="step === STEP_MESSAGE_DATE">
-            <button type="button" :disabled="!isGotoValid" @click="gotoStep()" class="btn btn-primary d-block w-100">
+            <button
+              type="button"
+              :disabled="!isGotoValid"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
               {{ i18n.next }}
             </button>
             <button
-v-if="debug" type="button" @click="debugSkipDate"
-              class="btn btn-outline-primary btn-sm mt-1 d-block w-100">
+              v-if="debug"
+              type="button"
+              @click="debugSkipDate"
+              class="btn btn-outline-primary btn-sm mt-1 d-block w-100"
+            >
               DEBUG set today
             </button>
           </template>
           <template v-else>
-            <button type="button" @click="gotoStep()" :disabled="!isGotoValid" class="btn btn-primary d-block w-100">
+            <button
+              type="button"
+              @click="gotoStep()"
+              :disabled="!isGotoValid"
+              class="btn btn-primary d-block w-100"
+            >
               {{ i18n.next }}
             </button>
           </template>

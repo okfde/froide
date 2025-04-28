@@ -34,7 +34,7 @@ useSortable(pagesEl, pages, { animation: 200 })
     class="pages d-flex flex-wrap row-gap-5 column-gap-3 my-5"
     :class="{ 'pe-none': busy, 'opacity-50': busy}"
     >
-    <image-page
+    <ImagePage
       v-for="(page, pageNum) in pages"
       :key="page.id"
       :idx="idx"

@@ -331,7 +331,7 @@
         </div>
       </div>
     </div>
-    <confirm-no-redaction
+    <ConfirmNoRedaction
       :i18n="config.i18n"
       ref="confirmmodal"
       @submit="submitRedactions"

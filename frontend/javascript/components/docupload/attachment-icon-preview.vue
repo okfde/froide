@@ -82,7 +82,7 @@ const iconTooltipTexts = computed(() => [
         </span>
       </span>
     </a>
-    <bs-modal
+    <BsModal
       ref="previewModal"
       :key="attachment.id"
       dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
@@ -94,13 +94,13 @@ const iconTooltipTexts = computed(() => [
       <template #body>
         <div class="row h-100">
           <div class="col-sm-8 mb-3">
-            <document-viewer
+            <DocumentViewer
               v-if="attachment.document && !attachment.document.pending"
               :document-url="attachment.document.resource_uri"
               :document-preview="attachment.document"
               :config="config"
               :defaults="{ maxHeight: '100%' }"
-              ></document-viewer>
+              ></DocumentViewer>
             <img
               v-else-if="attachment.is_image"
               :src="attachment.file_url"
@@ -133,7 +133,7 @@ const iconTooltipTexts = computed(() => [
                 </div>
               </div>
               <div v-if="attachment.document" class="card-body border-top">
-                <attachment-document-fields :attachment="attachment" />
+                <AttachmentDocumentFields :attachment="attachment" />
               </div>
             </div>
             <div
@@ -145,7 +145,7 @@ const iconTooltipTexts = computed(() => [
                   {{ i18n.actions }}
                 </h5>
                 <div class="d-flex flex-column">
-                  <attachment-actions
+                  <AttachmentActions
                     :attachment="attachment"
                     @action-done="closePreviewModal"
                     @action-delete="closePreviewModal"
@@ -156,7 +156,7 @@ const iconTooltipTexts = computed(() => [
           </div>
         </div>
       </template>
-    </bs-modal>
+    </BsModal>
   </div>
 </template>
 

@@ -42,7 +42,7 @@
         </tr>
       </thead>
       <tbody>
-        <geo-matcher-row
+        <GeoMatcherRow
           v-for="georegion in georegions"
           :key="georegion.id"
           :georegion="georegion"

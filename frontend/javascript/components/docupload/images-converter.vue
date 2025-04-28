@@ -36,7 +36,7 @@ const convertImagesClick = (idx) => {
         }}</label>
         <input type="text" :id="'imagesConverterName' + idx" v-model="image.name" class="form-control" :placeholder="i18n.documentTitlePlaceholder" />
         <div class="position-relative">
-          <image-document-pages-sortable
+          <ImageDocumentPagesSortable
             :idx="idx"
             show-rotate
             show-split

@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/okfde/froide#readme",
   "devDependencies": {
-    "@okfde/eslint-config-froide": "^1.1.0",
+    "@okfde/eslint-config-froide": "^1.2.0",
     "@types/bootstrap": "^5.2.1",
     "@types/glidejs__glide": "^3.4.2",
     "@vitejs/plugin-vue": "^5.2.3",

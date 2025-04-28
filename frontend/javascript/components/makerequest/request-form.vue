@@ -319,17 +319,17 @@
           <div class="col-lg-8 col-md-10">
             <template v-if="proofRequired">
               <h5>{{ i18n.includeProof }}</h5>
-              <proof-form
+              <ProofForm
                 :form="proofForm"
                 :required="proofRequired"
-                :config="config.proof_config"></proof-form>
+                :config="config.proof_config"></ProofForm>
             </template>
             <details v-else>
               <summary>{{ i18n.includeProof }}</summary>
-              <proof-form
+              <ProofForm
                 :form="proofForm"
                 :required="proofRequired"
-                :config="config.proof_config"></proof-form>
+                :config="config.proof_config"></ProofForm>
             </details>
           </div>
         </div>

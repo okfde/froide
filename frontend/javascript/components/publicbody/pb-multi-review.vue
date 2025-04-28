@@ -16,10 +16,10 @@
         </button>
       </div>
     </div>
-    <pb-summary
+    <PbSummary
       :scope="scope"
       :i18n="i18n"
-      :dimensions="summaryDimensions"></pb-summary>
+      :dimensions="summaryDimensions"></PbSummary>
 
     <div class="row mb-2">
       <div class="col-auto ms-auto">
@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <pb-table
+    <PbTable
       :name="name"
       :scope="scope"
       :i18n="i18n"
@@ -41,7 +41,7 @@
       :options="chosenOptions"
       :rows="publicBodies"
       @select-all-rows="selectAllRows"
-      class="transition"></pb-table>
+      class="transition"></PbTable>
   </div>
 </template>
 
