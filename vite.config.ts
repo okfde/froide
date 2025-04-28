@@ -17,7 +17,7 @@ export default defineConfig({
     extensions: ['.mjs', '.js', '.ts', '.vue', '.json']
   },
   build: {
-    manifest: true,
+    manifest: 'manifest.json',
     emptyOutDir: true,
     outDir: outputDir,
     sourcemap: true,
