@@ -8166,6 +8166,10 @@ msgid "non-redacted"
 msgstr "ungeschwärzt"
 
 #: froide/foirequest/views/message.py
+msgid "Selection…"
+msgstr "Auswahl…"
+
+#: froide/foirequest/views/message.py
 msgid "Delete selected"
 msgstr "Ausgewählte löschen"
 
