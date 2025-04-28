@@ -184,33 +184,71 @@ const makeResultSelected = async () => {
     </label>
     <div class="d-flex flex-column flex-md-row flex-grow-1 justify-content-end">
       <!-- TODO bulk download button, needs backend support -->
-      <button
-        v-if="selectionActionDelete"
-        type="button"
-        class="btn btn-link fw-bold text-start"
-        :disabled="!isSelectionDeletable"
-        @click="deleteSelected"
-        >
-        {{ i18n.deleteSelected }}
-      </button>
-      <button
-        v-if="selectionActionApprove"
-        type="button"
-        class="btn btn-link fw-bold text-start"
-        :disabled="!isSelectionApprovable"
-        @click="approveSelected"
-        >
-        {{ i18n.approveSelected }}
-      </button>
-      <button
-        v-if="selectionActionMakeResult"
-        type="button"
-        class="btn btn-link fw-bold text-start"
-        :disabled="!isSelectionMakeResultable"
-        @click="makeResultSelected"
-        >
-        {{ i18n.markResultSelected }}
-      </button>
+      <div class="d-none d-md-block">
+        <div class="btn-group" role="group">
+          <button
+            v-if="selectionActionDelete"
+            type="button"
+            class="btn btn-link fw-bold text-start"
+            :disabled="!isSelectionDeletable"
+            @click="deleteSelected"
+            >
+            {{ i18n.deleteSelected }}
+          </button>
+          <button
+            v-if="selectionActionApprove"
+            type="button"
+            class="btn btn-link fw-bold text-start"
+            :disabled="!isSelectionApprovable"
+            @click="approveSelected"
+            >
+            {{ i18n.approveSelected }}
+          </button>
+          <button
+            v-if="selectionActionMakeResult"
+            type="button"
+            class="btn btn-link fw-bold text-start"
+            :disabled="!isSelectionMakeResultable"
+            @click="makeResultSelected"
+            >
+            {{ i18n.markResultSelected }}
+          </button>
+        </div>
+      </div>
+      <div class="btn-group d-md-none align-self-end" role="group">
+        <button type="button" class="btn btn-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ i18n.selection }}
+        </button>
+        <ul class="dropdown-menu">
+          <button
+            v-if="selectionActionDelete"
+            type="button"
+            class="dropdown-item"
+            :disabled="!isSelectionDeletable"
+            @click="deleteSelected"
+            >
+            {{ i18n.deleteSelected }}
+          </button>
+          <button
+            v-if="selectionActionApprove"
+            type="button"
+            class="dropdown-item"
+            :disabled="!isSelectionApprovable"
+            @click="approveSelected"
+            >
+            {{ i18n.approveSelected }}
+          </button>
+          <button
+            v-if="selectionActionMakeResult"
+            type="button"
+            class="dropdown-item"
+            :disabled="!isSelectionMakeResultable"
+            @click="makeResultSelected"
+            >
+            {{ i18n.markResultSelected }}
+          </button>
+        </ul>
+      </div>
     </div>
     <div v-if="selectionButtons" class="d-flex flex-grow-1 justify-content-end">
       <button type="button" class="btn btn-link" @click="selectAll">
