@@ -409,6 +409,7 @@ class PublicBodyBaseAdminMixin:
             request, "publicbody/admin/show_georegions.html", context
         )
 
+    @admin.action(description=_("Validate public bodies"))
     def validate_publicbodies(self, request, queryset):
         from .validators import validate_publicbodies
 
