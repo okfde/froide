@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest import mock
 from urllib.parse import urlencode
 
@@ -128,7 +128,7 @@ def test_signup(world, client):
         "last_name": "Porst",
         "terms": "on",
         "user_email": "horst.porst",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     client.login(email="info@fragdenstaat.de", password="froide")
     response = client.post(reverse("account-signup"), post)
@@ -182,7 +182,7 @@ def test_overlong_name_signup(world, client):
         "terms": "on",
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     client.logout()
     response = client.post(reverse("account-signup"), post)
@@ -289,7 +289,7 @@ def test_next_link_login(world, client):
     url = mes.get_absolute_url()
     enc_url = url.replace("#", "%23")  # FIXME: fake uri encode
     response = client.get(reverse("account-login") + "?next=%s" % enc_url)
-    # occurences in hidden inputs of login, signup and forgotten password
+    # occurrences in hidden inputs of login, signup and forgotten password
     assert response.content.decode("utf-8").count(url) == 2
     response = client.post(
         reverse("account-login"),
