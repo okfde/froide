@@ -2,7 +2,7 @@ import logging
 import os
 import re
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Set
 
 from django import forms
@@ -193,7 +193,7 @@ class SpamProtectionMixin:
             )
         if self._should_include_timing():
             self.fields["time"] = forms.FloatField(
-                initial=datetime.utcnow().timestamp(), widget=forms.HiddenInput
+                initial=datetime.now(timezone.utc).timestamp(), widget=forms.HiddenInput
             )
 
     def _should_include_timing(self) -> bool:
@@ -232,7 +232,7 @@ class SpamProtectionMixin:
 
     def clean_time(self) -> str:
         value = self.cleaned_data["time"]
-        since = datetime.utcnow() - datetime.fromtimestamp(value)
+        since = datetime.now(timezone.utc) - datetime.fromtimestamp(value)
         if since < timedelta(seconds=5):
             raise forms.ValidationError(_("You filled this form out too quickly."))
         return value
