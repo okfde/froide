@@ -651,7 +651,6 @@ class FoiMessageAdmin(admin.ModelAdmin):
     def get_deliverystatus_display(self, obj):
         return obj.deliverystatus.get_status_display()
 
-    @admin.action(description=_("Resend selected messages"))
     def resend_message(self, request, pk):
         if not request.method == "POST":
             raise PermissionDenied
@@ -687,6 +686,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
     def mark_as_not_sent(self, request, queryset):
         queryset.update(sent=False)
 
+    @admin.action(description=_("Resend selected messages"))
     def resend_messages(self, request, queryset):
         if not request.method == "POST":
             raise PermissionDenied

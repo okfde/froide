@@ -107,11 +107,13 @@ class DocumentCollectionAdmin(DocumentCollectionBaseAdmin):
         "collect_documents_from_foirequests",
     ]
 
+    @admin.action(description=_("Reindex collection"))
     def reindex_collection(self, request, queryset):
         for collection in queryset:
             for doc in collection.documents.all():
                 update_document_index(doc)
 
+    @admin.action(description=_("Collect documents from FOI requests"))
     def collect_documents_from_foirequests(self, request, queryset):
         for collection in queryset:
             collection.update_from_foirequests()

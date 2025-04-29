@@ -50,6 +50,7 @@ class GuidanceAdmin(admin.ModelAdmin):
         qs = qs.prefetch_related("message", "action")
         return qs
 
+    @admin.action(description=_("Send notification about selected guidance items"))
     def send_notification(self, request, queryset):
         for guidance in queryset:
             notify_guidance(guidance)
