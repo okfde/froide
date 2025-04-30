@@ -208,7 +208,7 @@ class Follower(models.Model):
             return True
         return False
 
-    def check_and_follow(self, check):
+    def check_and_follow(self, check, request=None):
         secret = self.get_follow_secret()
         if not constant_time_compare(check, secret):
             return False
@@ -230,7 +230,7 @@ class Follower(models.Model):
                 self.email = ""
         self.confirmed = True
         self.save()
-        self.followed.send(sender=self)
+        self.followed.send(sender=self, request=request)
         return True
 
     def send_confirm_follow_mail(self, extra_data, user=None):
