@@ -6072,10 +6072,12 @@ msgid "Set team for project"
 msgstr "Weisen Sie diesem Projekt ein Team zu"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Edit tags"
 msgstr "Schlagwörter bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid ""
 "Tags are a way to organise your own requests and also group them with other "
 "requests on the platform."
@@ -6084,10 +6086,12 @@ msgstr ""
 "anderen Anfragen auf der Plattform gruppieren."
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "What does this mean?"
 msgstr "Was bedeutet das?"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Add tags"
 msgstr "Schlagwörter hinzufügen"
 
