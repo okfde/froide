@@ -28,10 +28,10 @@ const useAttachmentsStore = defineStore('attachments', {
       canMakeResult: d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document,
     })),
     approved() {
-      return this.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image)))
+      return this.all.filter((d) => (!d.is_irrelevant && d.approved && !d.redacted && !(d.converted && !d.is_image)))
     },
     notApproved() {
-      return this.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.has_redacted && !(d.converted && !d.is_image)))
+      return this.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.redacted && !(d.converted && !d.is_image)))
     },
     relevant() {
       return this.all.filter((d) => !d.is_irrelevant && !(d.converted && !d.is_image))
