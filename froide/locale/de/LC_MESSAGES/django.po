@@ -7827,6 +7827,10 @@ msgid "Display as table"
 msgstr "Als Tabelle darstellen"
 
 #: froide/foirequest/views/message.py
+msgid "Display as icons"
+msgstr "Als Icons darstellen"
+
+#: froide/foirequest/views/message.py
 msgid "Are you sure you want to approve the selected attachments?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge freigeben/öffentlich machen wollen?"
 
