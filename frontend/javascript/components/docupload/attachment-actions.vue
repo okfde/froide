@@ -11,8 +11,8 @@ const {
   getRedactUrl
 } = useAttachments()
 
-import BsModal from '../bs-modal.vue'
-import PdfRedaction from '../redaction/pdf-redaction.vue'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 const { attachment, dropdown } = defineProps({
   attachment: Object,
@@ -61,7 +61,6 @@ const pdfRedactionAtt = ref(null)
 const pdfRedactionModal = ref()
 
 const pdfRedactionUploaded = () => {
-  pdfRedactionModal.value.hide()
   pdfRedactionAtt.value = null
   refreshAttachments()
   emit('actionDone')
@@ -273,42 +272,9 @@ const approveClick = () => {
       -->
     </ul>
   </div>
-  <BsModal
+  <pdf-redaction-modal
     ref="pdfRedactionModal"
-    :key="pdfRedactionAtt?.id || attachment.id"
-    dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
-    content-classes="h-100"
-    body-classes="p-0"
-  >
-    <template #header>
-      <h5 class="modal-title">{{ i18n.redact }}, {{ pdfRedactionAtt.name }}</h5>
-    </template>
-    <template #body>
-      <PdfRedaction
-        ref="pdfRedaction"
-        :pdf-path="pdfRedactionAtt.file_url"
-        :attachment-url="pdfRedactionAtt.anchor_url"
-        :auto-approve="
-          attachments.autoApproveSelection[pdfRedactionAtt.id] !== false
-        "
-        :post-url="
-          config.url.redactAttachment.replace(
-            '/0/',
-            '/' + pdfRedactionAtt.id + '/'
-          )
-        "
-        :approve-url="
-          config.url.approveAttachment.replace(
-            '/0/',
-            '/' + pdfRedactionAtt.id + '/'
-          )
-        "
-        :minimal-ui="true"
-        :no-redirect="true"
-        :can-publish="true"
-        :config="config"
-        @uploaded="pdfRedactionUploaded"
-      />
-    </template>
-  </BsModal>
+    :attachment="pdfRedactionAtt"
+    @uploaded="pdfRedactionUploaded"
+    />
 </template>
