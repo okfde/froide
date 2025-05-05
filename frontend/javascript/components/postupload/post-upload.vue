@@ -291,7 +291,7 @@ const fileUploaderSucceeded = (uppyResult) => {
   )
 }
 
-/* --- <pdf-redaction> interaction --- */
+/* --- <PdfRedaction> interaction --- */
 
 const pdfRedaction = ref()
 
