@@ -29,8 +29,8 @@ const useAttachmentsStore = defineStore('attachments', {
       // TODO: include settings.can_make_document?
       canMakeResult: d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document,
     })),
-    approved: (state) => state.all.filter((d) => (!d.is_irrelevant && d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
-    notApproved: (state) => state.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.has_redacted && !(d.converted && !d.is_image))),
+    approved: (state) => state.all.filter((d) => (!d.is_irrelevant && d.approved && !d.redacted && !(d.converted && !d.is_image))),
+    notApproved: (state) => state.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.redacted && !(d.converted && !d.is_image))),
     relevant: (state) => state.all.filter((d) => !d.is_irrelevant && !(d.converted && !d.is_image)),
     irrelevant: (state) => state.all.filter((d) => d.is_irrelevant),
     getById: (state) => {
