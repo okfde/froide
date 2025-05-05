@@ -11,7 +11,6 @@ const {
   getRedactUrl
 } = useAttachments()
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 const { attachment, dropdown } = defineProps({
@@ -53,8 +52,6 @@ const makeResult = () => {
 const dropdownHasItems = computed(
   () => attachment.canRedact || unredacted.value || unconverted.value
 )
-
-const pdfRedaction = ref()
 
 const pdfRedactionAtt = ref(null)
 
@@ -296,7 +293,7 @@ const approveClick = () => {
       -->
     </ul>
   </div>
-  <pdf-redaction-modal
+  <PdfRedactionModal
     ref="pdfRedactionModal"
     :attachment="pdfRedactionAtt"
     @uploaded="pdfRedactionUploaded"

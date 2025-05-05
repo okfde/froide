@@ -33,7 +33,7 @@ defineExpose({
 </script>
 
 <template>
-  <bs-modal
+  <BsModal
     ref="modal"
     :key="attachment?.id"
     dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
@@ -46,7 +46,7 @@ defineExpose({
       </h5>
     </template>
     <template #body>
-      <pdf-redaction
+      <PdfRedaction
         ref="pdfRedaction"
         :pdf-path="attachment.file_url"
         :attachment-url="attachment.anchor_url"
@@ -68,7 +68,7 @@ defineExpose({
         :can-publish="true"
         :config="config"
         @uploaded="uploaded"
-        ></pdf-redaction>
+        ></PdfRedaction>
     </template>
-  </bs-modal>
+  </BsModal>
 </template>
