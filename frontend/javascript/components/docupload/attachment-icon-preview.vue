@@ -6,7 +6,6 @@ const { refresh: refreshAttachments } = useAttachments()
 
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentDocumentFields from './attachment-document-fields.vue'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 import { vBsTooltip } from '../../lib/vue-bootstrap'
@@ -119,7 +118,7 @@ const iconTooltipTexts = computed(() => needsRedaction.value
         </span>
       </span>
     </a>
-    <bs-modal
+    <BsModal
       ref="previewModal"
       :key="attachment.id"
       dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
@@ -193,8 +192,8 @@ const iconTooltipTexts = computed(() => needsRedaction.value
           </div>
         </div>
       </template>
-    </bs-modal>
-    <pdf-redaction-modal
+    </BsModal>
+    <PdfRedactionModal
       ref="pdfRedactionModal"
       :attachment="pdfRedactionAtt"
       @uploaded="pdfRedactionUploaded"
