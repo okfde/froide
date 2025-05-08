@@ -16,12 +16,13 @@ import DocumentViewer from './document-viewer.vue'
 const i18n = inject('i18n')
 const config = inject('config')
 
-const { attachment, actions, big } = defineProps({
+const { attachment, actions, nudgeRedaction, big } = defineProps({
   attachment: {
     type: Object,
     required: true
   },
   actions: Boolean,
+  nudgeRedaction: Boolean,
   big: Boolean
 })
 
@@ -34,11 +35,11 @@ const pdfRedactionUploaded = () => {
 }
 
 const needsRedaction = computed(() =>
-  !attachment.is_irrelevant && !attachment.approved && !attachment.has_redacted && !(attachment.converted && !attachment.is_image)
+  !attachment.is_irrelevant && !attachment.approved && !attachment.has_redacted && !(attachment.converted && !attachment.is_image) && !attachment.pending
 )
 
 const iconClick = () => {
-  if (needsRedaction.value) {
+  if (needsRedaction.value && nudgeRedaction) {
     pdfRedactionAtt.value = attachment
     nextTick().then(() => pdfRedactionModal.value.show())
   } else {
@@ -52,7 +53,7 @@ const closePreviewModal = () => {
   previewModal.value.hide()
 }
 
-const iconTooltipTexts = computed(() => needsRedaction.value
+const iconTooltipTexts = computed(() => (needsRedaction.value && nudgeRedaction)
   ? [i18n.value.redact]
   : [
     i18n.value.preview,
@@ -109,7 +110,7 @@ const iconTooltipTexts = computed(() => needsRedaction.value
         </span>
       </span>
       <span
-        v-else-if="needsRedaction"
+        v-else-if="needsRedaction && nudgeRedaction"
         style="font-size: 25%"
         class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary">
         <i class="fa fa-paint-brush" aria-hidden="true"></i>

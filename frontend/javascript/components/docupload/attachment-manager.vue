@@ -74,6 +74,7 @@ const onlineHelp = ref()
       table-selection
       selection-action-delete
       selection-action-make-result
+      nudge-redaction
       badges-type
       badges-resolution
     />
@@ -87,6 +88,7 @@ const onlineHelp = ref()
       table-selection
       selection-action-delete
       selection-action-approve
+      nudge-redaction
       badges-type
     />
   </div>
