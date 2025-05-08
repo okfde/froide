@@ -7949,6 +7949,10 @@ msgid "Drag the documents in the right order"
 msgstr "Ziehen Sie die Seiten in die richtige Reihenfolge"
 
 #: froide/foirequest/views/message.py
+msgid "Mark image attachments as important to convert them into PDFs."
+msgstr "Markieren Sie Bilddateien als nicht unwichtig um sie in ein PDF zu konvertieren."
+
+#: froide/foirequest/views/message.py
 msgid "We will convert your images into a PDF"
 msgstr "Wir erstellen aus Ihren Bildern ein PDF-Dokument"
 
