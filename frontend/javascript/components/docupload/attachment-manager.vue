@@ -20,11 +20,7 @@ provide('config', props.config)
 const { attachments, addFromUppy, refresh } = useAttachments({
   message: props.message,
   urls: {
-    ...props.config.url,
-    getAttachment:
-      props.config.url.getAttachment.replace('/0/', '/') +
-      '?belongs_to=' +
-      props.message.id
+    ...props.config.url
   },
   csrfToken,
   i18n
