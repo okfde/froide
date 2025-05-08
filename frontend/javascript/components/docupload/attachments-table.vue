@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -64,6 +64,7 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
       return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
+  nudgeRedaction: Boolean,
   badgesNew: Boolean,
   badgesRedaction: Boolean,
   badgesType: Boolean,
@@ -285,6 +286,7 @@ const makeResultSelected = async () => {
           big
           class="text-center pb-1"
           :actions="actions"
+          :nudge-redaction="nudgeRedaction"
           />
         <div
           class="text-center mb-1 mw-100 text-break"
@@ -366,6 +368,7 @@ const makeResultSelected = async () => {
         :attachment="att"
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         :actions="actions"
+        :nudge-redaction="nudgeRedaction"
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"
