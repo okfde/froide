@@ -323,6 +323,10 @@ const onlineHelp = ref()
 
 /* --- <AttachmentManager> interaction --- */
 
+onMounted(() => {
+  refreshAttachments()
+})
+
 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
 const attachmentsSelectedPdfRedaction = computed(() => attachments.selected
   .sort((a, b) => a.id - b.id)
@@ -437,18 +441,6 @@ const gotoStep = async (nextStep) => {
   stepsConfig[nextStep].onEnter?.()
   scrollNavIntoViewIfNecessary()
 }
-
-onMounted(async () => {
-  await refreshAttachments()
-  if (attachments.convertable.length > 0 && step.value === STEP_INTRO) {
-    console.info('onMounted, skipped intro because irrelevant attachments present')
-    gotoStep(STEP_DOCUMENTS_CONVERT)
-  }
-  else if (attachments.all.length > 0 && step.value === STEP_INTRO) {
-    console.info('onMounted, skipped intro because attachments present')
-    gotoStep(STEP_DOCUMENTS_OVERVIEW)
-  }
-})
 
 const backStep = () => {
   stepsConfig[step.value].onBack?.()
@@ -1106,7 +1098,6 @@ values={{ values }}
             {{ i18n.documentsAvailable }}
           </div>
           <AttachmentsTable :subset="attachments.redactable" action-delete cards-bg-transparent :as-card-threshold="0" />
-          <!-- TODO after a reload we land here. it might be good to also display "images" -->
         </div>
       </div>
     </div>
@@ -1513,6 +1504,7 @@ values={{ values }}
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.file_url"
+          :attachment-id="pdfRedactionCurrentDoc.id"
           :attachment-url="pdfRedactionCurrentDoc.anchor_url"
           :auto-approve="
             attachments.autoApproveSelection[pdfRedactionCurrentDoc.id] !==
@@ -1692,7 +1684,7 @@ values={{ values }}
             >
               DEBUG skip
             </button>
-            <button v-if="fileUploaderShow" type="button" :disabled="fileUploaderUploading" @click="gotoStep()" class="btn btn-primary d-block w-100">
+            <button v-if="fileUploaderShow || attachments.all.length > 0" type="button" :disabled="fileUploaderUploading" @click="gotoStep()" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
           </template>
