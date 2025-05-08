@@ -183,16 +183,6 @@ export default {
       this.$emit('uploading', false)
       this.$emit('upload-complete', result)
     })
-    /* to
-    if (this.onmountPick) {
-      nextTick(() => {
-        const button = this.$refs.uppy.querySelector(
-          '.uppy-Dashboard-browse'
-        )
-        button.click()
-      })
-    }
-      */
   }
 }
 </script>

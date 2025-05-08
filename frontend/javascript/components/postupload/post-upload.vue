@@ -71,57 +71,6 @@ const debugSkipDate = () => {
   gotoStep()
 }
 
-/* deprecated, unused stubs
-
-// get the message/draft clientsidedly, less via django template context
-
-const createOrRetrieveLastDraft = async () => {
-  const requestParam = { query: { request: props.foirequest_id } }
-  try {
-    const drafts = await messageDraftList({ ...requestParam, throwOnError: true })
-    if (drafts.data.objects.length) {
-      // TODO: this is not the "newest"
-      //   would have to get last page (or increase limit)
-      //   either "while drafts.meta.next"
-      //   or { limit: 1, offset: results.meta.total_count - 1 }
-      draft.value = drafts.data.objects[drafts.data.objects.length - 1]
-      // unnecessary, we already get all data from listFoi…
-      //   await retrieveFoiMessageDraft({ path: { id: newestDraft.resource_uri }})
-    } else {
-      draft.value = await messageDraftCreate({
-        body: requestParam,
-        throwOnError: true
-        // body.timestamp: ...
-      })
-    }
-    values.sent = draft.value.sent
-    refreshAttachments()
-    //  draft.value = r
-    //  formStatus.value = r.status
-    //  formStatusWasResolved.value = r.status === 'resolved'
-  } catch (e) {
-    error.value = e.message
-  }
-}
-
-// "PATCH on every relevant gotoStep"
-
-const updateValue = async (key) => {
-  return messagePartialUpdate({
-    path: { id: draft.value.id },
-    body: { [key]: values[key] },
-    throwOnError: true
-  })
-    .then((r) => {
-      draft.value = r.data
-    })
-    .catch((e) => {
-      error.value = e
-      return false
-    })
-}
-*/
-
 /* Form state */
 
 const error = ref(false)
@@ -535,10 +484,6 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
-    /* onBeforeNext: async () => {
-      return await updateValue('sent')
-      // todo handle validation
-    }, */
     context: {
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation
@@ -863,55 +808,13 @@ addEventListener('hashchange', () => {
     </div>
   </div>
 
-  <div v-if="error" class="container">
-    <div class="alert alert-danger alert-dismissible show" role="alert">
-      <h4 class="alert-heading">
-        {{ i18n.error || 'Error' }}
-      </h4>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" :aria-label="i18n.close" @click="error = false" />
-      <ul v-if="error?.non_field_errors">
-        <li v-for="(errorMessage, errorIndex) in error.non_field_errors" :key="errorIndex">
-          {{ errorMessage }}
-        </li>
-      </ul>
-      <dl v-else-if="typeof error === 'object'">
-        <template v-for="(value, key) in error" :key="key">
-          <dt>{{ key }}</dt>
-          <dd>
-            {{ value.join?.(', ') || value }}
-            <hr/>
-            <div v-if="key in fieldErrorStep" class="d-flex gap-1 flex-column flex-sm-row justify-content-sm-end">
-              <button
-                type="button"
-                class="btn btn-primary"
-                @click="gotoStep(fieldErrorStep[key])"
-                >
-                {{ i18n.review }}<!--{{ fieldErrorStep[key] }}-->
-              </button>
-              <button
-                type="button"
-                class="btn btn-secondary"
-                @click="gotoStep(STEP_DOCUMENTS_OVERVIEW_REDACTED)"
-                >
-                {{ i18n.backToSubmit }}
-              </button>
-            </div>
-          </dd>
-        </template>
-      </dl>
-      <div v-if="Object.keys(error).length === 0 || typeof error === 'string'">
-        <pre>{{ error }}</pre>
-      </div>
-    </div>
-  </div>
-
   <details v-if="debug" class="container">
     <summary class="DEBUG">DEBUG</summary>
-    <div>draft = {{ draft }}</div>
     <div>step={{ step }}</div>
     <div>history={{ stepHistory.join(' ') }}</div>
     <div>stepContext={{ stepContext }}</div>
     <div>isGotoValid={{ isGotoValid }}</div>
+    <div>values={{ values }}</div>
     <div>
       attachments.autoApproveSelection={{ attachments.autoApproveSelection }}
     </div>
@@ -940,9 +843,6 @@ addEventListener('hashchange', () => {
     <!--<span class="debug">{{documentsSelectedPdfRedaction}}</span>-->
     <!--<span class="debug">documentsSelectedPdfRedaction={{ documentsSelectedPdfRedaction.map(d => d.id).join(',') }}</span>-->
   </details>
-  <pre style="color: darkred">
-values={{ values }}
-  </pre>
 
   <div class="step-container">
     <div v-show="step === STEP_INTRO" class="container">
