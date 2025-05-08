@@ -49,16 +49,11 @@ defineExpose({
       <PdfRedaction
         ref="pdfRedaction"
         :pdf-path="attachment.file_url"
+        :attachment-id="attachment.id"
         :attachment-url="attachment.anchor_url"
         :auto-approve="true"
         :post-url="
           config.url.redactAttachment.replace(
-            '/0/',
-            '/' + attachment.id + '/'
-          )
-        "
-        :approve-url="
-          config.url.approveAttachment.replace(
             '/0/',
             '/' + attachment.id + '/'
           )

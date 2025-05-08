@@ -127,6 +127,15 @@ const fetchAttachments = (messageId) => {
     })
 }
 
+const fetchAttachment = (id) => {
+  return attachmentRetrieve({
+    path: { id },
+    throwOnError: true
+  })
+    .then(({ data }) => addOrReplaceAttachment(data))
+    .catch(handleError)
+}
+
 const refetchAttachment = (attachment) => {
   return attachmentRetrieve({
     path: { id: attachment.id },
@@ -140,6 +149,17 @@ const replaceAttachment = (attachment) => {
   const index = store.allRaw.findIndex(att => att.id === attachment.id)
   if (index === -1) throw new Error(`attachment not found ${attachment.id}`)
   store.allRaw[index] = attachment
+  return attachment
+}
+
+const addOrReplaceAttachment = (attachment) => {
+  const index = store.allRaw.findIndex(att => att.id === attachment.id)
+  if (index === -1) {
+    store.allRaw.push(attachment)
+  } else {
+    store.allRaw[index] = attachment
+  }
+  return attachment
 }
 
 const fetchImagePage = (page) => {
@@ -314,6 +334,7 @@ export function useAttachments({ message = null, urls = null, csrfToken = null, 
     rotatePage,
     addFromUppy,
     makeRelevant,
+    fetchAttachment,
     deleteAttachment,
     approveAttachment,
     approveAllUnredactedAttachments,

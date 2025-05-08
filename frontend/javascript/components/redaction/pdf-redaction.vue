@@ -353,6 +353,9 @@ import { Modal } from 'bootstrap'
 import { bustCache, getData } from '../../lib/api.js'
 import { toRaw } from 'vue'
 
+import { useAttachments } from '../docupload/lib/attachments.js'
+const { fetchAttachment, approveAttachment } = useAttachments()
+
 // 1000px are good enough to redact an A4 page with 10pt text
 const minRenderWidth = 1000
 
@@ -386,14 +389,15 @@ export default {
       type: String,
       required: true
     },
+    attachmentId: {
+      type: Number,
+      required: true
+    },
     attachmentUrl: {
       type: String,
       required: true
     },
     postUrl: {
-      type: String
-    },
-    approveUrl: {
       type: String
     },
     autoApprove: {
@@ -424,6 +428,7 @@ export default {
   data() {
     return {
       doc: null,
+      attachment: null,
       currentPage: null,
       page: null,
       numPages: null,
@@ -570,6 +575,7 @@ export default {
       .catch((err) => {
         console.log(err)
       })
+    this.attachment = fetchAttachment(this.attachmentId)
   },
   mounted() {
     document.addEventListener('keydown', this.setAltKey)
@@ -756,17 +762,10 @@ export default {
       }
     },
     approve() {
-      const url = this.approveUrl
-      return fetch(url, {
-        method: 'POST',
-        headers: { 'X-CSRFToken': this.csrfToken }
-      }).then((response) => {
-        if (!response.ok) {
-          console.error('approve error', response)
-          throw new Error(`approve error: ${response.status}`)
-        }
-        this.$emit('uploaded')
-      })
+      return approveAttachment(this.attachment)
+        .then(() => {
+          this.$emit('uploaded')
+        })
     },
     redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
