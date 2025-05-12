@@ -8,8 +8,13 @@ const { attachments, convertImage } = useAttachments()
 
 const i18n = inject('i18n')
 
+const emit = defineEmits(['converted'])
+
 const convertImagesClick = (idx) => {
   convertImage(idx)
+    .then(() => {
+      emit('converted')
+    })
     .catch((err) => {
       console.error(err)
       window.alert(`${i18n.value.error}: ${err.message}`)

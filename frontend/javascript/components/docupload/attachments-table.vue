@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -64,6 +64,7 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
       return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
+  nudgeRedaction: Boolean,
   badgesNew: Boolean,
   badgesRedaction: Boolean,
   badgesType: Boolean,
@@ -184,33 +185,71 @@ const makeResultSelected = async () => {
     </label>
     <div class="d-flex flex-column flex-md-row flex-grow-1 justify-content-end">
       <!-- TODO bulk download button, needs backend support -->
-      <button
-        v-if="selectionActionDelete"
-        type="button"
-        class="btn btn-link fw-bold text-start"
-        :disabled="!isSelectionDeletable"
-        @click="deleteSelected"
-        >
-        {{ i18n.deleteSelected }}
-      </button>
-      <button
-        v-if="selectionActionApprove"
-        type="button"
-        class="btn btn-link fw-bold text-start"
-        :disabled="!isSelectionApprovable"
-        @click="approveSelected"
-        >
-        {{ i18n.approveSelected }}
-      </button>
-      <button
-        v-if="selectionActionMakeResult"
-        type="button"
-        class="btn btn-link fw-bold text-start"
-        :disabled="!isSelectionMakeResultable"
-        @click="makeResultSelected"
-        >
-        {{ i18n.markResultSelected }}
-      </button>
+      <div class="d-none d-md-block">
+        <div class="btn-group" role="group">
+          <button
+            v-if="selectionActionDelete"
+            type="button"
+            class="btn btn-link fw-bold text-start"
+            :disabled="!isSelectionDeletable"
+            @click="deleteSelected"
+            >
+            {{ i18n.deleteSelected }}
+          </button>
+          <button
+            v-if="selectionActionApprove"
+            type="button"
+            class="btn btn-link fw-bold text-start"
+            :disabled="!isSelectionApprovable"
+            @click="approveSelected"
+            >
+            {{ i18n.approveSelected }}
+          </button>
+          <button
+            v-if="selectionActionMakeResult"
+            type="button"
+            class="btn btn-link fw-bold text-start"
+            :disabled="!isSelectionMakeResultable"
+            @click="makeResultSelected"
+            >
+            {{ i18n.markResultSelected }}
+          </button>
+        </div>
+      </div>
+      <div class="btn-group d-md-none align-self-end" role="group">
+        <button type="button" class="btn btn-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          {{ i18n.selection }}
+        </button>
+        <ul class="dropdown-menu">
+          <button
+            v-if="selectionActionDelete"
+            type="button"
+            class="dropdown-item"
+            :disabled="!isSelectionDeletable"
+            @click="deleteSelected"
+            >
+            {{ i18n.deleteSelected }}
+          </button>
+          <button
+            v-if="selectionActionApprove"
+            type="button"
+            class="dropdown-item"
+            :disabled="!isSelectionApprovable"
+            @click="approveSelected"
+            >
+            {{ i18n.approveSelected }}
+          </button>
+          <button
+            v-if="selectionActionMakeResult"
+            type="button"
+            class="dropdown-item"
+            :disabled="!isSelectionMakeResultable"
+            @click="makeResultSelected"
+            >
+            {{ i18n.markResultSelected }}
+          </button>
+        </ul>
+      </div>
     </div>
     <div v-if="selectionButtons" class="d-flex flex-grow-1 justify-content-end">
       <button type="button" class="btn btn-link" @click="selectAll">
@@ -247,13 +286,14 @@ const makeResultSelected = async () => {
           big
           class="text-center pb-1"
           :actions="actions"
+          :nudge-redaction="nudgeRedaction"
           />
         <div
           class="text-center mb-1 mw-100 text-break"
           @click.self="toggleSelection('card', att.id)"
           >
           {{ att.document?.title || att.name }}
-          <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
+          <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
             <span class="sr-only">{{ i18n.loading }}</span>
           </span>
           <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
@@ -328,13 +368,14 @@ const makeResultSelected = async () => {
         :attachment="att"
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         :actions="actions"
+        :nudge-redaction="nudgeRedaction"
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"
         @click.self="toggleSelection('table', att.id)"
         >
         {{ att.document?.title || att.name }}
-        <span v-if="att.isApproving || att.isCreatingDocument" class="spinner-border spinner-border-sm">
+        <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
           <span class="sr-only">{{ i18n.loading }}</span>
         </span>
         <AttachmentBadgeFiletype
@@ -382,6 +423,11 @@ const makeResultSelected = async () => {
       <slot name="after-row" :attachment="att"></slot>
     </div>
     <slot name="after-table"></slot>
+    <div class="py-3 text-end border-top px-md-1">
+      <button type="button" class="btn btn-link btn-sm" @click="asCards = true">
+        {{ i18n.displayAsCards }}
+      </button>
+    </div>
   </div>
 </template>
 

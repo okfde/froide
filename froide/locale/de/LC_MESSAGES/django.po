@@ -5995,9 +5995,25 @@ msgstr "Anfrage #%(num)s prüfen"
 msgid "Yes"
 msgstr "Ja"
 
+#: froide/foirequest/views/message.py
+msgid "Yes."
+msgstr "Ja."
+
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "No"
 msgstr "Nein"
+
+#: froide/foirequest/views/message.py
+msgid "No."
+msgstr "Nein."
+
+#: froide/foirequest/views/message.py
+msgid "No, pick different public body."
+msgstr "Nein, andere Behörde wählen."
+
+#: froide/foirequest/views/message.py
+msgid "Back to submit"
+msgstr "Zurück zum Abschluss"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Assign team to project"
@@ -7728,6 +7744,11 @@ msgid "New document with {count} pages"
 msgstr "Neues Dokument mit {count} Seiten"
 
 #: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "Question {current} of {total}"
+msgstr "Frage {current} von {total}"
+
+#: froide/foirequest/views/message.py
 msgid "Take / Choose picture"
 msgstr "Foto machen oder auswählen"
 
@@ -7827,6 +7848,10 @@ msgid "Display as table"
 msgstr "Als Tabelle darstellen"
 
 #: froide/foirequest/views/message.py
+msgid "Display as icons"
+msgstr "Als Icons darstellen"
+
+#: froide/foirequest/views/message.py
 msgid "Are you sure you want to approve the selected attachments?"
 msgstr "Sind Sie sicher, dass Sie die ausgewählten Anhänge freigeben/öffentlich machen wollen?"
 
@@ -7922,6 +7947,10 @@ msgstr "Wir haben diesen Bereich stark überarbeitet."
 #: froide/foirequest/views/message.py
 msgid "Drag the documents in the right order"
 msgstr "Ziehen Sie die Seiten in die richtige Reihenfolge"
+
+#: froide/foirequest/views/message.py
+msgid "Mark image attachments as important to convert them into PDFs."
+msgstr "Markieren Sie Bilddateien als nicht unwichtig um sie in ein PDF zu konvertieren."
 
 #: froide/foirequest/views/message.py
 msgid "We will convert your images into a PDF"
@@ -8033,10 +8062,10 @@ msgstr "Hat die Behörde Kosten verlangt?"
 #, python-brace-format
 msgid ""
 "You have noted that the public body had demanded compensation to the amount "
-"of €${amount}.<br/>Is this amount still correct?"
+"of ${amount}.<br/>Is this amount still correct?"
 msgstr ""
 "Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
-"${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+"${amount} verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
 
 #: froide/foirequest/views/message.py
 msgid "Which documents do you want to redact?"
@@ -8143,6 +8172,10 @@ msgstr "Alle Anhänge und Optionen"
 #: froide/foirequest/views/message.py
 msgid "non-redacted"
 msgstr "ungeschwärzt"
+
+#: froide/foirequest/views/message.py
+msgid "Selection…"
+msgstr "Auswahl…"
 
 #: froide/foirequest/views/message.py
 msgid "Delete selected"
