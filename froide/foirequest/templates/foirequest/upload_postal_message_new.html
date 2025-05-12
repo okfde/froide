@@ -15,7 +15,7 @@
         {% translate "Upload postal mail" as breadcrumb_label %}
         {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
     </div>
-    <!-- the form never submits, but is useful for checkValidity -->
+    {# the form never submits, but is useful for checkValidity #}
     <form name="postupload" class="d-flex flex-col flex-grow-1">
         {% csrf_token %}
         {# mw-100 crucial for pdf-redaction's dynamic maxWidth calculations #}
