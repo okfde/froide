@@ -1,7 +1,6 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  client: '@hey-api/client-fetch',
   input: 'froide/openapi-schema.yaml',
   output: {
     path: 'frontend/javascript/api/gen',
@@ -9,15 +8,16 @@ export default defineConfig({
     lint: 'eslint'
   },
   plugins: [
+    '@hey-api/client-fetch',
     '@hey-api/schemas',
-    '@hey-api/services',
+    '@hey-api/sdk',
     {
       dates: true,
       name: '@hey-api/transformers'
     },
     {
       enums: 'javascript',
-      name: '@hey-api/types'
+      name: '@hey-api/typescript'
     }
   ]
 })

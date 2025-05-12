@@ -1,4 +1,4 @@
-import { client } from './gen/services.gen'
+import { client } from './gen/client.gen'
 
 export const csrfToken = document.cookie.match(/csrftoken=([^;]+)/)?.[1]
 
@@ -12,5 +12,5 @@ client.interceptors.request.use((request) => {
 })
 
 export * from './gen/schemas.gen'
-export * from './gen/services.gen'
+export * from './gen/sdk.gen'
 export * from './gen/types.gen'
