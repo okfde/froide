@@ -141,10 +141,33 @@ const messageIsResponseChoices = [
   { value: false, label: i18n.value.messageSentLetter }
 ]
 
-const isoNoonifyDate = (dateYmdStr) =>
+const isoPrepareDate = (dateYmdStr) => {
+  // From <input type="date"> we get a string .value like 'yyyy-mm-dd'
+  // Note that .valueAsDate would have a similar problem:
   // "When the time zone offset is absent, date-only forms are interpreted as a UTC time
   // and date-time forms are interpreted as a local time."
-  (new Date(dateYmdStr + 'T12:00:00')).toISOString()
+  // We need to turn it into a timestamp:
+  const dateTime = new Date(dateYmdStr) // this is "today 0:00", but UTC...
+  // ...so it could be interpreted as a significantly different date
+  // by serverside utils.postal_date on publish.
+  // The server does not know client's timezone!
+  // So we add a reasonable time, like (local) noon...
+  const now = new Date
+  const isToday = ymdifyDate(now) === dateYmdStr
+  const isTodayAm = isToday && (now.getHours() < 12)
+  if (isTodayAm) {
+    // ...but not if noon is still in the future,
+    // which would throw a validation error.
+    // In "the AM" we basically return "now", rounded...
+    dateTime.setHours(now.getHours(), now.getMinutes(), 0, 0)
+  } else {
+    // ...for any day in the past, we do set noon.
+    dateTime.setHours(12, 0, 0, 0)
+  }
+  // Note that this could lead to unexpected behavior between
+  // "client midnight" and "server midnight".
+  return dateTime.toISOString()
+}
 
 const ymdifyDate = (date) =>
   `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`
@@ -222,8 +245,8 @@ const requestAndMessageUpdateValues = async () => {
     sender_public_body: values.is_response ? values.public_body : null,
     recipient_public_body: values.is_response ? null : values.public_body,
   }
-  if (values.date) messageBody.timestamp = isoNoonifyDate(values.date)
-  if (values.registered_mail_date) messageBody.registered_mail_date = isoNoonifyDate(values.registered_mail_date)
+  if (values.date) messageBody.timestamp = isoPrepareDate(values.date)
+  if (values.registered_mail_date) messageBody.registered_mail_date = isoPrepareDate(values.registered_mail_date)
   await messagePartialUpdate({
     path: { id: props.message.id },
     body: messageBody,
