@@ -68,7 +68,7 @@ coreschema==0.0.4
     # via coreapi
 cron-descriptor==1.4.5
     # via django-celery-beat
-cryptography==43.0.1
+cryptography==44.0.3
     # via
     #   fido2
     #   jwcrypto
