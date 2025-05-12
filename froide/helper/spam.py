@@ -232,7 +232,7 @@ class SpamProtectionMixin:
 
     def clean_time(self) -> str:
         value = self.cleaned_data["time"]
-        since = datetime.now(timezone.utc) - datetime.fromtimestamp(value)
+        since = datetime.now(timezone.utc).replace(tzinfo=None) - datetime.fromtimestamp(value)
         if since < timedelta(seconds=5):
             raise forms.ValidationError(_("You filled this form out too quickly."))
         return value
