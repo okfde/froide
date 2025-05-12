@@ -340,7 +340,6 @@
 </template>
 
 <script>
-import 'string.prototype.repeat'
 import ConfirmNoRedaction from './confirm-no-redaction'
 
 import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.js?url'
@@ -933,7 +932,6 @@ export default {
         clientY = e.changedTouches[0].clientY
       }
 
-       
       const scale = panzoom.getScale()
       const offsetX = (renderDensityFactor * (clientX - rect.left)) / scale
       const offsetY = (renderDensityFactor * (clientY - rect.top)) / scale
@@ -1327,7 +1325,7 @@ export default {
       matches.forEach((div) => {
         const text = div.textContent
         let result
-         
+
         while ((result = regex.exec(text))) {
           const pos = result.index
           const match = result[0]
