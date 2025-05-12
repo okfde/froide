@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@import '../variables.scss';
 
 $choices-bg-color: var(--#{$prefix}body-bg);
 $choices-bg-color-disabled: var(--#{$prefix}tertiary-bg);
@@ -6,13 +6,16 @@ $choices-bg-color-dropdown: var(--#{$prefix}body-bg);
 $choices-text-color: var(--#{$prefix}body-color);
 $choices-keyline-color: $body-tertiary-color;
 $choices-primary-color: $secondary;
+$choices-highlight-color: var(--#{$prefix}primary);
 $choices-disabled-color: $dark;
 $choices-guttering: 0;
 
-$choices-icon-cross-inverse: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGZpbGw9IiM5OTkiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
-$choices-icon-cross: none;
+$choices-font-size-lg: $font-size-lg;
+$choices-font-size-md: $font-size-base;
+$choices-font-size-sm: $font-size-sm;
+$choices-border-radius: var(--#{$prefix}border-radius);
 
-@import "choices.js/src/styles/choices.scss";
+@import 'choices.js/src/styles/choices.scss';
 
 .#{$choices-selector} {
   width: 100%;
@@ -28,7 +31,7 @@ $choices-icon-cross: none;
 }
 
 .#{$choices-selector}__list {
-  background-color : var(--bs-body-bg, var(--body-bg));
+  background-color: var(--bs-body-bg, var(--body-bg));
 }
 
 .#{$choices-selector}__input {
@@ -36,32 +39,23 @@ $choices-icon-cross: none;
   color: var(--#{$prefix}body-color, var(--body-fg));
 }
 
-.#{$choices-selector}[data-type*='select-one'] {
-  .#{$choices-selector}__input {
-    background-color: var(--#{$prefix}body-bg, var(--body-bg));
-    border-bottom-color: var(--#{$prefix}border-color, var(--body-loud-color)) !important;
-  }
-  .#{$choices-selector}__button,
-  .#{$choices-selector}__button:hover {
-    opacity: 1;
-    &::after {
-      content: "×";
-      color: var(--#{$prefix}secondary-color, var(--secondary));
-    }
-  }
+.#{$choices-selector}__input {
+  background-color: var(--#{$prefix}body-bg);
+  border-bottom-color: var(--#{$prefix}border-color) !important;
 }
 
 .#{$choices-selector}__list--dropdown {
-  background-color: var(--#{$prefix}body-bg, var(--body-bg));
+  background-color: var(--#{$prefix}body-bg);
 
   .#{$choices-selector}__item--selectable.is-highlighted,
   .#{$choices-selector}__list[aria-expanded],
   .#{$choices-selector}__item--selectable.is-highlighted {
-    background-color: var(--#{$prefix}secondary-color, var(--secondary)) !important;
+    background-color: var(--#{$prefix}tertiary-bg) !important;
   }
 }
 
-.#{$choices-selector}__inner, .#{$choices-selector}__list {
-  border-color: var(--#{$prefix}border-color, var(--body-loud-color)) !important;
+.#{$choices-selector}__inner,
+.#{$choices-selector}__list {
+  border-color: var(--#{$prefix}border-color) !important;
   font-size: inherit !important;
 }
