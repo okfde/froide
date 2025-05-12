@@ -221,7 +221,7 @@ frozenlist==1.4.1
     #   aiosignal
 geoip2==4.8.0
     # via froide (pyproject.toml)
-greenlet==3.1.1
+greenlet==3.2.2
     # via
     #   froide (pyproject.toml)
     #   playwright
