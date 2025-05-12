@@ -14,8 +14,6 @@ import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import { useAttachments } from '../docupload/lib/attachments'
 import Room from '../../lib/websocket.ts'
 import OnlineHelp from '../online-help.vue'
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import FileUploader from '../upload/file-uploader.vue'
 import ImagesConverter from '../docupload/images-converter.vue'
 import ImageDocumentPagesSortable from '../docupload/image-document-pages-sortable.vue'
@@ -1055,7 +1053,7 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <publicbody-chooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
+          <PublicbodyChooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
             name="publicbody" :config="config" :value="props.foirequest.public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
             @update="updateValuePublicBody"
