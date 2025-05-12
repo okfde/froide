@@ -955,6 +955,12 @@ def postal_date(
     if specified_date is None:
         specified_date = message.timestamp.date()
 
+    # Note: this can be off by a day in certain cases,
+    # like between client's midnight and server's midnight:
+    # client sends 01-02T00:00+2:00 = server sees 01-01T22:00Z,
+    # which then becomes 01-01T12:00+2:00
+    # We mostly send "noon day(s) ago", which should be safe.
+    # To solve this, the server would need to know the client's (message's) timezone.
     uploaded_date_midday = datetime.datetime.combine(
         specified_date,
         datetime.time(12, 00, 00),
