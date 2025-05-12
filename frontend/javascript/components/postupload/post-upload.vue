@@ -243,7 +243,6 @@ const messagePublishDraft = () => {
   })
 }
 
-// TODO rename the Submit because they do not submit any more
 const approveAndPublish = async () => {
   isSubmitting.value = true
   try {
@@ -259,7 +258,7 @@ const approveAndPublish = async () => {
     // error from the partialUpdates/PATCHes looks like
     // { resolution: [ '"0" ist keine gültige Option'] }
     // { non_field_errors: [ 'Antwortnachrichten müssen...' ] }
-    console.error('fetch submit error', err)
+    console.error('approveAndPublish error', err)
     error.value = err
   } finally {
     isSubmitting.value = false
@@ -904,11 +903,6 @@ addEventListener('hashchange', () => {
                 @upload-complete="fileUploaderCompleted"
                 />
             </div>
-            <!-- TODO
-            <div class="col-md-6">
-              QR code goes here
-            </div>
-            -->
           </div>
           <div class="alert alert-warning">
             <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
