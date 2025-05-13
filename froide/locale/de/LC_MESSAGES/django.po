@@ -2011,6 +2011,7 @@ msgstr "Dokument"
 #: froide/document/templates/document/search.html
 #: froide/foirequest/templates/foirequest/body/documents.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Documents"
 msgstr "Dokumente"
 
@@ -4285,7 +4286,7 @@ msgstr ""
 msgid "is_response is required"
 msgstr "Anfragen des Nutzers"
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Response messages must have a sender public body, no sender user and no "
 "recipient public body."
@@ -4293,7 +4294,7 @@ msgstr ""
 "Antwortnachrichten müssen eine Behörde als Sender, jedoch kein:e Nutzer:in "
 "als Sender und keine Behörde als Empfänger enthalten."
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Non-response messages must have a recipent public body, but no sender public "
 "body."
@@ -4399,7 +4400,7 @@ msgstr "Download als .eml"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Events"
-msgstr "Ereignisse"
+msgstr "Veranstaltungen"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Messages"
@@ -5057,6 +5058,7 @@ msgid "Unapproved attachments:"
 msgstr "Nicht-öffentliche Anhänge:"
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Manage attachments"
 msgstr "Anhänge verwalten"
 
@@ -6079,10 +6081,12 @@ msgid "Set team for project"
 msgstr "Weisen Sie diesem Projekt ein Team zu"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Edit tags"
 msgstr "Schlagwörter bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid ""
 "Tags are a way to organise your own requests and also group them with other "
 "requests on the platform."
@@ -6091,10 +6095,12 @@ msgstr ""
 "anderen Anfragen auf der Plattform gruppieren."
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "What does this mean?"
 msgstr "Was bedeutet das?"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Add tags"
 msgstr "Schlagwörter hinzufügen"
 
@@ -9271,7 +9277,7 @@ msgstr "Suchen…"
 
 #: froide/helper/templates/helper/forms/widgets/tag_autocomplete.html
 msgid "No results"
-msgstr "Keine Ergebnisse"
+msgstr "Keine Ergebnisse gefunden"
 
 #: froide/helper/templates/helper/forms/widgets/tag_autocomplete.html
 msgid "Press to select"
@@ -12530,29 +12536,50 @@ msgstr ""
 "Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
 "${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
 
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 #, python-format
-#~ msgid ""
-#~ "\n"
-#~ "      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from "
-#~ "<b>%(sender)s</b> in request “%(title)s”.\n"
-#~ "      "
-#~ msgstr ""
-#~ "\n"
-#~ "      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
-#~ "%(sender)s</b> bei Anfrage “%(title)s”.\n"
-#~ "      "
+msgid ""
+"\n"
+"      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from <b>"
+"%(sender)s</b> in request “%(title)s”.\n"
+"      "
+msgstr ""
+"\n"
+"      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
+"%(sender)s</b> bei Anfrage “%(title)s”.\n"
+"      "
 
-#~ msgid "Here you can:"
-#~ msgstr "Hier können Sie:"
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Here you can:"
+msgstr "Hier können Sie:"
 
-#~ msgid "Approve or redact attachments."
-#~ msgstr "Anhänge freigeben oder schwärzen."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Approve or redact attachments."
+msgstr "Anhänge freigeben oder schwärzen."
 
-#~ msgid "Convert multiple pictures to pages in a PDF document."
-#~ msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert multiple pictures to pages in a PDF document."
+msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
 
-#~ msgid "Upload more pictures or PDFs."
-#~ msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Upload more pictures or PDFs."
+msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert images to documents"
+msgstr "Bilder in Dokumente umwandeln"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid ""
+"Here you can approve, redact documents and also mark them as a result of "
+"your request."
+msgstr ""
+"Hier können Sie Dokumente freigeben, schwärzen und markieren, welche der "
+"Dokumente ein Ergebnis der Anfrage ist."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Other files"
+msgstr "Andere Dateien"
 
 #, python-format
 #~ msgid ""
@@ -15153,3 +15180,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "This field is required."
 #~ msgstr "Anfragen des Nutzers"
+
+#~ msgid "Redact this attachment"
+#~ msgstr "Schwärzen Sie diesen Anhang"
