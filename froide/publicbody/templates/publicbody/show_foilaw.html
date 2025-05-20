@@ -69,7 +69,7 @@
                                 {% blocktrans with name=object.name %}Official law text of {{ name }}{% endblocktrans %}
                             </a>
                         </div>
-                        {{ legal_text|safe }}
+                        {{ legal_text }}
                     </div>
                 {% endif %}
                 <div class="tab-pane {% if not legal_text %}active{% else %}fade{% endif %}"
