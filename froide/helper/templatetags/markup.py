@@ -1,7 +1,9 @@
 from django import template
-from django.conf import settings
 from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
+
+import markdown as markdown_lib
+import nh3
 
 register = template.Library()
 
@@ -26,13 +28,6 @@ def markdown(value, arg=""):
     they will be silently ignored.
 
     """
-    try:
-        import markdown
-    except ImportError:
-        if settings.DEBUG:
-            raise template.TemplateSyntaxError(
-                "Error in 'markdown' filter: The Python markdown library isn't installed."
-            ) from None
-        return force_str(value)
-    else:
-        return mark_safe(markdown.markdown(force_str(value)))
+    html = markdown_lib.markdown(force_str(value))
+    clean_html = nh3.clean(html)
+    return mark_safe(clean_html)

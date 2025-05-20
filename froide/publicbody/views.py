@@ -6,10 +6,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sitemaps import Sitemap
 from django.forms.models import model_to_dict
 from django.shortcuts import Http404, get_object_or_404, redirect, render
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DetailView, UpdateView
 
 import markdown
+import nh3
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.auth import can_moderate_object
@@ -74,7 +76,9 @@ def show_jurisdiction(request, slug):
 def show_foilaw(request, slug):
     law = get_object_or_404(FoiLaw.objects.translated(slug=slug))
 
-    legal_text = markdown.markdown(law.legal_text, extensions=[LawExtension()])
+    legal_text = mark_safe(
+        nh3.clean(markdown.markdown(law.legal_text, extensions=[LawExtension()]))
+    )
 
     context = {"object": law, "legal_text": legal_text}
     return render(request, "publicbody/show_foilaw.html", context)

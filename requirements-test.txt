@@ -133,7 +133,7 @@ django-crossdomainmedia==0.0.4
     # via froide (pyproject.toml)
 django-elasticsearch-dsl==8.0
     # via froide (pyproject.toml)
-django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@ed31f5136433fe09632b74ff6eeb8dd425180e34
+django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@d70b5d3ab00f2262d18bfb381fab95473b73ac1a
     # via froide (pyproject.toml)
 django-filter==24.3
     # via
@@ -286,7 +286,9 @@ mypy-extensions==1.0.0
     #   monkeytype
     #   mypy
 nh3==0.2.21
-    # via django-filingcabinet
+    # via
+    #   froide (pyproject.toml)
+    #   django-filingcabinet
 nodeenv==1.9.1
     # via pre-commit
 oauthlib==3.2.2

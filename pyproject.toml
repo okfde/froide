@@ -48,6 +48,7 @@ dependencies = [
   "icalendar",
   "lxml[html-clean]>=5.2.0",
   "markdown",
+  "nh3",
   "phonenumbers",
   "pillow>=9.0.0",
   "pikepdf==9.5.2",
