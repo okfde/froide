@@ -62,10 +62,6 @@ colorama==0.4.6 ; sys_platform == 'win32'
     # via
     #   click
     #   qrcode
-coreapi==2.3.3
-    # via froide (pyproject.toml)
-coreschema==0.0.4
-    # via coreapi
 cron-descriptor==1.4.5
     # via django-celery-beat
 cryptography==43.0.1
@@ -78,7 +74,7 @@ deprecated==1.2.14
     # via pikepdf
 dj-database-url==2.2.0
     # via froide (pyproject.toml)
-django==4.2.21
+django==5.0.14
     # via
     #   froide (pyproject.toml)
     #   channels
@@ -201,10 +197,6 @@ idna==3.8
     #   yarl
 inflection==0.5.1
     # via drf-spectacular
-itypes==1.2.0
-    # via coreapi
-jinja2==3.1.4
-    # via coreschema
 jsonschema==4.23.0
     # via
     #   django-filingcabinet
@@ -227,8 +219,6 @@ markdown==3.7
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
-markupsafe==2.1.5
-    # via jinja2
 maxminddb==2.6.2
     # via geoip2
 multidict==6.1.0
@@ -313,7 +303,6 @@ reportlab==4.2.2
 requests==2.32.3
     # via
     #   froide (pyproject.toml)
-    #   coreapi
     #   django-oauth-toolkit
     #   geoip2
 rpds-py==0.20.0
@@ -350,9 +339,7 @@ tzdata==2024.1
     #   kombu
     #   psycopg
 uritemplate==4.1.1
-    # via
-    #   coreapi
-    #   drf-spectacular
+    # via drf-spectacular
 urllib3==2.2.3
     # via
     #   elastic-transport

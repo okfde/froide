@@ -18,7 +18,6 @@ dependencies = [
   "bleach",
   "celery>=5.2.2",
   "channels==4.0.0",
-  "coreapi",
   "dj-database-url",
   "django-celery-beat>=2.5.0",
   "django-celery-email",
