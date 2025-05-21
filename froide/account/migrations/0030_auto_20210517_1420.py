@@ -17,7 +17,6 @@ class Migration(migrations.Migration):
                 blank=True,
                 max_length=254,
                 null=True,
-                unique=True,
                 verbose_name="email address",
             ),
         ),
