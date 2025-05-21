@@ -324,9 +324,9 @@ const makeResultSelected = async () => {
             :attachment="att"
             />
         </div>
-        <button v-if="actionDelete && att.canDelete" type="button" class="btn btn-outline-secondary" @click="deleteAttachment(att)">
-          <i class="fa fa-trash"></i>
-          <span class="sr-only">{{ i18n.delete }}</span>
+        <button v-if="actionDelete && att.canDelete" type="button" class="btn btn-sm btn-link" @click="deleteAttachment(att)">
+          <i class="fa fa-trash" aria-hidden="true"></i>
+          {{ i18n.delete }}
         </button>
         <div v-if="actions" class="d-flex flex-column align-items-start flex-grow-0 flex-shrink-1">
           <AttachmentActions
