@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest import mock
 from urllib.parse import urlencode
 
@@ -128,7 +128,7 @@ def test_signup(world, client):
         "last_name": "Porst",
         "terms": "on",
         "user_email": "horst.porst",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     client.login(email="info@fragdenstaat.de", password="froide")
     response = client.post(reverse("account-signup"), post)
@@ -182,7 +182,7 @@ def test_overlong_name_signup(world, client):
         "terms": "on",
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     client.logout()
     response = client.post(reverse("account-signup"), post)
@@ -202,7 +202,7 @@ def test_signup_too_fast(world, client):
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         # Signup in less than 5 seconds
-        "time": (datetime.utcnow() - timedelta(seconds=3)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=3)).timestamp(),
     }
     client.logout()
     response = client.post(reverse("account-signup"), post)
@@ -218,7 +218,7 @@ def test_signup_same_name(world, client):
         "terms": "on",
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     response = client.post(reverse("account-signup"), post)
     assert response.status_code == 302
@@ -311,7 +311,7 @@ def test_next_link_signup(world, client):
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         "next": url,
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     response = client.post(reverse("account-signup"), post)
     assert response.status_code == 302
@@ -774,7 +774,7 @@ def test_signup_blocklisted(world, client):
         "last_name": "Porst",
         "terms": "on",
         "user_email": "horst.porst@example.com",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
 
     AccountBlocklist.objects.create(name="Test", email="horst\\.porst.*@example.com$")
