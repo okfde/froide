@@ -7941,6 +7941,11 @@ msgstr ""
 "Feedback freuen."
 
 #: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "${amount} files and documents are being worked on."
+msgstr "${amount} Dateien und Dokumente sind in Bearbeitung."
+
+#: froide/foirequest/views/message.py
 msgid "We have redone this part of the app."
 msgstr "Wir haben diesen Bereich stark überarbeitet."
 
