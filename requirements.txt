@@ -119,8 +119,6 @@ django-filter==24.3
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
-django-fsm==3.0.0
-    # via froide (pyproject.toml)
 django-json-widget==2.0.1
     # via
     #   froide (pyproject.toml)

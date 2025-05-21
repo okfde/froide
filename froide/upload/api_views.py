@@ -23,7 +23,7 @@ from . import (
 )
 from . import settings as tus_settings
 from .exceptions import Conflict, TusParseError
-from .models import Upload, states
+from .models import Upload, UploadState
 from .serializers import UploadCreateSerializer, UploadSerializer
 from .utils import augment_request, checksum_matches, encode_upload_metadata
 
@@ -263,7 +263,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
         assert upload.get_or_create_temporary_file()
 
         # Change state
-        if upload.state == states.INITIAL:
+        if upload.state == UploadState.INITIAL:
             upload.start_receiving()
             upload.save()
 
@@ -329,7 +329,7 @@ class TusTerminateMixin(mixins.DestroyModelMixin):
         upload = self.get_object()
 
         # When the upload is still saving, we're not able to destroy the entity
-        if upload.state == states.SAVING:
+        if upload.state == UploadState.SAVING:
             return Response(
                 _(
                     'Unable to terminate upload while in state "{}".'.format(
