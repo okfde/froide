@@ -698,6 +698,8 @@ class Base(Configuration):
         "REDOC_DIST": "SIDECAR",
     }
 
+    FORMS_URLFIELD_ASSUME_HTTPS = True
+
 
 class Dev(Base):
     pass
