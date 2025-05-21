@@ -21,8 +21,6 @@
 </template>
 
 <script>
-// import { nextTick } from 'vue'
-
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
