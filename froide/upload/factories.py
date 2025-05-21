@@ -10,7 +10,7 @@ from factory.django import DjangoModelFactory
 
 from froide.account.factories import UserFactory
 
-from .models import Upload, states
+from .models import Upload, UploadState
 
 TEST_PDF_URL = "test.pdf"
 TEST_PDF_PATH = os.path.join(settings.MEDIA_ROOT, TEST_PDF_URL)
@@ -36,7 +36,7 @@ class UploadFactory(DjangoModelFactory):
     temporary_file_path = generate_file_path()
     upload_length = TEST_PDF_SIZE
     upload_offset = TEST_PDF_SIZE
-    state = states.RECEIVING
+    state = UploadState.RECEIVING
     upload_metadata = json.dumps(
         {
             "relativePath": "null",

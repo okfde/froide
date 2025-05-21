@@ -11,12 +11,10 @@ from django.db import models
 from django.urls import Resolver404, resolve
 from django.utils.translation import gettext_lazy as _
 
-from django_fsm import FSMField, transition
-
 from .utils import write_bytes_to_file
 
 
-class states:
+class UploadState(models.TextChoices):
     INITIAL = "initial"
     RECEIVING = "receiving"
     SAVING = "saving"
@@ -40,7 +38,9 @@ class AbstractUpload(models.Model):
 
     guid = models.UUIDField(_("GUID"), default=uuid.uuid4, unique=True)
 
-    state = FSMField(default=states.INITIAL)
+    state = models.CharField(
+        choices=UploadState, max_length=50, default=UploadState.INITIAL
+    )
 
     upload_offset = models.BigIntegerField(default=0)
     upload_length = models.BigIntegerField(default=-1)
@@ -127,43 +127,49 @@ class AbstractUpload(models.Model):
         assert os.path.isfile(self.temporary_file_path)
         return self.temporary_file_path
 
-    @transition(
-        field=state,
-        source=states.INITIAL,
-        target=states.RECEIVING,
-        conditions=[temporary_file_exists],
-    )
     def start_receiving(self):
         """
         State transition to indicate the first file chunk has been received successfully
         """
-        # Trigger signal
-        # signals.receiving.send(sender=self.__class__, instance=self)
+        if self.state != UploadState.INITIAL:
+            raise ValidationError(
+                _("Cannot start receiving, upload is not in initial state.")
+            )
+        if not self.temporary_file_exists():
+            raise ValidationError(
+                _("Cannot start receiving, temporary file does not exist.")
+            )
+        self.state = UploadState.RECEIVING
+        self.save(update_fields=["state"])
 
     def ensure_saving(self):
-        if self.state == states.RECEIVING:
+        if self.state == UploadState.RECEIVING:
             self.start_saving()
 
-    @transition(
-        field=state,
-        source=states.RECEIVING,
-        target=states.SAVING,
-        conditions=[is_complete],
-    )
     def start_saving(self):
         """
         State transition to indicate that the upload is complete, and that the temporary file will be transferred to
           its final destination.
         """
-        # Trigger signal
-        # signals.saving.send(sender=self.__class__, instance=self)
+        if self.state != UploadState.RECEIVING:
+            raise ValidationError(
+                _("Cannot start saving, upload is not in receiving state.")
+            )
+        if not self.is_complete():
+            raise ValidationError(_("Cannot start saving, upload is not complete."))
+        self.state = UploadState.SAVING
+        self.save(update_fields=["state"])
 
-    @transition(field=state, source=states.SAVING, target=states.DONE)
     def finish(self):
         """
         State transition to indicate the upload is ready and the file is ready for access
         """
-        # Trigger signal
+        if self.state != UploadState.SAVING:
+            raise ValidationError(
+                _("Cannot start saving, upload is not in receiving state.")
+            )
+        self.state = UploadState.DONE
+        self.save(update_fields=["state"])
 
 
 class UploadManager(models.Manager):

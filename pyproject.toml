@@ -26,7 +26,6 @@ dependencies = [
   "django-crossdomainmedia>=0.0.4",
   "django-elasticsearch-dsl>=8.0,<9.0",
   "django-filter",
-  "django-fsm",
   "django-json-widget",
   "django-leaflet",
   "django-mfa3",
