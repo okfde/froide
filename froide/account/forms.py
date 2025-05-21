@@ -12,6 +12,7 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.content_urls import get_content_url
@@ -123,7 +124,7 @@ class NewUserBaseForm(AddressBaseForm):
     user_email = forms.EmailField(
         label=_("Email address"),
         max_length=75,
-        help_text=_("Not public. The given address will " "need to be confirmed."),
+        help_text=_("Not public. The given address will need to be confirmed."),
         widget=forms.EmailInput(
             attrs={
                 "placeholder": _("mail@ddress.net"),
@@ -140,7 +141,7 @@ class NewUserBaseForm(AddressBaseForm):
             required=False,
             widget=BootstrapCheckboxInput,
             label=_("Hide my name from public view"),
-            help_text=format_html(
+            help_text=mark_safe(
                 _(
                     "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity"
                 )
@@ -176,7 +177,7 @@ class TermsForm(forms.Form):
         widget=BootstrapCheckboxInput,
         error_messages={
             "required": _(
-                "You need to accept our Terms " "and Conditions and Priavcy Statement."
+                "You need to accept our Terms and Conditions and Priavcy Statement."
             )
         },
     )
@@ -563,7 +564,7 @@ class ProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["profile_photo"].label = _("Profile picture")
         self.fields["profile_photo"].help_text = _(
-            "Image must be square and between 480 to 960 pixels " "in both dimensions."
+            "Image must be square and between 480 to 960 pixels in both dimensions."
         )
         self.old_profile_photo = None
         if self.instance.profile_photo:
