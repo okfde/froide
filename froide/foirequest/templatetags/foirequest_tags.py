@@ -116,7 +116,7 @@ def highlight_request(message, request):
                 message_sender=message.sender,
             )
         )
-    html.append(format_html("</div>"))
+    html.append(mark_safe("</div>"))
     return mark_safe("".join(html))
 
 
