@@ -106,13 +106,15 @@ if (props.config.url.messageWebsocket) {
   const room = new Room(props.config.url.messageWebsocket)
   room.connect().on('attachment_added', (data) => {
     // When a new attachment is added, refresh the attachments store
-    // TODO: can this be a race condition vs. "just added attachment via web ui",
-    // which also triggers a websocket event, that can arrive before "the id is present"?
     refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
       if (!refreshed) {
         return
       }
       if (step.value === STEP_INTRO) {
+        if (fileUploaderShow.value) {
+          console.log('websocket received attachment_added, but file upload had been started on same device, bailing skip')
+          return
+        }
         gotoStep(STEP_DOCUMENTS_OVERVIEW)
       }
     })
@@ -330,7 +332,7 @@ onMounted(() => {
   document.body.addEventListener('dragenter', () => fileUploaderShow.value = true)
 })
 
-const fileUploaderFileAdded = () => {
+const fileUploaderUpload = () => {
   fileUploaderShow.value = true
   fileUploaderUploading.value = true
 }
@@ -454,7 +456,7 @@ const stepsConfig = {
         return STEP_DOCUMENTS_CONVERT
       }
       console.log('uploads were documents, not images, passing by image sorting')
-      return STEP_MESSAGE_SENT_OR_RECEIVED
+      return STEP_DOCUMENTS_OVERVIEW
     },
     context: {
       progressStep: 0,
@@ -919,7 +921,7 @@ addEventListener('hashchange', () => {
                 :auto-proceed="true"
                 :show-uppy="fileUploaderShow"
                 ref="fileUploader"
-                @file-added="fileUploaderFileAdded"
+                @uploading="fileUploaderUpload"
                 @upload-success="fileUploaderSucceeded"
                 @upload-complete="fileUploaderCompleted"
                 />
@@ -1602,6 +1604,11 @@ addEventListener('hashchange', () => {
             <button v-if="fileUploaderShow || attachments.all.length > 0" type="button" :disabled="fileUploaderUploading" @click="gotoStep()" class="btn btn-primary d-block w-100">
               {{ i18n.next }}
             </button>
+            <div class="mt-2" v-if="attachments.all.length > 0 || attachments.images.length > 0">
+              <small>
+                {{ i18n._('uploadedFilesHint', { amount: attachments.all.length + attachments.images.length }) }}
+              </small>
+            </div>
           </template>
           <template v-else-if="step === STEP_DOCUMENTS_SORT">
             <button
