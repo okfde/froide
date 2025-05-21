@@ -360,6 +360,9 @@ def edit_postal_message(request, foirequest, message_id):
             "scanDocumentsAddendum": _("Use your phone's camera to create a PDF "),
             "uploadFiles": _("Upload files"),
             "uploadFilesAddendum": _("If you have the letter as PDF already"),
+            "uploadedFilesHint": _(
+                "${amount} files and documents are being worked on."
+            ),
             "redactLaterHint1": _(
                 "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
             ),
