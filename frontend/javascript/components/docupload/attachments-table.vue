@@ -84,13 +84,6 @@ watch(
   }
 )
 
-/* when asCard flips over/under threshold (when something is uploaded/deleted)
- * we need to prevent things being still selected without the possibility to
- * change the selection */
-watch(asCards, (newValue) => {
-  if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
-})
-
 const selected = computed(() => subset.filter(_ => attachments.selectedIds.has(_.id)))
 
 const selectAllEl = ref()
@@ -358,7 +351,7 @@ const makeResultSelected = async () => {
       v-for="att in subset" :key="att.id"
       class="d-flex flex-column px-md-1 py-1 position-relative flex-md-row align-items-md-center px-5"
       :class="{
-        'bg-primary-subtle': attachments.selectedIds.has(att.id),
+        'bg-primary-subtle': tableSelection && attachments.selectedIds.has(att.id),
         'border-top': subset.length > 1
       }"
       @click.self="toggleSelection('table', att.id)"

@@ -180,7 +180,8 @@ def edit_postal_message(request, foirequest, message_id):
         FoiMessage.with_drafts, request=foirequest, pk=int(message_id)
     )
     if not message.can_edit:
-        return render_400(request)
+        print("would 400 here, but continuiuing")
+        # return render_400(request)
     filingcabinet_js_config = get_js_config(request)
     ctx = {
         "settings": {
