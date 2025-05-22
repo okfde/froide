@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block object-tools-items %}
     {% if original.pk %}
         {% if perms.foirequest %}
@@ -29,13 +29,7 @@
 {% endblock %}
 {% block after_field_sets %}
     {% if not original.pk %}
-        <script>
-    (function(){
-      const entries = new URLSearchParams(window.location.search)
-
-      document.getElementById('id_regions').value = entries.get('regions') || '';
-      document.getElementById('id_name').value = entries.get('name') || '';
-    }())
-        </script>
+        <script id="prefill-map" type="application/json">{"id_regions": "{{ request.GET.regions }}", "id_name": "{{ request.GET.name }}"}</script>
+        <script src="{% static 'admin/js/prefill-admin.js' %}"></script>
     {% endif %}
 {% endblock %}
