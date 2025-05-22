@@ -62,7 +62,7 @@ colorama==0.4.6 ; sys_platform == 'win32'
     #   qrcode
 cron-descriptor==1.4.5
     # via django-celery-beat
-cryptography==43.0.1
+cryptography==44.0.1
     # via
     #   fido2
     #   jwcrypto
