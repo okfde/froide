@@ -402,7 +402,7 @@ rpds-py==0.20.0
     #   referencing
 ruff==0.9.3
     # via froide (pyproject.toml)
-setuptools==74.1.2
+setuptools==77.0.3
     # via geoip2
 six==1.16.0
     # via

@@ -94,7 +94,7 @@ test = [
 ]
 
 [build-system]
-requires = ["setuptools>=74"]
+requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.uv.pip]
