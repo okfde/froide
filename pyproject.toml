@@ -15,7 +15,6 @@ classifiers = [
 ]
 version = "5.0.0"
 dependencies = [
-  "bleach",
   "celery>=5.2.2",
   "channels==4.0.0",
   "dj-database-url",
