@@ -7,11 +7,10 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, Value, When
 from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars_html
-from django.utils.html import format_html
+from django.utils.html import Urlizer, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
 
-import bleach
 from django_comments import get_model
 
 from froide.helper.text_diff import mark_differences
@@ -224,25 +223,35 @@ def redact_subject(message, request):
 MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 
-def urlizetrunc_no_mail(content: SafeString, chars, **kwargs) -> SafeString:
+class CustomNonEmailUrlizer(Urlizer):
+    url_template = '<a href="{href}" rel="nofollow noopener" class="urlized">{url}</a>'
+
+    @staticmethod
+    def is_email_simple(value):
+        # Do not link emails
+        return False
+
+
+custom_urlizer = CustomNonEmailUrlizer()
+
+
+def urlizetrunc_no_mail(
+    content: SafeString, limit: int, autoescape: bool = True
+) -> SafeString:
     """
-    Transform urls in the text to proper links, marking them with the `data-urlized` attribute
+    Transform urls in the text to proper links, marking them with the `urlized` class
 
     This will not create mailto links, as they make it too easy to accidentally
     reply with your own email client.
     """
 
-    def mark_as_urlized(attrs, new=False):
-        attrs[(None, "class")] = "urlized"
-        return attrs
-
-    result = bleach.linkify(
-        content,
-        parse_email=False,
-        callbacks=[bleach.callbacks.nofollow, mark_as_urlized],
+    content = mark_safe(
+        custom_urlizer(
+            content, trim_url_limit=limit, nofollow=True, autoescape=autoescape
+        )
     )
 
-    return mark_safe(result)
+    return content
 
 
 def mark_redacted(original="", redacted="", authenticated_read=False) -> SafeString:

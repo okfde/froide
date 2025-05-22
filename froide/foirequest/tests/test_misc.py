@@ -277,8 +277,18 @@ class RenderMessageContentTest(TestCase):
         self.assertEqual(render_message_content(msg), expected)
 
     def test_escapes_a_tag(self):
+        # Contained URL will not be urlized because it is not detected in the quotes
         plaintext = '<a href="https://example.com">test</a>'
-        expected = '&lt;a href="<a href="https://example.com" rel="nofollow" class="urlized" >https://example.com</a>"&gt;test&lt;/a&gt;'
+        expected = " &lt;a href=&quot;https://example.com&quot;&gt;test&lt;/a&gt;"
+
+        msg = factories.FoiMessageFactory.create(
+            request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
+        )
+        self.assertHTMLEqual(render_message_content(msg), expected)
+
+    def test_renders_clickable_urls(self):
+        plaintext = ">> https://example.com <<"
+        expected = ' &gt;&gt; <a class="urlized" href="https://example.com" rel="nofollow noopener">https://example.com</a> &lt;&lt;'
 
         msg = factories.FoiMessageFactory.create(
             request=self.req, plaintext=plaintext, plaintext_redacted=plaintext
