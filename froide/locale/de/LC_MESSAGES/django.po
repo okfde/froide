@@ -4441,6 +4441,7 @@ msgstr "Aktuell kein Projekt ausgewählt."
 #: froide/helper/templates/helper/search/multi_search.html
 #: froide/helper/templates/helper/search/search_base.html
 #: froide/publicbody/widgets.py froide/templates/header.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Search"
 msgstr "Suchen"
 
@@ -7721,10 +7722,12 @@ msgid "A sent letter was successfully added!"
 msgstr "Ein gesendeter Brief wurde hinzugefügt!"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
@@ -7733,28 +7736,34 @@ msgid "Search for public authorities"
 msgstr "Suchen Sie nach Behörden"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Examples:"
 msgstr "Beispiele:"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Environment"
 msgstr "Umwelt"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Ministry of Labour"
 msgstr "Bundesministerium für Arbeit"
 
 #: froide/foirequest/views/message.py
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html
 #: froide/publicbody/widgets.py froide/templates/snippets/homepage_hero.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "or"
 msgstr "oder"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "No Public Bodies found for this query."
 msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
