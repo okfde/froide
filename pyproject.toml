@@ -1,8 +1,8 @@
 [project]
 name = "froide"
 readme = "README.md"
-license = { file = "LICENSE.txt" }
-requires-python = ">=3.10"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.12"
 description = "German Freedom of Information Portal"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
