@@ -48,7 +48,8 @@ const {
     ...props.config.urls
   },
   csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
-  i18n
+  i18n,
+  defaultSelected: true
 })
 
 const { isDesktop } = useIsDesktop()
@@ -386,7 +387,11 @@ const pdfRedactionUploaded = () => {
 
 /* --- state machine, functionality --- */
 
-const firstStep = STEP_INTRO
+const isEmailResponse = (props.message.kind === 'email' && props.message.is_response)
+
+const firstStep = isEmailResponse
+  ? STEP_INTRO_EMAIL
+  : STEP_INTRO
 const stepHistory = reactive([firstStep])
 const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
@@ -427,6 +432,7 @@ const isGotoValid = computed(() => {
 
 // vuex mutation style constants/"symbols"
 const STEP_INTRO = 'STEP_INTRO' // 1100
+const STEP_INTRO_EMAIL = 'STEP_INTRO_EMAIL'
 const STEP_DOCUMENTS_CONVERT = 'STEP_DOCUMENTS_CONVERT' // 1201
 const STEP_DOCUMENTS_SORT = 'STEP_DOCUMENTS_SORT' // 1201
 const STEP_DOCUMENTS_CONVERT_PDF = 'STEP_DOCUMENTS_CONVERT_PDF' // 1202
@@ -450,10 +456,10 @@ const stepsConfig = {
   [STEP_INTRO]: {
     next: () => {
       if (attachments.images.length) {
-        return STEP_DOCUMENTS_SORT
+        return STEP_DOCUMENTS_SORT // dot:label="has images"
       }
       if (attachments.convertable.length > 0) {
-        return STEP_DOCUMENTS_CONVERT
+        return STEP_DOCUMENTS_CONVERT // dot:label="has convertables"
       }
       console.log('uploads were documents, not images, passing by image sorting')
       return STEP_DOCUMENTS_OVERVIEW
@@ -463,8 +469,26 @@ const stepsConfig = {
       mobileHeaderTitle: i18n.value.addLetter
     }
   },
+  [STEP_INTRO_EMAIL]: {
+    next: () => {
+      if (attachments.convertable.length > 0) {
+        return STEP_DOCUMENTS_CONVERT // dot:style=dotted
+      }
+      console.log('uploads were documents, not images, passing by image sorting')
+      return STEP_REDACTION_REDACT // dot:style=dotted
+    },
+    context: {
+      // TODO
+      progressStep: 0,
+      mobileHeaderTitle: 'Neue Antwort der Behöde' // i18n.value.addLetter TODO
+    }
+  },
   [STEP_DOCUMENTS_CONVERT]: {
-    next: STEP_DOCUMENTS_OVERVIEW,
+    next: () => {
+      return isEmailResponse
+        ? STEP_REDACTION_REDACT // dot:style=dotted
+        : STEP_DOCUMENTS_OVERVIEW
+    },
     onEnter: () => {
       guardBeforeunload(true)
     },
@@ -488,7 +512,11 @@ const stepsConfig = {
     }
   },
   [STEP_DOCUMENTS_CONVERT_PDF]: {
-    next: STEP_DOCUMENTS_OVERVIEW,
+    next: () => {
+      return isEmailResponse
+        ? STEP_REDACTION_REDACT
+        : STEP_DOCUMENTS_OVERVIEW
+    },
     context: {
       progressStep: 0,
       mobileHeaderTitle: i18n.value.letterUploadOrScan
@@ -497,6 +525,7 @@ const stepsConfig = {
   [STEP_DOCUMENTS_OVERVIEW]: {
     next: STEP_MESSAGE_SENT_OR_RECEIVED,
     onEnter: () => {
+      guardBeforeunload(true)
       pdfRedactionUploaded()
     },
     context: {
@@ -566,9 +595,10 @@ const stepsConfig = {
   [STEP_MESSAGE_STATUS]: {
     next: () => {
       if (!isDesktop.value && requestIsResolved.value)
-        return STEP_MESSAGE_MESSAGE_RESOLUTION
+        return STEP_MESSAGE_MESSAGE_RESOLUTION // dot:label="mobile&unresolved"
       // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
-      if (!values.is_response) return STEP_REDACTION_PICKER
+      // if is not response, can't have cost, so skip over the cost flow
+      if (!values.is_response && !isEmailResponse) return STEP_REDACTION_PICKER // dot:label="no cost"
       return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
@@ -589,7 +619,7 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
     next: () => {
-      if (values.is_reponse) return STEP_REDACTION_PICKER
+      if (!values.is_response && !isEmailResponse) return STEP_REDACTION_PICKER // dot:label="no cost"
       return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
@@ -604,7 +634,9 @@ const stepsConfig = {
     next: () => {
       if (!isDesktop.value && requestUpdateCosts.value)
         return STEP_MESSAGE_COST_UPDATE
-      return STEP_REDACTION_PICKER
+      return isEmailResponse
+        ? STEP_DOCUMENTS_OVERVIEW_REDACTED // dot:style=dotted
+        : STEP_REDACTION_PICKER
     },
     context: {
       progressStep: 1,
@@ -615,7 +647,9 @@ const stepsConfig = {
     next: () => {
       if (!isDesktop.value && requestUpdateCosts.value)
         return STEP_MESSAGE_COST_UPDATE
-      return STEP_REDACTION_PICKER
+      return isEmailResponse
+        ? STEP_DOCUMENTS_OVERVIEW_REDACTED // dot:style=dotted
+        : STEP_REDACTION_PICKER
     },
     context: {
       progressStep: 1,
@@ -627,7 +661,11 @@ const stepsConfig = {
     }
   },
   [STEP_MESSAGE_COST_UPDATE]: {
-    next: STEP_REDACTION_PICKER,
+    next: () => {
+      return isEmailResponse
+        ? STEP_DOCUMENTS_OVERVIEW_REDACTED // dot:style=dotted
+        : STEP_REDACTION_PICKER
+    },
     onEnter: () => {
       updateValidity('costs')
     },
@@ -659,7 +697,9 @@ const stepsConfig = {
       ) {
         return STEP_REDACTION_REDACT
       }
-      return STEP_DOCUMENTS_OVERVIEW_REDACTED
+      return isEmailResponse
+        ? STEP_MESSAGE_STATUS // dot:style=dotted
+        : STEP_DOCUMENTS_OVERVIEW_REDACTED
     },
     context: {
       progressStep: 2,
@@ -710,13 +750,14 @@ const stepsConfigVisualize = (c) =>
     .map((state) => `  "${state}";\n`)
     .join('') +
   Object.keys(c)
-    .map((from) =>
-      c[from].next
-        .toString()
-        .match(/\bSTEP_\w+/g)
-        .map((to) => `  "${from}" -> "${to}";\n`)
+    .map((fromState) => {
+      const nextSourcecode = c[fromState].next.toString()
+      // match all STEP_* with optional "dot edge tag" in a comment, like so:
+      // some.code(); return STEP_FOO; // dot:key="attr"
+      return [...nextSourcecode.matchAll(/\b(STEP_\w+)(?:.*\/\/.*dot:(.*))?/g)]
+        .map(([, toState, dotEdgeTag]) => `  "${fromState}" -> "${toState}" [${dotEdgeTag || ''}];\n`)
         .join('')
-    )
+      })
     .join('') +
   '}\n' +
   'eot\n'
@@ -781,7 +822,7 @@ addEventListener('hashchange', () => {
         >← <u>{{ i18n.cancel }}</u></a
       >
     </div>
-    <div v-else-if="step !== STEP_OUTRO" class="my-3">
+    <div v-else-if="![STEP_OUTRO, STEP_INTRO_EMAIL].includes(step)" class="my-3">
       <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
         >← <u>{{ i18n.back }}</u></a
       >
@@ -945,6 +986,21 @@ addEventListener('hashchange', () => {
                 i18n._('newLinkOldFlow', { url: config.url.legacyPostupload })
               "
             ></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-show="step === STEP_INTRO_EMAIL" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="row my-5 justify-content-center">
+            MOBILE INTRO
+            <div>
+              all {{ attachments.all.length }}
+              convertable {{ attachments.convertable.length }}
+              images {{ attachments.images.length }}
+            </div>
+            <pre>{{ JSON.stringify(props.message, false, 2) }}</pre>
           </div>
         </div>
       </div>
@@ -1607,6 +1663,21 @@ addEventListener('hashchange', () => {
             <div class="mt-2" v-if="attachments.all.length > 0 || attachments.images.length > 0">
               <small>
                 {{ i18n._('uploadedFilesHint', { amount: attachments.all.length + attachments.images.length }) }}
+              </small>
+            </div>
+          </template>
+          <template v-else-if="step === STEP_INTRO_EMAIL">
+            <button
+              type="button"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
+              Anhänge lesen und schwärzen {{ i18n.attachmentsReadAndRedactTODO }}
+            </button>
+            <div class="mt-2" v-if="attachments.convertable.length > 0">
+              <small>
+                Es sind Bilddateien angehängt - im nächsten Schritt können diese in PDFs konvertiert werden.
+                {{ i18n.TODO }}
               </small>
             </div>
           </template>

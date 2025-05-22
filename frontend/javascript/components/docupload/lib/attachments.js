@@ -45,6 +45,7 @@ const convertImage = (imageIndex) => {
       store.images = store.images.filter((_, i) => i !== imageIndex)
       // append new
       store.allRaw.push(newAttachment)
+      maybeSelectNewRedactableAttachments()
     })
     .finally(() => {
       store.isConverting = false
@@ -106,17 +107,31 @@ const fetchPagedObjects = (nextUrl, pageCb) => {
 
 }
 
+const maybeSelectNewRedactableAttachments = () => {
+  console.log('## maybeSel', config)
+  if (!config.defaultSelected) return
+  console.log('## maybeSel 2')
+  store.redactable.forEach(att => {
+    if (!store.seenIds.has(att.id)) {
+      store.seenIds.add(att.id)
+      store.selectedIds.add(att.id)
+    }
+  })
+}
+
 const fetchAttachments = (messageId) => {
   store.isFetching = true
   return attachmentList({ query: { belongs_to: messageId }, throwOnError: true })
     .then((response) => {
       store.$patch({ allRaw: response.data.objects }) //.filter(_ => !_.is_image) })
+      maybeSelectNewRedactableAttachments()
       // store.$patch({ images: response.data.objects.filter(_ => _.is_image) })
       if (response.data.meta.next) {
         return fetchPagedObjects(
           response.data.meta.next,
           (objects) => {
             store.allRaw.push(...objects) // .filter(_ => !_.is_image))
+            maybeSelectNewRedactableAttachments()
             // store.images.push(...objects.filter(_ => _.is_image))
           }
         )
@@ -156,6 +171,7 @@ const addOrReplaceAttachment = (attachment) => {
   const index = store.allRaw.findIndex(att => att.id === attachment.id)
   if (index === -1) {
     store.allRaw.push(attachment)
+    maybeSelectNewRedactableAttachments()
   } else {
     store.allRaw[index] = attachment
   }
@@ -213,6 +229,7 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
         store.addImages([att], { imageDefaultFilename })
       } else {
         store.allRaw.push({ ...att, new: true })
+        maybeSelectNewRedactableAttachments()
       }
     })
     .then(() => {
@@ -313,7 +330,7 @@ const getRedactUrl = (attachment) => {
   return config.urls.redactAttachment.replace('/0/', `/${attachment.id}/`)
 }
 
-export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
+export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null, defaultSelected = false } = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
   // like <post-upload> and <attachment-manager>
@@ -322,6 +339,8 @@ export function useAttachments({ message = null, urls = null, csrfToken = null, 
   if (urls) config.urls = urls
   if (csrfToken) config.csrfToken = csrfToken
   if (i18n) config.i18n = i18n
+  // note that if this is set, it can not be unset by later calls to useAttachments
+  if (defaultSelected) config.defaultSelected = true
   return {
     pinia,
     attachments: store,
