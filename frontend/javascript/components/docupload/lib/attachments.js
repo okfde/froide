@@ -313,7 +313,7 @@ const getRedactUrl = (attachment) => {
   return config.urls.redactAttachment.replace('/0/', `/${attachment.id}/`)
 }
 
-export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
+export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null } = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
   // like <post-upload> and <attachment-manager>
