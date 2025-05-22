@@ -129,16 +129,16 @@ fetchImage()
         class="btn btn-link btn-sm text-body-secondary small"
         type="button"
         @click="rotatePage(page)">
-        <span class="fa fa-rotate-right" />
-        <span class="sr-only">{{ i18n.rotatePage }}</span>
+        <span class="fa fa-rotate-right" aria-hidden="true" />
+        <span class="visually-hidden">{{ i18n.rotatePage }}</span>
       </button>
       <button
         v-if="showSplit && !isLast"
         class="btn btn-link btn-sm text-body-secondary small ms-auto"
         type="button"
         @click="splitPages(idx, pageNum)">
-        <span class="fa fa-scissors" />
-        <span class="sr-only">{{ i18n.splitPagesHere }}</span>
+        <span class="fa fa-scissors" aria-hidden="true" />
+        <span class="visually-hidden">{{ i18n.splitPagesHere }}</span>
       </button>
     </div>
     <div

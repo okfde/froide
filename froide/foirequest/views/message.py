@@ -16,13 +16,14 @@ from django.views.decorators.http import require_POST
 from filingcabinet.views import get_js_config
 
 from froide.foirequest.auth import can_read_foirequest
+from froide.foirequest.models.request import Resolution, Status
 from froide.foirequest.utils import redact_plaintext_with_request
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import is_crew
 from froide.helper.content_urls import get_content_url
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
-from froide.helper.utils import is_ajax, is_fetch, render_400, render_403
+from froide.helper.utils import is_ajax, render_400, render_403
 from froide.proof.forms import handle_proof_form
 from froide.upload.forms import get_uppy_i18n
 
@@ -35,7 +36,6 @@ from ..decorators import (
 )
 from ..forms import (
     EditMessageForm,
-    PostalEditForm,
     PostalUploadForm,
     RedactMessageForm,
     TransferUploadForm,
@@ -181,48 +181,6 @@ def edit_postal_message(request, foirequest, message_id):
     )
     if not message.can_edit:
         return render_400(request)
-    form = PostalEditForm(
-        data=request.POST,
-        foirequest=foirequest,
-        message=message,
-        user=request.user,  # needs to be request user for upload ident
-    )
-    status_form = foirequest.get_status_form(data=request.POST)
-    if request.method == "POST":
-        if form.is_valid():
-            message.is_draft = False
-            message = form.save()
-
-            if status_form.is_valid():
-                status_form.save()
-
-            if message.is_response:
-                signal = FoiRequest.message_received
-                success_message = _("A postal reply was successfully added!")
-            else:
-                signal = FoiRequest.message_sent
-                success_message = _("A sent letter was successfully added!")
-
-            signal.send(sender=foirequest, message=message, user=request.user)
-
-            if is_fetch(request):
-                return JsonResponse({"success": 1})
-
-            messages.add_message(request, messages.SUCCESS, success_message)
-            url = reverse(
-                # after a successfully saved form, redirect to request
-                "foirequest-show",
-                kwargs={"slug": foirequest.slug},
-            )
-            return redirect(url)
-        else:
-            if is_fetch(request):
-                return JsonResponse({"errors": form._errors})
-            messages.add_message(
-                request,
-                messages.ERROR,
-                _("There were errors with your form submission!"),
-            )
     filingcabinet_js_config = get_js_config(request)
     ctx = {
         "settings": {
@@ -323,6 +281,7 @@ def edit_postal_message(request, foirequest, message_id):
             "documentTitlePlaceholder": _("e.g. Letter from date"),
             "showIrrelevantAttachments": _("Show irrelevant attachments"),
             "makeRelevant": _("Make relevant"),
+            "makePublic": pgettext("Attachment manager", "Make public"),
             "pending": _("Processing…"),
             "loading": _("Loading..."),
             "description": _("Description"),
@@ -348,6 +307,7 @@ def edit_postal_message(request, foirequest, message_id):
                 "Are you sure you want to mark the selected attachments as result?"
             ),
             "displayAsTable": _("Display as table"),
+            "displayAsCards": _("Display as icons"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
@@ -392,12 +352,17 @@ def edit_postal_message(request, foirequest, message_id):
             "documentsUploadDefaultFilename": _("letter.pdf"),
             "addLetter": _("Add letter"),
             "letterUploadOrScan": _("Upload or scan letter"),
+            "messageReceivedLetter": _("I have received the letter"),
+            "messageSentLetter": _("I have sent the letter"),
             "enterInformation": _("Enter information"),
             "preview": _("Preview"),
             "scanDocuments": _("Scan documents"),
             "scanDocumentsAddendum": _("Use your phone's camera to create a PDF "),
             "uploadFiles": _("Upload files"),
             "uploadFilesAddendum": _("If you have the letter as PDF already"),
+            "uploadedFilesHint": _(
+                "${amount} files and documents are being worked on."
+            ),
             "redactLaterHint1": _(
                 "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
             ),
@@ -409,6 +374,9 @@ def edit_postal_message(request, foirequest, message_id):
             ),
             "newWarning": _("We have redone this part of the app."),
             "documentsDragOrder": _("Drag the documents in the right order"),
+            "documentsConvertIrrelevant": _(
+                "Mark image attachments as important to convert them into PDFs."
+            ),
             "documentsFromImages": _("We will convert your images into a PDF"),
             "changeFilename": _("Change filename"),
             "documentsAvailable": _("Documents available so far"),
@@ -453,7 +421,7 @@ def edit_postal_message(request, foirequest, message_id):
             "messageCost": _("How much compensation does the public body demand?"),
             "messageCostCheck": _("Did the public body demand compensation?"),
             "messageCostCheckLast": _(
-                "You have noted that the public body had demanded compensation to the amount of €${amount}.<br/>Is this amount still correct?"
+                "You have noted that the public body had demanded compensation to the amount of ${amount}.<br/>Is this amount still correct?"
             ),
             "redactionPick": _("Which documents do you want to redact?"),
             "redactionInfo": _(
@@ -475,7 +443,6 @@ def edit_postal_message(request, foirequest, message_id):
             "redactionDone": _("I have finished redacting"),
             "redactionCheck": _("Important: Have you checked all pages?"),
             "confirm": _("Confirm"),
-            "formHasErrors": _("The form has errors"),
             "requestNonPublicHint": _(
                 "Your request is not public at the moment. The documents will not be public, either."
             ),
@@ -483,6 +450,7 @@ def edit_postal_message(request, foirequest, message_id):
             "doneSorting": _("Done sorting"),
             "createPdf": _("Create PDF"),
             "documentsApproveLater": _("Uncheck to leave unpublished for now"),
+            "selection": _("Selection…"),
             "deleteSelected": _("Delete selected"),
             "markResultSelected": _("Mark selected as result"),
             "approveSelected": _("Approve selected"),
@@ -505,6 +473,13 @@ def edit_postal_message(request, foirequest, message_id):
             "error": _("Error"),
             "genericErrorReload": _("Error! Try to reload the page?"),
             "attachmentDeleted": _("an attachment was deleted"),
+            "yes": _("Yes."),
+            "no": _("No."),
+            "noDifferentPublicBody": _("No, pick different public body."),
+            "questionOf": _("Question {current} of {total}").format(
+                current="${current}", total="${total}"
+            ),
+            "backToSubmit": _("Back to submit"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
@@ -522,44 +497,14 @@ def edit_postal_message(request, foirequest, message_id):
             "makeRequestTo": reverse(
                 "foirequest-make_request", kwargs={"publicbody_ids": "0"}
             ),
-            # from upload_attachments() TODO: might not need all
-            "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
-            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
+            # from upload_attachments()
             "convertAttachments": reverse(
                 "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
-            "addAttachment": reverse(
-                "foirequest-add_postal_reply_attachment",
                 kwargs={"slug": foirequest.slug, "message_id": message.id},
             ),
             "redactAttachment": reverse(
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "approveAttachment": reverse(
-                "foirequest-approve_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "deleteAttachment": reverse(
-                "foirequest-delete_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "createDocument": reverse(
-                "foirequest-create_document",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            # from views/attachment for <pdf-redaction>
-            "publishUrl": reverse(
-                "foirequest-approve_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},  # attachment.pk},
-            ),
-            "messageUpload": reverse(
-                "foirequest-manage_attachments",
-                kwargs={
-                    "slug": foirequest.slug,
-                    "message_id": 0,  # attachment.belongs_to_id,
-                },
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
@@ -578,33 +523,47 @@ def edit_postal_message(request, foirequest, message_id):
         },
     }
     ctx["i18n"] = ctx["i18n"] | filingcabinet_js_config["i18n"]
+    # somehow leverage/adapt form_utils JSONMixin ?
+    # another way to get this sans forms would be client-side:
+    #   import { ResolutionEnum } from '../../api/index.ts'
+    # but that has no i18n...
+    schemas = {
+        "resolution_choices": [
+            {"value": str(x[0]), "label": str(x[1])} for x in Resolution.choices
+        ],
+        # we don't use label here, could be almost hard coded...
+        "status_choices": [
+            {"value": str(x[0]), "label": str(x[1])}
+            for x in Status.choices
+            if x[0] in [Status.AWAITING_RESPONSE, Status.RESOLVED]
+        ],
+    }
     return render(
         request,
         "foirequest/upload_postal_message_new.html",
         {
+            "message_id": message_id,
             "object": foirequest,
-            "object_public_body_id": foirequest.public_body_id,
-            "object_public_body": {
-                "id": foirequest.public_body.id,
-                "name": foirequest.public_body.name,
-            },
-            "object_public_body_json": json.dumps(
+            "foirequest_json": json.dumps(
                 {
-                    "id": foirequest.public_body.id,
-                    "name": foirequest.public_body.name,
+                    "id": foirequest.id,
+                    "url": foirequest.url,
+                    "public_body": {
+                        "id": foirequest.public_body.id,
+                        "name": foirequest.public_body.name,
+                    },
+                    "public": foirequest.public,
                 }
             ),
             "date_max": timezone.localdate().isoformat(),
             "date_min": foirequest.created_at.date().isoformat(),
-            "object_public_json": json.dumps(foirequest.public),
             "user_is_staff": json.dumps(request.user.is_staff),
-            "form": form,
+            "schemas_json": json.dumps(schemas),
             "message_json": "null"
             if message is None
             else json.dumps(
                 FoiMessageSerializer(message, context={"request": request}).data
             ),
-            "status_form": status_form,
             "config_json": json.dumps(ctx),
         },
     )
@@ -613,6 +572,7 @@ def edit_postal_message(request, foirequest, message_id):
 # TODO: remove in favor of API endpoint
 @allow_write_foirequest
 def upload_postal_message(request, foirequest):
+    # todo clean up here?
     if request.method == "POST":
         form = PostalUploadForm(
             data=request.POST,
@@ -817,33 +777,15 @@ def upload_attachments(request, foirequest, message_id):
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
         },
         "url": {
-            "getMessage": reverse("api:message-detail", kwargs={"pk": message.id}),
-            "getAttachment": reverse("api:attachment-detail", kwargs={"pk": 0}),
             "convertAttachments": reverse(
                 "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
-            "addAttachment": reverse(
-                "foirequest-add_postal_reply_attachment",
                 kwargs={"slug": foirequest.slug, "message_id": message.id},
             ),
             "redactAttachment": reverse(
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
-            "approveAttachment": reverse(
-                "foirequest-approve_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
-            "deleteAttachment": reverse(
-                "foirequest-delete_attachment",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
             "tusEndpoint": reverse("api:upload-list"),
-            "createDocument": reverse(
-                "foirequest-create_document",
-                kwargs={"slug": foirequest.slug, "attachment_id": 0},
-            ),
             "helpAttachmentsManagement": get_content_url("help_attachments_management"),
         },
         # "urls" (plural) is used exclusively by the document-viewer component
@@ -876,6 +818,7 @@ def upload_attachments(request, foirequest, message_id):
             "documentTitle": _("Document title"),
             "documentTitleHelp": _("Give this document a proper title"),
             "documentTitlePlaceholder": _("e.g. Letter from date"),
+            "documentsUploadDefaultFilename": _("letter.pdf"),
             "showIrrelevantAttachments": _("Show irrelevant attachments"),
             "makeRelevant": _("Make relevant"),
             "makePublic": pgettext("Attachment manager", "Make public"),
@@ -906,6 +849,7 @@ def upload_attachments(request, foirequest, message_id):
                 "Are you sure you want to mark the selected attachments as result?"
             ),
             "displayAsTable": _("Display as table"),
+            "displayAsCards": _("Display as icons"),
             "protectedOriginal": _("protected original"),
             "protectedOriginalExplanation": _(
                 "This attachment has been converted to PDF and cannot be published."
@@ -919,6 +863,7 @@ def upload_attachments(request, foirequest, message_id):
             ),
             "selectAll": _("Select all"),
             "selectNone": _("Select none"),
+            "selection": _("Selection…"),
             "deleteSelected": _("Delete selected"),
             "markResultSelected": _("Mark selected as result"),
             "approveSelected": _("Approve selected"),
