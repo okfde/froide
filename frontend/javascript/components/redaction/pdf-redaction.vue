@@ -564,7 +564,7 @@ export default {
       this.tool = altKey ? 'move' : 'paint'
     }
   },
-  created() {
+  async created() {
     import('pdfjs-dist')
       .then((PDFJS) => {
         this.PDFJS = PDFJS
@@ -575,7 +575,7 @@ export default {
       .catch((err) => {
         console.log(err)
       })
-    this.attachment = fetchAttachment(this.attachmentId)
+    this.attachment = await fetchAttachment(this.attachmentId)
   },
   mounted() {
     document.addEventListener('keydown', this.setAltKey)
