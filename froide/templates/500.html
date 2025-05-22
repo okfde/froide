@@ -10,5 +10,5 @@
     {% blocktrans with ref=request.sentry.id %}We logged the error and are working on fixing it. If you need to contact us, please use the reference <code>{{ ref }}</code>.{% endblocktrans %}
 {% endblock error_description %}
 {% block scripts %}
-    <script rel="stylesheet" href="{% static 'main.js' %}"></script>
+    <script src="{% static 'main.js' %}"></script>
 {% endblock scripts %}
