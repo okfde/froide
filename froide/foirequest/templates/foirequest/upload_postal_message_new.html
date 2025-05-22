@@ -4,6 +4,8 @@
 {% load block_helper %}
 {% load frontendbuild %}
 {% load form_helper %}
+{% load content_helper %}
+{% load foirequest_tags %}
 {% block title %}
     {% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}
 {% endblock title %}
@@ -19,10 +21,14 @@
     <form name="postupload" class="d-flex flex-col flex-grow-1">
         {% csrf_token %}
         {# mw-100 crucial for pdf-redaction's dynamic maxWidth calculations #}
-        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}" :currency="{{ froide.currency }}">
+        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}" :message_timestamp_relative="{{ message.timestamp|relativetime }}" :message_timestamp_local="{{ message.timestamp }}" :currency="{{ froide.currency }}">
         <template data-slot="redaction_explanation">
             {% include "foirequest/snippets/redaction_explanation.html" %}
         </template>
+        {# TODO if kind=Email, if message.plaintext... #}
+        {# avoid whitespace, since this will be pre-wrap. spaceless didn't work... #}
+        <template data-slot="message_subject_redacted">{% redact_subject message request %}</template>
+        <template data-slot="message_content_redacted">{% redact_message message request %}</template>
         </post-upload>
     </form>
 {% endblock body %}

@@ -10,6 +10,7 @@ const useAttachmentsStore = defineStore('attachments', {
     isFetching: false,
     allRaw: [],
     images: [],
+    selectedOnceIds: new Set,
     selectedIds: new Set,
     approvingIds: new Set,
     availableIds: new Set,
@@ -44,7 +45,7 @@ const useAttachmentsStore = defineStore('attachments', {
       return this.all.filter((d) => d.canRedact)
     },
     redactNudgable() {
-      return this.all.filter((d) => d.canRedact && !d.is_redacted && !d.redacted)
+      return this.all.filter((d) => d.canRedact && !d.is_redacted && !d.redacted && !d.approved)
     },
     convertable() {
       return this.all.filter((d) => (d.is_irrelevant || d.is_image) && !d.converted)
@@ -106,6 +107,14 @@ const useAttachmentsStore = defineStore('attachments', {
     },
     unselectSubset(subset) {
       subset.forEach(_ => this.selectedIds.delete(_.id))
+    },
+    selectAllNewRedactableAttachments() {
+      this.redactable.forEach(att => {
+        if (!this.selectedOnceIds.has(att.id)) {
+          this.selectedOnceIds.add(att.id)
+          this.selectedIds.add(att.id)
+        }
+      })
     }
   }
 })
