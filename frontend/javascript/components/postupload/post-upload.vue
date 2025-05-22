@@ -1417,7 +1417,7 @@ addEventListener('hashchange', () => {
           DEBUG: pdfRedactionCurrentIndex= {{ pdfRedactionCurrentIndex }}
         </div>
         <PdfRedaction
-          :class="pdf - redaction - tool"
+          class="pdf-redaction-tool"
           v-if="pdfRedactionCurrentDoc"
           :key="pdfRedactionCurrentDoc.id"
           :pdf-path="pdfRedactionCurrentDoc.file_url"
