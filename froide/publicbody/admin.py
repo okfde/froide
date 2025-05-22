@@ -395,13 +395,11 @@ class PublicBodyBaseAdminMixin:
             "media": self.media,
             "applabel": opts.app_label,
             "no_regions": queryset.filter(regions=None),
-            "regions": json.dumps(
-                {
-                    reg.id: pb.id
-                    for pb in queryset.exclude(regions=None)
-                    for reg in pb.regions.all()
-                }
-            ),
+            "regions": {
+                reg.id: pb.id
+                for pb in queryset.exclude(regions=None)
+                for reg in pb.regions.all()
+            },
         }
 
         # Display the confirmation page
