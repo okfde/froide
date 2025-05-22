@@ -13,7 +13,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Utilities",
 ]
-version = "5.0.0"
+version = "6.0.0"
 dependencies = [
   "celery>=5.5.2",
   "channels>=4.2.2",
