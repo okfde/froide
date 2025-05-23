@@ -76,6 +76,7 @@ class Base(Configuration):
             "rest_framework",
             "drf_spectacular",
             "drf_spectacular_sidecar",
+            "django.forms",
         ]
     )
 
@@ -246,6 +247,7 @@ class Base(Configuration):
             },
         }
     ]
+    FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
     MIDDLEWARE = [
         "django.contrib.sessions.middleware.SessionMiddleware",
