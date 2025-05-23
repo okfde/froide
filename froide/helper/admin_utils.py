@@ -277,12 +277,7 @@ class ForeignKeyFilter(admin.FieldListFilter):
         param = self.field_path
         val = self.used_parameters.pop(param, None)
         if val is not None:
-            if val == "isnull":
-                self.used_parameters["{}__isnull".format(param)] = True
-            elif val == "notnull":
-                self.used_parameters["{}__isnull".format(param)] = False
-            else:
-                self.used_parameters["{}__in".format(param)] = val.split(",")
+            self.used_parameters["{}__in".format(param)] = [val]
 
     def expected_parameters(self):
         return [self.field_path]
