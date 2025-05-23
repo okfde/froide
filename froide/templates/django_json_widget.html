@@ -1,0 +1,11 @@
+{% load static %}
+{# Remove when resolved and released: https://github.com/jmrivas86/django-json-widget/issues/101 #}
+<div {% if not widget.attrs.style %}style="height:{{ widget.height|default:'500px' }};width:{{ widget.width|default:'90%' }};display:inline-block;"{% endif %}
+     {% include "django/forms/widgets/attrs.html" %}></div>
+<textarea data-jsonwidget="true"
+          id="{{widget.attrs.id}}_textarea"
+          name="{{ widget.name }}"
+          required=""
+          style="display: none"></textarea>
+{% with script_id=widget.name|add:"_data" %}{{ widget.value|json_script:script_id }}{% endwith %}
+<script src="{% static 'js/django_json_widget.js' %}"></script>
