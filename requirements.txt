@@ -301,7 +301,7 @@ rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
-setuptools==77.0.3
+setuptools==80.8.0
     # via geoip2
 six==1.16.0
     # via
