@@ -21,5 +21,5 @@
 {% endblock %}
 {% block scripts %}
     {{ block.super }}
-    <script src="{% static 'mfa/fido2.js' %}"></script>
+    <script type="module" src="{% static 'mfa/fido2.js' %}"></script>
 {% endblock %}

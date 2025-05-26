@@ -66,6 +66,6 @@
 {% endblock body %}
 {% block scripts %}
     {{ block.super }}
-    <script src="{% static 'mfa/fido2.js' %}"></script>
+    <script type="module" src="{% static 'mfa/fido2.js' %}"></script>
     <script async src="{% static 'account/mfa.js' %}"></script>
 {% endblock %}
