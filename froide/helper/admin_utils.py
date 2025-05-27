@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.filters import SimpleListFilter
 from django.contrib.admin.options import IncorrectLookupParameters
-from django.contrib.admin.utils import get_model_from_relation, prepare_lookup_value
+from django.contrib.admin.utils import get_model_from_relation
 from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models
@@ -523,7 +523,7 @@ class DateRangeFilter(admin.filters.SimpleListFilter):
         for p in self.expected_parameters():
             if p in params:
                 value = params.pop(p)
-                self.used_parameters[p] = prepare_lookup_value(p, value)
+                self.used_parameters[p] = value[-1]
 
     def lookups(self, request, model_admin):
         return ()
