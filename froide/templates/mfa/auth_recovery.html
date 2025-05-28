@@ -30,9 +30,8 @@
                     {% translate "Use hardware security key" %}
                 </a>
             {% endif %}
-            {% if mfa_keys.by_method.recovery %}
-                <a class="btn btn-outline-secondary"
-                   href="{% url 'mfa:auth' 'recovery' %}">{% translate "Use recovery code" %}</a>
+            {% if mfa_keys.by_method.TOTP %}
+                <a class="btn btn-outline-secondary" href="{% url 'mfa:auth' 'TOTP' %}">{% translate "Use authenticator app" %}</a>
             {% endif %}
         </p>
     </form>
