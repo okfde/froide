@@ -11752,6 +11752,7 @@ msgid "Use authenticator app"
 msgstr "Authentifizierungs-App nutzen"
 
 #: froide/templates/mfa/auth_FIDO2.html froide/templates/mfa/auth_TOTP.html
+#: froide/templates/mfa/auth_recovery.html
 msgid "Use recovery code"
 msgstr "Wiederherstellungs-Code nutzen"
 
