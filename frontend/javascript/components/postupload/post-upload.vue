@@ -84,6 +84,8 @@ const messagePublicBodyIsDefault = ref(true)
 
 const isSubmitting = ref(false)
 
+const pickNotAutoApprove = ref(false)
+
 /* Mobile App Content */
 
 const mobileAppContent = ref(null)
@@ -1311,7 +1313,7 @@ addEventListener('hashchange', () => {
             {{ i18n.redactionInfo }}
           </p>
           <AttachmentsTable :subset="attachments.redactable" table-selection selection-buttons :as-card-threshold="0">
-            <template #after-row="slotProps">
+            <template #after-row="slotProps" v-if="pickNotAutoApprove">
               <label
                 class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1"
               >
@@ -1344,7 +1346,7 @@ addEventListener('hashchange', () => {
                 />
               </label>
             </template>
-            <template #after-card="slotProps">
+            <template #after-card="slotProps" v-if="pickNotAutoApprove">
               <label v-if="!slotProps.attachment.approved" class="text-center">
                 <input
                   type="checkbox"
@@ -1367,18 +1369,37 @@ addEventListener('hashchange', () => {
                 {{ i18n.alreadyPublished }}
               </div>
             </template>
-            <template #after-table>
+            <template #after-table v-if="pickNotAutoApprove">
               <div class="text-end px-2">
                 {{ i18n.documentsApproveLater }}
-                ⮥
+                <span class="fa fa-level-up" aria-hidden="true"></span>
               </div>
             </template>
-            <template #after-cards>
+            <template #after-cards v-if="pickNotAutoApprove">
               <div class="text-end px-2">
                 * {{ i18n.documentsApproveLater }}
               </div>
             </template>
           </AttachmentsTable>
+          <div
+            v-if="props.user_is_staff && props.foirequest.public && !pickNotAutoApprove"
+            class="alert alert-secondary text-center my-3"
+            role="alert"
+            >
+            <p>
+              {{ i18n.publicRequestApproveHint }}
+            </p>
+            <button
+              type="button"
+              role="button"
+              :aria-disabled="pickNotAutoApprove ? 'true' : 'false'"
+              class="btn btn-primary"
+              :class="{ disabled: pickNotAutoApprove }"
+              @click="pickNotAutoApprove = true"
+              >
+              {{ i18n.publicRequestPickNotAutoApprove }}
+            </button>
+          </div>
         </div>
       </div>
     </div>

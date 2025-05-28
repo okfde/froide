@@ -450,6 +450,13 @@ def edit_postal_message(request, foirequest, message_id):
             "doneSorting": _("Done sorting"),
             "createPdf": _("Create PDF"),
             "documentsApproveLater": _("Uncheck to leave unpublished for now"),
+            "alreadyPublished": _("already published"),
+            "publicRequestApproveHint": _(
+                "The request is public, thus all document will be approved."
+            ),
+            "publicRequestPickNotAutoApprove": _(
+                "Pick documents to exclude from approval"
+            ),
             "selection": _("Selection…"),
             "deleteSelected": _("Delete selected"),
             "markResultSelected": _("Mark selected as result"),

@@ -8162,6 +8162,18 @@ msgid "Uncheck to leave unpublished for now"
 msgstr "Deaktivieren um zunächst unveröffentlicht zu lassen"
 
 #: froide/foirequest/views/message.py
+msgid "already published"
+msgstr "bereits veröffentlicht"
+
+#: froide/foirequest/views/message.py
+msgid "The request is public, thus all document will be approved."
+msgstr "Die Anfrage ist öffentlich, die Dokumente werden automatisch veröffentlicht."
+
+#: froide/foirequest/views/message.py
+msgid "Pick documents to exclude from approval"
+msgstr "Bestimmte Dokumente nicht veröffentlichen"
+
+#: froide/foirequest/views/message.py
 #, python-format
 msgid "You added %d document(s) to this message."
 msgstr "Sie haben %d Dokument(e) zu der Nachricht hinzugefügt."
