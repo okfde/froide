@@ -18,12 +18,9 @@ provide('i18n', i18n)
 provide('config', props.config)
 
 const { attachments, addFromUppy, refresh } = useAttachments({
+  message: props.message,
   urls: {
-    ...props.config.url,
-    getAttachment:
-      props.config.url.getAttachment.replace('/0/', '/') +
-      '?belongs_to=' +
-      props.message.id
+    ...props.config.url
   },
   csrfToken,
   i18n
@@ -73,6 +70,7 @@ const onlineHelp = ref()
       table-selection
       selection-action-delete
       selection-action-make-result
+      nudge-redaction
       badges-type
       badges-resolution
     />
@@ -86,6 +84,7 @@ const onlineHelp = ref()
       table-selection
       selection-action-delete
       selection-action-approve
+      nudge-redaction
       badges-type
     />
   </div>

@@ -1,9 +1,12 @@
 <script setup>
 
-import { computed, inject, ref } from 'vue'
+import { computed, inject, ref, nextTick } from 'vue'
+import { useAttachments } from './lib/attachments'
+const { refresh: refreshAttachments } = useAttachments()
 
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentDocumentFields from './attachment-document-fields.vue'
+import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import BsModal from '../bs-modal.vue'
@@ -13,14 +16,36 @@ import DocumentViewer from './document-viewer.vue'
 const i18n = inject('i18n')
 const config = inject('config')
 
-const { attachment, actions, big } = defineProps({
+const { attachment, actions, nudgeRedaction, big } = defineProps({
   attachment: {
     type: Object,
     required: true
   },
   actions: Boolean,
+  nudgeRedaction: Boolean,
   big: Boolean
 })
+
+const pdfRedactionAtt = ref(null)
+const pdfRedactionModal = ref()
+
+const pdfRedactionUploaded = () => {
+  pdfRedactionAtt.value = null
+  refreshAttachments()
+}
+
+const needsRedaction = computed(() =>
+  !attachment.is_irrelevant && !attachment.approved && !attachment.has_redacted && !(attachment.converted && !attachment.is_image) && !attachment.pending
+)
+
+const iconClick = () => {
+  if (needsRedaction.value && nudgeRedaction) {
+    pdfRedactionAtt.value = attachment
+    nextTick().then(() => pdfRedactionModal.value.show())
+  } else {
+    previewModal.value.show()
+  }
+}
 
 const previewModal = ref()
 
@@ -28,10 +53,13 @@ const closePreviewModal = () => {
   previewModal.value.hide()
 }
 
-const iconTooltipTexts = computed(() => [
-  i18n.value.preview,
-  ...attachment.document ? [i18n.value.editTitle, i18n.value.editDescription] : []
-])
+const iconTooltipTexts = computed(() => (needsRedaction.value && nudgeRedaction)
+  ? [i18n.value.redact]
+  : [
+    i18n.value.preview,
+    ...attachment.document ? [i18n.value.editTitle, i18n.value.editDescription] : []
+  ]
+)
 
 </script>
 
@@ -59,7 +87,7 @@ const iconTooltipTexts = computed(() => [
       v-else
       :href="attachment.site_url"
       class="btn btn-link lh-1 d-block p-0 me-2 icon--fa position-relative"
-      @click.prevent="previewModal.show()"
+      @click.prevent="iconClick"
       v-bs-tooltip
       data-bs-toggle="tooltip"
       data-bs-placement="top"
@@ -67,18 +95,27 @@ const iconTooltipTexts = computed(() => [
       :title="iconTooltipTexts.join('\n')"
       :data-bs-title="iconTooltipTexts.join('<br/>')"
       >
-      <i class="fa fa-file" :style="{ fontSize: Size }"></i>
-      <span class="sr-only">
-        {{ i18n.preview }}
+      <i class="fa fa-file" :style="{ fontSize: Size }" aria-hidden="true"></i>
+      <span class="visually-hidden">
+        {{ i18n.preview }}.
       </span>
       <span
         v-if="attachment.document"
         style="font-size: 25%"
         class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary">
-        <i class="fa fa-edit"></i>
-        <span class="sr-only">
-          {{ i18n.editTitle }}<br/>
+        <i class="fa fa-edit" aria-hidden="true"></i>
+        <span class="visually-hidden">
+          {{ i18n.editTitle }},
           {{ i18n.editDescription }}
+        </span>
+      </span>
+      <span
+        v-else-if="needsRedaction && nudgeRedaction"
+        style="font-size: 25%"
+        class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-secondary">
+        <i class="fa fa-paint-brush" aria-hidden="true"></i>
+        <span class="visually-hidden">
+          {{ i18n.redact }}
         </span>
       </span>
     </a>
@@ -157,6 +194,11 @@ const iconTooltipTexts = computed(() => [
         </div>
       </template>
     </BsModal>
+    <PdfRedactionModal
+      ref="pdfRedactionModal"
+      :attachment="pdfRedactionAtt"
+      @uploaded="pdfRedactionUploaded"
+      />
   </div>
 </template>
 
@@ -170,13 +212,12 @@ const iconTooltipTexts = computed(() => [
 }
 
 .icon--image {
-  font-size: 1.5rem;
-  width: 1em;
-  height: 1em;
+  width: 1.5rem;
+  height: 1.5rem;
 
   img {
-    max-width: 1em;
-    max-height: 1em;
+    max-width: 1.5rem;
+    max-height: 1.5rem;
   }
 }
 
@@ -185,14 +226,32 @@ const iconTooltipTexts = computed(() => [
 }
 
 @include media-breakpoint-up(md) {
-  .icon--image,
+  .icon--image {
+    width: 2.5rem;
+    height: 2.5rem;
+
+    img {
+      max-width: 2.5rem;
+      max-height: 2.5rem;
+    }
+  }
+
   .icon--fa {
     font-size: 2.5rem;
   }
 }
 
 .attachment-icon-preview--big {
-  .icon--image,
+  .icon--image {
+    width: 4rem;
+    height: 4rem;
+
+    img {
+      max-width: 4rem;
+      max-height: 4rem;
+    }
+  }
+
   .icon--fa {
     font-size: 4rem;
   }
