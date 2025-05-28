@@ -12507,6 +12507,19 @@ msgstr "Weiteres Dokument scannen"
 msgid "Upload another file"
 msgstr "Weitere Dateien hochladen"
 
+#: froide/foirequest/views/message.py
+msgid "The form has errors"
+msgstr "Das Formular enthält noch Fehler."
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"You have noted that the public body had demanded compensation to the amount "
+"of €${amount}.<br/>Is this amount still correct?"
+msgstr ""
+"Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
+"${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+
 #, python-format
 #~ msgid ""
 #~ "\n"
@@ -12530,9 +12543,6 @@ msgstr "Weitere Dateien hochladen"
 
 #~ msgid "Upload more pictures or PDFs."
 #~ msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
-
-#~ msgid "The form has errors"
-#~ msgstr "Das Formular enthält noch Fehler."
 
 #, python-format
 #~ msgid ""
