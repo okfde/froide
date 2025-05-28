@@ -214,7 +214,7 @@ const retrieveValues = async () => {
     throwOnError: true
   })
   values.is_response = message.is_response
-  values.date = ymdifyDate(message.timestamp)
+  values.date = ymdifyDate(new Date(message.timestamp))
   values.registered_mail_date = message.registered_mail_date
     ? ymdifyDate(message.registered_mail_date)
     : ''
