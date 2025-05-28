@@ -104,23 +104,32 @@ const approveClick = () => {
     {{ i18n.markResult }}
   </button>
   <a
-    v-if="!dropdown && attachment.canRedact"
-    :href="getRedactUrl(attachment)"
+    v-if="!dropdown && unredacted && unredacted.can_redact"
+    :href="getRedactUrl(unredacted)"
+    @click="redactClick($event, unredacted)"
     class="btn btn-sm btn-link text-start"
-    @click="redactClick($event, attachment)"
   >
+    <!-- "restart redaction (from unredacted)" -->
     <i class="fa fa-square"></i>
     {{ i18n.redact }}
   </a>
-  <!-- TODO: this is not really schwärzung bearbeiten, but instead ungeschwärztes original noch mal schwärzen -->
   <a
-    v-if="!dropdown && unredacted && unredacted.can_redact"
-    :href="getRedactUrl(unredacted)"
+    v-if="!dropdown && attachment.canRedact"
+    :href="getRedactUrl(attachment)"
+    @click="redactClick($event, attachment)"
     class="btn btn-sm btn-link text-start"
-    @click="redactClick($event, unredacted)"
   >
-    <i class="fa fa-pencil-square"></i>
-    {{ i18n.editRedaction }}
+    <template v-if="unredacted && unredacted.can_redact">
+      <!-- "continue redaction (keep past redactions)"
+        TODO: not really "edit" because can't undo/remove past redactions -->
+      <i class="fa fa-pencil-square"></i>
+      {{ i18n.editRedaction }}
+    </template>
+    <template v-else>
+      <!-- "start redaction (not redacted yet)" -->
+      <i class="fa fa-square"></i>
+      {{ i18n.redact }}
+    </template>
   </a>
   <button
     v-if="attachment.is_irrelevant"
@@ -209,24 +218,34 @@ const approveClick = () => {
       <i class="fa fa-ellipsis-h"></i>
     </button>
     <ul class="dropdown-menu">
-      <li v-if="attachment.canRedact">
-        <a
-          class="dropdown-item"
-          :href="getRedactUrl(attachment)"
-          @click="redactClick($event, attachment)"
-        >
-          <i class="fa fa-square"></i>
-          {{ i18n.redact }}
-        </a>
-      </li>
       <li v-if="unredacted && unredacted.can_redact">
         <a
           class="dropdown-item"
           :href="getRedactUrl(unredacted)"
           @click="redactClick($event, unredacted)"
         >
-          <i class="fa fa-pencil-square"></i>
-          {{ i18n.editRedaction }}
+          <!-- "restart redaction (from unredacted)" -->
+          <i class="fa fa-square"></i>
+          {{ i18n.redact }}
+        </a>
+      </li>
+      <li v-if="attachment.canRedact">
+        <a
+          class="dropdown-item"
+          :href="getRedactUrl(attachment)"
+          @click="redactClick($event, attachment)"
+        >
+          <template v-if="unredacted && unredacted.can_redact">
+            <!-- "continue redaction (keep past redactions)"
+              TODO: not really "edit" because can't undo/remove past redactions -->
+            <i class="fa fa-pencil-square"></i>
+            {{ i18n.editRedaction }}
+          </template>
+          <template v-else>
+            <!-- "start redaction (not redacted yet)" -->
+            <i class="fa fa-square"></i>
+            {{ i18n.redact }}
+          </template>
         </a>
       </li>
       <li v-if="unredacted">
