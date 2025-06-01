@@ -463,7 +463,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-virtualenv==20.26.4
+virtualenv==20.31.2
     # via pre-commit
 wand==0.6.13
     # via
