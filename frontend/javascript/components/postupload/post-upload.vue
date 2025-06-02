@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, onMounted, provide, reactive, ref } from 'vue'
+import { computed, defineProps, onMounted, provide, reactive, ref, watch } from 'vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from './simple-stepper.vue'
 import PublicbodyChooser from '../publicbody/publicbody-beta-chooser'
@@ -90,7 +90,9 @@ const pickNotAutoApprove = ref(false)
 /* Mobile App Content */
 
 const mobileAppContent = ref(null)
+const showMobileAppContent = ref(false)
 if (props.config.url.mobileAppContent) {
+  showMobileAppContent.value = true
   fetch(props.config.url.mobileAppContent.replace("{}", props.message.id))
     .then((response) => {
       if (!response.ok) {
@@ -106,21 +108,12 @@ if (props.config.url.mobileAppContent) {
 /* Websocket connection */
 
 if (props.config.url.messageWebsocket) {
-  const room = getWebsocketMessageRoom()
-  room.on('attachment_added', (data) => {
-    // When a new attachment is added, refresh the attachments store
-    refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
-      if (!refreshed) {
-        return
-      }
-      if (step.value === STEP_INTRO) {
-        if (fileUploaderShow.value) {
-          console.log('websocket received attachment_added, but file upload had been started on same device, bailing skip')
-          return
-        }
-        gotoStep(STEP_DOCUMENTS_OVERVIEW)
-      }
-    })
+  const room = new Room(props.config.url.messageWebsocket)
+  room.connect().on('attachment_added', (data) => {
+    // When a new attachment is added, refresh the attachments store.
+    // We used to auto-step here, but this proved to error-prone,
+    // 1 click more over potential confusion.
+    refreshAttachmentsIfIdNotPresent(data.attachment)
   })
   // react to changes (when image attachments become available = not pending)
   monitorAttachments()
@@ -332,7 +325,12 @@ const fileUploader = ref()
 const fileUploaderShow = ref(false)
 const fileUploaderUploading = ref(false)
 
+watch(isDesktop, (newValue) => {
+  if (newValue) fileUploaderShow.value = true
+}, { immediate: true })
+
 onMounted(() => {
+  // fileUploaderShow.value = isDesktop.value
   document.body.addEventListener('dragover', () => fileUploaderShow.value = true)
   document.body.addEventListener('dragenter', () => fileUploaderShow.value = true)
 })
@@ -351,7 +349,9 @@ const fileUploaderSucceeded = (uppyResult) => {
 const fileUploaderCompleted = async (uppyResult) => {
   await Promise.all(uppyAdds)
   fileUploaderUploading.value = false
+  fileUploaderShow.value = false
   if (uppyResult.failed?.length > 0) return
+  if (isDesktop.value) return
   gotoStep()
 }
 
@@ -874,70 +874,103 @@ addEventListener('hashchange', () => {
   <div class="step-container">
     <div v-show="step === STEP_INTRO" class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-9">
-          <div class="row my-5 justify-content-center">
-            <!--
-                <div class="col-md-6">
-                  <button disabled class="btn btn-outline-primary d-block w-100">
-                    <i class="fa fa-camera"></i>
-                    {{ i18n.scanDocuments }}
-                  </button>
-                  <p class="mt-1">
-                    {{ i18n.scanDocumentsAddendum }}
-                  </p>
+        <div class="col-lg-12 d-flex flex-column">
+          <div class="row mt-3 mb-5 justify-content-center order-md-2">
+            <div class="col-md-6 order-3 order-md-1"
+              :class="{
+                'col-md-6': showMobileAppContent,
+                'col-md-12': !showMobileAppContent
+              }"
+              >
+              <div v-if="showMobileAppContent" class="mt-3 mb-1 mb-md-3">
+                {{ i18n.uploadFilesAddendum }}:
+              </div>
+              <button
+                type="button"
+                @click="fileUploader.clickFilepick() || (fileUploaderShow = true)"
+                v-if="!isDesktop && !fileUploaderShow"
+                class="btn btn-outline-primary btn-lg d-block w-100 mb-3"
+              >
+                <i class="fa fa-upload fa-2x"></i><br />
+                {{ i18n.uploadFiles }}
+              </button>
+              <div class="d-flex gap-3 row">
+                <!-- on mobile, show the table first so websocket triggers a nice pop-in -->
+                <FileUploader
+                  :config="config"
+                  :allowed-file-types="config.settings.allowed_filetypes"
+                  :auto-proceed="true"
+                  :show-uppy="fileUploaderShow"
+                  ref="fileUploader"
+                  @uploading="fileUploaderUpload"
+                  @upload-success="fileUploaderSucceeded"
+                  @upload-complete="fileUploaderCompleted"
+                  class="order-2 order-md-1"
+                  :class="{
+                    'col-md-6': !showMobileAppContent,
+                    'col-12': showMobileAppContent
+                    }"
+                  />
+                <div class="col order-1 order-md-2"
+                  :class="{
+                    'col-md-6': !showMobileAppContent,
+                    'col-12': showMobileAppContent
+                  }"
+                  >
+                  <AttachmentsTable
+                    v-if="attachments.all.length > 0"
+                    :subset="attachments.all"
+                    badges-type action-delete
+                    dense
+                    >
+                    <template #before-cards>
+                      <div v-if="isDesktop && !fileUploaderShow" class="text-end">
+                        <button
+                          type="button" class="btn btn-sm btn-link"
+                          @click="fileUploaderShow = true"
+                          >{{ i18n.addMoreFiles }}</button>
+                      </div>
+                    </template>
+                    <template #before-table>
+                      <div v-if="isDesktop && !fileUploaderShow" class="text-end">
+                        <button
+                          type="button" class="btn btn-sm btn-link"
+                          @click="fileUploaderShow = true"
+                          >{{ i18n.addMoreFiles }}</button>
+                      </div>
+                    </template>
+                  </AttachmentsTable>
                 </div>
-                <div class="col-md-6">
-                  <button
-                    type="button"
-                    @click="stepAndUppyClick"
-                    class="btn btn-outline-primary d-block w-100">
-                    <i class="fa fa-upload"></i>
-                    {{ i18n.uploadFiles }}
-                  </button>
-                  <p class="mt-1">
-                    {{ i18n.uploadFilesAddendum }}
-                  </p>
+              </div>
+            </div>
+            <div v-if="showMobileAppContent" class="d-none d-md-block col-md-1 order-2">
+              <div class="fw-bold text-center text-uppercase" style="margin-top: 10em">oder</div>
+            </div>
+            <div v-if="showMobileAppContent" class="col-md-5 order-1 order-md-3">
+              <div class="mt-3 mb-1 mb-md-3">
+                {{ i18n.scanDocumentsAddendum }}:
+              </div>
+              <div class="row py-md-3" v-if="mobileAppContent !== null">
+                <div class="col-lg-6 mb-5">
+                  <div v-html="mobileAppContent"></div>
                 </div>
-                -->
-            <div v-if="config.url.mobileAppContent" class="col-md-6">
-              <div
-                v-if="mobileAppContent !== null"
-                v-html="mobileAppContent"
-              ></div>
+                <div class="col-lg-6 d-none d-md-block">
+                  <div v-html="i18n._('scanDocumentsInstructions', { url: config.url.mobileAppInstall })"></div>
+                </div>
+              </div>
               <div v-else>
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">{{ i18n.loading }}</span>
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <button
-                type="button"
-                @click="fileUploader.clickFilepick() || (fileUploaderShow = true)"
-                v-if="!fileUploaderShow"
-                class="btn btn-outline-primary btn-lg d-block w-100"
-              >
-                <i class="fa fa-upload fa-2x"></i><br />
-                {{ i18n.uploadFiles }}
-              </button>
-              <FileUploader
-                :config="config"
-                :allowed-file-types="config.settings.allowed_filetypes"
-                :auto-proceed="true"
-                :show-uppy="fileUploaderShow"
-                ref="fileUploader"
-                @uploading="fileUploaderUpload"
-                @upload-success="fileUploaderSucceeded"
-                @upload-complete="fileUploaderCompleted"
-                />
-            </div>
           </div>
-          <div class="alert alert-warning">
-            <h4><i class="fa fa-lightbulb-o fa-lg"></i> Tipp</h4>
+          <div class="alert alert-warning order-md-1">
+            <h4><i class="fa fa-lightbulb-o fa-lg"></i> {{ i18n.hint }}</h4>
             <p v-html="i18n.redactLaterHint1"></p>
             <p v-html="i18n.redactLaterHint2"></p>
           </div>
-          <div class="alert alert-warning">
+          <div class="alert alert-warning order-md-3">
             <h4>
               <i class="fa fa-exclamation-circle fa-lg"></i>
               {{ i18n.new }}
@@ -1538,24 +1571,16 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
-    <div v-show="step === STEP_DOCUMENTS_OVERVIEW" class="container">
+    <div v-show="step === STEP_DOCUMENTS_OVERVIEW || step === STEP_DOCUMENTS_SORT" class="container">
       <div class="row justify-content-center">
         <div class="col-sm-9 col-md-6 mt-3">
-          <button
-            type="button"
-            class="btn btn-outline-primary d-block w-100 mb-3"
-            :disabled="true"
-          >
-            <i class="fa fa-plus"></i>
-            {{ i18n.scanDocumentsAnother }}
-          </button>
           <button
             type="button"
             class="btn btn-outline-primary d-block w-100"
             @click="gotoStep(STEP_INTRO)"
           >
             <i class="fa fa-plus"></i>
-            {{ i18n.uploadFilesAnother }}
+            {{ i18n.uploadOrScanMoreFiles }}
           </button>
         </div>
       </div>
@@ -1626,12 +1651,17 @@ addEventListener('hashchange', () => {
             >
               DEBUG skip
             </button>
-            <button v-if="fileUploaderShow || attachments.all.length > 0" type="button" :disabled="fileUploaderUploading" @click="gotoStep()" class="btn btn-primary d-block w-100">
+            <button
+              v-if="fileUploaderShow || attachments.all.length > 0 || attachments.images.length > 0"
+              type="button" class="btn btn-primary d-block w-100"
+              :disabled="fileUploaderUploading || (attachments.all.length === 0 && attachments.images.length === 0)"
+              @click="gotoStep()"
+              >
               {{ i18n.next }}
             </button>
-            <div class="mt-2" v-if="attachments.all.length > 0 || attachments.images.length > 0">
+            <div class="mt-2">
               <small>
-                {{ i18n._('uploadedFilesHint', { amount: attachments.all.length + attachments.images.length }) }}
+                {{ i18n.notYetPublishedHint }}
               </small>
             </div>
           </template>
