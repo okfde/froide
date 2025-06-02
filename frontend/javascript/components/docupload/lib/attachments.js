@@ -83,8 +83,7 @@ const updateDocument = (attachment, { title, description }) => {
     })
 }
 
-// const wait = (ms) => (x) => new Promise(resolve => setTimeout(() => { console.log('#wait<'); resolve(x) }, ms))
-
+// TODO: consider using https://pinia-colada.esm.dev/guide/paginated-queries.html instead
 const fetchPagedObjects = (nextUrl, pageCb) => {
   return fetch(nextUrl, {
     headers: { 'X-CSRFToken': config.csrfToken }
@@ -92,7 +91,6 @@ const fetchPagedObjects = (nextUrl, pageCb) => {
     .then((response) => {
       if (!response.ok) {
         console.error('fetch attachment error', response)
-        // TODO
         throw new Error(response.message)
       }
       return response.json()
@@ -110,14 +108,12 @@ const fetchAttachments = (messageId) => {
   store.isFetching = true
   return attachmentList({ query: { belongs_to: messageId }, throwOnError: true })
     .then((response) => {
-      store.$patch({ allRaw: response.data.objects }) //.filter(_ => !_.is_image) })
-      // store.$patch({ images: response.data.objects.filter(_ => _.is_image) })
+      store.$patch({ allRaw: response.data.objects })
       if (response.data.meta.next) {
         return fetchPagedObjects(
           response.data.meta.next,
           (objects) => {
-            store.allRaw.push(...objects) // .filter(_ => !_.is_image))
-            // store.images.push(...objects.filter(_ => _.is_image))
+            store.allRaw.push(...objects)
           }
         )
       }
