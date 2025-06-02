@@ -35,7 +35,7 @@ const pdfRedactionUploaded = () => {
 }
 
 const needsRedaction = computed(() =>
-  !attachment.is_irrelevant && !attachment.approved && !attachment.has_redacted && !(attachment.converted && !attachment.is_image) && !attachment.pending
+  !attachment.is_irrelevant && !attachment.approved && attachment.can_approve && !attachment.has_redacted && !(attachment.converted && !attachment.is_image) && !attachment.pending
 )
 
 const iconClick = () => {
