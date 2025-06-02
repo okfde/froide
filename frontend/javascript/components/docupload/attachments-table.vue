@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -69,7 +69,8 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
   badgesRedaction: Boolean,
   badgesType: Boolean,
   badgesResolution: Boolean,
-  cardsBgTransparent: Boolean
+  cardsBgTransparent: Boolean,
+  dense: Boolean
 })
 
 const asCards = ref(subset.length < asCardThreshold)
@@ -263,14 +264,19 @@ const makeResultSelected = async () => {
 
   <div
     v-if="asCards"
-    :class="cardsBgTransparent ? '' : 'bg-body-tertiary pt-3 px-3 pt-md-5 px-md-5'"
+    :class="cardsBgTransparent ? '' : ('bg-body-tertiary ' + (dense ? 'px-1' : 'px-3 px-md-5'))"
     >
-    <slot name="before-cards"></slot>
-    <div class="d-flex flex-row flex-wrap gap-5 justify-content-around justify-content-lg-start">
+    <div class="py-3"><slot name="before-cards"></slot></div>
+    <div
+      :class="`d-flex flex-row flex-wrap gap-${dense ? 1 : 5} justify-content-around justify-content-lg-start`"
+    >
       <div
         v-for="att in subset" :key="att.id"
         class="d-flex flex-column px-md-1 py-1 position-relative align-items-center item--card"
-        :class="{ 'bg-primary-subtle': attachments.selectedIds.has(att.id) }"
+        :class="{
+          'bg-primary-subtle': attachments.selectedIds.has(att.id),
+          'item--dense': dense
+        }"
         @click.self="toggleSelection('card', att.id)"
         >
         <label
@@ -433,6 +439,10 @@ const makeResultSelected = async () => {
 
 .item--card {
   width: 15em;
+}
+
+.item--card.item--dense {
+  width: 8em;
 }
 
 </style>
