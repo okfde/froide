@@ -69,6 +69,12 @@ const useAttachmentsStore = defineStore('attachments', {
     removeAttachment(attachment) {
       this.selectedIds.delete(attachment.id)
       this.allRaw = this.allRaw.filter((a) => a.id !== attachment.id)
+      // remove from images = "page to be converted into pdf"
+      this.images.forEach(image => {
+        image.pages = image.pages.filter((p) => p.id !== attachment.id)
+      })
+      // clean up empty images (without pages)
+      this.images = this.images.filter((i) => i.pages.length > 0)
     },
     addImages(newImages, { isNew = false, imageDefaultFilename = '' } = {}) {
       // if there are no image documents yet, create a new one
