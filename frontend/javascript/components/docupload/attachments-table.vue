@@ -188,10 +188,9 @@ const makeResultSelected = async () => {
       <div class="d-none d-md-block">
         <div class="btn-group" role="group">
           <button
-            v-if="selectionActionDelete"
+            v-if="selectionActionDelete && isSelectionDeletable"
             type="button"
             class="btn btn-link fw-bold text-start"
-            :disabled="!isSelectionDeletable"
             @click="deleteSelected"
             >
             {{ i18n.deleteSelected }}
@@ -222,10 +221,9 @@ const makeResultSelected = async () => {
         </button>
         <ul class="dropdown-menu">
           <button
-            v-if="selectionActionDelete"
+            v-if="selectionActionDelete && isSelectionDeletable"
             type="button"
             class="dropdown-item"
-            :disabled="!isSelectionDeletable"
             @click="deleteSelected"
             >
             {{ i18n.deleteSelected }}
