@@ -579,6 +579,7 @@ class Base(Configuration):
             "help_postupload_redaction": "/hilfe/plain/funktionen-der-plattform/schwaerzungen-durchfuehren/",
             "help_attachments_management": "/hilfe/plain/funktionen-der-plattform/anhange-verwalten/",
         },
+        "mobile_app_install_url": None,  # TODO
         "mobile_app_content_url": None,
         "moderation_triggers": [
             {

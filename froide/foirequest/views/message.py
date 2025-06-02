@@ -356,12 +356,17 @@ def edit_postal_message(request, foirequest, message_id):
             "messageSentLetter": _("I have sent the letter"),
             "enterInformation": _("Enter information"),
             "preview": _("Preview"),
+            "hint": _("Hint"),
+            "addMoreFiles": _("Add more files"),
             "scanDocuments": _("Scan documents"),
             "scanDocumentsAddendum": _("Use your phone's camera to create a PDF "),
+            "scanDocumentsInstructions": _(
+                '<p>If you have installed the <a href="${url}">FdS Scanner App</a> on your smartphone, you can scan this QR code to start the process.</p><p>As soon as you have completed the process in the app, the documents will show up here.</p>'
+            ),
             "uploadFiles": _("Upload files"),
             "uploadFilesAddendum": _("If you have the letter as PDF already"),
-            "uploadedFilesHint": _(
-                "${amount} files and documents are being worked on."
+            "notYetPublishedHint": _(
+                "The documents will not be published immediately."
             ),
             "redactLaterHint1": _(
                 "You don't need to redact your letter <strong>beforehand</strong>. You can do this later in the process using our browser tool."
@@ -438,8 +443,7 @@ def edit_postal_message(request, foirequest, message_id):
             "documentsOverview": _("These documents will be added to the request:"),
             "documentsAddedSuccessfully": _("Documents added successfully"),
             "requestUpdatedThanks": _("Thank you for updating your request!"),
-            "scanDocumentsAnother": _("Scan another document"),
-            "uploadFilesAnother": _("Upload another file"),
+            "uploadOrScanMoreFiles": _("Scan or upload another document"),
             "redactionDone": _("I have finished redacting"),
             "redactionCheck": _("Important: Have you checked all pages?"),
             "confirm": _("Confirm"),
@@ -514,6 +518,7 @@ def edit_postal_message(request, foirequest, message_id):
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
             "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            "mobileAppInstall": settings.FROIDE_CONFIG.get("mobile_app_install_url"),
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
             if request.user.is_staff
             else None,

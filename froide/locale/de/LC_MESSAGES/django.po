@@ -7903,6 +7903,10 @@ msgid "Enter information"
 msgstr "Infos eingeben"
 
 #: froide/foirequest/views/message.py
+msgid "Hint"
+msgstr "Tipp"
+
+#: froide/foirequest/views/message.py
 msgid "Scan documents"
 msgstr "Dokumente scannen"
 
@@ -7911,12 +7915,28 @@ msgid "Use your phone's camera to create a PDF "
 msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
 
 #: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on your "
+"smartphone, you can scan this QR code to start the process.</p><p>As soon as "
+"you have completed the process in the app, the documents will show up here.</"
+"p>"
+msgstr ""
+"<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem Smartphone installier haben,"
+"können Sie diesen QR-Code einlesen um die Scanfunktion zu starten.</p>"
+"<p>Sobald Sie den Brief gescannt haben, können Sie hier am Gerät fortfahren.</p>"
+
+#: froide/foirequest/views/message.py
 msgid "Upload files"
 msgstr "Dateien hochladen"
 
 #: froide/foirequest/views/message.py
 msgid "If you have the letter as PDF already"
 msgstr "Wenn Sie den Brief schon als PDF oder Foto vorliegen haben"
+
+#: froide/foirequest/views/message.py
+msgid "The documents will not be published immediately."
+msgstr "Dieser Anhang kann nicht veröffentlicht werden."
 
 #: froide/foirequest/views/message.py
 msgid ""
@@ -7939,11 +7959,6 @@ msgstr ""
 "Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" "
 "href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über "
 "Feedback freuen."
-
-#: froide/foirequest/views/message.py
-#, python-brace-format
-msgid "${amount} files and documents are being worked on."
-msgstr "${amount} Dateien und Dokumente sind in Bearbeitung."
 
 #: froide/foirequest/views/message.py
 msgid "We have redone this part of the app."
@@ -8114,12 +8129,8 @@ msgid "Thank you for updating your request!"
 msgstr "Danke, dass Sie Ihre Anfrage auf den neuesten Stand gebracht haben!"
 
 #: froide/foirequest/views/message.py
-msgid "Scan another document"
-msgstr "Weiteres Dokument scannen"
-
-#: froide/foirequest/views/message.py
-msgid "Upload another file"
-msgstr "Weitere Dateien hochladen"
+msgid "Scan or upload another document"
+msgstr "Weiteres Dokument scannen oder hochladen"
 
 #: froide/foirequest/views/message.py
 msgid "I have finished redacting"
