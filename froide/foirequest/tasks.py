@@ -475,6 +475,7 @@ def move_upload_to_attachment(att_id, upload_id):
     if file:
         att.pending = False
         att.file.save(att.name, file, save=True)
+        FoiAttachment.attachment_available.send(sender=att)
     upload.finish()
     upload.delete()
 

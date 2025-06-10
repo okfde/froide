@@ -1,4 +1,5 @@
 import { postData } from '../../../lib/api'
+import Room from '../../../lib/websocket'
 import {
   attachmentList,
   attachmentRetrieve,
@@ -205,6 +206,10 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
         return
       }
       const att = result.added[0]
+      // sometimes an attachment_availble event precedes the API call's defacto outdated pending status
+      if (store.availableIds.has(att.id)) {
+        att.pending = false
+      }
       if (att.is_image) {
         store.addImages([att], { imageDefaultFilename })
       } else {
@@ -309,6 +314,28 @@ const getRedactUrl = (attachment) => {
   return config.urls.redactAttachment.replace('/0/', `/${attachment.id}/`)
 }
 
+let room
+const getWebsocketMessageRoom = () => {
+  if (!room) {
+    room = (new Room(config.urls.messageWebsocket)).connect()
+  }
+  return room
+}
+
+const monitorAttachments = () => {
+  getWebsocketMessageRoom().on('attachment_available', (data) => {
+    // we store the id in case the attachment is populated via API call later
+    store.availableIds.add(data.attachment)
+    const attachment = store.allRaw.find(att => att.id === data.attachment)
+    if (attachment) attachment.pending = false
+    store.images.forEach(image => image.pages.forEach(page => {
+      if (page.id === data.attachment) {
+        page.pending = false
+      }
+    }))
+  })
+}
+
 export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
@@ -334,6 +361,8 @@ export function useAttachments({ message = null, urls = null, csrfToken = null, 
     deleteAttachment,
     approveAttachment,
     approveAllUnredactedAttachments,
-    getRedactUrl
+    getRedactUrl,
+    getWebsocketMessageRoom,
+    monitorAttachments,
   }
 }

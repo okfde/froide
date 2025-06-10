@@ -12,7 +12,6 @@ import { vBsTooltip } from '../../lib/vue-bootstrap'
 import { useI18n } from '../../lib/i18n'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import { useAttachments } from '../docupload/lib/attachments'
-import Room from '../../lib/websocket.ts'
 import OnlineHelp from '../online-help.vue'
 import FileUploader from '../upload/file-uploader.vue'
 import ImagesConverter from '../docupload/images-converter.vue'
@@ -40,7 +39,9 @@ const {
   refresh: refreshAttachments,
   refreshIfIdNotPresent: refreshAttachmentsIfIdNotPresent,
   convertImage,
-  approveAllUnredactedAttachments
+  approveAllUnredactedAttachments,
+  getWebsocketMessageRoom,
+  monitorAttachments,
 } = useAttachments({
   message: props.message,
   urls: {
@@ -105,8 +106,8 @@ if (props.config.url.mobileAppContent) {
 /* Websocket connection */
 
 if (props.config.url.messageWebsocket) {
-  const room = new Room(props.config.url.messageWebsocket)
-  room.connect().on('attachment_added', (data) => {
+  const room = getWebsocketMessageRoom()
+  room.on('attachment_added', (data) => {
     // When a new attachment is added, refresh the attachments store
     refreshAttachmentsIfIdNotPresent(data.attachment).then((refreshed) => {
       if (!refreshed) {
@@ -121,6 +122,8 @@ if (props.config.url.messageWebsocket) {
       }
     })
   })
+  // react to changes (when image attachments become available = not pending)
+  monitorAttachments()
 }
 
 /* Form helpers */

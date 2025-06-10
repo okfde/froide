@@ -51,6 +51,14 @@ class MessageEditConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
+    async def attachment_available(self, event):
+        await self.send_json(
+            {
+                "type": "attachment_available",
+                "attachment": event["attachment"],
+            }
+        )
+
     async def disconnect(self, close_code):
         if self.room is None:
             return

@@ -108,7 +108,7 @@ fetchImage()
   <div class="page">
     <div class="page-frame d-flex align-items-center justify-content-center position-relative">
       <img
-        v-if="page.file_url"
+        v-if="page.file_url && !page.pending"
         ref="pageImage"
         :alt="page.name"
         :title="page.name"

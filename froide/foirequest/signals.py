@@ -355,6 +355,18 @@ def create_event_followers_attachments_document_created(
     )
 
 
+@receiver(
+    FoiAttachment.attachment_available,
+    dispatch_uid="broadcast_attachment_available",
+)
+def broadcast_attachment_available(sender, **kwargs):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        MESSAGEEDIT_ROOM_PREFIX.format(sender.belongs_to_id),
+        {"type": "attachment_available", "attachment": sender.id},
+    )
+
+
 @receiver(FoiRequest.status_changed, dispatch_uid="create_event_status_changed")
 def create_event_status_changed(sender, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
