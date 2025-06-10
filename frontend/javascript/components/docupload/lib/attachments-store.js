@@ -12,6 +12,7 @@ const useAttachmentsStore = defineStore('attachments', {
     images: [],
     selectedIds: new Set,
     approvingIds: new Set,
+    availableIds: new Set,
     autoApproveSelection: {},
     messages: []
   }),
