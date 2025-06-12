@@ -1,12 +1,8 @@
 <script setup>
-import { computed, inject, ref } from 'vue'
+import { computed, inject } from 'vue'
 
-import ExifReader from 'exifreader'
-
-import { useExifSupport } from './lib/exif-support'
 import { useAttachments } from './lib/attachments'
 
-const { hasExifSupport } = useExifSupport()
 const { splitPages, rotatePage } = useAttachments()
 
 const i18n = inject('i18n')
@@ -38,15 +34,8 @@ const { idx, page, pageNum, pageCount, showRotate, showSplit } = defineProps({
   }
 })
 
-const loaded = ref(false)
-const imgBitmap = ref(null)
-
 const totalRotate = computed(() => {
-  const rotDegree = page.rotate || 0
-  if (hasExifSupport.value) {
-    return rotDegree
-  }
-  return rotDegree + (page.implicitRotate || 0)
+  return ((page.rotate || 0) + (page.metadata?.implicitRotate || 0)) % 360
 })
 
 const isLast = computed(() => pageNum === pageCount)
@@ -70,37 +59,6 @@ const progressPercentLabel = computed(() => {
   }
   return '100%'
 })
-
-const fetchImage = () => {
-  fetch(page.file_url)
-    .then((response) => {
-      return response.blob()
-    })
-    .then((blob) => {
-      return Promise.all([blob.arrayBuffer(), createImageBitmap(blob)])
-    })
-    .then(([ab, v]) => {
-      const reader = ExifReader.load(ab, { expanded: true })
-      const data = {
-        exif: true,
-        width: v.width,
-        heigh: v.height,
-        implicitRotate: 0
-      }
-      const orientation = reader.exif?.Orientation?.value
-      if (orientation === 6) {
-        data.implicitRotate = 90
-      } else if (orientation === 8) {
-        data.implicitRotate = 270
-      } else if (orientation === 3) {
-        data.implicitRotate = 180
-      }
-      imgBitmap.value = v
-      loaded.value = true
-    })
-}
-
-fetchImage()
 
 </script>
 
