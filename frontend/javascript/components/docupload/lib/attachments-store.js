@@ -73,6 +73,7 @@ const useAttachmentsStore = defineStore('attachments', {
     addImages(newImages, { isNew = false, imageDefaultFilename = '' } = {}) {
       // if there are no image documents yet, create a new one
       // otherwise, append a page to the existing image
+      // note: .rotate + .metadata is later populated by fetchImagePage
       if (this.images.length === 0) {
         imageDocId += 1
         this.images.push({

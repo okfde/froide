@@ -960,6 +960,7 @@ addEventListener('hashchange', () => {
           {{ i18n.documentsConvertIrrelevant }}
         </div>
         <div class="my-3">
+          <!-- note: convertable subset misses those that have been converted-created in this very step -->
           <AttachmentsTable
             :subset="attachments.convertable"
             actions table-selection action-delete selection-action-delete badges-type

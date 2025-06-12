@@ -33,7 +33,7 @@ const convertImage = (imageIndex) => {
       title,
       images: store.images[imageIndex].pages.map((p) => ({
         attachment: p.resource_uri,
-        rotate: (p.rotate || 0) + (p.implicitRotate || 0)
+        rotate: ((p.rotate || 0) + (p.metadata.implicitRotate || 0)) % 360
       })),
       message: config.message.resource_uri
     },
@@ -160,32 +160,23 @@ const addOrReplaceAttachment = (attachment) => {
 }
 
 const fetchImagePage = (page) => {
-  fetch(page.file_url)
-    .then((response) => {
-      return response.blob()
-    })
-    .then((blob) => {
-      return Promise.all([blob.arrayBuffer(), createImageBitmap(blob)])
-    })
-    .then(([ab, v]) => {
-      const reader = ExifReader.load(ab, { expanded: true })
-      const metadata = {
-        exif: true,
-        width: v.width,
-        heigh: v.height,
-        implicitRotate: 0
+  page.loading = true
+  // ExifReader.load needs absolute URL *with* proto
+  const url = page.file_url.substring(0, 1) === '/'
+    ? document.location.origin + page.file_url
+    : page.file_url
+  ExifReader.load(url)
+    .then((data) => {
+      page.metadata = {}
+      switch (data.Orientation?.value) {
+        case 6: page.metadata.implicitRotate = 90; break
+        case 8: page.metadata.implicitRotate = 270; break
+        case 3: page.metadata.implicitRotate = 180; break
       }
-      const orientation = reader.exif?.Orientation?.value
-      if (orientation === 6) {
-        metadata.implicitRotate = 90
-      } else if (orientation === 8) {
-        metadata.implicitRotate = 270
-      } else if (orientation === 3) {
-        metadata.implicitRotate = 180
-      }
-      page.metadata = metadata
-      page.imgBitmap = v
       page.loaded = true
+    })
+    .catch((err) => {
+      console.warn('ExifReader could not process', page.file_url, err)
     })
 }
 
@@ -299,7 +290,7 @@ const refreshIfIdNotPresent = (attachment) => {
 store.$subscribe(() => {
   store.images.forEach(image => {
     image.pages.forEach(page => {
-      if (!page.loaded && !page.loading) {
+      if (!page.loaded && !page.loading && !page.pending) {
         fetchImagePage(page)
       }
     })
