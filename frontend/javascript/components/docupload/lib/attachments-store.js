@@ -43,6 +43,9 @@ const useAttachmentsStore = defineStore('attachments', {
     redactable() {
       return this.all.filter((d) => d.canRedact)
     },
+    redactNudgable() {
+      return this.all.filter((d) => d.canRedact && !d.is_redacted)
+    },
     convertable() {
       return this.all.filter((d) => (d.is_irrelevant || d.is_image) && !d.converted)
     },

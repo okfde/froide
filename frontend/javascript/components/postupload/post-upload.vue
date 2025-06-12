@@ -649,6 +649,7 @@ const stepsConfig = {
       return STEP_REDACTION_REDACT // TODO
     },
     onEnter: () => {
+      attachments.selectSubset(attachments.redactNudgable)
       pdfRedactionUploaded()
     },
     context: {
