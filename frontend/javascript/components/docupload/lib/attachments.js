@@ -33,7 +33,7 @@ const convertImage = (imageIndex) => {
       title,
       images: store.images[imageIndex].pages.map((p) => ({
         attachment: p.resource_uri,
-        rotate: ((p.rotate || 0) + (p.metadata.implicitRotate || 0)) % 360
+        rotate: ((p.rotate || 0) + (p.metadata?.implicitRotate || 0)) % 360
       })),
       message: config.message.resource_uri
     },
