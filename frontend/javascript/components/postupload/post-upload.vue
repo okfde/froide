@@ -997,7 +997,7 @@ addEventListener('hashchange', () => {
           <!-- note: convertable subset misses those that have been converted-created in this very step -->
           <AttachmentsTable
             :subset="attachments.convertable"
-            actions selection action-delete selection-action-delete badges-type
+            actions table-selection action-delete selection-action-delete badges-type
             />
         </div>
         <!-- irrelevant attachments re-appear after a refresh;
@@ -1350,7 +1350,7 @@ addEventListener('hashchange', () => {
           <p>
             {{ i18n.redactionInfo }}
           </p>
-          <AttachmentsTable :subset="attachments.redactable" selection selection-buttons :as-card-threshold="0">
+          <AttachmentsTable :subset="attachments.redactable" table-selection selection-buttons :as-card-threshold="0">
             <template #after-row="slotProps" v-if="pickNotAutoApprove">
               <label
                 class="d-flex flex-column position-absolute position-md-static top-0 end-0 py-3 px-1"
