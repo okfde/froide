@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, selection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
+const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -30,13 +30,14 @@ const { subset, asCardThreshold, actions, actionDelete, selection, selectionButt
       return !value || (value && !props.actions)
     }
   },
-  selection: Boolean,
+  cardsSelection: Boolean,
+  tableSelection: Boolean,
   selectionButtons: {
     type: Boolean,
     default: false,
     validator (value, props) {
       // needs selection
-      return !value || (value && props.selection)
+      return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
   selectionActionDelete: {
@@ -44,7 +45,7 @@ const { subset, asCardThreshold, actions, actionDelete, selection, selectionButt
     default: false,
     validator (value, props) {
       // batch actions need selection to make sense
-      return !value || (value && props.selection)
+      return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
   selectionActionApprove: {
@@ -52,7 +53,7 @@ const { subset, asCardThreshold, actions, actionDelete, selection, selectionButt
     default: false,
     validator (value, props) {
       // batch actions need selection to make sense
-      return !value || (value && props.selection)
+      return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
   selectionActionMakeResult: {
@@ -60,7 +61,7 @@ const { subset, asCardThreshold, actions, actionDelete, selection, selectionButt
     default: false,
     validator (value, props) {
       // batch actions need selection to make sense
-      return !value || (value && props.selection)
+      return !value || (value && (props.cardsSelection || props.tableSelection))
     }
   },
   nudgeRedaction: Boolean,
@@ -86,9 +87,9 @@ watch(
 /* when asCard flips over/under threshold (when something is uploaded/deleted)
  * we need to prevent things being still selected without the possibility to
  * change the selection */
-// watch(asCards, (newValue) => {
-//   if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
-// })
+watch(asCards, (newValue) => {
+  if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
+})
 
 const selected = computed(() => subset.filter(_ => attachments.selectedIds.has(_.id)))
 
@@ -118,8 +119,9 @@ const selectAllLabel = computed(() => {
     : i18n.value.selectAll
 })
 
-const toggleSelection = (id) => {
-  if (!selection) return
+const toggleSelection = (from, id) => {
+  if (from === 'table' && !tableSelection) return
+  if (from === 'card' && !cardsSelection) return
   if (attachments.selectedIds.has(id)) {
     attachments.selectedIds.delete(id)
   } else {
@@ -165,7 +167,7 @@ const makeResultSelected = async () => {
 <template>
 
   <div
-    v-if="(!asCards && selection)"
+    v-if="(asCards && cardsSelection) || (!asCards && tableSelection)"
     class="d-flex px-1 py-2"
     :class="{
       'bg-body-tertiary': !asCards,
@@ -272,13 +274,13 @@ const makeResultSelected = async () => {
         v-for="att in subset" :key="att.id"
         class="d-flex flex-column px-md-1 py-1 position-relative align-items-center item--card"
         :class="{
-          'bg-primary-subtle': selection && attachments.selectedIds.has(att.id),
+          'bg-primary-subtle': attachments.selectedIds.has(att.id),
           'item--dense': dense
         }"
-        @click.self="toggleSelection(att.id)"
+        @click.self="toggleSelection('card', att.id)"
         >
         <label
-          v-if="selection"
+          v-if="cardsSelection"
           class="d-block py-2"
           >
           <input v-model="attachments.selectedIds" type="checkbox" :value="att.id" />
@@ -292,7 +294,7 @@ const makeResultSelected = async () => {
           />
         <div
           class="text-center mb-1 mw-100 text-break"
-          @click.self="toggleSelection(att.id)"
+          @click.self="toggleSelection('card', att.id)"
           >
           {{ att.document?.title || att.name }}
           <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
@@ -356,13 +358,13 @@ const makeResultSelected = async () => {
       v-for="att in subset" :key="att.id"
       class="d-flex flex-column px-md-1 py-1 position-relative flex-md-row align-items-md-center px-5"
       :class="{
-        'bg-primary-subtle': selection && attachments.selectedIds.has(att.id),
+        'bg-primary-subtle': attachments.selectedIds.has(att.id),
         'border-top': subset.length > 1
       }"
-      @click.self="toggleSelection(att.id)"
+      @click.self="toggleSelection('table', att.id)"
       >
       <label
-        v-if="selection"
+        v-if="tableSelection"
         class="d-flex flex-grow ps-1 ps-md-0 pe-3 py-3 py-md-0 align-self-stretch position-absolute position-md-static top-0 start-0">
         <input v-model="attachments.selectedIds" type="checkbox" :value="att.id" />
       </label>
@@ -374,7 +376,7 @@ const makeResultSelected = async () => {
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"
-        @click.self="toggleSelection(att.id)"
+        @click.self="toggleSelection('table', att.id)"
         >
         {{ att.document?.title || att.name }}
         <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
