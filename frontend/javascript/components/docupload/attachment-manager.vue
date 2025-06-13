@@ -67,7 +67,7 @@ const onlineHelp = ref()
     <AttachmentsTable
       :subset="attachments.approved"
       actions
-      selection
+      table-selection
       selection-action-delete
       selection-action-make-result
       nudge-redaction
@@ -81,7 +81,7 @@ const onlineHelp = ref()
     <AttachmentsTable
       :subset="attachments.notApproved"
       actions
-      selection
+      table-selection
       selection-action-delete
       selection-action-approve
       nudge-redaction
@@ -94,7 +94,7 @@ const onlineHelp = ref()
     <AttachmentsTable
       :subset="attachments.irrelevant"
       actions
-      selection
+      table-selection
       selection-action-delete
       badges-type
     />
