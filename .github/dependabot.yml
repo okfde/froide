@@ -2,10 +2,10 @@
 
 version: 2
 updates:
-#  - package-ecosystem: npm
-#    directory: /
-#    schedule:
-#      interval: weekly
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
   - package-ecosystem: pip
     directory: /
     schedule:
