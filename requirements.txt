@@ -282,7 +282,7 @@ pytz==2024.1
     # via icalendar
 pyyaml==6.0.2
     # via drf-spectacular
-qrcode==7.3.1
+qrcode==8.2
     # via django-mfa3
 referencing==0.35.1
     # via
