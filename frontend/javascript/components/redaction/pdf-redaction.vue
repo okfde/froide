@@ -425,6 +425,7 @@ export default {
       default: false
     }
   },
+  emits: ['uploaded', 'hasredactionsupdate'],
   data() {
     return {
       doc: null,
@@ -762,10 +763,9 @@ export default {
       }
     },
     approve() {
-      return approveAttachment(this.attachment)
-        .then(() => {
-          this.$emit('uploaded')
-        })
+      return approveAttachment(this.attachment).then(() => {
+        this.$emit('uploaded')
+      })
     },
     redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
