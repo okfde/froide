@@ -1464,6 +1464,11 @@ export default {
     },
     setAltKey(e) {
       if (this.doPaint || !e.altKey) this.altKey = e.altKey
+
+      this.startDrag = null
+      this.endDrag = null
+
+      this.drawRectangles()
     },
     reloadPageAfterResizeDebounced() {
       if (resizeTimeout) {
