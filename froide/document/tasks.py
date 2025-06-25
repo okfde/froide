@@ -3,13 +3,14 @@ from django.contrib.auth import get_user_model
 from froide.celery import app as celery_app
 
 from .models import DocumentCollection
-from .services import UploadDocumentStorer
 
 User = get_user_model()
 
 
 @celery_app.task(name="froide.document.tasks.store_document_uploads")
 def store_document_upload(upload_urls, user_id, form_data, collection_id):
+    from .services import UploadDocumentStorer
+
     try:
         user = User.objects.get(id=user_id)
     except User.DoesNotExist:
