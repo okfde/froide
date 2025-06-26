@@ -30,13 +30,8 @@ from ..auth import (
     can_write_foiproject,
     can_write_foirequest,
 )
-from ..foi_mail import get_alternative_mail
-from ..forms import AssignProjectForm, EditMessageForm
 from ..models import DeliveryStatus, FoiMessage, FoiRequest
-from ..moderation import get_moderation_triggers
 from ..utils import get_minimum_redaction_replacements
-
-Comment = get_model()
 
 register = template.Library()
 
@@ -397,12 +392,15 @@ def truncatefilename(filename, chars=20):
 
 @register.simple_tag
 def alternative_address(foirequest):
+    from ..foi_mail import get_alternative_mail
+
     return get_alternative_mail(foirequest)
 
 
 @register.simple_tag(takes_context=True)
 def get_comment_list(context, message):
     if not hasattr(message, "comment_list"):
+        Comment = get_model()
         ct = ContentType.objects.get_for_model(FoiMessage)
         foirequest = message.request
         mids = [m.id for m in foirequest.messages]
@@ -443,6 +441,8 @@ def get_delivery_status(message):
 
 @register.inclusion_tag("foirequest/snippets/message_edit.html")
 def render_message_edit_button(message):
+    from ..forms import EditMessageForm
+
     return {
         "form": EditMessageForm(message=message),
         "foirequest": message.request,
@@ -504,11 +504,15 @@ def readable_status(status, resolution=""):
     "foirequest/snippets/moderation_triggers.html", takes_context=True
 )
 def render_moderation_actions(context, foirequest):
+    from ..moderation import get_moderation_triggers
+
     triggers = get_moderation_triggers(foirequest, request=context["request"])
     return {"triggers": triggers.values(), "object": foirequest}
 
 
 @register.simple_tag(takes_context=True)
 def get_project_form(context, obj):
+    from ..forms import AssignProjectForm
+
     request = context["request"]
     return AssignProjectForm(instance=obj, user=request.user)

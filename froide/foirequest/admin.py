@@ -722,7 +722,6 @@ class FoiMessageAdmin(admin.ModelAdmin):
         Add moderation comment to selected messages.
 
         """
-
         if request.POST.get("comment"):
             comment = request.POST["comment"]
 

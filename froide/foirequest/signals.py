@@ -10,7 +10,6 @@ from channels.layers import get_channel_layer
 
 from froide.helper.email_sending import mail_registry
 from froide.helper.signals import email_left_queue
-from froide.problem.models import ProblemReport
 
 from .consumers import MESSAGEEDIT_ROOM_PREFIX
 from .models import (
@@ -463,6 +462,8 @@ def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
 def save_delivery_status(
     message_id: Optional[str], status: str, log: List[str], **kwargs
 ):
+    from froide.problem.models import ProblemReport
+
     if message_id is None or not message_id.startswith("<{}".format(MESSAGE_ID_PREFIX)):
         return
 
