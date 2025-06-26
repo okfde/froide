@@ -3,9 +3,15 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
+class DocumentNoConfig(AppConfig):
+    name = "froide.document"
+    verbose_name = _("Document")
+
+
 class DocumentConfig(AppConfig):
     name = "froide.document"
     verbose_name = _("Document")
+    default = True
 
     def ready(self):
         import froide.document.signals  # noqa

@@ -4,9 +4,15 @@ from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 
 
+class AccessTokenNoConfig(AppConfig):
+    name = "froide.accesstoken"
+    verbose_name = _("Secret Access Token")
+
+
 class AccessTokenConfig(AppConfig):
     name = "froide.accesstoken"
     verbose_name = _("Secret Access Token")
+    default = True
 
     def ready(self):
         from froide.account import account_canceled, account_merged
