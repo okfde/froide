@@ -3,9 +3,15 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
+class PublicBodyNoConfig(AppConfig):
+    name = "froide.publicbody"
+    verbose_name = _("Public Body")
+
+
 class PublicBodyConfig(AppConfig):
     name = "froide.publicbody"
     verbose_name = _("Public Body")
+    default = True
 
     def ready(self):
         from froide.account import account_merged

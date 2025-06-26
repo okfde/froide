@@ -6,9 +6,15 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
+class TeamNoConfig(AppConfig):
+    name = "froide.team"
+    verbose_name = _("Teams")
+
+
 class TeamConfig(AppConfig):
     name = "froide.team"
     verbose_name = _("Teams")
+    default = True
 
     def ready(self):
         from froide.account import account_canceled, account_merged

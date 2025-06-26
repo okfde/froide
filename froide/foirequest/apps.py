@@ -6,9 +6,15 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
+class FoiRequestNoConfig(AppConfig):
+    name = "froide.foirequest"
+    verbose_name = _("FOI Request")
+
+
 class FoiRequestConfig(AppConfig):
     name = "froide.foirequest"
     verbose_name = _("FOI Request")
+    default = True
 
     def ready(self):
         from django_comments.signals import comment_will_be_posted

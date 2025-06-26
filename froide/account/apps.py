@@ -10,9 +10,15 @@ from django.utils.translation import gettext_lazy as _
 from .menu import MenuItem, menu_registry
 
 
+class AccountNoConfig(AppConfig):
+    name = "froide.account"
+    verbose_name = _("Account")
+
+
 class AccountConfig(AppConfig):
     name = "froide.account"
     verbose_name = _("Account")
+    default = True
 
     def ready(self):
         from django.contrib.auth.signals import user_logged_in
