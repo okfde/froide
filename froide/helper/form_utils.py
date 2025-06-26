@@ -3,8 +3,6 @@ from decimal import Decimal
 
 from django.db import models
 
-from froide.publicbody.models import PublicBody
-
 
 class DjangoJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -24,6 +22,10 @@ def get_data(error):
 # FIXME WIP this is maybe not the smartest way to do this
 # use simplejson instead?
 def serialize_extra(obj):
+    # FIXME: this is a hack to serialize some extra types
+    # Publicbody should not be coupled to helper
+    from froide.publicbody.models import PublicBody
+
     if isinstance(obj, Decimal):
         return {
             "__Decimal": True,

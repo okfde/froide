@@ -348,9 +348,14 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
     and implement at least these methods
     """
 
-    TOKEN_MAX_AGE_SECONDS = settings.FOI_MEDIA_TOKEN_EXPIRY
     SITE_URL = settings.SITE_URL
     DEBUG = False
+
+    def get_token_max_age(self) -> int:
+        """
+        Return the maximum age of the token in seconds
+        """
+        return settings.FOI_MEDIA_TOKEN_EXPIRY
 
     def is_media_public(self) -> bool:
         """

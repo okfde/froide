@@ -21,7 +21,6 @@ from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
 from froide.account import account_banned
-from froide.account.export import ExportCrossDomainMediaAuth
 from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
 from froide.helper.csv_utils import export_csv_response
 from froide.helper.forms import get_fk_raw_id_widget
@@ -368,7 +367,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     @admin.action(description=_("Start export of user data"))
     def export_user_data(self, request, queryset):
-        from .export import get_export_access_token
+        from .export import ExportCrossDomainMediaAuth, get_export_access_token
 
         if not request.user.is_superuser:
             raise PermissionDenied

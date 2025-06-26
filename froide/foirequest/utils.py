@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from io import BytesIO
 from pathlib import PurePath
-from typing import Iterator, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Iterator, List, Optional, Tuple, Union
 
 from django import forms
 from django.conf import settings
@@ -35,10 +35,12 @@ from froide.helper.text_utils import (
     redact_subject,
     redact_user_strings,
 )
-from froide.proof.models import ProofAttachment
 from froide.publicbody.models import FoiLaw, PublicBody
 
 from .models import FoiAttachment, FoiRequest
+
+if TYPE_CHECKING:
+    from froide.proof.models import ProofAttachment
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
@@ -198,7 +200,7 @@ def construct_initial_message_body(
     send_address: bool = True,
     attachment_names: Optional[List[str]] = None,
     attachment_missing: Optional[List[str]] = None,
-    proof: Optional[ProofAttachment] = None,
+    proof: Optional["ProofAttachment"] = None,
     template="foirequest/emails/mail_with_userinfo.txt",
 ):
     if full_text:
@@ -232,7 +234,7 @@ def construct_message_body(
     attachment_names: Optional[List[str]] = None,
     attachment_missing: Optional[List[str]] = None,
     template: str = "foirequest/emails/mail_with_userinfo.txt",
-    proof: Optional[ProofAttachment] = None,
+    proof: Optional["ProofAttachment"] = None,
 ):
     return render_to_string(
         template,
