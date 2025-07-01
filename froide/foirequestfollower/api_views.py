@@ -35,7 +35,9 @@ class CreateOnlyWithScopePermission(TokenHasScope):
 
 
 class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
-    request = serializers.PrimaryKeyRelatedField(queryset=FoiRequest.objects.none())
+    request = serializers.PrimaryKeyRelatedField(
+        queryset=FoiRequest.objects.none(), style={"base_template": "input.html"}
+    )
 
     class Meta:
         model = FoiRequestFollower

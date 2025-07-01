@@ -27,6 +27,14 @@ def get_fake_api_context(url="/"):
     }
 
 
+class InputStyleMixin:
+    """Don't render a choice field on the renderable API page"""
+
+    def __init__(self, *args, **kwargs):
+        kwargs["style"] = {"base_template": "input.html"}
+        super().__init__(*args, **kwargs)
+
+
 class SearchFacetListSerializer(ListSerializer):
     @property
     def data(self):

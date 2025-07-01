@@ -1,5 +1,7 @@
 from rest_framework import permissions, serializers
 
+from froide.helper.api_utils import InputStyleMixin
+
 from .auth import (
     get_read_foirequest_queryset,
     get_write_foimessage_queryset,
@@ -9,7 +11,7 @@ from .models.attachment import FoiAttachment
 from .models.message import FoiMessage
 
 
-class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
+class FoiRequestRelatedField(InputStyleMixin, serializers.HyperlinkedRelatedField):
     view_name = "api:request-detail"
 
     def get_queryset(self):
@@ -20,7 +22,7 @@ class FoiRequestRelatedField(serializers.HyperlinkedRelatedField):
             return get_write_foirequest_queryset(request)
 
 
-class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
+class FoiMessageRelatedField(InputStyleMixin, serializers.HyperlinkedRelatedField):
     view_name = "api:message-detail"
 
     def get_queryset(self):
@@ -31,7 +33,7 @@ class FoiMessageRelatedField(serializers.HyperlinkedRelatedField):
             return get_write_foimessage_queryset(request, FoiMessage.with_drafts.all())
 
 
-class FoiAttachmentRelatedField(serializers.HyperlinkedRelatedField):
+class FoiAttachmentRelatedField(InputStyleMixin, serializers.HyperlinkedRelatedField):
     view_name = "api:attachment-detail"
 
     def get_queryset(self):
