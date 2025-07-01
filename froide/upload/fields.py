@@ -1,9 +1,10 @@
 from rest_framework import serializers
 
+from froide.helper.api_utils import InputStyleMixin
 from froide.upload.models import Upload
 
 
-class UploadRelatedField(serializers.HyperlinkedRelatedField):
+class UploadRelatedField(InputStyleMixin, serializers.HyperlinkedRelatedField):
     view_name = "api:upload-detail"
     lookup_field = "guid"
 

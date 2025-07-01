@@ -6,6 +6,7 @@ from django.utils import translation
 from rest_framework import serializers
 
 from froide.helper.api_utils import (
+    InputStyleMixin,
     SearchFacetListSerializer,
 )
 
@@ -295,7 +296,7 @@ class PublicBodySerializer(PublicBodyListSerializer):
     laws = FoiLawSerializer(many=True, read_only=True)
 
 
-class PublicBodyRelatedField(serializers.HyperlinkedRelatedField):
+class PublicBodyRelatedField(InputStyleMixin, serializers.HyperlinkedRelatedField):
     view_name = "api:publicbody-detail"
 
     def get_queryset(self):

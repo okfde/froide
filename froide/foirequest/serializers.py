@@ -227,7 +227,9 @@ class FoiRequestDetailSerializer(FoiRequestListSerializer):
 
 class MakeRequestSerializer(serializers.Serializer):
     publicbodies = serializers.PrimaryKeyRelatedField(
-        queryset=PublicBody.objects.all(), many=True
+        queryset=PublicBody.objects.all(),
+        many=True,
+        style={"base_template": "input.html"},
     )
 
     subject = serializers.CharField(max_length=230)
