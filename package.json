@@ -52,7 +52,7 @@
     "@panzoom/panzoom": "^4.6.0",
     "@popperjs/core": "^2.11.5",
     "@types/lodash.throttle": "^4.1.9",
-    "@uppy/core": "^4.4.4",
+    "@uppy/core": "^4.4.7",
     "@uppy/dashboard": "^4.3.3",
     "@uppy/tus": "^4.2.2",
     "@vueuse/core": "^13.1.0",
