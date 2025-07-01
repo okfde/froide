@@ -213,7 +213,7 @@ class FoiAttachment(models.Model):
 
     @property
     def can_redact(self):
-        return self.redacted is not None or (self.can_approve and self.is_pdf)
+        return self.redacted_id is not None or (self.can_approve and self.is_pdf)
 
     @property
     def can_delete(self):
