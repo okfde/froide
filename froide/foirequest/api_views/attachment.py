@@ -11,11 +11,13 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from froide.campaign.models import Campaign
 from froide.document.api_views import DocumentSerializer
 from froide.foirequest.models.message import FoiMessage
 from froide.helper.auth import is_crew
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
+from froide.publicbody.models import PublicBody
 
 from ..auth import (
     CreateOnlyWithScopePermission,
@@ -39,6 +41,18 @@ class FoiAttachmentFilter(filters.FilterSet):
         queryset=FoiMessage.objects.none(),
         field_name="belongs_to",
     )
+    campaign = filters.ModelChoiceFilter(
+        queryset=Campaign.objects.get_filter_list(),
+        to_field_name="slug",
+        null_value="-",
+        empty_label=_("all/no campaigns"),
+        null_label=_("no campaign"),
+        method="filter_campaign",
+    )
+    publicbody = filters.ModelMultipleChoiceFilter(
+        queryset=PublicBody._default_manager.all(),
+        method="filter_publicbody",
+    )
 
     class Meta:
         model = FoiAttachment
@@ -58,6 +72,16 @@ class FoiAttachmentFilter(filters.FilterSet):
         self.filters["belongs_to"].queryset = get_read_foimessage_queryset(
             request, FoiMessage.with_drafts.all()
         ).order_by()
+
+    def filter_publicbody(self, qs, name, value):
+        if not value:
+            return qs
+        return qs.filter(belongs_to__request__public_body__in=value)
+
+    def filter_campaign(self, qs, name, value):
+        if value == "-":
+            return qs.filter(belongs_to__request__campaign=None)
+        return qs.filter(belongs_to__request__campaign=value)
 
 
 class FoiAttachmentViewSet(
