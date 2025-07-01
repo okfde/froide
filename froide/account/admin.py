@@ -98,7 +98,14 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     date_hierarchy = "date_joined"
     ordering = ("-date_joined",)
-
+    add_fieldsets = (
+        (
+            None,
+            {
+                "fields": ("username", "email", "password1", "password2"),
+            },
+        ),
+    )
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (
             _("Profile info"),
