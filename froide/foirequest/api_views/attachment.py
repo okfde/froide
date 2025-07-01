@@ -89,7 +89,7 @@ class FoiAttachmentViewSet(
         return qs.prefetch_related(
             "belongs_to",
             "belongs_to__request",
-            "belongs_to__request__user",
+            "document",
         )
 
     @extend_schema(
