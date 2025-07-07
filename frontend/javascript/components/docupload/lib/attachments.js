@@ -19,7 +19,7 @@ const store = useAttachmentsStore(pinia)
 
 const makeRelevant = (attachment) => {
   store.addImages([attachment])
-  store.removeAttachment(attachment)
+  store.removeAttachment(attachment, false)
 }
 
 const convertImage = (imageIndex) => {
@@ -238,7 +238,7 @@ const handleError = (err) => {
 
 const deleteAttachment = (attachment) => {
   // optimistically...
-  store.removeAttachment(attachment)
+  store.removeAttachment(attachment, true)
   return attachmentDestroy({
     path: { id: attachment.id },
     throwOnError: true
