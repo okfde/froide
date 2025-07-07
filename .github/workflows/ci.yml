@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: pnpm
       - name: Install dependencies
         run: pnpm install
       - uses: pre-commit/action@v3.0.1
@@ -28,30 +28,23 @@ jobs:
         python-version: ['3.12', '3.13']
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Setup uv
-        uses: astral-sh/setup-uv@v2
+        uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
           cache-dependency-glob: |
             requirements*.txt
             pyproject.toml
+          python-version: ${{ matrix.python-version }}
+          activate-environment: true
       - name: Install pnpm
         uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: pnpm
       - name: Install system-level dependencies
         run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev
-      - name: Setup venv
-        run: |
-          uv venv --python ${{ matrix.python-version }}
-          source .venv/bin/activate
-          echo PATH=$PATH >> $GITHUB_ENV
       - name: Install dependencies
         run: |
           uv pip sync requirements-test.txt
@@ -76,10 +69,8 @@ jobs:
           POSTGRES_DB: froide
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+        image: elasticsearch:8.14.3
         options: -e "discovery.type=single-node" -e "xpack.security.enabled=false" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
-          - '9200:9200'
+          - 9200:9200
