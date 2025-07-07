@@ -330,7 +330,6 @@ watch(isDesktop, (newValue) => {
 }, { immediate: true })
 
 onMounted(() => {
-  // fileUploaderShow.value = isDesktop.value
   document.body.addEventListener('dragover', () => fileUploaderShow.value = true)
   document.body.addEventListener('dragenter', () => fileUploaderShow.value = true)
 })
