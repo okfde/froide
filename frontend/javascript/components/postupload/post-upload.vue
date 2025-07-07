@@ -108,7 +108,7 @@ if (props.config.url.mobileAppContent) {
 /* Websocket connection */
 
 if (props.config.url.messageWebsocket) {
-  const room = new Room(props.config.url.messageWebsocket)
+  const room = getWebsocketMessageRoom() // new Room(props.config.url.messageWebsocket)
   room.connect().on('attachment_added', (data) => {
     // When a new attachment is added, refresh the attachments store.
     // We used to auto-step here, but this proved to error-prone,
