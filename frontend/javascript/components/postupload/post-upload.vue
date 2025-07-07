@@ -147,7 +147,7 @@ const isoPrepareDate = (dateYmdStr) => {
   // "When the time zone offset is absent, date-only forms are interpreted as a UTC time
   // and date-time forms are interpreted as a local time."
   // We need to turn it into a timestamp:
-  const dateTime = new Date(dateYmdStr) // this is "today 0:00", but UTC...
+  let dateTime = new Date(dateYmdStr) // this is "today 0:00", but UTC...
   // ...so it could be interpreted as a significantly different date
   // by serverside utils.postal_date on publish.
   // The server does not know client's timezone!
@@ -164,8 +164,15 @@ const isoPrepareDate = (dateYmdStr) => {
     // ...for any day in the past, we do set noon.
     dateTime.setHours(12, 0, 0, 0)
   }
-  // Note that this could lead to unexpected behavior between
+  // Note that the logic above could lead to unexpected behavior between
   // "client midnight" and "server midnight".
+  // Last, we avoid inventing a too early timestamp,
+  // (request created in the pm, post uploaded same day)
+  const requestCreatedAt = new Date(props.foirequest.created_at)
+  if (dateTime < requestCreatedAt) {
+    // "round up" a second, avoid precision collision
+    dateTime = new Date((+requestCreatedAt) + 1000)
+  }
   return dateTime.toISOString()
 }
 

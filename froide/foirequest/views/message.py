@@ -565,6 +565,7 @@ def edit_postal_message(request, foirequest, message_id):
                         "name": foirequest.public_body.name,
                     },
                     "public": foirequest.public,
+                    "created_at": foirequest.created_at.isoformat(),
                 }
             ),
             "date_max": timezone.localdate().isoformat(),
