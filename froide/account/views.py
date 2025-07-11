@@ -45,6 +45,7 @@ from .auth import (
     set_last_auth,
     start_mfa_auth,
     try_login_user_without_mfa,
+    user_has_mfa,
 )
 from .export import (
     ExportCrossDomainMediaAuth,
@@ -171,8 +172,14 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
         return redirect(url)
 
     if request.method == "POST":
+        login_optional = bool(request.POST.get("nologin"))
         user = User.objects.filter(pk=int(user_id)).first()
         if user and not user.is_blocked:
+            if login_optional and user_has_mfa(user):
+                # If login is optional, don't login MFA users
+                # as it will be too much friction
+                return redirect(url)
+
             account_manager = AccountService(user)
             if account_manager.check_autologin_token(token):
                 if not user.is_active:
@@ -184,7 +191,7 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
                 return start_mfa_auth(request, user, url)
 
         # If login-link fails, prompt login with redirect
-        if request.POST.get("nologin"):
+        if login_optional:
             # Unless we explicitly don't need a login for that url
             return redirect(url)
         return redirect_to_login(url)
