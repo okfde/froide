@@ -562,6 +562,20 @@ def test_go(world, client):
     response = client.get(test_url)
     assert response.context["user"].is_anonymous
 
+    # Try logging in via link: wrong secret but nologin tag
+    autologin = reverse(
+        "account-go",
+        kwargs={"user_id": str(user.id), "token": "a" * 32, "url": test_url},
+    )
+    response = client.get(autologin + "?nologin=1")
+    assert response.context["nologin"] == "1"
+    assert '<input type="hidden" name="nologin" value="1">' in response.text
+    response = client.post(autologin, {"nologin": "1"})
+    assert response.status_code == 302
+    assert response["Location"].startswith(test_url)
+    response = client.get(test_url)
+    assert response.context["user"].is_anonymous
+
 
 @pytest.mark.django_db
 def test_go_redirect_without_loop(client):

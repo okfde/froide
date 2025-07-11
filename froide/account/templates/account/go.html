@@ -6,6 +6,7 @@
         <form action="{{ form_action }}" method="post" data-autosubmit="true">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ next }}">
+            {% if nologin %}<input type="hidden" name="nologin" value="1">{% endif %}
             <div class="spinner-border" role="status">
                 <span class="visually-hidden">{% translate "Loading..." %}</span>
             </div>

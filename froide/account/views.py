@@ -184,11 +184,18 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
                 return start_mfa_auth(request, user, url)
 
         # If login-link fails, prompt login with redirect
-        if request.GET.get("nologin"):
+        if request.POST.get("nologin"):
+            # Unless we explicitly don't need a login for that url
             return redirect(url)
         return redirect_to_login(url)
     return render(
-        request, "account/go.html", {"form_action": request.path, "next": url}
+        request,
+        "account/go.html",
+        {
+            "form_action": request.path,
+            "next": url,
+            "nologin": request.GET.get("nologin", ""),
+        },
     )
 
 
