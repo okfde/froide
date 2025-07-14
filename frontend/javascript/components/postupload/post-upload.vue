@@ -336,6 +336,12 @@ watch(isDesktop, (newValue) => {
   if (newValue) fileUploaderShow.value = true
 }, { immediate: true })
 
+watch(() => attachments.images.length, (newValue, oldValue) => {
+  if (newValue === 0 && oldValue > 0) {
+    fileUploaderShow.value = true
+  }
+})
+
 onMounted(() => {
   document.body.addEventListener('dragover', () => fileUploaderShow.value = true)
   document.body.addEventListener('dragenter', () => fileUploaderShow.value = true)
