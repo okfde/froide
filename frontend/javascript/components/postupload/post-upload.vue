@@ -408,6 +408,7 @@ const isEmailResponse = (props.message.kind === 'email' && props.message.is_resp
 const firstStep = isEmailResponse
   ? STEP_INTRO_EMAIL
   : STEP_INTRO
+console.log('### #')
 const stepHistory = reactive([firstStep])
 const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
@@ -1053,6 +1054,9 @@ addEventListener('hashchange', () => {
         <div class="col-lg-9">
           <div class="row my-5 justify-content-center">
             MOBILE INTRO
+            <div class="alert alert-primary">
+              <DjangoSlot name="message_content_redacted"></DjangoSlot>
+            </div>
             <div>
               all {{ attachments.all.length }}
               convertable {{ attachments.convertable.length }}
@@ -1738,21 +1742,6 @@ addEventListener('hashchange', () => {
             <div class="mt-2">
               <small>
                 {{ i18n.notYetPublishedHint }}
-              </small>
-            </div>
-          </template>
-          <template v-else-if="step === STEP_INTRO_EMAIL">
-            <button
-              type="button"
-              @click="gotoStep()"
-              class="btn btn-primary d-block w-100"
-            >
-              Anhänge lesen und schwärzen {{ i18n.attachmentsReadAndRedactTODO }}
-            </button>
-            <div class="mt-2" v-if="attachments.convertable.length > 0">
-              <small>
-                Es sind Bilddateien angehängt - im nächsten Schritt können diese in PDFs konvertiert werden.
-                {{ i18n.TODO }}
               </small>
             </div>
           </template>

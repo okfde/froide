@@ -327,28 +327,6 @@ const monitorAttachments = () => {
   })
 }
 
-let room
-const getWebsocketMessageRoom = () => {
-  if (!room) {
-    room = (new Room(config.urls.messageWebsocket)).connect()
-  }
-  return room
-}
-
-const monitorAttachments = () => {
-  getWebsocketMessageRoom().on('attachment_available', (data) => {
-    // we store the id in case the attachment is populated via API call later
-    store.availableIds.add(data.attachment)
-    const attachment = store.allRaw.find(att => att.id === data.attachment)
-    if (attachment) attachment.pending = false
-    store.images.forEach(image => image.pages.forEach(page => {
-      if (page.id === data.attachment) {
-        page.pending = false
-      }
-    }))
-  })
-}
-
 export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
