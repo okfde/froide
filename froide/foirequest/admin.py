@@ -20,7 +20,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from froide.account.models import UserTag
+from froide.account.models import UserTag, annotate_deterministic_field
 from froide.comments.models import FroideComment
 from froide.foirequest.models.message import FoiMessageDraft
 from froide.guide.models import Action
@@ -1173,10 +1173,20 @@ class RequestDraftAdmin(admin.ModelAdmin):
         "subject",
     )
     list_filter = ("public", "full_text")
-    search_fields = ["subject", "user__email_deterministic"]
+    search_fields = ["subject", "user_email_deterministic"]
     ordering = ("-save_date",)
     date_hierarchy = "save_date"
     raw_id_fields = ("user", "publicbodies", "request", "project")
+
+    def get_queryset(self, request):
+        qs = (
+            super()
+            .get_queryset(request)
+            .annotate(
+                user_email_deterministic=annotate_deterministic_field("user__email")
+            )
+        )
+        return qs
 
 
 @admin.register(DeliveryStatus)

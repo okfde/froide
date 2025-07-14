@@ -48,9 +48,11 @@ class TaggedUser(TaggedItemBase):
 
 
 def annotate_deterministic_email(queryset):
-    return queryset.annotate(
-        email_deterministic=Collate("email", "und-x-icu"),
-    )
+    return queryset.annotate(email_deterministic=annotate_deterministic_field("email"))
+
+
+def annotate_deterministic_field(field_name: str):
+    return Collate(field_name, "und-x-icu")
 
 
 class UserManager(BaseUserManager):
