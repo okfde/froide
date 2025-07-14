@@ -418,8 +418,8 @@ def redact_attachment_task(att_id, target_id, instructions):
                 attachment.approve_and_save()
             attachment.can_approve = True
         attachment.pending = False
-        FoiAttachment.attachment_available.send(sender=attachment)
         attachment.save()
+        FoiAttachment.attachment_available.send(sender=attachment)
 
         if not target.file:
             target.delete()
@@ -477,9 +477,10 @@ def move_upload_to_attachment(att_id, upload_id):
     if file:
         att.pending = False
         att.file.save(att.name, file, save=True)
-        FoiAttachment.attachment_available.send(sender=att)
     upload.finish()
     upload.delete()
+    if file:
+        FoiAttachment.attachment_available.send(sender=att)
 
     if att.can_convert_to_pdf():
         convert_attachment_task.delay(att.id)
