@@ -9,7 +9,7 @@
     <div class="container py-3">
         <div class="row g-3">
             <div class="col-12 col-md-6 d-flex">
-                <div class="border-gray p-3 w-100 d-flex">
+                <div class="border border-2 border-gray-300 p-3 w-100 d-flex">
                     {% get_team_form object as team_form %}
                     {% trans "Assign team to request" as legend %}
                     {% trans "Set team" as submit_button %}
@@ -20,7 +20,7 @@
             {% get_project_form object as project_form %}
             {% if project_form.fields.project.queryset %}
                 <div class="col-12 col-md-6 d-flex">
-                    <div class="border-gray p-3 w-100 d-flex">
+                    <div class="border border-2 border-gray-300 p-3 w-100 d-flex">
                         {% trans "Assign request to project" as legend %}
                         {% trans "Set project" as submit_button %}
                         {% url 'foirequest-set_project' slug=object.slug as submit_url %}
@@ -30,7 +30,7 @@
             {% endif %}
             {% if object.response_messages %}
                 <div class="col-12 col-md-6 d-flex">
-                    <div class="border-gray p-3 w-100">
+                    <div class="border border-2 border-gray-300 p-3 w-100">
                         <h5>{% trans "Set Law" %}</h5>
                         <form method="post"
                               class="disable-submit"
@@ -47,7 +47,7 @@
             {% endif %}
             {% if not object.public %}
                 <div class="col-12 col-md-6 d-flex">
-                    <div class="border-gray p-3 w-100">
+                    <div class="border border-2 border-gray-300 p-3 w-100">
                         <h5>{% trans "Secret Short URL" %}</h5>
                         <p class="small help">{% trans "This URL gives read access to others." %}</p>
                         <p>
