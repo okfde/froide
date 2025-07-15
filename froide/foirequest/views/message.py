@@ -560,6 +560,7 @@ def edit_postal_message(request, foirequest, message_id):
             "foirequest_json": json.dumps(
                 {
                     "id": foirequest.id,
+                    "title": foirequest.title,
                     "url": foirequest.url,
                     "public_body": {
                         "id": foirequest.public_body.id,
@@ -573,6 +574,7 @@ def edit_postal_message(request, foirequest, message_id):
             "date_min": foirequest.created_at.date().isoformat(),
             "user_is_staff": json.dumps(request.user.is_staff),
             "schemas_json": json.dumps(schemas),
+            "message": message,
             "message_json": "null"
             if message is None
             else json.dumps(

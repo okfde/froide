@@ -21,6 +21,8 @@ import AttachmentsTable from '../docupload/attachments-table.vue'
 const props = defineProps({
   config: Object,
   message: Object,
+  message_timestamp_relative: String,
+  message_timestamp_local: String,
   schemas: Object,
   foirequest: Object,
   date_min: String,
@@ -61,6 +63,7 @@ window.FDSdebug = (val) => {
   debug.value = typeof val === 'boolean' ? val : !debug.value
   localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
 }
+window.__fds_atta = attachments
 
 const debugSkipDate = () => {
   values.date = document.forms.postupload.elements.date.max
@@ -401,9 +404,18 @@ const pdfRedactionUploaded = () => {
   refreshAttachments()
 }
 
-/* --- state machine, functionality --- */
+/* --- state/flow --- */
 
 const isEmailResponse = (props.message.kind === 'email' && props.message.is_response)
+
+const questionTotal = isEmailResponse ? 2 : 5
+
+// TODO i18n
+const progressSteps = isEmailResponse
+  ? ['Lesen & Schwärzen', 'Infos eingeben']
+  : ['Hochladen', 'Infos eingeben', 'Schwärzen']
+
+/* --- state machine, functionality --- */
 
 const firstStep = isEmailResponse
   ? STEP_INTRO_EMAIL
@@ -553,8 +565,9 @@ const stepsConfig = {
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
     context: {
-      progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      progressStep: 1, // n/a for isEmailResponse
+      mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: 1, // n/a for isEmailResponse
     }
   },
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
@@ -565,14 +578,15 @@ const stepsConfig = {
         : STEP_MESSAGE_PUBLICBODY_UPDATE
     },
     context: {
-      progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      progressStep: 1, // n/a for isEmailResponse
+      mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: 2, // n/a for isEmailResponse
     }
   },
   [STEP_MESSAGE_PUBLICBODY_UPDATE]: {
     next: STEP_MESSAGE_DATE,
     context: {
-      progressStep: 1,
+      progressStep: 1, // n/a for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation
     }
   },
@@ -588,8 +602,9 @@ const stepsConfig = {
       updateValidity('registered_mail_date')
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // n/a for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: 3, // n/a for isEmailResponse
       isGotoValid: () => {
         if (isDesktop.value && values.is_registered_mail)
           return validity.date && validity.registered_mail_date
@@ -604,7 +619,7 @@ const stepsConfig = {
       updateValidity('registered_mail_date')
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // n/a for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => validity.registered_mail_date
     }
@@ -625,8 +640,9 @@ const stepsConfig = {
       updateValidity('resolution')
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: isEmailResponse ? 1 : 4,
       isGotoValid: () => {
         if (isDesktop.value && requestIsResolved.value) {
           return validity.status && validity.resolution
@@ -646,7 +662,7 @@ const stepsConfig = {
       updateValidity('resolution')
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => validity.resolution
     }
@@ -660,8 +676,9 @@ const stepsConfig = {
         : STEP_REDACTION_PICKER
     },
     context: {
-      progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      progressStep: 1, // same for isEmailResponse
+      mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: isEmailResponse ? 2 : 5,
     }
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
@@ -673,8 +690,9 @@ const stepsConfig = {
         : STEP_REDACTION_PICKER
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: isEmailResponse ? 2 : 5,
       isGotoValid: () => {
         if (isDesktop.value && requestUpdateCosts.value) return validity.costs
         return true
@@ -692,7 +710,7 @@ const stepsConfig = {
     },
     context: {
       isGotoValid: () => validity.costs,
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation
     }
   },
@@ -705,10 +723,11 @@ const stepsConfig = {
     onEnter: () => {
       attachments.selectSubset(attachments.redactNudgable)
       pdfRedactionUploaded()
+      // TODO is this still correct?
       if (!isEmailResponse) attachments.selectAllNewRedactableAttachments()
     },
     context: {
-      progressStep: 2,
+      progressStep: 2, // n/a for isEmailResponse
       mobileHeaderTitle: i18n.value.redact,
     }
   },
@@ -725,11 +744,13 @@ const stepsConfig = {
         : STEP_DOCUMENTS_OVERVIEW_REDACTED
     },
     context: {
-      progressStep: 2,
+      progressStep: isEmailResponse ? 0 : 2,
       mobileHeaderTitle: i18n.value.redact
     },
     onEnter: () => {
-      if (isEmailResponse) attachments.selectAllNewRedactableAttachments()
+      if (isEmailResponse && attachments.selected.length === 0) {
+        attachments.selectSubset(attachments.redactNudgable)
+      }
     }
   },
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
@@ -740,7 +761,7 @@ const stepsConfig = {
       pdfRedactionUploaded()
     },
     context: {
-      progressStep: 2,
+      progressStep: isEmailResponse ? 1 : 2, // TODO check
       mobileHeaderTitle: i18n.value.preview,
     }
   },
@@ -750,7 +771,7 @@ const stepsConfig = {
       guardBeforeunload(false)
     },
     context: {
-      progressStep: 2,
+      progressStep: isEmailResponse ? 1 : 2, // TODO check
       mobileHeaderTitle: i18n.value.done
     }
   }
@@ -830,7 +851,7 @@ addEventListener('hashchange', () => {
   <SimpleStepper
     class="sticky-top position-md-static"
     :step="stepContext.progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+    :steps="progressSteps"
   >
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
@@ -1053,9 +1074,60 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="row my-5 justify-content-center">
-            MOBILE INTRO
-            <div class="alert alert-primary">
-              <DjangoSlot name="message_content_redacted"></DjangoSlot>
+            <h1>Neue Antwort der Behörde TODO i18n</h1>
+            <p>
+              Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite TODO i18n
+              <a :href="props.message.url">{{ props.foirequest.title }}</a>
+            </p>
+            <div
+              class="alert alert-primary rounded-4"
+              style="border-bottom-left-radius: 0 !important;"
+              >
+              <div>Betreff: {{ props.message.subject }}</div>
+              TODO: pre?
+                TODO: props.message.redacted_content? and subject?
+              <div>{{ props.message.content }}</div>
+              <div class="alert alert-primary">
+                <DjangoSlot name="message_content_redacted"></DjangoSlot>
+              </div>
+            </div>
+            <div class="mb-5 text-secondary d-flex gap-1">
+              <!--
+              <span class="badge rounded-circle text-bg-secondary d-inline-block"
+                style="width: 1rem; height: 1rem;">
+                <i class="fa fa-bank" aria-hidden="true"></i>
+              </span>
+              -->
+              <div>
+                <span class="fa-stack align-middle">
+                  <i class="fa fa-circle fa-stack-2x" style="color: var(--bs-tertiary-bg)"></i>
+                  <i class="fa fa-bank fa-stack-1x" style="color: var(--bs-tertiary-color)"></i>
+                </span>
+              </div>
+              <div class="pt-1">
+                Erhalten von
+                <strong>{{ props.message.sender }}&thinsp;</strong>
+                <span :title="props.message_timestamp_local">
+                  {{ props.message_timestamp_relative }}
+                </span>
+              </div>
+            </div>
+            <div class="alert alert-warning">
+              <div><strong>
+                {{ attachments.all.length }} Anhänge
+              </strong></div>
+              TODO: if has convertable, say something different here
+              or do the nächste schritte thing 
+              <div v-if="attachments.convertable.length">
+                Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren.
+              </div>
+              <div>Im folgenden Schritt lesen und schwärzen Sie die Anhänge.</div>
+              <AttachmentsTable
+                :subset="attachments.all"
+                :as-card-threshold="0"
+                badges-type
+                dense
+                />
             </div>
             <div>
               all {{ attachments.all.length }}
@@ -1140,7 +1212,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 1, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label">
             {{ i18n.letterSentOrReceived }}
           </label>
@@ -1157,7 +1229,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 2, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="!values.is_response">
               {{ i18n.messagePublicbodyCheckTo }}
@@ -1208,7 +1280,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_DATE" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 3, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label field-required" for="id_date">
             {{ i18n.messageDate }}
           </label>
@@ -1276,7 +1348,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_STATUS" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 4, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="values.is_response && requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
@@ -1340,7 +1412,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_COST_CHECK_ANY" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 5, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold col-form-label">
             {{ i18n.messageCostCheck }}
           </label>
@@ -1360,7 +1432,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_COST_CHECK_LAST" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 5, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00
             also, API returns floats, so this actually should be decimalized i18n-awarely...
             (or provided as a formatted string by the API)
