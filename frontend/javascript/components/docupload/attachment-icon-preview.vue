@@ -92,6 +92,7 @@ const retryLoad = (evt) => {
       :title="i18n.preview"
       >
       <img
+        v-if="!attachment.pending"
         :src="attachment.file_url"
         :alt="i18n.preview"
         class="object-fit-contain shadow-sm"
