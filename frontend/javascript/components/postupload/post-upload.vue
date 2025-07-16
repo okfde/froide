@@ -1080,39 +1080,39 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="row my-5 justify-content-center">
-            <h1>Neue Antwort der Behörde TODO i18n</h1>
+            <h1>Neue Antwort der Behörde</h1>
             <p>
-              Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite TODO i18n
+              Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:
               <a :href="props.message.url">{{ props.foirequest.title }}</a>
             </p>
             <div v-if="attachments.redactNudgable.length === 0" class="alert alert-warning" role="alert">
-              TODO Diese Nachricht hat keine zu schwärzenden Anhänge.
-              Deshalb entfällt 
-              Sie könnend das anschließend in der
+              Diese Nachricht hat keine zu schwärzenden Anhänge.
+              Deshalb entfällt der nächste Schritt.<br/>
+              Sie können die Anhänge anschließend in der
               <a :href="props.config.url.convertAttachments">
                 Anhangsverwaltung
               </a>
-              überprüfen.
+              überprüfen.<br/>
+              Falls die Nachricht Anhänge enthielt, die konvertiert werden
+              (z.B.
+              <span class="badge text-bg-secondary text-uppercase">docx</span>
+              Word-Dokumente),
+              warten Sie bitte noch etwas und aktualisieren diese Seite.
             </div>
+            <!-- the radius in style makes one corner pointy, speech bubbley -->
             <div
               class="alert alert-primary rounded-4"
               style="border-bottom-left-radius: 0 !important;"
               >
-              <div>Betreff: {{ props.message.subject }}</div>
-              TODO: pre?
-                TODO: props.message.redacted_content? and subject?
-              <div>{{ props.message.content }}</div>
-              <div class="alert alert-primary">
+              <!-- if unredacted, use pros.message.subject and .content -->
+              <div class="email-subject mb-3"><!-- strip whitespace for pre-wrap
+                -->Betreff: <DjangoSlot name="message_subject_redacted"></DjangoSlot>
+              </div>
+              <div class="email-content">
                 <DjangoSlot name="message_content_redacted"></DjangoSlot>
               </div>
             </div>
             <div class="mb-5 text-secondary d-flex gap-1">
-              <!--
-              <span class="badge rounded-circle text-bg-secondary d-inline-block"
-                style="width: 1rem; height: 1rem;">
-                <i class="fa fa-bank" aria-hidden="true"></i>
-              </span>
-              -->
               <div>
                 <span class="fa-stack align-middle">
                   <i class="fa fa-circle fa-stack-2x" style="color: var(--bs-tertiary-bg)"></i>
@@ -1127,30 +1127,23 @@ addEventListener('hashchange', () => {
                 </span>
               </div>
             </div>
-            <!-- TODO that soft grey background here, pbly no alert either -->
-            <div class="alert">
+            <div class="p-3 bg-body-tertiary">
               <div><strong>
                 {{ attachments.all.length }} Anhänge
               </strong></div>
-              TODO: if has convertable, say something different here
-              or do the nächste schritte thing 
               <div v-if="attachments.convertable.length">
                 Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren.
               </div>
-              <div>Im folgenden Schritt lesen und schwärzen Sie die Anhänge.</div>
+              <div v-if="attachments.redactNudgable.length > 0">
+                Im folgenden Schritt lesen und schwärzen Sie die Anhänge.
+              </div>
               <AttachmentsTable
                 :subset="attachments.all"
-                :as-card-threshold="0"
+                as-table-only
                 badges-type
                 dense
                 />
             </div>
-            <div>
-              all {{ attachments.all.length }}
-              convertable {{ attachments.convertable.length }}
-              images {{ attachments.images.length }}
-            </div>
-            <pre>{{ JSON.stringify(props.message, false, 2) }}</pre>
           </div>
         </div>
       </div>
@@ -2014,4 +2007,17 @@ addEventListener('hashchange', () => {
     top: 41px; // height of .simple-stepper/breadcrumbs
   }
 }
+
+/* email */
+
+.email-subject {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.email-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 </style>

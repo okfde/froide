@@ -26,13 +26,9 @@
             {% include "foirequest/snippets/redaction_explanation.html" %}
         </template>
         {# TODO if kind=Email, if message.plaintext... #}
-        <template data-slot="message_subject_redacted">
-            <!-- TODO doesnt look redacted, no tooltips?? -->
-            {% redact_subject message request %}
-        </template>
-        <template data-slot="message_content_redacted">
-            {% redact_message message request %}
-        </template>
+        {# avoid whitespace, since this will be pre-wrap. spaceless didn't work... #}
+        <template data-slot="message_subject_redacted">{% redact_subject message request %}</template>
+        <template data-slot="message_content_redacted">{% redact_message message request %}</template>
         </post-upload>
     </form>
 {% endblock body %}
