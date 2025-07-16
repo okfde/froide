@@ -61,6 +61,21 @@ const iconTooltipTexts = computed(() => (needsRedaction.value && nudgeRedaction)
   ]
 )
 
+const maxRetries = 3
+
+let retries = maxRetries
+
+const retryLoad = (evt) => {
+  if (retries === 0) return
+  console.log('AttachmentIconPreview img failed to load, retrying', retries, evt)
+  retries--
+  // back off slightly, first retry wait 3s, last 10s
+  window.setTimeout(() => {
+    const sep = evt.target.src.indexOf('?') > 0 ? '&' : '?'
+    evt.target.src = evt.target.src + sep + 'retry=' + Date.now()
+  }, 10000 / (retries + 1))
+}
+
 </script>
 
 <template>
@@ -81,6 +96,7 @@ const iconTooltipTexts = computed(() => (needsRedaction.value && nudgeRedaction)
         :alt="i18n.preview"
         class="object-fit-contain shadow-sm"
         :style="{ maxWidth: size, maxHeight: size }"
+        @error="retryLoad"
         />
     </a>
     <a
