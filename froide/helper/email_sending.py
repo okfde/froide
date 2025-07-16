@@ -106,6 +106,22 @@ class MailMiddlwareRegistry:
                 email_kwargs.update(ctx)
         return email_kwargs
 
+    def send_mail(
+        self, mail_intent, email_content, email_address, context, email_kwargs
+    ):
+        for middleware in self.middlewares:
+            result = self.maybe_call_middleware(
+                middleware,
+                "send_mail",
+                mail_intent=mail_intent,
+                email_content=email_content,
+                email_address=email_address,
+                context=context,
+                email_kwargs=email_kwargs,
+            )
+            if result is not None:
+                return result
+
 
 mail_middleware_registry = MailMiddlwareRegistry()
 
@@ -129,7 +145,7 @@ class MailIntent:
 
     def get_context(self, context, preview=False):
         if not preview and self.context_vars - set(context.keys()):
-            logger.warn(
+            logger.warning(
                 "Mail intent %s with incomplete default context %s",
                 self.mail_intent,
                 context,
@@ -201,6 +217,23 @@ class MailIntent:
         )
         return email_kwargs
 
+    def send_mail(
+        self, email_content: EmailContent, email_address: str, context, email_kwargs
+    ):
+        send_result = mail_middleware_registry.send_mail(
+            self.mail_intent, email_content, email_address, context, email_kwargs
+        )
+        if send_result is not None:
+            return send_result
+        return send_mail(
+            email_content.subject,
+            email_content.text,
+            email_address,
+            user_email=email_address,
+            html=email_content.html,
+            **email_kwargs,
+        )
+
     def send(self, email=None, user=None, context=None, template_base=None, **kwargs):
         if context is None:
             context = {}
@@ -229,14 +262,7 @@ class MailIntent:
         # Make sure no extra subject kwarg is present
         email_kwargs.pop("subject", None)
 
-        return send_mail(
-            email_content.subject,
-            email_content.text,
-            email_address,
-            user_email=email_address,
-            html=email_content.html,
-            **email_kwargs,
-        )
+        return self.send_mail(email_content, email_address, context, email_kwargs)
 
 
 def get_mail_connection(**kwargs):
