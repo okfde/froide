@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, asTableOnly, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
+const { subset, asCardThreshold, asTableOnly, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, previewHideInfoSidebar, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -68,6 +68,7 @@ const { subset, asCardThreshold, asTableOnly, actions, actionDelete, cardsSelect
     }
   },
   nudgeRedaction: Boolean,
+  previewHideInfoSidebar: Boolean,
   badgesNew: Boolean,
   badgesRedaction: Boolean,
   badgesType: Boolean,
@@ -287,6 +288,7 @@ const makeResultSelected = async () => {
           class="text-center pb-1"
           :actions="actions"
           :nudge-redaction="nudgeRedaction"
+          :preview-hide-info-sidebar="previewHideInfoSidebar"
           />
         <div
           class="text-center mb-1 mw-100 text-break"
@@ -369,6 +371,7 @@ const makeResultSelected = async () => {
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         :actions="actions"
         :nudge-redaction="nudgeRedaction"
+        :preview-hide-info-sidebar="previewHideInfoSidebar"
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"

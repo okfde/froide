@@ -23,7 +23,8 @@ const { attachment, actions, nudgeRedaction, big } = defineProps({
   },
   actions: Boolean,
   nudgeRedaction: Boolean,
-  big: Boolean
+  big: Boolean,
+  previewHideInfoSidebar: Boolean,
 })
 
 const pdfRedactionAtt = ref(null)
@@ -147,7 +148,7 @@ const retryLoad = (evt) => {
       </template>
       <template #body>
         <div class="row h-100">
-          <div class="col-sm-8 mb-3">
+          <div class="col mb-3">
             <DocumentViewer
               v-if="attachment.document && !attachment.document.pending"
               :document-url="attachment.document.resource_uri"
@@ -168,7 +169,7 @@ const retryLoad = (evt) => {
               class="h-100 w-100"
               ></iframe>
           </div>
-          <div class="col-sm-4 d-flex flex-column">
+          <div class="col-sm-4 d-flex flex-column" v-if="!previewHideInfoSidebar">
             <div
               v-if="attachment.size || attachment.filetype || attachment.document"
               class="card mb-3"
