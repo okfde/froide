@@ -158,9 +158,12 @@ class NullFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        kwargs = {
-            "%s" % self.parameter_name: None,
-        }
+        if self.parameter_name.endswith("__isnull"):
+            kwargs = {self.parameter_name: True}
+        else:
+            kwargs = {
+                "%s" % self.parameter_name: None,
+            }
         if self.value() == "0":
             return queryset.filter(**kwargs)
         if self.value() == "1":
