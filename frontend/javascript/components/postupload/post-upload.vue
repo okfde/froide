@@ -592,6 +592,7 @@ const stepsConfig = {
     },
     onEnter: () => {
       updateValidity('status')
+      updateValidity('resolution')
     },
     context: {
       progressStep: 1,
@@ -610,6 +611,9 @@ const stepsConfig = {
       return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
+    },
+    onEnter: () => {
+      updateValidity('resolution')
     },
     context: {
       progressStep: 1,
