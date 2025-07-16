@@ -503,6 +503,9 @@ const stepsConfig = {
       if (attachments.convertable.length > 0) {
         return STEP_DOCUMENTS_CONVERT // dot:style=dotted
       }
+      else if (attachments.redactNudgable.length === 0) {
+        return STEP_MESSAGE_STATUS // dot:style=dotted
+      }
       console.log('uploads were documents, not images, passing by image sorting')
       return STEP_REDACTION_REDACT // dot:style=dotted
     },
@@ -514,9 +517,12 @@ const stepsConfig = {
   },
   [STEP_DOCUMENTS_CONVERT]: {
     next: () => {
-      return isEmailResponse
-        ? STEP_REDACTION_REDACT // dot:style=dotted
-        : STEP_DOCUMENTS_OVERVIEW
+      if (isEmailResponse) {
+        return attachments.redactNudgable.length > 0
+          ? STEP_REDACTION_REDACT // dot:style=dotted
+          : STEP_MESSAGE_STATUS // dot:style=dotted
+      }
+      return STEP_DOCUMENTS_OVERVIEW
     },
     onEnter: () => {
       guardBeforeunload(true)
@@ -1079,6 +1085,15 @@ addEventListener('hashchange', () => {
               Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite TODO i18n
               <a :href="props.message.url">{{ props.foirequest.title }}</a>
             </p>
+            <div v-if="attachments.redactNudgable.length === 0" class="alert alert-warning" role="alert">
+              TODO Diese Nachricht hat keine zu schwärzenden Anhänge.
+              Deshalb entfällt 
+              Sie könnend das anschließend in der
+              <a :href="props.config.url.convertAttachments">
+                Anhangsverwaltung
+              </a>
+              überprüfen.
+            </div>
             <div
               class="alert alert-primary rounded-4"
               style="border-bottom-left-radius: 0 !important;"
@@ -1112,7 +1127,8 @@ addEventListener('hashchange', () => {
                 </span>
               </div>
             </div>
-            <div class="alert alert-warning">
+            <!-- TODO that soft grey background here, pbly no alert either -->
+            <div class="alert">
               <div><strong>
                 {{ attachments.all.length }} Anhänge
               </strong></div>
@@ -1823,7 +1839,12 @@ addEventListener('hashchange', () => {
               @click="gotoStep()"
               class="btn btn-primary d-block w-100"
             >
-              Anhänge lesen und schwärzen {{ i18n.attachmentsReadAndRedactTODO }}
+              <template v-if="attachments.convertable.length === 0 && attachments.redactNudgable.length === 0">
+                {{ i18n.next }}
+              </template>
+              <template v-else>
+                Anhänge lesen und schwärzen {{ i18n.attachmentsReadAndRedactTODO }}
+              </template>
             </button>
             <div class="mt-2" v-if="attachments.convertable.length > 0">
               <small>

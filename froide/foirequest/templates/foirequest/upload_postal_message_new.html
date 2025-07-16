@@ -27,10 +27,11 @@
         </template>
         {# TODO if kind=Email, if message.plaintext... #}
         <template data-slot="message_subject_redacted">
+            <!-- TODO doesnt look redacted, no tooltips?? -->
             {% redact_subject message request %}
         </template>
         <template data-slot="message_content_redacted">
-            {% redact_message_short message request %}
+            {% redact_message message request %}
         </template>
         </post-upload>
     </form>

@@ -581,7 +581,6 @@ def edit_postal_message(request, foirequest, message_id):
                 FoiMessageSerializer(message, context={"request": request}).data
             ),
             "config_json": json.dumps(ctx),
-            "message": message,
         },
     )
 
