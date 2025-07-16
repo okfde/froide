@@ -73,12 +73,23 @@ def make_choose_object_action(model_or_queryset, callback, label):
     return action
 
 
+def apply_tags_to_queryset(tags, queryset, field="tags"):
+    for obj in queryset:
+        if callable(field):
+            field(obj, tags)
+        else:
+            getattr(obj, field).add(*tags)
+        obj.save()
+
+
 def make_batch_tag_action(
     action_name="tag_all",
     field="tags",
     autocomplete_url=None,
     short_description=None,
     template="admin_utils/admin_tag_all.html",
+    convert_queryset=None,
+    apply_tags=apply_tags_to_queryset,
 ):
     def tag_func(self, request, queryset):
         """
@@ -97,12 +108,9 @@ def make_batch_tag_action(
             )
             if form.is_valid():
                 tags = form.cleaned_data["tags"]
-                for obj in queryset:
-                    if callable(field):
-                        field(obj, tags)
-                    else:
-                        getattr(obj, field).add(*tags)
-                    obj.save()
+                if convert_queryset is not None:
+                    queryset = convert_queryset(queryset)
+                apply_tags(tags, queryset, field=field)
                 self.message_user(request, _("Successfully added tags"))
                 # Return None to display the change list page again.
                 return None
