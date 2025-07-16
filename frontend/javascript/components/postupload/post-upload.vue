@@ -649,6 +649,7 @@ const stepsConfig = {
       progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
       questionCurrent: isEmailResponse ? 1 : 4,
+      showPeekAttachments: isEmailResponse,
       isGotoValid: () => {
         if (isDesktop.value && requestIsResolved.value) {
           return validity.status && validity.resolution
@@ -670,6 +671,7 @@ const stepsConfig = {
     context: {
       progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
+      showPeekAttachments: isEmailResponse,
       isGotoValid: () => validity.resolution
     }
   },
@@ -685,6 +687,7 @@ const stepsConfig = {
       progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
       questionCurrent: isEmailResponse ? 2 : 5,
+      showPeekAttachments: isEmailResponse,
     }
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
@@ -699,6 +702,7 @@ const stepsConfig = {
       progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
       questionCurrent: isEmailResponse ? 2 : 5,
+      showPeekAttachments: isEmailResponse,
       isGotoValid: () => {
         if (isDesktop.value && requestUpdateCosts.value) return validity.costs
         return true
@@ -717,7 +721,8 @@ const stepsConfig = {
     context: {
       isGotoValid: () => validity.costs,
       progressStep: 1, // same for isEmailResponse
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: i18n.value.enterInformation,
+      showPeekAttachments: isEmailResponse,
     }
   },
   [STEP_REDACTION_PICKER]: {
@@ -1743,6 +1748,32 @@ addEventListener('hashchange', () => {
             <i class="fa fa-plus"></i>
             {{ i18n.uploadOrScanMoreFiles }}
           </button>
+        </div>
+      </div>
+    </div>
+    <div class="container my-3" v-if="stepContext.showPeekAttachments && (attachments.all.length > 0)">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <button
+            type="button"
+            class="btn btn-link ps-0"
+            data-bs-toggle="collapse"
+            data-bs-target="#postuploadPeekAttachments"
+            aria-expanded="false"
+            aria-controls="postuploadPeekAttachments">
+            Ich weiß nicht. Bitte die Dokumente erneut anzeigen.
+          </button>
+          <div id="postuploadPeekAttachments" class="collapse bg-body-tertiary p-3">
+            Klicken Sie auf die Icons um eine Vorschau anzuzeigen.
+            <AttachmentsTable
+              :subset="attachments.all"
+              badges-type
+              dense
+              preview-hide-info-sidebar
+              as-table-only
+              >
+            </AttachmentsTable>
+          </div>
         </div>
       </div>
     </div>
