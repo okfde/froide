@@ -21,7 +21,11 @@ from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
 from froide.account import account_banned
-from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
+from froide.helper.admin_utils import (
+    MultiFilterMixin,
+    TaggitListFilter,
+    make_daterangefilter,
+)
 from froide.helper.csv_utils import export_csv_response
 from froide.helper.forms import get_fk_raw_id_widget
 
@@ -88,6 +92,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "first_name",
         "last_name",
         "date_joined",
+        "last_login",
         "is_active",
         "is_staff",
         "private",
@@ -137,6 +142,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         ),
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
+        make_daterangefilter("last_login", _("last login")),
         "private",
         "terms",
         "is_trusted",
