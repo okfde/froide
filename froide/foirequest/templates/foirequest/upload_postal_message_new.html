@@ -29,6 +29,15 @@
         {# avoid whitespace, since this will be pre-wrap. spaceless didn't work... #}
         <template data-slot="message_subject_redacted">{% redact_subject message request %}</template>
         <template data-slot="message_content_redacted">{% redact_message message request %}</template>
+        <template data-slot="email_intro">
+            <p>
+                {% trans "Read the full message thread on the request page:" %}
+                <a href="{{ message.url }}">{{ foirequest.title }}</a>
+            </p>
+        </template>
+        <template data-slot="email_intro_noattachments">
+            {% blocktrans with link=convert_attachments_url %}This message has no redactable attachments. The next step will be skipped.<br />You can review the attachments later at <a href="{{ link }}">Manage attachments</a>.<br />If the message hat attachments that need to be converted (e.g. <span class="badge text-bg-secondary text-uppercase">docx</span> Word documents), please wait and refresh this page.{% endblocktrans %}
+        </template>
         </post-upload>
     </form>
 {% endblock body %}

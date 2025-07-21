@@ -63,7 +63,6 @@ window.FDSdebug = (val) => {
   debug.value = typeof val === 'boolean' ? val : !debug.value
   localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
 }
-window.__fds_atta = attachments
 
 const debugSkipDate = () => {
   values.date = document.forms.postupload.elements.date.max
@@ -410,17 +409,15 @@ const isEmailResponse = (props.message.kind === 'email' && props.message.is_resp
 
 const questionTotal = isEmailResponse ? 2 : 5
 
-// TODO i18n
 const progressSteps = isEmailResponse
-  ? ['Lesen & Schwärzen', 'Infos eingeben']
-  : ['Hochladen', 'Infos eingeben', 'Schwärzen']
+  ? [i18n.value.readAndRedact, i18n.value.enterInformation]
+  : [i18n.value.upload, i18n.value.enterInformation, i18n.value.redact]
 
 /* --- state machine, functionality --- */
 
 const firstStep = isEmailResponse
   ? STEP_INTRO_EMAIL
   : STEP_INTRO
-console.log('### #')
 const stepHistory = reactive([firstStep])
 const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
@@ -510,9 +507,8 @@ const stepsConfig = {
       return STEP_REDACTION_REDACT // dot:style=dotted
     },
     context: {
-      // TODO
       progressStep: 0,
-      mobileHeaderTitle: 'Neue Antwort der Behöde' // i18n.value.addLetter TODO
+      mobileHeaderTitle: i18n.value.newReply
     }
   },
   [STEP_DOCUMENTS_CONVERT]: {
@@ -529,7 +525,9 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_SORT]: {
@@ -543,7 +541,9 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan,
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_CONVERT_PDF]: {
@@ -554,7 +554,9 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_OVERVIEW]: {
@@ -565,15 +567,18 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan,
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
     context: {
-      progressStep: 1, // n/a for isEmailResponse
+      // n/a for isEmailResponse
+      progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
-      questionCurrent: 1, // n/a for isEmailResponse
+      questionCurrent: 1,
     }
   },
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
@@ -584,15 +589,17 @@ const stepsConfig = {
         : STEP_MESSAGE_PUBLICBODY_UPDATE
     },
     context: {
-      progressStep: 1, // n/a for isEmailResponse
+      // n/a for isEmailResponse
+      progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
-      questionCurrent: 2, // n/a for isEmailResponse
+      questionCurrent: 2,
     }
   },
   [STEP_MESSAGE_PUBLICBODY_UPDATE]: {
     next: STEP_MESSAGE_DATE,
     context: {
-      progressStep: 1, // n/a for isEmailResponse
+      // n/a for isEmailResponse
+      progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation
     }
   },
@@ -608,9 +615,10 @@ const stepsConfig = {
       updateValidity('registered_mail_date')
     },
     context: {
-      progressStep: 1, // n/a for isEmailResponse
+      // n/a for isEmailResponse
+      progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
-      questionCurrent: 3, // n/a for isEmailResponse
+      questionCurrent: 3,
       isGotoValid: () => {
         if (isDesktop.value && values.is_registered_mail)
           return validity.date && validity.registered_mail_date
@@ -625,7 +633,8 @@ const stepsConfig = {
       updateValidity('registered_mail_date')
     },
     context: {
-      progressStep: 1, // n/a for isEmailResponse
+      // n/a for isEmailResponse
+      progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => validity.registered_mail_date
     }
@@ -646,7 +655,7 @@ const stepsConfig = {
       updateValidity('resolution')
     },
     context: {
-      progressStep: 1, // same for isEmailResponse
+      progressStep: 1, // same for isEmailResponse, n.b. also "Step 2/2" next to mobileHeaderTitle
       mobileHeaderTitle: i18n.value.enterInformation,
       questionCurrent: isEmailResponse ? 1 : 4,
       showPeekAttachments: isEmailResponse,
@@ -738,7 +747,8 @@ const stepsConfig = {
       if (!isEmailResponse) attachments.selectAllNewRedactableAttachments()
     },
     context: {
-      progressStep: 2, // n/a for isEmailResponse
+      // n/a for isEmailResponse
+      progressStep: 2,
       mobileHeaderTitle: i18n.value.redact,
     }
   },
@@ -772,7 +782,7 @@ const stepsConfig = {
       pdfRedactionUploaded()
     },
     context: {
-      progressStep: isEmailResponse ? 1 : 2, // TODO check
+      progressStep: isEmailResponse ? 1 : 2,
       mobileHeaderTitle: i18n.value.preview,
     }
   },
@@ -782,7 +792,7 @@ const stepsConfig = {
       guardBeforeunload(false)
     },
     context: {
-      progressStep: isEmailResponse ? 1 : 2, // TODO check
+      progressStep: isEmailResponse ? 1 : 2,
       mobileHeaderTitle: i18n.value.done
     }
   }
@@ -868,7 +878,7 @@ addEventListener('hashchange', () => {
       <small>{{ i18n.done }}</small>
     </template>
     <template v-else>
-      {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/3</strong>:
+      {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/{{ isEmailResponse ? 2 : 3 }}</strong>:
       {{ stepContext.mobileHeaderTitle }}
     </template>
   </SimpleStepper>
@@ -931,6 +941,7 @@ addEventListener('hashchange', () => {
 
   <details v-if="debug" class="container">
     <summary class="DEBUG">DEBUG</summary>
+    <div>isEmailResponse={{ isEmailResponse }}</div>
     <div>step={{ step }}</div>
     <div>history={{ stepHistory.join(' ') }}</div>
     <div>stepContext={{ stepContext }}</div>
@@ -1085,24 +1096,13 @@ addEventListener('hashchange', () => {
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="row my-5 justify-content-center">
-            <h1>Neue Antwort der Behörde</h1>
-            <p>
-              Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:
-              <a :href="props.message.url">{{ props.foirequest.title }}</a>
-            </p>
-            <div v-if="attachments.redactNudgable.length === 0" class="alert alert-warning" role="alert">
-              Diese Nachricht hat keine zu schwärzenden Anhänge.
-              Deshalb entfällt der nächste Schritt.<br/>
-              Sie können die Anhänge anschließend in der
-              <a :href="props.config.url.convertAttachments">
-                Anhangsverwaltung
-              </a>
-              überprüfen.<br/>
-              Falls die Nachricht Anhänge enthielt, die konvertiert werden
-              (z.B.
-              <span class="badge text-bg-secondary text-uppercase">docx</span>
-              Word-Dokumente),
-              warten Sie bitte noch etwas und aktualisieren diese Seite.
+            <h1>{{ i18n.newReply }}</h1>
+            <DjangoSlot name="email_intro"></DjangoSlot>
+            <div
+              v-if="attachments.redactNudgable.length === 0"
+              class="alert alert-warning"
+              role="alert"
+              ><DjangoSlot name="email_intro_noattachments"></DjangoSlot>
             </div>
             <!-- the radius in style makes one corner pointy, speech bubbley -->
             <div
@@ -1111,7 +1111,7 @@ addEventListener('hashchange', () => {
               >
               <!-- if unredacted, use pros.message.subject and .content -->
               <div class="email-subject mb-3"><!-- strip whitespace for pre-wrap
-                -->Betreff: <DjangoSlot name="message_subject_redacted"></DjangoSlot>
+                -->{{ i18n.subject }}: <DjangoSlot name="message_subject_redacted"></DjangoSlot>
               </div>
               <div class="email-content">
                 <DjangoSlot name="message_content_redacted"></DjangoSlot>
@@ -1125,7 +1125,7 @@ addEventListener('hashchange', () => {
                 </span>
               </div>
               <div class="pt-1">
-                Erhalten von
+                {{ i18n.receivedFrom }}
                 <strong>{{ props.message.sender }}&thinsp;</strong>
                 <span :title="props.message_timestamp_local">
                   {{ props.message_timestamp_relative }}
@@ -1133,14 +1133,12 @@ addEventListener('hashchange', () => {
               </div>
             </div>
             <div class="p-3 bg-body-tertiary">
-              <div><strong>
-                {{ attachments.all.length }} Anhänge
-              </strong></div>
+              <div><strong>{{ i18n._('attachmentCount', { count : attachments.all.length }) }}</strong></div>
               <div v-if="attachments.convertable.length">
-                Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren.
+                {{ i18n.nextStepConvertImages }}
               </div>
               <div v-if="attachments.redactNudgable.length > 0">
-                Im folgenden Schritt lesen und schwärzen Sie die Anhänge.
+                {{ i18n.nextStepReadRedact }}
               </div>
               <AttachmentsTable
                 :subset="attachments.all"
@@ -1761,10 +1759,10 @@ addEventListener('hashchange', () => {
             data-bs-target="#postuploadPeekAttachments"
             aria-expanded="false"
             aria-controls="postuploadPeekAttachments">
-            Ich weiß nicht. Bitte die Dokumente erneut anzeigen.
+            {{ i18n.pleasePeek }}
           </button>
           <div id="postuploadPeekAttachments" class="collapse bg-body-tertiary p-3">
-            Klicken Sie auf die Icons um eine Vorschau anzuzeigen.
+            {{ i18n.clickIconsForPreview }}
             <AttachmentsTable
               :subset="attachments.all"
               badges-type
@@ -1867,13 +1865,13 @@ addEventListener('hashchange', () => {
                 {{ i18n.next }}
               </template>
               <template v-else>
-                Anhänge lesen und schwärzen {{ i18n.attachmentsReadAndRedactTODO }}
+                {{ i18n.readAndRedactAttachments }}
               </template>
             </button>
             <div class="mt-2" v-if="attachments.convertable.length > 0">
               <small>
-                Es sind Bilddateien angehängt - im nächsten Schritt können diese in PDFs konvertiert werden.
-                {{ i18n.TODO }}
+                {{ i18n.imageAttachments }}
+                {{ i18n.nextStepConvertImages }}
               </small>
             </div>
           </template>

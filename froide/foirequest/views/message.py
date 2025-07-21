@@ -183,6 +183,10 @@ def edit_postal_message(request, foirequest, message_id):
         print("would 400 here, but continuiuing")
         # return render_400(request)
     filingcabinet_js_config = get_js_config(request)
+    convert_attachments_url = reverse(
+        "foirequest-manage_attachments",
+        kwargs={"slug": foirequest.slug, "message_id": message.id},
+    )
     ctx = {
         "settings": {
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
@@ -356,6 +360,24 @@ def edit_postal_message(request, foirequest, message_id):
             "messageReceivedLetter": _("I have received the letter"),
             "messageSentLetter": _("I have sent the letter"),
             "enterInformation": _("Enter information"),
+            "readAndRedact": _("Read & Redact"),
+            "readAndRedactAttachments": _("Read and redact the attachments"),
+            "newReply": pgettext("e-mail flow", "New reply to your request"),
+            "subject": _("Subject"),
+            "receivedFrom": _("Received from"),
+            "attachmentCount": [
+                _("One attachment"),
+                _("${count} attachments"),
+            ],
+            "imageAttachments": _("There are image attachments."),
+            "nextStepConvertImages": _(
+                "On the next step you can convert image attachments to PDF documents."
+            ),
+            "nextStepReadRedact": _(
+                "On the following step you can read and redact the attachments."
+            ),
+            "pleasePeek": _("I do not know. Please show the documents again."),
+            "clickIconsForPreview": _("Click the icons to preview."),
             "preview": _("Preview"),
             "hint": _("Hint"),
             "addMoreFiles": _("Add more files"),
@@ -509,11 +531,7 @@ def edit_postal_message(request, foirequest, message_id):
             "makeRequestTo": reverse(
                 "foirequest-make_request", kwargs={"publicbody_ids": "0"}
             ),
-            # from upload_attachments()
-            "convertAttachments": reverse(
-                "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
+            "convertAttachments": convert_attachments_url,
             "redactAttachment": reverse(
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
@@ -581,6 +599,7 @@ def edit_postal_message(request, foirequest, message_id):
                 FoiMessageSerializer(message, context={"request": request}).data
             ),
             "config_json": json.dumps(ctx),
+            "convert_attachments_url": convert_attachments_url,
         },
     )
 
