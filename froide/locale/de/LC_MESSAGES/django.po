@@ -14997,3 +14997,14 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
+
+### Diese Nachricht hat keine zu schwärzenden Anhänge. Deshalb entfällt der nächste Schritt.<br/>Sie können die Anhänge anschließend unter <a href="${link}">Anhänge verwalten</a> überprüfen.<br/>Falls die Nachricht Anhänge enthielt, die konvertiert werden
+### Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:
+### Lesen & Schwärzen
+### Erhalten von
+### Es sind Bilddateien angehängt.
+### Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren.
+### Im folgenden Schritt lesen und schwärzen Sie die Anhänge.
+### Ich weiß nicht. Bitte die Dokumente erneut anzeigen.
+### Klicken Sie auf die Icons um eine Vorschau anzuzeigen.
+### Anhänge lesen und schwärzen
