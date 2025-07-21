@@ -60,21 +60,6 @@ const progressPercentLabel = computed(() => {
   return '100%'
 })
 
-const maxRetries = 3
-
-let retries = maxRetries
-
-const retryLoad = (evt) => {
-  if (retries === 0) return
-  console.log('ImagePage img failed to load, retrying', retries, evt)
-  retries--
-  // back off slightly, first retry wait 3s, last 10s
-  window.setTimeout(() => {
-    const sep = evt.target.src.indexOf('?') > 0 ? '&' : '?'
-    evt.target.src = evt.target.src + sep + 'retry=' + Date.now()
-  }, 10000 / (retries + 1))
-}
-
 </script>
 
 <template>
@@ -88,7 +73,6 @@ const retryLoad = (evt) => {
         class="page-image d-block mw-100 mh-100 border"
         :src="page.file_url"
         :style="{ transform: `rotate(${totalRotate}deg)`}"
-        @error="retryLoad"
         />
       <div
         class="page-control page-control--number position-absolute bottom-0 mb-2 start-0 ms-1 text-bg-primary badge rounded-pill fw-bold lh-sm">
