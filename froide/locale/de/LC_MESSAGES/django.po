@@ -8273,6 +8273,72 @@ msgstr "Konnte Original nicht herunterladen."
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
 
+#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#, python-format
+msgid ""
+"This message has no redactable attachments. The next step will be skipped."
+"<br />You can review the attachments later at <a href=\"%(link)s\">Manage "
+"attachments</a>.<br />If the message hat attachments that need to be "
+"converted (e.g. <span class=\"badge text-bg-secondary text-uppercase\">docx</"
+"span> Word documents), please wait and refresh this page."
+msgstr ""
+"Diese Nachricht hat keine zu schwärzenden Anhänge. Deshalb entfällt der nächste Schritt."
+"<br />Sie können die Anhänge anschließend unter <a href=\"%(link)s\">Anhänge verwalten</a> überprüfen."
+"<br/>Falls die Nachricht Anhänge enthielt, die konvertiert werden müssen"
+"(z.B. <span class=\"badge text-bg-secondary text-uppercase\">docx</span> Word-Dokumente) "
+"warten Sie bitte kurz und laden diese Seite neu."
+
+#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+msgid "Read the full message thread on the request page:"
+msgstr "Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:"
+
+#: froide/foirequest/views/message.py
+msgctxt "e-mail flow"
+msgid "New reply to your request"
+msgstr "Neue Antwort der Behörde"
+
+
+#: froide/foirequest/views/message.py
+msgid "Read & Redact"
+msgstr "Lesen & Schwärzen"
+
+#: froide/foirequest/views/message.py
+msgid "Received from"
+msgstr "Erhalten von"
+
+#: froide/foirequest/views/message.py
+msgid "There are image attachments."
+msgstr "Es sind Bilddateien angehängt."
+
+#: froide/foirequest/views/message.py
+msgid "On the next step you can convert image attachments to PDF documents."
+msgstr "Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren."
+
+#: froide/foirequest/views/message.py
+msgid "On the following step you can read and redact the attachments."
+msgstr "Im folgenden Schritt lesen und schwärzen Sie die Anhänge."
+
+#: froide/foirequest/views/message.py
+msgid "I do not know. Please show the documents again."
+msgstr "Ich weiß nicht. Bitte die Dokumente erneut anzeigen."
+
+#: froide/foirequest/views/message.py
+msgid "Click the icons to preview."
+msgstr "Klicken Sie auf die Icons um eine Vorschau anzuzeigen."
+
+#: froide/foirequest/views/message.py
+msgid "Read and redact the attachments"
+msgstr "Anhänge lesen und schwärzen"
+
+#: froide/foirequest/views/message.py
+msgid "One attachment"
+msgstr "Ein Anhang"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "${count} attachments"
+msgstr "${count} Anhänge"
+
 #: froide/foirequest/views/project.py
 msgid "Publish selected requests."
 msgstr "Ausgewählte Anfragen veröffentlichen."
@@ -14997,14 +15063,3 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
-
-### Diese Nachricht hat keine zu schwärzenden Anhänge. Deshalb entfällt der nächste Schritt.<br/>Sie können die Anhänge anschließend unter <a href="${link}">Anhänge verwalten</a> überprüfen.<br/>Falls die Nachricht Anhänge enthielt, die konvertiert werden
-### Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:
-### Lesen & Schwärzen
-### Erhalten von
-### Es sind Bilddateien angehängt.
-### Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren.
-### Im folgenden Schritt lesen und schwärzen Sie die Anhänge.
-### Ich weiß nicht. Bitte die Dokumente erneut anzeigen.
-### Klicken Sie auf die Icons um eine Vorschau anzuzeigen.
-### Anhänge lesen und schwärzen
