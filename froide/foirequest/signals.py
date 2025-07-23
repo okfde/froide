@@ -137,7 +137,7 @@ def notify_user_message_received(sender, message=None, **kwargs):
             "user": sender.user,
             "publicbody": message.sender_public_body,
             "action_url": sender.user.get_autologin_url(
-                message.get_absolute_short_url()
+                short_request_url("foirequest-edit_email_message", sender, message)
             ),
         },
         priority=False,
