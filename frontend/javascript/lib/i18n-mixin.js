@@ -17,6 +17,7 @@ const I18nMixin = {
         _(key, params) {
           const trans = this[key]
           if (Array.isArray(trans)) {
+            // note that this will fail for languages with multiple plurals, like PL
             if (
               params.count !== undefined &&
               (params.count > 1 || params.count === 0)

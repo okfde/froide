@@ -94,7 +94,12 @@ MESSAGE_KIND_ICONS = {
     MessageKind.IMPORT: "cloud-download",
 }
 
-MANUAL_MESSAGE_KINDS = {MessageKind.POST, MessageKind.PHONE, MessageKind.VISIT}
+MANUAL_MESSAGE_KINDS = {
+    MessageKind.POST,
+    MessageKind.PHONE,
+    MessageKind.VISIT,
+}
+
 MESSAGE_ID_PREFIX = "foimsg."
 
 

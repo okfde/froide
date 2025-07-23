@@ -21,6 +21,8 @@ import AttachmentsTable from '../docupload/attachments-table.vue'
 const props = defineProps({
   config: Object,
   message: Object,
+  message_timestamp_relative: String,
+  message_timestamp_local: String,
   schemas: Object,
   foirequest: Object,
   date_min: String,
@@ -56,15 +58,15 @@ const { isDesktop } = useIsDesktop()
 
 /* --- debug --- */
 
-const debug = ref(!!localStorage.getItem('fds-postupload-debug'))
+const debug = ref(!!localStorage.getItem('fds-editmessageflow-debug'))
 window.FDSdebug = (val) => {
   debug.value = typeof val === 'boolean' ? val : !debug.value
-  localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
+  localStorage.setItem('fds-editmessageflow-debug', debug.value ? 'yes' : '')
 }
 
 const debugSkipDate = () => {
-  values.date = document.forms.postupload.elements.date.max
-  values.registered_mail_date = document.forms.postupload.elements.date.max
+  values.date = document.forms.editmessageflow.elements.date.max
+  values.registered_mail_date = document.forms.editmessageflow.elements.date.max
   updateValidity('date')
   updateValidity('registered_mail_date')
   gotoStep()
@@ -190,7 +192,7 @@ const validity = reactive({
 
 // TODO updateValidity should (maybe) be called on gotoStep(STEP_MESSAGE_DATE), too
 const updateValidity = (key) => {
-  let el = document.forms.postupload.elements[key]
+  let el = document.forms.editmessageflow.elements[key]
   // checkValidity is same for any radio button of a given name, we pick the first
   if (el instanceof RadioNodeList) el = el[0]
   // just assume true if browser doesn't support checkValidity
@@ -234,8 +236,8 @@ retrieveValues()
 
 /* Form API interaction: update/submit --- */
 
-const requestAndMessageUpdateValues = async () => {
-  await requestPartialUpdate({
+const requestUpdateValues = () => {
+  return requestPartialUpdate({
     path: { id: props.foirequest.id },
     body: {
       costs: values.costs,
@@ -244,9 +246,9 @@ const requestAndMessageUpdateValues = async () => {
     },
     throwOnError: true
   })
-    .then(() => {
-      console.info('requestPartialUpdate successful')
-    })
+}
+
+const messageUpdateValues = () => {
   const messageBody = {
     is_response: values.is_response,
     sender_public_body: values.is_response ? values.public_body : null,
@@ -254,7 +256,7 @@ const requestAndMessageUpdateValues = async () => {
   }
   if (values.date) messageBody.timestamp = isoPrepareDate(values.date)
   if (values.registered_mail_date) messageBody.registered_mail_date = isoPrepareDate(values.registered_mail_date)
-  await messagePartialUpdate({
+  return messagePartialUpdate({
     path: { id: props.message.id },
     body: messageBody,
     throwOnError: true
@@ -279,8 +281,11 @@ const approveAndPublish = async () => {
       .filter((kv) => kv[1] === false)
       .map((kv) => +kv[0])
     await approveAllUnredactedAttachments(excludeIds)
-    await requestAndMessageUpdateValues()
-    await messagePublishDraft()
+    await requestUpdateValues()
+    if (!isEmailResponse) {
+      await messageUpdateValues()
+      await messagePublishDraft()
+    }
     gotoStep()
   } catch (err) {
     // error from the partialUpdates/PATCHes looks like
@@ -401,9 +406,21 @@ const pdfRedactionUploaded = () => {
   refreshAttachments()
 }
 
+/* --- state/flow --- */
+
+const isEmailResponse = (props.message.kind === 'email' && props.message.is_response)
+
+const questionTotal = isEmailResponse ? 2 : 5
+
+const progressSteps = isEmailResponse
+  ? [i18n.value.readAndRedact, i18n.value.enterInformation]
+  : [i18n.value.upload, i18n.value.enterInformation, i18n.value.redact]
+
 /* --- state machine, functionality --- */
 
-const firstStep = STEP_INTRO
+const firstStep = isEmailResponse
+  ? STEP_INTRO_EMAIL
+  : STEP_INTRO
 const stepHistory = reactive([firstStep])
 const step = computed(() =>
   stepHistory.length ? stepHistory[stepHistory.length - 1] : false
@@ -444,6 +461,7 @@ const isGotoValid = computed(() => {
 
 // vuex mutation style constants/"symbols"
 const STEP_INTRO = 'STEP_INTRO' // 1100
+const STEP_INTRO_EMAIL = 'STEP_INTRO_EMAIL'
 const STEP_DOCUMENTS_CONVERT = 'STEP_DOCUMENTS_CONVERT' // 1201
 const STEP_DOCUMENTS_SORT = 'STEP_DOCUMENTS_SORT' // 1201
 const STEP_DOCUMENTS_CONVERT_PDF = 'STEP_DOCUMENTS_CONVERT_PDF' // 1202
@@ -467,10 +485,10 @@ const stepsConfig = {
   [STEP_INTRO]: {
     next: () => {
       if (attachments.images.length) {
-        return STEP_DOCUMENTS_SORT
+        return STEP_DOCUMENTS_SORT // dot:label="has images"
       }
       if (attachments.convertable.length > 0) {
-        return STEP_DOCUMENTS_CONVERT
+        return STEP_DOCUMENTS_CONVERT // dot:label="has convertables"
       }
       console.log('uploads were documents, not images, passing by image sorting')
       return STEP_DOCUMENTS_OVERVIEW
@@ -480,14 +498,39 @@ const stepsConfig = {
       mobileHeaderTitle: i18n.value.addLetter
     }
   },
+  [STEP_INTRO_EMAIL]: {
+    next: () => {
+      if (attachments.convertable.length > 0) {
+        return STEP_DOCUMENTS_CONVERT // dot:style=dotted
+      }
+      else if (attachments.redactNudgable.length === 0) {
+        return STEP_MESSAGE_STATUS // dot:style=dotted
+      }
+      console.log('uploads were documents, not images, passing by image sorting')
+      return STEP_REDACTION_REDACT // dot:style=dotted
+    },
+    context: {
+      progressStep: 0,
+      mobileHeaderTitle: i18n.value.newReply
+    }
+  },
   [STEP_DOCUMENTS_CONVERT]: {
-    next: STEP_DOCUMENTS_OVERVIEW,
+    next: () => {
+      if (isEmailResponse) {
+        return attachments.redactNudgable.length > 0
+          ? STEP_REDACTION_REDACT // dot:style=dotted
+          : STEP_MESSAGE_STATUS // dot:style=dotted
+      }
+      return STEP_DOCUMENTS_OVERVIEW
+    },
     onEnter: () => {
       guardBeforeunload(true)
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_SORT]: {
@@ -501,31 +544,44 @@ const stepsConfig = {
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan,
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_CONVERT_PDF]: {
-    next: STEP_DOCUMENTS_OVERVIEW,
+    next: () => {
+      return isEmailResponse
+        ? STEP_REDACTION_REDACT
+        : STEP_DOCUMENTS_OVERVIEW
+    },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_DOCUMENTS_OVERVIEW]: {
     next: STEP_MESSAGE_SENT_OR_RECEIVED,
     onEnter: () => {
+      guardBeforeunload(true)
       pdfRedactionUploaded()
     },
     context: {
       progressStep: 0,
-      mobileHeaderTitle: i18n.value.letterUploadOrScan,
+      mobileHeaderTitle: isEmailResponse
+        ? i18n.value.readAndRedact
+        : i18n.value.letterUploadOrScan
     }
   },
   [STEP_MESSAGE_SENT_OR_RECEIVED]: {
     next: STEP_MESSAGE_PUBLICBODY_CHECK,
     context: {
+      // n/a for isEmailResponse
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: 1,
     }
   },
   [STEP_MESSAGE_PUBLICBODY_CHECK]: {
@@ -536,13 +592,16 @@ const stepsConfig = {
         : STEP_MESSAGE_PUBLICBODY_UPDATE
     },
     context: {
+      // n/a for isEmailResponse
       progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: 2,
     }
   },
   [STEP_MESSAGE_PUBLICBODY_UPDATE]: {
     next: STEP_MESSAGE_DATE,
     context: {
+      // n/a for isEmailResponse
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation
     }
@@ -559,8 +618,10 @@ const stepsConfig = {
       updateValidity('registered_mail_date')
     },
     context: {
+      // n/a for isEmailResponse
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: 3,
       isGotoValid: () => {
         if (isDesktop.value && values.is_registered_mail)
           return validity.date && validity.registered_mail_date
@@ -575,6 +636,7 @@ const stepsConfig = {
       updateValidity('registered_mail_date')
     },
     context: {
+      // n/a for isEmailResponse
       progressStep: 1,
       mobileHeaderTitle: i18n.value.enterInformation,
       isGotoValid: () => validity.registered_mail_date
@@ -583,9 +645,10 @@ const stepsConfig = {
   [STEP_MESSAGE_STATUS]: {
     next: () => {
       if (!isDesktop.value && requestIsResolved.value)
-        return STEP_MESSAGE_MESSAGE_RESOLUTION
+        return STEP_MESSAGE_MESSAGE_RESOLUTION // dot:label="mobile&unresolved"
       // TODO: replace all STEP_REDACTION_PICKER with `if uploadedDocuments.length === 1 ? ... : STEP_REDACTION_PICKER`
-      if (!values.is_response) return STEP_REDACTION_PICKER
+      // if is not response, can't have cost, so skip over the cost flow
+      if (!values.is_response && !isEmailResponse) return STEP_REDACTION_PICKER // dot:label="no cost"
       return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
@@ -595,8 +658,10 @@ const stepsConfig = {
       updateValidity('resolution')
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse, n.b. also "Step 2/2" next to mobileHeaderTitle
       mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: isEmailResponse ? 1 : 4,
+      showPeekAttachments: isEmailResponse,
       isGotoValid: () => {
         if (isDesktop.value && requestIsResolved.value) {
           return validity.status && validity.resolution
@@ -607,7 +672,7 @@ const stepsConfig = {
   },
   [STEP_MESSAGE_MESSAGE_RESOLUTION]: {
     next: () => {
-      if (values.is_reponse) return STEP_REDACTION_PICKER
+      if (!values.is_response && !isEmailResponse) return STEP_REDACTION_PICKER // dot:label="no cost"
       return requestHadCosts.value
         ? STEP_MESSAGE_COST_CHECK_LAST
         : STEP_MESSAGE_COST_CHECK_ANY
@@ -616,8 +681,9 @@ const stepsConfig = {
       updateValidity('resolution')
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
+      showPeekAttachments: isEmailResponse,
       isGotoValid: () => validity.resolution
     }
   },
@@ -625,22 +691,30 @@ const stepsConfig = {
     next: () => {
       if (!isDesktop.value && requestUpdateCosts.value)
         return STEP_MESSAGE_COST_UPDATE
-      return STEP_REDACTION_PICKER
+      return isEmailResponse
+        ? STEP_DOCUMENTS_OVERVIEW_REDACTED // dot:style=dotted
+        : STEP_REDACTION_PICKER
     },
     context: {
-      progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      progressStep: 1, // same for isEmailResponse
+      mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: isEmailResponse ? 2 : 5,
+      showPeekAttachments: isEmailResponse,
     }
   },
   [STEP_MESSAGE_COST_CHECK_LAST]: {
     next: () => {
       if (!isDesktop.value && requestUpdateCosts.value)
         return STEP_MESSAGE_COST_UPDATE
-      return STEP_REDACTION_PICKER
+      return isEmailResponse
+        ? STEP_DOCUMENTS_OVERVIEW_REDACTED // dot:style=dotted
+        : STEP_REDACTION_PICKER
     },
     context: {
-      progressStep: 1,
+      progressStep: 1, // same for isEmailResponse
       mobileHeaderTitle: i18n.value.enterInformation,
+      questionCurrent: isEmailResponse ? 2 : 5,
+      showPeekAttachments: isEmailResponse,
       isGotoValid: () => {
         if (isDesktop.value && requestUpdateCosts.value) return validity.costs
         return true
@@ -648,14 +722,19 @@ const stepsConfig = {
     }
   },
   [STEP_MESSAGE_COST_UPDATE]: {
-    next: STEP_REDACTION_PICKER,
+    next: () => {
+      return isEmailResponse
+        ? STEP_DOCUMENTS_OVERVIEW_REDACTED // dot:style=dotted
+        : STEP_REDACTION_PICKER
+    },
     onEnter: () => {
       updateValidity('costs')
     },
     context: {
       isGotoValid: () => validity.costs,
-      progressStep: 1,
-      mobileHeaderTitle: i18n.value.enterInformation
+      progressStep: 1, // same for isEmailResponse
+      mobileHeaderTitle: i18n.value.enterInformation,
+      showPeekAttachments: isEmailResponse,
     }
   },
   [STEP_REDACTION_PICKER]: {
@@ -667,8 +746,11 @@ const stepsConfig = {
     onEnter: () => {
       attachments.selectSubset(attachments.redactNudgable)
       pdfRedactionUploaded()
+      // TODO is this still correct?
+      if (!isEmailResponse) attachments.selectAllNewRedactableAttachments()
     },
     context: {
+      // n/a for isEmailResponse
       progressStep: 2,
       mobileHeaderTitle: i18n.value.redact,
     }
@@ -681,11 +763,18 @@ const stepsConfig = {
       ) {
         return STEP_REDACTION_REDACT
       }
-      return STEP_DOCUMENTS_OVERVIEW_REDACTED
+      return isEmailResponse
+        ? STEP_MESSAGE_STATUS // dot:style=dotted
+        : STEP_DOCUMENTS_OVERVIEW_REDACTED
     },
     context: {
-      progressStep: 2,
+      progressStep: isEmailResponse ? 0 : 2,
       mobileHeaderTitle: i18n.value.redact
+    },
+    onEnter: () => {
+      if (isEmailResponse && attachments.selected.length === 0) {
+        attachments.selectSubset(attachments.redactNudgable)
+      }
     }
   },
   [STEP_DOCUMENTS_OVERVIEW_REDACTED]: {
@@ -696,7 +785,7 @@ const stepsConfig = {
       pdfRedactionUploaded()
     },
     context: {
-      progressStep: 2,
+      progressStep: isEmailResponse ? 1 : 2,
       mobileHeaderTitle: i18n.value.preview,
     }
   },
@@ -706,7 +795,7 @@ const stepsConfig = {
       guardBeforeunload(false)
     },
     context: {
-      progressStep: 2,
+      progressStep: isEmailResponse ? 1 : 2,
       mobileHeaderTitle: i18n.value.done
     }
   }
@@ -727,18 +816,19 @@ const fieldErrorStep = {
 
 const stepsConfigVisualize = (c) =>
   'dot -Tpng << eot | display -\n' +
-  'digraph "postupload" {\n' +
+  'digraph "editmessageflow" {\n' +
   Object.keys(c)
     .map((state) => `  "${state}";\n`)
     .join('') +
   Object.keys(c)
-    .map((from) =>
-      c[from].next
-        .toString()
-        .match(/\bSTEP_\w+/g)
-        .map((to) => `  "${from}" -> "${to}";\n`)
+    .map((fromState) => {
+      const nextSourcecode = c[fromState].next.toString()
+      // match all STEP_* with optional "dot edge tag" in a comment, like so:
+      // some.code(); return STEP_FOO; // dot:key="attr"
+      return [...nextSourcecode.matchAll(/\b(STEP_\w+)(?:.*\/\/.*dot:(.*))?/g)]
+        .map(([, toState, dotEdgeTag]) => `  "${fromState}" -> "${toState}" [${dotEdgeTag || ''}];\n`)
         .join('')
-    )
+      })
     .join('') +
   '}\n' +
   'eot\n'
@@ -785,13 +875,13 @@ addEventListener('hashchange', () => {
   <SimpleStepper
     class="sticky-top position-md-static"
     :step="stepContext.progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+    :steps="progressSteps"
   >
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
     </template>
     <template v-else>
-      {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/3</strong>:
+      {{ i18n.step }} <strong>{{ stepContext.progressStep + 1 }}/{{ isEmailResponse ? 2 : 3 }}</strong>:
       {{ stepContext.mobileHeaderTitle }}
     </template>
   </SimpleStepper>
@@ -803,7 +893,7 @@ addEventListener('hashchange', () => {
         >← <u>{{ i18n.cancel }}</u></a
       >
     </div>
-    <div v-else-if="step !== STEP_OUTRO" class="my-3">
+    <div v-else-if="![STEP_OUTRO, STEP_INTRO_EMAIL].includes(step)" class="my-3">
       <a @click="backStep" class="btn btn-link text-decoration-none ps-0"
         >← <u>{{ i18n.back }}</u></a
       >
@@ -854,6 +944,7 @@ addEventListener('hashchange', () => {
 
   <details v-if="debug" class="container">
     <summary class="DEBUG">DEBUG</summary>
+    <div>isEmailResponse={{ isEmailResponse }}</div>
     <div>step={{ step }}</div>
     <div>history={{ stepHistory.join(' ') }}</div>
     <div>stepContext={{ stepContext }}</div>
@@ -1004,6 +1095,65 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
+    <div v-show="step === STEP_INTRO_EMAIL" class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <div class="row my-5 justify-content-center">
+            <h1>{{ i18n.newReply }}</h1>
+            <DjangoSlot name="email_intro"></DjangoSlot>
+            <div
+              v-if="attachments.redactNudgable.length === 0"
+              class="alert alert-warning"
+              role="alert"
+              ><DjangoSlot name="email_intro_noattachments"></DjangoSlot>
+            </div>
+            <!-- the radius in style makes one corner pointy, speech bubbley -->
+            <div
+              class="alert alert-primary rounded-4"
+              style="border-bottom-left-radius: 0 !important;"
+              >
+              <!-- if unredacted, use pros.message.subject and .content -->
+              <div class="email-subject mb-3"><!-- strip whitespace for pre-wrap
+                -->{{ i18n.subject }}: <DjangoSlot name="message_subject_redacted"></DjangoSlot>
+              </div>
+              <div class="email-content">
+                <DjangoSlot name="message_content_redacted"></DjangoSlot>
+              </div>
+            </div>
+            <div class="mb-5 text-secondary d-flex gap-1">
+              <div>
+                <span class="fa-stack align-middle">
+                  <i class="fa fa-circle fa-stack-2x" style="color: var(--bs-tertiary-bg)"></i>
+                  <i class="fa fa-bank fa-stack-1x" style="color: var(--bs-tertiary-color)"></i>
+                </span>
+              </div>
+              <div class="pt-1">
+                {{ i18n.receivedFrom }}
+                <strong>{{ props.message.sender }}&thinsp;</strong>
+                <span :title="props.message_timestamp_local">
+                  {{ props.message_timestamp_relative }}
+                </span>
+              </div>
+            </div>
+            <div class="p-3 bg-body-tertiary">
+              <div><strong>{{ i18n._('attachmentCount', { count : attachments.all.length }) }}</strong></div>
+              <div v-if="attachments.convertable.length">
+                {{ i18n.nextStepConvertImages }}
+              </div>
+              <div v-if="attachments.redactNudgable.length > 0">
+                {{ i18n.nextStepReadRedact }}
+              </div>
+              <AttachmentsTable
+                :subset="attachments.all"
+                as-table-only
+                badges-type
+                dense
+                />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div v-show="step === STEP_DOCUMENTS_CONVERT" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9 fw-bold">
@@ -1013,7 +1163,7 @@ addEventListener('hashchange', () => {
           <!-- note: convertable subset misses those that have been converted-created in this very step -->
           <AttachmentsTable
             :subset="attachments.convertable"
-            actions table-selection action-delete selection-action-delete badges-type
+            actions action-delete selection-action-delete badges-type
             />
         </div>
         <!-- irrelevant attachments re-appear after a refresh;
@@ -1077,7 +1227,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_SENT_OR_RECEIVED" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 1, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label">
             {{ i18n.letterSentOrReceived }}
           </label>
@@ -1094,7 +1244,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_PUBLICBODY_CHECK" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 2, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="!values.is_response">
               {{ i18n.messagePublicbodyCheckTo }}
@@ -1134,7 +1284,7 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <PublicbodyChooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
+          <PublicbodyChooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="editmessageflow_publicbody"
             name="publicbody" :config="config" :value="props.foirequest.public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
             @update="updateValuePublicBody"
@@ -1145,7 +1295,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_DATE" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 3, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label field-required" for="id_date">
             {{ i18n.messageDate }}
           </label>
@@ -1213,7 +1363,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_STATUS" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 4, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold form-label" for="id_subject">
             <template v-if="values.is_response && requestWasResolved">
               {{ i18n.messageStatusIsResolvedAfterReceivedStill }}
@@ -1277,7 +1427,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_COST_CHECK_ANY" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 5, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <label class="fw-bold col-form-label">
             {{ i18n.messageCostCheck }}
           </label>
@@ -1297,7 +1447,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_MESSAGE_COST_CHECK_LAST" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="step-questioncounter">{{ i18n._('questionOf', { current: 5, total: 5 }) }}</div>
+          <div class="step-questioncounter">{{ i18n._('questionOf', { current: stepContext.questionCurrent, total: questionTotal }) }}</div>
           <!-- TODO: i18n: in DE, the amount format is not l10n: 1.00 instead of 1,00
             also, API returns floats, so this actually should be decimalized i18n-awarely...
             (or provided as a formatted string by the API)
@@ -1602,6 +1752,32 @@ addEventListener('hashchange', () => {
         </div>
       </div>
     </div>
+    <div class="container my-3" v-if="stepContext.showPeekAttachments && (attachments.all.length > 0)">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          <button
+            type="button"
+            class="btn btn-link ps-0"
+            data-bs-toggle="collapse"
+            data-bs-target="#editmessageflowPeekAttachments"
+            aria-expanded="false"
+            aria-controls="editmessageflowPeekAttachments">
+            {{ i18n.pleasePeek }}
+          </button>
+          <div id="editmessageflowPeekAttachments" class="collapse bg-body-tertiary p-3">
+            {{ i18n.clickIconsForPreview }}
+            <AttachmentsTable
+              :subset="attachments.all"
+              badges-type
+              dense
+              preview-hide-info-sidebar
+              as-table-only
+              >
+            </AttachmentsTable>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="sticky-bottom mt-auto mt-md-0 bg-body py-2">
@@ -1679,6 +1855,26 @@ addEventListener('hashchange', () => {
             <div class="mt-2">
               <small>
                 {{ i18n.notYetPublishedHint }}
+              </small>
+            </div>
+          </template>
+          <template v-else-if="step === STEP_INTRO_EMAIL">
+            <button
+              type="button"
+              @click="gotoStep()"
+              class="btn btn-primary d-block w-100"
+            >
+              <template v-if="attachments.convertable.length === 0 && attachments.redactNudgable.length === 0">
+                {{ i18n.next }}
+              </template>
+              <template v-else>
+                {{ i18n.readAndRedactAttachments }}
+              </template>
+            </button>
+            <div class="mt-2" v-if="attachments.convertable.length > 0">
+              <small>
+                {{ i18n.imageAttachments }}
+                {{ i18n.nextStepConvertImages }}
               </small>
             </div>
           </template>
@@ -1843,4 +2039,17 @@ addEventListener('hashchange', () => {
     top: 41px; // height of .simple-stepper/breadcrumbs
   }
 }
+
+/* email */
+
+.email-subject {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.email-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 </style>
