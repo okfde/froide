@@ -175,13 +175,20 @@ def upload_postal_message_create(request, foirequest):
 
 
 @allow_write_foirequest
-def edit_postal_message(request, foirequest, message_id):
+# todo name doesnt match
+def edit_postal_message(request, foirequest, message_id, is_email=False):
     message = get_object_or_404(
         FoiMessage.with_drafts, request=foirequest, pk=int(message_id)
     )
-    if not message.can_edit:
-        print("would 400 here, but continuiuing")
-        # return render_400(request)
+    if is_email:
+        # for emails we just update the request (status etc.)
+        # message does not need can_edit, but we make sure it has the correct properties
+        if not (message.kind == MessageKind.EMAIL and message.is_response):
+            return render_400(request)
+    else:
+        # for editing+creating postal messages we need the message to be editable
+        if not message.can_edit:
+            return render_400(request)
     filingcabinet_js_config = get_js_config(request)
     convert_attachments_url = reverse(
         "foirequest-manage_attachments",
