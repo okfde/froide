@@ -7,25 +7,24 @@
 {% load content_helper %}
 {% load foirequest_tags %}
 {% block title %}
-    {% blocktrans with title=object.title %}Upload postal mail for “{{ title }}”{% endblocktrans %}
+    {% blocktrans with title=object.title %}Edit e-mail response for “{{ title }}”{% endblocktrans %}
 {% endblock title %}
 {% block navbar %}
     {% include "header_reduced.html" %}
 {% endblock navbar %}
 {% block body %}
-    <div class="bg-body-tertiary postupload-breadcrumbs">
-        {% translate "Upload postal mail" as breadcrumb_label %}
+    <div class="bg-body-tertiary editmessageflow-breadcrumbs">
+        {% translate "Edit e-mail response" as breadcrumb_label %}
         {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
     </div>
     {# the form never submits, but is useful for checkValidity #}
-    <form name="postupload" class="d-flex flex-col flex-grow-1">
+    <form name="editmessageflow" class="d-flex flex-col flex-grow-1">
         {% csrf_token %}
         {# mw-100 crucial for pdf-redaction's dynamic maxWidth calculations #}
-        <post-upload class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}" :message_timestamp_relative="{{ message.timestamp|relativetime }}" :message_timestamp_local="{{ message.timestamp }}" :currency="{{ froide.currency }}">
+        <edit-message-flow class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}" :message_timestamp_relative="{{ message.timestamp|relativetime }}" :message_timestamp_local="{{ message.timestamp }}" :currency="{{ froide.currency }}">
         <template data-slot="redaction_explanation">
             {% include "foirequest/snippets/redaction_explanation.html" %}
         </template>
-        {# TODO if kind=Email, if message.plaintext... #}
         {# avoid whitespace, since this will be pre-wrap. spaceless didn't work... #}
         <template data-slot="message_subject_redacted">{% redact_subject message request %}</template>
         <template data-slot="message_content_redacted">{% redact_message message request %}</template>
@@ -38,13 +37,13 @@
         <template data-slot="email_intro_noattachments">
             {% blocktrans with link=convert_attachments_url %}This message has no redactable attachments. The next step will be skipped.<br />You can review the attachments later at <a href="{{ link }}">Manage attachments</a>.<br />If the message hat attachments that need to be converted (e.g. <span class="badge text-bg-secondary text-uppercase">docx</span> Word documents), please wait and refresh this page.{% endblocktrans %}
         </template>
-        </post-upload>
+        </edit-message-flow>
     </form>
 {% endblock body %}
 {% block scripts %}
     {{ block.super }}
     {% addfrontendbuild "request.js" %}
     {% addfrontendbuild "publicbody.js" %}
-    {% addfrontendbuild "postupload.js" %}
+    {% addfrontendbuild "editmessageflow.js" %}
     {% addfrontendbuild "fileuploader.js" %}
 {% endblock scripts %}
