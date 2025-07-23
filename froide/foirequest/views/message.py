@@ -168,7 +168,7 @@ def upload_postal_message_create(request, foirequest):
 
     return redirect(
         reverse(
-            "foirequest-edit_postal_message",
+            "foirequest-edit_message_flow_postal",
             kwargs={"slug": foirequest.slug, "message_id": message.id},
         )
     )
@@ -176,7 +176,7 @@ def upload_postal_message_create(request, foirequest):
 
 @allow_write_foirequest
 # todo name doesnt match
-def edit_postal_message(request, foirequest, message_id, is_email=False):
+def edit_message_flow(request, foirequest, message_id, is_email=False):
     message = get_object_or_404(
         FoiMessage.with_drafts, request=foirequest, pk=int(message_id)
     )
@@ -543,7 +543,9 @@ def edit_postal_message(request, foirequest, message_id, is_email=False):
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
-            "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            "helpEditmessageflowRedaction": get_content_url(
+                "help_editmessageflow_redaction"
+            ),
             "mobileAppInstall": settings.FROIDE_CONFIG.get("mobile_app_install_url"),
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
             if request.user.is_staff
@@ -578,7 +580,9 @@ def edit_postal_message(request, foirequest, message_id, is_email=False):
     }
     return render(
         request,
-        "foirequest/upload_postal_message_new.html",
+        "foirequest/edit_message_flow_email.html"
+        if is_email
+        else "foirequest/edit_message_flow_postal.html",
         {
             "message_id": message_id,
             "object": foirequest,

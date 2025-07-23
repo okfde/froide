@@ -6868,15 +6868,23 @@ msgid "I already told them"
 msgstr "Mitteilung ist schon erfolgt"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
 #, python-format
 msgid "Upload postal mail for “%(title)s”"
 msgstr "Post zur Anfrage „%(title)s“ hochladen"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
 msgid "Upload postal mail"
 msgstr "Post hochladen"
+
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
+msgid "Edit e-mail response for “%(title)s”"
+msgstr "E-Mail-Antwort zur Anfrage „%(title)s“ bearbeiten"
+
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
+msgid "Edit e-mail response"
+msgstr "E-Mail-Antwort bearbeiten"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #, python-format
@@ -7888,7 +7896,7 @@ msgid "Done"
 msgstr "Abgeschlossen"
 
 # #: froide/foirequest/views/message.py
-# #: frontend/javascript/components/postupload/post-upload.vue
+# #: frontend/javascript/components/editmessageflow/edit-message-flow.vue
 # msgid "Done"
 # msgstr "Fertig"
 #: froide/foirequest/views/message.py
@@ -8278,7 +8286,7 @@ msgstr "Konnte Original nicht herunterladen."
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
 
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
 #, python-format
 msgid ""
 "This message has no redactable attachments. The next step will be skipped."
@@ -8293,7 +8301,8 @@ msgstr ""
 "(z.B. <span class=\"badge text-bg-secondary text-uppercase\">docx</span> Word-Dokumente) "
 "warten Sie bitte kurz und laden diese Seite neu."
 
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
 msgid "Read the full message thread on the request page:"
 msgstr "Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:"
 

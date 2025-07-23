@@ -58,15 +58,15 @@ const { isDesktop } = useIsDesktop()
 
 /* --- debug --- */
 
-const debug = ref(!!localStorage.getItem('fds-postupload-debug'))
+const debug = ref(!!localStorage.getItem('fds-editmessageflow-debug'))
 window.FDSdebug = (val) => {
   debug.value = typeof val === 'boolean' ? val : !debug.value
-  localStorage.setItem('fds-postupload-debug', debug.value ? 'yes' : '')
+  localStorage.setItem('fds-editmessageflow-debug', debug.value ? 'yes' : '')
 }
 
 const debugSkipDate = () => {
-  values.date = document.forms.postupload.elements.date.max
-  values.registered_mail_date = document.forms.postupload.elements.date.max
+  values.date = document.forms.editmessageflow.elements.date.max
+  values.registered_mail_date = document.forms.editmessageflow.elements.date.max
   updateValidity('date')
   updateValidity('registered_mail_date')
   gotoStep()
@@ -192,7 +192,7 @@ const validity = reactive({
 
 // TODO updateValidity should (maybe) be called on gotoStep(STEP_MESSAGE_DATE), too
 const updateValidity = (key) => {
-  let el = document.forms.postupload.elements[key]
+  let el = document.forms.editmessageflow.elements[key]
   // checkValidity is same for any radio button of a given name, we pick the first
   if (el instanceof RadioNodeList) el = el[0]
   // just assume true if browser doesn't support checkValidity
@@ -816,7 +816,7 @@ const fieldErrorStep = {
 
 const stepsConfigVisualize = (c) =>
   'dot -Tpng << eot | display -\n' +
-  'digraph "postupload" {\n' +
+  'digraph "editmessageflow" {\n' +
   Object.keys(c)
     .map((state) => `  "${state}";\n`)
     .join('') +
@@ -1284,7 +1284,7 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <!-- TODO list-view=resultList has no pagination, but betaList doesnt work yet? -->
-          <PublicbodyChooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="postupload_publicbody"
+          <PublicbodyChooser v-if="!messagePublicBodyIsDefault" :search-collapsed="false" scope="editmessageflow_publicbody"
             name="publicbody" :config="config" :value="props.foirequest.public_body.id" list-view="resultList"
             :show-filters="false" :show-badges="false" :show-found-count-if-idle="false"
             @update="updateValuePublicBody"
@@ -1759,12 +1759,12 @@ addEventListener('hashchange', () => {
             type="button"
             class="btn btn-link ps-0"
             data-bs-toggle="collapse"
-            data-bs-target="#postuploadPeekAttachments"
+            data-bs-target="#editmessageflowPeekAttachments"
             aria-expanded="false"
-            aria-controls="postuploadPeekAttachments">
+            aria-controls="editmessageflowPeekAttachments">
             {{ i18n.pleasePeek }}
           </button>
-          <div id="postuploadPeekAttachments" class="collapse bg-body-tertiary p-3">
+          <div id="editmessageflowPeekAttachments" class="collapse bg-body-tertiary p-3">
             {{ i18n.clickIconsForPreview }}
             <AttachmentsTable
               :subset="attachments.all"
