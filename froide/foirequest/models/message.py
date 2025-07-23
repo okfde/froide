@@ -98,8 +98,8 @@ MANUAL_MESSAGE_KINDS = {
     MessageKind.POST,
     MessageKind.PHONE,
     MessageKind.VISIT,
-    MessageKind.EMAIL,
 }
+
 MESSAGE_ID_PREFIX = "foimsg."
 
 
