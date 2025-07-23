@@ -236,8 +236,8 @@ retrieveValues()
 
 /* Form API interaction: update/submit --- */
 
-const requestAndMessageUpdateValues = async () => {
-  await requestPartialUpdate({
+const requestUpdateValues = () => {
+  return requestPartialUpdate({
     path: { id: props.foirequest.id },
     body: {
       costs: values.costs,
@@ -246,9 +246,9 @@ const requestAndMessageUpdateValues = async () => {
     },
     throwOnError: true
   })
-    .then(() => {
-      console.info('requestPartialUpdate successful')
-    })
+}
+
+const messageUpdateValues = () => {
   const messageBody = {
     is_response: values.is_response,
     sender_public_body: values.is_response ? values.public_body : null,
@@ -256,7 +256,7 @@ const requestAndMessageUpdateValues = async () => {
   }
   if (values.date) messageBody.timestamp = isoPrepareDate(values.date)
   if (values.registered_mail_date) messageBody.registered_mail_date = isoPrepareDate(values.registered_mail_date)
-  await messagePartialUpdate({
+  return messagePartialUpdate({
     path: { id: props.message.id },
     body: messageBody,
     throwOnError: true
@@ -281,8 +281,11 @@ const approveAndPublish = async () => {
       .filter((kv) => kv[1] === false)
       .map((kv) => +kv[0])
     await approveAllUnredactedAttachments(excludeIds)
-    await requestAndMessageUpdateValues()
-    await messagePublishDraft()
+    await requestUpdateValues()
+    if (!isEmailResponse) {
+      await messageUpdateValues()
+      await messagePublishDraft()
+    }
     gotoStep()
   } catch (err) {
     // error from the partialUpdates/PATCHes looks like
