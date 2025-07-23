@@ -7078,6 +7078,11 @@ msgstr "<slug:slug>/<int:message_id>/postnachricht-bearbeiten/"
 
 #: froide/foirequest/urls/request_urls.py
 msgctxt "url part"
+msgid "<slug:slug>/<int:message_id>/edit-email-response/"
+msgstr "<slug:slug>/<int:message_id>/email-antwort-bearbeiten/"
+
+#: froide/foirequest/urls/request_urls.py
+msgctxt "url part"
 msgid "<slug:slug>/<int:message_id>/attachment/<str:attachment_name>"
 msgstr "<slug:slug>/<int:message_id>/anhang/<str:attachment_name>"
 
