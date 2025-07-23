@@ -115,7 +115,14 @@ urlpatterns = [
     path(
         pgettext_lazy("url part", "<slug:slug>/<int:message_id>/edit-postal-message/"),
         edit_postal_message,
+        {"is_email": False},
         name="foirequest-edit_postal_message",
+    ),
+    path(
+        pgettext_lazy("url part", "<slug:slug>/<int:message_id>/edit-email-response/"),
+        edit_postal_message,
+        {"is_email": True},
+        name="foirequest-edit_email_message",
     ),
     path(
         "<slug:slug>/apply-moderation/",
