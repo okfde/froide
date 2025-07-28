@@ -449,9 +449,10 @@ class MakeRequestView(FormView):
 
         request_form = self.get_form()
 
-        throttle_message = check_throttle(request.user, FoiRequest)
-        if throttle_message:
-            request_form.add_error(None, throttle_message)
+        if not request.POST.get("save_draft", ""):
+            throttle_message = check_throttle(request.user, FoiRequest)
+            if throttle_message:
+                request_form.add_error(None, throttle_message)
 
         if not request_form.is_valid():
             error = True
