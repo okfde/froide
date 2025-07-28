@@ -43,17 +43,24 @@
                     <td>{% trans "Delete proposal" %}</td>
                     {% for proposal in proposals %}
                         <td>
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="proposal_delete"
-                                       id="proposal_delete-{{ proposal.obj.id }}"
-                                       value="{{ proposal.obj.id }}">
-                                <label class="form-check-label" for="proposal_delete-{{ proposal.obj.id }}">{% trans "Delete" %}</label>
-                            </div>
-                            <button type="button"
-                                    class="btn btn-primary proposal"
-                                    value="{{ proposal.obj.id }}">{% translate "Apply changes" %}</button>
+                            {% with proposal_count=proposals|length %}
+                                {% if proposal_count == 1 %}
+                                    <button type="submit"
+                                            class="btn btn-primary"
+                                            formnovalidate
+                                            name="proposal_delete"
+                                            value="{{ proposal.obj.id }}">{% translate "Delete proposal" %}</button>
+                                {% else %}
+                                    <div class="form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="proposal_delete"
+                                               id="proposal_delete-{{ proposal.obj.id }}"
+                                               value="{{ proposal.obj.id }}">
+                                        <label class="form-check-label" for="proposal_delete-{{ proposal.obj.id }}">{% trans "Delete" %}</label>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
                         </td>
                     {% endfor %}
                 </tr>
