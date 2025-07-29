@@ -23,12 +23,12 @@ from .forms import TagObjectForm, get_fake_fk_form_class
 
 
 def make_choose_object_action(model_or_queryset, callback, label):
-    if issubclass(model_or_queryset, models.Model):
+    if isinstance(model_or_queryset, models.QuerySet):
+        model = model_or_queryset.model
+        filter_qs = model_or_queryset
+    else:
         model = model_or_queryset
         filter_qs = None
-    else:
-        filter_qs = model_or_queryset
-        model = model_or_queryset.model
 
     def action(model_admin, request, queryset):
         # Check that the user has change permission for the actual model
