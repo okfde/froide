@@ -12477,6 +12477,10 @@ msgstr ""
 msgid "GeoRegion %s/%s does not exist."
 msgstr "GeoRegion %s/%s existiert nicht"
 
+#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
+msgid "Apply changes"
+msgstr "Änderungen anwenden"
+
 #~ msgid "Fax"
 #~ msgstr "Fax"
 
@@ -12506,9 +12510,6 @@ msgstr "GeoRegion %s/%s existiert nicht"
 
 #~ msgid "The form has errors"
 #~ msgstr "Das Formular enthält noch Fehler."
-
-#~ msgid "Apply changes"
-#~ msgstr "Änderungen anwenden"
 
 #, python-format
 #~ msgid ""
