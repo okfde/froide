@@ -12490,6 +12490,10 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
+msgid "Apply changes"
+msgstr "Änderungen anwenden"
+
 #, python-format
 #~ msgid ""
 #~ "\n"
@@ -12516,9 +12520,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "The form has errors"
 #~ msgstr "Das Formular enthält noch Fehler."
-
-#~ msgid "Apply changes"
-#~ msgstr "Änderungen anwenden"
 
 #, python-format
 #~ msgid ""
