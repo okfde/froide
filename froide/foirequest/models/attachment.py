@@ -221,6 +221,8 @@ class FoiAttachment(models.Model):
             return False
         if not self.can_approve:
             return False
+        if self.belongs_to.is_draft:
+            return True
         now = timezone.now()
         return self.timestamp > (now - DELETE_TIMEFRAME)
 
