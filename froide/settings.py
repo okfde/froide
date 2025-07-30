@@ -576,7 +576,7 @@ class Base(Configuration):
             "help": "/help/",
             "throttled": "/help/",
             # TODO english?
-            "help_postupload_redaction": "/hilfe/plain/funktionen-der-plattform/schwaerzungen-durchfuehren/",
+            "help_editmessageflow_redaction": "/hilfe/plain/funktionen-der-plattform/schwaerzungen-durchfuehren/",
             "help_attachments_management": "/hilfe/plain/funktionen-der-plattform/anhange-verwalten/",
         },
         "mobile_app_install_url": None,  # TODO
