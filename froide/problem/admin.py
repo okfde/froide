@@ -11,6 +11,7 @@ from .models import ProblemReport
 @admin.register(ProblemReport)
 class ProblemReportAdmin(admin.ModelAdmin):
     date_hierarchy = "timestamp"
+    search_fields = ("description", "resolution", "escalation")
     raw_id_fields = ("message", "user", "moderator")
     list_filter = (
         "auto_submitted",
