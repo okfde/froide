@@ -1,6 +1,6 @@
 {
   "name": "froide",
-  "version": "1.0.0",
+  "version": "6.0.0",
   "description": "Froide",
   "main": "frontend/javascript/main.js",
   "files": [
