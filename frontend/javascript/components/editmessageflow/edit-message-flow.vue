@@ -1183,6 +1183,12 @@ addEventListener('hashchange', () => {
               <div v-if="attachments.redactNudgable.length > 0">
                 {{ i18n.nextStepReadRedact }}
               </div>
+              <div
+                v-if="attachments.havePendingConversion"
+                class="alert alert-warning mt-2"
+                >
+                {{ i18n.pendingConversionWarning }}
+              </div>
               <AttachmentsTable
                 :subset="attachments.all"
                 as-table-only

@@ -527,6 +527,9 @@ def edit_message_flow(request, foirequest, message_id, is_email=False):
             ),
             "messageMediationAuthority": _("Message to the mediation authority."),
             "messageNotYetPublic": _("This message is not yet public."),
+            "pendingConversionWarning": _(
+                "The message has attachments that are being converted. Please wait and refresh this page."
+            ),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),

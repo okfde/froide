@@ -298,7 +298,7 @@ const makeResultSelected = async () => {
           <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
             <span class="sr-only">{{ i18n.loading }}</span>
           </span>
-          <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
+          <span v-if="att.pending || att.pendingConversion || att.document?.pending" class="badge text-bg-secondary">
             <i class="fa fa-hourglass-half"></i>
             {{ i18n.pending}}
           </span>
@@ -385,7 +385,7 @@ const makeResultSelected = async () => {
           v-if="badgesType"
           :attachment="att"
           />
-        <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
+        <span v-if="att.pending || att.pendingConversion || att.document?.pending" class="badge text-bg-secondary">
           <i class="fa fa-hourglass-half"></i>
           {{ i18n.pending}}
         </span>

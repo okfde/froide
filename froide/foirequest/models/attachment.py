@@ -388,12 +388,15 @@ class FoiAttachment(models.Model):
                 self.file.delete(save=False)
         self.delete()
 
-    def can_convert_to_pdf(self):
+    def is_filetype_convertable_to_pdf(self):
         from filingcabinet.pdf_utils import can_convert_to_pdf
 
         ft = self.filetype.lower()
         name = self.name.lower()
-        return self.converted_id is None and can_convert_to_pdf(ft, name=name)
+        return can_convert_to_pdf(ft, name=name)
+
+    def can_convert_to_pdf(self):
+        return self.converted_id is None and self.is_filetype_convertable_to_pdf()
 
     def create_document(self, title=None):
         if self.document is not None:
