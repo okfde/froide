@@ -1106,35 +1106,76 @@ addEventListener('hashchange', () => {
               role="alert"
               ><DjangoSlot name="email_intro_noattachments"></DjangoSlot>
             </div>
-            <!-- the radius in style makes one corner pointy, speech bubbley -->
-            <div
-              class="alert alert-primary rounded-4"
-              style="border-bottom-left-radius: 0 !important;"
-              >
-              <!-- if unredacted, use pros.message.subject and .content -->
-              <div class="email-subject mb-3"><!-- strip whitespace for pre-wrap
-                -->{{ i18n.subject }}: <DjangoSlot name="message_subject_redacted"></DjangoSlot>
+
+            <!-- markup and comments match template foirequest/body/message/message.html -->
+            <div class="alpha-message alpha-message--expanded border mb-4">
+              <div class="d-flex p-3 alpha-message__head">
+                <!-- avatar -->
+                <div class="alpha-message__avatar alpha-message__avatar--house">
+                  <i class="fa fa-bank" aria-hidden="true"></i>
+                </div>
+                <!-- sender, recipient, message preview, meta infos -->
+                <div class="d-flex flex-fill flex-column overflow-hidden">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <!-- sender -->
+                    <DjangoSlot name="message_sender"></DjangoSlot>
+                    <!-- icons & timestamp -->
+                    <div class="d-flex flex-nowrap">
+                      <!-- need v-show, not v-if for tooltip -->
+                      <span class="alpha-message__badge"
+                        v-show="attachments.all.length > 0"
+                        data-bs-toggle="tooltip"
+                        :title="i18n.hasAttachments"
+                        ><span class="fa fa-paperclip" aria-hidden="true"></span></span>
+                      <span class="alpha-message__badge alpha-message__badge--error"
+                        v-if="props.message.fails_authenticity"
+                        data-bs-toggle="tooltip"
+                        :title="i18n.possibleAuthenticityProblems"
+                        ><span class="fa fa-user-secret"></span></span>
+                      <span class="alpha-message__badge alpha-message__badge--kind"
+                        v-if="props.message.is_escalation_message"
+                        data-bs-toggle="tooltip"
+                        :title="i18n.messageMediationAuthority"
+                        ><span class="fa fa-shield"></span></span>
+                      <span class="alpha-message__badge"
+                        v-if="props.message.content_hidden"
+                        data-bs-toggle="tooltip"
+                        :title="i18n.messageNotYetPublic"
+                        ><span class="fa fa-lock" aria-hidden="true"></span></span>
+                      <!-- relative time -->
+                      <span
+                        class="alpha-message__relative-time d-flex align-items-center text-nowrap smaller text-gray-600"
+                        data-bs-toggle="tooltip"
+                        :title="props.message_timestamp_local">
+                        {{ props.message_timestamp_relative }}
+                      </span>
+                      
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="email-content">
-                <DjangoSlot name="message_content_redacted"></DjangoSlot>
-              </div>
-            </div>
-            <div class="mb-5 text-secondary d-flex gap-1">
               <div>
-                <span class="fa-stack align-middle">
-                  <i class="fa fa-circle fa-stack-2x" style="color: var(--bs-tertiary-bg)"></i>
-                  <i class="fa fa-bank fa-stack-1x" style="color: var(--bs-tertiary-color)"></i>
-                </span>
+                <div class="alpha-message__wrap alpha-message__bodyinner">
+                  <div
+                    v-if="props.message.content_hidden"
+                    class="alert alert-warning"
+                    >
+                    <DjangoSlot name="message_content_hidden"></DjangoSlot>
+                  </div>
+                  <div class="alpha-message__content-text">
+                    <DjangoSlot name="message_content_redacted"></DjangoSlot>
+                  </div>
+                </div>
               </div>
-              <div class="pt-1">
-                {{ i18n.receivedFrom }}
-                <strong>{{ props.message.sender }}&thinsp;</strong>
-                <span :title="props.message_timestamp_local">
-                  {{ props.message_timestamp_relative }}
-                </span>
+              <div class="d-print-none alpha-message__toolbar alpha-message__toolbar--sticky alpha-message__toolbar--stickybump">
+                <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
+                  <DjangoSlot name="test_problembutton"></DjangoSlot>
+                  <DjangoSlot name="test_redactbutton"></DjangoSlot>
+                </div>
               </div>
             </div>
-            <div class="p-3 bg-body-tertiary">
+
+            <div class="p-3 bg-body-tertiary my-3">
               <div><strong>{{ i18n._('attachmentCount', { count : attachments.all.length }) }}</strong></div>
               <div v-if="attachments.convertable.length">
                 {{ i18n.nextStepConvertImages }}

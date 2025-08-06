@@ -6,6 +6,7 @@
 {% load form_helper %}
 {% load content_helper %}
 {% load foirequest_tags %}
+{% load problemreport_tags %}
 {% block title %}
     {% blocktrans with title=object.title %}Edit e-mail response for “{{ title }}”{% endblocktrans %}
 {% endblock title %}
@@ -22,8 +23,22 @@
         {% csrf_token %}
         {# mw-100 crucial for pdf-redaction's dynamic maxWidth calculations #}
         <edit-message-flow class="d-flex flex-column flex-grow-1 mw-100" :config="{{ config_json }}" :schemas="{{ schemas_json }}" :foirequest="{{ foirequest_json }}" :date_max="{{ date_max }}" :date_min="{{ date_min }}" :user_is_staff="{{ user_is_staff }}" :message="{{ message_json }}" :message_timestamp_relative="{{ message.timestamp|relativetime }}" :message_timestamp_local="{{ message.timestamp }}" :currency="{{ froide.currency }}">
+        <template data-slot="message_sender">
+            {% include "foirequest/body/message/sender.html" %}
+        </template>
         <template data-slot="redaction_explanation">
             {% include "foirequest/snippets/redaction_explanation.html" %}
+        </template>
+        <template data-slot="message_content_hidden">
+            {% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}
+        </template>
+        <template data-slot="test_redactbutton">
+            {% if object|can_write_foirequest:request or object|can_moderate_pii_foirequest:request %}
+                {% render_message_redact_button message %}
+            {% endif %}
+        </template>
+        <template data-slot="test_problembutton">
+            {% render_problem_button message %}
         </template>
         {# avoid whitespace, since this will be pre-wrap. spaceless didn't work... #}
         <template data-slot="message_subject_redacted">{% redact_subject message request %}</template>

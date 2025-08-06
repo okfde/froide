@@ -274,6 +274,8 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
     )
     status_name = serializers.CharField(source="get_status_display", read_only=True)
+    fails_authenticity = serializers.BooleanField(default=True, read_only=True)
+    is_escalation_message = serializers.BooleanField(default=False, read_only=True)
 
     class Meta:
         model = FoiMessage
@@ -289,6 +291,7 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "is_draft",
             "kind",
             "is_escalation",
+            "is_escalation_message",
             "content_hidden",
             "sender_public_body",
             "recipient_public_body",
@@ -305,14 +308,17 @@ class FoiMessageSerializer(serializers.HyperlinkedModelSerializer):
             "sender",
             "status_name",
             "last_modified_at",
+            "fails_authenticity",
         ]
         read_only_fields = [
             "sent",
             "is_escalation",
+            "is_escalation_message",
             "content_hidden",
             "is_draft",
             "not_publishable",
             "last_modified_at",
+            "fails_authenticity",
         ]
 
     def _is_authenticated_read(self, obj):

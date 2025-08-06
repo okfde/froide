@@ -520,6 +520,13 @@ def edit_message_flow(request, foirequest, message_id, is_email=False):
                 current="${current}", total="${total}"
             ),
             "backToSubmit": _("Back to submit"),
+            # email response
+            "hasAttachments": _("Has attachments"),
+            "possibleAuthenticityProblems": _(
+                "Possible authenticity problems with this message have been detected."
+            ),
+            "messageMediationAuthority": _("Message to the mediation authority."),
+            "messageNotYetPublic": _("This message is not yet public."),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
