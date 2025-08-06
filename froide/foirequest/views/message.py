@@ -1093,6 +1093,14 @@ def edit_message(request, foirequest, message_id):
 @allow_write_or_moderate_pii_foirequest
 def redact_message(request, foirequest, message_id):
     message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    redirect_to = (
+        reverse(
+            "foirequest-edit_message_flow_email",
+            kwargs={"slug": foirequest.slug, "message_id": message.id},
+        )
+        if request.POST.get("edit_message_flow_email")
+        else message.get_absolute_url()
+    )
     if message.is_response and request.POST.get("unredact_closing"):
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
@@ -1108,7 +1116,7 @@ def redact_message(request, foirequest, message_id):
             user=request.user,
             **{"action": "unredact_closing"},
         )
-        return redirect(message.get_absolute_url())
+        return redirect(redirect_to)
     form = RedactMessageForm(request.POST)
     if form.is_valid():
         form.save(message)
@@ -1119,7 +1127,7 @@ def redact_message(request, foirequest, message_id):
             user=request.user,
             **form.cleaned_data,
         )
-    return redirect(message.get_absolute_url())
+    return redirect(redirect_to)
 
 
 @allow_read_foirequest_authenticated

@@ -1169,8 +1169,12 @@ addEventListener('hashchange', () => {
               </div>
               <div class="d-print-none alpha-message__toolbar alpha-message__toolbar--sticky alpha-message__toolbar--stickybump">
                 <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
+                  <!-- Problem button -->
                   <DjangoSlot name="test_problembutton"></DjangoSlot>
-                  <DjangoSlot name="test_redactbutton"></DjangoSlot>
+                  <!-- no need for Edit button, because never can_edit email message -->
+                  <!-- Redact button -->
+                  <!-- the button will trigger the modal+form rendered outside of Vue component -->
+                  <DjangoSlot name="redactbutton"></DjangoSlot>
                 </div>
               </div>
             </div>

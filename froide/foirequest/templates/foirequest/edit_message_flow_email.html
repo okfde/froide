@@ -32,9 +32,9 @@
         <template data-slot="message_content_hidden">
             {% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}
         </template>
-        <template data-slot="test_redactbutton">
+        <template data-slot="redactbutton">
             {% if object|can_write_foirequest:request or object|can_moderate_pii_foirequest:request %}
-                {% render_message_redact_button message %}
+                {% render_message_redact_button message is_edit_message_flow_email=True partial='button' %}
             {% endif %}
         </template>
         <template data-slot="test_problembutton">
@@ -51,11 +51,15 @@
         </template>
         </edit-message-flow>
     </form>
+    {% if object|can_write_foirequest:request or object|can_moderate_pii_foirequest:request %}
+        {% render_message_redact_button message is_edit_message_flow_email=True partial='modal' %}
+    {% endif %}
 {% endblock body %}
 {% block scripts %}
     {{ block.super }}
     {% addfrontendbuild "request.js" %}
     {% addfrontendbuild "publicbody.js" %}
     {% addfrontendbuild "editmessageflow.js" %}
+    {% addfrontendbuild "messageredaction.js" %}
     {% addfrontendbuild "fileuploader.js" %}
 {% endblock scripts %}
