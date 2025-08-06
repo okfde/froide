@@ -1098,7 +1098,7 @@ addEventListener('hashchange', () => {
     <div v-show="step === STEP_INTRO_EMAIL" class="container">
       <div class="row justify-content-center">
         <div class="col-lg-9">
-          <div class="row my-5 justify-content-center">
+          <div class="my-5 justify-content-center">
             <h1>{{ i18n.newReply }}</h1>
             <div
               v-if="attachments.redactNudgable.length === 0"
@@ -1154,7 +1154,7 @@ addEventListener('hashchange', () => {
                   </div>
                 </div>
               </div>
-              <div>
+              <div class="alpha-message__body">
                 <div class="alpha-message__wrap alpha-message__bodyinner">
                   <div
                     v-if="props.message.content_hidden"
@@ -1166,15 +1166,15 @@ addEventListener('hashchange', () => {
                     <DjangoSlot name="message_content_redacted"></DjangoSlot>
                   </div>
                 </div>
-              </div>
-              <div class="d-print-none alpha-message__toolbar alpha-message__toolbar--sticky alpha-message__toolbar--stickybump">
-                <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
-                  <!-- Problem button -->
-                  <DjangoSlot name="problembutton"></DjangoSlot>
-                  <!-- no need for Edit button, because never can_edit email message -->
-                  <!-- Redact button -->
-                  <!-- the button will trigger the modal+form rendered outside of Vue component -->
-                  <DjangoSlot name="redactbutton"></DjangoSlot>
+                <div class="d-print-none alpha-message__toolbar alpha-message__toolbar--sticky alpha-message__toolbar--stickybump">
+                  <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-end py-2">
+                    <!-- these buttons will trigger the modals+forms rendered outside of Vue component -->
+                    <!-- Redact button -->
+                    <DjangoSlot name="redactbutton"></DjangoSlot>
+                    <!-- Edit button: omitted, because never can_edit email message -->
+                    <!-- Problem button -->
+                    <DjangoSlot name="problembutton"></DjangoSlot>
+                  </div>
                 </div>
               </div>
             </div>
