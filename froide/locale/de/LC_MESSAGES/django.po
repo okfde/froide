@@ -6868,15 +6868,23 @@ msgid "I already told them"
 msgstr "Mitteilung ist schon erfolgt"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
 #, python-format
 msgid "Upload postal mail for “%(title)s”"
 msgstr "Post zur Anfrage „%(title)s“ hochladen"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
-#: froide/foirequest/templates/foirequest/upload_postal_message_new.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
 msgid "Upload postal mail"
 msgstr "Post hochladen"
+
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
+msgid "Edit e-mail response for “%(title)s”"
+msgstr "E-Mail-Antwort zur Anfrage „%(title)s“ bearbeiten"
+
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
+msgid "Edit e-mail response"
+msgstr "E-Mail-Antwort bearbeiten"
 
 #: froide/foirequest/templates/foirequest/upload_postal_message.html
 #, python-format
@@ -7075,6 +7083,11 @@ msgstr "<slug:slug>/postnachricht-erstellen/"
 msgctxt "url part"
 msgid "<slug:slug>/<int:message_id>/edit-postal-message/"
 msgstr "<slug:slug>/<int:message_id>/postnachricht-bearbeiten/"
+
+#: froide/foirequest/urls/request_urls.py
+msgctxt "url part"
+msgid "<slug:slug>/<int:message_id>/edit-email-response/"
+msgstr "<slug:slug>/<int:message_id>/email-antwort-bearbeiten/"
 
 #: froide/foirequest/urls/request_urls.py
 msgctxt "url part"
@@ -7883,7 +7896,7 @@ msgid "Done"
 msgstr "Abgeschlossen"
 
 # #: froide/foirequest/views/message.py
-# #: frontend/javascript/components/postupload/post-upload.vue
+# #: frontend/javascript/components/editmessageflow/edit-message-flow.vue
 # msgid "Done"
 # msgstr "Fertig"
 #: froide/foirequest/views/message.py
@@ -8272,6 +8285,62 @@ msgstr "Konnte Original nicht herunterladen."
 #: froide/foirequest/views/message.py
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
+
+#: froide/foirequest/views/message.py
+msgid "The message has attachments that are being converted. Please wait and refresh this page."
+msgstr "Die Nachricht hat Anhänge die noch konvertiert werden. Bitte warten Sie kurz und laden dann die Seite neu."
+
+#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
+#: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
+msgid "Read the full message thread on the request page:"
+msgstr "Den vollständigen Nachrichtenverlauf finden Sie auf Ihrer Anfrageseite:"
+
+#: froide/foirequest/views/message.py
+msgctxt "e-mail flow"
+msgid "New reply to your request"
+msgstr "Neue Antwort der Behörde"
+
+
+#: froide/foirequest/views/message.py
+msgid "Read & Redact"
+msgstr "Lesen & Schwärzen"
+
+#: froide/foirequest/views/message.py
+msgid "Received from"
+msgstr "Erhalten von"
+
+#: froide/foirequest/views/message.py
+msgid "There are image attachments."
+msgstr "Es sind Bilddateien angehängt."
+
+#: froide/foirequest/views/message.py
+msgid "On the next step you can convert image attachments to PDF documents."
+msgstr "Im nächsten Schritt können Sie die Bild-Anhänge in PDFs konvertieren."
+
+#: froide/foirequest/views/message.py
+msgid "On the following step you can read and redact the attachments."
+msgstr "Im folgenden Schritt lesen und schwärzen Sie die Anhänge."
+
+#: froide/foirequest/views/message.py
+msgid "I do not know. Please show the documents again."
+msgstr "Ich weiß nicht. Bitte die Dokumente erneut anzeigen."
+
+#: froide/foirequest/views/message.py
+msgid "Click the icons to preview."
+msgstr "Klicken Sie auf die Icons um eine Vorschau anzuzeigen."
+
+#: froide/foirequest/views/message.py
+msgid "Read and redact the attachments"
+msgstr "Anhänge lesen und schwärzen"
+
+#: froide/foirequest/views/message.py
+msgid "One attachment"
+msgstr "Ein Anhang"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "${count} attachments"
+msgstr "${count} Anhänge"
 
 #: froide/foirequest/views/project.py
 msgid "Publish selected requests."

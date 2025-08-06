@@ -35,7 +35,7 @@ export default defineConfig({
         makerequest: './frontend/javascript/makerequest.js',
         messageredaction: './frontend/javascript/messageredaction.js',
         moderation: './frontend/javascript/moderation.js',
-        postupload: './frontend/javascript/postupload.js',
+        editmessageflow: './frontend/javascript/editmessageflow.js',
         proofupload: './frontend/javascript/proofupload.js',
         publicbody: './frontend/javascript/publicbody.js',
         publicbodyupload: './frontend/javascript/publicbodyupload.js',

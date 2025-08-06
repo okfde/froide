@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load markup %}
 {% load form_helper %}
-{% if show_button %}
+{% if is_redactable and render_button %}
     <div class="btn-group btn-group-sm mx-sm-1 mb-1">
         <button type="button"
                 title="{% trans 'Redact message text' %}"
@@ -12,6 +12,8 @@
             {% trans "Redact" %}
         </button>
     </div>
+{% endif %}
+{% if is_redactable and render_modal %}
     <div class="modal"
          data-teleport="body"
          tabindex="-1"
@@ -37,6 +39,7 @@
                                           class="disable-submit"
                                           action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
                                         {% csrf_token %}
+                                        {% if is_edit_message_flow_email %}<input type="hidden" name="edit_message_flow_email" value="1" />{% endif %}
                                         <p>
                                             {% translate "If there's important information below the message like inline replies, use the following button to unredact that part. Afterwards, personally identifiable information may need to be redacted again." %}
                                         </p>
@@ -51,6 +54,7 @@
                     <form method="post"
                           action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
                         {% csrf_token %}
+                        {% if is_edit_message_flow_email %}<input type="hidden" name="edit_message_flow_email" value="1" />{% endif %}
                         <message-redaction :config="{{ js_config }}" message-url="{% url 'api:message-detail' pk=message.pk %}"></message-redaction>
                         <p class="text-end">
                             <button type="submit" class="btn btn-dark">{% trans "Change message redaction" %}</button>

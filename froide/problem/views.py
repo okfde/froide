@@ -34,7 +34,15 @@ def report_problem(request, message_pk):
         messages.add_message(
             request, messages.ERROR, _("Your report could not be created.")
         )
-    return redirect(message)
+    redirect_to = (
+        reverse(
+            "foirequest-edit_message_flow_email",
+            kwargs={"slug": message.request.slug, "message_id": message.id},
+        )
+        if request.POST.get("edit_message_flow_email")
+        else message
+    )
+    return redirect(redirect_to)
 
 
 def get_moderation_data(request):

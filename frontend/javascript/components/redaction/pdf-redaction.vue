@@ -975,7 +975,7 @@ export default {
         return
       }
 
-      if (this.startDrag === null) {
+      if (this.startDrag === null || this.endDrag === null) {
         return
       }
 

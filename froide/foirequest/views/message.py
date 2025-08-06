@@ -168,20 +168,31 @@ def upload_postal_message_create(request, foirequest):
 
     return redirect(
         reverse(
-            "foirequest-edit_postal_message",
+            "foirequest-edit_message_flow_postal",
             kwargs={"slug": foirequest.slug, "message_id": message.id},
         )
     )
 
 
 @allow_write_foirequest
-def edit_postal_message(request, foirequest, message_id):
+def edit_message_flow(request, foirequest, message_id, is_email=False):
     message = get_object_or_404(
         FoiMessage.with_drafts, request=foirequest, pk=int(message_id)
     )
-    if not message.can_edit:
-        return render_400(request)
+    if is_email:
+        # for emails we just update the request (status etc.)
+        # message does not need can_edit, but we make sure it has the correct properties
+        if not (message.kind == MessageKind.EMAIL and message.is_response):
+            return render_400(request)
+    else:
+        # for editing+creating postal messages we need the message to be editable
+        if not message.can_edit:
+            return render_400(request)
     filingcabinet_js_config = get_js_config(request)
+    convert_attachments_url = reverse(
+        "foirequest-manage_attachments",
+        kwargs={"slug": foirequest.slug, "message_id": message.id},
+    )
     ctx = {
         "settings": {
             "tusChunkSize": settings.DATA_UPLOAD_MAX_MEMORY_SIZE - (500 * 1024),
@@ -355,6 +366,24 @@ def edit_postal_message(request, foirequest, message_id):
             "messageReceivedLetter": _("I have received the letter"),
             "messageSentLetter": _("I have sent the letter"),
             "enterInformation": _("Enter information"),
+            "readAndRedact": _("Read & Redact"),
+            "readAndRedactAttachments": _("Read and redact the attachments"),
+            "newReply": pgettext("e-mail flow", "New reply to your request"),
+            "subject": _("Subject"),
+            "receivedFrom": _("Received from"),
+            "attachmentCount": [
+                _("One attachment"),
+                _("${count} attachments"),
+            ],
+            "imageAttachments": _("There are image attachments."),
+            "nextStepConvertImages": _(
+                "On the next step you can convert image attachments to PDF documents."
+            ),
+            "nextStepReadRedact": _(
+                "On the following step you can read and redact the attachments."
+            ),
+            "pleasePeek": _("I do not know. Please show the documents again."),
+            "clickIconsForPreview": _("Click the icons to preview."),
             "preview": _("Preview"),
             "hint": _("Hint"),
             "addMoreFiles": _("Add more files"),
@@ -491,6 +520,16 @@ def edit_postal_message(request, foirequest, message_id):
                 current="${current}", total="${total}"
             ),
             "backToSubmit": _("Back to submit"),
+            # email response
+            "hasAttachments": _("Has attachments"),
+            "possibleAuthenticityProblems": _(
+                "Possible authenticity problems with this message have been detected."
+            ),
+            "messageMediationAuthority": _("Message to the mediation authority."),
+            "messageNotYetPublic": _("This message is not yet public."),
+            "pendingConversionWarning": _(
+                "The message has attachments that are being converted. Please wait and refresh this page."
+            ),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
@@ -508,16 +547,14 @@ def edit_postal_message(request, foirequest, message_id):
             "makeRequestTo": reverse(
                 "foirequest-make_request", kwargs={"publicbody_ids": "0"}
             ),
-            # from upload_attachments()
-            "convertAttachments": reverse(
-                "foirequest-manage_attachments",
-                kwargs={"slug": foirequest.slug, "message_id": message.id},
-            ),
+            "convertAttachments": convert_attachments_url,
             "redactAttachment": reverse(
                 "foirequest-redact_attachment",
                 kwargs={"slug": foirequest.slug, "attachment_id": 0},
             ),
-            "helpPostuploadRedaction": get_content_url("help_postupload_redaction"),
+            "helpEditmessageflowRedaction": get_content_url(
+                "help_editmessageflow_redaction"
+            ),
             "mobileAppInstall": settings.FROIDE_CONFIG.get("mobile_app_install_url"),
             "mobileAppContent": settings.FROIDE_CONFIG.get("mobile_app_content_url")
             if request.user.is_staff
@@ -552,13 +589,16 @@ def edit_postal_message(request, foirequest, message_id):
     }
     return render(
         request,
-        "foirequest/upload_postal_message_new.html",
+        "foirequest/edit_message_flow_email.html"
+        if is_email
+        else "foirequest/edit_message_flow_postal.html",
         {
             "message_id": message_id,
             "object": foirequest,
             "foirequest_json": json.dumps(
                 {
                     "id": foirequest.id,
+                    "title": foirequest.title,
                     "url": foirequest.url,
                     "public_body": {
                         "id": foirequest.public_body.id,
@@ -572,12 +612,14 @@ def edit_postal_message(request, foirequest, message_id):
             "date_min": foirequest.created_at.date().isoformat(),
             "user_is_staff": json.dumps(request.user.is_staff),
             "schemas_json": json.dumps(schemas),
+            "message": message,
             "message_json": "null"
             if message is None
             else json.dumps(
                 FoiMessageSerializer(message, context={"request": request}).data
             ),
             "config_json": json.dumps(ctx),
+            "convert_attachments_url": convert_attachments_url,
         },
     )
 
@@ -1051,6 +1093,14 @@ def edit_message(request, foirequest, message_id):
 @allow_write_or_moderate_pii_foirequest
 def redact_message(request, foirequest, message_id):
     message = get_object_or_404(FoiMessage, request=foirequest, pk=message_id)
+    redirect_to = (
+        reverse(
+            "foirequest-edit_message_flow_email",
+            kwargs={"slug": foirequest.slug, "message_id": message.id},
+        )
+        if request.POST.get("edit_message_flow_email")
+        else message.get_absolute_url()
+    )
     if message.is_response and request.POST.get("unredact_closing"):
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
@@ -1066,7 +1116,7 @@ def redact_message(request, foirequest, message_id):
             user=request.user,
             **{"action": "unredact_closing"},
         )
-        return redirect(message.get_absolute_url())
+        return redirect(redirect_to)
     form = RedactMessageForm(request.POST)
     if form.is_valid():
         form.save(message)
@@ -1077,7 +1127,7 @@ def redact_message(request, foirequest, message_id):
             user=request.user,
             **form.cleaned_data,
         )
-    return redirect(message.get_absolute_url())
+    return redirect(redirect_to)
 
 
 @allow_read_foirequest_authenticated
