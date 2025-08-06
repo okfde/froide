@@ -2094,16 +2094,4 @@ addEventListener('hashchange', () => {
   }
 }
 
-/* email */
-
-.email-subject {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.email-content {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
 </style>

@@ -8286,20 +8286,9 @@ msgstr "Konnte Original nicht herunterladen."
 msgid "The message has been re-sent."
 msgstr "Ihre Nachricht wurde erneut gesendet."
 
-#: froide/foirequest/templates/foirequest/edit_message_flow_email.html
-#, python-format
-msgid ""
-"This message has no redactable attachments. The next step will be skipped."
-"<br />You can review the attachments later at <a href=\"%(link)s\">Manage "
-"attachments</a>.<br />If the message hat attachments that need to be "
-"converted (e.g. <span class=\"badge text-bg-secondary text-uppercase\">docx</"
-"span> Word documents), please wait and refresh this page."
-msgstr ""
-"Diese Nachricht hat keine zu schwärzenden Anhänge. Deshalb entfällt der nächste Schritt."
-"<br />Sie können die Anhänge anschließend unter <a href=\"%(link)s\">Anhänge verwalten</a> überprüfen."
-"<br/>Falls die Nachricht Anhänge enthielt, die konvertiert werden müssen"
-"(z.B. <span class=\"badge text-bg-secondary text-uppercase\">docx</span> Word-Dokumente) "
-"warten Sie bitte kurz und laden diese Seite neu."
+#: froide/foirequest/views/message.py
+msgid "The message has attachments that are being converted. Please wait and refresh this page."
+msgstr "Die Nachricht hat Anhänge die noch konvertiert werden. Bitte warten Sie kurz und laden dann die Seite neu."
 
 #: froide/foirequest/templates/foirequest/edit_message_flow_email.html
 #: froide/foirequest/templates/foirequest/edit_message_flow_postal.html
