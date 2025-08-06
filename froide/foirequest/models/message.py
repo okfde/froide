@@ -648,7 +648,7 @@ class FoiMessage(models.Model):
         return data
 
     def fails_authenticity(self):
-        if not self.is_response or not self.is_email:
+        if not self.is_response or not self.is_email or not self.email_headers:
             return
         checks = self.email_headers.get("authenticity")
         if not checks:
