@@ -175,7 +175,6 @@ def upload_postal_message_create(request, foirequest):
 
 
 @allow_write_foirequest
-# todo name doesnt match
 def edit_message_flow(request, foirequest, message_id, is_email=False):
     message = get_object_or_404(
         FoiMessage.with_drafts, request=foirequest, pk=int(message_id)

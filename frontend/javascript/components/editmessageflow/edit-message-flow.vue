@@ -1100,7 +1100,6 @@ addEventListener('hashchange', () => {
         <div class="col-lg-9">
           <div class="row my-5 justify-content-center">
             <h1>{{ i18n.newReply }}</h1>
-            <DjangoSlot name="email_intro"></DjangoSlot>
             <div
               v-if="attachments.redactNudgable.length === 0"
               class="alert alert-warning"
@@ -1149,6 +1148,10 @@ addEventListener('hashchange', () => {
                 badges-type
                 dense
                 />
+            </div>
+
+            <div class="my-3">
+              <DjangoSlot name="email_request_link"></DjangoSlot>
             </div>
           </div>
         </div>
