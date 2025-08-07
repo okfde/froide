@@ -9,6 +9,7 @@ from django.urls import reverse
 
 import pytest
 
+from froide.account.factories import UserFactory
 from froide.foirequest.tests.factories import make_world, rebuild_index
 from froide.georegion.models import GeoRegion
 from froide.helper.csv_utils import export_csv_bytes
@@ -81,6 +82,21 @@ class PublicBodyTest(TestCase):
             reverse("publicbody-show", kwargs={"pk": "0", "slug": "bad-slug"})
         )
         self.assertEqual(response.status_code, 404)
+
+    def test_publicbody_page_access(self):
+        pb = PublicBody.objects.all()[0]
+        pb.confirmed = False
+        pb.save()
+        response = self.client.get(pb.get_absolute_url())
+        self.assertEqual(response.status_code, 403)
+        self.client.force_login(pb._created_by)
+        response = self.client.get(pb.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        superuser = UserFactory.create(is_superuser=True)
+        self.client.force_login(superuser)
+        response = self.client.get(pb.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
 
     def test_csv(self):
         csv = export_csv_bytes(PublicBody.export_csv(PublicBody.objects.all()))
