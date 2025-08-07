@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sitemaps import Sitemap
+from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.utils.safestring import mark_safe
@@ -104,6 +105,8 @@ class PublicBodyView(DetailView):
             raise Http404
         if self.kwargs.get("pk") is None:
             return self.get_redirect()
+        if not self._can_access():
+            raise PermissionDenied
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
@@ -116,9 +119,10 @@ class PublicBodyView(DetailView):
 
     def _can_access(self):
         if not self.object.confirmed:
-            not_creator = self.request.user != self.object._created_by
-            if not_creator and not can_moderate_object(self.object, self.request):
-                return False
+            is_creator = self.request.user == self.object._created_by
+            if is_creator or can_moderate_object(self.object, self.request):
+                return True
+            return False
         return True
 
     def get_context_data(self, **kwargs):
