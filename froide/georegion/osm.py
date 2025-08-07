@@ -4,17 +4,18 @@ from functools import partial
 from pathlib import Path
 
 from django.contrib.gis.geos import GEOSGeometry
+from django.db.models import Q
 
 from .models import GeoRegion
 
 logger = logging.getLogger(__name__)
 
 
-def update_georegion(wkb, tags, get_region_key=None):
-    key = get_region_key(tags)
-    if not key:
+def update_georegion(wkb, tags, get_region_query=None):
+    query = get_region_query(tags)
+    if not query:
         return
-    GeoRegion.objects.filter(region_identifier=key).update(
+    GeoRegion.objects.filter(query).update(
         geom_detail=GEOSGeometry(wkb, srid=4326),
         osm_tags=tags,
     )
@@ -22,7 +23,7 @@ def update_georegion(wkb, tags, get_region_key=None):
 
 def import_osm_pbf(
     pbf_file: Path,
-    region_key_func: Callable[[dict[str, str]], str | None],
+    region_query_func: Callable[[dict[str, str]], Q | None],
 ):
     try:
         import osmium
@@ -52,6 +53,6 @@ def import_osm_pbf(
                     return
                 self.area_callback(wkb, dict(area.tags))
 
-    area_handler = partial(update_georegion, get_region_key=region_key_func)
+    area_handler = partial(update_georegion, get_region_query=region_query_func)
     handler = AdminAreaHandler(area_handler)
     handler.apply_file(pbf_file, locations=True, idx="flex_mem")
