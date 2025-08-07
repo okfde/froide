@@ -37,6 +37,9 @@ class GeoRegion(MP_Node):
     invalid_on = models.DateTimeField(null=True, blank=True)
 
     geom = models.MultiPolygonField(_("geometry"), geography=True)
+    geom_detail = models.MultiPolygonField(
+        _("geometry detail"), geography=True, null=True, blank=True
+    )
     gov_seat = models.PointField(_("gov seat"), null=True, blank=True, geography=True)
 
     part_of = models.ForeignKey(
@@ -47,7 +50,8 @@ class GeoRegion(MP_Node):
         blank=True,
         related_name="sub_regions",
     )
-    data = models.JSONField(default=dict)
+    data = models.JSONField(default=dict, blank=True)
+    osm_tags = models.JSONField(default=dict, blank=True)
 
     node_order_by = ("name",)
 
