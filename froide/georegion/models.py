@@ -28,7 +28,7 @@ class GeoRegion(MP_Node):
     kind = models.CharField(_("Kind of Region"), max_length=255, choices=KIND_CHOICES)
     kind_detail = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
-    region_identifier = models.CharField(max_length=255, blank=True)
+    region_identifier = models.CharField(max_length=255, blank=True, db_index=True)
     global_identifier = models.CharField(max_length=255, blank=True)
 
     area = models.FloatField(_("Area"), default=0.0)  # in Sqm
