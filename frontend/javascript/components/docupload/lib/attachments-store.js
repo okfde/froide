@@ -10,6 +10,7 @@ const useAttachmentsStore = defineStore('attachments', {
     isFetching: false,
     allRaw: [],
     images: [],
+    selectedOnceIds: new Set,
     selectedIds: new Set,
     approvingIds: new Set,
     availableIds: new Set,
@@ -27,6 +28,9 @@ const useAttachmentsStore = defineStore('attachments', {
       canApprove: d.can_approve && !d.approving && !d.approved,
       // TODO: include settings.can_make_document?
       canMakeResult: d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document,
+      // different than "convertable" - this is about e.g. docx that arrive by e-mail,
+      // where the convert_to_pdf task does not report "pending"
+      pendingConversion: d.is_filetype_convertable_to_pdf && !d.converted,
     })),
     approved() {
       return this.all.filter((d) => (!d.is_irrelevant && d.approved && !d.redacted && !(d.converted && !d.is_image)))
@@ -44,7 +48,7 @@ const useAttachmentsStore = defineStore('attachments', {
       return this.all.filter((d) => d.canRedact)
     },
     redactNudgable() {
-      return this.all.filter((d) => d.canRedact && !d.is_redacted && !d.redacted)
+      return this.all.filter((d) => d.canRedact && !d.is_redacted && !d.redacted && !d.approved)
     },
     convertable() {
       return this.all.filter((d) => (d.is_irrelevant || d.is_image) && !d.converted)
@@ -60,6 +64,9 @@ const useAttachmentsStore = defineStore('attachments', {
     },
     getUnconvertedAttachmentByResourceUri: (state) => {
       return (resourceUri) => state.all.find((d) => d.converted === resourceUri)
+    },
+    havePendingConversion() {
+      return this.all.some(d => d.pendingConversion)
     }
   },
   actions: {
@@ -106,6 +113,14 @@ const useAttachmentsStore = defineStore('attachments', {
     },
     unselectSubset(subset) {
       subset.forEach(_ => this.selectedIds.delete(_.id))
+    },
+    selectAllNewRedactableAttachments() {
+      this.redactable.forEach(att => {
+        if (!this.selectedOnceIds.has(att.id)) {
+          this.selectedOnceIds.add(att.id)
+          this.selectedIds.add(att.id)
+        }
+      })
     }
   }
 })

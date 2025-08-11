@@ -68,6 +68,7 @@ const onlineHelp = ref()
       :subset="attachments.approved"
       actions
       table-selection
+      cards-selection
       selection-action-delete
       selection-action-make-result
       nudge-redaction
@@ -82,6 +83,7 @@ const onlineHelp = ref()
       :subset="attachments.notApproved"
       actions
       table-selection
+      cards-selection
       selection-action-delete
       selection-action-approve
       nudge-redaction
@@ -95,6 +97,7 @@ const onlineHelp = ref()
       :subset="attachments.irrelevant"
       actions
       table-selection
+      cards-selection
       selection-action-delete
       badges-type
     />

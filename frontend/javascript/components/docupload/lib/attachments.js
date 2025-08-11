@@ -330,7 +330,7 @@ const monitorAttachments = () => {
 export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
-  // like <post-upload> and <attachment-manager>
+  // like <message-edit-flow> and <attachment-manager>
   // they could also Object.extend, or throw an error/warning if already set...
   if (message) config.message = message
   if (urls) config.urls = urls

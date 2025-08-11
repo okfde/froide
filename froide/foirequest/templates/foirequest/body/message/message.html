@@ -207,14 +207,16 @@
                             </div>
                         {% endif %}
                     {% endif %}
+                    {# Redact button #}
                     {% if object|can_write_foirequest:request or object|can_moderate_pii_foirequest:request %}
                         {% render_message_redact_button message %}
                     {% endif %}
+                    {# Edit button #}
                     {% if object|can_write_foirequest:request %}
                         {% render_message_edit_button message %}
                     {% endif %}
                 {% endif %}
-                <!-- Problem button-->
+                {# Problem button #}
                 {% render_problem_button message %}
                 {% if object|can_moderate_foirequest:request and message.can_resend_bounce %}
                     {% include "foirequest/body/message/toolbar/resend.html" %}
