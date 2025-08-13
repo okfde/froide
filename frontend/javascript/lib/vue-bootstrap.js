@@ -24,7 +24,6 @@ export const vBsCollapsePersistent = {
   mounted: (el) => collapsePersistent(el)
 }
 
-
 export const vBsToast = {
   mounted: (el) => {
     new Toast(el)

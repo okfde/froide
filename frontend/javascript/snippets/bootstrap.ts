@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document
     .querySelectorAll('[data-bs-toggle="tooltip"]')
     .forEach((el) => new Tooltip(el))
+  // see also django-slot.vue
   document
-    .querySelectorAll('[data-bs-collapse-persistent]')
+    .querySelectorAll<HTMLElement>('[data-bs-collapse-persistent]')
     .forEach((el) => collapsePersistent(el))
 })
 ;(window as any).bootstrap = {
