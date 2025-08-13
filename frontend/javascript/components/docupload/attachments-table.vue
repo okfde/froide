@@ -8,7 +8,7 @@ import { computed, inject, ref, watch } from 'vue'
 
 import AttachmentIconPreview from './attachment-icon-preview.vue'
 import AttachmentActions from './attachment-actions.vue'
-import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
+import AttachmentBadges from './attachment-badges.vue'
 
 const i18n = inject('i18n')
 
@@ -286,45 +286,14 @@ const makeResultSelected = async () => {
           <input v-model="attachments.selectedIds" type="checkbox" :value="att.id" />
         </label>
         <AttachmentIconPreview
+          v-bind="{ attachment: att, actions, nudgeRedaction }"
           :attachment="att"
           big
           class="text-center pb-1"
-          :actions="actions"
-          :nudge-redaction="nudgeRedaction"
           />
-        <div
-          class="text-center mb-1 mw-100 text-break"
-          @click.self="toggleSelection('card', att.id)"
-          >
-          {{ att.document?.title || att.name }}
-          <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
-            <span class="sr-only">{{ i18n.loading }}</span>
-          </span>
-          <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
-            <i class="fa fa-hourglass-half"></i>
-            {{ i18n.pending}}
-          </span>
-          <span v-if="badgesNew && att.new" class="badge text-bg-success"
-            >{{ i18n.new }}</span>
-        </div>
-        <div
-          v-if="badgesRedaction">
-          <span
-            v-if="att.is_redacted"
-            class="badge text-bg-success"
-            >{{ i18n.redacted }}</span>
-          <span
-            v-else
-            class="badge text-bg-warning"
-            >{{ i18n.nonRedacted }}</span>
-        </div>
-        <span
-          v-if="badgesResolution && att.document"
-          class="badge text-bg-success"
-          >{{ i18n.resolution }}</span>
-        <div
-          v-if="badgesType">
-          <AttachmentBadgeFiletype
+        <div class="text-center mb-1 mw-100 text-break">
+          <AttachmentBadges
+            v-bind="{ attachment: att, badgesNew, badgesRedaction, badgesType, badgesResolution }"
             :attachment="att"
             />
         </div>
@@ -369,41 +338,13 @@ const makeResultSelected = async () => {
         <input v-model="attachments.selectedIds" type="checkbox" :value="att.id" />
       </label>
       <AttachmentIconPreview
-        :attachment="att"
-        class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
-        :actions="actions"
-        :nudge-redaction="nudgeRedaction"
+        v-bind="{ attachment: att, actions, nudgeRedaction }"
+        class="start-0 py-2 ps-0 pe-2 ps-md-0 ms-0 mt-1 ms-md-0"
         />
-      <div
-        class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"
-        @click.self="toggleSelection('table', att.id)"
-        >
-        {{ att.document?.title || att.name }}
-        <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
-          <span class="sr-only">{{ i18n.loading }}</span>
-        </span>
-        <AttachmentBadgeFiletype
-          v-if="badgesType"
-          :attachment="att"
+      <div class="flex-shrink-1 flex-grow-0 text-break d-md-flex flex-column align-items-start gap-1 me-md-auto">
+        <AttachmentBadges
+          v-bind="{ attachment: att, badgesNew, badgesRedaction, badgesType, badgesResolution }"
           />
-        <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
-          <i class="fa fa-hourglass-half"></i>
-          {{ i18n.pending}}
-        </span>
-        <span v-if="badgesNew && att.new" class="badge text-bg-success"
-          >{{ i18n.new }}</span>
-        <span
-          v-if="badgesRedaction && att.is_redacted"
-          class="badge text-bg-success"
-          >{{ i18n.redacted }}</span>
-        <span
-          v-if="badgesResolution && att.document"
-          class="badge text-bg-success"
-          >{{ i18n.resolution }}</span>
-        <span
-          v-if="badgesRedaction && !att.is_redacted"
-          class="badge text-bg-warning"
-          >{{ i18n.nonRedacted }}</span>
       </div>
       <button
         v-if="actionDelete && att.can_delete"
