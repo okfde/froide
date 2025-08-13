@@ -20,12 +20,12 @@ const unconvertedExtension = computed(() => unconverted.value?.name.match?.(/\.(
 </script>
 
 <template>
-  <span v-if="attachment.is_image" class="badge text-bg-secondary">
+  <span v-if="attachment.is_image" class="badge text-bg-secondary me-1">
     {{ i18n.imageFile }}
   </span>
   <span
     v-else-if="unconverted && !unconverted.is_image"
-    class="badge text-bg-secondary text-uppercase"
+    class="badge text-bg-secondary text-uppercase me-1"
     :title="unconverted.filetype"
     >
     {{ unconvertedExtension }}
