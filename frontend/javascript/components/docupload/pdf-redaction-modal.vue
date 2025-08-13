@@ -3,6 +3,7 @@
 import { inject, ref } from 'vue'
 import BsModal from '../bs-modal.vue'
 import PdfRedaction from '../redaction/pdf-redaction.vue'
+import DjangoSlot from '../../lib/django-slot.vue'
 
 const i18n = inject('i18n')
 const config = inject('config')
@@ -46,6 +47,11 @@ defineExpose({
       </h5>
     </template>
     <template #body>
+      <div class="container mb-2">
+        <div class="row">
+          <DjangoSlot name="redaction_explanation"></DjangoSlot>
+        </div>
+      </div>
       <PdfRedaction
         ref="pdfRedaction"
         :pdf-path="attachment.file_url"
