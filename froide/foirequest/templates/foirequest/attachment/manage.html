@@ -28,6 +28,9 @@
                 <span class="visually-hidden">{% trans "Loading..." %}</span>
             </div>
         </div>
+        <template data-slot="redaction_explanation">
+            {% include "foirequest/snippets/redaction_explanation.html" %}
+        </template>
         <template data-slot="notapproved-attachments">
             <h2>
                 {% if foirequest.public %}
