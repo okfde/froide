@@ -43,7 +43,7 @@ class DocumentSerializer(FCDocumentSerializer):
     )
     last_modified_at = serializers.CharField(source="updated_at", read_only=True)
 
-    class Meta:
+    class Meta(FCDocumentSerializer.Meta):
         model = Document
         fields = FCDocumentSerializer.Meta.fields + (
             "original",
@@ -61,9 +61,8 @@ class DocumentDetailSerializer(PagesMixin, DocumentSerializer):
 
 
 class DocumentCollectionSerializer(FCDocumentCollectionSerializer):
-    class Meta:
+    class Meta(FCDocumentCollectionSerializer.Meta):
         model = DocumentCollection
-        fields = FCDocumentCollectionSerializer.Meta.fields
 
 
 class AllowedOrReadOnly(permissions.BasePermission):
