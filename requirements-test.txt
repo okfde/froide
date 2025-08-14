@@ -380,7 +380,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   libcst
     #   pre-commit
-qrcode==7.3.1
+qrcode==8.2
     # via django-mfa3
 referencing==0.35.1
     # via
