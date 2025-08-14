@@ -257,7 +257,7 @@ pyisemail==2.0.1
     # via froide (pyproject.toml)
 pyotp==2.9.0
     # via django-mfa3
-pypdf==5.5.0
+pypdf==6.0.0
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
