@@ -437,3 +437,33 @@ def test_private_message_api_insufficient(client, dummy_user, get_oauth_header):
     foimessage_url = reverse("api:message-detail", kwargs={"pk": foimessage.pk})
     response = client.get(foimessage_url, HTTP_AUTHORIZATION=auth_header)
     assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_create_draft_message_with_oauth(client, dummy_user, get_oauth_header):
+    request = factories.FoiRequestFactory.create(user=dummy_user)
+    working_scopes = " ".join(
+        [
+            "write:request",
+            "write:message",
+        ]
+    )
+
+    data = {
+        "request": reverse("api:request-detail", kwargs={"pk": request.pk}),
+        "kind": "post",
+        "is_response": True,
+        "sender_public_body": reverse(
+            "api:publicbody-detail", kwargs={"pk": request.public_body.pk}
+        ),
+    }
+    auth_header = get_oauth_header(working_scopes)
+    response = client.post(
+        "/api/v1/message/",
+        data=data,
+        HTTP_AUTHORIZATION=auth_header,
+        content_type="application/json",
+    )
+    assert response.status_code == 201, response.json()
+    message_response = response.json()
+    assert message_response["is_draft"]
