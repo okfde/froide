@@ -112,6 +112,7 @@ class FoiLawSerializer(SimpleFoiLawSerializer):
     class Meta(SimpleFoiLawSerializer.Meta):
         fields = SimpleFoiLawSerializer.Meta.fields + (
             "refusal_reasons",
+            "legal_text",
             "combined",
         )
 
