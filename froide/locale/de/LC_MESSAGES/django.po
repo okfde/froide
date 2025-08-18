@@ -12472,6 +12472,11 @@ msgstr ""
 "starten.</p><p>Sobald Sie den Brief gescannt haben, können Sie hier am Gerät "
 "fortfahren.</p>"
 
+#: froide/publicbody/csv_import.py
+#, python-format
+msgid "GeoRegion %s/%s does not exist."
+msgstr "GeoRegion %s/%s existiert nicht"
+
 #~ msgid "Fax"
 #~ msgstr "Fax"
 
@@ -15100,3 +15105,7 @@ msgstr ""
 
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
+
+#, fuzzy
+#~ msgid "This field is required."
+#~ msgstr "Anfragen des Nutzers"
