@@ -451,7 +451,9 @@ def render_message_edit_button(message):
 
 
 @register.inclusion_tag("foirequest/snippets/message_redact.html")
-def render_message_redact_button(message):
+def render_message_redact_button(
+    message, is_edit_message_flow_email=False, partial=None
+):
     blocked_patterns = [
         pat.pattern
         for pat in get_minimum_redaction_replacements(message.request).keys()
@@ -459,7 +461,10 @@ def render_message_redact_button(message):
     return {
         "foirequest": message.request,
         "message": message,
-        "show_button": bool(message.plaintext or message.subject),
+        "is_redactable": bool(message.plaintext or message.subject),
+        "is_edit_message_flow_email": is_edit_message_flow_email,
+        "render_button": partial is None or partial == "button",
+        "render_modal": partial is None or partial == "modal",
         "js_config": json.dumps(
             {
                 "i18n": {

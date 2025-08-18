@@ -12,7 +12,7 @@ import AttachmentBadgeFiletype from './attachment-badge-filetype.vue'
 
 const i18n = inject('i18n')
 
-const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
+const { subset, asCardThreshold, asTableOnly, actions, actionDelete, cardsSelection, tableSelection, selectionButtons, selectionActionApprove, selectionActionDelete, selectionActionMakeResult, nudgeRedaction, previewHideInfoSidebar, badgesNew, badgesRedaction, badgesType, badgesResolution, cardsBgTransparent, dense } = defineProps({
   subset: {
     type: Array,
     required: true
@@ -20,6 +20,9 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
   asCardThreshold: {
     type: Number,
     default: 6
+  },
+  asTableOnly: {
+    type: Boolean
   },
   actions: Boolean,
   actionDelete: {
@@ -65,6 +68,7 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
     }
   },
   nudgeRedaction: Boolean,
+  previewHideInfoSidebar: Boolean,
   badgesNew: Boolean,
   badgesRedaction: Boolean,
   badgesType: Boolean,
@@ -73,7 +77,7 @@ const { subset, asCardThreshold, actions, actionDelete, cardsSelection, tableSel
   dense: Boolean
 })
 
-const asCards = ref(subset.length < asCardThreshold)
+const asCards = ref((subset.length < asCardThreshold) && !asTableOnly)
 
 watch(
   () => subset.length,
@@ -83,13 +87,6 @@ watch(
     }
   }
 )
-
-/* when asCard flips over/under threshold (when something is uploaded/deleted)
- * we need to prevent things being still selected without the possibility to
- * change the selection */
-watch(asCards, (newValue) => {
-  if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
-})
 
 const selected = computed(() => subset.filter(_ => attachments.selectedIds.has(_.id)))
 
@@ -291,6 +288,7 @@ const makeResultSelected = async () => {
           class="text-center pb-1"
           :actions="actions"
           :nudge-redaction="nudgeRedaction"
+          :preview-hide-info-sidebar="previewHideInfoSidebar"
           />
         <div
           class="text-center mb-1 mw-100 text-break"
@@ -300,7 +298,7 @@ const makeResultSelected = async () => {
           <span v-if="att.isApproving" class="spinner-border spinner-border-sm">
             <span class="sr-only">{{ i18n.loading }}</span>
           </span>
-          <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
+          <span v-if="att.pending || att.pendingConversion || att.document?.pending" class="badge text-bg-secondary">
             <i class="fa fa-hourglass-half"></i>
             {{ i18n.pending}}
           </span>
@@ -358,8 +356,8 @@ const makeResultSelected = async () => {
       v-for="att in subset" :key="att.id"
       class="d-flex flex-column px-md-1 py-1 position-relative flex-md-row align-items-md-center px-5"
       :class="{
-        'bg-primary-subtle': attachments.selectedIds.has(att.id),
-        'border-top': subset.length > 1
+        'bg-primary-subtle': tableSelection && attachments.selectedIds.has(att.id),
+        'border-top': (subset.length > 1) && !dense
       }"
       @click.self="toggleSelection('table', att.id)"
       >
@@ -373,6 +371,7 @@ const makeResultSelected = async () => {
         class="position-absolute position-md-static top-0 start-0 py-2 ps-2 pe-2 ps-md-0 ms-3 mt-1 ms-md-0"
         :actions="actions"
         :nudge-redaction="nudgeRedaction"
+        :preview-hide-info-sidebar="previewHideInfoSidebar"
         />
       <div
         class="px-1 py-2 py-md-0 flex-md-grow-1 text-break"
@@ -386,7 +385,7 @@ const makeResultSelected = async () => {
           v-if="badgesType"
           :attachment="att"
           />
-        <span v-if="att.pending || att.document?.pending" class="badge text-bg-secondary">
+        <span v-if="att.pending || att.pendingConversion || att.document?.pending" class="badge text-bg-secondary">
           <i class="fa fa-hourglass-half"></i>
           {{ i18n.pending}}
         </span>
@@ -427,7 +426,7 @@ const makeResultSelected = async () => {
       <slot name="after-row" :attachment="att"></slot>
     </div>
     <slot name="after-table"></slot>
-    <div class="py-3 text-end border-top px-md-1">
+    <div v-if="!asTableOnly" class="py-3 text-end border-top px-md-1">
       <button type="button" class="btn btn-link btn-sm" @click="asCards = true">
         {{ i18n.displayAsCards }}
       </button>

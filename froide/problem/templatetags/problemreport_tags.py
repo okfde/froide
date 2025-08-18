@@ -11,7 +11,9 @@ register = template.Library()
 
 
 @register.inclusion_tag("problem/message_toolbar_item.html", takes_context=True)
-def render_problem_button(context, message):
+def render_problem_button(
+    context, message, is_edit_message_flow_email=False, partial=None
+):
     request = context["request"]
     foirequest = message.request
     is_requester = (
@@ -39,10 +41,16 @@ def render_problem_button(context, message):
             # Assign message to problem to avoid query
             for problem in mes.problemreports:
                 problem.message = mes
+            # overwrite to later return the message with .problemreports*
+            if mes == message:
+                message = mes
 
     return {
         "is_requester": is_requester,
         "request": request,
         "foirequest": foirequest,
         "message": message,
+        "is_edit_message_flow_email": is_edit_message_flow_email,
+        "render_button": partial is None or partial == "button",
+        "render_modal": partial is None or partial == "modal",
     }

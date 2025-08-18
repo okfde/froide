@@ -24,7 +24,7 @@ from ..views import (
     download_message_pdf,
     download_original_email,
     edit_message,
-    edit_postal_message,
+    edit_message_flow,
     escalation_message,
     extend_deadline,
     make_public,
@@ -114,8 +114,15 @@ urlpatterns = [
     ),
     path(
         pgettext_lazy("url part", "<slug:slug>/<int:message_id>/edit-postal-message/"),
-        edit_postal_message,
-        name="foirequest-edit_postal_message",
+        edit_message_flow,
+        {"is_email": False},
+        name="foirequest-edit_message_flow_postal",
+    ),
+    path(
+        pgettext_lazy("url part", "<slug:slug>/<int:message_id>/edit-email-response/"),
+        edit_message_flow,
+        {"is_email": True},
+        name="foirequest-edit_message_flow_email",
     ),
     path(
         "<slug:slug>/apply-moderation/",
