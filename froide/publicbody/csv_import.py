@@ -221,7 +221,9 @@ class CSVImporter(object):
                 )
         except GeoRegion.DoesNotExist:
             raise ValueError(
-                _("GeoRegion %s/%s does not exist.") % (id, identifier)
+                _("GeoRegion {id}/{identifier} does not exist.").format(
+                    id=id, identifier=identifier
+                )
             ) from None
         return None
 
