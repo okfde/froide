@@ -12451,26 +12451,29 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/views/message.py
+msgid "Scan documents"
+msgstr "Dokumente scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Use your phone's camera to create a PDF "
+msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on your "
+"smartphone, you can scan this QR code to start the process.</p><p>As soon as "
+"you have completed the process in the app, the documents will show up here.</"
+"p>"
+msgstr ""
+"<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem Smartphone "
+"installier haben,können Sie diesen QR-Code einlesen um die Scanfunktion zu "
+"starten.</p><p>Sobald Sie den Brief gescannt haben, können Sie hier am Gerät "
+"fortfahren.</p>"
+
 #~ msgid "Fax"
 #~ msgstr "Fax"
-
-#~ msgid "Scan documents"
-#~ msgstr "Dokumente scannen"
-
-#~ msgid "Use your phone's camera to create a PDF "
-#~ msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
-
-#, python-brace-format
-#~ msgid ""
-#~ "<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on "
-#~ "your smartphone, you can scan this QR code to start the process.</p><p>As "
-#~ "soon as you have completed the process in the app, the documents will "
-#~ "show up here.</p>"
-#~ msgstr ""
-#~ "<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem "
-#~ "Smartphone installier haben,können Sie diesen QR-Code einlesen um die "
-#~ "Scanfunktion zu starten.</p><p>Sobald Sie den Brief gescannt haben, "
-#~ "können Sie hier am Gerät fortfahren.</p>"
 
 #, python-format
 #~ msgid ""
