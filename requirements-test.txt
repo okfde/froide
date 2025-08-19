@@ -179,7 +179,7 @@ drf-spectacular==0.28.0
     # via froide (pyproject.toml)
 drf-spectacular-sidecar==2024.7.1
     # via drf-spectacular
-easy-thumbnails==2.10
+easy-thumbnails==2.10.1
     # via froide (pyproject.toml)
 elastic-transport==8.15.0
     # via elasticsearch
