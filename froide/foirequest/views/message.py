@@ -358,11 +358,6 @@ def edit_postal_message(request, foirequest, message_id):
             "preview": _("Preview"),
             "hint": _("Hint"),
             "addMoreFiles": _("Add more files"),
-            "scanDocuments": _("Scan documents"),
-            "scanDocumentsAddendum": _("Use your phone's camera to create a PDF "),
-            "scanDocumentsInstructions": _(
-                '<p>If you have installed the <a href="${url}">FdS Scanner App</a> on your smartphone, you can scan this QR code to start the process.</p><p>As soon as you have completed the process in the app, the documents will show up here.</p>'
-            ),
             "uploadFiles": _("Upload files"),
             "uploadFilesAddendum": _("If you have the letter as PDF already"),
             "notYetPublishedHint": _(

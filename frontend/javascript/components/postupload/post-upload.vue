@@ -964,17 +964,7 @@ addEventListener('hashchange', () => {
               <div class="fw-bold text-center text-uppercase" style="margin-top: 10em">oder</div>
             </div>
             <div v-if="showMobileAppContent" class="col-md-5 order-1 order-md-3">
-              <div class="mt-3 mb-1 mb-md-3">
-                {{ i18n.scanDocumentsAddendum }}:
-              </div>
-              <div class="row py-md-3" v-if="mobileAppContent !== null">
-                <div class="col-lg-6 mb-5">
-                  <div v-html="mobileAppContent"></div>
-                </div>
-                <div class="col-lg-6 d-none d-md-block">
-                  <div v-html="i18n._('scanDocumentsInstructions', { url: config.url.mobileAppInstall })"></div>
-                </div>
-              </div>
+              <div v-if="mobileAppContent !== null" v-html="mobileAppContent"></div>
               <div v-else>
                 <div class="spinner-border" role="status">
                   <span class="visually-hidden">{{ i18n.loading }}</span>
