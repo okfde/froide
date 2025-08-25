@@ -144,7 +144,7 @@ const iconTooltipTexts = computed(() => {
           </span>
         </div>
       </a>
-      <div class="name align-self-center">
+      <div class="name align-self-center no-hyphens text-break">
         {{ attachment.document?.title || attachment.name }}
       </div>
     </div>
