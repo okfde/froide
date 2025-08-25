@@ -1,3 +1,5 @@
+import { Tooltip } from "bootstrap"
+
 const collapsePersistent = (el: HTMLElement) => {
   const id = el.id
   const key = 'froide-collapsible-' + id
@@ -7,7 +9,7 @@ const collapsePersistent = (el: HTMLElement) => {
     el.classList.toggle('show', !collapsed)
     const controllerEl = document.querySelector(`[data-bs-target="#${id}"]`)
     controllerEl?.classList.toggle('collapsed', collapsed)
-    controllerEl?.setAttribute('aria-expanded', !collapsed)
+    controllerEl?.setAttribute('aria-expanded', collapsed ? 'false': 'true')
   } catch {
     // noop
   }
@@ -19,6 +21,14 @@ const collapsePersistent = (el: HTMLElement) => {
   })
 }
 
+const registerBs = (node: HTMLElement) => {
+  node.querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
+    .forEach((el) => new Tooltip(el))
+  node.querySelectorAll<HTMLElement>('[data-bs-collapse-persistent]')
+    .forEach((el) => collapsePersistent(el))
+}
+
 export {
+  registerBs,
   collapsePersistent
 }
