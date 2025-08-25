@@ -1,17 +1,14 @@
 <script setup>
-import { computed, inject, nextTick, ref } from 'vue'
+import { computed, inject } from 'vue'
 import { useAttachments } from './lib/attachments'
 const {
   attachments,
-  refresh: refreshAttachments,
   createDocument,
   deleteAttachment,
   approveAttachment,
   makeRelevant,
   getRedactUrl
 } = useAttachments()
-
-import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 const { attachment, dropdown } = defineProps({
   attachment: Object,
@@ -25,7 +22,7 @@ const { attachment, dropdown } = defineProps({
   }
 })
 
-const emit = defineEmits(['actionDelete', 'actionDone'])
+const emit = defineEmits(['actionDelete', 'actionDone', 'redactClick'])
 
 const config = inject('config')
 
@@ -53,20 +50,9 @@ const dropdownHasItems = computed(
   () => attachment.canRedact || unredacted.value || unconverted.value
 )
 
-const pdfRedactionAtt = ref(null)
-
-const pdfRedactionModal = ref()
-
-const pdfRedactionUploaded = () => {
-  pdfRedactionAtt.value = null
-  refreshAttachments()
-  emit('actionDone')
-}
-
 const redactClick = (evt, att) => {
   evt.preventDefault()
-  pdfRedactionAtt.value = att
-  nextTick().then(() => pdfRedactionModal.value.show())
+  emit('redactClick', att)
 }
 
 const deleteClick = () => {
@@ -293,9 +279,4 @@ const approveClick = () => {
       -->
     </ul>
   </div>
-  <PdfRedactionModal
-    ref="pdfRedactionModal"
-    :attachment="pdfRedactionAtt"
-    @uploaded="pdfRedactionUploaded"
-    />
 </template>

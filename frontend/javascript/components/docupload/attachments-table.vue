@@ -2,13 +2,14 @@
 
 import { useAttachments } from './lib/attachments';
 
-const { attachments, approveAttachment, deleteAttachment, createDocument } = useAttachments()
+const { attachments, approveAttachment, deleteAttachment, createDocument, refresh: refreshAttachments } = useAttachments()
 
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, nextTick, ref, watch } from 'vue'
 
 import AttachmentIconPreview from './attachment-icon-preview.vue'
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentBadges from './attachment-badges.vue'
+import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 const i18n = inject('i18n')
 
@@ -90,6 +91,23 @@ watch(
 watch(asCards, (newValue) => {
   if ((newValue && !cardsSelection) || (!newValue && !tableSelection)) selectNone()
 })
+
+/* pdf redaction */
+
+const redactClick = (att) => {
+  pdfRedactionAtt.value = att
+  nextTick().then(() => pdfRedactionModal.value.show())
+}
+
+const pdfRedactionAtt = ref(null)
+const pdfRedactionModal = ref()
+
+const pdfRedactionUploaded = () => {
+  pdfRedactionAtt.value = null
+  refreshAttachments()
+}
+
+/* selection + bulk actions */
 
 const selected = computed(() => subset.filter(_ => attachments.selectedIds.has(_.id)))
 
@@ -290,6 +308,7 @@ const makeResultSelected = async () => {
           :attachment="att"
           big
           class="text-center pb-1"
+          @redact-click="redactClick"
           />
         <div class="text-center mb-1 mw-100 text-break">
           <AttachmentBadges
@@ -306,6 +325,7 @@ const makeResultSelected = async () => {
             :attachment="att"
             :dropdown="false"
             dropdown-classes=""
+            @redact-click="redactClick"
             />
         </div>
         <slot name="after-card" :attachment="att"></slot>
@@ -340,6 +360,7 @@ const makeResultSelected = async () => {
       <AttachmentIconPreview
         v-bind="{ attachment: att, actions, nudgeRedaction }"
         class="start-0 py-2 ps-0 pe-2 ps-md-0 ms-0 mt-1 ms-md-0"
+        @redact-click="redactClick"
         />
       <div class="flex-shrink-1 flex-grow-0 text-break d-md-flex flex-column align-items-start gap-1 me-md-auto">
         <AttachmentBadges
@@ -363,6 +384,7 @@ const makeResultSelected = async () => {
           :attachment="att"
           :dropdown="true"
           dropdown-classes="position-absolute position-md-static top-0 end-0 mt-1 mt-md-0 d-flex align-items-center"
+          @redact-click="redactClick"
           />
       </div>
       <slot name="after-row" :attachment="att"></slot>
@@ -374,6 +396,11 @@ const makeResultSelected = async () => {
       </button>
     </div>
   </div>
+  <PdfRedactionModal
+    ref="pdfRedactionModal"
+    :attachment="pdfRedactionAtt"
+    @uploaded="pdfRedactionUploaded"
+    />
 </template>
 
 <style scoped>

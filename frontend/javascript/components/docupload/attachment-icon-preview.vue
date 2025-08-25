@@ -1,12 +1,9 @@
 <script setup>
 
-import { computed, inject, ref, nextTick } from 'vue'
-import { useAttachments } from './lib/attachments'
-const { refresh: refreshAttachments } = useAttachments()
+import { computed, inject, ref } from 'vue'
 
 import AttachmentActions from './attachment-actions.vue'
 import AttachmentDocumentFields from './attachment-document-fields.vue'
-import PdfRedactionModal from './pdf-redaction-modal.vue'
 
 import { vBsTooltip } from '../../lib/vue-bootstrap'
 import BsModal from '../bs-modal.vue'
@@ -26,13 +23,7 @@ const { attachment, actions, nudgeRedaction, big } = defineProps({
   big: Boolean,
 })
 
-const pdfRedactionAtt = ref(null)
-const pdfRedactionModal = ref()
-
-const pdfRedactionUploaded = () => {
-  pdfRedactionAtt.value = null
-  refreshAttachments()
-}
+const emit = defineEmits(['redactClick'])
 
 const needsRedaction = computed(() =>
   !attachment.is_irrelevant && !attachment.approved && attachment.can_approve && !attachment.has_redacted && !(attachment.converted && !attachment.is_image) && !attachment.pending
@@ -40,11 +31,15 @@ const needsRedaction = computed(() =>
 
 const iconClick = () => {
   if (needsRedaction.value && nudgeRedaction) {
-    pdfRedactionAtt.value = attachment
-    nextTick().then(() => pdfRedactionModal.value.show())
+    emit('redactClick', attachment)
   } else {
     previewModal.value.show()
   }
+}
+
+const redactClick = (att) => {
+  closePreviewModal()
+  emit('redactClick', att)
 }
 
 const previewModal = ref()
@@ -215,6 +210,7 @@ const iconTooltipTexts = computed(() => {
                     :attachment="attachment"
                     @action-done="closePreviewModal"
                     @action-delete="closePreviewModal"
+                    @redact-click="redactClick"
                     />
                 </div>
               </div>
@@ -223,11 +219,6 @@ const iconTooltipTexts = computed(() => {
         </div>
       </template>
     </BsModal>
-    <PdfRedactionModal
-      ref="pdfRedactionModal"
-      :attachment="pdfRedactionAtt"
-      @uploaded="pdfRedactionUploaded"
-      />
     <!-- both Modals need to be within the root div for class set by parent -->
   </div>
 </template>
