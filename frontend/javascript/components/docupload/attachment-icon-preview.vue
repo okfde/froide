@@ -59,6 +59,11 @@ const iconTooltipTexts = computed(() => {
   ]
 })
 
+// cf. PdfRedactionModal modal title
+const hasLongName = computed(() =>
+  (attachment.document?.title || attachment.name)?.length > 40
+)
+
 </script>
 
 <template>
@@ -150,7 +155,10 @@ const iconTooltipTexts = computed(() => {
       content-classes="h-100"
       >
       <template #header>
-        <h2>{{ attachment.document?.title || attachment.name }}</h2>
+        <h2
+          class="modal-title"
+          :class="{ 'fs-6': hasLongName }"
+          >{{ attachment.document?.title || attachment.name }}</h2>
       </template>
       <template #body>
         <div class="row h-100">
@@ -219,7 +227,7 @@ const iconTooltipTexts = computed(() => {
         </div>
       </template>
     </BsModal>
-    <!-- both Modals need to be within the root div for class set by parent -->
+    <!-- modal needs to be within the root div for class set by parent -->
   </div>
 </template>
 
