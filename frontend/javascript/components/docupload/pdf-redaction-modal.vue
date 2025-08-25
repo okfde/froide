@@ -1,7 +1,6 @@
 <script setup>
 import { inject, ref } from 'vue'
 import BsModal from '../bs-modal.vue'
-import { vBsCollapsePersistent } from '../../lib/vue-bootstrap'
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 
@@ -47,7 +46,7 @@ defineExpose({
     <template #body>
       <div class="container mb-2">
         <div class="row">
-          <DjangoSlot name="redaction_explanation" v-bs-collapse-persistent />
+          <DjangoSlot name="redaction_explanation" has-bs-directives />
         </div>
       </div>
       <PdfRedaction
