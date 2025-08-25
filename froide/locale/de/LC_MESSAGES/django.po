@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-19 14:55+0200\n"
-"PO-Revision-Date: 2025-08-19 14:03+0100\n"
+"POT-Creation-Date: 2025-08-25 18:22+0200\n"
+"PO-Revision-Date: 2025-08-25 17:23+0100\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.7\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -6342,7 +6342,6 @@ msgstr "von %(name)s"
 
 #: froide/foirequest/templates/foirequest/list.html
 #, python-format
-#| msgid "See all requests of %(name)s"
 msgid "by a member of %(name)s"
 msgstr "von jemandem von %(name)s"
 
@@ -7940,27 +7939,6 @@ msgstr "Tipp"
 #: froide/foirequest/views/message.py froide/upload/forms.py
 msgid "Add more files"
 msgstr "Dateien hinzufügen"
-
-#: froide/foirequest/views/message.py
-msgid "Scan documents"
-msgstr "Dokumente scannen"
-
-#: froide/foirequest/views/message.py
-msgid "Use your phone's camera to create a PDF "
-msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
-
-#: froide/foirequest/views/message.py
-#, python-brace-format
-msgid ""
-"<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on your "
-"smartphone, you can scan this QR code to start the process.</p><p>As soon as "
-"you have completed the process in the app, the documents will show up here.</"
-"p>"
-msgstr ""
-"<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem Smartphone "
-"installier haben,können Sie diesen QR-Code einlesen um die Scanfunktion zu "
-"starten.</p><p>Sobald Sie den Brief gescannt haben, können Sie hier am Gerät "
-"fortfahren.</p>"
 
 #: froide/foirequest/views/message.py
 msgid "Upload files"
@@ -10284,7 +10262,6 @@ msgid "Public bodies with this category"
 msgstr "Behörden mit dieser Kategorie"
 
 #: froide/publicbody/admin.py
-#| msgid "The proposal has been deleted."
 msgid "{} change proposals were accepted."
 msgstr "{} Bearbeitungsvorschläge wurden angenommen."
 
@@ -10306,7 +10283,6 @@ msgstr "Kategorie mit Namen \"%s\" existiert nicht"
 
 #: froide/publicbody/csv_import.py
 #, python-brace-format
-#| msgid "GeoRegion %s/%s does not exist."
 msgid "GeoRegion {id}/{identifier} does not exist."
 msgstr "GeoRegion {id}/{identifier} existiert nicht."
 
@@ -11296,7 +11272,7 @@ msgstr "Nachrichten hinzufügen und bearbeiten"
 
 #: froide/settings.py
 msgid "Add and edit attachments"
-msgstr "Add and edit attachments"
+msgstr "Anhänge hinzufügen und bearbeiten"
 
 #: froide/settings.py
 msgid "Follow/Unfollow requests"
@@ -12480,6 +12456,24 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "Scan documents"
+#~ msgstr "Dokumente scannen"
+
+#~ msgid "Use your phone's camera to create a PDF "
+#~ msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
+
+#, python-brace-format
+#~ msgid ""
+#~ "<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on "
+#~ "your smartphone, you can scan this QR code to start the process.</p><p>As "
+#~ "soon as you have completed the process in the app, the documents will "
+#~ "show up here.</p>"
+#~ msgstr ""
+#~ "<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem "
+#~ "Smartphone installier haben,können Sie diesen QR-Code einlesen um die "
+#~ "Scanfunktion zu starten.</p><p>Sobald Sie den Brief gescannt haben, "
+#~ "können Sie hier am Gerät fortfahren.</p>"
 
 #, python-format
 #~ msgid ""
