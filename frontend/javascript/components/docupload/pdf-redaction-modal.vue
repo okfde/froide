@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from 'vue'
+import { computed, inject, ref } from 'vue'
 import BsModal from '../bs-modal.vue'
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
@@ -30,6 +30,12 @@ const show = () => {
 defineExpose({
   show
 })
+
+// cf. AttachmentIconPreview modal title
+const hasLongName = computed(() =>
+  attachment.name?.length > 40
+)
+
 </script>
 
 <template>
@@ -41,7 +47,10 @@ defineExpose({
     body-classes="p-0"
   >
     <template #header>
-      <h5 class="modal-title">{{ i18n.redact }}, {{ attachment.name }}</h5>
+      <h5
+        class="modal-title"
+        :class="{ 'fs-6': hasLongName }"
+        >{{ i18n.redact }}, {{ attachment.name }}</h5>
     </template>
     <template #body>
       <div class="container mb-2">
