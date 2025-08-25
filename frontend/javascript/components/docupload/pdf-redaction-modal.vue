@@ -1,7 +1,7 @@
 <script setup>
-
 import { inject, ref } from 'vue'
 import BsModal from '../bs-modal.vue'
+import { vBsCollapsePersistent } from '../../lib/vue-bootstrap'
 import PdfRedaction from '../redaction/pdf-redaction.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 
@@ -16,7 +16,7 @@ const { attachment } = defineProps({
   attachment: {
     type: Object,
     required: true
-  },
+  }
 })
 
 const uploaded = () => {
@@ -40,16 +40,14 @@ defineExpose({
     dialog-classes="modal-dialog-scrollable ms-auto modal-xl modal-fullscreen-lg-down"
     content-classes="h-100"
     body-classes="p-0"
-    >
+  >
     <template #header>
-      <h5 class="modal-title">
-        {{ i18n.redact }}, {{ attachment.name }}
-      </h5>
+      <h5 class="modal-title">{{ i18n.redact }}, {{ attachment.name }}</h5>
     </template>
     <template #body>
       <div class="container mb-2">
         <div class="row">
-          <DjangoSlot name="redaction_explanation"></DjangoSlot>
+          <DjangoSlot name="redaction_explanation" v-bs-collapse-persistent />
         </div>
       </div>
       <PdfRedaction
@@ -59,17 +57,14 @@ defineExpose({
         :attachment-url="attachment.anchor_url"
         :auto-approve="true"
         :post-url="
-          config.url.redactAttachment.replace(
-            '/0/',
-            '/' + attachment.id + '/'
-          )
+          config.url.redactAttachment.replace('/0/', '/' + attachment.id + '/')
         "
         :minimal-ui="true"
         :no-redirect="true"
         :can-publish="true"
         :config="config"
         @uploaded="uploaded"
-        ></PdfRedaction>
+      ></PdfRedaction>
     </template>
   </BsModal>
 </template>
