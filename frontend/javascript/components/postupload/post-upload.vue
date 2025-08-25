@@ -315,9 +315,8 @@ onMounted(() => {
   refreshAttachments()
 })
 
-// eslint-disable-next-line vue/no-side-effects-in-computed-properties
 const attachmentsSelectedPdfRedaction = computed(() =>
-  attachments.selected.sort((a, b) => a.id - b.id)
+  [...attachments.selected].sort((a, b) => a.id - b.id)
 )
 
 const attachmentsImagesConverting = computed(() => attachments.isConverting)
