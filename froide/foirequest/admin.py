@@ -994,8 +994,6 @@ def execute_redeliver(admin, request, queryset, action_obj):
 
 @admin.register(DeferredMessage)
 class DeferredMessageAdmin(admin.ModelAdmin):
-    model = DeferredMessage
-
     list_filter = ("delivered", make_nullfilter("request", _("Has request")), "spam")
     search_fields = (
         "recipient",
@@ -1021,8 +1019,53 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         "redeliver_subject",
         "close_request",
     ]
+    readonly_fields = (
+        "failed_authenticity",
+        "message_body",
+        "decoded_mail",
+    )
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "recipient",
+                    "sender",
+                    "request",
+                    "spam",
+                    "delivered",
+                )
+            },
+        ),
+        (
+            _("Message Content"),
+            {
+                "fields": (
+                    "failed_authenticity",
+                    "message_body",
+                )
+            },
+        ),
+        (
+            _("Advanced Options"),
+            {"classes": ["collapse"], "fields": ("mail", "decoded_mail")},
+        ),
+    )
 
-    save_on_top = True
+    def decoded_mail(self, obj):
+        return format_html(
+            "<pre>{}</pre>",
+            obj.decoded_mail(),
+        )
+
+    def failed_authenticity(self, obj) -> str:
+        return "\n".join(str(c) for c in obj.parsed_mail.fails_authenticity)
+
+    def message_body(self, obj):
+        return format_html(
+            "<pre>{}</pre>",
+            obj.parsed_mail.body,
+        )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
