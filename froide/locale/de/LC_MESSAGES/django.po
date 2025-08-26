@@ -2013,6 +2013,7 @@ msgstr "Dokument"
 #: froide/document/templates/document/search.html
 #: froide/foirequest/templates/foirequest/body/documents.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Documents"
 msgstr "Dokumente"
 
@@ -4287,7 +4288,7 @@ msgstr "Ihr Nachrichtendatum ist zeitlich vor dem Anfragedatum."
 msgid "is_response is required"
 msgstr "is_response ist benötigt"
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Response messages must have a sender public body, no sender user and no "
 "recipient public body."
@@ -4295,7 +4296,7 @@ msgstr ""
 "Antwortnachrichten müssen eine Behörde als Sender, jedoch kein:e Nutzer:in "
 "als Sender und keine Behörde als Empfänger enthalten."
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Non-response messages must have a recipent public body, but no sender public "
 "body."
@@ -4401,7 +4402,7 @@ msgstr "Download als .eml"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Events"
-msgstr "Ereignisse"
+msgstr "Veranstaltungen"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Messages"
@@ -4449,6 +4450,7 @@ msgstr "Aktuell kein Projekt ausgewählt."
 #: froide/helper/templates/helper/search/multi_search.html
 #: froide/helper/templates/helper/search/search_base.html
 #: froide/publicbody/widgets.py froide/templates/header.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Search"
 msgstr "Suchen"
 
@@ -5057,6 +5059,7 @@ msgid "Unapproved attachments:"
 msgstr "Nicht-öffentliche Anhänge:"
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Manage attachments"
 msgstr "Anhänge verwalten"
 
@@ -6079,10 +6082,12 @@ msgid "Set team for project"
 msgstr "Weisen Sie diesem Projekt ein Team zu"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Edit tags"
 msgstr "Schlagwörter bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid ""
 "Tags are a way to organise your own requests and also group them with other "
 "requests on the platform."
@@ -6091,10 +6096,12 @@ msgstr ""
 "anderen Anfragen auf der Plattform gruppieren."
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "What does this mean?"
 msgstr "Was bedeutet das?"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Add tags"
 msgstr "Schlagwörter hinzufügen"
 
@@ -6827,12 +6834,12 @@ msgid ""
 msgstr ""
 "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
 "die geschwärzt werden müssen. Während das %(icon_paint)s&nbsp;<b>Pinsel-"
-"Werkzeug</b> aktiv ist, zeichnen sie mit ihrem Finger Rechtecke, oder, indem "
-"sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
-"%(icon_minus)s können Sie rein- und raus-zoomen. Wechseln Sie zum "
-"%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. "
+"Werkzeug</b> aktiv ist, zeichnen Sie mit Ihrem Finger Rechtecke, oder, indem "
+"Sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
+"%(icon_minus)s können Sie rein- und rauszoomen. Wechseln Sie zum "
+"%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b>, um sich im Dokument zu bewegen. "
 "In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem "
-"Bewegen-Werkzeug hin-und-her-schalten."
+"Bewegen-Werkzeug hin- und herschalten."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 #, python-format
@@ -7729,10 +7736,12 @@ msgid "A sent letter was successfully added!"
 msgstr "Ein gesendeter Brief wurde hinzugefügt!"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
@@ -7741,28 +7750,34 @@ msgid "Search for public authorities"
 msgstr "Suchen Sie nach Behörden"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Examples:"
 msgstr "Beispiele:"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Environment"
 msgstr "Umwelt"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Ministry of Labour"
 msgstr "Bundesministerium für Arbeit"
 
 #: froide/foirequest/views/message.py
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html
 #: froide/publicbody/widgets.py froide/templates/snippets/homepage_hero.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "or"
 msgstr "oder"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "No Public Bodies found for this query."
 msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
@@ -8127,7 +8142,7 @@ msgid ""
 "the public body's employees."
 msgstr ""
 "Ein Dokument sollte geschwärzt werden, wenn es Informationen über Sie selbst "
-"oder Behördenmitarbeiter:innen"
+"oder Behördenmitarbeiter:innen enthält."
 
 #: froide/foirequest/views/message.py
 msgid "Select all"
@@ -9241,7 +9256,7 @@ msgstr "Suchen…"
 
 #: froide/helper/templates/helper/forms/widgets/tag_autocomplete.html
 msgid "No results"
-msgstr "Keine Ergebnisse"
+msgstr "Keine Ergebnisse gefunden"
 
 #: froide/helper/templates/helper/forms/widgets/tag_autocomplete.html
 msgid "Press to select"
@@ -11733,6 +11748,7 @@ msgid "Use authenticator app"
 msgstr "Authentifizierungs-App nutzen"
 
 #: froide/templates/mfa/auth_FIDO2.html froide/templates/mfa/auth_TOTP.html
+#: froide/templates/mfa/auth_recovery.html
 msgid "Use recovery code"
 msgstr "Wiederherstellungs-Code nutzen"
 
@@ -12471,56 +12487,109 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/foirequest/views/message.py
+msgid "Scan documents"
+msgstr "Dokumente scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Use your phone's camera to create a PDF "
+msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on your "
+"smartphone, you can scan this QR code to start the process.</p><p>As soon as "
+"you have completed the process in the app, the documents will show up here.</"
+"p>"
+msgstr ""
+"<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem Smartphone "
+"installier haben,können Sie diesen QR-Code einlesen um die Scanfunktion zu "
+"starten.</p><p>Sobald Sie den Brief gescannt haben, können Sie hier am Gerät "
+"fortfahren.</p>"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+#, python-format
+msgid ""
+"\n"
+"      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from <b>"
+"%(sender)s</b> in request “%(title)s”.\n"
+"      "
+msgstr ""
+"\n"
+"      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
+"%(sender)s</b> bei Anfrage “%(title)s”.\n"
+"      "
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Here you can:"
+msgstr "Hier können Sie:"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Approve or redact attachments."
+msgstr "Anhänge freigeben oder schwärzen."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert multiple pictures to pages in a PDF document."
+msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Upload more pictures or PDFs."
+msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+
+#: froide/foirequest/views/message.py
+msgid "The form has errors"
+msgstr "Das Formular enthält noch Fehler."
+
+#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
+msgid "Apply changes"
+msgstr "Änderungen anwenden"
+
+#: froide/publicbody/csv_import.py
+#, python-format
+msgid "GeoRegion %s/%s does not exist."
+msgstr "GeoRegion %s/%s existiert nicht"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "${amount} files and documents are being worked on."
+msgstr "${amount} Dateien und Dokumente sind in Bearbeitung."
+
+#: froide/foirequest/views/message.py
+msgid "Scan another document"
+msgstr "Weiteres Dokument scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Upload another file"
+msgstr "Weitere Dateien hochladen"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"You have noted that the public body had demanded compensation to the amount "
+"of €${amount}.<br/>Is this amount still correct?"
+msgstr ""
+"Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
+"${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert images to documents"
+msgstr "Bilder in Dokumente umwandeln"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid ""
+"Here you can approve, redact documents and also mark them as a result of "
+"your request."
+msgstr ""
+"Hier können Sie Dokumente freigeben, schwärzen und markieren, welche der "
+"Dokumente ein Ergebnis der Anfrage ist."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Other files"
+msgstr "Andere Dateien"
+
 #~ msgid "Fax"
 #~ msgstr "Fax"
-
-#~ msgid "Scan documents"
-#~ msgstr "Dokumente scannen"
-
-#~ msgid "Use your phone's camera to create a PDF "
-#~ msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
-
-#, python-brace-format
-#~ msgid ""
-#~ "<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on "
-#~ "your smartphone, you can scan this QR code to start the process.</p><p>As "
-#~ "soon as you have completed the process in the app, the documents will "
-#~ "show up here.</p>"
-#~ msgstr ""
-#~ "<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem "
-#~ "Smartphone installier haben,können Sie diesen QR-Code einlesen um die "
-#~ "Scanfunktion zu starten.</p><p>Sobald Sie den Brief gescannt haben, "
-#~ "können Sie hier am Gerät fortfahren.</p>"
-
-#, python-format
-#~ msgid ""
-#~ "\n"
-#~ "      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from "
-#~ "<b>%(sender)s</b> in request “%(title)s”.\n"
-#~ "      "
-#~ msgstr ""
-#~ "\n"
-#~ "      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
-#~ "%(sender)s</b> bei Anfrage “%(title)s”.\n"
-#~ "      "
-
-#~ msgid "Here you can:"
-#~ msgstr "Hier können Sie:"
-
-#~ msgid "Approve or redact attachments."
-#~ msgstr "Anhänge freigeben oder schwärzen."
-
-#~ msgid "Convert multiple pictures to pages in a PDF document."
-#~ msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
-
-#~ msgid "Upload more pictures or PDFs."
-#~ msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
-
-#~ msgid "The form has errors"
-#~ msgstr "Das Formular enthält noch Fehler."
-
-#~ msgid "Apply changes"
-#~ msgstr "Änderungen anwenden"
 
 #, python-format
 #~ msgid ""
@@ -15117,3 +15186,10 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
+
+#, fuzzy
+#~ msgid "This field is required."
+#~ msgstr "Anfragen des Nutzers"
+
+#~ msgid "Redact this attachment"
+#~ msgstr "Schwärzen Sie diesen Anhang"
