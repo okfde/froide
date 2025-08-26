@@ -165,9 +165,7 @@ class AbstractUpload(models.Model):
         State transition to indicate the upload is ready and the file is ready for access
         """
         if self.state != UploadState.SAVING:
-            raise ValidationError(
-                _("Cannot start saving, upload is not in receiving state.")
-            )
+            raise ValidationError(_("Cannot finish, upload is not in saving state."))
         self.state = UploadState.DONE
         self.save(update_fields=["state"])
 
