@@ -1078,6 +1078,7 @@ class DeferredMessageAdmin(admin.ModelAdmin):
         marked = 0
         deleted = 0
         for mes in queryset:
+            self.log_change(request, mes, "marked as spam")
             if mes.sender in spam_senders:
                 mes.delete()
                 deleted += 1
