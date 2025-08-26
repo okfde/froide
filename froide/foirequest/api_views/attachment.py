@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from froide.campaign.models import Campaign
 from froide.document.api_views import DocumentSerializer
 from froide.foirequest.models.message import FoiMessage
+from froide.foirequest.utils import find_attachment_name
 from froide.helper.auth import is_crew
 from froide.helper.storage import make_unique_filename
 from froide.helper.text_utils import slugify
@@ -127,7 +128,8 @@ class FoiAttachmentViewSet(
         upload = serializer.validated_data["upload"]
         foimessage = serializer.validated_data["message"]
 
-        att = FoiAttachment(belongs_to=foimessage, name=upload.filename)
+        name = find_attachment_name(foimessage.id, upload.filename)
+        att = FoiAttachment(belongs_to=foimessage, name=name)
         att.size = upload.size
         att.filetype = upload.content_type
         att.pending = True  # file needs to be moved by task
