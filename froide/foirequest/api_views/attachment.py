@@ -128,7 +128,7 @@ class FoiAttachmentViewSet(
         upload = serializer.validated_data["upload"]
         foimessage = serializer.validated_data["message"]
 
-        name = find_attachment_name(foimessage.id, upload.filename)
+        name = find_attachment_name(upload.filename, foimessage.id)
         att = FoiAttachment(belongs_to=foimessage, name=name)
         att.size = upload.size
         att.filetype = upload.content_type
