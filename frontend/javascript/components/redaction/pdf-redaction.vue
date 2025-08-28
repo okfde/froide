@@ -3,7 +3,6 @@
     id="pdf-viewer"
     ref="top"
     class="pdf-redaction-tool container-xxl bg-dark-subtle d-flex flex-column"
-    :class="{ 'pdf-redaction-tool--debug': debug }"
   >
     <div v-if="hasPassword && ready" class="row">
       <div class="col">
@@ -150,7 +149,6 @@
 
         <div class="btn-group me-1 toolbar-modes py-2">
           <button
-            type="button"
             class="btn"
             :class="{
               'btn-outline-secondary': !textOnly,
@@ -163,7 +161,6 @@
             <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
           </button>
           <button
-            type="button"
             class="btn"
             :class="{
               'btn-outline-secondary': !textDisabled,
@@ -247,10 +244,7 @@
     <div class="row flex-grow-1">
       <div
         class="preview position-relative"
-        :class="{
-          ['preview--do-paint']: doPaint,
-          ['preview--text-only']: textOnly
-        }"
+        :class="{ ['preview--do-paint']: doPaint }"
         ref="containerWrapper"
         @wheel="mouseWheel"
         @pointerleave="pointerLeaveWrapper"
@@ -304,7 +298,6 @@
             <div
               :id="textLayerId"
               class="textLayer"
-              ref="textLayer"
               :class="{ textActive: textOnly, textDisabled: textDisabled }"
             />
           </div>
@@ -362,9 +355,6 @@ import { toRaw } from 'vue'
 
 import { useAttachments } from '../docupload/lib/attachments.js'
 const { fetchAttachment, approveAttachment } = useAttachments()
-
-// help with only Text mode debugging: show non-OCR original + highlight spans/divs
-const debug = false
 
 // 1000px are good enough to redact an A4 page with 10pt text
 const minRenderWidth = 1000
@@ -438,7 +428,6 @@ export default {
   emits: ['uploaded', 'hasredactionsupdate'],
   data() {
     return {
-      debug,
       doc: null,
       attachment: null,
       currentPage: null,
@@ -661,8 +650,6 @@ export default {
         let maxWidth = this.$refs.containerWrapper.offsetWidth
         // subtract the paddings (from bootstrap's row child),
         // fall back to the value calculated in default settings (like base font size)
-        // note: paddingLeft is the value set in CSS, so something like "12px",
-        //   unlike offsetWidth, still this value is consistent across page zoom
         maxWidth -=
           parseInt(
             window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
@@ -680,16 +667,9 @@ export default {
         // - but would have to limit effective canvas size to prevent crashes
         renderDensityFactor = Math.max(minRenderWidth / window.innerWidth, 1.0)
 
-        this.intrinsicPageWidth = page.view[2]
-        this.intrinsicPageHeight = page.view[3]
-
-        // redaction "rects'" coordinates are stored in "intrinsic PDF viewport = document pixels",
-        // and not in "browser/device pixels"
-        // (which are affected by page zoom, bootstrap viewports and rendering artifacts)
-        // so scaleFactor needs to be respected in many calculations in the component
-        // (to "(re)project" between the two views)
-        this.scaleFactor = (renderDensityFactor * maxWidth) / this.intrinsicPageWidth
-        const viewport = page.getViewport({ scale: this.scaleFactor })
+        const pageWidth = page.view[2]
+        const scaleFactor = (renderDensityFactor * maxWidth) / pageWidth
+        const viewport = page.getViewport({ scale: scaleFactor })
 
         this.viewport = viewport
         const canvas = this.canvas
@@ -701,11 +681,11 @@ export default {
         const hPx = viewport.height / renderDensityFactor + 'px'
         console.log('PdfRedaction loadPage', {
           renderDensityFactor,
-          scaleFactor: this.scaleFactor,
+          scaleFactor,
           maxWidth,
           canvasViewportSize: [viewport.width, viewport.height],
           canvasCss: [wPx, hPx],
-          pageSize: [this.intrinsicPageWidth, this.intrinsicPageHeight]
+          pageSize: [pageWidth, page.view[3]]
         })
         canvas.style.width = wPx
         canvas.style.height = hPx
@@ -918,9 +898,11 @@ export default {
     serializePage(pageNumber) {
       const divs = this.textLayer.children
       const texts = Array.prototype.map.call(divs, (d) => {
-        const pos = this.getDivRect(d)
+        const [dx, dy] = this.getDivPos(d)
+        const dw = d.offsetWidth
+        const dh = d.offsetHeight
         return {
-          pos,
+          pos: [dx, dy, dw, dh],
           fontFamily: d.style.fontFamily,
           fontSize: d.style.fontSize,
           transform: d.style.transform,
@@ -928,8 +910,9 @@ export default {
         }
       })
       return {
-        width: this.intrinsicPageWidth,
-        height: this.intrinsicPageHeight,
+        width: this.viewport.width,
+        height: this.viewport.height,
+        scaleFactor: this.scaleFactor,
         pageNumber,
         rects: this.rectanglesPerPage[pageNumber],
         texts
@@ -972,8 +955,6 @@ export default {
       this.drawRectangles()
     },
     mouseDown(e, override) {
-      // throw out right/context-clicks etc.
-      if (e.button !== 0) return
       if (!this.doPaint && !override) {
         return
       }
@@ -1000,10 +981,6 @@ export default {
 
       const endDrag = this.endDrag
       this.endDrag = null
-      if (endDrag === null) {
-        console.log('Cancel malformed select')
-        return
-      }
       if (
         Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
         Math.abs(endDrag[1] - this.startDrag[1]) < 3
@@ -1012,21 +989,17 @@ export default {
         this.startDrag = null
         return
       }
-      // getRect is "device vs document pixel" agnostic;
-      // startDrag and endDrag are renderDensityFactor-aware, but not scaleFactor
-      let [x, y, w, h] = this.getRect(this.startDrag, endDrag)
+      const [x, y, w, h] = this.getRect(this.startDrag, endDrag)
       if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
         return
       }
-      x /= this.scaleFactor
-      y /= this.scaleFactor
-      w /= this.scaleFactor
-      h /= this.scaleFactor
 
       // find overlapping text and remove it completely
       const divs = this.textLayer.children
       const matches = Array.prototype.filter.call(divs, (d) => {
-        const [dx, dy, dw, dh] = this.getDivRect(d)
+        const [dx, dy] = this.getDivPos(d)
+        const dw = d.offsetWidth
+        const dh = d.offsetHeight
         return x < dx + dw && x + w > dx && y < dy + dh && y + h > dy
       })
       const texts = matches.map((d) => {
@@ -1235,30 +1208,21 @@ export default {
       }
       this.applyActionsOnPageLoad()
     },
-    drawRectangle(ctx, rect, doScale = false) {
+    drawRectangle(ctx, rect) {
       const [x, y, w, h] = rect
-      const f = doScale ? this.scaleFactor : 1
       ctx.fillStyle = '#000'
-      ctx.fillRect(x * f, y * f, w * f, h * f)
+      ctx.fillRect(x, y, w, h)
     },
     drawRectangles() {
-      const ctx = this.redactCanvas.getContext?.('2d')
-      if (!ctx) {
-        console.log('drawRectangel assume text mode, bail')
-        return
-      }
+      const ctx = this.redactCanvas.getContext('2d')
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       if (this.rectanglesPerPage[this.currentPage] !== undefined) {
         this.rectanglesPerPage[this.currentPage].forEach((r) => {
-          this.drawRectangle(ctx, r, true)
+          this.drawRectangle(ctx, r)
         })
       }
       if (this.startDrag && this.endDrag) {
-        this.drawRectangle(
-          ctx,
-          this.getRect(this.startDrag, this.endDrag),
-          false
-        )
+        this.drawRectangle(ctx, this.getRect(this.startDrag, this.endDrag))
       }
     },
     applyActionsOnPageLoad() {
@@ -1374,22 +1338,11 @@ export default {
         this.message = this.i18n.autoRedacted
       }
     },
-    getDivRect(div) {
-      // more exact than clientLeft/offsetTop, which are ints
-      const parentWidth = parseFloat(this.textLayer.style.width.replace('px', ''))
-      const parentHeight = parseFloat(this.textLayer.style.height.replace('px', ''))
-      const divLeft = parseFloat(div.style.left.replace('px', ''))
-      const divTop = parseFloat(div.style.top.replace('px', ''))
-      const divWidth = div.offsetWidth
-      const divHeight = div.offsetHeight
-      const x = (divLeft / parentWidth) * this.intrinsicPageWidth
-      const y = (divTop / parentHeight) * this.intrinsicPageHeight
-      // alternative calculation, should be identical
-      // const x = divLeft * renderDensityFactor / this.scaleFactor
-      // const y = divTop * renderDensityFactor / this.scaleFactor
-      const w = divWidth * renderDensityFactor / this.scaleFactor
-      const h = divHeight * renderDensityFactor / this.scaleFactor
-      return [x, y, w, h]
+    getDivPos(div) {
+      return [
+        parseInt(div.style.left.replace('px', '')),
+        parseInt(div.style.top.replace('px', ''))
+      ]
     },
     redactText(div, start, text) {
       return this.redactRange(div, start, start + text.length)
@@ -1441,32 +1394,27 @@ export default {
       // approach without getBoundlingClientRect:
       // const scaleX = parseFloat(div.style.transform?.match(/scaleX\(([\d.]+)\)/)?.[1]) || 1.0
 
-      // we temporarily reset the text in its div to measure where the matched selected part begins
       div.textContent = text.substr(0, start)
-      // const startWidth = div.offsetWidth * scaleX * renderDensityFactor / this.scaleFactor
-      const startWidth = div.getBoundingClientRect().width * renderDensityFactor / this.scaleFactor
+      const startWidth = div.getBoundingClientRect().width
+      // const startWidth = div.offsetWidth * scaleX
 
-      // reset again to measure where matched part ends
       div.textContent = text.substr(0, start + match.length)
-      // const endWidth = div.offsetWidth * scaleX * renderDensityFactor / this.scaleFactor
-      const endWidth = div.getBoundingClientRect().width * renderDensityFactor / this.scaleFactor
+      const endWidth = div.getBoundingClientRect().width
+      // const endWidth = div.offsetWidth * scaleX
 
-      // and finally revert div's text
       div.textContent = text
 
-      const width = endWidth - startWidth
-
-      const [x, y, /* w */, h] = this.getDivRect(div)
-
-      if (isNaN(x) || isNaN(y)) {
+      const pos = this.getDivPos(div)
+      let x = pos[0]
+      const y = pos[1]
+      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
         return null
       }
+      x += startWidth
+      const width = endWidth - startWidth
 
-      // assume line height
-      const height = h * 1.2
-      // assuming DIN A4 at 210mm, let's have ~1mm of padding
-      const padding = this.intrinsicPageWidth / 200
-
+      const height = Math.min(div.offsetHeight * 1.2, div.offsetHeight + 10)
+      const padding = 2
       return {
         type: 'redact',
         texts: [
@@ -1477,12 +1425,7 @@ export default {
             textAfter: text.replace(match, replace)
           }
         ],
-        rects: [[
-          x + startWidth - padding,
-          y - padding,
-          width + padding * 2,
-          height + padding * 2,
-        ]],
+        rects: [[x - padding, y, width + padding * 2, height]],
         page: this.currentPage
       }
     },
@@ -1578,13 +1521,8 @@ export default {
   overflow: hidden;
 }
 
-// user-select is usually disabled so it does not interfere with drag-to-pan.
-// In textOnly mode, we need to allow it, but only then, and only when doPaint
-// Otherwise, Firefox likes to select the whole div.redactContainer
-// when the dragging cursor crosses the middle of the div.
-// The whole div is then removed by selection.removeAllRanges()
-.preview--do-paint.preview--text-only[style],
-.preview--do-paint.preview--text-only .redactContainer[style] {
+.preview--do-paint[style],
+.preview--do-paint .redactContainer[style] {
   user-select: text !important;
 }
 
@@ -1647,21 +1585,4 @@ export default {
   // reduces jitter when variable-width numbers change
   font-variant-numeric: tabular-nums;
 }
-
-.pdf-redaction-tool--debug {
-  // for onlyText show non-OCR original + highlight spans/divs on top
-
-  .textLayer[style] {
-    background: rgba(255, 255, 255, 0.2) !important;
-  }
-
-  .textLayer :deep(span) {
-    outline: 1px solid red;
-  }
-
-  canvas.redactLayer {
-    display: block !important;
-  }
-}
-
 </style>
