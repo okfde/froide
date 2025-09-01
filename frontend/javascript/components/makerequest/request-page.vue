@@ -5,16 +5,55 @@
       :multi-request="multiRequest"
       :has-public-bodies="hasPublicBodies"
       :hide-publicbody-chooser="hidePublicbodyChooser" />
+    
+    <!-- TODO:
+      steps need to be same width (for progress meter to match)
+      steps need to be clickable
+      reflect "done" pbly = this seems to be just a > step check
+    -->
+    <SimpleStepper
+      class="bg-body-tertiary"
+      :step="progressStepCurrent"
+      :steps="steps"
+      >
+      §step <strong>{{ this.progressStepCurrent }}/{{ this.steps.length }}</strong>:
+      {{ this.steps[this.step] }}
+    </SimpleStepper>
 
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
       <DjangoSlot name="messages" />
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
+          <div v-if="step === STEPS.INTRO">
+            <h1>Anfrage stellen §</h1>
+            <p>Was möchten Sie tun?</p>
+            <div>
+              campaigns
+              <div class="row">
+                <div class="col col-md-4 mb-4">
+                  <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                      <div>LOGO</div>
+                      <h2 class="fs-4 my-auto">§ Eigene Anfrage schreiben</h2>
+                      <div>
+                        <button
+                          type="button" class="btn btn-primary"
+                          @click="setStep(STEPS.FIND_SIMILAR)"
+                          >§Auswählen</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <DjangoSlot name="campaigns"></DjangoSlot>
+              </div>
+            </div>
+          </div>
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
             class="mt-5">
+            <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
             <div v-if="multiRequest">
               <PublicbodyMultiChooser
                 name="publicbody"
@@ -176,12 +215,14 @@ import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
 import DjangoSlot from '../../lib/django-slot.vue'
+import SimpleStepper from '../postupload/simple-stepper.vue'
 
 import { Modal } from 'bootstrap'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import {
+  SET_STEP,
   SET_STEP_SELECT_PUBLICBODY,
   SET_STEP_REQUEST,
   SET_PUBLICBODY,
@@ -197,7 +238,8 @@ import {
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
   UPDATE_LAW_TYPE,
-  SET_CONFIG
+  SET_CONFIG,
+  STEPS
 } from '../../store/mutation_types'
 
 import LetterMixin from './lib/letter-mixin'
@@ -217,7 +259,8 @@ export default {
     RequestFormBreadcrumbs,
     RequestPublic,
     UserTerms,
-    DjangoSlot
+    DjangoSlot,
+    SimpleStepper
   },
   mixins: [I18nMixin, LetterMixin],
   props: {
@@ -292,7 +335,8 @@ export default {
       editingDisabled: this.hideEditing,
       fullLetter: false,
       showReview: false,
-      submitting: false
+      submitting: false,
+      STEPS,
     }
   },
   computed: {
@@ -311,6 +355,26 @@ export default {
       } else {
         return null
       }
+    },
+    hasReviewPbStep() {
+      return false
+    },
+    steps() {
+      return [
+        '§introduction',
+        '§similarRequests',
+        this.i18n.choosePublicBody,
+        ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
+        '§writeRequest',
+        '§account',
+        '§submit'
+      ]
+    },
+    progressStepCurrent() {
+      // need 0-indexed, but if hasReview there's even one less, so -2
+      return (!this.hasReviewPbStep && this.step >= STEPS.REVIEW_PUBLICBODY)
+        ? this.step - 2
+        : this.step - 1
     },
     publicBodySearch() {
       if (this.publicBody) {
@@ -519,6 +583,7 @@ export default {
       }
     },
     ...mapMutations({
+      setStep: SET_STEP,
       setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
       setStepRequest: SET_STEP_REQUEST,
       updateSubject: UPDATE_SUBJECT,

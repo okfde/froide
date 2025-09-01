@@ -61,6 +61,22 @@
         {% if multi_request %}:multi-request="true"{% endif %}
         {% if beta_ui %}:beta-ui="true"{% endif %}
         :config="{{ js_config }}">
+        <template data-slot="campaigns">
+            {% for campaign in campaigns %}
+                <div class="col col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <div>LOGO</div>
+                            <h2 class="fs-4 my-auto">
+                                Mitmachen bei §
+                                {{ campaign.name }}
+                            </h2>
+                            <a href="{{ campaign.url }}" class="btn btn-primary">{% trans "Make a request" %}</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </template>
         <template data-slot="messages">
             {% include "snippets/messages.html" %}
         </template>

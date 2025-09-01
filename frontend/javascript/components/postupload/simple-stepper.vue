@@ -22,7 +22,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
           <div
             v-for="(stepLabel, stepIndex) in steps"
             :key="stepIndex"
-            class="step col d-flex flex-column align-items-center text-primary"
+            class="step col d-flex flex-column align-items-center text-primary z-1"
             :class="{
               'fw-bold': stepIndex <= step
             }">
@@ -38,7 +38,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             <div>{{ stepLabel }}</div>
           </div>
           <div
-            class="progress progress--desktop position-absolute z-n1 translate-middle-y"
+            class="progress progress--desktop position-absolute translate-middle-y"
             :style="{
               width: 100 * (1 - 1 / props.steps.length) + '%',
               left: 50 / props.steps.length + '%'
@@ -71,6 +71,13 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
 </template>
 
 <style lang="scss" scoped>
+.step {
+  // TODO refine, bootstrapize
+  flex: 1 1 0;
+  hyphens: auto;
+  word-break: break-word;
+}
+
 .step-marker {
   font-size: 1rem;
   width: 2rem;

@@ -813,7 +813,7 @@ addEventListener('hashchange', () => {
   <SimpleStepper
     class="sticky-top position-md-static"
     :step="stepContext.progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+    :steps="[i18n.value.upload, i18n.value.enterInformation, i18n.value.redact]"
   >
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>

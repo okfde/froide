@@ -46,7 +46,7 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
-      step: STEPS.SELECT_PUBLICBODY,
+      step: STEPS.INTRO,
       subject: '',
       body: '',
       fullText: false
