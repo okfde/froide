@@ -49,6 +49,17 @@
               </div>
             </div>
           </div>
+          <div v-if="step === STEPS.FIND_SIMILAR">
+            <label>
+              Similar
+              <input type="text" v-model="similarSubject" />
+            </label>
+            <SimilarRequests
+              :config="config"
+              :publicbodies="publicBodies"
+              :subject="similarSubject"
+              ></SimilarRequests>
+          </div>
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
@@ -337,6 +348,7 @@ export default {
       showReview: false,
       submitting: false,
       STEPS,
+      similarSubject: '',
     }
   },
   computed: {
