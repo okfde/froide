@@ -19,6 +19,7 @@ from froide.account.forms import AddressForm, NewUserForm
 from froide.campaign.models import Campaign
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
+from froide.helper.content_urls import get_content_url
 from froide.helper.utils import update_query_params
 from froide.proof.forms import ProofMessageForm
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
@@ -155,6 +156,10 @@ class MakeRequestView(FormView):
                     "foirequest-make_request", kwargs={"publicbody_ids": "0"}
                 ),
                 "makeRequest": reverse("foirequest-make_request"),
+                "helpRequestWhat": get_content_url("help_request_what"),
+                "helpRequestWhatNot": get_content_url("help_request_what_not"),
+                "helpRequestPublic": get_content_url("help_request_public"),
+                "helpRequestPrivacy": get_content_url("help_request_privacy"),
             },
             "i18n": {
                 "publicBodiesFound": [
@@ -176,7 +181,26 @@ class MakeRequestView(FormView):
                 # Translators: not url
                 "requests": _("requests"),
                 "close": _("close"),
+                "back": _("Back"),
+                "stepNext": _("Next"),  # pgettext("Make request", "Next"),
+                "step": _("Step"),
+                "introduction": _("Introduction"),
+                "similarRequests": _("Similar requests"),
+                "address": _("Address"),
+                "account": pgettext("Make request breadcrumbs/stepper", "Account"),
+                "writeMessage": _("Write message"),
+                "submitRequest": _("Submit request"),
                 "makeRequest": _("Make request"),
+                "makeRequestYourself": _("Make a request yourself"),
+                "whatDoYouWantToDo": _("What do you want to do?"),
+                "whatCanIRequest": _("What can I request?"),
+                "whatCanINotRequest": _("What can’t I request?"),
+                "search": _("Search"),
+                "searchArchive": _("Search our archives:"),
+                "doYouAlreadyHaveAccount": _("Do you already have an account?"),
+                "thisFormRemembers": _(
+                    "This form remembers your inputs, as long as stay in the same tab."
+                ),
                 "writingRequestTo": _("You are writing a request to"),
                 "toMultiPublicBodies": _("To: {count} public bodies").format(
                     count="${count}"
@@ -247,7 +271,6 @@ class MakeRequestView(FormView):
                 "reviewPublicbodies": _("public bodies"),
                 "reviewSpelling": _("Please use proper spelling."),
                 "reviewPoliteness": _("Please stay polite."),
-                "submitRequest": _("Submit request"),
                 "greeting": _("Dear Sir or Madam"),
                 "kindRegards": _("Kind regards"),
                 "yourFirstName": _("Your first name"),
@@ -258,7 +281,6 @@ class MakeRequestView(FormView):
                 "similarExist": _(
                     "Please make sure the information is not already requested or public"
                 ),
-                "similarRequests": _("Similar requests"),
                 "moreSimilarRequests": _("Search for more similar requests"),
                 "relevantResources": _("Relevant resources"),
                 "officialWebsite": _("Official website: "),
@@ -296,6 +318,10 @@ class MakeRequestView(FormView):
                     if k in settings.FROIDE_CONFIG.get("filter_georegion_kinds", [])
                 ],
             },
+            "draftId": self.object.id
+            if hasattr(self, "object") and isinstance(self.object, RequestDraft)
+            else None,
+            "wasPost": self.request.method == "POST",
         }
         pb_ctx = get_widget_context()
         for key in pb_ctx:
@@ -620,7 +646,7 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        if self.request.method == "POST" or publicbodies or is_multi:
+        if self.request.method == "POST" or publicbodies:  # or is_multi:
             campaigns = None
         else:
             campaigns = Campaign.objects.get_active()
