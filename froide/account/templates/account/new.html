@@ -1,6 +1,7 @@
 {% extends 'account/base.html' %}
 {% load i18n %}
 {% load static %}
+{% load frontendbuild %}
 {% block title %}
     {% trans "New account" %}
 {% endblock %}
@@ -49,4 +50,5 @@
             {% endif %}
         </div>
     </div>
+    {% addfrontendbuild "makerequest_purgestorage.js" %}
 {% endblock %}

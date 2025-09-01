@@ -33,6 +33,7 @@ export default defineConfig({
         geomatch: './frontend/javascript/geomatch.js',
         main: './frontend/javascript/main.ts',
         makerequest: './frontend/javascript/makerequest.js',
+        makerequest_purgestorage: './frontend/javascript/makerequest_purgestorage.js',
         messageredaction: './frontend/javascript/messageredaction.js',
         moderation: './frontend/javascript/moderation.js',
         postupload: './frontend/javascript/postupload.js',

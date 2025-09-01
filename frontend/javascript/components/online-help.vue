@@ -2,11 +2,15 @@
 import { inject, ref, onMounted } from 'vue'
 import BsModal from './bs-modal.vue'
 
-const i18n = inject('i18n')
-
 const props = defineProps({
-  path: String
+  path: String,
+  i18n: {
+    type: Function,
+    required: false
+  }
 })
+
+const i18n = inject('i18n') || props.i18n
 
 const contents = ref('')
 
@@ -36,11 +40,13 @@ const fetchContents = (url) => {
 }
 
 const show = (path) => {
+  console.log('### OnlineHelp show', { bsModal })
   fetchContents(path)
   bsModal.value.show()
 }
 
 onMounted(() => {
+  console.log('### OnlineHelp', { bsModal })
   if (props.path) fetchContents(props.path)
 })
 

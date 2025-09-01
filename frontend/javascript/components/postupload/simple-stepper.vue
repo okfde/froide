@@ -3,8 +3,18 @@ import { computed } from 'vue'
 
 const props = defineProps({
   step: Number,
-  steps: Array
+  steps: Array,
+  clickable: Boolean
 })
+
+const emit = defineEmits('stepClick')
+
+const stepClick = (stepIndex) => {
+  if (!props.clickable) return
+  if (stepIndex < props.step) {
+    emit('stepClick', stepIndex)
+  }
+}
 
 // [0.0,1.0]
 const progressDesktop = computed(() => props.step / (props.steps.length - 1))
@@ -19,13 +29,17 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
     <div class="d-none d-md-block py-2">
       <div class="container">
         <div class="row position-relative">
-          <div
+          <component
+            :is="(clickable && (stepIndex < step)) ? 'a' : 'div'"
             v-for="(stepLabel, stepIndex) in steps"
+            @click.prevent="stepClick(stepIndex)"
+            :href="clickable ? '#step-' + stepIndex : false"
             :key="stepIndex"
-            class="step col d-flex flex-column align-items-center text-primary"
             :class="{
               'fw-bold': stepIndex <= step
-            }">
+            }"
+            class="step col d-flex flex-column align-items-center text-primary z-1"
+            >
             <div
               :class="`step-marker d-block rounded-circle text-center border border-primary
                   ${
@@ -35,10 +49,10 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
                   }`">
               {{ stepIndex + 1 }}
             </div>
-            <div>{{ stepLabel }}</div>
-          </div>
+            <div class="text-center">{{ stepLabel }}</div>
+          </component>
           <div
-            class="progress progress--desktop position-absolute z-n1 translate-middle-y"
+            class="progress progress--desktop position-absolute translate-middle-y"
             :style="{
               width: 100 * (1 - 1 / props.steps.length) + '%',
               left: 50 / props.steps.length + '%'
@@ -71,6 +85,13 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
 </template>
 
 <style lang="scss" scoped>
+.step {
+  // TODO refine, bootstrapize
+  flex: 1 1 0;
+  hyphens: auto;
+  word-break: break-word;
+}
+
 .step-marker {
   font-size: 1rem;
   width: 2rem;
