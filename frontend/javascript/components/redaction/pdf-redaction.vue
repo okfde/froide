@@ -673,8 +673,10 @@ export default {
         // - but would have to limit effective canvas size to prevent crashes
         renderDensityFactor = Math.max(minRenderWidth / window.innerWidth, 1.0)
 
-        this.intrinsicPageWidth = page.view[2]
-        this.intrinsicpageHeight = page.view[3]
+        // is the page rotated by ±{90, 270}?
+        const flipWidthHeight = Math.abs(page.rotate) % 180 === 90
+        this.intrinsicPageWidth = flipWidthHeight ? page.view[3] : page.view[2]
+        this.intrinsicPageHeight = flipWidthHeight ? page.view[2] : page.view[3]
         this.scaleFactor = (renderDensityFactor * maxWidth) / this.intrinsicPageWidth
         const viewport = page.getViewport({ scale: this.scaleFactor })
 
@@ -687,6 +689,9 @@ export default {
         const wPx = viewport.width / renderDensityFactor + 'px'
         const hPx = viewport.height / renderDensityFactor + 'px'
         console.log('PdfRedaction loadPage', {
+          flipWidthHeight,
+          page,
+          viewport,
           renderDensityFactor,
           scaleFactor: this.scaleFactor,
           maxWidth,
