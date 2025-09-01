@@ -13,9 +13,12 @@ import {
   SET_PUBLICBODY_ID,
   SET_SEARCHRESULTS,
   SET_STEP,
+  SET_STEP_NO_HISTORY,
   SET_STEP_REQUEST,
+  SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
   SET_STEP_SELECT_PUBLICBODY,
+  SET_STEP_NEXT,
   SET_USER,
   STEPS,
   UPDATE_ADDRESS,
@@ -26,12 +29,22 @@ import {
   UPDATE_LAST_NAME,
   UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
+  UPDATE_TERMS,
   UPDATE_SUBJECT,
-  UPDATE_USER_ID
+  UPDATE_USER_ID,
+  UPDATE_REQUEST_PUBLIC,
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
+
+const persistStorage = window.sessionStorage
+const persistKeyPrefix = 'froide-store-'
+
+const getInitialStep = () => {
+  // if (document.location.hash === '#step-submit') return STEPS.PREVIEW_SUBMIT
+  return STEPS.INTRO
+}
 
 export default createStore({
   state() {
@@ -46,10 +59,11 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
-      step: STEPS.SELECT_PUBLICBODY,
+      step: getInitialStep(),
       subject: '',
       body: '',
-      fullText: false
+      fullText: false,
+      requestPublic: false,
     }
   },
   getters: {
@@ -147,7 +161,33 @@ export default createStore({
     stepWriteRequest: (state) => state.step === STEPS.WRITE_REQUEST,
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
-    lawType: (state) => state.lawType
+    lawType: (state) => state.lawType,
+    // TODO validate closer to what happens server side?
+    userValid: (state) => state.user.id || (state.user.first_name && state.user.last_name && state.user.email),
+    termsValid: (state) => state.user.terms,
+    subjectValid: (state) => state.subject && state.subject.length > 0,
+    bodyValid: (state) => state.body && state.body.length > 0,
+    emailValid: (state) => state.user.email && state.user.email.length > 0,
+    addressValid: (state) => state.user.address && state.user.address.length > 0,
+    requestPublic: (state) => state.requestPublic,
+    stepCanContinue: (state, getters) => (scope) => {
+      switch (state.step) {
+        case STEPS.SELECT_PUBLICBODY:
+        case STEPS.REVIEW_PUBLICBODY:
+          return getters.getPublicBodiesByScope(scope).length > 0
+        case STEPS.CREATE_ACCOUNT:
+          if (!getters.addressValid) return false
+          // authenticated user only needs valid address
+          if (state.user.id) return true
+          if (!getters.userValid) return false
+          if (!getters.termsValid) return false
+          return true
+        case STEPS.WRITE_REQUEST:
+          if (!getters.subjectValid) return false
+          if (!getters.bodyValid) return false
+          return true
+      }
+    }
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -157,6 +197,12 @@ export default createStore({
     },
     [SET_STEP](state, step) {
       state.step = step
+      console.log('### pushstate', state.step)
+      window.history.pushState({ step: state.step }, '', '#step-' + state.step)
+    },
+    [SET_STEP_NO_HISTORY](state, step) {
+      console.log('### setstep nohistory', step)
+      state.step = step
     },
     [SET_STEP_SELECT_PUBLICBODY](state) {
       state.step = STEPS.SELECT_PUBLICBODY
@@ -164,8 +210,18 @@ export default createStore({
     [SET_STEP_REVIEW_PUBLICBODY](state) {
       state.step = STEPS.REVIEW_PUBLICBODY
     },
+    [SET_STEP_ACCOUNT](state) {
+      state.step = STEPS.CREATE_ACCOUNT
+    },
     [SET_STEP_REQUEST](state) {
       state.step = STEPS.WRITE_REQUEST
+    },
+    [SET_STEP_NEXT](state) {
+      switch (state.step) {
+        case STEPS.REVIEW_PUBLICBODY:
+          state.step = STEPS.CREATE_ACCOUNT
+          return
+      }
     },
     [SET_PUBLICBODY](state, { publicBody, scope }) {
       state.scopedPublicBodies[scope] = [publicBody]
@@ -178,7 +234,8 @@ export default createStore({
         }
       })
     },
-    [SET_PUBLICBODIES](state, { publicBodies, scope }) {
+    [SET_PUBLICBODIES](state, { publicBodies, scopedPublicBodies, scope }) {
+      publicBodies = publicBodies || scopedPublicBodies
       state.scopedPublicBodies[scope] = publicBodies
       const pbMap = {}
       publicBodies.forEach((pb) => {
@@ -319,6 +376,12 @@ export default createStore({
     [UPDATE_USER_ID](state, val) {
       state.user.id = val
     },
+    [UPDATE_TERMS](state, val) {
+      state.user.terms = val
+    },
+    [UPDATE_REQUEST_PUBLIC](state, val) {
+      state.requestPublic = val
+    },
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
     },
@@ -329,6 +392,93 @@ export default createStore({
     }
   },
   actions: {
+    writeToStorage({ state }, { scope }) {
+      // TODO publicbodies might need special handling
+      /*
+      const scopedPublicBodesIds = Object.keys(state.scopedPublicBodies)
+        .reduce((acc, cur) => {
+          acc[cur] = state.scopedPublicBodies[cur].map(pb => pb.id)
+          return acc
+        }, {})
+        console.log('###', scopedPublicBodesIds)
+        */
+      const reduced = {
+        // scopedPublicBodies: state.scopedPublicBodies,
+        lawType: state.lawType,
+        step: state.step,
+        subject: state.subject,
+        body: state.body,
+        // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
+        publicBodies: state.scopedPublicBodies[scope],
+        public: state.requestPublic,
+        // TODO add user. first_name, last_name, e-mail, address, private
+        address: state.user.address,
+        user_email: state.user.email,
+        first_name: state.user.first_name,
+        last_name: state.user.last_name,
+        private: state.user.private,
+        terms: state.user.terms,
+      }
+      try {
+        persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))
+      } catch (err) {
+        console.warn('failed to persist state', persistStorage, reduced, err)
+      }
+    },
+    // also called directly from makerequest.js
+    purgeStorage({ state }, { scope, keepStep }) {
+      const purged = keepStep
+        ? { step: state.step }
+        : null
+      try {
+        // persistStorage.removeItem(persistKey)
+        if (purged) {
+          persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
+          console.log('### purged, keeping', persistKeyPrefix + scope, purged)
+        } else {
+          persistStorage.removeItem(persistKeyPrefix + scope)
+          console.log('### purged, removed', persistKeyPrefix + scope)
+        }
+      } catch (err) {
+        console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
+      }
+    },
+    initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, preferStorage, scope, scoped }) {
+      // TODO cache me, scoped: if ! scope in storage try...
+      let storage
+      try {
+        storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))
+      } catch (err) {
+        console.warn('failed to load persisted state', persistStorage, persistKeyPrefix + scope, err)
+      }
+      for (const key in mutationMap) {
+        const mutation = mutationMap[key]
+        let value
+        if (preferStorage && storage && storage[key] !== undefined) {
+          value = storage[key]
+          console.log('### from storage', key, value)
+        } else if (propMap && propMap[key]) {
+          // prop has precedence over formField, e.g. for publicBodies
+          value = propMap[key]
+          console.log('### from prop', key, value)
+        } else if (formFields && formFields[key] !== undefined) {
+          value = formFields[key].value
+          if (value === undefined) value = formFields[key].initial
+          if (formCoerce && formCoerce[key]) {
+            value = formCoerce[key](value)
+          }
+          console.log('### from form', key, value)
+        } else {
+          console.log('### from nowhere', key)
+        }
+        if (value === undefined) continue
+        if (scoped) {
+          commit(mutation, { [key]: value, scope })
+        } else {
+          commit(mutation, value)
+        }
+      }
+    },
     setSearchResults({ commit, dispatch }, { scope, results }) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,

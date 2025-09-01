@@ -61,7 +61,7 @@
             {{ i18n._('selectAll', { count: searchResultsLength }) }}
           </button>
         </div>
-        <div class="col-auto ms-auto">
+        <div class="col-auto">
           <button
             :disabled="!hasSearchResults"
             @click.prevent="clearSearch"
@@ -69,6 +69,14 @@
           >
             {{ i18n.clearSearchResults }}
           </button>
+        </div>
+        <div class="col-auto ms-auto">
+          <button
+            :disabled="!stepCanContinue(scope)"
+            type="button"
+            class="btn btn-primary"
+            @click="setStepReviewPublicbody"
+            >§Weiter mit Auswahl</button>
         </div>
       </div>
       <div class="row">
@@ -129,6 +137,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import {
   SET_STEP_REQUEST,
+  SET_STEP_REVIEW_PUBLICBODY,
   ADD_PUBLICBODY_ID,
   REMOVE_PUBLICBODY_ID,
   CLEAR_PUBLICBODIES
@@ -324,7 +333,11 @@ export default {
     blockProgressWidth() {
       return `width: ${this.blockProgress}%`
     },
-    ...mapGetters(['getPublicBodiesByScope', 'getScopedSearchMeta'])
+    ...mapGetters([
+      'getPublicBodiesByScope',
+      'getScopedSearchMeta',
+      'stepCanContinue',
+    ])
   },
   methods: {
     togglePane(e) {
@@ -403,6 +416,7 @@ export default {
     },
     ...mapMutations({
       setStepRequest: SET_STEP_REQUEST,
+      setStepReviewPublicbody: SET_STEP_REVIEW_PUBLICBODY,
       addPublicBodyId: ADD_PUBLICBODY_ID,
       removePublicBodyId: REMOVE_PUBLICBODY_ID,
       clearPublicBodies: CLEAR_PUBLICBODIES
