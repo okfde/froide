@@ -236,60 +236,6 @@
           </div>
         </div>
         <div v-if="!hasUser" class="row">
-          <div class="col-md-8">
-            <div class="mb-3 row">
-              <div
-                class="col-sm-6"
-                :class="{ 'text-danger': usererrors.first_name }">
-                <label
-                  class="form-label field-required"
-                  for="id_first_name"
-                  :class="{ 'text-danger': usererrors.first_name }">
-                  {{ i18n.yourFirstName }}
-                </label>
-                <input
-                  id="id_first_name"
-                  v-model="first_name"
-                  type="text"
-                  name="first_name"
-                  class="form-control"
-                  :class="{ 'is-invalid': usererrors.first_name }"
-                  :placeholder="userformFields.first_name.placeholder"
-                  required />
-                <p v-for="e in usererrors.first_name" :key="e.message">
-                  {{ e.message }}
-                </p>
-              </div>
-
-              <div
-                class="col-sm-6"
-                :class="{ 'text-danger': usererrors.last_name }">
-                <label
-                  class="form-label field-required"
-                  for="id_last_name"
-                  :class="{ 'text-danger': usererrors.last_name }">
-                  {{ i18n.yourLastName }}
-                </label>
-                <input
-                  id="id_last_name"
-                  v-model="last_name"
-                  type="text"
-                  name="last_name"
-                  class="form-control"
-                  :class="{ 'is-invalid': usererrors.last_name }"
-                  :placeholder="userformFields.last_name.placeholder"
-                  required />
-                <p v-for="e in usererrors.last_name" :key="e.message">
-                  {{ e.message }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div v-if="usePseudonym" class="col-md-4 mt-md-4">
-            <small
-              v-if="userformFields.last_name.help_text"
-              v-html="userformFields.last_name.help_text" />
-          </div>
         </div>
 
         <div
@@ -416,14 +362,6 @@ export default {
       type: Boolean,
       default: false
     },
-    initialFirstName: {
-      type: String,
-      default: ''
-    },
-    initialLastName: {
-      type: String,
-      default: ''
-    },
     proofForm: {
       type: Object,
       default: null
@@ -449,10 +387,6 @@ export default {
       subjectValue: this.initialSubject || '',
       bodyValue: this.initialBody || '',
       fullTextValue: this.initialFullText,
-      firstNameValue:
-        this.initialFirstName || (this.user && this.user.first_name) || '',
-      lastNameValue:
-        this.initialLastName || (this.user && this.user.last_name) || '',
       privateValue:
         this.initialPrivate || (this.user && this.user.private) || false
     }
@@ -563,24 +497,6 @@ export default {
           MIN_BODY_ROWS,
           Math.min(newLineCount + 1, MAX_BODY_ROWS)
         )
-      }
-    },
-    first_name: {
-      get() {
-        return this.firstNameValue
-      },
-      set(value) {
-        this.firstNameValue = value
-        this.$emit('update:initialFirstName', value)
-      }
-    },
-    last_name: {
-      get() {
-        return this.lastNameValue
-      },
-      set(value) {
-        this.lastNameValue = value
-        this.$emit('update:initialLastName', value)
       }
     },
     userPrivate: {

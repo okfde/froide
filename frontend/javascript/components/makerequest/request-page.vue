@@ -50,22 +50,46 @@
             </div>
           </div>
           <div v-if="step === STEPS.FIND_SIMILAR">
-            <label>
-              Similar
-              <input type="text" v-model="similarSubject" />
-            </label>
+            <div class="mb-4">
+              <label for="similarSubject" class="form-label">
+                Im FragDenStaat-Archiv suchen:
+              </label>
+              <div class="row">
+                <div class="col-sm-8">
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="similarSubject"
+                    />
+                </div>
+                <div class="col-sm-4">
+                  <button type="button" class="btn btn-secondary w-100">
+                    Suchen
+                  </button>
+                </div>
+              </div>
+            </div>
             <SimilarRequests
               :config="config"
               :publicbodies="publicBodies"
               :subject="similarSubject"
               ></SimilarRequests>
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="setStep(STEPS.SELECT_PUBLICBODY)"
+                >
+                Weiter
+              </button>
+            </div>
           </div>
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
             class="mt-5">
             <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
-            <div v-if="multiRequest">
+            <div v-if="false && multiRequest">
               <PublicbodyMultiChooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
@@ -85,7 +109,7 @@
               </div>
               <div class="row">
                 <div class="col-lg-8">
-                  <template v-if="betaUi">
+                  <template v-if="true || betaUi">
                     <PublicbodyBetaChooser
                       name="publicbody"
                       :defaultsearch="publicBodySearch"
@@ -134,8 +158,6 @@
               v-model:initial-subject="subject"
               v-model:initial-body="body"
               v-model:initial-full-text="fullText"
-              v-model:initial-first-name="firstName"
-              v-model:initial-last-name="lastName"
               v-model:initial-private="userPrivate"
               :submitting="submitting"
               @set-step-select-public-body="setStepSelectPublicBody">
@@ -149,9 +171,12 @@
 
             <UserRegistration
               :form="userForm"
+              :user-form="userForm"
               :config="config"
               :user="user.id ? user : null"
               :default-law="defaultLaw"
+              v-model:initial-first-name="firstName"
+              v-model:initial-last-name="lastName"
               v-model:initial-email="email"
               v-model:initial-address="address"
               :address-help-text="userForm.fields.address.help_text" />
