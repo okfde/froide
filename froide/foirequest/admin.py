@@ -254,6 +254,8 @@ class FoiRequestAdmin(admin.ModelAdmin):
     )
     save_on_top = True
 
+    readonly_fields = ("secret_address", "secret")
+
     tag_all = make_batch_tag_action(
         autocomplete_url=reverse_lazy("api:request-tags-autocomplete")
     )
