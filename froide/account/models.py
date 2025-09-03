@@ -12,6 +12,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.functions import Collate
 from django.db.models.query import QuerySet
@@ -118,6 +119,14 @@ Replacements = Optional[Dict[str, str]]
 Redactions = List[Union[Tuple[str, str], Tuple[Pattern, str]]]
 
 
+def validate_lowercase(value: str):
+    if value.lower() != value:
+        raise ValidationError(
+            _("%(value)s is not lowercase"),
+            params={"value": value},
+        )
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
 
@@ -128,7 +137,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_(
             "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
         ),
-        validators=[username_validator],
+        validators=[username_validator, validate_lowercase],
         error_messages={
             "unique": _("A user with that username already exists."),
         },
