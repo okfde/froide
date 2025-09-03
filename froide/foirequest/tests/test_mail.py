@@ -511,3 +511,18 @@ def test_parsing_attachment_without_content_disposition():
     assert attachment.name == "_1_0CCE8CEC0CCE8894004AF2EFC125893A.gif"
     assert attachment.size == 35
     assert attachment.content_type == "image/gif"
+
+
+@pytest.mark.django_db
+def test_recipient_case_insensitive(foirequest_with_msg):
+    with open(p("test_mail_08.txt"), "rb") as f:
+        process_mail.delay(
+            f.read().replace(
+                foirequest_with_msg.secret_address.encode(),
+                foirequest_with_msg.secret_address.upper().encode(),
+            )
+        )
+    messages = foirequest_with_msg.messages
+    assert len(messages) == 2
+    message = messages[1]
+    assert message.timestamp.date() == timezone.now().date()
