@@ -14,6 +14,7 @@ import {
   SET_SEARCHRESULTS,
   SET_STEP,
   SET_STEP_REQUEST,
+  SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
   SET_STEP_SELECT_PUBLICBODY,
   SET_USER,
@@ -33,6 +34,11 @@ import {
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
 
+const getInitialStep = () => {
+  if (document.location.hash === '#step-submit') return STEPS.PREVIEW_SUBMIT
+  return STEPS.INTRO
+}
+
 export default createStore({
   state() {
     return {
@@ -46,7 +52,7 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
-      step: STEPS.INTRO,
+      step: getInitialStep(),
       subject: '',
       body: '',
       fullText: false
@@ -147,7 +153,9 @@ export default createStore({
     stepWriteRequest: (state) => state.step === STEPS.WRITE_REQUEST,
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
-    lawType: (state) => state.lawType
+    lawType: (state) => state.lawType,
+    userValid: (state) => state.user.first_name && state.user.last_name && state.user.email,
+    subjectValid: (state) => state.subject && state.subject.length > 0,
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -163,6 +171,9 @@ export default createStore({
     },
     [SET_STEP_REVIEW_PUBLICBODY](state) {
       state.step = STEPS.REVIEW_PUBLICBODY
+    },
+    [SET_STEP_ACCOUNT](state) {
+      state.step = STEPS.CREATE_ACCOUNT
     },
     [SET_STEP_REQUEST](state) {
       state.step = STEPS.WRITE_REQUEST

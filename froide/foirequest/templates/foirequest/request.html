@@ -36,7 +36,7 @@
         {% endif %}
     {% endblock %}
     <form method="post"
-          action="{% url 'foirequest-make_request' %}"
+          action="{% url 'foirequest-make_request' %}#step-submit"
           enctype="multipart/form-data"
           novalidate>
         {% csrf_token %}

@@ -45,8 +45,8 @@
       <div class="row">
         <div class="col-lg-12 publicbody-summary">
           <p>
-            {{ i18n._('toPublicBody', { name: publicBody.name }) }}
-            <a :href="publicBody.site_url" target="_blank">
+            {{ i18n._('toPublicBody', { name: publicBody?.name || '?' }) }}
+            <a v-if="publicBody" :href="publicBody.site_url" target="_blank">
               <span class="fa fa-info-circle" />
             </a>
             <span v-if="!hidePublicbodyChooser">
@@ -238,24 +238,6 @@
         <div v-if="!hasUser" class="row">
         </div>
 
-        <div
-          v-if="config.settings.user_can_hide_web && !hasUser"
-          class="row mt-2">
-          <div class="col-md-8">
-            <div class="form-check">
-              <input
-                id="id_private"
-                class="form-check-input"
-                v-model="userPrivate"
-                type="checkbox"
-                name="private" />
-              <label for="id_private" class="form-check-label">
-                {{ userformFields.private.label }}
-              </label>
-              <p class="help-block" v-html="userformFields.private.help_text" />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -387,8 +369,6 @@ export default {
       subjectValue: this.initialSubject || '',
       bodyValue: this.initialBody || '',
       fullTextValue: this.initialFullText,
-      privateValue:
-        this.initialPrivate || (this.user && this.user.private) || false
     }
   },
   computed: {
@@ -497,15 +477,6 @@ export default {
           MIN_BODY_ROWS,
           Math.min(newLineCount + 1, MAX_BODY_ROWS)
         )
-      }
-    },
-    userPrivate: {
-      get() {
-        return this.privateValue
-      },
-      set(value) {
-        this.privateValue = value
-        this.$emit('update:initialPrivate', value)
       }
     },
     hasPublicBodies() {

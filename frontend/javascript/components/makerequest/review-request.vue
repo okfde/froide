@@ -1,18 +1,54 @@
 <template>
-  <div id="step-review" class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            {{ i18n.reviewTitle }}
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            :aria-label="i18n.close"
-            @click="close" />
-        </div>
-        <div class="modal-body">
+  <div>
+    <div class="row border-top">
+      <div class="col-md-2">
+        <h5 class="fs-6">{{ i18n.name }}</h5>
+      </div>
+      <div class="col-md-7">
+        <span :class="{ 'text-danger': !user.first_name}">
+          {{ user.first_name || i18n.yourFirstName }}
+        </span>
+        <span :class="{ 'text-danger': !user.last_name}">
+          {{ user.last_name || i18n.yourLastName }}
+        </span>
+        <div
+          v-if="hasFormErrorsUser"
+          class="text-danger"
+          >§ there were errors here</div>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn"
+          :class="{
+            'btn-link': !needCorrectionUser,
+            'btn-primary': needCorrectionUser
+          }"
+          @click="setStep(STEPS.CREATE_ACCOUNT)"
+          >{{ needCorrectionUser ? '§korrigieren' : i18n.change }}</button>
+      </div>
+    </div>
+    <div class="row border-top">
+      <div class="col-md-2">
+        <h5 class="fs-6">{{ i18n.subject }}</h5>
+      </div>
+      <div class="col-md-7">
+        <span :class="{ 'text-danger': !subjectValid}">
+          {{ subject || i18n.subject }}
+        </span>
+        <div
+          v-if="hasFormErrorsSubject"
+          class="text-danger"
+          >§ there were errors here</div>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn"
+          :class="{
+            'btn-link': !needCorrectionSubject,
+            'btn-primary': needCorrectionSubject
+          }"
+          @click="setStep(STEPS.WRITE_REQUEST)"
+          >{{ needCorrectionSubject ? '§korrigieren' : i18n.change }}</button>
+      </div>
+    </div>
           <dl class="message-meta row">
             <dt class="col-sm-3" :class="{ 'text-danger': !userValid }">
               {{ i18n.reviewFrom }}
@@ -35,7 +71,7 @@
               {{ subject }}
             </dd>
           </dl>
-          <div @click="close">
+          <div>
             <div v-if="fullText">
               <div class="body-text review-body-text">
                 <span v-text="body" />
@@ -57,18 +93,9 @@
               {{ error }}
             </li>
           </ul>
-        </div>
-        <div class="modal-footer">
+
           <button
-            type="button"
-            class="btn"
-            :class="{ 'btn-secondary': canSend, 'btn-primary': !canSend }"
-            @click="close">
-            <i class="fa fa-edit" aria-hidden="true" />
-            {{ i18n.reviewEdit }}
-          </button>
-          <button
-            v-if="canSend"
+            :x-disabled="!canSend"
             id="send-request-button"
             type="submit"
             class="btn btn-primary"
@@ -76,14 +103,16 @@
             <i class="fa fa-send" aria-hidden="true" />
             {{ i18n.submitRequest }}
           </button>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import LetterMixin from './lib/letter-mixin'
+import { mapMutations, mapGetters } from 'vuex'
+import {
+  SET_STEP,
+  STEPS
+} from '../../store/mutation_types'
 
 function erx(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
@@ -105,6 +134,14 @@ export default {
       type: Object,
       required: true
     },
+    userForm: {
+      type: Object,
+      required: true
+    },
+    requestForm: {
+      type: Object,
+      required: true
+    },
     defaultLaw: {
       type: Object,
       default: null
@@ -122,6 +159,11 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      STEPS
+    }
+  },
   computed: {
     canSend() {
       return this.user.id || !this.hasErrors
@@ -129,11 +171,27 @@ export default {
     hasErrors() {
       return this.errors.length > 0
     },
-    userValid() {
-      return this.user.first_name && this.user.last_name && this.user.email
+    needCorrectionUser() {
+      return this.hasFormErrorsUser || !this.userValid
     },
-    subjectValid() {
-      return this.subject && this.subject.length > 0
+    needCorrectionSubject() {
+      return this.hasFormErrorsSubject || !this.subjectValid
+    },
+    hasFormErrorsUser() {
+      return this.hasFormErrorsFirstName || this.hasFormErrorsLastName
+    },
+    hasFormErrorsFirstName() {
+      if (this.userForm.fields.first_name !== this.user.first_name) return
+      return ('first_name' in this.userForm.errors)
+    },
+    hasFormErrorsLastName() {
+      if (this.userForm.fields.last_name !== this.user.last_name) return
+      return ('last_name' in this.userForm.errors)
+    },
+    hasFormErrorsSubject() {
+      // ignore form errors if value changed
+      if (this.requestForm.fields.subject.value !== this.subject) return
+      return ('subject' in this.requestForm.errors)
     },
     errors() {
       const errors = []
@@ -191,12 +249,18 @@ export default {
     },
     publicBodies() {
       return this.publicbodies
-    }
+    },
+    ...mapGetters([
+      'user',
+      'userValid',
+      'subject',
+      'subjectValid'
+    ])
   },
   methods: {
-    close() {
-      this.$emit('close')
-    }
+    ...mapMutations({
+      setStep: SET_STEP,
+    })
   }
 }
 </script>

@@ -9,12 +9,15 @@
     <!-- TODO:
       steps need to be same width (for progress meter to match)
       steps need to be clickable
+        into the future - "steps previously unlocked"
       reflect "done" pbly = this seems to be just a > step check
     -->
     <SimpleStepper
       class="bg-body-tertiary"
       :step="progressStepCurrent"
       :steps="steps"
+      clickable
+      @step-click="stepClick"
       >
       §step <strong>{{ this.progressStepCurrent }}/{{ this.steps.length }}</strong>:
       {{ this.steps[this.step] }}
@@ -141,7 +144,45 @@
             <PbMultiReview name="publicbody" :i18n="i18n" :scope="pbScope" />
           </fieldset>
 
-          <fieldset v-if="stepWriteRequest" id="step-request" class="mt-3">
+          <!-- need v-show over v-if so <input>s are in DOM while submitting -->
+          <div
+            v-show="step === STEPS.CREATE_ACCOUNT">
+
+            <UserRegistration
+              :form="userForm"
+              :user-form="userForm"
+              :config="config"
+              :user="user.id ? user : null"
+              :default-law="defaultLaw"
+              v-model:initial-first-name="firstName"
+              v-model:initial-last-name="lastName"
+              v-model:initial-email="email"
+              v-model:initial-address="address"
+              :address-help-text="userForm.fields.address.help_text" />
+
+            <div>TODO: passwort (optional)</div>
+            <!-- TODO if hasUser... -->
+            <UserPublic
+              :user-form="userForm"
+              :config="config"
+              v-model:initial-private="userPrivate"
+              />
+            <UserTerms v-if="!user.id" :form="userForm" />
+            <div>
+              TODO: validation of vorname/name<br/>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="setStep(STEPS.WRITE_REQUEST)"
+                >
+                Weiter
+              </button>
+            </div>
+
+          </div>
+
+          <fieldset v-show="stepWriteRequest" id="step-request" class="mt-3">
+            TODO: rename/emphasize ellipsis button
             <RequestForm
               :config="config"
               :publicbodies="publicBodies"
@@ -158,7 +199,6 @@
               v-model:initial-subject="subject"
               v-model:initial-body="body"
               v-model:initial-full-text="fullText"
-              v-model:initial-private="userPrivate"
               :submitting="submitting"
               @set-step-select-public-body="setStepSelectPublicBody">
               <template #request-hints>
@@ -168,22 +208,16 @@
                 <DjangoSlot name="request-legend-title" />
               </template>
             </RequestForm>
-
-            <UserRegistration
-              :form="userForm"
-              :user-form="userForm"
-              :config="config"
-              :user="user.id ? user : null"
-              :default-law="defaultLaw"
-              v-model:initial-first-name="firstName"
-              v-model:initial-last-name="lastName"
-              v-model:initial-email="email"
-              v-model:initial-address="address"
-              :address-help-text="userForm.fields.address.help_text" />
-
-            <RequestPublic :form="requestForm" :hide-public="hidePublic" />
-
-            <UserTerms v-if="!user.id" :form="userForm" />
+            <div>
+              TODO: validation<br/>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="setStep(STEPS.REQUEST_PUBLIC)"
+                >
+                Weiter
+              </button>
+            </div>
           </fieldset>
 
           <SimilarRequests
@@ -192,46 +226,64 @@
             :subject="subject"
             :config="config" />
 
-          <ReviewRequest
-            :i18n="i18n"
-            :publicbodies="publicBodies"
-            :user="user"
-            :default-law="defaultLaw"
-            :subject="subject"
-            :body="body"
-            :full-text="fullText"
-            ref="reviewrequest"
-            @close="showReview = false"
-            @submit="submitting = true" />
+          <div v-show="step == STEPS.REQUEST_PUBLIC">
+            TODO: make into radios, add texts around
+            <RequestPublic :form="requestForm" :hide-public="hidePublic" />
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="setStep(STEPS.PREVIEW_SUBMIT)"
+                >
+                Weiter
+              </button>
+            </div>
+          </div>
 
-          <button
-            v-if="stepWriteRequest && shouldCheckRequest"
-            id="review-button"
-            type="button"
-            class="btn btn-primary btn-lg mt-3"
-            @click="showReview = true">
-            <i class="fa fa-check" aria-hidden="true" />
-            {{ i18n.reviewRequest }}
-          </button>
-          <button
-            v-else-if="stepWriteRequest"
-            id="send-request-button"
-            type="submit"
-            class="btn btn-primary btn-lg mt-3"
-            @click="submitting = true">
-            <i class="fa fa-send" aria-hidden="true" />
-            {{ i18n.submitRequest }}
-          </button>
-          <button
-            v-if="stepWriteRequest && user.id && showDraft"
-            type="submit"
-            class="btn btn-secondary mt-3 ms-2"
-            name="save_draft"
-            value="true"
-            @click="submitting = true">
-            <i class="fa fa-save" aria-hidden="true" />
-            {{ i18n.saveAsDraft }}
-          </button>
+          <div v-if="step === STEPS.PREVIEW_SUBMIT">
+            <ReviewRequest
+              :i18n="i18n"
+              :publicbodies="publicBodies"
+              :user="user"
+              :user-form="userForm"
+              :request-form="requestForm"
+              :default-law="defaultLaw"
+              :subject="subject"
+              :body="body"
+              :full-text="fullText"
+              @submit="submitting = true" />
+            <!--
+            TODO: move submit/save button here,
+              but also needs canSend<-errors etc.
+            <button
+              v-if="shouldCheckRequest"
+              id="review-button"
+              type="button"
+              class="btn btn-primary btn-lg mt-3"
+              @click="showReview = true">
+              <i class="fa fa-check" aria-hidden="true" />
+              {{ i18n.reviewRequest }}
+            </button>
+            <button
+              id="send-request-button"
+              type="submit"
+              class="btn btn-primary btn-lg mt-3"
+              @click="submitting = true">
+              <i class="fa fa-send" aria-hidden="true" />
+              {{ i18n.submitRequest }}
+            </button>
+            -->
+            <button
+              v-if="user.id && showDraft"
+              type="submit"
+              class="btn btn-secondary mt-3 ms-2"
+              name="save_draft"
+              value="true"
+              @click="submitting = true">
+              <i class="fa fa-save" aria-hidden="true" />
+              {{ i18n.saveAsDraft }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -250,10 +302,9 @@ import RequestForm from './request-form'
 import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
+import UserPublic from './user-public.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from '../postupload/simple-stepper.vue'
-
-import { Modal } from 'bootstrap'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
@@ -295,6 +346,7 @@ export default {
     RequestFormBreadcrumbs,
     RequestPublic,
     UserTerms,
+    UserPublic,
     DjangoSlot,
     SimpleStepper
   },
@@ -402,16 +454,24 @@ export default {
         '§similarRequests',
         this.i18n.choosePublicBody,
         ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
-        '§writeRequest',
         '§account',
+        '§writeRequest',
         '§submit'
       ]
     },
     progressStepCurrent() {
-      // need 0-indexed, but if hasReview there's even one less, so -2
-      return (!this.hasReviewPbStep && this.step >= STEPS.REVIEW_PUBLICBODY)
-        ? this.step - 2
-        : this.step - 1
+      // needs to be zero-indexed
+      return ({
+        [STEPS.INTRO]: 0,
+        [STEPS.FIND_SIMILAR]: 1,
+        [STEPS.SELECT_PUBLICBODY]: 2,
+        [STEPS.REVIEW_PUBLICBODY]: 2,
+        [STEPS.CREATE_ACCOUNT]: 3,
+        [STEPS.WRITE_REQUEST]: 4,
+        [STEPS.REQUEST_PUBLIC]: 4,
+        [STEPS.PREVIEW_SUBMIT]: 5,
+        [STEPS.OUTRO]: 5
+      })[this.step]
     },
     publicBodySearch() {
       if (this.publicBody) {
@@ -433,15 +493,15 @@ export default {
         this.updateSubject(value)
       }
     },
-    subjectWasChanged() {
-      return this.subject !== this.originalSubject
-    },
+    // subjectWasChanged() {
+    //   return this.subject !== this.originalSubject
+    // },
     hasBody() {
       return this.body && this.body.length > 0
     },
-    bodyWasChanged() {
-      return this.body !== this.originalBody
-    },
+    // bodyWasChanged() {
+    //   return this.body !== this.originalBody
+    // },
     body: {
       get() {
         return this.$store.state.body
@@ -510,14 +570,14 @@ export default {
     publicBodies() {
       return this.getPublicBodiesByScope(this.pbScope)
     },
-    shouldCheckRequest() {
-      return (
-        this.body === '' ||
-        this.bodyWasChanged ||
-        this.subject === '' ||
-        this.subjectWasChanged
-      )
-    },
+    // shouldCheckRequest() {
+    //   return (
+    //     this.body === '' ||
+    //     this.bodyWasChanged ||
+    //     this.subject === '' ||
+    //     this.subjectWasChanged
+    //   )
+    // },
     ...mapGetters([
       'user',
       'getPublicBodyByScope',
@@ -533,22 +593,6 @@ export default {
   watch: {
     step() {
       window.scrollTo(0, 0)
-    },
-    showReview(newShowReview) {
-      if (newShowReview) {
-        if (!this.reviewModal) {
-          this.reviewModal = new Modal(this.$refs.reviewrequest.$el)
-          this.$refs.reviewrequest.$el.addEventListener(
-            'hidden.bs.modal',
-            () => {
-              this.showReview = false
-            }
-          )
-        }
-        this.reviewModal.show()
-      } else {
-        this.reviewModal.hide()
-      }
     }
   },
   created() {
@@ -616,8 +660,19 @@ export default {
         if (fields[key] === undefined) {
           continue
         }
+        // TODO: check what this does, really
         method(fields[key].value || fields[key].initial)
       }
+    },
+    stepClick(stepIndex) {
+      this.setStep(([
+        STEPS.INTRO,
+        STEPS.FIND_SIMILAR,
+        STEPS.SELECT_PUBLICBODY,
+        STEPS.CREATE_ACCOUNT,
+        STEPS.WRITE_REQUEST,
+        STEPS.PREVIEW_SUBMIT
+      ])[stepIndex])
     },
     ...mapMutations({
       setStep: SET_STEP,
