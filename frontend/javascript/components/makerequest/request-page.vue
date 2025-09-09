@@ -157,12 +157,21 @@
               v-model:initial-first-name="firstName"
               v-model:initial-last-name="lastName"
               v-model:initial-email="email"
-              v-model:initial-address="address"
-              :address-help-text="userForm.fields.address.help_text" />
+              />
 
             <div>TODO: passwort (optional)</div>
+
+            <UserAddress
+              v-model:initial-address="address"
+              :i18n="i18n"
+              :form="userForm"
+              :config="config"
+              :address-help-text="userForm.fields.address.help_text"
+              />
+
             <!-- TODO if hasUser... -->
             <UserPublic
+              v-if="!user"
               :user-form="userForm"
               :config="config"
               v-model:initial-private="userPrivate"
@@ -303,6 +312,7 @@ import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
 import UserPublic from './user-public.vue'
+import UserAddress from './user-address.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from '../postupload/simple-stepper.vue'
 
@@ -347,6 +357,7 @@ export default {
     RequestPublic,
     UserTerms,
     UserPublic,
+    UserAddress,
     DjangoSlot,
     SimpleStepper
   },
@@ -453,8 +464,8 @@ export default {
         '§introduction',
         '§similarRequests',
         this.i18n.choosePublicBody,
-        ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
-        '§account',
+        // ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
+        this.user ? '§Adresse' : '§account',
         '§writeRequest',
         '§submit'
       ]

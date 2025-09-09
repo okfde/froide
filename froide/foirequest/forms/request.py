@@ -32,6 +32,12 @@ payment_possible = settings.FROIDE_CONFIG.get("payment_possible", False)
 
 MAX_BODY_LENGTH = 5000
 
+# def tmp_coerce(x):
+# import pdb; pdb.set_trace()
+#    ret = x and (x.lower() != 'false')
+#    print('## coerced', ret)
+#    return ret
+
 
 class RequestForm(JSONMixin, forms.Form):
     subject = forms.CharField(
@@ -60,15 +66,25 @@ class RequestForm(JSONMixin, forms.Form):
         label=_("Don't wrap in template"),
         widget=forms.CheckboxInput(attrs={"tabindex": "-1"}),
     )
-    public = forms.BooleanField(
-        required=False,
-        initial=True,
+    # public = forms.BooleanField(
+    #    required=False,
+    #    initial=True,
+    #    label=_("This request is public."),
+    #    help_text=_(
+    #        "If you don't want your request to be public right now,"
+    #        " uncheck this. You can always decide to make it public later."
+    #    ),
+    # )
+    public = forms.TypedChoiceField(
         label=_("This request is public."),
-        help_text=_(
-            "If you don't want your request to be public right now,"
-            " uncheck this. You can always decide to make it public later."
-        ),
+        initial=True,
+        required=False,
+        widget=BootstrapRadioSelect,
+        choices=[(True, "yes, public"), (False, "no not public")],
+        coerce=lambda x: x and (x.lower() != "false"),
+        # coerce=tmp_coerce
     )
+
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     law_type = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)

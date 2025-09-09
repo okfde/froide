@@ -8,19 +8,23 @@
         id="id_hide_public" />
       <div class="card mb-3" v-if="!hidePublic">
         <div class="card-body">
-          <div class="form-check">
+          <div>{{ form.fields.public.label }}</div>
+          <div class="form-check" v-for="(choice, choiceIndex) in form.fields.public.choices" :key="choice.value">
             <input
-              type="checkbox"
+              type="radio"
               name="public"
               class="form-check-input"
-              id="id_public"
+              :id="'id_public_choice' + choiceIndex"
+              :value="choice.value"
               v-model="publicValue" />
-            <label class="form-check-label" for="id_public">
-              {{ form.fields.public.label }}
+            <label class="form-check-label" :for="'id_public_choice' + choiceIndex">
+              {{ choice.label }}
             </label>
+            <!--
             <small class="form-text text-body-secondary">
               {{ form.fields.public.help_text }}
             </small>
+            -->
           </div>
         </div>
       </div>
