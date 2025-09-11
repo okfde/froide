@@ -7,7 +7,7 @@ const I18nMixin = {
     i18n() {
       return {
         _replacer(params) {
-          return (match, p1) => {
+          return (_match, p1) => {
             if (p1 === 'count' && params.count >= 1000) {
               return params.count.toLocaleString(LANG)
             }
