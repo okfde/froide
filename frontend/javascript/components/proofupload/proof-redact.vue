@@ -216,7 +216,7 @@ export default {
       }
 
       this.rects = this.rects.filter(
-        (rect, index) => !this.actives.includes(index)
+        (_rect, index) => !this.actives.includes(index)
       )
       this.renderCanvas()
     }

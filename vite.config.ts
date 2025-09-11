@@ -44,7 +44,6 @@ export default defineConfig({
         tagautocomplete: './frontend/javascript/tagautocomplete.ts'
       },
       output: {
-        sourcemap: true,
         entryFileNames: '[name].js',
         chunkFileNames: 'js/[name].js',
         assetFileNames: (assetInfo) => {

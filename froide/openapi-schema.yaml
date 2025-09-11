@@ -16,6 +16,10 @@ paths:
         schema:
           type: integer
       - in: query
+        name: campaign
+        schema:
+          type: string
+      - in: query
         name: filetype
         schema:
           type: string
@@ -46,6 +50,14 @@ paths:
         description: The initial index from which to return the results.
         schema:
           type: integer
+      - in: query
+        name: publicbody
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
       tags:
       - attachment
       security:
@@ -1006,6 +1018,10 @@ paths:
         schema:
           type: string
       - in: query
+        name: kind_detail
+        schema:
+          type: string
+      - in: query
         name: latlng
         schema:
           type: string
@@ -1614,6 +1630,10 @@ paths:
           - csv
           - json
       - in: query
+        name: is_draft
+        schema:
+          type: boolean
+      - in: query
         name: is_response
         schema:
           type: boolean
@@ -1669,6 +1689,44 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/PaginatedFoiMessageList'
+          description: ''
+    post:
+      operationId: message_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+        required: true
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
           description: ''
   /api/v1/message/{id}/:
     get:
@@ -1735,6 +1793,7 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/FoiMessage'
+        required: true
       security:
       - oauth2:
         - write:message
@@ -1824,6 +1883,7 @@ paths:
           multipart/form-data:
             schema:
               $ref: '#/components/schemas/FoiMessage'
+        required: true
       security:
       - oauth2:
         - write:message
@@ -3607,34 +3667,36 @@ components:
           maxLength: 500
         slug:
           type: string
-          maxLength: 250
+          readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
         description:
           type: string
         published_at:
           type: string
           format: date-time
+          readOnly: true
           nullable: true
         num_pages:
           type: integer
-          maximum: 2147483647
-          minimum: 0
+          readOnly: true
         public:
           type: boolean
+          readOnly: true
         listed:
           type: boolean
+          readOnly: true
         allow_annotation:
           type: boolean
+          readOnly: true
         pending:
           type: boolean
+          readOnly: true
         file_url:
           type: string
           readOnly: true
         file_size:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
+          readOnly: true
           nullable: true
         cover_image:
           type: string
@@ -3642,12 +3704,15 @@ components:
           type: string
         outline:
           type: string
-        properties: {}
+          readOnly: true
+        properties:
+          readOnly: true
         uid:
           type: string
           format: uuid
           readOnly: true
-        data: {}
+        data:
+          readOnly: true
         pages_uri:
           type: string
           readOnly: true
@@ -3667,17 +3732,28 @@ components:
           type: string
           readOnly: true
       required:
+      - allow_annotation
       - cover_image
+      - data
+      - file_size
       - file_url
       - foirequest
       - id
       - last_modified_at
+      - listed
+      - num_pages
       - original
+      - outline
       - page_template
       - pages_uri
+      - pending
+      - properties
+      - public
       - publicbody
+      - published_at
       - resource_uri
       - site_url
+      - slug
       - uid
     DocumentCollection:
       type: object
@@ -3699,15 +3775,19 @@ components:
           type: string
         public:
           type: boolean
+          readOnly: true
         listed:
           type: boolean
+          readOnly: true
         created_at:
           type: string
           format: date-time
+          readOnly: true
           nullable: true
         updated_at:
           type: string
           format: date-time
+          readOnly: true
           nullable: true
         document_count:
           type: string
@@ -3721,7 +3801,13 @@ components:
           readOnly: true
         cover_image:
           type: string
+        current_directory:
+          type: string
+          readOnly: true
         directories:
+          type: string
+          readOnly: true
+        directory_stack:
           type: string
           readOnly: true
         documents:
@@ -3733,22 +3819,30 @@ components:
         pages_uri:
           type: string
           readOnly: true
-        settings: {}
+        settings:
+          readOnly: true
         zip_download_url:
           type: string
           readOnly: true
       required:
       - cover_image
+      - created_at
+      - current_directory
       - directories
+      - directory_stack
       - document_count
       - document_directory_count
       - documents
       - documents_uri
       - id
+      - listed
       - pages_uri
+      - public
       - resource_uri
+      - settings
       - site_url
       - uid
+      - updated_at
       - zip_download_url
     DocumentDetail:
       type: object
@@ -3768,34 +3862,36 @@ components:
           maxLength: 500
         slug:
           type: string
-          maxLength: 250
+          readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
         description:
           type: string
         published_at:
           type: string
           format: date-time
+          readOnly: true
           nullable: true
         num_pages:
           type: integer
-          maximum: 2147483647
-          minimum: 0
+          readOnly: true
         public:
           type: boolean
+          readOnly: true
         listed:
           type: boolean
+          readOnly: true
         allow_annotation:
           type: boolean
+          readOnly: true
         pending:
           type: boolean
+          readOnly: true
         file_url:
           type: string
           readOnly: true
         file_size:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
+          readOnly: true
           nullable: true
         cover_image:
           type: string
@@ -3803,12 +3899,15 @@ components:
           type: string
         outline:
           type: string
-        properties: {}
+          readOnly: true
+        properties:
+          readOnly: true
         uid:
           type: string
           format: uuid
           readOnly: true
-        data: {}
+        data:
+          readOnly: true
         pages_uri:
           type: string
           readOnly: true
@@ -3831,18 +3930,29 @@ components:
           type: string
           readOnly: true
       required:
+      - allow_annotation
       - cover_image
+      - data
+      - file_size
       - file_url
       - foirequest
       - id
       - last_modified_at
+      - listed
+      - num_pages
       - original
+      - outline
       - page_template
       - pages
       - pages_uri
+      - pending
+      - properties
+      - public
       - publicbody
+      - published_at
       - resource_uri
       - site_url
+      - slug
       - uid
     FoiAttachment:
       type: object
@@ -4031,6 +4141,9 @@ components:
         refusal_reasons:
           type: string
           readOnly: true
+        legal_text:
+          type: string
+          readOnly: true
         combined:
           type: array
           items:
@@ -4043,6 +4156,7 @@ components:
       - id
       - jurisdiction
       - last_modified_at
+      - legal_text
       - letter_end
       - letter_start
       - long_description
@@ -4070,26 +4184,21 @@ components:
         request:
           type: string
           format: uri
-          readOnly: true
         sent:
           type: boolean
           readOnly: true
           title: Has message been sent?
         is_response:
           type: boolean
-          readOnly: true
           title: Response?
         is_postal:
           type: string
           readOnly: true
         is_draft:
           type: boolean
-          readOnly: true
-          title: Is message a draft?
+          default: true
         kind:
-          allOf:
-          - $ref: '#/components/schemas/FoiMessageKindEnum'
-          readOnly: true
+          $ref: '#/components/schemas/FoiMessageKindEnum'
         is_escalation:
           type: boolean
           readOnly: true
@@ -4154,11 +4263,8 @@ components:
       - content
       - content_hidden
       - id
-      - is_draft
       - is_escalation
       - is_postal
-      - is_response
-      - kind
       - last_modified_at
       - not_publishable
       - redacted_content
@@ -4856,14 +4962,17 @@ components:
         timestamp:
           type: string
           format: date-time
+          readOnly: true
         can_delete:
           type: boolean
           readOnly: true
         highlight:
           type: string
+          readOnly: true
         image:
           type: string
           format: uri
+          readOnly: true
         document:
           type: string
           format: uri
@@ -4874,8 +4983,11 @@ components:
       required:
       - can_delete
       - document
+      - highlight
       - id
+      - image
       - number
+      - timestamp
     PaginatedCampaignList:
       type: object
       required:
@@ -5262,34 +5374,36 @@ components:
           maxLength: 500
         slug:
           type: string
-          maxLength: 250
+          readOnly: true
           pattern: ^[-a-zA-Z0-9_]+$
         description:
           type: string
         published_at:
           type: string
           format: date-time
+          readOnly: true
           nullable: true
         num_pages:
           type: integer
-          maximum: 2147483647
-          minimum: 0
+          readOnly: true
         public:
           type: boolean
+          readOnly: true
         listed:
           type: boolean
+          readOnly: true
         allow_annotation:
           type: boolean
+          readOnly: true
         pending:
           type: boolean
+          readOnly: true
         file_url:
           type: string
           readOnly: true
         file_size:
           type: integer
-          maximum: 9223372036854775807
-          minimum: -9223372036854775808
-          format: int64
+          readOnly: true
           nullable: true
         cover_image:
           type: string
@@ -5297,12 +5411,15 @@ components:
           type: string
         outline:
           type: string
-        properties: {}
+          readOnly: true
+        properties:
+          readOnly: true
         uid:
           type: string
           format: uuid
           readOnly: true
-        data: {}
+        data:
+          readOnly: true
         pages_uri:
           type: string
           readOnly: true
@@ -5322,26 +5439,21 @@ components:
         request:
           type: string
           format: uri
-          readOnly: true
         sent:
           type: boolean
           readOnly: true
           title: Has message been sent?
         is_response:
           type: boolean
-          readOnly: true
           title: Response?
         is_postal:
           type: string
           readOnly: true
         is_draft:
           type: boolean
-          readOnly: true
-          title: Is message a draft?
+          default: true
         kind:
-          allOf:
-          - $ref: '#/components/schemas/FoiMessageKindEnum'
-          readOnly: true
+          $ref: '#/components/schemas/FoiMessageKindEnum'
         is_escalation:
           type: boolean
           readOnly: true
@@ -5523,8 +5635,7 @@ components:
           type: string
           format: uuid
         state:
-          type: string
-          maxLength: 50
+          $ref: '#/components/schemas/StateEnum'
         upload_offset:
           type: integer
           maximum: 9223372036854775807
@@ -6008,6 +6119,18 @@ components:
       - resource_uri
       - site_url
       - slug
+    StateEnum:
+      enum:
+      - initial
+      - receiving
+      - saving
+      - done
+      type: string
+      description: |-
+        * `initial` - Initial
+        * `receiving` - Receiving
+        * `saving` - Saving
+        * `done` - Done
     Status719Enum:
       enum:
       - awaiting_response
@@ -6034,8 +6157,7 @@ components:
           type: string
           format: uuid
         state:
-          type: string
-          maxLength: 50
+          $ref: '#/components/schemas/StateEnum'
         upload_offset:
           type: integer
           maximum: 9223372036854775807
@@ -6079,8 +6201,7 @@ components:
           type: string
           format: uuid
         state:
-          type: string
-          maxLength: 50
+          $ref: '#/components/schemas/StateEnum'
         upload_offset:
           type: integer
           maximum: 9223372036854775807

@@ -53,7 +53,7 @@ export default createStore({
     }
   },
   getters: {
-    getPublicBodyByScope: (state, getters) => (scope) => {
+    getPublicBodyByScope: (_state, getters) => (scope) => {
       const pbs = getters.getPublicBodiesByScope(scope)
       if (pbs.length === 0) {
         return null
