@@ -35,6 +35,7 @@ import type {
   LawRetrieveResponse,
   LawAutocompleteRetrieveResponse,
   MessageListResponse,
+  MessageCreateResponse,
   MessageRetrieveResponse,
   MessagePartialUpdateResponse,
   MessageUpdateResponse,
@@ -73,9 +74,6 @@ import type {
 const documentSchemaResponseTransformer = (data: any) => {
   if (data.published_at) {
     data.published_at = new Date(data.published_at)
-  }
-  if (data.file_size) {
-    data.file_size = BigInt(data.file_size.toString())
   }
   return data
 }
@@ -186,9 +184,6 @@ export const documentListResponseTransformer = async (
 const documentDetailSchemaResponseTransformer = (data: any) => {
   if (data.published_at) {
     data.published_at = new Date(data.published_at)
-  }
-  if (data.file_size) {
-    data.file_size = BigInt(data.file_size.toString())
   }
   return data
 }
@@ -463,6 +458,13 @@ export const messageListResponseTransformer = async (
   return data
 }
 
+export const messageCreateResponseTransformer = async (
+  data: any
+): Promise<MessageCreateResponse> => {
+  data = foiMessageSchemaResponseTransformer(data)
+  return data
+}
+
 export const messageRetrieveResponseTransformer = async (
   data: any
 ): Promise<MessageRetrieveResponse> => {
@@ -492,9 +494,7 @@ export const messagePublishCreateResponseTransformer = async (
 }
 
 const pageAnnotationSchemaResponseTransformer = (data: any) => {
-  if (data.timestamp) {
-    data.timestamp = new Date(data.timestamp)
-  }
+  data.timestamp = new Date(data.timestamp)
   return data
 }
 
