@@ -1,7 +1,7 @@
 import { defineConfig } from '@hey-api/openapi-ts'
 
 export default defineConfig({
-  input: 'froide/openapi-schema.yaml',
+  input: './froide/openapi-schema.yaml',
   output: {
     path: 'frontend/javascript/api/gen',
     format: 'prettier',

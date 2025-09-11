@@ -194,7 +194,7 @@ export const DocumentSchema = {
     },
     slug: {
       type: 'string',
-      maxLength: 250,
+      readOnly: true,
       pattern: '^[-a-zA-Z0-9_]+$'
     },
     description: {
@@ -203,24 +203,28 @@ export const DocumentSchema = {
     published_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     num_pages: {
       type: 'integer',
-      maximum: 2147483647,
-      minimum: 0
+      readOnly: true
     },
     public: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     listed: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     allow_annotation: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     pending: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     file_url: {
       type: 'string',
@@ -228,9 +232,7 @@ export const DocumentSchema = {
     },
     file_size: {
       type: 'integer',
-      maximum: 9223372036854776000,
-      minimum: -9223372036854776000,
-      format: 'int64',
+      readOnly: true,
       nullable: true
     },
     cover_image: {
@@ -240,15 +242,20 @@ export const DocumentSchema = {
       type: 'string'
     },
     outline: {
-      type: 'string'
+      type: 'string',
+      readOnly: true
     },
-    properties: {},
+    properties: {
+      readOnly: true
+    },
     uid: {
       type: 'string',
       format: 'uuid',
       readOnly: true
     },
-    data: {},
+    data: {
+      readOnly: true
+    },
     pages_uri: {
       type: 'string',
       readOnly: true
@@ -274,17 +281,28 @@ export const DocumentSchema = {
     }
   },
   required: [
+    'allow_annotation',
     'cover_image',
+    'data',
+    'file_size',
     'file_url',
     'foirequest',
     'id',
     'last_modified_at',
+    'listed',
+    'num_pages',
     'original',
+    'outline',
     'page_template',
     'pages_uri',
+    'pending',
+    'properties',
+    'public',
     'publicbody',
+    'published_at',
     'resource_uri',
     'site_url',
+    'slug',
     'uid'
   ]
 } as const
@@ -313,19 +331,23 @@ export const DocumentCollectionSchema = {
       type: 'string'
     },
     public: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     listed: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     created_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     updated_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     document_count: {
@@ -344,7 +366,15 @@ export const DocumentCollectionSchema = {
     cover_image: {
       type: 'string'
     },
+    current_directory: {
+      type: 'string',
+      readOnly: true
+    },
     directories: {
+      type: 'string',
+      readOnly: true
+    },
+    directory_stack: {
       type: 'string',
       readOnly: true
     },
@@ -360,7 +390,9 @@ export const DocumentCollectionSchema = {
       type: 'string',
       readOnly: true
     },
-    settings: {},
+    settings: {
+      readOnly: true
+    },
     zip_download_url: {
       type: 'string',
       readOnly: true
@@ -368,16 +400,23 @@ export const DocumentCollectionSchema = {
   },
   required: [
     'cover_image',
+    'created_at',
+    'current_directory',
     'directories',
+    'directory_stack',
     'document_count',
     'document_directory_count',
     'documents',
     'documents_uri',
     'id',
+    'listed',
     'pages_uri',
+    'public',
     'resource_uri',
+    'settings',
     'site_url',
     'uid',
+    'updated_at',
     'zip_download_url'
   ]
 } as const
@@ -404,7 +443,7 @@ export const DocumentDetailSchema = {
     },
     slug: {
       type: 'string',
-      maxLength: 250,
+      readOnly: true,
       pattern: '^[-a-zA-Z0-9_]+$'
     },
     description: {
@@ -413,24 +452,28 @@ export const DocumentDetailSchema = {
     published_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     num_pages: {
       type: 'integer',
-      maximum: 2147483647,
-      minimum: 0
+      readOnly: true
     },
     public: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     listed: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     allow_annotation: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     pending: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     file_url: {
       type: 'string',
@@ -438,9 +481,7 @@ export const DocumentDetailSchema = {
     },
     file_size: {
       type: 'integer',
-      maximum: 9223372036854776000,
-      minimum: -9223372036854776000,
-      format: 'int64',
+      readOnly: true,
       nullable: true
     },
     cover_image: {
@@ -450,15 +491,20 @@ export const DocumentDetailSchema = {
       type: 'string'
     },
     outline: {
-      type: 'string'
+      type: 'string',
+      readOnly: true
     },
-    properties: {},
+    properties: {
+      readOnly: true
+    },
     uid: {
       type: 'string',
       format: 'uuid',
       readOnly: true
     },
-    data: {},
+    data: {
+      readOnly: true
+    },
     pages_uri: {
       type: 'string',
       readOnly: true
@@ -488,18 +534,29 @@ export const DocumentDetailSchema = {
     }
   },
   required: [
+    'allow_annotation',
     'cover_image',
+    'data',
+    'file_size',
     'file_url',
     'foirequest',
     'id',
     'last_modified_at',
+    'listed',
+    'num_pages',
     'original',
+    'outline',
     'page_template',
     'pages',
     'pages_uri',
+    'pending',
+    'properties',
+    'public',
     'publicbody',
+    'published_at',
     'resource_uri',
     'site_url',
+    'slug',
     'uid'
   ]
 } as const
@@ -750,6 +807,10 @@ export const FoiLawSchema = {
       type: 'string',
       readOnly: true
     },
+    legal_text: {
+      type: 'string',
+      readOnly: true
+    },
     combined: {
       type: 'array',
       items: {
@@ -765,6 +826,7 @@ export const FoiLawSchema = {
     'id',
     'jurisdiction',
     'last_modified_at',
+    'legal_text',
     'letter_end',
     'letter_start',
     'long_description',
@@ -797,8 +859,7 @@ export const FoiMessageSchema = {
     },
     request: {
       type: 'string',
-      format: 'uri',
-      readOnly: true
+      format: 'uri'
     },
     sent: {
       type: 'boolean',
@@ -807,7 +868,6 @@ export const FoiMessageSchema = {
     },
     is_response: {
       type: 'boolean',
-      readOnly: true,
       title: 'Response?'
     },
     is_postal: {
@@ -816,16 +876,10 @@ export const FoiMessageSchema = {
     },
     is_draft: {
       type: 'boolean',
-      readOnly: true,
-      title: 'Is message a draft?'
+      default: true
     },
     kind: {
-      allOf: [
-        {
-          $ref: '#/components/schemas/FoiMessageKindEnum'
-        }
-      ],
-      readOnly: true
+      $ref: '#/components/schemas/FoiMessageKindEnum'
     },
     is_escalation: {
       type: 'boolean',
@@ -914,11 +968,8 @@ export const FoiMessageSchema = {
     'content',
     'content_hidden',
     'id',
-    'is_draft',
     'is_escalation',
     'is_postal',
-    'is_response',
-    'kind',
     'last_modified_at',
     'not_publishable',
     'redacted_content',
@@ -1804,18 +1855,21 @@ export const PageAnnotationSchema = {
     },
     timestamp: {
       type: 'string',
-      format: 'date-time'
+      format: 'date-time',
+      readOnly: true
     },
     can_delete: {
       type: 'boolean',
       readOnly: true
     },
     highlight: {
-      type: 'string'
+      type: 'string',
+      readOnly: true
     },
     image: {
       type: 'string',
-      format: 'uri'
+      format: 'uri',
+      readOnly: true
     },
     document: {
       type: 'string',
@@ -1827,7 +1881,15 @@ export const PageAnnotationSchema = {
       readOnly: true
     }
   },
-  required: ['can_delete', 'document', 'id', 'number']
+  required: [
+    'can_delete',
+    'document',
+    'highlight',
+    'id',
+    'image',
+    'number',
+    'timestamp'
+  ]
 } as const
 
 export const PaginatedCampaignListSchema = {
@@ -2316,7 +2378,7 @@ export const PatchedDocumentSchema = {
     },
     slug: {
       type: 'string',
-      maxLength: 250,
+      readOnly: true,
       pattern: '^[-a-zA-Z0-9_]+$'
     },
     description: {
@@ -2325,24 +2387,28 @@ export const PatchedDocumentSchema = {
     published_at: {
       type: 'string',
       format: 'date-time',
+      readOnly: true,
       nullable: true
     },
     num_pages: {
       type: 'integer',
-      maximum: 2147483647,
-      minimum: 0
+      readOnly: true
     },
     public: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     listed: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     allow_annotation: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     pending: {
-      type: 'boolean'
+      type: 'boolean',
+      readOnly: true
     },
     file_url: {
       type: 'string',
@@ -2350,9 +2416,7 @@ export const PatchedDocumentSchema = {
     },
     file_size: {
       type: 'integer',
-      maximum: 9223372036854776000,
-      minimum: -9223372036854776000,
-      format: 'int64',
+      readOnly: true,
       nullable: true
     },
     cover_image: {
@@ -2362,15 +2426,20 @@ export const PatchedDocumentSchema = {
       type: 'string'
     },
     outline: {
-      type: 'string'
+      type: 'string',
+      readOnly: true
     },
-    properties: {},
+    properties: {
+      readOnly: true
+    },
     uid: {
       type: 'string',
       format: 'uuid',
       readOnly: true
     },
-    data: {},
+    data: {
+      readOnly: true
+    },
     pages_uri: {
       type: 'string',
       readOnly: true
@@ -2396,8 +2465,7 @@ export const PatchedFoiMessageSchema = {
     },
     request: {
       type: 'string',
-      format: 'uri',
-      readOnly: true
+      format: 'uri'
     },
     sent: {
       type: 'boolean',
@@ -2406,7 +2474,6 @@ export const PatchedFoiMessageSchema = {
     },
     is_response: {
       type: 'boolean',
-      readOnly: true,
       title: 'Response?'
     },
     is_postal: {
@@ -2415,16 +2482,10 @@ export const PatchedFoiMessageSchema = {
     },
     is_draft: {
       type: 'boolean',
-      readOnly: true,
-      title: 'Is message a draft?'
+      default: true
     },
     kind: {
-      allOf: [
-        {
-          $ref: '#/components/schemas/FoiMessageKindEnum'
-        }
-      ],
-      readOnly: true
+      $ref: '#/components/schemas/FoiMessageKindEnum'
     },
     is_escalation: {
       type: 'boolean',
@@ -2676,8 +2737,7 @@ export const PatchedUploadSchema = {
       format: 'uuid'
     },
     state: {
-      type: 'string',
-      maxLength: 50
+      $ref: '#/components/schemas/StateEnum'
     },
     upload_offset: {
       type: 'integer',
@@ -3313,6 +3373,15 @@ export const SimplePublicBodySchema = {
   ]
 } as const
 
+export const StateEnumSchema = {
+  enum: ['initial', 'receiving', 'saving', 'done'],
+  type: 'string',
+  description: `* \`initial\` - Initial
+* \`receiving\` - Receiving
+* \`saving\` - Saving
+* \`done\` - Done`
+} as const
+
 export const Status719EnumSchema = {
   enum: ['awaiting_response', 'resolved'],
   type: 'string',
@@ -3345,8 +3414,7 @@ export const UploadSchema = {
       format: 'uuid'
     },
     state: {
-      type: 'string',
-      maxLength: 50
+      $ref: '#/components/schemas/StateEnum'
     },
     upload_offset: {
       type: 'integer',
@@ -3402,8 +3470,7 @@ export const UploadCreateSchema = {
       format: 'uuid'
     },
     state: {
-      type: 'string',
-      maxLength: 50
+      $ref: '#/components/schemas/StateEnum'
     },
     upload_offset: {
       type: 'integer',
@@ -3469,4 +3536,1157 @@ export const UserPreferenceSchema = {
     }
   },
   required: ['value']
+} as const
+
+export const CampaignWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 50,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    url: {
+      type: 'string',
+      format: 'uri',
+      maxLength: 200
+    },
+    description: {
+      type: 'string'
+    },
+    start_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    active: {
+      type: 'boolean'
+    }
+  },
+  required: ['name', 'slug']
+} as const
+
+export const CategoryWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 100
+    },
+    slug: {
+      type: 'string',
+      pattern: '^[-\\w]+$',
+      maxLength: 100
+    },
+    is_topic: {
+      type: 'boolean',
+      title: 'As topic'
+    },
+    depth: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: 0
+    }
+  },
+  required: ['depth', 'name', 'slug']
+} as const
+
+export const ClassificationWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    depth: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: 0
+    }
+  },
+  required: ['depth', 'name', 'slug']
+} as const
+
+export const DocumentWritableSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      maxLength: 500
+    },
+    description: {
+      type: 'string'
+    },
+    cover_image: {
+      type: 'string'
+    },
+    page_template: {
+      type: 'string'
+    }
+  },
+  required: ['cover_image', 'page_template']
+} as const
+
+export const DocumentCollectionWritableSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      maxLength: 255
+    },
+    description: {
+      type: 'string'
+    },
+    cover_image: {
+      type: 'string'
+    }
+  },
+  required: ['cover_image']
+} as const
+
+export const DocumentDetailWritableSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      maxLength: 500
+    },
+    description: {
+      type: 'string'
+    },
+    cover_image: {
+      type: 'string'
+    },
+    page_template: {
+      type: 'string'
+    }
+  },
+  required: ['cover_image', 'page_template']
+} as const
+
+export const FoiAttachmentWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    filetype: {
+      type: 'string',
+      title: 'File type',
+      maxLength: 100
+    },
+    size: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    pending: {
+      type: 'boolean'
+    },
+    is_converted: {
+      type: 'boolean'
+    },
+    approved: {
+      type: 'boolean'
+    },
+    can_approve: {
+      type: 'boolean',
+      title: 'User can approve'
+    },
+    is_redacted: {
+      type: 'boolean'
+    },
+    document: {
+      $ref: '#/components/schemas/DocumentWritable'
+    }
+  },
+  required: ['document', 'name']
+} as const
+
+export const FoiLawWritableSchema = {
+  type: 'object',
+  properties: {
+    law_type: {
+      type: 'string',
+      maxLength: 255
+    },
+    created: {
+      type: 'string',
+      format: 'date',
+      nullable: true,
+      title: 'Creation Date'
+    },
+    meta: {
+      type: 'boolean',
+      title: 'Meta Law'
+    },
+    email_only: {
+      type: 'boolean',
+      title: 'E-Mail only'
+    },
+    priority: {
+      type: 'integer',
+      maximum: 32767,
+      minimum: -32768
+    },
+    url: {
+      type: 'string',
+      maxLength: 255
+    },
+    max_response_time: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true,
+      title: 'Maximal Response Time'
+    },
+    requires_signature: {
+      type: 'boolean'
+    },
+    max_response_time_unit: {
+      title: 'Unit of Response Time',
+      oneOf: [
+        {
+          $ref: '#/components/schemas/MaxResponseTimeUnitEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    last_modified_at: {
+      type: 'string'
+    }
+  },
+  required: ['last_modified_at']
+} as const
+
+export const FoiMessageWritableSchema = {
+  type: 'object',
+  properties: {
+    request: {
+      type: 'string',
+      format: 'uri'
+    },
+    is_response: {
+      type: 'boolean',
+      title: 'Response?'
+    },
+    is_draft: {
+      type: 'boolean',
+      default: true
+    },
+    kind: {
+      $ref: '#/components/schemas/FoiMessageKindEnum'
+    },
+    sender_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    recipient_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    timestamp: {
+      type: 'string',
+      format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    redacted: {
+      type: 'boolean',
+      title: 'Was Redacted?'
+    }
+  },
+  required: ['request']
+} as const
+
+export const FoiRequestDetailWritableSchema = {
+  type: 'object',
+  properties: {
+    refusal_reason: {
+      type: 'string'
+    },
+    costs: {
+      type: 'string',
+      format: 'decimal',
+      pattern: '^-?\\d{0,10}(?:\\.\\d{0,2})?$'
+    },
+    description: {
+      type: 'string'
+    },
+    summary: {
+      type: 'string'
+    },
+    status: {
+      $ref: '#/components/schemas/Status719Enum'
+    },
+    resolution: {
+      oneOf: [
+        {
+          $ref: '#/components/schemas/ResolutionEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    tags: {
+      type: 'array',
+      items: {
+        type: 'string'
+      }
+    }
+  },
+  required: ['costs', 'description', 'refusal_reason', 'status', 'tags']
+} as const
+
+export const FoiRequestFollowWritableSchema = {
+  type: 'object',
+  properties: {
+    timestamp: {
+      type: 'string',
+      format: 'date-time',
+      title: 'Timestamp of Following'
+    }
+  }
+} as const
+
+export const FoiRequestListWritableSchema = {
+  type: 'object',
+  properties: {
+    refusal_reason: {
+      type: 'string'
+    },
+    costs: {
+      type: 'string',
+      format: 'decimal',
+      pattern: '^-?\\d{0,10}(?:\\.\\d{0,2})?$'
+    },
+    law: {
+      type: 'string',
+      format: 'uri'
+    },
+    description: {
+      type: 'string'
+    },
+    summary: {
+      type: 'string'
+    },
+    status: {
+      $ref: '#/components/schemas/Status719Enum'
+    },
+    resolution: {
+      oneOf: [
+        {
+          $ref: '#/components/schemas/ResolutionEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    tags: {
+      type: 'array',
+      items: {
+        type: 'string'
+      }
+    }
+  },
+  required: ['costs', 'description', 'law', 'refusal_reason', 'status', 'tags']
+} as const
+
+export const GeoRegionWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    kind: {
+      allOf: [
+        {
+          $ref: '#/components/schemas/KindCfdEnum'
+        }
+      ],
+      title: 'Kind of Region'
+    },
+    kind_detail: {
+      type: 'string',
+      maxLength: 255
+    },
+    level: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648
+    },
+    region_identifier: {
+      type: 'string',
+      maxLength: 255
+    },
+    global_identifier: {
+      type: 'string',
+      maxLength: 255
+    },
+    area: {
+      type: 'number',
+      format: 'double'
+    },
+    population: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    valid_on: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    }
+  },
+  required: ['kind', 'name', 'slug']
+} as const
+
+export const GeoRegionDetailWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    kind: {
+      allOf: [
+        {
+          $ref: '#/components/schemas/KindCfdEnum'
+        }
+      ],
+      title: 'Kind of Region'
+    },
+    kind_detail: {
+      type: 'string',
+      maxLength: 255
+    },
+    level: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648
+    },
+    region_identifier: {
+      type: 'string',
+      maxLength: 255
+    },
+    global_identifier: {
+      type: 'string',
+      maxLength: 255
+    },
+    area: {
+      type: 'number',
+      format: 'double'
+    },
+    population: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    valid_on: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    }
+  },
+  required: ['kind', 'name', 'slug']
+} as const
+
+export const JurisdictionWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    rank: {
+      type: 'integer',
+      maximum: 32767,
+      minimum: -32768
+    },
+    description: {
+      type: 'string'
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    site_url: {
+      type: 'string'
+    }
+  },
+  required: ['name', 'site_url', 'slug']
+} as const
+
+export const PageWritableSchema = {
+  type: 'object',
+  properties: {
+    number: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      default: 1
+    },
+    content: {
+      type: 'string'
+    },
+    width: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    height: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    image: {
+      type: 'string'
+    },
+    query_highlight: {
+      type: 'string'
+    }
+  },
+  required: ['image', 'query_highlight']
+} as const
+
+export const PageAnnotationWritableSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      maxLength: 255
+    },
+    description: {
+      type: 'string'
+    },
+    top: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    left: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    width: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    },
+    height: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648,
+      nullable: true
+    }
+  }
+} as const
+
+export const PatchedDocumentWritableSchema = {
+  type: 'object',
+  properties: {
+    title: {
+      type: 'string',
+      maxLength: 500
+    },
+    description: {
+      type: 'string'
+    },
+    cover_image: {
+      type: 'string'
+    },
+    page_template: {
+      type: 'string'
+    }
+  }
+} as const
+
+export const PatchedFoiMessageWritableSchema = {
+  type: 'object',
+  properties: {
+    request: {
+      type: 'string',
+      format: 'uri'
+    },
+    is_response: {
+      type: 'boolean',
+      title: 'Response?'
+    },
+    is_draft: {
+      type: 'boolean',
+      default: true
+    },
+    kind: {
+      $ref: '#/components/schemas/FoiMessageKindEnum'
+    },
+    sender_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    recipient_public_body: {
+      type: 'string',
+      format: 'uri',
+      nullable: true
+    },
+    timestamp: {
+      type: 'string',
+      format: 'date-time'
+    },
+    registered_mail_date: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    redacted: {
+      type: 'boolean',
+      title: 'Was Redacted?'
+    }
+  }
+} as const
+
+export const PatchedFoiRequestListWritableSchema = {
+  type: 'object',
+  properties: {
+    refusal_reason: {
+      type: 'string'
+    },
+    costs: {
+      type: 'string',
+      format: 'decimal',
+      pattern: '^-?\\d{0,10}(?:\\.\\d{0,2})?$'
+    },
+    law: {
+      type: 'string',
+      format: 'uri'
+    },
+    description: {
+      type: 'string'
+    },
+    summary: {
+      type: 'string'
+    },
+    status: {
+      $ref: '#/components/schemas/Status719Enum'
+    },
+    resolution: {
+      oneOf: [
+        {
+          $ref: '#/components/schemas/ResolutionEnum'
+        },
+        {
+          $ref: '#/components/schemas/BlankEnum'
+        }
+      ]
+    },
+    tags: {
+      type: 'array',
+      items: {
+        type: 'string'
+      }
+    }
+  }
+} as const
+
+export const PatchedUploadWritableSchema = {
+  type: 'object',
+  properties: {
+    guid: {
+      type: 'string',
+      format: 'uuid'
+    },
+    state: {
+      $ref: '#/components/schemas/StateEnum'
+    },
+    upload_offset: {
+      type: 'integer',
+      maximum: 9223372036854776000,
+      minimum: -9223372036854776000,
+      format: 'int64'
+    },
+    upload_length: {
+      type: 'integer',
+      maximum: 9223372036854776000,
+      minimum: -9223372036854776000,
+      format: 'int64'
+    },
+    upload_metadata: {
+      type: 'string'
+    },
+    filename: {
+      type: 'string',
+      maxLength: 255
+    },
+    temporary_file_path: {
+      type: 'string',
+      nullable: true,
+      maxLength: 4096
+    },
+    expires: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    token: {
+      type: 'string',
+      format: 'uuid',
+      nullable: true
+    },
+    user: {
+      type: 'integer',
+      nullable: true
+    }
+  }
+} as const
+
+export const ProblemReportWritableSchema = {
+  type: 'object',
+  properties: {
+    kind: {
+      $ref: '#/components/schemas/ProblemReportKindEnum'
+    },
+    timestamp: {
+      type: 'string',
+      format: 'date-time'
+    },
+    auto_submitted: {
+      type: 'boolean'
+    },
+    resolved: {
+      type: 'boolean'
+    },
+    description: {
+      type: 'string'
+    },
+    resolution: {
+      type: 'string'
+    },
+    resolution_timestamp: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    claimed: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    escalated: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    }
+  },
+  required: ['kind']
+} as const
+
+export const PublicBodyWritableSchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'integer'
+    },
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    other_names: {
+      type: 'string'
+    },
+    description: {
+      type: 'string'
+    },
+    url: {
+      type: 'string',
+      format: 'uri',
+      nullable: true,
+      maxLength: 500
+    },
+    depth: {
+      type: 'integer',
+      maximum: 32767,
+      minimum: -32768
+    },
+    email: {
+      type: 'string',
+      format: 'email',
+      maxLength: 255
+    },
+    contact: {
+      type: 'string'
+    },
+    address: {
+      type: 'string'
+    },
+    fax: {
+      type: 'string',
+      maxLength: 50
+    },
+    request_note: {
+      type: 'string'
+    },
+    number_of_requests: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648
+    },
+    site_url: {
+      type: 'string'
+    },
+    source_reference: {
+      type: 'string',
+      maxLength: 255
+    },
+    alternative_emails: {
+      nullable: true
+    },
+    wikidata_item: {
+      type: 'string',
+      maxLength: 50
+    },
+    extra_data: {}
+  },
+  required: ['id', 'name', 'site_url', 'slug']
+} as const
+
+export const PublicBodyListWritableSchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'integer'
+    },
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    other_names: {
+      type: 'string'
+    },
+    description: {
+      type: 'string'
+    },
+    url: {
+      type: 'string',
+      format: 'uri',
+      nullable: true,
+      maxLength: 500
+    },
+    depth: {
+      type: 'integer',
+      maximum: 32767,
+      minimum: -32768
+    },
+    email: {
+      type: 'string',
+      format: 'email',
+      maxLength: 255
+    },
+    contact: {
+      type: 'string'
+    },
+    address: {
+      type: 'string'
+    },
+    fax: {
+      type: 'string',
+      maxLength: 50
+    },
+    request_note: {
+      type: 'string'
+    },
+    number_of_requests: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648
+    },
+    site_url: {
+      type: 'string'
+    },
+    source_reference: {
+      type: 'string',
+      maxLength: 255
+    },
+    alternative_emails: {
+      nullable: true
+    },
+    wikidata_item: {
+      type: 'string',
+      maxLength: 50
+    },
+    extra_data: {}
+  },
+  required: ['id', 'name', 'site_url', 'slug']
+} as const
+
+export const SimpleCategoryWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 100
+    },
+    slug: {
+      type: 'string',
+      pattern: '^[-\\w]+$',
+      maxLength: 100
+    },
+    is_topic: {
+      type: 'boolean',
+      title: 'As topic'
+    },
+    depth: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: 0
+    }
+  },
+  required: ['depth', 'name', 'slug']
+} as const
+
+export const SimpleClassificationWritableSchema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    depth: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: 0
+    }
+  },
+  required: ['depth', 'name', 'slug']
+} as const
+
+export const SimplePublicBodyWritableSchema = {
+  type: 'object',
+  properties: {
+    id: {
+      type: 'integer'
+    },
+    name: {
+      type: 'string',
+      maxLength: 255
+    },
+    slug: {
+      type: 'string',
+      maxLength: 255,
+      pattern: '^[-a-zA-Z0-9_]+$'
+    },
+    other_names: {
+      type: 'string'
+    },
+    description: {
+      type: 'string'
+    },
+    url: {
+      type: 'string',
+      format: 'uri',
+      nullable: true,
+      maxLength: 500
+    },
+    depth: {
+      type: 'integer',
+      maximum: 32767,
+      minimum: -32768
+    },
+    email: {
+      type: 'string',
+      format: 'email',
+      maxLength: 255
+    },
+    contact: {
+      type: 'string'
+    },
+    address: {
+      type: 'string'
+    },
+    fax: {
+      type: 'string',
+      maxLength: 50
+    },
+    request_note: {
+      type: 'string'
+    },
+    number_of_requests: {
+      type: 'integer',
+      maximum: 2147483647,
+      minimum: -2147483648
+    },
+    site_url: {
+      type: 'string'
+    },
+    last_modified_at: {
+      type: 'string'
+    }
+  },
+  required: ['id', 'last_modified_at', 'name', 'site_url', 'slug']
+} as const
+
+export const UploadWritableSchema = {
+  type: 'object',
+  properties: {
+    guid: {
+      type: 'string',
+      format: 'uuid'
+    },
+    state: {
+      $ref: '#/components/schemas/StateEnum'
+    },
+    upload_offset: {
+      type: 'integer',
+      maximum: 9223372036854776000,
+      minimum: -9223372036854776000,
+      format: 'int64'
+    },
+    upload_length: {
+      type: 'integer',
+      maximum: 9223372036854776000,
+      minimum: -9223372036854776000,
+      format: 'int64'
+    },
+    upload_metadata: {
+      type: 'string'
+    },
+    filename: {
+      type: 'string',
+      maxLength: 255
+    },
+    temporary_file_path: {
+      type: 'string',
+      nullable: true,
+      maxLength: 4096
+    },
+    expires: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    token: {
+      type: 'string',
+      format: 'uuid',
+      nullable: true
+    },
+    user: {
+      type: 'integer',
+      nullable: true
+    }
+  },
+  required: ['guid']
+} as const
+
+export const UploadCreateWritableSchema = {
+  type: 'object',
+  properties: {
+    guid: {
+      type: 'string',
+      format: 'uuid'
+    },
+    state: {
+      $ref: '#/components/schemas/StateEnum'
+    },
+    upload_offset: {
+      type: 'integer',
+      maximum: 9223372036854776000,
+      minimum: -9223372036854776000,
+      format: 'int64'
+    },
+    upload_length: {
+      type: 'integer',
+      maximum: 9223372036854776000,
+      minimum: -9223372036854776000,
+      format: 'int64'
+    },
+    upload_metadata: {
+      type: 'string'
+    },
+    filename: {
+      type: 'string',
+      maxLength: 255
+    },
+    temporary_file_path: {
+      type: 'string',
+      nullable: true,
+      maxLength: 4096
+    },
+    expires: {
+      type: 'string',
+      format: 'date-time',
+      nullable: true
+    },
+    token: {
+      type: 'string',
+      format: 'uuid',
+      nullable: true
+    },
+    user: {
+      type: 'integer',
+      nullable: true
+    }
+  }
+} as const
+
+export const UserWritableSchema = {
+  type: 'object',
+  properties: {
+    private: {
+      type: 'boolean'
+    }
+  }
 } as const
