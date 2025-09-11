@@ -14,6 +14,12 @@
                 {{ userformFields.private.label }}
               </label>
               <p class="help-block" v-html="userformFields.private.help_text" />
+              <p>
+                <a
+                  :href="config.url.helpRequestPrivacy" 
+                  @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
+                  >§Weitere Infos zur Privatsphäre auf FdS</a>
+              </p>
             </div>
           </div>
         </div>

@@ -813,7 +813,8 @@ addEventListener('hashchange', () => {
   <SimpleStepper
     class="sticky-top position-md-static"
     :step="stepContext.progressStep"
-    :steps="[i18n.value.upload, i18n.value.enterInformation, i18n.value.redact]"
+    x-steps="[i18n.value.upload, i18n.value.enterInformation, i18n.value.redact]"
+    :steps="['A', 'B', 'C']"
   >
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
@@ -910,6 +911,11 @@ addEventListener('hashchange', () => {
       </button>
     </span>
     <span>isDesktop={{ isDesktop }}</span>
+    <div>
+      <button type="button" class="btn btn-link"
+        @click="onlineHelp.show(config.url.helpPostuploadRedaction)"
+        >show online help</button>
+    </div>
     <button
       class="btn btn-secondary btn-sm"
       type="button"

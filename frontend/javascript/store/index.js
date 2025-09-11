@@ -13,6 +13,7 @@ import {
   SET_PUBLICBODY_ID,
   SET_SEARCHRESULTS,
   SET_STEP,
+  SET_STEP_NO_HISTORY,
   SET_STEP_REQUEST,
   SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
@@ -34,8 +35,11 @@ import {
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
 
+const persistStorage = window.sessionStorage
+const persistKeyPrefix = 'froide-store-'
+
 const getInitialStep = () => {
-  if (document.location.hash === '#step-submit') return STEPS.PREVIEW_SUBMIT
+  // if (document.location.hash === '#step-submit') return STEPS.PREVIEW_SUBMIT
   return STEPS.INTRO
 }
 
@@ -165,6 +169,12 @@ export default createStore({
     },
     [SET_STEP](state, step) {
       state.step = step
+      console.log('### pushstate', state.step)
+      window.history.pushState({ step: state.step }, '', '#step-' + state.step)
+    },
+    [SET_STEP_NO_HISTORY](state, step) {
+      console.log('### setstep nohistory', step)
+      state.step = step
     },
     [SET_STEP_SELECT_PUBLICBODY](state) {
       state.step = STEPS.SELECT_PUBLICBODY
@@ -189,7 +199,8 @@ export default createStore({
         }
       })
     },
-    [SET_PUBLICBODIES](state, { publicBodies, scope }) {
+    [SET_PUBLICBODIES](state, { publicBodies, scopedPublicBodies, scope }) {
+      publicBodies = publicBodies || scopedPublicBodies
       state.scopedPublicBodies[scope] = publicBodies
       const pbMap = {}
       publicBodies.forEach((pb) => {
@@ -340,6 +351,79 @@ export default createStore({
     }
   },
   actions: {
+    writeToStorage({ state }, { scope }) {
+      // TODO publicbodies might need special handling
+      /*
+      const scopedPublicBodesIds = Object.keys(state.scopedPublicBodies)
+        .reduce((acc, cur) => {
+          acc[cur] = state.scopedPublicBodies[cur].map(pb => pb.id)
+          return acc
+        }, {})
+        console.log('###', scopedPublicBodesIds)
+        */
+      const reduced = {
+        // scopedPublicBodies: state.scopedPublicBodies,
+        lawType: state.lawType,
+        step: state.step,
+        subject: state.subject,
+        body: state.body,
+        // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
+        publicBodies: state.scopedPublicBodies[scope],
+        // TODO add request.public/private
+        // TODO add user. first_name, last_name, e-mail, address, private
+        user_email: state.user.email,
+        first_name: state.user.first_name,
+        last_name: state.user.last_name,
+        private: state.user.private,
+      }
+      try {
+        persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))
+      } catch (err) {
+        console.warn('failed to persist state', persistStorage, reduced, err)
+      }
+    },
+    purgeStorage({ state }) {
+      const purged = {
+        step: state.step,
+      }
+      try {
+        // persistStorage.removeItem(persistKey)
+        persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
+        console.log('### purged', persistKeyPrefix + scope, purged)
+      } catch (err) {
+        console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
+      }
+    },
+    initStoreValues({ commit }, { formFields, mutationMap, propMap, preferStorage, scope, scoped }) {
+      // TODO cache me, scoped: if ! scope in storage try...
+      let storage
+      try {
+        storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))
+      } catch (err) {
+        console.warn('failed to load persisted state', persistStorage, persistKeyPrefix + scope, err)
+      }
+      for (const key in mutationMap) {
+        const mutation = mutationMap[key]
+        let value
+        if (preferStorage && storage && storage[key] !== undefined) {
+          value = storage[key]
+          console.log('### from storage', key, value)
+        } else if (propMap && propMap[key]) {
+          // prop has precedence over formField, e.g. for publicBodies
+          value = propMap[key]
+          console.log('### from prop', key, value)
+        } else if (formFields && formFields[key] !== undefined) {
+          value = formFields[key].value || formFields[key].initial
+          console.log('### from form', key, value)
+        }
+        if (value === undefined) continue
+        if (scoped) {
+          commit(mutation, { [key]: value, scope })
+        } else {
+          commit(mutation, value)
+        }
+      }
+    },
     setSearchResults({ commit, dispatch }, { scope, results }) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,

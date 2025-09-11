@@ -32,8 +32,8 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
           <component
             :is="(clickable && (true || stepIndex < step)) ? 'a' : 'div'"
             v-for="(stepLabel, stepIndex) in steps"
-            @click="stepClick(stepIndex)"
-            :href="clickable ? '#TODO' : false"
+            @click.prevent="stepClick(stepIndex)"
+            :href="clickable ? '#step-' + stepIndex : false"
             :key="stepIndex"
             :class="{
               'fw-bold': stepIndex <= step

@@ -19,6 +19,7 @@ from froide.account.forms import AddressForm, NewUserForm
 from froide.campaign.models import Campaign
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
+from froide.helper.content_urls import get_content_url
 from froide.helper.utils import update_query_params
 from froide.proof.forms import ProofMessageForm
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
@@ -155,6 +156,9 @@ class MakeRequestView(FormView):
                     "foirequest-make_request", kwargs={"publicbody_ids": "0"}
                 ),
                 "makeRequest": reverse("foirequest-make_request"),
+                "helpRequestWhat": get_content_url("help_request_what"),
+                "helpRequestWhatNot": get_content_url("help_request_what_not"),
+                "helpRequestPrivacy": get_content_url("help_request_privacy"),
             },
             "i18n": {
                 "publicBodiesFound": [
@@ -620,13 +624,14 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        if self.request.method == "POST" or publicbodies or is_multi:
+        if self.request.method == "POST" or publicbodies:  # or is_multi:
             campaigns = None
         else:
             campaigns = Campaign.objects.get_active()
 
         kwargs.update(
             {
+                "was_post_json": json.dumps(self.request.method == "POST"),
                 "publicbodies": publicbodies,
                 "publicbodies_json": publicbodies_json,
                 "multi_request": is_multi,

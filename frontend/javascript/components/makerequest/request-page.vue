@@ -23,6 +23,8 @@
       {{ this.steps[this.step] }}
     </SimpleStepper>
 
+    <div>STEP: {{ this.step }}</div>
+
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
       <DjangoSlot name="messages" />
 
@@ -39,6 +41,16 @@
                     <div class="card-body d-flex flex-column">
                       <div>LOGO</div>
                       <h2 class="fs-4 my-auto">§ Eigene Anfrage schreiben</h2>
+                      <div>
+                        <a
+                          :href="config.url.helpRequestWhat"
+                          @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhat)"
+                          >§Was kann ich anfragen?</a><br/>
+                        <a
+                          :href="config.url.helpRequestWhatNot"
+                          @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhatNot)"
+                          >§Was kann ich NICHT anfragen?</a><br/>
+                      </div>
                       <div>
                         <button
                           type="button" class="btn btn-primary"
@@ -148,6 +160,14 @@
           <div
             v-show="step === STEPS.CREATE_ACCOUNT">
 
+            <div v-if="!user.id">
+              <p>
+                §Sie haben schon einen Account?<br/>
+                <DjangoSlot name="loginlink"></DjangoSlot>
+              </p>
+              <p><small>§Dieses Formular merkt sich Ihre angaben.</small></p>
+            </div>
+
             <UserRegistration
               :form="userForm"
               :user-form="userForm"
@@ -171,10 +191,11 @@
 
             <!-- TODO if hasUser... -->
             <UserPublic
-              v-if="!user"
+              v-if="!user.id"
               :user-form="userForm"
               :config="config"
               v-model:initial-private="userPrivate"
+              @online-help="$refs.onlineHelp.show($event)"
               />
             <UserTerms v-if="!user.id" :form="userForm" />
             <div>
@@ -209,7 +230,8 @@
               v-model:initial-body="body"
               v-model:initial-full-text="fullText"
               :submitting="submitting"
-              @set-step-select-public-body="setStepSelectPublicBody">
+              @x-set-step-select-public-body="setStepSelectPublicBody"
+              @set-step-select-public-body="setStep(STEPS.SELECT_PUBLICBODY)">
               <template #request-hints>
                 <DjangoSlot name="request-hints" />
               </template>
@@ -296,6 +318,8 @@
         </div>
       </div>
     </div>
+    <button type="button" @click="$refs.onlineHelp.show('foo')">test oh</button>
+    <OnlineHelp ref="onlineHelp" :i18n="i18n"></OnlineHelp>
   </div>
 </template>
 
@@ -315,13 +339,15 @@ import UserPublic from './user-public.vue'
 import UserAddress from './user-address.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from '../postupload/simple-stepper.vue'
+import OnlineHelp from '../online-help.vue'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import {
   SET_STEP,
-  SET_STEP_SELECT_PUBLICBODY,
-  SET_STEP_REQUEST,
+  SET_STEP_NO_HISTORY,
+  // SET_STEP_SELECT_PUBLICBODY,
+  // SET_STEP_REQUEST,
   SET_PUBLICBODY,
   SET_PUBLICBODIES,
   CACHE_PUBLICBODIES,
@@ -359,7 +385,8 @@ export default {
     UserPublic,
     UserAddress,
     DjangoSlot,
-    SimpleStepper
+    SimpleStepper,
+    OnlineHelp,
   },
   mixins: [I18nMixin, LetterMixin],
   props: {
@@ -370,6 +397,7 @@ export default {
     config: {
       type: Object
     },
+    wasPost: Boolean,
     publicbodyDefaultSearch: {
       type: String
     },
@@ -603,53 +631,116 @@ export default {
   },
   watch: {
     step() {
+      this.writeToStorage({ scope: this.pbScope })
       window.scrollTo(0, 0)
     }
   },
   created() {
+    // window.__fds_debug_$store = this.$store
     this.pbScope = 'make-request'
+    // from props
     this.setConfig(this.config)
 
-    this.initStoreValues(this.formFields, {
-      subject: this.updateSubject,
-      body: this.updateBody,
-      full_text: this.updateFullText,
-      law_type: this.updateLawType
+    this.initStoreValues({
+      scope: this.pbScope,
+      preferStorage: true, // init step always from storage, we omit formFields
+      mutationMap: {
+        step: SET_STEP,
+      }
     })
 
-    this.updateLawType(
-      this.formFields.law_type.value || this.formFields.law_type.initial
-    )
-    if (this.publicbodies !== null) {
-      const pbs = this.publicbodies
-      this.setPublicBodies({
-        publicBodies: pbs,
-        scope: this.pbScope
-      })
-      this.cachePublicBodies(pbs)
-      this.getLawsForPublicBodies(pbs)
-    }
+    // init "regular form values" from storage if not POSTed
+    // (not form-submitted, but refreshed, or returned from login)
+    this.initStoreValues({
+      scope: this.pbScope,
+      preferStorage: !this.wasPost,
+      formFields: this.formFields,
+      mutationMap: {
+        subject: UPDATE_SUBJECT,
+        body: UPDATE_BODY,
+        full_text: UPDATE_FULL_TEXT, // TODO
+        // law_type: UPDATE_LAW_TYPE, // TODO
+      }
+    })
+
+    // PBs from prop, which is expanded in make_request context
+    // (formFields would have IDs only)
+    this.initStoreValues({
+      scope: this.pbScope,
+      scoped: true, // also, PBs are scoped
+      preferStorage: !this.wasPost,
+      mutationMap: {
+        publicBodies: SET_PUBLICBODIES
+      },
+      propMap: {
+        publicBodies: this.publicbodies
+      }
+    })
+
+    // TODO I think this does nothing
+    // this.updateLawType(
+    //   this.formFields.law_type.value || this.formFields.law_type.initial
+    // )
+
+    this.cachePublicBodies(this.publicBodies)
+    // "cache" laws for the PBs we just retrieved
+    this.getLawsForPublicBodies(this.publicBodies)
+
+    // prop set = is authenticated
     if (this.userInfo !== null) {
-      this.setUser(this.userInfo)
-      this.initStoreValues(this.userformFields, {
-        address: this.updateAddress
+      this.initStoreValues({
+        scope: this.pbScope,
+        preferStorage: false,
+        // no formFields, always from prop
+        propMap: {
+          user: this.userInfo 
+        },
+        mutationMap: {
+          user: SET_USER,
+        }
       })
     } else {
-      this.initStoreValues(this.userformFields, {
-        user_email: this.updateEmail,
-        first_name: this.updateFirstName,
-        last_name: this.updateLastName,
-        address: this.updateAddress,
-        private: this.updatePrivate
+      // note that for logged-out users their "fields" are stored flatly, not in a .user object,
+      // and hence need individual, per-field mutations.
+      // see writeToStorage, reduced, where they are flattened/plucked
+      this.initStoreValues({
+        scope: this.pbScope,
+        preferStorage: !this.wasPost,
+        formFields: this.userformFields,
+        mutationMap: {
+          user_email: UPDATE_EMAIL,
+          first_name: UPDATE_FIRST_NAME,
+          last_name: UPDATE_LAST_NAME,
+          private: UPDATE_PRIVATE,
+        }
       })
     }
-    this.originalBody = this.body
-    this.originalSubject = this.subject
+
+    // note that an empty address will be pre-filled for logged-in users in UserAddress.data
+    this.initStoreValues({
+      scope: this.pbScope,
+      preferStorage: !this.wasPost,
+      formFields: this.userformFields,
+      mutationMap: {
+        address: UPDATE_ADDRESS
+      }
+    })
+
+    // this.body are state getter/setters
+    // original* were non-data attributes used for shouldCheckRequest
+    // this.originalBody = this.body
+    // this.originalSubject = this.subject
   },
   mounted() {
-    if (this.hasPublicBodies) {
-      this.setStepRequest()
-    }
+    document.forms.make_request.addEventListener('submit', () => {
+      // invalidate storage, will load from form fields next time
+      this.purgeStorage()
+    })
+    // TODO pbly delete
+    // if (this.hasPublicBodies) {
+    //   this.setStepRequest()
+    // }
+    // TODO maybe unnecessary when remembered
     window.addEventListener('beforeunload', (e) => {
       if (this.submitting) {
         return
@@ -663,15 +754,23 @@ export default {
       e.returnValue = this.i18n.sureCancel
       return e.returnValue
     })
+    window.addEventListener('popstate', (e) => {
+      console.log('### popstate', e.state?.step)
+      if (!e.state) return
+      if (e.state.step) {
+        this.setStepNoHistory(e.state.step)
+      } else {
+        console.log('### popstate, but no step')
+      }
+    })
   },
   methods: {
-    initStoreValues(fields, mapping) {
+    initStoreValues2(fields, mapping) {
       for (const key in mapping) {
         const method = mapping[key]
         if (fields[key] === undefined) {
           continue
         }
-        // TODO: check what this does, really
         method(fields[key].value || fields[key].initial)
       }
     },
@@ -687,8 +786,9 @@ export default {
     },
     ...mapMutations({
       setStep: SET_STEP,
-      setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
-      setStepRequest: SET_STEP_REQUEST,
+      setStepNoHistory: SET_STEP_NO_HISTORY,
+      // setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
+      // setStepRequest: SET_STEP_REQUEST,
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,
       updateFullText: UPDATE_FULL_TEXT,
@@ -704,7 +804,12 @@ export default {
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE
     }),
-    ...mapActions(['getLawsForPublicBodies'])
+    ...mapActions([
+      'getLawsForPublicBodies',
+      'initStoreValues',
+      'writeToStorage',
+      'purgeStorage',
+    ])
   }
 }
 </script>

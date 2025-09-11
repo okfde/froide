@@ -36,9 +36,13 @@
         {% endif %}
     {% endblock %}
     <form method="post"
-          action="{% url 'foirequest-make_request' %}#step-submit"
+          name="make_request"
+          action="{% url 'foirequest-make_request' %}#step-8"
           enctype="multipart/form-data"
           novalidate>
+        {% comment %}
+          action="{% url 'foirequest-make_request' %}"
+        {% endcomment %}
         {% csrf_token %}
         {{ request_form.reference }}
         {{ request_form.tags }}
@@ -48,7 +52,7 @@
         {% for k, v in config.items %}
             {% if v %}<input type="hidden" name="{{ k }}" value="1" />{% endif %}
         {% endfor %}
-        <request-page id="make-request" v-cloak publicbody-default-search="{{ public_body_search }}" :publicbodies="{{ publicbodies_json }}" :request-form="{{ request_form.as_json }}" :user-form="{{ user_form.as_json }}"
+        <request-page id="make-request" v-cloak publicbody-default-search="{{ public_body_search }}" :publicbodies="{{ publicbodies_json }}" :request-form="{{ request_form.as_json }}" :user-form="{{ user_form.as_json }}" :was-post="{{ was_post_json }}"
         {% if request.user.is_authenticated %}:user-info="{{ request.user.as_json }}"{% endif %}
         {% if publicbody_form %}:publicbody-form="{{ publicbody_form.as_json }}"{% endif %}
         {% if proof_form %}:proof-form="{{ proof_form.as_json }}"{% endif %}
@@ -125,6 +129,9 @@
                     </li>
                 </ul>
             </div>
+        </template>
+        <template data-slot="loginlink">
+            <a href="{% url 'account-login' %}?next={{ request.get_full_path|urlencode }}">{% trans "Zum Login" %}</a>
         </template>
         </request-page>
     </form>
