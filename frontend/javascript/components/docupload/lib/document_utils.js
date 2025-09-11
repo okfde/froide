@@ -23,7 +23,7 @@ const createDocument = (doc, config, csrf) => {
   })
 }
 
-const updateDocument = (doc, config, csrf, payload) => {
+const updateDocument = (doc, _config, csrf, payload) => {
   const updateUrl = doc.attachment.document.resource_uri
   return putData(updateUrl, payload, csrf).then(() => {
     return getData(updateUrl)

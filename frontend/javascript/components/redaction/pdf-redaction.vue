@@ -961,7 +961,7 @@ export default {
       this.startDrag = this.getOffset(e)
       this.endDrag = null
     },
-    mouseUp(e, override) {
+    mouseUp(_e, override) {
       if (this.hasTouch && !override) {
         return
       }
