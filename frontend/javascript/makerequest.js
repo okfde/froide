@@ -9,7 +9,12 @@ function createRequestPage(selector) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  createRequestPage('#make-request')
+  if (document.getElementById('make-request')) {
+    createRequestPage('#make-request')
+  } else if (document.getElementById('make-request-sent')) {
+    // console.log('### would purgeStorage')
+    store.dispatch('purgeStorage', { scope: 'make-request' })
+  }
 })
 
 export default {

@@ -1,11 +1,12 @@
 {% extends "foirequest/base.html" %}
 {% load i18n %}
 {% load static %}
+{% load frontendbuild %}
 {% block title %}
     {% trans "Your request has been sent" %}
 {% endblock title %}
 {% block body %}
-    <div class="container">
+    <div class="container" id="make-request-sent">
         <div class="row mt-5 justify-content-center">
             <div class="col-6 col-md-3">
                 <img src="{% static 'img/onboarding/request-sent.svg' %}"
@@ -57,4 +58,5 @@
             </div>
         </div>
     </div>
+    {% addfrontendbuild "makerequest.js" %}
 {% endblock body %}

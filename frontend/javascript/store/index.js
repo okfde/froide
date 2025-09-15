@@ -404,14 +404,20 @@ export default createStore({
         console.warn('failed to persist state', persistStorage, reduced, err)
       }
     },
-    purgeStorage({ state }) {
-      const purged = {
-        step: state.step,
-      }
+    // also called directly from makerequest.js
+    purgeStorage({ state }, { scope, keepStep }) {
+      const purged = keepStep
+        ? { step: state.step }
+        : null
       try {
         // persistStorage.removeItem(persistKey)
-        persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
-        console.log('### purged', persistKeyPrefix + scope, purged)
+        if (purged) {
+          persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
+          console.log('### purged, keeping', persistKeyPrefix + scope, purged)
+        } else {
+          persistStorage.removeItem(persistKeyPrefix + scope)
+          console.log('### purged, removed', persistKeyPrefix + scope)
+        }
       } catch (err) {
         console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
       }

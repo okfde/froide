@@ -767,7 +767,7 @@ export default {
   mounted() {
     document.forms.make_request.addEventListener('submit', () => {
       // invalidate storage, will load from form fields next time
-      this.purgeStorage()
+      this.purgeStorage({ scope: this.pbScope, keepStep: true })
     })
     // TODO pbly delete
     // if (this.hasPublicBodies) {
