@@ -64,10 +64,11 @@
               </div>
             </div>
           </div>
+
           <div v-if="step === STEPS.FIND_SIMILAR">
             <div class="mb-4">
               <label for="similarSubject" class="form-label">
-                Im FragDenStaat-Archiv suchen:
+                §Im FragDenStaat-Archiv suchen:
               </label>
               <div class="row">
                 <div class="col-sm-8">
@@ -79,7 +80,7 @@
                 </div>
                 <div class="col-sm-4">
                   <button type="button" class="btn btn-secondary w-100">
-                    Suchen
+                    §Suchen
                   </button>
                 </div>
               </div>
@@ -95,16 +96,17 @@
                 class="btn btn-primary"
                 @click="setStep(STEPS.SELECT_PUBLICBODY)"
                 >
-                Weiter
+                §Weiter
               </button>
             </div>
           </div>
+
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
             class="mt-5">
             <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
-            <div v-if="false && multiRequest">
+            <div v-if="multiRequest && tmpMulti">
               <PublicbodyMultiChooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
@@ -246,7 +248,7 @@
                 class="btn btn-primary"
                 @click="setStep(STEPS.REQUEST_PUBLIC)"
                 >
-                Weiter
+                §Weiter
               </button>
             </div>
           </fieldset>
@@ -258,7 +260,7 @@
             :config="config" />
 
           <div v-show="step == STEPS.REQUEST_PUBLIC">
-            TODO: make into radios, add texts around
+            TODO: add texts around
             <RequestPublic
               :form="requestForm"
               :hide-public="hidePublic"
@@ -270,7 +272,7 @@
                 class="btn btn-primary"
                 @click="setStep(STEPS.PREVIEW_SUBMIT)"
                 >
-                Weiter
+                §Weiter
               </button>
             </div>
           </div>
@@ -469,6 +471,7 @@ export default {
   },
   data() {
     return {
+      tmpMulti: document.location.search.indexOf('multi') > -1,
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
       fullLetter: false,

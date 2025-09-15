@@ -18,6 +18,7 @@ import {
   SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
   SET_STEP_SELECT_PUBLICBODY,
+  SET_STEP_NEXT,
   SET_USER,
   STEPS,
   UPDATE_ADDRESS,
@@ -164,6 +165,13 @@ export default createStore({
     subjectValid: (state) => state.subject && state.subject.length > 0,
     emailValid: (state) => state.user.email && state.user.email.length > 0,
     requestPublic: (state) => state.requestPublic,
+    stepCanContinue: (state, getters) => (scope) => {
+      switch (state.step) {
+        case STEPS.SELECT_PUBLICBODY:
+        case STEPS.REVIEW_PUBLICBODY:
+          return getters.getPublicBodiesByScope(scope).length > 0
+      }
+    }
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -191,6 +199,13 @@ export default createStore({
     },
     [SET_STEP_REQUEST](state) {
       state.step = STEPS.WRITE_REQUEST
+    },
+    [SET_STEP_NEXT](state) {
+      switch (state.step) {
+        case STEPS.REVIEW_PUBLICBODY:
+          state.step = STEPS.CREATE_ACCOUNT
+          return
+      }
     },
     [SET_PUBLICBODY](state, { publicBody, scope }) {
       state.scopedPublicBodies[scope] = [publicBody]

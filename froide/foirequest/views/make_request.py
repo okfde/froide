@@ -302,7 +302,7 @@ class MakeRequestView(FormView):
                 ],
             },
             "draftId": self.object.id
-            if isinstance(self.object, RequestDraft)
+            if hasattr(self, "object") and isinstance(self.object, RequestDraft)
             else None,
             "wasPost": self.request.method == "POST",
         }
