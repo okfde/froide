@@ -145,7 +145,7 @@ class NewUserBaseForm(AddressBaseForm):
                 (False, "§My name may appear on the website in <b>plain text</b>"),
                 (True, "§My name must be <b>redacted</b>"),
             ],
-            coerce=lambda x: x and (x.lower() != "false",),
+            coerce=lambda x: x and (x.lower() != "false"),
         )
 
     field_order = ["first_name", "last_name", "user_email"]
