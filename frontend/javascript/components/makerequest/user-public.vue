@@ -3,24 +3,30 @@
           v-if="config.settings.user_can_hide_web && !hasUser"
           class="row mt-2">
           <div class="col-md-8">
-            <div class="form-check">
+            <div
+              v-for="(choice, choiceIndex) in userformFields.private.choices"
+              :key="choice.value"
+              class="form-check"
+              >
               <input
-                id="id_private"
+                :id="'id_private_choice' + choiceIndex"
                 class="form-check-input"
                 v-model="userPrivate"
-                type="checkbox"
-                name="private" />
-              <label for="id_private" class="form-check-label">
-                {{ userformFields.private.label }}
+                type="radio"
+                name="private"
+                :value="choice.value"
+                />
+              <label :for="'id_private_choice' + choiceIndex" class="form-check-label">
+                {{ choice.label }}
               </label>
-              <p class="help-block" v-html="userformFields.private.help_text" />
-              <p>
-                <a
-                  :href="config.url.helpRequestPrivacy" 
-                  @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
-                  >§Weitere Infos zur Privatsphäre auf FdS</a>
-              </p>
             </div>
+            <p class="help-block" v-html="userformFields.private.help_text" />
+            <p>
+              <a
+                :href="config.url.helpRequestPrivacy" 
+                @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
+                >§Weitere Infos zur Privatsphäre auf FdS</a>
+            </p>
           </div>
         </div>
 </template>
@@ -35,12 +41,14 @@ export default {
     userForm: {
       type: Object
     },
-    initialPrivate: Boolean
+    initialPrivate: {
+      Boolean,
+      required: true
+    }
   },
   data() {
     return {
-      privateValue:
-        this.initialPrivate || (this.user && this.user.private) || false
+      privateValue: this.initialPrivate ? 'True' : 'False'
     }
   },
   computed: {
@@ -53,7 +61,7 @@ export default {
       },
       set(value) {
         this.privateValue = value
-        this.$emit('update:initialPrivate', value)
+        this.$emit('update:initialPrivate', value === 'True')
       }
     },
   }

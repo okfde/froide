@@ -1,114 +1,152 @@
 <template>
   <div>
-    <div class="row border-top">
-      <div class="col-md-2">
-        <h5 class="fs-6">{{ i18n.name }}</h5>
-      </div>
-      <div class="col-md-7">
+    <ReviewRequestLine
+      :i18n="i18n"
+      :title="i18n.publicBody || '§Behörde'"
+      :invalid="needCorrectionPublicbody"
+      :step="hidePublicbodyChooser ? '' : STEPS.SELECT_PUBLICBODY"
+      >
+      <template #contents>
+        <ReviewPublicbody
+          :config="config"
+          :pb-scope="pbScope"
+          :multi-request="multiRequest"
+          />
+      </template>
+    </ReviewRequestLine>
+
+    <ReviewRequestLine
+      :i18n="i18n"
+      :title="i18n.subject"
+      :invalid="needCorrectionSubject"
+      :step="STEPS.WRITE_REQUEST"
+      :contents="subject || i18n.subject"
+      />
+    
+    <ReviewRequestLine
+      :i18n="i18n"
+      :title="'§Anfragentext'"
+      :invalid="needCorrectionText"
+      :step="STEPS.WRITE_REQUEST"
+      >
+      <template #contents>
+        <div>
+          <div v-if="fullText">
+            <div class="body-text review-body-text">
+              <span v-text="body" />
+              <span v-text="letterSignatureName" />
+            </div>
+          </div>
+          <div v-else>
+            <div class="body-text review-body-text">
+              <span>{{ letterStart }}</span>
+              <span class="highlight"><br />{{ body }}</span>
+              <span><br /><br />{{ letterEnd }}</span>
+            </div>
+          </div>
+        </div>
+        <ul class="review-hints">
+          <li>{{ i18n.reviewSpelling }}</li>
+          <li>{{ i18n.reviewPoliteness }}</li>
+          <li v-for="error in errors" :key="error" class="error">
+            {{ error }}
+          </li>
+        </ul>
+      </template>
+    </ReviewRequestLine>
+
+    <ReviewRequestLine
+      :i18n="i18n"
+      :title="i18n.visibility || '§Sichtbarkeit'"
+      :step="STEPS.REQUEST_PUBLIC"
+      >
+      <template #contents>
+        {{ requestPublic
+          ? '§Anfrage sofort veröffentlichen'
+          : '§Anfrage zunächst nicht veröffentlichen'
+        }}
+        <a
+          :href="config.url.helpRequestPublic"
+          @click.prevent="$emit('online-help', config.url.helpRequestPublic)"
+          >{{ i18n.help || '§Hilfe' }}</a>
+      </template>
+    </ReviewRequestLine>
+
+    <ReviewRequestLine
+      v-if="!user.id"
+      :i18n="i18n"
+      :title="i18n.privacy || '§Privatsphäre'"
+      :step="STEPS.CREATE_ACCOUNT"
+      >
+      <template #contents>
+        {{ user.private
+          ? '§Eigenen Namen schwärzen'
+          : '§Eigenen Namen im Klartext anzeigen'
+        }}
+        <a
+          :href="config.url.helpRequestPrivacy"
+          @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
+          >{{ i18n.help || '§Hilfe' }}</a>
+      </template>
+    </ReviewRequestLine>
+
+    <ReviewRequestLine
+      v-if="!user.id"
+      :i18n="i18n"
+      :title="i18n.name"
+      :invalid="needCorrectionUser"
+      :step="STEPS.CREATE_ACCOUNT"
+      >
+      <template #contents>
         <span :class="{ 'text-danger': !user.first_name}">
           {{ user.first_name || i18n.yourFirstName }}
         </span>
-        <span :class="{ 'text-danger': !user.last_name}">
+        <span :class="{ 'text-danger': !user.last_name}" style="margin-left: 1ch">
           {{ user.last_name || i18n.yourLastName }}
         </span>
         <div
           v-if="hasFormErrorsUser"
           class="text-danger"
           >§ there were errors here</div>
-      </div>
-      <div class="col-md-2">
-        <button type="button" class="btn"
-          :class="{
-            'btn-link': !needCorrectionUser,
-            'btn-primary': needCorrectionUser
-          }"
-          @click="setStep(STEPS.CREATE_ACCOUNT)"
-          >{{ needCorrectionUser ? '§korrigieren' : i18n.change }}</button>
-      </div>
-    </div>
-    <div class="row border-top">
-      <div class="col-md-2">
-        <h5 class="fs-6">{{ i18n.subject }}</h5>
-      </div>
-      <div class="col-md-7">
-        <span :class="{ 'text-danger': !subjectValid}">
-          {{ subject || i18n.subject }}
-        </span>
-        <div
-          v-if="hasFormErrorsSubject"
-          class="text-danger"
-          >§ there were errors here</div>
-      </div>
-      <div class="col-md-2">
-        <button type="button" class="btn"
-          :class="{
-            'btn-link': !needCorrectionSubject,
-            'btn-primary': needCorrectionSubject
-          }"
-          @click="setStep(STEPS.WRITE_REQUEST)"
-          >{{ needCorrectionSubject ? '§korrigieren' : i18n.change }}</button>
-      </div>
-    </div>
-          <dl class="message-meta row">
-            <dt class="col-sm-3" :class="{ 'text-danger': !userValid }">
-              {{ i18n.reviewFrom }}
-            </dt>
-            <dd class="col-sm-9" :class="{ 'text-danger': !userValid }">
-              {{ user.first_name }} {{ user.last_name }}
-            </dd>
-            <dt class="col-sm-3">{{ i18n.reviewTo }}</dt>
-            <dd class="col-sm-9" v-if="publicBodies.length > 1">
-              {{ publicBodies.length }} {{ i18n.reviewPublicbodies }}
-            </dd>
-            <dd class="col-sm-9" v-else-if="publicBody">
-              {{ publicBody.name }}
-            </dd>
-            <dd class="col-sm-9" v-else>-</dd>
-            <dt class="col-sm-3" :class="{ 'text-danger': !subjectValid }">
-              {{ i18n.subject }}
-            </dt>
-            <dd class="col-sm-9" :class="{ 'text-danger': !subjectValid }">
-              {{ subject }}
-            </dd>
-          </dl>
-          <div>
-            <div v-if="fullText">
-              <div class="body-text review-body-text">
-                <span v-text="body" />
-                <span v-text="letterSignatureName" />
-              </div>
-            </div>
-            <div v-else>
-              <div class="body-text review-body-text">
-                <span>{{ letterStart }}</span>
-                <span class="highlight"><br />{{ body }}</span>
-                <span><br /><br />{{ letterEnd }}</span>
-              </div>
-            </div>
-          </div>
-          <ul class="review-hints">
-            <li>{{ i18n.reviewSpelling }}</li>
-            <li>{{ i18n.reviewPoliteness }}</li>
-            <li v-for="error in errors" :key="error" class="error">
-              {{ error }}
-            </li>
-          </ul>
+      </template>
+    </ReviewRequestLine>
 
-          <button
-            :x-disabled="!canSend"
-            id="send-request-button"
-            type="submit"
-            class="btn btn-primary"
-            @click="$emit('submit')">
-            <i class="fa fa-send" aria-hidden="true" />
-            {{ i18n.submitRequest }}
-          </button>
+
+    <ReviewRequestLine
+      v-if="!user.id"
+      :i18n="i18n"
+      :title="i18n.email || '§Email'"
+      :invalid="needCorrectionEmail"
+      :step="STEPS.CREATE_ACCOUNT"
+      >
+      <template #contents>
+        <span :class="{ 'text-danger': needCorrectionEmail}">
+          {{ user.email || i18n.email }}
+        </span>
+        (§wird Behörde nicht mitgeteilt)
+      </template>
+    </ReviewRequestLine>
+
+    <button
+      :x-disabled="!canSend"
+      id="send-request-button"
+      type="submit"
+      class="btn btn-primary"
+      @click="$emit('submit')">
+      <i class="fa fa-send" aria-hidden="true" />
+      {{ i18n.submitRequest }}
+    </button>
   </div>
 </template>
 
 <script>
 import LetterMixin from './lib/letter-mixin'
+
+import ReviewRequestLine from './review-request-line.vue'
+import ReviewPublicbody from './review-publicbody.vue'
+
 import { mapMutations, mapGetters } from 'vuex'
+
 import {
   SET_STEP,
   STEPS
@@ -121,13 +159,21 @@ function erx(text) {
 export default {
   name: 'ReviewRequest',
   mixins: [LetterMixin],
+  components: {
+    ReviewRequestLine,
+    ReviewPublicbody,
+  },
   props: {
     i18n: {
       type: Object,
       required: true
     },
-    publicbodies: {
-      type: Array,
+    config: {
+      type: Object,
+      required: true
+    },
+    pbScope: {
+      type: String,
       required: true
     },
     user: {
@@ -154,7 +200,15 @@ export default {
       type: String,
       required: true
     },
+    multiRequest: {
+      type: Boolean,
+      required: true
+    },
     fullText: {
+      type: Boolean,
+      required: true
+    },
+    hidePublicbodyChooser: {
       type: Boolean,
       required: true
     }
@@ -188,16 +242,26 @@ export default {
       if (this.userForm.fields.last_name !== this.user.last_name) return
       return ('last_name' in this.userForm.errors)
     },
+    needCorrectionEmail() {
+      return this.hasFormErrorsEmail || !this.emailValid
+    },
+    hasFormErrorsEmail() {
+      if (this.userForm.fields.email != this.user.email) return
+      return ('email' in this.userForm.errors)
+    },
     hasFormErrorsSubject() {
       // ignore form errors if value changed
       if (this.requestForm.fields.subject.value !== this.subject) return
       return ('subject' in this.requestForm.errors)
     },
+    needCorrectionText() {
+      return this.errors.length > 0
+    },
     errors() {
       const errors = []
-      if (!this.subjectValid) {
+      /* if (!this.subjectValid) {
         errors.push(this.i18n.noSubject)
-      }
+      } */
       if (!this.body || this.body.length === 0) {
         errors.push(this.i18n.noBody)
       }
@@ -225,7 +289,6 @@ export default {
           errors.push(params[1])
         }
       })
-
       return errors
     },
     userRegex() {
@@ -245,16 +308,20 @@ export default {
       return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
     },
     publicBody() {
-      return this.publicbodies[0]
+      return this.getPublicBodyByScope(this.pbScope)
     },
     publicBodies() {
-      return this.publicbodies
+      return this.getPublicBodiesByScope(this.pbScope)
     },
     ...mapGetters([
       'user',
       'userValid',
       'subject',
-      'subjectValid'
+      'subjectValid',
+      'emailValid',
+      'getPublicBodyByScope',
+      'getPublicBodiesByScope',
+      'requestPublic',
     ])
   },
   methods: {

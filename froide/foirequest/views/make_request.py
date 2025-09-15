@@ -158,6 +158,7 @@ class MakeRequestView(FormView):
                 "makeRequest": reverse("foirequest-make_request"),
                 "helpRequestWhat": get_content_url("help_request_what"),
                 "helpRequestWhatNot": get_content_url("help_request_what_not"),
+                "helpRequestPublic": get_content_url("help_request_public"),
                 "helpRequestPrivacy": get_content_url("help_request_privacy"),
             },
             "i18n": {
@@ -300,6 +301,10 @@ class MakeRequestView(FormView):
                     if k in settings.FROIDE_CONFIG.get("filter_georegion_kinds", [])
                 ],
             },
+            "draftId": self.object.id
+            if isinstance(self.object, RequestDraft)
+            else None,
+            "wasPost": self.request.method == "POST",
         }
         pb_ctx = get_widget_context()
         for key in pb_ctx:
@@ -631,7 +636,6 @@ class MakeRequestView(FormView):
 
         kwargs.update(
             {
-                "was_post_json": json.dumps(self.request.method == "POST"),
                 "publicbodies": publicbodies,
                 "publicbodies_json": publicbodies_json,
                 "multi_request": is_multi,

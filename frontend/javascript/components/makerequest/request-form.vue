@@ -2,76 +2,6 @@
   <div>
     <slot name="request-legend-title" />
 
-    <div
-      v-if="multiRequest && canBatchRequest"
-      class="publicbody-summary-container">
-      <div class="publicbody-summary">
-        <p>
-          <template v-if="publicBodies.length < 20">
-            <ul>
-              <li v-for="pb in publicBodies" :key="pb.id">
-                {{ pb.name }}
-                <div v-if="pb.request_note_html" class="col-lg-8 alert alert-warning pb-0" v-html="pb.request_note_html" />
-              </li>
-            </ul>
-          </template>
-          <template v-else>
-            {{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}
-          </template>
-          <span v-if="!hidePublicbodyChooser">
-            <a
-              class="pb-change-link badge rounded-pill text-bg-primary ms-3"
-              :href="config.url.makeRequest"
-              @click.prevent="$emit('setStepSelectPublicBody')">
-              {{ i18n.change }}
-            </a>
-          </span>
-        </p>
-      </div>
-    </div>
-    <div v-if="multiRequest && !canBatchRequest" class="mb-5 mt-5">
-      <p>{{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}</p>
-      <div class="publicbody-summary-list">
-        <ul>
-          <li v-for="pb in publicBodies" :key="pb.id">
-            {{ pb.name }}
-          </li>
-        </ul>
-      </div>
-      <small>{{ i18n.batchRequestDraftOnly }}</small>
-    </div>
-
-    <div v-if="!multiRequest" class="publicbody-summary-container">
-      <div class="row">
-        <div class="col-lg-12 publicbody-summary">
-          <p>
-            {{ i18n._('toPublicBody', { name: publicBody?.name || '?' }) }}
-            <a v-if="publicBody" :href="publicBody.site_url" target="_blank">
-              <span class="fa fa-info-circle" />
-            </a>
-            <span v-if="!hidePublicbodyChooser">
-              <a
-                class="pb-change-link badge rounded-pill text-bg-primary ms-3"
-                :href="config.url.makeRequest"
-                @click.prevent="$emit('setStepSelectPublicBody')">
-                {{ i18n.change }}
-              </a>
-            </span>
-          </p>
-        </div>
-      </div>
-      <div v-if="hasLawNotes" class="row">
-        <div class="col-lg-8">
-          <div class="alert alert-warning" v-html="lawNotes" />
-        </div>
-      </div>
-      <div v-if="hasPublicBodyNotes" class="row">
-        <div class="col-lg-8">
-          <div class="alert alert-warning" v-html="publicBodyNotes" />
-        </div>
-      </div>
-    </div>
-
     <input
       v-for="pb in publicBodies"
       :key="pb.id"
@@ -270,6 +200,8 @@
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
+import { mapGetters } from  'vuex'
+
 import ProofForm from '../proofupload/proof-form.vue'
 
 const PLACEHOLDER_MARKER = '…'
@@ -291,10 +223,6 @@ export default {
       default: null
     },
     user: {
-      type: Object,
-      default: null
-    },
-    defaultLaw: {
       type: Object,
       default: null
     },
@@ -321,10 +249,6 @@ export default {
       default: true
     },
     hideEditing: {
-      type: Boolean,
-      default: false
-    },
-    multiRequest: {
       type: Boolean,
       default: false
     },
@@ -389,35 +313,6 @@ export default {
     },
     usererrors() {
       return this.userForm.errors
-    },
-    hasLawNotes() {
-      if (this.defaultLaw) {
-        return !!this.defaultLaw.request_note_html
-      }
-      // FIXME: find all notes of all public body default laws?
-      return false
-    },
-    hasPublicBodyNotes() {
-      if (this.publicBody) {
-        return !!this.publicBody.request_note_html
-      }
-      // FIXME: find all notes of all public body default laws?
-      return false
-    },
-    lawNotes() {
-      if (this.hasLawNotes) {
-        return this.defaultLaw.request_note_html
-      }
-      return ''
-    },
-    publicBodyNotes() {
-      if (this.hasPublicBodyNotes) {
-        return this.publicBody.request_note_html
-      }
-      return ''
-    },
-    canBatchRequest() {
-      return this.config.settings.user_can_create_batch
     },
     nonMeaningfulSubjects() {
       return this.config.settings.non_meaningful_subject_regex.map(
@@ -496,7 +391,10 @@ export default {
         }
       }
       return true
-    }
+    },
+    ...mapGetters([
+      'defaultLaw',
+    ])
   },
   mounted() {
     this.bodyChanged()

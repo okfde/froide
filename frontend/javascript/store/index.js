@@ -29,7 +29,8 @@ import {
   UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
   UPDATE_SUBJECT,
-  UPDATE_USER_ID
+  UPDATE_USER_ID,
+  UPDATE_REQUEST_PUBLIC,
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
@@ -59,7 +60,8 @@ export default createStore({
       step: getInitialStep(),
       subject: '',
       body: '',
-      fullText: false
+      fullText: false,
+      requestPublic: false,
     }
   },
   getters: {
@@ -160,6 +162,8 @@ export default createStore({
     lawType: (state) => state.lawType,
     userValid: (state) => state.user.first_name && state.user.last_name && state.user.email,
     subjectValid: (state) => state.subject && state.subject.length > 0,
+    emailValid: (state) => state.user.email && state.user.email.length > 0,
+    requestPublic: (state) => state.requestPublic,
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -341,6 +345,9 @@ export default createStore({
     [UPDATE_USER_ID](state, val) {
       state.user.id = val
     },
+    [UPDATE_REQUEST_PUBLIC](state, val) {
+      state.requestPublic = val
+    },
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
     },
@@ -369,7 +376,7 @@ export default createStore({
         body: state.body,
         // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
         publicBodies: state.scopedPublicBodies[scope],
-        // TODO add request.public/private
+        public: state.requestPublic,
         // TODO add user. first_name, last_name, e-mail, address, private
         user_email: state.user.email,
         first_name: state.user.first_name,
@@ -394,7 +401,7 @@ export default createStore({
         console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
       }
     },
-    initStoreValues({ commit }, { formFields, mutationMap, propMap, preferStorage, scope, scoped }) {
+    initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, preferStorage, scope, scoped }) {
       // TODO cache me, scoped: if ! scope in storage try...
       let storage
       try {
@@ -414,7 +421,12 @@ export default createStore({
           console.log('### from prop', key, value)
         } else if (formFields && formFields[key] !== undefined) {
           value = formFields[key].value || formFields[key].initial
+          if (formCoerce && formCoerce[key]) {
+            value = formCoerce[key](value)
+          }
           console.log('### from form', key, value)
+        } else {
+          console.log('### from nowhere', key)
         }
         if (value === undefined) continue
         if (scoped) {

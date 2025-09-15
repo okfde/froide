@@ -12,7 +12,6 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.content_urls import get_content_url
@@ -20,6 +19,7 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.spam import SpamProtectionMixin
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
+    BootstrapRadioSelect,
     BootstrapSelect,
     ImageFileInput,
 )
@@ -137,15 +137,15 @@ class NewUserBaseForm(AddressBaseForm):
     ALLOW_BLOCKED_ADDRESS = True
 
     if USER_CAN_HIDE_WEB:
-        private = forms.BooleanField(
+        private = forms.TypedChoiceField(
             required=False,
-            widget=BootstrapCheckboxInput,
+            widget=BootstrapRadioSelect,
             label=_("Hide my name from public view"),
-            help_text=mark_safe(
-                _(
-                    "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity"
-                )
-            ),
+            choices=[
+                (False, "§My name may appear on the website in <b>plain text</b>"),
+                (True, "§My name must be <b>redacted</b>"),
+            ],
+            coerce=lambda x: x and (x.lower() != "false",),
         )
 
     field_order = ["first_name", "last_name", "user_email"]

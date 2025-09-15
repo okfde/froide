@@ -80,7 +80,7 @@ class RequestForm(JSONMixin, forms.Form):
         initial=True,
         required=False,
         widget=BootstrapRadioSelect,
-        choices=[(True, "yes, public"), (False, "no not public")],
+        choices=[(True, "§yes, public"), (False, "§no not public")],
         coerce=lambda x: x and (x.lower() != "false"),
         # coerce=tmp_coerce
     )

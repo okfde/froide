@@ -259,7 +259,11 @@
 
           <div v-show="step == STEPS.REQUEST_PUBLIC">
             TODO: make into radios, add texts around
-            <RequestPublic :form="requestForm" :hide-public="hidePublic" />
+            <RequestPublic
+              :form="requestForm"
+              :hide-public="hidePublic"
+              v-model:initial-public="requestPublic"
+              />
             <div>
               <button
                 type="button"
@@ -274,6 +278,8 @@
           <div v-if="step === STEPS.PREVIEW_SUBMIT">
             <ReviewRequest
               :i18n="i18n"
+              :config="config"
+              :pb-scope="pbScope"
               :publicbodies="publicBodies"
               :user="user"
               :user-form="userForm"
@@ -281,8 +287,12 @@
               :default-law="defaultLaw"
               :subject="subject"
               :body="body"
+              :multi-request="multiRequest"
               :full-text="fullText"
-              @submit="submitting = true" />
+              :hide-publicbody-chooser="hidePublicbodyChooser"
+              @submit="submitting = true"
+              @online-help="$refs.onlineHelp.show($event)"
+              />
             <!--
             TODO: move submit/save button here,
               but also needs canSend<-errors etc.
@@ -318,6 +328,7 @@
         </div>
       </div>
     </div>
+    <button type="submit" @click="submitting = true">submit</button>
     <button type="button" @click="$refs.onlineHelp.show('foo')">test oh</button>
     <OnlineHelp ref="onlineHelp" :i18n="i18n"></OnlineHelp>
   </div>
@@ -360,6 +371,7 @@ import {
   UPDATE_ADDRESS,
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
+  UPDATE_REQUEST_PUBLIC,
   UPDATE_LAW_TYPE,
   SET_CONFIG,
   STEPS
@@ -397,7 +409,6 @@ export default {
     config: {
       type: Object
     },
-    wasPost: Boolean,
     publicbodyDefaultSearch: {
       type: String
     },
@@ -477,6 +488,7 @@ export default {
     userformFields() {
       return this.userForm.fields
     },
+    // TODO what is this
     conditionalProofForm() {
       if (this.proofForm && this.proofForm.fields.proof) {
         return this.proofForm
@@ -493,7 +505,7 @@ export default {
         '§similarRequests',
         this.i18n.choosePublicBody,
         // ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
-        this.user ? '§Adresse' : '§account',
+        this.userInfo ? '§Adresse' : '§account',
         '§writeRequest',
         '§submit'
       ]
@@ -600,6 +612,14 @@ export default {
         this.updatePrivate(value)
       }
     },
+    requestPublic: {
+      get() {
+        return this.$store.state.requestPublic
+      },
+      set(value) {
+        this.updateRequestPublic(value)
+      }
+    },
     hasPublicBodies() {
       return this.publicBodies.length > 0
     },
@@ -637,13 +657,16 @@ export default {
   },
   created() {
     // window.__fds_debug_$store = this.$store
-    this.pbScope = 'make-request'
+    this.pbScope = this.config.draftId
+      ? 'make-request-draft-' + this.config.draftId
+      : 'make-request'
     // from props
     this.setConfig(this.config)
 
+    // init step value
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: true, // init step always from storage, we omit formFields
+      preferStorage: true, // ...step always from storage, we omit formFields
       mutationMap: {
         step: SET_STEP,
       }
@@ -653,13 +676,17 @@ export default {
     // (not form-submitted, but refreshed, or returned from login)
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: !this.wasPost,
+      preferStorage: !this.config.wasPost,
       formFields: this.formFields,
+      formCoerce: {
+        public: (djangoBoolStr) => djangoBoolStr === 'True'
+      },
       mutationMap: {
         subject: UPDATE_SUBJECT,
         body: UPDATE_BODY,
         full_text: UPDATE_FULL_TEXT, // TODO
         // law_type: UPDATE_LAW_TYPE, // TODO
+        public: UPDATE_REQUEST_PUBLIC,
       }
     })
 
@@ -668,7 +695,7 @@ export default {
     this.initStoreValues({
       scope: this.pbScope,
       scoped: true, // also, PBs are scoped
-      preferStorage: !this.wasPost,
+      preferStorage: !this.config.wasPost,
       mutationMap: {
         publicBodies: SET_PUBLICBODIES
       },
@@ -705,8 +732,11 @@ export default {
       // see writeToStorage, reduced, where they are flattened/plucked
       this.initStoreValues({
         scope: this.pbScope,
-        preferStorage: !this.wasPost,
+        preferStorage: !this.config.wasPost,
         formFields: this.userformFields,
+        formCoerce: {
+          private: (djangoBoolStr) => djangoBoolStr === 'True'
+        },
         mutationMap: {
           user_email: UPDATE_EMAIL,
           first_name: UPDATE_FIRST_NAME,
@@ -719,7 +749,7 @@ export default {
     // note that an empty address will be pre-filled for logged-in users in UserAddress.data
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: !this.wasPost,
+      preferStorage: !this.config.wasPost,
       formFields: this.userformFields,
       mutationMap: {
         address: UPDATE_ADDRESS
@@ -802,7 +832,8 @@ export default {
       cachePublicBodies: CACHE_PUBLICBODIES,
       updateAddress: UPDATE_ADDRESS,
       updateEmail: UPDATE_EMAIL,
-      updatePrivate: UPDATE_PRIVATE
+      updatePrivate: UPDATE_PRIVATE,
+      updateRequestPublic: UPDATE_REQUEST_PUBLIC,
     }),
     ...mapActions([
       'getLawsForPublicBodies',
