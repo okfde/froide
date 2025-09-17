@@ -87,6 +87,55 @@
           </div>
         </div>
 
+        <!--
+          TODO: does not work a.t.m. without changes
+            1. change MakeRequestView.get_user_form
+              form_klass = NewUserForm → NewUserWithPasswordForm
+            2. account.forms.NewUserWithPasswordForm.clean
+              super().clean() returns None
+              should compare self.data["passwordN"] ?
+                and return self.cleaned_data ?
+            3. on form errors, password fields remain empty, have to be re-filled
+            4. /account/confirmed/ has a set password prompt
+
+        <template v-if="formFields.password">
+          <div class="mb-3 row">
+            <label
+              for="id_password"
+              class="col-sm-3 col-form-label"
+              >
+              {{ i18n.password }}
+            </label>
+            <div
+              class="col-sm-9"
+              >
+              <input
+                name="password"
+                type="password"
+                class="form-control"
+                />
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label
+              for="id_password2"
+              class="col-sm-3 col-form-label"
+              >
+              {{ i18n.passwordRepeated }}
+            </label>
+            <div
+              class="col-sm-9"
+              >
+              <input
+                name="password2"
+                type="password"
+                class="form-control"
+                />
+            </div>
+          </div>
+        </template>
+      -->
+
         <template v-if="formFields.time">
           <input type="hidden" name="time" :value="formFields.time.initial" />
         </template>
