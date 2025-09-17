@@ -29,6 +29,7 @@ import {
   UPDATE_LAST_NAME,
   UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
+  UPDATE_TERMS,
   UPDATE_SUBJECT,
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
@@ -58,6 +59,7 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
+      terms: false,
       step: getInitialStep(),
       subject: '',
       body: '',
@@ -161,15 +163,30 @@ export default createStore({
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
     lawType: (state) => state.lawType,
+    // TODO validate closer to what happens server side?
     userValid: (state) => state.user.first_name && state.user.last_name && state.user.email,
+    termsValid: (state) => state.terms,
     subjectValid: (state) => state.subject && state.subject.length > 0,
+    bodyValid: (state) => state.body && state.body.length > 0,
     emailValid: (state) => state.user.email && state.user.email.length > 0,
+    addressValid: (state) => state.user.address && state.user.address.length > 0,
     requestPublic: (state) => state.requestPublic,
     stepCanContinue: (state, getters) => (scope) => {
       switch (state.step) {
         case STEPS.SELECT_PUBLICBODY:
         case STEPS.REVIEW_PUBLICBODY:
           return getters.getPublicBodiesByScope(scope).length > 0
+        case STEPS.CREATE_ACCOUNT:
+          if (!getters.addressValid) return false
+          // authenticated user only needs valid address
+          if (state.user.id) return true
+          if (!getters.userValid) return false
+          if (!getters.termsValid) return false
+          return true
+        case STEPS.WRITE_REQUEST:
+          if (!getters.subjectValid) return false
+          if (!getters.bodyValid) return false
+          return true
       }
     }
   },
@@ -360,6 +377,9 @@ export default createStore({
     [UPDATE_USER_ID](state, val) {
       state.user.id = val
     },
+    [UPDATE_TERMS](state, val) {
+      state.terms = val
+    },
     [UPDATE_REQUEST_PUBLIC](state, val) {
       state.requestPublic = val
     },
@@ -392,7 +412,9 @@ export default createStore({
         // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
         publicBodies: state.scopedPublicBodies[scope],
         public: state.requestPublic,
+        terms: state.terms,
         // TODO add user. first_name, last_name, e-mail, address, private
+        address: state.user.address,
         user_email: state.user.email,
         first_name: state.user.first_name,
         last_name: state.user.last_name,

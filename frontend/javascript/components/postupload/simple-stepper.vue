@@ -11,9 +11,9 @@ const emit = defineEmits('stepClick')
 
 const stepClick = (stepIndex) => {
   if (!props.clickable) return
-  // if (stepIndex < props.step) {
-  emit('stepClick', stepIndex)
-  // }
+  if (stepIndex < props.step) {
+    emit('stepClick', stepIndex)
+  }
 }
 
 // [0.0,1.0]
@@ -30,7 +30,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
       <div class="container">
         <div class="row position-relative">
           <component
-            :is="(clickable && (true || stepIndex < step)) ? 'a' : 'div'"
+            :is="(clickable && (stepIndex < step)) ? 'a' : 'div'"
             v-for="(stepLabel, stepIndex) in steps"
             @click.prevent="stepClick(stepIndex)"
             :href="clickable ? '#step-' + stepIndex : false"

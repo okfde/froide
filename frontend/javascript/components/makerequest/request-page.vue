@@ -66,6 +66,12 @@
           </div>
 
           <div v-if="step === STEPS.FIND_SIMILAR">
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + STEPS.INTRO"
+                @click="setStep(STEPS.INTRO)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
             <div class="mb-4">
               <label for="similarSubject" class="form-label">
                 §Im FragDenStaat-Archiv suchen:
@@ -105,6 +111,12 @@
             v-if="stepSelectPublicBody"
             id="step-publicbody"
             class="mt-5">
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + STEPS.FIND_SIMILAR"
+                @click="setStep(STEPS.FIND_SIMILAR)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
             <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
             <div v-if="multiRequest && tmpMulti">
               <PublicbodyMultiChooser
@@ -154,13 +166,26 @@
           <fieldset
             v-if="stepReviewPublicBodies && !stepWriteRequest"
             id="step-review-publicbody"
-            class="mt-5">
+            >
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + STEPS.SELECT_PUBLICBODY"
+                @click="setStep(STEPS.SELECT_PUBLICBODY)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
             <PbMultiReview name="publicbody" :i18n="i18n" :scope="pbScope" />
           </fieldset>
 
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
           <div
             v-show="step === STEPS.CREATE_ACCOUNT">
+
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + (multiRequest ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
+                @click="setStep(multiRequest ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
 
             <div v-if="!user.id">
               <p>
@@ -191,7 +216,6 @@
               :address-help-text="userForm.fields.address.help_text"
               />
 
-            <!-- TODO if hasUser... -->
             <UserPublic
               v-if="!user.id"
               :user-form="userForm"
@@ -199,12 +223,17 @@
               v-model:initial-private="userPrivate"
               @online-help="$refs.onlineHelp.show($event)"
               />
-            <UserTerms v-if="!user.id" :form="userForm" />
+            <UserTerms
+              v-if="!user.id"
+              :form="userForm"
+              v-model:initial-terms="terms"
+              />
             <div>
               TODO: validation of vorname/name<br/>
               <button
                 type="button"
                 class="btn btn-primary"
+                :disabled="!stepCanContinue(pbScope)"
                 @click="setStep(STEPS.WRITE_REQUEST)"
                 >
                 Weiter
@@ -214,6 +243,12 @@
           </div>
 
           <fieldset v-show="stepWriteRequest" id="step-request" class="mt-3">
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + STEPS.CREATE_ACCOUNT"
+                @click="setStep(STEPS.CREATE_ACCOUNT)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
             TODO: rename/emphasize ellipsis button
             <RequestForm
               :config="config"
@@ -246,20 +281,26 @@
               <button
                 type="button"
                 class="btn btn-primary"
+                :disabled="!stepCanContinue(pbScope)"
                 @click="setStep(STEPS.REQUEST_PUBLIC)"
                 >
                 §Weiter
               </button>
             </div>
+            <SimilarRequests
+              v-if="showSimilar"
+              :publicbodies="publicBodies"
+              :subject="subject"
+              :config="config" />
           </fieldset>
 
-          <SimilarRequests
-            v-if="showSimilar && stepWriteRequest"
-            :publicbodies="publicBodies"
-            :subject="subject"
-            :config="config" />
-
           <div v-show="step == STEPS.REQUEST_PUBLIC">
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + STEPS.CREATE_ACCOUNT"
+                @click="setStep(STEPS.CREATE_ACCOUNT)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
             TODO: add texts around
             <RequestPublic
               :form="requestForm"
@@ -278,6 +319,12 @@
           </div>
 
           <div v-if="step === STEPS.PREVIEW_SUBMIT">
+            <div class="my-3">
+              <a class="btn btn-link text-decoration-none ps-0"
+                :href="'#step-' + STEPS.REQUEST_PUBLIC"
+                @click="setStep(STEPS.REQUEST_PUBLIC)"
+                >← <u>{{ i18n.back }}</u></a>
+            </div>
             <ReviewRequest
               :i18n="i18n"
               :config="config"
@@ -295,6 +342,18 @@
               @submit="submitting = true"
               @online-help="$refs.onlineHelp.show($event)"
               />
+            <UserConfirmation
+              :form="userForm"
+              />
+            <button
+              :x-disabled="!canSend"
+              id="send-request-button"
+              type="submit"
+              class="btn btn-primary"
+              @click="$emit('submit')">
+              <i class="fa fa-send" aria-hidden="true" />
+              {{ i18n.submitRequest }}
+            </button>
             <!--
             TODO: move submit/save button here,
               but also needs canSend<-errors etc.
@@ -342,6 +401,7 @@ import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
 import UserRegistration from './user-registration'
+import UserConfirmation from './user-confirmation'
 import ReviewRequest from './review-request'
 import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
@@ -375,6 +435,7 @@ import {
   UPDATE_PRIVATE,
   UPDATE_REQUEST_PUBLIC,
   UPDATE_LAW_TYPE,
+  UPDATE_TERMS,
   SET_CONFIG,
   STEPS
 } from '../../store/mutation_types'
@@ -389,6 +450,7 @@ export default {
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
     UserRegistration,
+    UserConfirmation,
     SimilarRequests,
     ReviewRequest,
     PbMultiReview,
@@ -498,9 +560,6 @@ export default {
       } else {
         return null
       }
-    },
-    hasReviewPbStep() {
-      return false
     },
     steps() {
       return [
@@ -623,6 +682,14 @@ export default {
         this.updateRequestPublic(value)
       }
     },
+    terms: {
+      get() {
+        return this.$store.state.terms
+      },
+      set(value) {
+        this.updateTerms(value)
+      }
+    },
     hasPublicBodies() {
       return this.publicBodies.length > 0
     },
@@ -649,7 +716,8 @@ export default {
       'stepSelectPublicBody',
       'step',
       'lawType',
-      'defaultLaw'
+      'defaultLaw',
+      'stepCanContinue',
     ])
   },
   watch: {
@@ -745,6 +813,8 @@ export default {
           first_name: UPDATE_FIRST_NAME,
           last_name: UPDATE_LAST_NAME,
           private: UPDATE_PRIVATE,
+          address: UPDATE_ADDRESS,
+          terms: UPDATE_TERMS,
         }
       })
     }
@@ -837,6 +907,7 @@ export default {
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE,
       updateRequestPublic: UPDATE_REQUEST_PUBLIC,
+      updateTerms: UPDATE_TERMS,
     }),
     ...mapActions([
       'getLawsForPublicBodies',

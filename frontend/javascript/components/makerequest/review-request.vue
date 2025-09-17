@@ -111,7 +111,6 @@
       </template>
     </ReviewRequestLine>
 
-
     <ReviewRequestLine
       v-if="!user.id"
       :i18n="i18n"
@@ -127,15 +126,19 @@
       </template>
     </ReviewRequestLine>
 
-    <button
-      :x-disabled="!canSend"
-      id="send-request-button"
-      type="submit"
-      class="btn btn-primary"
-      @click="$emit('submit')">
-      <i class="fa fa-send" aria-hidden="true" />
-      {{ i18n.submitRequest }}
-    </button>
+    <ReviewRequestLine
+      :i18n="i18n"
+      :title="i18n.address || '§Adresse'"
+      :invalid="needCorrectionAddress"
+      :step="STEPS.CREATE_ACCOUNT"
+      >
+      <template #contents>
+        <div
+          style="white-space: pre-line"
+          :class="{ 'text-danger': needCorrectionAddress}"
+          >{{ user.address || i18n.address }}</div>
+      </template>
+    </ReviewRequestLine>
   </div>
 </template>
 
@@ -219,12 +222,6 @@ export default {
     }
   },
   computed: {
-    canSend() {
-      return this.user.id || !this.hasErrors
-    },
-    hasErrors() {
-      return this.errors.length > 0
-    },
     needCorrectionUser() {
       return this.hasFormErrorsUser || !this.userValid
     },
@@ -256,6 +253,13 @@ export default {
     },
     needCorrectionText() {
       return this.errors.length > 0
+    },
+    hasFormAddressErrors() {
+      if (this.userForm.fields.address !== this.user.address) return
+      return ('address' in this.userForm.errors)
+    },
+    needCorrectionAddress() {
+      return this.hasFormAddressErrors || !this.addressValid
     },
     errors() {
       const errors = []
@@ -319,6 +323,7 @@ export default {
       'subject',
       'subjectValid',
       'emailValid',
+      'addressValid',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
       'requestPublic',

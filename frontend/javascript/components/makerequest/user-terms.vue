@@ -8,7 +8,7 @@
               <div class="form-check">
                 <input
                   type="checkbox"
-                  v-model="termsValue"
+                  v-model="terms"
                   name="terms"
                   class="form-check-input"
                   :class="{ 'is-invalid': errors.terms }"
@@ -35,14 +35,15 @@ export default {
   props: {
     form: {
       type: Object
+    },
+    initialTerms: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      terms:
-        this.form.fields.terms.value !== null
-          ? this.form.fields.terms.value
-          : this.form.fields.terms.initial
+      termsValue: this.initialTerms
     }
   },
   computed: {
@@ -55,12 +56,12 @@ export default {
       }
       return {}
     },
-    termsValue: {
+    terms: {
       get() {
-        return this.terms
+        return this.termsValue
       },
       set(value) {
-        this.terms = value
+        this.termsValue = value
         this.$emit('update:initialTerms', value)
       }
     }
