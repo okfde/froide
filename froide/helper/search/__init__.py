@@ -55,6 +55,12 @@ def get_default_ngram_analyzer():
     )
 
 
+def get_default_query_preprocessor():
+    from froide.helper.search.filters import BaseQueryPreprocessor
+
+    return BaseQueryPreprocessor()
+
+
 def get_func(config_name, default_func):
     def get_it():
         from django.conf import settings
@@ -73,3 +79,4 @@ get_text_analyzer = get_func("text_analyzer", get_default_text_analyzer)
 get_search_analyzer = get_func("search_analyzer", get_default_text_analyzer)
 get_search_quote_analyzer = get_func("search_quote_analyzer", get_default_text_analyzer)
 get_ngram_analyzer = get_func("ngram_analyzer", get_default_ngram_analyzer)
+get_query_preprocessor = get_func("query_preprocessor", get_default_query_preprocessor)
