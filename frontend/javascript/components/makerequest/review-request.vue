@@ -26,25 +26,32 @@
     <ReviewRequestLine
       :i18n="i18n"
       :title="'§Anfragentext'"
-      :invalid="needCorrectionText"
+      :invalid="needCorrectionBody"
       :step="STEPS.WRITE_REQUEST"
       >
       <template #contents>
         <div>
           <div v-if="fullText">
-            <div class="body-text review-body-text">
+            <div
+              class="body-text review-body-text"
+              :class="{ 'text-danger': needCorrectionBody }"
+              >
               <span v-text="body" />
               <span v-text="letterSignatureName" />
             </div>
           </div>
           <div v-else>
-            <div class="body-text review-body-text">
+            <div
+              class="body-text review-body-text"
+              :class="{ 'text-danger': needCorrectionBody }"
+              >
               <span>{{ letterStart }}</span>
               <span class="highlight"><br />{{ body }}</span>
               <span><br /><br />{{ letterEnd }}</span>
             </div>
           </div>
         </div>
+        <!--
         <ul class="review-hints">
           <li>{{ i18n.reviewSpelling }}</li>
           <li>{{ i18n.reviewPoliteness }}</li>
@@ -52,6 +59,7 @@
             {{ error }}
           </li>
         </ul>
+        -->
       </template>
     </ReviewRequestLine>
 
@@ -104,10 +112,6 @@
         <span :class="{ 'text-danger': !user.last_name}" style="margin-left: 1ch">
           {{ user.last_name || i18n.yourLastName }}
         </span>
-        <div
-          v-if="hasFormErrorsUser"
-          class="text-danger"
-          >§ there were errors here</div>
       </template>
     </ReviewRequestLine>
 
@@ -120,7 +124,7 @@
       >
       <template #contents>
         <span :class="{ 'text-danger': needCorrectionEmail}">
-          {{ user.email || i18n.email }}
+          {{ user.email || i18n.email || '§Email' }}
         </span>
         (§wird Behörde nicht mitgeteilt)
       </template>
@@ -136,9 +140,34 @@
         <div
           style="white-space: pre-line"
           :class="{ 'text-danger': needCorrectionAddress}"
-          >{{ user.address || i18n.address }}</div>
+          >{{ user.address || i18n.address || '§Adresse' }}</div>
       </template>
     </ReviewRequestLine>
+
+    <UserConfirmation
+      :form="userForm"
+      />
+
+    <button
+      id="send-request-button"
+      type="submit"
+      class="btn btn-primary"
+      :disabled="needCorrection"
+      @click="$emit('submit')">
+      <i class="fa fa-send" aria-hidden="true" />
+      {{ i18n.submitRequest }}
+    </button>
+    <button
+      v-if="user.id && showDraft"
+      type="submit"
+      class="btn btn-secondary mt-3 ms-2"
+      name="save_draft"
+      value="true"
+      :disabled="needCorrection"
+      @click="submitting = true">
+      <i class="fa fa-save" aria-hidden="true" />
+      {{ i18n.saveAsDraft }}
+    </button>
   </div>
 </template>
 
@@ -147,6 +176,7 @@ import LetterMixin from './lib/letter-mixin'
 
 import ReviewRequestLine from './review-request-line.vue'
 import ReviewPublicbody from './review-publicbody.vue'
+import UserConfirmation from './user-confirmation'
 
 import { mapMutations, mapGetters } from 'vuex'
 
@@ -165,6 +195,7 @@ export default {
   components: {
     ReviewRequestLine,
     ReviewPublicbody,
+    UserConfirmation,
   },
   props: {
     i18n: {
@@ -214,6 +245,10 @@ export default {
     hidePublicbodyChooser: {
       type: Boolean,
       required: true
+    },
+    showDraft: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -222,44 +257,61 @@ export default {
     }
   },
   computed: {
+    needCorrection() {
+      return this.needCorrectionUser ||
+        this.needCorrectionEmail ||
+        this.needCorrectionPublicbody ||
+        this.needCorrectionSubject ||
+        this.needCorrectionBody ||
+        this.needCorrectionAddress
+    },
     needCorrectionUser() {
       return this.hasFormErrorsUser || !this.userValid
     },
-    needCorrectionSubject() {
-      return this.hasFormErrorsSubject || !this.subjectValid
-    },
     hasFormErrorsUser() {
-      return this.hasFormErrorsFirstName || this.hasFormErrorsLastName
+      // note UserTerms here
+      return this.hasFormErrorsFirstName || this.hasFormErrorsLastName || this.hasFormErrorsUserTerms
     },
     hasFormErrorsFirstName() {
-      if (this.userForm.fields.first_name !== this.user.first_name) return
+      if (this.userForm?.fields.first_name?.value !== this.user.first_name) return
       return ('first_name' in this.userForm.errors)
     },
     hasFormErrorsLastName() {
-      if (this.userForm.fields.last_name !== this.user.last_name) return
+      if (this.userForm?.fields.last_name?.value !== this.user.last_name) return
       return ('last_name' in this.userForm.errors)
+    },
+    hasFormErrorsUserTerms() {
+      if (this.userForm?.fields.terms?.value !== this.user.terms) return
+      return ('terms' in this.userForm.errors)
     },
     needCorrectionEmail() {
       return this.hasFormErrorsEmail || !this.emailValid
     },
     hasFormErrorsEmail() {
-      if (this.userForm.fields.email != this.user.email) return
+      if (this.userForm?.fields.user_email?.value !== this.user.email) return
       return ('email' in this.userForm.errors)
+    },
+    needCorrectionSubject() {
+      return this.hasFormErrorsSubject || !this.subjectValid
     },
     hasFormErrorsSubject() {
       // ignore form errors if value changed
-      if (this.requestForm.fields.subject.value !== this.subject) return
+      if (this.requestForm?.fields.subject.value !== this.subject) return
       return ('subject' in this.requestForm.errors)
     },
-    needCorrectionText() {
-      return this.errors.length > 0
+    needCorrectionBody() {
+      return this.hasFormErrorsBody || !this.bodyValid
     },
-    hasFormAddressErrors() {
-      if (this.userForm.fields.address !== this.user.address) return
-      return ('address' in this.userForm.errors)
+    hasFormErrorsBody() {
+      if (this.requestForm?.fields.body.value !== this.body) return
+      return ('body' in this.requestForm.errors)
     },
     needCorrectionAddress() {
-      return this.hasFormAddressErrors || !this.addressValid
+      return this.hasFormErrorsAddress || !this.addressValid
+    },
+    hasFormErrorsAddress() {
+      if (this.userForm?.fields.address.value !== this.user.address) return
+      return ('address' in this.userForm.errors)
     },
     errors() {
       const errors = []
@@ -322,6 +374,7 @@ export default {
       'userValid',
       'subject',
       'subjectValid',
+      'bodyValid',
       'emailValid',
       'addressValid',
       'getPublicBodyByScope',

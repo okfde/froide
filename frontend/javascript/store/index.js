@@ -59,7 +59,6 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
-      terms: false,
       step: getInitialStep(),
       subject: '',
       body: '',
@@ -164,8 +163,8 @@ export default createStore({
     step: (state) => state.step,
     lawType: (state) => state.lawType,
     // TODO validate closer to what happens server side?
-    userValid: (state) => state.user.first_name && state.user.last_name && state.user.email,
-    termsValid: (state) => state.terms,
+    userValid: (state) => state.user.id || (state.user.first_name && state.user.last_name && state.user.email),
+    termsValid: (state) => state.user.terms,
     subjectValid: (state) => state.subject && state.subject.length > 0,
     bodyValid: (state) => state.body && state.body.length > 0,
     emailValid: (state) => state.user.email && state.user.email.length > 0,
@@ -378,7 +377,7 @@ export default createStore({
       state.user.id = val
     },
     [UPDATE_TERMS](state, val) {
-      state.terms = val
+      state.user.terms = val
     },
     [UPDATE_REQUEST_PUBLIC](state, val) {
       state.requestPublic = val
@@ -412,13 +411,13 @@ export default createStore({
         // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
         publicBodies: state.scopedPublicBodies[scope],
         public: state.requestPublic,
-        terms: state.terms,
         // TODO add user. first_name, last_name, e-mail, address, private
         address: state.user.address,
         user_email: state.user.email,
         first_name: state.user.first_name,
         last_name: state.user.last_name,
         private: state.user.private,
+        terms: state.user.terms,
       }
       try {
         persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))
@@ -463,7 +462,8 @@ export default createStore({
           value = propMap[key]
           console.log('### from prop', key, value)
         } else if (formFields && formFields[key] !== undefined) {
-          value = formFields[key].value || formFields[key].initial
+          value = formFields[key].value
+          if (value === undefined) value = formFields[key].initial
           if (formCoerce && formCoerce[key]) {
             value = formCoerce[key](value)
           }

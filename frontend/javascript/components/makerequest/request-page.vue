@@ -26,7 +26,13 @@
     <div>STEP: {{ this.step }}</div>
 
     <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
-      <DjangoSlot name="messages" />
+      <div
+        v-show="step === STEPS.PREVIEW_SUBMIT"
+        >
+        <DjangoSlot
+          name="messages"
+          />
+      </div>
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
@@ -111,11 +117,21 @@
             v-if="stepSelectPublicBody"
             id="step-publicbody"
             class="mt-5">
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + STEPS.FIND_SIMILAR"
-                @click="setStep(STEPS.FIND_SIMILAR)"
-                >← <u>{{ i18n.back }}</u></a>
+            <div class="my-3 row">
+              <div class="col">
+                <a class="btn btn-link text-decoration-none ps-0"
+                  :href="'#step-' + STEPS.FIND_SIMILAR"
+                  @click="setStep(STEPS.FIND_SIMILAR)"
+                  >← <u>{{ i18n.back }}</u></a>
+              </div>
+              <div class="col ms-auto text-end">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="!stepCanContinue(pbScope)"
+                  @click="setStep((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.CREATE_ACCOUNT)"
+                  >§Weiter</button>
+              </div>
             </div>
             <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
             <div v-if="multiRequest && tmpMulti">
@@ -182,8 +198,8 @@
 
             <div class="my-3">
               <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + (multiRequest ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
-                @click="setStep(multiRequest ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
+                :href="'#step-' + ((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
+                @click="setStep((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
                 >← <u>{{ i18n.back }}</u></a>
             </div>
 
@@ -339,52 +355,10 @@
               :multi-request="multiRequest"
               :full-text="fullText"
               :hide-publicbody-chooser="hidePublicbodyChooser"
+              :show-draft="showDraft"
               @submit="submitting = true"
               @online-help="$refs.onlineHelp.show($event)"
               />
-            <UserConfirmation
-              :form="userForm"
-              />
-            <button
-              :x-disabled="!canSend"
-              id="send-request-button"
-              type="submit"
-              class="btn btn-primary"
-              @click="$emit('submit')">
-              <i class="fa fa-send" aria-hidden="true" />
-              {{ i18n.submitRequest }}
-            </button>
-            <!--
-            TODO: move submit/save button here,
-              but also needs canSend<-errors etc.
-            <button
-              v-if="shouldCheckRequest"
-              id="review-button"
-              type="button"
-              class="btn btn-primary btn-lg mt-3"
-              @click="showReview = true">
-              <i class="fa fa-check" aria-hidden="true" />
-              {{ i18n.reviewRequest }}
-            </button>
-            <button
-              id="send-request-button"
-              type="submit"
-              class="btn btn-primary btn-lg mt-3"
-              @click="submitting = true">
-              <i class="fa fa-send" aria-hidden="true" />
-              {{ i18n.submitRequest }}
-            </button>
-            -->
-            <button
-              v-if="user.id && showDraft"
-              type="submit"
-              class="btn btn-secondary mt-3 ms-2"
-              name="save_draft"
-              value="true"
-              @click="submitting = true">
-              <i class="fa fa-save" aria-hidden="true" />
-              {{ i18n.saveAsDraft }}
-            </button>
           </div>
         </div>
       </div>
@@ -401,7 +375,6 @@ import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
 import UserRegistration from './user-registration'
-import UserConfirmation from './user-confirmation'
 import ReviewRequest from './review-request'
 import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
@@ -450,7 +423,6 @@ export default {
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
     UserRegistration,
-    UserConfirmation,
     SimilarRequests,
     ReviewRequest,
     PbMultiReview,
@@ -684,7 +656,7 @@ export default {
     },
     terms: {
       get() {
-        return this.$store.state.terms
+        return this.$store.state.user.terms
       },
       set(value) {
         this.updateTerms(value)
@@ -742,6 +714,11 @@ export default {
         step: SET_STEP,
       }
     })
+
+    if (this.requestForm.fields.draft.initial && this.step === STEPS.INTRO) {
+      console.log('request is draft, skipping intro etc.')
+      this.setStep(STEPS.WRITE_REQUEST)
+    }
 
     // init "regular form values" from storage if not POSTed
     // (not form-submitted, but refreshed, or returned from login)
