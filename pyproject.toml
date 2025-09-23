@@ -151,6 +151,10 @@ DJANGO_SETTINGS_MODULE = "froide.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 addopts = ["--reuse-db"]
 markers = ["no_delivery_mock"]
+filterwarnings = [
+    "ignore::DeprecationWarning:(?!froide).*",
+    "ignore::PendingDeprecationWarning:(?!froide)*",
+]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
