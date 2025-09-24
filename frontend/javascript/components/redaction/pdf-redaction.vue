@@ -359,6 +359,14 @@ const { fetchAttachment, approveAttachment } = useAttachments()
 // 1000px are good enough to redact an A4 page with 10pt text
 const minRenderWidth = 1000
 
+// factor; 1.4 will add 20% on top+bottom on the pure getBoundingRect
+const lineHeight = 1.4
+
+// add constant padding on left+right of pure getBoundingRect,
+// factor of the longer page side
+// 1/297 will add ~1mm (assuming DIN A4 as default)
+const paddingUnit = 1 / 297
+
 let renderDensityFactor
 
 const scaleCssProp = (styleObject, propName, factor) => {
@@ -667,8 +675,10 @@ export default {
         // - but would have to limit effective canvas size to prevent crashes
         renderDensityFactor = Math.max(minRenderWidth / window.innerWidth, 1.0)
 
+        // normalized to positive degrees, e.g. -90 ⇒ 270
+        const rotation = (page.rotate + 360) % 360
         // is the page rotated by ±{90, 270}?
-        const flipWidthHeight = Math.abs(page.rotate) % 180 === 90
+        const flipWidthHeight = rotation % 180 === 90
         this.intrinsicPageWidth = flipWidthHeight ? page.view[3] : page.view[2]
         this.intrinsicPageHeight = flipWidthHeight ? page.view[2] : page.view[3]
 
@@ -1176,7 +1186,7 @@ export default {
           if (node.nodeName === '#text') {
             node = node.parentNode
           }
-          console.log(node, start, end)
+          // console.log(node, start, end)
           if (
             node === null ||
             node.dataset === undefined ||
@@ -1402,31 +1412,79 @@ export default {
         blockIndex += 1
       }
 
+      const [baseX, baseY, baseWidth, baseHeight] = this.getDivRect(div)
+
+      if (isNaN(baseX) || isNaN(baseY)) {
+        console.warn('redactRage: getDivRect failed, bailing')
+        return null
+      }
+
+      let width
+      let height
+      let x
+      let y
+      const padding = Math.max(this.intrinsicPageWidth, this.intrinsicPageHeight) * paddingUnit
+      let paddingX = 0
+      let paddingY = 0
+      let dir
+      const f = renderDensityFactor / this.scaleFactor
+
       // PDFjs stretches lines; this is not reflected in offsetWidth
       // approach without getBoundlingClientRect:
       // const scaleX = parseFloat(div.style.transform?.match(/scaleX\(([\d.]+)\)/)?.[1]) || 1.0
 
-      div.textContent = text.substr(0, start)
-      const startWidth = div.getBoundingClientRect().width
-      // const startWidth = div.offsetWidth * scaleX
-
+      // we temporarily reset the text in its div to measure where the matched selected part begins
+      // 200b is ZeroWidthSpace, to avoid the box losing its height (later needed for calculations;
+      // we can ignore collapsing whitespace, since the box has white-space:pre)
+      div.textContent = text.substr(0, start) || '\u200b'
+      const startRect = div.getBoundingClientRect()
+      // reset again to measure where matched part ends
       div.textContent = text.substr(0, start + match.length)
-      const endWidth = div.getBoundingClientRect().width
-      // const endWidth = div.offsetWidth * scaleX
-
+      const endRect = div.getBoundingClientRect()
+      // and finally revert div's text
       div.textContent = text
 
-      const pos = this.getDivPos(div)
-      let x = pos[0]
-      const y = pos[1]
-      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
-        return null
+      // we compare the two measured rects to figure out their intersection,
+      // respecting the four directions
+      // note how vertical/horizontal are not perfectly inverses;
+      // due to how PDFs handles x/y vs width/height - only one is rotated
+      if (startRect.width !== endRect.width) {
+        // horizontal, ltr or rtl
+        if (startRect.x === endRect.x) {
+          dir = 'ltr'
+          x = baseX + startRect.width * f
+          y = baseY
+        } else {
+          dir = 'rtl'
+          x = baseX - endRect.width * f
+          y = baseY - baseHeight
+        }
+        width = Math.abs(startRect.width - endRect.width) * f
+        height = baseHeight
+        // factor in line height, shift away from center first
+        y -= height * ((lineHeight - 1.0) / 2)
+        height *= lineHeight
+        paddingX = padding
+      } else {
+        // vertical, top-to-bottom or bottom-to-top
+        if (startRect.y === endRect.y) {
+          dir = 'ttb'
+          x = baseX - baseHeight
+          y = baseY + startRect.height * f
+        } else {
+          dir = 'btt'
+          x = baseX
+          y = baseY - endRect.height * f
+        }
+        width = baseHeight
+        height = Math.abs(startRect.height - endRect.height) * f
+        x -= width * ((lineHeight - 1.0) / 2)
+        width *= lineHeight
+        paddingY = padding
       }
-      x += startWidth
-      const width = endWidth - startWidth
 
-      const height = Math.min(div.offsetHeight * 1.2, div.offsetHeight + 10)
-      const padding = 2
+      console.log('redactRange', { startRect, endRect, dir, baseX, baseY, baseWidth, baseHeight, x, y, width, height, padding, paddingUnit, paddingX, paddingY })
+
       return {
         type: 'redact',
         texts: [
@@ -1437,7 +1495,12 @@ export default {
             textAfter: text.replace(match, replace)
           }
         ],
-        rects: [[x - padding, y, width + padding * 2, height]],
+        rects: [[
+          x - paddingX,
+          y - paddingY,
+          width + paddingX * 2,
+          height + paddingY * 2,
+        ]],
         page: this.currentPage
       }
     },
