@@ -244,7 +244,10 @@
     <div class="row flex-grow-1">
       <div
         class="preview position-relative"
-        :class="{ ['preview--do-paint']: doPaint }"
+        :class="{
+          ['preview--do-paint']: doPaint,
+          ['preview--text-only']: textOnly
+        }"
         ref="containerWrapper"
         @wheel="mouseWheel"
         @pointerleave="pointerLeaveWrapper"
@@ -656,6 +659,9 @@ export default {
         this.page = page
 
         let maxWidth = this.$refs.containerWrapper.offsetWidth
+        if (!this.$refs.containerWrapper) {
+          console.error('containerWrapper is null?')
+        }
         // subtract the paddings (from bootstrap's row child),
         // fall back to the value calculated in default settings (like base font size)
         maxWidth -=
@@ -703,11 +709,11 @@ export default {
           page,
           viewport,
           renderDensityFactor,
-          scaleFactor,
+          scaleFactor: this.scaleFactor,
           maxWidth,
           canvasViewportSize: [viewport.width, viewport.height],
           canvasCss: [wPx, hPx],
-          pageSize: [pageWidth, page.view[3]]
+          pageSize: [this.intrinsicPageWidth, this.intrinsicPageHeight]
         })
         canvas.style.width = wPx
         canvas.style.height = hPx
@@ -932,9 +938,8 @@ export default {
         }
       })
       return {
-        width: this.viewport.width,
-        height: this.viewport.height,
-        scaleFactor: this.scaleFactor,
+        width: this.intrinsicPageWidth,
+        height: this.intrinsicPageHeight,
         pageNumber,
         rects: this.rectanglesPerPage[pageNumber],
         texts
@@ -977,6 +982,8 @@ export default {
       this.drawRectangles()
     },
     mouseDown(e, override) {
+      // throw out right/middle/context clicks
+      if (e.button !== 0) return
       if (!this.doPaint && !override) {
         return
       }
@@ -1003,6 +1010,9 @@ export default {
 
       const endDrag = this.endDrag
       this.endDrag = null
+      if (endDrag === null) {
+        return
+      }
       if (
         Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
         Math.abs(endDrag[1] - this.startDrag[1]) < 3
@@ -1031,7 +1041,12 @@ export default {
 
       this.addAction({
         type: 'redact',
-        rects: [[x, y, w, h]],
+        rects: [[
+          x / this.scaleFactor,
+          y / this.scaleFactor,
+          w / this.scaleFactor,
+          h / this.scaleFactor
+        ]],
         page: this.currentPage,
         texts
       })
@@ -1230,21 +1245,30 @@ export default {
       }
       this.applyActionsOnPageLoad()
     },
-    drawRectangle(ctx, rect) {
+    drawRectangle(ctx, rect, doScale = false) {
       const [x, y, w, h] = rect
+      const f = doScale ? this.scaleFactor : 1
       ctx.fillStyle = '#000'
-      ctx.fillRect(x, y, w, h)
+      ctx.fillRect(x * f, y * f, w * f, h * f)
     },
     drawRectangles() {
-      const ctx = this.redactCanvas.getContext('2d')
+      const ctx = this.redactCanvas.getContext?.('2d')
+      if (!ctx) {
+        console.warn('assume text mode, bail')
+        return
+      }
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       if (this.rectanglesPerPage[this.currentPage] !== undefined) {
         this.rectanglesPerPage[this.currentPage].forEach((r) => {
-          this.drawRectangle(ctx, r)
+          this.drawRectangle(ctx, r, true)
         })
       }
       if (this.startDrag && this.endDrag) {
-        this.drawRectangle(ctx, this.getRect(this.startDrag, this.endDrag))
+        this.drawRectangle(
+          ctx,
+          this.getRect(this.startDrag, this.endDrag),
+          false
+        )
       }
     },
     applyActionsOnPageLoad() {
@@ -1596,8 +1620,8 @@ export default {
   overflow: hidden;
 }
 
-.preview--do-paint[style],
-.preview--do-paint .redactContainer[style] {
+.preview--do-paint.preview--text-only[style],
+.preview--do-paint.preview--text-only .redactContainer[style] {
   user-select: text !important;
 }
 
