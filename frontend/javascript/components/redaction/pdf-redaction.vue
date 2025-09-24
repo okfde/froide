@@ -3,6 +3,7 @@
     id="pdf-viewer"
     ref="top"
     class="pdf-redaction-tool container-xxl bg-dark-subtle d-flex flex-column"
+    :class="{ 'pdf-redaction-tool--debug': debug }"
   >
     <div v-if="hasPassword && ready" class="row">
       <div class="col">
@@ -149,6 +150,7 @@
 
         <div class="btn-group me-1 toolbar-modes py-2">
           <button
+            type="button"
             class="btn"
             :class="{
               'btn-outline-secondary': !textOnly,
@@ -161,6 +163,7 @@
             <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
           </button>
           <button
+            type="button"
             class="btn"
             :class="{
               'btn-outline-secondary': !textDisabled,
@@ -301,6 +304,7 @@
             <div
               :id="textLayerId"
               class="textLayer"
+              ref="textLayer"
               :class="{ textActive: textOnly, textDisabled: textDisabled }"
             />
           </div>
@@ -358,6 +362,9 @@ import { toRaw } from 'vue'
 
 import { useAttachments } from '../docupload/lib/attachments.js'
 const { fetchAttachment, approveAttachment } = useAttachments()
+
+// help with only Text mode debugging: show non-OCR original + highlight spans/divs
+const debug = false
 
 // 1000px are good enough to redact an A4 page with 10pt text
 const minRenderWidth = 1000
@@ -439,6 +446,7 @@ export default {
   emits: ['uploaded', 'hasredactionsupdate'],
   data() {
     return {
+      debug,
       doc: null,
       attachment: null,
       currentPage: null,
@@ -664,6 +672,8 @@ export default {
         }
         // subtract the paddings (from bootstrap's row child),
         // fall back to the value calculated in default settings (like base font size)
+        // note: paddingLeft is the value set in CSS, so something like "12px",
+        //   unlike offsetWidth, still this value is consistent across page zoom
         maxWidth -=
           parseInt(
             window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
@@ -926,11 +936,9 @@ export default {
     serializePage(pageNumber) {
       const divs = this.textLayer.children
       const texts = Array.prototype.map.call(divs, (d) => {
-        const [dx, dy] = this.getDivPos(d)
-        const dw = d.offsetWidth
-        const dh = d.offsetHeight
+        const pos = this.getDivRect(d)
         return {
-          pos: [dx, dy, dw, dh],
+          pos,
           fontFamily: d.style.fontFamily,
           fontSize: d.style.fontSize,
           transform: d.style.transform,
@@ -1011,6 +1019,7 @@ export default {
       const endDrag = this.endDrag
       this.endDrag = null
       if (endDrag === null) {
+        console.log('Cancel malformed select')
         return
       }
       if (
@@ -1021,17 +1030,21 @@ export default {
         this.startDrag = null
         return
       }
-      const [x, y, w, h] = this.getRect(this.startDrag, endDrag)
+      // getRect is "device vs document pixel" agnostic;
+      // startDrag and endDrag are renderDensityFactor-aware, but not scaleFactor
+      let [x, y, w, h] = this.getRect(this.startDrag, endDrag)
       if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
         return
       }
+      x /= this.scaleFactor
+      y /= this.scaleFactor
+      w /= this.scaleFactor
+      h /= this.scaleFactor
 
       // find overlapping text and remove it completely
       const divs = this.textLayer.children
       const matches = Array.prototype.filter.call(divs, (d) => {
-        const [dx, dy] = this.getDivPos(d)
-        const dw = d.offsetWidth
-        const dh = d.offsetHeight
+        const [dx, dy, dw, dh] = this.getDivRect(d)
         return x < dx + dw && x + w > dx && y < dy + dh && y + h > dy
       })
       const texts = matches.map((d) => {
@@ -1041,12 +1054,7 @@ export default {
 
       this.addAction({
         type: 'redact',
-        rects: [[
-          x / this.scaleFactor,
-          y / this.scaleFactor,
-          w / this.scaleFactor,
-          h / this.scaleFactor
-        ]],
+        rects: [[x, y, w, h]],
         page: this.currentPage,
         texts
       })
@@ -1254,7 +1262,7 @@ export default {
     drawRectangles() {
       const ctx = this.redactCanvas.getContext?.('2d')
       if (!ctx) {
-        console.warn('assume text mode, bail')
+        console.log('drawRectangel assume text mode, bail')
         return
       }
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -1384,11 +1392,22 @@ export default {
         this.message = this.i18n.autoRedacted
       }
     },
-    getDivPos(div) {
-      return [
-        parseInt(div.style.left.replace('px', '')),
-        parseInt(div.style.top.replace('px', ''))
-      ]
+    getDivRect(div) {
+      // more exact than clientLeft/offsetTop, which are ints
+      const parentWidth = parseFloat(this.textLayer.style.width.replace('px', ''))
+      const parentHeight = parseFloat(this.textLayer.style.height.replace('px', ''))
+      const divLeft = parseFloat(div.style.left.replace('px', ''))
+      const divTop = parseFloat(div.style.top.replace('px', ''))
+      const divWidth = div.offsetWidth
+      const divHeight = div.offsetHeight
+      const x = (divLeft / parentWidth) * this.intrinsicPageWidth
+      const y = (divTop / parentHeight) * this.intrinsicPageHeight
+      // alternative calculation, should be identical
+      // const x = divLeft * renderDensityFactor / this.scaleFactor
+      // const y = divTop * renderDensityFactor / this.scaleFactor
+      const w = divWidth * renderDensityFactor / this.scaleFactor
+      const h = divHeight * renderDensityFactor / this.scaleFactor
+      return [x, y, w, h]
     },
     redactText(div, start, text) {
       return this.redactRange(div, start, start + text.length)
@@ -1620,6 +1639,11 @@ export default {
   overflow: hidden;
 }
 
+// user-select is usually disabled so it does not interfere with drag-to-pan.
+// In textOnly mode, we need to allow it, but only then, and only when doPaint
+// Otherwise, Firefox likes to select the whole div.redactContainer
+// when the dragging cursor crosses the middle of the div.
+// The whole div is then removed by selection.removeAllRanges()
 .preview--do-paint.preview--text-only[style],
 .preview--do-paint.preview--text-only .redactContainer[style] {
   user-select: text !important;
@@ -1684,4 +1708,21 @@ export default {
   // reduces jitter when variable-width numbers change
   font-variant-numeric: tabular-nums;
 }
+
+.pdf-redaction-tool--debug {
+  // for onlyText show non-OCR original + highlight spans/divs on top
+
+  .textLayer[style] {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .textLayer :deep(span) {
+    outline: 1px solid red;
+  }
+
+  canvas.redactLayer {
+    display: block !important;
+  }
+}
+
 </style>
