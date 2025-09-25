@@ -22,7 +22,7 @@ class Room {
   private socket: WebSocket | null = null
   private retryInterval: number | null = null
   private heartBeatInterval: number | null = null
-  private closed = true
+  private socketClosed = true
   private callbacks: CallbackMapping = {}
   private queue: EventData[] = []
   private readonly heartbeatSeconds: number
@@ -49,14 +49,14 @@ class Room {
     this.clearRetry()
 
     this.socket.onopen = () => {
-      this.closed = false
+      this.socketClosed = false
       this.setupHeartbeat()
       this.queue.forEach((d) => {
         if (this.socket != null) {
           this.socket.send(JSON.stringify(d))
         }
       })
-      window.addEventListener('beforeunload', this.onunload)
+      window.addEventListener('beforeunload', () => this.onunload())
       this.queue = []
     }
     this.socket.onmessage = (e) => {
@@ -69,7 +69,7 @@ class Room {
     this.socket.onclose = () => {
       this.clearHeartbeat()
       window.removeEventListener('beforeunload', this.onunload)
-      if (!this.closed) {
+      if (!this.socketClosed) {
         console.info('Socket closed unexpectedly. Retrying...')
         this.setupRetry()
       }
@@ -78,8 +78,8 @@ class Room {
   }
 
   onunload(): void {
-    if (!this.closed) {
-      this.close()
+    if (!this.socketClosed) {
+      this.closeSocket()
     }
   }
 
@@ -114,8 +114,8 @@ class Room {
     })
   }
 
-  close(): void {
-    this.closed = true
+  closeSocket(): void {
+    this.socketClosed = true
     if (this.socket != null) {
       this.socket.close()
     }
