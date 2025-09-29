@@ -25,6 +25,7 @@ class Room {
   private socketClosed = true
   private callbacks: CallbackMapping = {}
   private queue: EventData[] = []
+  private onUnloadHandler: EventListener | null = null
   private readonly heartbeatSeconds: number
   private readonly retrySeconds: number
 
@@ -56,7 +57,9 @@ class Room {
           this.socket.send(JSON.stringify(d))
         }
       })
-      window.addEventListener('beforeunload', () => this.onunload())
+      // provide this binding to onunload; keep handle around for removing in onclose
+      this.onUnloadHandler = () => this.onunload()
+      window.addEventListener('beforeunload', this.onUnloadHandler)
       this.queue = []
     }
     this.socket.onmessage = (e) => {
@@ -68,7 +71,7 @@ class Room {
     }
     this.socket.onclose = () => {
       this.clearHeartbeat()
-      window.removeEventListener('beforeunload', this.onunload)
+      window.removeEventListener('beforeunload', this.onUnloadHandler as EventListener)
       if (!this.socketClosed) {
         console.info('Socket closed unexpectedly. Retrying...')
         this.setupRetry()
