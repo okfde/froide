@@ -703,8 +703,8 @@ export default {
         // (which are affected by page zoom, bootstrap viewports and rendering artifacts)
         // so scaleFactor needs to be respected in many calculations in the component
         // (to "(re)project" between the two views)
-        this.scaleFactor = (renderDensityFactor * maxWidth) / this.intrinsicPageWidth
-        const viewport = page.getViewport({ scale: this.scaleFactor })
+        this.scaleFactor = maxWidth / this.intrinsicPageWidth
+        const viewport = page.getViewport({ scale: renderDensityFactor * this.scaleFactor })
 
         this.viewport = viewport
         const canvas = this.canvas
@@ -937,7 +937,8 @@ export default {
       const divs = this.textLayer.children
       const texts = Array.prototype.map.call(divs, (d) => {
         const pos = this.getDivRect(d)
-        const f = renderDensityFactor / this.scaleFactor
+        const f = 1 / this.scaleFactor
+        console.log('### pos', pos)
         return {
           pos: [
             pos[0] * f,
@@ -1061,9 +1062,11 @@ export default {
         return action.texts[0]
       })
 
+      const f2 = 1 / (this.scaleFactor * renderDensityFactor)
+
       this.addAction({
         type: 'redact',
-        rects: [[rx / this.scaleFactor, ry / this.scaleFactor, rw / this.scaleFactor, rh / this.scaleFactor]],
+        rects: [[rx * f2 , ry * f2, rw * f2, rh * f2]],
         page: this.currentPage,
         texts
       })
@@ -1279,7 +1282,7 @@ export default {
     },
     drawRectangle(ctx, rect, doScale = false) {
       const [x, y, w, h] = rect
-      const f = doScale ? this.scaleFactor : 1
+      const f = doScale ? this.scaleFactor * renderDensityFactor : 1
       ctx.fillStyle = '#000'
       ctx.fillRect(x * f, y * f, w * f, h * f)
     },
@@ -1420,7 +1423,7 @@ export default {
       // more exact than clientLeft/offsetTop, which are ints
       const divRect = div.getBoundingClientRect()
       const parentRect = this.textLayer.getBoundingClientRect()
-      const f = this.scaleFactor / renderDensityFactor // renderDensityFactor //  * scale
+      const f = this.scaleFactor
       const fx = f * this.intrinsicPageWidth / parentRect.width
       const fy = f * this.intrinsicPageHeight / parentRect.height
       const w = fx * divRect.width
@@ -1490,7 +1493,7 @@ export default {
       let paddingX = 0
       let paddingY = 0
       let dir
-      const f1 = renderDensityFactor / this.scaleFactor
+      const f1 = 1 / this.scaleFactor
       // raw getBoundingClientRects, unlike getDivRect, are affected by panzoom's scale/zoom
       const f2  = f1 / panzoom.getScale()
 
