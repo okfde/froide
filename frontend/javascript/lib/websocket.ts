@@ -71,7 +71,7 @@ class Room {
     }
     this.socket.onclose = () => {
       this.clearHeartbeat()
-      window.removeEventListener('beforeunload', this.onUnloadHandler as EventListener)
+      window.removeEventListener('beforeunload', this.onUnloadHandler!)
       if (!this.socketClosed) {
         console.info('Socket closed unexpectedly. Retrying...')
         this.setupRetry()
