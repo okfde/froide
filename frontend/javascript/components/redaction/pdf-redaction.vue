@@ -937,8 +937,14 @@ export default {
       const divs = this.textLayer.children
       const texts = Array.prototype.map.call(divs, (d) => {
         const pos = this.getDivRect(d)
+        const f = renderDensityFactor / this.scaleFactor
         return {
-          pos,
+          pos: [
+            pos[0] * f,
+            pos[1] * f,
+            pos[2] * f,
+            pos[3] * f,
+          ],
           fontSize: d.style.fontSize,
           text: d.textContent,
           // transform + fontFamily are ignored by add_text_on_pdf/redact.py; rotated boxes/pages won't match up
