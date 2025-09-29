@@ -939,10 +939,12 @@ export default {
         const pos = this.getDivRect(d)
         return {
           pos,
-          fontFamily: d.style.fontFamily,
           fontSize: d.style.fontSize,
+          text: d.textContent,
+          // transform + fontFamily are ignored by add_text_on_pdf/redact.py; rotated boxes/pages won't match up
+          // but moot because the text is invisible anyway?
           transform: d.style.transform,
-          text: d.textContent
+          fontFamily: d.style.fontFamily
         }
       })
       return {
@@ -1032,14 +1034,15 @@ export default {
       }
       // getRect is "device vs document pixel" agnostic;
       // startDrag and endDrag are renderDensityFactor-aware, but not scaleFactor
-      let [x, y, w, h] = this.getRect(this.startDrag, endDrag)
-      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
+      const [rx, ry, rw, rh] = this.getRect(this.startDrag, endDrag)
+      if (isNaN(parseFloat(rx)) || isNaN(parseFloat(ry))) {
         return
       }
-      x /= this.scaleFactor
-      y /= this.scaleFactor
-      w /= this.scaleFactor
-      h /= this.scaleFactor
+      const f = 1 / renderDensityFactor
+      const x = rx * f
+      const y = ry * f
+      const w = rw * f
+      const h = rh * f
 
       // find overlapping text and remove it completely
       const divs = this.textLayer.children
@@ -1054,7 +1057,7 @@ export default {
 
       this.addAction({
         type: 'redact',
-        rects: [[x, y, w, h]],
+        rects: [[rx / this.scaleFactor, ry / this.scaleFactor, rw / this.scaleFactor, rh / this.scaleFactor]],
         page: this.currentPage,
         texts
       })
@@ -1240,12 +1243,27 @@ export default {
       // mark every div with an index number
       // and shrink according to renderDensityFactor
       let i = 0
+      let debugDiv
+      if (debug) {
+        debugDiv = document.createElement('div')
+        debugDiv.id = 'getDivRect'
+        this.container.appendChild(debugDiv)
+      }
       Array.prototype.forEach.call(this.textLayer.children, (c) => {
         c.dataset.index = i
         i += 1
         scaleCssProp(c.style, 'left', 1 / renderDensityFactor)
         scaleCssProp(c.style, 'top', 1 / renderDensityFactor)
         scaleCssProp(c.style, 'fontSize', 1 / renderDensityFactor)
+        if (debug) {
+          c.onmouseenter = () => {
+            const cRect = this.getDivRect(c)
+            debugDiv.style.left = cRect[0] + 'px'
+            debugDiv.style.top = cRect[1] + 'px'
+            debugDiv.style.width = cRect[2] + 'px'
+            debugDiv.style.height = cRect[3] + 'px'
+          }
+        }
       })
       if (this.initialAutoRedact[this.currentPage] === undefined) {
         this.regexList.forEach((r) => this.autoRedact(r))
@@ -1394,19 +1412,15 @@ export default {
     },
     getDivRect(div) {
       // more exact than clientLeft/offsetTop, which are ints
-      const parentWidth = parseFloat(this.textLayer.style.width.replace('px', ''))
-      const parentHeight = parseFloat(this.textLayer.style.height.replace('px', ''))
-      const divLeft = parseFloat(div.style.left.replace('px', ''))
-      const divTop = parseFloat(div.style.top.replace('px', ''))
-      const divWidth = div.offsetWidth
-      const divHeight = div.offsetHeight
-      const x = (divLeft / parentWidth) * this.intrinsicPageWidth
-      const y = (divTop / parentHeight) * this.intrinsicPageHeight
-      // alternative calculation, should be identical
-      // const x = divLeft * renderDensityFactor / this.scaleFactor
-      // const y = divTop * renderDensityFactor / this.scaleFactor
-      const w = divWidth * renderDensityFactor / this.scaleFactor
-      const h = divHeight * renderDensityFactor / this.scaleFactor
+      const divRect = div.getBoundingClientRect()
+      const parentRect = this.textLayer.getBoundingClientRect()
+      const f = this.scaleFactor / renderDensityFactor // renderDensityFactor //  * scale
+      const fx = f * this.intrinsicPageWidth / parentRect.width
+      const fy = f * this.intrinsicPageHeight / parentRect.height
+      const w = fx * divRect.width
+      const h = fy * divRect.height
+      const x = (divRect.left - parentRect.left)  * fx
+      const y = (divRect.top - parentRect.top)  * fy
       return [x, y, w, h]
     },
     redactText(div, start, text) {
@@ -1470,7 +1484,9 @@ export default {
       let paddingX = 0
       let paddingY = 0
       let dir
-      const f = renderDensityFactor / this.scaleFactor
+      const f1 = renderDensityFactor / this.scaleFactor
+      // raw getBoundingClientRects, unlike getDivRect, are affected by panzoom's scale/zoom
+      const f2  = f1 / panzoom.getScale()
 
       // PDFjs stretches lines; this is not reflected in offsetWidth
       // approach without getBoundlingClientRect:
@@ -1490,20 +1506,19 @@ export default {
       // we compare the two measured rects to figure out their intersection,
       // respecting the four directions
       // note how vertical/horizontal are not perfectly inverses;
-      // due to how PDFs handles x/y vs width/height - only one is rotated
+      // due to how PDFjs handles x/y vs width/height - only one is rotated
       if (startRect.width !== endRect.width) {
         // horizontal, ltr or rtl
         if (startRect.x === endRect.x) {
           dir = 'ltr'
-          x = baseX + startRect.width * f
-          y = baseY
+          x = baseX * f1 + startRect.width * f2
         } else {
           dir = 'rtl'
-          x = baseX - endRect.width * f
-          y = baseY - baseHeight
+          x = baseX * f1 + baseWidth * f1 - endRect.width * f2
         }
-        width = Math.abs(startRect.width - endRect.width) * f
-        height = baseHeight
+        y = baseY * f1
+        width = Math.abs(startRect.width - endRect.width) * f2
+        height = baseHeight * f1
         // factor in line height, shift away from center first
         y -= height * ((lineHeight - 1.0) / 2)
         height *= lineHeight
@@ -1512,21 +1527,20 @@ export default {
         // vertical, top-to-bottom or bottom-to-top
         if (startRect.y === endRect.y) {
           dir = 'ttb'
-          x = baseX - baseHeight
-          y = baseY + startRect.height * f
+          y = baseY * f1 + startRect.height * f2
         } else {
           dir = 'btt'
-          x = baseX
-          y = baseY - endRect.height * f
+          y = baseY * f1 + baseHeight * f1 - endRect.height * f2
         }
-        width = baseHeight
-        height = Math.abs(startRect.height - endRect.height) * f
+        x = baseX * f1
+        width = baseWidth * f1
+        height = Math.abs(startRect.height - endRect.height) * f2
         x -= width * ((lineHeight - 1.0) / 2)
         width *= lineHeight
         paddingY = padding
       }
 
-      console.log('redactRange', { startRect, endRect, dir, baseX, baseY, baseWidth, baseHeight, x, y, width, height, padding, paddingUnit, paddingX, paddingY })
+      console.log('redactRange', { scaleFactor: this.scaleFactor, renderDensityFactor, startRect, endRect, dir, baseX, baseY, baseWidth, baseHeight, x, y, width, height, padding, paddingUnit, paddingX, paddingY })
 
       return {
         type: 'redact',
@@ -1722,6 +1736,18 @@ export default {
 
   canvas.redactLayer {
     display: block !important;
+  }
+
+  :deep(#getDivRect) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 100;
+    outline: 1px solid magenta;
+    transition: all 400ms;
+    pointer-events: none;
   }
 }
 
