@@ -703,6 +703,9 @@ export default {
         // (which are affected by page zoom, bootstrap viewports and rendering artifacts)
         // so scaleFactor needs to be respected in many calculations in the component
         // (to "(re)project" between the two views)
+        // It is a "per page, per current viewport" factor and is re-calculated 
+        // on every page change and window resize, but it is not stored "per page";
+        // instead, on submit serializePage reloads every page and thus re-calculates "per page".
         this.scaleFactor = maxWidth / this.intrinsicPageWidth
         const viewport = page.getViewport({ scale: renderDensityFactor * this.scaleFactor })
 
