@@ -1184,6 +1184,14 @@ export default {
         return nodes
       }
 
+      function isAncestor(node, ancestorNode) {
+        while (node) {
+          if (node === ancestorNode) return true
+          node = node.parentNode
+        }
+        return false
+      }
+
       const actions = []
 
       for (let i = 0; i < selection.rangeCount; i += 1) {
@@ -1191,6 +1199,9 @@ export default {
         if (range.isCollapsed) {
           continue
         }
+        // only allow selects that start and end within textLayer
+        if (!isAncestor(range.startContainer, this.textLayer)) continue
+        if (!isAncestor(range.endContainer, this.textLayer)) continue
         // Easy if start and end same container
         if (range.startContainer === range.endContainer) {
           let node = range.startContainer
