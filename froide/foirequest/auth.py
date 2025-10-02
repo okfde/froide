@@ -391,6 +391,9 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
         obj = self.context["object"]
         return obj.file.name
 
+    def is_debug(self):
+        return settings.SERVE_MEDIA
+
 
 def throttle_action(throttle_classes):
     def inner(method):
