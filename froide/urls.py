@@ -146,7 +146,7 @@ admin_urls = [
 ]
 
 
-if settings.DEBUG:
+if settings.SERVE_MEDIA:
     froide_urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
