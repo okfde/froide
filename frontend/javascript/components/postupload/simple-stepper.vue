@@ -49,7 +49,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
                   }`">
               {{ stepIndex + 1 }}
             </div>
-            <div>{{ stepLabel }}</div>
+            <div class="text-center">{{ stepLabel }}</div>
           </component>
           <div
             class="progress progress--desktop position-absolute translate-middle-y"
