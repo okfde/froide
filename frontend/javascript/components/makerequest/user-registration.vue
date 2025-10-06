@@ -1,91 +1,89 @@
 <template>
   <div>
-    <div class="card mb-3">
-      <div class="card-body">
-        <div v-if="!user" class="row">
-          <div class="col-md-8">
-            <div class="mb-3 row">
-              <div
-                class="col-sm-6"
-                :class="{ 'text-danger': usererrors.first_name }">
-                <label
-                  class="form-label field-required"
-                  for="id_first_name"
-                  :class="{ 'text-danger': usererrors.first_name }">
-                  {{ i18n.yourFirstName }}
-                </label>
-                <input
-                  id="id_first_name"
-                  v-model="first_name"
-                  type="text"
-                  name="first_name"
-                  class="form-control"
-                  :class="{ 'is-invalid': usererrors.first_name }"
-                  :placeholder="userformFields.first_name.placeholder"
-                  required />
-                <p v-for="e in usererrors.first_name" :key="e.message">
-                  {{ e.message }}
-                </p>
-              </div>
-
-              <div
-                class="col-sm-6"
-                :class="{ 'text-danger': usererrors.last_name }">
-                <label
-                  class="form-label field-required"
-                  for="id_last_name"
-                  :class="{ 'text-danger': usererrors.last_name }">
-                  {{ i18n.yourLastName }}
-                </label>
-                <input
-                  id="id_last_name"
-                  v-model="last_name"
-                  type="text"
-                  name="last_name"
-                  class="form-control"
-                  :class="{ 'is-invalid': usererrors.last_name }"
-                  :placeholder="userformFields.last_name.placeholder"
-                  required />
-                <p v-for="e in usererrors.last_name" :key="e.message">
-                  {{ e.message }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div v-if="usePseudonym" class="col-md-4 mt-md-4">
-            <small
-              v-if="userformFields.last_name.help_text"
-              v-html="userformFields.last_name.help_text" />
-          </div>
-
-        </div>
-        <div v-if="!user" class="mb-3 row">
-          <label
-            for="id_user_email"
-            class="col-sm-3 col-form-label"
-            :class="{
-              'text-danger': errors.user_email,
-              'field-required': !user
-            }">
-            {{ i18n.yourEmail }}
-          </label>
-          <div class="col-sm-9">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="mb-3 row">
+          <div
+            class="col-sm-6"
+            :class="{ 'text-danger': usererrors.first_name }">
+            <label
+              class="form-label field-required"
+              for="id_first_name"
+              :class="{ 'text-danger': usererrors.first_name }">
+              {{ i18n.yourFirstName }}
+            </label>
             <input
-              v-model="email"
-              type="email"
-              name="user_email"
+              id="id_first_name"
+              v-model="first_name"
+              type="text"
+              name="first_name"
               class="form-control"
-              :class="{ 'is-invalid': errors.user_email }"
-              :placeholder="formFields.user_email.placeholder"
+              :class="{ 'is-invalid': usererrors.first_name }"
+              :placeholder="userformFields.first_name.placeholder"
               required />
-            <p
-              v-for="e in errors.user_email"
-              :key="e.message"
-              class="text-danger">
+            <p v-for="e in usererrors.first_name" :key="e.message">
+              {{ e.message }}
+            </p>
+          </div>
+
+          <div
+            class="col-sm-6"
+            :class="{ 'text-danger': usererrors.last_name }">
+            <label
+              class="form-label field-required"
+              for="id_last_name"
+              :class="{ 'text-danger': usererrors.last_name }">
+              {{ i18n.yourLastName }}
+            </label>
+            <input
+              id="id_last_name"
+              v-model="last_name"
+              type="text"
+              name="last_name"
+              class="form-control"
+              :class="{ 'is-invalid': usererrors.last_name }"
+              :placeholder="userformFields.last_name.placeholder"
+              required />
+            <p v-for="e in usererrors.last_name" :key="e.message">
               {{ e.message }}
             </p>
           </div>
         </div>
+      </div>
+      <div v-if="usePseudonym" class="col-md-4 mt-md-4">
+        <small
+          v-if="userformFields.last_name.help_text"
+          v-html="userformFields.last_name.help_text" />
+      </div>
+
+    </div>
+    <div class="mb-3 row">
+      <label
+        for="id_user_email"
+        class="col-sm-3 col-form-label"
+        :class="{
+          'text-danger': errors.user_email,
+          'field-required': !user
+        }">
+        {{ i18n.yourEmail }}
+      </label>
+      <div class="col-sm-9">
+        <input
+          v-model="email"
+          type="email"
+          name="user_email"
+          class="form-control"
+          :class="{ 'is-invalid': errors.user_email }"
+          :placeholder="formFields.user_email.placeholder"
+          required />
+        <p
+          v-for="e in errors.user_email"
+          :key="e.message"
+          class="text-danger">
+          {{ e.message }}
+        </p>
+      </div>
+    </div>
 
         <!--
           TODO: does not work a.t.m. without changes
@@ -136,8 +134,6 @@
         </template>
       -->
 
-      </div>
-    </div>
   </div>
 </template>
 

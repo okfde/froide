@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-4">
     <template v-if="formFields.time">
       <input type="hidden" name="time" :value="formFields.time.initial" />
     </template>

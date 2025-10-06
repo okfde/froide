@@ -16,10 +16,10 @@
       {{ i18n.step }}
       <!-- avoid 0 -->
       <strong>{{ this.progressStepCurrent || 1 }}/{{ this.steps.length }}</strong>:
-      {{ this.steps[this.step - 1] }}
+      {{ this.mobileSteps[this.step - 1] }}
     </SimpleStepper>
 
-    <!--<div>STEP: {{ this.step }}</div>-->
+    <!--<div>step={{ this.step }}<br/>steps={{ steps }}<br/>mobileSteps={{ mobileSteps }}</div>-->
 
     <!--<div :class="{ container: !multiRequest, 'container-multi': multiRequest }">-->
     <div class="container"><div class="row"><div class="col x-col-lg-9">
@@ -75,6 +75,7 @@
                 @click="setStep(STEPS.INTRO)"
                 >← <u>{{ i18n.back }}</u></a>
             </div>
+            <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
             <div class="mb-4">
               <label for="similarSubject" class="form-label">
                 {{ i18n.searchArchive }}
@@ -113,7 +114,7 @@
           <fieldset
             v-if="stepSelectPublicBody"
             id="step-publicbody"
-            class="mt-5">
+            >
             <div class="my-3 row">
               <div class="col">
                 <a class="btn btn-link text-decoration-none ps-0"
@@ -201,14 +202,18 @@
             </div>
 
             <div v-if="!user.id">
+              <h2>Account anlegen</h2><!-- TODO i18n -->
               <p>
                 {{ i18n.doYouAlreadyHaveAccount }}<br/>
                 <DjangoSlot name="loginlink"></DjangoSlot>
               </p>
               <p><small>{{ i18n.thisFormRemembers }}</small></p>
             </div>
-
+            <div v-else>
+              <h2>Adresse</h2><!-- TODO i18n -->
+            </div>
             <UserRegistration
+              v-if="!user.id"
               :form="userForm"
               :user-form="userForm"
               :config="config"
@@ -218,8 +223,7 @@
               v-model:initial-last-name="lastName"
               v-model:initial-email="email"
               />
-
-            <div>TODO: passwort (optional)</div>
+            <!-- TODO: password, see UserRegistration stub -->
 
             <UserAddress
               v-model:initial-address="address"
@@ -229,20 +233,23 @@
               :address-help-text="userForm.fields.address.help_text"
               />
 
-            <UserPublic
-              v-if="!user.id"
-              :user-form="userForm"
-              :config="config"
-              v-model:initial-private="userPrivate"
-              @online-help="$refs.onlineHelp.show($event)"
-              />
-            <UserTerms
-              v-if="!user.id"
-              :form="userForm"
-              v-model:initial-terms="terms"
-              />
-            <div>
-              TODO: validation of vorname/name<br/>
+            <template v-if="config.settings.user_can_hide_web && !user.id">
+              <h3 class="fs-6">Privatsphäre</h3><!-- TODO i18n -->
+              <UserPublic
+                v-if="!user.id"
+                :user-form="userForm"
+                :config="config"
+                v-model:initial-private="userPrivate"
+                @online-help="$refs.onlineHelp.show($event)"
+                />
+              <h3 class="fs-6">Nutzungsbedingungen</h3><!-- TODO i18n -->
+              <UserTerms
+                :form="userForm"
+                v-model:initial-terms="terms"
+                />
+            </template>
+            <div class="my-4">
+              <!-- TODO: validation of vorname/name -->
               <button
                 type="button"
                 class="btn btn-primary"
@@ -262,7 +269,7 @@
                 @click="setStep(STEPS.CREATE_ACCOUNT)"
                 >← <u>{{ i18n.back }}</u></a>
             </div>
-            TODO: rename/emphasize ellipsis button
+            <!-- TODO: rename/emphasize ellipsis button -->
             <RequestForm
               :config="config"
               :publicbodies="publicBodies"
@@ -289,8 +296,8 @@
                 <DjangoSlot name="request-legend-title" />
               </template>
             </RequestForm>
-            <div>
-              TODO: validation<br/>
+            <div class="my-4">
+              <!-- TODO: validation -->
               <button
                 type="button"
                 class="btn btn-primary"
@@ -314,13 +321,18 @@
                 @click="setStep(STEPS.CREATE_ACCOUNT)"
                 >← <u>{{ i18n.back }}</u></a>
             </div>
-            TODO: add texts around
+            <h2>Sichtbarkeit der Anfrage</h2><!-- TODO i18n -->
+            <!-- TODO i18n -->
+            <p>Ihre Anfrage ist für alle auf dieser Website sichtbar.
+              Denn Sie tragen mit Ihrer Anfrage zu einem öffentlichen Archiv amtlicher Informationen bei und sorgen so mit einer wachsenden Community für Transparenz in Politik und Verwaltung.</p>
+            <p>Auf Wunsch können Sie Ihre Anfrage aber erst später öffentlich machen, z.B. nach Veröffentlichung Ihrer investigativen Recherche.</p>
             <RequestPublic
               :form="requestForm"
               :hide-public="hidePublic"
               v-model:initial-public="requestPublic"
               />
-            <div>
+            <p>Gut zu wissen: Ob Ihr Name im Klartext erscheinen soll, können Sie im nächsten Schritt auswählen –das ist unabhängig von Ihrer Entscheidung hier.</p>
+            <div class="my-4">
               <button
                 type="button"
                 class="btn btn-primary"
@@ -338,6 +350,7 @@
                 @click="setStep(STEPS.REQUEST_PUBLIC)"
                 >← <u>{{ i18n.back }}</u></a>
             </div>
+            <h2>Vorschau &amp; Abschicken</h2><!-- TODO i18n -->
             <ReviewRequest
               :i18n="i18n"
               :config="config"
@@ -554,6 +567,20 @@ export default {
         [STEPS.PREVIEW_SUBMIT]: 5,
         [STEPS.OUTRO]: 5
       })[this.step]
+    },
+    mobileSteps() {
+      return [
+        this.i18n.introduction,
+        this.i18n.similarRequests,
+        this.i18n.choosePublicBody,
+        this.i18n.choosePublicBody,
+        // ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
+        this.userInfo ? this.i18n.address : this.i18n.account,
+        this.i18n.writeMessage,
+        this.i18n.writeMessage,
+        this.i18n.submitRequest,
+        this.i18n.submitRequest,
+      ]
     },
     publicBodySearch() {
       if (this.publicBody) {
