@@ -162,19 +162,6 @@
             <i class="fa fa-align-justify" />
             <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
           </button>
-          <button
-            type="button"
-            class="btn"
-            :class="{
-              'btn-outline-secondary': !textDisabled,
-              'btn-secondary': textDisabled
-            }"
-            :title="i18n.disableText"
-            @click.stop="toggleDrawing"
-          >
-            <i class="fa fa-image" />
-            <small class="d-none d-xl-block">{{ i18n.disableText }}</small>
-          </button>
         </div>
 
         <div
