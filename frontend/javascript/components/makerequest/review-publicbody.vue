@@ -5,7 +5,7 @@
     <div class="publicbody-summary">
       <p>
         <template v-if="publicBodies.length < 20">
-          <ul>
+          <ul class="list">
             <li v-for="pb in publicBodies" :key="pb.id">
               {{ pb.name }}
               <!--<div v-if="pb.request_note_html" class="col-lg-8 alert alert-warning pb-0" v-html="pb.request_note_html" />-->
@@ -139,3 +139,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+.list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+</style>
