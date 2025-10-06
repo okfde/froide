@@ -62,14 +62,12 @@
     </div>
     <div v-if="showBadges" class="row">
       <div v-if="search" class="col-3">
-        <div class="filter-badge">
-          <span class="text-truncate">{{ search }}</span>
-          <button
-            @click="search = ''"
-            type="button"
-            class="btn btn-close btn-close-white"
-            aria-label="Close"></button>
-        </div>
+        <!-- TODO i18n -->
+        <PbFilterBadge
+          label="Text"
+          :value="search"
+          @remove-click="search = ''"
+          />
       </div>
       <div v-for="filterKey in activeFilters" :key="filterKey" class="col-4">
         <PbFilterSelected
@@ -112,6 +110,7 @@ import PBListMixin from './lib/pb-list-mixin'
 import PbFilter from './pb-filter'
 import PbFilterSelected from './pb-filter-selected'
 import PBChooserMixin from './lib/pb-chooser-mixin'
+import PbFilterBadge from './pb-filter-badge'
 
 function treeLabel(item) {
   return item.name
@@ -125,7 +124,8 @@ export default {
     multi: PBMultiList,
     betaList: PBBetaList,
     PbFilter,
-    PbFilterSelected
+    PbFilterSelected,
+    PbFilterBadge
   },
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
   props: {
