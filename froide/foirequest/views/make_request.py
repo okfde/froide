@@ -181,7 +181,26 @@ class MakeRequestView(FormView):
                 # Translators: not url
                 "requests": _("requests"),
                 "close": _("close"),
+                "back": _("Back"),
+                "stepNext": _("Next"),  # pgettext("Make request", "Next"),
+                "step": _("Step"),
+                "introduction": _("Introduction"),
+                "similarRequests": _("Similar requests"),
+                "address": _("Address"),
+                "account": pgettext("Make request breadcrumbs/stepper", "Account"),
+                "writeMessage": _("Write message"),
+                "submitRequest": _("Submit request"),
                 "makeRequest": _("Make request"),
+                "makeRequestYourself": _("Make a request yourself"),
+                "whatDoYouWantToDo": _("What do you want to do?"),
+                "whatCanIRequest": _("What can I request?"),
+                "whatCanINotRequest": _("What can’t I request?"),
+                "search": _("Search"),
+                "searchArchive": _("Search our archives:"),
+                "doYouAlreadyHaveAccount": _("Do you already have an account?"),
+                "thisFormRemembers": _(
+                    "This form remembers your inputs, as long as stay in the same tab."
+                ),
                 "writingRequestTo": _("You are writing a request to"),
                 "toMultiPublicBodies": _("To: {count} public bodies").format(
                     count="${count}"
@@ -252,7 +271,6 @@ class MakeRequestView(FormView):
                 "reviewPublicbodies": _("public bodies"),
                 "reviewSpelling": _("Please use proper spelling."),
                 "reviewPoliteness": _("Please stay polite."),
-                "submitRequest": _("Submit request"),
                 "greeting": _("Dear Sir or Madam"),
                 "kindRegards": _("Kind regards"),
                 "yourFirstName": _("Your first name"),
@@ -263,7 +281,6 @@ class MakeRequestView(FormView):
                 "similarExist": _(
                     "Please make sure the information is not already requested or public"
                 ),
-                "similarRequests": _("Similar requests"),
                 "moreSimilarRequests": _("Search for more similar requests"),
                 "relevantResources": _("Relevant resources"),
                 "officialWebsite": _("Official website: "),

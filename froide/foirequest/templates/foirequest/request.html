@@ -18,23 +18,7 @@
 {% block messages %}
 {% endblock messages %}
 {% block body %}
-    {% block before_form %}
-        {% if campaigns %}
-            <div class="bg-tertiary">
-                <div class="container pb-4 pt-3">
-                    <h3 class="text-center mb-3">{% trans "Join our current FOI campaigns" %}</h3>
-                    <div class="row justify-content-center text-center">
-                        {% for campaign in campaigns %}
-                            <div class="col-auto mb-4">
-                                <h4>{{ campaign.name }}</h4>
-                                <a href="{{ campaign.url }}" class="btn btn-primary">{% trans "Make a request" %}</a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-    {% endblock %}
+    {% block before_form %}{% endblock %}
     <form method="post"
           name="make_request"
           action="{% url 'foirequest-make_request' %}#step-8"

@@ -1,11 +1,5 @@
 <template>
   <div class="make-request-container">
-    <RequestFormBreadcrumbs
-      :i18n="i18n"
-      :multi-request="multiRequest"
-      :has-public-bodies="hasPublicBodies"
-      :hide-publicbody-chooser="hidePublicbodyChooser" />
-    
     <!-- TODO:
       steps need to be same width (for progress meter to match)
       steps need to be clickable
@@ -19,13 +13,16 @@
       clickable
       @step-click="stepClick"
       >
-      §step <strong>{{ this.progressStepCurrent }}/{{ this.steps.length }}</strong>:
-      {{ this.steps[this.step] }}
+      {{ i18n.step }}
+      <!-- avoid 0 -->
+      <strong>{{ this.progressStepCurrent || 1 }}/{{ this.steps.length }}</strong>:
+      {{ this.steps[this.step - 1] }}
     </SimpleStepper>
 
-    <div>STEP: {{ this.step }}</div>
+    <!--<div>STEP: {{ this.step }}</div>-->
 
-    <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
+    <!--<div :class="{ container: !multiRequest, 'container-multi': multiRequest }">-->
+    <div class="container"><div class="row"><div class="col x-col-lg-9">
       <div
         v-show="step === STEPS.PREVIEW_SUBMIT"
         >
@@ -36,32 +33,32 @@
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
-          <div v-if="step === STEPS.INTRO">
-            <h1>Anfrage stellen §</h1>
-            <p>Was möchten Sie tun?</p>
+          <div v-if="step === STEPS.INTRO" class="mt-5">
+            <h1>{{ i18n.makeRequest }}</h1>
+            <p>{{ i18n.whatDoYouWantToDo }}</p>
             <div>
-              campaigns
               <div class="row">
-                <div class="col col-md-4 mb-4">
+                <!-- col-12 is slightly akward on medium viewports but will make sure it is front and center -->
+                <div class="col-12 col-md-4 mb-4">
                   <div class="card h-100">
                     <div class="card-body d-flex flex-column">
-                      <div>LOGO</div>
-                      <h2 class="fs-4 my-auto">§ Eigene Anfrage schreiben</h2>
+                      <div>TODO LOGO</div>
+                      <h2 class="fs-4 my-auto">{{ i18n.makeRequestYourself }}</h2>
                       <div>
                         <a
                           :href="config.url.helpRequestWhat"
                           @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhat)"
-                          >§Was kann ich anfragen?</a><br/>
+                          >{{ i18n.whatCanIRequest }}</a><br/>
                         <a
                           :href="config.url.helpRequestWhatNot"
                           @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhatNot)"
-                          >§Was kann ich NICHT anfragen?</a><br/>
+                          >{{ i18n.whatCanINotRequest }}</a><br/>
                       </div>
                       <div>
                         <button
-                          type="button" class="btn btn-primary"
+                          type="button" class="btn btn-primary w-100"
                           @click="setStep(STEPS.FIND_SIMILAR)"
-                          >§Auswählen</button>
+                          >{{ i18n.makeRequest }}</button>
                       </div>
                     </div>
                   </div>
@@ -80,7 +77,7 @@
             </div>
             <div class="mb-4">
               <label for="similarSubject" class="form-label">
-                §Im FragDenStaat-Archiv suchen:
+                {{ i18n.searchArchive }}
               </label>
               <div class="row">
                 <div class="col-sm-8">
@@ -92,7 +89,7 @@
                 </div>
                 <div class="col-sm-4">
                   <button type="button" class="btn btn-secondary w-100">
-                    §Suchen
+                    {{ i18n.search }}
                   </button>
                 </div>
               </div>
@@ -108,7 +105,7 @@
                 class="btn btn-primary"
                 @click="setStep(STEPS.SELECT_PUBLICBODY)"
                 >
-                §Weiter
+                {{ i18n.stepNext }}
               </button>
             </div>
           </div>
@@ -130,7 +127,7 @@
                   class="btn btn-primary"
                   :disabled="!stepCanContinue(pbScope)"
                   @click="setStep((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.CREATE_ACCOUNT)"
-                  >§Weiter</button>
+                  >{{ i18n.stepNext }}</button>
               </div>
             </div>
             <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
@@ -205,10 +202,10 @@
 
             <div v-if="!user.id">
               <p>
-                §Sie haben schon einen Account?<br/>
+                {{ i18n.doYouAlreadyHaveAccount }}<br/>
                 <DjangoSlot name="loginlink"></DjangoSlot>
               </p>
-              <p><small>§Dieses Formular merkt sich Ihre angaben.</small></p>
+              <p><small>{{ i18n.thisFormRemembers }}</small></p>
             </div>
 
             <UserRegistration
@@ -252,7 +249,7 @@
                 :disabled="!stepCanContinue(pbScope)"
                 @click="setStep(STEPS.WRITE_REQUEST)"
                 >
-                Weiter
+                {{ i18n.stepNext }}
               </button>
             </div>
 
@@ -300,7 +297,7 @@
                 :disabled="!stepCanContinue(pbScope)"
                 @click="setStep(STEPS.REQUEST_PUBLIC)"
                 >
-                §Weiter
+                {{ i18n.stepNext }}
               </button>
             </div>
             <SimilarRequests
@@ -329,7 +326,7 @@
                 class="btn btn-primary"
                 @click="setStep(STEPS.PREVIEW_SUBMIT)"
                 >
-                §Weiter
+                {{ i18n.stepNext }}
               </button>
             </div>
           </div>
@@ -362,9 +359,11 @@
           </div>
         </div>
       </div>
-    </div>
+    </div></div></div> <!-- /.container -->
+    <!--
     <button type="submit" @click="submitting = true">submit</button>
     <button type="button" @click="$refs.onlineHelp.show('foo')">test oh</button>
+    -->
     <OnlineHelp ref="onlineHelp" :i18n="i18n"></OnlineHelp>
   </div>
 </template>
@@ -378,7 +377,6 @@ import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
 import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
-import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
 import UserTerms from './user-terms'
 import UserPublic from './user-public.vue'
@@ -427,7 +425,6 @@ export default {
     ReviewRequest,
     PbMultiReview,
     RequestForm,
-    RequestFormBreadcrumbs,
     RequestPublic,
     UserTerms,
     UserPublic,
@@ -535,13 +532,13 @@ export default {
     },
     steps() {
       return [
-        '§introduction',
-        '§similarRequests',
+        this.i18n.introduction,
+        this.i18n.similarRequests,
         this.i18n.choosePublicBody,
         // ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
-        this.userInfo ? '§Adresse' : '§account',
-        '§writeRequest',
-        '§submit'
+        this.userInfo ? this.i18n.address : this.i18n.account,
+        this.i18n.writeMessage,
+        this.i18n.submitRequest,
       ]
     },
     progressStepCurrent() {
