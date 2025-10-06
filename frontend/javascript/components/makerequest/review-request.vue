@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <!-- TODO i18n -->
+  <div class="my-4">
+    <!-- TODO i18n Behörde -->
     <ReviewRequestLine
       :i18n="i18n"
-      :title="i18n.publicBody || '§Behörde'"
+      :title="i18n.publicBody || 'Behörde'"
       :invalid="needCorrectionPublicbody"
       :step="hidePublicbodyChooser ? '' : STEPS.SELECT_PUBLICBODY"
       >
@@ -23,9 +25,10 @@
       :contents="subject || i18n.subject"
       />
     
+    <!-- TODO i18n Anfragentext -->
     <ReviewRequestLine
       :i18n="i18n"
-      :title="'§Anfragentext'"
+      :title="'Anfragentext'"
       :invalid="needCorrectionBody"
       :step="STEPS.WRITE_REQUEST"
       >
@@ -65,36 +68,39 @@
 
     <ReviewRequestLine
       :i18n="i18n"
-      :title="i18n.visibility || '§Sichtbarkeit'"
+      :title="i18n.visibility || 'Sichtbarkeit'"
       :step="STEPS.REQUEST_PUBLIC"
       >
       <template #contents>
+        <!-- TODO i18n -->
         {{ requestPublic
-          ? '§Anfrage sofort veröffentlichen'
-          : '§Anfrage zunächst nicht veröffentlichen'
+          ? 'Anfrage sofort veröffentlichen'
+          : 'Anfrage zunächst nicht veröffentlichen'
         }}
         <a
           :href="config.url.helpRequestPublic"
           @click.prevent="$emit('online-help', config.url.helpRequestPublic)"
-          >{{ i18n.help || '§Hilfe' }}</a>
+          >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
       </template>
     </ReviewRequestLine>
 
+    <!-- TODO i18n Privatsphäre -->
     <ReviewRequestLine
       v-if="!user.id"
       :i18n="i18n"
-      :title="i18n.privacy || '§Privatsphäre'"
+      :title="i18n.privacy || 'Privatsphäre'"
       :step="STEPS.CREATE_ACCOUNT"
       >
       <template #contents>
+        <!-- TODO i18n -->
         {{ user.private
-          ? '§Eigenen Namen schwärzen'
-          : '§Eigenen Namen im Klartext anzeigen'
+          ? 'Eigenen Namen schwärzen'
+          : 'Eigenen Namen im Klartext anzeigen'
         }}
         <a
           :href="config.url.helpRequestPrivacy"
           @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
-          >{{ i18n.help || '§Hilfe' }}</a>
+          >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
       </template>
     </ReviewRequestLine>
 
@@ -115,24 +121,27 @@
       </template>
     </ReviewRequestLine>
 
+    <!-- TODO i18n Email -->
     <ReviewRequestLine
       v-if="!user.id"
       :i18n="i18n"
-      :title="i18n.email || '§Email'"
+      :title="i18n.email || 'Email'"
       :invalid="needCorrectionEmail"
       :step="STEPS.CREATE_ACCOUNT"
       >
       <template #contents>
         <span :class="{ 'text-danger': needCorrectionEmail}">
-          {{ user.email || i18n.email || '§Email' }}
+          <!-- TODO i18n Email -->
+          {{ user.email || i18n.email || 'Email' }}
         </span>
-        (§wird Behörde nicht mitgeteilt)
+        (wird Behörde nicht mitgeteilt)<!-- TODO i18n -->
       </template>
     </ReviewRequestLine>
 
+    <!-- TODO i18n Adresse -->
     <ReviewRequestLine
       :i18n="i18n"
-      :title="i18n.address || '§Adresse'"
+      :title="i18n.address || 'Adresse'"
       :invalid="needCorrectionAddress"
       :step="STEPS.CREATE_ACCOUNT"
       >
@@ -140,7 +149,7 @@
         <div
           style="white-space: pre-line"
           :class="{ 'text-danger': needCorrectionAddress}"
-          >{{ user.address || i18n.address || '§Adresse' }}</div>
+          >{{ user.address || i18n.address || 'Adresse' }}<!-- TODO i18n --></div>
       </template>
     </ReviewRequestLine>
 
@@ -148,26 +157,28 @@
       :form="userForm"
       />
 
-    <button
-      id="send-request-button"
-      type="submit"
-      class="btn btn-primary"
-      :disabled="needCorrection"
-      @click="$emit('submit')">
-      <i class="fa fa-send" aria-hidden="true" />
-      {{ i18n.submitRequest }}
-    </button>
-    <button
-      v-if="user.id && showDraft"
-      type="submit"
-      class="btn btn-secondary mt-3 ms-2"
-      name="save_draft"
-      value="true"
-      :disabled="needCorrection"
-      @click="submitting = true">
-      <i class="fa fa-save" aria-hidden="true" />
-      {{ i18n.saveAsDraft }}
-    </button>
+    <div class="mt-4">
+      <button
+        id="send-request-button"
+        type="submit"
+        class="btn btn-primary me-2"
+        :disabled="needCorrection"
+        @click="$emit('submit')">
+        <i class="fa fa-send" aria-hidden="true" />
+        {{ i18n.submitRequest }}
+      </button>
+      <button
+        v-if="user.id && showDraft"
+        type="submit"
+        class="btn btn-secondary"
+        name="save_draft"
+        value="true"
+        :disabled="needCorrection"
+        @click="submitting = true">
+        <i class="fa fa-save" aria-hidden="true" />
+        {{ i18n.saveAsDraft }}
+      </button>
+    </div>
   </div>
 </template>
 

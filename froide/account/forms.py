@@ -142,8 +142,11 @@ class NewUserBaseForm(AddressBaseForm):
             widget=BootstrapRadioSelect,
             label=_("Hide my name from public view"),
             choices=[
-                (False, "§My name may appear on the website in <b>plain text</b>"),
-                (True, "§My name must be <b>redacted</b>"),
+                # TODO i18n
+                # TODO <b>plain text
+                (False, "My name may appear on the website in plain text"),
+                # TODO <b>redacted
+                (True, "My name must be redacted"),
             ],
             coerce=lambda x: x and (x.lower() != "false"),
         )

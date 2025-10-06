@@ -80,9 +80,18 @@ class RequestForm(JSONMixin, forms.Form):
         initial=True,
         required=False,
         widget=BootstrapRadioSelect,
-        choices=[(True, "§yes, public"), (False, "§no not public")],
+        choices=[
+            (
+                True,
+                # TODO i18n
+                "Die Anfrage soll sofort öffentlich auf dieser Website erscheinen. (Standardeinstellung)",
+            ),
+            (
+                False,
+                "Die Anfrage soll vorerst nicht öffentlich auf dieser Website erscheinen, sondern erst später veröffentlicht werden.",
+            ),
+        ],
         coerce=lambda x: x and (x.lower() != "false"),
-        # coerce=tmp_coerce
     )
 
     reference = forms.CharField(widget=forms.HiddenInput, required=False)

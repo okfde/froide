@@ -6,9 +6,10 @@
         name="hide_public"
         :value="hidePublic"
         id="id_hide_public" />
-      <div class="card mb-3" v-if="!hidePublic">
+      <!-- TODO: hide_public -->
+      <div class="mb-3" v-if="!hidePublic">
         <div class="card-body">
-          <div>{{ form.fields.public.label }}</div>
+          <!--<div>{{ form.fields.public.label }}</div>-->
           <div
             v-for="(choice, choiceIndex) in form.fields.public.choices"
             :key="choice.value"

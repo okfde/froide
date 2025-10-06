@@ -1,16 +1,16 @@
 <template>
-  <div class="row border-top">
-    <div class="col-md-2">
-      <h5 class="fs-6">{{ title }}</h5>
+  <div class="row border-top py-1">
+    <div class="col-sm-12 col-md-2 py-1">
+      <h3 class="fs-6 lh-base m-0">{{ title }}</h3>
     </div>
-    <div class="col-md-8">
+    <div class="col-sm-8 col-md-8 py-1">
       <slot name="contents">
         <div
           :class="{ 'text-danger': invalid }"
           >{{ contents }}</div>
       </slot>
     </div>
-    <div class="col-md-2">
+    <div class="col-sm-4 col-md-2 text-sm-end">
       <button
         v-if="step"
         type="button"
@@ -20,7 +20,7 @@
           'btn-primary': invalid
         }"
         @click="setStep(step)"
-        >{{ invalid ? '§korrigieren' : i18n.change }}</button>
+        >{{ invalid ? 'Korrigieren' : i18n.change }}</button>
     </div>
   </div>
 </template>
