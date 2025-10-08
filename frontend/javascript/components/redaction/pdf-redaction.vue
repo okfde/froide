@@ -655,10 +655,11 @@ export default {
       return doc.getPage(pageNum).then((page) => {
         this.page = page
 
-        let maxWidth = this.$refs.containerWrapper.offsetWidth
         if (!this.$refs.containerWrapper) {
           console.error('containerWrapper is null?')
+          return
         }
+        let maxWidth = this.$refs.containerWrapper.offsetWidth
         // subtract the paddings (from bootstrap's row child),
         // fall back to the value calculated in default settings (like base font size)
         // note: paddingLeft is the value set in CSS, so something like "12px",
