@@ -67,7 +67,7 @@ export default createStore({
     }
   },
   getters: {
-    getPublicBodyByScope: (state, getters) => (scope) => {
+    getPublicBodyByScope: (getters) => (scope) => {
       const pbs = getters.getPublicBodiesByScope(scope)
       if (pbs.length === 0) {
         return null
@@ -463,7 +463,7 @@ export default createStore({
           console.log('### from prop', key, value)
         } else if (formFields && formFields[key] !== undefined) {
           value = formFields[key].value
-          if (value === undefined) value = formFields[key].initial
+          if (value === undefined || value === null) value = formFields[key].initial
           if (formCoerce && formCoerce[key]) {
             value = formCoerce[key](value)
           }
