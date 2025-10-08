@@ -149,19 +149,22 @@
         </div>
 
         <div class="btn-group me-1 toolbar-modes py-2">
-          <button
-            type="button"
-            class="btn"
-            :class="{
-              'btn-outline-secondary': !textOnly,
-              'btn-secondary': textOnly
-            }"
+          <input
+            type="checkbox"
+            class="btn-check"
+            id="toggle-mode"
+            autocomplete="off"
+            :checked="textOnly"
+            @change="toggleText"
+            >
+          <label
+            class="btn btn-outline-secondary"
+            for="toggle-mode"
             :title="i18n.toggleText"
-            @click.stop="toggleText"
-          >
+            >
             <i class="fa fa-align-justify" />
             <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
-          </button>
+          </label>
         </div>
 
         <div
@@ -292,7 +295,7 @@
               :id="textLayerId"
               class="textLayer"
               ref="textLayer"
-              :class="{ textActive: textOnly, textDisabled: textDisabled }"
+              :class="{ textActive: textOnly, textDisabled: !textOnly }"
             />
           </div>
         </div>
@@ -447,7 +450,6 @@ export default {
       ready: false,
       pageLoading: false,
       textOnly: false,
-      textDisabled: true,
       actionsPerPage: {},
       actionIndexPerPage: {},
       rectanglesPerPage: {},
@@ -774,12 +776,6 @@ export default {
     toggleText() {
       this.cancelDrag()
       this.textOnly = !this.textOnly
-      this.textDisabled = !this.textOnly
-    },
-    toggleDrawing() {
-      this.cancelDrag()
-      this.textDisabled = !this.textDisabled
-      this.textOnly = !this.textDisabled
     },
     async redactOrApprove() {
       if (this.hasRedactions || this.hasPassword) {
