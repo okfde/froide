@@ -463,7 +463,7 @@ export default createStore({
           console.log('### from prop', key, value)
         } else if (formFields && formFields[key] !== undefined) {
           value = formFields[key].value
-          if (value === undefined) value = formFields[key].initial
+          if (value === undefined || value === null) value = formFields[key].initial
           if (formCoerce && formCoerce[key]) {
             value = formCoerce[key](value)
           }

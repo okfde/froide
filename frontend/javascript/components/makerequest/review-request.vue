@@ -3,10 +3,11 @@
   <div class="my-4">
     <!-- TODO i18n Behörde -->
     <ReviewRequestLine
+      v-if="!hidePublicbodyChooser"
+      :step="STEPS.SELECT_PUBLICBODY"
       :i18n="i18n"
       :title="i18n.publicBody || 'Behörde'"
       :invalid="needCorrectionPublicbody"
-      :step="hidePublicbodyChooser ? '' : STEPS.SELECT_PUBLICBODY"
       >
       <template #contents>
         <ReviewPublicbody
@@ -67,6 +68,7 @@
     </ReviewRequestLine>
 
     <ReviewRequestLine
+      v-if="!hidePublic"
       :i18n="i18n"
       :title="i18n.visibility || 'Sichtbarkeit'"
       :step="STEPS.REQUEST_PUBLIC"
@@ -250,6 +252,10 @@ export default {
       required: true
     },
     fullText: {
+      type: Boolean,
+      required: true
+    },
+    hidePublic: {
       type: Boolean,
       required: true
     },

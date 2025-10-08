@@ -8,20 +8,19 @@
     -->
     <SimpleStepper
       class="bg-body-tertiary"
-      :step="progressStepCurrent"
-      :steps="steps"
+      :step="stepperStepCurrent"
+      :steps="stepperSteps.map(step => step.label)"
       clickable
-      @step-click="stepClick"
+      keep-visited-clickable
+      @step-click="stepperClick"
       >
       {{ i18n.step }}
       <!-- avoid 0 -->
-      <strong>{{ this.progressStepCurrent || 1 }}/{{ this.steps.length }}</strong>:
-      {{ this.mobileSteps[this.step - 1] }}
+      <strong>{{ this.stepperStepCurrent + 1 }}/{{ this.stepperSteps.length }}</strong>:
+      {{ this.stepperSteps[this.stepperStepCurrent].label }}
     </SimpleStepper>
 
-    <!--<div>step={{ this.step }}<br/>steps={{ steps }}<br/>mobileSteps={{ mobileSteps }}</div>-->
 
-    <!--<div :class="{ container: !multiRequest, 'container-multi': multiRequest }">-->
     <div class="container"><div class="row"><div class="col x-col-lg-9">
       <div
         v-show="step === STEPS.PREVIEW_SUBMIT"
@@ -33,6 +32,23 @@
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
+          <div
+            v-if="stepBack"
+            class="my-3">
+            <a class="btn btn-link text-decoration-none ps-0"
+              :href="'#step-' + stepBack"
+              @click="setStep(stepBack)"
+              >← <u>{{ i18n.back }}</u></a>
+          </div>
+          
+          <h1
+            v-if="hidePublicbodyChooser && hasPublicBodies"
+            class="my-3 fs-5"
+            >
+            Anfrage an:<!-- TODO i18n -->
+            {{ publicBodies.map(pb => pb.name).join(', ') }}
+          </h1>
+
           <div v-if="step === STEPS.INTRO" class="mt-5">
             <h1>{{ i18n.makeRequest }}</h1>
             <p>{{ i18n.whatDoYouWantToDo }}</p>
@@ -57,7 +73,7 @@
                       <div>
                         <button
                           type="button" class="btn btn-primary w-100"
-                          @click="setStep(STEPS.FIND_SIMILAR)"
+                          @click="setStep(stepNext)"
                           >{{ i18n.makeRequest }}</button>
                       </div>
                     </div>
@@ -69,12 +85,6 @@
           </div>
 
           <div v-if="step === STEPS.FIND_SIMILAR">
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + STEPS.INTRO"
-                @click="setStep(STEPS.INTRO)"
-                >← <u>{{ i18n.back }}</u></a>
-            </div>
             <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
             <div class="mb-4">
               <label for="similarSubject" class="form-label">
@@ -104,7 +114,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                @click="setStep(STEPS.SELECT_PUBLICBODY)"
+                @click="setStep(stepNext)"
                 >
                 {{ i18n.stepNext }}
               </button>
@@ -116,18 +126,12 @@
             id="step-publicbody"
             >
             <div class="my-3 row">
-              <div class="col">
-                <a class="btn btn-link text-decoration-none ps-0"
-                  :href="'#step-' + STEPS.FIND_SIMILAR"
-                  @click="setStep(STEPS.FIND_SIMILAR)"
-                  >← <u>{{ i18n.back }}</u></a>
-              </div>
               <div class="col ms-auto text-end">
                 <button
                   type="button"
                   class="btn btn-primary"
                   :disabled="!stepCanContinue(pbScope)"
-                  @click="setStep((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.CREATE_ACCOUNT)"
+                  @click="setStep(stepNext)"
                   >{{ i18n.stepNext }}</button>
               </div>
             </div>
@@ -181,25 +185,12 @@
             v-if="stepReviewPublicBodies && !stepWriteRequest"
             id="step-review-publicbody"
             >
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + STEPS.SELECT_PUBLICBODY"
-                @click="setStep(STEPS.SELECT_PUBLICBODY)"
-                >← <u>{{ i18n.back }}</u></a>
-            </div>
             <PbMultiReview name="publicbody" :i18n="i18n" :scope="pbScope" />
           </fieldset>
 
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
           <div
             v-show="step === STEPS.CREATE_ACCOUNT">
-
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + ((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
-                @click="setStep((multiRequest && tmpMulti) ? STEPS.REVIEW_PUBLICBODY : STEPS.SELECT_PUBLICBODY)"
-                >← <u>{{ i18n.back }}</u></a>
-            </div>
 
             <div v-if="!user.id">
               <h2>Account anlegen</h2><!-- TODO i18n -->
@@ -254,7 +245,7 @@
                 type="button"
                 class="btn btn-primary"
                 :disabled="!stepCanContinue(pbScope)"
-                @click="setStep(STEPS.WRITE_REQUEST)"
+                @click="setStep(stepNext)"
                 >
                 {{ i18n.stepNext }}
               </button>
@@ -263,12 +254,6 @@
           </div>
 
           <fieldset v-show="stepWriteRequest" id="step-request" class="mt-3">
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + STEPS.CREATE_ACCOUNT"
-                @click="setStep(STEPS.CREATE_ACCOUNT)"
-                >← <u>{{ i18n.back }}</u></a>
-            </div>
             <!-- TODO: rename/emphasize ellipsis button -->
             <RequestForm
               :config="config"
@@ -302,7 +287,7 @@
                 type="button"
                 class="btn btn-primary"
                 :disabled="!stepCanContinue(pbScope)"
-                @click="setStep(STEPS.REQUEST_PUBLIC)"
+                @click="setStep(stepNext)"
                 >
                 {{ i18n.stepNext }}
               </button>
@@ -315,12 +300,6 @@
           </fieldset>
 
           <div v-show="step == STEPS.REQUEST_PUBLIC">
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + STEPS.CREATE_ACCOUNT"
-                @click="setStep(STEPS.CREATE_ACCOUNT)"
-                >← <u>{{ i18n.back }}</u></a>
-            </div>
             <h2>Sichtbarkeit der Anfrage</h2><!-- TODO i18n -->
             <!-- TODO i18n -->
             <p>Ihre Anfrage ist für alle auf dieser Website sichtbar.
@@ -336,7 +315,7 @@
               <button
                 type="button"
                 class="btn btn-primary"
-                @click="setStep(STEPS.PREVIEW_SUBMIT)"
+                @click="setStep(stepNext)"
                 >
                 {{ i18n.stepNext }}
               </button>
@@ -344,12 +323,6 @@
           </div>
 
           <div v-if="step === STEPS.PREVIEW_SUBMIT">
-            <div class="my-3">
-              <a class="btn btn-link text-decoration-none ps-0"
-                :href="'#step-' + STEPS.REQUEST_PUBLIC"
-                @click="setStep(STEPS.REQUEST_PUBLIC)"
-                >← <u>{{ i18n.back }}</u></a>
-            </div>
             <h2>Vorschau &amp; Abschicken</h2><!-- TODO i18n -->
             <ReviewRequest
               :i18n="i18n"
@@ -364,6 +337,7 @@
               :body="body"
               :multi-request="multiRequest"
               :full-text="fullText"
+              :hide-public="hidePublic"
               :hide-publicbody-chooser="hidePublicbodyChooser"
               :show-draft="showDraft"
               @submit="submitting = true"
@@ -545,42 +519,61 @@ export default {
     },
     steps() {
       return [
-        this.i18n.introduction,
-        this.i18n.similarRequests,
-        this.i18n.choosePublicBody,
-        // ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
-        this.userInfo ? this.i18n.address : this.i18n.account,
-        this.i18n.writeMessage,
-        this.i18n.submitRequest,
+        // TODO: when hidePbChoo maybe hide INTRO, and maybe swap ACCOUNT & WRITE_REQ?
+        //   or when campaigns slot is empty -- depends what other intro contents there will be
+        STEPS.INTRO,
+        ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
+        ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
+        ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
+        STEPS.CREATE_ACCOUNT,
+        STEPS.WRITE_REQUEST,
+        ...(this.hidePublic ? [] : [STEPS.REQUEST_PUBLIC]),
+        STEPS.PREVIEW_SUBMIT,
+        STEPS.OUTRO
       ]
     },
-    progressStepCurrent() {
-      // needs to be zero-indexed
-      return ({
-        [STEPS.INTRO]: 0,
-        [STEPS.FIND_SIMILAR]: 1,
-        [STEPS.SELECT_PUBLICBODY]: 2,
-        [STEPS.REVIEW_PUBLICBODY]: 2,
-        [STEPS.CREATE_ACCOUNT]: 3,
-        [STEPS.WRITE_REQUEST]: 4,
-        [STEPS.REQUEST_PUBLIC]: 4,
-        [STEPS.PREVIEW_SUBMIT]: 5,
-        [STEPS.OUTRO]: 5
-      })[this.step]
+    stepLabels() {
+      return {
+        [STEPS.INTRO]: this.i18n.introduction,
+        [STEPS.FIND_SIMILAR]: this.i18n.similarRequests,
+        [STEPS.SELECT_PUBLICBODY]: this.i18n.choosePublicBody,
+        [STEPS.REVIEW_PUBLICBODY]: this.i18n.choosePublicBody,
+        [STEPS.CREATE_ACCOUNT]: this.userInfo
+          ? this.i18n.address
+          : this.i18n.account,
+        [STEPS.WRITE_REQUEST]: this.i18n.writeMessage,
+        [STEPS.REQUEST_PUBLIC]: this.i18n.writeMessage,
+        [STEPS.PREVIEW_SUBMIT]: this.i18n.submitRequest,
+        [STEPS.OUTRO]: this.i18n.submitRequest,
+      }
     },
-    mobileSteps() {
-      return [
-        this.i18n.introduction,
-        this.i18n.similarRequests,
-        this.i18n.choosePublicBody,
-        this.i18n.choosePublicBody,
-        // ...(this.hasReviewPbStep ? [this.i18n.checkSelection] : []),
-        this.userInfo ? this.i18n.address : this.i18n.account,
-        this.i18n.writeMessage,
-        this.i18n.writeMessage,
-        this.i18n.submitRequest,
-        this.i18n.submitRequest,
-      ]
+    stepperSteps() {
+      const remap = {
+        [STEPS.SELECT_PUBLICBODY]: STEPS.REVIEW_PUBLICBODY,
+        [STEPS.WRITE_REQUEST]: STEPS.REQUEST_PUBLIC,
+        [STEPS.PREVIEW_SUBMIT]: STEPS.OUTRO
+      }
+      return this.steps
+        .filter(stepId => !(Object.values(remap).includes(stepId)))
+        .map(stepId => ({
+          stepId,
+          altStepId: remap[stepId],
+          label: this.stepLabels[stepId]
+        }))
+    },
+    stepperStepCurrent() {
+      return this.stepperSteps.findIndex(_ => _.stepId === this.step || _.altStepId === this.step)
+    },
+    stepIndex() {
+      return this.steps.findIndex(_ => _ === this.step)
+    },
+    stepBack() {
+      if (this.stepIndex <= 0) return false
+      return this.steps[this.stepIndex - 1]
+    },
+    stepNext() {
+      if (this.stepIndex === -1 || this.stepIndex > this.steps.length - 1) return false
+      return this.steps[this.stepIndex + 1]
     },
     publicBodySearch() {
       if (this.publicBody) {
@@ -739,13 +732,18 @@ export default {
       }
     })
 
-    if (this.requestForm.fields.draft.initial && this.step === STEPS.INTRO) {
-      console.log('request is draft, skipping intro etc.')
-      this.setStep(STEPS.WRITE_REQUEST)
-    }
+    this.setFirstStep()
 
     // init "regular form values" from storage if not POSTed
     // (not form-submitted, but refreshed, or returned from login)
+    // in the case of "preset by GET", e.g. ?subject=foo
+    // we still preferStorage to allow changes (of the presets) to persist
+    // -- within the session. In the (unlikely) case of "session reuse"
+    // (e.g. abandon draft, open the page with different GETs in the same tab)
+    // this could lead to the GET parameters be ignored. 
+    // This could be prevented by tying the storage stronger to the request;
+    // initStoreValues would need to do
+    // persistKeyPrefix+(document.location.pathname+document.location.search)
     this.initStoreValues({
       scope: this.pbScope,
       preferStorage: !this.config.wasPost,
@@ -869,24 +867,26 @@ export default {
     })
   },
   methods: {
-    initStoreValues2(fields, mapping) {
-      for (const key in mapping) {
-        const method = mapping[key]
-        if (fields[key] === undefined) {
-          continue
-        }
-        method(fields[key].value || fields[key].initial)
+    setFirstStep() {
+      /* this step may at this point "remembered" from Storage,
+         but will default to STEPS.INTRO */
+      // if "editing draft" skip forward 
+      if (this.requestForm.fields.draft.initial && this.step === STEPS.INTRO) {
+        console.log('request is draft, skipping intro etc.')
+        this.setStep(STEPS.WRITE_REQUEST)
+      } else if (this.hidePublicbodyChooser && this.step === STEPS.INTRO) {
+        this.setStep(STEPS.CREATE_ACCOUNT)
+      } else if (this.hasPublicBodies && this.step === STEPS.INTRO) {
+        // skip intro
+        this.setStep(this.stepNext)
+      }
+      // fall back to first (non-excluded) step
+      if (!this.steps.includes(this.step)) {
+        this.setStep(this.steps[0])
       }
     },
-    stepClick(stepIndex) {
-      this.setStep(([
-        STEPS.INTRO,
-        STEPS.FIND_SIMILAR,
-        STEPS.SELECT_PUBLICBODY,
-        STEPS.CREATE_ACCOUNT,
-        STEPS.WRITE_REQUEST,
-        STEPS.PREVIEW_SUBMIT
-      ])[stepIndex])
+    stepperClick(stepperIndex) {
+      this.setStep(this.stepperSteps[stepperIndex].stepId)
     },
     ...mapMutations({
       setStep: SET_STEP,
