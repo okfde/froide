@@ -1,19 +1,36 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps({
   step: Number,
   steps: Array,
-  clickable: Boolean
+  clickable: Boolean,
+  keepVisitedClickable: Boolean
 })
 
 const emit = defineEmits('stepClick')
 
 const stepClick = (stepIndex) => {
   if (!props.clickable) return
-  if (stepIndex < props.step) {
+  if (stepIndex <= maxClickableStep.value) {
     emit('stepClick', stepIndex)
   }
+}
+
+const maxVisitedStep = ref(0)
+watch(
+  () => props.step, () => {
+    maxVisitedStep.value = Math.max(maxVisitedStep.value, props.step)
+  },
+  { immediate: true }
+)
+
+const maxClickableStep = computed(() => props.keepVisitedClickable ? maxVisitedStep.value : props.step)
+
+const markerClasses = (stepIndex) => {
+  if (stepIndex <= props.step) return 'text-white bg-primary'
+  if (stepIndex <= maxClickableStep.value) return 'text-primary bg-primary-subtle'
+  return 'text-primary bg-body'
 }
 
 // [0.0,1.0]
@@ -30,7 +47,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
       <div class="container">
         <div class="row position-relative">
           <component
-            :is="(clickable && (stepIndex < step)) ? 'a' : 'div'"
+            :is="(clickable && (stepIndex <= maxClickableStep)) ? 'a' : 'div'"
             v-for="(stepLabel, stepIndex) in steps"
             @click.prevent="stepClick(stepIndex)"
             :href="clickable ? '#step-' + stepIndex : false"
@@ -41,12 +58,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             class="step col d-flex flex-column align-items-center text-primary z-1"
             >
             <div
-              :class="`step-marker d-block rounded-circle text-center border border-primary
-                  ${
-                    stepIndex <= step
-                      ? 'text-white bg-primary'
-                      : 'text-primary bg-body'
-                  }`">
+              :class="`step-marker ${markerClasses(stepIndex)} d-block rounded-circle text-center border border-primary`">
               {{ stepIndex + 1 }}
             </div>
             <div class="text-center">{{ stepLabel }}</div>
