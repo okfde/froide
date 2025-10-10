@@ -29,8 +29,12 @@ class Suspicion:
         return self.message
 
 
-def suspicious_ip(request: HttpRequest) -> Optional[Suspicion]:
+def check_suspicious_request(request: HttpRequest) -> Optional[Suspicion]:
     ip = get_client_ip(request)
+    return check_suspicious_ip(ip)
+
+
+def check_suspicious_ip(ip: str):
     if ip == "127.0.0.1":
         # Consider suspicious
         return Suspicion("localhost")
@@ -211,7 +215,7 @@ class SpamProtectionMixin:
         if self.SPAM_PROTECTION.get("captcha") == "always":
             return True
         if self.SPAM_PROTECTION.get("captcha") == "ip" and self.request:
-            return bool(suspicious_ip(self.request))
+            return bool(check_suspicious_request(self.request))
         if self._too_many_actions(increment=False):
             return True
         return False
