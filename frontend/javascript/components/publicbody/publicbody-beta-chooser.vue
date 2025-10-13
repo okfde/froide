@@ -64,7 +64,7 @@
       <div v-if="search" class="col-3">
         <!-- TODO i18n -->
         <PbFilterBadge
-          label="Text"
+          label="Freitext"
           :value="search"
           @remove-click="search = ''"
           />
@@ -362,18 +362,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '../../../styles/variables';
-
-.filter-badge {
-  background-color: $primary;
-  color: #fff;
-  display: block;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  margin: 0.5rem 0;
-  display: flex;
-  justify-content: space-between;
-}
-</style>
