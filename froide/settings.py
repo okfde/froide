@@ -146,6 +146,12 @@ class Base(Configuration):
     # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
     MEDIA_URL = values.Value("/files/")
 
+    # Whether the media files should be served by Django.
+    # In production, this should be handled by the web server (e.g. nginx)
+    @property
+    def SERVE_MEDIA(self):
+        return self.DEBUG
+
     # Sub path in MEDIA_ROOT that will hold FOI attachments
     FOI_MEDIA_PATH = values.Value("foi")
     FOI_MEDIA_TOKEN_EXPIRY = 2 * 60
@@ -756,6 +762,10 @@ class TestBase(Base):
     @property
     def MEDIA_ROOT(self):
         return super().PROJECT_ROOT / "tests" / "testdata"
+
+    @property
+    def SERVE_MEDIA(self):
+        return True
 
     ALLOWED_HOSTS = ("localhost", "testserver")
 

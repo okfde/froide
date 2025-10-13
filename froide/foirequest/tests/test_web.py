@@ -446,6 +446,7 @@ def test_request_media_tokens(world, client):
     MEDIA_URL="https://" + MEDIA_DOMAIN + "/files/",
     ALLOWED_HOSTS=("fragdenstaat.de", MEDIA_DOMAIN),
     FOI_MEDIA_TOKEN_EXPIRY=0,
+    SERVE_MEDIA=False,
 )
 @mock.patch(
     "froide.foirequest.auth.AttachmentCrossDomainMediaAuth.TOKEN_MAX_AGE_SECONDS", 0

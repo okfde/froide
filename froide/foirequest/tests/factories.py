@@ -38,7 +38,7 @@ from ..models import (
     RequestDraft,
 )
 
-TEST_PDF_URL = "test.pdf"
+TEST_PDF_URL = "redaction-test.pdf"
 TEST_PDF_PATH = os.path.join(settings.MEDIA_ROOT, TEST_PDF_URL)
 
 
