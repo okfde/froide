@@ -64,6 +64,8 @@ class GeoRegionDetailSerializer(GeoRegionSerializer):
         )
 
     def get_geom(self, obj):
+        if obj.geom_detail is not None:
+            return json.loads(obj.geom_detail.json)
         if obj.geom is not None:
             return json.loads(obj.geom.json)
         return None
