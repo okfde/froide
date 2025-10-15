@@ -23,6 +23,7 @@
 
     <div class="container"><div class="row"><div class="col x-col-lg-9">
       <div
+        class="my-2"
         v-show="step === STEPS.PREVIEW_SUBMIT"
         >
         <DjangoSlot
@@ -39,6 +40,11 @@
               :href="'#step-' + stepBack"
               @click="setStep(stepBack)"
               >← <u>{{ i18n.back }}</u></a>
+          </div>
+
+          <!-- keep visible for all steps -->
+          <div v-if="requestForm.nonFieldErrors.length > 0" class="alert alert-danger">
+            <p v-for="error in requestForm.nonFieldErrors" :key="error" v-html="error" />
           </div>
           
           <h1
@@ -272,8 +278,8 @@
               v-model:initial-body="body"
               v-model:initial-full-text="fullText"
               :submitting="submitting"
-              @x-set-step-select-public-body="setStepSelectPublicBody"
-              @set-step-select-public-body="setStep(STEPS.SELECT_PUBLICBODY)">
+              @step-next="setStep(stepNext)"
+              >
               <template #request-hints>
                 <DjangoSlot name="request-hints" />
               </template>
@@ -281,17 +287,6 @@
                 <DjangoSlot name="request-legend-title" />
               </template>
             </RequestForm>
-            <div class="my-4">
-              <!-- TODO: validation -->
-              <button
-                type="button"
-                class="btn btn-primary"
-                :disabled="!stepCanContinue(pbScope)"
-                @click="setStep(stepNext)"
-                >
-                {{ i18n.stepNext }}
-              </button>
-            </div>
             <SimilarRequests
               v-if="showSimilar"
               :publicbodies="publicBodies"
