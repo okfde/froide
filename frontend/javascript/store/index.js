@@ -22,6 +22,8 @@ import {
   SET_USER,
   STEPS,
   UPDATE_ADDRESS,
+  UPDATE_ADDRESS_VALIDITY,
+  UPDATE_ADDRESS_CHANGED,
   UPDATE_BODY,
   UPDATE_BODY_VALIDITY,
   UPDATE_EMAIL,
@@ -68,6 +70,8 @@ export default createStore({
       bodyValid: undefined,
       fullText: false,
       requestPublic: false,
+      addressValid: undefined,
+      addressChanged: false,
     }
   },
   getters: {
@@ -376,6 +380,12 @@ export default createStore({
     },
     [UPDATE_ADDRESS](state, address) {
       state.user.address = address
+    },
+    [UPDATE_ADDRESS_VALIDITY](state, validity) {
+      state.addressValid = validity
+    },
+    [UPDATE_ADDRESS_CHANGED](state, changed) {
+      state.addressChanged = changed
     },
     [UPDATE_EMAIL](state, email) {
       state.user.email = email

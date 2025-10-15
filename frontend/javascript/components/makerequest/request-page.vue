@@ -223,7 +223,6 @@
             <!-- TODO: password, see UserRegistration stub -->
 
             <UserAddress
-              v-model:initial-address="address"
               :i18n="i18n"
               :form="userForm"
               :config="config"
@@ -626,14 +625,6 @@ export default {
         this.updateEmail(value)
       }
     },
-    address: {
-      get() {
-        return this.$store.state.user.address
-      },
-      set(value) {
-        this.updateAddress(value)
-      }
-    },
     firstName: {
       get() {
         return this.$store.state.user.first_name
@@ -899,7 +890,6 @@ export default {
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES,
-      updateAddress: UPDATE_ADDRESS,
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE,
       updateRequestPublic: UPDATE_REQUEST_PUBLIC,

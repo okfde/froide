@@ -1,39 +1,67 @@
 <template>
-        <div class="mb-3 row">
-          <label
-            for="id_address"
-            class="col-sm-3 col-form-label"
-            :class="{
-              'text-danger': errors.address,
-              'field-required': requiresPostalAddress
-            }">
-            {{ i18n.yourAddress }}
-          </label>
-          <div class="col-sm-9">
-            <div>
-              <textarea
-                v-model="address"
-                name="address"
-                class="form-control"
-                :class="{ 'is-invalid': errors.address }"
-                :placeholder="formFields.address.placeholder"
-                :required="requiresPostalAddress" />
-              <div
-                v-if="!isAllowedAddress"
-                class="mt-3 alert alert-warning pre"
-                v-html="i18n.pleaseFollowAddressFormat" />
-              <p v-for="e in errors.address" :key="e.message">
-                {{ e.message }}
-              </p>
-              <p class="help-block">
-                <span v-html="addressHelpText" />
-              </p>
-            </div>
-          </div>
+  <div class="row">
+    <label
+      for="id_address"
+      class="col-sm-3 col-form-label"
+      :class="{
+        'text-danger': errors.address,
+        'field-required': requiresPostalAddress
+      }">
+      {{ i18n.yourAddress }}
+    </label>
+    <div class="col-sm-9">
+      <div>
+        <textarea
+          v-model="address"
+          name="address"
+          class="form-control"
+          :class="{ 'is-invalid': (errors.address || addressValid === false) && !wasAddressChanged }"
+          :placeholder="formFields.address.placeholder"
+          :required="requiresPostalAddress"
+          @keyup="addressChanged"
+          />
+        <p class="help-block">
+          <span v-html="addressHelpText" />
+        </p>
+        <div
+          v-if="!clearFormErrors && errors.address"
+          class="alert mb-2"
+          :class="{ 'alert-danger': !wasAddressChanged, 'alert-warning': wasAddressChanged }"
+          >
+          <ul class="list-unstyled my-0">
+            <li v-for="e in errors.address" :key="e.message">
+              {{ e.message }}
+            </li>
+          </ul>
         </div>
+        <div
+          v-else-if="addressValidationErrors.length > 0"
+          class="alert mb-2"
+          :class="{ 'alert-danger': !wasAddressChanged, 'alert-warning': wasAddressChanged }"
+          >
+          <ul class="list-unstyled my-0">
+            <li v-for="error in addressValidationErrors" :key="error" style="white-space: pre-line">
+              {{ error }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+
+import { mapGetters, mapMutations } from 'vuex'
+
+import {
+  UPDATE_ADDRESS,
+  UPDATE_ADDRESS_VALIDITY,
+  UPDATE_ADDRESS_CHANGED
+} from '../../store/mutation_types'
+
+let addressRegex
+
 export default {
   name: 'UserAddress',
   props: {
@@ -47,10 +75,6 @@ export default {
     form: {
       type: Object
     },
-    initialAddress: {
-      type: String,
-      default: ''
-    },
     addressHelpText: {
       type: String,
       default: null
@@ -58,13 +82,43 @@ export default {
     addressRequired: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
-      addressValue:
-        this.initialAddress || (this.user && this.user.address) || ''
+      clearFormErrors: false,
+      wasAddressChanged: false,
+      addressValidationErrors: []
     }
+  },
+  created() {
+    if (!this.address && this.user) {
+      this.address = this.user.address
+    }
+    addressRegex = new RegExp(this.config.settings.address_regex)
+  },
+  methods: {
+    addressChanged() {
+      this.wasAddressChanged = true
+      this.validate()
+    },
+    validate() {
+      this.addressValidationErrors = []
+      let valid = true
+      if (this.address && addressRegex && !addressRegex.test(this.address)) {
+        valid = false
+        this.addressValidationErrors.push(this.i18n.pleaseFollowAddressFormat)
+      }
+      if (valid) {
+        this.clearFormErrors = true
+      }
+      this.updateAddressValidity(valid)
+    },
+    ...mapMutations({
+      updateAddress: UPDATE_ADDRESS,
+      updateAddressChanged: UPDATE_ADDRESS_CHANGED,
+      updateAddressValidity: UPDATE_ADDRESS_VALIDITY,
+    })
   },
   computed: {
     formFields() {
@@ -84,11 +138,10 @@ export default {
     },
     address: {
       get() {
-        return this.addressValue
+        return this.$store.state.user.address
       },
       set(value) {
-        this.addressValue = value
-        this.$emit('update:initialAddress', value)
+        this.updateAddress(value)
       }
     },
     requiresPostalAddress() {
@@ -105,7 +158,10 @@ export default {
         return true
       }
       return new RegExp(this.config.settings.address_regex).test(this.address)
-    }
+    },
+    ...mapGetters([
+      'addressValid'
+    ])
   }
 }
 </script>

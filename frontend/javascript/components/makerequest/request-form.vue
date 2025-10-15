@@ -233,6 +233,22 @@
         </div>
       </div>
     </div>
+    <div v-if="hasUser" class="card mb-3">
+      <div class="card-body">
+        <details>
+          <summary>Postadresse für diese Anfrage anpassen</summary>
+          <UserAddress
+            v-model:initial-address="address"
+            :i18n="i18n"
+            :form="userForm"
+            :config="config"
+            :address-help-text="userForm.fields.address.help_text"
+            class="mt-3"
+            />
+        </details>
+      </div>
+    </div>
+
     <div class="my-4">
       <button
         type="button"
@@ -257,6 +273,7 @@ import {
 } from '../../store/mutation_types'
 
 import ProofForm from '../proofupload/proof-form.vue'
+import UserAddress from './user-address.vue'
 
 const PLACEHOLDER_MARKER = '…'
 const PLACEHOLDER_REPLACEMENT = '...'
@@ -267,7 +284,8 @@ export default {
   name: 'RequestForm',
   mixins: [I18nMixin, LetterMixin],
   components: {
-    ProofForm
+    ProofForm,
+    UserAddress
   },
   props: {
     config: {
