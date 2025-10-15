@@ -23,6 +23,7 @@ import {
   STEPS,
   UPDATE_ADDRESS,
   UPDATE_BODY,
+  UPDATE_BODY_VALIDITY,
   UPDATE_EMAIL,
   UPDATE_FIRST_NAME,
   UPDATE_FULL_TEXT,
@@ -31,6 +32,7 @@ import {
   UPDATE_PRIVATE,
   UPDATE_TERMS,
   UPDATE_SUBJECT,
+  UPDATE_SUBJECT_VALIDITY,
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
 } from './mutation_types'
@@ -61,7 +63,9 @@ export default createStore({
       user: {},
       step: getInitialStep(),
       subject: '',
+      subjectValid: undefined,
       body: '',
+      bodyValid: undefined,
       fullText: false,
       requestPublic: false,
     }
@@ -165,8 +169,8 @@ export default createStore({
     // TODO validate closer to what happens server side?
     userValid: (state) => state.user.id || (state.user.first_name && state.user.last_name && state.user.email),
     termsValid: (state) => state.user.terms,
-    subjectValid: (state) => state.subject && state.subject.length > 0,
-    bodyValid: (state) => state.body && state.body.length > 0,
+    subjectValid: (state) => state.subjectValid,
+    bodyValid: (state) => state.bodyValid,
     emailValid: (state) => state.user.email && state.user.email.length > 0,
     addressValid: (state) => state.user.address && state.user.address.length > 0,
     requestPublic: (state) => state.requestPublic,
@@ -355,8 +359,14 @@ export default createStore({
     [UPDATE_SUBJECT](state, subject) {
       state.subject = subject
     },
+    [UPDATE_SUBJECT_VALIDITY](state, validity) {
+      state.subjectValid = validity
+    },
     [UPDATE_BODY](state, body) {
       state.body = body
+    },
+    [UPDATE_BODY_VALIDITY](state, validity) {
+      state.bodyValid = validity
     },
     [UPDATE_FIRST_NAME](state, firstName) {
       state.user.first_name = firstName

@@ -12,15 +12,14 @@
 
     <div class="row">
       <div class="col-md-12">
-        <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
-          <p v-for="error in nonFieldErrors" :key="error" v-html="error" />
-        </div>
 
         <div class="mb-3">
           <label
             class="form-check-label"
             for="id_subject"
-            :class="{ 'text-danger': errors.subject }">
+            :class="{
+              'text-danger': errors.subject && !wasSubjectChanged
+            }">
             {{ i18n.subject }}
           </label>
           <div
@@ -40,25 +39,42 @@
           </div>
           <template v-else>
             <div
-              v-if="errors.subject && errors.subject.length > 0"
-              class="alert alert-danger">
-              <p v-for="error in errors.subject" :key="error.message">
-                {{ error.message }}
-              </p>
+              v-if="!clearFormErrors && errors.subject && errors.subject.length > 0"
+              class="alert my-2"
+              :class="{ 'alert-danger': !wasSubjectChanged, 'alert-warning': wasSubjectChanged }"
+              >
+              <ul class="list-unstyled my-0">
+                <li v-for="error in errors.subject" :key="error.message">
+                  {{ error.message }}
+                </li>
+              </ul>
             </div>
-            <div v-if="!isMeaningfulSubject" class="alert alert-warning">
-              {{ i18n.enterMeaningfulSubject }}
+            <div
+              v-else-if="subjectValidationErrors.length > 0"
+              class="alert my-2"
+              :class="{ 'alert-danger': !wasSubjectChanged, 'alert-warning': wasSubjectChanged }"
+              >
+              <ul class="list-unstyled my-0">
+                <li v-for="error in subjectValidationErrors" :key="error">
+                  {{ error }}
+                </li>
+              </ul>
             </div>
             <input
-              id="id_subject"
               v-model="subject"
+              ref="subject"
+              id="id_subject"
               type="text"
               name="subject"
               class="form-control"
-              minlength="4"
-              :class="{ 'is-invalid': errors.subject }"
+              :minlength="formFields.subject.min_length"
+              :maxlength="formFields.subject.max_length"
+              :class="{ 'is-invalid': (errors.subject || subjectValid === false) && !wasSubjectChanged }"
               :placeholder="formFields.subject.placeholder"
-              @keydown.enter.prevent />
+              @change="wasSubjectChanged = true"
+              @keyup="resetSubjectCustomValidity"
+              @keydown.enter.prevent
+              />
           </template>
         </div>
       </div>
@@ -85,15 +101,6 @@
               </div>
             </transition>
             <slot name="request-hints" />
-            <div
-              v-if="submitting && bodyCustomErrors.length > 0"
-              class="alert alert-warning">
-              <ul class="list-unstyled">
-                <li v-for="error in bodyCustomErrors" :key="error">
-                  {{ error }}
-                </li>
-              </ul>
-            </div>
             <button
               v-if="fullTextDisabled"
               class="btn btn-outline-secondary btn-sm"
@@ -103,27 +110,60 @@
           </div>
           <div class="col-md-8 order-1">
             <div
-              v-if="errors.body && errors.body.length > 0"
-              class="alert alert-danger">
-              <p v-for="error in errors.body" :key="error.message">
-                {{ error.message }}
-              </p>
+              v-if="!clearFormErrors && errors.body && errors.body.length > 0"
+              class="alert mb-2"
+              :class="{ 'alert-danger': !wasBodyChanged, 'alert-warning': wasBodyChanged }"
+              >
+              <ul class="list-unstyled my-0">
+                <li v-for="error in errors.body" :key="error.message">
+                  {{ error.message }}
+                </li>
+              </ul>
+              <div v-if="showPlaceholderReplacer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  @click="fixBodyPlaceholders"
+                  >Platzhalter reparieren</button>
+              </div>
+            </div>
+            <div
+              v-else-if="bodyValidationErrors.length > 0"
+              class="alert mt-2"
+              :class="{ 'alert-danger': !wasBodyChanged, 'alert-warning': wasBodyChanged }"
+              >
+              <ul class="list-unstyled my-0">
+                <li v-for="error in bodyValidationErrors" :key="error">
+                  {{ error }}
+                </li>
+              </ul>
+              <div v-if="showPlaceholderReplacer" class="mt-2">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm"
+                  @click="fixBodyPlaceholders"
+                  >Platzhalter automatisch reparieren</button>
+              </div>
             </div>
             <div v-if="!fullText" class="body-text" v-text="letterStart" />
             <div v-if="editingDisabled" class="body-text-em" v-text="body" />
             <textarea
               v-show="!editingDisabled"
-              id="id_body"
               v-model="body"
-              minlength="8"
-              name="body"
               ref="body"
+              id="id_body"
+              name="body"
+              required
               class="form-control body-textarea"
-              :class="{ 'is-invalid': errors.body, attention: !hasBody }"
+              :class="{ 'is-invalid': (errors.body || bodyValid === false) && !wasBodyChanged, attention: !hasBody }"
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
-              required
-              @keyup="bodyChanged" />
+              :minlength="formFields.body.min_length"
+              :maxlength="formFields.body.max_length"
+              @keydown="updateBody"
+              @keyup="resetBodyCustomValidity"
+              @change="wasBodyChanged = true"
+              />
             <div
               v-if="allowFullText && !editingDisabled"
               class="form-check form-check-inline float-end">
@@ -193,6 +233,15 @@
         </div>
       </div>
     </div>
+    <div class="my-4">
+      <button
+        type="button"
+        class="btn btn-primary"
+        @click="validateAllNextStep"
+        >
+        {{ i18n.stepNext }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -200,11 +249,17 @@
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
-import { mapGetters } from  'vuex'
+import { mapGetters, mapMutations } from  'vuex'
+
+import {
+  UPDATE_BODY_VALIDITY,
+  UPDATE_SUBJECT_VALIDITY
+} from '../../store/mutation_types'
 
 import ProofForm from '../proofupload/proof-form.vue'
 
 const PLACEHOLDER_MARKER = '…'
+const PLACEHOLDER_REPLACEMENT = '...'
 const MAX_BODY_ROWS = 12
 const MIN_BODY_ROWS = 3
 
@@ -285,7 +340,8 @@ export default {
     return {
       bodyRows: MIN_BODY_ROWS,
       bodyBeforeChange: '',
-      bodyCustomErrors: [],
+      bodyValidationErrors: [],
+      subjectValidationErrors: [],
       savedFullTextBody: '',
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
@@ -293,6 +349,10 @@ export default {
       subjectValue: this.initialSubject || '',
       bodyValue: this.initialBody || '',
       fullTextValue: this.initialFullText,
+      wasSubjectChanged: false,
+      wasBodyChanged: false,
+      clearFormErrors: false,
+      showPlaceholderReplacer: false,
     }
   },
   computed: {
@@ -384,20 +444,14 @@ export default {
       // FIXME
       return this.publicbodies
     },
-    isMeaningfulSubject() {
-      for (const re of this.nonMeaningfulSubjects) {
-        if (re.test(this.subject)) {
-          return false
-        }
-      }
-      return true
-    },
     ...mapGetters([
+      'subjectValid',
+      'bodyValid',
       'defaultLaw',
-    ])
+    ]),
   },
   mounted() {
-    this.bodyChanged()
+    this.updateBody()
   },
   methods: {
     resetFullText() {
@@ -405,7 +459,7 @@ export default {
       this.fullTextDisabled = false
       this.fullText = false
     },
-    bodyChanged() {
+    updateBody() {
       if (this.fullText) {
         this.fullTextDisabled = true
       }
@@ -418,17 +472,95 @@ export default {
         ta.style.overflow = 'auto'
       }
       this.bodyRows = ta.rows
-      if (this.body.includes(PLACEHOLDER_MARKER)) {
-        this.bodyCustomErrors = [this.i18n.replacePlaceholderMarker]
-        ta.setCustomValidity(this.i18n.replacePlaceholderMarker)
-      } else {
-        this.bodyCustomErrors = []
-        ta.setCustomValidity('')
-      }
+    },
+    fixBodyPlaceholders() {
+      this.body = this.body.replaceAll(PLACEHOLDER_MARKER, PLACEHOLDER_REPLACEMENT)
+      this.validateBody()
     },
     showFullLetter() {
       this.fullLetter = true
-    }
+    },
+    validateSubject() {
+      this.subjectValidationErrors = []
+      let valid = true
+      if (this.nonMeaningfulSubjects.some(re => re.test(this.subject))) {
+        this.subjectValidationErrors.push(this.i18n.subjectMeaningTODO || 'subject meaning')
+        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaningTODO || 'subject meaning')
+        valid = false
+      }
+      // from model via form_utils
+      const minLength = this.$refs.subject.minLength
+      const checkValidity = this.$refs.subject.checkValidity()
+      // unfortunately checkValidity is not enough, it won't kick in until a user interaction
+      // there is a workaround with pattern=".{min,max}" but it still won't work for textarea,
+      // so let's keep it consistent. cf. https://stackoverflow.com/a/10294291/629238 */
+      if (!checkValidity || (this.subject.length < minLength)) {
+        valid = false
+        const minLengthMessage = this.i18n._('valueMinLength', { count: minLength })
+        if (checkValidity) {
+          // if browser wrong, force our message
+          this.$refs.subject.setCustomValidity(minLengthMessage)
+        } else {
+          // let browser's native message take over
+          this.resetSubjectCustomValidity()
+        }
+        this.subjectValidationErrors.push(minLengthMessage)
+      }
+      if (!valid) {
+        // note: reportValidity might only work from a click, but not keyboard event?
+        this.$refs.subject.reportValidity()
+        this.wasSubjectChanged = false
+      }
+      this.updateSubjectValidity(valid)
+    },
+    resetSubjectCustomValidity() {
+      this.$refs.subject.setCustomValidity('')
+    },
+    validateBody() {
+      this.bodyValidationErrors = []
+      let valid = true
+      this.showPlaceholderReplacer = false
+      if (this.body.includes(PLACEHOLDER_MARKER)) {
+        this.bodyValidationErrors.push(this.i18n.replacePlaceholderMarker)
+        this.showPlaceholderReplacer = true
+        this.$refs.body.setCustomValidity(this.i18n.replacePlaceholderMarker)
+        valid = false
+      }
+      // see validateSubject above for comments, esp. re: textarea
+      const minLength = this.$refs.body.minLength
+      const checkValidity = this.$refs.body.checkValidity()
+      if (!checkValidity || (this.body.length < minLength)) {
+        valid = false
+        const minLengthMessage = this.i18n._('valueMinLength', { count: minLength })
+        if (checkValidity) {
+          this.$refs.body.setCustomValidity(minLengthMessage)
+        } else {
+          this.resetBodyCustomValidity()
+        }
+        this.bodyValidationErrors.push(minLengthMessage)
+      }
+      if (!valid) {
+        this.$refs.body.reportValidity()
+        this.wasBodyChanged = false
+      }
+      this.updateBodyValidity(valid)
+    },
+    resetBodyCustomValidity() {
+      this.$refs.body.setCustomValidity('')
+    },
+    validateAllNextStep() {
+      this.clearFormErrors = true
+      // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
+      this.validateBody()
+      this.validateSubject()
+      if (this.bodyValid && this.subjectValid) {
+        this.$emit('stepNext')
+      }
+    },
+    ...mapMutations({
+      updateBodyValidity: UPDATE_BODY_VALIDITY,
+      updateSubjectValidity: UPDATE_SUBJECT_VALIDITY
+    })
   }
 }
 </script>
