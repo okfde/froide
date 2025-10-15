@@ -86,4 +86,6 @@ class JSONMixin(object):
             "placeholder": str(field.widget.attrs.get("placeholder", "")),
             "value": self[name].value() if self.is_bound else None,
             "choices": choices,
+            "min_length": field.min_length if hasattr(field, "min_length") else None,
+            "max_length": field.max_length if hasattr(field, "max_length") else None,
         }
