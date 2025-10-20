@@ -66,8 +66,6 @@
 <script>
 import { mapMutations } from 'vuex'
 import {
-  // SET_STEP_REQUEST,
-  SET_STEP_ACCOUNT,
   SET_PUBLICBODY_ID
 } from '../../store/mutation_types'
 
@@ -84,15 +82,12 @@ export default {
         publicBodyId: pbid,
         scope: this.scope
       })
-      // this.setStepRequest()
-      this.setStepAccount()
+      this.$emit('stepNext')
     },
     getMakeRequestURLForResult(result) {
       return this.config.url.makeRequestTo.replace(/0/, result.id)
     },
     ...mapMutations({
-      // setStepRequest: SET_STEP_REQUEST,
-      setStepAccount: SET_STEP_ACCOUNT,
       setPublicBodyId: SET_PUBLICBODY_ID
     })
   }

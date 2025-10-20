@@ -145,7 +145,7 @@
       :i18n="i18n"
       :title="i18n.address || 'Adresse'"
       :invalid="needCorrectionAddress"
-      :step="STEPS.CREATE_ACCOUNT"
+      :step="user.id ? STEPS.WRITE_REQUEST : STEPS.CREATE_ACCOUNT"
       >
       <template #contents>
         <div
@@ -302,14 +302,14 @@ export default {
       return ('terms' in this.userForm.errors)
     },
     needCorrectionEmail() {
-      return this.hasFormErrorsEmail || !this.emailValid
+      return this.hasFormErrorsEmail || this.emailValid === false
     },
     hasFormErrorsEmail() {
       if (this.userForm?.fields.user_email?.value !== this.user.email) return
       return ('email' in this.userForm.errors)
     },
     needCorrectionSubject() {
-      return this.hasFormErrorsSubject || !this.subjectValid
+      return this.hasFormErrorsSubject || this.subjectValid === false
     },
     hasFormErrorsSubject() {
       // ignore form errors if value changed
@@ -317,7 +317,7 @@ export default {
       return ('subject' in this.requestForm.errors)
     },
     needCorrectionBody() {
-      return this.hasFormErrorsBody || !this.bodyValid
+      return this.hasFormErrorsBody || this.bodyValid === false
     },
     hasFormErrorsBody() {
       if (this.requestForm?.fields.body.value !== this.body) return
