@@ -25,15 +25,25 @@ import {
   UPDATE_ADDRESS_CHANGED,
   UPDATE_BODY,
   UPDATE_BODY_VALIDITY,
+  UPDATE_BODY_CHANGED,
   UPDATE_EMAIL,
+  UPDATE_EMAIL_VALIDITY,
+  UPDATE_EMAIL_CHANGED,
+  UPDATE_FIRST_NAME_VALIDITY,
+  UPDATE_FIRST_NAME_CHANGED,
   UPDATE_FIRST_NAME,
   UPDATE_FULL_TEXT,
   UPDATE_LAST_NAME,
+  UPDATE_LAST_NAME_VALIDITY,
+  UPDATE_LAST_NAME_CHANGED,
   UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
   UPDATE_TERMS,
+  UPDATE_TERMS_VALIDITY,
+  UPDATE_TERMS_CHANGED,
   UPDATE_SUBJECT,
   UPDATE_SUBJECT_VALIDITY,
+  UPDATE_SUBJECT_CHANGED,
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
 } from './mutation_types'
@@ -65,12 +75,20 @@ export default createStore({
       step: getInitialStep(),
       subject: '',
       subjectValid: undefined,
+      subjectChanged: false,
       body: '',
       bodyValid: undefined,
+      bodyChanged: false,
       fullText: false,
       requestPublic: false,
       addressValid: undefined,
       addressChanged: false,
+      firstNameValid: undefined,
+      firstNameChanged: false,
+      lastNameValid: undefined,
+      lastNameChanged: false,
+      emailValid: undefined,
+      emailChanged: false,
     }
   },
   getters: {
@@ -158,8 +176,12 @@ export default createStore({
       return state.user
     },
     subject: (state) => state.subject,
+    subjectValid: (state) => state.subjectValid,
+    subjectChanged: (state) => state.subjectChanged,
     getSubject: (state) => () => state.subject,
     body: (state) => state.body,
+    bodyValid: (state) => state.bodyValid,
+    bodyChanged: (state) => state.bodyChanged,
     fullText: (state) => state.fullText,
     stepSelectPublicBody: (state) => state.step === STEPS.SELECT_PUBLICBODY,
     stepSelectPublicBodyDone: (state) => state.step > STEPS.SELECT_PUBLICBODY,
@@ -169,13 +191,20 @@ export default createStore({
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
     lawType: (state) => state.lawType,
-    // TODO validate closer to what happens server side?
-    userValid: (state) => state.user.id || (state.user.first_name && state.user.last_name && state.user.email),
-    termsValid: (state) => state.user.terms,
-    subjectValid: (state) => state.subjectValid,
-    bodyValid: (state) => state.bodyValid,
-    emailValid: (state) => state.user.email && state.user.email.length > 0,
-    addressValid: (state) => state.user.address && state.user.address.length > 0,
+    userValid: (state) => {
+      if (state.user.id) return true
+      return state.firstNameValid && state.lastNameValid && state.emailValid
+    },
+    termsValid: (state) => state.termsValid,
+    termsChanged: (state) => state.termsChanged,
+    firstNameValid: (state) => state.firstNameValid,
+    firstNameChanged: (state) => state.firstNameChanged,
+    lastNameValid: (state) => state.lastNameValid,
+    lastNameChanged: (state) => state.lastNameChanged,
+    emailValid: (state) => state.emailValid,
+    emailChanged: (state) => state.emailChanged,
+    addressValid: (state) => state.addressValid,
+    addressChanged: (state) => state.addressChanged,
     requestPublic: (state) => state.requestPublic,
     stepCanContinue: (state, getters) => (scope) => {
       switch (state.step) {
@@ -358,17 +387,35 @@ export default createStore({
     [UPDATE_SUBJECT_VALIDITY](state, validity) {
       state.subjectValid = validity
     },
+    [UPDATE_SUBJECT_CHANGED](state, changed) {
+      state.subjectChanged = changed
+    },
     [UPDATE_BODY](state, body) {
       state.body = body
     },
     [UPDATE_BODY_VALIDITY](state, validity) {
       state.bodyValid = validity
     },
+    [UPDATE_BODY_CHANGED](state, changed) {
+      state.bodyChanged = changed
+    },
     [UPDATE_FIRST_NAME](state, firstName) {
       state.user.first_name = firstName
     },
+    [UPDATE_FIRST_NAME_VALIDITY](state, validity) {
+      state.firstNameValid = validity
+    },
+    [UPDATE_FIRST_NAME_CHANGED](state, changed) {
+      state.firstNameChanged = changed
+    },
     [UPDATE_LAST_NAME](state, lastName) {
       state.user.last_name = lastName
+    },
+    [UPDATE_LAST_NAME_VALIDITY](state, validity) {
+      state.lastNameValid = validity
+    },
+    [UPDATE_LAST_NAME_CHANGED](state, changed) {
+      state.lastNameChanged = changed
     },
     [UPDATE_ADDRESS](state, address) {
       state.user.address = address
@@ -382,6 +429,12 @@ export default createStore({
     [UPDATE_EMAIL](state, email) {
       state.user.email = email
     },
+    [UPDATE_EMAIL_VALIDITY](state, validity) {
+      state.emailValid = validity
+    },
+    [UPDATE_EMAIL_CHANGED](state, changed) {
+      state.emailChanged = changed
+    },
     [UPDATE_PRIVATE](state, val) {
       state.user.private = val
     },
@@ -390,6 +443,12 @@ export default createStore({
     },
     [UPDATE_TERMS](state, val) {
       state.user.terms = val
+    },
+    [UPDATE_TERMS_VALIDITY](state, validity) {
+      state.termsValid = validity
+    },
+    [UPDATE_TERMS_CHANGED](state, changed) {
+      state.termsChanged = changed
     },
     [UPDATE_REQUEST_PUBLIC](state, val) {
       state.requestPublic = val

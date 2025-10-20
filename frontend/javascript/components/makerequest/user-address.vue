@@ -4,7 +4,7 @@
       for="id_address"
       class="col-sm-3 col-form-label"
       :class="{
-        'text-danger': errors.address,
+        'text-danger': (errors.address && !addressChanged) || addressValid === false,
         'field-required': requiresPostalAddress
       }">
       {{ i18n.yourAddress }}
@@ -13,12 +13,13 @@
       <div>
         <textarea
           v-model="address"
+          ref="address"
           name="address"
           class="form-control"
-          :class="{ 'is-invalid': (errors.address || addressValid === false) && !wasAddressChanged }"
+          :class="{ 'is-invalid': (errors.address && !addressChanged ) || addressValid === false}"
           :placeholder="formFields.address.placeholder"
           :required="requiresPostalAddress"
-          @keyup="addressChanged"
+          @keyup="addressUpdated"
           />
         <p class="help-block">
           <span v-html="addressHelpText" />
@@ -26,7 +27,7 @@
         <div
           v-if="!clearFormErrors && errors.address"
           class="alert mb-2"
-          :class="{ 'alert-danger': !wasAddressChanged, 'alert-warning': wasAddressChanged }"
+          :class="{ 'alert-danger': !addressChanged, 'alert-warning': addressChanged }"
           >
           <ul class="list-unstyled my-0">
             <li v-for="e in errors.address" :key="e.message">
@@ -37,7 +38,7 @@
         <div
           v-else-if="addressValidationErrors.length > 0"
           class="alert mb-2"
-          :class="{ 'alert-danger': !wasAddressChanged, 'alert-warning': wasAddressChanged }"
+          :class="{ 'alert-danger': !addressChanged, 'alert-warning': addressChanged }"
           >
           <ul class="list-unstyled my-0">
             <li v-for="error in addressValidationErrors" :key="error" style="white-space: pre-line">
@@ -87,7 +88,6 @@ export default {
   data() {
     return {
       clearFormErrors: false,
-      wasAddressChanged: false,
       addressValidationErrors: []
     }
   },
@@ -98,12 +98,16 @@ export default {
     addressRegex = new RegExp(this.config.settings.address_regex)
   },
   methods: {
-    addressChanged() {
-      this.wasAddressChanged = true
+    addressUpdated() {
+      this.updateAddressChanged(true)
       this.validate()
     },
     validate() {
       this.addressValidationErrors = []
+      if (!this.$refs.address.reportValidity()) {
+        this.updateAddressValidity(false)
+        return
+      }
       let valid = true
       if (this.address && addressRegex && !addressRegex.test(this.address)) {
         valid = false
@@ -160,7 +164,8 @@ export default {
       return new RegExp(this.config.settings.address_regex).test(this.address)
     },
     ...mapGetters([
-      'addressValid'
+      'addressValid',
+      'addressChanged',
     ])
   }
 }
