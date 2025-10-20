@@ -18,7 +18,7 @@
             class="form-check-label"
             for="id_subject"
             :class="{
-              'text-danger': errors.subject && !wasSubjectChanged
+              'text-danger': errors.subject && !subjectChanged
             }">
             {{ i18n.subject }}
           </label>
@@ -41,7 +41,7 @@
             <div
               v-if="!clearFormErrors && errors.subject && errors.subject.length > 0"
               class="alert my-2"
-              :class="{ 'alert-danger': !wasSubjectChanged, 'alert-warning': wasSubjectChanged }"
+              :class="{ 'alert-danger': !subjectChanged, 'alert-warning': subjectChanged }"
               >
               <ul class="list-unstyled my-0">
                 <li v-for="error in errors.subject" :key="error.message">
@@ -52,7 +52,7 @@
             <div
               v-else-if="subjectValidationErrors.length > 0"
               class="alert my-2"
-              :class="{ 'alert-danger': !wasSubjectChanged, 'alert-warning': wasSubjectChanged }"
+              :class="{ 'alert-danger': !subjectChanged, 'alert-warning': subjectChanged }"
               >
               <ul class="list-unstyled my-0">
                 <li v-for="error in subjectValidationErrors" :key="error">
@@ -69,9 +69,9 @@
               class="form-control"
               :minlength="formFields.subject.min_length"
               :maxlength="formFields.subject.max_length"
-              :class="{ 'is-invalid': (errors.subject || subjectValid === false) && !wasSubjectChanged }"
+              :class="{ 'is-invalid': (errors.subject || subjectValid === false) && !subjectChanged }"
               :placeholder="formFields.subject.placeholder"
-              @change="wasSubjectChanged = true"
+              @change="updateSubjectChanged(true)"
               @keyup="resetSubjectCustomValidity"
               @keydown.enter.prevent
               />
@@ -112,7 +112,7 @@
             <div
               v-if="!clearFormErrors && errors.body && errors.body.length > 0"
               class="alert mb-2"
-              :class="{ 'alert-danger': !wasBodyChanged, 'alert-warning': wasBodyChanged }"
+              :class="{ 'alert-danger': !bodyChanged, 'alert-warning': bodyChanged }"
               >
               <ul class="list-unstyled my-0">
                 <li v-for="error in errors.body" :key="error.message">
@@ -130,7 +130,7 @@
             <div
               v-else-if="bodyValidationErrors.length > 0"
               class="alert mt-2"
-              :class="{ 'alert-danger': !wasBodyChanged, 'alert-warning': wasBodyChanged }"
+              :class="{ 'alert-danger': !bodyChanged, 'alert-warning': bodyChanged }"
               >
               <ul class="list-unstyled my-0">
                 <li v-for="error in bodyValidationErrors" :key="error">
@@ -155,14 +155,14 @@
               name="body"
               required
               class="form-control body-textarea"
-              :class="{ 'is-invalid': (errors.body || bodyValid === false) && !wasBodyChanged, attention: !hasBody }"
+              :class="{ 'is-invalid': (errors.body || bodyValid === false) && !bodyChanged, attention: !hasBody }"
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
               :minlength="formFields.body.min_length"
               :maxlength="formFields.body.max_length"
               @keydown="updateBody"
               @keyup="resetBodyCustomValidity"
-              @change="wasBodyChanged = true"
+              @change="updateBodyChanged(true)"
               />
             <div
               v-if="allowFullText && !editingDisabled"
@@ -236,9 +236,9 @@
 
     <div v-if="hasUser" class="card mb-3">
       <div class="card-body">
-        <details :open="userForm.errors.address">
-          <!-- TODO i18n -->
-          <summary>Postadresse bearbeiten</summary>
+        <!-- TODO open if errors -->
+        <details>
+          <summary>Postadresse für diese Anfrage anpassen</summary>
           <UserAddress
             v-model:initial-address="address"
             :i18n="i18n"
@@ -271,7 +271,9 @@ import { mapGetters, mapMutations } from  'vuex'
 
 import {
   UPDATE_BODY_VALIDITY,
-  UPDATE_SUBJECT_VALIDITY
+  UPDATE_BODY_CHANGED,
+  UPDATE_SUBJECT_VALIDITY,
+  UPDATE_SUBJECT_CHANGED,
 } from '../../store/mutation_types'
 
 import ProofForm from '../proofupload/proof-form.vue'
@@ -369,8 +371,6 @@ export default {
       subjectValue: this.initialSubject || '',
       bodyValue: this.initialBody || '',
       fullTextValue: this.initialFullText,
-      wasSubjectChanged: false,
-      wasBodyChanged: false,
       clearFormErrors: false,
       showPlaceholderReplacer: false,
     }
@@ -466,7 +466,9 @@ export default {
     },
     ...mapGetters([
       'subjectValid',
+      'subjectChanged',
       'bodyValid',
+      'bodyChanged',
       'defaultLaw',
     ]),
   },
@@ -529,7 +531,6 @@ export default {
       if (!valid) {
         // note: reportValidity might only work from a click, but not keyboard event?
         this.$refs.subject.reportValidity()
-        this.wasSubjectChanged = false
       }
       this.updateSubjectValidity(valid)
     },
@@ -561,7 +562,6 @@ export default {
       }
       if (!valid) {
         this.$refs.body.reportValidity()
-        this.wasBodyChanged = false
       }
       this.updateBodyValidity(valid)
     },
@@ -579,7 +579,9 @@ export default {
     },
     ...mapMutations({
       updateBodyValidity: UPDATE_BODY_VALIDITY,
-      updateSubjectValidity: UPDATE_SUBJECT_VALIDITY
+      updateBodyChanged: UPDATE_BODY_CHANGED,
+      updateSubjectValidity: UPDATE_SUBJECT_VALIDITY,
+      updateSubjectChanged: UPDATE_SUBJECT_CHANGED,
     })
   }
 }

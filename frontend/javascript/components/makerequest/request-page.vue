@@ -205,65 +205,19 @@
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
           <div
             v-show="step === STEPS.CREATE_ACCOUNT">
-
-            <div v-if="!user.id">
-              <h2>Account anlegen</h2><!-- TODO i18n -->
-              <p>
-                {{ i18n.doYouAlreadyHaveAccount }}<br/>
-                <DjangoSlot name="loginlink"></DjangoSlot>
-              </p>
-              <p><small>{{ i18n.thisFormRemembers }}</small></p>
-            </div>
-            <div v-else>
-              <h2>Adresse</h2><!-- TODO i18n -->
-            </div>
-            <UserRegistration
-              v-if="!user.id"
-              :form="userForm"
+            <UserCreateAccount
+              :config="config"
+              :user="user"
+              :request-form="requestForm"
               :user-form="userForm"
-              :config="config"
-              :user="user.id ? user : null"
               :default-law="defaultLaw"
-              v-model:initial-first-name="firstName"
-              v-model:initial-last-name="lastName"
-              v-model:initial-email="email"
-              />
-            <!-- TODO: password, see UserRegistration stub -->
-
-            <UserAddress
-              :i18n="i18n"
-              :form="userForm"
-              :config="config"
-              :address-help-text="userForm.fields.address.help_text"
-              />
-
-            <template v-if="config.settings.user_can_hide_web && !user.id">
-              <h3 class="fs-6">Privatsphäre</h3><!-- TODO i18n -->
-              <UserPublic
-                v-if="!user.id"
-                :user-form="userForm"
-                :config="config"
-                v-model:initial-private="userPrivate"
-                @online-help="$refs.onlineHelp.show($event)"
-                />
-              <h3 class="fs-6">Nutzungsbedingungen</h3><!-- TODO i18n -->
-              <UserTerms
-                :form="userForm"
-                v-model:initial-terms="terms"
-                />
-            </template>
-            <div class="my-4">
-              <!-- TODO: validation of vorname/name -->
-              <button
-                type="button"
-                class="btn btn-primary"
-                :disabled="!stepCanContinue(pbScope)"
-                @click="setStep(stepNext)"
-                >
-                {{ i18n.stepNext }}
-              </button>
-            </div>
-
+              @step-next="setStep(stepNext)"
+              @online-help="TODO"
+              >
+              <template #loginlink>
+                <DjangoSlot name="loginlink"></DjangoSlot>
+              </template>
+            </UserCreateAccount>
           </div>
 
           <fieldset
@@ -352,6 +306,7 @@
           </div>
         </div>
       </div>
+      <button type="submit">submit no matter what outside</button>
     </div></div></div> <!-- /.container -->
     <!--
     <button type="submit" @click="submitting = true">submit</button>
@@ -366,14 +321,10 @@ import SimilarRequests from './similar-requests'
 import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
-import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
 import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
 import RequestPublic from './request-public'
-import UserTerms from './user-terms'
-import UserPublic from './user-public.vue'
-import UserAddress from './user-address.vue'
 import DjangoSlot from '../../lib/django-slot.vue'
 import SimpleStepper from '../postupload/simple-stepper.vue'
 import OnlineHelp from '../online-help.vue'
@@ -406,6 +357,7 @@ import {
 
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
+import UserCreateAccount from './user-create-account.vue'
 
 export default {
   name: 'RequestPage',
@@ -413,15 +365,12 @@ export default {
     PublicbodyChooser,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
-    UserRegistration,
     SimilarRequests,
     ReviewRequest,
     PbMultiReview,
     RequestForm,
     RequestPublic,
-    UserTerms,
-    UserPublic,
-    UserAddress,
+    UserCreateAccount,
     DjangoSlot,
     SimpleStepper,
     OnlineHelp,
@@ -625,38 +574,6 @@ export default {
       },
       set(value) {
         this.updateFullText(value)
-      }
-    },
-    email: {
-      get() {
-        return this.$store.state.user.email
-      },
-      set(value) {
-        this.updateEmail(value)
-      }
-    },
-    firstName: {
-      get() {
-        return this.$store.state.user.first_name
-      },
-      set(value) {
-        this.updateFirstName(value)
-      }
-    },
-    lastName: {
-      get() {
-        return this.$store.state.user.last_name
-      },
-      set(value) {
-        this.updateLastName(value)
-      }
-    },
-    userPrivate: {
-      get() {
-        return this.$store.state.user.private
-      },
-      set(value) {
-        this.updatePrivate(value)
       }
     },
     requestPublic: {
@@ -885,21 +802,15 @@ export default {
     ...mapMutations({
       setStep: SET_STEP,
       setStepNoHistory: SET_STEP_NO_HISTORY,
-      // setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
-      // setStepRequest: SET_STEP_REQUEST,
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,
       updateFullText: UPDATE_FULL_TEXT,
       setConfig: SET_CONFIG,
       setUser: SET_USER,
-      updateFirstName: UPDATE_FIRST_NAME,
-      updateLastName: UPDATE_LAST_NAME,
       updateLawType: UPDATE_LAW_TYPE,
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES,
-      updateEmail: UPDATE_EMAIL,
-      updatePrivate: UPDATE_PRIVATE,
       updateRequestPublic: UPDATE_REQUEST_PUBLIC,
       updateTerms: UPDATE_TERMS,
     }),

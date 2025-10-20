@@ -25,7 +25,7 @@
       :step="STEPS.WRITE_REQUEST"
       :contents="subject || i18n.subject"
       />
-    
+
     <!-- TODO i18n Anfragentext -->
     <ReviewRequestLine
       :i18n="i18n"
@@ -155,6 +155,16 @@
       </template>
     </ReviewRequestLine>
 
+    <!-- TODO i18n Nutzungsbedingungen, notAgreed -->
+    <ReviewRequestLine
+      v-if="needCorrectionTerms"
+      :i18n="i18n"
+      :title="i18n.terms || 'Nutzungs&shy;bedingungen'"
+      :invalid="needCorrectionAddress"
+      :contents="i18n.notAgreed || 'nicht zugestimmt'"
+      :step="STEPS.CREATE_ACCOUNT"
+      />
+
     <UserConfirmation
       :form="userForm"
       />
@@ -169,6 +179,7 @@
         <i class="fa fa-send" aria-hidden="true" />
         {{ i18n.submitRequest }}
       </button>
+      <button type="submit">submit no matter what</button>
       <button
         v-if="user.id && showDraft"
         type="submit"
@@ -283,7 +294,10 @@ export default {
         this.needCorrectionAddress
     },
     needCorrectionUser() {
-      return this.hasFormErrorsUser || !this.userValid
+      return this.hasFormErrorsUser || this.userValid === false
+    },
+    needCorrectionTerms() {
+      return this.hasFormErrorsUserTerms || this.termsValid === false
     },
     hasFormErrorsUser() {
       // note UserTerms here
@@ -320,11 +334,15 @@ export default {
       return this.hasFormErrorsBody || this.bodyValid === false
     },
     hasFormErrorsBody() {
+      // TODO? the calculation is different than the validation in RequestForm,
+      //   where *any* change explicitly allows re-submitting -- even an effectively unchanged value
+      //   (which is made impossible here, contradictingly)
+      //   maybe need to move was...changed into store...
       if (this.requestForm?.fields.body.value !== this.body) return
       return ('body' in this.requestForm.errors)
     },
     needCorrectionAddress() {
-      return this.hasFormErrorsAddress || !this.addressValid
+      return this.hasFormErrorsAddress || this.addressValid === false
     },
     hasFormErrorsAddress() {
       if (this.userForm?.fields.address.value !== this.user.address) return
@@ -394,6 +412,7 @@ export default {
       'bodyValid',
       'emailValid',
       'addressValid',
+      'termsValid',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
       'requestPublic',

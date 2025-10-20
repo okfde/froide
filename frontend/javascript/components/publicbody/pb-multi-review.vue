@@ -21,7 +21,7 @@
           class="btn btn-primary"
           :disabled="!stepCanContinue(scope)"
           @click="$emit('stepNext')"
-          >§Weiter<!-- TODO i18n --></button>
+          >{{ i18n.continue || 'Weiter' }}<!-- TODO i18n --></button>
       </div>
     </div>
     <PbSummary
@@ -54,10 +54,11 @@
     <div class="row">
       <div class="col-auto ms-auto">
         <button
+          type="button"
           class="btn btn-primary"
           :disabled="!stepCanContinue(scope)"
-          @click="setStepNext"
-          >§Weiter</button>
+          @click="$emit('stepNext')"
+          >{{ i18n.continue || 'Weiter' }}<!-- TODO i18n --></button>
       </div>
     </div>
   </div>

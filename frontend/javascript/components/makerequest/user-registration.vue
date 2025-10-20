@@ -15,13 +15,15 @@
             <input
               id="id_first_name"
               v-model="first_name"
+              ref="first_name"
               type="text"
               name="first_name"
               class="form-control"
-              :class="{ 'is-invalid': usererrors.first_name }"
+              :class="{ 'is-invalid': usererrors.first_name && !updateFirstNameChanged }"
               :placeholder="userformFields.first_name.placeholder"
               required
               :maxlength="userformFields.first_name.max_length"
+              @change="updateFirstNameChanged(true)"
               />
             <p v-for="e in usererrors.first_name" :key="e.message">
               {{ e.message }}
@@ -40,13 +42,15 @@
             <input
               id="id_last_name"
               v-model="last_name"
+              ref="last_name"
               type="text"
               name="last_name"
               class="form-control"
-              :class="{ 'is-invalid': usererrors.last_name }"
+              :class="{ 'is-invalid': usererrors.last_name && !lastNameChanged }"
               :placeholder="userformFields.last_name.placeholder"
               required
               :maxlength="userformFields.last_name.max_length"
+              @change="updateLastNameChanged(true)"
               />
             <p v-for="e in usererrors.last_name" :key="e.message">
               {{ e.message }}
@@ -74,13 +78,15 @@
       <div class="col-sm-9">
         <input
           v-model="email"
+          ref="email"
           type="email"
           name="user_email"
           class="form-control"
-          :class="{ 'is-invalid': errors.user_email }"
+          :class="{ 'is-invalid': errors.user_email && !emailChanged }"
           :placeholder="formFields.user_email.placeholder"
           required
           :maxlength="userformFields.user_email.max_length"
+          @change="updateEmailChanged(true)"
           />
         <p
           v-for="e in errors.user_email"
@@ -145,6 +151,17 @@
 
 <script>
 import I18nMixin from '../../lib/i18n-mixin'
+
+import { mapGetters, mapMutations } from 'vuex'
+
+import {
+  UPDATE_FIRST_NAME_VALIDITY,
+  UPDATE_FIRST_NAME_CHANGED,
+  UPDATE_LAST_NAME_VALIDITY,
+  UPDATE_LAST_NAME_CHANGED,
+  UPDATE_EMAIL_VALIDITY,
+  UPDATE_EMAIL_CHANGED,
+} from '../../store/mutation_types'
 
 export default {
   name: 'UserRegistration',
@@ -231,6 +248,34 @@ export default {
         this.$emit('update:initialEmail', value)
       }
     },
+    ...mapGetters([
+      'firstNameChanged',
+      'lastNameChanged',
+      'emailChanged',
+    ]),
+  },
+  methods: {
+    validateAll() {
+      // validate in "reverse document order" since the last (negative) report triggers popup and lingers
+      // note that we're impurely committing side-effectful reportValidity (instead of checkValidity)
+      this.updateEmailValidity(
+        this.$refs.email.reportValidity()
+      )
+      this.updateLastNameValidity(
+        this.$refs.last_name.reportValidity()
+      )
+      this.updateFirstNameValidity(
+        this.$refs.first_name.reportValidity()
+      )
+    },
+    ...mapMutations({
+      updateFirstNameValidity: UPDATE_FIRST_NAME_VALIDITY,
+      updateFirstNameChanged: UPDATE_FIRST_NAME_CHANGED,
+      updateLastNameValidity: UPDATE_LAST_NAME_VALIDITY,
+      updateLastNameChanged: UPDATE_LAST_NAME_CHANGED,
+      updateEmailValidity: UPDATE_EMAIL_VALIDITY,
+      updateEmailChanged: UPDATE_EMAIL_CHANGED,
+    })
   }
 }
 </script>
