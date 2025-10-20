@@ -26,6 +26,7 @@
             v-if="
               editingDisabled && !(errors.subject && errors.subject.length > 0)
             ">
+            <!-- TODO what is this here, what/when is editingDisabled -->
             <input type="hidden" name="subject" :value="subject" />
             <strong>{{ subject }}</strong>
             <button
@@ -537,6 +538,7 @@ export default {
       this.$refs.subject.setCustomValidity('')
     },
     validateBody() {
+      console.trace('validateBody')
       this.bodyValidationErrors = []
       let valid = true
       this.showPlaceholderReplacer = false
@@ -561,6 +563,7 @@ export default {
       }
       if (!valid) {
         this.$refs.body.reportValidity()
+        // TODO is this correct??
         this.wasBodyChanged = false
       }
       this.updateBodyValidity(valid)

@@ -4,7 +4,7 @@
       for="id_address"
       class="col-sm-3 col-form-label"
       :class="{
-        'text-danger': errors.address,
+        'text-danger': errors.address || addressValid === false,
         'field-required': requiresPostalAddress
       }">
       {{ i18n.yourAddress }}

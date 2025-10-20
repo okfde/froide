@@ -320,6 +320,10 @@ export default {
       return this.hasFormErrorsBody || this.bodyValid === false
     },
     hasFormErrorsBody() {
+      // TODO? the calculation is different than the validation in RequestForm,
+      //   where *any* change explicitly allows re-submitting -- even an effectively unchanged value
+      //   (which is made impossible here, contradictingly)
+      //   maybe need to move was...changed into store...
       if (this.requestForm?.fields.body.value !== this.body) return
       return ('body' in this.requestForm.errors)
     },

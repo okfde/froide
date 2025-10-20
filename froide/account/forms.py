@@ -92,6 +92,7 @@ class AddressBaseForm(forms.Form):
 
     def clean_address(self) -> str:
         address = self.cleaned_data["address"]
+        raise forms.ValidationError("test invalid address")
         if not address:
             return address
         if self.ALLOW_BLOCKED_ADDRESS:

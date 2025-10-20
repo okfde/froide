@@ -188,6 +188,7 @@ export default {
         // classification: true
       },
       filterOrder: [
+        // TODO: 'jurisdiction-and-regions'
         'jurisdiction',
         'regions',
         'categories',
@@ -218,6 +219,8 @@ export default {
     filterConfig() {
       const searcher = new FroideAPI(this.config)
       return {
+        // TODO: jurisdiction-and-regions
+        //   bund-as-region? pbly not, as jurisdict
         classification: {
           label: this.i18n.classificationPlural[1],
           key: 'classification',
