@@ -233,10 +233,12 @@
         </div>
       </div>
     </div>
+
     <div v-if="hasUser" class="card mb-3">
       <div class="card-body">
-        <details>
-          <summary>Postadresse für diese Anfrage anpassen</summary>
+        <details :open="userForm.errors.address">
+          <!-- TODO i18n -->
+          <summary>Postadresse bearbeiten</summary>
           <UserAddress
             v-model:initial-address="address"
             :i18n="i18n"

@@ -85,6 +85,7 @@
     </div>
     <component :is="listView" :name="name" :scope="scope" :config="config"
       @update="$emit('update', $event)"
+      @step-next="$emit('stepNext')"
       />
   </div>
 </template>

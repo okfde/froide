@@ -20,8 +20,8 @@
           type="button"
           class="btn btn-primary"
           :disabled="!stepCanContinue(scope)"
-          @click="setStepNext"
-          >§Weiter</button>
+          @click="$emit('stepNext')"
+          >§Weiter<!-- TODO i18n --></button>
       </div>
     </div>
     <PbSummary
@@ -66,7 +66,6 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import {
-  SET_STEP_NEXT,
   SET_STEP_SELECT_PUBLICBODY
 } from '../../store/mutation_types'
 
@@ -102,8 +101,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
-      setStepNext: SET_STEP_NEXT,
+      setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY
     })
   }
 }
