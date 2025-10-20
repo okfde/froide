@@ -128,7 +128,7 @@
           </div>
 
           <fieldset
-            v-if="stepSelectPublicBody"
+            v-if="step === STEPS.SELECT_PUBLICBODY"
             id="step-publicbody"
             >
             <div class="my-3 row">
@@ -168,7 +168,9 @@
                       :defaultsearch="publicBodySearch"
                       :scope="pbScope"
                       :form="publicbodyForm"
-                      :config="config" />
+                      :config="config"
+                      @step-next="setStep(stepNext)"
+                      />
                   </template>
                   <template v-else>
                     <PublicbodyChooser
@@ -177,7 +179,8 @@
                       :scope="pbScope"
                       :form="publicbodyForm"
                       :config="config"
-                      :list-view="publicBodyListView" />
+                      :list-view="publicBodyListView"
+                      />
                   </template>
                 </div>
                 <div class="col-lg-4 small">
@@ -188,10 +191,15 @@
           </fieldset>
 
           <fieldset
-            v-if="stepReviewPublicBodies && !stepWriteRequest"
+            v-if="step === STEPS.REVIEW_PUBLICBODY"
             id="step-review-publicbody"
             >
-            <PbMultiReview name="publicbody" :i18n="i18n" :scope="pbScope" />
+            <PbMultiReview
+              name="publicbody"
+              :i18n="i18n"
+              :scope="pbScope"
+              @step-next="setStep(stepNext)"
+              />
           </fieldset>
 
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
@@ -258,7 +266,11 @@
 
           </div>
 
-          <fieldset v-show="stepWriteRequest" id="step-request" class="mt-3">
+          <fieldset
+            v-show="step === STEPS.WRITE_REQUEST"
+            id="step-request"
+            class="mt-3"
+            >
             <!-- TODO: rename/emphasize ellipsis button -->
             <RequestForm
               :config="config"
@@ -519,7 +531,7 @@ export default {
         ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
         ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
         ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
-        STEPS.CREATE_ACCOUNT,
+        ...(this.userInfo ? [] : [STEPS.CREATE_ACCOUNT]),
         STEPS.WRITE_REQUEST,
         ...(this.hidePublic ? [] : [STEPS.REQUEST_PUBLIC]),
         STEPS.PREVIEW_SUBMIT,
@@ -532,9 +544,7 @@ export default {
         [STEPS.FIND_SIMILAR]: this.i18n.similarRequests,
         [STEPS.SELECT_PUBLICBODY]: this.i18n.choosePublicBody,
         [STEPS.REVIEW_PUBLICBODY]: this.i18n.choosePublicBody,
-        [STEPS.CREATE_ACCOUNT]: this.userInfo
-          ? this.i18n.address
-          : this.i18n.account,
+        [STEPS.CREATE_ACCOUNT]: this.i18n.account,
         [STEPS.WRITE_REQUEST]: this.i18n.writeMessage,
         [STEPS.REQUEST_PUBLIC]: this.i18n.writeMessage,
         [STEPS.PREVIEW_SUBMIT]: this.i18n.submitRequest,
@@ -687,8 +697,6 @@ export default {
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
       'stepWriteRequest',
-      'stepReviewPublicBodies',
-      'stepSelectPublicBody',
       'step',
       'lawType',
       'defaultLaw',
@@ -833,7 +841,7 @@ export default {
       if (this.submitting) {
         return
       }
-      if (!this.stepWriteRequest) {
+      if (this.step !== STEPS.WRITE_REQUEST) {
         return
       }
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
@@ -860,7 +868,7 @@ export default {
       if (this.requestForm.fields.draft.initial && this.step === STEPS.INTRO) {
         console.log('request is draft, skipping intro etc.')
         this.setStep(STEPS.WRITE_REQUEST)
-      } else if (this.hidePublicbodyChooser && this.step === STEPS.INTRO) {
+      } else if (this.hidePublicbodyChooser && this.step === STEPS.INTRO && !this.userInfo) {
         this.setStep(STEPS.CREATE_ACCOUNT)
       } else if (this.hasPublicBodies && this.step === STEPS.INTRO) {
         // skip intro
