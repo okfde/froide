@@ -20,7 +20,9 @@
               class="form-control"
               :class="{ 'is-invalid': usererrors.first_name }"
               :placeholder="userformFields.first_name.placeholder"
-              required />
+              required
+              :maxlength="userformFields.first_name.max_length"
+              />
             <p v-for="e in usererrors.first_name" :key="e.message">
               {{ e.message }}
             </p>
@@ -43,7 +45,9 @@
               class="form-control"
               :class="{ 'is-invalid': usererrors.last_name }"
               :placeholder="userformFields.last_name.placeholder"
-              required />
+              required
+              :maxlength="userformFields.last_name.max_length"
+              />
             <p v-for="e in usererrors.last_name" :key="e.message">
               {{ e.message }}
             </p>
@@ -75,7 +79,9 @@
           class="form-control"
           :class="{ 'is-invalid': errors.user_email }"
           :placeholder="formFields.user_email.placeholder"
-          required />
+          required
+          :maxlength="userformFields.user_email.max_length"
+          />
         <p
           v-for="e in errors.user_email"
           :key="e.message"

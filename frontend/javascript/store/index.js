@@ -18,7 +18,6 @@ import {
   SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
   SET_STEP_SELECT_PUBLICBODY,
-  SET_STEP_NEXT,
   SET_USER,
   STEPS,
   UPDATE_ADDRESS,
@@ -223,13 +222,6 @@ export default createStore({
     },
     [SET_STEP_REQUEST](state) {
       state.step = STEPS.WRITE_REQUEST
-    },
-    [SET_STEP_NEXT](state) {
-      switch (state.step) {
-        case STEPS.REVIEW_PUBLICBODY:
-          state.step = STEPS.CREATE_ACCOUNT
-          return
-      }
     },
     [SET_PUBLICBODY](state, { publicBody, scope }) {
       state.scopedPublicBodies[scope] = [publicBody]

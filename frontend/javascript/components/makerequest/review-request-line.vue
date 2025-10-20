@@ -32,7 +32,7 @@ import {
 } from '../../store/mutation_types'
 
 export default {
-  name: 'ReviewRequest',
+  name: 'ReviewRequestLine',
   props: {
     i18n: {
       type: Object,
