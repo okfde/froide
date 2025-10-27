@@ -1,6 +1,6 @@
 <template>
   <div class="filter-list-wrapper">
-    <ul class="filter-list">
+    <ul v-if="!config.groupBy" class="filter-list">
       <li
         v-for="item in filteredItems"
         :key="item.id"
@@ -13,10 +13,11 @@
             @change="setFilter(item)"
             :data-test="item.isActive"
             :checked="item.isActive" />
-          <label class="form-check-label" :for="item.labelId">
+          <label class="form-check-label text-break" :for="item.labelId">
             {{ item.label }}
+            <small v-if="item.subLabel" class="text-secondary d-block">{{ item.subLabel }}</small>
           </label>
-          <small v-if="item.count">({{ item.count }})</small>
+          <small v-if="item.count" class="filter-list-sublabel">({{ item.count }})</small>
           <i
             v-if="item.children && item.children.length > 0 && !item.subItems"
             class="fa fa-chevron-down load-children"
@@ -36,9 +37,78 @@
         </div>
       </li>
     </ul>
-    <small v-if="hasMore" class="text-end">
-      <a href="#" @click.prevent="loadMore">{{ i18n.loadMore }}</a>
-    </small>
+    <ul v-else class="list-unstyled filter-list--grouped">
+      <li
+        v-for="itemGroup in itemGroups"
+        :key="itemGroup.id"
+        >
+        <div
+          v-if="itemGroup.items.length === 1"
+          class="form-check"
+          >
+          <input
+            type="checkbox"
+            class="form-check-input"
+            :id="itemGroup.items[0].labelId"
+            @change="setFilter(itemGroup.items[0])"
+            :checked="itemGroup.items[0].isActive" />
+          <label class="form-check-label text-break" :for="itemGroup.items[0].labelId">
+            {{ itemGroup.items[0].label }}
+          </label>
+          <small v-if="itemGroup.items[0].count">({{ itemGroup.items[0].count }})</small>
+        </div>
+        <!--details v-else-->
+        <div v-else>
+          <div class="form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              :id="itemGroup.id"
+              :checked="itemGroup.isActive"
+              :indeterminate.prop="itemGroup.isActive === undefined"
+              @click="itemGroupSelect(itemGroup)"
+              />
+            <label
+              class="form-check-label text-break"
+              :for="itemGroup.id"
+              >{{ itemGroup.label }}</label>
+            <i
+              data-bs-toggle="collapse"
+              :data-bs-target="'#collapse_' + itemGroup.id"
+              class="fa fa-chevron-down load-children"
+              role="button"
+              :aria-controls="'collapse_' + itemGroup.id"
+              ><!-- TODO a11y --></i>
+          </div>
+          <div class="collapse" :id="'collapse_' + itemGroup.id">
+            <ul class="list-unstyled ps-4">
+              <li v-for="item in itemGroup.items" :key="item.id">
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    :id="item.labelId"
+                    @change="setFilter(item)"
+                    :checked="isActive(item.id)"
+                    />
+                  <label class="form-check-label text-break" :for="item.labelId">
+                    {{ item.label }}
+                  </label>
+                  <small v-if="item.count">({{ item.count }})</small>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+    </ul>
+    <div v-if="hasMore" class="pb-4">
+      <button
+        type="button"
+        class="btn btn-link btn-sm"
+        @click.prevent="loadMore"
+        >{{ i18n.loadMore }}</button>
+    </div>
   </div>
 </template>
 
@@ -81,6 +151,31 @@ export default {
       }
       return items
     },
+    itemGroups() {
+      if (!this.config.groupBy) return
+      // const groupIds = new Set(this.items.map((x) => x[this.config.groupBy]))
+      const groups = {}
+      this.items.forEach((x) => {
+        const groupId = x[this.config.groupBy]
+        groups[groupId] = groups[groupId] || ({
+          id: this.config.key + '_' + groupId,
+          items: [],
+          label: this.i18n['groupBy_' + groupId] || groupId,
+          isActive: false,
+        })
+        groups[groupId].items.push(x)
+      })
+      for (const groupId in groups) {
+        const group = groups[groupId]
+        const itemsActive = group.items.map((x) => this.isActive(x.id))
+        if (itemsActive.every((x) => x)) {
+          group.isActive = true
+        } else if (itemsActive.some((x) => x)) {
+          group.isActive = undefined
+        }
+      }
+      return groups
+    },
     ...mapGetters(['getScopedSearchFacets'])
   },
   methods: {
@@ -89,6 +184,18 @@ export default {
         return this.value && this.value.some((x) => itemId === x.id)
       } else {
         return this.value && itemId === this.value.id
+      }
+    },
+    itemGroupSelect(itemGroup) {
+      // if all selected...
+      if (itemGroup.isActive === true) {
+        // unselect all; n.b. ids, not objects
+        // const allActive = itemGroup.items.map((x) => x.id)
+        this.$emit('removeFilter', itemGroup.items)
+      } else {
+        // select unselected (may be all); n.b. objects, not ids
+        const notActive = itemGroup.items.filter((x) => !this.isActive(x))
+        this.$emit('setFilter', notActive)
       }
     },
     removeFilter(item) {
