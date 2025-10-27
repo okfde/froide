@@ -30,6 +30,7 @@ class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
     region = serializers.HyperlinkedRelatedField(
         view_name="api:georegion-detail", lookup_field="pk", read_only=True
     )
+    region_kind = serializers.SerializerMethodField()
     site_url = serializers.CharField(source="get_absolute_domain_url")
 
     class Meta:
@@ -44,8 +45,14 @@ class JurisdictionSerializer(serializers.HyperlinkedModelSerializer):
             "slug",
             "site_url",
             "region",
+            "region_kind",
             "last_modified_at",
         )
+
+    def get_region_kind(self, obj):
+        if obj.region is not None:
+            return obj.region.kind
+        return None
 
 
 class SimpleFoiLawSerializer(serializers.HyperlinkedModelSerializer):
