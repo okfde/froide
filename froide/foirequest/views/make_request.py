@@ -209,6 +209,10 @@ class MakeRequestView(FormView):
                 "selectAll": [_("select one"), _("select all")],
                 "selectingAll": _("Selecting all public bodies, please wait..."),
                 "name": _("Name"),
+                "filterPlaceholder": _("Filter…"),
+                "level": pgettext("Publicbody filter", "Level"),
+                "location": pgettext("Publicbody filter", "Location"),
+                "groupBy_state": _("state"),
                 "jurisdictionPlural": [
                     _("Jurisdiction"),
                     _("Jurisdictions"),

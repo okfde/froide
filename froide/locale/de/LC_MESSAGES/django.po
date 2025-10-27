@@ -7690,6 +7690,16 @@ msgstr ""
 msgid "Please confirm your form submission."
 msgstr "Bitte bestätigen Sie das Absenden der Anfrage."
 
+#: froide/foirequest/views/make_request.py
+msgctxt "Publicbody filter"
+msgid "Level"
+msgstr "Ebene"
+
+#: froide/foirequest/views/make_request.py
+msgctxt "Publicbody filter"
+msgid "Location"
+msgstr "Standort"
+
 #: froide/foirequest/views/message.py
 msgid "Your message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."

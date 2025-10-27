@@ -1,5 +1,6 @@
 <template>
   <div class="filter-component">
+    <!-- TODO use card + collapse/dropdown -->
     <h5 @click="toggleExpand" class="filter-heading">
       {{ config.label }}&nbsp;<i
         class="fa expand-icon"
@@ -10,11 +11,25 @@
     </h5>
     <transition name="expand">
       <div v-show="expanded" class="filter-container">
+        <input
+          v-if="hasSearch"
+          type="search"
+          class="form-control form-control-sm"
+          :placeholder="i18n.searchPlaceholder"
+          v-model="search"
+          @input="triggerSearch"
+          @keydown.enter.prevent="triggerSearch"
+          />
         <select
           v-if="hasChoices"
           v-model="choice"
           @change="triggerSearch"
-          class="form-select">
+          class="form-select form-control-sm form-select-sm">
+          <option
+            :value="null"
+            :selected="!choice"
+            style="font-style: italic"
+            ><em>{{ config.choicesNoneLabel }}</em></option>
           <option
             v-for="opt in config.choices[1]"
             :key="opt[0]"
@@ -23,14 +38,6 @@
             {{ opt[1] }}
           </option>
         </select>
-        <input
-          v-if="hasSearch"
-          type="search"
-          class="form-control form-control-sm"
-          :placeholder="i18n.searchPlaceholder"
-          v-model="search"
-          @keyup="triggerSearch"
-          @keydown.enter.prevent="triggerSearch" />
         <div class="filter-list-container">
           <div
             v-if="loading"
@@ -72,7 +79,7 @@ export default {
   components: { PbFilterList },
   data() {
     let choice = null
-    if (this.config.choices) {
+    if (this.config.choices && !this.config.choicesNoneLabel) {
       choice = this.config.choices[1][0][0]
     }
     return {
@@ -126,6 +133,9 @@ export default {
         }
         items = applyFacetMap(this.facetMap, items)
       }
+      if (this.choice) {
+        items.forEach((x) => x.subLabel = false)
+      }
       return items
     },
     searcher() {
@@ -150,8 +160,11 @@ export default {
           ...this.config.initialFilters
         }
       }
-      if (this.config.choices && this.choice) {
-        filters[this.config.choices[0]] = this.choice
+      if (this.config.choices) {
+        filters[this.config.choices[0]] = this.choice === null
+          // if no choice set, filter by "or all"
+          ? this.config.choices[1].map((c) => c[0]).join(',')
+          : this.choice
       }
       const searchDump = JSON.stringify({
         q: this.search,
@@ -202,11 +215,17 @@ export default {
     },
     setFilter(item) {
       if (this.config.multi) {
+        if (!Array.isArray(item)) item = [item]
         let val
         if (!this.value) {
-          val = [item]
-        } else if (!this.value.some((x) => item.id === x.id)) {
-          val = [...this.value, item]
+          val = item
+        } else {
+          val = [...this.value]
+          item.forEach((i) => {
+            if (!this.value.some((x) => i.id === x.id)) {
+              val.push(i) //  = [...this.value, i]
+            }
+          })
         }
         if (val) {
           this.$emit('update', this.config, val)
@@ -266,19 +285,5 @@ export default {
     max-height: 320px;
   }
 }
-.filter-container:after {
-  content: ' ';
-  pointer-events: none;
-  position: absolute;
-  left: 0;
-  height: 3em;
-  bottom: 0em;
-  width: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(var(--#{$prefix}body-bg-rgb), 0.95) 50%
-  );
-  z-index: 1;
-}
+
 </style>
