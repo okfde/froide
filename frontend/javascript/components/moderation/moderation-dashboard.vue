@@ -140,6 +140,7 @@ export default {
       message: null,
       moderators: [],
       reports: [],
+      reportCount: null,
       publicbodies: this.initialPublicbodies,
       unclassified: this.initialUnclassified,
       unclassifiedCount: this.initialUnclassifiedCount,
@@ -170,7 +171,7 @@ export default {
       return this.moderators.filter((m) => m.name === null).length
     },
     problemreportsCount() {
-      return this.reports.length
+      return this.reportCount
     },
     publicbodiesCount() {
       return showMaxCount(this.publicbodies.length)
@@ -180,6 +181,7 @@ export default {
     this.room = new Room(this.config.url.moderationWebsocket)
     getData(this.config.url.listReports).then((data) => {
       this.reports = [...this.reports, ...data.objects]
+      this.reportCount = data.meta.total_count
     })
     this.room
       .connect()
@@ -187,6 +189,9 @@ export default {
         this.moderators = data.userlist
       })
       .on('report_added', (data) => {
+        if (!this.reports.some((r) => r.id === data.report.id)) {
+          this.reportCount += 1
+        }
         this.reports = [
           data.report,
           ...this.reports.filter((r) => r.id !== data.report.id)
@@ -198,6 +203,9 @@ export default {
         )
       })
       .on('report_removed', (data) => {
+        if (this.reports.some((r) => r.id === data.report.id)) {
+          this.reportCount -= 1
+        }
         this.reports = this.reports.filter((r) => r.id !== data.report.id)
       })
     if (this.publicbodies !== null) {
