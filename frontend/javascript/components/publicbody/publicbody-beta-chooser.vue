@@ -39,7 +39,7 @@
         <div
           v-for="filterKey in filterOrder"
           :key="filterKey"
-          class="col-3 filter-column position-relative">
+          class="col-4 filter-column position-relative">
           <PbFilter
             :global-config="config"
             :expanded="filterExpanded[filterKey]"
@@ -62,10 +62,10 @@
     </div>
     <div v-if="showBadges" class="row">
       <div v-if="search" class="col-3">
-        <!-- TODO i18n -->
         <PbFilterBadge
           label="Freitext"
           :value="search"
+          :i18n="i18n"
           @remove-click="search = ''"
           />
       </div>
@@ -73,7 +73,9 @@
         <PbFilterSelected
           :config="filterConfig[filterKey]"
           @update="updateFilter"
-          :value="filters[filterKey]">
+          :value="filters[filterKey]"
+          :i18n="i18n"
+          >
         </PbFilterSelected>
       </div>
     </div>
@@ -188,10 +190,11 @@ export default {
         // classification: true
       },
       filterOrder: [
+        // TODO: 'jurisdiction-and-regions'
         'jurisdiction',
         'regions',
         'categories',
-        'classification'
+        // 'classification'
         // 'regions_kind',
       ]
     }
@@ -218,7 +221,7 @@ export default {
     filterConfig() {
       const searcher = new FroideAPI(this.config)
       return {
-        classification: {
+        classification: { // = Behörden-Typen
           label: this.i18n.classificationPlural[1],
           key: 'classification',
           expanded: this.filterExpanded.classification,
@@ -235,7 +238,7 @@ export default {
           }
         },
         jurisdiction: {
-          label: this.i18n.jurisdictionPlural[1],
+          label: this.i18n.level, // this.i18n.jurisdictionPlural[1],
           key: 'jurisdiction',
           expanded: this.filterExpanded.jurisdiction,
           multi: true,
@@ -246,12 +249,14 @@ export default {
               label: item.name,
               ...item
             }
-          }
+          },
+          groupBy: 'region_kind',
         },
-        categories: {
+        categories: { // = Themen
           label: this.i18n.topicPlural[1],
           key: 'categories',
           expanded: this.filterExpanded.categories,
+          initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
           hasSearch: true,
           multi: true,
@@ -264,17 +269,24 @@ export default {
           }
         },
         regions: {
-          label: this.i18n.containingGeoregionsPlural[0],
+          label: this.i18n.location, // this.i18n.containingGeoregionsPlural[0],
           key: 'regions',
           multi: true,
           expanded: this.filterExpanded.georegion,
           initialFilters: { kind: this.config.fixtures.georegion_kind[0][0] },
           getItems: (q, filters) => searcher.listGeoregions(q, filters),
           hasSearch: true,
-          choices: ['kind', this.config.fixtures.georegion_kind],
+          choices: ['kind',
+            [
+              // ['', '(Alle)'],
+              ...this.config.fixtures.georegion_kind
+            ]
+          ],
+          choicesNoneLabel: this.i18n.filterPlaceholder,
           itemMap: (item) => {
             return {
               label: item.name,
+              subLabel: item.kind_detail,
               id: item.id
             }
           }
