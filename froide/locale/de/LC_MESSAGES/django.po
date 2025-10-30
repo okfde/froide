@@ -12476,6 +12476,13 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
+#: froide/publicbody/templates/publicbody/show.html
+#, python-format
+msgid "One requests to this public body"
+msgid_plural "%(count)s requests to this public body"
+msgstr[0] "Eine Anfrage an diese Behörde"
+msgstr[1] "%(count)s Anfragen an diese Behörde"
+
 #~ msgid "Fax"
 #~ msgstr "Fax"
 
