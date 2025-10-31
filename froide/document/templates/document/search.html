@@ -31,10 +31,10 @@
 {% block sidebar_bottom %}
     <div class="card mb-3">
         <div class="card-body">
-            <h6>
+            <h3 class="h6">
                 <i class="fa fa-rss" aria-hidden="true"></i>
                 <a href="{% url 'document-search_feed' %}?{{ getvars }}">{% trans "RSS feed for this search" %}</a>
-            </h6>
+            </h3>
         </div>
     </div>
 {% endblock sidebar_bottom %}

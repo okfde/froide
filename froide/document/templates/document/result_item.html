@@ -8,7 +8,7 @@
          alt="{% trans "Page" %} {{ object.number }} – {{ object.document.title }}" />
 </div>
 <div class="col ms-3 mb-3">
-    <h5 class="mt-0 mb-1">
+    <h3 class="h5 mt-0 mb-1">
         <a href="{{ object.get_absolute_url }}">
             {% if has_query %}
                 {% trans "Page" %} {{ object.number }} – {{ object.document.title }}
@@ -16,7 +16,7 @@
                 {{ object.document.title }}
             {% endif %}
         </a>
-    </h5>
+    </h3>
     {% if object.document.foirequest %}
         <a href="{{ object.document.foirequest.get_absolute_url }}">
             <small class="badge text-bg-secondary">{{ object.document.foirequest.title|truncatechars:25 }}</small>

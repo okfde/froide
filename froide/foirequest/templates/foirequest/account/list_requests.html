@@ -15,7 +15,8 @@
 {% block pre_table %}
     <div class="row">
         <div class="col-12 mt-2">
-            <h2 class="mb-3">{% translate "Your requests" %}</h2>
+            <h1 class="h2 mb-3">{% translate "Your requests" %}</h1>
+            <h2 class="visually-hidden">{% trans "Search form" %}</h2>
             {% url "account-requests" as search_url %}
             {% include "foirequest/_request_search.html" with search_url=search_url %}
             <p>
@@ -37,6 +38,7 @@
     </div>
     <div class="row">
         <div class="col-md-3">
+            <h2 class="visually-hidden">{% trans "Refine your query" %}</h2>
             <dl>
                 {% for key, _ in facet_config.items %}
                     {% show_facet key facets facet_config %}
@@ -46,6 +48,7 @@
         <div class="col-md-9">
         {% endblock %}
         {% block table_row %}
+            <h2 class="visually-hidden">{% trans "Requests list" %}</h2>
             <tr class="{% if object.is_important %}warning{% endif %}">
                 <td>
                     <a class="icon status-{{ object.status_representation }}"

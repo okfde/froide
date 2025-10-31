@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load humanize %}
 <div>
-    <h5 class="mt-0 mb-1">
+    <h3 class="h5 mt-0 mb-1">
         <a href="{{ object.url }}">{{ object.title }}</a>
         {% if object.follower_count %}
             <span class="badge text-bg-primary ms-2">
@@ -12,7 +12,7 @@
       {% endblocktrans %}
             </span>
         {% endif %}
-    </h5>
+    </h3>
     <small>
         {% if object.project %}
             {% blocktrans with name=object.public_body.name url=object.public_body.get_absolute_url count=project.request_count|add:-1 urlp=object.project.get_absolute_url %}to <a href="{{ url }}">{{ name }}</a> and <a href="{{ urlp }}">{{ count }} other public bodies</a>{% endblocktrans %}

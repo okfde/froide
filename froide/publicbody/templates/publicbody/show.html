@@ -26,7 +26,7 @@
 {% endblock %}
 {% block app_body %}
     <div itemscope itemtype="http://schema.org/Organization">
-        <h2 itemprop="name">{{ object.name }}</h2>
+        <h1 class="h2" itemprop="name">{{ object.name }}</h1>
         {% if object.email and object.confirmed %}
             <p>
                 <a class="btn btn-primary"
@@ -34,6 +34,7 @@
             </p>
         {% endif %}
         <div class="row">
+            <h2 class="visually-hidden">{% trans "Information about the public body" %}</h2>
             <div class="col-lg-4 col-md-4 mb-5">
                 <dl>
                     <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
@@ -147,7 +148,7 @@
             <div class="col-lg-8 col-md-8">
                 {% if not object.confirmed %}
                     <div class="alert alert-warning">
-                        <h3>{% trans "Proposal" %}</h3>
+                        <h2 class="h3">{% trans "Proposal" %}</h2>
                         {% if object.created_by == request.user %}
                             <p>{% trans "You have proposed this public body, but it has not been confirmed yet." %}</p>
                         {% else %}
@@ -158,13 +159,13 @@
                 {% if object.request_note %}
                     <div class="panel panel-info">
                         <div class="card-header">
-                            <h3 class="card-title">{% trans "Special note" %}</h3>
+                            <h2 class="h3 card-title">{% trans "Special note" %}</h2>
                         </div>
                         <div class="card-body">{{ object.request_note_html|safe }}</div>
                     </div>
                 {% endif %}
                 {% if foirequest_count %}
-                    <h3>{% trans "Summary of Results" %}</h3>
+                    <h2 class="h3">{% trans "Summary of Results" %}</h2>
                     <table class="table">
                         {% for res in resolutions %}
                             <tr>
@@ -182,9 +183,9 @@
                             </tr>
                         {% endfor %}
                     </table>
-                    <h3>
+                    <h2 class="h3">
                         {% blocktrans count count=foirequest_count %}One request to this public body{% plural %}{{ count }} requests to this public body{% endblocktrans %}
-                    </h3>
+                    </h2>
                     <ul class="list-unstyled">
                         {% for object in foirequests %}
                             <li>{% include "foirequest/snippets/request_item.html" %}</li>

@@ -59,7 +59,7 @@
 {% block sidebar_bottom %}
     <div class="card mb-3">
         <div class="card-body">
-            <h6>{% blocktrans %}Feeds for these requests{% endblocktrans %}</h6>
+            <h3 class="h6">{% blocktrans %}Feeds for these requests{% endblocktrans %}</h3>
             <ul class="list-unstyled">
                 <li>
                     <a href="{% url 'foirequest-list_feed' %}?{{ getvars }}">

@@ -22,7 +22,7 @@
                     </div>
                 {% endif %}
                 <div class="col-8 col-md-12 mt-3">
-                    <h2>{{ object.get_full_name }}</h2>
+                    <h1 class="h2">{{ object.get_full_name }}</h1>
                     {% if object.organization_url and object.organization_name %}
                         <p>
                             <strong>
@@ -81,7 +81,7 @@
                     <div class="col-12">
                         <div class="card mb-3">
                             <div class="card-body">
-                                <h4 class="text-center">{% translate "Most followed requests" %}</h4>
+                                <h2 class="h4 text-center">{% translate "Most followed requests" %}</h2>
                                 <ul class="list-unstyled">
                                     {% for foirequest in top_followers %}
                                         <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>
@@ -94,7 +94,7 @@
                 {% if top_publicbodies %}
                     <div class="col-12">
                         <div class="rounded-3 px-3 pt-3 pb-2 mb-3 bg-body-secondary">
-                            <h4 class="text-center">{% translate "Top requested public bodies" %}</h4>
+                            <h2 class="h4 text-center">{% translate "Top requested public bodies" %}</h2>
                             <ol class="lead">
                                 {% for pb in top_publicbodies %}
                                     <li>
@@ -112,7 +112,7 @@
             {% if foirequests %}
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h4 class="my-1">{% translate "Last requests" %}</h4>
+                        <h2 class="h4 my-1">{% translate "Last requests" %}</h2>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled">
@@ -130,11 +130,11 @@
                 <hr />
                 <div class="card mb-3">
                     <div class="card-header">
-                        <h5>
+                        <h2 class="h5">
                             {% blocktrans with name=object.first_name %}
               {{ name }} has taken part in these campaigns
             {% endblocktrans %}
-                        </h5>
+                        </h2>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled">
