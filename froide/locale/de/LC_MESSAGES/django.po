@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 18:22+0200\n"
+"POT-Creation-Date: 2025-10-31 14:54+0100\n"
 "PO-Revision-Date: 2025-08-25 17:23+0100\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -334,9 +334,9 @@ msgid ""
 "Conditions</a> and <a href=\"{url_privacy}\" target=\"_blank\">Privacy "
 "Statement</a>"
 msgstr ""
-"Sie stimmen den <a href=\"{url_terms}\" "
-"target=\"_blank\">Nutzungsbedingungen</a> und <a href=\"{url_privacy}\" "
-"target=\"_blank\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
+"Sie stimmen den <a href=\"{url_terms}\" target=\"_blank"
+"\">Nutzungsbedingungen</a> und <a href=\"{url_privacy}\" target=\"_blank"
+"\">Datenschutzbedingungen</a> von FragDenStaat.de zu."
 
 #: froide/account/forms.py
 #: froide/foirequest/templates/foirequest/admin/decrypt_pdf.html
@@ -479,6 +479,11 @@ msgstr "getaggte Nutzer:innen"
 #: froide/account/models.py
 msgid "tagged users"
 msgstr "getaggte Nutzer:innen"
+
+#: froide/account/models.py
+#, python-format
+msgid "%(value)s is not lowercase"
+msgstr ""
 
 #: froide/account/models.py
 msgid "username"
@@ -989,8 +994,8 @@ msgstr "Passwort ändern"
 #, python-format
 msgid ""
 "\n"
-"  WARNING! %(impostor)s, you are an impostor! You pretend to be "
-"<strong>%(user)s</strong>!\n"
+"  WARNING! %(impostor)s, you are an impostor! You pretend to be <strong>"
+"%(user)s</strong>!\n"
 "  "
 msgstr ""
 "\n"
@@ -1837,13 +1842,13 @@ msgstr "Kampagnen"
 #, python-format
 msgid ""
 "\n"
-"              This request was made as part of the campaign <a "
-"href=\"%(url)s\">“%(name)s”</a>.\n"
+"              This request was made as part of the campaign <a href=\"%(url)s"
+"\">“%(name)s”</a>.\n"
 "            "
 msgstr ""
 "\n"
-"           Diese Anfrage wurde als Teil der Kampagne <a "
-"href=\"%(url)s\">„%(name)s“</a> gestellt.\n"
+"           Diese Anfrage wurde als Teil der Kampagne <a href=\"%(url)s"
+"\">„%(name)s“</a> gestellt.\n"
 "          "
 
 #: froide/campaign/templates/campaign/request_banner.html
@@ -2008,6 +2013,7 @@ msgstr "Dokument"
 #: froide/document/templates/document/search.html
 #: froide/foirequest/templates/foirequest/body/documents.html
 #: froide/foirequest/templates/foirequest/header/tabs.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Documents"
 msgstr "Dokumente"
 
@@ -2187,13 +2193,13 @@ msgstr "Beschreibung bearbeiten"
 #, python-format
 msgid ""
 "\n"
-"        This document is part of the request ”<a "
-"href=\"%(request_url)s\">%(title)s</a>”.\n"
+"        This document is part of the request ”<a href=\"%(request_url)s\">"
+"%(title)s</a>”.\n"
 "        "
 msgstr ""
 "\n"
-"        Dieses Dokument ist Teil der Anfrage „<a "
-"href=\"%(request_url)s\">%(title)s</a>“\n"
+"        Dieses Dokument ist Teil der Anfrage „<a href=\"%(request_url)s\">"
+"%(title)s</a>“\n"
 "        "
 
 #. Translators: request URL
@@ -2527,6 +2533,16 @@ msgstr "Entschlüsselungs-Job gestartet: %s"
 #: froide/foirequest/admin.py
 msgid "Has request"
 msgstr "Hat Anfrage"
+
+#: froide/foirequest/admin.py
+#, fuzzy
+msgid "Message Content"
+msgstr "Nachricht wurde nicht gesendet"
+
+#: froide/foirequest/admin.py
+#, fuzzy
+msgid "Advanced Options"
+msgstr "Fortgeschritten"
 
 #: froide/foirequest/admin.py
 msgid "Close associated requests"
@@ -4188,8 +4204,8 @@ msgstr "Anfrage '%s'"
 #: froide/foirequest/models/request.py
 #, python-format
 msgid ""
-"You exceeded your request limit of %(count)s requests in %(time)s. <a "
-"href=\"%(url)s\">Learn more</a>"
+"You exceeded your request limit of %(count)s requests in %(time)s. <a href="
+"\"%(url)s\">Learn more</a>"
 msgstr ""
 "Sie haben die Begrenzung von %(count)s Anfragen in %(time)s überschritten. "
 "Dies ist eine automatische Vorsichtsmaßnahme. <a href=\"%(url)s\">Mehr "
@@ -4272,7 +4288,7 @@ msgstr "Ihr Nachrichtendatum ist zeitlich vor dem Anfragedatum."
 msgid "is_response is required"
 msgstr "is_response ist benötigt"
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Response messages must have a sender public body, no sender user and no "
 "recipient public body."
@@ -4280,7 +4296,7 @@ msgstr ""
 "Antwortnachrichten müssen eine Behörde als Sender, jedoch kein:e Nutzer:in "
 "als Sender und keine Behörde als Empfänger enthalten."
 
-#: froide/foirequest/serializers.py
+#: froide/foirequest/serializers.py froide/foirequest/api_views/message.py
 msgid ""
 "Non-response messages must have a recipent public body, but no sender public "
 "body."
@@ -4386,7 +4402,7 @@ msgstr "Download als .eml"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Events"
-msgstr "Ereignisse"
+msgstr "Veranstaltungen"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_form.html
 msgid "Messages"
@@ -4434,6 +4450,7 @@ msgstr "Aktuell kein Projekt ausgewählt."
 #: froide/helper/templates/helper/search/multi_search.html
 #: froide/helper/templates/helper/search/search_base.html
 #: froide/publicbody/widgets.py froide/templates/header.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Search"
 msgstr "Suchen"
 
@@ -4839,13 +4856,13 @@ msgstr "Anhang „%(name)s“"
 #, python-format
 msgid ""
 "\n"
-"    This attachment is part of the request ”<a "
-"href=\"%(message_url)s\">%(title)s</a>”.\n"
+"    This attachment is part of the request ”<a href=\"%(message_url)s\">"
+"%(title)s</a>”.\n"
 "    "
 msgstr ""
 "\n"
-"        Dieser Anhang ist Teil der Anfrage „<a "
-"href=\"%(message_url)s\">%(title)s</a>“.\n"
+"        Dieser Anhang ist Teil der Anfrage „<a href=\"%(message_url)s\">"
+"%(title)s</a>“.\n"
 "        "
 
 #: froide/foirequest/templates/foirequest/attachment/show.html
@@ -5042,6 +5059,7 @@ msgid "Unapproved attachments:"
 msgstr "Nicht-öffentliche Anhänge:"
 
 #: froide/foirequest/templates/foirequest/body/message/attachments/attachments.html
+#: froide/foirequest/templates/foirequest/attachment/manage.html
 msgid "Manage attachments"
 msgstr "Anhänge verwalten"
 
@@ -5864,11 +5882,10 @@ msgid ""
 "Legal Note: This mail was sent through a Freedom Of Information Portal. "
 "Replies might be published automatically.\n"
 msgstr ""
-"Rechtshinweis: Diese E-Mail wurde über den Webservice https://"
-"fragdenstaat.de versendet. Antworten werden ggf. im Auftrag der "
-"Antragstellenden automatisch auf dem Internet-Portal veröffentlicht. Falls "
-"Sie noch Fragen haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-"
-"behoerden/\n"
+"Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat."
+"de versendet. Antworten werden ggf. im Auftrag der Antragstellenden "
+"automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen "
+"haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-behoerden/\n"
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt
 #: froide/follow/templates/follow/emails/batch_update_follower.txt
@@ -6065,10 +6082,12 @@ msgid "Set team for project"
 msgstr "Weisen Sie diesem Projekt ein Team zu"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Edit tags"
 msgstr "Schlagwörter bearbeiten"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid ""
 "Tags are a way to organise your own requests and also group them with other "
 "requests on the platform."
@@ -6077,10 +6096,12 @@ msgstr ""
 "anderen Anfragen auf der Plattform gruppieren."
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "What does this mean?"
 msgstr "Was bedeutet das?"
 
 #: froide/foirequest/templates/foirequest/header/_tags.html
+#: froide/foirequest/templates/foirequest/header/header.html
 msgid "Add tags"
 msgstr "Schlagwörter hinzufügen"
 
@@ -6813,12 +6834,12 @@ msgid ""
 msgstr ""
 "Gehen Sie zu jeder Seite des Dokuments und suchen Sie nach Informationen, "
 "die geschwärzt werden müssen. Während das %(icon_paint)s&nbsp;<b>Pinsel-"
-"Werkzeug</b> aktiv ist, zeichnen sie mit ihrem Finger Rechtecke, oder, indem "
-"sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
-"%(icon_minus)s können Sie rein- und raus-zoomen. Wechseln Sie zum "
-"%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b> um sich im Dokument zu bewegen. "
+"Werkzeug</b> aktiv ist, zeichnen Sie mit Ihrem Finger Rechtecke, oder, indem "
+"Sie mit der Maus klicken und ziehen. Mit den Buttons %(icon_plus)s "
+"%(icon_minus)s können Sie rein- und rauszoomen. Wechseln Sie zum "
+"%(icon_move)s&nbsp;<b>Bewegen-Werkzeug</b>, um sich im Dokument zu bewegen. "
 "In vielen Browsern können Sie mit der Alt-Taste zwischen dem Pinsel- und dem "
-"Bewegen-Werkzeug hin-und-her-schalten."
+"Bewegen-Werkzeug hin- und herschalten."
 
 #: froide/foirequest/templates/foirequest/snippets/redaction_explanation.html
 #, python-format
@@ -7715,10 +7736,12 @@ msgid "A sent letter was successfully added!"
 msgstr "Ein gesendeter Brief wurde hinzugefügt!"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Are we missing a public body?"
 msgstr "Fehlt uns eine Behörde?"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Ministry of..."
 msgstr "Bundesministerium für..."
 
@@ -7727,28 +7750,34 @@ msgid "Search for public authorities"
 msgstr "Suchen Sie nach Behörden"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Examples:"
 msgstr "Beispiele:"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Environment"
 msgstr "Umwelt"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Ministry of Labour"
 msgstr "Bundesministerium für Arbeit"
 
 #: froide/foirequest/views/message.py
 #: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html
 #: froide/publicbody/widgets.py froide/templates/snippets/homepage_hero.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "or"
 msgstr "oder"
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "No Public Bodies found for this query."
 msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
 
 #: froide/foirequest/views/message.py froide/publicbody/widgets.py
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
 msgid "Please let us know!"
 msgstr "Bitte sagen Sie uns Bescheid!"
 
@@ -7967,12 +7996,12 @@ msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
 #: froide/foirequest/views/message.py
 #, python-brace-format
 msgid ""
-"Should you experience problems, you can use <a class=\"alert-link\" href=\"$"
-"{url}\">the older version</a> here. We welcome feedback!"
+"Should you experience problems, you can use <a class=\"alert-link\" href="
+"\"${url}\">the older version</a> here. We welcome feedback!"
 msgstr ""
-"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" href=\"$"
-"{url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback "
-"freuen."
+"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" href="
+"\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über "
+"Feedback freuen."
 
 #: froide/foirequest/views/message.py
 msgid "We have redone this part of the app."
@@ -8113,7 +8142,7 @@ msgid ""
 "the public body's employees."
 msgstr ""
 "Ein Dokument sollte geschwärzt werden, wenn es Informationen über Sie selbst "
-"oder Behördenmitarbeiter:innen"
+"oder Behördenmitarbeiter:innen enthält."
 
 #: froide/foirequest/views/message.py
 msgid "Select all"
@@ -8861,8 +8890,8 @@ msgstr "erhalten/<int:follow_id>/<str:check>/"
 msgctxt "url part"
 msgid "unfollow/<str:conf_slug>-<int:follow_id>/<str:check>/"
 msgstr ""
-"keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/"
-"<str:check>/"
+"keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/<str:"
+"check>/"
 
 #: froide/follow/urls.py
 msgctxt "url part"
@@ -9227,7 +9256,7 @@ msgstr "Suchen…"
 
 #: froide/helper/templates/helper/forms/widgets/tag_autocomplete.html
 msgid "No results"
-msgstr "Keine Ergebnisse"
+msgstr "Keine Ergebnisse gefunden"
 
 #: froide/helper/templates/helper/forms/widgets/tag_autocomplete.html
 msgid "Press to select"
@@ -10026,8 +10055,8 @@ msgid ""
 "it as proof of identity in future requests if necessary. I certify that I am "
 "the owner of this document. I understand that my consent is voluntary and "
 "that I can revoke it at any time with effect for the future. I have taken "
-"note of the information on the recommended redactions and the <a "
-"href=\"{url_privacy}\" target=\"_blank\">data protection declaration</a>."
+"note of the information on the recommended redactions and the <a href="
+"\"{url_privacy}\" target=\"_blank\">data protection declaration</a>."
 msgstr ""
 "Mit dem Anhaken willige ich ein, dass die von mir ausgewählte und "
 "geschwärzte Bilddatei von der Open Knowledge Foundation Deutschland e.V. "
@@ -10036,9 +10065,9 @@ msgstr ""
 "Behörden übermitteln kann. Zudem versichere ich, der im Nachweis angegebene "
 "Inhaber dieses Dokuments zu sein. Ich weiß, dass meine Einwilligung "
 "freiwillig ist und ich Sie jederzeit mit Wirkung für die Zukunft widerrufen "
-"kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a "
-"href=\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe "
-"ich zur Kenntnis genommen."
+"kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a href="
+"\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe ich "
+"zur Kenntnis genommen."
 
 #: froide/proof/forms.py
 msgid "Proof of identity"
@@ -10324,7 +10353,6 @@ msgstr ""
 "der Name der Behördenleitung etc."
 
 #: froide/publicbody/forms.py froide/publicbody/models.py
-#: froide/publicbody/models/contact.py
 #: froide/templates/snippets/share_buttons.html
 msgid "Email"
 msgstr "E-Mail"
@@ -10722,10 +10750,6 @@ msgstr "Vorgeschlagene Behördenänderung"
 #: froide/publicbody/models.py
 msgid "Proposed Public Body Changes"
 msgstr "Vorgeschlagene Behördenänderungen"
-
-#: froide/publicbody/models/contact.py
-msgid "Fax"
-msgstr "Fax"
 
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html
 msgid "Accept/reject this proposal"
@@ -11587,8 +11611,8 @@ msgstr ""
 #: froide/templates/error_base.html
 msgid "You can try searching or go back to the <a href=\"/\">Home page</a>."
 msgstr ""
-"Mit der Suche können Sie vielleicht finden, wonach Sie suchen – oder <a "
-"href=\"/\">zurück zur Startseite</a>."
+"Mit der Suche können Sie vielleicht finden, wonach Sie suchen – oder <a href="
+"\"/\">zurück zur Startseite</a>."
 
 #: froide/templates/footer.html
 msgid ""
@@ -11596,10 +11620,10 @@ msgid ""
 "Open Knowledge Foundation</a>. If you want to support Froide, please visit "
 "the <a href=\"https://github.com/okfde/froide\">repository on GitHub</a>."
 msgstr ""
-"Froide ist ein freies und Open Source Projekt der <a href=\"https://"
-"okfn.de\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen "
-"möchten, besuchen Sie bitte unser <a href=\"https://github.com/okfde/"
-"froide\">GitHub-Repo</a>"
+"Froide ist ein freies und Open Source Projekt der <a href=\"https://okfn.de"
+"\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen möchten, "
+"besuchen Sie bitte unser <a href=\"https://github.com/okfde/froide\">GitHub-"
+"Repo</a>"
 
 #: froide/templates/footer.html froide/templates/header.html
 msgid "About"
@@ -11724,6 +11748,7 @@ msgid "Use authenticator app"
 msgstr "Authentifizierungs-App nutzen"
 
 #: froide/templates/mfa/auth_FIDO2.html froide/templates/mfa/auth_TOTP.html
+#: froide/templates/mfa/auth_recovery.html
 msgid "Use recovery code"
 msgstr "Wiederherstellungs-Code nutzen"
 
@@ -12392,6 +12417,11 @@ msgstr "Kann nicht speichern, Upload ist nicht im Zustand ‘Empfangen’."
 msgid "Cannot start saving, upload is not complete."
 msgstr "Kann nicht speichern, Upload ist unvollständig."
 
+#: froide/upload/models.py
+#, fuzzy
+msgid "Cannot finish, upload is not in saving state."
+msgstr "Kann nicht speichern, Upload ist nicht im Zustand ‘Empfangen’."
+
 #: froide/urls.py
 msgctxt "url part"
 msgid "follow/"
@@ -12457,53 +12487,116 @@ msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
 
-#~ msgid "Scan documents"
-#~ msgstr "Dokumente scannen"
-
-#~ msgid "Use your phone's camera to create a PDF "
-#~ msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
-
-#, python-brace-format
-#~ msgid ""
-#~ "<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on "
-#~ "your smartphone, you can scan this QR code to start the process.</p><p>As "
-#~ "soon as you have completed the process in the app, the documents will "
-#~ "show up here.</p>"
-#~ msgstr ""
-#~ "<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem "
-#~ "Smartphone installier haben,können Sie diesen QR-Code einlesen um die "
-#~ "Scanfunktion zu starten.</p><p>Sobald Sie den Brief gescannt haben, "
-#~ "können Sie hier am Gerät fortfahren.</p>"
-
+#: froide/publicbody/templates/publicbody/show.html
 #, python-format
-#~ msgid ""
-#~ "\n"
-#~ "      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from "
-#~ "<b>%(sender)s</b> in request “%(title)s”.\n"
-#~ "      "
-#~ msgstr ""
-#~ "\n"
-#~ "      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von "
-#~ "<b>%(sender)s</b> bei Anfrage “%(title)s”.\n"
-#~ "      "
+msgid "One requests to this public body"
+msgid_plural "%(count)s requests to this public body"
+msgstr[0] "Eine Anfrage an diese Behörde"
+msgstr[1] "%(count)s Anfragen an diese Behörde"
 
-#~ msgid "Here you can:"
-#~ msgstr "Hier können Sie:"
+#: froide/foirequest/views/message.py
+msgid "Scan documents"
+msgstr "Dokumente scannen"
 
-#~ msgid "Approve or redact attachments."
-#~ msgstr "Anhänge freigeben oder schwärzen."
+#: froide/foirequest/views/message.py
+msgid "Use your phone's camera to create a PDF "
+msgstr "Handykamera verwenden, um automatisch ein PDF zu erstellen"
 
-#~ msgid "Convert multiple pictures to pages in a PDF document."
-#~ msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"<p>If you have installed the <a href=\"${url}\">FdS Scanner App</a> on your "
+"smartphone, you can scan this QR code to start the process.</p><p>As soon as "
+"you have completed the process in the app, the documents will show up here.</"
+"p>"
+msgstr ""
+"<p>Wenn Sie die <a href=\"${url}\">FdS Scanner App</a> auf Ihrem Smartphone "
+"installier haben,können Sie diesen QR-Code einlesen um die Scanfunktion zu "
+"starten.</p><p>Sobald Sie den Brief gescannt haben, können Sie hier am Gerät "
+"fortfahren.</p>"
 
-#~ msgid "Upload more pictures or PDFs."
-#~ msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+#, python-format
+msgid ""
+"\n"
+"      Attachments for <a href=\"%(url)s\">message dated %(date)s</a> from <b>"
+"%(sender)s</b> in request “%(title)s”.\n"
+"      "
+msgstr ""
+"\n"
+"      Anhänge <a href=\"%(url)s\">Nachricht vom %(date)s</a> von <b>"
+"%(sender)s</b> bei Anfrage “%(title)s”.\n"
+"      "
 
-#~ msgid "The form has errors"
-#~ msgstr "Das Formular enthält noch Fehler."
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Here you can:"
+msgstr "Hier können Sie:"
 
-#~ msgid "Apply changes"
-#~ msgstr "Änderungen anwenden"
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Approve or redact attachments."
+msgstr "Anhänge freigeben oder schwärzen."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert multiple pictures to pages in a PDF document."
+msgstr "Mehrere Bilder in PDF-Dokument umwandeln."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Upload more pictures or PDFs."
+msgstr "Laden Sie mehr PDFs oder Bilder von Dokumenten hoch."
+
+#: froide/foirequest/views/message.py
+msgid "The form has errors"
+msgstr "Das Formular enthält noch Fehler."
+
+#: froide/publicbody/templates/publicbody/snippets/publicbody_proposals.html
+msgid "Apply changes"
+msgstr "Änderungen anwenden"
+
+#: froide/publicbody/csv_import.py
+#, python-format
+msgid "GeoRegion %s/%s does not exist."
+msgstr "GeoRegion %s/%s existiert nicht"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid "${amount} files and documents are being worked on."
+msgstr "${amount} Dateien und Dokumente sind in Bearbeitung."
+
+#: froide/foirequest/views/message.py
+msgid "Scan another document"
+msgstr "Weiteres Dokument scannen"
+
+#: froide/foirequest/views/message.py
+msgid "Upload another file"
+msgstr "Weitere Dateien hochladen"
+
+#: froide/foirequest/views/message.py
+#, python-brace-format
+msgid ""
+"You have noted that the public body had demanded compensation to the amount "
+"of €${amount}.<br/>Is this amount still correct?"
+msgstr ""
+"Sie hatten bereits mitgeteilt, dass die Behörde Kosten in Höhe von "
+"${amount}€ verlangt hat.<br/>Ist dieser Betrag noch korrekt?"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Convert images to documents"
+msgstr "Bilder in Dokumente umwandeln"
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid ""
+"Here you can approve, redact documents and also mark them as a result of "
+"your request."
+msgstr ""
+"Hier können Sie Dokumente freigeben, schwärzen und markieren, welche der "
+"Dokumente ein Ergebnis der Anfrage ist."
+
+#: froide/foirequest/templates/foirequest/attachment/manage.html
+msgid "Other files"
+msgstr "Andere Dateien"
+
+#~ msgid "Fax"
+#~ msgstr "Fax"
 
 #, python-format
 #~ msgid ""
@@ -12801,15 +12894,15 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Anzahl der Nutzer:innen"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://"
-#~ "www.okfn.org\">the Open Knowledge Foundation</a>."
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn.org"
+#~ "\">the Open Knowledge Foundation</a>."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
 #~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://"
-#~ "www.okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
+#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
 #~ "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
@@ -13054,8 +13147,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "status."
 #~ msgstr ""
 #~ "Diese Anfrage hat eine Antwort erhalten und ist in einem unbekannten "
-#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a "
-#~ "href=\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
+#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href="
+#~ "\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
 #~ "Status."
 
 #, python-format
@@ -13063,9 +13156,9 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "<b>Hey %(name)s</b>, please read the latest response and <a href=\"#set-"
 #~ "status\" data-tabgo=\"tab\">set a new status for this request</a>!"
 #~ msgstr ""
-#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a "
-#~ "href=\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für "
-#~ "diese Anfrage an!</a>"
+#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a href="
+#~ "\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für diese "
+#~ "Anfrage an!</a>"
 
 #, python-format
 #~ msgid ""
@@ -13077,19 +13170,19 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ " Bitte handeln Sie jetzt:"
 
 #~ msgid ""
-#~ "Have you received a reply by <b>postal mail</b>? &rarr; <a data-"
-#~ "tabgo=\"tab\" href=\"#add-postal-reply\">Add it to the records below!</a>"
+#~ "Have you received a reply by <b>postal mail</b>? &rarr; <a data-tabgo="
+#~ "\"tab\" href=\"#add-postal-reply\">Add it to the records below!</a>"
 #~ msgstr ""
-#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-"
-#~ "tabgo=\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort "
-#~ "unbedingt hinzu!</a>"
+#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-tabgo="
+#~ "\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort unbedingt "
+#~ "hinzu!</a>"
 
 #~ msgid ""
 #~ "Have you not gotten any reply? &rarr; <a data-tabgo=\"tab\" href=\"#write-"
 #~ "message\">Write a reminder to the public body!</a>"
 #~ msgstr ""
-#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" "
-#~ "href=\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
+#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" href="
+#~ "\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
 
 #~ msgid "This request is <strong>not public</strong> at the moment."
 #~ msgstr "Diese Anfrage ist momentan <strong>nicht öffentlich</strong>."
@@ -13947,13 +14040,13 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "Benachrichtigungs-E-Mails."
 
 #~ msgid ""
-#~ "This email address already has an account. <a href=\"%s?simple\" "
-#~ "class=\"target-small\">Please login using that email address in order to "
-#~ "follow this account.</a>"
+#~ "This email address already has an account. <a href=\"%s?simple\" class="
+#~ "\"target-small\">Please login using that email address in order to follow "
+#~ "this account.</a>"
 #~ msgstr ""
-#~ "Diese E-Mail-Adresse hat schon einen Account. <a href=\"%s?simple\" "
-#~ "class=\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse "
-#~ "ein um Benachrichtigungen zu erhalten.</a>"
+#~ "Diese E-Mail-Adresse hat schon einen Account. <a href=\"%s?simple\" class="
+#~ "\"target-small\">Bitte loggen Sie sich mit dieser E-Mail-Adresse ein um "
+#~ "Benachrichtigungen zu erhalten.</a>"
 
 #~ msgid "TIME_FORMAT"
 #~ msgstr "H:i"
@@ -14092,8 +14185,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid ""
 #~ "If this document &lt;strong>is not a letter to you&lt;/strong> from a "
-#~ "public body, but any other kind of document, it very likely "
-#~ "&lt;strong>does not need a redaction&lt;/strong>."
+#~ "public body, but any other kind of document, it very likely &lt;"
+#~ "strong>does not need a redaction&lt;/strong>."
 #~ msgstr ""
 #~ "Falls dieses Dokument <strong>kein Brief an Sie</strong> von einer "
 #~ "Behörde ist, sondern ein andere Art von Dokument, dann müssen Sie es sehr "
@@ -14159,18 +14252,19 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "new status."
 #~ msgstr ""
 #~ "Diese Anfrage hat eine Antwort erhalten und ist in einem unbekannten "
-#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href=\"%"
-#~ "(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen Status."
+#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href="
+#~ "\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
+#~ "Status."
 
 #, fuzzy
 #~ msgid ""
-#~ "&lt;b>Hey %(name)s&lt;/b>, please read the latest response and &lt;a "
-#~ "href=\"#set-status\" data-tabgo=\"tab\">set a new status for this "
-#~ "request&lt;/a>!"
+#~ "&lt;b>Hey %(name)s&lt;/b>, please read the latest response and &lt;a href="
+#~ "\"#set-status\" data-tabgo=\"tab\">set a new status for this request&lt;/"
+#~ "a>!"
 #~ msgstr ""
-#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a "
-#~ "href=\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für "
-#~ "diese Anfrage an!</a>"
+#~ "<b>Hallo %(name)s</b>, bitte lesen Sie die letzte Antwort und <a href="
+#~ "\"#set-status\" data-tabgo=\"tab\">geben Sie einen neuen Status für diese "
+#~ "Anfrage an!</a>"
 
 #, fuzzy
 #~ msgid ""
@@ -14178,17 +14272,17 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "data-tabgo=\"tab\" href=\"#add-postal-reply\">Add it to the records below!"
 #~ "&lt;/a>"
 #~ msgstr ""
-#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-"
-#~ "tabgo=\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort "
-#~ "unbedingt hinzu!</a>"
+#~ "Haben Sie eine <b>Antwort per Post</b> erhalten? &rarr; <a data-tabgo="
+#~ "\"tab\" href=\"#add-postal-reply\">Fügen Sie diese Antwort unbedingt "
+#~ "hinzu!</a>"
 
 #, fuzzy
 #~ msgid ""
-#~ "Have you not gotten any reply? &amp;rarr; &lt;a data-tabgo=\"tab\" "
-#~ "href=\"#write-message\">Write a reminder to the public body!&lt;/a>"
+#~ "Have you not gotten any reply? &amp;rarr; &lt;a data-tabgo=\"tab\" href="
+#~ "\"#write-message\">Write a reminder to the public body!&lt;/a>"
 #~ msgstr ""
-#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" "
-#~ "href=\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
+#~ "Haben Sie keine Antwort erhalten? &rarr; <a data-tabgo=\"tab\" href="
+#~ "\"#write-message\">Fragen Sie bei der Behörde nach!</a>"
 
 #, fuzzy
 #~ msgid "This request is &lt;strong>not public&lt;/strong> at the moment."
@@ -14212,8 +14306,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a href=\"%(urlp)s\">%"
-#~ "(count)s other public bodies&lt;/a>"
+#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a href=\"%(urlp)s\">"
+#~ "%(count)s other public bodies&lt;/a>"
 #~ msgstr ""
 #~ "an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s "
 #~ "andere Behörden</a>"
@@ -14221,8 +14315,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid ""
 #~ "It looks like you are visiting from %(country_name)s. Did you know that "
-#~ "there is an &lt;a href=\"%(url)s\">FOI site for %(country_name)s called %"
-#~ "(name)s&lt;/a>?"
+#~ "there is an &lt;a href=\"%(url)s\">FOI site for %(country_name)s called "
+#~ "%(name)s&lt;/a>?"
 #~ msgstr ""
 #~ "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
 #~ "eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</"
@@ -14272,8 +14366,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "If you need assistance, you may reference this error as &lt;strong>%"
-#~ "(ref)s&lt;/strong>."
+#~ "If you need assistance, you may reference this error as &lt;strong>"
+#~ "%(ref)s&lt;/strong>."
 #~ msgstr ""
 #~ "Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: "
 #~ "<strong>%(ref)s</strong>."
@@ -14521,13 +14615,13 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid ""
 #~ "\n"
-#~ "            Check your emails for your account <strong "
-#~ "class=\"highlight\">%(email)s</strong>\n"
+#~ "            Check your emails for your account <strong class=\"highlight"
+#~ "\">%(email)s</strong>\n"
 #~ "          "
 #~ msgstr ""
 #~ "\n"
-#~ "            Rufen Sie Ihre E-Mails für diese Adresse ab: <strong "
-#~ "class=\"highlight\">%(email)s</strong>\n"
+#~ "            Rufen Sie Ihre E-Mails für diese Adresse ab: <strong class="
+#~ "\"highlight\">%(email)s</strong>\n"
 #~ "          "
 
 #~ msgid "Login using that email address"
@@ -14552,11 +14646,11 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "Ihre Postadresse (<a href=\"%(url)s#change-address\">hier ändern</a>):"
 
 #~ msgid ""
-#~ "You do not have a postal address set. <a href=\"%(url)s#change-"
-#~ "address\">You can enter enter an address here.</a>"
+#~ "You do not have a postal address set. <a href=\"%(url)s#change-address"
+#~ "\">You can enter enter an address here.</a>"
 #~ msgstr ""
-#~ "Sie haben keine Postadresse hinterlegt. <a href=\"%(url)s#change-"
-#~ "address\">Sie können hier eine Adresse eingeben.</a>"
+#~ "Sie haben keine Postadresse hinterlegt. <a href=\"%(url)s#change-address"
+#~ "\">Sie können hier eine Adresse eingeben.</a>"
 
 #~ msgid "The request '%(request)s' received a postal reply."
 #~ msgstr "Die Anfrage „%(request)s“ hat eine Antwort per Post erhalten."
@@ -14750,9 +14844,9 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Vorschau im Browser"
 
 #~ msgid ""
-#~ "This email address already has an account. <a href=\"%(url)s?"
-#~ "simple&email=%(email)s\" class=\"btn btn-warning target-small\">Click "
-#~ "here to login using that email address.</a>"
+#~ "This email address already has an account. <a href=\"%(url)s?simple&email="
+#~ "%(email)s\" class=\"btn btn-warning target-small\">Click here to login "
+#~ "using that email address.</a>"
 #~ msgstr ""
 #~ "Diese E-Mail-Adresse hat schon einen Account. <a href=\"%(url)s?"
 #~ "simple&email=%(email)s\" class=\"btn btn-warning target-small\">Klicken "
@@ -15099,3 +15193,10 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Upload and manage attachments"
 #~ msgstr "Anhänge hochladen und verwalten"
+
+#, fuzzy
+#~ msgid "This field is required."
+#~ msgstr "Anfragen des Nutzers"
+
+#~ msgid "Redact this attachment"
+#~ msgstr "Schwärzen Sie diesen Anhang"
