@@ -51,8 +51,10 @@
                             <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
                             <dd>
                                 {% for category in categories %}
-                                    {{ category.name }}
-                                    {% if not forloop.last %},{% endif %}
+                                    {# needs to be like this so that there's no space before the comma #}
+                                    {# djlint:off #}
+                                    {{ category.name }}{% if not forloop.last %},{% endif %}
+                                    {# djlint:on #}
                                 {% endfor %}
                             </dd>
                         {% endif %}
