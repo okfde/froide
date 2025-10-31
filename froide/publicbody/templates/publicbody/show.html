@@ -75,16 +75,20 @@
                             <span itemprop="fax">{{ object.fax }}</span>
                         </dd>
                     {% endif %}
-                    <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-                    <dd>
-                        {{ object.contact|urlizetrunc:35|linebreaksbr }}
-                    </dd>
-                    <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
-                    <dd itemprop="address"
-                        itemscope
-                        itemtype="http://schema.org/PostalAddress">
-                        {{ object.address|linebreaksbr }}
-                    </dd>
+                    {% if object.contact %}
+                        <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
+                        <dd>
+                            {{ object.contact|urlizetrunc:35|linebreaksbr }}
+                        </dd>
+                    {% endif %}
+                    {% if object.address %}
+                        <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
+                        <dd itemprop="address"
+                            itemscope
+                            itemtype="http://schema.org/PostalAddress">
+                            {{ object.address|linebreaksbr }}
+                        </dd>
+                    {% endif %}
                     {% if object.file_index %}
                         <dt>{% blocktrans %}File Index:{% endblocktrans %}</dt>
                         <dd>
