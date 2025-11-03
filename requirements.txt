@@ -208,7 +208,7 @@ lxml==6.0.1
     #   feedgen
     #   lxml-html-clean
     #   pikepdf
-lxml-html-clean==0.4.2
+lxml-html-clean==0.4.3
     # via lxml
 markdown==3.9
     # via
