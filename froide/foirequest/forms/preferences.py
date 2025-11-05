@@ -25,3 +25,12 @@ message_received_tour_pref = registry.register(
 postal_reply_tour_pref = registry.register(
     "foirequest_postalreply_tour", RequestPageTourForm
 )
+
+
+class MakeRequestPageIntro(RequestPageTourForm):
+    pass
+
+
+make_request_intro_skip_howto_pref = registry.register(
+    "foirequest_skiphowto_make", MakeRequestPageIntro
+)
