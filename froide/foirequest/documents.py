@@ -28,7 +28,7 @@ class FoiRequestDocument(Document):
         index_options="offsets",
     )
     title = fields.TextField()
-    description = fields.TextField()
+    description = fields.TextField(attr="get_description")
 
     resolution = fields.KeywordField()
     status = fields.KeywordField()
