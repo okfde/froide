@@ -238,7 +238,12 @@
               @step-back="setStep(stepBack)"
               >
               <template #request-hints>
-                <DjangoSlot name="request-hints" />
+                <!-- has-bs-directives for onlinehelp links -->
+                <DjangoSlot
+                  name="request-hints"
+                  has-bs-directives
+                  @onlinehelp-click="$refs.onlineHelp.show($event)"
+                  />
               </template>
               <template #request-legend-title>
                 <DjangoSlot name="request-legend-title" />

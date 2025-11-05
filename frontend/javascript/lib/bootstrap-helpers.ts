@@ -1,5 +1,13 @@
 import { Tooltip } from "bootstrap"
 
+const onlinehelpLink = (el: HTMLElement, emit: (event: string, ...args: any[]) => void) => {
+  el.style.outline = '2px dotted red'
+  el.addEventListener('click', (evt) => {
+    emit('onlinehelp-click', el.dataset.onlinehelpHref)
+    evt.preventDefault()
+  })
+}
+
 const collapsePersistent = (el: HTMLElement) => {
   const id = el.id
   const key = 'froide-collapsible-' + id
@@ -21,11 +29,14 @@ const collapsePersistent = (el: HTMLElement) => {
   })
 }
 
-const registerBs = (node: HTMLElement) => {
+const registerBs = (node: HTMLElement, emit?: (event: string, ...args: any[]) => void) => {
   node.querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
     .forEach((el) => new Tooltip(el))
   node.querySelectorAll<HTMLElement>('[data-bs-collapse-persistent]')
     .forEach((el) => collapsePersistent(el))
+  // TODO move this outside of the bootstrap/bs/v-bs "namespace"
+  node.querySelectorAll<HTMLElement>('[data-onlinehelp-href]')
+    .forEach((el) => onlinehelpLink(el, emit!))
 }
 
 export {

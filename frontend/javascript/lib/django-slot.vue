@@ -8,6 +8,8 @@ const props = defineProps<{
   hasBsDirectives: boolean
 }>()
 
+const emit = defineEmits(['onlinehelpLinkClick'])
+
 const container = ref<HTMLDivElement | undefined>()
 
 onMounted(() => {
@@ -19,7 +21,7 @@ onMounted(() => {
   if (fragment !== undefined) {
     container.value?.replaceWith(fragment.cloneNode(true))
     if (props.hasBsDirectives && parent) {
-      registerBs(parent)
+      registerBs(parent, emit)
     }
   }
 })
