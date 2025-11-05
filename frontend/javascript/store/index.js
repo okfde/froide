@@ -41,6 +41,8 @@ import {
   UPDATE_TERMS,
   UPDATE_TERMS_VALIDITY,
   UPDATE_TERMS_CHANGED,
+  UPDATE_CONFIRM,
+  UPDATE_CONFIRM_VALIDITY,
   UPDATE_SUBJECT,
   UPDATE_SUBJECT_VALIDITY,
   UPDATE_SUBJECT_CHANGED,
@@ -197,6 +199,7 @@ export default createStore({
     },
     termsValid: (state) => state.termsValid,
     termsChanged: (state) => state.termsChanged,
+    confirmValid: (state) => state.user.confirm && state.confirmValid,
     firstNameValid: (state) => state.firstNameValid,
     firstNameChanged: (state) => state.firstNameChanged,
     lastNameValid: (state) => state.lastNameValid,
@@ -221,6 +224,9 @@ export default createStore({
         case STEPS.WRITE_REQUEST:
           if (!getters.subjectValid) return false
           if (!getters.bodyValid) return false
+          if (!getters.confirmValid) return false
+          return true
+        default:
           return true
       }
     }
@@ -450,6 +456,12 @@ export default createStore({
     [UPDATE_TERMS_CHANGED](state, changed) {
       state.termsChanged = changed
     },
+    [UPDATE_CONFIRM](state, val) {
+      state.user.confirm = val
+    },
+    [UPDATE_CONFIRM_VALIDITY](state, validity) {
+      state.confirmValid = validity
+    },
     [UPDATE_REQUEST_PUBLIC](state, val) {
       state.requestPublic = val
     },
@@ -489,6 +501,7 @@ export default createStore({
         last_name: state.user.last_name,
         private: state.user.private,
         terms: state.user.terms,
+        confirm: state.user.confirm,
       }
       try {
         persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))

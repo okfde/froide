@@ -67,6 +67,16 @@
       </template>
     </ReviewRequestLine>
 
+    <!-- TODO i18n PI, notAgreed -->
+    <ReviewRequestLine
+      v-if="needCorrectionConfirm"
+      :i18n="i18n"
+      :title="i18n.request || 'Anfrage'"
+      :invalid="needCorrectionConfirm"
+      :contents="i18n.notAgreed || 'nicht zugestimmt: Bestätigung, dass ich keine persönlichen Informationen anfrage'"
+      :step="STEPS.WRITE_REQUEST"
+      />
+
     <ReviewRequestLine
       v-if="!hidePublic"
       :i18n="i18n"
@@ -160,7 +170,7 @@
       v-if="needCorrectionTerms"
       :i18n="i18n"
       :title="i18n.terms || 'Nutzungs&shy;bedingungen'"
-      :invalid="needCorrectionAddress"
+      :invalid="needCorrectionTerms"
       :contents="i18n.notAgreed || 'nicht zugestimmt'"
       :step="STEPS.CREATE_ACCOUNT"
       />
@@ -341,6 +351,9 @@ export default {
       if (this.requestForm?.fields.body.value !== this.body) return
       return ('body' in this.requestForm.errors)
     },
+    needCorrectionConfirm() {
+      return this.confirmValid === false
+    },
     needCorrectionAddress() {
       return this.hasFormErrorsAddress || this.addressValid === false
     },
@@ -413,6 +426,7 @@ export default {
       'emailValid',
       'addressValid',
       'termsValid',
+      'confirmValid',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
       'requestPublic',
