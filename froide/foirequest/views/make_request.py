@@ -15,7 +15,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, TemplateView
 
 from froide.account.forms import AddressForm, NewUserForm
+from froide.account.preferences import get_preferences_for_user
 from froide.campaign.models import Campaign
+from froide.foirequest.forms.preferences import make_request_intro_skip_howto_pref
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
 from froide.helper.content_urls import get_content_url
@@ -132,6 +134,21 @@ class MakeRequestView(FormView):
         return user_vars
 
     def get_js_context(self):
+        skip_intro_howto = False
+        show_skip_intro_howto_preference = False
+        if self.request.user.is_authenticated:
+            show_skip_intro_howto_preference = True
+            preferences = get_preferences_for_user(
+                self.request.user, [make_request_intro_skip_howto_pref]
+            )
+            if (make_request_intro_skip_howto_pref.key in preferences) and preferences[
+                make_request_intro_skip_howto_pref.key
+            ].value:
+                skip_intro_howto = True
+            elif FoiRequest.objects.filter(user=self.request.user).count() > 50:
+                # TODO: instead update the preference?
+                skip_intro_howto = True
+
         ctx = {
             "settings": {
                 "user_can_hide_web": settings.FROIDE_CONFIG.get("user_can_hide_web"),
@@ -140,6 +157,9 @@ class MakeRequestView(FormView):
                     "non_meaningful_subject_regex", []
                 ),
                 "address_regex": settings.FROIDE_CONFIG.get("address_regex", ""),
+                "skip_intro_howto": skip_intro_howto,
+                "show_skip_intro_howto_preference": show_skip_intro_howto_preference,
+                "skip_intro_howto_preference_key": make_request_intro_skip_howto_pref.key,
             },
             "url": {
                 "searchRequests": reverse("api:request-search"),
