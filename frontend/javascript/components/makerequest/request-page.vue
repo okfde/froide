@@ -1,11 +1,6 @@
 <template>
   <div class="make-request-container">
-    <!-- TODO:
-      steps need to be same width (for progress meter to match)
-      steps need to be clickable
-        into the future - "steps previously unlocked"
-      reflect "done" pbly = this seems to be just a > step check
-    -->
+
     <SimpleStepper
       class="bg-body-tertiary"
       :step="stepperStepCurrent"
@@ -20,8 +15,8 @@
       {{ this.stepperSteps[this.stepperStepCurrent].label }}
     </SimpleStepper>
 
-
     <div class="container"><div class="row"><div class="col x-col-lg-9">
+
       <div
         class="my-2"
         v-show="step === STEPS.PREVIEW_SUBMIT"
@@ -35,11 +30,21 @@
         <div class="col-lg-12">
           <div
             v-if="stepBack"
-            class="my-3">
+            class="my-3 d-flex justify-content-between"
+            >
             <a class="btn btn-link text-decoration-none ps-0"
               :href="'#step-' + stepBack"
               @click="setStep(stepBack)"
               >← <u>{{ i18n.back }}</u></a>
+            <button
+              v-show="true"
+              type="button"
+              class="btn btn-primary"
+              :disabled="!stepCanContinue(pbScope)"
+              @click="setStep(stepNext)"
+              >
+              {{ i18n.stepNext }}
+            </button>
           </div>
 
           <!-- keep visible for all steps -->
@@ -55,6 +60,8 @@
             {{ publicBodies.map(pb => pb.name).join(', ') }}
           </h1>
 
+          <!-- STEP: INTRO / CAMPAIGNS -->
+
           <div v-if="step === STEPS.INTRO" class="mt-5">
             <h1>{{ i18n.makeRequest }}</h1>
             <p>{{ i18n.whatDoYouWantToDo }}</p>
@@ -64,7 +71,10 @@
                 <div class="col-12 col-md-4 mb-4">
                   <div class="card h-100">
                     <div class="card-body d-flex flex-column">
-                      <div>TODO LOGO</div>
+                      <img
+                        alt="TODO"
+                        class="ratio ratio-4x3 placeholder mb-3"
+                        />
                       <h2 class="fs-4 my-auto">{{ i18n.makeRequestYourself }}</h2>
                       <div>
                         <a
@@ -76,7 +86,7 @@
                           @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhatNot)"
                           >{{ i18n.whatCanINotRequest }}</a><br/>
                       </div>
-                      <div>
+                      <div class="mt-3">
                         <button
                           type="button" class="btn btn-primary w-100"
                           @click="setStep(stepNext)"
@@ -89,6 +99,8 @@
               </div>
             </div>
           </div>
+
+          <!-- STEP: FIND SIMILAR REQUESTS -->
 
           <div v-if="step === STEPS.FIND_SIMILAR">
 
@@ -107,22 +119,17 @@
             </div>
           </div>
 
-          <fieldset
-            v-if="step === STEPS.SELECT_PUBLICBODY"
-            id="step-publicbody"
-            >
-            <div class="my-3 row">
-              <div class="col ms-auto text-end">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  :disabled="!stepCanContinue(pbScope)"
-                  @click="setStep(stepNext)"
-                  >{{ i18n.stepNext }}</button>
-              </div>
-            </div>
-            <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
+          <!-- STEP: SELECT PUBLIC BODY -->
+
+          <div v-if="step === STEPS.SELECT_PUBLICBODY">
+
+            <p>
+              Aktuell ausgewählt:<!-- TODO i18n -->
+              {{ publicBodies.map(pb => pb.name).join(', ') }}
+            </p>
+
             <div v-if="multiRequest && tmpMulti">
+              <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
               <PublicbodyMultiChooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
@@ -168,24 +175,26 @@
                 </div>
               </div>
             </div>
-          </fieldset>
+          </div>
 
-          <fieldset
-            v-if="step === STEPS.REVIEW_PUBLICBODY"
-            id="step-review-publicbody"
-            >
+          <!-- STEP: REVIEW PUBLIC BODIES -->
+
+          <div v-if="step === STEPS.REVIEW_PUBLICBODY">
             <PbMultiReview
               name="publicbody"
               :i18n="i18n"
               :scope="pbScope"
               @step-next="setStep(stepNext)"
               />
-          </fieldset>
+          </div>
+
+          <!-- STEP: CREATE ACCOUNT -->
 
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
           <div
             v-show="step === STEPS.CREATE_ACCOUNT">
             <UserCreateAccount
+              v-if="!user.id"
               :config="config"
               :user="user"
               :request-form="requestForm"
@@ -200,7 +209,9 @@
             </UserCreateAccount>
           </div>
 
-          <fieldset
+          <!-- STEP: WRITE REQUEST -->
+
+          <div
             v-show="step === STEPS.WRITE_REQUEST"
             id="step-request"
             class="mt-3"
@@ -224,6 +235,7 @@
               v-model:initial-full-text="fullText"
               :submitting="submitting"
               @step-next="setStep(stepNext)"
+              @step-back="setStep(stepBack)"
               >
               <template #request-hints>
                 <DjangoSlot name="request-hints" />
@@ -237,7 +249,9 @@
               :publicbodies="publicBodies"
               :subject="subject"
               :config="config" />
-          </fieldset>
+          </div>
+
+          <!-- STEP: VISIBILITY -->
 
           <div v-show="step == STEPS.REQUEST_PUBLIC">
             <h2>Sichtbarkeit der Anfrage</h2><!-- TODO i18n -->
@@ -261,6 +275,8 @@
               </button>
             </div>
           </div>
+
+          <!-- STEP: PREVIEW -->
 
           <div v-if="step === STEPS.PREVIEW_SUBMIT">
             <h2>Vorschau &amp; Abschicken</h2><!-- TODO i18n -->
@@ -286,18 +302,14 @@
           </div>
         </div>
       </div>
-      <button type="submit">submit no matter what outside</button>
     </div></div></div> <!-- /.container -->
-    <!--
-    <button type="submit" @click="submitting = true">submit</button>
-    <button type="button" @click="$refs.onlineHelp.show('foo')">test oh</button>
-    -->
     <OnlineHelp ref="onlineHelp" :i18n="i18n"></OnlineHelp>
   </div>
 </template>
 
 <script>
 import SimilarRequests from './similar-requests'
+import SimilarRequestSearch from './similar-request-search'
 import PublicbodyChooser from '../publicbody/publicbody-chooser'
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
@@ -314,8 +326,6 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 import {
   SET_STEP,
   SET_STEP_NO_HISTORY,
-  // SET_STEP_SELECT_PUBLICBODY,
-  // SET_STEP_REQUEST,
   SET_PUBLICBODY,
   SET_PUBLICBODIES,
   CACHE_PUBLICBODIES,
@@ -333,7 +343,8 @@ import {
   UPDATE_LAW_TYPE,
   UPDATE_TERMS,
   SET_CONFIG,
-  STEPS
+  STEPS,
+  UPDATE_CONFIRM,
 } from '../../store/mutation_types'
 
 import LetterMixin from './lib/letter-mixin'
@@ -509,6 +520,9 @@ export default {
     stepNext() {
       if (this.stepIndex === -1 || this.stepIndex > this.steps.length - 1) return false
       return this.steps[this.stepIndex + 1]
+    },
+    showTopNext() {
+      return [STEPS.FIND_SIMILAR].includes(this.step)
     },
     publicBodySearch() {
       if (this.publicBody) {
@@ -707,6 +721,7 @@ export default {
           private: UPDATE_PRIVATE,
           address: UPDATE_ADDRESS,
           terms: UPDATE_TERMS,
+          confirm: UPDATE_CONFIRM,
         }
       })
     }
@@ -779,8 +794,11 @@ export default {
       } else if (this.hasPublicBodies && this.step === STEPS.INTRO) {
         // skip intro
         this.setStep(this.stepNext)
+      } else if (this.step === STEPS.CREATE_ACCOUNT && this.userInfo) {
+        // returning from login
+        this.setStep(STEPS.WRITE_REQUEST)
       }
-      // fall back to first (non-excluded) step
+      // fall back to first viable (non-excluded) step
       if (!this.steps.includes(this.step)) {
         this.setStep(this.steps[0])
       }
