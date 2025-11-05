@@ -20,7 +20,7 @@
             :class="{
               'text-danger': errors.subject && !subjectChanged
             }">
-            {{ i18n.subject }}
+            {{ i18n.subject }}:
           </label>
           <div
             v-if="
@@ -205,8 +205,6 @@
               v-text="letterSignatureName" />
           </div>
         </div>
-        <div v-if="!hasUser" class="row">
-        </div>
 
       </div>
     </div>
@@ -251,6 +249,9 @@
       </div>
     </div>
 
+    <!-- TODO hide this for trusted users -->
+    <UserConfirm ref="userConfirm" />
+
     <div class="my-4">
       <button
         type="button"
@@ -278,6 +279,7 @@ import {
 
 import ProofForm from '../proofupload/proof-form.vue'
 import UserAddress from './user-address.vue'
+import UserConfirm from './user-confirm.vue'
 
 const PLACEHOLDER_MARKER = '…'
 const PLACEHOLDER_REPLACEMENT = '...'
@@ -289,7 +291,8 @@ export default {
   mixins: [I18nMixin, LetterMixin],
   components: {
     ProofForm,
-    UserAddress
+    UserAddress,
+    UserConfirm,
   },
   props: {
     config: {
@@ -469,6 +472,7 @@ export default {
       'subjectChanged',
       'bodyValid',
       'bodyChanged',
+      'confirmValid',
       'defaultLaw',
     ]),
   },
@@ -568,12 +572,16 @@ export default {
     resetBodyCustomValidity() {
       this.$refs.body.setCustomValidity('')
     },
+    validateConfirm() {
+      this.$refs.userConfirm.validate()
+    },
     validateAllNextStep() {
       this.clearFormErrors = true
       // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
       this.validateBody()
       this.validateSubject()
-      if (this.bodyValid && this.subjectValid) {
+      this.validateConfirm()
+      if (this.bodyValid && this.subjectValid && this.confirmValid) {
         this.$emit('stepNext')
       }
     },
