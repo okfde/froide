@@ -276,13 +276,7 @@ export default {
           initialFilters: { kind: this.config.fixtures.georegion_kind[0][0] },
           getItems: (q, filters) => searcher.listGeoregions(q, filters),
           hasSearch: true,
-          choices: ['kind',
-            [
-              // ['', '(Alle)'],
-              ...this.config.fixtures.georegion_kind
-            ]
-          ],
-          choicesNoneLabel: this.i18n.filterPlaceholder,
+          choices: ['kind', this.config.fixtures.georegion_kind],
           itemMap: (item) => {
             return {
               label: item.name,

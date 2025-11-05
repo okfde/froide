@@ -14,6 +14,17 @@
       <div class="col-md-12">
 
         <div class="mb-3">
+          Empfänger:<!-- TODO i18n -->
+          <div>
+            <strong>{{ publicBodies.map(pb => pb.name).join(', ') }}</strong>
+            <button
+              type="button" class="btn btn-secondary btn-sm align-baseline ms-2"
+              @click="$emit('stepBack')"
+              >Ändern<!-- TODO i18n --></button>
+          </div>
+        </div>
+
+        <div class="mb-3">
           <label
             class="form-check-label"
             for="id_subject"
