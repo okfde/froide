@@ -48,6 +48,7 @@ import {
   UPDATE_SUBJECT_CHANGED,
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
+  UPDATE_SIMILAR_REQUEST_SEARCH,
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
@@ -91,6 +92,7 @@ export default createStore({
       lastNameChanged: false,
       emailValid: undefined,
       emailChanged: false,
+      similarRequestSearch: {},
     }
   },
   getters: {
@@ -465,6 +467,9 @@ export default createStore({
     [UPDATE_REQUEST_PUBLIC](state, val) {
       state.requestPublic = val
     },
+    [UPDATE_SIMILAR_REQUEST_SEARCH](state, v) {
+      state.similarRequestSearch = v
+    },
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
     },
@@ -502,6 +507,7 @@ export default createStore({
         private: state.user.private,
         terms: state.user.terms,
         confirm: state.user.confirm,
+        similarRequestSearch: state.similarRequestSearch,
       }
       try {
         persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))
