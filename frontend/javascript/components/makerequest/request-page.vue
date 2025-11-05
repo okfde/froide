@@ -91,31 +91,11 @@
           </div>
 
           <div v-if="step === STEPS.FIND_SIMILAR">
+
             <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
-            <div class="mb-4">
-              <label for="similarSubject" class="form-label">
-                {{ i18n.searchArchive }}
-              </label>
-              <div class="row">
-                <div class="col-sm-8">
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="similarSubject"
-                    />
-                </div>
-                <div class="col-sm-4">
-                  <button type="button" class="btn btn-secondary w-100">
-                    {{ i18n.search }}
-                  </button>
-                </div>
-              </div>
-            </div>
-            <SimilarRequests
-              :config="config"
-              :publicbodies="publicBodies"
-              :subject="similarSubject"
-              ></SimilarRequests>
+
+            <SimilarRequestSearch />
+
             <div>
               <button
                 type="button"
@@ -349,6 +329,7 @@ import {
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
   UPDATE_REQUEST_PUBLIC,
+  UPDATE_SIMILAR_REQUEST_SEARCH,
   UPDATE_LAW_TYPE,
   UPDATE_TERMS,
   SET_CONFIG,
@@ -366,6 +347,7 @@ export default {
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
     SimilarRequests,
+    SimilarRequestSearch,
     ReviewRequest,
     PbMultiReview,
     RequestForm,
@@ -739,6 +721,13 @@ export default {
       }
     })
 
+    this.initStoreValues({
+      scope: this.pbScope,
+      preferStorage: true,
+      mutationMap: {
+        similarRequestSearch: UPDATE_SIMILAR_REQUEST_SEARCH
+      }
+    })
     // this.body are state getter/setters
     // original* were non-data attributes used for shouldCheckRequest
     // this.originalBody = this.body
