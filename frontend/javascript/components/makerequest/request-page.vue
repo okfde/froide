@@ -65,43 +65,18 @@
           <div v-if="step === STEPS.INTRO" class="mt-5">
             <h1>{{ i18n.makeRequest }}</h1>
             <p>{{ i18n.whatDoYouWantToDo }}</p>
-            <div>
-              <div class="row">
-                <!-- col-12 is slightly akward on medium viewports but will make sure it is front and center -->
-                <div class="col-12 col-md-4 mb-4">
-                  <div class="card h-100">
-                    <div class="card-body d-flex flex-column">
-                      <img
-                        alt="TODO"
-                        class="ratio ratio-4x3 placeholder mb-3"
-                        />
-                      <h2 class="fs-4 my-auto">{{ i18n.makeRequestYourself }}</h2>
-                      <div>
-                        <a
-                          :href="config.url.helpRequestWhat"
-                          @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhat)"
-                          >{{ i18n.whatCanIRequest }}</a><br/>
-                        <a
-                          :href="config.url.helpRequestWhatNot"
-                          @click.prevent="$refs.onlineHelp.show(config.url.helpRequestWhatNot)"
-                          >{{ i18n.whatCanINotRequest }}</a><br/>
-                      </div>
-                      <div class="mt-3">
-                        <button
-                          type="button" class="btn btn-primary w-100"
-                          @click="setStep(stepNext)"
-                          >{{ i18n.makeRequest }}</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <DjangoSlot name="campaigns"></DjangoSlot>
-              </div>
-            </div>
+            <IntroCampaigns
+              :config="config"
+              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              @step-next="setStep(stepNext)"
+              >
+              <DjangoSlot name="campaigns"></DjangoSlot>
+            </IntroCampaigns>
           </div>
 
           <!-- STEP: INTRO / HOWTO -->
 
+          <!-- TODO mt-5 might have no effect here -->
           <IntroHowto
             v-if="step === STEPS.INTRO_HOWTO"
             class="mt-5"
@@ -212,7 +187,7 @@
               :user-form="userForm"
               :default-law="defaultLaw"
               @step-next="setStep(stepNext)"
-              @online-help="TODO"
+              @onlinehelp-click="$refs.onlineHelp.show($event)"
               >
               <template #loginlink>
                 <DjangoSlot name="loginlink"></DjangoSlot>
@@ -313,7 +288,7 @@
               :hide-publicbody-chooser="hidePublicbodyChooser"
               :show-draft="showDraft"
               @submit="submitting = true"
-              @online-help="$refs.onlineHelp.show($event)"
+              @onlinehelp-click="$refs.onlineHelp.show($event)"
               />
           </div>
         </div>
@@ -367,11 +342,13 @@ import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 import UserCreateAccount from './user-create-account.vue'
 import IntroHowto from './intro-howto.vue'
+import IntroCampaigns from './intro-campaigns.vue'
 
 export default {
   name: 'RequestPage',
   components: {
     IntroHowto,
+    IntroCampaigns,
     PublicbodyChooser,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,

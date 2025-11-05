@@ -24,7 +24,7 @@
     <p>
       <a
         :href="config.url.helpRequestPrivacy" 
-        @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
+        @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPrivacy)"
         >Weitere Infos zur Privatsphäre auf dieser Website</a><!-- TODO i18n -->
     </p>
   </div>

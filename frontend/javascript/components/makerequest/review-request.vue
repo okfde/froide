@@ -91,7 +91,7 @@
         }}
         <a
           :href="config.url.helpRequestPublic"
-          @click.prevent="$emit('online-help', config.url.helpRequestPublic)"
+          @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPublic)"
           >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
       </template>
     </ReviewRequestLine>
@@ -111,7 +111,7 @@
         }}
         <a
           :href="config.url.helpRequestPrivacy"
-          @click.prevent="$emit('online-help', config.url.helpRequestPrivacy)"
+          @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPrivacy)"
           >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
       </template>
     </ReviewRequestLine>
