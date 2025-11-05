@@ -10,12 +10,10 @@
     <p><small>{{ i18n.thisFormRemembers }}</small></p>
 
     <UserRegistration
-      x-v-if="!user.id"
       ref="userRegistration"
       :form="userForm"
       :user-form="userForm"
       :config="config"
-      x-user="user.id ? user : null"
       :default-law="defaultLaw"
       v-model:initial-first-name="firstName"
       v-model:initial-last-name="lastName"
