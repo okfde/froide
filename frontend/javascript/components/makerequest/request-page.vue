@@ -51,7 +51,7 @@
           <div v-if="requestForm.nonFieldErrors.length > 0" class="alert alert-danger">
             <p v-for="error in requestForm.nonFieldErrors" :key="error" v-html="error" />
           </div>
-          
+
           <h1
             v-if="hidePublicbodyChooser && hasPublicBodies"
             class="my-3 fs-5"
@@ -100,6 +100,16 @@
             </div>
           </div>
 
+          <!-- STEP: INTRO / HOWTO -->
+
+          <IntroHowto
+            v-if="step === STEPS.INTRO_HOWTO"
+            class="mt-5"
+            :config="config"
+            >
+            <DjangoSlot name="intro_howto" />
+          </IntroHowto>
+
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
           <div v-if="step === STEPS.FIND_SIMILAR">
@@ -117,6 +127,7 @@
                 {{ i18n.stepNext }}
               </button>
             </div>
+
           </div>
 
           <!-- STEP: SELECT PUBLIC BODY -->
@@ -355,10 +366,12 @@ import {
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 import UserCreateAccount from './user-create-account.vue'
+import IntroHowto from './intro-howto.vue'
 
 export default {
   name: 'RequestPage',
   components: {
+    IntroHowto,
     PublicbodyChooser,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
@@ -475,6 +488,7 @@ export default {
         // TODO: when hidePbChoo maybe hide INTRO, and maybe swap ACCOUNT & WRITE_REQ?
         //   or when campaigns slot is empty -- depends what other intro contents there will be
         STEPS.INTRO,
+        ...(this.config.settings.skip_intro_howto ? [] : [STEPS.INTRO_HOWTO]),
         ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
         ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
         ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
@@ -488,6 +502,7 @@ export default {
     stepLabels() {
       return {
         [STEPS.INTRO]: this.i18n.introduction,
+        [STEPS.INTRO_HOWTO]: this.i18n.introduction,
         [STEPS.FIND_SIMILAR]: this.i18n.similarRequests,
         [STEPS.SELECT_PUBLICBODY]: this.i18n.choosePublicBody,
         [STEPS.REVIEW_PUBLICBODY]: this.i18n.choosePublicBody,
@@ -500,6 +515,8 @@ export default {
     },
     stepperSteps() {
       const remap = {
+        // "display INTRO_HOWTO as INTRO"
+        [STEPS.INTRO]: STEPS.INTRO_HOWTO,
         [STEPS.SELECT_PUBLICBODY]: STEPS.REVIEW_PUBLICBODY,
         [STEPS.WRITE_REQUEST]: STEPS.REQUEST_PUBLIC,
         [STEPS.PREVIEW_SUBMIT]: STEPS.OUTRO
@@ -748,6 +765,7 @@ export default {
         similarRequestSearch: UPDATE_SIMILAR_REQUEST_SEARCH
       }
     })
+
     // this.body are state getter/setters
     // original* were non-data attributes used for shouldCheckRequest
     // this.originalBody = this.body
@@ -788,7 +806,7 @@ export default {
   },
   methods: {
     setFirstStep() {
-      /* this step may at this point "remembered" from Storage,
+      /* this step may at this point be "remembered" from Storage,
          but will default to STEPS.INTRO */
       // if "editing draft" skip forward 
       if (this.requestForm.fields.draft.initial && this.step === STEPS.INTRO) {
@@ -797,6 +815,9 @@ export default {
       } else if (this.hidePublicbodyChooser && this.step === STEPS.INTRO && !this.userInfo) {
         this.setStep(STEPS.CREATE_ACCOUNT)
       } else if (this.hasPublicBodies && this.step === STEPS.INTRO) {
+        // skip intros
+        this.setStep(STEPS.FIND_SIMILAR)
+      } else if (this.step === STEPS.INTRO_HOWTO && this.config.settings.skip_intro_howto) {
         // skip intro
         this.setStep(this.stepNext)
       } else if (this.step === STEPS.CREATE_ACCOUNT && this.userInfo) {
