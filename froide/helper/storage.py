@@ -16,15 +16,6 @@ def sha256(file):
     return hash_sha256.hexdigest()
 
 
-class OverwriteStorage(FileSystemStorage):
-    # TODO: Remove in Django 5.1 in favour of allow_overwrite option
-    def get_available_name(self, name, max_length=None):
-        # FIXME: max_length is ignored
-        if self.exists(name):
-            self.delete(name)
-        return name
-
-
 def delete_file_if_last_reference(
     instance: models.Model, field_name: str, delete_prefix: bool = False
 ):
