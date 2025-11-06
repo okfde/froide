@@ -7,7 +7,7 @@ import functools
 from django.db import migrations, models
 
 import filingcabinet.models
-import filingcabinet.storage
+from django.core.files.storage import FileSystemStorage
 
 
 class Migration(migrations.Migration):
@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
             field=models.ImageField(
                 blank=True,
                 max_length=255,
-                storage=filingcabinet.storage.OverwriteStorage(),
+                storage=FileSystemStorage(allow_overwrite=True),
                 upload_to=filingcabinet.models.get_page_annotation_filename,
             ),
         ),
