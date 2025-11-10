@@ -176,6 +176,7 @@
       />
 
     <UserConfirmation
+      :i18n="i18n"
       :form="userForm"
       />
 
@@ -189,7 +190,6 @@
         <i class="fa fa-send" aria-hidden="true" />
         {{ i18n.submitRequest }}
       </button>
-      <button type="submit">submit no matter what</button>
       <button
         v-if="user.id && showDraft"
         type="submit"
