@@ -46,6 +46,7 @@ export default {
   name: 'UserConfirmation',
   mixins: [I18nMixin],
   props: {
+    i18n: Object,
     form: {
       type: Object
     }
