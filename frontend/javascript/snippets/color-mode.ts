@@ -1,12 +1,14 @@
 const storageKey = 'colortheme'
 const storedTheme = localStorage.getItem(storageKey)
 
+const DEFAULT_THEME = 'light'
+
 const getPreferredTheme = (): string => {
   if (storedTheme !== null) {
     return storedTheme
   }
 
-  return 'light'
+  return DEFAULT_THEME
 }
 
 const getCurrentTheme = (): string | null => {
@@ -28,19 +30,11 @@ const setTheme = (theme: string): void => {
   localStorage.setItem(storageKey, theme)
 }
 
-setTheme(getPreferredTheme())
+if (getCurrentTheme() === DEFAULT_THEME) setTheme(getPreferredTheme())
 
 window.addEventListener('DOMContentLoaded', () => {
-  const defaultTheme = getCurrentTheme()
-  if (defaultTheme === null) {
-    return
-  }
-
   toggle?.addEventListener('click', () => {
     const currentTheme = getCurrentTheme()
-    if (currentTheme === null) {
-      return
-    }
     if (currentTheme === 'dark') {
       setTheme('light')
     } else {
