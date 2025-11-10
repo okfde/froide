@@ -462,8 +462,6 @@ export default {
     },
     steps() {
       return [
-        // TODO: when hidePbChoo maybe hide INTRO, and maybe swap ACCOUNT & WRITE_REQ?
-        //   or when campaigns slot is empty -- depends what other intro contents there will be
         STEPS.INTRO,
         ...(this.config.settings.skip_intro_howto ? [] : [STEPS.INTRO_HOWTO]),
         ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
@@ -543,15 +541,9 @@ export default {
         this.updateSubject(value)
       }
     },
-    // subjectWasChanged() {
-    //   return this.subject !== this.originalSubject
-    // },
     hasBody() {
       return this.body && this.body.length > 0
     },
-    // bodyWasChanged() {
-    //   return this.body !== this.originalBody
-    // },
     body: {
       get() {
         return this.$store.state.body
@@ -596,14 +588,6 @@ export default {
     publicBodies() {
       return this.getPublicBodiesByScope(this.pbScope)
     },
-    // shouldCheckRequest() {
-    //   return (
-    //     this.body === '' ||
-    //     this.bodyWasChanged ||
-    //     this.subject === '' ||
-    //     this.subjectWasChanged
-    //   )
-    // },
     ...mapGetters([
       'user',
       'getPublicBodyByScope',
