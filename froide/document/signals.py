@@ -24,6 +24,9 @@ def document_created(instance=None, created=False, **kwargs):
 )
 def reprocess_document_after_redaction(sender: FoiAttachment, **kwargs):
     if sender.document and kwargs.get("redacted"):
+        # Clear pdf_file, it might contain an older version of the redacted file
+        if sender.document.pdf_file:
+            sender.document.pdf_file.delete(save=True)
         # Recreate pages after redaction
         sender.document.process_document(reprocess=True)
         return
@@ -43,6 +46,8 @@ def reprocess_document_after_redaction(sender: FoiAttachment, **kwargs):
             FoiAttachment.objects.filter(id=sender.id).update(document_id=doc_id)
         # Then reprocess document
         document = Document.objects.get(id=doc_id)
+        if document.pdf_file:
+            document.pdf_file.delete(save=True)
         document.process_document(reprocess=True)
 
 
