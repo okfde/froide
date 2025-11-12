@@ -434,6 +434,7 @@ export default {
       default: false
     }
   },
+  inject: ['django-slots'],
   data() {
     return {
       pbScope: this.config.draftId
@@ -475,7 +476,7 @@ export default {
     steps() {
       return [
         STEPS.INTRO,
-        ...(this.config.settings.skip_intro_howto ? [] : [STEPS.INTRO_HOWTO]),
+        ...(this.skipIntroHowto ? [] : [STEPS.INTRO_HOWTO]),
         ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
         ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
         ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
@@ -544,6 +545,9 @@ export default {
         return 'multi'
       }
       return 'actionList'
+    },
+    skipIntroHowto () {
+      return this.config.settings.skip_intro_howto || !this['django-slots'].intro_howto?.textContent.trim()
     },
     subject: {
       get() {
@@ -797,7 +801,7 @@ export default {
       } else if (this.hasPublicBodies && this.step === STEPS.INTRO) {
         // skip intros
         this.setStep(STEPS.FIND_SIMILAR)
-      } else if (this.step === STEPS.INTRO_HOWTO && this.config.settings.skip_intro_howto) {
+      } else if (this.step === STEPS.INTRO_HOWTO && this.skipIntroHowto) {
         // skip intro
         this.setStep(this.stepNext)
       } else if (this.step === STEPS.CREATE_ACCOUNT && this.userInfo) {
