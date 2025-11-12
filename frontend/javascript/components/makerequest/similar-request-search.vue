@@ -25,8 +25,8 @@
 
       <!-- Dropdown Jurisdiction -->
 
-      <div class="col col-md-3">
-        <div class="dropdown">
+      <div class="col-sm-3">
+        <div class="dropdown my-1 my-sm-0">
           <button
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
@@ -61,10 +61,10 @@
       <!-- Dropdown Sub-Jurisdiction -->
 
       <div
-        class="col col-md-3"
+        class="col-sm-3"
         v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length > 1"
         >
-        <div class="dropdown">
+        <div class="dropdown my-1 my-sm-0">
           <button
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
@@ -108,8 +108,8 @@
 
       <!-- Dropdown time range -->
 
-      <div class="col col-md-3">
-        <div class="dropdown">
+      <div class="col-sm-3">
+        <div class="dropdown my-1 my-sm-0">
           <button
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
@@ -152,8 +152,8 @@
 
       <!-- Dropdown Campaign -->
 
-      <div class="col col-md-3">
-        <div class="dropdown">
+      <div class="col-sm-3">
+        <div class="dropdown my-1 my-sm-0">
           <button
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"

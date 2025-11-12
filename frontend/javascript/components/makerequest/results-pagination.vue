@@ -47,6 +47,7 @@ const pages = computed(() => {
         offset: p * responseMeta.limit,
         active: p === current,
         disabled: false,
+        // TODO maybe hide the near ones on mobile so it does not wrap
       })
     } else {
       // ...collapse all others into ellipses.

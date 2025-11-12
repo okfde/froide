@@ -762,12 +762,12 @@ export default {
       return e.returnValue
     })
     window.addEventListener('popstate', (e) => {
-      console.log('### popstate', e.state?.step)
+      console.log('popstate', e.state?.step)
       if (!e.state) return
       if (e.state.step) {
         this.setStepNoHistory(e.state.step)
       } else {
-        console.log('### popstate, but no step')
+        console.log('popstate, but no step')
       }
     })
   },
