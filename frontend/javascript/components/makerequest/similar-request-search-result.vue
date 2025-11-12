@@ -44,6 +44,12 @@
           </span>
           <span v-else-if="object.public_body">
             to {{ object.public_body.name }}<!-- TODO i18n -->
+            <button type="button" class="btn btn-sm btn-link align-baseline"
+              @click="selectPublicBody(object.public_body.id)"
+              >
+              <!-- TODO i18n -->
+              Auch an diese Behörde schreiben
+            </button>
             <!--TODO jurisdiction_name?  – <span class="muted">{{ object.jurisdiction.name }}</span>-->
           </span>
           <br />
@@ -73,6 +79,13 @@
 </template>
 
 <script setup>
+import { inject } from 'vue'
+import { useStore } from 'vuex'
+import { SET_STEP, STEPS } from '../../store/mutation_types'
+
+const store = useStore()
+
+const pbScope = inject('pbScope')
 
 const { object } = defineProps({
   object: {
@@ -80,5 +93,11 @@ const { object } = defineProps({
     required: true
   }
 })
+
+const selectPublicBody = (id) => {
+  // TODO catch if 404 + display a warning
+  store.dispatch('setPublicBodyById', { id, scope: pbScope })
+  store.commit(SET_STEP, STEPS.WRITE_REQUEST)
+}
 
 </script>
