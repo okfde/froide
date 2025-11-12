@@ -1,7 +1,7 @@
 import { Tooltip } from "bootstrap"
 
 const onlinehelpLink = (el: HTMLElement, emit: (event: string, ...args: any[]) => void) => {
-  el.style.outline = '2px dotted red'
+  // el.style.outline = '2px dotted red'
   el.addEventListener('click', (evt) => {
     emit('onlinehelp-click', el.dataset.onlinehelpHref)
     evt.preventDefault()

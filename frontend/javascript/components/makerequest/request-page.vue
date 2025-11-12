@@ -432,6 +432,9 @@ export default {
   },
   data() {
     return {
+      pbScope: this.config.draftId
+        ? 'make-request-draft-' + this.config.draftId
+        : 'make-request',
       tmpMulti: document.location.search.indexOf('multi') > -1,
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
@@ -440,6 +443,11 @@ export default {
       submitting: false,
       STEPS,
       similarSubject: '',
+    }
+  },
+  provide() {
+    return {
+      pbScope: this.pbScope
     }
   },
   computed: {
@@ -606,9 +614,6 @@ export default {
     }
   },
   created() {
-    this.pbScope = this.config.draftId
-      ? 'make-request-draft-' + this.config.draftId
-      : 'make-request'
     // from props
     this.setConfig(this.config)
 
