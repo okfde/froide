@@ -1,6 +1,6 @@
 <template>
-  <div class="filter-list-wrapper">
-    <ul v-if="!config.groupBy" class="filter-list">
+  <div>
+    <ul v-if="!config.groupBy" class="filter-list mb-0">
       <li
         v-for="item in filteredItems"
         :key="item.id"
@@ -37,7 +37,7 @@
         </div>
       </li>
     </ul>
-    <ul v-else class="list-unstyled filter-list--grouped">
+    <ul v-else class="list-unstyled mb-0 filter-list--grouped">
       <li
         v-for="itemGroup in itemGroups"
         :key="itemGroup.id"
@@ -81,7 +81,7 @@
               ><!-- TODO a11y --></i>
           </div>
           <div class="collapse" :id="'collapse_' + itemGroup.id">
-            <ul class="list-unstyled ps-4">
+            <ul class="list-unstyled mb-0 ps-4">
               <li v-for="item in itemGroup.items" :key="item.id">
                 <div class="form-check">
                   <input
@@ -220,9 +220,6 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../styles/variables';
-.filter-list-wrapper {
-  padding-bottom: 1rem;
-}
 .filter-list {
   list-style: none;
   padding-left: 0;
