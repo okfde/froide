@@ -87,7 +87,7 @@
 
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
-          <div v-if="step === STEPS.FIND_SIMILAR">
+          <div v-show="step === STEPS.FIND_SIMILAR">
 
             <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
 
@@ -606,7 +606,6 @@ export default {
     }
   },
   created() {
-    // window.__fds_debug_$store = this.$store
     this.pbScope = this.config.draftId
       ? 'make-request-draft-' + this.config.draftId
       : 'make-request'

@@ -4,21 +4,21 @@
 
       <!-- Text query input -->
 
-      <div class="col col-md-8">
-        <input class="form-control" type="text" v-model="textQuery" />
+      <div class="col col-md-9">
+        <div class="input-group">
+          <input class="form-control" type="search" v-model="textQuery" />
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="search"
+            :disabled="isSearching"
+            >
+            <span class="fa fa-search" aria-hidden="true" />
+            <!-- TODO i18n -->
+            Search
+          </button>
+        </div>
       </div>
-      <div class="col col-md-4">
-        <button
-          type="button"
-          class="btn btn-secondary d-block w-100"
-          @click="search"
-          :disabled="isSearching"
-          >
-          <!-- TODO i18n -->
-          Search
-        </button>
-      </div>
-
     </div>
 
     <div class="row">
@@ -31,7 +31,6 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            data-bs-auto-close="outside"
             >Ebene</button>
           <div
             class="dropdown-menu p-3"
@@ -72,7 +71,6 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            data-bs-auto-close="outside"
             >{{ jurisdictionsByRegionKind[jurisdictionRegionKind].name }}</button>
           <div
             class="dropdown-menu p-3"
@@ -162,7 +160,6 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            data-bs-auto-close="outside"
             >Kampagne</button>
           <div class="dropdown-menu p-3">
             <ul class="list-unstyled">
@@ -194,80 +191,82 @@
 
     <!-- Active filter badges -->
 
-    <div class="my-3">
+    <div class="my-3 row">
 
       <!-- Badges: Jurisdiction/kind + sub-jurisdiction -->
 
-      <span
+      <!-- TODO: not sure if the column-alignment with the filter dropdown makes sense,
+         when it is off half of the time... probably the badges should be just inline-block-ish -->
+
+      <div
+        class="col-sm-3"
         v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length === 1 ||
         (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && selectedJurisdictions.size === 0 && !selectedJurisdiction)"
-        class="badge text-bg-secondary"
         >
-        {{ jurisdictionsByRegionKind[jurisdictionRegionKind].name }}
-        <button
-          type="button" class="btn-close"
-          @click="jurisdictionRegionKind = null"
-          ></button>
-      </span>
+        <PbFilterBadge
+          @remove-click="jurisdictionRegionKind = null"
+          :label="'Ebene'"
+          :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
+          />
+      </div>
 
-      <span
-        v-for="jurisdiction in selectedJurisdictions"
-        :key="jurisdiction.id"
-        class="badge text-bg-secondary"
+      <div
+        v-if="selectedJurisdictions.size > 0"
+        class="col-sm-3"
         >
-        {{ jurisdiction.name }}
-        <button
-          type="button" class="btn-close"
-          @click="selectedJurisdictions.delete(jurisdiction)"
-          ></button>
-      </span>
+        <PbFilterBadge
+          v-for="jurisdiction in selectedJurisdictions"
+          :key="jurisdiction.id"
+          @remove-click="selectedJurisdictions.delete(jurisdiction)"
+          :value="jurisdiction.name"
+          :label="'todo'"
+          />
+      </div>
 
-      <span
+      <div
         v-if="selectedJurisdiction"
-        class="badge text-bg-secondary"
+        class="col-sm-3"
         >
-        {{ selectedJurisdiction.name }}
-        <button
-          type="button" class="btn-close"
-          @click="selectedJurisdiction = null"
-          ></button>
-      </span>
-
-      <!-- Badge: campaign -->
-
-      <span
-        v-if="selectedCampaign"
-        class="badge text-bg-secondary"
-        >{{ selectedCampaign.name }}
-        <button
-          type="button" class="btn-close"
-          @click="selectedCampaign = null"
-          ></button>
-      </span>
+        <PbFilterBadge
+          @remove-click="selectedJurisdiction = null"
+          :label="jurisdictionRegionKind"
+          :value="selectedJurisdiction.name"
+          />
+      </div>
 
       <!-- Badges: from/to year -->
 
-      <span
-        v-if="dateStart"
-        class="badge text-bg-secondary"
-        >Von: {{ dateStart }}
-        <button
-          type="button" class="btn-close"
-          @click="dateStart = null"
-          ></button>
-      </span>
+      <div
+        v-if="dateStart || dateEnd"
+        class="col-sm-3 d-flex flex-column gap-2"
+        >
+        <PbFilterBadge
+          v-if="dateStart"
+          @remove-click="dateStart = null"
+          :label="'Von'"
+          :value="dateStart"
+          />
+        <PbFilterBadge
+          v-if="dateEnd"
+          @remove-click="dateEnd = null"
+          :label="'Bis'"
+          :value="dateEnd"
+          />
+      </div>
 
-      <span
-        v-if="dateEnd"
-        class="badge text-bg-secondary"
-        >Bis: {{ dateEnd }}
-        <button
-          type="button" class="btn-close"
-          @click="dateEnd = null"
-          ></button>
-      </span>
+      <!-- Badge: campaign -->
 
-    </div>
+      <div
+        v-if="selectedCampaign"
+        class="col-sm-3"
+        >
+        <PbFilterBadge
+          @remove-click="selectedCampaign = null"
+          :label="'Kampagne'"
+          :value="selectedCampaign.name"
+          />
+      </div>
+   </div>
 
     <!-- Results with count + pagination -->
 
@@ -305,6 +304,7 @@ import { jurisdictionList, campaignList, requestList } from '../../api';
 import SimilarRequestSearchResult from './similar-request-search-result.vue';
 import ResultsPagination from './results-pagination.vue'
 import { UPDATE_SIMILAR_REQUEST_SEARCH } from '../../store/mutation_types'
+import PbFilterBadge from '../publicbody/pb-filter-badge.vue'
 
 const props = defineProps({
   minYear: {
@@ -336,6 +336,12 @@ const jurisdictionsByRegionKind = ref({})
 const selectedJurisdictions = ref(new Set(initialState.selectedJurisdictions))
 const selectedJurisdiction = ref(initialState.selectedJurisdiction)
 
+watch(jurisdictionRegionKind, () => {
+  selectedJurisdictions.value.clear()
+  selectedJurisdiction.value = null
+})
+
+// populate by fetching from API...
 jurisdictionList().then((resp) => {
   // jurisdictionRegionKind.value = resp.data.objects[0].region_kind
   const regionKinds = new Set(resp.data.objects.map((j) => j.region_kind))
@@ -364,16 +370,23 @@ campaignList().then((resp) => {
 const dateStart = ref(initialState.dateStart)
 const dateEnd = ref(initialState.dateEnd)
 
+// create ranges for the select-options
 const dateYearsStart = computed(() => Array.from(
   { length: (new Date).getFullYear() - props.minYear },
   (_, y) => y + props.minYear
 ))
-
-// TODO watch dateStart, push dateEnd if <=
 const dateYearsEnd = computed(() => dateStart.value
   ? dateYearsStart.value.filter((y) => y >= dateStart.value)
   : dateYearsStart.value
 )
+
+// avoid impossible time ranges, push dateEnd after dateStart if necessary
+watch(dateStart, () => {
+  if (dateEnd.value === null) return
+  if (dateStart.value > dateEnd.value) {
+    dateEnd.value = dateStart.value
+  }
+})
 
 const query = computed(() => ({
   ...pagination,

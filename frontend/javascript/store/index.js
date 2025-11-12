@@ -499,7 +499,6 @@ export default createStore({
         // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
         publicBodies: state.scopedPublicBodies[scope],
         public: state.requestPublic,
-        // TODO add user. first_name, last_name, e-mail, address, private
         address: state.user.address,
         user_email: state.user.email,
         first_name: state.user.first_name,
