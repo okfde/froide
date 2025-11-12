@@ -51,9 +51,8 @@
         {% if beta_ui %}:beta-ui="true"{% endif %}
         :config="{{ js_config }}">
         <template data-slot="intro_howto">
-            TODO static_alias request_intro_howto
+            {# request-page will skip the INTRO_HOWTO step if this is empty #}
             {% static_alias "request_intro_howto" %}
-            {# TODO auto set config.settings.skip_intro_howto when alias is empty/nonexistent? or derive in component? #}
         </template>
         <template data-slot="campaigns">
             {% for campaign in campaigns %}
