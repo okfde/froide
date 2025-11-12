@@ -41,11 +41,13 @@
       </div>
     </div>
     <div class="row mt-3">
-      <p
-        v-show="
-          !searching && lastQuery && (showFoundCountIfIdle || searchMeta)
-        ">
-        {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
+      <p v-if="searching">
+        <span class="spinner-border spinner-border-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </p>
+      <p v-else-if="lastQuery && (showFoundCountIfIdle || searchMeta)">
+        {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
       </p>
     </div>
     <div v-if="showBadges && search" class="mb-3">
@@ -70,14 +72,14 @@
       </div>
     </div>
 
-    <div v-if="searching" class="search-spinner">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
     <component :is="listView" :name="name" :scope="scope" :config="config"
       @update="$emit('update', $event)"
       @step-next="$emit('stepNext')"
+      />
+    <!-- outside of listView component is awkward but easier than passing around v-model -->
+    <ResultsPagination
+      :response-meta="getScopedSearchMeta(scope)"
+      v-model="pagination"
       />
   </div>
 </template>
@@ -87,6 +89,7 @@ import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
 import PBBetaList from './pb-beta-list'
+import ResultsPagination from '../makerequest/results-pagination.vue'
 
 import { mapMutations, mapActions } from 'vuex'
 import {
@@ -105,6 +108,8 @@ import PbFilterSelected from './pb-filter-selected'
 import PBChooserMixin from './lib/pb-chooser-mixin'
 import PbFilterBadge from './pb-filter-badge'
 
+const searchResultPageSize = 30
+
 function treeLabel(item) {
   return item.name
 }
@@ -118,7 +123,8 @@ export default {
     betaList: PBBetaList,
     PbFilter,
     PbFilterSelected,
-    PbFilterBadge
+    PbFilterBadge,
+    ResultsPagination,
   },
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
   props: {
@@ -183,7 +189,11 @@ export default {
         'categories',
         // 'classification'
         // 'regions_kind',
-      ]
+      ],
+      pagination: {
+        offset: 0,
+        limit: searchResultPageSize
+      },
     }
   },
   computed: {
@@ -336,6 +346,11 @@ export default {
     if (this.defaultsearch && this.searchMeta === null) {
       this.triggerAutocomplete()
     }
-  }
+  },
+  watch: {
+    'pagination.offset': function() {
+      this.triggerAutocomplete()
+    }
+  },
 }
 </script>
