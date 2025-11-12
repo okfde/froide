@@ -91,7 +91,9 @@
 
             <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
 
-            <SimilarRequestSearch />
+            <SimilarRequestSearch
+              :config="config"
+              />
 
             <div>
               <button
