@@ -11,10 +11,15 @@ const { responseMeta } = defineProps({
 
 const model = defineModel({ type: Object })
 
+const show = computed(() => responseMeta.total_count > responseMeta.limit)
+
 const pages = computed(() => {
   // build an array like (current page = 5)
   // ← 1 2 … 4 5 6 … 41 42 →
   // previous/next are not special buttons, since all navigate by offset
+  // TODO: when paginating, esp. using the next button,
+  //   the "wobble" caused by the amount of pages shifting is pretty annoying --
+  //   you can not just page through, buttons shift under your cursor
   const ret = [{
     key: 'previous',
     ariaHiddenLabel: '←', // TODO i18n
@@ -68,7 +73,7 @@ const pages = computed(() => {
 
 <template>
   <!-- TODO i18n -->
-  <nav aria-label="Pagination">
+  <nav aria-label="Pagination" v-show="show">
     <ul class="pagination flex-wrap">
       <li class="page-item"
         v-for="page in pages"

@@ -1,65 +1,60 @@
 <template>
-  <div class="filter-component">
-    <!-- TODO use card + collapse/dropdown -->
-    <h5 @click="toggleExpand" class="filter-heading">
-      {{ config.label }}&nbsp;<i
-        class="fa expand-icon"
-        :class="{
-          'fa-chevron-down': !expanded,
-          'fa-chevron-up': expanded
-        }"></i>
-    </h5>
-    <transition name="expand">
-      <div v-show="expanded" class="filter-container">
-        <input
-          v-if="hasSearch"
-          type="search"
-          class="form-control form-control-sm"
-          :placeholder="i18n.searchPlaceholder"
-          v-model="search"
-          @input="triggerSearch"
-          @keydown.enter.prevent="triggerSearch"
-          />
-        <select
-          v-if="hasChoices"
-          v-model="choice"
-          @change="triggerSearch"
-          class="form-select form-control-sm form-select-sm">
-          <option
-            :value="null"
-            :selected="!choice"
-            style="font-style: italic"
-            ><em>{{ config.choicesNoneLabel }}</em></option>
-          <option
-            v-for="opt in config.choices[1]"
-            :key="opt[0]"
-            :value="opt[0]"
-            :selected="choice == opt[0]">
-            {{ opt[1] }}
-          </option>
-        </select>
-        <div class="filter-list-container">
-          <div
-            v-if="loading"
-            class="spinner-border text-secondary"
-            role="status">
-            <span class="visually-hidden">{{ i18n.loading }}</span>
-          </div>
-          <PbFilterList
-            v-else
-            :config="config"
-            :i18n="i18n"
-            :scope="scope"
-            :has-more="hasMore"
-            :items="orderedItems"
-            :value="value"
-            @remove-filter="removeFilter"
-            @set-filter="setFilter"
-            @load-more="loadMore"
-            @load-children="loadChildren"></PbFilterList>
+  <div class="dropdown my-1 my-sm-0">
+    <button
+      type="button"
+      class="btn btn-secondary dropdown-toggle d-block w-100"
+      data-bs-toggle="dropdown"
+      data-bs-auto-close="outside"
+      >{{ config.label }}</button>
+    <div class="dropdown-menu p-3">
+      <input
+        v-if="hasSearch"
+        type="search"
+        class="form-control form-control-sm"
+        :placeholder="i18n.searchPlaceholder"
+        v-model="search"
+        @input="triggerSearch"
+        @keydown.enter.prevent="triggerSearch"
+        />
+      <select
+        v-if="hasChoices"
+        v-model="choice"
+        @change="triggerSearch"
+        class="form-select form-control-sm form-select-sm">
+        <option
+          :value="null"
+          :selected="!choice"
+          style="font-style: italic"
+          ><em>{{ config.choicesNoneLabel }}</em></option>
+        <option
+          v-for="opt in config.choices[1]"
+          :key="opt[0]"
+          :value="opt[0]"
+          :selected="choice == opt[0]">
+          {{ opt[1] }}
+        </option>
+      </select>
+      <div>
+        <div
+          v-if="loading"
+          class="spinner-border text-secondary"
+          role="status">
+          <span class="visually-hidden">{{ i18n.loading }}</span>
         </div>
+        <PbFilterList
+          v-else
+          :config="config"
+          :i18n="i18n"
+          :scope="scope"
+          :has-more="hasMore"
+          :items="orderedItems"
+          :value="value"
+          @remove-filter="removeFilter"
+          @set-filter="setFilter"
+          @load-more="loadMore"
+          @load-children="loadChildren"></PbFilterList>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -239,51 +234,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../styles/variables';
-.filter-heading {
-  font-size: 0.9em;
-  cursor: pointer;
-}
-.expand-icon {
-  cursor: pointer;
-  font-size: 0.8em;
-}
-
-.expand-enter-active,
-.expand-leave-active {
-  transition: opacity 0.5s;
-}
-.expand-enter,
-.expand-leave-to {
-  opacity: 0;
-  .filter-list-container {
-    max-height: 0;
-  }
-}
-
-@include media-breakpoint-only(sm) {
-  .filter-heading {
-    cursor: default;
-    pointer-events: none;
-  }
-  .expand-icon {
-    display: none;
-  }
-  .filter-container {
-    display: block !important;
-  }
-}
-
-.filter-list-container {
-  transition: max-height 0.5s ease-in-out;
-  padding: 5px;
-  max-height: 200px;
-  overflow-y: auto;
-  position: relative;
-
-  @include media-breakpoint-up(md) {
-    max-height: 320px;
-  }
-}
 
 </style>
