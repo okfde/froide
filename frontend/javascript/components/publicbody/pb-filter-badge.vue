@@ -16,7 +16,7 @@ const emit = defineEmits(['removeClick'])
 </script>
 
 <template>
-  <div class="badge bg-secondary-subtle text-body d-flex justify-content-between fs-6 text-wrap">
+  <span class="badge bg-secondary-subtle text-body d-inline-flex justify-content-between fs-6 text-wrap">
     <dl class="text-start">
       <dt class="text-secondary mb-1"><small>{{ label }} =</small></dt>
       <dd>{{ value }}</dd>
@@ -27,7 +27,7 @@ const emit = defineEmits(['removeClick'])
       type="button"
       class="btn btn-close align-self-center"
       aria-label="Close"></button>
-  </div>
+  </span>
 </template>
 
 <style lang="scss" scoped>

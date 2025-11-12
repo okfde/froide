@@ -32,10 +32,8 @@
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
             >Ebene</button>
-          <div
-            class="dropdown-menu p-3"
-            >
-            <ul class="list-unstyled">
+          <div class="dropdown-menu p-3">
+            <ul class="list-unstyled mb-0">
               <li
                 v-for="(jurisdictions, regionKind) in jurisdictionsByRegionKind"
                 :key="regionKind"
@@ -162,7 +160,7 @@
             data-bs-toggle="dropdown"
             >Kampagne</button>
           <div class="dropdown-menu p-3">
-            <ul class="list-unstyled">
+            <ul class="list-unstyled mb-0">
               <li
                 v-for="campaign in campaigns"
                 :key="campaign.id"

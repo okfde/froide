@@ -2,9 +2,9 @@
   <div class="review">
     <div class="row mt-3 mb-3">
       <div class="col-auto">
-        <h3 class="display-4">
+        <h2>
           {{ i18n._('publicBodiesCount', { count: publicBodies.length }) }}
-        </h3>
+        </h2>
       </div>
     </div>
     <div class="row">
@@ -15,14 +15,16 @@
           &larr; {{ i18n.addMoreAuthorities }}
         </button>
       </div>
+      <!--
       <div class="col-auto ms-auto">
         <button
           type="button"
           class="btn btn-primary"
           :disabled="!stepCanContinue(scope)"
           @click="$emit('stepNext')"
-          >{{ i18n.continue || 'Weiter' }}<!-- TODO i18n --></button>
+          >{{ i18n.continue  }}</button>
       </div>
+      -->
     </div>
     <PbSummary
       :scope="scope"
