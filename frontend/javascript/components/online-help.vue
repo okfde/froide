@@ -40,13 +40,11 @@ const fetchContents = (url) => {
 }
 
 const show = (path) => {
-  console.log('### OnlineHelp show', { bsModal })
   fetchContents(path)
   bsModal.value.show()
 }
 
 onMounted(() => {
-  console.log('### OnlineHelp', { bsModal })
   if (props.path) fetchContents(props.path)
 })
 
