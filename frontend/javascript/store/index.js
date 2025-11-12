@@ -513,9 +513,10 @@ export default createStore({
       }
     },
     // also called directly from makerequest.js
-    purgeStorage({ state }, { scope, keepStep }) {
-      const purged = keepStep
-        ? { step: state.step }
+    purgeStorage({ state }, { scope, keepNonForm }) {
+      // don't purge values we can't get from (non-existing) form fields
+      const purged = keepNonForm
+        ? { step: state.step, confirm: state.user.confirm }
         : null
       try {
         // persistStorage.removeItem(persistKey)
@@ -541,13 +542,13 @@ export default createStore({
       for (const key in mutationMap) {
         const mutation = mutationMap[key]
         let value
-        if (preferStorage && storage && storage[key] !== undefined) {
-          value = storage[key]
-          console.log('got', key, 'from storage', value)
-        } else if (propMap && propMap[key]) {
+        if (propMap && propMap[key]) {
           // prop has precedence over formField, e.g. for publicBodies
           value = propMap[key]
           console.log('got', key, 'from prop')
+        } else if (preferStorage && storage && storage[key] !== undefined) {
+          value = storage[key]
+          console.log('got', key, 'from storage', value)
         } else if (formFields && formFields[key] !== undefined) {
           value = formFields[key].value
           if (value === undefined || value === null) value = formFields[key].initial
