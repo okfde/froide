@@ -658,6 +658,7 @@ export default {
 
     // PBs from prop, which is expanded in make_request context
     // (formFields would have IDs only)
+    // prop has precedence over storage
     this.initStoreValues({
       scope: this.pbScope,
       scoped: true, // also, PBs are scoped
@@ -715,6 +716,15 @@ export default {
       })
     }
 
+    // confirm is not a form field, always from storage
+    this.initStoreValues({
+      scope: this.pbScope,
+      preferStorage: true,
+      mutationMap: {
+        confirm: UPDATE_CONFIRM,
+      }
+    })
+
     // note that an empty address will be pre-filled for logged-in users in UserAddress.data
     this.initStoreValues({
       scope: this.pbScope,
@@ -741,7 +751,7 @@ export default {
   mounted() {
     document.forms.make_request.addEventListener('submit', () => {
       // invalidate storage, will load from form fields next time
-      this.purgeStorage({ scope: this.pbScope, keepStep: true })
+      this.purgeStorage({ scope: this.pbScope, keepNonForm: true })
     })
     // TODO pbly delete
     // if (this.hasPublicBodies) {
