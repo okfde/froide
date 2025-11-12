@@ -17,7 +17,7 @@
           @keydown.enter.prevent="triggerAutocomplete" />
         <button
           type="button"
-          class="btn btn-outline-primary search-public_bodies-submit"
+          class="btn btn-secondary search-public_bodies-submit"
           @click="triggerAutocomplete">
           <i class="fa fa-search" />
           {{ i18n.search }}
@@ -25,30 +25,18 @@
       </div>
 
       <div v-if="showFilters" class="row mt-3">
-        <!-- <div class="col-4 filter-column position-relative">
-          <pb-filter
-            :global-config="config"
-            :expanded="filterExpanded.jurisdiction"
-            :config="filterConfig.jurisdiction"
-            :i18n="i18n"
-            :scope="scope"
-            :value="filters.jurisdiction"
-            @update="updateJurisdictionFilter"
-            @setFilterExpand="setFilterExpand"></pb-filter>
-        </div> -->
         <div
           v-for="filterKey in filterOrder"
           :key="filterKey"
-          class="col-4 filter-column position-relative">
+          class="col-sm-4 filter-column position-relative">
           <PbFilter
             :global-config="config"
-            :expanded="filterExpanded[filterKey]"
             :config="filterConfig[filterKey]"
             :i18n="i18n"
             :scope="scope"
             :value="filters[filterKey]"
             @update="updateFilter"
-            @set-filter-expand="setFilterExpand"></PbFilter>
+            />
         </div>
       </div>
     </div>
@@ -61,7 +49,7 @@
       </p>
     </div>
     <div v-if="showBadges" class="row">
-      <div v-if="search" class="col-3">
+      <div v-if="search" class="col-sm-3 my-1 my-sm-0">
         <PbFilterBadge
           label="Freitext"
           :value="search"
@@ -69,7 +57,7 @@
           @remove-click="search = ''"
           />
       </div>
-      <div v-for="filterKey in activeFilters" :key="filterKey" class="col-4">
+      <div v-for="filterKey in activeFilters" :key="filterKey" class="col-sm-3 my-1 my-sm-0">
         <PbFilterSelected
           :config="filterConfig[filterKey]"
           @update="updateFilter"
@@ -186,9 +174,6 @@ export default {
         selectAllCheckbox: true
       },
       filters: this.getEmptyFilters(),
-      filterExpanded: {
-        // classification: true
-      },
       filterOrder: [
         // TODO: 'jurisdiction-and-regions'
         'jurisdiction',
@@ -224,7 +209,6 @@ export default {
         classification: { // = Behörden-Typen
           label: this.i18n.classificationPlural[1],
           key: 'classification',
-          expanded: this.filterExpanded.classification,
           initialFilters: { depth: 1 },
           multi: true,
           getItems: (q, filters) => searcher.listClassifications(q, filters),
@@ -240,7 +224,6 @@ export default {
         jurisdiction: {
           label: this.i18n.level, // this.i18n.jurisdictionPlural[1],
           key: 'jurisdiction',
-          expanded: this.filterExpanded.jurisdiction,
           multi: true,
           getItems: () => searcher.listJurisdictions(),
           // itemFilter: (item) => item.rank < 3,
@@ -255,7 +238,6 @@ export default {
         categories: { // = Themen
           label: this.i18n.topicPlural[1],
           key: 'categories',
-          expanded: this.filterExpanded.categories,
           initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
           hasSearch: true,
@@ -272,7 +254,6 @@ export default {
           label: this.i18n.location, // this.i18n.containingGeoregionsPlural[0],
           key: 'regions',
           multi: true,
-          expanded: this.filterExpanded.georegion,
           initialFilters: { kind: this.config.fixtures.georegion_kind[0][0] },
           getItems: (q, filters) => searcher.listGeoregions(q, filters),
           hasSearch: true,
@@ -322,19 +303,6 @@ export default {
         return false
       }
       return true
-    },
-    setFilterExpand(filter, expand) {
-      const expanded = {
-        [filter.key]: expand
-      }
-      if (expand) {
-        for (const key in this.filterExpanded) {
-          if (key !== filter.key) {
-            expanded[key] = false
-          }
-        }
-      }
-      this.filterExpanded = expanded
     },
     updateFilter(filter, value) {
       this.filters[filter.key] = value
