@@ -241,11 +241,9 @@ export default createStore({
     },
     [SET_STEP](state, step) {
       state.step = step
-      console.log('### pushstate', state.step)
       window.history.pushState({ step: state.step }, '', '#step-' + state.step)
     },
     [SET_STEP_NO_HISTORY](state, step) {
-      console.log('### setstep nohistory', step)
       state.step = step
     },
     [SET_STEP_SELECT_PUBLICBODY](state) {
@@ -523,10 +521,10 @@ export default createStore({
         // persistStorage.removeItem(persistKey)
         if (purged) {
           persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
-          console.log('### purged, keeping', persistKeyPrefix + scope, purged)
+          console.log('purged, keeping', persistKeyPrefix + scope, purged)
         } else {
           persistStorage.removeItem(persistKeyPrefix + scope)
-          console.log('### purged, removed', persistKeyPrefix + scope)
+          console.log('purged, removed', persistKeyPrefix + scope)
         }
       } catch (err) {
         console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
@@ -545,20 +543,20 @@ export default createStore({
         let value
         if (preferStorage && storage && storage[key] !== undefined) {
           value = storage[key]
-          console.log('### from storage', key, value)
+          console.log('got', key, 'from storage', value)
         } else if (propMap && propMap[key]) {
           // prop has precedence over formField, e.g. for publicBodies
           value = propMap[key]
-          console.log('### from prop', key, value)
+          console.log('got', key, 'from prop')
         } else if (formFields && formFields[key] !== undefined) {
           value = formFields[key].value
           if (value === undefined || value === null) value = formFields[key].initial
           if (formCoerce && formCoerce[key]) {
             value = formCoerce[key](value)
           }
-          console.log('### from form', key, value)
+          console.log('got', key, 'from form', value)
         } else {
-          console.log('### from nowhere', key)
+          console.log('could not get', key)
         }
         if (value === undefined) continue
         if (scoped) {
