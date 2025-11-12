@@ -29,8 +29,8 @@ const maxClickableStep = computed(() => props.keepVisitedClickable ? maxVisitedS
 
 const markerClasses = (stepIndex) => {
   if (stepIndex <= props.step) return 'text-white bg-primary'
-  if (stepIndex <= maxClickableStep.value) return 'text-primary bg-primary-subtle'
-  return 'text-primary bg-body'
+  if (stepIndex <= maxClickableStep.value) return 'text-body bg-primary-subtle'
+  return 'text-body bg-body'
 }
 
 // [0.0,1.0]
@@ -55,7 +55,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             :class="{
               'fw-bold': stepIndex <= step
             }"
-            class="step col d-flex flex-column align-items-center text-primary z-1"
+            class="step col d-flex flex-column align-items-center text-body z-1"
             >
             <div
               :class="`step-marker ${markerClasses(stepIndex)} d-block rounded-circle text-center border border-primary`">
