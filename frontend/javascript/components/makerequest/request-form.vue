@@ -13,8 +13,10 @@
     <div class="row">
       <div class="col-md-12">
 
-        <div class="mb-3">
-          Empfänger:<!-- TODO i18n -->
+        <div
+          v-if="!hidePublicbodyChooser"
+          class="mb-3"
+          >Empfänger:<!-- TODO i18n -->
           <div>
             <strong>{{ publicBodies.map(pb => pb.name).join(', ') }}</strong>
             <button
@@ -37,6 +39,7 @@
             v-if="
               editingDisabled && !(errors.subject && errors.subject.length > 0)
             ">
+            <!-- editingDisabled e.g. when ?hide_editing=1 -->
             <input type="hidden" name="subject" :value="subject" />
             <strong>{{ subject }}</strong>
             <button
