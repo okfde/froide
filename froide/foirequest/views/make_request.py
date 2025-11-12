@@ -148,6 +148,8 @@ class MakeRequestView(FormView):
             elif FoiRequest.objects.filter(user=self.request.user).count() > 50:
                 # TODO: instead update the preference?
                 skip_intro_howto = True
+        # TODO maybe not optimal...
+        min_year = FoiRequest.objects.order_by("created_at")[0].created_at.year
 
         ctx = {
             "settings": {
@@ -160,6 +162,7 @@ class MakeRequestView(FormView):
                 "skip_intro_howto": skip_intro_howto,
                 "show_skip_intro_howto_preference": show_skip_intro_howto_preference,
                 "skip_intro_howto_preference_key": make_request_intro_skip_howto_pref.key,
+                "min_year": min_year,
             },
             "url": {
                 "searchRequests": reverse("api:request-search"),
