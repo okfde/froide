@@ -660,7 +660,8 @@ export default {
 
     // PBs from prop, which is expanded in make_request context
     // (formFields would have IDs only)
-    // prop has precedence over storage
+    // prop has precedence over storage, so a reloaded /make-request/to/123/ URL
+    //   will always default back to PB 123
     this.initStoreValues({
       scope: this.pbScope,
       scoped: true, // also, PBs are scoped
