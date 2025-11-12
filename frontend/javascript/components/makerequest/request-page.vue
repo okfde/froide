@@ -36,8 +36,10 @@
               :href="'#step-' + stepBack"
               @click="setStep(stepBack)"
               >← <u>{{ i18n.back }}</u></a>
+            <!-- on STEP.WRITE_REQUEST, the bottom next button has a special disabled calculation
+              stepCanContinue is not in sync, which might be confusing -->
             <button
-              v-show="true"
+              v-if="![STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(step)"
               type="button"
               class="btn btn-primary"
               :disabled="!stepCanContinue(pbScope)"
