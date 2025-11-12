@@ -48,8 +48,8 @@
         {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
       </p>
     </div>
-    <div v-if="showBadges" class="row">
-      <div v-if="search" class="col-sm-3 my-1 my-sm-0">
+    <div v-if="showBadges && search" class="mb-3">
+      <div class="my-1 my-sm-0">
         <PbFilterBadge
           label="Freitext"
           :value="search"
@@ -57,7 +57,9 @@
           @remove-click="search = ''"
           />
       </div>
-      <div v-for="filterKey in activeFilters" :key="filterKey" class="col-sm-3 my-1 my-sm-0">
+    </div>
+    <div v-if="showBadges" class="row">
+      <div v-for="filterKey in activeFilters" :key="filterKey" class="col-sm-4 my-1 my-sm-0">
         <PbFilterSelected
           :config="filterConfig[filterKey]"
           @update="updateFilter"

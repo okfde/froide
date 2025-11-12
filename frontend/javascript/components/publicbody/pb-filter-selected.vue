@@ -6,6 +6,7 @@
       :label="config.label"
       :value="v.label"
       :i18n="i18n"
+      class="w-100"
       @remove-click="() => removeFilter(v)"
       />
   </div>
@@ -16,6 +17,7 @@
       :label="config.label"
       :value="group.badgeValue"
       :i18n="i18n"
+      class="w-100"
       @remove-click="() => removeFilter(group.values)"
       />
   </div>
