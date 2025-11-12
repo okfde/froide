@@ -305,9 +305,9 @@ import { UPDATE_SIMILAR_REQUEST_SEARCH } from '../../store/mutation_types'
 import PbFilterBadge from '../publicbody/pb-filter-badge.vue'
 
 const props = defineProps({
-  minYear: {
-    type: Number,
-    default: 2014 // TODO
+  config: {
+    type: Object,
+    required: true
   }
 })
 
@@ -370,8 +370,8 @@ const dateEnd = ref(initialState.dateEnd)
 
 // create ranges for the select-options
 const dateYearsStart = computed(() => Array.from(
-  { length: (new Date).getFullYear() - props.minYear },
-  (_, y) => y + props.minYear
+  { length: (new Date).getFullYear() - props.config.settings.min_year },
+  (_, y) => y + props.config.settings.min_year
 ))
 const dateYearsEnd = computed(() => dateStart.value
   ? dateYearsStart.value.filter((y) => y >= dateStart.value)
