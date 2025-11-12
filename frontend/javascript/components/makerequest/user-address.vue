@@ -19,7 +19,8 @@
           :class="{ 'is-invalid': (errors.address && !addressChanged ) || addressValid === false}"
           :placeholder="formFields.address.placeholder"
           :required="requiresPostalAddress"
-          @keyup="addressUpdated"
+          @change="addressUpdated(true)"
+          @keyup="addressUpdated()"
           />
         <p class="help-block">
           <span v-html="addressHelpText" />
@@ -87,6 +88,7 @@ export default {
   },
   data() {
     return {
+      validateLive: false,
       clearFormErrors: false,
       addressValidationErrors: []
     }
@@ -98,7 +100,9 @@ export default {
     addressRegex = new RegExp(this.config.settings.address_regex)
   },
   methods: {
-    addressUpdated() {
+    addressUpdated(enableValidateLive) {
+      if (!this.validateLive && !enableValidateLive) return
+      this.validateLive = true
       this.updateAddressChanged(true)
       this.validate()
     },
