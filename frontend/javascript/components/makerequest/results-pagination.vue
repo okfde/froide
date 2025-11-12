@@ -11,9 +11,12 @@ const { responseMeta } = defineProps({
 
 const model = defineModel({ type: Object })
 
-const show = computed(() => responseMeta.total_count > responseMeta.limit)
+const show = computed(() => responseMeta?.total_count > responseMeta?.limit)
 
 const pages = computed(() => {
+  if (!responseMeta) {
+    return [{ key: 'empty', label: '…' }]
+  }
   // build an array like (current page = 5)
   // ← 1 2 … 4 5 6 … 41 42 →
   // previous/next are not special buttons, since all navigate by offset
