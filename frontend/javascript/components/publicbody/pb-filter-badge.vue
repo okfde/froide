@@ -16,15 +16,16 @@ const emit = defineEmits(['removeClick'])
 </script>
 
 <template>
-  <div class="filter-badge">
-    <dl>
-      <dt><small>{{ label }} =</small></dt>
+  <div class="badge bg-secondary-subtle text-body d-flex justify-content-between fs-6 text-wrap">
+    <dl class="text-start">
+      <dt class="text-secondary mb-1"><small>{{ label }} =</small></dt>
       <dd>{{ value }}</dd>
     </dl>
+    <!-- TODO i18n -->
     <button
       @click="emit('removeClick')"
       type="button"
-      class="btn btn-close btn-close-white"
+      class="btn btn-close align-self-center"
       aria-label="Close"></button>
   </div>
 </template>
@@ -32,21 +33,11 @@ const emit = defineEmits(['removeClick'])
 <style lang="scss" scoped>
 @import '../../../styles/variables';
 
-.filter-badge {
-  background-color: $secondary;
-  color: #fff; // TODO $secondary-text ?
-  display: block;
-  border-radius: 4px; // TODO set a BS var
-  padding: 0.25rem 0.5rem;
-  margin: 0.5rem 0;
-  display: flex;
-  justify-content: space-between;
-
-  dl,
-  dt,
-  dd {
-    margin: 0;
-    font-weight: inherit;
-  }
+dl,
+dt,
+dd {
+  margin: 0;
+  font-weight: inherit;
 }
+
 </style>
