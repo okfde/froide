@@ -464,7 +464,6 @@ export default {
     userformFields() {
       return this.userForm.fields
     },
-    // TODO what is this
     conditionalProofForm() {
       if (this.proofForm && this.proofForm.fields.proof) {
         return this.proofForm
