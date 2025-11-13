@@ -636,6 +636,17 @@ export default {
 
     this.setFirstStep()
 
+    // the following initStoreValues intertwine several sources,
+    // where "onload values" can come from:
+    // - form: via formFields, e.g. after a POST, but also via the ?param=value preset "API"
+    // - props: <request-page :param="value">, e.g. publicbodies expanded by make_request
+    // - storage: sessionStorage "remembered" values (so they survive an account creation)
+    //   explicitly saved on step transition by writeToStorage.
+    // the precedence rules are complex, so we make several calls to initStoreValues,
+    // with different configurations
+    // (instead of supporting several Values, probably a singular initStoreValue
+    // would be more reaadable...)
+
     // init "regular form values" from storage if not POSTed
     // (not form-submitted, but refreshed, or returned from login)
     // in the case of "preset by GET", e.g. ?subject=foo
@@ -657,7 +668,6 @@ export default {
         subject: UPDATE_SUBJECT,
         body: UPDATE_BODY,
         full_text: UPDATE_FULL_TEXT, // TODO
-        // law_type: UPDATE_LAW_TYPE, // TODO
         public: UPDATE_REQUEST_PUBLIC,
       }
     })
@@ -678,17 +688,22 @@ export default {
       }
     })
 
-    // TODO I think this does nothing
-    // this.updateLawType(
-    //   this.formFields.law_type.value || this.formFields.law_type.initial
-    // )
+    // law_type only passed by query string, e.g. ?law_type=IFG, so never storage, always form
+    this.initStoreValues({
+      scope: this.pbScope,
+      preferStorage: false,
+      formFields: this.formFields,
+      mutationMap: {
+        law_type: UPDATE_LAW_TYPE
+      }
+    })
 
     this.cachePublicBodies(this.publicBodies)
     // "cache" laws for the PBs we just retrieved
     this.getLawsForPublicBodies(this.publicBodies)
 
-    // prop set = is authenticated
-    if (this.userInfo !== null) {
+    if (this.userInfo !== null) { // user is authenticated...
+      // authenticated user fields always set by prop, never form, never storage
       this.initStoreValues({
         scope: this.pbScope,
         preferStorage: false,
@@ -701,8 +716,9 @@ export default {
         }
       })
     } else {
-      // note that for logged-out users their "fields" are stored flatly, not in a .user object,
-      // and hence need individual, per-field mutations.
+      // for anonymous/logged-out users we use storage, or forms if POSTed.
+      // note that the "fields" here are stored flatly, not in a .user object,
+      // and hence we need individual, per-field mutations.
       // see writeToStorage, reduced, where they are flattened/plucked
       this.initStoreValues({
         scope: this.pbScope,
@@ -742,6 +758,7 @@ export default {
       }
     })
 
+    // search form config (jurisdiction/-kind, year range, campaign) is ephemeral, so always in storage only
     this.initStoreValues({
       scope: this.pbScope,
       preferStorage: true,
