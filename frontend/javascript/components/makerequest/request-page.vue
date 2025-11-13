@@ -118,7 +118,7 @@
               {{ publicBodies.map(pb => pb.name).join(', ') }}
             </p>
 
-            <div v-if="multiRequest && tmpMulti">
+            <div v-if="multiRequest">
               <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
               <PublicbodyMultiChooser
                 name="publicbody"
@@ -440,7 +440,6 @@ export default {
       pbScope: this.config.draftId
         ? 'make-request-draft-' + this.config.draftId
         : 'make-request',
-      tmpMulti: document.location.search.indexOf('multi') > -1,
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
       fullLetter: false,
