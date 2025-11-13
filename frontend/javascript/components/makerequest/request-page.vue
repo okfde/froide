@@ -634,8 +634,6 @@ export default {
       }
     })
 
-    this.setFirstStep()
-
     // the following initStoreValues intertwine several sources,
     // where "onload values" can come from:
     // - form: via formFields, e.g. after a POST, but also via the ?param=value preset "API"
@@ -767,6 +765,9 @@ export default {
       }
     })
 
+    // setFirstStep depends on state (publicbodies, subject...) so has to come after initStoreValues
+    this.setFirstStep()
+
     // this.body are state getter/setters
     // original* were non-data attributes used for shouldCheckRequest
     // this.originalBody = this.body
@@ -777,10 +778,6 @@ export default {
       // invalidate storage, will load from form fields next time
       this.purgeStorage({ scope: this.pbScope, keepNonForm: true })
     })
-    // TODO pbly delete
-    // if (this.hasPublicBodies) {
-    //   this.setStepRequest()
-    // }
     // TODO maybe unnecessary when remembered
     window.addEventListener('beforeunload', (e) => {
       if (this.submitting) {
@@ -807,17 +804,21 @@ export default {
   },
   methods: {
     setFirstStep() {
-      /* this step may at this point be "remembered" from Storage,
-         but will default to STEPS.INTRO */
-      // if "editing draft" skip forward 
-      if (this.requestForm.fields.draft.initial && this.step === STEPS.INTRO) {
-        console.log('request is draft, skipping intro etc.')
-        this.setStep(STEPS.WRITE_REQUEST)
-      } else if (this.hidePublicbodyChooser && this.step === STEPS.INTRO && !this.userInfo) {
-        this.setStep(STEPS.CREATE_ACCOUNT)
-      } else if (this.hasPublicBodies && this.step === STEPS.INTRO) {
-        // skip intros
-        this.setStep(STEPS.FIND_SIMILAR)
+      // this step may at this point be "remembered" from Storage,
+      // but will default to STEPS.INTRO
+      if (this.step === STEPS.INTRO) {
+        // if "editing draft" skip forward 
+        if (this.requestForm.fields.draft.initial) {
+          console.log('request is draft, skipping intro etc.')
+          this.setStep(STEPS.WRITE_REQUEST)
+        } else if (this.hidePublicbodyChooser && !this.userInfo) {
+          this.setStep(STEPS.CREATE_ACCOUNT)
+        } else if (this.hasPublicBodies) {
+          // skip directly to wrting
+          // might theoretically also apply to "if state.subject || state.body"
+          // but that combination seems unrealistic
+          this.setStep(STEPS.WRITE_REQUEST)
+        }
       } else if (this.step === STEPS.INTRO_HOWTO && this.skipIntroHowto) {
         // skip intro
         this.setStep(this.stepNext)
