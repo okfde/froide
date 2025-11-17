@@ -477,7 +477,7 @@ export default {
     steps() {
       return [
         STEPS.INTRO,
-        ...(this.skipIntroHowto ? [] : [STEPS.INTRO_HOWTO]),
+        // ...(this.skipIntroHowto ? [] : [STEPS.INTRO_HOWTO]),
         ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
         ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
         ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
@@ -548,6 +548,7 @@ export default {
       return 'actionList'
     },
     skipIntroHowto () {
+      // skip if preference set (prop via template) or slot (template/alias) is empty
       return this.config.settings.skip_intro_howto || !this['django-slots'].intro_howto?.textContent.trim()
     },
     subject: {
@@ -820,10 +821,9 @@ export default {
           // might theoretically also apply to "if state.subject || state.body"
           // but that combination seems unrealistic
           this.setStep(STEPS.WRITE_REQUEST)
+        } else if (this.skipIntroHowto) {
+          this.setStep(STEPS.SELECT_PUBLICBODY)
         }
-      } else if (this.step === STEPS.INTRO_HOWTO && this.skipIntroHowto) {
-        // skip intro
-        this.setStep(this.stepNext)
       } else if (this.step === STEPS.CREATE_ACCOUNT && this.userInfo) {
         // returning from login
         this.setStep(STEPS.WRITE_REQUEST)
