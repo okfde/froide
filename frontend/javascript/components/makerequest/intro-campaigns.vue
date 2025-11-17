@@ -5,23 +5,8 @@
       <div class="col-12 col-md-4 mb-4">
         <div class="card h-100">
           <div class="card-body d-flex flex-column">
-            <img
-              alt="TODO"
-              class="ratio ratio-4x3 placeholder mb-3"
-              />
-            <h2 class="fs-4 my-auto">{{ i18n.makeRequestYourself }}</h2>
-            <div>
-              <a
-                :href="config.url.helpRequestWhat"
-                @click.prevent="emit('onlinehelpClick', config.url.helpRequestWhat)"
-                >{{ i18n.whatCanIRequest }}</a><br/>
-              <a
-                :href="config.url.helpRequestWhatNot"
-                @click.prevent="emit('onlinehelpClick', config.url.helpRequestWhatNot)"
-                >{{ i18n.whatCanINotRequest }}</a><br/>
-            </div>
-            hey
-            <div class="mt-3">
+            <slot name="campaign_main"></slot>
+            <div class="mt-auto">
               <button
                 type="button" class="btn btn-primary w-100"
                 @click="emit('stepNext')"
@@ -30,7 +15,7 @@
           </div>
         </div>
       </div>
-      <slot></slot>
+      <slot name="campaigns"></slot>
     </div>
   </div>
 </template>
