@@ -18,10 +18,11 @@
           class="mb-3"
           >Empfänger:<!-- TODO i18n -->
           <div>
-            <strong>{{ publicBodies.map(pb => pb.name).join(', ') }}</strong>
+            <strong v-if="publicBodies.length === 0" class="text-danger">Keine gewählt!</strong>
+            <strong v-else>{{ publicBodies.map(pb => pb.name).join(', ') }}</strong>
             <button
               type="button" class="btn btn-secondary btn-sm align-baseline ms-2"
-              @click="$emit('stepBack')"
+              @click="setStepChangePublicbody"
               >Ändern<!-- TODO i18n --></button>
           </div>
         </div>
@@ -289,6 +290,8 @@ import {
   UPDATE_BODY_CHANGED,
   UPDATE_SUBJECT_VALIDITY,
   UPDATE_SUBJECT_CHANGED,
+  SET_STEP,
+  STEPS,
 } from '../../store/mutation_types'
 
 import ProofForm from '../proofupload/proof-form.vue'
@@ -599,7 +602,11 @@ export default {
         this.$emit('stepNext')
       }
     },
+    setStepChangePublicbody() {
+      this.setStep(STEPS.SELECT_PUBLICBODY)
+    },
     ...mapMutations({
+      setStep: SET_STEP,
       updateBodyValidity: UPDATE_BODY_VALIDITY,
       updateBodyChanged: UPDATE_BODY_CHANGED,
       updateSubjectValidity: UPDATE_SUBJECT_VALIDITY,

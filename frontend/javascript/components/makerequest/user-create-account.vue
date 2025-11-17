@@ -52,7 +52,6 @@
       <button
         type="button"
         class="btn btn-primary"
-        x-disabled="!stepCanContinue(pbScope)"
         @click="validateAllNextStep"
         >
         {{ i18n.stepNext }}
@@ -134,6 +133,7 @@ export default {
       'emailValid',
       'addressValid',
       'termsValid',
+      'stepCanContinue',
     ])
   },
   methods: {
