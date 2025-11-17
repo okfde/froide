@@ -68,14 +68,14 @@
     <div class="mb-3 row">
       <label
         for="id_user_email"
-        class="col-sm-3 col-form-label"
+        class="col-sm-4 col-md-3 col-form-label"
         :class="{
           'text-danger': errors.user_email,
           'field-required': !user
         }">
         {{ i18n.yourEmail }}
       </label>
-      <div class="col-sm-9">
+      <div class="col-sm-8 col-md-5">
         <input
           v-model="email"
           ref="email"
