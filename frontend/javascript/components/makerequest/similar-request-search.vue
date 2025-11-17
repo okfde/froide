@@ -264,7 +264,17 @@
           :value="selectedCampaign.name"
           />
       </div>
-   </div>
+    </div>
+
+    <!-- API errors -->
+
+    <div v-if="apiError" class="alert alert-danger alert-dismissible">
+      <strong>Fehler</strong><br/>
+      <!-- ugly, but better than nothing? -->
+      <small>{{ apiError }}</small>
+      <!-- TODO i18n -->
+      <button type="button" class="btn-close" aria-label="Close" @click="apiError = null"></button>
+    </div>
 
     <!-- Results with count + pagination -->
 
@@ -298,7 +308,7 @@
 import { computed, ref, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import debounce from 'lodash.debounce'
-import { jurisdictionList, campaignList, requestList } from '../../api';
+import { jurisdictionList, campaignList, requestSearchRetrieve } from '../../api';
 import SimilarRequestSearchResult from './similar-request-search-result.vue';
 import ResultsPagination from './results-pagination.vue'
 import { UPDATE_SIMILAR_REQUEST_SEARCH } from '../../store/mutation_types'
@@ -350,6 +360,7 @@ jurisdictionList().then((resp) => {
       label: regionKind,
       rank: items[0]?.rank,
       items,
+      slug: items[0]?.slug,
       name: items.length === 1
         ? items[0].name
         : items[0].region_kind_detail // TODO Land vs Bundesland vs Freistaat...
@@ -370,7 +381,7 @@ const dateEnd = ref(initialState.dateEnd)
 
 // create ranges for the select-options
 const dateYearsStart = computed(() => Array.from(
-  { length: (new Date).getFullYear() - props.config.settings.min_year },
+  { length: (new Date).getFullYear() - props.config.settings.min_year + 1 },
   (_, y) => y + props.config.settings.min_year
 ))
 const dateYearsEnd = computed(() => dateStart.value
@@ -391,23 +402,23 @@ const query = computed(() => ({
   ...textQuery.value
     ? { q: textQuery.value }
     : {},
-  // jurisdiction: [...selectedJurisdictions.value].map((j) => j.id).join(',')
   ...selectedJurisdictions.value.size > 0
-    ? { jurisdiction: [...selectedJurisdictions.value].map((j) => j.id) }
+    ? { jurisdiction: [...selectedJurisdictions.value].map((j) => j.slug) }
     : {},
   ...selectedJurisdiction.value
-    ? { jurisdiction: selectedJurisdiction.value.id }
+    ? { jurisdiction: selectedJurisdiction.value.slug }
     : {},
   ...jurisdictionRegionKind.value && !selectedJurisdiction.value
+      // FIXME
       // ? { jurisdiction_rank: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value].rank }
-      ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.map((j) => j.id) }
+      ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.map((j) => j.slug) }
       : {},
   ...jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1
-      ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items[0].id }
+      ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items[0].slug}
       : {},
-  ...selectedCampaign.value ? { campaign: selectedCampaign.value.id } : {},
-  ...dateStart.value ? { year__gte: dateStart.value } : {},
-  ...dateEnd.value ? { year__lte: dateEnd.value } : {},
+  ...selectedCampaign.value ? { campaign: selectedCampaign.value.slug } : {},
+  ...dateStart.value ? { last_after: dateStart.value + '-01-01' } : {},
+  ...dateEnd.value ? { first_before: dateEnd.value + '-12-31' } : {},
 }))
 // new URLSearchParams...toString
 
@@ -416,23 +427,22 @@ const resultsMeta = ref({})
 const results = ref([])
 
 const isSearching = ref(false)
+const apiError = ref(null)
 
 const search = () => {
   isSearching.value = true
-  // FIXME: there are two endpoints
-  //  requestSearchRetrieve - has "full text" search `?q=foo`
-  //  requestList - doesn't have it
-  // this is the main difference; there are other subtle limitations & breakages,
-  // main one: search-by-multiple-jurisdictions-OR resp. search-by-jurisdiction-rank
-  // and problems with search-by-year
-  requestList({
-    query: query.value
+  requestSearchRetrieve({
+    query: query.value,
+    throwOnError: true
   })
     .then((resp) => {
       showResults.value = true
       resultsCount.value = resp.data.meta.total_count
       resultsMeta.value = resp.data.meta
       results.value = resp.data.objects
+    })
+    .catch((err) => {
+      apiError.value = err
     })
     .finally(() => {
       isSearching.value = false
