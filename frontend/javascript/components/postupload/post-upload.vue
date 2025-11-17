@@ -20,7 +20,7 @@ import {
   requestPartialUpdate
 } from '../../api/index.ts'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
-import { vBsTooltip, vBsCollapsePersistent } from '../../lib/vue-bootstrap.ts'
+import { vBsTooltip } from '../../lib/vue-bootstrap.ts'
 import { useI18n } from '../../lib/i18n'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import { useAttachments } from '../docupload/lib/attachments'
@@ -1693,7 +1693,7 @@ addEventListener('hashchange', () => {
             <div class="row">
               <DjangoSlot
                 name="redaction_explanation"
-                v-bs-collapse-persistent
+                has-bs-directives
               />
             </div>
             <div class="mt-2 mb-3">

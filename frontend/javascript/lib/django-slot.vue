@@ -2,10 +2,12 @@
 import { onMounted, ref, inject } from 'vue'
 import type { DjangoSlots } from './vue-helper'
 import { registerBs } from './bootstrap-helpers'
+import { registerOnlinehelpLinks } from './onlinehelp'
 
 const props = defineProps<{
   name: string,
-  hasBsDirectives: boolean
+  hasBsDirectives: boolean,
+  hasOnlinehelpLinks: boolean,
 }>()
 
 const emit = defineEmits(['onlinehelpLinkClick'])
@@ -21,7 +23,10 @@ onMounted(() => {
   if (fragment !== undefined) {
     container.value?.replaceWith(fragment.cloneNode(true))
     if (props.hasBsDirectives && parent) {
-      registerBs(parent, emit)
+      registerBs(parent)
+    }
+    if (props.hasOnlinehelpLinks && parent) {
+      registerOnlinehelpLinks(parent, emit)
     }
   }
 })
