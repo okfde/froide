@@ -228,10 +228,9 @@
               @step-back="setStep(stepBack)"
               >
               <template #request-hints>
-                <!-- has-bs-directives for onlinehelp links -->
                 <DjangoSlot
                   name="request-hints"
-                  has-bs-directives
+                  has-onlinehelp-links
                   @onlinehelp-click="$refs.onlineHelp.show($event)"
                   />
               </template>
