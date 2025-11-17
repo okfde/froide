@@ -84,7 +84,11 @@
             class="mt-5"
             :config="config"
             >
-            <DjangoSlot name="intro_howto" />
+            <DjangoSlot
+              name="intro_howto"
+              has-onlinehelp-links
+              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              />
           </IntroHowto>
 
           <!-- STEP: FIND SIMILAR REQUESTS -->
