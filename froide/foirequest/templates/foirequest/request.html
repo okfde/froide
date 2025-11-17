@@ -6,7 +6,6 @@
 {% load block_helper %}
 {% load form_helper %}
 {% load frontendbuild %}
-{% load djangocms_alias_tags %}
 {% block title %}
     {% trans "Make a Freedom of Information request" %} - {{ SITE_NAME }}
 {% endblock %}
@@ -52,7 +51,7 @@
         :config="{{ js_config }}">
         <template data-slot="intro_howto">
             {# request-page will skip the INTRO_HOWTO step if this is empty #}
-            {% static_alias "request_intro_howto" %}
+            {% include "foirequest/snippets/request_intro_howto.html" %}
         </template>
         <template data-slot="campaigns">
             {% for campaign in campaigns %}
