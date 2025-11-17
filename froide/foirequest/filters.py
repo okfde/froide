@@ -242,15 +242,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     last = django_filters.DateFromToRangeFilter(
         method="filter_last", widget=DateRangeWidget, label=_("last message")
     )
-    # FIXME
-    year__gte = django_filters.NumberFilter(
-        field_name="created_at",
-        lookup_expr="year__gte",
-    )
-    year__lte = django_filters.NumberFilter(
-        field_name="created_at",
-        lookup_expr="year__lte",
-    )
+
     sort = django_filters.ChoiceFilter(
         choices=[
             ("-last", _("last message (newest first)")),
