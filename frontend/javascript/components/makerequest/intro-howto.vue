@@ -5,7 +5,7 @@
       @change="togglePreference"
       />
     <label for="skip_intro_howto" class="form-check-label">
-      Diese Informationen beim nächsten Mal überspringen (optional)<!-- TODO i18n -->
+      Diese Informationen beim nächsten Mal überspringen und direkt mit "Behörde wählen" beginnen (optional)<!-- TODO i18n -->
     </label>
   </div>
   <BsToast v-if="error" color="danger" @dismiss="error = null">
