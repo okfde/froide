@@ -39,7 +39,7 @@
             <!-- on STEP.WRITE_REQUEST, the bottom next button has a special disabled calculation
               stepCanContinue is not in sync, which might be confusing -->
             <button
-              v-if="![STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(step)"
+              v-if="showTopNext"
               type="button"
               class="btn btn-primary"
               :disabled="!stepCanContinue(pbScope)"
@@ -113,7 +113,7 @@
 
           <div v-if="step === STEPS.SELECT_PUBLICBODY">
 
-            <p>
+            <p v-if="publicBodies.length > 0">
               Aktuell ausgewählt:<!-- TODO i18n -->
               {{ publicBodies.map(pb => pb.name).join(', ') }}
             </p>
@@ -530,7 +530,7 @@ export default {
       return this.steps[this.stepIndex + 1]
     },
     showTopNext() {
-      return [STEPS.FIND_SIMILAR].includes(this.step)
+      return ![STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)
     },
     publicBodySearch() {
       if (this.publicBody) {
