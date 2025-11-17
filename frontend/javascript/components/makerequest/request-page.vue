@@ -680,7 +680,8 @@ export default {
         publicBodies: SET_PUBLICBODIES
       },
       propMap: {
-        publicBodies: this.publicbodies
+        // we want an empty array to fall through to storage
+        publicBodies: this.publicbodies?.length > 0 ? this.publicbodies : null
       }
     })
 
