@@ -28,6 +28,7 @@
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
+          <!-- TODO else show abort button -->
           <div
             v-if="stepBack"
             class="my-3 d-flex justify-content-between"
@@ -72,7 +73,20 @@
               @onlinehelp-click="$refs.onlineHelp.show($event)"
               @step-next="setStep(stepNext)"
               >
-              <DjangoSlot name="campaigns"></DjangoSlot>
+              <template #campaign_main>
+                <DjangoSlot
+                  name="campaign_main"
+                  has-onlinehelp-links
+                  @onlinehelp-click="$refs.onlineHelp.show($event)"
+                  />
+              </template>
+              <template #campaigns>
+                <DjangoSlot
+                  name="campaigns"
+                  has-onlinehelp-links
+                  @onlinehelp-click="$refs.onlineHelp.show($event)"
+                  />
+              </template>
             </IntroCampaigns>
           </div>
 
@@ -93,7 +107,7 @@
 
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
-          <div v-show="step === STEPS.FIND_SIMILAR">
+          <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3">
 
             <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
 
@@ -476,7 +490,7 @@ export default {
     },
     steps() {
       return [
-        STEPS.INTRO,
+        ...(this.hasCampaigns ? [STEPS.INTRO] : []),
         // ...(this.skipIntroHowto ? [] : [STEPS.INTRO_HOWTO]),
         ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
         ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
@@ -547,7 +561,10 @@ export default {
       }
       return 'actionList'
     },
-    skipIntroHowto () {
+    hasCampaigns() {
+      return this['django-slots'].campaigns.textContent.trim() !== ''
+    },
+    skipIntroHowto() {
       // skip if preference set (prop via template) or slot (template/alias) is empty
       return this.config.settings.skip_intro_howto || !this['django-slots'].intro_howto?.textContent.trim()
     },
@@ -809,7 +826,7 @@ export default {
     setFirstStep() {
       // this step may at this point be "remembered" from Storage,
       // but will default to STEPS.INTRO
-      if (this.step === STEPS.INTRO) {
+      if (this.step === this.steps[0]) { //STEPS.INTRO) {
         // if "editing draft" skip forward 
         if (this.requestForm.fields.draft.initial) {
           console.log('request is draft, skipping intro etc.')
