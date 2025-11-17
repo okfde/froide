@@ -31,9 +31,7 @@
 
     <template v-if="config.settings.user_can_hide_web">
       <h3 class="fs-6">Privatsphäre</h3><!-- TODO i18n -->
-      <!-- TODO test online help -->
       <UserPublic
-        x-v-if="!user.id"
         :user-form="userForm"
         :config="config"
         v-model:initial-private="userPrivate"
@@ -48,7 +46,6 @@
     </template>
 
     <div class="my-4">
-      <!-- TODO: validation of vorname/name -->
       <button
         type="button"
         class="btn btn-primary"

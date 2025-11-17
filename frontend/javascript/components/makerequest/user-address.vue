@@ -2,14 +2,14 @@
   <div class="row">
     <label
       for="id_address"
-      class="col-sm-3 col-form-label"
+      class="col-sm-4 col-md-3 col-form-label"
       :class="{
         'text-danger': (errors.address && !addressChanged) || addressValid === false,
         'field-required': requiresPostalAddress
       }">
       {{ i18n.yourAddress }}
     </label>
-    <div class="col-sm-9">
+    <div class="col-sm-8 col-md-5">
       <div>
         <textarea
           v-model="address"
