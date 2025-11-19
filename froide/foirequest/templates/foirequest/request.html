@@ -56,15 +56,18 @@
         <template data-slot="campaign_main">
             {% include "foirequest/snippets/request_campaign_main.html" %}
         </template>
+        <template data-slot="campaign_other">
+            {% include "foirequest/snippets/request_campaign_other.html" %}
+        </template>
         <template data-slot="campaigns">
             {% for campaign in campaigns %}
                 <div class="col col-md-4 mb-4">
                     <div class="card h-100">
                         <div class="card-body d-flex flex-column">
                             {% if campaign.logo %}
-                                <div class="ratio ratio-4x3 mb-3">
-                                    <img src="{{ campaign.logo.url }}" alt="" class="object-fit-contain" />
-                                </div>
+                                <img src="{{ campaign.logo.url }}"
+                                     alt=""
+                                     class="campaign-logo d-block object-fit-contain w-100 mb-3" />
                             {% endif %}
                             <h2 class="fs-4">
                                 Mitmachen bei {# TODO i18n #}

@@ -88,6 +88,11 @@
                   />
               </template>
             </IntroCampaigns>
+            <DjangoSlot
+              name="campaign_other"
+              has-onlinehelp-links
+              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              />
           </div>
 
           <!-- STEP: INTRO / HOWTO -->
@@ -961,5 +966,9 @@ legend {
 .show-full-letter {
   color: #999;
   text-decoration: underline;
+}
+
+:deep(.campaign-logo) {
+  max-height: 6em;
 }
 </style>
