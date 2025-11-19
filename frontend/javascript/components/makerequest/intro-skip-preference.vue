@@ -1,11 +1,11 @@
 <template>
-  <slot></slot>
-  <div class="form-check" v-if="config.settings.show_skip_intro_howto_preference">
+  <!-- todo move preference & display it on ähnliche anfragen, too -->
+  <div class="form-check my-3" v-if="config.settings.show_skip_intro_howto_preference">
     <input type="checkbox" id="skip_intro_howto" class="form-check-input" v-model="preferenceSkipIntroHowto"
       @change="togglePreference"
       />
     <label for="skip_intro_howto" class="form-check-label">
-      Diese Informationen beim nächsten Mal überspringen und direkt mit "Behörde wählen" beginnen (optional)<!-- TODO i18n -->
+      Diesen Teil beim nächsten Mal überspringen und direkt mit "Behörde wählen" beginnen (optional)<!-- TODO i18n -->
     </label>
   </div>
   <BsToast v-if="error" color="danger" @dismiss="error = null">
@@ -32,7 +32,7 @@ const props = defineProps({
   }
 })
 
-const preferenceSkipIntroHowto = ref(props.skipIntroHowto)
+const preferenceSkipIntroHowto = ref(props.config.settings.skip_intro_howto)
 const error = ref()
 
 const togglePreference = () => {
