@@ -688,10 +688,7 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        if self.request.method == "POST" or publicbodies:  # or is_multi:
-            campaigns = None
-        else:
-            campaigns = Campaign.objects.get_active()
+        campaigns = Campaign.objects.get_active()
 
         kwargs.update(
             {
