@@ -12,7 +12,7 @@
       {{ i18n.step }}
       <!-- avoid 0 -->
       <strong>{{ this.stepperStepCurrent + 1 }}/{{ this.stepperSteps.length }}</strong>:
-      {{ this.stepperSteps[this.stepperStepCurrent].label }}
+      {{ this.stepperSteps[this.stepperStepCurrent]?.label }}
     </SimpleStepper>
 
     <div class="container"><div class="row"><div class="col x-col-lg-9">
@@ -70,28 +70,29 @@
             <p>{{ i18n.whatDoYouWantToDo }}</p>
             <IntroCampaigns
               :config="config"
-              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              @onlinehelp-click="onlineHelpShow($event)"
               @step-next="setStep(stepNext)"
               >
               <template #campaign_main>
                 <DjangoSlot
                   name="campaign_main"
                   has-onlinehelp-links
-                  @onlinehelp-click="$refs.onlineHelp.show($event)"
+                  @onlinehelp-click="onlineHelpShow($event)"
                   />
               </template>
               <template #campaigns>
                 <DjangoSlot
                   name="campaigns"
                   has-onlinehelp-links
-                  @onlinehelp-click="$refs.onlineHelp.show($event)"
+                  @onlinehelp-click="onlineHelpShow($event)"
                   />
               </template>
             </IntroCampaigns>
+            <!-- todo move the refs. part to method -->
             <DjangoSlot
               name="campaign_other"
               has-onlinehelp-links
-              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              @onlinehelp-click="onlineHelpShow($event)"
               />
           </div>
 
@@ -104,7 +105,7 @@
             <DjangoSlot
               name="intro_howto"
               has-onlinehelp-links
-              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              @onlinehelp-click="onlineHelpShow($event)"
               />
             <div>
               <button type="button" class="btn btn-primary" @click="setStep(stepNext)">
@@ -117,13 +118,8 @@
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
           <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3">
-
             <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
-
-            <SimilarRequestSearch
-              :config="config"
-              />
-
+            <SimilarRequestSearch :config="config" />
             <div>
               <button
                 type="button"
@@ -218,7 +214,7 @@
               :user-form="userForm"
               :default-law="defaultLaw"
               @step-next="setStep(stepNext)"
-              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              @onlinehelp-click="onlineHelpShow($event)"
               >
               <template #loginlink>
                 <DjangoSlot name="loginlink"></DjangoSlot>
@@ -258,7 +254,7 @@
                 <DjangoSlot
                   name="request-hints"
                   has-onlinehelp-links
-                  @onlinehelp-click="$refs.onlineHelp.show($event)"
+                  @onlinehelp-click="onlineHelpShow($event)"
                   />
               </template>
               <template #request-legend-title>
@@ -318,9 +314,12 @@
               :hide-publicbody-chooser="hidePublicbodyChooser"
               :show-draft="showDraft"
               @submit="submitting = true"
-              @onlinehelp-click="$refs.onlineHelp.show($event)"
+              @onlinehelp-click="onlineHelpShow($event)"
               />
           </div>
+
+          <!-- No STEP: OUTRO here, because it is handled by the form success page -->
+
         </div>
       </div>
     </div></div></div> <!-- /.container -->
@@ -372,6 +371,7 @@ import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 import UserCreateAccount from './user-create-account.vue'
 import IntroCampaigns from './intro-campaigns.vue'
+import IntroSkipPreference from './intro-skip-preference.vue'
 
 export default {
   name: 'RequestPage',
@@ -865,6 +865,9 @@ export default {
     },
     stepperClick(stepperIndex) {
       this.setStep(this.stepperSteps[stepperIndex].stepId)
+    },
+    onlineHelpShow(url) {
+      this.$refs.onlineHelp.show(url)
     },
     ...mapMutations({
       setStep: SET_STEP,

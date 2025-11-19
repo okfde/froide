@@ -1,6 +1,8 @@
 <template>
   <!-- TODO i18n -->
   <div class="my-4">
+    <!-- TODO empty publicbody causes a nondescript form error (in messages), but does not show up as form error,
+      and does not show up as invalid here, either -->
     <!-- TODO i18n Behörde -->
     <ReviewRequestLine
       v-if="!hidePublicbodyChooser"
@@ -184,7 +186,7 @@
       <button
         id="send-request-button"
         type="submit"
-        class="btn btn-primary me-2"
+        class="btn btn-primary me-2 mb-3"
         :disabled="needCorrection"
         @click="$emit('submit')">
         <i class="fa fa-send" aria-hidden="true" />
@@ -193,7 +195,7 @@
       <button
         v-if="user.id && showDraft"
         type="submit"
-        class="btn btn-secondary"
+        class="btn btn-secondary mb-3"
         name="save_draft"
         value="true"
         :disabled="needCorrection"
