@@ -97,18 +97,22 @@
 
           <!-- STEP: INTRO / HOWTO -->
 
-          <!-- TODO mt-5 might have no effect here -->
-          <IntroHowto
+          <div
             v-if="step === STEPS.INTRO_HOWTO"
             class="mt-5"
-            :config="config"
             >
             <DjangoSlot
               name="intro_howto"
               has-onlinehelp-links
               @onlinehelp-click="$refs.onlineHelp.show($event)"
               />
-          </IntroHowto>
+            <div>
+              <button type="button" class="btn btn-primary" @click="setStep(stepNext)">
+                {{ i18n.stepNext }}
+              </button>
+            </div>
+            <IntroSkipPreference :config="config" />
+          </div>
 
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
@@ -129,7 +133,7 @@
                 {{ i18n.stepNext }}
               </button>
             </div>
-
+            <IntroSkipPreference :config="config" />
           </div>
 
           <!-- STEP: SELECT PUBLIC BODY -->
@@ -367,13 +371,12 @@ import {
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 import UserCreateAccount from './user-create-account.vue'
-import IntroHowto from './intro-howto.vue'
 import IntroCampaigns from './intro-campaigns.vue'
 
 export default {
   name: 'RequestPage',
   components: {
-    IntroHowto,
+    IntroSkipPreference,
     IntroCampaigns,
     PublicbodyChooser,
     PublicbodyBetaChooser,
@@ -494,10 +497,13 @@ export default {
       }
     },
     steps() {
+      // TODO needs discussion:
+      // hide vs. jump over INTRO+SIMILAR when hidePbChooser et al are set
       return [
-        ...(this.hasCampaigns ? [STEPS.INTRO] : []),
-        // ...(this.skipIntroHowto ? [] : [STEPS.INTRO_HOWTO]),
-        ...(this.showSimilar ? [STEPS.FIND_SIMILAR] : []),
+        ...(this.hasCampaigns && !this.hidePublicbodyChooser ? [STEPS.INTRO] : []),
+        // assume we don't need a generic intro for API-specified usage
+        ...(this.hidePublicbodyChooser || !this.hasIntroHowtoContent ? [] : [STEPS.INTRO_HOWTO]),
+        ...(this.showSimilar && !this.hidePublicbodyChooser ? [STEPS.FIND_SIMILAR] : []),
         ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
         ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
         ...(this.userInfo ? [] : [STEPS.CREATE_ACCOUNT]),
@@ -569,9 +575,11 @@ export default {
     hasCampaigns() {
       return this['django-slots'].campaigns.textContent.trim() !== ''
     },
-    skipIntroHowto() {
-      // skip if preference set (prop via template) or slot (template/alias) is empty
-      return this.config.settings.skip_intro_howto || !this['django-slots'].intro_howto?.textContent.trim()
+    skipIntroHowtoPreference() {
+      return this.config.settings.skip_intro_howto
+    },
+    hasIntroHowtoContent() {
+      return this['django-slots'].intro_howto?.textContent.trim() !== ''
     },
     subject: {
       get() {
@@ -843,7 +851,7 @@ export default {
           // might theoretically also apply to "if state.subject || state.body"
           // but that combination seems unrealistic
           this.setStep(STEPS.WRITE_REQUEST)
-        } else if (this.skipIntroHowto) {
+        } else if (this.skipIntroHowtoPreference) {
           this.setStep(STEPS.SELECT_PUBLICBODY)
         }
       } else if (this.step === STEPS.CREATE_ACCOUNT && this.userInfo) {
