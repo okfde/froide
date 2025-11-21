@@ -229,7 +229,7 @@ def find_bounce_status(headers, body=None):
             return DsnStatus(*[int(x) for x in match.group(1).split(".")])
 
     if body is not None:
-        bounce_matches = len(BOUNCE_TEXT.findall(body))
+        bounce_matches = len(set(BOUNCE_TEXT.findall(body)))
         if bounce_matches >= BOUNCE_TEXT_THRESHOLD:
             # Declare a DSN status of 5.5.0
             return DsnStatus(5, 5, 0)
