@@ -12,7 +12,8 @@
     <label
       for="id_confirm"
       class="form-check-label field-required"
-      >Ich versichere, dass ich <strong>keine persönlichen Informationen über mich selbst anfrage.</strong><!-- TODO i18n -->
+      >
+      <slot />
     </label>
   </div>
 </template>
@@ -50,3 +51,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+/* hide required indicator (a red asterisk) for labels that contain block markup */
+
+label:has(p)::after,
+label:has(div)::after,
+label:has(ul)::after {
+  display: none;
+}
+
+</style>

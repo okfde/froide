@@ -251,6 +251,9 @@
               <template #request-legend-title>
                 <DjangoSlot name="request-legend-title" />
               </template>
+              <template #request-user-confirm>
+                <DjangoSlot name="request-user-confirm" />
+              </template>
             </RequestForm>
             <SimilarRequests
               v-if="showSimilar"
