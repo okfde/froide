@@ -27,8 +27,9 @@
       <p class="help-block" v-html="userformFields.private.help_text" />
       <p>
         <a
-          :href="config.url.helpRequestPrivacy" 
-          @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPrivacy)"
+          v-if="config.url.helpRequestPrivacy"
+          :href="config.url.helpRequestPrivacy"
+          target="_blank"
           >Weitere Infos zur Privatsphäre auf dieser Website</a><!-- TODO i18n -->
       </p>
     </div>

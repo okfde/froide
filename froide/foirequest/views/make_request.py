@@ -179,8 +179,6 @@ class MakeRequestView(FormView):
                     "foirequest-make_request", kwargs={"publicbody_ids": "0"}
                 ),
                 "makeRequest": reverse("foirequest-make_request"),
-                "helpRequestWhat": get_content_url("help_request_what"),
-                "helpRequestWhatNot": get_content_url("help_request_what_not"),
                 "helpRequestPublic": get_content_url("help_request_public"),
                 "helpRequestPrivacy": get_content_url("help_request_privacy"),
             },

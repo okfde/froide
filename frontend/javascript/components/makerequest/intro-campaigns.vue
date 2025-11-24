@@ -33,6 +33,6 @@ defineProps({
   }
 })
 
-const emit = defineEmits('onlinehelpClick', 'stepNext')
+const emit = defineEmits('stepNext')
 
 </script>
