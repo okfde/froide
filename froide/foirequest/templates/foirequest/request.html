@@ -110,6 +110,9 @@
         <template data-slot="request-hints">
             {% include "foirequest/snippets/request_hints.html" %}
         </template>
+        <template data-slot="request-user-confirm">
+            {% include "foirequest/snippets/request_user_confirm.html" %}
+        </template>
         <template data-slot="loginlink">
             <a href="{% url 'account-login' %}?next={{ request.get_full_path|urlencode }}">{% trans "Zum Login" %}</a>
         </template>
