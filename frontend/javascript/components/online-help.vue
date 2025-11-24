@@ -39,9 +39,15 @@ const fetchContents = (url) => {
     })
 }
 
-const show = (path) => {
-  fetchContents(path)
-  bsModal.value.show()
+const show = (pathOrContent) => {
+  if (typeof pathOrContent === 'string') {
+    fetchContents(pathOrContent)
+    bsModal.value.show()
+  } else {
+    const { content } = pathOrContent
+    contents.value = content
+    bsModal.value.show()
+  }
 }
 
 onMounted(() => {

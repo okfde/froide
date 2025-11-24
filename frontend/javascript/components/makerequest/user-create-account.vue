@@ -35,7 +35,6 @@
         :user-form="userForm"
         :config="config"
         v-model:initial-private="userPrivate"
-        @onlinehelp-click="$emit('onlinehelpClick', $event)"
         />
     </template>
 

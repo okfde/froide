@@ -19,6 +19,7 @@
 {% endblock messages %}
 {% block body %}
     {% block before_form %}{% endblock %}
+    <!-- yes here-->
     <form method="post"
           name="make_request"
           action="{% url 'foirequest-make_request' %}#step-8"
@@ -107,36 +108,29 @@
             <h2>{% blocktrans %}Write the request{% endblocktrans %}</h2>
         </template>
         <template data-slot="request-hints">
-            <div class="request-hints">
-                <h6>{% blocktrans %}Important Notes:{% endblocktrans %}</h6>
-                <ul class="list-compact">
-                    <li>
-                        {# TODO #}
-                        <a href="#foo" data-onlinehelp-href="/foo/">test link</a> to online help
-                    </li>
-                    <li>
-                        {% blocktrans %}Write your request in <strong>simple, precise language</strong>.{% endblocktrans %}
-                    </li>
-                    <li>
-                        {% blocktrans %}Ask for <strong>specific</strong> documents or information.{% endblocktrans %}
-                    </li>
-                    <li>
-                        {% blocktrans %}Keep it <strong>focused and concise</strong>.{% endblocktrans %}
-                    </li>
-                    <li>
-                        {% blocktrans %}This site is <strong>public</strong>. Everything you type and any response will be published.{% endblocktrans %}
-                    </li>
-                    <li>
-                        {% blocktrans %}Do <strong>not include</strong> personal information in your request.{% endblocktrans %}
-                    </li>
-                    <li>
-                        {% blocktrans %}Do <strong>not ask</strong> for personal information.{% endblocktrans %}
-                    </li>
-                </ul>
-            </div>
+            {% include "foirequest/snippets/request_hints.html" %}
         </template>
         <template data-slot="loginlink">
             <a href="{% url 'account-login' %}?next={{ request.get_full_path|urlencode }}">{% trans "Zum Login" %}</a>
+        </template>
+        <template data-slot="request-public-preamble">
+            {% blocktrans %}
+            <p>Ihre Anfrage ist für alle auf dieser Website sichtbar.
+              Denn Sie tragen mit Ihrer Anfrage zu einem öffentlichen Archiv amtlicher Informationen bei und sorgen so mit einer wachsenden Community für Transparenz in Politik und Verwaltung.</p>
+            <p>Auf Wunsch können Sie Ihre Anfrage aber erst später öffentlich machen, z.B. nach Veröffentlichung Ihrer investigativen Recherche.</p>
+            {% endblocktrans %}
+        </template>
+        <template data-slot="request-public-postamble">
+            {% if request.user.is_authenticated %}
+                {% url 'account-settings' as profile_url %}
+                {% blocktrans with profilelink=profile_url %}
+                    Ob Ihr Name im Klartext erscheinen sollen, können Sie <a target="_blank" href="{{ profile_url }}">in ihrem Profil</a> anpassen.
+                {% endblocktrans %}
+            {% else %}
+                {% blocktrans %}
+                    Ihre Entscheidung hier hat keinen Einfluss darauf ob ihr Name im Klartext erscheinen soll (wie zuvor festgelegt).
+                {% endblocktrans %}
+            {% endif %}
         </template>
         </request-page>
     </form>

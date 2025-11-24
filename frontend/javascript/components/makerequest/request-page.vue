@@ -70,22 +70,13 @@
             <p>{{ i18n.whatDoYouWantToDo }}</p>
             <IntroCampaigns
               :config="config"
-              @onlinehelp-click="onlineHelpShow($event)"
               @step-next="setStep(stepNext)"
               >
               <template #campaign_main>
-                <DjangoSlot
-                  name="campaign_main"
-                  has-onlinehelp-links
-                  @onlinehelp-click="onlineHelpShow($event)"
-                  />
+                <DjangoSlot name="campaign_main" />
               </template>
               <template #campaigns>
-                <DjangoSlot
-                  name="campaigns"
-                  has-onlinehelp-links
-                  @onlinehelp-click="onlineHelpShow($event)"
-                  />
+                <DjangoSlot name="campaigns" />
               </template>
             </IntroCampaigns>
             <!-- todo move the refs. part to method -->
@@ -273,15 +264,13 @@
           <div v-show="step == STEPS.REQUEST_PUBLIC">
             <h2>Sichtbarkeit der Anfrage</h2><!-- TODO i18n -->
             <!-- TODO i18n -->
-            <p>Ihre Anfrage ist für alle auf dieser Website sichtbar.
-              Denn Sie tragen mit Ihrer Anfrage zu einem öffentlichen Archiv amtlicher Informationen bei und sorgen so mit einer wachsenden Community für Transparenz in Politik und Verwaltung.</p>
-            <p>Auf Wunsch können Sie Ihre Anfrage aber erst später öffentlich machen, z.B. nach Veröffentlichung Ihrer investigativen Recherche.</p>
+            <DjangoSlot name="request-public-preamble" />
             <RequestPublic
               :form="requestForm"
               :hide-public="hidePublic"
               v-model:initial-public="requestPublic"
               />
-            <p>Gut zu wissen: Ob Ihr Name im Klartext erscheinen soll, können Sie im nächsten Schritt auswählen –das ist unabhängig von Ihrer Entscheidung hier.</p>
+            <DjangoSlot name="request-public-postamble" />
             <div class="my-4">
               <button
                 type="button"
@@ -574,7 +563,7 @@ export default {
       return 'actionList'
     },
     hasCampaigns() {
-      return this['django-slots'].campaigns.textContent.trim() !== ''
+      return this['django-slots'].campaigns?.textContent.trim() !== ''
     },
     skipIntroHowtoPreference() {
       return this.config.settings.skip_intro_howto
@@ -868,8 +857,8 @@ export default {
     stepperClick(stepperIndex) {
       this.setStep(this.stepperSteps[stepperIndex].stepId)
     },
-    onlineHelpShow(url) {
-      this.$refs.onlineHelp.show(url)
+    onlineHelpShow(urlOrContent) {
+      this.$refs.onlineHelp.show(urlOrContent)
     },
     ...mapMutations({
       setStep: SET_STEP,
