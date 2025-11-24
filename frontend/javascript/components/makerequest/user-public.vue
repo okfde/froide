@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="config.settings.user_can_hide_web && !hasUser"
     class="row mt-2">
     <div class="col-md-8">
       <p>Ihr Name wird als Teil Ihrer Anfrage an die Behörde gesendet. Falls Sie wünschen, dass Ihr Name nicht auf der Website veröffentlicht wrid, können Sie – nach außen hin – anonym bleiben. Ihr Name wrid dann automatisch geschwärzt.</p><!-- TODO i18n -->

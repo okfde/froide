@@ -154,6 +154,7 @@ class MakeRequestView(FormView):
         ctx = {
             "settings": {
                 "user_can_hide_web": settings.FROIDE_CONFIG.get("user_can_hide_web"),
+                "user_can_claim_vip": settings.FROIDE_CONFIG.get("user_can_claim_vip"),
                 "user_can_create_batch": self.can_create_batch(),
                 "non_meaningful_subject_regex": settings.FROIDE_CONFIG.get(
                     "non_meaningful_subject_regex", []
@@ -610,6 +611,12 @@ class MakeRequestView(FormView):
 
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
+
+        # FIXME does this make sense?
+        # user just created
+        if not user.is_authenticated and foi_object.user:
+            if data["claims_vip"]:
+                foi_object.user.tags.add("claims:vip")
 
         return self.make_redirect(
             request_form, foi_object, email=data.get("user_email")

@@ -32,6 +32,7 @@ from .services import AccountService, get_user_for_email
 from .widgets import ConfirmationWidget, PinInputWidget
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
+USER_CAN_CLAIM_VIP = settings.FROIDE_CONFIG.get("user_can_claim_vip", False)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
 
 
@@ -133,6 +134,22 @@ class NewUserBaseForm(AddressBaseForm):
             }
         ),
     )
+
+    if USER_CAN_CLAIM_VIP:
+        claims_vip = forms.TypedChoiceField(
+            required=False,
+            initial=False,
+            widget=BootstrapRadioSelect,
+            label=_("For journalists"),
+            help_text=_(
+                "You work in journalism and would like to use this platform for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
+            ),
+            choices=[
+                (False, _("No, I am not a journalist")),
+                (True, _("Yes, I am a journalist")),
+            ],
+            coerce=lambda x: x and (x.lower() != "false"),
+        )
 
     ALLOW_BLOCKED_ADDRESS = True
 
