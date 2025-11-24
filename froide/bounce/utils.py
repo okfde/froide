@@ -17,7 +17,6 @@ from django.core.mail import mail_managers
 from django.core.mail.message import sanitize_address
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from django.core.validators import validate_email
-from django.utils import timezone
 from django.utils.crypto import salted_hmac
 
 from froide.helper.email_parsing import (
@@ -26,8 +25,7 @@ from froide.helper.email_parsing import (
     parse_header_field,
 )
 from froide.helper.email_utils import (
-    BounceResult,
-    classify_bounce_status,
+    BounceType,
     find_status_from_diagnostic,
     get_mail_client,
     get_unread_mails,
@@ -261,7 +259,7 @@ def update_bounce(email, recipient):
         )
 
 
-def get_bounce_stats(bounces, bounce_type="hard", start_date=None):
+def get_bounce_stats(bounces, bounce_type=BounceType.HARD, start_date=None):
     filtered_bounces = [
         datetime.datetime.strptime(b["timestamp"][:19], "%Y-%m-%dT%H:%M:%S")
         for b in bounces
@@ -287,12 +285,12 @@ def check_deactivation_condition(bounce):
     """
 
     if check_bounce_status(
-        bounce.bounces, "hard", HARD_BOUNCE_PERIOD, HARD_BOUNCE_COUNT
+        bounce.bounces, BounceType.HARD, HARD_BOUNCE_PERIOD, HARD_BOUNCE_COUNT
     ):
         return True
 
     if check_bounce_status(
-        bounce.bounces, "soft", SOFT_BOUNCE_PERIOD, SOFT_BOUNCE_COUNT
+        bounce.bounces, BounceType.SOFT, SOFT_BOUNCE_PERIOD, SOFT_BOUNCE_COUNT
     ):
         return True
 
@@ -315,18 +313,11 @@ def handle_smtp_error(exc):
         code, message = info
         message = message.decode("utf-8")
         status = find_status_from_diagnostic(message)
-        if status == (5, 7, 1) or "Sender address rejected" in message:
+        if status.is_sender_rejected() or "Sender address rejected" in message:
             # Sender address rejected, raise Error
             raise exc
-        if status == (5, 1, 1) or "Recipient address rejected" in message:
-            bounce_type = classify_bounce_status(status)
-            bounce_info = BounceResult(
-                status=status,
-                bounce_type=bounce_type,
-                is_bounce=True,
-                diagnostic_code=code,
-                timestamp=timezone.now(),
-            )
+        if status.is_recipient_rejected() or "Recipient address rejected" in message:
+            bounce_info = status.to_bounce_result(is_bounce=True, diagnostic_code=code)
             Bounce.objects.update_bounce(recipient, bounce_info)
             continue
         raise exc
