@@ -265,7 +265,9 @@
     </div>
 
     <!-- TODO hide this for trusted users -->
-    <UserConfirm ref="userConfirm" />
+    <UserConfirm ref="userConfirm">
+      <slot name="request-user-confirm" />
+    </UserConfirm>
 
     <div class="my-4">
       <button
