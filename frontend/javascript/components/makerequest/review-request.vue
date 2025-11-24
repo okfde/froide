@@ -92,6 +92,7 @@
           : 'Anfrage zunächst nicht veröffentlichen'
         }}
         <a
+          v-if="config.url.helpRequestPublic"
           :href="config.url.helpRequestPublic"
           @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPublic)"
           >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
@@ -112,8 +113,8 @@
           : 'Eigenen Namen im Klartext anzeigen'
         }}
         <a
-          :href="config.url.helpRequestPrivacy"
-          @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPrivacy)"
+          href="#"
+          @click.prevent="$emit('onlinehelpClick', { content: i18n.TODO || 'to do privacy bit' })"
           >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
       </template>
     </ReviewRequestLine>
