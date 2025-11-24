@@ -1,0 +1,58 @@
+Return-Path: <MAILER-DAEMON>
+X-Original-To: bounce+nerjzna=+john.doe=t-online.de.example.com@fragdenstaat.de
+Delivered-To: bounce+nerjzna=+john.doe=t-online.de.example.com@fragdenstaat.de
+Authentication-Results: OpenDMARC; dmarc=fail (p=none dis=none) header.from=t-online.de.example.com
+Authentication-Results: mail.fragdenstaat.de; dkim=none; dkim-atps=neutral
+Authentication-Results: mail.fragdenstaat.de; spf=none (no SPF record) smtp.helo=mailout05.t-online.de.example.com (client-ip=194.25.134.82; helo=mailout05.t-online.de.example.com; envelope-from=<>; receiver=fragdenstaat.de)
+Received: from mailout05.t-online.de.example.com (mailout05.t-online.de.example.com [194.25.134.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.fragdenstaat.de (Postfix) with ESMTPS id DDDC8A40017
+	for <bounce+nerjzna=+john.doe=t-online.de.example.com@fragdenstaat.de>; Sun, 23 Nov 2025 06:33:46 +0100 (CET)
+Received: from mailin41.aul.t-online.de.example.com (mailin41.aul.t-online.de.example.com [10.223.144.81])
+	by mailout05.t-online.de.example.com (Postfix) with SMTP id 518E2699
+	for <bounce+nerjzna=+john.doe=t-online.de.example.com@fragdenstaat.de>; Sun, 23 Nov 2025 06:33:46 +0100 (CET)
+X-Failed-Recipients: john.doe@t-online.de.example.com
+From: Mail Delivery System <Mailer-Daemon@t-online.de.example.com>
+To: bounce+nerjzna=+john.doe=t-online.de.example.com@fragdenstaat.de
+Subject: Mail delivery failed: returning message to sender
+Message-Id: <1vN2jJ-00Azyo0@mailin41.aul.t-online.de.example.com>
+Date: Sun, 23 Nov 2025 06:33:45 +0100
+X-TOI-MSGID: 9ff3c8ae-33b3-42ad-9abb-fccc667379c4
+Authentication-Results: mailin41.aul.t-online.de.example.com; dkim=none;
+	dkim-atps=neutral
+
+|------------------------- Failed addresses follow: ---------------------|
+ <john.doe@t-online.de.example.com>
+   552 5.2.2 <john.doe@t-online.de.example.com> Quota exceeded (mailbox for user is full)
+
+|------------------------- Message header follows: ----------------------|
+Received: from mail.fragdenstaat.de ([94.130.55.89]) by mailin41.mgt.mul.t-online.de.example.com
+	with (TLSv1.3:TLS_AES_256_GCM_SHA384 encrypted)
+	esmtp id 1vN2jE-16Hcyf0; Sun, 23 Nov 2025 06:33:40 +0100
+Received: from mail.fragdenstaat.de (mail.fragdenstaat.de [IPv6:2a01:4f8:10b:2cf1::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mail@fragdenstaat.de)
+	by mail.fragdenstaat.de (Postfix) with ESMTPSA id 3D5B6A40026
+	for <john.doe@t-online.de.example.com>; Sun, 23 Nov 2025 06:33:40 +0100 (CET)
+Content-Type: multipart/alternative;
+ boundary="===============3029374993844787359=="
+MIME-Version: 1.0
+Subject: Wie wir Deutschlands Steueroasen aufdeckten
+From: "Aiko Kempen | Investigativ-Team FragDenStaat" <info@fragdenstaat.de>
+To: "John Doe" <john.doe@t-online.de.example.com>
+Date: Sun, 23 Nov 2025 05:33:40 -0000
+Message-ID: <176387602024.4166511.7345771693061816921@mail.fragdenstaat.de>
+X-Auto-Response-Suppress: All
+List-Unsubscribe: 
+ <mailto:unsub+nerjzna=+john.doe=t-online.de.example.com@fragdenstaat.de>
+
+|----------- Message text follows: (body too large, truncated) ----------|
+--===============3029374993844787359==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+
