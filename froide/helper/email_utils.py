@@ -1,11 +1,12 @@
 import contextlib
 import imaplib
 import re
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from dataclasses import dataclass
+from datetime import datetime
 from email.message import EmailMessage
 from enum import Enum
-from typing import Iterator, Optional, Tuple, Union
+from typing import Iterator, NamedTuple, Optional, Tuple, Union
 
 from django.conf import settings
 from django.utils import timezone
@@ -17,8 +18,9 @@ AUTO_REPLY_HEADERS = (
     ("X-Autorespond", None),
     ("Auto-Submitted", "auto-replied"),
 )
-BOUNCE_STATUS_RE = re.compile(r"(\d\.\d+\.\d+)", re.IGNORECASE)
-BOUNCE_DIAGNOSTIC_STATUS_RE = re.compile(r"smtp; (\d{3})")
+SMTP_FULL_STATUS_RE = re.compile(r"([45]\d{2}) (\d\.\d+\.\d+)")
+SMTP_DIAGNOSTIC_STATUS_RE = re.compile(r"smtp; (\d{3})")
+SMTP_EXTENDED_STATUS_RE = re.compile(r"(\d\.\d+\.\d+)", re.IGNORECASE)
 BOUNCE_TEXT = re.compile(
     r"""5\d{2}\ Requested\ action\ not\ taken |
 RESOLVER\.ADR\.RecipNotFound |
@@ -26,6 +28,7 @@ mailbox\ unavailable |
 RCPT\ TO\ command |
 permanent\ error |
 SMTP\ error |
+552 5.2.2
 original\ message |
 Return-Path:\ # If headers are given in verbose
 """,
@@ -37,6 +40,7 @@ BOUNCE_HEADERS = (
     "Content-Description",
     "Diagnostic-Code",
     "Final-Recipient",
+    "X-Failed-Recipients",
     "Received",
     "Remote-Mta",
     "Remote-MTA",
@@ -45,7 +49,113 @@ BOUNCE_HEADERS = (
     "Status",
 )
 
-DsnStatus = namedtuple("DsnStatus", "class_ subject detail")
+
+class SmtpBasicStatus(NamedTuple):
+    class_: int
+    subject: int
+    detail: int
+
+    @classmethod
+    def from_string(cls, dsn_string):
+        return cls(*[int(x) for x in dsn_string])
+
+
+class SmtpExtendedStatus(NamedTuple):
+    class_: int
+    subject: int
+    detail: int
+
+    @classmethod
+    def from_string(cls, dsn_string):
+        return cls(*[int(x) for x in dsn_string.split(".")])
+
+
+GENERIC_ERROR = SmtpExtendedStatus(5, 0, 0)
+MAILBOX_FULL = SmtpBasicStatus(5, 5, 2)
+MAILBOX_FULL_EXTENDED = [SmtpExtendedStatus(5, 2, 2), SmtpExtendedStatus(4, 2, 2)]
+
+
+class BounceType(str, Enum):
+    UNKNOWN = "unknown"
+    SOFT = "soft"
+    HARD = "hard"
+
+
+class BounceResult(NamedTuple):
+    status: SmtpExtendedStatus
+    basic_status: SmtpBasicStatus
+    is_bounce: bool
+    timestamp: datetime
+    bounce_type: BounceType = BounceType.UNKNOWN
+    diagnostic_code: Optional[str] = None
+
+
+@dataclass
+class SmtpStatus:
+    basic: SmtpBasicStatus | None
+    extended: SmtpExtendedStatus | None
+
+    def __eq__(self, other: "SmtpStatus") -> bool:
+        return self.basic == other.basic and self.extended == other.extended
+
+    def is_more_expressive(self, other: "SmtpStatus") -> bool:
+        if self.extended is None and other.extended is not None:
+            return True
+        if self.is_generic_error() and not other.is_generic_error():
+            return True
+        if self.basic is None and other.basic is not None:
+            return True
+        return False
+
+    def is_generic_error(self):
+        if self.extended and self.extended == GENERIC_ERROR:
+            return True
+        return False
+
+    def is_mailbox_full(self):
+        if self.basic and self.basic == MAILBOX_FULL:
+            return True
+        elif self.extended and self.extended in MAILBOX_FULL_EXTENDED:
+            return True
+        return False
+
+    def is_sender_rejected(self):
+        return self.extended and self.extended == (5, 7, 1)
+
+    def is_recipient_rejected(self):
+        return self.extended and self.extended == (5, 1, 1)
+
+    def get_bounce_type(self: "SmtpStatus") -> BounceType:
+        if self.is_mailbox_full():
+            return BounceType.SOFT
+
+        dsn_class = None
+        if self.extended is not None:
+            dsn_class = self.extended.class_
+        elif self.basic is not None:
+            dsn_class = self.basic.class_
+
+        if dsn_class is not None:
+            if dsn_class == 5:
+                return BounceType.HARD
+            elif dsn_class == 4:
+                return BounceType.SOFT
+        return BounceType.UNKNOWN
+
+    def to_bounce_result(
+        self, is_bounce=None, diagnostic_code=None, date=None
+    ) -> BounceResult:
+        bounce_type = self.get_bounce_type()
+        return BounceResult(
+            status=self.extended,
+            basic_status=self.basic,
+            bounce_type=bounce_type,
+            is_bounce=bounce_type != BounceType.UNKNOWN
+            if is_bounce is None
+            else is_bounce,
+            diagnostic_code=diagnostic_code,
+            timestamp=date or timezone.now(),
+        )
 
 
 class AuthenticityCheck(Enum):
@@ -72,13 +182,6 @@ class AuthenticityStatus:
             "details": self.details,
         }
 
-
-BounceResult = namedtuple(
-    "BounceResult", "status is_bounce bounce_type diagnostic_code timestamp"
-)
-
-GENERIC_ERROR = DsnStatus(5, 0, 0)
-MAILBOX_FULL = DsnStatus(5, 5, 2)
 
 UID_RE = re.compile(r"UID\s+(?P<uid>\d+)")
 
@@ -192,7 +295,7 @@ class UnsupportedMailFormat(Exception):
     pass
 
 
-def get_bounce_headers(msgobj):
+def get_bounce_headers(msgobj) -> dict[str, list[str]]:
     from .email_parsing import parse_header_field
 
     headers = defaultdict(list)
@@ -203,64 +306,62 @@ def get_bounce_headers(msgobj):
     return headers
 
 
-def get_bounce_info(body, msgobj=None, date=None):
+def get_bounce_info(body, msgobj=None, date=None) -> BounceResult:
     headers = {}
     if msgobj is not None:
         headers = get_bounce_headers(msgobj)
+
     status = find_bounce_status(headers, body)
+
     diagnostic_code = headers.get("Diagnostic-Code", [None])[0]
     diagnostic_status = find_status_from_diagnostic(diagnostic_code)
-    if status == GENERIC_ERROR and diagnostic_status != status:
+    if status.is_more_expressive(diagnostic_status):
         status = diagnostic_status
-    bounce_type = classify_bounce_status(status)
-    return BounceResult(
-        status=status,
-        bounce_type=bounce_type,
-        is_bounce=bool(bounce_type),
-        diagnostic_code=diagnostic_code,
-        timestamp=date or timezone.now(),
-    )
+    return status.to_bounce_result(diagnostic_code=diagnostic_code, date=date)
 
 
-def find_bounce_status(headers, body=None):
+def find_bounce_status(headers, body=None) -> SmtpStatus:
+    if match := SMTP_FULL_STATUS_RE.search(body):
+        return SmtpStatus(
+            SmtpBasicStatus.from_string(match.group(1)),
+            SmtpExtendedStatus.from_string(match.group(2)),
+        )
+
+    extended_status = None
     for v in headers.get("Status", []):
-        match = BOUNCE_STATUS_RE.match(v.strip())
-        if match is not None:
-            return DsnStatus(*[int(x) for x in match.group(1).split(".")])
+        if match := SMTP_EXTENDED_STATUS_RE.match(v.strip()):
+            extended_status = SmtpExtendedStatus.from_string(match.group(1))
+            break
 
-    if body is not None:
+    if extended_status is None and body is not None:
         bounce_matches = len(set(BOUNCE_TEXT.findall(body)))
         if bounce_matches >= BOUNCE_TEXT_THRESHOLD:
-            # Declare a DSN status of 5.5.0
-            return DsnStatus(5, 5, 0)
-    return None
+            # Declare a Generic Error
+            extended_status = SmtpExtendedStatus(5, 5, 0)
+    return SmtpStatus(None, extended_status)
 
 
-def find_status_from_diagnostic(message):
+def find_status_from_diagnostic(
+    message: str,
+) -> SmtpStatus:
     if not message:
-        return
+        return SmtpStatus(None, None)
     message = str(message)
-    match = BOUNCE_DIAGNOSTIC_STATUS_RE.search(message)
-    if match is None:
-        match = BOUNCE_STATUS_RE.search(message)
-        if match is None:
-            return
-        return DsnStatus(*[int(x) for x in match.group(1).split(".")])
-    return DsnStatus(*[int(x) for x in match.group(1)])
+    if match := SMTP_FULL_STATUS_RE.search(message):
+        return SmtpStatus(
+            SmtpBasicStatus.from_string(match.group(1)),
+            SmtpExtendedStatus.from_string(match.group(2)),
+        )
 
+    basic_status = None
+    if match := SMTP_DIAGNOSTIC_STATUS_RE.search(message):
+        basic_status = SmtpBasicStatus.from_string(match.group(1))
 
-def classify_bounce_status(status):
-    if status is None:
-        return
-    if status.class_ == 2:
-        return
-    if status.class_ == 4:
-        return "soft"
-    # Mailbox full should be treated as a temporary problem
-    if status == MAILBOX_FULL:
-        return "soft"
-    if status.class_ == 5:
-        return "hard"
+    extended_status = None
+    if match := SMTP_EXTENDED_STATUS_RE.search(message):
+        extended_status = SmtpExtendedStatus.from_string(match.group(1))
+
+    return SmtpStatus(basic_status, extended_status)
 
 
 def detect_auto_reply(from_field, subject="", msgobj=None):
