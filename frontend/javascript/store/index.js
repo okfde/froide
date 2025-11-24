@@ -49,6 +49,7 @@ import {
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
   UPDATE_SIMILAR_REQUEST_SEARCH,
+  UPDATE_CLAIMS_VIP,
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
@@ -444,6 +445,9 @@ export default createStore({
     [UPDATE_PRIVATE](state, val) {
       state.user.private = val
     },
+    [UPDATE_CLAIMS_VIP](state, val) {
+      state.user.claims_vip = val
+    },
     [UPDATE_USER_ID](state, val) {
       state.user.id = val
     },
@@ -504,6 +508,7 @@ export default createStore({
         private: state.user.private,
         terms: state.user.terms,
         confirm: state.user.confirm,
+        claims_vip: state.user.claims_vip,
         similarRequestSearch: state.similarRequestSearch,
       }
       try {

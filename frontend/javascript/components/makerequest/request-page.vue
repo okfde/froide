@@ -365,6 +365,7 @@ import {
   SET_CONFIG,
   STEPS,
   UPDATE_CONFIRM,
+  UPDATE_CLAIMS_VIP,
 } from '../../store/mutation_types'
 
 import LetterMixin from './lib/letter-mixin'
@@ -766,6 +767,7 @@ export default {
           address: UPDATE_ADDRESS,
           terms: UPDATE_TERMS,
           confirm: UPDATE_CONFIRM,
+          claims_vip: UPDATE_CLAIMS_VIP,
         }
       })
     }

@@ -37,13 +37,22 @@
         v-model:initial-private="userPrivate"
         @onlinehelp-click="$emit('onlinehelpClick', $event)"
         />
-      <h3 class="fs-6">Nutzungsbedingungen</h3><!-- TODO i18n -->
-      <UserTerms
-        ref="userTerms"
-        :form="userForm"
-        v-model:initial-terms="terms"
+    </template>
+
+    <template v-if="config.settings.user_can_claim_vip">
+      <h3 class="fs-6">{{ userForm.fields.claims_vip.label }}</h3>
+      <UserClaimsVip
+        :user-form="userForm"
+        v-model:initial-value="userClaimsVip"
         />
     </template>
+
+    <h3 class="fs-6">Nutzungsbedingungen</h3><!-- TODO i18n -->
+    <UserTerms
+      ref="userTerms"
+      :form="userForm"
+      v-model:initial-terms="terms"
+      />
 
     <div class="my-4">
       <button
@@ -62,6 +71,7 @@ import UserRegistration from './user-registration'
 import UserTerms from './user-terms'
 import UserPublic from './user-public.vue'
 import UserAddress from './user-address.vue'
+import UserClaimsVip from './user-claims-vip.vue'
 
 import { mapGetters, mapMutations } from 'vuex'
 
@@ -70,6 +80,7 @@ import {
   UPDATE_LAST_NAME,
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
+  UPDATE_CLAIMS_VIP,
 } from '../../store/mutation_types'
 
 import I18nMixin from '../../lib/i18n-mixin'
@@ -81,6 +92,7 @@ export default {
     UserTerms,
     UserPublic,
     UserAddress,
+    UserClaimsVip,
   },
   mixins: [I18nMixin],
   props: {
@@ -124,6 +136,14 @@ export default {
         this.updatePrivate(value)
       }
     },
+    userClaimsVip: {
+      get() {
+        return this.$store.state.user.claims_vip
+      },
+      set(value) {
+        this.updateClaimsVip(value)
+      }
+    },
     ...mapGetters([
       'firstNameValid',
       'lastNameValid',
@@ -148,6 +168,7 @@ export default {
       updateLastName: UPDATE_LAST_NAME,
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE,
+      updateClaimsVip: UPDATE_CLAIMS_VIP,
     })
   }
 }
