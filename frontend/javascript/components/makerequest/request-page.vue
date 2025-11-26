@@ -351,6 +351,16 @@ import UserCreateAccount from './user-create-account.vue'
 import IntroCampaigns from './intro-campaigns.vue'
 import IntroSkipPreference from './intro-skip-preference.vue'
 
+// for TypedChoiceFields (essentialy BooleanFields, but radio),
+// we never handle or store (actual JS) Booleans, but strings
+// (the alternative would be to avoid TypedChoiceFields,
+//  and provide the two choice labels on the Vue side)
+const coerceDjangoBool = (booleanOrString) => {
+  return booleanOrString === true || booleanOrString === 'True'
+    ? 'True'
+    : 'False'
+}
+
 export default {
   name: 'RequestPage',
   components: {
@@ -674,7 +684,7 @@ export default {
       ignoreStorage: this.config.wasPost,
       formFields: this.formFields,
       formCoerce: {
-        public: (djangoBoolStr) => djangoBoolStr === 'True'
+        public: coerceDjangoBool
       },
       mutationMap: {
         subject: UPDATE_SUBJECT,
@@ -738,7 +748,8 @@ export default {
         ignoreStorage: this.config.wasPost,
         formFields: this.userformFields,
         formCoerce: {
-          private: (djangoBoolStr) => djangoBoolStr === 'True'
+          private: coerceDjangoBool,
+          claims_vip: coerceDjangoBool
         },
         mutationMap: {
           user_email: UPDATE_EMAIL,
@@ -747,7 +758,6 @@ export default {
           private: UPDATE_PRIVATE,
           address: UPDATE_ADDRESS,
           terms: UPDATE_TERMS,
-          confirm: UPDATE_CONFIRM,
           claims_vip: UPDATE_CLAIMS_VIP,
         }
       })

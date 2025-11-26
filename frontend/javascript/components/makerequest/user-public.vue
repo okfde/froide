@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      privateValue: this.initialPrivate ? 'True' : 'False'
+      privateValue: this.initialPrivate
     }
   },
   computed: {
@@ -66,7 +66,7 @@ export default {
       },
       set(value) {
         this.privateValue = value
-        this.$emit('update:initialPrivate', value === 'True')
+        this.$emit('update:initialPrivate', value)
       }
     },
   }
