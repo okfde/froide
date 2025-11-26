@@ -238,7 +238,6 @@ export default {
           key: 'jurisdiction',
           multi: true,
           getItems: () => searcher.listJurisdictions(),
-          // itemFilter: (item) => item.rank < 3,
           itemMap: (item) => {
             return {
               label: item.name,

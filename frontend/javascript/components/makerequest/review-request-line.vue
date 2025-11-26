@@ -20,7 +20,7 @@
           'btn-primary': invalid
         }"
         @click="setStep(step)"
-        >{{ invalid ? 'Korrigieren' : i18n.change }}</button>
+        >{{ invalid ? 'Korrigieren' : i18n.change }}<!-- TODO i18n --></button>
     </div>
   </div>
 </template>

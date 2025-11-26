@@ -15,16 +15,6 @@
           &larr; {{ i18n.addMoreAuthorities }}
         </button>
       </div>
-      <!--
-      <div class="col-auto ms-auto">
-        <button
-          type="button"
-          class="btn btn-primary"
-          :disabled="!stepCanContinue(scope)"
-          @click="$emit('stepNext')"
-          >{{ i18n.continue  }}</button>
-      </div>
-      -->
     </div>
     <PbSummary
       :scope="scope"

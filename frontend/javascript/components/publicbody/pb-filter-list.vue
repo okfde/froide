@@ -57,7 +57,6 @@
           </label>
           <small v-if="itemGroup.items[0].count">({{ itemGroup.items[0].count }})</small>
         </div>
-        <!--details v-else-->
         <div v-else>
           <div class="form-check">
             <input
@@ -153,7 +152,6 @@ export default {
     },
     itemGroups() {
       if (!this.config.groupBy) return
-      // const groupIds = new Set(this.items.map((x) => x[this.config.groupBy]))
       const groups = {}
       this.items.forEach((x) => {
         const groupId = x[this.config.groupBy]

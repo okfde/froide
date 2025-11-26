@@ -37,8 +37,6 @@
               :href="'#step-' + stepBack"
               @click="setStep(stepBack)"
               >← <u>{{ i18n.back }}</u></a>
-            <!-- on STEP.WRITE_REQUEST, the bottom next button has a special disabled calculation
-              stepCanContinue is not in sync, which might be confusing -->
             <button
               v-if="showTopNext"
               type="button"
@@ -79,7 +77,6 @@
                 <DjangoSlot name="campaigns" />
               </template>
             </IntroCampaigns>
-            <!-- todo move the refs. part to method -->
             <DjangoSlot
               name="campaign_other"
               has-onlinehelp-links
@@ -668,7 +665,7 @@ export default {
     // the precedence rules are complex, so we make several calls to initStoreValues,
     // with different configurations
     // (instead of supporting several Values, probably a singular initStoreValue
-    // would be more reaadable...)
+    // would be more readable...)
 
     // init "regular form values" from storage if not POSTed
     // (not form-submitted, but refreshed, or returned from login)
@@ -794,18 +791,13 @@ export default {
 
     // setFirstStep depends on state (publicbodies, subject...) so has to come after initStoreValues
     this.setFirstStep()
-
-    // this.body are state getter/setters
-    // original* were non-data attributes used for shouldCheckRequest
-    // this.originalBody = this.body
-    // this.originalSubject = this.subject
   },
   mounted() {
     document.forms.make_request.addEventListener('submit', () => {
       // invalidate storage, will load from form fields next time
       this.purgeStorage({ scope: this.pbScope, keepNonForm: true })
     })
-    // TODO maybe unnecessary when remembered
+    // TODO maybe unnecessary when state is remembered? otoh, we only writeToStorage on step transition
     window.addEventListener('beforeunload', (e) => {
       if (this.submitting) {
         return
