@@ -218,7 +218,7 @@ export default {
           val = [...this.value]
           item.forEach((i) => {
             if (!this.value.some((x) => i.id === x.id)) {
-              val.push(i) //  = [...this.value, i]
+              val.push(i)
             }
           })
         }

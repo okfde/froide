@@ -203,6 +203,7 @@ class MakeRequestView(FormView):
                 "requests": _("requests"),
                 "close": _("close"),
                 "back": _("Back"),
+                # TODO i18n
                 "stepNext": _("Next"),  # pgettext("Make request", "Next"),
                 "step": _("Step"),
                 "introduction": _("Introduction"),
