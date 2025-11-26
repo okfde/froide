@@ -263,8 +263,7 @@
       </div>
     </div>
 
-    <!-- TODO hide this for trusted users -->
-    <UserConfirm ref="userConfirm">
+    <UserConfirm v-if="confirmRequired" ref="userConfirm">
       <slot name="request-user-confirm" />
     </UserConfirm>
 
@@ -371,6 +370,10 @@ export default {
       default: null
     },
     proofRequired: {
+      type: Boolean,
+      default: false
+    },
+    confirmRequired: {
       type: Boolean,
       default: false
     },
@@ -602,8 +605,8 @@ export default {
       // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
       this.validateBody()
       this.validateSubject()
-      this.validateConfirm()
-      if (this.bodyValid && this.subjectValid && this.confirmValid) {
+      if (this.confirmRequired) this.validateConfirm()
+      if (this.bodyValid && this.subjectValid && (this.confirmValid || !this.confirmRequired)) {
         this.$emit('stepNext')
       }
     },

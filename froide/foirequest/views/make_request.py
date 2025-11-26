@@ -694,6 +694,10 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
+        # skip "i confirm" nag heuristically for all who can multi-request
+        # TODO: find better heuristic for "trusted users"?
+        confirm_required = not is_multi
+
         campaigns = Campaign.objects.get_active()
 
         kwargs.update(
@@ -701,6 +705,7 @@ class MakeRequestView(FormView):
                 "publicbodies": publicbodies,
                 "publicbodies_json": publicbodies_json,
                 "multi_request": is_multi,
+                "confirm_required": confirm_required,
                 "beta_ui": self.request.GET.get("beta") is not None,
                 "config": config,
                 "campaigns": campaigns,
