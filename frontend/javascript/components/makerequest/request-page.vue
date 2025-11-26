@@ -647,10 +647,9 @@ export default {
     // from props
     this.setConfig(this.config)
 
-    // init step value
+    // init step value, always from storage (formFields & propMap omitted)
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: true, // ...step always from storage, we omit formFields
       mutationMap: {
         step: SET_STEP,
       }
@@ -670,7 +669,7 @@ export default {
     // init "regular form values" from storage if not POSTed
     // (not form-submitted, but refreshed, or returned from login)
     // in the case of "preset by GET", e.g. ?subject=foo
-    // we still preferStorage to allow changes (of the presets) to persist
+    // we still do not ignoreStorage to allow changes (of the presets) to persist
     // -- within the session. In the (unlikely) case of "session reuse"
     // (e.g. abandon draft, open the page with different GETs in the same tab)
     // this could lead to the GET parameters be ignored. 
@@ -679,7 +678,7 @@ export default {
     // persistKeyPrefix+(document.location.pathname+document.location.search)
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: !this.config.wasPost,
+      ignoreStorage: this.config.wasPost,
       formFields: this.formFields,
       formCoerce: {
         public: (djangoBoolStr) => djangoBoolStr === 'True'
@@ -699,7 +698,7 @@ export default {
     this.initStoreValues({
       scope: this.pbScope,
       scoped: true, // also, PBs are scoped
-      preferStorage: !this.config.wasPost,
+      ignoreStorage: this.config.wasPost,
       mutationMap: {
         publicBodies: SET_PUBLICBODIES
       },
@@ -712,7 +711,7 @@ export default {
     // law_type only passed by query string, e.g. ?law_type=IFG, so never storage, always form
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: false,
+      ignoreStorage: true,
       formFields: this.formFields,
       mutationMap: {
         law_type: UPDATE_LAW_TYPE
@@ -727,7 +726,7 @@ export default {
       // authenticated user fields always set by prop, never form, never storage
       this.initStoreValues({
         scope: this.pbScope,
-        preferStorage: false,
+        ignoreStorage: true,
         // no formFields, always from prop
         propMap: {
           user: this.userInfo 
@@ -743,7 +742,7 @@ export default {
       // see writeToStorage, reduced, where they are flattened/plucked
       this.initStoreValues({
         scope: this.pbScope,
-        preferStorage: !this.config.wasPost,
+        ignoreStorage: this.config.wasPost,
         formFields: this.userformFields,
         formCoerce: {
           private: (djangoBoolStr) => djangoBoolStr === 'True'
@@ -764,16 +763,15 @@ export default {
     // confirm is not a form field, always from storage
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: true,
       mutationMap: {
         confirm: UPDATE_CONFIRM,
       }
     })
 
-    // note that an empty address will be pre-filled for logged-in users in UserAddress.data
+    // address provided via formField.initial when logged in
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: !this.config.wasPost,
+      ignoreStorage: this.config.wasPost,
       formFields: this.userformFields,
       mutationMap: {
         address: UPDATE_ADDRESS
@@ -783,7 +781,6 @@ export default {
     // search form config (jurisdiction/-kind, year range, campaign) is ephemeral, so always in storage only
     this.initStoreValues({
       scope: this.pbScope,
-      preferStorage: true,
       mutationMap: {
         similarRequestSearch: UPDATE_SIMILAR_REQUEST_SEARCH
       }
