@@ -48,7 +48,6 @@
         {% if config.hide_public %}:hide-public="true"{% endif %}
         {% if multi_request %}:multi-request="true"{% endif %}
         {% if confirm_required %}:confirm-required="true"{% endif %}
-        {% if beta_ui %}:beta-ui="true"{% endif %}
         :config="{{ js_config }}">
         <template data-slot="intro_howto">
             {# request-page will skip the INTRO_HOWTO step if this is empty #}
