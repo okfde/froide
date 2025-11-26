@@ -139,7 +139,7 @@
                   type="button"
                   class="btn btn-secondary"
                   @click="fixBodyPlaceholders"
-                  >Platzhalter reparieren</button>
+                  >Platzhalter reparieren<!-- TODO i18n --></button>
               </div>
             </div>
             <div
@@ -157,7 +157,7 @@
                   type="button"
                   class="btn btn-secondary btn-sm"
                   @click="fixBodyPlaceholders"
-                  >Platzhalter automatisch reparieren</button>
+                  >Platzhalter automatisch reparieren<!-- TODO i18n --></button>
               </div>
             </div>
             <div v-if="!fullText" class="body-text" v-text="letterStart" />
@@ -251,7 +251,7 @@
       <div class="card-body">
         <!-- TODO open if errors -->
         <details>
-          <summary>Postadresse für diese Anfrage anpassen</summary>
+          <summary>Postadresse für diese Anfrage anpassen<!-- TODO i18n --></summary>
           <UserAddress
             v-model:initial-address="address"
             :i18n="i18n"
@@ -529,8 +529,9 @@ export default {
       this.subjectValidationErrors = []
       let valid = true
       if (this.nonMeaningfulSubjects.some(re => re.test(this.subject))) {
-        this.subjectValidationErrors.push(this.i18n.subjectMeaningTODO || 'subject meaning')
-        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaningTODO || 'subject meaning')
+        // TODO i18n
+        this.subjectValidationErrors.push(this.i18n.subjectMeaning || 'subject meaning')
+        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaning || 'subject meaning')
         valid = false
       }
       // from model via form_utils
@@ -565,6 +566,7 @@ export default {
       let valid = true
       this.showPlaceholderReplacer = false
       if (this.body.includes(PLACEHOLDER_MARKER)) {
+        // TODO i18n
         this.bodyValidationErrors.push(this.i18n.replacePlaceholderMarker)
         this.showPlaceholderReplacer = true
         this.$refs.body.setCustomValidity(this.i18n.replacePlaceholderMarker)

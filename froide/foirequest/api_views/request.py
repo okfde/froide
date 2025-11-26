@@ -79,7 +79,7 @@ class FoiRequestFilter(filters.FilterSet):
         queryset=filter_by_authenticated_user_queryset, method="follower_filter"
     )
     costs = filters.RangeFilter()
-    # TODO make multiple
+    # TODO i18n
     campaign = filters.ModelChoiceFilter(
         queryset=Campaign.objects.filter(public=True),
         null_value="-",

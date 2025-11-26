@@ -201,6 +201,7 @@
         v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length === 1 ||
         (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && selectedJurisdictions.size === 0 && !selectedJurisdiction)"
         >
+        <!-- TODO i18n -->
         <PbFilterBadge
           @remove-click="jurisdictionRegionKind = null"
           :label="'Ebene'"
@@ -238,6 +239,7 @@
         v-if="dateStart || dateEnd"
         class="col-sm-3 d-flex flex-column gap-2"
         >
+        <!-- TODO i18n -->
         <PbFilterBadge
           v-if="dateStart"
           @remove-click="dateStart = null"
@@ -269,6 +271,7 @@
     <!-- API errors -->
 
     <div v-if="apiError" class="alert alert-danger alert-dismissible">
+      <!-- TODO i18n -->
       <strong>Fehler</strong><br/>
       <!-- ugly, but better than nothing? -->
       <small>{{ apiError }}</small>
@@ -420,7 +423,6 @@ const query = computed(() => ({
   ...dateStart.value ? { last_after: dateStart.value + '-01-01' } : {},
   ...dateEnd.value ? { first_before: dateEnd.value + '-12-31' } : {},
 }))
-// new URLSearchParams...toString
 
 const resultsCount = ref(0)
 const resultsMeta = ref({})

@@ -15,9 +15,6 @@ import {
 } from '../../../store/mutation_types'
 
 const PBChooserMixin = {
-  props: {
-    
-  },
   created() {
     if (this.config) {
       this.setConfig(this.config)

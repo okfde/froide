@@ -524,7 +524,6 @@ export default createStore({
         ? { step: state.step, confirm: state.user.confirm }
         : null
       try {
-        // persistStorage.removeItem(persistKey)
         if (purged) {
           persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
           console.log('purged, keeping', persistKeyPrefix + scope, purged)
@@ -537,7 +536,6 @@ export default createStore({
       }
     },
     initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, preferStorage, scope, scoped }) {
-      // TODO cache me, scoped: if ! scope in storage try...
       let storage
       try {
         storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))

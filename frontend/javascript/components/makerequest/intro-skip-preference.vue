@@ -49,7 +49,6 @@ const togglePreference = () => {
       preferenceSkipIntroHowto.value = fromValue
       // TODO: err does not have message when 404?
       error.value = `${i18n.error || 'error'} ${err?.message || ''}` // TODO i18n
-      // error.value = `${i18n.error || 'error'} ${err?.message || ''} ${err && JSON.stringify(err)}`
     })
 }
 
