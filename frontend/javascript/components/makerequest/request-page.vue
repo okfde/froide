@@ -28,7 +28,6 @@
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
-          <!-- TODO else show abort button -->
           <div
             v-if="stepBack"
             class="my-3 d-flex justify-content-between"
@@ -536,6 +535,7 @@ export default {
       return this.steps[this.stepIndex + 1]
     },
     showTopNext() {
+      if (this.step === STEPS.SELECT_PUBLICBODY && this.multiRequest) return false
       return ![STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)
     },
     publicBodySearch() {
