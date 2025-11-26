@@ -535,34 +535,39 @@ export default createStore({
         console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
       }
     },
-    initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, preferStorage, scope, scoped }) {
+    initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, ignoreStorage, scope, scoped }) {
       let storage
       try {
         storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))
       } catch (err) {
         console.warn('failed to load persisted state', persistStorage, persistKeyPrefix + scope, err)
       }
+      // need null check for parsed, previously serialized storage
+      const isSet = (v) => !(v === undefined || v === null)
       for (const key in mutationMap) {
         const mutation = mutationMap[key]
-        let value
+        let value = undefined
         if (propMap && propMap[key]) {
           // prop has precedence over formField, e.g. for publicBodies
           value = propMap[key]
           console.log('got', key, 'from prop')
-        } else if (preferStorage && storage && storage[key] !== undefined) {
+        }
+        if (!isSet(value) && !ignoreStorage && storage && storage[key] !== undefined) {
           value = storage[key]
           console.log('got', key, 'from storage', value)
-        } else if (formFields && formFields[key] !== undefined) {
+        }
+        if (!isSet(value) && formFields && formFields[key] !== undefined) {
           value = formFields[key].value
-          if (value === undefined || value === null) value = formFields[key].initial
+          if (!isSet(value)) value = formFields[key].initial
           if (formCoerce && formCoerce[key]) {
             value = formCoerce[key](value)
           }
           console.log('got', key, 'from form', value)
-        } else {
-          console.log('could not get', key)
         }
-        if (value === undefined) continue
+        if (!isSet(value)) {
+          console.log('could not get', key)
+          continue
+        }
         if (scoped) {
           commit(mutation, { [key]: value, scope })
         } else {
