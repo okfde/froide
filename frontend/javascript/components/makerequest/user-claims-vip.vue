@@ -45,7 +45,7 @@ export default {
   },
   data() {
     return {
-      internalValue: this.initialValue ? 'True' : 'False'
+      internalValue: this.initialValue
     }
   },
   computed: {
@@ -58,7 +58,7 @@ export default {
       },
       set(newValue) {
         this.internalValue = newValue
-        this.$emit('update:initialValue', newValue === 'True')
+        this.$emit('update:initialValue', newValue)
       }
     },
   }

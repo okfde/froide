@@ -6,10 +6,8 @@
         name="hide_public"
         :value="hidePublic"
         id="id_hide_public" />
-      <!-- TODO: hide_public -->
       <div class="mb-3" v-if="!hidePublic">
         <div class="card-body">
-          <!--<div>{{ form.fields.public.label }}</div>-->
           <div
             v-for="(choice, choiceIndex) in form.fields.public.choices"
             :key="choice.value"
@@ -26,20 +24,16 @@
             <label class="form-check-label" :for="'id_public_choice' + choiceIndex">
               {{ choice.label }}
             </label>
-            <!--
-            <small class="form-text text-body-secondary">
-              {{ form.fields.public.help_text }}
-            </small>
-            -->
           </div>
         </div>
       </div>
       <div v-else style="display: none">
         <input
-          type="checkbox"
+          type="hidden"
           name="public"
           id="id_public"
-          v-model="publicValue" />
+          v-model="publicValue"
+          />
       </div>
     </div>
   </div>
@@ -63,7 +57,7 @@ export default {
   },
   data() {
     return {
-      public: this.initialPublic ? 'True' : 'False'
+      public: this.initialPublic
     }
   },
   computed: {
@@ -73,7 +67,7 @@ export default {
       },
       set(value) {
         this.public = value
-        this.$emit('update:initialPublic', value === 'True')
+        this.$emit('update:initialPublic', value)
       }
     }
   }
