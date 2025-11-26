@@ -801,7 +801,6 @@ export default {
       return e.returnValue
     })
     window.addEventListener('popstate', (e) => {
-      console.log('popstate', e.state?.step)
       if (!e.state) return
       if (e.state.step) {
         this.setStepNoHistory(e.state.step)
