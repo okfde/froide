@@ -229,6 +229,7 @@
               :hide-full-text="hideFullText"
               :hide-editing="hideEditing"
               :multi-request="multiRequest"
+              :confirmRequired="confirmRequired"
               :default-law="defaultLaw"
               :law-type="lawType"
               v-model:initial-subject="subject"
@@ -441,6 +442,10 @@ export default {
       default: false
     },
     multiRequest: {
+      type: Boolean,
+      default: false
+    },
+    confirmRequired: {
       type: Boolean,
       default: false
     },
