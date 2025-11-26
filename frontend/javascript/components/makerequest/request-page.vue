@@ -447,6 +447,7 @@ export default {
       fullLetter: false,
       showReview: false,
       submitting: false,
+      preventUnload: false,
       STEPS,
       similarSubject: '',
     }
@@ -626,7 +627,11 @@ export default {
     ])
   },
   watch: {
-    step() {
+    step(newStep) {
+      // once "step > FIND_SIMILAR"...
+      if ([STEPS.SELECT_PUBLICBODY, STEPS.REVIEW_PUBLICBODY, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.REQUEST_PUBLIC, STEPS.PREVIEW_SUBMIT].includes(newStep)) {
+        this.preventUnload = true
+      }
       this.writeToStorage({ scope: this.pbScope })
       window.scrollTo(0, 0)
     }
@@ -782,12 +787,11 @@ export default {
       // invalidate storage, will load from form fields next time
       this.purgeStorage({ scope: this.pbScope, keepNonForm: true })
     })
-    // TODO maybe unnecessary when state is remembered? otoh, we only writeToStorage on step transition
     window.addEventListener('beforeunload', (e) => {
       if (this.submitting) {
         return
       }
-      if (this.step !== STEPS.WRITE_REQUEST) {
+      if (!this.preventUnload) {
         return
       }
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
