@@ -249,9 +249,8 @@
 
     <div v-if="hasUser" class="card mb-3">
       <div class="card-body">
-        <!-- TODO open if errors -->
-        <details>
-          <summary>Postadresse für diese Anfrage anpassen<!-- TODO i18n --></summary>
+        <details :open="userForm?.errors?.address || addressValid === false || addressChanged === true">
+          <summary>Meine Postadresse aktualisieren<!-- TODO i18n --></summary>
           <UserAddress
             v-model:initial-address="address"
             :i18n="i18n"
@@ -493,6 +492,8 @@ export default {
       'bodyChanged',
       'confirmValid',
       'defaultLaw',
+      'addressValid',
+      'addressChanged',
     ]),
   },
   mounted() {
