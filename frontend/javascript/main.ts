@@ -9,7 +9,9 @@ import './snippets/misc.ts'
 import './snippets/share-links.ts'
 import './snippets/color-mode.ts'
 import { initSearch } from './snippets/search.ts'
+import { purgeStorageAfterLogout } from './snippets/purgestorage.ts'
 
 document.addEventListener('DOMContentLoaded', () => {
+  purgeStorageAfterLogout()
   initSearch()
 })
