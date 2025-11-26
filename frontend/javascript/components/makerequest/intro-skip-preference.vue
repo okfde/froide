@@ -1,5 +1,4 @@
 <template>
-  <!-- todo move preference & display it on ähnliche anfragen, too -->
   <div class="form-check my-3" v-if="config.settings.show_skip_intro_howto_preference">
     <input type="checkbox" id="skip_intro_howto" class="form-check-input" v-model="preferenceSkipIntroHowto"
       @change="togglePreference"
