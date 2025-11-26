@@ -150,26 +150,14 @@
               </div>
               <div class="row">
                 <div class="col-lg-8">
-                  <template v-if="true || betaUi">
-                    <PublicbodyBetaChooser
-                      name="publicbody"
-                      :defaultsearch="publicBodySearch"
-                      :scope="pbScope"
-                      :form="publicbodyForm"
-                      :config="config"
-                      @step-next="setStep(stepNext)"
-                      />
-                  </template>
-                  <template v-else>
-                    <PublicbodyChooser
-                      name="publicbody"
-                      :defaultsearch="publicBodySearch"
-                      :scope="pbScope"
-                      :form="publicbodyForm"
-                      :config="config"
-                      :list-view="publicBodyListView"
-                      />
-                  </template>
+                  <PublicbodyBetaChooser
+                    name="publicbody"
+                    :defaultsearch="publicBodySearch"
+                    :scope="pbScope"
+                    :form="publicbodyForm"
+                    :config="config"
+                    @step-next="setStep(stepNext)"
+                    />
                 </div>
                 <div class="col-lg-4 small">
                   <DjangoSlot name="publicbody-missing" />
@@ -320,7 +308,7 @@
 <script>
 import SimilarRequests from './similar-requests'
 import SimilarRequestSearch from './similar-request-search'
-import PublicbodyChooser from '../publicbody/publicbody-chooser'
+// TODO: rename, un-beta, remove old?
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
 import ReviewRequest from './review-request'
@@ -369,7 +357,6 @@ export default {
   components: {
     IntroSkipPreference,
     IntroCampaigns,
-    PublicbodyChooser,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
     SimilarRequests,
@@ -446,10 +433,6 @@ export default {
       default: false
     },
     confirmRequired: {
-      type: Boolean,
-      default: false
-    },
-    betaUi: {
       type: Boolean,
       default: false
     }
