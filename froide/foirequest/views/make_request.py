@@ -295,8 +295,6 @@ class MakeRequestView(FormView):
                 "reviewFrom": _("From"),
                 "reviewTo": _("To"),
                 "reviewPublicbodies": _("public bodies"),
-                "reviewSpelling": _("Please use proper spelling."),
-                "reviewPoliteness": _("Please stay polite."),
                 "greeting": _("Dear Sir or Madam"),
                 "kindRegards": _("Kind regards"),
                 "yourFirstName": _("Your first name"),

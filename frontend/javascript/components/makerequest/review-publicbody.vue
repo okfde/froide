@@ -8,23 +8,13 @@
           <ul class="list">
             <li v-for="pb in publicBodies" :key="pb.id">
               {{ pb.name }}
-              <!--<div v-if="pb.request_note_html" class="col-lg-8 alert alert-warning pb-0" v-html="pb.request_note_html" />-->
+              <div v-if="pb.request_note_html" class="col-lg-8 alert alert-warning pb-0" v-html="pb.request_note_html" />
             </li>
           </ul>
         </template>
         <template v-else>
           {{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}
         </template>
-        <!--
-        <span v-if="!hidePublicbodyChooser">
-          <a
-            class="pb-change-link badge rounded-pill text-bg-primary ms-3"
-            :href="config.url.makeRequest"
-            @click.prevent="$emit('setStepSelectPublicBody')">
-            {{ i18n.change }}
-          </a>
-        </span>
-        -->
       </p>
     </div>
   </div>
@@ -44,19 +34,10 @@
     <div class="row">
       <div class="col-lg-12 publicbody-summary">
         <p>
-        <!--{{ i18n._('toPublicBody', { name: publicBody?.name || '?' }) }}-->
-         {{ publicBody?.name || '?' }}
-          <!--<a v-if="publicBody" :href="publicBody.site_url" target="_blank">
+          {{ publicBody?.name }}
+          <a v-if="publicBody" :href="publicBody.site_url" target="_blank">
             <span class="fa fa-info-circle" />
-          </a>-->
-          <!--<span v-if="!hidePublicbodyChooser">
-            <a
-              class="pb-change-link badge rounded-pill text-bg-primary ms-3"
-              :href="config.url.makeRequest"
-              @click.prevent="$emit('setStepSelectPublicBody')">
-              {{ i18n.change }}
-            </a>
-          </span>-->
+          </a>
         </p>
       </div>
     </div>

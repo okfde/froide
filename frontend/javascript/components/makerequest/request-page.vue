@@ -204,7 +204,6 @@
             id="step-request"
             class="mt-3"
             >
-            <!-- TODO: rename/emphasize ellipsis button -->
             <RequestForm
               :config="config"
               :publicbodies="publicBodies"
