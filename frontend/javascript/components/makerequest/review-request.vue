@@ -12,7 +12,9 @@
       :invalid="needCorrectionPublicbody"
       >
       <template #contents>
+        <span v-if="!hasPublicbodes" class="text-danger">Keine Behörde ausgewählt<!-- TODO i18n --></span>
         <ReviewPublicbody
+          v-else
           :config="config"
           :pb-scope="pbScope"
           :multi-request="multiRequest"
@@ -57,15 +59,6 @@
             </div>
           </div>
         </div>
-        <!--
-        <ul class="review-hints">
-          <li>{{ i18n.reviewSpelling }}</li>
-          <li>{{ i18n.reviewPoliteness }}</li>
-          <li v-for="error in errors" :key="error" class="error">
-            {{ error }}
-          </li>
-        </ul>
-        -->
       </template>
     </ReviewRequestLine>
 
@@ -222,9 +215,6 @@ import {
   STEPS
 } from '../../store/mutation_types'
 
-function erx(text) {
-  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-}
 
 export default {
   name: 'ReviewRequest',
@@ -347,6 +337,7 @@ export default {
       return this.hasFormErrorsBody || this.bodyValid === false
     },
     hasFormErrorsBody() {
+      // TODO
       // TODO? the calculation is different than the validation in RequestForm,
       //   where *any* change explicitly allows re-submitting -- even an effectively unchanged value
       //   (which is made impossible here, contradictingly)
@@ -364,61 +355,14 @@ export default {
       if (this.userForm?.fields.address.value !== this.user.address) return
       return ('address' in this.userForm.errors)
     },
-    errors() {
-      const errors = []
-      /* if (!this.subjectValid) {
-        errors.push(this.i18n.noSubject)
-      } */
-      if (!this.body || this.body.length === 0) {
-        errors.push(this.i18n.noBody)
-      }
-      let needles = []
-      if (!this.fullText) {
-        needles = [
-          ...needles,
-          [
-            new RegExp(erx(this.i18n.greeting), 'gi'),
-            this.i18n.dontAddGreeting
-          ],
-          [
-            new RegExp(erx(this.i18n.kindRegards), 'gi'),
-            this.i18n.dontAddClosing
-          ]
-        ]
-      }
-
-      if (this.userRegex) {
-        needles.push([this.userRegex, this.i18n.dontInsertName])
-      }
-
-      needles.forEach((params) => {
-        if (params[0].test(this.body)) {
-          errors.push(params[1])
-        }
-      })
-      return errors
-    },
-    userRegex() {
-      const regex = []
-      if (this.user.first_name && this.user.last_name) {
-        regex.push(erx(`${this.user.first_name} ${this.user.last_name}`))
-      }
-      if (this.user.first_name) {
-        regex.push(erx(this.user.first_name))
-      }
-      if (this.user.first_name) {
-        regex.push(erx(this.user.first_name))
-      }
-      if (regex.length === 0) {
-        return null
-      }
-      return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
-    },
     publicBody() {
       return this.getPublicBodyByScope(this.pbScope)
     },
     publicBodies() {
       return this.getPublicBodiesByScope(this.pbScope)
+    },
+    hasPublicbodes() {
+      return this.publicBodies.length > 0
     },
     ...mapGetters([
       'user',
