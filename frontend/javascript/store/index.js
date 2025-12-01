@@ -483,22 +483,11 @@ export default createStore({
   },
   actions: {
     writeToStorage({ state }, { scope }) {
-      // TODO publicbodies might need special handling
-      /*
-      const scopedPublicBodesIds = Object.keys(state.scopedPublicBodies)
-        .reduce((acc, cur) => {
-          acc[cur] = state.scopedPublicBodies[cur].map(pb => pb.id)
-          return acc
-        }, {})
-        console.log('###', scopedPublicBodesIds)
-        */
       const reduced = {
-        // scopedPublicBodies: state.scopedPublicBodies,
         lawType: state.lawType,
         step: state.step,
         subject: state.subject,
         body: state.body,
-        // publicBodiesIds: state.scopedPublicBodies[scope].map(pb => pb.id),
         publicBodies: state.scopedPublicBodies[scope],
         public: state.requestPublic,
         address: state.user.address,

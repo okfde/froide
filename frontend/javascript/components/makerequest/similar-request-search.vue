@@ -79,7 +79,8 @@
                 :key="jurisdiction.id"
                 >
                 <div class="form-check">
-                  <!--<input
+                  <!-- alt: multiple jurisdictions stub
+                    <input
                     type="checkbox"
                     :id="'j' + jurisdiction.id"
                     class="form-check-input"
@@ -118,7 +119,7 @@
             >Zeitraum</button>
           <div class="dropdown-menu p-3">
             <div class="d-sm-flex">
-              <!--
+              <!-- alt: label, date input
               <label for="date_start" class="form-label g-col-sm-4">From</label>
               <input id="date_start" type="date" class="form-control g-col-sm-8" v-model="dateStart" />
               -->
@@ -132,7 +133,7 @@
                 <option v-for="year in dateYearsStart" :key="year" :value="year">{{ year }}</option>
               </select>
               <span class="px-1">&mdash;</span>
-              <!--
+              <!-- alt: label, date input
               <label for="date_end" class="form-label g-col-sm-4">To</label>
               <input id="date_end" type="date" class="form-control g-col-sm-8" v-model="dateEnd" />
               -->
@@ -218,7 +219,7 @@
           :key="jurisdiction.id"
           @remove-click="selectedJurisdictions.delete(jurisdiction)"
           :value="jurisdiction.name"
-          :label="'todo'"
+          :label="'TODO'"
           />
       </div>
 
@@ -343,9 +344,10 @@ const jurisdictionRegionKind = ref(initialState.jurisdictionRegionKind)
 
 const jurisdictionsByRegionKind = ref({})
 
-// n.b. new Set!
-const selectedJurisdictions = ref(new Set(initialState.selectedJurisdictions))
 const selectedJurisdiction = ref(initialState.selectedJurisdiction)
+
+// n.b. new Set! alt: multiple selectable, currently unused
+const selectedJurisdictions = ref(new Set(initialState.selectedJurisdictions))
 
 watch(jurisdictionRegionKind, () => {
   selectedJurisdictions.value.clear()
@@ -354,7 +356,6 @@ watch(jurisdictionRegionKind, () => {
 
 // populate by fetching from API...
 jurisdictionList().then((resp) => {
-  // jurisdictionRegionKind.value = resp.data.objects[0].region_kind
   const regionKinds = new Set(resp.data.objects.map((j) => j.region_kind))
   regionKinds.forEach((regionKind) => {
     const items = resp.data.objects.filter((j) => j.region_kind === regionKind)
@@ -366,7 +367,9 @@ jurisdictionList().then((resp) => {
       slug: items[0]?.slug,
       name: items.length === 1
         ? items[0].name
-        : items[0].region_kind_detail // TODO Land vs Bundesland vs Freistaat...
+        // TODO works out because of alphabetical implicit sorting,
+        //   but might end up weird: Land vs Bundesland vs Freistaat...
+        : items[0].region_kind_detail
     }
   })
 })
@@ -376,7 +379,6 @@ const selectedCampaign = ref(initialState.selectedCampaign)
 
 campaignList().then((resp) => {
   campaigns.value = resp.data.objects
-  // TODO: check if (pre)selectedCampaign exists, and maybe reset
 })
 
 const dateStart = ref(initialState.dateStart)
@@ -412,8 +414,8 @@ const query = computed(() => ({
     ? { jurisdiction: selectedJurisdiction.value.slug }
     : {},
   ...jurisdictionRegionKind.value && !selectedJurisdiction.value
-      // FIXME
-      // ? { jurisdiction_rank: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value].rank }
+      // TODO/alt, fix/remove once search by search-jurisdiction-by-rank settled
+      // alt: ? { jurisdiction_rank: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value].rank }
       ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.map((j) => j.slug) }
       : {},
   ...jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1

@@ -19,6 +19,7 @@
       v-model:initial-last-name="lastName"
       v-model:initial-email="email"
       />
+
     <!-- TODO: password, see UserRegistration stub -->
 
     <UserAddress
@@ -154,7 +155,7 @@ export default {
   },
   methods: {
     validateAllNextStep() {
-      // calling the child's method à la Vue3 expose
+      // child components don't `expose` explicitly, but this still works
       this.$refs.userTerms.validate()
       this.$refs.userAddress.validate()
       this.$refs.userRegistration.validateAll()
