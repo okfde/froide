@@ -183,7 +183,6 @@ export default {
       },
       filters: this.getEmptyFilters(),
       filterOrder: [
-        // TODO: 'jurisdiction-and-regions'
         'jurisdiction',
         'regions',
         'categories',
@@ -262,7 +261,7 @@ export default {
           }
         },
         regions: {
-          label: this.i18n.location, // this.i18n.containingGeoregionsPlural[0],
+          label: this.i18n.location,
           key: 'regions',
           multi: true,
           initialFilters: { kind: this.config.fixtures.georegion_kind[0][0] },

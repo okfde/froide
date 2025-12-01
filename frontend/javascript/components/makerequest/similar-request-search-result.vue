@@ -62,9 +62,9 @@ const { object } = defineProps({
 })
 
 const selectPublicBody = (id) => {
-  // TODO catch if 404 + display a warning
   store.dispatch('setPublicBodyById', { id, scope: pbScope })
-  store.commit(SET_STEP, STEPS.WRITE_REQUEST)
+    .then(() => store.commit(SET_STEP, STEPS.WRITE_REQUEST))
+    .catch((err) => { console.error('publicbody not found', err) })
 }
 
 const formatDate = (date) => (new Date(date)).toLocaleDateString(

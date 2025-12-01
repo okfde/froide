@@ -55,7 +55,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             :class="{
               'fw-bold': stepIndex <= step
             }"
-            class="step col d-flex flex-column align-items-center text-body z-1"
+            class="step col d-flex flex-column align-items-center text-body z-1 flex-grow-1 flex-shrink-1 text-break"
             >
             <div
               :class="`step-marker ${markerClasses(stepIndex)} d-block rounded-circle text-center border border-primary`">
@@ -98,10 +98,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
 
 <style lang="scss" scoped>
 .step {
-  // TODO refine, bootstrapize
-  flex: 1 1 0;
   hyphens: auto;
-  word-break: break-word;
 }
 
 .step-marker {
