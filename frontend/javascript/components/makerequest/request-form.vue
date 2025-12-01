@@ -218,6 +218,16 @@
               v-if="!letterSignature && fullText"
               class="body-text"
               v-text="letterSignatureName" />
+            <div
+              v-if="needles.length > 0"
+              class="alert alert-warning mb-2"
+              >
+              <ul class="list-unstyled my-0">
+                <li v-for="needle in needles" :key="needle">
+                  {{ needle }}
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -297,6 +307,10 @@ import {
 import ProofForm from '../proofupload/proof-form.vue'
 import UserAddress from './user-address.vue'
 import UserConfirm from './user-confirm.vue'
+
+function erx(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+}
 
 const PLACEHOLDER_MARKER = '…'
 const PLACEHOLDER_REPLACEMENT = '...'
@@ -488,7 +502,51 @@ export default {
       // FIXME
       return this.publicbodies
     },
+    needles() {
+      let checks = []
+      const positives = []
+      if (!this.fullText) {
+        checks = [
+          ...checks,
+          [
+            new RegExp(erx(this.i18n.greeting), 'gi'),
+            this.i18n.dontAddGreeting
+          ],
+          [
+            new RegExp(erx(this.i18n.kindRegards), 'gi'),
+            this.i18n.dontAddClosing
+          ]
+        ]
+      }
+      if (this.userRegex) {
+        checks.push([this.userRegex, this.i18n.dontInsertName])
+      }
+      checks.forEach((params) => {
+        if (params[0].test(this.body)) {
+          positives.push(params[1])
+        }
+      })
+      return positives
+    },
+    userRegex() {
+      const regex = []
+      if (!this.user) return null
+      if (this.user.first_name && this.user.last_name) {
+        regex.push(erx(`${this.user.first_name} ${this.user.last_name}`))
+      }
+      if (this.user.first_name) {
+        regex.push(erx(this.user.first_name))
+      }
+      if (this.user.first_name) {
+        regex.push(erx(this.user.first_name))
+      }
+      if (regex.length === 0) {
+        return null
+      }
+      return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
+    },
     ...mapGetters([
+      'user',
       'subjectValid',
       'subjectChanged',
       'bodyValid',
