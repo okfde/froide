@@ -148,6 +148,8 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "is_trusted",
         "is_deleted",
         "is_blocked",
+        make_daterangefilter("date_deactivated", _("date deactivated")),
+        make_daterangefilter("date_left", _("date left")),
         UserTagListFilter,
     ]
     search_fields = ("email_deterministic", "username", "first_name", "last_name")
