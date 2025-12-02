@@ -169,6 +169,7 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "merge_accounts",
         "merge_accounts_keep_newer",
         "add_to_group_and_mail",
+        "reactivate_users",
     ]
 
     def get_queryset(self, request):
@@ -438,6 +439,17 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
         # Display the confirmation page
         return TemplateResponse(request, "helper/admin/apply_action.html", context)
+
+    @admin.action(
+        description=_("Reactivate users"),
+        permissions=("change",),
+    )
+    def reactivate_users(self, request, queryset):
+        queryset = queryset.filter(is_active=False)
+        queryset.update(
+            is_active=True,
+            date_deactivated=None,
+        )
 
 
 @admin.register(AccountBlocklist)
