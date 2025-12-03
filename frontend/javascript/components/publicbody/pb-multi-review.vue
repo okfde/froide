@@ -50,7 +50,7 @@
           class="btn btn-primary"
           :disabled="!stepCanContinue(scope)"
           @click="$emit('stepNext')"
-          >{{ i18n.continue || 'Weiter' }}<!-- TODO i18n --></button>
+          >{{ i18n.stepNext || i18n.continue }}</button>
       </div>
     </div>
   </div>

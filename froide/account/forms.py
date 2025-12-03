@@ -141,13 +141,15 @@ class NewUserBaseForm(AddressBaseForm):
             required=False,
             initial=False,
             widget=BootstrapRadioSelect,
-            label=_("For journalists"),
+            label=_("{site_name} for journalists").format(site_name=settings.SITE_NAME),
             help_text=_(
-                "You work in journalism and would like to use this platform for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
+                _(
+                    "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
+                ).format(site_name=settings.SITE_NAME)
             ),
             choices=[
-                (False, _("No, I am not a journalist")),
-                (True, _("Yes, I am a journalist")),
+                (False, _("No, I am <strong>not a journalist</strong>")),
+                (True, _("Yes, I am <strong>a journalist</strong>")),
             ],
             coerce=lambda x: x and (x.lower() != "false"),
         )
@@ -160,11 +162,13 @@ class NewUserBaseForm(AddressBaseForm):
             widget=BootstrapRadioSelect,
             label=_("Hide my name from public view"),
             choices=[
-                # TODO i18n
-                # TODO <b>plain text
-                (False, "My name may appear on the website in plain text"),
-                # TODO <b>redacted
-                (True, "My name must be redacted"),
+                (
+                    False,
+                    _(
+                        "My name may appear on the website in <strong>plain text</strong>"
+                    ),
+                ),
+                (True, _("My name must be <strong>redacted</strong>")),
             ],
             coerce=lambda x: x and (x.lower() != "false"),
         )

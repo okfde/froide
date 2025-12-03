@@ -2,7 +2,7 @@
   <div
     class="row mt-2">
     <div class="col-md-8">
-      <p>Ihr Name wird als Teil Ihrer Anfrage an die Behörde gesendet. Falls Sie wünschen, dass Ihr Name nicht auf der Website veröffentlicht wrid, können Sie – nach außen hin – anonym bleiben. Ihr Name wrid dann automatisch geschwärzt.</p><!-- TODO i18n -->
+      <slot></slot>
     </div>
   </div>
   <div class="row">
@@ -20,9 +20,7 @@
           name="private"
           :value="choice.value"
           />
-        <label :for="'id_private_choice' + choiceIndex" class="form-check-label">
-          {{ choice.label }}
-        </label>
+        <label :for="'id_private_choice' + choiceIndex" class="form-check-label" v-html="choice.label" />
       </div>
       <p class="help-block" v-html="userformFields.private.help_text" />
       <p>
@@ -30,7 +28,7 @@
           v-if="config.url.helpRequestPrivacy"
           :href="config.url.helpRequestPrivacy"
           target="_blank"
-          >Weitere Infos zur Privatsphäre auf dieser Website</a><!-- TODO i18n -->
+          >{{ i18n.privacyMoreInfo }}</a>
       </p>
     </div>
   </div>
@@ -51,6 +49,7 @@ export default {
       required: true
     }
   },
+  inject: ['i18n'],
   data() {
     return {
       privateValue: this.initialPrivate

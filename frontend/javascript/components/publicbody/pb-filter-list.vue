@@ -77,7 +77,7 @@
               class="fa fa-chevron-down load-children"
               role="button"
               :aria-controls="'collapse_' + itemGroup.id"
-              ><!-- TODO a11y --></i>
+              ><span class="visually-hidden">{{ i18n.toggleCollapse }}</span></i>
           </div>
           <div class="collapse" :id="'collapse_' + itemGroup.id">
             <ul class="list-unstyled mb-0 ps-4">

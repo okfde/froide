@@ -68,12 +68,15 @@ class RequestForm(JSONMixin, forms.Form):
         choices=[
             (
                 True,
-                # TODO i18n
-                "Die Anfrage soll sofort öffentlich auf dieser Website erscheinen. (Standardeinstellung)",
+                _(
+                    "I want the request to be immediately accessible to the <strong>public</strong> on this website. (Default)"
+                ),
             ),
             (
                 False,
-                "Die Anfrage soll vorerst nicht öffentlich auf dieser Website erscheinen, sondern erst später veröffentlicht werden.",
+                _(
+                    "I want the request to remain <strong>not public</strong> for now, and publish it later."
+                ),
             ),
         ],
         coerce=lambda x: x and (x.lower() != "false"),

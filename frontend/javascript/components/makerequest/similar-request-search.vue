@@ -14,8 +14,7 @@
             :disabled="isSearching"
             >
             <span class="fa fa-search" aria-hidden="true" />
-            <!-- TODO i18n -->
-            Search
+            {{ i18n.search }}
           </button>
         </div>
       </div>
@@ -31,7 +30,7 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            >Ebene</button>
+            >{{ i18n.level }}</button>
           <div class="dropdown-menu p-3">
             <ul class="list-unstyled mb-0">
               <li
@@ -116,7 +115,7 @@
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
             data-bs-auto-close="outside"
-            >Zeitraum</button>
+            >{{ i18n.dateRange }}</button>
           <div class="dropdown-menu p-3">
             <div class="d-sm-flex">
               <!-- alt: label, date input
@@ -125,7 +124,7 @@
               -->
               <select
                 class="form-select"
-                aria-label="Von"
+                :aria-label="i18n.dateRangeFrom"
                 v-model="dateStart"
                 style="min-width: 10ch"
                 >
@@ -139,7 +138,7 @@
               -->
               <select
                 class="form-select"
-                aria-label="Bis"
+                :aria-label="i18n.dateRangeTo"
                 v-model="dateEnd"
                 style="min-width: 10ch"
                 >
@@ -159,7 +158,7 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            >Kampagne</button>
+            >{{ i18n.campaign }}</button>
           <div class="dropdown-menu p-3">
             <ul class="list-unstyled mb-0">
               <li
@@ -202,14 +201,15 @@
         v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length === 1 ||
         (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && selectedJurisdictions.size === 0 && !selectedJurisdiction)"
         >
-        <!-- TODO i18n -->
         <PbFilterBadge
+          class="mb-1"
           @remove-click="jurisdictionRegionKind = null"
-          :label="'Ebene'"
+          :label="i18n.level"
           :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
           />
       </div>
 
+      <!-- alt
       <div
         v-if="selectedJurisdictions.size > 0"
         class="col-sm-3"
@@ -222,14 +222,16 @@
           :label="'TODO'"
           />
       </div>
+      -->
 
       <div
         v-if="selectedJurisdiction"
         class="col-sm-3"
         >
         <PbFilterBadge
+          class="mb-1"
           @remove-click="selectedJurisdiction = null"
-          :label="jurisdictionRegionKind"
+          :label="i18n['groupBy_' + jurisdictionRegionKind]"
           :value="selectedJurisdiction.name"
           />
       </div>
@@ -240,17 +242,18 @@
         v-if="dateStart || dateEnd"
         class="col-sm-3 d-flex flex-column gap-2"
         >
-        <!-- TODO i18n -->
         <PbFilterBadge
           v-if="dateStart"
+          class="mb-1"
           @remove-click="dateStart = null"
-          :label="'Von'"
+          :label="i18n.dateRangeFrom"
           :value="dateStart"
           />
         <PbFilterBadge
           v-if="dateEnd"
+          class="mb-1"
           @remove-click="dateEnd = null"
-          :label="'Bis'"
+          :label="i18n.dateRangeTo"
           :value="dateEnd"
           />
       </div>
@@ -263,7 +266,8 @@
         >
         <PbFilterBadge
           @remove-click="selectedCampaign = null"
-          :label="'Kampagne'"
+          class="mb-1"
+          :label="i18n.campaign"
           :value="selectedCampaign.name"
           />
       </div>
@@ -272,21 +276,16 @@
     <!-- API errors -->
 
     <div v-if="apiError" class="alert alert-danger alert-dismissible">
-      <!-- TODO i18n -->
-      <strong>Fehler</strong><br/>
+      <strong>{{ i18n.error }}</strong><br/>
       <!-- ugly, but better than nothing? -->
       <small>{{ apiError }}</small>
-      <!-- TODO i18n -->
-      <button type="button" class="btn-close" aria-label="Close" @click="apiError = null"></button>
+      <button type="button" class="btn-close" :aria-label="i18n.close" @click="apiError = null"></button>
     </div>
 
     <!-- Results with count + pagination -->
 
     <div v-if="showResults">
-      <p>
-        {{ resultsCount }}
-        Ergebnisse<!-- TODO i18n -->
-      </p>
+      <p>{{ i18n._('results', { count: resultsCount }) }}</p>
 
       <ResultsPagination
         :response-meta="resultsMeta"
@@ -309,7 +308,7 @@
 </template>
 
 <script setup>
-import { computed, ref, reactive, watch } from 'vue'
+import { computed, inject, ref, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import debounce from 'lodash.debounce'
 import { jurisdictionList, campaignList, requestSearchRetrieve } from '../../api';
@@ -324,6 +323,8 @@ const props = defineProps({
     required: true
   }
 })
+
+const i18n = inject('i18n')
 
 const searchResultPageSize = 10
 

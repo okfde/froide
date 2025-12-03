@@ -1,7 +1,7 @@
 <template>
   <div class="row border-top py-1">
     <div class="col-sm-12 col-md-2 py-1">
-      <h3 class="fs-6 lh-base m-0">{{ title }}</h3>
+      <h3 class="fs-6 lh-base m-0" style="hyphens: auto">{{ title }}</h3>
     </div>
     <div class="col-sm-8 col-md-8 py-1">
       <slot name="contents">
@@ -20,7 +20,7 @@
           'btn-primary': invalid
         }"
         @click="setStep(step)"
-        >{{ invalid ? 'Korrigieren' : i18n.change }}<!-- TODO i18n --></button>
+        >{{ invalid ? i18n.correct : i18n.change }}</button>
     </div>
   </div>
 </template>
