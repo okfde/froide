@@ -4,7 +4,7 @@
       @change="togglePreference"
       />
     <label for="skip_intro_howto" class="form-check-label">
-      Diesen Teil beim nächsten Mal überspringen und direkt mit "Behörde wählen" beginnen (optional)<!-- TODO i18n -->
+      {{ i18n.skipIntroHowto }}
     </label>
   </div>
   <BsToast v-if="error" color="danger" @dismiss="error = null">
@@ -47,7 +47,7 @@ const togglePreference = () => {
       console.error('toggle preference error', err)
       preferenceSkipIntroHowto.value = fromValue
       // TODO: err does not have message when 404?
-      error.value = `${i18n.error || 'error'} ${err?.message || ''}` // TODO i18n
+      error.value = `${i18n.error} ${err?.message || ''}`
     })
 }
 

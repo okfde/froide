@@ -68,10 +68,7 @@
                                      alt=""
                                      class="campaign-logo d-block object-fit-contain w-100 mb-3" />
                             {% endif %}
-                            <h2 class="fs-4">
-                                Mitmachen bei {# TODO i18n #}
-                                {{ campaign.name }}
-                            </h2>
+                            <h2 class="fs-4">{% blocktrans with name=campaign.name %}Participate in {{ name }}{% endblocktrans %}</h2>
                             {% if campaign.short_description %}<div class="fs-6">{{ campaign.short_description|markdown }}</div>{% endif %}
                             <div class="mt-auto">
                                 <a href="{{ campaign.url }}" class="btn btn-primary w-100">{% trans "Make a request" %}</a>
@@ -114,23 +111,18 @@
         <template data-slot="loginlink">
             <a href="{% url 'account-login' %}?next={{ request.get_full_path|urlencode }}">{% trans "Zum Login" %}</a>
         </template>
+        <template data-slot="user-public-preamble">
+            {% blocktrans %}<p>Your name will be sent to public bodies. If you want to remain anonymous to the public, you can choose to not display your name on the website. Your name will then be redacted.</p>{% endblocktrans %}
+        </template>
         <template data-slot="request-public-preamble">
-            {% blocktrans %}
-            <p>Ihre Anfrage ist für alle auf dieser Website sichtbar.
-              Denn Sie tragen mit Ihrer Anfrage zu einem öffentlichen Archiv amtlicher Informationen bei und sorgen so mit einer wachsenden Community für Transparenz in Politik und Verwaltung.</p>
-            <p>Auf Wunsch können Sie Ihre Anfrage aber erst später öffentlich machen, z.B. nach Veröffentlichung Ihrer investigativen Recherche.</p>
-            {% endblocktrans %}
+            {% blocktrans %}<p>Your request is accesible for everybody on this website. With your request, you contribute to a public archive of official information. You are part of a growing community that strives for transparency in politics and adminstration.</p><p>You can opt into publishing your request later, e.g. after the disclosure of your investigation or research.</p>{% endblocktrans %}
         </template>
         <template data-slot="request-public-postamble">
             {% if request.user.is_authenticated %}
                 {% url 'account-settings' as profile_url %}
-                {% blocktrans with profilelink=profile_url %}
-                    Ob Ihr Name im Klartext erscheinen sollen, können Sie <a target="_blank" href="{{ profile_url }}">in ihrem Profil</a> anpassen.
-                {% endblocktrans %}
+                {% blocktrans with profilelink=profile_url %}In your <a target="_blank" href="{{ profile_url }}">profile settings</a> you can decide whether to your name should be redacted.{% endblocktrans %}
             {% else %}
-                {% blocktrans %}
-                    Ihre Entscheidung hier hat keinen Einfluss darauf ob ihr Name im Klartext erscheinen soll (wie zuvor festgelegt).
-                {% endblocktrans %}
+                {% blocktrans %}Your decision here does not affect whether your name will appear in plain text or redacted (as you have decided previously).{% endblocktrans %}
             {% endif %}
         </template>
         </request-page>

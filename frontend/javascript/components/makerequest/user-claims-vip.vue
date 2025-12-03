@@ -20,9 +20,7 @@
           name="claims_vip"
           :value="choice.value"
           />
-        <label :for="'id_claims_vip_choice' + choiceIndex" class="form-check-label">
-          {{ choice.label }}
-        </label>
+        <label :for="'id_claims_vip_choice' + choiceIndex" class="form-check-label" v-html="choice.label" />
       </div>
     </div>
   </div>

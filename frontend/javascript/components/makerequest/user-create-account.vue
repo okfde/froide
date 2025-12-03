@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h2>Account anlegen</h2><!-- TODO i18n -->
+    <h2>{{ i18n.createAccount }}</h2>
+
+    <p>{{ i18n.createAccountPreamble }}</p>
 
     <p>
       {{ i18n.doYouAlreadyHaveAccount }}<br/>
@@ -31,12 +33,14 @@
       />
 
     <template v-if="config.settings.user_can_hide_web">
-      <h3 class="fs-6">Privatsphäre</h3><!-- TODO i18n -->
+      <h3 class="fs-6">{{ i18n.privacy }}</h3>
       <UserPublic
         :user-form="userForm"
         :config="config"
         v-model:initial-private="userPrivate"
-        />
+        >
+        <slot name="userPublicPreamble"></slot>
+      </UserPublic>
     </template>
 
     <template v-if="config.settings.user_can_claim_vip">
@@ -47,7 +51,7 @@
         />
     </template>
 
-    <h3 class="fs-6">Nutzungsbedingungen</h3><!-- TODO i18n -->
+    <h3 class="fs-6">{{ i18n.terms }}</h3>
     <UserTerms
       ref="userTerms"
       :form="userForm"

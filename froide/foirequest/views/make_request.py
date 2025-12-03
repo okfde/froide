@@ -203,11 +203,14 @@ class MakeRequestView(FormView):
                 "requests": _("requests"),
                 "close": _("close"),
                 "back": _("Back"),
-                # TODO i18n
-                "stepNext": _("Next"),  # pgettext("Make request", "Next"),
+                "stepNext": _("Next"),
                 "step": _("Step"),
                 "introduction": _("Introduction"),
                 "similarRequests": _("Similar requests"),
+                "findSimilarRequests": _("Find similar requests"),
+                "currentlyChosen": _("Currently chosen:"),
+                "requestVisibility": _("Public visibility of the request"),
+                "previewAndSubmit": _("Preview & submit"),
                 "address": _("Address"),
                 "account": pgettext("Make request breadcrumbs/stepper", "Account"),
                 "writeMessage": _("Write message"),
@@ -229,6 +232,7 @@ class MakeRequestView(FormView):
                 ),
                 "selectPublicBodies": _("Select public bodies"),
                 "continue": _("continue"),
+                "continueWithSelected": _("Continue with selected"),
                 "selectAll": [_("select one"), _("select all")],
                 "selectingAll": _("Selecting all public bodies, please wait..."),
                 "name": _("Name"),
@@ -346,6 +350,65 @@ class MakeRequestView(FormView):
                         count="${count}"
                     ),
                 ],
+                "results": [
+                    _("One result"),
+                    _("{count} results").format(count="${count}"),
+                ],
+                "createAccount": _("Create account"),
+                "createAccountPreamble": _(
+                    "You need to create an account at {site_name} so you will be able to manage your request."
+                ).format(site_name=settings.SITE_NAME),
+                "skipIntroHowto": _(
+                    "Skip this part next time and start at “Choose public body” (optional)"
+                ),
+                "error": _("Error"),
+                "none": _("None chosen"),
+                "toPb": _("To:"),
+                "to": _("to"),
+                "requestTo": _("Request to:"),
+                "correct": _("Correct"),
+                "fixPlaceholder": _("Fix placeholders automatically"),
+                "updatePostalAddress": _("Update my postal address"),
+                "subjectMeaningful": _("Please write a meaningful subject"),
+                "containsPlaceholderMarker": _(
+                    "The body contains an illegal placeholder ({placeholder})."
+                ).format(placeholder="${placeholder}"),
+                "pagination": _("Pagination"),
+                "publicbody": _("Public body"),
+                "requestBody": _("Request body"),
+                "request": _("request"),
+                "visibility": _("Visibility"),
+                "notConfirmed": _("Not confirmed"),
+                "notAgreed": _("Not agreed"),
+                "publishNow": _("Publish request now"),
+                "publishLater": _("Publish request later"),
+                "help": _("Help"),
+                "privacy": _("Privacy"),
+                "privacyMoreInfo": _("More information about privacy on this website"),
+                "nameRedact": _("My name must be <strong>redacted</strong>"),
+                "namePlainText": _(
+                    "My name may appear on the website in <strong>plain text</strong>"
+                ),
+                "email": _("Email"),
+                "notSentToPb": _("(not sent to public body)"),
+                "terms": _("Terms of Use"),
+                "searchToPbName": _("to %(name)s") % {"name": "${name}"},
+                "searchToProject": _(
+                    'to <a href="%(url)s">%(name)s</a> and <a href="%(urlp)s">%(count)s other public bodies</a>'
+                )
+                % {
+                    "name": "${name}",
+                    "url": "${url}",
+                    "urlp": "${urlp}",
+                    "count": "${count}",
+                },
+                "notYetSet": _("Not yet set"),
+                "searchSelectThisPb": _("Select this public body"),
+                "dateRange": _("Date range"),
+                "dateRangeFrom": _("From"),
+                "dateRangeTo": _("Until"),
+                "campaign": _("Campaign"),
+                "toggleCollapse": _("Toggle collapse"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],

@@ -1,5 +1,9 @@
 <script setup>
 
+import { inject } from 'vue'
+
+const i18n = inject('i18n')
+
 defineProps({
   label: {
     required: true,
@@ -21,12 +25,11 @@ const emit = defineEmits(['removeClick'])
       <dt class="text-secondary mb-1"><small>{{ label }} =</small></dt>
       <dd>{{ value }}</dd>
     </dl>
-    <!-- TODO i18n -->
     <button
       @click="emit('removeClick')"
       type="button"
       class="btn btn-close align-self-center"
-      aria-label="Close"></button>
+      :aria-label="i18n.close"></button>
   </span>
 </template>
 

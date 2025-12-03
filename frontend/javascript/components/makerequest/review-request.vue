@@ -1,18 +1,16 @@
 <template>
-  <!-- TODO i18n -->
   <div class="my-4">
     <!-- TODO empty publicbody causes a nondescript form error (in messages), but does not show up as form error,
       and does not show up as invalid here, either -->
-    <!-- TODO i18n Behörde -->
     <ReviewRequestLine
       v-if="!hidePublicbodyChooser"
       :step="STEPS.SELECT_PUBLICBODY"
       :i18n="i18n"
-      :title="i18n.publicBody || 'Behörde'"
+      :title="i18n.publicbody"
       :invalid="needCorrectionPublicbody"
       >
       <template #contents>
-        <span v-if="!hasPublicbodes" class="text-danger">Keine Behörde ausgewählt<!-- TODO i18n --></span>
+        <span v-if="!hasPublicbodes" class="text-danger">{{ i18n.none }}</span>
         <ReviewPublicbody
           v-else
           :config="config"
@@ -30,10 +28,9 @@
       :contents="subject || i18n.subject"
       />
 
-    <!-- TODO i18n Anfragentext -->
     <ReviewRequestLine
       :i18n="i18n"
-      :title="'Anfragentext'"
+      :title="i18n.requestBody"
       :invalid="needCorrectionBody"
       :step="STEPS.WRITE_REQUEST"
       >
@@ -62,53 +59,45 @@
       </template>
     </ReviewRequestLine>
 
-    <!-- TODO i18n PI, notAgreed -->
     <ReviewRequestLine
       v-if="needCorrectionConfirm"
       :i18n="i18n"
-      :title="i18n.request || 'Anfrage'"
+      :title="i18n.request"
       :invalid="needCorrectionConfirm"
-      :contents="i18n.notAgreed || 'nicht zugestimmt: Bestätigung, dass ich keine persönlichen Informationen anfrage'"
+      :contents="i18n.notConfirmed"
       :step="STEPS.WRITE_REQUEST"
       />
 
     <ReviewRequestLine
       v-if="!hidePublic"
       :i18n="i18n"
-      :title="i18n.visibility || 'Sichtbarkeit'"
+      :title="i18n.visibility"
       :step="STEPS.REQUEST_PUBLIC"
       >
       <template #contents>
-        <!-- TODO i18n -->
-        {{ requestPublic
-          ? 'Anfrage sofort veröffentlichen'
-          : 'Anfrage zunächst nicht veröffentlichen'
-        }}
+        {{ requestPublic ? i18n.publishNow : i18n.publishLater }}
         <a
           v-if="config.url.helpRequestPublic"
           :href="config.url.helpRequestPublic"
           @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPublic)"
-          >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
+          >{{ i18n.help }}</a>
       </template>
     </ReviewRequestLine>
 
-    <!-- TODO i18n Privatsphäre -->
     <ReviewRequestLine
       v-if="!user.id"
       :i18n="i18n"
-      :title="i18n.privacy || 'Privatsphäre'"
+      :title="i18n.privacy"
       :step="STEPS.CREATE_ACCOUNT"
       >
       <template #contents>
-        <!-- TODO i18n -->
-        {{ user.private
-          ? 'Eigenen Namen schwärzen'
-          : 'Eigenen Namen im Klartext anzeigen'
-        }}
+        <span v-html="user.private ? i18n.nameRedact : i18n.namePlainText" />
+        <!-- TODO
         <a
           href="#"
-          @click.prevent="$emit('onlinehelpClick', { content: i18n.TODO || 'to do privacy bit' })"
-          >{{ i18n.help || 'Hilfe' }}<!-- TODO i18n --></a>
+          @click.prevent="$emit('onlinehelpClick', { content: i18n.TODO })"
+          >{{ i18n.help }}</a>
+        -->
       </template>
     </ReviewRequestLine>
 
@@ -129,27 +118,24 @@
       </template>
     </ReviewRequestLine>
 
-    <!-- TODO i18n Email -->
     <ReviewRequestLine
       v-if="!user.id"
       :i18n="i18n"
-      :title="i18n.email || 'Email'"
+      :title="i18n.email"
       :invalid="needCorrectionEmail"
       :step="STEPS.CREATE_ACCOUNT"
       >
       <template #contents>
         <span :class="{ 'text-danger': needCorrectionEmail}">
-          <!-- TODO i18n Email -->
-          {{ user.email || i18n.email || 'Email' }}
+          {{ user.email || i18n.email }}
         </span>
-        (wird Behörde nicht mitgeteilt)<!-- TODO i18n -->
+        {{ i18n.notSentToPb }}
       </template>
     </ReviewRequestLine>
 
-    <!-- TODO i18n Adresse -->
     <ReviewRequestLine
       :i18n="i18n"
-      :title="i18n.address || 'Adresse'"
+      :title="i18n.address"
       :invalid="needCorrectionAddress"
       :step="user.id ? STEPS.WRITE_REQUEST : STEPS.CREATE_ACCOUNT"
       >
@@ -157,17 +143,16 @@
         <div
           style="white-space: pre-line"
           :class="{ 'text-danger': needCorrectionAddress}"
-          >{{ user.address || i18n.address || 'Adresse' }}<!-- TODO i18n --></div>
+          >{{ user.address || i18n.address }}</div>
       </template>
     </ReviewRequestLine>
 
-    <!-- TODO i18n Nutzungsbedingungen, notAgreed -->
     <ReviewRequestLine
       v-if="needCorrectionTerms"
       :i18n="i18n"
-      :title="i18n.terms || 'Nutzungs&shy;bedingungen'"
+      :title="i18n.terms"
       :invalid="needCorrectionTerms"
-      :contents="i18n.notAgreed || 'nicht zugestimmt'"
+      :contents="i18n.notAgreed"
       :step="STEPS.CREATE_ACCOUNT"
       />
 
