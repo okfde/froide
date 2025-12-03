@@ -80,6 +80,7 @@ class FoiRequestListSerializer(
             "id",
             "url",
             "jurisdiction",
+            "jurisdiction_name",
             "is_foi",
             "checked",
             "refusal_reason",
@@ -106,6 +107,8 @@ class FoiRequestListSerializer(
             "reference",
             "user",
             "project",
+            "project_site_url",
+            "project_request_count",
             "campaign",
             "tags",
         )
@@ -127,7 +130,10 @@ class FoiRequestListSerializer(
             "title",
             "reference",
             "user",
+            "jurisdiction_name",
             "project",  # TODO: make this updatable
+            "project_site_url",
+            "project_request_count",
             "campaign",
         )
 
