@@ -1,6 +1,8 @@
 <script setup>
 
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
+
+const i18n = inject('i18n')
 
 const { responseMeta } = defineProps({
   responseMeta: {
@@ -25,8 +27,8 @@ const pages = computed(() => {
   //   you can not just page through, buttons shift under your cursor
   const ret = [{
     key: 'previous',
-    ariaHiddenLabel: '←', // TODO i18n
-    visuallyHiddenLabel: 'vorherige',
+    ariaHiddenLabel: '←',
+    visuallyHiddenLabel: i18n.previous,
     offset: responseMeta.offset - responseMeta.limit,
     active: false,
     disabled: !responseMeta.previous,
@@ -64,8 +66,8 @@ const pages = computed(() => {
   }
   ret.push({
     key: 'next',
-    ariaHiddenLabel: '→', // TODO i18n
-    visuallyHiddenLabel: 'nächste',
+    ariaHiddenLabel: '→',
+    visuallyHiddenLabel: i18n.next,
     offset: responseMeta.offset + responseMeta.limit,
     active: false,
     disabled: !responseMeta.next,
@@ -76,8 +78,7 @@ const pages = computed(() => {
 </script>
 
 <template>
-  <!-- TODO i18n -->
-  <nav aria-label="Pagination" v-show="show">
+  <nav :aria-label="i18n.pagination" v-show="show">
     <ul class="pagination flex-wrap">
       <li class="page-item"
         v-for="page in pages"

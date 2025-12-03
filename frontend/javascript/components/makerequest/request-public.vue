@@ -21,9 +21,7 @@
               :value="choice.value"
               v-model="publicValue"
               />
-            <label class="form-check-label" :for="'id_public_choice' + choiceIndex">
-              {{ choice.label }}
-            </label>
+            <label class="form-check-label" :for="'id_public_choice' + choiceIndex" v-html="choice.label" />
           </div>
         </div>
       </div>

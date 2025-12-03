@@ -56,7 +56,7 @@
             v-if="hidePublicbodyChooser && hasPublicBodies"
             class="my-3 fs-5"
             >
-            Anfrage an:<!-- TODO i18n -->
+            {{ i18n.requestTo }}
             {{ publicBodies.map(pb => pb.name).join(', ') }}
           </h1>
 
@@ -105,7 +105,7 @@
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
           <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3">
-            <h2>Ähnliche Anfragen finden</h2><!-- TODO i18n -->
+            <h2>{{ i18n.findSimilarRequests }}</h2>
             <SimilarRequestSearch :config="config" />
             <div>
               <button
@@ -124,7 +124,7 @@
           <div v-if="step === STEPS.SELECT_PUBLICBODY">
 
             <p v-if="publicBodies.length > 0">
-              Aktuell ausgewählt:<!-- TODO i18n -->
+              {{ i18n.currentlyChosen }}
               {{ publicBodies.map(pb => pb.name).join(', ') }}
             </p>
 
@@ -194,6 +194,9 @@
               <template #loginlink>
                 <DjangoSlot name="loginlink"></DjangoSlot>
               </template>
+              <template #userPublicPreamble>
+                <DjangoSlot name="user-public-preamble"></DjangoSlot>
+              </template>
             </UserCreateAccount>
           </div>
 
@@ -215,7 +218,7 @@
               :hide-full-text="hideFullText"
               :hide-editing="hideEditing"
               :multi-request="multiRequest"
-              :confirmRequired="confirmRequired"
+              :confirm-required="confirmRequired"
               :default-law="defaultLaw"
               :law-type="lawType"
               v-model:initial-subject="subject"
@@ -249,8 +252,7 @@
           <!-- STEP: VISIBILITY -->
 
           <div v-show="step == STEPS.REQUEST_PUBLIC">
-            <h2>Sichtbarkeit der Anfrage</h2><!-- TODO i18n -->
-            <!-- TODO i18n -->
+            <h2>{{ i18n.requestVisibility }}</h2>
             <DjangoSlot name="request-public-preamble" />
             <RequestPublic
               :form="requestForm"
@@ -272,7 +274,7 @@
           <!-- STEP: PREVIEW -->
 
           <div v-if="step === STEPS.PREVIEW_SUBMIT">
-            <h2>Vorschau &amp; Abschicken</h2><!-- TODO i18n -->
+            <h2>{{ i18n.previewAndSubmit }}</h2>
             <ReviewRequest
               :i18n="i18n"
               :config="config"

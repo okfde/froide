@@ -76,7 +76,7 @@
             type="button"
             class="btn btn-primary"
             @click="setStepReviewPublicbody"
-            >Weiter mit Auswahl<!-- TODO i18n --></button>
+            >{{ i18n.continueWithSelected }}</button>
         </div>
       </div>
       <div class="row">

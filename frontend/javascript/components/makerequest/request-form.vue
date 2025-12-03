@@ -16,14 +16,14 @@
         <div
           v-if="!hidePublicbodyChooser"
           class="mb-3"
-          >Empfänger:<!-- TODO i18n -->
+          >{{ i18n.toPb }}
           <div>
-            <strong v-if="publicBodies.length === 0" class="text-danger">Keine gewählt!</strong>
+            <strong v-if="publicBodies.length === 0" class="text-danger">{{ i18n.none }}</strong>
             <strong v-else>{{ publicBodies.map(pb => pb.name).join(', ') }}</strong>
             <button
               type="button" class="btn btn-secondary btn-sm align-baseline ms-2"
               @click="setStepChangePublicbody"
-              >Ändern<!-- TODO i18n --></button>
+              >{{ i18n.change }}</button>
           </div>
         </div>
 
@@ -139,7 +139,7 @@
                   type="button"
                   class="btn btn-secondary"
                   @click="fixBodyPlaceholders"
-                  >Platzhalter reparieren<!-- TODO i18n --></button>
+                  >{{ i18n.fixPlaceholder }}</button>
               </div>
             </div>
             <div
@@ -157,7 +157,7 @@
                   type="button"
                   class="btn btn-secondary btn-sm"
                   @click="fixBodyPlaceholders"
-                  >Platzhalter automatisch reparieren<!-- TODO i18n --></button>
+                  >{{ i18n.fixPlaceholder }}</button>
               </div>
             </div>
             <div v-if="!fullText" class="body-text" v-text="letterStart" />
@@ -260,7 +260,7 @@
     <div v-if="hasUser" class="card mb-3">
       <div class="card-body">
         <details :open="userForm?.errors?.address || addressValid === false || addressChanged === true">
-          <summary>Meine Postadresse aktualisieren<!-- TODO i18n --></summary>
+          <summary>{{ i18n.updatePostalAddress }}</summary>
           <UserAddress
             v-model:initial-address="address"
             :i18n="i18n"
@@ -591,9 +591,8 @@ export default {
       this.subjectValidationErrors = []
       let valid = true
       if (this.nonMeaningfulSubjects.some(re => re.test(this.subject))) {
-        // TODO i18n
-        this.subjectValidationErrors.push(this.i18n.subjectMeaning || 'subject meaning')
-        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaning || 'subject meaning')
+        this.subjectValidationErrors.push(this.i18n.subjectMeaningful)
+        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaningful)
         valid = false
       }
       // from model via form_utils
@@ -612,7 +611,9 @@ export default {
           // let browser's native message take over
           this.resetSubjectCustomValidity()
         }
-        this.subjectValidationErrors.push(minLengthMessage)
+        if (this.subject.length < minLength) {
+          this.subjectValidationErrors.push(minLengthMessage)
+        }
       }
       if (!valid) {
         // note: reportValidity might only work from a click, but not keyboard event?
@@ -628,10 +629,10 @@ export default {
       let valid = true
       this.showPlaceholderReplacer = false
       if (this.body.includes(PLACEHOLDER_MARKER)) {
-        // TODO i18n
-        this.bodyValidationErrors.push(this.i18n.replacePlaceholderMarker)
+        const placeholderMessage = this.i18n._('containsPlaceholderMarker', { placeholder: PLACEHOLDER_MARKER })
+        this.bodyValidationErrors.push(placeholderMessage)
         this.showPlaceholderReplacer = true
-        this.$refs.body.setCustomValidity(this.i18n.replacePlaceholderMarker)
+        this.$refs.body.setCustomValidity(placeholderMessage)
         valid = false
       }
       // see validateSubject above for comments, esp. re: textarea
@@ -645,7 +646,9 @@ export default {
         } else {
           this.resetBodyCustomValidity()
         }
-        this.bodyValidationErrors.push(minLengthMessage)
+        if (this.body.length < minLength) {
+          this.bodyValidationErrors.push(minLengthMessage)
+        }
       }
       if (!valid) {
         this.$refs.body.reportValidity()

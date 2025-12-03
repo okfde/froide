@@ -15,22 +15,26 @@
           <!-- diff.: object.follower_count omitted -->
         </h5>
         <small>
-          <span v-if="object.public_body">
-            to {{ object.public_body.name }}<!-- TODO i18n -->
-            <!-- diff.: name not link -->
-            <span v-if="object.project" class="ms-1">und andere Behörden</span>
-            <!-- diff.: und andere not link -->
-            <!-- diff./TODO: jurisdiction_name missing, object holds only url a.t.m. -->
-            <button type="button" class="btn btn-sm btn-link align-baseline"
-              @click="selectPublicBody(object.public_body.id)"
-              >
-              <!-- TODO i18n -->
-              Auch an diese Behörde schreiben
-            </button>
+          <span v-if="object.project" v-html="i18n._('searchToProject', { name: object.public_body.name, url: object.public_body.site_url, urlp: object.project_site_url, count: object.project_request_count })" />
+          <span v-else-if="object.public_body_name">{{
+            i18n._('searchToPbName', { name: object.public_body_name })
+          }}</span>
+          <span v-else-if="object.public_body">
+            {{ i18n.to }}
+            <a :href="object.public_body.site_url">{{ object.public_body.name }}</a>
+            – {{ object.jurisdiction_name }}
           </span>
           <span v-else>
-            Not yet set<!-- TODO i18n -->
+            {{ i18n.notYetSet }}
           </span>
+          <button
+            v-if="object.public_body.id"
+            type="button"
+            class="btn btn-sm btn-link align-baseline text-start"
+            @click="selectPublicBody(object.public_body.id)"
+            >
+            {{ i18n.searchSelectThisPb }}
+          </button>
           <br />
           {{ object.readable_status }},
           <!-- diff.: not timesince/"ago", instead "Month YYYY" -->
@@ -53,6 +57,8 @@ import { SET_STEP, STEPS } from '../../store/mutation_types'
 const store = useStore()
 
 const pbScope = inject('pbScope')
+
+const i18n = inject('i18n')
 
 const { object } = defineProps({
   object: {
