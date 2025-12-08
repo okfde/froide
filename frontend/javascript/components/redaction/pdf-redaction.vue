@@ -687,7 +687,8 @@ export default {
         const flipWidthHeight = rotation % 180 === 90
 
         // non-zero pageOffset are rare; CLI test (the first two coordinates):
-        // pdfinfo -box in.pdf | grep CropBox:
+        // pdfinfo -box froide/tests/testdata/redaction-test-cropbox.pdf
+        // note CropBox; TrimBox+ArtBox on their own don't need special handling
         const [pageOffsetX, pageOffsetY, pageSizeX, pageSizeY] = page.view
         this.intrinsicPageWidth = flipWidthHeight ? pageSizeY - pageOffsetY : pageSizeX - pageOffsetX
         this.intrinsicPageHeight = flipWidthHeight ? pageSizeX - pageOffsetX : pageSizeY - pageOffsetY
