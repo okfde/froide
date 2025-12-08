@@ -685,8 +685,12 @@ export default {
         const rotation = (page.rotate + 360) % 360
         // is the page rotated by ±{90, 270}?
         const flipWidthHeight = rotation % 180 === 90
-        this.intrinsicPageWidth = flipWidthHeight ? page.view[3] : page.view[2]
-        this.intrinsicPageHeight = flipWidthHeight ? page.view[2] : page.view[3]
+
+        // non-zero pageOffset are rare; CLI test (the first two coordinates):
+        // pdfinfo -box in.pdf | grep CropBox:
+        const [pageOffsetX, pageOffsetY, pageSizeX, pageSizeY] = page.view
+        this.intrinsicPageWidth = flipWidthHeight ? pageSizeY - pageOffsetY : pageSizeX - pageOffsetX
+        this.intrinsicPageHeight = flipWidthHeight ? pageSizeX - pageOffsetX : pageSizeY - pageOffsetY
 
         // redaction "rects'" coordinates are stored in "intrinsic PDF viewport = document pixels",
         // and not in "browser/device pixels"
@@ -716,7 +720,8 @@ export default {
           maxWidth,
           canvasViewportSize: [viewport.width, viewport.height],
           canvasCss: [wPx, hPx],
-          pageSize: [this.intrinsicPageWidth, this.intrinsicPageHeight]
+          pageView: { pageOffsetX, pageOffsetY, pageSizeX, pageSizeY },
+          intrinsicPageSize: [this.intrinsicPageWidth, this.intrinsicPageHeight]
         })
         canvas.style.width = wPx
         canvas.style.height = hPx
@@ -925,7 +930,6 @@ export default {
       const texts = Array.prototype.map.call(divs, (d) => {
         const pos = this.getDivRect(d)
         const f = 1 / this.scaleFactor
-        console.log('### pos', pos)
         return {
           pos: [
             pos[0] * f,
