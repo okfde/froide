@@ -83,7 +83,7 @@ distlib==0.4.0
     # via virtualenv
 dj-database-url==3.0.1
     # via froide (pyproject.toml)
-django==5.2.6
+django==5.2.9
     # via
     #   froide (pyproject.toml)
     #   channels
