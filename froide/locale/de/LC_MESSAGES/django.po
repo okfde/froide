@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 18:22+0200\n"
+"POT-Creation-Date: 2025-12-10 12:46+0100\n"
 "PO-Revision-Date: 2025-08-25 17:23+0100\n"
 "Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -85,6 +85,14 @@ msgstr "Fortgeschritten"
 #: froide/account/admin.py
 msgid "last login"
 msgstr "letzter Login"
+
+#: froide/account/admin.py froide/account/models.py
+msgid "date deactivated"
+msgstr "Deaktivierungsdatum"
+
+#: froide/account/admin.py froide/account/models.py
+msgid "date left"
+msgstr "Austrittsdatum"
 
 #. Translators: not url
 #: froide/account/admin.py froide/foirequest/views/make_request.py
@@ -202,6 +210,12 @@ msgstr "Füge Nutzer*innen zur Gruppe hinzu und sende E-Mail..."
 #: froide/account/admin.py froide/helper/admin_utils.py
 msgid "Successfully executed."
 msgstr "Erfolgreich ausgeführt."
+
+#: froide/account/admin.py
+#, fuzzy
+#| msgid "Deactivate and block users"
+msgid "Reactivate users"
+msgstr "Nutzer:in deaktivieren und blocken"
 
 #: froide/account/apps.py
 #: froide/account/templates/account/includes/breadcrumbs.html
@@ -481,6 +495,11 @@ msgid "tagged users"
 msgstr "getaggte Nutzer:innen"
 
 #: froide/account/models.py
+#, python-format
+msgid "%(value)s is not lowercase"
+msgstr ""
+
+#: froide/account/models.py
 msgid "username"
 msgstr "Nutzer:innenname"
 
@@ -571,20 +590,12 @@ msgid "Blocked"
 msgstr "Blockiert"
 
 #: froide/account/models.py
-msgid "date deactivated"
-msgstr "Deaktivierungsdatum"
-
-#: froide/account/models.py
 msgid "deleted"
 msgstr "gelöscht"
 
 #: froide/account/models.py
 msgid "Designates whether this user was deleted."
 msgstr "Zeigt an, ob Nutzer:in gelöscht wurde."
-
-#: froide/account/models.py
-msgid "date left"
-msgstr "Austrittsdatum"
 
 #: froide/account/models.py
 msgid "<< Name Not Public >>"
@@ -2527,6 +2538,18 @@ msgstr "Entschlüsselungs-Job gestartet: %s"
 #: froide/foirequest/admin.py
 msgid "Has request"
 msgstr "Hat Anfrage"
+
+#: froide/foirequest/admin.py
+#, fuzzy
+#| msgid "Message was not sent"
+msgid "Message Content"
+msgstr "Nachricht wurde nicht gesendet"
+
+#: froide/foirequest/admin.py
+#, fuzzy
+#| msgid "Advanced"
+msgid "Advanced Options"
+msgstr "Fortgeschritten"
 
 #: froide/foirequest/admin.py
 msgid "Close associated requests"
@@ -5864,11 +5887,10 @@ msgid ""
 "Legal Note: This mail was sent through a Freedom Of Information Portal. "
 "Replies might be published automatically.\n"
 msgstr ""
-"Rechtshinweis: Diese E-Mail wurde über den Webservice https://"
-"fragdenstaat.de versendet. Antworten werden ggf. im Auftrag der "
-"Antragstellenden automatisch auf dem Internet-Portal veröffentlicht. Falls "
-"Sie noch Fragen haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-"
-"behoerden/\n"
+"Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat."
+"de versendet. Antworten werden ggf. im Auftrag der Antragstellenden "
+"automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen "
+"haben, besuchen Sie https://fragdenstaat.de/hilfe/fuer-behoerden/\n"
 
 #: froide/foirequest/templates/foirequest/emails/request_update.txt
 #: froide/follow/templates/follow/emails/batch_update_follower.txt
@@ -7967,12 +7989,12 @@ msgstr "Wir führen Sie Schritt für Schritt durch den Prozess."
 #: froide/foirequest/views/message.py
 #, python-brace-format
 msgid ""
-"Should you experience problems, you can use <a class=\"alert-link\" href=\"$"
-"{url}\">the older version</a> here. We welcome feedback!"
+"Should you experience problems, you can use <a class=\"alert-link\" "
+"href=\"${url}\">the older version</a> here. We welcome feedback!"
 msgstr ""
-"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" href=\"$"
-"{url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über Feedback "
-"freuen."
+"Sollte etwas nicht funktionieren, gibt es <a class=\"alert-link\" "
+"href=\"${url}\">hier noch das alte Upload-Formular</a>. Wir würden uns über "
+"Feedback freuen."
 
 #: froide/foirequest/views/message.py
 msgid "We have redone this part of the app."
@@ -8861,8 +8883,8 @@ msgstr "erhalten/<int:follow_id>/<str:check>/"
 msgctxt "url part"
 msgid "unfollow/<str:conf_slug>-<int:follow_id>/<str:check>/"
 msgstr ""
-"keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/"
-"<str:check>/"
+"keine-benachrichtigungen-erhalten/<str:conf_slug>-<int:follow_id>/<str:"
+"check>/"
 
 #: froide/follow/urls.py
 msgctxt "url part"
@@ -10324,7 +10346,6 @@ msgstr ""
 "der Name der Behördenleitung etc."
 
 #: froide/publicbody/forms.py froide/publicbody/models.py
-#: froide/publicbody/models/contact.py
 #: froide/templates/snippets/share_buttons.html
 msgid "Email"
 msgstr "E-Mail"
@@ -10722,10 +10743,6 @@ msgstr "Vorgeschlagene Behördenänderung"
 #: froide/publicbody/models.py
 msgid "Proposed Public Body Changes"
 msgstr "Vorgeschlagene Behördenänderungen"
-
-#: froide/publicbody/models/contact.py
-msgid "Fax"
-msgstr "Fax"
 
 #: froide/publicbody/templates/admin/publicbody/proposedpublicbody/change_form.html
 msgid "Accept/reject this proposal"
@@ -11596,8 +11613,8 @@ msgid ""
 "Open Knowledge Foundation</a>. If you want to support Froide, please visit "
 "the <a href=\"https://github.com/okfde/froide\">repository on GitHub</a>."
 msgstr ""
-"Froide ist ein freies und Open Source Projekt der <a href=\"https://"
-"okfn.de\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen "
+"Froide ist ein freies und Open Source Projekt der <a href=\"https://okfn."
+"de\">Open Knowledge Foundation </a><br/>Wenn Sie Froide unterstützen "
 "möchten, besuchen Sie bitte unser <a href=\"https://github.com/okfde/"
 "froide\">GitHub-Repo</a>"
 
@@ -12392,6 +12409,12 @@ msgstr "Kann nicht speichern, Upload ist nicht im Zustand ‘Empfangen’."
 msgid "Cannot start saving, upload is not complete."
 msgstr "Kann nicht speichern, Upload ist unvollständig."
 
+#: froide/upload/models.py
+#, fuzzy
+#| msgid "Cannot start saving, upload is not in receiving state."
+msgid "Cannot finish, upload is not in saving state."
+msgstr "Kann nicht speichern, Upload ist nicht im Zustand ‘Empfangen’."
+
 #: froide/urls.py
 msgctxt "url part"
 msgid "follow/"
@@ -12456,6 +12479,9 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid "Fax"
+#~ msgstr "Fax"
 
 #~ msgid "Scan documents"
 #~ msgstr "Dokumente scannen"
@@ -12619,9 +12645,6 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #~ msgid "Share request"
 #~ msgstr "Anfrage teilen"
-
-#~ msgid "Deactivate and block users"
-#~ msgstr "Nutzer:in deaktivieren und blocken"
 
 #~ msgid "Users logged out, deactivated and blocked."
 #~ msgstr "Nutzer:in wurden ausgeloggt, deaktiviert und blockiert."
@@ -12801,15 +12824,15 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ msgstr "Anzahl der Nutzer:innen"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by <a href=\"http://"
-#~ "www.okfn.org\">the Open Knowledge Foundation</a>."
+#~ "Froide is a free and Open Source Project by <a href=\"http://www.okfn."
+#~ "org\">the Open Knowledge Foundation</a>."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/hilfe/"
 #~ "spenden/\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
 
 #~ msgid ""
-#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://"
-#~ "www.okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
+#~ "Froide is a free and Open Source Project by &lt;a href=&quot;http://www."
+#~ "okfn.org&quot;&gt;the Open Knowledge Foundation&lt;/a&gt;."
 #~ msgstr ""
 #~ "Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.de/spenden/"
 #~ "\">Kämpfen Sie mit und unterstützen Sie uns.</a>"
@@ -14092,8 +14115,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid ""
 #~ "If this document &lt;strong>is not a letter to you&lt;/strong> from a "
-#~ "public body, but any other kind of document, it very likely "
-#~ "&lt;strong>does not need a redaction&lt;/strong>."
+#~ "public body, but any other kind of document, it very likely &lt;"
+#~ "strong>does not need a redaction&lt;/strong>."
 #~ msgstr ""
 #~ "Falls dieses Dokument <strong>kein Brief an Sie</strong> von einer "
 #~ "Behörde ist, sondern ein andere Art von Dokument, dann müssen Sie es sehr "
@@ -14159,8 +14182,9 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #~ "new status."
 #~ msgstr ""
 #~ "Diese Anfrage hat eine Antwort erhalten und ist in einem unbekannten "
-#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a href=\"%"
-#~ "(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen Status."
+#~ "Zustand. Wenn Sie diese Anfrage gestellt haben, bitte <a "
+#~ "href=\"%(login_url)s\">loggen Sie sich ein</a> und setzen Sie einen neuen "
+#~ "Status."
 
 #, fuzzy
 #~ msgid ""
@@ -14212,8 +14236,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a href=\"%(urlp)s\">%"
-#~ "(count)s other public bodies&lt;/a>"
+#~ "to &lt;a href=\"%(url)s\">%(name)s&lt;/a> and &lt;a "
+#~ "href=\"%(urlp)s\">%(count)s other public bodies&lt;/a>"
 #~ msgstr ""
 #~ "an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s "
 #~ "andere Behörden</a>"
@@ -14221,8 +14245,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 #, fuzzy
 #~ msgid ""
 #~ "It looks like you are visiting from %(country_name)s. Did you know that "
-#~ "there is an &lt;a href=\"%(url)s\">FOI site for %(country_name)s called %"
-#~ "(name)s&lt;/a>?"
+#~ "there is an &lt;a href=\"%(url)s\">FOI site for %(country_name)s called "
+#~ "%(name)s&lt;/a>?"
 #~ msgstr ""
 #~ "Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
 #~ "eine <a href=\"%(url)s\">IFG-Seite für %(country_name)s namens %(name)s</"
@@ -14272,8 +14296,8 @@ msgstr "zustaendigkeit/<slug:slug>/"
 
 #, fuzzy
 #~ msgid ""
-#~ "If you need assistance, you may reference this error as &lt;strong>%"
-#~ "(ref)s&lt;/strong>."
+#~ "If you need assistance, you may reference this error as &lt;"
+#~ "strong>%(ref)s&lt;/strong>."
 #~ msgstr ""
 #~ "Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: "
 #~ "<strong>%(ref)s</strong>."
