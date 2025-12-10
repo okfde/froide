@@ -189,88 +189,64 @@
 
     <!-- Active filter badges -->
 
-    <div class="my-3 row">
+    <div class="my-3 d-flex flex-wrap gap-2">
 
       <!-- Badges: Jurisdiction/kind + sub-jurisdiction -->
 
-      <!-- TODO: not sure if the column-alignment with the filter dropdown makes sense,
-         when it is off half of the time... probably the badges should be just inline-block-ish -->
-
-      <div
-        class="col-sm-3"
+      <PbFilterBadge
         v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length === 1 ||
         (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && selectedJurisdictions.size === 0 && !selectedJurisdiction)"
-        >
-        <PbFilterBadge
-          class="mb-1"
-          @remove-click="jurisdictionRegionKind = null"
-          :label="i18n.level"
-          :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
-          />
-      </div>
+        class="mb-1"
+        @remove-click="jurisdictionRegionKind = null"
+        :label="i18n.level"
+        :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
+        />
 
       <!-- alt
-      <div
-        v-if="selectedJurisdictions.size > 0"
-        class="col-sm-3"
-        >
         <PbFilterBadge
+          v-if="selectedJurisdictions.size > 0"
           v-for="jurisdiction in selectedJurisdictions"
           :key="jurisdiction.id"
           @remove-click="selectedJurisdictions.delete(jurisdiction)"
           :value="jurisdiction.name"
           :label="'TODO'"
           />
-      </div>
       -->
 
-      <div
+      <PbFilterBadge
         v-if="selectedJurisdiction"
-        class="col-sm-3"
-        >
-        <PbFilterBadge
-          class="mb-1"
-          @remove-click="selectedJurisdiction = null"
-          :label="i18n['groupBy_' + jurisdictionRegionKind]"
-          :value="selectedJurisdiction.name"
-          />
-      </div>
+        class="mb-1"
+        @remove-click="selectedJurisdiction = null"
+        :label="i18n['groupBy_' + jurisdictionRegionKind]"
+        :value="selectedJurisdiction.name"
+        />
 
       <!-- Badges: from/to year -->
 
-      <div
-        v-if="dateStart || dateEnd"
-        class="col-sm-3 d-flex flex-column gap-2"
-        >
-        <PbFilterBadge
-          v-if="dateStart"
-          class="mb-1"
-          @remove-click="dateStart = null"
-          :label="i18n.dateRangeFrom"
-          :value="dateStart"
-          />
-        <PbFilterBadge
-          v-if="dateEnd"
-          class="mb-1"
-          @remove-click="dateEnd = null"
-          :label="i18n.dateRangeTo"
-          :value="dateEnd"
-          />
-      </div>
+      <PbFilterBadge
+        v-if="dateStart"
+        class="mb-1"
+        @remove-click="dateStart = null"
+        :label="i18n.dateRangeFrom"
+        :value="dateStart"
+        />
+      <PbFilterBadge
+        v-if="dateEnd"
+        class="mb-1"
+        @remove-click="dateEnd = null"
+        :label="i18n.dateRangeTo"
+        :value="dateEnd"
+        />
 
       <!-- Badge: campaign -->
 
-      <div
+      <PbFilterBadge
         v-if="selectedCampaign"
-        class="col-sm-3"
-        >
-        <PbFilterBadge
-          @remove-click="selectedCampaign = null"
-          class="mb-1"
-          :label="i18n.campaign"
-          :value="selectedCampaign.name"
-          />
-      </div>
+        @remove-click="selectedCampaign = null"
+        class="mb-1"
+        :label="i18n.campaign"
+        :value="selectedCampaign.name"
+        />
     </div>
 
     <!-- API errors -->
