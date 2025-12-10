@@ -403,29 +403,36 @@ watch(dateStart, () => {
   }
 })
 
-const query = computed(() => ({
-  ...pagination,
-  ...textQuery.value
-    ? { q: textQuery.value }
-    : {},
-  ...selectedJurisdictions.value.size > 0
-    ? { jurisdiction: [...selectedJurisdictions.value].map((j) => j.slug) }
-    : {},
-  ...selectedJurisdiction.value
-    ? { jurisdiction: selectedJurisdiction.value.slug }
-    : {},
-  ...jurisdictionRegionKind.value && !selectedJurisdiction.value
-      // TODO/alt, fix/remove once search by search-jurisdiction-by-rank settled
-      // alt: ? { jurisdiction_rank: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value].rank }
-      ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.map((j) => j.slug) }
-      : {},
-  ...jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1
-      ? { jurisdiction: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items[0].slug}
-      : {},
-  ...selectedCampaign.value ? { campaign: selectedCampaign.value.slug } : {},
-  ...dateStart.value ? { last_after: dateStart.value + '-01-01' } : {},
-  ...dateEnd.value ? { first_before: dateEnd.value + '-12-31' } : {},
-}))
+const query = computed(() => {
+  const query = { ...pagination }
+  if (textQuery.value) {
+    query.q = textQuery.value
+  }
+  if (selectedJurisdictions.value.size > 0) {
+    query.jurisdiction = [...selectedJurisdictions.value].map((j) => j.slug)
+  }
+  if (selectedJurisdiction.value) {
+    query.jurisdiction = selectedJurisdiction.value.slug
+  }
+  if (jurisdictionRegionKind.value && !selectedJurisdiction.value) {
+    // TODO/alt, fix/remove once search by search-jurisdiction-by-rank settled
+    // alt: ? { jurisdiction_rank: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value].rank }
+    query.jurisdiction = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.map((j) => j.slug)
+  }
+  if (jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1) {
+    query.jurisdiction = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items[0].slug
+  }
+  if (selectedCampaign.value) {
+    query.campaign = selectedCampaign.value.slug
+  }
+  if (dateStart.value) {
+    query.last_after = dateStart.value + '-01-01'
+  }
+  if (dateEnd.value) {
+    query.first_before = dateEnd.value + '-12-31'
+  }
+  return query
+})
 
 const resultsCount = ref(0)
 const resultsMeta = ref({})
