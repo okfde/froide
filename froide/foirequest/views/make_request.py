@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import decorator_from_middleware, method_decorator
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
@@ -148,8 +149,10 @@ class MakeRequestView(FormView):
             elif FoiRequest.objects.filter(user=self.request.user).count() > 50:
                 # TODO: instead update the preference?
                 skip_intro_howto = True
-        # TODO maybe not optimal...
-        min_year = FoiRequest.objects.order_by("created_at")[0].created_at.year
+        if first_request := FoiRequest.objects.order_by("created_at").first():
+            min_year = first_request.created_at.year
+        else:
+            min_year = timezone.now().year
 
         ctx = {
             "settings": {
