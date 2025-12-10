@@ -206,6 +206,7 @@ class MakeRequestView(FormView):
                 "requests": _("requests"),
                 "close": _("close"),
                 "back": _("Back"),
+                "remove": _("Remove"),
                 "stepNext": _("Next"),
                 "step": _("Step"),
                 "introduction": _("Introduction"),

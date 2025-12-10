@@ -20,27 +20,15 @@ const emit = defineEmits(['removeClick'])
 </script>
 
 <template>
-  <span class="badge bg-secondary-subtle text-body d-inline-flex justify-content-between fs-6 text-wrap">
-    <dl class="text-start">
-      <dt class="text-secondary mb-1"><small>{{ label }} =</small></dt>
-      <dd>{{ value }}</dd>
-    </dl>
+  <span class="badge bg-secondary-subtle text-body d-flex fs-6 text-wrap gap-2">
+    <div class="text-start lh-sm">
+      <small class="text-body-secondary">{{ label }}</small><br/>
+      {{ value }}
+    </div>
     <button
       @click="emit('removeClick')"
       type="button"
       class="btn btn-close align-self-center"
-      :aria-label="i18n.close"></button>
+      :aria-label="i18n.remove"></button>
   </span>
 </template>
-
-<style lang="scss" scoped>
-@import '../../../styles/variables';
-
-dl,
-dt,
-dd {
-  margin: 0;
-  font-weight: inherit;
-}
-
-</style>
