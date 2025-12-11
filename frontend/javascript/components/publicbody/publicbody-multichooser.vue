@@ -110,12 +110,12 @@
               :value="filters[filterKey]"
               />
           </div>
-          <div class="row mt-3">
+          <div class="d-flex flex-column flex-sm-row flex-md-column flex-wrap gap-2 mt-3">
             <div
               v-for="filterKey in filterOrder"
               :key="filterKey"
-              class="col-sm-4 col-md-12 filter-column position-relative"
-            >
+              class="position-relative"
+              >
               <PbFilter
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
@@ -433,24 +433,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../styles/variables';
 
 button[disabled] {
   cursor: not-allowed;
 }
-@mixin filter-divider() {
-  .filter-column:not(:first-child) {
-    padding-top: 1em;
-  }
-  .filter-column:not(:last-child) {
-    border-bottom: 2px solid $gray-300;
-    padding-bottom: 1em;
-  }
-}
-@include media-breakpoint-up(md) {
-  @include filter-divider();
-}
-@include media-breakpoint-down(xs) {
-  @include filter-divider();
-}
+
 </style>

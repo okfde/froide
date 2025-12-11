@@ -2,7 +2,7 @@
   <div class="dropdown my-1 my-sm-0">
     <button
       type="button"
-      class="btn btn-secondary dropdown-toggle d-block w-100"
+      class="btn btn-secondary dropdown-toggle d-block w-100 text-wrap"
       data-bs-toggle="dropdown"
       data-bs-auto-close="outside"
       >{{ config.label }}</button>
