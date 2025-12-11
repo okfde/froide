@@ -6,35 +6,37 @@
       data-bs-toggle="dropdown"
       data-bs-auto-close="outside"
       >{{ config.label }}</button>
-    <div class="dropdown-menu p-3">
-      <input
-        v-if="hasSearch"
-        type="search"
-        class="form-control form-control-sm"
-        :placeholder="i18n.searchPlaceholder"
-        v-model="search"
-        @input="triggerSearch"
-        @keydown.enter.prevent="triggerSearch"
-        />
-      <select
-        v-if="hasChoices"
-        v-model="choice"
-        @change="triggerSearch"
-        class="form-select form-control-sm form-select-sm">
-        <option
-          :value="null"
-          :selected="!choice"
-          style="font-style: italic"
-          ><em>{{ config.choicesNoneLabel }}</em></option>
-        <option
-          v-for="opt in config.choices[1]"
-          :key="opt[0]"
-          :value="opt[0]"
-          :selected="choice == opt[0]">
-          {{ opt[1] }}
-        </option>
-      </select>
-      <div>
+    <div class="dropdown-menu">
+      <div class="px-3 py-2">
+        <input
+          v-if="hasSearch"
+          type="search"
+          class="form-control form-control-sm"
+          :placeholder="i18n.searchPlaceholder"
+          v-model="search"
+          @input="triggerSearch"
+          @keydown.enter.prevent="triggerSearch"
+          />
+        <select
+          v-if="hasChoices"
+          v-model="choice"
+          @change="triggerSearch"
+          class="form-select form-control-sm form-select-sm">
+          <option
+            :value="null"
+            :selected="!choice"
+            style="font-style: italic"
+            ><em>{{ config.choicesNoneLabel }}</em></option>
+          <option
+            v-for="opt in config.choices[1]"
+            :key="opt[0]"
+            :value="opt[0]"
+            :selected="choice == opt[0]">
+            {{ opt[1] }}
+          </option>
+        </select>
+      </div>
+      <div class="overflow-y-auto p-3" style="max-height: 50vh">
         <div
           v-if="loading"
           class="spinner-border text-secondary"
@@ -232,7 +234,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>
