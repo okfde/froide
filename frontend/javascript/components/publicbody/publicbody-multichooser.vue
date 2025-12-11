@@ -42,15 +42,13 @@
         </div>
       </div>
       <div class="row mb-4 mt-5">
-        <div class="col-auto">
-          <h3 v-show="!searching">
-            {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
-          </h3>
-          <div v-show="searching" class="col-auto">
-            <div class="spinner-border text-secondary" role="status">
+        <div class="col-12 col-lg-5">
+          <h3>
+            <span v-if="searching" class="spinner-border spinner-border-sm fs-3 text-secondary" role="status">
               <span class="visually-hidden">{{ i18n.loading }}</span>
-            </div>
-          </div>
+            </span>
+            {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
+          </h3>
         </div>
         <div class="col-auto">
           <button
@@ -70,7 +68,7 @@
             {{ i18n.clearSearchResults }}
           </button>
         </div>
-        <div class="col-auto ms-auto">
+        <div class="col-auto">
           <button
             :disabled="!stepCanContinue(scope)"
             type="button"
@@ -157,10 +155,6 @@ import PbFilterSelected from './pb-filter-selected'
 
 const MAX_PUBLICBODIES = 800
 
-function treeLabel(item) {
-  return '-'.repeat(item.depth - 1) + ' ' + item.name
-}
-
 export default {
   name: 'PublicbodyMultiChooser',
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
@@ -241,7 +235,7 @@ export default {
           hasSearch: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
@@ -260,13 +254,13 @@ export default {
         categories: {
           label: this.i18n.topicPlural[1],
           key: 'categories',
-          expanded: this.filterExpanded.categories,
+          initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
           hasSearch: true,
           multi: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }

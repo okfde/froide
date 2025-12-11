@@ -1,19 +1,23 @@
 <template>
   <div>
+    <!-- this is the case for most PbFilterLists... -->
     <ul v-if="!config.groupBy" class="filter-list mb-0">
       <li
         v-for="item in filteredItems"
         :key="item.id"
         :class="{ active: item.isActive }">
         <div class="form-check">
+          <!-- (when the parent PbFilterList is active, this child's matches will be included in the results anyway,
+             hence we "auto-check" it, so state is displayed more consistently, unamiguously -->
           <input
             :type="inputType"
-            :name="inputName"
+            :name="inputName + (parentInputName || '')"
             class="form-check-input"
             :id="item.labelId"
             @change="setFilter(item)"
             :data-test="item.isActive"
-            :checked="item.isActive"
+            :checked="item.isActive || (config.multi && parentActive)"
+            :disabled="config.multi && parentActive"
             />
           <label class="form-check-label text-break" :for="item.labelId">
             {{ item.label }}
@@ -32,18 +36,23 @@
             :scope="scope"
             :value="value"
             :items="item.subItems"
+            :parent-active="item.isActive"
+            :parent-input-name="item.labelId"
             @remove-filter="removeFilter"
             @set-filter="setFilter"
             @load-more="loadMore"
-            @load-children="loadChildren"></pb-filter-list>
+            @load-children="loadChildren"
+            />
         </div>
       </li>
     </ul>
+    <!-- ...this is used in PbBetaChooser for "layer"/jurisdiction -->
     <ul v-else class="list-unstyled mb-0 filter-list--grouped">
       <li
         v-for="itemGroup in itemGroups"
         :key="itemGroup.id"
         >
+        <!-- special simple case for groups with one member -->
         <div
           v-if="itemGroup.items.length === 1"
           class="form-check"
@@ -61,8 +70,10 @@
           </label>
           <small v-if="itemGroup.items[0].count">({{ itemGroup.items[0].count }})</small>
         </div>
+        <!-- groups with multiple members will have a "smart check all" checkbox... -->
         <div v-else>
           <div class="form-check">
+            <!-- ...which can be indeterminate. Als note the itemGroupSelect here... -->
             <input
               :type="inputType"
               :name="inputName"
@@ -86,6 +97,8 @@
           </div>
           <div class="collapse" :id="'collapse_' + itemGroup.id">
             <ul class="list-unstyled mb-0 ps-4">
+              <!-- ...which will affect all the nested/indented group members right here.
+                Note that we don't use a nested/recursive PbFilterList here, there is only "depth=1". -->
               <li v-for="item in itemGroup.items" :key="item.id">
                 <div class="form-check">
                   <input
@@ -122,7 +135,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'PbFilterList',
-  props: ['config', 'items', 'i18n', 'scope', 'value', 'hasMore'],
+  props: ['config', 'items', 'i18n', 'scope', 'value', 'hasMore', 'parentActive', 'parentInputName'],
   computed: {
     facetMap() {
       const facets = this.getScopedSearchFacets(this.scope)
@@ -215,6 +228,10 @@ export default {
       if (this.isActive(item.id)) {
         this.removeFilter(item)
         return
+      }
+      // uncollapse
+      if (item.children && item.children.length > 0 && !item.subItems) {
+        this.loadChildren(item)
       }
       this.$emit('setFilter', item)
     },
