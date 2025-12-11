@@ -7,9 +7,8 @@
       data-bs-auto-close="outside"
       >{{ config.label }}</button>
     <div class="dropdown-menu">
-      <div class="px-3 py-2">
+      <div v-if="hasSearch" class="px-3 py-2">
         <input
-          v-if="hasSearch"
           type="search"
           class="form-control form-control-sm"
           :placeholder="i18n.searchPlaceholder"
@@ -17,8 +16,9 @@
           @input="triggerSearch"
           @keydown.enter.prevent="triggerSearch"
           />
+      </div>
+      <div v-if="hasChoices" class="px-3 py-2">
         <select
-          v-if="hasChoices"
           v-model="choice"
           @change="triggerSearch"
           class="form-select form-control-sm form-select-sm">

@@ -7,12 +7,14 @@
         :class="{ active: item.isActive }">
         <div class="form-check">
           <input
-            type="checkbox"
+            :type="inputType"
+            :name="inputName"
             class="form-check-input"
             :id="item.labelId"
             @change="setFilter(item)"
             :data-test="item.isActive"
-            :checked="item.isActive" />
+            :checked="item.isActive"
+            />
           <label class="form-check-label text-break" :for="item.labelId">
             {{ item.label }}
             <small v-if="item.subLabel" class="text-secondary d-block">{{ item.subLabel }}</small>
@@ -47,11 +49,13 @@
           class="form-check"
           >
           <input
-            type="checkbox"
+            :type="inputType"
+            :name="inputName"
             class="form-check-input"
             :id="itemGroup.items[0].labelId"
             @change="setFilter(itemGroup.items[0])"
-            :checked="itemGroup.items[0].isActive" />
+            :checked="itemGroup.items[0].isActive"
+            />
           <label class="form-check-label text-break" :for="itemGroup.items[0].labelId">
             {{ itemGroup.items[0].label }}
           </label>
@@ -60,7 +64,8 @@
         <div v-else>
           <div class="form-check">
             <input
-              type="checkbox"
+              :type="inputType"
+              :name="inputName"
               class="form-check-input"
               :id="itemGroup.id"
               :checked="itemGroup.isActive"
@@ -84,7 +89,8 @@
               <li v-for="item in itemGroup.items" :key="item.id">
                 <div class="form-check">
                   <input
-                    type="checkbox"
+                    :type="inputType"
+                    :name="inputName"
                     class="form-check-input"
                     :id="item.labelId"
                     @change="setFilter(item)"
@@ -173,6 +179,12 @@ export default {
         }
       }
       return groups
+    },
+    inputType() {
+      return this.config.multi ? 'checkbox' : 'radio'
+    },
+    inputName() {
+      return 'pb_filter_' + this.config.key
     },
     ...mapGetters(['getScopedSearchFacets'])
   },
