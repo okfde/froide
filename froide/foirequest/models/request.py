@@ -555,27 +555,23 @@ class FoiRequest(models.Model):
 
     @property
     def jurisdiction_name(self):
-        if self.jurisdiction is not None:
+        if self.jurisdiction:
             return self.jurisdiction.name
-        return None
 
     @property
     def project_number(self):
-        if self.project_order is not None:
+        if self.project_order:
             return self.project_order + 1
-        return None
 
     @property
     def project_site_url(self):
-        if self.project is not None:
+        if self.project:
             return self.project.get_absolute_domain_url()
-        return None
 
     @property
     def project_request_count(self):
-        if self.project is not None:
+        if self.project:
             return self.project.request_count
-        return None
 
     @property
     def has_fee(self):
