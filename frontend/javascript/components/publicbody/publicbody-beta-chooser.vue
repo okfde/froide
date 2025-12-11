@@ -50,26 +50,22 @@
         {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
       </p>
     </div>
-    <div v-if="showBadges && search" class="mb-3">
-      <div class="my-1 my-sm-0">
+    <div v-if="showBadges" class="mb-3 d-flex flex-wrap gap-2">
         <PbFilterBadge
+          v-if="search"
           label="Freitext"
           :value="search"
           :i18n="i18n"
           @remove-click="search = ''"
           />
-      </div>
-    </div>
-    <div v-if="showBadges" class="row">
-      <div v-for="filterKey in activeFilters" :key="filterKey" class="col-sm-4 my-1 my-sm-0">
         <PbFilterSelected
+          v-for="filterKey in activeFilters"
+          :key="filterKey"
           :config="filterConfig[filterKey]"
           @update="updateFilter"
           :value="filters[filterKey]"
           :i18n="i18n"
-          >
-        </PbFilterSelected>
-      </div>
+          />
     </div>
 
     <component :is="listView" :name="name" :scope="scope" :config="config"

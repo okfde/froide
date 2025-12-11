@@ -20,7 +20,7 @@ const emit = defineEmits(['removeClick'])
 </script>
 
 <template>
-  <span class="badge bg-secondary-subtle text-body d-flex fs-6 text-wrap gap-2">
+  <span class="badge bg-secondary-subtle text-body d-flex fs-6 text-wrap gap-2 justify-content-between">
     <div class="text-start lh-sm">
       <small class="text-body-secondary">{{ label }}</small><br/>
       {{ value }}

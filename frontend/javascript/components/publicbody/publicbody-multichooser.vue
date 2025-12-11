@@ -101,14 +101,15 @@
           <PbPagination :scope="scope" :i18n="i18n"></PbPagination>
         </div>
         <div class="col-md-4 col-lg-3 order-md-1">
-          <PbFilterSelected
-            v-for="filterKey in filterOrder"
-            :key="filterKey"
-            :config="filterConfig[filterKey]"
-            @update="updateFilter"
-            :value="filters[filterKey]"
-          >
-          </PbFilterSelected>
+          <div class="d-flex flex-wrap flex-md-column gap-2">
+            <PbFilterSelected
+              v-for="filterKey in filterOrder"
+              :key="filterKey"
+              :config="filterConfig[filterKey]"
+              @update="updateFilter"
+              :value="filters[filterKey]"
+              />
+          </div>
           <div class="row mt-3">
             <div
               v-for="filterKey in filterOrder"
