@@ -413,6 +413,7 @@ class MakeRequestView(FormView):
                 "dateRangeTo": _("Until"),
                 "campaign": _("Campaign"),
                 "toggleCollapse": _("Toggle collapse"),
+                "searchText": pgettext("Search input", "Text"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],

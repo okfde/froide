@@ -7907,6 +7907,12 @@ msgid "Toggle collapse"
 msgstr "Ein-/Ausklappen"
 
 #: froide/foirequest/views/message.py
+#: froide/foirequest/views/make_request.py
+msgctxt "Search input"
+msgid "Text"
+msgstr "Freitext"
+
+#: froide/foirequest/views/message.py
 msgid "Your message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."
 

@@ -53,7 +53,7 @@
     <div v-if="showBadges" class="mb-3 d-flex flex-wrap gap-2">
       <PbFilterBadge
         v-if="search"
-        label="Freitext"
+        :label="i18n.searchText"
         :value="search"
         :i18n="i18n"
         @remove-click="search = ''"

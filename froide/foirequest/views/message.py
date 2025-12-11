@@ -487,6 +487,7 @@ def edit_postal_message(request, foirequest, message_id):
                 current="${current}", total="${total}"
             ),
             "backToSubmit": _("Back to submit"),
+            "searchText": pgettext("Search input", "Text"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),
