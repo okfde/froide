@@ -132,7 +132,7 @@ class FoiRequestListSerializer(
             "user",
             "jurisdiction_name",
             "project",  # TODO: make this updatable
-            "project_site_url",
+            "project_site_url",  # TODO: for api v2, create a FoiProject serializer and possibly inline it here
             "project_request_count",
             "campaign",
         )
