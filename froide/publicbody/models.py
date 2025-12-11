@@ -60,11 +60,6 @@ class JurisdictionManager(models.Manager):
     def get_list(self):
         return self.get_visible().annotate(num_publicbodies=models.Count("publicbody"))
 
-    # FIXME
-    def get_all_ranks(self):
-        ranks = {x.rank for x in self.get_visible()}
-        return dict(zip(ranks, ranks, strict=False))
-
 
 class Jurisdiction(models.Model):
     name = models.CharField(_("Name"), max_length=255)
