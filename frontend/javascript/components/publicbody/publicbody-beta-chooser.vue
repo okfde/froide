@@ -51,21 +51,21 @@
       </p>
     </div>
     <div v-if="showBadges" class="mb-3 d-flex flex-wrap gap-2">
-        <PbFilterBadge
-          v-if="search"
-          label="Freitext"
-          :value="search"
-          :i18n="i18n"
-          @remove-click="search = ''"
-          />
-        <PbFilterSelected
-          v-for="filterKey in activeFilters"
-          :key="filterKey"
-          :config="filterConfig[filterKey]"
-          @update="updateFilter"
-          :value="filters[filterKey]"
-          :i18n="i18n"
-          />
+      <PbFilterBadge
+        v-if="search"
+        label="Freitext"
+        :value="search"
+        :i18n="i18n"
+        @remove-click="search = ''"
+        />
+      <PbFilterSelected
+        v-for="filterKey in activeFilters"
+        :key="filterKey"
+        :config="filterConfig[filterKey]"
+        @update="updateFilter"
+        :value="filters[filterKey]"
+        :i18n="i18n"
+        />
     </div>
 
     <component :is="listView" :name="name" :scope="scope" :config="config"
