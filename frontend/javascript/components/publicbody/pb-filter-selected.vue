@@ -1,26 +1,22 @@
 <template>
-  <div v-if="hasValue && !valuesGrouped">
+  <template v-if="hasValue && !valuesGrouped">
     <PbFilterBadge
       v-for="v in valueList"
       :key="v.id"
       :label="config.label"
       :value="v.label"
-      :i18n="i18n"
-      class="w-100"
       @remove-click="() => removeFilter(v)"
       />
-  </div>
-  <div v-else-if="hasValue && valuesGrouped">
+  </template>
+  <template v-else-if="hasValue && valuesGrouped">
     <PbFilterBadge
       v-for="group in valuesGrouped"
       :key="group.id"
       :label="config.label"
       :value="group.badgeValue"
-      :i18n="i18n"
-      class="w-100"
       @remove-click="() => removeFilter(group.values)"
       />
-  </div>
+  </template>
 </template>
 
 <script>
