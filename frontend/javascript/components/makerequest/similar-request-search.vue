@@ -195,7 +195,7 @@
 
       <PbFilterBadge
         v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length === 1 ||
-        (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && selectedJurisdictions.size === 0 && !selectedJurisdiction)"
+        (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && !selectedJurisdiction)"
         class="mb-1"
         @remove-click="jurisdictionRegionKind = null"
         :label="i18n.level"
@@ -324,10 +324,10 @@ const jurisdictionsByRegionKind = ref({})
 const selectedJurisdiction = ref(initialState.selectedJurisdiction)
 
 // n.b. new Set! alt: multiple selectable, currently unused
-const selectedJurisdictions = ref(new Set(initialState.selectedJurisdictions))
+// const selectedJurisdictions = ref(new Set(initialState.selectedJurisdictions))
 
 watch(jurisdictionRegionKind, () => {
-  selectedJurisdictions.value.clear()
+  // selectedJurisdictions.value.clear()
   selectedJurisdiction.value = null
 })
 
@@ -384,19 +384,16 @@ const query = computed(() => {
   if (textQuery.value) {
     query.q = textQuery.value
   }
-  if (selectedJurisdictions.value.size > 0) {
-    query.jurisdiction = [...selectedJurisdictions.value].map((j) => j.slug)
-  }
+  // if (selectedJurisdictions.value.size > 0) {
+  //  query.jurisdiction = [...selectedJurisdictions.value].map((j) => j.slug)
+  // } else
   if (selectedJurisdiction.value) {
     query.jurisdiction = selectedJurisdiction.value.slug
-  }
-  if (jurisdictionRegionKind.value && !selectedJurisdiction.value) {
-    // TODO/alt, fix/remove once search by search-jurisdiction-by-rank settled
-    // alt: ? { jurisdiction_rank: jurisdictionsByRegionKind.value[jurisdictionRegionKind.value].rank }
-    query.jurisdiction = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.map((j) => j.slug)
-  }
-  if (jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1) {
+  } else if (jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1) {
+    // optionally chaining here because jurisdictionList might be still loading (when loaded from storage)
     query.jurisdiction = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items[0].slug
+  } else if (jurisdictionRegionKind.value && !selectedJurisdiction.value) {
+    query.jurisdiction_rank = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.rank
   }
   if (selectedCampaign.value) {
     query.campaign = selectedCampaign.value.slug
@@ -440,13 +437,27 @@ const search = () => {
 if (initialState.initialSearch) search()
 
 // on query change, rewind pagination
-watch(
-  [textQuery, selectedJurisdictions, selectedJurisdiction, jurisdictionRegionKind, selectedCampaign, dateStart, dateEnd],
+watch([
+  textQuery,
+  // selectedJurisdictions,
+  selectedJurisdiction,
+  jurisdictionRegionKind,
+  selectedCampaign,
+  dateStart,
+  dateEnd
+  ],
   () => { pagination.offset = 0 }
 )
 // on query change, including pagination but excluding text, trigger search
-watch(
-  [pagination, selectedJurisdictions, selectedJurisdiction, jurisdictionRegionKind, selectedCampaign, dateStart, dateEnd],
+watch([
+  pagination,
+  // selectedJurisdictions,
+  selectedJurisdiction,
+  jurisdictionRegionKind,
+  selectedCampaign,
+  dateStart,
+  dateEnd
+  ],
   () => search()
 )
 // on text query change, trigger debounced
@@ -458,7 +469,7 @@ watch(query, () => {
     pagination,
     textQuery: textQuery.value,
     // n.b. serializing a Set here!
-    selectedJurisdictions: [...selectedJurisdictions.value],
+    // selectedJurisdictions: [...selectedJurisdictions.value],
     selectedJurisdiction: selectedJurisdiction.value,
     jurisdictionRegionKind: jurisdictionRegionKind.value,
     selectedCampaign: selectedCampaign.value,
