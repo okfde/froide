@@ -73,8 +73,6 @@ class FoiRequestFilter(filters.FilterSet):
     tags = filters.CharFilter(method="tag_filter")
     categories = filters.CharFilter(method="categories_filter")
     classification = filters.CharFilter(method="classification_filter")
-    # FIXME
-    # jurisdiction = filters.CharFilter(method="jurisdiction_filter")
     reference = filters.CharFilter(method="reference_filter")
     follower = filters.ModelChoiceFilter(
         queryset=filter_by_authenticated_user_queryset, method="follower_filter"

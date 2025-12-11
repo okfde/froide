@@ -177,12 +177,8 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         widget=BootstrapSelect,
         method="filter_jurisdiction",
     )
-    # FIXME
-    jurisdiction_rank = django_filters.ChoiceFilter(
-        choices=Jurisdiction.objects.get_all_ranks(),
+    jurisdiction_rank = django_filters.NumberFilter(
         label=("jurisdiction rank"),
-        empty_label=_("all jurisdiction ranks"),
-        widget=BootstrapSelect,
         method="filter_jurisdiction_rank",
     )
     category = django_filters.ModelChoiceFilter(
@@ -262,6 +258,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             "q",
             "status",
             "jurisdiction",
+            "jurisdiction_rank",
             "campaign",
             "category",
             "classification",
@@ -285,7 +282,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     # FIXME
     def filter_jurisdiction_rank(self, qs, name, value):
-        return self.apply_filter(qs, name, jurisdiction__rank=int(value))
+        return self.apply_filter(qs, name, jurisdiction_rank=int(value))
 
     def filter_campaign(self, qs, name, value):
         if value == "-":
