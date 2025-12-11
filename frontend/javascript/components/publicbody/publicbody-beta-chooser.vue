@@ -106,10 +106,6 @@ import PbFilterBadge from './pb-filter-badge'
 
 const searchResultPageSize = 30
 
-function treeLabel(item) {
-  return item.name
-}
-
 export default {
   name: 'PublicbodyChooser',
   components: {
@@ -222,7 +218,7 @@ export default {
           hasSearch: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
@@ -250,7 +246,7 @@ export default {
           multi: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
