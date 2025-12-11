@@ -33,7 +33,6 @@ class Campaign(models.Model):
     logo = models.ImageField(
         null=True,
         blank=True,
-        # FIXME once storage is merged
         upload_to="campaign-logos",
         storage=HashedFilenameStorage(),
     )
