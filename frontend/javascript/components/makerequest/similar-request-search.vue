@@ -117,7 +117,7 @@
             data-bs-auto-close="outside"
             >{{ i18n.dateRange }}</button>
           <div class="dropdown-menu p-3">
-            <div class="d-sm-flex">
+            <div class="d-flex flex-column flex-md-row align-items-center">
               <!-- alt: label, date input
               <label for="date_start" class="form-label g-col-sm-4">From</label>
               <input id="date_start" type="date" class="form-control g-col-sm-8" v-model="dateStart" />
