@@ -17,7 +17,7 @@
           @keydown.enter.prevent="triggerAutocomplete" />
         <button
           type="button"
-          class="btn btn-outline-primary search-public_bodies-submit"
+          class="btn btn-secondary search-public_bodies-submit"
           @click="triggerAutocomplete">
           <i class="fa fa-search" />
           {{ i18n.search }}
@@ -25,68 +25,57 @@
       </div>
 
       <div v-if="showFilters" class="row mt-3">
-        <!-- <div class="col-4 filter-column position-relative">
-          <pb-filter
-            :global-config="config"
-            :expanded="filterExpanded.jurisdiction"
-            :config="filterConfig.jurisdiction"
-            :i18n="i18n"
-            :scope="scope"
-            :value="filters.jurisdiction"
-            @update="updateJurisdictionFilter"
-            @setFilterExpand="setFilterExpand"></pb-filter>
-        </div> -->
         <div
           v-for="filterKey in filterOrder"
           :key="filterKey"
-          class="col-3 filter-column position-relative">
+          class="col-sm-4 filter-column position-relative">
           <PbFilter
             :global-config="config"
-            :expanded="filterExpanded[filterKey]"
             :config="filterConfig[filterKey]"
             :i18n="i18n"
             :scope="scope"
             :value="filters[filterKey]"
             @update="updateFilter"
-            @set-filter-expand="setFilterExpand"></PbFilter>
+            />
         </div>
       </div>
     </div>
     <div class="row mt-3">
-      <p
-        v-show="
-          !searching && lastQuery && (showFoundCountIfIdle || searchMeta)
-        ">
-        {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
+      <p v-if="searching">
+        <span class="spinner-border spinner-border-sm" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </span>
+      </p>
+      <p v-else-if="lastQuery && (showFoundCountIfIdle || searchMeta)">
+        {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
       </p>
     </div>
-    <div v-if="showBadges" class="row">
-      <div v-if="search" class="col-3">
-        <div class="filter-badge">
-          <span class="text-truncate">{{ search }}</span>
-          <button
-            @click="search = ''"
-            type="button"
-            class="btn btn-close btn-close-white"
-            aria-label="Close"></button>
-        </div>
-      </div>
-      <div v-for="filterKey in activeFilters" :key="filterKey" class="col-4">
-        <PbFilterSelected
-          :config="filterConfig[filterKey]"
-          @update="updateFilter"
-          :value="filters[filterKey]">
-        </PbFilterSelected>
-      </div>
+    <div v-if="showBadges" class="mb-3 d-flex flex-wrap gap-2">
+      <PbFilterBadge
+        v-if="search"
+        :label="i18n.searchText"
+        :value="search"
+        :i18n="i18n"
+        @remove-click="search = ''"
+        />
+      <PbFilterSelected
+        v-for="filterKey in activeFilters"
+        :key="filterKey"
+        :config="filterConfig[filterKey]"
+        @update="updateFilter"
+        :value="filters[filterKey]"
+        :i18n="i18n"
+        />
     </div>
 
-    <div v-if="searching" class="search-spinner">
-      <div class="spinner-border" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
     <component :is="listView" :name="name" :scope="scope" :config="config"
       @update="$emit('update', $event)"
+      @step-next="$emit('stepNext')"
+      />
+    <!-- outside of listView component is awkward but easier than passing around v-model -->
+    <ResultsPagination
+      :response-meta="getScopedSearchMeta(scope)"
+      v-model="pagination"
       />
   </div>
 </template>
@@ -96,6 +85,7 @@ import PBResultList from './pb-result-list'
 import PBActionList from './pb-action-list'
 import PBMultiList from './pb-multi-list'
 import PBBetaList from './pb-beta-list'
+import ResultsPagination from '../makerequest/results-pagination.vue'
 
 import { mapMutations, mapActions } from 'vuex'
 import {
@@ -112,10 +102,9 @@ import PBListMixin from './lib/pb-list-mixin'
 import PbFilter from './pb-filter'
 import PbFilterSelected from './pb-filter-selected'
 import PBChooserMixin from './lib/pb-chooser-mixin'
+import PbFilterBadge from './pb-filter-badge'
 
-function treeLabel(item) {
-  return item.name
-}
+const searchResultPageSize = 30
 
 export default {
   name: 'PublicbodyChooser',
@@ -125,7 +114,9 @@ export default {
     multi: PBMultiList,
     betaList: PBBetaList,
     PbFilter,
-    PbFilterSelected
+    PbFilterSelected,
+    PbFilterBadge,
+    ResultsPagination,
   },
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
   props: {
@@ -183,16 +174,17 @@ export default {
         selectAllCheckbox: true
       },
       filters: this.getEmptyFilters(),
-      filterExpanded: {
-        // classification: true
-      },
       filterOrder: [
         'jurisdiction',
         'regions',
         'categories',
-        'classification'
+        // 'classification'
         // 'regions_kind',
-      ]
+      ],
+      pagination: {
+        offset: 0,
+        limit: searchResultPageSize
+      },
     }
   },
   computed: {
@@ -217,56 +209,53 @@ export default {
     filterConfig() {
       const searcher = new FroideAPI(this.config)
       return {
-        classification: {
+        classification: { // = Behörden-Typen
           label: this.i18n.classificationPlural[1],
           key: 'classification',
-          expanded: this.filterExpanded.classification,
           initialFilters: { depth: 1 },
           multi: true,
           getItems: (q, filters) => searcher.listClassifications(q, filters),
           hasSearch: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
           }
         },
         jurisdiction: {
-          label: this.i18n.jurisdictionPlural[1],
+          label: this.i18n.level, // this.i18n.jurisdictionPlural[1],
           key: 'jurisdiction',
-          expanded: this.filterExpanded.jurisdiction,
           multi: true,
           getItems: () => searcher.listJurisdictions(),
-          // itemFilter: (item) => item.rank < 3,
           itemMap: (item) => {
             return {
               label: item.name,
               ...item
             }
-          }
+          },
+          groupBy: 'region_kind',
         },
-        categories: {
+        categories: { // = Themen
           label: this.i18n.topicPlural[1],
           key: 'categories',
-          expanded: this.filterExpanded.categories,
+          initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
           hasSearch: true,
           multi: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
           }
         },
         regions: {
-          label: this.i18n.containingGeoregionsPlural[0],
+          label: this.i18n.location,
           key: 'regions',
           multi: true,
-          expanded: this.filterExpanded.georegion,
           initialFilters: { kind: this.config.fixtures.georegion_kind[0][0] },
           getItems: (q, filters) => searcher.listGeoregions(q, filters),
           hasSearch: true,
@@ -274,6 +263,7 @@ export default {
           itemMap: (item) => {
             return {
               label: item.name,
+              subLabel: item.kind_detail,
               id: item.id
             }
           }
@@ -316,19 +306,6 @@ export default {
       }
       return true
     },
-    setFilterExpand(filter, expand) {
-      const expanded = {
-        [filter.key]: expand
-      }
-      if (expand) {
-        for (const key in this.filterExpanded) {
-          if (key !== filter.key) {
-            expanded[key] = false
-          }
-        }
-      }
-      this.filterExpanded = expanded
-    },
     updateFilter(filter, value) {
       this.filters[filter.key] = value
       this.triggerAutocomplete()
@@ -359,21 +336,11 @@ export default {
     if (this.defaultsearch && this.searchMeta === null) {
       this.triggerAutocomplete()
     }
-  }
+  },
+  watch: {
+    'pagination.offset': function() {
+      this.triggerAutocomplete()
+    }
+  },
 }
 </script>
-
-<style lang="scss" scoped>
-@import '../../../styles/variables';
-
-.filter-badge {
-  background-color: $primary;
-  color: #fff;
-  display: block;
-  border-radius: 4px;
-  padding: 0.25rem 0.5rem;
-  margin: 0.5rem 0;
-  display: flex;
-  justify-content: space-between;
-}
-</style>

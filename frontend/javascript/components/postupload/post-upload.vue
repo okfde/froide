@@ -20,7 +20,7 @@ import {
   requestPartialUpdate
 } from '../../api/index.ts'
 import { guardBeforeunload, scrollNavIntoViewIfNecessary } from '../../lib/misc'
-import { vBsTooltip, vBsCollapsePersistent } from '../../lib/vue-bootstrap.ts'
+import { vBsTooltip } from '../../lib/vue-bootstrap.ts'
 import { useI18n } from '../../lib/i18n'
 import { useIsDesktop } from '../../lib/vue-helpers-layout'
 import { useAttachments } from '../docupload/lib/attachments'
@@ -813,7 +813,7 @@ addEventListener('hashchange', () => {
   <SimpleStepper
     class="sticky-top position-md-static"
     :step="stepContext.progressStep"
-    :steps="['Hochladen', 'Infos eingeben', 'Schwärzen']"
+    :steps="[i18n.upload, i18n.enterInformation, i18n.redact]"
   >
     <template v-if="step === STEP_OUTRO">
       <small>{{ i18n.done }}</small>
@@ -910,6 +910,11 @@ addEventListener('hashchange', () => {
       </button>
     </span>
     <span>isDesktop={{ isDesktop }}</span>
+    <div>
+      <button type="button" class="btn btn-link"
+        @click="onlineHelp.show(config.url.helpPostuploadRedaction)"
+        >show online help</button>
+    </div>
     <button
       class="btn btn-secondary btn-sm"
       type="button"
@@ -1688,7 +1693,7 @@ addEventListener('hashchange', () => {
             <div class="row">
               <DjangoSlot
                 name="redaction_explanation"
-                v-bs-collapse-persistent
+                has-bs-directives
               />
             </div>
             <div class="mt-2 mb-3">

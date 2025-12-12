@@ -12,7 +12,7 @@
                 {{ i18n.relevantResources }}
               </h6>
               <ul>
-                <li v-if="publicBody.url">
+                <li v-if="publicBody?.url">
                   <a :href="publicBody.url" target="_blank" rel="noopener">
                     {{ i18n.officialWebsite }} {{ publicBody.name }}
                   </a>

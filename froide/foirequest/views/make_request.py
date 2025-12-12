@@ -7,8 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import decorator_from_middleware, method_decorator
-from django.utils.html import linebreaks
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 from django.utils.translation import pgettext
@@ -16,9 +16,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, TemplateView
 
 from froide.account.forms import AddressForm, NewUserForm
+from froide.account.preferences import get_preferences_for_user
 from froide.campaign.models import Campaign
+from froide.foirequest.forms.preferences import make_request_intro_skip_howto_pref
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
+from froide.helper.content_urls import get_content_url
 from froide.helper.utils import update_query_params
 from froide.proof.forms import ProofMessageForm
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
@@ -132,14 +135,38 @@ class MakeRequestView(FormView):
         return user_vars
 
     def get_js_context(self):
+        skip_intro_howto = False
+        show_skip_intro_howto_preference = False
+        if self.request.user.is_authenticated:
+            show_skip_intro_howto_preference = True
+            preferences = get_preferences_for_user(
+                self.request.user, [make_request_intro_skip_howto_pref]
+            )
+            if (make_request_intro_skip_howto_pref.key in preferences) and preferences[
+                make_request_intro_skip_howto_pref.key
+            ].value:
+                skip_intro_howto = True
+            elif FoiRequest.objects.filter(user=self.request.user).count() > 50:
+                # TODO: instead update the preference?
+                skip_intro_howto = True
+        if first_request := FoiRequest.objects.order_by("created_at").first():
+            min_year = first_request.created_at.year
+        else:
+            min_year = timezone.now().year
+
         ctx = {
             "settings": {
                 "user_can_hide_web": settings.FROIDE_CONFIG.get("user_can_hide_web"),
+                "user_can_claim_vip": settings.FROIDE_CONFIG.get("user_can_claim_vip"),
                 "user_can_create_batch": self.can_create_batch(),
                 "non_meaningful_subject_regex": settings.FROIDE_CONFIG.get(
                     "non_meaningful_subject_regex", []
                 ),
                 "address_regex": settings.FROIDE_CONFIG.get("address_regex", ""),
+                "skip_intro_howto": skip_intro_howto,
+                "show_skip_intro_howto_preference": show_skip_intro_howto_preference,
+                "skip_intro_howto_preference_key": make_request_intro_skip_howto_pref.key,
+                "min_year": min_year,
             },
             "url": {
                 "searchRequests": reverse("api:request-search"),
@@ -155,6 +182,8 @@ class MakeRequestView(FormView):
                     "foirequest-make_request", kwargs={"publicbody_ids": "0"}
                 ),
                 "makeRequest": reverse("foirequest-make_request"),
+                "helpRequestPublic": get_content_url("help_request_public"),
+                "helpRequestPrivacy": get_content_url("help_request_privacy"),
             },
             "i18n": {
                 "publicBodiesFound": [
@@ -176,16 +205,45 @@ class MakeRequestView(FormView):
                 # Translators: not url
                 "requests": _("requests"),
                 "close": _("close"),
+                "back": _("Back"),
+                "remove": _("Remove"),
+                "stepNext": _("Next"),
+                "step": _("Step"),
+                "introduction": _("Introduction"),
+                "similarRequests": _("Similar requests"),
+                "findSimilarRequests": _("Find similar requests"),
+                "currentlyChosen": _("Currently chosen:"),
+                "requestVisibility": _("Public visibility of the request"),
+                "previewAndSubmit": _("Preview & submit"),
+                "address": _("Address"),
+                "account": pgettext("Make request breadcrumbs/stepper", "Account"),
+                "writeMessage": _("Write message"),
+                "submitRequest": _("Submit request"),
                 "makeRequest": _("Make request"),
+                "makeRequestYourself": _("Make a request yourself"),
+                "whatDoYouWantToDo": _("What do you want to do?"),
+                "whatCanIRequest": _("What can I request?"),
+                "whatCanINotRequest": _("What can’t I request?"),
+                "search": _("Search"),
+                "searchArchive": _("Search our archives:"),
+                "doYouAlreadyHaveAccount": _("Do you already have an account?"),
+                "thisFormRemembers": _(
+                    "This form remembers your inputs, as long as stay in the same tab."
+                ),
                 "writingRequestTo": _("You are writing a request to"),
                 "toMultiPublicBodies": _("To: {count} public bodies").format(
                     count="${count}"
                 ),
                 "selectPublicBodies": _("Select public bodies"),
                 "continue": _("continue"),
+                "continueWithSelected": _("Continue with selected"),
                 "selectAll": [_("select one"), _("select all")],
                 "selectingAll": _("Selecting all public bodies, please wait..."),
                 "name": _("Name"),
+                "filterPlaceholder": _("Filter…"),
+                "level": pgettext("Publicbody filter", "Level"),
+                "location": pgettext("Publicbody filter", "Location"),
+                "groupBy_state": _("state"),
                 "jurisdictionPlural": [
                     _("Jurisdiction"),
                     _("Jurisdictions"),
@@ -245,9 +303,6 @@ class MakeRequestView(FormView):
                 "reviewFrom": _("From"),
                 "reviewTo": _("To"),
                 "reviewPublicbodies": _("public bodies"),
-                "reviewSpelling": _("Please use proper spelling."),
-                "reviewPoliteness": _("Please stay polite."),
-                "submitRequest": _("Submit request"),
                 "greeting": _("Dear Sir or Madam"),
                 "kindRegards": _("Kind regards"),
                 "yourFirstName": _("Your first name"),
@@ -258,7 +313,6 @@ class MakeRequestView(FormView):
                 "similarExist": _(
                     "Please make sure the information is not already requested or public"
                 ),
-                "similarRequests": _("Similar requests"),
                 "moreSimilarRequests": _("Search for more similar requests"),
                 "relevantResources": _("Relevant resources"),
                 "officialWebsite": _("Official website: "),
@@ -276,14 +330,90 @@ class MakeRequestView(FormView):
                 "enterMeaningfulSubject": _(
                     "Please enter a subject which describes the information you are requesting."
                 ),
-                "pleaseFollowAddressFormat": linebreaks(
-                    _(
-                        "Please enter an address in the following format:\n%(format)s",
-                    )
-                    % {"format": _("Street address,\nPost Code, City")}
-                ),
+                "pleaseFollowAddressFormat": _(
+                    "Please enter an address in the following format:\n%(format)s",
+                )
+                % {"format": _("Street address,\nPost Code, City")},
                 "includeProof": _("Attach a proof of identity"),
                 "addMoreAuthorities": _("Add more authorities"),
+                # mimic Django's default messages, but use magic {count} parameter
+                # "Ensure this value has at least %(limit_value)d characters (it has %(show_value)d)."
+                "valueMinLength": [
+                    _("Ensure this value has at least {count} character.").format(
+                        count="${count}"
+                    ),
+                    _("Ensure this value has at least {count} characters.").format(
+                        count="${count}"
+                    ),
+                ],
+                "valueMaxLength": [
+                    _("Ensure this value has at most {count} character.").format(
+                        count="${count}"
+                    ),
+                    _("Ensure this value has at most {count} characters).").format(
+                        count="${count}"
+                    ),
+                ],
+                "results": [
+                    _("One result"),
+                    _("{count} results").format(count="${count}"),
+                ],
+                "createAccount": _("Create account"),
+                "createAccountPreamble": _(
+                    "You need to create an account at {site_name} so you will be able to manage your request."
+                ).format(site_name=settings.SITE_NAME),
+                "skipIntroHowto": _(
+                    "Skip this part next time and start at “Choose public body” (optional)"
+                ),
+                "error": _("Error"),
+                "none": _("None chosen"),
+                "toPb": _("To:"),
+                "to": _("to"),
+                "requestTo": _("Request to:"),
+                "correct": _("Correct"),
+                "fixPlaceholder": _("Fix placeholders automatically"),
+                "updatePostalAddress": _("Update my postal address"),
+                "subjectMeaningful": _("Please write a meaningful subject"),
+                "containsPlaceholderMarker": _(
+                    "The body contains an illegal placeholder ({placeholder})."
+                ).format(placeholder="${placeholder}"),
+                "pagination": _("Pagination"),
+                "publicbody": _("Public body"),
+                "requestBody": _("Request body"),
+                "request": _("request"),
+                "visibility": _("Visibility"),
+                "notConfirmed": _("Not confirmed"),
+                "notAgreed": _("Not agreed"),
+                "publishNow": _("Publish request now"),
+                "publishLater": _("Publish request later"),
+                "help": _("Help"),
+                "privacy": _("Privacy"),
+                "privacyMoreInfo": _("More information about privacy on this website"),
+                "nameRedact": _("My name must be <strong>redacted</strong>"),
+                "namePlainText": _(
+                    "My name may appear on the website in <strong>plain text</strong>"
+                ),
+                "email": _("Email"),
+                "notSentToPb": _("(not sent to public body)"),
+                "terms": _("Terms of Use"),
+                "searchToPbName": _("to %(name)s") % {"name": "${name}"},
+                "searchToProject": _(
+                    'to <a href="%(url)s">%(name)s</a> and <a href="%(urlp)s">%(count)s other public bodies</a>'
+                )
+                % {
+                    "name": "${name}",
+                    "url": "${url}",
+                    "urlp": "${urlp}",
+                    "count": "${count}",
+                },
+                "notYetSet": _("Not yet set"),
+                "searchSelectThisPb": _("Select this public body"),
+                "dateRange": _("Date range"),
+                "dateRangeFrom": _("From"),
+                "dateRangeTo": _("Until"),
+                "campaign": _("Campaign"),
+                "toggleCollapse": _("Toggle collapse"),
+                "searchText": pgettext("Search input", "Text"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
@@ -296,6 +426,10 @@ class MakeRequestView(FormView):
                     if k in settings.FROIDE_CONFIG.get("filter_georegion_kinds", [])
                 ],
             },
+            "draftId": self.object.id
+            if hasattr(self, "object") and isinstance(self.object, RequestDraft)
+            else None,
+            "wasPost": self.request.method == "POST",
         }
         pb_ctx = get_widget_context()
         for key in pb_ctx:
@@ -543,6 +677,12 @@ class MakeRequestView(FormView):
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
 
+        # FIXME does this make sense?
+        # user just created
+        if not user.is_authenticated and foi_object.user:
+            if data["claims_vip"]:
+                foi_object.user.tags.add("claims:vip")
+
         return self.make_redirect(
             request_form, foi_object, email=data.get("user_email")
         )
@@ -620,17 +760,18 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        if self.request.method == "POST" or publicbodies or is_multi:
-            campaigns = None
-        else:
-            campaigns = Campaign.objects.get_active()
+        # skip "i confirm" nag heuristically for all who can multi-request
+        # TODO: find better heuristic for "trusted users"?
+        confirm_required = not is_multi
+
+        campaigns = Campaign.objects.get_active()
 
         kwargs.update(
             {
                 "publicbodies": publicbodies,
                 "publicbodies_json": publicbodies_json,
                 "multi_request": is_multi,
-                "beta_ui": self.request.GET.get("beta") is not None,
+                "confirm_required": confirm_required,
                 "config": config,
                 "campaigns": campaigns,
                 "js_config": json.dumps(self.get_js_context()),

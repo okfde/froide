@@ -45,6 +45,7 @@ class FoiRequestDocument(Document):
 
     publicbody = fields.IntegerField(attr="public_body_id")
     jurisdiction = fields.IntegerField(attr="public_body.jurisdiction_id")
+    jurisdiction_rank = fields.IntegerField(attr="public_body.jurisdiction.rank")
 
     user = fields.IntegerField(attr="user_id")
     team = fields.IntegerField(attr="team_id")

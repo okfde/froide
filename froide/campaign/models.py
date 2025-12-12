@@ -6,6 +6,8 @@ from django.db.models.query import QuerySet
 from django.template.loader import select_template
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.storage import HashedFilenameStorage
+
 
 class CampaignManager(models.Manager):
     def get_filter_list(self) -> QuerySet:
@@ -24,9 +26,16 @@ class Campaign(models.Model):
     url = models.URLField(blank=True)
     report_url = models.URLField(blank=True)
     description = models.TextField(blank=True)
+    short_description = models.TextField(blank=True)
     start_date = models.DateTimeField(null=True)
     public = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
+    logo = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to="campaign-logos",
+        storage=HashedFilenameStorage(),
+    )
 
     request_match = models.TextField(blank=True)
     request_hint = models.TextField(blank=True)

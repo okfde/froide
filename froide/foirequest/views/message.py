@@ -354,6 +354,7 @@ def edit_postal_message(request, foirequest, message_id):
             "letterUploadOrScan": _("Upload or scan letter"),
             "messageReceivedLetter": _("I have received the letter"),
             "messageSentLetter": _("I have sent the letter"),
+            "upload": _("Hochladen"),
             "enterInformation": _("Enter information"),
             "preview": _("Preview"),
             "hint": _("Hint"),
@@ -486,6 +487,7 @@ def edit_postal_message(request, foirequest, message_id):
                 current="${current}", total="${total}"
             ),
             "backToSubmit": _("Back to submit"),
+            "searchText": pgettext("Search input", "Text"),
         },
         "url": {
             "tusEndpoint": reverse("api:upload-list"),

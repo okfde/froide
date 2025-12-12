@@ -177,6 +177,10 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         widget=BootstrapSelect,
         method="filter_jurisdiction",
     )
+    jurisdiction_rank = django_filters.NumberFilter(
+        label=("jurisdiction rank"),
+        method="filter_jurisdiction_rank",
+    )
     category = django_filters.ModelChoiceFilter(
         queryset=Category.objects.get_category_list(),
         to_field_name="slug",
@@ -234,6 +238,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     last = django_filters.DateFromToRangeFilter(
         method="filter_last", widget=DateRangeWidget, label=_("last message")
     )
+
     sort = django_filters.ChoiceFilter(
         choices=[
             ("-last", _("last message (newest first)")),
@@ -253,6 +258,7 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             "q",
             "status",
             "jurisdiction",
+            "jurisdiction_rank",
             "campaign",
             "category",
             "classification",
@@ -273,6 +279,10 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_jurisdiction(self, qs, name, value):
         return self.apply_filter(qs, name, jurisdiction=value.id)
+
+    # FIXME
+    def filter_jurisdiction_rank(self, qs, name, value):
+        return self.apply_filter(qs, name, jurisdiction_rank=int(value))
 
     def filter_campaign(self, qs, name, value):
         if value == "-":

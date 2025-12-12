@@ -80,6 +80,7 @@ class FoiRequestListSerializer(
             "id",
             "url",
             "jurisdiction",
+            "jurisdiction_name",
             "is_foi",
             "checked",
             "refusal_reason",
@@ -97,6 +98,8 @@ class FoiRequestListSerializer(
             "created_at",
             "last_modified_at",
             "status",
+            "status_representation",
+            "readable_status",
             "public_body",
             "resolution",
             "slug",
@@ -104,6 +107,8 @@ class FoiRequestListSerializer(
             "reference",
             "user",
             "project",
+            "project_site_url",
+            "project_request_count",
             "campaign",
             "tags",
         )
@@ -118,12 +123,17 @@ class FoiRequestListSerializer(
             "last_message",
             "created_at",
             "last_modified_at",
+            "status_representation",
+            "readable_status",
             "public_body",
             "slug",
             "title",
             "reference",
             "user",
+            "jurisdiction_name",
             "project",  # TODO: make this updatable
+            "project_site_url",  # TODO: for api v2, create a FoiProject serializer and possibly inline it here
+            "project_request_count",
             "campaign",
         )
 
