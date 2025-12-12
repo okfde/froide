@@ -273,7 +273,7 @@
       </div>
     </div>
 
-    <UserConfirm v-if="confirmRequired" ref="userConfirm">
+    <UserConfirm v-if="hasUserConfirmContent && confirmRequired" ref="userConfirm">
       <slot name="request-user-confirm" />
     </UserConfirm>
 
@@ -544,6 +544,9 @@ export default {
         return null
       }
       return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
+    },
+    hasUserConfirmContent () {
+      return this.$parent['django-slots']['request-user-confirm'].textContent.trim() !== ''
     },
     ...mapGetters([
       'user',
