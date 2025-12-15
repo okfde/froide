@@ -138,8 +138,9 @@ def get_status_filter_by_slug(slug):
             return status_filter
 
 
+# jurisdictions seldomly change, so it's okay to cache until app restart
 @cache
-def get_jurisdictions_by_rank(rank: int) -> list[str]:
+def get_jurisdictions_by_rank(rank: int) -> list[int]:
     return list(
         Jurisdiction.objects.get_visible()
         .filter(rank=rank)
