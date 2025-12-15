@@ -677,9 +677,8 @@ class MakeRequestView(FormView):
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
 
-        # FIXME does this make sense?
         # user just created
-        if not user.is_authenticated and foi_object.user:
+        if not user.is_authenticated and foi_object.user and "claims_vip" in data:
             if data["claims_vip"]:
                 foi_object.user.tags.add("claims:vip")
 
