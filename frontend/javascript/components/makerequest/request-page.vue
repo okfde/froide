@@ -488,19 +488,44 @@ export default {
     steps() {
       // TODO needs discussion:
       // hide vs. jump over INTRO+SIMILAR when hidePbChooser et al are set
-      return [
-        ...(this.hasCampaigns && !this.hidePublicbodyChooser ? [STEPS.INTRO] : []),
-        // assume we don't need a generic intro for API-specified usage
-        ...(this.hidePublicbodyChooser || !this.hasIntroHowtoContent ? [] : [STEPS.INTRO_HOWTO]),
-        ...(this.showSimilar && !this.hidePublicbodyChooser ? [STEPS.FIND_SIMILAR] : []),
-        ...(this.hidePublicbodyChooser ? [] : [STEPS.SELECT_PUBLICBODY]),
-        ...(this.hidePublicbodyChooser ? [] : (this.multiRequest ? [STEPS.REVIEW_PUBLICBODY] : [])),
-        ...(this.userInfo ? [] : [STEPS.CREATE_ACCOUNT]),
-        STEPS.WRITE_REQUEST,
-        ...(this.hidePublic ? [] : [STEPS.REQUEST_PUBLIC]),
-        STEPS.PREVIEW_SUBMIT,
-        STEPS.OUTRO
-      ]
+      const steps = []
+      if (this.hasCampaigns && !this.hidePublicbodyChooser) {
+        steps.push(STEPS.INTRO)
+      }
+      // assume we don't need a generic intro for API-specified usage
+      if (!(this.hidePublicbodyChooser || !this.hasIntroHowtoContent)) {
+        steps.push(STEPS.INTRO_HOWTO)
+      }
+      if (this.showSimilar && !this.hidePublicbodyChooser) {
+        steps.push(STEPS.FIND_SIMILAR)
+      }
+      if (!this.hidePublicbodyChooser) {
+        steps.push(STEPS.SELECT_PUBLICBODY)
+        if (this.multiRequest) {
+          steps.push(STEPS.REVIEW_PUBLICBODY)
+        }
+      }
+      // for /make-request/to/foo we want to land on WRITE_REQUEST...
+      if (this.hasPublicBodiesByParam) {
+        steps.push(STEPS.WRITE_REQUEST)
+        if (!this.hidePublic) {
+          steps.push(STEPS.REQUEST_PUBLIC)
+        }
+      }
+      // ...and sign up afterwards...
+      if (!this.userInfo) {
+        steps.push(STEPS.CREATE_ACCOUNT)
+      }
+      // ...but usually we sign up first and then write:
+      if (!this.hasPublicBodiesByParam) {
+        steps.push(STEPS.WRITE_REQUEST)
+        if (!this.hidePublic) {
+          steps.push(STEPS.REQUEST_PUBLIC)
+        }
+      }
+      steps.push(STEPS.PREVIEW_SUBMIT)
+      steps.push(STEPS.OUTRO)
+      return steps
     },
     stepLabels() {
       return {
@@ -619,6 +644,11 @@ export default {
     },
     hasPublicBodies() {
       return this.publicBodies.length > 0
+    },
+    // e.g. /make-request/to/foo/
+    // note the lowercase b
+    hasPublicBodiesByParam() {
+      return this.publicbodies.length > 0
     },
     publicBody() {
       return this.getPublicBodyByScope(this.pbScope)
