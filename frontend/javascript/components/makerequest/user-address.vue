@@ -94,7 +94,9 @@ export default {
     }
   },
   created() {
-    addressRegex = new RegExp(this.config.settings.address_regex)
+    if (addressRegex) {
+      addressRegex = new RegExp(this.config.settings.address_regex)
+    }
   },
   methods: {
     addressUpdated(enableValidateLive) {

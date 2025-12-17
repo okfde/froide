@@ -162,6 +162,7 @@ class MakeRequestView(FormView):
                 "non_meaningful_subject_regex": settings.FROIDE_CONFIG.get(
                     "non_meaningful_subject_regex", []
                 ),
+                # FIXME? default for address_regex is None, which will not become "" here
                 "address_regex": settings.FROIDE_CONFIG.get("address_regex", ""),
                 "skip_intro_howto": skip_intro_howto,
                 "show_skip_intro_howto_preference": show_skip_intro_howto_preference,
