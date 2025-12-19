@@ -58,11 +58,6 @@ import { selectBestLaw } from '../lib/law-select'
 const persistStorage = window.sessionStorage
 const persistKeyPrefix = 'froide-store-'
 
-const getInitialStep = () => {
-  // if (document.location.hash === '#step-submit') return STEPS.PREVIEW_SUBMIT
-  return STEPS.INTRO
-}
-
 export default createStore({
   state() {
     return {
@@ -76,7 +71,7 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
-      step: getInitialStep(),
+      step: null,
       subject: '',
       subjectValid: undefined,
       subjectChanged: false,

@@ -852,9 +852,9 @@ export default {
   },
   methods: {
     setFirstStep() {
-      // this step may at this point be "remembered" from Storage,
-      // but will default to STEPS.INTRO
-      if (this.step === this.steps[0]) { //STEPS.INTRO) {
+      // this step may at this point be "remembered" from Storage
+      // but this case is the "default"
+      if (!this.step || this.step === this.steps[0]) {
         // if "editing draft" skip forward 
         if (this.requestForm.fields.draft.initial) {
           console.log('request is draft, skipping intro etc.')
