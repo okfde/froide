@@ -7888,6 +7888,10 @@ msgid "<p>Your name will be sent to public bodies. If you want to remain anonymo
 msgstr "<p>Ihr Name wird als Teil Ihrer Anfrage an die Behörde gesendet. Falls Sie wünschen, dass Ihr Name nicht auf der Website veröffentlicht wrid, können Sie – nach außen hin – anonym bleiben. Ihr Name wrid dann automatisch geschwärzt.</p>"
 
 #: froide/foirequest/views/make_request.py
+msgid "<p>Before you write your own request, you can search our archives. Maybe the information you are looking for has already been published.</p>"
+msgstr "<p>Suchen Sie in unserem Archiv nach ähnlichen Anfragen, bevor Sie eine eigene Anfrage stellen. Vielleicht sind die gewünschten Informationen bereits veröffentlicht.</p>"
+
+#: froide/foirequest/views/make_request.py
 msgid "More information about privacy on this website"
 msgstr "Weitere Infos zur Privatsphäre auf dieser Website"
 
@@ -7912,6 +7916,10 @@ msgstr "Ein-/Ausklappen"
 msgctxt "Search input"
 msgid "Text"
 msgstr "Freitext"
+
+#: froide/foirequest/views/make_request.py
+msgid "Skip"
+msgstr "Überspringen"
 
 #: froide/foirequest/views/message.py
 msgid "Your message has been sent."

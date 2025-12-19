@@ -212,6 +212,7 @@ class MakeRequestView(FormView):
                 "back": _("Back"),
                 "remove": _("Remove"),
                 "stepNext": _("Next"),
+                "stepSkip": _("Skip"),
                 "step": _("Step"),
                 "introduction": _("Introduction"),
                 "similarRequests": _("Similar requests"),
@@ -419,6 +420,7 @@ class MakeRequestView(FormView):
                 "toggleCollapse": _("Toggle collapse"),
                 "searchText": pgettext("Search input", "Text"),
                 "login": pgettext("Make request", "Log in"),
+                "searchRequests": _("Search requests"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],

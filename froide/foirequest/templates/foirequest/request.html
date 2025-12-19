@@ -108,6 +108,9 @@
         <template data-slot="request-user-confirm">
             {% include "foirequest/snippets/request_user_confirm.html" %}
         </template>
+        <template data-slot="find-similar-requests-preamble">
+            {% blocktrans %}<p>Before you write your own request, you can search our archives. Maybe the information you are looking for has already been published.</p>{% endblocktrans %}
+        </template>
         <template data-slot="user-public-preamble">
             {% blocktrans %}<p>Your name will be sent to public bodies. If you want to remain anonymous to the public, you can choose to not display your name on the website. Your name will then be redacted.</p>{% endblocktrans %}
         </template>

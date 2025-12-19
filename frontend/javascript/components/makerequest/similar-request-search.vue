@@ -6,7 +6,12 @@
 
       <div class="col col-md-9">
         <div class="input-group">
-          <input class="form-control" type="search" v-model="textQuery" />
+          <input
+            class="form-control"
+            type="search"
+            v-model="textQuery"
+            :placeholder="i18n.searchRequests"
+            />
           <button
             type="button"
             class="btn btn-secondary"

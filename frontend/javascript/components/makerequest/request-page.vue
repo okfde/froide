@@ -37,13 +37,12 @@
               @click="setStep(stepBack)"
               >← <u>{{ i18n.back }}</u></a>
             <button
-              v-if="showTopNext"
+              v-if="topNextLabel"
               type="button"
               class="btn btn-primary"
               :disabled="!stepCanContinue(pbScope)"
               @click="setStep(stepNext)"
-              >
-              {{ i18n.stepNext }}
+              >{{ topNextLabel }}
             </button>
           </div>
 
@@ -106,6 +105,7 @@
 
           <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3">
             <h2>{{ i18n.findSimilarRequests }}</h2>
+            <DjangoSlot name="find-similar-requests-preamble"></DjangoSlot>
             <SimilarRequestSearch :config="config" />
             <div>
               <button
@@ -113,7 +113,7 @@
                 class="btn btn-primary"
                 @click="setStep(stepNext)"
                 >
-                {{ i18n.stepNext }}
+                {{ i18n.stepSkip }}
               </button>
             </div>
             <IntroSkipPreference :config="config" />
@@ -218,9 +218,6 @@
               @step-next="setStep(stepNext)"
               @onlinehelp-click="onlineHelpShow($event)"
               >
-              <template #loginlink>
-                <DjangoSlot name="loginlink"></DjangoSlot>
-              </template>
               <template #userPublicPreamble>
                 <DjangoSlot name="user-public-preamble"></DjangoSlot>
               </template>
@@ -600,9 +597,17 @@ export default {
       if (this.stepIndex === -1 || this.stepIndex > this.steps.length - 1) return false
       return this.steps[this.stepIndex + 1]
     },
-    showTopNext() {
-      if (this.step === STEPS.SELECT_PUBLICBODY && this.multiRequest) return false
-      return ![STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)
+    topNextLabel() {
+      if (this.step === STEPS.SELECT_PUBLICBODY && this.multiRequest) {
+        return false
+      }
+      if ([STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)) {
+        return false
+      }
+      if (this.step === STEPS.FIND_SIMILAR) {
+        return this.i18n.stepSkip
+      }
+      return this.i18n.stepNext
     },
     preventUnload() {
       // notably, not STEPS.LOGIN_CREATE
