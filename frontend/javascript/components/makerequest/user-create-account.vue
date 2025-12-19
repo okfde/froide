@@ -1,15 +1,5 @@
 <template>
   <div>
-    <h2>{{ i18n.createAccount }}</h2>
-
-    <p>{{ i18n.createAccountPreamble }}</p>
-
-    <p>
-      {{ i18n.doYouAlreadyHaveAccount }}<br/>
-      <slot name="loginlink"></slot>
-    </p>
-
-    <p><small>{{ i18n.thisFormRemembers }}</small></p>
 
     <UserRegistration
       ref="userRegistration"

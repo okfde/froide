@@ -176,11 +176,38 @@
               />
           </div>
 
+          <!-- STEPS: LOGIN or CREATE ? -->
+
+          <div
+            v-show="step === STEPS.LOGIN_CREATE">
+            <h2>{{ i18n.account }}</h2>
+            <div class="row">
+              <div class="col-md-6 mb-4">
+            <p class="mb-auto">
+              {{ i18n.createAccountPreamble }}
+            </p>
+            <div class="mt-3">
+            <button type="button" class="btn btn-primary" @click="setStep(stepNext)">{{ i18n.createAccount }}</button>
+            </div>
+          </div>
+          <div class="col-md-6 mb-4">
+            <p class="mb-auto">
+              {{ i18n.doYouAlreadyHaveAccount }}<br/>
+              <small>{{ i18n.thisFormRemembers }}</small>
+            </p>
+            <div class="mt-3">
+              <a :href="config.url.login" class="btn btn-primary">{{ i18n.login }}</a>
+            </div>
+          </div>
+          </div>
+          </div>
+
           <!-- STEP: CREATE ACCOUNT -->
 
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
           <div
             v-show="step === STEPS.CREATE_ACCOUNT">
+            <h2>{{ i18n.createAccount }}</h2>
             <UserCreateAccount
               v-if="!user.id"
               :config="config"
@@ -458,7 +485,6 @@ export default {
       fullLetter: false,
       showReview: false,
       submitting: false,
-      preventUnload: false,
       STEPS,
       similarSubject: '',
     }
@@ -514,6 +540,7 @@ export default {
       }
       // ...and sign up afterwards...
       if (!this.userInfo) {
+        steps.push(STEPS.LOGIN_CREATE)
         steps.push(STEPS.CREATE_ACCOUNT)
       }
       // ...but usually we sign up first and then write:
@@ -534,6 +561,7 @@ export default {
         [STEPS.FIND_SIMILAR]: this.i18n.similarRequests,
         [STEPS.SELECT_PUBLICBODY]: this.i18n.choosePublicBody,
         [STEPS.REVIEW_PUBLICBODY]: this.i18n.choosePublicBody,
+        [STEPS.LOGIN_CREATE]: this.i18n.account,
         [STEPS.CREATE_ACCOUNT]: this.i18n.account,
         [STEPS.WRITE_REQUEST]: this.i18n.writeMessage,
         [STEPS.REQUEST_PUBLIC]: this.i18n.writeMessage,
@@ -546,6 +574,7 @@ export default {
         // "display INTRO_HOWTO as INTRO"
         [STEPS.INTRO]: STEPS.INTRO_HOWTO,
         [STEPS.SELECT_PUBLICBODY]: STEPS.REVIEW_PUBLICBODY,
+        [STEPS.LOGIN_CREATE]: STEPS.CREATE_ACCOUNT,
         [STEPS.WRITE_REQUEST]: STEPS.REQUEST_PUBLIC,
         [STEPS.PREVIEW_SUBMIT]: STEPS.OUTRO
       }
@@ -573,7 +602,11 @@ export default {
     },
     showTopNext() {
       if (this.step === STEPS.SELECT_PUBLICBODY && this.multiRequest) return false
-      return ![STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)
+      return ![STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)
+    },
+    preventUnload() {
+      // notably, not STEPS.LOGIN_CREATE
+      return [STEPS.SELECT_PUBLICBODY, STEPS.REVIEW_PUBLICBODY, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.REQUEST_PUBLIC, STEPS.PREVIEW_SUBMIT].includes(this.step)
     },
     publicBodySearch() {
       if (this.publicBody) {
@@ -668,11 +701,7 @@ export default {
     ])
   },
   watch: {
-    step(newStep) {
-      // once "step > FIND_SIMILAR"...
-      if ([STEPS.SELECT_PUBLICBODY, STEPS.REVIEW_PUBLICBODY, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.REQUEST_PUBLIC, STEPS.PREVIEW_SUBMIT].includes(newStep)) {
-        this.preventUnload = true
-      }
+    step() {
       this.writeToStorage({ scope: this.pbScope })
       window.scrollTo(0, 0)
     }
@@ -860,7 +889,7 @@ export default {
           console.log('request is draft, skipping intro etc.')
           this.setStep(STEPS.WRITE_REQUEST)
         } else if (this.hidePublicbodyChooser && !this.userInfo) {
-          this.setStep(STEPS.CREATE_ACCOUNT)
+          this.setStep(STEPS.LOGIN_CREATE)
         } else if (this.hasPublicBodies) {
           // skip directly to wrting
           // might theoretically also apply to "if state.subject || state.body"
@@ -869,7 +898,7 @@ export default {
         } else if (this.skipIntroHowtoPreference) {
           this.setStep(STEPS.SELECT_PUBLICBODY)
         }
-      } else if (this.step === STEPS.CREATE_ACCOUNT && this.userInfo) {
+      } else if ([STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT].includes(this.step) && this.userInfo) {
         // returning from login
         this.setStep(STEPS.WRITE_REQUEST)
       }

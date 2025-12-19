@@ -185,6 +185,9 @@ class MakeRequestView(FormView):
                 "makeRequest": reverse("foirequest-make_request"),
                 "helpRequestPublic": get_content_url("help_request_public"),
                 "helpRequestPrivacy": get_content_url("help_request_privacy"),
+                "login": "{}?next={}".format(
+                    reverse("account-login"), self.request.get_full_path()
+                ),
             },
             "i18n": {
                 "publicBodiesFound": [
@@ -415,6 +418,7 @@ class MakeRequestView(FormView):
                 "campaign": _("Campaign"),
                 "toggleCollapse": _("Toggle collapse"),
                 "searchText": pgettext("Search input", "Text"),
+                "login": pgettext("Make request", "Log in"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],

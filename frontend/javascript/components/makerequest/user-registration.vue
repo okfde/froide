@@ -1,69 +1,74 @@
 <template>
   <div>
-    <div class="row">
-      <div class="col-md-8">
-        <div class="mb-3 row">
-          <div
-            class="col-sm-6"
-            :class="{ 'text-danger': usererrors.first_name }">
-            <label
-              class="form-label field-required"
-              for="id_first_name"
-              :class="{ 'text-danger': usererrors.first_name }">
-              {{ i18n.yourFirstName }}
-            </label>
-            <input
-              id="id_first_name"
-              v-model="first_name"
-              ref="first_name"
-              type="text"
-              name="first_name"
-              class="form-control"
-              :class="{ 'is-invalid': usererrors.first_name && !updateFirstNameChanged }"
-              :placeholder="userformFields.first_name.placeholder"
-              required
-              :maxlength="userformFields.first_name.max_length"
-              @change="updateFirstNameChanged(true)"
-              />
-            <p v-for="e in usererrors.first_name" :key="e.message">
-              {{ e.message }}
-            </p>
-          </div>
-
-          <div
-            class="col-sm-6"
-            :class="{ 'text-danger': usererrors.last_name }">
-            <label
-              class="form-label field-required"
-              for="id_last_name"
-              :class="{ 'text-danger': usererrors.last_name }">
-              {{ i18n.yourLastName }}
-            </label>
-            <input
-              id="id_last_name"
-              v-model="last_name"
-              ref="last_name"
-              type="text"
-              name="last_name"
-              class="form-control"
-              :class="{ 'is-invalid': usererrors.last_name && !lastNameChanged }"
-              :placeholder="userformFields.last_name.placeholder"
-              required
-              :maxlength="userformFields.last_name.max_length"
-              @change="updateLastNameChanged(true)"
-              />
-            <p v-for="e in usererrors.last_name" :key="e.message">
-              {{ e.message }}
-            </p>
-          </div>
+    <div class="row mb-3">
+      <!-- FIXME? the linter complained about vue/no-duplicate-attributes re class + :class,
+       which should have allowCoexistClass:true by default.
+       Adding that explicitly to eslint.config didn't help,
+       eslint-disable for this file didn't either. -->
+      <label
+        class="form-label field-required"
+        for="id_first_name"
+        :class="[
+          { 'text-danger': usererrors.first_name },
+          'col-sm-4', 'col-md-3', 'col-form-label'
+        ]"
+        >{{ i18n.yourFirstName }}
+      </label>
+      <div class="col-sm-8 col-md-5">
+        <input
+          id="id_first_name"
+          v-model="first_name"
+          ref="first_name"
+          type="text"
+          name="first_name"
+          class="form-control"
+          :class="{ 'is-invalid': usererrors.first_name && !updateFirstNameChanged }"
+          :placeholder="userformFields.first_name.placeholder"
+          required
+          :maxlength="userformFields.first_name.max_length"
+          @change="updateFirstNameChanged(true)"
+          />
+        <p
+          v-for="e in usererrors.first_name"
+          :key="e.message"
+          class="text-danger"
+          >{{ e.message }}
+        </p>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <label
+        class="form-label field-required"
+        for="id_last_name"
+        :class="[
+          { 'text-danger': usererrors.last_name },
+          'col-sm-4', 'col-md-3', 'col-form-label'
+        ]"
+        >{{ i18n.yourLastName }}
+      </label>
+      <div class="col-sm-8 col-md-5">
+        <input
+          id="id_last_name"
+          v-model="last_name"
+          ref="last_name"
+          type="text"
+          name="last_name"
+          class="form-control"
+          :class="{ 'is-invalid': usererrors.last_name && !lastNameChanged }"
+          :placeholder="userformFields.last_name.placeholder"
+          required
+          :maxlength="userformFields.last_name.max_length"
+          @change="updateLastNameChanged(true)"
+          />
+        <div v-if="usePseudonym" class="col-md-4 mt-md-4">
+          <small
+            v-if="userformFields.last_name.help_text"
+            v-html="userformFields.last_name.help_text" />
         </div>
+        <p v-for="e in usererrors.last_name" :key="e.message">
+          {{ e.message }}
+        </p>
       </div>
-      <div v-if="usePseudonym" class="col-md-4 mt-md-4">
-        <small
-          v-if="userformFields.last_name.help_text"
-          v-html="userformFields.last_name.help_text" />
-      </div>
-
     </div>
     <div class="mb-3 row">
       <label

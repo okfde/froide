@@ -108,9 +108,6 @@
         <template data-slot="request-user-confirm">
             {% include "foirequest/snippets/request_user_confirm.html" %}
         </template>
-        <template data-slot="loginlink">
-            <a href="{% url 'account-login' %}?next={{ request.get_full_path|urlencode }}">{% trans "Zum Login" %}</a>
-        </template>
         <template data-slot="user-public-preamble">
             {% blocktrans %}<p>Your name will be sent to public bodies. If you want to remain anonymous to the public, you can choose to not display your name on the website. Your name will then be redacted.</p>{% endblocktrans %}
         </template>

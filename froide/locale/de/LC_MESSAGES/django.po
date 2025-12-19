@@ -6628,9 +6628,10 @@ msgstr "Ihre Entscheidung hier hat keinen Einfluss darauf ob ihr Name im Klartex
 msgid "In your <a target=\"_blank\" href=\"%(profile_url)s\">profile settings</a> you can decide whether to your name should be redacted."
 msgstr "Ob Ihr Name im Klartext erscheinen sollen, können Sie <a target=\"_blank\" href=\"%(profile_url)s\">in ihrem Profil</a> anpassen."
 
-#: froide/foirequest/templates/foirequest/request.html
-msgid "Zum Login"
-msgstr "Log in"
+#: froide/foirequest/views/make_request.py
+msgctxt "Make request"
+msgid "Log in"
+msgstr "Zum Login"
 
 #: froide/foirequest/templates/foirequest/sent.html
 msgid "Your request has been sent"
