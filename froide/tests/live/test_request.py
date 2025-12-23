@@ -50,12 +50,14 @@ async def do_login(page, live_server, navigate=True):
 async def test_make_not_logged_in_request(page, live_server, public_body_with_index):
     pb = PublicBody.objects.all().first()
     await go_to_make_request_url(page, live_server)
-    await page.locator("request-page .btn-primary >> nth=0").nth(0).click()
+    await page.locator("request-page .btn-primary >> nth=0").click()
     await page.locator(".search-public_bodies").fill(pb.name)
     await page.locator(".search-public_bodies-submit").click()
     buttons = page.locator(".search-results .search-result .btn")
     await expect(buttons).to_have_count(2)
     await page.locator(".search-results .search-result .btn >> nth=0").click()
+
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
 
     await page.fill("[name=first_name]", "Peter")
     await page.fill("[name=last_name]", "Parker")
@@ -64,14 +66,16 @@ async def test_make_not_logged_in_request(page, live_server, public_body_with_in
     user_email = "peter.parker@example.com"
     await page.fill("[name=user_email]", user_email)
     await page.locator("[name=terms]").click()
-    await page.locator("request-page .btn-primary >> nth=1").click()
+    await page.locator("#step_create_account .btn-primary").click()
 
     req_title = "FoiRequest Number"
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", "Documents describing something...")
     await page.locator("[name=confirm]").click()
-    await page.locator("request-page .btn-primary >> nth=2").click()
-    await page.locator("request-page .btn-primary >> nth=4").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+
     await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
@@ -108,10 +112,11 @@ async def test_make_not_logged_in_request_to_public_body(page, live_server, worl
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", "Documents describing something...")
     await page.locator("[name=confirm]").click()
-    await page.locator("request-page .btn-primary >> nth=2").click()
-    await page.locator(
-        "request-page .btn-primary >> nth=4"
-    ).click()  # public visibility
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
 
     user_first_name = "Peter"
     user_last_name = "Parker"
@@ -121,7 +126,7 @@ async def test_make_not_logged_in_request_to_public_body(page, live_server, worl
     await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
     await page.fill("[name=user_email]", user_email)
     await page.locator("[name=terms]").click()
-    await page.locator("request-page .btn-primary >> nth=1").click()
+    await page.locator("#step_create_account .btn-primary").click()
 
     await page.locator("#send-request-button").click()
 
@@ -159,8 +164,10 @@ async def test_make_logged_in_request(
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", body_text)
     await page.locator("[name=confirm]").click()
-    await page.locator("request-page .btn-primary >> nth=1").click()
-    await page.locator("request-page .btn-primary >> nth=3").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+
     await page.locator("#send-request-button").click()
     request_sent = reverse("foirequest-request_sent")
     assert request_sent in page.url
@@ -194,17 +201,14 @@ async def test_make_logged_in_request_too_many(
     pb = PublicBody.objects.all().first()
     await go_to_make_request_url(page, live_server, pb=pb)
 
-    await page.locator("request-page .btn-primary >> nth=1").click()
-
     req_title = "FoiRequest Number"
     body_text = "Documents describing & something..."
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", body_text)
     await page.locator("[name=confirm]").click()
-    await page.locator("request-page .btn-primary >> nth=1").click()
-    # FIXME why twice?? maybe validation of subject+body interfering?
-    await page.locator("request-page .btn-primary >> nth=1").click()
-    await page.locator("request-page .btn-primary >> nth=3").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
     await page.locator("#send-request-button").click()
     make_request = reverse("foirequest-make_request")
     assert make_request in page.url
@@ -225,16 +229,19 @@ async def test_make_request_logged_out_with_existing_account(page, live_server, 
     await page.fill("[name=subject]", req_title)
     await page.fill("[name=body]", body_text)
     await page.locator("[name=confirm]").click()
-    await page.locator("request-page .btn-primary >> nth=2").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
     await page.locator("#id_public_choice1").click()  # "not public"
-    await page.locator("request-page .btn-primary >> nth=4").click()
+    await page.locator("#step_request_public .btn-primary").click()
+
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
 
     await page.fill("[name=first_name]", user_first_name)
     await page.fill("[name=last_name]", user_last_name)
     await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
     await page.fill("[name=user_email]", user.email)
     await page.locator("[name=terms]").click()
-    await page.locator("request-page .btn-primary >> nth=1").click()
+    await page.locator("#step_create_account .btn-primary").click()
 
     old_count = FoiRequest.objects.filter(user=user).count()
     draft_count = RequestDraft.objects.filter(user=None).count()

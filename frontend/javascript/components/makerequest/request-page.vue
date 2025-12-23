@@ -61,7 +61,7 @@
 
           <!-- STEP: INTRO / CAMPAIGNS -->
 
-          <div v-if="step === STEPS.INTRO" class="mt-5">
+          <div v-if="step === STEPS.INTRO" class="mt-5" id="step_intro">
             <h1>{{ i18n.makeRequest }}</h1>
             <p>{{ i18n.whatDoYouWantToDo }}</p>
             <IntroCampaigns
@@ -87,6 +87,7 @@
           <div
             v-if="step === STEPS.INTRO_HOWTO"
             class="mt-5"
+            id="step_intro_howto"
             >
             <DjangoSlot
               name="intro_howto"
@@ -103,7 +104,7 @@
 
           <!-- STEP: FIND SIMILAR REQUESTS -->
 
-          <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3">
+          <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3" id="step_find_similar">
             <h2>{{ i18n.findSimilarRequests }}</h2>
             <DjangoSlot name="find-similar-requests-preamble"></DjangoSlot>
             <SimilarRequestSearch :config="config" />
@@ -121,7 +122,7 @@
 
           <!-- STEP: SELECT PUBLIC BODY -->
 
-          <div v-if="step === STEPS.SELECT_PUBLICBODY">
+          <div v-if="step === STEPS.SELECT_PUBLICBODY" id="step_select_publicbody">
 
             <p v-if="publicBodies.length > 0">
               {{ i18n.currentlyChosen }}
@@ -167,7 +168,7 @@
 
           <!-- STEP: REVIEW PUBLIC BODIES -->
 
-          <div v-if="step === STEPS.REVIEW_PUBLICBODY">
+          <div v-if="step === STEPS.REVIEW_PUBLICBODY" id="step_review_publicbody">
             <PbMultiReview
               name="publicbody"
               :i18n="i18n"
@@ -179,7 +180,9 @@
           <!-- STEPS: LOGIN or CREATE ? -->
 
           <div
-            v-show="step === STEPS.LOGIN_CREATE">
+            v-show="step === STEPS.LOGIN_CREATE"
+            id="step_login_create"
+            >
             <h2>{{ i18n.account }}</h2>
             <div class="row">
               <div class="col-md-6 mb-4">
@@ -206,7 +209,9 @@
 
           <!-- need v-show over v-if so <input>s are in DOM while submitting -->
           <div
-            v-show="step === STEPS.CREATE_ACCOUNT">
+            v-show="step === STEPS.CREATE_ACCOUNT"
+            id="step_create_account"
+            >
             <h2>{{ i18n.createAccount }}</h2>
             <UserCreateAccount
               v-if="!user.id"
@@ -228,7 +233,7 @@
 
           <div
             v-show="step === STEPS.WRITE_REQUEST"
-            id="step-request"
+            id="step_write_request"
             class="mt-3"
             >
             <RequestForm
@@ -275,7 +280,7 @@
 
           <!-- STEP: VISIBILITY -->
 
-          <div v-show="step == STEPS.REQUEST_PUBLIC">
+          <div v-show="step == STEPS.REQUEST_PUBLIC" id="step_request_public">
             <h2>{{ i18n.requestVisibility }}</h2>
             <DjangoSlot name="request-public-preamble" />
             <RequestPublic
@@ -297,7 +302,7 @@
 
           <!-- STEP: PREVIEW -->
 
-          <div v-if="step === STEPS.PREVIEW_SUBMIT">
+          <div v-if="step === STEPS.PREVIEW_SUBMIT" id="step_preview_submit">
             <h2>{{ i18n.previewAndSubmit }}</h2>
             <ReviewRequest
               :i18n="i18n"
