@@ -79,6 +79,14 @@ async def test_make_not_logged_in_request(page, live_server, public_body_with_in
     await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
+
+    # FIXME
+    await page.wait_for_timeout(1000)
+    # none of these worked, unexpectedly:
+    # await page.wait_for_url('*'+new_account-url+'*')
+    # await page.wait_for_url('*')
+    # await page.wait_for_load_state()
+
     assert new_account_url in page.url
 
     new_user = User.objects.get(email=user_email)
@@ -131,6 +139,7 @@ async def test_make_not_logged_in_request_to_public_body(page, live_server, worl
     await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
+    await page.wait_for_timeout(1000)
     assert new_account_url in page.url
     new_user = User.objects.get(email=user_email)
     assert new_user.first_name == user_first_name
@@ -170,6 +179,7 @@ async def test_make_logged_in_request(
 
     await page.locator("#send-request-button").click()
     request_sent = reverse("foirequest-request_sent")
+    await page.wait_for_timeout(1000)
     assert request_sent in page.url
     req = FoiRequest.objects.filter(user=dummy_user).order_by("-id")[0]
     assert req.title == req_title
@@ -211,6 +221,7 @@ async def test_make_logged_in_request_too_many(
     await page.locator("#step_request_public .btn-primary").click()
     await page.locator("#send-request-button").click()
     make_request = reverse("foirequest-make_request")
+    await page.wait_for_timeout(1000)
     assert make_request in page.url
     alert = page.locator(".alert-danger", has_text="exceeded your request limit")
     await expect(alert).to_be_visible()
@@ -248,6 +259,7 @@ async def test_make_request_logged_out_with_existing_account(page, live_server, 
     await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
+    await page.wait_for_timeout(1000)
     assert new_account_url in page.url
 
     new_count = FoiRequest.objects.filter(user=user).count()
