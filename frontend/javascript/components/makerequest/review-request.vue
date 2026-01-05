@@ -167,7 +167,7 @@
         type="submit"
         class="btn btn-primary me-2 mb-3"
         :disabled="needCorrection"
-        @click="$emit('submit')">
+        @click.prevent="$emit('submit')">
         <i class="fa fa-send" aria-hidden="true" />
         {{ i18n.submitRequest }}
       </button>

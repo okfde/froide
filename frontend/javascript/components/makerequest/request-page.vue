@@ -50,6 +50,10 @@
           <div v-if="requestForm.nonFieldErrors.length > 0" class="alert alert-danger">
             <p v-for="error in requestForm.nonFieldErrors" :key="error" v-html="error" />
           </div>
+          <div v-if="fetchError" class="alert alert-danger">
+            <strong>{{ i18n.error }}</strong>
+            {{ fetchError }}
+          </div>
 
           <h1
             v-if="hidePublicbodyChooser && hasPublicBodies"
@@ -320,7 +324,7 @@
               :hide-public="hidePublic"
               :hide-publicbody-chooser="hidePublicbodyChooser"
               :show-draft="showDraft"
-              @submit="submitting = true"
+              @submit="submit"
               @onlinehelp-click="onlineHelpShow($event)"
               />
           </div>
@@ -433,13 +437,13 @@ export default {
       type: Object,
       default: null
     },
-    requestForm: {
+    requestFormInitial: {
       type: Object
     },
-    userForm: {
+    userFormInitial: {
       type: Object
     },
-    proofForm: {
+    proofFormInitial: {
       type: Object,
       default: null
     },
@@ -489,6 +493,8 @@ export default {
       submitting: false,
       STEPS,
       similarSubject: '',
+      fetchedForms: null,
+      fetchError: null,
     }
   },
   provide() {
@@ -497,21 +503,17 @@ export default {
     }
   },
   computed: {
-    form() {
-      return this.requestForm
+    requestForm() {
+      return this.fetchedForms?.request_form || this.requestFormInitial
     },
-    formFields() {
-      return this.form.fields
+    userForm() {
+      return this.fetchedForms?.user_form || this.userFormInitial
     },
-    userformFields() {
-      return this.userForm.fields
-    },
-    conditionalProofForm() {
-      if (this.proofForm && this.proofForm.fields.proof) {
-        return this.proofForm
-      } else {
+    proofForm() {
+      if (!this.proofForm?.fields?.proof) {
         return null
       }
+      return this.fetchedForms?.proof_form || this.proofFormInitial
     },
     steps() {
       // TODO needs discussion:
@@ -752,7 +754,7 @@ export default {
     this.initStoreValues({
       scope: this.pbScope,
       ignoreStorage: this.config.wasPost,
-      formFields: this.formFields,
+      formFields: this.requestForm.fields,
       formCoerce: {
         public: coerceDjangoBool
       },
@@ -785,7 +787,7 @@ export default {
     this.initStoreValues({
       scope: this.pbScope,
       ignoreStorage: true,
-      formFields: this.formFields,
+      formFields: this.requestForm.fields,
       mutationMap: {
         law_type: UPDATE_LAW_TYPE
       }
@@ -816,7 +818,7 @@ export default {
       this.initStoreValues({
         scope: this.pbScope,
         ignoreStorage: this.config.wasPost,
-        formFields: this.userformFields,
+        formFields: this.userForm.fields,
         formCoerce: {
           private: coerceDjangoBool,
           claims_vip: coerceDjangoBool
@@ -845,7 +847,7 @@ export default {
     this.initStoreValues({
       scope: this.pbScope,
       ignoreStorage: this.config.wasPost,
-      formFields: this.userformFields,
+      formFields: this.userForm.fields,
       mutationMap: {
         address: UPDATE_ADDRESS
       }
@@ -890,6 +892,46 @@ export default {
     })
   },
   methods: {
+    submit() {
+      this.fetchError = null
+      this.submitting = true
+      const form = document.forms.make_request
+      const fd = new FormData(form)
+      fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: { 'x-requested-with': 'fetch' },
+      })
+        .then((resp) => {
+          if (resp.ok) {
+            if (resp.redirected && resp.url) {
+              // success: purge & redirect
+              this.purgeStorage({ scope: this.pbScope })
+              document.location.href = resp.url
+              return
+            }
+            console.error(resp)
+            throw new Error('unexpected success response')
+          }
+          if (resp.status === 400) {
+            // resp not ok, assume forms have errors...
+            return resp.json()
+          }
+          console.error(resp)
+          throw new Error(`${resp.status} ${resp.statusText}`)
+        })
+        .then((resp) => {
+          // ...frontend will display/handle them
+          this.fetchedForms = resp
+        })
+        .catch((e) => {
+          console.error(e)
+          this.fetchError = e.message || this.i18n.error
+        })
+        .finally(() => {
+          this.submitting = false
+        })
+    },
     setFirstStep() {
       // this step may at this point be "remembered" from Storage
       // but this case is the "default"

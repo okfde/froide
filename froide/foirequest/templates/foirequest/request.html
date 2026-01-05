@@ -36,9 +36,9 @@
         {% for k, v in config.items %}
             {% if v %}<input type="hidden" name="{{ k }}" value="1" />{% endif %}
         {% endfor %}
-        <request-page id="make-request" v-cloak publicbody-default-search="{{ public_body_search }}" :publicbodies="{{ publicbodies_json }}" :request-form="{{ request_form.as_json }}" :user-form="{{ user_form.as_json }}" :was-post="{{ was_post_json }}"
+        <request-page id="make-request" v-cloak publicbody-default-search="{{ public_body_search }}" :publicbodies="{{ publicbodies_json }}" :request-form-initial="{{ request_form.as_json }}" :user-form-initial="{{ user_form.as_json }}" :was-post="{{ was_post_json }}"
         {% if request.user.is_authenticated %}:user-info="{{ request.user.as_json }}"{% endif %}
-        {% if proof_form %}:proof-form="{{ proof_form.as_json }}"{% endif %}
+        {% if proof_form %}:proof-form-initial="{{ proof_form.as_json }}"{% endif %}
         {% if not config.hide_similar %}:show-similar="true"{% endif %}
         {% if not config.hide_draft %}:show-draft="true"{% endif %}
         {% if config.hide_publicbody %}:hide-publicbody-chooser="true"{% endif %}

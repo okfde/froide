@@ -327,7 +327,8 @@ export default {
   },
   props: {
     config: {
-      type: Object
+      type: Object,
+      default: null
     },
     publicbodies: {
       type: Array,
@@ -338,10 +339,16 @@ export default {
       default: null
     },
     requestForm: {
+      required: true,
       type: Object
     },
     userForm: {
+      required: true,
       type: Object
+    },
+    proofForm: {
+      type: Object,
+      default: null
     },
     lawType: {
       type: String,
@@ -379,10 +386,6 @@ export default {
       type: Boolean,
       default: false
     },
-    proofForm: {
-      type: Object,
-      default: null
-    },
     proofRequired: {
       type: Boolean,
       default: false
@@ -414,23 +417,14 @@ export default {
     }
   },
   computed: {
-    nonFieldErrors() {
-      return this.form.nonFieldErrors
-    },
-    form() {
-      return this.requestForm
-    },
     formFields() {
-      return this.form.fields
+      return this.requestForm.fields
     },
     errors() {
-      return this.form.errors
+      return this.requestForm.errors
     },
     userformFields() {
       return this.userForm.fields
-    },
-    usererrors() {
-      return this.userForm.errors
     },
     nonMeaningfulSubjects() {
       return this.config.settings.non_meaningful_subject_regex.map(

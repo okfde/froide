@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
@@ -22,7 +22,7 @@ from froide.foirequest.forms.preferences import make_request_intro_skip_howto_pr
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
 from froide.helper.content_urls import get_content_url
-from froide.helper.utils import update_query_params
+from froide.helper.utils import is_fetch, update_query_params
 from froide.proof.forms import ProofMessageForm
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
 from froide.publicbody.models import PublicBody
@@ -621,15 +621,29 @@ class MakeRequestView(FormView):
         if not user_form.is_valid():
             error = True
 
+        proof_form = self.get_proof_form()
+
         form_kwargs = {
             "request_form": request_form,
             "user_form": user_form,
             "publicbody_form": publicbody_form,
-            "proof_form": self.get_proof_form(),
+            "proof_form": proof_form,
         }
 
         if not error:
             return self.form_valid(**form_kwargs)
+
+        if is_fetch(request):
+            return JsonResponse(
+                {
+                    # "json serializeable form_kwargs subset"
+                    "request_form": request_form.as_data(),
+                    "user_form": user_form.as_data() if user_form else None,
+                    "proof_form": proof_form.as_data() if proof_form else None,
+                },
+                status=400,
+            )
+
         return self.form_invalid(**form_kwargs)
 
     def save_draft(self, request_form, publicbody_form):
