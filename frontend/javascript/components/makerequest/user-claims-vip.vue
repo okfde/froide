@@ -10,7 +10,7 @@
       <div
         v-for="(choice, choiceIndex) in field.choices"
         :key="choice.value"
-        class="form-check"
+        class="form-check form-check-emphasized"
         >
         <input
           :id="'id_claims_vip_choice' + choiceIndex"

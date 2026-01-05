@@ -1172,7 +1172,7 @@ addEventListener('hashchange', () => {
             {{ i18n.letterSentOrReceived }}
           </label>
           <div
-            class="form-check"
+            class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in messageIsResponseChoices"
             :key="choiceIndex"
           >
@@ -1210,7 +1210,7 @@ addEventListener('hashchange', () => {
             {{ props.foirequest.public_body.name }}
           </div>
           <div
-            class="form-check"
+            class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in [
               { value: true, label: i18n.yes },
               { value: false, label: i18n.noDifferentPublicBody }
@@ -1300,7 +1300,7 @@ addEventListener('hashchange', () => {
             :max="props.date_max"
             @input="updateValidity('date')"
           />
-          <div class="form-check">
+          <div class="form-check form-check-emphasized">
             <input
               class="form-check-input"
               type="checkbox"
@@ -1373,7 +1373,7 @@ addEventListener('hashchange', () => {
             </template>
           </label>
           <div
-            class="form-check"
+            class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in schemas.status_choices"
             :key="choice.value"
           >
@@ -1423,7 +1423,7 @@ addEventListener('hashchange', () => {
             {{ i18n.messageResolution }}
           </label>
           <div
-            class="form-check"
+            class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in requestResolutionChoices"
             :key="choice.value"
           >
@@ -1456,7 +1456,7 @@ addEventListener('hashchange', () => {
             {{ i18n.messageCostCheck }}
           </label>
           <div
-            class="form-check"
+            class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in [
               { label: i18n.no, value: false },
               { label: i18n.yes, value: true }
@@ -1502,7 +1502,7 @@ addEventListener('hashchange', () => {
             "
           ></label>
           <div
-            class="form-check"
+            class="form-check form-check-emphasized"
             v-for="(choice, choiceIndex) in [
               { label: i18n.yes, value: false },
               { label: i18n.no, value: true }
@@ -2012,39 +2012,6 @@ addEventListener('hashchange', () => {
 
   &.btn {
     color: black !important;
-  }
-}
-
-/* make form-check more accessible; whole block is padded + clickable */
-
-.form-check {
-  background-color: var(--bs-tertiary-bg);
-  padding: 0;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-
-  &:hover {
-    background-color: var(--bs-secondary-bg);
-  }
-}
-
-.form-check label {
-  padding: 1em 1em 1em 2.5em;
-  display: block;
-}
-
-.form-check-input {
-  margin-top: 1.25em;
-  margin-left: 0.75em;
-  border-color: var(--bs-body-color);
-  border-width: 2px;
-
-  .form-check:hover & {
-    border-color: var(--bs-primary);
-  }
-
-  &:checked {
-    background-color: black;
   }
 }
 

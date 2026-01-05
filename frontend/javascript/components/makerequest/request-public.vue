@@ -11,7 +11,7 @@
           <div
             v-for="(choice, choiceIndex) in form.fields.public.choices"
             :key="choice.value"
-            class="form-check"
+            class="form-check form-check-emphasized"
             >
             <input
               type="radio"

@@ -1,5 +1,5 @@
 <template>
-  <div class="form-check">
+  <div class="form-check form-check-emphasized">
     <input
       type="checkbox"
       v-model="terms"
