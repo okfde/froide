@@ -46,7 +46,6 @@ const togglePreference = () => {
     .catch((err) => {
       console.error('toggle preference error', err)
       preferenceSkipIntroHowto.value = fromValue
-      // TODO: err does not have message when 404?
       error.value = `${i18n.error} ${err?.message || ''}`
     })
 }
