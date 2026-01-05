@@ -139,15 +139,13 @@ class MakeRequestView(FormView):
         show_skip_intro_howto_preference = False
         if self.request.user.is_authenticated:
             show_skip_intro_howto_preference = True
-            preferences = get_preferences_for_user(
+            preference = get_preferences_for_user(
                 self.request.user, [make_request_intro_skip_howto_pref]
             )
-            if (make_request_intro_skip_howto_pref.key in preferences) and preferences[
-                make_request_intro_skip_howto_pref.key
-            ].value:
-                skip_intro_howto = True
-            elif FoiRequest.objects.filter(user=self.request.user).count() > 50:
-                # TODO: instead update the preference?
+            preference_value = preference[make_request_intro_skip_howto_pref.key].value
+            if preference_value is not None:
+                skip_intro_howto = preference_value
+            elif FoiRequest.objects.filter(user=self.request.user).count() > 5:
                 skip_intro_howto = True
         if first_request := FoiRequest.objects.order_by("created_at").first():
             min_year = first_request.created_at.year
