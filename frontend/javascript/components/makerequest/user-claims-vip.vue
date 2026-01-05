@@ -37,7 +37,7 @@ export default {
       type: Object
     },
     initialValue: {
-      Boolean,
+      type: String,
       required: true
     }
   },

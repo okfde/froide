@@ -49,7 +49,7 @@ export default {
       default: false
     },
     initialPublic: {
-      type: Boolean,
+      type: String,
       required: true
     },
   },

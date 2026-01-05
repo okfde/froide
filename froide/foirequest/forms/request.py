@@ -79,7 +79,7 @@ class RequestForm(JSONMixin, forms.Form):
                 ),
             ),
         ],
-        coerce=lambda x: x and (x.lower() != "false"),
+        coerce=lambda x: x != "False",
     )
 
     reference = forms.CharField(widget=forms.HiddenInput, required=False)

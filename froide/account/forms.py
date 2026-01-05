@@ -151,7 +151,7 @@ class NewUserBaseForm(AddressBaseForm):
                 (False, _("No, I am <strong>not a journalist</strong>")),
                 (True, _("Yes, I am <strong>a journalist</strong>")),
             ],
-            coerce=lambda x: x and (x.lower() != "false"),
+            coerce=lambda x: x != "False",
         )
 
     ALLOW_BLOCKED_ADDRESS = True
@@ -170,7 +170,7 @@ class NewUserBaseForm(AddressBaseForm):
                 ),
                 (True, _("My name must be <strong>redacted</strong>")),
             ],
-            coerce=lambda x: x and (x.lower() != "false"),
+            coerce=lambda x: x != "False",
         )
 
     field_order = ["first_name", "last_name", "user_email"]

@@ -45,7 +45,7 @@ export default {
       type: Object
     },
     initialPrivate: {
-      Boolean,
+      type: String,
       required: true
     }
   },
