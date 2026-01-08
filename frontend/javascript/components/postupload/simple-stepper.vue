@@ -81,7 +81,6 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
     <div class="d-md-none bg-body-tertiary">
       <div class="container">
         <div class="breadcrumb">
-          <div class="breadcrumb-item"></div>
           <div class="breadcrumb-item">
             <slot></slot>
           </div>
