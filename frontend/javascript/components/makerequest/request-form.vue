@@ -663,8 +663,9 @@ export default {
       // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
       this.validateBody()
       this.validateSubject()
-      if (this.confirmRequired) this.validateConfirm()
-      if (this.bodyValid && this.subjectValid && (this.confirmValid || !this.confirmRequired)) {
+      if (this.hasUserConfirmContent && this.confirmRequired) this.validateConfirm()
+      const confirmPassed = this.confirmValid || !this.confirmRequired || !this.hasUserConfirmContent
+      if (this.bodyValid && this.subjectValid && confirmPassed) {
         this.$emit('stepNext')
       }
     },
