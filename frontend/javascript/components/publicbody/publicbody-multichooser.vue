@@ -41,41 +41,29 @@
           </div>
         </div>
       </div>
-      <div class="row mb-4 mt-5">
-        <div class="col-12 col-lg-5">
-          <h3>
+      <div class="mb-4 mt-5 d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <h3 class="mb-0">
             <span v-if="searching" class="spinner-border spinner-border-sm fs-3 text-secondary" role="status">
               <span class="visually-hidden">{{ i18n.loading }}</span>
             </span>
             {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
           </h3>
-        </div>
-        <div class="col-auto">
-          <button
-            @click.prevent="selectAll"
-            class="btn btn-sm btn-outline-secondary"
-            :disabled="selectAllButtonDisabled"
-          >
-            {{ i18n._('selectAll', { count: searchResultsLength }) }}
-          </button>
-        </div>
-        <div class="col-auto">
-          <button
-            :disabled="!hasSearchResults"
-            @click.prevent="clearSearch"
-            class="btn-sm btn btn-outline-secondary"
-          >
-            {{ i18n.clearSearchResults }}
-          </button>
-        </div>
-        <div class="col-auto">
-          <button
-            :disabled="!stepCanContinue(scope)"
-            type="button"
-            class="btn btn-primary"
-            @click="setStepReviewPublicbody"
-            >{{ i18n.continueWithSelected }}</button>
-        </div>
+          <div class="btn-group" role="group">
+            <button
+              @click.prevent="selectAll"
+              class="btn btn-sm btn-outline-secondary"
+              :disabled="selectAllButtonDisabled"
+            >
+              {{ i18n._('selectAll', { count: searchResultsLength }) }}
+            </button>
+            <button
+              :disabled="!hasSearchResults"
+              @click.prevent="clearSearch"
+              class="btn-sm btn btn-outline-secondary"
+            >
+              {{ i18n.clearSearchResults }}
+            </button>
+          </div>
       </div>
       <div class="row">
         <div class="col-md-8 col-lg-9 order-2">

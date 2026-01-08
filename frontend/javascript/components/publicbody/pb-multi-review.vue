@@ -7,15 +7,7 @@
         </h2>
       </div>
     </div>
-    <div class="row">
-      <div class="col-auto">
-        <button
-          class="btn btn-primary"
-          @click.prevent="setStepSelectPublicBody">
-          &larr; {{ i18n.addMoreAuthorities }}
-        </button>
-      </div>
-    </div>
+
     <PbSummary
       :scope="scope"
       :i18n="i18n"

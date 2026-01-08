@@ -605,9 +605,6 @@ export default {
       return this.steps[this.stepIndex + 1]
     },
     topNextLabel() {
-      if (this.step === STEPS.SELECT_PUBLICBODY && this.multiRequest) {
-        return false
-      }
       if ([STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)) {
         return false
       }
