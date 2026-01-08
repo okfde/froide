@@ -94,7 +94,7 @@ export default {
     }
   },
   created() {
-    if (addressRegex) {
+    if (this.config.settings.address_regex) {
       addressRegex = new RegExp(this.config.settings.address_regex)
     }
   },
