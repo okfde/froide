@@ -64,6 +64,9 @@ import {
 
 let addressRegex
 
+// if false, a failing regex will only nag, and not disable continue
+const addressRegexBlockValidity = false
+
 export default {
   name: 'UserAddress',
   props: {
@@ -113,7 +116,9 @@ export default {
       }
       let valid = true
       if (this.address && addressRegex && !addressRegex.test(this.address)) {
-        valid = false
+        if (addressRegexBlockValidity) {
+          valid = false
+        }
         this.addressValidationErrors.push(this.i18n.pleaseFollowAddressFormat)
       }
       if (valid) {
