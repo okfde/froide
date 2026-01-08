@@ -1,22 +1,26 @@
 <template>
-  <div class="form-check form-check-emphasized">
-    <input
-      type="checkbox"
-      v-model="terms"
-      ref="terms"
-      name="terms"
-      class="form-check-input"
-      :class="{ 'is-invalid': errors.terms && !termsChanged }"
-      required=""
-      id="id_terms"
-      @change="updateTermsChanged(true)"
-      />
-    <label
-      for="id_terms"
-      class="form-check-label field-required"
-      :class="{ 'text-danger': errors.terms && !termsChanged }">
-      <span v-html="form.fields.terms.label"></span>
-    </label>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="form-check form-check-emphasized">
+        <input
+          type="checkbox"
+          v-model="terms"
+          ref="terms"
+          name="terms"
+          class="form-check-input"
+          :class="{ 'is-invalid': errors.terms && !termsChanged }"
+          required=""
+          id="id_terms"
+          @change="updateTermsChanged(true)"
+          />
+        <label
+          for="id_terms"
+          class="form-check-label field-required"
+          :class="{ 'text-danger': errors.terms && !termsChanged }">
+          <span v-html="form.fields.terms.label"></span>
+        </label>
+      </div>
+    </div>
   </div>
 </template>
 
