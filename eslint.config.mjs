@@ -1,2 +1,2 @@
-import config from '@okfde/eslint-config-froide/eslint.config.mjs'
+import config from '@okfde/eslint-config-froide'
 export default config
