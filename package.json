@@ -42,7 +42,7 @@
     "prettier-config-standard": "^7.0.0",
     "sass": "^1.92.1",
     "typescript": "^5.9.2",
-    "vite": "^7.1.5",
+    "vite": "^7.2.4",
     "vite-plugin-dev-manifest": "^1.4.1"
   },
   "dependencies": {
