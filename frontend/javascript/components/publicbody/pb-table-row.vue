@@ -5,8 +5,7 @@
         type="checkbox"
         :data-label="row.name"
         :value="row.id"
-        v-model="value"
-      />
+        v-model="value" />
     </td>
     <td>
       {{ row.name }}

@@ -3,8 +3,7 @@
     :class="{
       'table-secondary': claimedByOther,
       'table-primary': claimedByMe
-    }"
-  >
+    }">
     <td :title="report.kind_label" class="kind-emoji">
       {{ emoji }}
     </td>
@@ -12,8 +11,7 @@
       {{ reportTimestampFormatted }}
       <span
         v-if="!report.is_requester && !report.auto_submitted"
-        class="badge text-bg-secondary"
-      >
+        class="badge text-bg-secondary">
         {{ i18n.isNotRequester }}
       </span>
     </td>
@@ -28,8 +26,7 @@
       <a
         :href="report.message_url"
         class="btn btn-outline-secondary btn-sm"
-        target="_blank"
-      >
+        target="_blank">
         {{ i18n.toMessage }}
       </a>
 
@@ -37,8 +34,7 @@
         v-if="showPublicBodyLink"
         class="ms-3 btn btn-outline-secondary btn-sm"
         :href="publicBodyLink"
-        target="_blank"
-      >
+        target="_blank">
         {{ i18n.toPublicBody }}
       </a>
 
@@ -71,8 +67,7 @@
         v-if="!report.claimed"
         class="btn btn-sm btn-primary"
         :disabled="!canClaim"
-        @click="claim"
-      >
+        @click="claim">
         {{ i18n.claim }}
       </button>
       <template v-if="claimedByOther">

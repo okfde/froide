@@ -7,21 +7,18 @@
             :class="{
               active: stepSelectPublicBody,
               done: stepSelectPublicBodyDone
-            }"
-          >
+            }">
             <a
               v-if="!hidePublicbodyChooser"
               href="#step-publicbody"
-              @click.prevent="setStepSelectPublicBody"
-            >
+              @click.prevent="setStepSelectPublicBody">
               <i
                 class="fa"
                 :class="{
                   'fa-check-circle': stepSelectPublicBodyDone,
                   'fa-circle-o': !stepSelectPublicBodyDone
                 }"
-                aria-hidden="true"
-              ></i>
+                aria-hidden="true"></i>
               {{ i18n.choosePublicBody }}
             </a>
             <span v-else>
@@ -31,8 +28,7 @@
                   'fa-check-circle': stepSelectPublicBodyDone,
                   'fa-circle-o': !stepSelectPublicBodyDone
                 }"
-                aria-hidden="true"
-              ></i>
+                aria-hidden="true"></i>
               {{ i18n.choosePublicBody }}
             </span>
           </li>
@@ -41,21 +37,18 @@
             :class="{
               active: stepReviewPublicBodies,
               done: stepReviewPublicBodiesDone
-            }"
-          >
+            }">
             <a
               v-if="hasPublicBodies"
               href="#step-publicbody-review"
-              @click.prevent="setStepReviewPublicBody"
-            >
+              @click.prevent="setStepReviewPublicBody">
               <i
                 class="fa"
                 :class="{
                   'fa-check-circle': stepReviewPublicBodiesDone,
                   'fa-circle-o': !stepReviewPublicBodiesDone
                 }"
-                aria-hidden="true"
-              ></i>
+                aria-hidden="true"></i>
               {{ i18n.checkSelection }}
             </a>
             <span v-else>
@@ -67,16 +60,14 @@
             <a
               v-if="hasPublicBodies"
               href="#step-request"
-              @click.prevent="setStepRequest"
-            >
+              @click.prevent="setStepRequest">
               <i
                 class="fa"
                 :class="{
                   'fa-check-circle': stepWriteRequestDone,
                   'fa-circle-o': !stepWriteRequestDone
                 }"
-                aria-hidden="true"
-              ></i>
+                aria-hidden="true"></i>
               {{ i18n.makeRequest }}
             </a>
             <span v-else>
@@ -86,8 +77,7 @@
                   'fa-check-circle': stepWriteRequestDone,
                   'fa-circle-o': !stepWriteRequestDone
                 }"
-                aria-hidden="true"
-              ></i>
+                aria-hidden="true"></i>
               {{ i18n.makeRequest }}
             </span>
           </li>
@@ -95,8 +85,7 @@
             <a
               href="#step-review"
               data-bs-toggle="modal"
-              v-if="stepWriteRequest"
-            >
+              v-if="stepWriteRequest">
               <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkRequest }}
             </a>

@@ -8,8 +8,9 @@
         <div class="col-md-9">
           <MessageRedactionField
             field-name="subject"
-            :redacted-parts="message.redacted_subject"
-          ></MessageRedactionField>
+            :redacted-parts="
+              message.redacted_subject
+            "></MessageRedactionField>
         </div>
       </div>
       <div v-if="message.content" class="mb-3">
@@ -20,8 +21,9 @@
           <MessageRedactionField
             field-name="content"
             :redacted-parts="message.redacted_content"
-            :blocked-patterns="config.settings.blockedPatterns"
-          ></MessageRedactionField>
+            :blocked-patterns="
+              config.settings.blockedPatterns
+            "></MessageRedactionField>
         </div>
       </div>
     </template>

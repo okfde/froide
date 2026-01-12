@@ -11,8 +11,6 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits('dismiss')
-
 let teleportTo = document.getElementById('toastContainer')
 
 if (!teleportTo) {
@@ -25,25 +23,13 @@ if (!teleportTo) {
 
 <template>
   <Teleport :to="teleportTo">
-    <div
-      v-bs-toast
-      :class="`toast show text-bg-${props.color}`"
-      role="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-    >
+    <div v-bs-toast :class="`toast show text-bg-${props.color}`" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">
         <div class="toast-body">
           <slot name="body"></slot>
         </div>
-        <button
-          type="button"
-          class="btn-close me-2 m-auto"
-          data-bs-dismiss="toast"
-          :aria-label="i18n.close"
-          @click="emit('dismiss')"
-        ></button>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" :aria-label="i18n.close"></button>
       </div>
-    </div>
+    </div> 
   </Teleport>
 </template>

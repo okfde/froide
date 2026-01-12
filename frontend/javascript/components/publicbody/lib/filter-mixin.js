@@ -25,8 +25,7 @@ const FilterMixin = {
   methods: {
     removeFilter(itemId) {
       if (this.config.multi) {
-        if (!Array.isArray(itemId)) itemId = [itemId]
-        const val = this.value.filter((x) => !itemId.includes(x))
+        const val = this.value.filter((x) => itemId !== x)
         this.$emit('update', this.config, val)
       } else {
         this.$emit('update', this.config, null)

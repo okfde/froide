@@ -40,7 +40,7 @@ class RequestProjectTest(TestCase):
         data = {
             "subject": "Test-Subject",
             "body": "This is another test body with Ümläut€n",
-            "public": True,
+            "public": "on",
             "publicbody": pb_ids.split("+"),
         }
         mail.outbox = []
@@ -81,7 +81,7 @@ class RequestProjectTest(TestCase):
         data = {
             "subject": "Test-Subject",
             "body": "This is another test body with Ümläut€n",
-            "public": True,
+            "public": "on",
             "publicbody": pb_ids,
             "full_text": "on",
         }
@@ -122,7 +122,7 @@ class RequestProjectTest(TestCase):
         data = {
             "subject": "Test-Subject",
             "body": "This is another test body with Ümläut€n",
-            "public": True,
+            "public": "on",
             "publicbody": pb_ids + [evil_pb3],
             "draft": draft.pk,
         }

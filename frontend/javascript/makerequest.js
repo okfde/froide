@@ -9,9 +9,7 @@ function createRequestPage(selector) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  if (document.getElementById('make-request')) {
-    createRequestPage('#make-request')
-  }
+  createRequestPage('#make-request')
 })
 
 export default {

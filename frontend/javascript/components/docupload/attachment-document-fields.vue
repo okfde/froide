@@ -1,7 +1,8 @@
 <script setup>
+
 import { inject, reactive, ref } from 'vue'
 
-import { useAttachments } from './lib/attachments'
+import { useAttachments } from './lib/attachments';
 
 const i18n = inject('i18n')
 
@@ -23,10 +24,12 @@ const isSubmitting = ref(false)
 
 const submitClick = () => {
   isSubmitting.value = true
-  updateDocument(attachment, fields).finally(() => {
-    isSubmitting.value = false
-  })
+  updateDocument(attachment, fields)
+    .finally(() => {
+      isSubmitting.value = false
+    })
 }
+
 </script>
 
 <template>
@@ -34,8 +37,7 @@ const submitClick = () => {
     <label
       class="form-label fw-bold"
       :for="'documentTitle' + attachment.document.id"
-      >{{ i18n.documentTitle }}</label
-    >
+      >{{ i18n.documentTitle }}</label>
     <input
       type="text"
       class="form-control"
@@ -43,34 +45,29 @@ const submitClick = () => {
       v-model="fields.title"
       :disabled="isDocumentSubmitting"
       :placeholder="i18n.documentTitlePlaceholder"
-    />
-    <small class="form-text text-body-secondary">{{
-      i18n.documentTitleHelp
-    }}</small>
+      />
+    <small class="form-text text-body-secondary">{{ i18n.documentTitleHelp }}</small>
   </div>
   <div class="mb-3">
     <label
       class="form-label fw-bold"
       :for="'documentDescription' + attachment.document.id"
-      >{{ i18n.description }}</label
-    >
+      >{{ i18n.description }}</label>
     <textarea
       class="form-control"
       :id="'documentDescription' + attachment.document.id"
       rows="4"
       v-model="fields.description"
       :disabled="isDocumentSubmitting"
-    ></textarea>
-    <small class="form-text text-body-secondary">{{
-      i18n.descriptionHelp
-    }}</small>
+      ></textarea>
+    <small class="form-text text-body-secondary">{{ i18n.descriptionHelp }}</small>
   </div>
   <button
     type="button"
     @click="submitClick"
     class="btn btn-secondary"
     :disabled="isSubmitting"
-  >
+    >
     {{ i18n.save }}
   </button>
 </template>

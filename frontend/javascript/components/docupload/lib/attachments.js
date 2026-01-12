@@ -25,10 +25,7 @@ const makeRelevant = (attachment) => {
 const convertImage = (imageIndex) => {
   store.isConverting = true
   store.images[imageIndex].isConverting = true
-  const title = (
-    store.images[imageIndex].name ||
-    config.i18n.value.documentsUploadDefaultFilename
-  )
+  const title = (store.images[imageIndex].name || config.i18n.value.documentsUploadDefaultFilename)
     // normalize possible .pdf extension away
     ?.replace(/\.pdf$/, '')
   return convertImagesToPdf({
@@ -62,18 +59,15 @@ const createDocument = (attachment) => {
   })
     .then(({ data }) => {
       // note: .getById and .all are not reactive, only allRaw
-      store.allRaw.find((att) => att.id === attachment.id).document = data
+      store.allRaw.find(att => att.id === attachment.id).document = data
     })
     .catch((err) => {
       // TODO where do these land in post-upload?
-      store.messages.push({
-        body: err.detail || config.i18n.error || 'Error',
-        color: 'danger'
-      })
+      store.messages.push({ body: err.detail || config.i18n.error || 'Error', color: 'danger' })
     })
-  // note there's no .finally here -- we don't know when it's done
-  // for now it remains in process until reload
-  // (or until we gain a websocket-y signal)
+    // note there's no .finally here -- we don't know when it's done
+    // for now it remains in process until reload
+    // (or until we gain a websocket-y signal)
 }
 
 const updateDocument = (attachment, { title, description }) => {
@@ -86,10 +80,7 @@ const updateDocument = (attachment, { title, description }) => {
       return refetchAttachment(attachment)
     })
     .catch((err) => {
-      store.messages.push({
-        body: err.detail || config.i18n.error || 'Error',
-        color: 'danger'
-      })
+      store.messages.push({ body: err.detail || config.i18n.error || 'Error', color: 'danger' })
     })
 }
 
@@ -111,20 +102,21 @@ const fetchPagedObjects = (nextUrl, pageCb) => {
         return fetchPagedObjects(response.meta.next, pageCb)
       }
     })
+
 }
 
 const fetchAttachments = (messageId) => {
   store.isFetching = true
-  return attachmentList({
-    query: { belongs_to: messageId },
-    throwOnError: true
-  })
+  return attachmentList({ query: { belongs_to: messageId }, throwOnError: true })
     .then((response) => {
       store.$patch({ allRaw: response.data.objects })
       if (response.data.meta.next) {
-        return fetchPagedObjects(response.data.meta.next, (objects) => {
-          store.allRaw.push(...objects)
-        })
+        return fetchPagedObjects(
+          response.data.meta.next,
+          (objects) => {
+            store.allRaw.push(...objects)
+          }
+        )
       }
     })
     .finally(() => {
@@ -151,14 +143,14 @@ const refetchAttachment = (attachment) => {
 }
 
 const replaceAttachment = (attachment) => {
-  const index = store.allRaw.findIndex((att) => att.id === attachment.id)
+  const index = store.allRaw.findIndex(att => att.id === attachment.id)
   if (index === -1) throw new Error(`attachment not found ${attachment.id}`)
   store.allRaw[index] = attachment
   return attachment
 }
 
 const addOrReplaceAttachment = (attachment) => {
-  const index = store.allRaw.findIndex((att) => att.id === attachment.id)
+  const index = store.allRaw.findIndex(att => att.id === attachment.id)
   if (index === -1) {
     store.allRaw.push(attachment)
   } else {
@@ -170,23 +162,16 @@ const addOrReplaceAttachment = (attachment) => {
 const fetchImagePage = (page) => {
   page.loading = true
   // ExifReader.load needs absolute URL *with* proto
-  const url =
-    page.file_url.substring(0, 1) === '/'
-      ? document.location.origin + page.file_url
-      : page.file_url
+  const url = page.file_url.substring(0, 1) === '/'
+    ? document.location.origin + page.file_url
+    : page.file_url
   ExifReader.load(url)
     .then((data) => {
       page.metadata = {}
       switch (data.Orientation?.value) {
-        case 6:
-          page.metadata.implicitRotate = 90
-          break
-        case 8:
-          page.metadata.implicitRotate = 270
-          break
-        case 3:
-          page.metadata.implicitRotate = 180
-          break
+        case 6: page.metadata.implicitRotate = 90; break
+        case 8: page.metadata.implicitRotate = 270; break
+        case 3: page.metadata.implicitRotate = 180; break
       }
       page.loaded = true
     })
@@ -208,10 +193,7 @@ const addFromUppy = ({ uppy, response, file }, imageDefaultFilename = '') => {
     .then((result) => {
       if (result.error) {
         // replace to cheaply "strip_tags" because this is a form snippet at the moment
-        store.messages.push({
-          body: result.message.replace(/<.*?>/g, ' '),
-          color: 'danger'
-        })
+        store.messages.push({ body: result.message.replace(/<.*?>/g, ' '), color: 'danger' })
         return
       }
       const att = result.added[0]
@@ -238,9 +220,7 @@ const handleErrorAndRefresh = (err) => {
   } catch {
     message = '…'
   }
-  if (
-    confirm(`${config.i18n.value.genericErrorReload}\n\n(${message})`) === true
-  ) {
+  if (confirm(`${config.i18n.value.genericErrorReload}\n\n(${message})`) === true) {
     refresh()
   }
 }
@@ -264,10 +244,7 @@ const deleteAttachment = (attachment) => {
     throwOnError: true
   })
     .then(() => {
-      store.messages.push({
-        body: `${config.i18n.value.attachmentDeleted} (${attachment.name})`,
-        color: 'success-subtle'
-      })
+      store.messages.push({ body: `${config.i18n.value.attachmentDeleted} (${attachment.name})`, color: 'success-subtle' })
     })
     .catch(handleErrorAndRefresh)
 }
@@ -286,25 +263,22 @@ const approveAttachment = (attachment) => {
 }
 
 const approveAllUnredactedAttachments = (excludeIds = []) => {
-  const approvable = store.all.filter(
-    (att) =>
-      !att.approved &&
-      att.can_approve &&
-      !att.redacted &&
-      !att.is_redacted &&
-      !excludeIds.includes(att.id)
+  const approvable = store.all.filter(att =>
+    !att.approved &&
+    att.can_approve &&
+    !att.redacted &&
+    !att.is_redacted &&
+    !excludeIds.includes(att.id)
   )
-  return Promise.all(
-    approvable.map((attachment) => {
-      return attachmentApproveCreate({ path: { id: attachment.id } })
-    })
-  )
+  return Promise.all(approvable.map(attachment => {
+    return attachmentApproveCreate({ path: { id: attachment.id }})
+  }))
 }
 
 const config = {}
 
-const refresh = (messageId) =>
-  fetchAttachments(messageId || config.message.id).catch(handleErrorAndRefresh)
+const refresh = (messageId) => fetchAttachments(messageId || config.message.id)
+  .catch(handleErrorAndRefresh)
 
 const refreshIfIdNotPresent = (attachment) => {
   if (store.getById(attachment.id)) {
@@ -314,8 +288,8 @@ const refreshIfIdNotPresent = (attachment) => {
 }
 
 store.$subscribe(() => {
-  store.images.forEach((image) => {
-    image.pages.forEach((page) => {
+  store.images.forEach(image => {
+    image.pages.forEach(page => {
       if (!page.loaded && !page.loading && !page.pending) {
         fetchImagePage(page)
       }
@@ -334,7 +308,7 @@ const getRedactUrl = (attachment) => {
 let room
 const getWebsocketMessageRoom = () => {
   if (!room) {
-    room = new Room(config.urls.messageWebsocket).connect()
+    room = (new Room(config.urls.messageWebsocket)).connect()
   }
   return room
 }
@@ -343,24 +317,17 @@ const monitorAttachments = () => {
   getWebsocketMessageRoom().on('attachment_available', (data) => {
     // we store the id in case the attachment is populated via API call later
     store.availableIds.add(data.attachment)
-    const attachment = store.allRaw.find((att) => att.id === data.attachment)
+    const attachment = store.allRaw.find(att => att.id === data.attachment)
     if (attachment) attachment.pending = false
-    store.images.forEach((image) =>
-      image.pages.forEach((page) => {
-        if (page.id === data.attachment) {
-          page.pending = false
-        }
-      })
-    )
+    store.images.forEach(image => image.pages.forEach(page => {
+      if (page.id === data.attachment) {
+        page.pending = false
+      }
+    }))
   })
 }
 
-export function useAttachments({
-  message = null,
-  urls = null,
-  csrfToken = null,
-  i18n = null
-} = {}) {
+export function useAttachments({ message = null, urls = null, csrfToken = null, i18n = null} = {}) {
   // urls, token and i18n could possibly overwrite what has been set before
   // they shall only be used in the most-parent, ancestral component,
   // like <post-upload> and <attachment-manager>
@@ -387,6 +354,6 @@ export function useAttachments({
     approveAllUnredactedAttachments,
     getRedactUrl,
     getWebsocketMessageRoom,
-    monitorAttachments
+    monitorAttachments,
   }
 }

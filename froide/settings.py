@@ -542,7 +542,6 @@ class Base(Configuration):
     FROIDE_CONFIG = {
         "spam_protection": True,
         "user_can_hide_web": True,
-        "user_can_claim_vip": False,
         "public_body_officials_public": True,
         "public_body_officials_email_public": False,
         "request_public_after_due_days": 14,

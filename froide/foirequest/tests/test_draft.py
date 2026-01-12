@@ -23,8 +23,6 @@ class RequestDraftTest(TestCase):
             "last_name": "Wehrmeyer",
             "user_email": "dummy@example.com",
             "terms": "on",
-            "private": True,
-            "public": True,
             "save_draft": "true",
             "publicbody": str(self.pb.pk),
         }
@@ -62,7 +60,7 @@ class RequestDraftTest(TestCase):
         post = {
             "subject": "Test-Subject",
             "body": "This is another test body with Ümläut€n",
-            "public": True,
+            "public": "on",
             "reference": "test:abcdefg",
             "save_draft": "true",
             "publicbody": str(self.pb.pk),
@@ -153,7 +151,6 @@ class RequestDraftTest(TestCase):
             "last_name": "Wehrmeyer",
             "user_email": user.email,
             "terms": "on",
-            "public": True,
             "publicbody": str(self.pb.pk),
             "hide_editing": "1",
             "hide_similar": "1",

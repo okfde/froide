@@ -15,13 +15,11 @@
         id="id_proof"
         v-model="proof"
         :disabled="!!proofImage"
-        :required="proofRequired"
-      >
+        :required="proofRequired">
         <option
           v-for="option in formFields.proof.choices"
           :key="option.value"
-          :value="option.value"
-        >
+          :value="option.value">
           {{ option.label }}
         </option>
       </select>
@@ -48,8 +46,7 @@
         maxlength="255"
         id="id_proof_name"
         :disabled="!!proof"
-        :required="proofImageRequired"
-      />
+        :required="proofImageRequired" />
 
       <div class="form-text">{{ formFields.proof_name.help_text }}</div>
     </div>
@@ -68,8 +65,7 @@
         v-model="proofImage"
         :disabled="!!proof"
         :config="config"
-        :required="proofImageRequired"
-      />
+        :required="proofImageRequired" />
     </div>
 
     <div class="mb-3">
@@ -79,8 +75,7 @@
           name="proof_store"
           class="form-check-input"
           :disabled="!!proof"
-          id="id_proof_store"
-        />
+          id="id_proof_store" />
         <label class="form-check-label fw-bold" for="id_proof_store">
           {{ formFields.proof_store.label }}
         </label>

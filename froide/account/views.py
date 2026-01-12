@@ -290,10 +290,7 @@ class ProfileView(DetailView):
 @require_POST
 def logout(request: HttpRequest) -> HttpResponseRedirect:
     auth.logout(request)
-    # we use the extra_tags to communicate a logout to purgestorage.ts (via main.ts)
-    messages.add_message(
-        request, messages.INFO, _("You have been logged out."), "info alert-loggedout"
-    )
+    messages.add_message(request, messages.INFO, _("You have been logged out."))
     return redirect("/")
 
 

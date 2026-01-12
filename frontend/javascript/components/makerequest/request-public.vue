@@ -5,38 +5,31 @@
         type="hidden"
         name="hide_public"
         :value="hidePublic"
-        id="id_hide_public"
-      />
-      <div class="mb-3" v-if="!hidePublic">
+        id="id_hide_public" />
+      <div class="card mb-3" v-if="!hidePublic">
         <div class="card-body">
-          <div
-            v-for="(choice, choiceIndex) in form.fields.public.choices"
-            :key="choice.value"
-            class="form-check form-check-emphasized"
-          >
+          <div class="form-check">
             <input
-              type="radio"
+              type="checkbox"
               name="public"
               class="form-check-input"
-              :id="'id_public_choice' + choiceIndex"
-              :value="choice.value"
-              v-model="publicValue"
-            />
-            <label
-              class="form-check-label"
-              :for="'id_public_choice' + choiceIndex"
-              v-html="choice.label"
-            />
+              id="id_public"
+              v-model="publicValue" />
+            <label class="form-check-label" for="id_public">
+              {{ form.fields.public.label }}
+            </label>
+            <small class="form-text text-body-secondary">
+              {{ form.fields.public.help_text }}
+            </small>
           </div>
         </div>
       </div>
       <div v-else style="display: none">
         <input
-          type="hidden"
+          type="checkbox"
           name="public"
           id="id_public"
-          v-model="publicValue"
-        />
+          v-model="publicValue" />
       </div>
     </div>
   </div>
@@ -52,15 +45,14 @@ export default {
     hidePublic: {
       type: Boolean,
       default: false
-    },
-    initialPublic: {
-      type: String,
-      required: true
     }
   },
   data() {
     return {
-      public: this.initialPublic
+      public:
+        this.form.fields.public.value !== null
+          ? this.form.fields.public.value
+          : this.form.fields.public.initial
     }
   },
   computed: {

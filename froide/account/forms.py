@@ -12,6 +12,7 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.content_urls import get_content_url
@@ -19,7 +20,6 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.spam import SpamProtectionMixin
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
-    BootstrapRadioSelect,
     BootstrapSelect,
     ImageFileInput,
 )
@@ -32,7 +32,6 @@ from .services import AccountService, get_user_for_email
 from .widgets import ConfirmationWidget, PinInputWidget
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
-USER_CAN_CLAIM_VIP = settings.FROIDE_CONFIG.get("user_can_claim_vip", False)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
 
 
@@ -93,7 +92,6 @@ class AddressBaseForm(forms.Form):
 
     def clean_address(self) -> str:
         address = self.cleaned_data["address"]
-        # TODO validate like clientside? cf. addressRegex in user-address.vue
         if not address:
             return address
         if self.ALLOW_BLOCKED_ADDRESS:
@@ -136,41 +134,18 @@ class NewUserBaseForm(AddressBaseForm):
         ),
     )
 
-    if USER_CAN_CLAIM_VIP:
-        claims_vip = forms.TypedChoiceField(
-            required=False,
-            initial=False,
-            widget=BootstrapRadioSelect,
-            label=_("{site_name} for journalists").format(site_name=settings.SITE_NAME),
-            help_text=_(
-                _(
-                    "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
-                ).format(site_name=settings.SITE_NAME)
-            ),
-            choices=[
-                (False, _("No, I am <strong>not a journalist</strong>")),
-                (True, _("Yes, I am <strong>a journalist</strong>")),
-            ],
-            coerce=lambda x: x != "False",
-        )
-
     ALLOW_BLOCKED_ADDRESS = True
 
     if USER_CAN_HIDE_WEB:
-        private = forms.TypedChoiceField(
+        private = forms.BooleanField(
             required=False,
-            widget=BootstrapRadioSelect,
+            widget=BootstrapCheckboxInput,
             label=_("Hide my name from public view"),
-            choices=[
-                (
-                    False,
-                    _(
-                        "My name may appear on the website in <strong>plain text</strong>"
-                    ),
-                ),
-                (True, _("My name must be <strong>redacted</strong>")),
-            ],
-            coerce=lambda x: x != "False",
+            help_text=mark_safe(
+                _(
+                    "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity"
+                )
+            ),
         )
 
     field_order = ["first_name", "last_name", "user_email"]

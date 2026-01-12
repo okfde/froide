@@ -13,50 +13,25 @@ import {
   SET_PUBLICBODY_ID,
   SET_SEARCHRESULTS,
   SET_STEP,
-  SET_STEP_NO_HISTORY,
   SET_STEP_REQUEST,
-  SET_STEP_ACCOUNT,
   SET_STEP_REVIEW_PUBLICBODY,
   SET_STEP_SELECT_PUBLICBODY,
   SET_USER,
   STEPS,
   UPDATE_ADDRESS,
-  UPDATE_ADDRESS_VALIDITY,
-  UPDATE_ADDRESS_CHANGED,
   UPDATE_BODY,
-  UPDATE_BODY_VALIDITY,
-  UPDATE_BODY_CHANGED,
   UPDATE_EMAIL,
-  UPDATE_EMAIL_VALIDITY,
-  UPDATE_EMAIL_CHANGED,
-  UPDATE_FIRST_NAME_VALIDITY,
-  UPDATE_FIRST_NAME_CHANGED,
   UPDATE_FIRST_NAME,
   UPDATE_FULL_TEXT,
   UPDATE_LAST_NAME,
-  UPDATE_LAST_NAME_VALIDITY,
-  UPDATE_LAST_NAME_CHANGED,
   UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
-  UPDATE_TERMS,
-  UPDATE_TERMS_VALIDITY,
-  UPDATE_TERMS_CHANGED,
-  UPDATE_CONFIRM,
-  UPDATE_CONFIRM_VALIDITY,
   UPDATE_SUBJECT,
-  UPDATE_SUBJECT_VALIDITY,
-  UPDATE_SUBJECT_CHANGED,
-  UPDATE_USER_ID,
-  UPDATE_REQUEST_PUBLIC,
-  UPDATE_SIMILAR_REQUEST_SEARCH,
-  UPDATE_CLAIMS_VIP
+  UPDATE_USER_ID
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
-
-const persistStorage = window.sessionStorage
-const persistKeyPrefix = 'froide-store-'
 
 export default createStore({
   state() {
@@ -71,24 +46,10 @@ export default createStore({
       publicBodies: {},
       lawType: null,
       user: {},
-      step: null,
+      step: STEPS.SELECT_PUBLICBODY,
       subject: '',
-      subjectValid: undefined,
-      subjectChanged: false,
       body: '',
-      bodyValid: undefined,
-      bodyChanged: false,
-      fullText: false,
-      requestPublic: false,
-      addressValid: undefined,
-      addressChanged: false,
-      firstNameValid: undefined,
-      firstNameChanged: false,
-      lastNameValid: undefined,
-      lastNameChanged: false,
-      emailValid: undefined,
-      emailChanged: false,
-      similarRequestSearch: {}
+      fullText: false
     }
   },
   getters: {
@@ -176,12 +137,8 @@ export default createStore({
       return state.user
     },
     subject: (state) => state.subject,
-    subjectValid: (state) => state.subjectValid,
-    subjectChanged: (state) => state.subjectChanged,
     getSubject: (state) => () => state.subject,
     body: (state) => state.body,
-    bodyValid: (state) => state.bodyValid,
-    bodyChanged: (state) => state.bodyChanged,
     fullText: (state) => state.fullText,
     stepSelectPublicBody: (state) => state.step === STEPS.SELECT_PUBLICBODY,
     stepSelectPublicBodyDone: (state) => state.step > STEPS.SELECT_PUBLICBODY,
@@ -190,44 +147,7 @@ export default createStore({
     stepWriteRequest: (state) => state.step === STEPS.WRITE_REQUEST,
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
-    lawType: (state) => state.lawType,
-    userValid: (state) => {
-      if (state.user.id) return true
-      return state.firstNameValid && state.lastNameValid && state.emailValid
-    },
-    termsValid: (state) => state.termsValid,
-    termsChanged: (state) => state.termsChanged,
-    confirmValid: (state) => state.user.confirm && state.confirmValid,
-    firstNameValid: (state) => state.firstNameValid,
-    firstNameChanged: (state) => state.firstNameChanged,
-    lastNameValid: (state) => state.lastNameValid,
-    lastNameChanged: (state) => state.lastNameChanged,
-    emailValid: (state) => state.emailValid,
-    emailChanged: (state) => state.emailChanged,
-    addressValid: (state) => state.addressValid,
-    addressChanged: (state) => state.addressChanged,
-    requestPublic: (state) => state.requestPublic,
-    stepCanContinue: (state, getters) => (scope) => {
-      switch (state.step) {
-        case STEPS.SELECT_PUBLICBODY:
-        case STEPS.REVIEW_PUBLICBODY:
-          return getters.getPublicBodiesByScope(scope).length > 0
-        case STEPS.CREATE_ACCOUNT:
-          if (!getters.addressValid) return false
-          // authenticated user only needs valid address
-          if (state.user.id) return true
-          if (!getters.userValid) return false
-          if (!getters.termsValid) return false
-          return true
-        case STEPS.WRITE_REQUEST:
-          if (!getters.subjectValid) return false
-          if (!getters.bodyValid) return false
-          if (!getters.confirmValid) return false
-          return true
-        default:
-          return true
-      }
-    }
+    lawType: (state) => state.lawType
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -237,19 +157,12 @@ export default createStore({
     },
     [SET_STEP](state, step) {
       state.step = step
-      window.history.pushState({ step: state.step }, '', '#step-' + state.step)
-    },
-    [SET_STEP_NO_HISTORY](state, step) {
-      state.step = step
     },
     [SET_STEP_SELECT_PUBLICBODY](state) {
       state.step = STEPS.SELECT_PUBLICBODY
     },
     [SET_STEP_REVIEW_PUBLICBODY](state) {
       state.step = STEPS.REVIEW_PUBLICBODY
-    },
-    [SET_STEP_ACCOUNT](state) {
-      state.step = STEPS.CREATE_ACCOUNT
     },
     [SET_STEP_REQUEST](state) {
       state.step = STEPS.WRITE_REQUEST
@@ -265,8 +178,7 @@ export default createStore({
         }
       })
     },
-    [SET_PUBLICBODIES](state, { publicBodies, scopedPublicBodies, scope }) {
-      publicBodies = publicBodies || scopedPublicBodies
+    [SET_PUBLICBODIES](state, { publicBodies, scope }) {
       state.scopedPublicBodies[scope] = publicBodies
       const pbMap = {}
       publicBodies.forEach((pb) => {
@@ -386,86 +298,26 @@ export default createStore({
     [UPDATE_SUBJECT](state, subject) {
       state.subject = subject
     },
-    [UPDATE_SUBJECT_VALIDITY](state, validity) {
-      state.subjectValid = validity
-    },
-    [UPDATE_SUBJECT_CHANGED](state, changed) {
-      state.subjectChanged = changed
-    },
     [UPDATE_BODY](state, body) {
       state.body = body
-    },
-    [UPDATE_BODY_VALIDITY](state, validity) {
-      state.bodyValid = validity
-    },
-    [UPDATE_BODY_CHANGED](state, changed) {
-      state.bodyChanged = changed
     },
     [UPDATE_FIRST_NAME](state, firstName) {
       state.user.first_name = firstName
     },
-    [UPDATE_FIRST_NAME_VALIDITY](state, validity) {
-      state.firstNameValid = validity
-    },
-    [UPDATE_FIRST_NAME_CHANGED](state, changed) {
-      state.firstNameChanged = changed
-    },
     [UPDATE_LAST_NAME](state, lastName) {
       state.user.last_name = lastName
-    },
-    [UPDATE_LAST_NAME_VALIDITY](state, validity) {
-      state.lastNameValid = validity
-    },
-    [UPDATE_LAST_NAME_CHANGED](state, changed) {
-      state.lastNameChanged = changed
     },
     [UPDATE_ADDRESS](state, address) {
       state.user.address = address
     },
-    [UPDATE_ADDRESS_VALIDITY](state, validity) {
-      state.addressValid = validity
-    },
-    [UPDATE_ADDRESS_CHANGED](state, changed) {
-      state.addressChanged = changed
-    },
     [UPDATE_EMAIL](state, email) {
       state.user.email = email
-    },
-    [UPDATE_EMAIL_VALIDITY](state, validity) {
-      state.emailValid = validity
-    },
-    [UPDATE_EMAIL_CHANGED](state, changed) {
-      state.emailChanged = changed
     },
     [UPDATE_PRIVATE](state, val) {
       state.user.private = val
     },
-    [UPDATE_CLAIMS_VIP](state, val) {
-      state.user.claims_vip = val
-    },
     [UPDATE_USER_ID](state, val) {
       state.user.id = val
-    },
-    [UPDATE_TERMS](state, val) {
-      state.user.terms = val
-    },
-    [UPDATE_TERMS_VALIDITY](state, validity) {
-      state.termsValid = validity
-    },
-    [UPDATE_TERMS_CHANGED](state, changed) {
-      state.termsChanged = changed
-    },
-    [UPDATE_CONFIRM](state, val) {
-      state.user.confirm = val
-    },
-    [UPDATE_CONFIRM_VALIDITY](state, validity) {
-      state.confirmValid = validity
-    },
-    [UPDATE_REQUEST_PUBLIC](state, val) {
-      state.requestPublic = val
-    },
-    [UPDATE_SIMILAR_REQUEST_SEARCH](state, v) {
-      state.similarRequestSearch = v
     },
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
@@ -477,119 +329,6 @@ export default createStore({
     }
   },
   actions: {
-    writeToStorage({ state }, { scope }) {
-      const reduced = {
-        lawType: state.lawType,
-        step: state.step,
-        subject: state.subject,
-        body: state.body,
-        publicBodies: state.scopedPublicBodies[scope],
-        public: state.requestPublic,
-        address: state.user.address,
-        user_email: state.user.email,
-        first_name: state.user.first_name,
-        last_name: state.user.last_name,
-        private: state.user.private,
-        terms: state.user.terms,
-        confirm: state.user.confirm,
-        claims_vip: state.user.claims_vip,
-        similarRequestSearch: state.similarRequestSearch
-      }
-      try {
-        persistStorage.setItem(
-          persistKeyPrefix + scope,
-          JSON.stringify(reduced)
-        )
-      } catch (err) {
-        console.warn('failed to persist state', persistStorage, reduced, err)
-      }
-    },
-    // also called from purgestorage.ts
-    purgeStorage({ state }, { scope, keepNonForm }) {
-      // don't purge values we can't get from (non-existing) form fields
-      const purged = keepNonForm
-        ? { step: state.step, confirm: state.user.confirm }
-        : null
-      try {
-        if (purged) {
-          persistStorage.setItem(
-            persistKeyPrefix + scope,
-            JSON.stringify(purged)
-          )
-          console.log('purged, keeping', persistKeyPrefix + scope, purged)
-        } else {
-          persistStorage.removeItem(persistKeyPrefix + scope)
-          console.log('purged, removed', persistKeyPrefix + scope)
-        }
-      } catch (err) {
-        console.warn(
-          'failed to purge persisted state',
-          persistKeyPrefix + scope,
-          err
-        )
-      }
-    },
-    initStoreValues(
-      { commit },
-      {
-        formFields,
-        formCoerce,
-        mutationMap,
-        propMap,
-        ignoreStorage,
-        scope,
-        scoped
-      }
-    ) {
-      let storage
-      try {
-        storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))
-      } catch (err) {
-        console.warn(
-          'failed to load persisted state',
-          persistStorage,
-          persistKeyPrefix + scope,
-          err
-        )
-      }
-      // need null check for parsed, previously serialized storage
-      const isSet = (v) => !(v === undefined || v === null)
-      for (const key in mutationMap) {
-        const mutation = mutationMap[key]
-        let value = undefined
-        if (propMap && propMap[key]) {
-          // prop has precedence over formField, e.g. for publicBodies
-          value = propMap[key]
-          console.log('got', key, 'from prop')
-        }
-        if (
-          !isSet(value) &&
-          !ignoreStorage &&
-          storage &&
-          storage[key] !== undefined
-        ) {
-          value = storage[key]
-          console.log('got', key, 'from storage', value)
-        }
-        if (!isSet(value) && formFields && formFields[key] !== undefined) {
-          value = formFields[key].value
-          if (!isSet(value)) value = formFields[key].initial
-          if (formCoerce && formCoerce[key]) {
-            value = formCoerce[key](value)
-          }
-          console.log('got', key, 'from form', value)
-        }
-        if (!isSet(value)) {
-          console.log('could not get', key)
-          continue
-        }
-        if (scoped) {
-          commit(mutation, { [key]: value, scope })
-        } else {
-          commit(mutation, value)
-        }
-      }
-    },
     setSearchResults({ commit, dispatch }, { scope, results }) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,
