@@ -32,7 +32,10 @@ defineExpose({
 })
 
 // cf. AttachmentIconPreview modal title
-const hasLongName = computed(() => attachment.name?.length > 40)
+const hasLongName = computed(() =>
+  attachment.name?.length > 40
+)
+
 </script>
 
 <template>
@@ -44,9 +47,10 @@ const hasLongName = computed(() => attachment.name?.length > 40)
     body-classes="p-0"
   >
     <template #header>
-      <h5 class="modal-title" :class="{ 'fs-6': hasLongName }">
-        {{ i18n.redact }}, {{ attachment.name }}
-      </h5>
+      <h5
+        class="modal-title"
+        :class="{ 'fs-6': hasLongName }"
+        >{{ i18n.redact }}, {{ attachment.name }}</h5>
     </template>
     <template #body>
       <div class="container mb-2">

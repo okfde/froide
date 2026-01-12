@@ -1,5 +1,4 @@
 from collections import namedtuple
-from functools import cache
 
 from django import forms
 from django.utils import timezone
@@ -138,16 +137,6 @@ def get_status_filter_by_slug(slug):
             return status_filter
 
 
-# jurisdictions seldomly change, so it's okay to cache until app restart
-@cache
-def get_jurisdictions_by_rank(rank: int) -> list[int]:
-    return list(
-        Jurisdiction.objects.get_visible()
-        .filter(rank=rank)
-        .values_list("id", flat=True)
-    )
-
-
 class DropDownStatusFilterWidget(DropDownFilterWidget):
     def create_option(
         self, name, value, label, selected, index, subindex=None, attrs=None
@@ -187,9 +176,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         empty_label=_("all jurisdictions"),
         widget=BootstrapSelect,
         method="filter_jurisdiction",
-    )
-    jurisdiction_rank = django_filters.NumberFilter(
-        label=("jurisdiction rank"), method="filter_jurisdiction_rank"
     )
     category = django_filters.ModelChoiceFilter(
         queryset=Category.objects.get_category_list(),
@@ -248,7 +234,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     last = django_filters.DateFromToRangeFilter(
         method="filter_last", widget=DateRangeWidget, label=_("last message")
     )
-
     sort = django_filters.ChoiceFilter(
         choices=[
             ("-last", _("last message (newest first)")),
@@ -268,7 +253,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
             "q",
             "status",
             "jurisdiction",
-            "jurisdiction_rank",
             "campaign",
             "category",
             "classification",
@@ -289,11 +273,6 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
 
     def filter_jurisdiction(self, qs, name, value):
         return self.apply_filter(qs, name, jurisdiction=value.id)
-
-    def filter_jurisdiction_rank(self, qs, name, value):
-        return self.apply_filter(
-            qs, name, jurisdiction=get_jurisdictions_by_rank(int(value))
-        )
 
     def filter_campaign(self, qs, name, value):
         if value == "-":

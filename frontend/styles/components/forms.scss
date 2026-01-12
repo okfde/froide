@@ -17,35 +17,3 @@
     }
   }
 }
-
-/* make form-check more accessible; whole block is padded + clickable */
-.form-check.form-check-emphasized {
-  background-color: var(--bs-tertiary-bg);
-  padding: 0;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-
-  &:hover {
-    background-color: var(--bs-secondary-bg);
-  }
-
-  label {
-    padding: 1em 1em 1em 2.5em;
-    display: block;
-  }
-
-  .form-check-input {
-    margin-top: 1.25em;
-    margin-left: 0.75em;
-    border-color: var(--bs-body-color);
-    border-width: 2px;
-
-    &:checked {
-      background-color: black;
-    }
-  }
-
-  &:hover .form-check-input {
-    border-color: var(--bs-primary);
-  }
-}

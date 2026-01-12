@@ -127,7 +127,6 @@ def test_signup(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
-        "private": True,
         "user_email": "horst.porst",
         "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
@@ -181,7 +180,6 @@ def test_overlong_name_signup(world, client):
         "first_name": "Horst" * 6 + "a",
         "last_name": "Porst" * 6,
         "terms": "on",
-        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
@@ -201,7 +199,6 @@ def test_signup_too_fast(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
-        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         # Signup in less than 5 seconds
@@ -219,7 +216,6 @@ def test_signup_same_name(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
-        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
@@ -312,7 +308,6 @@ def test_next_link_signup(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
-        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         "next": url,
@@ -444,7 +439,7 @@ def test_private_name(world, client):
     post = {
         "subject": "Request - Private name",
         "body": "This is a test body",
-        "public": True,
+        "public": "on",
         "publicbody": pb.pk,
         "law": pb.default_law.pk,
     }
@@ -792,7 +787,6 @@ def test_signup_blocklisted(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
-        "private": True,
         "user_email": "horst.porst@example.com",
         "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }

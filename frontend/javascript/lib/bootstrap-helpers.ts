@@ -1,4 +1,4 @@
-import { Tooltip } from 'bootstrap'
+import { Tooltip } from "bootstrap"
 
 const collapsePersistent = (el: HTMLElement) => {
   const id = el.id
@@ -9,7 +9,7 @@ const collapsePersistent = (el: HTMLElement) => {
     el.classList.toggle('show', !collapsed)
     const controllerEl = document.querySelector(`[data-bs-target="#${id}"]`)
     controllerEl?.classList.toggle('collapsed', collapsed)
-    controllerEl?.setAttribute('aria-expanded', collapsed ? 'false' : 'true')
+    controllerEl?.setAttribute('aria-expanded', collapsed ? 'false': 'true')
   } catch {
     // noop
   }
@@ -21,19 +21,14 @@ const collapsePersistent = (el: HTMLElement) => {
   })
 }
 
-// registerBs called onDomReady in bootstrap.ts, but also for each DjangoSlot[has-bs-directives].
-// In practice, this just works out and they don't interfere.
-// In theory, onDomReady might attach unnecessary/problematic listeners to something like
-// <FooVueComponent><template #barSlot><div data-bs-collapse-persistent>
-// Should this cause problems, we could make sure that the queried Elements
-// are not descendants of <template>.
 const registerBs = (node: HTMLElement) => {
-  node
-    .querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
+  node.querySelectorAll<HTMLElement>('[data-bs-toggle="tooltip"]')
     .forEach((el) => new Tooltip(el))
-  node
-    .querySelectorAll<HTMLElement>('[data-bs-collapse-persistent]')
+  node.querySelectorAll<HTMLElement>('[data-bs-collapse-persistent]')
     .forEach((el) => collapsePersistent(el))
 }
 
-export { registerBs }
+export {
+  registerBs,
+  collapsePersistent
+}

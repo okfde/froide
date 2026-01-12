@@ -117,8 +117,8 @@ const PBChooserMixin = {
   methods: {
     buildQuery() {
       let query = this.search
-      if (this.hasFilters || this.pagination) {
-        query += JSON.stringify({ ...this.filters, ...this.pagination })
+      if (this.hasFilters) {
+        query += JSON.stringify(this.filters)
       }
       return query
     },
@@ -172,7 +172,7 @@ const PBChooserMixin = {
       return this.getSearchResults({
         scope: this.scope,
         search: this.search,
-        filters: { ...this.searchFilters, ...this.pagination }
+        filters: this.searchFilters
       }).then(() => {
         this.searching = false
       })

@@ -186,16 +186,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
 /* the following :deep styles override uppy's Dashboard to follow the Bootstrap colors;
   they do not (yet) include: border-radiuses, dropFilesHereHint's svg background (icon);
   also, the "table" headers&footers when uppy is processing (.uppy-StatusBar etc.) aren't perfect */
 
 :deep(.uppy-Dashboard-inner) {
   --bs-bg-opacity: 1;
-  background-color: rgba(
-    var(--bs-tertiary-bg-rgb),
-    var(--bs-bg-opacity)
-  ) !important;
+  background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;
   border-color: var(--bs-border-color);
 }
 
@@ -228,13 +226,11 @@ export default {
 /* "table" headers and footers */
 :deep(.uppy-DashboardContent-bar),
 :deep(.uppy-StatusBar),
-:deep(.uppy-StatusBar:not([aria-hidden='true']).is-waiting),
+:deep(.uppy-StatusBar:not([aria-hidden="true"]).is-waiting),
 :deep(.uppy-StatusBar .uppy-StatusBar-actions),
 :deep(.uppy-StatusBar.is-waiting .uppy-StatusBar-actions) {
   --bs-bg-opacity: 1;
-  background-color: rgba(
-    var(--bs-tertiary-bg-rgb),
-    var(--bs-bg-opacity)
-  ) !important;
+  background-color: rgba(var(--bs-tertiary-bg-rgb), var(--bs-bg-opacity)) !important;
 }
+
 </style>

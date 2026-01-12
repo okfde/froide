@@ -148,13 +148,7 @@ class FroideAPI {
   }
 }
 
-function postData(
-  url = '',
-  data = {},
-  csrfToken,
-  method = 'POST',
-  throwErrorEarly = false
-) {
+function postData(url = '', data = {}, csrfToken, method = 'POST', throwErrorEarly = false) {
   return window
     .fetch(url, {
       method,

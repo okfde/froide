@@ -10,48 +10,32 @@ const useAttachmentsStore = defineStore('attachments', {
     isFetching: false,
     allRaw: [],
     images: [],
-    selectedIds: new Set(),
-    approvingIds: new Set(),
-    availableIds: new Set(),
+    selectedIds: new Set,
+    approvingIds: new Set,
+    availableIds: new Set,
     autoApproveSelection: {},
     messages: []
   }),
   getters: {
-    all: (state) =>
-      state.allRaw.map((d) => ({
-        ...d,
-        isApproving: state.approvingIds.has(d.id) || d.approving,
-        canDelete: d.can_delete && !d.approving && !d.document,
-        canRedact: d.can_redact && !d.pending,
-        // TODO: override by settings.can_edit_approval==is_crew ?
-        //   will probably be resolved by new API
-        canApprove: d.can_approve && !d.approving && !d.approved,
-        // TODO: include settings.can_make_document?
-        canMakeResult:
-          d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document
-      })),
+    all: (state) => state.allRaw.map((d) => ({
+      ...d,
+      isApproving: state.approvingIds.has(d.id) || d.approving,
+      canDelete: d.can_delete && !d.approving && !d.document,
+      canRedact: d.can_redact && !d.pending,
+      // TODO: override by settings.can_edit_approval==is_crew ?
+      //   will probably be resolved by new API
+      canApprove: d.can_approve && !d.approving && !d.approved,
+      // TODO: include settings.can_make_document?
+      canMakeResult: d.approved && d.is_pdf && !d.redacted && !d.converted && !d.document,
+    })),
     approved() {
-      return this.all.filter(
-        (d) =>
-          !d.is_irrelevant &&
-          d.approved &&
-          !d.redacted &&
-          !(d.converted && !d.is_image)
-      )
+      return this.all.filter((d) => (!d.is_irrelevant && d.approved && !d.redacted && !(d.converted && !d.is_image)))
     },
     notApproved() {
-      return this.all.filter(
-        (d) =>
-          !d.is_irrelevant &&
-          !d.approved &&
-          !d.redacted &&
-          !(d.converted && !d.is_image)
-      )
+      return this.all.filter((d) => (!d.is_irrelevant && !d.approved && !d.redacted && !(d.converted && !d.is_image)))
     },
     relevant() {
-      return this.all.filter(
-        (d) => !d.is_irrelevant && !(d.converted && !d.is_image)
-      )
+      return this.all.filter((d) => !d.is_irrelevant && !(d.converted && !d.is_image))
     },
     irrelevant() {
       return this.all.filter((d) => d.is_irrelevant)
@@ -60,20 +44,16 @@ const useAttachmentsStore = defineStore('attachments', {
       return this.all.filter((d) => d.canRedact)
     },
     redactNudgable() {
-      return this.all.filter(
-        (d) => d.canRedact && !d.is_redacted && !d.redacted
-      )
+      return this.all.filter((d) => d.canRedact && !d.is_redacted && !d.redacted)
     },
     convertable() {
-      return this.all.filter(
-        (d) => (d.is_irrelevant || d.is_image) && !d.converted
-      )
+      return this.all.filter((d) => (d.is_irrelevant || d.is_image) && !d.converted)
     },
-    getById() {
+    getById () {
       return (id) => this.all.find((d) => d.id === id)
     },
-    selected(state) {
-      return [...state.selectedIds].map((id) => this.getById(id))
+    selected (state) {
+      return [...state.selectedIds].map(id => this.getById(id))
     },
     getUnredactedAttachmentByResourceUri: (state) => {
       return (resourceUri) => state.all.find((d) => d.redacted === resourceUri)
@@ -85,10 +65,7 @@ const useAttachmentsStore = defineStore('attachments', {
   actions: {
     splitPages(imageIndex, pageNum) {
       const newPages = this.images[imageIndex].pages.slice(pageNum)
-      this.images[imageIndex].pages = this.images[imageIndex].pages.slice(
-        0,
-        pageNum
-      )
+      this.images[imageIndex].pages = this.images[imageIndex].pages.slice(0, pageNum)
       this.images[imageIndex].new = true
       this.images.push({ pages: newPages, new: true })
     },
@@ -97,7 +74,7 @@ const useAttachmentsStore = defineStore('attachments', {
       this.allRaw = this.allRaw.filter((a) => a.id !== attachment.id)
       if (asImage) {
         // remove from images = "page to be converted into pdf"
-        this.images.forEach((image) => {
+        this.images.forEach(image => {
           image.pages = image.pages.filter((p) => p.id !== attachment.id)
         })
         // clean up empty images (without pages)
@@ -114,7 +91,7 @@ const useAttachmentsStore = defineStore('attachments', {
           id: 'imagedoc' + imageDocId,
           filetype: null,
           type: 'imagedoc',
-          new: isNew,
+          'new': isNew,
           name: imageDefaultFilename, // TODO: provide default name here?
           isConverting: false,
           progress: false,
@@ -125,10 +102,10 @@ const useAttachmentsStore = defineStore('attachments', {
       }
     },
     selectSubset(subset) {
-      subset.forEach((_) => this.selectedIds.add(_.id))
+      subset.forEach(_ => this.selectedIds.add(_.id))
     },
     unselectSubset(subset) {
-      subset.forEach((_) => this.selectedIds.delete(_.id))
+      subset.forEach(_ => this.selectedIds.delete(_.id))
     }
   }
 })

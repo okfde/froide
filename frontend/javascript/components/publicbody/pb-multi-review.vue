@@ -2,25 +2,31 @@
   <div class="review">
     <div class="row mt-3 mb-3">
       <div class="col-auto">
-        <h2>
+        <h3 class="display-4">
           {{ i18n._('publicBodiesCount', { count: publicBodies.length }) }}
-        </h2>
+        </h3>
       </div>
     </div>
-
+    <div class="row">
+      <div class="col-auto">
+        <button
+          class="btn btn-primary btn-lg"
+          @click.prevent="setStepSelectPublicBody">
+          &larr; {{ i18n.addMoreAuthorities }}
+        </button>
+      </div>
+    </div>
     <PbSummary
       :scope="scope"
       :i18n="i18n"
-      :dimensions="summaryDimensions"
-    ></PbSummary>
+      :dimensions="summaryDimensions"></PbSummary>
 
     <div class="row mb-2">
       <div class="col-auto ms-auto">
         <button
           v-if="publicBodies.length > 0"
           @click.prevent="clearSelection"
-          class="btn btn-sm hover-btn-danger"
-        >
+          class="btn btn-sm hover-btn-danger">
           <i class="fa fa-ban" aria-hidden="true"></i>
           {{ i18n.clearSelection }}
         </button>
@@ -35,26 +41,12 @@
       :options="chosenOptions"
       :rows="publicBodies"
       @select-all-rows="selectAllRows"
-      class="transition"
-    ></PbTable>
-
-    <div class="row">
-      <div class="col-auto ms-auto">
-        <button
-          type="button"
-          class="btn btn-primary"
-          :disabled="!stepCanContinue(scope)"
-          @click="$emit('stepNext')"
-        >
-          {{ i18n.stepNext || i18n.continue }}
-        </button>
-      </div>
-    </div>
+      class="transition"></PbTable>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
 import { SET_STEP_SELECT_PUBLICBODY } from '../../store/mutation_types'
 
 import PBChooserMixin from './lib/pb-chooser-mixin'
@@ -82,8 +74,7 @@ export default {
   computed: {
     summaryDimensions() {
       return summaryDimensions
-    },
-    ...mapGetters(['stepCanContinue'])
+    }
   },
   methods: {
     ...mapMutations({

@@ -60,28 +60,15 @@ class RequestForm(JSONMixin, forms.Form):
         label=_("Don't wrap in template"),
         widget=forms.CheckboxInput(attrs={"tabindex": "-1"}),
     )
-    public = forms.TypedChoiceField(
-        label=_("This request is public."),
-        initial=True,
+    public = forms.BooleanField(
         required=False,
-        widget=BootstrapRadioSelect,
-        choices=[
-            (
-                True,
-                _(
-                    "I want the request to be immediately accessible to the <strong>public</strong> on this website. (Default)"
-                ),
-            ),
-            (
-                False,
-                _(
-                    "I want the request to remain <strong>not public</strong> for now, and publish it later."
-                ),
-            ),
-        ],
-        coerce=lambda x: x != "False",
+        initial=True,
+        label=_("This request is public."),
+        help_text=_(
+            "If you don't want your request to be public right now,"
+            " uncheck this. You can always decide to make it public later."
+        ),
     )
-
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     law_type = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)

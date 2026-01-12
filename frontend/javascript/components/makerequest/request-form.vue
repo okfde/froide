@@ -2,58 +2,106 @@
   <div>
     <slot name="request-legend-title" />
 
+    <div
+      v-if="multiRequest && canBatchRequest"
+      class="publicbody-summary-container">
+      <div class="publicbody-summary">
+        <p>
+          <template v-if="publicBodies.length < 20">
+            <ul>
+              <li v-for="pb in publicBodies" :key="pb.id">
+                {{ pb.name }}
+                <div v-if="pb.request_note_html" class="col-lg-8 alert alert-warning pb-0" v-html="pb.request_note_html" />
+              </li>
+            </ul>
+          </template>
+          <template v-else>
+            {{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}
+          </template>
+          <span v-if="!hidePublicbodyChooser">
+            <a
+              class="pb-change-link badge rounded-pill text-bg-primary ms-3"
+              :href="config.url.makeRequest"
+              @click.prevent="$emit('setStepSelectPublicBody')">
+              {{ i18n.change }}
+            </a>
+          </span>
+        </p>
+      </div>
+    </div>
+    <div v-if="multiRequest && !canBatchRequest" class="mb-5 mt-5">
+      <p>{{ i18n._('toMultiPublicBodies', { count: publicBodies.length }) }}</p>
+      <div class="publicbody-summary-list">
+        <ul>
+          <li v-for="pb in publicBodies" :key="pb.id">
+            {{ pb.name }}
+          </li>
+        </ul>
+      </div>
+      <small>{{ i18n.batchRequestDraftOnly }}</small>
+    </div>
+
+    <div v-if="!multiRequest" class="publicbody-summary-container">
+      <div class="row">
+        <div class="col-lg-12 publicbody-summary">
+          <p>
+            {{ i18n._('toPublicBody', { name: publicBody.name }) }}
+            <a :href="publicBody.site_url" target="_blank">
+              <span class="fa fa-info-circle" />
+            </a>
+            <span v-if="!hidePublicbodyChooser">
+              <a
+                class="pb-change-link badge rounded-pill text-bg-primary ms-3"
+                :href="config.url.makeRequest"
+                @click.prevent="$emit('setStepSelectPublicBody')">
+                {{ i18n.change }}
+              </a>
+            </span>
+          </p>
+        </div>
+      </div>
+      <div v-if="hasLawNotes" class="row">
+        <div class="col-lg-8">
+          <div class="alert alert-warning" v-html="lawNotes" />
+        </div>
+      </div>
+      <div v-if="hasPublicBodyNotes" class="row">
+        <div class="col-lg-8">
+          <div class="alert alert-warning" v-html="publicBodyNotes" />
+        </div>
+      </div>
+    </div>
+
     <input
       v-for="pb in publicBodies"
       :key="pb.id"
       type="hidden"
       name="publicbody"
-      :value="pb.id"
-    />
+      :value="pb.id" />
     <input type="hidden" name="law_type" :value="lawType" />
 
     <div class="row">
       <div class="col-md-12">
-        <div v-if="!hidePublicbodyChooser" class="mb-3">
-          {{ i18n.toPb }}
-          <div>
-            <strong v-if="publicBodies.length === 0" class="text-danger">{{
-              i18n.none
-            }}</strong>
-            <strong v-else>{{
-              publicBodies.map((pb) => pb.name).join(', ')
-            }}</strong>
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm align-baseline ms-2"
-              @click="setStepChangePublicbody"
-            >
-              {{ i18n.change }}
-            </button>
-          </div>
+        <div v-if="nonFieldErrors.length > 0" class="alert alert-danger">
+          <p v-for="error in nonFieldErrors" :key="error" v-html="error" />
         </div>
 
         <div class="mb-3">
           <label
             class="form-check-label"
             for="id_subject"
-            :class="{
-              'text-danger': errors.subject && !subjectChanged
-            }"
-          >
-            {{ i18n.subject }}:
+            :class="{ 'text-danger': errors.subject }">
+            {{ i18n.subject }}
           </label>
           <div
             v-if="
               editingDisabled && !(errors.subject && errors.subject.length > 0)
-            "
-          >
-            <!-- editingDisabled e.g. when ?hide_editing=1 -->
+            ">
             <input type="hidden" name="subject" :value="subject" />
             <strong>{{ subject }}</strong>
             <button
               class="btn btn-sm btn-white float-end"
-              @click.prevent="editingDisabled = false"
-            >
+              @click.prevent="editingDisabled = false">
               <small class="d-none d-md-block">{{ i18n.reviewEdit }}</small>
               <small class="d-md-none fa fa-edit">
                 <span class="visually-hidden">{{ i18n.reviewEdit }}</span>
@@ -62,53 +110,25 @@
           </div>
           <template v-else>
             <div
-              v-if="
-                !clearFormErrors && errors.subject && errors.subject.length > 0
-              "
-              class="alert my-2"
-              :class="{
-                'alert-danger': !subjectChanged,
-                'alert-warning': subjectChanged
-              }"
-            >
-              <ul class="list-unstyled my-0">
-                <li v-for="error in errors.subject" :key="error.message">
-                  {{ error.message }}
-                </li>
-              </ul>
+              v-if="errors.subject && errors.subject.length > 0"
+              class="alert alert-danger">
+              <p v-for="error in errors.subject" :key="error.message">
+                {{ error.message }}
+              </p>
             </div>
-            <div
-              v-else-if="subjectValidationErrors.length > 0"
-              class="alert my-2"
-              :class="{
-                'alert-danger': !subjectChanged,
-                'alert-warning': subjectChanged
-              }"
-            >
-              <ul class="list-unstyled my-0">
-                <li v-for="error in subjectValidationErrors" :key="error">
-                  {{ error }}
-                </li>
-              </ul>
+            <div v-if="!isMeaningfulSubject" class="alert alert-warning">
+              {{ i18n.enterMeaningfulSubject }}
             </div>
             <input
-              v-model="subject"
-              ref="subject"
               id="id_subject"
+              v-model="subject"
               type="text"
               name="subject"
               class="form-control"
-              :minlength="formFields.subject.min_length"
-              :maxlength="formFields.subject.max_length"
-              :class="{
-                'is-invalid':
-                  (errors.subject || subjectValid === false) && !subjectChanged
-              }"
+              minlength="4"
+              :class="{ 'is-invalid': errors.subject }"
               :placeholder="formFields.subject.placeholder"
-              @change="updateSubjectChanged(true)"
-              @keyup="resetSubjectCustomValidity"
-              @keydown.enter.prevent
-            />
+              @keydown.enter.prevent />
           </template>
         </div>
       </div>
@@ -131,110 +151,66 @@
                 <textarea
                   v-model="savedFullTextBody"
                   class="saved-body"
-                  readonly
-                />
+                  readonly />
               </div>
             </transition>
             <slot name="request-hints" />
+            <div
+              v-if="submitting && bodyCustomErrors.length > 0"
+              class="alert alert-warning">
+              <ul class="list-unstyled">
+                <li v-for="error in bodyCustomErrors" :key="error">
+                  {{ error }}
+                </li>
+              </ul>
+            </div>
             <button
               v-if="fullTextDisabled"
               class="btn btn-outline-secondary btn-sm"
-              @click.prevent="resetFullText"
-            >
+              @click.prevent="resetFullText">
               {{ i18n.resetFullText }}
             </button>
           </div>
           <div class="col-md-8 order-1">
             <div
-              v-if="!clearFormErrors && errors.body && errors.body.length > 0"
-              class="alert mb-2"
-              :class="{
-                'alert-danger': !bodyChanged,
-                'alert-warning': bodyChanged
-              }"
-            >
-              <ul class="list-unstyled my-0">
-                <li v-for="error in errors.body" :key="error.message">
-                  {{ error.message }}
-                </li>
-              </ul>
-              <div v-if="showPlaceholderReplacer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  @click="fixBodyPlaceholders"
-                >
-                  {{ i18n.fixPlaceholder }}
-                </button>
-              </div>
-            </div>
-            <div
-              v-else-if="bodyValidationErrors.length > 0"
-              class="alert mt-2"
-              :class="{
-                'alert-danger': !bodyChanged,
-                'alert-warning': bodyChanged
-              }"
-            >
-              <ul class="list-unstyled my-0">
-                <li v-for="error in bodyValidationErrors" :key="error">
-                  {{ error }}
-                </li>
-              </ul>
-              <div v-if="showPlaceholderReplacer" class="mt-2">
-                <button
-                  type="button"
-                  class="btn btn-secondary btn-sm"
-                  @click="fixBodyPlaceholders"
-                >
-                  {{ i18n.fixPlaceholder }}
-                </button>
-              </div>
+              v-if="errors.body && errors.body.length > 0"
+              class="alert alert-danger">
+              <p v-for="error in errors.body" :key="error.message">
+                {{ error.message }}
+              </p>
             </div>
             <div v-if="!fullText" class="body-text" v-text="letterStart" />
             <div v-if="editingDisabled" class="body-text-em" v-text="body" />
             <textarea
               v-show="!editingDisabled"
-              v-model="body"
-              ref="body"
               id="id_body"
+              v-model="body"
+              minlength="8"
               name="body"
-              required
+              ref="body"
               class="form-control body-textarea"
-              :class="{
-                'is-invalid':
-                  (errors.body || bodyValid === false) && !bodyChanged,
-                attention: !hasBody
-              }"
+              :class="{ 'is-invalid': errors.body, attention: !hasBody }"
               :rows="bodyRows"
               :placeholder="formFields.body.placeholder"
-              :minlength="formFields.body.min_length"
-              :maxlength="formFields.body.max_length"
-              @keydown="updateBody"
-              @keyup="resetBodyCustomValidity"
-              @change="updateBodyChanged(true)"
-            />
+              required
+              @keyup="bodyChanged" />
             <div
               v-if="allowFullText && !editingDisabled"
-              class="form-check form-check-inline float-end"
-            >
+              class="form-check form-check-inline float-end">
               <input
                 id="full_text_checkbox"
                 class="form-check-input"
                 v-model="fullText"
                 type="checkbox"
                 name="full_text_checkbox"
-                :disabled="fullTextDisabled"
-              />
+                :disabled="fullTextDisabled" />
               <label
                 for="full_text_checkbox"
-                class="form-check-label small text-body-secondary"
-              >
+                class="form-check-label small text-body-secondary">
                 <i
                   v-if="warnFullText"
                   class="fa fa-exclamation-triangle"
-                  aria-hidden="true"
-                />
+                  aria-hidden="true" />
                 {{ formFields.full_text.label }}
               </label>
             </div>
@@ -245,8 +221,7 @@
                   class="show-full-letter"
                   href="#"
                   @click.prevent="showFullLetter"
-                  v-text="'[…]'"
-                />
+                  v-text="'[…]'" />
                 <template v-if="true">{{ letterEndShort }}</template>
               </template>
               <template v-else>{{ letterEnd }}</template>
@@ -257,14 +232,81 @@
             <div
               v-if="!letterSignature && fullText"
               class="body-text"
-              v-text="letterSignatureName"
-            />
-            <div v-if="needles.length > 0" class="alert alert-warning mb-2">
-              <ul class="list-unstyled my-0">
-                <li v-for="needle in needles" :key="needle">
-                  {{ needle }}
-                </li>
-              </ul>
+              v-text="letterSignatureName" />
+          </div>
+        </div>
+        <div v-if="!hasUser" class="row">
+          <div class="col-md-8">
+            <div class="mb-3 row">
+              <div
+                class="col-sm-6"
+                :class="{ 'text-danger': usererrors.first_name }">
+                <label
+                  class="form-label field-required"
+                  for="id_first_name"
+                  :class="{ 'text-danger': usererrors.first_name }">
+                  {{ i18n.yourFirstName }}
+                </label>
+                <input
+                  id="id_first_name"
+                  v-model="first_name"
+                  type="text"
+                  name="first_name"
+                  class="form-control"
+                  :class="{ 'is-invalid': usererrors.first_name }"
+                  :placeholder="userformFields.first_name.placeholder"
+                  required />
+                <p v-for="e in usererrors.first_name" :key="e.message">
+                  {{ e.message }}
+                </p>
+              </div>
+
+              <div
+                class="col-sm-6"
+                :class="{ 'text-danger': usererrors.last_name }">
+                <label
+                  class="form-label field-required"
+                  for="id_last_name"
+                  :class="{ 'text-danger': usererrors.last_name }">
+                  {{ i18n.yourLastName }}
+                </label>
+                <input
+                  id="id_last_name"
+                  v-model="last_name"
+                  type="text"
+                  name="last_name"
+                  class="form-control"
+                  :class="{ 'is-invalid': usererrors.last_name }"
+                  :placeholder="userformFields.last_name.placeholder"
+                  required />
+                <p v-for="e in usererrors.last_name" :key="e.message">
+                  {{ e.message }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div v-if="usePseudonym" class="col-md-4 mt-md-4">
+            <small
+              v-if="userformFields.last_name.help_text"
+              v-html="userformFields.last_name.help_text" />
+          </div>
+        </div>
+
+        <div
+          v-if="config.settings.user_can_hide_web && !hasUser"
+          class="row mt-2">
+          <div class="col-md-8">
+            <div class="form-check">
+              <input
+                id="id_private"
+                class="form-check-input"
+                v-model="userPrivate"
+                type="checkbox"
+                name="private" />
+              <label for="id_private" class="form-check-label">
+                {{ userformFields.private.label }}
+              </label>
+              <p class="help-block" v-html="userformFields.private.help_text" />
             </div>
           </div>
         </div>
@@ -280,59 +322,18 @@
               <ProofForm
                 :form="proofForm"
                 :required="proofRequired"
-                :config="config.proof_config"
-              ></ProofForm>
+                :config="config.proof_config"></ProofForm>
             </template>
             <details v-else>
               <summary>{{ i18n.includeProof }}</summary>
               <ProofForm
                 :form="proofForm"
                 :required="proofRequired"
-                :config="config.proof_config"
-              ></ProofForm>
+                :config="config.proof_config"></ProofForm>
             </details>
           </div>
         </div>
       </div>
-    </div>
-
-    <div v-if="hasUser" class="card mb-3">
-      <div class="card-body">
-        <details
-          :open="
-            userForm?.errors?.address ||
-            addressValid === false ||
-            addressChanged === true
-          "
-        >
-          <summary>{{ i18n.updatePostalAddress }}</summary>
-          <UserAddress
-            v-model:initial-address="address"
-            :i18n="i18n"
-            :form="userForm"
-            :config="config"
-            :address-help-text="userForm.fields.address.help_text"
-            class="mt-3"
-          />
-        </details>
-      </div>
-    </div>
-
-    <UserConfirm
-      v-if="hasUserConfirmContent && confirmRequired"
-      ref="userConfirm"
-    >
-      <slot name="request-user-confirm" />
-    </UserConfirm>
-
-    <div class="my-4">
-      <button
-        type="button"
-        class="btn btn-primary"
-        @click="validateAllNextStep"
-      >
-        {{ i18n.stepNext }}
-      </button>
     </div>
   </div>
 </template>
@@ -341,27 +342,9 @@
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
-import { mapGetters, mapMutations } from 'vuex'
-
-import {
-  UPDATE_BODY_VALIDITY,
-  UPDATE_BODY_CHANGED,
-  UPDATE_SUBJECT_VALIDITY,
-  UPDATE_SUBJECT_CHANGED,
-  SET_STEP,
-  STEPS
-} from '../../store/mutation_types'
-
 import ProofForm from '../proofupload/proof-form.vue'
-import UserAddress from './user-address.vue'
-import UserConfirm from './user-confirm.vue'
-
-function erx(text) {
-  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-}
 
 const PLACEHOLDER_MARKER = '…'
-const PLACEHOLDER_REPLACEMENT = '...'
 const MAX_BODY_ROWS = 12
 const MIN_BODY_ROWS = 3
 
@@ -369,14 +352,11 @@ export default {
   name: 'RequestForm',
   mixins: [I18nMixin, LetterMixin],
   components: {
-    ProofForm,
-    UserAddress,
-    UserConfirm
+    ProofForm
   },
   props: {
     config: {
-      type: Object,
-      default: null
+      type: Object
     },
     publicbodies: {
       type: Array,
@@ -386,17 +366,15 @@ export default {
       type: Object,
       default: null
     },
+    defaultLaw: {
+      type: Object,
+      default: null
+    },
     requestForm: {
-      required: true,
       type: Object
     },
     userForm: {
-      required: true,
       type: Object
-    },
-    proofForm: {
-      type: Object,
-      default: null
     },
     lawType: {
       type: String,
@@ -418,6 +396,10 @@ export default {
       type: Boolean,
       default: false
     },
+    multiRequest: {
+      type: Boolean,
+      default: false
+    },
     usePseudonym: {
       type: Boolean,
       default: true
@@ -434,11 +416,19 @@ export default {
       type: Boolean,
       default: false
     },
-    proofRequired: {
-      type: Boolean,
-      default: false
+    initialFirstName: {
+      type: String,
+      default: ''
     },
-    confirmRequired: {
+    initialLastName: {
+      type: String,
+      default: ''
+    },
+    proofForm: {
+      type: Object,
+      default: null
+    },
+    proofRequired: {
       type: Boolean,
       default: false
     },
@@ -451,8 +441,7 @@ export default {
     return {
       bodyRows: MIN_BODY_ROWS,
       bodyBeforeChange: '',
-      bodyValidationErrors: [],
-      subjectValidationErrors: [],
+      bodyCustomErrors: [],
       savedFullTextBody: '',
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
@@ -460,19 +449,61 @@ export default {
       subjectValue: this.initialSubject || '',
       bodyValue: this.initialBody || '',
       fullTextValue: this.initialFullText,
-      clearFormErrors: false,
-      showPlaceholderReplacer: false
+      firstNameValue:
+        this.initialFirstName || (this.user && this.user.first_name) || '',
+      lastNameValue:
+        this.initialLastName || (this.user && this.user.last_name) || '',
+      privateValue:
+        this.initialPrivate || (this.user && this.user.private) || false
     }
   },
   computed: {
+    nonFieldErrors() {
+      return this.form.nonFieldErrors
+    },
+    form() {
+      return this.requestForm
+    },
     formFields() {
-      return this.requestForm.fields
+      return this.form.fields
     },
     errors() {
-      return this.requestForm.errors
+      return this.form.errors
     },
     userformFields() {
       return this.userForm.fields
+    },
+    usererrors() {
+      return this.userForm.errors
+    },
+    hasLawNotes() {
+      if (this.defaultLaw) {
+        return !!this.defaultLaw.request_note_html
+      }
+      // FIXME: find all notes of all public body default laws?
+      return false
+    },
+    hasPublicBodyNotes() {
+      if (this.publicBody) {
+        return !!this.publicBody.request_note_html
+      }
+      // FIXME: find all notes of all public body default laws?
+      return false
+    },
+    lawNotes() {
+      if (this.hasLawNotes) {
+        return this.defaultLaw.request_note_html
+      }
+      return ''
+    },
+    publicBodyNotes() {
+      if (this.hasPublicBodyNotes) {
+        return this.publicBody.request_note_html
+      }
+      return ''
+    },
+    canBatchRequest() {
+      return this.config.settings.user_can_create_batch
     },
     nonMeaningfulSubjects() {
       return this.config.settings.non_meaningful_subject_regex.map(
@@ -534,6 +565,33 @@ export default {
         )
       }
     },
+    first_name: {
+      get() {
+        return this.firstNameValue
+      },
+      set(value) {
+        this.firstNameValue = value
+        this.$emit('update:initialFirstName', value)
+      }
+    },
+    last_name: {
+      get() {
+        return this.lastNameValue
+      },
+      set(value) {
+        this.lastNameValue = value
+        this.$emit('update:initialLastName', value)
+      }
+    },
+    userPrivate: {
+      get() {
+        return this.privateValue
+      },
+      set(value) {
+        this.privateValue = value
+        this.$emit('update:initialPrivate', value)
+      }
+    },
     hasPublicBodies() {
       return this.publicBodies.length > 0
     },
@@ -544,70 +602,17 @@ export default {
       // FIXME
       return this.publicbodies
     },
-    needles() {
-      let checks = []
-      const positives = []
-      if (!this.fullText) {
-        checks = [
-          ...checks,
-          [
-            new RegExp(erx(this.i18n.greeting), 'gi'),
-            this.i18n.dontAddGreeting
-          ],
-          [
-            new RegExp(erx(this.i18n.kindRegards), 'gi'),
-            this.i18n.dontAddClosing
-          ]
-        ]
-      }
-      if (this.userRegex) {
-        checks.push([this.userRegex, this.i18n.dontInsertName])
-      }
-      checks.forEach((params) => {
-        if (params[0].test(this.body)) {
-          positives.push(params[1])
+    isMeaningfulSubject() {
+      for (const re of this.nonMeaningfulSubjects) {
+        if (re.test(this.subject)) {
+          return false
         }
-      })
-      return positives
-    },
-    userRegex() {
-      const regex = []
-      if (!this.user) return null
-      if (this.user.first_name && this.user.last_name) {
-        regex.push(erx(`${this.user.first_name} ${this.user.last_name}`))
       }
-      if (this.user.first_name) {
-        regex.push(erx(this.user.first_name))
-      }
-      if (this.user.first_name) {
-        regex.push(erx(this.user.first_name))
-      }
-      if (regex.length === 0) {
-        return null
-      }
-      return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
-    },
-    hasUserConfirmContent() {
-      return (
-        this.$parent['django-slots'][
-          'request-user-confirm'
-        ].textContent.trim() !== ''
-      )
-    },
-    ...mapGetters([
-      'user',
-      'subjectValid',
-      'subjectChanged',
-      'bodyValid',
-      'bodyChanged',
-      'confirmValid',
-      'defaultLaw',
-      'addressValid',
-      'addressChanged'
-    ])
+      return true
+    }
   },
   mounted() {
-    this.updateBody()
+    this.bodyChanged()
   },
   methods: {
     resetFullText() {
@@ -615,7 +620,7 @@ export default {
       this.fullTextDisabled = false
       this.fullText = false
     },
-    updateBody() {
+    bodyChanged() {
       if (this.fullText) {
         this.fullTextDisabled = true
       }
@@ -628,122 +633,17 @@ export default {
         ta.style.overflow = 'auto'
       }
       this.bodyRows = ta.rows
-    },
-    fixBodyPlaceholders() {
-      this.body = this.body.replaceAll(
-        PLACEHOLDER_MARKER,
-        PLACEHOLDER_REPLACEMENT
-      )
-      this.validateBody()
+      if (this.body.includes(PLACEHOLDER_MARKER)) {
+        this.bodyCustomErrors = [this.i18n.replacePlaceholderMarker]
+        ta.setCustomValidity(this.i18n.replacePlaceholderMarker)
+      } else {
+        this.bodyCustomErrors = []
+        ta.setCustomValidity('')
+      }
     },
     showFullLetter() {
       this.fullLetter = true
-    },
-    validateSubject() {
-      this.subjectValidationErrors = []
-      let valid = true
-      if (this.nonMeaningfulSubjects.some((re) => re.test(this.subject))) {
-        this.subjectValidationErrors.push(this.i18n.subjectMeaningful)
-        this.$refs.subject.setCustomValidity(this.i18n.subjectMeaningful)
-        valid = false
-      }
-      // from model via form_utils
-      const minLength = this.$refs.subject.minLength
-      const checkValidity = this.$refs.subject.checkValidity()
-      // unfortunately checkValidity is not enough, it won't kick in until a user interaction
-      // there is a workaround with pattern=".{min,max}" but it still won't work for textarea,
-      // so let's keep it consistent. cf. https://stackoverflow.com/a/10294291/629238 */
-      if (!checkValidity || this.subject.length < minLength) {
-        valid = false
-        const minLengthMessage = this.i18n._('valueMinLength', {
-          count: minLength
-        })
-        if (checkValidity) {
-          // if browser wrong, force our message
-          this.$refs.subject.setCustomValidity(minLengthMessage)
-        } else {
-          // let browser's native message take over
-          this.resetSubjectCustomValidity()
-        }
-        if (this.subject.length < minLength) {
-          this.subjectValidationErrors.push(minLengthMessage)
-        }
-      }
-      if (!valid) {
-        // note: reportValidity might only work from a click, but not keyboard event?
-        this.$refs.subject.reportValidity()
-      }
-      this.updateSubjectValidity(valid)
-    },
-    resetSubjectCustomValidity() {
-      this.$refs.subject.setCustomValidity('')
-    },
-    validateBody() {
-      this.bodyValidationErrors = []
-      let valid = true
-      this.showPlaceholderReplacer = false
-      if (this.body.includes(PLACEHOLDER_MARKER)) {
-        const placeholderMessage = this.i18n._('containsPlaceholderMarker', {
-          placeholder: PLACEHOLDER_MARKER
-        })
-        this.bodyValidationErrors.push(placeholderMessage)
-        this.showPlaceholderReplacer = true
-        this.$refs.body.setCustomValidity(placeholderMessage)
-        valid = false
-      }
-      // see validateSubject above for comments, esp. re: textarea
-      const minLength = this.$refs.body.minLength
-      const checkValidity = this.$refs.body.checkValidity()
-      if (!checkValidity || this.body.length < minLength) {
-        valid = false
-        const minLengthMessage = this.i18n._('valueMinLength', {
-          count: minLength
-        })
-        if (checkValidity) {
-          this.$refs.body.setCustomValidity(minLengthMessage)
-        } else {
-          this.resetBodyCustomValidity()
-        }
-        if (this.body.length < minLength) {
-          this.bodyValidationErrors.push(minLengthMessage)
-        }
-      }
-      if (!valid) {
-        this.$refs.body.reportValidity()
-      }
-      this.updateBodyValidity(valid)
-    },
-    resetBodyCustomValidity() {
-      this.$refs.body.setCustomValidity('')
-    },
-    validateConfirm() {
-      this.$refs.userConfirm.validate()
-    },
-    validateAllNextStep() {
-      this.clearFormErrors = true
-      // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
-      this.validateBody()
-      this.validateSubject()
-      if (this.hasUserConfirmContent && this.confirmRequired)
-        this.validateConfirm()
-      const confirmPassed =
-        this.confirmValid ||
-        !this.confirmRequired ||
-        !this.hasUserConfirmContent
-      if (this.bodyValid && this.subjectValid && confirmPassed) {
-        this.$emit('stepNext')
-      }
-    },
-    setStepChangePublicbody() {
-      this.setStep(STEPS.SELECT_PUBLICBODY)
-    },
-    ...mapMutations({
-      setStep: SET_STEP,
-      updateBodyValidity: UPDATE_BODY_VALIDITY,
-      updateBodyChanged: UPDATE_BODY_CHANGED,
-      updateSubjectValidity: UPDATE_SUBJECT_VALIDITY,
-      updateSubjectChanged: UPDATE_SUBJECT_CHANGED
-    })
+    }
   }
 }
 </script>

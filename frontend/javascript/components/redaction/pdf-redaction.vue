@@ -156,12 +156,12 @@
             autocomplete="off"
             :checked="textOnly"
             @change="toggleText"
-          />
+            >
           <label
             class="btn btn-outline-secondary"
             for="toggle-mode"
             :title="i18n.toggleText"
-          >
+            >
             <i class="fa fa-align-justify" />
             <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
           </label>
@@ -690,25 +690,19 @@ export default {
         // pdfinfo -box froide/tests/testdata/redaction-test-cropbox.pdf
         // note CropBox; TrimBox+ArtBox on their own don't need special handling
         const [pageOffsetX, pageOffsetY, pageSizeX, pageSizeY] = page.view
-        this.intrinsicPageWidth = flipWidthHeight
-          ? pageSizeY - pageOffsetY
-          : pageSizeX - pageOffsetX
-        this.intrinsicPageHeight = flipWidthHeight
-          ? pageSizeX - pageOffsetX
-          : pageSizeY - pageOffsetY
+        this.intrinsicPageWidth = flipWidthHeight ? pageSizeY - pageOffsetY : pageSizeX - pageOffsetX
+        this.intrinsicPageHeight = flipWidthHeight ? pageSizeX - pageOffsetX : pageSizeY - pageOffsetY
 
         // redaction "rects'" coordinates are stored in "intrinsic PDF viewport = document pixels",
         // and not in "browser/device pixels"
         // (which are affected by page zoom, bootstrap viewports and rendering artifacts)
         // so scaleFactor needs to be respected in many calculations in the component
         // (to "(re)project" between the two views)
-        // It is a "per page, per current viewport" factor and is re-calculated
+        // It is a "per page, per current viewport" factor and is re-calculated 
         // on every page change and window resize, but it is not stored "per page";
         // instead, on submit serializePage reloads every page and thus re-calculates "per page".
         this.scaleFactor = maxWidth / this.intrinsicPageWidth
-        const viewport = page.getViewport({
-          scale: renderDensityFactor * this.scaleFactor
-        })
+        const viewport = page.getViewport({ scale: renderDensityFactor * this.scaleFactor })
 
         this.viewport = viewport
         const canvas = this.canvas
@@ -938,7 +932,12 @@ export default {
         const pos = this.getDivRect(d)
         const f = 1 / this.scaleFactor
         return {
-          pos: [pos[0] * f, pos[1] * f, pos[2] * f, pos[3] * f],
+          pos: [
+            pos[0] * f,
+            pos[1] * f,
+            pos[2] * f,
+            pos[3] * f,
+          ],
           fontSize: d.style.fontSize,
           text: d.textContent,
           // transform + fontFamily are ignored by add_text_on_pdf/redact.py; rotated boxes/pages won't match up
@@ -1059,7 +1058,7 @@ export default {
 
       this.addAction({
         type: 'redact',
-        rects: [[rx * f2, ry * f2, rw * f2, rh * f2]],
+        rects: [[rx * f2 , ry * f2, rw * f2, rh * f2]],
         page: this.currentPage,
         texts
       })
@@ -1428,12 +1427,12 @@ export default {
       const divRect = div.getBoundingClientRect()
       const parentRect = this.textLayer.getBoundingClientRect()
       const f = this.scaleFactor
-      const fx = (f * this.intrinsicPageWidth) / parentRect.width
-      const fy = (f * this.intrinsicPageHeight) / parentRect.height
+      const fx = f * this.intrinsicPageWidth / parentRect.width
+      const fy = f * this.intrinsicPageHeight / parentRect.height
       const w = fx * divRect.width
       const h = fy * divRect.height
-      const x = (divRect.left - parentRect.left) * fx
-      const y = (divRect.top - parentRect.top) * fy
+      const x = (divRect.left - parentRect.left)  * fx
+      const y = (divRect.top - parentRect.top)  * fy
       return [x, y, w, h]
     },
     redactText(div, start, text) {
@@ -1493,15 +1492,13 @@ export default {
       let height
       let x
       let y
-      const padding =
-        Math.max(this.intrinsicPageWidth, this.intrinsicPageHeight) *
-        paddingUnit
+      const padding = Math.max(this.intrinsicPageWidth, this.intrinsicPageHeight) * paddingUnit
       let paddingX = 0
       let paddingY = 0
       let dir
       const f1 = 1 / this.scaleFactor
       // raw getBoundingClientRects, unlike getDivRect, are affected by panzoom's scale/zoom
-      const f2 = f1 / panzoom.getScale()
+      const f2  = f1 / panzoom.getScale()
 
       // PDFjs stretches lines; this is not reflected in offsetWidth
       // approach without getBoundlingClientRect:
@@ -1555,25 +1552,7 @@ export default {
         paddingY = padding
       }
 
-      console.log('redactRange', {
-        scaleFactor: this.scaleFactor,
-        renderDensityFactor,
-        startRect,
-        endRect,
-        dir,
-        baseX,
-        baseY,
-        baseWidth,
-        baseHeight,
-        x,
-        y,
-        width,
-        height,
-        padding,
-        paddingUnit,
-        paddingX,
-        paddingY
-      })
+      console.log('redactRange', { scaleFactor: this.scaleFactor, renderDensityFactor, startRect, endRect, dir, baseX, baseY, baseWidth, baseHeight, x, y, width, height, padding, paddingUnit, paddingX, paddingY })
 
       return {
         type: 'redact',
@@ -1585,14 +1564,12 @@ export default {
             textAfter: text.replace(match, replace)
           }
         ],
-        rects: [
-          [
-            x - paddingX,
-            y - paddingY,
-            width + paddingX * 2,
-            height + paddingY * 2
-          ]
-        ],
+        rects: [[
+          x - paddingX,
+          y - paddingY,
+          width + paddingX * 2,
+          height + paddingY * 2,
+        ]],
         page: this.currentPage
       }
     },
@@ -1785,4 +1762,5 @@ export default {
     pointer-events: none;
   }
 }
+
 </style>

@@ -122,14 +122,7 @@ const approveClick = () => {
     <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
     {{ i18n.markNotIrrelevant }}
   </button>
-  <button
-    v-if="
-      !attachment.is_irrelevant && attachment.is_image && !attachment.converted
-    "
-    @click="makeRelevantClick"
-    type="button"
-    class="btn btn-sm btn-link text-start"
-  >
+  <button v-if="!attachment.is_irrelevant && attachment.is_image && !attachment.converted" @click="makeRelevantClick" type="button" class="btn btn-sm btn-link text-start">
     <i class="fa fa-exclamation-circle"></i>
     <!-- these are not actually strictly irrelevant, but we use the language in the instruction above -->
     {{ i18n.markNotIrrelevant }}

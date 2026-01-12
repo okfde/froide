@@ -7,10 +7,11 @@
     :page="this.page"
     :config="this.config"
     :defaults="this.defaults"
-  ></DocumentViewer>
+    ></DocumentViewer>
 </template>
 
 <script>
+
 import DocumentViewer from '@okfde/filingcabinet/frontend/javascript/components/document-viewer.vue'
 
 export default {
@@ -43,4 +44,5 @@ export default {
     this.$root.config = this.config
   }
 }
+
 </script>

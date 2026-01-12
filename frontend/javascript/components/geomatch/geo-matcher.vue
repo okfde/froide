@@ -16,10 +16,7 @@
       <dt>
         <input v-model="category" @change="categoryChanged" />
         {{ categoryName }}
-        <label
-          ><input type="checkbox" v-model="useCategoryForSearch" />Use for
-          search</label
-        >
+        <label><input type="checkbox" v-model="useCategoryForSearch" />Use for search</label>
       </dt>
       <dd>Jurisdiction</dd>
       <dt>
@@ -49,8 +46,7 @@
           v-for="georegion in georegions"
           :key="georegion.id"
           :georegion="georegion"
-          @connectpublicbody="connectPublicBody"
-        />
+          @connectpublicbody="connectPublicBody" />
       </tbody>
     </table>
   </div>
@@ -290,7 +286,7 @@ export default {
     connectPublicBody(payload) {
       const data = {
         georegion: payload.georegionId,
-        publicbody: payload.publicbodyId
+        publicbody: payload.publicbodyId,
       }
       if (this.category && !this.useCategoryForSearch) {
         // Add category to public body
