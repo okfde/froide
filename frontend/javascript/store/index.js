@@ -501,7 +501,7 @@ export default createStore({
         console.warn('failed to persist state', persistStorage, reduced, err)
       }
     },
-    // also called directly from makerequest.js
+    // also called from purgestorage.ts
     purgeStorage({ state }, { scope, keepNonForm }) {
       // don't purge values we can't get from (non-existing) form fields
       const purged = keepNonForm
