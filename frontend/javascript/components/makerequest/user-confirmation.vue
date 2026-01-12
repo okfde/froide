@@ -9,11 +9,7 @@
           {{ formFields.phone.label }}
         </label>
         <div class="col-lg-9">
-          <input
-            id="id_phone"
-            class="form-control"
-            type="text"
-            name="phone" />
+          <input id="id_phone" class="form-control" type="text" name="phone" />
         </div>
       </div>
     </template>
@@ -25,7 +21,8 @@
             'text-danger': errors.test,
             'field-required': formFields.test.required
           }"
-          for="id_test">
+          for="id_test"
+        >
           {{ formFields.test.label }}
         </label>
         <div class="col-lg-9">
@@ -60,7 +57,7 @@ export default {
         return this.form.errors
       }
       return {}
-    },
+    }
   }
 }
 </script>

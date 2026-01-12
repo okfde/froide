@@ -1,6 +1,5 @@
 <template>
-  <div
-    class="row mt-2">
+  <div class="row mt-2">
     <div class="col-md-8">
       <slot></slot>
     </div>
@@ -11,7 +10,7 @@
         v-for="(choice, choiceIndex) in userformFields.private.choices"
         :key="choice.value"
         class="form-check form-check-emphasized"
-        >
+      >
         <input
           :id="'id_private_choice' + choiceIndex"
           class="form-check-input"
@@ -19,8 +18,12 @@
           type="radio"
           name="private"
           :value="choice.value"
-          />
-        <label :for="'id_private_choice' + choiceIndex" class="form-check-label" v-html="choice.label" />
+        />
+        <label
+          :for="'id_private_choice' + choiceIndex"
+          class="form-check-label"
+          v-html="choice.label"
+        />
       </div>
       <p class="help-block" v-html="userformFields.private.help_text" />
       <p>
@@ -28,7 +31,8 @@
           v-if="config.url.helpRequestPrivacy"
           :href="config.url.helpRequestPrivacy"
           target="_blank"
-          >{{ i18n.privacyMoreInfo }}</a>
+          >{{ i18n.privacyMoreInfo }}</a
+        >
       </p>
     </div>
   </div>
@@ -67,7 +71,7 @@ export default {
         this.privateValue = value
         this.$emit('update:initialPrivate', value)
       }
-    },
+    }
   }
 }
 </script>

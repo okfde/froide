@@ -10,7 +10,8 @@
             type="button"
             class="btn-close"
             data-bs-dismiss="modal"
-            :aria-label="i18n.close" />
+            :aria-label="i18n.close"
+          />
         </div>
         <div class="modal-body">
           <p>
@@ -25,7 +26,8 @@
             id="send-request-button"
             type="submit"
             class="btn btn-primary"
-            @click="submit">
+            @click="submit"
+          >
             {{ i18n.publishWithoutRedaction }}
           </button>
         </div>

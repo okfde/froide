@@ -911,9 +911,13 @@ addEventListener('hashchange', () => {
     </span>
     <span>isDesktop={{ isDesktop }}</span>
     <div>
-      <button type="button" class="btn btn-link"
+      <button
+        type="button"
+        class="btn btn-link"
         @click="onlineHelp.show(config.url.helpPostuploadRedaction)"
-        >show online help</button>
+      >
+        show online help
+      </button>
     </div>
     <button
       class="btn btn-secondary btn-sm"
@@ -1691,10 +1695,7 @@ addEventListener('hashchange', () => {
               {{ pdfRedactionCurrentDoc?.name }}
             </label>
             <div class="row">
-              <DjangoSlot
-                name="redaction_explanation"
-                has-bs-directives
-              />
+              <DjangoSlot name="redaction_explanation" has-bs-directives />
             </div>
             <div class="mt-2 mb-3">
               <button

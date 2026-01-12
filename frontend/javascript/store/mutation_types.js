@@ -70,7 +70,7 @@ export const STEPS = {
   WRITE_REQUEST: 8,
   REQUEST_PUBLIC: 9,
   PREVIEW_SUBMIT: 10,
-  OUTRO: 11,
+  OUTRO: 11
 }
 
 Object.freeze(STEPS)

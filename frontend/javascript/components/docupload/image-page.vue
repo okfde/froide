@@ -40,8 +40,8 @@ const totalRotate = computed(() => {
 
 const isLast = computed(() => pageNum === pageCount)
 
-const progressAlmostComplete = computed(() =>
-  !progressUnknown.value && page.progress === page.progressTotal
+const progressAlmostComplete = computed(
+  () => !progressUnknown.value && page.progress === page.progressTotal
 )
 
 const progressUnknown = computed(() => progressPercent.value === null)
@@ -59,12 +59,13 @@ const progressPercentLabel = computed(() => {
   }
   return '100%'
 })
-
 </script>
 
 <template>
   <div class="page">
-    <div class="page-frame d-flex align-items-center justify-content-center position-relative">
+    <div
+      class="page-frame d-flex align-items-center justify-content-center position-relative"
+    >
       <img
         v-if="page.file_url && !page.pending"
         ref="pageImage"
@@ -72,10 +73,11 @@ const progressPercentLabel = computed(() => {
         :title="page.name"
         class="page-image d-block mw-100 mh-100 border"
         :src="page.file_url"
-        :style="{ transform: `rotate(${totalRotate}deg)`}"
-        />
+        :style="{ transform: `rotate(${totalRotate}deg)` }"
+      />
       <div
-        class="page-control page-control--number position-absolute bottom-0 mb-2 start-0 ms-1 text-bg-primary badge rounded-pill fw-bold lh-sm">
+        class="page-control page-control--number position-absolute bottom-0 mb-2 start-0 ms-1 text-bg-primary badge rounded-pill fw-bold lh-sm"
+      >
         {{ pageNum }}
       </div>
     </div>
@@ -86,7 +88,8 @@ const progressPercentLabel = computed(() => {
         v-if="showRotate"
         class="btn btn-link btn-sm text-body-secondary small"
         type="button"
-        @click="rotatePage(page)">
+        @click="rotatePage(page)"
+      >
         <span class="fa fa-rotate-right" aria-hidden="true" />
         <span class="visually-hidden">{{ i18n.rotatePage }}</span>
       </button>
@@ -94,7 +97,8 @@ const progressPercentLabel = computed(() => {
         v-if="showSplit && !isLast"
         class="btn btn-link btn-sm text-body-secondary small ms-auto"
         type="button"
-        @click="splitPages(idx, pageNum)">
+        @click="splitPages(idx, pageNum)"
+      >
         <span class="fa fa-scissors" aria-hidden="true" />
         <span class="visually-hidden">{{ i18n.splitPagesHere }}</span>
       </button>

@@ -6,7 +6,8 @@
       :data-label="result.name"
       :name="name"
       :value="result.id"
-      v-model="value" />
+      v-model="value"
+    />
     <label class="form-check-label">
       {{ result.name }}
       <small>
