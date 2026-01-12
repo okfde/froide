@@ -203,7 +203,7 @@ feedgen==1.0.0
     # via django-filingcabinet
 fido2==2.0.0
     # via django-mfa3
-filelock==3.19.1
+filelock==3.20.1
     # via virtualenv
 fonttools==4.60.0
     # via weasyprint
