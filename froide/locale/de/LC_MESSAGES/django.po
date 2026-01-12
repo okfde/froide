@@ -7921,6 +7921,10 @@ msgstr "Freitext"
 msgid "Skip"
 msgstr "Überspringen"
 
+#: froide/foirequest/views/make_request.py
+msgid "What do you want to do?"
+msgstr "Was möchten Sie tun?"
+
 #: froide/foirequest/views/message.py
 msgid "Your message has been sent."
 msgstr "Ihre Nachricht wurde gesendet."
