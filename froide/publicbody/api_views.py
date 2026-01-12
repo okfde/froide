@@ -42,7 +42,7 @@ def make_search_filter(field):
 
 class JurisdictionViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = JurisdictionSerializer
-    queryset = Jurisdiction.objects.all()
+    queryset = Jurisdiction.objects.all().prefetch_related("region")
 
 
 class FoiLawFilter(filters.FilterSet):
