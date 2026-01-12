@@ -41,29 +41,39 @@
           </div>
         </div>
       </div>
-      <div class="mb-4 mt-5 d-flex flex-wrap gap-3 align-items-center justify-content-between">
-          <h3 class="mb-0">
-            <span v-if="searching" class="spinner-border spinner-border-sm fs-3 text-secondary" role="status">
-              <span class="visually-hidden">{{ i18n.loading }}</span>
-            </span>
-            {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
-          </h3>
-          <div class="btn-group" role="group">
-            <button
-              @click.prevent="selectAll"
-              class="btn btn-sm btn-outline-secondary"
-              :disabled="selectAllButtonDisabled"
-            >
-              {{ i18n._('selectAll', { count: searchResultsLength }) }}
-            </button>
-            <button
-              :disabled="!hasSearchResults"
-              @click.prevent="clearSearch"
-              class="btn-sm btn btn-outline-secondary"
-            >
-              {{ i18n.clearSearchResults }}
-            </button>
-          </div>
+      <div
+        class="mb-4 mt-5 d-flex flex-wrap gap-3 align-items-center justify-content-between"
+      >
+        <h3 class="mb-0">
+          <span
+            v-if="searching"
+            class="spinner-border spinner-border-sm fs-3 text-secondary"
+            role="status"
+          >
+            <span class="visually-hidden">{{ i18n.loading }}</span>
+          </span>
+          {{
+            searching
+              ? '…'
+              : i18n._('publicBodiesFound', { count: searchResultsLength })
+          }}
+        </h3>
+        <div class="btn-group" role="group">
+          <button
+            @click.prevent="selectAll"
+            class="btn btn-sm btn-outline-secondary"
+            :disabled="selectAllButtonDisabled"
+          >
+            {{ i18n._('selectAll', { count: searchResultsLength }) }}
+          </button>
+          <button
+            :disabled="!hasSearchResults"
+            @click.prevent="clearSearch"
+            class="btn-sm btn btn-outline-secondary"
+          >
+            {{ i18n.clearSearchResults }}
+          </button>
+        </div>
       </div>
       <div class="row">
         <div class="col-md-8 col-lg-9 order-2">
@@ -94,14 +104,16 @@
               :config="filterConfig[filterKey]"
               @update="updateFilter"
               :value="filters[filterKey]"
-              />
+            />
           </div>
-          <div class="d-flex flex-column flex-sm-row flex-md-column flex-wrap gap-2 mt-3">
+          <div
+            class="d-flex flex-column flex-sm-row flex-md-column flex-wrap gap-2 mt-3"
+          >
             <div
               v-for="filterKey in filterOrder"
               :key="filterKey"
               class="position-relative"
-              >
+            >
               <PbFilter
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
@@ -319,7 +331,7 @@ export default {
     ...mapGetters([
       'getPublicBodiesByScope',
       'getScopedSearchMeta',
-      'stepCanContinue',
+      'stepCanContinue'
     ])
   },
   methods: {
@@ -415,9 +427,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 button[disabled] {
   cursor: not-allowed;
 }
-
 </style>

@@ -49,7 +49,7 @@ import {
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
   UPDATE_SIMILAR_REQUEST_SEARCH,
-  UPDATE_CLAIMS_VIP,
+  UPDATE_CLAIMS_VIP
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
@@ -88,7 +88,7 @@ export default createStore({
       lastNameChanged: false,
       emailValid: undefined,
       emailChanged: false,
-      similarRequestSearch: {},
+      similarRequestSearch: {}
     }
   },
   getters: {
@@ -493,10 +493,13 @@ export default createStore({
         terms: state.user.terms,
         confirm: state.user.confirm,
         claims_vip: state.user.claims_vip,
-        similarRequestSearch: state.similarRequestSearch,
+        similarRequestSearch: state.similarRequestSearch
       }
       try {
-        persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))
+        persistStorage.setItem(
+          persistKeyPrefix + scope,
+          JSON.stringify(reduced)
+        )
       } catch (err) {
         console.warn('failed to persist state', persistStorage, reduced, err)
       }
@@ -509,22 +512,45 @@ export default createStore({
         : null
       try {
         if (purged) {
-          persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
+          persistStorage.setItem(
+            persistKeyPrefix + scope,
+            JSON.stringify(purged)
+          )
           console.log('purged, keeping', persistKeyPrefix + scope, purged)
         } else {
           persistStorage.removeItem(persistKeyPrefix + scope)
           console.log('purged, removed', persistKeyPrefix + scope)
         }
       } catch (err) {
-        console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
+        console.warn(
+          'failed to purge persisted state',
+          persistKeyPrefix + scope,
+          err
+        )
       }
     },
-    initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, ignoreStorage, scope, scoped }) {
+    initStoreValues(
+      { commit },
+      {
+        formFields,
+        formCoerce,
+        mutationMap,
+        propMap,
+        ignoreStorage,
+        scope,
+        scoped
+      }
+    ) {
       let storage
       try {
         storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))
       } catch (err) {
-        console.warn('failed to load persisted state', persistStorage, persistKeyPrefix + scope, err)
+        console.warn(
+          'failed to load persisted state',
+          persistStorage,
+          persistKeyPrefix + scope,
+          err
+        )
       }
       // need null check for parsed, previously serialized storage
       const isSet = (v) => !(v === undefined || v === null)
@@ -536,7 +562,12 @@ export default createStore({
           value = propMap[key]
           console.log('got', key, 'from prop')
         }
-        if (!isSet(value) && !ignoreStorage && storage && storage[key] !== undefined) {
+        if (
+          !isSet(value) &&
+          !ignoreStorage &&
+          storage &&
+          storage[key] !== undefined
+        ) {
           value = storage[key]
           console.log('got', key, 'from storage', value)
         }

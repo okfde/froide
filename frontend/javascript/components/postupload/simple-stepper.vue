@@ -19,13 +19,16 @@ const stepClick = (stepIndex) => {
 
 const maxVisitedStep = ref(0)
 watch(
-  () => props.step, () => {
+  () => props.step,
+  () => {
     maxVisitedStep.value = Math.max(maxVisitedStep.value, props.step)
   },
   { immediate: true }
 )
 
-const maxClickableStep = computed(() => props.keepVisitedClickable ? maxVisitedStep.value : props.step)
+const maxClickableStep = computed(() =>
+  props.keepVisitedClickable ? maxVisitedStep.value : props.step
+)
 
 const markerClasses = (stepIndex) => {
   if (stepIndex <= props.step) return 'text-white bg-primary'
@@ -47,7 +50,7 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
       <div class="container">
         <div class="row position-relative">
           <component
-            :is="(clickable && (stepIndex <= maxClickableStep)) ? 'a' : 'div'"
+            :is="clickable && stepIndex <= maxClickableStep ? 'a' : 'div'"
             v-for="(stepLabel, stepIndex) in steps"
             @click.prevent="stepClick(stepIndex)"
             :href="clickable ? '#step-' + stepIndex : false"
@@ -56,9 +59,10 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
               'fw-bold': stepIndex <= step
             }"
             class="step col d-flex flex-column align-items-center text-body z-1 flex-grow-1 flex-shrink-1 text-break"
-            >
+          >
             <div
-              :class="`step-marker ${markerClasses(stepIndex)} d-block rounded-circle text-center border border-primary`">
+              :class="`step-marker ${markerClasses(stepIndex)} d-block rounded-circle text-center border border-primary`"
+            >
               {{ stepIndex + 1 }}
             </div>
             <div class="text-center">{{ stepLabel }}</div>
@@ -68,10 +72,12 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
             :style="{
               width: 100 * (1 - 1 / props.steps.length) + '%',
               left: 50 / props.steps.length + '%'
-            }">
+            }"
+          >
             <div
               class="progress-bar"
-              :style="{ width: progressDesktop * 100 + '%' }"></div>
+              :style="{ width: progressDesktop * 100 + '%' }"
+            ></div>
           </div>
         </div>
       </div>
@@ -89,7 +95,8 @@ const progressMobile = computed(() => (props.step + 1) / props.steps.length)
       <div class="d-lg-none progress progress--mobile">
         <div
           class="progress-bar"
-          :style="{ width: progressMobile * 100 + '%' }"></div>
+          :style="{ width: progressMobile * 100 + '%' }"
+        ></div>
       </div>
     </div>
   </div>

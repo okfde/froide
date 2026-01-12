@@ -5,9 +5,9 @@ import { registerBs } from './bootstrap-helpers'
 import { registerOnlinehelpLinks } from './onlinehelp'
 
 const props = defineProps<{
-  name: string,
-  hasBsDirectives: boolean,
-  hasOnlinehelpLinks: boolean,
+  name: string
+  hasBsDirectives: boolean
+  hasOnlinehelpLinks: boolean
 }>()
 
 const emit = defineEmits(['onlinehelpLinkClick'])

@@ -8,7 +8,7 @@
       :i18n="i18n"
       :title="i18n.publicbody"
       :invalid="needCorrectionPublicbody"
-      >
+    >
       <template #contents>
         <span v-if="!hasPublicbodes" class="text-danger">{{ i18n.none }}</span>
         <ReviewPublicbody
@@ -16,7 +16,7 @@
           :config="config"
           :pb-scope="pbScope"
           :multi-request="multiRequest"
-          />
+        />
       </template>
     </ReviewRequestLine>
 
@@ -26,21 +26,21 @@
       :invalid="needCorrectionSubject"
       :step="STEPS.WRITE_REQUEST"
       :contents="subject || i18n.subject"
-      />
+    />
 
     <ReviewRequestLine
       :i18n="i18n"
       :title="i18n.requestBody"
       :invalid="needCorrectionBody"
       :step="STEPS.WRITE_REQUEST"
-      >
+    >
       <template #contents>
         <div>
           <div v-if="fullText">
             <div
               class="body-text review-body-text"
               :class="{ 'text-danger': needCorrectionBody }"
-              >
+            >
               <span v-text="body" />
               <span v-text="letterSignatureName" />
             </div>
@@ -49,7 +49,7 @@
             <div
               class="body-text review-body-text"
               :class="{ 'text-danger': needCorrectionBody }"
-              >
+            >
               <span>{{ letterStart }}</span>
               <span class="highlight"><br />{{ body }}</span>
               <span><br /><br />{{ letterEnd }}</span>
@@ -66,21 +66,24 @@
       :invalid="needCorrectionConfirm"
       :contents="i18n.notConfirmed"
       :step="STEPS.WRITE_REQUEST"
-      />
+    />
 
     <ReviewRequestLine
       v-if="!hidePublic"
       :i18n="i18n"
       :title="i18n.visibility"
       :step="STEPS.REQUEST_PUBLIC"
-      >
+    >
       <template #contents>
         {{ requestPublic ? i18n.publishNow : i18n.publishLater }}
         <a
           v-if="config.url.helpRequestPublic"
           :href="config.url.helpRequestPublic"
-          @click.prevent="$emit('onlinehelpClick', config.url.helpRequestPublic)"
-          >{{ i18n.help }}</a>
+          @click.prevent="
+            $emit('onlinehelpClick', config.url.helpRequestPublic)
+          "
+          >{{ i18n.help }}</a
+        >
       </template>
     </ReviewRequestLine>
 
@@ -89,7 +92,7 @@
       :i18n="i18n"
       :title="i18n.privacy"
       :step="STEPS.CREATE_ACCOUNT"
-      >
+    >
       <template #contents>
         <span v-html="user.private ? i18n.nameRedact : i18n.namePlainText" />
         <!-- TODO
@@ -107,12 +110,15 @@
       :title="i18n.name"
       :invalid="needCorrectionUser"
       :step="STEPS.CREATE_ACCOUNT"
-      >
+    >
       <template #contents>
-        <span :class="{ 'text-danger': !user.first_name}">
+        <span :class="{ 'text-danger': !user.first_name }">
           {{ user.first_name || i18n.yourFirstName }}
         </span>
-        <span :class="{ 'text-danger': !user.last_name}" style="margin-left: 1ch">
+        <span
+          :class="{ 'text-danger': !user.last_name }"
+          style="margin-left: 1ch"
+        >
           {{ user.last_name || i18n.yourLastName }}
         </span>
       </template>
@@ -124,9 +130,9 @@
       :title="i18n.email"
       :invalid="needCorrectionEmail"
       :step="STEPS.CREATE_ACCOUNT"
-      >
+    >
       <template #contents>
-        <span :class="{ 'text-danger': needCorrectionEmail}">
+        <span :class="{ 'text-danger': needCorrectionEmail }">
           {{ user.email || i18n.email }}
         </span>
         {{ i18n.notSentToPb }}
@@ -138,12 +144,14 @@
       :title="i18n.address"
       :invalid="needCorrectionAddress"
       :step="user.id ? STEPS.WRITE_REQUEST : STEPS.CREATE_ACCOUNT"
-      >
+    >
       <template #contents>
         <div
           style="white-space: pre-line"
-          :class="{ 'text-danger': needCorrectionAddress}"
-          >{{ user.address || i18n.address }}</div>
+          :class="{ 'text-danger': needCorrectionAddress }"
+        >
+          {{ user.address || i18n.address }}
+        </div>
       </template>
     </ReviewRequestLine>
 
@@ -154,12 +162,9 @@
       :invalid="needCorrectionTerms"
       :contents="i18n.notAgreed"
       :step="STEPS.CREATE_ACCOUNT"
-      />
+    />
 
-    <UserConfirmation
-      :i18n="i18n"
-      :form="userForm"
-      />
+    <UserConfirmation :i18n="i18n" :form="userForm" />
 
     <div class="mt-4">
       <button
@@ -167,7 +172,8 @@
         type="submit"
         class="btn btn-primary me-2 mb-3"
         :disabled="needCorrection"
-        @click.prevent="$emit('submit')">
+        @click.prevent="$emit('submit')"
+      >
         <i class="fa fa-send" aria-hidden="true" />
         {{ i18n.submitRequest }}
       </button>
@@ -178,7 +184,8 @@
         name="save_draft"
         value="true"
         :disabled="needCorrection"
-        @click="submitting = true">
+        @click="submitting = true"
+      >
         <i class="fa fa-save" aria-hidden="true" />
         {{ i18n.saveAsDraft }}
       </button>
@@ -195,11 +202,7 @@ import UserConfirmation from './user-confirmation'
 
 import { mapMutations, mapGetters } from 'vuex'
 
-import {
-  SET_STEP,
-  STEPS
-} from '../../store/mutation_types'
-
+import { SET_STEP, STEPS } from '../../store/mutation_types'
 
 export default {
   name: 'ReviewRequest',
@@ -207,7 +210,7 @@ export default {
   components: {
     ReviewRequestLine,
     ReviewPublicbody,
-    UserConfirmation,
+    UserConfirmation
   },
   props: {
     i18n: {
@@ -274,12 +277,14 @@ export default {
   },
   computed: {
     needCorrection() {
-      return this.needCorrectionUser ||
+      return (
+        this.needCorrectionUser ||
         this.needCorrectionEmail ||
         this.needCorrectionPublicbody ||
         this.needCorrectionSubject ||
         this.needCorrectionBody ||
         this.needCorrectionAddress
+      )
     },
     needCorrectionUser() {
       return this.hasFormErrorsUser || this.userValid === false
@@ -289,26 +294,31 @@ export default {
     },
     hasFormErrorsUser() {
       // note UserTerms here
-      return this.hasFormErrorsFirstName || this.hasFormErrorsLastName || this.hasFormErrorsUserTerms
+      return (
+        this.hasFormErrorsFirstName ||
+        this.hasFormErrorsLastName ||
+        this.hasFormErrorsUserTerms
+      )
     },
     hasFormErrorsFirstName() {
-      if (this.userForm?.fields.first_name?.value !== this.user.first_name) return
-      return ('first_name' in this.userForm.errors)
+      if (this.userForm?.fields.first_name?.value !== this.user.first_name)
+        return
+      return 'first_name' in this.userForm.errors
     },
     hasFormErrorsLastName() {
       if (this.userForm?.fields.last_name?.value !== this.user.last_name) return
-      return ('last_name' in this.userForm.errors)
+      return 'last_name' in this.userForm.errors
     },
     hasFormErrorsUserTerms() {
       if (this.userForm?.fields.terms?.value !== this.user.terms) return
-      return ('terms' in this.userForm.errors)
+      return 'terms' in this.userForm.errors
     },
     needCorrectionEmail() {
       return this.hasFormErrorsEmail || this.emailValid === false
     },
     hasFormErrorsEmail() {
       if (this.userForm?.fields.user_email?.value !== this.user.email) return
-      return ('email' in this.userForm.errors)
+      return 'email' in this.userForm.errors
     },
     needCorrectionSubject() {
       return this.hasFormErrorsSubject || this.subjectValid === false
@@ -316,7 +326,7 @@ export default {
     hasFormErrorsSubject() {
       // ignore form errors if value changed
       if (this.requestForm?.fields.subject.value !== this.subject) return
-      return ('subject' in this.requestForm.errors)
+      return 'subject' in this.requestForm.errors
     },
     needCorrectionBody() {
       return this.hasFormErrorsBody || this.bodyValid === false
@@ -328,7 +338,7 @@ export default {
       //   (which is made impossible here, contradictingly)
       //   maybe need to move was...changed into store...
       if (this.requestForm?.fields.body.value !== this.body) return
-      return ('body' in this.requestForm.errors)
+      return 'body' in this.requestForm.errors
     },
     needCorrectionConfirm() {
       return this.confirmValid === false
@@ -338,7 +348,7 @@ export default {
     },
     hasFormErrorsAddress() {
       if (this.userForm?.fields.address.value !== this.user.address) return
-      return ('address' in this.userForm.errors)
+      return 'address' in this.userForm.errors
     },
     publicBody() {
       return this.getPublicBodyByScope(this.pbScope)
@@ -361,12 +371,12 @@ export default {
       'confirmValid',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
-      'requestPublic',
+      'requestPublic'
     ])
   },
   methods: {
     ...mapMutations({
-      setStep: SET_STEP,
+      setStep: SET_STEP
     })
   }
 }

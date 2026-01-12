@@ -8,11 +8,8 @@
       class="form-check-input"
       required=""
       id="id_confirm"
-      />
-    <label
-      for="id_confirm"
-      class="form-check-label field-required"
-      >
+    />
+    <label for="id_confirm" class="form-check-label field-required">
       <slot />
     </label>
   </div>
@@ -23,7 +20,7 @@ import { mapMutations } from 'vuex'
 
 import {
   UPDATE_CONFIRM,
-  UPDATE_CONFIRM_VALIDITY,
+  UPDATE_CONFIRM_VALIDITY
 } from '../../store/mutation_types'
 
 export default {
@@ -40,20 +37,17 @@ export default {
   },
   methods: {
     validate() {
-      this.updateConfirmValidity(
-        this.$refs.confirm.reportValidity()
-      )
+      this.updateConfirmValidity(this.$refs.confirm.reportValidity())
     },
     ...mapMutations({
       updateConfirm: UPDATE_CONFIRM,
-      updateConfirmValidity: UPDATE_CONFIRM_VALIDITY,
+      updateConfirmValidity: UPDATE_CONFIRM_VALIDITY
     })
   }
 }
 </script>
 
 <style scoped>
-
 /* hide required indicator (a red asterisk) for labels that contain block markup */
 
 label:has(p)::after,
@@ -61,5 +55,4 @@ label:has(div)::after,
 label:has(ul)::after {
   display: none;
 }
-
 </style>

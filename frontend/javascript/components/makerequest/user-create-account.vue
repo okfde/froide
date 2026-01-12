@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <UserRegistration
       ref="userRegistration"
       :form="userForm"
@@ -10,7 +9,7 @@
       v-model:initial-first-name="firstName"
       v-model:initial-last-name="lastName"
       v-model:initial-email="email"
-      />
+    />
 
     <!-- TODO: password, see UserRegistration stub -->
 
@@ -20,7 +19,7 @@
       :form="userForm"
       :config="config"
       :address-help-text="userForm.fields.address.help_text"
-      />
+    />
 
     <template v-if="config.settings.user_can_hide_web">
       <h3 class="fs-6">{{ i18n.privacy }}</h3>
@@ -28,7 +27,7 @@
         :user-form="userForm"
         :config="config"
         v-model:initial-private="userPrivate"
-        >
+      >
         <slot name="userPublicPreamble"></slot>
       </UserPublic>
     </template>
@@ -38,22 +37,18 @@
       <UserClaimsVip
         :user-form="userForm"
         v-model:initial-value="userClaimsVip"
-        />
+      />
     </template>
 
     <h3 class="fs-6">{{ i18n.terms }}</h3>
-    <UserTerms
-      ref="userTerms"
-      :form="userForm"
-      v-model:initial-terms="terms"
-      />
+    <UserTerms ref="userTerms" :form="userForm" v-model:initial-terms="terms" />
 
     <div class="my-4">
       <button
         type="button"
         class="btn btn-primary"
         @click="validateAllNextStep"
-        >
+      >
         {{ i18n.stepNext }}
       </button>
     </div>
@@ -74,7 +69,7 @@ import {
   UPDATE_LAST_NAME,
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
-  UPDATE_CLAIMS_VIP,
+  UPDATE_CLAIMS_VIP
 } from '../../store/mutation_types'
 
 import I18nMixin from '../../lib/i18n-mixin'
@@ -86,7 +81,7 @@ export default {
     UserTerms,
     UserPublic,
     UserAddress,
-    UserClaimsVip,
+    UserClaimsVip
   },
   mixins: [I18nMixin],
   props: {
@@ -95,7 +90,7 @@ export default {
     },
     userForm: {
       type: Object
-    },
+    }
   },
   computed: {
     email: {
@@ -144,7 +139,7 @@ export default {
       'emailValid',
       'addressValid',
       'termsValid',
-      'stepCanContinue',
+      'stepCanContinue'
     ])
   },
   methods: {
@@ -153,7 +148,13 @@ export default {
       this.$refs.userTerms.validate()
       this.$refs.userAddress.validate()
       this.$refs.userRegistration.validateAll()
-      if (this.firstNameValid && this.lastNameValid && this.emailValid && this.addressValid && this.termsValid) {
+      if (
+        this.firstNameValid &&
+        this.lastNameValid &&
+        this.emailValid &&
+        this.addressValid &&
+        this.termsValid
+      ) {
         this.$emit('stepNext')
       }
     },
@@ -162,9 +163,8 @@ export default {
       updateLastName: UPDATE_LAST_NAME,
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE,
-      updateClaimsVip: UPDATE_CLAIMS_VIP,
+      updateClaimsVip: UPDATE_CLAIMS_VIP
     })
   }
 }
-
 </script>

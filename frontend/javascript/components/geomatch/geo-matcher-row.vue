@@ -1,7 +1,8 @@
 <template>
   <tr
     :class="{ loading: georegion.loading }"
-    :data-region="georegion.resource_uri">
+    :data-region="georegion.resource_uri"
+  >
     <td>
       <a :href="georegionAdminUrl" target="_blank">
         {{ georegion.name }}

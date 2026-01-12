@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="row mb-3">
-
       <!-- Text query input -->
 
       <div class="col col-md-9">
@@ -11,13 +10,13 @@
             type="search"
             v-model="textQuery"
             :placeholder="i18n.searchRequests"
-            />
+          />
           <button
             type="button"
             class="btn btn-secondary"
             @click="search"
             :disabled="isSearching"
-            >
+          >
             <span class="fa fa-search" aria-hidden="true" />
             {{ i18n.search }}
           </button>
@@ -26,7 +25,6 @@
     </div>
 
     <div class="row">
-
       <!-- Dropdown Jurisdiction -->
 
       <div class="col-sm-3">
@@ -35,13 +33,15 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            >{{ i18n.level }}</button>
+          >
+            {{ i18n.level }}
+          </button>
           <div class="dropdown-menu p-3">
             <ul class="list-unstyled mb-0">
               <li
                 v-for="(jurisdictions, regionKind) in jurisdictionsByRegionKind"
                 :key="regionKind"
-                >
+              >
                 <div class="form-check">
                   <input
                     type="radio"
@@ -50,11 +50,10 @@
                     name="regionkind"
                     v-model="jurisdictionRegionKind"
                     :value="regionKind"
-                    />
-                  <label
-                    :for="regionKind"
-                    class="form-check-label"
-                    >{{ jurisdictions.name }}</label>
+                  />
+                  <label :for="regionKind" class="form-check-label">{{
+                    jurisdictions.name
+                  }}</label>
                 </div>
               </li>
             </ul>
@@ -66,22 +65,26 @@
 
       <div
         class="col-sm-3"
-        v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length > 1"
-        >
+        v-if="
+          jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length > 1
+        "
+      >
         <div class="dropdown my-1 my-sm-0">
           <button
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            >{{ jurisdictionsByRegionKind[jurisdictionRegionKind].name }}</button>
-          <div
-            class="dropdown-menu p-3"
-            >
+          >
+            {{ jurisdictionsByRegionKind[jurisdictionRegionKind].name }}
+          </button>
+          <div class="dropdown-menu p-3">
             <ul class="list-unstyled">
               <li
-                v-for="jurisdiction in jurisdictionsByRegionKind[jurisdictionRegionKind].items"
+                v-for="jurisdiction in jurisdictionsByRegionKind[
+                  jurisdictionRegionKind
+                ].items"
                 :key="jurisdiction.id"
-                >
+              >
                 <div class="form-check">
                   <!-- alt: multiple jurisdictions stub
                     <input
@@ -99,11 +102,12 @@
                     name="jurisdiction"
                     :value="jurisdiction"
                     v-model="selectedJurisdiction"
-                    />
+                  />
                   <label
                     :for="'j' + jurisdiction.id"
                     class="form-check-label"
-                    >{{ jurisdiction.name }}</label>
+                    >{{ jurisdiction.name }}</label
+                  >
                 </div>
               </li>
             </ul>
@@ -120,7 +124,9 @@
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
             data-bs-auto-close="outside"
-            >{{ i18n.dateRange }}</button>
+          >
+            {{ i18n.dateRange }}
+          </button>
           <div class="dropdown-menu p-3">
             <div class="d-flex flex-column flex-md-row align-items-center">
               <!-- alt: label, date input
@@ -132,9 +138,15 @@
                 :aria-label="i18n.dateRangeFrom"
                 v-model="dateStart"
                 style="min-width: 10ch"
-                >
+              >
                 <option :value="null"></option>
-                <option v-for="year in dateYearsStart" :key="year" :value="year">{{ year }}</option>
+                <option
+                  v-for="year in dateYearsStart"
+                  :key="year"
+                  :value="year"
+                >
+                  {{ year }}
+                </option>
               </select>
               <span class="px-1">&mdash;</span>
               <!-- alt: label, date input
@@ -146,9 +158,11 @@
                 :aria-label="i18n.dateRangeTo"
                 v-model="dateEnd"
                 style="min-width: 10ch"
-                >
+              >
                 <option :value="null"></option>
-                <option v-for="year in dateYearsEnd" :key="year" :value="year">{{ year }}</option>
+                <option v-for="year in dateYearsEnd" :key="year" :value="year">
+                  {{ year }}
+                </option>
               </select>
             </div>
           </div>
@@ -163,13 +177,12 @@
             type="button"
             class="btn btn-secondary dropdown-toggle d-block w-100"
             data-bs-toggle="dropdown"
-            >{{ i18n.campaign }}</button>
+          >
+            {{ i18n.campaign }}
+          </button>
           <div class="dropdown-menu p-3">
             <ul class="list-unstyled mb-0">
-              <li
-                v-for="campaign in campaigns"
-                :key="campaign.id"
-                >
+              <li v-for="campaign in campaigns" :key="campaign.id">
                 <div class="form-check">
                   <input
                     type="radio"
@@ -178,34 +191,38 @@
                     name="campaign"
                     :value="campaign"
                     v-model="selectedCampaign"
-                    />
+                  />
                   <label
                     :for="'campaign_' + campaign.id"
                     class="form-check-label"
-                    >{{ campaign.name }}</label>
+                    >{{ campaign.name }}</label
+                  >
                 </div>
               </li>
             </ul>
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- Active filter badges -->
 
     <div class="my-3 d-flex flex-wrap gap-2">
-
       <!-- Badges: Jurisdiction/kind + sub-jurisdiction -->
 
       <PbFilterBadge
-        v-if="jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length === 1 ||
-        (jurisdictionRegionKind && jurisdictionsByRegionKind[jurisdictionRegionKind] && !selectedJurisdiction)"
+        v-if="
+          jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length ===
+            1 ||
+          (jurisdictionRegionKind &&
+            jurisdictionsByRegionKind[jurisdictionRegionKind] &&
+            !selectedJurisdiction)
+        "
         class="mb-1"
         @remove-click="jurisdictionRegionKind = null"
         :label="i18n.level"
         :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
-        />
+      />
 
       <!-- alt
         <PbFilterBadge
@@ -224,7 +241,7 @@
         @remove-click="selectedJurisdiction = null"
         :label="i18n['groupBy_' + jurisdictionRegionKind]"
         :value="selectedJurisdiction.name"
-        />
+      />
 
       <!-- Badges: from/to year -->
 
@@ -234,14 +251,14 @@
         @remove-click="dateStart = null"
         :label="i18n.dateRangeFrom"
         :value="dateStart"
-        />
+      />
       <PbFilterBadge
         v-if="dateEnd"
         class="mb-1"
         @remove-click="dateEnd = null"
         :label="i18n.dateRangeTo"
         :value="dateEnd"
-        />
+      />
 
       <!-- Badge: campaign -->
 
@@ -251,16 +268,22 @@
         class="mb-1"
         :label="i18n.campaign"
         :value="selectedCampaign.name"
-        />
+      />
     </div>
 
     <!-- API errors -->
 
     <div v-if="apiError" class="alert alert-danger alert-dismissible">
-      <strong>{{ i18n.error }}</strong><br/>
+      <strong>{{ i18n.error }}</strong
+      ><br />
       <!-- ugly, but better than nothing? -->
       <small>{{ apiError }}</small>
-      <button type="button" class="btn-close" :aria-label="i18n.close" @click="apiError = null"></button>
+      <button
+        type="button"
+        class="btn-close"
+        :aria-label="i18n.close"
+        @click="apiError = null"
+      ></button>
     </div>
 
     <!-- Results with count + pagination -->
@@ -268,10 +291,7 @@
     <div v-if="showResults">
       <p>{{ i18n._('results', { count: resultsCount }) }}</p>
 
-      <ResultsPagination
-        :response-meta="resultsMeta"
-        v-model="pagination"
-        />
+      <ResultsPagination :response-meta="resultsMeta" v-model="pagination" />
 
       <ul class="list-unstyled">
         <li v-for="object in results" :key="object.id">
@@ -279,12 +299,8 @@
         </li>
       </ul>
 
-      <ResultsPagination
-        :response-meta="resultsMeta"
-        v-model="pagination"
-        />
+      <ResultsPagination :response-meta="resultsMeta" v-model="pagination" />
     </div>
-
   </div>
 </template>
 
@@ -292,8 +308,12 @@
 import { computed, inject, ref, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 import debounce from 'lodash.debounce'
-import { jurisdictionList, campaignList, requestSearchRetrieve } from '../../api';
-import SimilarRequestSearchResult from './similar-request-search-result.vue';
+import {
+  jurisdictionList,
+  campaignList,
+  requestSearchRetrieve
+} from '../../api'
+import SimilarRequestSearchResult from './similar-request-search-result.vue'
 import ResultsPagination from './results-pagination.vue'
 import { UPDATE_SIMILAR_REQUEST_SEARCH } from '../../store/mutation_types'
 import PbFilterBadge from '../publicbody/pb-filter-badge.vue'
@@ -314,7 +334,7 @@ const initialState = store.state.similarRequestSearch
 
 const pagination = reactive({
   offset: initialState?.pagination?.offset || 0,
-  limit: searchResultPageSize,
+  limit: searchResultPageSize
 })
 
 // hide empty results list on load
@@ -347,11 +367,12 @@ jurisdictionList().then((resp) => {
       rank: items[0]?.rank,
       items,
       slug: items[0]?.slug,
-      name: items.length === 1
-        ? items[0].name
-        // TODO works out because of alphabetical implicit sorting,
-        //   but might end up weird: Land vs Bundesland vs Freistaat...
-        : items[0].region_kind_detail
+      name:
+        items.length === 1
+          ? items[0].name
+          : // TODO works out because of alphabetical implicit sorting,
+            //   but might end up weird: Land vs Bundesland vs Freistaat...
+            items[0].region_kind_detail
     }
   })
 })
@@ -367,13 +388,16 @@ const dateStart = ref(initialState.dateStart)
 const dateEnd = ref(initialState.dateEnd)
 
 // create ranges for the select-options
-const dateYearsStart = computed(() => Array.from(
-  { length: (new Date).getFullYear() - props.config.settings.min_year + 1 },
-  (_, y) => y + props.config.settings.min_year
-))
-const dateYearsEnd = computed(() => dateStart.value
-  ? dateYearsStart.value.filter((y) => y >= dateStart.value)
-  : dateYearsStart.value
+const dateYearsStart = computed(() =>
+  Array.from(
+    { length: new Date().getFullYear() - props.config.settings.min_year + 1 },
+    (_, y) => y + props.config.settings.min_year
+  )
+)
+const dateYearsEnd = computed(() =>
+  dateStart.value
+    ? dateYearsStart.value.filter((y) => y >= dateStart.value)
+    : dateYearsStart.value
 )
 
 // avoid impossible time ranges, push dateEnd after dateStart if necessary
@@ -394,11 +418,19 @@ const query = computed(() => {
   // } else
   if (selectedJurisdiction.value) {
     query.jurisdiction = selectedJurisdiction.value.slug
-  } else if (jurisdictionRegionKind.value && jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items.length === 1) {
+  } else if (
+    jurisdictionRegionKind.value &&
+    jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items
+      .length === 1
+  ) {
     // optionally chaining here because jurisdictionList might be still loading (when loaded from storage)
-    query.jurisdiction = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.items[0].slug
+    query.jurisdiction =
+      jurisdictionsByRegionKind.value[
+        jurisdictionRegionKind.value
+      ]?.items[0].slug
   } else if (jurisdictionRegionKind.value && !selectedJurisdiction.value) {
-    query.jurisdiction_rank = jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.rank
+    query.jurisdiction_rank =
+      jurisdictionsByRegionKind.value[jurisdictionRegionKind.value]?.rank
   }
   if (selectedCampaign.value) {
     query.campaign = selectedCampaign.value.slug
@@ -442,26 +474,30 @@ const search = () => {
 if (initialState.initialSearch) search()
 
 // on query change, rewind pagination
-watch([
-  textQuery,
-  // selectedJurisdictions,
-  selectedJurisdiction,
-  jurisdictionRegionKind,
-  selectedCampaign,
-  dateStart,
-  dateEnd
+watch(
+  [
+    textQuery,
+    // selectedJurisdictions,
+    selectedJurisdiction,
+    jurisdictionRegionKind,
+    selectedCampaign,
+    dateStart,
+    dateEnd
   ],
-  () => { pagination.offset = 0 }
+  () => {
+    pagination.offset = 0
+  }
 )
 // on query change, including pagination but excluding text, trigger search
-watch([
-  pagination,
-  // selectedJurisdictions,
-  selectedJurisdiction,
-  jurisdictionRegionKind,
-  selectedCampaign,
-  dateStart,
-  dateEnd
+watch(
+  [
+    pagination,
+    // selectedJurisdictions,
+    selectedJurisdiction,
+    jurisdictionRegionKind,
+    selectedCampaign,
+    dateStart,
+    dateEnd
   ],
   () => search()
 )
@@ -480,8 +516,7 @@ watch(query, () => {
     selectedCampaign: selectedCampaign.value,
     dateStart: dateStart.value,
     dateEnd: dateEnd.value,
-    initialSearch: true,
+    initialSearch: true
   })
 })
-
 </script>

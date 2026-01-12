@@ -13,12 +13,14 @@
         :required="required"
         :disabled="disabled"
         @change="fileChanged"
-        accept="image/*" />
+        accept="image/*"
+      />
       <button
         class="btn btn-sm btn-outline-secondary"
         :disabled="!hasFile"
         :title="i18n.reset"
-        @click.prevent="resetFile">
+        @click.prevent="resetFile"
+      >
         <i class="fa fa-times-circle" />
         {{ i18n.reset }}
       </button>
@@ -33,7 +35,8 @@
             class="btn btn-sm btn-outline-secondary"
             :disabled="!hasRedaction"
             :title="i18n.undo"
-            @click.prevent="undoRedaction">
+            @click.prevent="undoRedaction"
+          >
             <i class="fa fa-share fa-flip-horizontal" />
             {{ i18n.undo }}
           </button>
@@ -44,7 +47,8 @@
           :src="img.src"
           ref="redactor"
           @redacted="updateFile"
-          @hasredaction="updateHasRedation" />
+          @hasredaction="updateHasRedation"
+        />
       </div>
     </div>
   </div>

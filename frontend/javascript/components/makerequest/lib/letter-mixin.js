@@ -30,7 +30,7 @@ const LetterMixin = {
         return `${this.i18n.kindRegards}`
       }
       return `${this.defaultLaw.letter_end}`
-    },
+    }
     /*
     letterSignature() {
       if (!this.user || (!this.user.first_name && !this.user.last_name)) {
