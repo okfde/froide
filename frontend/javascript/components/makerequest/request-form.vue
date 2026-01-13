@@ -540,6 +540,7 @@ export default {
       return new RegExp(`\\b${regex.join('\\b|\\b')}\\b`, 'gi')
     },
     hasUserConfirmContent () {
+      if (!this.$parent['django-slots']) return false
       return this.$parent['django-slots']['request-user-confirm'].textContent.trim() !== ''
     },
     ...mapGetters([
