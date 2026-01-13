@@ -660,12 +660,15 @@ export default {
     },
     validateAllNextStep() {
       this.clearFormErrors = true
-      // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
-      this.validateBody()
-      this.validateSubject()
+      if (!this.editingDisabled) {
+        // only one reportValidity will be visible, but the order/precedence seems a bit unpredictable
+        this.validateBody()
+        this.validateSubject()
+      }
+      const editingPassed = (this.bodyValid && this.subjectValid) || this.editingDisabled
       if (this.hasUserConfirmContent && this.confirmRequired) this.validateConfirm()
       const confirmPassed = this.confirmValid || !this.confirmRequired || !this.hasUserConfirmContent
-      if (this.bodyValid && this.subjectValid && confirmPassed) {
+      if (editingPassed && confirmPassed) {
         this.$emit('stepNext')
       }
     },
