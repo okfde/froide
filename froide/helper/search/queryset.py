@@ -1,4 +1,7 @@
+import difflib
+import html
 import logging
+import re
 
 from django.utils.safestring import mark_safe
 
@@ -170,10 +173,62 @@ class ESQuerySetWrapper(object):
             hit = self._es_map[obj.pk]
             # mark_safe should work because highlight_options
             # has been set with encoder="html"
-            obj.query_highlight = mark_safe(" ".join(self._get_highlight(hit)))
+            obj.query_highlight = mark_safe(
+                html.unescape(" [...] ".join(self._get_highlight(hit)))
+            )
             yield obj
 
     def _get_highlight(self, hit):
         if hasattr(hit.meta, "highlight"):
+            highlighted = set()
+            highlight_count = 0
             for key in hit.meta.highlight:
-                yield from hit.meta.highlight[key]
+                for snippet in hit.meta.highlight[key]:
+                    for s in filter_highlight_snippet(snippet):
+                        if not has_similar_match(s, highlighted):
+                            highlight_count += 1
+                            yield s
+
+                        if highlight_count == 5:
+                            return
+
+                        highlighted.add(s)
+
+
+def filter_highlight_snippet(snippet):
+    """
+    Split a highlight snippet into sections based on whitespace clusters
+    and yields only those sections that contain <em> tags but are not fully
+    enclosed by them.
+    """
+    # Cluster of 2 or more whitespace characters
+    whitespace_cluster = re.compile(r"\s{2,}")
+
+    sections = whitespace_cluster.split(snippet)
+
+    for s in sections:
+        if "<em>" in s and not (s.startswith("<em>") and s.endswith("</em>")):
+            yield s
+
+
+def has_similar_match(word, possibilities, cutoff=0.9):
+    """
+    Return True if `word` is close to any string in `possibilities`
+    with a similarity >= `cutoff`.
+
+    Implementation inspired by difflib.get_close_matches:
+    https://github.com/python/cpython/blob/3.13/Lib/difflib.py#L=666
+    """
+    s = difflib.SequenceMatcher(isjunk=lambda c: c in " \r\n\t")
+    s.set_seq2(word)
+
+    for x in possibilities:
+        s.set_seq1(x)
+        if (
+            s.real_quick_ratio() >= cutoff
+            and s.quick_ratio() >= cutoff
+            and s.ratio() >= cutoff
+        ):
+            return True
+
+    return False
