@@ -1,6 +1,7 @@
 import hashlib
 import hmac
 import re
+import unicodedata
 from datetime import timedelta
 from typing import Dict, Optional
 from urllib.parse import urlencode
@@ -313,7 +314,7 @@ class AccountService(object):
                 user.save()
         return blocklisted
 
-    def apply_name_redaction(self, content, replacement=""):
+    def apply_name_redaction(self, content, replacement="", unicode=True):
         if not self.user.private:
             return content
 
@@ -328,6 +329,15 @@ class AccountService(object):
             *self.user.first_name.split(),
             *self.user.last_name.split(),
         ]
+
+        if not unicode:
+            user_asciiish_name = (
+                unicodedata.normalize("NFKD", self.user.get_full_name())
+                .encode("ascii", "ignore")
+                .decode()
+            )
+            needles.extend(user_asciiish_name.split())
+
         if self.user.organization_name:
             needles.append(self.user.organization_name)
 

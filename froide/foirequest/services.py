@@ -527,7 +527,9 @@ class ReceiveEmailService(BaseService):
 
             # Translators: replacement for person name in filename
             repl = str(_("NAME"))
-            att.name = account_service.apply_name_redaction(att.name, repl)
+            att.name = account_service.apply_name_redaction(
+                att.name, repl, unicode=False
+            )
             att.name = re.sub(r"[^A-Za-z0-9_\.\-]", "", att.name)
             att.name = att.name[:250]
 

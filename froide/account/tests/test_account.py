@@ -854,3 +854,13 @@ def test_multipart_name_redaction():
     repl = "NAME"
     redacted_name = account_service.apply_name_redaction(name, repl)
     assert redacted_name == "Reply-NAME-NAME-NAME.pdf"
+
+
+@pytest.mark.django_db
+def test_unicode_name_redaction():
+    user = User.objects.create(first_name="Älex", last_name="Eğçamplé", private=True)
+    account_service = AccountService(user)
+    name = "reply-alex-egcample.pdf"
+    repl = "NAME"
+    redacted_name = account_service.apply_name_redaction(name, repl, unicode=False)
+    assert redacted_name == "reply-NAME-NAME.pdf"
