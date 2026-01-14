@@ -246,6 +246,10 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
         widget=BootstrapSelect,
         method="add_sort",
     )
+    hide_project_duplicates = django_filters.BooleanFilter(
+        label=_("hide project duplicated"),
+        method="filter_hide_project_duplicates",
+    )
 
     class Meta:
         model = FoiRequest
@@ -324,6 +328,16 @@ class BaseFoiRequestFilterSet(BaseSearchFilterSet):
     def add_sort(self, qs, name, value):
         if value:
             return qs.add_sort("%s_message" % value)
+        return qs
+
+    def filter_hide_project_duplicates(self, qs, name, value):
+        if value:
+            return self.apply_filter(
+                qs,
+                name,
+                Q("bool", must_not={"exists": {"field": "project"}})
+                | Q("term", project_order=0),
+            )
         return qs
 
 

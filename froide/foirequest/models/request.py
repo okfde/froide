@@ -110,15 +110,6 @@ class PublishedFoiRequestManager(CurrentSiteManager):
     def by_last_update(self):
         return self.get_queryset().order_by("-last_message")
 
-    def for_list_view(self):
-        return (
-            self.by_last_update()
-            .filter(
-                same_as__isnull=True,
-            )
-            .filter(models.Q(project__isnull=True) | models.Q(project_order=0))
-        )
-
     def get_resolution_count_by_public_body(self, obj):
         from ..filters import REVERSE_FILTER_DICT
 
@@ -633,12 +624,7 @@ class FoiRequest(models.Model):
         return self.visibility == self.VISIBILITY.VISIBLE_TO_PUBLIC
 
     def in_public_search_index(self):
-        return (
-            self.is_public()
-            and self.is_foi
-            and self.same_as_id is None
-            and (self.project_id is None or self.project_order == 0)
-        )
+        return self.is_public() and self.is_foi and self.same_as_id is None
 
     def get_redaction_regexes(self):
         from ..utils import get_foi_mail_domains
