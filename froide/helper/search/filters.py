@@ -4,6 +4,8 @@ from django.utils.translation import gettext_lazy as _
 import django_filters
 from elasticsearch_dsl.query import Q
 
+from froide.helper.search import get_query_preprocessor
+
 
 class BaseSearchFilterSet(django_filters.FilterSet):
     query_fields = ["content"]
@@ -19,6 +21,7 @@ class BaseSearchFilterSet(django_filters.FilterSet):
     def __init__(self, *args, **kwargs):
         self.facet_config = kwargs.pop("facet_config", {})
         self.view = kwargs.pop("view", None)
+        self.query_preprocessor = get_query_preprocessor()
         super().__init__(*args, **kwargs)
 
     def apply_filter(self, qs, name, *args, **kwargs):
@@ -42,13 +45,29 @@ class BaseSearchFilterSet(django_filters.FilterSet):
 
     def auto_query(self, qs, name, value):
         if value:
+            query = self.query_preprocessor.prepare_query(value)
             return qs.set_query(
                 Q(
                     "simple_query_string",
-                    query=value,
+                    query=query,
                     fields=self.query_fields,
                     default_operator="and",
                     lenient=True,
                 )
             )
         return qs
+
+
+class BaseQueryPreprocessor:
+    """
+    Base class that can be overridden for custom search query preprocessing.
+    """
+
+    def prepare_query(self, text: str):
+        """
+        Preprocess the given search query text and return the processed text.
+
+        This method can be overridden in subclasses to implement custom
+        preprocessing logic.
+        """
+        return text
