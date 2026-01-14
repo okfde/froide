@@ -5,6 +5,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from elasticsearch_dsl.query import Q
+
 from froide.helper.search.views import BaseSearchView
 from froide.publicbody.models import Jurisdiction
 
@@ -38,7 +40,14 @@ class BaseListRequestView(BaseSearchView):
     filterset = FoiRequestFilterSet
 
     def get_base_search(self):
-        return super().get_base_search().filter("term", public=True)
+        base_search = super().get_base_search().filter("term", public=True)
+        # TODO: move this into facet so it is not removed if other filter are applied, e.g. through the filter-dropdowns
+        if not self.request.GET.get("show_project_requests"):
+            base_search = base_search.filter(
+                Q("bool", must_not={"exists": {"field": "project"}})
+                | Q("term", project_order=0)
+            )
+        return base_search
 
 
 class ListRequestView(BaseListRequestView):
