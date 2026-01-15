@@ -44,7 +44,7 @@ jobs:
           node-version: 22
           cache: pnpm
       - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev
+        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript
       - name: Install dependencies
         run: |
           uv pip sync requirements-test.txt
