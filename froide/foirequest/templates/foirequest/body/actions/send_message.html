@@ -6,7 +6,7 @@
       action="{% url 'foirequest-send_message' slug=object.slug %}#write-message"
       enctype="multipart/form-data">
     {% csrf_token %}
-    <h4>{% blocktrans %}Send message to public body{% endblocktrans %}</h4>
+    <h2 class="h4">{% blocktrans %}Send message to public body{% endblocktrans %}</h2>
     {% if object.is_overdue %}
         <p>
             {% blocktrans %}Your request is <b>overdue</b>. You should send a reminder to the Public Body!{% endblocktrans %}

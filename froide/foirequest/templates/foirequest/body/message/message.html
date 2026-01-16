@@ -12,6 +12,13 @@
      data-timeline-key="{{ message.timestamp|date:'Y-m' }}">
     {% block before_message %}{% endblock %}
     {# head #}
+    <h3 class="visually-hidden">
+        {% if message.is_response %}
+            {% blocktrans with sender=message.sender_public_body.name|default:message.sender_email %}Response from {{ sender }}{% endblocktrans %}
+        {% else %}
+            {% blocktrans with recipient=message.recipient_public_body.name|default:message.recipient_email %}Message to {{ recipient }}{% endblocktrans %}
+        {% endif %}
+    </h3>
     <div {% if message.timestamp == object.last_message %}id="last"{% endif %}
          class="d-flex p-3 alpha-message__head">
         {# avatar #}

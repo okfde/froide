@@ -4,7 +4,7 @@
       method="post"
       action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
     {% csrf_token %}
-    <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
+    <h2 class="h4">{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h2>
     <p>
         {% blocktrans %}
     If you think your request was not properly handled or it is delayed, you can ask for assistance.
