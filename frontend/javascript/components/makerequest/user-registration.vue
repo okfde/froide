@@ -9,7 +9,7 @@
         class="form-label field-required"
         for="id_first_name"
         :class="[
-          { 'text-danger': usererrors.first_name },
+          { 'text-danger': userformErrors.first_name },
           'col-sm-4', 'col-md-3', 'col-form-label'
         ]"
         >{{ i18n.yourFirstName }}
@@ -22,14 +22,14 @@
           type="text"
           name="first_name"
           class="form-control"
-          :class="{ 'is-invalid': usererrors.first_name && !updateFirstNameChanged }"
+          :class="{ 'is-invalid': userformErrors.first_name && !updateFirstNameChanged }"
           :placeholder="userformFields.first_name.placeholder"
           required
           :maxlength="userformFields.first_name.max_length"
           @change="updateFirstNameChanged(true)"
           />
         <p
-          v-for="e in usererrors.first_name"
+          v-for="e in userformErrors.first_name"
           :key="e.message"
           class="text-danger"
           >{{ e.message }}
@@ -41,7 +41,7 @@
         class="form-label field-required"
         for="id_last_name"
         :class="[
-          { 'text-danger': usererrors.last_name },
+          { 'text-danger': userformErrors.last_name },
           'col-sm-4', 'col-md-3', 'col-form-label'
         ]"
         >{{ i18n.yourLastName }}
@@ -54,18 +54,18 @@
           type="text"
           name="last_name"
           class="form-control"
-          :class="{ 'is-invalid': usererrors.last_name && !lastNameChanged }"
+          :class="{ 'is-invalid': userformErrors.last_name && !lastNameChanged }"
           :placeholder="userformFields.last_name.placeholder"
           required
           :maxlength="userformFields.last_name.max_length"
           @change="updateLastNameChanged(true)"
           />
-        <div v-if="usePseudonym" class="col-md-4 mt-md-4">
+        <div v-if="usePseudonym">
           <small
             v-if="userformFields.last_name.help_text"
             v-html="userformFields.last_name.help_text" />
         </div>
-        <p v-for="e in usererrors.last_name" :key="e.message">
+        <p v-for="e in userformErrors.last_name" :key="e.message">
           {{ e.message }}
         </p>
       </div>
@@ -75,7 +75,7 @@
         for="id_user_email"
         class="col-sm-4 col-md-3 col-form-label"
         :class="{
-          'text-danger': errors.user_email,
+          'text-danger': userformErrors.user_email,
           'field-required': !user
         }">
         {{ i18n.yourEmail }}
@@ -87,14 +87,14 @@
           type="email"
           name="user_email"
           class="form-control"
-          :class="{ 'is-invalid': errors.user_email && !emailChanged }"
-          :placeholder="formFields.user_email.placeholder"
+          :class="{ 'is-invalid': userformErrors.user_email && !emailChanged }"
+          :placeholder="userformFields.user_email.placeholder"
           required
           :maxlength="userformFields.user_email.max_length"
           @change="updateEmailChanged(true)"
           />
         <p
-          v-for="e in errors.user_email"
+          v-for="e in userformErrors.user_email"
           :key="e.message"
           class="text-danger">
           {{ e.message }}
@@ -185,9 +185,6 @@ export default {
     userForm: {
       type: Object
     },
-    defaultLaw: {
-      type: Object
-    },
     initialFirstName: {
       type: String,
       default: ''
@@ -200,6 +197,10 @@ export default {
       type: String,
       default: ''
     },
+    usePseudonym: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -211,19 +212,10 @@ export default {
     }
   },
   computed: {
-    formFields() {
-      return this.form.fields
-    },
-    errors() {
-      if (this.form) {
-        return this.form.errors
-      }
-      return {}
-    },
     userformFields() {
       return this.userForm.fields
     },
-    usererrors() {
+    userformErrors() {
       return this.userForm.errors
     },
     first_name: {

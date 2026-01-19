@@ -7648,8 +7648,8 @@ msgid "Your postal address"
 msgstr "Ihre Postadresse"
 
 #: froide/foirequest/views/make_request.py
-msgid "Please fill out your name below"
-msgstr "Bitte geben Sie Ihren Namen unten ein"
+msgid "Please fill out your name below, or in the next step"
+msgstr "Bitte geben Sie Ihren Namen unten ein, bzw. im nächsten Schritt"
 
 #: froide/foirequest/views/make_request.py
 msgid "Please make sure the information is not already requested or public"
