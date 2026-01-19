@@ -203,6 +203,7 @@
             v-if="hasRedactions || hasPassword"
             class="btn btn-dark"
             @click="redact"
+            data-testid="submit-redactions"
           >
             <i class="fa fa-check me-2" />
             <template v-if="hasRedactions">
@@ -253,7 +254,12 @@
         >
           <div class="d-flex flex-column position-sticky z-1 previewToolbar">
             <div class="btn-group-vertical w-auto position-sticky z-1">
-              <button type="button" class="btn btn-secondary" @click="zoomIn()">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="zoomIn()"
+                data-testid="zoom-in"
+              >
                 <i class="fa fa-lg fa-plus" />
               </button>
               <button
@@ -267,6 +273,7 @@
                 type="button"
                 class="btn btn-secondary"
                 @click="zoomOut()"
+                data-testid="zoom-out"
               >
                 <i class="fa fa-lg fa-minus" />
               </button>
