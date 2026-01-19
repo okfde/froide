@@ -6,7 +6,7 @@
       :form="userForm"
       :user-form="userForm"
       :config="config"
-      :default-law="defaultLaw"
+      :use-pseudonym="usePseudonym"
       v-model:initial-first-name="firstName"
       v-model:initial-last-name="lastName"
       v-model:initial-email="email"
@@ -19,7 +19,9 @@
       :i18n="i18n"
       :form="userForm"
       :config="config"
-      :address-help-text="userForm.fields.address.help_text"
+      :default-law="defaultLaw"
+      :address-help-text="addressHelpText"
+      :address-required="addressRequired"
       />
 
     <template v-if="config.settings.user_can_hide_web">
@@ -33,7 +35,7 @@
       </UserPublic>
     </template>
 
-    <template v-if="config.settings.user_can_claim_vip">
+    <template v-if="config.settings.user_can_claim_vip && showUserClaimsVip">
       <h3 class="fs-6">{{ userForm.fields.claims_vip.label }}</h3>
       <UserClaimsVip
         :user-form="userForm"
@@ -48,7 +50,7 @@
       v-model:initial-terms="terms"
       />
 
-    <div class="my-4">
+    <div class="my-4" v-if="showNextButton">
       <button
         type="button"
         class="btn btn-primary"
@@ -95,6 +97,28 @@ export default {
     },
     userForm: {
       type: Object
+    },
+    showNextButton: {
+      type: Boolean
+    },
+    showUserClaimsVip: {
+      type: Boolean
+    },
+    addressHelpText: {
+      type: String,
+      default: null
+    },
+    addressRequired: {
+      type: Boolean,
+      default: false
+    },
+    defaultLaw: {
+      type: Object
+    },
+    // TODO: this used to be true, hint should be added to privacy help page?
+    usePseudonym: {
+      type: Boolean,
+      default: false
     },
   },
   computed: {

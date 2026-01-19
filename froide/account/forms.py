@@ -12,6 +12,7 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.content_urls import get_content_url
@@ -161,6 +162,11 @@ class NewUserBaseForm(AddressBaseForm):
             required=False,
             widget=BootstrapRadioSelect,
             label=_("Hide my name from public view"),
+            help_text=mark_safe(
+                _(
+                    "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity"
+                )
+            ),
             choices=[
                 (
                     False,

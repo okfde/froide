@@ -40,13 +40,10 @@
 </template>
 
 <script>
-import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
   name: 'UserConfirmation',
-  mixins: [I18nMixin],
   props: {
-    i18n: Object,
     form: {
       type: Object
     }
@@ -63,4 +60,5 @@ export default {
     },
   }
 }
+
 </script>

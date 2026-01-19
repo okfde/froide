@@ -312,7 +312,7 @@ class MakeRequestView(FormView):
                 "yourLastName": _("Your last name"),
                 "yourEmail": _("Your email address"),
                 "yourAddress": _("Your postal address"),
-                "giveName": _("Please fill out your name below"),
+                "giveName": _("Please fill out your name below, or in the next step"),
                 "similarExist": _(
                     "Please make sure the information is not already requested or public"
                 ),
