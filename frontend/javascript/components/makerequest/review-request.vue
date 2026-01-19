@@ -143,7 +143,7 @@
         <div
           style="white-space: pre-line"
           :class="{ 'text-danger': needCorrectionAddress}"
-          >{{ user.address || i18n.address }}</div>
+          >{{ user.address || '—' }}</div>
       </template>
     </ReviewRequestLine>
 
@@ -209,6 +209,7 @@ export default {
     ReviewPublicbody,
     UserConfirmation,
   },
+  emits: ['submit', 'onlinehelpClick'],
   props: {
     i18n: {
       type: Object,

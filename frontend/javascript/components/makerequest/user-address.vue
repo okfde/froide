@@ -75,10 +75,12 @@ export default {
       required: true
     },
     config: {
-      type: Object
+      type: Object,
+      required: true
     },
     form: {
-      type: Object
+      type: Object,
+      required: true
     },
     addressHelpText: {
       type: String,
@@ -87,6 +89,10 @@ export default {
     addressRequired: {
       type: Boolean,
       default: false
+    },
+    defaultLaw: {
+      type: Object,
+      default: null
     },
   },
   data() {

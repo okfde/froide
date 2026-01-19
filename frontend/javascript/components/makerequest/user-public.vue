@@ -22,7 +22,7 @@
           />
         <label :for="'id_private_choice' + choiceIndex" class="form-check-label" v-html="choice.label" />
       </div>
-      <p class="help-block" v-html="userformFields.private.help_text" />
+      <!-- <p class="help-block" v-html="userformFields.private.help_text" /> -->
       <p>
         <a
           v-if="config.url.helpRequestPrivacy"

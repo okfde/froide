@@ -259,14 +259,14 @@
 
     <div v-if="hasUser" class="card mb-3">
       <div class="card-body">
-        <details :open="userForm?.errors?.address || addressValid === false || addressChanged === true">
+        <details :open="userForm?.errors?.address || addressValid === false || addressChanged === true || user?.address === ''">
           <summary>{{ i18n.updatePostalAddress }}</summary>
           <UserAddress
-            v-model:initial-address="address"
             :i18n="i18n"
             :form="userForm"
             :config="config"
             :address-help-text="userForm.fields.address.help_text"
+            :default-law="defaultLaw"
             class="mt-3"
             />
         </details>
@@ -277,7 +277,7 @@
       <slot name="request-user-confirm" />
     </UserConfirm>
 
-    <div class="my-4">
+    <div class="my-4" v-if="showNextButton">
       <button
         type="button"
         class="btn btn-primary"
@@ -354,6 +354,10 @@ export default {
       type: String,
       default: ''
     },
+    defaultLaw: {
+      type: Object,
+      default: null
+    },
     showDraft: {
       type: Boolean,
       default: false
@@ -370,9 +374,9 @@ export default {
       type: Boolean,
       default: false
     },
-    usePseudonym: {
+    showNextButton: {
       type: Boolean,
-      default: true
+      default: false
     },
     initialSubject: {
       type: String,
@@ -544,13 +548,11 @@ export default {
       return this.$parent['django-slots']['request-user-confirm'].textContent.trim() !== ''
     },
     ...mapGetters([
-      'user',
       'subjectValid',
       'subjectChanged',
       'bodyValid',
       'bodyChanged',
       'confirmValid',
-      'defaultLaw',
       'addressValid',
       'addressChanged',
     ]),
