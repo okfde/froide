@@ -89,6 +89,7 @@
     />
     <!-- outside of listView component is awkward but easier than passing around v-model -->
     <ResultsPagination
+      v-if="getScopedSearchMeta(scope)"
       :response-meta="getScopedSearchMeta(scope)"
       v-model="pagination"
     />
@@ -134,6 +135,7 @@ export default {
     ResultsPagination
   },
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
+  emits: ['stepNext'],
   props: {
     name: {
       type: String,

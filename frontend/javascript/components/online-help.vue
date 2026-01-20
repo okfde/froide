@@ -5,7 +5,7 @@ import BsModal from './bs-modal.vue'
 const props = defineProps({
   path: String,
   i18n: {
-    type: Function,
+    type: Object,
     required: false
   }
 })
