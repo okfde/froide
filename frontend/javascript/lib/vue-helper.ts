@@ -4,7 +4,6 @@ type PropValue = string | boolean | Record<string, unknown> | Array<unknown>
 type Props = Record<string, PropValue>
 export type DjangoSlots = Record<string, DocumentFragment> | undefined
 interface OtherAttrs {
-  attrs: Record<string, string>
   class: Record<string, boolean>
 }
 
@@ -67,13 +66,7 @@ function getSlotData(el: HTMLElement): DjangoSlots {
 
 function getOtherAttrs(el: HTMLElement): OtherAttrs {
   const other: OtherAttrs = {
-    attrs: {},
     class: {}
-  }
-  if (el.id) {
-    other.attrs = {
-      id: el.id
-    }
   }
   if (el.className) {
     const classes = el.className.split(' ')
