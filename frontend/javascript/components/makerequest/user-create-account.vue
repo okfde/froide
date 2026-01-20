@@ -43,7 +43,11 @@
     </template>
 
     <h3 class="fs-6">{{ i18n.terms }}</h3>
-    <UserTerms ref="userTerms" :form="userForm" v-model:initial-terms="terms" />
+    <UserTerms
+      ref="userTerms"
+      :form="userForm"
+      v-model:initial-terms="userTerms"
+    />
 
     <div class="my-4" v-if="showNextButton">
       <button
@@ -71,7 +75,8 @@ import {
   UPDATE_LAST_NAME,
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
-  UPDATE_CLAIMS_VIP
+  UPDATE_CLAIMS_VIP,
+  UPDATE_TERMS
 } from '../../store/mutation_types'
 
 import I18nMixin from '../../lib/i18n-mixin'
@@ -86,6 +91,7 @@ export default {
     UserClaimsVip
   },
   mixins: [I18nMixin],
+  emits: ['stepNext'],
   props: {
     config: {
       type: Object
@@ -157,6 +163,14 @@ export default {
         this.updateClaimsVip(value)
       }
     },
+    userTerms: {
+      get() {
+        return this.$store.state.user.terms
+      },
+      set(value) {
+        this.updateTerms(value)
+      }
+    },
     ...mapGetters([
       'firstNameValid',
       'lastNameValid',
@@ -187,7 +201,8 @@ export default {
       updateLastName: UPDATE_LAST_NAME,
       updateEmail: UPDATE_EMAIL,
       updatePrivate: UPDATE_PRIVATE,
-      updateClaimsVip: UPDATE_CLAIMS_VIP
+      updateClaimsVip: UPDATE_CLAIMS_VIP,
+      updateTerms: UPDATE_TERMS
     })
   }
 }
