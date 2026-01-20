@@ -6516,33 +6516,29 @@ msgid "Make a request"
 msgstr "Anfrage stellen"
 
 #: froide/foirequest/templates/foirequest/request.html
-msgid "Choose a public body"
-msgstr "Wählen Sie eine Behörde aus"
+msgid "Choose public body"
+msgstr "Behörde auswählen"
 
 #: froide/foirequest/templates/foirequest/request.html
-msgid ""
-"Please type <strong>the name of the public body</strong> you'd like to "
-"request information from into the search box."
-msgstr ""
-"Bitte geben Sie <strong>den Namen der Behörde</strong> ein, die Sie anfragen "
-"wollen."
+msgid "Which public body do you want to request information at? Here you can search and filter all available public bodies."
+msgstr "An welche Behörde wollen Sie Ihre Anfrage schicken? Hier können Sie alle verfügbaren Behörden durchsuchen und filtern."
 
 #: froide/foirequest/templates/foirequest/request.html
-msgid "Can't find what you're looking for?"
-msgstr "Konnten Sie nicht finden wonach Sie suchen?"
+msgid "Can’t find a specific public body?"
+msgstr "Sie können eine bestimmte Behörde nicht finden?"
 
 #: froide/foirequest/templates/foirequest/request.html
 #, python-format
 msgid ""
 "\n"
-"              <a href=\"%(search_url)s\">Search in all public bodies</a> or "
-"<a href=\"%(propose_url)s\">suggest a new one</a>.\n"
-"            "
+"                    <a href=\"%(propose_url)s\">Contact us so we can add "
+"this public body to our database.</a>\n"
+"                "
 msgstr ""
 "\n"
-"              <a href=\"%(search_url)s\">Suchen Sie in allen Behörden</a> "
-"oder <a href=\"%(propose_url)s\">schlagen Sie eine neue vor</a>.\n"
-"            "
+"                    <a href=\"%(propose_url)s\">Schreiben Sie uns, damit wir "
+"diese Behörde in unsere Datenbank aufnehmen.</a>\n"
+"                "
 
 #: froide/foirequest/templates/foirequest/request.html
 msgid "Write the request"
@@ -7924,6 +7920,10 @@ msgstr "Überspringen"
 #: froide/foirequest/views/make_request.py
 msgid "What do you want to do?"
 msgstr "Was möchten Sie tun?"
+
+#: froide/foirequest/views/make_request.py
+msgid "Search results"
+msgstr "Suchergebnisse"
 
 #: froide/foirequest/views/message.py
 msgid "Your message has been sent."
