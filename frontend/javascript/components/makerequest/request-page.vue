@@ -174,7 +174,15 @@
                         :form="publicbodyForm"
                         :config="config"
                         @step-next="setStep(stepNext)"
-                      />
+                      >
+                        <template #search-hint>
+                          <DjangoSlot
+                            name="publicbody-search-hint"
+                            has-onlinehelp-links
+                            @onlinehelp-click="onlineHelpShow($event)"
+                          />
+                        </template>
+                      </PublicbodyBetaChooser>
                       <DjangoSlot name="publicbody-missing" />
                     </div>
                   </div>
