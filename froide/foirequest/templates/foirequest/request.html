@@ -82,21 +82,20 @@
             {% include "snippets/messages.html" %}
         </template>
         <template data-slot="publicbody-legend-title">
-            <h2>{% blocktrans %}Choose a public body{% endblocktrans %}</h2>
+            <h2>{% blocktrans %}Choose public body{% endblocktrans %}</h2>
         </template>
         <template data-slot="publicbody-help-text">
             <p>
-                {% blocktrans %}Please type <strong>the name of the public body</strong> you'd like to request information from into the search box.{% endblocktrans %}
+                {% blocktrans %}Which public body do you want to request information at? Here you can search and filter all available public bodies.{% endblocktrans %}
             </p>
         </template>
         <template data-slot="publicbody-missing">
-            <h6>{% trans "Can't find what you're looking for?" %}</h6>
+            <h3 class="fs-6">{% trans "Can’t find a specific public body?" %}</h3>
             <p>
-                {% url 'publicbody-list' as pb_search_url %}
                 {% url 'publicbody-propose' as pb_propose_url %}
-                {% blocktrans with search_url=pb_search_url propose_url=pb_propose_url %}
-              <a href="{{ search_url }}">Search in all public bodies</a> or <a href="{{ propose_url }}">suggest a new one</a>.
-            {% endblocktrans %}
+                {% blocktrans with propose_url=pb_propose_url %}
+                    <a href="{{ propose_url }}">Contact us so we can add this public body to our database.</a>
+                {% endblocktrans %}
             </p>
         </template>
         <template data-slot="request-legend-title">

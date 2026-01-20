@@ -1,5 +1,6 @@
 <template>
   <div class="search-result-container">
+    <h3 v-if="searchResultsLength > 0 || emptyResults" class="visually-hidden">{{ i18n.searchResults }}</h3>
     <ul
       v-if="searchResultsLength > 0 || emptyResults"
       class="search-results list-unstyled">
