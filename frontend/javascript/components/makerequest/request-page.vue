@@ -20,7 +20,7 @@
 
     <div class="container">
       <div class="row">
-        <div class="col x-col-lg-9">
+        <div class="col">
           <!-- v-show="step === STEPS.PREVIEW_SUBMIT"
        ...would be less naggy here, but also more confusing in certain cases,
        e.g. submit from froide-campaign with target _blank -->
@@ -124,7 +124,11 @@
                 id="step_find_similar"
               >
                 <h2>{{ i18n.findSimilarRequests }}</h2>
-                <DjangoSlot name="find-similar-requests-preamble"></DjangoSlot>
+                <div class="row">
+                  <div class="col-lg-9">
+                    <DjangoSlot name="find-similar-requests-preamble" />
+                  </div>
+                </div>
                 <SimilarRequestSearch :config="config" />
                 <div>
                   <button
@@ -164,7 +168,7 @@
                 </div>
                 <div v-else>
                   <div class="row">
-                    <div class="col-lg-8">
+                    <div class="col-lg-9">
                       <DjangoSlot name="publicbody-legend-title" />
                       <DjangoSlot name="publicbody-help-text" />
                       <PublicbodyBetaChooser
