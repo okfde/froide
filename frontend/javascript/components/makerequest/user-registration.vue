@@ -10,7 +10,9 @@
         for="id_first_name"
         :class="[
           { 'text-danger': userformErrors.first_name },
-          'col-sm-4', 'col-md-3', 'col-form-label'
+          'col-sm-4',
+          'col-md-3',
+          'col-form-label'
         ]"
         >{{ i18n.yourFirstName }}
       </label>
@@ -22,17 +24,20 @@
           type="text"
           name="first_name"
           class="form-control"
-          :class="{ 'is-invalid': userformErrors.first_name && !updateFirstNameChanged }"
+          :class="{
+            'is-invalid': userformErrors.first_name && !updateFirstNameChanged
+          }"
           :placeholder="userformFields.first_name.placeholder"
           required
           :maxlength="userformFields.first_name.max_length"
           @change="updateFirstNameChanged(true)"
-          />
+        />
         <p
           v-for="e in userformErrors.first_name"
           :key="e.message"
           class="text-danger"
-          >{{ e.message }}
+        >
+          {{ e.message }}
         </p>
       </div>
     </div>
@@ -42,7 +47,9 @@
         for="id_last_name"
         :class="[
           { 'text-danger': userformErrors.last_name },
-          'col-sm-4', 'col-md-3', 'col-form-label'
+          'col-sm-4',
+          'col-md-3',
+          'col-form-label'
         ]"
         >{{ i18n.yourLastName }}
       </label>
@@ -54,16 +61,19 @@
           type="text"
           name="last_name"
           class="form-control"
-          :class="{ 'is-invalid': userformErrors.last_name && !lastNameChanged }"
+          :class="{
+            'is-invalid': userformErrors.last_name && !lastNameChanged
+          }"
           :placeholder="userformFields.last_name.placeholder"
           required
           :maxlength="userformFields.last_name.max_length"
           @change="updateLastNameChanged(true)"
-          />
+        />
         <div v-if="usePseudonym">
           <small
             v-if="userformFields.last_name.help_text"
-            v-html="userformFields.last_name.help_text" />
+            v-html="userformFields.last_name.help_text"
+          />
         </div>
         <p v-for="e in userformErrors.last_name" :key="e.message">
           {{ e.message }}
@@ -77,7 +87,8 @@
         :class="{
           'text-danger': userformErrors.user_email,
           'field-required': !user
-        }">
+        }"
+      >
         {{ i18n.yourEmail }}
       </label>
       <div class="col-sm-8 col-md-5">
@@ -92,17 +103,18 @@
           required
           :maxlength="userformFields.user_email.max_length"
           @change="updateEmailChanged(true)"
-          />
+        />
         <p
           v-for="e in userformErrors.user_email"
           :key="e.message"
-          class="text-danger">
+          class="text-danger"
+        >
           {{ e.message }}
         </p>
       </div>
     </div>
 
-        <!--
+    <!--
           TODO: does not work a.t.m. without changes
             1. change MakeRequestView.get_user_form
               form_klass = NewUserForm → NewUserWithPasswordForm
@@ -150,7 +162,6 @@
           </div>
         </template>
       -->
-
   </div>
 </template>
 
@@ -165,7 +176,7 @@ import {
   UPDATE_LAST_NAME_VALIDITY,
   UPDATE_LAST_NAME_CHANGED,
   UPDATE_EMAIL_VALIDITY,
-  UPDATE_EMAIL_CHANGED,
+  UPDATE_EMAIL_CHANGED
 } from '../../store/mutation_types'
 
 export default {
@@ -200,7 +211,7 @@ export default {
     usePseudonym: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data() {
     return {
@@ -208,7 +219,7 @@ export default {
       firstNameValue:
         this.initialFirstName || (this.user && this.user.first_name) || '',
       lastNameValue:
-        this.initialLastName || (this.user && this.user.last_name) || '',
+        this.initialLastName || (this.user && this.user.last_name) || ''
     }
   },
   computed: {
@@ -245,25 +256,15 @@ export default {
         this.$emit('update:initialEmail', value)
       }
     },
-    ...mapGetters([
-      'firstNameChanged',
-      'lastNameChanged',
-      'emailChanged',
-    ]),
+    ...mapGetters(['firstNameChanged', 'lastNameChanged', 'emailChanged'])
   },
   methods: {
     validateAll() {
       // validate in "reverse document order" since the last (negative) report triggers popup and lingers
       // note that we're impurely committing side-effectful reportValidity (instead of checkValidity)
-      this.updateEmailValidity(
-        this.$refs.email.reportValidity()
-      )
-      this.updateLastNameValidity(
-        this.$refs.last_name.reportValidity()
-      )
-      this.updateFirstNameValidity(
-        this.$refs.first_name.reportValidity()
-      )
+      this.updateEmailValidity(this.$refs.email.reportValidity())
+      this.updateLastNameValidity(this.$refs.last_name.reportValidity())
+      this.updateFirstNameValidity(this.$refs.first_name.reportValidity())
     },
     ...mapMutations({
       updateFirstNameValidity: UPDATE_FIRST_NAME_VALIDITY,
@@ -271,7 +272,7 @@ export default {
       updateLastNameValidity: UPDATE_LAST_NAME_VALIDITY,
       updateLastNameChanged: UPDATE_LAST_NAME_CHANGED,
       updateEmailValidity: UPDATE_EMAIL_VALIDITY,
-      updateEmailChanged: UPDATE_EMAIL_CHANGED,
+      updateEmailChanged: UPDATE_EMAIL_CHANGED
     })
   }
 }
