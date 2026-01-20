@@ -84,6 +84,9 @@
         <template data-slot="publicbody-legend-title">
             <h2>{% blocktrans %}Choose public body{% endblocktrans %}</h2>
         </template>
+        <template data-slot="publicbody-search-hint">
+            {% include "foirequest/snippets/request_publicbody_search_hint.html" %}
+        </template>
         <template data-slot="publicbody-help-text">
             <p>
                 {% blocktrans %}Which public body do you want to request information at? Here you can search and filter all available public bodies.{% endblocktrans %}
