@@ -3,7 +3,8 @@
     <button
       v-if="!showSearch"
       class="btn btn-sm btn-light float-end"
-      @click.prevent="showSearch = true">
+      @click.prevent="showSearch = true"
+    >
       {{ i18n.searchPublicBodyLabel }}
     </button>
     <div v-if="showSearch" class="form-search">
@@ -14,11 +15,13 @@
           class="search-public_bodies form-control"
           :placeholder="i18n.publicBodySearchPlaceholder"
           @keyup="triggerAutocomplete"
-          @keydown.enter.prevent="triggerAutocomplete" />
+          @keydown.enter.prevent="triggerAutocomplete"
+        />
         <button
           type="button"
           class="btn btn-secondary search-public_bodies-submit"
-          @click="triggerAutocomplete">
+          @click="triggerAutocomplete"
+        >
           <i class="fa fa-search" />
           {{ i18n.search }}
         </button>
@@ -28,7 +31,8 @@
         <div
           v-for="filterKey in filterOrder"
           :key="filterKey"
-          class="col-sm-4 filter-column position-relative">
+          class="col-sm-4 filter-column position-relative"
+        >
           <PbFilter
             :global-config="config"
             :config="filterConfig[filterKey]"
@@ -36,8 +40,11 @@
             :scope="scope"
             :value="filters[filterKey]"
             @update="updateFilter"
-            />
+          />
         </div>
+      </div>
+      <div class="mt-3" v-if="$slots['search-hint']">
+        <slot name="search-hint"></slot>
       </div>
     </div>
     <div class="row mt-3">
@@ -47,7 +54,11 @@
         </span>
       </p>
       <p v-else-if="lastQuery && (showFoundCountIfIdle || searchMeta)">
-        {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
+        {{
+          searching
+            ? '…'
+            : i18n._('publicBodiesFound', { count: searchResultsLength })
+        }}
       </p>
     </div>
     <div v-if="showBadges" class="mb-3 d-flex flex-wrap gap-2">
@@ -57,7 +68,7 @@
         :value="search"
         :i18n="i18n"
         @remove-click="search = ''"
-        />
+      />
       <PbFilterSelected
         v-for="filterKey in activeFilters"
         :key="filterKey"
@@ -65,18 +76,22 @@
         @update="updateFilter"
         :value="filters[filterKey]"
         :i18n="i18n"
-        />
+      />
     </div>
 
-    <component :is="listView" :name="name" :scope="scope" :config="config"
+    <component
+      :is="listView"
+      :name="name"
+      :scope="scope"
+      :config="config"
       @update="$emit('update', $event)"
       @step-next="$emit('stepNext')"
-      />
+    />
     <!-- outside of listView component is awkward but easier than passing around v-model -->
     <ResultsPagination
       :response-meta="getScopedSearchMeta(scope)"
       v-model="pagination"
-      />
+    />
   </div>
 </template>
 
@@ -116,7 +131,7 @@ export default {
     PbFilter,
     PbFilterSelected,
     PbFilterBadge,
-    ResultsPagination,
+    ResultsPagination
   },
   mixins: [PBChooserMixin, PBListMixin, I18nMixin],
   props: {
@@ -177,14 +192,14 @@ export default {
       filterOrder: [
         'jurisdiction',
         'regions',
-        'categories',
+        'categories'
         // 'classification'
         // 'regions_kind',
       ],
       pagination: {
         offset: 0,
         limit: searchResultPageSize
-      },
+      }
     }
   },
   computed: {
@@ -209,7 +224,8 @@ export default {
     filterConfig() {
       const searcher = new FroideAPI(this.config)
       return {
-        classification: { // = Behörden-Typen
+        classification: {
+          // = Behörden-Typen
           label: this.i18n.classificationPlural[1],
           key: 'classification',
           initialFilters: { depth: 1 },
@@ -235,9 +251,10 @@ export default {
               ...item
             }
           },
-          groupBy: 'region_kind',
+          groupBy: 'region_kind'
         },
-        categories: { // = Themen
+        categories: {
+          // = Themen
           label: this.i18n.topicPlural[1],
           key: 'categories',
           initialFilters: { depth: 1 },
@@ -338,9 +355,9 @@ export default {
     }
   },
   watch: {
-    'pagination.offset': function() {
+    'pagination.offset': function () {
       this.triggerAutocomplete()
     }
-  },
+  }
 }
 </script>
