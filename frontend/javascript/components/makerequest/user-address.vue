@@ -4,9 +4,11 @@
       for="id_address"
       class="col-sm-4 col-md-3 col-form-label"
       :class="{
-        'text-danger': (errors.address && !addressChanged) || addressValid === false,
+        'text-danger':
+          (errors.address && !addressChanged) || addressValid === false,
         'field-required': requiresPostalAddress
-      }">
+      }"
+    >
       {{ i18n.yourAddress }}
     </label>
     <div class="col-sm-8 col-md-5">
@@ -16,20 +18,26 @@
           ref="address"
           name="address"
           class="form-control"
-          :class="{ 'is-invalid': (errors.address && !addressChanged ) || addressValid === false}"
+          :class="{
+            'is-invalid':
+              (errors.address && !addressChanged) || addressValid === false
+          }"
           :placeholder="formFields.address.placeholder"
           :required="requiresPostalAddress"
           @change="addressUpdated(true)"
           @keyup="addressUpdated()"
-          />
+        />
         <p class="help-block">
           <span v-html="addressHelpText" />
         </p>
         <div
           v-if="!clearFormErrors && errors.address"
           class="alert mb-2"
-          :class="{ 'alert-danger': !addressChanged, 'alert-warning': addressChanged }"
-          >
+          :class="{
+            'alert-danger': !addressChanged,
+            'alert-warning': addressChanged
+          }"
+        >
           <ul class="list-unstyled my-0">
             <li v-for="e in errors.address" :key="e.message">
               {{ e.message }}
@@ -39,10 +47,17 @@
         <div
           v-else-if="addressValidationErrors.length > 0"
           class="alert mb-2"
-          :class="{ 'alert-danger': !addressChanged, 'alert-warning': addressChanged }"
-          >
+          :class="{
+            'alert-danger': !addressChanged,
+            'alert-warning': addressChanged
+          }"
+        >
           <ul class="list-unstyled my-0">
-            <li v-for="error in addressValidationErrors" :key="error" style="white-space: pre-line">
+            <li
+              v-for="error in addressValidationErrors"
+              :key="error"
+              style="white-space: pre-line"
+            >
               {{ error }}
             </li>
           </ul>
@@ -53,7 +68,6 @@
 </template>
 
 <script>
-
 import { mapGetters, mapMutations } from 'vuex'
 
 import {
@@ -93,7 +107,7 @@ export default {
     defaultLaw: {
       type: Object,
       default: null
-    },
+    }
   },
   data() {
     return {
@@ -135,7 +149,7 @@ export default {
     ...mapMutations({
       updateAddress: UPDATE_ADDRESS,
       updateAddressChanged: UPDATE_ADDRESS_CHANGED,
-      updateAddressValidity: UPDATE_ADDRESS_VALIDITY,
+      updateAddressValidity: UPDATE_ADDRESS_VALIDITY
     })
   },
   computed: {
@@ -177,10 +191,7 @@ export default {
       }
       return new RegExp(this.config.settings.address_regex).test(this.address)
     },
-    ...mapGetters([
-      'addressValid',
-      'addressChanged',
-    ])
+    ...mapGetters(['addressValid', 'addressChanged'])
   }
 }
 </script>
