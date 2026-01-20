@@ -361,6 +361,7 @@ class MakeRequestView(FormView):
                     _("One result"),
                     _("{count} results").format(count="${count}"),
                 ],
+                "searchResults": _("Search results"),
                 "createAccount": _("Create account"),
                 "createAccountPreamble": _(
                     "You need to create an account at {site_name} so you will be able to manage your request."

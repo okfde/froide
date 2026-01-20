@@ -164,13 +164,9 @@
                 </div>
                 <div v-else>
                   <div class="row">
-                    <div class="col-lg-7">
+                    <div class="col-lg-8">
                       <DjangoSlot name="publicbody-legend-title" />
                       <DjangoSlot name="publicbody-help-text" />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-8">
                       <PublicbodyBetaChooser
                         name="publicbody"
                         :defaultsearch="publicBodySearch"
@@ -179,8 +175,6 @@
                         :config="config"
                         @step-next="setStep(stepNext)"
                       />
-                    </div>
-                    <div class="col-lg-4 small">
                       <DjangoSlot name="publicbody-missing" />
                     </div>
                   </div>
