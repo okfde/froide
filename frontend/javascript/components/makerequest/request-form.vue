@@ -374,6 +374,7 @@ export default {
     UserAddress,
     UserConfirm
   },
+  emits: ['stepNext'],
   props: {
     config: {
       type: Object,

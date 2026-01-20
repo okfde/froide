@@ -1,14 +1,18 @@
 <template>
   <div class="search-result-container">
-    <h3 v-if="searchResultsLength > 0 || emptyResults" class="visually-hidden">{{ i18n.searchResults }}</h3>
+    <h3 v-if="searchResultsLength > 0 || emptyResults" class="visually-hidden">
+      {{ i18n.searchResults }}
+    </h3>
     <ul
       v-if="searchResultsLength > 0 || emptyResults"
-      class="search-results list-unstyled">
+      class="search-results list-unstyled"
+    >
       <li
         v-for="result in searchResults"
         :key="result.id"
         class="search-result"
-        @click.prevent="selectSearchResult(result.id)">
+        @click.prevent="selectSearchResult(result.id)"
+      >
         <div class="row">
           <div class="col-sm-8">
             <h4 class="pb-heading">
@@ -23,7 +27,8 @@
             <a
               class="btn btn-primary"
               :href="getMakeRequestURLForResult(result)"
-              @click.prevent="selectSearchResult(result.id)">
+              @click.prevent="selectSearchResult(result.id)"
+            >
               {{ i18n.makeRequest }}
             </a>
           </div>
@@ -35,9 +40,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  SET_PUBLICBODY_ID
-} from '../../store/mutation_types'
+import { SET_PUBLICBODY_ID } from '../../store/mutation_types'
 
 import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
@@ -45,6 +48,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 export default {
   name: 'PbActionList',
   mixins: [PBListMixin, I18nMixin],
+  emits: ['stepNext'],
   props: ['name', 'scope', 'config'],
   methods: {
     selectSearchResult(pbid) {
