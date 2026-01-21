@@ -37,13 +37,13 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">
+                <h1 class="h5 modal-title">
                     {% if not message.problemreports_count %}
                         {% trans "Report a problem" %}
                     {% else %}
                         {% trans "Problem reports" %}
                     {% endif %}
-                </h5>
+                </h1>
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="modal"
@@ -51,7 +51,7 @@
             </div>
             <div class="modal-body">
                 {% if not request.user.is_authenticated %}
-                    <h6>{% trans "Please login or register" %}</h6>
+                    <h2 class="h6">{% trans "Please login or register" %}</h2>
                     <p>{% trans "In order to report a problem with this message, you need to be logged in." %}</p>
                     <p>
                         <a class="btn btn-primary"
@@ -59,7 +59,7 @@
                     </p>
                 {% else %}
                     {% if message.problemreports %}
-                        <h6>{% trans "Previously reported problems" %}</h6>
+                        <h2 class="h6">{% trans "Previously reported problems" %}</h2>
                         <p>{% trans "Moderators are already informed about the following problems:" %}</p>
                         <div class="table-responsive">
                             <table class="table table-sm">
@@ -115,7 +115,7 @@
                                                         </blockquote>
                                                     {% endif %}
                                                     {% if report.resolution %}
-                                                        <h6>{% trans "Resolution" %}</h6>
+                                                        <h3 class="h6">{% trans "Resolution" %}</h3>
                                                         {{ report.resolution | markdown }}
                                                     {% endif %}
                                                 </td>
@@ -126,7 +126,7 @@
                             </table>
                         </div>
                     {% endif %}
-                    <h6>{% trans "Report a new problem" %}</h6>
+                    <h2 class="h6">{% trans "Report a new problem" %}</h2>
                     {% block reportinfo %}{% endblock %}
                     <form action="{% url 'problem-report' message_pk=message.pk %}"
                           method="post">

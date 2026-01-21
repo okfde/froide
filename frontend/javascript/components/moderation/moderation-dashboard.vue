@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-auto col-lg-2 order-lg-2">
       <div class="sidebar">
-        <h5>{{ i18n.activeModerators }}</h5>
+        <h2 class="h5">{{ i18n.activeModerators }}</h2>
         <ul>
           <li v-for="moderator in namedModerators" :key="moderator.id">
             {{ moderator.name }}

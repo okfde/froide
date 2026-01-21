@@ -72,6 +72,7 @@
             </div>
         </div>
     {% endif %}
+    <h2 class="visually-hidden">{% translate "Requests in this project" %}</h2>
     {% if object|can_write_foiproject:request %}
         <form method="post"
               action="{% url 'foirequest-project_execute_action' slug=object.slug %}">
