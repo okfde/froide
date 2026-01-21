@@ -3,11 +3,11 @@
 {% block app_body %}
     <div class="row mb-3 mt-3">
         <div class="col-lg-8">
-            <h2>
+            <h1 class="h2">
                 {% blocktrans with name=object.organization.name %}
         Organization “{{ name }}” has invited you
       {% endblocktrans %}
-            </h2>
+            </h1>
             {% if request.user.email != object.email %}
                 <div class="alert alert-warning">
                     {% blocktrans with email=object.email account=request.user.email %}
