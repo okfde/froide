@@ -6542,7 +6542,7 @@ msgstr ""
 
 #: froide/foirequest/templates/foirequest/request.html
 msgid "Write the request"
-msgstr "Schreiben Sie die Anfrage"
+msgstr "Anfrage schreiben"
 
 #: froide/foirequest/templates/foirequest/request.html
 msgid "Important Notes:"
