@@ -108,9 +108,8 @@ async def test_redaction(world, live_server, settings, page: Page):
         if instruction == "zoom-in":
             await page.get_by_test_id("zoom-in").click()
 
-            # wait for zoom in transition
-            handle = await canvas.element_handle()
-            await handle.wait_for_element_state("stable")
+            # FIXME: don't rely on timeout, but waiting for stable element doesn't do it
+            await page.wait_for_timeout(500)
         elif isinstance(instruction, list):
             await redact(*instruction)
 
