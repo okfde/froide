@@ -72,6 +72,7 @@ def test_public_body_logged_in_request(world, client, pb):
         "subject": "Test-Subject",
         "body": "This is another test body with Ümläut€n",
         "publicbody": pb.pk,
+        "public": False,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -114,6 +115,8 @@ def test_public_body_new_user_request(world, client, pb):
         "address": "TestStreet 3\n55555 Town",
         "user_email": "sw@example.com",
         "terms": "on",
+        "public": False,
+        "private": True,
         "publicbody": pb.pk,
     }
     response = client.post(reverse("foirequest-make_request"), post)
@@ -410,7 +413,7 @@ def test_logged_in_request_with_public_body(world, client, pb):
         "subject": "Another Third Test-Subject",
         "body": "This is another test body",
         "publicbody": "bs",
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 400
@@ -459,7 +462,7 @@ def test_redirect_after_request(world, client, pb):
         "body": "This is another test body",
         "redirect_url": "/foo/?blub=bla",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -473,7 +476,7 @@ def test_redirect_after_request(world, client, pb):
         "body": "This is another test body",
         "redirect_url": "http://evil.example.com",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     request_sent = reverse("foirequest-request_sent")
@@ -490,7 +493,8 @@ def test_redirect_after_request_new_account(world, client, pb):
         "body": "This is another test body",
         "redirect_url": redirect_url,
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
+        "private": True,
         "first_name": "Stefan",
         "last_name": "Wehrmeyer",
         "address": "TestStreet 3\n55555 Town",
@@ -525,7 +529,7 @@ def test_foi_email_settings(world, client, pb, settings):
         "body": "This is another test body",
         "publicbody": str(pb.pk),
         "law": str(pb.default_law.pk),
-        "public": "on",
+        "public": True,
     }
 
     def email_func(username, secret):
@@ -645,7 +649,7 @@ def test_postal_reply(world, client, pb):
         "subject": "Totally Random Request",
         "body": "This is another test body",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -837,7 +841,7 @@ def test_set_message_sender(world, client, pb, msgobj):
         "subject": "A simple test request",
         "body": "This is another test body",
         "publicbody": str(pb.id),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -1465,6 +1469,8 @@ def test_make_same_request(world, client):
         "address": "MyAddres 12\nB-Town",
         "user_email": "bob@example.com",
         "terms": "on",
+        "public": True,
+        "private": True,
     }
     response = client.post(
         reverse("foirequest-make_same_request", kwargs={"slug": same_req.slug}),
@@ -1573,7 +1579,7 @@ def test_full_text_request(world, client, pb):
         "body": "This is another test body with Ümläut€n",
         "full_text": "true",
         "publicbody": str(pb.id),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -1826,6 +1832,7 @@ def test_too_long_subject(world, client, pb):
         "subject": "Test" * 64,
         "body": "This is another test body with Ümläut€n",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 400
@@ -1834,6 +1841,7 @@ def test_too_long_subject(world, client, pb):
         "subject": "Test" * 55 + " a@b.de",
         "body": "This is another test body with Ümläut€n",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -1882,7 +1890,7 @@ def test_throttling(world, client, pb, request_throttle):
         "subject": "Another Third Test-Subject",
         "body": "This is another test body",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     post["law"] = str(pb.default_law.pk)
 
@@ -2082,6 +2090,7 @@ def test_letter_public_body(world, client, pb):
         "subject": "Jurisdiction-Test-Subject",
         "body": "This is a test body",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -2124,7 +2133,7 @@ def test_postal_after_last(world, client, pb, faker):
             "subject": "Totally Random Request",
             "body": "This is another test body",
             "publicbody": str(pb.pk),
-            "public": "on",
+            "public": True,
         }
         response = client.post(reverse("foirequest-make_request"), post)
         assert response.status_code == 302
@@ -2166,6 +2175,7 @@ def test_mail_confirmation_after_success(world, user, client, faker):
         "subject": faker.text(max_nb_chars=50),
         "body": faker.text(max_nb_chars=500),
         "publicbody": pb.pk,
+        "public": True,
     }
 
     client.login(email=user.email, password="froide")
@@ -2267,6 +2277,7 @@ def test_request_body_leading_indent(world, client, pb):
         "subject": "Test-Subject",
         "body": "  1. Indented\n  2. Indented",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302

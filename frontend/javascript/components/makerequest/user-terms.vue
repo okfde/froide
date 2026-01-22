@@ -1,48 +1,52 @@
 <template>
   <div class="row">
-    <div class="col-md-12">
-      <div class="card mb-3">
-        <div class="card-body">
-          <div class="mb-3 row">
-            <div class="col-lg-9">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  v-model="termsValue"
-                  name="terms"
-                  class="form-check-input"
-                  :class="{ 'is-invalid': errors.terms }"
-                  required=""
-                  id="id_terms" />
-                <label
-                  for="id_terms"
-                  class="form-check-label field-required"
-                  :class="{ 'text-danger': errors.terms }">
-                  <span v-html="form.fields.terms.label"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div class="col-md-8">
+      <div class="form-check form-check-emphasized">
+        <input
+          type="checkbox"
+          v-model="terms"
+          ref="terms"
+          name="terms"
+          class="form-check-input"
+          :class="{ 'is-invalid': errors.terms && !termsChanged }"
+          required=""
+          id="id_terms"
+          @change="updateTermsChanged(true)"
+          />
+        <label
+          for="id_terms"
+          class="form-check-label field-required"
+          :class="{ 'text-danger': errors.terms && !termsChanged }">
+          <span v-html="form.fields.terms.label"></span>
+        </label>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex'
+
+import {
+  UPDATE_TERMS,
+  UPDATE_TERMS_VALIDITY,
+  UPDATE_TERMS_CHANGED,
+} from '../../store/mutation_types'
+
 export default {
   name: 'UserTerms',
   props: {
     form: {
       type: Object
+    },
+    initialTerms: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      terms:
-        this.form.fields.terms.value !== null
-          ? this.form.fields.terms.value
-          : this.form.fields.terms.initial
+      termsValue: this.initialTerms
     }
   },
   computed: {
@@ -55,15 +59,29 @@ export default {
       }
       return {}
     },
-    termsValue: {
+    terms: {
       get() {
-        return this.terms
+        return this.$store.state.user.terms
       },
       set(value) {
-        this.terms = value
-        this.$emit('update:initialTerms', value)
+        this.updateTerms(value)
       }
-    }
+    },
+    ...mapGetters([
+      'termsChanged',
+    ]),
+  },
+  methods: {
+    validate() {
+      this.updateTermsValidity(
+        this.$refs.terms.reportValidity()
+      )
+    },
+    ...mapMutations({
+      updateTerms: UPDATE_TERMS,
+      updateTermsValidity: UPDATE_TERMS_VALIDITY,
+      updateTermsChanged: UPDATE_TERMS_CHANGED
+    })
   }
 }
 </script>

@@ -1,21 +1,140 @@
 <template>
   <div class="make-request-container">
-    <RequestFormBreadcrumbs
-      :i18n="i18n"
-      :multi-request="multiRequest"
-      :has-public-bodies="hasPublicBodies"
-      :hide-publicbody-chooser="hidePublicbodyChooser" />
 
-    <div :class="{ container: !multiRequest, 'container-multi': multiRequest }">
-      <DjangoSlot name="messages" />
+    <SimpleStepper
+      class="bg-body-tertiary"
+      :step="stepperStepCurrent"
+      :steps="stepperSteps.map(step => step.label)"
+      clickable
+      keep-visited-clickable
+      @step-click="stepperClick"
+      >
+      {{ i18n.step }}
+      <!-- avoid 0 -->
+      <strong>{{ this.stepperStepCurrent + 1 }}/{{ this.stepperSteps.length }}</strong>:
+      {{ this.stepperSteps[this.stepperStepCurrent]?.label }}
+    </SimpleStepper>
+
+    <div class="container"><div class="row"><div class="col x-col-lg-9">
+
+      <div
+        class="my-2"
+        v-show="step === STEPS.PREVIEW_SUBMIT"
+        >
+        <DjangoSlot
+          name="messages"
+          />
+      </div>
 
       <div class="row justify-content-lg-center">
         <div class="col-lg-12">
-          <fieldset
-            v-if="stepSelectPublicBody"
-            id="step-publicbody"
-            class="mt-5">
+          <div
+            v-if="stepBack"
+            class="my-3 d-flex justify-content-between"
+            >
+            <a class="btn btn-link text-decoration-none ps-0"
+              :href="'#step-' + stepBack"
+              @click="setStep(stepBack)"
+              >← <u>{{ i18n.back }}</u></a>
+            <button
+              v-if="topNextLabel"
+              type="button"
+              class="btn btn-primary"
+              :disabled="!stepCanContinue(pbScope)"
+              @click="setStep(stepNext)"
+              >{{ topNextLabel }}
+            </button>
+          </div>
+
+          <!-- keep visible for all steps -->
+          <div v-if="requestForm.nonFieldErrors.length > 0" class="alert alert-danger">
+            <p v-for="error in requestForm.nonFieldErrors" :key="error" v-html="error" />
+          </div>
+          <div v-if="fetchError" class="alert alert-danger">
+            <strong>{{ i18n.error }}</strong>
+            {{ fetchError }}
+          </div>
+
+          <h1
+            v-if="hidePublicbodyChooser && hasPublicBodies"
+            class="my-3 fs-5"
+            >
+            {{ i18n.requestTo }}
+            {{ publicBodies.map(pb => pb.name).join(', ') }}
+          </h1>
+
+          <!-- STEP: INTRO / CAMPAIGNS -->
+
+          <div v-if="step === STEPS.INTRO" class="mt-5" id="step_intro">
+            <h1>{{ i18n.makeRequest }}</h1>
+            <p>{{ i18n.whatDoYouWantToDo }}</p>
+            <IntroCampaigns
+              :config="config"
+              @step-next="setStep(stepNext)"
+              >
+              <template #campaign_main>
+                <DjangoSlot name="campaign_main" />
+              </template>
+              <template #campaigns>
+                <DjangoSlot name="campaigns" />
+              </template>
+            </IntroCampaigns>
+            <DjangoSlot
+              name="campaign_other"
+              has-onlinehelp-links
+              @onlinehelp-click="onlineHelpShow($event)"
+              />
+          </div>
+
+          <!-- STEP: INTRO / HOWTO -->
+
+          <div
+            v-if="step === STEPS.INTRO_HOWTO"
+            class="mt-5"
+            id="step_intro_howto"
+            >
+            <DjangoSlot
+              name="intro_howto"
+              has-onlinehelp-links
+              @onlinehelp-click="onlineHelpShow($event)"
+              />
+            <div>
+              <button type="button" class="btn btn-primary" @click="setStep(stepNext)">
+                {{ i18n.stepNext }}
+              </button>
+            </div>
+            <IntroSkipPreference :config="config" />
+          </div>
+
+          <!-- STEP: FIND SIMILAR REQUESTS -->
+
+          <div v-show="step === STEPS.FIND_SIMILAR" class="mt-3" id="step_find_similar">
+            <h2>{{ i18n.findSimilarRequests }}</h2>
+            <DjangoSlot name="find-similar-requests-preamble"></DjangoSlot>
+            <SimilarRequestSearch :config="config" />
+            <div>
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="setStep(stepNext)"
+                >
+                {{ i18n.stepSkip }}
+              </button>
+            </div>
+            <IntroSkipPreference :config="config" />
+          </div>
+
+          <!-- STEP: SELECT PUBLIC BODY -->
+
+          <div v-if="step === STEPS.SELECT_PUBLICBODY" id="step_select_publicbody">
+
+            <p v-if="publicBodies.length > 0">
+              {{ i18n.currentlyChosen }}
+              {{ publicBodies.map(pb => pb.name).join(', ') }}
+            </p>
+
             <div v-if="multiRequest">
+              <!-- PublicBodyChoosers advance step by mutations like SET_STEP_REQUEST (mapped to setStepRequest) -->
               <PublicbodyMultiChooser
                 name="publicbody"
                 :defaultsearch="publicBodySearch"
@@ -35,39 +154,92 @@
               </div>
               <div class="row">
                 <div class="col-lg-8">
-                  <template v-if="betaUi">
-                    <PublicbodyBetaChooser
-                      name="publicbody"
-                      :defaultsearch="publicBodySearch"
-                      :scope="pbScope"
-                      :form="publicbodyForm"
-                      :config="config" />
-                  </template>
-                  <template v-else>
-                    <PublicbodyChooser
-                      name="publicbody"
-                      :defaultsearch="publicBodySearch"
-                      :scope="pbScope"
-                      :form="publicbodyForm"
-                      :config="config"
-                      :list-view="publicBodyListView" />
-                  </template>
+                  <PublicbodyBetaChooser
+                    name="publicbody"
+                    :defaultsearch="publicBodySearch"
+                    :scope="pbScope"
+                    :form="publicbodyForm"
+                    :config="config"
+                    @step-next="setStep(stepNext)"
+                    />
                 </div>
                 <div class="col-lg-4 small">
                   <DjangoSlot name="publicbody-missing" />
                 </div>
               </div>
             </div>
-          </fieldset>
+          </div>
 
-          <fieldset
-            v-if="stepReviewPublicBodies && !stepWriteRequest"
-            id="step-review-publicbody"
-            class="mt-5">
-            <PbMultiReview name="publicbody" :i18n="i18n" :scope="pbScope" />
-          </fieldset>
+          <!-- STEP: REVIEW PUBLIC BODIES -->
 
-          <fieldset v-if="stepWriteRequest" id="step-request" class="mt-3">
+          <div v-if="step === STEPS.REVIEW_PUBLICBODY" id="step_review_publicbody">
+            <PbMultiReview
+              name="publicbody"
+              :i18n="i18n"
+              :scope="pbScope"
+              @step-next="setStep(stepNext)"
+              />
+          </div>
+
+          <!-- STEPS: LOGIN or CREATE ? -->
+
+          <div
+            v-show="step === STEPS.LOGIN_CREATE"
+            id="step_login_create"
+            >
+            <h2>{{ i18n.account }}</h2>
+            <div class="row">
+              <div class="col-md-6 mb-4">
+            <p class="mb-auto">
+              {{ i18n.createAccountPreamble }}
+            </p>
+            <div class="mt-3">
+            <button type="button" class="btn btn-primary" @click="setStep(stepNext)">{{ i18n.createAccount }}</button>
+            </div>
+          </div>
+          <div class="col-md-6 mb-4">
+            <p class="mb-auto">
+              {{ i18n.doYouAlreadyHaveAccount }}<br/>
+              <small>{{ i18n.thisFormRemembers }}</small>
+            </p>
+            <div class="mt-3">
+              <a :href="config.url.login" class="btn btn-primary">{{ i18n.login }}</a>
+            </div>
+          </div>
+          </div>
+          </div>
+
+          <!-- STEP: CREATE ACCOUNT -->
+
+          <!-- need v-show over v-if so <input>s are in DOM while submitting -->
+          <div
+            v-show="step === STEPS.CREATE_ACCOUNT"
+            id="step_create_account"
+            >
+            <h2>{{ i18n.createAccount }}</h2>
+            <UserCreateAccount
+              v-if="!user.id"
+              :config="config"
+              :user="user"
+              :request-form="requestForm"
+              :user-form="userForm"
+              :default-law="defaultLaw"
+              @step-next="setStep(stepNext)"
+              @onlinehelp-click="onlineHelpShow($event)"
+              >
+              <template #userPublicPreamble>
+                <DjangoSlot name="user-public-preamble"></DjangoSlot>
+              </template>
+            </UserCreateAccount>
+          </div>
+
+          <!-- STEP: WRITE REQUEST -->
+
+          <div
+            v-show="step === STEPS.WRITE_REQUEST"
+            id="step_write_request"
+            class="mt-3"
+            >
             <RequestForm
               :config="config"
               :publicbodies="publicBodies"
@@ -79,111 +251,112 @@
               :hide-full-text="hideFullText"
               :hide-editing="hideEditing"
               :multi-request="multiRequest"
+              :confirm-required="confirmRequired"
               :default-law="defaultLaw"
               :law-type="lawType"
               v-model:initial-subject="subject"
               v-model:initial-body="body"
               v-model:initial-full-text="fullText"
-              v-model:initial-first-name="firstName"
-              v-model:initial-last-name="lastName"
-              v-model:initial-private="userPrivate"
               :submitting="submitting"
-              @set-step-select-public-body="setStepSelectPublicBody">
+              @step-next="setStep(stepNext)"
+              @step-back="setStep(stepBack)"
+              >
               <template #request-hints>
-                <DjangoSlot name="request-hints" />
+                <DjangoSlot
+                  name="request-hints"
+                  has-onlinehelp-links
+                  @onlinehelp-click="onlineHelpShow($event)"
+                  />
               </template>
               <template #request-legend-title>
                 <DjangoSlot name="request-legend-title" />
               </template>
+              <template #request-user-confirm>
+                <DjangoSlot name="request-user-confirm" />
+              </template>
             </RequestForm>
+            <SimilarRequests
+              v-if="showSimilar"
+              :publicbodies="publicBodies"
+              :subject="subject"
+              :config="config" />
+          </div>
 
-            <UserRegistration
-              :form="userForm"
+          <!-- STEP: VISIBILITY -->
+
+          <div v-show="step == STEPS.REQUEST_PUBLIC" id="step_request_public">
+            <h2>{{ i18n.requestVisibility }}</h2>
+            <DjangoSlot name="request-public-preamble" />
+            <RequestPublic
+              :form="requestForm"
+              :hide-public="hidePublic"
+              v-model:initial-public="requestPublic"
+              />
+            <DjangoSlot name="request-public-postamble" />
+            <div class="my-4">
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="setStep(stepNext)"
+                >
+                {{ i18n.stepNext }}
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP: PREVIEW -->
+
+          <div v-if="step === STEPS.PREVIEW_SUBMIT" id="step_preview_submit">
+            <h2>{{ i18n.previewAndSubmit }}</h2>
+            <ReviewRequest
+              :i18n="i18n"
               :config="config"
-              :user="user.id ? user : null"
+              :pb-scope="pbScope"
+              :publicbodies="publicBodies"
+              :user="user"
+              :user-form="userForm"
+              :request-form="requestForm"
               :default-law="defaultLaw"
-              v-model:initial-email="email"
-              v-model:initial-address="address"
-              :address-help-text="userForm.fields.address.help_text" />
+              :subject="subject"
+              :body="body"
+              :multi-request="multiRequest"
+              :full-text="fullText"
+              :hide-public="hidePublic"
+              :hide-publicbody-chooser="hidePublicbodyChooser"
+              :show-draft="showDraft"
+              @submit="submit"
+              @onlinehelp-click="onlineHelpShow($event)"
+              />
+          </div>
 
-            <RequestPublic :form="requestForm" :hide-public="hidePublic" />
+          <!-- No STEP: OUTRO here, because it is handled by the form success page -->
 
-            <UserTerms v-if="!user.id" :form="userForm" />
-          </fieldset>
-
-          <SimilarRequests
-            v-if="showSimilar && stepWriteRequest"
-            :publicbodies="publicBodies"
-            :subject="subject"
-            :config="config" />
-
-          <ReviewRequest
-            :i18n="i18n"
-            :publicbodies="publicBodies"
-            :user="user"
-            :default-law="defaultLaw"
-            :subject="subject"
-            :body="body"
-            :full-text="fullText"
-            ref="reviewrequest"
-            @close="showReview = false"
-            @submit="submitting = true" />
-
-          <button
-            v-if="stepWriteRequest && shouldCheckRequest"
-            id="review-button"
-            type="button"
-            class="btn btn-primary btn-lg mt-3"
-            @click="showReview = true">
-            <i class="fa fa-check" aria-hidden="true" />
-            {{ i18n.reviewRequest }}
-          </button>
-          <button
-            v-else-if="stepWriteRequest"
-            id="send-request-button"
-            type="submit"
-            class="btn btn-primary btn-lg mt-3"
-            @click="submitting = true">
-            <i class="fa fa-send" aria-hidden="true" />
-            {{ i18n.submitRequest }}
-          </button>
-          <button
-            v-if="stepWriteRequest && user.id && showDraft"
-            type="submit"
-            class="btn btn-secondary mt-3 ms-2"
-            name="save_draft"
-            value="true"
-            @click="submitting = true">
-            <i class="fa fa-save" aria-hidden="true" />
-            {{ i18n.saveAsDraft }}
-          </button>
         </div>
       </div>
-    </div>
+    </div></div></div> <!-- /.container -->
+    <OnlineHelp ref="onlineHelp" :i18n="i18n"></OnlineHelp>
   </div>
 </template>
 
 <script>
 import SimilarRequests from './similar-requests'
-import PublicbodyChooser from '../publicbody/publicbody-chooser'
+import SimilarRequestSearch from './similar-request-search'
+// TODO: rename, un-beta, remove old?
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
-import UserRegistration from './user-registration'
 import ReviewRequest from './review-request'
 import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
-import RequestFormBreadcrumbs from './request-form-breadcrumbs'
 import RequestPublic from './request-public'
-import UserTerms from './user-terms'
 import DjangoSlot from '../../lib/django-slot.vue'
-
-import { Modal } from 'bootstrap'
+import SimpleStepper from '../postupload/simple-stepper.vue'
+import OnlineHelp from '../online-help.vue'
 
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 import {
-  SET_STEP_SELECT_PUBLICBODY,
-  SET_STEP_REQUEST,
+  SET_STEP,
+  SET_STEP_NO_HISTORY,
   SET_PUBLICBODY,
   SET_PUBLICBODIES,
   CACHE_PUBLICBODIES,
@@ -196,28 +369,49 @@ import {
   UPDATE_ADDRESS,
   UPDATE_EMAIL,
   UPDATE_PRIVATE,
+  UPDATE_REQUEST_PUBLIC,
+  UPDATE_SIMILAR_REQUEST_SEARCH,
   UPDATE_LAW_TYPE,
-  SET_CONFIG
+  UPDATE_TERMS,
+  SET_CONFIG,
+  STEPS,
+  UPDATE_CONFIRM,
+  UPDATE_CLAIMS_VIP,
 } from '../../store/mutation_types'
 
 import LetterMixin from './lib/letter-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
+import UserCreateAccount from './user-create-account.vue'
+import IntroCampaigns from './intro-campaigns.vue'
+import IntroSkipPreference from './intro-skip-preference.vue'
+
+// for TypedChoiceFields (essentialy BooleanFields, but radio),
+// we never handle or store (actual JS) Booleans, but strings
+// (the alternative would be to avoid TypedChoiceFields,
+//  and provide the two choice labels on the Vue side)
+const coerceDjangoBool = (booleanOrString) => {
+  return booleanOrString === true || booleanOrString === 'True'
+    ? 'True'
+    : 'False'
+}
 
 export default {
   name: 'RequestPage',
   components: {
-    PublicbodyChooser,
+    IntroSkipPreference,
+    IntroCampaigns,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
-    UserRegistration,
     SimilarRequests,
+    SimilarRequestSearch,
     ReviewRequest,
     PbMultiReview,
     RequestForm,
-    RequestFormBreadcrumbs,
     RequestPublic,
-    UserTerms,
-    DjangoSlot
+    UserCreateAccount,
+    DjangoSlot,
+    SimpleStepper,
+    OnlineHelp,
   },
   mixins: [I18nMixin, LetterMixin],
   props: {
@@ -243,13 +437,13 @@ export default {
       type: Object,
       default: null
     },
-    requestForm: {
+    requestFormInitial: {
       type: Object
     },
-    userForm: {
+    userFormInitial: {
       type: Object
     },
-    proofForm: {
+    proofFormInitial: {
       type: Object,
       default: null
     },
@@ -281,36 +475,147 @@ export default {
       type: Boolean,
       default: false
     },
-    betaUi: {
+    confirmRequired: {
       type: Boolean,
       default: false
     }
   },
+  inject: ['django-slots'],
   data() {
     return {
+      pbScope: this.config.draftId
+        ? 'make-request-draft-' + this.config.draftId
+        : 'make-request',
       fullTextDisabled: false,
       editingDisabled: this.hideEditing,
       fullLetter: false,
       showReview: false,
-      submitting: false
+      submitting: false,
+      STEPS,
+      similarSubject: '',
+      fetchedForms: null,
+      fetchError: null,
+    }
+  },
+  provide() {
+    return {
+      pbScope: this.pbScope
     }
   },
   computed: {
-    form() {
-      return this.requestForm
+    requestForm() {
+      return this.fetchedForms?.request_form || this.requestFormInitial
     },
-    formFields() {
-      return this.form.fields
+    userForm() {
+      return this.fetchedForms?.user_form || this.userFormInitial
     },
-    userformFields() {
-      return this.userForm.fields
-    },
-    conditionalProofForm() {
-      if (this.proofForm && this.proofForm.fields.proof) {
-        return this.proofForm
-      } else {
+    proofForm() {
+      if (!this.proofForm?.fields?.proof) {
         return null
       }
+      return this.fetchedForms?.proof_form || this.proofFormInitial
+    },
+    steps() {
+      // TODO needs discussion:
+      // hide vs. jump over INTRO+SIMILAR when hidePbChooser et al are set
+      const steps = []
+      if (this.hasCampaigns && !this.hidePublicbodyChooser) {
+        steps.push(STEPS.INTRO)
+      }
+      // assume we don't need a generic intro for API-specified usage
+      if (!(this.hidePublicbodyChooser || !this.hasIntroHowtoContent)) {
+        steps.push(STEPS.INTRO_HOWTO)
+      }
+      if (this.showSimilar && !this.hidePublicbodyChooser) {
+        steps.push(STEPS.FIND_SIMILAR)
+      }
+      if (!this.hidePublicbodyChooser) {
+        steps.push(STEPS.SELECT_PUBLICBODY)
+        if (this.multiRequest) {
+          steps.push(STEPS.REVIEW_PUBLICBODY)
+        }
+      }
+      // for /make-request/to/foo we want to land on WRITE_REQUEST...
+      if (this.hasPublicBodiesByParam) {
+        steps.push(STEPS.WRITE_REQUEST)
+        if (!this.hidePublic) {
+          steps.push(STEPS.REQUEST_PUBLIC)
+        }
+      }
+      // ...and sign up afterwards...
+      if (!this.userInfo) {
+        steps.push(STEPS.LOGIN_CREATE)
+        steps.push(STEPS.CREATE_ACCOUNT)
+      }
+      // ...but usually we sign up first and then write:
+      if (!this.hasPublicBodiesByParam) {
+        steps.push(STEPS.WRITE_REQUEST)
+        if (!this.hidePublic) {
+          steps.push(STEPS.REQUEST_PUBLIC)
+        }
+      }
+      steps.push(STEPS.PREVIEW_SUBMIT)
+      steps.push(STEPS.OUTRO)
+      return steps
+    },
+    stepLabels() {
+      return {
+        [STEPS.INTRO]: this.i18n.introduction,
+        [STEPS.INTRO_HOWTO]: this.i18n.introduction,
+        [STEPS.FIND_SIMILAR]: this.i18n.similarRequests,
+        [STEPS.SELECT_PUBLICBODY]: this.i18n.choosePublicBody,
+        [STEPS.REVIEW_PUBLICBODY]: this.i18n.choosePublicBody,
+        [STEPS.LOGIN_CREATE]: this.i18n.account,
+        [STEPS.CREATE_ACCOUNT]: this.i18n.account,
+        [STEPS.WRITE_REQUEST]: this.i18n.writeMessage,
+        [STEPS.REQUEST_PUBLIC]: this.i18n.writeMessage,
+        [STEPS.PREVIEW_SUBMIT]: this.i18n.submitRequest,
+        [STEPS.OUTRO]: this.i18n.submitRequest,
+      }
+    },
+    stepperSteps() {
+      const remap = {
+        // "display INTRO_HOWTO as INTRO"
+        [STEPS.INTRO]: STEPS.INTRO_HOWTO,
+        [STEPS.SELECT_PUBLICBODY]: STEPS.REVIEW_PUBLICBODY,
+        [STEPS.LOGIN_CREATE]: STEPS.CREATE_ACCOUNT,
+        [STEPS.WRITE_REQUEST]: STEPS.REQUEST_PUBLIC,
+        [STEPS.PREVIEW_SUBMIT]: STEPS.OUTRO
+      }
+      return this.steps
+        .filter(stepId => !(Object.values(remap).includes(stepId)))
+        .map(stepId => ({
+          stepId,
+          altStepId: remap[stepId],
+          label: this.stepLabels[stepId]
+        }))
+    },
+    stepperStepCurrent() {
+      return this.stepperSteps.findIndex(_ => _.stepId === this.step || _.altStepId === this.step)
+    },
+    stepIndex() {
+      return this.steps.findIndex(_ => _ === this.step)
+    },
+    stepBack() {
+      if (this.stepIndex <= 0) return false
+      return this.steps[this.stepIndex - 1]
+    },
+    stepNext() {
+      if (this.stepIndex === -1 || this.stepIndex > this.steps.length - 1) return false
+      return this.steps[this.stepIndex + 1]
+    },
+    topNextLabel() {
+      if ([STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.PREVIEW_SUBMIT, STEPS.OUTRO].includes(this.step)) {
+        return false
+      }
+      if (this.step === STEPS.FIND_SIMILAR) {
+        return this.i18n.stepSkip
+      }
+      return this.i18n.stepNext
+    },
+    preventUnload() {
+      // notably, not STEPS.LOGIN_CREATE
+      return [STEPS.SELECT_PUBLICBODY, STEPS.REVIEW_PUBLICBODY, STEPS.CREATE_ACCOUNT, STEPS.WRITE_REQUEST, STEPS.REQUEST_PUBLIC, STEPS.PREVIEW_SUBMIT].includes(this.step)
     },
     publicBodySearch() {
       if (this.publicBody) {
@@ -324,6 +629,15 @@ export default {
       }
       return 'actionList'
     },
+    hasCampaigns() {
+      return this['django-slots'].campaigns?.textContent.trim() !== ''
+    },
+    skipIntroHowtoPreference() {
+      return this.config.settings.skip_intro_howto
+    },
+    hasIntroHowtoContent() {
+      return this['django-slots'].intro_howto?.textContent.trim() !== ''
+    },
     subject: {
       get() {
         return this.$store.state.subject
@@ -332,14 +646,8 @@ export default {
         this.updateSubject(value)
       }
     },
-    subjectWasChanged() {
-      return this.subject !== this.originalSubject
-    },
     hasBody() {
       return this.body && this.body.length > 0
-    },
-    bodyWasChanged() {
-      return this.body !== this.originalBody
     },
     body: {
       get() {
@@ -360,48 +668,29 @@ export default {
         this.updateFullText(value)
       }
     },
-    email: {
+    requestPublic: {
       get() {
-        return this.$store.state.user.email
+        return this.$store.state.requestPublic
       },
       set(value) {
-        this.updateEmail(value)
+        this.updateRequestPublic(value)
       }
     },
-    address: {
+    terms: {
       get() {
-        return this.$store.state.user.address
+        return this.$store.state.user.terms
       },
       set(value) {
-        this.updateAddress(value)
-      }
-    },
-    firstName: {
-      get() {
-        return this.$store.state.user.first_name
-      },
-      set(value) {
-        this.updateFirstName(value)
-      }
-    },
-    lastName: {
-      get() {
-        return this.$store.state.user.last_name
-      },
-      set(value) {
-        this.updateLastName(value)
-      }
-    },
-    userPrivate: {
-      get() {
-        return this.$store.state.user.private
-      },
-      set(value) {
-        this.updatePrivate(value)
+        this.updateTerms(value)
       }
     },
     hasPublicBodies() {
       return this.publicBodies.length > 0
+    },
+    // e.g. /make-request/to/foo/
+    // note the lowercase b
+    hasPublicBodiesByParam() {
+      return this.publicbodies.length > 0
     },
     publicBody() {
       return this.getPublicBodyByScope(this.pbScope)
@@ -409,96 +698,179 @@ export default {
     publicBodies() {
       return this.getPublicBodiesByScope(this.pbScope)
     },
-    shouldCheckRequest() {
-      return (
-        this.body === '' ||
-        this.bodyWasChanged ||
-        this.subject === '' ||
-        this.subjectWasChanged
-      )
-    },
     ...mapGetters([
       'user',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
       'stepWriteRequest',
-      'stepReviewPublicBodies',
-      'stepSelectPublicBody',
       'step',
       'lawType',
-      'defaultLaw'
+      'defaultLaw',
+      'stepCanContinue',
     ])
   },
   watch: {
     step() {
+      this.writeToStorage({ scope: this.pbScope })
       window.scrollTo(0, 0)
-    },
-    showReview(newShowReview) {
-      if (newShowReview) {
-        if (!this.reviewModal) {
-          this.reviewModal = new Modal(this.$refs.reviewrequest.$el)
-          this.$refs.reviewrequest.$el.addEventListener(
-            'hidden.bs.modal',
-            () => {
-              this.showReview = false
-            }
-          )
-        }
-        this.reviewModal.show()
-      } else {
-        this.reviewModal.hide()
-      }
     }
   },
   created() {
-    this.pbScope = 'make-request'
+    // from props
     this.setConfig(this.config)
 
-    this.initStoreValues(this.formFields, {
-      subject: this.updateSubject,
-      body: this.updateBody,
-      full_text: this.updateFullText,
-      law_type: this.updateLawType
+    // init step value, always from storage (formFields & propMap omitted)
+    this.initStoreValues({
+      scope: this.pbScope,
+      mutationMap: {
+        step: SET_STEP,
+      }
     })
 
-    this.updateLawType(
-      this.formFields.law_type.value || this.formFields.law_type.initial
-    )
-    if (this.publicbodies !== null) {
-      const pbs = this.publicbodies
-      this.setPublicBodies({
-        publicBodies: pbs,
-        scope: this.pbScope
-      })
-      this.cachePublicBodies(pbs)
-      this.getLawsForPublicBodies(pbs)
-    }
-    if (this.userInfo !== null) {
-      this.setUser(this.userInfo)
-      this.initStoreValues(this.userformFields, {
-        address: this.updateAddress
+    // the following initStoreValues intertwine several sources,
+    // where "onload values" can come from:
+    // - form: via formFields, e.g. after a POST, but also via the ?param=value preset "API"
+    // - props: <request-page :param="value">, e.g. publicbodies expanded by make_request
+    // - storage: sessionStorage "remembered" values (so they survive an account creation)
+    //   explicitly saved on step transition by writeToStorage.
+    // the precedence rules are complex, so we make several calls to initStoreValues,
+    // with different configurations
+    // (instead of supporting several Values, probably a singular initStoreValue
+    // would be more readable...)
+
+    // init "regular form values" from storage if not POSTed
+    // (not form-submitted, but refreshed, or returned from login)
+    // in the case of "preset by GET", e.g. ?subject=foo
+    // we still do not ignoreStorage to allow changes (of the presets) to persist
+    // -- within the session. In the (unlikely) case of "session reuse"
+    // (e.g. abandon draft, open the page with different GETs in the same tab)
+    // this could lead to the GET parameters be ignored. 
+    // This could be prevented by tying the storage stronger to the request;
+    // initStoreValues would need to do
+    // persistKeyPrefix+(document.location.pathname+document.location.search)
+    this.initStoreValues({
+      scope: this.pbScope,
+      ignoreStorage: this.config.wasPost,
+      formFields: this.requestForm.fields,
+      formCoerce: {
+        public: coerceDjangoBool
+      },
+      mutationMap: {
+        subject: UPDATE_SUBJECT,
+        body: UPDATE_BODY,
+        full_text: UPDATE_FULL_TEXT, // TODO
+        public: UPDATE_REQUEST_PUBLIC,
+      }
+    })
+
+    // PBs from prop, which is expanded in make_request context
+    // (formFields would have IDs only)
+    // prop has precedence over storage, so a reloaded /make-request/to/123/ URL
+    //   will always default back to PB 123
+    this.initStoreValues({
+      scope: this.pbScope,
+      scoped: true, // also, PBs are scoped
+      ignoreStorage: this.config.wasPost,
+      mutationMap: {
+        publicBodies: SET_PUBLICBODIES
+      },
+      propMap: {
+        // we want an empty array to fall through to storage
+        publicBodies: this.publicbodies?.length > 0 ? this.publicbodies : null
+      }
+    })
+
+    // law_type only passed by query string, e.g. ?law_type=IFG, so never storage, always form
+    this.initStoreValues({
+      scope: this.pbScope,
+      ignoreStorage: true,
+      formFields: this.requestForm.fields,
+      mutationMap: {
+        law_type: UPDATE_LAW_TYPE
+      }
+    })
+
+    this.cachePublicBodies(this.publicBodies)
+    // "cache" laws for the PBs we just retrieved
+    this.getLawsForPublicBodies(this.publicBodies)
+
+    if (this.userInfo !== null) { // user is authenticated...
+      // authenticated user fields always set by prop, never form, never storage
+      this.initStoreValues({
+        scope: this.pbScope,
+        ignoreStorage: true,
+        // no formFields, always from prop
+        propMap: {
+          user: this.userInfo 
+        },
+        mutationMap: {
+          user: SET_USER,
+        }
       })
     } else {
-      this.initStoreValues(this.userformFields, {
-        user_email: this.updateEmail,
-        first_name: this.updateFirstName,
-        last_name: this.updateLastName,
-        address: this.updateAddress,
-        private: this.updatePrivate
+      // for anonymous/logged-out users we use storage, or forms if POSTed.
+      // note that the "fields" here are stored flatly, not in a .user object,
+      // and hence we need individual, per-field mutations.
+      // see writeToStorage, reduced, where they are flattened/plucked
+      this.initStoreValues({
+        scope: this.pbScope,
+        ignoreStorage: this.config.wasPost,
+        formFields: this.userForm.fields,
+        formCoerce: {
+          private: coerceDjangoBool,
+          claims_vip: coerceDjangoBool
+        },
+        mutationMap: {
+          user_email: UPDATE_EMAIL,
+          first_name: UPDATE_FIRST_NAME,
+          last_name: UPDATE_LAST_NAME,
+          private: UPDATE_PRIVATE,
+          address: UPDATE_ADDRESS,
+          terms: UPDATE_TERMS,
+          claims_vip: UPDATE_CLAIMS_VIP,
+        }
       })
     }
-    this.originalBody = this.body
-    this.originalSubject = this.subject
+
+    // confirm is not a form field, always from storage
+    this.initStoreValues({
+      scope: this.pbScope,
+      mutationMap: {
+        confirm: UPDATE_CONFIRM,
+      }
+    })
+
+    // address provided via formField.initial when logged in
+    this.initStoreValues({
+      scope: this.pbScope,
+      ignoreStorage: this.config.wasPost,
+      formFields: this.userForm.fields,
+      mutationMap: {
+        address: UPDATE_ADDRESS
+      }
+    })
+
+    // search form config (jurisdiction/-kind, year range, campaign) is ephemeral, so always in storage only
+    this.initStoreValues({
+      scope: this.pbScope,
+      mutationMap: {
+        similarRequestSearch: UPDATE_SIMILAR_REQUEST_SEARCH
+      }
+    })
+
+    // setFirstStep depends on state (publicbodies, subject...) so has to come after initStoreValues
+    this.setFirstStep()
   },
   mounted() {
-    if (this.hasPublicBodies) {
-      this.setStepRequest()
-    }
+    document.forms.make_request.addEventListener('submit', () => {
+      // invalidate storage, will load from form fields next time
+      this.purgeStorage({ scope: this.pbScope, keepNonForm: true })
+    })
     window.addEventListener('beforeunload', (e) => {
       if (this.submitting) {
         return
       }
-      if (!this.stepWriteRequest) {
+      if (!this.preventUnload) {
         return
       }
       // If you prevent default behavior in Mozilla Firefox prompt will always be shown
@@ -507,36 +879,110 @@ export default {
       e.returnValue = this.i18n.sureCancel
       return e.returnValue
     })
+    window.addEventListener('popstate', (e) => {
+      if (!e.state) return
+      if (e.state.step) {
+        this.setStepNoHistory(e.state.step)
+      } else {
+        console.log('popstate, but no step')
+      }
+    })
   },
   methods: {
-    initStoreValues(fields, mapping) {
-      for (const key in mapping) {
-        const method = mapping[key]
-        if (fields[key] === undefined) {
-          continue
+    submit() {
+      this.fetchError = null
+      this.submitting = true
+      const form = document.forms.make_request
+      const fd = new FormData(form)
+      fetch(form.action, {
+        method: 'POST',
+        body: fd,
+        headers: { 'x-requested-with': 'fetch' },
+      })
+        .then((resp) => {
+          if (resp.ok) {
+            if (resp.redirected && resp.url) {
+              // success: purge & redirect
+              this.purgeStorage({ scope: this.pbScope })
+              document.location.href = resp.url
+              return
+            }
+            console.error(resp)
+            throw new Error('unexpected success response')
+          }
+          if (resp.status === 400) {
+            // resp not ok, assume forms have errors...
+            return resp.json()
+          }
+          console.error(resp)
+          throw new Error(`${resp.status} ${resp.statusText}`)
+        })
+        .then((resp) => {
+          // ...frontend will display/handle them
+          this.fetchedForms = resp
+        })
+        .catch((e) => {
+          console.error(e)
+          this.fetchError = e.message || this.i18n.error
+        })
+        .finally(() => {
+          this.submitting = false
+        })
+    },
+    setFirstStep() {
+      // this step may at this point be "remembered" from Storage
+      // but this case is the "default"
+      if (!this.step || this.step === this.steps[0]) {
+        // if "editing draft" skip forward 
+        if (this.requestForm.fields.draft.initial) {
+          console.log('request is draft, skipping intro etc.')
+          this.setStep(STEPS.WRITE_REQUEST)
+        } else if (this.hidePublicbodyChooser && !this.userInfo) {
+          this.setStep(STEPS.LOGIN_CREATE)
+        } else if (this.hasPublicBodies) {
+          // skip directly to wrting
+          // might theoretically also apply to "if state.subject || state.body"
+          // but that combination seems unrealistic
+          this.setStep(STEPS.WRITE_REQUEST)
+        } else if (this.skipIntroHowtoPreference) {
+          this.setStep(STEPS.SELECT_PUBLICBODY)
         }
-        method(fields[key].value || fields[key].initial)
+      } else if ([STEPS.LOGIN_CREATE, STEPS.CREATE_ACCOUNT].includes(this.step) && this.userInfo) {
+        // returning from login
+        this.setStep(STEPS.WRITE_REQUEST)
+      }
+      // fall back to first viable (non-excluded) step
+      if (!this.steps.includes(this.step)) {
+        this.setStep(this.steps[0])
       }
     },
+    stepperClick(stepperIndex) {
+      this.setStep(this.stepperSteps[stepperIndex].stepId)
+    },
+    onlineHelpShow(urlOrContent) {
+      this.$refs.onlineHelp.show(urlOrContent)
+    },
     ...mapMutations({
-      setStepSelectPublicBody: SET_STEP_SELECT_PUBLICBODY,
-      setStepRequest: SET_STEP_REQUEST,
+      setStep: SET_STEP,
+      setStepNoHistory: SET_STEP_NO_HISTORY,
       updateSubject: UPDATE_SUBJECT,
       updateBody: UPDATE_BODY,
       updateFullText: UPDATE_FULL_TEXT,
       setConfig: SET_CONFIG,
       setUser: SET_USER,
-      updateFirstName: UPDATE_FIRST_NAME,
-      updateLastName: UPDATE_LAST_NAME,
       updateLawType: UPDATE_LAW_TYPE,
       setPublicBody: SET_PUBLICBODY,
       setPublicBodies: SET_PUBLICBODIES,
       cachePublicBodies: CACHE_PUBLICBODIES,
-      updateAddress: UPDATE_ADDRESS,
-      updateEmail: UPDATE_EMAIL,
-      updatePrivate: UPDATE_PRIVATE
+      updateRequestPublic: UPDATE_REQUEST_PUBLIC,
+      updateTerms: UPDATE_TERMS,
     }),
-    ...mapActions(['getLawsForPublicBodies'])
+    ...mapActions([
+      'getLawsForPublicBodies',
+      'initStoreValues',
+      'writeToStorage',
+      'purgeStorage',
+    ])
   }
 }
 </script>
@@ -624,5 +1070,9 @@ legend {
 .show-full-letter {
   color: #999;
   text-decoration: underline;
+}
+
+:deep(.campaign-logo) {
+  max-height: 6em;
 }
 </style>
