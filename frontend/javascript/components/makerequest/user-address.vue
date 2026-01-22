@@ -11,7 +11,7 @@
     >
       {{ i18n.yourAddress }}
     </label>
-    <div class="col-sm-8 col-md-5">
+    <div class="col-sm-8 col-md-9">
       <div>
         <textarea
           v-model="address"

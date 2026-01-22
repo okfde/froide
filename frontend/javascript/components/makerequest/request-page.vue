@@ -273,48 +273,53 @@
                 id="step_write_request"
                 class="mt-3"
               >
-                <RequestForm
-                  :config="config"
-                  :publicbodies="publicBodies"
-                  :user="user"
-                  :request-form="requestForm"
-                  :user-form="userForm"
-                  :proof-form="proofForm"
-                  :hide-publicbody-chooser="hidePublicbodyChooser"
-                  :hide-full-text="hideFullText"
-                  :hide-editing="hideEditing"
-                  show-next-button
-                  :multi-request="multiRequest"
-                  :confirm-required="confirmRequired"
-                  :default-law="defaultLaw"
-                  :law-type="lawType"
-                  v-model:initial-subject="subject"
-                  v-model:initial-body="body"
-                  v-model:initial-full-text="fullText"
-                  :submitting="submitting"
-                  @step-next="setStep(stepNext)"
-                  @step-back="setStep(stepBack)"
-                >
-                  <template #request-hints>
-                    <DjangoSlot
-                      name="request-hints"
-                      has-onlinehelp-links
-                      @onlinehelp-click="onlineHelpShow($event)"
+                <h2>{{ i18n.writeRequest }}</h2>
+                <div class="row">
+                  <div class="col-lg-9">
+                    <div class="alert alert-info">
+                      <DjangoSlot
+                        name="request-hints"
+                        has-onlinehelp-links
+                        @onlinehelp-click="onlineHelpShow($event)"
+                      />
+                    </div>
+                    <RequestForm
+                      :config="config"
+                      :publicbodies="publicBodies"
+                      :user="user"
+                      :request-form="requestForm"
+                      :user-form="userForm"
+                      :proof-form="proofForm"
+                      :hide-publicbody-chooser="hidePublicbodyChooser"
+                      :hide-full-text="hideFullText"
+                      :hide-editing="hideEditing"
+                      show-next-button
+                      :multi-request="multiRequest"
+                      :confirm-required="confirmRequired"
+                      :default-law="defaultLaw"
+                      :law-type="lawType"
+                      v-model:initial-subject="subject"
+                      v-model:initial-body="body"
+                      v-model:initial-full-text="fullText"
+                      :submitting="submitting"
+                      @step-next="setStep(stepNext)"
+                      @step-back="setStep(stepBack)"
+                    >
+                      <template #request-legend-title>
+                        <DjangoSlot name="request-legend-title" />
+                      </template>
+                      <template #request-user-confirm>
+                        <DjangoSlot name="request-user-confirm" />
+                      </template>
+                    </RequestForm>
+                    <SimilarRequests
+                      v-if="showSimilar"
+                      :publicbodies="publicBodies"
+                      :subject="subject"
+                      :config="config"
                     />
-                  </template>
-                  <template #request-legend-title>
-                    <DjangoSlot name="request-legend-title" />
-                  </template>
-                  <template #request-user-confirm>
-                    <DjangoSlot name="request-user-confirm" />
-                  </template>
-                </RequestForm>
-                <SimilarRequests
-                  v-if="showSimilar"
-                  :publicbodies="publicBodies"
-                  :subject="subject"
-                  :config="config"
-                />
+                  </div>
+                </div>
               </div>
 
               <!-- STEP: VISIBILITY -->
