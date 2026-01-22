@@ -224,6 +224,8 @@ class MakeRequestView(FormView):
                 "submitRequest": _("Submit request"),
                 "makeRequest": _("Make request"),
                 "makeRequestYourself": _("Make a request yourself"),
+                "writeRequest": _("Write the request"),
+                "recipientPb": _("Receiving public body"),
                 "whatDoYouWantToDo": _("What do you want to do?"),
                 "whatCanIRequest": _("What can I request?"),
                 "whatCanINotRequest": _("What can’t I request?"),
