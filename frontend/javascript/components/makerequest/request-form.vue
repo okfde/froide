@@ -22,9 +22,11 @@
             <strong v-else>{{
               publicBodies.map((pb) => pb.name).join(', ')
             }}</strong>
+            <!-- setStep won't work in froide-campaign, but hidePublicbodyChooser always applies there;
+              and Pb choosing is handled by <CampaignChoosePublicbody> -->
             <button
               type="button"
-              class="btn btn-secondary btn-sm ms-auto"
+              class="btn btn-secondary btn-sm ms-auto text-nowrap"
               @click="setStepChangePublicbody"
             >
               {{ i18n.change }}
@@ -56,7 +58,7 @@
               <strong>{{ subject }}</strong>
               <button
                 type="button"
-                class="btn btn-secondary btn-sm ms-auto"
+                class="btn btn-secondary btn-sm ms-auto text-nowrap"
                 @click="editingDisabled = false"
               >
                 {{ i18n.reviewEdit }}
