@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as filters
 from rest_framework import mixins, permissions, status, throttling, viewsets
@@ -80,7 +81,7 @@ class FoiRequestFilter(filters.FilterSet):
     campaign = filters.ModelChoiceFilter(
         queryset=Campaign.objects.filter(public=True),
         null_value="-",
-        null_label="No Campaign",
+        null_label=_("no campaign"),
         lookup_expr="isnull",
         method="campaign_filter",
     )

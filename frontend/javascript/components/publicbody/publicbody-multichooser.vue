@@ -41,35 +41,29 @@
           </div>
         </div>
       </div>
-      <div class="row mb-4 mt-5">
-        <div class="col-auto">
-          <h3 v-show="!searching">
-            {{ i18n._('publicBodiesFound', { count: searchResultsLength }) }}
-          </h3>
-          <div v-show="searching" class="col-auto">
-            <div class="spinner-border text-secondary" role="status">
+      <div class="mb-4 mt-5 d-flex flex-wrap gap-3 align-items-center justify-content-between">
+          <h3 class="mb-0">
+            <span v-if="searching" class="spinner-border spinner-border-sm fs-3 text-secondary" role="status">
               <span class="visually-hidden">{{ i18n.loading }}</span>
-            </div>
+            </span>
+            {{ searching ? '…' : i18n._('publicBodiesFound', { count: searchResultsLength }) }}
+          </h3>
+          <div class="btn-group" role="group">
+            <button
+              @click.prevent="selectAll"
+              class="btn btn-sm btn-outline-secondary"
+              :disabled="selectAllButtonDisabled"
+            >
+              {{ i18n._('selectAll', { count: searchResultsLength }) }}
+            </button>
+            <button
+              :disabled="!hasSearchResults"
+              @click.prevent="clearSearch"
+              class="btn-sm btn btn-outline-secondary"
+            >
+              {{ i18n.clearSearchResults }}
+            </button>
           </div>
-        </div>
-        <div class="col-auto">
-          <button
-            @click.prevent="selectAll"
-            class="btn btn-sm btn-outline-secondary"
-            :disabled="selectAllButtonDisabled"
-          >
-            {{ i18n._('selectAll', { count: searchResultsLength }) }}
-          </button>
-        </div>
-        <div class="col-auto ms-auto">
-          <button
-            :disabled="!hasSearchResults"
-            @click.prevent="clearSearch"
-            class="btn-sm btn btn-outline-secondary"
-          >
-            {{ i18n.clearSearchResults }}
-          </button>
-        </div>
       </div>
       <div class="row">
         <div class="col-md-8 col-lg-9 order-2">
@@ -93,20 +87,21 @@
           <PbPagination :scope="scope" :i18n="i18n"></PbPagination>
         </div>
         <div class="col-md-4 col-lg-3 order-md-1">
-          <PbFilterSelected
-            v-for="filterKey in filterOrder"
-            :key="filterKey"
-            :config="filterConfig[filterKey]"
-            @update="updateFilter"
-            :value="filters[filterKey]"
-          >
-          </PbFilterSelected>
-          <div class="row mt-3">
+          <div class="d-flex flex-wrap flex-md-column gap-2">
+            <PbFilterSelected
+              v-for="filterKey in filterOrder"
+              :key="filterKey"
+              :config="filterConfig[filterKey]"
+              @update="updateFilter"
+              :value="filters[filterKey]"
+              />
+          </div>
+          <div class="d-flex flex-column flex-sm-row flex-md-column flex-wrap gap-2 mt-3">
             <div
               v-for="filterKey in filterOrder"
               :key="filterKey"
-              class="col-sm-4 col-md-12 filter-column position-relative"
-            >
+              class="position-relative"
+              >
               <PbFilter
                 :global-config="config"
                 :expanded="filterExpanded[filterKey]"
@@ -129,6 +124,7 @@
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import {
   SET_STEP_REQUEST,
+  SET_STEP_REVIEW_PUBLICBODY,
   ADD_PUBLICBODY_ID,
   REMOVE_PUBLICBODY_ID,
   CLEAR_PUBLICBODIES
@@ -146,10 +142,6 @@ import PbFilter from './pb-filter'
 import PbFilterSelected from './pb-filter-selected'
 
 const MAX_PUBLICBODIES = 800
-
-function treeLabel(item) {
-  return '-'.repeat(item.depth - 1) + ' ' + item.name
-}
 
 export default {
   name: 'PublicbodyMultiChooser',
@@ -231,7 +223,7 @@ export default {
           hasSearch: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
@@ -250,13 +242,13 @@ export default {
         categories: {
           label: this.i18n.topicPlural[1],
           key: 'categories',
-          expanded: this.filterExpanded.categories,
+          initialFilters: { depth: 1 },
           getItems: (q, filters) => searcher.listCategories(q, filters),
           hasSearch: true,
           multi: true,
           itemMap: (item) => {
             return {
-              label: treeLabel(item),
+              label: item.name,
               id: item.id,
               children: item.children
             }
@@ -324,7 +316,11 @@ export default {
     blockProgressWidth() {
       return `width: ${this.blockProgress}%`
     },
-    ...mapGetters(['getPublicBodiesByScope', 'getScopedSearchMeta'])
+    ...mapGetters([
+      'getPublicBodiesByScope',
+      'getScopedSearchMeta',
+      'stepCanContinue',
+    ])
   },
   methods: {
     togglePane(e) {
@@ -403,6 +399,7 @@ export default {
     },
     ...mapMutations({
       setStepRequest: SET_STEP_REQUEST,
+      setStepReviewPublicbody: SET_STEP_REVIEW_PUBLICBODY,
       addPublicBodyId: ADD_PUBLICBODY_ID,
       removePublicBodyId: REMOVE_PUBLICBODY_ID,
       clearPublicBodies: CLEAR_PUBLICBODIES
@@ -418,24 +415,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../styles/variables';
 
 button[disabled] {
   cursor: not-allowed;
 }
-@mixin filter-divider() {
-  .filter-column:not(:first-child) {
-    padding-top: 1em;
-  }
-  .filter-column:not(:last-child) {
-    border-bottom: 2px solid $gray-300;
-    padding-bottom: 1em;
-  }
-}
-@include media-breakpoint-up(md) {
-  @include filter-divider();
-}
-@include media-breakpoint-down(xs) {
-  @include filter-divider();
-}
+
 </style>

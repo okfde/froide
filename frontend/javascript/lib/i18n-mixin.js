@@ -3,6 +3,11 @@ const VAR = /\$\{(\w+)\}/g
 const LANG = document.querySelector('html').lang
 
 const I18nMixin = {
+  provide() {
+    return {
+      i18n: this.i18n
+    }
+  },
   computed: {
     i18n() {
       return {

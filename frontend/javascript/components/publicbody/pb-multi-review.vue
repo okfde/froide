@@ -2,20 +2,12 @@
   <div class="review">
     <div class="row mt-3 mb-3">
       <div class="col-auto">
-        <h3 class="display-4">
+        <h2>
           {{ i18n._('publicBodiesCount', { count: publicBodies.length }) }}
-        </h3>
+        </h2>
       </div>
     </div>
-    <div class="row">
-      <div class="col-auto">
-        <button
-          class="btn btn-primary btn-lg"
-          @click.prevent="setStepSelectPublicBody">
-          &larr; {{ i18n.addMoreAuthorities }}
-        </button>
-      </div>
-    </div>
+
     <PbSummary
       :scope="scope"
       :i18n="i18n"
@@ -42,12 +34,25 @@
       :rows="publicBodies"
       @select-all-rows="selectAllRows"
       class="transition"></PbTable>
+
+    <div class="row">
+      <div class="col-auto ms-auto">
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="!stepCanContinue(scope)"
+          @click="$emit('stepNext')"
+          >{{ i18n.stepNext || i18n.continue }}</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-import { SET_STEP_SELECT_PUBLICBODY } from '../../store/mutation_types'
+import { mapGetters, mapMutations } from 'vuex'
+import {
+  SET_STEP_SELECT_PUBLICBODY
+} from '../../store/mutation_types'
 
 import PBChooserMixin from './lib/pb-chooser-mixin'
 import PBListMixin from './lib/pb-list-mixin'
@@ -74,7 +79,10 @@ export default {
   computed: {
     summaryDimensions() {
       return summaryDimensions
-    }
+    },
+    ...mapGetters([
+      'stepCanContinue',
+    ])
   },
   methods: {
     ...mapMutations({
