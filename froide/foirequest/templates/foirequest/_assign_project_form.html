@@ -3,7 +3,7 @@
 <form method="post"
       action="{{ submit_url }}"
       class="tight-margin d-flex flex-column w-100">
-    <h5 class="card-title">{{ legend }}</h5>
+    <h3 class="h5 card-title">{{ legend }}</h3>
     {% csrf_token %}{# needs to be below <h5> for `tight-margin` class to work #}
     <p>
         {% if object.project %}

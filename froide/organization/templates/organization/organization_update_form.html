@@ -32,7 +32,7 @@
 {% block app_body %}
     <div class="row mb-3 mt-3">
         <div class="col-lg-8">
-            <h2>{% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}</h2>
+            <h1 class="h2">{% blocktrans with name=object.name %}Organization “{{ name }}”{% endblocktrans %}</h1>
         </div>
         <div class="col-lg-4">
             <a href="{% url 'organization-detail' slug=object.slug %}"
@@ -110,7 +110,7 @@
                 </table>
             </div>
             <div class="col-lg-4">
-                <h3>{% trans "Roles" %}</h3>
+                <h2 class="h3">{% trans "Roles" %}</h2>
                 <dl>
                     <dt>{% trans "Member" %}</dt>
                     <dd>
@@ -131,7 +131,7 @@
     {% if invite_form %}
         <div class="row">
             <div class="col-md-8">
-                <h4>{% trans "Add organization member" %}</h4>
+                <h2 class="h4">{% trans "Add organization member" %}</h2>
                 <form method="post"
                       action="{% url 'organization-invite' slug=object.slug %}">
                     {% csrf_token %}
@@ -146,7 +146,7 @@
     {% if form %}
         <div class="row mt-5">
             <div class="col-md-8">
-                <h4>{% trans "Edit organization" %}</h4>
+                <h2 class="h4">{% trans "Edit organization" %}</h2>
                 <form method="post"
                       action="{% url 'organization-update' slug=object.slug %}"
                       enctype="multipart/form-data">

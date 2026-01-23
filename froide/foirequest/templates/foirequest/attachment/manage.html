@@ -18,12 +18,12 @@
             <a href="{{ message.get_absolute_url }}"
                class="btn btn-outline-secondary">{% trans "Back" %}</a>
         </div>
-        <h2>{% trans "All attachments and options" %}</h2>
+        <h1 class="h2">{% trans "All attachments and options" %}</h1>
         {% translate "Here you can download and edit documents you have uploaded previously." %}
         {% csrf_token %}
         <attachment-manager id="attachment-manager" :message="{{ message_json }}" :config="{{ config_json }}" :user_is_staff="{{ user_is_staff }}">
         <div class="text-center">
-            <h4>{% trans "Attachments are loading..." %}</h4>
+            <div class="h4">{% trans "Attachments are loading..." %}</div>
             <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">{% trans "Loading..." %}</span>
             </div>

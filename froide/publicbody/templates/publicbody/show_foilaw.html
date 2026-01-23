@@ -3,9 +3,10 @@
 {% load markup %}
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
 {% block app_body %}
-    <h2>{{ object.name }}</h2>
+    <h1 class="h2">{{ object.name }}</h1>
     <div class="row mt-4">
         <div class="col-md-3">
+            <h2 class="visually-hidden">{% trans "Information about the law" %}</h2>
             <dl class="my-0">
                 {% if object.created %}
                     <dt>{% blocktrans %}Came into effect on{% endblocktrans %}:</dt>
@@ -45,6 +46,7 @@
             </dl>
         </div>
         <div class="col-md-9">
+            <h2 class="visually-hidden">{% trans "Law details" %}</h2>
             {% if legal_text %}
                 <ul class="nav nav-tabs mb-3">
                     <li class="nav-item">

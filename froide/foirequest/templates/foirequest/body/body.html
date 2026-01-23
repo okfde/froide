@@ -12,6 +12,7 @@
          aria-labelledby="correspondence-tab">
         {# Correspondence, Action buttons and Timeline #}
         <div class="container-sm-full px-0">
+            <h2 class="visually-hidden">{% trans "Correspondence" %}</h2>
             <div class="row mx-3 mx-lg-0 py-4 d-print-none">
                 <div class="col-lg-8 px-0 d-flex">
                     {% if object|can_write_foirequest:request and object.public_body %}

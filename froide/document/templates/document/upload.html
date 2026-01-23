@@ -7,7 +7,7 @@
     {% include "header_reduced.html" %}
 {% endblock %}
 {% block app_body %}
-    <h3>{% blocktrans %}Upload documents{% endblocktrans %}</h3>
+    <h1 class="h3">{% blocktrans %}Upload documents{% endblocktrans %}</h1>
     <p class="lead">{% trans "You can upload large PDF documents or ZIP files of PDF documents here." %}</p>
     <form action="" method="post">
         {% csrf_token %}

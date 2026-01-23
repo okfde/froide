@@ -19,7 +19,7 @@
             <div class="pb-5">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{% trans "Which Public Bodies?" %}</h5>
+                        <h3 class="h5 card-title">{% trans "Which Public Bodies?" %}</h3>
                         {% url 'publicbody-list' jurisdiction=object.slug as pb_url %}
                         <p class="card-text">{% trans "All bodies that work on administrative tasks of this jurisdiction." %}</p>
                     </div>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{% trans "What Information?" %}</h5>
+                        <h3 class="h5 card-title">{% trans "What Information?" %}</h3>
                         <p class="card-text">
                             {% trans "Contracts, memos, reports and other documents of the administration: you have the right to know." %}
                         </p>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">{% trans "What right?" %}</h5>
+                        <h3 class="h5 card-title">{% trans "What right?" %}</h3>
                         <p class="card-text">
                             {% blocktrans with name=object.name %}The freedom of information law in {{ name }} allows you access to administrative information. {% endblocktrans %}
                         </p>
@@ -63,7 +63,7 @@
                         {% with page_url="/"|add:object.slug|add:"/text/" %}
                             {% get_flatpages page_url as content_page %}
                             {% if content_page %}
-                                <h3>{{ content_page.0.title }}</h3>
+                                <h2>{{ content_page.0.title }}</h2>
                                 {{ content_page.0.content|safe }}
                             {% endif %}
                         {% endwith %}
@@ -71,18 +71,18 @@
                 </div>
                 <div class="col-lg-4 col-md-4">
                     {% block jurisdiction_sidebar %}
-                        <h3>
+                        <h2 class="h3">
                             {% block jurisdiction_sidebar_header %}
                                 {% blocktrans with name=SITE_NAME %}Facts about {{ name }}{% endblocktrans %}
                             {% endblock %}
-                        </h3>
+                        </h2>
                         {% block jurisdiction_sidebar_content %}{% endblock %}
                         {% block jurisdiction_sidebar_laws %}
-                            <h3>
+                            <h2 class="h3">
                                 {% block jurisdiction_sidebar_laws_header %}
                                     {% blocktrans with name=object.name %}Information laws in {{ name }}{% endblocktrans %}
                                 {% endblock %}
-                            </h3>
+                            </h2>
                             {% for law in laws %}
                                 {% block jurisdiction_sidebar_laws_law %}
                                     <p>
@@ -97,11 +97,11 @@
                             {% endfor %}
                         {% endblock %}
                         {% block jurisdiction_sidebar_requests %}
-                            <h3>
+                            <h2 class="h3">
                                 {% block jurisdiction_sidebar_requests_header %}
                                     {% blocktrans with name=object.name %}Requests in {{ name }}{% endblocktrans %}
                                 {% endblock %}
-                            </h3>
+                            </h2>
                             <ul class="list-unstyled">
                                 {% for foirequest in foirequests %}
                                     <li>{% include "foirequest/snippets/request_item.html" with object=foirequest %}</li>

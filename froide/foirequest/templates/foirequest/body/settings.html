@@ -7,6 +7,7 @@
      id="settings-panel"
      aria-labelledby="settings-tab">
     <div class="container py-3">
+        <h2 class="visually-hidden">{% trans "Settings" %}</h2>
         <div class="row g-3">
             <div class="col-12 col-md-6 d-flex">
                 <div class="border border-2 border-gray-300 p-3 w-100 d-flex">
@@ -31,7 +32,7 @@
             {% if object.response_messages %}
                 <div class="col-12 col-md-6 d-flex">
                     <div class="border border-2 border-gray-300 p-3 w-100">
-                        <h5>{% trans "Set Law" %}</h5>
+                        <h3 class="h5">{% trans "Set Law" %}</h3>
                         <form method="post"
                               class="disable-submit"
                               action="{% url 'foirequest-set_law' slug=object.slug %}">
@@ -48,7 +49,7 @@
             {% if not object.public %}
                 <div class="col-12 col-md-6 d-flex">
                     <div class="border border-2 border-gray-300 p-3 w-100">
-                        <h5>{% trans "Secret Short URL" %}</h5>
+                        <h3 class="h5">{% trans "Secret Short URL" %}</h3>
                         <p class="small help">{% trans "This URL gives read access to others." %}</p>
                         <p>
                             <input type="text"

@@ -4,10 +4,11 @@
 {% load form_helper %}
 {% load block_helper %}
 {% block app_container %}
+    <h1 class="visually-hidden">{% blocktrans %}Log in or reset password{% endblocktrans %}</h1>
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-8">
             <div class="card mb-3">
-                <h5 class="card-header">{% blocktrans %}Log in{% endblocktrans %}</h5>
+                <h2 class="h5 card-header">{% blocktrans %}Log in{% endblocktrans %}</h2>
                 <div class="card-body">
                     <p class="visible-sm visible-xs">
                         <a href="{% url 'account-signup' %}">
@@ -29,7 +30,7 @@
                 </div>
             </div>
             <div class="card mb-3">
-                <h5 class="card-header">{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h5>
+                <h2 class="h5 card-header">{% blocktrans %}In case you forgot your password...{% endblocktrans %}</h2>
                 <div class="card-body">
                     <p>{% blocktrans %}... we can send you a reset link to your email address.{% endblocktrans %}</p>
                     <form class="form-horizontal"
