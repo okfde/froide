@@ -276,7 +276,7 @@
                 <h2>{{ i18n.writeRequest }}</h2>
                 <div class="row">
                   <div class="col-lg-9">
-                    <div class="alert alert-info">
+                    <div v-show="!editingDisabled" class="alert alert-info">
                       <DjangoSlot
                         name="request-hints"
                         has-onlinehelp-links
@@ -304,6 +304,7 @@
                       :submitting="submitting"
                       @step-next="setStep(stepNext)"
                       @step-back="setStep(stepBack)"
+                      @enable-editing="editingDisabled = false"
                     >
                       <template #request-legend-title>
                         <DjangoSlot name="request-legend-title" />

@@ -59,7 +59,7 @@
               <button
                 type="button"
                 class="btn btn-secondary btn-sm ms-auto text-nowrap"
-                @click="editingDisabled = false"
+                @click="enableEditing"
               >
                 {{ i18n.reviewEdit }}
               </button>
@@ -422,7 +422,7 @@ export default {
     UserAddress,
     UserConfirm
   },
-  emits: ['stepNext'],
+  emits: ['stepNext', 'enableEditing'],
   props: {
     config: {
       type: Object,
@@ -689,6 +689,10 @@ export default {
         PLACEHOLDER_REPLACEMENT
       )
       this.validateBody()
+    },
+    enableEditing() {
+      this.editingDisabled = false
+      this.$emit('enableEditing')
     },
     showFullLetter() {
       this.fullLetter = true
