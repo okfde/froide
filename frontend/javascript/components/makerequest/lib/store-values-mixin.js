@@ -15,7 +15,7 @@ import {
   UPDATE_TERMS,
   SET_CONFIG,
   UPDATE_CONFIRM,
-  UPDATE_CLAIMS_VIP,
+  UPDATE_CLAIMS_VIP
 } from '../../../store/mutation_types'
 
 // for TypedChoiceFields (essentialy BooleanFields, but radio),
@@ -51,12 +51,9 @@ const StoreValueMixin = {
       // we still do not ignoreStorage to allow changes (of the presets) to persist
       // -- within the session. In the (unlikely) case of "session reuse"
       // (e.g. abandon draft, open the page with different GETs in the same tab)
-      // this could lead to the GET parameters be ignored. 
-      // This could be prevented by tying the storage stronger to the request;
-      // initStoreValues would need to do
-      // persistKeyPrefix+(document.location.pathname+document.location.search)
+      // this could lead to the GET parameters be ignored.
+      // We prevent this by tying the storage to a URL-scoped key.
       this.initStoreValues({
-        scope: this.pbScope,
         ignoreStorage: this.config.wasPost,
         formFields: this.requestForm.fields,
         formCoerce: {
@@ -66,13 +63,12 @@ const StoreValueMixin = {
           subject: UPDATE_SUBJECT,
           body: UPDATE_BODY,
           full_text: UPDATE_FULL_TEXT, // TODO
-          public: UPDATE_REQUEST_PUBLIC,
+          public: UPDATE_REQUEST_PUBLIC
         }
       })
 
       // law_type only passed by query string, e.g. ?law_type=IFG, so never storage, always form
       this.initStoreValues({
-        scope: this.pbScope,
         ignoreStorage: true,
         formFields: this.requestForm.fields,
         mutationMap: {
@@ -80,17 +76,17 @@ const StoreValueMixin = {
         }
       })
 
-      if (this.userInfo !== null) { // user is authenticated...
+      if (this.userInfo !== null) {
+        // user is authenticated...
         // authenticated user fields always set by prop, never form, never storage
         this.initStoreValues({
-          scope: this.pbScope,
           ignoreStorage: true,
           // no formFields, always from prop
           propMap: {
-            user: this.userInfo 
+            user: this.userInfo
           },
           mutationMap: {
-            user: SET_USER,
+            user: SET_USER
           }
         })
       } else {
@@ -99,7 +95,6 @@ const StoreValueMixin = {
         // and hence we need individual, per-field mutations.
         // see writeToStorage, reduced, where they are flattened/plucked
         this.initStoreValues({
-          scope: this.pbScope,
           ignoreStorage: this.config.wasPost,
           formFields: this.userForm.fields,
           formCoerce: {
@@ -113,22 +108,20 @@ const StoreValueMixin = {
             private: UPDATE_PRIVATE,
             address: UPDATE_ADDRESS,
             terms: UPDATE_TERMS,
-            claims_vip: UPDATE_CLAIMS_VIP,
+            claims_vip: UPDATE_CLAIMS_VIP
           }
         })
       }
 
       // confirm is not a form field, always from storage
       this.initStoreValues({
-        scope: this.pbScope,
         mutationMap: {
-          confirm: UPDATE_CONFIRM,
+          confirm: UPDATE_CONFIRM
         }
       })
 
       // address provided via formField.initial when logged in
       this.initStoreValues({
-        scope: this.pbScope,
         ignoreStorage: this.config.wasPost,
         formFields: this.userForm.fields,
         mutationMap: {
@@ -138,18 +131,15 @@ const StoreValueMixin = {
 
       // search form config (jurisdiction/-kind, year range, campaign) is ephemeral, so always in storage only
       this.initStoreValues({
-        scope: this.pbScope,
         mutationMap: {
           similarRequestSearch: UPDATE_SIMILAR_REQUEST_SEARCH
         }
       })
     },
     ...mapMutations({
-      setConfig: SET_CONFIG,
+      setConfig: SET_CONFIG
     }),
-    ...mapActions([
-      'initStoreValues',
-    ])
+    ...mapActions(['initStoreValues'])
   }
 }
 

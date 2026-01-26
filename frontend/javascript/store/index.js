@@ -49,14 +49,15 @@ import {
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
   UPDATE_SIMILAR_REQUEST_SEARCH,
-  UPDATE_CLAIMS_VIP,
+  UPDATE_CLAIMS_VIP
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
 
 const persistStorage = window.sessionStorage
-const persistKeyPrefix = 'froide-store-'
+const persistKey =
+  'froide-store-' + document.location.pathname + document.location.search
 
 export default createStore({
   state() {
@@ -88,7 +89,7 @@ export default createStore({
       lastNameChanged: false,
       emailValid: undefined,
       emailChanged: false,
-      similarRequestSearch: {},
+      similarRequestSearch: {}
     }
   },
   getters: {
@@ -493,38 +494,46 @@ export default createStore({
         terms: state.user.terms,
         confirm: state.user.confirm,
         claims_vip: state.user.claims_vip,
-        similarRequestSearch: state.similarRequestSearch,
+        similarRequestSearch: state.similarRequestSearch
       }
       try {
-        persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(reduced))
+        persistStorage.setItem(persistKey, JSON.stringify(reduced))
       } catch (err) {
         console.warn('failed to persist state', persistStorage, reduced, err)
       }
     },
     // also called from purgestorage.ts
-    purgeStorage({ state }, { scope, keepNonForm }) {
+    purgeStorage({ state }, { keepNonForm }) {
       // don't purge values we can't get from (non-existing) form fields
       const purged = keepNonForm
         ? { step: state.step, confirm: state.user.confirm }
         : null
       try {
         if (purged) {
-          persistStorage.setItem(persistKeyPrefix + scope, JSON.stringify(purged))
-          console.log('purged, keeping', persistKeyPrefix + scope, purged)
+          persistStorage.setItem(persistKey, JSON.stringify(purged))
+          console.log('purged, keeping', persistKey, purged)
         } else {
-          persistStorage.removeItem(persistKeyPrefix + scope)
-          console.log('purged, removed', persistKeyPrefix + scope)
+          persistStorage.removeItem(persistKey)
+          console.log('purged, removed', persistKey)
         }
       } catch (err) {
-        console.warn('failed to purge persisted state', persistKeyPrefix + scope, err)
+        console.warn('failed to purge persisted state', persistKey, err)
       }
     },
-    initStoreValues({ commit }, { formFields, formCoerce, mutationMap, propMap, ignoreStorage, scope, scoped }) {
+    initStoreValues(
+      { commit },
+      { formFields, formCoerce, mutationMap, propMap, ignoreStorage, scope }
+    ) {
       let storage
       try {
-        storage = JSON.parse(persistStorage.getItem(persistKeyPrefix + scope))
+        storage = JSON.parse(persistStorage.getItem(persistKey))
       } catch (err) {
-        console.warn('failed to load persisted state', persistStorage, persistKeyPrefix + scope, err)
+        console.warn(
+          'failed to load persisted state',
+          persistStorage,
+          persistKey,
+          err
+        )
       }
       // need null check for parsed, previously serialized storage
       const isSet = (v) => !(v === undefined || v === null)
@@ -536,7 +545,12 @@ export default createStore({
           value = propMap[key]
           console.log('got', key, 'from prop')
         }
-        if (!isSet(value) && !ignoreStorage && storage && storage[key] !== undefined) {
+        if (
+          !isSet(value) &&
+          !ignoreStorage &&
+          storage &&
+          storage[key] !== undefined
+        ) {
           value = storage[key]
           console.log('got', key, 'from storage', value)
         }
@@ -552,7 +566,7 @@ export default createStore({
           console.log('could not get', key)
           continue
         }
-        if (scoped) {
+        if (scope) {
           commit(mutation, { [key]: value, scope })
         } else {
           commit(mutation, value)
