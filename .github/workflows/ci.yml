@@ -2,9 +2,6 @@ name: Froide CI
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   lint:
@@ -55,7 +52,7 @@ jobs:
         run: pnpm run build
       - name: Run tests
         run: |
-          coverage run --branch -m pytest froide/
+          pytest --cov -n auto --dist loadgroup 
           coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide
