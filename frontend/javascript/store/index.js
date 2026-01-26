@@ -503,7 +503,7 @@ export default createStore({
       }
     },
     // also called from purgestorage.ts
-    purgeStorage({ state }, { keepNonForm }) {
+    purgeStorage({ state }, { keepNonForm } = { keepNonForm: false }) {
       // don't purge values we can't get from (non-existing) form fields
       const purged = keepNonForm
         ? { step: state.step, confirm: state.user.confirm }
