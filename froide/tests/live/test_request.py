@@ -45,6 +45,8 @@ async def do_login(page, live_server, navigate=True):
         await expect(page.locator("#navbaraccount-link")).to_have_count(1)
 
 
+@pytest.mark.elasticsearch
+@pytest.mark.xdist_group(name="elasticsearch")
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_not_logged_in_request(page, live_server, public_body_with_index):
@@ -125,6 +127,8 @@ async def test_make_not_logged_in_request_to_public_body(page, live_server, worl
     assert req.status == FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
 
 
+@pytest.mark.elasticsearch
+@pytest.mark.xdist_group(name="elasticsearch")
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_logged_in_request(
@@ -239,6 +243,8 @@ async def test_collapsed_menu(page, live_server):
 
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
+@pytest.mark.elasticsearch
+@pytest.mark.xdist_group(name="elasticsearch")
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
     [("", "successful"), ("successful", "refused")],

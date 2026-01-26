@@ -1043,7 +1043,7 @@ def test_escalation_message(world, client):
         reverse("foirequest-escalation_message", kwargs={"slug": req.slug}),
         {
             "subject": "My Escalation Subject",
-            "message": ("My Escalation Message" "\n%s\nDone" % req.get_auth_link()),
+            "message": ("My Escalation Message\n%s\nDone" % req.get_auth_link()),
         },
     )
     assert response.status_code == 302
@@ -1555,6 +1555,8 @@ def test_resolution(world, client):
 
 
 @pytest.mark.django_db
+@pytest.mark.elasticsearch
+@pytest.mark.xdist_group(name="elasticsearch")
 def test_search(world, client, pb):
     pb = PublicBody.objects.all()[0]
     factories.rebuild_index()
@@ -1599,9 +1601,7 @@ def test_redaction_config(world, client, msgobj):
             **{
                 "date": timezone.now(),
                 "subject": "Reply",
-                "body": (
-                    "Guten Tag,\nblub\nbla\n\n" "Mit freundlichen Grüßen\n" + name
-                ),
+                "body": ("Guten Tag,\nblub\nbla\n\nMit freundlichen Grüßen\n" + name),
                 "html": "html",
                 "from_": EmailAddress(name, "petra.radetsky@bund.example.org"),
                 "to": [EmailAddress("", req.secret_address)],

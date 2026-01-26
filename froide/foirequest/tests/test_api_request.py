@@ -28,6 +28,7 @@ Application = get_application_model()
 AccessToken = get_access_token_model()
 
 
+@pytest.mark.xdist_group(name="elasticsearch")
 class ApiTest(TestCase):
     def setUp(self):
         self.site = factories.make_world()
@@ -113,6 +114,7 @@ class ApiTest(TestCase):
         response = self.client.get("/api/v1/request/search/?q=Number")
         self.assertEqual(response.status_code, 200)
 
+    @pytest.mark.elasticsearch
     def test_search_similar(self):
         factories.delete_index()
         search_url = "/api/v1/request/search/"

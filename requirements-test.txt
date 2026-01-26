@@ -69,6 +69,7 @@ coverage==7.10.6
     # via
     #   froide (pyproject.toml)
     #   django-coverage-plugin
+    #   pytest-cov
 cron-descriptor==2.0.6
     # via django-celery-beat
 cryptography==46.0.1
@@ -126,7 +127,7 @@ django-crossdomainmedia==0.0.4
     # via froide (pyproject.toml)
 django-elasticsearch-dsl==8.2
     # via froide (pyproject.toml)
-django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@36bac253a1ac5cfa779599ae7bf10ea23eec35e5
+django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@a7951d051fc155104bfe07ff43573762abafb1ec
     # via froide (pyproject.toml)
 django-filter==25.1
     # via
@@ -191,6 +192,8 @@ elasticsearch==8.19.1
     #   elasticsearch-dsl
 elasticsearch-dsl==8.18.0
     # via froide (pyproject.toml)
+execnet==2.1.2
+    # via pytest-xdist
 factory-boy==3.3.3
     # via
     #   froide (pyproject.toml)
@@ -306,7 +309,9 @@ platformdirs==4.4.0
 playwright==1.55.0
     # via pytest-playwright-asyncio
 pluggy==1.6.0
-    # via pytest
+    # via
+    #   pytest
+    #   pytest-cov
 pre-commit==4.3.0
     # via froide (pyproject.toml)
 prompt-toolkit==3.0.52
@@ -348,20 +353,26 @@ pytest==8.4.2
     #   froide (pyproject.toml)
     #   pytest-asyncio
     #   pytest-base-url
+    #   pytest-cov
     #   pytest-django
     #   pytest-factoryboy
     #   pytest-playwright-asyncio
+    #   pytest-xdist
 pytest-asyncio==1.2.0
     # via
     #   froide (pyproject.toml)
     #   pytest-playwright-asyncio
 pytest-base-url==2.1.0
     # via pytest-playwright-asyncio
+pytest-cov==7.0.0
+    # via froide (pyproject.toml)
 pytest-django==4.11.1
     # via froide (pyproject.toml)
 pytest-factoryboy==2.8.1
     # via froide (pyproject.toml)
 pytest-playwright-asyncio==0.7.1
+    # via froide (pyproject.toml)
+pytest-xdist==3.8.0
     # via froide (pyproject.toml)
 python-crontab==3.3.0
     # via django-celery-beat

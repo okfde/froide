@@ -25,10 +25,12 @@ from .factories import (
 from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 
 
+@pytest.mark.xdist_group(name="elasticsearch")
 class PublicBodyTest(TestCase):
     def setUp(self):
         self.site = make_world()
 
+    @pytest.mark.elasticsearch
     def test_web_page(self):
         pb = PublicBody.objects.all()[0]
         category = CategoryFactory.create(is_topic=True)
@@ -269,6 +271,7 @@ class ApiTest(TestCase):
         response = self.client.get("/api/v1/publicbody/search/?format=json&q=Body")
         self.assertEqual(response.status_code, 200)
 
+    @pytest.mark.elasticsearch
     def test_autocomplete(self):
         pb = PublicBody.objects.all()[0]
         rebuild_index()

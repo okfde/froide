@@ -80,9 +80,11 @@ test = [
   "pyflakes",
   "pytest",
   "pytest-asyncio",
+  "pytest-cov",
   "pytest-django",
   "pytest-factoryboy",
   "pytest-playwright-asyncio>=0.7.0",
+  "pytest-xdist",
   "greenlet>=3.1.1",
   "ruff",
   "tblib",
@@ -142,19 +144,22 @@ branch = true
 
 [tool.coverage.report]
 show_missing = true
-skip_covered = true
+skip_covered = false
 exclude_lines = ["pragma: no cover"]
+
+[tool.coverage.files]
+source = ["froide"]
 
 [tool.pytest.ini_options]
 DJANGO_CONFIGURATION = "Test"
 DJANGO_SETTINGS_MODULE = "froide.settings"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 addopts = ["--reuse-db"]
-markers = ["no_delivery_mock"]
 filterwarnings = [
-    "ignore::DeprecationWarning:(?!froide).*",
-    "ignore::PendingDeprecationWarning:(?!froide)*",
+  "ignore::DeprecationWarning:(?!froide).*",
+  "ignore::PendingDeprecationWarning:(?!froide)*",
 ]
+markers = ["no_delivery_mock", "elasticsearch"]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
