@@ -1,7 +1,7 @@
 import re
 from datetime import datetime, timedelta, timezone
 from unittest import mock
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
@@ -291,10 +291,18 @@ def test_confirmation_process(world, client):
 def test_next_link_login(world, client):
     mes = FoiMessage.objects.all()[0]
     url = mes.get_absolute_url()
-    enc_url = url.replace("#", "%23")  # FIXME: fake uri encode
-    response = client.get(reverse("account-login") + "?next=%s" % enc_url)
-    # occurences in hidden inputs of login, signup and forgotten password
-    assert response.content.decode("utf-8").count(url) == 2
+    response = client.get(reverse("account-login") + "?next=%s" % quote(url))
+    assert response.status_code == 200  # not redirecting
+    # occurences in hidden inputs of login and forgotten password forms
+    assert response.text.count(url) == 2
+
+    response = client.post(
+        reverse("account-login"),
+        {"username": "info@fragdenstaat.de", "next": url, "password": "wrong-password"},
+    )
+    # next url still present in form
+    assert response.text.count(url) == 2
+
     response = client.post(
         reverse("account-login"),
         {"username": "info@fragdenstaat.de", "next": url, "password": "froide"},
@@ -308,6 +316,11 @@ def test_next_link_signup(world, client):
     mail.outbox = []
     mes = FoiMessage.objects.all()[0]
     url = mes.get_absolute_url()
+
+    response = client.get(reverse("account-signup") + "?next=%s" % quote(url))
+    # occurences in hidden inputs of signup form
+    assert response.text.count(url) == 1
+
     post = {
         "first_name": "Horst",
         "last_name": "Porst",

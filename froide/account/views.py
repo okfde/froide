@@ -325,7 +325,8 @@ class LoginView(MFALoginView):
         context = super().get_context_data(**kwargs)
         if "reset_form" not in context:
             context["reset_form"] = PasswordResetForm(prefix="pwreset")
-        context.update({"next": self.request.GET.get("next")})
+
+        context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
         return context
 
 
@@ -352,7 +353,7 @@ class ReAuthView(FormView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["next"] = self.request.GET.get("next", "")
+        context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
         context["mfa_methods"] = self.mfa_methods
         if MFAMethod.FIDO2 in self.mfa_methods and "mfa_data" not in context:
             context["mfa_data"] = begin_mfa_authenticate_for_method(
@@ -447,6 +448,13 @@ class SignupView(FormView):
             )
 
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
+
+        return context
 
 
 @require_POST
