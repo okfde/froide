@@ -46,7 +46,7 @@
               {{ i18n.subject }}:
             </label>
           </div>
-          <div class="col-sm-9 d-flex align-items-center">
+          <div class="col-sm-9 d-flex flex-wrap align-items-center">
             <template
               v-if="
                 editingDisabled &&
@@ -71,7 +71,7 @@
                   errors.subject &&
                   errors.subject.length > 0
                 "
-                class="alert my-2"
+                class="alert my-2 w-100"
                 :class="{
                   'alert-danger': !subjectChanged,
                   'alert-warning': subjectChanged
@@ -85,7 +85,7 @@
               </div>
               <div
                 v-else-if="subjectValidationErrors.length > 0"
-                class="alert my-2"
+                class="alert my-2 w-100"
                 :class="{
                   'alert-danger': !subjectChanged,
                   'alert-warning': subjectChanged
