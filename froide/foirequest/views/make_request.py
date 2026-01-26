@@ -183,8 +183,9 @@ class MakeRequestView(FormView):
                 "makeRequest": reverse("foirequest-make_request"),
                 "helpRequestPublic": get_content_url("help_request_public"),
                 "helpRequestPrivacy": get_content_url("help_request_privacy"),
-                "login": "{}?next={}".format(
-                    reverse("account-login"), self.request.get_full_path()
+                "login": "{}?{}".format(
+                    reverse("account-login"),
+                    urlencode({"next": self.request.get_full_path()}),
                 ),
             },
             "i18n": {
