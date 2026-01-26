@@ -876,8 +876,6 @@ export default {
         if (this.requestForm.fields.draft.initial) {
           console.log('request is draft, skipping intro etc.')
           this.setStep(STEPS.WRITE_REQUEST)
-        } else if (this.hidePublicbodyChooser && !this.userInfo) {
-          this.setStep(STEPS.LOGIN_CREATE)
         } else if (this.hasPublicBodies) {
           // skip directly to wrting
           // might theoretically also apply to "if state.subject || state.body"
