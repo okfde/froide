@@ -232,9 +232,12 @@
                       <small>{{ i18n.thisFormRemembers }}</small>
                     </p>
                     <div class="mt-3">
-                      <a :href="config.url.login" class="btn btn-primary">{{
-                        i18n.login
-                      }}</a>
+                      <a
+                        :href="config.url.login"
+                        class="btn btn-primary"
+                        @click="writeToStorage"
+                        >{{ i18n.login }}</a
+                      >
                     </div>
                   </div>
                 </div>
@@ -762,7 +765,7 @@ export default {
   },
   watch: {
     step() {
-      this.writeToStorage({ scope: this.pbScope })
+      this.writeToStorage()
       window.scrollTo(0, 0)
     }
   },
@@ -771,7 +774,6 @@ export default {
 
     // init step value, always from storage (formFields & propMap omitted)
     this.initStoreValues({
-      scope: this.pbScope,
       mutationMap: {
         step: SET_STEP
       }
@@ -783,7 +785,6 @@ export default {
     //   will always default back to PB 123
     this.initStoreValues({
       scope: this.pbScope,
-      scoped: true, // also, PBs are scoped
       ignoreStorage: this.config.wasPost,
       mutationMap: {
         publicBodies: SET_PUBLICBODIES
@@ -804,7 +805,7 @@ export default {
   mounted() {
     document.forms.make_request.addEventListener('submit', () => {
       // invalidate storage, will load from form fields next time
-      this.purgeStorage({ scope: this.pbScope, keepNonForm: true })
+      this.purgeStorage({ keepNonForm: true })
     })
     window.addEventListener('beforeunload', (e) => {
       if (this.submitting) {
@@ -843,7 +844,7 @@ export default {
           if (resp.ok) {
             if (resp.redirected && resp.url) {
               // success: purge & redirect
-              this.purgeStorage({ scope: this.pbScope })
+              this.purgeStorage()
               document.location.href = resp.url
               return
             }
@@ -903,6 +904,9 @@ export default {
     onlineHelpShow(urlOrContent) {
       this.$refs.onlineHelp.show(urlOrContent)
     },
+    writeToStorage() {
+      this.$store.dispatch('writeToStorage', { scope: this.pbScope })
+    },
     ...mapMutations({
       setStep: SET_STEP,
       setStepNoHistory: SET_STEP_NO_HISTORY,
@@ -913,12 +917,7 @@ export default {
       updateRequestPublic: UPDATE_REQUEST_PUBLIC,
       updateTerms: UPDATE_TERMS
     }),
-    ...mapActions([
-      'getLawsForPublicBodies',
-      'initStoreValues',
-      'writeToStorage',
-      'purgeStorage'
-    ])
+    ...mapActions(['getLawsForPublicBodies', 'initStoreValues', 'purgeStorage'])
   }
 }
 </script>
