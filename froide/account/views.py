@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlencode
 
 from django.contrib import auth, messages
@@ -342,7 +342,7 @@ class ReAuthView(FormView):
             return redirect(self.get_success_url())
         return super().dispatch(*args, **kwargs)
 
-    def get_form_kwargs(self) -> Dict[str, Any]:
+    def get_form_kwargs(self) -> dict[str, Any]:
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         self.mfa_methods = {
@@ -351,7 +351,7 @@ class ReAuthView(FormView):
         kwargs["mfa_methods"] = self.mfa_methods
         return kwargs
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
         context["mfa_methods"] = self.mfa_methods
@@ -377,7 +377,7 @@ class ReAuthView(FormView):
         return get_redirect_url(self.request)
 
 
-FormKwargs = Dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]
+FormKwargs = dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]
 
 
 class SignupView(FormView):
@@ -544,9 +544,9 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 Context = Optional[
     Union[
-        Dict[str, UserChangeDetailsForm],
-        Dict[str, UserDeleteForm],
-        Dict[str, SetPasswordForm],
+        dict[str, UserChangeDetailsForm],
+        dict[str, UserDeleteForm],
+        dict[str, SetPasswordForm],
     ]
 ]
 
