@@ -75,7 +75,7 @@
       :step="STEPS.REQUEST_PUBLIC"
     >
       <template #contents>
-        {{ requestPublic ? i18n.publishNow : i18n.publishLater }}
+        {{ requestPublic === 'True' ? i18n.publishNow : i18n.publishLater }}
         <a
           v-if="config.url.helpRequestPublic"
           :href="config.url.helpRequestPublic"
@@ -94,7 +94,11 @@
       :step="STEPS.CREATE_ACCOUNT"
     >
       <template #contents>
-        <span v-html="user.private ? i18n.nameRedact : i18n.namePlainText" />
+        <span
+          v-html="
+            user.private === 'True' ? i18n.nameRedact : i18n.namePlainText
+          "
+        />
         <!-- TODO
         <a
           href="#"
