@@ -10,7 +10,7 @@
       :invalid="needCorrectionPublicbody"
     >
       <template #contents>
-        <span v-if="!hasPublicbodes" class="text-danger">{{ i18n.none }}</span>
+        <span v-if="!hasPublicbodies" class="text-danger">{{ i18n.none }}</span>
         <ReviewPublicbody
           v-else
           :config="config"
@@ -230,10 +230,6 @@ export default {
       type: String,
       required: true
     },
-    user: {
-      type: Object,
-      required: true
-    },
     userForm: {
       type: Object,
       required: true
@@ -245,14 +241,6 @@ export default {
     defaultLaw: {
       type: Object,
       default: null
-    },
-    subject: {
-      type: String,
-      required: true
-    },
-    body: {
-      type: String,
-      required: true
     },
     multiRequest: {
       type: Boolean,
@@ -318,6 +306,11 @@ export default {
       if (this.userForm?.fields.terms?.value !== this.user.terms) return
       return 'terms' in this.userForm.errors
     },
+    needCorrectionPublicbody() {
+      // TODO are pb-less requests allowed? drafts?
+      // return !this.hasPublicbodies?
+      return false
+    },
     needCorrectionEmail() {
       return this.hasFormErrorsEmail || this.emailValid === false
     },
@@ -361,7 +354,7 @@ export default {
     publicBodies() {
       return this.getPublicBodiesByScope(this.pbScope)
     },
-    hasPublicbodes() {
+    hasPublicbodies() {
       return this.publicBodies.length > 0
     },
     ...mapGetters([
@@ -369,6 +362,7 @@ export default {
       'userValid',
       'subject',
       'subjectValid',
+      'body',
       'bodyValid',
       'emailValid',
       'addressValid',

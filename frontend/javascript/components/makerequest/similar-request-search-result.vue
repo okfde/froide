@@ -75,7 +75,7 @@ const i18n = inject('i18n')
 
 const { object } = defineProps({
   object: {
-    type: Array,
+    type: Object,
     required: true
   }
 })
