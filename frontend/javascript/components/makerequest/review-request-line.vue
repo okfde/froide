@@ -10,7 +10,6 @@
     </div>
     <div class="col-sm-4 col-md-2 text-sm-end">
       <button
-        v-if="step"
         type="button"
         class="btn btn-sm"
         :class="{
@@ -49,8 +48,8 @@ export default {
       default: false
     },
     step: {
-      type: String,
-      default: ''
+      type: Number,
+      required: true
     }
   },
   methods: {

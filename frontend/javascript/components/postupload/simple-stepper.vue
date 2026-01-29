@@ -8,7 +8,7 @@ const props = defineProps({
   keepVisitedClickable: Boolean
 })
 
-const emit = defineEmits('stepClick')
+const emit = defineEmits(['stepClick'])
 
 const stepClick = (stepIndex) => {
   if (!props.clickable) return

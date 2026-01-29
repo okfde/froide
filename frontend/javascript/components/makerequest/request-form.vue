@@ -422,7 +422,12 @@ export default {
     UserAddress,
     UserConfirm
   },
-  emits: ['stepNext', 'enableEditing'],
+  emits: [
+    'stepNext',
+    'enableEditing',
+    'update:initialSubject',
+    'update:initialBody'
+  ],
   props: {
     config: {
       type: Object,
