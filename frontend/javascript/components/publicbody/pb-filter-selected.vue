@@ -6,7 +6,7 @@
       :label="config.label"
       :value="v.label"
       @remove-click="() => removeFilter(v)"
-      />
+    />
   </template>
   <template v-else-if="hasValue && valuesGrouped">
     <PbFilterBadge
@@ -15,7 +15,7 @@
       :label="config.label"
       :value="group.badgeValue"
       @remove-click="() => removeFilter(group.values)"
-      />
+    />
   </template>
 </template>
 
@@ -40,22 +40,22 @@ export default {
       const groups = {}
       this.valueList.forEach((x) => {
         const groupId = x[this.config.groupBy]
-        groups[groupId] = groups[groupId] || ({
+        groups[groupId] = groups[groupId] || {
           id: groupId,
           values: [],
-          label: this.i18n['groupBy_' + groupId] || groupId,
-        })
+          label: this.i18n['groupBy_' + groupId] || groupId
+        }
         groups[groupId].values.push(x)
       })
       for (const groupId in groups) {
         const group = groups[groupId]
-        group.badgeValue = group.values.length > groupedCollapseLabelValuesThreshold
-          ? group.label
-          : group.values.map((v) => v.label).join(', ')
+        group.badgeValue =
+          group.values.length > groupedCollapseLabelValuesThreshold
+            ? group.label
+            : group.values.map((v) => v.label).join(', ')
       }
       return groups
     }
   }
 }
 </script>
-

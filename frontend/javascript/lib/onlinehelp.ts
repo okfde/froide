@@ -1,4 +1,7 @@
-const onlinehelpLink = (el: HTMLElement, emit: (event: string, ...args: any[]) => void) => {
+const onlinehelpLink = (
+  el: HTMLElement,
+  emit: (event: string, ...args: any[]) => void
+) => {
   // debug helper, uncomment: el.style.outline = '2px dotted red'
   el.addEventListener('click', (evt) => {
     const href = el.dataset.onlinehelpHref || (el.target && el.href)
@@ -11,7 +14,13 @@ const onlinehelpLink = (el: HTMLElement, emit: (event: string, ...args: any[]) =
   })
 }
 
-export const registerOnlinehelpLinks = (node: HTMLElement, emit?: (event: string, ...args: any[]) => void) => {
-  node.querySelectorAll<HTMLElement>('[data-onlinehelp-href], [target="onlinehelp"]')
+export const registerOnlinehelpLinks = (
+  node: HTMLElement,
+  emit?: (event: string, ...args: any[]) => void
+) => {
+  node
+    .querySelectorAll<HTMLElement>(
+      '[data-onlinehelp-href], [target="onlinehelp"]'
+    )
     .forEach((el) => onlinehelpLink(el, emit!))
 }

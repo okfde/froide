@@ -5,9 +5,7 @@
     </div>
     <div class="col-sm-8 col-md-8 py-1">
       <slot name="contents">
-        <div
-          :class="{ 'text-danger': invalid }"
-          >{{ contents }}</div>
+        <div :class="{ 'text-danger': invalid }">{{ contents }}</div>
       </slot>
     </div>
     <div class="col-sm-4 col-md-2 text-sm-end">
@@ -20,16 +18,16 @@
           'btn-primary': invalid
         }"
         @click="setStep(step)"
-        >{{ invalid ? i18n.correct : i18n.change }}</button>
+      >
+        {{ invalid ? i18n.correct : i18n.change }}
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 import { mapMutations } from 'vuex'
-import {
-  SET_STEP,
-} from '../../store/mutation_types'
+import { SET_STEP } from '../../store/mutation_types'
 
 export default {
   name: 'ReviewRequestLine',
@@ -53,13 +51,12 @@ export default {
     step: {
       type: String,
       default: ''
-    },
+    }
   },
   methods: {
     ...mapMutations({
-      setStep: SET_STEP,
+      setStep: SET_STEP
     })
   }
 }
-
 </script>

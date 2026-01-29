@@ -12,11 +12,12 @@
           required=""
           id="id_terms"
           @change="updateTermsChanged(true)"
-          />
+        />
         <label
           for="id_terms"
           class="form-check-label field-required"
-          :class="{ 'text-danger': errors.terms && !termsChanged }">
+          :class="{ 'text-danger': errors.terms && !termsChanged }"
+        >
           <span v-html="form.fields.terms.label"></span>
         </label>
       </div>
@@ -30,7 +31,7 @@ import { mapGetters, mapMutations } from 'vuex'
 import {
   UPDATE_TERMS,
   UPDATE_TERMS_VALIDITY,
-  UPDATE_TERMS_CHANGED,
+  UPDATE_TERMS_CHANGED
 } from '../../store/mutation_types'
 
 export default {
@@ -67,15 +68,11 @@ export default {
         this.updateTerms(value)
       }
     },
-    ...mapGetters([
-      'termsChanged',
-    ]),
+    ...mapGetters(['termsChanged'])
   },
   methods: {
     validate() {
-      this.updateTermsValidity(
-        this.$refs.terms.reportValidity()
-      )
+      this.updateTermsValidity(this.$refs.terms.reportValidity())
     },
     ...mapMutations({
       updateTerms: UPDATE_TERMS,

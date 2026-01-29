@@ -8,9 +8,12 @@
             <slot name="campaign_main"></slot>
             <div class="mt-auto">
               <button
-                type="button" class="btn btn-primary w-100"
+                type="button"
+                class="btn btn-primary w-100"
                 @click="emit('stepNext')"
-                >{{ i18n.makeRequest }}</button>
+              >
+                {{ i18n.makeRequest }}
+              </button>
             </div>
           </div>
         </div>
@@ -21,7 +24,6 @@
 </template>
 
 <script setup>
-
 import { inject } from 'vue'
 
 const i18n = inject('i18n')
@@ -29,10 +31,9 @@ const i18n = inject('i18n')
 defineProps({
   config: {
     type: Object,
-    required: true,
+    required: true
   }
 })
 
 const emit = defineEmits('stepNext')
-
 </script>

@@ -16,7 +16,6 @@ interface AutocompleteResponse {
 }
 
 declare global {
-   
   interface Window {
     _choices_: Record<string, Choices>
   }
@@ -45,7 +44,6 @@ function setupTagging(): void {
 
       const choices = new Choices(select, {
         addItemText(value) {
-           
           return addItemText.replace('${value}', value)
         },
         addItems: true,
@@ -73,7 +71,6 @@ function setupTagging(): void {
         } else if (Array.isArray(value)) {
           valueString = value.join(',')
         } else {
-           
           valueString = value.toString()
         }
         realInput.value = valueString ?? ''
@@ -99,12 +96,11 @@ function setupTagging(): void {
               if (!present && allowNew) {
                 data.push({ value: searchValue, label: searchValue })
               }
-               
+
               choices.setChoices(data, 'value', 'label', true)
             })
           })
         } else {
-           
           choices.setChoices(
             [{ value: searchValue, label: searchValue }],
             'value',

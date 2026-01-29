@@ -5,14 +5,15 @@
         type="hidden"
         name="hide_public"
         :value="hidePublic"
-        id="id_hide_public" />
+        id="id_hide_public"
+      />
       <div class="mb-3" v-if="!hidePublic">
         <div class="card-body">
           <div
             v-for="(choice, choiceIndex) in form.fields.public.choices"
             :key="choice.value"
             class="form-check form-check-emphasized"
-            >
+          >
             <input
               type="radio"
               name="public"
@@ -20,8 +21,12 @@
               :id="'id_public_choice' + choiceIndex"
               :value="choice.value"
               v-model="publicValue"
-              />
-            <label class="form-check-label" :for="'id_public_choice' + choiceIndex" v-html="choice.label" />
+            />
+            <label
+              class="form-check-label"
+              :for="'id_public_choice' + choiceIndex"
+              v-html="choice.label"
+            />
           </div>
         </div>
       </div>
@@ -31,7 +36,7 @@
           name="public"
           id="id_public"
           v-model="publicValue"
-          />
+        />
       </div>
     </div>
   </div>
@@ -51,7 +56,7 @@ export default {
     initialPublic: {
       type: String,
       required: true
-    },
+    }
   },
   data() {
     return {
