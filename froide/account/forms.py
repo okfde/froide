@@ -137,24 +137,6 @@ class NewUserBaseForm(AddressBaseForm):
         ),
     )
 
-    if USER_CAN_CLAIM_VIP:
-        claims_vip = forms.TypedChoiceField(
-            required=False,
-            initial=False,
-            widget=BootstrapRadioSelect,
-            label=_("{site_name} for journalists").format(site_name=settings.SITE_NAME),
-            help_text=_(
-                "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
-            ).format(site_name=settings.SITE_NAME),
-            choices=[
-                (False, mark_safe(_("No, I am <strong>not a journalist</strong>"))),
-                (True, mark_safe(_("Yes, I am <strong>a journalist</strong>"))),
-            ],
-            coerce=lambda x: x != "False",
-        )
-
-    ALLOW_BLOCKED_ADDRESS = True
-
     if USER_CAN_HIDE_WEB:
         private = forms.TypedChoiceField(
             required=True,
@@ -178,6 +160,24 @@ class NewUserBaseForm(AddressBaseForm):
             ],
             coerce=lambda x: x != "False",
         )
+
+    if USER_CAN_CLAIM_VIP:
+        claims_vip = forms.TypedChoiceField(
+            required=False,
+            initial=False,
+            widget=BootstrapRadioSelect,
+            label=_("{site_name} for journalists").format(site_name=settings.SITE_NAME),
+            help_text=_(
+                "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
+            ).format(site_name=settings.SITE_NAME),
+            choices=[
+                (False, mark_safe(_("No, I am <strong>not a journalist</strong>"))),
+                (True, mark_safe(_("Yes, I am <strong>a journalist</strong>"))),
+            ],
+            coerce=lambda x: x != "False",
+        )
+
+    ALLOW_BLOCKED_ADDRESS = True
 
     field_order = ["first_name", "last_name", "user_email"]
 
