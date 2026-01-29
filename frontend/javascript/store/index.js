@@ -80,7 +80,9 @@ export default createStore({
       bodyValid: undefined,
       bodyChanged: false,
       fullText: false,
-      requestPublic: false,
+      // Python/Django "bool string" for TypedChoiceField form radio
+      // also: user.claims_vip, user.private
+      requestPublic: 'False',
       addressValid: undefined,
       addressChanged: false,
       firstNameValid: undefined,
