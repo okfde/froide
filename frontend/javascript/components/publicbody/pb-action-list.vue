@@ -2,12 +2,14 @@
   <div class="search-result-container">
     <ul
       v-if="searchResultsLength > 0 || emptyResults"
-      class="search-results list-unstyled">
+      class="search-results list-unstyled"
+    >
       <li
         v-for="result in searchResults"
         :key="result.id"
         class="search-result"
-        @click.prevent="selectSearchResult(result.id)">
+        @click.prevent="selectSearchResult(result.id)"
+      >
         <div class="row">
           <div class="col-sm-8">
             <h4 class="pb-heading">
@@ -22,7 +24,8 @@
             <a
               class="btn btn-primary"
               :href="getMakeRequestURLForResult(result)"
-              @click.prevent="selectSearchResult(result.id)">
+              @click.prevent="selectSearchResult(result.id)"
+            >
               {{ i18n.makeRequest }}
             </a>
           </div>

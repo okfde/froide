@@ -27,7 +27,8 @@
               <a
                 :href="pb.acceptUrl"
                 class="btn btn-primary btn-sm"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.reviewChangedPublicBody }}
               </a>
             </template>
@@ -35,7 +36,8 @@
               <a
                 :href="pb.acceptUrl"
                 class="btn btn-secondary btn-sm"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.reviewNewPublicBody }}
               </a>
             </template>

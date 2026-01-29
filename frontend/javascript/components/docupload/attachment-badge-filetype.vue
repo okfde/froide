@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from 'vue'
 
-import { useAttachments } from './lib/attachments';
+import { useAttachments } from './lib/attachments'
 
 const i18n = inject('i18n')
 
@@ -14,9 +14,12 @@ const { attachment } = defineProps({
   }
 })
 
-const unconverted = computed(() => attachments.getUnconvertedAttachmentByResourceUri(attachment.resource_uri))
-const unconvertedExtension = computed(() => unconverted.value?.name.match?.(/\.(\w+)$/)?.[1])
-
+const unconverted = computed(() =>
+  attachments.getUnconvertedAttachmentByResourceUri(attachment.resource_uri)
+)
+const unconvertedExtension = computed(
+  () => unconverted.value?.name.match?.(/\.(\w+)$/)?.[1]
+)
 </script>
 
 <template>
@@ -27,7 +30,7 @@ const unconvertedExtension = computed(() => unconverted.value?.name.match?.(/\.(
     v-else-if="unconverted && !unconverted.is_image"
     class="badge text-bg-secondary text-uppercase me-1"
     :title="unconverted.filetype"
-    >
+  >
     {{ unconvertedExtension }}
   </span>
 </template>

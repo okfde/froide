@@ -1,6 +1,5 @@
 <template>
-  <div
-    class="row mt-2">
+  <div class="row mt-2">
     <div class="col-md-8">
       <p>{{ field.help_text }}</p>
     </div>
@@ -11,7 +10,7 @@
         v-for="(choice, choiceIndex) in field.choices"
         :key="choice.value"
         class="form-check form-check-emphasized"
-        >
+      >
         <input
           :id="'id_claims_vip_choice' + choiceIndex"
           class="form-check-input"
@@ -19,8 +18,12 @@
           type="radio"
           name="claims_vip"
           :value="choice.value"
-          />
-        <label :for="'id_claims_vip_choice' + choiceIndex" class="form-check-label" v-html="choice.label" />
+        />
+        <label
+          :for="'id_claims_vip_choice' + choiceIndex"
+          class="form-check-label"
+          v-html="choice.label"
+        />
       </div>
     </div>
   </div>
@@ -47,7 +50,7 @@ export default {
     }
   },
   computed: {
-    field () {
+    field() {
       return this.userForm.fields.claims_vip
     },
     value: {
@@ -58,7 +61,7 @@ export default {
         this.internalValue = newValue
         this.$emit('update:initialValue', newValue)
       }
-    },
+    }
   }
 }
 </script>

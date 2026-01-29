@@ -8,9 +8,8 @@
         <div>
           <MessageRedactionField
             field-name="description"
-            :redacted-parts="
-              request.redacted_description
-            "></MessageRedactionField>
+            :redacted-parts="request.redacted_description"
+          ></MessageRedactionField>
         </div>
       </div>
     </template>
