@@ -159,7 +159,7 @@ class NewUserBaseForm(AddressBaseForm):
 
     if USER_CAN_HIDE_WEB:
         private = forms.TypedChoiceField(
-            required=False,
+            required=True,
             widget=BootstrapRadioSelect,
             label=_("Hide my name from public view"),
             help_text=mark_safe(
