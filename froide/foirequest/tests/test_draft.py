@@ -154,6 +154,7 @@ class RequestDraftTest(TestCase):
             "user_email": user.email,
             "terms": "on",
             "public": True,
+            "private": True,
             "publicbody": str(self.pb.pk),
             "hide_editing": "1",
             "hide_similar": "1",
