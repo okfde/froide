@@ -144,13 +144,11 @@ class NewUserBaseForm(AddressBaseForm):
             widget=BootstrapRadioSelect,
             label=_("{site_name} for journalists").format(site_name=settings.SITE_NAME),
             help_text=_(
-                _(
-                    "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
-                ).format(site_name=settings.SITE_NAME)
-            ),
+                "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
+            ).format(site_name=settings.SITE_NAME),
             choices=[
-                (False, _("No, I am <strong>not a journalist</strong>")),
-                (True, _("Yes, I am <strong>a journalist</strong>")),
+                (False, mark_safe(_("No, I am <strong>not a journalist</strong>"))),
+                (True, mark_safe(_("Yes, I am <strong>a journalist</strong>"))),
             ],
             coerce=lambda x: x != "False",
         )
@@ -170,11 +168,13 @@ class NewUserBaseForm(AddressBaseForm):
             choices=[
                 (
                     False,
-                    _(
-                        "My name may appear on the website in <strong>plain text</strong>"
+                    mark_safe(
+                        _(
+                            "My name may appear on the website in <strong>plain text</strong>"
+                        )
                     ),
                 ),
-                (True, _("My name must be <strong>redacted</strong>")),
+                (True, mark_safe(_("My name must be <strong>redacted</strong>"))),
             ],
             coerce=lambda x: x != "False",
         )
