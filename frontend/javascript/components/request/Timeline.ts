@@ -1,17 +1,13 @@
-import Message from './Message'
+import type Message from './Message'
 
-interface TimelineItemsInterface {
-  [key: string]: {
-    isActive: boolean
-    element: HTMLElement
-    msgIdsVisibleMap: MessagesVisbileMap
-    updateItemVisibility: Function
-  }
+type MessagesVisibleMap = Record<string, boolean>
+interface TimelineItem {
+  isActive: boolean
+  element: HTMLElement
+  msgIdsVisibleMap: MessagesVisibleMap
+  updateItemVisibility: (msgId: string, isVisible: boolean) => void
 }
-
-interface MessagesVisbileMap {
-  [key: string]: boolean
-}
+type TimelineItemsInterface = Record<string, TimelineItem>
 
 export default class Timeline {
   element: HTMLElement
@@ -23,7 +19,7 @@ export default class Timeline {
   messagesArr: Message[]
   scrollToEndLink: HTMLElement
   observer: IntersectionObserver | null
-  minWidthBreakpoint: number = 992
+  minWidthBreakpoint = 992
 
   constructor(messagesContainer: HTMLElement, messagesArr: Message[]) {
     this.element = document.getElementById('timeline') as HTMLElement
@@ -63,18 +59,21 @@ export default class Timeline {
 
   parseTimelineItems(): TimelineItemsInterface {
     const result: TimelineItemsInterface = {}
-    const nodes: any = this.element.getElementsByClassName(
+    const nodes = this.element.getElementsByClassName(
       'alpha-timeline__item'
-    )
+    ) as HTMLCollectionOf<HTMLElement>
 
     for (const item of nodes) {
       const key = item.dataset.key
+      if (key === undefined) {
+        continue
+      }
 
       result[key] = {
         isActive: false,
         element: item,
         msgIdsVisibleMap: (() => {
-          const result: MessagesVisbileMap = {}
+          const result: MessagesVisibleMap = {}
           const msgContainersByKey = this.messagesContainer.querySelectorAll(
             `[data-timeline-key^="${key as string}"]`
           )
@@ -104,7 +103,7 @@ export default class Timeline {
       // smooth scroll on link click (anchor link)
       item
         .querySelector('.alpha-timeline__link')
-        .addEventListener('click', this.itemClickCallback.bind(this))
+        ?.addEventListener('click', this.itemClickCallback.bind(this))
     }
 
     return result

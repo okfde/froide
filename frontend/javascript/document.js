@@ -1,27 +1,21 @@
-import Vue from 'vue'
+// TODO rename this file
 
-import { renderComponent } from './lib/vue-helper'
+import { createAppWithProps } from './lib/vue-helper'
 
 import FileUploader from './components/upload/file-uploader.vue'
 
-Vue.config.productionTip = false
-
-function createDocumentUploader(element) {
-  /* eslint-disable no-new */
-  new Vue({
-    components: { FileUploader },
-    render: renderComponent(element, FileUploader)
-  }).$mount(element)
+function createFileUploader(element) {
+  createAppWithProps(element, FileUploader).mount(element)
 }
 
 const els = document.querySelectorAll('.document-upload')
 for (let i = 0; i < els.length; i += 1) {
-  createDocumentUploader(els[i])
+  createFileUploader(els[i])
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   const docUploader = document.querySelector('#document-upload')
   if (docUploader) {
-    createDocumentUploader(docUploader)
+    createFileUploader(docUploader)
   }
 })

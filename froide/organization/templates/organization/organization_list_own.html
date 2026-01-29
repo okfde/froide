@@ -1,15 +1,19 @@
 {% extends "base.html" %}
-
 {% load i18n %}
-
 {% block title %}
     {% trans "Organizations" %}
 {% endblock %}
-
 {% block body %}
-    <div class="bg-gray-100">
+    <div class="bg-body-tertiary">
         <nav class="container" aria-label="breadcrumb">
             <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    {# djlint:off D018 #}
+                    <a href="/">
+                        <i class="fa fa-home"></i>
+                        <span class="visually-hidden">{% trans "Home Page" %}</span>
+                    </a>
+                </li>
                 <li class="breadcrumb-item">
                     <a href="{% url 'organization-list' %}">{% trans "Organizations" %}</a>
                 </li>
@@ -19,10 +23,8 @@
             </ol>
         </nav>
     </div>
- 
     <div class="container">
         <h1 class="py-4">{% trans "Your Organizations" %}</h1>
-
         <div class="row">
             <div class="col-lg-12">
                 <table class="table table-hover table-responsive mt-3">
@@ -38,8 +40,8 @@
                             <tr>
                                 <td>
                                     {% if object.status == 'active' %}<a href="{{ object.get_absolute_url }}">{% endif %}
-                                    {{ object.name }}
-                                    {% if object.status == 'active' %}</a>{% endif %}
+                                        {{ object.name }}
+                                        {% if object.status == 'active' %}</a>{% endif %}
                                 </td>
                                 <td>
                                     {% if object.status == 'invited' %}
@@ -59,5 +61,4 @@
             </div>
         </div>
     </div>
-
 {% endblock %}

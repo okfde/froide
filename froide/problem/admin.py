@@ -8,8 +8,10 @@ from froide.helper.admin_utils import make_nullfilter
 from .models import ProblemReport
 
 
+@admin.register(ProblemReport)
 class ProblemReportAdmin(admin.ModelAdmin):
     date_hierarchy = "timestamp"
+    search_fields = ("description", "resolution", "escalation")
     raw_id_fields = ("message", "user", "moderator")
     list_filter = (
         "auto_submitted",
@@ -48,6 +50,7 @@ class ProblemReportAdmin(admin.ModelAdmin):
             if sent:
                 self.message_user(request, _("User will be notified of resolution"))
 
+    @admin.action(description=_("Resolve selected"))
     def resolve_all(self, request, queryset):
         count = 0
         for problem in queryset.filter(resolved=False):
@@ -61,8 +64,3 @@ class ProblemReportAdmin(admin.ModelAdmin):
                 count=count
             ),
         )
-
-    resolve_all.short_description = _("Resolve selected")
-
-
-admin.site.register(ProblemReport, ProblemReportAdmin)

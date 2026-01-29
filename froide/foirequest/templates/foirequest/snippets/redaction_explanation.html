@@ -1,0 +1,78 @@
+{% load i18n %}
+<div class="col-lg-6 mt-3">
+    <div class="accordion" id="explanations1">
+        <div class="accordion-item">
+            <h5 class="accordion-header">
+                <button class="accordion-button fw-bold"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseExplanation1"
+                        aria-expanded="true"
+                        aria-controls="collapseExplanation1">{% trans "What you need to redact" %}</button>
+            </h5>
+            <div id="collapseExplanation1"
+                 class="accordion-collapse collapse show"
+                 data-bs-collapse-persistent
+                 data-bs-parent="explanations2">
+                <div class="accordion-body">
+                    <p>
+                        {% trans "If this document <strong>is not a letter to you</strong> from a public body, but any other kind of document, it very likely <strong>does not need a redaction</strong>." %}
+                    </p>
+                    <ul>
+                        <li>
+                            {% if foirequest.user == request.user %}
+                                {% if foirequest.user.private %}
+                                    {% trans "Please remove all your personally identifying information." %}
+                                {% else %}
+                                    {% trans "Please remove all your personally identifying information except your name." %}
+                                {% endif %}
+                            {% else %}
+                                {% if foirequest.user.private %}
+                                    {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }}.{% endblocktrans %}
+                                {% else %}
+                                    {% blocktrans with name=foirequest.user.get_full_name %}Please remove all personally identifying information of {{ name }} except the name itself.{% endblocktrans %}
+                                {% endif %}
+                            {% endif %}
+                        </li>
+                        <li>{% trans "Please remove email addresses of this site." %}</li>
+                        <li>{% trans "Please remove all names of public body employees." %}</li>
+                        {% block redaction_removal_explanation_addition %}
+                            <li>{% trans "Please remove hand-written signatures." %}</li>
+                        {% endblock %}
+                    </ul>
+                    <p>
+                        {% blocktrans %}The original version of the document will still be available to you (but not to the public).{% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6 mt-3">
+    <div class="accordion" id="explanations2">
+        <div class="accordion-item">
+            <h5 class="accordion-header">
+                <button class="accordion-button fw-bold"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseExplanation2"
+                        aria-expanded="true"
+                        aria-controls="collapseExplanation2">{% trans "How to redact" %}</button>
+            </h5>
+            <div id="collapseExplanation2"
+                 class="accordion-collapse collapse show"
+                 data-bs-collapse-persistent
+                 data-bs-parent="explanations2">
+                <div class="accordion-body">
+                    <p>{% trans "If this document is a letter to you:" %}</p>
+                    <p>
+                        {% blocktrans with icon_paint="<i class=\"fa fa-paint-brush\"></i>" icon_plus="<i class=\"fa fa-plus\"></i>" icon_minus="<i class=\"fa fa-minus\"></i>" icon_move="<i class=\"fa fa-arrows\"></i>" %}Go to each page of the PDF and locate the parts that need to be blacked out. While the {{ icon_paint }}&nbsp;<b>paint tool</b> is active, draw rectangles with your finger, or by clicking and dragging your mouse. Use the {{ icon_plus }} {{ icon_minus }} buttons to zoom in and out. Switch to the {{ icon_move }}&nbsp;<b>move tool</b> to pan the document. In many browsers, you can use the Alt key to toggle between paint and move tools.{% endblocktrans %}
+                    </p>
+                    <p>
+                        {% blocktrans with icon_text="<i class=\"fa fa-align-justify\"></i>" %}Check the {{ icon_text }}&nbsp;<b>Hide text</b> view to see if the underlying text is also gone. If the document does not load correctly, cancel and inform a site moderator.{% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

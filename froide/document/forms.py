@@ -1,5 +1,8 @@
+from functools import partial
+
 from django import forms
 from django.conf import settings
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from taggit.forms import TagField, TagWidget
@@ -14,7 +17,10 @@ from .tasks import store_document_upload
 
 class DocumentUploadForm(forms.Form):
     collection = forms.ModelChoiceField(
-        label=_("Add all to collection"), queryset=None, required=False
+        label=_("Add all to collection"),
+        queryset=None,
+        required=False,
+        widget=BootstrapSelect,
     )
     collection_title = forms.CharField(
         label=_("Or add all to new collection with this title"),
@@ -63,9 +69,14 @@ class DocumentUploadForm(forms.Form):
                 public=self.cleaned_data["public"],
             )
             collection_id = collection.id
-
-        store_document_upload.delay(
-            upload_list, user.id, self.cleaned_data, collection_id
+        transaction.on_commit(
+            partial(
+                store_document_upload.delay,
+                upload_list,
+                user.id,
+                self.cleaned_data,
+                collection_id,
+            )
         )
         doc_count = len(upload_list)
 

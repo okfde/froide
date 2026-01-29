@@ -6,11 +6,10 @@
           <h5>{{ i18n.subject }}</h5>
         </div>
         <div class="col-md-9">
-          <message-redaction-field
+          <MessageRedactionField
             field-name="subject"
-            :redacted-parts="
-              message.redacted_subject
-            "></message-redaction-field>
+            :redacted-parts="message.redacted_subject"
+          ></MessageRedactionField>
         </div>
       </div>
       <div v-if="message.content" class="mb-3">
@@ -18,11 +17,11 @@
           {{ i18n.message }}
         </h5>
         <div>
-          <message-redaction-field
+          <MessageRedactionField
             field-name="content"
-            :redacted-parts="
-              message.redacted_content
-            "></message-redaction-field>
+            :redacted-parts="message.redacted_content"
+            :blocked-patterns="config.settings.blockedPatterns"
+          ></MessageRedactionField>
         </div>
       </div>
     </template>
@@ -43,10 +42,24 @@ import { getData } from '../../lib/api.js'
 import MessageRedactionField from './message-redaction-field.vue'
 
 export default {
-  name: 'message-redaction',
-  props: ['config', 'messageUrl'],
+  name: 'MessageRedaction',
+  props: {
+    config: {
+      type: Object,
+      required: true
+    },
+    messageUrl: {
+      type: String,
+      required: true
+    }
+  },
   components: {
     MessageRedactionField
+  },
+  provide() {
+    return {
+      config: this.config
+    }
   },
   data() {
     return {
@@ -65,5 +78,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss"></style>

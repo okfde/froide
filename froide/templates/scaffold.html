@@ -1,35 +1,39 @@
-{% load i18n %}{% load static %}{% load block_helper %}<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
-  <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="language" content="{{ LANGUAGE_CODE }}" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <title>{% block title %}{% trans "Freedom of Information Requests" %}{% endblock %} - {{ SITE_NAME }}</title>
-  {% block header_font %}{% endblock %}
-  {% block css %}
-    {% block extra_css %}
-    {% endblock %}
-  {% endblock %}
-
-  {% render_block "css" %}
-  {% block meta %}
-    {# Translators: meta description #}
-    <meta name="description" content="{% if description %}{{ description }}{% else %}{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}{% endif %}"/>
-    {% include "snippets/meta.html" %}
-  {% endblock %}
-
-  {% block extra_head %}
-  {% endblock %}
-</head>
-<body {% if request.user.is_authenticated %}data-user="{{ request.user.id }}" data-useremail="{{ request.user.email }}"{% endif %}{% block body_extra_attributes %}{% endblock %}>
-  {% block body_tag %}{% endblock %}
-  {% block extra_footer %}{% endblock %}
-
-  {% block scripts %}{% endblock %}
-  {% render_block "js" %}
-
-  {% block below_scripts %}{% endblock %}
-</body>
+{% load i18n %}
+{% load static %}
+{% load block_helper %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}"
+      {% if request.user.is_staff %}data-bs-theme="light"{% endif %}>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="language" content="{{ LANGUAGE_CODE }}" />
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>
+            {% block title %}
+                {% trans "Freedom of Information Requests" %}
+            {% endblock %}
+        - {{ SITE_NAME }}</title>
+        {% block header_font %}{% endblock %}
+        {% block css %}
+            {% block extra_css %}{% endblock %}
+        {% endblock %}
+        {% render_block "css" %}
+        {% block meta %}
+            {# Translators: meta description #}
+            <meta name="description"
+                  content="{% if description %}{{ description }}{% else %}{% block metadescription %}{% blocktrans with site=SITE_NAME %}{{ site }} helps you to make freedom of information requests to public bodies{% endblocktrans %}{% endblock %}{% endif %}" />
+            {% include "snippets/meta.html" %}
+        {% endblock %}
+        {% block extra_head %}{% endblock %}
+    </head>
+    <body {% if request.user.is_authenticated %}data-user="{{ request.user.id }}" data-useremail="{{ request.user.email }}"{% endif %}
+          {% block body_extra_attributes %}{% endblock %}>
+        {% block body_tag %}{% endblock %}
+        {% block extra_footer %}{% endblock %}
+        {% block scripts %}{% endblock %}
+        {% render_block "js" %}
+        {% block below_scripts %}{% endblock %}
+    </body>
 </html>

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0039_publicbody_alternative_emails"),
     ]

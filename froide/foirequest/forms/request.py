@@ -1,7 +1,10 @@
+from decimal import Decimal
 from typing import List
 
 from django import forms
 from django.conf import settings
+from django.contrib import messages
+from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.html import escape
@@ -15,7 +18,7 @@ from froide.campaign.validators import validate_not_campaign
 from froide.helper.auth import get_read_queryset
 from froide.helper.form_utils import JSONMixin
 from froide.helper.forms import TagObjectForm
-from froide.helper.text_utils import redact_plaintext, slugify
+from froide.helper.text_utils import apply_user_redaction, redact_plaintext, slugify
 from froide.helper.widgets import BootstrapRadioSelect, BootstrapSelect, PriceInput
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
@@ -49,6 +52,7 @@ class RequestForm(JSONMixin, forms.Form):
                 "class": "form-control",
             }
         ),
+        strip=False,
     )
     full_text = forms.BooleanField(
         required=False,
@@ -56,15 +60,28 @@ class RequestForm(JSONMixin, forms.Form):
         label=_("Don't wrap in template"),
         widget=forms.CheckboxInput(attrs={"tabindex": "-1"}),
     )
-    public = forms.BooleanField(
-        required=False,
-        initial=True,
+    public = forms.TypedChoiceField(
         label=_("This request is public."),
-        help_text=_(
-            "If you don't want your request to be public right now,"
-            " uncheck this. You can always decide to make it public later."
-        ),
+        initial=True,
+        required=False,
+        widget=BootstrapRadioSelect,
+        choices=[
+            (
+                True,
+                _(
+                    "I want the request to be immediately accessible to the <strong>public</strong> on this website. (Default)"
+                ),
+            ),
+            (
+                False,
+                _(
+                    "I want the request to remain <strong>not public</strong> for now, and publish it later."
+                ),
+            ),
+        ],
+        coerce=lambda x: x != "False",
     )
+
     reference = forms.CharField(widget=forms.HiddenInput, required=False)
     law_type = forms.CharField(widget=forms.HiddenInput, required=False)
     redirect_url = forms.CharField(widget=forms.HiddenInput, required=False)
@@ -205,7 +222,7 @@ class PublicBodySuggestionsForm(forms.Form):
         try:
             self.publicbody = PublicBody.objects.get(pk=pb_pk)
         except PublicBody.DoesNotExist:
-            raise forms.ValidationError(_("Missing or invalid input!"))
+            raise forms.ValidationError(_("Missing or invalid input!")) from None
         return pb_pk
 
     def clean(self):
@@ -256,7 +273,7 @@ class PublicBodySuggestionsForm(forms.Form):
             req.message_sent.send(sender=req, message=message, user=user)
 
 
-class FoiRequestStatusForm(forms.Form):
+class FoiRequestStatusForm(forms.Form, JSONMixin):
     status = forms.ChoiceField(
         label=_("Status"),
         widget=BootstrapRadioSelect,
@@ -274,10 +291,13 @@ class FoiRequestStatusForm(forms.Form):
         help_text=_("How would you describe the current outcome of this request?"),
     )
     if payment_possible:
-        costs = forms.FloatField(
+        costs = forms.DecimalField(
             label=_("Costs"),
             required=False,
-            min_value=0.0,
+            min_value=Decimal(0.0),
+            max_value=Decimal("10000000000"),
+            max_digits=9,
+            decimal_places=2,
             localize=True,
             widget=PriceInput,
             help_text=_(
@@ -372,17 +392,18 @@ class ConcreteLawForm(forms.Form):
         else:
             self.possible_laws = []
         self.fields["law"] = forms.TypedChoiceField(
-            label=_("Information Law"),
+            label=_("Law"),
             choices=(
                 [("", "-------")] + [(law.pk, law.name) for law in self.possible_laws]
             ),
             coerce=int,
             empty_value="",
             initial=foirequest.law.pk if foirequest.law else None,
+            widget=BootstrapSelect,
         )
 
     def clean(self):
-        indexed_laws = dict([(law.pk, law) for law in self.possible_laws])
+        indexed_laws = {law.pk: law for law in self.possible_laws}
         if "law" not in self.cleaned_data:
             return
         if self.cleaned_data["law"]:
@@ -444,3 +465,44 @@ class ApplyModerationForm(forms.Form):
             m for m in trigger.apply_actions(self.foirequest, self.request) if m
         ]
         return messages
+
+
+class RedactDescriptionForm(forms.Form):
+    description = forms.CharField(required=False)
+    description_length = forms.IntegerField()
+
+    def clean_description(self):
+        val = self.cleaned_data["description"]
+        if not val:
+            return []
+        try:
+            val = [int(x) for x in val.split(",")]
+        except ValueError:
+            raise forms.ValidationError("Bad value") from None
+        return val
+
+    def save(self, request: HttpRequest, foirequest: FoiRequest):
+        redacted_description = apply_user_redaction(
+            foirequest.description,
+            self.cleaned_data["description"],
+            self.cleaned_data["description_length"],
+        )
+        first_message = foirequest.first_outgoing_message
+        if foirequest.description_redacted in first_message.plaintext_redacted:
+            first_message.plaintext_redacted = first_message.plaintext_redacted.replace(
+                foirequest.description_redacted, redacted_description
+            )
+            first_message.save()
+        else:
+            messages.add_message(
+                request,
+                messages.WARNING,
+                _(
+                    "Could not automatically redact first message. Please check the message manually."
+                ),
+            )
+
+        foirequest.description_redacted = redacted_description
+        foirequest.clear_render_cache()
+
+        foirequest.save()

@@ -1,8 +1,11 @@
 from typing import List, Optional
 
+from django import forms
+from django.apps import apps
 from django.contrib import admin
 from django.contrib.admin import helpers
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Exists, OuterRef
 from django.db.models.query import QuerySet
@@ -11,20 +14,32 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.urls.resolvers import URLPattern
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from mfa.admin import MFAKeyAdmin
 from mfa.models import MFAKey
 
-from froide.account.export import ExportCrossDomainMediaAuth
-from froide.foirequest.models import FoiRequest
-from froide.helper.admin_utils import MultiFilterMixin, TaggitListFilter
+from froide.account import account_banned
+from froide.helper.admin_utils import (
+    MultiFilterMixin,
+    TaggitListFilter,
+    make_daterangefilter,
+)
 from froide.helper.csv_utils import export_csv_response
+from froide.helper.forms import get_fk_raw_id_widget
 
 from . import account_email_changed
 from .auth import MFAAndRecentAuthRequiredAdminMixin, RecentAuthRequiredAdminMixin
 from .forms import UserChangeForm, UserCreationForm
-from .models import AccountBlocklist, TaggedUser, User, UserPreference, UserTag
+from .models import (
+    AccountBlocklist,
+    TaggedUser,
+    User,
+    UserPreference,
+    UserTag,
+    annotate_deterministic_email,
+)
 from .services import AccountService
 from .tasks import merge_accounts_task, send_bulk_mail, start_export_task
 from .utils import (
@@ -34,11 +49,15 @@ from .utils import (
     start_cancel_account_process,
 )
 
+has_foirequests = apps.is_installed("froide.foirequest")
 
+
+@admin.register(UserTag)
 class UserTagAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+@admin.register(TaggedUser)
 class TaggedUserAdmin(admin.ModelAdmin):
     raw_id_fields = ("tag", "content_object")
 
@@ -50,28 +69,48 @@ class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
     lookup_name = "__in"
 
 
+class AddToGroupForm(forms.Form):
+    group = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+    )
+    set_trusted = forms.BooleanField()
+
+    def __init__(self, *args, admin_site, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["group"].widget = get_fk_raw_id_widget(Group, admin_site)
+
+
+@admin.register(User)
 class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
     # The forms to add and change user instances
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = (
+    list_display = [
         "username",
         "email",
         "first_name",
         "last_name",
         "date_joined",
+        "last_login",
         "is_active",
         "is_staff",
         "private",
         "is_trusted",
         "is_deleted",
         "has_mfa",
-        "request_count",
-    )
+    ] + (["request_count"] if has_foirequests else [])
+
     date_hierarchy = "date_joined"
     ordering = ("-date_joined",)
-
+    add_fieldsets = (
+        (
+            None,
+            {
+                "fields": ("username", "email", "password1", "password2"),
+            },
+        ),
+    )
     fieldsets = list(DjangoUserAdmin.fieldsets) + [
         (
             _("Profile info"),
@@ -103,14 +142,17 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         ),
     ]
     list_filter = list(DjangoUserAdmin.list_filter) + [
+        make_daterangefilter("last_login", _("last login")),
         "private",
         "terms",
         "is_trusted",
         "is_deleted",
         "is_blocked",
+        make_daterangefilter("date_deactivated", _("date deactivated")),
+        make_daterangefilter("date_left", _("date left")),
         UserTagListFilter,
     ]
-    search_fields = ("email", "username", "first_name", "last_name")
+    search_fields = ("email_deterministic", "username", "first_name", "last_name")
     readonly_fields = ("is_superuser", "user_permissions")
 
     actions = [
@@ -122,15 +164,25 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         "cancel_users_by_request",
         "future_cancel_users_notify",
         "future_cancel_users",
-        "deactivate_users",
+        "cancel_users_immediately",
         "export_user_data",
         "merge_accounts",
         "merge_accounts_keep_newer",
+        "add_to_group_and_mail",
+        "reactivate_users",
     ]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.annotate(request_count=Count("foirequest"))
+        # Anotate deterministic email on queryset
+        # as the user admin may also be used on
+        # subclasses of User with other default managers
+        # where deterministic email would otherwise not be available
+        qs = annotate_deterministic_email(qs)
+
+        if has_foirequests:
+            qs = qs.annotate(request_count=Count("foirequest"))
+
         user_has_mfa = MFAKey.objects.filter(
             user_id=OuterRef("pk"),
         )
@@ -154,18 +206,22 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         if "email" in form.changed_data:
             account_email_changed.send_robust(sender=obj)
 
-    def request_count(self, obj):
-        return obj.request_count
+    if has_foirequests:
 
-    request_count.admin_order_field = "request_count"
-    request_count.short_description = _("requests")
+        @admin.display(
+            description=_("requests"),
+            ordering="request_count",
+        )
+        def request_count(self, obj):
+            return obj.request_count
 
+    @admin.display(
+        description=_("2FA"),
+        boolean=True,
+        ordering="has_mfa",
+    )
     def has_mfa(self, obj):
         return obj.has_mfa
-
-    has_mfa.admin_order_field = "has_mfa"
-    has_mfa.short_description = _("2FA")
-    has_mfa.boolean = True
 
     def become_user(self, request, pk):
         if not request.method == "POST":
@@ -208,38 +264,27 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
         return redirect("/")
 
+    @admin.action(description=_("Export to CSV"))
     def export_csv(self, request, queryset):
         if not request.user.is_superuser:
             raise PermissionDenied
         return export_csv_response(User.export_csv(queryset))
 
-    export_csv.short_description = _("Export to CSV")
-
+    @admin.action(description=_("Resend activation mail"))
     def resend_activation(self, request, queryset):
         rows_updated = 0
-
         for user in queryset:
             if user.is_active:
                 continue
-            foi_request = FoiRequest.objects.filter(
-                user=user, status=FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
-            )
-            if len(foi_request) == 1:
-                foi_request = foi_request[0].pk
-            elif len(foi_request) > 1:
-                # Something is borken!
-                continue
-            else:
-                foi_request = None
             rows_updated += 1
-            AccountService(user).send_confirmation_mail(
-                request_id=foi_request,
-            )
+            AccountService(user).send_confirmation_mail()
 
         self.message_user(request, _("%d activation mails sent." % rows_updated))
 
-    resend_activation.short_description = _("Resend activation mail")
-
+    @admin.action(
+        description=_("Send mail to users..."),
+        permissions=("change",),
+    )
     def send_mail(
         self, request: HttpRequest, queryset: QuerySet
     ) -> Optional[TemplateResponse]:
@@ -269,53 +314,46 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         # Display the confirmation page
         return TemplateResponse(request, "account/admin_send_mail.html", context)
 
-    send_mail.short_description = _("Send mail to users...")
-    send_mail.allowed_permissions = ("change",)
-
+    @admin.action(description=_("Delete sessions of users"))
     def delete_sessions(self, request, queryset):
         for user in queryset:
             delete_all_unexpired_sessions_for_user(user)
         self.message_user(request, _("Sessions deleted."))
         return None
 
-    delete_sessions.short_description = _("Delete sessions of users")
-
+    @admin.action(description=_("Cancel account by user request"))
     def cancel_users_by_request(self, request, queryset):
+        note = "Canceled account by user request on {}".format(
+            timezone.now().isoformat()
+        )
         for user in queryset:
-            start_cancel_account_process(user)
+            start_cancel_account_process(user, note=note)
         self.message_user(request, _("Accounts canceled."))
         return None
 
-    cancel_users_by_request.short_description = _("Cancel account by user request")
-
+    @admin.action(description=_("Future cancel accounts + notify of terms violation"))
     def future_cancel_users_notify(self, request, queryset):
         for user in queryset:
             future_cancel_user(user, notify=True)
         self.message_user(request, _("Users future canceled and notified."))
         return None
 
-    future_cancel_users_notify.short_description = _(
-        "Future cancel accounts + notify of terms violation"
-    )
-
+    @admin.action(description=_("Future cancel accounts (no notification)"))
     def future_cancel_users(self, request, queryset):
         for user in queryset:
             future_cancel_user(user)
         self.message_user(request, _("Users future canceled."))
         return None
 
-    future_cancel_users.short_description = _(
-        "Future cancel accounts (no notification)"
-    )
-
-    def deactivate_users(self, request, queryset):
+    @admin.action(description=_("Cancel account immediately (no notification)"))
+    def cancel_users_immediately(self, request, queryset):
         for user in queryset:
-            user.deactivate_and_block()
-        self.message_user(request, _("Users logged out, deactivated and blocked."))
+            account_banned.send_robust(sender=user)
+            future_cancel_user(user, notify=False, immediately=True)
+        self.message_user(request, _("Users canceled immediately."))
         return None
 
-    deactivate_users.short_description = _("Deactivate and block users")
-
+    @admin.action(description=_("Make user private"))
     def make_private(self, request, queryset):
         user = queryset[0]
         if user.private:
@@ -323,8 +361,6 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         make_account_private(user)
         self.message_user(request, _("User made private."))
         return None
-
-    make_private.short_description = _("Make user private")
 
     def merge_accounts(self, request, queryset, keep_older=True):
         if queryset.count() != 2:
@@ -341,13 +377,13 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
 
     merge_accounts.short_description = _("Merge accounts (keep older)")
 
+    @admin.action(description=_("Merge accounts (keep newer)"))
     def merge_accounts_keep_newer(self, request, queryset):
         return self.merge_accounts(request, queryset, keep_older=False)
 
-    merge_accounts_keep_newer.short_description = _("Merge accounts (keep newer)")
-
+    @admin.action(description=_("Start export of user data"))
     def export_user_data(self, request, queryset):
-        from .export import get_export_access_token
+        from .export import ExportCrossDomainMediaAuth, get_export_access_token
 
         if not request.user.is_superuser:
             raise PermissionDenied
@@ -374,13 +410,54 @@ class UserAdmin(RecentAuthRequiredAdminMixin, DjangoUserAdmin):
         )
         return None
 
-    export_user_data.short_description = _("Start export of user data")
+    @admin.action(
+        description=_("Add users to group and send mail..."),
+        permissions=("change",),
+    )
+    def add_to_group_and_mail(self, request, queryset):
+        form = AddToGroupForm(request.POST, admin_site=self.admin_site)
+        if form.is_valid():
+            for user in queryset:
+                if form.cleaned_data["set_trusted"]:
+                    user.is_trusted = True
+                    user.save(update_fields=["is_trusted"])
+                AccountService(user).add_to_group(form.cleaned_data["group"])
+                self.message_user(request, _("Successfully executed."))
+                return None
+
+        opts = self.model._meta
+        context = {
+            "opts": opts,
+            "queryset": queryset,
+            "media": self.media,
+            "action_checkbox_name": admin.helpers.ACTION_CHECKBOX_NAME,
+            "form": form,
+            "headline": _("Add users to group and send mail..."),
+            "actionname": request.POST.get("action"),
+            "applabel": opts.app_label,
+        }
+
+        # Display the confirmation page
+        return TemplateResponse(request, "helper/admin/apply_action.html", context)
+
+    @admin.action(
+        description=_("Reactivate users"),
+        permissions=("change",),
+    )
+    def reactivate_users(self, request, queryset):
+        queryset = queryset.filter(is_active=False)
+        queryset.update(
+            is_active=True,
+            date_deactivated=None,
+        )
 
 
+@admin.register(AccountBlocklist)
 class AccountBlocklistAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+@admin.register(UserPreference)
 class UserPreferenceAdmin(admin.ModelAdmin):
     raw_id_fields = ("user",)
     list_display = ("key", "user", "timestamp")
@@ -397,12 +474,6 @@ class CustomMFAKeyAdmin(MFAAndRecentAuthRequiredAdminMixin, MFAKeyAdmin):
     exclude = ("secret",)
     readonly_fields = ("user", "method", "last_code")
 
-
-admin.site.register(User, UserAdmin)
-admin.site.register(TaggedUser, TaggedUserAdmin)
-admin.site.register(UserTag, UserTagAdmin)
-admin.site.register(AccountBlocklist, AccountBlocklistAdmin)
-admin.site.register(UserPreference, UserPreferenceAdmin)
 
 admin.site.unregister(MFAKey)
 admin.site.register(MFAKey, CustomMFAKeyAdmin)

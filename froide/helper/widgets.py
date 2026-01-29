@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.http.request import QueryDict
 from django.utils.datastructures import MultiValueDict
+from django.utils.html import html_safe
 
 from django_filters.widgets import DateRangeWidget as DFDateRangeWidget
 from django_filters.widgets import RangeWidget
@@ -11,6 +12,21 @@ from taggit.forms import TagWidget
 from taggit.utils import parse_tags
 
 from froide.helper.templatetags.frontendbuild import get_frontend_files
+
+
+class BootstrapWidgetMixin:
+    def __init__(self, *args, **kwargs) -> None:
+        kwargs.setdefault("attrs", {})
+        kwargs["attrs"].update({"class": "form-control"})
+        super().__init__(*args, **kwargs)
+
+
+class BootstrapTextInput(BootstrapWidgetMixin, forms.TextInput):
+    pass
+
+
+class BootstrapTextarea(BootstrapWidgetMixin, forms.Textarea):
+    pass
 
 
 class BootstrapChoiceMixin(object):
@@ -48,13 +64,16 @@ class BootstrapSelect(forms.Select):
 
 
 class BootstrapFileInput(forms.FileInput):
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, multiple=False, **kwargs) -> None:
         kwargs.setdefault("attrs", {})
+        if multiple:
+            kwargs["attrs"].update({"multiple": True})
+            self.allow_multiple_selected = True
         kwargs["attrs"].update({"class": "form-control"})
         super().__init__(*args, **kwargs)
 
 
-class PriceInput(forms.TextInput):
+class PriceInput(forms.NumberInput):
     template_name = "helper/forms/widgets/price_input.html"
 
     def get_context(
@@ -63,9 +82,23 @@ class PriceInput(forms.TextInput):
         ctx = super().get_context(name, value, attrs)
         ctx["widget"].setdefault("attrs", {})
         ctx["widget"]["attrs"]["class"] = "form-control col-3"
-        ctx["widget"]["attrs"]["pattern"] = "[\\d\\.,]*"
+        ctx["widget"]["attrs"]["pattern"] = r"[0-9]+([\.,][0-9]+)?"
+        ctx["widget"]["attrs"]["inputmode"] = "decimal"
+        ctx["widget"]["attrs"]["step"] = "0.01"
+        ctx["widget"]["attrs"]["style"] = "appearance: textfield; text-align: right"
         ctx["currency"] = settings.FROIDE_CONFIG["currency"]
         return ctx
+
+
+@html_safe
+class JSModulePath:
+    def __init__(self, src: str) -> None:
+        self.src = src
+
+    def __str__(self):
+        return '<script src="{path}" type="module" crossorigin="anonymous"></script>'.format(
+            path=self.src
+        )
 
 
 class AutocompleteMixin:
@@ -84,7 +117,10 @@ class AutocompleteMixin:
     @property
     def media(self):
         build_info = get_frontend_files("tagautocomplete.js")
-        return forms.Media(css={"all": build_info["css"]}, js=build_info["js"])
+        return forms.Media(
+            css={"all": build_info["css"]},
+            js=[JSModulePath(src) for src in build_info["js"]],
+        )
 
     def get_context(self, name, value, attrs):
         ctx = super().get_context(name, value, attrs)

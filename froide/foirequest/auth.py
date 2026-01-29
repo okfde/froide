@@ -4,11 +4,16 @@ from typing import List
 from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
+from django.test import RequestFactory
 from django.urls import reverse
 from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.translation import override
 
 from crossdomainmedia import CrossDomainMediaAuth
+from oauth2_provider.contrib.rest_framework import TokenHasScope
+from rest_framework.permissions import SAFE_METHODS
+from rest_framework.request import Request
+from rest_framework.viewsets import ViewSet
 
 from froide.helper.auth import (
     can_manage_object,
@@ -19,20 +24,50 @@ from froide.helper.auth import (
     get_read_queryset,
     get_write_queryset,
     has_authenticated_access,
+    make_q,
 )
 
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest
 
 
+class FoiRequestScope:
+    READ_REQUEST = "read:request"
+    WRITE_REQUEST = "write:request"
+    MAKE_REQUEST = "make:request"
+    WRITE_MESSAGE = "write:message"
+
+
+def get_request_for_user(user, path: str):
+    request_factory = RequestFactory()
+    request = request_factory.get(path)
+    request.user = user
+    return request
+
+
+def get_campaign_auth_foirequests_filter(request: HttpRequest, fk_path=None):
+    # request is not available when called from manage.py generateschema
+    if not request or not request.user.is_staff:
+        return None
+
+    # staff user can act on all campaign-requests
+    # via auth group associated with campaigns
+    auth_group_campaigns = (
+        request.user.groups.all().filter(campaign__isnull=False).values_list("campaign")
+    )
+    return make_q("campaign__in", auth_group_campaigns, fk_path=fk_path)
+
+
 def get_read_foirequest_queryset(request: HttpRequest, queryset=None):
     if queryset is None:
         queryset = FoiRequest.objects.all()
+
     return get_read_queryset(
         queryset,
         request,
         has_team=True,
         public_q=Q(visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
-        scope="read:request",
+        scope=FoiRequestScope.READ_REQUEST,
+        user_read_filter=get_campaign_auth_foirequests_filter(request),
     )
 
 
@@ -43,7 +78,8 @@ def get_write_foirequest_queryset(request: HttpRequest, queryset=None):
         queryset,
         request,
         has_team=True,
-        scope="write:request",
+        scope=FoiRequestScope.WRITE_REQUEST,
+        user_write_filter=get_campaign_auth_foirequests_filter(request),
     )
 
 
@@ -54,9 +90,29 @@ def get_read_foimessage_queryset(request: HttpRequest, queryset=None):
         queryset,
         request,
         has_team=True,
-        public_q=Q(request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC),
-        scope="read:request",
+        public_q=Q(
+            request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC, is_draft=False
+        ),
+        scope=FoiRequestScope.READ_REQUEST,
         fk_path="request",
+        user_read_filter=get_campaign_auth_foirequests_filter(
+            request, fk_path="request"
+        ),
+    )
+
+
+def get_write_foimessage_queryset(request: HttpRequest, queryset=None):
+    if queryset is None:
+        queryset = FoiMessage.objects.all()
+    return get_write_queryset(
+        queryset,
+        request,
+        has_team=True,
+        scope=FoiRequestScope.WRITE_MESSAGE,
+        fk_path="request",
+        user_write_filter=get_campaign_auth_foirequests_filter(
+            request, fk_path="request"
+        ),
     )
 
 
@@ -69,10 +125,14 @@ def get_read_foiattachment_queryset(request: HttpRequest, queryset=None):
         has_team=True,
         public_q=Q(
             belongs_to__request__visibility=FoiRequest.VISIBILITY.VISIBLE_TO_PUBLIC,
+            belongs_to__is_draft=False,
             approved=True,
         ),
-        scope="read:request",
+        scope=FoiRequestScope.READ_REQUEST,
         fk_path="belongs_to__request",
+        user_read_filter=get_campaign_auth_foirequests_filter(
+            request, fk_path="belongs_to__request"
+        ),
     )
 
 
@@ -83,7 +143,7 @@ def can_read_foirequest(
     if foirequest.visibility == FoiRequest.VISIBILITY.INVISIBLE:
         return False
 
-    if can_read_object(foirequest, request):
+    if can_read_object(foirequest, request, scope=FoiRequestScope.READ_REQUEST):
         return True
 
     if allow_code:
@@ -99,11 +159,13 @@ def can_read_foirequest_authenticated(
     An authenticated read allows seeing redactions and unapproved attachments.
     """
     user = request.user
-    if has_authenticated_access(foirequest, request, verb="read", scope="read:request"):
+    if has_authenticated_access(
+        foirequest, request, verb="read", scope=FoiRequestScope.READ_REQUEST
+    ):
         return True
 
     if foirequest.project and has_authenticated_access(
-        foirequest.project, request, verb="read", scope="read:request"
+        foirequest.project, request, verb="read", scope=FoiRequestScope.READ_REQUEST
     ):
         return True
 
@@ -129,13 +191,13 @@ def can_read_foiproject_authenticated(
 ) -> bool:
     assert isinstance(foiproject, FoiProject)
     return has_authenticated_access(
-        foiproject, request, verb="read", scope="read:request"
+        foiproject, request, verb="read", scope=FoiRequestScope.READ_REQUEST
     )
 
 
 @lru_cache()
 def can_write_foirequest(foirequest: FoiRequest, request: HttpRequest) -> bool:
-    if can_write_object(foirequest, request):
+    if can_write_object(foirequest, request, scope=FoiRequestScope.WRITE_REQUEST):
         return True
 
     if foirequest.project:
@@ -284,9 +346,14 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
     and implement at least these methods
     """
 
-    TOKEN_MAX_AGE_SECONDS = settings.FOI_MEDIA_TOKEN_EXPIRY
     SITE_URL = settings.SITE_URL
     DEBUG = False
+
+    def get_token_max_age(self) -> int:
+        """
+        Return the maximum age of the token in seconds
+        """
+        return settings.FOI_MEDIA_TOKEN_EXPIRY
 
     def is_media_public(self) -> bool:
         """
@@ -323,3 +390,31 @@ class AttachmentCrossDomainMediaAuth(CrossDomainMediaAuth):
         """
         obj = self.context["object"]
         return obj.file.name
+
+    def is_debug(self):
+        return settings.SERVE_MEDIA
+
+
+def throttle_action(throttle_classes):
+    def inner(method):
+        def _inner(self, request, *args, **kwargs):
+            for throttle_class in throttle_classes:
+                throttle = throttle_class()
+                if not throttle.allow_request(request, self):
+                    self.throttled(request, throttle.wait())
+            return method(self, request, *args, **kwargs)
+
+        return _inner
+
+    return inner
+
+
+class CreateOnlyWithScopePermission(TokenHasScope):
+    def has_permission(self, request: Request, view: ViewSet):
+        if request.method in SAFE_METHODS:
+            return True
+        if request.user.is_authenticated and request.auth is None:
+            # allow api use with session authentication
+            # see https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
+            return True
+        return super().has_permission(request, view)

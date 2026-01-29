@@ -1,9 +1,5 @@
 body {
   hyphens: auto;
-  hyphenate-limit-chars: 6 3 3;
-  hyphenate-limit-lines: 2;
-  hyphenate-limit-last: always;
-  hyphenate-limit-zone: 8%;
 }
 
 h1,
@@ -17,6 +13,19 @@ h6 {
   }
 }
 
+h1,
+h2,
+h3 {
+  hyphens: manual;
+}
+
 .no-hyphens {
   hyphens: none;
+}
+
+.simple-blockquote {
+  border-left: 0.25rem solid $gray-300;
+  padding: 0.5rem 1rem;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
 }

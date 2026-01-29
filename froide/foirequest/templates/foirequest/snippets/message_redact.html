@@ -1,56 +1,63 @@
 {% load i18n %}
 {% load markup %}
 {% load form_helper %}
-
 {% if show_button %}
-<div class="btn-group btn-group-sm mx-sm-1 mb-1">
-  <button type="button" title="{% trans 'Redact message text' %}" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#message-redact-{{ message.pk }}">
-    <i class="fa fa-paint-brush"></i>
-    {% trans "Redact" %}
-  </button>
-</div>
-
-<div class="modal" data-teleport="body" tabindex="-1" role="dialog" data-redact="message" id="message-redact-{{ message.pk }}">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          {% trans "Redact / unredact message" %}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% translate 'Close' %}"></button>
-      </div>
-      <div class="modal-body container">
-        {% if message.is_response %}
-          <div class="card mb-2">
-            <div class="card-body">
-              <details>
-                <summary>{% translate "Need to unredact information in the message footer?" %}</summary>
-                <form method="post" class="disable-submit" action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
-                  {% csrf_token %}
-                  <p>
-                    {% translate "If there's important information below the message like inline replies, use the following button to unredact that part. Afterwards, personally identifiable information may need to be redacted again." %}
-                  </p>
-                  <input type="hidden" name="unredact_closing" value="1"/>
-                  <button type="submit" class="btn btn-light">{% translate "Unredact footer" %}</button>
-                </form>
-              </details>
-            </div>
-          </div>
-        {% endif %}
-        <p>
-          {% trans "Click on the words you wish to redact or unredact." %}
-        </p>
-        <form method="post" action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
-          {% csrf_token %}
-          <message-redaction :config="{{ js_config }}" message-url="{% url 'api:message-detail' pk=message.pk %}"></message-redaction>
-          <p class="text-end">
-            <button type="submit" class="btn btn-dark">
-              {% trans "Change message redaction" %}
-            </button>
-          </p>
-        </form>
-      </div>
+    <div class="btn-group btn-group-sm mx-sm-1 mb-1">
+        <button type="button"
+                title="{% trans 'Redact message text' %}"
+                class="btn btn-outline-redact"
+                data-bs-toggle="modal"
+                data-bs-target="#message-redact-{{ message.pk }}">
+            <i class="fa fa-paint-brush"></i>
+            {% trans "Redact" %}
+        </button>
     </div>
-  </div>
-</div>
+    <div class="modal"
+         data-teleport="body"
+         tabindex="-1"
+         role="dialog"
+         data-redact="message"
+         id="message-redact-{{ message.pk }}">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{% trans "Redact / unredact message" %}</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="{% translate 'Close' %}"></button>
+                </div>
+                <div class="modal-body container">
+                    {% if message.is_response %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <details>
+                                    <summary>{% translate "Need to unredact information in the message footer?" %}</summary>
+                                    <form method="post"
+                                          class="disable-submit"
+                                          action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
+                                        {% csrf_token %}
+                                        <p>
+                                            {% translate "If there's important information below the message like inline replies, use the following button to unredact that part. Afterwards, personally identifiable information may need to be redacted again." %}
+                                        </p>
+                                        <input type="hidden" name="unredact_closing" value="1" />
+                                        <button type="submit" class="btn btn-outline-secondary">{% translate "Unredact footer" %}</button>
+                                    </form>
+                                </details>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <p>{% trans "Click on the words you wish to redact or unredact." %}</p>
+                    <form method="post"
+                          action="{% url 'foirequest-redact_message' slug=foirequest.slug message_id=message.pk %}">
+                        {% csrf_token %}
+                        <message-redaction :config="{{ js_config }}" message-url="{% url 'api:message-detail' pk=message.pk %}"></message-redaction>
+                        <p class="text-end">
+                            <button type="submit" class="btn btn-dark">{% trans "Change message redaction" %}</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endif %}

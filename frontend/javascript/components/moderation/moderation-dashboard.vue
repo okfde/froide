@@ -18,7 +18,8 @@
             class="nav-link"
             :class="{ active: tab === 'problemreports' }"
             href="#problemreports"
-            @click="tab = 'problemreports'">
+            @click="tab = 'problemreports'"
+          >
             {{ i18n.problemReports }}
             <span class="badge text-bg-secondary">{{
               problemreportsCount
@@ -30,7 +31,8 @@
             class="nav-link"
             :class="{ active: tab === 'publicbodies' }"
             href="#publicbodies"
-            @click="tab = 'publicbodies'">
+            @click="tab = 'publicbodies'"
+          >
             {{ i18n.publicBodyChangeProposals }}
             <span class="badge text-bg-secondary">{{ publicbodiesCount }}</span>
           </a>
@@ -40,7 +42,8 @@
             class="nav-link"
             :class="{ active: tab === 'unclassified' }"
             href="#unclassified"
-            @click="tab = 'unclassified'">
+            @click="tab = 'unclassified'"
+          >
             {{ i18n.unclassifiedRequests }}
             <span class="badge text-bg-secondary">{{ unclassifiedCount }}</span>
           </a>
@@ -50,29 +53,31 @@
             class="nav-link"
             :class="{ active: tab === 'attachments' }"
             href="#attachments"
-            @click="tab = 'attachments'">
+            @click="tab = 'attachments'"
+          >
             {{ i18n.attachments }}
             <span class="badge text-bg-secondary">{{ attachmentsCount }}</span>
           </a>
         </li>
       </ul>
       <div class="tab-content pt-3">
-        <moderation-problems
+        <ModerationProblems
           v-if="tab === 'problemreports'"
-          :config="config"
-          :reports="reports" />
-        <moderation-publicbodies
+          :reports="reports"
+        />
+        <ModerationPublicbodies
           v-if="tab === 'publicbodies'"
-          :config="config"
-          :publicbodies="publicbodies" />
-        <moderation-unclassified
+          :publicbodies="publicbodies"
+        />
+        <ModerationUnclassified
           v-if="tab === 'unclassified'"
-          :config="config"
-          :unclassified="unclassified" />
-        <moderation-attachments
+          :unclassified="unclassified"
+        />
+        <ModerationAttachments
           v-if="tab === 'attachments'"
-          :config="config"
-          :attachments="attachments" />
+          :attachments="attachments"
+          @resolved="resolveAttachment"
+        />
       </div>
     </div>
   </div>
@@ -135,6 +140,7 @@ export default {
       message: null,
       moderators: [],
       reports: [],
+      reportCount: null,
       publicbodies: this.initialPublicbodies,
       unclassified: this.initialUnclassified,
       unclassifiedCount: this.initialUnclassifiedCount,
@@ -145,6 +151,13 @@ export default {
       },
       tabs: ['problemreports', 'unclassified', 'publicbodies', 'attachments'],
       tab: 'problemreports'
+    }
+  },
+  provide() {
+    return {
+      config: this.config,
+      csrfToken: document.querySelector('[name=csrfmiddlewaretoken]').value,
+      room: this.room
     }
   },
   computed: {
@@ -158,20 +171,17 @@ export default {
       return this.moderators.filter((m) => m.name === null).length
     },
     problemreportsCount() {
-      return this.reports.length
+      return this.reportCount
     },
     publicbodiesCount() {
       return showMaxCount(this.publicbodies.length)
     }
   },
   created() {
-    this.$root.config = this.config
-    this.$root.csrfToken = document.querySelector(
-      '[name=csrfmiddlewaretoken]'
-    ).value
     this.room = new Room(this.config.url.moderationWebsocket)
     getData(this.config.url.listReports).then((data) => {
       this.reports = [...this.reports, ...data.objects]
+      this.reportCount = data.meta.total_count
     })
     this.room
       .connect()
@@ -179,6 +189,9 @@ export default {
         this.moderators = data.userlist
       })
       .on('report_added', (data) => {
+        if (!this.reports.some((r) => r.id === data.report.id)) {
+          this.reportCount += 1
+        }
         this.reports = [
           data.report,
           ...this.reports.filter((r) => r.id !== data.report.id)
@@ -190,6 +203,9 @@ export default {
         )
       })
       .on('report_removed', (data) => {
+        if (this.reports.some((r) => r.id === data.report.id)) {
+          this.reportCount -= 1
+        }
         this.reports = this.reports.filter((r) => r.id !== data.report.id)
       })
     if (this.publicbodies !== null) {
@@ -239,6 +255,12 @@ export default {
         this.unclassifiedCount = data.unclassified_count
         this.publicbodies = data.publicbodies
       })
+    },
+    resolveAttachment(att) {
+      const index = this.attachments.findIndex((x) => x.id === att.id)
+      if (index !== -1) {
+        this.attachments.splice(index, 1)
+      }
     }
   }
 }

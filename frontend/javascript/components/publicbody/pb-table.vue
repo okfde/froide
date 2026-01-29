@@ -15,19 +15,21 @@
               'fa-sort-alpha-desc': sortOrder < 0,
               'sort-control--active': sortHeader === header.label
             }"
-            @click="changeSort(header.label)"></i>
+            @click="changeSort(header.label)"
+          ></i>
         </th>
       </tr>
     </thead>
     <transition-group name="table" tag="tbody">
-      <pb-table-row
+      <PbTableRow
         v-for="row in sortedRows"
         :key="row.id"
         :name="name"
         :row="row"
         :headers="headers"
         :selected="row.isSelected"
-        @update:row="updateRow"></pb-table-row>
+        @update:row="updateRow"
+      ></PbTableRow>
     </transition-group>
   </table>
 </template>
@@ -45,7 +47,7 @@ import {
 import PbTableRow from './pb-table-row'
 
 export default {
-  name: 'pb-table',
+  name: 'PbTable',
   props: ['name', 'headers', 'options', 'scope', 'i18n', 'rows'],
   data() {
     return {

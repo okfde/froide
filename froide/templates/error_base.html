@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load search_helper %}
+{% block body %}
+    <div class="container mt-3">
+        <h2 class="mb-3">
+            {% block error %}
+            {% endblock error %}
+        </h2>
+        <div class="row">
+            <div class="col col-md-8">
+                <div class="redacted error-redacted-bar mb-1" aria-hidden="true">&nbsp;</div>
+                <div class="mb-1 error-page-description">
+                    <span>
+                        {% block error_description %}
+                        {% endblock error_description %}
+                    </span>
+                </div>
+                <div class="redacted error-redacted-bar mb-1" aria-hidden="true">&nbsp;</div>
+                <div class="redacted error-redacted-bar" aria-hidden="true">&nbsp;</div>
+            </div>
+            {% block error_right %}
+            {% endblock error_right %}
+        </div>
+    </div>
+    <div class="py-3 py-lg-5 my-5 text-bg-subtle tight-margin">
+        <div class="container">
+            <p class="lead">
+                {% blocktrans %}You can try searching or go back to the <a href="/">Home page</a>.{% endblocktrans %}
+            </p>
+            {% multi_search %}
+        </div>
+    </div>
+    {% block error_footer %}
+    {% endblock error_footer %}
+{% endblock body %}

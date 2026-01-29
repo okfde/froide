@@ -1,12 +1,16 @@
 {% extends "admin/change_form.html" %}
 {% load i18n %}
 {% block object-tools-items %}
-  {% if original.pk %}
-    <li>
-      <a href="{% url 'admin:foirequest_foievent_changelist' %}?request={{ original.pk }}">
-        {% trans "Events" %}
-      </a>
-    </li>
-  {% endif %}
-  {{ block.super }}
+    {% if original.pk %}
+        <li>
+            <a href="{% url 'admin:foirequest_foievent_changelist' %}?request={{ original.pk }}">{% trans "Events" %}</a>
+        </li>
+        <li>
+            <a href="{% url 'admin:foirequest_foimessage_changelist' %}?request={{ original.pk }}">{% trans "Messages" %}</a>
+        </li>
+        <li>
+            <a href="{% url 'admin:foirequest_foimessagedraft_changelist' %}?request={{ original.pk }}">{% trans "Message Drafts" %}</a>
+        </li>
+    {% endif %}
+    {{ block.super }}
 {% endblock %}

@@ -3,24 +3,24 @@ export DJANGO_CONFIGURATION=Test
 export PYTHONWARNINGS=default
 
 test:
-	flake8 froide
-	coverage run --branch -m pytest froide/ --reuse-db
-	coverage report
-
-testci:
-	coverage run --branch -m pytest froide/ --reuse-db --ignore=froide/tests/live/
+	ruff check
+	coverage run --branch -m pytest froide/
 	coverage report
 
 testui:
-	coverage run --branch -m pytest --browser chromium froide/tests/live/ --reuse-db
+	coverage run --branch -m pytest --browser chromium froide/tests/live/
 
 .PHONY: htmlcov
 htmlcov:
 	coverage html
 
 messagesde:
-	django-admin makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file
+	python manage.py makemessages -l de --ignore public --ignore froide-env --ignore node_modules --ignore htmlcov --add-location file
 
-requirements: requirements.in requirements-test.in
-	pip-compile requirements.in
-	pip-compile requirements-test.in
+requirements: pyproject.toml
+	uv pip compile -o requirements.txt pyproject.toml -p 3.12
+	uv pip compile -o requirements-test.txt --extra test pyproject.toml -p 3.12
+
+openapi:
+	python manage.py spectacular --file froide/openapi-schema.yaml --validate
+	pnpm run openapi

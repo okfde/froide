@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 from urllib.parse import urlencode
 
 from django.contrib import auth, messages
@@ -31,10 +31,9 @@ from django.views.generic import DetailView, FormView, RedirectView, TemplateVie
 from crossdomainmedia import CrossDomainMediaMixin
 from mfa.views import LoginView as MFALoginView
 
-from froide.foirequest.models import FoiRequest
-from froide.foirequest.services import ActivatePendingRequestService
 from froide.helper.utils import get_redirect, get_redirect_url, render_403
 
+from . import account_confirmed
 from .auth import (
     MFAMethod,
     begin_mfa_authenticate_for_method,
@@ -45,6 +44,8 @@ from .auth import (
     requires_recent_auth,
     set_last_auth,
     start_mfa_auth,
+    try_login_user_without_mfa,
+    user_has_mfa,
 )
 from .export import (
     ExportCrossDomainMediaAuth,
@@ -54,12 +55,12 @@ from .export import (
 )
 from .forms import (
     AccountSettingsForm,
+    NewTermsForm,
     PasswordResetForm,
     ProfileForm,
     ReAuthForm,
     SetPasswordForm,
     SignUpForm,
-    TermsForm,
     UserChangeDetailsForm,
     UserDeleteForm,
     UserEmailConfirmationForm,
@@ -95,7 +96,9 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
         context["ref"] = self.request.GET.get("ref")
         return context
 
-    def get_foirequest(self) -> Optional[FoiRequest]:
+    def get_foirequest(self):
+        from froide.foirequest.models import FoiRequest
+
         request_pk = self.request.GET.get("request")
         if request_pk:
             try:
@@ -120,6 +123,7 @@ def confirm(
     if user.is_active or (not user.is_active and user.email is None):
         return redirect("account-login")
     account_service = AccountService(user)
+    # Todo: remove request_id from confirm_account
     result = account_service.confirm_account(secret, request_id)
     if not result:
         messages.add_message(
@@ -132,23 +136,28 @@ def confirm(
         )
         return redirect("account-login")
 
-    auth.login(request, user)
+    # mfa can't be setup yet, so login should succeed
+    try_login_user_without_mfa(request, user)
 
     params = {}
 
     if request.GET.get("ref"):
         params["ref"] = request.GET["ref"]
 
-    if request_id is not None:
-        req_service = ActivatePendingRequestService({"request_id": request_id})
-        foirequest = req_service.process(request=request)
-        if foirequest:
-            params["request"] = str(foirequest.pk)
+    # Confirm account
+    results = account_confirmed.send_robust(sender=user, request=request)
+    extra_params_list = [result for _receiver, result in results if result]
+    for extra_params in extra_params_list:
+        params.update(extra_params)
+
     default_url = "%s?%s" % (reverse("account-confirmed"), urlencode(params))
     return get_redirect(request, default=default_url, params=params)
 
 
 def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse:
+    if url == "/":
+        # If no further path is given, try extracting next parameter
+        url = get_redirect_url(request, default=url)
     if request.user.is_authenticated:
         if request.user.id != int(user_id):
             messages.add_message(
@@ -163,23 +172,38 @@ def go(request: HttpRequest, user_id: str, token: str, url: str) -> HttpResponse
         return redirect(url)
 
     if request.method == "POST":
+        login_optional = bool(request.POST.get("nologin"))
         user = User.objects.filter(pk=int(user_id)).first()
         if user and not user.is_blocked:
+            if login_optional and user_has_mfa(user):
+                # If login is optional, don't login MFA users
+                # as it will be too much friction
+                return redirect(url)
+
             account_manager = AccountService(user)
             if account_manager.check_autologin_token(token):
                 if not user.is_active:
                     # Confirm user account (link came from email)
                     account_manager.reactivate_account()
 
-                if not user.mfakey_set.exists():
-                    # Perform login
-                    auth.login(request, user)
+                if try_login_user_without_mfa(request, user):
                     return redirect(url)
                 return start_mfa_auth(request, user, url)
 
         # If login-link fails, prompt login with redirect
-        return get_redirect(request, default="account-login", params={"next": url})
-    return render(request, "account/go.html", {"form_action": request.path})
+        if login_optional:
+            # Unless we explicitly don't need a login for that url
+            return redirect(url)
+        return redirect_to_login(url)
+    return render(
+        request,
+        "account/go.html",
+        {
+            "form_action": request.path,
+            "next": url,
+            "nologin": request.GET.get("nologin", ""),
+        },
+    )
 
 
 class ProfileView(DetailView):
@@ -189,6 +213,7 @@ class ProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         from froide.campaign.models import Campaign
+        from froide.foirequest.models import FoiRequest
         from froide.publicbody.models import PublicBody
 
         ctx = super().get_context_data(**kwargs)
@@ -265,7 +290,10 @@ class ProfileView(DetailView):
 @require_POST
 def logout(request: HttpRequest) -> HttpResponseRedirect:
     auth.logout(request)
-    messages.add_message(request, messages.INFO, _("You have been logged out."))
+    # we use the extra_tags to communicate a logout to purgestorage.ts (via main.ts)
+    messages.add_message(
+        request, messages.INFO, _("You have been logged out."), "info alert-loggedout"
+    )
     return redirect("/")
 
 
@@ -297,7 +325,8 @@ class LoginView(MFALoginView):
         context = super().get_context_data(**kwargs)
         if "reset_form" not in context:
             context["reset_form"] = PasswordResetForm(prefix="pwreset")
-        context.update({"next": self.request.GET.get("next")})
+
+        context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
         return context
 
 
@@ -313,18 +342,18 @@ class ReAuthView(FormView):
             return redirect(self.get_success_url())
         return super().dispatch(*args, **kwargs)
 
-    def get_form_kwargs(self) -> Dict[str, Any]:
+    def get_form_kwargs(self) -> dict[str, Any]:
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
-        self.mfa_methods = set(
+        self.mfa_methods = {
             x["method"] for x in list_mfa_methods(self.request.user)
-        ) - {"recovery"}
+        } - {"recovery"}
         kwargs["mfa_methods"] = self.mfa_methods
         return kwargs
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["next"] = self.request.GET.get("next", "")
+        context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
         context["mfa_methods"] = self.mfa_methods
         if MFAMethod.FIDO2 in self.mfa_methods and "mfa_data" not in context:
             context["mfa_data"] = begin_mfa_authenticate_for_method(
@@ -348,7 +377,7 @@ class ReAuthView(FormView):
         return get_redirect_url(self.request)
 
 
-FormKwargs = Dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]
+FormKwargs = dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]
 
 
 class SignupView(FormView):
@@ -420,6 +449,13 @@ class SignupView(FormView):
 
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        context["next"] = self.request.GET.get("next") or self.request.POST.get("next")
+
+        return context
+
 
 @require_POST
 @login_required
@@ -484,13 +520,14 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
         # Login after post reset only if no MFA keys are set
         # leave post_reset_login class setting as False
-        if not user.mfakey_set.exists():
+        if try_login_user_without_mfa(
+            self.request, user, backend=self.post_reset_login_backend
+        ):
             messages.add_message(
                 self.request,
                 messages.SUCCESS,
                 _("Your password has been set and you are now logged in."),
             )
-            auth.login(self.request, user, self.post_reset_login_backend)
             # Skip parent class implemntation
             return super(PasswordResetConfirmView, self).form_valid(form)
 
@@ -507,9 +544,9 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 Context = Optional[
     Union[
-        Dict[str, UserChangeDetailsForm],
-        Dict[str, UserDeleteForm],
-        Dict[str, SetPasswordForm],
+        dict[str, UserChangeDetailsForm],
+        dict[str, UserDeleteForm],
+        dict[str, SetPasswordForm],
     ]
 ]
 
@@ -665,7 +702,8 @@ def delete_account(request: HttpRequest) -> HttpResponse:
         )
         return account_settings(request, context={"user_delete_form": form}, status=400)
     # Removing all personal data from account
-    start_cancel_account_process(request.user)
+    note = "User deleted account on {}".format(timezone.now().isoformat())
+    start_cancel_account_process(request.user, note=note)
     auth.logout(request)
     messages.add_message(
         request,
@@ -683,9 +721,9 @@ def new_terms(request):
     if request.user.terms:
         return get_redirect(request, default=next)
 
-    form = TermsForm()
+    form = NewTermsForm()
     if request.POST:
-        form = TermsForm(request.POST)
+        form = NewTermsForm(request.POST)
         if form.is_valid():
             form.save(request.user)
             messages.add_message(

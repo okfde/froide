@@ -19,9 +19,12 @@ from ..views import (
     delete_request,
     download_foirequest_pdf,
     download_foirequest_zip,
+    download_message_letter_pdf,
+    download_message_package,
     download_message_pdf,
     download_original_email,
     edit_message,
+    edit_postal_message,
     escalation_message,
     extend_deadline,
     make_public,
@@ -30,6 +33,7 @@ from ..views import (
     message_shortlink,
     publicbody_upload,
     redact_attachment,
+    redact_description,
     redact_message,
     resend_message,
     send_message,
@@ -45,6 +49,7 @@ from ..views import (
     suggest_public_body,
     upload_attachments,
     upload_postal_message,
+    upload_postal_message_create,
 )
 
 urlpatterns = [
@@ -103,6 +108,16 @@ urlpatterns = [
         name="foirequest-upload_postal_message",
     ),
     path(
+        pgettext_lazy("url part", "<slug:slug>/upload-postal-message-create/"),
+        upload_postal_message_create,
+        name="foirequest-upload_postal_message_create",
+    ),
+    path(
+        pgettext_lazy("url part", "<slug:slug>/<int:message_id>/edit-postal-message/"),
+        edit_postal_message,
+        name="foirequest-edit_postal_message",
+    ),
+    path(
         "<slug:slug>/apply-moderation/",
         apply_moderation,
         name="foirequest-apply_moderation",
@@ -122,6 +137,11 @@ urlpatterns = [
         "<slug:slug>/set-project/",
         SetProjectView.as_view(),
         name="foirequest-set_project",
+    ),
+    path(
+        "<slug:slug>/redact-description/",
+        redact_description,
+        name="foirequest-redact_description",
     ),
     # Messages
     path(
@@ -158,6 +178,16 @@ urlpatterns = [
         "<slug:slug>/<int:message_id>/resend/",
         resend_message,
         name="foirequest-resend_message",
+    ),
+    path(
+        "<slug:slug>/<int:message_id>/letter/",
+        download_message_letter_pdf,
+        name="foirequest-download_message_letter_pdf",
+    ),
+    path(
+        "<slug:slug>/<int:message_id>/zip/",
+        download_message_package,
+        name="foirequest-download_message_package",
     ),
     path(
         "<slug:slug>/<int:message_id>/pdf/",

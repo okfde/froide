@@ -87,6 +87,26 @@ def test_go_with_mfa(client, mfa_user):
     # We are not logged in
     response = client.get(test_url)
     assert response.status_code == 302
+    response = client.get(response["Location"])
+    assert response.context["user"].is_anonymous
+
+
+@pytest.mark.django_db
+def test_go_with_mfa_login_optional(client, mfa_user):
+    test_url = "/"
+
+    # Try logging in via link: success
+    autologin = mfa_user.get_autologin_url(test_url)
+    response = client.get(autologin + "?nologin=1")
+    assert response.status_code == 200
+    response = client.post(autologin, data={"nologin": "1"})
+    assert response.status_code == 302
+
+    assert response["Location"] == test_url
+    # We are not logged in
+    response = client.get(test_url)
+    assert response.status_code == 200
+    assert response.context["user"].is_anonymous
 
 
 def test_admin_login_url(client):

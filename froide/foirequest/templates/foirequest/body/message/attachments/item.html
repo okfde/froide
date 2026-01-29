@@ -1,108 +1,102 @@
 {% load i18n %}
 {% load foirequest_tags %}
 {% load content_helper %}
-
 <div class="alpha-attachment">
-  {% if attachment.redacted %}
-    {% trans 'This attachment contains personally identifying information and cannot be published.' as tooltip %}
-  {% elif attachment.converted and not attachment.approved %}
-    {% trans 'This attachment has been converted to PDF and cannot be published.' as tooltip %}
-  {% elif attachment.approved %}
-    {% if object.public %}
-      {% trans 'This attachment is public.' as tooltip %}
-    {% else %}
-      {% trans 'This attachment is only visible for users with access to this request.' as tooltip %}
-    {% endif %}
-  {% else %}
-    {% if not attachment.can_approve %}
-      {% trans 'This attachment is not public yet.' as tooltip %}
-    {% else %}
-      {% trans 'This attachment cannot be published.' as tooltip %}
-    {% endif %}
-  {% endif %}
-
-  <div
-    class="alpha-attachment__file-icon {% if not attachment.approved %}alpha-attachment__file-icon--gray{% else %}alpha-attachment__file-icon--blue{% endif %} flex-shrink-0 rounded me-2 d-flex align-items-center justify-content-center"
-    data-bs-toggle="tooltip" data-placement="top" title="{{ tooltip }}"
-  >
-    <i class="fa {{ attachment|fontawesome_filetype_icon }}" aria-hidden="true"></i>
-  </div>
-
-  <div class="overflow-hidden">
-    {# filename #}
-    <div class="text-nowrap text-truncate smaller" title="{{ attachment.name }}">
-      {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
-        <a id="{{ attachment.get_html_id }}" class="text-body fw-bold" href="{{ attachment.get_absolute_url }}">
-          {{ attachment.name }}
-        </a>
-      {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
-        {# not approved, can read but cannot write, so allow read link #}
-        <a id="{{ attachment.get_html_id }}" class="text-body fw-bold" href="{{ attachment.get_absolute_url }}">
-          {{ attachment.name }}
-        </a>
-      {% else %}
-        {{ attachment.name }}
-      {% endif %}
-    </div>
-
-    {# attachments badges #}
-    <div class="d-flex">
-      {% if attachment.approved or attachment.redacted %}
-
-        <!-- approved or redacted badges-->
-        {% if attachment.redacted or attachment.converted and not attachment.approved %}
-          <span class="me-1 px-1 small text-nowrap bg-gray-600 text-white">
-            {% blocktrans %}protected original{% endblocktrans %}
-          </span>
-        {% endif %}
-        {% if attachment.approved %}
-          {% if attachment.is_mail_decoration %}
-            <span data-bs-toggle="tooltip" data-bs-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
-              <i class="fa fa-picture-o" aria-hidden="true"></i>
-            </span>
-          {% endif %}
-        {% endif %}
-        {% if attachment.is_redacted %}
-          <span class="me-1 px-1 small text-nowrap bg-dark text-white">
-            {% blocktrans %}redacted{% endblocktrans %}
-          </span>
-        {% endif %}
-
-      {% else %}
-
-        <!-- unapproved badges-->
-        {% if attachment.pending %}
-          <span class="me-1 badge text-bg-info">
-            {% blocktrans %}PDF Pending{% endblocktrans %}
-          </span>
-        {% elif attachment.is_mail_decoration and object|can_read_foirequest_authenticated:request %}
-          <span data-bs-toggle="tooltip" data-bs-html="true" title="<h6>{{ attachment.name }}</h6> <img src='{{ attachment.get_authorized_absolute_domain_file_url }}' alt='{{ attachment.name }}'/>">
-            <i class="fa fa-picture-o" aria-hidden="true"></i>
-          </span>
-        {% endif %}
-
-      {% endif %}
-    </div>
-    {# attachment badges end #}
-
-    {# filesize #}
-    <div class="text-gray-600 small">{{ attachment.size|filesizeformat }}</div>
-
-    {% if object|can_write_foirequest:request and not attachment.approved and attachment.can_approve %}
-      <div class="small d-print-none">
-        {% if attachment.can_redact %}
-          <a href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">
-            {% translate "Review to approve" %}
-          </a>
+    {% if attachment.redacted %}
+        {% trans 'This attachment contains personally identifying information and cannot be published.' as tooltip %}
+    {% elif attachment.converted and not attachment.approved %}
+        {% trans 'This attachment has been converted to PDF and cannot be published.' as tooltip %}
+    {% elif attachment.approved %}
+        {% if object.public %}
+            {% trans 'This attachment is public.' as tooltip %}
         {% else %}
-          <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=attachment.belongs_to_id %}">
-            {% translate "Review to approve" %}
-          </a>
+            {% trans 'This attachment is only visible for users with access to this request.' as tooltip %}
         {% endif %}
-      </div>
+    {% else %}
+        {% if not attachment.can_approve %}
+            {% trans 'This attachment is not public yet.' as tooltip %}
+        {% else %}
+            {% trans 'This attachment cannot be published.' as tooltip %}
+        {% endif %}
     {% endif %}
-
-
-  </div>
-
+    <div class="alpha-attachment__file-icon {% if not attachment.approved %}alpha-attachment__file-icon--gray{% else %}alpha-attachment__file-icon--blue{% endif %} flex-shrink-0 rounded me-2 d-flex align-items-center justify-content-center"
+         data-bs-toggle="tooltip"
+         data-placement="top"
+         title="{{ tooltip }}">
+        <i class="fa {{ attachment|fontawesome_filetype_icon }}"
+           aria-hidden="true"></i>
+    </div>
+    <div class="overflow-hidden">
+        {# filename #}
+        <div class="text-nowrap text-truncate smaller"
+             title="{{ attachment.name }}">
+            {% if attachment.approved or object|can_write_foirequest:request and attachment.can_link %}
+                <a id="{{ attachment.get_html_id }}"
+                   class="text-body fw-bold"
+                   href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a>
+            {% elif not attachment.approved and not object|can_write_foirequest:request and object|can_read_foirequest_authenticated:request %}
+                {# not approved, can read but cannot write, so allow read link #}
+                <a id="{{ attachment.get_html_id }}"
+                   class="text-body fw-bold"
+                   href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a>
+            {% else %}
+                {{ attachment.name }}
+            {% endif %}
+        </div>
+        {# attachments badges #}
+        <div class="d-flex">
+            {% if attachment.approved or attachment.redacted %}
+                <!-- approved or redacted badges-->
+                {% if attachment.redacted or attachment.converted and not attachment.approved %}
+                    <span class="me-1 badge small text-nowrap bg-gray-600 text-white">
+                        {% blocktrans %}protected original{% endblocktrans %}
+                    </span>
+                {% endif %}
+                {% if attachment.approved %}
+                    {% if attachment.is_mail_decoration %}
+                        {# djlint:off #}
+                        <span data-bs-toggle="tooltip" data-bs-html="true" title="
+                            <h6>{{ attachment.name }}</h6>
+                            <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'
+                                 alt='{{ attachment.name }}'/>
+                            ">
+                            <i class="fa fa-picture-o" aria-hidden="true"></i>
+                        </span>
+                    {% endif %}
+                {% endif %}
+                {% if attachment.is_redacted %}
+                    <span class="me-1 badge small text-nowrap bg-dark text-white">{% blocktrans %}redacted{% endblocktrans %}</span>
+                {% endif %}
+            {% else %}
+                <!-- unapproved badges-->
+                {% if attachment.pending %}
+                    <span class="me-1 badge text-bg-info">{% blocktrans %}PDF Pending{% endblocktrans %}</span>
+                {% elif attachment.is_mail_decoration and object|can_read_foirequest_authenticated:request %}
+                    <span data-bs-toggle="tooltip" data-bs-html="true" title="
+                        <h6>{{ attachment.name }}</h6>
+                        <img src='{{ attachment.get_authorized_absolute_domain_file_url }}'
+                             alt='{{ attachment.name }}'/>
+                        ">
+                        <i class="fa fa-picture-o" aria-hidden="true"></i>
+                    </span>
+                {% endif %}
+            {% endif %}
+        </div>
+        {# attachment badges end #}
+        {# filesize #}
+        <div class="text-gray-600 small">{{ attachment.size|filesizeformat }}</div>
+        {% if object|can_write_foirequest:request and not attachment.approved and attachment.can_approve %}
+            <div class="small d-print-none">
+                {% if attachment.can_redact %}
+                    <a href="{% url 'foirequest-redact_attachment' slug=object.slug attachment_id=attachment.id %}">
+                        {% translate "Review to approve" %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'foirequest-manage_attachments' slug=object.slug message_id=attachment.belongs_to_id %}">
+                        {% translate "Review to approve" %}
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
 </div>

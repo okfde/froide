@@ -3,20 +3,26 @@ import os
 import tempfile
 from io import BytesIO
 
+from django.contrib.gis.geos import MultiPolygon
 from django.test import TestCase
 from django.urls import reverse
 
+import pytest
+
+from froide.account.factories import UserFactory
 from froide.foirequest.tests.factories import make_world, rebuild_index
+from froide.georegion.models import GeoRegion
 from froide.helper.csv_utils import export_csv_bytes
-from froide.publicbody.factories import (
+
+from .csv_import import CSVImporter
+from .factories import (
     CategoryFactory,
     ClassificationFactory,
     JurisdictionFactory,
+    PublicBodyChangeProposalFactory,
     PublicBodyFactory,
 )
-
-from .csv_import import CSVImporter
-from .models import FoiLaw, Jurisdiction, PublicBody
+from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 
 
 class PublicBodyTest(TestCase):
@@ -77,6 +83,21 @@ class PublicBodyTest(TestCase):
         )
         self.assertEqual(response.status_code, 404)
 
+    def test_publicbody_page_access(self):
+        pb = PublicBody.objects.all()[0]
+        pb.confirmed = False
+        pb.save()
+        response = self.client.get(pb.get_absolute_url())
+        self.assertEqual(response.status_code, 403)
+        self.client.force_login(pb._created_by)
+        response = self.client.get(pb.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+        self.client.logout()
+        superuser = UserFactory.create(is_superuser=True)
+        self.client.force_login(superuser)
+        response = self.client.get(pb.get_absolute_url())
+        self.assertEqual(response.status_code, 200)
+
     def test_csv(self):
         csv = export_csv_bytes(PublicBody.export_csv(PublicBody.objects.all()))
         self.assertEqual(PublicBody.objects.all().count() + 1, len(csv.splitlines()))
@@ -92,20 +113,60 @@ class PublicBodyTest(TestCase):
 
     def test_csv_existing_import(self):
         classification = ClassificationFactory.create(name="Ministry")
-        PublicBodyFactory.create(
-            site=self.site, name="Public Body 76 X", classification=classification
+        source_reference = "source:42"
+        pb = PublicBodyFactory.create(
+            site=self.site,
+            name="Public Body 76 X",
+            classification=classification,
+            source_reference=source_reference,
         )
-        # reenable when django-taggit support atomic transaction wrapping
-        # factories.PublicBodyTagFactory.create(slug='public-body-topic-76-x', is_topic=True)
+        georegion_identifier = "01234"
+        region = GeoRegion.add_root(
+            name="Region 1",
+            slug="region-1",
+            kind="district",
+            region_identifier=georegion_identifier,
+            geom=MultiPolygon(),
+        )
+        pb.regions.add(region)
 
         prev_count = PublicBody.objects.all().count()
-        # Existing entity via slug, no id reference
-        csv = """name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,website_dump,request_note
-Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,,"""
+        # Existing entity via id
         imp = CSVImporter()
+        csv = """id,name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address
+{},Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address""".format(
+            pb.id
+        )
         imp.import_from_file(BytesIO(csv.encode("utf-8")))
         now_count = PublicBody.objects.all().count()
         self.assertEqual(now_count, prev_count)
+
+        # Existing entity via source reference
+        csv = """name,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,source_reference
+Public Body 76 X,pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,{}""".format(
+            source_reference
+        )
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count)
+
+        # Existing entity via slug and georegion identifier
+        csv = """name,slug,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address,georegion_identifier
+Public Body 76 X,{},pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address,{}""".format(
+            pb.slug, georegion_identifier
+        )
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count)
+
+        # Add entity if only same slug
+        csv = """name,slug,email,jurisdiction__slug,other_names,description,url,parent__name,classification,contact,address
+Public Body 76 X,{},pb-76@76.example.com,bund,,,http://example.com,,Ministry,Some contact stuff,An address""".format(
+            pb.slug
+        )
+        imp.import_from_file(BytesIO(csv.encode("utf-8")))
+        now_count = PublicBody.objects.all().count()
+        self.assertEqual(now_count, prev_count + 1)
 
     def test_csv_new_import(self):
         # Make sure classification exist
@@ -223,3 +284,24 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode("utf-8"))
         self.assertEqual(obj["objects"], [])
+
+
+@pytest.mark.django_db
+def test_accept_change_proposal():
+    pb = PublicBodyFactory.create()
+    change_proposal = PublicBodyChangeProposalFactory.create(publicbody=pb)
+    change_proposal.categories.set([CategoryFactory.create(), CategoryFactory.create()])
+    change_proposal_categories = set(change_proposal.categories.all())
+    assert len(change_proposal_categories) == 2
+    ok = change_proposal.accept(pb._created_by)
+    assert ok
+    pb.refresh_from_db()
+    assert pb.name == change_proposal.name
+    assert pb.fax == change_proposal.fax
+    assert pb.address == change_proposal.address
+    assert pb.classification_id == change_proposal.classification_id
+    assert pb.jurisdiction_id == change_proposal.jurisdiction_id
+    assert set(pb.categories.all()) == change_proposal_categories
+
+    with pytest.raises(PublicBodyChangeProposal.DoesNotExist):
+        change_proposal.refresh_from_db()

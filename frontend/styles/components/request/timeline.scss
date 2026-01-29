@@ -11,35 +11,36 @@
     transition: transform 0.2s ease;
   }
   &__item {
-    border-left: 2px solid $gray-300;
+    border-left: 2px solid var(--#{$prefix}border-color);
     padding-top: $spacer * 0.25;
     padding-left: $spacer;
     padding-bottom: $spacer * 1.5;
     transition: all 0.2s ease;
-    color: $gray-500;
+    color: var(--#{$prefix}tertiary-color);
     a {
-      color: $gray-500;
+      opacity: 0.9;
+      color: var(--#{$prefix}tertiary-color);
     }
     &--active {
-      color: $gray-700;
+      color: var(--#{$prefix}secondary-color);
       a {
-        color: $gray-700;
+        opacity: 1;
+        color: var(--#{$prefix}secondary-color);
       }
-      border-left-color: $gray-500;
+      border-left-color: var(--#{$prefix}tertiary-color);
     }
   }
   &__link:hover {
-    color: $gray-700;
+    opacity: 1;
+    color: var(--#{$prefix}secondary-color);;
   }
   &__month {
     font-weight: 600;
   }
   &__item--overdue &__overdue-time {
     display: inline-block;
-    $color1: darken($red, 7%);
-    $color2: #ffdcd4;
-    color: $color1;
-    border: 1px solid $color1;
+    color: var(--#{$prefix}danger);
+    border: 1px solid var(--#{$prefix}danger-border-subtle);
     padding: $spacer * 0.25 $spacer * 0.5;
     margin-top: $spacer * 0.25;
   }
@@ -53,8 +54,8 @@
     margin-left: 2px;
     padding-top: $spacer * 0.75;
     padding-bottom: $spacer;
-    color: $gray-700;
-    background-color: $gray-200;
+    color: var(--#{$prefix}secondary-color);
+    background-color: var(--#{$prefix}tertiary-bg);
     font-weight: 600;
     box-shadow: 0 -10px 10px $gray-200;
     transition: all 0.2s ease;

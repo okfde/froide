@@ -5,6 +5,7 @@ from django.utils.functional import SimpleLazyObject
 
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework import response, serializers, status, views
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -50,7 +51,7 @@ class UserDetailSerializer(UserSerializer):
     def get_full_name(self, obj: Union[User, SimpleLazyObject]) -> str:
         return obj.get_full_name()
 
-    def profile_photo(self, obj):
+    def get_profile_photo(self, obj):
         if obj.profile_photo:
             return obj.profile_photo.url
         return None
@@ -69,6 +70,7 @@ class UserFullSerializer(UserEmailDetailSerializer):
 
 
 class ProfileView(views.APIView):
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticatedOrTokenHasScope]
     required_scopes = ["read:user"]
 
@@ -92,32 +94,40 @@ class ProfileView(views.APIView):
         return response.Response(serializer.data)
 
 
-class UserPreferenceView(views.APIView):
-    permission_classes = [IsAuthenticated]
+class UserPreferenceSerializer(serializers.Serializer):
+    value = serializers.CharField()
 
-    def get(self, request, format=None):
-        key = request.GET.get("key")
-        if key is None:
-            return Response(None, status=status.HTTP_404_NOT_FOUND)
+
+class UserPreferenceView(RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserPreferenceSerializer
+    lookup_url_kwarg = "key"
+    lookup_field = "key"
+
+    def post(self, request, *args, **kwargs):
+        # Accept POST requests for update as well
+        return self.update(request, *args, **kwargs)
+
+    def get_queryset(self):
+        key = self.kwargs["key"]
         try:
             registry.find(key)
         except KeyError:
-            return Response(None, status=status.HTTP_404_NOT_FOUND)
+            return UserPreference.objects.none()
+        return UserPreference.objects.filter(user=self.request.user, key=key)
 
-        value = UserPreference.objects.get_preference(request.user, key)
-        return Response({"key": key, "value": value})
-
-    def post(self, request, format=None):
-        key = request.data.get("key")
-        if key is None:
-            return Response(None, status=status.HTTP_404_NOT_FOUND)
+    def update(self, request, *args, **kwargs):
+        key = self.kwargs["key"]
         try:
             form_klass = registry.find(key)
         except KeyError:
-            return Response(None, status=status.HTTP_400_BAD_REQUEST)
-
-        form = form_klass(request.data)
+            return Response(None, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = dict(serializer.data, key=key)
+        form = form_klass(data)
         if form.is_valid():
             form.save(request.user)
             return Response(None)
-        return Response(None, status=status.HTTP_400_BAD_REQUEST)
+        return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)

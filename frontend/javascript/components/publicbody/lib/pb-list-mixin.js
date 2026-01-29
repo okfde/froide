@@ -1,7 +1,7 @@
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import {
-  SET_PUBLICBODY,
-  CLEAR_SEARCHRESULTS
+  CLEAR_SEARCHRESULTS,
+  SET_PUBLICBODY
 } from '../../../store/mutation_types'
 
 const PBListMixin = {
@@ -79,10 +79,10 @@ const PBListMixin = {
     ])
   },
   methods: {
-    getNext(e) {
+    getNext() {
       this.getNextSearchResults(this.scope)
     },
-    getPrevious(e) {
+    getPrevious() {
       this.getPreviousSearchResults(this.scope)
     },
     ...mapMutations({

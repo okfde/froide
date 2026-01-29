@@ -1,38 +1,42 @@
 <template>
   <div class="row">
     <div class="col-md-12">
-      <!-- FIXME: shouldn't be mutating props -->
-      <!-- eslint-disable vue/no-mutating-props -->
       <input
         type="hidden"
         name="hide_public"
-        v-model="hidePublic"
-        id="id_hide_public" />
-      <!-- eslint-enable vue/no-mutating-props -->
-      <div class="card mb-3" v-if="!hidePublic">
+        :value="hidePublic"
+        id="id_hide_public"
+      />
+      <div class="mb-3" v-if="!hidePublic">
         <div class="card-body">
-          <div class="form-check">
+          <div
+            v-for="(choice, choiceIndex) in form.fields.public.choices"
+            :key="choice.value"
+            class="form-check form-check-emphasized"
+          >
             <input
-              type="checkbox"
+              type="radio"
               name="public"
               class="form-check-input"
-              id="id_public"
-              v-model="publicValue" />
-            <label class="form-check-label" for="id_public">
-              {{ form.fields.public.label }}
-            </label>
-            <small class="form-text text-muted">
-              {{ form.fields.public.help_text }}
-            </small>
+              :id="'id_public_choice' + choiceIndex"
+              :value="choice.value"
+              v-model="publicValue"
+            />
+            <label
+              class="form-check-label"
+              :for="'id_public_choice' + choiceIndex"
+              v-html="choice.label"
+            />
           </div>
         </div>
       </div>
       <div v-else style="display: none">
         <input
-          type="checkbox"
+          type="hidden"
           name="public"
           id="id_public"
-          v-model="publicValue" />
+          v-model="publicValue"
+        />
       </div>
     </div>
   </div>
@@ -40,7 +44,7 @@
 
 <script>
 export default {
-  name: 'request-public',
+  name: 'RequestPublic',
   props: {
     form: {
       type: Object
@@ -48,14 +52,15 @@ export default {
     hidePublic: {
       type: Boolean,
       default: false
+    },
+    initialPublic: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
-      public:
-        this.form.fields.public.value !== null
-          ? this.form.fields.public.value
-          : this.form.fields.public.initial
+      public: this.initialPublic
     }
   },
   computed: {

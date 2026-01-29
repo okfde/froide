@@ -1,227 +1,208 @@
-{% extends 'account/settings_base.html' %}
-
+{% extends "account/settings_base.html" %}
 {% load i18n %}
 {% load form_helper %}
 {% load account_tags %}
-
-{% block title %}{% trans "Account Settings" %}{% endblock %}
-
+{% block title %}
+    {% trans "Account Settings" %}
+{% endblock title %}
 {% block settings_body %}
-<h2>{% trans "Account Settings" %}</h2>
-
-<dl id="general">
-  <dt>
-    {% blocktrans %}Your name:{% endblocktrans %}
-  </dt>
-  <dd>
-    {{ request.user.get_full_name }}
-    {% block settings_name %}{% endblock %}
-  </dd>
-  <dt>
-    {% trans "Account Privacy:" %}
-  </dt>
-  <dd>
-  {% if request.user.private %}
-    <i class="fa fa-lock"></i>
-    {% blocktrans %}Your name is hidden on the web.{% endblocktrans %}
-  {% else %}
-    {% blocktrans %}Your name is visible.{% endblocktrans %}
-    {% block settings_privacy %}{% endblock %}
-    <a class="btn btn-sm btn-secondary float-end" data-bs-toggle="collapse" href="#make-private">{% trans "Make my account private" %}</a>
-    <div class="collapse mt-3" id="make-private">
-      <div class="card card-body">
-        <form method="post" action="{% url 'account-make_user_private' %}">
-          {% csrf_token %}
-          <p>{% blocktrans %}
+    <h2>{% trans "Account Settings" %}</h2>
+    <dl id="general">
+        <dt>{% blocktrans %}Your name:{% endblocktrans %}</dt>
+        <dd>
+            {{ request.user.get_full_name }}
+            {% block settings_name %}
+            {% endblock settings_name %}
+        </dd>
+        <dt>{% trans "Account Privacy:" %}</dt>
+        <dd>
+            {% if request.user.private %}
+                <i class="fa fa-lock"></i>
+                {% blocktrans %}Your name is hidden on the web.{% endblocktrans %}
+            {% else %}
+                {% blocktrans %}Your name is visible.{% endblocktrans %}
+                {% block settings_privacy %}
+                {% endblock settings_privacy %}
+                <a class="btn btn-sm btn-secondary float-end"
+                   data-bs-toggle="collapse"
+                   href="#make-private">{% trans "Make my account private" %}</a>
+                <div class="collapse mt-3" id="make-private">
+                    <div class="card card-body">
+                        <form method="post" action="{% url 'account-make_user_private' %}">
+                            {% csrf_token %}
+                            <p>
+                                {% blocktrans %}
             If you changed your mind about the public visibility of your account name, we can change your account to <b>private</b>. This will automatically remove your name where it is currently publicly visible.
-          {% endblocktrans %}</p>
-          <div class="alert alert-danger mt-3 text-center">
-            {% blocktrans %}This account-wide setting <b>cannot be undone</b>.<br/> Your account will <b>stay private</b> once you set it to private.{% endblocktrans %}
-            {% blocktrans %}Any public profile information will be removed.{% endblocktrans %}
-          </div>
-          <p class="text-muted">
-            {% trans "You are still responsible for redacting attachments when they contain your personal information." %}
-          </p>
-          <button type="submit" class="btn btn-danger float-end">
-            {% trans "Make account private" %}
-          </button>
-        </form>
-      </div>
-    </div>
-  {% endif %}
-  </dd>
-</dl>
-
-<div id="change-user-now" class="card mb-3 mt-5">
-  <h5 class="card-header">
-    {% trans "Change details" %}
-  </h5>
-  <div class="card-body">
-    <form action="{% url 'account-change_user' %}" method="post" id="change-address">
-      {% csrf_token %}
-      {% if change_form %}
-        {% render_form change_form %}
-      {% else %}
-        {% render_form request.user.get_change_form %}
-      {% endif %}
-      <button type="submit" class="btn btn-secondary">
-        {% blocktrans %}Save changes{% endblocktrans %}
-      </button>
-    </form>
-  </div>
-</div>
-
-
-<div id="settings" class="card mb-3 mt-5">
-  <h5 class="card-header">
-    {% trans "Account settings" %}
-  </h5>
-  <div class="card-body">
-    <form action="{% url 'account-change_settings' %}#settings" method="post">
-      {% csrf_token %}
-      {% if account_settings_form %}
-        {% render_form account_settings_form %}
-      {% else %}
-        {% render_form request.user.get_account_settings_form %}
-      {% endif %}
-      <button type="submit" class="btn btn-secondary">
-        {% blocktrans %}Save changes{% endblocktrans %}
-      </button>
-    </form>
-  </div>
-</div>
-
-{% if not request.user.private %}
-  <div id="profile" class="card mb-3 mt-5">
-    <h5 class="card-header">
-      {% trans "Public profile" %}
-    </h5>
-    <div class="card-body">
-      <p>
-        <a href="{{ request.user.get_absolute_url }}">
-          {% translate "Your public profile" %}
-        </a>
-      </p>
-      <form action="{% url 'account-change_profile' %}#profile" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% if profile_form %}
-          {% render_form profile_form %}
-        {% else %}
-          {% render_form request.user.get_profile_form %}
-        {% endif %}
-        <button type="submit" class="btn btn-secondary">
-          {% blocktrans %}Save changes{% endblocktrans %}
-        </button>
-      </form>
-    </div>
-  </div>
-{% endif %}
-
-{% include "account/includes/change_password_form.html" %}
-
-<div id="mfa" class="card mb-3">
-  <h5 class="card-header">
-    {% translate "Setup two-factor login" %}
-  </h5>
-  <div class="card-body">
-    {% recentauthrequired "mfa" %}
-      {% if not request.user.has_usable_password %}
-        <p>{% translate "You need to set a password first." %}</p>
-      {% else %}
-        {% get_mfa_keys as mfa_keys %}
-        {% if mfa_keys.all %}
-          <p>{% translate "You have the following two-factor login methods active:" %}</p>
-          <ul>
-            {% for mfa_key in mfa_keys.all %}
-              <li>
-                {{ mfa_key.name }} 
-                <span class="badge text-bg-secondary">
-                {% if mfa_key.method == "FIDO2" %}
-                  {% translate "hardware security key" %}
-                {% elif mfa_key.method == "TOTP" %}
-                  {% translate "authenticator app" %}
+          {% endblocktrans %}
+                            </p>
+                            <div class="alert alert-danger mt-3 text-center">
+                                {% blocktrans %}This account-wide setting <b>cannot be undone</b>.<br /> Your account will <b>stay private</b> once you set it to private.{% endblocktrans %}
+                                {% blocktrans %}Any public profile information will be removed.{% endblocktrans %}
+                            </div>
+                            <p class="text-body-secondary">
+                                {% trans "You are still responsible for redacting attachments when they contain your personal information." %}
+                            </p>
+                            <button type="submit" class="btn btn-danger float-end">{% trans "Make account private" %}</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </dd>
+    </dl>
+    <div id="change-user-now" class="card mb-3 mt-5">
+        <h5 class="card-header">{% trans "Change details" %}</h5>
+        <div class="card-body">
+            <form action="{% url 'account-change_user' %}"
+                  method="post"
+                  id="change-address">
+                {% csrf_token %}
+                {% if change_form %}
+                    {% render_form change_form %}
                 {% else %}
-                  {% translate "recovery code" %}
+                    {% render_form request.user.get_change_form %}
                 {% endif %}
-                </span>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>{% translate "You have not setup any two-factor login methods." %}</p>
-        {% endif %}
-        <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
-      {% endif %}
-    {% endrecentauthrequired %}
-  </div>
-</div>
-
-{% block post_password %}{% endblock %}
-
-<hr/>
-
-<div id="export" class="card mb-3">
-  <h5 class="card-header">
-    {% trans "Export your data" %}
-  </h5>
-  <div class="card-body">
-    {% recentauthrequired "export" %}
-      <form action="{% url 'account-create_export' %}" method="post">
-        {% csrf_token %}
-        <p>
-          {% trans "We will generate a data export and notify you by email when it is ready." %}
-        </p>
-        <button type="submit" class="btn btn-secondary">
-          {% trans "Request data export" %}
-        </button>
-      </form>
-    {% endrecentauthrequired %}
-  </div>
-</div>
-
-<hr/>
-
-<div id="delete-account-section" class="card">
-  <h5 class="card-header">
-    {% blocktrans %}Delete your account{% endblocktrans %}
-  </h5>
-  <div class="card-body">
-    {% recentauthrequired "delete-account-section" %}
-      <div class="alert alert-danger">
-        <h4>
-          <i class="fa fa-fire"></i>
-          {% trans "Danger: deleting your account cannot be undone." %}
-          <i class="fa fa-fire"></i>
-        </h4>
-        <form action="{% url 'account-delete_account' %}" method="post">
-          {% csrf_token %}
-          {% render_form user_delete_form %}
-          <p>
-            {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
-          </p>
-          <button type="submit" class="btn btn-danger">
-            <i class="fa fa-warning" aria-hidden="true"></i>
-            {% blocktrans %}Delete account{% endblocktrans %}
-          </button>
-        </form>
-      </div>
-    {% endrecentauthrequired %}
-  </div>
-</div>
-
-<div id="developer" class="card mt-5">
-  <h5 class="card-header">
-    {% blocktrans %}Developer{% endblocktrans %}
-  </h5>
-  <div class="card-body">
-    {% if froide.api_activated %}
-      {% recentauthrequired "developer" %}
-        <a href="{% url 'oauth2_provider:list' %}">
-          {% trans "Your OAuth Applications" %}
-        </a>
-      {% endrecentauthrequired %}
+                <button type="submit" class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
+            </form>
+        </div>
+    </div>
+    <div id="settings" class="card mb-3 mt-5">
+        <h5 class="card-header">{% trans "Account settings" %}</h5>
+        <div class="card-body">
+            <form action="{% url 'account-change_settings' %}#settings" method="post">
+                {% csrf_token %}
+                {% if account_settings_form %}
+                    {% render_form account_settings_form %}
+                {% else %}
+                    {% render_form request.user.get_account_settings_form %}
+                {% endif %}
+                <button type="submit" class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
+            </form>
+        </div>
+    </div>
+    {% if not request.user.private %}
+        <div id="profile" class="card mb-3 mt-5">
+            <h5 class="card-header">{% trans "Public profile" %}</h5>
+            <div class="card-body">
+                <p>
+                    <a href="{{ request.user.get_absolute_url }}">{% translate "Your public profile" %}</a>
+                </p>
+                <form action="{% url 'account-change_profile' %}#profile"
+                      method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if profile_form %}
+                        {% render_form profile_form %}
+                    {% else %}
+                        {% render_form request.user.get_profile_form %}
+                    {% endif %}
+                    <button type="submit" class="btn btn-secondary">{% blocktrans %}Save changes{% endblocktrans %}</button>
+                </form>
+            </div>
+        </div>
     {% endif %}
-  </div>
+    {% include "account/includes/change_password_form.html" %}
+    <div id="mfa" class="card mb-3">
+        <h5 class="card-header">{% translate "Setup two-factor login" %}</h5>
+        <div class="card-body">
+            {% recentauthrequired "mfa" %}
+            {% if not request.user.has_usable_password %}
+                <p>{% translate "You need to set a password first." %}</p>
+            {% else %}
+                {% get_mfa_keys as mfa_keys %}
+                {% if mfa_keys.all %}
+                    <p>{% translate "You have the following two-factor login methods active:" %}</p>
+                    <ul>
+                        {% for mfa_key in mfa_keys.all %}
+                            <li>
+                                {{ mfa_key.name }}
+                                <span class="badge text-bg-secondary">
+                                    {% if mfa_key.method == "FIDO2" %}
+                                        {% translate "hardware security key" %}
+                                    {% elif mfa_key.method == "TOTP" %}
+                                        {% translate "authenticator app" %}
+                                    {% else %}
+                                        {% translate "recovery code" %}
+                                    {% endif %}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>{% translate "You have not setup any two-factor login methods." %}</p>
+                {% endif %}
+                <a href="{% url 'mfa:list' %}" class="btn btn-secondary">{% translate "Manage two-factor login methods" %}</a>
+            {% endif %}
+        {% endrecentauthrequired %}
+    </div>
 </div>
-
-{% endblock %}
+{% block post_password %}
+{% endblock post_password %}
+<div id="proofs" class="card mb-3">
+    <h5 class="card-header">{% translate "Proofs" %}</h5>
+    <div class="card-body">
+        {% recentauthrequired "proofs" %}
+        {% include "proof/proof_settings.html" %}
+    {% endrecentauthrequired %}
+</div>
+</div>
+<hr />
+<div id="apps" class="card mb-3">
+    <h5 class="card-header">{% trans "External apps" %}</h5>
+    <div class="card-body">
+        {% recentauthrequired "apps" %}
+        <a href="{% url 'oauth2_provider:authorized-token-list' %}">
+            {% trans "Show external apps with access to your account" %}
+        </a>
+    {% endrecentauthrequired %}
+</div>
+</div>
+<hr />
+<div id="export" class="card mb-3">
+    <h5 class="card-header">{% trans "Export your data" %}</h5>
+    <div class="card-body">
+        {% recentauthrequired "export" %}
+        <form action="{% url 'account-create_export' %}" method="post">
+            {% csrf_token %}
+            <p>{% trans "We will generate a data export and notify you by email when it is ready." %}</p>
+            <button type="submit" class="btn btn-secondary">{% trans "Request data export" %}</button>
+        </form>
+    {% endrecentauthrequired %}
+</div>
+</div>
+<hr />
+<div id="delete-account-section" class="card">
+    <h5 class="card-header">{% blocktrans %}Delete your account{% endblocktrans %}</h5>
+    <div class="card-body">
+        {% recentauthrequired "delete-account-section" %}
+        <div class="alert alert-danger">
+            <h4>
+                <i class="fa fa-fire"></i>
+                {% trans "Danger: deleting your account cannot be undone." %}
+                <i class="fa fa-fire"></i>
+            </h4>
+            <form action="{% url 'account-delete_account' %}" method="post">
+                {% csrf_token %}
+                {% render_form user_delete_form %}
+                <p>
+                    {% blocktrans %}Your FOI requests will not be removed. Only your personal information connected with your account will be removed.{% endblocktrans %}
+                </p>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fa fa-warning" aria-hidden="true"></i>
+                    {% blocktrans %}Delete account{% endblocktrans %}
+                </button>
+            </form>
+        </div>
+    {% endrecentauthrequired %}
+</div>
+</div>
+<div id="developer" class="card mt-5">
+    <h5 class="card-header">{% blocktrans %}Developer{% endblocktrans %}</h5>
+    <div class="card-body">
+        {% if froide.api_activated %}
+            {% recentauthrequired "developer" %}
+            <a href="{% url 'oauth2_provider:list' %}">{% trans "Your OAuth Applications" %}</a>
+        {% endrecentauthrequired %}
+    {% endif %}
+</div>
+</div>
+{% endblock settings_body %}

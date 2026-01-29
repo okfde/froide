@@ -1,0 +1,2887 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+# Translators:
+# fin <fin+transifex@xbhd.org>, 2015
+# m_hoerz <hoerz@michael-hoerz.de>, 2011
+# Stefan Wehrmeyer <mail@stefanwehrmeyer.com>, 2011
+# stefanw <stefanwehrmeyer@gmail.com>, 2011
+msgid ""
+msgstr ""
+"Project-Id-Version: froide\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-07 23:40+0100\n"
+"PO-Revision-Date: 2015-11-27 16:57+0000\n"
+"Last-Translator: stefanw <stefanwehrmeyer@gmail.com>\n"
+"Language-Team: German (Austria) (http://www.transifex.com/ddie/froide/"
+"language/de_AT/)\n"
+"Language: de_AT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: froide/accesstoken/templates/accesstoken/token_widget.html
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: froide/account/admin.py
+msgid "Profile info"
+msgstr "Profil-Info"
+
+#. Translators: not url
+#: froide/account/admin.py froide/foirequest/views/make_request.py
+#: froide/publicbody/admin.py
+msgid "requests"
+msgstr "anfragen"
+
+#: froide/account/admin.py froide/publicbody/admin.py
+msgid "Export to CSV"
+msgstr "Exportiere als CSV"
+
+#: froide/account/admin.py
+msgid "Resend activation mail"
+msgstr "Aktivierungs-Mail neuversenden"
+
+#: froide/account/admin.py
+#, python-format
+msgid "%d activation mails sent."
+msgstr "%d Aktivierungs-E-Mails versendet."
+
+#: froide/account/apps.py
+#: froide/account/templates/account/includes/breadcrumbs.html
+msgid "Account"
+msgstr "Account"
+
+#: froide/account/apps.py
+msgid "You are now logged in."
+msgstr "Sie sind jetzt eingeloggt."
+
+#: froide/account/forms.py
+msgid "Mailing Address"
+msgstr "Postadresse"
+
+#: froide/account/forms.py
+msgid "First name"
+msgstr "Vorname"
+
+#: froide/account/forms.py
+msgid "First Name"
+msgstr "Vorname"
+
+#: froide/account/forms.py
+msgid "Last name"
+msgstr "Nachname"
+
+#: froide/account/forms.py
+msgid "Last Name"
+msgstr "Nachname"
+
+#: froide/account/forms.py froide/organization/forms.py froide/team/forms.py
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: froide/account/forms.py
+msgid "Not public. The given address will need to be confirmed."
+msgstr "Nicht öffentlich. Sie müssen diese Adresse bestätigen."
+
+#: froide/account/forms.py
+msgid "mail@ddress.net"
+msgstr "email@dresse.net"
+
+#: froide/account/forms.py
+msgid ""
+"If you check this, your name will still appear in requests to public bodies, "
+"but we will do our best to not display it publicly. However, we cannot "
+"guarantee your anonymity"
+msgstr ""
+"Ihr Name wird an die Behörde gesendet, aber wir werden ihn nach Möglichkeit "
+"nicht öffentlich anzeigen. Wir können jedoch aus technischen Gründen "
+"<b>keine</b> komplette Anonymität garantieren."
+
+#: froide/account/forms.py
+msgid "You need to accept our Terms and Conditions and Priavcy Statement."
+msgstr ""
+"Sie müssen die Nutzungs- und Datenschutzbedingungen von FragDenStaat.at "
+"akzeptieren."
+
+#: froide/account/forms.py
+#, python-brace-format
+msgid ""
+"You agree to our <a href=\"{url_terms}\" target=\"_blank\">Terms and "
+"Conditions</a> and <a href=\"{url_privacy}\" target=\"_blank\">Privacy "
+"Statement</a>"
+msgstr ""
+"Sie stimmen den <a href=\"{url_terms}\" "
+"target=\"_blank\">Nutzungsbedingungen</a> und den <a href=\"{url_privacy}\" "
+"target=\"_blank\">Datenschutzbedingungen</a> von FragDenStaat.at zu."
+
+#: froide/account/forms.py
+msgid "Password"
+msgstr "Passwort"
+
+#: froide/account/forms.py
+msgid "Password (repeat)"
+msgstr "Passwort (wiederholen)"
+
+#: froide/account/forms.py
+msgid "Passwords do not match!"
+msgstr "Passwörter stimmen nicht überein!"
+
+#: froide/account/forms.py
+msgid "Please activate your mail address before logging in."
+msgstr "Bitte bestätigen Sie Ihre E-Mail-Adresse bevor Sie sich einloggen."
+
+#: froide/account/forms.py froide/foirequest/views/make_request.py
+#: froide/follow/forms.py
+msgid "Your email address"
+msgstr "Ihre E-Mail-Adresse"
+
+#: froide/account/forms.py
+msgid "Your address will never be displayed publicly."
+msgstr "Ihre Adresse wird niemals öffentlich angezeigt werden."
+
+#: froide/account/forms.py
+msgid "Street, Post Code, City"
+msgstr "Straße, Hausnummer, PLZ, Ort"
+
+#: froide/account/forms.py
+msgid "Logged in user does not match this link!"
+msgstr "Der eingeloggte Nutzer passt nicht zu dem geklickten Link!"
+
+#: froide/account/forms.py
+msgid "Link is invalid or has expired!"
+msgstr "Link ist ungültig oder abgelaufen!"
+
+#: froide/account/forms.py
+msgid "Freedom of Information Act"
+msgstr "Informationsgesetz"
+
+#: froide/account/forms.py
+msgid "Please type your password to confirm."
+msgstr "Bitte geben Sie Ihr Passwort zum Bestätigen ein."
+
+#: froide/account/forms.py
+msgid "Confirmation Phrase"
+msgstr "Bestätitungs-Satz"
+
+#: froide/account/forms.py
+msgid "Type the phrase above exactly as displayed."
+msgstr "Geben Sie das obrige Wort genau so ein wie angezeigt."
+
+#: froide/account/forms.py
+msgid "You provided the wrong password!"
+msgstr "Sie haben ein falsches Passwort angegeben!"
+
+#: froide/account/forms.py
+msgid "You did not type the confirmation phrase exactly right!"
+msgstr "Sie haben das Bestätigungswort nicht korrekt eingegeben!"
+
+#: froide/account/forms.py froide/account/models.py froide/organization/apps.py
+msgid "Organization"
+msgstr "Organisation"
+
+#: froide/account/models.py
+#: froide/foirequest/templates/foirequest/publicbody_upload.html
+#: froide/follow/forms.py
+msgid "email address"
+msgstr "E-Mail-Adresse"
+
+#: froide/account/models.py
+msgid "Optional. Affiliation will be shown next to your name"
+msgstr "Optional. Ihre Organisation wird neben Ihrem Namen angezeigt."
+
+#: froide/account/models.py
+msgid "Private"
+msgstr "Privat"
+
+#: froide/account/models.py froide/publicbody/forms.py
+#: froide/publicbody/models.py
+msgid "Address"
+msgstr "Adresse"
+
+#: froide/account/models.py
+msgid "Accepted Terms"
+msgstr "Bedingungen akzeptiert"
+
+#: froide/account/models.py
+msgid "<< Name Not Public >>"
+msgstr "Anfragesteller/in"
+
+#: froide/account/services.py
+#, python-format
+msgid "%(site_name)s: please confirm your new email address"
+msgstr "%(site_name)s: Bitte bestätigen Sie Ihre neue E-Mail-Adresse"
+
+#: froide/account/services.py
+msgid "<< Name removed >>"
+msgstr "Antragsteller/in"
+
+#: froide/account/services.py
+msgid "<< Email removed >>"
+msgstr "<< E-Mail entfernt >>"
+
+#: froide/account/services.py
+msgid "<< Address removed >>"
+msgstr "<< Adresse entfernt >>"
+
+#: froide/account/templates/account/admin_send_mail.html
+msgid "Send mail to users"
+msgstr "Sende E-Mail an Nutzer"
+
+#: froide/account/templates/account/admin_send_mail.html
+#: froide/foirequest/forms/message.py froide/foirequest/forms/request.py
+#: froide/foirequest/models/message.py
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/foirequest/templatetags/foirequest_tags.py
+#: froide/foirequest/views/make_request.py
+msgid "Subject"
+msgstr "Betreff"
+
+#: froide/account/templates/account/admin_send_mail.html
+msgid "You can use the following placeholders:"
+msgstr "Sie können die folgenden Platzhalter verwenden:"
+
+#: froide/account/templates/account/admin_send_mail.html
+#, python-format
+msgid "Send mail to one user"
+msgid_plural "Send mail to %(count)s users"
+msgstr[0] "Sende E-Mail an eine/n Nutzer/in"
+msgstr[1] "Sende E-Mail an %(count)s Nutzer/innen"
+
+#: froide/account/templates/account/emails/account_reminder.txt
+#: froide/account/templates/account/emails/change_email.txt
+#: froide/account/templates/account/emails/confirm_action.txt
+#: froide/account/templates/account/emails/confirmation_mail.txt
+#: froide/account/templates/account/emails/password_reset_email.txt
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt
+#: froide/organization/templates/organization/emails/organization_invite.txt
+#: froide/team/templates/team/emails/team_invite.txt
+#, python-format
+msgid ""
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Grüße,\n"
+"%(site_name)s"
+
+#: froide/account/templates/account/emails/confirmation_mail_subject.txt
+#, python-format
+msgid "%(site_name)s: please confirm your account"
+msgstr "%(site_name)s: Bitte bestätigen Sie Ihren Account"
+
+#: froide/account/templates/account/emails/password_reset_email.txt
+#, python-format
+msgid ""
+"You're receiving this e-mail because you requested a password reset for your "
+"account at %(site_name)s."
+msgstr ""
+"Sie erhalten diese E-Mail, weil Sie Ihr Passwort für ihren %(site_name)s "
+"Account zurücksetzen wollen."
+
+#: froide/account/templates/account/emails/password_reset_email.txt
+msgid "Please go to the following page and choose a new password:"
+msgstr "Bitte besuchen Sie folgende Seite und wählen Sie ein neues Passwort:"
+
+#: froide/account/templates/account/go.html
+#: froide/letter/templates/letter/default.html
+msgid "Continue"
+msgstr "zum nächsten Schritt"
+
+#: froide/account/templates/account/includes/change_password_form.html
+#: froide/account/templates/account/settings_base.html
+msgid "Change password"
+msgstr "Passwort ändern"
+
+#: froide/account/templates/account/login.html
+msgid "Don't have an account? Click here to sign up!"
+msgstr "Noch keinen Account? Klicken Sie hier, um sich anzumelden!"
+
+#: froide/account/templates/account/login.html
+msgid "Log In"
+msgstr "Einloggen"
+
+#: froide/account/templates/account/login.html
+msgid "In case you forgot your password..."
+msgstr "Falls Sie Ihr Passwort vergessen haben..."
+
+#: froide/account/templates/account/login.html
+msgid "... we can send you a reset link to your email address."
+msgstr ""
+"…können wir Ihnen einen Zurücksetzen-Link an Ihre E-Mail-Adresse schicken."
+
+#: froide/account/templates/account/login.html
+msgid "Send reset link"
+msgstr "Sende Zurücksetzen-Link"
+
+#: froide/account/templates/account/new_terms.html
+msgid "Our Terms of Use have changed"
+msgstr "Unsere Nutzungsbedingungen haben sich geändert"
+
+#: froide/account/templates/account/new_terms.html
+msgid "Accept"
+msgstr "Akzeptieren"
+
+#: froide/account/templates/account/password_reset_confirm.html
+msgid "Password reset"
+msgstr "Password zurücksetzen"
+
+#: froide/account/templates/account/password_reset_confirm.html
+msgid "Enter new password"
+msgstr "Geben Sie das neue Passwort ein"
+
+#: froide/account/templates/account/password_reset_confirm.html
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+"Bitte geben Sie Ihr Passwort zweimal ein, damit wir sicher sein können, dass "
+"Sie es richtig eingegeben haben."
+
+#: froide/account/templates/account/password_reset_confirm.html
+msgid "Change my password"
+msgstr "Ändere mein Passwort"
+
+#: froide/account/templates/account/password_reset_confirm.html
+msgid "Password reset unsuccessful"
+msgstr "Zurücksetzen des Passworts fehlgeschlagen"
+
+#: froide/account/templates/account/password_reset_confirm.html
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+"Der Link zum Passwort-Zurücksetzen war ungültig. Möglicherweise wurde er "
+"schon einmal benutzt. Bitte lassen Sie sich noch einen Link schicken."
+
+#: froide/account/templates/account/settings.html
+msgid "Account Settings"
+msgstr "Nutzerkonto-Einstellungen"
+
+#: froide/account/templates/account/settings.html
+msgid "Your name:"
+msgstr "Ihr Name:"
+
+#: froide/account/templates/account/settings.html
+msgid "Account Privacy:"
+msgstr "Privatsphäreneinstellung:"
+
+#: froide/account/templates/account/settings.html
+msgid "Your name is visible."
+msgstr "Ihr Name ist öffentlich sichtbar."
+
+#: froide/account/templates/account/settings.html
+msgid "Delete your account"
+msgstr "Löschen Sie Ihren Account"
+
+#: froide/account/templates/account/settings.html
+msgid "Danger: deleting your account cannot be undone."
+msgstr ""
+"Gefahr: das Löschen Ihres Account kann nicht rückgängig gemacht werden."
+
+#: froide/account/templates/account/settings.html
+msgid ""
+"Your FOI requests will not be removed. Only your personal information "
+"connected with your account will be removed."
+msgstr ""
+"Ihre Anfragen werden nicht gelöscht. Nur die persönlichen Informationen "
+"Ihres Account werden entfernt."
+
+#: froide/account/templates/account/settings.html
+msgid "Delete account"
+msgstr "Account löschen"
+
+#: froide/account/templates/account/show.html
+msgid "Your account settings"
+msgstr "Ihre Nutzerkonto-Einstellungen"
+
+#: froide/account/templates/account/show.html
+#: froide/foirequest/forms/request.py froide/foirequest/models/message.py
+#: froide/foirequest/models/request.py
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/organization/templates/organization/organization_update_form.html
+#: froide/team/templates/team/team_detail.html
+msgid "Status"
+msgstr "Status"
+
+#: froide/account/templates/account/show.html
+#: froide/foirequest/models/project.py froide/foirequest/models/request.py
+#: froide/foirequest/templates/foirequest/account/list_drafts.html
+#: froide/foirequest/templates/foirequest/account/list_projects.html
+#: froide/frontpage/models.py froide/team/templates/team/team_detail.html
+msgid "Title"
+msgstr "Titel"
+
+#: froide/account/templates/account/signup.html
+msgid "Sign Up"
+msgstr "Anmelden"
+
+#: froide/account/templates/admin/account/user/change_form.html
+msgid "This users requests"
+msgstr "Anfragen des Nutzers"
+
+#: froide/account/templates/oauth2_provider/authorize.html
+#: froide/document/templates/filingcabinet/_base_set_form.html
+#: froide/foirequest/templates/foirequest/header/header.html
+#: froide/foirequest/templates/foirequest/snippets/message_edit.html
+#: froide/foirequest/views/attachment.py
+#: froide/problem/templates/problem/message_toolbar_item.html
+#: froide/problem/views.py froide/upload/forms.py
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: froide/account/views.py
+msgid "You are logged in and cannot use a confirmation link."
+msgstr ""
+"Sie sind gerade eingeloggt und können daher Bestätigungslinks nicht nutzen."
+
+#: froide/account/views.py
+msgid ""
+"You can only use the confirmation link once, please login with your password."
+msgstr ""
+"Sie können den Bestätigungslink nur einmal benutzen, bitte loggen Sie sich "
+"mit Ihrem Passwort ein."
+
+#: froide/account/views.py
+msgid ""
+"You are logged in with a different user account. Please logout first before "
+"using this link."
+msgstr ""
+"Sie sind mit einem anderen Nutzerkonto eingeloggt. Bitte loggen Sie sich "
+"erst aus, bevor Sie den E-Mail-Link benutzen."
+
+#: froide/account/views.py
+msgid "You have been logged out."
+msgstr "Sie wurden ausgeloggt."
+
+#: froide/account/views.py
+msgid "Please check your emails for a mail from us with a confirmation link."
+msgstr ""
+"Bitte überprüfen Sie Ihre E-Mails. Sie haben eine E-Mail mit einem "
+"Bestätigungslink von uns erhalten."
+
+#: froide/account/views.py
+msgid "Your password has been changed."
+msgstr "Ihr Passwort wurde geändert."
+
+#: froide/account/views.py
+msgid "You are currently logged in, you cannot get a password reset link."
+msgstr ""
+"Sie sind gerade eingeloggt. Sie können keinen Passwort-Zurücksetzen-Link "
+"erhalten."
+
+#: froide/account/views.py
+msgid "Your password has been set and you are now logged in."
+msgstr "Ihre Password wurde gesetzt und Sie sind jetzt eingeloggt."
+
+#: froide/account/views.py
+msgid "Your email address has been changed."
+msgstr "Ihre E-Mail-Adresse wurde geändert."
+
+#: froide/account/views.py
+msgid "The email confirmation link was invalid or expired."
+msgstr "Der E-Mail-Bestätigungs-Link ist ungültig oder abgelaufen."
+
+#: froide/account/views.py
+msgid "Password or confirmation phrase were wrong. Account was not deleted."
+msgstr ""
+"Passwort oder Bestätigungssatz waren falsch. Ihr Account wurde nicht "
+"gelöscht."
+
+#: froide/account/views.py
+msgid "Your account has been deleted and you have been logged out."
+msgstr "Ihr Account wurde gelöscht und Sie wurden ausgeloggt."
+
+#: froide/account/views.py
+msgid "Thank you for accepting our new terms!"
+msgstr "Danke, dass Sie unsere neuen Nutzungsbedingungen akzeptiert haben!"
+
+#: froide/account/views.py
+msgid "You need to accept our new terms to continue."
+msgstr ""
+"Sie müssen unsere neuen Nutzungs- und Datenschutzbedingungen akzeptieren."
+
+#: froide/account/views.py
+#, python-format
+msgid ""
+"You probably do not have cookies enabled, but you need cookies to use this "
+"site! Cookies are only ever sent securely. The technical reason is: "
+"%(reason)s"
+msgstr ""
+"Sie haben vermutlich Ihre Browser-Cookies deaktivert, allerdings brauchen "
+"Sie Cookies für diese Seite! Cookies werden auf dieser Seite nur über eine "
+"sichere Verbindung gesendet. Der technische Grund für diesen Fehler ist: "
+"%(reason)s"
+
+#: froide/comments/forms.py froide/foirequest/models/attachment.py
+#: froide/foirequest/views/make_request.py froide/foisite/models.py
+#: froide/georegion/models.py froide/organization/forms.py
+#: froide/organization/templates/organization/organization_list_own.html
+#: froide/problem/views.py froide/publicbody/forms.py
+#: froide/publicbody/models.py froide/team/templates/team/team_list.html
+msgid "Name"
+msgstr "Name"
+
+#: froide/comments/templates/froide_comments/comment.html
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid "Read all"
+msgstr "Alles lesen"
+
+#: froide/comments/templates/froide_comments/comments.html
+msgid "Write a comment"
+msgstr "Schreiben Sie einen Kommentar"
+
+#: froide/comments/templates/froide_comments/form.html
+msgid "Post Comment"
+msgstr "Kommentar absenden"
+
+#: froide/document/feeds.py froide/foirequest/feeds.py
+#, python-format
+msgid "by tag %(tag)s"
+msgstr "nach Tag %(tag)s"
+
+#: froide/document/forms.py froide/helper/forms.py
+msgid "Tags"
+msgstr "Schlagwörter"
+
+#: froide/document/templates/document/result_item.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html
+msgid "Page"
+msgstr "Seite"
+
+#: froide/foirequest/admin.py
+msgid "Has same request"
+msgstr "Hat gleiche Anfrage"
+
+#: froide/foirequest/admin.py
+msgid "Mark selected requests as checked"
+msgstr "Markiere ausgewählte Anfragen als gesehen"
+
+#: froide/foirequest/admin.py
+#, python-format
+msgid "%d request(s) successfully marked as checked."
+msgstr "%d Anfrage(n) wurden als gesehen markiert."
+
+#: froide/foirequest/admin.py
+msgid "Mark selected requests as not FoI"
+msgstr "Markiere ausgewählte Anfragen als nicht-IF"
+
+#: froide/foirequest/admin.py
+#, python-format
+msgid "%d request(s) successfully marked as not FoI."
+msgstr "%d "
+
+#: froide/foirequest/admin.py
+msgid "Mark selected requests as identical to..."
+msgstr "Markiere ausgewählte Anfragen als identisch zu..."
+
+#: froide/foirequest/admin.py
+msgid "Successfully marked requests as identical."
+msgstr "Markierung als identisch war erfolgreich."
+
+#: froide/foirequest/admin.py
+#: froide/foirequest/templates/foirequest/account/list_requests.html
+#: froide/foirequest/views/project.py
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+#: froide/foirequest/admin.py
+msgid "Has redacted version"
+msgstr "Hat geschwärzte Version"
+
+#: froide/foirequest/admin.py
+msgid "Has converted version"
+msgstr "Hat konvertierte Version"
+
+#: froide/foirequest/admin.py
+msgid "See FoiMessage"
+msgstr "Siehe Nachricht"
+
+#: froide/foirequest/admin.py
+msgid "Mark selected as approved"
+msgstr "Markiere ausgewählte Anhänge als genehmigt"
+
+#: froide/foirequest/admin.py
+#, python-format
+msgid "%d attachment(s) successfully approved."
+msgstr "%d Anhänge erfolgreich genehmigt."
+
+#: froide/foirequest/admin.py
+msgid "Convert to PDF"
+msgstr "In PDF konvertieren"
+
+#: froide/foirequest/admin.py
+msgid "Has request"
+msgstr "Hat Anfrage"
+
+#: froide/foirequest/admin.py
+msgid "Redeliver to..."
+msgstr "Erneut zustellen…"
+
+#: froide/foirequest/apps.py froide/foirequest/models/event.py
+#: froide/foirequest/notifications.py
+#: froide/foirequest/templates/foirequest/account/list_projects.html
+#: froide/foirequest/templates/foirequest/header/breadcrumb.html
+#: froide/foirequest/templates/foirequest/list.html
+#: froide/foirequestfollower/configuration.py
+#: froide/problem/templates/problem/user_moderation.html
+#: froide/team/templates/team/team_detail.html froide/templates/header.html
+msgid "Requests"
+msgstr "Anfragen"
+
+msgid "FOI Request"
+msgstr "Anfrage"
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid "by status %(status)s"
+msgstr "nach Status %(status)s"
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid "for %(juris)s"
+msgstr "für %(juris)s"
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid "Freedom of Information Requests %(by)s on %(sitename)s"
+msgstr "Anfragen %(by)s auf %(sitename)s"
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid "Freedom of Information Requests on %(sitename)s"
+msgstr "Anfragen auf %(sitename)s"
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid ""
+"This feed contains the Freedom of Information requests %(by)s that have been "
+"made through %(sitename)s."
+msgstr ""
+"Dieser Feed enthält die neuesten Anfragen %(by)s, die mit Hilfe von "
+"%(sitename)s gestellt wurden."
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid ""
+"This feed contains the latest Freedom of Information requests that have been "
+"made through %(sitename)s."
+msgstr ""
+"Dieser Feed enthält die neuesten Anfragen, die mit Hilfe von %(sitename)s "
+"gestellt wurden."
+
+#: froide/foirequest/feeds.py
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid "Not yet known"
+msgstr "Noch nicht bekannt"
+
+#: froide/foirequest/feeds.py
+#, python-format
+msgid "'%(title)s' to %(publicbody)s"
+msgstr "'%(title)s' an %(publicbody)s"
+
+#: froide/foirequest/filters.py
+msgid "Fee charged"
+msgstr "Gebühr erhoben"
+
+#: froide/foirequest/filters.py
+msgid "This request is connected with a fee."
+msgstr "Bei dieser Anfrage wurde eine Gebühr erhoben."
+
+#: froide/foirequest/filters.py
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/foirequest/views/account_requests.py
+msgid "status"
+msgstr "status"
+
+#: froide/foirequest/foi_mail.py froide/foirequest/tests/test_mail.py
+msgid "Unknown FoI-Mail Recipient"
+msgstr "Unbekannter Antwortmail-Empfänger"
+
+#: froide/foirequest/foi_mail.py
+#, python-format
+msgid ""
+"We received a possible spam mail to this address: %(address)s.\n"
+"Please investigate! %(url)s\n"
+msgstr ""
+"Wir haben eine mögliche Spam-E-Mail an diese Adresse erhalten: %(address)s.\n"
+"Bitte dem nachgehen!\n"
+"%(url)s\n"
+
+#: froide/foirequest/forms/message.py
+#, python-format
+msgid "%(count)s day"
+msgid_plural "%(count)s days"
+msgstr[0] "%(count)s Tag"
+msgstr[1] "%(count)s Tage"
+
+#: froide/foirequest/forms/message.py
+msgid "Sending Public Body"
+msgstr "Absender (Behörde)"
+
+#: froide/foirequest/forms/message.py
+#: froide/foirequest/templates/foirequest/body/message/message.html
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/foirequest/views/make_request.py
+msgid "To"
+msgstr "An"
+
+#: froide/foirequest/forms/message.py
+msgid "Your message"
+msgstr "Ihre Nachricht"
+
+#: froide/foirequest/forms/message.py froide/foirequest/models/attachment.py
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/problem/views.py
+msgid "Attachments"
+msgstr "Anhänge"
+
+#: froide/foirequest/forms/message.py
+msgid "Send physical address"
+msgstr "Adresse mitsenden"
+
+#: froide/foirequest/forms/message.py
+msgid "mm/dd/YYYY"
+msgstr "dd.mm.YYYY"
+
+#: froide/foirequest/forms/message.py
+msgid "Send Date"
+msgstr "Sendedatum"
+
+#: froide/foirequest/forms/message.py
+msgid "Please give the date the reply was sent."
+msgstr "Bitte geben Sie das Datum an, an dem der Brief versendet wurde."
+
+#: froide/foirequest/forms/message.py
+msgid "Your reply date is in the future, that is not possible."
+msgstr "Ihr Sendedatum ist in der Zukunft, das ist nicht möglich."
+
+#: froide/foirequest/forms/message.py
+msgid "Scanned Letter"
+msgstr "Gescannter Brief"
+
+#: froide/foirequest/forms/message.py
+msgid "You need to provide either the letter text or a scanned document."
+msgstr ""
+"Bitte geben Sie entweder den Brieftext an oder laden Sie ein gescanntes "
+"Dokument hoch."
+
+#: froide/foirequest/forms/message.py
+msgid "Sender Name"
+msgstr "Absender"
+
+#: froide/foirequest/forms/message.py
+msgid "You are not allowed to publish some received documents"
+msgstr "Sie dürfen einige der erhaltenen Dokumente nicht veröffentlichen."
+
+#: froide/foirequest/forms/message.py
+msgid ""
+"If the reply explicitly states that you are not allowed to publish some of "
+"the documents (e.g. due to copyright), check this."
+msgstr ""
+"Falls die erhaltene Antwort ausdrücklich eine Veröffentlichung von einigen "
+"Dokumenten untersagt (z.B. wegen des Urheberrechts), machen Sie hier einen "
+"Haken."
+
+#: froide/foirequest/forms/message.py
+msgid "Scanned Document"
+msgstr "Gescanntes Dokument"
+
+#. Translators: replacement for person name in filename
+#: froide/foirequest/forms/message.py froide/foirequest/forms/postal.py
+#: froide/foirequest/services.py
+msgid "NAME"
+msgstr "NAME"
+
+#: froide/foirequest/forms/request.py
+msgid "Body"
+msgstr "Nachricht"
+
+#: froide/foirequest/forms/request.py
+msgid "Specify your request here..."
+msgstr "Beschreiben Sie Ihre Anfrage hier ..."
+
+#: froide/foirequest/forms/request.py
+msgid "Don't wrap in template"
+msgstr "Vorlage anpassen"
+
+#: froide/foirequest/forms/request.py
+msgid "This request is public."
+msgstr "Diese Anfrage ist öffentlich."
+
+#: froide/foirequest/forms/request.py
+msgid ""
+"If you don't want your request to be public right now, uncheck this. You can "
+"always decide to make it public later."
+msgstr ""
+"Wenn Ihre Anfrage nicht sofort öffentlich sein soll, entfernen Sie den "
+"Haken. Sie können die Anfrage dann später veröffentlichen."
+
+#: froide/foirequest/forms/request.py
+msgid "Please specify a reason why this is the right Public Body:"
+msgstr "Begründen Sie, warum dies die richtige Behörde ist:"
+
+#: froide/foirequest/forms/request.py
+msgid "Reason"
+msgstr "Begründung"
+
+#: froide/foirequest/forms/request.py
+msgid "Suggestions"
+msgstr "Vorschläge"
+
+#: froide/foirequest/forms/request.py froide/publicbody/models.py
+msgid "More Info"
+msgstr "Details"
+
+#: froide/foirequest/forms/request.py
+#, python-format
+msgid "Reason for this suggestion: %(reason)s"
+msgstr "Grund für diesen Vorschlag: %(reason)s"
+
+#: froide/foirequest/forms/request.py
+msgid "Missing or invalid input!"
+msgstr "Fehlende oder ungültige Eingabe!"
+
+#: froide/foirequest/forms/request.py
+msgid "This request doesn't need a Public Body!"
+msgstr "Diese Anfrage benötigt keine Behörde!"
+
+#: froide/foirequest/forms/request.py
+msgid "This request is still ongoing."
+msgstr "Diese Anfrage läuft noch."
+
+#: froide/foirequest/forms/request.py
+msgid "This request is finished."
+msgstr "Diese Anfrage ist abgeschlossen."
+
+#: froide/foirequest/forms/request.py froide/foirequest/models/request.py
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "Resolution"
+msgstr "Ergebnis"
+
+#: froide/foirequest/forms/request.py
+msgid "No outcome yet"
+msgstr "Noch kein Ergebnis"
+
+#: froide/foirequest/forms/request.py
+msgid "How would you describe the current outcome of this request?"
+msgstr "Wie würden Sie das Ergebnis dieser Anfrage beschreiben?"
+
+#: froide/foirequest/forms/request.py
+msgid "Costs"
+msgstr "Kosten"
+
+#: froide/foirequest/forms/request.py
+msgid "Please specify what the Public Body charges for the information."
+msgstr ""
+"Bitte geben Sie an, welchen Betrag die Behörde für diese Information "
+"verlangt."
+
+#: froide/foirequest/forms/request.py
+msgid "Refusal Reason"
+msgstr "Verweigerungsgrund"
+
+#: froide/foirequest/forms/request.py
+msgid "No or other reason given"
+msgstr "Kein oder anderer Grund"
+
+#: froide/foirequest/forms/request.py
+msgid ""
+"When you are (partially) denied access to information, the Public Body "
+"should always state the reason."
+msgstr ""
+"Wenn Ihnen (auch nur teilweise) Auskunft verweigert wird, sollte die Behörde "
+"immer eine Begründung angeben."
+
+#: froide/foirequest/forms/request.py
+msgid "Please give a resolution to this request"
+msgstr "Bitte schreiben Sie eine Zusammenfassung des Ergebnisses"
+
+#: froide/foirequest/models/attachment.py
+msgid "File"
+msgstr "Datei"
+
+#: froide/foirequest/models/attachment.py
+msgid "Size"
+msgstr "Größe"
+
+#: froide/foirequest/models/attachment.py
+msgid "File type"
+msgstr "Dateityp"
+
+#: froide/foirequest/models/attachment.py
+msgid "Format"
+msgstr "Format"
+
+#: froide/foirequest/models/attachment.py
+msgid "User can approve"
+msgstr "Nutzer kann genehmigen"
+
+#: froide/foirequest/models/attachment.py
+msgid "Approved"
+msgstr "Veröffentlicht"
+
+#: froide/foirequest/models/attachment.py
+msgid "Redacted Version"
+msgstr "Geschwärzte Version"
+
+#: froide/foirequest/models/attachment.py
+msgid "Is redacted"
+msgstr "Ist geschwärzt"
+
+#: froide/foirequest/models/attachment.py
+msgid "Converted Version"
+msgstr "Konvertierte Version"
+
+#: froide/foirequest/models/attachment.py
+msgid "Is converted"
+msgstr "Konvertiert?"
+
+#: froide/foirequest/models/attachment.py
+msgid "Attachment"
+msgstr "Anhang"
+
+#: froide/foirequest/models/attachment.py
+#, python-format
+msgid "attachment-%(id)d"
+msgstr "anhang-%(id)d"
+
+#: froide/foirequest/models/deferred.py
+msgid "Undelivered Message"
+msgstr "Nicht zugestellte Nachricht"
+
+#: froide/foirequest/models/deferred.py
+msgid "Undelivered Messages"
+msgstr "Nicht zugestellte Nachrichten"
+
+#: froide/foirequest/models/deferred.py
+#, python-format
+msgid "Undelievered Message to %(recipient)s (%(request)s)"
+msgstr "Unzugestellte Nachricht an %(recipient)s (%(request)s)"
+
+#: froide/foirequest/models/event.py
+msgid "This request became overdue"
+msgstr "Die Frist für diese Anfrage ist abgelaufen"
+
+#: froide/foirequest/models/event.py froide/foirequest/models/message.py
+#: froide/foirequest/models/request.py froide/foirequest/models/suggestion.py
+#: froide/foirequestfollower/models.py
+msgid "Freedom of Information Request"
+msgstr "Anfrage"
+
+#: froide/foirequest/models/event.py froide/foirequest/models/project.py
+#: froide/foirequest/models/request.py froide/foirequest/models/suggestion.py
+#: froide/follow/models.py froide/frontpage/models.py
+msgid "User"
+msgstr "Nutzer"
+
+#: froide/foirequest/models/event.py froide/foirequest/models/request.py
+#: froide/foirequest/models/suggestion.py
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/publicbody/apps.py froide/publicbody/models.py
+#: froide/team/templates/team/team_detail.html
+msgid "Public Body"
+msgstr "Behörde"
+
+#: froide/foirequest/models/event.py
+msgid "Is Public?"
+msgstr "Öffentlich oder nicht?"
+
+#: froide/foirequest/models/event.py
+msgid "Event Name"
+msgstr "Ereignisname"
+
+#: froide/foirequest/models/event.py froide/foirequest/models/message.py
+#: froide/frontpage/models.py
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#: froide/foirequest/models/event.py
+msgid "Context JSON"
+msgstr "Kontext JSON"
+
+#: froide/foirequest/models/event.py
+msgid "Request Event"
+msgstr "Anfrageereignis"
+
+#: froide/foirequest/models/event.py
+msgid "Request Events"
+msgstr "Anfrageereignisse"
+
+#. Translators: Hash part of Event URL
+#: froide/foirequest/models/event.py
+msgid "event"
+msgstr "ereignis"
+
+#: froide/foirequest/models/message.py
+msgid "has message been sent?"
+msgstr "wurde die Nachricht versendet?"
+
+#: froide/foirequest/models/message.py
+msgid "Escalation?"
+msgstr "Vermittlung?"
+
+#: froide/foirequest/models/message.py
+msgid "Content hidden?"
+msgstr "Text versteckt?"
+
+#: froide/foirequest/models/message.py
+msgid "From User"
+msgstr "Von Nutzer"
+
+#: froide/foirequest/models/message.py
+msgid "From Email"
+msgstr "Von E-Mail"
+
+#: froide/foirequest/models/message.py
+msgid "From Name"
+msgstr "Von Name"
+
+#: froide/foirequest/models/message.py
+msgid "From Public Body"
+msgstr "Von Behörde"
+
+#: froide/foirequest/models/message.py
+msgid "Recipient"
+msgstr "Empfänger"
+
+#: froide/foirequest/models/message.py
+msgid "Recipient Email"
+msgstr "Empfänger-E-mail"
+
+#: froide/foirequest/models/message.py
+msgid "Public Body Recipient"
+msgstr "Empfangende Behörde"
+
+#: froide/foirequest/models/message.py
+msgid "Redacted Subject"
+msgstr "Geschwärzter Betreff"
+
+#: froide/foirequest/models/message.py
+msgid "plain text"
+msgstr "einfacher Text"
+
+#: froide/foirequest/models/message.py
+msgid "redacted plain text"
+msgstr "geschwärzter Text"
+
+#: froide/foirequest/models/message.py
+msgid "HTML"
+msgstr "HTML"
+
+#: froide/foirequest/models/message.py
+msgid "Was Redacted?"
+msgstr "wurde geschwärzt?"
+
+#: froide/foirequest/models/message.py froide/foirequest/models/request.py
+msgid "Not publishable"
+msgstr "Veröffentlichung verboten"
+
+#: froide/foirequest/models/message.py
+msgid "Freedom of Information Message"
+msgstr "Nachricht"
+
+#: froide/foirequest/models/message.py
+msgid "Freedom of Information Messages"
+msgstr "Nachrichten"
+
+#: froide/foirequest/models/message.py
+#, python-format
+msgid "Message in '%(request)s' at %(time)s"
+msgstr "Nachricht in '%(request)s' um %(time)s"
+
+#: froide/foirequest/models/message.py
+#, python-format
+msgid "message-%(id)d"
+msgstr "nachricht-%(id)d"
+
+#: froide/foirequest/models/message.py
+msgid "To:"
+msgstr "An:"
+
+#: froide/foirequest/models/project.py
+msgid "asleep"
+msgstr "eingeschlafen"
+
+#: froide/foirequest/models/project.py froide/foirequest/models/request.py
+#: froide/georegion/models.py froide/publicbody/models.py
+msgid "Slug"
+msgstr "URL-Kürzel"
+
+#: froide/foirequest/models/project.py froide/foirequest/models/request.py
+#: froide/foirequest/views/message.py froide/organization/forms.py
+#: froide/problem/views.py froide/publicbody/models.py
+#: froide/publicbody/templates/publicbody/show_foilaw.html
+msgid "Description"
+msgstr "Beschreibung"
+
+#: froide/foirequest/models/project.py froide/foirequest/models/request.py
+msgid "published?"
+msgstr "veröffentlicht?"
+
+#: froide/foirequest/models/project.py froide/foirequest/models/request.py
+#: froide/frontpage/models.py froide/publicbody/models.py
+msgid "Site"
+msgstr "Seite"
+
+#: froide/foirequest/models/request.py
+msgid "FoI Request Tag"
+msgstr "Schlagwort einer Anfrage"
+
+#: froide/foirequest/models/request.py
+msgid "FoI Request Tags"
+msgstr "Schlagworte einer Anfrage"
+
+#: froide/foirequest/models/request.py
+msgid "Awaiting user confirmation"
+msgstr "Warte auf Nutzerbestätigung"
+
+#: froide/foirequest/models/request.py
+msgid "Public Body needed"
+msgstr "Behörde benötigt"
+
+#: froide/foirequest/models/request.py
+msgid "Awaiting Public Body confirmation"
+msgstr "Warte auf Bestätigung der Behörde"
+
+#: froide/foirequest/models/request.py
+#: froide/foirequest/templates/foirequest/header/info-box.html
+msgid "Awaiting response"
+msgstr "Warte auf Antwort"
+
+#: froide/foirequest/models/request.py
+msgid "Request awaits classification"
+msgstr "Anfrage muss klassifiziert werden"
+
+#: froide/foirequest/models/request.py
+msgid "Request asleep"
+msgstr "Anfrage eingeschlafen"
+
+#: froide/foirequest/models/request.py
+msgid "Request resolved"
+msgstr "Anfrage abgeschlossen"
+
+#: froide/foirequest/models/request.py
+msgid "Request Successful"
+msgstr "Anfrage erfolgreich"
+
+#: froide/foirequest/models/request.py
+msgid "Request partially successful"
+msgstr "Anfrage teilweise erfolgreich"
+
+#: froide/foirequest/models/request.py
+msgid "Information not held"
+msgstr "Information nicht vorhanden"
+
+#: froide/foirequest/models/request.py
+msgid "Request refused"
+msgstr "Anfrage abgelehnt"
+
+#: froide/foirequest/models/request.py
+msgid "Request was withdrawn due to costs"
+msgstr "Anfrage wurde wegen der Kosten zurückgezogen"
+
+#: froide/foirequest/models/request.py
+msgid "Request was withdrawn"
+msgstr "Anfrage wurde zurückgezogen"
+
+#: froide/foirequest/models/request.py
+msgid "Response overdue"
+msgstr "Antwort verspätet"
+
+#: froide/foirequest/models/request.py
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: froide/foirequest/models/request.py
+msgid "The requester's email address is yet to be confirmed."
+msgstr "Die E-mail-Adresse des Anfragestellenden muss noch bestätigt werden."
+
+#: froide/foirequest/models/request.py
+msgid "This request still needs a Public Body."
+msgstr "Diese Anfrage erfordert noch eine Behörde."
+
+#: froide/foirequest/models/request.py
+msgid ""
+"The Public Body of this request has been created by the user and still needs "
+"to be confirmed."
+msgstr ""
+"Die Behörde dieser Anfrage wurde vom Nutzer erstellt und muss noch bestätigt "
+"werden."
+
+#: froide/foirequest/models/request.py
+msgid "This request is still waiting for a response from the Public Body."
+msgstr "Diese Anfrage wartet noch auf eine Antwort von der Behörde."
+
+#: froide/foirequest/models/request.py
+msgid "A message was received and the user needs to set a new status."
+msgstr ""
+"Eine Antwort wurde erhalten und der/die Nutzer/in muss einen neuen Status "
+"angeben."
+
+#: froide/foirequest/models/request.py
+msgid "The request is not resolved and has not been active for a while."
+msgstr ""
+"Die Anfrage ist unbeantwortet und seit geraumer Zeit nicht mehr aktiv "
+"gewesen."
+
+#: froide/foirequest/models/request.py
+msgid "The request is resolved."
+msgstr "Die Anfrage ist abgeschlossen."
+
+#: froide/foirequest/models/request.py
+msgid ""
+"The request has been partially successful (some information was provided, "
+"but not all)"
+msgstr ""
+"Die Anfrage war teilweise erfolgreich (ein Teil der angefragten "
+"Informationen wurde geliefert, aber nicht alle)"
+
+#: froide/foirequest/models/request.py
+msgid "The Public Body refuses to provide the information."
+msgstr "Die Behörde weigert sich, die Information zur Verfügung zu stellen."
+
+#: froide/foirequest/models/request.py
+msgid "User withdrew the request due to the associated costs."
+msgstr "Die Anfrage wurde auf Grund der entstehenden Kosten zurückgezogen."
+
+#: froide/foirequest/models/request.py
+msgid "User withdrew the request for other reasons."
+msgstr "Nutzer hat die Anfrage aus anderen Gründen zurückgezogen."
+
+#: froide/foirequest/models/request.py
+msgid "The request has not been answered in time."
+msgstr "Diese Anfrage wurde nicht innerhalb der Frist beantwortet."
+
+#: froide/foirequest/models/request.py
+msgid "Invisible"
+msgstr "Unsichtbar"
+
+#: froide/foirequest/models/request.py
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+#: froide/foirequest/models/request.py
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
+#: froide/foirequest/models/request.py froide/publicbody/models.py
+msgid "Created at"
+msgstr "Erstellt am"
+
+#: froide/foirequest/models/request.py
+msgid "Date of last message"
+msgstr "Letzte Nachricht"
+
+#: froide/foirequest/models/request.py
+msgid "Resolution date"
+msgstr "Lösungsdatum"
+
+#: froide/foirequest/models/request.py
+msgid "Due Date"
+msgstr "Frist"
+
+#: froide/foirequest/models/request.py
+msgid "Secret address"
+msgstr "Geheime Adresse"
+
+#: froide/foirequest/models/request.py
+msgid "Secret"
+msgstr "Geheimnis"
+
+#: froide/foirequest/models/request.py
+msgid "Identical request"
+msgstr "Identische Anfrage"
+
+#: froide/foirequest/models/request.py
+msgid "Identical request count"
+msgstr "Anzahl Identischer Anfragen"
+
+#: froide/foirequest/models/request.py froide/publicbody/models.py
+msgid "Freedom of Information Law"
+msgstr "Informationsgesetz"
+
+#: froide/foirequest/models/request.py
+msgid "Cost of Information"
+msgstr "Kosten dieser Information"
+
+#: froide/foirequest/models/request.py
+msgid "Refusal reason"
+msgstr "Verweigerungsgrund"
+
+#: froide/foirequest/models/request.py
+msgid "checked"
+msgstr "gesehen"
+
+#: froide/foirequest/models/request.py
+msgid "is FoI request"
+msgstr "ist eine IF-Anfrage"
+
+#: froide/foirequest/models/request.py froide/foirequest/views/make_request.py
+#: froide/publicbody/forms.py froide/publicbody/models.py
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Jurisdiction"
+msgstr "Zuständigkeitsbereich"
+
+#: froide/foirequest/models/request.py froide/templates/scaffold.html
+msgid "Freedom of Information Requests"
+msgstr "Anfragen"
+
+#: froide/foirequest/models/request.py
+msgid "Can see private requests"
+msgstr "Kann private Anfragen sehen"
+
+#: froide/foirequest/models/request.py
+#, python-format
+msgid "Request '%s'"
+msgstr "Anfrage '%s'"
+
+#: froide/foirequest/models/suggestion.py
+msgid "Timestamp of Suggestion"
+msgstr "Zeitstempel des Vorschlags"
+
+#: froide/foirequest/models/suggestion.py
+msgid "Reason this Public Body fits the request"
+msgstr "Begründung, warum diese Behörde zur Anfrage passt"
+
+#: froide/foirequest/models/suggestion.py
+msgid "Public Body Suggestion"
+msgstr "Vorschlag für Behörde"
+
+#: froide/foirequest/models/suggestion.py
+msgid "Public Body Suggestions"
+msgstr "Vorschläge für Behörden"
+
+#: froide/foirequest/services.py
+#, python-format
+msgid "attached_file_%d"
+msgstr "angehaengte_datei_%d"
+
+#: froide/foirequest/signals.py
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "requester"
+msgstr "anfragesteller"
+
+#: froide/foirequest/signals.py
+msgid "Your Freedom of Information Request was sent"
+msgstr "✔️ Anfrage gesendet"
+
+#: froide/foirequest/templates/admin/foirequest/foimessage/change_form.html
+#: froide/foirequest/templates/foirequest/body/message/toolbar/resend.html
+msgid "Resend message"
+msgstr "Nachricht erneut senden"
+
+#: froide/foirequest/templates/foirequest/_request_search.html
+#: froide/helper/templates/helper/search/search_base.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
+#: froide/publicbody/widgets.py froide/templates/header.html
+msgid "Search"
+msgstr "Suchen"
+
+#: froide/foirequest/templates/foirequest/_request_search.html
+msgid "Show all FoI requests"
+msgstr "Zeige alle Anfragen"
+
+#: froide/foirequest/templates/foirequest/account/list_drafts.html
+#: froide/foirequest/templates/foirequest/account/list_projects.html
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/header/info-box.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html
+#: froide/letter/templates/letter/pdf/default.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+#: froide/problem/views.py froide/team/templates/team/team_detail.html
+msgid "Date"
+msgstr "Datum"
+
+#: froide/foirequest/templates/foirequest/admin/add_to_project.html
+#: froide/foirequest/templates/foirequest/admin/mark_same_as.html
+msgid "These FoI request..."
+msgstr "Diese IFG-Anfragen..."
+
+#: froide/foirequest/templates/foirequest/admin/mark_same_as.html
+msgid "Mark multiple requests identical"
+msgstr "Mehrer Anfragen als identische markieren"
+
+#: froide/foirequest/templates/foirequest/admin/mark_same_as.html
+msgid "...are identical to this one:"
+msgstr "...sind identisch zu dieser Anfrage:"
+
+#: froide/foirequest/templates/foirequest/admin/mark_same_as.html
+msgid "Mark as identical to chosen request"
+msgstr "Als identisch zu den gewählten Anfragen markieren"
+
+#: froide/foirequest/templates/foirequest/admin_redeliver.html
+msgid "Redeliver deferred messages"
+msgstr "Stelle Nachrichten erneut zu"
+
+#: froide/foirequest/templates/foirequest/admin_redeliver.html
+msgid "Redeliver these messages..."
+msgstr "Stelle diese Nachrichten erneut zu..."
+
+#: froide/foirequest/templates/foirequest/admin_redeliver.html
+msgid "...to this FOI request:"
+msgstr "…an diese IFG-Anfrage"
+
+#: froide/foirequest/templates/foirequest/admin_redeliver.html
+msgid "Redeliver messages"
+msgstr "Nachrichten erneut zustellen"
+
+#: froide/foirequest/templates/foirequest/body/actions/escalate.html
+msgid "Ask for mediation for this request"
+msgstr "Fragen Sie nach Vermittlung zu dieser Anfrage"
+
+#: froide/foirequest/templates/foirequest/body/actions/escalate.html
+#: froide/publicbody/templates/publicbody/show_foilaw.html
+msgid "Mediating authority"
+msgstr "Vermittelnde Behörde"
+
+#: froide/foirequest/templates/foirequest/body/actions/escalate.html
+msgid ""
+"Your request is currently not public, but will be made accessible to the "
+"mediator via the special link in the message."
+msgstr ""
+"Ihre Anfrage ist momentan nicht öffentlich, allerdings wird sie der "
+"vermittelnden Stelle über den Link in der Nachricht zugänglich gemacht."
+
+#: froide/foirequest/templates/foirequest/body/actions/escalate.html
+#: froide/foirequest/templates/foirequest/body/actions/send_message.html
+msgid "Send Message"
+msgstr "Nachricht absenden"
+
+#: froide/foirequest/templates/foirequest/body/actions/send_message.html
+msgid "Send message to public body"
+msgstr "Nachricht an Behörde senden"
+
+#: froide/foirequest/templates/foirequest/body/actions/send_message.html
+msgid ""
+"Your request is <b>overdue</b>. You should send a reminder to the Public "
+"Body!"
+msgstr ""
+"Ihre Anfrage ist <b>verspätet</b>. Sie sollten der Behörde eine Nachricht "
+"schicken."
+
+#: froide/foirequest/templates/foirequest/body/correspondence.html
+msgid "No messages yet"
+msgstr "Noch keine Nachrichten"
+
+#: froide/foirequest/templates/foirequest/body/message/attachments/item.html
+msgid ""
+"This attachment contains personally identifying information and cannot be "
+"published."
+msgstr ""
+"Dieser Anhang enthält personenbezogene Informationen und kann nicht "
+"veröffentlicht werden."
+
+#: froide/foirequest/templates/foirequest/body/message/attachments/item.html
+#: froide/foirequest/views/message.py
+msgid "This attachment has been converted to PDF and cannot be published."
+msgstr ""
+"Dieser Anhang wurde in ein PDF konvertiert und kann nicht veröffentlicht "
+"werden."
+
+#: froide/foirequest/templates/foirequest/body/message/message.html
+msgid "This message is not yet public."
+msgstr "Diese Nachricht ist noch nicht öffentlich."
+
+#: froide/foirequest/templates/foirequest/body/message/message.html
+#: froide/problem/forms.py
+msgid "Details"
+msgstr "Details"
+
+#: froide/foirequest/templates/foirequest/body/message/message.html
+msgid ""
+"This message may contain information that you may wish to not publish until "
+"after the whole request finished. The following message is therefore "
+"currently only visible to you."
+msgstr ""
+"Diese Nachricht enthält ggf. Informationen, die Sie erst nach Abschluss "
+"Ihrer Anfrage veröffentlichen sollten. Daher ist der Inhalt der Nachricht "
+"momentan nur für Sie sichtbar."
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/foirequest/views/make_request.py froide/helper/admin_utils.py
+msgid "From"
+msgstr "Von"
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/body/message/sender.html
+#: froide/foirequest/templatetags/foirequest_tags.py
+msgid "Only visible to you"
+msgstr "Nur für Sie sichtbar"
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/views/make_request.py
+msgid "change"
+msgstr "ändern"
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+msgid "Set the Public Body that sent this message:"
+msgstr "Geben Sie die Behörde an, die dieses Antwort gesendet hat:"
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+msgid "Set Sending Public Body"
+msgstr "Absender angeben"
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/header/info-box.html
+msgid "Admin"
+msgstr "Admin"
+
+#: froide/foirequest/templates/foirequest/body/message/meta_container.html
+msgid "View message in admin"
+msgstr "Nachricht im Admin"
+
+#: froide/foirequest/templates/foirequest/body/settings.html
+msgid "Set Law"
+msgstr "Gesetz festlegen"
+
+#: froide/foirequest/templates/foirequest/body/settings.html
+msgid "Set Concrete Law"
+msgstr "Konkretes Gesetz festlegen"
+
+#: froide/foirequest/templates/foirequest/body/settings.html
+msgid "Secret Short URL"
+msgstr "Geheime Kurz-URL"
+
+#: froide/foirequest/templates/foirequest/body/settings.html
+msgid "This URL gives read access to others."
+msgstr "Diese URL gibt anderen Lese-Zugriff."
+
+#: froide/foirequest/templates/foirequest/body/timeline.html
+msgid "overdue"
+msgstr "verspaetet"
+
+#: froide/foirequest/templates/foirequest/emails/dummy_mail_end.txt
+msgid ""
+"\n"
+"Sincerely yours,"
+msgstr ""
+"\n"
+"Mit freundlichen Grüßen,"
+
+#: froide/foirequest/templates/foirequest/emails/dummy_mail_start.txt
+msgid ""
+"Dear Sir or Madam,\n"
+"\n"
+"I'd like to make a request under a (yet to be determined) freedom of "
+"information law."
+msgstr ""
+"Guten Tag,\n"
+"\n"
+"ich würde gerne eine Anfrage nach einem (noch festzulegenden) "
+"Informationsgesetz/Auskunftsgesetz stellen."
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt
+#, python-format
+msgid "From: %(from)s"
+msgstr "Von: %(from)s"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt
+#, python-format
+msgid ""
+"Date: %(date)s\n"
+"Via: Postal Mail"
+msgstr ""
+"Datum: %(date)s\n"
+"Via: Postalischer Zustellung"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt
+#, python-format
+msgid ""
+"Date: %(date)s\n"
+"Via: Email"
+msgstr ""
+"Datum: %(date)s\n"
+"Via: E-Mail"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt
+#, python-format
+msgid "URL: %(url)s"
+msgstr "URL: %(url)s"
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt
+#, python-format
+msgid "Subject: %(subject)s"
+msgstr "Betreff: %(subject)s "
+
+#: froide/foirequest/templates/foirequest/emails/formatted_message.txt
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
+msgid "Attachments:"
+msgstr "Anhänge:"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
+#, python-format
+msgid "Request Number: %(num)s"
+msgstr "Anfragenr: %(num)s"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
+#, python-format
+msgid "Reply To: %(email)s"
+msgstr "Antwort an: %(email)s"
+
+#: froide/foirequest/templates/foirequest/emails/mail_with_userinfo.txt
+msgid "Post Address:"
+msgstr "Postanschrift"
+
+#: froide/foirequest/templates/foirequest/emails/message_received_notification.txt
+#, python-format
+msgid ""
+"Hello %(name)s,\n"
+"\n"
+"%(pbname)s sent you a response to your request “%(title)s”. Please read the "
+"response and change the status of the request if needed. You can also send "
+"another message.\n"
+"\n"
+"To read your response and to reply to the authority, click the link below:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+"Cheers,\n"
+"%(site_name)s"
+msgstr ""
+"Hallo %(name)s,\n"
+"\n"
+"%(pbname)s hat auf Ihre Anfrage „%(title)s“ geantwortet. Bitte lesen Sie die "
+"Nachricht auf FragDenStaat.at und tragen ein, ob die Anfrage abgeschlossen "
+"ist. Sie können dort auch eine weitere Nachricht senden.\n"
+"\n"
+"Um die Antwort zu lesen und der Behörde zu antworten, klicken Sie auf diesen "
+"Link:\n"
+"\n"
+"%(action_url)s\n"
+"\n"
+"Beste Grüße,\n"
+"%(site_name)s"
+
+#: froide/foirequest/templates/foirequest/emails/overdue_reply.txt
+#, python-format
+msgid ""
+"Dear Sir or Madam,\n"
+"\n"
+"My Freedom of Information request \"%(title)s\" (%(date)s, #%(num)s) was not "
+"answered in the time defined by law and is now %(due)s late.\n"
+"Please update me on the status of my request as soon as possible.\n"
+"\n"
+"Sincerely yours,\n"
+"%(name)s"
+msgstr ""
+"Guten Tag,\n"
+"\n"
+"meine Anfrage \"%(title)s\" vom %(date)s (#%(num)s) wurde von Ihnen nicht in "
+"der gesetzlich vorgeschriebenen Zeit beantwortet. Sie haben die Frist "
+"mittlerweile um %(due)s überschritten.\n"
+"Bitte informieren Sie mich umgehend über den Stand meiner Anfrage.\n"
+"\n"
+"Mit freundlichen Grüßen,\n"
+"%(name)s"
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt
+msgid "The suggestion is:"
+msgstr "Der Vorschlag lautet:"
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt
+msgid "The following reason was given:"
+msgstr "Folgender Grund wurde angegeben:"
+
+#: froide/foirequest/templates/foirequest/emails/public_body_suggestion_received.txt
+msgid ""
+"If you want to use this Public Body, go to your request and chose the Public "
+"Body from the list. Here is a link to your request:"
+msgstr ""
+"Wenn Sie Ihre Anfrage an diese Behörde richten wollen, rufen Sie Ihre "
+"Anfrage auf und wählen Sie die Behörde aus der Liste. Hier ist ein Link zu "
+"Ihrer Anfrage:"
+
+#: froide/foirequest/templates/foirequest/emails/request_footer.txt
+msgid ""
+"Legal Note: This mail was sent through a Freedom Of Information Portal. "
+"Replies might be published automatically.\n"
+msgstr ""
+"Rechtshinweis: Diese E-Mail wurde über den Webservice https://fragdenstaat."
+"at versendet. Antworten werden ggf. im Auftrag der Antragstellenden "
+"automatisch auf dem Internet-Portal veröffentlicht. Falls Sie noch Fragen "
+"haben, besuchen Sie https://fragdenstaat.at/hilfe/fuer-behoerden/\n"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt
+#: froide/follow/templates/follow/emails/batch_update_follower.txt
+#: froide/follow/templates/follow/emails/confirm_follow.txt
+#: froide/follow/templates/follow/emails/update_follower.txt
+#: froide/guide/templates/guide/emails/new_guidance.txt
+#: froide/problem/templates/problem/email_problem_resolved.txt
+#, python-format
+msgid "Hello %(name)s,"
+msgstr "Hallo %(name)s,"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt
+#, python-format
+msgid "in the last 24 hours there was an update on one of your requests."
+msgid_plural ""
+"in the last 24 hours there were updates to %(count)s of your requests."
+msgstr[0] ""
+"in den letzten 24 Stunden passierte Folgendes bei einer Ihrer Anfragen."
+msgstr[1] ""
+"in den letzten 24 Stunden passierte Folgendes bei %(count)s Ihrer Anfragen."
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt
+#, python-format
+msgid "Updates to your request \"%(title)s\""
+msgstr "Neues zu Ihrer Anfrage \"%(title)s\""
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt
+#, python-format
+msgid "Visit your request: %(link)s"
+msgstr "Gehe zu deiner Anfrage: %(link)s"
+
+#: froide/foirequest/templates/foirequest/emails/request_update.txt
+#: froide/follow/templates/follow/emails/batch_update_follower.txt
+#, python-format
+msgid ""
+"\n"
+"Cheers,\n"
+"%(site_name)s\n"
+msgstr ""
+"\n"
+"Grüße,\n"
+"%(site_name)s\n"
+
+#: froide/foirequest/templates/foirequest/header/breadcrumb.html
+msgid "request"
+msgstr "anfrage"
+
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid "You request has been refused."
+msgstr "Ihre Anfrage wurde abgelehnt."
+
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid "Consider sending a letter to a mediator"
+msgstr "Sie können den gesetzlichen Vermittler einschalten"
+
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid "Request to:"
+msgstr "Anfrage an:"
+
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid "Write summary"
+msgstr "Zusammenfassung schreiben"
+
+#: froide/foirequest/templates/foirequest/header/header.html
+msgid ""
+"Have you received the information you need? What have you learned from it?"
+msgstr ""
+"Haben Sie die Informationen, die Sie erfragt haben, erhalten? Was haben Sie "
+"erfahren?"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+#, python-format
+msgid "%(due)s ago"
+msgstr "%(due)s her"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+#, python-format
+msgid "in %(due)s"
+msgstr "in %(due)s"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+msgid "Cost of information:"
+msgstr "Kosten dieser Information:"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+#: froide/foirequest/templates/foirequest/list.html
+#: froide/publicbody/templates/publicbody/show.html
+msgid "RSS Feed"
+msgstr "RSS-Feed"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+#: froide/foirequest/views/request.py
+msgid "Download"
+msgstr "Download"
+
+#: froide/foirequest/templates/foirequest/header/info-box.html
+msgid "Set status"
+msgstr "Status festlegen"
+
+#: froide/foirequest/templates/foirequest/list.html
+msgid "RSS Feed for these requests"
+msgstr "RSS-Feed für diese Anfragen"
+
+#: froide/foirequest/templates/foirequest/list.html
+msgid "Atom feed for these request"
+msgstr "Atom-Feed für diese Anfragen"
+
+#: froide/foirequest/templates/foirequest/list.html
+msgid "FoI Requests"
+msgstr "Anfragen"
+
+#: froide/foirequest/templates/foirequest/list.html
+msgid "Feeds for these requests"
+msgstr "Feeds für diese Anfragen"
+
+#: froide/foirequest/templates/foirequest/list.html
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Atom Feed"
+msgstr "Atom-Feed"
+
+#: froide/foirequest/templates/foirequest/pdf/foirequest.html
+#: froide/foisite/models.py froide/frontpage/models.py
+#: froide/publicbody/models.py
+msgid "URL"
+msgstr "URL"
+
+#: froide/foirequest/templates/foirequest/pdf/message_letter.html
+#: froide/foirequest/templatetags/foirequest_tags.py
+msgid "Kind Regards,"
+msgstr "Mit freundlichen Grüßen"
+
+#: froide/foirequest/templates/foirequest/publicbody_upload.html
+msgid "Request"
+msgstr "Anfrage"
+
+#: froide/foirequest/templates/foirequest/redact.html
+#, python-format
+msgid "Redacting attachment %(name)s"
+msgstr "Schwärzen des Anhangs %(name)s"
+
+#: froide/foirequest/templates/foirequest/redact.html
+#, python-format
+msgid "Redact \"%(name)s\""
+msgstr "\"%(name)s\" schwärzen"
+
+#: froide/foirequest/templates/foirequest/redact.html
+msgid "What you need to redact"
+msgstr "Was Sie schwärzen sollten"
+
+#: froide/foirequest/templates/foirequest/redact.html
+msgid "Please remove all your personally identifying information."
+msgstr "Bitte entfernen Sie alle Ihre personenbezogenen Informationen."
+
+#: froide/foirequest/templates/foirequest/redact.html
+msgid ""
+"Please remove all your personally identifying information except your name."
+msgstr "Bitte entfernen Sie alle personenbezogenen Daten bis auf Ihren Namen."
+
+#: froide/foirequest/templates/foirequest/redact.html
+#, python-format
+msgid "Please remove all personally identifying information of %(name)s."
+msgstr "Bitte entfernen Sie alle personenbezogenen Daten von %(name)s."
+
+#: froide/foirequest/templates/foirequest/redact.html
+#, python-format
+msgid ""
+"Please remove all personally identifying information of %(name)s except the "
+"name itself."
+msgstr ""
+"Bitte entfernen Sie alle personenbezogenen Daten von %(name)s bis auf den "
+"Namen selbst."
+
+#: froide/foirequest/templates/foirequest/redact.html
+msgid "Please remove email addresses of this site."
+msgstr "Bitte entfernen Sie die E-Mailadressen dieser Seite."
+
+#: froide/foirequest/templates/foirequest/redact.html
+msgid "Please remove hand-written signatures."
+msgstr "Bitte entfernen Sie handschriftlich erstellte Unterschriften."
+
+#: froide/foirequest/templates/foirequest/redact.html
+msgid "How to redact"
+msgstr "So schwärzen Sie das Dokument"
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Make a request"
+msgstr "Make a request"
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Important Notes:"
+msgstr "Wichtige Hinweise:"
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Write your request in <strong>simple, precise language</strong>."
+msgstr ""
+"Schreiben Sie Ihre Anfrage in <strong>einfacher, präziser Sprache</strong>."
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Ask for <strong>specific</strong> documents or information."
+msgstr ""
+"Fragen Sie nach <strong>spezifischen</strong> Dokumenten oder Informationen."
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Keep it <strong>focused and concise</strong>."
+msgstr "Halten Sie es <strong>kurz und bündig</strong>."
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid ""
+"This site is <strong>public</strong>. Everything you type and any response "
+"will be published."
+msgstr ""
+"Diese Seite ist <strong>öffentlich</strong>. Alles, was Sie eingeben und die "
+"Antworten werden veröffentlicht."
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Do <strong>not include</strong> personal information in your request."
+msgstr ""
+"Schließen Sie <strong>keine</strong> persönlichen Daten in Ihre Anfrage ein."
+
+#: froide/foirequest/templates/foirequest/request.html
+msgid "Do <strong>not ask</strong> for personal information."
+msgstr "Fragen Sie <strong>nicht</strong> nach persönlichen Informationen."
+
+#: froide/foirequest/templates/foirequest/show.html
+#, python-format
+msgid "RSS Feed for request '%(title)s'"
+msgstr "RSS-Feed für Anfrage '%(title)s'"
+
+#: froide/foirequest/templates/foirequest/show.html
+#, python-format
+msgid "Atom feed for request '%(title)s'"
+msgstr "Atom-Feed für Anfrage '%(title)s'"
+
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html
+msgid "You made the original request."
+msgstr "Sie haben die Originalanfrage gestellt."
+
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html
+msgid "You made an identical request."
+msgstr "Sie haben eine identische Anfrage gestellt."
+
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html
+msgid ""
+"Make an identical request in your name to get access to the information."
+msgstr ""
+"Stellen Sie eine identische Anfrage in Ihrem Namen um Zugang zu den "
+"Informationen zu erhalten."
+
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html
+msgid "Your Email Address:"
+msgstr "Ihre E-Mail-Adresse:"
+
+#: froide/foirequest/templates/foirequest/snippets/make_same_request.html
+msgid "Make identical request in your name"
+msgstr "Eine identische Anfrage in Ihrem Namen stellen"
+
+#: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
+msgid "Not yet set"
+msgstr "Noch nicht festgelegt"
+
+#: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
+#: froide/foirequest/templates/foirequest/snippets/request_item_mini.html
+#, python-format
+msgid "%(time)s ago"
+msgstr "%(time)s her"
+
+#: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
+#, python-format
+msgid "One identical request"
+msgid_plural "%(counter)s identical requests"
+msgstr[0] "eine identische Anfrage"
+msgstr[1] "%(counter)s identische Anfragen"
+
+#: froide/foirequest/templatetags/foirequest_tags.py
+msgid "[... Show complete request text]"
+msgstr "[… Zeige kompletten Anfragetext]"
+
+#: froide/foirequest/templatetags/foirequest_tags.py froide/problem/views.py
+msgid "Message"
+msgstr "Message"
+
+#: froide/foirequest/validators.py
+#, python-format
+msgid ""
+"The scanned letter must be either PDF, JPG or PNG, but was detected as "
+"%(content_type)s!"
+msgstr ""
+"Der eingescannte Brief muss entweder im PDF-, JPG- oder PNG-Format sein, "
+"wurde aber als %(content_type)s erkannt!"
+
+#: froide/foirequest/views/attachment.py
+msgid "Attachment approved."
+msgstr "Anhang veröffentlicht."
+
+#: froide/foirequest/views/attachment.py
+msgid "Previous Page"
+msgstr "vorherige Seite"
+
+#: froide/foirequest/views/attachment.py
+msgid "Next Page"
+msgstr "nächste Seite"
+
+#: froide/foirequest/views/attachment.py
+msgid "Loading PDF..."
+msgstr "Lade PDF..."
+
+#: froide/foirequest/views/attachment.py
+#, python-format
+msgid "%s_redacted.pdf"
+msgstr "%s_geschwaerzt.pdf"
+
+#: froide/foirequest/views/make_request.py froide/publicbody/models.py
+msgid "Jurisdictions"
+msgstr "Zuständigkeitsbereiche"
+
+#: froide/foirequest/views/make_request.py
+#: froide/templates/pagination/pagination.html
+msgid "next"
+msgstr "nächste"
+
+#: froide/foirequest/views/make_request.py
+#: froide/templates/pagination/pagination.html
+msgid "previous"
+msgstr "vorherige"
+
+#: froide/foirequest/views/make_request.py
+msgid "Please use proper spelling."
+msgstr "Bitte achten Sie auf Ihre Rechtschreibung."
+
+#: froide/foirequest/views/make_request.py
+msgid "Please stay polite."
+msgstr "Bitte bleiben Sie höflich."
+
+#: froide/foirequest/views/make_request.py
+msgid "Your first name"
+msgstr "Ihr Vorname"
+
+#: froide/foirequest/views/make_request.py
+msgid "Your last name"
+msgstr "Ihr Nachname"
+
+#: froide/foirequest/views/make_request.py
+msgid ""
+"There were errors in your form submission. Please review and submit again."
+msgstr ""
+"Ihre Formulareingabe enthielt Fehler. Bitte überprüfen Sie Ihre Eingabe und "
+"senden Sie das Formular noch einmal."
+
+#: froide/foirequest/views/message.py
+msgid "Your request cannot be escalated."
+msgstr "Ihre Anfrage kann noch nicht vermittelt werden. "
+
+#: froide/foirequest/views/message.py
+msgid "Your Escalation Message has been sent."
+msgstr "Ihre Anfrage nach Vermittlung wurde gesendet."
+
+#: froide/foirequest/views/message.py
+msgid "A postal reply was successfully added!"
+msgstr "Eine per Post erhaltene Antwort wurde hinzugefügt!"
+
+#: froide/foirequest/views/message.py
+msgid "There were errors with your form submission!"
+msgstr "Ihre Angaben waren fehlerhaft!"
+
+#: froide/foirequest/views/message.py
+msgid "Content published."
+msgstr "Nachricht veröffentlicht."
+
+#: froide/foirequest/views/request.py
+msgid "Messages in this request"
+msgstr "Korrespondenz"
+
+#: froide/foirequest/views/request_actions.py
+msgid "Your Public Body suggestion has been added."
+msgstr "Ihr Vorschlag für eine Behörde wurde hinzugefügt."
+
+#: froide/foirequest/views/request_actions.py
+msgid "This Public Body has already been suggested."
+msgstr "Diese Behörde wurde schon vorgeschlagen."
+
+#: froide/foirequest/views/request_actions.py
+msgid "You need to specify a Public Body!"
+msgstr "Sie müssen eine Behörde angeben!"
+
+#: froide/foirequest/views/request_actions.py
+msgid "Status of request has been updated."
+msgstr "Status der Anfrage wurde aktualisiert."
+
+#: froide/foirequest/views/request_actions.py
+msgid "Invalid value for form submission!"
+msgstr "Ungültige Eingabe im Formular!"
+
+#: froide/foirequest/views/request_actions.py
+msgid "A concrete law has been set for this request."
+msgstr "Ein konkretes Gesetz wurde für diese Anfrage festgelegt."
+
+#: froide/foirequest/views/request_actions.py
+msgid "The outcome summary has been saved."
+msgstr "Die Ergebniszusammenfassung wurde gespeichert."
+
+#: froide/foirequest/views/request_actions.py
+msgid "You already made an identical request"
+msgstr "Sie haben schon eine identische Anfrage gestellt"
+
+#: froide/foirequest/views/request_actions.py
+#, python-format
+msgid ""
+"Please see this request on %(site_name)s where you granted access to this "
+"information: %(url)s"
+msgstr ""
+"Ich verweise auf eine Anfrage auf %(site_name)s, der Sie Zugang zu den "
+"angefragten Dokumenten gewährt haben: %(url)s"
+
+#: froide/foirequest/views/request_actions.py
+msgid ""
+"You successfully requested this document! Your request is displayed below."
+msgstr ""
+"Sie haben das Dokument nun angefragt. Ihre Anfrage finden Sie auf dieser "
+"Seite."
+
+#: froide/foirequest/views/request_actions.py
+msgid "Please check your inbox for mail from us to confirm your mail address."
+msgstr ""
+"Bitte überprüfen Sie Ihren Posteingang und bestätigen Sie Ihre E-Mail-"
+"Adresse."
+
+#: froide/foirequest/views/request_actions.py
+msgid "Deadline has been extended."
+msgstr "Frist wurde verlängert."
+
+#: froide/foirequest/views/request_actions.py
+msgid ""
+"A session error occurred while authenticating your uploads. Please contact "
+"administrators."
+msgstr ""
+"Ein Fehler ist aufgetreten bei der Authentifizierung Ihrer Dateien. Bitte "
+"kontaktieren Sie FragDenStaat.at direkt."
+
+#: froide/foirequestfollower/configuration.py
+msgid "You are now following this request."
+msgstr "Sie erhalten nun Benachrichtigungen für diese Anfrage."
+
+#: froide/foirequestfollower/configuration.py froide/follow/views.py
+msgid "You are not following this request anymore."
+msgstr "Sie erhalten keine Benachrichtigungen mehr für diese Anfrage."
+
+#: froide/foirequestfollower/configuration.py
+msgid ""
+"Check your emails and click the confirmation link in order to follow this "
+"request."
+msgstr ""
+"Rufen Sie Ihre E-Mails ab und klicken Sie auf den Bestätigungs-Link um "
+"Benachrichtigungen für diese Anfrage zu erhalten."
+
+#: froide/foirequestfollower/configuration.py
+msgid "Follow request"
+msgstr "Sie interessiert das!"
+
+#: froide/foirequestfollower/configuration.py
+msgid "Follow request?"
+msgstr "Interessiert Sie das?"
+
+#: froide/foirequestfollower/configuration.py
+msgid "Unfollow request"
+msgstr "Kein Interesse mehr"
+
+#: froide/foirequestfollower/models.py
+msgid "Request Follower"
+msgstr "Anfrage-Abo"
+
+#: froide/foirequestfollower/models.py
+msgid "Request Followers"
+msgstr "Anfrage-Abos"
+
+#: froide/foisite/models.py
+msgid "Country Code"
+msgstr "Länder-Kennung"
+
+#: froide/foisite/models.py
+msgid "Country Name"
+msgstr "Landname"
+
+#: froide/foisite/models.py froide/frontpage/models.py
+msgid "Text"
+msgstr "Text"
+
+#: froide/foisite/models.py
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: froide/foisite/models.py
+msgid "FOI Site"
+msgstr "Informationsfreiheits-Portal"
+
+#: froide/foisite/models.py
+msgid "FOI Sites"
+msgstr "Informationsfreheits-Portal"
+
+#: froide/foisite/templates/foisite/banner.html
+#, python-format
+msgid ""
+"It looks like you are visiting from %(country_name)s. Did you know that "
+"there is an <a href=\"%(url)s\">FOI site for %(country_name)s called "
+"%(name)s</a>?"
+msgstr ""
+"Es sieht so aus, als kämen Sie aus %(country_name)s. Wussten Sie, dass es "
+"ein <a href=\"%(url)s\">Informationsfreiheits-Portal für %(country_name)s "
+"namens %(name)s</a> gibt?"
+
+#: froide/follow/forms.py
+msgid "Missing email address!"
+msgstr "Fehlende E-Mail-Adresse!"
+
+#: froide/follow/models.py
+msgid "Timestamp of Following"
+msgstr "Zeitstempel des Abos"
+
+#: froide/follow/templates/follow/_follow_form.html
+msgid "Get notified by email of changes."
+msgstr "Erhalten Sie Neuigkeiten per Email."
+
+#: froide/follow/templates/follow/emails/batch_update_follower.txt
+#: froide/follow/templates/follow/emails/confirm_follow.txt
+#: froide/follow/templates/follow/emails/update_follower.txt
+msgid "Hello,"
+msgstr "Hallo,"
+
+#: froide/follow/views.py
+msgid "There was something wrong with your link. Perhaps try again."
+msgstr "Der Link war fehlerhaft, probieren Sie es noch mal."
+
+#: froide/frontpage/apps.py froide/frontpage/models.py
+#: froide/templates/snippets/homepage_hero.html
+msgid "Featured Request"
+msgstr "Anfrage der Woche"
+
+#: froide/frontpage/models.py
+msgid "Featured Requests"
+msgstr "Anfragen der Woche"
+
+#: froide/guide/templates/guide/emails/new_guidance.txt
+msgid "You recently received replies to some of your requests."
+msgstr ""
+"Sie haben vor kurzem Antworten auf einige Ihrer Anfragen bei FragDenStaat.at "
+"erhalten."
+
+#: froide/helper/admin_utils.py
+msgid "Successfully added tags"
+msgstr "Tags erfolgreich hinzugefügt"
+
+#: froide/helper/admin_utils.py
+msgid "Form invalid"
+msgstr "Formular ungültig"
+
+#: froide/helper/admin_utils.py
+msgid "Set these tags for all selected items:"
+msgstr "Diese Tags auf den gewählten Objekten setzen:"
+
+#: froide/helper/admin_utils.py
+msgid "Has value"
+msgstr "Hat Wert"
+
+#: froide/helper/admin_utils.py
+msgid "None"
+msgstr "None"
+
+#: froide/helper/forms.py
+msgid "Comma separated and quoted"
+msgstr "Komma-separiert und ggf. in \"\""
+
+#: froide/helper/templates/helper/admin_base_action.html
+msgid "Home"
+msgstr "Start"
+
+#: froide/helper/text_utils.py
+msgid "<< Greeting >>"
+msgstr "<< Anrede >>"
+
+#: froide/helper/text_utils.py
+msgid "<<name and email address>>"
+msgstr "<<Name und E-Mail-Adresse>>"
+
+#: froide/helper/text_utils.py
+msgid "<<email address>>"
+msgstr "<<E-Mail-Adresse>>"
+
+#: froide/letter/apps.py
+msgid "Letter"
+msgstr "Brief"
+
+#: froide/publicbody/admin.py
+msgid "Public Bodies were imported."
+msgstr "Behörden wurden importiert."
+
+#: froide/publicbody/admin.py
+msgid "Remove from search index"
+msgstr "Entferne aus Such-Index"
+
+#: froide/publicbody/admin.py
+msgid "Removed from search index"
+msgstr "Aus Such-Index entfernt"
+
+#: froide/publicbody/apps.py froide/publicbody/models.py
+#: froide/publicbody/templates/publicbody/base.html
+#: froide/publicbody/templates/publicbody/list.html
+msgid "Public Bodies"
+msgstr "Behörden"
+
+#: froide/publicbody/forms.py
+msgid "Search for a topic or a public body:"
+msgstr "Suchen Sie nach einem Thema oder nach einer Behörde:"
+
+#: froide/publicbody/forms.py froide/publicbody/models.py
+msgid "Other names"
+msgstr "Andere Namen"
+
+#: froide/publicbody/forms.py froide/publicbody/models.py
+msgid "Email"
+msgstr "E-Mail"
+
+#: froide/publicbody/forms.py
+msgid "Classification"
+msgstr "Klassifikation"
+
+#: froide/publicbody/models.py
+msgid "Hidden"
+msgstr "Versteckt"
+
+#: froide/publicbody/models.py
+msgid "Website Text"
+msgstr "Webseiten-Text"
+
+#: froide/publicbody/models.py
+msgid "request note"
+msgstr "Anfrage-Hinweis"
+
+#: froide/publicbody/models.py
+msgid "Start of Letter"
+msgstr "Briefbeginn"
+
+#: froide/publicbody/models.py
+msgid "End of Letter"
+msgstr "Briefende"
+
+#: froide/publicbody/models.py
+msgid "Creation Date"
+msgstr "Erstellungsdatum"
+
+#: froide/publicbody/models.py
+msgid "Updated Date"
+msgstr "Änderungsdatum"
+
+#: froide/publicbody/models.py
+msgid "Meta Law"
+msgstr "Meta-Gesetz"
+
+#: froide/publicbody/models.py
+msgid "Combined Laws"
+msgstr "Kombinierte Gesetze"
+
+#: froide/publicbody/models.py
+msgid "Priority"
+msgstr "Priorität"
+
+#: froide/publicbody/models.py
+msgid "Maximal Response Time"
+msgstr "Maximale Antwortzeit"
+
+#: froide/publicbody/models.py
+msgid "Unit of Response Time"
+msgstr "Einheit der Antwortzeit"
+
+#: froide/publicbody/models.py
+msgid "Day(s)"
+msgstr "Tag(e)"
+
+#: froide/publicbody/models.py
+msgid "Working Day(s)"
+msgstr "Arbeitstag(e)"
+
+#: froide/publicbody/models.py
+msgid "Month(s) (DE)"
+msgstr "Monat(e) (DE)"
+
+#: froide/publicbody/models.py
+msgid "Mediator"
+msgstr "Vermittelnde Stelle"
+
+#: froide/publicbody/models.py
+msgid "E-Mail only"
+msgstr "Nur E-Mail"
+
+#: froide/publicbody/models.py
+msgid "Freedom of Information Laws"
+msgstr "Informationsgesetze"
+
+#: froide/publicbody/models.py
+msgid "No law can be applied"
+msgstr "Kein Gesetz kann angewendet werden"
+
+#: froide/publicbody/models.py
+msgid "as topic"
+msgstr "als Thema"
+
+#: froide/publicbody/models.py
+msgid "rank"
+msgstr "Rang"
+
+#: froide/publicbody/models.py
+msgid "Public Body Tag"
+msgstr "Behörden-Schlagwort"
+
+#: froide/publicbody/models.py
+msgid "Public Body Tags"
+msgstr "Behörden-Schlagwörter"
+
+#: froide/publicbody/models.py
+msgid "Tagged Public Body"
+msgstr "Verschlagwortete Behörde"
+
+#: froide/publicbody/models.py
+msgid "Tagged Public Bodies"
+msgstr "Verschlagwortete Behörden"
+
+#: froide/publicbody/models.py
+msgid "Contact"
+msgstr "Kontakt"
+
+#: froide/publicbody/models.py
+msgid "Website Dump"
+msgstr "Webseiten-Dump"
+
+#: froide/publicbody/models.py
+msgid "Created by"
+msgstr "Erstellt von"
+
+#: froide/publicbody/models.py
+msgid "Updated by"
+msgstr "Aktualisiert von"
+
+#: froide/publicbody/models.py
+msgid "Updated at"
+msgstr "Aktualisiert am"
+
+#: froide/publicbody/models.py
+msgid "confirmed"
+msgstr "bestätigt"
+
+#: froide/publicbody/models.py
+msgid "Number of requests"
+msgstr "Anzahl der Anfragen"
+
+#: froide/publicbody/templates/admin/publicbody/publicbody/change_list.html
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
+#: froide/publicbody/widgets.py froide/templates/snippets/homepage_hero.html
+msgid "or"
+msgstr "oder"
+
+#: froide/publicbody/templates/publicbody/accept_proposals.html
+#: froide/publicbody/templates/publicbody/add_proposal.html
+#, python-format
+msgid "%(name)s is a %(classification)s in %(juris)s on %(site_name)s"
+msgstr "%(name)s ist ein(e) %(classification)s in %(juris)s auf %(site_name)s"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+#, python-format
+msgid "Freedom of Information<br/>in %(name)s"
+msgstr "Informationsfreiheit<br/> in %(name)s"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "Ask Public Bodies for administrative information — it's your right."
+msgstr ""
+"Fragen Sie Behörden nach Verwaltungsinformationen – es ist Ihr gutes Recht."
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "Which Public Bodies?"
+msgstr "Welche Behörden?"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "All bodies that work on administrative tasks of this jurisdiction."
+msgstr "Alle Einrichtungen, die Verwaltungs­aufgaben wahrnehmen."
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "What Information?"
+msgstr "Welche Informationen?"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid ""
+"Contracts, memos, reports and other documents of the administration: you "
+"have the right to know."
+msgstr ""
+"Verträge, Protokolle, Gutachten und andere Dokumente aus der Verwaltung: Sie "
+"haben das Recht auf Einsicht."
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "Make a request!"
+msgstr "Stellen Sie eine Anfrage!"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "What right?"
+msgstr "Welches Recht?"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+#, python-format
+msgid ""
+"The freedom of information law in %(name)s allows you access to "
+"administrative information. "
+msgstr ""
+"Das Informationsgesetz von %(name)s erlaubt Ihnen den Zugang zu "
+"Informationen der Verwaltung."
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "Get to know your right!"
+msgstr "Lernen Sie Ihr Recht kennen."
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+#, python-format
+msgid "Facts about %(name)s"
+msgstr "Fakten zu %(name)s"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+#, python-format
+msgid "came into effect on %(date)s"
+msgstr "trat am %(date)s in Kraft"
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+msgid "get to know this law..."
+msgstr "lernen Sie das Gesetz kennen..."
+
+#: froide/publicbody/templates/publicbody/jurisdiction.html
+#, python-format
+msgid "Requests in %(name)s"
+msgstr "Anfragen an %(name)s"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Make a Request to this public body!"
+msgstr "Stellen Sie eine Anfrage an diese Behörde"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Classification:"
+msgstr "Klassifikation:"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Website:"
+msgstr "Webseite:"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Email:"
+msgstr "E-Mail:"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Contact:"
+msgstr "Kontakt:"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Mailing Address:"
+msgstr "Postadresse:"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "View on Admin site"
+msgstr "Im Admin-Bereich ansehen"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Special note"
+msgstr "Besonderer Hinweis"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "Summary of Results"
+msgstr "Zusammenfassung der Ergebnisse"
+
+#: froide/publicbody/templates/publicbody/show.html
+#, python-format
+msgid "One requests to this public body"
+msgid_plural "%(count)s requests to this public body"
+msgstr[0] "Eine Anfrage an diese Behörde"
+msgstr[1] "%(count)s Anfragen an diese Behörde"
+
+#: froide/publicbody/templates/publicbody/show.html
+msgid "See all FOI requests for this public body"
+msgstr "Alle Anfragen an diese Behörde ansehen"
+
+#: froide/publicbody/templates/publicbody/show_foilaw.html
+msgid "Came into effect on"
+msgstr "Trat in Kraft am"
+
+#: froide/publicbody/templates/publicbody/show_foilaw.html
+msgid "Last update on"
+msgstr "Letzte Änderung"
+
+#: froide/publicbody/templates/publicbody/snippets/publicbody_item.html
+#, python-format
+msgid "%(num)s request"
+msgid_plural "%(num)s requests"
+msgstr[0] "%(num)s Anfrage"
+msgstr[1] "%(num)s Anfragen"
+
+#: froide/publicbody/templates/publicbody/snippets/publicbody_item.html
+msgid "no requests yet"
+msgstr "noch keine Anfragen"
+
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
+#: froide/publicbody/widgets.py
+msgid "Examples:"
+msgstr "Beispiele:"
+
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
+#: froide/publicbody/widgets.py
+msgid "Environment"
+msgstr "Umwelt"
+
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
+#: froide/publicbody/widgets.py
+msgid "Ministry of Labour"
+msgstr "Bundesministerium für Inneres"
+
+#: froide/publicbody/templates/publicbody/widget/_add_js_vars.html
+#: froide/publicbody/widgets.py
+msgid "No Public Bodies found for this query."
+msgstr "Es wurden keine Behörden für diesen Suchbegriff gefunden."
+
+#: froide/settings.py
+msgid "English"
+msgstr "Englisch"
+
+#: froide/settings.py
+msgid "Spanish"
+msgstr "Spanisch"
+
+#: froide/settings.py
+msgid "Finnish (Finland)"
+msgstr "Finnisch (Finnland)"
+
+#: froide/settings.py
+msgid "German"
+msgstr "Deutsch"
+
+#: froide/settings.py
+msgid "Danish (Denmark)"
+msgstr "Dänisch (Dänemark)"
+
+#: froide/settings.py
+msgid "Italian"
+msgstr "Italienisch"
+
+#: froide/settings.py
+msgid "Portuguese"
+msgstr "Portugiesisch"
+
+#: froide/settings.py
+msgid "Swedish (Sweden)"
+msgstr "Schwedisch (Schweden)"
+
+#: froide/settings.py
+msgid "Swedish (Finland)"
+msgstr "Schwedisch (Finnland)"
+
+#: froide/settings.py
+msgid "Chinese (Simplified)"
+msgstr "Chinesisch (Kurzzeichen)"
+
+#: froide/settings.py
+msgid "Chinese (Traditional, Hong Kong)"
+msgstr "Chinesisch (Traditionell, Honk Kong)"
+
+#: froide/settings.py
+msgid "Access to user status"
+msgstr "Kann Sie als Nutzer:in auf FragDenStaat.at identifizieren"
+
+#: froide/templates/400.html
+msgid "400 - Bad Request"
+msgstr "400 - Fehlerhafte Anfrage"
+
+#: froide/templates/403.html
+msgid "403 - Forbidden"
+msgstr "403 - Verboten"
+
+#: froide/templates/403.html
+msgid ""
+"You tried to access a site that you are not authorized to access or you "
+"triggered a security warning."
+msgstr ""
+"Sie haben versucht einen Teil der Seite aufzurufen, für den Sie keine Rechte "
+"haben oder Sie haben einen zusätzlichen Sicherheitsmechanismus ausgelöst."
+
+#: froide/templates/404.html
+msgid "404 - Not Found"
+msgstr "404 - Nicht Gefunden"
+
+#: froide/templates/500.html
+msgid "500 - Server Error"
+msgstr "500 - Server-Fehler"
+
+#: froide/templates/500.html
+#, python-format
+msgid ""
+"If you need assistance, you may reference this error as <strong>%(ref)s</"
+"strong>."
+msgstr ""
+"Wenn Sie Hilfe benötigen, können Sie diesen Fehler so referenzieren: "
+"<strong>%(ref)s</strong>."
+
+#: froide/templates/admin_utils/admin_tag_all.html
+msgid "Add tags to multiple items"
+msgstr "Tags zu mehreren Objekten hinzufügen"
+
+#: froide/templates/admin_utils/admin_tag_all.html
+msgid "Set these tags for all items"
+msgstr "Tags auf den gewählten Objekten setzen"
+
+#: froide/templates/emails/footer.html
+msgid ""
+"Support Froide by <a href=\"https://okfn.de/spenden/\">donating to Open "
+"Knowledge Foundation Germany</a>"
+msgstr ""
+"Wir kämpfen für Transparenz! <a href=\"https://fragdenstaat.at/\">Kämpfen "
+"Sie mit und unterstützen Sie uns.</a>"
+
+#: froide/templates/emails/footer.txt
+msgid ""
+"Support Froide by donating to Open Knowledge Foundation Germany:\n"
+"https://okfn.de/spenden/\n"
+msgstr ""
+"Wir kämpfen für Transparenz! Kämpfen Sie mit und unterstützen Sie uns:\n"
+"https://fragdenstaat.at/\n"
+
+#: froide/templates/footer.html froide/templates/header.html
+msgid "About"
+msgstr "Über uns"
+
+#: froide/templates/footer.html
+msgid "Terms of Use"
+msgstr "Nutzungsbedingungen"
+
+#: froide/templates/footer.html
+msgid "Privacy Statement"
+msgstr "Datenschutzerklärung"
+
+#: froide/templates/footer.html froide/templates/header.html
+#: froide/templates/help/base.html
+msgid "Help"
+msgstr "Hilfe"
+
+#: froide/templates/header.html
+msgid "Make a Request!"
+msgstr "Stellen Sie eine Anfrage!"
+
+#: froide/templates/header.html
+msgid "Logout"
+msgstr "Ausloggen"
+
+#. Translators: URL part
+#: froide/templates/help/base.html
+msgid "help"
+msgstr "hilfe"
+
+#: froide/templates/index.html
+msgid "What is Freedom of Information?"
+msgstr "Was ist Informationsfreiheit?"
+
+#: froide/templates/index.html
+msgid ""
+"Every citizen has the right under the Freedom of Information Laws to ask for "
+"and receive access to information from Public Bodies concerning public "
+"affairs."
+msgstr ""
+"Jeder Bürger hat nach den Informations&shy;gesetzen das Recht, Zugang zu "
+"Informationen der öffentlichen Hand zu erhalten."
+
+#: froide/templates/index.html
+msgid "Read more about the Freedom of Information!"
+msgstr "Erfahren Sie mehr über Informations&shy;freiheit."
+
+#: froide/templates/index.html
+msgid "What does this site do?"
+msgstr "Was macht diese Seite?"
+
+#: froide/templates/index.html
+msgid ""
+"This site publishes Freedom of Information requests and replies so that "
+"others don't have to ask for the same information and replies can be "
+"scrutinized by the public."
+msgstr ""
+"Diese Seite veröffentlicht Informationsanfragen und ihre Antworten, so dass "
+"der Vorgang durch die Öffentlichkeit geprüft werden kann."
+
+#: froide/templates/index.html
+msgid "Read more about the concept!"
+msgstr "Erfahren Sie mehr über das Konzept."
+
+#: froide/templates/index.html
+msgid "Successful Requests"
+msgstr "Erfolgreiche Anfragen"
+
+#: froide/templates/index.html
+msgid "Unsuccessful Requests"
+msgstr "Abgelehnte Anfragen"
+
+#: froide/templates/pagination/pagination.html
+msgid "(current page)"
+msgstr "(aktuelle Seite)"
+
+#. Translators: meta description
+#: froide/templates/scaffold.html
+#, python-format
+msgid ""
+"%(site)s helps you to make freedom of information requests to public bodies"
+msgstr "%(site)s hilft Ihnen, Informationsanfragen an Behörden zu stellen"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid ""
+"This site publishes Freedom of Information requests and helps you to make "
+"your own!"
+msgstr ""
+"Diese Seite veröffentlicht Anfragen nach den Informationsgesetzen und hilft "
+"Ihnen, eigene Anfragen an den Staat zu stellen."
+
+#: froide/templates/snippets/homepage_hero.html
+#, python-format
+msgid "Search %(foicount)s requests and %(pbcount)s public bodies:"
+msgstr "Suchen Sie in %(foicount)s Anfragen und %(pbcount)s Behörden:"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Search For Information"
+msgstr "Suchen!"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Try the following:"
+msgstr "Versuchen Sie:"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Nuclear"
+msgstr "Atom"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Employment"
+msgstr "Eurofighter"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Read the blog post"
+msgstr "Lesen Sie den Blogeintrag"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Visit this request"
+msgstr "Lesen Sie die Anfrage"
+
+#: froide/templates/snippets/homepage_hero.html
+msgid "Write a Request Now!"
+msgstr "Schreiben Sie jetzt eine Anfrage!"
+
+#. Translators: meta keywords
+#: froide/templates/snippets/meta.html
+msgid ""
+"Freedom of Information Requests, Freedom of Information Law, Public Body "
+"Information"
+msgstr ""
+"Informationsfreiheitsanfragen, Informationsfreiheitsgesetz, "
+"Behördeninformationen, Auskunftspflicht"
+
+msgid ""
+"By checking this box, I agree that the image file I have selected and "
+"redacted may be stored by {site_name} in my user account, so that I can use "
+"it as proof of identity in future requests if necessary. I certify that I am "
+"the owner of this document. I understand that my consent is voluntary and "
+"that I can revoke it at any time with effect for the future. I have taken "
+"note of the information on the recommended redactions and the <a "
+"href=\"{url_privacy}\" target=\"_blank\">data protection declaration</a>."
+msgstr ""
+"Mit dem Anhaken willige ich ein, dass die von mir ausgewählte und "
+"geschwärzte Bilddatei vom Verein Forum Informationsfreiheit "
+"(Projekt {site_name}) in meinem {site_name}-Konto hinterlegt wird, damit ich "
+"sie bei zukünftigen Anfragen im Bedarfsfall als Identitätsnachweis an "
+"Behörden übermitteln kann. Zudem versichere ich, der im Nachweis angegebene "
+"Inhaber dieses Dokuments zu sein. Ich weiß, dass meine Einwilligung "
+"freiwillig ist und ich Sie jederzeit mit Wirkung für die Zukunft widerrufen "
+"kann. Den Hinweis zur empfohlenen Vornahme von Schwärzungen, sowie <a "
+"href=\"{url_privacy}\" target=\"_blank\">die Datenschutzerklärung</a> habe "
+"ich zur Kenntnis genommen."

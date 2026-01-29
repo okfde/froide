@@ -31,10 +31,10 @@ def get_follower_updates(
 
     notifications = sorted(notifications, key=key_func)
 
-    for (section, _obj_id), update_list in itertools.groupby(
+    for (section, _obj_id), update_list_generator in itertools.groupby(
         notifications, lambda n: (n.section, n.object.id)
     ):
-        update_list = list(update_list)
+        update_list = list(update_list_generator)
         if not update_list:
             continue
 
@@ -52,11 +52,9 @@ def get_follower_updates(
             ).select_related("user")
             for follower in followers:
                 if not any(
-                    [
-                        n
-                        for n in update_list
-                        if n.user_id is None or n.user_id != follower.user_id
-                    ]
+                    n
+                    for n in update_list
+                    if n.user_id is None or n.user_id != follower.user_id
                 ):
                     continue
                 ident = follower.get_ident()

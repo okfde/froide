@@ -1,7 +1,11 @@
+import logging
+
 from django.utils.safestring import mark_safe
 
 from elasticsearch_dsl import A
 from elasticsearch_dsl.query import Q
+
+logger = logging.getLogger(__name__)
 
 
 def _make_values_lists(kwargs):
@@ -23,6 +27,9 @@ class SearchQuerySetWrapper(object):
         self.sqs.model = model
         self.model = model
         self.filters = []
+        self.post_filters = []
+        self.aggregations = []
+        self.applied_post_filters = {}
         self.query = None
         self.aggs = []
         self.broken_query = False
@@ -48,8 +55,16 @@ class SearchQuerySetWrapper(object):
         return ESQuerySetWrapper(qs, self.response)
 
     def update_query(self):
+        if self.post_filters:
+            self.sqs = self.sqs.post_filter(Q("bool", must=self.post_filters))
         if self.filters:
-            self.sqs.post_filter = Q("bool", must=self.filters)
+            self.sqs = self.sqs.query("bool", filter=self.filters)
+        for field in self.aggregations:
+            agg_filters = self.applied_post_filters.copy()
+            agg_filters.pop(field, None)
+            filter_agg = A("filter", bool={"must": list(agg_filters.values())})
+            filter_agg.bucket(field, "terms", field=field)
+            self.sqs.aggs.bucket(field, filter_agg)
 
     def all(self):
         return self
@@ -69,16 +84,16 @@ class SearchQuerySetWrapper(object):
             self.sqs = self.sqs.source(excludes=["*"])
         else:
             return self.sqs._response
+        self.update_query()
         try:
             return self.sqs.execute()
-        except Exception:
+        except Exception as e:
+            logger.error("Elasticsearch error: %s", e)
             self.broken_query = True
             return EmtpyResponse()
 
     def add_aggregation(self, aggs):
-        for field in aggs:
-            a = A("terms", field=field)
-            self.sqs.aggs.bucket(field, a)
+        self.aggregations.extend(aggs)
         return self
 
     def add_date_histogram(self, date_field, interval="1y", format="yyyy"):
@@ -91,14 +106,10 @@ class SearchQuerySetWrapper(object):
         self.sqs.aggs.bucket(date_field, a)
         return self
 
-    def get_facets(self, resolvers=None):
-        if resolvers is None:
-            resolvers = {}
-        return {
-            k: resolvers[k](k, self.response["aggregations"][k])
-            for k in self.response["aggregations"]
-            if k in resolvers
-        }
+    def get_facet_data(self):
+        if "aggregations" in self.response:
+            return self.response["aggregations"]
+        return {}
 
     def get_aggregations(self):
         if self.broken_query or "aggregations" not in self.response:
@@ -107,19 +118,26 @@ class SearchQuerySetWrapper(object):
             "fields": {
                 k: [
                     [i["key"], i["doc_count"]]
-                    for i in self.response["aggregations"][k]["buckets"]
+                    for i in self.response["aggregations"][k][k]["buckets"]
                 ]
                 for k in self.response["aggregations"]
             }
         }
 
-    def filter(self, *args, **kwargs):
+    def _make_query(self, *args, **kwargs):
         if kwargs:
-            value = Q("terms", **_make_values_lists(kwargs))
-        else:
-            value = args[0]
-        self.filters.append(value)
-        self.update_query()
+            return Q("terms", **_make_values_lists(kwargs))
+        return args[0]
+
+    def filter(self, *args, **kwargs):
+        query = self._make_query(*args, **kwargs)
+        self.filters.append(query)
+        return self
+
+    def post_filter(self, name, *args, **kwargs):
+        query = self._make_query(*args, **kwargs)
+        self.post_filters.append(query)
+        self.applied_post_filters[name] = query
         return self
 
     def set_query(self, q):

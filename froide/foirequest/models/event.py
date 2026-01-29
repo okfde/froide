@@ -36,18 +36,24 @@ class EventName(models.TextChoices):
 
     ATTACHMENT_UPLOADED = "attachment_uploaded", _("attachments were uploaded")
     ATTACHMENT_APPROVED = "attachment_approved", _("an attachment was approved")
-    ATTACHMENT_DEPUBLISHED = "attachment_depublished", _(
-        "an attachment was depublished"
+    ATTACHMENT_DEPUBLISHED = (
+        "attachment_depublished",
+        _("an attachment was depublished"),
     )
     ATTACHMENT_REDACTED = "attachment_redacted", _("an attachment was redacted")
     ATTACHMENT_DELETED = "attachment_deleted", _("an attachment was deleted")
+    ATTACHMENT_CONVERTED = (
+        "attachment_converted",
+        _("one or more attachments were converted"),
+    )
     DOCUMENT_CREATED = "document_created", _("a document was created")
 
     STATUS_CHANGED = "status_changed", _("the status was changed")
     REPORTED_COSTS = "reported_costs", _("costs were reported for this request")
     REQUEST_REFUSED = "request_refused", _("the request was marked as refused")
-    PARTIALLY_SUCCESSFUL = "partially_successful", _(
-        "the request was marked as partially successful"
+    PARTIALLY_SUCCESSFUL = (
+        "partially_successful",
+        _("the request was marked as partially successful"),
     )
     BECAME_OVERDUE = "became_overdue", _("request became overdue")
 
@@ -55,8 +61,9 @@ class EventName(models.TextChoices):
     SET_SUMMARY = "set_summary", _("set summary of result")
     SET_TAGS = "set_tags", _("set tags on request")
 
-    DEADLINE_EXTENDED = "deadline_extended", _(
-        "the deadline for the request was extended"
+    DEADLINE_EXTENDED = (
+        "deadline_extended",
+        _("the deadline for the request was extended"),
     )
     MARK_NOT_FOI = "mark_not_foi", _("the request was marked as not an FOI request")
     MODERATOR_ACTION = "moderator_action", _("the request was moderated")
@@ -65,6 +72,8 @@ class EventName(models.TextChoices):
 
     PUBLIC_BODY_SUGGESTED = "public_body_suggested", _("a public body was suggested")
     REQUEST_REDIRECTED = "request_redirected", _("the request was redirected")
+
+    DESCRIPTION_REDACTED = "description_redacted", _("the description was redacted")
 
 
 EVENT_KEYS = dict(EventName.choices).keys()
@@ -126,10 +135,27 @@ class FoiEventManager(models.Manager):
         foirequest,
         message=None,
         user=None,
+        request=None,
         public_body=None,
-        **context
+        context=None,
+        **kwargs,
     ):
         assert event_name in EVENT_KEYS
+
+        if not context:
+            context = {}
+        context.update(kwargs)
+
+        if user is None and request is not None:
+            user = request.user
+        if user is not None:
+            user = user if user.is_authenticated else None
+
+        if request is not None:
+            token = getattr(request, "auth", None)
+            if token is not None:
+                context["oauth_application_id"] = token.application_id
+
         context = {k: str(v) for k, v in context.items()}
         event = FoiEvent(
             request=foirequest,

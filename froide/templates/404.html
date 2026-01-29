@@ -1,9 +1,8 @@
-{% extends 'base.html' %}
+{% extends "./error_base.html" %}
 {% load i18n %}
-
-{% block app_body %}
-<h2>
-  {% blocktrans %}404 - Not Found{% endblocktrans %}
-</h2>
-<span class="text-white">{{ exception }}</span>
-{% endblock %}
+{% block error %}
+    {% blocktrans %}404 - Not Found{% endblocktrans %}
+{% endblock error %}
+{% block error_description %}
+    {% blocktrans %}Nothing to see here.{% endblocktrans %}
+{% endblock error_description %}

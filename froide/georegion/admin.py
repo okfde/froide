@@ -47,8 +47,6 @@ class GeoRegionMixin(object):
     readonly_fields = ("depth", "numchild", "path")
 
 
-class GeoRegionAdmin(GeoRegionMixin, admin.GeoModelAdmin):
+@admin.register(GeoRegion)
+class GeoRegionAdmin(GeoRegionMixin, admin.GISModelAdmin):
     pass
-
-
-admin.site.register(GeoRegion, GeoRegionAdmin)

@@ -1,0 +1,133 @@
+{% load i18n %}
+{% comment %}
+If there are multiple share buttons on a page, make sure to pass a unique id for each one!
+{% endcomment %}
+{% with modal_id=id|default:"modal" url=url|default:request.build_absolute_uri %}
+    <div class="d-inline-flex flex-wrap no-hyphens {% if links %}column-gap-3 row-gap-1{% else %}gap-1{% endif %}"
+         aria-label="{% trans "Share on social media" %}">
+        {% if not image %}
+            {% if bluesky|default_if_none:True %}
+                {# on by default #}
+                <a class="{% if not links %}btn btn-share-bluesky{% endif %}"
+                   rel="noopener"
+                   target="_blank"
+                   href="https://bsky.app/intent/compose?text={{ text|urlencode }}{% if text %}%20-%20{% endif %}{{ url|urlencode }}">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 512 512"
+                         class="img-text">
+                        <!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path d="M111.8 62.2C170.2 105.9 233 194.7 256 242.4c23-47.6 85.8-136.4 144.2-180.2c42.1-31.6 110.3-56 110.3 21.8c0 15.5-8.9 130.5-14.1 149.2C478.2 298 412 314.6 353.1 304.5c102.9 17.5 129.1 75.5 72.5 133.5c-107.4 110.2-154.3-27.6-166.3-62.9l0 0c-1.7-4.9-2.6-7.8-3.3-7.8s-1.6 3-3.3 7.8l0 0c-12 35.3-59 173.1-166.3 62.9c-56.5-58-30.4-116 72.5-133.5C100 314.6 33.8 298 15.7 233.1C10.4 214.4 1.5 99.4 1.5 83.9c0-77.8 68.2-53.4 110.3-21.8z"  fill="currentColor" />
+                    </svg>
+                    {% if icons_only %}<span class="visually-hidden">{% endif %}
+                        Bluesky
+                        {% if icons_only %}</span>{% endif %}
+                </a>
+            {% endif %}
+            {% if mastodon|default_if_none:True %}
+                {# on by default #}
+                <a href="#!"
+                   class="{% if not links %}btn btn-share-mastodon{% endif %}"
+                   data-bs-toggle="modal"
+                   data-bs-target="#share-mastodon-{{ modal_id }}">
+                    <svg viewBox="0 0 216.41 232.01"
+                         xmlns="http://www.w3.org/2000/svg"
+                         class="img-text">
+                        <path d="M107.85822 0C78.20448.2425 49.67197 3.45428 33.04465 11.0905c0 0-32.9769 14.75141-32.9769 65.08244 0 11.52456-.22401 25.31035.141 39.91645 1.19749 49.21822 9.02412 97.73333 54.53223 109.78008 20.98196 5.54994 38.99677 6.71242 53.51099 5.90618 26.30597-1.4531 41.08081-9.38427 41.08081-9.38427l-.87186-19.0873s-18.79668 5.92494-39.91833 5.20307c-20.9229-.7125-43.00735-2.25935-46.39169-27.9372-.31312-2.25935-.47062-4.6687-.47062-7.19992 0 0 20.53947 5.02494 46.57169 6.20618 15.9092.73124 30.84342-.92812 45.99326-2.73747 29.06219-3.46871 54.3838-21.38415 57.56189-37.74335 5.01557-25.78097 4.60307-62.92245 4.60307-62.92245 0-50.33103-32.9809-65.08243-32.9809-65.08243C166.79822 3.45428 138.25165.2425 108.58947 0h-.73125zM74.29608 39.3249c12.35518 0 21.71227 4.74932 27.89033 14.24797l6.02806 10.0827 6.00931-10.0827c6.18744-9.49865 15.53421-14.24798 27.8997-14.24798 10.67802 0 19.2748 3.75465 25.8466 11.07832 6.36556 7.32274 9.54365 17.21888 9.54365 29.67344v60.9406h-24.14037v-59.15c0-12.46862-5.24994-18.79574-15.74045-18.79574-11.6155 0-17.42794 7.50649-17.42794 22.35164v32.37247H96.20522V85.42315c0-14.84515-5.81337-22.35164-17.41575-22.35164-10.49426 0-15.73952 6.32806-15.73952 18.79574v59.15H38.90584v-60.9406c0-12.45456 3.16965-22.3507 9.5399-29.67344 6.56899-7.32273 15.1714-11.07832 25.85034-11.07832z" fill="currentColor" />
+                    </svg>
+                    {% if icons_only %}<span class="visually-hidden">{% endif %}
+                        Mastodon
+                        {% if icons_only %}</span>{% endif %}
+                </a>
+                <div class="modal fade"
+                     id="share-mastodon-{{ modal_id }}"
+                     tabindex="-1"
+                     aria-labelledby="share-mastodon-label-{{ modal_id }}"
+                     aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <form class="modal-content share-mastodon-form"
+                              data-share-url="{{ url }}"
+                              data-share-text="{{ text }}">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="share-mastodon-label-{{ modal_id }}">{% trans "Share on Mastodon" %}</h1>
+                                <button type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="{% trans "Close" %}"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>{% trans "Please enter the domain of your Mastodon instance." %}</p>
+                                <div class="input-group">
+                                    <span class="input-group-text">https://</span>
+                                    <input type="text"
+                                           class="form-control"
+                                           pattern="\S+\.\S+"
+                                           placeholder="mastodon.social"
+                                           aria-label="{% trans "Your Mastodon instance" %}"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+                                    <i class="fa fa-send"></i>
+                                    Share!
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+            {% if facebook %}
+                {# off by default #}
+                <a class="{% if not links %}btn btn-share-facebook{% endif %}"
+                   rel="noopener"
+                   target="_blank"
+                   href="https://www.facebook.com/sharer.php?u={{ url|urlencode }}">
+                    <i class="fa fa-facebook"></i>
+                    {% if icons_only %}<span class="visually-hidden">{% endif %}
+                        Facebook
+                        {% if icons_only %}</span>{% endif %}
+                </a>
+            {% endif %}
+            {% if email %}
+                {# off by default #}
+                <a class="{% if not links %}btn btn-outline-primary{% endif %}"
+                   href="mailto:?subject={{ text|urlencode }}&body={{ text|urlencode }}{% if text %}%20-%20{% endif %}{{ url|urlencode }}">
+                    <i class="fa fa-envelope"></i>
+                    {% if icons_only %}<span class="visually-hidden">{% endif %}
+                        {% trans "Email" %}
+                        {% if icons_only %}</span>{% endif %}
+                </a>
+            {% endif %}
+            {% if clipboard|default_if_none:True %}
+                {# on by default #}
+                <a href="#!"
+                   class="{% if not links %}btn btn-outline-primary{% endif %} copy-text"
+                   data-copy-text="{{ short_url|default:url }}">
+                    <i class="fa fa-clipboard"></i>
+                    {% if icons_only %}<span class="visually-hidden">{% endif %}
+                        {% trans "Copy link to clipboard" as copy_default %}
+                        {{ copy_text|default:copy_default }}
+                        {% if icons_only %}</span>{% endif %}
+                </a>
+            {% endif %}
+        {% endif %}
+        {% if native_share|default_if_none:True %}
+            {# on by default #}
+            <a href="#!"
+               class="{% if not links %}btn btn-outline-primary{% endif %} share-native"
+               data-share-url="{{ url }}"
+               data-share-text="{{ text }}"
+               {% if image %}data-share-image="{{ image.url }}"{% endif %}
+               hidden>
+                <i class="fa fa-share-alt"></i>
+                {% if icons_only %}<span class="visually-hidden">{% endif %}
+                    {% if native_text %}
+                        {{ native_text }}
+                    {% else %}
+                        {% trans "Share…" %}
+                    {% endif %}
+                    {% if icons_only %}</span>{% endif %}
+            </a>
+        {% endif %}
+    </div>
+{% endwith %}

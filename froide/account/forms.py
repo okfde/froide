@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Dict, Union
 
 from django import forms
@@ -13,6 +12,7 @@ from django.contrib.auth.password_validation import password_validators_help_tex
 from django.http import HttpRequest
 from django.utils.functional import SimpleLazyObject
 from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from froide.helper.content_urls import get_content_url
@@ -20,6 +20,7 @@ from froide.helper.form_utils import JSONMixin
 from froide.helper.spam import SpamProtectionMixin
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
+    BootstrapRadioSelect,
     BootstrapSelect,
     ImageFileInput,
 )
@@ -27,10 +28,12 @@ from froide.helper.widgets import (
 from . import account_email_changed
 from .auth import complete_mfa_authenticate_for_method
 from .models import AccountBlocklist, User
+from .registries import user_extra_registry
 from .services import AccountService, get_user_for_email
 from .widgets import ConfirmationWidget, PinInputWidget
 
 USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
+USER_CAN_CLAIM_VIP = settings.FROIDE_CONFIG.get("user_can_claim_vip", False)
 ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
 
 
@@ -51,27 +54,6 @@ class UserChangeForm(DjangoUserChangeForm):
         fields = "__all__"
 
 
-class UserExtrasRegistry:
-    def __init__(self):
-        self.registry = defaultdict(list)
-
-    def register(self, key, form_extender):
-        self.registry[key].append(form_extender)
-
-    def on_init(self, key: str, form) -> None:
-        for fe in self.registry[key]:
-            fe.on_init(form)
-
-    def on_clean(self, key: str, form) -> None:
-        for fe in self.registry[key]:
-            fe.on_clean(form)
-
-    def on_save(self, key: str, form, user: Union[SimpleLazyObject, User]) -> None:
-        for fe in self.registry[key]:
-            fe.on_save(form, user)
-
-
-user_extra_registry = UserExtrasRegistry()
 ADDRESS_REQUIRED_HELP_TEXT = _(
     "Your address will not be displayed "
     "publicly and is only needed because a public body "
@@ -112,6 +94,7 @@ class AddressBaseForm(forms.Form):
 
     def clean_address(self) -> str:
         address = self.cleaned_data["address"]
+        # TODO validate like clientside? cf. addressRegex in user-address.vue
         if not address:
             return address
         if self.ALLOW_BLOCKED_ADDRESS:
@@ -144,7 +127,7 @@ class NewUserBaseForm(AddressBaseForm):
     user_email = forms.EmailField(
         label=_("Email address"),
         max_length=75,
-        help_text=_("Not public. The given address will " "need to be confirmed."),
+        help_text=_("Not public. The given address will need to be confirmed."),
         widget=forms.EmailInput(
             attrs={
                 "placeholder": _("mail@ddress.net"),
@@ -154,19 +137,47 @@ class NewUserBaseForm(AddressBaseForm):
         ),
     )
 
-    ALLOW_BLOCKED_ADDRESS = True
-
     if USER_CAN_HIDE_WEB:
-        private = forms.BooleanField(
-            required=False,
-            widget=BootstrapCheckboxInput,
+        private = forms.TypedChoiceField(
+            required=True,
+            widget=BootstrapRadioSelect,
             label=_("Hide my name from public view"),
-            help_text=format_html(
+            help_text=mark_safe(
                 _(
                     "If you check this, your name will still appear in requests to public bodies, but we will do our best to not display it publicly. However, we cannot guarantee your anonymity"
                 )
             ),
+            choices=[
+                (
+                    False,
+                    mark_safe(
+                        _(
+                            "My name may appear on the website in <strong>plain text</strong>"
+                        )
+                    ),
+                ),
+                (True, mark_safe(_("My name must be <strong>redacted</strong>"))),
+            ],
+            coerce=lambda x: x != "False",
         )
+
+    if USER_CAN_CLAIM_VIP:
+        claims_vip = forms.TypedChoiceField(
+            required=False,
+            initial=False,
+            widget=BootstrapRadioSelect,
+            label=_("{site_name} for journalists").format(site_name=settings.SITE_NAME),
+            help_text=_(
+                "You work in journalism and would like to use {site_name} for your research? Shortly after your sign-up is completed, we will send you additional information about extra functionality for journalists."
+            ).format(site_name=settings.SITE_NAME),
+            choices=[
+                (False, mark_safe(_("No, I am <strong>not a journalist</strong>"))),
+                (True, mark_safe(_("Yes, I am <strong>a journalist</strong>"))),
+            ],
+            coerce=lambda x: x != "False",
+        )
+
+    ALLOW_BLOCKED_ADDRESS = True
 
     field_order = ["first_name", "last_name", "user_email"]
 
@@ -197,7 +208,7 @@ class TermsForm(forms.Form):
         widget=BootstrapCheckboxInput,
         error_messages={
             "required": _(
-                "You need to accept our Terms " "and Conditions and Priavcy Statement."
+                "You need to accept our Terms and Conditions and Priavcy Statement."
             )
         },
     )
@@ -216,6 +227,12 @@ class TermsForm(forms.Form):
             url_terms=get_content_url("terms"),
             url_privacy=get_content_url("privacy"),
         )
+
+
+class NewTermsForm(TermsForm):
+    def save(self, user: User) -> None:
+        user.terms = True
+        user.save()
 
 
 CleanedData = Dict[str, Union[str, bool]]
@@ -578,7 +595,7 @@ class ProfileForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["profile_photo"].label = _("Profile picture")
         self.fields["profile_photo"].help_text = _(
-            "Image must be square and between 480 to 960 pixels " "in both dimensions."
+            "Image must be square and between 480 to 960 pixels in both dimensions."
         )
         self.old_profile_photo = None
         if self.instance.profile_photo:

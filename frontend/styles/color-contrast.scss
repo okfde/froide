@@ -61,174 +61,205 @@
 ///
 ////////////////////////////////////////////////////////////////////////////////
 
-@use "sass:math";
-@use "sass:color";
-@use "sass:map";
+@use 'sass:math';
+@use 'sass:color';
+@use 'sass:map';
 
 $SA98G: (
-    "mainTRC": 2.4,
+  'mainTRC': 2.4,
 
-    // 2.4 exponent for emulating actual monitor perception
-    // For reverseAPCA
-    // get mainTRCencode() { return 1 / this.mainTRC },
-    // sRGB coefficients
-    "sRco": 0.2126729,
-    "sGco": 0.7151522,
-    "sBco": 0.072175,
+  // 2.4 exponent for emulating actual monitor perception
+  // For reverseAPCA
+  // get mainTRCencode() { return 1 / this.mainTRC },
+  // sRGB coefficients
+  'sRco': 0.2126729,
+  'sGco': 0.7151522,
+  'sBco': 0.072175,
 
-    // G-4g constants for use with 2.4 exponent
-    "normBG": 0.56,
-    "normTXT": 0.57,
-    "revTXT": 0.62,
-    "revBG": 0.65,
+  // G-4g constants for use with 2.4 exponent
+  'normBG': 0.56,
+  'normTXT': 0.57,
+  'revTXT': 0.62,
+  'revBG': 0.65,
 
-    // G-4g Clamps and Scalers
-    "blkThrs": 0.022,
-    "blkClmp": 1.414,
-    "scaleBoW": 1.14,
-    "scaleWoB": 1.14,
-    "loBoWoffset": 0.027,
-    "loWoBoffset": 0.027,
-    "deltaYmin": 0.0005,
-    "loClip": 0.1,
+  // G-4g Clamps and Scalers
+  'blkThrs': 0.022,
+  'blkClmp': 1.414,
+  'scaleBoW': 1.14,
+  'scaleWoB': 1.14,
+  'loBoWoffset': 0.027,
+  'loWoBoffset': 0.027,
+  'deltaYmin': 0.0005,
+  'loClip': 0.1
 );
 
 @function simpleExp($chan) {
-    @return math.pow(math.div($chan, 255), map.get($SA98G, "mainTRC"));
+  @return math.pow(math.div($chan, 255), map.get($SA98G, 'mainTRC'));
 }
 
 @function sRGBtoY($color) {
-    @return map.get($SA98G, "sRco") * simpleExp(color.red($color)) + map.get($SA98G, "sGco") *
-        simpleExp(color.green($color)) + map.get($SA98G, "sBco") * simpleExp(color.blue($color));
+  @return map.get($SA98G, 'sRco') * simpleExp(color.red($color)) +
+    map.get($SA98G, 'sGco') * simpleExp(color.green($color)) +
+    map.get($SA98G, 'sBco') * simpleExp(color.blue($color));
 }
 
 @function APCAcontrast($txtY, $bgY) {
-    // send linear Y (luminance) for text and background.
-    // txtY and bgY must be between 0.0-1.0
-    // IMPORTANT: Do not swap, polarity is important.
+  // send linear Y (luminance) for text and background.
+  // txtY and bgY must be between 0.0-1.0
+  // IMPORTANT: Do not swap, polarity is important.
 
-    $icp_min: 0;
-    $icp_max: 1.1; // input range clamp / input error check
+  $icp_min: 0;
+  $icp_max: 1.1; // input range clamp / input error check
 
-    @if math.min($txtY, $bgY) < $icp_min or math.max($txtY, $bgY) > $icp_max {
-        @return 0; // return zero on error
-        // return 'error'; // optional string return for error
-    }
+  @if math.min($txtY, $bgY) < $icp_min or math.max($txtY, $bgY) > $icp_max {
+    @return 0; // return zero on error
+    // return 'error'; // optional string return for error
+  }
 
-    //////////   SAPC LOCAL VARS   /////////////////////////////////////////
+  //////////   SAPC LOCAL VARS   /////////////////////////////////////////
 
-    $SAPC: 0; // For raw SAPC values
-    $outputContrast: 0; // For weighted final values
-    $polCat: "BoW"; // Alternate Polarity Indicator. N normal R reverse
+  $SAPC: 0; // For raw SAPC values
+  $outputContrast: 0; // For weighted final values
+  $polCat: 'BoW'; // Alternate Polarity Indicator. N normal R reverse
 
-    // TUTORIAL
+  // TUTORIAL
 
-    // Use Y for text and BG, and soft clamp black,
-    // return 0 for very close luminances, determine
-    // polarity, and calculate SAPC raw contrast
-    // Then scale for easy to remember levels.
+  // Use Y for text and BG, and soft clamp black,
+  // return 0 for very close luminances, determine
+  // polarity, and calculate SAPC raw contrast
+  // Then scale for easy to remember levels.
 
-    // Note that reverse contrast (white text on black)
-    // intentionally returns a negative number
-    // Proper polarity is important!
+  // Note that reverse contrast (white text on black)
+  // intentionally returns a negative number
+  // Proper polarity is important!
 
-    //////////   BLACK SOFT CLAMP   ////////////////////////////////////////
+  //////////   BLACK SOFT CLAMP   ////////////////////////////////////////
 
-    // Soft clamps Y for either color if it is near black.
-    @if $txtY <= map.get($SA98G, "blkThrs") {
-        $txtY: $txtY + math.pow(map.get($SA98G, "blkThrs") - $txtY, map.get($SA98G, "blkClmp"));
-    }
-    @if $bgY <= map.get($SA98G, "blkThrs") {
-        $bgY: $bgY + math.pow(map.get($SA98G, "blkThrs") - $bgY, map.get($SA98G, "blkClmp"));
-    }
+  // Soft clamps Y for either color if it is near black.
+  @if $txtY <= map.get($SA98G, 'blkThrs') {
+    $txtY: $txtY +
+      math.pow(map.get($SA98G, 'blkThrs') - $txtY, map.get($SA98G, 'blkClmp'));
+  }
+  @if $bgY <= map.get($SA98G, 'blkThrs') {
+    $bgY: $bgY +
+      math.pow(map.get($SA98G, 'blkThrs') - $bgY, map.get($SA98G, 'blkClmp'));
+  }
 
-    ///// Return 0 Early for extremely low ∆Y
-    ///
-    @if math.abs($bgY - $txtY) < map.get($SA98G, "deltaYmin") {
-        @return 0;
-    }
+  ///// Return 0 Early for extremely low ∆Y
+  ///
+  @if math.abs($bgY - $txtY) < map.get($SA98G, 'deltaYmin') {
+    @return 0;
+  }
 
-    //////////   APCA/SAPC CONTRAST - LOW CLIP (W3 LICENSE)  ///////////////
+  //////////   APCA/SAPC CONTRAST - LOW CLIP (W3 LICENSE)  ///////////////
 
-    @if $bgY > $txtY {
-        // For normal polarity, black text on white (BoW)
+  @if $bgY > $txtY {
+    // For normal polarity, black text on white (BoW)
 
-        // Calculate the SAPC contrast value and scale
-        $SAPC: (math.pow($bgY, map.get($SA98G, "normBG")) - math.pow($txtY, map.get($SA98G, "normTXT"))) *
-            map.get($SA98G, "scaleBoW");
+    // Calculate the SAPC contrast value and scale
+    $SAPC: (
+        math.pow($bgY, map.get($SA98G, 'normBG')) - math.pow(
+            $txtY,
+            map.get($SA98G, 'normTXT')
+          )
+      ) *
+      map.get($SA98G, 'scaleBoW');
 
-        // Low Contrast smooth rollout to prevent polarity reversal
-        // and also a low-clip for very low contrasts
-        @if $SAPC < map.get($SA98G, "loClip") {
-            $outputContrast: 0;
-        } @else {
-            $outputContrast: $SAPC - map.get($SA98G, "loBoWoffset");
-        }
+    // Low Contrast smooth rollout to prevent polarity reversal
+    // and also a low-clip for very low contrasts
+    @if $SAPC < map.get($SA98G, 'loClip') {
+      $outputContrast: 0;
     } @else {
-        // For reverse polarity, light text on dark (WoB)
-        // WoB should always return negative value.
-        $polCat: "WoB";
-
-        $SAPC: (math.pow($bgY, map.get($SA98G, "revBG")) - math.pow($txtY, map.get($SA98G, "revTXT"))) *
-            map.get($SA98G, "scaleWoB");
-
-        @if $SAPC > - (map.get($SA98G, "loClip")) {
-            $outputContrast: 0;
-        } @else {
-            $outputContrast: $SAPC + map.get($SA98G, "loWoBoffset");
-        }
+      $outputContrast: $SAPC - map.get($SA98G, 'loBoWoffset');
     }
+  } @else {
+    // For reverse polarity, light text on dark (WoB)
+    // WoB should always return negative value.
+    $polCat: 'WoB';
 
-    // return Lc (lightness contrast) as a signed numeric value
-    // Round to the nearest whole number as string is optional.
-    // Rounded can be a signed INT as output will be within ± 127
-    // places = -1 returns signed float, 1 or more set that many places
-    // 0 returns rounded string, uses BoW or WoB instead of minus sign
+    $SAPC: (
+        math.pow($bgY, map.get($SA98G, 'revBG')) - math.pow(
+            $txtY,
+            map.get($SA98G, 'revTXT')
+          )
+      ) *
+      map.get($SA98G, 'scaleWoB');
 
-    @return $outputContrast * 100;
+    @if $SAPC > - (map.get($SA98G, 'loClip')) {
+      $outputContrast: 0;
+    } @else {
+      $outputContrast: $SAPC + map.get($SA98G, 'loWoBoffset');
+    }
+  }
+
+  // return Lc (lightness contrast) as a signed numeric value
+  // Round to the nearest whole number as string is optional.
+  // Rounded can be a signed INT as output will be within ± 127
+  // places = -1 returns signed float, 1 or more set that many places
+  // 0 returns rounded string, uses BoW or WoB instead of minus sign
+
+  @return $outputContrast * 100;
 } // End APCAcontrast()
 
 @function alphaBlend($rgbaFG, $rgbBG) {
-    $compBlend: 1 - color.alpha($rgbaFG);
+  $compBlend: 1 - color.alpha($rgbaFG);
 
-    @return rgba(
-        math.min(math.round(color.red($rgbBG) * $compBlend + color.red($rgbaFG) * color.alpha($rgbaFG)), 255),
-        math.min(math.round(color.blue($rgbBG) * $compBlend + color.blue($rgbaFG) * color.alpha($rgbaFG)), 255),
-        math.min(math.round(color.green($rgbBG) * $compBlend + color.green($rgbaFG) * color.alpha($rgbaFG)), 255)
-    );
+  @return rgba(
+    math.min(
+      math.round(
+        color.red($rgbBG) * $compBlend + color.red($rgbaFG) *
+          color.alpha($rgbaFG)
+      ),
+      255
+    ),
+    math.min(
+      math.round(
+        color.blue($rgbBG) * $compBlend + color.blue($rgbaFG) *
+          color.alpha($rgbaFG)
+      ),
+      255
+    ),
+    math.min(
+      math.round(
+        color.green($rgbBG) * $compBlend + color.green($rgbaFG) *
+          color.alpha($rgbaFG)
+      ),
+      255
+    )
+  );
 }
 
 @function calcAPCA($textColor, $bgColor) {
-    @if color.alpha($textColor) < 1 {
-        $textColor: alphaBlend($textColor, $bgColor);
-    }
+  @if color.alpha($textColor) < 1 {
+    $textColor: alphaBlend($textColor, $bgColor);
+  }
 
-    @return APCAcontrast(sRGBtoY($textColor), sRGBtoY($bgColor));
+  @return APCAcontrast(sRGBtoY($textColor), sRGBtoY($bgColor));
 }
 
 $min-lc-body-text: 75;
 
 @function color-contrast(
-    $background,
-    $color-contrast-dark: $color-contrast-dark,
-    $color-contrast-light: $color-contrast-light,
-    $min-contrast-ratio: $min-lc-body-text
+  $background,
+  $color-contrast-dark: $color-contrast-dark,
+  $color-contrast-light: $color-contrast-light,
+  $min-contrast-ratio: $min-lc-body-text
 ) {
-    $foregrounds: $color-contrast-light, $color-contrast-dark, $white, $black;
-    $max-ratio: 0;
-    $max-ratio-color: null;
+  $foregrounds: $color-contrast-light, $color-contrast-dark, $white, $black;
+  $max-ratio: 0;
+  $max-ratio-color: null;
 
-    @each $color in $foregrounds {
-        $contrast-ratio: math.abs(calcAPCA($color, $background));
-        @if $contrast-ratio >= $min-contrast-ratio {
-            @return $color;
-        } @else if $contrast-ratio > $max-ratio {
-            $max-ratio: $contrast-ratio;
-            $max-ratio-color: $color;
-        }
+  @each $color in $foregrounds {
+    $contrast-ratio: math.abs(calcAPCA($color, $background));
+    @if $contrast-ratio >= $min-contrast-ratio {
+      @return $color;
+    } @else if $contrast-ratio > $max-ratio {
+      $max-ratio: $contrast-ratio;
+      $max-ratio-color: $color;
     }
+  }
 
-    @warn "Found no color leading to at least #{$min-contrast-ratio} Lc against #{$background}. Only found #{$max-ratio} for #{$max-ratio-color}";
+  @warn "Found no color leading to at least #{$min-contrast-ratio} Lc against #{$background}. Only found #{$max-ratio} for #{$max-ratio-color}";
 
-    @return $max-ratio-color;
+  @return $max-ratio-color;
 }

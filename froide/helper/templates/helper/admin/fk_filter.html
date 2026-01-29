@@ -1,12 +1,12 @@
 {% load i18n %}
 <h3>{% blocktrans with filter_title=title %}By {{ filter_title }}{% endblocktrans %}</h3>
 <ul>
-  <li>
-    <form action="" method="get">
-      <input type="text" name="{{ choices.0.field_path }}" value="{% if choices.0.value %}{{ choices.0.value }}{% endif %}">
-      {% for k, v in choices.0.params.items %}
-        <input type="hidden" name="{{ k }}" value="{{ v }}"/>
-      {% endfor %}
-    </form>
-  </li>
+    <li>
+        <form action="" method="get">
+            <input type="text"
+                   name="{{ choices.0.field_path }}"
+                   value="{% if choices.0.value %}{{ choices.0.value }}{% endif %}">
+            {% for k, v in choices.0.params.items %}<input type="hidden" name="{{ k }}" value="{{ v }}" />{% endfor %}
+        </form>
+    </li>
 </ul>

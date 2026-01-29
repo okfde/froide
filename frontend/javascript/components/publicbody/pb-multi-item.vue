@@ -6,7 +6,8 @@
       :data-label="result.name"
       :name="name"
       :value="result.id"
-      v-model="value" />
+      v-model="value"
+    />
     <label class="form-check-label">
       {{ result.name }}
       <small>
@@ -24,7 +25,7 @@ import {
 } from '../../store/mutation_types'
 
 export default {
-  name: 'pb-multi-item',
+  name: 'PbMultiItem',
   props: ['name', 'result', 'scope'],
   computed: {
     value: {

@@ -1,48 +1,38 @@
 {% extends "scaffold.html" %}
-
 {% load i18n %}
 {% load static %}
 {% load frontendbuild %}
-
-
 {% block body_tag %}
-  {% if request.user.is_authenticated and request.session.impostor %}
-    {% include "account/includes/impostor.html" %}
-  {% endif %}
-
-  {% block top_block %}
-  {% endblock %}
-
-  {% block navbar %}
-    {% include "header.html" %}
-  {% endblock %}
-
-  {% block body_wrapper %}
-  <main class="main">
-    
-    {% block index_banner %}{% endblock %}
-    {% block foisite_advice %}{% endblock %}
-
-    {% block messages %}
-      {% include "snippets/messages.html" %}
-    {% endblock messages %}
-
-    {% block body %}
-      <div class="container mb-5 mt-3">
-        {% block app_body %}{% endblock %}
-      </div>
+    {% block above_footer %}
+        {% if request.user.is_authenticated and request.session.impostor %}
+            {% include "account/includes/impostor.html" %}
+        {% endif %}
+        {% block top_block %}{% endblock %}
+        {% block navbar %}
+            {% include "header.html" %}
+        {% endblock %}
+        {% include "snippets/breadcrumbs.html" %}
+        {% block body_wrapper %}
+            <main class="main">
+                {% block index_banner %}{% endblock %}
+                {% block foisite_advice %}{% endblock %}
+                {% block messages %}
+                    {% include "snippets/messages.html" %}
+                {% endblock messages %}
+                {% block body %}
+                    <div class="container mb-5 mt-3">
+                        {% block app_body %}{% endblock %}
+                    </div>
+                {% endblock %}
+            </main>
+        {% endblock %}
+    {% endblock above_footer %}
+    {% block footer_container %}
+        {% include "footer.html" %}
     {% endblock %}
-  </main>
-  {% endblock %}
-
-{% block footer_container %}
-  {% include "footer.html" %}
-{% endblock %}
-
 {% endblock body_tag %}
-
 {% block scripts %}
-  {% renderfrontendhmr %}
-  {% addfrontendbuild "main.js" %}
-  {{ block.super }}
+    {% renderfrontendhmr %}
+    {% addfrontendbuild "main.js" %}
+    {{ block.super }}
 {% endblock %}

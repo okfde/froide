@@ -6,11 +6,7 @@ import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
 
-import django_fsm
-
-
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -36,7 +32,7 @@ class Migration(migrations.Migration):
                         default=uuid.uuid4, unique=True, verbose_name="GUID"
                     ),
                 ),
-                ("state", django_fsm.FSMField(default="initial", max_length=50)),
+                ("state", models.CharField(default="initial", max_length=50)),
                 ("upload_offset", models.BigIntegerField(default=0)),
                 ("upload_length", models.BigIntegerField(default=-1)),
                 ("upload_metadata", models.TextField(blank=True)),

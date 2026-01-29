@@ -11,7 +11,6 @@ def set_message_kind(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0021_foimessage_kind"),
     ]

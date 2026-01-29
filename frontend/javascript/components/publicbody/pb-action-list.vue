@@ -2,12 +2,14 @@
   <div class="search-result-container">
     <ul
       v-if="searchResultsLength > 0 || emptyResults"
-      class="search-results list-unstyled">
+      class="search-results list-unstyled"
+    >
       <li
         v-for="result in searchResults"
         :key="result.id"
         class="search-result"
-        @click.prevent="selectSearchResult(result.id)">
+        @click.prevent="selectSearchResult(result.id)"
+      >
         <div class="row">
           <div class="col-sm-8">
             <h4 class="pb-heading">
@@ -22,7 +24,8 @@
             <a
               class="btn btn-primary"
               :href="getMakeRequestURLForResult(result)"
-              @click.prevent="selectSearchResult(result.id)">
+              @click.prevent="selectSearchResult(result.id)"
+            >
               {{ i18n.makeRequest }}
             </a>
           </div>
@@ -71,7 +74,7 @@ import PBListMixin from './lib/pb-list-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
 
 export default {
-  name: 'pb-action-list',
+  name: 'PbActionList',
   mixins: [PBListMixin, I18nMixin],
   props: ['name', 'scope', 'config'],
   methods: {
@@ -109,7 +112,8 @@ export default {
   .row {
     padding: 1rem 0;
     &:hover {
-      background-color: $gray-200;
+      background-color: var(--#{$prefix}light-bg-subtle);
+      color: var(--#{$prefix}light-text-emphasis);
     }
   }
   .btn {

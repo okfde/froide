@@ -1,0 +1,62 @@
+@use 'sass:map';
+@use 'sass:list';
+
+// TODO: refactor this to use the same map as bootstrap
+
+@each $name in $froide-theme {
+  .text-bg-#{$name} {
+    color: var(--froide-#{$name}-color) !important;
+    background-color: RGBA(
+      var(--froide-#{$name}-bg-rgb),
+      var(--#{$prefix}bg-opacity, 1)
+    ) !important;
+  }
+  .bg-#{$name} {
+    background-color: RGBA(
+      var(--froide-#{$name}-bg-rgb),
+      var(--#{$prefix}bg-opacity, 1)
+    ) !important;
+  }
+  .text-#{$name} {
+    color: var(--froide-#{$name}-color) !important;
+  }
+}
+
+// This gives us text-bg classes for the color-mode compatibole
+// bootstrap colors
+
+$bootstrap-extras: (
+  'body': (
+    'body-color',
+    'body-bg'
+  ),
+  'body-secondary': (
+    'secondary-color',
+    'secondary-bg'
+  ),
+  'body-tertiary': (
+    'tertiary',
+    'tertiary-bg'
+  ),
+  'light-subtle': (
+    'light-text-emphasis',
+    'light-bg-subtle'
+  ),
+  'dark-subtle': (
+    'dark-text-emphasis',
+    'dark-bg-subtle'
+  )
+);
+
+@each $name, $vars in $bootstrap-extras {
+  .text-bg-#{$name} {
+    $color: list.nth($vars, 1);
+    $bg: list.nth($vars, 2);
+
+    color: var(--#{$prefix}#{$color});
+    background-color: RGBA(
+      var(--#{$prefix}#{$bg}-rgb),
+      var(--#{$prefix}bg-opacity, 1)
+    ) !important;
+  }
+}

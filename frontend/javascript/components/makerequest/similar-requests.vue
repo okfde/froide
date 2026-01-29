@@ -12,7 +12,7 @@
                 {{ i18n.relevantResources }}
               </h6>
               <ul>
-                <li v-if="publicBody.url">
+                <li v-if="publicBody?.url">
                   <a :href="publicBody.url" target="_blank" rel="noopener">
                     {{ i18n.officialWebsite }} {{ publicBody.name }}
                   </a>
@@ -52,7 +52,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 const MAX_SIMILAR = 5
 
 export default {
-  name: 'similar-requests',
+  name: 'SimilarRequests',
   props: ['config', 'publicbodies', 'subject'],
   mixins: [I18nMixin],
   data() {
@@ -105,7 +105,7 @@ export default {
     }
   },
   watch: {
-    subject: function (val, oldVal) {
+    subject: function () {
       this.debouncedSearch()
     }
   }

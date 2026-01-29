@@ -24,7 +24,8 @@
             <a
               :href="req.url + '#set-status'"
               class="btn btn-primary btn-sm"
-              target="_blank">
+              target="_blank"
+            >
               {{ i18n.setStatus }}
             </a>
           </td>
@@ -40,15 +41,12 @@ const getUrl = (templ, objId) => templ.replace(/0/, objId)
 export default {
   name: 'ModerationUnclassified',
   props: {
-    config: {
-      type: Object,
-      required: true
-    },
     unclassified: {
       type: Array,
       required: true
     }
   },
+  inject: ['config'],
   computed: {
     i18n() {
       return this.config.i18n

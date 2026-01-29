@@ -16,6 +16,7 @@ from froide.helper.text_utils import slugify
 from froide.helper.widgets import (
     AutocompleteMultiWidget,
     BootstrapSelect,
+    BootstrapTextarea,
     TagAutocompleteWidget,
 )
 
@@ -53,6 +54,7 @@ class MultiplePublicBodyForm(PublicBodyForm):
             "laws",
         ),
         label=_("Search for a topic or a public body:"),
+        widget=forms.MultipleHiddenInput,
     )
 
     is_multi = True
@@ -72,6 +74,14 @@ class MultiplePublicBodyForm(PublicBodyForm):
 
 
 class PublicBodyProposalForm(forms.ModelForm):
+    reason = forms.CharField(
+        label=_("Reason"),
+        required=False,
+        help_text=_(
+            "Please give a reason why this public body should be added if that is not obvious."
+        ),
+        widget=BootstrapTextarea,
+    )
     name = forms.CharField(
         label=_("Name"),
         help_text=_("Official name of the public authority."),
@@ -112,7 +122,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "type": "tel",
-                "pattern": "[\\d\\+ \\-/]+",
+                "pattern": "\\+?[\\d -\\/]+",
                 "placeholder": "+49 ...",
             }
         ),
@@ -214,7 +224,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             # FIXME: language code used for country code
             number = phonenumbers.parse(fax, settings.LANGUAGE_CODE.upper())
         except phonenumbers.phonenumberutil.NumberParseException:
-            raise forms.ValidationError(_("Fax number not a valid number!"))
+            raise forms.ValidationError(_("Fax number not a valid number!")) from None
         if not phonenumbers.is_possible_number(number):
             raise forms.ValidationError(_("Fax number not possible!"))
         if not phonenumbers.is_valid_number(number):
@@ -240,6 +250,7 @@ class PublicBodyProposalForm(forms.ModelForm):
             "regions",
             "file_index",
             "org_chart",
+            "reason",
         )
 
     def get_other_publicbodies(self):
@@ -262,6 +273,14 @@ class PublicBodyProposalForm(forms.ModelForm):
         pb.confirmed = False
         pb._created_by = user
         pb.updated_at = timezone.now()
+        pb.change_history = [
+            {
+                "user_id": user.id,
+                "timestamp": pb.updated_at.isoformat(),
+                "data": {"reason": self.cleaned_data["reason"]},
+            }
+        ]
+
         pb.save()
         self.save_m2m()
         pb.laws.set(pb.jurisdiction.get_all_laws())
@@ -295,6 +314,10 @@ class PublicBodyChangeProposalForm(PublicBodyProposalForm):
 
 
 class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["reason"].initial = self.instance.reason
+
     def get_other_publicbodies(self):
         return PublicBody._default_manager.all().exclude(id=self.instance.id)
 
@@ -320,6 +343,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
     def save(
         self,
         user,
+        batch=False,
         proposal_id=None,
         delete_proposals=None,
         delete_unconfirmed=False,
@@ -336,7 +360,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
             proposal = PublicBodyChangeProposal.objects.get(
                 id=proposal_id, publicbody=self.instance
             )
-            if proposal.user != user:
+            if proposal.user != user and not batch:
                 proposal.user.send_mail(
                     _("Changes to public body “{}” have been applied").format(pb.name),
                     _(
@@ -355,7 +379,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
             ).delete()
 
         if not pb.confirmed and delete_unconfirmed:
-            self.delete_proppsed_publicbody(pb, user, delete_reason)
+            self.delete_proposed_publicbody(pb, user, delete_reason, batch=batch)
             return None
         pb.change_history.append(
             {
@@ -376,7 +400,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
         self.save_m2m()
         return pb
 
-    def delete_proppsed_publicbody(self, pb, user, delete_reason=""):
+    def delete_proposed_publicbody(self, pb, user, delete_reason="", batch=False):
         LogEntry.objects.log_action(
             user_id=user.id,
             content_type_id=ContentType.objects.get_for_model(pb).pk,
@@ -386,7 +410,7 @@ class PublicBodyAcceptProposalForm(PublicBodyProposalForm):
         )
 
         creator = pb.created_by
-        if creator:
+        if creator and not batch:
             creator.send_mail(
                 _("Your public body proposal “%s” was rejected") % pb.name,
                 _(

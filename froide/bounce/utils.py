@@ -3,6 +3,7 @@ This contains a basic implementation of VERP and bounce detection
 https://en.wikipedia.org/wiki/Variable_envelope_return_path
 
 """
+
 import base64
 import datetime
 import time
@@ -32,7 +33,6 @@ from froide.helper.email_utils import (
     get_unread_mails,
 )
 
-from .models import Bounce
 from .signals import email_bounced, email_unsubscribed, user_email_bounced
 
 BOUNCE_FORMAT = settings.FROIDE_CONFIG["bounce_format"]
@@ -44,11 +44,12 @@ SEP_REPL = "+"
 MAX_BOUNCE_AGE = settings.FROIDE_CONFIG["bounce_max_age"]
 
 MAX_BOUNCE_COUNT = 20
-HARD_BOUNCE_COUNT = 3
-HARD_BOUNCE_PERIOD = datetime.timedelta(seconds=3 * 7 * 24 * 60 * 60)  # 3 weeks
+HARD_BOUNCE_COUNT = 2
+WEEK = 7 * 24 * 60 * 60
+HARD_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * WEEK)
 
 SOFT_BOUNCE_COUNT = 5
-SOFT_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * 7 * 24 * 60 * 60)  # 5 weeks
+SOFT_BOUNCE_PERIOD = datetime.timedelta(seconds=5 * WEEK)
 
 
 def b32_encode(s):
@@ -72,7 +73,8 @@ class CustomTimestampSigner(TimestampSigner):
     Signs in base32 so that only lower case characters are used.
     """
 
-    def signature(self, value):
+    def signature(self, value, key=None):
+        key = key or self.key
         return base32_hmac(self.salt + "signer", value, self.key)
 
     def timestamp(self):
@@ -205,7 +207,7 @@ def process_unsubscribe_mail(mail_bytes):
     with closing(BytesIO(mail_bytes)) as stream:
         email = parse_email(stream)
     recipient_list = list(
-        set([get_recipient_address_from_unsubscribe(x.email) for x in email.to])
+        {get_recipient_address_from_unsubscribe(x.email) for x in email.to}
     )
     if len(recipient_list) != 1:
         return
@@ -233,7 +235,7 @@ def process_bounce_mail(mail_bytes):
 
 
 def add_bounce_mail(email):
-    recipient_list = set([get_recipient_address_from_bounce(x.email) for x in email.to])
+    recipient_list = {get_recipient_address_from_bounce(x.email) for x in email.to}
     for recipient, status in recipient_list:
         if status:
             update_bounce(email, recipient)
@@ -245,6 +247,8 @@ def add_bounce_mail(email):
 
 
 def update_bounce(email, recipient):
+    from .models import Bounce
+
     bounce = Bounce.objects.update_bounce(recipient, email.bounce_info)
     should_deactivate = check_deactivation_condition(bounce)
 
@@ -299,6 +303,8 @@ def handle_smtp_error(exc):
     """
     Handle SMTPRecipientsRefused exceptions
     """
+    from .models import Bounce
+
     recipients = exc.recipients
     for recipient, info in recipients.items():
         recipient = parse_header_field(recipient)

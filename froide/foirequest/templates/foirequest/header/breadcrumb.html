@@ -1,21 +1,27 @@
 {% load i18n %}
-
 <nav class="container" aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item">
-      {% if object.user == request.user %}
-        <a href="{% url 'account-show' %}">{% trans "My requests" %}</a>
-        {% else %}
-        <a href="{% url 'foirequest-list' %}">{% trans "Requests" %}</a>
-      {% endif %}
-    </li>
-    <li class="breadcrumb-item">
-      <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{% trans "request" %} #{{ object.id }}</a>
-    </li>
-    {% if last_item %}
-      <li class="breadcrumb-item active">
-        <span>{{ last_item }}</span>
-      </li>
-    {% endif %}
-  </ol>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            {# djlint:off D018 #}
+            <a href="/">
+                <i class="fa fa-home"></i>
+                <span class="visually-hidden">{% trans "Home Page" %}</span>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            {% if object.user == request.user %}
+                <a href="{% url 'account-show' %}">{% trans "My requests" %}</a>
+            {% else %}
+                <a href="{% url 'foirequest-list' %}">{% trans "Requests" %}</a>
+            {% endif %}
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ object.get_absolute_url }}" title="{{ object.title }}">{% trans "request" %} #{{ object.id }}</a>
+        </li>
+        {% if last_item %}
+            <li class="breadcrumb-item active">
+                <span>{{ last_item }}</span>
+            </li>
+        {% endif %}
+    </ol>
 </nav>

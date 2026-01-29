@@ -1,19 +1,22 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from unittest import mock
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth import get_user_model
 from django.contrib.messages.storage import default_storage
 from django.core import mail
+from django.db import IntegrityError
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.html import escape
 
 import pytest
 
+from froide.accesstoken.models import AccessToken
+from froide.account.factories import UserFactory
 from froide.account.management.commands.send_mass_mail import Command
 from froide.foirequest.models import FoiMessage, FoiRequest
 from froide.foirequest.tests import factories
@@ -124,8 +127,9 @@ def test_signup(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
+        "private": True,
         "user_email": "horst.porst",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     client.login(email="info@fragdenstaat.de", password="froide")
     response = client.post(reverse("account-signup"), post)
@@ -177,9 +181,10 @@ def test_overlong_name_signup(world, client):
         "first_name": "Horst" * 6 + "a",
         "last_name": "Porst" * 6,
         "terms": "on",
+        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     client.logout()
     response = client.post(reverse("account-signup"), post)
@@ -196,10 +201,11 @@ def test_signup_too_fast(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
+        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         # Signup in less than 5 seconds
-        "time": (datetime.utcnow() - timedelta(seconds=3)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=3)).timestamp(),
     }
     client.logout()
     response = client.post(reverse("account-signup"), post)
@@ -213,9 +219,10 @@ def test_signup_same_name(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
+        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     response = client.post(reverse("account-signup"), post)
     assert response.status_code == 302
@@ -284,10 +291,18 @@ def test_confirmation_process(world, client):
 def test_next_link_login(world, client):
     mes = FoiMessage.objects.all()[0]
     url = mes.get_absolute_url()
-    enc_url = url.replace("#", "%23")  # FIXME: fake uri encode
-    response = client.get(reverse("account-login") + "?next=%s" % enc_url)
-    # occurences in hidden inputs of login, signup and forgotten password
-    assert response.content.decode("utf-8").count(url) == 2
+    response = client.get(reverse("account-login") + "?next=%s" % quote(url))
+    assert response.status_code == 200  # not redirecting
+    # occurences in hidden inputs of login and forgotten password forms
+    assert response.text.count(url) == 2
+
+    response = client.post(
+        reverse("account-login"),
+        {"username": "info@fragdenstaat.de", "next": url, "password": "wrong-password"},
+    )
+    # next url still present in form
+    assert response.text.count(url) == 2
+
     response = client.post(
         reverse("account-login"),
         {"username": "info@fragdenstaat.de", "next": url, "password": "froide"},
@@ -301,14 +316,20 @@ def test_next_link_signup(world, client):
     mail.outbox = []
     mes = FoiMessage.objects.all()[0]
     url = mes.get_absolute_url()
+
+    response = client.get(reverse("account-signup") + "?next=%s" % quote(url))
+    # occurences in hidden inputs of signup form
+    assert response.text.count(url) == 1
+
     post = {
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
+        "private": True,
         "user_email": "horst.porst@example.com",
         "address": "MyOwnPrivateStree 5\n31415 Pi-Ville",
         "next": url,
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
     response = client.post(reverse("account-signup"), post)
     assert response.status_code == 302
@@ -436,7 +457,7 @@ def test_private_name(world, client):
     post = {
         "subject": "Request - Private name",
         "body": "This is a test body",
-        "public": "on",
+        "public": True,
         "publicbody": pb.pk,
         "law": pb.default_law.pk,
     }
@@ -538,7 +559,7 @@ def test_go(world, client):
 
     # Try logging in via link: wrong user id
     autologin = reverse(
-        "account-go", kwargs=dict(user_id="80000", token="a" * 32, url=test_url)
+        "account-go", kwargs={"user_id": "80000", "token": "a" * 32, "url": test_url}
     )
     response = client.post(autologin)
     assert response.status_code == 302
@@ -551,13 +572,51 @@ def test_go(world, client):
     # Try logging in via link: wrong secret
     autologin = reverse(
         "account-go",
-        kwargs=dict(user_id=str(user.id), token="a" * 32, url=test_url),
+        kwargs={"user_id": str(user.id), "token": "a" * 32, "url": test_url},
     )
     response = client.post(autologin)
     assert response.status_code == 302
     assert response["Location"].startswith(login_url)
     response = client.get(test_url)
     assert response.context["user"].is_anonymous
+
+    # Try logging in via link: wrong secret but nologin tag
+    autologin = reverse(
+        "account-go",
+        kwargs={"user_id": str(user.id), "token": "a" * 32, "url": test_url},
+    )
+    response = client.get(autologin + "?nologin=1")
+    assert response.context["nologin"] == "1"
+    assert '<input type="hidden" name="nologin" value="1">' in response.text
+    response = client.post(autologin, {"nologin": "1"})
+    assert response.status_code == 302
+    assert response["Location"].startswith(test_url)
+    response = client.get(test_url)
+    assert response.context["user"].is_anonymous
+
+
+@pytest.mark.django_db
+def test_go_redirect_without_loop(client):
+    user = UserFactory.create()
+    # Foirequest is private
+    foirequest = factories.FoiRequestFactory.create(user=user, visibility=1)
+
+    # Super users are not logged in
+    next_url = foirequest.get_absolute_short_url()
+    autologin_url = user.get_autologin_url(next_url)
+
+    # Invalidate access token to prevent login
+    AccessToken.objects.filter(user=user).delete()
+
+    # Get autologin url
+    response = client.get(autologin_url)
+    form_action = response.context["form_action"]
+    next_url = response.context["next"]
+    # Post to autologin url
+    response = client.post(form_action, {"next": next_url})
+    assert response.status_code == 302
+    qs = urlencode({"next": next_url}, safe="/")
+    assert response["Location"] == f"{reverse(settings.LOGIN_URL)}?{qs}"
 
 
 @pytest.mark.django_db
@@ -746,8 +805,9 @@ def test_signup_blocklisted(world, client):
         "first_name": "Horst",
         "last_name": "Porst",
         "terms": "on",
+        "private": True,
         "user_email": "horst.porst@example.com",
-        "time": (datetime.utcnow() - timedelta(seconds=30)).timestamp(),
+        "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
     }
 
     AccountBlocklist.objects.create(name="Test", email="horst\\.porst.*@example.com$")
@@ -786,3 +846,40 @@ def test_send_mail(world, rf):
     assert "|%s|" % user.first_name in message.body
     assert "|%s|" % user.last_name in message.body
     assert "^%s|" % user.get_full_name() in message.body
+
+
+@pytest.mark.django_db
+def test_email_case_insensitive_search():
+    user = User.objects.create(email="Hacker@example.com")
+    user2 = User.objects.get(email="hacker@example.com")
+    assert user == user2
+
+
+@pytest.mark.django_db
+def test_email_case_insensitive_unique():
+    User.objects.create(email="Hacker@example.com")
+    msg = 'duplicate key value violates unique constraint "account_user_username_key"'
+    with pytest.raises(IntegrityError, match=msg):
+        User.objects.create(email="hacker@example.com")
+
+
+@pytest.mark.django_db
+def test_multipart_name_redaction():
+    user = User.objects.create(
+        first_name="Alex", last_name="Random Example", private=True
+    )
+    account_service = AccountService(user)
+    name = "Reply-Alex-Random-Example.pdf"
+    repl = "NAME"
+    redacted_name = account_service.apply_name_redaction(name, repl)
+    assert redacted_name == "Reply-NAME-NAME-NAME.pdf"
+
+
+@pytest.mark.django_db
+def test_unicode_name_redaction():
+    user = User.objects.create(first_name="Älex", last_name="Eğçamplé", private=True)
+    account_service = AccountService(user)
+    name = "reply-alex-egcample.pdf"
+    repl = "NAME"
+    redacted_name = account_service.apply_name_redaction(name, repl, unicode=False)
+    assert redacted_name == "reply-NAME-NAME.pdf"

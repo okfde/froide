@@ -24,7 +24,7 @@ def get_configuration(slug: str) -> FollowConfiguration:
     try:
         return follow_registry.get_by_slug(slug)
     except LookupError:
-        raise Http404
+        raise Http404 from None
 
 
 @require_POST
@@ -97,7 +97,7 @@ def confirm_follow(
     configuration = get_configuration(conf_slug)
 
     follower = get_object_or_404(configuration.model, id=int(follow_id))
-    if follower.check_and_follow(check):
+    if follower.check_and_follow(check, request=request):
         messages.add_message(
             request,
             messages.SUCCESS,

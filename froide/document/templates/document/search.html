@@ -1,44 +1,40 @@
-{% extends 'helper/search/search_base.html' %}
-
+{% extends "helper/search/search_base.html" %}
 {% load i18n %}
-
+{% block title %}
+    {% if has_query %}
+        {% blocktranslate with query=form.cleaned_data.q %}{{ query }} document search{% endblocktranslate %}
+    {% else %}
+        {% translate "Document search" %}
+    {% endif %}
+{% endblock title %}
 {% block search_title %}
-  {% trans "Documents" %}
-{% endblock %}
-
-
+    {% trans "Documents" %}
+{% endblock search_title %}
 {% block search_form_filters %}
-  <div class="row align-items-start">
-    {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
-      <div class="col-md-4">
-        {{ form.jurisdiction }}
-      </div>
-    {% else %}
-      {{ form.jurisdiction }}
-    {% endif %}
-
-    {% if "campaign" in show_filters %}
-      <div class="col-md-4">
-        {{ form.campaign }}
-      </div>
-    {% else %}
-      {{ form.campaign }}
-    {% endif %}
-
-    {{ form.publicbody }}
-    {{ form.tag }}
-  </div>
-{% endblock %}
-
+    <div class="row align-items-start">
+        {% if "jurisdiction" in show_filters and form.jurisdiction.field.choices|length > 1 %}
+            <div class="col-md-4">{{ form.jurisdiction }}</div>
+        {% else %}
+            {{ form.jurisdiction }}
+        {% endif %}
+        {% if "campaign" in show_filters %}
+            <div class="col-md-4">{{ form.campaign }}</div>
+        {% else %}
+            {{ form.campaign }}
+        {% endif %}
+        <div class="col-md-4">{{ form.portal }}</div>
+        {{ form.publicbody }}
+        {{ form.collection }}
+        {{ form.tag }}
+    </div>
+{% endblock search_form_filters %}
 {% block sidebar_bottom %}
-<div class="card mb-3">
-  <div class="card-body">
-    <h6>
-      <i class="fa fa-rss" aria-hidden="true"></i>
-      <a href="{% url 'document-search_feed' %}?{{ getvars }}">
-        {% trans "RSS feed for this search" %}
-      </a>
-    </h6>
-  </div>
-</div>
-{% endblock %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6>
+                <i class="fa fa-rss" aria-hidden="true"></i>
+                <a href="{% url 'document-search_feed' %}?{{ getvars }}">{% trans "RSS feed for this search" %}</a>
+            </h6>
+        </div>
+    </div>
+{% endblock sidebar_bottom %}

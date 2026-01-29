@@ -13,13 +13,14 @@ from .message import (
     get_postal_reply_form,
     get_send_message_form,
 )
-from .postal import PostalUploadForm
+from .postal import PostalEditForm, PostalUploadForm
 from .project import (
     AssignProjectForm,
     FoiRequestBulkForm,
     MakeProjectPublicForm,
     PublishRequestsForm,
     SendMessageProjectForm,
+    SetStatusProjectForm,
 )
 from .request import (
     ApplyModerationForm,
@@ -54,7 +55,9 @@ __all__ = [
     "RedactMessageForm",
     "PublicBodyUploader",
     "PostalUploadForm",
+    "PostalEditForm",
     "FoiRequestBulkForm",
+    "SetStatusProjectForm",
     "MakeProjectPublicForm",
     "PublishRequestsForm",
     "ApplyModerationForm",

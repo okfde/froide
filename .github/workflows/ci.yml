@@ -2,6 +2,7 @@ name: Froide CI
 
 on:
   push:
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -9,115 +10,67 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
         with:
-          python-version: 3.x
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'yarn'
-      - name: Cache pip
-        uses: actions/cache@v1
-        with:
-          key: v0-${{ runner.os }}-pip-lint-${{ hashFiles('setup.py') }}
-          path: ~/.cache/pip
-          restore-keys: |
-            v0-${{ runner.os }}-pip-lint-
-            v0-${{ runner.os }}-pip-
+          node-version: 22
+          cache: pnpm
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install .[lint]
-          yarn install
-      - name: Run flake8
-        run: flake8 froide --statistics
-      - name: Run black
-        run: black --check froide
-      - name: Run isort
-        run: isort --check froide
-      - name: Run eslint
-        run: yarn lint
+        run: pnpm install
+      - uses: pre-commit/action@v3.0.1
 
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.10']
+        python-version: ['3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
         with:
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements*.txt
+            pyproject.toml
           python-version: ${{ matrix.python-version }}
+          activate-environment: true
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
       - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python3-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev
+        run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip~=22.0.1 pip-tools
-          pip-sync requirements-test.txt
-          pip install -e .
-          yarn install
-      - name: Build frontend
-        run: yarn run build
-      - name: Run flake8 and tests
-        run: make testci
-        env:
-          DATABASE_URL: postgis://postgres:postgres@localhost/froide
-    services:
-      postgres:
-        image: postgis/postgis:12-3.0
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: froide
-        ports:
-          - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-      elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
-        options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
-        ports:
-          - '9200:9200'
-  testui:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8']
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install system-level dependencies
-        run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev python3-dev libgdal-dev gdal-bin python3-gdal libmagic-dev libmagickwand-dev
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip~=22.0.1 pip-tools
-          pip-sync requirements-test.txt
+          uv pip sync requirements-test.txt
+          uv pip install -e . --no-deps
           playwright install --with-deps chromium
-          pip install -e .
-          yarn install
+          pnpm install
       - name: Build frontend
-        run: yarn run build
-      - name: Run in-browser tests
-        run: make testui
+        run: pnpm run build
+      - name: Run tests
+        run: |
+          coverage run --branch -m pytest froide/
+          coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
         env:
           DATABASE_URL: postgis://postgres:postgres@localhost/froide
-          DJANGO_TEST_SELENIUM_DRIVER: http://localhost:4444/wd/hub#chrome_headless
+
     services:
       postgres:
-        image: postgis/postgis:12-3.0
+        image: postgis/postgis:16-3.4
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: froide
         ports:
           - 5432:5432
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
-        options: -e "discovery.type=single-node" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
+        image: elasticsearch:8.14.3
+        options: -e "discovery.type=single-node" -e "xpack.security.enabled=false" --expose 9200 --health-cmd "curl localhost:9200/_cluster/health" --health-interval 10s --health-timeout 5s --health-retries 10
         ports:
-          - '9200:9200'
+          - 9200:9200

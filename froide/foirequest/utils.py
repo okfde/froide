@@ -1,12 +1,17 @@
+import datetime
 import json
 import re
+import zipfile
 from dataclasses import dataclass
 from datetime import timedelta
-from typing import Iterator, List, Optional, Tuple, Union
+from io import BytesIO
+from pathlib import PurePath
+from typing import TYPE_CHECKING, Iterator, List, Optional, Tuple, Union
 
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files import File
 from django.core.mail import mail_managers
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
@@ -17,18 +22,25 @@ from django.utils.translation import gettext_lazy as _
 
 import icalendar
 
+from froide.foirequest.models.message import FoiMessage
+from froide.helper.content_urls import get_content_url
 from froide.helper.date_utils import format_seconds
 from froide.helper.email_utils import delete_mails_by_recipient
+from froide.helper.storage import make_unique_filename
 from froide.helper.tasks import search_instance_save
 from froide.helper.text_utils import (
+    apply_text_replacements,
     find_all_emails,
     redact_plaintext,
     redact_subject,
     redact_user_strings,
 )
-from froide.publicbody.models import PublicBody
+from froide.publicbody.models import FoiLaw, PublicBody
 
-from .models import FoiRequest
+from .models import FoiAttachment, FoiRequest
+
+if TYPE_CHECKING:
+    from froide.proof.models import ProofAttachment
 
 MAX_ATTACHMENT_SIZE = settings.FROIDE_CONFIG["max_attachment_size"]
 RECIPIENT_BLOCKLIST = settings.FROIDE_CONFIG.get("recipient_blocklist_regex", None)
@@ -74,7 +86,11 @@ def check_throttle(user, klass, extra_filters=None):
         mail_managers(_("User exceeded request limit"), str(user.pk))
     return forms.ValidationError(
         klass.get_throttle_message(),
-        params={"count": throttle_kind[0], "time": format_seconds(throttle_kind[1])},
+        params={
+            "count": throttle_kind[0],
+            "time": format_seconds(throttle_kind[1]),
+            "url": get_content_url("throttled"),
+        },
         code="throttled",
     )
 
@@ -101,26 +117,6 @@ def generate_secret_address(user, length=10):
             username=username, secret=secret, domain=FOI_EMAIL_DOMAIN
         )
     return "%s.%s@%s" % (username, secret, FOI_EMAIL_DOMAIN)
-
-
-def construct_message_body(
-    foirequest: FoiRequest,
-    text: str,
-    send_address: bool = True,
-    attachment_names: Optional[List[str]] = None,
-    attachment_missing: Optional[List[str]] = None,
-    template: str = "foirequest/emails/mail_with_userinfo.txt",
-):
-    return render_to_string(
-        template,
-        {
-            "request": foirequest,
-            "body": text,
-            "attachment_names": attachment_names,
-            "attachment_missing": attachment_missing,
-            "send_address": send_address,
-        },
-    )
 
 
 def build_secret_url_regexes(url_name):
@@ -150,7 +146,7 @@ def get_secret_url_replacements():
     replacement_url = reverse("foirequest-shortlink", kwargs={"obj_id": "0"})
     replacement_url = replacement_url.replace("0", r"\1")
 
-    replacements = {key: replacement_url for key in url_regexes}
+    replacements = dict.fromkeys(url_regexes, replacement_url)
     SECRET_URL_REPLACEMENTS.update(replacements)
     return SECRET_URL_REPLACEMENTS
 
@@ -169,6 +165,19 @@ def short_request_url(name, foirequest, message=None):
     )
 
 
+def get_minimum_redaction_replacements(foirequest: FoiRequest):
+    replacements = dict(get_secret_url_replacements())
+    pattern = re.compile(re.escape(foirequest.secret_address))
+    replacements[pattern] = str(_("<<email address>>"))
+    return replacements
+
+
+def apply_minimum_redaction(foirequest: FoiRequest, plaintext: str) -> str:
+    replacements = get_minimum_redaction_replacements(foirequest)
+    plaintext = apply_text_replacements(plaintext, replacements)
+    return plaintext
+
+
 def redact_plaintext_with_request(
     plaintext, foirequest, redact_greeting=False, redact_closing=False
 ):
@@ -184,11 +193,14 @@ def redact_plaintext_with_request(
 
 
 def construct_initial_message_body(
-    foirequest,
-    text="",
-    foilaw=None,
-    full_text=False,
-    send_address=True,
+    foirequest: FoiRequest,
+    text: str = "",
+    foilaw: Optional[FoiLaw] = None,
+    full_text: bool = False,
+    send_address: bool = True,
+    attachment_names: Optional[List[str]] = None,
+    attachment_missing: Optional[List[str]] = None,
+    proof: Optional["ProofAttachment"] = None,
     template="foirequest/emails/mail_with_userinfo.txt",
 ):
     if full_text:
@@ -204,13 +216,35 @@ def construct_initial_message_body(
             letter_end=letter_end,
             name=foirequest.user.get_full_name(),
         )
+    return construct_message_body(
+        foirequest,
+        text=body,
+        send_address=send_address,
+        attachment_names=attachment_names,
+        attachment_missing=attachment_missing,
+        proof=proof,
+        template=template,
+    )
 
+
+def construct_message_body(
+    foirequest: FoiRequest,
+    text: str,
+    send_address: bool = True,
+    attachment_names: Optional[List[str]] = None,
+    attachment_missing: Optional[List[str]] = None,
+    template: str = "foirequest/emails/mail_with_userinfo.txt",
+    proof: Optional["ProofAttachment"] = None,
+):
     return render_to_string(
         template,
         {
             "request": foirequest,
-            "body": body,
+            "body": text,
+            "attachment_names": attachment_names,
+            "attachment_missing": attachment_missing,
             "send_address": send_address,
+            "proof": proof,
         },
     )
 
@@ -307,7 +341,7 @@ def send_request_user_email(
     add_idmark=True,
     priority=True,
     start_thread=False,
-    **kwargs
+    **kwargs,
 ):
     if not foirequest.user:
         return
@@ -335,7 +369,7 @@ def send_request_user_email(
         context=context,
         priority=priority,
         headers=headers,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -383,7 +417,6 @@ def get_publicbody_emails(publicbody: PublicBody, include_mediator=True):
 def get_emails_from_request_iterator(
     foirequest, include_mediator=True
 ) -> Iterator[PublicBodyEmailInfo]:
-
     if foirequest.public_body:
         # Get emails from public body / mediator
         yield from get_publicbody_emails(
@@ -545,6 +578,14 @@ def cancel_user(sender, user=None, **kwargs):
     permanently_anonymize_requests(user_foirequests.select_related("user"))
 
 
+def depublish_requests(user, **kwargs):
+    from .models import FoiRequest
+
+    user_foirequests = FoiRequest.objects.filter(user=user)
+    user_foirequests.update(visibility=FoiRequest.VISIBILITY.INVISIBLE)
+    update_foirequest_index(FoiRequest.objects.filter(user=user))
+
+
 def delete_foirequest_emails_from_imap(user_foirequests) -> int:
     from .foi_mail import get_foi_mail_client
 
@@ -588,6 +629,9 @@ def rerun_message_redaction(foirequests):
 def permanently_anonymize_requests(foirequests):
     from .models import FoiAttachment
 
+    # Old secret address contained plus, new dot, split by either
+    SECRET_ADDRESS_SPLITTER = re.compile(r"[\.\+]")
+
     replacements = {
         "name": str(_("<information-removed>")),
         "email": str(_("<information-removed>")),
@@ -600,18 +644,18 @@ def permanently_anonymize_requests(foirequests):
         foirequest.closed = True
         # Cut off name part of secret address
         foirequest.secret_address = "~" + ".".join(
-            foirequest.secret_address.split(".")[2:]
+            SECRET_ADDRESS_SPLITTER.split(foirequest.secret_address)[2:]
         )
         foirequest.save()
         user = foirequest.user
         user_replacements = user.get_redactions(replacements)
         user.private = True
         for message in foirequest.messages:
-
-            message.plaintext_redacted = redact_user_strings(
-                message.plaintext_redacted,
-                user_replacements=user_replacements,
-            )
+            if message.plaintext_redacted:
+                message.plaintext_redacted = redact_user_strings(
+                    message.plaintext_redacted,
+                    user_replacements=user_replacements,
+                )
             message.plaintext = redact_user_strings(
                 message.plaintext,
                 user_replacements=user_replacements,
@@ -683,7 +727,6 @@ def add_ical_events(foirequest, cal):
         foirequest.resolution
         in (foirequest.RESOLUTION.PARTIALLY_SUCCESSFUL, foirequest.RESOLUTION.REFUSED)
     ):
-
         responses = foirequest.response_messages()
         if responses:
             appeal_deadline = foirequest.law.calculate_due_date(
@@ -707,12 +750,12 @@ def add_ical_events(foirequest, cal):
 def export_user_data(user):
     from froide.helper.api_utils import get_fake_api_context
 
-    from .api_views import (
+    from .models import FoiAttachment, FoiProject
+    from .serializers import (
         FoiAttachmentSerializer,
         FoiMessageSerializer,
         FoiRequestListSerializer,
     )
-    from .models import FoiAttachment, FoiProject
 
     ctx = get_fake_api_context()
     foirequests = user.foirequest_set.all().iterator()
@@ -857,3 +900,101 @@ def select_foirequest_template(foirequest, base_template: str):
 
     templates.append(base_template)
     return templates
+
+
+ZIP_BLOCK_LIST = {"__MACOSX", ".DS_Store"}
+PATH_REPLACEMENT = "___"  # 3 underscores
+
+
+def unpack_zipfile_attachment(attachment: FoiAttachment):
+    import magic
+    from filingcabinet.services import remove_common_root_path
+
+    file_obj = attachment.file
+
+    if not zipfile.is_zipfile(file_obj):
+        return
+
+    with zipfile.ZipFile(file_obj, "r") as zf:
+        zip_paths = []
+        for zip_info in zf.infolist():
+            if zip_info.is_dir():
+                continue
+            path = PurePath(zip_info.filename)
+            parts = path.parts
+            if parts[0] in ZIP_BLOCK_LIST:
+                continue
+            zip_paths.append(path)
+        if not zip_paths:
+            return
+
+        doc_paths = remove_common_root_path(zip_paths)
+        names = set(
+            attachment.belongs_to.foiattachment_set.all().values_list("name", flat=True)
+        )
+        for doc_path, zip_path in zip(doc_paths, zip_paths, strict=False):
+            attachment_name = PATH_REPLACEMENT.join(doc_path.parts)
+            attachment_name = make_unique_filename(attachment_name, names)
+            names.add(attachment_name)
+
+            file_obj = BytesIO(zf.read(str(zip_path)))
+            content_type = magic.from_buffer(file_obj.read(1024), mime=True)
+            file_obj.seek(0)
+
+            new_attachment = FoiAttachment(
+                belongs_to=attachment.belongs_to,
+                name=attachment_name,
+                size=file_obj.getbuffer().nbytes,
+                filetype=content_type,
+                can_approve=not attachment.belongs_to.request.not_publishable,
+            )
+            new_attachment.file.save(attachment_name, File(file_obj))
+
+
+def postal_date(
+    message: FoiMessage, specified_date: datetime.date | None = None
+) -> datetime.datetime:
+    if specified_date is None:
+        specified_date = message.timestamp.date()
+
+    # Note: this can be off by a day in certain cases,
+    # like between client's midnight and server's midnight:
+    # client sends 01-02T00:00+2:00 = server sees 01-01T22:00Z,
+    # which then becomes 01-01T12:00+2:00
+    # We mostly send "noon day(s) ago", which should be safe.
+    # To solve this, the server would need to know the client's (message's) timezone.
+    uploaded_date_midday = datetime.datetime.combine(
+        specified_date,
+        datetime.time(12, 00, 00),
+        tzinfo=timezone.get_current_timezone(),
+    )
+
+    # The problem we have when uploading postal messages is that they do not have a time, so we
+    # need to invent one. 12am is a good assumption, however if we already have messages on this
+    # date, we need to add it *after* all those messages
+    # Example: User sends a foi request on 2011-01-01 at 3pm, the public body is fast and sends
+    # out the reply letter on the same day. If we would assume 12am as the letter time, we would
+    # place the postal reply earlier than the users message
+    possible_message_timestamps = [
+        msg.timestamp + datetime.timedelta(seconds=1)
+        for msg in message.request.messages
+        if msg.timestamp.date() == specified_date
+    ] + [uploaded_date_midday]
+
+    postal_date = max(possible_message_timestamps)
+
+    # If the last message on that date was sent out 1 sec before midnight, there is no good way
+    # to place the postal reply, so just assume midday
+    if postal_date.date() != specified_date:
+        return uploaded_date_midday
+    else:
+        return postal_date
+
+
+def find_attachment_name(name: str, message_id: int) -> str:
+    attachment_names = set(
+        FoiAttachment.objects.filter(belongs_to_id=message_id).values_list(
+            "name", flat=True
+        )
+    )
+    return make_unique_filename(name, attachment_names)

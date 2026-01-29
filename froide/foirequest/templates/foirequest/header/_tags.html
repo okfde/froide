@@ -1,0 +1,69 @@
+{% load i18n %}
+{% load foirequest_tags %}
+{% with object.tags.all as tags %}
+    {% if tags or object|can_write_foirequest:request %}
+        <div class="request-tags mt-3 mb-3">
+            <div id="request-tags-list">
+                {# tags list #}
+                {% if tags %}
+                    <div class="request-tags-list">
+                        <ul class="list-unstyled d-flex flex-wrap mb-0">
+                            {% for tag in tags %}
+                                <li class="me-2 smaller">
+                                    <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
+                                        <i class="fa fa-tags" aria-hidden="true"></i>
+                                        <span>{{ tag.name }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            <li class="me-2 smaller">
+                                {% if object|can_write_foirequest:request %}
+                                    <a href="#"
+                                       data-inlineedit="#request-tags-form"
+                                       data-inlineeditpresentation="#request-tags-list">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                        <span class="visually-hidden">{% trans "Edit tags" %}</span>
+                                    </a>
+                                    <span data-bs-toggle="tooltip"
+                                          title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
+                                        <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                                        <span class="visually-hidden">{% translate "What does this mean?" %}</span>
+                                    </span>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if not tags and object|can_write_foirequest:request %}
+                    <a href="#" data-inlineedit="#request-tags-form">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        {% trans "Add tags" %}
+                    </a>
+                    <span data-bs-toggle="tooltip"
+                          title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
+                        <i class="fa fa-question-circle-o" aria-hidden="true"></i>
+                        <span class="visually-hidden">{% translate "What does this mean?" %}</span>
+                    </span>
+                {% endif %}
+            </div>
+            <!-- tags form-->
+            {% if object|can_write_foirequest:request %}
+                <div class="request-tags-form mb-3 d-none"
+                     id="request-tags-form"
+                     data-autofocus=".choices__input.choices__input--cloned">
+                    <form method="post"
+                          action="{% url 'foirequest-set_tags' slug=object.slug %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            {% with object.get_set_tags_form as set_tags_form %}{{ set_tags_form.tags }}{% endwith %}
+                        </div>
+                        <button class="btn btn-sm btn-primary" type="submit">{% trans "Save" %}</button>
+                        <button class="btn btn-sm btn-secondary"
+                                data-inlineeditcancel="true"
+                                type="button">{% trans "Cancel" %}</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endwith %}

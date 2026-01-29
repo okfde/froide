@@ -8,7 +8,8 @@
           type="radio"
           :data-label="publicBody.name"
           :name="name"
-          :value="publicBody.id" />
+          :value="publicBody.id"
+        />
         <label class="form-check-label">
           {{ publicBody.name }}
           <small>
@@ -21,18 +22,31 @@
       <li
         v-for="result in searchResults"
         :key="result.id"
-        class="search-result">
+        class="search-result"
+      >
         <div class="form-check">
+          <!-- TODO: escape could/should "reset" -->
           <input
             v-model="value"
             type="radio"
             class="form-check-input"
             :data-label="result.name"
+            :data-resource-uri="result.resource_uri"
             :name="name"
             :value="result.id"
-            @change="selectSearchResult"
-            @click="selectSearchResult" />
-          <label class="form-check-label">
+            :id="`pb_${this.scope}_${result.id}`"
+            tabindex="0"
+            @change="selectSearchResult($event, false)"
+            @click="selectSearchResult($event, true)"
+            @keydown.enter.prevent="clear"
+            @keydown.space.prevent="clear"
+          />
+          <!-- clearDelayed prevents in some browser the change on input not firing -->
+          <label
+            class="form-check-label"
+            @click="clearDelayed"
+            :for="`pb_${this.scope}_${result.id}`"
+          >
             {{ result.name }}
             <small>
               {{ result.jurisdiction.name }}
@@ -78,19 +92,38 @@ export default {
           publicBody: this.getPublicBody(value),
           scope: this.scope
         })
-        this.clearSearchResults({ scope: this.scope })
       }
     }
   },
   methods: {
-    selectSearchResult(event) {
+    selectSearchResult(event, doClear) {
+      // keyboard navigation (arrow keys) can send a fake click event
+      // it can be distinguished by detail attribute,
+      // which usually holds the amount of clicks (e.g. 2 for a double click)
+      // should this not suffice, we could check clientX === 0
+      if (event.type === 'click' && event.detail === 0) {
+        return
+      }
       this.value = event.target.value
+      this.$emit('update', {
+        id: event.target.value,
+        resourceUri: event.target.dataset.resourceUri
+      })
+      if (doClear) this.clear()
+    },
+    clear() {
+      this.clearSearchResults({ scope: this.scope })
+    },
+    clearDelayed() {
+      setTimeout(() => this.clear(), 100)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../../styles/variables';
+
 .search-results {
   overflow-y: auto;
   outline: 1px solid #aaa;
@@ -101,25 +134,17 @@ export default {
 }
 
 .search-result:hover {
-  background-color: #f5f5f5;
+  background-color: var(--#{$prefix}light-bg-subtle);
+  color: var(--#{$prefix}light-text-emphasis);
 }
 
 .search-result.selected {
-  background-color: #dff0d8;
+  background-color: var(--#{$prefix}body-secondary-bg);
 }
 
-.search-result > label {
-  font-weight: normal;
+.form-check label {
+  display: block;
   cursor: pointer;
-}
-
-.search-result > label > small {
-  margin-left: 5px;
-  color: #999;
-}
-
-.search-result > label > input {
-  margin: 0 5px;
 }
 
 /* Enter and leave animations can use different */

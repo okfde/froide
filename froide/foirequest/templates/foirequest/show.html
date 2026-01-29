@@ -1,5 +1,4 @@
 {% extends 'foirequest/base.html' %}
-
 {% load i18n %}
 {% load static %}
 {% load markup %}
@@ -9,100 +8,93 @@
 {% load block_helper %}
 {% load frontendbuild %}
 {% load humanize %}
-
 {% block title %}{{ object.title }}{% endblock %}
-
 {% block metadescription %}{{ object.get_description }}{% endblock %}
-
 {% block extra_head %}
-  {% if not object.is_foi or object.same_as %}
-    <meta name="robots" content="noindex"/>
-  {% endif %}
-
-  {# Open Graph / Facebook #}
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
-  <meta property="og:title" content="{{ object.title }}">
-  <meta property="og:description" content="{{ object.get_description }}">
-
-
-  {# Twitter #}
-  <meta property="twitter:url" content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
-  <meta property="twitter:title" content="{{ object.title }}">
-  <meta property="twitter:description" content="{{ object.get_description }}">
-  {% block share_image %}
-    <meta property="twitter:card" content="summary">
-    {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
-  {% endblock share_image %}
-
-  <link rel="self" type="text/html" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
-  {% if DEFAULT_LANGUAGE_CODE != CURRENT_LANGUAGE_CODE %}
-    {% language DEFAULT_LANGUAGE_CODE %}
-      <link rel="alternate" hreflang="{{ DEFAULT_LANGUAGE_CODE }}" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
-    {% endlanguage %}
-  {% else %}
-    <link rel="canonical" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
-    <link rel="alternate nofollow" href="{{ SITE_URL }}{% url 'foirequest-feed' slug=object.slug %}" type="application/rss+xml" title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
-    <link rel="alternate nofollow" href="{{ SITE_URL }}{% url 'foirequest-feed_atom' slug=object.slug %}" type="application/atom+xml" title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" />
-    {% for lang_code, language in LANGUAGES %}
-      {% if lang_code != CURRENT_LANGUAGE_CODE %}
-        {% language lang_code %}
-          <link rel="alternate" hreflang="{{ lang_code }}" href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}"/>
+    {% if not object.is_foi or object.same_as or object.no_index %}<meta name="robots" content="noindex" />{% endif %}
+    {% if not object.no_index %}
+        {# Open Graph / Facebook #}
+        <meta property="og:type" content="website">
+        <meta property="og:url"
+              content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
+        <meta property="og:title" content="{{ object.title }}">
+        <meta property="og:description" content="{{ object.get_description }}">
+        {# Twitter #}
+        <meta property="twitter:url"
+              content="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}">
+        <meta property="twitter:title" content="{{ object.title }}">
+        <meta property="twitter:description" content="{{ object.get_description }}">
+        {% block share_image %}
+            <meta property="twitter:card" content="summary">
+            {% if SITE_LOGO %}<meta property="og:image" content="{{ SITE_LOGO }}">{% endif %}
+        {% endblock share_image %}
+    {% endif %}
+    <link rel="self"
+          type="text/html"
+          href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}" />
+    {% if DEFAULT_LANGUAGE_CODE != CURRENT_LANGUAGE_CODE %}
+        {% language DEFAULT_LANGUAGE_CODE %}
+            <link rel="alternate"
+                  hreflang="{{ DEFAULT_LANGUAGE_CODE }}"
+                  href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}" />
         {% endlanguage %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-
-  {% if object|can_write_foirequest:request %}
-    {% with object.get_set_tags_form as set_tags_form %}
-      {{ set_tags_form.media.css }}
-    {% endwith %}
-  {% endif %}
+    {% else %}
+        <link rel="canonical"
+              href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}" />
+        <link rel="alternate nofollow"
+              href="{{ SITE_URL }}{% url 'foirequest-feed' slug=object.slug %}"
+              type="application/rss+xml"
+              title="{% blocktrans with title=object.title %}RSS Feed for request '{{ title }}'{% endblocktrans %}">
+        <link rel="alternate nofollow"
+              href="{{ SITE_URL }}{% url 'foirequest-feed_atom' slug=object.slug %}"
+              type="application/atom+xml"
+              title="{% blocktrans with title=object.title %}Atom feed for request '{{ title }}'{% endblocktrans %}" />
+        {% for lang_code, language in LANGUAGES %}
+            {% if lang_code != CURRENT_LANGUAGE_CODE %}
+                {% language lang_code %}
+                    <link rel="alternate"
+                          hreflang="{{ lang_code }}"
+                          href="{{ SITE_URL }}{% url 'foirequest-show' slug=object.slug %}" />
+                {% endlanguage %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    {% if object|can_write_foirequest:request %}
+        {% with object.get_set_tags_form as set_tags_form %}{{ set_tags_form.media.css }}{% endwith %}
+    {% endif %}
 {% endblock %}
-
-
 {% block body %}
-  {% block app_body %}
-
-    {# breadcrumb #}
-    <div class="bg-gray-100">
-      {% include "foirequest/header/breadcrumb.html" %}
-    </div>
-
-    {# header,  #}
-    <div class="bg-gray-100 bg-gray-100-header">
-      {% include "foirequest/header/header.html" %}
-
-      {% include "foirequest/header/tabs.html" %}
-    </div>
-
-    {# body, tabs content #}
-    {% include "foirequest/body/body.html" %}
-
-  {% endblock app_body %}
+    {% block app_body %}
+        {# breadcrumb #}
+        <div class="bg-body-tertiary">{% include "foirequest/header/breadcrumb.html" %}</div>
+        {# header,  #}
+        <div class="bg-body-tertiary">
+            {% include "foirequest/header/header.html" %}
+            {% include "foirequest/header/tabs.html" %}
+        </div>
+        {% if show_withdrawal_popup %}
+            {% include "foirequest/snippets/withdrawal_popup.html" %}
+        {% endif %}
+        {# body, tabs content #}
+        {% include "foirequest/body/body.html" %}
+    {% endblock app_body %}
 {% endblock body %}
-
 {% block scripts %}
-  {{ block.super }}
-  {% if object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
-    {% addfrontendbuild "tagautocomplete.js" %}
-
-    {% if foirequest_requestpage_tour %}
-      {% addtoblock "js" %}
-        {{ foirequest_requestpage_tour|json_script:"foirequest_requestpage_tour" }}
-      {% endaddtoblock %}
+    {{ block.super }}
+    {% if object|can_write_foirequest:request or object|can_moderate_foirequest:request %}
+        {% addfrontendbuild "tagautocomplete.js" %}
+        {% if foirequest_requestpage_tour %}
+            {% addtoblock "js" %}
+            {{ foirequest_requestpage_tour|json_script:"foirequest_requestpage_tour" }}
+        {% endaddtoblock %}
     {% endif %}
     {% if foirequest_messagereceived_tour %}
-      {% addtoblock "js" %}
+        {% addtoblock "js" %}
         {{ foirequest_messagereceived_tour|json_script:"foirequest_messagereceived_tour" }}
-      {% endaddtoblock %}
-    {% endif %}
-
-    {% addfrontendbuild "publicbody.js" %}
-    {% addfrontendbuild "messageredaction.js" %}
-
-  {% endif %}
-
-  {% addfrontendbuild "request.js" %}
-
+    {% endaddtoblock %}
+{% endif %}
+{% addfrontendbuild "publicbody.js" %}
+{% addfrontendbuild "messageredaction.js" %}
+{% endif %}
+{% addfrontendbuild "request.js" %}
 {% endblock %}

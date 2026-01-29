@@ -1,17 +1,21 @@
 import json
 import logging
 import re
+from functools import partial
 
 from django.contrib import messages
+from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import Http404, get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from django.utils.translation import pgettext
 from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 
 from crossdomainmedia import CrossDomainMediaMixin
 
+from froide.helper.auth import is_crew
 from froide.helper.utils import is_ajax, render_400, render_403
 
 from ..auth import (
@@ -36,7 +40,7 @@ def show_attachment(request, slug, message_id, attachment_name):
     try:
         attachment = FoiAttachment.objects.get_for_message(message, attachment_name)
     except FoiAttachment.DoesNotExist:
-        raise Http404
+        raise Http404 from None
 
     if not has_attachment_access(request, foirequest, attachment):
         if attachment.redacted and has_attachment_access(
@@ -62,13 +66,14 @@ def show_attachment(request, slug, message_id, attachment_name):
     )
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_or_moderate_pii_foirequest
 def approve_attachment(request, foirequest, attachment_id):
     att = get_object_or_404(
         FoiAttachment, id=attachment_id, belongs_to__request=foirequest
     )
-    if not att.can_approve and not request.user.is_staff:
+    if not att.can_approve and not is_crew(request.user):
         return render_403(request)
 
     # hard guard against publishing of non publishable requests
@@ -91,6 +96,7 @@ def approve_attachment(request, foirequest, attachment_id):
     return redirect(att.get_anchor_url())
 
 
+# TODO: move this to API
 @require_POST
 @allow_moderate_pii_foirequest
 def mark_attachment_as_moderated(request, foirequest, attachment_id):
@@ -116,6 +122,7 @@ def mark_attachment_as_moderated(request, foirequest, attachment_id):
     return redirect(att.get_anchor_url())
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_foirequest
 def delete_attachment(request, foirequest, attachment_id):
@@ -143,6 +150,7 @@ def delete_attachment(request, foirequest, attachment_id):
     return redirect(message.get_absolute_url())
 
 
+# TODO: remove in favor of API endpoint
 @require_POST
 @allow_write_or_moderate_pii_foirequest
 def create_document(request, foirequest, attachment_id):
@@ -181,13 +189,15 @@ class AttachmentFileDetailView(CrossDomainMediaMixin, DetailView):
     media_auth_class = AttachmentCrossDomainMediaAuth
 
     def get_object(self):
-        self.message = get_object_or_404(FoiMessage, id=int(self.kwargs["message_id"]))
+        self.message = get_object_or_404(
+            FoiMessage.with_drafts, id=int(self.kwargs["message_id"])
+        )
         try:
             return FoiAttachment.objects.get_for_message(
                 self.message, self.kwargs["attachment_name"]
             )
         except FoiAttachment.DoesNotExist:
-            raise Http404
+            raise Http404 from None
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -244,8 +254,11 @@ def get_redact_context(foirequest, attachment):
             ),
             "redactAndPublish": _("Save redaction"),
             "publishWithoutRedaction": _("No redaction needed"),
+            "removeAllRedaction": _("Remove all redaction"),
             "toggleText": _("Text only"),
             "disableText": _("Hide text"),
+            "redact": _("Redact"),
+            "moveTool": pgettext("redact tool", "Move"),
             "cancel": _("Cancel"),
             "undo": _("Undo"),
             "redo": _("Redo"),
@@ -338,7 +351,9 @@ def redact_attachment(request, foirequest, attachment_id):
             attachment.approved = False
             attachment.save()
 
-        redact_attachment_task.delay(attachment.id, att.id, instructions)
+        transaction.on_commit(
+            partial(redact_attachment_task.delay, attachment.id, att.id, instructions)
+        )
 
         att.attachment_redacted.send(
             sender=att,

@@ -1,3 +1,6 @@
+$header-bg-rgb: var(--#{$prefix}tertiary-bg-rgb);
+$header-bg: var(--#{$prefix}tertiary-bg);
+
 .request-title {
   margin-bottom: 0;
   margin-top: $spacer * 1.5;
@@ -34,7 +37,7 @@
   left: 0;
   right: 0;
   padding-top: 80px;
-  background-image: linear-gradient(to bottom, rgba($gray-100, 0), $gray-100);
+  background-image: linear-gradient(to bottom, rgba($header-bg-rgb, 0), $header-bg);
 }
 
 @mixin hover-focus() {
@@ -64,7 +67,7 @@
   }
   // &__subtitle {}
   &__icon {
-    background-color: $white;
+    background-color: var(--#{$prefix}body-bg);
     border-radius: 50%;
     width: 44px;
     height: 44px;
@@ -73,7 +76,7 @@
     background-size: 30px;
   }
   &__body {
-    background-color: $gray-100;
+    background-color: var(--#{$prefix}tertiary-bg);
   }
   &__list {
     list-style-type: none;
@@ -86,7 +89,7 @@
       margin: $y-spacing-desktop $x-spacing-desktop;
     }
     a .fa-question-circle-o {
-      color: $blue-800;
+      color: var(--#{$prefix}primary-text-emphasis);
     }
     p {
       margin: 0;
@@ -109,8 +112,8 @@
       }
     }
     &--is-danger {
-      color: darken($red, 7%);
-      background-color: #ffdcd4;
+      color: var(--#{$prefix}danger-text-emphasis);
+      background-color: var(--#{$prefix}danger-bg-subtle);
       padding-top: $y-spacing-mobile;
       padding-bottom: $y-spacing-mobile;
       @include media-breakpoint-up(lg) {
@@ -118,7 +121,7 @@
         padding-bottom: $y-spacing-desktop;
       }
       a .fa-question-circle-o {
-        color: darken($red, 7%);
+        color: var(--#{$prefix}danger-text-emphasis);
       }
     }
   }
@@ -131,51 +134,51 @@
     Info-box theme regular
   */
   &--regular {
-    border: 2px solid $gray-300;
-    box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
+    border: 2px solid var(--#{$prefix}secondary-bg-subtle);
+    box-shadow: 6px 6px 0px rgba(var(--#{$prefix}secondary-bg-rgb), 0.76);
   }
   &--regular &__header {
-    background-color: $gray-300;
+    background-color: var(--#{$prefix}secondary-bg-subtle);
   }
   &--regular &__title {
-    color: $blue-800;
+    color: var(--#{$prefix}secondary-text-emphasis);
   }
   &--regular &__subtitle {
-    color: $gray-700;
+    color: var(--#{$prefix}secondary-text-emphasis);
   }
 
   /*
     Info-box theme danger
   */
   &--danger {
-    border: 2px solid $red;
-    box-shadow: 6px 6px 0px rgba(255, 220, 212, 0.7);
+    border: 2px solid var(--#{$prefix}danger-bg-subtle);
+    box-shadow: 6px 6px 0px rgba(var(--#{$prefix}danger-bg-subtle-rgb), 0.76);
   }
   &--danger &__header {
-    background-color: $red;
+    background-color: var(--#{$prefix}danger-bg-subtle);
   }
   &--danger &__title {
-    color: $white;
+    color: var(--#{$prefix}danger-text-emphasis);
   }
   &--danger &__subtitle {
-    color: $white;
+    color: var(--#{$prefix}danger-text-emphasis);
   }
 
   /*
     Info-box thesme success
   */
   &--success {
-    border: 2px solid $green;
-    box-shadow: 6px 6px 0px rgba(232, 235, 240, 0.76);
+    border: 2px solid var(--#{$prefix}success-bg-subtle);
+    box-shadow: 6px 6px 0px rgba(var(--#{$prefix}success-bg-subtle-rgb), 0.76);
   }
   &--success &__header {
-    background-color: $green;
+    background-color: var(--#{$prefix}success-bg-subtle);
   }
   &--success &__title {
-    color: $white;
+    color: var(--#{$prefix}success-text-emphasis);
   }
   &--success &__subtitle {
-    color: $white;
+    color: var(--#{$prefix}success-text-emphasis);
   }
 }
 
@@ -187,8 +190,8 @@
   -ms-overflow-style: -ms-autohiding-scrollbar;
 
   background-image:
-    /* Shadows */ linear-gradient(to right, $gray-100, $gray-100),
-    linear-gradient(to right, $gray-100, $gray-100),
+    /* Shadows */ linear-gradient(to right, $header-bg, $header-bg),
+    linear-gradient(to right, $header-bg, $header-bg),
     /* Shadow covers */ linear-gradient(to right, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0)),
     linear-gradient(to left, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0));
 
@@ -207,7 +210,7 @@
     display: flex;
     align-items: center;
     padding: $spacer * 0.625 $spacer;
-    color: $blue-800;
+    color: var(--#{$prefix}body-emphasis);
     font-weight: 600;
     font-size: $font-size-base;
     border-bottom: 2px solid transparent;
@@ -216,10 +219,10 @@
       text-decoration: none;
     }
     &:hover {
-      border-bottom-color: $gray-300;
+      border-bottom-color: var(--#{$prefix}body-emphasis);
     }
     &.active {
-      border-bottom-color: $blue-600;
+      border-bottom-color: var(--#{$prefix}primary);
     }
     @include media-breakpoint-up(sm) {
       padding: $spacer * 0.625 $spacer;
@@ -236,14 +239,14 @@
     margin-left: $spacer * 0.25;
     font-size: 10px;
     line-height: 1;
-    color: $gray-700;
-    background-color: #d7dee5;
+    color: var(--#{$prefix}secondary-color);
+    background-color: var(--#{$prefix}secondary-bg);
     border-radius: 50%;
     min-width: 20px;
     height: 20px;
     &--highlight {
-      color: $gray-800;
-      background-color: $yellow-200;
+      color: var(--#{$prefix}warning-color);
+      background-color: var(--#{$prefix}warning-color);
     }
   }
 }

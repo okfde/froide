@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("team", "0002_auto_20180111_1347"),
         ("document", "0017_document_pending"),

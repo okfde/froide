@@ -1,3 +1,4 @@
+@use 'sass:map';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/mixins';
 
@@ -49,13 +50,15 @@ $danger: $red;
 $light: $gray-200;
 $dark: $gray-800;
 
-$yiq-text-dark: $blue-800;
-$yiq-text-light: $white;
+$color-contrast-dark: $blue-800;
+$color-contrast-light: $white;
 
 $body-color: $black;
-$navbar-light-color: $black;
+$body-color-dark: $gray-400;
+
 $component-active-color: $white;
 $component-active-bg: $primary;
+$body-tertiary-color: rgba($body-color, 0.75);
 
 // spacing
 $spacer: 1rem;
@@ -83,14 +86,17 @@ $spacers: (
 // Define the maximum width of `.container` for different screen sizes.
 $container-max-widths: (
   sm: 540px,
+  // changed from original Bootstrap 720px for extra space!
   md: 780px,
   lg: 960px,
-  xl: 1140px
+  xl: 1140px,
+  xxl: 1320px
 );
 
 // Typography
 $btn-font-weight: 600;
-$badge-font-weight: 600;
+$btn-box-shadow: 0 0 0 transparent; // shadow only when focused or active
+$badge-font-weight: 400;
 
 $link-decoration: none;
 $link-hover-decoration: underline;
@@ -107,15 +113,41 @@ $box-shadow-yellow: 2px 2px 0 transparentize($yellow-300, 0.85);
 
 @import 'bootstrap/scss/variables';
 
-:root {
-  --shadow-blue: #{transparentize($blue-30, 0.85)};
-  --shadow-gray: #{transparentize($gray-300, 0.6)};
-  --shadow-yellow: #{transparentize($yellow-300, 0.85)};
-}
+$froide-theme: ('subtle', 'highlight', 'callout');
 
-/* Bootstrap theme end*/
+$highlight: var(--froide-highlight-bg);
+$highlight-color: var(--froide-highlight-color);
 
-// Other colors
-$highlight-yellow: #fffc78;
+$froide-theme-light: (
+  'subtle': (
+    'bg': $blue-100,
+    'color': $blue-800
+  ),
+  'highlight': (
+    'bg': $yellow-100,
+    'color': $blue-800
+  ),
+  'callout': (
+    'bg': $blue-10,
+    'color': $blue-800
+  )
+);
 
-$breadcrumb-divider: quote('›');
+$froide-theme-dark: (
+  'subtle': (
+    'bg': $blue-900,
+    'color': $white
+  ),
+  'highlight': (
+    'bg': $yellow-300,
+    'color': $blue-900
+  ),
+  'callout': (
+    'bg': $blue-800,
+    'color': $white
+  )
+);
+
+$breadcrumb-divider: quote('→');
+
+$enable-smooth-scroll: false;

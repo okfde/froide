@@ -1,39 +1,35 @@
-// interface IHTMLToolTipElement extends HTMLInputElement { Tooltip: any | null; }
+interface IHTMLToolTipElement extends HTMLInputElement {
+  Tooltip: any | null
+}
 
 export default class InfoBox {
   element: HTMLElement
-  editButton: HTMLElement | undefined
-  copyUrlTrigger: HTMLElement | undefined
-  editPanel: HTMLElement | undefined
-  infoList: HTMLElement | undefined
-  editPanelIsVisible: boolean | undefined
+  editButton: HTMLElement | null
+  copyUrlTrigger: HTMLElement | null
+  editPanel: HTMLElement | null
+  infoList: HTMLElement | null
+  editPanelIsVisible = false
 
   constructor() {
     this.element = document.getElementById('infobox') as HTMLElement
 
     this.editButtonClickCallback = this.editButtonClickCallback.bind(this)
     // edit button listener
-    this.editButton = this.element.querySelector(
-      '.info-box__edit-button'
-    ) as HTMLElement
-    if (this.editButton) {
-      this.editPanel = this.element.querySelector(
-        '.info-box__edit-panel'
-      ) as HTMLElement
-      this.editPanelIsVisible = false
-      this.infoList = this.element.querySelector(
-        '.info-box__list'
-      ) as HTMLElement
+    this.editButton = this.element.querySelector('.info-box__edit-button')
+    if (this.editButton != null) {
+      this.editPanel = this.element.querySelector('.info-box__edit-panel')
+      this.infoList = this.element.querySelector('.info-box__list')
 
       // event listeners
       this.editButton.addEventListener('click', this.editButtonClickCallback)
+    } else {
+      this.editPanel = null
+      this.infoList = null
     }
 
     // copy short url listener
-    this.copyUrlTrigger = this.element.querySelector(
-      '.copy-short-url-trigger'
-    ) as HTMLElement
-    if (this.copyUrlTrigger) {
+    this.copyUrlTrigger = this.element.querySelector('.copy-short-url-trigger')
+    if (this.copyUrlTrigger != null) {
       this.copyUrlTrigger.addEventListener(
         'click',
         this.copyShortUrlTriggerClickCallback.bind(this)

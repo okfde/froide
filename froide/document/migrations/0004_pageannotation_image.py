@@ -8,7 +8,6 @@ import filingcabinet.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0003_auto_20180521_1619"),
     ]

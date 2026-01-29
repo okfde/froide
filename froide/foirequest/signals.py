@@ -5,9 +5,13 @@ from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+
 from froide.helper.email_sending import mail_registry
 from froide.helper.signals import email_left_queue
 
+from .consumers import MESSAGEEDIT_ROOM_PREFIX
 from .models import (
     DeliveryStatus,
     FoiAttachment,
@@ -76,7 +80,7 @@ def trigger_index_update(klass, instance_pk):
 def send_notification_became_overdue(sender, **kwargs):
     req_url = sender.user.get_autologin_url(sender.get_absolute_short_url())
     upload_url = sender.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", sender)
+        short_request_url("foirequest-upload_postal_message_create", sender)
     )
     send_request_user_email(
         became_overdue_email,
@@ -98,7 +102,7 @@ def send_notification_became_overdue(sender, **kwargs):
 def send_notification_became_asleep(sender, **kwargs):
     req_url = sender.user.get_autologin_url(sender.get_absolute_short_url())
     upload_url = sender.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", sender)
+        short_request_url("foirequest-upload_postal_message_create", sender)
     )
 
     send_request_user_email(
@@ -119,9 +123,8 @@ def send_notification_became_asleep(sender, **kwargs):
 
 @receiver(FoiRequest.message_received, dispatch_uid="notify_user_message_received")
 def notify_user_message_received(sender, message=None, **kwargs):
-    if message.received_by_user:
-        # All non-email/upload received messages the user actively contributed
-        # Don't inform them about it
+    if kwargs.get("user") == sender.user:
+        # If the same user has uploaded this, don't notify
         return
 
     send_request_user_email(
@@ -197,49 +200,6 @@ def send_foiproject_created_confirmation(sender, **kwargs):
     )
 
 
-@receiver(FoiRequest.message_sent, dispatch_uid="send_foimessage_sent_confirmation")
-def send_foimessage_sent_confirmation(sender, message=None, **kwargs):
-    if message.is_not_email:
-        # All non-email sent messages are not interesting to users.
-        # Don't inform them about it.
-        return
-    if kwargs.get("bulk"):
-        # Don't notify on bulk message sending
-        return
-
-    messages = sender.get_messages()
-    start_thread = False
-    if len(messages) == 1:
-        if sender.project_id is not None:
-            # Don't notify on first message in a project
-            return
-        subject = _("Your Freedom of Information Request was sent")
-        mail_intent = confirm_foi_request_sent_email
-        action_url = sender.get_absolute_domain_short_url()
-        start_thread = True
-    else:
-        subject = _("Your message was sent")
-        mail_intent = confirm_foi_message_sent_email
-        action_url = message.get_absolute_domain_short_url()
-
-    upload_url = sender.user.get_autologin_url(
-        short_request_url("foirequest-upload_postal_message", sender)
-    )
-
-    context = {
-        "foirequest": sender,
-        "user": sender.user,
-        "publicbody": message.recipient_public_body,
-        "message": message,
-        "action_url": action_url,
-        "upload_action_url": upload_url,
-    }
-
-    send_request_user_email(
-        mail_intent, sender, subject=subject, context=context, start_thread=start_thread
-    )
-
-
 # Updating public body request counts
 @receiver(
     FoiRequest.request_to_public_body, dispatch_uid="foirequest_increment_request_count"
@@ -311,23 +271,27 @@ def foiattachment_delayed_remove(instance, **kwargs):
 
 
 @receiver(FoiRequest.message_sent, dispatch_uid="create_event_message_sent")
-def create_event_message_sent(sender, message, user=None, **kwargs):
+def create_event_message_sent(sender, message, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_SENT,
         sender,
         message=message,
         user=user,
+        request=request,
         public_body=message.recipient_public_body,
     )
 
 
 @receiver(FoiRequest.message_received, dispatch_uid="create_event_message_received")
-def create_event_message_received(sender, message=None, user=None, **kwargs):
+def create_event_message_received(
+    sender, message=None, user=None, request=None, **kwargs
+):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.MESSAGE_RECEIVED,
         sender,
         message=message,
         user=user,
+        request=request,
         public_body=message.sender_public_body,
     )
 
@@ -362,11 +326,14 @@ def create_event_followers_attachments_redacted(sender, user=None, **kwargs):
     FoiAttachment.attachment_deleted,
     dispatch_uid="create_event_followers_attachment_deleted",
 )
-def create_event_followers_attachments_attachment_deleted(sender, user=None, **kwargs):
+def create_event_followers_attachments_attachment_deleted(
+    sender, user=None, request=None, **kwargs
+):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.ATTACHMENT_DELETED,
         sender.belongs_to.request,
         user=user,
+        request=request,
         attachment_id=sender.id,
     )
 
@@ -375,21 +342,37 @@ def create_event_followers_attachments_attachment_deleted(sender, user=None, **k
     FoiAttachment.document_created,
     dispatch_uid="create_event_followers_attachment_document_created",
 )
-def create_event_followers_attachments_document_created(sender, user=None, **kwargs):
+def create_event_followers_attachments_document_created(
+    sender, user=None, request=None, **kwargs
+):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.DOCUMENT_CREATED,
         sender.belongs_to.request,
         user=user,
+        request=request,
         attachment_id=sender.id,
     )
 
 
+@receiver(
+    FoiAttachment.attachment_available,
+    dispatch_uid="broadcast_attachment_available",
+)
+def broadcast_attachment_available(sender, **kwargs):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        MESSAGEEDIT_ROOM_PREFIX.format(sender.belongs_to_id),
+        {"type": "attachment_available", "attachment": sender.id},
+    )
+
+
 @receiver(FoiRequest.status_changed, dispatch_uid="create_event_status_changed")
-def create_event_status_changed(sender, user=None, **kwargs):
+def create_event_status_changed(sender, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
         FoiEvent.EVENTS.STATUS_CHANGED,
         sender,
         user=user,
+        request=request,
         status=kwargs.get("status", ""),
         resolution=kwargs.get("resolution", ""),
         costs=kwargs["data"].get("costs"),
@@ -399,12 +382,21 @@ def create_event_status_changed(sender, user=None, **kwargs):
     )
 
 
-@receiver(FoiRequest.made_public, dispatch_uid="create_event_made_public")
-def create_event_made_public(sender, user=None, **kwargs):
+@receiver(FoiRequest.costs_reported, dispatch_uid="create_event_costs_reported")
+def create_event_costs_reported(sender: FoiRequest, user=None, request=None, **kwargs):
     FoiEvent.objects.create_event(
-        FoiEvent.EVENTS.MADE_PUBLIC,
+        FoiEvent.EVENTS.REPORTED_COSTS,
         sender,
         user=user,
+        request=request,
+        costs=kwargs.get("costs"),
+    )
+
+
+@receiver(FoiRequest.made_public, dispatch_uid="create_event_made_public")
+def create_event_made_public(sender, user=None, request=None, **kwargs):
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.MADE_PUBLIC, sender, user=user, request=request
     )
 
 
@@ -470,6 +462,8 @@ def pre_comment_foimessage(sender=None, comment=None, request=None, **kwargs):
 def save_delivery_status(
     message_id: Optional[str], status: str, log: List[str], **kwargs
 ):
+    from froide.problem.models import ProblemReport
+
     if message_id is None or not message_id.startswith("<{}".format(MESSAGE_ID_PREFIX)):
         return
 
@@ -478,11 +472,91 @@ def save_delivery_status(
     except FoiMessage.DoesNotExist:
         return
 
-    DeliveryStatus.objects.update_or_create(
+    delivery_status, _ = DeliveryStatus.objects.update_or_create(
         message=message,
         defaults={
             "log": "".join(log),
             "status": status,
             "last_update": timezone.now(),
         },
+    )
+
+    if status == "sent":
+        send_foimessage_sent_confirmation(message)
+    elif delivery_status.is_failed():
+        if not ProblemReport.objects.filter(
+            message=message, kind=ProblemReport.PROBLEM.BOUNCE_PUBLICBODY
+        ).exists():
+            ProblemReport.objects.report(
+                message=message,
+                kind=ProblemReport.PROBLEM.BOUNCE_PUBLICBODY,
+                description=delivery_status.log,
+                auto_submitted=True,
+            )
+
+
+def send_foimessage_sent_confirmation(message: FoiMessage = None, **kwargs):
+    request = message.request
+    if message.is_not_email:
+        # All non-email sent messages are not interesting to users.
+        # Don't inform them about it.
+        return
+    if message.is_bulk:
+        # Don't notify on bulk message sending
+        return
+
+    if message.confirmation_sent:
+        # Don't send a second confirmation for this message
+        return
+
+    messages = request.get_messages()
+    start_thread = False
+    if len(messages) >= 1 and message == messages[0]:
+        if request.project_id is not None:
+            # Don't notify on first message in a project
+            return
+        subject = _("Your Freedom of Information Request was sent")
+        mail_intent = confirm_foi_request_sent_email
+        action_url = request.get_absolute_domain_short_url()
+        start_thread = True
+    else:
+        subject = _("Your message was sent")
+        mail_intent = confirm_foi_message_sent_email
+        action_url = message.get_absolute_domain_short_url()
+
+    upload_url = request.user.get_autologin_url(
+        short_request_url("foirequest-upload_postal_message_create", request)
+    )
+
+    context = {
+        "foirequest": request,
+        "user": request.user,
+        "publicbody": message.recipient_public_body,
+        "message": message,
+        "action_url": action_url,
+        "upload_action_url": upload_url,
+    }
+
+    send_request_user_email(
+        mail_intent,
+        request,
+        subject=subject,
+        context=context,
+        start_thread=start_thread,
+    )
+
+    message.confirmation_sent = True
+    message.save(update_fields=["confirmation_sent"])
+
+
+@receiver(
+    signals.post_save, sender=FoiAttachment, dispatch_uid="broadcast_attachment_added"
+)
+def broadcast_attachment_added(instance, created=False, **kwargs):
+    if not created or kwargs.get("raw", False):
+        return
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        MESSAGEEDIT_ROOM_PREFIX.format(instance.belongs_to_id),
+        {"type": "attachment_added", "attachment": instance.id},
     )

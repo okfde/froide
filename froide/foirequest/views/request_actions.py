@@ -13,6 +13,7 @@ from django.views.generic import UpdateView
 
 from froide.account.forms import AddressForm, NewUserForm
 from froide.foirequest.forms.project import AssignProjectForm
+from froide.foirequest.forms.request import RedactDescriptionForm
 from froide.helper.auth import can_manage_object
 from froide.helper.utils import get_redirect, is_ajax, render_400, render_403
 from froide.team.views import AssignTeamView
@@ -24,7 +25,7 @@ from ..auth import (
     check_foirequest_upload_code,
     get_read_foirequest_queryset,
 )
-from ..decorators import allow_write_foirequest
+from ..decorators import allow_write_foirequest, allow_write_or_moderate_pii_foirequest
 from ..forms import (
     ApplyModerationForm,
     ConcreteLawForm,
@@ -106,13 +107,12 @@ def set_status(request, slug):
     if not can_write_foirequest(foirequest, request):
         if not can_moderate_foirequest(foirequest, request):
             return render_403(request)
-        else:
-            if not foirequest.moderate_classification():
-                return render_403(request)
 
     form = FoiRequestStatusForm(request.POST, foirequest=foirequest)
     if form.is_valid():
         form.save(user=request.user)
+        if form.cleaned_data["resolution"] in ("user_withdrew", "user_withdrew_costs"):
+            request.session["show_withdrawal_popup"] = foirequest.id
         response = registry.run_hook(
             "post_status_set",
             request,
@@ -457,3 +457,18 @@ def publicbody_upload(request, obj_id, code):
         "foirequest/publicbody_upload.html",
         {"authenticated": True, "foirequest": foirequest, "config": config},
     )
+
+
+@require_POST
+@allow_write_or_moderate_pii_foirequest
+def redact_description(request, foirequest):
+    form = RedactDescriptionForm(request.POST)
+    if form.is_valid():
+        form.save(request, foirequest)
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.DESCRIPTION_REDACTED,
+            foirequest,
+            user=request.user,
+            **form.cleaned_data,
+        )
+    return redirect(foirequest.get_absolute_url())

@@ -7,9 +7,10 @@
 const HEARTBEAT_SECONDS = 30
 const RETRY_SECONDS = 3
 
-interface CallbackMapping {
-  [key: string]: Function[]
-}
+type AppData = Record<string, unknown>
+type Callback = (data: AppData) => void
+
+type CallbackMapping = Record<string, Callback[]>
 
 interface EventData {
   type: string
@@ -21,9 +22,10 @@ class Room {
   private socket: WebSocket | null = null
   private retryInterval: number | null = null
   private heartBeatInterval: number | null = null
-  private closed = true
+  private socketClosed = true
   private callbacks: CallbackMapping = {}
   private queue: EventData[] = []
+  private onUnloadHandler: EventListener | null = null
   private readonly heartbeatSeconds: number
   private readonly retrySeconds: number
 
@@ -48,14 +50,16 @@ class Room {
     this.clearRetry()
 
     this.socket.onopen = () => {
-      this.closed = false
+      this.socketClosed = false
       this.setupHeartbeat()
       this.queue.forEach((d) => {
         if (this.socket != null) {
           this.socket.send(JSON.stringify(d))
         }
       })
-      window.addEventListener('beforeunload', this.onunload)
+      // provide this binding to onunload; keep handle around for removing in onclose
+      this.onUnloadHandler = () => this.onunload()
+      window.addEventListener('beforeunload', this.onUnloadHandler)
       this.queue = []
     }
     this.socket.onmessage = (e) => {
@@ -63,13 +67,13 @@ class Room {
       this.trigger(data.type, data)
     }
     this.socket.onerror = (e) => {
-      console.error(e)
+      console.info('websocket error', e)
     }
     this.socket.onclose = () => {
       this.clearHeartbeat()
-      window.removeEventListener('beforeunload', this.onunload)
-      if (!this.closed) {
-        console.error('Socket closed unexpectedly. Retrying...')
+      window.removeEventListener('beforeunload', this.onUnloadHandler!)
+      if (!this.socketClosed) {
+        console.info('Socket closed unexpectedly. Retrying...')
         this.setupRetry()
       }
     }
@@ -77,8 +81,8 @@ class Room {
   }
 
   onunload(): void {
-    if (!this.closed) {
-      this.close()
+    if (!this.socketClosed) {
+      this.closeSocket()
     }
   }
 
@@ -90,13 +94,13 @@ class Room {
     }
   }
 
-  on(event: string, callback: Function): this {
+  on(event: string, callback: Callback): this {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event].push(callback)
     return this
   }
 
-  off(event: string, callback: Function): this {
+  off(event: string, callback: Callback): this {
     this.callbacks[event] = this.callbacks[event] || []
     this.callbacks[event] = this.callbacks[event].filter(
       (cb) => cb !== callback
@@ -104,7 +108,7 @@ class Room {
     return this
   }
 
-  trigger(event: string, data: Object): void {
+  trigger(event: string, data: AppData): void {
     if (!this.callbacks[event]) {
       return
     }
@@ -113,8 +117,8 @@ class Room {
     })
   }
 
-  close(): void {
-    this.closed = true
+  closeSocket(): void {
+    this.socketClosed = true
     if (this.socket != null) {
       this.socket.close()
     }

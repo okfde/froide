@@ -30,7 +30,8 @@
               <button
                 @click="() => markModerated(att)"
                 class="btn btn-dark"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.markModerated }}
               </button>
             </div>
@@ -64,15 +65,13 @@ const getMessageUrl = (templ, att) => {
 export default {
   name: 'ModerationAttachments',
   props: {
-    config: {
-      type: Object,
-      required: true
-    },
     attachments: {
       type: Array,
       required: true
     }
   },
+  emits: ['resolved'],
+  inject: ['config', 'csrfToken'],
   computed: {
     i18n() {
       return this.config.i18n
@@ -91,12 +90,9 @@ export default {
       postData(
         getRedactionUrl(this.config.url.mark_attachment_as_moderated, att),
         {},
-        this.$root.csrfToken
+        this.csrfToken
       ).then(() => {
-        const index = this.attachments.findIndex((x) => x.id === att.id)
-        if (index !== -1) {
-          this.$delete(this.attachments, index)
-        }
+        this.$emit('resolved', att)
       })
     }
   }

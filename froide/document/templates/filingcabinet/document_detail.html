@@ -1,54 +1,46 @@
 {% extends "filingcabinet/document_detail.html" %}
-
 {% load i18n %}
 {% load markup %}
 {% load frontendbuild %}
 {% load document_tags %}
-
 {% block document_top %}
-<div class="container mt-3 mb-5">
-    <h2 id="document-title">
-      {{ object.title }}
-      {% if object|can_write_document:request %}
-        <a href="#" data-inlineedit="#document-title-form" data-inlineeditpresentation="#document-title">
-          <i class="fa fa-pencil" aria-hidden="true"></i>
-          <span class="visually-hidden">{% trans "Edit title" %}</span>
-        </a>
-      {% endif %}
-    </h2>
-
-
-    {% if object|can_write_document:request %}
-      {% include 'filingcabinet/_set_title_form.html' with form_id='document-title-form' %}
-      {% include 'filingcabinet/_set_description_form.html' with form_id='document-description-form' %}
-    {% endif %}
-
-    {% if not object.public %}
-      <span class="badge text-bg-secondary">{% trans "private" %}</span>
-    {% endif %}
-    {% if object.description %}
-      <div id="document-description">
-         {{ object.description|markdown }} 
-      </div>
-    {% endif %}
-    {% if object|can_write_document:request %}
-      <a href="#" data-inlineedit="#document-description-form" data-inlineeditpresentation="#document-description">
-        <i class="fa fa-pencil" aria-hidden="true"></i>
-        <span>{% trans "Edit description" %}</span>
-      </a>
-    {% endif %}
-
-    {% if object.foirequest %}
-      <p>
-        {% blocktrans with title=object.foirequest.title request_url=object.foirequest.get_absolute_url %}
+    <div class="container mt-3 mb-5">
+        <h2 id="document-title">
+            {{ object.title }}
+            {% if object|can_write_document:request %}
+                <a href="#"
+                   data-inlineedit="#document-title-form"
+                   data-inlineeditpresentation="#document-title">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                    <span class="visually-hidden">{% trans "Edit title" %}</span>
+                </a>
+            {% endif %}
+        </h2>
+        {% if object|can_write_document:request %}
+            {% include 'filingcabinet/_set_title_form.html' with form_id='document-title-form' %}
+            {% include 'filingcabinet/_set_description_form.html' with form_id='document-description-form' %}
+        {% endif %}
+        {% if not object.public %}
+            <span class="badge text-bg-secondary">{% trans "private" %}</span>
+        {% endif %}
+        {% if object.description %}<div id="document-description">{{ object.description|markdown }}</div>{% endif %}
+        {% if object|can_write_document:request %}
+            <a href="#"
+               data-inlineedit="#document-description-form"
+               data-inlineeditpresentation="#document-description">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+                <span>{% trans "Edit description" %}</span>
+            </a>
+        {% endif %}
+        {% if object.foirequest %}
+            <p>
+                {% blocktrans with title=object.foirequest.title request_url=object.foirequest.get_absolute_url %}
         This document is part of the request ”<a href="{{ request_url }}">{{ title }}</a>”.
         {% endblocktrans %}
-      </p>
-      {% if object.foirequest.campaign %}
-        <div class="my-3">
-          {% include object.foirequest.campaign.banner_templates with object=object.foirequest %}
-        </div>
-      {% endif %}
-    {% endif %}
-</div>
+            </p>
+            {% if object.foirequest.campaign %}
+                <div class="my-3">{% include object.foirequest.campaign.banner_templates with object=object.foirequest %}</div>
+            {% endif %}
+        {% endif %}
+    </div>
 {% endblock document_top %}

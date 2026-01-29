@@ -25,7 +25,6 @@ def convert_change_proposals(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0040_alter_foilaw_options_alter_category_slug_and_more"),
     ]

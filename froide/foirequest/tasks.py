@@ -1,18 +1,25 @@
 import logging
 import os
+from collections.abc import Collection
+from datetime import timedelta
+from functools import partial
 
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.core.mail import mail_managers
 from django.db import transaction
-from django.utils import translation
+from django.utils import timezone, translation
 from django.utils.translation import gettext_lazy as _
 
 from celery.exceptions import SoftTimeLimitExceeded
+
 from froide.celery import app as celery_app
+from froide.foirequest.models.event import FoiEvent
+from froide.foirequest.utils import find_attachment_name
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
-from .foi_mail import _fetch_mail, _process_mail
+from .foi_mail import _fetch_mail, _process_mail, get_foi_mail_client
 from .models import FoiAttachment, FoiProject, FoiRequest
 from .notifications import batch_update_requester, send_classification_reminder
 
@@ -57,13 +64,6 @@ def classification_reminder():
     translation.activate(settings.LANGUAGE_CODE)
     for foirequest in FoiRequest.objects.get_unclassified():
         send_classification_reminder(foirequest)
-
-
-@celery_app.task
-def check_delivery_status(message_id, count=None, extended=False):
-    # Keep until task queue is empty
-    # Replaced with froide.helper.tasks.check_mail_log
-    pass
 
 
 @celery_app.task
@@ -144,6 +144,38 @@ def create_project_message(foirequest_id, user_id, **form_data):
         form.save(user=user, bulk=True)
 
 
+@celery_app.task
+def set_project_request_status_bulk(foirequest_ids, user_id, **form_data):
+    for req_id in foirequest_ids:
+        set_project_request_status.delay(req_id, user_id, **form_data)
+
+
+@celery_app.task
+def set_project_request_status(foirequest_id, user_id, **form_data):
+    from django.contrib.auth import get_user_model
+
+    from froide.foirequest.forms.request import FoiRequestStatusForm
+
+    User = get_user_model()
+
+    try:
+        foirequest = FoiRequest.objects.get(id=foirequest_id)
+    except FoiRequest.DoesNotExist:
+        # request does not exist anymore?
+        return
+    assert foirequest.project
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return
+
+    # Set foirequest status via form
+    form = FoiRequestStatusForm(foirequest=foirequest, data=form_data)
+    if form.is_valid():
+        form.save(user=user)
+
+
 @celery_app.task(name="froide.foirequest.tasks.convert_attachment_task", time_limit=60)
 def convert_attachment_task(instance_id):
     try:
@@ -175,9 +207,12 @@ def ocr_pdf_attachment(att):
     att.approved = False
     att.save()
 
-    ocr_pdf_task.delay(
-        att.pk,
-        ocred_att.pk,
+    transaction.on_commit(
+        partial(
+            ocr_pdf_task.delay,
+            att.pk,
+            ocred_att.pk,
+        )
     )
 
 
@@ -207,6 +242,12 @@ def convert_attachment(att):
             can_approve=att.can_approve,
         )
 
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_CONVERTED,
+            att.belongs_to.request,
+            originals=[att.id],
+        )
+
     new_file = ContentFile(output_bytes)
     new_att.size = new_file.size
     new_att.file.save(new_att.name, new_file)
@@ -217,6 +258,7 @@ def convert_attachment(att):
     att.save()
 
 
+# TODO: remove this once no longer needed in views/message.py
 @celery_app.task(
     name="froide.foirequest.tasks.convert_images_to_pdf_task",
     time_limit=60 * 5,
@@ -248,6 +290,51 @@ def convert_images_to_pdf_task(att_ids, target_id, instructions, can_approve=Tru
     target.size = new_file.size
     target.file.save(target.name, new_file)
     target.save()
+
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ATTACHMENT_CONVERTED,
+        target.belongs_to.request,
+        originals=att_ids,
+    )
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.convert_images_to_pdf_api_task",
+    time_limit=60 * 5,
+    soft_time_limit=60 * 4,
+)
+def convert_images_to_pdf_api_task(
+    attachments: Collection[FoiAttachment],
+    target: FoiAttachment,
+    instructions,
+    can_approve=True,
+):
+    from filingcabinet.pdf_utils import convert_images_to_ocred_pdf
+
+    paths = [a.file.path for a in attachments]
+
+    try:
+        pdf_bytes = convert_images_to_ocred_pdf(paths, instructions=instructions)
+    except SoftTimeLimitExceeded:
+        pdf_bytes = None
+
+    if pdf_bytes is None:
+        FoiAttachment.objects.filter(id__in=[a.id for a in attachments]).update(
+            can_approve=can_approve
+        )
+        target.delete()
+        return
+
+    new_file = ContentFile(pdf_bytes)
+    target.size = new_file.size
+    target.file.save(target.name, new_file)
+    target.save()
+
+    FoiEvent.objects.create_event(
+        FoiEvent.EVENTS.ATTACHMENT_CONVERTED,
+        target.belongs_to.request,
+        originals=[a.id for a in attachments],
+    )
 
 
 @celery_app.task(
@@ -327,10 +414,12 @@ def redact_attachment_task(att_id, target_id, instructions):
         if attachment.redacted:
             attachment.redacted = None
         if attachment.is_redacted:
-            attachment.approved = True
+            if instructions["auto_approve"]:
+                attachment.approve_and_save()
             attachment.can_approve = True
         attachment.pending = False
         attachment.save()
+        FoiAttachment.attachment_available.send(sender=attachment)
 
         if not target.file:
             target.delete()
@@ -364,8 +453,12 @@ def redact_attachment_task(att_id, target_id, instructions):
 
     target.can_approve = True
     target.pending = False
-    target.approve_and_save()
-    FoiAttachment.attachment_approved.send(sender=target, user=None, redacted=True)
+    FoiAttachment.attachment_available.send(sender=target)
+    if instructions.get("auto_approve"):
+        target.approve_and_save()
+        FoiAttachment.attachment_approved.send(sender=target, user=None, redacted=True)
+    else:
+        target.save()
 
 
 @celery_app.task(name="froide.foirequest.tasks.move_upload_to_attachment")
@@ -386,6 +479,97 @@ def move_upload_to_attachment(att_id, upload_id):
         att.file.save(att.name, file, save=True)
     upload.finish()
     upload.delete()
+    if file:
+        FoiAttachment.attachment_available.send(sender=att)
 
     if att.can_convert_to_pdf():
         convert_attachment_task.delay(att.id)
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.unpack_zipfile_attachment_task", time_limit=360
+)
+def unpack_zipfile_attachment_task(instance_id):
+    from .utils import unpack_zipfile_attachment
+
+    try:
+        att = FoiAttachment.objects.get(pk=instance_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    unpack_zipfile_attachment(att)
+
+
+@celery_app.task(name="froide.foirequest.tasks.remove_old_drafts", time_limit=10)
+def remove_old_drafts():
+    from .models import FoiAttachment, FoiMessageDraft, MessageKind
+
+    # FIXME: remove? We should keep drafts around, especially when drafts are also used
+    # for drafting email messages
+    draft_messages_to_be_deleted = FoiMessageDraft.objects.filter(
+        is_draft=True,
+        kind=MessageKind.POST,
+        last_modified_at__lt=timezone.now() - timedelta(days=30),
+    )
+    attachments = FoiAttachment.objects.filter(
+        belongs_to__in=draft_messages_to_be_deleted
+    )
+    for att in attachments:
+        att.remove_file_and_delete()
+
+    draft_messages_to_be_deleted.delete()
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.warn_on_unprocessed_mail", time_limit=120
+)
+def warn_on_unprocessed_mail():
+    with get_foi_mail_client() as client:
+        status, count = client.select("Inbox")
+        typ, [msg_ids] = client.search(None, "FLAGGED")
+        if len(msg_ids) > 0:
+            mail_managers(
+                _("Unprocessed FOI Mail: {count}").format(count=len(msg_ids)),
+                _("There are unprocessed FOI Mails, inform system administrators!"),
+            )
+
+
+@celery_app.task(
+    name="froide.foirequest.tasks.decrypt_pdf_attachment_task", time_limit=600
+)
+def decrypt_pdf_attachment_task(att_id, password):
+    from filingcabinet.pdf_utils import decrypt_pdf
+    from filingcabinet.utils import get_local_file
+
+    try:
+        att = FoiAttachment.objects.get(pk=att_id)
+    except FoiAttachment.DoesNotExist:
+        return
+
+    if not att.is_pdf:
+        return
+
+    with get_local_file(att.file.path) as file_path:
+        output_bytes = decrypt_pdf(file_path, password)
+
+    if output_bytes is None:
+        return
+
+    name, ext = os.path.splitext(att.name)
+    name = _("{name}_decrypted{ext}").format(name=name, ext=".pdf")
+    name = find_attachment_name(name, att.belongs_to)
+
+    decrypted_att = FoiAttachment.objects.create(
+        name=name,
+        belongs_to=att.belongs_to,
+        approved=False,
+        filetype="application/pdf",
+        is_converted=True,
+        can_approve=att.can_approve,
+    )
+    new_file = ContentFile(output_bytes)
+    decrypted_att.size = new_file.size
+    decrypted_att.file.save(att.name, new_file, save=True)
+
+    att.converted = decrypted_att
+    att.save()

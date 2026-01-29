@@ -4,12 +4,13 @@ from filingcabinet.models import (
     AbstractDocument,
     AbstractDocumentCollection,
     CollectionDocument,
+    Page,
+    get_page_image_filename,
 )
 from filingcabinet.models import (
     DocumentCollectionManager as FCDocumentCollectionManager,
 )
 from filingcabinet.models import DocumentManager as FCDocumentManager
-from filingcabinet.models import Page, get_page_image_filename
 
 from froide.helper.auth import (
     can_read_object_authenticated,
@@ -130,7 +131,15 @@ class DocumentCollection(AbstractDocumentCollection):
     )
     foirequests = models.ManyToManyField("foirequest.FoiRequest", blank=True)
 
+    allow_zip_download = models.BooleanField(default=True)
+
     objects = DocumentCollectionManager()
+
+    def get_zip_download_url(self):
+        if self.allow_zip_download:
+            return super().get_zip_download_url()
+        else:
+            return ""
 
     def is_public(self):
         return self.public

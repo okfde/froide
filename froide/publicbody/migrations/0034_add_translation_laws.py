@@ -8,7 +8,6 @@ import parler.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0033_auto_20210203_1554"),
     ]

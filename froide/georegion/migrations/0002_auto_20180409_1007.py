@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("georegion", "0001_initial_squashed_0004_auto_20180307_2026"),
     ]

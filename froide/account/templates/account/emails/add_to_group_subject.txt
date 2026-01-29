@@ -1,0 +1,1 @@
+{% load i18n %}{% blocktrans with group_name=group.name %}{{ site_name }}: Added to group "{{ group_name }}"{% endblocktrans %}

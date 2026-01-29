@@ -1,4 +1,4 @@
-import { postData, putData, getData } from '../../../lib/api.js'
+import { getData, postData, putData } from '../../../lib/api.js'
 
 const deleteAttachment = (doc, config, csrf) => {
   const deleteUrl = config.url.deleteAttachment.replace('/0/', `/${doc.id}/`)
@@ -23,9 +23,9 @@ const createDocument = (doc, config, csrf) => {
   })
 }
 
-const updateDocument = (doc, config, csrf, payload) => {
+const updateDocument = (doc, _config, csrf, payload) => {
   const updateUrl = doc.attachment.document.resource_uri
-  return putData(updateUrl, payload, csrf).then((data) => {
+  return putData(updateUrl, payload, csrf).then(() => {
     return getData(updateUrl)
   })
 }
@@ -39,7 +39,7 @@ const DocumentMixin = {
           this.document,
           this.config,
           this.$root.csrfToken
-        ).then((data) => {
+        ).then(() => {
           this.$emit('docupdated', null)
         })
       }
@@ -87,4 +87,4 @@ const DocumentMixin = {
   }
 }
 
-export { DocumentMixin, deleteAttachment, approveAttachment, createDocument }
+export { DocumentMixin, approveAttachment, createDocument, deleteAttachment }

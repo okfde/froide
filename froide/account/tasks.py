@@ -1,12 +1,15 @@
 from typing import Any, Iterator
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db.models.query import QuerySet
 from django.utils import translation
 
+from oauth2_provider.models import clear_expired as clear_expired_oauth2_tokens
+
 from froide.celery import app as celery_app
 
-from .models import User
+User = get_user_model()
 
 
 @celery_app.task
@@ -63,6 +66,7 @@ def account_maintenance_task():
     delete_deactivated_users()
     delete_all_expired_exports()
     delete_expired_onetime_login_tokens()
+    clear_expired_oauth2_tokens()
 
 
 @celery_app.task

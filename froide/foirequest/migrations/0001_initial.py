@@ -8,7 +8,6 @@ import froide.foirequest.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("taggit", "0001_initial"),
     ]

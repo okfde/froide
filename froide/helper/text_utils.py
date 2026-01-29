@@ -10,9 +10,11 @@ from django.utils.translation import gettext_lazy as _
 
 from slugify import slugify as _slugify
 
+from .text_diff import get_diff_chunks
+
 try:
     from lxml import html as html_parser
-    from lxml.html import HtmlElement
+    from lxml.html import HtmlElement, HTMLParser
 except ImportError:
     html_parser = None
 
@@ -87,6 +89,7 @@ def split_text_by_separator(
 
 
 Replacements = List[Union[Tuple[str, str], Tuple[Pattern[str], str]]]
+ReplacementsDict = Dict[Union[str, Pattern[str]], str]
 
 
 def redact_user_strings(content: str, user_replacements: Replacements) -> str:
@@ -108,12 +111,21 @@ def redact_subject(
     return content[:255]
 
 
+def apply_text_replacements(content: str, replacements: ReplacementsDict) -> str:
+    for key, val in replacements.items():
+        if isinstance(key, re.Pattern):
+            content = key.sub(val, content)
+        else:
+            content = content.replace(key, val)
+    return content
+
+
 def redact_plaintext(
     content: Union[str, SafeString],
     redact_greeting: bool = False,
     redact_closing: bool = False,
     user_replacements: Optional[Replacements] = None,
-    replacements: Optional[Dict[Union[str, Pattern[str]], str]] = None,
+    replacements: Optional[ReplacementsDict] = None,
 ) -> str:
     content = redact_content(content)
 
@@ -129,11 +141,7 @@ def redact_plaintext(
         content = redact_user_strings(content, user_replacements)
 
     if replacements is not None:
-        for key, val in replacements.items():
-            if isinstance(key, re.Pattern):
-                content = key.sub(val, content)
-            else:
-                content = content.replace(key, val)
+        content = apply_text_replacements(content, replacements)
 
     return content
 
@@ -158,7 +166,7 @@ def replace_word(needle: str, replacement: str, content: str) -> str:
         r"(^|[\W_])%s($|[\W_])" % re.escape(needle),
         "\\1%s\\2" % replacement,
         content,
-        re.U | re.I,
+        flags=re.U | re.I,
     )
 
 
@@ -283,7 +291,8 @@ def convert_html_to_text(html_str: str, ignore_tags: None = None) -> str:
     if html_parser is None:
         return strip_tags(html_str)
 
-    root = html_parser.fromstring(html_str)
+    parser = HTMLParser(encoding="utf-8")
+    root = html_parser.fromstring(html_str.encode("utf-8"), parser=parser)
     try:
         body = root.xpath("./body")[0]
     except IndexError:
@@ -319,3 +328,27 @@ def convert_element(
                 repl_tag = html_parser.Element("span")
                 repl_tag.text = replacement
                 el.getparent().replace(el, repl_tag)
+
+
+def apply_user_redaction(original, instructions, length):
+    REDACTION_MARKER = str(_("[redacted]"))
+
+    if not instructions:
+        return original
+
+    chunks = get_diff_chunks(original)
+
+    # Sanity check chunk length
+    if len(chunks) != length:
+        raise IndexError
+
+    for index in instructions:
+        chunks[index] = REDACTION_MARKER
+
+    redacted = "".join(chunks)
+    # Replace multiple connecting redactions with one
+    return re.sub(
+        "{marker}(?: {marker})+".format(marker=re.escape(REDACTION_MARKER)),
+        REDACTION_MARKER,
+        redacted,
+    )

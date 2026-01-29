@@ -9,6 +9,7 @@ class OrganizationMembershipInline(admin.StackedInline):
     raw_id_fields = ("user",)
 
 
+@admin.register(Organization)
 class OrganizationAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ("name", "website", "member_count", "show_in_list")
@@ -19,6 +20,3 @@ class OrganizationAdmin(admin.ModelAdmin):
     @admin.action(description=_("Show selected organizations in public list"))
     def show_in_list(self, request, queryset):
         queryset.update(show_in_list=True)
-
-
-admin.site.register(Organization, OrganizationAdmin)

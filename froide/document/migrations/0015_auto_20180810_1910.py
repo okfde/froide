@@ -15,7 +15,6 @@ def set_fields_from_original(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0014_auto_20180810_1908"),
     ]

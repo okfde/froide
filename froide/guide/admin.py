@@ -7,6 +7,7 @@ from .models import Action, Guidance, Rule
 from .utils import notify_guidance
 
 
+@admin.register(Rule)
 class RuleAdmin(admin.ModelAdmin):
     list_display = ("name", "priority", "is_active")
     list_filter = ("priority", "is_active")
@@ -15,6 +16,7 @@ class RuleAdmin(admin.ModelAdmin):
     raw_id_fields = ("publicbodies", "categories")
 
 
+@admin.register(Action)
 class ActionAdmin(admin.ModelAdmin):
     list_display = ("name", "label", "mail_intent", "tag", "letter_template")
     search_fields = (
@@ -28,6 +30,7 @@ class ActionAdmin(admin.ModelAdmin):
         return qs
 
 
+@admin.register(Guidance)
 class GuidanceAdmin(admin.ModelAdmin):
     raw_id_fields = (
         "message",
@@ -47,11 +50,7 @@ class GuidanceAdmin(admin.ModelAdmin):
         qs = qs.prefetch_related("message", "action")
         return qs
 
+    @admin.action(description=_("Send notification about selected guidance items"))
     def send_notification(self, request, queryset):
         for guidance in queryset:
             notify_guidance(guidance)
-
-
-admin.site.register(Rule, RuleAdmin)
-admin.site.register(Action, ActionAdmin)
-admin.site.register(Guidance, GuidanceAdmin)

@@ -1,23 +1,29 @@
 {
   "compilerOptions": {
-    "lib": ["DOM", "ESNext"],
-    "module": "esnext",
-    "moduleResolution": "node",
-    "target": "es6",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "preserve",
+    "allowJs": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitAny": true,
-    "downlevelIteration": true
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "./frontend/javascript/**/*"
-  ],
-  "exclude": [
-    "node_modules"
+    "./frontend/**/*",
+    "vite.config.ts",
+    "openapi-ts.config.ts"
   ]
 }

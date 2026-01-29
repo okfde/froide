@@ -2,11 +2,12 @@ import calendar
 import datetime
 
 from django import template
+from django.conf import settings
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.formats import date_format
 from django.utils.html import avoid_wrapping
 from django.utils.http import urlencode
-from django.utils.timezone import is_aware, utc
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext_lazy, pgettext
 
@@ -58,11 +59,12 @@ def relativetime(d):
     https://docs.djangoproject.com/en/3.0/ref/templates/builtins/#date
     """
 
+    d = timezone.localtime(d)
     # Convert datetime.date to datetime.datetime for comparison.
     if not isinstance(d, datetime.datetime):
         d = datetime.datetime(d.year, d.month, d.day)
 
-    now = datetime.datetime.now(utc if is_aware(d) else None)
+    now = timezone.now()
     delta = now - d
 
     # Deal with leapyears by subtracing the number of leapdays
@@ -102,7 +104,16 @@ def relativetime(d):
 
 @register.filter
 def make_login_redirect_url(url):
-    return reverse("account-login") + "?" + urlencode({"next": url})
+    return reverse(settings.LOGIN_URL) + "?" + urlencode({"next": url})
+
+
+@register.filter
+def startswith(haystack, needle):
+    if not isinstance(haystack, str):
+        return False
+    if not isinstance(needle, str):
+        return False
+    return haystack.startswith(needle)
 
 
 @register.filter

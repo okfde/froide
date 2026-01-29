@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from froide.helper.widgets import BootstrapSelect
 
+from . import team_changed
 from .models import Team, TeamMembership
 from .services import TeamService
 
@@ -104,6 +105,11 @@ class AssignTeamForm(forms.Form):
 
     def save(self):
         team = self.cleaned_data["team"]
+        old_team = self.instance.team
         self.instance.team = team
         self.instance.save()
+
+        if old_team != team:
+            team_changed.send(sender=self.instance, team=team, old_team=old_team)
+
         return self.instance

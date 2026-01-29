@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin.filters import SimpleListFilter
 from django.contrib.admin.options import IncorrectLookupParameters
-from django.contrib.admin.utils import get_model_from_relation, prepare_lookup_value
+from django.contrib.admin.utils import get_model_from_relation
 from django.contrib.admin.widgets import AdminDateWidget
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import models
@@ -23,12 +23,12 @@ from .forms import TagObjectForm, get_fake_fk_form_class
 
 
 def make_choose_object_action(model_or_queryset, callback, label):
-    if issubclass(model_or_queryset, models.Model):
+    if isinstance(model_or_queryset, models.QuerySet):
+        model = model_or_queryset.model
+        filter_qs = model_or_queryset
+    else:
         model = model_or_queryset
         filter_qs = None
-    else:
-        filter_qs = model_or_queryset
-        model = model_or_queryset.model
 
     def action(model_admin, request, queryset):
         # Check that the user has change permission for the actual model
@@ -44,6 +44,13 @@ def make_choose_object_action(model_or_queryset, callback, label):
                 callback(model_admin, request, queryset, action_obj)
                 model_admin.message_user(request, _("Successfully executed."))
                 return None
+            else:
+                model_name = model._meta.verbose_name
+                msg = _("Please enter a valid %(model_name)s ID.") % {
+                    "model_name": model_name
+                }
+                model_admin.message_user(request, msg, level="error")
+                form = Form()
         else:
             form = Form()
 
@@ -66,12 +73,23 @@ def make_choose_object_action(model_or_queryset, callback, label):
     return action
 
 
+def apply_tags_to_queryset(tags, queryset, field="tags"):
+    for obj in queryset:
+        if callable(field):
+            field(obj, tags)
+        else:
+            getattr(obj, field).add(*tags)
+        obj.save()
+
+
 def make_batch_tag_action(
     action_name="tag_all",
     field="tags",
     autocomplete_url=None,
     short_description=None,
     template="admin_utils/admin_tag_all.html",
+    convert_queryset=None,
+    apply_tags=apply_tags_to_queryset,
 ):
     def tag_func(self, request, queryset):
         """
@@ -90,12 +108,9 @@ def make_batch_tag_action(
             )
             if form.is_valid():
                 tags = form.cleaned_data["tags"]
-                for obj in queryset:
-                    if callable(field):
-                        field(obj, tags)
-                    else:
-                        getattr(obj, field).add(*tags)
-                    obj.save()
+                if convert_queryset is not None:
+                    queryset = convert_queryset(queryset)
+                apply_tags(tags, queryset, field=field)
                 self.message_user(request, _("Successfully added tags"))
                 # Return None to display the change list page again.
                 return None
@@ -143,9 +158,12 @@ class NullFilter(SimpleListFilter):
         )
 
     def queryset(self, request, queryset):
-        kwargs = {
-            "%s" % self.parameter_name: None,
-        }
+        if self.parameter_name.endswith("__isnull"):
+            kwargs = {self.parameter_name: True}
+        else:
+            kwargs = {
+                "%s" % self.parameter_name: None,
+            }
         if self.value() == "0":
             return queryset.filter(**kwargs)
         if self.value() == "1":
@@ -270,12 +288,7 @@ class ForeignKeyFilter(admin.FieldListFilter):
         param = self.field_path
         val = self.used_parameters.pop(param, None)
         if val is not None:
-            if val == "isnull":
-                self.used_parameters["{}__isnull".format(param)] = True
-            elif val == "notnull":
-                self.used_parameters["{}__isnull".format(param)] = False
-            else:
-                self.used_parameters["{}__in".format(param)] = val.split(",")
+            self.used_parameters["{}__in".format(param)] = [val]
 
     def expected_parameters(self):
         return [self.field_path]
@@ -415,7 +428,7 @@ class TreeRelatedFieldListFilter(admin.RelatedFieldListFilter):
             # #### MPTT ADDITION END
             return queryset.filter(**self.used_parameters)
         except ValidationError as e:
-            raise IncorrectLookupParameters(e)
+            raise IncorrectLookupParameters(e) from e
 
     # Adding padding_style to each choice tuple
     def field_choices(self, field, request, model_admin):
@@ -513,7 +526,6 @@ class DateRangeFilter(admin.filters.SimpleListFilter):
     parameter_name = ""
 
     def __init__(self, request, params, model, model_admin):
-
         super().__init__(request, params, model, model_admin)
         self.lookup_kwarg_gte = "{0}__range__gte".format(self.parameter_name)
         self.lookup_kwarg_lte = "{0}__range__lte".format(self.parameter_name)
@@ -522,7 +534,7 @@ class DateRangeFilter(admin.filters.SimpleListFilter):
         for p in self.expected_parameters():
             if p in params:
                 value = params.pop(p)
-                self.used_parameters[p] = prepare_lookup_value(p, value)
+                self.used_parameters[p] = value[-1]
 
     def lookups(self, request, model_admin):
         return ()

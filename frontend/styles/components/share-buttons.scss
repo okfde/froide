@@ -1,0 +1,15 @@
+@import 'bootstrap/scss/mixins/buttons';
+
+.btn-share {
+  &-bluesky {
+    @include button-outline-variant(#0085ff, #fff);
+  }
+
+  &-facebook {
+    @include button-outline-variant(#4267b2);
+  }
+
+  &-mastodon {
+    @include button-outline-variant(#6364ff);
+  }
+}

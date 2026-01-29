@@ -5,7 +5,7 @@
   padding: $spacer * 0.5;
   margin-right: $spacer * 0.5;
   margin-bottom: $spacer * 0.5;
-  background-color: $gray-100;
+  background-color: var(--#{$prefix}tertiary-bg);
   border-radius: $border-radius;
   @include media-breakpoint-up(md) {
     $width: calc(50% - #{$spacer * 0.5});
@@ -18,11 +18,11 @@
     height: 3.688rem;
     &--gray {
       color: $gray-400;
-      background-color: $gray-200;
+      background-color: var(--#{$prefix}secondary-bg-subtle);
     }
     &--blue {
       color: $blue-400;
-      background-color: $blue-200;
+      background-color: var(--#{$prefix}primary-bg-subtle);
     }
   }
 }

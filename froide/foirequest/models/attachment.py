@@ -1,7 +1,8 @@
 from datetime import timedelta
+from functools import partial
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.dispatch import Signal
 from django.urls import reverse
 from django.utils import timezone
@@ -12,7 +13,7 @@ from froide.helper.storage import HashedFilenameStorage
 
 from .message import FoiMessage
 
-DELETE_TIMEFRAME = timedelta(hours=36)
+UNAPPROVE_TIMEFRAME = DELETE_TIMEFRAME = timedelta(hours=36)
 
 PDF_FILETYPES = (
     "application/pdf",
@@ -125,7 +126,6 @@ class FoiAttachmentManager(models.Manager):
 class FoiAttachment(models.Model):
     belongs_to = models.ForeignKey(
         FoiMessage,
-        null=True,
         verbose_name=_("Belongs to message"),
         on_delete=models.CASCADE,
         related_name="foiattachment_set",
@@ -143,6 +143,7 @@ class FoiAttachment(models.Model):
     format = models.CharField(_("Format"), blank=True, max_length=100)
     can_approve = models.BooleanField(_("User can approve"), default=True)
     approved = models.BooleanField(_("Approved"), default=False)
+    approved_timestamp = models.DateTimeField(null=True, blank=True)
     redacted = models.ForeignKey(
         "self",
         verbose_name=_("Redacted Version"),
@@ -175,11 +176,12 @@ class FoiAttachment(models.Model):
 
     objects = FoiAttachmentManager()
 
-    attachment_approved = Signal()  # args: ['user', 'redacted']
-    attachment_unapproved = Signal()  # args: ['user']
-    attachment_deleted = Signal()  # args: ['user']
-    attachment_redacted = Signal()  # args: ['user']
-    document_created = Signal()  # args: ['user']
+    attachment_available = Signal()
+    attachment_approved = Signal()  # args: ['user', 'request', 'redacted']
+    attachment_unapproved = Signal()  # args: ['user', 'request',]
+    attachment_deleted = Signal()  # args: ['user', 'request',]
+    attachment_redacted = Signal()  # args: ['user', 'request',]
+    document_created = Signal()  # args: ['user', 'request']
 
     class Meta:
         ordering = ("name",)
@@ -211,7 +213,7 @@ class FoiAttachment(models.Model):
 
     @property
     def can_redact(self):
-        return self.redacted is not None or (self.can_approve and self.is_pdf)
+        return self.redacted_id is not None or (self.can_approve and self.is_pdf)
 
     @property
     def can_delete(self):
@@ -219,8 +221,22 @@ class FoiAttachment(models.Model):
             return False
         if not self.can_approve:
             return False
+        if self.belongs_to.is_draft:
+            return True
         now = timezone.now()
         return self.timestamp > (now - DELETE_TIMEFRAME)
+
+    @property
+    def can_unapprove(self):
+        if not self.approved or not self.approved_timestamp:
+            return False
+
+        now = timezone.now()
+        return self.approved_timestamp > (now - DELETE_TIMEFRAME)
+
+    @property
+    def can_change_approval(self):
+        return self.can_unapprove if self.approved else self.can_approve
 
     @property
     def can_edit(self):
@@ -349,12 +365,14 @@ class FoiAttachment(models.Model):
     def get_absolute_domain_file_url(self, authorized=False):
         return self.get_crossdomain_auth().get_full_media_url(authorized=authorized)
 
-    def approve_and_save(self):
-        self.approved = True
+    def approve_and_save(self, approve: bool = True) -> None:
+        self.approved = approve
+        self.approved_timestamp = timezone.now() if approve else None
         self.save()
+
         if self.document:
             foirequest = self.belongs_to.request
-            should_be_public = foirequest.public
+            should_be_public = foirequest.public and approve
             if self.document.public != should_be_public:
                 self.document.public = should_be_public
                 self.document.save()
@@ -401,6 +419,6 @@ class FoiAttachment(models.Model):
 
         from filingcabinet.tasks import process_document_task
 
-        process_document_task.delay(doc.pk)
+        transaction.on_commit(partial(process_document_task.delay, doc.pk))
 
         return doc

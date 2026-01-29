@@ -1,101 +1,76 @@
 {% extends 'foirequest/base.html' %}
-
 {% load i18n %}
 {% load static %}
 {% load frontendbuild %}
-
-{% block title %}{% blocktrans with title=object.title %}Manage attachments for “{{ title }}”{% endblocktrans %}{% endblock %}
-
-{% block navbar %}
-  {% include "header_reduced.html" %}
+{% block title %}
+    {% blocktrans with title=foirequest.title %}Manage attachments for “{{ title }}”{% endblocktrans %}
 {% endblock %}
-
+{% block navbar %}
+    {% include "header_reduced.html" %}
+{% endblock %}
 {% block body %}
-
-  <div class="bg-gray-100">
-    {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachments of message from {{ date }}{% endblocktrans %}
-    {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
-  </div>
-
-  <div class="container">
-    <div class="float-end">
-      <a href="{{ message.get_absolute_url }}" class="btn btn-light">{% trans "Back" %}</a>
+    <div class="bg-body-tertiary">
+        {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" asvar breadcrumb_label %}Attachments of message from {{ date }}{% endblocktrans %}
+        {% include "foirequest/header/breadcrumb.html" with last_item=breadcrumb_label %}
     </div>
-
-    <h2>{% trans "Manage attachments" %}</h2>
-    <p>
-      {% blocktrans with date=message.timestamp|date:"SHORT_DATE_FORMAT" sender=message.sender title=foirequest.title url=message.get_absolute_url %}
-      Attachments for <a href="{{ url }}">message dated {{ date }}</a> from <b>{{ sender }}</b> in request “{{ title }}”.
-      {% endblocktrans %}
-      <br/>
-      {% translate "Here you can:" %}
-    </p>
-    <ul>
-      <li>
-        {% translate "Approve or redact attachments." %}
-      </li>
-      <li>
-        {% translate "Convert multiple pictures to pages in a PDF document." %}
-      </li>
-      {% if message.can_edit %}
-        <li>
-          {% translate "Upload more pictures or PDFs." %}
-        </li>
-      {% endif %}
-    </ul>
-
-    {% csrf_token %}
-
-    <document-uploader
-      id="document-uploader"
-      :message="{{ message_json }}"
-      :config="{{ config_json }}"
-    >
-      <div class="text-center">
-        <h4>
-          {% trans "Attachments are loading..." %}
-        </h4>
-        <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
-          <span class="visually-hidden">{% trans "Loading..." %}</span>
+    <div class="container">
+        <div class="my-3">
+            <a href="{{ message.get_absolute_url }}"
+               class="btn btn-outline-secondary">{% trans "Back" %}</a>
         </div>
-      </div>
-      <div slot="convert-images">
-        <h3>{% translate "Convert images to documents" %}</h3>
-      </div>
-      <div slot="documents">
-        <h3>{% translate "Documents" %}</h3>
-        <p>
-          {% translate "Here you can approve, redact documents and also mark them as a result of your request." %}
+        <h2>{% trans "All attachments and options" %}</h2>
+        {% translate "Here you can download and edit documents you have uploaded previously." %}
+        {% csrf_token %}
+        <attachment-manager id="attachment-manager" :message="{{ message_json }}" :config="{{ config_json }}" :user_is_staff="{{ user_is_staff }}">
+        <div class="text-center">
+            <h4>{% trans "Attachments are loading..." %}</h4>
+            <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">{% trans "Loading..." %}</span>
+            </div>
+        </div>
+        <template data-slot="redaction_explanation">
+            {% include "foirequest/snippets/redaction_explanation.html" %}
+        </template>
+        <template data-slot="notapproved-attachments">
+            <h2>
+                {% if foirequest.public %}
+                    {% translate "Non-approved attachments" %}
+                {% else %}
+                    {% translate "Non-public attachments" %}
+                {% endif %}
+            </h2>
+            {% if not foirequest.public %}
+                <p>
+                    {% translate "Your request is not public at the moment. Non-published attachments will remain so even after the request is published." %}
+                </p>
+            {% endif %}
+        </template>
+        <template data-slot="upload-header">
+            <h2>{% translate "Upload" %}</h2>
+            <p>{% translate "Upload PDFs or pictures of documents." %}</p>
+            {% with extra_content_types=message.get_extra_content_types %}
+                {% if extra_content_types %}
+                    <p>
+                        <strong>{% translate "You may additionally upload the following file types to this message:" %}</strong>
+                    </p>
+                    <ul>
+                        {% for ct in extra_content_types %}
+                            <li>
+                                <code>{{ ct }}</code>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+        </template>
+        <template data-slot="irrelevant-attachments">
+            <h2>{% translate "Unimportant attachments" %}</h2>
+            <p>{% translate "Public bodies’ logos and similar images are automatically classified as unimportant." %}</p>
+        </template>
+        </attachment-manager>
+        <p class="text-end mt-3">
+            <a href="{{ message.get_absolute_url }}" class="btn btn-secondary">{% trans "Return to message" %}</a>
         </p>
-      </div>
-      <div slot="upload-header">
-        <h3>{% translate "Upload" %}</h3>
-        <p>{% translate "Upload PDFs or pictures of documents." %}</p>
-        {% with extra_content_types=message.get_extra_content_types %}
-          {% if extra_content_types %}
-            <p>
-              <strong>
-              {% translate "You may additionally upload the following file types to this message:" %}
-              </strong>
-            </p>
-            <ul>
-            {% for ct in extra_content_types %}
-              <li><code>{{ ct }}</code></li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
-      </div>
-      <div slot="other-files">
-        <h4>{% translate "Other files" %}</h4>
-      </div>
-    </document-uploader>
-
-    <p class="text-end">
-      <a href="{{ message.get_absolute_url }}" class="btn btn-secondary">{% trans "Return to message" %}</a>
-    </p>
-  </div>
-
-  {% addfrontendbuild "docupload.js" %}
-
+    </div>
+    {% addfrontendbuild "docupload.js" %}
 {% endblock %}

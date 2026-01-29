@@ -1,12 +1,19 @@
+from functools import partial
+
 from django import forms
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from froide.foirequest.forms.message import get_default_initial_message
-from froide.foirequest.tasks import create_project_messages
-from froide.helper.widgets import BootstrapCheckboxInput
+from froide.foirequest.tasks import (
+    create_project_messages,
+    set_project_request_status_bulk,
+)
+from froide.helper.widgets import BootstrapCheckboxInput, BootstrapSelect
 
 from ..auth import get_write_foirequest_queryset
-from ..forms import SendMessageForm
+from ..forms.message import SendMessageForm
+from ..forms.request import FoiRequestStatusForm
 from ..models import FoiProject
 
 
@@ -19,7 +26,9 @@ class MakeProjectPublicForm(forms.Form):
 
 
 class AssignProjectForm(forms.Form):
-    project = forms.ModelChoiceField(queryset=None, required=False)
+    project = forms.ModelChoiceField(
+        queryset=None, required=False, widget=BootstrapSelect
+    )
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -87,7 +96,47 @@ class SendMessageProjectForm(SendMessageForm):
         return self.foiproject.user
 
     def save(self, user):
-        create_project_messages.delay(
-            [f.id for f in self.foirequests], user.id, **self.cleaned_data
+        transaction.on_commit(
+            partial(
+                create_project_messages.delay,
+                [f.id for f in self.foirequests],
+                user.id,
+                **self.cleaned_data,
+            )
+        )
+        return self.foiproject
+
+
+class SetStatusProjectForm(FoiRequestStatusForm):
+    def __init__(self, *args, **kwargs):
+        self.foiproject: FoiProject = kwargs.pop("foiproject")
+        self.foirequests = kwargs.pop("foirequests")
+        # Skip super class
+        super(FoiRequestStatusForm, self).__init__(*args, **kwargs)
+        refusal_choices = []
+        same_law = len({f.law_id for f in self.foirequests}) == 1
+        # Get prototypical requests
+        foirequest = self.foirequests[0]
+        if same_law and foirequest.law:
+            refusal_choices = foirequest.law.get_refusal_reason_choices()
+            self.fields["refusal_reason"] = forms.ChoiceField(
+                label=_("Refusal Reason"),
+                choices=[("", _("No or other reason given"))] + refusal_choices,
+                required=False,
+                widget=BootstrapSelect,
+                help_text=_(
+                    "When you are (partially) denied access to information, "
+                    "the Public Body should always state the reason."
+                ),
+            )
+
+    def save(self, user):
+        transaction.on_commit(
+            partial(
+                set_project_request_status_bulk.delay,
+                [f.id for f in self.foirequests],
+                user.id,
+                **self.cleaned_data,
+            )
         )
         return self.foiproject

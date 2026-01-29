@@ -8,7 +8,6 @@ import froide.publicbody.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0020_foilaw_requires_signature"),
     ]

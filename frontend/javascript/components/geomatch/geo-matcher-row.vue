@@ -1,7 +1,8 @@
 <template>
   <tr
     :class="{ loading: georegion.loading }"
-    :data-region="georegion.resource_uri">
+    :data-region="georegion.resource_uri"
+  >
     <td>
       <a :href="georegionAdminUrl" target="_blank">
         {{ georegion.name }}
@@ -58,9 +59,12 @@ export default {
   name: 'GeoMatcherRow',
   props: {
     georegion: {
-      type: Object
+      type: Object,
+      required: true
     }
   },
+  inject: ['config'],
+  emits: ['connectpublicbody'],
   data() {
     return {}
   },
@@ -93,7 +97,7 @@ export default {
       return this.georegion.matches.length > 0
     },
     georegionAdminUrl() {
-      return this.$root.config.url.georegionAdminUrl.replace(
+      return this.config.url.georegionAdminUrl.replace(
         /\/0\//,
         `/${this.georegion.id}/`
       )
@@ -102,17 +106,16 @@ export default {
       const name = window.encodeURIComponent(
         `${this.georegion.kind_detail} ${this.georegion.name}`
       )
-      return `${this.$root.config.url.publicbodyAddAdminUrl}?regions=${this.georegion.id}&name=${name}`
+      return `${this.config.url.publicbodyAddAdminUrl}?regions=${this.georegion.id}&name=${name}`
     },
     searchPublicBodyUrl() {
       const name = window.encodeURIComponent(this.georegion.name)
-      return `${this.$root.config.url.publicbodyAdminUrl}?q=${name}`
+      return `${this.config.url.publicbodyAdminUrl}?q=${name}`
     }
   },
-  mounted() {},
   methods: {
     addPublicBodyAdminUrl(pb) {
-      pb.url = this.$root.config.url.publicbodyAdminChangeUrl.replace(
+      pb.url = this.config.url.publicbodyAdminChangeUrl.replace(
         /\/0\//,
         `/${pb.id}/`
       )

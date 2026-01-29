@@ -25,6 +25,7 @@ from ..forms import (
     MakeProjectPublicForm,
     PublishRequestsForm,
     SendMessageProjectForm,
+    SetStatusProjectForm,
 )
 from ..models import FoiProject
 
@@ -84,6 +85,7 @@ class ProjectAction:
     button: str
     description: str
     success: str
+    template_name: str = "foirequest/foiproject_action.html"
 
 
 class ProjectActionView(UpdateView):
@@ -111,6 +113,15 @@ class ProjectActionView(UpdateView):
                 button=gettext("Send messages"),
                 success=gettext("Messages are being sent now."),
             ),
+            ProjectAction(
+                action="setstatus",
+                auth_check=can_write_foiproject,
+                form_class=SetStatusProjectForm,
+                description=gettext("Set status on selected requests"),
+                button=gettext("Set status"),
+                success=gettext("Status has been set."),
+                template_name="foirequest/foiproject_set_status.html",
+            ),
         )
         return {a.action: a for a in actions}
 
@@ -130,6 +141,9 @@ class ProjectActionView(UpdateView):
         if form.is_valid():
             return form.cleaned_data["foirequest"]
         return []
+
+    def get_template_names(self):
+        return [self.action.template_name or self.template_name]
 
     def post(self, request, *args, **kwargs):
         self.action = self.get_action()
@@ -191,7 +205,7 @@ def make_project_public(request, foiproject):
     else:
         form = MakeProjectPublicForm(request.POST)
         if not form.is_valid():
-            return render_400()
+            return render_400(request)
         foiproject.make_public(
             publish_requests=form.cleaned_data["publish_requests"], user=request.user
         )

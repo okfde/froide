@@ -1,272 +1,193 @@
 {% load i18n %}
+{% load markup %}
 {% load foirequest_tags %}
-
 <div class="container pt-2">
-
-  {% if not object.public and object|can_read_foirequest_anonymous:request %}
-  <div class="alert alert-warning">
-    <h4>{% trans "This request is not public!" %}</h4>
-    <p>
-      {% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}
-    </p>
-  </div>
-  {% elif object|can_read_foirequest_anonymous:request %}
-  <div class="alert alert-warning">
-    <h4>{% trans "Special access" %}</h4>
-    <p>
-      {% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}
-    </p>
-  </div>
-  {% endif %}
-
-  {% if not object.is_foi %}
-  <div class="alert alert-info">
-    {% blocktrans %}This request is not an FoI request. This site is only for requesting specific, non-personal information from public bodies.{% endblocktrans %}
-  </div>
-  {% endif %}
-
-  {% if object.closed %}
-  <div class="alert alert-info">
-    {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
-  </div>
-  {% endif %}
-
-  {% if object|can_write_foirequest:request %}
-    {% include "foirequest/header/tour.html" %}
-  {% endif %}
-
-  {% if object|can_write_foirequest:request and object.is_overdue %}
-    <div class="alert alert-info d-print-none">
-      {% blocktrans with name=object.user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!{% endblocktrans %}
-      <br/>
-      {% translate "Please act now:" %}
-      <ul>
-        <li>
-          {% blocktrans %}Have you received a reply by <b>postal mail</b>?{% endblocktrans %}
-          &rarr;
-          <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}">
-            {% translate "Upload the letter now!" %}
-          </a>
-        </li>
-        <li>
-          {% blocktrans %}Have you not gotten any reply?{% endblocktrans %}
-          &rarr;
-          <a href="#write-messages" data-scrollto="write-messages">
-            {% translate "Write a reminder to the public body!" %}
-          </a>
-        </li>
-        {% block aditional_actions %}{% endblock %}
-      </ul>
-    </div>
-  {% endif %}
-
-  {% if object|can_write_foirequest:request and object.has_been_refused and object.can_be_escalated %}
-    <div class="alert alert-info d-print-none">
-      {% blocktrans %}You request has been refused.{% endblocktrans %}
-      <a href="#escalate" data-tabgo="tab" data-scrollto="escalate">
-        {% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}
-      </a>
-    </div>
-  {% endif %}
-
-
-  {% block foirequest_header %}{% endblock %}
-
-  <div class="row">
-    {# left column (title, description, tags etc.) #}
-    <div class="col-md-6 col-lg-7 col-xl-8 mb-4">
-
-      <div class="d-flex flex-column">
-
-        {# title #}
-        <h2 class="request-title">{{ object.title }}</h2>
-
-        {# recipient #}
-        <div class="mt-3 text-gray-500">
-          {% blocktrans %}Request to:{% endblocktrans %}
-
-          {% if object.public_body %}
-            <a class="text-gray-500 fw-bold" href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
-          {% else %}
-            {% blocktrans %}Not yet known{% endblocktrans %}
-          {% endif %}
+    {% if not object.public and object|can_read_foirequest_anonymous:request %}
+        <div class="alert alert-warning">
+            <h4>{% trans "This request is not public!" %}</h4>
+            <p>{% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}</p>
         </div>
-
-        {% if object.project %}
-          {% if object.project.public or object|can_write_foirequest:request %}
-            {# project #}
-            <div class="mt-3 text-gray-500">
-              {% blocktrans %}Project:{% endblocktrans %}
-              <a class="text-gray-500 fw-bold" href="{{ object.project.get_absolute_url }}">
-                {{ object.project.title }}
-              </a>
-            </div>
-          {% endif %}
-        {% endif %}
-
-        {# law if not meta #}
-        {% if object.law and not object.law.meta %}
-        <div class="mt-3 text-gray-500">
-          {% blocktrans %}Legal basis:{% endblocktrans %}
-          <a class="text-gray-500 fw-bold" href="{{ object.law.get_absolute_url }}">{{ object.law.name }}</a>
+    {% elif object|can_read_foirequest_anonymous:request %}
+        <div class="alert alert-warning">
+            <h4>{% trans "Special access" %}</h4>
+            <p>{% trans "You clicked a special URL that gave you access. Share the original link responsibly." %}</p>
         </div>
-        {% endif %}
-
-        {# description #}
-        <div class="mt-3">
-          <div class="request-descr request-descr--collapsed">
-            {{ object.get_description|urlizetrunc:40|linebreaks }}
-            <div class="request-descr-read-more d-grid">
-              <button type="button" class="btn btn-light btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
-            </div>
-          </div>
+    {% endif %}
+    {% if not object.is_foi %}
+        <div class="alert alert-info">
+            {% blocktrans %}This request is not an FoI request. This site is only for requesting specific, non-personal information from public bodies.{% endblocktrans %}
         </div>
-
-        {% if object.summary or object|can_write_foirequest:request %}
-        {# result summary #}
-        <div class="mt-3">
-          <h5>
-            {% trans "Result of request" %}
-            {% if object|can_write_foirequest:request and object.summary %}
-              <a href="#" data-inlineedit="#request-summary-form" data-inlineeditpresentation="#request-summary">
-                <i class="fa fa-pencil" aria-hidden="true"></i>
-                <span class="visually-hidden">{% trans "Edit summary" %}</span>
-              </a>
-            {% endif %}
-          </h5>
-            <div id="request-summary">
-            {% if not object.summary and object|can_write_foirequest:request %}
-              <p class="text-muted smaller font-italic mb-0">
-                {% translate "What have you learned from this request? Write a short summary of the results." %}
-              </p>
-            {% endif %}
-            {% if object.summary %}
-              <div class="request-descr request-descr--collapsed">
-                {{ object.summary|urlizetrunc:40|linebreaks }}
-                <div class="request-descr-read-more d-grid">
-                  <button type="button" class="btn btn-light btn-sm expand-descr-btn">{% blocktrans %}Read all{% endblocktrans %}</button>
+    {% endif %}
+    {% if object.closed %}
+        <div class="alert alert-info">
+            {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
+        </div>
+    {% endif %}
+    {% if object|can_write_foirequest:request %}
+        {% include "foirequest/header/tour.html" %}
+    {% endif %}
+    {% if object|can_write_foirequest:request and object.is_overdue %}
+        <div class="alert alert-info d-print-none">
+            {% blocktrans with name=object.user.get_full_name %}<b>Hey {{ name }}</b>, your request is <b>overdue</b>!{% endblocktrans %}
+            <br />
+            {% translate "Please act now:" %}
+            <ul>
+                <li>
+                    {% blocktrans %}Have you received a reply by <b>postal mail</b>?{% endblocktrans %}
+                    &rarr;
+                    <a href="{% url 'foirequest-upload_postal_message' slug=object.slug %}"
+                       class="alert-link">{% translate "Upload the letter now!" %}</a>
+                </li>
+                <li>
+                    {% blocktrans %}Have you not gotten any reply?{% endblocktrans %}
+                    &rarr;
+                    <a href="#write-messages"
+                       data-scrollto="write-messages"
+                       class="alert-link">{% translate "Write a reminder to the public body!" %}</a>
+                </li>
+                {% block aditional_actions %}{% endblock %}
+            </ul>
+        </div>
+    {% endif %}
+    {% if object|can_write_foirequest:request and object.has_been_refused and object.can_be_escalated %}
+        <div class="alert alert-info d-print-none">
+            {% blocktrans %}You request has been refused.{% endblocktrans %}
+            <a href="#escalate"
+               data-tabgo
+               data-scrollto="escalate"
+               class="alert-link">{% blocktrans %}Consider sending a letter to a mediator{% endblocktrans %}</a>
+        </div>
+    {% endif %}
+    {% if object.banner %}<div class="alert alert-info">{{ object.banner | markdown }}</div>{% endif %}
+    {% block foirequest_header %}{% endblock %}
+    <div class="row">
+        {# left column (title, description, tags etc.) #}
+        <div class="col-md-6 col-lg-7 col-xl-8 mb-4">
+            <div class="d-flex flex-column">
+                {# title #}
+                <h2 class="request-title">{{ object.title }}</h2>
+                {# recipient #}
+                <div class="mt-3 text-gray-500">
+                    {% blocktrans %}Request to:{% endblocktrans %}
+                    {% if object.public_body %}
+                        <a class="text-gray-500 fw-bold"
+                           href="{{ object.public_body.get_absolute_url }}">{{ object.public_body.name }}</a>
+                    {% else %}
+                        {% blocktrans %}Not yet known{% endblocktrans %}
+                    {% endif %}
                 </div>
-              </div>
-            {% endif %}
-            {% if not object.summary and object|can_write_foirequest:request %}
-              <a href="#" data-inlineedit="#request-summary-form" data-inlineeditpresentation="#request-summary">
-                <i class="fa fa-pencil" aria-hidden="true"></i>
-                {% trans "Write summary" %}
-              </a>
-            {% endif %}
-          </div>
-          {% if object|can_write_foirequest:request %}
-            <div class="mb-3 request-summary-form d-none" id="request-summary-form" data-autofocus="[name='summary']">
-              <form method="post" class="disable-submit" action="{% url 'foirequest-set_summary' slug=object.slug %}">
-                {% csrf_token %}
-                {% if object.summary %}
-                  <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+                {% if object.project %}
+                    {% if object.project.public or object|can_write_foirequest:request %}
+                        {# project #}
+                        <div class="mt-3 text-gray-500">
+                            {% blocktrans %}Project:{% endblocktrans %}
+                            <a class="text-gray-500 fw-bold"
+                               href="{{ object.project.get_absolute_url }}">{{ object.project.title }}</a>
+                        </div>
+                    {% endif %}
                 {% endif %}
-                <textarea rows="8" class="form-control mb-3" name="summary" placeholder="{% trans 'Summary of the result of your request' %}">{{ object.summary }}</textarea>
-                <button type="submit" class="btn btn-primary me-2">
-                  {% blocktrans %}Save{% endblocktrans %}
-                </button>
-                <button type="button" class="btn btn-secondary" data-inlineeditcancel="true">
-                  {% blocktrans %}Cancel{% endblocktrans %}
-                </button>
-              </form>
-            </div>
-          {% endif %}
-        </div>
-        {% endif %}
-
-        {# tags #}
-        <div class="request-tags mt-3 mb-3">
-          <div id="request-tags-list">
-            {# tags list #}
-            {% with object.tags.all as tags %}
-              {% if tags %}
-                <div class="request-tags-list">
-                  <ul class="list-unstyled d-flex flex-wrap mb-0">
-                    {% for tag in tags %}
-                      <li class="me-2 smaller">
-                        <a href="{% url 'foirequest-list' tag=tag.slug %}" class="text-gray-500">
-                          <i class="fa fa-tags" aria-hidden="true"></i>
-                          <span>{{ tag.name }}</span>
-                        </a>
-                      </li>
-                    {% endfor %}
-                    <li class="me-2 smaller">
-                      {% if object|can_write_foirequest:request %}
-                        <a href="#" data-inlineedit="#request-tags-form" data-inlineeditpresentation="#request-tags-list">
-                          <i class="fa fa-pencil" aria-hidden="true"></i>
-                          <span class="visually-hidden">{% trans "Edit tags" %}</span>
-                        </a>
-                        <span data-bs-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
-                          <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                          <span class="visually-hidden">{% translate "What does this mean?" %}</span>
-                        </span>
-                      {% endif %}
-                    </li>
-                  </ul>
+                {# law if not meta #}
+                {% if object.law and not object.law.meta %}
+                    <div class="mt-3 text-gray-500">
+                        {% blocktrans %}Legal basis:{% endblocktrans %}
+                        <a class="text-gray-500 fw-bold"
+                           href="{{ object.law.get_absolute_url }}">{{ object.law.name }}</a>
+                    </div>
+                {% endif %}
+                {# description #}
+                <div class="mt-3">
+                    <div class="request-descr request-descr--collapsed">
+                        {% redact_request_description object request as redacted_description %}
+                        {{ redacted_description|linebreaks }}
+                        {% if object|can_write_foirequest:request %}
+                            {% render_description_redact_button object %}
+                        {% endif %}
+                        <div class="request-descr-read-more d-grid">
+                            <button type="button"
+                                    class="btn btn-outline-secondary btn-sm expand-descr-btn">
+                                {% blocktrans %}Read all{% endblocktrans %}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-              {% endif %}
-              {% if not tags and object|can_write_foirequest:request %}
-                  <a href="#" data-inlineedit="#request-tags-form">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                    {% trans "Add tags" %}
-                  </a>
-                  <span data-bs-toggle="tooltip" title="{% translate 'Tags are a way to organise your own requests and also group them with other requests on the platform.' %}">
-                    <i class="fa fa-question-circle-o" aria-hidden="true"></i>
-                    <span class="visually-hidden">{% translate "What does this mean?" %}</span>
-                  </span>
-              {% endif %}
-            {% endwith %}
-          </div>
-
-          <!-- tags form-->
-          {% if object|can_write_foirequest:request %}
-            <div class="request-tags-form mb-3 d-none" id="request-tags-form" data-autofocus=".choices__input.choices__input--cloned">
-              <form method="post" action="{% url 'foirequest-set_tags' slug=object.slug %}">
-                {% csrf_token %}
-                <div class="mb-3">
-                  {% with object.get_set_tags_form as set_tags_form %}
-                    {{ set_tags_form.tags }}
-                  {% endwith %}
-                </div>
-                <button class="btn btn-sm btn-primary" type="submit">{% trans "Save" %}</button>
-                <button class="btn btn-sm btn-secondary" data-inlineeditcancel="true" type="button">{% trans "Cancel" %}</button>
-              </form>
+                {% if object.summary or object|can_write_foirequest:request %}
+                    {# result summary #}
+                    <div class="mt-3">
+                        <h5>
+                            {% trans "Result of request" %}
+                            {% if object|can_write_foirequest:request and object.summary %}
+                                <a href="#"
+                                   data-inlineedit="#request-summary-form"
+                                   data-inlineeditpresentation="#request-summary">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    <span class="visually-hidden">{% trans "Edit summary" %}</span>
+                                </a>
+                            {% endif %}
+                        </h5>
+                        <div id="request-summary">
+                            {% if not object.summary and object|can_write_foirequest:request %}
+                                <p class="text-body-secondary smaller font-italic mb-0">
+                                    {% translate "What have you learned from this request? Write a short summary of the results." %}
+                                </p>
+                            {% endif %}
+                            {% if object.summary %}
+                                <div class="request-descr request-descr--collapsed">
+                                    {{ object.summary|urlizetrunc:40|linebreaks }}
+                                    <div class="request-descr-read-more d-grid">
+                                        <button type="button"
+                                                class="btn btn-outline-secondary btn-sm expand-descr-btn">
+                                            {% blocktrans %}Read all{% endblocktrans %}
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if not object.summary and object|can_write_foirequest:request %}
+                                <a href="#"
+                                   data-inlineedit="#request-summary-form"
+                                   data-inlineeditpresentation="#request-summary">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    {% trans "Write summary" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                        {% if object|can_write_foirequest:request %}
+                            <div class="mb-3 request-summary-form d-none"
+                                 id="request-summary-form"
+                                 data-autofocus="[name='summary']">
+                                <form method="post"
+                                      class="disable-submit"
+                                      action="{% url 'foirequest-set_summary' slug=object.slug %}">
+                                    {% csrf_token %}
+                                    {% if object.summary %}
+                                        <p>{% blocktrans %}Have you received the information you need? What have you learned from it?{% endblocktrans %}</p>
+                                    {% endif %}
+                                    <textarea rows="8"
+                                              class="form-control mb-3"
+                                              name="summary"
+                                              placeholder="{% trans 'Summary of the result of your request' %}">{{ object.summary }}</textarea>
+                                    <button type="submit" class="btn btn-primary me-2">{% blocktrans %}Save{% endblocktrans %}</button>
+                                    <button type="button" class="btn btn-secondary" data-inlineeditcancel="true">
+                                        {% blocktrans %}Cancel{% endblocktrans %}
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {# tags #}
+                {% include "foirequest/header/_tags.html" with object=object %}
+                {% block make_same_request %}
+                    {% if object.not_publishable %}
+                        <div id="make-same-request" class="p-3 bg-body border">{% include "foirequest/snippets/make_same_request.html" %}</div>
+                    {% endif %}
+                {% endblock %}
             </div>
-          {% endif %}
-
         </div>
-
-      </div>
-
+        {# right column (info box) #}
+        <div class="col-md-6 col-lg-5 col-xl-4">{% include "foirequest/header/info-box.html" %}</div>
     </div>
-
-    {# right column (info box) #}
-    <div class="col-md-6 col-lg-5 col-xl-4">
-      {% include "foirequest/header/info-box.html" %}
-    </div>
-  </div>
 </div>
-
 {% if object.campaign %}
-  <div class="container mt-4">
-    {% include object.campaign.banner_templates %}
-  </div>
+    <div class="container mt-4">{% include object.campaign.banner_templates %}</div>
 {% endif %}
-
-{% block make_same_request %}
-  {% if object.not_publishable %}
-    <div class="container mt-4">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div id="make-same-request">
-            {% include "foirequest/snippets/make_same_request.html" %}
-          </div>
-        </div>
-      </div>
-    </div>
-  {% endif %}
-{% endblock %}
-
-
 {% block foirequest_below_header %}{% endblock %}

@@ -1,13 +1,24 @@
+import json
+from urllib.parse import quote
+
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views.generic import DetailView
 
+from filingcabinet import get_document_model
+
 from froide.account.preferences import get_preferences_for_user
+from froide.helper.auth import get_read_queryset
 from froide.helper.utils import render_403
 
 from ..auth import can_read_foirequest, can_write_foirequest, check_foirequest_auth_code
 from ..forms.preferences import message_received_tour_pref, request_page_tour_pref
 from ..models import FoiAttachment, FoiEvent, FoiRequest
+from ..utils import select_foirequest_template
+
+Document = get_document_model()
 
 
 def shortlink(request, obj_id, url_path=""):
@@ -43,7 +54,6 @@ def can_see_attachment(att, can_write):
 def show_foirequest(
     request, obj, template_name="foirequest/show.html", context=None, status=200
 ):
-
     if context is None:
         context = {}
 
@@ -83,12 +93,44 @@ class FoiRequestView(DetailView):
         return context
 
 
+def get_foirequest_documents_context(request, obj):
+    context = {}
+    docs = get_read_queryset(
+        Document.objects.filter(foirequest=obj, pending=False),
+        request,
+        public_field="public",
+    )
+    doc_count = docs.count()
+
+    context["has_documents"] = doc_count > 0
+    if not doc_count:
+        return context
+
+    context["document_count"] = doc_count
+    serialized_documents = Document.get_serializer_class()(
+        docs, many=True, context={"request": request}
+    ).data
+    context["documentcollection_data"] = {
+        "documents": serialized_documents,
+        "document_directory_count": doc_count,
+        "document_count": doc_count,
+        "documents_uri": reverse("api:document-list") + "?foirequest=%s" % obj.pk,
+        "pages_uri": reverse("api:page-list") + "?foirequest=%s" % obj.pk,
+        "directories": [],
+        "current_directory": None,
+        "directory_stack": [],
+    }
+    return context
+
+
 def get_foirequest_context(request, obj):
     context = {}
 
     all_attachments = FoiAttachment.objects.select_related("redacted").filter(
         belongs_to__request=obj
     )
+    context.update(get_foirequest_documents_context(request, obj))
+    context["show_documents"] = obj.status_is_final() and context["has_documents"]
 
     can_write = can_write_foirequest(obj, request)
 
@@ -161,6 +203,26 @@ def get_foirequest_context(request, obj):
             )
         elif not preferences["foirequest_requestpage_tour"].value:
             context.update({"foirequest_requestpage_tour": get_requestpage_tour_data()})
+
+    context["show_withdrawal_popup"] = (
+        request.session.pop("show_withdrawal_popup", None) == obj.id
+    )
+    context["default_withdrawal_message"] = quote(
+        json.dumps(
+            {
+                "subject": _("Withdrawal of My FOI Request"),
+                "message": render_to_string(
+                    select_foirequest_template(
+                        obj, "foirequest/emails/withdrawal_reply.txt"
+                    ),
+                    {
+                        "foirequest": obj,
+                    },
+                ),
+            }
+        )
+    )
+
     return context
 
 
@@ -193,7 +255,6 @@ def get_base_tour_data():
             "done": _("👋 Goodbye!"),
             "next": _("Next"),
             "previous": _("Previous"),
-            "close": _("Close"),
             "start": _("Next"),
         }
     }

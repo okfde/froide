@@ -1,5 +1,5 @@
 <template>
-  <div class="process-breadcrumbs-container">
+  <div class="bg-body-secondary">
     <div class="container">
       <div class="row">
         <ol class="process-breadcrumbs col-md-8">
@@ -7,16 +7,32 @@
             :class="{
               active: stepSelectPublicBody,
               done: stepSelectPublicBodyDone
-            }">
+            }"
+          >
             <a
               v-if="!hidePublicbodyChooser"
               href="#step-publicbody"
-              @click.prevent="setStepSelectPublicBody">
-              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              @click.prevent="setStepSelectPublicBody"
+            >
+              <i
+                class="fa"
+                :class="{
+                  'fa-check-circle': stepSelectPublicBodyDone,
+                  'fa-circle-o': !stepSelectPublicBodyDone
+                }"
+                aria-hidden="true"
+              ></i>
               {{ i18n.choosePublicBody }}
             </a>
             <span v-else>
-              <i class="fa fa-check-circle" aria-hidden="true"></i>
+              <i
+                class="fa"
+                :class="{
+                  'fa-check-circle': stepSelectPublicBodyDone,
+                  'fa-circle-o': !stepSelectPublicBodyDone
+                }"
+                aria-hidden="true"
+              ></i>
               {{ i18n.choosePublicBody }}
             </span>
           </li>
@@ -25,22 +41,25 @@
             :class="{
               active: stepReviewPublicBodies,
               done: stepReviewPublicBodiesDone
-            }">
+            }"
+          >
             <a
               v-if="hasPublicBodies"
               href="#step-publicbody-review"
-              @click.prevent="setStepReviewPublicBody">
+              @click.prevent="setStepReviewPublicBody"
+            >
               <i
                 class="fa"
                 :class="{
                   'fa-check-circle': stepReviewPublicBodiesDone,
-                  'fa-check-circle-o': !stepReviewPublicBodiesDone
+                  'fa-circle-o': !stepReviewPublicBodiesDone
                 }"
-                aria-hidden="true"></i>
+                aria-hidden="true"
+              ></i>
               {{ i18n.checkSelection }}
             </a>
             <span v-else>
-              <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+              <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkSelection }}
             </span>
           </li>
@@ -48,14 +67,16 @@
             <a
               v-if="hasPublicBodies"
               href="#step-request"
-              @click.prevent="setStepRequest">
+              @click.prevent="setStepRequest"
+            >
               <i
                 class="fa"
                 :class="{
                   'fa-check-circle': stepWriteRequestDone,
-                  'fa-check-circle-o': !stepWriteRequestDone
+                  'fa-circle-o': !stepWriteRequestDone
                 }"
-                aria-hidden="true"></i>
+                aria-hidden="true"
+              ></i>
               {{ i18n.makeRequest }}
             </a>
             <span v-else>
@@ -63,9 +84,10 @@
                 class="fa"
                 :class="{
                   'fa-check-circle': stepWriteRequestDone,
-                  'fa-check-circle-o': !stepWriteRequestDone
+                  'fa-circle-o': !stepWriteRequestDone
                 }"
-                aria-hidden="true"></i>
+                aria-hidden="true"
+              ></i>
               {{ i18n.makeRequest }}
             </span>
           </li>
@@ -73,12 +95,13 @@
             <a
               href="#step-review"
               data-bs-toggle="modal"
-              v-if="stepWriteRequest">
-              <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+              v-if="stepWriteRequest"
+            >
+              <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkRequest }}
             </a>
             <span v-else>
-              <i class="fa fa-check-circle-o" aria-hidden="true"></i>
+              <i class="fa fa-circle-o" aria-hidden="true"></i>
               {{ i18n.checkRequest }}
             </span>
           </li>
@@ -103,7 +126,7 @@ import {
 } from '../../store/mutation_types'
 
 export default {
-  name: 'request-form-breadcrumbs',
+  name: 'RequestFormBreadcrumbs',
   props: {
     i18n: {
       type: Object
@@ -169,13 +192,6 @@ export default {
 <style lang="scss" scoped>
 @import '../../../styles/variables';
 
-.process-breadcrumbs-container {
-  background-color: #f5f5f5;
-  // position: sticky;
-  // top: 0;
-  // z-index: 500;
-}
-
 .process-breadcrumbs {
   margin-bottom: 0;
   list-style-type: none;
@@ -189,15 +205,15 @@ export default {
 
     & > *,
     *:hover {
-      color: $gray-500;
+      color: var(--#{$prefix}body-color);
       text-decoration: none;
     }
     &.active > * {
-      color: $black;
+      color: var(--#{$prefix}emphasis-color);
       font-weight: bold;
     }
     &.done > * {
-      color: $success;
+      color: var(--#{$prefix}success);
     }
   }
 }

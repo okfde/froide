@@ -1,40 +1,35 @@
 {% load i18n %}
 {% load form_helper %}
-
-<form class="disable-submit" method="post" action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
-  {% csrf_token %}
-  <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
-  <p>
-    {% blocktrans %}
+<form class="disable-submit"
+      method="post"
+      action="{% url 'foirequest-escalation_message' slug=object.slug %}#escalate">
+    {% csrf_token %}
+    <h4>{% blocktrans %}Ask for mediation for this request{% endblocktrans %}</h4>
+    <p>
+        {% blocktrans %}
     If you think your request was not properly handled or it is delayed, you can ask for assistance.
     Here you can explain your case to the authority that is responsible for your request.
     {% endblocktrans %}
-  </p>
-  <div class="row mb-3">
-    <span class="fw-bold col-md-4">
-      {% translate "Mediating authority" %}
-    </span>
-    <div class="col-md-8">
-      {{ object.law.mediator.name }}                            
+    </p>
+    <div class="row mb-3">
+        <span class="fw-bold col-md-4">{% translate "Mediating authority" %}</span>
+        <div class="col-md-8">{{ object.law.mediator.name }}</div>
     </div>
-  </div>
-  {% if escalation_form %}
-    {% render_form escalation_form horizontal=False %}
-  {% else %}
-    {% with escalation_form=object.get_escalation_message_form %}
-      {% render_form escalation_form horizontal=False %}
-    {% endwith %}
-  {% endif %}
-  <div class="row mb-3">
-    <div class="ms-md-auto col-lg-9">
-      {% if not object.public %}
-        <small class="form-text text-muted">
-          {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
-        </small>
-      {% endif %}
-      <button class="btn btn-primary mt-3 float-end" type="submit">
-        {% blocktrans %}Send Message{% endblocktrans %}
-      </button>
+    {% if escalation_form %}
+        {% render_form escalation_form horizontal=False %}
+    {% else %}
+        {% with escalation_form=object.get_escalation_message_form %}
+            {% render_form escalation_form horizontal=False %}
+        {% endwith %}
+    {% endif %}
+    <div class="row mb-3">
+        <div class="ms-md-auto col-lg-9">
+            {% if not object.public %}
+                <small class="form-text text-body-secondary">
+                    {% blocktrans %}Your request is currently not public, but will be made accessible to the mediator via the special link in the message.{% endblocktrans %}
+                </small>
+            {% endif %}
+            <button class="btn btn-primary mt-3 float-end" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+        </div>
     </div>
-  </div>
 </form>

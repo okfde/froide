@@ -34,7 +34,8 @@ class FoiRequestFollowConfiguration(FollowConfiguration):
 
     def get_content_object_queryset(self, request):
         qs = get_read_foirequest_queryset(request)
-        if request.user.is_authenticated:
+        # request is not available when called from manage.py generateschema
+        if request and request.user.is_authenticated:
             qs = qs.exclude(user=request.user)
         return qs
 

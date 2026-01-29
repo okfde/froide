@@ -1,7 +1,12 @@
 import base64
+from contextlib import closing
+from functools import cached_property
+from io import BytesIO
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
+from froide.helper.email_parsing import parse_email
 
 from .request import FoiRequest
 
@@ -48,6 +53,11 @@ class DeferredMessage(models.Model):
 
     def decoded_mail(self):
         return self.encoded_mail().decode("utf-8", "ignore")
+
+    @cached_property
+    def parsed_mail(self):
+        with closing(BytesIO(self.encoded_mail())) as stream:
+            return parse_email(stream)
 
     def redeliver(self, request):
         from ..tasks import process_mail

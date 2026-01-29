@@ -40,7 +40,6 @@ def migrate_data_to_external_app(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("document", "0007_auto_20180807_1448"),
     ]

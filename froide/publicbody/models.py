@@ -6,6 +6,7 @@ from django.contrib.gis.db import models
 from django.contrib.sites.managers import CurrentSiteManager
 from django.contrib.sites.models import Site
 from django.dispatch import Signal
+from django.forms.models import model_to_dict
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import escape
@@ -72,6 +73,8 @@ class Jurisdiction(models.Model):
 
     objects = JurisdictionManager()
 
+    last_modified_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name = _("Jurisdiction")
         verbose_name_plural = _("Jurisdictions")
@@ -95,6 +98,14 @@ class Jurisdiction(models.Model):
         meta_laws = FoiLaw.objects.filter(pk__in=meta_ids)
         return laws.union(meta_laws)
 
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs:
+            kwargs["update_fields"] = {"last_modified_at"}.union(
+                kwargs["update_fields"]
+            )
+
+        super().save(*args, **kwargs)
+
 
 class FoiLaw(TranslatableModel):
     translations = TranslatedFields(
@@ -107,6 +118,7 @@ class FoiLaw(TranslatableModel):
         letter_start=models.TextField(_("Start of Letter"), blank=True),
         letter_end=models.TextField(_("End of Letter"), blank=True),
         refusal_reasons=models.TextField(_("refusal reasons"), blank=True),
+        overdue_reply=models.TextField(_("overdue reply"), blank=True),
     )
 
     created = models.DateField(_("Creation Date"), blank=True, null=True)
@@ -205,7 +217,7 @@ class FoiLaw(TranslatableModel):
     def as_data(self, request=None):
         from froide.helper.api_utils import get_fake_api_context
 
-        from .api_views import FoiLawSerializer
+        from .serializers import FoiLawSerializer
 
         if request is None:
             ctx = get_fake_api_context()
@@ -319,8 +331,8 @@ class Classification(MP_Node):
     objects = ClassificationManager()
 
     class Meta:
-        verbose_name = _("classification")
-        verbose_name_plural = _("classifications")
+        verbose_name = _("Classification")
+        verbose_name_plural = _("Classifications")
 
     def __str__(self):
         return self.name
@@ -375,7 +387,7 @@ class PublicBody(models.Model):
         Classification, null=True, blank=True, on_delete=models.SET_NULL
     )
 
-    email = models.EmailField(_("Email"), blank=True, default="")
+    email = models.EmailField(_("Email"), blank=True, default="", max_length=255)
     fax = models.CharField(max_length=50, blank=True)
     contact = models.TextField(_("Contact"), blank=True)
     address = models.TextField(_("Address"), blank=True)
@@ -434,7 +446,9 @@ class PublicBody(models.Model):
     geo = models.PointField(null=True, blank=True, geography=True)
     regions = models.ManyToManyField(GeoRegion, blank=True)
 
-    laws = models.ManyToManyField(FoiLaw, verbose_name=_("Freedom of Information Laws"))
+    laws = models.ManyToManyField(
+        FoiLaw, blank=True, verbose_name=_("Freedom of Information Laws")
+    )
     tags = TaggableManager(through=TaggedPublicBody, blank=True)
     categories = TaggableManager(
         through=CategorizedPublicBody, verbose_name=_("categories"), blank=True
@@ -515,6 +529,13 @@ class PublicBody(models.Model):
     def change_proposal_count(self):
         return self.change_proposals.count()
 
+    @property
+    def reason(self):
+        try:
+            return self.change_history[-1].get("data", {}).get("reason", "")
+        except IndexError:
+            return ""
+
     def get_applicable_law(self, law_type=None):
         return get_applicable_law(pb=self, law_type=law_type)
 
@@ -564,12 +585,12 @@ class PublicBody(models.Model):
         return serializer_klass(self, context=ctx).data
 
     def as_data(self, request=None):
-        from .api_views import PublicBodyListSerializer
+        from .serializers import PublicBodyListSerializer
 
         return self._as_data(PublicBodyListSerializer)
 
     def as_simple_data(self, request=None):
-        from .api_views import SimplePublicBodySerializer
+        from .serializers import SimplePublicBodySerializer
 
         return self._as_data(SimplePublicBodySerializer)
 
@@ -599,6 +620,10 @@ class PublicBody(models.Model):
             "request_note",
             "parent__id",
             ("regions", lambda obj: ",".join(str(x.id) for x in obj.regions.all())),
+            (
+                "alternative_emails",
+                lambda obj: json.dumps(obj.alternative_emails or {}),
+            ),
         )
 
         return export_csv(queryset, fields)
@@ -652,6 +677,7 @@ class PublicBodyChangeProposal(models.Model):
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(_("Created at"), default=timezone.now)
+    reason = models.TextField(blank=True)
 
     name = models.CharField(_("Name"), max_length=255)
     other_names = models.TextField(_("Other names"), default="", blank=True)
@@ -722,6 +748,7 @@ class PublicBodyChangeProposal(models.Model):
                 != self.publicbody.classification_id,
             },
             "email": field_data("email"),
+            "reason": field_data("reason"),
             "fax": field_data("fax"),
             "contact": field_data("contact"),
             "address": field_data("address"),
@@ -747,3 +774,26 @@ class PublicBodyChangeProposal(models.Model):
                 "is_changed": set(categories) != set(self.publicbody.categories.all()),
             },
         }
+
+    def accept(self, user, batch=False):
+        from .forms import PublicBodyAcceptProposalForm
+
+        fields = PublicBodyAcceptProposalForm.Meta.fields
+        initial = model_to_dict(self, fields=fields)
+        form = PublicBodyAcceptProposalForm(instance=self.publicbody, initial=initial)
+        data = {
+            k: form.fields[k].widget.format_value(
+                form.fields[k].prepare_value(initial[k])
+            )
+            for k in fields
+        }
+        data["jurisdiction"] = str(initial["jurisdiction"])
+        data["classification"] = str(initial["classification"])
+        data["categories"] = edit_string_for_tags(self.categories.all())
+        data["regions"] = ",".join(str(x.id) for x in self.regions.all())
+
+        form = PublicBodyAcceptProposalForm(instance=self.publicbody, data=data)
+        if form.is_valid():
+            form.save(user, proposal_id=self.pk, batch=batch)
+            return True
+        return False

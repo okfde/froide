@@ -36,8 +36,7 @@ class PublicBodyDocument(Document):
     def get_queryset(self):
         """Not mandatory but to improve performance we can select related in one sql request"""
         return (
-            super()
-            .get_queryset()
+            PublicBody.objects.get_for_search_index()
             .select_related("jurisdiction")
             .prefetch_related("classification", "categories", "regions")
         )

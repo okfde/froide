@@ -2,18 +2,18 @@ import logging
 from typing import Optional
 
 from django.apps import apps
+from django.db import models
 
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch.exceptions import ConnectionTimeout
 
 from froide.celery import app as celery_app
-from froide.foirequest.models.request import FoiRequest
 from froide.helper.email_log_parsing import check_delivery_from_log
 
 logger = logging.getLogger(__name__)
 
 
-def get_instance(model_name: str, pk: int) -> Optional[FoiRequest]:
+def get_instance(model_name: str, pk: int) -> Optional[models.Model]:
     model = apps.get_model(model_name)
     try:
         return model._default_manager.get(pk=pk)

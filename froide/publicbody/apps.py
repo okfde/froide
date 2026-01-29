@@ -3,9 +3,15 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
+class PublicBodyNoConfig(AppConfig):
+    name = "froide.publicbody"
+    verbose_name = _("Public Body")
+
+
 class PublicBodyConfig(AppConfig):
     name = "froide.publicbody"
     verbose_name = _("Public Body")
+    default = True
 
     def ready(self):
         from froide.account import account_merged
@@ -17,6 +23,26 @@ class PublicBodyConfig(AppConfig):
         registry.register(export_user_data)
         account_merged.connect(merge_user)
         search_registry.register(add_search)
+
+        from froide.api import api_router
+
+        from .api_views import (
+            CategoryViewSet,
+            ClassificationViewSet,
+            FoiLawViewSet,
+            JurisdictionViewSet,
+            PublicBodyViewSet,
+        )
+
+        api_router.register(r"publicbody", PublicBodyViewSet, basename="publicbody")
+        api_router.register(r"category", CategoryViewSet, basename="category")
+        api_router.register(
+            r"classification", ClassificationViewSet, basename="classification"
+        )
+        api_router.register(
+            r"jurisdiction", JurisdictionViewSet, basename="jurisdiction"
+        )
+        api_router.register(r"law", FoiLawViewSet, basename="law")
 
 
 def add_search(request):

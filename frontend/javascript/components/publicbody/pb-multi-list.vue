@@ -6,14 +6,16 @@
           class="btn btn-primary"
           href="#step-request"
           @click="setStepRequest"
-          v-show="hasPublicBodies">
+          v-show="hasPublicBodies"
+        >
           Continue
         </a>
         <a
           v-if="hasSearchResults"
           href="#"
           @click="selectAll"
-          class="btn btn-light float-end">
+          class="btn btn-outline-secondary float-end"
+        >
           Select all
         </a>
       </div>
@@ -21,11 +23,13 @@
         <li
           v-for="result in searchResults"
           :key="result.id"
-          class="search-result">
-          <pb-multi-item
+          class="search-result"
+        >
+          <PbMultiItem
             :name="name"
             :result="result"
-            :scope="scope"></pb-multi-item>
+            :scope="scope"
+          ></PbMultiItem>
         </li>
       </ul>
       <p v-if="hasPublicBodies">
@@ -47,7 +51,7 @@ import I18nMixin from '../../lib/i18n-mixin'
 import PbMultiItem from './pb-multi-item'
 
 export default {
-  name: 'pb-multi-list',
+  name: 'PbMultiList',
   props: ['name', 'scope', 'config'],
   mixins: [PBListMixin, I18nMixin],
   methods: {
@@ -71,6 +75,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../styles/variables';
 .search-results {
   overflow-y: auto;
   outline: 1px solid #aaa;
@@ -81,11 +86,12 @@ export default {
 }
 
 .search-result:hover {
-  background-color: #f5f5f5;
+  background-color: var(--#{$prefix}light-bg-subtle);
+  color: var(--#{$prefix}light-text-emphasis);
 }
 
 .search-result.selected {
-  background-color: #dff0d8;
+  background-color: var(--#{$prefix}dark-bg-subtle);
 }
 
 .search-result > label {

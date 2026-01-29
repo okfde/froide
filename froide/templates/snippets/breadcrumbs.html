@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load breadcrumb_helper %}
+{# Renders breadcrumbs that are defined in view #}
+{% get_breadcrumbs view as breadcrumbs %}
+{% if breadcrumbs %}
+    {% with breadcrumbs_background=breadcrumbs_background|default:breadcrumbs.color %}
+        {% if breadcrumbs_background %}
+            <div class="text-bg-{{ breadcrumbs_background }}{% if overlay|default:breadcrumbs.overlay %} breadcrumb-overlay{% endif %}">
+            {% endif %}
+            <nav class="container-md" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        {# djlint:off D018 #}
+                        <a href="/"> {# djlint:on #}
+                            <i class="fa fa-home"></i>
+                            <span class="visually-hidden">{% trans "Home Page" %}</span>
+                        </a>
+                    </li>
+                    {% for breadcrumb in breadcrumbs %}
+                        <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">
+                            {% if breadcrumb.has_link %}
+                                <a href="{{ breadcrumb.url }}"
+                                   {% if forloop.last %}aria-current="page"{% endif %}>{{ breadcrumb.title }}</a>
+                            {% else %}
+                                {{ breadcrumb.title }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+            </nav>
+            {% if breadcrumbs_background %}</div>{% endif %}
+    {% endwith %}
+{% endif %}

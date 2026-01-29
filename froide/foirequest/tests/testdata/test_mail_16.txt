@@ -1,0 +1,51 @@
+Return-Path: <prvs=3740992bb=buergermeister@duesseldorf.de>
+X-Original-To: info@fragdenstaat.de
+Delivered-To: info@fragdenstaat.de
+Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=193.27.22.88; helo=mailout.itk-rheinland.de; envelope-from=prvs=3740992bb=buergermeister@duesseldorf.de; receiver=<UNKNOWN> 
+Authentication-Results: OpenDMARC; dmarc=pass (p=none dis=none) header.from=duesseldorf.de
+Authentication-Results: mail.fragdenstaat.de;
+	dkim=pass (2048-bit key; unprotected) header.d=duesseldorf.de header.i=@duesseldorf.de header.a=rsa-sha256 header.s=s00001 header.b=C24dEkYW;
+	dkim-atps=neutral
+X-Mailer: IBM Notes
+To: info@fragdenstaat.de
+MIME-Version: 1.0
+Subject: WG: Einrichtung Bewohnerparken Zone "Lessingplatz" [#267938], Ihre Email
+ vom 17.01.2023
+From: buergermeister@duesseldorf.de
+Date: Tue, 17 Jan 2023 14:38:38 +0100
+X-Encrypt: 0
+X-Form: Memo
+Content-Type: multipart/related; boundary="=_related 004AF2EFC125893A_="
+
+Dies ist eine mehrteilige Nachricht im MIME-Format.
+--=_related 004AF2EFC125893A_=
+Content-Type: multipart/alternative; boundary="=_alternative 004AF2EFC125893A_="
+
+
+--=_alternative 004AF2EFC125893A_=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+U2VociBnZWVocnRlciBIZXJyLAoKSGllciBkZXIgR2VsdHVuZ3NiZXJlaWNoCgoKCgpNaXQgZnJl
+dW5kbGljaGVuIEdyw7zDn2VuCmltIEF1ZnRyYWcKCkxhbmRlc2hhdXB0c3RhZHQgRMO8c3NlbGRv
+cmYKRGVyIE9iZXJiw7xyZ2VybWVpc3Rlcgo=
+--=_alternative 004AF2EFC125893A_=
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+PGZvbnQgc2l6ZT0yIGZhY2U9InNhbnMtc2VyaWYiPlNlaHIgZ2VlaHJ0ZXIgSGVyciwgPC9mb250
+Pgo8YnI+Cjxicj48Zm9udCBzaXplPTIgZmFjZT0ic2Fucy1zZXJpZiI+SGllciBkZXIgR2VsdHVu
+Z3NiZXJlaWNoPC9mb250Pgo8YnI+Cjxicj48aW1nIHNyYz1jaWQ6XzFfMENDRThDRUMwQ0NFODg5
+NDAwNEFGMkVGQzEyNTg5M0Egc3R5bGU9ImJvcmRlcjowcHggc29saWQ7Ij4KPGJyPgo8YnI+Cjxi
+cj48Zm9udCBzaXplPTI+TWl0IGZyZXVuZGxpY2hlbiBHcsO8w59lbjxicj4KaW0gQXVmdHJhZzwv
+Zm9udD4KPGJyPjxmb250IHNpemU9Mj48YnI+CkxhbmRlc2hhdXB0c3RhZHQgRMO8c3NlbGRvcmY8
+L2ZvbnQ+Cjxicj48Zm9udCBzaXplPTI+RGVyIE9iZXJiw7xyZ2VybWVpc3RlcjwvZm9udD4KPGJy
+Pgo8YnI+Cg==
+--=_alternative 004AF2EFC125893A_=--
+--=_related 004AF2EFC125893A_=
+Content-Type: image/gif
+Content-ID: <_1_0CCE8CEC0CCE8894004AF2EFC125893A>
+Content-Transfer-Encoding: base64
+
+R0lGODdhAQABAPAAAP8AAAAAACwAAAAAAQABAAACAkQBADs=
+--=_related 004AF2EFC125893A_=--

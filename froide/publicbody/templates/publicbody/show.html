@@ -1,221 +1,217 @@
 {% extends 'publicbody/base.html' %}
-
 {% load i18n %}
 {% load static %}
 {% load markup %}
 {% load permission_helper %}
-
 {% block title %}{{ object.name }} - {{ SITE_NAME }}{% endblock %}
-
-{% block metadescription %}{% spaceless %}
-{% if object.classification %}
-  {% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a public body ({{ classification }}) in {{ juris }} on {{ site_name }}{% endblocktrans %}
-{% else %}
-  {% blocktrans with name=object.name juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a public body in {{ juris }} on {{ site_name }}{% endblocktrans %}
-{% endif %}{% endspaceless %}{% endblock %}
-
-{% block extra_head %}
-  {% if not object.confirmed %}
-    <meta name="robots" content="noindex"/>
-  {% endif %}
-
-  <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed" %}" href="{% url 'foirequest-list_feed' publicbody=object.slug %}" />
-  <link rel="alternate" type="application/atom+xml" title="{% trans "Atom Feed" %}" href="{% url 'foirequest-list_feed_atom' publicbody=object.slug %}" />
-
-{% endblock %}
-
-{% block app_body %}
-<div itemscope itemtype="http://schema.org/Organization">
-
-<h2 itemprop="name">{{ object.name }}</h2>
-
-{% if object.email and object.confirmed %}
-<p>
-  <a class="btn btn-primary" href="{% url 'foirequest-make_request' publicbody_slug=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
-</p>
-{% endif %}
-
-
-<div class="row">
-  <div class="col-lg-4 col-md-4 mb-5">
-    <dl>
-      <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
-      <dd><a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a></dd>
-      {% if object.classification %}
-        <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
-        <dd>{{ object.classification }}</dd>
-      {% endif %}
-      {% with categories=object.categories.all %}
-        {% if categories %}
-          <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
-          <dd>
-            {% for category in categories %}
-              {{ category.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-          </dd>
-        {% endif %}
-      {% endwith %}
-      {% if object.url %}
-        <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
-        <dd><a href="{{ object.url }}" target="_blank" rel="noopener">{{ object.url|truncatechars:30 }}</a></dd>
-      {% endif %}
-
-      {% if object.email %}
-        <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
-        <dd>
-          <span itemprop="email">{{ object.email }}</span>
-        </dd>
-      {% endif %}
-
-      {% if object.fax %}
-        <dt>{% blocktrans %}Fax:{% endblocktrans %}</dt>
-        <dd>
-          <span itemprop="fax">{{ object.fax }}</span>
-        </dd>
-      {% endif %}
-
-      <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
-      <dd>{{ object.contact|urlizetrunc:35|linebreaksbr }}</dd>
-      <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
-      <dd itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-        {{ object.address|linebreaksbr }}
-      </dd>
-      {% if object.file_index %}
-        <dt>{% blocktrans %}File Index:{% endblocktrans %}</dt>
-        <dd>
-          <a href="{{ object.file_index }}">{{ object.file_index|urlizetrunc:40 }}</a>
-        </dd>
-      {% endif %}
-      {% if object.org_chart %}
-        <dt>{% blocktrans %}Organization Chart:{% endblocktrans %}</dt>
-        <dd>
-          <a href="{{ object.org_chart }}">{{ object.org_chart|urlizetrunc:40 }}</a>
-        </dd>
-      {% endif %}
-    </dl>
-
-    {% if request.user.is_authenticated %}
-      {% if object|can_moderate:request %}
-        <a class="btn btn-secondary mt-2" href="{% url 'publicbody-accept' pk=object.pk %}">
-          {% if not object.confirmed %}
-            {% trans "Review proposal" %}
-          {% else %}
-            {% if object.change_proposal_count %}
-              {% blocktrans with count=object.change_proposal_count %}Change / accept proposals ({{ count}}){% endblocktrans %}
-            {% else %}
-              {% trans "Change" %} 
-            {% endif %}
-          {% endif %}
-        </a>
-      {% else %}
-        <a class="btn btn-secondary" href="{% url 'publicbody-change' pk=object.pk %}">
-          {% trans "Propose change" %}
-        </a>
-      {% endif %}
-    {% else %}
-      <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-placement="top" title="{% trans 'You must be logged in.' %}">
-        <button class="btn btn-secondary" disabled style="pointer-events: none;">
-          {% trans "Propose change" %}
-        </button>
-      </span>
-    {% endif %}
-
-    {% if request.user.is_staff and request.user|has_perm:"publicbody.view_publicbody" %}
-      {% if object.confirmed %}
-        {% url 'admin:publicbody_publicbody_change' object.id as admin_url %}
-      {% else %}
-        {% url 'admin:publicbody_proposedpublicbody_change' object.id as admin_url %}
-      {% endif %}
-      <br/>
-      <a class="btn btn-secondary mt-2" href="{{ admin_url }}">
-        <i class="fa fa-cog"></i>
-        {% trans "View on Admin site" %}
-      </a>
-    {% endif %}
-  </div>
-  <div class="col-lg-8 col-md-8">
-    {% if not object.confirmed %}
-      <div class="alert alert-warning">
-        <h3>
-          {% trans "Proposal" %}
-        </h3>
-        {% if object.created_by == request.user %}
-          <p>
-            {% trans "You have proposed this public body, but it has not been confirmed yet." %}
-          </p>
+{% block metadescription %}
+    {% spaceless %}
+        {% if object.classification %}
+            {% blocktrans with name=object.name classification=object.classification juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a public body ({{ classification }}) in {{ juris }} on {{ site_name }}{% endblocktrans %}
         {% else %}
-          <p>
-            {% trans "This public body has been proposed and has not been confirmed yet." %}
-          </p>
+            {% blocktrans with name=object.name juris=object.jurisdiction.name site_name=SITE_NAME %}{{ name }} is a public body in {{ juris }} on {{ site_name }}{% endblocktrans %}
         {% endif %}
-      </div>
-    {% endif %}
-    {% if object.request_note %}
-      <div class="panel panel-info">
-        <div class="card-header">
-          <h3 class="card-title">{% trans "Special note" %}</h3>
+    {% endspaceless %}
+{% endblock %}
+{% block extra_head %}
+    {% if not object.confirmed %}<meta name="robots" content="noindex" />{% endif %}
+    <link rel="alternate"
+          type="application/rss+xml"
+          title="{% trans "RSS Feed" %}"
+          href="{% url 'foirequest-list_feed' publicbody=object.slug %}" />
+    <link rel="alternate"
+          type="application/atom+xml"
+          title="{% trans "Atom Feed" %}"
+          href="{% url 'foirequest-list_feed_atom' publicbody=object.slug %}" />
+{% endblock %}
+{% block app_body %}
+    <div itemscope itemtype="http://schema.org/Organization">
+        <h2 itemprop="name">{{ object.name }}</h2>
+        {% if object.email and object.confirmed %}
+            <p>
+                <a class="btn btn-primary"
+                   href="{% url 'foirequest-make_request' publicbody_slug=object.slug %}">{% blocktrans %}Make a Request to this public body!{% endblocktrans %}</a>
+            </p>
+        {% endif %}
+        <div class="row">
+            <div class="col-lg-4 col-md-4 mb-5">
+                <dl>
+                    <dt>{% blocktrans %}Jurisdiction{% endblocktrans %}:</dt>
+                    <dd>
+                        <a href="{{ object.jurisdiction.get_absolute_url }}">{{ object.jurisdiction }}</a>
+                    </dd>
+                    {% if object.classification %}
+                        <dt>{% blocktrans %}Classification:{% endblocktrans %}</dt>
+                        <dd>
+                            {{ object.classification }}
+                        </dd>
+                    {% endif %}
+                    {% with categories=object.categories.all %}
+                        {% if categories %}
+                            <dt>{% blocktrans %}Categories:{% endblocktrans %}</dt>
+                            <dd>
+                                {% for category in categories %}
+                                    {# needs to be like this so that there's no space before the comma #}
+                                    {# djlint:off #}
+                                    {{ category.name }}{% if not forloop.last %},{% endif %}
+                                    {# djlint:on #}
+                                {% endfor %}
+                            </dd>
+                        {% endif %}
+                    {% endwith %}
+                    {% if object.url %}
+                        <dt>{% blocktrans %}Website:{% endblocktrans %}</dt>
+                        <dd>
+                            <a href="{{ object.url }}" target="_blank" rel="noopener">{{ object.url|truncatechars:30 }}</a>
+                        </dd>
+                    {% endif %}
+                    {% if object.email %}
+                        <dt>{% blocktrans %}Email:{% endblocktrans %}</dt>
+                        <dd>
+                            <span itemprop="email">{{ object.email }}</span>
+                        </dd>
+                    {% endif %}
+                    {% if object.fax %}
+                        <dt>{% blocktrans %}Fax:{% endblocktrans %}</dt>
+                        <dd>
+                            <span itemprop="fax">{{ object.fax }}</span>
+                        </dd>
+                    {% endif %}
+                    {% if object.contact %}
+                        <dt>{% blocktrans %}Contact:{% endblocktrans %}</dt>
+                        <dd>
+                            {{ object.contact|urlizetrunc:35|linebreaksbr }}
+                        </dd>
+                    {% endif %}
+                    {% if object.address %}
+                        <dt>{% blocktrans %}Mailing Address:{% endblocktrans %}</dt>
+                        <dd itemprop="address"
+                            itemscope
+                            itemtype="http://schema.org/PostalAddress">
+                            {{ object.address|linebreaksbr }}
+                        </dd>
+                    {% endif %}
+                    {% if object.file_index %}
+                        <dt>{% blocktrans %}File Index:{% endblocktrans %}</dt>
+                        <dd>
+                            <a href="{{ object.file_index }}">{{ object.file_index|urlizetrunc:40 }}</a>
+                        </dd>
+                    {% endif %}
+                    {% if object.org_chart %}
+                        <dt>{% blocktrans %}Organization Chart:{% endblocktrans %}</dt>
+                        <dd>
+                            <a href="{{ object.org_chart }}">{{ object.org_chart|urlizetrunc:40 }}</a>
+                        </dd>
+                    {% endif %}
+                </dl>
+                {% if request.user.is_authenticated %}
+                    {% if object|can_moderate:request %}
+                        <a class="btn btn-secondary mt-2"
+                           href="{% url 'publicbody-accept' pk=object.pk %}">
+                            {% if not object.confirmed %}
+                                {% trans "Review proposal" %}
+                            {% else %}
+                                {% if object.change_proposal_count %}
+                                    {% blocktrans with count=object.change_proposal_count %}Change / accept proposals ({{ count}}){% endblocktrans %}
+                                {% else %}
+                                    {% trans "Change" %}
+                                {% endif %}
+                            {% endif %}
+                        </a>
+                    {% else %}
+                        <a class="btn btn-secondary"
+                           href="{% url 'publicbody-change' pk=object.pk %}">{% trans "Propose change" %}</a>
+                    {% endif %}
+                {% else %}
+                    <span class="d-inline-block"
+                          tabindex="0"
+                          data-bs-toggle="tooltip"
+                          data-placement="top"
+                          title="{% trans 'You must be logged in.' %}">
+                        <button class="btn btn-secondary" disabled style="pointer-events: none;">{% trans "Propose change" %}</button>
+                    </span>
+                {% endif %}
+                {% if request.user.is_staff and request.user|has_perm:"publicbody.view_publicbody" %}
+                    {% if object.confirmed %}
+                        {% url 'admin:publicbody_publicbody_change' object.id as admin_url %}
+                    {% else %}
+                        {% url 'admin:publicbody_proposedpublicbody_change' object.id as admin_url %}
+                    {% endif %}
+                    <br />
+                    <a class="btn btn-secondary mt-2" href="{{ admin_url }}">
+                        <i class="fa fa-cog"></i>
+                        {% trans "View on Admin site" %}
+                    </a>
+                {% endif %}
+            </div>
+            <div class="col-lg-8 col-md-8">
+                {% if not object.confirmed %}
+                    <div class="alert alert-warning">
+                        <h3>{% trans "Proposal" %}</h3>
+                        {% if object.created_by == request.user %}
+                            <p>{% trans "You have proposed this public body, but it has not been confirmed yet." %}</p>
+                        {% else %}
+                            <p>{% trans "This public body has been proposed and has not been confirmed yet." %}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+                {% if object.request_note %}
+                    <div class="panel panel-info">
+                        <div class="card-header">
+                            <h3 class="card-title">{% trans "Special note" %}</h3>
+                        </div>
+                        <div class="card-body">{{ object.request_note_html|safe }}</div>
+                    </div>
+                {% endif %}
+                {% if foirequest_count %}
+                    <h3>{% trans "Summary of Results" %}</h3>
+                    <table class="table">
+                        {% for res in resolutions %}
+                            <tr>
+                                <td>
+                                    <span class="icon status-{{ res.resolution }}"></span>
+                                </td>
+                                <td>
+                                    {% block result_image %}
+                                    {% endblock result_image %}
+                                    <a href="{% url 'foirequest-list' publicbody=object.slug %}?status={{ res.url_slug }}">{{ res.name }}</a>
+                                    <br />
+                                    <small class="text-body-secondary">{{ res.description }}</small>
+                                </td>
+                                <td class="text-end">{{ res.count }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                    <h3>
+                        {% blocktrans count count=foirequest_count %}One request to this public body{% plural %}{{ count }} requests to this public body{% endblocktrans %}
+                    </h3>
+                    <ul class="list-unstyled">
+                        {% for object in foirequests %}
+                            <li>{% include "foirequest/snippets/request_item.html" %}</li>
+                        {% endfor %}
+                    </ul>
+                    <p>
+                        <a href="{% url 'foirequest-list_feed' publicbody=object.slug %}">
+                            <i class="fa fa-rss" aria-hidden="true"></i>
+                            {% trans "RSS Feed" %}
+                        </a>
+                        <br />
+                        <a href="{% url 'foirequest-list_feed_atom' publicbody=object.slug %}">
+                            <i class="fa fa-rss-square" aria-hidden="true"></i>
+                            {% trans "Atom Feed" %}
+                        </a>
+                    </p>
+                    {% if foirequest_count > foirequests|length %}
+                        <p>
+                            <a href="{% url 'foirequest-list' publicbody=object.slug %}">
+                                {% trans "See all FOI requests for this public body" %}
+                            </a>
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <p>{% trans "There are no requests for this public body yet." %}</p>
+                {% endif %}
+            </div>
         </div>
-        <div class="card-body">
-          {{ object.request_note_html|safe }}
-        </div>
-      </div>
-    {% endif %}
-    {% if foirequest_count %}
-      <h3>{% trans "Summary of Results" %}</h3>
-      <table class="table">
-        {% for res in resolutions %}
-        <tr>
-          <td>
-            <span class="icon status-{{ res.resolution }}"></span>
-          </td>
-          <td>
-            {% block result_image %}
-            {% endblock result_image %}
-            <a href="{% url 'foirequest-list' publicbody=object.slug %}?status={{ res.url_slug }}">
-              {{ res.name }}
-            </a>
-            <br/>
-            <small class="text-muted">{{ res.description }}</small>
-          </td>
-          <td class="text-end">
-            {{ res.count }}
-          </td>
-        </tr>
-        {% endfor %}
-      </table>
-      <h3>
-        {% blocktrans count count=foirequest_count %}One requests to this public body{% plural %}{{ count }} requests to this public body{% endblocktrans %}
-      </h3>
-      <ul class="list-unstyled">
-        {% for object in foirequests %}
-          <li>
-            {% include "foirequest/snippets/request_item.html" %}
-          </li>
-        {% endfor %}
-      </ul>
-      <p>
-        <a href="{% url 'foirequest-list_feed' publicbody=object.slug %}">
-          <i class="fa fa-rss" aria-hidden="true"></i>
-          {% trans "RSS Feed" %}
-        </a>
-        <br/>
-        <a href="{% url 'foirequest-list_feed_atom' publicbody=object.slug %}">
-          <i class="fa fa-rss-square" aria-hidden="true"></i>
-          {% trans "Atom Feed" %}
-        </a>
-      </p>
-      {% if foirequest_count > foirequests|length %}
-        <p>
-          <a href="{% url 'foirequest-list' publicbody=object.slug %}">
-            {% trans "See all FOI requests for this public body" %}
-          </a>
-        </p>
-      {% endif %}
-    {% else %}
-      <p>{% trans "There are no requests for this public body yet." %}</p>
-    {% endif %}
-  </div>
-</div>
-
-</div>
+    </div>
 {% endblock %}

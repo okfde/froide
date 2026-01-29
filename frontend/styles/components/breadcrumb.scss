@@ -1,22 +1,30 @@
 .breadcrumb {
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   padding: $spacer * 0.5 0;
   background-color: inherit;
-  overflow: hidden;
+  overflow: auto;
   margin: 0;
+  gap: $spacer * 0.5;
+  scroll-snap-type: x;
 
   &-item {
-    margin-right: $spacer * 0.5;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    float: none;
     white-space: nowrap;
+    scroll-snap-align: end;
+
+    & + .breadcrumb-item::before {
+      float: none;
+      color: inherit;
+    }
 
     &,
     > * {
-      color: $gray-700;
-      font-size: small;
+      color: inherit;
+      font-size: $font-size-sm;
       white-space: nowrap;
+      opacity: 0.9;
 
       @include media-breakpoint-up(lg) {
         font-size: $font-size-sm;
@@ -24,11 +32,10 @@
     }
 
     &:last-child {
-      margin-right: none;
-
       &,
       > * {
-        color: $blue-800;
+        color: inherit;
+        opacity: 1;
       }
     }
   }
@@ -36,25 +43,12 @@
   &-item + &-item {
     padding-left: 0;
   }
+}
 
-  &-light {
-    .breadcrumb-item {
-      &,
-      > * {
-        color: $gray-200;
-      }
-
-      &:last-child,
-      &.active {
-        &,
-        > * {
-          color: $white;
-        }
-      }
-    }
-
-    .breadcrumb-item + .breadcrumb-item::before {
-      color: $gray-300;
-    }
-  }
+.breadcrumb-overlay {
+  position: relative;
+  margin-bottom: -2.3rem;
+  z-index: 40;
+  --#{$prefix}bg-opacity: 0.75;
+  background-blend-mode: screen;
 }

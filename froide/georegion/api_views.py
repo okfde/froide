@@ -2,6 +2,7 @@ import json
 import re
 
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 
 from django_filters import rest_framework as filters
 from rest_framework import serializers, viewsets
@@ -63,6 +64,8 @@ class GeoRegionDetailSerializer(GeoRegionSerializer):
         )
 
     def get_geom(self, obj):
+        if obj.geom_detail is not None:
+            return json.loads(obj.geom_detail.json)
         if obj.geom is not None:
             return json.loads(obj.geom.json)
         return None
@@ -83,6 +86,7 @@ class GeoRegionFilter(filters.FilterSet):
     )
     latlng = filters.CharFilter(method="latlng_filter")
     name = filters.CharFilter(method="name_filter")
+    kind_detail = filters.CharFilter(method="kind_detail_filter")
     region_identifier = filters.CharFilter(method="region_identifier_filter")
 
     class Meta:
@@ -96,7 +100,9 @@ class GeoRegionFilter(filters.FilterSet):
         return qs
 
     def search_filter(self, queryset, name, value):
-        return queryset.filter(name__icontains=value)
+        return queryset.filter(
+            Q(name__icontains=value) | Q(region_identifier__startswith=value)
+        )
 
     def kind_filter(self, queryset, name, value):
         return queryset.filter(kind__in=value.split(","))
@@ -117,6 +123,9 @@ class GeoRegionFilter(filters.FilterSet):
 
     def region_identifier_filter(self, queryset, name, value):
         return queryset.filter(region_identifier=value)
+
+    def kind_detail_filter(self, queryset, name, value):
+        return queryset.filter(kind_detail=value)
 
     def latlng_filter(self, queryset, name, value):
         try:
@@ -171,11 +180,12 @@ class GeoRegionViewSet(OpenRefineReconciliationMixin, viewsets.ReadOnlyModelView
         properties_dict = {p["id"]: p for p in properties}
 
     def get_serializer_class(self):
-        if self.request.user.is_superuser:
-            return GeoRegionDetailSerializer
         try:
+            # request is not available when called from manage.py generateschema
+            if self.request and self.request.user.is_superuser:
+                return GeoRegionDetailSerializer
             return self.serializer_action_classes[self.action]
-        except (KeyError, AttributeError):
+        except KeyError:
             return GeoRegionSerializer
 
     def _search_reconciliation_results(self, query, filters, limit):

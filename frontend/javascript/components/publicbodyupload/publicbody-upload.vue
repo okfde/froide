@@ -5,34 +5,39 @@
         v-if="canSubmit"
         type="submit"
         class="btn btn-lg btn-primary"
-        @click="submitting = true">
+        @click="submitting = true"
+      >
         <span
           v-if="uploading"
           class="spinner-border spinner-border-sm"
           role="status"
-          aria-hidden="true" />
+          aria-hidden="true"
+        />
         {{ i18n.createResponse }}
       </button>
     </div>
-    <file-uploader
+    <FileUploader
       :config="config"
       class="mb-3 mt-3"
       :auto-proceed="true"
       :allow-remove="false"
       :required="true"
       @ready="canSubmit = $event"
-      @uploading="uploading = $event" />
+      @uploading="uploading = $event"
+    />
     <div class="text-end mt-3">
       <button
         type="submit"
         class="btn btn-lg btn-primary"
         :disabled="!canSubmit"
-        @click="submitting = true">
+        @click="submitting = true"
+      >
         <span
           v-if="uploading"
           class="spinner-border spinner-border-sm"
           role="status"
-          aria-hidden="true" />
+          aria-hidden="true"
+        />
         {{ i18n.createResponse }}
       </button>
     </div>

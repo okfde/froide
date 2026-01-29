@@ -27,7 +27,8 @@
               <a
                 :href="pb.acceptUrl"
                 class="btn btn-primary btn-sm"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.reviewChangedPublicBody }}
               </a>
             </template>
@@ -35,7 +36,8 @@
               <a
                 :href="pb.acceptUrl"
                 class="btn btn-secondary btn-sm"
-                target="_blank">
+                target="_blank"
+              >
                 {{ i18n.reviewNewPublicBody }}
               </a>
             </template>
@@ -52,15 +54,12 @@ const getUrl = (templ, objId) => templ.replace(/0/, objId)
 export default {
   name: 'ModerationPublicbodies',
   props: {
-    config: {
-      type: Object,
-      required: true
-    },
     publicbodies: {
       type: Array,
       required: true
     }
   },
+  inject: ['config'],
   computed: {
     i18n() {
       return this.config.i18n

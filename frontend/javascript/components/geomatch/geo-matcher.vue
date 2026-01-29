@@ -3,6 +3,10 @@
     <dl>
       <dd>Region Kind</dd>
       <dt><input v-model="regionKind" /></dt>
+      <dd>GeoRegion Kind Detail</dd>
+      <dt>
+        <input v-model="regionKindDetail" />
+      </dt>
       <dd>Ancestor GeoRegion</dd>
       <dt>
         <input v-model="ancestor" @change="ancestorChanged" />
@@ -12,6 +16,10 @@
       <dt>
         <input v-model="category" @change="categoryChanged" />
         {{ categoryName }}
+        <label
+          ><input type="checkbox" v-model="useCategoryForSearch" />Use for
+          search</label
+        >
       </dt>
       <dd>Jurisdiction</dd>
       <dt>
@@ -37,20 +45,19 @@
         </tr>
       </thead>
       <tbody>
-        <geo-matcher-row
+        <GeoMatcherRow
           v-for="georegion in georegions"
           :key="georegion.id"
           :georegion="georegion"
-          @connectpublicbody="connectPublicBody" />
+          @connectpublicbody="connectPublicBody"
+        />
       </tbody>
     </table>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-
-import { getAllData, FroideAPI, getData, postData } from '../../lib/api.js'
+import { FroideAPI, getAllData, getData, postData } from '../../lib/api.js'
 
 import GeoMatcherRow from './geo-matcher-row.vue'
 
@@ -59,18 +66,32 @@ export default {
   components: {
     GeoMatcherRow
   },
-  props: ['config'],
+  props: {
+    config: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       georegions: [],
       regionKind: '',
+      regionKindDetail: '',
       ancestor: '',
       ancestorName: '',
       jurisdiction: '',
       jurisdictionName: '',
+      useCategoryForSearch: true,
       category: '',
       categoryName: '',
-      searchHint: ''
+      searchHint: '',
+      csrfToken: document.querySelector('input[name="csrfmiddlewaretoken"]')
+        .value
+    }
+  },
+  provide() {
+    return {
+      config: this.config
     }
   },
   computed: {
@@ -100,15 +121,11 @@ export default {
     }
   },
   mounted() {
-    this.$root.config = this.config
-    this.$root.csrfToken = document.querySelector(
-      'input[name="csrfmiddlewaretoken"]'
-    ).value
-
     const entries = new URLSearchParams(window.location.search)
 
     this.ancestor = entries.get('ancestor') || ''
     this.regionKind = entries.get('kind') || ''
+    this.regionKindDetail = entries.get('kind_detail') || ''
     this.category = entries.get('category') || ''
     this.jurisdiction = entries.get('jurisdiction') || ''
     this.searchHint = entries.get('searchhint') || ''
@@ -190,15 +207,18 @@ export default {
     },
     loadGeoRegions() {
       let apiUrl = `${this.config.url.listGeoregion}?kind=${this.regionKind}`
+      if (this.regionKindDetail) {
+        apiUrl += `&kind_detail=${encodeURIComponent(this.regionKindDetail)}`
+      }
       if (this.ancestor) {
         apiUrl += `&ancestor=${this.ancestor}`
       }
       getAllData(apiUrl).then((data) => {
         this.georegions = data
         this.georegions.forEach((gr) => {
-          Vue.set(gr, 'loading', false)
-          Vue.set(gr, 'links', null)
-          Vue.set(gr, 'matches', null)
+          gr.loading = false
+          gr.links = null
+          gr.matches = null
         })
         this.loadLinks().then(() => {
           this.searchPublicBodies()
@@ -234,7 +254,7 @@ export default {
             if (gr === undefined) {
               return
             }
-            Vue.set(gr, 'links', [...(gr.links || []), pb])
+            gr.links = [...(gr.links || []), pb]
           })
         })
       })
@@ -249,22 +269,22 @@ export default {
       if (gr.matches !== null || gr.loading) {
         return
       }
-      Vue.set(gr, 'loading', true)
+      gr.loading = true
       let term = gr.name
       if (this.searchHint) {
         term = `${this.searchHint} ${term}`
       }
 
       const filter = {}
-      if (this.category) {
+      if (this.category && this.useCategoryForSearch) {
         filter.categories = this.category
       }
       if (this.jurisdiction) {
         filter.jurisdiction = this.jurisdiction
       }
       this.api.searchPublicBodies(term, filter).then((data) => {
-        Vue.set(gr, 'loading', false)
-        Vue.set(gr, 'matches', data.objects.slice(0, 5))
+        gr.loading = false
+        gr.matches = data.objects.slice(0, 5)
       })
     },
     connectPublicBody(payload) {
@@ -272,10 +292,14 @@ export default {
         georegion: payload.georegionId,
         publicbody: payload.publicbodyId
       }
-      postData('', data, this.$root.csrfToken).then((data) => {
+      if (this.category && !this.useCategoryForSearch) {
+        // Add category to public body
+        data.category = this.category
+      }
+      postData('', data, this.csrfToken).then(() => {
         const gr = this.georegions[this.georegionMapping[payload.georegionUrl]]
-        Vue.set(gr, 'links', [...(gr.links || []), payload.publicbody])
-        Vue.set(gr, 'matches', [])
+        gr.links = [...(gr.links || []), payload.publicbody]
+        gr.matches = []
       })
     }
   }

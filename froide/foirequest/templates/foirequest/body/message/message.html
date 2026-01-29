@@ -5,252 +5,233 @@
 {% load guidance_tags %}
 {% load content_helper %}
 {% load thumbnail %}
-
 {% get_comment_list message as comment_list %}
-
 {% block before_message_container %}{% endblock %}
-
-<div class="alpha-message" id="{{ message.get_html_id }}" data-timeline-key="{{ message.timestamp|date:'Y-m' }}">
-
-  {% block before_message %}{% endblock %}
-
-  {# head #}
-  <div {% if message.timestamp == object.last_message %}id="last" {% endif %} class="d-flex p-3 alpha-message__head">
-
-    {# avatar #}
-    <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
-      {% if not message.is_response and not message.sender_user.private and message.sender_user.profile_photo %}
-        <img src="{% thumbnail message.sender_user.profile_photo 64x64 %}" alt="{{ message.sender_user.get_full_name }}" class="img-fluid rounded-circle">
-      {% else %}
-        <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}" aria-hidden="true"></i>
-      {% endif %}
-    </div>
-
-    {# sender, recipient, message preview, meta infos #}
-    <div class="d-flex flex-fill flex-column overflow-hidden">
-      {# first row #}
-      <div class="d-flex justify-content-between align-items-center">
-        {# sender #}
-        {% include "foirequest/body/message/sender.html" %}
-
-        {# icons & timestamp #}
-        <div class="d-flex flex-nowrap">
-          {% if message.all_attachments %}
-            <span class="alpha-message__badge" data-bs-toggle="tooltip" title="{% trans 'Has attachments' %}">
-              <span class="fa fa-paperclip"></span>
-            </span>
-          {% endif %}
-          {% if comment_list %}
-            <span class="alpha-message__badge" data-bs-toggle="tooltip" title="{% trans 'Has comments' %}">
-              <span class="fa fa-comment-o"></span>
-            </span>
-          {% endif %}
-
-          {% if message.is_not_email %}
-            {% if message.is_response %}
-              {% blocktrans with kind=message.get_kind_display asvar kind_display %}received via {{ kind }}{% endblocktrans %}
+<div class="alpha-message"
+     id="{{ message.get_html_id }}"
+     data-timeline-key="{{ message.timestamp|date:'Y-m' }}">
+    {% block before_message %}{% endblock %}
+    {# head #}
+    <div {% if message.timestamp == object.last_message %}id="last"{% endif %}
+         class="d-flex p-3 alpha-message__head">
+        {# avatar #}
+        <div class="alpha-message__avatar alpha-message__avatar--{% if message.is_response %}{% if message.is_mediator %}shield{% else %}house{% endif %}{% else %}user{% endif %}">
+            {% if not message.is_response and not message.sender_user.private and message.sender_user.profile_photo %}
+                <img src="{% thumbnail message.sender_user.profile_photo 64x64 %}"
+                     alt="{{ message.sender_user.get_full_name }}"
+                     class="img-fluid rounded-circle">
             {% else %}
-              {% blocktrans with kind=message.get_kind_display asvar kind_display %}sent via {{ kind }}{% endblocktrans %}
+                <i class="fa fa-{% if message.is_response %}{% if message.is_mediator %}shield{% else %}bank{% endif %}{% else %}user{% endif %}"
+                   aria-hidden="true"></i>
             {% endif %}
-            <span class="alpha-message__badge alpha-message__badge--kind" data-bs-toggle="tooltip" title="{{ kind_display }}">
-              <span class="fa fa-{{ message.kind_icon }}"></span>
-            </span>
-          {% endif %}
-
-          {% if message.request|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.fails_authenticity %}
-            <span class="alpha-message__badge alpha-message__badge--error" data-bs-toggle="tooltip" title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
-              <span class="fa fa-user-secret"></span>
-            </span>
-          {% endif %}
-
-          {% if message.is_escalation_message %}
-            <span class="alpha-message__badge alpha-message__badge--kind" data-bs-toggle="tooltip" title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
-              <span class="fa fa-shield"></span>
-            </span>
-          {% endif %}
-
-          {% if message.content_hidden %}
-            <span class="alpha-message__badge alpha-message__badge--kind" data-bs-toggle="tooltip" title="{% blocktrans %}This message is not yet public.{% endblocktrans %}">
-              <span class="fa fa-lock"></span>
-            </span>
-          {% endif %}
-
-          {% get_delivery_status message as delivery_status %}
-          {% if delivery_status.is_failed %}
-            <span class="alpha-message__badge alpha-message__badge--error" data-bs-toggle="tooltip" title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
-              <span class="fa fa-bolt"></span>
-            </span>
-          {% endif %}
-
-
-          {# relative time #}
-          <a href="#{{ message.get_html_id }}" class="alpha-message__relative-time d-flex align-items-center text-nowrap smaller text-gray-600" title="{{ message.timestamp }}">
-            {{ message.timestamp|relativetime }}
-          </a>
         </div>
-      </div>
-
-      {# second row #}
-
-      {# message preview (collapsed state) #}
-      <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
-        {% if message.content_hidden and not object|can_read_foirequest_authenticated:request %}
-          {% blocktrans %}This message is not yet public.{% endblocktrans %}
-        {% else %}
-          {% if not message.plaintext %}
-            {% if message.subject %}
-              {% redact_subject message request %}
-            {% else %}
-              <i>{% trans 'No message text' %}</i>
-            {% endif %}
-          {% else %}
-            {% redact_message_short message request %}
-          {% endif %}
-        {% endif %}
-      </div>
-
-      {# recipient and delivery details link (expanded state) #}
-      <div class="alpha-message__details smaller">
-        {# recipient #}
-        {% if message.recipient_public_body.name %}
-          <span class="text-gray-600 me-1">
-            {% blocktrans %}To{% endblocktrans %}
-            {{ message.recipient_public_body.name }}
-          </span>
-        {% endif %}
-
-        <!-- delivery details link-->
-        <a href="#" class="alpha-message__meta-toggle text-body">
-          {% trans "Details" %}
-          <i class="fa fa-angle-down" aria-hidden="true"></i>
-        </a>
-
-      </div>
-    </div>
-  </div>
-
-  {# meta details container #}
-  {% include "foirequest/body/message/meta_container.html" %}
-
-  {# body #}
-  <div class="alpha-message__body">
-    <div class="alpha-message__wrap alpha-message__bodyinner">
-
-      {# guidance #}
-      {% render_guidance_alpha message %}
-
-      {# attachments #}
-      {% include "foirequest/body/message/attachments/attachments.html" %}
-
-      {# text #}
-      {% if message == object.first_outgoing_message %}
-        {# First outgoing message should (🤞) contain the request-message, render with highlight, cannot be hidden #}
-        <div class="alpha-message__content-text">{% highlight_request message request %}</div>
-      {% else %}
-
-        {% if message.content_hidden and object|can_write_foirequest:request %}
-          <div class="d-print-none alert alert-warning">
-            <p>{% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}</p>
-            <form class="form-horizontal disable-submit" method="post" action="{% url 'foirequest-approve_message' slug=object.slug message_id=message.pk %}">
-              {% csrf_token %}
-              <button class="btn btn-secondary" type="submit">
-                {% trans "Publish message content" %}
-              </button>
-            </form>
-          </div>
-        {% endif %}
-        
-        {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
-          <div class="alpha-message__content-text">{% redact_message message request %}</div>
-        {% else %}
-          <div class="alert alert-warning">
-            <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
-          </div>
-        {% endif %}
-
-      {% endif %}
-    </div>
-
-    {% block after_message %}{% endblock %}
-
-    <div class="d-print-none alpha-message__toolbar {% block message_extra_classes %}{% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky {% if object.awaits_classification %}alpha-message__toolbar--stickybump{% endif %}{% endif %}{% endblock message_extra_classes %}">
-
-      {# footer buttons #}
-      <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
-
-        {# Comments button #}
-        <button
-          type="button"
-          class="btn btn-light btn-sm text-primary mb-1 me-sm-auto order-last order-sm-first "
-          data-bs-toggle="collapse"
-          aria-expanded="false"
-          aria-controls="comments-{{ message.id }}"
-          data-bs-target="#comments-{{ message.id }}"
-          data-scrollto="comments-{{ message.id }}"
-          data-scrolltoblock="end"
-        >
-          <span class="fa fa-comments"></span>
-          {% with count=comment_list|length %}
-            <span class="d-inline d-lg-none d-xl-inline">
-              {{ count }} {% if count == 1 %}{% trans "Comment" %}{% else %}{% trans "Comments" %}{% endif %}
-            </span>
-            <span class="d-none d-lg-inline d-xl-none">
-              {{ count }}
-            </span>
-          {% endwith %}
-        </button>
-
-
-        {% block message_toolbar_item %}{% endblock %}
-
-        {% if not message.original %}
-          {% if object|can_write_foirequest:request %}
-            {% if message.is_response %}
-              <div class="btn-group btn-group-sm mb-1 ms-sm-auto">
-                <a data-fieldname="sendmessage-to" data-value="{{ message.sender_email }}" href="#write-message" class="btn btn-outline-primary">
-                  <span class="fa fa-reply"></span>
-                  {% trans "Reply" %}
+        {# sender, recipient, message preview, meta infos #}
+        <div class="d-flex flex-fill flex-column overflow-hidden">
+            {# first row #}
+            <div class="d-flex justify-content-between align-items-center">
+                {# sender #}
+                {% include "foirequest/body/message/sender.html" %}
+                {# icons & timestamp #}
+                <div class="d-flex flex-nowrap">
+                    {% if message.all_attachments %}
+                        <span class="alpha-message__badge"
+                              data-bs-toggle="tooltip"
+                              title="{% trans 'Has attachments' %}">
+                            <span class="fa fa-paperclip"></span>
+                        </span>
+                    {% endif %}
+                    {% if comment_list %}
+                        <span class="alpha-message__badge"
+                              data-bs-toggle="tooltip"
+                              title="{% trans 'Has comments' %}">
+                            <span class="fa fa-comment-o"></span>
+                        </span>
+                    {% endif %}
+                    {% if message.is_not_email %}
+                        {% if message.is_response %}
+                            {% blocktrans with kind=message.get_kind_display asvar kind_display %}received via {{ kind }}{% endblocktrans %}
+                        {% else %}
+                            {% blocktrans with kind=message.get_kind_display asvar kind_display %}sent via {{ kind }}{% endblocktrans %}
+                        {% endif %}
+                        <span class="alpha-message__badge alpha-message__badge--kind"
+                              data-bs-toggle="tooltip"
+                              title="{{ kind_display }}">
+                            <span class="fa fa-{{ message.kind_icon }}"></span>
+                        </span>
+                    {% endif %}
+                    {% if message.request|can_read_foirequest_authenticated:request and message.is_response and message.is_email and message.fails_authenticity %}
+                        <span class="alpha-message__badge alpha-message__badge--error"
+                              data-bs-toggle="tooltip"
+                              title="{% translate 'Possible authenticity problems with this message have been detected.' %}">
+                            <span class="fa fa-user-secret"></span>
+                        </span>
+                    {% endif %}
+                    {% if message.is_escalation_message %}
+                        <span class="alpha-message__badge alpha-message__badge--kind"
+                              data-bs-toggle="tooltip"
+                              title="{% blocktrans %}Message to the mediation authority.{% endblocktrans %}">
+                            <span class="fa fa-shield"></span>
+                        </span>
+                    {% endif %}
+                    {% if message.content_hidden %}
+                        <span class="alpha-message__badge alpha-message__badge--kind"
+                              data-bs-toggle="tooltip"
+                              title="{% blocktrans %}This message is not yet public.{% endblocktrans %}">
+                            <span class="fa fa-lock"></span>
+                        </span>
+                    {% endif %}
+                    {% get_delivery_status message as delivery_status %}
+                    {% if delivery_status.is_failed %}
+                        <span class="alpha-message__badge alpha-message__badge--error"
+                              data-bs-toggle="tooltip"
+                              title="{% blocktrans with kind=message.get_kind_display %}{{ kind }} delivery has failed.{% endblocktrans %}">
+                            <span class="fa fa-bolt"></span>
+                        </span>
+                    {% endif %}
+                    {# relative time #}
+                    <a href="#{{ message.get_html_id }}"
+                       class="alpha-message__relative-time d-flex align-items-center text-nowrap smaller text-gray-600"
+                       title="{{ message.timestamp }}">{{ message.timestamp|relativetime }}</a>
+                </div>
+            </div>
+            {# second row #}
+            {# message preview (collapsed state) #}
+            <div class="alpha-message__text-preview text-gray-600 smaller text-truncate">
+                {% if message.content_hidden and not object|can_read_foirequest_authenticated:request %}
+                    {% blocktrans %}This message is not yet public.{% endblocktrans %}
+                {% else %}
+                    {% if not message.plaintext %}
+                        {% if message.subject %}
+                            {% redact_subject message request %}
+                        {% else %}
+                            <i>{% trans 'No message text' %}</i>
+                        {% endif %}
+                    {% else %}
+                        {% redact_message_short message request %}
+                    {% endif %}
+                {% endif %}
+            </div>
+            {# recipient and delivery details link (expanded state) #}
+            <div class="alpha-message__details smaller">
+                {# recipient #}
+                {% if message.recipient_public_body.name %}
+                    <span class="text-gray-600 me-1">
+                        {% blocktrans %}To{% endblocktrans %}
+                        {{ message.recipient_public_body.name }}
+                    </span>
+                {% endif %}
+                <!-- delivery details link-->
+                <a href="#" class="alpha-message__meta-toggle text-body">
+                    {% trans "Details" %}
+                    <i class="fa fa-angle-down" aria-hidden="true"></i>
                 </a>
-              </div>
-            {% endif %}
-          {% endif %}
-
-          {% if object|can_write_foirequest:request or object|can_moderate_pii_foirequest:request %}
-            {% render_message_redact_button message %}
-          {% endif %}
-
-          {% if object|can_write_foirequest:request %}
-            {% render_message_edit_button message %}
-          {% endif %}
-        {% endif %}
-
-        <!-- Problem button-->
-        {% render_problem_button message %}
-
-        {% if object|can_moderate_foirequest:request and message.can_resend_bounce %}
-          {% include "foirequest/body/message/toolbar/resend.html" %}
-        {% endif %}
-
-      </div>
-    </div>
-
-    <div class="alpha-message__footer">
-      {# comments list #}
-      <div id="comments-{{ message.id }}" class="collapse {% if comment_list|length %}show{% endif %}">
-        {% block before_comments %}{% endblock %}
-        <div class="alpha-message__wrap pb-4">
-
-          {% include "froide_comments/comments.html" with object=message comment_list=comment_list %}
-
+            </div>
         </div>
-
-        {% block after_comments %}{% endblock %}
-      </div>
-
     </div>
-
-  </div>
-
+    {# meta details container #}
+    {% include "foirequest/body/message/meta_container.html" %}
+    {# body #}
+    <div class="alpha-message__body">
+        <div class="alpha-message__wrap alpha-message__bodyinner">
+            {# guidance #}
+            {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
+                {% render_guidance_alpha message %}
+            {% endif %}
+            {# attachments #}
+            {% include "foirequest/body/message/attachments/attachments.html" %}
+            {# text #}
+            {% if message == object.first_outgoing_message %}
+                {# First outgoing message should (🤞) contain the request-message, render with highlight, cannot be hidden #}
+                <div class="alpha-message__content-text">{% highlight_request message request %}</div>
+            {% else %}
+                {% if message.content_hidden and object|can_write_foirequest:request %}
+                    <div class="d-print-none alert alert-warning">
+                        <p>
+                            {% blocktrans %}This message may contain information that you may wish to not publish until after the whole request finished. The following message is therefore currently only visible to you.{% endblocktrans %}
+                        </p>
+                        <form class="form-horizontal disable-submit"
+                              method="post"
+                              action="{% url 'foirequest-approve_message' slug=object.slug message_id=message.pk %}">
+                            {% csrf_token %}
+                            <button class="btn btn-secondary" type="submit">{% trans "Publish message content" %}</button>
+                        </form>
+                    </div>
+                {% endif %}
+                {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
+                    <div class="alpha-message__content-text">{% redact_message message request %}</div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <p>{% blocktrans %}This message is not yet public.{% endblocktrans %}</p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% block after_message %}{% endblock %}
+        <div class="d-print-none alpha-message__toolbar {% block message_extra_classes %}{% if object|can_write_foirequest:request %}alpha-message__toolbar--sticky {% if object.awaits_classification %}alpha-message__toolbar--stickybump{% endif %}{% endif %}{% endblock message_extra_classes %}">
+            {# footer buttons #}
+            <div class="alpha-message__wrap d-flex flex-column flex-sm-row flex-wrap justify-content-between py-2">
+                {# Comments button #}
+                <button type="button"
+                        class="btn btn-outline-secondary btn-sm mb-1 me-sm-auto order-last order-sm-first "
+                        data-bs-toggle="collapse"
+                        aria-expanded="false"
+                        aria-controls="comments-{{ message.id }}"
+                        data-bs-target="#comments-{{ message.id }}"
+                        data-scrollto="comments-{{ message.id }}"
+                        data-scrolltoblock="end">
+                    <span class="fa fa-comments"></span>
+                    {% with count=comment_list|length %}
+                        <span class="d-inline d-lg-none d-xl-inline">
+                            {{ count }}
+                            {% if count == 1 %}
+                                {% trans "Comment" %}
+                            {% else %}
+                                {% trans "Comments" %}
+                            {% endif %}
+                        </span>
+                        <span class="d-none d-lg-inline d-xl-none">{{ count }}</span>
+                    {% endwith %}
+                </button>
+                {% block message_toolbar_item %}{% endblock %}
+                {% if not message.original %}
+                    {% if object|can_write_foirequest:request %}
+                        {% if message.is_response %}
+                            <div class="btn-group btn-group-sm mb-1 ms-sm-auto">
+                                <a data-fieldname="sendmessage-to"
+                                   data-value="{{ message.sender_email }}"
+                                   href="#write-message"
+                                   class="btn btn-outline-primary">
+                                    <span class="fa fa-reply"></span>
+                                    {% trans "Reply" %}
+                                </a>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                    {% if object|can_write_foirequest:request or object|can_moderate_pii_foirequest:request %}
+                        {% render_message_redact_button message %}
+                    {% endif %}
+                    {% if object|can_write_foirequest:request %}
+                        {% render_message_edit_button message %}
+                    {% endif %}
+                {% endif %}
+                <!-- Problem button-->
+                {% render_problem_button message %}
+                {% if object|can_moderate_foirequest:request and message.can_resend_bounce %}
+                    {% include "foirequest/body/message/toolbar/resend.html" %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="alpha-message__footer">
+            {# comments list #}
+            <div id="comments-{{ message.id }}"
+                 class="collapse {% if comment_list|length %}show{% endif %}">
+                {% block before_comments %}{% endblock %}
+                <div class="alpha-message__wrap py-4">
+                    {% include "froide_comments/comments.html" with object=message comment_list=comment_list %}
+                </div>
+                {% block after_comments %}{% endblock %}
+            </div>
+        </div>
+    </div>
 </div>
-
 {% block after_message_container %}{% endblock %}

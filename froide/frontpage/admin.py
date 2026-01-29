@@ -3,6 +3,7 @@ from django.contrib import admin
 from froide.frontpage.models import FeaturedRequest
 
 
+@admin.register(FeaturedRequest)
 class FeaturedRequestAdmin(admin.ModelAdmin):
     list_display = (
         "request",
@@ -17,6 +18,3 @@ class FeaturedRequestAdmin(admin.ModelAdmin):
         "request",
         "user",
     )
-
-
-admin.site.register(FeaturedRequest, FeaturedRequestAdmin)

@@ -1,13 +1,16 @@
 import collections
 import re
 from collections import defaultdict, namedtuple
-from typing import Iterable, Optional
+from pathlib import Path
+from typing import Iterable, List, Optional
 
-from pygtail import Pygtail
+from dogtail import Dogtail
 
 from .signals import email_left_queue
 
 PostfixLogLine = namedtuple("PostfixLogLine", ["date", "queue_id", "data"])
+
+DEFAULT_POSTFIX_LOG_PATHS = [Path("/var/log/mail.log"), Path("/var/log/mail.log.1")]
 
 
 class PostfixLogfileParser(collections.abc.Iterator):
@@ -19,14 +22,16 @@ class PostfixLogfileParser(collections.abc.Iterator):
 
     DEFAULT_RELEVANT_FIELDS = {"message-id", "from", "to", "status", "removed"}
     QUEUE_ID_REGEX = r"(?P<queue_id>[0-9A-F]{6,}|[0-9a-zA-Z]{12,})"
-    TIMESTAMP_RE = r"(?P<timestamp>\w{3}\s+\d+\s+\d+:\d+:\d+)"
+    TIMESTAMP_RE = r"(?P<timestamp>(\w{3}\s+\d+\s+\d+:\d+:\d+)|(\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)))"
     USER_RE = r"(?P<user>[^ ]+)"
     PROCESS_RE = r"(?P<process>[^:]+)"
     FIELDS_RE = r"(?P<fields>.*)"
     LINE_RE = rf"^{TIMESTAMP_RE} {USER_RE} {PROCESS_RE}: {QUEUE_ID_REGEX}: {FIELDS_RE}$"
 
     def __init__(
-        self, logfile_reader: Iterable[str], relevant_fields: Optional[Iterable] = None
+        self,
+        logfile_reader: Iterable[str],
+        relevant_fields: Optional[Iterable[str]] = None,
     ):
         self.logfile_reader = logfile_reader
         self.relevant_fields = (
@@ -98,7 +103,7 @@ class PostfixLogfileParser(collections.abc.Iterator):
         Returns:
             dict: A dictionary containing the key-value pairs from the given fields
         """
-        kv_map = dict()
+        kv_map = {}
 
         for field in fields:
             if "=" in field:
@@ -127,8 +132,8 @@ class PostfixLogfileParser(collections.abc.Iterator):
         return kv_map
 
 
-class PygtailPostfixLogfileParser(PostfixLogfileParser):
-    """A logfile parser that keeps track of its position in the logfile using pygtail.
+class DogtailPostfixLogfileParser(PostfixLogfileParser):
+    """A logfile parser that keeps track of its position in the logfile using dogtail.
 
     It tries to ignore parts of the log that were already fully processed.
     However it can only ignore parts at the beginning of the log where all mails
@@ -140,37 +145,38 @@ class PygtailPostfixLogfileParser(PostfixLogfileParser):
     is this part will be returned by the iterator on every invocation.
     """
 
-    DEFAULT_POSTFIX_LOG_PATH = "/var/log/mail.log"
-    DEFAULT_PYGTAIL_OFFSET_PATH = "./mail_log.offset"
+    DEFAULT_DOGTAIL_OFFSET_PATH = Path("./mail_log.offset")
 
     def __init__(
-        self, log_path: Optional[str] = None, offset_path: Optional[str] = None
+        self,
+        log_paths: Optional[Iterable[str]] = None,
+        offset_path: Optional[Path] = None,
     ):
-        if log_path is None:
-            log_path = self.DEFAULT_POSTFIX_LOG_PATH
+        if log_paths is None:
+            log_paths = DEFAULT_POSTFIX_LOG_PATHS
 
         if offset_path is None:
-            offset_path = self.DEFAULT_PYGTAIL_OFFSET_PATH
+            offset_path = self.DEFAULT_DOGTAIL_OFFSET_PATH
 
-        self.logfile_reader = Pygtail(
-            log_path,
-            offset_file=offset_path,
-            full_lines=True,
-            save_on_end=False,
-            copytruncate=False,
+        self.logfile_reader = Dogtail(
+            log_paths,
+            offset_path=offset_path,
         )
         super().__init__(self.logfile_reader)
         self._msg_log = defaultdict(lambda: {"log": [], "data": {}, "offset": None})
+        self._log_read = False
 
     def iteration_done(self):
         if not self._msg_log:
-            self.logfile_reader.update_offset_file()
+            if self._log_read:
+                self.logfile_reader.update_offset_file()
         else:
-            first_logoffset = sorted(x["offset"] for x in self._msg_log.values())[0]
+            first_logoffset = min(x["offset"] for x in self._msg_log.values())
             self.logfile_reader.write_offset_to_file(first_logoffset)
 
     def __next__(self):
-        for line, offset in self.logfile_reader.with_offsets():
+        for line, offset in self.logfile_reader:
+            self._log_read = True
             parsed_line = self._parse_line(line)
             if parsed_line is None:
                 continue
@@ -192,9 +198,9 @@ class PygtailPostfixLogfileParser(PostfixLogfileParser):
 
 
 def check_delivery_from_log(
-    log_path: Optional[str] = None, offset_path: Optional[str] = None
+    log_paths: Optional[List[str]] = None, offset_path: Optional[Path] = None
 ):
-    parser = PygtailPostfixLogfileParser(log_path, offset_path)
+    parser = DogtailPostfixLogfileParser(log_paths, offset_path)
     for message in parser:
         email_left_queue.send(
             sender=__name__,

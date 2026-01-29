@@ -5,12 +5,12 @@ from collections import defaultdict
 from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Case, Value, When
+from django.http import HttpRequest
 from django.template.defaultfilters import truncatechars_html
-from django.utils.html import format_html
-from django.utils.safestring import mark_safe
+from django.utils.html import Urlizer, format_html
+from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext as _
 
-import bleach
 from django_comments import get_model
 
 from froide.helper.text_diff import mark_differences
@@ -30,12 +30,8 @@ from ..auth import (
     can_write_foiproject,
     can_write_foirequest,
 )
-from ..foi_mail import get_alternative_mail
-from ..forms import AssignProjectForm, EditMessageForm
 from ..models import DeliveryStatus, FoiMessage, FoiRequest
-from ..moderation import get_moderation_triggers
-
-Comment = get_model()
+from ..utils import get_minimum_redaction_replacements
 
 register = template.Library()
 
@@ -58,19 +54,16 @@ def highlight_request(message, request):
     real_content = unify(message.get_real_content())
     redacted_content = unify(message.get_content())
 
-    description = unify(message.request.description)
+    real_description = unify(message.request.description)
     redacted_description = unify(message.request.get_description())
-    description_with_markup = markup_redacted_content(
-        description,
-        redacted_description,
-        authenticated_read=auth_read,
-        message_id=message.id,
-    )
+    description_with_markup = render_request_description(message.request, auth_read)
 
     if auth_read:
         content = real_content
+        description = real_description
     else:
         content = redacted_content
+        description = redacted_description
 
     try:
         index = content.index(description)
@@ -117,7 +110,7 @@ def highlight_request(message, request):
                 message_sender=message.sender,
             )
         )
-    html.append(format_html("</div>"))
+    html.append(mark_safe("</div>"))
     return mark_safe("".join(html))
 
 
@@ -146,6 +139,38 @@ def render_message_content(message, authenticated_read=False, render_footer=True
 def redact_message(message, request):
     authenticated_read = is_authenticated_read(message, request)
     content = render_message_content(message, authenticated_read=authenticated_read)
+
+    return content
+
+
+@register.simple_tag
+def redact_request_description(
+    foirequest: FoiRequest, request: HttpRequest
+) -> SafeString:
+    authenticated_read = can_read_foirequest_authenticated(foirequest, request)
+    return render_request_description(foirequest, authenticated_read)
+
+
+def render_request_description(
+    foirequest: FoiRequest, authenticated_read: bool
+) -> SafeString:
+    cached_content = foirequest.get_cached_rendered_description(authenticated_read)
+    if cached_content:
+        return mark_safe(cached_content)
+
+    real_content = unify(foirequest.description)
+    redacted_content = unify(foirequest.get_description())
+
+    content = mark_redacted(
+        real_content,
+        redacted_content,
+        authenticated_read=authenticated_read,
+    )
+
+    if content:
+        foirequest.set_cached_rendered_description(
+            authenticated_read=authenticated_read, description=content
+        )
 
     return content
 
@@ -193,30 +218,40 @@ def redact_subject(message, request):
 MAILTO_RE = re.compile(r'<a href="mailto:([^"]+)">[^<]+</a>')
 
 
-def urlizetrunc_no_mail(content, chars, **kwargs):
-    """
-    Transform urls in the text to proper links, marking them with the `data-urlized` attribute
+class CustomNonEmailUrlizer(Urlizer):
+    url_template = '<a href="{href}" rel="nofollow noopener" class="urlized">{url}</a>'
 
-    This will not create mailto links, as they make it to easy to accidentally
+    @staticmethod
+    def is_email_simple(value):
+        # Do not link emails
+        return False
+
+
+custom_urlizer = CustomNonEmailUrlizer()
+
+
+def urlizetrunc_no_mail(
+    content: SafeString, limit: int, autoescape: bool = True
+) -> SafeString:
+    """
+    Transform urls in the text to proper links, marking them with the `urlized` class
+
+    This will not create mailto links, as they make it too easy to accidentally
     reply with your own email client.
     """
 
-    def mark_as_urlized(attrs, new=False):
-        attrs[(None, "class")] = "urlized"
-        return attrs
-
-    result = bleach.linkify(
-        content,
-        parse_email=False,
-        callbacks=[bleach.callbacks.nofollow, mark_as_urlized],
+    content = mark_safe(
+        custom_urlizer(
+            content, trim_url_limit=limit, nofollow=True, autoescape=autoescape
+        )
     )
 
-    return mark_safe(result)
+    return content
 
 
-def mark_redacted(original="", redacted="", authenticated_read=False):
+def mark_redacted(original="", redacted="", authenticated_read=False) -> SafeString:
     if authenticated_read:
-        content = mark_differences(
+        content: SafeString = mark_differences(
             original,
             redacted,
             attrs='class="redacted-dummy redacted-hover"'
@@ -225,7 +260,9 @@ def mark_redacted(original="", redacted="", authenticated_read=False):
             ),
         )
     else:
-        content = mark_differences(redacted, original, attrs='class="redacted"')
+        content: SafeString = mark_differences(
+            redacted, original, attrs='class="redacted"'
+        )
 
     return urlizetrunc_no_mail(content, 40, autoescape=False)
 
@@ -236,14 +273,14 @@ def markup_redacted_content(
     authenticated_read=False,
     message_id=None,
     render_footer=True,
-):
+) -> SafeString:
     c_1, c_2 = split_text_by_separator(real_content)
     r_1, r_2 = split_text_by_separator(redacted_content)
 
-    content_1 = mark_redacted(
+    content_1: SafeString = mark_redacted(
         original=c_1, redacted=r_1, authenticated_read=authenticated_read
     )
-    content_2 = mark_redacted(
+    content_2: SafeString = mark_redacted(
         original=c_2, redacted=r_2, authenticated_read=authenticated_read
     )
 
@@ -254,7 +291,7 @@ def markup_redacted_content(
                     '<div class="text-content-visible">',
                     content_1,
                     (
-                        '</div><a class="btn btn-sm btn-light btn-block" href="#message-footer-{message_id}" data-bs-toggle="collapse" '
+                        '</div><a class="btn btn-sm btn-outline-secondary btn-block" href="#message-footer-{message_id}" data-bs-toggle="collapse" '
                         ' aria-expanded="false" aria-controls="message-footer-{message_id}">{label}</a>'
                         '<div id="message-footer-{message_id}" class="collapse">'.format(
                             message_id=message_id, label=_("Show the quoted message")
@@ -266,7 +303,7 @@ def markup_redacted_content(
             )
         )
 
-    return mark_safe(content_1)
+    return content_1
 
 
 @register.simple_tag
@@ -355,12 +392,15 @@ def truncatefilename(filename, chars=20):
 
 @register.simple_tag
 def alternative_address(foirequest):
+    from ..foi_mail import get_alternative_mail
+
     return get_alternative_mail(foirequest)
 
 
 @register.simple_tag(takes_context=True)
 def get_comment_list(context, message):
     if not hasattr(message, "comment_list"):
+        Comment = get_model()
         ct = ContentType.objects.get_for_model(FoiMessage)
         foirequest = message.request
         mids = [m.id for m in foirequest.messages]
@@ -401,6 +441,8 @@ def get_delivery_status(message):
 
 @register.inclusion_tag("foirequest/snippets/message_edit.html")
 def render_message_edit_button(message):
+    from ..forms import EditMessageForm
+
     return {
         "form": EditMessageForm(message=message),
         "foirequest": message.request,
@@ -410,6 +452,10 @@ def render_message_edit_button(message):
 
 @register.inclusion_tag("foirequest/snippets/message_redact.html")
 def render_message_redact_button(message):
+    blocked_patterns = [
+        pat.pattern
+        for pat in get_minimum_redaction_replacements(message.request).keys()
+    ]
     return {
         "foirequest": message.request,
         "message": message,
@@ -420,7 +466,28 @@ def render_message_redact_button(message):
                     "subject": _("Subject"),
                     "message": _("Message"),
                     "messageLoading": _("Message is loading..."),
-                }
+                    "blockedRedaction": _("This word needs to stay redacted."),
+                },
+                "settings": {
+                    "blockedPatterns": blocked_patterns,
+                },
+            }
+        ),
+    }
+
+
+@register.inclusion_tag("foirequest/snippets/description_redact.html")
+def render_description_redact_button(request):
+    return {
+        "foirequest": request,
+        "js_config": json.dumps(
+            {
+                "i18n": {
+                    "subject": _("Subject"),
+                    "message": _("Message"),
+                    "messageLoading": _("Message is loading..."),
+                    "blockedRedaction": _("This word needs to stay redacted."),
+                },
             }
         ),
     }
@@ -437,11 +504,15 @@ def readable_status(status, resolution=""):
     "foirequest/snippets/moderation_triggers.html", takes_context=True
 )
 def render_moderation_actions(context, foirequest):
+    from ..moderation import get_moderation_triggers
+
     triggers = get_moderation_triggers(foirequest, request=context["request"])
     return {"triggers": triggers.values(), "object": foirequest}
 
 
 @register.simple_tag(takes_context=True)
 def get_project_form(context, obj):
+    from ..forms import AssignProjectForm
+
     request = context["request"]
     return AssignProjectForm(instance=obj, user=request.user)

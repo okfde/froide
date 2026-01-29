@@ -3,37 +3,42 @@
     :class="{
       'table-secondary': claimedByOther,
       'table-primary': claimedByMe
-    }">
+    }"
+  >
     <td :title="report.kind_label" class="kind-emoji">
       {{ emoji }}
     </td>
     <td :title="report.timestamp">
-      {{ report.timestamp | date }}
+      {{ reportTimestampFormatted }}
       <span
         v-if="!report.is_requester && !report.auto_submitted"
-        class="badge text-bg-secondary">
+        class="badge text-bg-secondary"
+      >
         {{ i18n.isNotRequester }}
       </span>
     </td>
-    <td>{{ report.message_subject | truncatechars }}</td>
+    <td>{{ reportMessageSubjectTruncated }}</td>
     <td>
       <template v-if="claimedByMe"> {{ report.description }}<br /> </template>
       <template v-else>
-        {{ report.description | truncatechars(120) }}<br />
+        {{ reportDescriptionTruncated }}
+        <br />
       </template>
 
       <a
         :href="report.message_url"
-        class="btn btn-light btn-sm"
-        target="_blank">
+        class="btn btn-outline-secondary btn-sm"
+        target="_blank"
+      >
         {{ i18n.toMessage }}
       </a>
 
       <a
         v-if="showPublicBodyLink"
-        class="ms-3 btn btn-light btn-sm"
+        class="ms-3 btn btn-outline-secondary btn-sm"
         :href="publicBodyLink"
-        target="_blank">
+        target="_blank"
+      >
         {{ i18n.toPublicBody }}
       </a>
 
@@ -66,7 +71,8 @@
         v-if="!report.claimed"
         class="btn btn-sm btn-primary"
         :disabled="!canClaim"
-        @click="claim">
+        @click="claim"
+      >
         {{ i18n.claim }}
       </button>
       <template v-if="claimedByOther">
@@ -114,22 +120,22 @@ const calcMinutesAgo = (val) => {
   return Math.round((now - t) / (1000 * 60))
 }
 
+const truncatechars = (val, len = 25) => {
+  return val.length > len ? val.substring(0, len) + '…' : val
+}
+
+const formatDate = (val) => {
+  const d = new Date(val)
+  const today = new Date().toLocaleDateString()
+  const res = d.toLocaleString()
+  if (d.toLocaleDateString() === today) {
+    return res.split(',')[1].trim()
+  }
+  return res
+}
+
 export default {
   name: 'ModerationRow',
-  filters: {
-    date: (val) => {
-      const d = new Date(val)
-      const today = new Date().toLocaleDateString()
-      const res = d.toLocaleString()
-      if (d.toLocaleDateString() === today) {
-        return res.split(',')[1].trim()
-      }
-      return res
-    },
-    truncatechars: (val, len = 25) => {
-      return val.length > len ? val.substring(0, len) + '…' : val
-    }
-  },
   props: {
     report: {
       type: Object,
@@ -140,6 +146,8 @@ export default {
       default: true
     }
   },
+  inject: ['config'],
+  emits: ['claim', 'unclaim', 'resolve', 'escalate'],
   data() {
     return {
       resolving: false,
@@ -151,7 +159,7 @@ export default {
   },
   computed: {
     i18n() {
-      return this.$root.config.i18n
+      return this.config.i18n
     },
     showPublicBodyLink() {
       return (
@@ -160,10 +168,19 @@ export default {
       )
     },
     publicBodyLink() {
-      return this.$root.config.url.publicBody.replace(
+      return this.config.url.publicBody.replace(
         /0/,
         this.report.related_publicbody_id
       )
+    },
+    reportTimestampFormatted() {
+      return formatDate(this.report.timestamp)
+    },
+    reportMessageSubjectTruncated() {
+      return truncatechars(this.report.message_subject)
+    },
+    reportDescriptionTruncated() {
+      return truncatechars(this.report.description, 120)
     },
     emoji() {
       return EMOJI_MAPPING[this.report.kind] || ''
@@ -172,7 +189,7 @@ export default {
       return !!this.report.claimed && !this.claimedByMe
     },
     claimedByMe() {
-      return this.report.moderator_id === this.$root.config.settings.user_id
+      return this.report.moderator_id === this.config.settings.user_id
     },
     longClaim() {
       return this.claimedMinutes > MAX_CLAIMED_MINUTES

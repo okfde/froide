@@ -1,43 +1,50 @@
 {% extends "oauth2_provider/base.html" %}
-
 {% load i18n %}
-
-{% block content %}
-  <div class="row justify-content-center mt-5 mb-5">
-    <div class="col-md-8">
-      {% if not error %}
-        <form id="authorizationForm" method="post">
-            <h3 class="block-center-heading">{% blocktrans with name=application.name %}Authorize the application '{{ name }}'?{% endblocktrans %}</h3>
-            {% csrf_token %}
-
-            {% for field in form %}
-                {% if field.is_hidden %}
-                    {{ field }}
-                {% endif %}
-            {% endfor %}
-
-            <p>{% trans "Application requires following permissions" %}</p>
-            <ul>
-                {% for scope in scopes_descriptions %}
-                    <li>{{ scope }}</li>
-                {% endfor %}
-            </ul>
-
-            {{ form.errors }}
-            {{ form.non_field_errors }}
-
-            <div class="control-group">
-                <div class="controls">
-                    <input type="submit" class="btn btn-large" value="{% trans 'Cancel' %}"/>
-                    <input type="submit" class="btn btn-large btn-primary" name="allow" value="{% trans 'Authorize' %}"/>
-                </div>
-            </div>
-        </form>
-
-      {% else %}
-        <h2>Error: {{ error.error }}</h2>
-        <p>{{ error.description }}</p>
-      {% endif %}
-    </div>
-  </div>
+{% block breadcrumbs %}
+    {% translate "App Permissions" as last_item %}
+    {% include "account/includes/breadcrumbs.html" with last_item=last_item %}
 {% endblock %}
+{% block content %}
+    <div class="row justify-content-center mt-5 mb-5">
+        <div class="col-md-8">
+            {% if not error %}
+                <form id="authorizationForm" method="post">
+                    <h3 class="block-center-heading">
+                        {% blocktrans with name=application.name %}Authorize the application '{{ name }}'?{% endblocktrans %}
+                    </h3>
+                    <p>{% translate "The application has given the following description:" %}</p>
+                    <blockquote class="simple-blockquote">
+                        {{ application.description }}
+                    </blockquote>
+                    {% if application.client_type == "public" %}
+                        <div class="alert alert-info">
+                            {% translate "Please make sure you are using a trusted client that belongs to this application." %}
+                        </div>
+                    {% endif %}
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.is_hidden %}{{ field }}{% endif %}
+                    {% endfor %}
+                    <p>{% trans "Application requires following permissions" %}</p>
+                    <ul>
+                        {% for scope in scopes_descriptions %}<li>{{ scope }}</li>{% endfor %}
+                    </ul>
+                    {{ form.errors }}
+                    {{ form.non_field_errors }}
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="submit" class="btn btn-large" value="{% trans "Cancel" %}" />
+                            <input type="submit"
+                                   class="btn btn-large btn-primary"
+                                   name="allow"
+                                   value="{% trans "Authorize" %}" />
+                        </div>
+                    </div>
+                </form>
+            {% else %}
+                <h2>Error: {{ error.error }}</h2>
+                <p>{{ error.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock content %}

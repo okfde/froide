@@ -1,82 +1,77 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 {% load static %}
 {% load frontendbuild %}
-
-{% block extra_head %}
-  <meta name="robots" content="noindex"/>
-{% endblock %}
-
+{% block extra_head %}<meta name="robots" content="noindex" />{% endblock %}
 {% block navbar %}
-  {% include "header_minimal.html" %}
+    {% include "header_minimal.html" %}
 {% endblock %}
-
-
 {% block app_body %}
-<h3>
-{% blocktrans with reqid=foirequest.id name=foirequest.public_body.name %}
+    <h3>
+        {% blocktrans with reqid=foirequest.id name=foirequest.public_body.name %}
   File transfer by <mark>{{ name }}</mark> for request [#{{ reqid }}]
 {% endblocktrans %}
-</h3>
-
-{% if not authenticated %}
-  <form action="" method="post" class="mb-5">
-    {% csrf_token %}
-    <p>
-      {% blocktranslate %}Please enter the email address of the requester to use the upload form.{% endblocktranslate %}
-    </p>
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="mb-3">
-          <label class="form-label" for="email_prefix">
-            {% blocktranslate %}Enter the email address of the requester:{% endblocktranslate %}
-          </label>
-          <div class="input-group mb-3">
-            <input name="email_prefix" id="email_prefix" type="text" class="form-control" aria-label="{% translate 'email address' %}" placeholder="{% translate 'j.doe.1234abc' %}">
-            <span class="input-group-text">@{{ email_domain }}</span>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">
-          {% translate "Next" %}
-        </button>
-      </div>
-    </div>
-  </form>
-{% else %}
-<dl>
-  <dt>{% trans "Request" %}</dt>
-  <dd>“{{ foirequest.title }}” [#{{ foirequest.id }}] ({{ foirequest.created_at|date:"SHORT_DATE_FORMAT" }})</dd>
-  <dt>{% trans "Requester" %}</dt>
-  <dd>{{ foirequest.user.get_full_name }} &lt;{{ foirequest.secret_address }}&gt;</dd>
-  <dt>{% trans "File transfer" %}</dt>
-  <dd><i class="fa fa-lock" aria-hidden="true"></i> {% trans "The file transfer is transferred securely encrypted." %}</dd>
-</dl>
-
-<p class="lead">
-  {% trans "Please upload files as a response to this request below." %}
-</p>
-
-<ol>
-  <li>{% trans 'Drag files on the framed area or click "Search" to select files.' %}</li>
-  <li>{% trans 'Wait for all files to be uploaded.' %}</li>
-  <li><strong>{% trans 'Click on "Create response now" to finish the process.' %}</strong></li>
-</ol>
-
-<form action="" method="post" class="mb-5">
-  {% csrf_token %}
-  <publicbody-upload class="publicbody-upload" :config="{{ config }}">
-    <div class="spinner-border text-center" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-  </publicbody-upload>
-</form>
-{% endif %}
-
+    </h3>
+    {% if not authenticated %}
+        <form action="" method="post" class="mb-5">
+            {% csrf_token %}
+            <p>
+                {% blocktranslate %}Please enter the email address of the requester to use the upload form.{% endblocktranslate %}
+            </p>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label" for="email_prefix">
+                            {% blocktranslate %}Enter the email address of the requester:{% endblocktranslate %}
+                        </label>
+                        <div class="input-group mb-3">
+                            <input name="email_prefix"
+                                   id="email_prefix"
+                                   type="text"
+                                   class="form-control"
+                                   aria-label="{% translate 'email address' %}"
+                                   placeholder="{% translate 'j.doe.1234abc' %}">
+                            <span class="input-group-text">@{{ email_domain }}</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">{% translate "Next" %}</button>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <dl>
+            <dt>{% trans "Request" %}</dt>
+            <dd>
+                “{{ foirequest.title }}” [#{{ foirequest.id }}] ({{ foirequest.created_at|date:"SHORT_DATE_FORMAT" }})
+            </dd>
+            <dt>{% trans "Requester" %}</dt>
+            <dd>
+                {{ foirequest.user.get_full_name }} &lt;{{ foirequest.secret_address }}&gt;
+            </dd>
+            <dt>{% trans "File transfer" %}</dt>
+            <dd>
+                <i class="fa fa-lock" aria-hidden="true"></i> {% trans "The file transfer is transferred securely encrypted." %}
+            </dd>
+        </dl>
+        <p class="lead">{% trans "Please upload files as a response to this request below." %}</p>
+        <ol>
+            <li>{% trans 'Drag files on the framed area or click "Search" to select files.' %}</li>
+            <li>{% trans 'Wait for all files to be uploaded.' %}</li>
+            <li>
+                <strong>{% trans 'Click on "Create response now" to finish the process.' %}</strong>
+            </li>
+        </ol>
+        <form action="" method="post" class="mb-5">
+            {% csrf_token %}
+            <publicbody-upload class="publicbody-upload" :config="{{ config }}">
+            <div class="spinner-border text-center" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            </publicbody-upload>
+        </form>
+    {% endif %}
 {% endblock %}
-
-
 {% block scripts %}
-  {{ block.super }}
-  {% addfrontendbuild "publicbodyupload.js" %}
+    {{ block.super }}
+    {% addfrontendbuild "publicbodyupload.js" %}
 {% endblock %}

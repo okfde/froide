@@ -1,0 +1,7 @@
+{% load i18n %}
+{% load static %}
+{% if creatediv %}<div id="{{ name }}" class="leaflet-container-default"></div>{% endif %}
+<script type="application/json"
+        data-leafletmap="true"
+        id="{{ name }}_options">{% autoescape off %}{{ djoptions }}{% endautoescape %}</script>
+<script src="{% static 'js/django_leaflet_loadmap.js' %}"></script>

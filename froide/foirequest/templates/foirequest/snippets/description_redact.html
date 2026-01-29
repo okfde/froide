@@ -1,0 +1,31 @@
+{% load i18n %}
+{% load markup %}
+{% load form_helper %}
+<a href="#"
+   data-bs-toggle="modal"
+   data-bs-target="#description-redact-{{ foirequest.pk }}">
+    <i class="fa fa-paint-brush"></i>
+    {% trans "Redact" %}
+</a>
+<div class="modal"
+     data-teleport="body"
+     tabindex="-1"
+     role="dialog"
+     data-redact="description"
+     id="description-redact-{{ foirequest.pk }}">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body container">
+                <p>{% trans "Click on the words you wish to redact or unredact." %}</p>
+                <form method="post"
+                      action="{% url 'foirequest-redact_description' slug=foirequest.slug %}">
+                    {% csrf_token %}
+                    <description-redaction :config="{{ js_config }}" request-url="{% url 'api:request-detail' pk=foirequest.pk %}"></description-redaction>
+                    <p class="text-end">
+                        <button type="submit" class="btn btn-dark">{% trans "Change request text redaction" %}</button>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

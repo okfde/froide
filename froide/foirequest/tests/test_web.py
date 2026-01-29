@@ -1,14 +1,19 @@
+import itertools
 import unittest
-from datetime import datetime
+import urllib.parse
+from datetime import datetime, timezone
+from typing import Callable, Optional
 from unittest import mock
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.test import Client
 from django.test.utils import override_settings
-from django.urls import reverse
+from django.urls import resolve, reverse
 
 import pytest
+from bs4 import BeautifulSoup
 from pytest_django.asserts import (
     assertContains,
     assertInHTML,
@@ -17,12 +22,13 @@ from pytest_django.asserts import (
     assertRedirects,
 )
 
-from froide.foirequest.filters import FOIREQUEST_FILTER_DICT, FOIREQUEST_FILTERS
+from froide.foirequest.filters import FOIREQUEST_LIST_FILTER_CHOICES
 from froide.foirequest.models import FoiAttachment, FoiRequest
 from froide.foirequest.tests import factories
 from froide.helper.search.signal_processor import realtime_search
-from froide.publicbody.models import Category, Jurisdiction, PublicBody
+from froide.publicbody.models import Category, FoiLaw, Jurisdiction, PublicBody
 
+User = get_user_model()
 MEDIA_DOMAIN = "media.frag-den-staat.de"
 
 
@@ -92,10 +98,9 @@ def test_list_requests(world, client):
     factories.rebuild_index()
     response = client.get(reverse("foirequest-list"))
     assert response.status_code == 200
-    for urlpart in FOIREQUEST_FILTER_DICT:
-        response = client.get(
-            reverse("foirequest-list", kwargs={"status": str(urlpart)})
-        )
+    for slug, _label in FOIREQUEST_LIST_FILTER_CHOICES:
+        request_list_url = reverse("foirequest-list", kwargs={"status": slug})
+        response = client.get(request_list_url)
         assert response.status_code == 200
 
     for topic in Category.objects.filter(is_topic=True):
@@ -103,6 +108,10 @@ def test_list_requests(world, client):
             reverse("foirequest-list", kwargs={"category": topic.slug})
         )
         assert response.status_code == 200
+
+    bad_request_list_url = request_list_url.replace(str(slug), "bad")
+    response = client.get(bad_request_list_url)
+    assert response.status_code == 404
 
     response = client.get(reverse("foirequest-list") + "?page=99999")
     assert response.status_code == 404
@@ -113,14 +122,20 @@ def test_list_jurisdiction_requests(world, client):
     factories.rebuild_index()
     juris = Jurisdiction.objects.all()[0]
     response = client.get(
-        reverse("foirequest-list"), kwargs={"jurisdiction": juris.slug}
+        reverse("foirequest-list", kwargs={"jurisdiction": juris.slug})
     )
     assert response.status_code == 200
-    for urlpart in FOIREQUEST_FILTER_DICT:
+
+    response = client.get(
+        reverse("foirequest-list", kwargs={"jurisdiction": "bad-juris"})
+    )
+    assert response.status_code == 404
+
+    for slug, _label in FOIREQUEST_LIST_FILTER_CHOICES:
         response = client.get(
             reverse(
                 "foirequest-list",
-                kwargs={"status": urlpart, "jurisdiction": juris.slug},
+                kwargs={"status": slug, "jurisdiction": juris.slug},
             )
         )
         assert response.status_code == 200
@@ -301,7 +316,7 @@ def test_feed(world, client):
     )
     assert response.status_code == 200
 
-    status = FOIREQUEST_FILTERS[0][0]
+    status = FOIREQUEST_LIST_FILTER_CHOICES[0][0]
     response = client.get(
         reverse(
             "foirequest-list_feed",
@@ -511,6 +526,7 @@ def test_queries_foirequest(world, client):
     """
     FoiRequest page should query for non-loggedin users
     - FoiRequest (+1)
+    - Save FoiRequest redacted description (+1)
     - FoiRequest Tags (+1)
     - FoiMessages of that request (+1)
     - FoiAttachments of that request (+1)
@@ -525,7 +541,7 @@ def test_queries_foirequest(world, client):
     mes2 = factories.FoiMessageFactory.create(request=req)
     factories.FoiAttachmentFactory.create(belongs_to=mes2)
     ContentType.objects.clear_cache()
-    with assertNumQueries(10):
+    with assertNumQueries(12):
         client.get(req.get_absolute_url())
 
 
@@ -535,6 +551,7 @@ def test_queries_foirequest_loggedin(world, client):
     FoiRequest page should query for non-staff loggedin users
     - Django session + Django user (+3)
     - FoiRequest (+1)
+    - Save FoiRequest redacted description (+1)
     - FoiRequest Tags (+1)
     - User and group permissions (+2)
     - FoiMessages of that request (+1)
@@ -546,7 +563,7 @@ def test_queries_foirequest_loggedin(world, client):
     - Problem reports - even for non-requester (+1)
     - ContentType + Comments for each FoiMessage (+2)
     """
-    TOTAL_EXPECTED_REQUESTS = 16
+    TOTAL_EXPECTED_REQUESTS = 18
     req = factories.FoiRequestFactory.create(site=world)
     factories.FoiMessageFactory.create(request=req, is_response=False)
     mes2 = factories.FoiMessageFactory.create(request=req)
@@ -566,14 +583,14 @@ def req_with_unordered_messages(
     foi_message_factory(
         request=req,
         is_response=True,
-        timestamp=datetime(2022, 1, 1),
+        timestamp=datetime(2022, 1, 1, tzinfo=timezone.utc),
         plaintext="Some random response text",
         plaintext_redacted="Some random response text",
     )
     foi_message_factory(
         request=req,
         is_response=False,
-        timestamp=datetime(2022, 1, 5),
+        timestamp=datetime(2022, 1, 5, tzinfo=timezone.utc),
         plaintext=f"To whom it may concern\n\n{req_text}\n\nGreetings",
         plaintext_redacted=f"To whom it may concern\n\n{req_text}\n\nGreetings",
     )
@@ -590,14 +607,14 @@ def req_with_ordered_messages(
     foi_message_factory(
         request=req,
         is_response=False,
-        timestamp=datetime(2022, 1, 1),
+        timestamp=datetime(2022, 1, 1, tzinfo=timezone.utc),
         plaintext=f"To whom it may concern\n\n{req_text}\n\nGreetings",
         plaintext_redacted=f"To whom it may concern\n\n{req_text}\n\nGreetings",
     )
     foi_message_factory(
         request=req,
         is_response=True,
-        timestamp=datetime(2022, 1, 5),
+        timestamp=datetime(2022, 1, 5, tzinfo=timezone.utc),
         plaintext="Some random response text",
         plaintext_redacted="Some random response text",
     )
@@ -622,3 +639,144 @@ def test_message_highlight(client: Client, req_fixture: str, request):
         f'<div class="highlight">{req.description}</div>',
         content,
     )
+
+
+@pytest.fixture
+def jurisdiction_with_many_requests(world):
+    site = world
+    user = User.objects.first()
+    jurisdiction = Jurisdiction.objects.first()
+    for _ in range(40):
+        law = FoiLaw.objects.filter(site=site, jurisdiction=jurisdiction).first()
+        public_body = PublicBody.objects.filter(jurisdiction=jurisdiction).first()
+        req = factories.FoiRequestFactory.create(
+            site=site,
+            user=user,
+            resolution="successful",
+            jurisdiction=jurisdiction,
+            law=law,
+            public_body=public_body,
+        )
+        factories.FoiMessageFactory.create(
+            request=req, sender_user=user, recipient_public_body=public_body
+        )
+        mes = factories.FoiMessageFactory.create(
+            request=req, sender_public_body=public_body
+        )
+        factories.FoiAttachmentFactory.create(belongs_to=mes, approved=False)
+        factories.FoiAttachmentFactory.create(belongs_to=mes, approved=True)
+    return jurisdiction
+
+
+def jurisdiction_with_many_requests_slug(request: pytest.FixtureRequest):
+    return request.getfixturevalue("jurisdiction_with_many_requests").slug
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "filter_field,filter_value,filter_value_function",
+    [["jurisdiction", None, jurisdiction_with_many_requests_slug], ["q", "*", None]],
+)
+@pytest.mark.usefixtures(
+    "jurisdiction_with_many_requests"
+)  # We always need enough requests to have a second page we can filter for
+def test_request_list_filter_pagination(
+    request: pytest.FixtureRequest,
+    client,
+    filter_field: str,
+    filter_value: Optional[str],
+    filter_value_function: Optional[Callable],
+):
+    if filter_value is None and filter_value_function is not None:
+        filter_value = filter_value_function(request)
+
+    factories.rebuild_index()
+
+    list_url = (
+        reverse(
+            "foirequest-list",
+        )
+        + "?"
+        + urllib.parse.urlencode({filter_field: filter_value})
+    )
+    response = client.get(list_url)
+    assert response.status_code == 200
+
+    saw_page_link = False
+    soup = BeautifulSoup(response.content.decode(), "lxml")
+    for link in soup.find_all("a", class_="page-link"):
+        href = link.get("href")
+        if href == "#":
+            continue
+        query = urllib.parse.parse_qs(urllib.parse.urlparse(href).query)
+        assert query.get(filter_field) == [filter_value]
+
+        saw_page_link = True
+        link_url = urllib.parse.urljoin(list_url, link.get("href"))
+
+        response = client.get(link_url)
+        assert response.status_code == 200
+
+    assert saw_page_link
+
+
+def dict_combinations_all_r(sequence):
+    for r in range(len(sequence) + 1):
+        for parts in itertools.combinations(sequence, r=r):
+            yield dict(parts)
+
+
+@pytest.mark.django_db
+def test_request_list_path_filter(
+    client: Client,
+    jurisdiction_with_many_requests: Jurisdiction,
+):
+    factories.rebuild_index()
+
+    kwargs_elements = [
+        ("jurisdiction", jurisdiction_with_many_requests.slug),
+        ("status", "successful"),
+    ]
+
+    query_elements = [("q", "*"), ("sort", "last")]
+
+    for kwargs in dict_combinations_all_r(kwargs_elements):
+        qe = query_elements + [x for x in kwargs_elements if x[0] not in kwargs]
+        for query in dict_combinations_all_r(qe):
+            list_url = (
+                reverse("foirequest-list", kwargs=kwargs)
+                + "?"
+                + urllib.parse.urlencode(query)
+            )
+            response = client.get(list_url)
+            assert response.status_code == 200
+
+            saw_page_link = False
+            soup = BeautifulSoup(response.content.decode(), "lxml")
+            for link in soup.find_all("a", class_="page-link"):
+                href = link.get("href")
+                if href == "#":
+                    continue
+                target_url = urllib.parse.urljoin(list_url, href)
+                target_path = urllib.parse.urlparse(target_url).path
+                target_resolved = resolve(target_path)
+                # Pagination should link to a foirequest-list again
+                assert target_resolved.url_name == "foirequest-list"
+                target_query = urllib.parse.parse_qs(
+                    urllib.parse.urlparse(target_url).query
+                )
+
+                # Query filters and filters set via the path should not overlap
+                assert not (target_query.keys() & target_resolved.kwargs.keys())
+                for k, v in itertools.chain(kwargs.items(), query.items()):
+                    assert k in target_query or k in target_resolved.kwargs
+                    assert (
+                        target_query.get(k) == [v] or target_resolved.kwargs.get(k) == v
+                    )
+
+                saw_page_link = True
+
+                response = client.get(target_url)
+                assert response.status_code == 200
+
+            assert saw_page_link

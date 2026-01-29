@@ -1,11 +1,13 @@
-import datetime
 import logging
 import re
-from typing import Callable
+from datetime import datetime
+from functools import partial
+from typing import Optional
 
 from django import forms
 from django.conf import settings
 from django.db import transaction
+from django.template import Context, Template
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -13,27 +15,31 @@ from django.utils.translation import ngettext_lazy
 
 from froide.account.forms import AddressBaseForm
 from froide.account.services import AccountService
+from froide.foirequest.models.event import FoiEvent
+from froide.helper.fields import MultipleFileField
 from froide.helper.storage import make_filename, make_unique_filename
-from froide.helper.text_diff import get_diff_chunks
-from froide.helper.text_utils import redact_subject
+from froide.helper.text_utils import apply_user_redaction, redact_subject
 from froide.helper.widgets import (
     BootstrapCheckboxInput,
     BootstrapFileInput,
     BootstrapRadioSelect,
 )
+from froide.proof.forms import ProofAttachment
 from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
 
 from ..models import FoiAttachment, FoiMessage, FoiRequest
-from ..models.message import MessageKind
+from ..models.message import BULK_TAG, MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
 from ..utils import (
     MailAttachmentSizeChecker,
+    apply_minimum_redaction,
     construct_message_body,
     get_info_for_email,
     get_publicbody_for_email,
     possible_reply_addresses,
+    postal_date,
     redact_plaintext_with_request,
     select_foirequest_template,
 )
@@ -78,9 +84,6 @@ class AttachmentSaverMixin(object):
             att.name for att in FoiAttachment.objects.filter(belongs_to=message)
         }
 
-        def get_convert_callback(att: FoiAttachment) -> Callable:
-            return lambda: convert_attachment_task.delay(att.id)
-
         for file in files:
             filename = make_unique_filename(file.name, attachment_names)
             attachment_names.add(filename)
@@ -97,7 +100,7 @@ class AttachmentSaverMixin(object):
             added.append(att)
 
             if save_file and att.can_convert_to_pdf():
-                transaction.on_commit(get_convert_callback(att))
+                transaction.on_commit(partial(convert_attachment_task.delay, att.id))
 
         message._attachments = None
 
@@ -122,17 +125,32 @@ def get_send_message_form(*args, **kwargs):
     if foirequest.is_overdue() and foirequest.awaits_response():
         days = (timezone.now() - foirequest.due_date).days + 1
         first_message = foirequest.messages[0]
-        message = render_to_string(
-            select_foirequest_template(
-                foirequest, "foirequest/emails/overdue_reply.txt"
-            ),
-            {
-                "due": ngettext_lazy("%(count)s day", "%(count)s days", days)
-                % {"count": days},
-                "foirequest": foirequest,
-                "first_message": first_message,
-            },
-        )
+
+        context = {
+            "due": ngettext_lazy("%(count)s day", "%(count)s days", days)
+            % {"count": days},
+            "foirequest": foirequest,
+            "first_message": first_message,
+        }
+
+        message = None
+
+        if foirequest.law.overdue_reply:
+            template_str = "{top}{body}{bottom}{footer}".format(
+                top="{% autoescape off %}",
+                body=foirequest.law.overdue_reply,
+                bottom="{% endautoescape %}",
+                footer='\r\n{% include "foirequest/emails/overdue_reply_footer.txt" %}',
+            )
+            message = Template(template_str).render(Context(context))
+        if not message:
+            message = render_to_string(
+                select_foirequest_template(
+                    foirequest, "foirequest/emails/overdue_reply.txt"
+                ),
+                context,
+            )
+
     else:
         message = get_default_initial_message(foirequest.user)
 
@@ -141,7 +159,7 @@ def get_send_message_form(*args, **kwargs):
         foirequest=foirequest,
         prefix="sendmessage",
         initial={"subject": subject, "message": message},
-        **kwargs
+        **kwargs,
     )
 
 
@@ -234,12 +252,12 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         "Uploaded scans can be PDF, JPG, PNG or GIF. They will be non-public "
         "by default and can be redacted after upload."
     )
-    files = forms.FileField(
-        label=_("Attachments"),
+    files = MultipleFileField(
+        label=_("Other attachments"),
         required=False,
         validators=[validate_upload_document],
         help_text=files_help_text,
-        widget=BootstrapFileInput(attrs={"multiple": True, "accept": ACCEPT_FILETYPES}),
+        widget=BootstrapFileInput(multiple=True, attrs={"accept": ACCEPT_FILETYPES}),
     )
 
     send_address = forms.BooleanField(
@@ -285,11 +303,17 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             and not cleaned_data.get("address", "").strip()
         ):
             raise forms.ValidationError(
-                "You need to give a postal address, " "if you want to send it."
+                "You need to give a postal address, if you want to send it."
             )
         return cleaned_data
 
-    def add_message_body(self, message, attachment_names=(), attachment_missing=()):
+    def add_message_body(
+        self,
+        message,
+        attachment_names=(),
+        attachment_missing=(),
+        proof: Optional[ProofAttachment] = None,
+    ):
         message_body = self.cleaned_data["message"]
         send_address = self.cleaned_data.get("send_address", True)
         message.plaintext = construct_message_body(
@@ -298,6 +322,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             send_address=send_address,
             attachment_names=attachment_names,
             attachment_missing=attachment_missing,
+            proof=proof,
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext, self.foirequest, redact_greeting=True
@@ -341,16 +366,24 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         )
         return message
 
-    def save(self, user=None, bulk=False):
+    def save(self, user=None, bulk=False, proof: Optional[ProofAttachment] = None):
         recipient_email = self.cleaned_data["to"]
         message = self.make_message(self.foirequest, recipient_email)
         message.save()
+
+        if bulk:
+            message.tags.add(BULK_TAG)
 
         if self.cleaned_data.get("files"):
             self.save_attachments(self.files.getlist("%s-files" % self.prefix), message)
 
         message._attachments = None
-        files = message.get_mime_attachments()
+        files = list(message.get_mime_attachments())
+
+        if proof:
+            # prepend to files list so it is definitely sent
+            files = [proof.get_mime_attachment()] + files
+
         att_gen = MailAttachmentSizeChecker(files)
         attachments = list(att_gen)
 
@@ -358,12 +391,13 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             message,
             attachment_names=att_gen.send_files,
             attachment_missing=att_gen.non_send_files,
+            proof=proof,
         )
         message.save()
 
         message.send(attachments=attachments)
         self.foirequest.message_sent.send(
-            sender=self.foirequest, message=message, user=user, bulk=bulk
+            sender=self.foirequest, message=message, user=user
         )
 
         return message
@@ -388,7 +422,7 @@ def get_escalation_message_form(*args, **kwargs):
                     "name": foirequest.user.get_full_name(),
                 },
             ),
-        }
+        },
     )
 
 
@@ -488,6 +522,17 @@ class MessageEditMixin(forms.Form):
         help_text=_("Please give the date the reply was sent."),
         localize=True,
     )
+    registered_mail_date = forms.DateField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": _("mm/dd/YYYY")}
+        ),
+        label=_("Registered mail date"),
+        required=False,
+        help_text=_(
+            "If this letter was registered on a different date than it was sent, enter it here"
+        ),
+        localize=True,
+    )
     subject = forms.CharField(
         label=_("Subject"),
         required=False,
@@ -520,31 +565,12 @@ class MessageEditMixin(forms.Form):
         return date
 
     def set_data_on_message(self, message):
-        # TODO: Check if timezone support is correct
-        uploaded_date_midday = datetime.datetime.combine(
-            self.cleaned_data["date"],
-            datetime.time(12, 00, 00),
-            tzinfo=timezone.get_current_timezone(),
-        )
-
-        # The problem we have when uploading postal messages is that they do not have a time, so we
-        # need to invent one. 12am is a good assumption, however if we already have messages on this
-        # date, we need to add it *after* all those messages
-        # Example: User sends a foi request on 2011-01-01 at 3pm, the public body is fast and sends
-        # out the reply letter on the same day. If we would assume 12am as the letter time, we would
-        # place the postal reply earlier than the users message
-        possible_message_timestamps = [
-            msg.timestamp + datetime.timedelta(seconds=1)
-            for msg in self.foirequest.messages
-            if msg.timestamp.date() == self.cleaned_data["date"]
-        ] + [uploaded_date_midday]
-
-        message.timestamp = max(possible_message_timestamps)
-
-        # If the last message on that date was sent out 1 sec before midnight, there is no good way
-        # to place the postal reply, so just assume midday
-        if message.timestamp.date() != self.cleaned_data["date"]:
-            message.timestamp = uploaded_date_midday
+        message.timestamp = postal_date(message, self.cleaned_data["date"])
+        # TODO: registered_mail_date should probably be just a date field instead of datetime
+        if self.cleaned_data.get("registered_mail_date"):
+            message.registered_mail_date = datetime.combine(
+                self.cleaned_data.get("registered_mail_date"), datetime.min.time()
+            )
 
         message.subject = self.cleaned_data.get("subject", "")
         user_replacements = self.foirequest.user.get_redactions()
@@ -565,6 +591,9 @@ class EditMessageForm(MessageEditMixin):
         self.foirequest = self.message.request
         super().__init__(*args, **kwargs)
         self.fields["date"].initial = self.message.timestamp.date()
+        if self.message.registered_mail_date:
+            registered_mail_date = timezone.localtime(self.message.registered_mail_date)
+            self.fields["registered_mail_date"].initial = registered_mail_date.date()
         self.fields["subject"].initial = self.message.subject
         self.fields["text"].initial = self.message.plaintext
 
@@ -581,12 +610,12 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
         widget=PublicBodySelect,
     )
 
-    files = forms.FileField(
+    files = MultipleFileField(
         label=_("Scanned Letter"),
         required=False,
         validators=[validate_upload_document],
         help_text=scan_help_text,
-        widget=BootstrapFileInput(attrs={"multiple": True, "accept": ACCEPT_FILETYPES}),
+        widget=BootstrapFileInput(multiple=True, attrs={"accept": ACCEPT_FILETYPES}),
     )
     FIELD_ORDER = ["publicbody", "date", "subject", "text", "files"]
 
@@ -607,10 +636,7 @@ class PostalBaseForm(MessageEditMixin, AttachmentSaverMixin, forms.Form):
             files = None
         if not (text or files):
             raise forms.ValidationError(
-                _(
-                    "You need to provide either the letter text or "
-                    "a scanned document."
-                )
+                _("You need to provide either the letter text or a scanned document.")
             )
         return cleaned_data
 
@@ -661,7 +687,7 @@ class PostalReplyForm(PostalBaseForm):
 
     if publishing_denied:
         not_publishable = forms.BooleanField(
-            label=_("You are not allowed to " "publish some received documents"),
+            label=_("You are not allowed to publish some received documents"),
             initial=False,
             required=False,
             help_text=_(
@@ -677,6 +703,13 @@ class PostalReplyForm(PostalBaseForm):
         if self.cleaned_data.get("sender"):
             message.sender_name = self.cleaned_data["sender"]
         message.not_publishable = self.cleaned_data.get("not_publishable", False)
+        return message
+
+    def save(self, user):
+        message = super().save()
+        FoiRequest.message_received.send(
+            sender=self.foirequest, message=message, user=user
+        )
         return message
 
 
@@ -708,6 +741,11 @@ class PostalMessageForm(PostalBaseForm):
             message.recipient = self.cleaned_data["recipient"]
         return message
 
+    def save(self, user):
+        message = super().save()
+        FoiRequest.message_sent.send(sender=self.foirequest, message=message, user=user)
+        return message
+
 
 def get_postal_attachment_form(*args, **kwargs):
     foimessage = kwargs.pop("foimessage")
@@ -716,11 +754,11 @@ def get_postal_attachment_form(*args, **kwargs):
 
 
 class PostalAttachmentForm(AttachmentSaverMixin, forms.Form):
-    files = forms.FileField(
+    files = MultipleFileField(
         label=_("Scanned Document"),
         help_text=PostalBaseForm.scan_help_text,
         validators=[validate_upload_document],
-        widget=BootstrapFileInput(attrs={"multiple": True}),
+        widget=BootstrapFileInput(multiple=True),
     )
 
     def save(self, message):
@@ -746,17 +784,25 @@ class TransferUploadForm(AttachmentSaverMixin, forms.Form):
             validate_postal_content_type(upload.content_type)
         return upload
 
-    def save(self, foimessage):
+    def save(self, request):
         upload = self.cleaned_data["upload"]
 
-        result = self.save_attachments([upload], foimessage, save_file=False)
+        result = self.save_attachments([upload], self.foimessage, save_file=False)
         upload.ensure_saving()
         upload.save()
 
         att = result[0]
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(att.id, upload.id)
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
+        )
+
+        FoiEvent.objects.create_event(
+            FoiEvent.EVENTS.ATTACHMENT_UPLOADED,
+            self.foimessage.request,
+            message=self.foimessage,
+            request=request,
+            **{"added": str(result)},
         )
 
         return result
@@ -775,7 +821,7 @@ class RedactMessageForm(forms.Form):
         try:
             val = [int(x) for x in val.split(",")]
         except ValueError:
-            raise forms.ValidationError("Bad value")
+            raise forms.ValidationError("Bad value") from None
         return val
 
     def clean_subject(self):
@@ -792,32 +838,9 @@ class RedactMessageForm(forms.Form):
             if not self.cleaned_data.get("subject_length"):
                 raise forms.ValidationError
 
-    def redact_part(self, original, instructions, length):
-        REDACTION_MARKER = str(_("[redacted]"))
-
-        if not instructions:
-            return original
-
-        chunks = get_diff_chunks(original)
-
-        # Sanity check chunk length
-        if len(chunks) != length:
-            raise IndexError
-
-        for index in instructions:
-            chunks[index] = REDACTION_MARKER
-
-        redacted = "".join(chunks)
-        # Replace multiple connecting redactions with one
-        return re.sub(
-            "{marker}(?: {marker})+".format(marker=re.escape(REDACTION_MARKER)),
-            REDACTION_MARKER,
-            redacted,
-        )
-
     def save(self, message):
         try:
-            redacted_subject = self.redact_part(
+            redacted_subject = apply_user_redaction(
                 message.subject,
                 self.cleaned_data["subject"],
                 self.cleaned_data["subject_length"],
@@ -827,10 +850,13 @@ class RedactMessageForm(forms.Form):
             logging.warning(e)
 
         try:
-            redacted_content = self.redact_part(
+            redacted_content = apply_user_redaction(
                 message.plaintext,
                 self.cleaned_data["content"],
                 self.cleaned_data["content_length"],
+            )
+            redacted_content = apply_minimum_redaction(
+                message.request, redacted_content
             )
             message.plaintext_redacted = redacted_content
         except IndexError as e:
@@ -883,7 +909,7 @@ class PublicBodyUploader:
             name=name,
             size=upload.size,
             filetype=upload.content_type,
-            can_approve=True,
+            can_approve=not message.request.not_publishable,
             approved=False,
             pending=True,
         )
@@ -891,6 +917,6 @@ class PublicBodyUploader:
         upload.save()
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(att.id, upload.id)
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
         )
         return att

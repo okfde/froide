@@ -5,10 +5,10 @@ from typing import Iterator, List, Optional, Tuple
 from django.utils.html import escape
 from django.utils.safestring import SafeString, mark_safe
 
-SPLITTER = r"([^\w\-@/\.\:])"
 SPLITTER = r"([\u0000-\u002C\u003B-\u003F\u005B-\u005e\u0060\u007B-\u007E])"
 SPLITTER_RE = re.compile(SPLITTER)
 SPLITTER_MATCH_RE = re.compile("^%s$" % SPLITTER)
+CONTENT_CACHE_THRESHOLD = 5000
 
 
 def get_diff_chunks(content: str) -> List[str]:
@@ -69,11 +69,11 @@ def get_tagged_differences(
     end_tag: str = "</span>",
     attrs: Optional[str] = None,
     min_part_len: int = 3,
-) -> Iterator[str]:
-
+) -> Iterator[SafeString]:
     if attrs is None:
         attrs = ""
-    start_tag = start_tag.format(attrs=attrs)
+    start_tag = SafeString(start_tag.format(attrs=attrs))
+    end_tag = SafeString(end_tag)
 
     diff_chunks = get_differences(content_a, content_b, min_part_len=min_part_len)
 

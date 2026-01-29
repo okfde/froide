@@ -2,7 +2,7 @@ import json
 import re
 from collections import namedtuple
 from datetime import timedelta
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 import django.dispatch
 from django.conf import settings
@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
@@ -21,6 +22,7 @@ from taggit.models import TaggedItemBase
 
 from froide.campaign.models import Campaign
 from froide.helper.email_utils import make_address
+from froide.helper.text_diff import CONTENT_CACHE_THRESHOLD, get_differences
 from froide.helper.text_utils import redact_plaintext
 from froide.publicbody.models import FoiLaw, Jurisdiction, PublicBody
 from froide.team.models import Team
@@ -194,19 +196,30 @@ class InternalTaggableManager(TaggitTaggableManager):
 
 
 class Status(models.TextChoices):
-    AWAITING_USER_CONFIRMATION = "awaiting_user_confirmation", _(
-        "Awaiting user confirmation"
+    AWAITING_USER_CONFIRMATION = (
+        "awaiting_user_confirmation",
+        _("Awaiting user confirmation"),
     )
     PUBLICBODY_NEEDED = "publicbody_needed", _("Public Body needed")
-    AWAITING_PUBLICBODY_CONFIRMATION = "awaiting_publicbody_confirmation", _(
-        "Awaiting Public Body confirmation"
+    AWAITING_PUBLICBODY_CONFIRMATION = (
+        "awaiting_publicbody_confirmation",
+        _("Awaiting Public Body confirmation"),
     )
     AWAITING_RESPONSE = "awaiting_response", _("Awaiting response")
-    AWAITING_CLASSIFICATION = "awaiting_classification", _(
-        "Request awaits classification"
+    AWAITING_CLASSIFICATION = (
+        "awaiting_classification",
+        _("Request awaits classification"),
     )
     ASLEEP = "asleep", _("Request asleep")
     RESOLVED = "resolved", _("Request resolved")
+
+
+# users are only allowed to set the status to one of the following values.
+# the others are only set by the system
+USER_ALLOWED_STATUS = (
+    Status.AWAITING_RESPONSE,
+    Status.RESOLVED,
+)
 
 
 class Resolution(models.TextChoices):
@@ -284,6 +297,7 @@ class Visibility(models.IntegerChoices):
 
 class FoiRequest(models.Model):
     STATUS = Status
+
     RESOLUTION = Resolution
     FILTER_STATUS = FilterStatus
     VISIBILITY = Visibility
@@ -294,6 +308,12 @@ class FoiRequest(models.Model):
     title = models.CharField(_("Title"), max_length=255)
     slug = models.SlugField(_("Slug"), max_length=255, unique=True)
     description = models.TextField(_("Description"), blank=True)
+    description_redacted = models.TextField(_("Redacted Description"), blank=True)
+    redacted_description_auth = models.JSONField(blank=True, null=True)
+    redacted_description_anon = models.JSONField(blank=True, null=True)
+    rendered_description_auth = models.TextField(blank=True, null=True)
+    rendered_description_anon = models.TextField(blank=True, null=True)
+
     summary = models.TextField(_("Summary"), blank=True)
 
     public_body = models.ForeignKey(
@@ -330,6 +350,7 @@ class FoiRequest(models.Model):
     )
     resolved_on = models.DateTimeField(_("Resolution date"), blank=True, null=True)
     due_date = models.DateTimeField(_("Due Date"), blank=True, null=True)
+    last_modified_at = models.DateTimeField(auto_now=True)
 
     secret_address = models.CharField(
         _("Secret address"), max_length=255, db_index=True, unique=True
@@ -363,13 +384,17 @@ class FoiRequest(models.Model):
         on_delete=models.SET_NULL,
         verbose_name=_("Freedom of Information Law"),
     )
-    costs = models.FloatField(_("Cost of Information"), default=0.0)
+    costs = models.DecimalField(
+        _("Cost of Information"), default=0.0, decimal_places=2, max_digits=12
+    )
     refusal_reason = models.CharField(_("Refusal reason"), max_length=1024, blank=True)
     checked = models.BooleanField(_("checked"), default=False)
     is_blocked = models.BooleanField(_("Blocked"), default=False)
     not_publishable = models.BooleanField(_("Not publishable"), default=False)
     is_foi = models.BooleanField(_("is FoI request"), default=True)
     closed = models.BooleanField(_("is closed"), default=False)
+    no_index = models.BooleanField(_("Disable search machine indexing"), default=False)
+    banner = models.TextField(_("Show extra info on request page"), blank=True)
 
     campaign = models.ForeignKey(
         Campaign,
@@ -418,8 +443,9 @@ class FoiRequest(models.Model):
         )
 
     # Custom Signals
-    message_sent = django.dispatch.Signal()  # args: ["message", "user"]
-    message_received = django.dispatch.Signal()  # args: ["message"]
+    message_sent = django.dispatch.Signal()  # args: ["message", "user", "request"]
+    message_received = django.dispatch.Signal()  # args: ["message", "user", "request"]
+    message_delivered = django.dispatch.Signal()  # args: ["message", "bulk"]
     request_created = django.dispatch.Signal()  # args: []
     request_sent = django.dispatch.Signal()  # args: []
     request_to_public_body = django.dispatch.Signal()  # args: []
@@ -428,6 +454,7 @@ class FoiRequest(models.Model):
     #    "previous_status", "previous_resolution"
     # ]
     status_changed = django.dispatch.Signal()
+    costs_reported = django.dispatch.Signal()  # args: ["costs"]
     became_overdue = django.dispatch.Signal()  # args: []
     became_asleep = django.dispatch.Signal()  # args: []
     public_body_suggested = django.dispatch.Signal()  # args: ["suggestion"]
@@ -438,6 +465,14 @@ class FoiRequest(models.Model):
 
     def __str__(self):
         return _("Request '%s'") % self.title
+
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs:
+            kwargs["update_fields"] = {"last_modified_at"}.union(
+                kwargs["update_fields"]
+            )
+
+        super().save(*args, **kwargs)
 
     @property
     def same_as_set(self):
@@ -454,9 +489,13 @@ class FoiRequest(models.Model):
         return "[#{}]".format(self.id)
 
     def get_messages(self, with_tags=False):
-        qs = self.foimessage_set.select_related(
-            "sender_user", "sender_public_body", "recipient_public_body"
-        ).order_by("timestamp")
+        qs = (
+            self.foimessage_set.filter(is_draft=False)
+            .select_related(
+                "sender_user", "sender_public_body", "recipient_public_body"
+            )
+            .order_by("timestamp")
+        )
         if with_tags:
             qs = qs.prefetch_related("tags")
 
@@ -473,10 +512,11 @@ class FoiRequest(models.Model):
         due_date = self.due_date
         has_overdue_messages = False
         for msg in self.messages:
-            key = str(msg.timestamp)[:7]
+            local_msg_timestamp = timezone.localtime(msg.timestamp)
+            key = local_msg_timestamp.strftime("%Y-%m")
             if key not in groups:
                 groups[key] = {
-                    "date": msg.timestamp.replace(
+                    "date": local_msg_timestamp.replace(
                         day=1, hour=0, minute=0, second=0, microsecond=0
                     ),
                     "messages": [],
@@ -514,10 +554,24 @@ class FoiRequest(models.Model):
         return self.awaits_classification()
 
     @property
+    def jurisdiction_name(self):
+        if self.jurisdiction:
+            return self.jurisdiction.name
+
+    @property
     def project_number(self):
-        if self.project_order is not None:
+        if self.project_order:
             return self.project_order + 1
-        return None
+
+    @property
+    def project_site_url(self):
+        if self.project:
+            return self.project.get_absolute_domain_url()
+
+    @property
+    def project_request_count(self):
+        if self.project:
+            return self.project.request_count
 
     @property
     def has_fee(self):
@@ -621,8 +675,61 @@ class FoiRequest(models.Model):
         return json.dumps([a.strip() for a in all_regexes if a.strip()])
 
     def get_description(self):
-        user_replacements = self.user.get_redactions()
-        return redact_plaintext(self.description, user_replacements=user_replacements)
+        if not self.description_redacted:
+            user_replacements = self.user.get_redactions()
+            self.description_redacted = redact_plaintext(
+                self.description, user_replacements=user_replacements
+            )
+            self.clear_render_cache()
+            if (
+                self.description_redacted
+            ):  # description might be empty, if so, don't save again
+                self.save()
+        return self.description_redacted
+
+    def get_redacted_description(self, auth: bool) -> List[Tuple[bool, str]]:
+        if auth:
+            show, hide, cache_field = (
+                self.description,
+                self.get_description(),
+                "redacted_description_auth",
+            )
+        else:
+            show, hide, cache_field = (
+                self.get_description(),
+                self.description,
+                "redacted_description_anon",
+            )
+
+        if not getattr(self, cache_field):
+            redacted_content = [list(x) for x in get_differences(show, hide)]
+            setattr(self, cache_field, redacted_content)
+            if redacted_content:
+                FoiRequest.objects.filter(id=self.pk).update(
+                    **{cache_field: redacted_content}
+                )
+        return getattr(self, cache_field)
+
+    def clear_render_cache(self):
+        self.redacted_description_anon = None
+        self.redacted_description_auth = None
+        self.rendered_description_anon = None
+        self.rendered_description_auth = None
+
+    def get_cached_rendered_description(self, authenticated_read):
+        if authenticated_read:
+            return self.rendered_description_auth
+        else:
+            return self.rendered_description_anon
+
+    def set_cached_rendered_description(self, authenticated_read, description):
+        needs_caching = len(self.description) > CONTENT_CACHE_THRESHOLD
+        if needs_caching:
+            if authenticated_read:
+                update = {"rendered_description_auth": description}
+            else:
+                update = {"rendered_description_anon": description}
+            FoiRequest.objects.filter(id=self.pk).update(**update)
 
     def response_messages(self):
         return list(filter(lambda m: m.is_response, self.messages))
@@ -665,7 +772,11 @@ class FoiRequest(models.Model):
 
     @classmethod
     def get_throttle_message(cls):
-        return _("You exceeded your request limit of %(count)s requests in %(time)s.")
+        return mark_safe(
+            _(
+                'You exceeded your request limit of %(count)s requests in %(time)s. <a href="%(url)s">Learn more</a>'
+            )
+        )
 
     def should_apply_throttle(self):
         last_message = self.messages[-1]
@@ -690,9 +801,6 @@ class FoiRequest(models.Model):
 
     def awaits_classification(self):
         return self.status == Status.AWAITING_CLASSIFICATION
-
-    def moderate_classification(self):
-        return self.awaits_classification() and self.available_for_moderator_action()
 
     def available_for_moderator_action(self):
         ago = timezone.now() - MODERATOR_CLASSIFICATION_OFFSET

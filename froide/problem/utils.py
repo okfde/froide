@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from froide.foirequest.auth import can_read_foirequest, get_request_for_user
+
 
 def inform_managers(report):
     admin_url = settings.SITE_URL + reverse(
@@ -23,6 +25,11 @@ def inform_managers(report):
     )
 
 
+def can_read(user, foirequest):
+    request = get_request_for_user(user, foirequest.get_absolute_url())
+    return can_read_foirequest(foirequest, request)
+
+
 def inform_user_problem_resolved(report):
     if report.auto_submitted or not report.user:
         return False
@@ -39,6 +46,7 @@ def inform_user_problem_resolved(report):
                 report.message.get_absolute_short_url()
             ),
             "site_name": settings.SITE_NAME,
+            "can_read_request": can_read(report.user, foirequest),
         },
     )
 

@@ -143,6 +143,16 @@ class Follower(models.Model):
             "content_object": self.content_object,
         }
 
+    def get_full_name(self):
+        if self.user:
+            return self.user.get_full_name()
+        return ""
+
+    def get_email(self):
+        if self.user:
+            return self.user.email
+        return self.email
+
     @property
     def configuration(self) -> FollowConfiguration:
         return follow_registry.get_by_model(self.__class__)
@@ -198,7 +208,7 @@ class Follower(models.Model):
             return True
         return False
 
-    def check_and_follow(self, check):
+    def check_and_follow(self, check, request=None):
         secret = self.get_follow_secret()
         if not constant_time_compare(check, secret):
             return False
@@ -220,7 +230,7 @@ class Follower(models.Model):
                 self.email = ""
         self.confirmed = True
         self.save()
-        self.followed.send(sender=self)
+        self.followed.send(sender=self, request=request)
         return True
 
     def send_confirm_follow_mail(self, extra_data, user=None):

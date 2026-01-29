@@ -1,8 +1,13 @@
+from functools import partial
+
 from django import forms
 from django.db import transaction
+from django.forms import HiddenInput
+from django.forms.models import ModelChoiceField
 from django.utils.translation import gettext_lazy as _
 
 from froide.account.services import AccountService
+from froide.helper.form_utils import JSONMixin
 from froide.helper.storage import make_unique_filename
 from froide.helper.widgets import BootstrapRadioSelect
 from froide.publicbody.models import PublicBody
@@ -17,7 +22,7 @@ from ..validators import validate_postal_content_type
 from .message import MessageEditMixin
 
 
-class PostalUploadForm(MessageEditMixin, forms.Form):
+class PostalUploadForm(MessageEditMixin, JSONMixin, forms.Form):
     sent = forms.TypedChoiceField(
         widget=BootstrapRadioSelect,
         choices=(
@@ -48,7 +53,15 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         ),
     )
 
-    FIELD_ORDER = ["sent", "publicbody", "date", "subject", "uploads", "text"]
+    FIELD_ORDER = [
+        "sent",
+        "publicbody",
+        "date",
+        "registered_mail_date",
+        "subject",
+        "uploads",
+        "text",
+    ]
 
     def __init__(self, *args, **kwargs):
         self.foirequest = kwargs.pop("foirequest")
@@ -76,7 +89,6 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         cleaned_data = self.cleaned_data
         text = cleaned_data.get("text")
         uploads = cleaned_data.get("uploads")
-
         if not (text or uploads):
             raise forms.ValidationError(
                 _(
@@ -137,6 +149,66 @@ class PostalUploadForm(MessageEditMixin, forms.Form):
         upload.save()
 
         transaction.on_commit(
-            lambda: move_upload_to_attachment.delay(att.id, upload.id)
+            partial(move_upload_to_attachment.delay, att.id, upload.id)
         )
         return att
+
+
+class PostalEditForm(MessageEditMixin, JSONMixin, forms.Form):
+    sent = forms.TypedChoiceField(
+        choices=(
+            (0, _("I have received the letter")),
+            (1, _("I have sent the letter")),
+        ),
+        coerce=lambda x: bool(int(x)),
+        required=True,
+        initial=0,
+        label=_("Did you receive or sent the letter?"),
+        error_messages={"required": _("You have to decide!")},
+    )
+
+    publicbody = ModelChoiceField(
+        label=_("Public body"),
+        queryset=PublicBody.objects.all(),
+        required=True,
+        widget=HiddenInput(),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.message = kwargs.pop("message")  # XXX
+
+        self.foirequest = kwargs.pop("foirequest")
+        self.user = kwargs.pop("user", None)
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["sent"].initial = 1 if self.message.sent else 0
+        self.fields["publicbody"].initial = (
+            self.message.sender_public_body or self.message.recipient_public_body
+        )
+        self.account_service = AccountService(self.foirequest.user)
+
+    def save(self):
+        foirequest = self.foirequest
+        # set subject, text, date via MessageEditMixin
+        message = self.set_data_on_message(self.message)
+
+        if self.cleaned_data["sent"]:
+            message.is_response = False
+            message.sender_user = message.request.user
+            message.recipient_public_body = self.cleaned_data["publicbody"]
+            message.sender_public_body = None
+        else:
+            message.is_response = True
+            message.sender_public_body = self.cleaned_data["publicbody"]
+            message.recipient_public_body = None
+
+        message.save()
+
+        foirequest._messages = None
+        foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
+        foirequest.save()
+
+        # we don't need to handle/attach uploads, this has already been done
+
+        return message

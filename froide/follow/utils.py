@@ -12,7 +12,7 @@ def get_context(
     request: HttpRequest,
     content_object: models.Model,
     configuration: FollowConfiguration,
-    **kwargs
+    **kwargs,
 ):
     follow_form_class = configuration.get_follow_form_class()
     form = follow_form_class(
@@ -86,6 +86,7 @@ def handle_unsubscribe(sender, email, reference, **kwargs):
         follow_model, follow_id = follow_part.split("-", 1)
     except ValueError:
         follow_model = "foirequestfollower.foirequestfollower"
+        follow_id = follow_part
     try:
         configuration = follow_registry.get_by_model_name(follow_model)
     except LookupError:

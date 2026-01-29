@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "detachhead.basedpyright",
+    "vue.volar",
+    "charliermarsh.ruff",
+    "dbaeumer.vscode-eslint"
+  ]
+}

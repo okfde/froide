@@ -11,7 +11,7 @@ from taggit.models import Tag
 from froide.account.models import User
 from froide.campaign.models import Campaign
 from froide.foirequest.auth import get_read_foirequest_queryset
-from froide.helper.auth import get_read_queryset
+from froide.helper.auth import get_read_queryset, is_crew
 from froide.helper.search.filters import BaseSearchFilterSet
 from froide.helper.widgets import BootstrapSelect, DateRangeWidget
 from froide.publicbody.models import Jurisdiction, PublicBody
@@ -57,6 +57,12 @@ class DocumentFilter(FCDocumentFilter):
         return qs.filter(foirequest=value)
 
 
+def get_portal_queryset(request):
+    if is_crew(request.user):
+        return DocumentPortal.objects.filter(public=True)
+    return DocumentPortal.objects.all()
+
+
 class PageDocumentFilterset(BaseSearchFilterSet):
     query_fields = ["title^3", "description^2", "content"]
 
@@ -84,14 +90,19 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method="filter_tag",
         widget=forms.HiddenInput(),
     )
+    foirequest = django_filters.ModelChoiceFilter(
+        queryset=None,
+        to_field_name="pk",
+        method="filter_foirequest",
+    )
     publicbody = django_filters.ModelChoiceFilter(
         queryset=PublicBody._default_manager.all(),
-        to_field_name="slug",
+        to_field_name="pk",
         method="filter_publicbody",
         widget=forms.HiddenInput(),
     )
     collection = django_filters.ModelChoiceFilter(
-        queryset=DocumentCollection.objects.all(),
+        queryset=DocumentCollection.objects.filter(public=True),
         to_field_name="pk",
         method="filter_collection",
         widget=forms.HiddenInput(),
@@ -102,11 +113,12 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         method="filter_directory",
         widget=forms.HiddenInput(),
     )
-    portal = django_filters.ModelChoiceFilter(
-        queryset=DocumentPortal.objects.filter(public=True),
-        to_field_name="pk",
+    portal = django_filters.ChoiceFilter(
+        empty_label=_("Freedom of Information Requests"),
+        null_value="",
         method="filter_portal",
-        widget=forms.HiddenInput(),
+        label=_("Source"),
+        widget=BootstrapSelect,
     )
     document = django_filters.ModelChoiceFilter(
         queryset=Document.objects.all(),
@@ -148,6 +160,14 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         if request is None:
             request = self.view.request
         self.request = request
+        self.filters["foirequest"].queryset = get_read_foirequest_queryset(request)
+
+        self.filters["portal"].extra["choices"] = [
+            (p.pk, str(p)) for p in get_portal_queryset(request)
+        ] + [("-", _("All"))]
+
+    def has_query(self):
+        return bool(self.request.GET.get("q"))
 
     def filter_queryset(self, queryset):
         required_unlisted_filters = {"document", "collection"}
@@ -158,46 +178,69 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         )
         if not filter_present:
             queryset = queryset.filter(listed=True)
+        if not self.form.cleaned_data.get("portal") and not filter_present:
+            queryset = self.apply_filter(queryset, "portal", portal=0)
+            queryset = self.apply_filter(
+                queryset,
+                "foirequest",
+                ESQ("bool", must={"exists": {"field": "foirequest"}}),
+            )
+        if not self.has_query():
+            # Only show first page when there's no query
+            queryset = self.apply_filter(queryset, "number", number=1)
         return super().filter_queryset(queryset)
 
     def filter_jurisdiction(self, qs, name, value):
-        return qs.filter(jurisdiction=value.id)
+        return self.apply_filter(qs, name, jurisdiction=value.id)
 
     def filter_campaign(self, qs, name, value):
         if value == "-":
-            return qs.filter(Q("bool", must_not={"exists": {"field": "campaign"}}))
-        return qs.filter(campaign=value.id)
+            return qs.filter(ESQ("bool", must_not={"exists": {"field": "campaign"}}))
+        return self.apply_filter(qs, name, campaign=value.id)
 
     def filter_tag(self, qs, name, value):
-        return qs.filter(tags=value.id)
+        return self.apply_filter(qs, name, tags=value.id)
 
     def filter_publicbody(self, qs, name, value):
-        return qs.filter(publicbody=value.id)
+        return self.apply_filter(qs, name, publicbody=value.id)
+
+    def filter_foirequest(self, qs, name, value):
+        return self.apply_filter(qs, name, foirequest=value.id)
 
     def filter_collection(self, qs, name, collection):
         if not collection.can_read(self.request):
             return qs.none()
-        qs = qs.filter(collections=collection.id)
+        qs = self.apply_filter(qs, name, collections=collection.id)
         qs = self.apply_data_filters(qs, collection.settings.get("filters", []))
         return qs
 
     def filter_directory(self, qs, name, directory):
         if not directory.collection.can_read(self.request):
             return qs.none()
-        qs = qs.filter(directories=directory.id)
+        qs = self.apply_filter(qs, name, directories=directory.id)
         return qs
 
-    def filter_portal(self, qs, name, portal):
-        qs = qs.filter(portal=portal.id)
-        qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
+    def filter_portal(self, qs, name, portal_value):
+        if portal_value == "-":
+            pass
+        else:
+            try:
+                portal_qs = get_portal_queryset(self.request)
+                portal = portal_qs.get(id=int(portal_value))
+            except (DocumentPortal.DoesNotExist, IndexError):
+                return qs.none()
+            qs = self.apply_filter(qs, name, portal=portal.id)
+            qs = self.apply_data_filters(qs, portal.settings.get("filters", []))
+
+            if not self.has_query():
+                qs = qs.add_sort()
+                qs = qs.add_sort("-created_at")
         return qs
 
     def apply_data_filters(self, qs, filters):
-        has_query = self.request.GET.get("q")
-
         for filt in filters:
             es_key = filt["key"].replace("__", ".")
-            if has_query and filt.get("facet"):
+            if self.has_query() and filt.get("facet"):
                 facet = filt.get("facet_config", {"type": "term"})
                 if facet["type"] == "term":
                     qs = qs.add_aggregation([es_key])
@@ -225,13 +268,13 @@ class PageDocumentFilterset(BaseSearchFilterSet):
     def filter_document(self, qs, name, value):
         if not value.can_read(self.request):
             return qs.none()
-        return qs.filter(document=value.id)
+        return self.apply_filter(qs, name, document=value.id)
 
     def filter_user(self, qs, name, value):
-        return qs.filter(user=value.id)
+        return self.apply_filter(qs, name, user=value.id)
 
     def filter_number(self, qs, name, value):
-        return qs.filter(number=int(value))
+        return self.apply_filter(qs, name, number=int(value))
 
     def filter_created_at(self, qs, name, value):
         range_kwargs = {}
@@ -240,4 +283,4 @@ class PageDocumentFilterset(BaseSearchFilterSet):
         if value.stop is not None:
             range_kwargs["lte"] = value.stop
 
-        return qs.filter(ESQ("range", created_at=range_kwargs))
+        return self.apply_filter(qs, name, ESQ("range", created_at=range_kwargs))

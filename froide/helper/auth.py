@@ -1,8 +1,12 @@
-from functools import lru_cache
+from functools import lru_cache, reduce
+from operator import or_
 
 from django.contrib.auth import get_permission_codename
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 
+from froide.account.models import User
 from froide.team.models import Team
 
 AUTH_MAPPING = {
@@ -43,11 +47,11 @@ def has_authenticated_access(obj, request, verb="write", scope=None):
         # The object owner always has the capability
         return True
 
-    if user.is_superuser:
-        # Superusers can do everything
+    if token is None and user.is_superuser:
+        # Superusers can do everything but not via token
         return True
 
-    if check_permission(obj, request, verb):
+    if token is None and check_permission(obj, request, verb):
         return True
 
     if hasattr(obj, "team") and obj.team and obj.team.can_do(verb, user):
@@ -57,32 +61,32 @@ def has_authenticated_access(obj, request, verb="write", scope=None):
 
 
 @lru_cache()
-def can_read_object(obj, request=None):
+def can_read_object(obj, request=None, scope=None):
     if hasattr(obj, "is_public") and obj.is_public():
         return True
     if request is None:
         return False
-    return has_authenticated_access(obj, request, verb="read")
+    return has_authenticated_access(obj, request, verb="read", scope=scope)
 
 
 @lru_cache()
-def can_read_object_authenticated(obj, request=None):
+def can_read_object_authenticated(obj, request=None, scope=None):
     if request is None:
         return False
-    return has_authenticated_access(obj, request, verb="read")
+    return has_authenticated_access(obj, request, verb="read", scope=scope)
 
 
 @lru_cache()
-def can_write_object(obj, request):
-    return has_authenticated_access(obj, request)
+def can_write_object(obj, request, scope=None):
+    return has_authenticated_access(obj, request, scope=scope)
 
 
 @lru_cache()
-def can_manage_object(obj, request):
+def can_manage_object(obj, request, scope=None):
     """
     Team owner permission
     """
-    return has_authenticated_access(obj, request, "manage")
+    return has_authenticated_access(obj, request, "manage", scope=scope)
 
 
 @lru_cache()
@@ -102,7 +106,7 @@ def can_access_object(verb, obj, request):
     try:
         access_func = ACCESS_MAPPING[verb]
     except KeyError:
-        raise ValueError("Invalid auth verb")
+        raise ValueError("Invalid auth verb") from None
     return access_func(obj, request)
 
 
@@ -114,56 +118,66 @@ def get_read_queryset(
     public_q=None,
     scope=None,
     fk_path=None,
+    user_read_filter=None,
 ):
-    user = request.user
-    filters = None
+    filters = []
     if public_field is not None:
-        filters = Q(**{public_field: True})
-        result_qs = qs.filter(filters)
-    elif public_q is not None:
-        filters = public_q
-        result_qs = qs.filter(filters)
+        if public_q is not None:
+            raise ValueError("Cannot use both public_field and public_q")
+        public_q = Q(**{public_field: True})
+
+    if public_q is not None:
+        filters.append(public_q)
+        unauth_qs = qs.filter(public_q)
     else:
-        result_qs = qs.none()
+        unauth_qs = qs.none()
+
+    # request is not available when called from manage.py generateschema
+    if not request:
+        return unauth_qs
+    user = request.user
 
     if not user.is_authenticated:
-        return result_qs
+        return unauth_qs
 
     # OAuth token
     token = getattr(request, "auth", None)
     if token and (not scope or not token.is_valid([scope])):
         # API access, but no scope
-        return result_qs
+        return unauth_qs
 
-    if user.is_superuser:
+    if token is None and user.is_superuser:
         return qs
 
     model = qs.model
     opts = model._meta
     codename = get_permission_codename("view", opts)
-    if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
+    if (
+        token is None
+        and is_crew(user)
+        and user.has_perm("%s.%s" % (opts.app_label, codename))
+    ):
         return qs
+
+    if user_read_filter:
+        filters.append(user_read_filter)
 
     teams = None
     if has_team:
         teams = Team.objects.get_for_user(user)
 
     user_filter = get_user_filter(request, teams=teams, fk_path=fk_path)
-    if filters is None:
-        filters = user_filter
-    else:
-        filters |= user_filter
+    filters.append(user_filter)
 
-    return qs.filter(filters)
+    return qs.filter(reduce(or_, filters))
 
 
 def get_write_queryset(
     qs, request, has_team=False, user_write_filter=None, scope=None, fk_path=None
 ):
-    user = request.user
-
-    if not user.is_authenticated:
+    if not request or not request.user.is_authenticated:
         return qs.none()
+    user = request.user
 
     # OAuth token
     token = getattr(request, "auth", None)
@@ -171,13 +185,17 @@ def get_write_queryset(
         # API access, but no scope
         return qs.none()
 
-    if user.is_superuser:
+    if token is None and user.is_superuser:
         return qs
 
     model = qs.model
     opts = model._meta
     codename = get_permission_codename("change", opts)
-    if user.is_staff and user.has_perm("%s.%s" % (opts.app_label, codename)):
+    if (
+        token is None
+        and is_crew(user)
+        and user.has_perm("%s.%s" % (opts.app_label, codename))
+    ):
         return qs
 
     filters = None
@@ -212,6 +230,21 @@ def get_user_filter(request, teams=None, fk_path=None):
     return filter_arg
 
 
+def require_crew(view_func):
+    def decorator(request, *args, **kwargs):
+        if not is_crew(request.user):
+            raise PermissionDenied
+        return view_func(request, *args, **kwargs)
+
+    return decorator
+
+
 def clear_lru_caches():
     for f in ACCESS_MAPPING.values():
         f.cache_clear()
+
+
+def is_crew(user: User | AnonymousUser) -> bool:
+    if user.is_authenticated:
+        return user.is_crew
+    return False

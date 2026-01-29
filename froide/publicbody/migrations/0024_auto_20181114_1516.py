@@ -12,7 +12,6 @@ def move_region_to_regions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0023_auto_20181114_1515"),
     ]

@@ -1,11 +1,13 @@
 import hashlib
 import hmac
 import re
+import unicodedata
 from datetime import timedelta
 from typing import Dict, Optional
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import constant_time_compare
@@ -31,7 +33,7 @@ def get_user_for_email(email):
 
 
 confirmation_mail = mail_registry.register(
-    "account/emails/confirmation_mail", ("action_url", "name", "request_id")
+    "account/emails/confirmation_mail", ("action_url", "name")
 )
 confirm_action_mail = mail_registry.register(
     "account/emails/confirm_action", ("title", "action_url", "name")
@@ -41,6 +43,9 @@ reminder_mail = mail_registry.register(
 )
 change_email_mail = mail_registry.register(
     "account/emails/change_email", ("action_url", "name")
+)
+add_to_group_mail = mail_registry.register(
+    "account/emails/add_to_group", ("user", "group", "name")
 )
 
 
@@ -94,8 +99,8 @@ class AccountService(object):
 
         return user, True
 
-    def confirm_account(self, secret, request_id=None):
-        if not self.check_confirmation_secret(secret, request_id):
+    def confirm_account(self, secret, *args):
+        if not self.check_confirmation_secret(secret, *args):
             return False
         self._confirm_account()
         return True
@@ -183,7 +188,8 @@ class AccountService(object):
             return ""
         to_sign = [str(self.user.pk), self.user.email]
         for a in args:
-            to_sign.append(str(a))
+            if a is not None:
+                to_sign.append(str(a))
         if self.user.last_login:
             to_sign.append(self.user.last_login.strftime("%Y-%m-%dT%H:%M:%S"))
         return hmac.new(
@@ -192,13 +198,9 @@ class AccountService(object):
             digestmod=hashlib.md5,
         ).hexdigest()
 
-    def send_confirmation_mail(
-        self, request_id=None, reference=None, redirect_url=None
-    ):
-        secret = self.generate_confirmation_secret(request_id)
+    def send_confirmation_mail(self, reference=None, redirect_url=None):
+        secret = self.generate_confirmation_secret()
         url_kwargs = {"user_id": self.user.pk, "secret": secret}
-        if request_id:
-            url_kwargs["request_id"] = request_id
         url = reverse("account-confirm", kwargs=url_kwargs)
 
         params = {}
@@ -217,7 +219,6 @@ class AccountService(object):
         context = {
             "user": self.user,
             "action_url": settings.SITE_URL + url,
-            "request_id": request_id,
             "name": self.user.get_full_name(),
         }
 
@@ -313,7 +314,7 @@ class AccountService(object):
                 user.save()
         return blocklisted
 
-    def apply_name_redaction(self, content, replacement=""):
+    def apply_name_redaction(self, content, replacement="", unicode=True):
         if not self.user.private:
             return content
 
@@ -321,7 +322,22 @@ class AccountService(object):
             # No more info present about user to redact
             return content
 
-        needles = [self.user.last_name, self.user.first_name, self.user.get_full_name()]
+        needles = [
+            self.user.last_name,
+            self.user.first_name,
+            self.user.get_full_name(),
+            *self.user.first_name.split(),
+            *self.user.last_name.split(),
+        ]
+
+        if not unicode:
+            user_asciiish_name = (
+                unicodedata.normalize("NFKD", self.user.get_full_name())
+                .encode("ascii", "ignore")
+                .decode()
+            )
+            needles.extend(user_asciiish_name.split())
+
         if self.user.organization_name:
             needles.append(self.user.organization_name)
 
@@ -363,3 +379,15 @@ class AccountService(object):
 
         if self.user.organization_name:
             yield (self.user.organization_name, repl["name"])
+
+    def add_to_group(self, group: Group):
+        if group not in self.user.groups.all():
+            self.user.groups.add(group)
+            add_to_group_mail.send(
+                user=self.user,
+                template_base=f"account/emails/add_to_group/{group.pk}",
+                context={
+                    "group": group,
+                    "name": self.user.get_full_name(),
+                },
+            )

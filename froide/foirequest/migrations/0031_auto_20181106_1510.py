@@ -20,7 +20,6 @@ def deferred_fill_sender(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0030_auto_20181106_1510"),
     ]

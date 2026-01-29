@@ -1,7 +1,7 @@
 Return-Path: <kundendialog@example.com>
 X-Original-To: sw+yurpykc1hr@fragdenstaat.de
 Delivered-To: foimail@fragdenstaat.de
-Received-SPF: Pass (mailfrom) identity=mailfrom; client-ip=194.246.151.239; helo=c119-k30-rz.muenchen.de; envelope-from=prvs=062a39565=max.mustermann@muenchen.de; receiver=<UNKNOWN> 
+Authentication-Results: mail.fragdenstaat.de; spf=fail (SPF fail - not authorized) smtp.mailfrom=lamv.mv-regierung.de (client-ip=1.1.1.1; helo=bad.domain; envelope-from=bad-post@lamv.mv-regierung.de; receiver=<UNKNOWN>)
 Authentication-Results: OpenDMARC; dmarc=pass (p=none dis=none) header.from=muenchen.de
 Authentication-Results: mail.fragdenstaat.de;
 	dkim=pass (2048-bit key; unprotected) header.d=muenchen.de header.i=@muenchen.de header.a=rsa-sha256 header.s=dkim2020 header.b=MpYjhRkg;

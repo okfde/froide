@@ -1,9 +1,7 @@
-<file-uploader
-  id="file-uploader-{{ widget.attrs.id }}"
-  class="file-uploader"
-  :name="{{ widget.name }}"
-  :required="{% if widget.required %}true{% else %}false{% endif %}"
-  :allowed-file-types="{{ allowed_file_types }}"
-  :auto-proceed="true"
-  :config="{{ config }}"
-></file-uploader>
+<file-uploader id="file-uploader-{{ widget.attrs.id }}" class="file-uploader" :name="{{ widget.name }}" :required="
+{% if widget.required %}
+    true
+{% else %}
+    false
+{% endif %}
+" :allowed-file-types="{{ allowed_file_types }}" :auto-proceed="true" :config="{{ config }}"></file-uploader>

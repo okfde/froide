@@ -8,7 +8,6 @@ import froide.organization.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("organization", "0001_initial"),
     ]

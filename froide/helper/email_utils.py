@@ -229,7 +229,7 @@ def find_bounce_status(headers, body=None):
             return DsnStatus(*[int(x) for x in match.group(1).split(".")])
 
     if body is not None:
-        bounce_matches = len(BOUNCE_TEXT.findall(body))
+        bounce_matches = len(set(BOUNCE_TEXT.findall(body)))
         if bounce_matches >= BOUNCE_TEXT_THRESHOLD:
             # Declare a DSN status of 5.5.0
             return DsnStatus(5, 5, 0)
@@ -283,16 +283,27 @@ def detect_auto_reply(from_field, subject="", msgobj=None):
     return False
 
 
+SPF_MATCH = re.compile(r"\sspf=(\w+);?\s")
+
+
 def check_spf(msgobj: EmailMessage) -> Optional[AuthenticityStatus]:
     spf_headers = msgobj.get_all("Received-SPF", [])
-    if not spf_headers:
-        return
-    header = spf_headers[0]
-    status = header.split(" ", 1)[0]
+    if spf_headers:
+        header = spf_headers[0]
+        status = header.split(" ", 1)[0]
+    else:
+        auth_headers = msgobj.get_all("Authentication-Results", [])
+        spf_headers = [h for h in auth_headers if SPF_MATCH.search(h) is not None]
+        if not spf_headers:
+            return
+        header = spf_headers[0]
+        match = SPF_MATCH.search(header)
+        status = match.group(1)
+
     return AuthenticityStatus(
         check=AuthenticityCheck.SPF,
         status=status,
-        failed=status.lower() == "fail",
+        failed=status.lower() == "fail" or status.lower() == "softfail",
         details=header,
     )
 

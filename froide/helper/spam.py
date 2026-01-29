@@ -2,7 +2,7 @@ import logging
 import os
 import re
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, Set
 
 from django import forms
@@ -29,8 +29,12 @@ class Suspicion:
         return self.message
 
 
-def suspicious_ip(request: HttpRequest) -> Optional[Suspicion]:
+def check_suspicious_request(request: HttpRequest) -> Optional[Suspicion]:
     ip = get_client_ip(request)
+    return check_suspicious_ip(ip)
+
+
+def check_suspicious_ip(ip: str):
     if ip == "127.0.0.1":
         # Consider suspicious
         return Suspicion("localhost")
@@ -115,9 +119,9 @@ def get_suspicious_asns(refresh: bool = False) -> Set[int]:
                 response = requests.get(provider, timeout=5)
             except Timeout:
                 continue
-            asn_set |= set(int(x) for x in ASN_REGEX.findall(response.text))
+            asn_set |= {int(x) for x in ASN_REGEX.findall(response.text)}
         else:
-            asn_set |= set(int(x) for x in provider.split(",") if x)
+            asn_set |= {int(x) for x in provider.split(",") if x}
     cache.set(cache_key, asn_set, ASN_LIST_TIMEOUT)
     return asn_set
 
@@ -177,9 +181,7 @@ class SpamProtectionMixin:
         super().__init__(*args, **kwargs)
         self.fields["phone"] = HoneypotField(
             required=False,
-            label=_(
-                "If you enter anything in this field " "your action will be blocked."
-            ),
+            label=_("If you enter anything in this field your action will be blocked."),
             widget=forms.TextInput(attrs={"required": True}),
         )
         if self._should_include_captcha():
@@ -193,7 +195,8 @@ class SpamProtectionMixin:
             )
         if self._should_include_timing():
             self.fields["time"] = forms.FloatField(
-                initial=datetime.utcnow().timestamp(), widget=forms.HiddenInput
+                initial=datetime.now(timezone.utc).timestamp(),
+                widget=forms.HiddenInput,
             )
 
     def _should_include_timing(self) -> bool:
@@ -212,7 +215,7 @@ class SpamProtectionMixin:
         if self.SPAM_PROTECTION.get("captcha") == "always":
             return True
         if self.SPAM_PROTECTION.get("captcha") == "ip" and self.request:
-            return bool(suspicious_ip(self.request))
+            return bool(check_suspicious_request(self.request))
         if self._too_many_actions(increment=False):
             return True
         return False
@@ -232,7 +235,9 @@ class SpamProtectionMixin:
 
     def clean_time(self) -> str:
         value = self.cleaned_data["time"]
-        since = datetime.utcnow() - datetime.fromtimestamp(value)
+        since = datetime.now(timezone.utc) - datetime.fromtimestamp(
+            value, tz=timezone.utc
+        )
         if since < timedelta(seconds=5):
             raise forms.ValidationError(_("You filled this form out too quickly."))
         return value

@@ -1,51 +1,57 @@
 {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text required=field.field.required %}
-
-{% if field_type == "radio" or is_checkboxmultiple %}
-  <fieldset class="row mb-3">
-    <legend class="fw-bold col-form-label col-md-4{% if required %} field-required{% endif %}">{{ label }}</legend>
-    <div class="col-md-8">
-      {% for widget in field %}
-        <div class="form-check">
-          {{ widget }}
+    {% if field_type == "radio" or is_checkboxmultiple %}
+        <fieldset class="row mb-3">
+            <legend class="fw-bold col-form-label col-md-4{% if required %} field-required{% endif %}">{{ label }}</legend>
+            <div class="col-md-8">
+                {% for widget in field %}<div class="form-check">{{ widget }}</div>{% endfor %}
+                {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
+                {% if field.errors %}
+                    <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
+                {% endif %}
+            </div>
+        </fieldset>
+    {% elif field_type == "checkbox" %}
+        <div class="mb-3 row{% if classes %} {{ classes }}{% endif %}">
+            <div class="col-md-8 offset-md-4">
+                <div class="form-check">
+                    {{ field }}
+                    <label class="form-check-label fw-bold {% if required %}field-required{% endif %}"
+                           for="{{ field.id_for_label }}">{{ label }}</label>
+                    {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
+                    {% if field.errors %}
+                        <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-      {% endfor %}
-      {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-      {% if field.errors %}
-        <div class="invalid-feedback">
-          {% include "helper/forms/errors.html" with errors=field.errors %}
+    {% elif label and not field.id_for_label %}
+        <fieldset class="mb-3 row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
+            <legend class="fw-bold col-md-4 col-form-label{% if required %} field-required{% endif %}">{{ label }}</legend>
+            <div class="col-md-8">
+                {{ field }}
+                {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
+                {% if field.errors %}
+                    <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
+                {% endif %}
+            </div>
+        </fieldset>
+    {% else %}
+        <div class="mb-3 row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
+            {% if label %}
+                {% if field.id_for_label %}
+                    <label class="fw-bold col-md-4 col-form-label{% if required %} field-required{% endif %}"
+                           for="{{ field.id_for_label }}">
+                    {% endif %}
+                    {{ label }}
+                    {% if field.id_for_label %}</label>{% endif %}
+            {% endif %}
+            <div class="col-md-8">
+                {{ field }}
+                {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
+                {% if field.errors %}
+                    <div class="invalid-feedback">{% include "helper/forms/errors.html" with errors=field.errors %}</div>
+                {% endif %}
+            </div>
         </div>
-      {% endif %}
-    </div>
-  </fieldset>
-{% elif field_type == "checkbox" %}
-  <div class="mb-3 row{% if classes %} {{ classes }}{% endif %}">
-    <div class="col-md-8 offset-md-4">
-      <div class="form-check">
-        {{ field }}
-        <label class="form-check-label fw-bold {% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">
-          {{ label }}
-        </label>
-        {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-        {% if field.errors %}
-          <div class="invalid-feedback">
-            {% include "helper/forms/errors.html" with errors=field.errors %}
-          </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-{% else %}
-<div class="mb-3 row{% if classes %} {{ classes }}{% endif %}{% if field.field.is_honeypot %} d-none honigtopf{% endif %}">
-  {% if label %}{% if field.id_for_label %}<label class="fw-bold col-md-4 col-form-label{% if required %} field-required{% endif %}" for="{{ field.id_for_label }}">{% endif %}{{ label }}{% if field.id_for_label %}</label>{% endif %}{% endif %}
-  <div class="col-md-8">
-    {{ field }}
-    {% if help_text %}<div class="form-text">{{ help_text }}</div>{% endif %}
-    {% if field.errors %}
-      <div class="invalid-feedback">
-        {% include "helper/forms/errors.html" with errors=field.errors %}
-      </div>
     {% endif %}
-  </div>
-</div>
-{% endif %}
 {% endwith %}

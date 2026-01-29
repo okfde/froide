@@ -1,12 +1,15 @@
 {% load i18n %}
-
 {% if messages %}
-<div class="container mb-3 mt-3">
-  {% for message in messages %}
-  <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %} show alert-dismissible" role="alert">
-    {{ message }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{% translate 'Close' %}"></button>
-  </div>
-  {% endfor %}
-</div>
+    <div class="container h-list g-3">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == "error" %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} show alert-dismissible"
+                 role="alert">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="{% translate 'Close' %}"></button>
+            </div>
+        {% endfor %}
+    </div>
 {% endif %}

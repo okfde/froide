@@ -1,17 +1,14 @@
-import Vue from 'vue'
-
-import { renderComponent } from './lib/vue-helper'
+import { createAppWithProps } from './lib/vue-helper'
 
 import MessageRedaction from './components/messageredaction/message-redaction.vue'
-
-Vue.config.productionTip = false
+import DescriptionRedaction from './components/messageredaction/description-redaction.vue'
 
 function createMessageRedaction(selector) {
-  /* eslint-disable no-new */
-  new Vue({
-    components: { MessageRedaction },
-    render: renderComponent(selector, MessageRedaction)
-  }).$mount(selector)
+  createAppWithProps(selector, MessageRedaction).mount(selector)
+}
+
+function createDescriptionRedaction(selector) {
+  createAppWithProps(selector, DescriptionRedaction).mount(selector)
 }
 
 document.querySelectorAll('[data-redact="message"]').forEach((el) => {
@@ -19,6 +16,15 @@ document.querySelectorAll('[data-redact="message"]').forEach((el) => {
     const redaction = el.querySelector('message-redaction')
     if (redaction !== null) {
       createMessageRedaction(redaction)
+    }
+  })
+})
+
+document.querySelectorAll('[data-redact="description"]').forEach((el) => {
+  el.addEventListener('show.bs.modal', () => {
+    const redaction = el.querySelector('description-redaction')
+    if (redaction !== null) {
+      createDescriptionRedaction(redaction)
     }
   })
 })

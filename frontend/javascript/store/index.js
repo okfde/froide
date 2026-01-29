@@ -1,69 +1,108 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { createStore } from 'vuex'
 
 import {
-  SET_CONFIG,
-  SET_STEP,
-  SET_STEP_SELECT_PUBLICBODY,
-  SET_STEP_REVIEW_PUBLICBODY,
-  SET_STEP_REQUEST,
-  STEPS,
-  SET_PUBLICBODY,
-  SET_PUBLICBODIES,
-  SET_PUBLICBODY_ID,
   ADD_PUBLICBODY_ID,
-  REMOVE_PUBLICBODY_ID,
-  CLEAR_PUBLICBODIES,
-  CACHE_PUBLICBODIES,
   CACHE_LAWS,
-  SET_SEARCHRESULTS,
+  CACHE_PUBLICBODIES,
+  CLEAR_PUBLICBODIES,
   CLEAR_SEARCHRESULTS,
-  UPDATE_LAW_TYPE,
+  REMOVE_PUBLICBODY_ID,
+  SET_CONFIG,
+  SET_PUBLICBODIES,
+  SET_PUBLICBODY,
+  SET_PUBLICBODY_ID,
+  SET_SEARCHRESULTS,
+  SET_STEP,
+  SET_STEP_NO_HISTORY,
+  SET_STEP_REQUEST,
+  SET_STEP_ACCOUNT,
+  SET_STEP_REVIEW_PUBLICBODY,
+  SET_STEP_SELECT_PUBLICBODY,
   SET_USER,
-  UPDATE_SUBJECT,
-  UPDATE_BODY,
-  UPDATE_FULL_TEXT,
-  UPDATE_FIRST_NAME,
-  UPDATE_LAST_NAME,
-  UPDATE_EMAIL,
+  STEPS,
   UPDATE_ADDRESS,
+  UPDATE_ADDRESS_VALIDITY,
+  UPDATE_ADDRESS_CHANGED,
+  UPDATE_BODY,
+  UPDATE_BODY_VALIDITY,
+  UPDATE_BODY_CHANGED,
+  UPDATE_EMAIL,
+  UPDATE_EMAIL_VALIDITY,
+  UPDATE_EMAIL_CHANGED,
+  UPDATE_FIRST_NAME_VALIDITY,
+  UPDATE_FIRST_NAME_CHANGED,
+  UPDATE_FIRST_NAME,
+  UPDATE_FULL_TEXT,
+  UPDATE_LAST_NAME,
+  UPDATE_LAST_NAME_VALIDITY,
+  UPDATE_LAST_NAME_CHANGED,
+  UPDATE_LAW_TYPE,
   UPDATE_PRIVATE,
-  UPDATE_USER_ID
+  UPDATE_TERMS,
+  UPDATE_TERMS_VALIDITY,
+  UPDATE_TERMS_CHANGED,
+  UPDATE_CONFIRM,
+  UPDATE_CONFIRM_VALIDITY,
+  UPDATE_SUBJECT,
+  UPDATE_SUBJECT_VALIDITY,
+  UPDATE_SUBJECT_CHANGED,
+  UPDATE_USER_ID,
+  UPDATE_REQUEST_PUBLIC,
+  UPDATE_SIMILAR_REQUEST_SEARCH,
+  UPDATE_CLAIMS_VIP
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
 import { selectBestLaw } from '../lib/law-select'
 
-Vue.use(Vuex)
+const persistStorage = window.sessionStorage
+const persistKey =
+  'froide-store-' + document.location.pathname + document.location.search
 
-const debug = process.env.NODE_ENV !== 'production'
-
-export default new Vuex.Store({
-  state: {
-    config: null,
-    scopedSearchResults: {},
-    scopedSearchFacets: {},
-    scopedSearchMeta: {},
-    scopedPublicBodies: {},
-    scopedPublicBodiesMap: {},
-    lawCache: {},
-    publicBodies: {},
-    lawType: null,
-    user: {},
-    step: STEPS.SELECT_PUBLICBODY,
-    subject: '',
-    body: '',
-    fullText: false
+export default createStore({
+  state() {
+    return {
+      config: null,
+      scopedSearchResults: {},
+      scopedSearchFacets: {},
+      scopedSearchMeta: {},
+      scopedPublicBodies: {},
+      scopedPublicBodiesMap: {},
+      lawCache: {},
+      publicBodies: {},
+      lawType: null,
+      user: {},
+      step: null,
+      subject: '',
+      subjectValid: undefined,
+      subjectChanged: false,
+      body: '',
+      bodyValid: undefined,
+      bodyChanged: false,
+      fullText: false,
+      // Python/Django "bool string" for TypedChoiceField form radio
+      // also: user.claims_vip, user.private
+      requestPublic: 'False',
+      addressValid: undefined,
+      addressChanged: false,
+      firstNameValid: undefined,
+      firstNameChanged: false,
+      lastNameValid: undefined,
+      lastNameChanged: false,
+      emailValid: undefined,
+      emailChanged: false,
+      similarRequestSearch: {}
+    }
   },
   getters: {
-    getPublicBodyByScope: (state, getters) => (scope) => {
+    getPublicBodyByScope: (_state, getters) => (scope) => {
       const pbs = getters.getPublicBodiesByScope(scope)
       if (pbs.length === 0) {
         return null
       }
       return pbs[0]
     },
-    getPublicBodiesByScope: (state, getters) => (scope) => {
+    getPublicBodiesByScope: (state) => (scope) => {
       const pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
         return []
@@ -80,7 +119,7 @@ export default new Vuex.Store({
     getPublicBody: (state) => (id) => {
       return state.publicBodies[id]
     },
-    getScopedSearchResults: (state, getters) => (scope) => {
+    getScopedSearchResults: (state) => (scope) => {
       const srs = state.scopedSearchResults[scope]
       if (srs === undefined) {
         return []
@@ -140,8 +179,12 @@ export default new Vuex.Store({
       return state.user
     },
     subject: (state) => state.subject,
+    subjectValid: (state) => state.subjectValid,
+    subjectChanged: (state) => state.subjectChanged,
     getSubject: (state) => () => state.subject,
     body: (state) => state.body,
+    bodyValid: (state) => state.bodyValid,
+    bodyChanged: (state) => state.bodyChanged,
     fullText: (state) => state.fullText,
     stepSelectPublicBody: (state) => state.step === STEPS.SELECT_PUBLICBODY,
     stepSelectPublicBodyDone: (state) => state.step > STEPS.SELECT_PUBLICBODY,
@@ -150,7 +193,44 @@ export default new Vuex.Store({
     stepWriteRequest: (state) => state.step === STEPS.WRITE_REQUEST,
     stepWriteRequestDone: (state) => state.step > STEPS.WRITE_REQUEST,
     step: (state) => state.step,
-    lawType: (state) => state.lawType
+    lawType: (state) => state.lawType,
+    userValid: (state) => {
+      if (state.user.id) return true
+      return state.firstNameValid && state.lastNameValid && state.emailValid
+    },
+    termsValid: (state) => state.termsValid,
+    termsChanged: (state) => state.termsChanged,
+    confirmValid: (state) => state.user.confirm && state.confirmValid,
+    firstNameValid: (state) => state.firstNameValid,
+    firstNameChanged: (state) => state.firstNameChanged,
+    lastNameValid: (state) => state.lastNameValid,
+    lastNameChanged: (state) => state.lastNameChanged,
+    emailValid: (state) => state.emailValid,
+    emailChanged: (state) => state.emailChanged,
+    addressValid: (state) => state.addressValid,
+    addressChanged: (state) => state.addressChanged,
+    requestPublic: (state) => state.requestPublic,
+    stepCanContinue: (state, getters) => (scope) => {
+      switch (state.step) {
+        case STEPS.SELECT_PUBLICBODY:
+        case STEPS.REVIEW_PUBLICBODY:
+          return getters.getPublicBodiesByScope(scope).length > 0
+        case STEPS.CREATE_ACCOUNT:
+          if (!getters.addressValid) return false
+          // authenticated user only needs valid address
+          if (state.user.id) return true
+          if (!getters.userValid) return false
+          if (!getters.termsValid) return false
+          return true
+        case STEPS.WRITE_REQUEST:
+          if (!getters.subjectValid) return false
+          if (!getters.bodyValid) return false
+          if (!getters.confirmValid) return false
+          return true
+        default:
+          return true
+      }
+    }
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -160,6 +240,10 @@ export default new Vuex.Store({
     },
     [SET_STEP](state, step) {
       state.step = step
+      window.history.pushState({ step: state.step }, '', '#step-' + state.step)
+    },
+    [SET_STEP_NO_HISTORY](state, step) {
+      state.step = step
     },
     [SET_STEP_SELECT_PUBLICBODY](state) {
       state.step = STEPS.SELECT_PUBLICBODY
@@ -167,12 +251,15 @@ export default new Vuex.Store({
     [SET_STEP_REVIEW_PUBLICBODY](state) {
       state.step = STEPS.REVIEW_PUBLICBODY
     },
+    [SET_STEP_ACCOUNT](state) {
+      state.step = STEPS.CREATE_ACCOUNT
+    },
     [SET_STEP_REQUEST](state) {
       state.step = STEPS.WRITE_REQUEST
     },
     [SET_PUBLICBODY](state, { publicBody, scope }) {
-      Vue.set(state.scopedPublicBodies, scope, [publicBody])
-      Vue.set(state.scopedPublicBodiesMap, scope, { [publicBody.id]: true })
+      state.scopedPublicBodies[scope] = [publicBody]
+      state.scopedPublicBodiesMap[scope] = { [publicBody.id]: true }
       state.scopedSearchResults[scope].forEach((sr) => {
         if (sr.id === publicBody.id) {
           sr.isSelected = true
@@ -181,13 +268,14 @@ export default new Vuex.Store({
         }
       })
     },
-    [SET_PUBLICBODIES](state, { publicBodies, scope }) {
-      Vue.set(state.scopedPublicBodies, scope, publicBodies)
+    [SET_PUBLICBODIES](state, { publicBodies, scopedPublicBodies, scope }) {
+      publicBodies = publicBodies || scopedPublicBodies
+      state.scopedPublicBodies[scope] = publicBodies
       const pbMap = {}
       publicBodies.forEach((pb) => {
         pbMap[pb.id] = true
       })
-      Vue.set(state.scopedPublicBodiesMap, scope, pbMap)
+      state.scopedPublicBodiesMap[scope] = pbMap
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (pbMap[sr.id] !== undefined) {
@@ -200,8 +288,8 @@ export default new Vuex.Store({
     },
     [SET_PUBLICBODY_ID](state, { publicBodyId, scope }) {
       const pb = state.publicBodies[publicBodyId]
-      Vue.set(state.scopedPublicBodies, scope, [pb])
-      Vue.set(state.scopedPublicBodiesMap, scope, { publicBodyId: true })
+      state.scopedPublicBodies[scope] = [pb]
+      state.scopedPublicBodiesMap[scope] = { publicBodyId: true }
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -219,14 +307,14 @@ export default new Vuex.Store({
       }
       const pbs = state.scopedPublicBodies[scope]
       if (pbs === undefined) {
-        Vue.set(state.scopedPublicBodies, scope, [pb])
+        state.scopedPublicBodies[scope] = [pb]
       } else {
         const contains = pbs.some((p) => p.id === pb.id)
         if (!contains) {
-          Vue.set(state.scopedPublicBodies, scope, [...pbs, ...[pb]])
+          state.scopedPublicBodies[scope] = [...pbs, ...[pb]]
         }
       }
-      Vue.set(state.scopedPublicBodiesMap[scope], publicBodyId, true)
+      state.scopedPublicBodiesMap[scope][publicBodyId] = true
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -241,8 +329,8 @@ export default new Vuex.Store({
         return
       }
       pbs = pbs.filter((p) => p.id !== publicBodyId)
-      Vue.set(state.scopedPublicBodies, scope, pbs)
-      Vue.set(state.scopedPublicBodiesMap[scope], publicBodyId, undefined)
+      state.scopedPublicBodies[scope] = pbs
+      state.scopedPublicBodiesMap[scope][publicBodyId] = undefined
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           if (sr.id === publicBodyId) {
@@ -252,8 +340,8 @@ export default new Vuex.Store({
       }
     },
     [CLEAR_PUBLICBODIES](state, { scope }) {
-      Vue.set(state.scopedPublicBodies, scope, [])
-      Vue.set(state.scopedPublicBodiesMap, scope, {})
+      state.scopedPublicBodies[scope] = []
+      state.scopedPublicBodiesMap[scope] = {}
       if (state.scopedSearchResults[scope]) {
         state.scopedSearchResults[scope].forEach((sr) => {
           sr.isSelected = false
@@ -283,14 +371,14 @@ export default new Vuex.Store({
         sr.isSelected = state.scopedPublicBodiesMap[scope][sr.id] !== undefined
         return sr
       })
-      Vue.set(state.scopedSearchResults, scope, searchResults)
-      Vue.set(state.scopedSearchFacets, scope, searchFacets)
-      Vue.set(state.scopedSearchMeta, scope, searchMeta)
+      state.scopedSearchResults[scope] = searchResults
+      state.scopedSearchFacets[scope] = searchFacets
+      state.scopedSearchMeta[scope] = searchMeta
     },
     [CLEAR_SEARCHRESULTS](state, { scope }) {
-      Vue.set(state.scopedSearchResults, scope, [])
-      Vue.set(state.scopedSearchFacets, scope, {})
-      Vue.set(state.scopedSearchMeta, scope, null)
+      state.scopedSearchResults[scope] = []
+      state.scopedSearchFacets[scope] = {}
+      state.scopedSearchMeta[scope] = null
     },
     [UPDATE_FULL_TEXT](state, val) {
       state.fullText = val
@@ -301,38 +389,193 @@ export default new Vuex.Store({
     [UPDATE_SUBJECT](state, subject) {
       state.subject = subject
     },
+    [UPDATE_SUBJECT_VALIDITY](state, validity) {
+      state.subjectValid = validity
+    },
+    [UPDATE_SUBJECT_CHANGED](state, changed) {
+      state.subjectChanged = changed
+    },
     [UPDATE_BODY](state, body) {
       state.body = body
     },
+    [UPDATE_BODY_VALIDITY](state, validity) {
+      state.bodyValid = validity
+    },
+    [UPDATE_BODY_CHANGED](state, changed) {
+      state.bodyChanged = changed
+    },
     [UPDATE_FIRST_NAME](state, firstName) {
-      Vue.set(state.user, 'first_name', firstName)
+      state.user.first_name = firstName
+    },
+    [UPDATE_FIRST_NAME_VALIDITY](state, validity) {
+      state.firstNameValid = validity
+    },
+    [UPDATE_FIRST_NAME_CHANGED](state, changed) {
+      state.firstNameChanged = changed
     },
     [UPDATE_LAST_NAME](state, lastName) {
-      Vue.set(state.user, 'last_name', lastName)
+      state.user.last_name = lastName
+    },
+    [UPDATE_LAST_NAME_VALIDITY](state, validity) {
+      state.lastNameValid = validity
+    },
+    [UPDATE_LAST_NAME_CHANGED](state, changed) {
+      state.lastNameChanged = changed
     },
     [UPDATE_ADDRESS](state, address) {
-      Vue.set(state.user, 'address', address)
+      state.user.address = address
+    },
+    [UPDATE_ADDRESS_VALIDITY](state, validity) {
+      state.addressValid = validity
+    },
+    [UPDATE_ADDRESS_CHANGED](state, changed) {
+      state.addressChanged = changed
     },
     [UPDATE_EMAIL](state, email) {
-      Vue.set(state.user, 'email', email)
+      state.user.email = email
+    },
+    [UPDATE_EMAIL_VALIDITY](state, validity) {
+      state.emailValid = validity
+    },
+    [UPDATE_EMAIL_CHANGED](state, changed) {
+      state.emailChanged = changed
     },
     [UPDATE_PRIVATE](state, val) {
-      Vue.set(state.user, 'private', val)
+      state.user.private = val
+    },
+    [UPDATE_CLAIMS_VIP](state, val) {
+      state.user.claims_vip = val
     },
     [UPDATE_USER_ID](state, val) {
-      Vue.set(state.user, 'id', val)
+      state.user.id = val
+    },
+    [UPDATE_TERMS](state, val) {
+      state.user.terms = val
+    },
+    [UPDATE_TERMS_VALIDITY](state, validity) {
+      state.termsValid = validity
+    },
+    [UPDATE_TERMS_CHANGED](state, changed) {
+      state.termsChanged = changed
+    },
+    [UPDATE_CONFIRM](state, val) {
+      state.user.confirm = val
+    },
+    [UPDATE_CONFIRM_VALIDITY](state, validity) {
+      state.confirmValid = validity
+    },
+    [UPDATE_REQUEST_PUBLIC](state, val) {
+      state.requestPublic = val
+    },
+    [UPDATE_SIMILAR_REQUEST_SEARCH](state, v) {
+      state.similarRequestSearch = v
     },
     [UPDATE_LAW_TYPE](state, val) {
       state.lawType = val
     },
     [CACHE_LAWS](state, { laws }) {
       laws.forEach((law) => {
-        Vue.set(state.lawCache, law.resource_uri, law)
+        state.lawCache[law.resource_uri] = law
       })
     }
   },
   actions: {
-    setSearchResults({ commit, state, dispatch }, { scope, results }) {
+    writeToStorage({ state }, { scope }) {
+      const reduced = {
+        lawType: state.lawType,
+        step: state.step,
+        subject: state.subject,
+        body: state.body,
+        publicBodies: state.scopedPublicBodies[scope],
+        public: state.requestPublic,
+        address: state.user.address,
+        user_email: state.user.email,
+        first_name: state.user.first_name,
+        last_name: state.user.last_name,
+        private: state.user.private,
+        terms: state.user.terms,
+        confirm: state.user.confirm,
+        claims_vip: state.user.claims_vip,
+        similarRequestSearch: state.similarRequestSearch
+      }
+      try {
+        persistStorage.setItem(persistKey, JSON.stringify(reduced))
+      } catch (err) {
+        console.warn('failed to persist state', persistStorage, reduced, err)
+      }
+    },
+    // also called from purgestorage.ts
+    purgeStorage({ state }, { keepNonForm } = { keepNonForm: false }) {
+      // don't purge values we can't get from (non-existing) form fields
+      const purged = keepNonForm
+        ? { step: state.step, confirm: state.user.confirm }
+        : null
+      try {
+        if (purged) {
+          persistStorage.setItem(persistKey, JSON.stringify(purged))
+          console.log('purged, keeping', persistKey, purged)
+        } else {
+          persistStorage.removeItem(persistKey)
+          console.log('purged, removed', persistKey)
+        }
+      } catch (err) {
+        console.warn('failed to purge persisted state', persistKey, err)
+      }
+    },
+    initStoreValues(
+      { commit },
+      { formFields, formCoerce, mutationMap, propMap, ignoreStorage, scope }
+    ) {
+      let storage
+      try {
+        storage = JSON.parse(persistStorage.getItem(persistKey))
+      } catch (err) {
+        console.warn(
+          'failed to load persisted state',
+          persistStorage,
+          persistKey,
+          err
+        )
+      }
+      // need null check for parsed, previously serialized storage
+      const isSet = (v) => !(v === undefined || v === null)
+      for (const key in mutationMap) {
+        const mutation = mutationMap[key]
+        let value = undefined
+        if (propMap && propMap[key]) {
+          // prop has precedence over formField, e.g. for publicBodies
+          value = propMap[key]
+          console.log('got', key, 'from prop')
+        }
+        if (
+          !isSet(value) &&
+          !ignoreStorage &&
+          storage &&
+          storage[key] !== undefined
+        ) {
+          value = storage[key]
+          console.log('got', key, 'from storage', value)
+        }
+        if (!isSet(value) && formFields && formFields[key] !== undefined) {
+          value = formFields[key].value
+          if (!isSet(value)) value = formFields[key].initial
+          if (formCoerce && formCoerce[key]) {
+            value = formCoerce[key](value)
+          }
+          console.log('got', key, 'from form', value)
+        }
+        if (!isSet(value)) {
+          console.log('could not get', key)
+          continue
+        }
+        if (scope) {
+          commit(mutation, { [key]: value, scope })
+        } else {
+          commit(mutation, value)
+        }
+      }
+    },
+    setSearchResults({ commit, dispatch }, { scope, results }) {
       commit(SET_SEARCHRESULTS, {
         searchResults: results.objects,
         searchFacets: results.facets.fields,
@@ -374,18 +617,18 @@ export default new Vuex.Store({
       commit(SET_STEP_REQUEST)
       dispatch('getLawsForPublicBodies', [result])
     },
-    getSearchResultsUrl({ commit, state, getters, dispatch }, { scope, url }) {
+    getSearchResultsUrl({ commit, state, dispatch }, { scope, url }) {
       commit(CLEAR_SEARCHRESULTS, { scope })
       const searcher = new FroideAPI(state.config)
       return searcher.getJson(url).then((results) => {
         dispatch('setSearchResults', { results, scope })
       })
     },
-    getNextSearchResults({ state, getters, dispatch }, scope) {
+    getNextSearchResults({ getters, dispatch }, scope) {
       const meta = getters.getScopedSearchMeta(scope)
       return dispatch('getSearchResultsUrl', { url: meta.next, scope })
     },
-    getPreviousSearchResults({ state, getters, dispatch }, scope) {
+    getPreviousSearchResults({ getters, dispatch }, scope) {
       const meta = getters.getScopedSearchMeta(scope)
       return dispatch('getSearchResultsUrl', {
         url: meta.previous,
@@ -393,5 +636,5 @@ export default new Vuex.Store({
       })
     }
   },
-  strict: debug
+  strict: false
 })

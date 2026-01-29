@@ -4,9 +4,8 @@ from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
 
-from configurations import Configuration, importer, values
-
 from celery.schedules import crontab
+from configurations import Configuration, importer, values
 
 importer.install(check_options=True)
 
@@ -27,6 +26,9 @@ class Base(Configuration):
             "django.contrib.sites",
             "django.contrib.messages",
             "django.contrib.staticfiles",
+            # overwrite admin templates and
+            # management command in django_elasticsearch_dsl
+            "froide.helper",
             "django.contrib.admin",
             "django_comments",
             "django.contrib.flatpages",
@@ -34,9 +36,6 @@ class Base(Configuration):
             "django.contrib.humanize",
             "django.contrib.gis",
             "channels",
-            # overwrite management command in
-            # django_elasticsearch_dsl
-            "froide.helper",
             # external
             "django_elasticsearch_dsl",
             "taggit",
@@ -64,6 +63,7 @@ class Base(Configuration):
             "froide.foisite",
             "froide.problem",
             "froide.accesstoken",
+            "froide.proof",
             "froide.guide",
             "froide.comments",
             "froide.campaign",
@@ -74,12 +74,20 @@ class Base(Configuration):
             # API
             "oauth2_provider",
             "rest_framework",
+            "drf_spectacular",
+            "drf_spectacular_sidecar",
+            "django.forms",
         ]
     )
 
-    DATABASES = values.DatabaseURLValue("postgis://froide:froide@localhost:5432/froide")
+    DATABASES = values.DatabaseURLValue("postgis://froide:froide@127.0.0.1:5432/froide")
+    DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-    CACHES = values.CacheURLValue("dummy://")
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        }
+    }
 
     CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
@@ -101,6 +109,9 @@ class Base(Configuration):
     def MFA_SITE_TITLE(self):
         return self.SITE_NAME
 
+    # Valid TOTP windows before and after, see https://pyauth.github.io/pyotp/#pyotp.totp.TOTP.verify
+    MFA_TOTP_VALID_WINDOW = 1
+
     SITE_ID = values.IntegerValue(1)
 
     ADMINS = (
@@ -109,6 +120,10 @@ class Base(Configuration):
 
     MANAGERS = ADMINS
 
+    # instead of relying on user's `is_staff` attribute, you can also
+    # specify a user group that should be considered as "crew"
+    CREW_GROUP = None
+
     INTERNAL_IPS = values.TupleValue(("127.0.0.1",))
 
     # ############## PATHS ###############
@@ -116,7 +131,7 @@ class Base(Configuration):
     PROJECT_ROOT = Path(__file__).resolve().parent
     BASE_DIR = PROJECT_ROOT.parent
 
-    LOCALE_PATHS = [BASE_DIR / "locale"]
+    LOCALE_PATHS = [PROJECT_ROOT / "locale"]
 
     GEOIP_PATH = None
     GDAL_LIBRARY_PATH = os.environ.get("GDAL_LIBRARY_PATH")
@@ -130,6 +145,12 @@ class Base(Configuration):
     # trailing slash.
     # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
     MEDIA_URL = values.Value("/files/")
+
+    # Whether the media files should be served by Django.
+    # In production, this should be handled by the web server (e.g. nginx)
+    @property
+    def SERVE_MEDIA(self):
+        return self.DEBUG
 
     # Sub path in MEDIA_ROOT that will hold FOI attachments
     FOI_MEDIA_PATH = values.Value("foi")
@@ -232,6 +253,7 @@ class Base(Configuration):
             },
         }
     ]
+    FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
     MIDDLEWARE = [
         "django.contrib.sessions.middleware.SessionMiddleware",
@@ -280,10 +302,6 @@ class Base(Configuration):
     # If you set this to False, Django will make some optimizations so as not
     # to load the internationalization machinery.
     USE_I18N = values.BooleanValue(True)
-
-    # If you set this to False, Django will not format dates, numbers and
-    # calendars according to the current locale
-    USE_L10N = values.BooleanValue(True)
 
     DATE_FORMAT = values.Value("d. F Y")
     SHORT_DATE_FORMAT = values.Value("d.m.Y")
@@ -393,6 +411,10 @@ class Base(Configuration):
             "task": "froide.foirequest.tasks.fetch_mail",
             "schedule": crontab(),
         },
+        "check_mail_log": {
+            "task": "froide.helper.tasks.check_mail_log",
+            "schedule": crontab(),
+        },
         "detect-asleep": {
             "task": "froide.foirequest.tasks.detect_asleep",
             "schedule": crontab(hour=0, minute=0),
@@ -445,18 +467,23 @@ class Base(Configuration):
     # which doesn't work well in JSON
     CELERY_TASK_SERIALIZER = "pickle"
     CELERY_RESULT_SERIALIZER = "pickle"
-    CELERY_ACCEPT_CONTENT = ["pickle"]
+    CELERY_ACCEPT_CONTENT = ["application/json", "pickle"]
 
     CELERY_EMAIL_TASK_CONFIG = {"queue": "emailsend"}
     CELERY_EMAIL_BACKEND = "froide.foirequest.smtp.EmailBackend"
     EMAIL_BULK_QUEUE = "emailsend_bulk"
+
+    # Monitoring
+
+    CELERY_WORKER_SEND_TASK_EVENTS = values.BooleanValue(False)
+    CELERY_TASK_SEND_SENT_EVENT = values.BooleanValue(False)
 
     # ######## Search ###########
 
     ELASTICSEARCH_INDEX_PREFIX = "froide"
     ELASTICSEARCH_HOST = values.Value("localhost")
     ELASTICSEARCH_DSL = {
-        "default": {"hosts": "%s:9200" % ELASTICSEARCH_HOST},
+        "default": {"hosts": "http://%s:9200" % ELASTICSEARCH_HOST},
     }
     ELASTICSEARCH_DSL_SIGNAL_PROCESSOR = (
         "django_elasticsearch_dsl.signals.RealTimeSignalProcessor"
@@ -467,6 +494,14 @@ class Base(Configuration):
     # Do not include xml by default, so lxml doesn't need to be present
     TASTYPIE_DEFAULT_FORMATS = ["json"]
 
+    def is_pkce_required(client_id):
+        from froide.account.models import Application
+
+        # Require PKCE only for public clients
+        return Application.objects.filter(
+            client_id=client_id, client_type=Application.CLIENT_PUBLIC
+        ).exists()
+
     OAUTH2_PROVIDER = {
         "SCOPES": {
             "read:user": _("Access to user status"),
@@ -474,9 +509,14 @@ class Base(Configuration):
             "read:email": _("Read user email"),
             "read:request": _("Read your (private) requests"),
             "make:request": _("Make requests on your behalf"),
+            "write:request": _("Edit requests"),
+            "write:message": _("Add and edit messages"),
+            "write:attachment": _("Add and edit attachments"),
             "follow:request": _("Follow/Unfollow requests"),
             "read:document": _("Read your (private) documents"),
-        }
+        },
+        "PKCE_REQUIRED": is_pkce_required,
+        "REFRESH_TOKEN_EXPIRE_SECONDS": 60 * 60 * 24 * 180,  # half a year
     }
     OAUTH2_PROVIDER_APPLICATION_MODEL = "account.Application"
 
@@ -500,48 +540,55 @@ class Base(Configuration):
             "froide.helper.api_renderers.CustomPaginatedCSVRenderer",
             "rest_framework.renderers.BrowsableAPIRenderer",
         ),
+        "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     }
 
     # ######### Froide settings ########
 
-    FROIDE_CONFIG = dict(
-        spam_protection=True,
-        user_can_hide_web=True,
-        public_body_officials_public=True,
-        public_body_officials_email_public=False,
-        request_public_after_due_days=14,
-        payment_possible=True,
-        currency="Euro",
-        default_law=1,
-        search_engine_query="http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images",
-        greetings=[rec(r"Dear (?:Mr\.?|Mr?s\.? .*?)")],
-        redact_salutation=r"(?:Mr\.?|Mr?s\.?)",
-        custom_replacements=[],
-        closings=[rec(r"Sincerely yours,?")],
-        public_body_boosts={},
-        autocomplete_body_boosts={},
-        read_receipt=False,
-        delivery_receipt=False,
-        dsn=False,
-        target_countries=None,
-        suspicious_asn_provider_list=None,
-        delivery_reporter=None,
-        request_throttle=None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
-        message_throttle=[
+    FROIDE_CONFIG = {
+        "spam_protection": True,
+        "user_can_hide_web": True,
+        "user_can_claim_vip": False,
+        "public_body_officials_public": True,
+        "public_body_officials_email_public": False,
+        "request_public_after_due_days": 14,
+        "payment_possible": True,
+        "currency": "Euro",
+        "default_law": 1,
+        "search_engine_query": "http://www.google.de/search?as_q=%(query)s&as_epq=&as_oq=&as_eq=&hl=en&lr=&cr=&as_ft=i&as_filetype=&as_qdr=all&as_occt=any&as_dt=i&as_sitesearch=%(domain)s&as_rights=&safe=images",
+        "greetings": [rec(r"Dear (?:Mr\.?|Mr?s\.? .*?)")],
+        "redact_salutation": r"(?:Mr\.?|Mr?s\.?)",
+        "custom_replacements": [],
+        "closings": [rec(r"Sincerely yours,?")],
+        "public_body_boosts": {},
+        "autocomplete_body_boosts": {},
+        "read_receipt": False,
+        "delivery_receipt": False,
+        "dsn": False,
+        "target_countries": None,
+        "suspicious_asn_provider_list": None,
+        "request_throttle": None,  # Set to [(15, 7 * 24 * 60 * 60),] for 15 requests in 7 days
+        "message_throttle": [
             (2, 5 * 60),  # X messages in X seconds
             (6, 6 * 60 * 60),
             (8, 24 * 60 * 60),
         ],
-        allow_pseudonym=False,
-        doc_conversion_binary=None,  # replace with libreoffice instance
-        doc_conversion_call_func=None,  # see settings_test for use
-        content_urls={
+        "allow_pseudonym": False,
+        "doc_conversion_binary": None,  # replace with libreoffice instance
+        "doc_conversion_call_func": None,  # see settings_test for use
+        "content_urls": {
             "terms": "/terms/",
             "privary": "/privacy/",
             "about": "/about/",
             "help": "/help/",
+            "throttled": "/help/",
+            # TODO english?
+            "help_postupload_redaction": "/hilfe/plain/funktionen-der-plattform/schwaerzungen-durchfuehren/",
+            "help_attachments_management": "/hilfe/plain/funktionen-der-plattform/anhange-verwalten/",
         },
-        moderation_triggers=[
+        "mobile_app_install_url": None,  # TODO
+        "mobile_app_content_url": None,
+        "moderation_triggers": [
             {
                 "name": "nonfoi",
                 "label": _("Non-FOI"),
@@ -564,25 +611,34 @@ class Base(Configuration):
                 ],
             },
         ],
-        message_handlers={
+        "message_handlers": {
             "email": "froide.foirequest.message_handlers.EmailMessageHandler"
         },
-        recipient_blocklist_regex=None,
-        max_attachment_size=1024 * 1024 * 10,  # 10 MB
-        bounce_enabled=False,
-        bounce_max_age=60 * 60 * 24 * 14,  # 14 days
-        bounce_format="bounce+{token}@example.com",
-        unsubscribe_enabled=False,
-        unsubscribe_format="unsub+{token}@example.com",
-        auto_reply_subject_regex=rec("^(Auto-?Reply|Out of office)"),
-        auto_reply_email_regex=rec("^auto(reply|responder)@"),
-        hide_content_funcs=[],
-        non_meaningful_subject_regex=[
+        "recipient_blocklist_regex": None,
+        "max_attachment_size": 1024 * 1024 * 10,  # 10 MB
+        "bounce_enabled": False,
+        "bounce_max_age": 60 * 60 * 24 * 14,  # 14 days
+        "bounce_format": "bounce+{token}@example.com",
+        "unsubscribe_enabled": False,
+        "unsubscribe_format": "unsub+{token}@example.com",
+        "auto_reply_subject_regex": rec("^(Auto-?Reply|Out of office)"),
+        "auto_reply_email_regex": rec("^auto(reply|responder)@"),
+        "hide_content_funcs": [],
+        "filter_georegion_kinds": [
+            "state",
+            "admin_district",
+            "district",
+            "admin_cooperation",
+            "municipality",
+            "borought",
+        ],
+        "non_meaningful_subject_regex": [
             r"^(foi[- ])?request$",
             r"^documents?$",
             r"^information$",
         ],
-    )
+        "address_regex": None,
+    }
 
     TESSERACT_DATA_PATH = values.Value("/usr/local/share/tessdata")
     # allow override of settings.LANGUAGE_CODE for Tesseract
@@ -646,6 +702,14 @@ class Base(Configuration):
     UNSUBSCRIBE_EMAIL_ACCOUNT_PASSWORD = values.Value("")
     UNSUBSCRIBE_EMAIL_USE_SSL = values.Value(False)
 
+    SPECTACULAR_SETTINGS = {
+        "SWAGGER_UI_DIST": "SIDECAR",
+        "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+        "REDOC_DIST": "SIDECAR",
+    }
+
+    FORMS_URLFIELD_ASSUME_HTTPS = True
+
 
 class Dev(Base):
     pass
@@ -679,17 +743,20 @@ class TestBase(Base):
     def FROIDE_CONFIG(self):
         config = dict(super().FROIDE_CONFIG)
         config.update(
-            dict(
-                spam_protection=False,
-                doc_conversion_call_func=self._fake_convert_pdf,
-                default_law=10000,
-                greetings=[
+            {
+                "spam_protection": False,
+                "doc_conversion_call_func": self._fake_convert_pdf,
+                "default_law": 10000,
+                "greetings": [
                     rec(r"Dear ((?:Mr\.?|Ms\.?) .*),?"),
                     rec(r"Sehr geehrter? ((Herr|Frau) .*),?"),
                 ],
-                closings=[rec(r"Sincerely yours,?"), rec(r"Mit freundlichen Grüßen")],
-                public_body_officials_public=False,
-            )
+                "closings": [
+                    rec(r"Sincerely yours,?"),
+                    rec(r"Mit freundlichen Grüßen"),
+                ],
+                "public_body_officials_public": False,
+            }
         )
         return config
 
@@ -702,7 +769,12 @@ class TestBase(Base):
     ELASTICSEARCH_INDEX_PREFIX = "froide_test"
 
     MESSAGE_STORAGE = "django.contrib.messages.storage.cookie.CookieStorage"
-    CACHES = values.CacheURLValue("locmem://")
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
 
     TEST_SELENIUM_DRIVER = values.Value("chrome_headless")
 

@@ -1,32 +1,32 @@
 <template>
   <div>
-    <div ref="uppy" />
+    <div ref="uppy" v-show="showUppy"></div>
     <template v-if="formFields">
       <input
         v-for="upload in uploads"
         :key="upload"
         type="hidden"
         :name="name"
-        :value="upload" />
+        :value="upload"
+      />
       <input
         v-if="!canSubmit"
         type="hidden"
         name="upload-pending"
         value=""
-        required />
+        required
+      />
     </template>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import Dashboard from '@uppy/dashboard'
 
-import '@uppy/core/dist/style.css'
-import '@uppy/dashboard/dist/style.css'
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
 
 import I18nMixin from '../../lib/i18n-mixin'
 
@@ -66,6 +66,15 @@ export default {
       type: Boolean,
       default: true,
       required: false
+    },
+    onmountPick: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    showUppy: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -105,6 +114,13 @@ export default {
       return uploads
     }
   },
+  methods: {
+    clickFilepick() {
+      const button = this.$refs.uppy.querySelector('.uppy-Dashboard-browse')
+      if (!button) return false
+      return button.click()
+    }
+  },
   mounted() {
     const uppyLocale = {
       strings: this.config.i18n.uppy,
@@ -124,9 +140,11 @@ export default {
       }
     })
     this.uppy.use(Dashboard, {
+      theme: document.documentElement.getAttribute('data-bs-theme') || 'light',
       inline: true,
       target: this.$refs.uppy,
-      height: 250,
+      width: '100%',
+      height: '16rem',
       showLinkToFileUploadResult: false,
       proudlyDisplayPoweredByUppy: false,
       showRemoveButtonAfterComplete: this.allowRemove,
@@ -140,19 +158,19 @@ export default {
       }
     })
     this.uppy.on('file-added', (file) => {
-      Vue.set(this.files, file.id, false)
+      this.files[file.id] = false
       this.$emit('ready', this.canSubmit)
     })
     this.uppy.on('file-removed', (file) => {
-      Vue.delete(this.files, file.id)
+      delete this.files[file.id]
       this.$emit('ready', this.canSubmit)
     })
-    this.uppy.on('upload', (data) => {
+    this.uppy.on('upload', () => {
       this.uploading = true
       this.$emit('uploading', true)
     })
     this.uppy.on('upload-success', (file, response) => {
-      Vue.set(this.files, file.id, response.uploadURL)
+      this.files[file.id] = response.uploadURL
       this.$emit('ready', this.canSubmit)
       this.$emit('upload-success', { uppy: this.uppy, file, response })
     })
@@ -161,7 +179,62 @@ export default {
       console.log('failed files:', result.failed)
       this.uploading = false
       this.$emit('uploading', false)
+      this.$emit('upload-complete', result)
     })
   }
 }
 </script>
+
+<style scoped lang="scss">
+/* the following :deep styles override uppy's Dashboard to follow the Bootstrap colors;
+  they do not (yet) include: border-radiuses, dropFilesHereHint's svg background (icon);
+  also, the "table" headers&footers when uppy is processing (.uppy-StatusBar etc.) aren't perfect */
+
+:deep(.uppy-Dashboard-inner) {
+  --bs-bg-opacity: 1;
+  background-color: rgba(
+    var(--bs-tertiary-bg-rgb),
+    var(--bs-bg-opacity)
+  ) !important;
+  border-color: var(--bs-border-color);
+}
+
+:deep(.uppy-Dashboard-AddFiles) {
+  border-color: var(--bs-border-color);
+}
+
+:deep(.uppy-Dashboard-browse) {
+  color: var(--bs-link-color);
+  border-bottom: 0 !important;
+  border-block-end: 0 !important;
+  transition-duration: 0.15s; // hardcoded in bs
+
+  &:hover {
+    color: var(--bs-link-hover-color);
+    text-decoration: underline;
+  }
+}
+
+:deep(.uppy-Dashboard-inner),
+:deep(.uppy-Dashboard-AddFiles-title),
+:deep(.uppy-Dashboard-dropFilesHereHint) {
+  color: var(--bs-body-color);
+}
+
+:deep(.uppy-Dashboard-dropFilesHereHint) {
+  border-color: rgba(var(--bs-info-rgb), var(--bs-border-opacity));
+}
+
+/* "table" headers and footers */
+:deep(.uppy-DashboardContent-bar),
+:deep(.uppy-StatusBar),
+:deep(.uppy-StatusBar:not([aria-hidden='true']).is-waiting),
+:deep(.uppy-StatusBar .uppy-StatusBar-actions),
+:deep(.uppy-StatusBar.is-waiting .uppy-StatusBar-actions) {
+  --bs-bg-opacity: 1;
+  background-color: rgba(
+    var(--bs-tertiary-bg-rgb),
+    var(--bs-bg-opacity)
+  ) !important;
+}
+</style>

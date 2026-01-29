@@ -10,11 +10,12 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
 from django.core.management import call_command
+from django.db.models import signals
 from django.utils import timezone
 
 import factory
 from elasticsearch.exceptions import RequestError
-from factory.django import DjangoModelFactory
+from factory.django import DjangoModelFactory, FileField
 
 from froide.account.factories import UserFactory
 from froide.helper.text_utils import slugify
@@ -156,13 +157,14 @@ class FoiMessageFactory(DjangoModelFactory):
     not_publishable = False
 
 
+@factory.django.mute_signals(signals.pre_save, signals.post_save)
 class FoiAttachmentFactory(DjangoModelFactory):
     class Meta:
         model = FoiAttachment
 
     belongs_to = factory.SubFactory(FoiMessageFactory)
     name = factory.Sequence(lambda n: "file_{0}.pdf".format(n))
-    file = TEST_PDF_URL
+    file = FileField(from_path=TEST_PDF_PATH)
     size = 500
     filetype = "application/pdf"
     format = "pdf"

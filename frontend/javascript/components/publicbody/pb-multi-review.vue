@@ -2,51 +2,59 @@
   <div class="review">
     <div class="row mt-3 mb-3">
       <div class="col-auto">
-        <h3 class="display-4">
+        <h2>
           {{ i18n._('publicBodiesCount', { count: publicBodies.length }) }}
-        </h3>
+        </h2>
       </div>
     </div>
-    <div class="row">
-      <div class="col-auto">
-        <button
-          class="btn btn-primary btn-lg"
-          @click.prevent="setStepSelectPublicBody">
-          &larr; weitere Behörden hinzufügen
-        </button>
-      </div>
-    </div>
-    <pb-summary
+
+    <PbSummary
       :scope="scope"
       :i18n="i18n"
-      :dimensions="summaryDimensions"></pb-summary>
+      :dimensions="summaryDimensions"
+    ></PbSummary>
 
     <div class="row mb-2">
       <div class="col-auto ms-auto">
         <button
           v-if="publicBodies.length > 0"
           @click.prevent="clearSelection"
-          class="btn btn-sm hover-btn-danger">
+          class="btn btn-sm hover-btn-danger"
+        >
           <i class="fa fa-ban" aria-hidden="true"></i>
           {{ i18n.clearSelection }}
         </button>
       </div>
     </div>
 
-    <pb-table
+    <PbTable
       :name="name"
       :scope="scope"
       :i18n="i18n"
       :headers="headers"
       :options="chosenOptions"
       :rows="publicBodies"
-      @selectAllRows="selectAllRows"
-      class="transition"></pb-table>
+      @select-all-rows="selectAllRows"
+      class="transition"
+    ></PbTable>
+
+    <div class="row">
+      <div class="col-auto ms-auto">
+        <button
+          type="button"
+          class="btn btn-primary"
+          :disabled="!stepCanContinue(scope)"
+          @click="$emit('stepNext')"
+        >
+          {{ i18n.stepNext || i18n.continue }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { SET_STEP_SELECT_PUBLICBODY } from '../../store/mutation_types'
 
 import PBChooserMixin from './lib/pb-chooser-mixin'
@@ -57,8 +65,9 @@ import PbTable from './pb-table'
 import PbSummary from './pb-summary'
 
 export default {
-  name: 'pb-multi-review',
+  name: 'PbMultiReview',
   mixins: [PBChooserMixin, PBListMixin],
+  emits: ['stepNext'],
   props: ['name', 'scope', 'i18n'],
   components: {
     PbTable,
@@ -74,7 +83,8 @@ export default {
   computed: {
     summaryDimensions() {
       return summaryDimensions
-    }
+    },
+    ...mapGetters(['stepCanContinue'])
   },
   methods: {
     ...mapMutations({

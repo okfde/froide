@@ -9,8 +9,8 @@ const LetterMixin = {
     },
     letterSignatureName() {
       let name = ''
-      if (this.first_name || this.last_name) {
-        name = `${this.first_name || ''} ${this.last_name || ''}`
+      if (this.user && (this.user.first_name || this.user.last_name)) {
+        name = `${this.user.first_name || ''} ${this.user.last_name || ''}`
       }
       return name.trim()
     },
@@ -32,7 +32,7 @@ const LetterMixin = {
       return `${this.defaultLaw.letter_end}`
     },
     letterSignature() {
-      if (!this.user && !this.first_name && !this.last_name) {
+      if (!this.user || (!this.user.first_name && !this.user.last_name)) {
         return this.i18n.giveName
       }
       return false

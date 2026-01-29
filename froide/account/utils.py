@@ -2,13 +2,13 @@ import re
 from datetime import timedelta
 from typing import Any, Dict, Optional, Tuple, Union
 
+from django.contrib.auth import get_user_model
 from django.contrib.sessions.models import Session
 from django.db import transaction
 from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.functional import SimpleLazyObject
 
-from froide.accesstoken.models import AccessToken
 from froide.helper.date_utils import get_midnight
 from froide.helper.email_sending import (
     mail_middleware_registry,
@@ -17,7 +17,6 @@ from froide.helper.email_sending import (
 )
 
 from . import account_canceled, account_future_canceled, account_merged
-from .models import User
 from .tasks import make_account_private_task
 
 POSTCODE_RE = re.compile(r"(\d{5})\s+(.*)")
@@ -26,6 +25,8 @@ TRAILING_COMMA = re.compile(r"\s*,\s*$")
 EXPIRE_UNCONFIRMED_USERS_AGE = timedelta(days=30)
 CANCEL_DEACTIVATED_USERS_AGE = timedelta(days=100)
 FUTURE_CANCEL_PERIOD = timedelta(days=31)
+
+User = get_user_model()
 
 
 def send_mail_users(subject, body, users, **kwargs):
@@ -157,13 +158,16 @@ future_cancel_mail = mail_registry.register(
 )
 
 
-def future_cancel_user(user, notify=False):
+def future_cancel_user(user, notify=False, immediately=False):
     user.is_trusted = False
     user.is_blocked = True
     # Do not delete yet!
     user.is_deleted = False
     now = timezone.localtime(timezone.now())
-    user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
+    if immediately:
+        user.date_left = now
+    else:
+        user.date_left = get_midnight(now + FUTURE_CANCEL_PERIOD)
     user.notes += "Canceled on {} for {}\n\n".format(
         now.isoformat(), user.date_left.isoformat()
     )
@@ -174,26 +178,38 @@ def future_cancel_user(user, notify=False):
     if notify:
         future_cancel_mail.send(user=user)
 
+    if immediately:
+        # 10 minutes delay to allow signal processing
+        start_cancel_account_process(user, delete=False, cancel_countdown=60 * 10)
 
-def start_cancel_account_process(user: SimpleLazyObject, delete: bool = False) -> None:
+
+def start_cancel_account_process(
+    user: SimpleLazyObject, delete: bool = False, note: str = "", cancel_countdown=0.0
+) -> None:
     from .tasks import cancel_account_task
 
-    user.private = True
-    user.email = None
-    user.tags.clear()
     user.is_active = False
     user.set_unusable_password()
     user.date_deactivated = timezone.now()
+    if note:
+        user.notes += "\n\n" + note
 
     user.save()
     delete_all_unexpired_sessions_for_user(user)
 
     # Asynchronously delete account
     # So more expensive anonymization can run in the background
-    cancel_account_task.delay(user.pk, delete=delete)
+    cancel_account_task.apply_async(
+        args=(user.pk,), kwargs={"delete": delete}, countdown=cancel_countdown
+    )
 
 
 def cancel_user(user: User, delete: bool = False) -> None:
+    # Set user to private here to ensure that
+    # all data is anonymized before deletion
+    user.private = True
+    user.save()
+
     with transaction.atomic():
         account_canceled.send(sender=User, user=user)
 
@@ -205,12 +221,13 @@ def cancel_user(user: User, delete: bool = False) -> None:
 
     user.organization_name = ""
     user.organization_url = ""
-    user.private = True
     user.terms = False
     user.address = ""
     user.profile_text = ""
     user.profile_photo.delete()
+    user.tags.clear()
     user.save()
+    user.groups.clear()
     user.first_name = ""
     user.last_name = ""
     user.is_trusted = False
@@ -312,6 +329,8 @@ def check_account_compatibility(groups):
 
 
 def delete_expired_onetime_login_tokens():
+    from froide.accesstoken.models import AccessToken
+
     from .services import ONE_TIME_LOGIN_EXPIRY, ONE_TIME_LOGIN_PURPOSE
 
     time_ago = timezone.now() - ONE_TIME_LOGIN_EXPIRY

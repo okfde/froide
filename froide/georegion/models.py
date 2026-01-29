@@ -28,7 +28,7 @@ class GeoRegion(MP_Node):
     kind = models.CharField(_("Kind of Region"), max_length=255, choices=KIND_CHOICES)
     kind_detail = models.CharField(max_length=255, blank=True)
     level = models.IntegerField(default=0)
-    region_identifier = models.CharField(max_length=255, blank=True)
+    region_identifier = models.CharField(max_length=255, blank=True, db_index=True)
     global_identifier = models.CharField(max_length=255, blank=True)
 
     area = models.FloatField(_("Area"), default=0.0)  # in Sqm
@@ -37,6 +37,9 @@ class GeoRegion(MP_Node):
     invalid_on = models.DateTimeField(null=True, blank=True)
 
     geom = models.MultiPolygonField(_("geometry"), geography=True)
+    geom_detail = models.MultiPolygonField(
+        _("geometry detail"), geography=True, null=True, blank=True
+    )
     gov_seat = models.PointField(_("gov seat"), null=True, blank=True, geography=True)
 
     part_of = models.ForeignKey(
@@ -47,7 +50,8 @@ class GeoRegion(MP_Node):
         blank=True,
         related_name="sub_regions",
     )
-    data = models.JSONField(default=dict)
+    data = models.JSONField(default=dict, blank=True)
+    osm_tags = models.JSONField(default=dict, blank=True)
 
     node_order_by = ("name",)
 

@@ -1,11 +1,13 @@
 <template>
   <div class="publicbody-chooser mb-3">
-    <button
-      v-if="!showSearch"
-      class="btn btn-sm btn-light float-end"
-      @click.prevent="showSearch = true">
-      {{ i18n.searchPublicBodyLabel }}
-    </button>
+    <p v-if="!showSearch">
+      <button
+        class="btn btn-sm btn-outline-secondary text-end"
+        @click.prevent="showSearch = true"
+      >
+        {{ i18n.searchPublicBodyLabel }}
+      </button>
+    </p>
     <div v-if="showSearch" class="form-search">
       <div class="input-group">
         <input
@@ -14,11 +16,13 @@
           class="search-public_bodies form-control"
           :placeholder="i18n.publicBodySearchPlaceholder"
           @keyup="triggerAutocomplete"
-          @keydown.enter.prevent="triggerAutocomplete" />
+          @keydown.enter.prevent="triggerAutocomplete"
+        />
         <button
           type="button"
           class="btn btn-outline-primary search-public_bodies-submit"
-          @click="triggerAutocomplete">
+          @click="triggerAutocomplete"
+        >
           <i class="fa fa-search" />
           {{ i18n.search }}
         </button>

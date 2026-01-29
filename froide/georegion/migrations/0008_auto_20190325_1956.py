@@ -31,7 +31,6 @@ def make_nodes(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("georegion", "0007_auto_20190325_1956"),
     ]

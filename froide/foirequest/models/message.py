@@ -8,13 +8,14 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import formats, timezone
 from django.utils.functional import cached_property
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from taggit.managers import TaggableManager
 from taggit.models import TagBase, TaggedItemBase
 
 from froide.helper.email_utils import make_address
-from froide.helper.text_diff import get_differences
+from froide.helper.text_diff import CONTENT_CACHE_THRESHOLD, get_differences
 from froide.helper.text_utils import quote_text, redact_plaintext, redact_subject
 from froide.publicbody.models import PublicBody
 
@@ -24,6 +25,7 @@ BOUNCE_TAG = "bounce"
 HAS_BOUNCED_TAG = "bounced"
 AUTO_REPLY_TAG = "auto-reply"
 BOUNCE_RESENT_TAG = "bounce-resent"
+BULK_TAG = "bulk"
 
 
 class FoiMessageManager(models.Manager):
@@ -34,6 +36,15 @@ class FoiMessageManager(models.Manager):
         if extra_filters is not None:
             qs = qs.filter(**extra_filters)
         return qs, "timestamp"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(is_draft=False)
+
+
+class FoiMessageDraftManager(FoiMessageManager):
+    def get_queryset(self):
+        # need to call models.Manager, since FoiMessageManager removes drafts
+        return super(models.Manager, self).get_queryset().filter(is_draft=True)
 
 
 class MessageTag(TagBase):
@@ -57,11 +68,20 @@ class MessageKind(models.TextChoices):
     EMAIL = ("email", _("email"))
     POST = ("post", _("postal mail"))
     FAX = ("fax", _("fax"))
+    # uploads by public bodies using link in foirequest
     UPLOAD = ("upload", _("upload"))
     PHONE = ("phone", _("phone call"))
     VISIT = ("visit", _("visit in person"))
     IMPORT = ("import", _("automatically imported"))
 
+
+# users are allowed to only create messages of these kinds
+# the other kinds can only be created by the system
+MESSAGE_KIND_USER_ALLOWED = [
+    MessageKind.POST,
+    MessageKind.PHONE,
+    MessageKind.VISIT,
+]
 
 MESSAGE_KIND_ICONS = {
     MessageKind.EMAIL: "mail",
@@ -79,13 +99,12 @@ MESSAGE_ID_PREFIX = "foimsg."
 
 
 class FoiMessage(models.Model):
-    CONTENT_CACHE_THRESHOLD = 5000
-
     request = models.ForeignKey(
         FoiRequest,
         verbose_name=_("Freedom of Information Request"),
         on_delete=models.CASCADE,
     )
+    is_draft = models.BooleanField(_("is message a draft?"), default=False)
     sent = models.BooleanField(_("has message been sent?"), default=True)
     is_response = models.BooleanField(_("response?"), default=True)
     kind = models.CharField(
@@ -133,12 +152,18 @@ class FoiMessage(models.Model):
     )
 
     timestamp = models.DateTimeField(_("Timestamp"), blank=True)
+    last_modified_at = models.DateTimeField(auto_now=True)
+
+    registered_mail_date = models.DateTimeField(
+        _("Registered mail date"), blank=True, null=True, default=None
+    )  # "Gelber Brief"
+
     email_message_id = models.CharField(max_length=512, blank=True, default="")
     subject = models.CharField(_("Subject"), blank=True, max_length=255)
     subject_redacted = models.CharField(
         _("Redacted Subject"), blank=True, max_length=255
     )
-    plaintext = models.TextField(_("plain text"), blank=True, null=True)
+    plaintext = models.TextField(_("plain text"), blank=True, null=False, default="")
     plaintext_redacted = models.TextField(
         _("redacted plain text"), blank=True, null=True
     )
@@ -159,7 +184,11 @@ class FoiMessage(models.Model):
     )
     tags = TaggableManager(through=TaggedMessage, verbose_name=_("tags"), blank=True)
 
+    confirmation_sent = models.BooleanField(_("Confirmation sent?"), default=False)
+
     objects = FoiMessageManager()
+    with_drafts = models.Manager()
+    drafts_only = FoiMessageDraftManager()
 
     class Meta:
         get_latest_by = "timestamp"
@@ -168,11 +197,24 @@ class FoiMessage(models.Model):
         verbose_name = _("Freedom of Information Message")
         verbose_name_plural = _("Freedom of Information Messages")
 
+        indexes = [models.Index(fields=["email_message_id"])]
+
     def __str__(self):
         return _("Message in '%(request)s' at %(time)s") % {
             "request": self.request,
             "time": self.timestamp,
         }
+
+    def save(self, *args, **kwargs):
+        if "update_fields" in kwargs:
+            kwargs["update_fields"] = {"last_modified_at"}.union(
+                kwargs["update_fields"]
+            )
+
+        super().save(*args, **kwargs)
+
+    def is_public(self) -> bool:
+        return not self.is_draft
 
     @property
     def is_postal(self):
@@ -226,6 +268,10 @@ class FoiMessage(models.Model):
     @property
     def is_bounce_resent(self):
         return BOUNCE_RESENT_TAG in self.tag_set
+
+    @property
+    def is_bulk(self):
+        return BULK_TAG in self.tag_set
 
     @cached_property
     def tag_set(self):
@@ -384,7 +430,7 @@ class FoiMessage(models.Model):
         return pb_id == request.law.mediator_id
 
     @property
-    def sender(self):
+    def sender(self) -> str:
         if self.sender_user:
             return self.sender_user.display_name()
         if settings.FROIDE_CONFIG.get("public_body_officials_email_public", False):
@@ -394,10 +440,10 @@ class FoiMessage(models.Model):
             and self.sender_name
         ):
             return self.sender_name
-        else:
-            if self.sender_public_body:
-                return self.sender_public_body.name
-            return self.sender_public_body
+
+        if self.sender_public_body:
+            return self.sender_public_body.name
+        return ""
 
     @property
     def user_real_sender(self):
@@ -516,7 +562,11 @@ class FoiMessage(models.Model):
 
     @classmethod
     def get_throttle_message(cls):
-        return _("You exceeded your message limit of %(count)s messages in %(time)s.")
+        return mark_safe(
+            _(
+                "You exceeded your message limit of %(count)s messages in %(time)s. Find out more in the Help area."
+            )
+        )
 
     def get_postal_attachment_form(self):
         from ..forms import get_postal_attachment_form
@@ -598,7 +648,7 @@ class FoiMessage(models.Model):
         checks = self.email_headers.get("authenticity")
         if not checks:
             return False
-        return any([c["failed"] for c in checks])
+        return any(c["failed"] for c in checks)
 
     def has_authenticity_info(self):
         return bool(self.email_headers.get("authenticity"))
@@ -668,12 +718,12 @@ class FoiMessage(models.Model):
         if auth:
             show, hide, cache_field = (
                 self.plaintext,
-                self.plaintext_redacted,
+                self.get_content(),
                 "redacted_content_auth",
             )
         else:
             show, hide, cache_field = (
-                self.plaintext_redacted,
+                self.get_content(),
                 self.plaintext,
                 "redacted_content_anon",
             )
@@ -693,13 +743,27 @@ class FoiMessage(models.Model):
             return self.content_rendered_anon
 
     def set_cached_rendered_content(self, authenticated_read, content):
-        needs_caching = len(self.content) > self.CONTENT_CACHE_THRESHOLD
+        needs_caching = len(self.content) > CONTENT_CACHE_THRESHOLD
         if needs_caching:
             if authenticated_read:
                 update = {"content_rendered_auth": content}
             else:
                 update = {"content_rendered_anon": content}
             FoiMessage.objects.filter(id=self.id).update(**update)
+
+
+class FoiMessageDraft(FoiMessage):
+    objects = FoiMessageDraftManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = _("Freedom of Information Message Draft")
+        verbose_name_plural = _("Freedom of Information Message Drafts")
+
+    def __init__(self, *args, **kwargs):
+        if not args:
+            kwargs.update({"is_draft": True})
+        super().__init__(*args, **kwargs)
 
 
 class Delivery(models.TextChoices):

@@ -14,7 +14,7 @@ from django_comments import get_form, get_model
 from froide.foirequest.models import FoiRequest
 from froide.foirequest.models.message import MessageKind
 from froide.foirequest.tests import factories
-from froide.foirequest.tests.test_api import OAuthAPIMixin
+from froide.foirequest.tests.test_api_request import OAuthAPIMixin
 from froide.follow.notifications import run_batch_update
 
 from .configuration import FoiRequestFollowConfiguration

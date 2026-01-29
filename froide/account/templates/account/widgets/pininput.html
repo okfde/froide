@@ -1,3 +1,16 @@
 <div class="d-flex flex-row justify-content-center">
-  <input class="form-control rounded" data-pininput="{{ digits | length }}" {% if autofocus %}autofocus{% endif %} type="text" name="{{ widget.name }}" value="" pattern="\d{{ '{' }}{{ digits | length }}{{ '}' }}" inputmode="numeric" autocomplete="off" maxlength="{{ digits | length }}" style="font-size: 2em;letter-spacing: 0.5ch;width: 12ch;font-family: monospace;"/>
+    <input class="form-control rounded"
+           data-pininput="{{ digits | length }}"
+           {% if autofocus %}autofocus{% endif %}
+           type="text"
+           name="{{ widget.name }}"
+           value=""
+           pattern="\d{{ '{' }}{{ digits | length }}{{ '}' }}"
+           inputmode="numeric"
+           autocomplete="off"
+           maxlength="{{ digits | length }}"
+           style="font-size: 2em;
+                  letter-spacing: 0.5ch;
+                  width: 12ch;
+                  font-family: monospace" />
 </div>

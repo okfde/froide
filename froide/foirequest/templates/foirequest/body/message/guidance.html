@@ -1,59 +1,48 @@
 {% load i18n %}
 {% load markup %}
 {% load foirequest_tags %}
-
 {% for guidance in message.guidances %}
-  <div id="{{ message.get_html_id }}-guidance" data-messageid="{{ message.get_html_id }}" {% if foirequest|can_read_foirequest_authenticated:request and guidance.matches %}data-messagemark="{{ guidance.get_matches_json }}" {% endif %}class="alpha-message__guidance d-print-none bg-yellow-100 p-3 mb-3">
-    {% with guidance.get_label as label %}
-      {% if label %}
-        <h4 class="h6 mb-1" {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>
-          {{ label }}
-        </h4>
-      {% endif %}
-    {% endwith %}
-
-    {% with guidance.get_description as description %}
-      {% if description %}
-        <div>
-          {{ description | markdown }}
-        </div>
-      {% endif %}
-    {% endwith %}
-
-    {% if guidance.has_snippet and foirequest|can_write_foirequest:request %}
-      {% with snippet=guidance.get_snippet %}
-        {% if snippet|length < 250 %}
-        <h6>{% trans "Suggested reply" %}</h6>
-        <blockquote class="card-text small bg-light ps-2">
-          <p>
-          {{ snippet|linebreaksbr }}
-          </p>
-        </blockquote>
+    <div id="{{ message.get_html_id }}-guidance"
+         data-messageid="{{ message.get_html_id }}"
+         {% if foirequest|can_read_foirequest_authenticated:request and guidance.matches %}data-messagemark="{{ guidance.get_matches_json }}" {% endif %}
+         class="alpha-message__guidance d-print-none text-bg-highlight p-3 mb-3">
+        {% with guidance.get_label as label %}
+            {% if label %}
+                <h4 class="h6 mb-1"
+                    {% if request.user.is_staff %}title="{{ guidance.rule.name }}"{% endif %}>{{ label }}</h4>
+            {% endif %}
+        {% endwith %}
+        {% with guidance.get_description as description %}
+            {% if description %}<div>{{ description | markdown }}</div>{% endif %}
+        {% endwith %}
+        {% if guidance.has_snippet and foirequest|can_write_foirequest:request %}
+            {% with snippet=guidance.get_snippet %}
+                {% if snippet|length < 250 %}
+                    <h6>{% trans "Suggested reply" %}</h6>
+                    <blockquote class="card-text small bg-body-secondary ps-2">
+                        <p>{{ snippet|linebreaksbr }}</p>
+                    </blockquote>
+                {% endif %}
+                <a data-fieldname="sendmessage-to"
+                   data-addtextfield="#id_sendmessage-message"
+                   data-value="{% if message.is_response %}{{ message.sender_email }}{% else %}{{ message.recipient_email }}{% endif %}"
+                   data-addtext="{{ snippet }}"
+                   href="#write-message"
+                   class="btn btn-sm btn-secondary">
+                    <span class="fa fa-reply"></span>
+                    {% if snippet|length < 250 %}
+                        {% trans "Add to reply" %}
+                    {% else %}
+                        {% trans "Prepare message" %}
+                    {% endif %}
+                </a>
+            {% endwith %}
         {% endif %}
-
-        <a data-fieldname="sendmessage-to"
-          data-addtextfield="#id_sendmessage-message"
-          data-value="{% if message.is_response %}{{ message.sender_email }}{% else %}{{ message.recipient_email }}{% endif %}"
-          data-addtext="{{ snippet }}"
-          href="#write-message" class="btn btn-sm btn-secondary">
-          <span class="fa fa-reply"></span>
-          {% if snippet|length < 250 %}
-            {% trans "Add to reply" %}
-          {% else %}
-            {% trans "Prepare message" %}
-          {% endif %}
-        </a>
-
-      {% endwith %}
-    {% endif %}
-
-    {% if guidance.has_letter and foirequest|can_write_foirequest:request %}
-      <a href="{{ guidance.get_letter_url }}" class="btn btn-primary">
-        <span class="fa fa-envelope"></span>
-        {% trans "Generate letter" %}
-      </a>
-    {% endif %}
-
-
-  </div>
+        {% if guidance.has_letter and foirequest|can_write_foirequest:request %}
+            <a href="{{ guidance.get_letter_url }}" class="btn btn-primary">
+                <span class="fa fa-envelope"></span>
+                {% trans "Generate letter" %}
+            </a>
+        {% endif %}
+    </div>
 {% endfor %}

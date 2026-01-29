@@ -1,0 +1,179 @@
+[project]
+name = "froide"
+readme = "README.md"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.12"
+description = "German Freedom of Information Portal"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: Django",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Utilities",
+]
+version = "6.0.0"
+dependencies = [
+  "celery>=5.5.2",
+  "channels>=4.2.2",
+  "dj-database-url",
+  "django-celery-beat>=2.8.1",
+  "django-celery-email",
+  "django-configurations",
+  "django-contrib-comments",
+  "django-crossdomainmedia>=0.0.4",
+  "django-elasticsearch-dsl>=8.0,<9.0",
+  "django-filter>=25.1",
+  "django-json-widget",
+  "django-leaflet>=0.32.0",
+  "django-mfa3>=1.0.0",
+  "django-oauth-toolkit>=3.0.1",
+  "django-parler",
+  "django-storages",
+  "django-taggit>=6.1.0",
+  "django-treebeard",
+  "django>=5.2,<5.3",
+  "djangorestframework>=3.16.0",
+  "djangorestframework-csv",
+  "djangorestframework-jsonp",
+  "drf-spectacular[sidecar]>=0.28.0",
+  "easy-thumbnails>=2.10.0",
+  "elasticsearch-dsl>=8.0.0,<9.0.0",
+  "elasticsearch<9.0.0,>=8.0.0",
+  "geoip2",
+  "icalendar",
+  "lxml[html-clean]>=5.2.0",
+  "markdown",
+  "nh3",
+  "phonenumbers",
+  "pillow>=9.0.0",
+  "pikepdf>=9.7.0",
+  "psycopg[binary]>=3.2.1",
+  "pyisemail",
+  "pypdf>=5.5.0",
+  "python-magic",
+  "python-mimeparse",
+  "python-slugify",
+  "reportlab>=4.4.1",
+  "requests",
+  "wand",
+  "weasyprint>=65.1",
+  "websockets",
+  "django-filingcabinet @ git+https://github.com/okfde/django-filingcabinet.git@main",
+  "dogtail @ git+https://github.com/okfde/dogtail.git@main",
+]
+
+[project.optional-dependencies]
+test = [
+  "beautifulsoup4",
+  "coverage[toml]",
+  "django-coverage-plugin",
+  "django-stubs",
+  "factory-boy",
+  "faker",
+  "monkeytype",
+  "mypy",
+  "pbr",
+  "pre-commit",
+  "pycodestyle",
+  "pyflakes",
+  "pytest",
+  "pytest-asyncio",
+  "pytest-django",
+  "pytest-factoryboy",
+  "pytest-playwright-asyncio>=0.7.0",
+  "greenlet>=3.1.1",
+  "ruff",
+  "tblib",
+  "text-unidecode",
+  "time-machine",
+  "types-Markdown",
+  "types-python-dateutil",
+  "types-requests",
+]
+
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv.pip]
+universal = true
+
+[tool.setuptools.packages.find]
+include = ["froide*"]
+
+[tool.ruff]
+exclude = ["migrations", "build", "node_modules"]
+
+[tool.ruff.lint]
+ignore = ["E501", "C901"]
+select = ["C", "E", "F", "W", "B", "I001"]
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 88
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+section-order = [
+  "future",
+  "standard-library",
+  "django",
+  "third-party",
+  "first-party",
+  "local-folder",
+]
+default-section = "third-party"
+known-first-party = ["froide"]
+
+[tool.ruff.lint.isort.sections]
+django = ["django"]
+
+[tool.djlint]
+ignore = "T002,T003,H005,H006,H021,H023,H029,H030,H031"
+
+[tool.coverage.run]
+source = ["froide"]
+omit = ["*/migrations/*", "*/wsgi.py", "*/asgi.py"]
+plugins = ["django_coverage_plugin"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+exclude_lines = ["pragma: no cover"]
+
+[tool.pytest.ini_options]
+DJANGO_CONFIGURATION = "Test"
+DJANGO_SETTINGS_MODULE = "froide.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = ["--reuse-db"]
+markers = ["no_delivery_mock"]
+filterwarnings = [
+    "ignore::DeprecationWarning:(?!froide).*",
+    "ignore::PendingDeprecationWarning:(?!froide)*",
+]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main"]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+ignore_errors = false
+ignore_missing_imports = true
+implicit_reexport = false
+strict_optional = true
+strict_equality = true
+no_implicit_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_no_return = true
+python_version = "3.10"
+
+[tool.django-stubs]
+django_settings_module = "froide.settings"

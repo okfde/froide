@@ -1,0 +1,4 @@
+{% extends "foirequest/foiproject_action.html" %}
+{% block app_form %}
+    {% include "foirequest/header/_set_status.html" with status_form=form inline=False %}
+{% endblock app_form %}

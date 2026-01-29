@@ -1,12 +1,15 @@
 import re
 import uuid
 from datetime import timedelta
+from functools import partial
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.files import File
 from django.db import transaction
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -15,8 +18,9 @@ from froide.account.services import AccountService
 from froide.helper.db_utils import save_obj_with_slug
 from froide.helper.email_parsing import ParsedEmail
 from froide.helper.storage import make_unique_filename
-from froide.helper.text_utils import redact_subject
+from froide.helper.text_utils import redact_plaintext, redact_subject
 from froide.problem.models import ProblemReport
+from froide.publicbody.models import PublicBody
 
 from .hooks import registry
 from .models import FoiAttachment, FoiMessage, FoiProject, FoiRequest, RequestDraft
@@ -80,11 +84,12 @@ class CreateRequestService(BaseService):
         if len(self.data["publicbodies"]) > 1:
             foi_object = self.create_project()
         else:
-            foi_object = self.create_request(self.data["publicbodies"][0])
+            foi_object = self.create_request(
+                self.data["publicbodies"][0], request=request
+            )
 
             if user_created:
                 AccountService(user).send_confirmation_mail(
-                    request_id=foi_object.pk,
                     reference=foi_object.reference,
                     redirect_url=self.data.get("redirect_url"),
                 )
@@ -100,14 +105,14 @@ class CreateRequestService(BaseService):
         from .views import MakeRequestView
 
         data = self.data
-        additional_kwargs = dict(
-            subject=data.get("subject", ""),
-            body=data.get("body", ""),
-            full_text=data.get("full_text", False),
-            public=data["public"],
-            reference=data.get("reference", ""),
-            law_type=data.get("law_type", ""),
-        )
+        additional_kwargs = {
+            "subject": data.get("subject", ""),
+            "body": data.get("body", ""),
+            "full_text": data.get("full_text", False),
+            "public": data["public"],
+            "reference": data.get("reference", ""),
+            "law_type": data.get("law_type", ""),
+        }
 
         flag_keys = set(MakeRequestView.FORM_CONFIG_PARAMS) | {"redirect_url"}
         flags = {k: v for k, v in data.items() if k in flag_keys}
@@ -158,19 +163,30 @@ class CreateRequestService(BaseService):
             "address": data.get("address"),
             "full_text": data.get("full_text", False),
         }
-        create_project_requests.delay(project.id, publicbody_ids, **extra)
+        transaction.on_commit(
+            partial(create_project_requests.delay, project.id, publicbody_ids, **extra)
+        )
         return project
 
-    def create_request(self, publicbody, sequence=0):
+    def create_request(
+        self,
+        publicbody: PublicBody,
+        sequence: int = 0,
+        request: Optional[HttpRequest] = None,
+    ):
         data = self.data
         user = data["user"]
+        user_replacements = user.get_redactions()
 
         now = timezone.now()
-        request = FoiRequest(
+        foirequest = FoiRequest(
             title=data["subject"],
             public_body=publicbody,
             user=data["user"],
             description=data["body"],
+            description_redacted=redact_plaintext(
+                data["body"], user_replacements=user_replacements
+            ),
             public=data["public"],
             language=data.get("language", ""),
             site=Site.objects.get_current(),
@@ -184,14 +200,14 @@ class CreateRequestService(BaseService):
         send_now = False
 
         if not user.is_active:
-            request.status = FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
-            request.visibility = FoiRequest.VISIBILITY.INVISIBLE
+            foirequest.status = FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
+            foirequest.visibility = FoiRequest.VISIBILITY.INVISIBLE
         else:
-            request.status = FoiRequest.STATUS.AWAITING_RESPONSE
-            request.determine_visibility()
+            foirequest.status = FoiRequest.STATUS.AWAITING_RESPONSE
+            foirequest.determine_visibility()
             send_now = True
 
-        request.secret_address = generate_unique_secret_address(user)
+        foirequest.secret_address = generate_unique_secret_address(user)
         foilaw = None
         if data.get("law_type"):
             law_type = data["law_type"]
@@ -200,30 +216,29 @@ class CreateRequestService(BaseService):
         if foilaw is None:
             foilaw = publicbody.default_law
 
-        request.law = foilaw
-        request.jurisdiction = foilaw.jurisdiction
+        foirequest.law = foilaw
+        foirequest.jurisdiction = foilaw.jurisdiction
 
         if send_now:
-            request.due_date = request.law.calculate_due_date()
+            foirequest.due_date = foirequest.law.calculate_due_date()
 
         if data.get("blocked"):
             send_now = False
-            request.is_blocked = True
+            foirequest.is_blocked = True
 
-        self.pre_save_request(request)
-        save_obj_with_slug(request, count=sequence)
+        self.pre_save_request(foirequest)
+        save_obj_with_slug(foirequest, count=sequence)
 
         if "tags" in data and data["tags"]:
-            request.tags.add(*[t[:100] for t in data["tags"]])
+            foirequest.tags.add(*[t[:100] for t in data["tags"]])
 
-        subject = "%s [#%s]" % (request.title, request.pk)
-        user_replacements = user.get_redactions()
+        subject = "%s [#%s]" % (foirequest.title, foirequest.pk)
         message = FoiMessage(
-            request=request,
+            request=foirequest,
             sent=False,
             is_response=False,
             sender_user=user,
-            sender_email=request.secret_address,
+            sender_email=foirequest.secret_address,
             sender_name=user.display_name(),
             timestamp=now,
             status="awaiting_response",
@@ -231,40 +246,51 @@ class CreateRequestService(BaseService):
             subject_redacted=redact_subject(subject, user_replacements),
         )
 
+        proof = self.data.get("proof")
+        attachments = []
+        attachment_names = []
+        if send_now and proof:
+            proof_attachment = proof.get_mime_attachment()
+            attachment_names.append(proof_attachment[0])
+            attachments.append(proof_attachment)
+
         send_address = bool(self.data.get("address"))
         message.plaintext = construct_initial_message_body(
-            request,
+            foirequest,
             text=data["body"],
             foilaw=foilaw,
             full_text=data.get("full_text", False),
             send_address=send_address,
+            attachment_names=attachment_names,
+            proof=proof,
         )
         message.plaintext_redacted = redact_plaintext_with_request(
             message.plaintext,
-            request,
+            foirequest,
         )
 
         message.recipient_public_body = publicbody
         message.recipient = publicbody.name
         message.recipient_email = publicbody.get_email(data.get("law_type"))
 
-        FoiRequest.request_to_public_body.send(sender=request)
+        FoiRequest.request_to_public_body.send(sender=foirequest)
 
         message.save()
         FoiRequest.request_created.send(
-            sender=request, reference=data.get("reference", "")
+            sender=foirequest, reference=data.get("reference", "")
         )
         if send_now:
-            message.send()
+            message.send(attachments=attachments)
             message.save()
             FoiRequest.message_sent.send(
-                sender=request,
+                sender=foirequest,
                 message=message,
+                request=request,
             )
             FoiRequest.request_sent.send(
-                sender=request, reference=data.get("reference", "")
+                sender=foirequest, reference=data.get("reference", "")
             )
-        return request
+        return foirequest
 
     def pre_save_request(self, request):
         pass
@@ -286,14 +312,14 @@ class CreateRequestFromProjectService(CreateRequestService):
     def process(self, request=None):
         data = self.data
         pb = data["publicbody"]
-        return self.create_request(pb, sequence=data["project_order"])
+        return self.create_request(pb, sequence=data["project_order"], request=request)
 
 
 class CreateSameAsRequestService(CreateRequestService):
-    def create_request(self, publicbody, sequence=0):
+    def create_request(self, publicbody, sequence=0, request=None):
         original_request = self.data["original_foirequest"]
         sequence = original_request.same_as_count + 1
-        return super().create_request(publicbody, sequence=sequence)
+        return super().create_request(publicbody, sequence=sequence, request=request)
 
     def pre_save_request(self, request):
         original_request = self.data["original_foirequest"]
@@ -307,14 +333,14 @@ class SaveDraftService(BaseService):
         data = self.data
         request_form = data["request_form"]
         draft = request_form.cleaned_data.get("draft", None)
-        additional_kwargs = dict(
-            subject=request_form.cleaned_data.get("subject", ""),
-            body=request_form.cleaned_data.get("body", ""),
-            full_text=request_form.cleaned_data.get("full_text", False),
-            public=request_form.cleaned_data["public"],
-            reference=request_form.cleaned_data.get("reference", ""),
-            law_type=request_form.cleaned_data.get("law_type", ""),
-        )
+        additional_kwargs = {
+            "subject": request_form.cleaned_data.get("subject", ""),
+            "body": request_form.cleaned_data.get("body", ""),
+            "full_text": request_form.cleaned_data.get("full_text", False),
+            "public": request_form.cleaned_data["public"],
+            "reference": request_form.cleaned_data.get("reference", ""),
+            "law_type": request_form.cleaned_data.get("law_type", ""),
+        }
         if draft is None:
             draft = RequestDraft.objects.create(user=request.user, **additional_kwargs)
         else:
@@ -407,14 +433,6 @@ class ReceiveEmailService(BaseService):
 
         if email.is_auto_reply:
             message.tags.add(AUTO_REPLY_TAG)
-
-        if email.fails_authenticity:
-            ProblemReport.objects.report(
-                message=message,
-                kind=ProblemReport.PROBLEM.MAIL_INAUTHENTIC,
-                description="\n".join(str(c) for c in email.fails_authenticity),
-                auto_submitted=True,
-            )
 
         foirequest._messages = None
         foirequest.status = FoiRequest.STATUS.AWAITING_CLASSIFICATION
@@ -509,7 +527,9 @@ class ReceiveEmailService(BaseService):
 
             # Translators: replacement for person name in filename
             repl = str(_("NAME"))
-            att.name = account_service.apply_name_redaction(att.name, repl)
+            att.name = account_service.apply_name_redaction(
+                att.name, repl, unicode=False
+            )
             att.name = re.sub(r"[^A-Za-z0-9_\.\-]", "", att.name)
             att.name = att.name[:250]
 
@@ -528,7 +548,7 @@ class ReceiveEmailService(BaseService):
                 self.trigger_convert_pdf(att.id)
 
     def trigger_convert_pdf(self, att_id):
-        transaction.on_commit(lambda: convert_attachment_task.delay(att_id))
+        transaction.on_commit(partial(convert_attachment_task.delay, att_id))
 
 
 class ActivatePendingRequestService(BaseService):

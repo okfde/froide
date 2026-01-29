@@ -1,4 +1,5 @@
-body {
+body,
+.body-content {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -18,6 +19,8 @@ small,
 }
 
 .main {
+  display: flex;
+  flex-direction: column;
   flex: 1 0 auto;
 }
 

@@ -1,68 +1,65 @@
 {% load i18n %}
-
 {% if can_follow %}
-
-  {% if user_authenticated %}
-    <form method="post" action="{{ follow_url }}" class="ajaxified" id="followrequest-form-{{ object.pk }}">
-      {% csrf_token %}
-      {% if following and not follow_only %}
-        <button class="btn btn-sm btn-outline-success hover-btn-danger" type="submit">
-          <span class="on-hover">
-            <i class="fa fa-remove" aria-hidden="true"></i>
-            {{ action_labels.unfollow }}
-          </span>
-          <span class="on-display">
-            <i class="fa fa-bell" aria-hidden="true"></i>
-            {{ action_labels.following }}
-          </span>
+    {% if user_authenticated %}
+        <form method="post"
+              action="{{ follow_url }}"
+              class="ajaxified"
+              id="followrequest-form-{{ object.pk }}">
+            {% csrf_token %}
+            {% if following and not follow_only %}
+                <button class="btn btn-sm btn-outline-success hover-btn-danger" type="submit">
+                    <span class="on-hover">
+                        <i class="fa fa-remove" aria-hidden="true"></i>
+                        {{ action_labels.unfollow }}
+                    </span>
+                    <span class="on-display">
+                        <i class="fa fa-bell" aria-hidden="true"></i>
+                        {{ action_labels.following }}
+                    </span>
+                </button>
+            {% elif not following %}
+                <button class="btn btn-sm btn-outline-primary" type="submit">
+                    <span class="on-hover">
+                        <i class="fa fa-bell" aria-hidden="true"></i>
+                        {{ action_labels.follow_q }}
+                    </span>
+                    <span class="on-display">
+                        <i class="fa fa-bell-o" aria-hidden="true"></i>
+                        {{ action_labels.follow_q }}
+                    </span>
+                </button>
+            {% endif %}
+            {% include "follow/follow_count_badge.html" with count=count %}
+        </form>
+    {% else %}
+        <button id="follow-form-{{ object.pk }}-modal-trigger"
+                data-bs-toggle="modal"
+                data-bs-target="#follow-form-{{ object.pk }}-modal"
+                class="btn btn-sm btn-outline-primary">
+            <span class="on-hover">
+                <i class="fa fa-bell" aria-hidden="true"></i>
+                {{ action_labels.follow_q }}
+            </span>
+            <span class="on-display">
+                <i class="fa fa-bell-o" aria-hidden="true"></i>
+                {{ action_labels.follow_q }}
+            </span>
         </button>
-      {% elif not following %}
-        <button class="btn btn-sm btn-outline-primary" type="submit">
-          <span class="on-hover">
-            <i class="fa fa-bell" aria-hidden="true"></i>
-            {{ action_labels.follow_q }}
-          </span>
-          <span class="on-display">
-            <i class="fa fa-bell-o" aria-hidden="true"></i>
-            {{ action_labels.follow_q }}
-          </span>
-        </button>
-      {% endif %}
-
-      {% include "follow/follow_count_badge.html" with count=count %}
-
-    </form>
-  {% else %}
-    <button id="follow-form-{{ object.pk }}-modal-trigger" data-bs-toggle="modal" data-bs-target="#follow-form-{{ object.pk }}-modal" class="btn btn-sm btn-outline-primary">
-      <span class="on-hover">
-        <i class="fa fa-bell" aria-hidden="true"></i>
-        {{ action_labels.follow_q }}
-      </span>
-      <span class="on-display">
-        <i class="fa fa-bell-o" aria-hidden="true"></i>
-        {{ action_labels.follow_q }}
-      </span>
-    </button>
-
-    {% include "follow/follow_count_badge.html" with count=count %}
-
-  {% endif %}
-
-  {% if verbose %}
-    <p>
-      <small class="text-muted">
-        {% blocktranslate %}Get notified by email of changes.{% endblocktranslate %}
-      </small>
-    </p>
-  {% endif %}
-
-  {% if not user_authenticated %}
-    {# modal form #}
-    <div id="follow-form-{{ object.pk }}-modal" class="modal fade" role="dialog" aria-labelledby="follow-form-{{ object.pk }}-modal-label" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        {% include "follow/_email_follow_form.html" %}
-      </div>
-    </div>
-  {% endif %}
-
+        {% include "follow/follow_count_badge.html" with count=count %}
+    {% endif %}
+    {% if verbose %}
+        <p>
+            <small class="text-body-secondary">{% blocktranslate %}Get notified by email of changes.{% endblocktranslate %}</small>
+        </p>
+    {% endif %}
+    {% if not user_authenticated %}
+        {# modal form #}
+        <div id="follow-form-{{ object.pk }}-modal"
+             class="modal fade"
+             role="dialog"
+             aria-labelledby="follow-form-{{ object.pk }}-modal-label"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">{% include "follow/_email_follow_form.html" %}</div>
+        </div>
+    {% endif %}
 {% endif %}

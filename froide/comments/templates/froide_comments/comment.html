@@ -1,57 +1,51 @@
 {% load i18n %}
-
 <div id="comment-{{ comment.id }}" class="comments-comment">
-
-  {# head #}
-  <div class="d-flex justify-content-start align-items-center flex-nowrap">
-    <strong class="text-truncate">
-      {% if request.user.is_authenticated %}
-        {# name #}
-        {% if comment.is_requester and comment.user.private %}
-          <span class="redacted-dummy redacted-hover" data-bs-toggle="tooltip" title="{% trans 'Name not public' %}">
-            {% trans "Commentator" %}
-          </span>
-        {% elif not comment.user_name %}
-          {% trans "Commentator" %}
-        {% else %}
-          {{ comment.user_name }}
-        {% endif %}
-
-        {# requester-/moderator-badges #}
-        {% if comment.is_requester %}
-          <span class="badge text-bg-blue-20 ms-1">{% trans "Requester" %}</span>
-        {% elif comment.is_moderation %}
-          <span class="badge text-bg-yellow-100 ms-1">{% trans "Moderation" %}</span>
-        {% endif %}
-
-      {% else %}
-        <span class="text-muted font-italic">{% trans "Only visible if logged in" %}</span>
-      {% endif %}
-    </strong>
-
-    {# timestamp #}
-    <small class="text-gray-600 mx-1">•</small>
-    <small class="text-nowrap text-gray-600">{{ comment.submit_date }}</small>
-
-  </div>
-
-  {# body #}
-  {% if comment.is_removed %}
-    <div class="text-muted">{% trans "Comment was removed." %}</div>
-  {% else %}
-    <div>
-      {% if comment.is_moderation %}
-        {{ comment.comment|urlizetrunc:40|linebreaksbr }}
-      {% else %}
-        {% if comment.comment != comment.comment|truncatewords:20 %}
-          <span>{{ comment.comment|truncatewords:20|urlizetrunc:40|linebreaksbr }}
-          <a href="#more-commenttext-{{ comment.id }}" class="hideparent" data-bs-toggle="collapse">
-          {% trans "Read all" %}</a></span>
-          <span id="more-commenttext-{{ comment.id }}" class="collapse">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
-        {% else %}
-          {{ comment.comment|urlizetrunc:40|linebreaksbr }}
-        {% endif %}
-      {% endif %}
+    {# head #}
+    <div class="d-flex justify-content-start align-items-center flex-nowrap">
+        <strong class="text-truncate">
+            {% if request.user.is_authenticated %}
+                {# name #}
+                {% if comment.is_requester and comment.user.private %}
+                    <span class="redacted-dummy redacted-hover"
+                          data-bs-toggle="tooltip"
+                          title="{% trans 'Name not public' %}">{% trans "Commentator" %}</span>
+                {% elif not comment.user_name %}
+                    {% trans "Commentator" %}
+                {% else %}
+                    {{ comment.user_name }}
+                {% endif %}
+                {# requester-/moderator-badges #}
+                {% if comment.is_requester %}
+                    <span class="badge text-bg-blue-20 ms-1">{% trans "Requester" %}</span>
+                {% elif comment.is_moderation %}
+                    <span class="badge text-bg-highlight ms-1">{% trans "Moderation" %}</span>
+                {% endif %}
+            {% else %}
+                <span class="text-body-secondary font-italic">{% trans "Only visible if logged in" %}</span>
+            {% endif %}
+        </strong>
+        {# timestamp #}
+        <small class="text-gray-600 mx-1">•</small>
+        <small class="text-nowrap text-gray-600">{{ comment.submit_date }}</small>
     </div>
-  {% endif %}
+    {# body #}
+    {% if comment.is_removed %}
+        <div class="text-body-secondary">{% trans "Comment was removed." %}</div>
+    {% else %}
+        <div>
+            {% if comment.is_moderation %}
+                {{ comment.comment|urlizetrunc:40|linebreaksbr }}
+            {% else %}
+                {% if comment.comment != comment.comment|truncatewords:20 %}
+                    <span>{{ comment.comment|truncatewords:20|urlizetrunc:40|linebreaksbr }}
+                        <a href="#more-commenttext-{{ comment.id }}"
+                           class="hideparent"
+                           data-bs-toggle="collapse">{% trans "Read all" %}</a></span>
+                    <span id="more-commenttext-{{ comment.id }}" class="collapse">{{ comment.comment|urlizetrunc:40|linebreaksbr }}</span>
+                {% else %}
+                    {{ comment.comment|urlizetrunc:40|linebreaksbr }}
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
 </div>

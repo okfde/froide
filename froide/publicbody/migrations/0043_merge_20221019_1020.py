@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("publicbody", "0040_alter_foilaw_options"),
         ("publicbody", "0042_remove_publicbody_change_proposals_and_more"),

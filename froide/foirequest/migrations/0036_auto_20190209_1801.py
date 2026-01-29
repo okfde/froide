@@ -11,7 +11,6 @@ def assign_not_publishable(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("foirequest", "0035_auto_20190209_1801"),
     ]

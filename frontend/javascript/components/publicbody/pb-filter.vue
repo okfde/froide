@@ -1,62 +1,66 @@
 <template>
-  <div class="filter-component">
-    <h5 @click="toggleExpand" class="filter-heading">
-      {{ config.label }}&nbsp;<i
-        class="fa expand-icon"
-        :class="{
-          'fa-chevron-down': !expanded,
-          'fa-chevron-up': expanded
-        }"></i>
-    </h5>
-    <transition name="expand">
-      <div v-show="expanded" class="filter-container">
-        <select
-          v-if="hasChoices"
-          v-model="choice"
-          @change="triggerSearch"
-          class="form-control">
-          <option
-            v-for="opt in config.choices[1]"
-            :value="opt[0]"
-            :key="opt[0]">
-            {{ opt[1] }}
-          </option>
-        </select>
+  <div class="dropdown my-1 my-sm-0">
+    <button
+      type="button"
+      class="btn btn-secondary dropdown-toggle d-block w-100 text-wrap"
+      data-bs-toggle="dropdown"
+      data-bs-auto-close="outside"
+    >
+      {{ config.label }}
+    </button>
+    <div class="dropdown-menu">
+      <div v-if="hasSearch" class="px-3 py-2">
         <input
-          v-if="hasSearch"
           type="search"
           class="form-control form-control-sm"
           :placeholder="i18n.searchPlaceholder"
           v-model="search"
-          @keyup="triggerSearch"
-          @keydown.enter.prevent="triggerSearch" />
-        <div class="filter-list-container">
-          <div
-            v-if="loading"
-            class="spinner-border text-secondary"
-            role="status">
-            <span class="visually-hidden">{{ i18n.loading }}</span>
-          </div>
-          <pb-filter-list
-            v-else
-            :config="config"
-            :i18n="i18n"
-            :scope="scope"
-            :has-more="hasMore"
-            :items="orderedItems"
-            :value="value"
-            @removeFilter="removeFilter"
-            @setFilter="setFilter"
-            @loadMore="loadMore"
-            @loadChildren="loadChildren"></pb-filter-list>
-        </div>
+          @input="triggerSearch"
+          @keydown.enter.prevent="triggerSearch"
+        />
       </div>
-    </transition>
+      <div v-if="hasChoices" class="px-3 py-2">
+        <select
+          v-model="choice"
+          @change="triggerSearch"
+          class="form-select form-control-sm form-select-sm"
+        >
+          <option :value="null" :selected="!choice" style="font-style: italic">
+            <em>{{ config.choicesNoneLabel }}</em>
+          </option>
+          <option
+            v-for="opt in config.choices[1]"
+            :key="opt[0]"
+            :value="opt[0]"
+            :selected="choice == opt[0]"
+          >
+            {{ opt[1] }}
+          </option>
+        </select>
+      </div>
+      <div class="overflow-y-auto p-3" style="max-height: 50vh">
+        <div v-if="loading" class="spinner-border text-secondary" role="status">
+          <span class="visually-hidden">{{ i18n.loading }}</span>
+        </div>
+        <PbFilterList
+          v-else
+          :config="config"
+          :i18n="i18n"
+          :scope="scope"
+          :has-more="hasMore"
+          :items="orderedItems"
+          :value="value"
+          @remove-filter="removeFilter"
+          @set-filter="setFilter"
+          @load-more="loadMore"
+          @load-children="loadChildren"
+        ></PbFilterList>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
 import { mapGetters } from 'vuex'
 import debounce from 'lodash.debounce'
 
@@ -66,15 +70,19 @@ import FilterMixin from './lib/filter-mixin'
 import PbFilterList from './pb-filter-list'
 
 export default {
-  name: 'pb-filter',
+  name: 'PbFilter',
   props: ['globalConfig', 'config', 'i18n', 'scope', 'value', 'expanded'],
   mixins: [FilterMixin],
   components: { PbFilterList },
   data() {
+    let choice = null
+    if (this.config.choices && !this.config.choicesNoneLabel) {
+      choice = this.config.choices[1][0][0]
+    }
     return {
       items: [],
       search: '',
-      choice: null,
+      choice,
       lastSearch: null,
       searchMeta: null,
       loading: false
@@ -122,6 +130,9 @@ export default {
         }
         items = applyFacetMap(this.facetMap, items)
       }
+      if (this.choice) {
+        items.forEach((x) => (x.subLabel = false))
+      }
       return items
     },
     searcher() {
@@ -146,8 +157,12 @@ export default {
           ...this.config.initialFilters
         }
       }
-      if (this.config.choices && this.choice) {
-        filters[this.config.choices[0]] = this.choice
+      if (this.config.choices) {
+        filters[this.config.choices[0]] =
+          this.choice === null
+            ? // if no choice set, filter by "or all"
+              this.config.choices[1].map((c) => c[0]).join(',')
+            : this.choice
       }
       const searchDump = JSON.stringify({
         q: this.search,
@@ -193,15 +208,22 @@ export default {
     loadChildren(item) {
       this.config.getItems(null, { parent: item.id }).then((result) => {
         const items = this.processItems(result.objects)
-        Vue.set(item, 'subItems', items)
+        item.subItems = items
       })
     },
     setFilter(item) {
       if (this.config.multi) {
+        if (!Array.isArray(item)) item = [item]
+        let val
         if (!this.value) {
-          var val = [item]
-        } else if (!this.value.some((x) => item.id === x.id)) {
-          val = [...this.value, item]
+          val = item
+        } else {
+          val = [...this.value]
+          item.forEach((i) => {
+            if (!this.value.some((x) => i.id === x.id)) {
+              val.push(i)
+            }
+          })
         }
         if (val) {
           this.$emit('update', this.config, val)
@@ -213,67 +235,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-@import '../../../styles/variables';
-.filter-heading {
-  font-size: 0.9em;
-  cursor: pointer;
-}
-.expand-icon {
-  cursor: pointer;
-  font-size: 0.8em;
-}
-
-.expand-enter-active,
-.expand-leave-active {
-  transition: opacity 0.5s;
-}
-.expand-enter,
-.expand-leave-to {
-  opacity: 0;
-  .filter-list-container {
-    max-height: 0;
-  }
-}
-
-@include media-breakpoint-only(sm) {
-  .filter-heading {
-    cursor: default;
-    pointer-events: none;
-  }
-  .expand-icon {
-    display: none;
-  }
-  .filter-container {
-    display: block !important;
-  }
-}
-
-.filter-list-container {
-  transition: max-height 0.5s ease-in-out;
-  padding: 5px;
-  max-height: 200px;
-  overflow-y: auto;
-  position: relative;
-
-  @include media-breakpoint-up(md) {
-    max-height: 320px;
-  }
-}
-.filter-container:after {
-  content: ' ';
-  pointer-events: none;
-  position: absolute;
-  left: 0;
-  height: 3em;
-  bottom: 0em;
-  width: 100%;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0),
-    rgba(255, 255, 255, 0.95) 50%
-  );
-  z-index: 1;
-}
-</style>

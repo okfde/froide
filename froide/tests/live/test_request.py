@@ -6,66 +6,59 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pytest
-from playwright.sync_api import expect
+from playwright.async_api import expect
 
 from froide.foirequest.models import FoiRequest, RequestDraft
 from froide.foirequest.tests import factories
 from froide.publicbody.models import PublicBody
 
+from .utils import do_login, go_to_make_request_url, go_to_request_page
+
 User = get_user_model()
 
 
-def go_to_make_request_url(page, live_server, pb=None):
-    if pb is None:
-        path = reverse("foirequest-make_request")
-    else:
-        path = reverse(
-            "foirequest-make_request",
-            kwargs={"publicbody_slug": pb.slug},
-        )
-    url = live_server.url + path
-    page.goto(url=url)
-
-
-def go_to_request_page(page, live_server, foirequest):
-    path = reverse("foirequest-show", kwargs={"slug": foirequest.slug})
-    page.goto(live_server.url + path)
-
-
-def do_login(page, live_server, navigate=True):
-    if navigate:
-        page.goto(live_server.url + reverse("account-login"))
-        user = User.objects.get(username="dummy")
-        page.fill("[name=username]", user.email)
-        page.fill("[name=password]", "froide")
-        page.locator('button.btn.btn-primary[type="submit"]').click()
-        expect(page.locator("#navbaraccount-link")).to_have_count(1)
-
-
 @pytest.mark.django_db
-def test_make_not_logged_in_request(page, live_server, public_body_with_index):
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_not_logged_in_request(page, live_server, public_body_with_index):
     pb = PublicBody.objects.all().first()
-    go_to_make_request_url(page, live_server)
-    page.locator(".search-public_bodies").fill(pb.name)
-    page.locator(".search-public_bodies-submit").click()
+    await go_to_make_request_url(page, live_server)
+    await page.locator("request-page .btn-primary >> nth=0").click()
+    await page.locator(".search-public_bodies").fill(pb.name)
+    await page.locator(".search-public_bodies-submit").click()
     buttons = page.locator(".search-results .search-result .btn")
-    expect(buttons).to_have_count(2)
-    page.locator(".search-results .search-result .btn >> nth=0").click()
+    await expect(buttons).to_have_count(2)
+    await page.locator(".search-results .search-result .btn >> nth=0").click()
+
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
+
+    await page.fill("[name=first_name]", "Peter")
+    await page.fill("[name=last_name]", "Parker")
+    await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
+
+    user_email = "peter.parker@example.com"
+    await page.fill("[name=user_email]", user_email)
+    await page.locator("[name=terms]").click()
+    await page.locator("#step_create_account .btn-primary").click()
 
     req_title = "FoiRequest Number"
-    page.fill("[name=subject]", req_title)
-    page.fill("[name=body]", "Documents describing something...")
-    page.fill("[name=first_name]", "Peter")
-    page.fill("[name=last_name]", "Parker")
-    user_email = "peter.parker@example.com"
-    page.fill("[name=user_email]", user_email)
-    page.locator("[name=terms]").click()
-    page.locator("#review-button").click()
+    await page.fill("[name=subject]", req_title)
+    await page.fill("[name=body]", "Documents describing something...")
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
 
-    mail.outbox = []
-    page.locator("#send-request-button").click()
+    await page.locator("#step_request_public .btn-primary").click()
+
+    await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
+
+    # FIXME
+    await page.wait_for_timeout(1000)
+    # none of these worked, unexpectedly:
+    # await page.wait_for_url('*'+new_account-url+'*')
+    # await page.wait_for_url('*')
+    # await page.wait_for_load_state()
+
     assert new_account_url in page.url
 
     new_user = User.objects.get(email=user_email)
@@ -78,10 +71,10 @@ def test_make_not_logged_in_request(page, live_server, public_body_with_index):
     message = mail.outbox[0]
     match = re.search(r"http://[^/]+(/.+)", message.body)
     activate_url = match.group(1)
-    page.goto("%s%s" % (live_server.url, activate_url))
+    await page.goto("%s%s" % (live_server.url, activate_url))
     account_confirmed = reverse("account-confirmed")
     assert account_confirmed in page.url
-    expect(page.locator("xpath=//h2")).to_have_text(
+    await expect(page.locator("xpath=//h2")).to_have_text(
         "Your email address is now confirmed!"
     )
     req = FoiRequest.objects.get(user=new_user)
@@ -89,25 +82,36 @@ def test_make_not_logged_in_request(page, live_server, public_body_with_index):
 
 
 @pytest.mark.django_db
-def test_make_not_logged_in_request_to_public_body(page, live_server, world):
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_not_logged_in_request_to_public_body(page, live_server, world):
     pb = PublicBody.objects.all().first()
     assert pb
-    go_to_make_request_url(page, live_server, pb=pb)
+    await go_to_make_request_url(page, live_server, pb=pb)
+
+    req_title = "FoiRequest Number"
+    await page.fill("[name=subject]", req_title)
+    await page.fill("[name=body]", "Documents describing something...")
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
 
     user_first_name = "Peter"
     user_last_name = "Parker"
-    req_title = "FoiRequest Number"
-    page.fill("[name=subject]", req_title)
-    page.fill("[name=body]", "Documents describing something...")
-    page.fill("[name=first_name]", user_first_name)
-    page.fill("[name=last_name]", user_last_name)
     user_email = "peter.parker@example.com"
-    page.fill("[name=user_email]", user_email)
-    page.locator("[name=terms]").click()
-    page.locator("#review-button").click()
-    page.locator("#send-request-button").click()
+    await page.fill("[name=first_name]", user_first_name)
+    await page.fill("[name=last_name]", user_last_name)
+    await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
+    await page.fill("[name=user_email]", user_email)
+    await page.locator("[name=terms]").click()
+    await page.locator("#step_create_account .btn-primary").click()
+
+    await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
+    await page.wait_for_timeout(1000)
     assert new_account_url in page.url
     new_user = User.objects.get(email=user_email)
     assert new_user.first_name == user_first_name
@@ -121,24 +125,33 @@ def test_make_not_logged_in_request_to_public_body(page, live_server, world):
 
 
 @pytest.mark.django_db
-def test_make_logged_in_request(page, live_server, public_body_with_index, dummy_user):
-    do_login(page, live_server)
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_logged_in_request(
+    page, live_server, public_body_with_index, dummy_user
+):
+    await do_login(page, live_server)
     assert dummy_user.is_authenticated
-    go_to_make_request_url(page, live_server)
+    await go_to_make_request_url(page, live_server)
+    await page.locator("request-page .btn-primary >> nth=0").click()
     pb = PublicBody.objects.all().first()
-    page.locator(".search-public_bodies").fill(pb.name)
-    page.locator(".search-public_bodies-submit").click()
+    await page.locator(".search-public_bodies").fill(pb.name)
+    await page.locator(".search-public_bodies-submit").click()
     buttons = page.locator(".search-results .search-result .btn")
-    expect(buttons).to_have_count(2)
-    page.locator(".search-results .search-result .btn >> nth=0").click()
+    await expect(buttons).to_have_count(2)
+    await page.locator(".search-results .search-result .btn >> nth=0").click()
 
     req_title = "FoiRequest Number"
     body_text = "Documents describing & something..."
-    page.fill("[name=subject]", req_title)
-    page.fill("[name=body]", body_text)
-    page.locator("#review-button").click()
-    page.locator("#send-request-button").click()
+    await page.fill("[name=subject]", req_title)
+    await page.fill("[name=body]", body_text)
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+
+    await page.locator("#send-request-button").click()
     request_sent = reverse("foirequest-request_sent")
+    await page.wait_for_timeout(1000)
     assert request_sent in page.url
     req = FoiRequest.objects.filter(user=dummy_user).order_by("-id")[0]
     assert req.title == req_title
@@ -150,7 +163,8 @@ def test_make_logged_in_request(page, live_server, public_body_with_index, dummy
 
 
 @pytest.mark.django_db
-def test_make_logged_in_request_too_many(
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_logged_in_request_too_many(
     page,
     live_server,
     foi_request_factory,
@@ -165,45 +179,59 @@ def test_make_logged_in_request_too_many(
             created_at=timezone.now(),
         )
         foi_message_factory(request=req, is_response=False, sender_user=dummy_user)
-    do_login(page, live_server)
+    await do_login(page, live_server)
     pb = PublicBody.objects.all().first()
-    go_to_make_request_url(page, live_server, pb=pb)
+    await go_to_make_request_url(page, live_server, pb=pb)
+
     req_title = "FoiRequest Number"
     body_text = "Documents describing & something..."
-    page.fill("[name=subject]", req_title)
-    page.fill("[name=body]", body_text)
-    page.locator("#review-button").click()
-    page.locator("#send-request-button").click()
+    await page.fill("[name=subject]", req_title)
+    await page.fill("[name=body]", body_text)
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#step_request_public .btn-primary").click()
+    await page.locator("#send-request-button").click()
     make_request = reverse("foirequest-make_request")
+    await page.wait_for_timeout(1000)
     assert make_request in page.url
-    alert = page.locator(".alert-danger")
-    expect(alert).to_contain_text("exceeded your request limit")
+    alert = page.locator(".alert-danger", has_text="exceeded your request limit")
+    await expect(alert).to_be_visible()
 
 
 @pytest.mark.django_db
-def test_make_request_logged_out_with_existing_account(page, live_server, world):
+@pytest.mark.asyncio(loop_scope="session")
+async def test_make_request_logged_out_with_existing_account(page, live_server, world):
     pb = PublicBody.objects.all().first()
     user = User.objects.get(username="dummy")
-    go_to_make_request_url(page, live_server, pb=pb)
+    await go_to_make_request_url(page, live_server, pb=pb)
     req_title = "FoiRequest Number"
     body_text = "Documents describing & something..."
     user_first_name = user.first_name
     user_last_name = user.last_name
-    page.fill("[name=subject]", req_title)
-    page.fill("[name=body]", body_text)
-    page.fill("[name=first_name]", user_first_name)
-    page.fill("[name=last_name]", user_last_name)
-    page.fill("[name=user_email]", user.email)
-    page.locator("[name=terms]").click()
-    page.locator("[name=public]").click()
-    page.locator("[name=private]").click()
-    page.locator("#review-button").click()
+    await page.fill("[name=subject]", req_title)
+    await page.fill("[name=body]", body_text)
+    await page.locator("[name=confirm]").click()
+    await page.locator("#step_write_request .btn-primary").click()
+
+    await page.locator("#id_public_choice1").click()  # "not public"
+    await page.locator("#step_request_public .btn-primary").click()
+
+    await page.locator("#step_login_create .btn-primary >> nth=0").click()
+
+    await page.fill("[name=first_name]", user_first_name)
+    await page.fill("[name=last_name]", user_last_name)
+    await page.fill("[name=address]", "123 Queens Blvd\n12345 Queens")
+    await page.fill("[name=user_email]", user.email)
+    await page.locator("[name=terms]").click()
+    await page.locator("#step_create_account .btn-primary").click()
 
     old_count = FoiRequest.objects.filter(user=user).count()
     draft_count = RequestDraft.objects.filter(user=None).count()
-    page.locator("#send-request-button").click()
+    await page.locator("#send-request-button").click()
 
     new_account_url = reverse("account-new")
+    await page.wait_for_timeout(1000)
     assert new_account_url in page.url
 
     new_count = FoiRequest.objects.filter(user=user).count()
@@ -217,21 +245,23 @@ def test_make_request_logged_out_with_existing_account(page, live_server, world)
 
 
 @pytest.mark.django_db
-def test_collapsed_menu(page, live_server):
+@pytest.mark.asyncio(loop_scope="session")
+async def test_collapsed_menu(page, live_server):
     SCREEN_SIZE = (400, 800)
-    page.set_viewport_size({"width": SCREEN_SIZE[0], "height": SCREEN_SIZE[1]})
-    page.goto(live_server.url + reverse("index"))
-    expect(page.locator(".navbar form[role=search]")).not_to_be_visible()
-    page.locator(".navbar-toggler").click()
-    expect(page.locator(".navbar form[role=search]")).to_be_visible()
+    await page.set_viewport_size({"width": SCREEN_SIZE[0], "height": SCREEN_SIZE[1]})
+    await page.goto(live_server.url + reverse("index"))
+    await expect(page.locator(".navbar form[role=search]")).not_to_be_visible()
+    await page.locator(".navbar-toggler").click()
+    await expect(page.locator(".navbar form[role=search]")).to_be_visible()
 
 
 @pytest.mark.django_db
+@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
     [("", "successful"), ("successful", "refused")],
 )
-def test_set_status(
+async def test_set_status(
     page,
     live_server,
     world,
@@ -249,26 +279,28 @@ def test_set_status(
         resolution=from_resolution,
     )
     foi_message_factory(request=req, is_response=False, sender_user=user)
-    do_login(page, live_server)
+    await do_login(page, live_server)
     req.refresh_from_db()
     assert req.resolution == from_resolution
-    go_to_request_page(page, live_server, req)
-    expect(page.locator(".info-box__edit-panel > form")).not_to_be_visible()
-    page.locator(".info-box__edit-button").click()
-    expect(page.locator(".info-box__edit-panel > form")).to_be_visible()
+    await go_to_request_page(page, live_server, req)
+    await expect(page.locator(".info-box__edit-panel > form")).not_to_be_visible()
+    await page.locator(".info-box__edit-button").click()
+    await expect(page.locator(".info-box__edit-panel > form")).to_be_visible()
 
     resolution_select = page.locator("#id_resolution")
-    expect(resolution_select).to_be_visible()
-    expect(page.locator('select[name="resolution"]')).to_have_value(from_resolution)
+    await expect(resolution_select).to_be_visible()
+    await expect(page.locator('select[name="resolution"]')).to_have_value(
+        from_resolution
+    )
 
-    page.locator('select[name="resolution"]').select_option("successful")
-    expect(page.locator("#id_refusal_reason")).not_to_be_visible()
+    await page.locator('select[name="resolution"]').select_option("successful")
+    await expect(page.locator("#id_refusal_reason")).not_to_be_visible()
 
-    page.locator('select[name="resolution"]').select_option("refused")
-    expect(page.locator("#id_refusal_reason")).to_be_visible()
+    await page.locator('select[name="resolution"]').select_option("refused")
+    await expect(page.locator("#id_refusal_reason")).to_be_visible()
 
-    page.locator('select[name="resolution"]').select_option(to_resolution)
-    page.locator("#set-status-submit").click()
+    await page.locator('select[name="resolution"]').select_option(to_resolution)
+    await page.locator("#set-status-submit").click()
 
     req.refresh_from_db()
     assert req.resolution == to_resolution

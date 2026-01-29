@@ -12,8 +12,8 @@
           </th>
         </tr>
       </thead>
-      <tbody is="transition-group" name="moderation-problem">
-        <moderation-problem
+      <TransitionGroup tag="tbody" name="moderation-problem">
+        <ModerationProblem
           v-for="report in reports"
           :key="report.id"
           :report="report"
@@ -21,8 +21,9 @@
           @claim="claim"
           @unclaim="unclaim"
           @resolve="resolve"
-          @escalate="escalate" />
-      </tbody>
+          @escalate="escalate"
+        />
+      </TransitionGroup>
     </table>
   </div>
 </template>
@@ -41,15 +42,12 @@ export default {
     ModerationProblem
   },
   props: {
-    config: {
-      type: Object,
-      required: true
-    },
     reports: {
       type: Array,
       required: true
     }
   },
+  inject: ['config', 'csrfToken'],
   computed: {
     i18n() {
       return this.config.i18n
@@ -80,14 +78,14 @@ export default {
       postData(
         getUrl(this.config.url.claimReport, reportId),
         {},
-        this.$root.csrfToken
+        this.csrfToken
       )
     },
     unclaim(reportId) {
       postData(
         getUrl(this.config.url.unclaimReport, reportId),
         {},
-        this.$root.csrfToken
+        this.csrfToken
       )
     },
     escalate({ reportId, escalation }) {
@@ -96,7 +94,7 @@ export default {
         {
           escalation
         },
-        this.$root.csrfToken
+        this.csrfToken
       )
     },
     resolve({ reportId, resolution }) {
@@ -105,7 +103,7 @@ export default {
         {
           resolution
         },
-        this.$root.csrfToken
+        this.csrfToken
       )
     }
   }

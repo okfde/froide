@@ -1,28 +1,33 @@
 <template>
-  <div id="pdf-viewer" ref="top" class="pdf-redaction-tool">
+  <div
+    id="pdf-viewer"
+    ref="top"
+    class="pdf-redaction-tool container-xxl bg-dark-subtle d-flex flex-column"
+    :class="{ 'pdf-redaction-tool--debug': debug }"
+  >
     <div v-if="hasPassword && ready" class="row">
-      <div class="col-lg-12">
-        <div class="alert alert-info" role="alert">
+      <div class="col">
+        <div class="alert alert-info mb-0" role="alert">
           {{ i18n.hasPassword }}
         </div>
       </div>
     </div>
-    <div v-if="message" class="row">
-      <div class="col-lg-12">
-        <div class="alert alert-info" role="alert">
+    <div v-if="message" class="row bg-light pt-2">
+      <div class="col">
+        <div class="alert alert-info mb-0" role="alert">
           {{ message }}
         </div>
       </div>
     </div>
-    <div v-if="errors" class="row">
-      <div class="col-lg-12">
-        <div class="alert alert-danger" role="alert">
+    <div v-if="errors" class="row bg-light pt-2">
+      <div class="col">
+        <div class="alert alert-danger mb-0" role="alert">
           {{ errors }}
         </div>
       </div>
     </div>
-    <div v-if="working" class="row mt-5">
-      <div class="col-lg-12">
+    <div v-if="working" class="row py-3 text-bg-light">
+      <div class="col">
         <div class="text-center">
           <h3 v-if="loading">
             {{ i18n.loadingPdf }}
@@ -34,89 +39,173 @@
             {{ i18n.sending }}
           </h3>
         </div>
-        <div class="progress">
+        <div
+          class="progress"
+          role="progressbar"
+          :aria-valuenow="progressPercent"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
           <div
             class="progress-bar"
             :class="{
               'progress-bar-striped progress-bar-animated': progressUnknown
             }"
-            role="progressbar"
-            :aria-valuenow="progressPercent"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            :style="progressWidth" />
+            :style="progressWidth"
+          />
         </div>
         <div class="text-center mt-3">
           <div class="spinner-border" role="status" />
         </div>
       </div>
     </div>
-    <div class="row toolbar">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-1">
+    <div class="row toolbar sticky-top z-3">
+      <div
+        v-if="ready"
+        class="btn-toolbar col justify-content-md-around justify-content-lg-between bg-light"
+      >
+        <div
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2"
+        >
+          <input
+            type="radio"
+            class="btn-check"
+            name="pdfredaction-tool"
+            value="paint"
+            id="btn-check-paint"
+            v-model="tool"
+          />
+          <!-- Pan/move does not send focusout event to the tooltips, so on mobile,
+            they overstay their welcome and get in the way. As a simple workaround,
+            we make them autohide after a timeout. -->
+          <label
+            class="btn btn-outline-secondary d-flex"
+            :title="i18n.redact"
+            for="btn-check-paint"
+          >
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-paint-brush" />
+              <small class="d-none d-xl-block">{{ i18n.redact }}</small>
+            </div>
+          </label>
+          <input
+            type="radio"
+            class="btn-check"
+            name="pdfredaction-tool"
+            value="move"
+            id="btn-check-move"
+            v-model="tool"
+          />
+          <label
+            class="btn btn-outline-secondary d-flex"
+            :title="i18n.moveTool"
+            for="btn-check-move"
+          >
+            <!-- browser hardcodedly vertically center text in <button>s, we try to match this visually via flex -->
+            <div class="align-self-center">
+              <i class="fa fa-lg fa-arrows" />
+              <small class="d-none d-xl-block">{{ i18n.moveTool }}</small>
+            </div>
+          </label>
+        </div>
+        <div
+          class="btn-group me-1 justify-content-center justify-content-lg-start py-2"
+        >
           <button
-            class="btn btn-light"
+            type="button"
+            class="btn btn-outline-secondary"
             :disabled="!canUndo"
             :title="i18n.undo"
-            @click="undo">
-            <i class="fa fa-share fa-flip-horizontal" />
+            @click="undo"
+          >
+            <i class="fa fa-lg fa-share fa-flip-horizontal" />
+            <small class="d-none d-xxl-block">{{ i18n.undo }}</small>
           </button>
           <button
-            class="btn btn-light"
+            type="button"
+            class="btn btn-outline-secondary"
             :disabled="!canRedo"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
             :title="i18n.redo"
-            @click="redo">
-            <i class="fa fa-share" />
+            @click="redo"
+          >
+            <i class="fa fa-lg fa-share" />
+            <small class="d-none d-xxl-block">{{ i18n.redo }}</small>
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            :disabled="!canUndo"
+            :title="i18n.removeAllRedaction"
+            @click="undoAll"
+          >
+            <i class="fa fa-lg fa-trash" />
+            <small class="d-none d-xxl-block">{{
+              i18n.removeAllRedaction
+            }}</small>
           </button>
         </div>
 
-        <div class="btn-group me-1">
-          <button
-            class="btn"
-            :class="{ 'btn-outline-info': !textOnly, 'btn-info': textOnly }"
+        <div class="btn-group me-1 toolbar-modes py-2">
+          <input
+            type="checkbox"
+            class="btn-check"
+            id="toggle-mode"
+            autocomplete="off"
+            :checked="textOnly"
+            @change="toggleText"
+          />
+          <label
+            class="btn btn-outline-secondary"
+            for="toggle-mode"
             :title="i18n.toggleText"
-            @click.stop="toggleText">
+          >
             <i class="fa fa-align-justify" />
-          </button>
-          <button
-            class="btn"
-            :class="{
-              'btn-outline-info': !textDisabled,
-              'btn-info': textDisabled
-            }"
-            :title="i18n.disableText"
-            @click.stop="toggleDrawing">
-            <i class="fa fa-image" />
-          </button>
+            <small class="d-none d-xl-block">{{ i18n.toggleText }}</small>
+          </label>
         </div>
 
-        <div class="btn-group me-1">
+        <div
+          v-if="!bottomToolbar"
+          class="input-group me-1 justify-content-center justify-content-lg-start py-2"
+        >
           <button
-            class="pdf-prev btn btn-light"
+            class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
-            @click="goPrevious">
+            @click="goPrevious"
+          >
             &laquo;
             <span class="visually-hidden">{{ i18n.previousPage }}</span>
           </button>
-          <span class="input-group-text">
+          <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
           </span>
           <button
-            class="pdf-next btn btn-light"
+            class="pdf-next btn btn-outline-secondary"
             :disabled="!hasNext"
-            @click="goNext">
+            @click="goNext"
+          >
             <span class="visually-hidden">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
         </div>
 
         <div
-          v-if="hasRedactions || hasPassword"
-          class="btn-group me-lg-1 ms-auto mt-1 mt-lg-0">
-          <button class="btn btn-dark" @click="redact">
-            <i class="fa fa-paint-brush" />
+          v-if="
+            !hideDoneButton &&
+            (hasRedactions || hasPassword || (canPublish && !hasPassword))
+          "
+          class="btn-group mt-lg-0 py-2 mw-lg-50 mw-xl-25"
+        >
+          <button
+            v-if="hasRedactions || hasPassword"
+            class="btn btn-dark"
+            @click="redact"
+            data-testid="submit-redactions"
+          >
+            <i class="fa fa-check me-2" />
             <template v-if="hasRedactions">
               {{ i18n.redactAndPublish }}
             </template>
@@ -124,118 +213,187 @@
               {{ i18n.removePasswordAndPublish }}
             </template>
           </button>
-        </div>
-        <div class="btn-group ms-auto mt-1 mt-lg-0">
           <form
-            v-if="canPublish && !hasPassword"
+            v-if="canPublish && !hasPassword && !hasRedactions"
             method="post"
             id="redaction-submit-form"
-            :action="config.urls.publishUrl">
+            :action="config.urls.publishUrl"
+          >
             <input
               type="hidden"
               name="csrfmiddlewaretoken"
-              :value="csrfToken" />
+              :value="csrfToken"
+            />
             <button
-              class="btn"
-              :class="{
-                'btn-success': !hasRedactions,
-                'btn-light': hasRedactions
-              }"
+              class="btn btn-dark"
               type="submit"
-              @click="confirmNoRedactions">
-              <i class="fa fa-check" />
-              {{ i18n.publishWithoutRedaction }}
+              @click="confirmNoRedactions"
+            >
+              <i class="fa fa-check me-2" />{{ i18n.publishWithoutRedaction }}
             </button>
           </form>
-          <a v-else class="btn btn-secondary" :href="attachmentUrl">
-            {{ i18n.cancel }}
-          </a>
         </div>
       </div>
     </div>
-    <div class="row mt-3">
-      <div ref="containerWrapper" class="col-lg-12 overflow-auto">
+    <div class="row flex-grow-1">
+      <div
+        class="preview position-relative"
+        :class="{
+          ['preview--do-paint']: doPaint,
+          ['preview--text-only']: textOnly
+        }"
+        ref="containerWrapper"
+        @wheel="mouseWheel"
+        @pointerleave="pointerLeaveWrapper"
+      >
         <div
-          :id="containerId"
-          ref="container"
-          class="redactContainer"
-          :class="{ 'hide-redacting': working }">
-          <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
-          <canvas
-            v-show="!textOnly"
-            :id="redactCanvasId"
-            class="redactLayer"
-            @mousedown="mouseDown"
-            @mousemove="mouseMove"
-            @mouseup="mouseUp"
-            @touchstart="touchStart"
-            @touchend="touchEnd"
-            @touchmove="touchMove"
-            @touchcancel="touchCancel" />
+          class="position-absolute top-0 bottom-0 start-0 px-2 py-4"
+          :class="{
+            'pe-none': isDragging
+          }"
+        >
+          <div class="d-flex flex-column position-sticky z-1 previewToolbar">
+            <div class="btn-group-vertical w-auto position-sticky z-1">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="zoomIn()"
+                data-testid="zoom-in"
+              >
+                <i class="fa fa-lg fa-plus" />
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="zoomReset()"
+              >
+                <i class="fa fa-lg fa-compress" />
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                @click="zoomOut()"
+                data-testid="zoom-out"
+              >
+                <i class="fa fa-lg fa-minus" />
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          class="position-static row py-3 h-100"
+          @pointerdown="pointerDown"
+          @pointerup="pointerUp"
+          @pointermove="pointerMove"
+        >
           <div
-            :id="textLayerId"
-            class="textLayer"
-            :class="{ textActive: textOnly, textDisabled: textDisabled }"
-            @mousedown="mouseDown"
-            @mousemove="mouseMove"
-            @mouseup="mouseUp"
-            @touchstart="touchStart"
-            @touchend="touchEnd"
-            @touchmove="touchMove"
-            @touchcancel="touchCancel" />
+            :id="containerId"
+            ref="container"
+            class="redactContainer"
+            :class="{ invisible: working }"
+          >
+            <canvas v-show="!textOnly" :id="canvasId" class="redactLayer" />
+            <canvas
+              v-show="!textOnly"
+              :id="redactCanvasId"
+              class="redactLayer"
+            />
+            <div
+              :id="textLayerId"
+              class="textLayer"
+              ref="textLayer"
+              :class="{ textActive: textOnly, textDisabled: !textOnly }"
+            />
+          </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div v-if="ready" class="btn-toolbar col-lg-12">
-        <div class="btn-group me-auto ms-auto">
+    <div v-if="bottomToolbar" class="row sticky-bottom z-2">
+      <div v-if="ready" class="btn-toolbar col bg-light py-2">
+        <div class="input-group me-auto ms-auto">
           <button
-            class="pdf-prev btn btn-light"
+            class="pdf-prev btn btn-outline-secondary"
             :disabled="!hasPrevious"
-            @click="goPrevious">
+            @click="goPrevious"
+          >
             &laquo;
-            {{ i18n.previousPage }}
+            <span class="d-none d-md-inline-block">{{
+              i18n.previousPage
+            }}</span>
           </button>
-          <span class="input-group-text">
+          <span class="input-group-text pageOfTotal">
             {{ pageOfTotal }}
           </span>
           <button
-            class="pdf-next btn btn-light"
+            class="pdf-next btn btn-outline-secondary"
             :disabled="!hasNext"
-            @click="goNext">
-            {{ i18n.nextPage }}
+            @click="goNext"
+          >
+            <span class="d-none d-md-inline-block">{{ i18n.nextPage }}</span>
             &raquo;
           </button>
         </div>
       </div>
     </div>
-    <confirm-no-redaction
+    <ConfirmNoRedaction
       :i18n="config.i18n"
       ref="confirmmodal"
-      @submit="submitRedactions" />
+      @submit="submitRedactions"
+    />
   </div>
 </template>
 
 <script>
-import 'string.prototype.repeat'
 import ConfirmNoRedaction from './confirm-no-redaction'
 
-import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.js?url'
+import PDFJSWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.js?url'
+
+import Panzoom from '@panzoom/panzoom'
 
 import range from 'lodash.range'
-
-import Vue from 'vue'
 
 import { Modal } from 'bootstrap'
 
 import { bustCache, getData } from '../../lib/api.js'
+import { toRaw } from 'vue'
 
-function isTouchDevice() {
-  return 'ontouchstart' in window
+import { useAttachments } from '../docupload/lib/attachments.js'
+const { fetchAttachment, approveAttachment } = useAttachments()
+
+// help with only Text mode debugging: show non-OCR original + highlight spans/divs
+const debug = false
+
+// 1000px are good enough to redact an A4 page with 10pt text
+const minRenderWidth = 1000
+
+// factor; 1.4 will add 20% on top+bottom on the pure getBoundingRect
+const lineHeight = 1.4
+
+// add constant padding on left+right of pure getBoundingRect,
+// factor of the longer page side
+// 1/297 will add ~1mm (assuming DIN A4 as default)
+const paddingUnit = 1 / 297
+
+let renderDensityFactor
+
+const scaleCssProp = (styleObject, propName, factor) => {
+  const value = parseFloat(styleObject[propName])
+  if (!isNaN(value)) {
+    // we'll assume they're all in px
+    styleObject[propName] = value * factor + 'px'
+  }
 }
 
+function isTouchDevice() {
+  return matchMedia('(pointer: coarse)').matches
+}
+
+let panzoom
+
+let resizeTimeout = false
+
 export default {
-  name: 'pdf-redaction',
+  name: 'PdfRedaction',
   components: { ConfirmNoRedaction },
   props: {
     config: {
@@ -246,9 +404,24 @@ export default {
       type: String,
       required: true
     },
+    attachmentId: {
+      type: Number,
+      required: true
+    },
     attachmentUrl: {
       type: String,
       required: true
+    },
+    postUrl: {
+      type: String
+    },
+    autoApprove: {
+      type: Boolean,
+      default: true
+    },
+    noRedirect: {
+      type: Boolean,
+      default: false
     },
     redactRegex: {
       type: Array,
@@ -257,11 +430,22 @@ export default {
     canPublish: {
       type: Boolean,
       default: false
+    },
+    hideDoneButton: {
+      type: Boolean,
+      default: false
+    },
+    bottomToolbar: {
+      type: Boolean,
+      default: false
     }
   },
+  emits: ['uploaded', 'hasredactionsupdate'],
   data() {
     return {
+      debug,
       doc: null,
+      attachment: null,
       currentPage: null,
       page: null,
       numPages: null,
@@ -273,22 +457,22 @@ export default {
       ready: false,
       pageLoading: false,
       textOnly: false,
-      textDisabled: true,
-      pageScaleFactor: {},
       actionsPerPage: {},
       actionIndexPerPage: {},
       rectanglesPerPage: {},
       password: null,
-      maxWidth: null,
       startDrag: null,
       endDrag: null,
+      isDragging: false,
       initialAutoRedact: {},
       errors: null,
       message: null,
       progressCurrent: null,
       progressTotal: null,
       hasTouch: isTouchDevice(),
-      doubleTap: false
+      tool: isTouchDevice() ? 'move' : 'paint',
+      doubleTap: false,
+      altKey: false
     }
   },
   computed: {
@@ -380,9 +564,23 @@ export default {
     },
     csrfToken() {
       return document.querySelector('[name=csrfmiddlewaretoken]').value
+    },
+    doPaint() {
+      return this.tool === 'paint'
     }
   },
-  created() {
+  watch: {
+    hasRedactions(newValue) {
+      this.$emit('hasredactionsupdate', newValue)
+    },
+    doPaint(doPaint) {
+      this.updateMode(doPaint)
+    },
+    altKey(altKey) {
+      this.tool = altKey ? 'move' : 'paint'
+    }
+  },
+  async created() {
     import('pdfjs-dist')
       .then((PDFJS) => {
         this.PDFJS = PDFJS
@@ -393,6 +591,25 @@ export default {
       .catch((err) => {
         console.log(err)
       })
+    this.attachment = await fetchAttachment(this.attachmentId)
+  },
+  mounted() {
+    document.addEventListener('keydown', this.setAltKey)
+    document.addEventListener('keyup', this.setAltKey)
+    window.addEventListener('resize', this.reloadPageAfterResizeDebounced)
+
+    panzoom = Panzoom(this.$refs.container, {
+      canvas: true,
+      pinchAndPan: true,
+      cursor: 'move',
+      noBind: true
+    })
+    this.updateMode(this.doPaint)
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.setAltKey)
+    document.removeEventListener('keyup', this.setAltKey)
+    window.removeEventListener('resize', this.reloadPageAfterResizeDebounced)
   },
   methods: {
     loadDocument() {
@@ -433,46 +650,102 @@ export default {
         this.numPages = this.doc.numPages
 
         for (let i = 1; i <= this.numPages; i += 1) {
-          Vue.set(this.actionsPerPage, i, [])
-          Vue.set(this.actionIndexPerPage, i, 0)
+          this.actionsPerPage[i] = []
+          this.actionIndexPerPage[i] = 0
         }
         this.currentPage = 1
       })
     },
     loadPage(pageNum) {
       this.pageLoading = true
-      return this.doc.getPage(pageNum).then((page) => {
-        console.log('# Page ' + pageNum)
+      const doc = toRaw(this.doc)
+      return doc.getPage(pageNum).then((page) => {
         this.page = page
-        if (this.maxWidth === null) {
-          this.maxWidth = this.$refs.containerWrapper.offsetWidth
-        }
 
-        if (this.pageScaleFactor[pageNum] === undefined) {
-          // Make sure scaleFactor is fixed to page, doesn't change
-          const scaleFactor = this.maxWidth / page.view[2]
-          this.pageScaleFactor[pageNum] = scaleFactor
+        if (!this.$refs.containerWrapper) {
+          console.error('containerWrapper is null?')
+          return
         }
+        let maxWidth = this.$refs.containerWrapper.offsetWidth
+        // subtract the paddings (from bootstrap's row child),
+        // fall back to the value calculated in default settings (like base font size)
+        // note: paddingLeft is the value set in CSS, so something like "12px",
+        //   unlike offsetWidth, still this value is consistent across page zoom
+        maxWidth -=
+          parseInt(
+            window.getComputedStyle(this.$refs.containerWrapper)?.paddingLeft
+          ) * 2 || 24
 
-        const scaleFactor = this.pageScaleFactor[pageNum]
-        const viewport = page.getViewport({ scale: scaleFactor })
+        // We render/raster the PDF to roughly "viewport width pixels",
+        // which is too low to be useful on mobile,
+        // so we bump up the density on screens < minRenderWidth,
+        // so the render fills the minRenderWidth.
+        // On screens above, we use the full width
+        // (which is capped by bootstrap container to ~1300px).
+        // We could improve quality/comfort by further bumping the density
+        // - on highdpi displays (e.g. by DPR or just 2x),
+        // - or to leave headroom for zoom (e.g. sqrt(2)x for 1 level)
+        // - but would have to limit effective canvas size to prevent crashes
+        renderDensityFactor = Math.max(minRenderWidth / window.innerWidth, 1.0)
+
+        // normalized to positive degrees, e.g. -90 ⇒ 270
+        const rotation = (page.rotate + 360) % 360
+        // is the page rotated by ±{90, 270}?
+        const flipWidthHeight = rotation % 180 === 90
+
+        // non-zero pageOffset are rare; CLI test (the first two coordinates):
+        // pdfinfo -box froide/tests/testdata/redaction-test-cropbox.pdf
+        // note CropBox; TrimBox+ArtBox on their own don't need special handling
+        const [pageOffsetX, pageOffsetY, pageSizeX, pageSizeY] = page.view
+        this.intrinsicPageWidth = flipWidthHeight
+          ? pageSizeY - pageOffsetY
+          : pageSizeX - pageOffsetX
+        this.intrinsicPageHeight = flipWidthHeight
+          ? pageSizeX - pageOffsetX
+          : pageSizeY - pageOffsetY
+
+        // redaction "rects'" coordinates are stored in "intrinsic PDF viewport = document pixels",
+        // and not in "browser/device pixels"
+        // (which are affected by page zoom, bootstrap viewports and rendering artifacts)
+        // so scaleFactor needs to be respected in many calculations in the component
+        // (to "(re)project" between the two views)
+        // It is a "per page, per current viewport" factor and is re-calculated
+        // on every page change and window resize, but it is not stored "per page";
+        // instead, on submit serializePage reloads every page and thus re-calculates "per page".
+        this.scaleFactor = maxWidth / this.intrinsicPageWidth
+        const viewport = page.getViewport({
+          scale: renderDensityFactor * this.scaleFactor
+        })
 
         this.viewport = viewport
-        console.log(
-          scaleFactor,
-          'Size: ' + viewport.width + 'x' + viewport.height,
-          'at maxwidth',
-          this.maxWidth
-        )
         const canvas = this.canvas
         canvas.width = viewport.width
         canvas.height = viewport.height
         this.redactCanvas.width = viewport.width
         this.redactCanvas.height = viewport.height
-        this.container.style.width = Math.floor(viewport.width) + 'px'
-        this.container.style.height = Math.floor(viewport.height) + 'px'
-        this.textLayer.style.width = Math.floor(viewport.width) + 'px'
-        this.textLayer.style.height = Math.floor(viewport.height) + 'px'
+        const wPx = viewport.width / renderDensityFactor + 'px'
+        const hPx = viewport.height / renderDensityFactor + 'px'
+        console.log('PdfRedaction loadPage', {
+          flipWidthHeight,
+          page,
+          viewport,
+          renderDensityFactor,
+          scaleFactor: this.scaleFactor,
+          maxWidth,
+          canvasViewportSize: [viewport.width, viewport.height],
+          canvasCss: [wPx, hPx],
+          pageView: { pageOffsetX, pageOffsetY, pageSizeX, pageSizeY },
+          intrinsicPageSize: [this.intrinsicPageWidth, this.intrinsicPageHeight]
+        })
+        canvas.style.width = wPx
+        canvas.style.height = hPx
+        this.redactCanvas.style.width = wPx
+        this.redactCanvas.style.height = hPx
+        this.textLayer.style.width = wPx
+        this.textLayer.style.height = hPx
+        this.container.style.width = wPx
+        this.container.style.height = hPx
+        this.zoomReset()
         const ctx = canvas.getContext('2d')
         const renderTask = page.render({
           canvasContext: ctx,
@@ -501,6 +774,9 @@ export default {
           })
       })
     },
+    reloadCurrentPage() {
+      this.loadPage(this.currentPage)
+    },
     goNext() {
       if (this.hasNext) {
         this.setCurrentPage(this.currentPage + 1)
@@ -520,12 +796,20 @@ export default {
     toggleText() {
       this.cancelDrag()
       this.textOnly = !this.textOnly
-      this.textDisabled = !this.textOnly
     },
-    toggleDrawing() {
-      this.cancelDrag()
-      this.textDisabled = !this.textDisabled
-      this.textOnly = !this.textDisabled
+    async redactOrApprove() {
+      if (this.hasRedactions || this.hasPassword) {
+        // .redact() handles autoApprove
+        return this.redact()
+      }
+      if (this.autoApprove) {
+        return this.approve()
+      }
+    },
+    approve() {
+      return approveAttachment(this.attachment).then(() => {
+        this.$emit('uploaded')
+      })
     },
     redact() {
       this.$refs.top.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -546,7 +830,11 @@ export default {
         }, Promise.resolve())
         .then(() => {
           console.log(serialized)
-          const data = { pages: serialized, password: this.password }
+          const data = {
+            pages: serialized,
+            password: this.password,
+            auto_approve: this.autoApprove
+          }
           this.progressCurrent = null
           return this.sendSerializedPages(data)
             .then((attachment) => {
@@ -554,6 +842,10 @@ export default {
                 this.progressCurrent = 100
                 this.progressTotal = 100
                 bustCache(attachment.file_url).then(() => {
+                  if (this.noRedirect) {
+                    this.$emit('uploaded')
+                    return
+                  }
                   document.location.href = this.config.urls.messageUpload
                 })
               } else {
@@ -577,7 +869,8 @@ export default {
       this.progressTotal = 100
       return new Promise((resolve, reject) => {
         const xhr = new window.XMLHttpRequest()
-        xhr.open('POST', document.location.href)
+        const url = this.postUrl || document.location.href
+        xhr.open('POST', url)
         xhr.setRequestHeader('Content-Type', 'application/json')
         xhr.setRequestHeader('X-CSRFToken', this.csrfToken)
         const xhrUpload = xhr.upload ? xhr.upload : xhr
@@ -595,10 +888,12 @@ export default {
               try {
                 this.progressCurrent = null
                 this.workingState = 'redacting'
-                this.waitOnAttachment(JSON.parse(xhr.responseText))
+                this.waitOnAttachment(
+                  JSON.parse(xhr.responseText),
+                  serialized.auto_approve
+                )
                   .then(resolve)
                   .catch(reject)
-                return
               } catch (e) {
                 console.error('Failed to decode JSON', e, xhr.responseText)
                 reject(this.i18n.redactionError)
@@ -612,14 +907,17 @@ export default {
         xhr.send(JSON.stringify(serialized))
       })
     },
-    waitOnAttachment(response) {
+    waitOnAttachment(response, wasAutoApprove) {
       return new Promise((resolve, reject) => {
         const attachmentUrl = response.resource_uri
         let waitTime = 0
         const checkAttachment = () => {
           getData(attachmentUrl)
             .then((attachment) => {
-              if (attachment.pending || !attachment.approved) {
+              if (
+                attachment.pending ||
+                (wasAutoApprove && !attachment.approved)
+              ) {
                 waitTime += 5
                 if (waitTime > 60 * 3) {
                   console.error('Timeout while waiting for redaction')
@@ -630,7 +928,7 @@ export default {
                 }
                 return
               }
-              console.error('Attachment redacted.')
+              console.info('Attachment redacted.')
               resolve(attachment)
             })
             .catch(() => {
@@ -644,21 +942,21 @@ export default {
     serializePage(pageNumber) {
       const divs = this.textLayer.children
       const texts = Array.prototype.map.call(divs, (d) => {
-        const [dx, dy] = this.getDivPos(d)
-        const dw = d.offsetWidth
-        const dh = d.offsetHeight
+        const pos = this.getDivRect(d)
+        const f = 1 / this.scaleFactor
         return {
-          pos: [dx, dy, dw, dh],
-          fontFamily: d.style.fontFamily,
+          pos: [pos[0] * f, pos[1] * f, pos[2] * f, pos[3] * f],
           fontSize: d.style.fontSize,
+          text: d.textContent,
+          // transform + fontFamily are ignored by add_text_on_pdf/redact.py; rotated boxes/pages won't match up
+          // but moot because the text is invisible anyway?
           transform: d.style.transform,
-          text: d.textContent
+          fontFamily: d.style.fontFamily
         }
       })
       return {
-        width: this.viewport.width,
-        height: this.viewport.height,
-        scaleFactor: this.scaleFactor,
+        width: this.intrinsicPageWidth,
+        height: this.intrinsicPageHeight,
         pageNumber,
         rects: this.rectanglesPerPage[pageNumber],
         texts
@@ -676,29 +974,11 @@ export default {
         clientX = e.changedTouches[0].clientX
         clientY = e.changedTouches[0].clientY
       }
-      const offsetX = clientX - rect.left
-      const offsetY = clientY - rect.top
+
+      const scale = panzoom.getScale()
+      const offsetX = (renderDensityFactor * (clientX - rect.left)) / scale
+      const offsetY = (renderDensityFactor * (clientY - rect.top)) / scale
       return [offsetX, offsetY]
-    },
-    touchStart(e) {
-      if (!this.doubleTap) {
-        this.doubleTap = true
-        setTimeout(() => {
-          this.doubleTap = false
-        }, 500)
-        return false
-      }
-      e.preventDefault()
-      this.mouseDown(e, true)
-    },
-    touchEnd(e) {
-      this.mouseUp(e, true)
-    },
-    touchMove(e) {
-      this.mouseMove(e, true)
-    },
-    touchCancel() {
-      this.cancelDrag()
     },
     cancelDrag() {
       this.startDrag = null
@@ -719,13 +999,15 @@ export default {
       this.drawRectangles()
     },
     mouseDown(e, override) {
-      if (this.hasTouch && !override) {
+      // throw out right/middle/context clicks
+      if (e.button !== 0) return
+      if (!this.doPaint && !override) {
         return
       }
       this.startDrag = this.getOffset(e)
       this.endDrag = null
     },
-    mouseUp(e, override) {
+    mouseUp(_e, override) {
       if (this.hasTouch && !override) {
         return
       }
@@ -742,8 +1024,13 @@ export default {
       if (this.startDrag === null) {
         return
       }
+
+      const endDrag = this.endDrag
       this.endDrag = null
-      const endDrag = this.getOffset(e)
+      if (endDrag === null) {
+        console.log('Cancel malformed select')
+        return
+      }
       if (
         Math.abs(endDrag[0] - this.startDrag[0]) < 3 &&
         Math.abs(endDrag[1] - this.startDrag[1]) < 3
@@ -752,17 +1039,22 @@ export default {
         this.startDrag = null
         return
       }
-      const [x, y, w, h] = this.getRect(this.startDrag, endDrag)
-      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
+      // getRect is "device vs document pixel" agnostic;
+      // startDrag and endDrag are renderDensityFactor-aware, but not scaleFactor
+      const [rx, ry, rw, rh] = this.getRect(this.startDrag, endDrag)
+      if (isNaN(parseFloat(rx)) || isNaN(parseFloat(ry))) {
         return
       }
+      const f = 1 / renderDensityFactor
+      const x = rx * f
+      const y = ry * f
+      const w = rw * f
+      const h = rh * f
 
       // find overlapping text and remove it completely
       const divs = this.textLayer.children
       const matches = Array.prototype.filter.call(divs, (d) => {
-        const [dx, dy] = this.getDivPos(d)
-        const dw = d.offsetWidth
-        const dh = d.offsetHeight
+        const [dx, dy, dw, dh] = this.getDivRect(d)
         return x < dx + dw && x + w > dx && y < dy + dh && y + h > dy
       })
       const texts = matches.map((d) => {
@@ -770,13 +1062,67 @@ export default {
         return action.texts[0]
       })
 
+      const f2 = 1 / (this.scaleFactor * renderDensityFactor)
+
       this.addAction({
         type: 'redact',
-        rects: [[x, y, w, h]],
+        rects: [[rx * f2, ry * f2, rw * f2, rh * f2]],
         page: this.currentPage,
         texts
       })
       this.startDrag = null
+    },
+    pointerDown(e) {
+      this.isDragging = true
+      if (!this.doPaint) {
+        panzoom.handleDown(e)
+        return
+      }
+      // only click on canvas starts painting a rectangle
+      if (e.target.tagName !== 'CANVAS') {
+        return
+      }
+      this.mouseDown(e, true)
+    },
+    pointerUp(e) {
+      this.isDragging = false
+      if (!this.doPaint) {
+        panzoom.handleUp(e)
+        return
+      }
+      this.mouseUp(e, true)
+    },
+    pointerMove(e) {
+      if (!this.doPaint) {
+        panzoom.handleMove(e)
+        return
+      }
+      // only click on canvas starts painting a rectangle
+      if (e.target.tagName !== 'CANVAS') {
+        return
+      }
+      this.mouseMove(e, true)
+    },
+    pointerLeaveWrapper(e) {
+      this.isDragging = false
+      if (!this.doPaint) {
+        panzoom.handleUp(e)
+      }
+      this.mouseUp(e, true)
+    },
+    mouseWheel(e) {
+      if (!this.doPaint) {
+        panzoom.zoomWithWheel(e)
+      }
+    },
+    zoomReset() {
+      panzoom.reset({ force: true })
+    },
+    zoomIn() {
+      panzoom.zoomIn({ force: true })
+    },
+    zoomOut() {
+      panzoom.zoomOut({ force: true })
     },
     getRect(start, end) {
       let x, y, w, h
@@ -835,6 +1181,14 @@ export default {
         return nodes
       }
 
+      function isAncestor(node, ancestorNode) {
+        while (node) {
+          if (node === ancestorNode) return true
+          node = node.parentNode
+        }
+        return false
+      }
+
       const actions = []
 
       for (let i = 0; i < selection.rangeCount; i += 1) {
@@ -842,6 +1196,9 @@ export default {
         if (range.isCollapsed) {
           continue
         }
+        // only allow selects that start and end within textLayer
+        if (!isAncestor(range.startContainer, this.textLayer)) continue
+        if (!isAncestor(range.endContainer, this.textLayer)) continue
         // Easy if start and end same container
         if (range.startContainer === range.endContainer) {
           let node = range.startContainer
@@ -875,7 +1232,7 @@ export default {
           if (node.nodeName === '#text') {
             node = node.parentNode
           }
-          console.log(node, start, end)
+          // console.log(node, start, end)
           if (
             node === null ||
             node.dataset === undefined ||
@@ -904,37 +1261,65 @@ export default {
     },
     textAvailable() {
       // mark every div with an index number
+      // and shrink according to renderDensityFactor
       let i = 0
+      let debugDiv
+      if (debug) {
+        debugDiv = document.createElement('div')
+        debugDiv.id = 'getDivRect'
+        this.container.appendChild(debugDiv)
+      }
       Array.prototype.forEach.call(this.textLayer.children, (c) => {
         c.dataset.index = i
         i += 1
+        scaleCssProp(c.style, 'left', 1 / renderDensityFactor)
+        scaleCssProp(c.style, 'top', 1 / renderDensityFactor)
+        scaleCssProp(c.style, 'fontSize', 1 / renderDensityFactor)
+        if (debug) {
+          c.onmouseenter = () => {
+            const cRect = this.getDivRect(c)
+            debugDiv.style.left = cRect[0] + 'px'
+            debugDiv.style.top = cRect[1] + 'px'
+            debugDiv.style.width = cRect[2] + 'px'
+            debugDiv.style.height = cRect[3] + 'px'
+          }
+        }
       })
       if (this.initialAutoRedact[this.currentPage] === undefined) {
         this.regexList.forEach((r) => this.autoRedact(r))
-        Vue.set(this.initialAutoRedact, this.currentPage, true)
+        this.initialAutoRedact[this.currentPage] = true
       }
       this.applyActionsOnPageLoad()
     },
-    drawRectangle(ctx, rect) {
+    drawRectangle(ctx, rect, doScale = false) {
       const [x, y, w, h] = rect
+      const f = doScale ? this.scaleFactor * renderDensityFactor : 1
       ctx.fillStyle = '#000'
-      ctx.fillRect(x, y, w, h)
+      ctx.fillRect(x * f, y * f, w * f, h * f)
     },
     drawRectangles() {
-      const ctx = this.redactCanvas.getContext('2d')
+      const ctx = this.redactCanvas.getContext?.('2d')
+      if (!ctx) {
+        console.log('drawRectangel assume text mode, bail')
+        return
+      }
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
       if (this.rectanglesPerPage[this.currentPage] !== undefined) {
         this.rectanglesPerPage[this.currentPage].forEach((r) => {
-          this.drawRectangle(ctx, r)
+          this.drawRectangle(ctx, r, true)
         })
       }
       if (this.startDrag && this.endDrag) {
-        this.drawRectangle(ctx, this.getRect(this.startDrag, this.endDrag))
+        this.drawRectangle(
+          ctx,
+          this.getRect(this.startDrag, this.endDrag),
+          false
+        )
       }
     },
     applyActionsOnPageLoad() {
       if (this.rectanglesPerPage[this.currentPage] === undefined) {
-        Vue.set(this.rectanglesPerPage, this.currentPage, [])
+        this.rectanglesPerPage[this.currentPage] = []
       }
       this.actionsPerPage[this.currentPage].forEach((a) => {
         this.applyAction(a, true)
@@ -947,9 +1332,14 @@ export default {
       }
       let actionIndex = this.actionIndexPerPage[this.currentPage]
       actionIndex -= 1
-      Vue.set(this.actionIndexPerPage, this.currentPage, actionIndex)
+      this.actionIndexPerPage[this.currentPage] = actionIndex
       const lastAction = this.actionsPerPage[this.currentPage][actionIndex]
       this.unapplyAction(lastAction)
+    },
+    undoAll() {
+      while (this.canUndo) {
+        this.undo()
+      }
     },
     redo() {
       if (!this.canRedo) {
@@ -958,31 +1348,29 @@ export default {
       let actionIndex = this.actionIndexPerPage[this.currentPage]
       const nextAction = this.actionsPerPage[this.currentPage][actionIndex]
       actionIndex += 1
-      Vue.set(this.actionIndexPerPage, this.currentPage, actionIndex)
+      this.actionIndexPerPage[this.currentPage] = actionIndex
       this.applyAction(nextAction)
     },
     addAction(action) {
       let actions = this.actionsPerPage[action.page].slice()
       actions = actions.slice(0, this.actionIndexPerPage[action.page])
       actions.push(action)
-      Vue.set(this.actionsPerPage, action.page, actions)
-      Vue.set(
-        this.actionIndexPerPage,
-        action.page,
+      this.actionsPerPage[action.page] = actions
+
+      this.actionIndexPerPage[action.page] =
         this.actionsPerPage[action.page].length
-      )
 
       this.applyAction(action)
     },
     applyAction(action, ignoreRects = false) {
       if (this.rectanglesPerPage[action.page] === undefined) {
-        Vue.set(this.rectanglesPerPage, action.page, [])
+        this.rectanglesPerPage[action.page] = []
       }
       if (action.rects !== undefined && !ignoreRects) {
-        Vue.set(this.rectanglesPerPage, action.page, [
+        this.rectanglesPerPage[action.page] = [
           ...this.rectanglesPerPage[action.page],
           ...action.rects
-        ])
+        ]
         this.drawRectangles()
       }
       if (action.texts !== undefined && action.texts.length > 0) {
@@ -1007,7 +1395,7 @@ export default {
             }).length === 0
           )
         })
-        Vue.set(this.rectanglesPerPage, action.page, newRects)
+        this.rectanglesPerPage[action.page] = newRects
         this.drawRectangles()
       }
       if (action.texts !== undefined && action.texts.length > 0) {
@@ -1028,7 +1416,7 @@ export default {
       matches.forEach((div) => {
         const text = div.textContent
         let result
-        /* eslint-disable no-cond-assign */
+
         while ((result = regex.exec(text))) {
           const pos = result.index
           const match = result[0]
@@ -1042,11 +1430,18 @@ export default {
         this.message = this.i18n.autoRedacted
       }
     },
-    getDivPos(div) {
-      return [
-        parseInt(div.style.left.replace('px', '')),
-        parseInt(div.style.top.replace('px', ''))
-      ]
+    getDivRect(div) {
+      // more exact than clientLeft/offsetTop, which are ints
+      const divRect = div.getBoundingClientRect()
+      const parentRect = this.textLayer.getBoundingClientRect()
+      const f = this.scaleFactor
+      const fx = (f * this.intrinsicPageWidth) / parentRect.width
+      const fy = (f * this.intrinsicPageHeight) / parentRect.height
+      const w = fx * divRect.width
+      const h = fy * divRect.height
+      const x = (divRect.left - parentRect.left) * fx
+      const y = (divRect.top - parentRect.top) * fy
+      return [x, y, w, h]
     },
     redactText(div, start, text) {
       return this.redactRange(div, start, start + text.length)
@@ -1094,23 +1489,99 @@ export default {
         blockIndex += 1
       }
 
-      div.textContent = text.substr(0, start)
-      const startWidth = div.offsetWidth
+      const [baseX, baseY, baseWidth, baseHeight] = this.getDivRect(div)
 
-      div.textContent = text.substr(0, start + match.length)
-      const endWidth = div.offsetWidth
-
-      div.textContent = text
-
-      let [x, y] = this.getDivPos(div)
-      if (isNaN(parseFloat(x)) || isNaN(parseFloat(y))) {
+      if (isNaN(baseX) || isNaN(baseY)) {
+        console.warn('redactRage: getDivRect failed, bailing')
         return null
       }
-      x += startWidth
-      const width = endWidth - startWidth
 
-      const height = Math.min(div.offsetHeight * 1.2, div.offsetHeight + 10)
-      const padding = 2
+      let width
+      let height
+      let x
+      let y
+      const padding =
+        Math.max(this.intrinsicPageWidth, this.intrinsicPageHeight) *
+        paddingUnit
+      let paddingX = 0
+      let paddingY = 0
+      let dir
+      const f1 = 1 / this.scaleFactor
+      // raw getBoundingClientRects, unlike getDivRect, are affected by panzoom's scale/zoom
+      const f2 = f1 / panzoom.getScale()
+
+      // PDFjs stretches lines; this is not reflected in offsetWidth
+      // approach without getBoundlingClientRect:
+      // const scaleX = parseFloat(div.style.transform?.match(/scaleX\(([\d.]+)\)/)?.[1]) || 1.0
+
+      // we temporarily reset the text in its div to measure where the matched selected part begins
+      // 200b is ZeroWidthSpace, to avoid the box losing its height (later needed for calculations;
+      // we can ignore collapsing whitespace, since the box has white-space:pre)
+      div.textContent = text.substr(0, start) || '\u200b'
+      const startRect = div.getBoundingClientRect()
+      // reset again to measure where matched part ends
+      div.textContent = text.substr(0, start + match.length)
+      const endRect = div.getBoundingClientRect()
+      // and finally revert div's text
+      div.textContent = text
+
+      // we compare the two measured rects to figure out their intersection,
+      // respecting the four directions
+      // note how vertical/horizontal are not perfectly inverses;
+      // due to how PDFjs handles x/y vs width/height - only one is rotated
+      if (startRect.width !== endRect.width) {
+        // horizontal, ltr or rtl
+        if (startRect.x === endRect.x) {
+          dir = 'ltr'
+          x = baseX * f1 + startRect.width * f2
+        } else {
+          dir = 'rtl'
+          x = baseX * f1 + baseWidth * f1 - endRect.width * f2
+        }
+        y = baseY * f1
+        width = Math.abs(startRect.width - endRect.width) * f2
+        height = baseHeight * f1
+        // factor in line height, shift away from center first
+        y -= height * ((lineHeight - 1.0) / 2)
+        height *= lineHeight
+        paddingX = padding
+      } else {
+        // vertical, top-to-bottom or bottom-to-top
+        if (startRect.y === endRect.y) {
+          dir = 'ttb'
+          y = baseY * f1 + startRect.height * f2
+        } else {
+          dir = 'btt'
+          y = baseY * f1 + baseHeight * f1 - endRect.height * f2
+        }
+        x = baseX * f1
+        width = baseWidth * f1
+        height = Math.abs(startRect.height - endRect.height) * f2
+        x -= width * ((lineHeight - 1.0) / 2)
+        width *= lineHeight
+        paddingY = padding
+      }
+
+      console.log('redactRange', {
+        scaleFactor: this.scaleFactor,
+        renderDensityFactor,
+        startRect,
+        endRect,
+        dir,
+        baseX,
+        baseY,
+        baseWidth,
+        baseHeight,
+        x,
+        y,
+        width,
+        height,
+        padding,
+        paddingUnit,
+        paddingX,
+        paddingY
+      })
+
       return {
         type: 'redact',
         texts: [
@@ -1121,7 +1592,14 @@ export default {
             textAfter: text.replace(match, replace)
           }
         ],
-        rects: [[x - padding, y, width + padding * 2, height]],
+        rects: [
+          [
+            x - paddingX,
+            y - paddingY,
+            width + paddingX * 2,
+            height + paddingY * 2
+          ]
+        ],
         page: this.currentPage
       }
     },
@@ -1131,30 +1609,80 @@ export default {
         const modal = Modal.getOrCreateInstance(this.$refs.confirmmodal.$el)
         modal.show()
       }
+      if (this.noRedirect) {
+        event.preventDefault()
+        this.redactOrApprove()
+      }
     },
-    submitRedactions(event) {
+    submitRedactions() {
+      if (this.noRedirect) {
+        this.redactOrApprove()
+        return
+      }
       document.getElementById('redaction-submit-form').submit()
+    },
+    updateMode(paint) {
+      if (paint) {
+        panzoom.setOptions({
+          disableZoom: true,
+          disablePan: true,
+          cursor: 'auto'
+        })
+      } else {
+        panzoom.setOptions({
+          disableZoom: false,
+          disablePan: false,
+          cursor: 'move'
+        })
+      }
+    },
+    setAltKey(e) {
+      if (this.doPaint || !e.altKey) this.altKey = e.altKey
+
+      this.startDrag = null
+      this.endDrag = null
+
+      this.drawRectangles()
+    },
+    reloadPageAfterResizeDebounced() {
+      if (resizeTimeout) {
+        console.log('debounce resize timeout')
+        window.clearTimeout(resizeTimeout)
+      }
+      resizeTimeout = window.setTimeout(() => {
+        this.reloadCurrentPage()
+        resizeTimeout = false
+      }, 500)
     }
   }
 }
 </script>
 
-<style lang="scss">
-.toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  opacity: 1;
-  padding: 5px;
-  background-color: #fff;
+<style lang="scss" scoped>
+@import '../../../styles/variables';
+
+.pdf-redaction-tool {
+  min-height: calc(100vh - 10em);
 }
+
+.toolbar {
+  padding: 5px;
+  background-color: var(--#{$prefix}body-bg);
+}
+
+.toolbar button {
+  hyphens: none;
+}
+
+.toolbar form {
+  display: flex;
+  display: contents;
+}
+
 .redactContainer {
   position: relative;
   padding: 0;
   margin: 0 auto;
-}
-.hide-redacting {
-  visibility: hidden;
 }
 
 .textLayer,
@@ -1165,20 +1693,44 @@ export default {
   right: 0;
   bottom: 0;
   overflow: hidden;
+}
+
+// user-select is usually disabled so it does not interfere with drag-to-pan.
+// In textOnly mode, we need to allow it, but only then, and only when doPaint
+// Otherwise, Firefox likes to select the whole div.redactContainer
+// when the dragging cursor crosses the middle of the div.
+// The whole div is then removed by selection.removeAllRanges()
+.preview--do-paint.preview--text-only[style],
+.preview--do-paint.preview--text-only .redactContainer[style] {
+  user-select: text !important;
+}
+
+.preview--do-paint .redactLayer {
   cursor: crosshair;
 }
+
 .textLayer {
   opacity: 0.2;
   line-height: 1;
+  background: white;
 }
-.textLayer > div,
-.textLayer > span,
-.textLayer > br {
+
+.textLayer > :deep(div),
+.textLayer > :deep(span),
+.textLayer > :deep(br) {
   color: transparent;
   position: absolute;
   white-space: pre;
   cursor: text;
   transform-origin: 0% 0%;
+}
+
+.preview:not(.preview--do-paint) {
+  .textLayer > :deep(div),
+  .textLayer > :deep(span),
+  .textLayer > :deep(br) {
+    pointer-events: none;
+  }
 }
 
 .textLayer.textActive {
@@ -1188,8 +1740,56 @@ export default {
   visibility: hidden;
 }
 
-.textLayer.textActive > div,
-.textLayer.textActive > span {
+.textLayer.textActive > :deep(div),
+.textLayer.textActive > :deep(span) {
   color: #000;
+}
+
+.toolbar {
+  padding: 0;
+}
+
+.preview {
+  box-shadow: inset 0 1em 1em -1em rgba(0, 0, 0, 0.5);
+}
+
+.previewToolbar {
+  // leave enough space for the toolbars
+  // (which break/wrap on narrow viewports)
+  top: 8em;
+  bottom: 0;
+}
+
+.pageOfTotal {
+  // reduces jitter when variable-width numbers change
+  font-variant-numeric: tabular-nums;
+}
+
+.pdf-redaction-tool--debug {
+  // for onlyText show non-OCR original + highlight spans/divs on top
+
+  .textLayer[style] {
+    background: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .textLayer :deep(span) {
+    outline: 1px solid red;
+  }
+
+  canvas.redactLayer {
+    display: block !important;
+  }
+
+  :deep(#getDivRect) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 100;
+    outline: 1px solid magenta;
+    transition: all 400ms;
+    pointer-events: none;
+  }
 }
 </style>

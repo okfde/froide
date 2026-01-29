@@ -1,27 +1,12 @@
-import Vue from 'vue'
+import { createAppWithProps } from './lib/vue-helper'
 
-import { renderComponent } from './lib/vue-helper'
+import { pinia } from './lib/pinia'
 
-import DocumentUploader from './components/docupload/document-uploader.vue'
-
-Vue.config.productionTip = false
-
-function createDocumentUploader(element) {
-  /* eslint-disable no-new */
-  new Vue({
-    components: { DocumentUploader },
-    render: renderComponent(element, DocumentUploader)
-  }).$mount(element)
-}
-
-const els = document.querySelectorAll('.document-uploader')
-for (let i = 0; i < els.length; i += 1) {
-  createDocumentUploader(els[i])
-}
+import AttachmentManager from './components/docupload/attachment-manager.vue'
 
 document.addEventListener('DOMContentLoaded', function () {
-  const docUploader = document.querySelector('#document-uploader')
-  if (docUploader) {
-    createDocumentUploader(docUploader)
-  }
+  const el = document.getElementById('attachment-manager')
+  const app = createAppWithProps(el, AttachmentManager)
+  app.use(pinia)
+  app.mount(el)
 })

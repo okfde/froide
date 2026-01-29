@@ -1,0 +1,51 @@
+name: Update translations
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  translations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v2
+      - name: Install system-level dependencies
+        run: sudo apt-get update && sudo apt-get install libxml2-dev libxslt1-dev libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev gettext
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v2
+        with:
+          enable-cache: true
+          cache-dependency-glob: |
+            requirements*.txt
+            pyproject.toml
+      - name: Setup venv
+        run: |
+          uv venv --python 3.12
+          source .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+      - name: Install dependencies
+        run: |
+          uv pip sync requirements-test.txt
+          uv pip install -e . --no-deps
+      - name: Setup Git
+        run: |
+          git config user.name "fdsbot"
+          git config user.email "119665132+fdsbot@users.noreply.github.com"
+      - name: Compile translations
+        run: make messagesde
+      - name: Commit translations
+        run: |
+          git add **/django.po || true
+          git commit -m "💬 update translation messages" || true
+          git push -u origin main:weblate-source --force

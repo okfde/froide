@@ -1,4 +1,5 @@
 import json
+from decimal import Decimal
 
 from django.db import models
 
@@ -8,7 +9,7 @@ class DjangoJSONEncoder(json.JSONEncoder):
         if isinstance(obj, models.Model) and hasattr(obj, "as_data"):
             return obj.as_data()
         if isinstance(obj, models.query.QuerySet):
-            return json.JSONEncoder.default(self, [x for x in obj])
+            return json.JSONEncoder.default(self, list(obj))
         return json.JSONEncoder.default(self, obj)
 
 
@@ -18,9 +19,39 @@ def get_data(error):
     return error.get_json_data()
 
 
+# FIXME WIP this is maybe not the smartest way to do this
+# use simplejson instead?
+def serialize_extra(obj):
+    # FIXME: this is a hack to serialize some extra types
+    # Publicbody should not be coupled to helper
+    from froide.publicbody.models import PublicBody
+
+    if isinstance(obj, Decimal):
+        return {
+            "__Decimal": True,
+            "intValue": int(obj * 100),
+            "strValue": str(obj),
+        }
+    if isinstance(obj, PublicBody):
+        return {
+            "__PublicBody": True,
+            "id": obj.id,
+            "name": obj.name,
+            "jurisdiction": {"name": obj.jurisdiction.name},
+        }
+    raise TypeError
+
+
 class JSONMixin(object):
     def as_json(self):
-        return json.dumps(self.as_data(), cls=DjangoJSONEncoder)
+        return json.dumps(
+            self.as_data(), default=serialize_extra, cls=DjangoJSONEncoder
+        )
+
+    def as_json_pretty(self):
+        return json.dumps(
+            self.as_data(), default=serialize_extra, cls=DjangoJSONEncoder, indent="  "
+        )
 
     def as_data(self):
         return {
@@ -33,6 +64,17 @@ class JSONMixin(object):
         }
 
     def field_to_dict(self, name, field):
+        choices = getattr(field, "choices", None)
+        if choices and not field.widget.is_hidden:
+            choices = [
+                {
+                    "value": str(c[0]),
+                    "label": str(c[1]),
+                }
+                for c in choices
+            ]
+        else:
+            choices = None
         return {
             "type": field.__class__.__name__,
             "widget_type": field.widget.__class__.__name__,
@@ -43,4 +85,7 @@ class JSONMixin(object):
             "initial": self.get_initial_for_field(field, name),
             "placeholder": str(field.widget.attrs.get("placeholder", "")),
             "value": self[name].value() if self.is_bound else None,
+            "choices": choices,
+            "min_length": getattr(field, "min_length", None),
+            "max_length": getattr(field, "max_length", None),
         }

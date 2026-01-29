@@ -1,6 +1,6 @@
 function scrollToAnchor(
   id: string,
-  options: boolean | Object | undefined = true
+  options: boolean | Record<string, unknown> | undefined = true
 ): void {
   window.setTimeout(() => {
     const el = document.getElementById(id)
@@ -13,6 +13,16 @@ function scrollToAnchor(
     }
     el.scrollIntoView(options)
   }, 200)
+}
+
+const scrollNavIntoViewIfNecessary = (): void => {
+  const header = document.querySelector('main nav') as HTMLElement
+  if (header === null) return
+  const rect = header.getBoundingClientRect()
+  if (rect.bottom < 0) {
+    // timeout to make it feel less jarring
+    setTimeout(() => header.scrollIntoView({ behavior: 'smooth' }), 500)
+  }
 }
 
 const getHeight = (el: HTMLElement): number => {
@@ -83,16 +93,19 @@ const toggleSlide = (el: HTMLElement, seconds = 0.3): void => {
   }
 }
 
-const slideUp = (el: HTMLElement, seconds = 0.3): void => {
-  const elMaxHeight = `${getHeight(el)}px`
-  el.style.maxHeight = elMaxHeight
-  el.setAttribute('data-max-height', elMaxHeight)
+const slideUp = (el: HTMLElement, seconds = 0.3): Promise<void> => {
+  return new Promise((resolve) => {
+    const elMaxHeight = `${getHeight(el)}px`
+    el.style.maxHeight = elMaxHeight
+    el.setAttribute('data-max-height', elMaxHeight)
 
-  el.style.transition = `max-height ${seconds}s ease-in-out`
-  el.style.overflow = 'hidden'
+    el.style.transition = `max-height ${seconds}s ease-in-out`
+    el.style.overflow = 'hidden'
 
-  requestAnimationFrame(() => {
-    el.style.maxHeight = '0'
+    setTimeout(() => {
+      el.style.maxHeight = '0px'
+      resolve()
+    }, 1)
   })
 }
 
@@ -125,4 +138,24 @@ const addText = (dataset: DOMStringMap): void => {
   textField.value = text
 }
 
-export { scrollToAnchor, toggleSlide, slideUp, addText }
+const beforeunloadHandler = (e: BeforeUnloadEvent) => e.preventDefault()
+let isBeforeunloadGuarded = false
+const guardBeforeunload = (enable: boolean): void => {
+  if (enable) {
+    if (!isBeforeunloadGuarded) {
+      window.addEventListener('beforeunload', beforeunloadHandler)
+      isBeforeunloadGuarded = true
+    }
+  } else {
+    window.removeEventListener('beforeunload', beforeunloadHandler)
+  }
+}
+
+export {
+  addText,
+  scrollToAnchor,
+  scrollNavIntoViewIfNecessary,
+  slideUp,
+  toggleSlide,
+  guardBeforeunload
+}

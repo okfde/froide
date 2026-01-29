@@ -1,0 +1,6261 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: 0.0.0
+paths:
+  /api/v1/attachment/:
+    get:
+      operationId: attachment_list
+      parameters:
+      - in: query
+        name: approved
+        schema:
+          type: boolean
+      - in: query
+        name: belongs_to
+        schema:
+          type: integer
+      - in: query
+        name: campaign
+        schema:
+          type: string
+      - in: query
+        name: filetype
+        schema:
+          type: string
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: query
+        name: is_redacted
+        schema:
+          type: boolean
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: publicbody
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      tags:
+      - attachment
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiAttachmentList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiAttachmentList'
+          description: ''
+    post:
+      operationId: attachment_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachmentTus'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachmentTus'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachmentTus'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+  /api/v1/attachment/{id}/:
+    get:
+      operationId: attachment_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+    delete:
+      operationId: attachment_destroy
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/attachment/{id}/approve/:
+    post:
+      operationId: attachment_approve_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+  /api/v1/attachment/{id}/to_document/:
+    post:
+      operationId: attachment_to_document_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /api/v1/attachment/{id}/unapprove/:
+    post:
+      operationId: attachment_unapprove_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Attachment.
+        required: true
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiAttachment'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+  /api/v1/attachment/convert_to_pdf/:
+    post:
+      operationId: convert_images_to_pdf
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - attachment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageAttachmentConverter'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiAttachment'
+          description: ''
+  /api/v1/campaign/:
+    get:
+      operationId: campaign_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - campaign
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCampaignList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedCampaignList'
+          description: ''
+  /api/v1/campaign/{id}/:
+    get:
+      operationId: campaign_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this campaign.
+        required: true
+      tags:
+      - campaign
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/category/:
+    get:
+      operationId: category_list
+      parameters:
+      - in: query
+        name: ancestor
+        schema:
+          type: string
+      - in: query
+        name: depth
+        schema:
+          type: integer
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: query
+        name: is_topic
+        schema:
+          type: boolean
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: parent
+        schema:
+          type: string
+      - in: query
+        name: q
+        schema:
+          type: string
+      tags:
+      - category
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryList'
+          description: ''
+  /api/v1/category/{id}/:
+    get:
+      operationId: category_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this category.
+        required: true
+      tags:
+      - category
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/v1/category/autocomplete/:
+    get:
+      operationId: category_autocomplete_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - category
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Category'
+          description: ''
+  /api/v1/classification/:
+    get:
+      operationId: classification_list
+      parameters:
+      - in: query
+        name: ancestor
+        schema:
+          type: string
+      - in: query
+        name: depth
+        schema:
+          type: integer
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: parent
+        schema:
+          type: string
+      - in: query
+        name: q
+        schema:
+          type: string
+      tags:
+      - classification
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClassificationList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedClassificationList'
+          description: ''
+  /api/v1/classification/{id}/:
+    get:
+      operationId: classification_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Classification.
+        required: true
+      tags:
+      - classification
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Classification'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Classification'
+          description: ''
+  /api/v1/document/:
+    get:
+      operationId: document_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - document
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDocumentList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedDocumentList'
+          description: ''
+  /api/v1/document/{id}/:
+    get:
+      operationId: document_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this document.
+        required: true
+      tags:
+      - document
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/DocumentDetail'
+          description: ''
+    put:
+      operationId: document_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateDocument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateDocument'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateDocument'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UpdateDocument'
+          description: ''
+    patch:
+      operationId: document_partial_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - document
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedDocument'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /api/v1/document/oembed/:
+    get:
+      operationId: document_oembed_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - document
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Document'
+          description: ''
+  /api/v1/documentcollection/:
+    get:
+      operationId: documentcollection_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - documentcollection
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDocumentCollectionList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedDocumentCollectionList'
+          description: ''
+  /api/v1/documentcollection/{id}/:
+    get:
+      operationId: documentcollection_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this document collection.
+        required: true
+      tags:
+      - documentcollection
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCollection'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/DocumentCollection'
+          description: ''
+  /api/v1/documentcollection/oembed/:
+    get:
+      operationId: documentcollection_oembed_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - documentcollection
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentCollection'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/DocumentCollection'
+          description: ''
+  /api/v1/following/:
+    get:
+      operationId: following_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - following
+      security:
+      - oauth2:
+        - follow:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiRequestFollowList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiRequestFollowList'
+          description: ''
+    post:
+      operationId: following_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - following
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFoiRequestFollow'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateFoiRequestFollow'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateFoiRequestFollow'
+        required: true
+      security:
+      - oauth2:
+        - follow:request
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateFoiRequestFollow'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/CreateFoiRequestFollow'
+          description: ''
+  /api/v1/following/{id}/:
+    delete:
+      operationId: following_destroy
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Request Follower.
+        required: true
+      tags:
+      - following
+      security:
+      - oauth2:
+        - follow:request
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/georegion/:
+    get:
+      operationId: georegion_list
+      parameters:
+      - in: query
+        name: ancestor
+        schema:
+          type: string
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      - in: query
+        name: id
+        schema:
+          type: string
+      - in: query
+        name: kind
+        schema:
+          type: string
+      - in: query
+        name: kind_detail
+        schema:
+          type: string
+      - in: query
+        name: latlng
+        schema:
+          type: string
+      - in: query
+        name: level
+        schema:
+          type: integer
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: name
+        schema:
+          type: string
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: region_identifier
+        schema:
+          type: string
+      - in: query
+        name: slug
+        schema:
+          type: string
+      tags:
+      - georegion
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGeoRegionList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedGeoRegionList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PaginatedGeoRegionList'
+          description: ''
+  /api/v1/georegion/{id}/:
+    get:
+      operationId: georegion_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Geo Region.
+        required: true
+      tags:
+      - georegion
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegionDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegionDetail'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegionDetail'
+          description: ''
+  /api/v1/georegion/autocomplete/:
+    get:
+      operationId: georegion_autocomplete_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+  /api/v1/georegion/reconciliation/:
+    get:
+      operationId: georegion_reconciliation_retrieve
+      description: |-
+        This is a OpenRefine Reconciliation API endpoint
+        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+        It's a bit messy.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+    post:
+      operationId: georegion_reconciliation_create
+      description: |-
+        This is a OpenRefine Reconciliation API endpoint
+        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+        It's a bit messy.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+  /api/v1/georegion/reconciliation-flyout/:
+    get:
+      operationId: georegion_reconciliation_flyout_retrieve
+      description: |-
+        Implements OpenRefine Flyout Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+    post:
+      operationId: georegion_reconciliation_flyout_create
+      description: |-
+        Implements OpenRefine Flyout Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+  /api/v1/georegion/reconciliation-propose-properties/:
+    get:
+      operationId: georegion_reconciliation_propose_properties_retrieve
+      description: |-
+        Implements OpenRefine Data Extension API
+        https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+    post:
+      operationId: georegion_reconciliation_propose_properties_create
+      description: |-
+        Implements OpenRefine Data Extension API
+        https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+  /api/v1/georegion/reconciliation-suggest-service/:
+    get:
+      operationId: georegion_reconciliation_suggest_service_retrieve
+      description: |-
+        Implements OpenRefine Suggest Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+
+        Only implements prefix
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+    post:
+      operationId: georegion_reconciliation_suggest_service_create
+      description: |-
+        Implements OpenRefine Suggest Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+
+        Only implements prefix
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - georegion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeoRegion'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/GeoRegion'
+          description: ''
+  /api/v1/jurisdiction/:
+    get:
+      operationId: jurisdiction_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - jurisdiction
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedJurisdictionList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedJurisdictionList'
+          description: ''
+  /api/v1/jurisdiction/{id}/:
+    get:
+      operationId: jurisdiction_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Jurisdiction.
+        required: true
+      tags:
+      - jurisdiction
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Jurisdiction'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Jurisdiction'
+          description: ''
+  /api/v1/law/:
+    get:
+      operationId: law_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: query
+        name: id
+        schema:
+          type: string
+      - in: query
+        name: jurisdiction
+        schema:
+          type: integer
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: mediator
+        schema:
+          type: integer
+      - in: query
+        name: meta
+        schema:
+          type: boolean
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      tags:
+      - law
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiLawList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiLawList'
+          description: ''
+  /api/v1/law/{id}/:
+    get:
+      operationId: law_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Law.
+        required: true
+      tags:
+      - law
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiLaw'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiLaw'
+          description: ''
+  /api/v1/law/autocomplete/:
+    get:
+      operationId: law_autocomplete_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - law
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiLaw'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiLaw'
+          description: ''
+  /api/v1/message/:
+    get:
+      operationId: message_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: query
+        name: is_draft
+        schema:
+          type: boolean
+      - in: query
+        name: is_response
+        schema:
+          type: boolean
+      - in: query
+        name: kind
+        schema:
+          type: string
+          enum:
+          - email
+          - fax
+          - import
+          - phone
+          - post
+          - upload
+          - visit
+        description: |-
+          * `email` - email
+          * `post` - postal mail
+          * `fax` - fax
+          * `upload` - upload
+          * `phone` - phone call
+          * `visit` - visit in person
+          * `import` - automatically imported
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: request
+        schema:
+          type: integer
+      tags:
+      - message
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiMessageList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiMessageList'
+          description: ''
+    post:
+      operationId: message_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+        required: true
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
+  /api/v1/message/{id}/:
+    get:
+      operationId: message_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Message.
+        required: true
+      tags:
+      - message
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
+    put:
+      operationId: message_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Message.
+        required: true
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+        required: true
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
+    patch:
+      operationId: message_partial_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Message.
+        required: true
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiMessage'
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
+  /api/v1/message/{id}/publish/:
+    post:
+      operationId: message_publish_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Message.
+        required: true
+      tags:
+      - message
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiMessage'
+        required: true
+      security:
+      - oauth2:
+        - write:message
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiMessage'
+          description: ''
+  /api/v1/page/:
+    get:
+      operationId: page_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - rss
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - page
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPageList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedPageList'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PaginatedPageList'
+          description: ''
+  /api/v1/pageannotation/:
+    get:
+      operationId: pageannotation_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - pageannotation
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPageAnnotationList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedPageAnnotationList'
+          description: ''
+    post:
+      operationId: pageannotation_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - pageannotation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePageAnnotation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreatePageAnnotation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreatePageAnnotation'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePageAnnotation'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/CreatePageAnnotation'
+          description: ''
+  /api/v1/pageannotation/{id}/:
+    get:
+      operationId: pageannotation_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this page annotation.
+        required: true
+      tags:
+      - pageannotation
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageAnnotation'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PageAnnotation'
+          description: ''
+    delete:
+      operationId: pageannotation_destroy
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this page annotation.
+        required: true
+      tags:
+      - pageannotation
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/problemreport/:
+    get:
+      operationId: problemreport_list
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      tags:
+      - problemreport
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProblemReportList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedProblemReportList'
+          description: ''
+  /api/v1/problemreport/{id}/:
+    get:
+      operationId: problemreport_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this problem report.
+        required: true
+      tags:
+      - problemreport
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+          description: ''
+  /api/v1/problemreport/{id}/claim/:
+    post:
+      operationId: problemreport_claim_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this problem report.
+        required: true
+      tags:
+      - problemreport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+          description: ''
+  /api/v1/problemreport/{id}/escalate/:
+    post:
+      operationId: problemreport_escalate_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this problem report.
+        required: true
+      tags:
+      - problemreport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+          description: ''
+  /api/v1/problemreport/{id}/resolve/:
+    post:
+      operationId: problemreport_resolve_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this problem report.
+        required: true
+      tags:
+      - problemreport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+          description: ''
+  /api/v1/problemreport/{id}/unclaim/:
+    post:
+      operationId: problemreport_unclaim_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this problem report.
+        required: true
+      tags:
+      - problemreport
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProblemReport'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProblemReport'
+          description: ''
+  /api/v1/publicbody/:
+    get:
+      operationId: publicbody_list
+      parameters:
+      - in: query
+        name: category
+        schema:
+          type: array
+          items:
+            type: string
+        explode: true
+        style: form
+      - in: query
+        name: classification
+        schema:
+          type: integer
+      - in: query
+        name: classification_id
+        schema:
+          type: integer
+          nullable: true
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      - in: query
+        name: jurisdiction
+        schema:
+          type: integer
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: lnglat
+        schema:
+          type: string
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: regions
+        schema:
+          type: string
+      - in: query
+        name: slug
+        schema:
+          type: string
+      tags:
+      - publicbody
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicBodyListList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicBodyListList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicBodyListList'
+          description: ''
+  /api/v1/publicbody/{id}/:
+    get:
+      operationId: publicbody_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Public Body.
+        required: true
+      tags:
+      - publicbody
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBody'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBody'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBody'
+          description: ''
+  /api/v1/publicbody/autocomplete/:
+    get:
+      operationId: publicbody_autocomplete_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+  /api/v1/publicbody/reconciliation/:
+    get:
+      operationId: publicbody_reconciliation_retrieve
+      description: |-
+        This is a OpenRefine Reconciliation API endpoint
+        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+        It's a bit messy.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+    post:
+      operationId: publicbody_reconciliation_create
+      description: |-
+        This is a OpenRefine Reconciliation API endpoint
+        https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation-Service-API
+        It's a bit messy.
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+  /api/v1/publicbody/reconciliation-flyout/:
+    get:
+      operationId: publicbody_reconciliation_flyout_retrieve
+      description: |-
+        Implements OpenRefine Flyout Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+    post:
+      operationId: publicbody_reconciliation_flyout_create
+      description: |-
+        Implements OpenRefine Flyout Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#flyout-entry-point
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+  /api/v1/publicbody/reconciliation-propose-properties/:
+    get:
+      operationId: publicbody_reconciliation_propose_properties_retrieve
+      description: |-
+        Implements OpenRefine Data Extension API
+        https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+    post:
+      operationId: publicbody_reconciliation_propose_properties_create
+      description: |-
+        Implements OpenRefine Data Extension API
+        https://github.com/OpenRefine/OpenRefine/wiki/Data-Extension-API
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+  /api/v1/publicbody/reconciliation-suggest-service/:
+    get:
+      operationId: publicbody_reconciliation_suggest_service_retrieve
+      description: |-
+        Implements OpenRefine Suggest Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+
+        Only implements prefix
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+    post:
+      operationId: publicbody_reconciliation_suggest_service_create
+      description: |-
+        Implements OpenRefine Suggest Entry Point
+        https://github.com/OpenRefine/OpenRefine/wiki/Suggest-API#suggest-entry-point
+
+        Only implements prefix
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PublicBodyList'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+  /api/v1/publicbody/search/:
+    get:
+      operationId: publicbody_search_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+          - jsonp
+      tags:
+      - publicbody
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+            application/javascript:
+              schema:
+                $ref: '#/components/schemas/PublicBodyList'
+          description: ''
+  /api/v1/request/:
+    get:
+      operationId: request_list
+      parameters:
+      - in: query
+        name: campaign
+        schema:
+          type: integer
+      - in: query
+        name: categories
+        schema:
+          type: string
+      - in: query
+        name: checked
+        schema:
+          type: boolean
+      - in: query
+        name: classification
+        schema:
+          type: string
+      - in: query
+        name: costs_max
+        schema:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          title: Cost of Information
+      - in: query
+        name: costs_min
+        schema:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          title: Cost of Information
+      - in: query
+        name: created_at_after
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: created_at_before
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: follower
+        schema:
+          type: string
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: query
+        name: has_same
+        schema:
+          type: boolean
+      - in: query
+        name: is_foi
+        schema:
+          type: boolean
+      - in: query
+        name: jurisdiction
+        schema:
+          type: integer
+      - in: query
+        name: law
+        schema:
+          type: integer
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - in: query
+        name: project
+        schema:
+          type: integer
+      - in: query
+        name: public_body
+        schema:
+          type: integer
+      - in: query
+        name: reference
+        schema:
+          type: string
+      - in: query
+        name: resolution
+        schema:
+          type: string
+          enum:
+          - not_held
+          - partially_successful
+          - refused
+          - successful
+          - user_withdrew
+          - user_withdrew_costs
+        description: |-
+          * `successful` - Request Successful
+          * `partially_successful` - Request partially successful
+          * `not_held` - Information not held
+          * `refused` - Request refused
+          * `user_withdrew_costs` - Request was withdrawn due to costs
+          * `user_withdrew` - Request was withdrawn
+      - in: query
+        name: slug
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - asleep
+          - awaiting_classification
+          - awaiting_publicbody_confirmation
+          - awaiting_response
+          - awaiting_user_confirmation
+          - publicbody_needed
+          - resolved
+        description: |-
+          * `awaiting_user_confirmation` - Awaiting user confirmation
+          * `publicbody_needed` - Public Body needed
+          * `awaiting_publicbody_confirmation` - Awaiting Public Body confirmation
+          * `awaiting_response` - Awaiting response
+          * `awaiting_classification` - Request awaits classification
+          * `asleep` - Request asleep
+          * `resolved` - Request resolved
+      - in: query
+        name: tags
+        schema:
+          type: string
+      - in: query
+        name: user
+        schema:
+          type: integer
+      tags:
+      - request
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiRequestListList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PaginatedFoiRequestListList'
+          description: ''
+    post:
+      operationId: request_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MakeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MakeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MakeRequest'
+        required: true
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MakeRequest'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/MakeRequest'
+          description: ''
+  /api/v1/request/{id}/:
+    get:
+      operationId: request_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Request.
+        required: true
+      tags:
+      - request
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiRequestDetail'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiRequestDetail'
+          description: ''
+    put:
+      operationId: request_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Request.
+        required: true
+      tags:
+      - request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoiRequestList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FoiRequestList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FoiRequestList'
+        required: true
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+          description: ''
+    patch:
+      operationId: request_partial_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Freedom of Information
+          Request.
+        required: true
+      tags:
+      - request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiRequestList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiRequestList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFoiRequestList'
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+          description: ''
+  /api/v1/request/search/:
+    get:
+      operationId: request_search_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - request
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+          description: ''
+  /api/v1/request/tags/autocomplete/:
+    get:
+      operationId: request_tags_autocomplete_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - request
+      security:
+      - oauth2:
+        - make:request
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/FoiRequestList'
+          description: ''
+  /api/v1/schema/:
+    get:
+      operationId: schema_retrieve
+      description: |-
+        OpenApi3 schema for this API. Format can be selected via content negotiation.
+
+        - YAML: application/vnd.oai.openapi
+        - JSON: application/vnd.oai.openapi+json
+      parameters:
+      - in: query
+        name: lang
+        schema:
+          type: string
+          enum:
+          - da-dk
+          - de
+          - en
+          - es
+          - fi-fi
+          - it
+          - pt
+          - sv-fi
+          - sv-se
+          - zh-cn
+          - zh-hk
+      tags:
+      - schema
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/vnd.oai.openapi+json:
+              schema:
+                type: object
+                additionalProperties: {}
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/v1/upload/:
+    post:
+      operationId: upload_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - upload
+      requestBody:
+        content:
+          application/offset+octet-stream:
+            schema:
+              $ref: '#/components/schemas/UploadCreate'
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadCreate'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UploadCreate'
+          description: ''
+  /api/v1/upload/{guid}/:
+    put:
+      operationId: upload_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: guid
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$
+        required: true
+      tags:
+      - upload
+      requestBody:
+        content:
+          application/offset+octet-stream:
+            schema:
+              $ref: '#/components/schemas/Upload'
+        required: true
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upload'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Upload'
+          description: ''
+    patch:
+      operationId: upload_partial_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: guid
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$
+        required: true
+      tags:
+      - upload
+      requestBody:
+        content:
+          application/offset+octet-stream:
+            schema:
+              $ref: '#/components/schemas/PatchedUpload'
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upload'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/Upload'
+          description: ''
+    delete:
+      operationId: upload_destroy
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: guid
+        schema:
+          type: string
+          pattern: ^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$
+        required: true
+      tags:
+      - upload
+      security:
+      - oauth2:
+        - write:attachment
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/user/:
+    get:
+      operationId: user_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      tags:
+      - user
+      security:
+      - oauth2:
+        - read:user
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/userpreference/{key}/:
+    get:
+      operationId: userpreference_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - userpreference
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+    post:
+      operationId: userpreference_create
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - userpreference
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+    put:
+      operationId: userpreference_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - userpreference
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserPreference'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+    patch:
+      operationId: userpreference_partial_update
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - csv
+          - json
+      - in: path
+        name: key
+        schema:
+          type: string
+        required: true
+      tags:
+      - userpreference
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserPreference'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserPreference'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserPreference'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserPreference'
+          description: ''
+components:
+  schemas:
+    BlankEnum:
+      enum:
+      - ''
+    Campaign:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 50
+          pattern: ^[-a-zA-Z0-9_]+$
+        url:
+          type: string
+          format: uri
+          maxLength: 200
+        description:
+          type: string
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        active:
+          type: boolean
+      required:
+      - id
+      - name
+      - resource_uri
+      - slug
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          pattern: ^[-\w]+$
+          maxLength: 100
+        is_topic:
+          type: boolean
+          title: As topic
+        depth:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        parent:
+          type: string
+          format: uri
+          readOnly: true
+        children:
+          type: array
+          items:
+            type: string
+            format: uri
+          readOnly: true
+      required:
+      - children
+      - depth
+      - id
+      - name
+      - parent
+      - slug
+    Classification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        depth:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        parent:
+          type: string
+          format: uri
+          readOnly: true
+        children:
+          type: array
+          items:
+            type: string
+            format: uri
+          readOnly: true
+      required:
+      - children
+      - depth
+      - id
+      - name
+      - parent
+      - slug
+    CreateFoiRequestFollow:
+      type: object
+      properties:
+        request:
+          type: integer
+      required:
+      - request
+    CreatePageAnnotation:
+      type: object
+      properties:
+        document:
+          type: integer
+        page_number:
+          type: integer
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 1024
+        top:
+          type: integer
+          nullable: true
+        left:
+          type: integer
+          nullable: true
+        width:
+          type: integer
+          nullable: true
+        height:
+          type: integer
+          nullable: true
+      required:
+      - description
+      - document
+      - page_number
+      - title
+    Document:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        site_url:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        num_pages:
+          type: integer
+          readOnly: true
+        public:
+          type: boolean
+          readOnly: true
+        listed:
+          type: boolean
+          readOnly: true
+        allow_annotation:
+          type: boolean
+          readOnly: true
+        pending:
+          type: boolean
+          readOnly: true
+        file_url:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          readOnly: true
+          nullable: true
+        cover_image:
+          type: string
+        page_template:
+          type: string
+        outline:
+          type: string
+          readOnly: true
+        properties:
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        data:
+          readOnly: true
+        pages_uri:
+          type: string
+          readOnly: true
+        original:
+          type: string
+          format: uri
+          readOnly: true
+        foirequest:
+          type: string
+          format: uri
+          readOnly: true
+        publicbody:
+          type: string
+          format: uri
+          readOnly: true
+        last_modified_at:
+          type: string
+          readOnly: true
+      required:
+      - allow_annotation
+      - cover_image
+      - data
+      - file_size
+      - file_url
+      - foirequest
+      - id
+      - last_modified_at
+      - listed
+      - num_pages
+      - original
+      - outline
+      - page_template
+      - pages_uri
+      - pending
+      - properties
+      - public
+      - publicbody
+      - published_at
+      - resource_uri
+      - site_url
+      - slug
+      - uid
+    DocumentCollection:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        site_url:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        public:
+          type: boolean
+          readOnly: true
+        listed:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        document_count:
+          type: string
+          readOnly: true
+        document_directory_count:
+          type: string
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        cover_image:
+          type: string
+        current_directory:
+          type: string
+          readOnly: true
+        directories:
+          type: string
+          readOnly: true
+        directory_stack:
+          type: string
+          readOnly: true
+        documents:
+          type: string
+          readOnly: true
+        documents_uri:
+          type: string
+          readOnly: true
+        pages_uri:
+          type: string
+          readOnly: true
+        settings:
+          readOnly: true
+        zip_download_url:
+          type: string
+          readOnly: true
+      required:
+      - cover_image
+      - created_at
+      - current_directory
+      - directories
+      - directory_stack
+      - document_count
+      - document_directory_count
+      - documents
+      - documents_uri
+      - id
+      - listed
+      - pages_uri
+      - public
+      - resource_uri
+      - settings
+      - site_url
+      - uid
+      - updated_at
+      - zip_download_url
+    DocumentDetail:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        site_url:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        num_pages:
+          type: integer
+          readOnly: true
+        public:
+          type: boolean
+          readOnly: true
+        listed:
+          type: boolean
+          readOnly: true
+        allow_annotation:
+          type: boolean
+          readOnly: true
+        pending:
+          type: boolean
+          readOnly: true
+        file_url:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          readOnly: true
+          nullable: true
+        cover_image:
+          type: string
+        page_template:
+          type: string
+        outline:
+          type: string
+          readOnly: true
+        properties:
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        data:
+          readOnly: true
+        pages_uri:
+          type: string
+          readOnly: true
+        original:
+          type: string
+          format: uri
+          readOnly: true
+        foirequest:
+          type: string
+          format: uri
+          readOnly: true
+        publicbody:
+          type: string
+          format: uri
+          readOnly: true
+        last_modified_at:
+          type: string
+          readOnly: true
+        pages:
+          type: string
+          readOnly: true
+      required:
+      - allow_annotation
+      - cover_image
+      - data
+      - file_size
+      - file_url
+      - foirequest
+      - id
+      - last_modified_at
+      - listed
+      - num_pages
+      - original
+      - outline
+      - page_template
+      - pages
+      - pages_uri
+      - pending
+      - properties
+      - public
+      - publicbody
+      - published_at
+      - resource_uri
+      - site_url
+      - slug
+      - uid
+    FoiAttachment:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        belongs_to:
+          type: string
+          format: uri
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        filetype:
+          type: string
+          title: File type
+          maxLength: 100
+        size:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        site_url:
+          type: string
+          readOnly: true
+        anchor_url:
+          type: string
+          readOnly: true
+        file_url:
+          type: string
+          readOnly: true
+        pending:
+          type: boolean
+        is_converted:
+          type: boolean
+        converted:
+          type: string
+          format: uri
+          readOnly: true
+        approved:
+          type: boolean
+        can_approve:
+          type: boolean
+          title: User can approve
+        can_change_approval:
+          type: string
+          readOnly: true
+        redacted:
+          type: string
+          format: uri
+          readOnly: true
+        is_redacted:
+          type: boolean
+        can_redact:
+          type: string
+          readOnly: true
+        can_delete:
+          type: string
+          readOnly: true
+        is_pdf:
+          type: string
+          readOnly: true
+        is_image:
+          type: string
+          readOnly: true
+        is_irrelevant:
+          type: string
+          readOnly: true
+        document:
+          $ref: '#/components/schemas/Document'
+      required:
+      - anchor_url
+      - belongs_to
+      - can_change_approval
+      - can_delete
+      - can_redact
+      - converted
+      - document
+      - file_url
+      - id
+      - is_image
+      - is_irrelevant
+      - is_pdf
+      - name
+      - redacted
+      - resource_uri
+      - site_url
+    FoiAttachmentTus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: uri
+        upload:
+          type: string
+          format: uri
+      required:
+      - message
+      - upload
+    FoiLaw:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        long_description:
+          type: string
+          readOnly: true
+        law_type:
+          type: string
+          maxLength: 255
+        created:
+          type: string
+          format: date
+          nullable: true
+          title: Creation Date
+        request_note:
+          type: string
+          readOnly: true
+        request_note_html:
+          type: string
+          readOnly: true
+        meta:
+          type: boolean
+          title: Meta Law
+        site_url:
+          type: string
+          readOnly: true
+        jurisdiction:
+          type: string
+          format: uri
+          readOnly: true
+        email_only:
+          type: boolean
+          title: E-Mail only
+        mediator:
+          type: string
+          format: uri
+          readOnly: true
+        priority:
+          type: integer
+          maximum: 32767
+          minimum: -32768
+        url:
+          type: string
+          maxLength: 255
+        max_response_time:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          title: Maximal Response Time
+        requires_signature:
+          type: boolean
+        max_response_time_unit:
+          title: Unit of Response Time
+          oneOf:
+          - $ref: '#/components/schemas/MaxResponseTimeUnitEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        letter_start:
+          type: string
+          readOnly: true
+        letter_end:
+          type: string
+          readOnly: true
+        last_modified_at:
+          type: string
+        refusal_reasons:
+          type: string
+          readOnly: true
+        legal_text:
+          type: string
+          readOnly: true
+        combined:
+          type: array
+          items:
+            type: string
+            format: uri
+          readOnly: true
+      required:
+      - combined
+      - description
+      - id
+      - jurisdiction
+      - last_modified_at
+      - legal_text
+      - letter_end
+      - letter_start
+      - long_description
+      - mediator
+      - name
+      - refusal_reasons
+      - request_note
+      - request_note_html
+      - resource_uri
+      - site_url
+      - slug
+    FoiMessage:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        request:
+          type: string
+          format: uri
+        sent:
+          type: boolean
+          readOnly: true
+          title: Has message been sent?
+        is_response:
+          type: boolean
+          title: Response?
+        is_postal:
+          type: string
+          readOnly: true
+        is_draft:
+          type: boolean
+          default: true
+        kind:
+          $ref: '#/components/schemas/FoiMessageKindEnum'
+        is_escalation:
+          type: boolean
+          readOnly: true
+          title: Escalation?
+        content_hidden:
+          type: boolean
+          readOnly: true
+          title: Content hidden?
+        sender_public_body:
+          type: string
+          format: uri
+          nullable: true
+        recipient_public_body:
+          type: string
+          format: uri
+          nullable: true
+        status:
+          readOnly: true
+          oneOf:
+          - $ref: '#/components/schemas/FoiMessageStatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        timestamp:
+          type: string
+          format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
+        redacted:
+          type: boolean
+          title: Was Redacted?
+        not_publishable:
+          type: boolean
+          readOnly: true
+        attachments:
+          type: string
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          readOnly: true
+        redacted_subject:
+          type: string
+          readOnly: true
+        redacted_content:
+          type: string
+          readOnly: true
+        sender:
+          type: string
+          readOnly: true
+        status_name:
+          type: string
+          readOnly: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - attachments
+      - content
+      - content_hidden
+      - id
+      - is_escalation
+      - is_postal
+      - last_modified_at
+      - not_publishable
+      - redacted_content
+      - redacted_subject
+      - request
+      - resource_uri
+      - sender
+      - sent
+      - status
+      - status_name
+      - subject
+      - url
+    FoiMessageKindEnum:
+      enum:
+      - email
+      - post
+      - fax
+      - upload
+      - phone
+      - visit
+      - import
+      type: string
+      description: |-
+        * `email` - email
+        * `post` - postal mail
+        * `fax` - fax
+        * `upload` - upload
+        * `phone` - phone call
+        * `visit` - visit in person
+        * `import` - automatically imported
+    FoiMessageStatusEnum:
+      enum:
+      - awaiting_user_confirmation
+      - publicbody_needed
+      - awaiting_publicbody_confirmation
+      - awaiting_response
+      - awaiting_classification
+      - asleep
+      - resolved
+      type: string
+      description: |-
+        * `awaiting_user_confirmation` - Awaiting user confirmation
+        * `publicbody_needed` - Public Body needed
+        * `awaiting_publicbody_confirmation` - Awaiting Public Body confirmation
+        * `awaiting_response` - Awaiting response
+        * `awaiting_classification` - Request awaits classification
+        * `asleep` - Request asleep
+        * `resolved` - Request resolved
+    FoiRequestDetail:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        jurisdiction:
+          type: string
+          format: uri
+          readOnly: true
+        is_foi:
+          type: boolean
+          readOnly: true
+          title: Is FoI request
+        checked:
+          type: boolean
+          readOnly: true
+        refusal_reason:
+          type: string
+        costs:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        public:
+          type: boolean
+          readOnly: true
+          title: Published?
+        law:
+          allOf:
+          - $ref: '#/components/schemas/FoiLaw'
+          readOnly: true
+        description:
+          type: string
+        redacted_description:
+          type: string
+          readOnly: true
+        summary:
+          type: string
+        same_as_count:
+          type: integer
+          readOnly: true
+          title: Identical request count
+        same_as:
+          type: string
+          format: uri
+          readOnly: true
+        due_date:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        resolved_on:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Resolution date
+        last_message:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Date of last message
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status719Enum'
+        public_body:
+          allOf:
+          - $ref: '#/components/schemas/PublicBody'
+          readOnly: true
+        resolution:
+          oneOf:
+          - $ref: '#/components/schemas/ResolutionEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        reference:
+          type: string
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        project:
+          type: integer
+          readOnly: true
+        campaign:
+          type: string
+          format: uri
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+        messages:
+          type: string
+          readOnly: true
+      required:
+      - campaign
+      - checked
+      - costs
+      - created_at
+      - description
+      - due_date
+      - id
+      - is_foi
+      - jurisdiction
+      - last_message
+      - last_modified_at
+      - law
+      - messages
+      - project
+      - public
+      - public_body
+      - redacted_description
+      - reference
+      - refusal_reason
+      - resolved_on
+      - resource_uri
+      - same_as
+      - same_as_count
+      - slug
+      - status
+      - tags
+      - title
+      - url
+      - user
+    FoiRequestFollow:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        request:
+          type: string
+          format: uri
+          readOnly: true
+        request_url:
+          type: string
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp of Following
+        follow_count:
+          type: integer
+          readOnly: true
+        follows:
+          type: boolean
+          readOnly: true
+        can_follow:
+          type: boolean
+          readOnly: true
+      required:
+      - can_follow
+      - follow_count
+      - follows
+      - request
+      - request_url
+      - resource_uri
+    FoiRequestList:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        jurisdiction:
+          type: string
+          format: uri
+          readOnly: true
+        is_foi:
+          type: boolean
+          readOnly: true
+          title: Is FoI request
+        checked:
+          type: boolean
+          readOnly: true
+        refusal_reason:
+          type: string
+        costs:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        public:
+          type: boolean
+          readOnly: true
+          title: Published?
+        law:
+          type: string
+          format: uri
+        description:
+          type: string
+        redacted_description:
+          type: string
+          readOnly: true
+        summary:
+          type: string
+        same_as_count:
+          type: integer
+          readOnly: true
+          title: Identical request count
+        same_as:
+          type: string
+          format: uri
+          readOnly: true
+        due_date:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        resolved_on:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Resolution date
+        last_message:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Date of last message
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status719Enum'
+        public_body:
+          allOf:
+          - $ref: '#/components/schemas/SimplePublicBody'
+          readOnly: true
+        resolution:
+          oneOf:
+          - $ref: '#/components/schemas/ResolutionEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        reference:
+          type: string
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        project:
+          type: integer
+          readOnly: true
+        campaign:
+          type: string
+          format: uri
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+      required:
+      - campaign
+      - checked
+      - costs
+      - created_at
+      - description
+      - due_date
+      - id
+      - is_foi
+      - jurisdiction
+      - last_message
+      - last_modified_at
+      - law
+      - project
+      - public
+      - public_body
+      - redacted_description
+      - reference
+      - refusal_reason
+      - resolved_on
+      - resource_uri
+      - same_as
+      - same_as_count
+      - slug
+      - status
+      - tags
+      - title
+      - url
+      - user
+    GeoRegion:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/KindCfdEnum'
+          title: Kind of Region
+        kind_detail:
+          type: string
+          maxLength: 255
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        region_identifier:
+          type: string
+          maxLength: 255
+        global_identifier:
+          type: string
+          maxLength: 255
+        area:
+          type: number
+          format: double
+        population:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        valid_on:
+          type: string
+          format: date-time
+          nullable: true
+        part_of:
+          type: string
+          format: uri
+          readOnly: true
+        centroid:
+          type: string
+          readOnly: true
+      required:
+      - centroid
+      - id
+      - kind
+      - name
+      - part_of
+      - resource_uri
+      - slug
+    GeoRegionDetail:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/KindCfdEnum'
+          title: Kind of Region
+        kind_detail:
+          type: string
+          maxLength: 255
+        level:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        region_identifier:
+          type: string
+          maxLength: 255
+        global_identifier:
+          type: string
+          maxLength: 255
+        area:
+          type: number
+          format: double
+        population:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        valid_on:
+          type: string
+          format: date-time
+          nullable: true
+        part_of:
+          type: string
+          format: uri
+          readOnly: true
+        centroid:
+          type: string
+          readOnly: true
+        geom:
+          type: string
+          readOnly: true
+        gov_seat:
+          type: string
+          readOnly: true
+      required:
+      - centroid
+      - geom
+      - gov_seat
+      - id
+      - kind
+      - name
+      - part_of
+      - resource_uri
+      - slug
+    ImageAttachmentConverter:
+      type: object
+      properties:
+        title:
+          type: string
+          default: Letter
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageAttachmentConverterItem'
+        message:
+          type: string
+          format: uri
+      required:
+      - images
+      - message
+    ImageAttachmentConverterItem:
+      type: object
+      properties:
+        attachment:
+          type: string
+          format: uri
+        rotate:
+          type: integer
+          maximum: 360
+          minimum: 0
+          default: 0
+      required:
+      - attachment
+    Jurisdiction:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        rank:
+          type: integer
+          maximum: 32767
+          minimum: -32768
+        description:
+          type: string
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        site_url:
+          type: string
+        region:
+          type: string
+          format: uri
+          readOnly: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - last_modified_at
+      - name
+      - region
+      - resource_uri
+      - site_url
+      - slug
+    KindCfdEnum:
+      enum:
+      - country
+      - state
+      - admin_district
+      - district
+      - admin_cooperation
+      - municipality
+      - borough
+      - zipcode
+      - admin_court_jurisdiction
+      type: string
+      description: |-
+        * `country` - country
+        * `state` - state
+        * `admin_district` - administrative district
+        * `district` - district
+        * `admin_cooperation` - administrative cooperation
+        * `municipality` - municipality
+        * `borough` - borough
+        * `zipcode` - zipcode
+        * `admin_court_jurisdiction` - administrative court jurisdiction
+    MakeRequest:
+      type: object
+      properties:
+        publicbodies:
+          type: array
+          items:
+            type: integer
+        subject:
+          type: string
+          maxLength: 230
+        body:
+          type: string
+        full_text:
+          type: boolean
+          default: false
+        public:
+          type: boolean
+          default: true
+        reference:
+          type: string
+          default: ''
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 255
+      required:
+      - body
+      - publicbodies
+      - subject
+    MaxResponseTimeUnitEnum:
+      enum:
+      - day
+      - working_day
+      - month_de
+      type: string
+      description: |-
+        * `day` - Day(s)
+        * `working_day` - Working Day(s)
+        * `month_de` - Month(s) (DE)
+    Page:
+      type: object
+      properties:
+        document:
+          type: string
+          format: uri
+          readOnly: true
+        number:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          default: 1
+        content:
+          type: string
+        width:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        height:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        image:
+          type: string
+        query_highlight:
+          type: string
+      required:
+      - document
+      - image
+      - query_highlight
+    PageAnnotation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        top:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        left:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        width:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        height:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        can_delete:
+          type: boolean
+          readOnly: true
+        highlight:
+          type: string
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          readOnly: true
+        document:
+          type: string
+          format: uri
+          readOnly: true
+        number:
+          type: integer
+          readOnly: true
+      required:
+      - can_delete
+      - document
+      - highlight
+      - id
+      - image
+      - number
+      - timestamp
+    PaginatedCampaignList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Campaign'
+    PaginatedCategoryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    PaginatedClassificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Classification'
+    PaginatedDocumentCollectionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentCollection'
+    PaginatedDocumentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Document'
+    PaginatedFoiAttachmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoiAttachment'
+    PaginatedFoiLawList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoiLaw'
+    PaginatedFoiMessageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoiMessage'
+    PaginatedFoiRequestFollowList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoiRequestFollow'
+    PaginatedFoiRequestListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoiRequestList'
+    PaginatedGeoRegionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoRegion'
+    PaginatedJurisdictionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Jurisdiction'
+    PaginatedPageAnnotationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PageAnnotation'
+    PaginatedPageList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Page'
+    PaginatedProblemReportList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemReport'
+    PaginatedPublicBodyListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicBodyList'
+    PatchedDocument:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        site_url:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 500
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        description:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        num_pages:
+          type: integer
+          readOnly: true
+        public:
+          type: boolean
+          readOnly: true
+        listed:
+          type: boolean
+          readOnly: true
+        allow_annotation:
+          type: boolean
+          readOnly: true
+        pending:
+          type: boolean
+          readOnly: true
+        file_url:
+          type: string
+          readOnly: true
+        file_size:
+          type: integer
+          readOnly: true
+          nullable: true
+        cover_image:
+          type: string
+        page_template:
+          type: string
+        outline:
+          type: string
+          readOnly: true
+        properties:
+          readOnly: true
+        uid:
+          type: string
+          format: uuid
+          readOnly: true
+        data:
+          readOnly: true
+        pages_uri:
+          type: string
+          readOnly: true
+    PatchedFoiMessage:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        request:
+          type: string
+          format: uri
+        sent:
+          type: boolean
+          readOnly: true
+          title: Has message been sent?
+        is_response:
+          type: boolean
+          title: Response?
+        is_postal:
+          type: string
+          readOnly: true
+        is_draft:
+          type: boolean
+          default: true
+        kind:
+          $ref: '#/components/schemas/FoiMessageKindEnum'
+        is_escalation:
+          type: boolean
+          readOnly: true
+          title: Escalation?
+        content_hidden:
+          type: boolean
+          readOnly: true
+          title: Content hidden?
+        sender_public_body:
+          type: string
+          format: uri
+          nullable: true
+        recipient_public_body:
+          type: string
+          format: uri
+          nullable: true
+        status:
+          readOnly: true
+          oneOf:
+          - $ref: '#/components/schemas/FoiMessageStatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        timestamp:
+          type: string
+          format: date-time
+        registered_mail_date:
+          type: string
+          format: date-time
+          nullable: true
+        redacted:
+          type: boolean
+          title: Was Redacted?
+        not_publishable:
+          type: boolean
+          readOnly: true
+        attachments:
+          type: string
+          readOnly: true
+        subject:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          readOnly: true
+        redacted_subject:
+          type: string
+          readOnly: true
+        redacted_content:
+          type: string
+          readOnly: true
+        sender:
+          type: string
+          readOnly: true
+        status_name:
+          type: string
+          readOnly: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedFoiRequestList:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        jurisdiction:
+          type: string
+          format: uri
+          readOnly: true
+        is_foi:
+          type: boolean
+          readOnly: true
+          title: Is FoI request
+        checked:
+          type: boolean
+          readOnly: true
+        refusal_reason:
+          type: string
+        costs:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        public:
+          type: boolean
+          readOnly: true
+          title: Published?
+        law:
+          type: string
+          format: uri
+        description:
+          type: string
+        redacted_description:
+          type: string
+          readOnly: true
+        summary:
+          type: string
+        same_as_count:
+          type: integer
+          readOnly: true
+          title: Identical request count
+        same_as:
+          type: string
+          format: uri
+          readOnly: true
+        due_date:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        resolved_on:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Resolution date
+        last_message:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Date of last message
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        last_modified_at:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status719Enum'
+        public_body:
+          allOf:
+          - $ref: '#/components/schemas/SimplePublicBody'
+          readOnly: true
+        resolution:
+          oneOf:
+          - $ref: '#/components/schemas/ResolutionEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        title:
+          type: string
+          readOnly: true
+        reference:
+          type: string
+          readOnly: true
+        user:
+          type: string
+          readOnly: true
+        project:
+          type: integer
+          readOnly: true
+        campaign:
+          type: string
+          format: uri
+          readOnly: true
+        tags:
+          type: array
+          items:
+            type: string
+    PatchedUpload:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        guid:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/StateEnum'
+        upload_offset:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        upload_length:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        upload_metadata:
+          type: string
+        filename:
+          type: string
+          maxLength: 255
+        temporary_file_path:
+          type: string
+          nullable: true
+          maxLength: 4096
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        token:
+          type: string
+          format: uuid
+          nullable: true
+        user:
+          type: integer
+          nullable: true
+    PatchedUserPreference:
+      type: object
+      properties:
+        value:
+          type: string
+    ProblemReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        message_id:
+          type: integer
+          readOnly: true
+        kind:
+          $ref: '#/components/schemas/ProblemReportKindEnum'
+        kind_label:
+          type: string
+          readOnly: true
+        message_subject:
+          type: string
+          readOnly: true
+        message_url:
+          type: string
+          readOnly: true
+        timestamp:
+          type: string
+          format: date-time
+        auto_submitted:
+          type: boolean
+        resolved:
+          type: boolean
+        description:
+          type: string
+        resolution:
+          type: string
+        resolution_timestamp:
+          type: string
+          format: date-time
+          nullable: true
+        claimed:
+          type: string
+          format: date-time
+          nullable: true
+        related_publicbody_id:
+          type: string
+          readOnly: true
+        escalated:
+          type: string
+          format: date-time
+          nullable: true
+        moderator_id:
+          type: integer
+          nullable: true
+          readOnly: true
+        is_requester:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - is_requester
+      - kind
+      - kind_label
+      - message_id
+      - message_subject
+      - message_url
+      - moderator_id
+      - related_publicbody_id
+    ProblemReportKindEnum:
+      enum:
+      - message_not_delivered
+      - attachment_broken
+      - redaction_needed
+      - foi_help_needed
+      - other
+      - not_foi
+      - not_nice
+      - info_outdated
+      - info_wrong
+      - bounce_publicbody
+      - mail_inauthentic
+      type: string
+      description: |-
+        * `message_not_delivered` - Your message was not delivered.
+        * `attachment_broken` - The attachments don't seem to work.
+        * `redaction_needed` - More redactions are needed.
+        * `foi_help_needed` - You need help to understand or reply to this message.
+        * `other` - Something else...
+        * `not_foi` - This is not a proper FOI request.
+        * `not_nice` - Content is against netiquette.
+        * `info_outdated` - Published information is outdated.
+        * `info_wrong` - Published information is wrong.
+        * `bounce_publicbody` - You received a bounce mail from the public body.
+        * `mail_inauthentic` - Received mail does not pass authenticity checks.
+    PublicBody:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        other_names:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 500
+        parent:
+          type: string
+          format: uri
+          readOnly: true
+        root:
+          type: string
+          format: uri
+          readOnly: true
+        depth:
+          type: integer
+          maximum: 32767
+          minimum: -32768
+        classification:
+          allOf:
+          - $ref: '#/components/schemas/SimpleClassification'
+          readOnly: true
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleCategory'
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        contact:
+          type: string
+        address:
+          type: string
+        fax:
+          type: string
+          maxLength: 50
+        request_note:
+          type: string
+        number_of_requests:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        site_url:
+          type: string
+        request_note_html:
+          type: string
+          readOnly: true
+        jurisdiction:
+          allOf:
+          - $ref: '#/components/schemas/Jurisdiction'
+          readOnly: true
+        laws:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoiLaw'
+          readOnly: true
+        regions:
+          type: array
+          items:
+            type: string
+            format: uri
+          readOnly: true
+        source_reference:
+          type: string
+          maxLength: 255
+        alternative_emails:
+          nullable: true
+        wikidata_item:
+          type: string
+          maxLength: 50
+        extra_data: {}
+        geo:
+          type: string
+          readOnly: true
+      required:
+      - categories
+      - classification
+      - geo
+      - id
+      - jurisdiction
+      - laws
+      - name
+      - parent
+      - regions
+      - request_note_html
+      - resource_uri
+      - root
+      - site_url
+      - slug
+    PublicBodyList:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        other_names:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 500
+        parent:
+          type: string
+          format: uri
+          readOnly: true
+        root:
+          type: string
+          format: uri
+          readOnly: true
+        depth:
+          type: integer
+          maximum: 32767
+          minimum: -32768
+        classification:
+          allOf:
+          - $ref: '#/components/schemas/SimpleClassification'
+          readOnly: true
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleCategory'
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        contact:
+          type: string
+        address:
+          type: string
+        fax:
+          type: string
+          maxLength: 50
+        request_note:
+          type: string
+        number_of_requests:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        site_url:
+          type: string
+        request_note_html:
+          type: string
+          readOnly: true
+        jurisdiction:
+          allOf:
+          - $ref: '#/components/schemas/Jurisdiction'
+          readOnly: true
+        laws:
+          type: array
+          items:
+            type: string
+            format: uri
+          readOnly: true
+        regions:
+          type: array
+          items:
+            type: string
+            format: uri
+          readOnly: true
+        source_reference:
+          type: string
+          maxLength: 255
+        alternative_emails:
+          nullable: true
+        wikidata_item:
+          type: string
+          maxLength: 50
+        extra_data: {}
+        geo:
+          type: string
+          readOnly: true
+      required:
+      - categories
+      - classification
+      - geo
+      - id
+      - jurisdiction
+      - laws
+      - name
+      - parent
+      - regions
+      - request_note_html
+      - resource_uri
+      - root
+      - site_url
+      - slug
+    ResolutionEnum:
+      enum:
+      - successful
+      - partially_successful
+      - not_held
+      - refused
+      - user_withdrew_costs
+      - user_withdrew
+      type: string
+      description: |-
+        * `successful` - Request Successful
+        * `partially_successful` - Request partially successful
+        * `not_held` - Information not held
+        * `refused` - Request refused
+        * `user_withdrew_costs` - Request was withdrawn due to costs
+        * `user_withdrew` - Request was withdrawn
+    SimpleCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        slug:
+          type: string
+          pattern: ^[-\w]+$
+          maxLength: 100
+        is_topic:
+          type: boolean
+          title: As topic
+        depth:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - depth
+      - id
+      - name
+      - slug
+    SimpleClassification:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        depth:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - depth
+      - id
+      - name
+      - slug
+    SimplePublicBody:
+      type: object
+      properties:
+        resource_uri:
+          type: string
+          format: uri
+          readOnly: true
+        id:
+          type: integer
+        name:
+          type: string
+          maxLength: 255
+        slug:
+          type: string
+          maxLength: 255
+          pattern: ^[-a-zA-Z0-9_]+$
+        other_names:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 500
+        depth:
+          type: integer
+          maximum: 32767
+          minimum: -32768
+        classification:
+          type: string
+          format: uri
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        contact:
+          type: string
+        address:
+          type: string
+        fax:
+          type: string
+          maxLength: 50
+        request_note:
+          type: string
+        number_of_requests:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        site_url:
+          type: string
+        jurisdiction:
+          type: string
+          format: uri
+          readOnly: true
+        request_note_html:
+          type: string
+          readOnly: true
+        geo:
+          type: string
+          readOnly: true
+        last_modified_at:
+          type: string
+      required:
+      - classification
+      - geo
+      - id
+      - jurisdiction
+      - last_modified_at
+      - name
+      - request_note_html
+      - resource_uri
+      - site_url
+      - slug
+    StateEnum:
+      enum:
+      - initial
+      - receiving
+      - saving
+      - done
+      type: string
+      description: |-
+        * `initial` - Initial
+        * `receiving` - Receiving
+        * `saving` - Saving
+        * `done` - Done
+    Status719Enum:
+      enum:
+      - awaiting_response
+      - resolved
+      type: string
+      description: |-
+        * `awaiting_response` - awaiting_response
+        * `resolved` - resolved
+    UpdateDocument:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 500
+        description:
+          type: string
+    Upload:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        guid:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/StateEnum'
+        upload_offset:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        upload_length:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        upload_metadata:
+          type: string
+        filename:
+          type: string
+          maxLength: 255
+        temporary_file_path:
+          type: string
+          nullable: true
+          maxLength: 4096
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        token:
+          type: string
+          format: uuid
+          nullable: true
+        user:
+          type: integer
+          nullable: true
+      required:
+      - guid
+      - id
+    UploadCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        guid:
+          type: string
+          format: uuid
+        state:
+          $ref: '#/components/schemas/StateEnum'
+        upload_offset:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        upload_length:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        upload_metadata:
+          type: string
+        filename:
+          type: string
+          maxLength: 255
+        temporary_file_path:
+          type: string
+          nullable: true
+          maxLength: 4096
+        expires:
+          type: string
+          format: date-time
+          nullable: true
+        token:
+          type: string
+          format: uuid
+          nullable: true
+        user:
+          type: integer
+          nullable: true
+      required:
+      - id
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        private:
+          type: boolean
+      required:
+      - id
+    UserPreference:
+      type: object
+      properties:
+        value:
+          type: string
+      required:
+      - value
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    oauth2:
+      type: oauth2
+      flows: {}

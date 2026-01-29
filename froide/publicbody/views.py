@@ -4,12 +4,15 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.sitemaps import Sitemap
+from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from django.shortcuts import Http404, get_object_or_404, redirect, render
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import CreateView, DetailView, UpdateView
 
 import markdown
+import nh3
 
 from froide.foirequest.models import FoiRequest
 from froide.helper.auth import can_moderate_object
@@ -25,30 +28,6 @@ from .forms import (
 )
 from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
 from .utils import LawExtension
-
-FILTER_ORDER = ("jurisdiction", "category")
-SUB_FILTERS = {"jurisdiction": ("category",)}
-
-
-def get_active_filters(data):
-    for key in FILTER_ORDER:
-        if not data.get(key):
-            continue
-        yield key
-        sub_filters = SUB_FILTERS.get(key, ())
-        for sub_key in sub_filters:
-            if data.get(sub_key):
-                yield sub_key
-                break
-        break
-
-
-def get_filter_data(filter_kwargs, data):
-    query = {}
-    for key in get_active_filters(filter_kwargs):
-        query[key] = filter_kwargs[key]
-    data.update(query)
-    return data
 
 
 class PublicBodySearch(BaseSearchView):
@@ -71,9 +50,10 @@ class PublicBodySearch(BaseSearchView):
             "label": _("jurisdictions"),
         }
     }
-
-    def get_filter_data(self, kwargs, get_dict):
-        return get_filter_data(kwargs, get_dict)
+    search_manager_kwargs = {
+        "filter_order": ("jurisdiction", "category"),
+        "sub_filters": {"jurisdiction": ("category",)},
+    }
 
 
 @cache_anonymous_page(15 * 60)
@@ -97,7 +77,9 @@ def show_jurisdiction(request, slug):
 def show_foilaw(request, slug):
     law = get_object_or_404(FoiLaw.objects.translated(slug=slug))
 
-    legal_text = markdown.markdown(law.legal_text, extensions=[LawExtension()])
+    legal_text = mark_safe(
+        nh3.clean(markdown.markdown(law.legal_text, extensions=[LawExtension()]))
+    )
 
     context = {"object": law, "legal_text": legal_text}
     return render(request, "publicbody/show_foilaw.html", context)
@@ -123,6 +105,8 @@ class PublicBodyView(DetailView):
             raise Http404
         if self.kwargs.get("pk") is None:
             return self.get_redirect()
+        if not self._can_access():
+            raise PermissionDenied
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
@@ -135,9 +119,10 @@ class PublicBodyView(DetailView):
 
     def _can_access(self):
         if not self.object.confirmed:
-            not_creator = self.request.user != self.object._created_by
-            if not_creator and not can_moderate_object(self.object, self.request):
-                return False
+            is_creator = self.request.user == self.object._created_by
+            if is_creator or can_moderate_object(self.object, self.request):
+                return True
+            return False
         return True
 
     def get_context_data(self, **kwargs):

@@ -3,6 +3,8 @@ import os
 import re
 import zipfile
 from datetime import date, datetime, timedelta
+from datetime import timezone as dt_timezone
+from decimal import Decimal
 from email.parser import BytesParser as Parser
 from io import BytesIO
 from unittest import mock
@@ -33,8 +35,11 @@ from froide.foirequest.models import (
     FoiMessage,
     FoiRequest,
 )
+from froide.foirequest.models.message import MessageKind
+from froide.foirequest.signals import email_left_queue
 from froide.foirequest.tests import factories
 from froide.foirequest.utils import possible_reply_addresses
+from froide.helper.content_urls import get_content_url
 from froide.helper.email_parsing import EmailAddress, ParsedEmail
 from froide.publicbody.models import FoiLaw, PublicBody
 
@@ -67,6 +72,7 @@ def test_public_body_logged_in_request(world, client, pb):
         "subject": "Test-Subject",
         "body": "This is another test body with Ümläut€n",
         "publicbody": pb.pk,
+        "public": False,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -109,6 +115,8 @@ def test_public_body_new_user_request(world, client, pb):
         "address": "TestStreet 3\n55555 Town",
         "user_email": "sw@example.com",
         "terms": "on",
+        "public": False,
+        "private": True,
         "publicbody": pb.pk,
     }
     response = client.post(reverse("foirequest-make_request"), post)
@@ -127,7 +135,7 @@ def test_public_body_new_user_request(world, client, pb):
     assert len(mail.outbox) == 1
     message = mail.outbox[0]
     assert mail.outbox[0].to[0] == post["user_email"]
-    match = re.search(r"/%d/%d/(\w+)/" % (user.pk, req.pk), message.body)
+    match = re.search(r"/%d/(\w+)/" % user.pk, message.body)
     match_full = re.search(r"http://[^/]+(/.+)", message.body)
     assert match is not None
     assert match_full is not None
@@ -137,7 +145,7 @@ def test_public_body_new_user_request(world, client, pb):
     secret = match.group(1)
     generated_url = reverse(
         "account-confirm",
-        kwargs={"user_id": user.pk, "secret": secret, "request_id": req.pk},
+        kwargs={"user_id": user.pk, "secret": secret},
     )
     assert generated_url in url
     assert not user.is_active
@@ -182,7 +190,7 @@ def test_new_email_received_set_status(world, client, pb, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.get(pk=req.pk)
@@ -208,7 +216,7 @@ def test_new_email_received_set_status(world, client, pb, msgobj):
         {"status": status, "costs": costs},
     )
     req = FoiRequest.objects.get(pk=req.pk)
-    assert req.costs == float(costs)
+    assert req.costs == Decimal(costs)
     assert req.status == status
 
 
@@ -389,8 +397,12 @@ def test_public_body_not_logged_in_request(world, client, pb):
         },
     )
     assert response.status_code == 400
-    assertFormError(response, "user_form", "first_name", ["This field is required."])
-    assertFormError(response, "user_form", "last_name", ["This field is required."])
+    assertFormError(
+        response.context["user_form"], "first_name", ["This field is required."]
+    )
+    assertFormError(
+        response.context["user_form"], "last_name", ["This field is required."]
+    )
 
 
 @pytest.mark.django_db
@@ -401,7 +413,7 @@ def test_logged_in_request_with_public_body(world, client, pb):
         "subject": "Another Third Test-Subject",
         "body": "This is another test body",
         "publicbody": "bs",
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 400
@@ -450,7 +462,7 @@ def test_redirect_after_request(world, client, pb):
         "body": "This is another test body",
         "redirect_url": "/foo/?blub=bla",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -464,7 +476,7 @@ def test_redirect_after_request(world, client, pb):
         "body": "This is another test body",
         "redirect_url": "http://evil.example.com",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     request_sent = reverse("foirequest-request_sent")
@@ -481,7 +493,8 @@ def test_redirect_after_request_new_account(world, client, pb):
         "body": "This is another test body",
         "redirect_url": redirect_url,
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
+        "private": True,
         "first_name": "Stefan",
         "last_name": "Wehrmeyer",
         "address": "TestStreet 3\n55555 Town",
@@ -497,7 +510,7 @@ def test_redirect_after_request_new_account(world, client, pb):
     req = FoiRequest.objects.get(title=post["subject"])
     message = mail.outbox[0]
     assert message.to[0] == post["user_email"]
-    match = re.search(r"http://[\w:]+(/[\w/]+/\d+/%d/\w+/\S*)" % (req.pk), message.body)
+    match = re.search(r"http://[\w:]+(/[\w/]+/\d+/\w+/\S*)", message.body)
     assert match is not None
     url = match.group(1)
     response = client.get(url)
@@ -516,7 +529,7 @@ def test_foi_email_settings(world, client, pb, settings):
         "body": "This is another test body",
         "publicbody": str(pb.pk),
         "law": str(pb.default_law.pk),
-        "public": "on",
+        "public": True,
     }
 
     def email_func(username, secret):
@@ -636,7 +649,7 @@ def test_postal_reply(world, client, pb):
         "subject": "Totally Random Request",
         "body": "This is another test body",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -645,7 +658,7 @@ def test_postal_reply(world, client, pb):
     assert response.status_code == 200
     # Date message back
     message = req.foimessage_set.all()[0]
-    message.timestamp = datetime(2011, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    message.timestamp = datetime(2011, 1, 1, 0, 0, 0, tzinfo=dt_timezone.utc)
     message.save()
     req.created_at = message.timestamp
     req.save()
@@ -828,7 +841,7 @@ def test_set_message_sender(world, client, pb, msgobj):
         "subject": "A simple test request",
         "body": "This is another test body",
         "publicbody": str(pb.id),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -849,7 +862,7 @@ def test_set_message_sender(world, client, pb, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.get(title=post["subject"])
@@ -1043,7 +1056,7 @@ def test_escalation_message(world, client):
     assert req.get_auth_link() not in req.messages[-1].plaintext_redacted
     assert len(mail.outbox) == 2
     message = list(filter(lambda x: x.to[0] == req.law.mediator.email, mail.outbox))[-1]
-    assert message.attachments[0][0] == "%s.pdf" % req.pk
+    assert message.attachments[0][0] == "_%s.pdf" % req.pk
     assert message.attachments[0][2] == "application/pdf"
     assert len(message.attachments) == len(attachments)
     assert [x[0] for x in message.attachments] == [x[0] for x in attachments]
@@ -1456,6 +1469,8 @@ def test_make_same_request(world, client):
         "address": "MyAddres 12\nB-Town",
         "user_email": "bob@example.com",
         "terms": "on",
+        "public": True,
+        "private": True,
     }
     response = client.post(
         reverse("foirequest-make_same_request", kwargs={"slug": same_req.slug}),
@@ -1469,7 +1484,7 @@ def test_make_same_request(world, client):
     assert len(mail.outbox) == 1
     message = mail.outbox[0]
     assert message.to[0] == post["user_email"]
-    match = re.search(r"/(\d+)/%d/(\w+)/" % (same_req2.pk), message.body)
+    match = re.search(r"/(\d+)/(\w+)/", message.body)
     assert match is not None
     new_user = User.objects.get(id=int(match.group(1)))
     assert not new_user.is_active
@@ -1477,11 +1492,7 @@ def test_make_same_request(world, client):
     response = client.get(
         reverse(
             "account-confirm",
-            kwargs={
-                "user_id": new_user.pk,
-                "secret": secret,
-                "request_id": same_req2.pk,
-            },
+            kwargs={"user_id": new_user.pk, "secret": secret},
         )
     )
     assert response.status_code == 302
@@ -1509,7 +1520,7 @@ def test_empty_costs(world, client):
     )
     assert response.status_code == 302
     req = FoiRequest.objects.get(pk=req.pk)
-    assert req.costs == 0.0
+    assert req.costs == Decimal(0.0)
     assert req.status == status
 
 
@@ -1543,7 +1554,7 @@ def test_resolution(world, client):
     )
     assert response.status_code == 302
     req = FoiRequest.objects.get(pk=req.pk)
-    assert req.costs == 0.0
+    assert req.costs == Decimal(0.0)
     assert req.status == FoiRequest.STATUS.RESOLVED
     assert req.resolution == FoiRequest.RESOLUTION.SUCCESSFUL
     assert req.days_to_resolution() == (mes.timestamp - req.created_at).days
@@ -1568,7 +1579,7 @@ def test_full_text_request(world, client, pb):
         "body": "This is another test body with Ümläut€n",
         "full_text": "true",
         "publicbody": str(pb.id),
-        "public": "on",
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -1595,8 +1606,7 @@ def test_redaction_config(world, client, msgobj):
                 "date": timezone.now(),
                 "subject": "Reply",
                 "body": (
-                    "Sehr geehrte Damen und Herren,\nblub\nbla\n\n"
-                    "Mit freundlichen Grüßen\n" + name
+                    "Guten Tag,\nblub\nbla\n\n" "Mit freundlichen Grüßen\n" + name
                 ),
                 "html": "html",
                 "from_": EmailAddress(name, "petra.radetsky@bund.example.org"),
@@ -1605,7 +1615,7 @@ def test_redaction_config(world, client, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.all()[0]
@@ -1644,9 +1654,7 @@ def test_redaction_urls(world):
         Really{url1}
         !!{url2}
         {url3}#also
-    """.format(
-        url1=url1, url2=url2, url3=url3
-    )
+    """.format(url1=url1, url2=url2, url3=url3)
     assert url1 in plaintext
     assert url2 in plaintext
     assert url3 in plaintext
@@ -1824,6 +1832,7 @@ def test_too_long_subject(world, client, pb):
         "subject": "Test" * 64,
         "body": "This is another test body with Ümläut€n",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 400
@@ -1832,6 +1841,7 @@ def test_too_long_subject(world, client, pb):
         "subject": "Test" * 55 + " a@b.de",
         "body": "This is another test body with Ümläut€n",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -1873,7 +1883,6 @@ def request_throttle(settings):
 
 @pytest.mark.django_db
 def test_throttling(world, client, pb, request_throttle):
-
     pb = PublicBody.objects.all()[0]
     client.login(email="dummy@example.org", password="froide")
 
@@ -1881,7 +1890,7 @@ def test_throttling(world, client, pb, request_throttle):
         "subject": "Another Third Test-Subject",
         "body": "This is another test body",
         "publicbody": str(pb.pk),
-        "public": "on",
+        "public": True,
     }
     post["law"] = str(pb.default_law.pk)
 
@@ -1898,11 +1907,15 @@ def test_throttling(world, client, pb, request_throttle):
         "exceeded your request limit of 2 requests in 1",
         status_code=400,
     )
+    assertContains(
+        response,
+        '<a href="{}">'.format(get_content_url("throttled")),
+        status_code=400,
+    )
 
 
 @pytest.mark.django_db
 def test_throttling_same_as(world, client, request_throttle):
-
     requests = []
     for i in range(3):
         requests.append(
@@ -1981,7 +1994,7 @@ def test_invalid_emails_not_shown_in_reply(world, client, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
 
@@ -2039,7 +2052,7 @@ def test_hiding_content(world, msgobj):
                 "resent_to": [],
                 "resent_cc": [],
                 "attachments": [],
-            }
+            },
         ),
     )
     req = FoiRequest.objects.all()[0]
@@ -2077,6 +2090,7 @@ def test_letter_public_body(world, client, pb):
         "subject": "Jurisdiction-Test-Subject",
         "body": "This is a test body",
         "publicbody": pb.pk,
+        "public": True,
     }
     response = client.post(reverse("foirequest-make_request"), post)
     assert response.status_code == 302
@@ -2093,13 +2107,15 @@ def test_package(world):
     bytes = package_foirequest(fr)
     zfile = zipfile.ZipFile(BytesIO(bytes), "r")
     filenames = [
-        r"%s/%s\.pdf" % (fr.pk, fr.pk),
-        r"%s/20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf" % fr.pk,
-        r"%s/20\d{2}-\d{2}-\d{2}_1-file_\d+\.pdf" % fr.pk,
+        "%s/_%s.pdf" % (fr.pk, fr.pk),
+        "%s/%s.pdf" % (fr.pk, fr.messages[0].timestamp.date().isoformat()),
+        "%s/%s.pdf" % (fr.pk, fr.messages[1].timestamp.date().isoformat()),
+        r"%s/%s-file_\d+.pdf" % (fr.pk, fr.messages[1].timestamp.date().isoformat()),
+        r"%s/%s-file_\d+.pdf" % (fr.pk, fr.messages[1].timestamp.date().isoformat()),
     ]
     zip_names = zfile.namelist()
     assert len(filenames) == len(zip_names)
-    for zname, fname in zip(zip_names, filenames):
+    for zname, fname in zip(zip_names, filenames, strict=False):
         assert bool(re.match(r"^%s$" % fname, zname))
 
 
@@ -2117,7 +2133,7 @@ def test_postal_after_last(world, client, pb, faker):
             "subject": "Totally Random Request",
             "body": "This is another test body",
             "publicbody": str(pb.pk),
-            "public": "on",
+            "public": True,
         }
         response = client.post(reverse("foirequest-make_request"), post)
         assert response.status_code == 302
@@ -2149,3 +2165,126 @@ def test_postal_after_last(world, client, pb, faker):
     assert created_msg.timestamp > message.timestamp
     assert created_msg.timestamp.date() == date(2011, 1, 1)
     message = req.foimessage_set.all()[1]
+
+
+@pytest.mark.django_db
+@pytest.mark.no_delivery_mock
+def test_mail_confirmation_after_success(world, user, client, faker):
+    pb = PublicBody.objects.first()
+    foirequest_post = {
+        "subject": faker.text(max_nb_chars=50),
+        "body": faker.text(max_nb_chars=500),
+        "publicbody": pb.pk,
+        "public": True,
+    }
+
+    client.login(email=user.email, password="froide")
+    response = client.post(reverse("foirequest-make_request"), foirequest_post)
+    assert response.status_code == 302
+    req = FoiRequest.objects.filter(
+        user=user, public_body=foirequest_post["publicbody"]
+    ).get()
+    assert req.title == foirequest_post["subject"]
+    assert req.description == foirequest_post["body"]
+
+    # Test that we queue the email for the public body
+    assert len(mail.outbox) == 1
+    message = mail.outbox[0]
+    assert mail.outbox[0].to[0] == pb.email
+    assert foirequest_post["body"] in message.body
+
+    # Now mark the email as sent
+    foimessage = req.foimessage_set.get()
+
+    email_left_queue.send(
+        sender=__name__,
+        to=foimessage.recipient_email,
+        from_address=foimessage.sender_email,
+        message_id=foimessage.email_message_id,
+        status="sent",
+        log=[],
+    )
+
+    # Expectation: The user should receive a confirmation that the request was sent
+    assert len(mail.outbox) == 2
+    confirmation_message = mail.outbox[1]
+    assert (
+        "Your Freedom of Information Request was sent" in confirmation_message.subject
+    )
+
+    # Action: Send a new foimessage in the request
+    foimessage: FoiMessage = factories.FoiMessageFactory(
+        request=req,
+        subject=faker.text(max_nb_chars=50),
+        kind=MessageKind.EMAIL,
+        is_response=False,
+        sender_user=user,
+        sender_name=user.display_name(),
+        sender_email=req.secret_address,
+        recipient_email=req.public_body.email,
+        recipient_public_body=req.public_body,
+        recipient=req.public_body.name,
+        plaintext=faker.text(max_nb_chars=50),
+    )
+    foimessage.send()
+
+    # Expectation: The message is send to the public body
+    assert len(mail.outbox) == 3
+    message = mail.outbox[2]
+    assert message.to[0] == pb.email
+    assert foimessage.plaintext in message.body
+
+    # Action: Mark the email as sent
+    email_left_queue.send(
+        sender=__name__,
+        to=foimessage.recipient_email,
+        from_address=foimessage.sender_email,
+        message_id=foimessage.email_message_id,
+        status="sent",
+        log=[],
+    )
+
+    # Expectation: The user should receive a confirmation that the message was sent
+    assert len(mail.outbox) == 4
+    confirmation_message = mail.outbox[3]
+    assert "Your message was sent" in confirmation_message.subject
+
+    # Action: Mark the email as sent *again*
+    email_left_queue.send(
+        sender=__name__,
+        to=foimessage.recipient_email,
+        from_address=foimessage.sender_email,
+        message_id=foimessage.email_message_id,
+        status="sent",
+        log=[],
+    )
+
+    # Expectation: The user should not receive another confirmation that the message was sent
+    assert len(mail.outbox) == 4
+
+
+@pytest.mark.django_db
+def test_request_body_leading_indent(world, client, pb):
+    ok = client.login(email="info@fragdenstaat.de", password="froide")
+    assert ok
+
+    user = User.objects.get(username="sw")
+    user.organization_name = "ACME Org"
+    user.save()
+
+    pb = PublicBody.objects.all()[0]
+    post = {
+        "subject": "Test-Subject",
+        "body": "  1. Indented\n  2. Indented",
+        "publicbody": pb.pk,
+        "public": True,
+    }
+    response = client.post(reverse("foirequest-make_request"), post)
+    assert response.status_code == 302
+
+    req = FoiRequest.objects.filter(user=user, public_body=pb).order_by("-id")[0]
+    foi_message = req.foimessage_set.all()[0]
+    assert post["body"] in foi_message.plaintext
+    assert len(mail.outbox) == 2
+    message = mail.outbox[0]
+    assert post["body"] in message.body

@@ -1,8 +1,10 @@
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from froide.account.models import User
+User = get_user_model()
 
 
 def convert_bounce_info(bounce_info):
@@ -38,7 +40,9 @@ class BounceManager(models.Manager):
 class Bounce(models.Model):
     email = models.EmailField(max_length=255)
 
-    user = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
+    )
     bounces = models.JSONField(default=list, blank=True)
     last_update = models.DateTimeField(default=timezone.now)
 

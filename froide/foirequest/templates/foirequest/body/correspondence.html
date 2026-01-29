@@ -1,42 +1,31 @@
 {% load i18n %}
 {% load foirequest_tags %}
-
 <div id="correspondence" class="mb-6">
-
-
-  {% block foirequest_messages %}
-    {% for message in object.messages %}
-      {% if forloop.last and object.messages|length > 1 %}
-        {% block foirequest_message_before_last %}{% endblock %}
-      {% endif %}
-
-      {% include "foirequest/body/message/message.html" %}
-
-      {% if forloop.last and object.messages|length == 1 %}
-        {% block foirequest_message_after_single %}{% endblock %}
-      {% endif %}
-
-      {% empty %}
-        <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
-    {% endfor %}
-  {% endblock foirequest_messages %}
-
-  {% block after_foirequest_messages %}
-    {% if object|can_write_foirequest:request and object.awaits_classification %}
-      <div class="position-sticky d-print-none" style="bottom: 0">
-        <div class="bg-yellow-100 text-center p-2">
-          <a href="#set-status" data-scrollto="set-status">
-            {% translate "Please set the status of this request!" %}
-          </a>
+    {% block foirequest_messages %}
+        {% for message in object.messages %}
+            {% if forloop.last and object.messages|length > 1 %}
+                {% block foirequest_message_before_last %}{% endblock %}
+            {% endif %}
+            {% include "foirequest/body/message/message.html" %}
+            {% if forloop.last and object.messages|length == 1 %}
+                {% block foirequest_message_after_single %}{% endblock %}
+            {% endif %}
+        {% empty %}
+            <p>{% blocktrans %}No messages yet{% endblocktrans %}</p>
+        {% endfor %}
+    {% endblock foirequest_messages %}
+    {% block after_foirequest_messages %}
+        {% if object|can_write_foirequest:request and object.awaits_classification %}
+            <div class="position-sticky d-print-none" style="bottom: 0">
+                <div class="bg-warning-subtle text-center p-2">
+                    <a href="#set-status" data-scrollto="set-status">{% translate "Please set the status of this request!" %}</a>
+                </div>
+            </div>
+        {% endif %}
+    {% endblock %}
+    {% if object.closed %}
+        <div class="alert alert-secondary">
+            {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
         </div>
-      </div>
     {% endif %}
-  {% endblock %}
-
-  {% if object.closed %}
-    <div class="alert alert-secondary">
-      {% blocktrans %}This request has been closed and cannot receive further messages.{% endblocktrans %}
-    </div>
-  {% endif %}
-
 </div>

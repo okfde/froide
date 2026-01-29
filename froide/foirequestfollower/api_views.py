@@ -35,7 +35,9 @@ class CreateOnlyWithScopePermission(TokenHasScope):
 
 
 class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
-    request = serializers.PrimaryKeyRelatedField(queryset=FoiRequest.objects.none())
+    request = serializers.PrimaryKeyRelatedField(
+        queryset=FoiRequest.objects.none(), style={"base_template": "input.html"}
+    )
 
     class Meta:
         model = FoiRequestFollower
@@ -57,7 +59,7 @@ class CreateFoiRequestFollowSerializer(serializers.ModelSerializer):
         try:
             value = qs.get(id=value.id)
         except FoiRequest.DoesNotExist:
-            raise serializers.ValidationError("No access")
+            raise serializers.ValidationError("No access") from None
         if value.user == user:
             raise serializers.ValidationError("Cannot follow your own requests")
         return value
@@ -188,11 +190,17 @@ class FoiRequestFollowerViewSet(
 
     def get_request_filter(self):
         if not hasattr(self, "_requests_filter"):
-            requests = self.request.query_params.get("request", "").split(",")
+            requests = []
             try:
-                requests = [int(r) for r in requests]
+                # request is not available when called from manage.py generateschema
+                if self.request:
+                    requests = self.request.query_params.get("request", "").split(",")
+                    requests = [
+                        int(r) for r in requests if r
+                    ]  # filter out empty strings
             except ValueError:
-                requests = []
+                pass
+
             self._requests_filter = requests
         return self._requests_filter
 

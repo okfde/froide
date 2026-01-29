@@ -1,13 +1,12 @@
 {% extends "admin/base_site.html" %}
-
 {% load i18n %}
-
+{% load frontendbuild %}
+{% block extrahead %}
+    {{ block.super }}{% renderfrontendhmr %}
+{% endblock %}
 {% block branding %}
-{% blocktrans with site_name=SITE_NAME %}{{ site_name }} admin{% endblocktrans %}
-{% if request.user.is_authenticated and request.session.impostor %}
-  {% include "account/includes/impostor.html" %}
-{% endif %}
-
-{% block userlinks %}{% endblock %}
-
+    {% blocktrans with site_name=SITE_NAME %}{{ site_name }} admin{% endblocktrans %}
+    {% if request.user.is_authenticated and request.session.impostor %}
+        {% include "account/includes/impostor.html" %}
+    {% endif %}
 {% endblock %}

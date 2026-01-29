@@ -1,3 +1,4 @@
+import { Modal } from 'bootstrap'
 import { scrollToAnchor } from '../lib/misc'
 
 const runOnPage = (): void => {
@@ -9,6 +10,8 @@ const runOnPage = (): void => {
         const parent = this.parentElement
         if (parent != null) {
           parent.style.display = 'none'
+          // When the parent has d-grid, this will not work, we also add d-none
+          parent.classList.add('d-none')
         }
       })
     })
@@ -87,6 +90,10 @@ const runOnPage = (): void => {
 
   document.querySelectorAll('.honigtopf input').forEach((input) => {
     input.removeAttribute('required')
+  })
+
+  document.querySelectorAll('.modal.modal-show-default').forEach((modal) => {
+    Modal.getOrCreateInstance(modal).show()
   })
 }
 

@@ -1,0 +1,34 @@
+@use "sass:map";
+
+:root {
+  --shadow-blue: #{transparentize($blue-30, 0.85)};
+  --shadow-gray: #{transparentize($gray-300, 0.6)};
+  --shadow-yellow: #{transparentize($yellow-300, 0.85)};
+  
+  @each $name, $value in $froide-theme-light {
+    $bg: map.get($value, "bg");
+    --froide-#{$name}-bg: #{$bg};
+    --froide-#{$name}-bg-rgb: #{to-rgb($bg)};
+    $color: map.get($value, "color");
+    --froide-#{$name}-color: #{$color};
+    --froide-#{$name}-color-rgb: #{to-rgb($color)};
+  }
+}
+
+@include color-mode(dark, true) {
+  color-scheme: dark;
+
+  --shadow-blue: #{transparentize($blue-700, 0.85)};
+  --shadow-gray: #{transparentize($gray-700, 0.6)};
+  --shadow-yellow: #{transparentize($yellow-300, 0.85)};
+
+  @each $name, $value in $froide-theme-dark {
+    $bg: map.get($value, "bg");
+    --froide-#{$name}-bg: #{$bg};
+    --froide-#{$name}-bg-rgb: #{to-rgb($bg)};
+    $color: map.get($value, "color");
+    --froide-#{$name}-color: #{$color};
+    --froide-#{$name}-color-rgb: #{to-rgb($color)};
+  }
+}
+

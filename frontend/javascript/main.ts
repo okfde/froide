@@ -1,8 +1,17 @@
 import '../styles/main.scss'
 
+// TODO: refactor global imports to ESM, like with search
 import './snippets/bootstrap.ts'
-import './snippets/copy-input.ts'
+import './snippets/copy-text'
 import './snippets/form-ajax.ts'
 import './snippets/inline-edit-forms.ts'
 import './snippets/misc.ts'
-import './snippets/search.ts'
+import './snippets/share-links.ts'
+import './snippets/color-mode.ts'
+import { initSearch } from './snippets/search.ts'
+import { purgeStorageAfterLogout } from './snippets/purgestorage.ts'
+
+document.addEventListener('DOMContentLoaded', () => {
+  purgeStorageAfterLogout()
+  initSearch()
+})

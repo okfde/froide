@@ -4,9 +4,10 @@ from urllib.parse import urlencode
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import decorator_from_middleware, method_decorator
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
@@ -15,19 +16,24 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, FormView, TemplateView
 
 from froide.account.forms import AddressForm, NewUserForm
+from froide.account.preferences import get_preferences_for_user
 from froide.campaign.models import Campaign
+from froide.foirequest.forms.preferences import make_request_intro_skip_howto_pref
 from froide.georegion.models import GeoRegion
 from froide.helper.auth import get_read_queryset
-from froide.helper.utils import update_query_params
-from froide.publicbody.api_views import PublicBodyListSerializer
+from froide.helper.content_urls import get_content_url
+from froide.helper.utils import is_fetch, update_query_params
+from froide.proof.forms import ProofMessageForm
 from froide.publicbody.forms import MultiplePublicBodyForm, PublicBodyForm
 from froide.publicbody.models import PublicBody
+from froide.publicbody.serializers import PublicBodyListSerializer
 from froide.publicbody.widgets import get_widget_context
 
 from ..forms import RequestForm
 from ..models import FoiProject, FoiRequest, RequestDraft
 from ..services import CreateRequestService, SaveDraftService
 from ..utils import check_throttle
+from ..validators import PLACEHOLDER_MARKER
 
 csrf_middleware_class = import_string(
     getattr(
@@ -129,13 +135,37 @@ class MakeRequestView(FormView):
         return user_vars
 
     def get_js_context(self):
+        skip_intro_howto = False
+        show_skip_intro_howto_preference = False
+        if self.request.user.is_authenticated:
+            show_skip_intro_howto_preference = True
+            preference = get_preferences_for_user(
+                self.request.user, [make_request_intro_skip_howto_pref]
+            )
+            preference_value = preference[make_request_intro_skip_howto_pref.key].value
+            if preference_value is not None:
+                skip_intro_howto = preference_value
+            elif FoiRequest.objects.filter(user=self.request.user).count() > 5:
+                skip_intro_howto = True
+        if first_request := FoiRequest.objects.order_by("created_at").first():
+            min_year = first_request.created_at.year
+        else:
+            min_year = timezone.now().year
+
         ctx = {
             "settings": {
                 "user_can_hide_web": settings.FROIDE_CONFIG.get("user_can_hide_web"),
+                "user_can_claim_vip": settings.FROIDE_CONFIG.get("user_can_claim_vip"),
                 "user_can_create_batch": self.can_create_batch(),
                 "non_meaningful_subject_regex": settings.FROIDE_CONFIG.get(
                     "non_meaningful_subject_regex", []
                 ),
+                # FIXME? default for address_regex is None, which will not become "" here
+                "address_regex": settings.FROIDE_CONFIG.get("address_regex", ""),
+                "skip_intro_howto": skip_intro_howto,
+                "show_skip_intro_howto_preference": show_skip_intro_howto_preference,
+                "skip_intro_howto_preference_key": make_request_intro_skip_howto_pref.key,
+                "min_year": min_year,
             },
             "url": {
                 "searchRequests": reverse("api:request-search"),
@@ -151,6 +181,12 @@ class MakeRequestView(FormView):
                     "foirequest-make_request", kwargs={"publicbody_ids": "0"}
                 ),
                 "makeRequest": reverse("foirequest-make_request"),
+                "helpRequestPublic": get_content_url("help_request_public"),
+                "helpRequestPrivacy": get_content_url("help_request_privacy"),
+                "login": "{}?{}".format(
+                    reverse("account-login"),
+                    urlencode({"next": self.request.get_full_path()}),
+                ),
             },
             "i18n": {
                 "publicBodiesFound": [
@@ -172,35 +208,67 @@ class MakeRequestView(FormView):
                 # Translators: not url
                 "requests": _("requests"),
                 "close": _("close"),
-                "makeRequest": _("make request"),
+                "back": _("Back"),
+                "remove": _("Remove"),
+                "stepNext": _("Next"),
+                "stepSkip": _("Skip"),
+                "step": _("Step"),
+                "introduction": _("Introduction"),
+                "similarRequests": _("Similar requests"),
+                "findSimilarRequests": _("Find similar requests"),
+                "currentlyChosen": _("Currently chosen:"),
+                "requestVisibility": _("Public visibility of the request"),
+                "previewAndSubmit": _("Preview & submit"),
+                "address": _("Address"),
+                "account": pgettext("Make request breadcrumbs/stepper", "Account"),
+                "writeMessage": _("Write message"),
+                "submitRequest": _("Submit request"),
+                "makeRequest": _("Make request"),
+                "makeRequestYourself": _("Make a request yourself"),
+                "writeRequest": _("Write the request"),
+                "recipientPb": _("Receiving public body"),
+                "whatDoYouWantToDo": _("What do you want to do?"),
+                "whatCanIRequest": _("What can I request?"),
+                "whatCanINotRequest": _("What can’t I request?"),
+                "search": _("Search"),
+                "searchArchive": _("Search our archives:"),
+                "doYouAlreadyHaveAccount": _("Do you already have an account?"),
+                "thisFormRemembers": _(
+                    "This form remembers your inputs, as long as stay in the same tab."
+                ),
                 "writingRequestTo": _("You are writing a request to"),
                 "toMultiPublicBodies": _("To: {count} public bodies").format(
                     count="${count}"
                 ),
                 "selectPublicBodies": _("Select public bodies"),
                 "continue": _("continue"),
+                "continueWithSelected": _("Continue with selected"),
                 "selectAll": [_("select one"), _("select all")],
                 "selectingAll": _("Selecting all public bodies, please wait..."),
                 "name": _("Name"),
+                "filterPlaceholder": _("Filter…"),
+                "level": pgettext("Publicbody filter", "Level"),
+                "location": pgettext("Publicbody filter", "Location"),
+                "groupBy_state": _("state"),
                 "jurisdictionPlural": [
                     _("Jurisdiction"),
                     _("Jurisdictions"),
                 ],
                 "topicPlural": [
-                    _("topic"),
-                    _("topics"),
+                    _("Topic"),
+                    _("Topics"),
                 ],
                 "classificationPlural": [
-                    _("classification"),
-                    _("classifications"),
+                    _("Classification"),
+                    _("Classifications"),
                 ],
                 "containingGeoregionsPlural": [
-                    _("part of administrative region"),
-                    _("part of administrative regions"),
+                    _("Part of administrative region"),
+                    _("Part of administrative regions"),
                 ],
-                "administrativeUnitKind": _("type of administrative unit"),
+                "administrativeUnitKind": _("Type of administrative unit"),
                 "toPublicBody": _("To: {name}").format(name="${name}"),
-                "change": _("change"),
+                "change": _("Change"),
                 "searchPlaceholder": _("Search..."),
                 "clearSearchResults": _("clear search"),
                 "clearSelection": _("clear selection"),
@@ -227,6 +295,11 @@ class MakeRequestView(FormView):
                     "applicable laws. Instead you have to write the text to be "
                     "jurisdiction agnostic."
                 ),
+                "replacePlaceholderMarker": _(
+                    _("Please replace all placeholder values marked by “{}”.").format(
+                        PLACEHOLDER_MARKER
+                    )
+                ),
                 "resetFullText": _("Reset text to template version"),
                 "savedFullTextChanges": _("Your previous customized text"),
                 "saveAsDraft": _("Save as draft"),
@@ -236,20 +309,16 @@ class MakeRequestView(FormView):
                 "reviewFrom": _("From"),
                 "reviewTo": _("To"),
                 "reviewPublicbodies": _("public bodies"),
-                "reviewSpelling": _("Please use proper spelling."),
-                "reviewPoliteness": _("Please stay polite."),
-                "submitRequest": _("Submit request"),
                 "greeting": _("Dear Sir or Madam"),
                 "kindRegards": _("Kind regards"),
                 "yourFirstName": _("Your first name"),
                 "yourLastName": _("Your last name"),
                 "yourEmail": _("Your email address"),
                 "yourAddress": _("Your postal address"),
-                "giveName": _("Please fill out your name below"),
+                "giveName": _("Please fill out your name below, or in the next step"),
                 "similarExist": _(
                     "Please make sure the information is not already requested or public"
                 ),
-                "similarRequests": _("Similar requests"),
                 "moreSimilarRequests": _("Search for more similar requests"),
                 "relevantResources": _("Relevant resources"),
                 "officialWebsite": _("Official website: "),
@@ -267,14 +336,109 @@ class MakeRequestView(FormView):
                 "enterMeaningfulSubject": _(
                     "Please enter a subject which describes the information you are requesting."
                 ),
+                "pleaseFollowAddressFormat": _(
+                    "Please enter an address in the following format:\n%(format)s",
+                )
+                % {"format": _("Street address,\nPost Code, City")},
+                "includeProof": _("Attach a proof of identity"),
+                "addMoreAuthorities": _("Add more authorities"),
+                # mimic Django's default messages, but use magic {count} parameter
+                # "Ensure this value has at least %(limit_value)d characters (it has %(show_value)d)."
+                "valueMinLength": [
+                    _("Ensure this value has at least {count} character.").format(
+                        count="${count}"
+                    ),
+                    _("Ensure this value has at least {count} characters.").format(
+                        count="${count}"
+                    ),
+                ],
+                "valueMaxLength": [
+                    _("Ensure this value has at most {count} character.").format(
+                        count="${count}"
+                    ),
+                    _("Ensure this value has at most {count} characters).").format(
+                        count="${count}"
+                    ),
+                ],
+                "results": [
+                    _("One result"),
+                    _("{count} results").format(count="${count}"),
+                ],
+                "searchResults": _("Search results"),
+                "createAccount": _("Create account"),
+                "createAccountPreamble": _(
+                    "You need to create an account at {site_name} so you will be able to manage your request."
+                ).format(site_name=settings.SITE_NAME),
+                "skipIntroHowto": _(
+                    "Skip this part next time and start at “Choose public body” (optional)"
+                ),
+                "error": _("Error"),
+                "none": _("None chosen"),
+                "toPb": _("To:"),
+                "to": _("to"),
+                "requestTo": _("Request to:"),
+                "correct": _("Correct"),
+                "fixPlaceholder": _("Fix placeholders automatically"),
+                "updatePostalAddress": _("Update my postal address"),
+                "subjectMeaningful": _("Please write a meaningful subject"),
+                "containsPlaceholderMarker": _(
+                    "The body contains an illegal placeholder ({placeholder})."
+                ).format(placeholder="${placeholder}"),
+                "pagination": _("Pagination"),
+                "publicbody": _("Public body"),
+                "requestBody": _("Request body"),
+                "request": _("request"),
+                "visibility": _("Visibility"),
+                "notConfirmed": _("Not confirmed"),
+                "notAgreed": _("Not agreed"),
+                "publishNow": _("Publish request now"),
+                "publishLater": _("Publish request later"),
+                "help": _("Help"),
+                "privacy": _("Privacy"),
+                "privacyMoreInfo": _("More information about privacy on this website"),
+                "nameRedact": _("My name must be <strong>redacted</strong>"),
+                "namePlainText": _(
+                    "My name may appear on the website in <strong>plain text</strong>"
+                ),
+                "email": _("Email"),
+                "notSentToPb": _("(not sent to public body)"),
+                "terms": _("Terms of Use"),
+                "searchToPbName": _("to %(name)s") % {"name": "${name}"},
+                "searchToProject": _(
+                    'to <a href="%(url)s">%(name)s</a> and <a href="%(urlp)s">%(count)s other public bodies</a>'
+                )
+                % {
+                    "name": "${name}",
+                    "url": "${url}",
+                    "urlp": "${urlp}",
+                    "count": "${count}",
+                },
+                "notYetSet": _("Not yet set"),
+                "searchSelectThisPb": _("Select this public body"),
+                "dateRange": _("Date range"),
+                "dateRangeFrom": _("From"),
+                "dateRangeTo": _("Until"),
+                "campaign": _("Campaign"),
+                "toggleCollapse": _("Toggle collapse"),
+                "searchText": pgettext("Search input", "Text"),
+                "login": pgettext("Make request", "Log in"),
+                "searchRequests": _("Search requests"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
                 "closings": [_("Kind Regards")],
             },
             "fixtures": {
-                "georegion_kind": [[str(k), str(v)] for k, v in GeoRegion.KIND_CHOICES]
+                "georegion_kind": [
+                    [str(k), str(v)]
+                    for k, v in GeoRegion.KIND_CHOICES
+                    if k in settings.FROIDE_CONFIG.get("filter_georegion_kinds", [])
+                ],
             },
+            "draftId": self.object.id
+            if hasattr(self, "object") and isinstance(self.object, RequestDraft)
+            else None,
+            "wasPost": self.request.method == "POST",
         }
         pb_ctx = get_widget_context()
         for key in pb_ctx:
@@ -282,6 +446,9 @@ class MakeRequestView(FormView):
                 ctx[key].update(pb_ctx[key])
             else:
                 ctx[key] = pb_ctx[key]
+        proof_form = self.get_proof_form()
+        if proof_form:
+            ctx["proof_config"] = proof_form.get_js_context()
         return ctx
 
     def get_form_config_initial(self):
@@ -356,12 +523,12 @@ class MakeRequestView(FormView):
         )
         publicbody_slug = self.kwargs.get("publicbody_slug")
         publicbodies = []
-        if publicbody_ids is not None:
+        if publicbody_ids:
             publicbody_ids = publicbody_ids.split("+")
             try:
                 publicbodies = PublicBody.objects.filter(pk__in=publicbody_ids)
             except ValueError:
-                raise Http404
+                raise Http404 from None
             if len(publicbody_ids) != len(publicbodies):
                 raise Http404
             if len(publicbody_ids) > 1 and not self.can_create_batch():
@@ -391,6 +558,16 @@ class MakeRequestView(FormView):
             return form_class(**self.get_publicbody_form_kwargs())
         return FakePublicBodyForm(publicbodies)
 
+    def get_proof_form(self):
+        if not self.request.user.is_authenticated:
+            # Can't send proof if not logged in
+            return None
+        if self.request.method in ("POST", "PUT"):
+            return ProofMessageForm(
+                self.request.POST, self.request.FILES, user=self.request.user
+            )
+        return ProofMessageForm(user=self.request.user)
+
     def csrf_valid(self):
         """
         This runs a replaceable csrf view middleware
@@ -415,9 +592,10 @@ class MakeRequestView(FormView):
 
         request_form = self.get_form()
 
-        throttle_message = check_throttle(request.user, FoiRequest)
-        if throttle_message:
-            request_form.add_error(None, throttle_message)
+        if not request.POST.get("save_draft", ""):
+            throttle_message = check_throttle(request.user, FoiRequest)
+            if throttle_message:
+                request_form.add_error(None, throttle_message)
 
         if not request_form.is_valid():
             error = True
@@ -432,7 +610,7 @@ class MakeRequestView(FormView):
             request_form.add_error(None, _("Draft cannot be used again."))
             error = True
 
-        if request.user.is_authenticated:
+        if request_form.is_valid() and request.user.is_authenticated:
             if request.POST.get("save_draft", ""):
                 return self.save_draft(request_form, publicbody_form)
             if request.user.is_blocked:
@@ -447,14 +625,29 @@ class MakeRequestView(FormView):
         if not user_form.is_valid():
             error = True
 
+        proof_form = self.get_proof_form()
+
         form_kwargs = {
             "request_form": request_form,
             "user_form": user_form,
             "publicbody_form": publicbody_form,
+            "proof_form": proof_form,
         }
 
         if not error:
             return self.form_valid(**form_kwargs)
+
+        if is_fetch(request):
+            return JsonResponse(
+                {
+                    # "json serializeable form_kwargs subset"
+                    "request_form": request_form.as_data(),
+                    "user_form": user_form.as_data() if user_form else None,
+                    "proof_form": proof_form.as_data() if proof_form else None,
+                },
+                status=400,
+            )
+
         return self.form_invalid(**form_kwargs)
 
     def save_draft(self, request_form, publicbody_form):
@@ -488,7 +681,9 @@ class MakeRequestView(FormView):
             )
         return self.render_to_response(self.get_context_data(**form_kwargs), status=400)
 
-    def form_valid(self, request_form=None, publicbody_form=None, user_form=None):
+    def form_valid(
+        self, request_form=None, publicbody_form=None, user_form=None, proof_form=None
+    ):
         user = self.request.user
         data = dict(request_form.cleaned_data)
         data["user"] = user
@@ -499,9 +694,16 @@ class MakeRequestView(FormView):
         elif user_form is not None:
             data["address"] = user_form.cleaned_data.get("address")
             user_form.save(user=user)
+        if proof_form and proof_form.is_valid():
+            data["proof"] = proof_form.save()
 
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
+
+        # user just created
+        if not user.is_authenticated and foi_object.user and "claims_vip" in data:
+            if data["claims_vip"]:
+                foi_object.user.tags.add("claims:vip")
 
         return self.make_redirect(
             request_form, foi_object, email=data.get("user_email")
@@ -553,6 +755,9 @@ class MakeRequestView(FormView):
         if "publicbody_form" not in kwargs:
             kwargs["publicbody_form"] = self.get_publicbody_form()
 
+        if "proof_form" not in kwargs:
+            kwargs["proof_form"] = self.get_proof_form()
+
         publicbodies_json = "[]"
         publicbodies = self.get_publicbodies()
         if not publicbodies:
@@ -577,16 +782,18 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        if self.request.method == "POST" or publicbodies or is_multi:
-            campaigns = None
-        else:
-            campaigns = Campaign.objects.get_active()
+        # skip "i confirm" nag heuristically for all who can multi-request
+        # TODO: find better heuristic for "trusted users"?
+        confirm_required = not is_multi
+
+        campaigns = Campaign.objects.get_active()
 
         kwargs.update(
             {
                 "publicbodies": publicbodies,
                 "publicbodies_json": publicbodies_json,
                 "multi_request": is_multi,
+                "confirm_required": confirm_required,
                 "config": config,
                 "campaigns": campaigns,
                 "js_config": json.dumps(self.get_js_context()),

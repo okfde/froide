@@ -1,14 +1,61 @@
-@import "../variables.scss";
+@import '../variables.scss';
 
-$choices-primary-color: $gray-500;
+$choices-bg-color: var(--#{$prefix}body-bg);
+$choices-bg-color-disabled: var(--#{$prefix}tertiary-bg);
+$choices-bg-color-dropdown: var(--#{$prefix}body-bg);
+$choices-text-color: var(--#{$prefix}body-color);
+$choices-keyline-color: $body-tertiary-color;
+$choices-primary-color: $secondary;
+$choices-highlight-color: var(--#{$prefix}primary);
+$choices-disabled-color: $dark;
 $choices-guttering: 0;
 
-@import "choices.js/src/styles/choices.scss";
+$choices-font-size-lg: $font-size-lg;
+$choices-font-size-md: $font-size-base;
+$choices-font-size-sm: $font-size-sm;
+$choices-border-radius: var(--#{$prefix}border-radius);
+
+@import 'choices.js/src/styles/choices.scss';
 
 .#{$choices-selector} {
   width: 100%;
 }
 
+.#{$choices-selector}.is-open {
+  // Bootstrap level $zindex-dropdown but +1 to be higher than leaflet map controls
+  z-index: 1001;
+}
+
 .form-row:has(.choices__list) {
   overflow: visible;
+}
+
+.#{$choices-selector}__list {
+  background-color: var(--bs-body-bg, var(--body-bg));
+}
+
+.#{$choices-selector}__input {
+  background-color: var(--#{$prefix}body-bg, var(--body-bg));
+  color: var(--#{$prefix}body-color, var(--body-fg));
+}
+
+.#{$choices-selector}__input {
+  background-color: var(--#{$prefix}body-bg);
+  border-bottom-color: var(--#{$prefix}border-color) !important;
+}
+
+.#{$choices-selector}__list--dropdown {
+  background-color: var(--#{$prefix}body-bg);
+
+  .#{$choices-selector}__item--selectable.is-highlighted,
+  .#{$choices-selector}__list[aria-expanded],
+  .#{$choices-selector}__item--selectable.is-highlighted {
+    background-color: var(--#{$prefix}tertiary-bg) !important;
+  }
+}
+
+.#{$choices-selector}__inner,
+.#{$choices-selector}__list {
+  border-color: var(--#{$prefix}border-color) !important;
+  font-size: inherit !important;
 }

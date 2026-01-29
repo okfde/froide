@@ -25,11 +25,9 @@ class FrontendBuildLoader:
         Dev manifest format is:
 
         """
-        try:
-            with open(settings.FRONTEND_BUILD_DIR / "manifest.dev.json") as f:
-                manifest_data = json.load(f)
-        except IOError as e:
-            raise Exception("Please build frontend or run frontend dev server") from e
+        with open(settings.FRONTEND_BUILD_DIR / "manifest.dev.json") as f:
+            manifest_data = json.load(f)
+
         return {
             "{}.js".format(entry_point): {"source": source_file}
             for entry_point, source_file in manifest_data["inputs"].items()
@@ -37,10 +35,12 @@ class FrontendBuildLoader:
 
     def load_manifest(self):
         try:
+            if settings.FRONTEND_DEBUG:
+                return self.load_dev_manifest()
             with open(settings.FRONTEND_BUILD_DIR / "manifest.json") as f:
                 manifest_data = json.load(f)
-        except IOError:
-            return self.load_dev_manifest()
+        except IOError as e:
+            raise Exception("Please build frontend or run frontend dev server") from e
 
         return self.generate_entry_points(manifest_data)
 
@@ -93,7 +93,9 @@ def get_frontend_files(
     if settings.FRONTEND_DEBUG:
         source_file = data["source"]
         # Replace relative references from vite with symlink in node_modules
-        source_file = source_file.replace("../", "node_modules/")
+        source_file = settings.FRONTEND_SERVER_URL + source_file.replace(
+            "../", "node_modules/"
+        )
         return {
             "js": [source_file],
             "css": (),
@@ -105,7 +107,8 @@ def get_frontend_files(
         if block_name not in result:
             continue
         for path in paths:
-            result[block_name].append(path)
+            static_path = static(path)
+            result[block_name].append(static_path)
     return result
 
 
@@ -117,9 +120,7 @@ def get_frontend_build(
     if settings.FRONTEND_DEBUG:
         return {
             "js": [
-                FRONTEND_TEMPLATES["js"].format(
-                    src=settings.FRONTEND_SERVER_URL + source_file
-                )
+                FRONTEND_TEMPLATES["js"].format(src=source_file)
                 for source_file in frontend_files["js"]
             ],
             "css": (),
@@ -129,15 +130,13 @@ def get_frontend_build(
 
     for block_name, paths in frontend_files.items():
         for path in paths:
-            static_path = static(path)
-            output = FRONTEND_TEMPLATES[block_name].format(src=static_path)
+            output = FRONTEND_TEMPLATES[block_name].format(src=path)
             result[block_name].append(output)
     return result
 
 
 @register.simple_tag(takes_context=True)
 def addfrontendbuild(context, name: str) -> str:
-
     result = get_frontend_build(name)
     if not result:
         return ""

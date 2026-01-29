@@ -14,16 +14,16 @@ from rest_framework.parsers import BaseParser, DataAndFiles
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from . import constants
-from . import settings as tus_settings
 from . import (
+    constants,
     tus_api_checksum_algorithms,
     tus_api_extensions,
     tus_api_version,
     tus_api_version_supported,
 )
+from . import settings as tus_settings
 from .exceptions import Conflict, TusParseError
-from .models import Upload, states
+from .models import Upload, UploadState
 from .serializers import UploadCreateSerializer, UploadSerializer
 from .utils import augment_request, checksum_matches, encode_upload_metadata
 
@@ -65,7 +65,7 @@ class TusMixin(object):
         try:
             request = augment_request(request)
         except ValueError as e:
-            raise TusParseError(str(e))
+            raise TusParseError(str(e)) from None
 
         super().initial(request, *args, **kwargs)
 
@@ -244,7 +244,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
         if not self._is_valid_content_type(request):
             return Response(
                 'Invalid value for "Content-Type" header: {}. Expected "{}".'.format(
-                    request.META["CONTENT_TYPE"], TusUploadStreamParser.media_type
+                    request.headers["content-type"], TusUploadStreamParser.media_type
                 ),
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -263,7 +263,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
         assert upload.get_or_create_temporary_file()
 
         # Change state
-        if upload.state == states.INITIAL:
+        if upload.state == UploadState.INITIAL:
             upload.start_receiving()
             upload.save()
 
@@ -300,7 +300,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
             )
 
         # Write file
-        chunk_size = int(request.META.get("CONTENT_LENGTH", 102400))
+        chunk_size = int(request.headers.get("content-length", 102400))
         try:
             upload.write_data(chunk_bytes, chunk_size)
         except Exception as e:
@@ -320,7 +320,7 @@ class TusPatchMixin(mixins.UpdateModelMixin):
         return Response(headers=headers, status=status.HTTP_204_NO_CONTENT)
 
     def _is_valid_content_type(self, request):
-        return request.META["CONTENT_TYPE"] == TusUploadStreamParser.media_type
+        return request.headers["content-type"] == TusUploadStreamParser.media_type
 
 
 class TusTerminateMixin(mixins.DestroyModelMixin):
@@ -329,7 +329,7 @@ class TusTerminateMixin(mixins.DestroyModelMixin):
         upload = self.get_object()
 
         # When the upload is still saving, we're not able to destroy the entity
-        if upload.state == states.SAVING:
+        if upload.state == UploadState.SAVING:
             return Response(
                 _(
                     'Unable to terminate upload while in state "{}".'.format(
@@ -374,7 +374,7 @@ class UploadViewSet(
     )
     parser_classes = [TusUploadStreamParser]
     permission_classes = (UploadWithScopePermission,)
-    required_scopes = ["write:request"]
+    required_scopes = ["write:attachment"]
 
     def get_queryset(self):
         if self.request.user.is_authenticated:

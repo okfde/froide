@@ -1,6 +1,7 @@
 import json
 import os
 import re
+from functools import cached_property
 from re import Pattern
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -11,8 +12,9 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.contrib.postgres.fields import CIEmailField
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.functions import Collate
 from django.db.models.query import QuerySet
 from django.urls import reverse
 from django.utils import timezone
@@ -46,9 +48,21 @@ class TaggedUser(TaggedItemBase):
         verbose_name_plural = _("tagged users")
 
 
+def annotate_deterministic_email(queryset):
+    return queryset.annotate(email_deterministic=annotate_deterministic_field("email"))
+
+
+def annotate_deterministic_field(field_name: str):
+    return Collate(field_name, "und-x-icu")
+
+
 class UserManager(BaseUserManager):
     def get_public_profiles(self) -> QuerySet:
         return super().get_queryset().filter(is_active=True, private=False)
+
+    def get_queryset(self) -> QuerySet:
+        qs = super().get_queryset()
+        return annotate_deterministic_email(qs)
 
     def _create_user(
         self,
@@ -57,7 +71,7 @@ class UserManager(BaseUserManager):
         password: str,
         is_staff: bool,
         is_superuser: bool,
-        **extra_fields
+        **extra_fields,
     ):
         """
         Creates and saves a User with the given email and password.
@@ -79,7 +93,7 @@ class UserManager(BaseUserManager):
             is_superuser=is_superuser,
             last_login=None,
             date_joined=now,
-            **extra_fields
+            **extra_fields,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -105,8 +119,15 @@ Replacements = Optional[Dict[str, str]]
 Redactions = List[Union[Tuple[str, str], Tuple[Pattern, str]]]
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+def validate_lowercase(value: str):
+    if value.lower() != value:
+        raise ValidationError(
+            _("%(value)s is not lowercase"),
+            params={"value": value},
+        )
 
+
+class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
@@ -116,14 +137,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_(
             "Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."
         ),
-        validators=[username_validator],
+        validators=[username_validator, validate_lowercase],
         error_messages={
             "unique": _("A user with that username already exists."),
         },
     )
     first_name = models.CharField(_("first name"), max_length=30, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
-    email = CIEmailField(_("email address"), unique=True, null=True, blank=True)
+    email = models.EmailField(
+        _("email address"),
+        db_collation="case_insensitive",
+        unique=True,
+        null=True,
+        blank=True,
+    )
 
     is_staff = models.BooleanField(
         _("staff status"),
@@ -228,6 +255,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     def trusted(self) -> bool:
         return self.is_trusted or self.is_staff or self.is_superuser
 
+    @cached_property
+    def is_crew(self) -> bool:
+        if hasattr(settings, "CREW_GROUP") and settings.CREW_GROUP:
+            return self.groups.filter(pk=settings.CREW_GROUP).exists()
+        else:
+            return self.is_staff
+
     @classmethod
     def export_csv(cls, queryset, fields=None):
         if fields is None:
@@ -280,6 +314,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         service = AccountService(self)
         return service.get_autologin_url(url)
+
+    def can_autologin(self) -> bool:
+        from .services import AccountService
+
+        service = AccountService(self)
+        return service.can_autologin()
 
     def get_redactions(self, replacements: Replacements = None) -> Redactions:
         account_service = self.get_account_service()
@@ -341,9 +381,7 @@ class Application(AbstractApplication):
     def allows_grant_type(self, *grant_types):
         # only allow GRANT_AUTHORIZATION_CODE
         # regardless of application setting
-        return bool(
-            set([AbstractApplication.GRANT_AUTHORIZATION_CODE]) & set(grant_types)
-        )
+        return bool({AbstractApplication.GRANT_AUTHORIZATION_CODE} & set(grant_types))
 
     def can_auto_approve(self, scopes):
         """
@@ -385,6 +423,7 @@ class AccountBlocklist(models.Model):
 
     address = models.TextField(blank=True)
     email = models.TextField(blank=True)
+    full_name = models.TextField(blank=True)
 
     objects = AccountBlocklistManager()
 
@@ -396,7 +435,11 @@ class AccountBlocklist(models.Model):
         return self.name
 
     def match_user(self, user: User) -> bool:
-        return self.match_field(user, "address") or self.match_field(user, "email")
+        return (
+            self.match_field(user, "address")
+            or self.match_field(user, "email")
+            or self.match_content(self.full_name, user.get_full_name())
+        )
 
     def match_field(self, user: User, key: str) -> bool:
         content = getattr(self, key)
@@ -414,7 +457,7 @@ class AccountBlocklist(models.Model):
 
 
 class UserPreferenceManager(models.Manager):
-    def get_preference(self, user, key):
+    def get_preference(self, user, key: str):
         try:
             return self.get_queryset().get(user=user, key=key).value
         except UserPreference.DoesNotExist:

@@ -1,18 +1,19 @@
 {% for trigger in triggers %}
-  <li class="list-inline-item">
-    {% if trigger.is_applied %}
-      <button disabled class="btn btn-link text-muted">✔️{{ trigger.label }}</button>
-    {% else %}
-      <form class="ajaxified" method="post" data-confirm="{{ trigger.label}}?" action="{% url 'foirequest-apply_moderation' slug=object.slug %}">
-        {% csrf_token %}
-        <input type="hidden" name="moderation_trigger" value="{{ trigger.name }}"/>
-        <button class="btn btn-link" type="submit">
-          {% if trigger.icon %}
-            <i class="fa {{ trigger.icon }}"></i>
-          {% endif %}
-          {{ trigger.label }}
-        </button>
-      </form>
-    {% endif %}
-  </li>
+    <li class="list-inline-item">
+        {% if trigger.is_applied %}
+            <button disabled class="btn btn-link text-body-secondary">✔️{{ trigger.label }}</button>
+        {% else %}
+            <form class="ajaxified"
+                  method="post"
+                  data-confirm="{{ trigger.label }}?"
+                  action="{% url 'foirequest-apply_moderation' slug=object.slug %}">
+                {% csrf_token %}
+                <input type="hidden" name="moderation_trigger" value="{{ trigger.name }}" />
+                <button class="btn btn-link" type="submit">
+                    {% if trigger.icon %}<i class="fa {{ trigger.icon }}"></i>{% endif %}
+                    {{ trigger.label }}
+                </button>
+            </form>
+        {% endif %}
+    </li>
 {% endfor %}

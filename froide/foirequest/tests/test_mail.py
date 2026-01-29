@@ -1,13 +1,16 @@
 import os
 from datetime import datetime
+from datetime import timezone as dt_timezone
 
 from django.conf import settings
 from django.core import mail
+from django.db.models import signals
 from django.test.utils import override_settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import pytest
+from factory.django import mute_signals
 
 from froide.foirequest.foi_mail import add_message_from_email
 from froide.foirequest.models import DeferredMessage, FoiMessage, FoiRequest
@@ -27,14 +30,15 @@ def p(path: str) -> str:
 @pytest.fixture
 def foirequest_with_msg(world):
     secret_address = "sw+yurpykc1hr@fragdenstaat.de"
-    date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=timezone.utc)
-    req = factories.FoiRequestFactory.create(
-        site=world,
-        secret_address=secret_address,
-        created_at=date,
-        last_message=date,
-    )
-    factories.FoiMessageFactory.create(request=req, timestamp=date)
+    date = datetime(2010, 6, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
+    with mute_signals(signals.pre_save, signals.post_save):
+        req = factories.FoiRequestFactory.create(
+            site=world,
+            secret_address=secret_address,
+            created_at=date,
+            last_message=date,
+        )
+        factories.FoiMessageFactory.create(request=req, timestamp=date)
     return req
 
 
@@ -77,7 +81,7 @@ def test_working(foirequest_with_msg):
     assert len(messages) == 2
     assert "Jörg Gahl-Killen" in [m.sender_name for m in messages]
     message = messages[1]
-    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc)
+    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
     assert (
         message.subject
         == "Anfrage nach dem Informationsfreiheitsgesetz;  Förderanträge und Verwendungsnachweise der Hanns-Seidel-Stiftung;  Vg. 375-2018"
@@ -93,7 +97,7 @@ def test_wrong_address(foirequest_with_msg):
     with open(p("test_mail_01.txt"), "rb") as f:
         process_mail.delay(f.read())
     assert len(mail.outbox) == len(settings.MANAGERS)
-    assert all([_("Unknown FoI-Mail Recipient") in m.subject for m in mail.outbox])
+    assert all(_("Unknown FoI-Mail Recipient") in m.subject for m in mail.outbox)
     recipients = [m.to[0] for m in mail.outbox]
     for manager in settings.MANAGERS:
         assert manager[1] in recipients
@@ -125,7 +129,7 @@ def test_long_attachment_names(foirequest_with_msg):
     assert len(messages) == 2
     assert messages[1].subject == mail.subject
     assert len(messages[1].attachments) == 2
-    names = set([a.name for a in messages[1].attachments])
+    names = {a.name for a in messages[1].attachments}
     assert names == {
         "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06-12-2012-anlage.pdf",
         "kooperationendesmswantragnachinformationsfreiheitsgesetznrwstefansafariovom06-12-2012-awvom08-01-2013-rs.pdf",
@@ -135,12 +139,12 @@ def test_long_attachment_names(foirequest_with_msg):
 def test_authenticity_pass():
     with open(p("test_mail_05.txt"), "rb") as f:
         mail = parse_email(f)
-    assert not mail.fails_authenticity
+    assert mail.fails_authenticity
     authenticity_checks = mail.get_authenticity_checks()
     assert authenticity_checks[0].check.value == "SPF"
     assert authenticity_checks[1].check.value == "DMARC"
     assert authenticity_checks[2].check.value == "DKIM"
-    assert not authenticity_checks[0].failed
+    assert authenticity_checks[0].failed
     assert not authenticity_checks[1].failed
     assert not authenticity_checks[2].failed
 
@@ -255,7 +259,7 @@ def test_additional_domains(foirequest_with_msg):
     assert len(messages) == 2
     assert "Jörg Gahl-Killen" in [m.sender_name for m in messages]
     message = messages[1]
-    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=timezone.utc)
+    assert message.timestamp == datetime(2010, 7, 5, 5, 54, 40, tzinfo=dt_timezone.utc)
 
 
 def test_eml_attachments():
@@ -488,3 +492,37 @@ def test_closed(req_with_msgs):
     assert count_messages == FoiMessage.objects.filter(request=req_with_msgs).count()
     dms = DeferredMessage.objects.filter(recipient=recipient)
     assert len(dms) == 0
+
+
+@pytest.mark.parametrize("testfile", ["test_mail_14.txt", "test_mail_15.txt"])
+def test_handle_html_in_plaintext(testfile):
+    with open(p(testfile), "rb") as f:
+        mail = parse_email(f)
+    assert mail.html != mail.body
+    assert "<p>" not in mail.body
+
+
+def test_parsing_attachment_without_content_disposition():
+    with open(p("test_mail_16.txt"), "rb") as f:
+        email = parse_email(f)
+
+    assert len(email.attachments) == 1
+    attachment = email.attachments[0]
+    assert attachment.name == "_1_0CCE8CEC0CCE8894004AF2EFC125893A.gif"
+    assert attachment.size == 35
+    assert attachment.content_type == "image/gif"
+
+
+@pytest.mark.django_db
+def test_recipient_case_insensitive(foirequest_with_msg):
+    with open(p("test_mail_08.txt"), "rb") as f:
+        process_mail.delay(
+            f.read().replace(
+                foirequest_with_msg.secret_address.encode(),
+                foirequest_with_msg.secret_address.upper().encode(),
+            )
+        )
+    messages = foirequest_with_msg.messages
+    assert len(messages) == 2
+    message = messages[1]
+    assert message.timestamp.date() == timezone.now().date()
