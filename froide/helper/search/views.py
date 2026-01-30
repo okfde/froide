@@ -63,7 +63,11 @@ class BaseSearchView(ListView):
         if not self.has_query:
             s = s.sort(self.default_sort)
         else:
-            s = s.highlight_options(encoder="html").highlight("content")
+            # Retrieve 10 fragments of highlighted text, to be reduced to 5 later on
+            # due to possible duplicates.
+            s = s.highlight_options(encoder="html", number_of_fragments=10).highlight(
+                "content"
+            )
             s = s.sort("_score")
         return s
 
