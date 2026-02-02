@@ -239,6 +239,90 @@ async def test_make_request_logged_out_with_existing_account(
 
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
+async def test_edit_request_boilerplate(
+    page: Page, live_server, public_body_with_index, dummy_user
+):
+    pb = PublicBody.objects.all().first()
+    await do_login(page, live_server)
+    await go_to_make_request_url(page, live_server)
+
+    await page.get_by_role("checkbox", name="Skip this part next time and").check()
+    await page.get_by_role("button", name="Skip").click()
+
+    await page.locator(".search-public_bodies").fill(pb.name)
+    await page.get_by_role("button", name="Search").click()
+    await page.get_by_role("link", name="Make request").first.click()
+    await page.get_by_role("textbox", name="Subject:").fill(req_title)
+
+    await page.get_by_role("checkbox", name="Don't wrap in template").check()
+
+    body = page.get_by_role("textbox", name="Request body:")
+    initial_template = await body.input_value()
+    assert initial_template
+
+    await body.fill(req_body)
+
+    await page.get_by_role("checkbox", name="I confirm that I am not").check()
+    await page.get_by_role("button", name="Next").click()
+
+    await (
+        page.locator("#step_request_public").get_by_role("button", name="Next").click()
+    )
+    await page.get_by_role("button", name="Submit request").click()
+
+    await page.wait_for_url(f"**{reverse('foirequest-request_sent')}*")
+
+    req = FoiRequest.objects.filter(user=dummy_user).order_by("-id")[0]
+    assert req.title == req_title
+    assert req.description in req_body
+    assert all(
+        line.strip() not in req.messages[0].plaintext
+        for line in initial_template.split("\n")
+        if line.strip()
+    )
+
+
+@pytest.mark.django_db
+@pytest.mark.asyncio(loop_scope="session")
+async def test_skip_search_similar(
+    page: Page, live_server, world, public_body_with_index
+):
+    pb = PublicBody.objects.all().first()
+    await do_login(page, live_server)
+    await go_to_make_request_url(page, live_server)
+
+    await page.get_by_role("checkbox", name="Skip this part next time and").check()
+    await page.get_by_role("button", name="Skip").click()
+
+    await page.locator(".search-public_bodies").fill(pb.name)
+    await page.get_by_role("button", name="Search").click()
+    await page.get_by_role("link", name="Make request").first.click()
+    await page.get_by_role("textbox", name="Subject:").fill(req_title)
+    await page.get_by_role("textbox", name="Request body:").fill(req_body)
+    await page.get_by_role("checkbox", name="I confirm that I am not").check()
+    await page.get_by_role("button", name="Next").click()
+
+    await (
+        page.locator("#step_request_public").get_by_role("button", name="Next").click()
+    )
+    await page.get_by_role("button", name="Submit request").click()
+
+    await page.wait_for_url(f"**{reverse('foirequest-request_sent')}*")
+
+    await go_to_make_request_url(page, live_server)
+
+    await page.get_by_role("heading", name="Choose public body").click()
+
+    await expect(page.get_by_role("heading", name="Choose public body")).to_be_visible()
+
+    await page.get_by_role("link", name="Similar requests").click()
+    await expect(
+        page.get_by_role("checkbox", name="Skip this part next time and")
+    ).to_be_checked()
+
+
+@pytest.mark.django_db
+@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
     [("", "successful"), ("successful", "refused")],
