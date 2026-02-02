@@ -81,12 +81,12 @@ class MakeRequestView(FormView):
     form_class = RequestForm
     template_name = "foirequest/request.html"
     FORM_CONFIG_PARAMS = (
-        "hide_similar",
-        "hide_public",
-        "hide_draft",
-        "hide_publicbody",
-        "hide_full_text",
-        "hide_editing",
+        "hide_similar",  # hide similar request search
+        "hide_public",  # hide option to make request non-public
+        "hide_draft",  # hide button to save request as draft
+        "hide_publicbody",  # hide option to change public body. use on public-body specific request url
+        "hide_full_text",  # hide option to edit the request boilerplate text
+        "hide_editing",  # hide step to write request text. use together with body param
     )
 
     draft = None
