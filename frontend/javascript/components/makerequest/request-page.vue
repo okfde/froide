@@ -1007,8 +1007,4 @@ legend {
   color: #999;
   text-decoration: underline;
 }
-
-:deep(.campaign-logo) {
-  max-height: 6em;
-}
 </style>
