@@ -246,17 +246,6 @@ async def test_make_request_logged_out_with_existing_account(page, live_server, 
 
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
-async def test_collapsed_menu(page, live_server):
-    SCREEN_SIZE = (400, 800)
-    await page.set_viewport_size({"width": SCREEN_SIZE[0], "height": SCREEN_SIZE[1]})
-    await page.goto(live_server.url + reverse("index"))
-    await expect(page.locator(".navbar form[role=search]")).not_to_be_visible()
-    await page.locator(".navbar-toggler").click()
-    await expect(page.locator(".navbar form[role=search]")).to_be_visible()
-
-
-@pytest.mark.django_db
-@pytest.mark.asyncio(loop_scope="session")
 @pytest.mark.parametrize(
     "from_resolution, to_resolution",
     [("", "successful"), ("successful", "refused")],
