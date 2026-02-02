@@ -63,6 +63,8 @@ async def test_make_not_logged_in_request(
     assert req.public
     assert req.public_body == pb
     assert req.status == FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
+    assert req.description == req_body
+    assert req_body in req.messages[0].plaintext
     message = mail.outbox[0]
     match = re.search(r"http://[^/]+(/.+)", message.body)
     activate_url = match.group(1)
@@ -117,6 +119,8 @@ async def test_make_not_logged_in_request_to_public_body(
     assert req.public
     assert req.public_body == pb
     assert req.status == FoiRequest.STATUS.AWAITING_USER_CONFIRMATION
+    assert req.description == req_body
+    assert req_body in req.messages[0].plaintext
 
 
 @pytest.mark.django_db
@@ -148,8 +152,8 @@ async def test_make_logged_in_request(
 
     req = FoiRequest.objects.filter(user=dummy_user).order_by("-id")[0]
     assert req.title == req_title
-    assert req.description in req_body
-    assert req_body, req.messages[0].plaintext
+    assert req.description == req_body
+    assert req_body in req.messages[0].plaintext
     assert req.public
     assert req.public_body == pb
     assert req.status == "awaiting_response"
