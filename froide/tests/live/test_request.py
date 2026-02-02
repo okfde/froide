@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 import pytest
-from playwright.async_api import expect
+from playwright.async_api import Page, expect
 
 from froide.foirequest.models import FoiRequest, RequestDraft
 from froide.foirequest.tests import factories
@@ -16,10 +16,15 @@ from .utils import do_login, go_to_make_request_url, go_to_request_page
 
 User = get_user_model()
 
+req_title = "FoiRequest Number"
+req_body = "Documents describing & something..."
+
 
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
-async def test_make_not_logged_in_request(page, live_server, public_body_with_index):
+async def test_make_not_logged_in_request(
+    page: Page, live_server, public_body_with_index
+):
     pb = PublicBody.objects.all().first()
     await go_to_make_request_url(page, live_server)
     await page.locator("request-page .btn-primary >> nth=0").click()
@@ -40,9 +45,8 @@ async def test_make_not_logged_in_request(page, live_server, public_body_with_in
     await page.locator("[name=terms]").click()
     await page.locator("#step_create_account .btn-primary").click()
 
-    req_title = "FoiRequest Number"
     await page.fill("[name=subject]", req_title)
-    await page.fill("[name=body]", "Documents describing something...")
+    await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
     await page.locator("#step_write_request .btn-primary").click()
 
@@ -50,16 +54,7 @@ async def test_make_not_logged_in_request(page, live_server, public_body_with_in
 
     await page.locator("#send-request-button").click()
 
-    new_account_url = reverse("account-new")
-
-    # FIXME
-    await page.wait_for_timeout(1000)
-    # none of these worked, unexpectedly:
-    # await page.wait_for_url('*'+new_account-url+'*')
-    # await page.wait_for_url('*')
-    # await page.wait_for_load_state()
-
-    assert new_account_url in page.url
+    await page.wait_for_url(f"**{reverse('account-new')}*")
 
     new_user = User.objects.get(email=user_email)
     assert not new_user.private
@@ -83,14 +78,15 @@ async def test_make_not_logged_in_request(page, live_server, public_body_with_in
 
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
-async def test_make_not_logged_in_request_to_public_body(page, live_server, world):
+async def test_make_not_logged_in_request_to_public_body(
+    page: Page, live_server, world
+):
     pb = PublicBody.objects.all().first()
     assert pb
     await go_to_make_request_url(page, live_server, pb=pb)
 
-    req_title = "FoiRequest Number"
     await page.fill("[name=subject]", req_title)
-    await page.fill("[name=body]", "Documents describing something...")
+    await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
     await page.locator("#step_write_request .btn-primary").click()
 
@@ -110,9 +106,8 @@ async def test_make_not_logged_in_request_to_public_body(page, live_server, worl
 
     await page.locator("#send-request-button").click()
 
-    new_account_url = reverse("account-new")
-    await page.wait_for_timeout(1000)
-    assert new_account_url in page.url
+    await page.wait_for_url(f"**{reverse('account-new')}*")
+
     new_user = User.objects.get(email=user_email)
     assert new_user.first_name == user_first_name
     assert new_user.last_name == user_last_name
@@ -140,23 +135,21 @@ async def test_make_logged_in_request(
     await expect(buttons).to_have_count(2)
     await page.locator(".search-results .search-result .btn >> nth=0").click()
 
-    req_title = "FoiRequest Number"
-    body_text = "Documents describing & something..."
     await page.fill("[name=subject]", req_title)
-    await page.fill("[name=body]", body_text)
+    await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
     await page.locator("#step_write_request .btn-primary").click()
 
     await page.locator("#step_request_public .btn-primary").click()
 
     await page.locator("#send-request-button").click()
-    request_sent = reverse("foirequest-request_sent")
-    await page.wait_for_timeout(1000)
-    assert request_sent in page.url
+
+    await page.wait_for_url(f"**{reverse('foirequest-request_sent')}*")
+
     req = FoiRequest.objects.filter(user=dummy_user).order_by("-id")[0]
     assert req.title == req_title
-    assert req.description in body_text
-    assert body_text, req.messages[0].plaintext
+    assert req.description in req_body
+    assert req_body, req.messages[0].plaintext
     assert req.public
     assert req.public_body == pb
     assert req.status == "awaiting_response"
@@ -165,7 +158,7 @@ async def test_make_logged_in_request(
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
 async def test_make_logged_in_request_too_many(
-    page,
+    page: Page,
     live_server,
     foi_request_factory,
     foi_message_factory,
@@ -183,34 +176,32 @@ async def test_make_logged_in_request_too_many(
     pb = PublicBody.objects.all().first()
     await go_to_make_request_url(page, live_server, pb=pb)
 
-    req_title = "FoiRequest Number"
-    body_text = "Documents describing & something..."
     await page.fill("[name=subject]", req_title)
-    await page.fill("[name=body]", body_text)
+    await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
     await page.locator("#step_write_request .btn-primary").click()
 
     await page.locator("#step_request_public .btn-primary").click()
     await page.locator("#send-request-button").click()
-    make_request = reverse("foirequest-make_request")
-    await page.wait_for_timeout(1000)
-    assert make_request in page.url
+
+    await page.wait_for_load_state()
+
     alert = page.locator(".alert-danger", has_text="exceeded your request limit")
     await expect(alert).to_be_visible()
 
 
 @pytest.mark.django_db
 @pytest.mark.asyncio(loop_scope="session")
-async def test_make_request_logged_out_with_existing_account(page, live_server, world):
+async def test_make_request_logged_out_with_existing_account(
+    page: Page, live_server, world
+):
     pb = PublicBody.objects.all().first()
     user = User.objects.get(username="dummy")
     await go_to_make_request_url(page, live_server, pb=pb)
-    req_title = "FoiRequest Number"
-    body_text = "Documents describing & something..."
     user_first_name = user.first_name
     user_last_name = user.last_name
     await page.fill("[name=subject]", req_title)
-    await page.fill("[name=body]", body_text)
+    await page.fill("[name=body]", req_body)
     await page.locator("[name=confirm]").click()
     await page.locator("#step_write_request .btn-primary").click()
 
@@ -230,9 +221,7 @@ async def test_make_request_logged_out_with_existing_account(page, live_server, 
     draft_count = RequestDraft.objects.filter(user=None).count()
     await page.locator("#send-request-button").click()
 
-    new_account_url = reverse("account-new")
-    await page.wait_for_timeout(1000)
-    assert new_account_url in page.url
+    await page.wait_for_url(f"**{reverse('account-new')}*")
 
     new_count = FoiRequest.objects.filter(user=user).count()
     assert old_count == new_count
