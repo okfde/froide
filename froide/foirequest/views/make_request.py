@@ -792,9 +792,9 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        # skip "i confirm" nag heuristically for all who can multi-request
-        # TODO: find better heuristic for "trusted users"?
-        confirm_required = not is_multi
+        # skip "i confirm this is a foi request" for users who can multi-request
+        # or if editing is hidden (less friction for pre-written requests)
+        confirm_required = not (config["hide_editing"] or is_multi)
 
         campaigns = Campaign.objects.get_active()
 
