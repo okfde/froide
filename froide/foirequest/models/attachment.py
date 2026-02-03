@@ -38,7 +38,7 @@ WORD_FILEEXTENSIONS = (
     ".wbk",
     ".docx",
     ".docm",
-    "dotx",
+    ".dotx",
     ".dotm",
     ".docb",
 )
@@ -82,6 +82,7 @@ ARCHIVE_FILEEXTENSIONS = (
 
 POWERPOINT_FILETYPES = (
     "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     "application/vnd.ms-powerpoint.presentation.macroenabled.12",
     "application/vnd.ms-powerpoint.slideshow.macroenabled.12",
 )
