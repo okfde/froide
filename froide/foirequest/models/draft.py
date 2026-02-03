@@ -85,6 +85,7 @@ class RequestDraft(models.Model):
             "public": self.public,
             "full_text": self.full_text,
             "law_type": self.law_type,
+            "proof": self.proof_id,
         }
         if self.reference:
             context["reference"] = self.reference

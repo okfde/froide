@@ -17,7 +17,7 @@ from .models import Proof, ProofAttachment, TemporaryProof
 from .widgets import ProofImageWidget, get_widget_context
 
 
-def get_proof_choice_field(user):
+def get_proof_choice_field(user, initial=None):
     proof_choices = Proof.objects.filter(user=user)
     if proof_choices:
         return forms.ModelChoiceField(
@@ -27,6 +27,7 @@ def get_proof_choice_field(user):
             ),
             queryset=proof_choices,
             required=False,
+            initial=initial,
             widget=BootstrapSelect,
         )
 
@@ -63,7 +64,9 @@ class ProofMessageForm(JSONMixin, ProofSettingsForm):
         self.fields["proof_image"].required = False
         self.user = user
         if user.is_authenticated:
-            proof_choice = get_proof_choice_field(user)
+            proof_choice = get_proof_choice_field(
+                user, initial=self.initial.get("proof")
+            )
             if proof_choice:
                 self.fields["proof"] = proof_choice
         self.fields["proof_store"].help_text = format_html(
