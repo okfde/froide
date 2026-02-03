@@ -188,7 +188,7 @@
         name="save_draft"
         value="true"
         :disabled="needCorrection"
-        @click="submitting = true"
+        @click="$emit('savedraft')"
       >
         <i class="fa fa-save" aria-hidden="true" />
         {{ i18n.saveAsDraft }}
@@ -200,11 +200,11 @@
 <script>
 import LetterMixin from './lib/letter-mixin'
 
-import ReviewRequestLine from './review-request-line.vue'
 import ReviewPublicbody from './review-publicbody.vue'
+import ReviewRequestLine from './review-request-line.vue'
 import UserConfirmation from './user-confirmation'
 
-import { mapMutations, mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 import { SET_STEP, STEPS } from '../../store/mutation_types'
 
@@ -216,7 +216,7 @@ export default {
     ReviewPublicbody,
     UserConfirmation
   },
-  emits: ['submit', 'onlinehelpClick'],
+  emits: ['submit', 'onlinehelpClick', 'savedraft'],
   props: {
     i18n: {
       type: Object,
