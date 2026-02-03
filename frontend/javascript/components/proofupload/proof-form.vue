@@ -115,7 +115,10 @@ export default {
   },
   data() {
     return {
-      proof: this.form.fields.proof?.value,
+      proof:
+        this.form.fields.proof?.value ||
+        this.form.fields.proof?.initial ||
+        null,
       proofImage: null
     }
   },

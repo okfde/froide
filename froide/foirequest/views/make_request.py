@@ -610,22 +610,13 @@ class MakeRequestView(FormView):
             request_form.add_error(None, _("Draft cannot be used again."))
             error = True
 
-        if request_form.is_valid() and request.user.is_authenticated:
-            if request.POST.get("save_draft", ""):
-                return self.save_draft(request_form, publicbody_form)
-            if request.user.is_blocked:
-                messages.add_message(
-                    self.request,
-                    messages.WARNING,
-                    _("Your account cannot send requests."),
-                )
-                return self.save_draft(request_form, publicbody_form)
+        proof_form = self.get_proof_form()
+        if proof_form and not proof_form.is_valid():
+            error = True
 
         user_form = self.get_user_form()
         if not user_form.is_valid():
             error = True
-
-        proof_form = self.get_proof_form()
 
         form_kwargs = {
             "request_form": request_form,
@@ -633,6 +624,18 @@ class MakeRequestView(FormView):
             "publicbody_form": publicbody_form,
             "proof_form": proof_form,
         }
+
+        if not error and request.user.is_authenticated:
+            # Check if we should save as draft
+            if request.POST.get("save_draft", ""):
+                return self.save_draft(**form_kwargs)
+            if request.user.is_blocked:
+                messages.add_message(
+                    self.request,
+                    messages.WARNING,
+                    _("Your account cannot send requests."),
+                )
+                return self.save_draft(**form_kwargs)
 
         if not error:
             return self.form_valid(**form_kwargs)
@@ -650,11 +653,18 @@ class MakeRequestView(FormView):
 
         return self.form_invalid(**form_kwargs)
 
-    def save_draft(self, request_form, publicbody_form):
+    def save_draft(self, *, request_form, publicbody_form, user_form, proof_form):
+        user = self.request.user
+        user_form.save(user=user)
+
+        proof = None
+        if proof_form and proof_form.is_valid():
+            proof = proof_form.save()
+
         publicbodies = publicbody_form.get_publicbodies()
 
         service = SaveDraftService(
-            {"publicbodies": publicbodies, "request_form": request_form}
+            {"publicbodies": publicbodies, "request_form": request_form, "proof": proof}
         )
         service.execute(self.request)
         messages.add_message(
@@ -819,6 +829,11 @@ class DraftRequestView(MakeRequestView, DetailView):
 
     def get_publicbodies_from_context(self):
         return self.object.publicbodies.all()
+
+    def get_proof_form(self):
+        return ProofMessageForm(
+            user=self.request.user, initial={"proof": self.object.proof_id}
+        )
 
 
 def get_new_account_url(foi_object, email=None):

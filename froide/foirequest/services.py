@@ -340,6 +340,7 @@ class SaveDraftService(BaseService):
             "public": request_form.cleaned_data["public"],
             "reference": request_form.cleaned_data.get("reference", ""),
             "law_type": request_form.cleaned_data.get("law_type", ""),
+            "proof": data.get("proof"),
         }
         if draft is None:
             draft = RequestDraft.objects.create(user=request.user, **additional_kwargs)
