@@ -1,11 +1,13 @@
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
+from froide.proof.models import Proof
 from froide.publicbody.models import PublicBody
 
 from .request import FoiProject, FoiRequest
@@ -34,6 +36,7 @@ class RequestDraft(models.Model):
     public = models.BooleanField(default=True)
     reference = models.CharField(max_length=255, blank=True)
     law_type = models.CharField(max_length=255, blank=True)
+    proof = models.ForeignKey(Proof, null=True, blank=True, on_delete=models.SET_NULL)
     flags = models.JSONField(blank=True, default=dict)
 
     request = models.ForeignKey(
@@ -64,6 +67,12 @@ class RequestDraft(models.Model):
     @cached_property
     def is_multi_request(self):
         return self.publicbodies.all().count() > 1
+
+    def clean(self):
+        if self.proof and self.proof.user != self.user:
+            raise ValidationError(
+                {"proof": _("Proof does not belong to the draft user.")}
+            )
 
     def get_absolute_url(self):
         return reverse("foirequest-make_draftrequest", kwargs={"pk": self.id})
