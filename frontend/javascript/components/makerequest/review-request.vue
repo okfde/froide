@@ -41,7 +41,7 @@
               class="body-text review-body-text"
               :class="{ 'text-danger': needCorrectionBody }"
             >
-              <span v-text="body" />
+              <span v-text="body" /><br />
               <span v-text="letterSignatureName" />
             </div>
           </div>
