@@ -1224,6 +1224,8 @@ class RequestDraftAdmin(admin.ModelAdmin):
     date_hierarchy = "save_date"
     raw_id_fields = ("user", "publicbodies", "request", "project")
 
+    actions = ["send_draft"]
+
     def get_queryset(self, request):
         qs = (
             super()
@@ -1233,6 +1235,14 @@ class RequestDraftAdmin(admin.ModelAdmin):
             )
         )
         return qs
+
+    @admin.action(description=_("Send selected drafts as requests"))
+    def send_draft(self, request, queryset):
+        from .services import CreateFromRequestDratService
+
+        for draft in queryset:
+            service = CreateFromRequestDratService({"draft": draft})
+            service.process(request=None)
 
 
 @admin.register(DeliveryStatus)

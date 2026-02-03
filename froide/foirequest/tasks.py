@@ -16,6 +16,7 @@ from celery.exceptions import SoftTimeLimitExceeded
 from froide.celery import app as celery_app
 from froide.foirequest.models.event import FoiEvent
 from froide.foirequest.utils import find_attachment_name
+from froide.proof.models import Proof
 from froide.publicbody.models import PublicBody
 from froide.upload.models import Upload
 
@@ -88,6 +89,13 @@ def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
         # pb was deleted?
         return
 
+    proof = None
+    if proof_id := kwargs.get("proof_id"):
+        try:
+            proof = Proof.objects.get(id=proof_id, user=project.user)
+        except Proof.DoesNotExist:
+            pass
+
     kwargs.update(
         {
             "project": project,
@@ -99,6 +107,7 @@ def create_project_request(project_id, publicbody_id, sequence=0, **kwargs):
             "reference": project.reference,
             "tags": [t.name for t in project.tags.all()],
             "project_order": sequence,
+            "proof": proof,
         }
     )
     service = CreateRequestFromProjectService(kwargs)
