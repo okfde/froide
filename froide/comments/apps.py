@@ -64,10 +64,12 @@ def export_user_data(user):
 
 def set_is_moderation_flag(comment, **kwargs):
     from froide.foirequest.auth import can_moderate_foirequest
+    from froide.foirequest.models import FoiMessage
 
     is_moderation = False
     request = kwargs.get("request")
-    foi_request = comment.content_object.request
-    if can_moderate_foirequest(foi_request, request):
-        is_moderation = request.POST.get("is_moderation") == "on"
-    comment.is_moderation = is_moderation
+    if isinstance(comment.content_object, FoiMessage):
+        foi_request = comment.content_object.request
+        if can_moderate_foirequest(foi_request, request):
+            is_moderation = request.POST.get("is_moderation") == "on"
+        comment.is_moderation = is_moderation
