@@ -27,8 +27,17 @@ class FoiRequestDocument(Document):
         search_quote_analyzer=search_quote_analyzer,
         index_options="offsets",
     )
-    title = fields.TextField()
-    description = fields.TextField(attr="get_description")
+    title = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+        search_quote_analyzer=search_quote_analyzer,
+    )
+    description = fields.TextField(
+        attr="get_description",
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+        search_quote_analyzer=search_quote_analyzer,
+    )
 
     resolution = fields.KeywordField()
     status = fields.KeywordField()

@@ -1,13 +1,21 @@
 from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 
-from froide.helper.search import get_index, get_ngram_analyzer, get_text_analyzer
+from froide.helper.search import (
+    get_index,
+    get_ngram_analyzer,
+    get_search_analyzer,
+    get_search_quote_analyzer,
+    get_text_analyzer,
+)
 
 from .models import PublicBody
 
 index = get_index("publicbody")
 
 analyzer = get_text_analyzer()
+search_analyzer = get_search_analyzer()
+search_quote_analyzer = get_search_quote_analyzer()
 ngram_analyzer = get_ngram_analyzer()
 
 
@@ -17,9 +25,15 @@ class PublicBodyDocument(Document):
     name = fields.TextField(
         fields={"raw": fields.KeywordField()},
         analyzer=analyzer,
+        search_analyzer=get_search_analyzer(),
+        search_quote_analyzer=get_search_quote_analyzer(),
     )
     name_auto = fields.TextField(attr="all_names", analyzer=ngram_analyzer)
-    content = fields.TextField(analyzer=analyzer)
+    content = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=get_search_analyzer(),
+        search_quote_analyzer=get_search_quote_analyzer(),
+    )
 
     jurisdiction = fields.IntegerField(attr="jurisdiction_id")
 

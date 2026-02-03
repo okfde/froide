@@ -20,8 +20,16 @@ search_quote_analyzer = get_search_quote_analyzer()
 class PageDocument(Document):
     document = fields.IntegerField(attr="document_id")
 
-    title = fields.TextField()
-    description = fields.TextField()
+    title = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+        search_quote_analyzer=search_quote_analyzer,
+    )
+    description = fields.TextField(
+        analyzer=analyzer,
+        search_analyzer=search_analyzer,
+        search_quote_analyzer=search_quote_analyzer,
+    )
 
     tags = fields.ListField(fields.KeywordField())
     created_at = fields.DateField()
