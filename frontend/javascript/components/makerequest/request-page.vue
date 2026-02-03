@@ -372,6 +372,7 @@
                   :hide-publicbody-chooser="hidePublicbodyChooser"
                   :show-draft="showDraft"
                   @submit="submit"
+                  @savedraft="saveDraft"
                   @onlinehelp-click="onlineHelpShow($event)"
                 />
               </div>
@@ -388,40 +389,40 @@
 </template>
 
 <script>
-import SimilarRequests from './similar-requests'
 import SimilarRequestSearch from './similar-request-search'
+import SimilarRequests from './similar-requests'
 // TODO: rename, un-beta, remove old?
+import DjangoSlot from '../../lib/django-slot.vue'
+import OnlineHelp from '../online-help.vue'
+import SimpleStepper from '../postupload/simple-stepper.vue'
+import PbMultiReview from '../publicbody/pb-multi-review'
 import PublicbodyBetaChooser from '../publicbody/publicbody-beta-chooser.vue'
 import PublicbodyMultiChooser from '../publicbody/publicbody-multichooser'
-import ReviewRequest from './review-request'
-import PbMultiReview from '../publicbody/pb-multi-review'
 import RequestForm from './request-form'
 import RequestPublic from './request-public'
-import DjangoSlot from '../../lib/django-slot.vue'
-import SimpleStepper from '../postupload/simple-stepper.vue'
-import OnlineHelp from '../online-help.vue'
+import ReviewRequest from './review-request'
 
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 import {
+  CACHE_PUBLICBODIES,
+  SET_PUBLICBODIES,
   SET_STEP,
   SET_STEP_NO_HISTORY,
-  UPDATE_SUBJECT,
+  STEPS,
   UPDATE_BODY,
   UPDATE_FULL_TEXT,
   UPDATE_REQUEST_PUBLIC,
-  UPDATE_TERMS,
-  STEPS,
-  CACHE_PUBLICBODIES,
-  SET_PUBLICBODIES
+  UPDATE_SUBJECT,
+  UPDATE_TERMS
 } from '../../store/mutation_types'
 
-import LetterMixin from './lib/letter-mixin'
-import StoreValueMixin from './lib/store-values-mixin'
 import I18nMixin from '../../lib/i18n-mixin'
-import UserCreateAccount from './user-create-account.vue'
 import IntroCampaigns from './intro-campaigns.vue'
 import IntroSkipPreference from './intro-skip-preference.vue'
+import LetterMixin from './lib/letter-mixin'
+import StoreValueMixin from './lib/store-values-mixin'
+import UserCreateAccount from './user-create-account.vue'
 
 export default {
   name: 'RequestPage',
@@ -827,6 +828,9 @@ export default {
     })
   },
   methods: {
+    saveDraft() {
+      this.submitting = true
+    },
     submit() {
       this.fetchError = null
       this.submitting = true
