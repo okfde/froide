@@ -1218,7 +1218,11 @@ class RequestDraftAdmin(admin.ModelAdmin):
         "user",
         "subject",
     )
-    list_filter = ("public", "full_text")
+    list_filter = (
+        "public",
+        "full_text",
+        ("user", ForeignKeyFilter),
+    )
     search_fields = ["subject", "user_email_deterministic"]
     ordering = ("-save_date",)
     date_hierarchy = "save_date"
