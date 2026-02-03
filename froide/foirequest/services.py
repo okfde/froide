@@ -162,6 +162,7 @@ class CreateRequestService(BaseService):
             "language": data.get("language", ""),
             "address": data.get("address"),
             "full_text": data.get("full_text", False),
+            "proof_id": data.get("proof").id if data.get("proof") else None,
         }
         transaction.on_commit(
             partial(create_project_requests.delay, project.id, publicbody_ids, **extra)
@@ -315,6 +316,27 @@ class CreateRequestFromProjectService(CreateRequestService):
         return self.create_request(pb, sequence=data["project_order"], request=request)
 
 
+class CreateFromRequestDratService(CreateRequestService):
+    def process(self, request=None):
+        draft: RequestDraft = self.data["draft"]
+        self.data["user"] = draft.user
+        self.data["subject"] = draft.subject
+        self.data["body"] = draft.body
+        self.data["public"] = draft.public
+        self.data["reference"] = draft.reference
+        self.data["law_type"] = draft.law_type
+        self.data["full_text"] = draft.full_text
+        self.data["proof"] = draft.proof
+        pbs = draft.publicbodies.all()
+        self.data["publicbodies"] = pbs
+        if len(pbs) == 1:
+            foi_object = self.create_request(pbs[0], request=request)
+        else:
+            foi_object = self.create_project()
+        self.post_creation(foi_object)
+        return foi_object
+
+
 class CreateSameAsRequestService(CreateRequestService):
     def create_request(self, publicbody, sequence=0, request=None):
         original_request = self.data["original_foirequest"]
@@ -341,6 +363,12 @@ class SaveDraftService(BaseService):
             "reference": request_form.cleaned_data.get("reference", ""),
             "law_type": request_form.cleaned_data.get("law_type", ""),
             "proof": data.get("proof"),
+        }
+        already = set(additional_kwargs.keys()) | {
+            "draft",
+        }
+        additional_kwargs["flags"] = {
+            k: v for k, v in request_form.cleaned_data.items() if k not in already
         }
         if draft is None:
             draft = RequestDraft.objects.create(user=request.user, **additional_kwargs)

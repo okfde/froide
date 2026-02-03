@@ -91,6 +91,7 @@ class RequestDraft(models.Model):
             context["reference"] = self.reference
         if self.flags:
             context.update(self.flags)
+        context["tags"] = ",".join(context.get("tags", []))
         return context
 
     def get_url_params(self):
