@@ -4,6 +4,11 @@ from django.apps import AppConfig
 from django.utils.translation import gettext_lazy as _
 
 
+class ProofNoConfig(AppConfig):
+    name = "froide.proof"
+    verbose_name = _("Proofs")
+
+
 class ProofConfig(AppConfig):
     name = "froide.proof"
     verbose_name = _("Proofs")
