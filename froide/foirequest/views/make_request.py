@@ -794,7 +794,7 @@ class MakeRequestView(FormView):
 
         # skip "i confirm this is a foi request" for users who can multi-request
         # or if editing is hidden (less friction for pre-written requests)
-        confirm_required = not (config["hide_editing"] or is_multi)
+        confirm_required = not (config.get("hide_editing") or is_multi)
 
         campaigns = Campaign.objects.get_active()
 
