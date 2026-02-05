@@ -81,12 +81,12 @@ class MakeRequestView(FormView):
     form_class = RequestForm
     template_name = "foirequest/request.html"
     FORM_CONFIG_PARAMS = (
-        "hide_similar",
-        "hide_public",
-        "hide_draft",
-        "hide_publicbody",
-        "hide_full_text",
-        "hide_editing",
+        "hide_similar",  # hide similar request search
+        "hide_public",  # hide option to make request non-public
+        "hide_draft",  # hide button to save request as draft
+        "hide_publicbody",  # hide option to change public body. use on public-body specific request url
+        "hide_full_text",  # hide option to edit the request boilerplate text
+        "hide_editing",  # hide step to write request text. use together with body param
     )
 
     draft = None
@@ -792,9 +792,9 @@ class MakeRequestView(FormView):
         if self.request.GET.get("single") is not None:
             is_multi = False
 
-        # skip "i confirm" nag heuristically for all who can multi-request
-        # TODO: find better heuristic for "trusted users"?
-        confirm_required = not is_multi
+        # skip "i confirm this is a foi request" for users who can multi-request
+        # or if editing is hidden (less friction for pre-written requests)
+        confirm_required = not (config.get("hide_editing") or is_multi)
 
         campaigns = Campaign.objects.get_active()
 
