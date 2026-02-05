@@ -76,10 +76,13 @@ export default {
 }
 
 .search-result {
-  border-top: 1px solid #ccc;
   margin-top: 1rem;
   padding-top: 1rem;
   cursor: pointer;
+
+  &:not(:first-child) {
+    border-top: 1px solid $gray-300;
+  }
 
   .row {
     padding: 1rem 0;
