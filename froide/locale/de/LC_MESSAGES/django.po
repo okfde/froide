@@ -16,8 +16,8 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-05 09:20+0100\n"
-"PO-Revision-Date: 2025-08-25 17:23+0100\n"
-"Last-Translator: Kara Engelhardt <kara.engelhardt@okfn.de>\n"
+"PO-Revision-Date: 2026-02-05 14:32+0000\n"
+"Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
 "Language: de\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 3.7\n"
+"X-Generator: Weblate 4.14.2\n"
 
 #: froide/accesstoken/apps.py
 msgid "Secret Access Token"
@@ -1236,7 +1236,7 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"              %(name)s hat an diesen Kampagnen teilgenommen\n"
+"              %(name)s hat an diesen Aktionen teilgenommen\n"
 "            "
 
 #: froide/account/templates/account/reauth.html
@@ -1873,11 +1873,11 @@ msgstr "Kampagne"
 #: froide/campaign/models.py froide/document/filters.py
 #: froide/foirequest/filters.py froide/foirequest/models/request.py
 msgid "campaign"
-msgstr "Kampagne"
+msgstr "Aktion"
 
 #: froide/campaign/models.py
 msgid "campaigns"
-msgstr "Kampagnen"
+msgstr "Aktionen"
 
 #: froide/campaign/templates/campaign/request_banner.html
 #, python-format
@@ -1888,9 +1888,9 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"           Diese Anfrage wurde als Teil der Kampagne <a "
-"href=\"%(url)s\">„%(name)s“</a> gestellt.\n"
-"          "
+"              Diese Anfrage wurde als Teil der Aktion <a href=\"%(url)s\""
+">„%(name)s“</a> gestellt.\n"
+"            "
 
 #: froide/campaign/templates/campaign/request_banner.html
 #: froide/foirequest/views/make_request.py
@@ -1902,8 +1902,8 @@ msgid ""
 "This request seems like it should belong to a campaign. Please use the "
 "campaign interface to make the request."
 msgstr ""
-"Es sieht so aus, als sollte diese Anfrage zu einer Kampagne gehören. Bitte "
-"nutzen Sie die Kampagnen-Seite, um die Anfrage zu stellen."
+"Es sieht so aus, als sollte diese Anfrage zu einer Aktion gehören. Bitte "
+"nutzen Sie die Aktionsseite, um die Anfrage zu stellen."
 
 #: froide/comments/admin.py
 msgid "Content"
@@ -2081,7 +2081,7 @@ msgstr "von %(publicbody)s"
 #: froide/document/feeds.py
 #, python-format
 msgid "resulting from campaign “%(campaign)s”"
-msgstr "aus der Kampagne „%(campaign)s“"
+msgstr "aus der Aktion „%(campaign)s“"
 
 #: froide/document/feeds.py
 #, python-format
@@ -2113,12 +2113,12 @@ msgstr "{title} (Seite {page})"
 #: froide/document/filters.py froide/foirequest/api_views/attachment.py
 #: froide/foirequest/filters.py
 msgid "all/no campaigns"
-msgstr "alle/keine Kampagnen"
+msgstr "alle/keine Aktionen"
 
 #: froide/document/filters.py froide/foirequest/api_views/attachment.py
 #: froide/foirequest/api_views/request.py froide/foirequest/filters.py
 msgid "no campaign"
-msgstr "Keine Kampagne"
+msgstr "Keine Aktion"
 
 #: froide/document/filters.py froide/foirequest/filters.py
 #: froide/publicbody/filters.py
@@ -4487,7 +4487,7 @@ msgstr "Eindeutige Zuständigkeitsbereiche:"
 
 #: froide/foirequest/templates/admin/foirequest/foirequest/change_list.html
 msgid "Distinct campaigns:"
-msgstr "Eindeutige Kampagnen:"
+msgstr "Eindeutige Aktionen:"
 
 #: froide/foirequest/templates/foirequest/_assign_project_form.html
 #, python-format
