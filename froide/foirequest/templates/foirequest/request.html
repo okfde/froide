@@ -86,9 +86,7 @@
             {% include "foirequest/snippets/request_publicbody_search_hint.html" %}
         </template>
         <template data-slot="publicbody-help-text">
-            <p>
-                {% blocktrans %}Which public body do you want to request information at? Here you can search and filter all available public bodies.{% endblocktrans %}
-            </p>
+            {% include "foirequest/snippets/request_publicbody_helptext.html" %}
         </template>
         <template data-slot="publicbody-missing">
             <h3 class="fs-6">{% trans "Can’t find a specific public body?" %}</h3>
