@@ -170,7 +170,11 @@
                   <div class="row">
                     <div class="col-lg-9">
                       <DjangoSlot name="publicbody-legend-title" />
-                      <DjangoSlot name="publicbody-help-text" />
+                      <DjangoSlot
+                        name="publicbody-help-text"
+                        has-onlinehelp-links
+                        @onlinehelp-click="onlineHelpShow($event)"
+                      />
                       <PublicbodyBetaChooser
                         name="publicbody"
                         :defaultsearch="publicBodySearch"
