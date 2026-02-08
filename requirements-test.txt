@@ -205,7 +205,7 @@ fido2==2.0.0
     # via django-mfa3
 filelock==3.19.1
     # via virtualenv
-fonttools==4.60.0
+fonttools==4.60.2
     # via weasyprint
 frozenlist==1.7.0
     # via
