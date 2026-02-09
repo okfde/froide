@@ -176,7 +176,7 @@ feedgen==1.0.0
     # via django-filingcabinet
 fido2==2.0.0
     # via django-mfa3
-fonttools==4.60.0
+fonttools==4.60.2
     # via weasyprint
 frozenlist==1.7.0
     # via
