@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-02-09 18:32+0100\n"
-"PO-Revision-Date: 2026-02-05 14:32+0000\n"
+"PO-Revision-Date: 2026-02-09 17:42+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
 "froide/de/>\n"
@@ -213,10 +213,8 @@ msgid "Successfully executed."
 msgstr "Erfolgreich ausgeführt."
 
 #: froide/account/admin.py
-#, fuzzy
-#| msgid "Deactivate and block users"
 msgid "Reactivate users"
-msgstr "Nutzer:in deaktivieren und blocken"
+msgstr "Nutzer:in reaktivieren"
 
 #: froide/account/apps.py
 #: froide/account/templates/account/includes/breadcrumbs.html
@@ -532,7 +530,7 @@ msgstr "getaggte Nutzer:innen"
 #: froide/account/models.py
 #, python-format
 msgid "%(value)s is not lowercase"
-msgstr ""
+msgstr "%(value)s ist nicht in Kleinbuchstaben"
 
 #: froide/account/models.py
 msgid "username"
@@ -2576,16 +2574,12 @@ msgid "Has request"
 msgstr "Hat Anfrage"
 
 #: froide/foirequest/admin.py
-#, fuzzy
-#| msgid "Message was not sent"
 msgid "Message Content"
-msgstr "Nachricht wurde nicht gesendet"
+msgstr "Nachrichteninhalt"
 
 #: froide/foirequest/admin.py
-#, fuzzy
-#| msgid "Advanced"
 msgid "Advanced Options"
-msgstr "Fortgeschritten"
+msgstr "Fortgeschrittene Optionen"
 
 #: froide/foirequest/admin.py
 msgid "Close associated requests"
@@ -2630,10 +2624,8 @@ msgid "Publish project and all requests"
 msgstr "Veröffentliche Projekt und alle Anfragen"
 
 #: froide/foirequest/admin.py
-#, fuzzy
-#| msgid "Set status on selected requests"
 msgid "Send selected drafts as requests"
-msgstr "Legen Sie den Status der ausgewählten Anfragen fest"
+msgstr "Ausgewählte Entwürfe als Anfrage absenden"
 
 #: froide/foirequest/api_views/attachment.py
 msgid "Can't delete attachments on non-postal messages."
@@ -3446,7 +3438,7 @@ msgstr "Entwurf „{subject}“ von {user}"
 
 #: froide/foirequest/models/draft.py
 msgid "Proof does not belong to the draft user."
-msgstr ""
+msgstr "Nachweis gehört nicht zur Entwurfsnutzer:in."
 
 #: froide/foirequest/models/event.py froide/foirequest/models/message.py
 msgid "unknown"
@@ -6945,20 +6937,16 @@ msgid "Keep it <strong>focused and concise</strong>."
 msgstr "Halten Sie es <strong>kurz und bündig</strong>."
 
 #: froide/foirequest/templates/foirequest/snippets/request_hints.html
-#, fuzzy
-#| msgid ""
-#| "Do <strong>not include</strong> personal information in your request."
 msgid ""
 "Do <strong>not include or ask for</strong> personal information in your "
 "request."
 msgstr ""
-"Schließen Sie <strong>keine</strong> persönlichen Daten in Ihre Anfrage ein."
+"Schließen Sie <strong>keine</strong> persönlichen Daten in Ihre Anfrage ein "
+"und fragen Sie nicht nach solchen."
 
 #: froide/foirequest/templates/foirequest/snippets/request_hints.html
-#, fuzzy
-#| msgid "Please use proper spelling."
 msgid "Please use proper spelling and stay polite."
-msgstr "Bitte achten Sie auf Ihre Rechtschreibung."
+msgstr "Bitte achten Sie auf Ihre Rechtschreibung und bleiben Sie höflich."
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
 #, python-format
@@ -7583,22 +7571,16 @@ msgid "What do you want to do?"
 msgstr "Was möchten Sie tun?"
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy
-#| msgid "Not an FOI request"
 msgid "What can I request?"
-msgstr "Keine IFG-Anfrage"
+msgstr "Was kann ich Anfragen?"
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy
-#| msgid "Not an FOI request"
 msgid "What can’t I request?"
-msgstr "Keine IFG-Anfrage"
+msgstr "Was kann ich nicht anfragen?"
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy
-#| msgid "Search your projects"
 msgid "Search our archives:"
-msgstr "Suchen Sie in Ihren Projekten"
+msgstr "Durchsuchen Sie unser Archiv:"
 
 #: froide/foirequest/views/make_request.py
 msgid "Do you already have an account?"
@@ -7644,10 +7626,8 @@ msgid "Selecting all public bodies, please wait..."
 msgstr "Alle Behörden werden ausgewählt, bitte warten..."
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy
-#| msgid "Filter"
 msgid "Filter…"
-msgstr "Filtern"
+msgstr "Filter…"
 
 #: froide/foirequest/views/make_request.py
 msgctxt "Publicbody filter"
@@ -8042,14 +8022,9 @@ msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy, python-format
-#| msgid ""
-#| "to <a href=\"%(url)s\">%(name)s</a> and <a href=\"%(urlp)s\">%(count)s "
-#| "other public bodies</a>"
+#, python-format
 msgid "to %(name)s and %(count)s other public bodies"
-msgstr ""
-"an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s "
-"andere Behörden</a>"
+msgstr "an %(name)s und %(count)s andere Behörden"
 
 #: froide/foirequest/views/make_request.py
 msgid "Select this public body"
@@ -8084,10 +8059,8 @@ msgid "Log in"
 msgstr "Zum Login"
 
 #: froide/foirequest/views/make_request.py
-#, fuzzy
-#| msgid "Show the quoted message"
 msgid "Show entire message"
-msgstr "Zeige die zitierte Nachricht an"
+msgstr "Gesamte Nachricht anzeigen"
 
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
