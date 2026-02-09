@@ -9,359 +9,345 @@
     />
     <input type="hidden" name="law_type" :value="lawType" />
 
-    <div class="card mb-3">
-      <div class="card-body">
-        <div class="row mb-3" v-if="!hidePublicbodyChooser">
-          <div class="col-sm-3 d-flex align-items-center">
-            {{ i18n.recipientPb }}
-          </div>
-          <div class="col-sm-9 d-flex align-items-center">
-            <strong v-if="publicBodies.length === 0" class="text-danger">{{
-              i18n.none
-            }}</strong>
-            <strong v-else>{{
-              publicBodies.map((pb) => pb.name).join(', ')
-            }}</strong>
-            <!-- setStep won't work in froide-campaign, but hidePublicbodyChooser always applies there;
+    <div class="border border-2 border-gray-300 p-3 mb-3">
+      <div class="row mb-3" v-if="!hidePublicbodyChooser">
+        <div class="col-sm-3 d-flex align-items-center">
+          {{ i18n.recipientPb }}
+        </div>
+        <div class="col-sm-9 d-flex align-items-center">
+          <strong v-if="publicBodies.length === 0" class="text-danger">{{
+            i18n.none
+          }}</strong>
+          <strong v-else>{{
+            publicBodies.map((pb) => pb.name).join(', ')
+          }}</strong>
+          <!-- setStep won't work in froide-campaign, but hidePublicbodyChooser always applies there;
               and Pb choosing is handled by <CampaignChoosePublicbody> -->
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm ms-auto text-nowrap"
+            @click="setStepChangePublicbody"
+          >
+            {{ i18n.change }}
+          </button>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-3 d-flex align-items-center">
+          <label
+            class="form-check-label"
+            for="id_subject"
+            :class="{
+              'text-danger': errors.subject && !subjectChanged
+            }"
+          >
+            {{ i18n.subject }}:
+          </label>
+        </div>
+        <div class="col-sm-9 d-flex flex-wrap align-items-center">
+          <template
+            v-if="
+              editingDisabled && !(errors.subject && errors.subject.length > 0)
+            "
+          >
+            <!-- editingDisabled e.g. when ?hide_editing=1 -->
+            <input type="hidden" name="subject" :value="subject" />
+            <strong>{{ subject }}</strong>
             <button
               type="button"
               class="btn btn-secondary btn-sm ms-auto text-nowrap"
-              @click="setStepChangePublicbody"
+              @click="enableEditing"
             >
-              {{ i18n.change }}
+              {{ i18n.reviewEdit }}
             </button>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-sm-3 d-flex align-items-center">
-            <label
-              class="form-check-label"
-              for="id_subject"
-              :class="{
-                'text-danger': errors.subject && !subjectChanged
-              }"
-            >
-              {{ i18n.subject }}:
-            </label>
-          </div>
-          <div class="col-sm-9 d-flex flex-wrap align-items-center">
-            <template
+          </template>
+          <template v-else>
+            <div
               v-if="
-                editingDisabled &&
-                !(errors.subject && errors.subject.length > 0)
+                !clearFormErrors && errors.subject && errors.subject.length > 0
               "
-            >
-              <!-- editingDisabled e.g. when ?hide_editing=1 -->
-              <input type="hidden" name="subject" :value="subject" />
-              <strong>{{ subject }}</strong>
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm ms-auto text-nowrap"
-                @click="enableEditing"
-              >
-                {{ i18n.reviewEdit }}
-              </button>
-            </template>
-            <template v-else>
-              <div
-                v-if="
-                  !clearFormErrors &&
-                  errors.subject &&
-                  errors.subject.length > 0
-                "
-                class="alert my-2 w-100"
-                :class="{
-                  'alert-danger': !subjectChanged,
-                  'alert-warning': subjectChanged
-                }"
-              >
-                <ul class="list-unstyled my-0">
-                  <li v-for="error in errors.subject" :key="error.message">
-                    {{ error.message }}
-                  </li>
-                </ul>
-              </div>
-              <div
-                v-else-if="subjectValidationErrors.length > 0"
-                class="alert my-2 w-100"
-                :class="{
-                  'alert-danger': !subjectChanged,
-                  'alert-warning': subjectChanged
-                }"
-              >
-                <ul class="list-unstyled my-0">
-                  <li v-for="error in subjectValidationErrors" :key="error">
-                    {{ error }}
-                  </li>
-                </ul>
-              </div>
-              <input
-                v-model="subject"
-                ref="subject"
-                id="id_subject"
-                type="text"
-                name="subject"
-                class="form-control"
-                :minlength="formFields.subject.min_length"
-                :maxlength="formFields.subject.max_length"
-                :class="{
-                  'is-invalid':
-                    (errors.subject || subjectValid === false) &&
-                    !subjectChanged
-                }"
-                :placeholder="formFields.subject.placeholder"
-                @change="updateSubjectChanged(true)"
-                @keyup="resetSubjectCustomValidity"
-                @keydown.enter.prevent
-              />
-            </template>
-          </div>
-        </div>
-
-        <div v-if="fullText && warnFullText" class="alert alert-warning">
-          <p>
-            {{ i18n.warnFullText }}
-          </p>
-        </div>
-
-        <div
-          v-if="!clearFormErrors && errors.body && errors.body.length > 0"
-          class="alert mb-2"
-          :class="{
-            'alert-danger': !bodyChanged,
-            'alert-warning': bodyChanged
-          }"
-        >
-          <ul class="list-unstyled my-0">
-            <li v-for="error in errors.body" :key="error.message">
-              {{ error.message }}
-            </li>
-          </ul>
-          <div v-if="showPlaceholderReplacer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="fixBodyPlaceholders"
-            >
-              {{ i18n.fixPlaceholder }}
-            </button>
-          </div>
-        </div>
-        <div
-          v-else-if="bodyValidationErrors.length > 0"
-          class="alert mt-2"
-          :class="{
-            'alert-danger': !bodyChanged,
-            'alert-warning': bodyChanged
-          }"
-        >
-          <ul class="list-unstyled my-0">
-            <li v-for="error in bodyValidationErrors" :key="error">
-              {{ error }}
-            </li>
-          </ul>
-          <div v-if="showPlaceholderReplacer" class="mt-2">
-            <button
-              type="button"
-              class="btn btn-secondary btn-sm"
-              @click="fixBodyPlaceholders"
-            >
-              {{ i18n.fixPlaceholder }}
-            </button>
-          </div>
-        </div>
-
-        <div class="row">
-          <div
-            :class="
-              savedFullTextBody && savedFullTextBodySidebyside
-                ? 'col-md-8 order-md-1'
-                : 'col'
-            "
-          >
-            <div class="mb-4">
-              <label for="id_body"> {{ i18n.requestBody }}: </label>
-            </div>
-            <div v-if="!fullText" class="body-text" v-text="letterStart" />
-            <div
-              v-if="editingDisabled"
-              class="body-text-em mb-3"
-              v-text="body"
-            />
-            <textarea
-              v-show="!editingDisabled"
-              v-model="body"
-              ref="body"
-              id="id_body"
-              name="body"
-              required
-              class="form-control body-textarea"
+              class="alert my-2 w-100"
               :class="{
-                'is-invalid':
-                  (errors.body || bodyValid === false) && !bodyChanged,
-                attention: !hasBody
+                'alert-danger': !subjectChanged,
+                'alert-warning': subjectChanged
               }"
-              :rows="bodyRows"
-              :placeholder="formFields.body.placeholder"
-              :minlength="formFields.body.min_length"
-              :maxlength="formFields.body.max_length"
-              @keydown="updateBody"
-              @keyup="resetBodyCustomValidity"
-              @change="updateBodyChanged(true)"
-            />
-
-            <div class="bg-secondary-subtle px-2 py-1 mb-4 mt-1 border">
-              <div class="d-flex justify-content-end gap-2">
-                <div class="form-check">
-                  <input
-                    v-if="!fullText"
-                    id="full_letter_checkbox"
-                    type="checkbox"
-                    class="form-check-input"
-                    v-model="fullLetter"
-                  />
-                  <input
-                    v-else
-                    id="full_letter_checkbox"
-                    type="checkbox"
-                    class="form-check-input"
-                    disabled
-                    :checked="true"
-                  />
-                  <label class="form-check-label" for="full_letter_checkbox"
-                    >Gesamten Nachrichtentext anzeigen</label
-                  >
-                </div>
-                <input v-model="fullText" type="hidden" name="full_text" />
-                <div
-                  v-if="allowFullText && !editingDisabled"
-                  class="form-check"
-                >
-                  <input
-                    id="full_text_checkbox"
-                    class="form-check-input"
-                    v-model="fullText"
-                    type="checkbox"
-                    name="full_text_checkbox"
-                    :disabled="fullTextDisabled"
-                  />
-                  <label for="full_text_checkbox" class="form-check-label">
-                    <i
-                      v-if="warnFullText"
-                      class="fa fa-exclamation-triangle"
-                      aria-hidden="true"
-                    />
-                    {{ formFields.full_text.label }}
-                  </label>
-                </div>
-              </div>
-              <div
-                class="d-flex justify-content-end mt-2"
-                v-if="fullTextDisabled"
-              >
-                <button
-                  class="btn btn-outline-secondary btn-sm"
-                  @click.prevent="resetFullText"
-                >
-                  {{ i18n.resetFullText }}
-                </button>
-              </div>
-              <details
-                v-if="savedFullTextBody && !savedFullTextBodySidebyside"
-                class="text-end mt-2"
-              >
-                <summary>
-                  {{ i18n.savedFullTextChanges }}
-                </summary>
-                <textarea
-                  v-model="savedFullTextBody"
-                  class="saved-body"
-                  readonly
-                />
-              </details>
-            </div>
-
-            <div v-if="!fullText && !fullLetter" class="body-text">
-              […]<br />{{ letterEndShort }}
-            </div>
-
-            <div v-if="!fullText && fullLetter" class="body-text">
-              {{ letterEnd }}
-            </div>
-
-            <div v-if="letterSignature" class="body-text">
-              <em>{{ letterSignature }}</em>
-            </div>
-            <div
-              v-if="!letterSignature && fullText"
-              class="body-text"
-              v-text="letterSignatureName"
-            />
-            <div v-if="needles.length > 0" class="alert alert-warning mb-2">
+            >
               <ul class="list-unstyled my-0">
-                <li v-for="needle in needles" :key="needle">
-                  {{ needle }}
+                <li v-for="error in errors.subject" :key="error.message">
+                  {{ error.message }}
                 </li>
               </ul>
             </div>
+            <div
+              v-else-if="subjectValidationErrors.length > 0"
+              class="alert my-2 w-100"
+              :class="{
+                'alert-danger': !subjectChanged,
+                'alert-warning': subjectChanged
+              }"
+            >
+              <ul class="list-unstyled my-0">
+                <li v-for="error in subjectValidationErrors" :key="error">
+                  {{ error }}
+                </li>
+              </ul>
+            </div>
+            <input
+              v-model="subject"
+              ref="subject"
+              id="id_subject"
+              type="text"
+              name="subject"
+              class="form-control"
+              :minlength="formFields.subject.min_length"
+              :maxlength="formFields.subject.max_length"
+              :class="{
+                'is-invalid':
+                  (errors.subject || subjectValid === false) && !subjectChanged
+              }"
+              :placeholder="formFields.subject.placeholder"
+              @change="updateSubjectChanged(true)"
+              @keyup="resetSubjectCustomValidity"
+              @keydown.enter.prevent
+            />
+          </template>
+        </div>
+      </div>
+
+      <div v-if="fullText && warnFullText" class="alert alert-warning">
+        <p>
+          {{ i18n.warnFullText }}
+        </p>
+      </div>
+
+      <div
+        v-if="!clearFormErrors && errors.body && errors.body.length > 0"
+        class="alert mb-2"
+        :class="{
+          'alert-danger': !bodyChanged,
+          'alert-warning': bodyChanged
+        }"
+      >
+        <ul class="list-unstyled my-0">
+          <li v-for="error in errors.body" :key="error.message">
+            {{ error.message }}
+          </li>
+        </ul>
+        <div v-if="showPlaceholderReplacer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="fixBodyPlaceholders"
+          >
+            {{ i18n.fixPlaceholder }}
+          </button>
+        </div>
+      </div>
+      <div
+        v-else-if="bodyValidationErrors.length > 0"
+        class="alert mt-2"
+        :class="{
+          'alert-danger': !bodyChanged,
+          'alert-warning': bodyChanged
+        }"
+      >
+        <ul class="list-unstyled my-0">
+          <li v-for="error in bodyValidationErrors" :key="error">
+            {{ error }}
+          </li>
+        </ul>
+        <div v-if="showPlaceholderReplacer" class="mt-2">
+          <button
+            type="button"
+            class="btn btn-secondary btn-sm"
+            @click="fixBodyPlaceholders"
+          >
+            {{ i18n.fixPlaceholder }}
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div
+          :class="
+            savedFullTextBody && savedFullTextBodySidebyside
+              ? 'col-md-8 order-md-1'
+              : 'col'
+          "
+        >
+          <div class="mb-4">
+            <label for="id_body"> {{ i18n.requestBody }}: </label>
+          </div>
+          <div v-if="!fullText" class="body-text" v-text="letterStart" />
+          <div v-if="editingDisabled" class="body-text-em mb-3" v-text="body" />
+          <textarea
+            v-show="!editingDisabled"
+            v-model="body"
+            ref="body"
+            id="id_body"
+            name="body"
+            required
+            class="form-control body-textarea"
+            :class="{
+              'is-invalid':
+                (errors.body || bodyValid === false) && !bodyChanged,
+              attention: !hasBody
+            }"
+            :rows="bodyRows"
+            :placeholder="formFields.body.placeholder"
+            :minlength="formFields.body.min_length"
+            :maxlength="formFields.body.max_length"
+            @keydown="updateBody"
+            @keyup="resetBodyCustomValidity"
+            @change="updateBodyChanged(true)"
+          />
+
+          <div class="bg-secondary-subtle px-2 py-1 mb-4 mt-1 border">
+            <div class="d-sm-flex justify-content-end gap-2">
+              <div class="form-check">
+                <input
+                  v-if="!fullText"
+                  id="full_letter_checkbox"
+                  type="checkbox"
+                  class="form-check-input"
+                  v-model="fullLetter"
+                />
+                <input
+                  v-else
+                  id="full_letter_checkbox"
+                  type="checkbox"
+                  class="form-check-input"
+                  disabled
+                  :checked="true"
+                />
+                <label class="form-check-label" for="full_letter_checkbox">
+                  {{ i18n.showEntireMessage }}
+                </label>
+              </div>
+              <input v-model="fullText" type="hidden" name="full_text" />
+              <div v-if="allowFullText && !editingDisabled" class="form-check">
+                <input
+                  id="full_text_checkbox"
+                  class="form-check-input"
+                  v-model="fullText"
+                  type="checkbox"
+                  name="full_text_checkbox"
+                  :disabled="fullTextDisabled"
+                />
+                <label for="full_text_checkbox" class="form-check-label">
+                  <i
+                    v-if="warnFullText"
+                    class="fa fa-exclamation-triangle"
+                    aria-hidden="true"
+                  />
+                  {{ formFields.full_text.label }}
+                </label>
+              </div>
+            </div>
+            <div
+              class="d-flex justify-content-end mt-2"
+              v-if="fullTextDisabled"
+            >
+              <button
+                class="btn btn-outline-secondary btn-sm"
+                @click.prevent="resetFullText"
+              >
+                {{ i18n.resetFullText }}
+              </button>
+            </div>
+            <details
+              v-if="savedFullTextBody && !savedFullTextBodySidebyside"
+              class="text-end mt-2"
+            >
+              <summary>
+                {{ i18n.savedFullTextChanges }}
+              </summary>
+              <textarea
+                v-model="savedFullTextBody"
+                class="saved-body"
+                readonly
+              />
+            </details>
+          </div>
+
+          <div v-if="!fullText && !fullLetter" class="body-text">
+            […]<br />{{ letterEndShort }}
+          </div>
+
+          <div v-if="!fullText && fullLetter" class="body-text">
+            {{ letterEnd }}
+          </div>
+
+          <div v-if="letterSignature" class="body-text">
+            <em>{{ letterSignature }}</em>
           </div>
           <div
-            v-if="savedFullTextBody && savedFullTextBodySidebyside"
-            class="col-md-4 order-md-2"
-          >
-            <h6>
-              {{ i18n.savedFullTextChanges }}
-            </h6>
-            <textarea v-model="savedFullTextBody" class="saved-body" readonly />
+            v-if="!letterSignature && fullText"
+            class="body-text"
+            v-text="letterSignatureName"
+          />
+          <div v-if="needles.length > 0" class="alert alert-warning mb-2">
+            <ul class="list-unstyled my-0">
+              <li v-for="needle in needles" :key="needle">
+                {{ needle }}
+              </li>
+            </ul>
           </div>
+        </div>
+        <div
+          v-if="savedFullTextBody && savedFullTextBodySidebyside"
+          class="col-md-4 order-md-2"
+        >
+          <h6>
+            {{ i18n.savedFullTextChanges }}
+          </h6>
+          <textarea v-model="savedFullTextBody" class="saved-body" readonly />
         </div>
       </div>
     </div>
 
-    <div v-if="hasUser && proofForm" class="card mb-3">
-      <div class="card-body">
-        <template v-if="proofRequired">
-          <h5>{{ i18n.includeProof }}</h5>
-          <ProofForm
-            :form="proofForm"
-            :required="proofRequired"
-            :config="config.proof_config"
-          ></ProofForm>
-        </template>
-        <details v-else>
-          <summary>{{ i18n.includeProof }}</summary>
-          <ProofForm
-            :form="proofForm"
-            :required="proofRequired"
-            :config="config.proof_config"
-          ></ProofForm>
-        </details>
-      </div>
+    <div
+      v-if="hasUser && proofForm"
+      class="border border-2 border-gray-300 p-3 mb-3"
+    >
+      <template v-if="proofRequired">
+        <h5>{{ i18n.includeProof }}</h5>
+        <ProofForm
+          :form="proofForm"
+          :required="proofRequired"
+          :config="config.proof_config"
+        ></ProofForm>
+      </template>
+      <details v-else>
+        <summary>{{ i18n.includeProof }}</summary>
+        <ProofForm
+          :form="proofForm"
+          :required="proofRequired"
+          :config="config.proof_config"
+        ></ProofForm>
+      </details>
     </div>
 
-    <div v-if="hasUser" class="card mb-3">
-      <div class="card-body">
-        <details
-          :open="
-            userForm?.errors?.address ||
-            addressValid === false ||
-            addressChanged === true ||
-            user?.address === ''
-          "
-        >
-          <summary>{{ i18n.updatePostalAddress }}</summary>
-          <UserAddress
-            :i18n="i18n"
-            :form="userForm"
-            :config="config"
-            :address-help-text="userForm.fields.address.help_text"
-            :default-law="defaultLaw"
-            class="mt-3"
-          />
-        </details>
-      </div>
+    <div v-if="hasUser" class="border border-2 border-gray-300 p-3 mb-3">
+      <details
+        :open="
+          userForm?.errors?.address ||
+          addressValid === false ||
+          addressChanged === true ||
+          user?.address === ''
+        "
+      >
+        <summary>{{ i18n.updatePostalAddress }}</summary>
+        <UserAddress
+          :i18n="i18n"
+          :form="userForm"
+          :config="config"
+          :address-help-text="userForm.fields.address.help_text"
+          :default-law="defaultLaw"
+          class="mt-3"
+        />
+      </details>
     </div>
 
     <UserConfirm
@@ -839,14 +825,6 @@ legend {
 
 .small a {
   color: $blue;
-}
-
-.request-hints {
-  color: $gray-700;
-  font-size: $font-size-sm;
-  ul {
-    padding-left: $spacer;
-  }
 }
 
 .publicbody-summary-container {
