@@ -35,8 +35,10 @@
                   class="btn btn-link text-decoration-none ps-0"
                   :href="'#step-' + stepBack"
                   @click="setStep(stepBack)"
-                  >← <u>{{ i18n.back }}</u></a
                 >
+                  <span aria-hidden="true">←</span>
+                  <u>{{ i18n.back }}</u>
+                </a>
                 <button
                   v-if="topNextLabel"
                   type="button"
@@ -300,14 +302,19 @@
               >
                 <h2>{{ i18n.writeRequest }}</h2>
                 <div class="row">
-                  <div class="col-lg-9">
-                    <div v-show="!editingDisabled" class="alert alert-info">
+                  <div class="col-lg-3 order-lg-2">
+                    <div
+                      v-if="!editingDisabled"
+                      class="border border-2 border-yellow-200 p-3 tight-margin mb-3 request-hints"
+                    >
                       <DjangoSlot
                         name="request-hints"
                         has-onlinehelp-links
                         @onlinehelp-click="onlineHelpShow($event)"
                       />
                     </div>
+                  </div>
+                  <div class="col-lg-9">
                     <RequestForm
                       :config="config"
                       :publicbodies="publicBodies"
@@ -338,12 +345,6 @@
                         <DjangoSlot name="request-user-confirm" />
                       </template>
                     </RequestForm>
-                    <SimilarRequests
-                      v-if="showSimilar"
-                      :publicbodies="publicBodies"
-                      :subject="subject"
-                      :config="config"
-                    />
                   </div>
                 </div>
               </div>
@@ -412,7 +413,6 @@
 
 <script>
 import SimilarRequestSearch from './similar-request-search'
-import SimilarRequests from './similar-requests'
 // TODO: rename, un-beta, remove old?
 import DjangoSlot from '../../lib/django-slot.vue'
 import OnlineHelp from '../online-help.vue'
@@ -453,7 +453,6 @@ export default {
     IntroCampaigns,
     PublicbodyBetaChooser,
     PublicbodyMultiChooser,
-    SimilarRequests,
     SimilarRequestSearch,
     ReviewRequest,
     PbMultiReview,
@@ -972,12 +971,8 @@ legend {
   color: $blue;
 }
 
-.request-hints {
-  color: $gray-700;
-  font-size: $font-size-sm;
-  ul {
-    padding-left: $spacer;
-  }
+.request-hints :deep(ul) {
+  padding-left: $spacer;
 }
 
 .publicbody-summary-container {

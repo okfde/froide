@@ -420,6 +420,7 @@ class MakeRequestView(FormView):
                 "searchText": pgettext("Search input", "Text"),
                 "login": pgettext("Make request", "Log in"),
                 "searchRequests": _("Search requests"),
+                "showEntireMessage": _("Show entire message"),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
