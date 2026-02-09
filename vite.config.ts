@@ -55,7 +55,7 @@ export default defineConfig({
             assetInfo.name?.match(/(\.(woff2?|eot|ttf|otf)|font\.svg)(\?.*)?$/)
           ) {
             return 'fonts/[name][extname]'
-          } else if (assetInfo.name?.match(/\.(jpg|png|svg)$/)) {
+          } else if (assetInfo.name?.match(/\.(jpg|png|svg|avif)$/)) {
             return 'img/[name][extname]'
           }
 
