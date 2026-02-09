@@ -415,6 +415,7 @@ class MakeRequestView(FormView):
                 "dateRangeFrom": _("From"),
                 "dateRangeTo": _("Until"),
                 "campaign": _("Campaign"),
+                "noCampaign": _("No campaign"),
                 "toggleCollapse": _("Toggle collapse"),
                 "searchText": pgettext("Search input", "Text"),
                 "login": pgettext("Make request", "Log in"),

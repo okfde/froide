@@ -162,6 +162,21 @@
                 </button>
                 <div class="dropdown-menu p-3">
                   <ul class="list-unstyled mb-0">
+                    <li>
+                      <div class="form-check">
+                        <input
+                          type="radio"
+                          id="campaign_none"
+                          class="form-check-input"
+                          name="campaign"
+                          :value="null"
+                          v-model="selectedCampaign"
+                        />
+                        <label for="campaign_none" class="form-check-label">
+                          {{ i18n.noCampaign }}
+                        </label>
+                      </div>
+                    </li>
                     <li v-for="campaign in campaigns" :key="campaign.id">
                       <div class="form-check">
                         <input
@@ -360,7 +375,7 @@ jurisdictionList().then((resp) => {
 })
 
 const campaigns = ref([])
-const selectedCampaign = ref(initialState.selectedCampaign)
+const selectedCampaign = ref(initialState.selectedCampaign ?? null)
 
 campaignList().then((resp) => {
   campaigns.value = resp.data.objects
