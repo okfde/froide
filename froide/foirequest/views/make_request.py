@@ -404,13 +404,9 @@ class MakeRequestView(FormView):
                 "notSentToPb": _("(not sent to public body)"),
                 "terms": _("Terms of Use"),
                 "searchToPbName": _("to %(name)s") % {"name": "${name}"},
-                "searchToProject": _(
-                    'to <a href="%(url)s">%(name)s</a> and <a href="%(urlp)s">%(count)s other public bodies</a>'
-                )
+                "searchToProject": _("to %(name)s and %(count)s other public bodies")
                 % {
                     "name": "${name}",
-                    "url": "${url}",
-                    "urlp": "${urlp}",
                     "count": "${count}",
                 },
                 "notYetSet": _("Not yet set"),

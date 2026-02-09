@@ -1,41 +1,34 @@
 <template>
   <!-- adapted from request_item.html -->
-  <div class="d-flex mb-4">
-    <a
-      v-if="object.status_representation"
-      :class="`flex-shrink-0 icon status-${object.status_representation} ${'--has-fee' && object.costs > 0}`"
-      :href="object.url"
-      :title="object.readable_status"
-    ></a>
-    <div class="flex-grow-1 ms-3">
+  <div class="d-flex">
+    <div class="flex-grow-1">
       <!-- cf. foirequest/snippets/request_item_inner.html;
          following comments indicate differences to there -->
       <div>
-        <h5 class="mt-0 mb-1">
-          <a :href="object.url" target="_blank">{{ object.title }}</a>
+        <h3 class="mt-0 mb-1 h5">
+          <a :href="object.url" target="_blank">
+            {{ object.title }}
+            <i class="fa fa-external-link" aria-hidden="true" />
+          </a>
           <!-- diff.: object.follower_count omitted -->
-        </h5>
+        </h3>
         <small>
-          <span
-            v-if="object.project"
-            v-html="
+          <span v-if="object.project">
+            {{
               i18n._('searchToProject', {
                 name: object.public_body.name,
-                url: object.public_body.site_url,
-                urlp: object.project_site_url,
                 count: object.project_request_count
               })
-            "
-          />
+            }}
+          </span>
           <span v-else-if="object.public_body_name">{{
             i18n._('searchToPbName', { name: object.public_body_name })
           }}</span>
           <span v-else-if="object.public_body">
-            {{ i18n.to }}
-            <a :href="object.public_body.site_url">{{
-              object.public_body.name
-            }}</a>
-            – {{ object.jurisdiction_name }}
+            {{ object.public_body.name }}
+            <template v-if="showJurisdiction"
+              >– {{ object.jurisdiction_name }}</template
+            >
           </span>
           <span v-else>
             {{ i18n.notYetSet }}
@@ -48,22 +41,29 @@
           >
             {{ i18n.searchSelectThisPb }}
           </button>
-          <br />
-          {{ object.readable_status }},
+        </small>
+        <div>
+          <span class="badge rounded-pill" :class="[statusColorClass]">{{
+            object.readable_status
+          }}</span>
           <!-- diff.: not timesince/"ago", instead "Month YYYY" -->
-          <time :datetime="object.last_message">
+          <time :datetime="object.last_message" class="ms-2 small">
             {{ formatDate(object.last_message) }}
           </time>
           <!-- diff.: costs omitted -->
           <!-- diff.: same_as_count/identical hint omitted -->
-        </small>
+        </div>
+        <div class="small text-secondary mt-1">
+          {{ object.description.substring(0, 200) }}
+          {{ object.description.length > 200 ? '…' : '' }}
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { inject } from 'vue'
+import { computed, inject } from 'vue'
 import { useStore } from 'vuex'
 import { SET_STEP, STEPS } from '../../store/mutation_types'
 
@@ -73,12 +73,22 @@ const pbScope = inject('pbScope')
 
 const i18n = inject('i18n')
 
-const { object } = defineProps({
+const props = defineProps({
   object: {
     type: Object,
     required: true
   }
 })
+
+const statusColors = {
+  awaiting_response: 'text-bg-yellow-200',
+  successful: 'text-bg-success',
+  partially_successful: 'text-bg-success',
+  refused: 'text-bg-danger',
+  user_withdrew_costs: 'text-bg-danger'
+}
+
+const { object } = props
 
 const selectPublicBody = (id) => {
   store
@@ -94,4 +104,12 @@ const formatDate = (date) =>
     year: 'numeric',
     month: 'long'
   })
+
+const showJurisdiction = computed(() => {
+  return !props.object.public_body.name.includes(props.object.jurisdiction_name)
+})
+
+const statusColorClass = computed(
+  () => statusColors[props.object.status_representation] ?? 'text-bg-gray-300'
+)
 </script>
