@@ -1,82 +1,89 @@
 <template>
   <div class="publicbody-chooser mb-3">
-    <button
-      v-if="!showSearch"
-      class="btn btn-sm btn-light float-end"
-      @click.prevent="showSearch = true"
-    >
-      {{ i18n.searchPublicBodyLabel }}
-    </button>
-    <div v-if="showSearch" class="form-search">
-      <div class="input-group">
-        <input
-          v-model="search"
-          type="search"
-          class="search-public_bodies form-control"
-          :placeholder="i18n.publicBodySearchPlaceholder"
-          @keyup="triggerAutocomplete"
-          @keydown.enter.prevent="triggerAutocomplete"
-        />
-        <button
-          type="button"
-          class="btn btn-secondary search-public_bodies-submit"
-          @click="triggerAutocomplete"
-        >
-          <i class="fa fa-search" />
-          {{ i18n.search }}
-        </button>
-      </div>
+    <div>
+      <div
+        class="border border-2 border-gray-300 p-3 text-bg-body bg-opacity-90 mb-3"
+      >
+        <slot name="header" />
 
-      <div v-if="showFilters" class="row mt-3">
-        <div
-          v-for="filterKey in filterOrder"
-          :key="filterKey"
-          class="col-sm-4 filter-column position-relative"
+        <button
+          v-if="!showSearch"
+          class="btn btn-sm btn-light float-end"
+          @click.prevent="showSearch = true"
         >
-          <PbFilter
-            :global-config="config"
-            :config="filterConfig[filterKey]"
+          {{ i18n.searchPublicBodyLabel }}
+        </button>
+        <div v-if="showSearch" class="form-search">
+          <div class="input-group">
+            <input
+              v-model="search"
+              type="search"
+              class="search-public_bodies form-control"
+              :placeholder="i18n.publicBodySearchPlaceholder"
+              @keyup="triggerAutocomplete"
+              @keydown.enter.prevent="triggerAutocomplete"
+            />
+            <button
+              type="button"
+              class="btn btn-secondary search-public_bodies-submit"
+              @click="triggerAutocomplete"
+            >
+              <i class="fa fa-search" />
+              {{ i18n.search }}
+            </button>
+          </div>
+          <div v-if="showFilters" class="row mt-3">
+            <div
+              v-for="filterKey in filterOrder"
+              :key="filterKey"
+              class="col-sm-4 filter-column position-relative"
+            >
+              <PbFilter
+                :global-config="config"
+                :config="filterConfig[filterKey]"
+                :i18n="i18n"
+                :scope="scope"
+                :value="filters[filterKey]"
+                @update="updateFilter"
+              />
+            </div>
+          </div>
+          <div class="mt-3" v-if="$slots['search-hint']">
+            <slot name="search-hint"></slot>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <p v-if="searching">
+            <span class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </span>
+          </p>
+          <p v-else-if="lastQuery && (showFoundCountIfIdle || searchMeta)">
+            {{
+              searching
+                ? '…'
+                : i18n._('publicBodiesFound', { count: searchResultsLength })
+            }}
+          </p>
+        </div>
+        <div v-if="showBadges" class="d-flex flex-wrap gap-2">
+          <PbFilterBadge
+            v-if="search"
+            :label="i18n.searchText"
+            :value="search"
             :i18n="i18n"
-            :scope="scope"
-            :value="filters[filterKey]"
+            @remove-click="search = ''"
+          />
+          <PbFilterSelected
+            v-for="filterKey in activeFilters"
+            :key="filterKey"
+            :config="filterConfig[filterKey]"
             @update="updateFilter"
+            :value="filters[filterKey]"
+            :i18n="i18n"
           />
         </div>
       </div>
-      <div class="mt-3" v-if="$slots['search-hint']">
-        <slot name="search-hint"></slot>
-      </div>
-    </div>
-    <div class="row mt-3">
-      <p v-if="searching">
-        <span class="spinner-border spinner-border-sm" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </span>
-      </p>
-      <p v-else-if="lastQuery && (showFoundCountIfIdle || searchMeta)">
-        {{
-          searching
-            ? '…'
-            : i18n._('publicBodiesFound', { count: searchResultsLength })
-        }}
-      </p>
-    </div>
-    <div v-if="showBadges" class="mb-3 d-flex flex-wrap gap-2">
-      <PbFilterBadge
-        v-if="search"
-        :label="i18n.searchText"
-        :value="search"
-        :i18n="i18n"
-        @remove-click="search = ''"
-      />
-      <PbFilterSelected
-        v-for="filterKey in activeFilters"
-        :key="filterKey"
-        :config="filterConfig[filterKey]"
-        @update="updateFilter"
-        :value="filters[filterKey]"
-        :i18n="i18n"
-      />
     </div>
 
     <component

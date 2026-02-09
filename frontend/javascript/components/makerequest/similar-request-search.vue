@@ -1,274 +1,248 @@
 <template>
-  <div>
-    <div class="row mb-3">
-      <!-- Text query input -->
-
-      <div class="col col-md-9">
-        <div class="input-group">
-          <input
-            class="form-control"
-            type="search"
-            v-model="textQuery"
-            :placeholder="i18n.searchRequests"
-          />
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="search"
-            :disabled="isSearching"
-          >
-            <span class="fa fa-search" aria-hidden="true" />
-            {{ i18n.search }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <!-- Dropdown Jurisdiction -->
-
-      <div class="col-sm-3">
-        <div class="dropdown my-1 my-sm-0">
-          <button
-            type="button"
-            class="btn btn-secondary dropdown-toggle d-block w-100"
-            data-bs-toggle="dropdown"
-          >
-            {{ i18n.level }}
-          </button>
-          <div class="dropdown-menu p-3">
-            <ul class="list-unstyled mb-0">
-              <li
-                v-for="(jurisdictions, regionKind) in jurisdictionsByRegionKind"
-                :key="regionKind"
-              >
-                <div class="form-check">
-                  <input
-                    type="radio"
-                    :id="regionKind"
-                    class="form-check-input"
-                    name="regionkind"
-                    v-model="jurisdictionRegionKind"
-                    :value="regionKind"
-                  />
-                  <label :for="regionKind" class="form-check-label">{{
-                    jurisdictions.name
-                  }}</label>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Dropdown Sub-Jurisdiction -->
-
+  <div class="row">
+    <div class="col col-md-9">
       <div
-        class="col-sm-3"
-        v-if="
-          jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length > 1
-        "
+        class="border border-2 border-gray-300 p-3 text-bg-body bg-opacity-90 mb-3"
       >
-        <div class="dropdown my-1 my-sm-0">
-          <button
-            type="button"
-            class="btn btn-secondary dropdown-toggle d-block w-100"
-            data-bs-toggle="dropdown"
-          >
-            {{ jurisdictionsByRegionKind[jurisdictionRegionKind].name }}
-          </button>
-          <div class="dropdown-menu p-3">
-            <ul class="list-unstyled">
-              <li
-                v-for="jurisdiction in jurisdictionsByRegionKind[
-                  jurisdictionRegionKind
-                ].items"
-                :key="jurisdiction.id"
-              >
-                <div class="form-check">
-                  <!-- alt: multiple jurisdictions stub
-                    <input
-                    type="checkbox"
-                    :id="'j' + jurisdiction.id"
-                    class="form-check-input"
-                    name="jurisdiction"
-                    :value="jurisdiction"
-                    v-model="selectedJurisdictions"
-                    />-->
-                  <input
-                    type="radio"
-                    :id="'j' + jurisdiction.id"
-                    class="form-check-input"
-                    name="jurisdiction"
-                    :value="jurisdiction"
-                    v-model="selectedJurisdiction"
-                  />
-                  <label
-                    :for="'j' + jurisdiction.id"
-                    class="form-check-label"
-                    >{{ jurisdiction.name }}</label
-                  >
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
+        <slot name="header" />
 
-      <!-- Dropdown time range -->
-
-      <div class="col-sm-3">
-        <div class="dropdown my-1 my-sm-0">
-          <button
-            type="button"
-            class="btn btn-secondary dropdown-toggle d-block w-100"
-            data-bs-toggle="dropdown"
-            data-bs-auto-close="outside"
-          >
-            {{ i18n.dateRange }}
-          </button>
-          <div class="dropdown-menu p-3">
-            <div class="d-flex flex-column flex-md-row align-items-center">
-              <!-- alt: label, date input
-              <label for="date_start" class="form-label g-col-sm-4">From</label>
-              <input id="date_start" type="date" class="form-control g-col-sm-8" v-model="dateStart" />
-              -->
-              <select
-                class="form-select"
-                :aria-label="i18n.dateRangeFrom"
-                v-model="dateStart"
-                style="min-width: 10ch"
-              >
-                <option :value="null"></option>
-                <option
-                  v-for="year in dateYearsStart"
-                  :key="year"
-                  :value="year"
+        <fieldset>
+          <div class="row mb-3">
+            <!-- Text query input -->
+            <div class="">
+              <div class="input-group">
+                <input
+                  class="form-control"
+                  type="search"
+                  v-model="textQuery"
+                  :placeholder="i18n.searchRequests"
+                />
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  @click="search"
+                  :disabled="isSearching"
                 >
-                  {{ year }}
-                </option>
-              </select>
-              <span class="px-1">&mdash;</span>
-              <!-- alt: label, date input
-              <label for="date_end" class="form-label g-col-sm-4">To</label>
-              <input id="date_end" type="date" class="form-control g-col-sm-8" v-model="dateEnd" />
-              -->
-              <select
-                class="form-select"
-                :aria-label="i18n.dateRangeTo"
-                v-model="dateEnd"
-                style="min-width: 10ch"
-              >
-                <option :value="null"></option>
-                <option v-for="year in dateYearsEnd" :key="year" :value="year">
-                  {{ year }}
-                </option>
-              </select>
+                  <span class="fa fa-search" aria-hidden="true" />
+                  {{ i18n.search }}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Dropdown Campaign -->
-
-      <div class="col-sm-3">
-        <div class="dropdown my-1 my-sm-0">
-          <button
-            type="button"
-            class="btn btn-secondary dropdown-toggle d-block w-100"
-            data-bs-toggle="dropdown"
-          >
-            {{ i18n.campaign }}
-          </button>
-          <div class="dropdown-menu p-3">
-            <ul class="list-unstyled mb-0">
-              <li v-for="campaign in campaigns" :key="campaign.id">
-                <div class="form-check">
-                  <input
-                    type="radio"
-                    :id="'campaign_' + campaign.id"
-                    class="form-check-input"
-                    name="campaign"
-                    :value="campaign"
-                    v-model="selectedCampaign"
-                  />
-                  <label
-                    :for="'campaign_' + campaign.id"
-                    class="form-check-label"
-                    >{{ campaign.name }}</label
-                  >
+          <div class="row">
+            <!-- Dropdown Jurisdiction -->
+            <div class="col-sm-4">
+              <div class="dropdown my-1 my-sm-0">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle d-block w-100"
+                  data-bs-toggle="dropdown"
+                >
+                  {{ i18n.level }}
+                </button>
+                <div class="dropdown-menu p-3">
+                  <ul class="list-unstyled mb-0">
+                    <li
+                      v-for="(
+                        jurisdictions, regionKind
+                      ) in jurisdictionsByRegionKind"
+                      :key="regionKind"
+                    >
+                      {{ jurisdicitions }}
+                      <div class="form-check">
+                        <input
+                          type="radio"
+                          :id="regionKind"
+                          class="form-check-input"
+                          name="regionkind"
+                          v-model="jurisdictionRegionKind"
+                          :value="regionKind"
+                        />
+                        <label :for="regionKind" class="form-check-label">{{
+                          jurisdictions.name
+                        }}</label>
+                      </div>
+                      <ul
+                        v-if="jurisdictions.items.length > 1"
+                        class="list-unstyled ms-3"
+                      >
+                        <li
+                          v-for="jurisdiction in jurisdictions.items"
+                          :key="jurisdiction.id"
+                        >
+                          <div class="form-check">
+                            <input
+                              type="radio"
+                              :id="'j' + jurisdiction.id"
+                              class="form-check-input"
+                              name="jurisdiction"
+                              :value="jurisdiction"
+                              v-model="selectedJurisdiction"
+                            />
+                            <label
+                              :for="'j' + jurisdiction.id"
+                              class="form-check-label"
+                              >{{ jurisdiction.name }}</label
+                            >
+                          </div>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
+            <!-- Dropdown time range -->
+            <div class="col-sm-4">
+              <div class="dropdown my-1 my-sm-0">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle d-block w-100"
+                  data-bs-toggle="dropdown"
+                  data-bs-auto-close="outside"
+                >
+                  {{ i18n.dateRange }}
+                </button>
+                <div class="dropdown-menu p-3">
+                  <div
+                    class="d-flex flex-column flex-md-row align-items-center"
+                  >
+                    <!-- alt: label, date input
+                    <label for="date_start" class="form-label g-col-sm-4">From</label>
+                    <input id="date_start" type="date" class="form-control g-col-sm-8" v-model="dateStart" />
+                    -->
+                    <select
+                      class="form-select"
+                      :aria-label="i18n.dateRangeFrom"
+                      v-model="dateStart"
+                      style="min-width: 10ch"
+                    >
+                      <option :value="null"></option>
+                      <option
+                        v-for="year in dateYearsStart"
+                        :key="year"
+                        :value="year"
+                      >
+                        {{ year }}
+                      </option>
+                    </select>
+                    <span class="px-1">&mdash;</span>
+                    <!-- alt: label, date input
+                    <label for="date_end" class="form-label g-col-sm-4">To</label>
+                    <input id="date_end" type="date" class="form-control g-col-sm-8" v-model="dateEnd" />
+                    -->
+                    <select
+                      class="form-select"
+                      :aria-label="i18n.dateRangeTo"
+                      v-model="dateEnd"
+                      style="min-width: 10ch"
+                    >
+                      <option :value="null"></option>
+                      <option
+                        v-for="year in dateYearsEnd"
+                        :key="year"
+                        :value="year"
+                      >
+                        {{ year }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Dropdown Campaign -->
+            <div class="col-sm-4">
+              <div class="dropdown my-1 my-sm-0">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle d-block w-100"
+                  data-bs-toggle="dropdown"
+                >
+                  {{ i18n.campaign }}
+                </button>
+                <div class="dropdown-menu p-3">
+                  <ul class="list-unstyled mb-0">
+                    <li v-for="campaign in campaigns" :key="campaign.id">
+                      <div class="form-check">
+                        <input
+                          type="radio"
+                          :id="'campaign_' + campaign.id"
+                          class="form-check-input"
+                          name="campaign"
+                          :value="campaign"
+                          v-model="selectedCampaign"
+                        />
+                        <label
+                          :for="'campaign_' + campaign.id"
+                          class="form-check-label"
+                          >{{ campaign.name }}</label
+                        >
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+          <!-- Active filter badges -->
+          <div class="mt-3 d-flex flex-wrap gap-2">
+            <!-- Badges: Jurisdiction/kind + sub-jurisdiction -->
+            <PbFilterBadge
+              v-if="
+                jurisdictionsByRegionKind[jurisdictionRegionKind]?.items
+                  .length === 1 ||
+                (jurisdictionRegionKind &&
+                  jurisdictionsByRegionKind[jurisdictionRegionKind] &&
+                  !selectedJurisdiction)
+              "
+              class="mb-1"
+              @remove-click="jurisdictionRegionKind = null"
+              :label="i18n.level"
+              :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
+            />
+            <!-- alt
+              <PbFilterBadge
+                v-if="selectedJurisdictions.size > 0"
+                v-for="jurisdiction in selectedJurisdictions"
+                :key="jurisdiction.id"
+                @remove-click="selectedJurisdictions.delete(jurisdiction)"
+                :value="jurisdiction.name"
+                :label="'TODO'"
+                />
+            -->
+            <PbFilterBadge
+              v-if="selectedJurisdiction"
+              class="mb-1"
+              @remove-click="selectedJurisdiction = null"
+              :label="i18n['groupBy_' + selectedJurisdiction.region_kind]"
+              :value="selectedJurisdiction.name"
+            />
+            <!-- Badges: from/to year -->
+            <PbFilterBadge
+              v-if="dateStart"
+              class="mb-1"
+              @remove-click="dateStart = null"
+              :label="i18n.dateRangeFrom"
+              :value="dateStart"
+            />
+            <PbFilterBadge
+              v-if="dateEnd"
+              class="mb-1"
+              @remove-click="dateEnd = null"
+              :label="i18n.dateRangeTo"
+              :value="dateEnd"
+            />
+            <!-- Badge: campaign -->
+            <PbFilterBadge
+              v-if="selectedCampaign"
+              @remove-click="selectedCampaign = null"
+              class="mb-1"
+              :label="i18n.campaign"
+              :value="selectedCampaign.name"
+            />
+          </div>
+        </fieldset>
       </div>
-    </div>
-
-    <!-- Active filter badges -->
-
-    <div class="my-3 d-flex flex-wrap gap-2">
-      <!-- Badges: Jurisdiction/kind + sub-jurisdiction -->
-
-      <PbFilterBadge
-        v-if="
-          jurisdictionsByRegionKind[jurisdictionRegionKind]?.items.length ===
-            1 ||
-          (jurisdictionRegionKind &&
-            jurisdictionsByRegionKind[jurisdictionRegionKind] &&
-            !selectedJurisdiction)
-        "
-        class="mb-1"
-        @remove-click="jurisdictionRegionKind = null"
-        :label="i18n.level"
-        :value="jurisdictionsByRegionKind[jurisdictionRegionKind].name"
-      />
-
-      <!-- alt
-        <PbFilterBadge
-          v-if="selectedJurisdictions.size > 0"
-          v-for="jurisdiction in selectedJurisdictions"
-          :key="jurisdiction.id"
-          @remove-click="selectedJurisdictions.delete(jurisdiction)"
-          :value="jurisdiction.name"
-          :label="'TODO'"
-          />
-      -->
-
-      <PbFilterBadge
-        v-if="selectedJurisdiction"
-        class="mb-1"
-        @remove-click="selectedJurisdiction = null"
-        :label="i18n['groupBy_' + jurisdictionRegionKind]"
-        :value="selectedJurisdiction.name"
-      />
-
-      <!-- Badges: from/to year -->
-
-      <PbFilterBadge
-        v-if="dateStart"
-        class="mb-1"
-        @remove-click="dateStart = null"
-        :label="i18n.dateRangeFrom"
-        :value="dateStart"
-      />
-      <PbFilterBadge
-        v-if="dateEnd"
-        class="mb-1"
-        @remove-click="dateEnd = null"
-        :label="i18n.dateRangeTo"
-        :value="dateEnd"
-      />
-
-      <!-- Badge: campaign -->
-
-      <PbFilterBadge
-        v-if="selectedCampaign"
-        @remove-click="selectedCampaign = null"
-        class="mb-1"
-        :label="i18n.campaign"
-        :value="selectedCampaign.name"
-      />
     </div>
 
     <!-- API errors -->
@@ -293,11 +267,15 @@
 
       <ResultsPagination :response-meta="resultsMeta" v-model="pagination" />
 
-      <ul class="list-unstyled">
-        <li v-for="object in results" :key="object.id">
-          <SimilarRequestSearchResult :object="object" />
-        </li>
-      </ul>
+      <div class="row">
+        <div class="col-lg-9">
+          <ul class="list-unstyled vstack gap-5">
+            <li v-for="object in results" :key="object.id">
+              <SimilarRequestSearchResult :object="object" />
+            </li>
+          </ul>
+        </div>
+      </div>
 
       <ResultsPagination :response-meta="resultsMeta" v-model="pagination" />
     </div>
@@ -351,9 +329,13 @@ const selectedJurisdiction = ref(initialState.selectedJurisdiction)
 // n.b. new Set! alt: multiple selectable, currently unused
 // const selectedJurisdictions = ref(new Set(initialState.selectedJurisdictions))
 
-watch(jurisdictionRegionKind, () => {
+watch(jurisdictionRegionKind, (value) => {
   // selectedJurisdictions.value.clear()
-  selectedJurisdiction.value = null
+  if (value) selectedJurisdiction.value = null
+})
+
+watch(selectedJurisdiction, (value) => {
+  if (value) jurisdictionRegionKind.value = null
 })
 
 // populate by fetching from API...

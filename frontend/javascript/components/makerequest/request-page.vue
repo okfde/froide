@@ -123,13 +123,22 @@
                 class="mt-3"
                 id="step_find_similar"
               >
-                <h2>{{ i18n.findSimilarRequests }}</h2>
-                <div class="row">
-                  <div class="col-lg-9">
-                    <DjangoSlot name="find-similar-requests-preamble" />
-                  </div>
-                </div>
-                <SimilarRequestSearch :config="config" />
+                <img
+                  src="../../../images/make-request/step-find-similar.avif"
+                  class="step-graphic"
+                  alt=""
+                />
+
+                <SimilarRequestSearch :config="config">
+                  <template #header>
+                    <h2>{{ i18n.findSimilarRequests }}</h2>
+                    <div class="row">
+                      <div class="col-lg-9">
+                        <DjangoSlot name="find-similar-requests-preamble" />
+                      </div>
+                    </div>
+                  </template>
+                </SimilarRequestSearch>
                 <div>
                   <button
                     type="button"
@@ -148,6 +157,13 @@
                 v-if="step === STEPS.SELECT_PUBLICBODY"
                 id="step_select_publicbody"
               >
+                <img
+                  src="../../../images/make-request/step-find-publicbody.avif"
+                  class="step-graphic"
+                  alt=""
+                  v-if="!multiRequest"
+                />
+
                 <p v-if="publicBodies.length > 0">
                   {{ i18n.currentlyChosen }}
                   {{ publicBodies.map((pb) => pb.name).join(', ') }}
@@ -169,12 +185,6 @@
                 <div v-else>
                   <div class="row">
                     <div class="col-lg-9">
-                      <DjangoSlot name="publicbody-legend-title" />
-                      <DjangoSlot
-                        name="publicbody-help-text"
-                        has-onlinehelp-links
-                        @onlinehelp-click="onlineHelpShow($event)"
-                      />
                       <PublicbodyBetaChooser
                         name="publicbody"
                         :defaultsearch="publicBodySearch"
@@ -186,6 +196,14 @@
                         <template #search-hint>
                           <DjangoSlot
                             name="publicbody-search-hint"
+                            has-onlinehelp-links
+                            @onlinehelp-click="onlineHelpShow($event)"
+                          />
+                        </template>
+                        <template #header>
+                          <DjangoSlot name="publicbody-legend-title" />
+                          <DjangoSlot
+                            name="publicbody-help-text"
                             has-onlinehelp-links
                             @onlinehelp-click="onlineHelpShow($event)"
                           />
@@ -929,6 +947,7 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../styles/variables';
+@import 'bootstrap/scss/mixins';
 
 .make-request-container {
   padding-bottom: 1rem;
@@ -1010,5 +1029,21 @@ legend {
 .show-full-letter {
   color: #999;
   text-decoration: underline;
+}
+
+.step-graphic {
+  width: 100%;
+  display: block;
+  margin-bottom: $spacer;
+
+  @include media-breakpoint-up(md) {
+    position: relative;
+    height: 12rem;
+    width: auto;
+    max-width: 100%;
+    margin-bottom: -6rem;
+    margin-left: auto;
+    z-index: -1;
+  }
 }
 </style>
