@@ -486,7 +486,7 @@ wand==0.6.13
     #   django-filingcabinet
 wcwidth==0.2.13
     # via prompt-toolkit
-weasyprint==66.0
+weasyprint==68.0
     # via froide (pyproject.toml)
 webencodings==0.5.1
     # via
