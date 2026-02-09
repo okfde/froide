@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-05 09:20+0100\n"
+"POT-Creation-Date: 2026-02-09 18:32+0100\n"
 "PO-Revision-Date: 2026-02-05 14:32+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -1888,8 +1888,8 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"              Diese Anfrage wurde als Teil der Aktion <a href=\"%(url)s\""
-">„%(name)s“</a> gestellt.\n"
+"              Diese Anfrage wurde als Teil der Aktion <a "
+"href=\"%(url)s\">„%(name)s“</a> gestellt.\n"
 "            "
 
 #: froide/campaign/templates/campaign/request_banner.html
@@ -6567,14 +6567,6 @@ msgid "Choose public body"
 msgstr "Behörde auswählen"
 
 #: froide/foirequest/templates/foirequest/request.html
-msgid ""
-"Which public body do you want to request information at? Here you can search "
-"and filter all available public bodies."
-msgstr ""
-"An welche Behörde wollen Sie Ihre Anfrage schicken? Hier können Sie alle "
-"verfügbaren Behörden durchsuchen und filtern."
-
-#: froide/foirequest/templates/foirequest/request.html
 msgid "Can’t find a specific public body?"
 msgstr "Sie können eine bestimmte Behörde nicht finden?"
 
@@ -6953,29 +6945,20 @@ msgid "Keep it <strong>focused and concise</strong>."
 msgstr "Halten Sie es <strong>kurz und bündig</strong>."
 
 #: froide/foirequest/templates/foirequest/snippets/request_hints.html
+#, fuzzy
+#| msgid ""
+#| "Do <strong>not include</strong> personal information in your request."
 msgid ""
-"This site is <strong>public</strong>. Everything you type and any response "
-"will be published."
-msgstr ""
-"Diese Seite ist <strong>öffentlich</strong>. Alles, was Sie eingeben und die "
-"Antworten werden veröffentlicht."
-
-#: froide/foirequest/templates/foirequest/snippets/request_hints.html
-msgid "Do <strong>not include</strong> personal information in your request."
+"Do <strong>not include or ask for</strong> personal information in your "
+"request."
 msgstr ""
 "Schließen Sie <strong>keine</strong> persönlichen Daten in Ihre Anfrage ein."
 
 #: froide/foirequest/templates/foirequest/snippets/request_hints.html
-msgid "Do <strong>not ask</strong> for personal information."
-msgstr "Fragen Sie <strong>nicht</strong> nach persönlichen Informationen."
-
-#: froide/foirequest/templates/foirequest/snippets/request_hints.html
-msgid "Please use proper spelling."
+#, fuzzy
+#| msgid "Please use proper spelling."
+msgid "Please use proper spelling and stay polite."
 msgstr "Bitte achten Sie auf Ihre Rechtschreibung."
-
-#: froide/foirequest/templates/foirequest/snippets/request_hints.html
-msgid "Please stay polite."
-msgstr "Bitte bleiben Sie höflich."
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
 #, python-format
@@ -6997,7 +6980,6 @@ msgstr[1] ""
 "  "
 
 #: froide/foirequest/templates/foirequest/snippets/request_item_inner.html
-#: froide/foirequest/views/make_request.py
 #, python-format
 msgid ""
 "to <a href=\"%(url)s\">%(name)s</a> and <a href=\"%(urlp)s\">%(count)s other "
@@ -7034,6 +7016,14 @@ msgid "One identical request"
 msgid_plural "%(counter)s identical requests"
 msgstr[0] "Eine identische Anfrage"
 msgstr[1] "%(counter)s identische Anfragen"
+
+#: froide/foirequest/templates/foirequest/snippets/request_publicbody_helptext.html
+msgid ""
+"Which public body do you want to request information at? Here you can search "
+"and filter all available public bodies."
+msgstr ""
+"An welche Behörde wollen Sie Ihre Anfrage schicken? Hier können Sie alle "
+"verfügbaren Behörden durchsuchen und filtern."
 
 #: froide/foirequest/templates/foirequest/snippets/request_user_confirm.html
 msgid ""
@@ -8052,6 +8042,16 @@ msgid "Terms of Use"
 msgstr "Nutzungsbedingungen"
 
 #: froide/foirequest/views/make_request.py
+#, fuzzy, python-format
+#| msgid ""
+#| "to <a href=\"%(url)s\">%(name)s</a> and <a href=\"%(urlp)s\">%(count)s "
+#| "other public bodies</a>"
+msgid "to %(name)s and %(count)s other public bodies"
+msgstr ""
+"an <a href=\"%(url)s\">%(name)s</a> und <a href=\"%(urlp)s\">%(count)s "
+"andere Behörden</a>"
+
+#: froide/foirequest/views/make_request.py
 msgid "Select this public body"
 msgstr "Auch an diese Behörde schreiben"
 
@@ -8062,6 +8062,12 @@ msgstr "Zeitraum"
 #: froide/foirequest/views/make_request.py froide/helper/admin_utils.py
 msgid "Until"
 msgstr "Bis"
+
+#: froide/foirequest/views/make_request.py
+#, fuzzy
+#| msgid "no campaign"
+msgid "No campaign"
+msgstr "Keine Aktion"
 
 #: froide/foirequest/views/make_request.py
 msgid "Toggle collapse"
@@ -8076,6 +8082,12 @@ msgstr "Freitext"
 msgctxt "Make request"
 msgid "Log in"
 msgstr "Zum Login"
+
+#: froide/foirequest/views/make_request.py
+#, fuzzy
+#| msgid "Show the quoted message"
+msgid "Show entire message"
+msgstr "Zeige die zitierte Nachricht an"
 
 #: froide/foirequest/views/make_request.py
 msgid "Kind Regards"
@@ -12830,6 +12842,19 @@ msgstr "organisation/"
 msgctxt "url part"
 msgid "jurisdiction/<slug:slug>/"
 msgstr "zustaendigkeit/<slug:slug>/"
+
+#~ msgid ""
+#~ "This site is <strong>public</strong>. Everything you type and any "
+#~ "response will be published."
+#~ msgstr ""
+#~ "Diese Seite ist <strong>öffentlich</strong>. Alles, was Sie eingeben und "
+#~ "die Antworten werden veröffentlicht."
+
+#~ msgid "Do <strong>not ask</strong> for personal information."
+#~ msgstr "Fragen Sie <strong>nicht</strong> nach persönlichen Informationen."
+
+#~ msgid "Please stay polite."
+#~ msgstr "Bitte bleiben Sie höflich."
 
 #~ msgid ""
 #~ "If you don't want your request to be public right now, uncheck this. You "
