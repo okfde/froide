@@ -1,0 +1,23 @@
+{% load i18n %}
+{% load humanize %}
+<div class="mb-0 d-flex flex-column">
+    {% if object.status_representation %}
+        <a class="flex-shrink-0 "
+           href="{{ url|default:object.url }}"
+           title="{{ object.readable_status }}"></a>
+    {% endif %}
+    <div class="flex-grow-1">
+        <span class="mt-0 mb-1">
+            <a href="{{ url|default:object.url }}">
+                <span class="small-icon status-{{ object.status_representation }} {% if object.has_fee %}--has-fee{% endif %}"></span>
+                {{ object.title }}
+            </a>
+            <br>
+            <small>
+                <a href="{{ object.public_body.get_absolute_urll }}"
+                   class="link-secondary">{{ object.public_body.name }}</a>
+                – <span class="muted">{{ object.jurisdiction.name }}</span>
+            </small>
+        </span>
+    </div>
+</div>
