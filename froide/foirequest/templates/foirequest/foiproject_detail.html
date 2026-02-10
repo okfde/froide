@@ -3,6 +3,7 @@
 {% load static %}
 {% load markup %}
 {% load foirequest_tags %}
+{% load permission_helper %}
 {% load form_helper %}
 {% block title %}
     {{ object.title }}
@@ -114,6 +115,7 @@
                         <th scope="col">{% trans "public body" %}</th>
                         {% if object|can_read_foiproject_authenticated:request %}
                             <th scope="col">{% trans "is public?" %}</th>
+                            <th scope="col">{% trans "has problems?" %}</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -153,6 +155,14 @@
                                         <span class="visually-hidden">{% translate "No" %}</span>
                                     {% endif %}
                                 </td>
+                                <td class="text-center">
+                                    {% if req.has_problems %}
+                                        <span class="fa fa-exclamation-triangle"></span>
+                                        <span class="visually-hidden">{% translate "Yes" %}</span>
+                                    {% else %}
+                                        <span class="visually-hidden">{% translate "No" %}</span>
+                                    {% endif %}
+                                </td>
                             {% endif %}
                         </tr>
                     {% endfor %}
@@ -160,7 +170,54 @@
             </table>
         </div>
         {% if object|can_write_foiproject:request %}</form>{% endif %}
+    {% if problems %}
+        <hr />
+        <h3>{% translate "Unresolved problem reports" %}</h3>
+        <div class="table-responsive">
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr>
+                        <th>{% translate "Request" %}</th>
+                        <th>{% trans "Problem" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "State" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in problems %}
+                        <tr>
+                            <td>
+                                {% include "foirequest/snippets/request_item_mini_pb.html" with object=report.message.request url=report.get_absolute_url %}
+                            </td>
+                            <td>
+                                <a href="{{ report.get_absolute_url }}">
+                                    <span class="badge text-bg-body-secondary">{{ report.get_kind_display }}</span>
+                                    {% if report.auto_submitted %}
+                                        <br />
+                                        <span class="badge text-bg-dark">{% trans "auto detected" %}</span>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>{{ report.timestamp|date:"SHORT_DATETIME_FORMAT" }}</td>
+                            <td>
+                                {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}
+                                    <a href="{% url 'admin:problem_problemreport_change' object_id=report.id %}">
+                                    {% endif %}
+                                    {% if report.resolved %}
+                                        <span class="badge text-bg-success">{% trans "Resolved" %}</span>
+                                    {% else %}
+                                        <span class="badge text-bg-secondary">{% trans "Pending" %}</span>
+                                    {% endif %}
+                                    {% if request.user.is_staff and request.user|has_perm:"problem.view_problemreport" %}</a>{% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
     {% if team_form %}
+        <hr />
         {% trans "Assign team to project" as legend %}
         {% trans "Set team for project" as submit_button %}
         {% url 'foirequest-project_set_team' slug=object.slug as submit_url %}

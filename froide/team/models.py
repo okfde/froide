@@ -1,8 +1,12 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Exists, OuterRef
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
+User = get_user_model()
 
 
 class TeamRole(models.TextChoices):
@@ -103,6 +107,14 @@ class Team(models.Model):
         if hasattr(self, "role"):
             return TeamMembership.ROLES_DICT[self.role]
         return ""
+
+    def get_active_users(self):
+        active_members = TeamMembership.objects.filter(
+            user=OuterRef("pk"),
+            status=TeamMembership.MEMBERSHIP_STATUS.ACTIVE,
+            team=self,
+        )
+        return User.objects.filter(Exists(active_members))
 
     @property
     def member_count(self):

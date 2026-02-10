@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 from django.contrib import messages
+from django.db.models import Exists, OuterRef, Q
 from django.forms import Form
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
@@ -11,6 +12,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import DetailView, UpdateView
 
 from froide.helper.utils import render_400, render_403
+from froide.problem.models import ProblemReport
 from froide.team.forms import AssignTeamForm
 from froide.team.views import AssignTeamView
 
@@ -61,9 +63,19 @@ class ProjectView(AuthRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         public_requests = self.object.foirequest_set.filter(public=True).count()
-        context["foirequests"] = get_read_foirequest_queryset(
-            self.request, queryset=self.object.foirequest_set.all()
-        ).prefetch_related("public_body")
+        context["foirequests"] = (
+            get_read_foirequest_queryset(
+                self.request, queryset=self.object.foirequest_set.all()
+            )
+            .annotate(
+                has_problems=Exists(
+                    ProblemReport.objects.filter(
+                        message__request=OuterRef("pk"), resolved=False
+                    )
+                )
+            )
+            .prefetch_related("public_body")
+        )
         context["public_requests"] = public_requests
         context["all_public"] = public_requests == self.object.request_count
         context["all_non_public"] = public_requests == 0
@@ -72,6 +84,18 @@ class ProjectView(AuthRequiredMixin, DetailView):
                 context["make_public_form"] = MakeProjectPublicForm()
             context["team_form"] = AssignTeamForm(
                 instance=self.object, user=self.request.user
+            )
+            user_filter = Q(user=None)
+            if self.object.team:
+                user_filter |= Q(user__in=self.object.team.get_active_users())
+            context["problems"] = (
+                ProblemReport.objects.filter(
+                    message__request__in=context["foirequests"],
+                    resolved=False,
+                )
+                .filter(user_filter)
+                .select_related("message")
+                .prefetch_related("message__request", "message__request__public_body")
             )
 
         return context
