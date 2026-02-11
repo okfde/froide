@@ -293,7 +293,7 @@ pikepdf==9.11.0
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
-pillow==11.3.0
+pillow==12.1.1
     # via
     #   froide (pyproject.toml)
     #   django-filingcabinet
