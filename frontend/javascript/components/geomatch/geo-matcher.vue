@@ -297,7 +297,7 @@ export default {
         georegion: payload.georegionId,
         publicbody: payload.publicbodyId
       }
-      if (this.category && !this.addCategoryOnConnect) {
+      if (this.category && this.addCategoryOnConnect) {
         // Add category to public body
         data.category = this.category
       }
