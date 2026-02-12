@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 
 from django_filters import rest_framework as filters
 from elasticsearch_dsl.query import Q as ESQ
@@ -272,10 +272,17 @@ class PublicBodyViewSet(
         return self.optimize_query(PublicBody.objects.all())
 
     def optimize_query(self, qs):
-        return qs.select_related("classification", "jurisdiction").prefetch_related(
+        return qs.select_related(
+            "classification",
+            "jurisdiction",
+        ).prefetch_related(
+            Prefetch(
+                "jurisdiction__region",
+                queryset=GeoRegion.objects.all().only("id", "kind", "kind_detail"),
+            ),
             "categories",
             "laws",
-            "regions",
+            Prefetch("regions", GeoRegion.objects.all().only("id")),
         )
 
     @action(detail=False, methods=["get"])
