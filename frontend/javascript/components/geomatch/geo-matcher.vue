@@ -16,10 +16,14 @@
       <dt>
         <input v-model="category" @change="categoryChanged" />
         {{ categoryName }}
-        <label
-          ><input type="checkbox" v-model="useCategoryForSearch" />Use for
-          search</label
-        >
+        <label>
+          <input type="checkbox" v-model="useCategoryForSearch" />
+          Use for search
+        </label>
+        <label>
+          <input type="checkbox" v-model="addCategoryOnConnect" />
+          Add on connect
+        </label>
       </dt>
       <dd>Jurisdiction</dd>
       <dt>
@@ -82,6 +86,7 @@ export default {
       jurisdiction: '',
       jurisdictionName: '',
       useCategoryForSearch: true,
+      addCategoryOnConnect: true,
       category: '',
       categoryName: '',
       searchHint: '',
@@ -292,7 +297,7 @@ export default {
         georegion: payload.georegionId,
         publicbody: payload.publicbodyId
       }
-      if (this.category && !this.useCategoryForSearch) {
+      if (this.category && !this.addCategoryOnConnect) {
         // Add category to public body
         data.category = this.category
       }
