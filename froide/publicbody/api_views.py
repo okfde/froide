@@ -3,7 +3,6 @@ from django.contrib.gis.geos import Point
 from django.db.models import Prefetch, Q
 
 from django_filters import rest_framework as filters
-from elasticsearch_dsl.query import Q as ESQ
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.settings import api_settings
@@ -15,6 +14,7 @@ from froide.helper.api_utils import (
 )
 from froide.helper.search import SearchQuerySetWrapper
 from froide.helper.search.api_views import ESQueryMixin
+from froide.publicbody.filters import PublicBodyFilterSet
 
 from .documents import PublicBodyDocument
 from .models import Category, Classification, FoiLaw, Jurisdiction, PublicBody
@@ -233,6 +233,9 @@ class PublicBodyViewSet(
     }
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = PublicBodyFilter
+    search_model = PublicBody
+    search_document = PublicBodyDocument
+    searchfilterset_class = PublicBodyFilterSet
 
     # OpenRefine needs JSONP responses
     # This is OK because authentication is not considered
@@ -306,36 +309,8 @@ class PublicBodyViewSet(
         return ctx
 
     def get_searchqueryset(self):
-        query = self.request.GET.get("q", "")
-
-        sqs = SearchQuerySetWrapper(PublicBodyDocument.search(), PublicBody)
-
-        if len(query) > 2:
-            sqs = sqs.set_query(
-                ESQ("multi_match", query=query, fields=["name_auto", "content"])
-            )
-
-        model_filters = {
-            "jurisdiction": Jurisdiction,
-            "classification": Classification,
-            "categories": Category,
-            "regions": GeoRegion,
-        }
-        for key, model in model_filters.items():
-            pks = self.request.GET.getlist(key)
-            if pks:
-                try:
-                    obj = model.objects.filter(pk__in=pks)
-                    sqs = sqs.filter(**{key: [o.pk for o in obj]})
-                except ValueError:
-                    # Make result set empty, no 0 pk present
-                    sqs = sqs.filter(key, **{key: 0})
-
-        other_filters = {"regions_kind": "regions_kind"}
-        for key, search_key in other_filters.items():
-            values = self.request.GET.getlist(key)
-            if values:
-                sqs = sqs.filter(**{search_key: values})
+        sqs = self.search_document.search()
+        sqs = SearchQuerySetWrapper(sqs, self.search_model)
 
         sqs = sqs.add_aggregation(
             [
@@ -345,4 +320,5 @@ class PublicBodyViewSet(
                 "regions",
             ]
         )
+
         return sqs

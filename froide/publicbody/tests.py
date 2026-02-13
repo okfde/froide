@@ -11,6 +11,7 @@ import pytest
 
 from froide.account.factories import UserFactory
 from froide.foirequest.tests.factories import make_world, rebuild_index
+from froide.georegion.factories import GeoRegionFactory
 from froide.georegion.models import GeoRegion
 from froide.helper.csv_utils import export_csv_bytes
 
@@ -22,7 +23,12 @@ from .factories import (
     PublicBodyChangeProposalFactory,
     PublicBodyFactory,
 )
-from .models import FoiLaw, Jurisdiction, PublicBody, PublicBodyChangeProposal
+from .models import (
+    FoiLaw,
+    Jurisdiction,
+    PublicBody,
+    PublicBodyChangeProposal,
+)
 
 
 class PublicBodyTest(TestCase):
@@ -284,6 +290,194 @@ class ApiTest(TestCase):
         self.assertEqual(response.status_code, 200)
         obj = json.loads(response.content.decode("utf-8"))
         self.assertEqual(obj["objects"], [])
+
+
+@pytest.fixture
+def publicbody_data(db):
+    # Jurisdictions
+    berlin = JurisdictionFactory(name="Berlin", slug="berlin")
+    hamburg = JurisdictionFactory(name="Hamburg", slug="hamburg")
+
+    # Classifications
+    ministry = ClassificationFactory(name="Ministry", slug="ministry")
+    agency = ClassificationFactory(name="Agency", slug="agency")
+
+    # Categories
+    environment = CategoryFactory(name="Environment", slug="environment")
+    traffic = CategoryFactory(name="Traffic", slug="traffic")
+
+    # Regions
+    mitte = GeoRegionFactory(name="Mitte", kind="district")
+    altona = GeoRegionFactory(name="Altona", kind="district")
+
+    # PublicBodies
+    pb1 = PublicBodyFactory(
+        name="Umweltministerium Berlin",
+        jurisdiction=berlin,
+        classification=ministry,
+        description="Zuständig für Umweltschutz",
+    )
+    pb1.categories.add(environment)
+    pb1.regions.add(mitte)
+
+    pb2 = PublicBodyFactory(
+        name="Verkehrsministerium Berlin",
+        jurisdiction=berlin,
+        classification=ministry,
+        description="Zuständig für Verkehr",
+    )
+    pb2.categories.add(traffic)
+
+    pb3 = PublicBodyFactory(
+        name="Umweltbehörde Hamburg",
+        jurisdiction=hamburg,
+        classification=agency,
+        description="Hamburger Umweltbehörde",
+    )
+    pb3.categories.add(environment)
+    pb3.regions.add(altona)
+
+    pb4 = PublicBodyFactory(
+        name="Bezirksamt Mitte",
+        jurisdiction=berlin,
+        classification=agency,
+    )
+    pb4.regions.add(mitte)
+
+    rebuild_index()
+
+    yield {
+        "jurisdictions": {"berlin": berlin, "hamburg": hamburg},
+        "classifications": {"ministry": ministry, "agency": agency},
+        "categories": {"environment": environment, "traffic": traffic},
+        "regions": {"mitte": mitte, "altona": altona},
+        "publicbodies": {"pb1": pb1, "pb2": pb2, "pb3": pb3, "pb4": pb4},
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "query_params,expected_count,expected_names",
+    [
+        # Text search
+        ({"q": "Umwelt"}, 2, ["Umweltministerium Berlin", "Umweltbehörde Hamburg"]),
+        # Jurisdiction filter
+        (
+            {"jurisdiction": "berlin"},
+            3,
+            [
+                "Umweltministerium Berlin",
+                "Verkehrsministerium Berlin",
+                "Bezirksamt Mitte",
+            ],
+        ),
+        # Classification filter
+        (
+            {"classification": "ministry"},
+            2,
+            ["Umweltministerium Berlin", "Verkehrsministerium Berlin"],
+        ),
+        # Category filter
+        (
+            {"categories": "environment"},
+            2,
+            ["Umweltministerium Berlin", "Umweltbehörde Hamburg"],
+        ),
+        # GeoRegion filter
+        ({"regions": "mitte"}, 2, ["Umweltministerium Berlin", "Bezirksamt Mitte"]),
+        # GeoRegion kind filter
+        (
+            {"regions_kind": "district"},
+            3,
+            ["Umweltministerium Berlin", "Bezirksamt Mitte", "Umweltbehörde Hamburg"],
+        ),
+        # Combination text + jurisdiction
+        ({"q": "Umwelt", "jurisdiction": "berlin"}, 1, ["Umweltministerium Berlin"]),
+        # Combination jurisdiction + classification
+        (
+            {"jurisdiction": "berlin", "classification": "ministry"},
+            2,
+            ["Umweltministerium Berlin", "Verkehrsministerium Berlin"],
+        ),
+        # Combination category + classification
+        (
+            {"categories": "environment", "classification": "ministry"},
+            1,
+            ["Umweltministerium Berlin"],
+        ),
+        # No results
+        ({"q": "NichtVorhanden"}, 0, []),
+        # Empty search (all results)
+        (
+            {},
+            4,
+            [
+                "Umweltministerium Berlin",
+                "Verkehrsministerium Berlin",
+                "Umweltbehörde Hamburg",
+                "Bezirksamt Mitte",
+            ],
+        ),
+    ],
+    ids=[
+        "text_search",
+        "jurisdiction_filter",
+        "classification_filter",
+        "category_filter",
+        "georegion_filter",
+        "georegion_kind_filter",
+        "text_and_jurisdiction",
+        "jurisdiction_and_classification",
+        "category_and_classification",
+        "no_results",
+        "empty_search",
+    ],
+)
+def test_publicbody_search_filters(
+    client, publicbody_data, query_params, expected_count, expected_names
+):
+    """Test different combinations of search and filters for the publicbody search API."""
+
+    test_params = query_params.copy()
+
+    # Replace slugs with actual IDs.
+    if "jurisdiction" in test_params:
+        slug = test_params["jurisdiction"]
+        test_params["jurisdiction"] = publicbody_data["jurisdictions"][slug].pk
+
+    if "classification" in test_params:
+        slug = test_params["classification"]
+        test_params["classification"] = publicbody_data["classifications"][slug].pk
+
+    if "categories" in test_params:
+        slug = test_params["categories"]
+        test_params["categories"] = publicbody_data["categories"][slug].pk
+
+    if "regions" in test_params:
+        slug = test_params["regions"]
+        test_params["regions"] = publicbody_data["regions"][slug].pk
+
+    url = reverse("api:publicbody-search")
+    response = client.get(url, test_params)
+
+    assert response.status_code == 200
+    data = response.json()
+
+    # Check counts.
+    assert len(data["objects"]) == expected_count
+    assert data["meta"]["total_count"] == expected_count
+
+    # Check names.
+    result_names = {pb["name"] for pb in data["objects"]}
+    assert result_names == set(expected_names)
+
+    # Check facets.
+    assert "facets" in data
+    facets = data["facets"]["fields"]
+    assert "jurisdiction" in facets
+    assert "classification" in facets
+    assert "categories" in facets
+    assert "regions" in facets
 
 
 @pytest.mark.django_db
