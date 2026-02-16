@@ -71,7 +71,7 @@ coverage==7.10.6
     #   django-coverage-plugin
 cron-descriptor==2.0.6
     # via django-celery-beat
-cryptography==46.0.1
+cryptography==46.0.5
     # via
     #   fido2
     #   jwcrypto
