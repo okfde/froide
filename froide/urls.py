@@ -149,15 +149,12 @@ admin_urls = [
 if settings.SERVE_MEDIA:
     froide_urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
-    try:
-        import debug_toolbar
+if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
+    import debug_toolbar
 
-        froide_urlpatterns = [
-            path("__debug__/", include(debug_toolbar.urls)),
-        ] + froide_urlpatterns
-    except ImportError:
-        pass
+    froide_urlpatterns = [
+        path("__debug__/", include(debug_toolbar.urls)),
+    ] + froide_urlpatterns
 
 
 jurisdiction_urls = [
