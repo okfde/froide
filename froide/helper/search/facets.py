@@ -11,6 +11,13 @@ class FakeObject:
         return ""
 
 
+def get_facet_data(aggregation_item, key):
+    if key in aggregation_item:
+        # the data could ne nested due to aggs filter
+        return aggregation_item[key]
+    return aggregation_item
+
+
 class SearchManager:
     def __init__(
         self,
@@ -69,7 +76,7 @@ class SearchManager:
         return {
             key: self.resolve_facet(
                 key,
-                aggregation_data[key][key],  # the data is nested due to aggs filter
+                get_facet_data(aggregation_data[key], key),
                 getter=config.get("getter"),
                 model=config.get("model"),
                 queryset=config.get("queryset"),
