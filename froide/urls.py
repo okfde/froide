@@ -149,7 +149,7 @@ admin_urls = [
 if settings.SERVE_MEDIA:
     froide_urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-if settings.DEBUG:
+if settings.DEBUG and "debug_toolbar" in settings.INSTALLED_APPS:
     try:
         import debug_toolbar
 
