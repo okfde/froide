@@ -24,13 +24,13 @@ importers:
         specifier: ^4.1.9
         version: 4.1.9
       '@uppy/core':
-        specifier: ^5.2.0
+        specifier: ^5.0.1
         version: 5.2.0
       '@uppy/dashboard':
-        specifier: ^5.1.1
+        specifier: ^5.0.1
         version: 5.1.1(@uppy/core@5.2.0)
       '@uppy/tus':
-        specifier: ^5.1.1
+        specifier: ^5.0.0
         version: 5.1.1(@uppy/core@5.2.0)
       '@vueuse/core':
         specifier: ^13.9.0
