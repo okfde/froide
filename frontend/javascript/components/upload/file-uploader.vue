@@ -190,6 +190,10 @@ export default {
   they do not (yet) include: border-radiuses, dropFilesHereHint's svg background (icon);
   also, the "table" headers&footers when uppy is processing (.uppy-StatusBar etc.) aren't perfect */
 
+:deep(.uppy-Root) {
+  font-family: unset;
+}
+
 :deep(.uppy-Dashboard-inner) {
   --bs-bg-opacity: 1;
   background-color: rgba(
