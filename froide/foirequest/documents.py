@@ -59,6 +59,8 @@ class FoiRequestDocument(Document):
     team = fields.IntegerField(attr="team_id")
 
     public = fields.BooleanField()
+    project = fields.IntegerField(attr="project_id")
+    project_order = fields.IntegerField()
 
     class Django:
         model = FoiRequest
