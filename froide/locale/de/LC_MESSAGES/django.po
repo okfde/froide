@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: froide\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-09 18:32+0100\n"
+"POT-Creation-Date: 2026-02-19 11:44+0100\n"
 "PO-Revision-Date: 2026-02-09 17:42+0000\n"
 "Last-Translator: krmax44 <github@krmax44.de>\n"
 "Language-Team: German <https://weblate.frag-den-staat.de/projects/froide/"
@@ -4569,6 +4569,7 @@ msgstr[1] ""
 #: froide/foirequest/templates/foirequest/account/list_drafts.html
 #: froide/foirequest/templates/foirequest/account/list_projects.html
 #: froide/foirequest/templates/foirequest/body/message/meta_container.html
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
 #: froide/foirequest/templates/foirequest/header/info-box.html
 #: froide/foirequest/templates/foirequest/pdf/_foimessage.html
 #: froide/foirequest/templates/foirequest/pdf/message_letter.html
@@ -6114,6 +6115,12 @@ msgid "is public?"
 msgstr "öffentlich?"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
+#, fuzzy
+#| msgid "What is the problem?"
+msgid "has problems?"
+msgstr "Welches Problem liegt vor?"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
 #, python-format
 msgid "Check request #%(num)s"
 msgstr "Anfrage #%(num)s prüfen"
@@ -6125,6 +6132,42 @@ msgstr "Ja"
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "No"
 msgstr "Nein"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#, fuzzy
+#| msgid "problem reports"
+msgid "Unresolved problem reports"
+msgstr "Problemberichte"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/foirequest/templates/foirequest/publicbody_upload.html
+msgid "Request"
+msgstr "Anfrage"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "Problem"
+msgstr "Problem"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "State"
+msgstr "Zustand"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "auto detected"
+msgstr "automatisch erkannt"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "Resolved"
+msgstr "Gelöst"
+
+#: froide/foirequest/templates/foirequest/foiproject_detail.html
+#: froide/problem/templates/problem/message_toolbar_item.html
+msgid "Pending"
+msgstr "Läuft"
 
 #: froide/foirequest/templates/foirequest/foiproject_detail.html
 msgid "Assign team to project"
@@ -6483,10 +6526,6 @@ msgstr "m.muster.1234abc"
 #: froide/foirequest/views/request.py
 msgid "Next"
 msgstr "Weiter"
-
-#: froide/foirequest/templates/foirequest/publicbody_upload.html
-msgid "Request"
-msgstr "Anfrage"
 
 #: froide/foirequest/templates/foirequest/publicbody_upload.html
 msgid "File transfer"
@@ -10146,10 +10185,6 @@ msgid "Problem?"
 msgstr "Problem?"
 
 #: froide/problem/templates/problem/message_toolbar_item.html
-msgid "Problem"
-msgstr "Problem"
-
-#: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Report a problem"
 msgstr "Melden Sie ein Problem"
 
@@ -10185,25 +10220,9 @@ msgid "Reported by"
 msgstr "Gemeldet von"
 
 #: froide/problem/templates/problem/message_toolbar_item.html
-msgid "State"
-msgstr "Zustand"
-
-#: froide/problem/templates/problem/message_toolbar_item.html
-msgid "auto detected"
-msgstr "automatisch erkannt"
-
-#: froide/problem/templates/problem/message_toolbar_item.html
 #: froide/problem/views.py
 msgid "not requester"
 msgstr "nicht Anfragesteller:in"
-
-#: froide/problem/templates/problem/message_toolbar_item.html
-msgid "Resolved"
-msgstr "Gelöst"
-
-#: froide/problem/templates/problem/message_toolbar_item.html
-msgid "Pending"
-msgstr "Läuft"
 
 #: froide/problem/templates/problem/message_toolbar_item.html
 msgid "Report a new problem"
