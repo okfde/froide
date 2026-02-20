@@ -350,7 +350,7 @@ msgid ""
 msgstr ""
 "Sind Sie im Journalismus tätig und möchten {site_name} für Ihre Recherchen "
 "nutzen? Dann schicken wir Ihnen nach Ihrer Anmeldung Infos über zusätzliche "
-"Frunktionen für Journalist*innen."
+"Funktionen für Journalist*innen."
 
 #: froide/account/forms.py
 msgid "No, I am <strong>not a journalist</strong>"
