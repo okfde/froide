@@ -1866,7 +1866,7 @@ msgstr "Bounce-Meldungen"
 
 #: froide/campaign/apps.py froide/foirequest/views/make_request.py
 msgid "Campaign"
-msgstr "Kampagne"
+msgstr "Aktion"
 
 #: froide/campaign/models.py froide/document/filters.py
 #: froide/foirequest/filters.py froide/foirequest/models/request.py
