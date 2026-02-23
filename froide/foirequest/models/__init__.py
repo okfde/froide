@@ -1,6 +1,7 @@
 from .attachment import FoiAttachment
 from .deferred import DeferredMessage
 from .draft import RequestDraft
+from .link import FoiRequestLink
 from .message import (
     DeliveryStatus,
     FoiMessage,
@@ -16,6 +17,7 @@ from .event import FoiEvent  # isort: skip
 
 __all__ = [
     "FoiRequest",
+    "FoiRequestLink",
     "TaggedFoiRequest",
     "FoiMessage",
     "FoiMessageDraft",

@@ -50,6 +50,7 @@ from .models import (
     FoiMessage,
     FoiProject,
     FoiRequest,
+    FoiRequestLink,
     MessageTag,
     PublicBodySuggestion,
     RequestDraft,
@@ -1263,3 +1264,17 @@ class DeliveryStatusAdmin(admin.ModelAdmin):
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("message", "message__request")
         return qs
+
+
+@admin.register(FoiRequestLink)
+class FoiRequestLink(admin.ModelAdmin):
+    raw_id_fields = ("request",)
+    date_hierarchy = "timestamp"
+    list_display = (
+        "request",
+        "content_type",
+    )
+    list_filter = (
+        "content_type",
+        ("request", ForeignKeyFilter),
+    )
