@@ -418,7 +418,7 @@ six==1.17.0
     #   python-dateutil
 soupsieve==2.8
     # via beautifulsoup4
-sqlparse==0.5.3
+sqlparse==0.5.4
     # via django
 tblib==3.1.0
     # via froide (pyproject.toml)
