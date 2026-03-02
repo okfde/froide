@@ -408,7 +408,7 @@
       </div>
     </div>
     <!-- /.container -->
-    <OnlineHelp ref="onlineHelp" :i18n="i18n"></OnlineHelp>
+    <OnlineHelp ref="onlineHelp" />
   </div>
 </template>
 
