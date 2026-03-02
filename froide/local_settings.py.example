@@ -225,7 +225,7 @@ class Dev(Base):
     # SESSION_COOKIE_SECURE = False
 
     # Only in production, but don't forget
-    # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+    # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     # ALLOWED_HOSTS = ('example.com',)
 
     # # Django-Secure options

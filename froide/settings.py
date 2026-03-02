@@ -893,7 +893,7 @@ class Production(Base):
 
 
 class SSLSite(object):
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTOCOL", "https")
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     LANGUAGE_COOKIE_SECURE = True
