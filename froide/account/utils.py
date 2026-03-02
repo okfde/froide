@@ -43,7 +43,7 @@ class OnlyActiveUsersMailMiddleware:
         mail_intent: str,
         context: Dict[str, Any],
         email_kwargs: EmailKwargs,
-    ) -> None:
+    ) -> None | bool:
         user = context.get("user")
         if not user:
             # No user, not our concern here
