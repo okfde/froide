@@ -354,8 +354,8 @@ import range from 'lodash.range'
 
 import { Modal } from 'bootstrap'
 
-import { bustCache, getData } from '../../lib/api.js'
 import { toRaw } from 'vue'
+import { bustCache, getData } from '../../lib/api.js'
 
 import { useAttachments } from '../docupload/lib/attachments.js'
 const { fetchAttachment, approveAttachment } = useAttachments()
@@ -585,7 +585,7 @@ export default {
       .then((PDFJS) => {
         const currentModuleUrl = new URL(import.meta.url)
         const staticOrigin = currentModuleUrl.origin
-        const configuredWorkerUrl = new URL(PDFJSWorkerUrl)
+        const configuredWorkerUrl = new URL(PDFJSWorkerUrl, import.meta.url)
         const workerUrl = staticOrigin + configuredWorkerUrl.pathname
         this.PDFJS = PDFJS
         this.PDFJS.GlobalWorkerOptions.workerSrc = workerUrl
