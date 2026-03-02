@@ -160,6 +160,17 @@
     </ReviewRequestLine>
 
     <ReviewRequestLine
+      :i18n="i18n"
+      :title="i18n.proof"
+      :step="STEPS.WRITE_REQUEST"
+      v-if="user && proofForm"
+    >
+      <template #contents>
+        {{ hasProofs ? i18n.hasProofs : i18n.hasNoProofs }}
+      </template>
+    </ReviewRequestLine>
+
+    <ReviewRequestLine
       v-if="needCorrectionTerms"
       :i18n="i18n"
       :title="i18n.terms"
@@ -238,6 +249,10 @@ export default {
       type: Object,
       required: true
     },
+    proofForm: {
+      type: Object,
+      required: true
+    },
     defaultLaw: {
       type: Object,
       default: null
@@ -261,6 +276,10 @@ export default {
     showDraft: {
       type: Boolean,
       default: false
+    },
+    hasProof: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
@@ -370,7 +389,8 @@ export default {
       'confirmValid',
       'getPublicBodyByScope',
       'getPublicBodiesByScope',
-      'requestPublic'
+      'requestPublic',
+      'hasProofs'
     ])
   },
   methods: {
