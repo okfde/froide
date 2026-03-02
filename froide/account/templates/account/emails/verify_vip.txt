@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% blocktrans with name=name %}Hello {{ name }},
+
+You have stated to be a journalist while signing up and to use {{ site_name }} for your research.
+We can enable advanced features for your account, such as sending requests to multiple public bodies at once.
+Please provide some brief verification in order for us to grant you access.
+
+Cheers,
+{{ site_name }}{% endblocktrans %}
+{% endautoescape %}
+{% include "emails/footer.txt" %}
