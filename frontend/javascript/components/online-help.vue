@@ -1,45 +1,70 @@
-<script setup>
+<script lang="ts" setup>
 import { inject, ref, onMounted } from 'vue'
 import BsModal from './bs-modal.vue'
 
 const props = defineProps({
-  path: String,
-  i18n: {
-    type: Object,
-    required: false
-  }
+  path: { type: String, default: '' }
 })
 
-const i18n = inject('i18n') || props.i18n
+const i18n: any = inject('i18n')
 
+const container = ref<HTMLDivElement>()
 const contents = ref('')
 
 const bsModal = ref()
 
 const isFetching = ref(false)
 
-const fetchContents = (url) => {
+const lowerHeadingLevel = (el: Element, from: number, to: number) => {
+  el.querySelectorAll<HTMLHeadingElement>(`h${from}`).forEach((el) => {
+    const h = document.createElement(`h${to}`)
+    h.innerHTML = el.innerHTML
+    el.replaceWith(h)
+  })
+}
+
+const fetchContents = (url: string) => {
   isFetching.value = true
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
         console.error('online help fetch error', response)
-        return `<h1>${response.status} ${response.statusText}</h1>`
+        return `<strong>${response.status} ${response.statusText}</strong>`
       }
       return response.text()
     })
     .then((response) => {
-      contents.value = response
+      container.value!.innerHTML = ''
+
+      const root = document.createElement('div')
+      root.innerHTML = response
+
+      root.querySelectorAll('a').forEach((a) => {
+        if (!a.target) a.target = '_blank'
+      })
+
+      // we need to adjust the lowest levels first, otherwise we would lower them multiple times
+      const headlineLevels = [
+        [3, 5],
+        [2, 4],
+        [1, 3]
+      ]
+
+      for (const [from, to] of headlineLevels) {
+        lowerHeadingLevel(root, from, to)
+      }
+
+      container.value!.appendChild(root)
     })
     .catch((err) => {
-      contents.value = 'Error: ' + err
+      container.value!.innerHTML = 'Error: ' + err
     })
     .finally(() => {
       isFetching.value = false
     })
 }
 
-const show = (pathOrContent) => {
+const show = (pathOrContent: string | { content: string }) => {
   if (typeof pathOrContent === 'string') {
     fetchContents(pathOrContent)
     bsModal.value.show()
@@ -54,28 +79,25 @@ onMounted(() => {
   if (props.path) fetchContents(props.path)
 })
 
-defineExpose({
-  show
-})
+defineExpose({ show })
 </script>
 
 <template>
   <BsModal
     ref="bsModal"
     dialog-classes="modal-fullscreen modal-dialog-scrollable ms-auto modal-online-help"
-    content-classes="bg-warning-subtle"
+    :body-classes="
+      isFetching ? 'd-flex justify-content-center align-items-center' : ''
+    "
   >
     <template #header>
-      <h5 class="modal-title">{{ i18n.help }}</h5>
+      <h2 class="h5 modal-title">{{ i18n.help }}</h2>
     </template>
     <template #body>
-      <span
-        class="spinner spinner-border position-absolute top-50 start-50 translate-middle"
-        v-show="isFetching"
-      >
-        <span class="sr-only">{{ i18n.attachmentsLoading }}</span>
+      <span v-if="isFetching" class="spinner spinner-border" role="status">
+        <span class="visually-hidden">{{ i18n.attachmentsLoading }}</span>
       </span>
-      <div v-html="contents"></div>
+      <div v-show="!isFetching" ref="container" />
     </template>
   </BsModal>
 </template>
