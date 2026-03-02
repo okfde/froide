@@ -49,7 +49,8 @@ import {
   UPDATE_USER_ID,
   UPDATE_REQUEST_PUBLIC,
   UPDATE_SIMILAR_REQUEST_SEARCH,
-  UPDATE_CLAIMS_VIP
+  UPDATE_CLAIMS_VIP,
+  UPDATE_PROOF
 } from './mutation_types'
 
 import { FroideAPI } from '../lib/api'
@@ -91,7 +92,8 @@ export default createStore({
       lastNameChanged: false,
       emailValid: undefined,
       emailChanged: false,
-      similarRequestSearch: {}
+      similarRequestSearch: {},
+      proof: null
     }
   },
   getters: {
@@ -230,7 +232,8 @@ export default createStore({
         default:
           return true
       }
-    }
+    },
+    hasProofs: (state) => !!state.proof
   },
   mutations: {
     [SET_CONFIG](state, config) {
@@ -477,6 +480,9 @@ export default createStore({
       laws.forEach((law) => {
         state.lawCache[law.resource_uri] = law
       })
+    },
+    [UPDATE_PROOF](state, proof) {
+      state.proof = proof
     }
   },
   actions: {

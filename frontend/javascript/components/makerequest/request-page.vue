@@ -388,6 +388,7 @@
                   :publicbodies="publicBodies"
                   :user-form="userForm"
                   :request-form="requestForm"
+                  :proof-form="proofForm"
                   :default-law="defaultLaw"
                   :multi-request="multiRequest"
                   :full-text="fullText"
