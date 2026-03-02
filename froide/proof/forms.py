@@ -22,9 +22,6 @@ def get_proof_choice_field(user, initial=None):
     if proof_choices:
         return forms.ModelChoiceField(
             label=_("Proof"),
-            help_text=_(
-                "If you want to send one of your proofs of identity, choose it here."
-            ),
             queryset=proof_choices,
             required=False,
             initial=initial,

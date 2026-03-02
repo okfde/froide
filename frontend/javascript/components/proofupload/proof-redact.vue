@@ -33,6 +33,7 @@ export default {
       required: true
     }
   },
+  emits: ['hasredaction', 'redacted'],
   data() {
     return {
       holding: false,
