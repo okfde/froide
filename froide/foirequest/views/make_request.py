@@ -708,11 +708,6 @@ class MakeRequestView(FormView):
         service = CreateRequestService(data)
         foi_object = service.execute(self.request)
 
-        # user just created
-        if not user.is_authenticated and foi_object.user and "claims_vip" in data:
-            if data["claims_vip"]:
-                foi_object.user.tags.add("claims:vip")
-
         return self.make_redirect(
             request_form, foi_object, email=data.get("user_email")
         )

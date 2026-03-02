@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta, timezone
+from importlib import reload
 from unittest import mock
 from urllib.parse import quote, urlencode
 
@@ -25,13 +26,16 @@ from froide.publicbody.models import PublicBody
 
 from ..admin import UserAdmin
 from ..models import AccountBlocklist
-from ..services import AccountService
+from ..services import VIP_TAG, AccountService
 from ..utils import merge_accounts
 
 User = get_user_model()
 
 SPAM_ENABLED_CONFIG = dict(settings.FROIDE_CONFIG)
 SPAM_ENABLED_CONFIG["spam_protection"] = True
+
+CAN_CLAIM_VIP_CONFIG = dict(settings.FROIDE_CONFIG)
+CAN_CLAIM_VIP_CONFIG["user_can_claim_vip"] = True
 
 
 @pytest.mark.django_db
@@ -231,6 +235,44 @@ def test_signup_same_name(world, client):
     assert response.status_code == 302
     user = User.objects.get(email="horst.porst2@example.com")
     assert user.username == "h.porst_1"
+
+
+@pytest.mark.django_db
+def test_signup_claims_vip(world, client, settings):
+    import froide.account.forms
+    import froide.account.services
+
+    with override_settings(FROIDE_CONFIG=CAN_CLAIM_VIP_CONFIG):
+        # otherwise, the claims_vip field is missing from the SignUpForm/NewUserBaseForm
+        reload(froide.account.services)
+        reload(froide.account.forms)
+
+        assert "claims_vip" in froide.account.forms.SignUpForm().fields
+
+        mail.outbox = []
+
+        post = {
+            "first_name": "Horst",
+            "last_name": "Porst",
+            "terms": "on",
+            "private": True,
+            "user_email": "horst.vip@example.com",
+            "time": (datetime.now(timezone.utc) - timedelta(seconds=30)).timestamp(),
+            "claims_vip": True,
+        }
+        response = client.post(reverse("account-signup"), post)
+        assert response.status_code == 302
+
+        user = User.objects.last()
+        assert user.email == post["user_email"]
+        assert user.tags.filter(name=VIP_TAG).exists()
+
+        assert len(mail.outbox) == 2
+
+    reload(froide.account.services)
+    reload(froide.account.forms)
+
+    assert "claims_vip" not in froide.account.forms.SignUpForm().fields
 
 
 @pytest.mark.django_db
