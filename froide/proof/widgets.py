@@ -19,6 +19,9 @@ def get_widget_context():
             "redactionInstructions": _(
                 "Click or touch and drag over the image to redact parts of it."
             ),
+            "whenToAddProof": _(
+                "You usually do not need to prove your identity! This is only required in rare cases, for example when requesting information about yourself or to prove you are a journalist."
+            ),
         },
     }
 
