@@ -126,7 +126,7 @@
                         {{ year }}
                       </option>
                     </select>
-                    <span class="px-1">&mdash;</span>
+                    <span class="px-1" aria-hidden="true">&mdash;</span>
                     <!-- alt: label, date input
                     <label for="date_end" class="form-label g-col-sm-4">To</label>
                     <input id="date_end" type="date" class="form-control g-col-sm-8" v-model="dateEnd" />
