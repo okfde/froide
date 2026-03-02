@@ -354,7 +354,7 @@ def edit_postal_message(request, foirequest, message_id):
             "letterUploadOrScan": _("Upload or scan letter"),
             "messageReceivedLetter": _("I have received the letter"),
             "messageSentLetter": _("I have sent the letter"),
-            "upload": _("Hochladen"),
+            "upload": _("Upload"),
             "enterInformation": _("Enter information"),
             "preview": _("Preview"),
             "hint": _("Hint"),
