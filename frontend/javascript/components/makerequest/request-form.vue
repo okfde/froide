@@ -317,6 +317,7 @@
           :form="proofForm"
           :required="proofRequired"
           :config="config.proof_config"
+          @update="updateProof"
         ></ProofForm>
       </template>
       <details v-else>
@@ -325,6 +326,8 @@
           :form="proofForm"
           :required="proofRequired"
           :config="config.proof_config"
+          @update="updateProof"
+          class="pt-3"
         ></ProofForm>
       </details>
     </div>
@@ -381,7 +384,8 @@ import {
   UPDATE_SUBJECT_VALIDITY,
   UPDATE_SUBJECT_CHANGED,
   SET_STEP,
-  STEPS
+  STEPS,
+  UPDATE_PROOF
 } from '../../store/mutation_types'
 
 import ProofForm from '../proofupload/proof-form.vue'
@@ -795,7 +799,8 @@ export default {
       updateBodyValidity: UPDATE_BODY_VALIDITY,
       updateBodyChanged: UPDATE_BODY_CHANGED,
       updateSubjectValidity: UPDATE_SUBJECT_VALIDITY,
-      updateSubjectChanged: UPDATE_SUBJECT_CHANGED
+      updateSubjectChanged: UPDATE_SUBJECT_CHANGED,
+      updateProof: UPDATE_PROOF
     })
   }
 }

@@ -421,6 +421,11 @@ class MakeRequestView(FormView):
                 "login": pgettext("Make request", "Log in"),
                 "searchRequests": _("Search requests"),
                 "showEntireMessage": _("Show entire message"),
+                "proof": _("Proof of identity"),
+                "hasProofs": _("You have provided a proof of your identity"),
+                "hasNoProofs": _(
+                    "You're not providing a proof of your identity (only required in rare cases)"
+                ),
             },
             "regex": {
                 "greetings": [_("Dear Sir or Madam")],
