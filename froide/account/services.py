@@ -24,6 +24,10 @@ from .models import AccountBlocklist, User
 ONE_TIME_LOGIN_PURPOSE = "onetimelogin"
 ONE_TIME_LOGIN_EXPIRY = timedelta(hours=72)
 
+USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
+USER_CAN_CLAIM_VIP = settings.FROIDE_CONFIG.get("user_can_claim_vip", False)
+ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
+
 
 def get_user_for_email(email):
     try:
@@ -47,6 +51,10 @@ change_email_mail = mail_registry.register(
 add_to_group_mail = mail_registry.register(
     "account/emails/add_to_group", ("user", "group", "name")
 )
+verify_vip_mail = mail_registry.register("account/emails/verify_vip", ("user", "name"))
+
+# tag for users who request features for journalists during sign-up
+VIP_TAG = "claims:vip"
 
 
 class AccountService(object):
@@ -96,6 +104,9 @@ class AccountService(object):
         # ensure username is unique
         user.username = username_base
         save_obj_unique(user, "username", postfix_format="_{count}")
+
+        if USER_CAN_CLAIM_VIP and data.get("claims_vip"):
+            user.tags.add(VIP_TAG)
 
         return user, True
 
@@ -199,8 +210,9 @@ class AccountService(object):
         ).hexdigest()
 
     def send_confirmation_mail(self, reference=None, redirect_url=None):
+        user = self.user
         secret = self.generate_confirmation_secret()
-        url_kwargs = {"user_id": self.user.pk, "secret": secret}
+        url_kwargs = {"user_id": user.pk, "secret": secret}
         url = reverse("account-confirm", kwargs=url_kwargs)
 
         params = {}
@@ -216,20 +228,27 @@ class AccountService(object):
             ref = reference.split(":", 1)[0]
             template_base = "account/emails/{}/confirmation_mail".format(ref)
 
+        name = user.get_full_name()
+
         context = {
-            "user": self.user,
+            "user": user,
             "action_url": settings.SITE_URL + url,
-            "name": self.user.get_full_name(),
+            "name": name,
         }
 
         confirmation_mail.send(
-            user=self.user,
+            user=user,
             context=context,
             template_base=template_base,
             reference=reference,
             ignore_active=True,
             priority=True,
         )
+
+        if user.tags.filter(name=VIP_TAG).exists():
+            verify_vip_mail.send(
+                user=user, context={"user": user, "name": name}, ignore_active=True
+            )
 
     def send_confirm_action_mail(self, url, title, reference=None, redirect_url=None):
         secret_url = self.get_autologin_url(url)

@@ -29,13 +29,14 @@ from . import account_email_changed
 from .auth import complete_mfa_authenticate_for_method
 from .models import AccountBlocklist, User
 from .registries import user_extra_registry
-from .services import AccountService, get_user_for_email
+from .services import (
+    ALLOW_PSEUDONYM,
+    USER_CAN_CLAIM_VIP,
+    USER_CAN_HIDE_WEB,
+    AccountService,
+    get_user_for_email,
+)
 from .widgets import ConfirmationWidget, PinInputWidget
-
-USER_CAN_HIDE_WEB = settings.FROIDE_CONFIG.get("user_can_hide_web", True)
-USER_CAN_CLAIM_VIP = settings.FROIDE_CONFIG.get("user_can_claim_vip", False)
-ALLOW_PSEUDONYM = settings.FROIDE_CONFIG.get("allow_pseudonym", False)
-
 
 # UserChangeForm / UserCreationForm need to be in this module
 # due to django-cms convention:
