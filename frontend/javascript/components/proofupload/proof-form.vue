@@ -1,36 +1,37 @@
 <template>
   <div>
-    <div v-if="formFields.proof" class="mb-3 mt-3">
-      <label
-        class="fw-bold form-label"
-        :class="{
-          'field-required': proofRequired
-        }"
-        for="id_proof"
-        >{{ formFields.proof.label }}</label
-      >
-      <select
-        name="proof"
-        class="form-select"
-        id="id_proof"
-        v-model="proof"
-        :disabled="!!proofImage"
-        :required="proofRequired"
-      >
-        <option
-          v-for="option in formFields.proof.choices"
-          :key="option.value"
-          :value="option.value"
+    <p>{{ i18n.whenToAddProof }}</p>
+    <template v-if="formFields.proof?.choices.length">
+      <div class="mb-3 mt-3">
+        <label
+          class="fw-bold form-label"
+          :class="{
+            'field-required': proofRequired
+          }"
+          for="id_proof"
+          >{{ formFields.proof.label }}</label
         >
-          {{ option.label }}
-        </option>
-      </select>
-      <div class="form-text">{{ formFields.proof.help_text }}</div>
-    </div>
-
-    <div v-if="formFields.proof" class="text-center fw-bold">
-      {{ i18n.orUploadNewProof }}
-    </div>
+        <select
+          name="proof"
+          class="form-select"
+          id="id_proof"
+          v-model="proof"
+          :disabled="!!proofImage"
+          :required="proofRequired"
+        >
+          <option
+            v-for="option in formFields.proof.choices"
+            :key="option.value"
+            :value="option.value"
+          >
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      <div class="text-center fw-bold">
+        {{ i18n.orUploadNewProof }}
+      </div>
+    </template>
 
     <div class="mb-3 mt-3">
       <label
@@ -65,10 +66,10 @@
       >
       <ProofUpload
         name="proof_image"
-        v-model="proofImage"
         :disabled="!!proof"
         :config="config"
         :required="proofImageRequired"
+        @input="(image) => (proofImage = image)"
       />
     </div>
 
@@ -102,7 +103,8 @@ export default {
   mixins: [I18nMixin],
   props: {
     config: {
-      type: Object
+      type: Object,
+      required: true
     },
     form: {
       type: Object,
@@ -113,6 +115,7 @@ export default {
       default: false
     }
   },
+  emits: ['update'],
   data() {
     return {
       proof:
@@ -133,6 +136,24 @@ export default {
       return this.form.fields
     }
   },
-  methods: {}
+  methods: {
+    update() {
+      if (this.proof) {
+        this.$emit('update', { proof: this.proof, image: null })
+      } else if (this.proofImage) {
+        this.$emit('update', { proof: null, image: this.proofImage })
+      } else {
+        this.$emit('update', null)
+      }
+    }
+  },
+  watch: {
+    proof() {
+      this.update()
+    },
+    proofImage() {
+      this.update()
+    }
+  }
 }
 </script>

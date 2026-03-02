@@ -87,7 +87,8 @@ export default {
       required: true
     },
     config: {
-      type: Object
+      type: Object,
+      required: true
     },
     required: {
       type: Boolean,
@@ -100,6 +101,7 @@ export default {
       default: false
     }
   },
+  emits: ['input'],
   data() {
     return {
       img: null,
