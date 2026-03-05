@@ -31,7 +31,7 @@ async def test_make_not_logged_in_request(
     await page.locator(".search-public_bodies").fill(pb.name)
     await page.locator(".search-public_bodies-submit").click()
     buttons = page.locator(".search-results .search-result .btn")
-    await expect(buttons).to_have_count(2)
+    await expect(buttons).to_have_count(1)
     await page.locator(".search-results .search-result .btn >> nth=0").click()
 
     await page.locator("#step_login_create .btn-primary >> nth=0").click()
@@ -136,7 +136,7 @@ async def test_make_logged_in_request(
     await page.locator(".search-public_bodies").fill(pb.name)
     await page.locator(".search-public_bodies-submit").click()
     buttons = page.locator(".search-results .search-result .btn")
-    await expect(buttons).to_have_count(2)
+    await expect(buttons).to_have_count(1)
     await page.locator(".search-results .search-result .btn >> nth=0").click()
 
     await page.fill("[name=subject]", req_title)
