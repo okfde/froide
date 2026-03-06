@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load foirequest_tags %}
+{% load block_helper %}
 {% load form_helper %}
 <form class="disable-submit"
       method="post"
@@ -34,31 +35,33 @@
         {% render_field form.message horizontal=False %}
         {% render_field form.send_address horizontal=False %}
         {% render_field form.address horizontal=False %}
-        {% if request.user.is_staff %}
-            <details class="mb-3">
-                <summary>{% translate "Include proofs and other attachments" %}</summary>
-                {% if request.user != object.user %}
-                    <div class="alert alert-warning">
-                        {% blocktranslate with name=object.user.get_full_name %}
-                  The proof will be sent in the name of {{ name }}. Storing them will store them in your account.
-                {% endblocktranslate %}
-                    </div>
-                {% endif %}
-                {% include "proof/proof_message.html" %}
-                {% render_field form.files horizontal=False %}
-            </details>
-        {% else %}
+        <details class="mb-3">
+            <summary>{% translate "Include proofs and other attachments" %}</summary>
+            {% if request.user != object.user %}
+                <div class="alert alert-warning">
+                    {% blocktranslate with name=object.user.get_full_name %}
+                The proof will be sent in the name of {{ name }}. Storing them will store them in your account.
+            {% endblocktranslate %}
+                </div>
+            {% endif %}
+            {% include "proof/proof_message.html" %}
             {% render_field form.files horizontal=False %}
-        {% endif %}
-    {% endwith %}
-    <button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
-    <p class="form-text text-body-secondary">
-        <small>
-            {% trans "If you need to provide an alternative email address, use this one:" %}
-            <br />
-            <strong>{% alternative_address object %}</strong>
-            <br />
-            {% trans "It will still go to your request here." %}
-        </small>
-    </p>
+        </details>
+        {% addtoblock "css" %}
+        {{ form.media.css }}
+    {% endaddtoblock %}
+    {% addtoblock "js" %}
+    {{ form.media.js }}
+{% endaddtoblock %}
+{% endwith %}
+<button class="btn btn-primary" type="submit">{% blocktrans %}Send Message{% endblocktrans %}</button>
+<p class="form-text text-body-secondary">
+    <small>
+        {% trans "If you need to provide an alternative email address, use this one:" %}
+        <br />
+        <strong>{% alternative_address object %}</strong>
+        <br />
+        {% trans "It will still go to your request here." %}
+    </small>
+</p>
 </form>
