@@ -74,25 +74,6 @@ class PublicBodyFilterSet(PublicBodySearchMixin, BaseSearchFilterSet):
 class PublicBodyAPIFilterSet(PublicBodySearchMixin, BaseSearchFilterSet):
     """FilterSet for the PublicBody API search (ID-based lookups)."""
 
-    def is_valid(self):
-        # Trigger form validation to populate cleaned_data and errors,
-        # but always return True to prevent DjangoFilterBackend from
-        # raising a 400 response for invalid filter values.
-        self.form.is_valid()
-
-        return True
-
-    def filter_queryset(self, queryset):
-        # Apply all valid filters normally.
-        for name, value in self.form.cleaned_data.items():
-            queryset = self.filters[name].filter(queryset, value)
-
-        # For invalid filter values, filter by a non-existent PK to return empty results.
-        for name in self.form.errors:
-            queryset = queryset.filter(**{name: 0})
-
-        return queryset
-
     q = django_filters.CharFilter(
         method="auto_query",
     )
@@ -113,7 +94,8 @@ class PublicBodyAPIFilterSet(PublicBodySearchMixin, BaseSearchFilterSet):
         queryset=GeoRegion.objects.all(),
         method="filter_regions",
     )
-    regions_kind = django_filters.CharFilter(
+    regions_kind = django_filters.ChoiceFilter(
+        choices=GeoRegion.KIND_CHOICES,
         method="filter_regions_kind",
     )
 
