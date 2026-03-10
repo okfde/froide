@@ -574,13 +574,11 @@ class TestPublicBodySearchAPI:
         ],
     )
     def test_invalid_input(self, client, publicbody_data, api_params):
-        """Invalid filter values should return 200 with empty results."""
+        """Invalid filter values should return 400."""
         url = reverse("api:publicbody-search")
         response = client.get(url, api_params)
 
-        assert response.status_code == 200
-        data = response.json()
-        assert data["objects"] == []
+        assert response.status_code == 400
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(
