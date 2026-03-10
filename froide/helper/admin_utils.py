@@ -317,6 +317,8 @@ class SearchFilter(ForeignKeyFilter):
 class MultiFilterMixin:
     template = "helper/admin/multi_filter.html"
     lookup_name = ""
+    related_model = None
+    related_model_fk_field = None
 
     def queryset(self, request, queryset):
         if request.GET.get(self.parameter_name):
@@ -329,12 +331,25 @@ class MultiFilterMixin:
     def get_q(cls, values, lookup):
         includes = [v for v in values if not v.startswith("~")]
         excludes = [v[1:] for v in values if v.startswith("~")]
+
+        if not lookup.endswith("__in"):
+            lookup += "__in"
+
+        def exists(values):
+            return models.Exists(
+                cls.related_model.objects.filter(
+                    **{
+                        cls.related_model_fk_field: models.OuterRef("id"),
+                        lookup: values,
+                    }
+                )
+            )
+
         q = models.Q()
         if includes:
-            for inc in includes:
-                q |= models.Q(**{lookup: [inc]})
+            q &= exists(includes)
         if excludes:
-            q &= ~models.Q(**{lookup: excludes})
+            q &= ~exists(excludes)
         return q
 
     def value_as_list(self):

@@ -65,8 +65,10 @@ class TaggedUserAdmin(admin.ModelAdmin):
 class UserTagListFilter(MultiFilterMixin, TaggitListFilter):
     tag_class = TaggedUser
     title = "Tags"
-    parameter_name = "tags__slug"
+    parameter_name = "tag__slug"
     lookup_name = "__in"
+    related_model = TaggedUser
+    related_model_fk_field = "content_object"
 
 
 class AddToGroupForm(forms.Form):

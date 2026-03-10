@@ -523,8 +523,10 @@ class DeliveryStatusInline(admin.TabularInline):
 class MessageTagsFilter(MultiFilterMixin, TaggitListFilter):
     tag_class = TaggedMessage
     title = "Tags"
-    parameter_name = "tags__slug"
+    parameter_name = "tag__slug"
     lookup_name = "__in"
+    related_model = TaggedMessage
+    related_model_fk_field = "content_object"
 
 
 @admin.register(FoiMessage)
@@ -610,6 +612,7 @@ class FoiMessageAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
+        qs = qs.select_related("request")
         qs = qs.prefetch_related("deliverystatus")
         return qs
 
