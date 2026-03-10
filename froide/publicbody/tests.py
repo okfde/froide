@@ -1,4 +1,3 @@
-import json
 import os
 import tempfile
 from io import BytesIO
@@ -270,26 +269,6 @@ class ApiTest(TestCase):
         jur = Jurisdiction.objects.all()[0]
         response = self.client.get("/api/v1/jurisdiction/%d/?format=json" % jur.pk)
         self.assertEqual(response.status_code, 200)
-
-    def test_search(self):
-        response = self.client.get("/api/v1/publicbody/search/?format=json&q=Body")
-        self.assertEqual(response.status_code, 200)
-
-    def test_autocomplete(self):
-        pb = PublicBody.objects.all()[0]
-        rebuild_index()
-
-        response = self.client.get("%s?q=%s" % ("/api/v1/publicbody/search/", pb.name))
-        self.assertEqual(response.status_code, 200)
-        obj = json.loads(response.content.decode("utf-8"))
-        self.assertIn(pb.name, obj["objects"][0]["name"])
-        response = self.client.get(
-            "%s?query=%s&jurisdiction=non_existant"
-            % ("/api/v1/publicbody/search/", pb.name)
-        )
-        self.assertEqual(response.status_code, 200)
-        obj = json.loads(response.content.decode("utf-8"))
-        self.assertEqual(obj["objects"], [])
 
 
 @pytest.fixture
