@@ -81,7 +81,7 @@ class NewAccountView(TemplateView):
     template_name = "account/new.html"
 
     def get_context_data(self, **kwargs):
-        context = super(NewAccountView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["title"] = self.request.GET.get("title", "")
         context["email"] = self.request.GET.get("email", "")
         return context
@@ -91,7 +91,7 @@ class AccountConfirmedView(LoginRequiredMixin, TemplateView):
     template_name = "account/confirmed.html"
 
     def get_context_data(self, **kwargs):
-        context = super(AccountConfirmedView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["foirequest"] = self.get_foirequest()
         context["ref"] = self.request.GET.get("ref")
         return context

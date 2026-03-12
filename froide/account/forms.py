@@ -545,7 +545,7 @@ class SetPasswordForm(DjangoSetPasswordForm):
     )
 
     def __init__(self, *args, **kwargs) -> None:
-        super(SetPasswordForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.user is None:
             # Password reset link broken
             return
