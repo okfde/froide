@@ -238,14 +238,16 @@ def test_signup_same_name(world, client):
 
 
 @pytest.mark.django_db
-def test_signup_claims_vip(world, client, settings):
+def test_signup_claims_vip(world, settings, client):
     import froide.account.forms
     import froide.account.services
+    import froide.account.views
 
     with override_settings(FROIDE_CONFIG=CAN_CLAIM_VIP_CONFIG):
         # otherwise, the claims_vip field is missing from the SignUpForm/NewUserBaseForm
         reload(froide.account.services)
         reload(froide.account.forms)
+        reload(froide.account.views)
 
         assert "claims_vip" in froide.account.forms.SignUpForm().fields
 
@@ -271,6 +273,7 @@ def test_signup_claims_vip(world, client, settings):
 
     reload(froide.account.services)
     reload(froide.account.forms)
+    reload(froide.account.views)
 
     assert "claims_vip" not in froide.account.forms.SignUpForm().fields
 
