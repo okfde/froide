@@ -29,12 +29,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
-          enable-cache: true
-          cache-dependency-glob: |
-            requirements*.txt
-            pyproject.toml
           python-version: ${{ matrix.python-version }}
           activate-environment: true
       - name: Install pnpm
@@ -47,8 +43,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libgdal-dev gdal-bin libmagic-dev libmagickwand-dev libpoppler-cpp-dev poppler-utils ghostscript
       - name: Install dependencies
         run: |
-          uv pip sync requirements-test.txt
-          uv pip install -e . --no-deps
+          uv sync
           playwright install --with-deps chromium
           pnpm install
       - name: Build frontend

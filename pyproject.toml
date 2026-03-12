@@ -64,8 +64,8 @@ dependencies = [
   "dogtail @ git+https://github.com/okfde/dogtail.git@main",
 ]
 
-[project.optional-dependencies]
-test = [
+[dependency-groups]
+dev = [
   "beautifulsoup4",
   "coverage[toml]",
   "django-coverage-plugin",
@@ -75,7 +75,6 @@ test = [
   "monkeytype",
   "mypy",
   "pbr",
-  "pre-commit",
   "pycodestyle",
   "pyflakes",
   "pytest",
@@ -91,6 +90,7 @@ test = [
   "types-Markdown",
   "types-python-dateutil",
   "types-requests",
+  "prek>=0.3.5",
 ]
 
 [build-system]
@@ -152,8 +152,8 @@ python_files = ["tests.py", "test_*.py", "*_tests.py"]
 addopts = ["--reuse-db"]
 markers = ["no_delivery_mock"]
 filterwarnings = [
-    "ignore::DeprecationWarning:(?!froide).*",
-    "ignore::PendingDeprecationWarning:(?!froide)*",
+  "ignore::DeprecationWarning:(?!froide).*",
+  "ignore::PendingDeprecationWarning:(?!froide)*",
 ]
 
 [tool.mypy]

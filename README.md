@@ -17,7 +17,7 @@ Required system tools:
 - [make](https://www.gnu.org/software/make/)
 - [uv](https://docs.astral.sh/uv/)
 - [pnpm](https://pnpm.io/)
-- [pre-commit](https://pre-commit.com)
+- [prek](https://prek.j178.dev)
 
 Required system libraries:
 
@@ -28,19 +28,16 @@ Required system libraries:
 
 After clone, create a Python virtual environment and install dependencies:
 
-```
+```shell
 # create and activate virtual envornment
-uv venv
+uv venv -p 3.13
 source .venv/bin/activate
 
 # install dependencies
-uv pip sync requirements-test.txt
+uv sync
 
 # Install git pre-commit hook
-pre-commit install
-
-# build froide backend
-uv pip install -e . --no-deps
+prek install
 
 # install frontend dependencies
 pnpm install
@@ -59,7 +56,7 @@ pnpm run dev
 
 You can run your own Postgres+PostGIS database and Elasticsearch service or run them with [Docker](https://docker.com):
 
-```
+```shell
 docker compose -f compose-dev.yaml up
 ```
 
@@ -69,14 +66,17 @@ This will start Postgres and Elasticsearch and listen on port 5432 and 9200 resp
 
 If you need to adjust settings, you can copy the `froide/local_settings.py.example` to `froide/local_settings.py` and edit it. More steps:
 
-```
+```shell
 # To initialise the database:
 python manage.py migrate --skip-checks
+
 # Create a superuser
 python manage.py createsuperuser
+
 # Create and populate search index
 python manage.py search_index --create
 python manage.py search_index --populate
+
 # Run the Django development server
 python manage.py runserver
 ```
@@ -85,7 +85,7 @@ python manage.py runserver
 
 Make sure the services are running.
 
-```
+```shell
 # Run all tests
 make test
 # Run only unit/integration tests
@@ -98,7 +98,7 @@ make testui
 
 For Python code, we use ruff for linting and formatting. JavaScript, Vue and SCSS files are formatted and linted with ESLint and Prettier.
 
-Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode, [we recommend some extensions](./.vscode/extensions.json)
+Make sure to have pre-commit hooks registered (`prek install`). For VSCode, [we recommend some extensions](./.vscode/extensions.json)
 
 ```json
 {
@@ -108,12 +108,6 @@ Make sure to have pre-commit hooks registered (`pre-commit install`). For VSCode
   "vetur.format.defaultFormatter.html": "prettier",
   "vetur.format.defaultFormatter.js": "prettier-eslint"
 }
-```
-
-### Upgrade dependencies
-
-```
-make requirements
 ```
 
 ## Docs
