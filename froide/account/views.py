@@ -382,7 +382,10 @@ FormKwargs = dict[str, Optional[Union[QueryDict, MultiValueDict, HttpRequest]]]
 
 class SignupView(FormView):
     template_name = "account/signup.html"
-    form_class = SignUpForm
+
+    def get_form_class(self):
+        # required like this for testing
+        return SignUpForm
 
     def dispatch(
         self, request: HttpRequest, *args, **kwargs
