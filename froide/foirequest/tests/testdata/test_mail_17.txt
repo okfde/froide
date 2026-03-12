@@ -1,0 +1,117 @@
+Return-Path: <ifg@bsi.bund.de>
+X-Original-To: s.wehrmeyer+axb4afh@fragdenstaat.de
+Delivered-To: foimail@fragdenstaat.de
+Received: from m3-bn.bund.de (m3-bn.bund.de [77.87.228.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by fragdenstaat.de (Postfix) with ESMTPS id 05B872E0033
+	for <s.wehrmeyer+axb4afh@fragdenstaat.de>; Tue,  4 Sep 2018 09:25:21 +0200 (CEST)
+Received: from m3.mfw.bn.ivbb.bund.de (localhost [127.0.0.1])
+	by m3.mfw.bn.ivbb.bund.de (Postfix) with ESMTP id C3D1D52848
+	for <s.wehrmeyer+axb4afh@fragdenstaat.de>; Tue,  4 Sep 2018 09:25:20 +0200 (CEST)
+Received: (from localhost) by m3.mfw.bn.ivbb.bund.de (MSCAN) id 4/m3.mfw.bn.ivbb.bund.de/smtp-gw/mscan; Tue Sep 4 09:25:20
+     2018
+X-P350-Id: 5c719afa385d6214
+X-Virus-Scanned: amavisd-new at bsi.bund.de
+X-Virus-Scanned: by amavisd-new at bsi.bund.de
+From: "Tester, Theresa" <ifg@bsi.bund.de>
+Organization: BSI Bonn
+To: T M <s.wehrmeyer+axb4afh@fragdenstaat.de>
+Subject: Bescheid zu Ihrer =?utf-8?q?erg=C3=A4nzten_IFG-Anfrage_Bestellung?= Infomaterial, =?utf-8?q?Brosch=C3=BCren=2E=2E=2E?= [#32154]
+Date: Tue, 4 Sep 2018 09:25:07 +0200
+User-Agent: KMail/1.9.10 (enterprise35 20150610.75555ff)
+References: <20180725132804.5741.2827@fragdenstaat.de>
+In-Reply-To: <20180725132804.5741.2827@fragdenstaat.de>
+X-KMail-QuotePrefix: > 
+MIME-Version: 1.0
+Content-Type: Multipart/Mixed;
+  boundary="Boundary-00=_TNjjb4lXjP2r0QD"
+Message-Id: <201809040925.07570.ifg@bsi.bund.de>
+X-Rusd: domwl, Pass through domain bsi.bund.de
+
+--Boundary-00=_TNjjb4lXjP2r0QD
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+
+Sehr geehrter Herr Antragsteller,
+
+anbei =C3=BCbersende ich Ihnen meinen Bescheid zu Ihrer untenstehenden Anfr=
+age nach=20
+dem Informationsfreiheitsgesetz.
+
+Mit freundlichen Gr=C3=BC=C3=9Fen
+im Auftrag
+
+Theresa Tester
+
+
+
+
+__________ urspr=C3=BCngliche Nachricht __________
+
+Von:		T M <s.wehrmeyer+axb4afh@fragdenstaat.de>
+Datum:	Mittwoch, 25. Juli 2018, 15:28:04
+An:		ifg@bsi.bund.de
+Kopie:=09
+Betr.:	 Re: Bestellung Infomaterial, Brosch=C3=BCren... [#32154]
+
+> Guten Tag,
+>
+> wie ich erfahren habe, kommen keine Kosten auf mich zu und ich kann jede
+> Brosch=C3=BCre etc. jeweils einmal bestellen.
+>
+> Bitte stellen Sie mir, wenn vorhanden, folgende Informationen zur
+> Verf=C3=BCgung: - f=C3=BCr das Drucken und den Versand zusammen gekommene=
+n Kosten
+> - anonymisierte Statistik, wie viele Exemplare bestellt werden, bitte
+> aufgeschl=C3=BCsselt nach "Einzelpersonen", "Mittler und Tr=C3=A4ger poli=
+tischer
+> Bildung" sowie "=C3=B6ffentliche Einrichtungen und Unternehmen"
+>
+> Dies bitte auf elektronischem Weg.
+> ...
+>
+> Mit freundlichen Gr=C3=BC=C3=9Fen
+> Anton Anfragesteller
+>
+> Anfragenr: 32154
+> Antwort an: s.wehrmeyer+axb4afh@fragdenstaat.de
+>
+> Postanschrift
+> T M
+
+=2D-=20
+Theresa Tester
+=2D---------------------------------------
+Bundesamt f=C3=BCr Sicherheit in der Informationstechnik (BSI)
+Referat B21 - IT-Sicherheit und Recht
+Godesberger Allee 185-189
+53175 Bonn
+
+Postfach 20 03 63
+53133 Bonn
+
+Internet:
+www.bsi.bund.de
+www.bsi-fuer-buerger.de
+
+--Boundary-00=_TNjjb4lXjP2r0QD
+Content-Type: application/pdf;
+	name*0*="utf-8''Amtliche%20Bekanntmachung%20Wahlausschusssitzung%20Ausl%C3";
+	name*1*="%A4nderbeiratswahl.pdf"
+Content-Description:
+ =?utf-8?B?QW10bGljaGUgQmVrYW5udG1hY2h1bmcgV2FobGF1c3NjaHVzc3NpdHp1bmcg?=
+ =?utf-8?B?QXVzbMOkbmRlcmJlaXJhdHN3YWhsLnBkZg==?=
+Content-Disposition: attachment;
+	filename*0*="utf-8''Amtliche%20Bekanntmachung%20Wahlausschusssitzung%20Ausl";
+	filename*1*="%C3%A4nderbeiratswahl.pdf"; size=122339;
+	creation-date="Tue, 10 Mar 2026 05:50:45 GMT";
+	modification-date="Tue, 10 Mar 2026 05:51:13 GMT"
+Content-Transfer-Encoding: base64
+
+VGVzdA==
+
+--Boundary-00=_TNjjb4lXjP2r0QD--
+

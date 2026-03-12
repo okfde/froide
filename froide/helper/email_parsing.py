@@ -8,6 +8,7 @@ Licensed under MIT
 
 import mimetypes
 import re
+import unicodedata
 from contextlib import closing
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -197,27 +198,54 @@ def parse_attachment(message_part: Message, ignore_content_types=None):
     return attachment
 
 
-def get_attachment_name(attachment, dispo_dict, content_type=None):
+def get_attachment_name(
+    attachment, dispo_dict, content_type=None, fallback="attachment"
+):
     name = None
     if "filename" in dispo_dict:
         name = dispo_dict["filename"]
-    if name is None and "filename*" in dispo_dict:
+    if not name and "filename*" in dispo_dict:
         name = parse_extended_header_field(dispo_dict["filename*"])
+    if not name and "filename*0*" in dispo_dict:
+        name = get_split_name_from_dict("filename", dispo_dict)
 
-    if content_type:
+    if not name and content_type:
         _, content_dict = parse_dispositions(content_type)
         if "name" in content_dict:
             name = content_dict["name"]
-        if name is None and "name*" in content_dict:
+        if not name and "name*" in content_dict:
             name = parse_extended_header_field(content_dict["name*"])
+        if not name and "name*0*" in content_dict:
+            name = get_split_name_from_dict("name", content_dict)
 
-    if name is None and content_type == "message/rfc822":
+    if not name and content_type == "message/rfc822":
         attachment_bytes = attachment.getvalue()
         attachment_headers = get_email_headers(attachment_bytes, ["Subject"])
         subject = attachment_headers["Subject"]
         if subject:
             name = "%s.eml" % subject[0][:45]
+
+    if not name:
+        name = fallback
+
     return name
+
+
+def get_split_name_from_dict(base_name, value_dict):
+    name_parts = []
+    i = 0
+    key = f"{base_name}*{i}*"
+    field_encoding = None
+    while key in value_dict:
+        field = value_dict[key]
+        part = parse_extended_header_field(field, encoding=field_encoding)
+        name_parts.append(part)
+        if i == 0:
+            # store encoding from first field
+            field_encoding = get_extended_header_field_encoding(field)
+        i += 1
+        key = f"{base_name}*{i}*"
+    return "".join(name_parts)
 
 
 def parse_header_field(field):
@@ -262,15 +290,26 @@ def parse_header_field(field):
     return field.replace("\n\t", " ").replace("\n", "").replace("\r", "")
 
 
-def parse_extended_header_field(field):
+def parse_extended_header_field(field, encoding=None):
     """
     https://tools.ietf.org/html/rfc5987#section-3.2
     """
+    if encoding is None:
+        try:
+            encoding, _fname_lang, fname = field.split("'")
+        except ValueError:
+            return str(field)
+    else:
+        fname = field
+    return unicodedata.normalize("NFC", unquote(fname, encoding=encoding))
+
+
+def get_extended_header_field_encoding(field):
     try:
-        fname_encoding, fname_lang, fname = field.split("'")
+        fname_encoding, _fname_lang, _fname = field.split("'")
+        return fname_encoding
     except ValueError:
-        return str(field)
-    return unquote(fname, encoding=fname_encoding)
+        return None
 
 
 def try_decoding(encoded, encoding=None):
@@ -284,7 +323,7 @@ def try_decoding(encoded, encoding=None):
         # Try common encodings
         for enc in ("utf-8", "latin1"):
             try:
-                decoded = encoded.decode(enc)
+                decoded = unicodedata.normalize("NFC", encoded.decode(enc))
                 break
             except UnicodeDecodeError:
                 continue

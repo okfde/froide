@@ -244,6 +244,20 @@ def test_attachment_name_parsing_2():
     assert mail.attachments[0].name == "20180904_Bescheid Broschüren.pdf"
 
 
+def test_attachment_name_parsing_3():
+    with open(p("test_mail_17.txt"), "rb") as f:
+        mail = parse_email(f)
+    assert (
+        mail.subject
+        == "Bescheid zu Ihrer ergänzten IFG-Anfrage Bestellung Infomaterial, Broschüren... [#32154]"
+    )
+    assert len(mail.attachments) == 1
+    assert (
+        mail.attachments[0].name
+        == "Amtliche Bekanntmachung Wahlausschusssitzung Ausländerbeiratswahl.pdf"
+    )
+
+
 def test_address_list():
     with open(p("test_mail_01.txt"), "rb") as f:
         mail = parse_email(f)
