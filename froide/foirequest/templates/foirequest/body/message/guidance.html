@@ -26,6 +26,7 @@
                 <a data-fieldname="sendmessage-to"
                    data-addtextfield="#id_sendmessage-message"
                    data-value="{% if message.is_response %}{{ message.sender_email }}{% else %}{{ message.recipient_email }}{% endif %}"
+                   data-params="{{ guidance.get_params }}"
                    data-addtext="{{ snippet }}"
                    href="#write-message"
                    class="btn btn-sm btn-secondary">
