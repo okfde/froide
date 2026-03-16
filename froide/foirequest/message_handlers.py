@@ -7,18 +7,39 @@ from .foi_mail import send_foi_mail
 from .models import DeliveryStatus
 
 
-def get_message_handler_class(dotted):
+def _get_message_handler_class(dotted):
     return get_module_attr_from_dotted_path(dotted)
 
 
 def get_message_handler(message):
-    kind = message.kind
-    handler = settings.FROIDE_CONFIG["message_handlers"].get(kind)
+    handler_klass = get_message_handler_class(message.kind)
+    return handler_klass(message)
+
+
+def get_message_handler_class(message_kind):
+    handler = settings.FROIDE_CONFIG["message_handlers"].get(message_kind)
     if handler is None:
         handler_klass = DefaultMessageHandler
     else:
-        handler_klass = get_message_handler_class(handler)
-    return handler_klass(message)
+        handler_klass = _get_message_handler_class(handler)
+    return handler_klass
+
+
+def get_message_handler_classes_for(method: str):
+    for _key, dotted_import in settings.FROIDE_CONFIG["message_handlers"].items():
+        handler_class = _get_message_handler_class(dotted_import)
+        if hasattr(handler_class, method):
+            yield handler_class
+
+
+def get_message_handler_class_methods(method: str):
+    for handler_class in get_message_handler_classes_for(method):
+        yield getattr(handler_class, method)
+
+
+def run_all_message_handler_classes(method: str, *args, **kwargs):
+    for handler_class in get_message_handler_classes_for(method):
+        getattr(handler_class, method)(*args, **kwargs)
 
 
 def send_message(message, **kwargs):
