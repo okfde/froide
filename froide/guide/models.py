@@ -36,6 +36,7 @@ class Action(models.Model):
     letter_template = models.ForeignKey(
         LetterTemplate, null=True, blank=True, on_delete=models.SET_NULL
     )
+    params = models.CharField(max_length=255, blank=True)
 
     class Meta:
         verbose_name = pgettext_lazy("Guide action", "Guide action")
@@ -94,7 +95,7 @@ class Guidance(models.Model):
     label = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     snippet = models.TextField(blank=True)
-    matches = models.JSONField(null=True)
+    matches = models.JSONField(null=True, blank=True)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL
@@ -184,6 +185,11 @@ class Guidance(models.Model):
         if self.action:
             return self.action.snippet
         return self.snippet
+
+    def get_params(self):
+        if self.action:
+            return self.action.params
+        return ""
 
 
 class Rule(models.Model):
