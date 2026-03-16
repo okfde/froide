@@ -135,7 +135,7 @@
         <div class="alpha-message__wrap alpha-message__bodyinner">
             {# guidance #}
             {% if not message.content_hidden or object|can_read_foirequest_authenticated:request %}
-                {% render_guidance_alpha message %}
+                {% render_guidance message %}
             {% endif %}
             {# attachments #}
             {% include "foirequest/body/message/attachments/attachments.html" %}
