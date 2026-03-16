@@ -109,23 +109,23 @@ const slideUp = (el: HTMLElement, seconds = 0.3): Promise<void> => {
   })
 }
 
-const addText = (dataset: DOMStringMap): void => {
+const addText = (dataset: DOMStringMap): HTMLTextAreaElement | undefined => {
   if (!dataset.addtextfield) {
     return
   }
   const textField = document.querySelector(
     dataset.addtextfield
-  ) as HTMLInputElement
+  ) as HTMLTextAreaElement
   if (textField === null) {
     return
   }
   let text = textField.value
   const addedText = dataset.addtext
   if (!addedText) {
-    return
+    return textField
   }
   if (text.includes(addedText)) {
-    return
+    return textField
   }
   if (text.includes('\n...\n')) {
     text = text.replace('...', addedText)
@@ -136,6 +136,37 @@ const addText = (dataset: DOMStringMap): void => {
     )
   }
   textField.value = text
+  return textField
+}
+
+const setFormValuesFromParams = (
+  form: HTMLFormElement,
+  paramsString: string
+): void => {
+  const params = new URLSearchParams(paramsString)
+  for (const [key, value] of params.entries()) {
+    const formElement = form.querySelector(`[name="${key}"]`)
+    if (formElement) {
+      if (
+        formElement instanceof HTMLInputElement &&
+        formElement.type === 'checkbox'
+      ) {
+        formElement.checked = Boolean(value)
+      } else if (
+        formElement instanceof HTMLInputElement ||
+        formElement instanceof HTMLSelectElement ||
+        formElement instanceof HTMLTextAreaElement
+      ) {
+        formElement.value = value
+      }
+      const details = formElement.closest(
+        'details'
+      ) as HTMLDetailsElement | null
+      if (details && !details.open) {
+        details.open = true
+      }
+    }
+  }
 }
 
 const beforeunloadHandler = (e: BeforeUnloadEvent) => e.preventDefault()
@@ -153,9 +184,10 @@ const guardBeforeunload = (enable: boolean): void => {
 
 export {
   addText,
-  scrollToAnchor,
+  guardBeforeunload,
   scrollNavIntoViewIfNecessary,
+  scrollToAnchor,
+  setFormValuesFromParams,
   slideUp,
-  toggleSlide,
-  guardBeforeunload
+  toggleSlide
 }

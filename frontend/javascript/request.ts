@@ -6,7 +6,7 @@ import InfoBox from './components/request/InfoBox'
 import Message from './components/request/Message'
 import ScrollIndicator from './components/request/ScrollIndicator'
 import Timeline from './components/request/Timeline'
-import { addText, toggleSlide } from './lib/misc'
+import { addText, setFormValuesFromParams, toggleSlide } from './lib/misc'
 
 const initRequestPage = (): void => {
   initSetStatusForm()
@@ -101,9 +101,18 @@ const initRequestPage = (): void => {
         checkbox.setAttribute('checked', '')
       }
     }
+    let textField
     if (this.dataset?.addtextfield) {
-      addText(this.dataset)
+      textField = addText(this.dataset)
     }
+    // Using dataset.params to prefill other form fields and open parent <details>
+    if (textField) {
+      const form = textField.closest('form') as HTMLFormElement | null
+      if (form && this.dataset.params) {
+        setFormValuesFromParams(form, this.dataset.params)
+      }
+    }
+
     goToReplyForm()
   }
 
