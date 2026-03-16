@@ -29,6 +29,10 @@ from froide.publicbody.models import PublicBody
 from froide.publicbody.widgets import PublicBodySelect
 from froide.upload.models import Upload
 
+from ..message_handlers import (
+    get_message_handler_class_methods,
+    run_all_message_handler_classes,
+)
 from ..models import FoiAttachment, FoiMessage, FoiRequest
 from ..models.message import BULK_TAG, MessageKind
 from ..tasks import convert_attachment_task, move_upload_to_attachment
@@ -278,6 +282,7 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         self._store_params(kwargs)
         super().__init__(*args, **kwargs)
         self._initialize_fields()
+        run_all_message_handler_classes("initialize_send_message_form", self)
 
     def _store_params(self, kwargs):
         self.foirequest = kwargs.pop("foirequest")
@@ -305,6 +310,10 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
             raise forms.ValidationError(
                 "You need to give a postal address, if you want to send it."
             )
+
+        for method in get_message_handler_class_methods("clean_send_message_form"):
+            cleaned_data = method(self, cleaned_data)
+
         return cleaned_data
 
     def add_message_body(
@@ -399,6 +408,8 @@ class SendMessageForm(AttachmentSaverMixin, AddressBaseForm, forms.Form):
         self.foirequest.message_sent.send(
             sender=self.foirequest, message=message, user=user
         )
+
+        run_all_message_handler_classes("save_send_message_form", self, message, user)
 
         return message
 
