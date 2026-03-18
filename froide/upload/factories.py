@@ -33,7 +33,7 @@ class UploadFactory(DjangoModelFactory):
 
     user = factory.LazyAttribute(lambda o: UserFactory())
     filename = TEST_PDF_URL
-    temporary_file_path = generate_file_path()
+    temporary_file_path = factory.LazyAttribute(lambda o: generate_file_path())
     upload_length = TEST_PDF_SIZE
     upload_offset = TEST_PDF_SIZE
     state = UploadState.RECEIVING
