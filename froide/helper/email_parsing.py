@@ -43,6 +43,9 @@ DISPO_SPLIT = re.compile(r"""((?:[^;"']|"[^"]*"|'[^']*')+)""")
 # https://tools.ietf.org/html/rfc2231#7
 DISPO_MULTI_VALUE = re.compile(r"(\w+)\*\d+$")
 
+ANGLE_COMMA = re.compile(r"(?<=>)\s*,\s*")
+SINGLE_NON_QUOTED_NAME_EMAIL_RE = re.compile(r"^([^<]*) ?<([^@]+@[^>]+)>$")
+
 
 class EmailAddress(NamedTuple):
     name: str
@@ -333,9 +336,40 @@ def try_decoding(encoded, encoding=None):
     return decoded
 
 
-def get_address_list(values):
+def _parse_recipients_loosely(recipient_str: str) -> list[tuple[str, str]]:
+    recipient_list = getaddresses([recipient_str], strict=False)
+    return [r for r in recipient_list if r != ("", "")]
+
+
+def _parse_recipient(recipients: str) -> list[tuple[str, str]]:
+    if '"' not in recipients:
+        # Case of unquoted name with spaces
+        results = []
+        for recipient in ANGLE_COMMA.split(recipients):
+            if match := SINGLE_NON_QUOTED_NAME_EMAIL_RE.match(recipient):
+                name = match.group(1)
+                if name and name[0] == '"' and name[-1] == '"':
+                    name = name[1:-1]
+                results.append((name, match.group(2)))
+            else:
+                results.extend(_parse_recipients_loosely(recipient))
+        return results
+
+    return _parse_recipients_loosely(recipients)
+
+
+def _parse_recipients(recipients: list[str]) -> list[tuple[str, str]]:
+    recipient_list = []
+    for recipient_str in recipients:
+        sub_list = _parse_recipient(recipient_str)
+        recipient_list.extend(sub_list)
+
+    return recipient_list
+
+
+def get_address_list(values) -> list[EmailAddress]:
     values = [parse_header_field(value) for value in values]
-    address_list = getaddresses(values)
+    address_list = _parse_recipients(values)
     fixed = []
     for addr in address_list:
         fixed.append(EmailAddress(parse_header_field(addr[0]), addr[1]))

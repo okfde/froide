@@ -167,6 +167,8 @@ def test_recipient_parsing():
         mail = parse_email(f)
     assert len(mail.cc) == 2
     assert len(mail.to) == 2
+    assert mail.to[0] == ("", "info@zdf.de")
+    assert mail.to[1] == ("Test User [#123456]", "sw+yurpykc1hr@fragdenstaat.de")
     assert len(mail.x_original_to) == 1
     assert mail.is_auto_reply
 
