@@ -6,6 +6,7 @@ from django.db.models.query import QuerySet
 from django.template.loader import select_template
 from django.utils.translation import gettext_lazy as _
 
+from froide.helper.fields import SVGAndImageField
 from froide.helper.storage import HashedFilenameStorage
 
 
@@ -30,7 +31,7 @@ class Campaign(models.Model):
     start_date = models.DateTimeField(null=True)
     public = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
-    logo = models.ImageField(
+    logo = SVGAndImageField(
         null=True,
         blank=True,
         upload_to="campaign-logos",
